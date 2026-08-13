@@ -32,11 +32,16 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
 
                     match component {
                         None => {
+                            let from_root = normalise(std::path::Path::new(reference));
+                            // Allow old style ref pointing from root of repo.
+                            if inputs.present.contains(&from_root) {
+                                continue;
+                            }
                             out.push(Finding::at(
                                 &doc.rel,
                                 line,
-                                format!("`{reference}` found as an old path reference"),
-                                format!("migrate to the new syntax: `<component>@{reference}`"),
+                                format!("`{reference}` found as an old path reference, now only allowed for existing paths that stem from repo root."),
+                                format!("migrate to the new syntax: `<component>@path/from/component/file.md`"),
                             ));
                         }
 

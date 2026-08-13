@@ -26,7 +26,7 @@ pub const COMPONENT_DOCUMENTS: [&str; 6] = [
     "README.md",
     "CLAUDE.md",
     "docs/design.md",
-    "docs/rejected_alternatives.md",
+    "docs/rejected-alternatives.md",
     "docs/open-issues.md",
     "docs/tripwires.md",
 ];

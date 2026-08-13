@@ -4,15 +4,11 @@ Recorded intent for this tool: how it is built internally, and why. Present tens
 anchors, plus a **Losing arguments** section, like every design document — `recording-a-decision`
 owns the shape.
 
-**What belongs here rather than in `../../docs/design/`:** a decision that does **not** survive
+**What belongs here rather than in `docs/design/`:** a decision that does **not** survive
 deleting this tool. How it works and how the pieces inside divide the work belongs here.
 
-**Outstanding state is `open-issues.md` beside this file, and there is no `tripwires.md`.** A
-tripwire guards a recorded decision, and those live in `../../docs/rules/tripwires.md` and
-`../../docs/design/tripwires.md` — the only two in the repository.
-
-What otherwise shapes it is `../CLAUDE.md`, `../../knowledge.toml`, and the module documentation at
-the top of each file under `documentation/src/` and `rules/src/`.
+What otherwise shapes it is `tools/CLAUDE.md`, `knowledge.toml`, and the module documentation at
+the top of each file under `knowledge@documentation/src/` and `knowledge@rules/src/`.
 
 `##model-then-checks` — **The model is built once, and every check is a pure function over it.** A
 check never reads a file, spawns a process, or knows how the walk works. Anything a check cannot
@@ -41,7 +37,7 @@ check over documents, which stays pure.
 
 `##families-are-the-checks` — **`--only` selects a set over the nine checks, one family per check,
 and a family is named for its check rather than for whoever reads it.** Eight of the nine are the
-modules under `documentation/src/check/`. The ninth is `corpus`, which is `rules::integrity::check`
+modules under `knowledge@documentation/src/check/`. The ninth is `corpus`, which is `rules::integrity::check`
 and sits outside them because its subject is filesystem state rather than the model. `Only` is a set, so
 one invocation asks for any combination of them. A report states which families it performed, and a
 family that did not run contributes no count: printed as a zero, a count nobody took reads as
@@ -54,7 +50,7 @@ every component carries the same documents.** The project root is one of them, n
 `project.name`; every other is a project-relative directory, named by the basename of that path.
 Nothing is discovered by filename, so a document in a directory that is not a component is not that
 kind of document: nothing counts it and nothing reports it. A component that does not carry one it
-owes is a finding, and `check/components.rs` is where both directions are asserted. `outstanding`
+owes is a finding, and `knowledge@documentation/src/check/components.rs` is where both directions are asserted. `outstanding`
 builds the component paths rather than matching `file_name()` over the walk, which is what makes
 its total a claim rather than a sample.
 
@@ -66,7 +62,7 @@ it exists, and it is named as a tracker — because the report splits its totals
 file called anything else joins one half or the other by accident.
 
 **Which components exist is declared, and what a component carries is compiled in.** That is the
-one exception to `../CLAUDE.md`'s rule that nothing about a repository is compiled into the tool,
+one exception to `tools/CLAUDE.md`'s rule that nothing about a repository is compiled into the tool,
 and it is not an exception to it: the list in `manifest.rs` is not this repository's, it is what
 the word *component* means here. A project free to declare its own set would be conformant with
 whatever it declared, which is the same as being checked against nothing.
@@ -116,36 +112,3 @@ taking the third branch: the corpus check asserts that every release the tooling
 or archived, and asking that through the resolver would answer it by fetching, which is the thing
 being asserted against. A bump archives the outgoing release, so the property holds by construction;
 what it does not survive is a bump committed without the archive.
-
-## Losing arguments
-
-**Families named for the subjects that read them** — lost to `#families-are-the-checks`. `live`. A
-family per review axis would let a reader ask for its own subject in one word instead of listing the
-checks that serve it. It loses on `../CLAUDE.md`: nothing about this repository is compiled into the
-tool, and every list a check reads comes from `../../knowledge.toml`. A subject's name inside
-`Only::parse` is exactly that repository knowledge, compiled in. Which families serve a subject
-belongs to whoever reads them.
-
-**One family per invocation, instead of a set** — lost to `#families-are-the-checks`. `live`. It
-needs no set type and no comma parsing, and each invocation stays one word. It loses to
-`#model-then-checks`, which records what a walk costs: the walk happens once per invocation, so a
-caller wanting five families reads every live document five times, which is the shape the single
-walk was built to remove.
-
-**A slug unique across the whole project, with the component named for the reader only** — lost to
-`knowledge#a-slug-belongs-to-a-component`. `live`. It keeps one meaning per word everywhere and needs
-no lookup to resolve a reference. It loses because it makes every component's vocabulary global: two
-components cannot each decide something they call the same word, and the second one to want the word
-has to take a worse one.
-
-**A reference with no component read as one inside its own component** — lost to
-`knowledge#a-slug-belongs-to-a-component`. `live`. It would leave a pointer inside a component as
-short as it was before components existed, and qualify only the crossings. It loses on what a
-reference has to carry by itself: the same text would name different decisions depending on which
-file it sits in, so moving a document between components would silently retarget every unqualified
-reference in it.
-
-**A third-party mirror as the source** — lost to `#watch-reads-the-page`. `live`. Mirrors keep
-stable index pages and would be less brittle than Wizards' HTML. It loses on what the corpus is: the
-Comprehensive Rules are this project's only authority, and putting a third party between the project
-and its authority as the _change signal_ is a dependency nothing else here has.

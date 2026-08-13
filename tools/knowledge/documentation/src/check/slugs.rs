@@ -23,6 +23,9 @@ type Place = (String, u32);
 
 pub fn check(model: &Model, manifest: &Manifest) -> (Vec<Finding>, (usize, usize)) {
     let components = manifest.components();
+
+    let mut out = Vec::new();
+
     // Keyed by the component that owns the definition, which is where the document sits rather
     // than anything the line says.
     let mut defined: BTreeMap<(&str, &str), Vec<Place>> = BTreeMap::new();
@@ -32,10 +35,20 @@ pub fn check(model: &Model, manifest: &Manifest) -> (Vec<Finding>, (usize, usize
         let owner = components.owning(&doc.rel);
         for l in &doc.observations {
             match &l.what {
-                Observation::SlugDef(s) => defined
-                    .entry((owner.name.as_str(), s.as_str()))
-                    .or_default()
-                    .push((name.clone(), l.line)),
+                Observation::SlugDef(s) => {
+                    if !(name.as_str().ends_with("design.md")) {
+                        out.push(Finding::at(
+                            name.clone(),
+                            l.line,
+                            format!("`#{s}` defined outside its component's design.md file."),
+                            "write it in docs/design.md of its component.",
+                        ))
+                    }
+                    defined
+                        .entry((owner.name.as_str(), s.as_str()))
+                        .or_default()
+                        .push((name.clone(), l.line))
+                }
                 Observation::SlugRef { component, slug } => referenced
                     .entry((component.as_deref(), slug.as_str()))
                     .or_default()
@@ -44,8 +57,6 @@ pub fn check(model: &Model, manifest: &Manifest) -> (Vec<Finding>, (usize, usize
             }
         }
     }
-
-    let mut out = Vec::new();
     for ((component, slug), where_) in &referenced {
         let (file, line) = &where_[0];
         match component {
@@ -169,16 +180,22 @@ mod tests {
         // rather than of a file — which is the case a per-file check would miss.
         let found = findings(vec![
             ("docs/design.md", head(SLUG)),
-            ("docs/rejected_alternatives.md", head(SLUG)),
+            ("docs/rejected-alternatives.md", head(SLUG)),
         ]);
-        assert_eq!(found.len(), 1, "{found:#?}");
+        assert_eq!(found.len(), 2, "{found:#?}");
         assert!(
-            found[0].contains(&format!("`{ROOT}#{SLUG}` is defined 2 times")),
+            found[0].contains(&format!(
+                "`#{SLUG}` defined outside its component's design.md"
+            )),
             "{found:#?}"
         );
         assert!(
-            found[0].contains("docs/design.md:1")
-                && found[0].contains("docs/rejected_alternatives.md:1"),
+            found[1].contains(&format!("`{ROOT}#{SLUG}` is defined 2 times")),
+            "{found:#?}"
+        );
+        assert!(
+            found[1].contains("docs/design.md:1")
+                && found[1].contains("docs/rejected-alternatives.md:1"),
             "the finding must name both places: {found:#?}"
         );
     }

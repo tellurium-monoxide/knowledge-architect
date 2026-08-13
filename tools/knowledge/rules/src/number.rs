@@ -53,7 +53,7 @@ impl RuleNumber {
         &self.suffix
     }
 
-    /// The order `../../../../docs/rules/index.md` is generated in: section number, then the printed
+    /// The order `thaum@docs/rules/index.md` is generated in: section number, then the printed
     /// text compared as text.
     ///
     /// The text tiebreak is deliberate and is **not** numeric — the committed index carries
@@ -131,7 +131,7 @@ mod tests {
 
     #[test]
     fn index_order_compares_the_tail_as_text() {
-        // Verified against the committed `../../../../docs/rules/index.md`, which carries CR~400.10 and
+        // Verified against the committed `thaum@docs/rules/index.md`, which carries CR~400.10 and
         // CR~400.11 between CR~400.1 and CR~400.2, and CR~613.11 before CR~613.1a. Ordering
         // the tail numerically would rewrite the file on the first run and fail its
         // freshness check.

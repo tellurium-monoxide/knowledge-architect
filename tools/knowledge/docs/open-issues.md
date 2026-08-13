@@ -1,7 +1,7 @@
 # Open issues — the knowledge tool
 
 What is outstanding about `tools/knowledge/` itself: the checks, the release machinery, the archive.
-What is outstanding about the *rules and their readings* is `../../docs/rules/`.
+What is outstanding about the _rules and their readings_ is `../../docs/rules/`.
 
 **Read this file before concluding that a checker behaviour is a new problem.** Every entry states
 its **kind** as a tag on its title and carries **What**, **Why it matters**, and **What would close
@@ -88,8 +88,8 @@ concept. Untested — nobody has tried moving one.
 ## The interpretation register has no mention form, so naming an entry counts as citing it `question`
 
 **What.** The interpretation walk counts every `R`-number token in a live file as a citation of that
-entry, so a document that merely *names* one — to point at a diff, to say where a reading is filed —
-is listed in `../../docs/rules/interpretations/index.md` beside the documents whose argument depends
+entry, so a document that merely _names_ one — to point at a diff, to say where a reading is filed —
+is listed in `docs/rules/interpretations/index.md` beside the documents whose argument depends
 on the reading. Root `CLAUDE.md` gives rule numbers the distinction: `CR~` marks a number used as a
 name rather than as a claim about content, and the register has no equivalent. No entry is named in
 this file on purpose, so that the illustration does not create the thing it illustrates.
@@ -113,14 +113,14 @@ interpretation walk skip it, the way the rule walk skips `CR~`. The decision bel
 ## A slug definition is not recognised in a list item `observation`
 
 **What.** A slug is recognised as a definition at the start of a line or in a table cell. A list
-item is neither, so a decision written as `- \`#slug\` — **Statement.**` is read as a *reference*
+item is neither, so a decision written as `- \`#slug\` — **Statement.**` is read as a _reference_
 and fails the dangling check.
 
-**Observed.** Writing `#bench-is-a-tool` into `../../docs/design/architecture.md`, in the
-*Why each part is the way it is* subsection of *Repository layout*. That subsection is nothing but
+**Observed.** Writing `thaum#bench-is-a-tool` into `docs/design.md`, in the
+_Why each part is the way it is_ subsection of _Repository layout_. That subsection is nothing but
 consecutive bulleted arguments, which is its whole idiom, and the slug had to be broken out into a
 standalone paragraph after the list. The subsection's other arguments carry no slugs, and the one it
-cites  is defined elsewhere. **Whether that is cause or coincidence is not
+cites is defined elsewhere. **Whether that is cause or coincidence is not
 established**: nobody has checked whether those arguments lack slugs because the grammar cannot hold
 one there, or because none of them was ever cited from anywhere.
 
@@ -134,14 +134,14 @@ leaves them without anchors, and an unanchored decision cannot be cited or found
 Either extend the definition grammar to accept a leading list marker, which costs one alternation
 and makes the grammar match the documents; or record that a decision worth a slug is worth its own
 paragraph, in which case the current behaviour is a deliberate constraint and belongs in
-`../../.claude/skills/recording-a-decision/SKILL.md` beside the head instruction rather than being a
+`.claude/skills/recording-a-decision/SKILL.md` beside the head instruction rather than being a
 property only a pattern states. `assumption`: the second is what was intended, since the table-cell
 form was added deliberately and the list form was not. Nothing records either way.
 
 ## The unmarked-reference lint exempts a blockquote and not an inline quote `defect`
 
 **What.** `check/citations.rs`'s `lint` skips a line whose first non-space character is `>`, with the
-comment *"verbatim rule text, not a reference"*. That exemption is **line-shaped**. The inline quote
+comment _"verbatim rule text, not a reference"_. That exemption is **line-shaped**. The inline quote
 form is **span-shaped**, so a rule number inside an inline quotation is scanned as an ordinary
 reference and reported as unmarked. The identical rule text quoted as a blockquote is exempt.
 
@@ -188,11 +188,11 @@ the same line still does.
 
 ## The nearest-marker rule and the stated convention are not the same rule `observation`
 
-**What.** `quote.rs` attributes a quote to *"The NEAREST marker before the quote"*, and its comment
-argues the case it exists for: *"A sentence often cites two rules in sequence, each with its own
+**What.** `quote.rs` attributes a quote to _"The NEAREST marker before the quote"_, and its comment
+argues the case it exists for: _"A sentence often cites two rules in sequence, each with its own
 marker and its own quote; taking the first or the last marker on the line attributes both quotes to
-one of them."* Root `CLAUDE.md` states the convention differently: *"The marker goes in the clause
-that introduces the quote."*
+one of them."_ Root `CLAUDE.md` states the convention differently: _"The marker goes in the clause
+that introduces the quote."_
 
 A clause is not a distance. The two agree whenever the introducing clause's marker is also the
 closest one, and they diverge when a sentence names a second rule between the introducing marker and
@@ -221,7 +221,7 @@ what they meet only after already being wrong. Nothing records either way.
 ## A `CR:` marker that owns no quote is never reported, and its number is never resolved `defect`
 
 **What.** The prose-form marker asserts a claim about a rule's content, and root `CLAUDE.md`
-requires it to carry *"a verbatim quote and the exact rule number as printed"*. A `CR:` marker with
+requires it to carry _"a verbatim quote and the exact rule number as printed"_. A `CR:` marker with
 **no quote anywhere near it** satisfies neither check that exists: the quote check verifies quotes
 against the rule cited and has nothing to verify, and the missing-marker lint looks for the opposite
 failure — a reference with no marker.
@@ -231,7 +231,7 @@ Nothing resolves the number either. Planted in `crates/thaum-engine/src/runtime/
 A prose-form marker naming a three-digit rule that does not exist, with no quote after it, planted
 in a doc comment. **The marker is not written out here**, for the reason the entry two above gives
 about this file's own fixtures: it would be a live citation in this document and would put its own
-row in the generated index. It did — `docs/rules/index.md` carried a *"Not rules in this release"*
+row in the generated index. It did — `docs/rules/index.md` carried a _"Not rules in this release"_
 row for the planted number until this sentence replaced the planting.
 
 `cargo knowledge check` reported nothing: every quote fragment verified and zero unmarked rule
@@ -239,15 +239,15 @@ references, over a doc comment asserting what a rule says, behind a marker, abou
 corpus does not hold.
 
 **Why it matters.** It is the failure mode root `CLAUDE.md` names as the dangerous one, reached from
-the other side: *"a bare rule number with no marker at all is the one thing that discharges nothing,
-because the checker cannot see it."* A marked number with no quote discharges nothing either, and it
+the other side: _"a bare rule number with no marker at all is the one thing that discharges nothing,
+because the checker cannot see it."_ A marked number with no quote discharges nothing either, and it
 looks conformant to a reader **and** to the checker, which the bare number does not.
 
 **Observed twice in one session**, writing `crates/thaum-engine/src/runtime/observe.rs`. One was
 `CR:120.3c's attempt on an empty library`, which is planeswalker damage — the rule wanted was
 CR:704.5b. Both were caught by re-reading the citations by hand, not by the gate.
 
-**Why it is not the entry above it.** *A verbatim rule quote can sit unchecked if nothing marks it*
+**Why it is not the entry above it.** _A verbatim rule quote can sit unchecked if nothing marks it_
 is the inverse case, a quote with no marker, and its argument turns on the false-positive ratio of
 scanning plain quoted spans. This one needs no scanning: the marker is already found, and what is
 missing is a check that something follows it.
@@ -277,8 +277,8 @@ tolerances and any three-digit constant with a decimal are ordinary in a project
 measurements, and a lint firing on them teaches the author to route around it.
 
 **Why it is not simply exempted.** The same pattern is what catches a genuine unmarked citation, and
-that lint is load-bearing: root `CLAUDE.md` names a bare rule number as *"the one thing that
-discharges nothing, because the checker cannot see it"*. An exemption keyed on "inside a `.rs` file"
+that lint is load-bearing: root `CLAUDE.md` names a bare rule number as _"the one thing that
+discharges nothing, because the checker cannot see it"_. An exemption keyed on "inside a `.rs` file"
 would blind it exactly where rule citations sit in code comments.
 
 **What would close it.** A decision on how to tell the two apart. The candidate that costs nothing

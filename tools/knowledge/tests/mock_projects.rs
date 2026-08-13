@@ -51,7 +51,7 @@ fn the_walk_obeys_the_project_that_declares_it() {
             "code/lib.rs".to_string(),
             "docs/design.md".to_string(),
             "docs/open-issues.md".to_string(),
-            "docs/rejected_alternatives.md".to_string(),
+            "docs/rejected-alternatives.md".to_string(),
             "docs/tripwires.md".to_string(),
             "notes/a.md".to_string(),
             "notes/b.md".to_string(),
@@ -90,22 +90,22 @@ fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
     // A slug opening a decision, a reference to it from a Rust doc comment, a path reference,
     // and the two marker forms — each at the line of the file it sits on.
     assert!(
-        dump.contains("notes/a.md\t3\tslug-def\tmock-anchor"),
+        dump.contains("docs/design.md\t5\tslug-def\tmock-anchor"),
         "{dump}"
     );
     assert!(
-        dump.contains("notes/a.md\t5\tpath-ref\tnotes/b.md"),
+        dump.contains("docs/design.md\t7\tpath-ref\tnotes/b.md"),
         "{dump}"
     );
     assert!(
-        dump.contains("notes/a.md\t5\tmarker-prose\t100.1"),
+        dump.contains("docs/design.md\t7\tmarker-prose\t100.1"),
         "{dump}"
     );
     assert!(
-        dump.contains("notes/a.md\t5\tmarker-mention\t100.2"),
+        dump.contains("docs/design.md\t7\tmarker-mention\t100.2"),
         "{dump}"
     );
-    assert!(dump.contains("notes/a.md\t12\tinterp-ref\t7"), "{dump}");
+    assert!(dump.contains("notes/a.md\t5\tinterp-ref\t7"), "{dump}");
     assert!(
         dump.contains("code/lib.rs\t1\tmarker-prose\t100.1"),
         "{dump}"
@@ -316,7 +316,7 @@ mod planted {
     /// table without a test failing.
     const PLANTED: [(Only, usize, &str); 7] = [
         (Only::CITATIONS, 5, "no rule says this"),
-        (Only::SLUGS, 4, "is referenced"),
+        (Only::SLUGS, 6, "is referenced"),
         (Only::PATHS, 1, "does not exist"),
         (Only::COMPONENTS, 2, "carries no"),
         (Only::INTERPRETATIONS, 1, "has no entry in the register"),
@@ -330,8 +330,8 @@ mod planted {
         let found = findings_of(current_indexes, pair);
         assert_eq!(
             found.len(),
-            5,
-            "four slug defects and one path defect: {found:#?}"
+            7,
+            "two misplaced slug defs, four slug defects and one path defect: {found:#?}"
         );
         assert!(
             !found.iter().any(|f| f.contains("no rule says this")),
