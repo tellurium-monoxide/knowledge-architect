@@ -255,3 +255,30 @@ about the discharge rule — root `CLAUDE.md` says a pointer to a slug that alre
 discharges the obligation, so a marker whose quote lives elsewhere is conformant and would have to be
 distinguished. `assumption`: the number-resolution half can land alone. Nobody has checked whether
 any conformant citation names a rule the corpus does not hold.
+
+## A float literal shaped like a rule number is reported as an unmarked reference `defect`
+
+**What.** The missing-marker lint matches a bare rule token as `\b(\d{3}\.\d+[a-z]{0,2})\b`, which
+a numeric literal satisfies. Multiplying a ratio by one hundred, written as a float literal in
+`../../crates/thaum-ai/tests/answerers.rs`, was reported as an unmarked reference to a rule with
+that number.
+
+**This entry could not be written using the literal that causes it**, which is the clearest
+statement of the cost: the text above says "one hundred as a float literal" because spelling it
+produced two more findings against this file.
+
+**Why it matters.** The repair available to an author is to spell the number differently — the line
+now carries a Rust numeric suffix instead — which is a source change made to satisfy a checker
+rather than a reader. The cost is small per instance and paid in the wrong place: percentages,
+tolerances and any three-digit constant with a decimal are ordinary in a project that records
+measurements, and a lint firing on them teaches the author to route around it.
+
+**Why it is not simply exempted.** The same pattern is what catches a genuine unmarked citation, and
+that lint is load-bearing: root `CLAUDE.md` names a bare rule number as *"the one thing that
+discharges nothing, because the checker cannot see it"*. An exemption keyed on "inside a `.rs` file"
+would blind it exactly where rule citations sit in code comments.
+
+**What would close it.** A decision on how to tell the two apart. The candidate that costs nothing
+elsewhere is to skip a token in arithmetic or with a numeric suffix — a preceding `*`, `+` or `=`
+and no `CR` marker on the line. `assumption`: no genuine citation is ever written adjacent to an
+arithmetic operator. Nobody has checked that against the tree.
