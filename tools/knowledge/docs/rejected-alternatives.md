@@ -1,13 +1,13 @@
 # Rejected Alternatives
 
-**Families named for the subjects that read them** — lost to `#families-are-the-checks`. `live`. A
+**Families named for the subjects that read them** — lost to `knowledge#families-are-the-checks`. `live`. A
 family per review axis would let a reader ask for its own subject in one word instead of listing the
 checks that serve it. It loses on `thaum@tools/CLAUDE.md`: nothing about this repository is compiled into the
 tool, and every list a check reads comes from `thaum@knowledge.toml`. A subject's name inside
 `Only::parse` is exactly that repository knowledge, compiled in. Which families serve a subject
 belongs to whoever reads them.
 
-**One family per invocation, instead of a set** — lost to `#families-are-the-checks`. `live`. It
+**One family per invocation, instead of a set** — lost to `knowledge#families-are-the-checks`. `live`. It
 needs no set type and no comma parsing, and each invocation stays one word. It loses to
 `knowledge#model-then-checks`, which records what a walk costs: the walk happens once per invocation, so a
 caller wanting five families reads every live document five times, which is the shape the single

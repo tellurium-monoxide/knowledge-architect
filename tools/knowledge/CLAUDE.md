@@ -6,5 +6,5 @@ root — so the same binary checks this repository and a mock project under
 `knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says so
 there, in one place, with a reason beside it.
 
-Read `thaum@docs/design.md` before changing how it works, and `bumping-rules` before adopting a
+Read `tools/knowledge/docs/design.md` before changing how it works, and `bumping-rules` before adopting a
 rules release.

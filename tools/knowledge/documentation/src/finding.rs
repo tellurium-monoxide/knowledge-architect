@@ -79,15 +79,15 @@ mod tests {
     #[test]
     fn a_located_finding_renders_file_line_then_the_action() {
         let f = Finding::at(
-            "docs/design/architecture.md",
+            "crates/thaum-engine/docs/design.md",
             604,
-            "`#staging-not-mutation` is defined twice",
+            "`thaum-engine#staging-not-mutation` is defined twice",
             "delete one definition; a reference resolves to exactly one anchor",
         );
-        assert_eq!(f.location(), "docs/design/architecture.md:604");
+        assert_eq!(f.location(), "crates/thaum-engine/docs/design.md:604");
         assert_eq!(
             f.to_string(),
-            "docs/design/architecture.md:604  `#staging-not-mutation` is defined twice\n    \
+            "crates/thaum-engine/docs/design.md:604  `thaum-engine#staging-not-mutation` is defined twice\n    \
              → delete one definition; a reference resolves to exactly one anchor"
         );
     }
@@ -95,11 +95,11 @@ mod tests {
     #[test]
     fn a_whole_file_finding_omits_the_colon_rather_than_inventing_a_line() {
         let f = Finding::in_file(
-            "docs/contract/open-issues.md",
-            "the family carries no tripwires.md",
-            "create it, or stop calling the directory a family",
+            "crates/thaum-corpus/docs/open-issues.md",
+            "the component carries no tripwires.md",
+            "create it, or stop declaring the directory a component",
         );
-        assert_eq!(f.location(), "docs/contract/open-issues.md");
+        assert_eq!(f.location(), "crates/thaum-corpus/docs/open-issues.md");
         assert!(!f.to_string().contains(":0"));
     }
 }
