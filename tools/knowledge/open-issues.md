@@ -217,3 +217,41 @@ convention checkable where a writer reads it and costs one sentence; or the find
 second case, so a mismatch on a line carrying two prose markers suggests reordering before
 retargeting. `assumption`: the first, because the convention is what a writer consults and the hint is
 what they meet only after already being wrong. Nothing records either way.
+
+## A `CR:` marker that owns no quote is never reported, and its number is never resolved `defect`
+
+**What.** The prose-form marker asserts a claim about a rule's content, and root `CLAUDE.md`
+requires it to carry *"a verbatim quote and the exact rule number as printed"*. A `CR:` marker with
+**no quote anywhere near it** satisfies neither check that exists: the quote check verifies quotes
+against the rule cited and has nothing to verify, and the missing-marker lint looks for the opposite
+failure — a reference with no marker.
+
+Nothing resolves the number either. Planted in `crates/thaum-engine/src/runtime/observe.rs` and run:
+
+```rust
+/// CR:999.9 says the chooser is determined by a coin flip.
+```
+
+`cargo knowledge check` reported nothing, with `477/477 rule-quote fragments verified` and
+`0 unmarked rule reference(s)`. CR~999.9 is not in the corpus.
+
+**Why it matters.** It is the failure mode root `CLAUDE.md` names as the dangerous one, reached from
+the other side: *"a bare rule number with no marker at all is the one thing that discharges nothing,
+because the checker cannot see it."* A marked number with no quote discharges nothing either, and it
+looks conformant to a reader **and** to the checker, which the bare number does not.
+
+**Observed twice in one session**, writing `crates/thaum-engine/src/runtime/observe.rs`. One was
+`CR:120.3c's attempt on an empty library`, which is planeswalker damage — the rule wanted was
+CR:704.5b. Both were caught by re-reading the citations by hand, not by the gate.
+
+**Why it is not the entry above it.** *A verbatim rule quote can sit unchecked if nothing marks it*
+is the inverse case, a quote with no marker, and its argument turns on the false-positive ratio of
+scanning plain quoted spans. This one needs no scanning: the marker is already found, and what is
+missing is a check that something follows it.
+
+**What would close it.** Two halves, separable. Resolving every cited number against the corpus is
+mechanical and has no false-positive class. Requiring a quote after a prose marker needs a decision
+about the discharge rule — root `CLAUDE.md` says a pointer to a slug that already carries the quote
+discharges the obligation, so a marker whose quote lives elsewhere is conformant and would have to be
+distinguished. `assumption`: the number-resolution half can land alone. Nobody has checked whether
+any conformant citation names a rule the corpus does not hold.
