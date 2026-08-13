@@ -102,7 +102,7 @@ pub fn rule_index(model: &Model, manifest: &Manifest, corpus: &Corpus, pinned: &
     out.push_str("# Rule citation index\n\n");
     // The provenance line names the command that regenerates the file, because a generated
     // file a reader cannot regenerate is a file they will edit by hand.
-    out.push_str("**Generated — do not edit.** `cargo tools index --write`\n\n");
+    out.push_str("**Generated — do not edit.** `cargo knowledge index --write`\n\n");
     out.push_str(
         "Every Comprehensive Rule the live files cite, and where. This is what makes a\n\
          rules bump actionable: when a rule changes or is renumbered, this says exactly what\n\
@@ -321,11 +321,11 @@ fn render_interpretation_index(
 
     let concerns: BTreeSet<&String> = entries.values().map(|e| &e.file).collect();
     let provenance = if with_lines {
-        "**Generated — do not edit.** `cargo tools index --interpretations --lines`\n\n\
-         **Line numbers are on, so this copy is temporary.** `cargo tools check` fails\n\
+        "**Generated — do not edit.** `cargo knowledge index --interpretations --lines`\n\n\
+         **Line numbers are on, so this copy is temporary.** `cargo knowledge check` fails\n\
          while it is in the tree; regenerate without `--lines` before committing.\n\n"
     } else {
-        "**Generated — do not edit.** `cargo tools index --interpretations --write`\n\n"
+        "**Generated — do not edit.** `cargo knowledge index --interpretations --write`\n\n"
     };
     format!(
         "# Interpretation index\n\n\
@@ -333,7 +333,7 @@ fn render_interpretation_index(
          Every `R` entry, the file that holds it, and every live file that cites it. A numbering\n\
          check sees the shape of the sequence and not its content, so an entry replaced under its\n\
          own number passes every assertion; **the diff of this file is where that becomes\n\
-         visible**, and `cargo tools check` fails if it is out of date.\n\n\
+         visible**, and `cargo knowledge check` fails if it is out of date.\n\n\
          A moved title is a replaced entry, a moved file is a re-filing, a removed section is a\n\
          loss. The citing list is the blast radius of a re-filing: every file in it names a\n\
          concern file, so moving an entry means rewriting all of them in the same change.\n\n\
@@ -344,7 +344,7 @@ fn render_interpretation_index(
          readings would have to be re-argued if that rule moved under them.\n\n\
          The citing list is file-level, and that is what freshness is gated on: this file changes\n\
          when a citation is added, moved between files or deleted, and not when unrelated prose\n\
-         shifts one down a page. `cargo tools index --interpretations --lines` adds the line numbers to\n\
+         shifts one down a page. `cargo knowledge index --interpretations --lines` adds the line numbers to\n\
          a temporary copy for someone who wants them; that copy fails the gate until it is\n\
          regenerated without the flag.\n\n\
          {} entries across {} concern files\n\n\

@@ -2,7 +2,7 @@
 //!
 //! The registration is a two-way claim and this is one direction of it: a registered file that
 //! is missing means the report silently under-counts what is outstanding, and
-//! `cargo tools outstanding` is what root `CLAUDE.md` sends a session to before it diagnoses
+//! `cargo knowledge outstanding` is what root `CLAUDE.md` sends a session to before it diagnoses
 //! anything.
 
 use crate::finding::Finding;

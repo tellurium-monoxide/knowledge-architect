@@ -1,4 +1,4 @@
-//! `cargo tools rules …` — the corpus and its releases.
+//! `cargo knowledge rules …` — the corpus and its releases.
 //!
 //! These are the commands that manage the pinned specification rather than checking anything:
 //! see what a release changed, notice that a new one exists, fetch one, and move the project
@@ -77,10 +77,10 @@ fn latest(tree: &Tree) -> Result<i32, String> {
     println!(
         "FAIL  a newer release is published: {published} (pinned at {pinned}).\n      \
          Read the bumping-rules skill, then:\n        \
-         cargo tools rules diff {pinned} {published}\n        \
-         cargo tools rules bump {published}\n      \
+         cargo knowledge rules diff {pinned} {published}\n        \
+         cargo knowledge rules bump {published}\n      \
          Nothing here opens a tracker entry: outstanding state goes in a family's\n      \
-         open-issues.md by hand, where `cargo tools outstanding` can see it."
+         open-issues.md by hand, where `cargo knowledge outstanding` can see it."
     );
     Ok(1)
 }
@@ -265,7 +265,7 @@ fn bump(manifest: &Manifest, tree: &Tree, new: Option<&String>) -> Result<i32, S
     println!("\nNext, by hand:\n  \
               1. write the interpretation under each subsection and set its action:\n  \
               2. add a row to the summary table at the top of CHANGES.md\n  \
-              3. cargo tools check\n  \
+              3. cargo knowledge check\n  \
               4. commit the rules text, the version file, past/, both indexes, CHANGES.md and\n     \
               every document whose quote or decision changed, TOGETHER. past/ is not\n     \
               optional: a container pinned to the outgoing release resolves from it, and\n     \
