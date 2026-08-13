@@ -228,12 +228,15 @@ failure — a reference with no marker.
 
 Nothing resolves the number either. Planted in `crates/thaum-engine/src/runtime/observe.rs` and run:
 
-```rust
-/// CR:999.9 says the chooser is determined by a coin flip.
-```
+A prose-form marker naming a three-digit rule that does not exist, with no quote after it, planted
+in a doc comment. **The marker is not written out here**, for the reason the entry two above gives
+about this file's own fixtures: it would be a live citation in this document and would put its own
+row in the generated index. It did — `docs/rules/index.md` carried a *"Not rules in this release"*
+row for the planted number until this sentence replaced the planting.
 
-`cargo knowledge check` reported nothing, with `477/477 rule-quote fragments verified` and
-`0 unmarked rule reference(s)`. CR~999.9 is not in the corpus.
+`cargo knowledge check` reported nothing: every quote fragment verified and zero unmarked rule
+references, over a doc comment asserting what a rule says, behind a marker, about a number the
+corpus does not hold.
 
 **Why it matters.** It is the failure mode root `CLAUDE.md` names as the dangerous one, reached from
 the other side: *"a bare rule number with no marker at all is the one thing that discharges nothing,
