@@ -1,0 +1,485 @@
+//! The tool run against whole projects, not against strings.
+//!
+//! A mock project under `tools/knowledge/tests/projects/` is a complete project: it carries
+//! its own `knowledge.toml` and its own documents. That is what makes these tests worth more
+//! than the in-memory ones — a fixture written as a string cannot exercise the walk, the
+//! exclusions, or a layout different from this repository's.
+//!
+//! It is also what stops fixtures leaking. This file and the projects beside it sit under
+//! `tools/knowledge/tests`, which this repository's own manifest excludes, so a planted slug,
+//! a dangling path or a rule number here is invisible to the checks that run on the
+//! repository. Written as a literal into a test that IS walked, each of those would be a real
+//! anchor, a real broken reference and a real citation — which is what happened before this
+//! directory existed, four times, each caught by a checker rather than by review.
+//!
+//! Cargo compiles `tests/*.rs`, so this file is a test target and `projects/` beside it is
+//! not: a directory without a `main.rs` is data.
+
+use std::path::PathBuf;
+
+use documentation::{Manifest, Model, Observation};
+
+fn mock(name: &str) -> Manifest {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/projects")
+        .join(name);
+    Manifest::load(&root).expect("the mock project's manifest")
+}
+
+fn model(name: &str) -> Model {
+    Model::build(&mock(name)).expect("a model of the mock project")
+}
+
+fn walked(model: &Model) -> Vec<String> {
+    let mut names: Vec<String> = model
+        .documents()
+        .iter()
+        .map(|d| d.rel.display().to_string())
+        .collect();
+    names.sort();
+    names
+}
+
+#[test]
+fn the_walk_obeys_the_project_that_declares_it() {
+    let names = walked(&model("minimal"));
+    assert_eq!(
+        names,
+        vec![
+            "code/lib.rs".to_string(),
+            "notes/a.md".to_string(),
+            "notes/b.md".to_string(),
+        ],
+        "the walk should hold exactly the declared suffixes, minus every exclusion"
+    );
+}
+
+#[test]
+fn each_of_the_three_exclusion_kinds_removes_its_file() {
+    let names = walked(&model("minimal"));
+    // A directory name, a path, and a filename — one document each, and each planted with a
+    // slug definition that would collide if it were walked.
+    assert!(!names.iter().any(|n| n.starts_with("build/")), "skip-dirs");
+    assert!(!names.iter().any(|n| n.starts_with("vendor/")), "exclude");
+    assert!(
+        !names.iter().any(|n| n.ends_with("generated.md")),
+        "skip-files"
+    );
+}
+
+#[test]
+fn a_suffix_this_project_does_not_declare_is_not_walked() {
+    // The mock declares `md` and `rs` only, so its TOML manifest is walked and its rules text
+    // is not — the opposite of the repository holding it, which declares five suffixes.
+    let names = walked(&model("minimal"));
+    assert!(!names.iter().any(|n| n.ends_with(".txt")));
+    assert!(!names.iter().any(|n| n.ends_with(".tsv")));
+}
+
+#[test]
+fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
+    let model = model("minimal");
+    let dump = model.canonical();
+    // A slug opening a decision, a reference to it from a Rust doc comment, a path reference,
+    // and the two marker forms — each at the line of the file it sits on.
+    assert!(
+        dump.contains("notes/a.md\t3\tslug-def\tmock-anchor"),
+        "{dump}"
+    );
+    assert!(
+        dump.contains("notes/a.md\t5\tpath-ref\tnotes/b.md"),
+        "{dump}"
+    );
+    assert!(
+        dump.contains("notes/a.md\t5\tmarker-prose\t100.1"),
+        "{dump}"
+    );
+    assert!(
+        dump.contains("notes/a.md\t5\tmarker-mention\t100.2"),
+        "{dump}"
+    );
+    assert!(dump.contains("notes/a.md\t11\tinterp-ref\t7"), "{dump}");
+    assert!(
+        dump.contains("code/lib.rs\t1\tmarker-prose\t100.1"),
+        "{dump}"
+    );
+}
+
+#[test]
+fn a_slug_inside_a_fence_is_not_a_definition_even_in_a_real_file() {
+    let model = model("minimal");
+    let defs: Vec<String> = model
+        .documents()
+        .iter()
+        .flat_map(|d| d.observations.iter())
+        .filter_map(|l| match &l.what {
+            Observation::SlugDef(s) => Some(s.clone()),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(defs, vec!["mock-anchor".to_string()]);
+}
+
+#[test]
+fn the_corpus_parses_under_the_project_that_declares_where_its_body_starts() {
+    // This mock's text has no table of contents, so its body starts at line zero. The
+    // repository's starts at 181. Nothing in the parser knows either number.
+    let manifest = mock("minimal");
+    let tree = manifest.rules_tree();
+    let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
+    let corpus = rules::Corpus::parse(&text, manifest.rules().body_starts_at);
+    assert_eq!(corpus.len(), 2);
+    let second = rules::RuleNumber::parse("100.2").expect("a rule number");
+    assert_eq!(
+        corpus.get(&second),
+        Some("A second mock rule, wrapped over two lines."),
+        "a continuation line should join the rule"
+    );
+}
+
+/// The checks run against a project whose documents are wrong on purpose.
+///
+/// This is the half the repository itself cannot test. Running the checks here proves only
+/// that nothing is found, because everything here is correct; a checker that had stopped
+/// detecting would look exactly the same. These assertions are on the findings themselves.
+///
+/// There is no cross-check against the implementation being replaced for this project: it has
+/// no manifest to read and could not be pointed at a mock corpus. The planted defects are
+/// checked against intent instead, which is what a fixture is for.
+mod planted {
+    use super::*;
+    use documentation::check::{citations::Release, run, Inputs, Only};
+    use documentation::index;
+    use std::collections::HashMap;
+    use std::path::PathBuf;
+
+    /// The generated files this project would have if they were current.
+    ///
+    /// Supplied rather than written: a check receives them, so a test can hand it any state
+    /// it likes without a file existing anywhere.
+    fn current_indexes(
+        manifest: &Manifest,
+        model: &Model,
+        corpus: &rules::Corpus,
+    ) -> HashMap<PathBuf, String> {
+        HashMap::from([
+            (
+                manifest.rules().dir.join("index.md"),
+                index::rule_index(model, manifest, corpus, "20200101"),
+            ),
+            (
+                manifest.interpretations().dir.join("index.md"),
+                index::interpretation_index(model, manifest, false),
+            ),
+        ])
+    }
+
+    fn findings_with(
+        committed: impl Fn(&Manifest, &Model, &rules::Corpus) -> HashMap<PathBuf, String>,
+    ) -> Vec<String> {
+        findings_of(committed, Only::EVERYTHING)
+    }
+
+    /// The findings of one run, over whichever families `only` names.
+    fn findings_of(
+        committed: impl Fn(&Manifest, &Model, &rules::Corpus) -> HashMap<PathBuf, String>,
+        only: Only,
+    ) -> Vec<String> {
+        let manifest = mock("planted");
+        let model = Model::build(&manifest).expect("a model");
+        let tree = manifest.rules_tree();
+        let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
+        let release = Release::new(&text, manifest.rules().body_starts_at);
+        let corpus = rules::Corpus::parse(&text, manifest.rules().body_starts_at);
+        let committed = committed(&manifest, &model, &corpus);
+        let releases = HashMap::from([(None, release)]);
+        let (present, outside) =
+            documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+        let inputs = Inputs {
+            releases: &releases,
+            pinned: "20200101",
+            committed: &committed,
+            present: &present,
+            outside: &outside,
+        };
+        run(&model, &manifest, &inputs, only)
+            .findings
+            .iter()
+            .map(|f| format!("{}  {}", f.location(), f.what))
+            .collect()
+    }
+
+    fn findings() -> Vec<String> {
+        findings_with(current_indexes)
+    }
+
+    /// Every planted defect this project carries, by the family that reports it.
+    ///
+    /// Each row is a family, the number of findings it owns, and a fragment of one of them.
+    /// The rows must account for every finding a whole run produces, which
+    /// `the_families_partition_every_finding` asserts, so a family cannot be left out of this
+    /// table without a test failing.
+    const PLANTED: [(Only, usize, &str); 7] = [
+        (Only::CITATIONS, 5, "no rule says this"),
+        (Only::SLUGS, 2, "is referenced"),
+        (Only::PATHS, 1, "does not exist"),
+        (Only::TRACKERS, 1, "is registered as carrying"),
+        (Only::INTERPRETATIONS, 1, "has no entry in the register"),
+        (Only::UNCOVERED, 1, "is outside the walk"),
+        (Only::GENERATED, 2, "the generated file is missing"),
+    ];
+
+    #[test]
+    fn a_set_of_families_reports_exactly_the_union_of_theirs() {
+        let pair = Only::SLUGS.union(Only::PATHS);
+        let found = findings_of(current_indexes, pair);
+        assert_eq!(
+            found.len(),
+            3,
+            "two slug defects and one path defect: {found:#?}"
+        );
+        assert!(
+            !found.iter().any(|f| f.contains("no rule says this")),
+            "the citation family did not run: {found:#?}"
+        );
+    }
+
+    /// Every family, and the findings each produces when run alone.
+    ///
+    /// EVERY family is fed the same empty set of committed files, so `generated` has findings
+    /// of its own in every run. Unlike the other eight it reports on what the tree does NOT
+    /// contain, so under current indexes it is silent — and a family that is silent cannot
+    /// leak visibly, which is how a deleted gate on it survived a leak test that gave the
+    /// other families a different input.
+    fn findings_per_family() -> Vec<(Only, Vec<String>)> {
+        Only::NAMED
+            .iter()
+            .map(|(_, family)| (*family, findings_of(|_, _, _| HashMap::new(), *family)))
+            .collect()
+    }
+
+    #[test]
+    fn no_family_reports_a_finding_that_belongs_to_another() {
+        // The leak test. A gate deleted from any family makes that family's findings appear
+        // in every other family's run, so the pairwise intersection stops being empty. This
+        // catches a leak from a family that plants no defect of its own, which counting
+        // findings per family cannot.
+        let per_family = findings_per_family();
+        for (a, found_a) in &per_family {
+            for (b, found_b) in &per_family {
+                if a == b {
+                    continue;
+                }
+                let shared: Vec<&String> = found_a.iter().filter(|f| found_b.contains(f)).collect();
+                assert!(
+                    shared.is_empty(),
+                    "{} and {} both report {shared:#?}",
+                    a.names().join(","),
+                    b.names().join(",")
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn the_families_partition_every_finding() {
+        // Nothing is lost between the families and nothing is invented by running them
+        // together, so `PLANTED` is a complete account rather than a sample.
+        let per_family = findings_per_family();
+        let mut apart: Vec<String> = per_family.iter().flat_map(|(_, f)| f.clone()).collect();
+        let mut whole = findings_of(|_, _, _| HashMap::new(), Only::EVERYTHING);
+        apart.sort();
+        whole.sort();
+        assert_eq!(apart, whole, "the families must partition a whole run");
+
+        for (family, planted, _) in PLANTED {
+            let (_, found) = per_family
+                .iter()
+                .find(|(f, _)| *f == family)
+                .expect("a declared family");
+            assert_eq!(
+                found.len(),
+                planted,
+                "{} planted {planted}: {found:#?}",
+                family.names().join(",")
+            );
+        }
+    }
+
+    #[test]
+    fn every_family_reports_exactly_what_it_was_asked_for() {
+        // `ran` under-reporting is as wrong as over-reporting, and only one direction was
+        // pinned before: a report that names fewer families than ran makes a check that
+        // happened look like one that did not.
+        for (name, family) in Only::NAMED {
+            let report = report_of(family);
+            assert_eq!(report.ran, family, "{name}");
+            assert_eq!(report.ran.names(), vec![name], "{name}");
+            assert_eq!(report.asked, family, "{name}");
+        }
+    }
+
+    #[test]
+    fn the_pinned_containers_come_out_in_a_stable_order() {
+        // The walk orders documents by path component and this list orders them by display
+        // path, so the two disagree whenever a directory name is a prefix of another. Without
+        // the sort the block reshuffles between runs on an unchanged tree.
+        let report = report_with_pin(Only::CITATIONS);
+        let files: Vec<&str> = report.pinned.iter().map(|(f, _, _)| f.as_str()).collect();
+        assert!(
+            files.len() >= 2,
+            "the fixture must pin at least two: {files:#?}"
+        );
+        let mut sorted = files.clone();
+        sorted.sort();
+        assert_eq!(files, sorted, "pinned containers must be sorted");
+    }
+
+    /// One run's whole report, over `only`, with the generated files current.
+    fn report_of(only: Only) -> documentation::check::Report {
+        report_inner(only, false)
+    }
+
+    /// The same, with the pinned release the two `cr-version` fixtures name also supplied.
+    ///
+    /// A pinned document is skipped unless its release is in the map, so the fixtures are
+    /// invisible to every other test here and change no count.
+    fn report_with_pin(only: Only) -> documentation::check::Report {
+        report_inner(only, true)
+    }
+
+    fn report_inner(only: Only, with_pin: bool) -> documentation::check::Report {
+        let manifest = mock("planted");
+        let model = Model::build(&manifest).expect("a model");
+        let tree = manifest.rules_tree();
+        let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
+        let body = manifest.rules().body_starts_at;
+        let corpus = rules::Corpus::parse(&text, body);
+        let committed = current_indexes(&manifest, &model, &corpus);
+        let mut releases = HashMap::from([(None, Release::new(&text, body))]);
+        if with_pin {
+            releases.insert(Some("20200101".to_string()), Release::new(&text, body));
+        }
+        let (present, outside) =
+            documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+        let inputs = Inputs {
+            releases: &releases,
+            pinned: "20200101",
+            committed: &committed,
+            present: &present,
+            outside: &outside,
+        };
+        run(&model, &manifest, &inputs, only)
+    }
+
+    #[test]
+    fn the_report_says_which_families_it_performed() {
+        // Without this, a family carrying no count of its own — `generated`, `trackers` — is
+        // indistinguishable from a run that performed nothing at all.
+        let report = report_of(Only::TRACKERS);
+        assert_eq!(report.ran.names(), vec!["trackers"]);
+        assert!(!report.ran.has(Only::SLUGS));
+    }
+
+    #[test]
+    fn a_generated_file_that_has_drifted_is_reported_at_the_line_it_drifted_on() {
+        let stale = findings_with(|m, model, corpus| {
+            let mut c = current_indexes(m, model, corpus);
+            let path = m.rules().dir.join("index.md");
+            let text = c[&path].replace("Rule citation index", "Rule citation index (edited)");
+            c.insert(path, text);
+            c
+        });
+        let hits: Vec<&String> = stale.iter().filter(|f| f.contains("out of date")).collect();
+        assert_eq!(hits.len(), 1, "{stale:#?}");
+        assert!(hits[0].starts_with("corpus/index.md:1"), "{}", hits[0]);
+    }
+
+    #[test]
+    fn a_generated_file_that_is_absent_is_reported_as_missing() {
+        let gone = findings_with(|_, _, _| HashMap::new());
+        assert_eq!(
+            gone.iter().filter(|f| f.contains("is missing")).count(),
+            2,
+            "both generated files: {gone:#?}"
+        );
+    }
+
+    fn one(needle: &str) -> String {
+        let all = findings();
+        let hits: Vec<&String> = all.iter().filter(|f| f.contains(needle)).collect();
+        assert_eq!(hits.len(), 1, "expected exactly one {needle:?} in {all:#?}");
+        hits[0].clone()
+    }
+
+    #[test]
+    fn a_fabricated_quote_is_reported_as_verifying_against_nothing() {
+        assert!(one("no rule says this").starts_with("notes/quotes.md:5"));
+    }
+
+    #[test]
+    fn a_quote_that_belongs_to_another_rule_is_reported_as_misattributed() {
+        // The dangerous case: the text exists, under a number that means something else, so
+        // the citation still looks right to a reader.
+        let f = one("verifies, but not as");
+        assert!(f.starts_with("notes/quotes.md:7"), "{f}");
+    }
+
+    #[test]
+    fn commentary_inside_a_blockquote_is_reported() {
+        assert!(one("commentary, not rule text").starts_with("notes/quotes.md:9"));
+    }
+
+    #[test]
+    fn a_rule_number_with_no_marker_is_linted() {
+        assert!(one("named with no marker").starts_with("notes/quotes.md:11"));
+    }
+
+    #[test]
+    fn an_identifier_marker_with_no_prose_marker_above_it_is_reported() {
+        assert!(one("has no CR:100.1 above it").starts_with("code/lib.rs:2"));
+    }
+
+    #[test]
+    fn a_slug_referenced_but_never_defined_is_reported() {
+        assert!(one("`#dangling-anchor` is referenced").starts_with("notes/structure.md:9"));
+    }
+
+    #[test]
+    fn a_slug_defined_twice_is_reported_once_naming_both_places() {
+        // A rename that left one behind. The reader who finds the stale one acts on it.
+        let f = one("is defined 2 times");
+        assert!(f.starts_with("notes/structure.md:3"), "{f}");
+        assert!(f.contains("notes/structure.md:7"), "{f}");
+    }
+
+    #[test]
+    fn a_path_that_does_not_resolve_is_reported() {
+        assert!(one("does not exist").starts_with("notes/structure.md:11"));
+    }
+
+    #[test]
+    fn a_reference_to_an_entry_that_does_not_exist_is_reported() {
+        assert!(one("has no entry in the register").starts_with("notes/structure.md:13"));
+    }
+
+    #[test]
+    fn a_registered_tracker_file_that_is_missing_is_reported() {
+        assert!(one("is registered as carrying open-issues.md").starts_with("notes/open-issues.md"));
+    }
+
+    #[test]
+    fn the_correct_quote_produces_no_finding_and_the_exempt_file_is_not_linted() {
+        let all = findings();
+        assert!(
+            !all.iter().any(|f| f.contains("exempt.md")),
+            "the manifest exempts that file from the lint: {all:#?}"
+        );
+        // Every planted defect found and nothing else, counted against `PLANTED` so the two
+        // cannot drift apart. Taken over the same empty set of committed files that table is
+        // stated against, which is what gives `generated` its two findings.
+        let planted: usize = PLANTED.iter().map(|(_, n, _)| n).sum();
+        let whole = findings_of(|_, _, _| HashMap::new(), Only::EVERYTHING);
+        assert_eq!(whole.len(), planted, "{whole:#?}");
+    }
+}

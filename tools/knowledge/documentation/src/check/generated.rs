@@ -1,0 +1,97 @@
+//! The generated indexes are current.
+//!
+//! A generated file that drifts is worse than no generated file: `bumping-rules` calls the
+//! rule index *the work list* for a release, and a stale work list decides what a renumbering
+//! breaks. The interpretation index is a change detector for the register itself, and it
+//! detects nothing unless it is current — which was the objection raised against building one
+//! at all, and gating it is the answer to that objection.
+//!
+//! **The comparison is against a string.** Nothing here writes the file and restores it, so a
+//! run that dies half-way leaves the tree exactly as it found it.
+
+use std::path::Path;
+
+use crate::finding::Finding;
+use crate::index;
+use crate::manifest::Manifest;
+use crate::model::Model;
+
+use super::Inputs;
+
+/// Compare each generated file with what it would be generated as now.
+pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding> {
+    let mut findings = Vec::new();
+    let Some(vendored) = inputs.releases.get(&None) else {
+        return findings;
+    };
+
+    let rule_index = manifest.rules().dir.join("index.md");
+    compare(
+        &rule_index,
+        &index::rule_index(model, manifest, &vendored.rules, inputs.pinned),
+        inputs,
+        "regenerate it and read the diff: it is the work list a release bump reads",
+        &mut findings,
+    );
+
+    let interpretation_index = manifest.interpretations().dir.join("index.md");
+    compare(
+        &interpretation_index,
+        &index::interpretation_index(model, manifest, false),
+        inputs,
+        "regenerate it WITHOUT line numbers and read the diff: a moved title is a replaced \
+         entry, a moved file is a re-filing, a removed section is a loss",
+        &mut findings,
+    );
+    findings
+}
+
+fn compare(path: &Path, expected: &str, inputs: &Inputs, action: &str, out: &mut Vec<Finding>) {
+    let committed = inputs.committed.get(path).map(String::as_str);
+    match committed {
+        None => out.push(Finding::in_file(
+            path,
+            "the generated file is missing",
+            action,
+        )),
+        Some(current) if current != expected => {
+            let line = first_difference(current, expected);
+            out.push(Finding::at(
+                path,
+                line,
+                "the generated file is out of date".to_string(),
+                action,
+            ));
+        }
+        Some(_) => {}
+    }
+}
+
+/// The first line where the committed file and the regenerated one disagree.
+///
+/// A file-level *this is stale* sends a reader to diff the whole thing; a line sends them to
+/// the change. Both files are generated, so the first disagreement is where the content
+/// actually moved.
+fn first_difference(a: &str, b: &str) -> u32 {
+    let mut n = 1;
+    for (x, y) in a.lines().zip(b.lines()) {
+        if x != y {
+            return n;
+        }
+        n += 1;
+    }
+    n
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_first_differing_line_is_reported() {
+        assert_eq!(first_difference("a\nb\nc", "a\nB\nc"), 2);
+        // A file that is a prefix of the other differs at the line past the shorter one.
+        assert_eq!(first_difference("a\nb", "a\nb\nc"), 3);
+        assert_eq!(first_difference("same", "same"), 2);
+    }
+}

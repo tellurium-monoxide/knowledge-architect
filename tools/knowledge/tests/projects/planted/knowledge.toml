@@ -1,0 +1,27 @@
+# A mock project whose documents are wrong on purpose. Every defect below is one the checker
+# must find; a test asserts the findings themselves, not merely that something failed.
+
+[walk]
+suffixes = ["md", "rs"]
+skip-dirs = [".git"]
+# The rules text is not a citation of itself.
+skip-files = ["CompRules.txt"]
+exclude = []
+
+[lint]
+exempt-files = ["exempt.md"]
+
+[rules]
+dir = "corpus"
+text = "CompRules.txt"
+body-starts-at = 0
+version = "VERSION"
+past = "past"
+manifest = "past/MANIFEST.tsv"
+
+[interpretations]
+dir = "notes/readings"
+concerns = []
+
+[trackers]
+"notes" = ["open-issues.md"]

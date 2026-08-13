@@ -1,0 +1,2 @@
+100.1 The first mock rule says exactly this and nothing else.
+100.2 The second mock rule says something completely different.

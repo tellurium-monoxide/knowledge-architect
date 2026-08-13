@@ -1,0 +1,28 @@
+# A mock project. Its layout differs from the repository that holds it on purpose: the rules
+# corpus is `corpus/` rather than `docs/rules/`, its text has another name, and its body
+# starts on the first line. Anything the tool gets right here it gets right from this file
+# rather than from a constant.
+
+[walk]
+suffixes = ["md", "rs"]
+skip-dirs = ["build"]
+skip-files = ["generated.md"]
+exclude = ["vendor"]
+
+[lint]
+exempt-files = ["stale.md"]
+
+[rules]
+dir = "corpus"
+text = "CompRules.txt"
+body-starts-at = 0
+version = "VERSION"
+past = "past"
+manifest = "past/MANIFEST.tsv"
+
+[interpretations]
+dir = "notes/readings"
+concerns = ["one-concern"]
+
+[trackers]
+"notes" = ["open-issues.md"]

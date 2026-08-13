@@ -1,0 +1,391 @@
+//! The checks. Each is a pure function from the model to findings.
+//!
+//! No check reads a file, spawns a process, or knows how the walk works. That is what makes
+//! the single walk a property of the design rather than of anyone's care, and it is what lets
+//! a check be run against a model assembled in memory.
+
+pub mod changes;
+pub mod citations;
+pub mod generated;
+pub mod interpretations;
+pub mod paths;
+pub mod slugs;
+pub mod trackers;
+pub mod uncovered;
+
+use std::collections::{HashMap, HashSet};
+use std::path::PathBuf;
+
+use crate::finding::Finding;
+use crate::manifest::Manifest;
+use crate::model::Model;
+
+use citations::{Counts, Release};
+
+/// What the structural checks looked at, so that finding nothing is distinguishable from
+/// looking at nothing.
+#[derive(Debug, Default)]
+pub struct Structure {
+    pub slugs_defined: usize,
+    pub slugs_referenced: usize,
+    pub path_references: usize,
+    pub uncovered_files: usize,
+    pub concerns: usize,
+    pub entries: usize,
+    pub top_entry: u16,
+}
+
+/// What a whole run found and counted.
+pub struct Report {
+    pub findings: Vec<Finding>,
+    pub counts: Counts,
+    pub structure: Structure,
+    /// What the corpus checks looked at. They are the one family that reads the filesystem
+    /// itself, because their subject IS filesystem state.
+    pub corpus: rules::integrity::Counts,
+    pub changelog_changes: usize,
+    /// Files that opted out of the vendored release, and how many quotes each carries.
+    pub pinned: Vec<(String, String, usize)>,
+    /// The families this run performed. A count belonging to a family that is not here was
+    /// never taken, and printing it as zero would read as "nothing found" for a check that
+    /// never ran.
+    pub ran: Only,
+    /// The families the caller selected. A family in `asked` and not in `ran` is one that
+    /// could not run, and saying so is the difference between a check that found nothing and
+    /// a check that never happened.
+    pub asked: Only,
+}
+
+impl Report {
+    pub fn failed(&self) -> bool {
+        !self.findings.is_empty()
+    }
+}
+
+/// Everything a check needs that it may not fetch for itself.
+///
+/// A check is a pure function from the model to findings, so anything requiring the
+/// filesystem or the network is resolved by the caller and handed in. Resolving a release may
+/// read the archive; reading a generated file reaches outside the walk, which excludes those
+/// files by name.
+pub struct Inputs<'a> {
+    /// A pin — `None` for the vendored release — to the parsed release.
+    pub releases: &'a HashMap<Option<String>, Release>,
+    /// The release the project is pinned at, as its own version file states it.
+    pub pinned: &'a str,
+    /// The generated files as committed, keyed by their project-relative path.
+    pub committed: &'a HashMap<PathBuf, String>,
+    /// Every path that exists in the project, files and directories, project-relative. One
+    /// listing by the caller answers every question a check has about what is there.
+    pub present: &'a HashSet<PathBuf>,
+    /// Files the walk does not cover, with their text — excluding the paths the manifest
+    /// excludes, which are other projects rather than unchecked files of this one.
+    pub outside: &'a [(PathBuf, String)],
+}
+
+/// Which families of checks to run.
+///
+/// A set over the nine checks, one family per check, so a caller asks for exactly the subject
+/// it is about to read. Eight are the modules in this directory. The ninth is `corpus`, which
+/// is `rules::integrity::check` and lives outside them for the reason `Report::corpus` gives:
+/// its subject is filesystem state, so there is no model to hand it and it is called by the
+/// binary rather than from `run`.
+///
+/// The families are the checks themselves rather than any grouping of them: a grouping named
+/// for its consumer would compile that consumer's vocabulary into the tool, and nothing about
+/// this repository is compiled in.
+///
+/// `citations` and `structure` are kept as names for the two groupings that had consumers
+/// before the set existed. The write-time hook runs `citations` alone, deliberately: it fires
+/// after every edit, and a structural check mid-edit reports a reference whose target the
+/// writer has not typed yet. What the hook is for is the failure that is invisible to a
+/// writer — a quote that no longer says what the rule says.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Only(u16);
+
+impl Only {
+    pub const CITATIONS: Self = Self(1 << 0);
+    pub const GENERATED: Self = Self(1 << 1);
+    pub const TRACKERS: Self = Self(1 << 2);
+    pub const SLUGS: Self = Self(1 << 3);
+    pub const PATHS: Self = Self(1 << 4);
+    pub const INTERPRETATIONS: Self = Self(1 << 5);
+    pub const UNCOVERED: Self = Self(1 << 6);
+    pub const CHANGES: Self = Self(1 << 7);
+    pub const CORPUS: Self = Self(1 << 8);
+
+    /// The empty set. What a selection naming no family would be.
+    pub const NOTHING: Self = Self(0);
+
+    /// Every check. What a run with no `--only` performs.
+    pub const EVERYTHING: Self = Self(0b1_1111_1111);
+    /// Every check that is not the citation walk.
+    pub const STRUCTURE: Self = Self(Self::EVERYTHING.0 & !Self::CITATIONS.0);
+
+    /// Each family with the name that selects it, in the order the help prints them.
+    ///
+    /// One table, so the parser, the error message and the help cannot disagree about what
+    /// exists. A check added without a row here is selectable by no name.
+    pub const NAMED: [(&'static str, Self); 9] = [
+        ("citations", Self::CITATIONS),
+        ("generated", Self::GENERATED),
+        ("trackers", Self::TRACKERS),
+        ("slugs", Self::SLUGS),
+        ("paths", Self::PATHS),
+        ("interpretations", Self::INTERPRETATIONS),
+        ("uncovered", Self::UNCOVERED),
+        ("changes", Self::CHANGES),
+        ("corpus", Self::CORPUS),
+    ];
+
+    /// Parse a comma-separated list of family names into their union.
+    ///
+    /// A list rather than one name per invocation, because the single walk is a property of
+    /// this design: a caller wanting five families would otherwise read every live document
+    /// five times.
+    pub fn parse(names: &str) -> Result<Self, String> {
+        let mut set = Self(0);
+        for name in names.split(',') {
+            let name = name.trim();
+            // An empty component contributes no family rather than failing as an unknown one.
+            // A trailing comma is a typo with an obvious meaning, and asking for nothing at
+            // all is caught below, where the message can say what was actually wrong.
+            if name.is_empty() {
+                continue;
+            }
+            if name == "structure" {
+                set = set.union(Self::STRUCTURE);
+                continue;
+            }
+            match Self::NAMED.iter().find(|(n, _)| *n == name) {
+                Some((_, family)) => set = set.union(*family),
+                None => {
+                    let known: Vec<&str> = Self::NAMED.iter().map(|(n, _)| *n).collect();
+                    return Err(format!(
+                        "unknown check family {name:?}; expected one of {}, or structure for \
+                         every family but citations, as a comma-separated list",
+                        known.join(", ")
+                    ));
+                }
+            }
+        }
+        if set == Self::NOTHING {
+            return Err("--only needs at least one check family".to_string());
+        }
+        Ok(set)
+    }
+
+    /// Are ALL of `family`'s members in this set.
+    ///
+    /// Containment rather than overlap, because a caller may pass a group as readily as one
+    /// family: `structure` is a name callers type, so `only.has(Only::STRUCTURE)` is a
+    /// question someone will ask, and under an overlap test a set holding one structural
+    /// family would answer it yes.
+    pub fn has(self, family: Self) -> bool {
+        self.0 & family.0 == family.0
+    }
+
+    /// This set without `other`'s members.
+    ///
+    /// What a caller uses to record that a family it asked for did not run after all.
+    pub fn without(self, other: Self) -> Self {
+        Self(self.0 & !other.0)
+    }
+
+    /// The name of each family in the set, in the order `NAMED` declares them.
+    pub fn names(self) -> Vec<&'static str> {
+        Self::NAMED
+            .iter()
+            .filter(|(_, f)| self.has(*f))
+            .map(|(n, _)| *n)
+            .collect()
+    }
+
+    /// The union of two sets. What `parse` builds a comma list out of.
+    pub fn union(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+
+/// Run the checks.
+///
+/// Each family is gated on its own, so a run performs exactly what `only` names and the
+/// report says which families that was.
+pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> Report {
+    let releases = inputs.releases;
+    let mut findings = Vec::new();
+    let mut counts = Counts::default();
+    let mut pinned = Vec::new();
+
+    if only.has(Only::CITATIONS) {
+        for doc in model.documents() {
+            let Some(release) = releases.get(&doc.pin) else {
+                continue;
+            };
+            let exempt = doc
+                .rel
+                .file_name()
+                .and_then(|n| n.to_str())
+                .is_some_and(|n| manifest.lint().exempt_files.iter().any(|f| f == n));
+            let (found, c) = citations::check(doc, release, exempt);
+            findings.extend(found);
+            counts.fragments += c.fragments;
+            counts.verified += c.verified;
+            counts.misattributed += c.misattributed;
+            counts.unverified += c.unverified;
+            counts.short += c.short;
+            counts.commentary += c.commentary;
+            counts.unmarked += c.unmarked;
+            counts.orphans += c.orphans;
+
+            // Opting out of the change detector is COUNTED, never invisible.
+            if let Some(pin) = &doc.pin {
+                let quotes = crate::quote::inline(&doc.stripped).len()
+                    + crate::quote::blocks(&doc.stripped).len();
+                pinned.push((doc.rel.display().to_string(), pin.clone(), quotes));
+            }
+        }
+        pinned.sort();
+    }
+
+    let mut structure = Structure::default();
+    if only.has(Only::GENERATED) {
+        findings.extend(generated::check(model, manifest, inputs));
+    }
+    if only.has(Only::TRACKERS) {
+        findings.extend(trackers::check(manifest, inputs));
+    }
+    if only.has(Only::SLUGS) {
+        let (found, (defined, referenced)) = slugs::check(model);
+        findings.extend(found);
+        (structure.slugs_defined, structure.slugs_referenced) = (defined, referenced);
+    }
+    if only.has(Only::PATHS) {
+        let (found, references) = paths::check(model, inputs);
+        findings.extend(found);
+        structure.path_references = references;
+    }
+    if only.has(Only::INTERPRETATIONS) {
+        let (found, (concerns, entries, top)) = interpretations::check(model, manifest);
+        findings.extend(found);
+        (structure.concerns, structure.entries, structure.top_entry) = (concerns, entries, top);
+    }
+    if only.has(Only::UNCOVERED) {
+        let (found, scanned) = uncovered::check(inputs);
+        findings.extend(found);
+        structure.uncovered_files = scanned;
+    }
+
+    Report {
+        findings,
+        counts,
+        structure,
+        corpus: rules::integrity::Counts::default(),
+        changelog_changes: 0,
+        pinned,
+        ran: only,
+        asked: only,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Only;
+
+    #[test]
+    fn each_family_name_selects_that_family_and_no_other() {
+        for (name, family) in Only::NAMED {
+            let parsed = Only::parse(name).expect("a declared family name parses");
+            assert_eq!(parsed, family, "{name}");
+            assert_eq!(parsed.names(), vec![name]);
+        }
+    }
+
+    #[test]
+    fn a_comma_list_is_the_union_of_its_members() {
+        let set = Only::parse("slugs,paths").expect("two declared names");
+        assert!(set.has(Only::SLUGS) && set.has(Only::PATHS));
+        assert!(!set.has(Only::CITATIONS));
+        assert_eq!(set.names(), vec!["slugs", "paths"]);
+        // Order and spacing are the caller's, not a second meaning.
+        assert_eq!(Only::parse(" paths , slugs ").expect("spaced"), set);
+    }
+
+    #[test]
+    fn the_two_names_that_had_consumers_keep_their_meaning() {
+        // The write-time hook runs `citations` alone. It selected the citation walk and
+        // nothing else before the set existed, and a change here changes what fires on
+        // every edit.
+        assert_eq!(
+            Only::parse("citations").expect("citations"),
+            Only::CITATIONS
+        );
+        let structure = Only::parse("structure").expect("structure");
+        assert!(!structure.has(Only::CITATIONS));
+        for (name, family) in Only::NAMED {
+            if name != "citations" {
+                assert!(structure.has(family), "structure should hold {name}");
+            }
+        }
+        assert_eq!(Only::CITATIONS.union(structure), Only::EVERYTHING);
+    }
+
+    #[test]
+    fn membership_asks_whether_every_named_family_is_present() {
+        // Overlap is not membership. `structure` is a name a caller types, so a set holding
+        // one structural family must not answer yes to holding `structure`.
+        let slugs = Only::parse("slugs").expect("a family");
+        assert!(slugs.has(Only::SLUGS));
+        assert!(!slugs.has(Only::STRUCTURE));
+        assert!(!slugs.has(Only::EVERYTHING));
+        assert!(!Only::CITATIONS.has(Only::EVERYTHING));
+        assert!(Only::EVERYTHING.has(Only::STRUCTURE));
+        assert!(Only::parse("slugs,paths")
+            .expect("two")
+            .has(Only::SLUGS.union(Only::PATHS)));
+    }
+
+    #[test]
+    fn a_name_repeated_or_already_covered_adds_nothing_and_removes_nothing() {
+        // Union, not symmetric difference. Both inputs are ones a caller writes by hand.
+        assert_eq!(Only::parse("slugs,slugs").expect("dup"), Only::SLUGS);
+        let mixed = Only::parse("structure,slugs").expect("overlapping");
+        assert!(
+            mixed.has(Only::SLUGS),
+            "slugs must survive being named twice"
+        );
+        assert_eq!(mixed, Only::STRUCTURE);
+    }
+
+    #[test]
+    fn without_removes_only_what_it_names() {
+        let pair = Only::SLUGS.union(Only::PATHS);
+        assert_eq!(pair.without(Only::PATHS), Only::SLUGS);
+        assert_eq!(pair.without(Only::CITATIONS), pair);
+        assert_eq!(Only::EVERYTHING.without(Only::CITATIONS), Only::STRUCTURE);
+    }
+
+    #[test]
+    fn an_unknown_family_is_an_error_that_names_what_is_accepted() {
+        let e = Only::parse("slugs,nonesuch").expect_err("not a family");
+        assert!(e.contains("nonesuch"), "{e}");
+        for (name, _) in Only::NAMED {
+            assert!(e.contains(name), "the error should name {name}: {e}");
+        }
+    }
+
+    #[test]
+    fn an_empty_selection_is_an_error_rather_than_a_run_that_checks_nothing() {
+        // The message matters as much as the failure: reported as an unknown family named
+        // "", it sends the reader looking for a name they did not type.
+        for empty in ["", ",", "  ", " , "] {
+            let e = Only::parse(empty).expect_err("no family named");
+            assert!(
+                e.contains("at least one"),
+                "{empty:?} should say what was missing, got {e}"
+            );
+        }
+        // A trailing comma is a typo with one obvious meaning, and is not an empty selection.
+        assert_eq!(Only::parse("slugs,").expect("trailing comma"), Only::SLUGS);
+    }
+}

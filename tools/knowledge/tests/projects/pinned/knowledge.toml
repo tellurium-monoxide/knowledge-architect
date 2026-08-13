@@ -1,0 +1,28 @@
+# A mock project whose one document pins a release that is neither vendored nor archived.
+#
+# Resolving that pin is the only thing here that can reach the network, so this project
+# separates the families that read rule text from the families that do not: a run asking for
+# slugs must succeed without touching it, and a run asking for citations must fail on it.
+[walk]
+suffixes = ["md"]
+skip-dirs = [".git"]
+skip-files = ["CompRules.txt"]
+exclude = []
+
+[lint]
+exempt-files = []
+
+[rules]
+dir = "corpus"
+text = "CompRules.txt"
+body-starts-at = 0
+version = "VERSION"
+past = "past"
+manifest = "past/MANIFEST.tsv"
+
+[interpretations]
+dir = "notes/readings"
+concerns = []
+
+[trackers]
+"notes" = ["open-issues.md"]
