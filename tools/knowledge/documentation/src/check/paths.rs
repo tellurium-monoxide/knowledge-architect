@@ -5,42 +5,75 @@
 //! enforcement is a guess.
 
 use crate::finding::Finding;
+use crate::manifest::Manifest;
 use crate::model::Model;
 use crate::scan::Observation;
 
 use super::Inputs;
 
-pub fn check(model: &Model, inputs: &Inputs) -> (Vec<Finding>, usize) {
+pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Finding>, usize) {
+    let components = manifest.components();
     let mut out = Vec::new();
     let mut seen = 0;
     for doc in model.documents() {
-        for (line, reference) in doc.observations_of(|o| match o {
-            Observation::PathRef(p) => Some(p.as_str()),
-            _ => None,
-        }) {
-            // An absolute path is not this project's to resolve, and a space means the
-            // backticks held prose rather than a path.
-            if reference.starts_with('/') || reference.contains(' ') {
-                continue;
+        for l in &doc.observations {
+            match &l.what {
+                Observation::PathRef {
+                    component,
+                    path: reference,
+                } => {
+                    let line = l.line;
+                    // An absolute path is not this project's to resolve, and a space means the
+                    // backticks held prose rather than a path.
+                    if reference.starts_with('/') || reference.contains(' ') {
+                        continue;
+                    }
+                    seen += 1;
+
+                    match component {
+                        None => {
+                            out.push(Finding::at(
+                                &doc.rel,
+                                line,
+                                format!("`{reference}` found as an old path reference"),
+                                format!("migrate to the new syntax: `<component>@{reference}`"),
+                            ));
+                        }
+
+                        Some(component) => {
+                            let component_root = components.by_name(&component);
+                            match component_root {
+                                None => {
+                                    out.push(Finding::at(
+                        &doc.rel,
+                        line,
+                        format!("`{component}` does not exist"),
+                        "repair the pointer, or delete it; a path should point to an existing component, or the project",
+                    ));
+                                }
+                                Some(cr) => {
+                                    // Relative to the component_root
+                                    let beside = cr.path.join(reference);
+                                    let from_root = normalise(std::path::Path::new(reference));
+                                    if inputs.present.contains(&beside)
+                                        || (cr.is_root() && inputs.present.contains(&from_root))
+                                    {
+                                        continue;
+                                    }
+                                    let p = cr.path.clone().into_os_string().into_string().unwrap();
+                                    out.push(Finding::at(
+                        &doc.rel,
+                        line,
+                        format!("`{reference}` does not exist in component {component} at {p}"),
+                        "repair the pointer, or delete it; a path that does not resolve is a guess",
+                    ));
+                                }
+                            }
+                        }
+                    }
+                }
+                _ => {}
             }
-            seen += 1;
-            // Relative to the naming document first, then to the project root — a document
-            // points at a sibling far more often than at the root.
-            let beside = doc
-                .rel
-                .parent()
-                .map(|d| normalise(&d.join(reference)))
-                .unwrap_or_default();
-            let from_root = normalise(std::path::Path::new(reference));
-            if inputs.present.contains(&beside) || inputs.present.contains(&from_root) {
-                continue;
-            }
-            out.push(Finding::at(
-                &doc.rel,
-                line,
-                format!("`{reference}` does not exist"),
-                "repair the pointer, or delete it; a path that does not resolve is a guess",
-            ));
         }
     }
     (out, seen)

@@ -66,7 +66,7 @@ impl Model {
             };
             let rel = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
             let is_markdown = rel.extension().is_some_and(|e| e == "md");
-            let observations = scan::scan(&text, &stripped, is_markdown);
+            let observations: Vec<Located> = scan::scan(&text, &stripped, is_markdown);
             docs.push(Document {
                 rel,
                 pin: scan::pin(&text),
@@ -163,7 +163,10 @@ fn describe(what: &Observation) -> (&'static str, String) {
                 None => format!("#{slug}"),
             },
         ),
-        Observation::PathRef(p) => ("path-ref", p.clone()),
+        Observation::PathRef { component, path } => match component {
+            None => ("old-path-ref", format!("{path}")),
+            Some(cp) => ("path-ref", format!("{path}{cp}")),
+        },
         Observation::InterpRef(n) => ("interp-ref", n.to_string()),
         // Fencing is a property of a line that a check reads, not something to compare.
         Observation::Fenced => ("", String::new()),

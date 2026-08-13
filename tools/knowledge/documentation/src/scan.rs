@@ -59,7 +59,11 @@ pub enum Observation {
         slug: String,
     },
     /// A repository-relative path named in prose.
-    PathRef(String),
+    PathRef {
+        /// The component named before the `@`
+        component: Option<String>,
+        path: String,
+    },
     /// An `R` number naming an interpretation entry.
     InterpRef(u16),
     /// A line inside a fenced code block, so that a check can tell an example from a claim.
@@ -102,8 +106,13 @@ static SLUG_DEF: LazyLock<Regex> = LazyLock::new(|| {
 });
 /// Only things shaped like a path = containing a slash. A bare filename in prose is a name,
 /// not a pointer, and flagging those would bury the real dangling references under noise.
+/// Temporary ignored, will come back to check that it is no longer used.
 static PATH_REF: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"`((?:\.\.?/)?(?:[\w.-]+/)+[\w.-]+\.(?:md|txt|py|sh|tsv))`").unwrap()
+});
+/// Path relative to a component, syntax `<component>@path/to/file`
+static COMPONENT_PATH_REF: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"`(\.?[A-Za-z0-9][A-Za-z0-9._-]*)@(/?(?:[\w.+-]+/)*[\w.+-]+/?)`").unwrap()
 });
 static INTERP_REF: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"R(\d{1,3})\b").unwrap());
 static PIN: LazyLock<Regex> =
@@ -214,8 +223,17 @@ pub fn scan(raw: &str, stripped: &str, is_markdown: bool) -> Vec<Located> {
                 });
             }
         }
+        for c in COMPONENT_PATH_REF.captures_iter(raw_line) {
+            push(Observation::PathRef {
+                component: Some(c[1].to_string()),
+                path: c[2].to_string(),
+            });
+        }
         for c in PATH_REF.captures_iter(raw_line) {
-            push(Observation::PathRef(c[1].to_string()));
+            push(Observation::PathRef {
+                component: None,
+                path: c[1].to_string(),
+            });
         }
         if is_markdown {
             for c in INTERP_REF.captures_iter(raw_line) {
@@ -421,11 +439,11 @@ mod tests {
 
     #[test]
     fn a_path_needs_a_slash_and_a_known_suffix() {
-        let text = format!("see `{DOC_PATH}` and `citations.py` and `a/b.json`");
+        let text = format!("see `component@{DOC_PATH}` and `citations.py` and `a/b.json`");
         let paths: Vec<String> = scan_md(&text)
             .into_iter()
             .filter_map(|o| match o {
-                Observation::PathRef(p) => Some(p),
+                Observation::PathRef { component: _, path } => Some(path),
                 _ => None,
             })
             .collect();

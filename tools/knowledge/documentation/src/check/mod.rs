@@ -266,7 +266,7 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
         (structure.slugs_defined, structure.slugs_referenced) = (defined, referenced);
     }
     if only.has(Only::PATHS) {
-        let (found, references) = paths::check(model, inputs);
+        let (found, references) = paths::check(model, manifest, inputs);
         findings.extend(found);
         structure.path_references = references;
     }

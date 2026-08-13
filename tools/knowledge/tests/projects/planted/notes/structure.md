@@ -14,6 +14,6 @@ A pointer at a component nothing declares: `nowhere#twice-defined`.
 
 A pointer that resolves, across a boundary: `widget#widget-decision`.
 
-A pointer at a file that is not there: `notes/missing.md`.
+A pointer at a file that is not there: `planted@notes/missing.md`.
 
 An entry that does not exist: R99.

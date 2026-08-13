@@ -87,7 +87,7 @@ impl PartialOrd for Sort {
     }
 }
 
-/// `../../../../docs/rules/index.md`: every rule cited, and what depends on it.
+/// `thaum@docs/rules/index.md`: every rule cited, and what depends on it.
 ///
 /// This is what makes a bump actionable — when a rule changes or is renumbered, it says
 /// exactly what has to be re-read.
@@ -143,7 +143,7 @@ struct Entry {
     turns_on: BTreeMap<String, MarkerForm>,
 }
 
-/// `../../../../docs/rules/interpretations/index.md`: every entry, what it rests on, and who cites it.
+/// `thaum@docs/rules/interpretations/index.md`: every entry, what it rests on, and who cites it.
 ///
 /// It exists for what a numbering check cannot see. Uniqueness, no holes and a high-water mark
 /// all describe the SHAPE of the sequence, and a replacement — delete an entry, write a
@@ -340,7 +340,7 @@ fn render_interpretation_index(
          **Turns on** is every Comprehensive Rule the entry rests on, from its markers and from\n\
          the numbers its blockquotes carry as printed — `CR:` where the entry makes a claim about\n\
          the rule's content, `CR~` where it names the number only. This is the per-entry half of\n\
-         a release bump: `../../../../docs/rules/index.md` says which files cite a rule, and this says which\n\
+         a release bump: `thaum@docs/rules/index.md` says which files cite a rule, and this says which\n\
          readings would have to be re-argued if that rule moved under them.\n\n\
          The citing list is file-level, and that is what freshness is gated on: this file changes\n\
          when a citation is added, moved between files or deleted, and not when unrelated prose\n\

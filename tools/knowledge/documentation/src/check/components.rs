@@ -8,7 +8,7 @@
 //! **A missing document is a finding rather than an absence.** The trackers among them are what
 //! `cargo knowledge outstanding` reads, so one that is not there makes the report under-count
 //! what is open — and the report is what a session consults before diagnosing anything. The
-//! other four fail the same way more slowly: a component with no `docs/design.md` has its
+//! other four fail the same way more slowly: a component with no docs/design.md has its
 //! design recorded wherever the last session happened to put it.
 //!
 //! **A tracker outside every component is declared one by one, and checked the same way.** Some
