@@ -248,10 +248,18 @@ fn check(manifest: &Manifest) -> Result<ExitCode, String> {
             }
         }
     }
-    for finding in &report.findings {
-        println!("{finding}");
-    }
+    // The summary first, the findings under it, the verdict on the last line. The order is
+    // the whole point: a caller reading the tail of the output has to reach the answer, and
+    // when the findings came first every `| tail` and every `| grep` for a count printed a
+    // success-shaped report over a failing run.
     print!("{}", counts(&report));
+    if !report.findings.is_empty() {
+        println!();
+        for finding in &report.findings {
+            println!("{finding}");
+        }
+    }
+    println!("{}", verdict(&report));
     Ok(if report.failed() {
         ExitCode::FAILURE
     } else {
@@ -366,7 +374,20 @@ fn outstanding(manifest: &Manifest) -> Result<ExitCode, String> {
     Ok(ExitCode::SUCCESS)
 }
 
-/// What a run looked at, as the block printed under the findings.
+/// The last line, and the only one that states the outcome.
+///
+/// **It is derived from the finding list rather than tracked beside it**, so it cannot
+/// disagree with the exit code: `Report::failed` is the same predicate over the same vector.
+/// A caller scripting against this reads the exit code; a person reads this line.
+fn verdict(report: &Report) -> String {
+    match report.findings.len() {
+        0 => "PASSED: no findings".to_string(),
+        1 => "FAILED: 1 finding above".to_string(),
+        n => format!("FAILED: {n} findings above"),
+    }
+}
+
+/// What a run looked at, as the block printed above the findings.
 ///
 /// **A family that did not run contributes nothing.** Its counts are not zero, they are
 /// unasked, and a zero would read as "nothing found" for a check that never ran. The

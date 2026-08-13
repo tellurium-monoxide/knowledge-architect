@@ -1,13 +1,13 @@
 # tools/knowledge — design
 
-Recorded intent for this tool: how it is built internally, and why. Present tense with slug
-anchors, plus a **Losing arguments** section, like every design document — `recording-a-decision`
-owns the shape.
+Recorded intent for this tool: how it is built internally, and why. Present tense, each decision
+carrying a slug anchor, cited from elsewhere with `knowledge` as its component. What lost to a decision here is
+`knowledge@docs/rejected-alternatives.md`, and `recording-a-decision` owns the shape.
 
-**What belongs here rather than in `docs/design/`:** a decision that does **not** survive
+**What belongs here rather than in `docs/design.md`:** a decision that does **not** survive
 deleting this tool. How it works and how the pieces inside divide the work belongs here.
 
-What otherwise shapes it is `tools/CLAUDE.md`, `knowledge.toml`, and the module documentation at
+What otherwise shapes it is `tools/README.md`, `knowledge.toml`, and the module documentation at
 the top of each file under `knowledge@documentation/src/` and `knowledge@rules/src/`.
 
 `##model-then-checks` — **The model is built once, and every check is a pure function over it.** A
@@ -62,7 +62,7 @@ it exists, and it is named as a tracker — because the report splits its totals
 file called anything else joins one half or the other by accident.
 
 **Which components exist is declared, and what a component carries is compiled in.** That is the
-one exception to `tools/CLAUDE.md`'s rule that nothing about a repository is compiled into the tool,
+one exception to `tools/README.md`'s rule that nothing about a repository is compiled into the tool,
 and it is not an exception to it: the list in `manifest.rs` is not this repository's, it is what
 the word *component* means here. A project free to declare its own set would be conformant with
 whatever it declared, which is the same as being checked against nothing.

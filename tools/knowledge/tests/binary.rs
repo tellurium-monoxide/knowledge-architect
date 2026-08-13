@@ -110,3 +110,76 @@ fn no_subcommand_is_not_success() {
     let (_, stderr, code) = run("planted", &[]);
     assert_eq!(code, 2, "{stderr}");
 }
+
+/// The summary comes first, the findings under it, and the verdict is the last line.
+///
+/// The order is the contract, not a preference. A caller reading the tail of a run — `| tail`,
+/// `| grep` for a count, a CI log truncated to its end — must reach the answer, and while the
+/// findings came first the summary block printed on a failing run and read as success. That is
+/// the failure this asserts against, so it asserts the positions rather than the presence.
+#[test]
+fn a_failing_run_ends_with_its_verdict_and_the_summary_precedes_the_findings() {
+    let (stdout, _, code) = run("planted", &["check"]);
+    let lines: Vec<&str> = stdout.lines().filter(|l| !l.is_empty()).collect();
+
+    let summary = lines
+        .iter()
+        .position(|l| l.starts_with("checked:"))
+        .expect("the summary block names what ran");
+    let first_finding = lines
+        .iter()
+        .position(|l| l.contains("no rule says this"))
+        .expect("the planted project reports citation findings");
+    assert!(
+        summary < first_finding,
+        "the summary precedes the findings: {stdout}"
+    );
+
+    let last = lines.last().expect("output is not empty");
+    assert!(
+        last.starts_with("FAILED: ") && last.ends_with(" findings above"),
+        "the last line is the verdict: {last:?}"
+    );
+    assert_eq!(code, 1, "{stdout}");
+}
+
+/// The verdict counts what was printed, and the count is the exit code's own predicate.
+///
+/// A count tracked beside the findings could disagree with the list and with the exit code.
+/// This reads both off the same run and compares them, so a second source of truth for
+/// "did it fail" cannot be introduced without failing here.
+#[test]
+fn the_verdict_counts_the_findings_it_printed() {
+    let (stdout, _, code) = run("planted", &["check"]);
+    let last = stdout.lines().rfind(|l| !l.is_empty()).unwrap();
+    let claimed: usize = last
+        .trim_start_matches("FAILED: ")
+        .trim_end_matches(" findings above")
+        .trim_end_matches(" finding above")
+        .parse()
+        .unwrap_or_else(|_| panic!("the verdict names a count: {last:?}"));
+
+    // A finding is two lines: the finding, then its indented `→` action. Counting the actions
+    // counts the findings without parsing the finding lines themselves.
+    let printed = stdout
+        .lines()
+        .filter(|l| l.trim_start().starts_with('→'))
+        .count();
+    assert_eq!(
+        claimed, printed,
+        "the verdict counts what was printed: {stdout}"
+    );
+    assert!(
+        claimed > 0 && code == 1,
+        "a nonzero count means failure: {stdout}"
+    );
+}
+
+/// A clean run says so on its last line and exits zero.
+#[test]
+fn a_passing_run_ends_with_a_passed_verdict() {
+    let (stdout, _, code) = run("pinned", &["check", "--only", "slugs"]);
+    let last = stdout.lines().rfind(|l| !l.is_empty()).unwrap();
+    assert_eq!(last, "PASSED: no findings", "{stdout}");
+    assert_eq!(code, 0, "{stdout}");
+}

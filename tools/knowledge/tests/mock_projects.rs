@@ -93,8 +93,12 @@ fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
         dump.contains("docs/design.md\t5\tslug-def\tmock-anchor"),
         "{dump}"
     );
+    // The whole value, and the trailing tab is load-bearing. This assertion once named the
+    // path alone, which is a prefix of the component-suffixed value the renderer wrongly
+    // produced, so it passed against both the right output and the wrong one for as long as
+    // the defect existed. A `contains` over a field that is not terminated asserts a prefix.
     assert!(
-        dump.contains("docs/design.md\t7\tpath-ref\tnotes/b.md"),
+        dump.contains("docs/design.md\t7\tpath-ref\tminimal@notes/b.md\n"),
         "{dump}"
     );
     assert!(

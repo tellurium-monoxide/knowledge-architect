@@ -163,9 +163,12 @@ fn describe(what: &Observation) -> (&'static str, String) {
                 None => format!("#{slug}"),
             },
         ),
+        // Rendered in the syntax it is written in, so a dumped row can be grepped for in the
+        // tree it came from. A reference naming no component has no `@` and is a different kind,
+        // so the two are told apart by the kind column rather than by reading the value.
         Observation::PathRef { component, path } => match component {
-            None => ("old-path-ref", format!("{path}")),
-            Some(cp) => ("path-ref", format!("{path}{cp}")),
+            None => ("old-path-ref", path.to_string()),
+            Some(cp) => ("path-ref", format!("{cp}@{path}")),
         },
         Observation::InterpRef(n) => ("interp-ref", n.to_string()),
         // Fencing is a property of a line that a check reads, not something to compare.
@@ -204,6 +207,51 @@ mod tests {
         let dump = model.canonical();
         assert!(dump.contains(&format!("{DOC}\t1\tslug-def\t{SLUG}")));
         assert!(dump.contains(&format!("{SRC}\t1\tslug-ref\t{COMPONENT}#{SLUG}")));
+    }
+
+    /// A dumped path reference reads back as the text it was written as.
+    ///
+    /// The dump is what a person greps the tree with, so a row whose value cannot be found in
+    /// the file the row names is worse than no row: it reports a reference that appears
+    /// nowhere. Concatenating the two halves in the wrong order produced exactly that, on
+    /// every qualified reference in the repository at once, and nothing here read the value.
+    #[test]
+    fn a_qualified_path_reference_dumps_as_it_is_written() {
+        let written = format!("`{COMPONENT}@{DOC}`");
+        let model = Model::from_documents(
+            vec![(
+                PathBuf::from(SRC),
+                format!("/// see {written}\nfn f() {{}}\n"),
+            )],
+            &Walk::sample(),
+        );
+        let dump = model.canonical();
+        let value = format!("{COMPONENT}@{DOC}");
+        assert!(
+            dump.contains(&format!("{SRC}\t1\tpath-ref\t{value}")),
+            "dumped as written: {dump}"
+        );
+        // The property the row exists for, asserted rather than assumed: the value is a
+        // substring of the line it was read from.
+        assert!(written.contains(&value), "the value greps in its source");
+    }
+
+    /// A reference naming no component keeps the bare path and is a different kind.
+    #[test]
+    fn an_unqualified_path_reference_dumps_without_a_separator() {
+        let model = Model::from_documents(
+            vec![(
+                PathBuf::from(SRC),
+                format!("/// see `{DOC}`\nfn f() {{}}\n"),
+            )],
+            &Walk::sample(),
+        );
+        let dump = model.canonical();
+        assert!(
+            dump.contains(&format!("{SRC}\t1\told-path-ref\t{DOC}")),
+            "{dump}"
+        );
+        assert!(!dump.contains("@"), "no separator was invented: {dump}");
     }
 
     #[test]

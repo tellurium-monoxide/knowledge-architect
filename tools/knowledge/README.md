@@ -11,6 +11,13 @@ cargo knowledge model                    # every observation the walk produced
 cargo knowledge rules latest|diff|fetch|bump
 ```
 
+**A run prints the summary first, its findings under it, and its verdict on the last line** —
+`PASSED: no findings`, or `FAILED: n findings above`. The verdict is derived from the finding list
+rather than tracked beside it, so it cannot disagree with the exit code, which is `0` when there are
+none and `1` when there are any. A caller scripting against a run reads the exit code; a person
+reads the last line. The order matters because the summary block prints on a failing run too, so
+while it came last a `| tail` showed a success-shaped report over a red tree.
+
 **The `--only` families are the checks themselves**, one per check: `citations`, `generated`,
 `components`, `slugs`, `paths`, `interpretations`, `uncovered`, `changes`, `corpus`. Eight are the
 modules under `knowledge@documentation/src/check/`, and `corpus` is the integrity check over the
