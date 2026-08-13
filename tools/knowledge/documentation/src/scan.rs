@@ -44,9 +44,20 @@ pub enum Observation {
         text: String,
     },
     /// A slug at the head of a line or a table cell, opening a decision.
+    ///
+    /// The name alone. Which component it belongs to is where the document sits, which is a
+    /// fact about the project rather than about the line.
     SlugDef(String),
-    /// A slug anywhere else: a pointer at a decision.
-    SlugRef(String),
+    /// A slug anywhere else: a pointer at a decision, in the component that defines it.
+    SlugRef {
+        /// The component named before the `#`, and `None` where the reference names none.
+        ///
+        /// A slug is unique inside its component and not across them, so a reference naming
+        /// no component resolves to nothing. It is recorded rather than dropped: dropped, it
+        /// would be a pointer that no check can see and no reader is told about.
+        component: Option<String>,
+        slug: String,
+    },
     /// A repository-relative path named in prose.
     PathRef(String),
     /// An `R` number naming an interpretation entry.
@@ -71,8 +82,19 @@ static CR_IDENT: LazyLock<Regex> =
 static RULE_TOKEN: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\b(\d{3}\.\d+[a-z]{0,2})\b").unwrap());
 static HEADING: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(#{1,4})\s+(.+?)\s*$").unwrap());
-static SLUG_REF: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"`#([a-z0-9][a-z0-9-]{2,})`").unwrap());
+/// A reference is `` `<component>#<slug>` ``, and the component is optional only so that one
+/// written without it is still seen. The component alternative cannot match a `#`, so a
+/// definition — which opens with `##` — is not read as a reference to a slug of its own.
+static SLUG_REF: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"`(\.?[A-Za-z0-9][A-Za-z0-9._-]*)?#([a-z0-9][a-z0-9-]{2,})`").unwrap()
+});
+/// The shape a component name must have for a reference to be able to name it.
+///
+/// The same character class the reference pattern accepts, anchored. A component whose name a
+/// reference cannot spell is one every pointer at it misses silently, so the check over the
+/// declaration asks this rather than assuming it.
+static COMPONENT_NAME: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^\.?[A-Za-z0-9][A-Za-z0-9._-]*$").unwrap());
 /// A slug is DEFINED where it opens a decision: at the head of a line or of a table cell,
 /// followed by an em dash and the statement. Anywhere else it is a reference.
 static SLUG_DEF: LazyLock<Regex> = LazyLock::new(|| {
@@ -90,6 +112,14 @@ static PIN: LazyLock<Regex> =
 /// The release a file's quotes verify against: its own pin, or `None` for the vendored one.
 pub fn pin(text: &str) -> Option<String> {
     PIN.captures(text).map(|c| c[1].to_string())
+}
+
+/// Can a slug reference name a component called this.
+///
+/// Asked of a declared component name, so that a name no pointer can spell is reported where
+/// it is declared rather than found later as a reference that resolves to nothing.
+pub fn is_component_name(name: &str) -> bool {
+    COMPONENT_NAME.is_match(name)
 }
 
 /// Scan one document.
@@ -168,9 +198,21 @@ pub fn scan(raw: &str, stripped: &str, is_markdown: bool) -> Vec<Located> {
                 let slug = c.get(1).or_else(|| c.get(2)).unwrap().as_str();
                 push(Observation::SlugDef(slug.to_string()));
             }
-        }
-        for c in SLUG_REF.captures_iter(raw_line) {
-            push(Observation::SlugRef(c[1].to_string()));
+            // Both halves of the convention are guarded by the same flag. A slug inside a
+            // fence is an ILLUSTRATION of the form, not a use of it, and there is no way to
+            // write the illustration that is not a finding otherwise: unqualified it names no
+            // component, and qualified it names a slug the example invented. Every document
+            // that explains how to write a reference has to hold one.
+            //
+            // Paths and interpretation numbers are NOT guarded here, deliberately. Both need
+            // backticks inside a fence to be found at all, which is rare, and neither has been
+            // seen to fire on an example.
+            for c in SLUG_REF.captures_iter(raw_line) {
+                push(Observation::SlugRef {
+                    component: c.get(1).map(|m| m.as_str().to_string()),
+                    slug: c[2].to_string(),
+                });
+            }
         }
         for c in PATH_REF.captures_iter(raw_line) {
             push(Observation::PathRef(c[1].to_string()));
@@ -275,6 +317,19 @@ mod tests {
     const CELL_SLUG: &str = "in-a-cell";
     const DOC_PATH: &str = "docs/design/a.md";
 
+    const COMPONENT: &str = "a-component";
+
+    /// The reference a line holds, as `(component, slug)`.
+    fn refs(text: &str) -> Vec<(Option<String>, String)> {
+        scan_md(text)
+            .into_iter()
+            .filter_map(|o| match o {
+                Observation::SlugRef { component, slug } => Some((component, slug)),
+                _ => None,
+            })
+            .collect()
+    }
+
     #[test]
     fn a_slug_opens_a_decision_at_a_line_head_or_in_a_table_cell() {
         let head = format!("`##{SLUG}`  **The statement.**");
@@ -282,9 +337,86 @@ mod tests {
         let cell = format!("| `##{CELL_SLUG}` | holds |");
         assert!(scan_md(&cell).contains(&Observation::SlugDef(CELL_SLUG.into())));
         // Mid-sentence it is a reference, not a definition.
-        let mid = scan_md(&format!("as `#{SLUG}` records"));
-        assert!(mid.contains(&Observation::SlugRef(SLUG.into())));
-        assert!(!mid.iter().any(|o| matches!(o, Observation::SlugDef(_))));
+        let mid = format!("as `{COMPONENT}#{SLUG}` records");
+        assert_eq!(
+            refs(&mid),
+            vec![(Some(COMPONENT.to_string()), SLUG.to_string())]
+        );
+        assert!(!scan_md(&mid)
+            .iter()
+            .any(|o| matches!(o, Observation::SlugDef(_))));
+    }
+
+    #[test]
+    fn a_slug_inside_a_fence_is_an_illustration_rather_than_a_pointer() {
+        // Neither form is a reference there, and the same two forms outside the fence are.
+        // Without this, a document explaining the convention cannot hold an example of it:
+        // unqualified names no component, and qualified names a slug the example invented.
+        let fenced = format!(
+            "before\n```\n`{COMPONENT}#{SLUG}` and `#{SLUG}` and `##{SLUG}` — **A head.**\n```\nafter\n"
+        );
+        assert!(refs(&fenced).is_empty(), "{:#?}", refs(&fenced));
+        assert!(!scan_md(&fenced)
+            .iter()
+            .any(|o| matches!(o, Observation::SlugDef(_))));
+        // The fence is what does it, not the line: the same line outside one is both.
+        let open = format!("`{COMPONENT}#{SLUG}` and `#{SLUG}`\n");
+        assert_eq!(
+            refs(&open),
+            vec![
+                (Some(COMPONENT.to_string()), SLUG.to_string()),
+                (None, SLUG.to_string()),
+            ]
+        );
+    }
+
+    #[test]
+    fn a_definition_is_not_also_read_as_a_reference_to_itself() {
+        // The reference pattern's component part is optional, so a definition — which opens
+        // with a second `#` — could match it with no component at all. It must not: every
+        // decision head in the project would then be a reference naming no component, and the
+        // check that reports those would fire on all of them at once.
+        for line in [
+            format!("`##{SLUG}`  **The statement.**"),
+            format!("| `##{CELL_SLUG}` | holds |"),
+        ] {
+            assert!(refs(&line).is_empty(), "{line}");
+        }
+    }
+
+    #[test]
+    fn a_reference_naming_no_component_is_recorded_rather_than_dropped() {
+        // Dropped, it would be a pointer no check can see: nothing resolves it and nothing
+        // tells the writer it resolves to nothing.
+        assert_eq!(
+            refs(&format!("as `#{SLUG}` records")),
+            vec![(None, SLUG.to_string())]
+        );
+    }
+
+    #[test]
+    fn a_component_name_is_referenceable_exactly_when_a_reference_can_spell_it() {
+        // Two patterns state the same character class, and a name accepted by one and not the
+        // other is a component every pointer at it misses in silence.
+        for name in [
+            "a-tool",
+            "an.engine",
+            ".claude",
+            "an_engine",
+            "9lives",
+            "-leading-dash",
+            "has/slash",
+            "has space",
+            "",
+        ] {
+            let scanned = refs(&format!("see `{name}#{SLUG}`"));
+            let spelled = scanned == vec![(Some(name.to_string()), SLUG.to_string())];
+            assert_eq!(
+                is_component_name(name),
+                spelled,
+                "{name:?} scanned as {scanned:?}"
+            );
+        }
     }
 
     #[test]

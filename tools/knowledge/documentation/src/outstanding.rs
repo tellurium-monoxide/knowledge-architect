@@ -1,9 +1,9 @@
 //! What is outstanding, across every tracker in the project.
 //!
-//! Asking otherwise takes one file open per directory, and the count grows with every module
-//! that gains one. The set of tracker files comes from `knowledge.toml [trackers]`, which
-//! registers each directory against the files it carries; the entries come from reading those
-//! files at run time, so no count is stored anywhere and none can go stale.
+//! Asking otherwise takes one file open per component, and the count grows with every one that
+//! is added. The set of tracker files comes from `knowledge.toml [project]`: every component
+//! carries the same documents, and two of them are its trackers. The entries come from reading
+//! those files at run time, so no count is stored anywhere and none can go stale.
 
 use std::path::PathBuf;
 
@@ -60,8 +60,7 @@ pub fn tracker_files(model: &Model, manifest: &Manifest) -> Vec<PathBuf> {
     let present: std::collections::HashSet<&PathBuf> =
         model.documents().iter().map(|d| &d.rel).collect();
     let mut out: Vec<PathBuf> = manifest
-        .trackers()
-        .paths()
+        .tracker_paths()
         .into_iter()
         .filter(|p| present.contains(p))
         .collect();
@@ -71,11 +70,11 @@ pub fn tracker_files(model: &Model, manifest: &Manifest) -> Vec<PathBuf> {
 
 /// Every entry in every tracker the project declares.
 pub fn entries(model: &Model, manifest: &Manifest) -> Vec<Entry> {
-    // Registered paths, not a filename match over the whole tree. A file called
-    // `open-issues.md` in a directory nobody registered is not a tracker, and counting it
+    // The components' own paths, not a filename match over the whole tree. A file called
+    // `open-issues.md` in a directory that is not a component is not a tracker, and counting it
     // would report an entry against a total the project never claimed.
     let registered: std::collections::HashSet<PathBuf> =
-        manifest.trackers().paths().into_iter().collect();
+        manifest.tracker_paths().into_iter().collect();
     let mut out = Vec::new();
     for doc in model.documents() {
         if !registered.contains(&doc.rel) {

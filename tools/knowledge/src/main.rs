@@ -442,6 +442,15 @@ fn counts(report: &Report) -> String {
 
     let s = &report.structure;
     let mut structural = String::new();
+    if ran.has(Only::COMPONENTS) {
+        let _ = write!(
+            structural,
+            "\ncomponents: {} declared, {} document(s) each, {} additional tracker(s)",
+            s.components,
+            documentation::manifest::COMPONENT_DOCUMENTS.len(),
+            s.additional_trackers
+        );
+    }
     if ran.has(Only::SLUGS) {
         let _ = write!(
             structural,
@@ -519,6 +528,8 @@ mod tests {
         r.counts.fragments = 22;
         r.counts.unmarked = 33;
         r.counts.orphans = 44;
+        r.structure.components = 188;
+        r.structure.additional_trackers = 199;
         r.structure.slugs_defined = 55;
         r.structure.slugs_referenced = 66;
         r.structure.path_references = 77;
@@ -539,6 +550,7 @@ mod tests {
         let out = counts(&numbered(Only::EVERYTHING));
         for expected in [
             "11/22 rule-quote fragments verified against the rule cited",
+            "components: 188 declared, 6 document(s) each, 199 additional tracker(s)",
             "lint: 33 unmarked rule reference(s), 44 orphan identifier marker(s)",
             "slugs: 55 defined, 66 referenced",
             "paths: 77 reference(s)",
@@ -576,6 +588,7 @@ mod tests {
         // Every other family's label is absent rather than present with a zero. A zero here
         // reads as "nothing found" for a check that never ran.
         for label in [
+            "components:",
             "paths:",
             "interpretations:",
             "uncovered files:",
@@ -590,10 +603,11 @@ mod tests {
 
     #[test]
     fn the_families_that_ran_are_named_even_when_they_carry_no_count() {
-        // `generated` and `trackers` report findings and count nothing, so this line is the
-        // only thing separating "ran and found nothing" from "did not run".
-        let out = counts(&report(Only::GENERATED.union(Only::TRACKERS)));
-        assert!(out.contains("checked: generated, trackers"), "{out}");
+        // `generated` reports findings and counts nothing, so this line is the only thing
+        // separating "ran and found nothing" from "did not run".
+        let out = counts(&report(Only::GENERATED));
+        assert!(out.contains("checked: generated"), "{out}");
+        assert!(!out.contains("NOT RUN"), "{out}");
     }
 
     #[test]

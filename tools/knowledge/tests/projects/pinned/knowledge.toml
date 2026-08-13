@@ -3,6 +3,12 @@
 # Resolving that pin is the only thing here that can reach the network, so this project
 # separates the families that read rule text from the families that do not: a run asking for
 # slugs must succeed without touching it, and a run asking for citations must fail on it.
+
+
+[project]
+name = "pinned"
+components = []
+
 [walk]
 suffixes = ["md"]
 skip-dirs = [".git"]
@@ -23,6 +29,3 @@ manifest = "past/MANIFEST.tsv"
 [interpretations]
 dir = "notes/readings"
 concerns = []
-
-[trackers]
-"notes" = ["open-issues.md"]

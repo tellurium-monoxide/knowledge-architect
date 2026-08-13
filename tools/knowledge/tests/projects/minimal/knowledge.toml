@@ -3,6 +3,12 @@
 # starts on the first line. Anything the tool gets right here it gets right from this file
 # rather than from a constant.
 
+[project]
+name = "minimal"
+components = []
+# `notes/` carries outstanding state and nothing else a component carries.
+additional-trackers = ["notes/open-issues.md"]
+
 [walk]
 suffixes = ["md", "rs"]
 skip-dirs = ["build"]
@@ -24,5 +30,3 @@ manifest = "past/MANIFEST.tsv"
 dir = "notes/readings"
 concerns = ["one-concern"]
 
-[trackers]
-"notes" = ["open-issues.md"]

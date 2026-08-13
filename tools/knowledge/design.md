@@ -49,17 +49,47 @@ family that did not run contributes no count: printed as a zero, a count nobody 
 names cover the groupings that had callers before the set existed. `citations` is the one the
 write-time hook runs alone, and `structure` is every family but that one.
 
-`##trackers-are-registered` — **`knowledge.toml` registers each directory against the tracker files
-it carries, and nothing is discovered by filename.** `[trackers]` is a map from a project-relative
-directory to its file list, so directories carrying different files need no exception in any check.
-Two consequences follow from registration rather than discovery, and both are the point: a tracker
-in an unregistered directory is not a tracker, so nothing counts it and nothing reports it; and a
-registered file that is missing is a finding. `check/trackers.rs` asserts the second, and
-`outstanding` builds registered paths rather than matching `file_name()` over the walk, which is why
-the four crates are registered explicitly even though no crate carries a `tripwires.md`.
+`##components-carry-the-same-documents` — **`knowledge.toml [project]` names the components, and
+every component carries the same documents.** The project root is one of them, named by
+`project.name`; every other is a project-relative directory, named by the basename of that path.
+Nothing is discovered by filename, so a document in a directory that is not a component is not that
+kind of document: nothing counts it and nothing reports it. A component that does not carry one it
+owes is a finding, and `check/components.rs` is where both directions are asserted. `outstanding`
+builds the component paths rather than matching `file_name()` over the walk, which is what makes
+its total a claim rather than a sample.
 
-`Trackers` is a `BTreeMap` rather than a `HashMap` because findings are emitted in iteration order,
-and a hash order would reshuffle a report between runs on an unchanged tree.
+**A directory may carry outstanding state without being a component**, and `additional-trackers`
+names those files one at a time. `.claude/` is the case: what is open about the agent configuration
+belongs somewhere, and there is no library or binary there to have a README, a design or a
+rejected-alternatives document. Such a file owes the same two things a component's tracker owes —
+it exists, and it is named as a tracker — because the report splits its totals on that name, so a
+file called anything else joins one half or the other by accident.
+
+**Which components exist is declared, and what a component carries is compiled in.** That is the
+one exception to `../CLAUDE.md`'s rule that nothing about a repository is compiled into the tool,
+and it is not an exception to it: the list in `manifest.rs` is not this repository's, it is what
+the word *component* means here. A project free to declare its own set would be conformant with
+whatever it declared, which is the same as being checked against nothing.
+
+**A component directory that does not exist is one finding rather than one per document.** Six
+findings from one cause bury the cause, and the repair for all of them is the same line of the
+manifest.
+
+`##a-slug-belongs-to-a-component` — **A slug is unique inside its component, and a reference names
+the component it means: `` `<component>#<slug>` ``.** A definition is owned by where its document
+sits — the deepest component whose path holds it — rather than by anything the line says, so moving
+a document moves the decisions in it. Two components may therefore each record a decision they call
+the same word, which is what qualifying a reference buys.
+
+**A reference resolves to nothing in three ways, and each is reported as the repair it needs.** The
+component is not declared; the component is declared and does not define that slug; or the
+reference names no component at all. One finding for all three would send a reader to check the
+wrong half of the pointer two times out of three.
+
+**A reference naming no component is recorded and reported, never dropped.** The scanner could
+require the component and see nothing without one, which needs no finding and no migration. It
+would also mean every pointer written in the older form stops being checked with nothing saying so,
+and a silent false negative is the failure this tool exists to prevent.
 
 `##watch-reads-the-page` — **The release watch learns the newest release from the page Wizards
 announces it on, and treats "no match" as a failure rather than as an answer.** Two properties
@@ -101,6 +131,19 @@ needs no set type and no comma parsing, and each invocation stays one word. It l
 `#model-then-checks`, which records what a walk costs: the walk happens once per invocation, so a
 caller wanting five families reads every live document five times, which is the shape the single
 walk was built to remove.
+
+**A slug unique across the whole project, with the component named for the reader only** — lost to
+`knowledge#a-slug-belongs-to-a-component`. `live`. It keeps one meaning per word everywhere and needs
+no lookup to resolve a reference. It loses because it makes every component's vocabulary global: two
+components cannot each decide something they call the same word, and the second one to want the word
+has to take a worse one.
+
+**A reference with no component read as one inside its own component** — lost to
+`knowledge#a-slug-belongs-to-a-component`. `live`. It would leave a pointer inside a component as
+short as it was before components existed, and qualify only the crossings. It loses on what a
+reference has to carry by itself: the same text would name different decisions depending on which
+file it sits in, so moving a document between components would silently retarget every unqualified
+reference in it.
 
 **A third-party mirror as the source** — lost to `#watch-reads-the-page`. `live`. Mirrors keep
 stable index pages and would be less brittle than Wizards' HTML. It loses on what the corpus is: the

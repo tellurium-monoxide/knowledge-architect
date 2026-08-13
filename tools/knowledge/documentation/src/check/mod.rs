@@ -6,11 +6,11 @@
 
 pub mod changes;
 pub mod citations;
+pub mod components;
 pub mod generated;
 pub mod interpretations;
 pub mod paths;
 pub mod slugs;
-pub mod trackers;
 pub mod uncovered;
 
 use std::collections::{HashMap, HashSet};
@@ -26,6 +26,8 @@ use citations::{Counts, Release};
 /// looking at nothing.
 #[derive(Debug, Default)]
 pub struct Structure {
+    pub components: usize,
+    pub additional_trackers: usize,
     pub slugs_defined: usize,
     pub slugs_referenced: usize,
     pub path_references: usize,
@@ -106,7 +108,7 @@ pub struct Only(u16);
 impl Only {
     pub const CITATIONS: Self = Self(1 << 0);
     pub const GENERATED: Self = Self(1 << 1);
-    pub const TRACKERS: Self = Self(1 << 2);
+    pub const COMPONENTS: Self = Self(1 << 2);
     pub const SLUGS: Self = Self(1 << 3);
     pub const PATHS: Self = Self(1 << 4);
     pub const INTERPRETATIONS: Self = Self(1 << 5);
@@ -129,7 +131,7 @@ impl Only {
     pub const NAMED: [(&'static str, Self); 9] = [
         ("citations", Self::CITATIONS),
         ("generated", Self::GENERATED),
-        ("trackers", Self::TRACKERS),
+        ("components", Self::COMPONENTS),
         ("slugs", Self::SLUGS),
         ("paths", Self::PATHS),
         ("interpretations", Self::INTERPRETATIONS),
@@ -252,11 +254,14 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
     if only.has(Only::GENERATED) {
         findings.extend(generated::check(model, manifest, inputs));
     }
-    if only.has(Only::TRACKERS) {
-        findings.extend(trackers::check(manifest, inputs));
+    if only.has(Only::COMPONENTS) {
+        let (found, counts) = components::check(manifest, inputs);
+        findings.extend(found);
+        structure.components = counts.components;
+        structure.additional_trackers = counts.additional_trackers;
     }
     if only.has(Only::SLUGS) {
-        let (found, (defined, referenced)) = slugs::check(model);
+        let (found, (defined, referenced)) = slugs::check(model, manifest);
         findings.extend(found);
         (structure.slugs_defined, structure.slugs_referenced) = (defined, referenced);
     }

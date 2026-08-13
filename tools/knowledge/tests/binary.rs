@@ -71,7 +71,7 @@ fn asking_for_one_family_does_not_read_another() {
     assert!(stdout.contains("slugs:"), "{stdout}");
     assert!(!stdout.contains("paths:"), "{stdout}");
     assert!(!stdout.contains("no rule says this"), "{stdout}");
-    assert_eq!(code, 1, "the project plants two slug defects: {stdout}");
+    assert_eq!(code, 1, "the project plants four slug defects: {stdout}");
 }
 
 #[test]

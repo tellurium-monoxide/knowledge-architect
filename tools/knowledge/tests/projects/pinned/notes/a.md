@@ -2,4 +2,4 @@
 
 `##anchor` — a definition, so the slug family has something to count.
 
-A pointer to `#anchor`.
+A pointer to `pinned#anchor`.

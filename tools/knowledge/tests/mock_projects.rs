@@ -46,9 +46,16 @@ fn the_walk_obeys_the_project_that_declares_it() {
     assert_eq!(
         names,
         vec![
+            "CLAUDE.md".to_string(),
+            "README.md".to_string(),
             "code/lib.rs".to_string(),
+            "docs/design.md".to_string(),
+            "docs/open-issues.md".to_string(),
+            "docs/rejected_alternatives.md".to_string(),
+            "docs/tripwires.md".to_string(),
             "notes/a.md".to_string(),
             "notes/b.md".to_string(),
+            "notes/open-issues.md".to_string(),
         ],
         "the walk should hold exactly the declared suffixes, minus every exclusion"
     );
@@ -98,7 +105,7 @@ fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
         dump.contains("notes/a.md\t5\tmarker-mention\t100.2"),
         "{dump}"
     );
-    assert!(dump.contains("notes/a.md\t11\tinterp-ref\t7"), "{dump}");
+    assert!(dump.contains("notes/a.md\t12\tinterp-ref\t7"), "{dump}");
     assert!(
         dump.contains("code/lib.rs\t1\tmarker-prose\t100.1"),
         "{dump}"
@@ -106,18 +113,61 @@ fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
 }
 
 #[test]
-fn a_slug_inside_a_fence_is_not_a_definition_even_in_a_real_file() {
+fn a_tracker_outside_every_component_is_read_by_the_report() {
+    // What `additional-trackers` is for: a directory carrying outstanding state and nothing
+    // else a component carries. Undeclared, this entry is in no report and nobody finds it.
+    let manifest = mock("minimal");
     let model = model("minimal");
-    let defs: Vec<String> = model
-        .documents()
+    let files: Vec<String> = documentation::outstanding::tracker_files(&model, &manifest)
         .iter()
-        .flat_map(|d| d.observations.iter())
-        .filter_map(|l| match &l.what {
-            Observation::SlugDef(s) => Some(s.clone()),
-            _ => None,
-        })
+        .map(|p| p.display().to_string())
         .collect();
+    assert!(
+        files.contains(&"notes/open-issues.md".to_string()),
+        "{files:#?}"
+    );
+    let entries = documentation::outstanding::entries(&model, &manifest);
+    let here: Vec<&documentation::outstanding::Entry> = entries
+        .iter()
+        .filter(|e| e.file.ends_with("notes/open-issues.md"))
+        .collect();
+    assert_eq!(here.len(), 1, "{entries:#?}");
+    assert!(here[0].is_issue, "an open-issues.md holds issues");
+    assert_eq!(here[0].kind.to_string(), "observation");
+}
+
+#[test]
+fn a_slug_inside_a_fence_is_neither_a_definition_nor_a_reference_in_a_real_file() {
+    // The fenced block in that document holds all three forms — a head, a qualified pointer
+    // and an unqualified one — which is what a document explaining the convention holds. None
+    // of them is an observation, and the two real pointers elsewhere in the project are.
+    let model = model("minimal");
+    let observed = |f: fn(&Observation) -> Option<String>| -> Vec<String> {
+        model
+            .documents()
+            .iter()
+            .flat_map(|d| d.observations.iter())
+            .filter_map(|l| f(&l.what))
+            .collect()
+    };
+    let defs = observed(|o| match o {
+        Observation::SlugDef(s) => Some(s.clone()),
+        _ => None,
+    });
     assert_eq!(defs, vec!["mock-anchor".to_string()]);
+    let refs = observed(|o| match o {
+        Observation::SlugRef { component, slug } => {
+            Some(format!("{}#{slug}", component.clone().unwrap_or_default()))
+        }
+        _ => None,
+    });
+    assert_eq!(
+        refs,
+        vec![
+            "minimal#mock-anchor".to_string(),
+            "minimal#mock-anchor".to_string()
+        ]
+    );
 }
 
 #[test]
@@ -134,6 +184,51 @@ fn the_corpus_parses_under_the_project_that_declares_where_its_body_starts() {
         corpus.get(&second),
         Some("A second mock rule, wrapped over two lines."),
         "a continuation line should join the rule"
+    );
+}
+
+/// A project that carries what it declares reports nothing.
+///
+/// The planted project below cannot show this: everything there is wrong on purpose, so a check
+/// that had started reporting a correct component as incomplete would look the same. `minimal`
+/// declares one component — the one at the root — and carries every document it owes.
+#[test]
+fn a_project_carrying_every_component_document_reports_nothing() {
+    use documentation::check::citations::Release;
+    use documentation::check::{run, Inputs, Only};
+    use std::collections::HashMap;
+
+    let manifest = mock("minimal");
+    let model = Model::build(&manifest).expect("a model");
+    let releases: HashMap<Option<String>, Release> = HashMap::new();
+    let committed = HashMap::new();
+    let (present, outside) =
+        documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+    let inputs = Inputs {
+        releases: &releases,
+        pinned: "20200101",
+        committed: &committed,
+        present: &present,
+        outside: &outside,
+    };
+    let report = run(
+        &model,
+        &manifest,
+        &inputs,
+        Only::COMPONENTS.union(Only::SLUGS),
+    );
+    let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
+    assert!(found.is_empty(), "{found:#?}");
+    // The component at the root is one whether or not anything is declared beside it, and its
+    // two references resolve against it by the project's own name.
+    assert_eq!(report.structure.components, 1);
+    assert_eq!(report.structure.additional_trackers, 1);
+    assert_eq!(
+        (
+            report.structure.slugs_defined,
+            report.structure.slugs_referenced
+        ),
+        (1, 1)
     );
 }
 
@@ -221,9 +316,9 @@ mod planted {
     /// table without a test failing.
     const PLANTED: [(Only, usize, &str); 7] = [
         (Only::CITATIONS, 5, "no rule says this"),
-        (Only::SLUGS, 2, "is referenced"),
+        (Only::SLUGS, 4, "is referenced"),
         (Only::PATHS, 1, "does not exist"),
-        (Only::TRACKERS, 1, "is registered as carrying"),
+        (Only::COMPONENTS, 2, "carries no"),
         (Only::INTERPRETATIONS, 1, "has no entry in the register"),
         (Only::UNCOVERED, 1, "is outside the walk"),
         (Only::GENERATED, 2, "the generated file is missing"),
@@ -235,8 +330,8 @@ mod planted {
         let found = findings_of(current_indexes, pair);
         assert_eq!(
             found.len(),
-            3,
-            "two slug defects and one path defect: {found:#?}"
+            5,
+            "four slug defects and one path defect: {found:#?}"
         );
         assert!(
             !found.iter().any(|f| f.contains("no rule says this")),
@@ -376,8 +471,8 @@ mod planted {
     fn the_report_says_which_families_it_performed() {
         // Without this, a family carrying no count of its own — `generated`, `trackers` — is
         // indistinguishable from a run that performed nothing at all.
-        let report = report_of(Only::TRACKERS);
-        assert_eq!(report.ran.names(), vec!["trackers"]);
+        let report = report_of(Only::COMPONENTS);
+        assert_eq!(report.ran.names(), vec!["components"]);
         assert!(!report.ran.has(Only::SLUGS));
     }
 
@@ -441,31 +536,71 @@ mod planted {
     }
 
     #[test]
-    fn a_slug_referenced_but_never_defined_is_reported() {
-        assert!(one("`#dangling-anchor` is referenced").starts_with("notes/structure.md:9"));
+    fn a_slug_referenced_in_a_component_that_does_not_define_it_is_reported() {
+        let f = one("`planted#dangling-anchor` is referenced");
+        assert!(f.starts_with("notes/structure.md:9"), "{f}");
     }
 
     #[test]
-    fn a_slug_defined_twice_is_reported_once_naming_both_places() {
+    fn a_reference_naming_no_component_is_reported() {
+        let f = one("`#unqualified-anchor` names no component");
+        assert!(f.starts_with("notes/structure.md:11"), "{f}");
+    }
+
+    #[test]
+    fn a_reference_naming_a_component_that_is_not_declared_is_reported() {
+        // A different repair from the two above, and the finding says which: the slug exists,
+        // and the word before the `#` is what nothing resolves.
+        let f = one("which is no component of this project");
+        assert!(f.starts_with("notes/structure.md:13"), "{f}");
+    }
+
+    #[test]
+    fn a_reference_across_a_component_boundary_resolves() {
+        // Line 15 of that document points at the decision the component below the root
+        // records, and line 5 of the component's own design document points back. Neither is
+        // a finding, and the count in `PLANTED` is what asserts that they produce none.
+        let all = findings();
+        assert!(
+            !all.iter().any(|f| f.contains("widget-decision")),
+            "a qualified reference that resolves must be silent: {all:#?}"
+        );
+    }
+
+    #[test]
+    fn a_slug_defined_twice_in_one_component_is_reported_once_naming_both_places() {
         // A rename that left one behind. The reader who finds the stale one acts on it.
         let f = one("is defined 2 times");
         assert!(f.starts_with("notes/structure.md:3"), "{f}");
         assert!(f.contains("notes/structure.md:7"), "{f}");
+        assert!(f.contains("`planted#twice-defined`"), "{f}");
     }
 
     #[test]
     fn a_path_that_does_not_resolve_is_reported() {
-        assert!(one("does not exist").starts_with("notes/structure.md:11"));
+        // Named rather than matched on "does not exist": a declared tracker that is not there
+        // says the same words, and a needle matching both would pass while checking neither.
+        assert!(one("`notes/missing.md` does not exist").starts_with("notes/structure.md:17"));
     }
 
     #[test]
     fn a_reference_to_an_entry_that_does_not_exist_is_reported() {
-        assert!(one("has no entry in the register").starts_with("notes/structure.md:13"));
+        assert!(one("has no entry in the register").starts_with("notes/structure.md:19"));
     }
 
     #[test]
-    fn a_registered_tracker_file_that_is_missing_is_reported() {
-        assert!(one("is registered as carrying open-issues.md").starts_with("notes/open-issues.md"));
+    fn a_component_document_that_is_missing_is_reported_at_the_path_it_belongs_at() {
+        let f = one("carries no docs/tripwires.md");
+        assert!(f.starts_with("parts/widget/docs/tripwires.md"), "{f}");
+        assert!(f.contains("`widget`"), "{f}");
+    }
+
+    #[test]
+    fn a_declared_tracker_outside_every_component_that_is_missing_is_reported() {
+        // The report reads the declared paths, so this one would make it under-count what is
+        // open rather than fail — which is what the declaration exists to prevent.
+        let f = one("is declared an additional tracker");
+        assert!(f.starts_with("notes/open-issues.md"), "{f}");
     }
 
     #[test]

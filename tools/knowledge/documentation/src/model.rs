@@ -154,7 +154,15 @@ fn describe(what: &Observation) -> (&'static str, String) {
         Observation::RuleToken(n) => ("rule-token", n.to_string()),
         Observation::Heading { level, text } => ("heading", format!("{level} {text}")),
         Observation::SlugDef(s) => ("slug-def", s.clone()),
-        Observation::SlugRef(s) => ("slug-ref", s.clone()),
+        // Rendered as it is written, so the dump says which component a pointer names and a
+        // reference naming none is visibly different from one that does.
+        Observation::SlugRef { component, slug } => (
+            "slug-ref",
+            match component {
+                Some(c) => format!("{c}#{slug}"),
+                None => format!("#{slug}"),
+            },
+        ),
         Observation::PathRef(p) => ("path-ref", p.clone()),
         Observation::InterpRef(n) => ("interp-ref", n.to_string()),
         // Fencing is a property of a line that a check reads, not something to compare.
@@ -170,6 +178,7 @@ mod tests {
     // Interpolated, never spelled out: this tool's checks walk their own source, and a slug
     // or a path written literally here becomes a real anchor or a real dangling reference.
     const SLUG: &str = "a-slug";
+    const COMPONENT: &str = "a-component";
     const DOC: &str = "docs/design/a.md";
     const SRC: &str = "src/b.rs";
 
@@ -183,7 +192,7 @@ mod tests {
                 ),
                 (
                     PathBuf::from(SRC),
-                    format!("/// see `#{SLUG}`\nfn f() {{}}\n"),
+                    format!("/// see `{COMPONENT}#{SLUG}`\nfn f() {{}}\n"),
                 ),
             ],
             &Walk::sample(),
@@ -191,7 +200,7 @@ mod tests {
         assert_eq!(model.documents().len(), 2);
         let dump = model.canonical();
         assert!(dump.contains(&format!("{DOC}\t1\tslug-def\t{SLUG}")));
-        assert!(dump.contains(&format!("{SRC}\t1\tslug-ref\t{SLUG}")));
+        assert!(dump.contains(&format!("{SRC}\t1\tslug-ref\t{COMPONENT}#{SLUG}")));
     }
 
     #[test]
