@@ -107,7 +107,6 @@ pub fn check(model: &Model, manifest: &Manifest) -> (Vec<Finding>, (usize, usize
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::manifest::Walk;
     use std::path::{Path, PathBuf};
 
     // Interpolated, never spelled out: this tool's own source is walked, so a slug written
@@ -120,7 +119,7 @@ mod tests {
     fn manifest() -> Manifest {
         let text = format!(
             "[project]\nname = \"{ROOT}\"\ncomponents = [\"parts/{PART}\"]\n\n\
-             [walk]\nsuffixes = [\"md\"]\nskip-dirs = []\nskip-files = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
              [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\
@@ -134,7 +133,7 @@ mod tests {
             .into_iter()
             .map(|(p, text)| (PathBuf::from(p), text))
             .collect();
-        let model = Model::from_documents(docs, &Walk::sample());
+        let model = Model::from_documents(docs);
         check(&model, &manifest())
             .0
             .iter()
@@ -143,7 +142,7 @@ mod tests {
     }
 
     fn head(slug: &str) -> String {
-        format!("`##{slug}` — **The decision.**\n")
+        format!("### `##{slug}` — **The decision.**\n")
     }
 
     #[test]
@@ -244,7 +243,7 @@ mod tests {
                 format!("`{ROOT}#{SLUG}` a third time.\n"),
             ),
         ];
-        let model = Model::from_documents(docs, &Walk::sample());
+        let model = Model::from_documents(docs);
         let (found, (defined, referenced)) = check(&model, &manifest());
         assert!(found.is_empty(), "{found:#?}");
         assert_eq!((defined, referenced), (1, 1));

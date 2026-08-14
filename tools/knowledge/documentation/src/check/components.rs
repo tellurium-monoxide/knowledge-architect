@@ -159,7 +159,7 @@ mod tests {
         let text = format!(
             "[project]\nname = \"a-project\"\ncomponents = [{components}]\n\
              additional-trackers = [{additional}]\n\n\
-             [walk]\nsuffixes = [\"md\"]\nskip-dirs = []\nskip-files = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
              [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\

@@ -13,6 +13,7 @@ pub mod model;
 pub mod outstanding;
 pub mod quote;
 pub mod scan;
+pub mod source;
 pub mod survey;
 pub mod walk;
 

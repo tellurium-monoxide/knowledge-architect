@@ -6,6 +6,7 @@
 //! not lose a quote, it attributes it to the wrong rule — and a quote checked against the
 //! wrong rule is the failure the whole regime exists to catch.
 
+use pulldown_cmark::{Event, Options, Parser, Tag, TagEnd};
 use rules::RuleNumber;
 
 /// A quote and the rule it is offered as.
@@ -46,43 +47,81 @@ impl Block {
     }
 }
 
-/// Every `>` block in a document, each joined into one line.
+/// Every blockquote in a document, with its lines kept separate.
 ///
-/// A block ends at a blank quoted line or at any unquoted line. `>` characters are stripped
-/// from the front — all of them, so a nested quote flattens rather than keeping a stray
-/// marker inside the text being matched.
+/// **Found by the markdown parser, not by a leading character.** The hand-written scan this
+/// replaces asked `line.strip_prefix('>')`, and three shapes defeated it, each of them ordinary:
+///
+/// - a quote continued on the next line WITHOUT a marker, which CommonMark calls lazy
+///   continuation and renders as one blockquote. The scan saw only the marked lines, so text
+///   appended to a genuine quote was invisible — it verified, and the continuation could say
+///   anything at all.
+/// - one space before the marker, which any reflow introduces.
+/// - a blockquote nested in a list, which MUST be indented to be one.
+///
+/// The last two removed the quote from verification entirely; the first left a verified quote
+/// standing in front of unverified text.
 pub fn blocks(text: &str) -> Vec<Block> {
     let mut out = Vec::new();
-    let mut buf: Vec<String> = Vec::new();
-    let mut start = 0u32;
-    for (i, line) in text.lines().enumerate() {
-        let n = i as u32 + 1;
-        if let Some(rest) = line.strip_prefix('>') {
-            let body = rest.trim_start_matches('>').trim();
-            if !body.is_empty() {
-                if buf.is_empty() {
-                    start = n;
+    let mut depth = 0usize;
+    let mut range: Option<(usize, usize)> = None;
+    for (event, at) in Parser::new_ext(text, Options::all()).into_offset_iter() {
+        match event {
+            Event::Start(Tag::BlockQuote(_)) => {
+                if depth == 0 {
+                    range = Some((at.start, at.end));
                 }
-                buf.push(body.to_string());
-            } else if !buf.is_empty() {
-                out.push(Block {
-                    line: start,
-                    lines: std::mem::take(&mut buf),
-                });
+                depth += 1;
             }
-        } else if !buf.is_empty() {
-            out.push(Block {
-                line: start,
-                lines: std::mem::take(&mut buf),
-            });
+            Event::End(TagEnd::BlockQuote(_)) => {
+                depth = depth.saturating_sub(1);
+                if depth == 0 {
+                    if let Some((from, to)) = range.take() {
+                        out.extend(blocks_at(text, from, to));
+                    }
+                }
+            }
+            _ => {}
         }
     }
-    if !buf.is_empty() {
-        out.push(Block {
-            line: start,
-            lines: buf,
-        });
+    out.retain(|b| !b.lines.is_empty());
+    out
+}
+
+/// One blockquote's PARAGRAPHS, each its own block, with the markers taken off.
+///
+/// A blank quoted line separates two quotes, and the corpus prints one rule per line — so
+/// merging the paragraphs of one blockquote runs consecutive rules together and the split by
+/// leading number then binds the second rule's text to the first. Three quotes in this
+/// repository fail that way if the paragraphs are merged.
+///
+/// A nested quote flattens: every leading marker comes off, so a stray one cannot end up inside
+/// the text being matched against a rule.
+fn blocks_at(text: &str, from: usize, to: usize) -> Vec<Block> {
+    let mut out: Vec<Block> = Vec::new();
+    let mut current: Option<Block> = None;
+    for (i, raw) in text[from..to.min(text.len())].lines().enumerate() {
+        let mut body = raw.trim_start();
+        while let Some(rest) = body.strip_prefix('>') {
+            body = rest.trim_start();
+        }
+        let body = body.trim();
+        if body.is_empty() {
+            out.extend(current.take());
+            continue;
+        }
+        let at = line_of(text, from) + i as u32;
+        match &mut current {
+            Some(b) => b.lines.push(body.to_string()),
+            None => {
+                current = Some(Block {
+                    line: at,
+                    lines: vec![body.to_string()],
+                })
+            }
+        }
     }
+    out.extend(current);
     out
 }
 
@@ -97,46 +136,71 @@ struct Span {
     italic: bool,
 }
 
-/// The italic form, `*"…"*`, with neither delimiter doubled.
+/// The emphasised form, `*"…"*`, found as EMPHASIS rather than as two literal bytes.
 ///
-/// Hand-scanned rather than matched with a pattern: the original uses lookarounds Rust's
-/// engine has none of, and the faithful replacement is not "match then filter" — a rejected
-/// match must not consume its span, because the closing delimiter of a rejected attempt can
-/// open the next one. Scanning explicitly is what keeps that true.
+/// The scan this replaces required the byte pair `*"`. A markdown formatter that normalises
+/// emphasis to underscores rewrites every one of them to `_"`, which that scan could not see —
+/// so the quotes did not become wrong, they became ABSENT, and the run still reported success
+/// over a document whose citations had left the walk. Measured when it happened here: 89 of 661
+/// verified fragments disappeared and three consecutive runs printed `PASSED: no findings`.
+///
+/// The parser represents both delimiters as one emphasis node, so the distinction is gone.
+/// Doubled delimiters are `Strong` and are not emphasis, which is what keeps bold text out.
 fn italic_spans(text: &str) -> Vec<Span> {
-    let bytes = text.as_bytes();
     let mut out = Vec::new();
-    let mut i = 0;
-    while i + 1 < bytes.len() {
-        if bytes[i] != b'*' || bytes[i + 1] != b'"' || (i > 0 && bytes[i - 1] == b'*') {
-            i += 1;
-            continue;
-        }
-        // Non-greedy: the nearest `"*` that is not followed by another `*`.
-        let mut j = i + 2;
-        let close = loop {
-            match bytes[j..].windows(2).position(|w| w == b"\"*") {
-                None => break None,
-                Some(off) => {
-                    let at = j + off;
-                    if bytes.get(at + 2) != Some(&b'*') {
-                        break Some(at);
+    let mut depth = 0usize;
+    let mut range: Option<(usize, usize)> = None;
+    for (event, at) in Parser::new_ext(text, Options::all()).into_offset_iter() {
+        match event {
+            Event::Start(Tag::Emphasis) => {
+                if depth == 0 {
+                    range = Some((at.start, at.end));
+                }
+                depth += 1;
+            }
+            Event::End(TagEnd::Emphasis) => {
+                depth = depth.saturating_sub(1);
+                if depth > 0 {
+                    continue;
+                }
+                let Some((start, end)) = range.take() else {
+                    continue;
+                };
+                // The delimiters are one byte each, whichever character was used.
+                let inner = (start + 1, end.saturating_sub(1));
+                let body = &text[inner.0..inner.1];
+                // The convention is a quotation INSIDE the emphasis. Emphasis alone is
+                // ordinary prose and declares nothing.
+                //
+                // **Typographic delimiters count.** `norm` already folds `“”` to `"` because
+                // they arrive in real input — a paste, an editor's smart quotes, a model
+                // emitting them — and a scanner that tested only the straight form did not
+                // leave such a quote WRONG, it left it absent, with the fragment total
+                // silently one lower. That is the emphasis-normalisation incident again,
+                // through the other delimiter.
+                let open = body
+                    .chars()
+                    .next()
+                    .filter(|c| matches!(c, '"' | '\u{201c}'));
+                let close = body
+                    .chars()
+                    .next_back()
+                    .filter(|c| matches!(c, '"' | '\u{201d}'));
+                // The delimiters are NOT one byte each: a typographic quotation mark is
+                // three, and slicing past it by one lands inside a character and panics.
+                if let (Some(o), Some(c)) = (open, close) {
+                    let (from, to) = (inner.0 + o.len_utf8(), inner.1 - c.len_utf8());
+                    if from < to {
+                        out.push(Span {
+                            start,
+                            end,
+                            inner: (from, to),
+                            italic: true,
+                        });
                     }
-                    j = at + 1;
                 }
             }
-        };
-        match close {
-            Some(at) if at > i + 2 => {
-                out.push(Span {
-                    start: i,
-                    end: at + 2,
-                    inner: (i + 2, at),
-                    italic: true,
-                });
-                i = at + 2;
-            }
-            _ => i += 1,
+            _ => {}
         }
     }
     out
@@ -193,6 +257,30 @@ fn plain_spans(text: &str, italic: &[Span]) -> Vec<Span> {
 /// quotations to whatever rule the paragraph happened to cite.
 const PARAGRAPH_LOOKBACK: usize = 400;
 
+/// Every emphasised quotation that NO marker claims, with the line it sits on.
+///
+/// The emphasised form declares *this is rule text*. One with nothing to bind it is verified
+/// against nothing, and the lint that would catch the bare number beside it is silenced when
+/// that number sits in a code span — so the whole shape produced no output at all.
+///
+/// **Every unclaimed span is returned; the CALLER decides which are rule text.** Filtering here
+/// on a rule number being on the same line missed the two shapes that matter most — a display
+/// quote in its own paragraph, and a quotation of real rule text with no number near it — and
+/// the caller has the release, which answers the question without a guess.
+pub fn unclaimed(text: &str) -> Vec<(u32, String)> {
+    let claimed: Vec<u32> = inline(text).iter().map(|q| q.line).collect();
+    italic_spans(text)
+        .into_iter()
+        .map(|s| {
+            (
+                line_of(text, s.start),
+                text[s.inner.0..s.inner.1].to_string(),
+            )
+        })
+        .filter(|(line, _)| !claimed.contains(line))
+        .collect()
+}
+
 /// Every inline quote in a document, each bound to the rule that owns it.
 pub fn inline(text: &str) -> Vec<Quote> {
     let italic = italic_spans(text);
@@ -205,7 +293,20 @@ pub fn inline(text: &str) -> Vec<Quote> {
     for span in spans {
         let from = if span.italic {
             let para = text[..span.start].rfind("\n\n").map_or(0, |p| p + 2);
-            para.max(span.start.saturating_sub(PARAGRAPH_LOOKBACK))
+            // **A DISPLAY quote reaches back one paragraph further.** The shape the
+            // convention prescribes is a marker, a colon, a blank line, then the quote alone
+            // — and stopping at the paragraph break bound that quote to nothing at all. The
+            // reach is granted only when the quote IS the paragraph, so an ordinary
+            // quotation mid-paragraph cannot borrow a marker from the text above it.
+            let alone = text[para..span.start].trim().is_empty();
+            let from = if alone {
+                text[..para.saturating_sub(2)]
+                    .rfind("\n\n")
+                    .map_or(0, |p| p + 2)
+            } else {
+                para
+            };
+            from.max(span.start.saturating_sub(PARAGRAPH_LOOKBACK))
         } else {
             text[..span.start].rfind('\n').map_or(0, |p| p + 1)
         };
@@ -280,9 +381,16 @@ mod tests {
         quotes.iter().map(|q| q.rule.to_string()).collect()
     }
 
+    // A fixture is BOUND to a name, never written into a call. The tool walks its own
+    // source, and a string handed straight to a function is prose that a check reads: a
+    // blockquote spelled there is a blockquote of this file, holding commentary. Bound, it is
+    // data, which is the whole of the distinction `source::rs` draws.
+    const TWO_BLOCKS: &str = "> one\n> two\n\nprose\n> three\n";
+    const NESTED: &str = ">> nested\n";
+
     #[test]
     fn a_block_joins_its_lines_and_ends_at_a_blank_or_unquoted_line() {
-        let b = blocks("> one\n> two\n\nprose\n> three\n");
+        let b = blocks(TWO_BLOCKS);
         assert_eq!(b.len(), 2);
         assert_eq!(b[0].text(), "one two");
         assert_eq!(b[0].lines.len(), 2, "the lines stay separate");
@@ -293,7 +401,7 @@ mod tests {
 
     #[test]
     fn a_nested_marker_is_flattened_out_of_the_text() {
-        assert_eq!(blocks(">> nested\n")[0].text(), "nested");
+        assert_eq!(blocks(NESTED)[0].text(), "nested");
     }
 
     #[test]
@@ -309,9 +417,14 @@ mod tests {
     }
 
     #[test]
-    fn an_italic_quote_does_not_reach_across_a_paragraph_break() {
-        let text = format!("per CR:{RULE}\n\n*\"the quoted text\"*");
-        assert!(inline(&text).is_empty());
+    fn an_italic_quote_reaches_across_a_paragraph_break_only_when_it_is_the_paragraph() {
+        // A DISPLAY quote — marker, colon, blank line, quote alone — is the shape the
+        // convention prescribes, and stopping at the break bound it to nothing.
+        let display = format!("per CR:{RULE}:\n\n*\"the quoted text\"*");
+        assert_eq!(rules_of(&inline(&display)), vec![RULE.to_string()]);
+        // Ordinary prose in the paragraph, and the quote may not borrow the marker above.
+        let midway = format!("per CR:{RULE}\n\nprose first, *\"the quoted text\"*");
+        assert!(inline(&midway).is_empty());
     }
 
     #[test]
@@ -351,6 +464,38 @@ mod tests {
         assert_eq!(rules_of(&inline(&text)), vec![RULE.to_string()]);
         let plain = format!("\"a plain quoted span\" ({RULE})");
         assert!(inline(&plain).is_empty());
+    }
+
+    #[test]
+    fn a_typographic_delimiter_is_the_same_quote_as_a_straight_one() {
+        // `norm` already folds these because they arrive in real input. A scanner that tested
+        // only the straight form did not leave such a quote wrong, it left it ABSENT — the
+        // emphasis-normalisation incident again, through the other delimiter.
+        const OPEN: char = '\u{201c}';
+        const CLOSE: char = '\u{201d}';
+        let curly = format!("per CR:{RULE}, *{OPEN}the quoted text{CLOSE}*");
+        assert_eq!(rules_of(&inline(&curly)), vec![RULE.to_string()]);
+        assert_eq!(inline(&curly)[0].body, "the quoted text");
+    }
+
+    #[test]
+    fn a_display_quote_alone_in_its_paragraph_reaches_the_marker_above_it() {
+        // The shape the convention prescribes: marker, colon, blank line, quote. Stopping at
+        // the paragraph break bound it to nothing.
+        let display = format!("the engine follows CR:{RULE}:\n\n*\"the quoted text\"*\n");
+        assert_eq!(rules_of(&inline(&display)), vec![RULE.to_string()]);
+        // The reach is granted only when the quote IS the paragraph, so an ordinary
+        // quotation mid-paragraph cannot borrow a marker from the text above it.
+        let midway = format!("per CR:{RULE}\n\nprose first, *\"the quoted text\"*\n");
+        assert!(inline(&midway).is_empty());
+    }
+
+    #[test]
+    fn every_unclaimed_span_is_returned_for_the_caller_to_judge() {
+        let orphan = "it says *\"some quoted text here\"* and nothing marks it";
+        assert_eq!(unclaimed(orphan).len(), 1);
+        let claimed = format!("per CR:{RULE}, *\"some quoted text here\"*");
+        assert!(unclaimed(&claimed).is_empty());
     }
 
     #[test]

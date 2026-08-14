@@ -10,14 +10,13 @@ components = ["parts/widget"]
 additional-trackers = ["notes/open-issues.md"]
 
 [walk]
-suffixes = ["md", "rs"]
 skip-dirs = [".git"]
 # The rules text is not a citation of itself.
-skip-files = ["CompRules.txt"]
+skip-files = ["corpus/CompRules.txt"]
 exclude = []
 
 [lint]
-exempt-files = ["exempt.md"]
+exempt-files = ["notes/exempt.md"]
 
 [rules]
 dir = "corpus"

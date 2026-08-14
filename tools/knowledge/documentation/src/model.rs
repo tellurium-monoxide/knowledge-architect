@@ -2,8 +2,9 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::manifest::{Manifest, Walk};
+use crate::manifest::Manifest;
 use crate::scan::{self, Located, Observation};
+use crate::source::{self, Parsed};
 use crate::walk;
 
 /// One live document and everything that was observed in it.
@@ -13,8 +14,8 @@ pub struct Document {
     pub rel: PathBuf,
     /// The file as it is on disk.
     pub text: String,
-    /// The same file with one comment leader removed per line, and the same line count.
-    pub stripped: String,
+    /// Its prose and its scopes, as the parser for its suffix found them.
+    pub parsed: Parsed,
     /// The release this file's quotes verify against, where it opts out of the vendored one.
     pub pin: Option<String>,
     pub observations: Vec<Located>,
@@ -23,6 +24,85 @@ pub struct Document {
 impl Document {
     pub fn is_markdown(&self) -> bool {
         self.rel.extension().is_some_and(|e| e == "md")
+    }
+
+    /// Every inline quote in the document, at the FILE line it sits on.
+    ///
+    /// Extraction runs per prose region rather than over the file, which is what makes a
+    /// paragraph lookback stop at the end of a comment: a marker in one doc comment cannot own
+    /// a quote in the next function's.
+    pub fn inline_quotes(&self) -> Vec<crate::quote::Quote> {
+        self.parsed
+            .prose
+            .iter()
+            .flat_map(|region| {
+                crate::quote::inline(&region.text)
+                    .into_iter()
+                    .map(|mut q| {
+                        q.line = region.file_line(q.line as usize - 1);
+                        q
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .collect()
+    }
+
+    /// Every `>` block in the document, at the FILE line it starts on.
+    pub fn blocks(&self) -> Vec<crate::quote::Block> {
+        self.parsed
+            .prose
+            .iter()
+            .flat_map(|region| {
+                crate::quote::blocks(&region.text)
+                    .into_iter()
+                    .map(|mut b| {
+                        b.line = region.file_line(b.line as usize - 1);
+                        b
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .collect()
+    }
+
+    /// Every emphasised quotation in the document that no marker claims.
+    pub fn unclaimed_quotes(&self) -> Vec<(u32, String)> {
+        self.parsed
+            .prose
+            .iter()
+            .flat_map(|region| {
+                crate::quote::unclaimed(&region.text)
+                    .into_iter()
+                    .map(|(l, body)| (region.file_line(l as usize - 1), body))
+                    .collect::<Vec<_>>()
+            })
+            .collect()
+    }
+
+    /// The prose on a file line, where that line carries any.
+    ///
+    /// A line of code has none, which is the point: a check asking what a line says is asking
+    /// about prose, and the answer for code is that there is nothing to read.
+    pub fn prose_line(&self, line: u32) -> Option<&str> {
+        self.parsed.prose.iter().find_map(|region| {
+            region
+                .lines
+                .iter()
+                .position(|&n| n == line)
+                .and_then(|i| region.text.split('\n').nth(i))
+        })
+    }
+
+    /// Every file line that carries prose, in order.
+    pub fn prose_lines(&self) -> Vec<u32> {
+        let mut out: Vec<u32> = self
+            .parsed
+            .prose
+            .iter()
+            .flat_map(|r| r.lines.iter().copied())
+            .collect();
+        out.sort_unstable();
+        out.dedup();
+        out
     }
 
     pub fn observations_of<'a, T: 'a>(
@@ -53,25 +133,35 @@ impl Model {
         let walk_config = manifest.walk();
         let mut docs = Vec::new();
         for path in walk::live_files(root, walk_config)? {
+            let rel_for_error = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
             let text = match std::fs::read_to_string(&path) {
                 Ok(t) => t,
-                // Not every walked suffix guarantees UTF-8. A file that cannot be read as
-                // text cites nothing, which is the same answer the walk being replaced gives.
-                Err(_) => continue,
-            };
-            let stripped = if walk::has_comments(&path, walk_config) {
-                walk::strip_leaders(&text)
-            } else {
-                text.clone()
+                // **Not silence.** A file the walk cannot read leaves the model AND the
+                // inverse assertion, so a citation in it is checked by nothing and the run
+                // still passes. One byte of Windows-1252 — a pasted em dash — does it. The
+                // document is kept, empty, carrying the reason, so a check reports it.
+                Err(e) => {
+                    docs.push(Document {
+                        rel: rel_for_error,
+                        text: String::new(),
+                        parsed: Parsed {
+                            trouble: Some(format!("this file could not be read as text: {e}")),
+                            ..Parsed::default()
+                        },
+                        pin: None,
+                        observations: Vec::new(),
+                    });
+                    continue;
+                }
             };
             let rel = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
-            let is_markdown = rel.extension().is_some_and(|e| e == "md");
-            let observations: Vec<Located> = scan::scan(&text, &stripped, is_markdown);
+            let parsed = source::parse(&rel, &text);
+            let observations: Vec<Located> = scan::scan(&parsed);
             docs.push(Document {
                 rel,
-                pin: scan::pin(&text),
+                pin: scan::pin(&parsed, &text),
                 text,
-                stripped,
+                parsed,
                 observations,
             });
         }
@@ -83,24 +173,19 @@ impl Model {
 
     /// A model assembled from text rather than from a checkout, for a test.
     ///
-    /// `walk` decides only which suffixes carry comment leaders, so a test that does not
-    /// care can pass the default.
-    pub fn from_documents(docs: Vec<(PathBuf, String)>, walk: &Walk) -> Self {
+    /// It takes no walk configuration: what the walk skips decides which files exist, and a
+    /// caller handing the text in has already decided that.
+    pub fn from_documents(docs: Vec<(PathBuf, String)>) -> Self {
         let docs = docs
             .into_iter()
             .map(|(rel, text)| {
-                let stripped = if walk::has_comments(&rel, walk) {
-                    walk::strip_leaders(&text)
-                } else {
-                    text.clone()
-                };
-                let is_markdown = rel.extension().is_some_and(|e| e == "md");
-                let observations = scan::scan(&text, &stripped, is_markdown);
+                let parsed = source::parse(&rel, &text);
+                let observations = scan::scan(&parsed);
                 Document {
                     rel,
-                    pin: scan::pin(&text),
+                    pin: scan::pin(&parsed, &text),
                     text,
-                    stripped,
+                    parsed,
                     observations,
                 }
             })
@@ -147,6 +232,7 @@ fn describe(what: &Observation) -> (&'static str, String) {
             match form {
                 Prose => "marker-prose",
                 Identifier => "marker-ident",
+                IdentifierInProse => "marker-ident-prose",
                 Mention => "marker-mention",
             },
             number.to_string(),
@@ -171,15 +257,12 @@ fn describe(what: &Observation) -> (&'static str, String) {
             Some(cp) => ("path-ref", format!("{cp}@{path}")),
         },
         Observation::InterpRef(n) => ("interp-ref", n.to_string()),
-        // Fencing is a property of a line that a check reads, not something to compare.
-        Observation::Fenced => ("", String::new()),
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::manifest::Walk;
 
     // Interpolated, never spelled out: this tool's checks walk their own source, and a slug
     // or a path written literally here becomes a real anchor or a real dangling reference.
@@ -190,19 +273,16 @@ mod tests {
 
     #[test]
     fn a_model_can_be_assembled_without_a_checkout() {
-        let model = Model::from_documents(
-            vec![
-                (
-                    PathBuf::from(DOC),
-                    format!("`##{SLUG}` **The statement.**\n"),
-                ),
-                (
-                    PathBuf::from(SRC),
-                    format!("/// see `{COMPONENT}#{SLUG}`\nfn f() {{}}\n"),
-                ),
-            ],
-            &Walk::sample(),
-        );
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from(DOC),
+                format!("### `##{SLUG}` **The statement.**\n"),
+            ),
+            (
+                PathBuf::from(SRC),
+                format!("/// see `{COMPONENT}#{SLUG}`\nfn f() {{}}\n"),
+            ),
+        ]);
         assert_eq!(model.documents().len(), 2);
         let dump = model.canonical();
         assert!(dump.contains(&format!("{DOC}\t1\tslug-def\t{SLUG}")));
@@ -218,13 +298,10 @@ mod tests {
     #[test]
     fn a_qualified_path_reference_dumps_as_it_is_written() {
         let written = format!("`{COMPONENT}@{DOC}`");
-        let model = Model::from_documents(
-            vec![(
-                PathBuf::from(SRC),
-                format!("/// see {written}\nfn f() {{}}\n"),
-            )],
-            &Walk::sample(),
-        );
+        let model = Model::from_documents(vec![(
+            PathBuf::from(SRC),
+            format!("/// see {written}\nfn f() {{}}\n"),
+        )]);
         let dump = model.canonical();
         let value = format!("{COMPONENT}@{DOC}");
         assert!(
@@ -239,13 +316,10 @@ mod tests {
     /// A reference naming no component keeps the bare path and is a different kind.
     #[test]
     fn an_unqualified_path_reference_dumps_without_a_separator() {
-        let model = Model::from_documents(
-            vec![(
-                PathBuf::from(SRC),
-                format!("/// see `{DOC}`\nfn f() {{}}\n"),
-            )],
-            &Walk::sample(),
-        );
+        let model = Model::from_documents(vec![(
+            PathBuf::from(SRC),
+            format!("/// see `{DOC}`\nfn f() {{}}\n"),
+        )]);
         let dump = model.canonical();
         assert!(
             dump.contains(&format!("{SRC}\t1\told-path-ref\t{DOC}")),
@@ -255,16 +329,20 @@ mod tests {
     }
 
     #[test]
-    fn a_comment_leader_is_stripped_only_where_the_suffix_says_so() {
-        let model = Model::from_documents(
-            vec![
-                (PathBuf::from("a.md"), "# A heading\n".to_string()),
-                (PathBuf::from("a.py"), "# A heading\n".to_string()),
-            ],
-            &Walk::sample(),
-        );
-        // In Markdown the `#` opens a heading; in Python it opens a comment, and once the
-        // leader is gone there is no heading left.
+    fn a_heading_is_read_from_prose_and_never_from_code() {
+        let model = Model::from_documents(vec![
+            (PathBuf::from("a.md"), "# A heading\n".to_string()),
+            (
+                PathBuf::from("a.rs"),
+                "/// # A heading\nfn f() {}\n".to_string(),
+            ),
+            (
+                PathBuf::from("b.rs"),
+                "fn f() {\n    let s = \"# A heading\";\n}\n".to_string(),
+            ),
+        ]);
+        // Markdown carries it directly, a doc comment's content is markdown and carries it
+        // too, and a string literal is data whatever it spells.
         let headings: Vec<usize> = model
             .documents()
             .iter()
@@ -275,19 +353,22 @@ mod tests {
                     .count()
             })
             .collect();
-        assert_eq!(headings, vec![1, 0]);
+        assert_eq!(headings, vec![1, 1, 0]);
     }
 
     #[test]
-    fn the_two_views_have_the_same_number_of_lines() {
-        let model = Model::from_documents(
-            vec![(
-                PathBuf::from("a.rs"),
-                "/// one\n// two\nfn f() {}\n".to_string(),
-            )],
-            &Walk::sample(),
-        );
+    fn a_prose_line_reports_the_file_line_it_came_from() {
+        // There are no longer two views of a file to keep in step. There is the file, and
+        // the prose pulled out of it, and every line of that prose says where it came from —
+        // which is what a finding's line number is built out of.
+        let model = Model::from_documents(vec![(
+            PathBuf::from("a.rs"),
+            "/// one\n// two\nfn f() {}\n".to_string(),
+        )]);
         let doc = &model.documents()[0];
-        assert_eq!(doc.text.lines().count(), doc.stripped.lines().count());
+        assert_eq!(doc.prose_line(1), Some("one"));
+        assert_eq!(doc.prose_line(2), Some("two"));
+        assert_eq!(doc.prose_line(3), None, "a line of code carries no prose");
+        assert_eq!(doc.prose_lines(), vec![1, 2]);
     }
 }

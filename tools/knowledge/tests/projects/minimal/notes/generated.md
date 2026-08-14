@@ -1,3 +1,3 @@
 # Skipped by skip-files
 
-`##never-seen` — **Must not be walked.**
+### Must not be walked `##never-seen`

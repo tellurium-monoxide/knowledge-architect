@@ -11,6 +11,109 @@ Read `tracking-open-issues` before adding.
 
 ---
 
+## The plan claimed a parser port that was not made, and three reviewers found it before anyone else did `observation`
+
+**What.** `../../../../docs/plans/citation-enforcement-design.md` stated, as a consequence of
+adopting a markdown parser, that two recorded defects were closed by it: an emphasis delimiter a
+formatter rewrites, and a backticked reference a formatter wraps across a line. Neither was closed.
+The parser was wired into scanning and into scoping; quote EXTRACTION was left on the hand-written
+byte scanners, which is where both defects live. The plan is corrected, and the port is now made.
+
+**Why this is recorded rather than only corrected.** A plan document is amended in place and leaves
+the repository when its work lands, so correcting it erases the fact that the claim was made. What
+is worth keeping is not the wrong sentence but its shape: **a consequence was written into a design
+document as though it had been implemented, in the same change that implemented the thing it was a
+consequence of.** Nothing distinguished it from the clauses that were true, and the gate could not:
+the tool passed throughout, because a quote that stops being found is subtracted from the numerator
+and the denominator together.
+
+**Observed.** Three independent reviewers found it — a spec-conformity axis, an adversarial evasion
+axis and a blind one — each reproducing it separately. No checker did, and neither did the author.
+
+**Why it matters.** The same shape is available to every design document in this project: a head
+that states what a mechanism achieves, written by the session that built the mechanism, verified by
+nobody. Root `CLAUDE.md` `Verify a claim before writing it` binds it, and the failure was not that
+the instruction is missing but that it was not applied to a sentence about the author's own work.
+
+**What would close it.** Nothing here is outstanding as work — the port is made and the plan is
+corrected. It stays as an `observation` because the question it raises is open: whether a design
+head asserting what a change achieves should be reviewed against the change by a separate axis by
+default, rather than only when someone dispatches one. `assumption`: the reviewers caught it because
+the brief named the spec as the standard and told them to establish the tree themselves. Untested —
+it has happened once.
+
+## A markdown formatter's emphasis normalisation makes an inline rule quote invisible `defect`
+
+**What.** The inline-quote convention is the asterisk form, and `quote.rs` finds one with
+`italic_spans`, which requires the two characters `*"` to open the span. A markdown formatter that
+normalises emphasis to underscores rewrites the span so it opens with `_"` instead. That form is
+found by neither scanner: `italic_spans` requires the asterisk, and `plain_spans` rejects a double
+quote whose neighbour is a `*`, an alphanumeric or a `_`. The quote is then not wrong — it is
+**absent**, and nothing verifies it.
+
+**Reproduced against this tree, on the branch that reworks the citation checks.** A formatter ran
+over `../../crates/thaum-engine/docs/design.md` and converted 87 asterisk-delimited spans to
+underscore-delimited ones. Counted with `grep -o` before and after. The signature of the same run is
+visible in two other places in that file: markdown tables padded to aligned column widths, and five
+lines where a literal asterisk was escaped as a backslash pair.
+
+Measured with `cargo knowledge check --only citations`, which prints the fragment count on its first
+line, over a worktree at the merge base and over the branch tip:
+
+| tree | fragments verified |
+| --- | --- |
+| merge base | 661 |
+| branch, after the formatter ran | 572 |
+| branch, after restoring the asterisk form | 666 |
+
+So **89 rule quotes stopped being checked** and every run in between reported `PASSED: no findings`.
+The count rose past the merge base on repair because three spans were already in the underscore form
+at the merge base.
+
+**Why it matters.** The guarantee this tool exists to make is that every rule quote in a live
+document verifies against the pinned release. A routine editor action removes quotes from that
+guarantee with no diagnostic, and the diff that does it looks like whitespace and emphasis. It is
+the exact failure the tool is built to prevent, arriving through the one path nobody inspects.
+
+`assumption`: the formatter is Prettier, which normalises emphasis to underscores, pads tables and
+escapes stray asterisks. Not established — no formatter is configured in this repository, and no
+configuration file for one exists in it, so the run came from an editor rather than from the tree.
+
+**What would close it.** Either the scanner accepts both emphasis delimiters, or the repository
+declares the files a formatter must not rewrite. The first is the direction
+`../../../../docs/plans/citation-enforcement-design.md` already takes: the markdown parser it adopts
+represents both delimiters as one emphasis node, so the distinction disappears. Closing it means the
+underscore form verifying, asserted by a test, and the fragment count not moving when a formatter
+runs over the tree.
+
+## The citation report is a ratio, so a quote that stops being found reads as success `defect`
+
+**What.** `check::citations` counts what it finds and reports `verified / fragments`. A quote the
+scanner cannot see contributes to neither, so the ratio stays at 100% and the run passes. There is
+no expected count and nothing compares one run against another, so **losing a quote is
+indistinguishable from never having written one**.
+
+**Observed** as the reason the entry above went unnoticed. Three separate full runs of
+`cargo knowledge check` reported `572/572 rule-quote fragments verified` and `PASSED: no findings`
+while 89 quotes were absent from the walk. The loss was found by comparing against a worktree at the
+merge base, by hand, for an unrelated reason.
+
+**Why it matters.** Every other family in this tool reports an absolute a reader can judge — the
+number of components, of slugs, of path references, of register entries. The citation family reports
+only a proportion of itself, which is the one family where absence is the dangerous direction. A
+reviewer reading the summary cannot tell a tree with no quotes from a tree whose quotes all verify.
+
+**What is ruled out.** Storing an expected count in the repository. It would go stale on every commit
+that adds or removes a citation, which is most of them, and a threshold nobody can maintain is one
+that gets raised until it means nothing.
+
+**What would close it.** Two candidates, neither tried. Report the absolute alongside the ratio, so a
+fall is visible in a diff of CI output — cheap, and it only helps a reader who compares runs. Or
+report quoted spans the scanner found but could not bind to a rule, which turns the mangled form
+above into a finding rather than a silence. `assumption`: the second is the one that would have
+caught this, since a `_"…"_` span is still a quoted span; nobody has measured its false-positive rate
+against ordinary quoted prose.
+
 ## `cargo fmt` can produce a line the blockquote instruction reads as a quote `defect`
 
 **What.** A blockquote is recognised by `>` at the start of a line, which is Markdown's rule applied

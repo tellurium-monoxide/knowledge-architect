@@ -121,9 +121,19 @@ impl Components {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields, rename_all = "kebab-case")]
 pub struct Walk {
-    pub suffixes: Vec<String>,
-    pub skip_dirs: Vec<String>,
-    pub skip_files: Vec<String>,
+    /// Directories skipped by their project-relative PATH.
+    ///
+    /// **Not by name.** A bare name matched at any depth, so a component-local `past/` or
+    /// `build/` was skipped by the walk AND dropped from the inverse assertion — invisible in
+    /// both directions, which is where a fabricated quote goes unread.
+    pub skip_dirs: Vec<PathBuf>,
+    /// Files skipped by their project-relative PATH.
+    ///
+    /// **Not by name.** A bare name matched anywhere in the tree, so declaring the two
+    /// generated indexes exempted every file called `index.md` — from the walk AND from the
+    /// inverse assertion that an unwalked file may not name a rule. A fabricated rule quote in
+    /// a hand-written index elsewhere in the tree was read by nothing and reported by nothing.
+    pub skip_files: Vec<PathBuf>,
     /// Project-relative paths skipped by location rather than by name.
     #[serde(default)]
     pub exclude: Vec<PathBuf>,
@@ -131,20 +141,34 @@ pub struct Walk {
 
 #[cfg(test)]
 impl Walk {
-    /// A walk configuration for a unit test that only needs to know which suffixes carry
-    /// comment leaders. It is not this project's — a test that cares about this project's
-    /// declaration reads the real manifest.
+    /// A walk configuration for a unit test. It is not this project's — a test that cares
+    /// about this project's declaration reads the real manifest.
     pub fn sample() -> Self {
         Self {
-            suffixes: ["md", "rs", "py", "sh", "toml"]
-                .iter()
-                .map(|s| s.to_string())
-                .collect(),
-            skip_dirs: vec![".git".to_string()],
+            skip_dirs: vec![PathBuf::from(".git")],
             skip_files: Vec::new(),
             exclude: Vec::new(),
         }
     }
+}
+
+/// Rules of the citation regime a project has not finished migrating to.
+///
+/// **A deferral names a rule, never a file.** The set of rules is compiled in, so a project
+/// cannot invent one it satisfies; all it can do is say which of the fixed set it does not yet
+/// meet, with the reason beside it. Each deferred rule still RUNS — its findings are counted
+/// and printed as a backlog on every run — so the only thing a deferral buys is that the run
+/// does not fail on it.
+///
+/// It retires itself: when the backlog for a rule reaches zero the entry is deleted, and
+/// nothing has to remember to remove a flag. A deferral whose backlog is already zero is
+/// reported, so the list cannot outlive the work.
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(deny_unknown_fields, rename_all = "kebab-case")]
+pub struct Migration {
+    /// Rule names, as `check::regime::Rule::NAMED` spells them.
+    #[serde(default)]
+    pub deferred: Vec<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -152,7 +176,11 @@ impl Walk {
 pub struct Lint {
     /// Exempt from the missing-marker lint only. Quotes in these files are still verified.
     #[serde(default)]
-    pub exempt_files: Vec<String>,
+    /// Files exempt from the lint, by their project-relative PATH.
+    ///
+    /// **Not by name.** A bare name matched anywhere, so a second file with the same basename
+    /// inherited an exemption argued for one document.
+    pub exempt_files: Vec<PathBuf>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -184,6 +212,9 @@ pub struct Interpretations {
 struct Declared {
     project: Project,
     walk: Walk,
+    /// Absent means nothing is deferred, which is the state a finished migration leaves.
+    #[serde(default)]
+    migration: Migration,
     lint: Lint,
     rules: Rules,
     interpretations: Interpretations,
@@ -246,6 +277,21 @@ impl Manifest {
 
     pub fn walk(&self) -> &Walk {
         &self.declared.walk
+    }
+
+    /// The same manifest with a different deferral list, for a test.
+    ///
+    /// A deferral changes only whether a run fails, so nothing about a project on disk has to
+    /// change to exercise it — and nothing did, which is why the mechanism was unpinned.
+    #[cfg(any(test, feature = "testing"))]
+    pub fn with_deferred(&self, rules: &[&str]) -> Self {
+        let mut out = self.clone();
+        out.declared.migration.deferred = rules.iter().map(|r| r.to_string()).collect();
+        out
+    }
+
+    pub fn migration(&self) -> &Migration {
+        &self.declared.migration
     }
 
     pub fn lint(&self) -> &Lint {
@@ -351,7 +397,7 @@ pub(crate) mod tests {
         let text = format!(
             "[project]\nname = \"a-project\"\ncomponents = [{components}]\n\
              additional-trackers = [{additional}]\n\n\
-             [walk]\nsuffixes = [\"md\"]\nskip-dirs = []\nskip-files = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
              [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\
@@ -363,7 +409,6 @@ pub(crate) mod tests {
     #[test]
     fn this_repository_declares_a_readable_manifest() {
         let m = Manifest::load(&this_project()).expect("knowledge.toml");
-        assert!(m.walk().suffixes.contains(&"md".to_string()));
         assert!(m
             .tracker_paths()
             .iter()

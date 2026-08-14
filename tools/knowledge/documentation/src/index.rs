@@ -392,12 +392,15 @@ mod tests {
         // An entry's primary rule is written this way and often carries no marker anywhere.
         // Interpolated, never spelled out: a literal here is a citation of this file.
         const RULE: &str = "104.4b"; // CR~104.4b
-        let quoted = format!("> **{RULE}** If a game…");
-        assert_eq!(blockquoted_number(&quoted).as_deref(), Some(RULE));
-        let stopped = format!("> **{RULE}.** With a stop");
-        assert_eq!(blockquoted_number(&stopped).as_deref(), Some(RULE));
-        assert!(blockquoted_number("> plain quoted text").is_none());
+                                     // Bound, not written into the call: a blockquote handed straight to a function is a
+                                     // blockquote of this file, and the check over commentary reads it.
+        const QUOTED: &str = "> **104.4b** If a game…";
+        const STOPPED: &str = "> **104.4b.** With a stop";
+        const PLAIN: &str = "> plain quoted text";
         let unquoted = format!("**{RULE}** not in a blockquote");
+        assert_eq!(blockquoted_number(QUOTED).as_deref(), Some(RULE));
+        assert_eq!(blockquoted_number(STOPPED).as_deref(), Some(RULE));
+        assert!(blockquoted_number(PLAIN).is_none());
         assert!(blockquoted_number(&unquoted).is_none());
     }
 

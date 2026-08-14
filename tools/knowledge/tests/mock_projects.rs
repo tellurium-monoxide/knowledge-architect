@@ -57,7 +57,7 @@ fn the_walk_obeys_the_project_that_declares_it() {
             "notes/b.md".to_string(),
             "notes/open-issues.md".to_string(),
         ],
-        "the walk should hold exactly the declared suffixes, minus every exclusion"
+        "the walk should hold every markdown and Rust file, minus every exclusion"
     );
 }
 
@@ -75,12 +75,13 @@ fn each_of_the_three_exclusion_kinds_removes_its_file() {
 }
 
 #[test]
-fn a_suffix_this_project_does_not_declare_is_not_walked() {
-    // The mock declares `md` and `rs` only, so its TOML manifest is walked and its rules text
-    // is not — the opposite of the repository holding it, which declares five suffixes.
+fn a_suffix_the_tool_cannot_parse_is_not_walked() {
+    // The walk is markdown and Rust, compiled in rather than declared, so the mock's own TOML
+    // manifest and its rules text are both outside it whatever the manifest says.
     let names = walked(&model("minimal"));
     assert!(!names.iter().any(|n| n.ends_with(".txt")));
     assert!(!names.iter().any(|n| n.ends_with(".tsv")));
+    assert!(!names.iter().any(|n| n.ends_with(".toml")));
 }
 
 #[test]
@@ -318,7 +319,7 @@ mod planted {
     /// The rows must account for every finding a whole run produces, which
     /// `the_families_partition_every_finding` asserts, so a family cannot be left out of this
     /// table without a test failing.
-    const PLANTED: [(Only, usize, &str); 7] = [
+    const PLANTED: [(Only, usize, &str); 8] = [
         (Only::CITATIONS, 5, "no rule says this"),
         (Only::SLUGS, 6, "is referenced"),
         (Only::PATHS, 1, "does not exist"),
@@ -326,6 +327,7 @@ mod planted {
         (Only::INTERPRETATIONS, 1, "has no entry in the register"),
         (Only::UNCOVERED, 1, "is outside the walk"),
         (Only::GENERATED, 2, "the generated file is missing"),
+        (Only::REGIME, 16, "with no verified quote of it in range"),
     ];
 
     #[test]
@@ -620,5 +622,251 @@ mod planted {
         let planted: usize = PLANTED.iter().map(|(_, n, _)| n).sum();
         let whole = findings_of(|_, _, _| HashMap::new(), Only::EVERYTHING);
         assert_eq!(whole.len(), planted, "{whole:#?}");
+    }
+}
+
+/// The citation regime, against a project that plants one violation of each of its rules.
+///
+/// The rules are judged against SCOPES, so a string fixture cannot exercise them: what a
+/// finding turns on is which section or item a claim sits in and how far its quote is, and
+/// neither exists until a real document is walked.
+mod regime {
+    use super::*;
+    use documentation::check::citations::Release;
+    use documentation::check::regime::{self, Rule};
+    use std::collections::HashMap;
+
+    /// Every finding the regime produces over the planted project, ignoring deferrals.
+    fn judged() -> Vec<(Rule, String)> {
+        let manifest = mock("planted");
+        let model = Model::build(&manifest).expect("a model");
+        let tree = manifest.rules_tree();
+        let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
+        let release = Release::new(&text, manifest.rules().body_starts_at);
+        let mut out = Vec::new();
+        for doc in model.documents() {
+            if doc.pin.is_some() {
+                continue;
+            }
+            let (found, _) = regime::check(doc, &release);
+            for j in found {
+                out.push((
+                    j.rule,
+                    format!("{}  {}", j.finding.location(), j.finding.what),
+                ));
+            }
+        }
+        out
+    }
+
+    fn of(rule: Rule) -> Vec<String> {
+        judged()
+            .into_iter()
+            .filter(|(r, _)| *r == rule)
+            .map(|(_, w)| w)
+            .collect()
+    }
+
+    fn one(rule: Rule, needle: &str) {
+        let found = of(rule);
+        assert!(
+            found.iter().any(|f| f.contains(needle)),
+            "expected `{}` to report {needle:?}, got {found:#?}",
+            rule.name()
+        );
+    }
+
+    #[test]
+    fn every_rule_of_the_regime_has_a_planted_violation() {
+        // A rule with no fixture is a rule nothing proves fires. The list is the tool's own,
+        // so adding a rule without planting one fails here rather than passing silently.
+        let fired: Vec<Rule> = judged().into_iter().map(|(r, _)| r).collect();
+        let missing: Vec<&str> = Rule::NAMED
+            .iter()
+            .filter(|(_, r)| !fired.contains(r))
+            .map(|(n, _)| *n)
+            .collect();
+        assert!(missing.is_empty(), "no planted violation for: {missing:?}");
+    }
+
+    #[test]
+    fn a_claim_with_no_quote_in_its_scope_is_reported() {
+        one(Rule::QuoteInScope, "no verified quote of it in range");
+    }
+
+    #[test]
+    fn a_quote_in_a_neighbouring_scope_does_not_discharge_a_claim() {
+        // The whole point of the innermost rule: the quote exists in the document, one
+        // section away, and the reader arriving by grep never sees it.
+        let found = of(Rule::QuoteInScope);
+        assert!(
+            found.iter().any(
+                |f| f.contains("A claim whose quote is in a different scope")
+                    || f.contains("100.1 is claimed")
+            ),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_claim_quoted_beside_it_is_not_reported() {
+        // The negative half. Without it the rule could fire on everything and still pass.
+        let found = of(Rule::QuoteInScope);
+        assert!(
+            !found.iter().any(|f| f.contains("code/regime.rs")),
+            "a doc comment carrying its own quote must pass: {found:#?}"
+        );
+    }
+
+    #[test]
+    fn the_retired_mention_form_is_reported() {
+        one(Rule::MentionRetired, "retired mention form");
+    }
+
+    #[test]
+    fn a_number_the_release_does_not_hold_is_reported() {
+        one(Rule::NumberResolves, "no such rule");
+    }
+
+    #[test]
+    fn the_identifier_form_written_in_prose_is_reported() {
+        one(Rule::IdentifierInProse, "identifier form names");
+    }
+
+    #[test]
+    fn a_name_quoting_part_of_its_rule_is_reported_and_the_whole_body_is_not() {
+        one(Rule::IdentifierFullQuote, "does not carry its whole body");
+        let found = of(Rule::IdentifierFullQuote);
+        assert!(
+            !found.iter().any(|f| f.contains("100.4")),
+            "a name whose rule is quoted entire must pass: {found:#?}"
+        );
+    }
+
+    #[test]
+    fn an_unmarked_omission_is_reported_at_the_end_it_drops() {
+        let found = of(Rule::OmissionMarked);
+        assert!(
+            found.iter().any(|f| f.contains("drops the rule's opening")),
+            "{found:#?}"
+        );
+        assert!(
+            found.iter().any(|f| f.contains("drops the rule's tail")),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_fragment_under_the_floor_is_reported() {
+        one(Rule::FragmentLongEnough, "under the floor");
+    }
+
+    #[test]
+    fn a_parent_rule_quoted_whole_is_reported_and_a_leaf_rule_is_not() {
+        one(Rule::ParentRuleIsNotItsSubrules, "has subrules of its own");
+        let found = of(Rule::ParentRuleIsNotItsSubrules);
+        assert!(
+            !found.iter().any(|f| f.contains("100.4")),
+            "a rule with no subrules must pass: {found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_rule_number_that_is_data_produces_no_claim() {
+        // A code span, and a string bound to a name. Neither is a citation, so neither can
+        // be reported for lacking a quote.
+        let found = of(Rule::QuoteInScope);
+        assert!(
+            !found
+                .iter()
+                .any(|f| f.contains("A rule number that is data")),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_quotation_no_marker_claims_is_reported() {
+        one(Rule::QuoteHasNoMarker, "no marker claims it");
+    }
+
+    #[test]
+    fn a_quote_in_the_enclosing_section_does_not_discharge_a_claim_in_a_subsection() {
+        // There is no outward search, and this is the fixture that pins it: the quote is one
+        // level out, which a reader arriving by grep at the subsection never sees.
+        one(Rule::QuoteInScope, "A claim in the subsection under it");
+    }
+
+    #[test]
+    fn a_claim_further_from_its_quote_than_the_cap_is_reported() {
+        // Same section, same rule, quote present — only the distance differs. Without this
+        // the cap could be removed entirely and every test would still pass.
+        one(
+            Rule::QuoteInScope,
+            "A claim further from its quote than the cap allows",
+        );
+    }
+
+    #[test]
+    fn a_deferred_rule_is_counted_and_does_not_fail_the_run() {
+        let manifest = mock("planted");
+        let model = Model::build(&manifest).expect("a model");
+        let tree = manifest.rules_tree();
+        let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
+        let releases =
+            HashMap::from([(None, Release::new(&text, manifest.rules().body_starts_at))]);
+        let (findings, counts) = regime::run(&model, &manifest, &releases);
+        // The planted project defers nothing, so every finding is a finding.
+        assert!(counts.backlog.is_empty());
+        assert!(!findings.is_empty());
+    }
+
+    #[test]
+    fn a_deferral_holds_its_rule_back_counts_it_and_retires_itself() {
+        // Nothing exercised a NON-EMPTY deferral before, so the mechanism the whole migration
+        // rests on — hold back, count, and report an entry that has outlived its work — was
+        // pinned by no test at all.
+        let manifest = mock("planted");
+        let model = Model::build(&manifest).expect("a model");
+        let tree = manifest.rules_tree();
+        let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
+        let releases =
+            HashMap::from([(None, Release::new(&text, manifest.rules().body_starts_at))]);
+
+        let (before, _) = regime::run(&model, &manifest, &releases);
+        let held = before
+            .iter()
+            .filter(|f| f.what.contains("retired mention form"))
+            .count();
+        assert!(held > 0, "the fixture must plant at least one");
+
+        let deferring = manifest.with_deferred(&["mention-retired"]);
+        let (after, counts) = regime::run(&model, &deferring, &releases);
+        assert_eq!(
+            after.len(),
+            before.len() - held,
+            "exactly the deferred rule's findings are held back"
+        );
+        assert_eq!(counts.backlog, vec![(Rule::MentionRetired, held)]);
+        assert!(counts.retired.is_empty(), "it still has work outstanding");
+    }
+
+    #[test]
+    fn a_deferral_with_nothing_outstanding_is_reported_as_one_to_delete() {
+        // The self-retirement the whole mechanism rests on: a list that outlives its work is
+        // a list nobody deletes, so a backlog of zero has to say so.
+        let manifest = mock("planted").with_deferred(&["mention-retired"]);
+        let tree = manifest.rules_tree();
+        let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
+        let releases =
+            HashMap::from([(None, Release::new(&text, manifest.rules().body_starts_at))]);
+        // A document with nothing wrong in it, so the deferred rule has nothing to hold.
+        let clean = Model::from_documents(vec![(
+            std::path::PathBuf::from("notes/clean.md"),
+            "# Clean\n\nNothing here cites anything.\n".to_string(),
+        )]);
+        let (findings, counts) = regime::run(&clean, &manifest, &releases);
+        assert!(findings.is_empty(), "{findings:#?}");
+        assert!(counts.backlog.is_empty());
+        assert_eq!(counts.retired, vec![Rule::MentionRetired]);
     }
 }

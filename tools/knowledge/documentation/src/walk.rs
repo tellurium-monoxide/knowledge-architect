@@ -1,4 +1,7 @@
-//! Which files are read, and what a line looks like once its comment leader is gone.
+//! Which files are read.
+//!
+//! What a line MEANS is `source`'s: the grammar for the file's kind says which byte ranges
+//! are prose, so nothing here strips a prefix off anything.
 
 use std::path::{Component, Path, PathBuf};
 
@@ -12,7 +15,7 @@ use crate::manifest::Walk;
 pub fn live_files(root: &Path, walk: &Walk) -> std::io::Result<Vec<PathBuf>> {
     let excluded: Vec<PathBuf> = walk.exclude.iter().map(|p| root.join(p)).collect();
     let mut out = Vec::new();
-    collect(root, walk, &excluded, &mut out)?;
+    collect(root, root, walk, &excluded, &mut out)?;
     // Sorted by path COMPONENT, not by the path as one string. They disagree whenever one
     // directory name is a prefix of another — `a/b` against `a-c/d`, where `-` sorts before
     // `/` — and component order is what the walk being replaced produced.
@@ -25,6 +28,7 @@ fn components(path: &Path) -> Vec<&std::ffi::OsStr> {
 }
 
 fn collect(
+    root: &Path,
     dir: &Path,
     walk: &Walk,
     excluded: &[PathBuf],
@@ -32,89 +36,43 @@ fn collect(
 ) -> std::io::Result<()> {
     for entry in std::fs::read_dir(dir)? {
         let path = entry?.path();
-        let Some(name) = path.file_name().and_then(|n| n.to_str()) else {
+        if path.file_name().and_then(|n| n.to_str()).is_none() {
             continue;
-        };
+        }
         if excluded.contains(&path) {
             continue;
         }
         if path.is_dir() {
-            if !walk.skip_dirs.iter().any(|d| d == name) {
-                collect(&path, walk, excluded, out)?;
+            let rel = path.strip_prefix(root).unwrap_or(&path);
+            if !walk.skip_dirs.iter().any(|d| d == rel) {
+                collect(root, &path, walk, excluded, out)?;
             }
-        } else if is_live(&path, name, walk) {
+        } else if is_live(&path, path.strip_prefix(root).unwrap_or(&path), walk) {
             out.push(path);
         }
     }
     Ok(())
 }
 
-fn is_live(path: &Path, name: &str, walk: &Walk) -> bool {
-    !walk.skip_files.iter().any(|f| f == name)
+/// The file kinds this tool can parse, and therefore the whole of the walk.
+///
+/// **Compiled in rather than declared.** Which suffixes a project holds is a fact about that
+/// project; which of them this tool knows how to parse is a fact about this tool, and only
+/// the second decides what may be walked. A project free to declare its own set would be
+/// conformant with whatever it declared — `suffixes = []` passes every citation check — which
+/// is the same argument `##components-carry-the-same-documents` makes about the document set.
+///
+/// Nothing is left unchecked by narrowing it. `check::uncovered` asserts the inverse, that a
+/// file outside the walk may not name a rule, so a citation written in a manifest or a script
+/// is a finding rather than a silence.
+pub const LIVE_SUFFIXES: [&str; 2] = ["md", "rs"];
+
+fn is_live(path: &Path, rel: &Path, walk: &Walk) -> bool {
+    !walk.skip_files.iter().any(|f| f == rel)
         && path
             .extension()
             .and_then(|e| e.to_str())
-            .is_some_and(|e| walk.suffixes.iter().any(|s| s == e))
-}
-
-/// Whether a file's lines carry comment leaders to strip.
-///
-/// Scoped by suffix, not by content. `#` opens a comment in Python, shell and TOML and opens
-/// a heading in Markdown; Markdown has no comment syntax at all, so there is nothing to strip
-/// there and stripping anyway would corrupt the one file kind the quote conventions were
-/// written for.
-pub fn has_comments(path: &Path, walk: &Walk) -> bool {
-    path.extension()
-        .and_then(|e| e.to_str())
-        .is_some_and(|e| e != "md" && walk.suffixes.iter().any(|s| s == e))
-}
-
-/// One comment leader, removed from the front of a line.
-///
-/// The quote conventions are Markdown's and the walk covers source files, so a quote in a
-/// comment arrives wearing a leader the conventions know nothing about: a doc-comment line
-/// opening with `>` is not a blockquote, because a blockquote starts at the `>` and that one
-/// starts at the `///`.
-///
-/// Indentation goes **with** the leader: a blockquote is recognised at the start of a line
-/// and a comment inside a function is indented, so keeping the indentation would leave every
-/// such blockquote invisible.
-///
-/// A leading `*` is a leader only when a space or the line end follows it. `*"…"*` is the
-/// inline-quote convention, and stripping its opening delimiter would destroy the very quote
-/// this exists to reach.
-pub fn strip_leader(line: &str) -> &str {
-    let body = line.trim_start_matches([' ', '\t']);
-    // Ordered longest-first, matching the alternation order of the pattern this replaces:
-    // `///` and `//!` before `//`, and `*/` before a continuation `*`.
-    for leader in ["///", "//!", "//", "/**", "/*", "*/", "#"] {
-        if let Some(rest) = body.strip_prefix(leader) {
-            return rest.strip_prefix([' ', '\t']).unwrap_or(rest);
-        }
-    }
-    if let Some(rest) = body.strip_prefix('*') {
-        if rest.is_empty() || rest.starts_with([' ', '\t']) {
-            return rest.strip_prefix([' ', '\t']).unwrap_or(rest);
-        }
-    }
-    body
-}
-
-/// A file's text with one comment leader removed per line.
-///
-/// Line count and line order are preserved, so a finding that reports a line number still
-/// reports the right one. A line carrying no leader is left exactly as it is — that line is
-/// code, not prose.
-pub fn strip_leaders(text: &str) -> String {
-    let mut out = text
-        .lines()
-        .map(strip_leader)
-        .collect::<Vec<_>>()
-        .join("\n");
-    if text.ends_with('\n') {
-        out.push('\n');
-    }
-    out
+            .is_some_and(|e| LIVE_SUFFIXES.contains(&e))
 }
 
 #[cfg(test)]
@@ -123,44 +81,31 @@ mod tests {
     use crate::manifest::Walk;
 
     #[test]
-    fn rust_doc_leaders_come_off_with_their_indentation() {
-        assert_eq!(strip_leader("    /// > a blockquote"), "> a blockquote");
-        assert_eq!(strip_leader("//! module doc"), "module doc");
-        assert_eq!(strip_leader("// plain"), "plain");
-    }
-
-    #[test]
-    fn a_block_comment_continuation_is_a_leader_but_an_italic_quote_is_not() {
-        assert_eq!(strip_leader(" * continued"), "continued");
-        assert_eq!(strip_leader(" *"), "");
-        assert_eq!(strip_leader(" */"), "");
-        // The inline-quote convention opens with `*"`. Stripping that `*` would destroy the
-        // quote the whole walk exists to reach.
-        assert_eq!(strip_leader(r#" *"quoted"*"#), r#"*"quoted"*"#);
-    }
-
-    #[test]
-    fn a_hash_leader_comes_off_and_a_line_of_code_does_not() {
-        assert_eq!(strip_leader("# a python comment"), "a python comment");
-        assert_eq!(
-            strip_leader("value = 1  # trailing"),
-            "value = 1  # trailing"
+    fn a_skipped_file_is_named_by_its_path_and_not_by_its_basename() {
+        // A bare name matched anywhere, so exempting the generated index exempted every file
+        // called `index.md` — from the walk and from the inverse assertion both.
+        let walk = Walk {
+            skip_files: vec![PathBuf::from("docs/rules/index.md")],
+            ..Walk::sample()
+        };
+        let declared = PathBuf::from("docs/rules/index.md");
+        assert!(!is_live(&declared, &declared, &walk));
+        let elsewhere = PathBuf::from("docs/plans/index.md");
+        assert!(
+            is_live(&elsewhere, &elsewhere, &walk),
+            "same name, other path"
         );
     }
 
     #[test]
-    fn stripping_preserves_the_line_count() {
-        let text = "// one\ncode();\n/// three\n";
-        assert_eq!(strip_leaders(text), "one\ncode();\nthree\n");
-        assert_eq!(strip_leaders(text).lines().count(), text.lines().count());
-    }
-
-    #[test]
-    fn markdown_has_no_leaders_to_strip() {
+    fn the_walk_covers_markdown_and_rust_only() {
+        assert_eq!(LIVE_SUFFIXES, ["md", "rs"]);
         let walk = Walk::sample();
-        assert!(!has_comments(Path::new("a/b.md"), &walk));
-        for suffix in ["rs", "py", "sh", "toml"] {
-            assert!(has_comments(&PathBuf::from(format!("a/b.{suffix}")), &walk));
+        assert!(is_live(Path::new("a/b.md"), Path::new("a/b.md"), &walk));
+        assert!(is_live(Path::new("a/b.rs"), Path::new("a/b.rs"), &walk));
+        for suffix in ["py", "sh", "toml", "yml", "json", "txt"] {
+            let p = PathBuf::from(format!("a/b.{suffix}"));
+            assert!(!is_live(&p, &p, &walk), "{suffix} must not be walked");
         }
     }
 }

@@ -1,29 +1,37 @@
-//! One pass over a document's lines, producing typed observations.
+//! One pass over a document's prose, producing typed observations.
 //!
-//! Every check reads observations rather than text, so the tree is walked once, each file is
-//! read once, and each line is scanned once. What a check may see is exactly what this
-//! module chose to record.
+//! Every check reads observations rather than text, so the tree is walked once and each file
+//! is read once. What a check may see is exactly what this module chose to record.
 //!
-//! **Two views of a document, and which one a kind is read from is load-bearing.** Rule
-//! markers, bare rule numbers and headings are read from the text with comment leaders
-//! removed, because a citation inside a code comment is a citation. Slugs, path references
-//! and interpretation references are read from the raw text, because they are prose
-//! conventions and a `///` in front of one means it is not at the start of a line. Reading
-//! either kind from the other view silently changes what is found.
+//! **The scanner sees prose and nothing else.** `source` decides which byte ranges of a file
+//! are prose at all — the whole of a markdown document, and a Rust file's comments — so this
+//! module never asks whether a line is code. The implementation it replaces answered that
+//! from a prefix, and three recorded defects came out of the guesses.
+//!
+//! **A rule number inside a code span or a fence is data, not a citation.** A sort key, a
+//! parser input, a line of tool output. Slug and path references are the opposite case: the
+//! conventions put them inside backticks, so a code span is where they are expected and the
+//! exclusion must not reach them.
 
 use std::sync::LazyLock;
 
 use regex::Regex;
 use rules::RuleNumber;
 
+use crate::source::Parsed;
+
 /// How a rule number was written.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum MarkerForm {
     /// `CR:` — a claim about what the rule says. It owes a quote.
     Prose,
-    /// `CR_` with underscores — the identifier form, for a test name that cannot hold
-    /// punctuation. It owes a prose marker with its quote above it.
+    /// The identifier form, in a NAME. It owes the rule's whole body above it, because a name
+    /// has no room to qualify what it asserts.
     Identifier,
+    /// The identifier form written in PROSE, where the prose form fits. Told apart from the
+    /// one above because only the second is what the convention exists for, and a check that
+    /// conflated them would ask a sentence for a quote a name owes.
+    IdentifierInProse,
     /// `CR~` — the number used as a name rather than as a claim about content. It owes no
     /// quote, and marking it keeps the distinction visible instead of silently absent.
     Mention,
@@ -66,8 +74,6 @@ pub enum Observation {
     },
     /// An `R` number naming an interpretation entry.
     InterpRef(u16),
-    /// A line inside a fenced code block, so that a check can tell an example from a claim.
-    Fenced,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -81,8 +87,21 @@ static CR_PROSE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\bCR:(\d{3}\.\d+[a-z]{0,2})\b").unwrap());
 static CR_MENTION: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\bCR~(\d{3}\.\d+[a-z]{0,2})\b").unwrap());
+/// The identifier form, in ANY case.
+///
+/// The prescribed upper-case spelling fails `non_snake_case` under the clippy gate, so every
+/// rule-named test in this tree uses the lower-case one — and a case-sensitive pattern left the
+/// orphan lint structurally dead for the only shape the convention exists for.
 static CR_IDENT: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"\bCR_(\d{3})_(\d+[a-z]{0,2})").unwrap());
+    LazyLock::new(|| Regex::new(r"(?i)\bCR_(\d{3})_(\d+[a-z]{0,2})").unwrap());
+/// The same, ANYWHERE inside a name.
+///
+/// A name is one token, so there is no word boundary to lean on and no prose around it to
+/// mistake for one. The bounded pattern above could not see a marker inside a `test_`-prefixed
+/// name — an underscore is a word character, so the boundary never matched — which left the
+/// convention unenforced for the commonest way to write the shape it exists for.
+static CR_IDENT_IN_NAME: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?i)CR_(\d{3})_(\d+[a-z]{0,2})").unwrap());
 static RULE_TOKEN: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\b(\d{3}\.\d+[a-z]{0,2})\b").unwrap());
 static HEADING: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(#{1,4})\s+(.+?)\s*$").unwrap());
@@ -99,10 +118,17 @@ static SLUG_REF: LazyLock<Regex> = LazyLock::new(|| {
 /// declaration asks this rather than assuming it.
 static COMPONENT_NAME: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^\.?[A-Za-z0-9][A-Za-z0-9._-]*$").unwrap());
-/// A slug is DEFINED where it opens a decision: at the head of a line or of a table cell,
-/// followed by an em dash and the statement. Anywhere else it is a reference.
+/// A slug is DEFINED in a level-three heading, or in a table cell. Anywhere else it is a
+/// reference.
+///
+/// **The heading form takes the slug anywhere in the heading**, so the statement may precede
+/// it: `### The catalog is a question` followed by the slug reads as an outline entry, which
+/// a slug alone does not. Requiring text AFTER the slug is what made a heading carrying
+/// nothing else invisible, and every decision written that way was read as a reference to an
+/// anchor nobody defined.
 static SLUG_DEF: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"^(?:\| `##([a-z0-9][a-z0-9-]{2,})`\s|`##([a-z0-9][a-z0-9-]{2,})`\s+\S)").unwrap()
+    Regex::new(r"^(?:\|\s*`##([a-z0-9][a-z0-9-]{2,})`|###\s+.*?`##([a-z0-9][a-z0-9-]{2,})`)")
+        .unwrap()
 });
 /// Only things shaped like a path = containing a slash. A bare filename in prose is a name,
 /// not a pointer, and flagging those would bury the real dangling references under noise.
@@ -119,8 +145,26 @@ static PIN: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"<!--\s*cr-version:\s*(\d{8})\s*-->").unwrap());
 
 /// The release a file's quotes verify against: its own pin, or `None` for the vendored one.
-pub fn pin(text: &str) -> Option<String> {
-    PIN.captures(text).map(|c| c[1].to_string())
+///
+/// **An illustration of the syntax is not a pin.** This runs over the raw file, so a document
+/// EXPLAINING the mechanism — a README, a plan, a skill — used to repin itself by showing the
+/// form in a fenced example, and then verified its quotes against a release it never chose. The
+/// resolver fetches an absent release over the network, so the symptom was a `curl` failure in
+/// a check that reads no network for anything else.
+pub fn pin(parsed: &Parsed, text: &str) -> Option<String> {
+    let fenced: std::collections::HashSet<u32> = parsed.fenced.iter().copied().collect();
+    for (i, line) in text.lines().enumerate() {
+        let n = i as u32 + 1;
+        // Fenced only. The pin IS an HTML comment, so skipping the inert lines would find
+        // no pin anywhere; what matters is that an ILLUSTRATION of one does not bind.
+        if fenced.contains(&n) {
+            continue;
+        }
+        if let Some(c) = PIN.captures(line) {
+            return Some(c[1].to_string());
+        }
+    }
+    None
 }
 
 /// Can a slug reference name a component called this.
@@ -131,126 +175,166 @@ pub fn is_component_name(name: &str) -> bool {
     COMPONENT_NAME.is_match(name)
 }
 
-/// Scan one document.
-///
-/// `raw` and `stripped` are the same file in the two views described at the top of this
-/// module. They have the same number of lines, so a line number means the same thing in both.
-pub fn scan(raw: &str, stripped: &str, is_markdown: bool) -> Vec<Located> {
+/// Scan one parsed document.
+pub fn scan(parsed: &Parsed) -> Vec<Located> {
+    let fenced: std::collections::HashSet<u32> = parsed.fenced.iter().copied().collect();
+    let inert: std::collections::HashSet<u32> = parsed.inert.iter().copied().collect();
     let mut out = Vec::new();
-    let mut fenced = false;
-    for (i, (raw_line, stripped_line)) in raw.lines().zip(stripped.lines()).enumerate() {
-        let line = i as u32 + 1;
-        let mut push = |what| out.push(Located { line, what });
-
-        // --- the comment-stripped view -------------------------------------------------
-        for c in CR_PROSE.captures_iter(stripped_line) {
-            if let Some(n) = RuleNumber::parse(&c[1]) {
-                push(Observation::RuleMarker {
-                    number: n,
-                    form: MarkerForm::Prose,
-                });
-            }
-        }
-        for c in CR_MENTION.captures_iter(stripped_line) {
-            if let Some(n) = RuleNumber::parse(&c[1]) {
-                push(Observation::RuleMarker {
-                    number: n,
-                    form: MarkerForm::Mention,
-                });
-            }
-        }
-        for c in CR_IDENT.captures_iter(stripped_line) {
-            // The pattern this replaces ends in a lookahead for `_` or a word boundary, so
-            // that a marker embedded in a longer test name is still recognised while one
-            // whose letter suffix runs past two is not. Rust's engine has no lookahead; the
-            // character after the match answers the same question, and the greedy suffix
-            // cannot be shortened into a match the lookahead would have accepted.
-            let after = stripped_line[c.get(0).unwrap().end()..].chars().next();
-            if after.is_some_and(|c| c.is_alphanumeric() && c != '_') {
+    for region in &parsed.prose {
+        let mut line_start = 0usize;
+        for (i, line) in region.text.split('\n').enumerate() {
+            let at = line_start;
+            line_start += line.len() + 1;
+            let n = region.file_line(i);
+            // Commented out. Parking a section by wrapping it in an HTML comment left its
+            // slug defined and its anchor pointing at text no reader sees.
+            if inert.contains(&n) {
                 continue;
             }
-            if let Some(n) = RuleNumber::parse(&format!("{}.{}", &c[1], &c[2])) {
-                push(Observation::RuleMarker {
-                    number: n,
-                    form: MarkerForm::Identifier,
+            let mut push = |what| out.push(Located { line: n, what });
+            // Data, never a citation: a BARE rule number inside a code span is a value being
+            // displayed — a sort key, a parser input, a line of tool output.
+            //
+            // **A MARKER is never data, wherever it sits.** It is explicit intent, and
+            // applying this test to one made `` `CR:104.3a` `` erase its own claim: no quote
+            // owed, no number resolved, nothing linted, and the file absent from the bump
+            // work list. Backticking is reflexive here, so that shape reads as typography.
+            //
+            // Slugs and paths are backticked BY CONVENTION and are never tested either.
+            let data = |m: regex::Match| region.is_code(at + m.start());
+
+            for c in CR_PROSE.captures_iter(line) {
+                if let Some(number) = RuleNumber::parse(&c[1]) {
+                    push(Observation::RuleMarker {
+                        number,
+                        form: MarkerForm::Prose,
+                    });
+                }
+            }
+            for c in CR_MENTION.captures_iter(line) {
+                if let Some(number) = RuleNumber::parse(&c[1]) {
+                    push(Observation::RuleMarker {
+                        number,
+                        form: MarkerForm::Mention,
+                    });
+                }
+            }
+            for c in CR_IDENT.captures_iter(line) {
+                let whole = c.get(0).unwrap();
+                // The ONE marker a code span exempts, and it is the one the convention
+                // names: inside backticks the identifier form is naming an identifier —
+                // a test, a fixture — rather than claiming what a rule says.
+                if data(whole) {
+                    continue;
+                }
+                // A marker embedded in a longer name is still a marker; one whose letter
+                // suffix runs past two is not. The character after the match answers it,
+                // Rust's engine having no lookahead.
+                let after = line[whole.end()..].chars().next();
+                if after.is_some_and(|c| c.is_alphanumeric() && c != '_') {
+                    continue;
+                }
+                if let Some(number) = RuleNumber::parse(&format!("{}.{}", &c[1], &c[2])) {
+                    push(Observation::RuleMarker {
+                        number,
+                        form: MarkerForm::IdentifierInProse,
+                    });
+                }
+            }
+            for c in RULE_TOKEN.captures_iter(line) {
+                if data(c.get(0).unwrap()) {
+                    continue;
+                }
+                if let Some(n) = RuleNumber::parse(&c[1]) {
+                    push(Observation::RuleToken(n));
+                }
+            }
+            // A heading-shaped line inside a fence is an ILLUSTRATION. The generated index
+            // labels each citation by the last heading seen, so one in a fenced example
+            // relabelled every entry after it.
+            if let Some(c) = HEADING.captures(line).filter(|_| !fenced.contains(&n)) {
+                push(Observation::Heading {
+                    level: c[1].len() as u8,
+                    text: c[2].to_string(),
                 });
             }
-        }
-        for c in RULE_TOKEN.captures_iter(stripped_line) {
-            if let Some(n) = RuleNumber::parse(&c[1]) {
-                push(Observation::RuleToken(n));
-            }
-        }
-        if let Some(c) = HEADING.captures(stripped_line) {
-            // A `##` in a Python or shell file becomes `# …` once one leader is stripped and
-            // is then read as a heading. That is the behaviour of the implementation this
-            // replaces, and it is reproduced rather than corrected: changing it would change
-            // the section labels in a generated index, which is a decision to take on its
-            // own.
-            push(Observation::Heading {
-                level: c[1].len() as u8,
-                text: c[2].to_string(),
-            });
-        }
-
-        // --- the raw view ---------------------------------------------------------------
-        if raw_line.trim_start().starts_with("```") {
-            fenced = !fenced;
-            push(Observation::Fenced);
-            continue;
-        }
-        if fenced {
-            push(Observation::Fenced);
-        }
-        if !fenced {
-            if let Some(c) = SLUG_DEF.captures(raw_line.trim_start()) {
-                let slug = c.get(1).or_else(|| c.get(2)).unwrap().as_str();
-                push(Observation::SlugDef(slug.to_string()));
-            }
-            // Both halves of the convention are guarded by the same flag. A slug inside a
-            // fence is an ILLUSTRATION of the form, not a use of it, and there is no way to
-            // write the illustration that is not a finding otherwise: unqualified it names no
-            // component, and qualified it names a slug the example invented. Every document
-            // that explains how to write a reference has to hold one.
+            // A FENCE suppresses the slug conventions and nothing else. Every document that
+            // explains how to write a reference has to hold one, and there is no way to write
+            // the illustration that is not a finding otherwise: unqualified it names no
+            // component, and qualified it names a slug the example invented.
             //
-            // Paths and interpretation numbers are NOT guarded here, deliberately. Both need
-            // backticks inside a fence to be found at all, which is rare, and neither has been
-            // seen to fire on an example.
-            for c in SLUG_REF.captures_iter(raw_line) {
+            // It does NOT suppress rule numbers. A fenced sketch in a design document comments
+            // its rules on purpose, and reading those as data lost 34 citations in this tree.
+            let illustration = fenced.contains(&n);
+            if region.structural && !illustration {
+                // A slug DEFINES a decision, and a decision's home is a component's design
+                // document. A source comment is not one, so a slug written there defines
+                // nothing — while a REFERENCE from a source comment is ordinary and is
+                // scanned below.
+                if let Some(c) = SLUG_DEF.captures(line.trim_start()) {
+                    let slug = c.get(1).or_else(|| c.get(2)).unwrap().as_str();
+                    push(Observation::SlugDef(slug.to_string()));
+                }
+            }
+            // Interpretation numbers are NOT guarded by the fence, deliberately: one needs no
+            // delimiter to be found, none has been seen to fire on an example, and the
+            // register's index is built from them.
+            if region.structural {
+                for c in INTERP_REF.captures_iter(line) {
+                    let start = c.get(0).unwrap().start();
+                    let before = line[..start].chars().next_back();
+                    if before.is_some_and(|c| c.is_alphanumeric() || c == '_' || c == '.') {
+                        continue;
+                    }
+                    if let Ok(n) = c[1].parse() {
+                        push(Observation::InterpRef(n));
+                    }
+                }
+            }
+            for c in SLUG_REF.captures_iter(line) {
+                if illustration {
+                    continue;
+                }
                 push(Observation::SlugRef {
                     component: c.get(1).map(|m| m.as_str().to_string()),
                     slug: c[2].to_string(),
                 });
             }
-        }
-        for c in COMPONENT_PATH_REF.captures_iter(raw_line) {
-            push(Observation::PathRef {
-                component: Some(c[1].to_string()),
-                path: c[2].to_string(),
-            });
-        }
-        for c in PATH_REF.captures_iter(raw_line) {
-            push(Observation::PathRef {
-                component: None,
-                path: c[1].to_string(),
-            });
-        }
-        if is_markdown {
-            for c in INTERP_REF.captures_iter(raw_line) {
-                // The pattern this replaces opens with a lookbehind rejecting a preceding
-                // word character or full stop, so the `R` inside a `CR:` marker and that of a word
-                // are not entry references. The character before the match answers it.
-                let start = c.get(0).unwrap().start();
-                let before = raw_line[..start].chars().next_back();
-                if before.is_some_and(|c| c.is_alphanumeric() || c == '_' || c == '.') {
-                    continue;
-                }
-                if let Ok(n) = c[1].parse() {
-                    push(Observation::InterpRef(n));
-                }
+            for c in COMPONENT_PATH_REF.captures_iter(line) {
+                push(Observation::PathRef {
+                    component: Some(c[1].to_string()),
+                    path: c[2].to_string(),
+                });
+            }
+            for c in PATH_REF.captures_iter(line) {
+                push(Observation::PathRef {
+                    component: None,
+                    path: c[1].to_string(),
+                });
             }
         }
     }
+    // The identifier form lives in a NAME, which is code. Nothing above can see it, and it is
+    // the one shape the convention was written for.
+    for (line, name) in &parsed.names {
+        for c in CR_IDENT_IN_NAME.captures_iter(name) {
+            let whole = c.get(0).unwrap();
+            let after = name[whole.end()..].chars().next();
+            if after.is_some_and(|c| c.is_alphanumeric() && c != '_') {
+                continue;
+            }
+            if let Some(number) = RuleNumber::parse(&format!("{}.{}", &c[1], &c[2])) {
+                out.push(Located {
+                    line: *line,
+                    what: Observation::RuleMarker {
+                        number,
+                        form: MarkerForm::Identifier,
+                    },
+                });
+            }
+        }
+    }
+    out.sort_by_key(|l| l.line);
     out
 }
 
@@ -263,7 +347,18 @@ mod tests {
     const OTHER: &str = "613.8c"; // CR~613.8c
 
     fn scan_md(text: &str) -> Vec<Observation> {
-        scan(text, text, true).into_iter().map(|l| l.what).collect()
+        scan(&crate::source::md::parse(text))
+            .into_iter()
+            .map(|l| l.what)
+            .collect()
+    }
+
+    /// The same, over a Rust file, so a test can say which conventions reach source comments.
+    fn scan_rs(text: &str) -> Vec<Observation> {
+        scan(&crate::source::rs::parse(text))
+            .into_iter()
+            .map(|l| l.what)
+            .collect()
     }
 
     fn markers(text: &str) -> Vec<(String, MarkerForm)> {
@@ -289,27 +384,125 @@ mod tests {
     }
 
     #[test]
-    fn an_identifier_marker_must_start_the_identifier_it_sits_in() {
+    fn an_identifier_marker_is_found_anywhere_in_a_name() {
         let ident = RULE.replace('.', "_");
-        // Opening the name: recognised, and the trailing text does not end it.
-        let opens = format!("fn CR_{ident}_holds() {{}}");
+        for name in [
+            format!("fn CR_{ident}_holds() {{}}"),
+            // Prefixed. An underscore is a word character, so a bounded pattern never matched
+            // here — and `test_…` is the commonest way to write the shape the convention
+            // exists for, which left it unenforced for exactly that shape.
+            format!("fn test_cr_{ident}_holds() {{}}"),
+        ] {
+            let seen: Vec<(String, MarkerForm)> = scan(&crate::source::rs::parse(&name))
+                .into_iter()
+                .filter_map(|l| match l.what {
+                    Observation::RuleMarker { number, form } => Some((number.to_string(), form)),
+                    _ => None,
+                })
+                .collect();
+            assert_eq!(
+                seen,
+                vec![(RULE.to_string(), MarkerForm::Identifier)],
+                "{name}"
+            );
+        }
+    }
+
+    #[test]
+    fn an_identifier_marker_in_prose_is_told_apart_from_one_in_a_name() {
+        // Only the second is what the convention exists for. A check that conflated them
+        // would ask a sentence for the quote a name owes.
+        let ident = RULE.replace('.', "_");
+        let prose = format!("the test cr_{ident}_holds covers it");
         assert_eq!(
-            markers(&opens),
-            vec![(RULE.to_string(), MarkerForm::Identifier)]
+            markers(&prose),
+            vec![(RULE.to_string(), MarkerForm::IdentifierInProse)]
         );
-        // Prefixed by anything word-shaped: NOT recognised, because the pattern opens with a
-        // word boundary. Verified against the implementation being replaced, which returns
-        // no match for the same input. This is a live false negative — a test named in the
-        // `test_…` style carries a marker that nothing checks — and it is reproduced rather
-        // than corrected, because widening it changes the convention rather than the port.
-        let prefixed = format!("fn test_CR_{ident}_holds() {{}}");
-        assert!(markers(&prefixed).is_empty());
     }
 
     #[test]
     fn an_identifier_marker_with_too_long_a_suffix_is_not_one() {
-        let text = "fn test_CR_613_8cde() {}";
-        assert!(markers(text).is_empty());
+        // Through `rs::parse`, not `scan_md`. Scanned as MARKDOWN this reached neither
+        // identifier pattern, so it passed with both suffix guards removed and pinned
+        // nothing at all — while reading as though it covered names.
+        const TOO_LONG: &str = "fn cr_613_8cde_holds() {}";
+        let seen: Vec<Observation> = scan(&crate::source::rs::parse(TOO_LONG))
+            .into_iter()
+            .map(|l| l.what)
+            .collect();
+        assert!(
+            !seen
+                .iter()
+                .any(|o| matches!(o, Observation::RuleMarker { .. })),
+            "{seen:?}"
+        );
+        // The control: two letters IS a rule number, and must still be found.
+        const OK: &str = "fn cr_613_8c_holds() {}";
+        assert!(scan(&crate::source::rs::parse(OK))
+            .into_iter()
+            .any(|l| matches!(l.what, Observation::RuleMarker { .. })));
+    }
+
+    #[test]
+    fn a_heading_inside_a_fence_is_an_illustration() {
+        // The generated index labels each citation by the last heading seen, so a
+        // heading-shaped line in a fenced example relabelled every entry after it. Two live
+        // sites in this repository showed one.
+        let fenced = "```sh\n# not a heading, a shell comment\n```\n";
+        assert!(
+            !scan_md(fenced)
+                .iter()
+                .any(|o| matches!(o, Observation::Heading { .. })),
+            "{:?}",
+            scan_md(fenced)
+        );
+        assert!(scan_md("# A heading\n")
+            .iter()
+            .any(|o| matches!(o, Observation::Heading { .. })));
+    }
+
+    #[test]
+    fn a_marker_inside_a_code_span_is_still_a_marker() {
+        // Backticking is reflexive here, so `` `CR:x` `` reads as typography. Treating it as
+        // data erased the claim entirely: no quote owed, no number resolved, nothing linted.
+        let spanned = format!("the engine follows `CR:{RULE}` here");
+        assert_eq!(
+            markers(&spanned),
+            vec![(RULE.to_string(), MarkerForm::Prose)]
+        );
+        // A BARE number in a code span is still data — a sort key, a parser input.
+        let bare = format!("the sort key is `{RULE}`");
+        assert!(scan_md(&bare)
+            .iter()
+            .all(|o| !matches!(o, Observation::RuleToken(_))));
+    }
+
+    #[test]
+    fn an_inline_html_tag_does_not_park_its_line() {
+        // Only an HTML COMMENT parks text. Treating every inline tag as one erased every
+        // citation, slug and path reference on a line carrying `Vec<Player>`.
+        let tagged = format!("the engine stores a Vec<Player> and follows {RULE} here");
+        assert!(
+            scan_md(&tagged)
+                .iter()
+                .any(|o| matches!(o, Observation::RuleToken(_))),
+            "{:?}",
+            scan_md(&tagged)
+        );
+    }
+
+    #[test]
+    fn a_slug_inside_an_html_comment_defines_nothing() {
+        // Parking a section by commenting it out left its anchor defined and pointing at
+        // text no reader sees.
+        let parked = format!("<!--\n### Parked `##{SLUG}`\n-->\n");
+        assert!(
+            !scan_md(&parked)
+                .iter()
+                .any(|o| matches!(o, Observation::SlugDef(_))),
+            "{:?}",
+            scan_md(&parked)
+        );
     }
 
     #[test]
@@ -349,9 +542,14 @@ mod tests {
     }
 
     #[test]
-    fn a_slug_opens_a_decision_at_a_line_head_or_in_a_table_cell() {
-        let head = format!("`##{SLUG}`  **The statement.**");
-        assert!(scan_md(&head).contains(&Observation::SlugDef(SLUG.into())));
+    fn a_slug_opens_a_decision_in_a_level_three_heading_or_in_a_table_cell() {
+        // The statement precedes the slug, which is what makes the heading an outline entry.
+        let stated = format!("### The statement `##{SLUG}`");
+        assert!(scan_md(&stated).contains(&Observation::SlugDef(SLUG.into())));
+        // A heading carrying nothing but the slug is a definition too. Requiring text after
+        // it is what made every such heading invisible.
+        let alone = format!("### `##{SLUG}`");
+        assert!(scan_md(&alone).contains(&Observation::SlugDef(SLUG.into())));
         let cell = format!("| `##{CELL_SLUG}` | holds |");
         assert!(scan_md(&cell).contains(&Observation::SlugDef(CELL_SLUG.into())));
         // Mid-sentence it is a reference, not a definition.
@@ -363,6 +561,30 @@ mod tests {
         assert!(!scan_md(&mid)
             .iter()
             .any(|o| matches!(o, Observation::SlugDef(_))));
+    }
+
+    #[test]
+    fn a_slug_at_a_bare_line_head_is_no_longer_a_definition() {
+        // The form that predates the heading rule. It defines nothing, so every pointer at
+        // it is reported as dangling — which is how the migration is visible rather than
+        // silent.
+        let old = format!("`##{SLUG}` — **The statement.**");
+        assert!(!scan_md(&old)
+            .iter()
+            .any(|o| matches!(o, Observation::SlugDef(_))));
+    }
+
+    #[test]
+    fn a_slug_in_a_deeper_or_shallower_heading_is_not_a_definition() {
+        for level in ["##", "####"] {
+            let head = format!("{level} The statement `##{SLUG}`");
+            assert!(
+                !scan_md(&head)
+                    .iter()
+                    .any(|o| matches!(o, Observation::SlugDef(_))),
+                "level {level} must not define"
+            );
+        }
     }
 
     #[test]
@@ -385,6 +607,45 @@ mod tests {
                 (Some(COMPONENT.to_string()), SLUG.to_string()),
                 (None, SLUG.to_string()),
             ]
+        );
+    }
+
+    #[test]
+    fn a_source_comment_carries_pointers_but_defines_no_decision() {
+        // A slug's home is a component's design document, so a source comment may point at a
+        // decision and may not open one. The reference still has to be found, because that is
+        // how a doc comment cites the argument for the code under it.
+        let src =
+            format!("/// argued at `{COMPONENT}#{SLUG}`\n/// ### stated `##{SLUG}`\nfn f() {{}}\n");
+        let seen = scan_rs(&src);
+        assert!(seen.contains(&Observation::SlugRef {
+            component: Some(COMPONENT.to_string()),
+            slug: SLUG.to_string(),
+        }));
+        assert!(!seen.iter().any(|o| matches!(o, Observation::SlugDef(_))));
+    }
+
+    #[test]
+    fn a_rule_number_in_a_string_literal_is_not_a_citation() {
+        // The recorded fixture problem: this tool walks its own source, so a rule number
+        // written as test data was live content and had to be interpolated to hide it.
+        let src = format!("fn f() {{\n    let n = \"{RULE}\";\n}}\n");
+        assert!(scan_rs(&src).is_empty(), "{:?}", scan_rs(&src));
+    }
+
+    #[test]
+    fn a_rule_number_in_a_code_span_is_data_rather_than_a_citation() {
+        let live = format!("The sort key is {RULE} in prose.");
+        assert!(scan_md(&live)
+            .iter()
+            .any(|o| matches!(o, Observation::RuleToken(_))));
+        let data = format!("The sort key is `{RULE}` in a code span.");
+        assert!(
+            !scan_md(&data)
+                .iter()
+                .any(|o| matches!(o, Observation::RuleToken(_))),
+            "{:?}",
+            scan_md(&data)
         );
     }
 
@@ -467,7 +728,7 @@ mod tests {
     fn interpretation_references_are_markdown_only() {
         // In Rust an `R`-shaped token is usually a type parameter, and reading one as a
         // citation is worse than missing one.
-        let refs = scan("fn f<R15>() {}", "fn f<R15>() {}", false);
+        let refs = scan(&crate::source::rs::parse("fn f<R15>() {}"));
         assert!(!refs
             .iter()
             .any(|l| matches!(l.what, Observation::InterpRef(_))));
@@ -480,7 +741,21 @@ mod tests {
         // tool's own test fixture as an opt-out from the change detector.
         const DATE: &str = "20260807";
         let text = format!("intro\n<!-- cr-version: {DATE} -->\n");
-        assert_eq!(pin(&text).as_deref(), Some(DATE));
-        assert_eq!(pin("no pin here"), None);
+        assert_eq!(
+            pin(&crate::source::md::parse(&text), &text).as_deref(),
+            Some(DATE)
+        );
+        const NONE: &str = "no pin here";
+        assert_eq!(pin(&crate::source::md::parse(NONE), NONE), None);
+    }
+
+    #[test]
+    fn a_pin_shown_inside_a_fence_is_an_illustration_and_binds_nothing() {
+        // A document EXPLAINING the mechanism used to repin itself by showing the form, and
+        // then verified its quotes against a release it never chose. The resolver fetches an
+        // absent release, so the symptom was a network failure in a check that reads none.
+        const DATE: &str = "20260807";
+        let text = format!("intro\n\n```markdown\n<!-- cr-version: {DATE} -->\n```\n");
+        assert_eq!(pin(&crate::source::md::parse(&text), &text), None);
     }
 }

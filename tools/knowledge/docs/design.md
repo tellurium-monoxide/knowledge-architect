@@ -10,8 +10,9 @@ deleting this tool. How it works and how the pieces inside divide the work belon
 What otherwise shapes it is `tools/README.md`, `knowledge.toml`, and the module documentation at
 the top of each file under `knowledge@documentation/src/` and `knowledge@rules/src/`.
 
-`##model-then-checks` — **The model is built once, and every check is a pure function over it.** A
-check never reads a file, spawns a process, or knows how the walk works. Anything a check cannot
+### The model is built once, and every check is a pure function over it `##model-then-checks`
+
+A check never reads a file, spawns a process, or knows how the walk works. Anything a check cannot
 fetch for itself is resolved by the caller and handed in: the parsed releases, the pinned date, the
 generated files as committed, one listing of what exists, and the files the walk does not cover.
 
@@ -35,24 +36,25 @@ bytes match the pin, whether the archive has provenance, whether a needed releas
 subject _is_ filesystem state, so there is no model to hand them. That is a different thing from a
 check over documents, which stays pure.
 
-`##families-are-the-checks` — **`--only` selects a set over the nine checks, one family per check,
-and a family is named for its check rather than for whoever reads it.** Eight of the nine are the
-modules under `knowledge@documentation/src/check/`. The ninth is `corpus`, which is `rules::integrity::check`
-and sits outside them because its subject is filesystem state rather than the model. `Only` is a set, so
-one invocation asks for any combination of them. A report states which families it performed, and a
-family that did not run contributes no count: printed as a zero, a count nobody took reads as
-*nothing found* for a check that never ran, which is the failure this tool exists to prevent. Two
-names cover the groupings that had callers before the set existed. `citations` is the one the
-write-time hook runs alone, and `structure` is every family but that one.
+### `--only` selects a set over the check families, one family per check, and a family is named for its check rather than for whoever reads it `##families-are-the-checks`
 
-`##components-carry-the-same-documents` — **`knowledge.toml [project]` names the components, and
-every component carries the same documents.** The project root is one of them, named by
-`project.name`; every other is a project-relative directory, named by the basename of that path.
-Nothing is discovered by filename, so a document in a directory that is not a component is not that
-kind of document: nothing counts it and nothing reports it. A component that does not carry one it
-owes is a finding, and `knowledge@documentation/src/check/components.rs` is where both directions are asserted. `outstanding`
-builds the component paths rather than matching `file_name()` over the walk, which is what makes
-its total a claim rather than a sample.
+All but one are the modules under `knowledge@documentation/src/check/`. The remaining one is `corpus`,
+which is `rules::integrity::check` and sits outside them because its subject is filesystem state
+rather than the model. `Only` is a set, so one invocation asks for any combination of them. A report
+states which families it performed, and a family that did not run contributes no count: printed as a
+zero, a count nobody took reads as _nothing found_ for a check that never ran, which is the failure
+this tool exists to prevent. Two names cover the groupings that had callers before the set existed.
+`citations` is the one the write-time hook runs alone, and `structure` is every family but that one.
+
+### `knowledge.toml [project]` names the components, and every component carries the same documents `##components-carry-the-same-documents`
+
+The project root is one of them, named by `project.name`; every other is a project-relative
+directory, named by the basename of that path. Nothing is discovered by filename, so a document in a
+directory that is not a component is not that kind of document: nothing counts it and nothing
+reports it. A component that does not carry one it owes is a finding, and
+`knowledge@documentation/src/check/components.rs` is where both directions are asserted.
+`outstanding` builds the component paths rather than matching `file_name()` over the walk, which is
+what makes its total a claim rather than a sample.
 
 **A directory may carry outstanding state without being a component**, and `additional-trackers`
 names those files one at a time. `.claude/` is the case: what is open about the agent configuration
@@ -64,18 +66,100 @@ file called anything else joins one half or the other by accident.
 **Which components exist is declared, and what a component carries is compiled in.** That is the
 one exception to `tools/README.md`'s rule that nothing about a repository is compiled into the tool,
 and it is not an exception to it: the list in `manifest.rs` is not this repository's, it is what
-the word *component* means here. A project free to declare its own set would be conformant with
+the word _component_ means here. A project free to declare its own set would be conformant with
 whatever it declared, which is the same as being checked against nothing.
 
 **A component directory that does not exist is one finding rather than one per document.** Six
 findings from one cause bury the cause, and the repair for all of them is the same line of the
 manifest.
 
-`##a-slug-belongs-to-a-component` — **A slug is unique inside its component, and a reference names
-the component it means: `` `<component>#<slug>` ``.** A definition is owned by where its document
-sits — the deepest component whose path holds it — rather than by anything the line says, so moving
-a document moves the decisions in it. Two components may therefore each record a decision they call
-the same word, which is what qualifying a reference buys.
+### The grammar for a file's kind decides which of its bytes are prose `##grammars-not-prefixes`
+
+A markdown document is prose entire. A Rust file is prose only where its grammar says so — its
+comments, and the string literals that are not bound to a name. Nothing is decided by a line's
+prefix.
+
+**A doc comment's content is markdown**, so the markdown analysis runs over a document and over
+every Rust comment alike, and a heading, a fence or a blockquote means the same in both.
+
+**Prefixes were the single cause of four defects**, each found by a checker or a review rather
+than by reasoning: a formatted return type opening a line with an angle bracket read as a
+blockquote; a float literal read as a rule number; a test fixture's string literal read as live
+content; and a rule quoted inside a block comment lost because the `*` continuation was left in
+front of it.
+
+**Three readings of "data" were too broad and the measurement caught each.** A fenced block is
+not data — a sketch in a design document comments its rules on purpose, and reading fences as
+data lost 34 citations. A string literal is data only when BOUND to a name — an assertion's
+message cites rules for a human to read on failure, and reading every literal as data lost 32
+of them. A macro body is not an argument list, so a binding still applies inside one.
+
+**A name is the one thing prose cannot reach**, and the identifier form of a rule marker exists
+for names. Names are collected where they are DECLARED. Collecting every occurrence made a call
+site and a `use` import citations owing the rule's whole body in the caller's scope, where there
+is nowhere to put it.
+
+### A parse that cannot be trusted is reported, never silent `##a-failed-parse-is-loud`
+
+A file the walk cannot read, a source the grammar cannot parse, and a source nested deeper than
+the walk goes all produce a finding naming the file. Silence would remove every citation in it
+from the walk while the run reported success, which is indistinguishable from a clean file and
+is the failure this tool exists to prevent.
+
+One byte of Windows-1252 — a pasted em dash — put a document outside the walk AND outside the
+inverse assertion, so a fabricated quote in it was read by nothing. Unbounded recursion aborted
+the whole run with no file named and no finding printed.
+
+### A quote's claims are judged against the innermost scope, within a bounded distance `##scope-and-distance`
+
+The scope is the level-three subsection in a document and the item in Rust, and there is no
+outward search. A quote may sit either side of the claim it discharges, within
+`MAX_DISTANCE` lines of it.
+
+**Sessions reach files by grep and partial read**, so a quote a thousand lines above a claim is
+one the reader never sees — and a reader who cannot see the rule text cannot tell a right
+citation from a wrong one.
+
+**Either direction, because the conventional shape introduces the rule and then quotes it.**
+Requiring the quote to precede its marker was written into the plan and was wrong; what the
+distance is for is that a reader sees both at once, which does not depend on the order.
+
+**A Rust item's scope reaches up over its doc comment and its attributes**, which the grammar
+makes siblings. Without that the claim in a doc comment and the name it documents fall in
+different scopes, which is the one pair that must agree.
+
+### A rule of the regime a project has not reached is deferred, never disabled `##deferral-retires-itself`
+
+`knowledge.toml [migration]` names rules, and the rule set is compiled in — so a project can say
+only which of a fixed set it has not reached, never invent one it meets. A deferred rule still
+runs; its findings are counted and printed as a backlog on every run, and only the exit code
+changes.
+
+**It retires itself.** A backlog of zero is reported as an entry to delete, so the list cannot
+outlive the work and nothing has to remember to remove a flag.
+
+### A slug is defined in a level-three heading or a table cell, and nowhere else `##a-slug-is-a-heading`
+
+The statement precedes the slug in the heading, so a document outline lists the decisions rather
+than a set of identifiers, and an editor's outline view is the index. The table cell form is
+unchanged and serves the decision tables that predate the heading rule.
+
+**A slug at the head of a plain line defines nothing**, which is what makes the migration off that
+form visible: it is neither a definition nor a reference, so every pointer at an unmigrated anchor is
+reported as dangling rather than resolving to a stale one. The alternative — accepting both forms —
+would have left the two indistinguishable and the migration unfinishable, because nothing would say
+which anchors had moved.
+
+**Requiring text after the slug is what the first attempt got wrong.** A heading carrying nothing
+but the slug then matched nothing, and every reference to those anchors was reported as dangling
+while the definition sat in the file. The pattern takes the slug anywhere in the heading.
+
+### A slug is unique inside its component, and a reference names the component it means: `` `<component>#<slug>` `` `##a-slug-belongs-to-a-component`
+
+A definition is owned by where its document sits — the deepest component whose path holds it —
+rather than by anything the line says, so moving a document moves the decisions in it. Two
+components may therefore each record a decision they call the same word, which is what qualifying a
+reference buys.
 
 **A reference resolves to nothing in three ways, and each is reported as the repair it needs.** The
 component is not declared; the component is declared and does not define that slug; or the
@@ -87,9 +171,9 @@ require the component and see nothing without one, which needs no finding and no
 would also mean every pointer written in the older form stops being checked with nothing saying so,
 and a silent false negative is the failure this tool exists to prevent.
 
-`##watch-reads-the-page` — **The release watch learns the newest release from the page Wizards
-announces it on, and treats "no match" as a failure rather than as an answer.** Two properties
-decide the shape, and they pull the same way.
+### The release watch learns the newest release from the page Wizards announces it on, and treats "no match" as a failure rather than as an answer `##watch-reads-the-page`
+
+Two properties decide the shape, and they pull the same way.
 
 The first is that **the URL is not stable and the announcement is**. The download URL is built from
 a date, so probing forward-dated candidates would need no HTML at all — and the release resolver's
@@ -106,9 +190,13 @@ with no date, and a malformed date — and those four are the ones the design tu
 negative is silent, while a wrong date is loud and is corrected by whoever reads it. A test asserts
 that count, so weakening one of the four into a passing case is visible.
 
-`##local-release-is-separate` — **One function answers whether a release is already in the tree;
-another resolves one, fetching if it must.** The split exists so the question can be asked without
-taking the third branch: the corpus check asserts that every release the tooling needs is vendored
-or archived, and asking that through the resolver would answer it by fetching, which is the thing
-being asserted against. A bump archives the outgoing release, so the property holds by construction;
-what it does not survive is a bump committed without the archive.
+### One function answers whether a release is already in the tree; another resolves one, fetching if it must `##local-release-is-separate`
+
+The split exists so the question can be asked without taking the third branch: the corpus check
+asserts that every release the tooling needs is vendored or archived, and asking that through the
+resolver would answer it by fetching, which is the thing being asserted against. A bump archives the
+outgoing release, so the property holds by construction; what it does not survive is a bump
+committed without the archive.
+
+
+

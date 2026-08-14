@@ -14,13 +14,22 @@ use rules::{norm, Corpus, RuleNumber};
 
 use crate::finding::Finding;
 use crate::model::Document;
-use crate::quote::{self, Quote, QuoteKind};
+use crate::quote::{Quote, QuoteKind};
 use crate::scan::{MarkerForm, Observation};
 
-/// Below this a fragment matches too easily to be evidence.
-pub const MIN_FRAGMENT: usize = 12;
+/// Below this a fragment matches too easily to be evidence of the rule CITED.
+///
+/// It is not a licence to skip one. The floor this replaces COUNTED a short fragment and never
+/// checked it — a silent false negative inside the guarantee, and the summary said only how
+/// many. A short fragment is now checked like any other; what the floor changes is that it can
+/// only come back verified or unverified, never misattributed, because a common short string
+/// matches somewhere in a 500 kB corpus by accident and that verdict would be noise.
+///
+/// `regime::MIN_FRAGMENT` is the same number, and reports the fragment as too short to be
+/// evidence at all. This one governs the verdict; that one governs whether it may be written.
+pub const MIN_FRAGMENT: usize = 30;
 
-/// How far above an identifier marker its prose marker may sit.
+/// How far above an identifier marker its prose marker may sit, in FILE lines.
 const ORPHAN_LOOKBACK: usize = 12;
 
 /// What one release looks like to the checker: the whole text, and one body per rule.
@@ -62,7 +71,7 @@ fn verdict(fragment: &str, rule: &RuleNumber, release: &Release) -> Verdict {
         .is_some_and(|body| body.contains(&n))
     {
         Verdict::Verified
-    } else if release.whole.contains(&n) {
+    } else if n.chars().count() >= MIN_FRAGMENT && release.whole.contains(&n) {
         Verdict::Misattributed
     } else {
         Verdict::Unverified
@@ -76,7 +85,7 @@ pub struct Counts {
     pub verified: usize,
     pub misattributed: usize,
     pub unverified: usize,
-    /// Elided fragments below the floor, which are not checked at all.
+    /// Fragments below the floor. They ARE checked; the count says how many are weak evidence.
     pub short: usize,
     pub commentary: usize,
     pub unmarked: usize,
@@ -158,23 +167,50 @@ fn leading_number(text: &str) -> Option<(RuleNumber, &str)> {
     Some((number, &text[index + space.len_utf8()..]))
 }
 
-/// Elided pieces of a quote that are long enough to be evidence.
-fn fragments(body: &str) -> (Vec<String>, usize) {
+/// The pieces of a quote, split at its elision marks.
+///
+/// **Every non-empty piece is returned and every one is checked.** The version this replaces
+/// held back anything under a floor and reported only a count of them, so a fabricated
+/// seven-character fragment was invisible — which is the failure the floor was meant to prevent,
+/// reached from the other side.
+pub fn fragments(body: &str) -> (Vec<String>, usize) {
     let stripped: String = body.chars().filter(|&c| c != '*').collect();
-    let mut long = Vec::new();
+    let mut pieces = Vec::new();
     let mut short = 0;
     for piece in stripped.split('…') {
         let n = norm(piece);
         if n.is_empty() {
             continue;
         }
-        if n.chars().count() >= MIN_FRAGMENT {
-            long.push(piece.to_string());
-        } else {
+        if n.chars().count() < MIN_FRAGMENT {
             short += 1;
         }
+        pieces.push(piece.to_string());
     }
-    (long, short)
+    (pieces, short)
+}
+
+/// Every quote in a document, inline and blockquoted, each bound to the rule it is offered as.
+///
+/// Shared with `regime`, which asks whether a claim has one rather than whether it verifies.
+pub fn quotes(doc: &Document) -> Vec<Quote> {
+    let mut out = doc.inline_quotes();
+    for block in doc.blocks() {
+        let lines: Vec<String> = block
+            .lines
+            .iter()
+            .map(|l| l.chars().filter(|&c| c != '*').collect::<String>())
+            .collect();
+        for (rule, part) in split_rules(&lines) {
+            out.push(Quote {
+                rule,
+                body: part,
+                line: block.line,
+                kind: QuoteKind::Block,
+            });
+        }
+    }
+    out
 }
 
 /// Verify every quote in one document, and lint its unmarked rule numbers.
@@ -182,8 +218,20 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
     let mut findings = Vec::new();
     let mut counts = Counts::default();
 
-    let mut quotes = quote::inline(&doc.stripped);
-    for block in quote::blocks(&doc.stripped) {
+    // A parse that could not be trusted must be LOUD. Silently it removes every citation in
+    // the file from the walk while the run reports success — indistinguishable from a clean
+    // file, and the guard the premortem named for a grammar that changes under an upgrade.
+    if let Some(trouble) = &doc.parsed.trouble {
+        findings.push(Finding::at(
+            &doc.rel,
+            1,
+            trouble.clone(),
+            "nothing here is verified; fix the source, or the citations in it are unchecked",
+        ));
+    }
+
+    let mut quotes = doc.inline_quotes();
+    for block in doc.blocks() {
         let lines: Vec<String> = block
             .lines
             .iter()
@@ -267,13 +315,60 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
 fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
     let mut findings = Vec::new();
     let (mut unmarked, mut orphans) = (0, 0);
-    let lines: Vec<&str> = doc.stripped.lines().collect();
+    let numbered: Vec<(u32, &str)> = doc
+        .prose_lines()
+        .into_iter()
+        .filter_map(|n| doc.prose_line(n).map(|l| (n, l)))
+        .collect();
 
-    for (i, line) in lines.iter().enumerate() {
-        let n = i as u32 + 1;
+    // Rule text, whichever form carries it. The exemption this replaces was LINE-shaped —
+    // it skipped a line opening with `>` — while the inline form is SPAN-shaped, so a rule
+    // named inside an inline quotation was reported as an unmarked reference. Measured over
+    // the pinned release: 569 of 3 162 rules name another rule inside their own body, so
+    // roughly one rule in six could not be quoted through its cross-reference.
+    let quoted: Vec<(u32, String)> = quotes(doc)
+        .into_iter()
+        .map(|q| (q.line, norm(&q.body)))
+        .collect();
+
+    // Lines the parser actually extracted as a blockquote. A `>` that opens a line elsewhere
+    // — inside a fence, or in an indented code block — yields NO blockquote, so it is never
+    // verified; and skipping it here as though it were rule text meant nothing looked at it
+    // at all. The canonical citation example in this project's own root instructions is that
+    // shape, and an edit reversing the rule it quotes was reported by nothing.
+    let quoted_lines: std::collections::HashSet<u32> = doc
+        .blocks()
+        .iter()
+        .flat_map(|b| b.line..b.line + b.lines.len() as u32)
+        .collect();
+
+    for (n, line) in &numbered {
+        let (n, line) = (*n, *line);
         if line.trim_start().starts_with('>') {
-            continue; // verbatim rule text, not a reference
+            if quoted_lines.contains(&n) {
+                continue; // verbatim rule text, and verified as such
+            }
+            if leading_number(line.trim_start().trim_start_matches('>').trim()).is_some() {
+                unmarked += 1;
+                findings.push(Finding::at(
+                    &doc.rel,
+                    n,
+                    format!(
+                        "this reads as a rule quote and sits where nothing verifies it: {}",
+                        clip(line.trim(), 76)
+                    ),
+                    "a blockquote inside a fenced or indented block is not a blockquote; move \
+                     it into prose, or drop the rule number if it is an illustration",
+                ));
+            }
+            continue;
         }
+        let inside_a_quote = |token: &RuleNumber| {
+            let t = token.to_string();
+            quoted
+                .iter()
+                .any(|(at, body)| *at == n && body.contains(&t))
+        };
         let marked: Vec<&RuleNumber> = doc
             .observations
             .iter()
@@ -292,7 +387,7 @@ fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
             })
             .filter(|(at, _)| *at == n)
         {
-            if !marked.contains(&token) {
+            if !marked.contains(&token) && !inside_a_quote(token) {
                 unmarked += 1;
                 findings.push(Finding::at(
                     &doc.rel,
@@ -306,33 +401,35 @@ fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
                 ));
             }
         }
-        for (_, ident) in doc
-            .observations_of(|o| match o {
-                Observation::RuleMarker { number, form } if *form == MarkerForm::Identifier => {
-                    Some(number)
-                }
-                _ => None,
-            })
-            .filter(|(at, _)| *at == n)
-        {
-            let from = i.saturating_sub(ORPHAN_LOOKBACK);
-            let above = lines[from..i].join("\n");
-            if !above.contains(&format!("CR:{ident}")) {
-                orphans += 1;
-                findings.push(Finding::at(
-                    &doc.rel,
-                    n,
-                    format!("the identifier marker for {ident} has no CR:{ident} above it"),
-                    "a test name cannot carry a quote, so put a prose marker with the quote \
-                     in the comment immediately above",
-                ));
-            }
+    }
+
+    // The identifier form sits in a NAME, which is code, so it has no prose line of its own to
+    // iterate. It is judged from its file line instead, against the prose above it.
+    for (n, ident) in doc.observations_of(|o| match o {
+        Observation::RuleMarker { number, form } if *form == MarkerForm::Identifier => Some(number),
+        _ => None,
+    }) {
+        let above: String = numbered
+            .iter()
+            .filter(|(at, _)| *at < n && n - *at <= ORPHAN_LOOKBACK as u32)
+            .map(|(_, l)| *l)
+            .collect::<Vec<_>>()
+            .join("\n");
+        if !above.contains(&format!("CR:{ident}")) {
+            orphans += 1;
+            findings.push(Finding::at(
+                &doc.rel,
+                n,
+                format!("the identifier marker for {ident} has no CR:{ident} above it"),
+                "a name cannot carry a quote, so put a prose marker with the quote in the \
+                 comment immediately above",
+            ));
         }
     }
     (findings, (unmarked, orphans))
 }
 
-fn clip(s: &str, n: usize) -> String {
+pub fn clip(s: &str, n: usize) -> String {
     s.chars().take(n).collect()
 }
 
@@ -345,6 +442,15 @@ mod tests {
 
     fn n(s: &str) -> RuleNumber {
         RuleNumber::parse(s).expect("a rule number")
+    }
+
+    /// A one-document model over markdown, for a check that reads observations.
+    fn doc_with(text: &str) -> crate::model::Document {
+        let model = crate::model::Model::from_documents(vec![(
+            std::path::PathBuf::from("notes/a.md"),
+            text.to_string(),
+        )]);
+        model.documents()[0].clone()
     }
 
     fn lines(text: &str) -> Vec<String> {
@@ -422,10 +528,27 @@ mod tests {
     }
 
     #[test]
-    fn a_fragment_below_the_floor_is_counted_and_not_checked() {
-        let (long, short) = fragments("a long enough fragment…tiny");
-        assert_eq!(long.len(), 1);
-        assert_eq!(short, 1);
+    fn a_rule_number_inside_a_quote_is_rule_text_and_not_an_unmarked_reference() {
+        // 569 of 3 162 rules name another rule inside their own body, so roughly one rule in
+        // six could not be quoted through its cross-reference. The exemption this pins is
+        // SPAN-shaped; the line-shaped one it replaces covered only the block form.
+        let doc = doc_with(&format!(
+            "per CR:{A}, *\"a fragment long enough to be evidence. See rule {B}.\"*\n"
+        ));
+        let (found, counts) = lint(&doc);
+        assert_eq!(counts.0, 0, "{found:#?}");
+        // The control: the same number in ordinary prose on the same line IS reported.
+        let bare = doc_with(&format!("per CR:{A}, and also {B} in prose\n"));
+        assert_eq!(lint(&bare).1 .0, 1);
+    }
+
+    #[test]
+    fn every_fragment_is_returned_and_the_short_ones_are_counted() {
+        // The split this replaces HELD BACK anything under the floor and reported only how
+        // many, so a fabricated seven-character fragment was never checked against anything.
+        let (pieces, short) = fragments("a fragment comfortably longer than the floor…tiny");
+        assert_eq!(pieces.len(), 2, "both pieces are returned: {pieces:?}");
+        assert_eq!(short, 1, "and the short one is counted");
     }
 
     #[test]

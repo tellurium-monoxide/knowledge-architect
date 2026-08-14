@@ -10,6 +10,7 @@ pub mod components;
 pub mod generated;
 pub mod interpretations;
 pub mod paths;
+pub mod regime;
 pub mod slugs;
 pub mod uncovered;
 
@@ -46,6 +47,8 @@ pub struct Report {
     /// itself, because their subject IS filesystem state.
     pub corpus: rules::integrity::Counts,
     pub changelog_changes: usize,
+    /// What the regime found, and what a deferral is holding back.
+    pub regime: regime::Counts,
     /// Files that opted out of the vendored release, and how many quotes each carries.
     pub pinned: Vec<(String, String, usize)>,
     /// The families this run performed. A count belonging to a family that is not here was
@@ -87,8 +90,9 @@ pub struct Inputs<'a> {
 
 /// Which families of checks to run.
 ///
-/// A set over the nine checks, one family per check, so a caller asks for exactly the subject
-/// it is about to read. Eight are the modules in this directory. The ninth is `corpus`, which
+/// A set over the checks, one family per check, so a caller asks for exactly the subject
+/// it is about to read. All but one are the modules in this directory. The exception is
+/// `corpus`, which
 /// is `rules::integrity::check` and lives outside them for the reason `Report::corpus` gives:
 /// its subject is filesystem state, so there is no model to hand it and it is called by the
 /// binary rather than from `run`.
@@ -115,12 +119,13 @@ impl Only {
     pub const UNCOVERED: Self = Self(1 << 6);
     pub const CHANGES: Self = Self(1 << 7);
     pub const CORPUS: Self = Self(1 << 8);
+    pub const REGIME: Self = Self(1 << 9);
 
     /// The empty set. What a selection naming no family would be.
     pub const NOTHING: Self = Self(0);
 
     /// Every check. What a run with no `--only` performs.
-    pub const EVERYTHING: Self = Self(0b1_1111_1111);
+    pub const EVERYTHING: Self = Self(0b11_1111_1111);
     /// Every check that is not the citation walk.
     pub const STRUCTURE: Self = Self(Self::EVERYTHING.0 & !Self::CITATIONS.0);
 
@@ -128,7 +133,7 @@ impl Only {
     ///
     /// One table, so the parser, the error message and the help cannot disagree about what
     /// exists. A check added without a row here is selectable by no name.
-    pub const NAMED: [(&'static str, Self); 9] = [
+    pub const NAMED: [(&'static str, Self); 10] = [
         ("citations", Self::CITATIONS),
         ("generated", Self::GENERATED),
         ("components", Self::COMPONENTS),
@@ -138,6 +143,7 @@ impl Only {
         ("uncovered", Self::UNCOVERED),
         ("changes", Self::CHANGES),
         ("corpus", Self::CORPUS),
+        ("regime", Self::REGIME),
     ];
 
     /// Parse a comma-separated list of family names into their union.
@@ -224,11 +230,7 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
             let Some(release) = releases.get(&doc.pin) else {
                 continue;
             };
-            let exempt = doc
-                .rel
-                .file_name()
-                .and_then(|n| n.to_str())
-                .is_some_and(|n| manifest.lint().exempt_files.iter().any(|f| f == n));
+            let exempt = manifest.lint().exempt_files.contains(&doc.rel);
             let (found, c) = citations::check(doc, release, exempt);
             findings.extend(found);
             counts.fragments += c.fragments;
@@ -242,12 +244,18 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
 
             // Opting out of the change detector is COUNTED, never invisible.
             if let Some(pin) = &doc.pin {
-                let quotes = crate::quote::inline(&doc.stripped).len()
-                    + crate::quote::blocks(&doc.stripped).len();
+                let quotes = doc.inline_quotes().len() + doc.blocks().len();
                 pinned.push((doc.rel.display().to_string(), pin.clone(), quotes));
             }
         }
         pinned.sort();
+    }
+
+    let mut regime = regime::Counts::default();
+    if only.has(Only::REGIME) {
+        let (found, counts) = regime::run(model, manifest, releases);
+        findings.extend(found);
+        regime = counts;
     }
 
     let mut structure = Structure::default();
@@ -287,6 +295,7 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
         structure,
         corpus: rules::integrity::Counts::default(),
         changelog_changes: 0,
+        regime,
         pinned,
         ran: only,
         asked: only,

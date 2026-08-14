@@ -146,12 +146,12 @@ fn check(manifest: &Manifest) -> Result<ExitCode, String> {
     // release, and before this was scoped it failed on a pin it had no reason to read.
     // `generated` renders the rule index, so it needs the vendored release and no other.
     let mut releases: HashMap<Option<String>, Release> = HashMap::new();
-    if only.has(Only::CITATIONS) || only.has(Only::GENERATED) {
+    if only.has(Only::CITATIONS) || only.has(Only::GENERATED) || only.has(Only::REGIME) {
         let vendored = std::fs::read_to_string(tree.text())
             .map_err(|e| format!("{}: {e}", tree.text().display()))?;
         releases.insert(None, Release::new(&vendored, body_starts_at));
     }
-    if only.has(Only::CITATIONS) {
+    if only.has(Only::CITATIONS) || only.has(Only::REGIME) {
         for doc in model.documents() {
             let Some(date) = &doc.pin else { continue };
             if releases.contains_key(&doc.pin) {
@@ -435,7 +435,7 @@ fn counts(report: &Report) -> String {
         if c.short > 0 {
             let _ = write!(
                 out,
-                "\n{} elided fragment(s) under {} chars, not checked",
+                "\n{} elided fragment(s) under {} chars: checked, but weak evidence",
                 c.short,
                 documentation::check::citations::MIN_FRAGMENT
             );
@@ -513,6 +513,30 @@ fn counts(report: &Report) -> String {
             report.changelog_changes
         );
     }
+    if ran.has(Only::REGIME) {
+        let _ = write!(
+            structural,
+            "\nregime: {} claim(s) judged against their scope",
+            report.regime.claims
+        );
+        // A deferred rule is COUNTED and printed, never silent. The backlog is the migration's
+        // work list, and it is what retires the deferral: when it reaches zero the entry in
+        // the manifest is deleted, and nothing has to remember to remove a flag.
+        for (rule, n) in &report.regime.backlog {
+            let _ = write!(
+                structural,
+                "\n  deferred `{}`: {n} outstanding",
+                rule.name()
+            );
+        }
+        for rule in &report.regime.retired {
+            let _ = write!(
+                structural,
+                "\n  deferred `{}`: NOTHING OUTSTANDING — delete it from knowledge.toml",
+                rule.name()
+            );
+        }
+    }
     if !structural.is_empty() {
         out.push('\n');
         out.push_str(&structural);
@@ -527,6 +551,7 @@ mod tests {
 
     fn report(ran: Only) -> Report {
         Report {
+            regime: Default::default(),
             findings: Vec::new(),
             counts: Default::default(),
             structure: Default::default(),

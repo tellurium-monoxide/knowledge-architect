@@ -1,10 +1,10 @@
 # Structure, wrong on purpose
 
-`##twice-defined` — **A decision recorded here.**
+### A decision recorded here `##twice-defined`
 
 And again, which is a rename that left one behind:
 
-`##twice-defined` — **The same anchor, a second time.**
+### The same anchor, a second time `##twice-defined`
 
 A pointer into nothing: `planted#dangling-anchor`.
 

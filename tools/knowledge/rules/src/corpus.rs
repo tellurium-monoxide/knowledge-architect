@@ -63,6 +63,25 @@ impl Corpus {
         self.rules.contains_key(number)
     }
 
+    /// Whether this release holds any rule numbered below this one.
+    ///
+    /// A parent rule's body says what it says and its subrules say the rest, so a quote of the
+    /// parent entire does not stand for a claim that belongs to a subrule. Asked by the check
+    /// that guards the whole-body exception.
+    pub fn has_subrules(&self, number: &RuleNumber) -> bool {
+        let prefix = number.to_string();
+        self.rules.keys().any(|k| {
+            let n = k.to_string();
+            // A subrule appends LETTERS. A digit makes it a sibling: `612.10` is not under
+            // `612.1`, and a plain prefix test called seventeen leaf rules parents — two of
+            // them cited whole in this repository, where the only repair would have been to
+            // stop quoting a leaf rule in full.
+            n.len() > prefix.len()
+                && n.starts_with(&prefix)
+                && n[prefix.len()..].chars().all(|c| c.is_ascii_lowercase())
+        })
+    }
+
     pub fn len(&self) -> usize {
         self.rules.len()
     }
@@ -115,6 +134,29 @@ fn is_section_head(line: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_sibling_numbered_with_a_digit_is_not_a_subrule() {
+        // `612.10` is a SIBLING of `612.1`, not a subrule of it. A plain prefix test could not
+        // tell them apart and called seventeen leaf rules parents — two of them quoted whole
+        // in this repository, where the only repair would have been to stop quoting a leaf
+        // rule in full.
+        const TEXT: &str = concat!(
+            "100.1 A leaf rule with a digit sibling.\n",
+            "100.10 The sibling, numbered with a digit.\n",
+            "100.2 A parent rule.\n",
+            "100.2a Its subrule, numbered with a letter.\n",
+        );
+        // BOUND, so the numbers are fixture data. Written into the call they are prose, and
+        // this crate is walked like any other.
+        const LEAF: &str = "100.1";
+        const PARENT: &str = "100.2";
+        let c = Corpus::parse(TEXT, 0);
+        let leaf = RuleNumber::parse(LEAF).expect("a rule number");
+        let parent = RuleNumber::parse(PARENT).expect("a rule number");
+        assert!(!c.has_subrules(&leaf), "a digit makes it a sibling");
+        assert!(c.has_subrules(&parent), "a letter makes it a subrule");
+    }
 
     // Bound to names on lines carrying their CR~ mentions, so no other line holds a bare
     // number. These are inputs to a parser, not claims about what any rule says.

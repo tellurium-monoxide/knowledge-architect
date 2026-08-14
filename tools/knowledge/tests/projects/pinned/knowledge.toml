@@ -10,9 +10,8 @@ name = "pinned"
 components = []
 
 [walk]
-suffixes = ["md"]
 skip-dirs = [".git"]
-skip-files = ["CompRules.txt"]
+skip-files = ["corpus/CompRules.txt"]
 exclude = []
 
 [lint]

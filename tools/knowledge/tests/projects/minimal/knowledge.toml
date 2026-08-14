@@ -10,13 +10,12 @@ components = []
 additional-trackers = ["notes/open-issues.md"]
 
 [walk]
-suffixes = ["md", "rs"]
 skip-dirs = ["build"]
-skip-files = ["generated.md"]
+skip-files = ["notes/generated.md"]
 exclude = ["vendor"]
 
 [lint]
-exempt-files = ["stale.md"]
+exempt-files = ["notes/stale.md"]
 
 [rules]
 dir = "corpus"

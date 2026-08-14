@@ -49,10 +49,8 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
             // filename and an excluded path are all left out — the first two because they are
             // deliberately unchecked and covered elsewhere, the third because it is another
             // project entirely, whose fixtures are not this project's unverified claims.
-            let skipped = rel
-                .components()
-                .any(|c| walk.skip_dirs.iter().any(|d| d.as_str() == c.as_os_str()))
-                || walk.skip_files.contains(&name)
+            let skipped = walk.skip_dirs.iter().any(|d| rel.starts_with(d))
+                || walk.skip_files.contains(&rel)
                 || walk.exclude.iter().any(|e| rel.starts_with(e));
             if !skipped && !covered.contains(rel.as_path()) {
                 if let Ok(text) = std::fs::read_to_string(&path) {
