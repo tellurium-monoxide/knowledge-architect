@@ -269,6 +269,50 @@ discharges the obligation, so a marker whose quote lives elsewhere is conformant
 distinguished. `assumption`: the number-resolution half can land alone. Nobody has checked whether
 any conformant citation names a rule the corpus does not hold.
 
+## A Component-relative document name resolves against the project root and is never reported `defect`
+
+**What.** Three path syntaxes are declared: a full path from the project root, `<component>@path`
+relative to a Component's root, and `@path` for a reference that is not checked. A reference written
+as the first when the second was meant still resolves, because **every Component is required to
+carry the same six document names** — `README.md`, `CLAUDE.md` and four under `docs/` — and the
+project is itself a Component carrying them too. So `docs/open-issues.md` written inside
+`crates/thaum-engine/` names the project's file, the file exists, and the path check passes.
+
+**Six instances, all in one Component**, found while routing a pointer for the acting-player seam.
+Each was written inside `crates/thaum-engine/src/` and each means that crate's
+`docs/open-issues.md`:
+
+- `Side::life`'s doc comment in `runtime/instance.rs` — fixed
+- `active_player`'s doc comment in `runtime/step.rs` — deleted with the function
+- `first_player_of`'s doc comment in `runtime/step.rs` — deleted with the function
+- `Roster`'s doc comment in `runtime/state.rs` — outstanding
+- the module header of `runtime/step.rs` — outstanding
+- `runtime/step.rs`'s reference to `docs/tripwires.md`, beside `advance` — outstanding
+
+The three fixed ones were rewritten to `thaum-engine@docs/open-issues.md`, which is the form
+`runtime/state.rs` already uses correctly at one other site. The three outstanding ones were left
+because they are orthogonal to the change that found them.
+
+**Why it matters.** The reader is sent to a document that does not carry what the sentence names,
+and nothing reports it. The project's `docs/open-issues.md` holds two entries, on a
+scenario-interchange format and on design-review artifacts; none of the six sentences above means
+either. This is silent in exactly the case the two syntaxes exist to distinguish, and the collision
+is universal rather than accidental, because the required document set is what creates it.
+
+**What is ruled out.** Forbidding the shape. A bare root-relative reference from inside a Component
+is legitimate and is in use: `tools/knowledge/docs/design.md` says *"What belongs here rather than in
+`docs/design.md`"* meaning the project's, and `tools/knowledge/docs/open-issues.md` names the same
+file the same way. So the check cannot key on the shape alone.
+
+**What would close it.** A check that reports a root-relative reference whose tail is one of the
+Component-required document names, made from a file inside a Component that carries that document,
+**and** a way for a writer to say they meant the root one — the `@` form already exists and is not
+checked, so the disambiguation may already be spelled. Closing this means the three outstanding
+sites above being reported, and the two `tools/knowledge` references to the root `docs/design.md`
+still passing. Whether it is a finding or a lint is open: six instances in one Component is enough
+to suggest the form is easy to get wrong, and `not established` whether other Components carry the
+same error.
+
 ## A float literal shaped like a rule number is reported as an unmarked reference `defect`
 
 **What.** The missing-marker lint matches a bare rule token as `\b(\d{3}\.\d+[a-z]{0,2})\b`, which
