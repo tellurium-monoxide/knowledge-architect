@@ -278,40 +278,59 @@ carry the same six document names** — `README.md`, `CLAUDE.md` and four under 
 project is itself a Component carrying them too. So `docs/open-issues.md` written inside
 `crates/thaum-engine/` names the project's file, the file exists, and the path check passes.
 
-**Six instances, all in one Component**, found while routing a pointer for the acting-player seam.
-Each was written inside `crates/thaum-engine/src/` and each means that crate's
-`docs/open-issues.md`:
+**How to enumerate them**, since a hand-written list of sites went stale within one review:
 
-- `Side::life`'s doc comment in `runtime/instance.rs` — fixed
-- `active_player`'s doc comment in `runtime/step.rs` — deleted with the function
-- `first_player_of`'s doc comment in `runtime/step.rs` — deleted with the function
-- `Roster`'s doc comment in `runtime/state.rs` — outstanding
-- the module header of `runtime/step.rs` — outstanding
-- `runtime/step.rs`'s reference to `docs/tripwires.md`, beside `advance` — outstanding
+```sh
+grep -rn '`docs/\(open-issues\|design\|tripwires\|rejected-alternatives\)\.md`' \
+  crates clients tools --include=*.rs --include=*.md | grep -v '@docs/'
+```
 
-The three fixed ones were rewritten to `thaum-engine@docs/open-issues.md`, which is the form
-`runtime/state.rs` already uses correctly at one other site. The three outstanding ones were left
-because they are orthogonal to the change that found them.
+Every hit is a candidate and **not** every hit is an instance: a bare root-relative reference from
+inside a Component is legitimate where the project's file really is meant. Classifying requires
+reading each one.
+
+**In `crates/thaum-engine/` alone, twelve candidates and nine outstanding instances**, counted this
+way rather than by recall:
+
+| site | means | outstanding |
+| --- | --- | --- |
+| `Roster`'s doc comment, `runtime/state.rs` | the engine's | yes |
+| `Status`'s doc comment, `runtime/step.rs` | the engine's | yes |
+| `advance`'s doc comment, `runtime/step.rs` | the engine's `tripwires.md` | yes |
+| `the_game_and_the_free_functions_play_the_same_game`, `tests/log.rs` | the engine's `tripwires.md` | yes |
+| `a_copied_game_carries_its_history_and_is_independent`, `tests/log.rs` | the engine's `tripwires.md` | yes |
+| `cr_402_2_a_hand_never_exceeds_the_maximum_after_a_cleanup_step`, `tests/pregame.rs` | an entry on the absent discard, which exists in no tracker in the tree | yes |
+| *Whether a `State` pins a card-corpus version*, the engine's `open-issues.md` | **`thaum-corpus`'s** `open-issues.md` | yes |
+| *`Status::BudgetExhausted` conflates two different bounds*, the engine's `open-issues.md` | the file it is written in | yes |
+| the new pre-game departure refusal, `runtime/state.rs` | the engine's | fixed on sight |
+| `Side::life`'s doc comment, `runtime/instance.rs` | the engine's | fixed |
+| the two deleted acting-player helpers, `runtime/step.rs` | the engine's | gone with the functions |
+| `record_mulligan_round`'s doc comment, `runtime/step.rs` | **the project's**, correctly | not an instance |
+
+**The seventh row breaks the mechanism stated above.** It points from one Component into a
+*different* Component, so the collision is not only "the project carries the same names" — a bare
+path from inside any Component names the project's file whatever Component was meant. `assumption`:
+other Components carry instances too; only `crates/thaum-engine/` has been counted.
 
 **Why it matters.** The reader is sent to a document that does not carry what the sentence names,
 and nothing reports it. The project's `docs/open-issues.md` holds two entries, on a
-scenario-interchange format and on design-review artifacts; none of the six sentences above means
-either. This is silent in exactly the case the two syntaxes exist to distinguish, and the collision
-is universal rather than accidental, because the required document set is what creates it.
+scenario-interchange format and on design-review artifacts; none of the sentences above means
+either, and one of them names an entry that exists nowhere at all. This is silent in exactly the
+case the two syntaxes exist to distinguish, and the collision is universal rather than accidental,
+because the required document set is what creates it.
 
 **What is ruled out.** Forbidding the shape. A bare root-relative reference from inside a Component
 is legitimate and is in use: `tools/knowledge/docs/design.md` says *"What belongs here rather than in
-`docs/design.md`"* meaning the project's, and `tools/knowledge/docs/open-issues.md` names the same
-file the same way. So the check cannot key on the shape alone.
+`docs/design.md`"* meaning the project's, `tools/knowledge/docs/open-issues.md` names the same file
+the same way, and the last row of the table above is a third. So the check cannot key on the shape
+alone.
 
 **What would close it.** A check that reports a root-relative reference whose tail is one of the
-Component-required document names, made from a file inside a Component that carries that document,
-**and** a way for a writer to say they meant the root one — the `@` form already exists and is not
-checked, so the disambiguation may already be spelled. Closing this means the three outstanding
-sites above being reported, and the two `tools/knowledge` references to the root `docs/design.md`
-still passing. Whether it is a finding or a lint is open: six instances in one Component is enough
-to suggest the form is easy to get wrong, and `not established` whether other Components carry the
-same error.
+Component-required document names, made from a file inside a Component, **and** a way for a writer
+to say they meant the project's — the `@` form already exists and is not checked, so the
+disambiguation may already be spelled. Closing this means every outstanding row above being
+reported and the three legitimate root references still passing. Whether it is a finding or a lint
+is open.
 
 ## A float literal shaped like a rule number is reported as an unmarked reference `defect`
 
