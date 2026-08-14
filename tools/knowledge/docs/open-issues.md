@@ -247,6 +247,16 @@ looks conformant to a reader **and** to the checker, which the bare number does 
 `CR:120.3c's attempt on an empty library`, which is planeswalker damage — the rule wanted was
 CR:704.5b. Both were caught by re-reading the citations by hand, not by the gate.
 
+**A third occurrence, in prose rather than in a doc comment.** Writing
+`docs/plans/slice-2-design.md`, 886 lines against the pinned release: an audit by hand of every
+prose marker in that file found **eighteen** carrying no quote in range, each a claim about a rule's
+content whose quote sat in a different section or a different document. `cargo knowledge check`
+passed on the file before the audit and passed after it, so the whole repair was invisible to the
+gate. That the count is high is a property of a long document written in one pass, and the figure is
+over that file at that revision rather than a rate to expect elsewhere. What it adds to the two
+observations above is that the failure is not confined to code comments, and that a session writing
+a document of this size cannot rely on the gate to find it.
+
 **Why it is not the entry above it.** _A verbatim rule quote can sit unchecked if nothing marks it_
 is the inverse case, a quote with no marker, and its argument turns on the false-positive ratio of
 scanning plain quoted spans. This one needs no scanning: the marker is already found, and what is
