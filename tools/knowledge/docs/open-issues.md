@@ -53,7 +53,21 @@ to write one. A test named that way carries a marker that the orphan check canno
 its quote immediately above it — is unenforced for exactly the shape it was written for. It is a
 silent false negative: nothing reports it, and the missing quote is invisible.
 
-The tree has two uses of the form and both are in prose, so nothing depends on it yet. The first
+**That last clause is no longer true, and the convention it describes cannot be followed in Rust.**
+The prescribed identifier form is upper case. A Rust function named that way fails the gate:
+`rustc -D warnings` reports that the function *"should have a snake case name"* under
+`non_snake_case`, which `cargo clippy --workspace --all-targets -- -D warnings` runs. (The form is
+not written out here, for the reason the parenthesis above gives.) So every rule-named test in the
+tree uses the lower-case form instead — 56 of them, `grep -rn 'fn cr_[0-9]' --include=*.rs .` — and
+the check's pattern is case-sensitive, so the orphan lint is structurally dead for the one thing the
+convention exists for. A test named for a rule its comment does not quote is reported by nothing.
+
+Two ways out and they are not equivalent: the pattern accepts the lower-case form, which makes 56
+existing names live markers and may surface a backlog; or root `CLAUDE.md` prescribes the lower-case
+form, which is what the tree already does and what Rust permits. The second is a configuration
+change and is `maintaining-agent-config`'s.
+
+The tree has two uses of the upper-case form and both are in prose, so nothing depends on it yet. The first
 Rust test named this way is when it starts costing something.
 
 **What would close it.** Either the pattern widened to find a marker anywhere in an identifier, or
