@@ -40,15 +40,6 @@ unit, before the duplicates spread — a rule quoted twice in one document is tw
 step at the next release.
 **Re-entry:** standing, and at any change to the bound.
 
-## Guarding `knowledge#deferral-retires-itself`
-
-**Fires when:** the deferred list in `knowledge.toml [migration]` gains an entry, or a backlog rises
-between two runs. It is a migration's work list and may only shrink.
-**Response:** a rising backlog means new work is being written against the old regime. A new entry
-means a rule was enforced and then was not. Either is a decision, not a maintenance step, and it is
-argued before it lands.
-**Re-entry:** standing, and at every change to that list.
-
 ## Guarding the citation index as a bump work list
 
 **Fires when:** `docs/rules/index.md`'s cited-rule count falls between two commits that add engine

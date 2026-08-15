@@ -13,8 +13,8 @@ Read `tracking-open-issues` before adding.
 
 ## The plan claimed a parser port that was not made, and three reviewers found it before anyone else did `observation`
 
-**What.** `../../../../docs/plans/citation-enforcement-design.md` stated, as a consequence of
-adopting a markdown parser, that two recorded defects were closed by it: an emphasis delimiter a
+**What.** The design that adopted a markdown parser stated, as a consequence of adopting it, that
+two recorded defects were closed by it: an emphasis delimiter a
 formatter rewrites, and a backticked reference a formatter wraps across a line. Neither was closed.
 The parser was wired into scanning and into scoping; quote EXTRACTION was left on the hand-written
 byte scanners, which is where both defects live. The plan is corrected, and the port is now made.
@@ -80,11 +80,10 @@ escapes stray asterisks. Not established — no formatter is configured in this 
 configuration file for one exists in it, so the run came from an editor rather than from the tree.
 
 **What would close it.** Either the scanner accepts both emphasis delimiters, or the repository
-declares the files a formatter must not rewrite. The first is the direction
-`../../../../docs/plans/citation-enforcement-design.md` already takes: the markdown parser it adopts
-represents both delimiters as one emphasis node, so the distinction disappears. Closing it means the
-underscore form verifying, asserted by a test, and the fragment count not moving when a formatter
-runs over the tree.
+declares the files a formatter must not rewrite. The first is the direction already taken: the
+markdown parser represents both delimiters as one emphasis node, so the distinction disappears in
+`quote::italic_spans`. Closing it means the underscore form verifying, asserted by a test, and the
+fragment count not moving when a formatter runs over the tree.
 
 ## The citation report is a ratio, so a quote that stops being found reads as success `defect`
 
@@ -168,9 +167,10 @@ concept. Untested — nobody has tried moving one.
 **What.** The interpretation walk counts every `R`-number token in a live file as a citation of that
 entry, so a document that merely _names_ one — to point at a diff, to say where a reading is filed —
 is listed in `docs/rules/interpretations/index.md` beside the documents whose argument depends
-on the reading. Root `CLAUDE.md` gives rule numbers the distinction: `CR~` marks a number used as a
-name rather than as a claim about content, and the register has no equivalent. No entry is named in
-this file on purpose, so that the illustration does not create the thing it illustrates.
+on the reading. Rule numbers have a way to say it and `R` numbers do not: a rule number that is data
+goes inside a code span, a fenced block or a name-bound string literal, and the walk does not read
+those as citations. No entry is named in this file on purpose, so that the illustration does not
+create the thing it illustrates.
 
 **Observed.** Writing the entry this one replaces, which asked whether the index should store line
 numbers. Its first draft named two entries by number as examples of index churn; regenerating then
@@ -184,9 +184,10 @@ that cannot have broken. The error is one-directional and grows with the registe
 that discusses the register rather than resting on it inflates the blast radius of every entry it
 names.
 
-**What would answer it.** Decide whether `R` numbers get a mention form, and if so make the
-interpretation walk skip it, the way the rule walk skips `CR~`. The decision belongs with
-`recording-an-interpretation`, which owns the entry shape and would have to state the marker.
+**What would answer it.** Decide whether an `R` number inside a code span stops counting as a
+citation, the way a rule number in one does. That is the structural answer the rule side already
+uses, and it needs no new marker. The decision belongs with `recording-an-interpretation`, which
+owns the entry shape.
 
 ## A slug definition is not recognised in a list item `observation`
 

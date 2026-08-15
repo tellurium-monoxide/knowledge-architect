@@ -152,25 +152,6 @@ impl Walk {
     }
 }
 
-/// Rules of the citation regime a project has not finished migrating to.
-///
-/// **A deferral names a rule, never a file.** The set of rules is compiled in, so a project
-/// cannot invent one it satisfies; all it can do is say which of the fixed set it does not yet
-/// meet, with the reason beside it. Each deferred rule still RUNS — its findings are counted
-/// and printed as a backlog on every run — so the only thing a deferral buys is that the run
-/// does not fail on it.
-///
-/// It retires itself: when the backlog for a rule reaches zero the entry is deleted, and
-/// nothing has to remember to remove a flag. A deferral whose backlog is already zero is
-/// reported, so the list cannot outlive the work.
-#[derive(Debug, Clone, Default, Deserialize)]
-#[serde(deny_unknown_fields, rename_all = "kebab-case")]
-pub struct Migration {
-    /// Rule names, as `check::regime::Rule::NAMED` spells them.
-    #[serde(default)]
-    pub deferred: Vec<String>,
-}
-
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields, rename_all = "kebab-case")]
 pub struct Lint {
@@ -212,9 +193,6 @@ pub struct Interpretations {
 struct Declared {
     project: Project,
     walk: Walk,
-    /// Absent means nothing is deferred, which is the state a finished migration leaves.
-    #[serde(default)]
-    migration: Migration,
     lint: Lint,
     rules: Rules,
     interpretations: Interpretations,
@@ -295,21 +273,6 @@ impl Manifest {
     /// What the root `.gitignore` covers, which the walk does not read and may not declare.
     pub fn ignore(&self) -> &crate::gitignore::Ignore {
         &self.ignore
-    }
-
-    /// The same manifest with a different deferral list, for a test.
-    ///
-    /// A deferral changes only whether a run fails, so nothing about a project on disk has to
-    /// change to exercise it — and nothing did, which is why the mechanism was unpinned.
-    #[cfg(any(test, feature = "testing"))]
-    pub fn with_deferred(&self, rules: &[&str]) -> Self {
-        let mut out = self.clone();
-        out.declared.migration.deferred = rules.iter().map(|r| r.to_string()).collect();
-        out
-    }
-
-    pub fn migration(&self) -> &Migration {
-        &self.declared.migration
     }
 
     pub fn lint(&self) -> &Lint {

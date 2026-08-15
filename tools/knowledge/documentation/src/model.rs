@@ -236,7 +236,6 @@ fn describe(what: &Observation) -> (&'static str, String) {
                 Prose => "marker-prose",
                 Identifier => "marker-ident",
                 IdentifierInProse => "marker-ident-prose",
-                Mention => "marker-mention",
             },
             number.to_string(),
         ),

@@ -11,12 +11,9 @@
 //! reader who cannot see the rule text cannot tell a right citation from a wrong one, which is
 //! the whole failure this tool exists to prevent.
 //!
-//! **A rule still under migration is DEFERRED, never disabled.** Its findings are counted and
-//! printed on every run; all a deferral changes is whether the run fails. The set of rules is
-//! compiled in, so a project can only say which of them it has not reached — never invent one
-//! it meets.
-
-use std::collections::BTreeSet;
+//! **Every rule of the regime is enforced.** There is no way for a project to hold one back: the
+//! set is compiled in and the manifest declares nothing about it, so conformance means the same
+//! thing in every tree the tool checks.
 
 use rules::{norm, RuleNumber};
 
@@ -46,18 +43,15 @@ pub const MAX_DISTANCE: u32 = 60;
 
 /// The rules of the regime that this module enforces.
 ///
-/// Named so a manifest can defer one by name. The set is compiled in for the reason
-/// `##components-carry-the-same-documents` gives about the document set: a project free to
-/// declare its own would be conformant with whatever it declared.
+/// The set is compiled in for the reason `##components-carry-the-same-documents` gives about the
+/// document set: a project free to declare its own would be conformant with whatever it declared.
+/// Each is named so the fixture assertion can say which one has no planted violation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Rule {
     /// Every marked number names a rule the applicable release holds.
     NumberResolves,
     /// A prose marker owes a verified quote of its rule, in scope and in range.
     QuoteInScope,
-    /// The mention form is retired: a number claiming content takes the prose form and a
-    /// quote, and a number that is data goes in a code span, a fence or a string literal.
-    MentionRetired,
     /// The identifier form belongs in a name. Written in prose, the prose form fits.
     IdentifierInProse,
     /// A name carrying the identifier form owes the rule's WHOLE body, with no elision.
@@ -98,10 +92,9 @@ pub enum Rule {
 }
 
 impl Rule {
-    pub const NAMED: [(&'static str, Rule); 11] = [
+    pub const NAMED: [(&'static str, Rule); 10] = [
         ("number-resolves", Rule::NumberResolves),
         ("quote-in-scope", Rule::QuoteInScope),
-        ("mention-retired", Rule::MentionRetired),
         ("identifier-in-prose", Rule::IdentifierInProse),
         ("identifier-full-quote", Rule::IdentifierFullQuote),
         ("omission-marked", Rule::OmissionMarked),
@@ -131,7 +124,7 @@ impl Rule {
     }
 }
 
-/// One finding, and the rule it came from, so a deferral can hold it back.
+/// One finding, and the rule of the regime it came from.
 pub struct Judged {
     pub rule: Rule,
     pub finding: Finding,
@@ -140,10 +133,6 @@ pub struct Judged {
 /// What a run of the regime counted.
 #[derive(Debug, Default, PartialEq, Eq)]
 pub struct Counts {
-    /// Findings held back by a deferral, per rule.
-    pub backlog: Vec<(Rule, usize)>,
-    /// Deferrals whose backlog is zero, which have outlived their work.
-    pub retired: Vec<Rule>,
     pub claims: usize,
 }
 
@@ -487,16 +476,6 @@ pub fn check(doc: &Document, release: &Release) -> (Vec<Judged>, usize) {
             continue;
         }
         match form {
-            MarkerForm::Mention => out.push(Judged {
-                rule: Rule::MentionRetired,
-                finding: Finding::at(
-                    &doc.rel,
-                    line,
-                    format!("{number} is named with the retired mention form"),
-                    "a claim about the rule takes CR: and a quote; a number that is data goes \
-                     in a code span, a fenced block or a string literal",
-                ),
-            }),
             // A FENCE is where code is shown, and the identifier form IS code, so an
             // illustration of one is not a use of it. The fence suppresses this rule and no
             // other: a fenced sketch in a design document cites its rules for real, which is
@@ -600,20 +579,13 @@ fn unquoted(
     ))
 }
 
-/// Run the regime over a model, splitting findings from the backlog a deferral holds back.
+/// Run the regime over every document in a model.
 pub fn run(
     model: &Model,
     manifest: &Manifest,
     releases: &std::collections::HashMap<Option<String>, Release>,
 ) -> (Vec<Finding>, Counts) {
-    let deferred: BTreeSet<Rule> = manifest
-        .migration()
-        .deferred
-        .iter()
-        .filter_map(|n| Rule::parse(n))
-        .collect();
     let mut findings = Vec::new();
-    let mut backlog: Vec<(Rule, usize)> = Vec::new();
     let mut counts = Counts::default();
 
     for doc in model.documents() {
@@ -623,35 +595,16 @@ pub fn run(
         // A file the manifest exempts from the lint is exempt here too. It is declared stale
         // and is decomposed as its sections are harvested; judging its claims produces a
         // suppression list longer than the findings, which is the argument the exemption
-        // already makes. Without this the regime had no exemption path at all, so nothing in
-        // the manifest could say so once the deferrals retire.
-        let exempt = manifest.lint().exempt_files.contains(&doc.rel);
-        if exempt {
+        // already makes. That list is the only exemption path the regime has, and it names
+        // FILES that are leaving the tree — never a rule, and never for the whole tree.
+        if manifest.lint().exempt_files.contains(&doc.rel) {
             continue;
         }
         let (judged, claims) = check(doc, release);
         counts.claims += claims;
-        for j in judged {
-            if deferred.contains(&j.rule) {
-                match backlog.iter_mut().find(|(r, _)| *r == j.rule) {
-                    Some((_, n)) => *n += 1,
-                    None => backlog.push((j.rule, 1)),
-                }
-            } else {
-                findings.push(j.finding);
-            }
-        }
+        findings.extend(judged.into_iter().map(|j| j.finding));
     }
 
-    // A deferral with nothing left to defer has outlived its work, and a list that outlives its
-    // work is one nobody deletes.
-    for rule in &deferred {
-        if !backlog.iter().any(|(r, _)| r == rule) {
-            counts.retired.push(*rule);
-        }
-    }
-    backlog.sort();
-    counts.backlog = backlog;
     (findings, counts)
 }
 

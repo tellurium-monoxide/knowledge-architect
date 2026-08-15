@@ -106,10 +106,6 @@ fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
         dump.contains("docs/design.md\t7\tmarker-prose\t100.1"),
         "{dump}"
     );
-    assert!(
-        dump.contains("docs/design.md\t7\tmarker-mention\t100.2"),
-        "{dump}"
-    );
     assert!(dump.contains("notes/a.md\t5\tinterp-ref\t7"), "{dump}");
     assert!(
         dump.contains("code/lib.rs\t1\tmarker-prose\t100.1"),
@@ -330,7 +326,7 @@ mod planted {
         (Only::INTERPRETATIONS, 1, "has no entry in the register"),
         (Only::UNCOVERED, 1, "is outside the walk"),
         (Only::GENERATED, 2, "the generated file is missing"),
-        (Only::REGIME, 20, "with no verified quote of it in range"),
+        (Only::REGIME, 19, "with no verified quote of it in range"),
     ];
 
     #[test]
@@ -637,9 +633,8 @@ mod regime {
     use super::*;
     use documentation::check::citations::Release;
     use documentation::check::regime::{self, Rule};
-    use std::collections::HashMap;
 
-    /// Every finding the regime produces over the planted project, ignoring deferrals.
+    /// Every finding the regime produces over the planted project.
     fn judged() -> Vec<(Rule, String)> {
         let manifest = mock("planted");
         let model = Model::build(&manifest).expect("a model");
@@ -746,11 +741,6 @@ mod regime {
     }
 
     #[test]
-    fn the_retired_mention_form_is_reported() {
-        one(Rule::MentionRetired, "retired mention form");
-    }
-
-    #[test]
     fn a_number_the_release_does_not_hold_is_reported() {
         one(Rule::NumberResolves, "no such rule");
     }
@@ -831,69 +821,5 @@ mod regime {
             Rule::QuoteInScope,
             "A claim further from its quote than the cap allows",
         );
-    }
-
-    #[test]
-    fn a_deferred_rule_is_counted_and_does_not_fail_the_run() {
-        let manifest = mock("planted");
-        let model = Model::build(&manifest).expect("a model");
-        let tree = manifest.rules_tree();
-        let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
-        let releases =
-            HashMap::from([(None, Release::new(&text, manifest.rules().body_starts_at))]);
-        let (findings, counts) = regime::run(&model, &manifest, &releases);
-        // The planted project defers nothing, so every finding is a finding.
-        assert!(counts.backlog.is_empty());
-        assert!(!findings.is_empty());
-    }
-
-    #[test]
-    fn a_deferral_holds_its_rule_back_counts_it_and_retires_itself() {
-        // Nothing exercised a NON-EMPTY deferral before, so the mechanism the whole migration
-        // rests on — hold back, count, and report an entry that has outlived its work — was
-        // pinned by no test at all.
-        let manifest = mock("planted");
-        let model = Model::build(&manifest).expect("a model");
-        let tree = manifest.rules_tree();
-        let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
-        let releases =
-            HashMap::from([(None, Release::new(&text, manifest.rules().body_starts_at))]);
-
-        let (before, _) = regime::run(&model, &manifest, &releases);
-        let held = before
-            .iter()
-            .filter(|f| f.what.contains("retired mention form"))
-            .count();
-        assert!(held > 0, "the fixture must plant at least one");
-
-        let deferring = manifest.with_deferred(&["mention-retired"]);
-        let (after, counts) = regime::run(&model, &deferring, &releases);
-        assert_eq!(
-            after.len(),
-            before.len() - held,
-            "exactly the deferred rule's findings are held back"
-        );
-        assert_eq!(counts.backlog, vec![(Rule::MentionRetired, held)]);
-        assert!(counts.retired.is_empty(), "it still has work outstanding");
-    }
-
-    #[test]
-    fn a_deferral_with_nothing_outstanding_is_reported_as_one_to_delete() {
-        // The self-retirement the whole mechanism rests on: a list that outlives its work is
-        // a list nobody deletes, so a backlog of zero has to say so.
-        let manifest = mock("planted").with_deferred(&["mention-retired"]);
-        let tree = manifest.rules_tree();
-        let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
-        let releases =
-            HashMap::from([(None, Release::new(&text, manifest.rules().body_starts_at))]);
-        // A document with nothing wrong in it, so the deferred rule has nothing to hold.
-        let clean = Model::from_documents(vec![(
-            std::path::PathBuf::from("notes/clean.md"),
-            "# Clean\n\nNothing here cites anything.\n".to_string(),
-        )]);
-        let (findings, counts) = regime::run(&clean, &manifest, &releases);
-        assert!(findings.is_empty(), "{findings:#?}");
-        assert!(counts.backlog.is_empty());
-        assert_eq!(counts.retired, vec![Rule::MentionRetired]);
     }
 }

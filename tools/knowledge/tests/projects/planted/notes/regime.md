@@ -14,10 +14,6 @@ CR:100.1 is quoted in the section below and not in this one.
 
 Per CR:100.1: *"The first mock rule says exactly this and nothing else."*
 
-## The retired mention form
-
-A number named as CR~100.2 rather than claimed.
-
 ## An omission with no mark
 
 Per CR:100.3: *"a quote of its middle is evidence of nothing unless the omission is marked."*

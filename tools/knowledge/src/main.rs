@@ -520,23 +520,6 @@ fn counts(report: &Report) -> String {
             "\nregime: {} claim(s) judged against their scope",
             report.regime.claims
         );
-        // A deferred rule is COUNTED and printed, never silent. The backlog is the migration's
-        // work list, and it is what retires the deferral: when it reaches zero the entry in
-        // the manifest is deleted, and nothing has to remember to remove a flag.
-        for (rule, n) in &report.regime.backlog {
-            let _ = write!(
-                structural,
-                "\n  deferred `{}`: {n} outstanding",
-                rule.name()
-            );
-        }
-        for rule in &report.regime.retired {
-            let _ = write!(
-                structural,
-                "\n  deferred `{}`: NOTHING OUTSTANDING — delete it from knowledge.toml",
-                rule.name()
-            );
-        }
     }
     if !structural.is_empty() {
         out.push('\n');

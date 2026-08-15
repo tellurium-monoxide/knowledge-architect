@@ -148,15 +148,17 @@ distance is for is that a reader sees both at once, which does not depend on the
 makes siblings. Without that the claim in a doc comment and the name it documents fall in
 different scopes, which is the one pair that must agree.
 
-### A rule of the regime a project has not reached is deferred, never disabled `##deferral-retires-itself`
+### Every rule of the regime is enforced, and a project cannot exempt itself from one `##the-regime-has-no-opt-out`
 
-`knowledge.toml [migration]` names rules, and the rule set is compiled in — so a project can say
-only which of a fixed set it has not reached, never invent one it meets. A deferred rule still
-runs; its findings are counted and printed as a backlog on every run, and only the exit code
-changes.
+The rule set is compiled in and the manifest declares nothing about it, so conformance means the
+same thing in every tree this tool checks. There is no flag, no list and no severity: a rule of the
+regime either holds over a document or the run fails.
 
-**It retires itself.** A backlog of zero is reported as an entry to delete, so the list cannot
-outlive the work and nothing has to remember to remove a flag.
+**The one exemption path is `[lint] exempt-files`, and it names FILES rather than rules.** A file
+there is one that is leaving the tree, so the exemption expires with its subject; a rule held back
+would have applied to every file and expired with nothing. That asymmetry is the whole of it —
+exempting a document that is about to be deleted costs the guarantee nothing, and exempting a rule
+costs it everywhere at once.
 
 ### A slug is defined in a level-three heading or a table cell, and nowhere else `##a-slug-is-a-heading`
 

@@ -47,7 +47,7 @@ pub struct Report {
     /// itself, because their subject IS filesystem state.
     pub corpus: rules::integrity::Counts,
     pub changelog_changes: usize,
-    /// What the regime found, and what a deferral is holding back.
+    /// What the regime found.
     pub regime: regime::Counts,
     /// Files that opted out of the vendored release, and how many quotes each carries.
     pub pinned: Vec<(String, String, usize)>,

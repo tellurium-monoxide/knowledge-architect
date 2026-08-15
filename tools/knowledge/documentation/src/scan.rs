@@ -32,9 +32,6 @@ pub enum MarkerForm {
     /// one above because only the second is what the convention exists for, and a check that
     /// conflated them would ask a sentence for a quote a name owes.
     IdentifierInProse,
-    /// `CR~` — the number used as a name rather than as a claim about content. It owes no
-    /// quote, and marking it keeps the distinction visible instead of silently absent.
-    Mention,
 }
 
 /// Something a check might care about, found at a line.
@@ -85,8 +82,6 @@ pub struct Located {
 
 static CR_PROSE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\bCR:(\d{3}\.\d+[a-z]{0,2})\b").unwrap());
-static CR_MENTION: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"\bCR~(\d{3}\.\d+[a-z]{0,2})\b").unwrap());
 /// The identifier form, in ANY case.
 ///
 /// The prescribed upper-case spelling fails `non_snake_case` under the clippy gate, so every
@@ -209,14 +204,6 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                     push(Observation::RuleMarker {
                         number,
                         form: MarkerForm::Prose,
-                    });
-                }
-            }
-            for c in CR_MENTION.captures_iter(line) {
-                if let Some(number) = RuleNumber::parse(&c[1]) {
-                    push(Observation::RuleMarker {
-                        number,
-                        form: MarkerForm::Mention,
                     });
                 }
             }
@@ -373,15 +360,12 @@ mod tests {
     }
 
     #[test]
-    fn the_three_marker_forms_are_told_apart() {
-        let text = format!("per CR:{RULE}, and CR~{OTHER} is only a name");
-        assert_eq!(
-            markers(&text),
-            vec![
-                (RULE.to_string(), MarkerForm::Prose),
-                (OTHER.to_string(), MarkerForm::Mention),
-            ]
-        );
+    fn a_prose_marker_is_told_from_an_ordinary_number() {
+        // A bare number beside a marked one is NOT a marker. What catches it is the
+        // missing-marker lint, and that is why there is no form for a number owing no quote:
+        // a number that is data goes in a code span, a fence or a name-bound literal.
+        let text = format!("per CR:{RULE}, and {OTHER} is only a number");
+        assert_eq!(markers(&text), vec![(RULE.to_string(), MarkerForm::Prose)]);
     }
 
     #[test]

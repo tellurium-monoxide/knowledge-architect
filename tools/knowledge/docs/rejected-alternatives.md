@@ -30,3 +30,46 @@ reference in it.
 stable index pages and would be less brittle than Wizards' HTML. It loses on what the corpus is: the
 Comprehensive Rules are this project's only authority, and putting a third party between the project
 and its authority as the _change signal_ is a dependency nothing else here has.
+
+**A per-rule deferral in the manifest, retiring itself at a backlog of zero** — lost to
+`knowledge#the-regime-has-no-opt-out`. `live`. It was built to carry one migration and it did, but
+what it left standing is a way for any tree to be conformant with less than the regime. A deferral
+names a rule, so it applies to every file and expires with none; the file-level exemption it is
+replaced by expires with its subject. The self-retiring report made the list hard to forget and did
+nothing about that.
+
+**Banning elision outright**, so every quote is a full body checked by equality — lost to the
+completeness rules `knowledge#scope-and-distance` sits beside. `live`. It is the strongest check
+available and the cost was measured: about 90 000 characters of rule text across the tree, roughly
+1 200 lines, with the operative clause buried inside each one. Marking every omission delivers the
+content of the incident this would have prevented.
+
+**A third marker for the quote-free class**, beside the content marker and the identifier form —
+lost to reading a number as data by its surface. `live`. Defeated by enumeration: every genuine
+quote-free use is a number being displayed, and the code span, the fenced block and the name-bound
+string literal already say so structurally. A new marker would have been a place to hide.
+
+**A per-usage declaration of data spans**, each carrying the whole source line — lost to the same
+structural reading. `live`. Half the sites sit in doc comments that `cargo fmt` reflows, so the
+declaration would break on commits that changed nothing but whitespace, and a gate that cries wolf
+earns exemptions of its own.
+
+**A permissive discharge by slug pointer**, a marker present with its quote at the far end of the
+pointer — lost to the pointer REPLACING the marker. `live`. A marker present means the file is
+listed in the generated rule index as citing that rule, so a file that merely points at a decision
+joins the bump work list for a rule it does not depend on.
+
+**`syn` as the Rust parser** — lost to `knowledge#grammars-not-prefixes`. `live`. Prototyped: it
+parses all 68 files without error, but doc comments survive only as attributes and ordinary comments
+are discarded during lexing, so a rule cited in a `//` comment inside a function body needs a second
+raw-text pass. One parser that answers every question beats two that each answer half.
+
+**Rust-analyzer's syntax crate** — lost to `knowledge#grammars-not-prefixes`. `live`. Pure Rust,
+lossless and it keeps comments, but it is published per nightly, so adopting it means pinning a
+crate of compiler internals that churns weekly.
+
+**A hand-rolled indentation scanner**, leaning on the formatter gate to normalise indentation — lost
+to `knowledge#grammars-not-prefixes`. `live`. Zero dependencies, and rejected because a mis-scope
+would be silent, which is the failure class this tool exists to prevent. The line-prefix scanner it
+would have resembled was the single cause of four recorded defects.
+

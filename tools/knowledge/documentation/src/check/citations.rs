@@ -409,8 +409,8 @@ fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
                         "rule {token} is named with no marker: {}",
                         clip(line.trim(), 88)
                     ),
-                    "mark it CR: with its quote, or CR~ if the number is a name and not a \
-                     claim about content",
+                    "mark it CR: with its quote; a number that is data goes in a code span, \
+                     a fenced block or a name-bound string literal",
                 ));
             }
         }

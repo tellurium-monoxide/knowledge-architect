@@ -138,7 +138,7 @@ pub fn rule_index(model: &Model, manifest: &Manifest, corpus: &Corpus, pinned: &
 struct Entry {
     title: String,
     file: String,
-    /// Every rule the entry rests on, and how it was written. `CR:` wins over `CR~` — a claim
+    /// Every rule the entry rests on, and how it was written. A claim
     /// about content outranks a mention of the number.
     turns_on: BTreeMap<String, MarkerForm>,
 }
@@ -281,16 +281,7 @@ fn render_interpretation_index(
         let line = if rules.is_empty() {
             "Turns on: **no rule** — check this".to_string()
         } else {
-            let listed: Vec<String> = rules
-                .iter()
-                .map(|r| {
-                    let marker = match entry.turns_on[*r] {
-                        MarkerForm::Mention => "CR~",
-                        _ => "CR:",
-                    };
-                    format!("`{marker}{r}`")
-                })
-                .collect();
+            let listed: Vec<String> = rules.iter().map(|r| format!("`CR:{r}`")).collect();
             format!("Turns on: {}", listed.join(", "))
         };
         body.push(format!("{}\n", wrap(&line, 98).join("\n")));
@@ -338,8 +329,7 @@ fn render_interpretation_index(
          loss. The citing list is the blast radius of a re-filing: every file in it names a\n\
          concern file, so moving an entry means rewriting all of them in the same change.\n\n\
          **Turns on** is every Comprehensive Rule the entry rests on, from its markers and from\n\
-         the numbers its blockquotes carry as printed — `CR:` where the entry makes a claim about\n\
-         the rule's content, `CR~` where it names the number only. This is the per-entry half of\n\
+         the numbers its blockquotes carry as printed. This is the per-entry half of\n\
          a release bump: `docs/rules/index.md` says which files cite a rule, and this says which\n\
          readings would have to be re-argued if that rule moved under them.\n\n\
          The citing list is file-level, and that is what freshness is gated on: this file changes\n\
