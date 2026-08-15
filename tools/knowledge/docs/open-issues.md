@@ -307,3 +307,37 @@ to say they meant the project's — the `@` form already exists and is not check
 disambiguation may already be spelled. Closing this means every outstanding row above being
 reported and the three legitimate root references still passing. Whether it is a finding or a lint
 is open.
+
+## A line naming two concern files cannot cite an interpretation from either `defect`
+
+**What.** The reference check in `check/interpretations.rs` compares **every** `R` number on a line
+against **every** concern file the same line names, so a line that names two concern files and cites
+one entry from each reports two findings and cannot be written at all. Both are false: each number
+does name the file it belongs to.
+
+**Reproduce.** In any markdown file the register check reads, put both of the following on **one**
+line, in either order: a reference to `docs/rules/interpretations/game-loop.md` R29, and
+a reference to `docs/rules/interpretations/object-identity.md` R30.
+`cargo knowledge check` then reports *R29 is in game-loop.md, not the object-identity.md this line
+names* and the mirror of it.
+
+**They are on separate lines here deliberately**, because writing the reproduction as one line makes
+this file fail the gate — which is the defect demonstrating itself and is why the entry cannot show
+it directly. Met while writing the 2c-ii row of
+`docs/plans/progress.md`, which records both readings that step landed; the row now names one file
+and describes the other in prose, which is a worse reference than the one the check refused.
+
+**Why it matters.** A table row is one line, so any row recording work that touched two concerns is
+affected — `docs/plans/progress.md` is written entirely in such rows and is where a step's readings
+are listed. The workaround costs exactly what the check exists to buy: the comment beside it says a
+re-filing must rewrite every file that names the old concern, and a reference reduced to prose is one
+a re-filing cannot find.
+
+**Why the check is shaped that way.** Binding a number to a file needs a rule for which of several
+named files is the one, and comparing against all of them is the approximation that needs no rule. It
+is right whenever a line names one concern, which is every line in the tree until this one.
+
+**What would close it.** Bind each `R` to the nearest concern file named before it on the line, and
+compare only against that; a number with no file before it is unqualified and checked against none,
+which is the shape a bare `R29` already has. `assumption`, not measured: the nearest-preceding rule
+matches how every existing line reads, since each names its file immediately before its numbers.
