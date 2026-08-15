@@ -276,7 +276,7 @@ way rather than by recall:
 | `the_game_and_the_free_functions_play_the_same_game`, `tests/log.rs` | the engine's `tripwires.md` | yes |
 | `a_copied_game_carries_its_history_and_is_independent`, `tests/log.rs` | the engine's `tripwires.md` | yes |
 | `cr_402_2_a_hand_never_exceeds_the_maximum_after_a_cleanup_step`, `tests/pregame.rs` | an entry on the absent discard, which exists in no tracker in the tree | yes |
-| *Whether a `State` pins a card-corpus version*, the engine's `open-issues.md` | **`thaum-corpus`'s** `open-issues.md` | yes |
+| *Whether a `State` pins a card-corpus version*, the engine's `open-issues.md` | **`thaum-corpus`'s** `open-issues.md` | gone with the entry — closed by the corpus design |
 | *`Status::BudgetExhausted` conflates two different bounds*, the engine's `open-issues.md` | the file it is written in | yes |
 | the new pre-game departure refusal, `runtime/state.rs` | the engine's | fixed on sight |
 | `Side::life`'s doc comment, `runtime/instance.rs` | the engine's | fixed |
