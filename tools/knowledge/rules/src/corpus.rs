@@ -13,6 +13,14 @@ use crate::text::norm;
 #[derive(Clone, Debug, Default)]
 pub struct Corpus {
     rules: HashMap<RuleNumber, String>,
+    /// The same bodies with their typography untouched, for anything a human will paste.
+    ///
+    /// `rules` is normalised: `norm` folds a curly apostrophe to a straight one so that a quote
+    /// written either way verifies. That is right for COMPARING and wrong for DISPLAYING —
+    /// 1 933 of 3 162 rules contain a curly quote or apostrophe, and a session that pastes the
+    /// folded form writes a quote that differs from the pinned text in exactly the way root
+    /// `CLAUDE.md` names as the smallest form of paraphrase.
+    raw: HashMap<RuleNumber, String>,
 }
 
 impl Corpus {
@@ -33,6 +41,7 @@ impl Corpus {
     pub fn parse(text: &str, body_starts_at: usize) -> Self {
         let lines: Vec<&str> = text.lines().collect();
         let mut rules: HashMap<RuleNumber, String> = HashMap::new();
+        let mut raw: HashMap<RuleNumber, String> = HashMap::new();
         let mut i = body_starts_at;
         while i < lines.len() {
             let Some((number, rest)) = rule_head(lines[i]) else {
@@ -49,14 +58,27 @@ impl Corpus {
                 body.push(lines[j]);
                 j += 1;
             }
-            rules.entry(number).or_insert_with(|| norm(&body.join(" ")));
+            let joined = body.join(" ");
+            // Whitespace is collapsed in both, because a body spans lines and a quote is one
+            // run of text. Only the CHARACTERS differ between the two maps.
+            raw.entry(number.clone())
+                .or_insert_with(|| joined.split_whitespace().collect::<Vec<_>>().join(" "));
+            rules.entry(number).or_insert_with(|| norm(&joined));
             i = j;
         }
-        Self { rules }
+        Self { rules, raw }
     }
 
     pub fn get(&self, number: &RuleNumber) -> Option<&str> {
         self.rules.get(number).map(String::as_str)
+    }
+
+    /// The body as the release prints it, typography and all.
+    ///
+    /// **Use this for anything a person will read or paste, and `get` for anything compared.**
+    /// A quote taken from `get` verifies and is not what the rule says.
+    pub fn raw(&self, number: &RuleNumber) -> Option<&str> {
+        self.raw.get(number).map(String::as_str)
     }
 
     pub fn contains(&self, number: &RuleNumber) -> bool {
@@ -69,17 +91,21 @@ impl Corpus {
     /// parent entire does not stand for a claim that belongs to a subrule. Asked by the check
     /// that guards the whole-body exception.
     pub fn has_subrules(&self, number: &RuleNumber) -> bool {
-        let prefix = number.to_string();
-        self.rules.keys().any(|k| {
-            let n = k.to_string();
-            // A subrule appends LETTERS. A digit makes it a sibling: `612.10` is not under
-            // `612.1`, and a plain prefix test called seventeen leaf rules parents — two of
-            // them cited whole in this repository, where the only repair would have been to
-            // stop quoting a leaf rule in full.
-            n.len() > prefix.len()
-                && n.starts_with(&prefix)
-                && n[prefix.len()..].chars().all(|c| c.is_ascii_lowercase())
-        })
+        self.rules.keys().any(|k| is_subrule_of(k, number))
+    }
+
+    /// Every rule numbered below this one, in index order.
+    ///
+    /// The list rather than the predicate, for a reader deciding WHICH subrule a claim rests
+    /// on. `has_subrules` answers the check; this answers the person repairing what it found.
+    pub fn subrules(&self, number: &RuleNumber) -> Vec<&RuleNumber> {
+        let mut out: Vec<&RuleNumber> = self
+            .rules
+            .keys()
+            .filter(|k| is_subrule_of(k, number))
+            .collect();
+        out.sort_by(|a, b| a.cmp_index(b));
+        out
     }
 
     pub fn len(&self) -> usize {
@@ -105,6 +131,28 @@ impl Corpus {
             .map(|k| format!("{k}\t{}\n", self.rules[*k]))
             .collect()
     }
+}
+
+/// Whether `candidate` is numbered below `parent`.
+///
+/// A subrule appends LETTERS. A digit makes it a sibling: `612.10` is not under `612.1`, and a
+/// plain prefix test called seventeen leaf rules parents — two of them cited whole in this
+/// repository, where the only repair would have been to stop quoting a leaf rule in full.
+fn is_subrule_of(candidate: &RuleNumber, parent: &RuleNumber) -> bool {
+    let prefix = parent.to_string();
+    let n = candidate.to_string();
+    // **A rule whose own number ends in a letter has no subrules.** Lettering runs a, b, … z,
+    // aa, so `704.5aa` is the twenty-seventh SIBLING under `704.5`, not a child of `704.5a`.
+    // Measured over the pinned release: 3 162 rules, exactly one with a two-letter suffix,
+    // none with three. Without this test `704.5a` is called a parent, and its body is one
+    // 59-character sentence, so every honest quote of it is the whole body and fires a check
+    // that has no subrule to offer — both available repairs are dressing.
+    if prefix.ends_with(|c: char| c.is_ascii_lowercase()) {
+        return false;
+    }
+    n.len() > prefix.len()
+        && n.starts_with(&prefix)
+        && n[prefix.len()..].chars().all(|c| c.is_ascii_lowercase())
 }
 
 /// A rule's opening line: the number, an optional full stop, one whitespace character, and
@@ -158,12 +206,12 @@ mod tests {
         assert!(c.has_subrules(&parent), "a letter makes it a subrule");
     }
 
-    // Bound to names on lines carrying their CR~ mentions, so no other line holds a bare
-    // number. These are inputs to a parser, not claims about what any rule says.
-    const FIRST: &str = "100.1"; // CR~100.1
-    const SECOND: &str = "100.2"; // CR~100.2
-    const CONDITIONED: &str = "104.4b"; // CR~104.4b
-    const LAYERED: &str = "613.8c"; // CR~613.8c
+    // Bound to names, so no other line holds a bare number. These are inputs to a parser,
+    // not claims about what any rule says.
+    const FIRST: &str = "100.1";
+    const SECOND: &str = "100.2";
+    const CONDITIONED: &str = "104.4b";
+    const LAYERED: &str = "613.8c";
 
     /// This project's corpus opens with 181 lines of contents.
     const CONTENTS_LINES: usize = 181;

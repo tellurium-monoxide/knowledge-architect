@@ -54,6 +54,17 @@ per CR:100.2: *"The second mock rule says something completely different."*
 fn sketch() {}
 ```
 
+## A quote two markers could own
+
+Per CR:100.5, which CR:100.6 restates, the rule says *"A rule long enough to be evidence,
+restated word for word by another rule."* The quote binds to the nearer marker, and its text is
+in both rules, so nothing else reports the binding.
+
+## A quote that does not use the release's characters
+
+Per CR:100.7: *"A rule whose body carries the release's own curly apostrophe inside it."* The words
+are the rule's and the characters are not, which verification cannot see because it folds both.
+
 ## A quotation no marker claims
 
 Rule `100.2` states *"The second mock rule says something completely different."* — real rule

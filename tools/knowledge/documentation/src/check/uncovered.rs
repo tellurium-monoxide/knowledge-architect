@@ -52,7 +52,7 @@ mod tests {
 
     #[test]
     fn a_rule_number_is_found_however_it_is_written() {
-        const RULE: &str = "104.4b"; // CR~104.4b
+        const RULE: &str = "104.4b";
         for line in [
             format!("see {RULE} here"),
             format!("CR:{RULE}"),

@@ -112,6 +112,7 @@ fn main() -> ExitCode {
          \x20 index [--interpretations] [--lines] [--write]\n\
          \x20                          print a generated index, or write it\n\
          \x20 model                    every observation the walk produced\n\
+         \x20 rules show <number>…     the pinned text of a rule, shaped to be quoted\n\
          \x20 rules latest             is a newer rules release published?\n\
          \x20 rules diff <old> <new>   what moved, filtered to what this project cites\n\
          \x20 rules fetch [date]       fetch a release and repin to it\n\

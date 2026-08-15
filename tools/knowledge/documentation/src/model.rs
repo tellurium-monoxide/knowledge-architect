@@ -39,7 +39,10 @@ impl Document {
                 crate::quote::inline(&region.text)
                     .into_iter()
                     .map(|mut q| {
+                        // Both endpoints, or a wrapped quote reports a range that starts in
+                        // the file and ends in the region.
                         q.line = region.file_line(q.line as usize - 1);
+                        q.last = region.file_line(q.last as usize - 1);
                         q
                     })
                     .collect::<Vec<_>>()
@@ -132,7 +135,7 @@ impl Model {
         let root = manifest.root();
         let walk_config = manifest.walk();
         let mut docs = Vec::new();
-        for path in walk::live_files(root, walk_config)? {
+        for path in walk::live_files(root, walk_config, manifest.ignore())? {
             let rel_for_error = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
             let text = match std::fs::read_to_string(&path) {
                 Ok(t) => t,

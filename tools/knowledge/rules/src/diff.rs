@@ -169,11 +169,11 @@ fn others<'a>(
 mod tests {
     use super::*;
 
-    // Inputs to a comparison, not claims about content — each bound on a line with its CR~
-    // mention so no other line carries a bare number.
-    const A: &str = "100.1"; // CR~100.1
-    const B: &str = "100.2"; // CR~100.2
-    const C: &str = "100.3"; // CR~100.3
+    // Inputs to a comparison, not claims about content — each bound to a name so no other
+    // line carries a bare number.
+    const A: &str = "100.1";
+    const B: &str = "100.2";
+    const C: &str = "100.3";
 
     fn n(s: &str) -> RuleNumber {
         RuleNumber::parse(s).expect("a rule number")

@@ -183,3 +183,81 @@ fn a_passing_run_ends_with_a_passed_verdict() {
     assert_eq!(last, "PASSED: no findings", "{stdout}");
     assert_eq!(code, 0, "{stdout}");
 }
+
+/// `rules show` prints a rule in the shape a citation is written in.
+///
+/// The migration this exists for pastes the printed line into a document as a blockquote, so
+/// what is asserted is the whole line: the marker, the number as printed, and the body entire.
+/// A run that dropped the number, wrapped the body or elided any of it would produce a quote
+/// the checker rejects, and the whole point is that it does not.
+#[test]
+fn rules_show_prints_a_rule_as_a_pasteable_blockquote() {
+    let (stdout, _, code) = run("planted", &["rules", "show", "100.3"]);
+    assert!(
+        stdout.lines().any(|l| l
+            == "> 100.3 A rule whose body is long enough to be cut at either end without the \
+                cut showing, so that a quote of its middle is evidence of nothing unless the \
+                omission is marked."),
+        "{stdout}"
+    );
+    assert_eq!(code, 0, "{stdout}");
+}
+
+/// A rule with subrules says which, and a rule without says nothing about any.
+///
+/// A whole-body quote of a parent does not stand for a claim its subrule carries, so the one
+/// thing a reader must not do with this output is quote a parent for a subrule's claim
+/// without being told the subrules exist.
+#[test]
+fn rules_show_names_the_subrules_a_parent_has() {
+    let (parent, _, _) = run("planted", &["rules", "show", "100.1"]);
+    assert!(parent.contains("100.1a"), "{parent}");
+    let leaf = run("planted", &["rules", "show", "100.2"]).0;
+    assert!(!leaf.contains("subrule"), "{leaf}");
+}
+
+/// A number the release has no rule for is named, and the run fails.
+///
+/// Silence here is the failure this tool exists to prevent: a session that asked for a rule
+/// and got nothing back would write the citation from recollection.
+#[test]
+fn rules_show_fails_on_a_number_the_release_does_not_hold() {
+    let (stdout, _, code) = run("planted", &["rules", "show", "100.9"]);
+    assert!(stdout.contains("100.9"), "{stdout}");
+    assert_eq!(code, 1, "{stdout}");
+}
+
+/// Several numbers in one run, because an enumeration cites several and each owes its quote.
+#[test]
+fn rules_show_takes_several_numbers_at_once() {
+    let (stdout, _, code) = run("planted", &["rules", "show", "100.1", "100.2", "100.4"]);
+    for number in ["100.1", "100.2", "100.4"] {
+        assert!(
+            stdout
+                .lines()
+                .any(|l| l.starts_with(&format!("> {number} "))),
+            "{number} is missing: {stdout}"
+        );
+    }
+    assert_eq!(code, 0, "{stdout}");
+}
+
+/// What `rules show` prints carries the release's own typography.
+///
+/// The corpus is normalised for comparison — `norm` folds a curly apostrophe to a straight one
+/// so that a quote written either way verifies — and a caller PASTES this output. Printing the
+/// folded form writes a quote that differs from the pinned text at every apostrophe, which
+/// verifies and is not what the rule says.
+#[test]
+fn rules_show_prints_the_release_typography_and_not_the_folded_form() {
+    let (stdout, _, code) = run("typography", &["rules", "show", "100.1"]);
+    assert!(
+        stdout.contains('\u{2019}'),
+        "the curly apostrophe must survive: {stdout:?}"
+    );
+    assert!(
+        !stdout.contains('\''),
+        "and no straight one appears: {stdout:?}"
+    );
+    assert_eq!(code, 0, "{stdout}");
+}

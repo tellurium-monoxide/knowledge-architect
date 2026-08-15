@@ -102,7 +102,7 @@ pub struct Counts {
 ///
 /// One guard remains, because a document wraps its blockquotes: a line that opens with a
 /// number does **not** start a rule when the line above it ended mid-sentence. A wrapped
-/// cross-reference reads `… (See rules` / `CR~603.10. …`, and a rule is a complete statement,
+/// cross-reference reads `… (See rules` / `603.10. …`, and a rule is a complete statement,
 /// nothing legitimately begins after a dangling lowercase word.
 pub fn split_rules(lines: &[String]) -> Vec<(RuleNumber, String)> {
     let mut parts: Vec<(RuleNumber, String)> = Vec::new();
@@ -136,7 +136,7 @@ pub fn split_rules(lines: &[String]) -> Vec<(RuleNumber, String)> {
 /// Whether a line ends something a new rule could follow.
 ///
 /// True when it ends with a terminator and any closing brackets or quotes, and true when its
-/// last word is capitalised — a heading-shaped rule such as `CR~701.2 Activate` ends without
+/// last word is capitalised — a heading-shaped rule such as `701.2 Activate` ends without
 /// punctuation and is still complete. False only for a dangling lowercase word, which is a
 /// wrap in the middle of a sentence.
 fn ends_a_statement(line: &str) -> bool {
@@ -204,8 +204,12 @@ pub fn quotes(doc: &Document) -> Vec<Quote> {
         for (rule, part) in split_rules(&lines) {
             out.push(Quote {
                 rule,
+                // A block binds by the number printed at its head, never by proximity, so
+                // no other marker could have owned it.
+                alternatives: Vec::new(),
                 body: part,
                 line: block.line,
+                last: block.line + block.lines.len().saturating_sub(1) as u32,
                 kind: QuoteKind::Block,
             });
         }
@@ -255,8 +259,12 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
         for (rule, part) in split_rules(&lines) {
             quotes.push(Quote {
                 rule,
+                // A block binds by the number printed at its head, never by proximity, so
+                // no other marker could have owned it.
+                alternatives: Vec::new(),
                 body: part,
                 line: block.line,
+                last: block.line + block.lines.len().saturating_sub(1) as u32,
                 kind: QuoteKind::Block,
             });
         }
@@ -326,9 +334,9 @@ fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
     // named inside an inline quotation was reported as an unmarked reference. Measured over
     // the pinned release: 569 of 3 162 rules name another rule inside their own body, so
     // roughly one rule in six could not be quoted through its cross-reference.
-    let quoted: Vec<(u32, String)> = quotes(doc)
+    let quoted: Vec<(u32, u32, String)> = quotes(doc)
         .into_iter()
-        .map(|q| (q.line, norm(&q.body)))
+        .map(|q| (q.line, q.last, norm(&q.body)))
         .collect();
 
     // Lines the parser actually extracted as a blockquote. A `>` that opens a line elsewhere
@@ -363,11 +371,16 @@ fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
             }
             continue;
         }
+        // The quote's whole RANGE, not the line it opens on. A quote is one span over
+        // several lines, so testing the opening line exempted the first line and left every
+        // continuation unprotected — and a rule long enough to carry a cross-reference is
+        // long enough to wrap. The body test still binds the token to THIS quote, so a bare
+        // number in ordinary prose on a continuation line is reported as it should be.
         let inside_a_quote = |token: &RuleNumber| {
             let t = token.to_string();
             quoted
                 .iter()
-                .any(|(at, body)| *at == n && body.contains(&t))
+                .any(|(first, last, body)| (*first..=*last).contains(&n) && body.contains(&t))
         };
         let marked: Vec<&RuleNumber> = doc
             .observations
@@ -437,8 +450,8 @@ pub fn clip(s: &str, n: usize) -> String {
 mod tests {
     use super::*;
 
-    const A: &str = "100.1"; // CR~100.1
-    const B: &str = "100.2"; // CR~100.2
+    const A: &str = "100.1";
+    const B: &str = "100.2";
 
     fn n(s: &str) -> RuleNumber {
         RuleNumber::parse(s).expect("a rule number")
@@ -520,7 +533,7 @@ mod tests {
 
     #[test]
     fn a_heading_shaped_rule_does_not_suppress_the_rule_after_it() {
-        // `CR~701.2 Activate` ends with no punctuation and is still complete. Treating an
+        // `701.2 Activate` ends with no punctuation and is still complete. Treating an
         // unterminated line as mid-sentence would swallow every rule that follows a heading.
         let parts = split_rules(&lines(&format!("{A} Card Types\n{B} The rule after it.")));
         assert_eq!(parts.len(), 2);
@@ -539,6 +552,56 @@ mod tests {
         assert_eq!(counts.0, 0, "{found:#?}");
         // The control: the same number in ordinary prose on the same line IS reported.
         let bare = doc_with(&format!("per CR:{A}, and also {B} in prose\n"));
+        assert_eq!(lint(&bare).1 .0, 1);
+    }
+
+    #[test]
+    fn a_quote_reports_the_line_range_it_actually_occupies() {
+        // `Quote::last` is the field the exemption's range test reads. The lint reaches a
+        // BLOCK through a different path, so a block whose range is wrong is invisible there
+        // — and the field is public and its contract is stated, so it is asserted directly
+        // rather than through a caller that happens not to consult it.
+        let doc = doc_with(&format!(
+            "per CR:{A}:\n\n> {A} a fragment long enough to be evidence,\n> and it continues \
+             on a second line.\n"
+        ));
+        let block = quotes(&doc)
+            .into_iter()
+            .find(|q| q.kind == QuoteKind::Block)
+            .expect("the block is found");
+        assert_eq!(
+            (block.line, block.last),
+            (3, 4),
+            "a two-line block spans two lines"
+        );
+
+        let inline = quotes(&doc_with(&format!(
+            "per CR:{A}, *\"a fragment long enough to be evidence,\nand it continues here.\"*\n"
+        )))
+        .into_iter()
+        .find(|q| q.kind == QuoteKind::Inline)
+        .expect("the inline quote is found");
+        assert_eq!((inline.line, inline.last), (1, 2));
+    }
+
+    #[test]
+    fn the_quote_exemption_covers_every_line_a_wrapped_quote_occupies() {
+        // A quote long enough to carry a cross-reference is usually long enough to wrap, and
+        // the regime asks for long quotes — so the exemption holding only on the line the
+        // quote OPENS on is the common case, not the corner. A doc comment held to 100
+        // columns wraps almost every whole-body quote.
+        let doc = doc_with(&format!(
+            "per CR:{A}, *\"a fragment long enough to be evidence,\nand it continues here. \
+             See rule {B}.\"*\n"
+        ));
+        let (found, counts) = lint(&doc);
+        assert_eq!(counts.0, 0, "{found:#?}");
+        // The control, and the reason the fix is a RANGE rather than a per-line exemption: a
+        // bare number in ordinary prose on a continuation line is still reported.
+        let bare = doc_with(&format!(
+            "per CR:{A}, *\"a fragment long enough to be evidence,\nand it continues here.\"* \
+             and then {B} in prose\n"
+        ));
         assert_eq!(lint(&bare).1 .0, 1);
     }
 

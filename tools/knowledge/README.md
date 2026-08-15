@@ -8,6 +8,7 @@ cargo knowledge check [--only a,b,c]     # every check, over one walk; or only t
 cargo knowledge outstanding [text]       # every tracker entry, by directory; or one in full
 cargo knowledge index [--interpretations] [--lines] [--write]
 cargo knowledge model                    # every observation the walk produced
+cargo knowledge rules show <number> [<number> ...]   # the pinned text of a rule, shaped to be quoted
 cargo knowledge rules latest|diff|fetch|bump
 ```
 
@@ -25,6 +26,12 @@ vendored text and its archive, which reads the filesystem rather than the model.
 every family but `citations`. A comma-separated list runs their union over the one walk, so asking
 for several costs one run rather than one run each. A run prints which families it performed, and a
 family that did not run prints no count of its own. The argument is `knowledge#families-are-the-checks`.
+
+**`rules show` prints a rule as a citation is written**: `> <number> <body>`, the body entire, on
+one line, from the vendored release and no other. Paste the line into a document as a blockquote,
+or take the body alone for the inline form. It names the rule's subrules where it has any, because
+a whole-body quote of a parent does not stand for a claim its subrule carries, and it fails the run
+on a number the release does not hold rather than printing nothing.
 
 **Nothing about this repository is compiled into the tool.** Every list a check reads comes from
 `thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project

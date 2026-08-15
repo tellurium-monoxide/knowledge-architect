@@ -4,7 +4,7 @@
 # rather than from a constant.
 
 [project]
-name = "minimal"
+name = "typography"
 components = []
 # `notes/` carries outstanding state and nothing else a component carries.
 additional-trackers = ["notes/open-issues.md"]

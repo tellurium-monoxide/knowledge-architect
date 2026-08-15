@@ -69,6 +69,25 @@ pub enum Rule {
     FragmentLongEnough,
     /// A quote of a parent rule's whole body does not stand for what its subrules say.
     ParentRuleIsNotItsSubrules,
+    /// Two markers could have owned an inline quote, and its text verifies against more
+    /// than one of them.
+    ///
+    /// A quote binds to the NEAREST marker before it. The convention a writer reads puts the
+    /// marker in the clause that INTRODUCES the quote, and a clause is not a distance, so a
+    /// sentence naming a second rule in between binds the quote to the rule the writer did not
+    /// mean. Where the text matches only one candidate, `citations` already reports the
+    /// mismatch. Where it matches several the binding is unfalsifiable: 90 rules in the pinned
+    /// release have a body contained whole inside another rule's, so the wrong choice verifies
+    /// and nothing is reported. That is a silent false negative, which this tool may not have.
+    QuoteBindingIsAmbiguous,
+    /// A quote whose characters are not the release's, though its text is.
+    ///
+    /// `norm` folds a curly apostrophe or quotation mark to its ASCII form so that a quote
+    /// written either way VERIFIES — which is right for comparing and leaves the tree free to
+    /// drift. Root `CLAUDE.md` names adjusting a rule's quote style as the smallest form of
+    /// paraphrase, and 1 933 of 3 162 rules carry a character that can be folded, so without
+    /// this the convention is stated and unenforced.
+    QuoteTypography,
     /// A quotation written in the rule-quote form that no marker claims.
     ///
     /// The form is `*"…"*`, and it declares *this is rule text*. Written with no marker to bind
@@ -79,7 +98,7 @@ pub enum Rule {
 }
 
 impl Rule {
-    pub const NAMED: [(&'static str, Rule); 9] = [
+    pub const NAMED: [(&'static str, Rule); 11] = [
         ("number-resolves", Rule::NumberResolves),
         ("quote-in-scope", Rule::QuoteInScope),
         ("mention-retired", Rule::MentionRetired),
@@ -92,6 +111,8 @@ impl Rule {
             Rule::ParentRuleIsNotItsSubrules,
         ),
         ("quote-has-no-marker", Rule::QuoteHasNoMarker),
+        ("quote-binding-is-ambiguous", Rule::QuoteBindingIsAmbiguous),
+        ("quote-typography", Rule::QuoteTypography),
     ];
 
     pub fn name(self) -> &'static str {
@@ -256,6 +277,105 @@ fn completeness(doc: &Document, release: &Release, quote: &crate::quote::Quote) 
     out
 }
 
+/// Whether the quote's CHARACTERS are the release's, not merely its words.
+///
+/// Verification folds typography on both sides, so `cards' faces` verifies against the release's
+/// `cards’ faces`. That fold is deliberate — a quote written either way is checked rather than
+/// dropped — and it means nothing else asks whether the document holds what the rule prints.
+fn typography(doc: &Document, release: &Release, quote: &crate::quote::Quote) -> Vec<Judged> {
+    let Some(raw) = release.rules.raw(&quote.rule) else {
+        return Vec::new();
+    };
+    let ws = |s: &str| s.split_whitespace().collect::<Vec<_>>().join(" ");
+    let body = ws(raw);
+    let text = quote.body.replace('*', "");
+    for piece in text.split('…') {
+        let piece = ws(piece);
+        if piece.chars().count() < MIN_FRAGMENT {
+            continue;
+        }
+        if body.contains(&piece) {
+            continue;
+        }
+        // The fragment verified against the folded body — `citations` reports it otherwise —
+        // so a miss here is typography and nothing else.
+        if norm(&body).contains(&norm(&piece)) {
+            return vec![Judged {
+                rule: Rule::QuoteTypography,
+                finding: Finding::at(
+                    &doc.rel,
+                    quote.line,
+                    format!(
+                        "the quote of {} does not use the release's own characters: {}",
+                        quote.rule,
+                        clip(&piece, 60)
+                    ),
+                    "take the text from `cargo knowledge rules show`, which prints the release \
+                     verbatim; a straight quote where the rule prints a curly one is the \
+                     smallest form of paraphrase",
+                ),
+            }];
+        }
+    }
+    Vec::new()
+}
+
+/// Whether more than one marker could have owned this quote, judged by the corpus.
+///
+/// **Only the corpus can answer it.** Two markers before a quote is ordinary and correct — a
+/// sentence citing two rules in sequence, each with its own quote, is the shape the nearest-marker
+/// rule exists to serve. What is not answerable by a reader is a quote whose text belongs to
+/// several of the candidates, because then nothing in the file says which was meant and the
+/// checker's choice cannot be wrong in a way anything detects.
+///
+/// The repair is never to retarget the citation: the quote is verbatim and the rule it is bound to
+/// holds it. It is to move the other marker out from between, or to use the blockquote form, which
+/// binds by the number printed at its head and is not exposed to this at all.
+fn ambiguous_binding(
+    doc: &Document,
+    release: &Release,
+    quote: &crate::quote::Quote,
+) -> Vec<Judged> {
+    if quote.alternatives.is_empty() {
+        return Vec::new();
+    }
+    let holds = |rule: &RuleNumber| {
+        release
+            .rules
+            .get(rule)
+            .is_some_and(|body| norm(body).contains(&norm(&quote.body.replace(['*', '…'], ""))))
+    };
+    if !holds(&quote.rule) {
+        // The text does not verify as the rule it bound to. `citations` reports that already,
+        // and reporting it twice would put two findings on one repair.
+        return Vec::new();
+    }
+    let also: Vec<String> = quote
+        .alternatives
+        .iter()
+        .filter(|r| holds(r))
+        .map(|r| r.to_string())
+        .collect();
+    if also.is_empty() {
+        return Vec::new();
+    }
+    vec![Judged {
+        rule: Rule::QuoteBindingIsAmbiguous,
+        finding: Finding::at(
+            &doc.rel,
+            quote.line,
+            format!(
+                "this quote is bound to {} because that marker is nearest, and its text is also {}",
+                quote.rule,
+                also.join(" and ")
+            ),
+            "a quote takes the NEAREST marker before it, not the clause that introduces it; \
+             move the other marker out from between, or quote it as a blockquote, which binds \
+             by the number at its head",
+        ),
+    }]
+}
+
 /// Judge one document against every rule of the regime.
 pub fn check(doc: &Document, release: &Release) -> (Vec<Judged>, usize) {
     let mut out = Vec::new();
@@ -285,14 +405,56 @@ pub fn check(doc: &Document, release: &Release) -> (Vec<Judged>, usize) {
             ),
         });
     }
+    // Rules whose whole body is OWED, because a name cites them. `identifier-full-quote`
+    // demands exactly the shape `parent-rule-is-not-its-subrules` forbids, so without this the
+    // two rules cannot both be satisfied and a name citing a parent rule has no legal repair
+    // but a rename. Three sessions hit it independently and invented three different
+    // workarounds, which is what an unsatisfiable pair of instructions produces.
+    let named: Vec<(RuleNumber, u32)> = doc
+        .observations_of(|o| match o {
+            Observation::RuleMarker { number, form } if *form == MarkerForm::Identifier => {
+                Some(number.clone())
+            }
+            _ => None,
+        })
+        .map(|(line, number)| (number, line))
+        .collect();
+
     for quote in super::citations::quotes(doc) {
         out.extend(completeness(doc, release, &quote));
+        out.extend(ambiguous_binding(doc, release, &quote));
+        out.extend(typography(doc, release, &quote));
         // A parent rule's body says what it says; its subrules say the rest. A quote of the
         // parent entire passes by equality and can be offered for a claim that belongs to a
         // subrule, which is the one hole the whole-body exception opens.
         let whole = release.rules.get(&quote.rule).map(norm);
-        let text = norm(&quote.body.replace('*', ""));
-        if whole.as_deref() == Some(text.as_str()) && release.rules.has_subrules(&quote.rule) {
+        // The elision mark is stripped so a disclosed parent quote is still RECOGNISED as the
+        // parent's whole body; whether it discloses is asked separately below.
+        let text = norm(&quote.body.replace(['*', '…'], ""));
+        let owed_whole = named
+            .iter()
+            .any(|(rule, at)| *rule == quote.rule && in_range(doc, *at, quote.line));
+        // **A trailing elision discloses that the subrules say more, and that is what this
+        // rule asks for.** The bargain is `omission-marked`'s: quoting only what the claim
+        // needs is allowed, doing it invisibly is not. A parent's body is not the whole of
+        // what the rule states — its subrules are the rest — so a quote that stops at the
+        // parent and marks the omission is complete and honest, and one that presents the
+        // parent as the entire rule is the shape this catches.
+        //
+        // Without this the rule is UNSATISFIABLE beside `identifier-full-quote` and beside any
+        // claim that genuinely rests on a parent's own body: four migrating sessions hit it
+        // independently and invented four different forms, which is what a pair of
+        // instructions with no legal move produces.
+        let discloses_subrules = quote
+            .body
+            .trim_end()
+            .trim_end_matches(['*', '"'])
+            .ends_with('…');
+        if whole.as_deref() == Some(text.as_str())
+            && release.rules.has_subrules(&quote.rule)
+            && !owed_whole
+            && !discloses_subrules
+        {
             out.push(Judged {
                 rule: Rule::ParentRuleIsNotItsSubrules,
                 finding: Finding::at(
@@ -491,4 +653,183 @@ pub fn run(
     backlog.sort();
     counts.backlog = backlog;
     (findings, counts)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Two rules sharing a body exactly, and one that shares with nothing.
+    ///
+    /// Not contrived: 90 rules in the pinned release have a body contained whole inside
+    /// another rule's, `103.4` inside `119.1` among them.
+    /// A parent with one subrule, for the parent-rule cases. Bound to a name so the numbers in
+    /// it are data: written inline they are unbound literals, which the scanner reads as prose.
+    const PARENT_CORPUS: &str = concat!(
+        "100.8 A parent body long enough to be evidence on its own terms.\n",
+        "100.8a A subrule saying its own thing, which the parent does not say.\n",
+    );
+
+    const CORPUS: &str = concat!(
+        "100.5 A body long enough to be evidence and shared by two rules exactly.\n",
+        "100.6 A body long enough to be evidence and shared by two rules exactly.\n",
+        "100.7 A different body, also long enough to be evidence, and shared with nothing.\n",
+    );
+
+    // Bound to names so the scanner reads them as data. Written inline they are unbound
+    // literals, which is prose, and each one becomes a claim this file owes a quote for.
+    const SHARED_A: &str = "100.5";
+    const SHARED_B: &str = "100.6";
+    const ALONE: &str = "100.7";
+    const SHARED_TEXT: &str = "A body long enough to be evidence and shared by two rules exactly.";
+
+    fn release() -> Release {
+        Release::new(CORPUS, 0)
+    }
+
+    fn findings(text: &str) -> Vec<String> {
+        let model = crate::model::Model::from_documents(vec![(
+            std::path::PathBuf::from("notes/a.md"),
+            text.to_string(),
+        )]);
+        let doc = model.documents()[0].clone();
+        check(&doc, &release())
+            .0
+            .into_iter()
+            .filter(|j| j.rule == Rule::QuoteBindingIsAmbiguous)
+            .map(|j| j.finding.what)
+            .collect()
+    }
+
+    #[test]
+    fn a_quote_two_markers_could_own_is_reported_when_both_rules_hold_it() {
+        // The silent case. The writer means the first rule and the checker binds the second,
+        // and because both bodies hold the text nothing verifies wrongly — so without this
+        // rule there is no finding at all, and the generated index records the wrong rule as
+        // cited, which is the bump work list.
+        let found = findings(&format!(
+            "per CR:{SHARED_A}, which CR:{SHARED_B} restates, *\"{SHARED_TEXT}\"*\n"
+        ));
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains(SHARED_B), "{found:#?}");
+        assert!(found[0].contains(SHARED_A), "{found:#?}");
+    }
+
+    #[test]
+    fn a_whole_body_quote_a_name_owes_is_not_reported_as_a_parent_rule() {
+        // `identifier-full-quote` demands the rule's whole body with no elision, and
+        // `parent-rule-is-not-its-subrules` forbids a whole-body quote of a rule with
+        // subrules. Together they leave a name citing a parent rule with no legal repair but a
+        // rename — which is what three migrating sessions did, three different ways.
+        const PARENT: &str = "100.8";
+        let text = format!(
+            "/// Per CR:{PARENT}:\n\
+             ///\n\
+             /// > {PARENT} A parent body long enough to be evidence on its own terms.\n\
+             fn cr_100_8_a_test() {{}}\n"
+        );
+        let model = crate::model::Model::from_documents(vec![(
+            std::path::PathBuf::from("code/a.rs"),
+            text,
+        )]);
+        let doc = model.documents()[0].clone();
+        let release = Release::new(PARENT_CORPUS, 0);
+        let found: Vec<String> = check(&doc, &release)
+            .0
+            .into_iter()
+            .filter(|j| j.rule == Rule::ParentRuleIsNotItsSubrules)
+            .map(|j| j.finding.what)
+            .collect();
+        assert_eq!(
+            found,
+            Vec::<String>::new(),
+            "the name owes this exact quote"
+        );
+
+        // The control: the same whole-body quote with NO name citing it is still reported.
+        let plain = crate::model::Model::from_documents(vec![(
+            std::path::PathBuf::from("code/b.md"),
+            format!(
+                "### A section\n\nPer CR:{PARENT}:\n\n\
+                 > {PARENT} A parent body long enough to be evidence on its own terms.\n"
+            ),
+        )]);
+        let plain = plain.documents()[0].clone();
+        let still: Vec<String> = check(&plain, &release)
+            .0
+            .into_iter()
+            .filter(|j| j.rule == Rule::ParentRuleIsNotItsSubrules)
+            .map(|j| j.finding.what)
+            .collect();
+        assert_eq!(still.len(), 1, "{still:#?}");
+    }
+
+    #[test]
+    fn a_parent_quoted_whole_is_reported_unless_it_discloses_its_subrules() {
+        // The bargain is `omission-marked`'s, applied to the other axis: a parent's body is not
+        // the whole of what the rule states, so stopping there is allowed and doing it
+        // invisibly is not. Without the disclosure form the rule has no legal repair when the
+        // claim rests on the parent's own body, which is most of the time.
+        const PARENT: &str = "100.8";
+        const BODY: &str = "A parent body long enough to be evidence on its own terms.";
+        let release = Release::new(PARENT_CORPUS, 0);
+        let parent_findings = |text: String| -> Vec<String> {
+            let model = crate::model::Model::from_documents(vec![(
+                std::path::PathBuf::from("notes/a.md"),
+                text,
+            )]);
+            check(&model.documents()[0].clone(), &release)
+                .0
+                .into_iter()
+                .filter(|j| j.rule == Rule::ParentRuleIsNotItsSubrules)
+                .map(|j| j.finding.what)
+                .collect()
+        };
+        let bare = parent_findings(format!(
+            "### A section\n\nPer CR:{PARENT}:\n\n> {PARENT} {BODY}\n"
+        ));
+        assert_eq!(bare.len(), 1, "presented as the entire rule: {bare:#?}");
+        let disclosed = parent_findings(format!(
+            "### A section\n\nPer CR:{PARENT}:\n\n> {PARENT} {BODY} …\n"
+        ));
+        assert_eq!(
+            disclosed,
+            Vec::<String>::new(),
+            "the mark says the subrules state the rest"
+        );
+    }
+
+    #[test]
+    fn a_second_marker_whose_rule_does_not_hold_the_text_is_not_ambiguous() {
+        // Every one of the ten lines in this repository carrying two prose markers and an
+        // inline quote is this shape, so the rule must stay silent on it or it reports ten
+        // correct citations.
+        let found = findings(&format!(
+            "per CR:{ALONE}, and the rule CR:{SHARED_A} says *\"{SHARED_TEXT}\"*\n"
+        ));
+        assert_eq!(found, Vec::<String>::new());
+    }
+
+    #[test]
+    fn a_quote_that_does_not_verify_as_the_rule_it_bound_to_is_left_to_citations() {
+        // The other half of the divergence: the text belongs to the introducing rule and the
+        // nearest marker is a rule that does NOT hold it. `citations` reports that as a
+        // mismatch, and a second finding here would put two on one repair.
+        let found = findings(&format!(
+            "per CR:{SHARED_A}, and unlike CR:{ALONE}, the rule says *\"{SHARED_TEXT}\"*\n"
+        ));
+        assert_eq!(found, Vec::<String>::new());
+    }
+
+    #[test]
+    fn a_blockquote_is_never_ambiguous_because_it_binds_by_its_own_number() {
+        // A block takes the number printed at its head, so no other marker could have owned
+        // it however many precede it. This is the repair the finding recommends, and it has to
+        // actually be a repair.
+        let found = findings(&format!(
+            "The rule is CR:{SHARED_A}, which CR:{SHARED_B} restates:\n\n\
+             > {SHARED_A} {SHARED_TEXT}\n"
+        ));
+        assert_eq!(found, Vec::<String>::new());
+    }
 }

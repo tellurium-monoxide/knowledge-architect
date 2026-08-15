@@ -14,15 +14,82 @@ use rules::{Corpus, RuleNumber};
 pub fn run(manifest: &Manifest, args: &[String]) -> Result<i32, String> {
     let tree = manifest.rules_tree();
     match args.first().map(String::as_str) {
+        Some("show") => show(manifest, &tree, &args[1..]),
         Some("latest") => latest(&tree),
         Some("diff") => diff(manifest, &tree, &args[1..]),
         Some("fetch") => fetch(&tree, args.get(1).cloned()),
         Some("bump") => bump(manifest, &tree, args.get(1)),
         other => Err(format!(
-            "unknown rules command {:?}; expected latest, diff, fetch or bump",
+            "unknown rules command {:?}; expected show, latest, diff, fetch or bump",
             other.unwrap_or("(none)")
         )),
     }
+}
+
+/// One rule as a citation is written: the marker, the number as printed, then the body entire.
+///
+/// The number leads the line because that is what binds the body to a rule.
+/// `documentation::check::citations::split_rules` reads it off the front of the line, so what
+/// this returns is a citation the checker resolves rather than a rendering of one — which is
+/// the whole property, since the caller pastes it into a document.
+fn quoted(number: &RuleNumber, body: &str) -> String {
+    // Bound to a name rather than written inline, because an unbound literal is prose the
+    // scanner reads: inline, this format string is a blockquote holding no rule text, which
+    // is exactly the finding the convention exists to raise.
+    const BLOCKQUOTE: &str = ">";
+    format!("{BLOCKQUOTE} {number} {body}")
+}
+
+/// The pinned text of one or more rules, shaped to be quoted.
+///
+/// **The vendored release and no other.** A citation being written lands against what the
+/// project is pinned at; text taken from an archived release would produce a quote that fails
+/// the moment it lands, and the failure would name the quote rather than the release it came
+/// from.
+///
+/// **A number that resolves to nothing fails the run.** A session that asked for a rule and
+/// got silence writes the citation from recollection, which is the one thing root `CLAUDE.md`
+/// forbids outright.
+fn show(manifest: &Manifest, tree: &Tree, args: &[String]) -> Result<i32, String> {
+    let numbers: Vec<&String> = args.iter().filter(|a| !a.starts_with('-')).collect();
+    if numbers.is_empty() {
+        return Err("usage: rules show <number> [<number> …]".to_string());
+    }
+    let text = std::fs::read_to_string(tree.text())
+        .map_err(|e| format!("{}: {e}", tree.text().display()))?;
+    let corpus = Corpus::parse(&text, manifest.rules().body_starts_at);
+
+    let mut unresolved = 0;
+    for arg in numbers {
+        let parsed = RuleNumber::parse(arg.trim_end_matches('.'));
+        // `raw`, never `get`. `get` is normalised for COMPARING — `norm` folds a curly
+        // apostrophe to a straight one so a quote written either way verifies — and 1 933 of
+        // 3 162 rules carry one. A caller pastes what this prints, so printing the folded form
+        // makes every one of those quotes differ from the pinned text in the exact way root
+        // `CLAUDE.md` calls the smallest form of paraphrase.
+        let Some(body) = parsed.as_ref().and_then(|n| corpus.raw(n)) else {
+            println!("\n!! {arg} — the pinned release holds no such rule");
+            unresolved += 1;
+            continue;
+        };
+        let number = parsed.expect("a body was found under a parsed number");
+        println!("\n{}", quoted(&number, body));
+
+        // What the reader has to know before quoting this, and nothing else. Both notes name
+        // a rule of the regime that the text in front of them can fail.
+        let subrules = corpus.subrules(&number);
+        if !subrules.is_empty() {
+            let names: Vec<String> = subrules.iter().map(|n| n.to_string()).collect();
+            println!(
+                "   subrules, which this body does NOT say: {}",
+                names.join(" ")
+            );
+        }
+        if body.chars().count() < documentation::check::regime::MIN_FRAGMENT {
+            println!("   under the fragment floor: quote this body whole, which always passes");
+        }
+    }
+    Ok(i32::from(unresolved > 0))
 }
 
 /// Download a URL, or say why not.
@@ -363,7 +430,10 @@ mod tests {
 
     #[test]
     fn a_citing_list_is_read_out_of_the_pre_bump_index() {
-        const RULE: &str = "104.4b"; // CR~104.4b
+        // Bound, so the numbers are fixture data: an index line and a lookup key, not
+        // claims about what either rule says.
+        const RULE: &str = "104.4b";
+        const ABSENT: &str = "900.1";
         let index = format!("| `{RULE}` | 2 | one.md · A<br>two.md |\n");
         let n = RuleNumber::parse(RULE).expect("a rule number");
         let cited_by = |rule: &RuleNumber| -> String {
@@ -375,7 +445,75 @@ mod tests {
                 .unwrap_or_else(|| "(not cited)".to_string())
         };
         assert_eq!(cited_by(&n), "one.md · A, two.md");
-        let absent = RuleNumber::parse("900.1").expect("a rule number"); // CR~900.1
+        let absent = RuleNumber::parse(ABSENT).expect("a rule number");
         assert_eq!(cited_by(&absent), "(not cited)");
+    }
+
+    /// What `show` prints parses back, through the checker's own splitter, to the rule it
+    /// names and to that rule's body entire.
+    ///
+    /// This is the property the command exists for: the caller pastes the line into a
+    /// document and the citation check accepts it. Asserting the format by eye would pass
+    /// while `split_rules` read the line differently, which is the one way this can be wrong
+    /// and still look right. The cross-reference case is the shape that has broken a splitter
+    /// before — a rule number inside a body, which must not start a second rule.
+    #[test]
+    fn what_show_prints_parses_back_as_the_rule_it_names() {
+        const TEXT: &str = concat!(
+            "100.1 A body long enough to be worth quoting, and complete.\n",
+            "100.1a A subrule, which says its own thing and not its parent's.\n",
+            "100.2 A body that says see rule 100.1 for the general case.\n",
+        );
+        let corpus = Corpus::parse(TEXT, 0);
+        assert_eq!(corpus.len(), 3, "the fixture parses");
+        for (number, body) in corpus.iter() {
+            let line = quoted(number, body);
+            let stripped = line
+                .strip_prefix("> ")
+                .expect("the line opens as a blockquote")
+                .to_string();
+            let parts = documentation::check::citations::split_rules(&[stripped]);
+            assert_eq!(
+                parts,
+                vec![(number.clone(), body.to_string())],
+                "{line} must read back as one rule with its whole body"
+            );
+        }
+    }
+
+    /// `subrules` lists what `has_subrules` only counts, and neither calls a sibling a child.
+    #[test]
+    fn subrules_are_lettered_and_a_numbered_sibling_is_not_one() {
+        const TEXT: &str = concat!(
+            "612.1 A parent rule with a lettered child and a numbered sibling.\n",
+            "612.1a The lettered child, which is a subrule of the parent.\n",
+            "612.1aa The twenty-seventh sibling, which follows 612.1z and is not a child.\n",
+            "612.10 The numbered sibling, which is not under the parent at all.\n",
+        );
+        let corpus = Corpus::parse(TEXT, 0);
+        const PARENT: &str = "612.1";
+        const CHILD: &str = "612.1a";
+        const SIBLING: &str = "612.1aa";
+        let parent = RuleNumber::parse(PARENT).expect("a rule number");
+        let names: Vec<String> = corpus
+            .subrules(&parent)
+            .iter()
+            .map(|n| n.to_string())
+            .collect();
+        assert_eq!(
+            names,
+            vec![CHILD.to_string(), SIBLING.to_string()],
+            "both letterings are children of the numeric parent"
+        );
+        assert!(corpus.has_subrules(&parent));
+
+        // The lettered child has none of its own: `612.1aa` follows `612.1z` at the SAME
+        // level. This is the `704.5a`/`704.5aa` shape in the real corpus, the only two-letter
+        // rule in it, and calling it a parent left its citation with no legal repair.
+        let child = RuleNumber::parse(CHILD).expect("a rule number");
+        assert!(
+            !corpus.has_subrules(&child),
+            "a rule already lettered has no subrules"
+        );
     }
 }

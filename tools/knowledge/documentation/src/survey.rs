@@ -33,13 +33,16 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
                 .unwrap_or_default()
                 .to_string_lossy()
                 .to_string();
+            // `present` is a COMPLETE listing, because the checks it serves ask whether a path
+            // exists — one a document names, or one the manifest declares. A document may
+            // legitimately point into a directory the walk skips, such as the archive or the
+            // frozen survey, and the manifest declares `.git` as a skip. So the insert comes
+            // BEFORE the descent is refused: `.git` exists, and a listing that omitted it
+            // reported the manifest's own declaration of it as dead.
+            present.insert(rel.clone());
             if name == ".git" {
                 continue;
             }
-            // `present` is a COMPLETE listing, because the check it serves asks whether a path
-            // a document names exists — and a document may legitimately point into a directory
-            // the walk skips, such as the archive or the frozen survey.
-            present.insert(rel.clone());
             if path.is_dir() {
                 stack.push(path);
                 continue;
@@ -49,9 +52,15 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
             // filename and an excluded path are all left out — the first two because they are
             // deliberately unchecked and covered elsewhere, the third because it is another
             // project entirely, whose fixtures are not this project's unverified claims.
+            //
+            // What git does not track is not this project's file at all: it is build output or
+            // a directory made on demand, and a rule number inside one is not a claim anybody
+            // wrote. `present` still carries it, because a document may legitimately point at
+            // a generated path and `paths` has to resolve it.
             let skipped = walk.skip_dirs.iter().any(|d| rel.starts_with(d))
                 || walk.skip_files.contains(&rel)
-                || walk.exclude.iter().any(|e| rel.starts_with(e));
+                || walk.exclude.iter().any(|e| rel.starts_with(e))
+                || manifest.ignore().covers(&rel, false);
             if !skipped && !covered.contains(rel.as_path()) {
                 if let Ok(text) = std::fs::read_to_string(&path) {
                     outside.push((rel, text));

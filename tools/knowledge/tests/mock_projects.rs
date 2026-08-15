@@ -323,11 +323,14 @@ mod planted {
         (Only::CITATIONS, 5, "no rule says this"),
         (Only::SLUGS, 6, "is referenced"),
         (Only::PATHS, 1, "does not exist"),
-        (Only::COMPONENTS, 2, "carries no"),
+        // Two missing documents, plus the manifest declaring `.git`, which this project does
+        // not have. One planted row across the four declared path lists rather than four
+        // identical ones: what needs pinning is that a declared path is checked at all.
+        (Only::COMPONENTS, 3, "carries no"),
         (Only::INTERPRETATIONS, 1, "has no entry in the register"),
         (Only::UNCOVERED, 1, "is outside the walk"),
         (Only::GENERATED, 2, "the generated file is missing"),
-        (Only::REGIME, 16, "with no verified quote of it in range"),
+        (Only::REGIME, 20, "with no verified quote of it in range"),
     ];
 
     #[test]
@@ -687,6 +690,30 @@ mod regime {
             .map(|(n, _)| *n)
             .collect();
         assert!(missing.is_empty(), "no planted violation for: {missing:?}");
+    }
+
+    #[test]
+    fn a_quote_two_markers_could_own_is_reported_when_both_rules_hold_its_text() {
+        // The fixture plants the whole shape rather than the one finding, because all three
+        // are what a writer meets: the binding is ambiguous, the rule it bound to has a tail
+        // the quote drops, and the rule the writer meant is left with no quote in range. The
+        // last is the one whose hint sends them at the wrong repair, which is why the first
+        // exists.
+        one(
+            Rule::QuoteBindingIsAmbiguous,
+            "bound to 100.6 because that marker is nearest, and its text is also 100.5",
+        );
+        one(Rule::QuoteInScope, "100.5 is claimed");
+    }
+
+    #[test]
+    fn a_quote_whose_characters_are_not_the_releases_is_reported() {
+        // Verification folds typography on both sides so the words alone cannot catch it, and
+        // 1 933 of the pinned release's 3 162 rules carry a character that folds.
+        one(
+            Rule::QuoteTypography,
+            "does not use the release's own characters",
+        );
     }
 
     #[test]

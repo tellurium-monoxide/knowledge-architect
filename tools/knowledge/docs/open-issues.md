@@ -139,45 +139,6 @@ arrives as `/// >` and loses only the leader. Closing this means the reproductio
 finding while a quote written in a doc comment still verifies — the case
 `documentation/src/walk.rs` already tests.
 
-## An identifier marker is invisible unless it opens its identifier `defect`
-
-**What.** The identifier form exists because a test name cannot carry punctuation, and it owes a
-prose marker with its quote above it. The pattern that finds one opens with a word boundary, so a
-marker standing alone after a space or a backtick matches, and the same marker inside a
-`test_`-prefixed name does not. (Neither form is written out here: the first would be a live marker
-in this file, owing a quote it has no business carrying.)
-
-Verified against the implementation this replaced, which returns no match for the same input, so the
-behaviour is reproduced rather than introduced. `documentation/src/scan.rs` pins both directions.
-
-**Why it matters.** The convention's whole purpose is test names, and `test_` is the commonest way
-to write one. A test named that way carries a marker that the orphan check cannot see, so the carve
--out to the no-exceptions citation instruction — an identifier marker must have a prose marker with
-its quote immediately above it — is unenforced for exactly the shape it was written for. It is a
-silent false negative: nothing reports it, and the missing quote is invisible.
-
-**That last clause is no longer true, and the convention it describes cannot be followed in Rust.**
-The prescribed identifier form is upper case. A Rust function named that way fails the gate:
-`rustc -D warnings` reports that the function *"should have a snake case name"* under
-`non_snake_case`, which `cargo clippy --workspace --all-targets -- -D warnings` runs. (The form is
-not written out here, for the reason the parenthesis above gives.) So every rule-named test in the
-tree uses the lower-case form instead — 56 of them, `grep -rn 'fn cr_[0-9]' --include=*.rs .` — and
-the check's pattern is case-sensitive, so the orphan lint is structurally dead for the one thing the
-convention exists for. A test named for a rule its comment does not quote is reported by nothing.
-
-Two ways out and they are not equivalent: the pattern accepts the lower-case form, which makes 56
-existing names live markers and may surface a backlog; or root `CLAUDE.md` prescribes the lower-case
-form, which is what the tree already does and what Rust permits. The second is a configuration
-change and is `maintaining-agent-config`'s.
-
-The tree has two uses of the upper-case form and both are in prose, so nothing depends on it yet. The first
-Rust test named this way is when it starts costing something.
-
-**What would close it.** Either the pattern widened to find a marker anywhere in an identifier, or
-root `CLAUDE.md` stating that the marker must open the name. Both are changes to the convention
-rather than to the checker, so this is a decision before it is a fix. Closing it means a test named
-`test_CR_…` with no prose marker above it being reported.
-
 ## The tool's own fixtures are indistinguishable from real content `observation`
 
 **What.** The checks walk the whole project, including their own source. A rule number, a slug, a
@@ -255,136 +216,33 @@ paragraph, in which case the current behaviour is a deliberate constraint and be
 property only a pattern states. `assumption`: the second is what was intended, since the table-cell
 form was added deliberately and the list form was not. Nothing records either way.
 
-## The unmarked-reference lint exempts a blockquote and not an inline quote `defect`
+## The mismatch finding's hint sends a writer at the wrong repair `defect`
 
-**What.** `check/citations.rs`'s `lint` skips a line whose first non-space character is `>`, with the
-comment _"verbatim rule text, not a reference"_. That exemption is **line-shaped**. The inline quote
-form is **span-shaped**, so a rule number inside an inline quotation is scanned as an ordinary
-reference and reported as unmarked. The identical rule text quoted as a blockquote is exempt.
+**What.** An inline quote binds to the nearest marker before it. Where a sentence names a second
+rule between the introducing marker and the quote, the quote is bound to the rule the writer did
+not mean, and `check::citations` reports *"the text verifies, but not as X"* with the hint *"a
+renumbering, or the wrong number — retarget the citation at the rule that now holds this text"*.
+That advice is wrong here: the citation is correct and the repair is to move the other marker. A
+writer who follows the hint retargets a correct citation onto the wrong rule.
 
-**Observed** writing `../../crates/thaum-engine/src/runtime/step.rs`. The rule quoted was CR:800.4n,
-whose body ends with a sentence naming CR~800.4a as the rule it makes an exception to. Quoting that
-rule in full, inline, put a bare subrule number inside the quotation, and the check reported it as a
-rule named with no marker. The quotation was verbatim and verified.
+**What has been closed, and is no longer part of this entry.** The silent half — a quote bound to
+the wrong rule whose text that rule also holds, verifying with nothing reported — is now
+`regime::Rule::QuoteBindingIsAmbiguous`, and root `CLAUDE.md` states the proximity rule where a
+writer reads it. Two real instances were found in the tree when the rule landed:
+`crates/thaum-engine/src/runtime/instance.rs` in the doc comment for `empty_draw_attempts`, and
+`crates/thaum-engine/tests/driver.rs` above the two-player departure test. Both are sentences that
+deliberately name two rules sharing a sentence, so the citation is right and only the binding is
+unfalsifiable.
 
-**This entry cannot show its own example**, for the reason the fixtures entry above records: writing
-the offending line out here reproduces the finding in this file. The first draft did exactly that and
-the check reported it twice.
+**Why it matters.** The hint is the only thing a writer meets after already being wrong, and it is
+confident and specific in the wrong direction. Retargeting produces a citation that verifies, so
+nothing downstream reports it, and the generated rule index then carries a rule the document does
+not depend on.
 
-Measured over the pinned release, filtering to `NR>181`: 3 162 numbered rules in the body, of which
-569 contain a token matching the lint's own number shape after their own number. So roughly one rule
-in six cannot be quoted in full by the inline form without tripping this, and the count grows with
-every cross-reference WotC adds. Re-take from `../../docs/rules/`:
-
-```python
-import re
-tok = re.compile(r'\b\d{3}\.\d+[a-z]{0,2}\b')
-num = re.compile(r'^(\d{3}\.\d+[a-z]{0,2})\.?\s')
-body = open('MagicCompRules.txt', encoding='utf-8').read().split('\n')[181:7099]
-rules = [(m.group(0), L.strip()[len(m.group(0)):])
-         for L in body if (m := num.match(L.strip()))]
-print(len(rules), sum(1 for _, rest in rules if tok.search(rest)))
-```
-
-The body bound is the corpus layout root `CLAUDE.md` states, and it moves with the release, so
-re-take against the pinned text rather than against these numbers.
-
-**Why it matters.** It is a false positive inside a gate, and its shape pushes the writer the wrong
-way. Three escapes exist and each costs something: switch to a blockquote, which is not always wanted
-inside a doc comment; elide the cross-reference, which is right only when that fragment is genuinely
-not needed; or add a marker for a rule the sentence makes no claim about, which is the worst of the
-three, because it puts a citation in the tree that no reader asked for and that a release bump will
-later treat as a work item. Nothing distinguishes a real unmarked reference from this one, so every
-occurrence is judged by hand.
-
-**What would close it.** The quote scanner already computes every quoted span and which rule owns it,
-so the information exists: a rule-number token falling **inside a verified quote span** is verbatim
-rule text rather than a reference, whichever quote form carries it. Closing this means CR:800.4n
-quoted in full by the inline form producing no finding, while a bare rule number in ordinary prose on
-the same line still does.
-
-## The nearest-marker rule and the stated convention are not the same rule `observation`
-
-**What.** `quote.rs` attributes a quote to _"The NEAREST marker before the quote"_, and its comment
-argues the case it exists for: _"A sentence often cites two rules in sequence, each with its own
-marker and its own quote; taking the first or the last marker on the line attributes both quotes to
-one of them."_ Root `CLAUDE.md` states the convention differently: _"The marker goes in the clause
-that introduces the quote."_
-
-A clause is not a distance. The two agree whenever the introducing clause's marker is also the
-closest one, and they diverge when a sentence names a second rule between the introducing marker and
-the quote. There the writer has followed the stated instruction and the check reports a mismatch.
-
-**Observed** writing `../../crates/thaum-engine/tests/driver.rs`: one sentence introduced a quote of
-CR:800.4n while naming CR~800.4a after it and before the quote, so the nearest preceding marker was
-not the introducing one. **The report was useful.** The sentence was ambiguous to a human reader too,
-and reordering it improved the prose. That is why this is an observation rather than a defect.
-
-Only the prose form can own a quote, since the marker pattern matches `CR:` alone, so a mention
-marker cannot steal one. That was checked against the implementation, because the opposite would have
-been a defect rather than a divergence.
-
-**Why it matters.** The failure is legible only to someone who already knows the rule is proximity.
-The finding says the text verifies against a different rule, which reads as a renumbering, and its
-hint says to retarget the citation. That advice is wrong for this case, where the repair is to move
-the other marker, and a writer who follows it retargets a correct citation at the wrong rule.
-
-**What would answer it.** Either root `CLAUDE.md` states the proximity rule, which makes the
-convention checkable where a writer reads it and costs one sentence; or the finding's hint gains the
-second case, so a mismatch on a line carrying two prose markers suggests reordering before
-retargeting. `assumption`: the first, because the convention is what a writer consults and the hint is
-what they meet only after already being wrong. Nothing records either way.
-
-## A `CR:` marker that owns no quote is never reported, and its number is never resolved `defect`
-
-**What.** The prose-form marker asserts a claim about a rule's content, and root `CLAUDE.md`
-requires it to carry _"a verbatim quote and the exact rule number as printed"_. A `CR:` marker with
-**no quote anywhere near it** satisfies neither check that exists: the quote check verifies quotes
-against the rule cited and has nothing to verify, and the missing-marker lint looks for the opposite
-failure — a reference with no marker.
-
-Nothing resolves the number either. Planted in `crates/thaum-engine/src/runtime/observe.rs` and run:
-
-A prose-form marker naming a three-digit rule that does not exist, with no quote after it, planted
-in a doc comment. **The marker is not written out here**, for the reason the entry two above gives
-about this file's own fixtures: it would be a live citation in this document and would put its own
-row in the generated index. It did — `docs/rules/index.md` carried a _"Not rules in this release"_
-row for the planted number until this sentence replaced the planting.
-
-`cargo knowledge check` reported nothing: every quote fragment verified and zero unmarked rule
-references, over a doc comment asserting what a rule says, behind a marker, about a number the
-corpus does not hold.
-
-**Why it matters.** It is the failure mode root `CLAUDE.md` names as the dangerous one, reached from
-the other side: _"a bare rule number with no marker at all is the one thing that discharges nothing,
-because the checker cannot see it."_ A marked number with no quote discharges nothing either, and it
-looks conformant to a reader **and** to the checker, which the bare number does not.
-
-**Observed twice in one session**, writing `crates/thaum-engine/src/runtime/observe.rs`. One was
-`CR:120.3c's attempt on an empty library`, which is planeswalker damage — the rule wanted was
-CR:704.5b. Both were caught by re-reading the citations by hand, not by the gate.
-
-**A third occurrence, in prose rather than in a doc comment.** Writing
-`docs/plans/slice-2-design.md`, 886 lines against the pinned release: an audit by hand of every
-prose marker in that file found **eighteen** carrying no quote in range, each a claim about a rule's
-content whose quote sat in a different section or a different document. `cargo knowledge check`
-passed on the file before the audit and passed after it, so the whole repair was invisible to the
-gate. That the count is high is a property of a long document written in one pass, and the figure is
-over that file at that revision rather than a rate to expect elsewhere. What it adds to the two
-observations above is that the failure is not confined to code comments, and that a session writing
-a document of this size cannot rely on the gate to find it.
-
-**Why it is not the entry above it.** _A verbatim rule quote can sit unchecked if nothing marks it_
-is the inverse case, a quote with no marker, and its argument turns on the false-positive ratio of
-scanning plain quoted spans. This one needs no scanning: the marker is already found, and what is
-missing is a check that something follows it.
-
-**What would close it.** Two halves, separable. Resolving every cited number against the corpus is
-mechanical and has no false-positive class. Requiring a quote after a prose marker needs a decision
-about the discharge rule — root `CLAUDE.md` says a pointer to a slug that already carries the quote
-discharges the obligation, so a marker whose quote lives elsewhere is conformant and would have to be
-distinguished. `assumption`: the number-resolution half can land alone. Nobody has checked whether
-any conformant citation names a rule the corpus does not hold.
+**What would close it.** The hint gains the second case: on a line carrying two or more prose
+markers, suggest moving the intervening marker before suggesting a retarget. `assumption`: the
+mismatch verdict cannot distinguish the two causes, so the hint has to name both rather than
+choose. Nothing has tested whether a writer reads past the first clause of a hint.
 
 ## A Component-relative document name resolves against the project root and is never reported `defect`
 
@@ -448,30 +306,3 @@ to say they meant the project's — the `@` form already exists and is not check
 disambiguation may already be spelled. Closing this means every outstanding row above being
 reported and the three legitimate root references still passing. Whether it is a finding or a lint
 is open.
-
-## A float literal shaped like a rule number is reported as an unmarked reference `defect`
-
-**What.** The missing-marker lint matches a bare rule token as `\b(\d{3}\.\d+[a-z]{0,2})\b`, which
-a numeric literal satisfies. Multiplying a ratio by one hundred, written as a float literal in
-`../../crates/thaum-ai/tests/answerers.rs`, was reported as an unmarked reference to a rule with
-that number.
-
-**This entry could not be written using the literal that causes it**, which is the clearest
-statement of the cost: the text above says "one hundred as a float literal" because spelling it
-produced two more findings against this file.
-
-**Why it matters.** The repair available to an author is to spell the number differently — the line
-now carries a Rust numeric suffix instead — which is a source change made to satisfy a checker
-rather than a reader. The cost is small per instance and paid in the wrong place: percentages,
-tolerances and any three-digit constant with a decimal are ordinary in a project that records
-measurements, and a lint firing on them teaches the author to route around it.
-
-**Why it is not simply exempted.** The same pattern is what catches a genuine unmarked citation, and
-that lint is load-bearing: root `CLAUDE.md` names a bare rule number as _"the one thing that
-discharges nothing, because the checker cannot see it"_. An exemption keyed on "inside a `.rs` file"
-would blind it exactly where rule citations sit in code comments.
-
-**What would close it.** A decision on how to tell the two apart. The candidate that costs nothing
-elsewhere is to skip a token in arithmetic or with a numeric suffix — a preceding `*`, `+` or `=`
-and no `CR` marker on the line. `assumption`: no genuine citation is ever written adjacent to an
-arithmetic operator. Nobody has checked that against the tree.

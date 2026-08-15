@@ -17,6 +17,21 @@ pub struct Quote {
     pub body: String,
     /// One-based line the quote starts on.
     pub line: u32,
+    /// One-based line the quote ENDS on, which equals `line` unless the quote wraps.
+    ///
+    /// A quote is one span over several lines. Anything asking whether a position is inside a
+    /// quote needs the range: asking only about `line` exempts the opening line and leaves
+    /// every continuation line unprotected, and the regime asks for quotes long enough to wrap.
+    pub last: u32,
+    /// The other rules marked inside this quote's binding window, nearest first.
+    ///
+    /// `rule` is the nearest marker, which is how a quote is bound. The convention a writer
+    /// reads says the marker goes in the clause that INTRODUCES the quote, and a clause is not
+    /// a distance — so a sentence naming a second rule in between binds the quote to the rule
+    /// the writer did not mean. These are the markers that could have owned it, kept so a
+    /// check can ask whether the choice was ambiguous. Empty for a blockquote, which binds by
+    /// the rule number printed at its head and never by proximity.
+    pub alternatives: Vec<RuleNumber>,
     pub kind: QuoteKind,
 }
 
@@ -314,28 +329,37 @@ pub fn inline(text: &str) -> Vec<Quote> {
         // The NEAREST marker before the quote owns it. A sentence often cites two rules in
         // sequence, each with its own marker and its own quote; taking the first or the last
         // marker on the line attributes both quotes to one of them.
-        let rule = marker
+        let marked: Vec<RuleNumber> = marker
             .captures_iter(&text[from..span.start])
-            .last()
-            .and_then(|c| RuleNumber::parse(&c[1]))
-            .or_else(|| {
-                // The trailing bare number is what identified a citation before markers
-                // existed, and it is still accepted so an un-retrofitted quote stays checked.
-                // It is too weak a signal to promote an ordinary quotation, so only the
-                // italic form may use it.
-                if !span.italic {
-                    return None;
-                }
-                let to = floor_char_boundary(text, (span.end + 50).min(text.len()));
-                regex_bare()
-                    .captures(&text[span.end..to])
-                    .and_then(|c| RuleNumber::parse(&c[1]))
-            });
+            .filter_map(|c| RuleNumber::parse(&c[1]))
+            .collect();
+        let rule = marked.last().cloned().or_else(|| {
+            // The trailing bare number is what identified a citation before markers
+            // existed, and it is still accepted so an un-retrofitted quote stays checked.
+            // It is too weak a signal to promote an ordinary quotation, so only the
+            // italic form may use it.
+            if !span.italic {
+                return None;
+            }
+            let to = floor_char_boundary(text, (span.end + 50).min(text.len()));
+            regex_bare()
+                .captures(&text[span.end..to])
+                .and_then(|c| RuleNumber::parse(&c[1]))
+        });
         if let Some(rule) = rule {
+            let alternatives = marked
+                .iter()
+                .rev()
+                .skip(1)
+                .filter(|r| **r != rule)
+                .cloned()
+                .collect();
             out.push(Quote {
                 rule,
+                alternatives,
                 body: text[span.inner.0..span.inner.1].to_string(),
                 line: line_of(text, span.start),
+                last: line_of(text, span.end),
                 kind: QuoteKind::Inline,
             });
         }
@@ -374,8 +398,8 @@ fn regex_bare() -> &'static regex::Regex {
 mod tests {
     use super::*;
 
-    const RULE: &str = "104.4b"; // CR~104.4b
-    const OTHER: &str = "613.8c"; // CR~613.8c
+    const RULE: &str = "104.4b";
+    const OTHER: &str = "613.8c";
 
     fn rules_of(quotes: &[Quote]) -> Vec<String> {
         quotes.iter().map(|q| q.rule.to_string()).collect()

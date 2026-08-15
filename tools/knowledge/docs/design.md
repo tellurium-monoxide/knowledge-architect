@@ -99,6 +99,26 @@ for names. Names are collected where they are DECLARED. Collecting every occurre
 site and a `use` import citations owing the rule's whole body in the caller's scope, where there
 is nowhere to put it.
 
+### What git ignores is pruned by the walk, and the manifest declares only what git tracks `##gitignore-prunes-the-walk`
+
+The root `.gitignore` is read beside `knowledge.toml` and its paths are pruned from the walk and
+from the inverse assertion that an unwalked file may not name a rule. Nothing generated is declared:
+`target` and `.claude/worktrees` left `[walk] skip-dirs` when this landed.
+
+**What it buys is that every remaining declaration is checkable.** A generated path cannot be
+asserted to exist — a fresh clone has none of them — so while the manifest named them, no check
+could ask whether a declared path was still real, and a row naming a deleted file stayed silent in
+both directions: nobody was told it was dead, and a file later created at that path inherited what
+the row granted. With the generated class removed, every path in the manifest is one git tracks and
+`check::components` asserts each one exists.
+
+**Only the root file is read, and an unsupported pattern is an error.** A nested `.gitignore` is not
+honoured; a project needing one declares the path in the manifest instead. The matcher implements
+comments, a leading `/`, a trailing `/`, `*` inside a segment, and a bare name at any depth. A
+negation, `**`, `?` or a character class is refused by name, per `##a-failed-parse-is-loud` — a
+dropped ignore rule makes the walk read more than it should and a dropped negation makes it read
+less, and both are silent.
+
 ### A parse that cannot be trusted is reported, never silent `##a-failed-parse-is-loud`
 
 A file the walk cannot read, a source the grammar cannot parse, and a source nested deeper than

@@ -7,6 +7,7 @@
 
 pub mod check;
 pub mod finding;
+pub mod gitignore;
 pub mod index;
 pub mod manifest;
 pub mod model;

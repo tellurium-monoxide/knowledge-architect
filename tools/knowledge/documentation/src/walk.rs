@@ -5,6 +5,7 @@
 
 use std::path::{Component, Path, PathBuf};
 
+use crate::gitignore::Ignore;
 use crate::manifest::Walk;
 
 /// Every file in the repository whose contents are checked.
@@ -12,10 +13,10 @@ use crate::manifest::Walk;
 /// A hand-maintained list cannot survive a source tree, so the set is a walk with an
 /// exclusion set rather than an inclusion one: a new document is covered the moment it
 /// exists, and a file that should be exempt has to say so here, in one place, with a reason.
-pub fn live_files(root: &Path, walk: &Walk) -> std::io::Result<Vec<PathBuf>> {
+pub fn live_files(root: &Path, walk: &Walk, ignore: &Ignore) -> std::io::Result<Vec<PathBuf>> {
     let excluded: Vec<PathBuf> = walk.exclude.iter().map(|p| root.join(p)).collect();
     let mut out = Vec::new();
-    collect(root, root, walk, &excluded, &mut out)?;
+    collect(root, root, walk, ignore, &excluded, &mut out)?;
     // Sorted by path COMPONENT, not by the path as one string. They disagree whenever one
     // directory name is a prefix of another — `a/b` against `a-c/d`, where `-` sorts before
     // `/` — and component order is what the walk being replaced produced.
@@ -31,6 +32,7 @@ fn collect(
     root: &Path,
     dir: &Path,
     walk: &Walk,
+    ignore: &Ignore,
     excluded: &[PathBuf],
     out: &mut Vec<PathBuf>,
 ) -> std::io::Result<()> {
@@ -42,12 +44,18 @@ fn collect(
         if excluded.contains(&path) {
             continue;
         }
+        let rel = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
+        // What git does not track, this tool does not read, and the manifest does not have to
+        // say so. A generated directory cannot be declared and checked to exist: a fresh clone
+        // has none of them.
+        if ignore.covers(&rel, path.is_dir()) {
+            continue;
+        }
         if path.is_dir() {
-            let rel = path.strip_prefix(root).unwrap_or(&path);
-            if !walk.skip_dirs.iter().any(|d| d == rel) {
-                collect(root, &path, walk, excluded, out)?;
+            if !walk.skip_dirs.contains(&rel) {
+                collect(root, &path, walk, ignore, excluded, out)?;
             }
-        } else if is_live(&path, path.strip_prefix(root).unwrap_or(&path), walk) {
+        } else if is_live(&path, &rel, walk) {
             out.push(path);
         }
     }

@@ -196,9 +196,10 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
             // displayed — a sort key, a parser input, a line of tool output.
             //
             // **A MARKER is never data, wherever it sits.** It is explicit intent, and
-            // applying this test to one made `` `CR:104.3a` `` erase its own claim: no quote
-            // owed, no number resolved, nothing linted, and the file absent from the bump
-            // work list. Backticking is reflexive here, so that shape reads as typography.
+            // applying this test to one made a backticked `CR:` marker erase its own claim:
+            // no quote owed, no number resolved, nothing linted, and the file absent from the
+            // bump work list. Backticking is reflexive here, so that shape reads as
+            // typography.
             //
             // Slugs and paths are backticked BY CONVENTION and are never tested either.
             let data = |m: regex::Match| region.is_code(at + m.start());
@@ -342,9 +343,9 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
 mod tests {
     use super::*;
 
-    // Inputs to a scanner, bound on lines carrying their CR~ mentions.
-    const RULE: &str = "104.4b"; // CR~104.4b
-    const OTHER: &str = "613.8c"; // CR~613.8c
+    // Inputs to a scanner, bound to names.
+    const RULE: &str = "104.4b";
+    const OTHER: &str = "613.8c";
 
     fn scan_md(text: &str) -> Vec<Observation> {
         scan(&crate::source::md::parse(text))

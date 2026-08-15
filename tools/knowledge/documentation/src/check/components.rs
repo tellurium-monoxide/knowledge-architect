@@ -126,6 +126,43 @@ pub fn check(manifest: &Manifest, inputs: &Inputs) -> (Vec<Finding>, Counts) {
         }
     }
 
+    // **Every path the manifest declares is checked to exist.** A row naming a deleted file is
+    // silent in both directions: nobody is told it is dead, and a file later created at that
+    // path inherits what the row grants. That matters most for `exempt-files`, which
+    // `check::regime::run` reads as well as the lint, so a stale row there can exempt a
+    // document from the whole citation regime without anyone deciding to.
+    //
+    // **Every declaration is checkable because `.gitignore` carries the rest.** The walk prunes
+    // what git does not track, so a manifest never names build output or a directory made on
+    // demand — the class that cannot be checked, since a fresh clone has none of it.
+    //
+    // Existence, never file-ness: `skip-dirs` names directories, `exclude` names either, and
+    // `docs/rules/past` is a declared skip that is legitimately empty in a fresh checkout.
+    let walk = manifest.walk();
+    let declared: [(&str, &Vec<std::path::PathBuf>); 4] = [
+        ("[walk] skip-dirs", &walk.skip_dirs),
+        ("[walk] skip-files", &walk.skip_files),
+        ("[walk] exclude", &walk.exclude),
+        ("[lint] exempt-files", &manifest.lint().exempt_files),
+    ];
+    for (list, paths) in declared {
+        for path in paths {
+            if inputs.present.contains(path) {
+                continue;
+            }
+            out.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!(
+                    "`{}` is declared in {list} and does not exist",
+                    path.display()
+                ),
+                "delete the row, or restore what it names; a declaration nothing checks \
+                 silently covers whatever is created at that path next. What git ignores is \
+                 pruned by the walk and is never declared here",
+            ));
+        }
+    }
+
     let counts = Counts {
         components: components.all().len(),
         additional_trackers: additional.len(),
@@ -156,11 +193,24 @@ mod tests {
 
     /// The same, also declaring trackers that belong to no component.
     fn declaring_with(components: &str, additional: &str) -> Manifest {
+        declaring_full(components, additional, "[]", "[]", "[]", "[]")
+    }
+
+    /// The same, with every path list the manifest can declare spelled out.
+    fn declaring_full(
+        components: &str,
+        additional: &str,
+        skip_dirs: &str,
+        skip_files: &str,
+        exclude: &str,
+        exempt: &str,
+    ) -> Manifest {
         let text = format!(
             "[project]\nname = \"a-project\"\ncomponents = [{components}]\n\
              additional-trackers = [{additional}]\n\n\
-             [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
+             [walk]\nskip-dirs = {skip_dirs}\nskip-files = {skip_files}\n\
+             exclude = {exclude}\n\n\
+             [lint]\nexempt-files = {exempt}\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\
              [interpretations]\ndir = \"i\"\nconcerns = []\n"
@@ -200,6 +250,47 @@ mod tests {
                 }
             })
             .collect()
+    }
+
+    #[test]
+    fn a_declared_path_that_does_not_exist_is_reported_from_every_list() {
+        // All four, because every one of them is now checkable: `.gitignore` carries what
+        // cannot be — build output and directories made on demand — so a manifest names only
+        // paths git tracks.
+        let manifest = declaring_full(
+            "",
+            "",
+            "[\"gone/dir\"]",
+            "[\"gone/skipped.md\"]",
+            "[\"gone/excluded\"]",
+            "[\"gone/exempt.md\"]",
+        );
+        let present: Vec<String> = all_of("");
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let found = findings(&manifest, &present);
+        assert_eq!(found.len(), 4, "one per list: {found:#?}");
+        for name in [
+            "gone/dir",
+            "gone/skipped.md",
+            "gone/excluded",
+            "gone/exempt.md",
+        ] {
+            assert!(
+                found.iter().any(|f| f.contains(name)),
+                "{name} is unreported: {found:#?}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_declared_directory_that_exists_passes_even_when_it_holds_nothing() {
+        // `docs/rules/past` is a declared skip that is legitimately empty in a fresh checkout,
+        // so the test is existence and never file-ness.
+        let manifest = declaring_full("", "", "[\"empty/dir\"]", "[]", "[]", "[]");
+        let mut present: Vec<String> = all_of("");
+        present.push("empty/dir".to_string());
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        assert_eq!(findings(&manifest, &present), Vec::<String>::new());
     }
 
     #[test]

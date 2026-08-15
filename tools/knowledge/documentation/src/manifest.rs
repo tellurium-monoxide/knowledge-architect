@@ -225,6 +225,7 @@ struct Declared {
 pub struct Manifest {
     root: PathBuf,
     declared: Declared,
+    ignore: crate::gitignore::Ignore,
 }
 
 impl Manifest {
@@ -247,12 +248,23 @@ impl Manifest {
         Self::load(root)
     }
 
-    /// Read a manifest from a known root.
+    /// Read a manifest from a known root, and the `.gitignore` beside it.
+    ///
+    /// **The two are read together because they are one declaration.** What a project does not
+    /// track is already in `.gitignore`, so the manifest declares only what git holds — and
+    /// that is what makes every path in it checkable against the tree. A project with no
+    /// `.gitignore` declares everything in the manifest, which is what a mock project does.
     pub fn load(root: &Path) -> Result<Self, String> {
         let path = root.join(MANIFEST_NAME);
         let text =
             std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-        Self::parse(root, &text).map_err(|e| format!("{}: {e}", path.display()))
+        let mut out = Self::parse(root, &text).map_err(|e| format!("{}: {e}", path.display()))?;
+        let ignore_path = root.join(".gitignore");
+        if let Ok(text) = std::fs::read_to_string(&ignore_path) {
+            out.ignore = crate::gitignore::Ignore::parse(&text)
+                .map_err(|e| format!("{}: {e}", ignore_path.display()))?;
+        }
+        Ok(out)
     }
 
     /// Parse a declaration from text, against a root that is not read.
@@ -264,6 +276,7 @@ impl Manifest {
         Ok(Self {
             root: root.to_path_buf(),
             declared,
+            ignore: crate::gitignore::Ignore::default(),
         })
     }
 
@@ -277,6 +290,11 @@ impl Manifest {
 
     pub fn walk(&self) -> &Walk {
         &self.declared.walk
+    }
+
+    /// What the root `.gitignore` covers, which the walk does not read and may not declare.
+    pub fn ignore(&self) -> &crate::gitignore::Ignore {
+        &self.ignore
     }
 
     /// The same manifest with a different deferral list, for a test.

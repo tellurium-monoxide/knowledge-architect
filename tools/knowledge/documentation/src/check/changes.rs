@@ -283,7 +283,7 @@ fn strip_leading_number(quote: &str) -> String {
 mod tests {
     use super::*;
 
-    const RULE: &str = "104.4b"; // CR~104.4b
+    const RULE: &str = "104.4b";
 
     #[test]
     fn a_file_without_the_append_only_marker_is_rejected() {

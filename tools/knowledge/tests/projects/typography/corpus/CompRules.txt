@@ -1,0 +1,1 @@
+100.1 A rule carrying the release’s own curly apostrophe in its body text.

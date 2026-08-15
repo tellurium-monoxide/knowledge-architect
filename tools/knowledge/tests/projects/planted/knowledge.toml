@@ -10,13 +10,16 @@ components = ["parts/widget"]
 additional-trackers = ["notes/open-issues.md"]
 
 [walk]
-skip-dirs = [".git"]
+# Not a git repository, so there is no `.git` to skip and none is declared.
+skip-dirs = []
 # The rules text is not a citation of itself.
 skip-files = ["corpus/CompRules.txt"]
 exclude = []
 
 [lint]
-exempt-files = ["notes/exempt.md"]
+# PLANTED: `notes/gone.md` is not there. An exemption naming a file that does not exist is the
+# stale row this check reports — silent otherwise, and inherited by whatever is created there.
+exempt-files = ["notes/exempt.md", "notes/gone.md"]
 
 [rules]
 dir = "corpus"

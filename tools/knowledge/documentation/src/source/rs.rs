@@ -76,13 +76,22 @@ pub fn parse(text: &str) -> Parsed {
     let mut prose = runs(comments);
     let mut scopes: Vec<Scope> = Vec::new();
     for (i, (first, last, name)) in items.iter().enumerate() {
-        // The walk stops at the line after the previous item ENDS. Without that bound two
+        // The walk stops at the line after the previous SIBLING ends. Without that bound two
         // scopes overlap, and `scope_at` takes the last maximum — so the overlapped line is
         // judged against the FOLLOWING item, and a finding names the wrong one. Measured in
         // this repository before the bound: seven overlaps, every one a pair of adjacent
         // two-line statics.
+        //
+        // `prev_last < first` is what makes it siblings. `items` is sorted by `(first, last)`,
+        // so an ENCLOSING item is also earlier in it, and its `last` is past this item's first
+        // line — a floor taken over every earlier item therefore lands above `first`, the
+        // walk-up never runs, and a nested item's doc comment stays in the enclosing scope
+        // while its name sits in the inner one. That is the one thing the walk-up exists to
+        // prevent, and it made the identifier form unusable on a test function, which is
+        // where that form belongs.
         let floor = items[..i]
             .iter()
+            .filter(|(_, prev_last, _)| prev_last < first)
             .map(|(_, prev_last, _)| *prev_last + 1)
             .max()
             .unwrap_or(1);
@@ -584,6 +593,50 @@ mod tests {
         let s = p.scope_at(1).expect("a scope holds the doc line");
         assert_eq!(s.kind, ScopeKind::Item);
         assert_eq!((s.first, s.last), (1, 3));
+    }
+
+    #[test]
+    fn an_item_scope_does_not_reach_up_into_the_previous_item() {
+        // The bound the floor exists for. The walk-up climbs over ATTACHED lines, and every
+        // comment line is attached — including one trailing the previous item on its own last
+        // line. Without the floor `b` reaches back over it and swallows `a` entirely, and
+        // `scope_at` takes the last maximum, so a claim written inside `a` is judged against
+        // `b`: the quote and the claim end up in different scopes, which is the failure the
+        // regime exists to catch.
+        //
+        // The failure is CONTAINMENT of a sibling, not a partial overlap. A scan of all 75
+        // `.rs` files in this workspace for partial overlaps returns zero with the floor and
+        // zero without it, so a scan written that way reports the bound as dead code.
+        const SRC: &str = "fn a() {} // trailing\n/// doc for b\nfn b() {}\n";
+        let p = parse(SRC);
+        assert_eq!(
+            p.scope_at(1).map(|s| s.name.as_str()),
+            Some("a"),
+            "line 1 belongs to the item written on it"
+        );
+        let b = p
+            .scopes
+            .iter()
+            .find(|s| s.name == "b")
+            .expect("b has a scope");
+        assert_eq!((b.first, b.last), (2, 3), "b starts at its own doc comment");
+    }
+
+    #[test]
+    fn a_nested_item_reaches_up_over_its_doc_comment_too() {
+        // The enclosing item ENDS after the nested one begins, so a floor taken over every
+        // earlier item — rather than over the preceding SIBLINGS — sits above the nested
+        // item's own first line and the walk-up never runs. The doc comment then lands in the
+        // enclosing scope while the name lands in the inner one, which is the single case the
+        // walk-up exists to prevent. Reached constantly in practice: a test function inside
+        // `mod tests` is where the identifier form of a rule marker belongs, and that form owes
+        // its quote in the doc comment above the name.
+        const SRC: &str = "mod tests {\n    /// documented\n    fn f() {}\n}\n";
+        let p = parse(SRC);
+        let s = p.scope_at(2).expect("a scope holds the doc line");
+        assert_eq!(s.kind, ScopeKind::Item);
+        assert_eq!(s.name, "f", "the doc line belongs to the item it documents");
+        assert_eq!((s.first, s.last), (2, 3));
     }
 
     #[test]

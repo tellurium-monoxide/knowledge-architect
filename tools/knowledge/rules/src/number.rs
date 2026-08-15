@@ -6,7 +6,7 @@ use std::fmt;
 /// A Comprehensive Rule number as the rules text prints it.
 ///
 /// The grammar is the one every checker already uses: three digits, a dot, one or more
-/// digits, then at most two lowercase letters — CR~613.8c is one.
+/// digits, then at most two lowercase letters — `613.8c` is one.
 ///
 /// The printed text is stored verbatim and is what `Display` returns, so a number always
 /// round-trips to the bytes it was read from. The parsed parts exist only for ordering.
@@ -86,17 +86,17 @@ impl fmt::Display for RuleNumber {
 mod tests {
     use super::*;
 
-    // Every rule number below is bound to a name on a line that carries its CR~ mention.
-    // They are input to a parser, not claims about what any rule says, and `selftest.py`
-    // already uses this shape for the same reason: a test about the checker cannot move the
-    // checker's numbers. Binding them once keeps every other line free of a bare number.
-    const PLAIN: &str = "400.1"; // CR~400.1
-    const SECOND: &str = "400.2"; // CR~400.2
-    const TENTH: &str = "400.10"; // CR~400.10
-    const SUFFIXED: &str = "613.8c"; // CR~613.8c
-    const ELEVENTH: &str = "613.11"; // CR~613.11
-    const FIRST_LETTERED: &str = "613.1a"; // CR~613.1a
-    const LONG_TAIL: &str = "702.169b"; // CR~702.169b
+    // Every rule number below is bound to a name. They are input to a parser, not claims
+    // about what any rule says, and `selftest.py` already uses this shape for the same
+    // reason: a test about the checker cannot move the checker's numbers. Binding them once
+    // keeps every other line free of a bare number.
+    const PLAIN: &str = "400.1";
+    const SECOND: &str = "400.2";
+    const TENTH: &str = "400.10";
+    const SUFFIXED: &str = "613.8c";
+    const ELEVENTH: &str = "613.11";
+    const FIRST_LETTERED: &str = "613.1a";
+    const LONG_TAIL: &str = "702.169b";
 
     fn n(s: &str) -> RuleNumber {
         RuleNumber::parse(s).expect("should parse")
@@ -131,8 +131,8 @@ mod tests {
 
     #[test]
     fn index_order_compares_the_tail_as_text() {
-        // Verified against the committed `thaum@docs/rules/index.md`, which carries CR~400.10 and
-        // CR~400.11 between CR~400.1 and CR~400.2, and CR~613.11 before CR~613.1a. Ordering
+        // Verified against the committed `thaum@docs/rules/index.md`, which carries `400.10`
+        // and `400.11` between `400.1` and `400.2`, and `613.11` before `613.1a`. Ordering
         // the tail numerically would rewrite the file on the first run and fail its
         // freshness check.
         assert_eq!(n(PLAIN).cmp_index(&n(TENTH)), Ordering::Less);
