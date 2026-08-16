@@ -281,7 +281,7 @@ way rather than by recall:
 | the new pre-game departure refusal, `runtime/state.rs` | the engine's | fixed on sight |
 | `Side::life`'s doc comment, `runtime/instance.rs` | the engine's | fixed |
 | the two deleted acting-player helpers, `runtime/step.rs` | the engine's | gone with the functions |
-| `record_mulligan_round`'s doc comment, `runtime/step.rs` | **the project's**, correctly | not an instance |
+| `record_mulligan_round`'s doc comment, `runtime/step/pregame.rs` | **the project's**, correctly | not an instance |
 
 **The seventh row breaks the mechanism stated above.** It points from one Component into a
 *different* Component, so the collision is not only "the project carries the same names" — a bare
