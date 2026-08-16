@@ -341,3 +341,28 @@ is right whenever a line names one concern, which is every line in the tree unti
 compare only against that; a number with no file before it is unqualified and checked against none,
 which is the shape a bare `R29` already has. `assumption`, not measured: the nearest-preceding rule
 matches how every existing line reads, since each names its file immediately before its numbers.
+
+## The citation lint cannot see a section-level rule reference `question`
+
+**What.** Every rule-number pattern in the tool requires a subrule dot: `RULE_TOKEN` in
+`tools/knowledge/documentation/src/scan.rs` is `\b(\d{3}\.\d+[a-z]{0,2})\b`, and the marker and
+identifier patterns in `scan.rs` and `tools/knowledge/documentation/src/quote.rs` are the same
+shape behind `CR:` and `cr_`. A reference to a whole section — "CR 601's casting process", "is
+733" — therefore passes every check while claiming content, which is the shape the citation
+regime exists to prevent. Two instance classes are known: the bare "is 733" sentence tracked as a
+`defect` in `thaum-engine@docs/open-issues.md` (its entry names widening the lint as the
+alternative repair and defers the decision here), and the space-form "CR 601" references in
+`docs/plans/slices.md` and `docs/plans/slice-2-design.md`, found by a rules-axis review of the
+staging-design branch and left by the owner's decision pending this question.
+
+**Why it matters.** A reader takes an unreported reference as verified. The regime's whole
+mechanism is that a number claiming content owes a quote a checker verifies; a section-level
+reference is outside the mechanism entirely, so the class grows silently with the documents.
+
+**What would close it.** A decision on what a section-level reference owes, then the lint
+widened to enforce it. The open design question is the discriminator: "rule 733" appears inside
+verbatim quotes, in cross-references the CR's own text carries, and in structural prose ("one
+rules section per module") where it claims no content — a widened pattern must separate those
+from a claiming reference, or the lint drowns in false findings. An experiment that would
+inform it: count `\b\d{3}\b` and `CR \d{3}` hits across the live documents and classify a
+sample by hand.
