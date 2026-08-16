@@ -43,7 +43,11 @@ step at the next release.
 ## Guarding the citation index as a bump work list
 
 **Fires when:** `docs/rules/index.md`'s cited-rule count falls between two commits that add engine
-code. It is 372 at the time of writing; the number is in the file's own header.
+code, **and a rule that left was cited by anything other than a `docs/plans/` document deleted at
+its landing**. The count is in the file's own header, and the old index names each lost rule's
+citers. A plan file leaves the tree with its slice by design and takes its citations with it, so a
+fall it fully accounts for guards nothing; without that clause this fires at every landing that
+deletes a plan file.
 **Response:** the regime is being satisfied by dropping rule numbers rather than by quoting them.
 That leaves the engine's dependence on the corpus invisible, and a release bump then misses what
 depends on it — which is the one thing the index exists to prevent.
