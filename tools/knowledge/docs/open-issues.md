@@ -278,7 +278,7 @@ way rather than by recall:
 | `cr_402_2_a_hand_never_exceeds_the_maximum_after_a_cleanup_step`, `tests/pregame.rs` | an entry on the absent discard, which exists in no tracker in the tree | yes |
 | *Whether a `State` pins a card-corpus version*, the engine's `open-issues.md` | **`thaum-corpus`'s** `open-issues.md` | gone with the entry — closed by the corpus design |
 | *`Status::BudgetExhausted` conflates two different bounds*, the engine's `open-issues.md` | the file it is written in | yes |
-| the new pre-game departure refusal, `runtime/state.rs` | the engine's | fixed on sight |
+| the new pre-game departure refusal, `runtime/state/boundary.rs` | the engine's | fixed on sight |
 | `Side::life`'s doc comment, `runtime/instance.rs` | the engine's | fixed |
 | the two deleted acting-player helpers, `runtime/step.rs` | the engine's | gone with the functions |
 | `record_mulligan_round`'s doc comment, `runtime/step/pregame.rs` | **the project's**, correctly | not an instance |
