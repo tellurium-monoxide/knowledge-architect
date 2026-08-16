@@ -30,16 +30,6 @@ indistinguishable from a clean tree. `Parsed::trouble` catches the cases the gra
 guards the case where it reports success and returns nothing.
 **Re-entry:** standing, and each time either parser's version changes.
 
-## Guarding `knowledge#scope-and-distance`
-
-**Fires when:** the count of file-and-rule pairs carrying two or more verified quotes rises above 10.
-Near zero today. Re-take by grouping the verified quotes `cargo knowledge check --only citations`
-walks by their file and rule.
-**Response:** the bound is forcing a copy rather than a repair. Re-argue the distance, or the scope
-unit, before the duplicates spread — a rule quoted twice in one document is two things to keep in
-step at the next release.
-**Re-entry:** standing, and at any change to the bound.
-
 ## Guarding the citation index as a bump work list
 
 **Fires when:** `docs/rules/index.md`'s cited-rule count falls between two commits that add engine
