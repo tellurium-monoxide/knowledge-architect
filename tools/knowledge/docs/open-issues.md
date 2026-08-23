@@ -351,9 +351,10 @@ shape behind `CR:` and `cr_`. A reference to a whole section — "CR 601's casti
 733" — therefore passes every check while claiming content, which is the shape the citation
 regime exists to prevent. Two instance classes are known: the bare "is 733" sentence tracked as a
 `defect` in `thaum-engine@docs/open-issues.md` (its entry names widening the lint as the
-alternative repair and defers the decision here), and the space-form "CR 601" references in
-`docs/plans/slices.md` and `docs/plans/slice-2-design.md`, found by a rules-axis review of the
-staging-design branch and left by the owner's decision pending this question.
+alternative repair and defers the decision here), and the space-form "CR 601" shape, found by a
+rules-axis review in slice 2's plan documents and left by the owner's decision pending this
+question; those documents left the tree when slice 2 landed, so the class currently has no live
+instance, and the lint's blindness to the shape is unchanged.
 
 **Why it matters.** A reader takes an unreported reference as verified. The regime's whole
 mechanism is that a number claiming content owes a quote a checker verifies; a section-level
