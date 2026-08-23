@@ -91,13 +91,7 @@ pub fn entries(model: &Model, manifest: &Manifest) -> Vec<Entry> {
             // tripwire states when it fires, an issue states what it is — so the test is the
             // one a reader applies.
             let tagged = tag_of(&title);
-            // Anchored to the start of a line, not a substring anywhere. An entry ABOUT
-            // tripwires quotes the phrase in its prose, and a substring test reads that entry
-            // as a tripwire — which is how the first draft of this fix mislabelled the very
-            // entry recording the defect it was fixing.
-            let fires = body
-                .lines()
-                .any(|l| l.trim_start().starts_with("**Fires when:**"));
+            let fires = body.lines().any(states_when_it_fires);
             if !fires && tagged.is_none() && !body.contains("**What.**") {
                 continue;
             }
@@ -119,6 +113,29 @@ pub fn entries(model: &Model, manifest: &Manifest) -> Vec<Entry> {
         }
     }
     out
+}
+
+/// Whether this line is a tripwire's firing field: a bold label opening with `Fires when`,
+/// optionally qualified — `**Fires when:**`, `**Fires when (the bound):**` — whose bold span
+/// closes with a colon.
+///
+/// Anchored to the line's start, not a substring anywhere: an entry ABOUT tripwires quotes the
+/// phrase in its prose, and a substring test reads that entry as a tripwire — which is how the
+/// first draft of the anchoring fix mislabelled the very entry recording the defect it was
+/// fixing. Requiring the span to close with `:` is what keeps a bold `**Fires when**` opening
+/// an ordinary sentence from counting as a field.
+///
+/// **The qualifier is admitted in any shape**, because the exact-prefix match this replaces
+/// dropped a real entry whole: a two-clause tripwire tells its clauses apart inside the label —
+/// `**Fires when (the bound):**` beside `**Fires when (the key):**` — and matching only the
+/// unqualified form left it out of the listing and the count, unenumerated for every session
+/// that reads the trackers through this tool as instructed.
+fn states_when_it_fires(line: &str) -> bool {
+    let Some(rest) = line.trim_start().strip_prefix("**Fires when") else {
+        return false;
+    };
+    rest.find("**")
+        .is_some_and(|end| rest[..end].ends_with(':'))
 }
 
 /// `(title, body)` for each second- or third-level heading.
@@ -229,6 +246,30 @@ mod tests {
             format!("{:<10}|", Kind::Tagged("todo".into())),
             "todo      |"
         );
+    }
+
+    #[test]
+    fn a_firing_field_is_recognised_with_or_without_a_qualifier() {
+        assert!(states_when_it_fires(
+            "**Fires when:** a reader treats the bound as a guarantee"
+        ));
+        // The recorded defect, closed: the two-clause entry's own labels, which the
+        // exact-prefix match this repairs dropped from the listing entirely. The mutation the
+        // qualified cases discriminate is restoring `starts_with("**Fires when:**")`.
+        assert!(states_when_it_fires(
+            "**Fires when (the bound):** a reader or a document treats the engine's catalog bound"
+        ));
+        assert!(states_when_it_fires(
+            "  **Fires when (the key):** a second pool exists"
+        ));
+        // Prose about the field is not the field: quoted mid-line, or a bold span opening an
+        // ordinary sentence rather than closing a label with a colon.
+        assert!(!states_when_it_fires(
+            "an entry states **Fires when:** and a response"
+        ));
+        assert!(!states_when_it_fires(
+            "**Fires when** is the field a tripwire states"
+        ));
     }
 
     #[test]

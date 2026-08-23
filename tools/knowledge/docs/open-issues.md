@@ -366,27 +366,3 @@ rules section per module") where it claims no content — a widened pattern must
 from a claiming reference, or the lint drowns in false findings. An experiment that would
 inform it: count `\b\d{3}\b` and `CR \d{3}` hits across the live documents and classify a
 sample by hand.
-
-## A tripwire whose firing field carries a parenthesis is invisible to `outstanding` `defect`
-
-**What.** `cargo knowledge outstanding` drops the entry
-`Guarding thaum-engine#catalog-is-a-question (two)` from `crates/thaum-engine/docs/tripwires.md`:
-the file holds 31 `## ` entries and the tool lists 30 for it, and
-`cargo knowledge outstanding catalog` answers `no entry matching "catalog"`. The mechanism is in
-`entries` in `tools/knowledge/documentation/src/outstanding.rs`: an untagged entry is recognised
-as a tripwire only where a line starts with the exact prefix `**Fires when:**`, and is otherwise
-skipped. That entry's fields are `**Fires when (the bound):**` and `**Fires when (the key):**`,
-so no line matches and the entry is dropped from the listing and from the count. Found by the
-standing-state reviewer of the 2h landing; the entry itself was read whole there and neither of
-its halves fires on that work.
-
-**Why it matters.** Root `CLAUDE.md` instructs sessions to enumerate the trackers through the
-tool rather than by grep, so a live tripwire is unenumerated for every session that complies —
-a parked item whose re-entry mechanism silently does not include it.
-
-**What would close it.** The owner's call between two repairs: the parser recognising a
-qualified firing field (a prefix match on `**Fires when` up to `:**`), or the entry's two
-fields renamed to the exact form with the qualifier moved into the sentence — and a check that
-the per-file entry count the tool sees equals the file's `## ` heading count, so the next
-divergence names itself.
-
