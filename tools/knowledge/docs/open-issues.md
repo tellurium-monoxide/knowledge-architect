@@ -353,8 +353,11 @@ regime exists to prevent. Two instance classes are known: the bare "is 733" sent
 `defect` in `thaum-engine@docs/open-issues.md` (its entry names widening the lint as the
 alternative repair and defers the decision here), and the space-form "CR 601" shape, found by a
 rules-axis review in slice 2's plan documents and left by the owner's decision pending this
-question; those documents left the tree when slice 2 landed, so the class currently has no live
-instance, and the lint's blindness to the shape is unchanged.
+question. The instances that review flagged are gone — one document left the tree when slice 2
+landed, the other's were edited out during the slice — but the shape itself stays common:
+`grep -rnE '\bCR [0-9]{3}' --include="*.md" --include="*.rs"` over the live tree returns
+space-form references in the tens of files, several claiming content, and the lint sees none of
+them.
 
 **Why it matters.** A reader takes an unreported reference as verified. The regime's whole
 mechanism is that a number claiming content owes a quote a checker verifies; a section-level
