@@ -231,7 +231,7 @@ the wrong rule whose text that rule also holds, verifying with nothing reported 
 `regime::Rule::QuoteBindingIsAmbiguous`, and root `CLAUDE.md` states the proximity rule where a
 writer reads it. Two real instances were found in the tree when the rule landed:
 `crates/thaum-engine/src/runtime/instance.rs` in the doc comment for `empty_draw_attempts`, and
-`crates/thaum-engine/tests/driver.rs` above the two-player departure test. Both are sentences that
+`tools/thaum-testing/tests/driver.rs` above the two-player departure test. Both are sentences that
 deliberately name two rules sharing a sentence, so the citation is right and only the binding is
 unfalsifiable.
 
@@ -370,3 +370,30 @@ rules section per module") where it claims no content — a widened pattern must
 from a claiming reference, or the lint drowns in false findings. An experiment that would
 inform it: count `\b\d{3}\b` and `CR \d{3}` hits across the live documents and classify a
 sample by hand.
+
+## The path scanner's suffix set omits `.rs`, so Rust paths in documents are never checked `defect`
+
+**What.** `PATH_REF` in `tools/knowledge/documentation/src/scan.rs` extracts a backticked
+root-stem path only when its suffix is one of `md|txt|py|sh|tsv`. A backticked `.rs` path in
+any document is not extracted, so the paths check in
+`tools/knowledge/documentation/src/check/paths.rs` never validates it and it can dangle
+silently. Root `CLAUDE.md` states that backticked paths are checked to point at existing
+locations, with no suffix carve-out, so the instruction and the tool disagree. The
+component-relative form (`COMPONENT_PATH_REF`) carries no suffix restriction and is unaffected.
+
+**Reproduce.** Append a backticked reference to a nonexistent path ending in `.rs` — for
+example a `bogus-probe.rs` under any real directory — to a walked document, then run
+`cargo knowledge check --only paths`: the reference count does not change and the check
+passes. The same reference with a `.md` suffix is reported as dangling.
+
+**Why it matters.** The relocation of the nine game-driving suites to `tools/thaum-testing`
+moved every `.rs` test path named across five knowledge documents, and the checker reported
+none of them; the sweep had to be grep-driven. Any rename of a Rust file leaves silent
+dangling pointers in the documents, which is the failure the paths check exists to prevent —
+its own module doc records nine dangling references to a deleted file as its founding case.
+
+**What would close it.** Adding `rs` to `PATH_REF`'s suffix set, then repairing whatever the
+widened check reports over the live documents. `assumption`, not measured: the suffix set
+exists to keep prose with slashes from reading as paths, and widening by one code suffix
+keeps that property because the pattern still requires backticks, a slash and a filename
+shape.
