@@ -10,7 +10,7 @@ use sha2::{Digest, Sha256};
 ///
 /// Every path is supplied by the caller. This library knows that a corpus has a pinned text,
 /// a version, an archive and a provenance manifest; it does not know that they sit under
-/// `docs/rules`, which is a fact about a project's layout and lives in that project's
+/// `thaum@docs/rules/`, which is a fact about a project's layout and lives in that project's
 /// manifest. Handing it explicit paths is what lets the same code check a mock project whose
 /// layout differs.
 #[derive(Clone, Debug)]

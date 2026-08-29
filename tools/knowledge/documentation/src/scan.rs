@@ -63,7 +63,7 @@ pub enum Observation {
         component: Option<String>,
         slug: String,
     },
-    /// A path named in prose, behind its anchor: `` `anchor@path` ``.
+    /// A path named in prose, behind its anchor: `` `<anchor>@<path>` ``.
     PathRef {
         anchor: PathAnchor,
         /// As written, trailing slash included: the slash is the writer's claim that the
@@ -173,7 +173,7 @@ static SLUG_DEF: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"^(?:\|\s*`##([a-z0-9][a-z0-9-]{2,})`|###\s+.*?`##([a-z0-9][a-z0-9-]{2,})`)")
         .unwrap()
 });
-/// An anchored path reference: `` `anchor@path` ``. The anchor is a component name, `*`, or
+/// An anchored path reference: `` `<anchor>@<path>` ``. The anchor is a component name, `*`, or
 /// the escape anchor, all one character class with the slug reference's component part.
 ///
 /// The path class is permissive on purpose: a `..`, a `.` segment or a leading `/` still
@@ -908,7 +908,7 @@ mod tests {
         }
     }
 
-    /// The path references a text yields, rendered as written: `anchor@path`.
+    /// The path references a text yields, rendered as written: `<anchor>@<path>`.
     fn path_refs(text: &str) -> Vec<String> {
         scan_md(text)
             .into_iter()
@@ -960,7 +960,7 @@ mod tests {
     fn any_suffix_and_a_slashless_path_are_extracted() {
         // The retired form extracted a bare path only when its suffix was one of five, so
         // every backticked Rust path dangled silently through one relocation. The anchored
-        // form owes no suffix and no slash: `component@README.md` is a reference too.
+        // form owes no suffix and no slash: a bare document name behind an anchor is a reference too.
         let rs = "src/b.rs";
         let bare = "README.md";
         let text = format!("see `{COMPONENT}@{rs}` and `{COMPONENT}@{bare}`");

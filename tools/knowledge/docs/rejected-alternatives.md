@@ -26,7 +26,29 @@ reference has to carry by itself: the same text would name different decisions d
 file it sits in, so moving a document between components would silently retarget every unqualified
 reference in it.
 
-**A third-party mirror as the source** — lost to `knowledge#watch-reads-the-page`. `live`. Mirrors keep
+**A bare root-relative path form, with a targeted check on the collision cases** — lost to
+`knowledge#every-path-names-its-anchor`. `live`. It keeps prose short and costs no migration.
+It loses on what was counted: the required document set gives every component the same names,
+so a bare `docs/`-headed reference from inside a component silently names the project's file —
+twelve candidate sites in one component alone, nine of them wrong, enumerated in the entry
+that recorded the defect. A targeted check patrols the collision; retiring the form makes it
+unrepresentable, and an anchored reference is what a fixed-string grep can find.
+
+**The `@` prefix as the root-relative spelling** — lost to `knowledge#reserved-anchors`.
+`live`. It is one character where the project name is five. It loses on the census taken at
+the design session: the tree held 75 `@`-prefixed spans carrying three meanings — about 65
+meant every component's own copy, a handful meant a path outside the tree, three were Java
+annotations that were never path syntax — and the scanner registered none of them, so a typo'd
+escape was invisible by construction. One mute marker for three meanings is the confusion the
+anchor words dissolve, and a second spelling for the root would put two shapes on one meaning.
+
+**Widening the retired form's suffix set by one entry** — superseded by
+`knowledge#every-path-names-its-anchor`, which retires suffix sets with the form that carried
+them. `live`. The measured cost of the set: relocating the nine game-driving suites moved
+every backticked Rust path across five knowledge documents and the checker reported none of
+them, because no suffix in the set covered them; the sweep had to be grep-driven.
+
+ Mirrors keep
 stable index pages and would be less brittle than Wizards' HTML. It loses on what the corpus is: the
 Comprehensive Rules are this project's only authority, and putting a third party between the project
 and its authority as the _change signal_ is a dependency nothing else here has.

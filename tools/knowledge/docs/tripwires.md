@@ -1,6 +1,6 @@
 # Tripwires — the knowledge tool
 
-Evidence that would reopen a decision about `tools/knowledge/` itself. **A tripwire is not something
+Evidence that would reopen a decision about `knowledge` itself. **A tripwire is not something
 to do**: it is a hypothesis about a future failure plus the response, and it leaves this file when it
 fires. What is outstanding about the tool is `open-issues.md` beside it.
 
@@ -9,7 +9,7 @@ standing re-entry point is `standing-state-reviewer`, which re-reads every track
 
 ## Guarding `knowledge#families-are-the-checks`
 
-**Fires when:** a check family exists that no subagent definition under `../../.claude/agents/`
+**Fires when:** a check family exists that no subagent definition under `thaum@.claude/agents/`
 names, or a definition names a family the tool does not accept. Read the family list out of the
 tool's help, which prints every accepted name, and grep each across that directory.
 **Response:** open a `defect`. A family nobody reads is a check whose output reaches no reviewer,
@@ -62,10 +62,22 @@ once-per-claim weight of the quote obligation, and record the instance as an `ob
 rules-reviewer's genuinely-data check is where the instance surfaces.
 **Re-entry:** standing.
 
+## Guarding `knowledge#reserved-anchors`' generic rule
+
+**Fires when:** a session or a review reports a `*@` finding whose repair was unclear to
+whoever hit it — the finding named neither a path to fix nor a component to anchor at that the
+repairer could act on, or the reference passed while meaning something the writer did not
+intend, such as a path every crate happens to carry without being generic.
+**Response:** reopen the generic anchor's checking rule at `knowledge#reserved-anchors`: the
+accepted set may need to be the required documents alone, or the at-least-one-component test
+may need to become an every-component test. Record the confusing instance as an `observation`
+with the finding text it produced.
+**Re-entry:** standing.
+
 ## Guarding the citation index as a bump work list
 
-**Fires when:** `docs/rules/index.md`'s cited-rule count falls between two commits that add engine
-code, **and a rule that left was cited by anything other than a `docs/plans/` document deleted at
+**Fires when:** `thaum@docs/rules/index.md`'s cited-rule count falls between two commits that add engine
+code, **and a rule that left was cited by anything other than a `thaum@docs/plans/` document deleted at
 its landing**. The count is in the file's own header, and the old index names each lost rule's
 citers. A plan file leaves the tree with its slice by design and takes its citations with it, so a
 fall it fully accounts for guards nothing; without that clause this fires at every landing that

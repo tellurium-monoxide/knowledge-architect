@@ -17,7 +17,7 @@ use crate::scan::{MarkerForm, Observation};
 /// How a document is named in an index.
 ///
 /// The register is a directory of concern files, and the concern is the useful half of the
-/// name — `interpretations/layers` rather than the path to it.
+/// name — `<dir>/<stem>` rather than the path to it.
 pub fn label(doc: &Document, interpretations_dir: &std::path::Path) -> String {
     if doc.rel.parent() == Some(interpretations_dir) {
         let stem = doc.rel.file_stem().unwrap_or_default().to_string_lossy();
@@ -120,7 +120,7 @@ impl PartialOrd for Sort {
     }
 }
 
-/// `docs/rules/index.md`: every rule cited, and what depends on it.
+/// `thaum@docs/rules/index.md`: every rule cited, and what depends on it.
 ///
 /// This is what makes a bump actionable — when a rule changes or is renumbered, it says
 /// exactly what has to be re-read.
@@ -176,7 +176,7 @@ struct Entry {
     turns_on: BTreeMap<String, MarkerForm>,
 }
 
-/// `docs/rules/interpretations/index.md`: every entry, what it rests on, and who cites it.
+/// `thaum@docs/rules/interpretations/index.md`: every entry, what it rests on, and who cites it.
 ///
 /// It exists for what a numbering check cannot see. Uniqueness, no holes and a high-water mark
 /// all describe the SHAPE of the sequence, and a replacement — delete an entry, write a

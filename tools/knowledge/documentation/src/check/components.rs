@@ -13,8 +13,8 @@
 //! design recorded wherever the last session happened to put it.
 //!
 //! **The design home has two accepted shapes, and a component carries exactly one** — the
-//! argument is `knowledge#design-home-two-shapes`. The single file `docs/design.md`, or the
-//! directory `docs/design/` whose `README.md` is the head and must link every subdocument
+//! argument is `knowledge#design-home-two-shapes`. The single file `*@docs/design.md`, or the
+//! directory `*@docs/design/` whose `README.md` is the head and must link every subdocument
 //! with a markdown link relative to itself; a bullet list of links is the conventional shape.
 //!
 //! **A tracker outside every component is declared one by one, and checked the same way.** Some
@@ -172,7 +172,7 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
     // demand — the class that cannot be checked, since a fresh clone has none of it.
     //
     // Existence, never file-ness: `skip-dirs` names directories, `exclude` names either, and
-    // `docs/rules/past` is a declared skip that is legitimately empty in a fresh checkout.
+    // `thaum@docs/rules/past/` is a declared skip that is legitimately empty in a fresh checkout.
     let walk = manifest.walk();
     let declared: [(&str, &Vec<std::path::PathBuf>); 4] = [
         ("[walk] skip-dirs", &walk.skip_dirs),
@@ -443,7 +443,7 @@ mod tests {
 
     #[test]
     fn a_declared_directory_that_exists_passes_even_when_it_holds_nothing() {
-        // `docs/rules/past` is a declared skip that is legitimately empty in a fresh checkout,
+        // `thaum@docs/rules/past/` is a declared skip that is legitimately empty in a fresh checkout,
         // so the test is existence and never file-ness.
         let manifest = declaring_full("", "", "[\"empty/dir\"]", "[]", "[]", "[]");
         let mut present: Vec<String> = all_of("");

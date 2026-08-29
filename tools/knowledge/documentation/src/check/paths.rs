@@ -159,8 +159,12 @@ fn reference(
             let target = cr.path.join(trimmed);
             // The deepest anchor wins: a reference reaching inside another component breaks
             // when that component moves, and the anchor is what a move must not break.
+            // Inside means a PROPER descendant: a component's own directory has no spelling
+            // under its own anchor, so pointing at it from an ancestor is the one legal way
+            // to name where a component lives — and that reference names a location, which
+            // is exactly what a move is expected to break.
             let owner = components.owning(&target);
-            if owner.path != cr.path {
+            if owner.path != cr.path && target != owner.path {
                 out.push(Finding::at(
                     rel,
                     line,
@@ -504,6 +508,15 @@ mod tests {
             "{found:#?}"
         );
         assert!(found[0].contains(NAME), "{found:#?}");
+    }
+
+    #[test]
+    fn a_components_own_directory_is_named_from_an_ancestor() {
+        // Inside means a proper descendant, so the one spelling of where a component lives
+        // is legal — and it is a location, which a move is expected to break.
+        let m = manifest();
+        let (found, _) = checked(&m, &format!("See `{PROJECT}@{PART}/`.\n"), &tree());
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
     }
 
     #[test]

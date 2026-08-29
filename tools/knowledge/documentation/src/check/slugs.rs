@@ -127,7 +127,7 @@ mod tests {
     const ROOT: &str = "a-project";
     const PART: &str = "a-part";
 
-    /// A project whose root component is `a-project` and which declares `parts/a-part`.
+    /// A project whose root component is `a-project` and which declares one component under `parts/`.
     fn manifest() -> Manifest {
         let text = format!(
             "[project]\nname = \"{ROOT}\"\ncomponents = [\"parts/{PART}\"]\n\n\

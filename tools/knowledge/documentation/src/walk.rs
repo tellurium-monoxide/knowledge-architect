@@ -18,7 +18,7 @@ pub fn live_files(root: &Path, walk: &Walk, ignore: &Ignore) -> std::io::Result<
     let mut out = Vec::new();
     collect(root, root, walk, ignore, &excluded, &mut out)?;
     // Sorted by path COMPONENT, not by the path as one string. They disagree whenever one
-    // directory name is a prefix of another — `a/b` against `a-c/d`, where `-` sorts before
+    // directory name is a prefix of another — a/b against a-c/d, where `-` sorts before
     // `/` — and component order is what the walk being replaced produced.
     out.sort_by(|a, b| components(a).cmp(&components(b)));
     Ok(out)

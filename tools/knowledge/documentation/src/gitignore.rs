@@ -194,7 +194,7 @@ mod tests {
 
     #[test]
     fn the_two_paths_the_manifest_used_to_declare_are_covered() {
-        // The whole point: `target` and `.claude/worktrees` come out of `knowledge.toml`
+        // The whole point: `target` and `thaum@.claude/worktrees/` come out of `knowledge.toml`
         // because this file already names them, and neither can be checked to exist.
         let i = ignore();
         assert!(i.covers(Path::new("target"), true));
@@ -222,7 +222,7 @@ mod tests {
             !i.covers(Path::new("target"), false),
             "`target/` names a directory; a FILE called target is tracked"
         );
-        // `.claude/worktrees` carries no trailing slash, so it matches either.
+        // `thaum@.claude/worktrees/` carries no trailing slash, so it matches either.
         assert!(i.covers(Path::new(".claude/worktrees"), false));
     }
 

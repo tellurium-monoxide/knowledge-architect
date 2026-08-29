@@ -4,10 +4,10 @@ Recorded intent for this tool: how it is built internally, and why. Present tens
 carrying a slug anchor, cited from elsewhere with `knowledge` as its component. What lost to a decision here is
 `knowledge@docs/rejected-alternatives.md`, and `recording-a-decision` owns the shape.
 
-**What belongs here rather than in `docs/design.md`:** a decision that does **not** survive
+**What belongs here rather than in `thaum@docs/design.md`:** a decision that does **not** survive
 deleting this tool. How it works and how the pieces inside divide the work belongs here.
 
-What otherwise shapes it is `tools/README.md`, `knowledge.toml`, and the module documentation at
+What otherwise shapes it is `thaum@tools/README.md`, `knowledge.toml`, and the module documentation at
 the top of each file under `knowledge@documentation/src/` and `knowledge@rules/src/`.
 
 ### The model is built once, and every check is a pure function over it `##model-then-checks`
@@ -66,7 +66,7 @@ it exists, and it is named as a tracker — because the report splits its totals
 file called anything else joins one half or the other by accident.
 
 **Which components exist is declared, and what a component carries is compiled in.** That is the
-one exception to `tools/README.md`'s rule that nothing about a repository is compiled into the tool,
+one exception to `thaum@tools/README.md`'s rule that nothing about a repository is compiled into the tool,
 and it is not an exception to it: the list in `manifest.rs` is not this repository's, it is what
 the word _component_ means here. A project free to declare its own set would be conformant with
 whatever it declared, which is the same as being checked against nothing.
@@ -75,17 +75,18 @@ whatever it declared, which is the same as being checked against nothing.
 findings from one cause bury the cause, and the repair for all of them is the same line of the
 manifest.
 
-### A component's design home is `docs/design.md` or a `docs/design/` directory, never both `##design-home-two-shapes`
+### A component's design home is `*@docs/design.md` or a `*@docs/design/` directory, never both `##design-home-two-shapes`
 
 The single file serves a component whose design fits one document. The directory serves one whose
 design has outgrown it. In the directory shape, `README.md` is the head: an introduction, and a
 bullet list of markdown links, one per subdocument, each target written relative to the README.
 The decisions and their slug anchors live in the subdocuments.
 
-Five assertions carry the shape, split over two checks. `check::components` asserts exactly one
-home per component, that a directory home carries its `README.md`, that the README links
-every markdown subdocument the walk covers — a gitignored scratch file owes nothing — and that
-each of its relative links resolves. `check::slugs`
+Five assertions carry the shape, split over three checks. `check::components` asserts exactly one
+home per component, that a directory home carries its `README.md`, and that the README links
+every markdown subdocument the walk covers — a gitignored scratch file owes nothing. That
+each relative link resolves is the paths family's assertion, made for every navigation file
+alike per `knowledge#links-are-navigation-rows`. `check::slugs`
 accepts a slug definition only in the file home or in a subdocument, matched against the owning
 component's own paths rather than against a filename suffix — a suffix match would accept a slug
 in any file whose name ends in `design.md`, a plan document included.
@@ -139,7 +140,10 @@ is nowhere to put it.
 
 The root `.gitignore` is read beside `knowledge.toml` and its paths are pruned from the walk and
 from the inverse assertion that an unwalked file may not name a rule. Nothing generated is declared:
-`target` and `.claude/worktrees` left `[walk] skip-dirs` when this landed.
+`target` and `thaum@.claude/worktrees/` left `[walk] skip-dirs` when this landed.
+
+A path reference whose target the ignore rules cover is exempt from assertion the same way,
+per `knowledge#ignored-targets-are-not-asserted`.
 
 **What it buys is that every remaining declaration is checkable.** A generated path cannot be
 asserted to exist — a fresh clone has none of them — so while the manifest named them, no check
@@ -255,6 +259,85 @@ wrong half of the pointer two times out of three.
 require the component and see nothing without one, which needs no finding and no migration. It
 would also mean every pointer written in the older form stops being checked with nothing saying so,
 and a silent false negative is the failure this tool exists to prevent.
+
+### Every path reference names its anchor, and the deepest anchor wins `##every-path-names-its-anchor`
+
+A checked path reference is one backticked span, `<component>@<path>`, resolving beside the
+named component's directory. The root is a component like any other, named by `project.name`.
+There is no unanchored form: a backticked span of path characters with two or more segments
+that parses as no accepted reference is a finding naming the accepted syntaxes, so no pointer
+class passes unregistered. One segment is a name rather than a pointer, and a span holding a
+space, a colon or an angle bracket is not path-shaped, which is what lets documentation of the
+syntax show a placeholder with no carve-out.
+
+**The path is plain**: `..`, a `.` segment and a leading `/` are refused. An upward path is
+anchored at the wrong place by definition, and it is the shape that breaks when the referencing
+file moves.
+
+**The deepest anchor wins, and inside means a proper descendant.** A reference whose target
+sits inside another component is refused with the right anchor named. What this buys is the
+same property `knowledge#a-slug-belongs-to-a-component` buys for decisions: relocating a
+component edits its one line of `thaum@knowledge.toml` and no document, and one fixed-string
+grep per anchor is a component's complete inbound-reference list. A component's own directory
+is the one target with no spelling under its own anchor, so it is named from an ancestor — a
+reference that names a location, which a move is expected to break.
+
+**A fenced path reference is live**, the stance `knowledge#grammars-not-prefixes` takes for
+rule numbers: a sketch names its paths on purpose, and an illustration that needs a fake path
+writes the escape anchor.
+
+### Two anchors are reserved: the escape for a path this tree does not hold, and `*` for every component's own copy `##reserved-anchors`
+
+**The escape anchor** — the word elsewhere before the `@` — marks a path deliberately not
+resolvable here: a surveyed engine's layout, a deleted file a tracker entry discusses, a
+hypothetical location. It is scanned and counted like any reference, so a typo'd escape is
+still a registered pointer; it is exempt from the existence, kind and shape assertions,
+because a foreign layout may spell anything. One assertion runs against it: a target that DOES
+resolve here, beside any component, is a finding — without it, the escape is the cheap way to
+silence the unsupported-shape finding on a real path.
+
+**The generic anchor `*`** marks each component's own copy of a path, as in
+`*@docs/tripwires.md`. It is accepted when the path is one of the compiled-in required
+document names, both design-home shapes included — naming a shape no component uses yet is
+legitimate — and otherwise when at least one component carries the path with the claimed kind.
+A generic reference nothing resolves rots exactly like a dangling one.
+
+`check::components` refuses a declared component wearing a reserved anchor name: every pointer
+at it would read as an escape.
+
+### A trailing slash claims a directory, and the survey records every path's kind `##trailing-slash-claims-directory`
+
+The kind claim sits in the span itself — greppable, visible to the reader, checkable — rather
+than inferred from what happens to exist. The survey records directories in their own set
+beside the presence listing, so the claim is asserted as a fact in both directions, the five
+required documents are asserted to be files rather than directories wearing document names,
+and the design home's two shapes are told apart by recorded kind.
+
+### A target the root gitignore covers is not asserted `##ignored-targets-are-not-asserted`
+
+Resolution asks whether the ignore rules cover the target before asking whether it is present.
+Covered means accepted with no existence or kind assertion: a generated path cannot be
+asserted to exist, per `knowledge#gitignore-prunes-the-walk`, and deciding by the RULES rather
+than by presence makes the verdict identical on a fresh clone and a built tree. A verdict that
+depends on the checking machine's build state is a check nobody can trust twice. The exemption
+is exactly as wide as the gitignore, deliberately.
+
+### A relative markdown link is a navigation row, and README.md and index.md files are the navigation homes `##links-are-navigation-rows`
+
+A README is directions about what a directory holds and an index is a listing, so a relative
+link — the row a reader follows where a renderer shows the page — is legal there and reported
+everywhere else; in prose, a pointer is a backticked anchored path. A navigation link resolves
+against the linking file's own directory, under the same kind claim and the same refusals as
+an anchored path, in the paths family; `check::components` keeps the inverse assertion, that a
+design README links every subdocument.
+
+**Markdown documents only.** In Rust prose a markdown link is rustdoc's mechanism, resolved by
+rustdoc against the crate namespace, and reading those as index rows would report every
+intra-doc link.
+
+**The generated indexes emit links**, relative to their own directory, upward segments
+included. Both sit outside the walk in `[walk] skip-files`, and generated text cannot go
+stale, which is what the upward ban on hand-written links exists against.
 
 ### The release watch learns the newest release from the page Wizards announces it on, and treats "no match" as a failure rather than as an answer `##watch-reads-the-page`
 

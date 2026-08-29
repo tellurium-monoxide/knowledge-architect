@@ -1,7 +1,7 @@
 # Open issues — the knowledge tool
 
-What is outstanding about `tools/knowledge/` itself: the checks, the release machinery, the archive.
-What is outstanding about the _rules and their readings_ is `../../docs/rules/`.
+What is outstanding about `knowledge` itself: the checks, the release machinery, the archive.
+What is outstanding about the _rules and their readings_ is `thaum@docs/rules/`.
 
 **Read this file before concluding that a checker behaviour is a new problem.** Every entry states
 its **kind** as a tag on its title and carries **What**, **Why it matters**, and **What would close
@@ -54,14 +54,14 @@ bare rule numbers in fixtures; a `cr-version` fixture that pinned its whole file
 identifier marker written out in a doc comment; fixture slugs that defined a real anchor and three
 dangling references; a concern filename; two relative paths; and a slug in a title fixture.
 
-**Why it matters.** The structural answer exists — `tests/projects/` is excluded by the manifest, so
+**Why it matters.** The structural answer exists — `knowledge@tests/projects/` is excluded by the manifest, so
 anything there is invisible — but it only covers integration tests. A unit test still lives in a
 walked file, and the standing workaround is to interpolate every literal, which makes the tests
 measurably harder to read: `format!("`#{SLUG}` — …")` in place of the thing it means. The cost is
 paid by every future check module.
 
 **What would answer it.** Three candidates, and the choice is real rather than a bug to fix.
-Either unit tests that carry such literals move to `tests/projects/`, which costs a file per case
+Either unit tests that carry such literals move to `knowledge@tests/projects/`, which costs a file per case
 and buys readable fixtures; or a way to mark a span as fixture text, which is a new convention and
 a new thing to get wrong; or a per-family exemption in the manifest, exempting only the citation
 families over a named path. The third was argued and parked at the linting-scope discussion, and
@@ -75,7 +75,7 @@ Re-entry: the next tool-cleanup discussion.
 
 **What.** The interpretation walk counts every `R`-number token in a live file as a citation of that
 entry, so a document that merely _names_ one — to point at a diff, to say where a reading is filed —
-is listed in `docs/rules/interpretations/index.md` beside the documents whose argument depends
+is listed in `thaum@docs/rules/interpretations/index.md` beside the documents whose argument depends
 on the reading. Rule numbers have a way to say it and `R` numbers do not: a rule number that is data
 goes inside a code span, a fenced block or a name-bound string literal, and the walk does not read
 those as citations. No entry is named in this file on purpose, so that the illustration does not
@@ -122,7 +122,7 @@ is enumerable at that point from the register index's citing lists.
 item is neither, so a decision written as `- \`#slug\` — **Statement.**` is read as a _reference_
 and fails the dangling check.
 
-**Observed.** Writing `thaum#bench-is-a-tool` into `docs/design.md`, in the
+**Observed.** Writing `thaum#bench-is-a-tool` into `thaum@docs/design.md`, in the
 _Why each part is the way it is_ subsection of _Repository layout_. That subsection is nothing but
 consecutive bulleted arguments, which is its whole idiom, and the slug had to be broken out into a
 standalone paragraph after the list. The subsection's other arguments carry no slugs, and the one it
@@ -140,73 +140,9 @@ leaves them without anchors, and an unanchored decision cannot be cited or found
 Either extend the definition grammar to accept a leading list marker, which costs one alternation
 and makes the grammar match the documents; or record that a decision worth a slug is worth its own
 paragraph, in which case the current behaviour is a deliberate constraint and belongs in
-`.claude/skills/recording-a-decision/SKILL.md` beside the head instruction rather than being a
+`thaum@.claude/skills/recording-a-decision/SKILL.md` beside the head instruction rather than being a
 property only a pattern states. `assumption`: the second is what was intended, since the table-cell
 form was added deliberately and the list form was not. Nothing records either way.
-
-## A Component-relative document name resolves against the project root and is never reported `defect`
-
-**What.** Three path syntaxes are declared: a full path from the project root, `<component>@path`
-relative to a Component's root, and `@path` for a reference that is not checked. A reference written
-as the first when the second was meant still resolves, because **every Component is required to
-carry the same document names** — `README.md`, `CLAUDE.md`, four under `docs/` with the design
-home in its file shape, per `knowledge#design-home-two-shapes` — and the
-project is itself a Component carrying them too. So `docs/open-issues.md` written inside
-`crates/thaum-engine/` names the project's file, the file exists, and the path check passes.
-
-**How to enumerate them**, since a hand-written list of sites went stale within one review:
-
-```sh
-grep -rn '`docs/\(open-issues\|design\|tripwires\|rejected-alternatives\)\.md`' \
-  crates clients tools --include=*.rs --include=*.md | grep -v '@docs/'
-```
-
-Every hit is a candidate and **not** every hit is an instance: a bare root-relative reference from
-inside a Component is legitimate where the project's file really is meant. Classifying requires
-reading each one.
-
-**In `crates/thaum-engine/` alone, twelve candidates and nine outstanding instances**, counted this
-way rather than by recall:
-
-| site | means | outstanding |
-| --- | --- | --- |
-| `Roster`'s doc comment, `runtime/state.rs` | the engine's | yes |
-| `Status`'s doc comment, `runtime/step.rs` | the engine's | yes |
-| `advance`'s doc comment, `runtime/step.rs` | the engine's `tripwires.md` | yes |
-| `the_game_and_the_free_functions_play_the_same_game`, `tests/log.rs` | the engine's `tripwires.md` | yes |
-| `a_copied_game_carries_its_history_and_is_independent`, `tests/log.rs` | the engine's `tripwires.md` | yes |
-| `cr_402_2_a_hand_never_exceeds_the_maximum_after_a_cleanup_step`, `tests/pregame.rs` | an entry on the absent discard, which exists in no tracker in the tree | yes |
-| *Whether a `State` pins a card-corpus version*, the engine's `open-issues.md` | **`thaum-corpus`'s** `open-issues.md` | gone with the entry — closed by the corpus design |
-| *`Status::BudgetExhausted` conflates two different bounds*, the engine's `open-issues.md` | the file it was written in | gone with the entry — closed by the status split |
-| the new pre-game departure refusal, `runtime/state/boundary.rs` | the engine's | fixed on sight |
-| `Side::life`'s doc comment, `runtime/instance.rs` | the engine's | fixed |
-| the two deleted acting-player helpers, `runtime/step.rs` | the engine's | gone with the functions |
-| `record_mulligan_round`'s doc comment, `runtime/step/pregame.rs` | **the project's**, correctly | not an instance |
-
-**The seventh row breaks the mechanism stated above.** It points from one Component into a
-*different* Component, so the collision is not only "the project carries the same names" — a bare
-path from inside any Component names the project's file whatever Component was meant. `assumption`:
-other Components carry instances too; only `crates/thaum-engine/` has been counted.
-
-**Why it matters.** The reader is sent to a document that does not carry what the sentence names,
-and nothing reports it. The project's `docs/open-issues.md` holds two entries, on a
-scenario-interchange format and on design-review artifacts; none of the sentences above means
-either, and one of them names an entry that exists nowhere at all. This is silent in exactly the
-case the two syntaxes exist to distinguish, and the collision is universal rather than accidental,
-because the required document set is what creates it.
-
-**What is ruled out.** Forbidding the shape. A bare root-relative reference from inside a Component
-is legitimate and is in use: `tools/knowledge/docs/design.md` says *"What belongs here rather than in
-`docs/design.md`"* meaning the project's, `tools/knowledge/docs/open-issues.md` names the same file
-the same way, and the last row of the table above is a third. So the check cannot key on the shape
-alone.
-
-**What would close it.** A check that reports a root-relative reference whose tail is one of the
-Component-required document names, made from a file inside a Component, **and** a way for a writer
-to say they meant the project's — the `@` form already exists and is not checked, so the
-disambiguation may already be spelled. Closing this means every outstanding row above being
-reported and the three legitimate root references still passing. Whether it is a finding or a lint
-is open.
 
 ## The release diff calls a renumbered section a deletion `defect`
 
@@ -232,87 +168,3 @@ appears under a new number, corroborated by its subrules' own moves — titles a
 pinned release printing the same title under two sections. Closing means the reproduction above
 reporting the section as renumbered, and a genuinely deleted section still reporting `GONE`.
 
-## The path scanner's suffix set omits `.rs`, so Rust paths in documents are never checked `defect`
-
-**What.** `PATH_REF` in `tools/knowledge/documentation/src/scan.rs` extracts a backticked
-root-stem path only when its suffix is one of `md|txt|py|sh|tsv`. A backticked `.rs` path in
-any document is not extracted, so the paths check in
-`tools/knowledge/documentation/src/check/paths.rs` never validates it and it can dangle
-silently. Root `CLAUDE.md` states that backticked paths are checked to point at existing
-locations, with no suffix carve-out, so the instruction and the tool disagree. The
-component-relative form (`COMPONENT_PATH_REF`) carries no suffix restriction and is unaffected.
-
-**Reproduce.** Append a backticked reference to a nonexistent path ending in `.rs` — for
-example a `bogus-probe.rs` under any real directory — to a walked document, then run
-`cargo knowledge check --only paths`: the reference count does not change and the check
-passes. The same reference with a `.md` suffix is reported as dangling.
-
-**Why it matters.** The relocation of the nine game-driving suites to `tools/thaum-testing`
-moved every `.rs` test path named across five knowledge documents, and the checker reported
-none of them; the sweep had to be grep-driven. Any rename of a Rust file leaves silent
-dangling pointers in the documents, which is the failure the paths check exists to prevent —
-its own module doc records nine dangling references to a deleted file as its founding case.
-
-**What would close it.** Adding `rs` to `PATH_REF`'s suffix set, then repairing whatever the
-widened check reports over the live documents. `assumption`, not measured: the suffix set
-exists to keep prose with slashes from reading as paths, and widening by one code suffix
-keeps that property because the pattern still requires backticks, a slash and a filename
-shape.
-
-## The document presence test cannot tell a file from a directory `observation`
-
-**What.** `check::components` asks whether a path is in the survey listing, and the listing
-records files and directories with no kind. The design home guards itself: `design_home` in
-`knowledge@documentation/src/check/components.rs` reads a path with entries beneath it as a
-directory, so a directory named like the file home is not the file home. Two shapes remain
-unguarded. A directory wearing one of the five fixed document names satisfies that document's
-presence check (`assumption`: asserted by an adversarial review of the design-home change as
-pre-existing, reproduced only for the design home before its guard landed). And an empty
-directory named like the file home would still read as the file home — unreachable through git,
-which cannot commit an empty directory.
-
-**Why it matters.** A component could pass the check while carrying no readable document of a
-required name. The walk never reads a directory as a document, so every claim that should live
-in it is also outside the citation walk — silent in exactly the way the missing-document
-finding exists to prevent.
-
-**What would close it.** Recording the kind in the survey — a directories set beside `present`
-in `Inputs` — and asserting file-ness for the five fixed documents; or deciding the residue is
-not worth the plumbing, and saying so here.
-
-## A fenced path reference counts for the paths check `observation`
-
-**What.** The scanner extracts backticked path references without regard to fences, so a path
-inside a fenced block is checked to exist by `check::paths`. Slug definitions and references
-are fence-guarded, and so are markdown links, which the design README naming reads; path
-references are not. Seen by an adversarial review of the design-home change.
-
-**Why it matters.** Whether this is a defect is not established. The regime deliberately reads
-fenced content as live — a fenced sketch cites its rules for real, per
-`knowledge#grammars-not-prefixes` — and a fenced path that must exist is the same stance. But
-the asymmetry with slugs and links means the reference kinds cross fences differently, and
-nothing records which is intended for paths.
-
-**What would close it.** A decision either way: fence-guard path references like slugs and
-links, and repair whatever the widened checks report; or record beside
-`knowledge#grammars-not-prefixes` that fenced paths are deliberately live.
-
-## A link outside the accepted inline shape mis-reports rather than saying the shape is unsupported `observation`
-
-**What.** The design README index accepts one link shape, the plain inline form with a
-spaceless target, per `knowledge#design-home-two-shapes`. A README written in another
-CommonMark shape is reported, but not as an unsupported shape: an angle-bracketed target or a
-parenthesised filename yields a false "links to nothing" naming the mangled target, a
-quoted-title or reference-style link is invisible and yields "not linked" for a subdocument
-the author did link, and a subdocument whose filename holds a space cannot be linked in any
-accepted form. Seen by an adversarial review of the link-index change, each shape reproduced
-over a mutated copy of the directory-home mock project.
-
-**Why it matters.** The findings push the author toward the accepted shape, which is the
-intended direction, but the message misattributes the cause: "links to nothing" reads as a
-broken target when the target is fine and the shape is not. The cost stays low while no
-component uses the directory home and the accepted shape is stated in the design head.
-
-**What would close it.** Either a message that names the unsupported shape when a link-like
-row does not parse as the accepted form, or a decision that the current messages are close
-enough, recorded beside the accepted-shape sentence in the design head.

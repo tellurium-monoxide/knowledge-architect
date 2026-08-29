@@ -24,7 +24,7 @@ fn main() -> ExitCode {
     };
     // The project is whatever declares itself one at or above here. Nothing about any
     // particular repository is compiled in, so pointing the tool at a mock project under
-    // `tools/knowledge/tests/projects/` needs no flag and no special case.
+    // `knowledge@tests/projects/` needs no flag and no special case.
     let manifest = match Manifest::find(&cwd) {
         Ok(m) => m,
         Err(e) => {
