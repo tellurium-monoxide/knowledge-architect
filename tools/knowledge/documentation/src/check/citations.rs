@@ -295,6 +295,21 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
                 Verdict::Verified => counts.verified += 1,
                 Verdict::Misattributed => {
                     counts.misattributed += 1;
+                    // The hint is the only thing a writer meets after already being wrong,
+                    // and the verdict cannot tell the two causes apart — so where a second
+                    // marker could have owned the quote, the hint names the binding repair
+                    // FIRST. Following a retarget hint there moves a correct citation onto
+                    // the wrong rule, and the result verifies, so nothing downstream
+                    // reports it.
+                    let hint = if q.alternatives.is_empty() {
+                        "a renumbering, or the wrong number — retarget the citation at the \
+                         rule that now holds this text"
+                    } else {
+                        "a quote binds to the NEAREST marker before it, so if the quote \
+                         belongs to an earlier marker on this line, move the marker in \
+                         between out of the way; only if the number itself is wrong — a \
+                         renumbering — retarget the citation"
+                    };
                     findings.push(Finding::at(
                         &doc.rel,
                         q.line,
@@ -303,8 +318,7 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
                             q.rule,
                             clip(&norm(&fragment), 80)
                         ),
-                        "a renumbering, or the wrong number — retarget the citation at the \
-                         rule that now holds this text",
+                        hint,
                     ));
                 }
                 Verdict::Unverified => {
@@ -627,6 +641,40 @@ mod tests {
              {SECTION_N}.\"*\n"
         ));
         assert_eq!(lint(&quoted).1 .0, 0, "a cross-reference inside a quote");
+    }
+
+    #[test]
+    fn the_mismatch_hint_names_the_binding_repair_when_a_second_marker_could_own_the_quote() {
+        // A quote bound to an intervening marker is a CORRECT citation wrongly bound, and
+        // the retarget-only hint sent the writer at the wrong repair: retargeting produces a
+        // citation that verifies, so nothing downstream reports it. Mutation checked:
+        // dropping the `alternatives` branch fails the first assertion with the
+        // retarget-only hint.
+        const A_TEXT: &str = "a first body long enough to be checked as evidence";
+        const B_TEXT: &str = "a second body long enough to be checked as evidence";
+        let release = Release::new(&format!("{A} {A_TEXT}\n{B} {B_TEXT}\n"), 0);
+        // The writer means A; the sentence names B in between; the quote binds to B and
+        // misattributes.
+        let doc = doc_with(&format!(
+            "per CR:{A}, which CR:{B} restates, *\"{A_TEXT}\"*\n"
+        ));
+        let (findings, counts) = check(&doc, &release, true);
+        assert_eq!(counts.misattributed, 1, "{findings:#?}");
+        let hint = &findings
+            .iter()
+            .find(|f| f.what.contains("verifies, but not as"))
+            .expect("the mismatch finding")
+            .action;
+        assert!(hint.contains("NEAREST marker"), "{hint}");
+        // The control: with one marker on the line, the hint stays the retarget.
+        let alone = doc_with(&format!("per CR:{B}, *\"{A_TEXT}\"*\n"));
+        let (findings, _) = check(&alone, &release, true);
+        let hint = &findings
+            .iter()
+            .find(|f| f.what.contains("verifies, but not as"))
+            .expect("the mismatch finding")
+            .action;
+        assert!(hint.contains("retarget the citation at the rule"), "{hint}");
     }
 
     #[test]

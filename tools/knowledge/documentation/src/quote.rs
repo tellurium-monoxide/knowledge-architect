@@ -514,6 +514,18 @@ mod tests {
     }
 
     #[test]
+    fn an_underscore_delimiter_is_the_same_quote_as_an_asterisk_one() {
+        // A markdown formatter that normalises emphasis rewrites `*"…"*` to `_"…"_`. The
+        // byte-pair scanner this replaces saw only the asterisk form, so the rewrite did not
+        // make quotes wrong, it made them ABSENT: 89 of 661 verified fragments left the walk
+        // and three consecutive runs printed a pass. The parser represents both delimiters as
+        // one emphasis node; this pins that the distinction stays gone.
+        let underscored = format!("per CR:{RULE}, _\"the quoted text\"_");
+        assert_eq!(rules_of(&inline(&underscored)), vec![RULE.to_string()]);
+        assert_eq!(inline(&underscored)[0].body, "the quoted text");
+    }
+
+    #[test]
     fn a_typographic_delimiter_is_the_same_quote_as_a_straight_one() {
         // `norm` already folds these because they arrive in real input. A scanner that tested
         // only the straight form did not leave such a quote wrong, it left it ABSENT — the
