@@ -63,12 +63,19 @@ pub enum Observation {
         component: Option<String>,
         slug: String,
     },
-    /// A repository-relative path named in prose.
+    /// A path named in prose, behind its anchor: `` `anchor@path` ``.
     PathRef {
-        /// The component named before the `@`
-        component: Option<String>,
+        anchor: PathAnchor,
+        /// As written, trailing slash included: the slash is the writer's claim that the
+        /// target is a directory, and the check asserts it.
         path: String,
     },
+    /// A backticked span shaped like a path that parses as no accepted reference form.
+    ///
+    /// Recorded rather than dropped, so the check can name the accepted syntaxes: dropped,
+    /// it would be a pointer no check resolves and no reader is told about, which is how
+    /// the retired bare form dangled silently through one relocation.
+    UnsupportedPath(String),
     /// An `R` number naming an interpretation entry.
     InterpRef(u16),
     /// A markdown link's target, as written.
@@ -77,6 +84,23 @@ pub enum Observation {
     /// linking document's own directory, the way a renderer would.
     Link(String),
 }
+
+/// What stands before the `@` of a path reference.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum PathAnchor {
+    /// A component's name; the path resolves beside that component's directory. The root is
+    /// a component like any other, named by the project.
+    Component(String),
+    /// The escape anchor: a path deliberately not resolvable in this tree.
+    Elsewhere,
+    /// `*` — every component's own copy of the path.
+    Every,
+}
+
+/// The reserved anchor word for a path deliberately not resolvable in this tree.
+///
+/// A declared component may not take this name, which `check::components` asserts.
+pub const ESCAPE_ANCHOR: &str = "elsewhere";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Located {
@@ -149,16 +173,24 @@ static SLUG_DEF: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"^(?:\|\s*`##([a-z0-9][a-z0-9-]{2,})`|###\s+.*?`##([a-z0-9][a-z0-9-]{2,})`)")
         .unwrap()
 });
-/// Only things shaped like a path = containing a slash. A bare filename in prose is a name,
-/// not a pointer, and flagging those would bury the real dangling references under noise.
-/// Temporary ignored, will come back to check that it is no longer used.
-static PATH_REF: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"`((?:\.\.?/)?(?:[\w.-]+/)+[\w.-]+\.(?:md|txt|py|sh|tsv))`").unwrap()
-});
-/// Path relative to a component, syntax `<component>@path/to/file`
-static COMPONENT_PATH_REF: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"`(\.?[A-Za-z0-9][A-Za-z0-9._-]*)@(/?(?:[\w.+-]+/)*[\w.+-]+/?)`").unwrap()
-});
+/// An anchored path reference: `` `anchor@path` ``. The anchor is a component name, `*`, or
+/// the escape anchor, all one character class with the slug reference's component part.
+///
+/// The path class is permissive on purpose: a `..`, a `.` segment or a leading `/` still
+/// parses as a reference, so the check reports the cause rather than the span falling to
+/// the unsupported-shape lint with nothing naming what is wrong.
+static ANCHORED_PATH: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"`(\*|\.?[A-Za-z0-9][A-Za-z0-9._-]*)@([\w./+-]+)`").unwrap());
+/// A backticked span of path characters holding a slash: the unsupported-shape lint's input.
+///
+/// The class holds everything the anchored form accepts, `@` and `*` included, so a
+/// malformed anchor is caught rather than invisible. A span holding a space, a colon or an
+/// angle bracket is not path-shaped, which is what lets meta-notation like a bracketed
+/// placeholder document the syntax without a carve-out. Requiring two segments is what
+/// keeps prose livable: a single segment with a trailing slash names a nearby directory,
+/// the way a bare filename names a file, and neither is a pointer.
+static PATH_SHAPED: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"`([\w.@*+-]*/[\w.@*/+-]*)`").unwrap());
 static INTERP_REF: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"R(\d{1,3})\b").unwrap());
 /// A markdown link: `[text](target)`. The target may not hold a space or a closing
 /// parenthesis, which is the shape every link in this tree has.
@@ -366,17 +398,31 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                     slug: c[2].to_string(),
                 });
             }
-            for c in COMPONENT_PATH_REF.captures_iter(line) {
+            let mut anchored: Vec<(usize, usize)> = Vec::new();
+            for c in ANCHORED_PATH.captures_iter(line) {
+                let whole = c.get(0).unwrap();
+                anchored.push((whole.start(), whole.end()));
+                let anchor = match &c[1] {
+                    "*" => PathAnchor::Every,
+                    ESCAPE_ANCHOR => PathAnchor::Elsewhere,
+                    name => PathAnchor::Component(name.to_string()),
+                };
                 push(Observation::PathRef {
-                    component: Some(c[1].to_string()),
+                    anchor,
                     path: c[2].to_string(),
                 });
             }
-            for c in PATH_REF.captures_iter(line) {
-                push(Observation::PathRef {
-                    component: None,
-                    path: c[1].to_string(),
-                });
+            for c in PATH_SHAPED.captures_iter(line) {
+                let whole = c.get(0).unwrap();
+                // Both patterns span backtick to backtick, so a span both match is the same
+                // range, already recorded as the reference it parses as.
+                if anchored.contains(&(whole.start(), whole.end())) {
+                    continue;
+                }
+                if c[1].split('/').filter(|s| !s.is_empty()).count() < 2 {
+                    continue;
+                }
+                push(Observation::UnsupportedPath(c[1].to_string()));
             }
         }
     }
@@ -862,17 +908,113 @@ mod tests {
         }
     }
 
-    #[test]
-    fn a_path_needs_a_slash_and_a_known_suffix() {
-        let text = format!("see `component@{DOC_PATH}` and `citations.py` and `a/b.json`");
-        let paths: Vec<String> = scan_md(&text)
+    /// The path references a text yields, rendered as written: `anchor@path`.
+    fn path_refs(text: &str) -> Vec<String> {
+        scan_md(text)
             .into_iter()
             .filter_map(|o| match o {
-                Observation::PathRef { component: _, path } => Some(path),
+                Observation::PathRef { anchor, path } => Some(match anchor {
+                    PathAnchor::Component(c) => format!("{c}@{path}"),
+                    PathAnchor::Elsewhere => format!("{ESCAPE_ANCHOR}@{path}"),
+                    PathAnchor::Every => format!("*@{path}"),
+                }),
                 _ => None,
             })
-            .collect();
-        assert_eq!(paths, vec![DOC_PATH.to_string()]);
+            .collect()
+    }
+
+    /// The unsupported path-shaped spans a text yields.
+    fn unsupported(text: &str) -> Vec<String> {
+        scan_md(text)
+            .into_iter()
+            .filter_map(|o| match o {
+                Observation::UnsupportedPath(s) => Some(s),
+                _ => None,
+            })
+            .collect()
+    }
+
+    #[test]
+    fn an_anchor_is_a_component_a_star_or_the_escape_word() {
+        // The three anchors of the grammar, each rendered back as written. The trailing
+        // slash on the second is kept: it is the writer's claim that the target is a
+        // directory, and the check asserts it.
+        let dir = "docs/design/";
+        let text = format!(
+            "see `{COMPONENT}@{DOC_PATH}` and `{COMPONENT}@{dir}` and `*@{DOC_PATH}` \
+             and `{ESCAPE_ANCHOR}@{DOC_PATH}`"
+        );
+        assert_eq!(
+            path_refs(&text),
+            vec![
+                format!("{COMPONENT}@{DOC_PATH}"),
+                format!("{COMPONENT}@{dir}"),
+                format!("*@{DOC_PATH}"),
+                format!("{ESCAPE_ANCHOR}@{DOC_PATH}"),
+            ]
+        );
+        assert_eq!(unsupported(&text), Vec::<String>::new());
+    }
+
+    #[test]
+    fn any_suffix_and_a_slashless_path_are_extracted() {
+        // The retired form extracted a bare path only when its suffix was one of five, so
+        // every backticked Rust path dangled silently through one relocation. The anchored
+        // form owes no suffix and no slash: `component@README.md` is a reference too.
+        let rs = "src/b.rs";
+        let bare = "README.md";
+        let text = format!("see `{COMPONENT}@{rs}` and `{COMPONENT}@{bare}`");
+        assert_eq!(
+            path_refs(&text),
+            vec![format!("{COMPONENT}@{rs}"), format!("{COMPONENT}@{bare}")]
+        );
+    }
+
+    #[test]
+    fn a_bare_two_segment_span_is_an_unsupported_path_shape() {
+        // The retired bare form, the retired `@` escape, and a dotted upward path: each is
+        // recorded so the check can name the accepted syntaxes, never dropped.
+        for span in [
+            DOC_PATH.to_string(),
+            format!("@{DOC_PATH}"),
+            format!("../../{DOC_PATH}"),
+            "a/b.json".to_string(),
+        ] {
+            let text = format!("see `{span}`");
+            assert_eq!(unsupported(&text), vec![span.clone()], "{span}");
+            assert_eq!(path_refs(&text), Vec::<String>::new(), "{span}");
+        }
+    }
+
+    #[test]
+    fn a_single_segment_span_is_a_name_rather_than_a_pointer() {
+        // A directory named beside its slash and a bare filename are prose naming a thing,
+        // the stance the retired pattern took on filenames. Flagging them would bury the
+        // real dangling references under noise.
+        let text = "see `past/` and `citations.py` and `a/`";
+        assert_eq!(unsupported(text), Vec::<String>::new());
+        assert_eq!(path_refs(text), Vec::<String>::new());
+    }
+
+    #[test]
+    fn meta_notation_is_not_path_shaped() {
+        // A space, a colon or an angle bracket puts a span outside the path classes, which
+        // is what lets documentation of the syntax show a placeholder without a carve-out.
+        let text = format!(
+            "write `<component>@{DOC_PATH}` or `see the {DOC_PATH} form` or `https://a.test/{DOC_PATH}`"
+        );
+        assert_eq!(unsupported(&text), Vec::<String>::new());
+        assert_eq!(path_refs(&text), Vec::<String>::new());
+    }
+
+    #[test]
+    fn an_anchored_span_is_not_also_an_unsupported_shape() {
+        // Both patterns span backtick to backtick, so the anchored match owns its range and
+        // the lint reads the residue. Without the range check every anchored reference in
+        // the tree would be reported once as itself and once as unsupported.
+        let text = format!("see `{COMPONENT}@{DOC_PATH}`");
+        assert_eq!(path_refs(&text).len(), 1);
+        assert_eq!(unsupported(&text), Vec::<String>::new());
     }
 
     #[test]

@@ -252,12 +252,20 @@ fn describe(what: &Observation) -> (&'static str, String) {
             },
         ),
         // Rendered in the syntax it is written in, so a dumped row can be grepped for in the
-        // tree it came from. A reference naming no component has no `@` and is a different kind,
-        // so the two are told apart by the kind column rather than by reading the value.
-        Observation::PathRef { component, path } => match component {
-            None => ("old-path-ref", path.to_string()),
-            Some(cp) => ("path-ref", format!("{cp}@{path}")),
-        },
+        // tree it came from. The unsupported span is a different kind: the value is the raw
+        // span, and the kind column is what says it parses as no reference.
+        Observation::PathRef { anchor, path } => (
+            "path-ref",
+            format!(
+                "{}@{path}",
+                match anchor {
+                    crate::scan::PathAnchor::Component(c) => c.as_str(),
+                    crate::scan::PathAnchor::Elsewhere => crate::scan::ESCAPE_ANCHOR,
+                    crate::scan::PathAnchor::Every => "*",
+                }
+            ),
+        ),
+        Observation::UnsupportedPath(span) => ("unsupported-path", span.clone()),
         Observation::InterpRef(n) => ("interp-ref", n.to_string()),
         Observation::Link(target) => ("link", target.clone()),
     }
@@ -316,16 +324,16 @@ mod tests {
         assert!(written.contains(&value), "the value greps in its source");
     }
 
-    /// A reference naming no component keeps the bare path and is a different kind.
+    /// A span parsing as no reference keeps its raw text and is a different kind.
     #[test]
-    fn an_unqualified_path_reference_dumps_without_a_separator() {
+    fn an_unsupported_path_shape_dumps_as_the_span_it_was() {
         let model = Model::from_documents(vec![(
             PathBuf::from(SRC),
             format!("/// see `{DOC}`\nfn f() {{}}\n"),
         )]);
         let dump = model.canonical();
         assert!(
-            dump.contains(&format!("{SRC}\t1\told-path-ref\t{DOC}")),
+            dump.contains(&format!("{SRC}\t1\tunsupported-path\t{DOC}")),
             "{dump}"
         );
         assert!(!dump.contains("@"), "no separator was invented: {dump}");

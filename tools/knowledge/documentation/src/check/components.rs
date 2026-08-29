@@ -79,6 +79,16 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
                  at is one every pointer misses in silence",
             ));
         }
+        // The escape anchor is compiled in, so a component wearing it could never be the
+        // target of a path reference: every pointer at it would read as an escape.
+        if *name == scan::ESCAPE_ANCHOR {
+            out.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!("`{name}` is a reserved anchor and cannot name a component"),
+                "rename the component; this word marks a path deliberately not resolvable \
+                 in this tree",
+            ));
+        }
     }
 
     for component in components.all() {
@@ -243,7 +253,7 @@ fn design_home(
                 ));
                 return;
             }
-            let linked = links(model, &readme, &dir, inputs, out);
+            let linked = links(model, &readme, &dir);
             // Enumerated from the model rather than from the listing: a subdocument is what
             // the walk covers, so a gitignored scratch file owes no naming, a directory is
             // never one, and a document owned by a component nested under this directory is
@@ -277,33 +287,16 @@ fn design_home(
     }
 }
 
-/// Whether a link target opens with a URI scheme — letters then a colon, before any slash.
-///
-/// A filename may hold a colon in principle; a relative path in this project never does, and
-/// reading such a target as a scheme passes it over rather than reporting a false dangling.
-fn has_scheme(target: &str) -> bool {
-    target
-        .split('/')
-        .next()
-        .is_some_and(|head| head.contains(':'))
-}
-
-/// Every path the README's markdown links resolve to, reporting the links that resolve to
-/// nothing.
+/// Every path the README's markdown links resolve to.
 ///
 /// A link's target resolves against the README's own directory, the way a renderer follows
-/// it, with `.` and `..` resolved by the same rule `check::paths` applies. A URL, a bare
-/// fragment and an absolute path are not this check's to resolve and are passed over; a
-/// fragment on a file target is dropped before resolution. Backticked paths are the pointer
-/// forms of prose and do not name a subdocument here: the index is made of links a reader
-/// can follow.
-fn links(
-    model: &Model,
-    readme: &PathBuf,
-    dir: &std::path::Path,
-    inputs: &Inputs,
-    out: &mut Vec<Finding>,
-) -> HashSet<PathBuf> {
+/// it. A URL, a bare fragment and an absolute path are not index rows and are passed over; a
+/// fragment on a file target is dropped before resolution. Whether each link RESOLVES is
+/// `check::paths`' assertion, made for every navigation file alike — what is asserted here
+/// is the other direction, that every subdocument has a row. Backticked paths are the
+/// pointer forms of prose and do not name a subdocument: the index is made of links a
+/// reader can follow.
+fn links(model: &Model, readme: &PathBuf, dir: &std::path::Path) -> HashSet<PathBuf> {
     let Some(doc) = model.documents().iter().find(|d| d.rel == *readme) else {
         return HashSet::new();
     };
@@ -312,30 +305,14 @@ fn links(
         let Observation::Link(target) = &l.what else {
             continue;
         };
-        // A bare fragment stays on the page; on a file target a fragment rides along and is
-        // dropped before resolution, so the file part is never empty.
         if target.starts_with('#') {
             continue;
         }
         let file_part = target.split('#').next().unwrap_or(target);
-        // A scheme (https:, mailto:, tel:) marks a target that leaves the project, with or
-        // without the double slash; so does an absolute path. Neither is this check's to
-        // resolve.
-        if has_scheme(file_part) || file_part.starts_with('/') {
+        if super::paths::has_scheme(file_part) || file_part.starts_with('/') {
             continue;
         }
-        let path = super::paths::normalise(&dir.join(file_part));
-        if !inputs.present.contains(&path) {
-            out.push(Finding::at(
-                readme,
-                l.line,
-                format!("`{target}` links to nothing"),
-                "repair the link, or delete it; the README's links are the directory \
-                 home's index, and a link that does not resolve is a guess",
-            ));
-            continue;
-        }
-        resolved.insert(path);
+        resolved.insert(dir.join(file_part));
     }
     resolved
 }
@@ -706,9 +683,10 @@ mod tests {
     }
 
     #[test]
-    fn a_link_with_dots_resolves_the_same_as_the_paths_check() {
-        // Textual `..` resolution, shared with `check::paths` through `normalise`: a link
-        // written through a sibling directory still names the subdocument.
+    fn a_link_through_an_upward_segment_does_not_discharge_the_naming() {
+        // An upward segment is refused by `check::paths`, so the index resolution here does
+        // not fold it away either: the row does not name the subdocument, and the naming
+        // finding stands beside the refusal.
         let manifest = declaring("");
         let mut present = without_design("");
         for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
@@ -722,9 +700,11 @@ mod tests {
             ),
             (PathBuf::from(SUB_A), "a subject\n".to_string()),
         ]);
-        assert_eq!(
-            findings_over(&manifest, &present, model),
-            Vec::<String>::new()
+        let found = findings_over(&manifest, &present, model);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains(SUB_A) && found[0].contains("not linked"),
+            "{found:#?}"
         );
     }
 
@@ -923,10 +903,11 @@ mod tests {
     }
 
     #[test]
-    fn a_link_to_nothing_is_reported_and_a_url_is_not_this_checks() {
-        // The README's links are the index, so both directions are asserted here: an
-        // existing subdocument must be linked, and a link must resolve. A URL and a bare
-        // fragment are not this check's to resolve.
+    fn a_dangling_link_is_the_paths_checks_to_report() {
+        // This check asserts only the other direction — that every subdocument has a row.
+        // Whether each row resolves is `check::paths`' assertion, made for every navigation
+        // file alike, so a dangling row produces no finding here. A URL and a bare fragment
+        // are rows of nothing and are passed over.
         let manifest = declaring("");
         let mut present = without_design("");
         for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
@@ -943,11 +924,9 @@ mod tests {
             ),
             (PathBuf::from(SUB_A), "a subject\n".to_string()),
         ]);
-        let found = findings_over(&manifest, &present, model);
-        assert_eq!(found.len(), 1, "{found:#?}");
-        assert!(
-            found[0].contains("missing.md") && found[0].contains("links to nothing"),
-            "{found:#?}"
+        assert_eq!(
+            findings_over(&manifest, &present, model),
+            Vec::<String>::new()
         );
     }
 

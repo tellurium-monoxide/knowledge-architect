@@ -481,7 +481,11 @@ fn counts(report: &Report) -> String {
         );
     }
     if ran.has(Only::PATHS) {
-        let _ = write!(structural, "\npaths: {} reference(s)", s.path_references);
+        let _ = write!(
+            structural,
+            "\npaths: {} reference(s), {} link(s)",
+            s.path_references, s.links
+        );
     }
     if ran.has(Only::INTERPRETATIONS) {
         let _ = write!(
@@ -563,6 +567,7 @@ mod tests {
         r.structure.slugs_defined = 55;
         r.structure.slugs_referenced = 66;
         r.structure.path_references = 77;
+        r.structure.links = 78;
         r.structure.concerns = 88;
         r.structure.entries = 99;
         r.structure.top_entry = 111;
@@ -583,7 +588,7 @@ mod tests {
             "components: 188 declared, 5 document(s) each plus a design home, 199 additional tracker(s)",
             "lint: 33 unmarked rule reference(s), 44 orphan identifier marker(s)",
             "slugs: 55 defined, 66 referenced",
-            "paths: 77 reference(s)",
+            "paths: 77 reference(s), 78 link(s)",
             "interpretations: 88 concerns, 99 entries R1-R111",
             "uncovered files: 122 scanned",
             "corpus: 133 archived release(s), 144 manifest row(s),",

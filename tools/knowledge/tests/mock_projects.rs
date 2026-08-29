@@ -372,7 +372,10 @@ mod planted {
     const PLANTED: [(Only, usize, &str); 8] = [
         (Only::CITATIONS, 5, "no rule says this"),
         (Only::SLUGS, 6, "is referenced"),
-        (Only::PATHS, 1, "does not exist"),
+        // A dangling anchored path, the retired bare shape, a wrong kind claim, an escape
+        // that resolves here, a root pointer reaching inside the component, a generic
+        // pointer nothing carries, and a link outside a navigation home.
+        (Only::PATHS, 7, "does not exist"),
         // Two missing documents, plus the manifest declaring `.git`, which this project does
         // not have. One planted row across the four declared path lists rather than four
         // identical ones: what needs pinning is that a declared path is checked at all.
@@ -389,8 +392,8 @@ mod planted {
         let found = findings_of(current_indexes, pair);
         assert_eq!(
             found.len(),
-            7,
-            "two misplaced slug defs, four slug defects and one path defect: {found:#?}"
+            13,
+            "two misplaced slug defs, four slug defects and seven path defects: {found:#?}"
         );
         assert!(
             !found.iter().any(|f| f.contains("no rule says this")),
@@ -640,7 +643,21 @@ mod planted {
     fn a_path_that_does_not_resolve_is_reported() {
         // Named rather than matched on "does not exist": a declared tracker that is not there
         // says the same words, and a needle matching both would pass while checking neither.
-        assert!(one("`notes/missing.md` does not exist").starts_with("notes/structure.md:17"));
+        assert!(
+            one("`planted@notes/missing.md` does not exist").starts_with("notes/structure.md:17")
+        );
+    }
+
+    #[test]
+    fn each_shape_of_the_anchored_grammar_is_enforced_over_a_real_walk() {
+        // One planted defect per path check, end to end; the unit tests carry the shapes,
+        // and this asserts the walk delivers each to its check.
+        assert!(one("follows no accepted syntax").contains("notes/missing.md"));
+        assert!(one("claims a file and names a directory").contains("planted@notes"));
+        assert!(one("resolves in this tree").contains("elsewhere@notes/p.md"));
+        assert!(one("reaches inside the component").contains("widget"));
+        assert!(one("resolves in no component").contains("*@notes/void.md"));
+        assert!(one("not a navigation home").contains("p.md"));
     }
 
     #[test]

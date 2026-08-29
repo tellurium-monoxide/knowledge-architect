@@ -32,6 +32,7 @@ pub struct Structure {
     pub slugs_defined: usize,
     pub slugs_referenced: usize,
     pub path_references: usize,
+    pub links: usize,
     pub uncovered_files: usize,
     pub concerns: usize,
     pub entries: usize,
@@ -277,9 +278,10 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
         (structure.slugs_defined, structure.slugs_referenced) = (defined, referenced);
     }
     if only.has(Only::PATHS) {
-        let (found, references) = paths::check(model, manifest, inputs);
+        let (found, c) = paths::check(model, manifest, inputs);
         findings.extend(found);
-        structure.path_references = references;
+        structure.path_references = c.references;
+        structure.links = c.links;
     }
     if only.has(Only::INTERPRETATIONS) {
         let (found, (concerns, entries, top)) = interpretations::check(model, manifest);

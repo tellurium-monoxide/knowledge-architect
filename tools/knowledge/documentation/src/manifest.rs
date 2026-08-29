@@ -345,6 +345,12 @@ impl Manifest {
         out
     }
 
+    /// Replace the parsed ignore rules, for a test that states them without a checkout.
+    #[cfg(test)]
+    pub(crate) fn set_ignore(&mut self, ignore: crate::gitignore::Ignore) {
+        self.ignore = ignore;
+    }
+
     /// The rules corpus as `rules::Tree` needs it, with every path already resolved.
     ///
     /// The `rules` library is handed explicit paths rather than the manifest, so it keeps
