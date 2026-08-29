@@ -151,10 +151,11 @@ different scopes, which is the one pair that must agree.
 ### A whole-section citation owes the section's heading line, and the lint gates the keyword shape `##sections-cite-the-heading`
 
 A rule number with no subrule part cites a whole section: the dotless marker, owing a verbatim
-quote of the section's heading line — the title the release prints — under the same scope and
-distance rules as a subrule quote. The corpus holds section titles apart from the rule bodies, so
-the canonical digest, the release diff and move detection see exactly what they saw before
-sections existed, and only the lookups route on the section form.
+quote of the section's heading — the title the release prints, entire, with the printed number
+standing at a blockquote's head and tolerated at an inline quote's front — under the same scope
+and distance rules as a subrule quote. The corpus holds section titles apart from the rule
+bodies: the canonical digest, the release diff and move detection read the rule bodies alone, and
+only the lookups route on the section form.
 
 **The lint discriminates by grammatical shape, never by judging what a sentence claims.** Measured
 over this tree when the decision was argued: claiming and structural section references differ

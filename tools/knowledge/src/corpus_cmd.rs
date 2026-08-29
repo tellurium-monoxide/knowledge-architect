@@ -37,7 +37,10 @@ fn quoted(number: &RuleNumber, body: &str) -> String {
     // scanner reads: inline, this format string is a blockquote holding no rule text, which
     // is exactly the finding the convention exists to raise.
     const BLOCKQUOTE: &str = ">";
-    format!("{BLOCKQUOTE} {number} {body}")
+    // A section head prints its dot, and the blockquote form needs it: a caller pastes what
+    // this prints, and three bare digits opening a blockquote read as commentary.
+    let dot = if number.is_section() { "." } else { "" };
+    format!("{BLOCKQUOTE} {number}{dot} {body}")
 }
 
 /// The pinned text of one or more rules, shaped to be quoted.
@@ -61,7 +64,7 @@ fn show(manifest: &Manifest, tree: &Tree, args: &[String]) -> Result<i32, String
 
     let mut unresolved = 0;
     for arg in numbers {
-        let parsed = RuleNumber::parse(arg.trim_end_matches('.'));
+        let parsed = RuleNumber::parse_any(arg.trim_end_matches('.'));
         // `raw`, never `get`. `get` is normalised for COMPARING — `norm` folds a curly
         // apostrophe to a straight one so a quote written either way verifies — and 1 933 of
         // 3 162 rules carry one. A caller pastes what this prints, so printing the folded form

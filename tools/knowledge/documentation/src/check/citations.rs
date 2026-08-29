@@ -175,6 +175,25 @@ fn leading_number(text: &str) -> Option<(RuleNumber, &str)> {
     Some((number, &text[index + space.len_utf8()..]))
 }
 
+/// A section quote's text with its own printed number stripped, where it carries one.
+///
+/// The blockquote form carries the heading as printed — number, dot, title — while the corpus
+/// holds the title alone, so verification strips the number the binding already carries. The
+/// prescribed inline form is the title entire; one written with the heading's number verifies
+/// the same way rather than being reported as text of another rule.
+pub fn section_body(rule: &RuleNumber, text: &str) -> String {
+    if rule.is_section() {
+        if let Some(rest) = text
+            .trim_start()
+            .strip_prefix(rule.as_str())
+            .and_then(|r| r.strip_prefix('.'))
+        {
+            return rest.trim_start().to_string();
+        }
+    }
+    text.to_string()
+}
+
 /// The pieces of a quote, split at its elision marks.
 ///
 /// **Every non-empty piece is returned and every one is checked.** The version this replaces
@@ -279,7 +298,8 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
     }
 
     for q in &quotes {
-        let (long, short) = fragments(&q.body);
+        let body = section_body(&q.rule, &q.body);
+        let (long, short) = fragments(&body);
         // A whole-body quote is not weak evidence, whatever its length: there is nothing more
         // of the rule to keep, and the completeness rules already exempt it from the floor.
         // Without this every section title under thirty characters — most of them — would
@@ -287,7 +307,7 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
         let whole = release
             .rules
             .get(&q.rule)
-            .is_some_and(|body| body == norm(&q.body.replace(['*', '…'], "")));
+            .is_some_and(|rule| rule == norm(&body.replace(['*', '…'], "")));
         counts.short += if whole { 0 } else { short };
         for fragment in long {
             counts.fragments += 1;
@@ -406,11 +426,17 @@ fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
         // continuation unprotected — and a rule long enough to carry a cross-reference is
         // long enough to wrap. The body test still binds the token to THIS quote, so a bare
         // number in ordinary prose on a continuation line is reported as it should be.
+        //
+        // **The body match takes the number with its own boundaries.** A plain substring
+        // test let a quote's `104.1` shelter a claiming `section 104` written beside the
+        // quote on its line — the section token is a prefix of the dotted number, and the
+        // exemption is line-ranged, so the substring was the only thing binding token to
+        // quote.
         let inside_a_quote = |token: &RuleNumber| {
             let t = token.to_string();
-            quoted
-                .iter()
-                .any(|(first, last, body)| (*first..=*last).contains(&n) && body.contains(&t))
+            quoted.iter().any(|(first, last, body)| {
+                (*first..=*last).contains(&n) && contains_number(body, &t)
+            })
         };
         let marked: Vec<&RuleNumber> = doc
             .observations
@@ -474,6 +500,33 @@ fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
 
 pub fn clip(s: &str, n: usize) -> String {
     s.chars().take(n).collect()
+}
+
+/// Whether `body` holds `t` as a whole number rather than as a piece of a longer one.
+///
+/// A digit, a letter or a dot-and-digit continuing the match means the body's number is a
+/// different one: `104` is not held by `104.1`, and `104.1` is not held by `104.1a`. A dot
+/// followed by anything else is sentence punctuation and does not disqualify.
+fn contains_number(body: &str, t: &str) -> bool {
+    let mut from = 0;
+    while let Some(i) = body[from..].find(t) {
+        let at = from + i;
+        let before_ok = body[..at]
+            .chars()
+            .next_back()
+            .is_none_or(|c| !(c.is_ascii_alphanumeric() || c == '.'));
+        let mut after = body[at + t.len()..].chars();
+        let after_ok = match after.next() {
+            Some('.') => !after.next().is_some_and(|c| c.is_ascii_digit()),
+            Some(c) => !c.is_ascii_alphanumeric(),
+            None => true,
+        };
+        if before_ok && after_ok {
+            return true;
+        }
+        from = at + t.len();
+    }
+    false
 }
 
 #[cfg(test)]
@@ -675,6 +728,63 @@ mod tests {
             .expect("the mismatch finding")
             .action;
         assert!(hint.contains("retarget the citation at the rule"), "{hint}");
+    }
+
+    #[test]
+    fn a_formatted_signature_line_opening_with_an_angle_bracket_is_not_a_blockquote() {
+        // The recorded defect's exact shape: a long generic return type broken by the
+        // formatter so a line reads `> {`. The grammar parser never lets a code line into
+        // the prose stream, so the commentary check cannot reach it — while a doc-comment
+        // quote in the same file is still extracted and verified.
+        let src = format!(
+            "/// Per CR:{A}:\n///\n/// > {A} a fragment long enough to be evidence here.\n\
+             fn f() -> Result<\n    (usize, usize),\n    String,\n> {{\n    todo!()\n}}\n"
+        );
+        let model =
+            crate::model::Model::from_documents(vec![(std::path::PathBuf::from("code/a.rs"), src)]);
+        let doc = model.documents()[0].clone();
+        let release = Release::new(
+            &format!("{A} a fragment long enough to be evidence here.\n"),
+            0,
+        );
+        let (findings, counts) = check(&doc, &release, false);
+        assert_eq!(findings, Vec::new(), "{findings:#?}");
+        assert_eq!(counts.commentary, 0, "the code line is not a blockquote");
+        assert_eq!(counts.verified, 1, "the doc-comment quote still verifies");
+    }
+
+    #[test]
+    fn a_quotes_dotted_number_does_not_shelter_a_section_token_beside_it() {
+        // The carve-out is line-ranged, so the body match is the only thing binding token to
+        // quote — and a substring test let `104.1` inside the quote exempt a claiming
+        // `section 104` written in prose on the quote's line. Mutation checked: reverting
+        // `contains_number` to `contains` fails the first assertion with zero findings.
+        let doc = doc_with(&format!(
+            "per CR:{IN_SECTION}, *\"a fragment long enough to be evidence, see rule \
+             {IN_SECTION} here.\"* and section {SECTION_N} places no other bound\n"
+        ));
+        let (findings, counts) = lint(&doc);
+        assert_eq!(counts.0, 1, "{findings:#?}");
+        // The control: the section's own cross-reference inside the quote stays sheltered.
+        let genuine = doc_with(&format!(
+            "per CR:{IN_SECTION}, *\"a fragment long enough, see section {SECTION_N} \
+             there.\"*\n"
+        ));
+        assert_eq!(lint(&genuine).1 .0, 0);
+    }
+
+    #[test]
+    fn a_section_quote_carrying_its_own_heading_number_verifies_as_the_title() {
+        // The blockquote form prints the number; an inline quote written the same way is the
+        // same text, and reporting it as belonging to another rule sent the writer at a
+        // retarget that does not exist. Mutation checked: dropping `section_body` from the
+        // verdict path fails this with a misattribution finding.
+        let doc = doc_with(&format!(
+            "per CR:{SECTION_N}, *\"{SECTION_N}. {SECTION_TITLE}\"*\n"
+        ));
+        let (findings, counts) = check(&doc, &section_release(), false);
+        assert_eq!(findings, Vec::new(), "{findings:#?}");
+        assert_eq!((counts.verified, counts.misattributed), (1, 0));
     }
 
     #[test]

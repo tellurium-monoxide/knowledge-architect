@@ -60,11 +60,16 @@ walked file, and the standing workaround is to interpolate every literal, which 
 measurably harder to read: `format!("`#{SLUG}` — …")` in place of the thing it means. The cost is
 paid by every future check module.
 
-**What would answer it.** Two readings, and the choice is real rather than a bug to fix. Either
-unit tests that carry such literals move to `tests/projects/`, which costs a file per case and buys
-readable fixtures; or a way to mark a span as fixture text, which is a new convention and a new
-thing to get wrong. `assumption`: the first, because the exclusion already exists and needs no new
-concept. Untested — nobody has tried moving one.
+**What would answer it.** Three candidates, and the choice is real rather than a bug to fix.
+Either unit tests that carry such literals move to `tests/projects/`, which costs a file per case
+and buys readable fixtures; or a way to mark a span as fixture text, which is a new convention and
+a new thing to get wrong; or a per-family exemption in the manifest, exempting only the citation
+families over a named path. The third was argued and parked at the linting-scope discussion, and
+it carries a conflict to argue before it can win: `knowledge#the-regime-has-no-opt-out` accepts
+only files that are leaving the tree, and the walk asserts that an unwalked file may not name a
+rule, so the shape has to say what happens to that assertion. `assumption`: the first, because the
+exclusion already exists and needs no new concept. Untested — nobody has tried moving one.
+Re-entry: the next tool-cleanup discussion.
 
 ## The interpretation register has no mention form, so naming an entry counts as citing it `question`
 
@@ -92,6 +97,24 @@ names.
 citation, the way a rule number in one does. That is the structural answer the rule side already
 uses, and it needs no new marker. The decision belongs with `recording-an-interpretation`, which
 owns the entry shape.
+
+## Whether register entries should carry text slugs in place of `R` numbers `question`
+
+**What.** Interpretation entries are named by an `R` and a sequence number, and the owner
+proposed replacing the numbers with content-named slugs, the shape design decisions already use.
+The numbering's purpose is unclear, a number is inconvenient to cite from memory, and a text slug
+would dissolve the mention-form question above along the way — a slug in a code span is already
+the established data shape, while an entry number written anywhere counts as a citation, which
+this entry's own first draft demonstrated by joining two citing lists in the generated index.
+Proposed and deliberately deferred at the linting-scope discussion.
+
+**Why it matters.** Every document and doc comment that cites a reading carries the number, so
+the rename grows more expensive with each entry — and the mention-form question stays open as
+long as the numbers do.
+
+**What would answer it.** The next tool-cleanup discussion, arguing it with
+`recording-an-interpretation`, which owns the entry shape and the numbering. The migration cost
+is enumerable at that point from the register index's citing lists.
 
 ## A slug definition is not recognised in a list item `observation`
 
@@ -183,6 +206,30 @@ to say they meant the project's — the `@` form already exists and is not check
 disambiguation may already be spelled. Closing this means every outstanding row above being
 reported and the three legitimate root references still passing. Whether it is a finding or a lint
 is open.
+
+## The release diff calls a renumbered section a deletion `defect`
+
+**What.** `rules diff` detects a renumbered rule by its body — `by_body` in
+`knowledge@rules/src/diff.rs` builds its move maps from `Corpus::iter`, which deliberately
+excludes sections — so a section that is renumbered between releases is reported `GONE` while its
+own subrules are reported `MOVED` directly beneath. A retitled section is reported correctly as
+changed.
+
+**Reproduce.** Two mock corpora, the second renumbering a section and moving its rules with it —
+a heading line and one dotted rule under each number. `rules diff` over them prints the section
+as gone directly above the subrule move that proves the renumbering, and the summary counts one
+renumbered and one gone. Found by an adversarial review of the branch that made sections citable.
+
+**Why it matters.** Section citations owe heading quotes now, so a release that renumbers a
+section breaks every citing site, and the diff is the work list a bump reads — per
+`knowledge#sections-cite-the-heading`, the index's section rows say *where*, and the diff is what
+says *what kind* of change moved under them. Root `CLAUDE.md` calls renumbering the dangerous
+case, and `bumping-rules` reads the diff's verdicts as its instructions.
+
+**What would close it.** Section move detection: a candidate is a vanished number whose title
+appears under a new number, corroborated by its subrules' own moves — titles alone collide, the
+pinned release printing the same title under two sections. Closing means the reproduction above
+reporting the section as renumbered, and a genuinely deleted section still reporting `GONE`.
 
 ## The path scanner's suffix set omits `.rs`, so Rust paths in documents are never checked `defect`
 

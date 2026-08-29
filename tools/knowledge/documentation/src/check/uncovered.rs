@@ -37,13 +37,31 @@ pub fn check(inputs: &Inputs) -> (Vec<Finding>, usize) {
 }
 
 /// The first rule-number-shaped token on a line, marked or not.
+///
+/// The section form counts only behind a marker or a keyword: a bare three-digit number in an
+/// unwalked file is a count or a date fragment, and asserting over those would make the
+/// assertion unusable. The dotted form counts bare, as it always has.
 fn first_rule_number(line: &str) -> Option<RuleNumber> {
-    line.split(|c: char| !(c.is_ascii_alphanumeric() || c == '.'))
+    static SECTION: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+        regex::Regex::new(r"(?i)\b(?:cr:[\s*_]*|(?:cr|rules?|sections?)[\s*_]+)(\d{3})\b").unwrap()
+    });
+    let dotted = line
+        .split(|c: char| !(c.is_ascii_alphanumeric() || c == '.'))
         .filter_map(|token| {
             let token = token.trim_start_matches(|c: char| !c.is_ascii_digit());
             RuleNumber::parse(token.trim_end_matches('.'))
         })
-        .next()
+        .next();
+    dotted.or_else(|| {
+        SECTION.captures(line).and_then(|c| {
+            let whole = c.get(1).unwrap();
+            let mut rest = line[whole.end()..].chars();
+            if rest.next() == Some('.') && rest.next().is_some_and(|c| c.is_ascii_digit()) {
+                return None;
+            }
+            Some(RuleNumber::section(c[1].parse().ok()?))
+        })
+    })
 }
 
 #[cfg(test)]
@@ -75,6 +93,35 @@ mod tests {
             "10.4 and 1004.4",
         ] {
             assert!(first_rule_number(line).is_none(), "{line}");
+        }
+    }
+
+    #[test]
+    fn a_section_counts_behind_a_marker_or_keyword_and_a_bare_number_does_not() {
+        // The branch made the section form citable, so an unwalked file naming one is the
+        // exact silence this module's assertion exists to prevent — while a bare three-digit
+        // number stays a count or a date fragment.
+        const SECTION: &str = "104";
+        for line in [
+            format!("per CR:{SECTION} the game ends"),
+            format!("see rule {SECTION} here"),
+        ] {
+            assert_eq!(
+                first_rule_number(&line).map(|r| r.to_string()).as_deref(),
+                Some(SECTION),
+                "{line}"
+            );
+        }
+        for line in [
+            format!("{SECTION} files were scanned"),
+            format!("rule {SECTION}.4b is dotted, and its own token wins"),
+        ] {
+            let found = first_rule_number(&line);
+            assert_ne!(
+                found.as_ref().map(|r| r.to_string()).as_deref(),
+                Some(SECTION),
+                "{line}: {found:?}"
+            );
         }
     }
 }

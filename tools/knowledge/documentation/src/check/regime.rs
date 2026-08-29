@@ -141,11 +141,20 @@ fn verified(doc: &Document, release: &Release) -> Vec<(RuleNumber, u32, String)>
     super::citations::quotes(doc)
         .into_iter()
         .filter(|q| {
+            let text = super::citations::section_body(&q.rule, &q.body);
+            // A quote that quotes nothing verifies nothing. An ellipsis-only body survives
+            // both arms without this: an empty string is contained in every rule, and a
+            // fragment test over no fragments passes vacuously — so `*"…"*` discharged a
+            // claim while carrying no evidence at all.
+            let whole = norm(&text.replace(['*', '…'], ""));
+            if whole.is_empty() {
+                return false;
+            }
             release
                 .rules
                 .get(&q.rule)
-                .is_some_and(|body| body.contains(&norm(&q.body.replace(['*', '…'], ""))))
-                || super::citations::fragments(&q.body).0.iter().all(|f| {
+                .is_some_and(|body| body.contains(&whole))
+                || super::citations::fragments(&text).0.iter().all(|f| {
                     release
                         .rules
                         .get(&q.rule)
@@ -172,11 +181,33 @@ fn completeness(doc: &Document, release: &Release, quote: &crate::quote::Quote) 
     let Some(body) = release.rules.get(&quote.rule).map(norm) else {
         return out;
     };
-    let text = quote.body.replace('*', "");
+    let text = super::citations::section_body(&quote.rule, &quote.body).replace('*', "");
     let whole = norm(&text.replace('…', ""));
     // A quote of the rule entire owes no mark and no floor: there is nothing omitted, and
     // nothing more of the rule to keep. 241 of 3 162 rules have a body under the floor.
     if whole == body {
+        return out;
+    }
+    // **A section is quoted by its heading entire.** The title is the claim of identity, and
+    // a piece of one — an elided tail, a fragment over the length floor — reads as the whole
+    // to anyone who does not know the title. A quote the title does not hold at all is left
+    // to `citations`, which reports what it says against the release.
+    if quote.rule.is_section() {
+        if body.contains(&whole) || text.contains('…') {
+            out.push(Judged {
+                rule: Rule::OmissionMarked,
+                finding: Finding::at(
+                    &doc.rel,
+                    quote.line,
+                    format!(
+                        "the quote of {} is not the section's heading entire",
+                        quote.rule
+                    ),
+                    "a section is quoted by its heading line whole; nothing of the title may \
+                     be elided, and the whole line always passes",
+                ),
+            });
+        }
         return out;
     }
     let pieces: Vec<String> = text
@@ -277,7 +308,7 @@ fn typography(doc: &Document, release: &Release, quote: &crate::quote::Quote) ->
     };
     let ws = |s: &str| s.split_whitespace().collect::<Vec<_>>().join(" ");
     let body = ws(raw);
-    let text = quote.body.replace('*', "");
+    let text = super::citations::section_body(&quote.rule, &quote.body).replace('*', "");
     for piece in text.split('…') {
         let piece = ws(piece);
         if piece.chars().count() < MIN_FRAGMENT {
@@ -329,10 +360,11 @@ fn ambiguous_binding(
         return Vec::new();
     }
     let holds = |rule: &RuleNumber| {
+        let text = super::citations::section_body(rule, &quote.body);
         release
             .rules
             .get(rule)
-            .is_some_and(|body| norm(body).contains(&norm(&quote.body.replace(['*', '…'], ""))))
+            .is_some_and(|body| norm(body).contains(&norm(&text.replace(['*', '…'], ""))))
     };
     if !holds(&quote.rule) {
         // The text does not verify as the rule it bound to. `citations` reports that already,
@@ -706,6 +738,50 @@ mod tests {
             judged(&inline, &release, Rule::QuoteInScope),
             Vec::<String>::new()
         );
+    }
+
+    #[test]
+    fn a_section_is_quoted_by_its_heading_entire_or_reported() {
+        // A piece of a title reads as the whole to anyone who does not know the title, and
+        // titles long enough to clear the fragment floor were exposed: the pinned release
+        // holds nine of thirty characters or more. Mutation checked: removing the section
+        // branch from `completeness` passes the elided long title silently.
+        const LONG_N: &str = "200";
+        const LONG_TITLE: &str = "A Title Comfortably Longer Than The Fragment Floor";
+        let release = Release::new(&format!("{LONG_N}. {LONG_TITLE}\n{CORPUS}"), 0);
+        let elided = format!(
+            "### A section\n\nper CR:{LONG_N}, *\"A Title Comfortably Longer Than The…\"*\n"
+        );
+        let found = judged(&elided, &release, Rule::OmissionMarked);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("heading entire"), "{found:#?}");
+        // An ellipsis-only quote quotes nothing and must not discharge anything.
+        let empty = format!("### A section\n\nper CR:{LONG_N}, *\"…\"*\n");
+        assert_eq!(judged(&empty, &release, Rule::OmissionMarked).len(), 1);
+        // The whole title is complete: no mark owed, in either form, with or without the
+        // printed number at its head.
+        for clean in [
+            format!("### A section\n\nper CR:{LONG_N}, *\"{LONG_TITLE}\"*\n"),
+            format!("### A section\n\nper CR:{LONG_N}:\n\n> {LONG_N}. {LONG_TITLE}\n"),
+            format!("### A section\n\nper CR:{LONG_N}, *\"{LONG_N}. {LONG_TITLE}\"*\n"),
+        ] {
+            assert_eq!(
+                judged(&clean, &release, Rule::OmissionMarked),
+                Vec::<String>::new(),
+                "{clean}"
+            );
+        }
+    }
+
+    #[test]
+    fn an_ellipsis_only_quote_discharges_nothing() {
+        // An empty string is contained in every rule and a fragment test over no fragments
+        // passes vacuously, so `*"…"*` used to satisfy `quote-in-scope` while quoting
+        // nothing. Mutation checked: removing the emptiness guard from `verified` passes
+        // this with zero findings.
+        let text = format!("### A section\n\nper CR:{SHARED_A}, *\"…\"*\n");
+        let found = judged(&text, &release(), Rule::QuoteInScope);
+        assert_eq!(found.len(), 1, "{found:#?}");
     }
 
     #[test]

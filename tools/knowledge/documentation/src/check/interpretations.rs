@@ -104,6 +104,11 @@ pub fn check(model: &Model, manifest: &Manifest) -> (Vec<Finding>, (usize, usize
             continue;
         }
         let inside = doc.rel.parent() == Some(dir.as_path());
+        // The scanner records one observation per occurrence, and the binding below re-finds
+        // every occurrence itself — so a line repeating a number is judged once, not once
+        // per copy.
+        let mut bound_checked: std::collections::HashSet<(u32, u16)> =
+            std::collections::HashSet::new();
         for (line, number) in doc.observations_of(|o| match o {
             Observation::InterpRef(n) => Some(*n),
             _ => None,
@@ -125,27 +130,37 @@ pub fn check(model: &Model, manifest: &Manifest) -> (Vec<Finding>, (usize, usize
             // because the directory always resolves. This is the half the addressing decision
             // rests on: a re-filing has to rewrite every file that names the old concern.
             //
-            // **Each `R` binds to the NEAREST concern file named before it on its line.**
-            // Comparing every number against every file on the line made a line citing one
-            // entry from each of two concerns unwritable: both pairings reported, both
-            // false. A number with no file before it is unqualified and checked against
-            // none, which is the shape a bare reference already has.
+            // **Each occurrence of the `R` binds to the NEAREST concern file named on its
+            // line, either side, by the gap between them.** Comparing every number against
+            // every file made a line citing one entry from each of two concerns unwritable —
+            // both pairings reported, both false — and binding only leftward un-checked the
+            // tree's commonest order, `R31's claim in <file>`. The gap runs to the name's
+            // nearer edge, because a name has length and its far edge says nothing about
+            // adjacency. A number on a line naming no concern file is unqualified and
+            // checked against none, the shape a bare reference already has.
+            if !bound_checked.insert((line, number)) {
+                continue;
+            }
             let named = concern_files_named(text, dir);
-            let bound = r_position(text, number).and_then(|p| {
-                named
-                    .iter()
-                    .filter(|(at, _)| *at < p)
-                    .max_by_key(|(at, _)| *at)
-            });
-            if let Some((_, named_file)) = bound {
-                if named_file != file {
-                    out.push(Finding::at(
-                        &doc.rel,
-                        line,
-                        format!("R{number} is in {file}, not the {named_file} this line names"),
-                        "repair the concern file it names; a re-filing rewrites every \
-                         reference in the same change",
-                    ));
+            for p in r_positions(text, number) {
+                let bound = named.iter().min_by_key(|(start, end, _)| {
+                    if p < *start {
+                        start - p
+                    } else {
+                        p.saturating_sub(*end)
+                    }
+                });
+                if let Some((_, _, named_file)) = bound {
+                    if named_file != file {
+                        out.push(Finding::at(
+                            &doc.rel,
+                            line,
+                            format!("R{number} is in {file}, not the {named_file} this line names"),
+                            "repair the concern file it names; a re-filing rewrites every \
+                             reference in the same change",
+                        ));
+                        break;
+                    }
                 }
             }
         }
@@ -162,11 +177,12 @@ fn entry_heading(line: &str) -> Option<(u16, String)> {
     Some((digits.parse().ok()?, title.trim_end().to_string()))
 }
 
-/// Concern filenames a line names, as `(byte position, <concern>.md)`.
+/// Concern filenames a line names, as `(name start, name end, <concern>.md)`.
 ///
-/// The position is where the name starts in the line, which is what nearest-before binding
-/// compares against the `R` token's own position.
-fn concern_files_named(line: &str, dir: &std::path::Path) -> Vec<(usize, String)> {
+/// Both edges, because the binding measures the gap to the nearer one: a name has length,
+/// and measuring to its start makes a long name further from the reference sitting right
+/// after it than a short name two words away.
+fn concern_files_named(line: &str, dir: &std::path::Path) -> Vec<(usize, usize, String)> {
     let needle = format!("{}/", dir.file_name().unwrap_or_default().to_string_lossy());
     let mut out = Vec::new();
     let mut from = 0;
@@ -178,20 +194,21 @@ fn concern_files_named(line: &str, dir: &std::path::Path) -> Vec<(usize, String)
             .unwrap_or(after.len());
         let stem = &after[..end];
         if !stem.is_empty() && after[end..].starts_with(".md") {
-            out.push((at, format!("{stem}.md")));
+            let name_end = at + needle.len() + end + ".md".len();
+            out.push((at, name_end, format!("{stem}.md")));
         }
         from = at + needle.len();
     }
     out
 }
 
-/// Where `R<number>` sits in a line, with the boundaries the scanner's pattern uses.
+/// Every place `R<number>` sits in a line, with the boundaries the scanner's pattern uses.
 ///
-/// The scanner records the line and not the column, so the binding re-finds the token. The
-/// first occurrence wins; a line repeating the same number is not a shape the register's
-/// prose has, and the nearest-file rule reads the same for every copy that shares a prefix.
-fn r_position(line: &str, number: u16) -> Option<usize> {
+/// The scanner records the line and not the column, so the binding re-finds the token —
+/// every occurrence, because each binds to its own nearest file.
+fn r_positions(line: &str, number: u16) -> Vec<usize> {
     let token = format!("R{number}");
+    let mut out = Vec::new();
     let mut from = 0;
     while let Some(i) = line[from..].find(&token) {
         let at = from + i;
@@ -204,11 +221,11 @@ fn r_position(line: &str, number: u16) -> Option<usize> {
             .next()
             .is_none_or(|c| !c.is_ascii_digit());
         if before_ok && after_ok {
-            return Some(at);
+            out.push(at);
         }
         from = at + token.len();
     }
-    None
+    out
 }
 
 #[cfg(test)]
@@ -227,7 +244,7 @@ mod tests {
         let names = |line: &str| -> Vec<String> {
             concern_files_named(line, &dir)
                 .into_iter()
-                .map(|(_, f)| f)
+                .map(|(_, _, f)| f)
                 .collect()
         };
         let one = format!("see `{DIR}/{A}.md` for it");
@@ -268,13 +285,27 @@ mod tests {
         // One entry from each concern on ONE line: both bindings are right, no finding.
         let both = format!("`{DIR}/{A}.md` R1 and `{DIR}/{B}.md` R2, together\n");
         assert_eq!(mistargets(&both), Vec::<String>::new());
+        // The tree's commonest order puts the number first — "R1's claim in <file>" — and
+        // binding only leftward un-checked every such line: a re-filing was silent at each.
+        let number_first = format!("per R2's claim in `{DIR}/{B}.md`, tables watch\n");
+        assert_eq!(mistargets(&number_first), Vec::<String>::new());
+        let refiled = format!("per R1's claim in `{DIR}/{B}.md`, tables watch\n");
+        assert_eq!(mistargets(&refiled).len(), 1, "{:#?}", mistargets(&refiled));
         // The nearest file before the number is the wrong one: exactly one finding.
         let wrong = format!("`{DIR}/{B}.md` R1 names the wrong file\n");
         assert_eq!(mistargets(&wrong).len(), 1, "{:#?}", mistargets(&wrong));
-        // A number with no file before it is unqualified and checked against none, even
-        // with a file named later on the line.
-        let after = format!("R1, argued beside `{DIR}/{B}.md`\n");
-        assert_eq!(mistargets(&after), Vec::<String>::new());
+        // A number on a line naming no concern file is unqualified and checked against none.
+        let bare = "R1 stands alone here\n";
+        assert_eq!(mistargets(bare), Vec::<String>::new());
+        // Every occurrence binds for itself: a first, correctly bound mention does not
+        // launder a second one sitting beside the wrong file.
+        let repeated = format!("`{DIR}/{A}.md` R1 first, then refiled under `{DIR}/{B}.md` R1\n");
+        assert_eq!(
+            mistargets(&repeated).len(),
+            1,
+            "{:#?}",
+            mistargets(&repeated)
+        );
     }
 
     #[test]

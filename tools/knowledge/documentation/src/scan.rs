@@ -110,8 +110,14 @@ static CR_SECTION: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\bCR:(\d{3})\
 /// numbers to a handful of section references, so the keyword is what makes the token
 /// claimable at all. The dotted alternative in the tail is there to be DISCARDED: `rule
 /// 601.2` names a rule, and the dotted patterns above already carry it.
-static SECTION_KEYWORD: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"\b(?:CR|[Rr]ules?|[Ss]ections?)\s+(\d{3})\b").unwrap());
+///
+/// Any casing, and emphasis characters may sit between the keyword and the digits: `RULE
+/// 104`, `rule *104*` and a lowercase `cr:104` all claim exactly what the plain form claims,
+/// and a case-varying evasion is cheaper than a code span. The `cr:` alternative also matches
+/// the uppercase marker, so the scan drops a match whose digits a marker already carries.
+static SECTION_KEYWORD: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?i)\b(?:cr:[\s*_]*|(?:cr|rules?|sections?)[\s*_]+)(\d{3})\b").unwrap()
+});
 static HEADING: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(#{1,4})\s+(.+?)\s*$").unwrap());
 /// A reference is `` `<component>#<slug>` ``, and the component is optional only so that one
 /// written without it is still seen. The component alternative cannot match a `#`, so a
@@ -248,11 +254,14 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                 let mut rest = line[m.end()..].chars();
                 rest.next() == Some('.') && rest.next().is_some_and(|c| c.is_ascii_digit())
             };
+            let mut marker_digits: Vec<(usize, usize)> = Vec::new();
             for c in CR_SECTION.captures_iter(line) {
                 let whole = c.get(0).unwrap();
                 if continues_dotted(whole) {
                     continue;
                 }
+                let digits = c.get(1).unwrap();
+                marker_digits.push((digits.start(), digits.end()));
                 let number = RuleNumber::section(c[1].parse().expect("three digits"));
                 // Marker AND token, the same pair a dotted marker line carries: the token is
                 // what the lint compares against the marker, and what the index collects. The
@@ -276,6 +285,11 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
             for c in SECTION_KEYWORD.captures_iter(line) {
                 let number = c.get(1).unwrap();
                 if data(number) || continues_dotted(number) {
+                    continue;
+                }
+                // The `cr:` alternative also matches the uppercase marker, whose token the
+                // marker scan above already pushed once.
+                if marker_digits.contains(&(number.start(), number.end())) {
                     continue;
                 }
                 push(Observation::RuleToken(RuleNumber::section(
@@ -525,6 +539,27 @@ mod tests {
         }
         let dotted = format!("named by rule {IN_SECTION} in prose");
         assert_eq!(tokens(&dotted), vec![IN_SECTION.to_string()]);
+    }
+
+    #[test]
+    fn a_case_or_emphasis_evasion_of_the_keyword_shape_is_still_a_token() {
+        // A case-varying or emphasised keyword claims exactly what the plain form claims,
+        // and either evasion is cheaper than a code span. The lowercase colon form is a
+        // token rather than a marker: the marker convention is uppercase, and legitimising
+        // the lowercase spelling would let two forms drift.
+        for shape in [
+            format!("named by RULE {SECTION} in prose"),
+            format!("named by SECTION {SECTION} in prose"),
+            format!("named by rule *{SECTION}* in prose"),
+            format!("named by cr:{SECTION} in prose"),
+        ] {
+            assert_eq!(tokens(&shape), vec![SECTION.to_string()], "{shape}");
+            assert!(markers(&shape).is_empty(), "{shape}");
+        }
+        // The uppercase marker matches the widened keyword pattern too, and must still
+        // yield exactly one token beside its marker, not two.
+        let marker = format!("in the order CR:{SECTION} states them");
+        assert_eq!(tokens(&marker), vec![SECTION.to_string()]);
     }
 
     #[test]
