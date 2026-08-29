@@ -148,6 +148,32 @@ distance is for is that a reader sees both at once, which does not depend on the
 makes siblings. Without that the claim in a doc comment and the name it documents fall in
 different scopes, which is the one pair that must agree.
 
+### A whole-section citation owes the section's heading line, and the lint gates the keyword shape `##sections-cite-the-heading`
+
+A rule number with no subrule part cites a whole section: the dotless marker, owing a verbatim
+quote of the section's heading line — the title the release prints — under the same scope and
+distance rules as a subrule quote. The corpus holds section titles apart from the rule bodies, so
+the canonical digest, the release diff and move detection see exactly what they saw before
+sections existed, and only the lookups route on the section form.
+
+**The lint discriminates by grammatical shape, never by judging what a sentence claims.** Measured
+over this tree when the decision was argued: claiming and structural section references differ
+only in what the surrounding sentence does, every one of them sits behind the word CR, rule,
+rules or section, and bare three-digit numbers are counts, line numbers and date fragments at
+hundreds to a handful. So the keyword shape is the gate — reported exactly as an unmarked dotted
+number is — bare numbers stay invisible on purpose, and everything semantic is the
+rules-reviewer's, named in its definition: whether a marked reference's claim about its section is
+true, whether a section citation dodges a subrule that carries the claim, and whether a number in
+a code span is genuinely data. Re-take the census with the keyword patterns over `*.md` and
+`*.rs`; a claiming shape the patterns cannot see reopens this decision, and a tripwire beside it
+says so.
+
+**The heading line is the quote because it is the claim every section reference makes at
+minimum** — which part of the specification the text stands against — and because no fragment of
+a section's body can discharge a claim about the whole. A renumbering or retitling breaks the
+quote loudly at every citing site, so the generated rule index's section rows are the bump work
+list covering sections.
+
 ### Every rule of the regime is enforced, and a project cannot exempt itself from one `##the-regime-has-no-opt-out`
 
 The rule set is compiled in and the manifest declares nothing about it, so conformance means the

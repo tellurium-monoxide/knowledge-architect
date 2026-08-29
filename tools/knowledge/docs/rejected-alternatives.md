@@ -44,6 +44,26 @@ available and the cost was measured: about 90 000 characters of rule text across
 1 200 lines, with the operative clause buried inside each one. Marking every omission delivers the
 content of the incident this would have prevented.
 
+**A blessed structural form for section references owing nothing**, the space form for location
+and the marker only for claims — lost to `knowledge#sections-cite-the-heading`. `live`. It costs
+nearly no migration and reads naturally. It loses on what it leaves open: a claiming reference
+written in the unmarked form passes every check forever, which is the exact gap the census was
+taken to close — and the census showed the two uses are not mechanically separable, so no lint
+could ever tell an honest structural use from a dodge.
+
+**A lint that detects claiming references**, reporting a section number only where the sentence
+claims content — lost to `knowledge#sections-cite-the-heading`. `live`. Classified by hand over
+the whole tree: claiming and structural references differ only in what the surrounding sentence
+does, with no separating pattern, so the lint either drowns in the structural majority or misses
+the claims it exists for. The shape test is decidable; the claim test is the reviewer's.
+
+**A checker for verbatim rule quotes that nothing marks** — lost to the rules-reviewer owning the
+class, per its definition's sweep instruction. `live`. Measured over `interpretations/`: checking
+every plain quoted span against the corpus produces four false positives per true finding — the
+project's own coinages, card text and quoted external prose all sit in plain quotes — and a gate
+at that ratio gets muted. The buildable version reads only spans already written as quotes; the
+dangerous case is the unquoted verbatim, which no span scanner sees.
+
 **A third marker for the quote-free class**, beside the content marker and the identifier form —
 lost to reading a number as data by its surface. `live`. Defeated by enumeration: every genuine
 quote-free use is a number being displayed, and the code span, the fenced block and the name-bound

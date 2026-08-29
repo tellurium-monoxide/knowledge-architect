@@ -30,6 +30,38 @@ indistinguishable from a clean tree. `Parsed::trouble` catches the cases the gra
 guards the case where it reports success and returns nothing.
 **Re-entry:** standing, and each time either parser's version changes.
 
+## Guarding `knowledge#sections-cite-the-heading`'s keyword boundary
+
+**Fires when:** a review reports a section reference that claims content in a shape the lint
+cannot see — no keyword before the number, or a keyword shape outside the patterns in
+`knowledge@documentation/src/scan.rs`. The census behind the decision listed every shape the tree
+held; this fires on the first shape it did not.
+**Response:** reopen `knowledge#sections-cite-the-heading`'s boundary: widen the pattern to the
+new shape, or re-accept the keyword boundary knowingly and record the shape as the reviewer's.
+Either way the review finding is the evidence; open a `defect` naming the shape if the decision
+is not reopened in the same change.
+**Re-entry:** standing.
+
+## Guarding `knowledge#sections-cite-the-heading`'s reviewer delegation
+
+**Fires when:** a section citation standing where one subrule carries the claim is found in work
+already merged to `main` — the delegation to the rules-reviewer was the only enforcement, and it
+missed.
+**Response:** reopen the delegation half of `knowledge#sections-cite-the-heading`: the semantic
+check may need mechanical support after all, or the reviewer definition's instruction needs
+sharpening. Record the missed instance as a `defect` in the component that carries it.
+**Re-entry:** standing.
+
+## Guarding `knowledge#sections-cite-the-heading`'s quote obligation
+
+**Fires when:** a diff moves a section reference into a code span, or deletes one, where the
+surrounding sentence still claims the section's content — the visible effect being that the
+heading-quote obligation is avoided rather than met.
+**Response:** the readability the heading quote bought is inverting into avoidance. Reopen the
+once-per-claim weight of the quote obligation, and record the instance as an `observation`; the
+rules-reviewer's genuinely-data check is where the instance surfaces.
+**Re-entry:** standing.
+
 ## Guarding the citation index as a bump work list
 
 **Fires when:** `docs/rules/index.md`'s cited-rule count falls between two commits that add engine

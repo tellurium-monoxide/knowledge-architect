@@ -42,102 +42,6 @@ default, rather than only when someone dispatches one. `assumption`: the reviewe
 the brief named the spec as the standard and told them to establish the tree themselves. Untested —
 it has happened once.
 
-## A markdown formatter's emphasis normalisation makes an inline rule quote invisible `defect`
-
-**What.** The inline-quote convention is the asterisk form, and `quote.rs` finds one with
-`italic_spans`, which requires the two characters `*"` to open the span. A markdown formatter that
-normalises emphasis to underscores rewrites the span so it opens with `_"` instead. That form is
-found by neither scanner: `italic_spans` requires the asterisk, and `plain_spans` rejects a double
-quote whose neighbour is a `*`, an alphanumeric or a `_`. The quote is then not wrong — it is
-**absent**, and nothing verifies it.
-
-**Reproduced against this tree, on the branch that reworks the citation checks.** A formatter ran
-over `../../crates/thaum-engine/docs/design.md` and converted 87 asterisk-delimited spans to
-underscore-delimited ones. Counted with `grep -o` before and after. The signature of the same run is
-visible in two other places in that file: markdown tables padded to aligned column widths, and five
-lines where a literal asterisk was escaped as a backslash pair.
-
-Measured with `cargo knowledge check --only citations`, which prints the fragment count on its first
-line, over a worktree at the merge base and over the branch tip:
-
-| tree | fragments verified |
-| --- | --- |
-| merge base | 661 |
-| branch, after the formatter ran | 572 |
-| branch, after restoring the asterisk form | 666 |
-
-So **89 rule quotes stopped being checked** and every run in between reported `PASSED: no findings`.
-The count rose past the merge base on repair because three spans were already in the underscore form
-at the merge base.
-
-**Why it matters.** The guarantee this tool exists to make is that every rule quote in a live
-document verifies against the pinned release. A routine editor action removes quotes from that
-guarantee with no diagnostic, and the diff that does it looks like whitespace and emphasis. It is
-the exact failure the tool is built to prevent, arriving through the one path nobody inspects.
-
-`assumption`: the formatter is Prettier, which normalises emphasis to underscores, pads tables and
-escapes stray asterisks. Not established — no formatter is configured in this repository, and no
-configuration file for one exists in it, so the run came from an editor rather than from the tree.
-
-**What would close it.** Either the scanner accepts both emphasis delimiters, or the repository
-declares the files a formatter must not rewrite. The first is the direction already taken: the
-markdown parser represents both delimiters as one emphasis node, so the distinction disappears in
-`quote::italic_spans`. Closing it means the underscore form verifying, asserted by a test, and the
-fragment count not moving when a formatter runs over the tree.
-
-## The citation report is a ratio, so a quote that stops being found reads as success `defect`
-
-**What.** `check::citations` counts what it finds and reports `verified / fragments`. A quote the
-scanner cannot see contributes to neither, so the ratio stays at 100% and the run passes. There is
-no expected count and nothing compares one run against another, so **losing a quote is
-indistinguishable from never having written one**.
-
-**Observed** as the reason the entry above went unnoticed. Three separate full runs of
-`cargo knowledge check` reported `572/572 rule-quote fragments verified` and `PASSED: no findings`
-while 89 quotes were absent from the walk. The loss was found by comparing against a worktree at the
-merge base, by hand, for an unrelated reason.
-
-**Why it matters.** Every other family in this tool reports an absolute a reader can judge — the
-number of components, of slugs, of path references, of register entries. The citation family reports
-only a proportion of itself, which is the one family where absence is the dangerous direction. A
-reviewer reading the summary cannot tell a tree with no quotes from a tree whose quotes all verify.
-
-**What is ruled out.** Storing an expected count in the repository. It would go stale on every commit
-that adds or removes a citation, which is most of them, and a threshold nobody can maintain is one
-that gets raised until it means nothing.
-
-**What would close it.** Two candidates, neither tried. Report the absolute alongside the ratio, so a
-fall is visible in a diff of CI output — cheap, and it only helps a reader who compares runs. Or
-report quoted spans the scanner found but could not bind to a rule, which turns the mangled form
-above into a finding rather than a silence. `assumption`: the second is the one that would have
-caught this, since a `_"…"_` span is still a quoted span; nobody has measured its false-positive rate
-against ordinary quoted prose.
-
-## `cargo fmt` can produce a line the blockquote instruction reads as a quote `defect`
-
-**What.** A blockquote is recognised by `>` at the start of a line, which is Markdown's rule applied
-to source files as well, because a rule quote inside a code comment is a citation. In Rust, `>`
-closes a generic — and when a signature is long enough, the formatter breaks the return type so that
-a line begins with `> {`. The check then reports a blockquote holding commentary rather than rule
-text.
-
-Reproduced against this tree: a `fn` returning a two-element tuple inside a `Result` formatted to a
-line reading exactly `> {`, and both the current checker and the implementation it replaced reported
-the same finding on the same line. It is not a defect introduced by the port.
-
-**Why it matters.** The formatter and the checker disagree about one character, and the formatter
-wins — `cargo fmt --all --check` is a gate, so the shape cannot simply be avoided by hand. The
-workaround is a type alias, which is usually better code, but that is a coincidence rather than a
-reason. It is a false positive inside the guarantee the citation check makes, and every long
-signature is a new chance to hit it.
-
-**What would close it.** A blockquote test that cannot fire on code. The suffix is already known
-where the leaders are stripped, so the check has the information: in a file with comment syntax, a
-`>` that survives leader-stripping is code rather than a quote, because a real doc-comment quote
-arrives as `/// >` and loses only the leader. Closing this means the reproduction above producing no
-finding while a quote written in a doc comment still verifies — the case
-`documentation/src/walk.rs` already tests.
-
 ## The tool's own fixtures are indistinguishable from real content `observation`
 
 **What.** The checks walk the whole project, including their own source. A rule number, a slug, a
@@ -217,34 +121,6 @@ paragraph, in which case the current behaviour is a deliberate constraint and be
 property only a pattern states. `assumption`: the second is what was intended, since the table-cell
 form was added deliberately and the list form was not. Nothing records either way.
 
-## The mismatch finding's hint sends a writer at the wrong repair `defect`
-
-**What.** An inline quote binds to the nearest marker before it. Where a sentence names a second
-rule between the introducing marker and the quote, the quote is bound to the rule the writer did
-not mean, and `check::citations` reports *"the text verifies, but not as X"* with the hint *"a
-renumbering, or the wrong number — retarget the citation at the rule that now holds this text"*.
-That advice is wrong here: the citation is correct and the repair is to move the other marker. A
-writer who follows the hint retargets a correct citation onto the wrong rule.
-
-**What has been closed, and is no longer part of this entry.** The silent half — a quote bound to
-the wrong rule whose text that rule also holds, verifying with nothing reported — is now
-`regime::Rule::QuoteBindingIsAmbiguous`, and root `CLAUDE.md` states the proximity rule where a
-writer reads it. Two real instances were found in the tree when the rule landed:
-`crates/thaum-engine/src/runtime/instance.rs` in the doc comment for `empty_draw_attempts`, and
-`tools/thaum-testing/tests/driver.rs` above the two-player departure test. Both are sentences that
-deliberately name two rules sharing a sentence, so the citation is right and only the binding is
-unfalsifiable.
-
-**Why it matters.** The hint is the only thing a writer meets after already being wrong, and it is
-confident and specific in the wrong direction. Retargeting produces a citation that verifies, so
-nothing downstream reports it, and the generated rule index then carries a rule the document does
-not depend on.
-
-**What would close it.** The hint gains the second case: on a line carrying two or more prose
-markers, suggest moving the intervening marker before suggesting a retarget. `assumption`: the
-mismatch verdict cannot distinguish the two causes, so the hint has to name both rather than
-choose. Nothing has tested whether a writer reads past the first clause of a hint.
-
 ## A Component-relative document name resolves against the project root and is never reported `defect`
 
 **What.** Three path syntaxes are declared: a full path from the project root, `<component>@path`
@@ -307,69 +183,6 @@ to say they meant the project's — the `@` form already exists and is not check
 disambiguation may already be spelled. Closing this means every outstanding row above being
 reported and the three legitimate root references still passing. Whether it is a finding or a lint
 is open.
-
-## A line naming two concern files cannot cite an interpretation from either `defect`
-
-**What.** The reference check in `check/interpretations.rs` compares **every** `R` number on a line
-against **every** concern file the same line names, so a line that names two concern files and cites
-one entry from each reports two findings and cannot be written at all. Both are false: each number
-does name the file it belongs to.
-
-**Reproduce.** In any markdown file the register check reads, put both of the following on **one**
-line, in either order: a reference to `docs/rules/interpretations/game-loop.md` R29, and
-a reference to `docs/rules/interpretations/object-identity.md` R30.
-`cargo knowledge check` then reports *R29 is in game-loop.md, not the object-identity.md this line
-names* and the mirror of it.
-
-**They are on separate lines here deliberately**, because writing the reproduction as one line makes
-this file fail the gate — which is the defect demonstrating itself and is why the entry cannot show
-it directly. Met while writing the 2c-ii row of
-`docs/plans/progress.md`, which records both readings that step landed; the row now names one file
-and describes the other in prose, which is a worse reference than the one the check refused.
-
-**Why it matters.** A table row is one line, so any row recording work that touched two concerns is
-affected — `docs/plans/progress.md` is written entirely in such rows and is where a step's readings
-are listed. The workaround costs exactly what the check exists to buy: the comment beside it says a
-re-filing must rewrite every file that names the old concern, and a reference reduced to prose is one
-a re-filing cannot find.
-
-**Why the check is shaped that way.** Binding a number to a file needs a rule for which of several
-named files is the one, and comparing against all of them is the approximation that needs no rule. It
-is right whenever a line names one concern, which is every line in the tree until this one.
-
-**What would close it.** Bind each `R` to the nearest concern file named before it on the line, and
-compare only against that; a number with no file before it is unqualified and checked against none,
-which is the shape a bare `R29` already has. `assumption`, not measured: the nearest-preceding rule
-matches how every existing line reads, since each names its file immediately before its numbers.
-
-## The citation lint cannot see a section-level rule reference `question`
-
-**What.** Every rule-number pattern in the tool requires a subrule dot: `RULE_TOKEN` in
-`tools/knowledge/documentation/src/scan.rs` is `\b(\d{3}\.\d+[a-z]{0,2})\b`, and the marker and
-identifier patterns in `scan.rs` and `tools/knowledge/documentation/src/quote.rs` are the same
-shape behind `CR:` and `cr_`. A reference to a whole section — `CR 601's casting process`, "is
-733" — therefore passes every check while claiming content, which is the shape the citation
-regime exists to prevent. Two instance classes are known: the bare "is 733" sentence tracked as a
-`defect` in `thaum-engine@docs/open-issues.md` (its entry names widening the lint as the
-alternative repair and defers the decision here), and the space-form `CR 601` shape, found by a
-rules-axis review in slice 2's plan documents and left by the owner's decision pending this
-question. The instances that review flagged are gone — one document left the tree when slice 2
-landed, the other's were edited out during the slice — but the shape itself stays common:
-`grep -rnE '\bCR [0-9]{3}' --include="*.md" --include="*.rs"` over the live tree returns
-space-form references in the tens of files, several claiming content, and the lint sees none of
-them.
-
-**Why it matters.** A reader takes an unreported reference as verified. The regime's whole
-mechanism is that a number claiming content owes a quote a checker verifies; a section-level
-reference is outside the mechanism entirely, so the class grows silently with the documents.
-
-**What would close it.** A decision on what a section-level reference owes, then the lint
-widened to enforce it. The open design question is the discriminator: `rule 733` appears inside
-verbatim quotes, in cross-references the CR's own text carries, and in structural prose ("one
-rules section per module") where it claims no content — a widened pattern must separate those
-from a claiming reference, or the lint drowns in false findings. An experiment that would
-inform it: count `\b\d{3}\b` and `CR \d{3}` hits across the live documents and classify a
-sample by hand.
 
 ## The path scanner's suffix set omits `.rs`, so Rust paths in documents are never checked `defect`
 
