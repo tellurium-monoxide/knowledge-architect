@@ -11,37 +11,6 @@ Read `tracking-open-issues` before adding.
 
 ---
 
-## The plan claimed a parser port that was not made, and three reviewers found it before anyone else did `observation`
-
-**What.** The design that adopted a markdown parser stated, as a consequence of adopting it, that
-two recorded defects were closed by it: an emphasis delimiter a
-formatter rewrites, and a backticked reference a formatter wraps across a line. Neither was closed.
-The parser was wired into scanning and into scoping; quote EXTRACTION was left on the hand-written
-byte scanners, which is where both defects live. The plan is corrected, and the port is now made.
-
-**Why this is recorded rather than only corrected.** A plan document is amended in place and leaves
-the repository when its work lands, so correcting it erases the fact that the claim was made. What
-is worth keeping is not the wrong sentence but its shape: **a consequence was written into a design
-document as though it had been implemented, in the same change that implemented the thing it was a
-consequence of.** Nothing distinguished it from the clauses that were true, and the gate could not:
-the tool passed throughout, because a quote that stops being found is subtracted from the numerator
-and the denominator together.
-
-**Observed.** Three independent reviewers found it — a spec-conformity axis, an adversarial evasion
-axis and a blind one — each reproducing it separately. No checker did, and neither did the author.
-
-**Why it matters.** The same shape is available to every design document in this project: a head
-that states what a mechanism achieves, written by the session that built the mechanism, verified by
-nobody. Root `CLAUDE.md` `Verify a claim before writing it` binds it, and the failure was not that
-the instruction is missing but that it was not applied to a sentence about the author's own work.
-
-**What would close it.** Nothing here is outstanding as work — the port is made and the plan is
-corrected. It stays as an `observation` because the question it raises is open: whether a design
-head asserting what a change achieves should be reviewed against the change by a separate axis by
-default, rather than only when someone dispatches one. `assumption`: the reviewers caught it because
-the brief named the spec as the standard and told them to establish the tree themselves. Untested —
-it has happened once.
-
 ## The tool's own fixtures are indistinguishable from real content `observation`
 
 **What.** The checks walk the whole project, including their own source. A rule number, a slug, a
