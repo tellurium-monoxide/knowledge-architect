@@ -347,11 +347,11 @@ matches how every existing line reads, since each names its file immediately bef
 **What.** Every rule-number pattern in the tool requires a subrule dot: `RULE_TOKEN` in
 `tools/knowledge/documentation/src/scan.rs` is `\b(\d{3}\.\d+[a-z]{0,2})\b`, and the marker and
 identifier patterns in `scan.rs` and `tools/knowledge/documentation/src/quote.rs` are the same
-shape behind `CR:` and `cr_`. A reference to a whole section — "CR 601's casting process", "is
+shape behind `CR:` and `cr_`. A reference to a whole section — `CR 601's casting process`, "is
 733" — therefore passes every check while claiming content, which is the shape the citation
 regime exists to prevent. Two instance classes are known: the bare "is 733" sentence tracked as a
 `defect` in `thaum-engine@docs/open-issues.md` (its entry names widening the lint as the
-alternative repair and defers the decision here), and the space-form "CR 601" shape, found by a
+alternative repair and defers the decision here), and the space-form `CR 601` shape, found by a
 rules-axis review in slice 2's plan documents and left by the owner's decision pending this
 question. The instances that review flagged are gone — one document left the tree when slice 2
 landed, the other's were edited out during the slice — but the shape itself stays common:
@@ -364,7 +364,7 @@ mechanism is that a number claiming content owes a quote a checker verifies; a s
 reference is outside the mechanism entirely, so the class grows silently with the documents.
 
 **What would close it.** A decision on what a section-level reference owes, then the lint
-widened to enforce it. The open design question is the discriminator: "rule 733" appears inside
+widened to enforce it. The open design question is the discriminator: `rule 733` appears inside
 verbatim quotes, in cross-references the CR's own text carries, and in structural prose ("one
 rules section per module") where it claims no content — a widened pattern must separate those
 from a claiming reference, or the lint drowns in false findings. An experiment that would
