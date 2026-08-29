@@ -30,16 +30,49 @@ pub fn label(doc: &Document, interpretations_dir: &std::path::Path) -> String {
     doc.rel.display().to_string()
 }
 
+/// The relative path from `dir` to `target`, the way a renderer resolves a link in a file
+/// inside `dir`.
+///
+/// The upward segments this produces are legal here and nowhere else: both generated
+/// indexes sit outside the walk, and generated text cannot go stale, which is what the
+/// upward ban in hand-written links exists against.
+fn rel_from(dir: &std::path::Path, target: &std::path::Path) -> std::path::PathBuf {
+    let dir_parts: Vec<_> = dir.components().collect();
+    let target_parts: Vec<_> = target.components().collect();
+    let common = dir_parts
+        .iter()
+        .zip(&target_parts)
+        .take_while(|(a, b)| a == b)
+        .count();
+    let mut out = std::path::PathBuf::new();
+    for _ in common..dir_parts.len() {
+        out.push("..");
+    }
+    for part in &target_parts[common..] {
+        out.push(part);
+    }
+    out
+}
+
 /// Every rule the live files cite, and where, as `document · heading`.
 ///
 /// The heading is tracked down the file, and **a heading line is applied before the rule
 /// numbers on that same line**: a rule named in a heading belongs under that heading, not
 /// under the one above it. The scanner emits the observations in the other order, so this
 /// reorders them per line rather than replaying them as they arrive.
-fn citations(model: &Model, interpretations_dir: &std::path::Path) -> BTreeMap<Sort, Vec<String>> {
+fn citations(
+    model: &Model,
+    interpretations_dir: &std::path::Path,
+    index_dir: &std::path::Path,
+) -> BTreeMap<Sort, Vec<String>> {
     let mut out: BTreeMap<Sort, BTreeSet<String>> = BTreeMap::new();
     for doc in model.documents() {
-        let name = label(doc, interpretations_dir);
+        // A markdown link, so a reader follows the row where a renderer shows the page.
+        let name = format!(
+            "[{}]({})",
+            label(doc, interpretations_dir),
+            rel_from(index_dir, &doc.rel).display()
+        );
         let mut heading = String::new();
         let mut by_line: BTreeMap<u32, Vec<&Observation>> = BTreeMap::new();
         for l in &doc.observations {
@@ -93,7 +126,7 @@ impl PartialOrd for Sort {
 /// exactly what has to be re-read.
 pub fn rule_index(model: &Model, manifest: &Manifest, corpus: &Corpus, pinned: &str) -> String {
     let dir = manifest.interpretations().dir.clone();
-    let cites = citations(model, &dir);
+    let cites = citations(model, &dir, &manifest.rules().dir);
     let (known, unknown): (Vec<_>, Vec<_>) = cites
         .iter()
         .partition(|(Sort(rule), _)| corpus.contains(rule));
@@ -211,7 +244,8 @@ pub fn interpretation_index(model: &Model, manifest: &Manifest, with_lines: bool
     }
 
     let cited = citing_files(model, &dir);
-    render_interpretation_index(&entries, &cited, with_lines)
+    let rule_index = rel_from(&dir, &manifest.rules().dir.join("index.md"));
+    render_interpretation_index(&entries, &cited, with_lines, &dir, &rule_index)
 }
 
 /// `R<n> — <title>` as an entry's own heading.
@@ -266,6 +300,8 @@ fn render_interpretation_index(
     entries: &BTreeMap<u16, Entry>,
     cited: &BTreeMap<u16, BTreeMap<String, Vec<u32>>>,
     with_lines: bool,
+    dir: &std::path::Path,
+    rule_index: &std::path::Path,
 ) -> String {
     let mut body = Vec::new();
     for (n, entry) in entries {
@@ -285,11 +321,14 @@ fn render_interpretation_index(
             format!("Turns on: {}", listed.join(", "))
         };
         body.push(format!("{}\n", wrap(&line, 98).join("\n")));
+        // Links rather than backticked names, so a reader follows a row where a renderer
+        // shows the page. The concern file is a sibling, and a citing file resolves
+        // relative to this index's own directory.
         let who = cited.get(n);
         match who.filter(|w| !w.is_empty()) {
             Some(files) => {
                 body.push(format!(
-                    "In `{}`. Cited by {} file{}:\n",
+                    "In [{0}]({0}). Cited by {1} file{2}:\n",
                     entry.file,
                     files.len(),
                     if files.len() > 1 { "s" } else { "" }
@@ -302,15 +341,20 @@ fn render_interpretation_index(
                     } else {
                         String::new()
                     };
-                    body.push(format!("- `{file}`{suffix}"));
+                    let rel = rel_from(dir, std::path::Path::new(file));
+                    body.push(format!("- [{file}]({}){suffix}", rel.display()));
                 }
                 body.push(String::new());
             }
-            None => body.push(format!("In `{}`. **Cited from nowhere.**\n", entry.file)),
+            None => body.push(format!(
+                "In [{0}]({0}). **Cited from nowhere.**\n",
+                entry.file
+            )),
         }
     }
 
     let concerns: BTreeSet<&String> = entries.values().map(|e| &e.file).collect();
+    let rule_index = rule_index.display();
     let provenance = if with_lines {
         "**Generated — do not edit.** `cargo knowledge index --interpretations --lines`\n\n\
          **Line numbers are on, so this copy is temporary.** `cargo knowledge check` fails\n\
@@ -330,8 +374,8 @@ fn render_interpretation_index(
          concern file, so moving an entry means rewriting all of them in the same change.\n\n\
          **Turns on** is every Comprehensive Rule the entry rests on, from its markers and from\n\
          the numbers its blockquotes carry as printed. This is the per-entry half of\n\
-         a release bump: `docs/rules/index.md` says which files cite a rule, and this says which\n\
-         readings would have to be re-argued if that rule moved under them.\n\n\
+         a release bump: [the rule index]({rule_index}) says which files cite a rule, and this says\n\
+         which readings would have to be re-argued if that rule moved under them.\n\n\
          The citing list is file-level, and that is what freshness is gated on: this file changes\n\
          when a citation is added, moved between files or deleted, and not when unrelated prose\n\
          shifts one down a page. `cargo knowledge index --interpretations --lines` adds the line numbers to\n\
@@ -367,6 +411,48 @@ pub fn wrap(text: &str, width: usize) -> Vec<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::path::PathBuf;
+
+    /// A declaration whose rules directory and register directory are one level deep.
+    fn declaring() -> Manifest {
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\
+             [interpretations]\ndir = \"i\"\nconcerns = []\n";
+        Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration")
+    }
+
+    #[test]
+    fn a_rule_index_row_links_relative_to_the_index_directory() {
+        // A markdown link a renderer follows, with the upward segments the index's own
+        // directory requires — legal here because the generated files sit outside the walk
+        // and regenerate, so the link cannot go stale.
+        const RULE: &str = "100.1";
+        let corpus = Corpus::parse(&format!("{RULE} A mock rule body.\n"), 0);
+        let doc = "parts/x/doc.md";
+        let model = Model::from_documents(vec![(PathBuf::from(doc), format!("per CR:{RULE}\n"))]);
+        let index = rule_index(&model, &declaring(), &corpus, "20200101");
+        let row = format!("[{doc}](../{doc})");
+        assert!(index.contains(&row), "{index}");
+    }
+
+    #[test]
+    fn an_interpretation_citing_row_links_relative_to_the_register_directory() {
+        // The concern file is a sibling of the index, so its link is the bare name; a
+        // citing file resolves through the upward segments.
+        let concern = "i/a-concern.md";
+        let citing = "notes/n.md";
+        let model = Model::from_documents(vec![
+            (PathBuf::from(concern), "## R7 — a reading\n".to_string()),
+            (PathBuf::from(citing), "R7 holds\n".to_string()),
+        ]);
+        let index = interpretation_index(&model, &declaring(), false);
+        assert!(index.contains("In [a-concern.md](a-concern.md)"), "{index}");
+        let row = format!("- [{citing}](../{citing})");
+        assert!(index.contains(&row), "{index}");
+    }
 
     #[test]
     fn an_entry_heading_is_recognised_and_its_title_kept() {
