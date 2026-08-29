@@ -331,6 +331,13 @@ against the linking file's own directory, under the same kind claim and the same
 an anchored path, in the paths family; `check::components` keeps the inverse assertion, that a
 design README links every subdocument.
 
+**The accepted link is the plain inline form with a spaceless target**, one shape so the
+check stays one pattern. The other CommonMark shapes — reference-style, an angle-bracketed or
+quoted-title target — are outside the scanner: a row written in one surfaces as a dangling
+target or an unlinked subdocument rather than as a finding naming the shape, and that is
+judged close enough while this head states the accepted form. The shapes themselves are
+enumerated in `knowledge@docs/open-issues.md`.
+
 **Markdown documents only.** In Rust prose a markdown link is rustdoc's mechanism, resolved by
 rustdoc against the crate namespace, and reading those as index rows would report every
 intra-doc link.

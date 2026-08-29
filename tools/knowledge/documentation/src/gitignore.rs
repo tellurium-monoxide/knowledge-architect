@@ -222,7 +222,7 @@ mod tests {
             !i.covers(Path::new("target"), false),
             "`target/` names a directory; a FILE called target is tracked"
         );
-        // `thaum@.claude/worktrees/` carries no trailing slash, so it matches either.
+        // The worktrees pattern carries no trailing slash, so it matches either.
         assert!(i.covers(Path::new(".claude/worktrees"), false));
     }
 

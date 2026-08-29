@@ -224,19 +224,35 @@ fn reference(
             // The compiled-in required set is what the generic form usually names, and it
             // is accepted whether or not any component carries the shape yet — the two
             // design homes are the case, where naming both shapes is legitimate while only
-            // one is in use anywhere.
-            let required = COMPONENT_DOCUMENTS.contains(&trimmed)
+            // one is in use anywhere. The set carries its own kinds, so the trailing-slash
+            // claim is asserted here too: the design directory is the one directory.
+            let required_file = COMPONENT_DOCUMENTS.contains(&trimmed)
                 || trimmed == DESIGN_FILE
-                || trimmed == DESIGN_DIR
                 || trimmed == DESIGN_README;
-            if required {
+            let required_dir = trimmed == DESIGN_DIR;
+            if required_file || required_dir {
+                if claims_dir != required_dir {
+                    out.push(Finding::at(
+                        rel,
+                        line,
+                        format!("`*@{path}` claims the wrong kind for a required document"),
+                        "the design directory takes the trailing slash and the document \
+                         files take none; the slash is the kind claim",
+                    ));
+                }
                 return;
             }
-            // Anything else must be real somewhere, with the claimed kind: a generic
-            // reference nothing resolves rots exactly like a dangling one.
+            // Anything else must be real somewhere, with the claimed kind. A hit is a
+            // component's OWN copy: a path reaching a nested component from above is not
+            // this component's, or the generic form would evade the deepest-anchor rule.
+            // A gitignored copy is not a hit either — presence of generated content is
+            // build state, and a verdict may not depend on the checking machine's.
             let hit = components.all().iter().any(|c| {
                 let t = c.path.join(trimmed);
-                inputs.present.contains(&t) && claims_dir == inputs.directories.contains(&t)
+                components.owning(&t).path == c.path
+                    && !manifest.ignore().covers(&t, claims_dir)
+                    && inputs.present.contains(&t)
+                    && claims_dir == inputs.directories.contains(&t)
             });
             if !hit {
                 out.push(Finding::at(
@@ -310,13 +326,14 @@ fn link(
     manifest: &Manifest,
 ) {
     // A bare fragment stays on the page; on a file target a fragment rides along and is
-    // dropped before resolution. A scheme and an absolute path leave the project and are
-    // not this check's to resolve.
+    // dropped before resolution. A scheme leaves the project and is not this check's to
+    // resolve; an absolute path is NOT passed over — it reaches `refused` below, under the
+    // same leading-slash arm an anchored path meets.
     if target.starts_with('#') {
         return;
     }
     let file_part = target.split('#').next().unwrap_or(target);
-    if has_scheme(file_part) || file_part.starts_with('/') {
+    if has_scheme(file_part) {
         return;
     }
     counts.links += 1;
@@ -551,6 +568,56 @@ mod tests {
         let (found, _) = checked(&m, &format!("See `*@{NOWHERE}`.\n"), &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("resolves in no component"), "{found:#?}");
+    }
+
+    #[test]
+    fn the_generic_anchor_cannot_reach_inside_a_component_from_above() {
+        // Without the owning test, a root-relative deep path resolves through the root
+        // component and the generic form evades the deepest-anchor rule.
+        let m = manifest();
+        let (found, _) = checked(&m, &format!("See `*@{PART}/{DOC}`.\n"), &tree());
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("resolves in no component"), "{found:#?}");
+    }
+
+    #[test]
+    fn a_required_name_still_carries_the_kind_claim() {
+        // The design directory is the one directory in the required set; a slash on a
+        // document file, or its absence on the directory, is the same wrong claim the
+        // resolved forms are refused for.
+        let m = manifest();
+        let (found, _) = checked(&m, &format!("See `*@{DESIGN_FILE}/`.\n"), &tree());
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("wrong kind"), "{found:#?}");
+        let (found, _) = checked(&m, &format!("See `*@{DESIGN_DIR}`.\n"), &tree());
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("wrong kind"), "{found:#?}");
+    }
+
+    #[test]
+    fn a_gitignored_copy_is_not_a_generic_hit() {
+        // Presence of generated content is build state: the same reference must fail on a
+        // fresh clone and a built tree alike, so an ignored copy never carries a generic.
+        let m = manifest_ignoring("scratch/\n");
+        let generated = "scratch/x.md";
+        let mut present = tree();
+        present.push("scratch".to_string());
+        present.push(generated.to_string());
+        let (found, _) = checked(&m, &format!("See `*@{generated}`.\n"), &present);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("resolves in no component"), "{found:#?}");
+    }
+
+    #[test]
+    fn an_absolute_link_target_is_refused_rather_than_passed_over() {
+        // The same leading-slash arm an anchored path meets; skipped before the refusal,
+        // an absolute link resolved nowhere and was reported by nothing.
+        let m = manifest();
+        let present = vec![format!("{PART}/{DOC}"), PART.to_string()];
+        let at = format!("{PART}/notes/README.md");
+        let (found, _) = checked_in(&m, &at, "[x](/no/such/place.md)\n", &present);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("is refused"), "{found:#?}");
     }
 
     #[test]

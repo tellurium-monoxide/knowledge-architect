@@ -30,17 +30,22 @@ reference in it.
 `knowledge#every-path-names-its-anchor`. `live`. It keeps prose short and costs no migration.
 It loses on what was counted: the required document set gives every component the same names,
 so a bare `docs/`-headed reference from inside a component silently names the project's file —
-twelve candidate sites in one component alone, nine of them wrong, enumerated in the entry
-that recorded the defect. A targeted check patrols the collision; retiring the form makes it
+twelve candidate sites in one component alone, nine of them wrong, counted by hand when the
+defect was recorded. A targeted check patrols the collision; retiring the form makes it
 unrepresentable, and an anchored reference is what a fixed-string grep can find.
 
-**The `@` prefix as the root-relative spelling** — lost to `knowledge#reserved-anchors`.
-`live`. It is one character where the project name is five. It loses on the census taken at
-the design session: the tree held 75 `@`-prefixed spans carrying three meanings — about 65
-meant every component's own copy, a handful meant a path outside the tree, three were Java
-annotations that were never path syntax — and the scanner registered none of them, so a typo'd
-escape was invisible by construction. One mute marker for three meanings is the confusion the
-anchor words dissolve, and a second spelling for the root would put two shapes on one meaning.
+**Keeping the `@` prefix as the escape** — lost to `knowledge#reserved-anchors`. `live`. It
+costs no migration. It loses on the census taken at the design session: the tree held 75
+`@`-prefixed spans carrying three meanings — about 65 meant every component's own copy, a
+handful meant a path outside the tree, three were Java annotations that were never path
+syntax — and the scanner registered none of them, so a typo'd escape was invisible by
+construction. One mute marker for three meanings is the confusion the anchor words dissolve.
+
+**The `@` prefix reused as the root-relative spelling** — lost to
+`knowledge#every-path-names-its-anchor`. `live`. It is one character where the project name is
+five. It loses on shape: the root is a component and already has a spelling under the one
+grammar, so a second one puts two shapes on one meaning — and it spends the prefix the census
+above shows is needed for the generic and escape meanings.
 
 **Widening the retired form's suffix set by one entry** — superseded by
 `knowledge#every-path-names-its-anchor`, which retires suffix sets with the form that carried
@@ -48,7 +53,7 @@ them. `live`. The measured cost of the set: relocating the nine game-driving sui
 every backticked Rust path across five knowledge documents and the checker reported none of
 them, because no suffix in the set covered them; the sweep had to be grep-driven.
 
- Mirrors keep
+**A third-party mirror as the source** — lost to `knowledge#watch-reads-the-page`. `live`. Mirrors keep
 stable index pages and would be less brittle than Wizards' HTML. It loses on what the corpus is: the
 Comprehensive Rules are this project's only authority, and putting a third party between the project
 and its authority as the _change signal_ is a dependency nothing else here has.

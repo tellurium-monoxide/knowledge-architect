@@ -168,3 +168,58 @@ appears under a new number, corroborated by its subrules' own moves — titles a
 pinned release printing the same title under two sections. Closing means the reproduction above
 reporting the section as renumbered, and a genuinely deleted section still reporting `GONE`.
 
+
+## A root gitignore line can unread a tracked live document `defect`
+
+**What.** The walk prunes every path the root gitignore covers, and the survey drops it from the
+files-outside listing too. Git itself does not ignore a file it already tracks, so the two
+disagree exactly where it hurts: an unanchored basename pattern matches at any depth, and one
+line meant for a scratch file removes a tracked live document from the walk AND from the inverse
+assertion. Every citation, slug and path reference in it leaves every check, and the run reports
+success.
+
+**Reproduce.** A mock project copied from `knowledge@tests/projects/minimal/` whose `knowledge@tests/projects/minimal/notes/b.md`
+carries a dangling anchored reference: without a gitignore the run fails on it; after adding a
+one-line `.gitignore` holding the document's bare filename, the run passes with no finding and
+nothing reports that a live file went unread. Found by an adversarial review of the
+anchored-grammar branch.
+
+**Why it matters.** This is the founding failure class: a file silently outside every check while
+the run stays green, reachable by one plausible ignore line. The unsupported-pattern gate refuses
+what the matcher cannot honour; it does not refuse a pattern that over-matches tracked files.
+
+**What would close it.** The walk refusing to prune a path git tracks — which needs a source of
+the tracked set the model build does not have today — or the gitignore parse refusing a bare-name
+pattern that matches a tracked file, with the same loudness the unsupported patterns get. Either
+way, the reproduction above must fail loudly instead of passing.
+
+## Span and link shapes the scanner cannot see `observation`
+
+**What.** The path scanner reads one line at a time and two character classes, and the link
+scanner reads one inline pattern, so these shapes produce neither a reference nor an
+unsupported-shape observation, and no finding:
+
+```
+`notes/a.md:12`             a colon suffix, the file-and-line idiom
+`minimal@notes/a.md,`       trailing punctuation inside the backticks
+a span wrapped across a line boundary
+a fullwidth at sign in place of the ASCII one
+[text][label]               a reference-style link, with its definition elsewhere
+[text](<notes/a.md>)        an angle-bracketed target
+```
+
+The link shapes surface as a dangling target or an unlinked subdocument in a design README, and
+are silent in an ordinary navigation file, per the close-enough clause of
+`knowledge#links-are-navigation-rows`. Enumerated by an adversarial review of the
+anchored-grammar branch; a grep at that revision found no live instance of any shape, so every
+gap is latent.
+
+**Why it matters.** The unsupported-shape lint promises that no pointer class passes
+unregistered, and each shape above is a pointer a reader might write — the colon idiom most of
+all. The cost of widening is false positives on prose, which the lint's two-segment clause was
+tuned against; the census that tuned it did not measure these shapes.
+
+**What would close it.** Widening the classes shape by shape with a measured false-positive
+census for each, or recording beside `knowledge#every-path-names-its-anchor` that a named shape
+stays outside on purpose. `assumption`: the colon idiom is the one worth widening first, being
+ordinary editor output. Untested — no census taken.
