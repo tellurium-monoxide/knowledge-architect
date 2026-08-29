@@ -79,11 +79,11 @@ manifest.
 
 The single file serves a component whose design fits one document. The directory serves one whose
 design has outgrown it. In the directory shape, `README.md` is the head: an introduction, and a
-table of contents naming every subdocument as a backticked path. The decisions and their slug
-anchors live in the subdocuments.
+bullet list of markdown links, one per subdocument, each target written relative to the README.
+The decisions and their slug anchors live in the subdocuments.
 
 Four assertions carry the shape, split over two checks. `check::components` asserts exactly one
-home per component, that a directory home carries its `README.md`, and that the README names
+home per component, that a directory home carries its `README.md`, and that the README links
 every markdown subdocument the walk covers — a gitignored scratch file owes nothing. `check::slugs`
 accepts a slug definition only in the file home or in a subdocument, matched against the owning
 component's own paths rather than against a filename suffix — a suffix match would accept a slug
@@ -92,10 +92,14 @@ in any file whose name ends in `design.md`, a plan document included.
 **Exactly one home, because two give a decision two candidate places to land.** That is the
 one-home failure, and the reader who finds one half acts on half the design.
 
-**The README must name every subdocument, because a subdocument nobody lists is a home nobody
-finds.** The table of contents is the conventional shape of that naming, and its rows are
-checkable pointers, so the two directions close: the paths check asserts a named file exists,
-and this check asserts an existing subdocument is named.
+**The README must link every subdocument, because a subdocument nobody links is a home nobody
+finds.** A markdown link is the index's row because a reader can follow it where a renderer
+shows the page, and a bullet list is its conventional shape — a table grows painful to edit as
+soon as a row outgrows a short sentence. Both directions are asserted over the same links: an
+existing subdocument no link names is reported, and a link that resolves to nothing is reported.
+A fenced link is an illustration and discharges nothing, the stance the slug conventions take.
+A backticked path in the README stays what it is everywhere: a checked pointer in prose, not a
+row of the index.
 
 **The README defines no slugs.** It is the head and the index. A decision recorded there competes
 with the subdocuments as a home, which is what the split exists to end.

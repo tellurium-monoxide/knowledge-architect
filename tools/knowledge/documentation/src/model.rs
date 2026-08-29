@@ -259,6 +259,7 @@ fn describe(what: &Observation) -> (&'static str, String) {
             Some(cp) => ("path-ref", format!("{cp}@{path}")),
         },
         Observation::InterpRef(n) => ("interp-ref", n.to_string()),
+        Observation::Link(target) => ("link", target.clone()),
     }
 }
 

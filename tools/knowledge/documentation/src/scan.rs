@@ -71,6 +71,11 @@ pub enum Observation {
     },
     /// An `R` number naming an interpretation entry.
     InterpRef(u16),
+    /// A markdown link's target, as written.
+    ///
+    /// Resolution is the consumer's: a design README's naming check resolves it against the
+    /// linking document's own directory, the way a renderer would.
+    Link(String),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -155,6 +160,9 @@ static COMPONENT_PATH_REF: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"`(\.?[A-Za-z0-9][A-Za-z0-9._-]*)@(/?(?:[\w.+-]+/)*[\w.+-]+/?)`").unwrap()
 });
 static INTERP_REF: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"R(\d{1,3})\b").unwrap());
+/// A markdown link: `[text](target)`. The target may not hold a space or a closing
+/// parenthesis, which is the shape every link in this tree has.
+static MD_LINK: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\[[^\]]*\]\(([^)\s]+)\)").unwrap());
 static PIN: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"<!--\s*cr-version:\s*(\d{8})\s*-->").unwrap());
 
@@ -337,6 +345,15 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                         push(Observation::InterpRef(n));
                     }
                 }
+            }
+            // A markdown link is a pointer a renderer follows, recorded as written. A fenced
+            // link is an illustration, like a fenced slug: the design README naming check
+            // reads links, and an example must not discharge a real obligation.
+            for c in MD_LINK.captures_iter(line) {
+                if illustration {
+                    continue;
+                }
+                push(Observation::Link(c[1].to_string()));
             }
             for c in SLUG_REF.captures_iter(line) {
                 if illustration {

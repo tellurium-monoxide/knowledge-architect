@@ -280,21 +280,19 @@ finding exists to prevent.
 in `Inputs` — and asserting file-ness for the five fixed documents; or deciding the residue is
 not worth the plumbing, and saying so here.
 
-## A fenced path reference counts for the paths check and for a design README's naming `observation`
+## A fenced path reference counts for the paths check `observation`
 
 **What.** The scanner extracts backticked path references without regard to fences, so a path
-inside a fenced block is checked to exist by `check::paths`, and it discharges a design
-README's subdocument naming in `check::components`. Slug definitions and references are
-fence-guarded; path references are not. Seen by an adversarial review of the design-home
-change, reproduced with a design README whose only mention of a subdocument sits inside a
-fence: no finding.
+inside a fenced block is checked to exist by `check::paths`. Slug definitions and references
+are fence-guarded, and so are markdown links, which the design README naming reads; path
+references are not. Seen by an adversarial review of the design-home change.
 
 **Why it matters.** Whether this is a defect is not established. The regime deliberately reads
 fenced content as live — a fenced sketch cites its rules for real, per
 `knowledge#grammars-not-prefixes` — and a fenced path that must exist is the same stance. But
-the asymmetry with slugs means the two reference kinds cross fences differently, and nothing
-records which is intended for paths.
+the asymmetry with slugs and links means the reference kinds cross fences differently, and
+nothing records which is intended for paths.
 
-**What would close it.** A decision either way: fence-guard path references like slugs, and
-repair whatever the widened checks report; or record beside `knowledge#grammars-not-prefixes`
-that fenced paths are deliberately live.
+**What would close it.** A decision either way: fence-guard path references like slugs and
+links, and repair whatever the widened checks report; or record beside
+`knowledge#grammars-not-prefixes` that fenced paths are deliberately live.

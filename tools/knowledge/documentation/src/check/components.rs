@@ -14,8 +14,8 @@
 //!
 //! **The design home has two accepted shapes, and a component carries exactly one** — the
 //! argument is `knowledge#design-home-two-shapes`. The single file `docs/design.md`, or the
-//! directory `docs/design/` whose `README.md` is the head and must name every subdocument as
-//! a backticked path; the table of contents is the conventional shape of that naming.
+//! directory `docs/design/` whose `README.md` is the head and must link every subdocument
+//! with a markdown link relative to itself; a bullet list of links is the conventional shape.
 //!
 //! **A tracker outside every component is declared one by one, and checked the same way.** Some
 //! directories carry outstanding state and nothing else a component carries, so
@@ -228,11 +228,11 @@ fn design_home(
                     &readme,
                     format!("the design directory `{}` has no README.md", dir.display()),
                     "create it; the README is the directory home's head — an introduction, \
-                     and a table of contents naming every subdocument as a backticked path",
+                     and a bullet list of markdown links naming every subdocument",
                 ));
                 return;
             }
-            let listed = listed_in(model, &readme, components);
+            let linked = links(model, &readme, &dir, inputs, out);
             // Enumerated from the model rather than from the listing: a subdocument is what
             // the walk covers, so a gitignored scratch file owes no naming, a directory is
             // never one, and a document owned by a component nested under this directory is
@@ -250,15 +250,15 @@ fn design_home(
                 .collect();
             subdocuments.sort();
             for subdocument in subdocuments {
-                if !listed.contains(subdocument) {
+                if !linked.contains(subdocument) {
                     out.push(Finding::in_file(
                         &readme,
                         format!(
-                            "`{}` is not named in its design README",
+                            "`{}` is not linked from its design README",
                             subdocument.display()
                         ),
-                        "name it as a backticked path, or delete the subdocument; a design \
-                         subdocument nobody lists is a home nobody finds",
+                        "link it — [title](file.md), relative to the README — or delete the \
+                         subdocument; a design subdocument nobody links is a home nobody finds",
                     ));
                 }
             }
@@ -277,28 +277,51 @@ fn holds_entries(inputs: &Inputs, path: &PathBuf) -> bool {
         .any(|p| p != path && p.starts_with(path))
 }
 
-/// Every path the README's backticked references resolve to.
+/// Every path the README's markdown links resolve to, reporting the links that resolve to
+/// nothing.
 ///
-/// Resolution mirrors `check::paths`: a bare reference resolves from the project root, a
-/// `<component>@path` reference against that component's directory. A reference the paths
-/// check would report — an unknown component, an `@`-ignored path — lists nothing here,
-/// so a table of contents is made of checkable pointers or it does not count.
-fn listed_in(model: &Model, readme: &PathBuf, components: &Components) -> HashSet<PathBuf> {
+/// A link's target resolves against the README's own directory, the way a renderer follows
+/// it, with `.` and `..` resolved by the same rule `check::paths` applies. A URL, a bare
+/// fragment and an absolute path are not this check's to resolve and are passed over; a
+/// fragment on a file target is dropped before resolution. Backticked paths are the pointer
+/// forms of prose and do not name a subdocument here: the index is made of links a reader
+/// can follow.
+fn links(
+    model: &Model,
+    readme: &PathBuf,
+    dir: &std::path::Path,
+    inputs: &Inputs,
+    out: &mut Vec<Finding>,
+) -> HashSet<PathBuf> {
     let Some(doc) = model.documents().iter().find(|d| d.rel == *readme) else {
         return HashSet::new();
     };
-    doc.observations
-        .iter()
-        .filter_map(|l| match &l.what {
-            Observation::PathRef { component, path } => match component {
-                None => Some(super::paths::normalise(std::path::Path::new(path))),
-                Some(named) => components
-                    .by_name(named)
-                    .map(|c| super::paths::normalise(&c.path.join(path))),
-            },
-            _ => None,
-        })
-        .collect()
+    let mut resolved = HashSet::new();
+    for l in &doc.observations {
+        let Observation::Link(target) = &l.what else {
+            continue;
+        };
+        if target.contains("://") || target.starts_with('#') || target.starts_with('/') {
+            continue;
+        }
+        let file_part = target.split('#').next().unwrap_or_default();
+        if file_part.is_empty() {
+            continue;
+        }
+        let path = super::paths::normalise(&dir.join(file_part));
+        if !inputs.present.contains(&path) {
+            out.push(Finding::at(
+                readme,
+                l.line,
+                format!("`{target}` links to nothing"),
+                "repair the link, or delete it; the README's links are the directory \
+                 home's index, and a link that does not resolve is a guess",
+            ));
+            continue;
+        }
+        resolved.insert(path);
+    }
+    resolved
 }
 
 /// How a finding names a component's place: its path, or the root.
@@ -589,7 +612,7 @@ mod tests {
 
     #[test]
     fn a_subdocument_the_readme_does_not_name_is_reported() {
-        // One listed as a bare root-stem path, and one not listed at all.
+        // One linked (a fragment on the target changes nothing), and one not linked at all.
         let manifest = declaring("");
         let mut present = without_design("");
         for p in [DESIGN_DIR, DESIGN_README, SUB_A, SUB_B] {
@@ -599,7 +622,7 @@ mod tests {
         let model = Model::from_documents(vec![
             (
                 PathBuf::from(DESIGN_README),
-                format!("# design\n\n- `{SUB_A}`\n"),
+                "# design\n\n- [one subject](one-subject.md#somewhere)\n".to_string(),
             ),
             (PathBuf::from(SUB_A), "a subject\n".to_string()),
             (PathBuf::from(SUB_B), "another subject\n".to_string()),
@@ -608,7 +631,7 @@ mod tests {
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].starts_with(DESIGN_README), "{found:#?}");
         assert!(
-            found[0].contains(SUB_B) && found[0].contains("not named"),
+            found[0].contains(SUB_B) && found[0].contains("not linked"),
             "{found:#?}"
         );
     }
@@ -635,8 +658,8 @@ mod tests {
 
     #[test]
     fn only_the_design_readme_discharges_the_naming() {
-        // The subdocument is named, backticked and resolvable, in the project's own README —
-        // the wrong document. The naming obligation is the design README's alone.
+        // The subdocument is linked, resolvably, from the project's own README — the wrong
+        // document. The obligation is the design README's alone.
         let manifest = declaring("");
         let mut present = without_design("");
         for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
@@ -646,9 +669,12 @@ mod tests {
         let model = Model::from_documents(vec![
             (
                 PathBuf::from(DESIGN_README),
-                "# design\n\nNothing listed.\n".to_string(),
+                "# design\n\nNothing linked.\n".to_string(),
             ),
-            (PathBuf::from("README.md"), format!("See `{SUB_A}`.\n")),
+            (
+                PathBuf::from("README.md"),
+                format!("See [the subject]({SUB_A}).\n"),
+            ),
             (PathBuf::from(SUB_A), "a subject\n".to_string()),
         ]);
         let found = findings_over(&manifest, &present, model);
@@ -657,10 +683,9 @@ mod tests {
     }
 
     #[test]
-    fn a_row_with_dots_resolves_the_same_as_the_paths_check() {
-        // Textual `..` resolution, shared with `check::paths` through `normalise`: a row
+    fn a_link_with_dots_resolves_the_same_as_the_paths_check() {
+        // Textual `..` resolution, shared with `check::paths` through `normalise`: a link
         // written through a sibling directory still names the subdocument.
-        let dotted = "docs/other/../design/one-subject.md";
         let manifest = declaring("");
         let mut present = without_design("");
         for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
@@ -670,7 +695,7 @@ mod tests {
         let model = Model::from_documents(vec![
             (
                 PathBuf::from(DESIGN_README),
-                format!("# design\n\n- `{dotted}`\n"),
+                "# design\n\n- [one subject](../design/one-subject.md)\n".to_string(),
             ),
             (PathBuf::from(SUB_A), "a subject\n".to_string()),
         ]);
@@ -730,9 +755,9 @@ mod tests {
     }
 
     #[test]
-    fn a_subdocument_listed_in_the_component_relative_form_counts() {
-        // The README may point at its sibling either way `check::paths` accepts, so the
-        // resolution here has to agree with that check's.
+    fn a_link_resolves_against_the_linking_readme() {
+        // The target is written relative to the README, the way a renderer follows it —
+        // here from a declared component's own design README, not from the project root.
         let part = "parts/a-part";
         let manifest = declaring(&format!("\"{part}\""));
         let mut present = all_of("");
@@ -742,12 +767,10 @@ mod tests {
             present.push(format!("{part}/{p}"));
         }
         let present: Vec<&str> = present.iter().map(String::as_str).collect();
-        // Dots in the row on purpose: the component form normalises like the bare form.
-        let dotted_sub = "docs/other/../design/one-subject.md";
         let model = Model::from_documents(vec![
             (
                 PathBuf::from(format!("{part}/{DESIGN_README}")),
-                format!("# design\n\n- `a-part@{dotted_sub}`\n"),
+                "# design\n\n- [one subject](one-subject.md)\n".to_string(),
             ),
             (
                 PathBuf::from(format!("{part}/{SUB_A}")),
@@ -757,6 +780,84 @@ mod tests {
         assert_eq!(
             findings_over(&manifest, &present, model),
             Vec::<String>::new()
+        );
+    }
+
+    #[test]
+    fn a_backticked_path_is_not_a_link() {
+        // The index is made of links a reader can follow. A backticked path in the README is
+        // prose pointing, and it does not discharge the linking.
+        let manifest = declaring("");
+        let mut present = without_design("");
+        for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
+            present.push(p.to_string());
+        }
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from(DESIGN_README),
+                format!("# design\n\n- `{SUB_A}`\n"),
+            ),
+            (PathBuf::from(SUB_A), "a subject\n".to_string()),
+        ]);
+        let found = findings_over(&manifest, &present, model);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains(SUB_A) && found[0].contains("not linked"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_fenced_link_is_an_illustration() {
+        // The only link to the subdocument sits inside a fence. An example must not
+        // discharge a real obligation, the same stance the slug conventions take.
+        let manifest = declaring("");
+        let mut present = without_design("");
+        for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
+            present.push(p.to_string());
+        }
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from(DESIGN_README),
+                "# design\n\n```\n- [one subject](one-subject.md)\n```\n".to_string(),
+            ),
+            (PathBuf::from(SUB_A), "a subject\n".to_string()),
+        ]);
+        let found = findings_over(&manifest, &present, model);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains(SUB_A) && found[0].contains("not linked"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_link_to_nothing_is_reported_and_a_url_is_not_this_checks() {
+        // The README's links are the index, so both directions are asserted here: an
+        // existing subdocument must be linked, and a link must resolve. A URL and a bare
+        // fragment are not this check's to resolve.
+        let manifest = declaring("");
+        let mut present = without_design("");
+        for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
+            present.push(p.to_string());
+        }
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from(DESIGN_README),
+                "# design\n\n- [one subject](one-subject.md)\n- [gone](missing.md)\n\
+                 - [a site](https://example.test/page)\n- [above](#design)\n"
+                    .to_string(),
+            ),
+            (PathBuf::from(SUB_A), "a subject\n".to_string()),
+        ]);
+        let found = findings_over(&manifest, &present, model);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("missing.md") && found[0].contains("links to nothing"),
+            "{found:#?}"
         );
     }
 

@@ -1,8 +1,6 @@
 # dirhome — design
 
-The head of the directory design home: an introduction, and the table of contents. It
-defines no slug.
+The head of the directory design home: an introduction, and a bullet list linking every
+subdocument, each link relative to this README. It defines no slug.
 
-| subdocument                    | subject               |
-| ------------------------------ | --------------------- |
-| `docs/design/one-subject.md`   | the recorded decision |
+- [one subject](one-subject.md) — the recorded decision

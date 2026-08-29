@@ -59,7 +59,7 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
                             Some(cr) => {
                                 // Relative to the component_root, `.` and `..` resolved the
                                 // same way `check::components` resolves a design README's
-                                // rows, so a pointer means one thing whichever check reads it.
+                                // links, so a pointer means one thing whichever check reads it.
                                 let beside = normalise(&cr.path.join(reference));
                                 let from_root = normalise(std::path::Path::new(reference));
                                 if inputs.present.contains(&beside)
@@ -87,7 +87,7 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
 /// Resolve `.` and `..` textually, so a parent reference beside a document in one
 /// directory names a file in its sibling.
 ///
-/// `check::components` resolves a design README's table of contents with the same rule,
+/// `check::components` resolves a design README's links with the same rule,
 /// so a pointer means one thing whichever check reads it.
 pub(crate) fn normalise(path: &std::path::Path) -> std::path::PathBuf {
     let mut out = std::path::PathBuf::new();
