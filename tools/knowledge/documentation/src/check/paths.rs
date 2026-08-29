@@ -84,7 +84,10 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
 
 /// Resolve `.` and `..` textually, so a parent reference beside a document in one
 /// directory names a file in its sibling.
-fn normalise(path: &std::path::Path) -> std::path::PathBuf {
+///
+/// `check::components` resolves a design README's table of contents with the same rule,
+/// so a pointer means one thing whichever check reads it.
+pub(crate) fn normalise(path: &std::path::Path) -> std::path::PathBuf {
     let mut out = std::path::PathBuf::new();
     for part in path.components() {
         match part {

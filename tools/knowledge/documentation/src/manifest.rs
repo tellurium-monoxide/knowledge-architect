@@ -22,14 +22,27 @@ pub const MANIFEST_NAME: &str = "knowledge.toml";
 /// project's own knowledge and is declared in `[project]`; WHAT a component is, is this tool's
 /// definition of one. A project free to declare its own set could be conformant with anything,
 /// which is the same as being checked against nothing.
-pub const COMPONENT_DOCUMENTS: [&str; 6] = [
+///
+/// The design home is not in this list: it has two accepted shapes — `DESIGN_FILE`, or
+/// `DESIGN_DIR` headed by `DESIGN_README` — and a component carries exactly one of them,
+/// which `check::components` asserts on its own.
+pub const COMPONENT_DOCUMENTS: [&str; 5] = [
     "README.md",
     "CLAUDE.md",
-    "docs/design.md",
     "docs/rejected-alternatives.md",
     "docs/open-issues.md",
     "docs/tripwires.md",
 ];
+
+/// The single-file design home, relative to the component's own directory.
+pub const DESIGN_FILE: &str = "docs/design.md";
+
+/// The directory design home. Its subdocuments carry the decisions and their slugs.
+pub const DESIGN_DIR: &str = "docs/design";
+
+/// The head of a directory design home: an introduction, and a table of contents naming
+/// every subdocument as a backticked path. It defines no slugs.
+pub const DESIGN_README: &str = "docs/design/README.md";
 
 /// The component documents that carry outstanding state, which `outstanding` reads.
 ///

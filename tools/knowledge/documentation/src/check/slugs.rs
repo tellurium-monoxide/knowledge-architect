@@ -36,12 +36,24 @@ pub fn check(model: &Model, manifest: &Manifest) -> (Vec<Finding>, (usize, usize
         for l in &doc.observations {
             match &l.what {
                 Observation::SlugDef(s) => {
-                    if !(name.as_str().ends_with("design.md")) {
+                    // The design home's two shapes, per `check::components`: the single file,
+                    // or a subdocument of the directory. The directory's README is the head
+                    // and the table of contents, not a decision's home. Matched against the
+                    // owning component's own paths rather than by filename suffix — a suffix
+                    // match accepted a slug in any file whose NAME ends in `design.md`, a
+                    // plan document included.
+                    let file = owner.document(crate::manifest::DESIGN_FILE);
+                    let dir = owner.document(crate::manifest::DESIGN_DIR);
+                    let readme = owner.document(crate::manifest::DESIGN_README);
+                    let in_home =
+                        doc.rel == file || (doc.rel.starts_with(&dir) && doc.rel != readme);
+                    if !in_home {
                         out.push(Finding::at(
                             name.clone(),
                             l.line,
-                            format!("`#{s}` defined outside its component's design.md file."),
-                            "write it in docs/design.md of its component.",
+                            format!("`#{s}` defined outside its component's design home"),
+                            "write it in docs/design.md of its component, or in a \
+                             subdocument of its docs/design/ directory",
                         ))
                     }
                     defined
@@ -184,7 +196,7 @@ mod tests {
         assert_eq!(found.len(), 2, "{found:#?}");
         assert!(
             found[0].contains(&format!(
-                "`#{SLUG}` defined outside its component's design.md"
+                "`#{SLUG}` defined outside its component's design home"
             )),
             "{found:#?}"
         );
@@ -225,6 +237,52 @@ mod tests {
         at(1, "names no component");
         at(2, "which is no component of this project");
         at(3, "does not define it");
+    }
+
+    #[test]
+    fn a_subdocument_of_the_design_directory_is_a_definition_home() {
+        // Both components at once, and a cross-reference between them, so ownership is by
+        // the document's place under the component rather than by any one path shape.
+        let found = findings(vec![
+            (
+                "docs/design/one-subject.md",
+                format!("{}\nIt rests on `{PART}#{SLUG}`.\n", head(SLUG)),
+            ),
+            (
+                &format!("parts/{PART}/docs/design/one-subject.md"),
+                format!("{}\nIt rests on `{ROOT}#{SLUG}`.\n", head(SLUG)),
+            ),
+        ]);
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+    }
+
+    #[test]
+    fn the_design_directorys_readme_is_not_a_definition_home() {
+        // The README is the head and the table of contents. A decision recorded there
+        // competes with the subdocuments as a home, which is what the split exists to end.
+        let found = findings(vec![("docs/design/README.md", head(SLUG))]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("outside its component's design home"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_file_merely_named_like_a_design_document_is_not_a_definition_home() {
+        // The rule matches the owning component's own paths, never a filename suffix: a
+        // suffix match accepted a slug in any file whose name ends in `design.md`, which a
+        // plan document's can.
+        let found = findings(vec![("notes/a-plan-design.md", head(SLUG))]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].starts_with("notes/a-plan-design.md:1"),
+            "{found:#?}"
+        );
+        assert!(
+            found[0].contains("outside its component's design home"),
+            "{found:#?}"
+        );
     }
 
     #[test]

@@ -53,6 +53,8 @@ directory, named by the basename of that path. Nothing is discovered by filename
 directory that is not a component is not that kind of document: nothing counts it and nothing
 reports it. A component that does not carry one it owes is a finding, and
 `knowledge@documentation/src/check/components.rs` is where both directions are asserted.
+The design home is the one document in the set with two accepted shapes, per
+`knowledge#design-home-two-shapes`; the other five are the same file in every component.
 `outstanding` builds the component paths rather than matching `file_name()` over the walk, which is
 what makes its total a claim rather than a sample.
 
@@ -72,6 +74,30 @@ whatever it declared, which is the same as being checked against nothing.
 **A component directory that does not exist is one finding rather than one per document.** Six
 findings from one cause bury the cause, and the repair for all of them is the same line of the
 manifest.
+
+### A component's design home is `docs/design.md` or a `docs/design/` directory, never both `##design-home-two-shapes`
+
+The single file serves a component whose design fits one document. The directory serves one whose
+design has outgrown it. In the directory shape, `README.md` is the head: an introduction, and a
+table of contents naming every subdocument as a backticked path. The decisions and their slug
+anchors live in the subdocuments.
+
+Three assertions carry the shape, split over two checks. `check::components` asserts exactly one
+home per component, that a directory home carries its `README.md`, and that every markdown
+subdocument is named in the README's table of contents. `check::slugs` accepts a slug definition
+only in the file home or in a subdocument, matched against the owning component's own paths
+rather than against a filename suffix — a suffix match accepted a slug in any file whose name
+ends in `design.md`, a plan document included.
+
+**Exactly one home, because two give a decision two candidate places to land.** That is the
+one-home failure, and the reader who finds one half acts on half the design.
+
+**The table of contents is checked because a subdocument nobody lists is a home nobody finds.**
+Its rows are checkable pointers, so the two directions close: the paths check asserts a listed
+file exists, and this check asserts an existing subdocument is listed.
+
+**The README defines no slugs.** It is the head and the index. A decision recorded there competes
+with the subdocuments as a home, which is what the split exists to end.
 
 ### The grammar for a file's kind decides which of its bytes are prose `##grammars-not-prefixes`
 

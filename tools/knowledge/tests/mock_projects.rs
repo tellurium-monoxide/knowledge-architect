@@ -233,6 +233,46 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     );
 }
 
+/// The other accepted design home, end to end: `docs/design/` headed by a README whose table
+/// of contents names the one subdocument, with the anchor defined in the subdocument and
+/// referenced from the project's own README. `paths` runs too, so the table-of-contents row
+/// is shown to be a pointer that check resolves as well.
+#[test]
+fn a_directory_design_home_passes_end_to_end() {
+    use documentation::check::citations::Release;
+    use documentation::check::{run, Inputs, Only};
+    use std::collections::HashMap;
+
+    let manifest = mock("dirhome");
+    let model = Model::build(&manifest).expect("a model");
+    let releases: HashMap<Option<String>, Release> = HashMap::new();
+    let committed = HashMap::new();
+    let (present, outside) =
+        documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+    let inputs = Inputs {
+        releases: &releases,
+        pinned: "20200101",
+        committed: &committed,
+        present: &present,
+        outside: &outside,
+    };
+    let report = run(
+        &model,
+        &manifest,
+        &inputs,
+        Only::COMPONENTS.union(Only::SLUGS).union(Only::PATHS),
+    );
+    let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
+    assert!(found.is_empty(), "{found:#?}");
+    assert_eq!(
+        (
+            report.structure.slugs_defined,
+            report.structure.slugs_referenced
+        ),
+        (1, 1)
+    );
+}
+
 /// The checks run against a project whose documents are wrong on purpose.
 ///
 /// This is the half the repository itself cannot test. Running the checks here proves only

@@ -263,7 +263,7 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
         findings.extend(generated::check(model, manifest, inputs));
     }
     if only.has(Only::COMPONENTS) {
-        let (found, counts) = components::check(manifest, inputs);
+        let (found, counts) = components::check(model, manifest, inputs);
         findings.extend(found);
         structure.components = counts.components;
         structure.additional_trackers = counts.additional_trackers;

@@ -467,7 +467,7 @@ fn counts(report: &Report) -> String {
     if ran.has(Only::COMPONENTS) {
         let _ = write!(
             structural,
-            "\ncomponents: {} declared, {} document(s) each, {} additional tracker(s)",
+            "\ncomponents: {} declared, {} document(s) each plus a design home, {} additional tracker(s)",
             s.components,
             documentation::manifest::COMPONENT_DOCUMENTS.len(),
             s.additional_trackers
@@ -580,7 +580,7 @@ mod tests {
         let out = counts(&numbered(Only::EVERYTHING));
         for expected in [
             "11/22 rule-quote fragments verified against the rule cited",
-            "components: 188 declared, 6 document(s) each, 199 additional tracker(s)",
+            "components: 188 declared, 5 document(s) each plus a design home, 199 additional tracker(s)",
             "lint: 33 unmarked rule reference(s), 44 orphan identifier marker(s)",
             "slugs: 55 defined, 66 referenced",
             "paths: 77 reference(s)",

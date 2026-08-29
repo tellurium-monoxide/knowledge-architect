@@ -1,0 +1,28 @@
+# A mock project whose design home is the directory shape: `docs/design/` headed by a
+# README, with the decisions in subdocuments. Everything here is correct on purpose — the
+# defect side of the shape is covered by unit tests over assembled models.
+
+[project]
+name = "dirhome"
+components = []
+additional-trackers = []
+
+[walk]
+skip-dirs = []
+skip-files = []
+exclude = []
+
+[lint]
+exempt-files = []
+
+[rules]
+dir = "corpus"
+text = "CompRules.txt"
+body-starts-at = 0
+version = "VERSION"
+past = "past"
+manifest = "past/MANIFEST.tsv"
+
+[interpretations]
+dir = "notes/readings"
+concerns = []
