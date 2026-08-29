@@ -266,6 +266,17 @@ fn design_home(
     }
 }
 
+/// Whether a link target opens with a URI scheme — letters then a colon, before any slash.
+///
+/// A filename may hold a colon in principle; a relative path in this project never does, and
+/// reading such a target as a scheme passes it over rather than reporting a false dangling.
+fn has_scheme(target: &str) -> bool {
+    target
+        .split('/')
+        .next()
+        .is_some_and(|head| head.contains(':'))
+}
+
 /// Whether the listing holds entries beneath `path` — a directory with content.
 ///
 /// The listing records no kind, and a committable directory always has entries while a file
@@ -301,11 +312,16 @@ fn links(
         let Observation::Link(target) = &l.what else {
             continue;
         };
-        if target.contains("://") || target.starts_with('#') || target.starts_with('/') {
+        // A bare fragment stays on the page; on a file target a fragment rides along and is
+        // dropped before resolution, so the file part is never empty.
+        if target.starts_with('#') {
             continue;
         }
-        let file_part = target.split('#').next().unwrap_or_default();
-        if file_part.is_empty() {
+        let file_part = target.split('#').next().unwrap_or(target);
+        // A scheme (https:, mailto:, tel:) marks a target that leaves the project, with or
+        // without the double slash; so does an absolute path. Neither is this check's to
+        // resolve.
+        if has_scheme(file_part) || file_part.starts_with('/') {
             continue;
         }
         let path = super::paths::normalise(&dir.join(file_part));
@@ -834,6 +850,56 @@ mod tests {
     }
 
     #[test]
+    fn an_absolute_target_is_not_this_checks_to_resolve() {
+        // An absolute path leaves the project, so it is passed over rather than resolved —
+        // and never misread as a dangling relative link.
+        let manifest = declaring("");
+        let mut present = without_design("");
+        for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
+            present.push(p.to_string());
+        }
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from(DESIGN_README),
+                "# design\n\n- [one subject](one-subject.md)\n\
+                 - [elsewhere](/no/such/place.md)\n"
+                    .to_string(),
+            ),
+            (PathBuf::from(SUB_A), "a subject\n".to_string()),
+        ]);
+        assert_eq!(
+            findings_over(&manifest, &present, model),
+            Vec::<String>::new()
+        );
+    }
+
+    #[test]
+    fn a_link_in_a_code_span_is_typography() {
+        // A code span shows the shape of a link without making one, so it neither
+        // discharges the linking nor owes a resolvable target.
+        let manifest = declaring("");
+        let mut present = without_design("");
+        for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
+            present.push(p.to_string());
+        }
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from(DESIGN_README),
+                "# design\n\n- [one subject](one-subject.md)\n\n\
+                 A row is written `- [title](file.md)`, relative to this README.\n"
+                    .to_string(),
+            ),
+            (PathBuf::from(SUB_A), "a subject\n".to_string()),
+        ]);
+        assert_eq!(
+            findings_over(&manifest, &present, model),
+            Vec::<String>::new()
+        );
+    }
+
+    #[test]
     fn a_link_to_nothing_is_reported_and_a_url_is_not_this_checks() {
         // The README's links are the index, so both directions are asserted here: an
         // existing subdocument must be linked, and a link must resolve. A URL and a bare
@@ -848,7 +914,8 @@ mod tests {
             (
                 PathBuf::from(DESIGN_README),
                 "# design\n\n- [one subject](one-subject.md)\n- [gone](missing.md)\n\
-                 - [a site](https://example.test/page)\n- [above](#design)\n"
+                 - [a site](https://example.test/page)\n- [mail](mailto:a@example.test)\n\
+                 - [above](#design)\n"
                     .to_string(),
             ),
             (PathBuf::from(SUB_A), "a subject\n".to_string()),

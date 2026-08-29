@@ -313,10 +313,11 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                     text: c[2].to_string(),
                 });
             }
-            // A FENCE suppresses the slug conventions and nothing else. Every document that
-            // explains how to write a reference has to hold one, and there is no way to write
-            // the illustration that is not a finding otherwise: unqualified it names no
-            // component, and qualified it names a slug the example invented.
+            // A FENCE suppresses the slug conventions and markdown links, and nothing else.
+            // Every document that explains how to write a reference has to hold one, and
+            // there is no way to write the illustration that is not a finding otherwise:
+            // unqualified it names no component, and qualified it names a slug the example
+            // invented. A fenced link is the same case for the design README's index.
             //
             // It does NOT suppress rule numbers. A fenced sketch in a design document comments
             // its rules on purpose, and reading those as data lost 34 citations in this tree.
@@ -347,10 +348,11 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                 }
             }
             // A markdown link is a pointer a renderer follows, recorded as written. A fenced
-            // link is an illustration, like a fenced slug: the design README naming check
-            // reads links, and an example must not discharge a real obligation.
+            // link is an illustration, like a fenced slug, and one inside a code span is
+            // typography showing the shape: the design README naming check reads links, and
+            // an example must neither discharge a real obligation nor owe a real target.
             for c in MD_LINK.captures_iter(line) {
-                if illustration {
+                if illustration || data(c.get(0).unwrap()) {
                     continue;
                 }
                 push(Observation::Link(c[1].to_string()));

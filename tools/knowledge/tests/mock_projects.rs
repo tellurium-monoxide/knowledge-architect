@@ -233,10 +233,10 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     );
 }
 
-/// The other accepted design home, end to end: `docs/design/` headed by a README whose table
-/// of contents names the one subdocument, with the anchor defined in the subdocument and
-/// referenced from the project's own README. `paths` runs too, so the table-of-contents row
-/// is shown to be a pointer that check resolves as well.
+/// The other accepted design home, end to end: `docs/design/` headed by a README that links
+/// the one subdocument, with the anchor defined in the subdocument and referenced from the
+/// project's own README. `paths` runs too, so the fixture shows the three families passing
+/// together over a real walk.
 #[test]
 fn a_directory_design_home_passes_end_to_end() {
     use documentation::check::citations::Release;

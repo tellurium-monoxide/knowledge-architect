@@ -82,9 +82,10 @@ design has outgrown it. In the directory shape, `README.md` is the head: an intr
 bullet list of markdown links, one per subdocument, each target written relative to the README.
 The decisions and their slug anchors live in the subdocuments.
 
-Four assertions carry the shape, split over two checks. `check::components` asserts exactly one
-home per component, that a directory home carries its `README.md`, and that the README links
-every markdown subdocument the walk covers — a gitignored scratch file owes nothing. `check::slugs`
+Five assertions carry the shape, split over two checks. `check::components` asserts exactly one
+home per component, that a directory home carries its `README.md`, that the README links
+every markdown subdocument the walk covers — a gitignored scratch file owes nothing — and that
+each of its relative links resolves. `check::slugs`
 accepts a slug definition only in the file home or in a subdocument, matched against the owning
 component's own paths rather than against a filename suffix — a suffix match would accept a slug
 in any file whose name ends in `design.md`, a plan document included.
@@ -97,7 +98,11 @@ finds.** A markdown link is the index's row because a reader can follow it where
 shows the page, and a bullet list is its conventional shape — a table grows painful to edit as
 soon as a row outgrows a short sentence. Both directions are asserted over the same links: an
 existing subdocument no link names is reported, and a link that resolves to nothing is reported.
-A fenced link is an illustration and discharges nothing, the stance the slug conventions take.
+A fenced link is an illustration and discharges nothing, the stance the slug conventions take,
+and a link inside a code span is typography showing the shape. **The accepted row is the plain
+inline form, a target without spaces**: reference-style links, angle-bracketed or quoted-title
+targets and the other CommonMark shapes are outside it, deliberately — the index is one shape
+so the check stays one pattern.
 A backticked path in the README stays what it is everywhere: a checked pointer in prose, not a
 row of the index.
 

@@ -296,3 +296,23 @@ nothing records which is intended for paths.
 **What would close it.** A decision either way: fence-guard path references like slugs and
 links, and repair whatever the widened checks report; or record beside
 `knowledge#grammars-not-prefixes` that fenced paths are deliberately live.
+
+## A link outside the accepted inline shape mis-reports rather than saying the shape is unsupported `observation`
+
+**What.** The design README index accepts one link shape, the plain inline form with a
+spaceless target, per `knowledge#design-home-two-shapes`. A README written in another
+CommonMark shape is reported, but not as an unsupported shape: an angle-bracketed target or a
+parenthesised filename yields a false "links to nothing" naming the mangled target, a
+quoted-title or reference-style link is invisible and yields "not linked" for a subdocument
+the author did link, and a subdocument whose filename holds a space cannot be linked in any
+accepted form. Seen by an adversarial review of the link-index change, each shape reproduced
+over a mutated copy of the directory-home mock project.
+
+**Why it matters.** The findings push the author toward the accepted shape, which is the
+intended direction, but the message misattributes the cause: "links to nothing" reads as a
+broken target when the target is fine and the shape is not. The cost stays low while no
+component uses the directory home and the accepted shape is stated in the design head.
+
+**What would close it.** Either a message that names the unsupported shape when a link-like
+row does not parse as the accepted form, or a decision that the current messages are close
+enough, recorded beside the accepted-shape sentence in the design head.
