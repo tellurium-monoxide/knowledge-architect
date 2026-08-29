@@ -21,6 +21,13 @@ pub struct Corpus {
     /// folded form writes a quote that differs from the pinned text in exactly the way root
     /// `CLAUDE.md` names as the smallest form of paraphrase.
     raw: HashMap<RuleNumber, String>,
+    /// Section titles, keyed by section number: what a whole-section citation quotes.
+    ///
+    /// Kept apart from `rules` so that everything iterating the rules — the canonical digest,
+    /// the release diff, move detection — sees exactly what it saw before sections existed.
+    /// The two maps meet only in the lookups, which route on [`RuleNumber::is_section`].
+    sections: HashMap<u16, String>,
+    sections_raw: HashMap<u16, String>,
 }
 
 impl Corpus {
@@ -42,9 +49,20 @@ impl Corpus {
         let lines: Vec<&str> = text.lines().collect();
         let mut rules: HashMap<RuleNumber, String> = HashMap::new();
         let mut raw: HashMap<RuleNumber, String> = HashMap::new();
+        let mut sections: HashMap<u16, String> = HashMap::new();
+        let mut sections_raw: HashMap<u16, String> = HashMap::new();
         let mut i = body_starts_at;
         while i < lines.len() {
             let Some((number, rest)) = rule_head(lines[i]) else {
+                // A section heading is one line: the number, its printed dot, the title.
+                // First occurrence wins here too, so a title-shaped line deeper in the text
+                // cannot overwrite the heading a citation quotes.
+                if let Some((section, title)) = section_head(lines[i]) {
+                    sections_raw
+                        .entry(section)
+                        .or_insert_with(|| title.split_whitespace().collect::<Vec<_>>().join(" "));
+                    sections.entry(section).or_insert_with(|| norm(title));
+                }
                 i += 1;
                 continue;
             };
@@ -66,10 +84,22 @@ impl Corpus {
             rules.entry(number).or_insert_with(|| norm(&joined));
             i = j;
         }
-        Self { rules, raw }
+        Self {
+            rules,
+            raw,
+            sections,
+            sections_raw,
+        }
     }
 
+    /// The body a citation of this number is checked against.
+    ///
+    /// For a whole-section number that is the section's TITLE — the heading line minus the
+    /// number — which is all the text a section has of its own; its rules each carry theirs.
     pub fn get(&self, number: &RuleNumber) -> Option<&str> {
+        if number.is_section() {
+            return self.sections.get(&number.major()).map(String::as_str);
+        }
         self.rules.get(number).map(String::as_str)
     }
 
@@ -78,10 +108,16 @@ impl Corpus {
     /// **Use this for anything a person will read or paste, and `get` for anything compared.**
     /// A quote taken from `get` verifies and is not what the rule says.
     pub fn raw(&self, number: &RuleNumber) -> Option<&str> {
+        if number.is_section() {
+            return self.sections_raw.get(&number.major()).map(String::as_str);
+        }
         self.raw.get(number).map(String::as_str)
     }
 
     pub fn contains(&self, number: &RuleNumber) -> bool {
+        if number.is_section() {
+            return self.sections.contains_key(&number.major());
+        }
         self.rules.contains_key(number)
     }
 
@@ -171,12 +207,20 @@ fn rule_head(line: &str) -> Option<(RuleNumber, &str)> {
 
 /// A section heading — three digits, a full stop, whitespace — which ends the rule above it.
 fn is_section_head(line: &str) -> bool {
-    let mut chars = line.chars();
-    let digits: String = chars.by_ref().take(3).collect();
-    digits.len() == 3
-        && digits.bytes().all(|b| b.is_ascii_digit())
-        && chars.next() == Some('.')
-        && chars.next().is_some_and(char::is_whitespace)
+    section_head(line).is_some()
+}
+
+/// The section heading's parts: the number, and the title after the printed dot.
+fn section_head(line: &str) -> Option<(u16, &str)> {
+    let (digits, rest) = line.split_at_checked(3)?;
+    if !digits.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    let rest = rest.strip_prefix('.')?;
+    let mut chars = rest.chars();
+    let space = chars.next().filter(|c| c.is_whitespace())?;
+    let title = &rest[space.len_utf8()..];
+    Some((digits.parse().ok()?, title))
 }
 
 #[cfg(test)]
@@ -254,6 +298,40 @@ mod tests {
         assert_eq!(c.get(&n(FIRST)), Some("Head"));
         let c = parse_contents(&body_lines(&format!("{FIRST} Head\n200. Section\ntitle\n")));
         assert_eq!(c.get(&n(FIRST)), Some("Head"));
+    }
+
+    #[test]
+    fn a_section_heading_is_held_as_a_title_and_answers_the_section_form() {
+        // What a whole-section citation quotes is the heading line, so the corpus must hold
+        // it. The rules maps stay exactly as they were — the digest test below is the guard —
+        // and only the section-form lookups reach the titles.
+        const SECTION_LINE: &str = "100. A Section Title";
+        let c = parse_contents(&body_lines(&format!(
+            "{SECTION_LINE}\n{FIRST} First rule.\n"
+        )));
+        let section = RuleNumber::section(100);
+        assert_eq!(c.get(&section), Some("A Section Title"));
+        assert_eq!(c.raw(&section), Some("A Section Title"));
+        assert!(c.contains(&section));
+        assert_eq!(c.len(), 1, "the section is not a rule");
+        assert!(!c.contains(&RuleNumber::section(200)));
+        // A section's rules are not its SUBRULES: a title quoted whole must not be asked to
+        // disclose them, the way a parent rule's body must. Mutation checked: making
+        // `is_subrule_of` accept a dotted number under a section prefix fails this.
+        assert!(!c.has_subrules(&section));
+    }
+
+    #[test]
+    fn a_heading_above_the_body_start_is_a_contents_entry_and_binds_no_title() {
+        // The table of contents duplicates every heading, so parsing from the top would bind
+        // each title twice; `body_starts_at` is the property that prevents it, for sections
+        // exactly as for rules.
+        const SECTION_LINE: &str = "100. A Contents Title";
+        let mut text = format!("{SECTION_LINE}\n");
+        text.push_str(&"filler\n".repeat(CONTENTS_LINES - 1));
+        text.push_str(&format!("{FIRST} Real rule.\n"));
+        let c = Corpus::parse(&text, CONTENTS_LINES);
+        assert!(!c.contains(&RuleNumber::section(100)));
     }
 
     #[test]

@@ -20,6 +20,12 @@ pub struct RuleNumber {
 
 impl RuleNumber {
     /// Parse a rule number, or `None` if the token is not one.
+    ///
+    /// A bare section number is NOT one: three digits with no subrule part is a count, a line
+    /// number or a date fragment far more often than it is a citation, so accepting it here
+    /// would make every caller that scans free text read noise as rules. A caller that has
+    /// already established the token names a section — a marker behind `CR:`, a blockquote
+    /// head with its printed dot — asks [`RuleNumber::parse_any`] instead.
     pub fn parse(text: &str) -> Option<Self> {
         let (major_text, rest) = text.split_once('.')?;
         if major_text.len() != 3 || !major_text.bytes().all(|b| b.is_ascii_digit()) {
@@ -39,6 +45,38 @@ impl RuleNumber {
             minor: minor_text.parse().ok()?,
             suffix: suffix.to_string(),
         })
+    }
+
+    /// A whole-section number: three digits and no subrule part.
+    ///
+    /// Sections cite like rules — the marker owes a verbatim quote of the section's heading
+    /// line — and differ only in what the corpus holds for them: a title rather than a body.
+    pub fn section(major: u16) -> Self {
+        Self {
+            text: format!("{major:03}"),
+            major,
+            minor: 0,
+            suffix: String::new(),
+        }
+    }
+
+    /// Parse a token already established to name a rule OR a whole section.
+    ///
+    /// The section alternative accepts exactly three digits. It is a separate entry point
+    /// rather than a widening of [`RuleNumber::parse`] because only a caller that has seen the
+    /// citation shape around the token — a `CR:` marker, a blockquote head printed with its
+    /// dot — can afford to read three bare digits as a number of the rules.
+    pub fn parse_any(text: &str) -> Option<Self> {
+        Self::parse(text).or_else(|| {
+            (text.len() == 3 && text.bytes().all(|b| b.is_ascii_digit()))
+                .then(|| text.parse().ok().map(Self::section))
+                .flatten()
+        })
+    }
+
+    /// Whether this names a whole section rather than one rule.
+    pub fn is_section(&self) -> bool {
+        !self.text.contains('.')
     }
 
     pub fn as_str(&self) -> &str {
@@ -127,6 +165,39 @@ mod tests {
         ] {
             assert!(RuleNumber::parse(s).is_none(), "{s} should not parse");
         }
+    }
+
+    #[test]
+    fn a_section_parses_only_through_the_deliberate_entry_point() {
+        // `parse` rejecting three bare digits is what keeps free-text scanning from reading a
+        // count or a date fragment as a citation; `parse_any` exists for callers that have
+        // already seen the citation shape around the token. Mutation checked: widening `parse`
+        // to accept the section form fails `rejects_tokens_that_are_not_rule_numbers` above.
+        const SECTION: &str = "103";
+        let s = RuleNumber::parse_any(SECTION).expect("a section number");
+        assert_eq!(s.to_string(), SECTION);
+        assert_eq!(s.major(), 103);
+        assert!(s.is_section());
+        assert!(!n(PLAIN).is_section());
+        assert_eq!(s, RuleNumber::section(103));
+        assert_ne!(Some(&s), RuleNumber::parse_any(PLAIN).as_ref());
+        // The dotted form still comes through `parse_any` unchanged.
+        assert_eq!(RuleNumber::parse_any(SUFFIXED), RuleNumber::parse(SUFFIXED));
+        for not_a_section in ["10", "1034", "1a3", "103."] {
+            assert!(
+                RuleNumber::parse_any(not_a_section).is_none(),
+                "{not_a_section}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_section_sorts_ahead_of_its_own_rules_in_both_orders() {
+        // Both generated files group by section, so the section row must open its group
+        // rather than land mid-list by a quirk of the text comparison.
+        let s = RuleNumber::section(400);
+        assert_eq!(s.cmp_index(&n(PLAIN)), Ordering::Less);
+        assert_eq!(s.cmp_turns(&n(PLAIN)), Ordering::Less);
     }
 
     #[test]

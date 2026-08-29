@@ -461,14 +461,20 @@ pub fn check(doc: &Document, release: &Release) -> (Vec<Judged>, usize) {
         Observation::RuleMarker { number, form } => Some((number.clone(), *form)),
         _ => None,
     }) {
-        // Every marker, whatever its form, asserts that this number is a rule.
+        // Every marker, whatever its form, asserts that this number is a rule — or, in the
+        // section form, a section the release prints a heading for.
         if !release.rules.contains(&number) {
+            let what = if number.is_section() {
+                format!("{number} is cited and the applicable release has no such section")
+            } else {
+                format!("{number} is cited and the applicable release has no such rule")
+            };
             out.push(Judged {
                 rule: Rule::NumberResolves,
                 finding: Finding::at(
                     &doc.rel,
                     line,
-                    format!("{number} is cited and the applicable release has no such rule"),
+                    what,
                     "check the number against the pinned text; a rule that moved under a \
                      citation is a bump",
                 ),
@@ -652,6 +658,87 @@ mod tests {
             .filter(|j| j.rule == Rule::QuoteBindingIsAmbiguous)
             .map(|j| j.finding.what)
             .collect()
+    }
+
+    // A section and its title, bound as parser inputs.
+    const SECTION_N: &str = "100";
+    const SECTION_TITLE: &str = "A Section Title Long Enough";
+
+    fn section_release() -> Release {
+        Release::new(&format!("{SECTION_N}. {SECTION_TITLE}\n{CORPUS}"), 0)
+    }
+
+    fn judged(text: &str, release: &Release, rule: Rule) -> Vec<String> {
+        let model = crate::model::Model::from_documents(vec![(
+            std::path::PathBuf::from("notes/a.md"),
+            text.to_string(),
+        )]);
+        check(&model.documents()[0].clone(), release)
+            .0
+            .into_iter()
+            .filter(|j| j.rule == rule)
+            .map(|j| j.finding.what)
+            .collect()
+    }
+
+    #[test]
+    fn a_section_marker_owes_its_heading_quote_in_scope() {
+        // The section form owes a verbatim quote of the heading line, under the same scope
+        // and distance rules as a subrule quote. Both quote forms discharge it: the
+        // blockquote binds by the printed head, the inline form by the nearest marker.
+        let release = section_release();
+        let bare = format!("### A section\n\nin the order CR:{SECTION_N} states them\n");
+        let owed = judged(&bare, &release, Rule::QuoteInScope);
+        assert_eq!(owed.len(), 1, "{owed:#?}");
+        assert!(owed[0].contains(SECTION_N), "{owed:#?}");
+        let block = format!(
+            "### A section\n\nin the order CR:{SECTION_N} states them:\n\n\
+             > {SECTION_N}. {SECTION_TITLE}\n"
+        );
+        assert_eq!(
+            judged(&block, &release, Rule::QuoteInScope),
+            Vec::<String>::new()
+        );
+        let inline = format!(
+            "### A section\n\nin the order CR:{SECTION_N}, *\"{SECTION_TITLE}\"*, states them\n"
+        );
+        assert_eq!(
+            judged(&inline, &release, Rule::QuoteInScope),
+            Vec::<String>::new()
+        );
+    }
+
+    #[test]
+    fn a_section_the_release_does_not_print_is_reported_as_such() {
+        // The finding must say SECTION, or the repairer greps the rules body for a dotted
+        // number that never existed.
+        const ABSENT: &str = "999";
+        let text = format!("### A section\n\nnothing here, per CR:{ABSENT}\n");
+        let found = judged(&text, &section_release(), Rule::NumberResolves);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("no such section"), "{found:#?}");
+    }
+
+    #[test]
+    fn a_whole_title_quote_owes_no_elision_and_no_subrule_disclosure() {
+        // A section's rules are not its subrules: the title is the whole of the section's
+        // own text, so quoting it entire is complete — no omission mark owed, no
+        // parent-rule finding. Mutation checked: keying the parent test on `major` alone
+        // fires it for every section with rules.
+        let release = section_release();
+        let block =
+            format!("### A section\n\nper CR:{SECTION_N}:\n\n> {SECTION_N}. {SECTION_TITLE}\n");
+        for rule in [
+            Rule::OmissionMarked,
+            Rule::FragmentLongEnough,
+            Rule::ParentRuleIsNotItsSubrules,
+        ] {
+            assert_eq!(
+                judged(&block, &release, rule),
+                Vec::<String>::new(),
+                "{rule:?}"
+            );
+        }
     }
 
     #[test]

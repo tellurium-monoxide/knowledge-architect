@@ -328,10 +328,12 @@ pub fn inline(text: &str) -> Vec<Quote> {
         let from = floor_char_boundary(text, from);
         // The NEAREST marker before the quote owns it. A sentence often cites two rules in
         // sequence, each with its own marker and its own quote; taking the first or the last
-        // marker on the line attributes both quotes to one of them.
+        // marker on the line attributes both quotes to one of them. `parse_any`, because the
+        // marker pattern is what establishes the token as a citation, and a section marker
+        // binds a quote of its heading line exactly as a rule marker binds one of its body.
         let marked: Vec<RuleNumber> = marker
             .captures_iter(&text[from..span.start])
-            .filter_map(|c| RuleNumber::parse(&c[1]))
+            .filter_map(|c| RuleNumber::parse_any(&c[1]))
             .collect();
         let rule = marked.last().cloned().or_else(|| {
             // The trailing bare number is what identified a citation before markers
@@ -383,8 +385,11 @@ fn floor_char_boundary(text: &str, mut i: usize) -> usize {
 }
 
 fn regex_marker() -> &'static regex::Regex {
-    static R: std::sync::LazyLock<regex::Regex> =
-        std::sync::LazyLock::new(|| regex::Regex::new(r"\bCR:(\d{3}\.\d+[a-z]{0,2})\b").unwrap());
+    // The subrule part is optional so a section marker binds too. Greed keeps a dotted marker
+    // whole: the alternative never wins when subrule digits follow.
+    static R: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+        regex::Regex::new(r"\bCR:(\d{3}(?:\.\d+[a-z]{0,2})?)\b").unwrap()
+    });
     &R
 }
 
@@ -432,6 +437,24 @@ mod tests {
     fn an_italic_quote_takes_the_nearest_marker_before_it() {
         let text = format!("per CR:{OTHER} and then CR:{RULE}, *\"the quoted text\"*");
         assert_eq!(rules_of(&inline(&text)), vec![RULE.to_string()]);
+    }
+
+    #[test]
+    fn a_section_marker_binds_a_quote_the_same_way_a_rule_marker_does() {
+        // A section citation owes its heading line, so the binder must let the dotless
+        // marker own a quote — and nearest-wins must hold across the two forms, or a
+        // sentence citing a section and then a rule binds the rule's quote to the section.
+        const SECTION: &str = "104";
+        let text = format!("per CR:{SECTION}, *\"the quoted heading line\"*");
+        assert_eq!(rules_of(&inline(&text)), vec![SECTION.to_string()]);
+        let both = format!("per CR:{SECTION} and then CR:{RULE}, *\"the quoted text\"*");
+        assert_eq!(rules_of(&inline(&both)), vec![RULE.to_string()]);
+        let alternatives: Vec<String> = inline(&both)[0]
+            .alternatives
+            .iter()
+            .map(|r| r.to_string())
+            .collect();
+        assert_eq!(alternatives, vec![SECTION.to_string()]);
     }
 
     #[test]

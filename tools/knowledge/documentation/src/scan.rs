@@ -99,6 +99,19 @@ static CR_IDENT_IN_NAME: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?i)CR_(\d{3})_(\d+[a-z]{0,2})").unwrap());
 static RULE_TOKEN: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\b(\d{3}\.\d+[a-z]{0,2})\b").unwrap());
+/// The section-level marker: `CR:` and three digits with no subrule part.
+///
+/// The pattern alone also matches the front of a dotted marker — the boundary sits between
+/// the third digit and the dot — so the scan discards a match that a subrule digit continues.
+static CR_SECTION: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\bCR:(\d{3})\b").unwrap());
+/// A section named through a keyword: the lint's input, never a marker.
+///
+/// A bare three-digit number is noise at a measured ratio of hundreds of counts and line
+/// numbers to a handful of section references, so the keyword is what makes the token
+/// claimable at all. The dotted alternative in the tail is there to be DISCARDED: `rule
+/// 601.2` names a rule, and the dotted patterns above already carry it.
+static SECTION_KEYWORD: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"\b(?:CR|[Rr]ules?|[Ss]ections?)\s+(\d{3})\b").unwrap());
 static HEADING: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(#{1,4})\s+(.+?)\s*$").unwrap());
 /// A reference is `` `<component>#<slug>` ``, and the component is optional only so that one
 /// written without it is still seen. The component alternative cannot match a `#`, so a
@@ -229,6 +242,29 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                     });
                 }
             }
+            // A subrule digit after the match means the boundary landed inside a dotted
+            // number, which the dotted patterns already carry.
+            let continues_dotted = |m: regex::Match| {
+                let mut rest = line[m.end()..].chars();
+                rest.next() == Some('.') && rest.next().is_some_and(|c| c.is_ascii_digit())
+            };
+            for c in CR_SECTION.captures_iter(line) {
+                let whole = c.get(0).unwrap();
+                if continues_dotted(whole) {
+                    continue;
+                }
+                let number = RuleNumber::section(c[1].parse().expect("three digits"));
+                // Marker AND token, the same pair a dotted marker line carries: the token is
+                // what the lint compares against the marker, and what the index collects. The
+                // token half keeps the dotted symmetry — a marker is never data, its token is.
+                push(Observation::RuleMarker {
+                    number: number.clone(),
+                    form: MarkerForm::Prose,
+                });
+                if !data(whole) {
+                    push(Observation::RuleToken(number));
+                }
+            }
             for c in RULE_TOKEN.captures_iter(line) {
                 if data(c.get(0).unwrap()) {
                     continue;
@@ -236,6 +272,15 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                 if let Some(n) = RuleNumber::parse(&c[1]) {
                     push(Observation::RuleToken(n));
                 }
+            }
+            for c in SECTION_KEYWORD.captures_iter(line) {
+                let number = c.get(1).unwrap();
+                if data(number) || continues_dotted(number) {
+                    continue;
+                }
+                push(Observation::RuleToken(RuleNumber::section(
+                    c[1].parse().expect("three digits"),
+                )));
             }
             // A heading-shaped line inside a fence is an ILLUSTRATION. The generated index
             // labels each citation by the last heading seen, so one in a fenced example
@@ -426,6 +471,86 @@ mod tests {
         assert!(scan(&crate::source::rs::parse(OK))
             .into_iter()
             .any(|l| matches!(l.what, Observation::RuleMarker { .. })));
+    }
+
+    // A section number and its dotted rules, as inputs to the scanner.
+    const SECTION: &str = "104";
+    const IN_SECTION: &str = "104.4b";
+
+    /// The tokens a line yields, as printed text.
+    fn tokens(text: &str) -> Vec<String> {
+        scan_md(text)
+            .into_iter()
+            .filter_map(|o| match o {
+                Observation::RuleToken(n) => Some(n.to_string()),
+                _ => None,
+            })
+            .collect()
+    }
+
+    #[test]
+    fn a_section_marker_is_a_marker_and_a_token_and_a_dotted_marker_is_not_one() {
+        // The dotless marker is the section citation form. The boundary in its pattern also
+        // matches the FRONT of a dotted marker, so the guard is what keeps `CR:` and a dotted
+        // number from reporting twice. Mutation checked: removing the subrule-digit guard
+        // fails the second assertion with two markers on the line.
+        let section = format!("in the order CR:{SECTION} states them");
+        assert_eq!(
+            markers(&section),
+            vec![(SECTION.to_string(), MarkerForm::Prose)]
+        );
+        assert_eq!(tokens(&section), vec![SECTION.to_string()]);
+        let dotted = format!("per CR:{IN_SECTION}, the step is pinned");
+        assert_eq!(
+            markers(&dotted),
+            vec![(IN_SECTION.to_string(), MarkerForm::Prose)]
+        );
+        // At a sentence end the dot belongs to the sentence, not the number.
+        let sentence = format!("the order is CR:{SECTION}. The next sentence.");
+        assert_eq!(
+            markers(&sentence),
+            vec![(SECTION.to_string(), MarkerForm::Prose)]
+        );
+    }
+
+    #[test]
+    fn a_keyword_section_reference_is_a_token_and_never_a_marker() {
+        // The keyword form is the lint's input: a token with no marker on its line is what
+        // the missing-marker lint reports. A dotted number after the keyword is a rule
+        // reference the dotted patterns already carry, so the keyword match is discarded.
+        for keyword in ["CR", "rule", "Rule", "rules", "section", "Sections"] {
+            let text = format!("named by {keyword} {SECTION} in prose");
+            assert_eq!(tokens(&text), vec![SECTION.to_string()], "{keyword}");
+            assert!(markers(&text).is_empty(), "{keyword}");
+        }
+        let dotted = format!("named by rule {IN_SECTION} in prose");
+        assert_eq!(tokens(&dotted), vec![IN_SECTION.to_string()]);
+    }
+
+    #[test]
+    fn a_keyword_section_number_in_a_code_span_is_data() {
+        // The data carve-outs survive the section form: inside backticks the number is being
+        // displayed, and whether that shelters a claim is the reviewer's question, not a
+        // pattern's.
+        let sheltered = format!("named by rule `{SECTION}` in a code span");
+        assert_eq!(tokens(&sheltered), Vec::<String>::new());
+        // A backticked MARKER stays a marker — markers are never data — and its token keeps
+        // the dotted symmetry by staying out.
+        let marker = format!("named by `CR:{SECTION}` in a code span");
+        assert_eq!(
+            markers(&marker),
+            vec![(SECTION.to_string(), MarkerForm::Prose)]
+        );
+        assert_eq!(tokens(&marker), Vec::<String>::new());
+    }
+
+    #[test]
+    fn a_bare_three_digit_number_is_not_a_token() {
+        // Three digits with no keyword is a count, a line number, a date fragment. The
+        // keyword is what makes the token claimable, and everything below it stays the
+        // reviewer's.
+        let noise = format!("the corpus holds 3 162 rules over {SECTION} files");
+        assert_eq!(tokens(&noise), Vec::<String>::new(), "{noise}");
     }
 
     #[test]

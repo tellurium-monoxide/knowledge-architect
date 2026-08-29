@@ -160,10 +160,18 @@ fn ends_a_statement(line: &str) -> bool {
 }
 
 /// A rule number opening a line, with an optional full stop and one space after it.
+///
+/// **A section head needs its printed dot.** The corpus prints a section as `NNN. Title`, and
+/// the blockquote convention is the number as printed — while three bare digits opening a
+/// commentary blockquote are a count far more often than a citation, and reading them as one
+/// would turn the commentary finding into a false verification failure.
 fn leading_number(text: &str) -> Option<(RuleNumber, &str)> {
     let (index, space) = text.char_indices().find(|(_, c)| c.is_whitespace())?;
     let token = &text[..index];
-    let number = RuleNumber::parse(token.strip_suffix('.').unwrap_or(token))?;
+    let number = match token.strip_suffix('.') {
+        Some(t) => RuleNumber::parse_any(t),
+        None => RuleNumber::parse(token),
+    }?;
     Some((number, &text[index + space.len_utf8()..]))
 }
 
@@ -272,7 +280,15 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
 
     for q in &quotes {
         let (long, short) = fragments(&q.body);
-        counts.short += short;
+        // A whole-body quote is not weak evidence, whatever its length: there is nothing more
+        // of the rule to keep, and the completeness rules already exempt it from the floor.
+        // Without this every section title under thirty characters — most of them — would
+        // swell a count whose label says "checked, but weak".
+        let whole = release
+            .rules
+            .get(&q.rule)
+            .is_some_and(|body| body == norm(&q.body.replace(['*', '…'], "")));
+        counts.short += if whole { 0 } else { short };
         for fragment in long {
             counts.fragments += 1;
             match verdict(&fragment, &q.rule, release) {
@@ -538,6 +554,79 @@ mod tests {
         let parts = split_rules(&lines(&format!("{A} Card Types\n{B} The rule after it.")));
         assert_eq!(parts.len(), 2);
         assert_eq!(parts[1].0, n(B));
+    }
+
+    // A section, its title as the corpus prints it, and one rule under it — parser inputs,
+    // bound so the walk reads them as data.
+    const SECTION_N: &str = "104";
+    const SECTION_TITLE: &str = "A Section Title Long Enough";
+    const IN_SECTION: &str = "104.1";
+
+    fn section_release() -> Release {
+        Release::new(
+            &format!(
+                "{SECTION_N}. {SECTION_TITLE}\n\
+                 {IN_SECTION} A rule under the section, long enough to be evidence.\n"
+            ),
+            0,
+        )
+    }
+
+    #[test]
+    fn a_section_heading_blockquote_verifies_against_the_pinned_title() {
+        // The section citation form owes the heading line, so the blockquote `NNN. Title`
+        // must bind by its printed head and verify against the title the corpus holds —
+        // and it must not be read as commentary, which is what the dotted-only head test
+        // made of it. Mutation checked: reverting `leading_number` to dotted-only turns the
+        // first assertion into a commentary finding.
+        let doc = doc_with(&format!(
+            "per CR:{SECTION_N}:\n\n> {SECTION_N}. {SECTION_TITLE}\n"
+        ));
+        let (findings, counts) = check(&doc, &section_release(), false);
+        assert_eq!(findings, Vec::new(), "{findings:#?}");
+        assert_eq!(counts.commentary, 0);
+        assert_eq!((counts.fragments, counts.verified), (1, 1));
+
+        // A title the release does not print is the failure the quote exists to catch.
+        let wrong = doc_with(&format!(
+            "per CR:{SECTION_N}:\n\n> {SECTION_N}. A Wrong Title Entirely Presented\n"
+        ));
+        let (findings, counts) = check(&wrong, &section_release(), false);
+        assert_eq!(counts.unverified, 1, "{findings:#?}");
+    }
+
+    #[test]
+    fn a_whole_title_quote_is_not_counted_as_weak_evidence() {
+        // Most section titles are under the thirty-character floor, and a whole-body quote
+        // has nothing more of the rule to keep — counting it "checked, but weak" would let
+        // the migration swell that count into noise. An elided fragment stays counted.
+        let doc = doc_with(&format!(
+            "per CR:{SECTION_N}:\n\n> {SECTION_N}. {SECTION_TITLE}\n"
+        ));
+        let (_, counts) = check(&doc, &section_release(), false);
+        assert_eq!(counts.short, 0);
+        let elided = doc_with(&format!(
+            "per CR:{IN_SECTION}, *\"A rule under the section…\"*\n"
+        ));
+        let (_, counts) = check(&elided, &section_release(), false);
+        assert_eq!(counts.short, 1, "an elided short fragment is still counted");
+    }
+
+    #[test]
+    fn a_keyword_section_reference_is_linted_and_a_marked_or_quoted_one_is_not() {
+        // The widened lint gate: a keyword-form section reference outside the carve-outs is
+        // named with no marker, exactly as a bare dotted number is. Inside a verified
+        // quote's range it is the corpus's own cross-reference and owes nothing.
+        let bare = doc_with(&format!("named by rule {SECTION_N} in prose\n"));
+        let (findings, counts) = lint(&bare);
+        assert_eq!(counts.0, 1, "{findings:#?}");
+        let marked = doc_with(&format!("in the order CR:{SECTION_N} states them\n"));
+        assert_eq!(lint(&marked).1 .0, 0, "the marker carries the claim");
+        let quoted = doc_with(&format!(
+            "per CR:{IN_SECTION}, *\"a fragment long enough to be evidence. See rule \
+             {SECTION_N}.\"*\n"
+        ));
+        assert_eq!(lint(&quoted).1 .0, 0, "a cross-reference inside a quote");
     }
 
     #[test]
