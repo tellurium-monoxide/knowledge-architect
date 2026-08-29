@@ -57,8 +57,10 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
                     ));
                             }
                             Some(cr) => {
-                                // Relative to the component_root
-                                let beside = cr.path.join(reference);
+                                // Relative to the component_root, `.` and `..` resolved the
+                                // same way `check::components` resolves a design README's
+                                // rows, so a pointer means one thing whichever check reads it.
+                                let beside = normalise(&cr.path.join(reference));
                                 let from_root = normalise(std::path::Path::new(reference));
                                 if inputs.present.contains(&beside)
                                     || (cr.is_root() && inputs.present.contains(&from_root))
@@ -104,7 +106,44 @@ pub(crate) fn normalise(path: &std::path::Path) -> std::path::PathBuf {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::Path;
+    use std::collections::{HashMap, HashSet};
+    use std::path::{Path, PathBuf};
+
+    #[test]
+    fn a_component_relative_reference_resolves_dots_against_the_component() {
+        // The same textual resolution as the root form and as `check::components`' reading
+        // of a design README, so a pointer means one thing whichever check reads it.
+        let part = "parts/a-part";
+        let text = format!(
+            "[project]\nname = \"a-project\"\ncomponents = [\"{part}\"]\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\
+             [interpretations]\ndir = \"i\"\nconcerns = []\n"
+        );
+        let manifest = Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration");
+        let dotted = "notes/other/../real/a.md";
+        let model = Model::from_documents(vec![(
+            PathBuf::from("README.md"),
+            format!("See `a-part@{dotted}`.\n"),
+        )]);
+        let releases = HashMap::new();
+        let committed = HashMap::new();
+        let present: HashSet<PathBuf> = [PathBuf::from(format!("{part}/notes/real/a.md"))].into();
+        let outside = Vec::new();
+        let inputs = Inputs {
+            releases: &releases,
+            pinned: "",
+            committed: &committed,
+            present: &present,
+            outside: &outside,
+        };
+        let (found, seen) = check(&model, &manifest, &inputs);
+        let found: Vec<String> = found.iter().map(|f| f.to_string()).collect();
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+        assert_eq!(seen, 1, "the reference was looked at");
+    }
 
     #[test]
     fn a_parent_reference_resolves_against_the_naming_document() {

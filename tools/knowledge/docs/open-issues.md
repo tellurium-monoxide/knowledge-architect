@@ -149,7 +149,8 @@ form was added deliberately and the list form was not. Nothing records either wa
 **What.** Three path syntaxes are declared: a full path from the project root, `<component>@path`
 relative to a Component's root, and `@path` for a reference that is not checked. A reference written
 as the first when the second was meant still resolves, because **every Component is required to
-carry the same six document names** — `README.md`, `CLAUDE.md` and four under `docs/` — and the
+carry the same document names** — `README.md`, `CLAUDE.md`, four under `docs/` with the design
+home in its file shape, per `knowledge#design-home-two-shapes` — and the
 project is itself a Component carrying them too. So `docs/open-issues.md` written inside
 `crates/thaum-engine/` names the project's file, the file exists, and the path check passes.
 
@@ -257,3 +258,43 @@ widened check reports over the live documents. `assumption`, not measured: the s
 exists to keep prose with slashes from reading as paths, and widening by one code suffix
 keeps that property because the pattern still requires backticks, a slash and a filename
 shape.
+
+## The document presence test cannot tell a file from a directory `observation`
+
+**What.** `check::components` asks whether a path is in the survey listing, and the listing
+records files and directories with no kind. The design home guards itself: `design_home` in
+`knowledge@documentation/src/check/components.rs` reads a path with entries beneath it as a
+directory, so a directory named like the file home is not the file home. Two shapes remain
+unguarded. A directory wearing one of the five fixed document names satisfies that document's
+presence check (`assumption`: asserted by an adversarial review of the design-home change as
+pre-existing, reproduced only for the design home before its guard landed). And an empty
+directory named like the file home would still read as the file home — unreachable through git,
+which cannot commit an empty directory.
+
+**Why it matters.** A component could pass the check while carrying no readable document of a
+required name. The walk never reads a directory as a document, so every claim that should live
+in it is also outside the citation walk — silent in exactly the way the missing-document
+finding exists to prevent.
+
+**What would close it.** Recording the kind in the survey — a directories set beside `present`
+in `Inputs` — and asserting file-ness for the five fixed documents; or deciding the residue is
+not worth the plumbing, and saying so here.
+
+## A fenced path reference counts for the paths check and for a design README's naming `observation`
+
+**What.** The scanner extracts backticked path references without regard to fences, so a path
+inside a fenced block is checked to exist by `check::paths`, and it discharges a design
+README's subdocument naming in `check::components`. Slug definitions and references are
+fence-guarded; path references are not. Seen by an adversarial review of the design-home
+change, reproduced with a design README whose only mention of a subdocument sits inside a
+fence: no finding.
+
+**Why it matters.** Whether this is a defect is not established. The regime deliberately reads
+fenced content as live — a fenced sketch cites its rules for real, per
+`knowledge#grammars-not-prefixes` — and a fenced path that must exist is the same stance. But
+the asymmetry with slugs means the two reference kinds cross fences differently, and nothing
+records which is intended for paths.
+
+**What would close it.** A decision either way: fence-guard path references like slugs, and
+repair whatever the widened checks report; or record beside `knowledge#grammars-not-prefixes`
+that fenced paths are deliberately live.

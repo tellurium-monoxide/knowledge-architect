@@ -286,6 +286,19 @@ mod tests {
     }
 
     #[test]
+    fn the_file_home_is_matched_exactly_and_not_by_path_suffix() {
+        // The fixture path ends with the home's whole path, component by component. The
+        // match is against the owning component's own document, so the suffix shape is as
+        // foreign as any other file.
+        let found = findings(vec![("notes/docs/design.md", head(SLUG))]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("outside its component's design home"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
     fn the_counts_are_of_distinct_anchors_and_distinct_pointers() {
         // Not of occurrences: a slug pointed at from five documents is one pointer as far as
         // the report is concerned, and counting the mentions would make the two numbers read

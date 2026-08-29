@@ -82,19 +82,20 @@ design has outgrown it. In the directory shape, `README.md` is the head: an intr
 table of contents naming every subdocument as a backticked path. The decisions and their slug
 anchors live in the subdocuments.
 
-Three assertions carry the shape, split over two checks. `check::components` asserts exactly one
-home per component, that a directory home carries its `README.md`, and that every markdown
-subdocument is named in the README's table of contents. `check::slugs` accepts a slug definition
-only in the file home or in a subdocument, matched against the owning component's own paths
-rather than against a filename suffix — a suffix match accepted a slug in any file whose name
-ends in `design.md`, a plan document included.
+Four assertions carry the shape, split over two checks. `check::components` asserts exactly one
+home per component, that a directory home carries its `README.md`, and that the README names
+every markdown subdocument the walk covers — a gitignored scratch file owes nothing. `check::slugs`
+accepts a slug definition only in the file home or in a subdocument, matched against the owning
+component's own paths rather than against a filename suffix — a suffix match would accept a slug
+in any file whose name ends in `design.md`, a plan document included.
 
 **Exactly one home, because two give a decision two candidate places to land.** That is the
 one-home failure, and the reader who finds one half acts on half the design.
 
-**The table of contents is checked because a subdocument nobody lists is a home nobody finds.**
-Its rows are checkable pointers, so the two directions close: the paths check asserts a listed
-file exists, and this check asserts an existing subdocument is listed.
+**The README must name every subdocument, because a subdocument nobody lists is a home nobody
+finds.** The table of contents is the conventional shape of that naming, and its rows are
+checkable pointers, so the two directions close: the paths check asserts a named file exists,
+and this check asserts an existing subdocument is named.
 
 **The README defines no slugs.** It is the head and the index. A decision recorded there competes
 with the subdocuments as a home, which is what the split exists to end.

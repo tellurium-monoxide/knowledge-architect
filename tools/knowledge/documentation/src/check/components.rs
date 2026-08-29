@@ -12,12 +12,10 @@
 //! others fail the same way more slowly: a component with no design home has its
 //! design recorded wherever the last session happened to put it.
 //!
-//! **The design home has two accepted shapes, and a component carries exactly one.** The
-//! single file `docs/design.md`, or the directory `docs/design/` whose `README.md` is the
-//! head: an introduction, and a table of contents naming every subdocument as a backticked
-//! path. Both present would give a decision two candidate homes, which is the failure the
-//! one-home rule exists to prevent; the table of contents is checked because a subdocument
-//! nobody lists is a design home nobody finds.
+//! **The design home has two accepted shapes, and a component carries exactly one** — the
+//! argument is `knowledge#design-home-two-shapes`. The single file `docs/design.md`, or the
+//! directory `docs/design/` whose `README.md` is the head and must name every subdocument as
+//! a backticked path; the table of contents is the conventional shape of that naming.
 //!
 //! **A tracker outside every component is declared one by one, and checked the same way.** Some
 //! directories carry outstanding state and nothing else a component carries, so
@@ -195,10 +193,15 @@ fn design_home(
     let file = component.document(DESIGN_FILE);
     let dir = component.document(DESIGN_DIR);
     let readme = component.document(DESIGN_README);
-    match (
-        inputs.present.contains(&file),
-        inputs.present.contains(&dir),
-    ) {
+    // The listing holds files and directories together, so a path's kind is not recorded in
+    // it. What a committable directory always has is entries beneath it, and a file never
+    // does — so a `docs/design.md` with entries under it is a directory wearing the file
+    // home's name, and counting it as the home would report a component with no design
+    // document anywhere as carrying one. The mirror shape, a plain file named `docs/design`,
+    // fails the same test and lands in the no-home arm.
+    let file_home = inputs.present.contains(&file) && !holds_entries(inputs, &file);
+    let dir_home = inputs.present.contains(&dir) && holds_entries(inputs, &dir);
+    match (file_home, dir_home) {
         (true, false) => {}
         (false, false) => out.push(Finding::in_file(
             &file,
@@ -230,11 +233,19 @@ fn design_home(
                 return;
             }
             let listed = listed_in(model, &readme, components);
-            let mut subdocuments: Vec<&PathBuf> = inputs
-                .present
+            // Enumerated from the model rather than from the listing: a subdocument is what
+            // the walk covers, so a gitignored scratch file owes no naming, a directory is
+            // never one, and a document owned by a component nested under this directory is
+            // that component's rather than a subdocument of this home.
+            let mut subdocuments: Vec<&PathBuf> = model
+                .documents()
                 .iter()
+                .map(|d| &d.rel)
                 .filter(|p| {
-                    p.starts_with(&dir) && **p != readme && p.extension().is_some_and(|e| e == "md")
+                    p.starts_with(&dir)
+                        && **p != readme
+                        && p.extension().is_some_and(|e| e == "md")
+                        && components.owning(p).path == component.path
                 })
                 .collect();
             subdocuments.sort();
@@ -243,7 +254,7 @@ fn design_home(
                     out.push(Finding::in_file(
                         &readme,
                         format!(
-                            "`{}` is not named in this README's table of contents",
+                            "`{}` is not named in its design README",
                             subdocument.display()
                         ),
                         "name it as a backticked path, or delete the subdocument; a design \
@@ -253,6 +264,17 @@ fn design_home(
             }
         }
     }
+}
+
+/// Whether the listing holds entries beneath `path` — a directory with content.
+///
+/// The listing records no kind, and a committable directory always has entries while a file
+/// never does. The one shape this cannot see is an empty directory, which git cannot commit.
+fn holds_entries(inputs: &Inputs, path: &PathBuf) -> bool {
+    inputs
+        .present
+        .iter()
+        .any(|p| p != path && p.starts_with(path))
 }
 
 /// Every path the README's backticked references resolve to.
@@ -567,24 +589,21 @@ mod tests {
 
     #[test]
     fn a_subdocument_the_readme_does_not_name_is_reported() {
-        // One listed as a bare root-stem path, one not listed at all, and a non-markdown
-        // asset that owes no listing.
+        // One listed as a bare root-stem path, and one not listed at all.
         let manifest = declaring("");
         let mut present = without_design("");
-        for p in [
-            DESIGN_DIR,
-            DESIGN_README,
-            SUB_A,
-            SUB_B,
-            "docs/design/sketch.svg",
-        ] {
+        for p in [DESIGN_DIR, DESIGN_README, SUB_A, SUB_B] {
             present.push(p.to_string());
         }
         let present: Vec<&str> = present.iter().map(String::as_str).collect();
-        let model = Model::from_documents(vec![(
-            PathBuf::from(DESIGN_README),
-            format!("# design\n\n- `{SUB_A}`\n"),
-        )]);
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from(DESIGN_README),
+                format!("# design\n\n- `{SUB_A}`\n"),
+            ),
+            (PathBuf::from(SUB_A), "a subject\n".to_string()),
+            (PathBuf::from(SUB_B), "another subject\n".to_string()),
+        ]);
         let found = findings_over(&manifest, &present, model);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].starts_with(DESIGN_README), "{found:#?}");
@@ -592,6 +611,122 @@ mod tests {
             found[0].contains(SUB_B) && found[0].contains("not named"),
             "{found:#?}"
         );
+    }
+
+    #[test]
+    fn a_subdocument_outside_the_walk_owes_no_naming() {
+        // A gitignored scratch file is in the listing (it is complete) and not in the model
+        // (the walk prunes it). It is not this project's document, so it owes nothing.
+        let manifest = declaring("");
+        let mut present = without_design("");
+        for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
+            present.push(p.to_string());
+        }
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let model = Model::from_documents(vec![(
+            PathBuf::from(DESIGN_README),
+            "# design\n\nNothing listed.\n".to_string(),
+        )]);
+        assert_eq!(
+            findings_over(&manifest, &present, model),
+            Vec::<String>::new()
+        );
+    }
+
+    #[test]
+    fn only_the_design_readme_discharges_the_naming() {
+        // The subdocument is named, backticked and resolvable, in the project's own README —
+        // the wrong document. The naming obligation is the design README's alone.
+        let manifest = declaring("");
+        let mut present = without_design("");
+        for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
+            present.push(p.to_string());
+        }
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from(DESIGN_README),
+                "# design\n\nNothing listed.\n".to_string(),
+            ),
+            (PathBuf::from("README.md"), format!("See `{SUB_A}`.\n")),
+            (PathBuf::from(SUB_A), "a subject\n".to_string()),
+        ]);
+        let found = findings_over(&manifest, &present, model);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains(SUB_A), "{found:#?}");
+    }
+
+    #[test]
+    fn a_row_with_dots_resolves_the_same_as_the_paths_check() {
+        // Textual `..` resolution, shared with `check::paths` through `normalise`: a row
+        // written through a sibling directory still names the subdocument.
+        let dotted = "docs/other/../design/one-subject.md";
+        let manifest = declaring("");
+        let mut present = without_design("");
+        for p in [DESIGN_DIR, DESIGN_README, SUB_A] {
+            present.push(p.to_string());
+        }
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from(DESIGN_README),
+                format!("# design\n\n- `{dotted}`\n"),
+            ),
+            (PathBuf::from(SUB_A), "a subject\n".to_string()),
+        ]);
+        assert_eq!(
+            findings_over(&manifest, &present, model),
+            Vec::<String>::new()
+        );
+    }
+
+    #[test]
+    fn a_nested_components_documents_are_not_subdocuments() {
+        // A component declared under another's design directory owns its own documents; the
+        // outer README does not name them. Contrived, and cheap to hold.
+        let nested = "docs/design/sub-part";
+        let manifest = declaring(&format!("\"{nested}\""));
+        let mut present = without_design("");
+        for p in [DESIGN_DIR, DESIGN_README] {
+            present.push(p.to_string());
+        }
+        present.push(nested.to_string());
+        present.extend(all_of(nested));
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let mut docs = vec![(
+            PathBuf::from(DESIGN_README),
+            "# design\n\nNothing listed.\n".to_string(),
+        )];
+        for p in all_of(nested) {
+            docs.push((PathBuf::from(p), "content\n".to_string()));
+        }
+        let model = Model::from_documents(docs);
+        assert_eq!(
+            findings_over(&manifest, &present, model),
+            Vec::<String>::new()
+        );
+    }
+
+    #[test]
+    fn a_directory_wearing_the_file_homes_name_is_not_a_home() {
+        // The listing records no kind, and a directory always has entries beneath it. Both
+        // impostor shapes land in the no-home arm: a directory named like the file, and a
+        // plain file named like the directory.
+        let manifest = declaring("");
+        let mut with_dir = without_design("");
+        with_dir.push(DESIGN_FILE.to_string());
+        with_dir.push(format!("{DESIGN_FILE}/stray.md"));
+        let with_dir: Vec<&str> = with_dir.iter().map(String::as_str).collect();
+        let found = findings(&manifest, &with_dir);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("no design home"), "{found:#?}");
+
+        let mut with_file = without_design("");
+        with_file.push(DESIGN_DIR.to_string());
+        let with_file: Vec<&str> = with_file.iter().map(String::as_str).collect();
+        let found = findings(&manifest, &with_file);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("no design home"), "{found:#?}");
     }
 
     #[test]
@@ -607,10 +742,18 @@ mod tests {
             present.push(format!("{part}/{p}"));
         }
         let present: Vec<&str> = present.iter().map(String::as_str).collect();
-        let model = Model::from_documents(vec![(
-            PathBuf::from(format!("{part}/{DESIGN_README}")),
-            format!("# design\n\n- `a-part@{SUB_A}`\n"),
-        )]);
+        // Dots in the row on purpose: the component form normalises like the bare form.
+        let dotted_sub = "docs/other/../design/one-subject.md";
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from(format!("{part}/{DESIGN_README}")),
+                format!("# design\n\n- `a-part@{dotted_sub}`\n"),
+            ),
+            (
+                PathBuf::from(format!("{part}/{SUB_A}")),
+                "a subject\n".to_string(),
+            ),
+        ]);
         assert_eq!(
             findings_over(&manifest, &present, model),
             Vec::<String>::new()
