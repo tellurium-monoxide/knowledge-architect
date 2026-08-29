@@ -83,6 +83,9 @@ pub struct Inputs<'a> {
     /// Every path that exists in the project, files and directories, project-relative. One
     /// listing by the caller answers every question a check has about what is there.
     pub present: &'a HashSet<PathBuf>,
+    /// The subset of `present` that is directories, so a check can assert a path's kind —
+    /// a required document is a file, and a reference's trailing slash claims a directory.
+    pub directories: &'a HashSet<PathBuf>,
     /// Files the walk does not cover, with their text — excluding the paths the manifest
     /// excludes, which are other projects rather than unchecked files of this one.
     pub outside: &'a [(PathBuf, String)],
@@ -299,6 +302,24 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
         pinned,
         ran: only,
         asked: only,
+    }
+}
+
+#[cfg(test)]
+pub(crate) mod testing {
+    use std::collections::HashSet;
+    use std::path::PathBuf;
+
+    /// The directories a flat listing implies: every path with an entry beneath it.
+    ///
+    /// A test states its tree as a list of paths, the way a checkout lists one, and the kinds
+    /// follow from the shape. A test that needs a childless directory inserts it directly.
+    pub fn implied_directories(present: &HashSet<PathBuf>) -> HashSet<PathBuf> {
+        present
+            .iter()
+            .filter(|p| present.iter().any(|q| *q != **p && q.starts_with(p)))
+            .cloned()
+            .collect()
     }
 }
 

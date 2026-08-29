@@ -183,14 +183,14 @@ fn check(manifest: &Manifest) -> Result<ExitCode, String> {
         .ok_or("VERSION names no date")?;
     // One listing answers every question a check has about what is there, and it is the
     // caller's job because a check may not touch the filesystem.
-    let (present, outside) =
-        documentation::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
+    let survey = documentation::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
     let inputs = Inputs {
         releases: &releases,
         pinned: &pinned,
         committed: &committed,
-        present: &present,
-        outside: &outside,
+        present: &survey.present,
+        directories: &survey.directories,
+        outside: &survey.outside,
     };
     let mut report = documentation::check::run(&model, manifest, &inputs, only);
 

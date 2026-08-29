@@ -114,6 +114,19 @@ fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
 }
 
 #[test]
+fn the_survey_records_which_paths_are_directories() {
+    // The kind is a fact of the listing rather than an inference from entries beneath a
+    // path, which could not tell an empty directory from a file.
+    let manifest = mock("minimal");
+    let model = Model::build(&manifest).expect("a model");
+    let survey = documentation::survey::survey(&manifest, &model).expect("a survey");
+    assert!(survey.directories.contains(&PathBuf::from("docs")));
+    assert!(survey.present.contains(&PathBuf::from("docs")));
+    assert!(!survey.directories.contains(&PathBuf::from("README.md")));
+    assert!(survey.present.contains(&PathBuf::from("README.md")));
+}
+
+#[test]
 fn a_tracker_outside_every_component_is_read_by_the_report() {
     // What `additional-trackers` is for: a directory carrying outstanding state and nothing
     // else a component carries. Undeclared, this entry is in no report and nobody finds it.
@@ -203,14 +216,14 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     let model = Model::build(&manifest).expect("a model");
     let releases: HashMap<Option<String>, Release> = HashMap::new();
     let committed = HashMap::new();
-    let (present, outside) =
-        documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+    let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
     let inputs = Inputs {
         releases: &releases,
         pinned: "20200101",
         committed: &committed,
-        present: &present,
-        outside: &outside,
+        present: &survey.present,
+        directories: &survey.directories,
+        outside: &survey.outside,
     };
     let report = run(
         &model,
@@ -247,14 +260,14 @@ fn a_directory_design_home_passes_end_to_end() {
     let model = Model::build(&manifest).expect("a model");
     let releases: HashMap<Option<String>, Release> = HashMap::new();
     let committed = HashMap::new();
-    let (present, outside) =
-        documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+    let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
     let inputs = Inputs {
         releases: &releases,
         pinned: "20200101",
         committed: &committed,
-        present: &present,
-        outside: &outside,
+        present: &survey.present,
+        directories: &survey.directories,
+        outside: &survey.outside,
     };
     let report = run(
         &model,
@@ -329,14 +342,15 @@ mod planted {
         let corpus = rules::Corpus::parse(&text, manifest.rules().body_starts_at);
         let committed = committed(&manifest, &model, &corpus);
         let releases = HashMap::from([(None, release)]);
-        let (present, outside) =
+        let survey =
             documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
         let inputs = Inputs {
             releases: &releases,
             pinned: "20200101",
             committed: &committed,
-            present: &present,
-            outside: &outside,
+            present: &survey.present,
+            directories: &survey.directories,
+            outside: &survey.outside,
         };
         run(&model, &manifest, &inputs, only)
             .findings
@@ -500,14 +514,15 @@ mod planted {
         if with_pin {
             releases.insert(Some("20200101".to_string()), Release::new(&text, body));
         }
-        let (present, outside) =
+        let survey =
             documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
         let inputs = Inputs {
             releases: &releases,
             pinned: "20200101",
             committed: &committed,
-            present: &present,
-            outside: &outside,
+            present: &survey.present,
+            directories: &survey.directories,
+            outside: &survey.outside,
         };
         run(&model, &manifest, &inputs, only)
     }

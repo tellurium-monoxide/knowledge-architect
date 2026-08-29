@@ -131,12 +131,14 @@ mod tests {
         let releases = HashMap::new();
         let committed = HashMap::new();
         let present: HashSet<PathBuf> = [PathBuf::from(format!("{part}/notes/real/a.md"))].into();
+        let directories = crate::check::testing::implied_directories(&present);
         let outside = Vec::new();
         let inputs = Inputs {
             releases: &releases,
             pinned: "",
             committed: &committed,
             present: &present,
+            directories: &directories,
             outside: &outside,
         };
         let (found, seen) = check(&model, &manifest, &inputs);

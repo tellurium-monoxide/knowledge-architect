@@ -104,6 +104,19 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
                     "create it, or stop listing the component in knowledge.toml [project]; \
                      every component carries the same documents",
                 ));
+            } else if inputs.directories.contains(&path) {
+                // A directory wearing the document's name satisfies a presence test and is
+                // read by nothing: the walk never reads a directory as a document, so every
+                // claim that should live in it is outside every check.
+                out.push(Finding::in_file(
+                    &path,
+                    format!(
+                        "`{}` is a directory wearing the document's name",
+                        path.display()
+                    ),
+                    "the component documents are files; move the directory aside and create \
+                     the file",
+                ));
             }
         }
         design_home(&mut out, component, model, &components, inputs);
@@ -193,14 +206,11 @@ fn design_home(
     let file = component.document(DESIGN_FILE);
     let dir = component.document(DESIGN_DIR);
     let readme = component.document(DESIGN_README);
-    // The listing holds files and directories together, so a path's kind is not recorded in
-    // it. What a committable directory always has is entries beneath it, and a file never
-    // does — so a `docs/design.md` with entries under it is a directory wearing the file
-    // home's name, and counting it as the home would report a component with no design
-    // document anywhere as carrying one. The mirror shape, a plain file named `docs/design`,
-    // fails the same test and lands in the no-home arm.
-    let file_home = inputs.present.contains(&file) && !holds_entries(inputs, &file);
-    let dir_home = inputs.present.contains(&dir) && holds_entries(inputs, &dir);
+    // The survey records each path's kind, so both impostor shapes land in the no-home arm
+    // by fact rather than by inference: a directory wearing the file home's name is not the
+    // file home, and a plain file named like the directory is not the directory home.
+    let file_home = inputs.present.contains(&file) && !inputs.directories.contains(&file);
+    let dir_home = inputs.directories.contains(&dir);
     match (file_home, dir_home) {
         (true, false) => {}
         (false, false) => out.push(Finding::in_file(
@@ -222,8 +232,9 @@ fn design_home(
         )),
         (false, true) => {
             // Without a head nothing can list the subdocuments, so the per-subdocument
-            // findings would bury the one repair that fixes them all.
-            if !inputs.present.contains(&readme) {
+            // findings would bury the one repair that fixes them all. A directory wearing
+            // the README's name is no head either: the walk never reads a directory.
+            if !inputs.present.contains(&readme) || inputs.directories.contains(&readme) {
                 out.push(Finding::in_file(
                     &readme,
                     format!("the design directory `{}` has no README.md", dir.display()),
@@ -275,17 +286,6 @@ fn has_scheme(target: &str) -> bool {
         .split('/')
         .next()
         .is_some_and(|head| head.contains(':'))
-}
-
-/// Whether the listing holds entries beneath `path` — a directory with content.
-///
-/// The listing records no kind, and a committable directory always has entries while a file
-/// never does. The one shape this cannot see is an empty directory, which git cannot commit.
-fn holds_entries(inputs: &Inputs, path: &PathBuf) -> bool {
-    inputs
-        .present
-        .iter()
-        .any(|p| p != path && p.starts_with(path))
 }
 
 /// Every path the README's markdown links resolve to, reporting the links that resolve to
@@ -394,16 +394,21 @@ mod tests {
     }
 
     /// The same, with documents in the model — what the table-of-contents check reads.
+    ///
+    /// The kinds are implied by the listing's shape: a path with an entry beneath it is a
+    /// directory, which is how every committable tree looks.
     fn findings_over(manifest: &Manifest, present: &[&str], model: Model) -> Vec<String> {
         let releases: HashMap<Option<String>, Release> = HashMap::new();
         let committed = HashMap::new();
         let present: HashSet<PathBuf> = present.iter().map(PathBuf::from).collect();
+        let directories = crate::check::testing::implied_directories(&present);
         let outside = Vec::new();
         let inputs = Inputs {
             releases: &releases,
             pinned: "",
             committed: &committed,
             present: &present,
+            directories: &directories,
             outside: &outside,
         };
         check(&model, manifest, &inputs)
@@ -546,12 +551,14 @@ mod tests {
         let releases: HashMap<Option<String>, Release> = HashMap::new();
         let committed = HashMap::new();
         let present = HashSet::new();
+        let directories = HashSet::new();
         let outside = Vec::new();
         let inputs = Inputs {
             releases: &releases,
             pinned: "",
             committed: &committed,
             present: &present,
+            directories: &directories,
             outside: &outside,
         };
         let counts = check(&Model::from_documents(Vec::new()), &manifest, &inputs).1;
@@ -749,10 +756,26 @@ mod tests {
     }
 
     #[test]
+    fn a_directory_wearing_a_required_documents_name_is_reported() {
+        // A presence test alone was satisfied by the directory, while the walk never reads a
+        // directory as a document — so every claim that should live in it was outside every
+        // check. Mutation checked: with the kind assertion removed, this reports nothing.
+        let manifest = declaring("");
+        let mut present = all_of("");
+        present.push("docs/tripwires.md/entry.md".to_string());
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let found = findings(&manifest, &present);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("is a directory wearing the document's name"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
     fn a_directory_wearing_the_file_homes_name_is_not_a_home() {
-        // The listing records no kind, and a directory always has entries beneath it. Both
-        // impostor shapes land in the no-home arm: a directory named like the file, and a
-        // plain file named like the directory.
+        // The kind comes from the survey. Both impostor shapes land in the no-home arm: a
+        // directory named like the file, and a plain file named like the directory.
         let manifest = declaring("");
         let mut with_dir = without_design("");
         with_dir.push(DESIGN_FILE.to_string());

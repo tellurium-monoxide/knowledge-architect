@@ -10,8 +10,20 @@ use std::path::PathBuf;
 use crate::manifest::Manifest;
 use crate::model::Model;
 
-/// Every project-relative path that exists, and the readable files the walk does not cover.
-pub type Survey = (HashSet<PathBuf>, Vec<(PathBuf, String)>);
+/// Every project-relative path that exists with its kind, and the readable files the walk
+/// does not cover.
+pub struct Survey {
+    /// Every project-relative path that exists, files and directories together.
+    pub present: HashSet<PathBuf>,
+    /// The subset of `present` that is directories.
+    ///
+    /// Recorded rather than inferred: a directory wearing a document's name has entries
+    /// beneath it in every committable case, but the inference cannot tell an empty directory
+    /// from a file, and a reference's trailing-slash claim needs the kind to be a fact.
+    pub directories: HashSet<PathBuf>,
+    /// The readable files the walk does not cover, with their text.
+    pub outside: Vec<(PathBuf, String)>,
+}
 
 pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
     let root = manifest.root();
@@ -19,6 +31,7 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
     let covered: HashSet<&std::path::Path> =
         model.documents().iter().map(|d| d.rel.as_path()).collect();
     let mut present = HashSet::new();
+    let mut directories = HashSet::new();
     let mut outside = Vec::new();
     let mut stack = vec![root.to_path_buf()];
     while let Some(dir) = stack.pop() {
@@ -40,6 +53,9 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
             // BEFORE the descent is refused: `.git` exists, and a listing that omitted it
             // reported the manifest's own declaration of it as dead.
             present.insert(rel.clone());
+            if path.is_dir() {
+                directories.insert(rel.clone());
+            }
             if name == ".git" {
                 continue;
             }
@@ -69,5 +85,9 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
         }
     }
     outside.sort();
-    Ok((present, outside))
+    Ok(Survey {
+        present,
+        directories,
+        outside,
+    })
 }
