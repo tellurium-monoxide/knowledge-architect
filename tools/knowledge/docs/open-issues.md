@@ -18,7 +18,9 @@ path, a `cr-version` marker or an identifier marker written as a literal in a te
 content: it is linted, it defines an anchor, it is a reference that must resolve, and it can pin the
 file it sits in to a release.
 
-**Observed** seven times while the tool was written, each caught by a checker rather than by review:
+**Observed** seven times while the tool was written, and an eighth at the first release bump —
+rule-shaped bytes in the fold tests' fixtures, repaired to neutral text in the change "Test
+fixtures stop looking like rule citations" — each caught by a checker rather than by review:
 bare rule numbers in fixtures; a `cr-version` fixture that pinned its whole file to a release; an
 identifier marker written out in a doc comment; fixture slugs that defined a real anchor and three
 dangling references; a concern filename; two relative paths; and a slug in a title fixture.
@@ -222,3 +224,27 @@ default.
 **What would close it.** Migrating `knowledge` and `mutate` argument handling to clap, with
 the refusal of unknown flags and invalid combinations asserted by a test in each, as
 `xtask@src/main.rs` does.
+
+## A release the manifest does not know resolves from a cache nothing verifies `observation`
+
+**What.** `resolve` in `knowledge@rules/src/release.rs` answers a release that is neither
+vendored nor archived from `std::env::temp_dir()/MagicCompRules-<date>.txt`, downloading only
+when that file is absent. When `MANIFEST.tsv` holds no row for the date — which is every bump
+target by construction, since the manifest records only superseded releases — the digest check
+has nothing to compare against, so whatever bytes sit at that path are returned with only a
+stderr warning. Reproduced during the adversarial review of the first bump: with an empty
+manifest and the cache pre-seeded with arbitrary bytes, `resolve` returned those bytes as the
+release. A `bump` then builds its diff, its effective-as-of report and its `CHANGES.md`
+skeleton from them.
+
+**Why it matters.** The temp path is predictable and the directory is world-writable, and a
+stale or foreign file there is indistinguishable from a download. The blast radius is bounded:
+the pinned text a bump writes is walked by `cargo knowledge check`, so grossly wrong bytes fail
+hundreds of quote verifications loudly — but a subtly wrong text that preserves the cited rules
+would pin silently. First contact with a new release is inherently unverifiable against a prior
+record; trusting a shared cache by existence is the avoidable part.
+
+**What would close it.** Caching under a user-owned directory (or not caching across runs at
+all: the file is under 1 MB), plus printing the digest of what was actually used, would reduce
+the window to the download itself. Deciding that the residual first-contact trust is accepted,
+and saying so in `resolve`'s doc comment, would also close this as a recorded trade-off.
