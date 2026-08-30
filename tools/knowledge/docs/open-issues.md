@@ -192,3 +192,33 @@ tuned against; the census that tuned it did not measure these shapes.
 census for each, or recording beside `knowledge#every-path-names-its-anchor` that a named shape
 stays outside on purpose. `assumption`: the colon idiom is the one worth widening first, being
 ordinary editor output. Untested — no census taken.
+
+## The hand-rolled CLI has accepted invalid argument combinations silently `observation`
+
+**What.** The owner reports that this tool's command-line parsing, hand-rolled in
+`knowledge@src/main.rs`, has accepted invalid argument combinations and then done nothing,
+with no error and exit 0. Reported from past sessions; whether any such combination still
+reproduces on the current parser is `not established` — no failing invocation is on record.
+
+**Why it matters.** A tool that silently does nothing on a malformed invocation reads as a
+passing check. Every gate and review in this project trusts this tool's exit code.
+
+**What would close it.** Enumerating the subcommands' argument handling and either reproducing
+a silent acceptance (promoting this to `defect` with the invocation) or ruling the class out.
+The clap migration in the entry below closes it structurally: clap refuses unknown flags and
+invalid combinations by construction, which is the argument recorded at
+`xtask#clap-for-parsing`.
+
+## The CLI-taking tools still parse arguments by hand `todo`
+
+**What.** The owner intends every CLI-taking tool in this repository to parse through clap (or
+an equivalent crate), as `xtask` now does per `xtask#clap-for-parsing`. `knowledge` and
+`mutate` still parse by hand; clients may follow later.
+
+**Why it matters.** Hand-rolled parsing is where the silent-acceptance class above lives, and
+each hand-rolled parser re-solves flag handling that a shared crate already solves refused-by-
+default.
+
+**What would close it.** Migrating `knowledge` and `mutate` argument handling to clap, with
+the refusal of unknown flags and invalid combinations asserted by a test in each, as
+`xtask@src/main.rs` does.
