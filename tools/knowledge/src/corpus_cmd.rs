@@ -251,6 +251,28 @@ fn vendor(tree: &Tree, date: &str, url: &str, published: &[u8]) -> Result<(Strin
     Ok((digest, bytes.iter().filter(|&&b| b == b'\n').count()))
 }
 
+/// What the two releases' effective-as-of lines say about a bump.
+///
+/// A release is dated by its URL, and Wizards has re-published one release's rules under a
+/// new URL date with nothing changed but typography. The URL date is all the release watch
+/// can see, so a bump names the re-export case outright rather than leaving it to a diff.
+fn effective_report(old_text: &str, new_text: &str, old: &str, new: &str) -> String {
+    match (
+        release::effective_as_of(old_text),
+        release::effective_as_of(new_text),
+    ) {
+        (Some(a), Some(b)) if a == b => format!(
+            "Both releases say \"{a}\" — {new} re-publishes the same rules under a new\n\
+             URL date, and any file difference is typography."
+        ),
+        (a, b) => format!(
+            "{old}: {}\n{new}: {}",
+            a.unwrap_or("(no effective-as-of line)"),
+            b.unwrap_or("(no effective-as-of line)")
+        ),
+    }
+}
+
 /// Move the project to a new release.
 ///
 /// The checkers ARE the change detector: every citation is a verbatim quote, so a quote that
@@ -279,23 +301,7 @@ fn bump(manifest: &Manifest, tree: &Tree, new: Option<&String>) -> Result<i32, S
         println!("\n{change}");
     }
 
-    // A release is dated by its URL, and Wizards has re-published one release's rules under
-    // a new URL date with nothing changed but typography. The effective line is what tells
-    // that case apart from a real update, so it is said here rather than left to a diff.
-    match (
-        release::effective_as_of(&old_text),
-        release::effective_as_of(&new_text),
-    ) {
-        (Some(a), Some(b)) if a == b => println!(
-            "\nBoth releases say \"{a}\" — {new} re-publishes the same rules under a new\n\
-             URL date, and any file difference is typography."
-        ),
-        (a, b) => println!(
-            "\n{old}: {}\n{new}: {}",
-            a.unwrap_or("(no effective-as-of line)"),
-            b.unwrap_or("(no effective-as-of line)")
-        ),
-    }
+    println!("\n{}", effective_report(&old_text, &new_text, &old, new));
 
     // Archive the OUTGOING release before it is overwritten. A release that is no longer
     // vendored is still needed — to compare two, and to hold any container pinned to it — and
@@ -326,7 +332,12 @@ fn bump(manifest: &Manifest, tree: &Tree, new: Option<&String>) -> Result<i32, S
     let index_path = manifest.root().join(manifest.rules().dir.join("index.md"));
     let pre_index = std::fs::read_to_string(&index_path).unwrap_or_default();
 
-    fetch(tree, Some(new.clone()))?;
+    // Vendor the SAME bytes the diff and the report were computed from. Fetching again here
+    // opened a window in which the work list described one download and the pin held another,
+    // with nothing tying the two together.
+    let url = release::url_for(new);
+    let (digest, lines) = vendor(tree, new, &url, new_text.as_bytes())?;
+    println!("{lines} lines\ndate:   {new}\nsource: {url}\nsha256: {digest}");
     let model = documentation::Model::build(manifest).map_err(|e| e.to_string())?;
     let fresh = {
         let text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
@@ -455,6 +466,26 @@ fn today() -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_effective_report_names_a_re_export_only_when_the_lines_agree() {
+        // The mutation this guards against: inverting the agreement test, which would call a
+        // genuine rules update typography — the exact misleading verdict the report exists
+        // to prevent.
+        let same = "title\nThese rules are effective as of January 1, 1998.\n";
+        let other = "title\nThese rules are effective as of February 2, 1998.\n";
+        let report = effective_report(same, same, "19980101", "19980102");
+        assert!(report.contains("re-publishes the same rules"), "{report}");
+        let report = effective_report(same, other, "19980101", "19980202");
+        assert!(!report.contains("re-publishes"), "{report}");
+        assert!(
+            report.contains("January 1") && report.contains("February 2"),
+            "{report}"
+        );
+        let report = effective_report("no dated line\n", same, "19980101", "19980202");
+        assert!(report.contains("(no effective-as-of line)"), "{report}");
+        assert!(!report.contains("re-publishes"), "{report}");
+    }
 
     #[test]
     fn vendoring_folds_the_published_bytes_and_digests_what_it_wrote() {

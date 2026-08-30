@@ -86,19 +86,31 @@ pub fn sha256(bytes: &[u8]) -> String {
 /// folds a fetch before comparing it against one. Nothing else is touched: a CR not followed
 /// by LF is content and is kept, and so is every other byte, because the vendored text is
 /// what citations quote verbatim.
+///
+/// Folding repeats until stable, so the function is idempotent — [`resolve`] folds whatever
+/// its cache holds, and a fold that is not idempotent would fail the digest of a cache it had
+/// itself verified, then delete it. Stability costs a byte on the pathological run `\r\r\n`,
+/// which collapses to one LF across the passes; no published release has carried one.
 pub fn normalize(published: &[u8]) -> Vec<u8> {
-    let body = published
-        .strip_prefix(b"\xef\xbb\xbf".as_slice())
-        .unwrap_or(published);
-    let mut out = Vec::with_capacity(body.len());
-    let mut i = 0;
-    while i < body.len() {
-        if body[i] != b'\r' || body.get(i + 1) != Some(&b'\n') {
-            out.push(body[i]);
+    let mut cur = published.to_vec();
+    loop {
+        let body = cur.strip_prefix(b"\xef\xbb\xbf".as_slice()).unwrap_or(&cur);
+        let mut out = Vec::with_capacity(body.len());
+        let mut i = 0;
+        while i < body.len() {
+            if body[i] == b'\r' && body.get(i + 1) == Some(&b'\n') {
+                out.push(b'\n');
+                i += 2;
+            } else {
+                out.push(body[i]);
+                i += 1;
+            }
         }
-        i += 1;
+        if out == cur {
+            return out;
+        }
+        cur = out;
     }
-    out
 }
 
 /// The "effective as of" line near the top of a release, or `None` when the layout moved.
@@ -187,6 +199,9 @@ pub fn resolve(tree: &Tree, date: &str) -> Result<PathBuf, String> {
             .status()
             .map_err(|e| format!("{date}: could not run curl: {e}"))?;
         if !status.success() {
+            // A failed download can leave a partial file, and `cache.exists()` would trust
+            // it on the next run — for a bump target no digest exists to catch that.
+            let _ = std::fs::remove_file(&cache);
             return Err(format!("{date}: curl failed ({status})"));
         }
     }
@@ -262,6 +277,46 @@ mod tests {
         assert_eq!(normalize(b"\xef\xbb\xbfa\r\nb\rc\n"), b"a\nb\rc\n");
         // Idempotent: text already in the vendored form passes through byte for byte.
         assert_eq!(normalize(b"a\nb\rc\n"), b"a\nb\rc\n");
+    }
+
+    #[test]
+    fn normalizing_is_idempotent_even_on_a_cr_run() {
+        // The adversarial shape: one pass over `\r\r\n` leaves a CRLF behind, and a fold
+        // that is not idempotent fails the digest of a cache it had itself verified. The
+        // fold runs to a fixpoint instead, at the recorded cost of the lone CR in the run.
+        let once = normalize(b"a\r\r\nb\n");
+        assert_eq!(once, b"a\nb\n");
+        assert_eq!(normalize(&once), once);
+    }
+
+    #[test]
+    fn a_digest_mismatch_refuses_the_bytes_and_clears_the_cache() {
+        // The refusal is the property the manifest exists for; a mutant that disables it
+        // must fail here, not survive the suite.
+        const DATE: &str = "19980102";
+        let dir = std::env::temp_dir().join("knowledge-release-mismatch-test");
+        std::fs::create_dir_all(&dir).expect("a scratch directory");
+        let manifest = dir.join("MANIFEST.tsv");
+        std::fs::write(
+            &manifest,
+            format!(
+                "{DATE}\thttps://e.test/r.txt\t{}\t2026-01-01\n",
+                sha256(b"what the manifest recorded\n")
+            ),
+        )
+        .expect("a manifest row");
+        let tree = Tree::new(
+            &dir,
+            dir.join("MagicCompRules.txt"),
+            dir.join("VERSION"),
+            dir.join("past"),
+            manifest,
+        );
+        let cache = std::env::temp_dir().join(format!("MagicCompRules-{DATE}.txt"));
+        std::fs::write(&cache, b"something else entirely\n").expect("a seeded cache");
+        let err = resolve(&tree, DATE).expect_err("the digests differ");
+        assert!(err.contains("does not match"), "{err}");
+        assert!(!cache.exists(), "the refused cache is cleared");
     }
 
     #[test]
