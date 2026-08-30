@@ -473,15 +473,18 @@ mod tests {
             &tree,
             "19980101",
             "https://e.test/r.txt",
-            b"\xef\xbb\xbf100.1 A rule.\r\n",
+            b"\xef\xbb\xbfthe rules text\r\n",
         )
         .expect("a vendored release");
         let written = std::fs::read(tree.text()).expect("the vendored text");
-        assert_eq!(written, b"100.1 A rule.\n");
+        assert_eq!(written, b"the rules text\n");
         assert_eq!(lines, 1);
         assert_eq!(digest, release::sha256(&written));
         let version = std::fs::read_to_string(tree.version()).expect("the version file");
-        assert!(version.contains(&digest), "the version file records {digest}");
+        assert!(
+            version.contains(&digest),
+            "the version file records {digest}"
+        );
     }
 
     #[test]

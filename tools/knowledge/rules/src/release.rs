@@ -270,13 +270,16 @@ mod tests {
         // seeded with the raw BOM+CRLF bytes Wizards would serve. Resolving must fold before
         // comparing, or the digest check refuses the exact bytes the publisher sends.
         const DATE: &str = "19980101";
-        let folded = b"100.1 A rule.\n";
+        let folded = b"the rules text\n";
         let dir = std::env::temp_dir().join("knowledge-release-fold-test");
         std::fs::create_dir_all(&dir).expect("a scratch directory");
         let manifest = dir.join("MANIFEST.tsv");
         std::fs::write(
             &manifest,
-            format!("{DATE}\thttps://e.test/r.txt\t{}\t2026-01-01\n", sha256(folded)),
+            format!(
+                "{DATE}\thttps://e.test/r.txt\t{}\t2026-01-01\n",
+                sha256(folded)
+            ),
         )
         .expect("a manifest row");
         let tree = Tree::new(
@@ -287,7 +290,7 @@ mod tests {
             manifest,
         );
         let cache = std::env::temp_dir().join(format!("MagicCompRules-{DATE}.txt"));
-        std::fs::write(&cache, b"\xef\xbb\xbf100.1 A rule.\r\n").expect("a seeded cache");
+        std::fs::write(&cache, b"\xef\xbb\xbfthe rules text\r\n").expect("a seeded cache");
         let path = resolve(&tree, DATE).expect("the folded digest matches");
         assert_eq!(std::fs::read(&path).expect("the resolved file"), folded);
         let _ = std::fs::remove_file(&cache);
@@ -300,7 +303,7 @@ mod tests {
             effective_as_of(text),
             Some("These rules are effective as of August 7, 2026.")
         );
-        assert_eq!(effective_as_of("100.1 A rule.\n"), None);
+        assert_eq!(effective_as_of("no such line anywhere\n"), None);
     }
 
     #[test]
