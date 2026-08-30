@@ -230,7 +230,17 @@ fn fetch(tree: &Tree, date: Option<String>) -> Result<i32, String> {
     };
     let url = release::url_for(&date);
     println!("fetching {url}");
-    let bytes = curl(&url)?;
+    let (digest, lines) = vendor(tree, &date, &url, &curl(&url)?)?;
+    println!("{lines} lines\ndate:   {date}\nsource: {url}\nsha256: {digest}");
+    Ok(0)
+}
+
+/// Write a downloaded release into the tree: fold it, vendor the text, record its digest.
+///
+/// The digest recorded is of the bytes as written, never of the download, so the version
+/// file can be re-checked against the committed file without refetching anything.
+fn vendor(tree: &Tree, date: &str, url: &str, published: &[u8]) -> Result<(String, usize), String> {
+    let bytes = release::normalize(published);
     std::fs::write(tree.text(), &bytes).map_err(|e| e.to_string())?;
     let digest = release::sha256(&bytes);
     std::fs::write(
@@ -238,11 +248,7 @@ fn fetch(tree: &Tree, date: Option<String>) -> Result<i32, String> {
         format!("date:   {date}\nsource: {url}\nsha256: {digest}\n"),
     )
     .map_err(|e| e.to_string())?;
-    println!(
-        "{} lines\ndate:   {date}\nsource: {url}\nsha256: {digest}",
-        bytes.iter().filter(|&&b| b == b'\n').count()
-    );
-    Ok(0)
+    Ok((digest, bytes.iter().filter(|&&b| b == b'\n').count()))
 }
 
 /// Move the project to a new release.
@@ -261,15 +267,34 @@ fn bump(manifest: &Manifest, tree: &Tree, new: Option<&String>) -> Result<i32, S
     }
     println!("== {old} -> {new} ==");
 
-    let old_corpus = {
-        let text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
-        Corpus::parse(&text, manifest.rules().body_starts_at)
-    };
-    let new_corpus = corpus_at(tree, manifest, new)?;
+    let old_text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
+    let old_corpus = Corpus::parse(&old_text, manifest.rules().body_starts_at);
+    let new_path = release::resolve(tree, new)?;
+    let new_text =
+        std::fs::read_to_string(&new_path).map_err(|e| format!("{}: {e}", new_path.display()))?;
+    let new_corpus = Corpus::parse(&new_text, manifest.rules().body_starts_at);
     let cited = cited(manifest)?;
     let changes = rules::diff::diff(&old_corpus, &new_corpus, &cited);
     for change in &changes {
         println!("\n{change}");
+    }
+
+    // A release is dated by its URL, and Wizards has re-published one release's rules under
+    // a new URL date with nothing changed but typography. The effective line is what tells
+    // that case apart from a real update, so it is said here rather than left to a diff.
+    match (
+        release::effective_as_of(&old_text),
+        release::effective_as_of(&new_text),
+    ) {
+        (Some(a), Some(b)) if a == b => println!(
+            "\nBoth releases say \"{a}\" — {new} re-publishes the same rules under a new\n\
+             URL date, and any file difference is typography."
+        ),
+        (a, b) => println!(
+            "\n{old}: {}\n{new}: {}",
+            a.unwrap_or("(no effective-as-of line)"),
+            b.unwrap_or("(no effective-as-of line)")
+        ),
     }
 
     // Archive the OUTGOING release before it is overwritten. A release that is no longer
@@ -430,6 +455,34 @@ fn today() -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn vendoring_folds_the_published_bytes_and_digests_what_it_wrote() {
+        // The mutation this guards against: writing or digesting the raw download, either of
+        // which leaves the version file's sha256 not matching the committed text.
+        let dir = std::env::temp_dir().join("knowledge-vendor-test");
+        std::fs::create_dir_all(&dir).expect("a scratch directory");
+        let tree = Tree::new(
+            &dir,
+            dir.join("MagicCompRules.txt"),
+            dir.join("VERSION"),
+            dir.join("past"),
+            dir.join("MANIFEST.tsv"),
+        );
+        let (digest, lines) = vendor(
+            &tree,
+            "19980101",
+            "https://e.test/r.txt",
+            b"\xef\xbb\xbf100.1 A rule.\r\n",
+        )
+        .expect("a vendored release");
+        let written = std::fs::read(tree.text()).expect("the vendored text");
+        assert_eq!(written, b"100.1 A rule.\n");
+        assert_eq!(lines, 1);
+        assert_eq!(digest, release::sha256(&written));
+        let version = std::fs::read_to_string(tree.version()).expect("the version file");
+        assert!(version.contains(&digest), "the version file records {digest}");
+    }
 
     #[test]
     fn a_citing_list_is_read_out_of_the_pre_bump_index() {

@@ -77,6 +77,42 @@ pub fn sha256(bytes: &[u8]) -> String {
     digest.iter().map(|b| format!("{b:02x}")).collect()
 }
 
+/// A published file, folded to the form this tree vendors: no UTF-8 BOM, LF line endings.
+///
+/// Wizards publishes the text as UTF-8 with a BOM and CRLF terminators. Neither carries
+/// content, and vendoring them would put every line of the file in a diff on every bump — so
+/// every download is folded here before anything stores or digests it. Every recorded sha256,
+/// in the version file and in the archive manifest, is of the folded text, and [`resolve`]
+/// folds a fetch before comparing it against one. Nothing else is touched: a CR not followed
+/// by LF is content and is kept, and so is every other byte, because the vendored text is
+/// what citations quote verbatim.
+pub fn normalize(published: &[u8]) -> Vec<u8> {
+    let body = published
+        .strip_prefix(b"\xef\xbb\xbf".as_slice())
+        .unwrap_or(published);
+    let mut out = Vec::with_capacity(body.len());
+    let mut i = 0;
+    while i < body.len() {
+        if body[i] != b'\r' || body.get(i + 1) != Some(&b'\n') {
+            out.push(body[i]);
+        }
+        i += 1;
+    }
+    out
+}
+
+/// The "effective as of" line near the top of a release, or `None` when the layout moved.
+///
+/// Two releases can differ as files while carrying the same effective date: Wizards
+/// re-exports a release with new typography under a new URL date. Comparing the two lines at
+/// bump time is what shows that case before anyone reads a diff.
+pub fn effective_as_of(text: &str) -> Option<&str> {
+    text.lines()
+        .take(10)
+        .map(str::trim)
+        .find(|l| l.contains("effective as of"))
+}
+
 /// One archived release's provenance.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ArchivedRelease {
@@ -154,12 +190,19 @@ pub fn resolve(tree: &Tree, date: &str) -> Result<PathBuf, String> {
             return Err(format!("{date}: curl failed ({status})"));
         }
     }
+    // Fold whatever the cache holds: a fresh download is the publisher's raw bytes, and a
+    // cache written before folding existed is too. Idempotent, so a folded cache is untouched.
+    let raw = std::fs::read(&cache).map_err(|e| e.to_string())?;
+    let folded = normalize(&raw);
+    if folded != raw {
+        std::fs::write(&cache, &folded).map_err(|e| e.to_string())?;
+    }
     let expected = std::fs::read_to_string(tree.manifest())
         .ok()
         .and_then(|t| read_manifest(&t).get(date).map(|r| r.sha256.clone()));
     match expected {
         Some(want) => {
-            let got = sha256(&std::fs::read(&cache).map_err(|e| e.to_string())?);
+            let got = sha256(&folded);
             if got != want {
                 let _ = std::fs::remove_file(&cache);
                 return Err(format!(
@@ -212,6 +255,52 @@ mod tests {
             url_for("20260807"),
             "https://media.wizards.com/2026/downloads/MagicCompRules%2020260807.txt"
         );
+    }
+
+    #[test]
+    fn normalizing_strips_the_bom_and_folds_crlf_and_nothing_else() {
+        assert_eq!(normalize(b"\xef\xbb\xbfa\r\nb\rc\n"), b"a\nb\rc\n");
+        // Idempotent: text already in the vendored form passes through byte for byte.
+        assert_eq!(normalize(b"a\nb\rc\n"), b"a\nb\rc\n");
+    }
+
+    #[test]
+    fn a_fetch_is_folded_before_the_digest_is_checked() {
+        // A scratch corpus whose manifest records the digest of the FOLDED text, and a cache
+        // seeded with the raw BOM+CRLF bytes Wizards would serve. Resolving must fold before
+        // comparing, or the digest check refuses the exact bytes the publisher sends.
+        const DATE: &str = "19980101";
+        let folded = b"100.1 A rule.\n";
+        let dir = std::env::temp_dir().join("knowledge-release-fold-test");
+        std::fs::create_dir_all(&dir).expect("a scratch directory");
+        let manifest = dir.join("MANIFEST.tsv");
+        std::fs::write(
+            &manifest,
+            format!("{DATE}\thttps://e.test/r.txt\t{}\t2026-01-01\n", sha256(folded)),
+        )
+        .expect("a manifest row");
+        let tree = Tree::new(
+            &dir,
+            dir.join("MagicCompRules.txt"),
+            dir.join("VERSION"),
+            dir.join("past"),
+            manifest,
+        );
+        let cache = std::env::temp_dir().join(format!("MagicCompRules-{DATE}.txt"));
+        std::fs::write(&cache, b"\xef\xbb\xbf100.1 A rule.\r\n").expect("a seeded cache");
+        let path = resolve(&tree, DATE).expect("the folded digest matches");
+        assert_eq!(std::fs::read(&path).expect("the resolved file"), folded);
+        let _ = std::fs::remove_file(&cache);
+    }
+
+    #[test]
+    fn the_effective_line_is_read_off_the_top_and_absence_is_none() {
+        let text = "\u{feff}Magic Rules\n \nThese rules are effective as of August 7, 2026.\n";
+        assert_eq!(
+            effective_as_of(text),
+            Some("These rules are effective as of August 7, 2026.")
+        );
+        assert_eq!(effective_as_of("100.1 A rule.\n"), None);
     }
 
     #[test]
