@@ -318,7 +318,7 @@ mod planted {
             ),
             (
                 manifest.interpretations().dir.join("index.md"),
-                index::interpretation_index(model, manifest, false),
+                index::interpretation_index(model, manifest),
             ),
         ])
     }

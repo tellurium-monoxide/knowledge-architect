@@ -37,7 +37,7 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding
     let interpretation_index = manifest.interpretations().dir.join("index.md");
     compare(
         &interpretation_index,
-        &index::interpretation_index(model, manifest, false),
+        &index::interpretation_index(model, manifest),
         inputs,
         "regenerate it WITHOUT line numbers and read the diff: a moved title is a replaced \
          entry, a moved file is a re-filing, a removed section is a loss",

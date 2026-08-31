@@ -43,8 +43,31 @@ which is `rules::integrity::check` and sits outside them because its subject is 
 rather than the model. `Only` is a set, so one invocation asks for any combination of them. A report
 states which families it performed, and a family that did not run contributes no count: printed as a
 zero, a count nobody took reads as _nothing found_ for a check that never ran, which is the failure
-this tool exists to prevent. Two names cover the groupings that had callers before the set existed.
-`citations` is the one the write-time hook runs alone, and `structure` is every family but that one.
+this tool exists to prevent. Two names cover the groupings that had callers before the set existed:
+`citations` is every quote judged against the rule it names, and `structure` is every family but
+that one.
+
+### A generated file's content is a function of the walked tree, so `index` writes it with no dry run `##generated-files-are-pure`
+
+`thaum@docs/rules/index.md` and `thaum@docs/rules/interpretations/index.md` hold no hand-written
+bytes. Each is what its generator returns over the model, which is what lets
+`knowledge@documentation/src/check/generated.rs` verify one by regenerating into a `String` and
+comparing rather than by writing the file and reading it back. Two things follow, and both are
+load-bearing.
+
+**Writing one destroys nothing**, so `cargo knowledge index` takes no flags. The dry run a write
+command normally owes exists because a write can lose something, and here it cannot: the worst a
+run can do is replace a file with what the tree says that file is. It writes only where the bytes
+differ, so running it to look moves not even an mtime, and it names each file it rewrote.
+
+**Verifying is not this command's question.** `cargo knowledge check --only generated` is the gate,
+and it names the first line at which the committed file and the regenerated one disagree. A second
+command answering the same question in its own format is what drifts, and there would be nothing to
+say which of the two was right.
+
+**The purity is a property to preserve, not one to observe.** A generator that embedded a
+timestamp, a hostname, or anything the walk does not see would break both consequences at once: the
+check would report a file stale that nobody had changed, and `index` would rewrite on every run.
 
 ### `knowledge.toml [project]` names the components, and every component carries the same documents `##components-carry-the-same-documents`
 

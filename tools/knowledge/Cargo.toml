@@ -10,6 +10,7 @@ publish.workspace = true
 [dependencies]
 documentation = { path = "documentation" }
 rules = { path = "rules" }
+clap = { version = "4", features = ["derive"] }
 
 # The integration tests read the family list out of the library rather than repeating it,
 # so a family added without a test is a compile-time fact rather than a silent gap.

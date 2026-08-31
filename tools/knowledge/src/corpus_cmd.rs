@@ -6,24 +6,57 @@
 
 use std::collections::HashMap;
 use std::path::Path;
+use std::process::ExitCode;
+
+use clap::Subcommand;
 
 use documentation::Manifest;
 use rules::release::{self, Tree};
 use rules::{Corpus, RuleNumber};
 
-pub fn run(manifest: &Manifest, args: &[String]) -> Result<i32, String> {
+/// The corpus verbs. Dates are named rather than positional wherever two of them meet, per
+/// `thaum#named-values-where-order-decides`; a lone date has no order to get wrong.
+#[derive(Subcommand)]
+pub enum RulesCommand {
+    /// The pinned text of one or more rules, shaped to be quoted.
+    Show {
+        #[arg(required = true, num_args = 1.., value_name = "NUMBER")]
+        numbers: Vec<String>,
+    },
+    /// Is a release newer than the pinned one published?
+    Latest,
+    /// What moved between two releases, filtered to the rules this project cites.
+    Diff {
+        /// The earlier release.
+        #[arg(long, value_name = "DATE")]
+        old: String,
+        /// The later release.
+        #[arg(long, value_name = "DATE")]
+        new: String,
+    },
+    /// Fetch a release into the vendored text and repin to it.
+    Fetch {
+        /// Without one, the release the version file already names.
+        #[arg(value_name = "DATE")]
+        date: Option<String>,
+    },
+    /// Move the project to a release: archive, fetch, reindex, draft the changelog.
+    Bump {
+        #[arg(value_name = "DATE")]
+        date: String,
+    },
+}
+
+pub fn run(manifest: &Manifest, command: &RulesCommand) -> Result<ExitCode, String> {
     let tree = manifest.rules_tree();
-    match args.first().map(String::as_str) {
-        Some("show") => show(manifest, &tree, &args[1..]),
-        Some("latest") => latest(&tree),
-        Some("diff") => diff(manifest, &tree, &args[1..]),
-        Some("fetch") => fetch(&tree, args.get(1).cloned()),
-        Some("bump") => bump(manifest, &tree, args.get(1)),
-        other => Err(format!(
-            "unknown rules command {:?}; expected show, latest, diff, fetch or bump",
-            other.unwrap_or("(none)")
-        )),
-    }
+    let code = match command {
+        RulesCommand::Show { numbers } => show(manifest, &tree, numbers)?,
+        RulesCommand::Latest => latest(&tree)?,
+        RulesCommand::Diff { old, new } => diff(manifest, &tree, old, new)?,
+        RulesCommand::Fetch { date } => fetch(&tree, date.clone())?,
+        RulesCommand::Bump { date } => bump(manifest, &tree, date)?,
+    };
+    Ok(ExitCode::from(code as u8))
 }
 
 /// One rule as a citation is written: the marker, the number as printed, then the body entire.
@@ -53,11 +86,7 @@ fn quoted(number: &RuleNumber, body: &str) -> String {
 /// **A number that resolves to nothing fails the run.** A session that asked for a rule and
 /// got silence writes the citation from recollection, which is the one thing root `CLAUDE.md`
 /// forbids outright.
-fn show(manifest: &Manifest, tree: &Tree, args: &[String]) -> Result<i32, String> {
-    let numbers: Vec<&String> = args.iter().filter(|a| !a.starts_with('-')).collect();
-    if numbers.is_empty() {
-        return Err("usage: rules show <number> [<number> …]".to_string());
-    }
+fn show(manifest: &Manifest, tree: &Tree, numbers: &[String]) -> Result<i32, String> {
     let text = std::fs::read_to_string(tree.text())
         .map_err(|e| format!("{}: {e}", tree.text().display()))?;
     let corpus = Corpus::parse(&text, manifest.rules().body_starts_at);
@@ -147,7 +176,7 @@ fn latest(tree: &Tree) -> Result<i32, String> {
     println!(
         "FAIL  a newer release is published: {published} (pinned at {pinned}).\n      \
          Read the bumping-rules skill, then:\n        \
-         cargo knowledge rules diff {pinned} {published}\n        \
+         cargo knowledge rules diff --old {pinned} --new {published}\n        \
          cargo knowledge rules bump {published}\n      \
          Nothing here opens a tracker entry: outstanding state goes in a family's\n      \
          open-issues.md by hand, where `cargo knowledge outstanding` can see it."
@@ -179,25 +208,11 @@ fn corpus_at(tree: &Tree, manifest: &Manifest, date: &str) -> Result<Corpus, Str
 }
 
 /// What moved between two releases, filtered to the rules this project cites.
-fn diff(manifest: &Manifest, tree: &Tree, args: &[String]) -> Result<i32, String> {
-    let local = args.iter().any(|a| a == "--local");
-    let dates: Vec<&String> = args.iter().filter(|a| !a.starts_with("--")).collect();
-    let (old, new) = match (local, dates.len()) {
-        (true, 1) => {
-            let text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
-            (
-                Corpus::parse(&text, manifest.rules().body_starts_at),
-                corpus_at(tree, manifest, dates[0])?,
-            )
-        }
-        (false, 2) => (
-            corpus_at(tree, manifest, dates[0])?,
-            corpus_at(tree, manifest, dates[1])?,
-        ),
-        _ => {
-            return Err("usage: rules diff <old> <new>   |   rules diff --local <new>".to_string())
-        }
-    };
+fn diff(manifest: &Manifest, tree: &Tree, old: &str, new: &str) -> Result<i32, String> {
+    let (old, new) = (
+        corpus_at(tree, manifest, old)?,
+        corpus_at(tree, manifest, new)?,
+    );
     let cited = cited(manifest)?;
     let changes = rules::diff::diff(&old, &new, &cited);
     for change in &changes {
@@ -278,12 +293,9 @@ fn effective_report(old_text: &str, new_text: &str, old: &str, new: &str) -> Str
 /// The checkers ARE the change detector: every citation is a verbatim quote, so a quote that
 /// stops verifying is a rule that moved under a decision we made. What this prints is a work
 /// list, not a build break to silence.
-fn bump(manifest: &Manifest, tree: &Tree, new: Option<&String>) -> Result<i32, String> {
-    let Some(new) = new else {
-        return Err("usage: rules bump <date>".to_string());
-    };
+fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     let old = pinned_date(tree)?;
-    if old == *new {
+    if old == new {
         println!("already pinned at {new}");
         return Ok(0);
     }

@@ -4,9 +4,15 @@
 //! deciding what is printed. A library that found the project itself would have to do it from
 //! its own location, and then a check could not be run against a model built in memory —
 //! which is the property the whole shape rests on.
+//!
+//! Arguments are declared, never parsed by hand, per `thaum#arguments-parse-through-clap`, and
+//! the exit codes are `thaum#exit-code-ladder`: 0 ran-and-clean, 1 ran-and-negative, 2
+//! could-not-run.
 
 use std::collections::HashMap;
 use std::process::ExitCode;
+
+use clap::{Args, Parser, Subcommand};
 
 use documentation::check::citations::Release;
 use documentation::check::{Inputs, Only, Report};
@@ -14,117 +20,119 @@ use documentation::Manifest;
 
 mod corpus_cmd;
 
+/// Every accepted `--only` value, as the help prints them.
+///
+/// Written out rather than built from `Only::NAMED`, because a clap help string is a literal.
+/// `every_family_is_named_in_the_help` is what keeps the two in step: it fails when a family
+/// is added and not listed here. A tripwire in `knowledge@docs/tripwires.md` reads this list
+/// out of the help, so a family missing from it is a check whose output reaches no reviewer.
+const FAMILIES: &str = "citations, generated, components, slugs, paths, interpretations, \
+                        uncovered, changes, corpus, regime. `structure` names every family \
+                        but citations. A comma-separated list runs their union over one walk.";
+
+#[derive(Parser)]
+#[command(
+    name = "knowledge",
+    about = "What this project knows, and whether it still holds.",
+    arg_required_else_help = true
+)]
+struct Cli {
+    #[command(subcommand)]
+    command: Command,
+}
+
+#[derive(Subcommand)]
+enum Command {
+    /// Every check, over one walk; or only these families.
+    Check(CheckArgs),
+    /// Every tracker entry, by directory; or the ones a search names, in full.
+    Outstanding(OutstandingArgs),
+    /// Regenerate every generated index in place.
+    Index,
+    /// Every observation the walk produced: file, line, kind, value.
+    Model,
+    /// The corpus and its releases.
+    Rules {
+        #[command(subcommand)]
+        command: corpus_cmd::RulesCommand,
+    },
+}
+
+#[derive(Args)]
+struct CheckArgs {
+    /// Which check families to run. Without it, every one.
+    #[arg(long, value_name = "FAMILIES", value_parser = Only::parse, long_help = FAMILIES)]
+    only: Option<Only>,
+}
+
+#[derive(Args)]
+struct OutstandingArgs {
+    /// Only the entries that need doing.
+    #[arg(long, conflicts_with = "tripwires")]
+    issues: bool,
+    /// Only the tripwires, which need nothing done.
+    #[arg(long, conflicts_with = "issues")]
+    tripwires: bool,
+    /// Print in full every entry whose title contains this text.
+    #[arg(value_name = "TEXT")]
+    needle: Vec<String>,
+}
+
 fn main() -> ExitCode {
-    let cwd = match std::env::current_dir() {
-        Ok(d) => d,
-        Err(e) => {
-            eprintln!("error: cannot read the working directory: {e}");
-            return ExitCode::from(2);
-        }
-    };
-    // The project is whatever declares itself one at or above here. Nothing about any
-    // particular repository is compiled in, so pointing the tool at a mock project under
-    // `knowledge@tests/projects/` needs no flag and no special case.
-    let manifest = match Manifest::find(&cwd) {
-        Ok(m) => m,
+    // Parsed before the project is located, so `--help` answers from anywhere and a mistyped
+    // invocation is refused without a walk. clap exits 2 on a parse failure, which is already
+    // this project's could-not-run code.
+    let cli = Cli::parse();
+
+    let outcome = locate().and_then(|manifest| match cli.command {
+        Command::Check(args) => check(&manifest, args.only.unwrap_or(Only::EVERYTHING)),
+        Command::Outstanding(args) => outstanding(&manifest, &args),
+        Command::Index => index(&manifest),
+        Command::Model => model(&manifest),
+        Command::Rules { command } => corpus_cmd::run(&manifest, &command),
+    });
+
+    match outcome {
+        Ok(code) => code,
         Err(e) => {
             eprintln!("error: {e}");
-            return ExitCode::from(2);
+            ExitCode::from(2)
         }
-    };
-
-    if std::env::args().nth(1).as_deref() == Some("check") {
-        return match check(&manifest) {
-            Ok(code) => code,
-            Err(e) => {
-                eprintln!("error: {e}");
-                ExitCode::from(2)
-            }
-        };
     }
+}
 
-    if std::env::args().nth(1).as_deref() == Some("rules") {
-        let args: Vec<String> = std::env::args().skip(2).collect();
-        return match corpus_cmd::run(&manifest, &args) {
-            Ok(code) => ExitCode::from(code as u8),
-            Err(e) => {
-                eprintln!("error: {e}");
-                ExitCode::from(2)
-            }
-        };
-    }
+/// The project is whatever declares itself one at or above the working directory.
+///
+/// Nothing about any particular repository is compiled in, so pointing the tool at a mock
+/// project under `knowledge@tests/projects/` needs no flag and no special case.
+fn locate() -> Result<Manifest, String> {
+    let cwd =
+        std::env::current_dir().map_err(|e| format!("cannot read the working directory: {e}"))?;
+    Manifest::find(&cwd).map_err(|e| e.to_string())
+}
 
-    if std::env::args().nth(1).as_deref() == Some("outstanding") {
-        return match outstanding(&manifest) {
-            Ok(code) => code,
-            Err(e) => {
-                eprintln!("error: {e}");
-                ExitCode::from(2)
-            }
-        };
-    }
-
-    if std::env::args().nth(1).as_deref() == Some("index") {
-        return match index(&manifest) {
-            Ok(code) => code,
-            Err(e) => {
-                eprintln!("error: {e}");
-                ExitCode::from(2)
-            }
-        };
-    }
-
-    if std::env::args().nth(1).as_deref() == Some("model") {
-        // Every observation the walk and the scanner produced, one per line. This is what the
-        // model was compared against the implementation it replaces with, and it is the way
-        // to see what a check is actually being handed.
-        return match documentation::Model::build(&manifest) {
-            Ok(model) => {
-                let dump = model.canonical();
-                // The count goes to stderr so that redirecting stdout gives a file that is
-                // only observations, while a reader still learns how much was walked. A
-                // document with nothing in it produces no line, so the two numbers together
-                // are what say whether the walk agrees with another implementation of it.
-                eprintln!(
-                    "{} documents, {} observations",
-                    model.documents().len(),
-                    dump.lines().count()
-                );
-                print!("{dump}");
-                ExitCode::SUCCESS
-            }
-            Err(e) => {
-                eprintln!("error: cannot read the project: {e}");
-                ExitCode::from(2)
-            }
-        };
-    }
-
-    // No subcommand is not success. A tool whose default is to exit 0 having done nothing is
-    // the silent false negative everything here exists to prevent.
+/// Every observation the walk and the scanner produced, one per line.
+///
+/// This is what the model was compared against the implementation it replaces with, and it is
+/// the way to see what a check is actually being handed. Filtering it on a rule number is also
+/// how a citation is located inside the file the rule index names, because markers and rule
+/// tokens are separate kinds here and a text grep tells them apart from neither each other nor
+/// from a rule number that is data.
+fn model(manifest: &Manifest) -> Result<ExitCode, String> {
+    let model = documentation::Model::build(manifest)
+        .map_err(|e| format!("cannot read the project: {e}"))?;
+    let dump = model.canonical();
+    // The count goes to stderr so that redirecting stdout gives a file that is only
+    // observations, while a reader still learns how much was walked. A document with nothing
+    // in it produces no line, so the two numbers together are what say whether the walk agrees
+    // with another implementation of it.
     eprintln!(
-        "knowledge — what this project knows, and whether it still holds.\n\
-         project root {}\n\
-         \n\
-         \x20 check [--only a,b,c]     every check, over one walk; or only these families\n\
-         \x20                          {}\n\
-         \x20 outstanding [text]       every tracker entry, by directory; or one in full\n\
-         \x20 index [--interpretations] [--lines] [--write]\n\
-         \x20                          print a generated index, or write it\n\
-         \x20 model                    every observation the walk produced\n\
-         \x20 rules show <number>…     the pinned text of a rule, shaped to be quoted\n\
-         \x20 rules latest             is a newer rules release published?\n\
-         \x20 rules diff <old> <new>   what moved, filtered to what this project cites\n\
-         \x20 rules fetch [date]       fetch a release and repin to it\n\
-         \x20 rules bump <date>        move to a release: archive, fetch, reindex, draft\n",
-        manifest.root().display(),
-        Only::NAMED
-            .iter()
-            .map(|(n, _)| *n)
-            .collect::<Vec<_>>()
-            .join(", ")
+        "{} documents, {} observations",
+        model.documents().len(),
+        dump.lines().count()
     );
-    ExitCode::from(2)
+    print!("{dump}");
+    Ok(ExitCode::SUCCESS)
 }
 
 /// Every check, over one walk.
@@ -132,12 +140,7 @@ fn main() -> ExitCode {
 /// Releases are resolved here rather than inside a check: resolving one may read the archive
 /// or reach the network, and a check may do neither. What a check receives is a release
 /// already parsed.
-fn check(manifest: &Manifest) -> Result<ExitCode, String> {
-    let args: Vec<String> = std::env::args().skip(2).collect();
-    let only = match args.iter().position(|a| a == "--only") {
-        Some(i) => Only::parse(args.get(i + 1).ok_or("--only needs a family")?.as_str())?,
-        None => Only::EVERYTHING,
-    };
+fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
     let model = documentation::Model::build(manifest).map_err(|e| e.to_string())?;
     let tree = manifest.rules_tree();
     let body_starts_at = manifest.rules().body_starts_at;
@@ -268,56 +271,64 @@ fn check(manifest: &Manifest) -> Result<ExitCode, String> {
     })
 }
 
-/// Print a generated index, or write it.
+/// Regenerate every generated index in place.
 ///
-/// Printing is the default because the file is read as a diff: `--write` is the deliberate
-/// act, and everything else leaves the tree alone.
+/// **It writes only where the bytes differ**, per `knowledge#generated-files-are-pure`: what a
+/// generated file holds is a function of the walked tree, so rewriting an already current one
+/// moves nothing but its mtime, and running this to look must cost nothing. It takes no flags
+/// for the same reason — nothing here can lose content, so there is nothing for a dry run to
+/// protect.
+///
+/// **Whether a generated file is current is not this command's question.**
+/// `cargo knowledge check --only generated` is the gate, and it names the first line at which
+/// the committed file and the regenerated one disagree.
 fn index(manifest: &Manifest) -> Result<ExitCode, String> {
-    let args: Vec<String> = std::env::args().collect();
-    let interpretations = args.iter().any(|a| a == "--interpretations");
-    let with_lines = args.iter().any(|a| a == "--lines");
-    if with_lines && !interpretations {
-        return Err("--lines applies to --interpretations only".into());
-    }
     let model = documentation::Model::build(manifest).map_err(|e| e.to_string())?;
-    let (rel, text) = if interpretations {
-        (
-            manifest.interpretations().dir.join("index.md"),
-            documentation::index::interpretation_index(&model, manifest, with_lines),
-        )
-    } else {
-        let tree = manifest.rules_tree();
-        let corpus_text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
-        let corpus = rules::Corpus::parse(&corpus_text, manifest.rules().body_starts_at);
-        let version = std::fs::read_to_string(tree.version()).map_err(|e| e.to_string())?;
-        let pinned = rules::release::read_version(&version)
-            .get("date")
-            .cloned()
-            .ok_or("VERSION names no date")?;
+    let tree = manifest.rules_tree();
+    let corpus_text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
+    let corpus = rules::Corpus::parse(&corpus_text, manifest.rules().body_starts_at);
+    let version = std::fs::read_to_string(tree.version()).map_err(|e| e.to_string())?;
+    let pinned = rules::release::read_version(&version)
+        .get("date")
+        .cloned()
+        .ok_or("VERSION names no date")?;
+
+    // Both, always. They come from one model and one gate family checks them together, so a
+    // flag choosing between them bought nothing and was where an invalid combination lived.
+    let generated = [
         (
             manifest.rules().dir.join("index.md"),
             documentation::index::rule_index(&model, manifest, &corpus, &pinned),
-        )
-    };
-    if args.iter().any(|a| a == "--write") {
-        std::fs::write(manifest.root().join(&rel), &text).map_err(|e| e.to_string())?;
-        eprintln!("wrote {}", rel.display());
-    } else {
-        print!("{text}");
+        ),
+        (
+            manifest.interpretations().dir.join("index.md"),
+            documentation::index::interpretation_index(&model, manifest),
+        ),
+    ];
+
+    for (rel, text) in generated {
+        let path = manifest.root().join(&rel);
+        if std::fs::read_to_string(&path).ok().as_deref() == Some(text.as_str()) {
+            println!("{:<40} already current", rel.display());
+            continue;
+        }
+        std::fs::write(&path, &text).map_err(|e| format!("{}: {e}", path.display()))?;
+        println!("{:<40} rewritten", rel.display());
     }
     Ok(ExitCode::SUCCESS)
 }
 
-/// Every tracker entry in the project, or the one entry a search names.
-fn outstanding(manifest: &Manifest) -> Result<ExitCode, String> {
-    let args: Vec<String> = std::env::args().skip(2).collect();
-    let want_issues = !args.iter().any(|a| a == "--tripwires");
-    let want_tripwires = !args.iter().any(|a| a == "--issues");
-    let needle: Vec<&str> = args
-        .iter()
-        .filter(|a| !a.starts_with("--"))
-        .map(String::as_str)
-        .collect();
+/// Every tracker entry in the project, or the entries a search names.
+fn outstanding(manifest: &Manifest, args: &OutstandingArgs) -> Result<ExitCode, String> {
+    // Each flag SELECTS its own kind. Read as each deselecting the other, passing both
+    // selected nothing and reported the project empty at exit 0 — the command root
+    // `CLAUDE.md` sends every session to before diagnosing anything. clap refuses the pair
+    // now; this reads so that a third kind could not reintroduce the shape.
+    let (want_issues, want_tripwires) = match (args.issues, args.tripwires) {
+        (false, false) => (true, true),
+        (issues, tripwires) => (issues, tripwires),
+    };
+    let needle: Vec<&str> = args.needle.iter().map(String::as_str).collect();
 
     let model = documentation::Model::build(manifest).map_err(|e| e.to_string())?;
     let entries = documentation::outstanding::entries(&model, manifest);
@@ -535,7 +546,151 @@ fn counts(report: &Report) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{counts, Only, Report};
+    use super::{counts, Cli, Command, Only, Report, FAMILIES};
+    use crate::corpus_cmd::RulesCommand;
+    use clap::Parser;
+
+    // Bound to names, so these are fixture data rather than citations: a rule number in an
+    // unbound string literal is prose the scanner reads, and this file is inside the walk.
+    const RULE: &str = "601.2";
+    const ANOTHER_RULE: &str = "104.1";
+    const OLD: &str = "20260807";
+    const NEW: &str = "20260819";
+
+    // clap's own consistency check over the whole derive: a flag that conflicts with an
+    // argument that does not exist, a broken default, two arguments claiming one name. It is
+    // what catches a malformed declaration at test time rather than at first invocation.
+    #[test]
+    fn cli_declaration_is_consistent() {
+        use clap::CommandFactory;
+        Cli::command().debug_assert();
+    }
+
+    /// The claim: every family the tool accepts is named in the help.
+    ///
+    /// `FAMILIES` is a literal because a clap help string has to be one, so nothing but this
+    /// keeps it in step with `Only::NAMED`. The tripwire guarding
+    /// `knowledge#families-are-the-checks` reads the family list out of the help, so a family
+    /// missing from it is a check whose output reaches no reviewer and nothing reports that.
+    #[test]
+    fn every_family_is_named_in_the_help() {
+        for (name, _) in Only::NAMED {
+            assert!(
+                FAMILIES.contains(name),
+                "{name} is accepted by --only and absent from its help"
+            );
+        }
+        assert!(FAMILIES.contains("structure"), "the grouping name too");
+    }
+
+    /// The claim: every combination the hand-rolled parser accepted is refused, and refused
+    /// while parsing rather than by a check inside a command.
+    ///
+    /// Each row below exited 0 before this migration, having done something other than what
+    /// was asked — the first silently reported the project empty, and the rest ignored a flag
+    /// or an argument. That is the discrimination: they are observed passing against the
+    /// implementation this replaces.
+    #[test]
+    fn every_recorded_silent_acceptance_is_refused() {
+        for argv in [
+            // Set from each other's absence, the pair selected neither kind.
+            vec!["knowledge", "outstanding", "--issues", "--tripwires"],
+            // Unknown flags, accepted by every subcommand.
+            vec!["knowledge", "check", "--bogus"],
+            vec!["knowledge", "outstanding", "--bogus"],
+            vec![
+                "knowledge",
+                "rules",
+                "diff",
+                "--bogus",
+                "--old",
+                OLD,
+                "--new",
+                NEW,
+            ],
+            // Positional junk, filtered out of the arguments and never refused.
+            vec!["knowledge", "check", "stray"],
+            vec!["knowledge", "model", "zzz"],
+            // A flag on a command that has none, silently dropped.
+            vec!["knowledge", "rules", "show", "--write", RULE],
+            // The flags `index` no longer has, one pair of which wrote a file the gate rejects.
+            vec!["knowledge", "index", "--write"],
+            vec!["knowledge", "index", "--interpretations"],
+            vec!["knowledge", "index", "--lines"],
+            // Dates by position, where a swap produces a reversed work list in silence.
+            vec!["knowledge", "rules", "diff", OLD, NEW],
+            vec!["knowledge", "rules", "diff", "--old", OLD],
+            // Arguments a command cannot run without.
+            vec!["knowledge", "rules", "show"],
+            vec!["knowledge", "rules", "bump"],
+            vec!["knowledge"],
+        ] {
+            assert!(
+                Cli::try_parse_from(argv.iter().copied()).is_err(),
+                "{argv:?} must be refused"
+            );
+        }
+    }
+
+    /// The claim: what the tool does accept parses to the command and values it names.
+    ///
+    /// The refusals above are satisfied by a declaration that refuses everything, so this is
+    /// the half that says the interface still exists.
+    #[test]
+    fn the_accepted_shapes_parse_to_what_they_name() {
+        let Command::Check(bare) = Cli::parse_from(["knowledge", "check"]).command else {
+            panic!("check parses to the check subcommand");
+        };
+        assert!(bare.only.is_none(), "no --only is every family");
+
+        let Command::Check(some) =
+            Cli::parse_from(["knowledge", "check", "--only", "slugs,paths"]).command
+        else {
+            panic!("check parses to the check subcommand");
+        };
+        assert_eq!(some.only, Some(Only::SLUGS.union(Only::PATHS)));
+
+        let Command::Outstanding(o) =
+            Cli::parse_from(["knowledge", "outstanding", "two", "words"]).command
+        else {
+            panic!("outstanding parses to the outstanding subcommand");
+        };
+        assert_eq!(o.needle, ["two", "words"]);
+        assert!(!o.issues && !o.tripwires, "neither flag is every kind");
+
+        let Command::Outstanding(one) =
+            Cli::parse_from(["knowledge", "outstanding", "--tripwires"]).command
+        else {
+            panic!("outstanding parses to the outstanding subcommand");
+        };
+        assert!(one.tripwires && !one.issues);
+
+        let Command::Rules { command } =
+            Cli::parse_from(["knowledge", "rules", "diff", "--old", OLD, "--new", NEW]).command
+        else {
+            panic!("rules parses to the rules subcommand");
+        };
+        let RulesCommand::Diff { old, new } = command else {
+            panic!("diff parses to the diff verb");
+        };
+        // Named, so this assertion could not pass with the two the wrong way round.
+        assert_eq!((old.as_str(), new.as_str()), (OLD, NEW));
+
+        let Command::Rules { command } =
+            Cli::parse_from(["knowledge", "rules", "show", RULE, ANOTHER_RULE]).command
+        else {
+            panic!("rules parses to the rules subcommand");
+        };
+        let RulesCommand::Show { numbers } = command else {
+            panic!("show parses to the show verb");
+        };
+        assert_eq!(numbers.len(), 2, "several numbers at once, in order given");
+
+        assert!(matches!(
+            Cli::parse_from(["knowledge", "index"]).command,
+            Command::Index
+        ));
+    }
 
     fn report(ran: Only) -> Report {
         Report {

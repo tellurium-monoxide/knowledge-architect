@@ -87,3 +87,13 @@ That leaves the engine's dependence on the corpus invisible, and a release bump 
 depends on it — which is the one thing the index exists to prevent.
 **Re-entry:** standing.
 
+## Guarding the rejected citation locator
+
+**Fires when:** a rules bump lands a citation repair at a file and line that a
+`cargo knowledge model` filter for that rule number did not list. Take the filter output before the
+repairs and compare it against the diff the bump produced.
+**Response:** reopen the rejected locator in `knowledge@docs/rejected-alternatives.md`. The reason
+it lost is that the model dump is complete for this purpose, and a repair the filter missed is that
+reason failing — the answer is then either widening the scanner or a filter that states what it
+covers, and either way the missed shape is recorded as a `defect`.
+**Re-entry:** the next rules bump, and standing.

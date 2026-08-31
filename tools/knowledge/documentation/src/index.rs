@@ -135,7 +135,7 @@ pub fn rule_index(model: &Model, manifest: &Manifest, corpus: &Corpus, pinned: &
     out.push_str("# Rule citation index\n\n");
     // The provenance line names the command that regenerates the file, because a generated
     // file a reader cannot regenerate is a file they will edit by hand.
-    out.push_str("**Generated — do not edit.** `cargo knowledge index --write`\n\n");
+    out.push_str("**Generated — do not edit.** `cargo knowledge index`\n\n");
     out.push_str(
         "Every Comprehensive Rule the live files cite, and where. This is what makes a\n\
          rules bump actionable: when a rule changes or is renumbered, this says exactly what\n\
@@ -183,7 +183,7 @@ struct Entry {
 /// different reading under the same number — changes none of them. A title in a generated
 /// table does change, so the diff of this file is where a lost, replaced or re-filed entry
 /// becomes visible.
-pub fn interpretation_index(model: &Model, manifest: &Manifest, with_lines: bool) -> String {
+pub fn interpretation_index(model: &Model, manifest: &Manifest) -> String {
     let dir = manifest.interpretations().dir.clone();
     let mut entries: BTreeMap<u16, Entry> = BTreeMap::new();
 
@@ -245,7 +245,7 @@ pub fn interpretation_index(model: &Model, manifest: &Manifest, with_lines: bool
 
     let cited = citing_files(model, &dir);
     let rule_index = rel_from(&dir, &manifest.rules().dir.join("index.md"));
-    render_interpretation_index(&entries, &cited, with_lines, &dir, &rule_index)
+    render_interpretation_index(&entries, &cited, &dir, &rule_index)
 }
 
 /// `R<n> — <title>` as an entry's own heading.
@@ -299,7 +299,6 @@ fn citing_files(model: &Model, dir: &std::path::Path) -> BTreeMap<u16, BTreeMap<
 fn render_interpretation_index(
     entries: &BTreeMap<u16, Entry>,
     cited: &BTreeMap<u16, BTreeMap<String, Vec<u32>>>,
-    with_lines: bool,
     dir: &std::path::Path,
     rule_index: &std::path::Path,
 ) -> String {
@@ -333,16 +332,13 @@ fn render_interpretation_index(
                     files.len(),
                     if files.len() > 1 { "s" } else { "" }
                 ));
-                for (file, lines) in files {
-                    let suffix = if with_lines {
-                        let plural = if lines.len() > 1 { "s" } else { "" };
-                        let numbers: Vec<String> = lines.iter().map(u32::to_string).collect();
-                        format!(" — line{plural} {}", numbers.join(", "))
-                    } else {
-                        String::new()
-                    };
+                // The citing list is file-level, and that is deliberate: it is what the
+                // freshness gate is denominated in, so this file moves when a citation is
+                // added, re-filed or deleted and not when unrelated prose shifts a line.
+                // Locating a citation inside the file it names is `cargo knowledge model`.
+                for file in files.keys() {
                     let rel = rel_from(dir, std::path::Path::new(file));
-                    body.push(format!("- [{file}]({}){suffix}", rel.display()));
+                    body.push(format!("- [{file}]({})", rel.display()));
                 }
                 body.push(String::new());
             }
@@ -355,13 +351,7 @@ fn render_interpretation_index(
 
     let concerns: BTreeSet<&String> = entries.values().map(|e| &e.file).collect();
     let rule_index = rule_index.display();
-    let provenance = if with_lines {
-        "**Generated — do not edit.** `cargo knowledge index --interpretations --lines`\n\n\
-         **Line numbers are on, so this copy is temporary.** `cargo knowledge check` fails\n\
-         while it is in the tree; regenerate without `--lines` before committing.\n\n"
-    } else {
-        "**Generated — do not edit.** `cargo knowledge index --interpretations --write`\n\n"
-    };
+    let provenance = "**Generated — do not edit.** `cargo knowledge index`\n\n";
     format!(
         "# Interpretation index\n\n\
          {provenance}\
@@ -378,9 +368,9 @@ fn render_interpretation_index(
          which readings would have to be re-argued if that rule moved under them.\n\n\
          The citing list is file-level, and that is what freshness is gated on: this file changes\n\
          when a citation is added, moved between files or deleted, and not when unrelated prose\n\
-         shifts one down a page. `cargo knowledge index --interpretations --lines` adds the line numbers to\n\
-         a temporary copy for someone who wants them; that copy fails the gate until it is\n\
-         regenerated without the flag.\n\n\
+         shifts one down a page. To locate a citation inside the file that holds it, filter\n\
+         `cargo knowledge model` on the rule number: its dump is file, line, kind and value, and\n\
+         markers and rule tokens are separate kinds.\n\n\
          {} entries across {} concern files\n\n\
          ---\n\n{}\n",
         entries.len(),
@@ -448,7 +438,7 @@ mod tests {
             (PathBuf::from(concern), "## R7 — a reading\n".to_string()),
             (PathBuf::from(citing), "R7 holds\n".to_string()),
         ]);
-        let index = interpretation_index(&model, &declaring(), false);
+        let index = interpretation_index(&model, &declaring());
         assert!(index.contains("In [a-concern.md](a-concern.md)"), "{index}");
         let row = format!("- [{citing}](../{citing})");
         assert!(index.contains(&row), "{index}");

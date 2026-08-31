@@ -1,43 +1,120 @@
 # Knowledge checker
 
-How this project's knowledge is held: the Comprehensive Rules corpus, and the
-documents that cite it. One binary, reached through a cargo alias so nothing has to be installed:
+How this project's knowledge is held: the Comprehensive Rules corpus, and the documents that cite
+it. One binary, reached through a cargo alias so nothing has to be installed.
 
 ```sh
-cargo knowledge check [--only a,b,c]     # every check, over one walk; or only these families
-cargo knowledge outstanding [text]       # every tracker entry, by directory; or one in full
-cargo knowledge index [--interpretations] [--lines] [--write]
-cargo knowledge model                    # every observation the walk produced
-cargo knowledge rules show <number> [<number> ...]   # the pinned text of a rule, shaped to be quoted
-cargo knowledge rules latest|diff|fetch|bump
+cargo knowledge check [--only a,b,c]      every check, over one walk; or only these families
+cargo knowledge outstanding [--issues | --tripwires] [text …]
+                                          every tracker entry by directory; or one in full
+cargo knowledge index                     regenerate every generated index in place
+cargo knowledge model                     every observation the walk produced
+cargo knowledge rules show <number> …     the pinned text of a rule, shaped to be quoted
+cargo knowledge rules latest              is a newer rules release published?
+cargo knowledge rules diff --old <date> --new <date>
+                                          what moved, filtered to what this project cites
+cargo knowledge rules fetch [<date>]      fetch a release and repin to it
+cargo knowledge rules bump <date>         archive, fetch, reindex, draft the changelog
 ```
+
+## Exit codes
+
+Three, per `thaum#exit-code-ladder`, and the third is what makes the other two mean anything.
+
+| code | meaning | where it comes from |
+| ---- | ------- | ------------------- |
+| `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; every `index` and `model` run |
+| `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `outstanding <text>` matching nothing |
+| `2` | the command could not run | an unknown or invalid argument, no project above the working directory, an input that cannot be read, `rules latest` when the extractor fails |
+
+**A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
+are refused before the project is located, so `--help` answers from anywhere and a mistyped
+invocation costs no walk.
+
+## `check`
 
 **A run prints the summary first, its findings under it, and its verdict on the last line** —
 `PASSED: no findings`, or `FAILED: n findings above`. The verdict is derived from the finding list
-rather than tracked beside it, so it cannot disagree with the exit code, which is `0` when there are
-none and `1` when there are any. A caller scripting against a run reads the exit code; a person
-reads the last line. The order matters because the summary block prints on a failing run too, so
-while it came last a `| tail` showed a success-shaped report over a red tree.
+rather than tracked beside it, so it cannot disagree with the exit code. **The order is a
+contract**: the summary block prints on a failing run as well as a passing one, so a reader taking
+the tail of the output has to reach the verdict rather than the counts.
 
-**The `--only` families are the checks themselves**, one per check: `citations`, `generated`,
-`components`, `slugs`, `paths`, `interpretations`, `uncovered`, `changes`, `corpus`. Eight are the
-modules under `knowledge@documentation/src/check/`, and `corpus` is the integrity check over the
-vendored text and its archive, which reads the filesystem rather than the model. `structure` names
-every family but `citations`. A comma-separated list runs their union over the one walk, so asking
-for several costs one run rather than one run each. A run prints which families it performed, and a
-family that did not run prints no count of its own. The argument is `knowledge#families-are-the-checks`.
+**The `--only` families are the checks themselves**, one per check:
 
-**`rules show` prints a rule as a citation is written**: `> <number> <body>`, the body entire, on
-one line, from the vendored release and no other. Paste the line into a document as a blockquote,
-or take the body alone for the inline form. It names the rule's subrules where it has any, because
-a whole-body quote of a parent does not stand for a claim its subrule carries, and it fails the run
-on a number the release does not hold rather than printing nothing.
+`citations`, `generated`, `components`, `slugs`, `paths`, `interpretations`, `uncovered`,
+`changes`, `corpus`, `regime`.
+
+Nine are the modules under `knowledge@documentation/src/check/`. `corpus` is the integrity check
+over the vendored text and its archive, which reads the filesystem rather than the model.
+`structure` names every family but `citations`. A comma-separated list runs their union over the
+one walk, so asking for several costs one run rather than one run each. A run prints which families
+it performed, and a family that did not run prints no count of its own. The argument is
+`knowledge#families-are-the-checks`.
+
+## `outstanding`
+
+Every tracker entry in the project, grouped by the file that holds it. `--issues` and `--tripwires`
+each select one kind and **refuse each other**: the pair asks for two disjoint halves at once, which
+is what asking for neither already means. A text argument prints in full every entry whose title
+contains it, and matching nothing exits 1.
+
+## `index`
+
+Regenerates `thaum@docs/rules/index.md` and `thaum@docs/rules/interpretations/index.md`, in place,
+from one walk. It takes no flags and **writes only where the bytes differ**, naming each file it
+rewrote:
+
+```
+$ cargo knowledge index
+docs/rules/index.md                      already current
+docs/rules/interpretations/index.md      rewritten
+```
+
+Running it to look therefore costs nothing, not even an mtime. **Whether a generated file is
+current is not this command's question** — that is `cargo knowledge check --only generated`, which
+is a gate and names the first line at which the committed file and the regenerated one disagree.
+Both halves are `knowledge#generated-files-are-pure`.
+
+## `model`
+
+Every observation the walk and the scanner produced, one per line, as `file`, `line`, `kind`,
+`value`, tab-separated on stdout; the document and observation counts go to stderr, so redirecting
+stdout gives a file that is only observations.
+
+**This is also how a citation is located inside the file that holds it.** The generated rule index
+says which files cite a rule, deliberately at file level; filtering this dump on the rule number
+says where in each. It answers from the scanner's own notion of a citation rather than from a
+pattern, which matters because markers and rule tokens are separate kinds here, and because a rule
+number that is *data* — inside a code span, a fenced block or a name-bound string literal — is not
+a citation and does not appear.
+
+```sh
+cargo knowledge model | awk -F'\t' '$4=="<number>" && ($3=="rule-token" || $3 ~ /^marker-/)'
+```
+
+## `rules`
+
+- **`show`** prints a rule as a citation is written: `> <number> <body>`, the body entire, on one
+  line, from the vendored release and no other. Paste the line into a document as a blockquote, or
+  take the body alone for the inline form. It names the rule's subrules where it has any, because a
+  whole-body quote of a parent does not stand for a claim its subrule carries, and it fails the run
+  on a number the release does not hold rather than printing nothing.
+- **`latest`** compares the pinned release against what is published, and treats *no match* as the
+  extractor failing rather than as an answer.
+- **`diff`** names its two releases, `--old` and `--new`, both required. They are flags rather than
+  positions because the output names no direction, so the pair given the wrong way round reports
+  new rules as gone and points every renumbering backwards — `thaum#named-values-where-order-decides`.
+- **`fetch`** vendors a release and rewrites the version file to match; without a date, the one
+  already pinned.
+- **`bump`** moves the project to a release. Read `bumping-rules` before running it.
+
+## What to respect
 
 **Nothing about this repository is compiled into the tool.** Every list a check reads comes from
 `thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
 root — so the same binary checks this repository and a mock project under
-`knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says so
-there, in one place, with a reason beside it.
+`knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says
+so there, in one place, with a reason beside it.
 
 Read `knowledge@docs/design.md` before changing how it works, and `bumping-rules` before adopting a
 rules release.

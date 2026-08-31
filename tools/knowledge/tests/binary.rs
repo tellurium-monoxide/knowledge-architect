@@ -9,8 +9,9 @@
 //! from this repository's own walk, so the binary finds that project by walking up from the
 //! working directory exactly as it would find any other.
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::time::SystemTime;
 
 fn project(name: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -18,11 +19,11 @@ fn project(name: &str) -> PathBuf {
         .join(name)
 }
 
-/// Stdout, stderr and the exit code of one run in one mock project.
-fn run(name: &str, args: &[&str]) -> (String, String, i32) {
+/// Stdout, stderr and the exit code of one run in a directory.
+fn run_in(dir: &Path, args: &[&str]) -> (String, String, i32) {
     let out = Command::new(env!("CARGO_BIN_EXE_knowledge"))
         .args(args)
-        .current_dir(project(name))
+        .current_dir(dir)
         .output()
         .expect("the binary runs");
     (
@@ -30,6 +31,70 @@ fn run(name: &str, args: &[&str]) -> (String, String, i32) {
         String::from_utf8_lossy(&out.stderr).into_owned(),
         out.status.code().unwrap_or(-1),
     )
+}
+
+/// Stdout, stderr and the exit code of one run in one mock project.
+fn run(name: &str, args: &[&str]) -> (String, String, i32) {
+    run_in(&project(name), args)
+}
+
+/// A throwaway copy of a mock project, for the tests whose command writes.
+///
+/// Every other test here runs against `tests/projects/` in place, which works only while a run
+/// leaves the tree alone. `index` writes, so it gets a copy: writing into the fixture would
+/// leave the repository dirty, and the next run would then be comparing against the previous
+/// run's output rather than against the fixture.
+struct Sandbox {
+    dir: PathBuf,
+}
+
+impl Sandbox {
+    fn new(tag: &str, from: &str) -> Self {
+        let dir = std::env::temp_dir().join(format!("knowledge-{tag}-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        copy_dir(&project(from), &dir);
+        Sandbox { dir }
+    }
+
+    fn path(&self, rel: &str) -> PathBuf {
+        self.dir.join(rel)
+    }
+
+    fn write(&self, rel: &str, text: &str) {
+        let path = self.path(rel);
+        std::fs::create_dir_all(path.parent().expect("a parent")).expect("the parent directory");
+        std::fs::write(&path, text).expect("a written fixture file");
+    }
+
+    fn run(&self, args: &[&str]) -> (String, String, i32) {
+        run_in(&self.dir, args)
+    }
+}
+
+impl Drop for Sandbox {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.dir);
+    }
+}
+
+fn copy_dir(from: &Path, to: &Path) {
+    std::fs::create_dir_all(to).expect("the sandbox directory");
+    for entry in std::fs::read_dir(from).expect("a readable fixture") {
+        let entry = entry.expect("a directory entry");
+        let target = to.join(entry.file_name());
+        if entry.file_type().expect("a file type").is_dir() {
+            copy_dir(&entry.path(), &target);
+        } else {
+            std::fs::copy(entry.path(), &target).expect("a copied file");
+        }
+    }
+}
+
+fn modified(path: &Path) -> SystemTime {
+    std::fs::metadata(path)
+        .expect("a generated file")
+        .modified()
+        .expect("an mtime")
 }
 
 #[test]
@@ -260,4 +325,123 @@ fn rules_show_prints_the_release_typography_and_not_the_folded_form() {
         "and no straight one appears: {stdout:?}"
     );
     assert_eq!(code, 0, "{stdout}");
+}
+
+/// The claim: an invocation the hand-rolled parser accepted now exits 2 and runs nothing.
+///
+/// The parse-level half of this lives beside the declaration in `knowledge@src/main.rs`. This
+/// is the same claim at the process boundary, which is what a gate and a session actually
+/// read: a `try_parse_from` returning `Err` says nothing about the code the process leaves
+/// with, and 2 is `thaum#exit-code-ladder`'s could-not-run.
+///
+/// Every row exited **0** against the implementation this replaces, each having done something
+/// other than what was asked.
+#[test]
+fn an_invalid_invocation_exits_two_and_runs_nothing() {
+    // Bound, so the dates are fixture data rather than prose.
+    const OLD: &str = "20200101";
+    const NEW: &str = "20200102";
+    let invalid: [&[&str]; 6] = [
+        &["outstanding", "--issues", "--tripwires"],
+        &["check", "--bogus"],
+        &["check", "stray"],
+        &["model", "zzz"],
+        &["index", "--write"],
+        &["rules", "diff", OLD, NEW],
+    ];
+    for args in invalid {
+        let (stdout, stderr, code) = run("planted", args);
+        assert_eq!(code, 2, "{args:?} must be refused; stderr: {stderr}");
+        assert!(stdout.is_empty(), "{args:?} ran something: {stdout}");
+    }
+}
+
+/// The claim: help answers from outside a project.
+///
+/// Arguments parse before the project is located, which is the whole of it. Before the
+/// migration `Manifest::find` ran first, so every invocation from outside a checkout — help
+/// included — failed with `error:` and exit 2 and never reached its subcommand.
+#[test]
+fn help_answers_from_outside_a_project() {
+    let outside = std::env::temp_dir();
+    let (stdout, stderr, code) = run_in(&outside, &["--help"]);
+    assert_eq!(code, 0, "{stderr}");
+    for verb in ["check", "outstanding", "index", "model", "rules"] {
+        assert!(
+            stdout.contains(verb),
+            "{verb} is missing from the help: {stdout}"
+        );
+    }
+}
+
+/// The concern file the interpretation index needs a row for. No rule number in it: this file
+/// is inside the walk, and a number in an unbound literal is prose the scanner reads.
+const CONCERN: &str = "\
+# One concern
+
+## R1 — A reading, recorded so that the generated index has a row to carry
+
+The body of the reading.
+";
+
+/// The claim: `index` regenerates both files from one invocation, writes only where the bytes
+/// differ, and says which of the two it moved.
+///
+/// **Two assertions, because they fall to different mutations.** The report is satisfied by an
+/// implementation that compares and then writes anyway; the mtime is what catches that one.
+/// Recorded mutation, run through `cargo mutate run`: making the write unconditional — the
+/// `continue` on equality deleted — leaves the report right and moves both mtimes.
+#[test]
+fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
+    let sandbox = Sandbox::new("index", "minimal");
+    // `minimal` declares this concern directory and does not carry it, no other test needing
+    // one. The interpretation index is written into it, so it has to exist; creating it is the
+    // manifest's claim to make good, not something `index` should do on the manifest's behalf.
+    sandbox.write("notes/readings/one-concern.md", CONCERN);
+    let generated = ["corpus/index.md", "notes/readings/index.md"];
+
+    let (first, stderr, code) = sandbox.run(&["index"]);
+    assert_eq!(code, 0, "{stderr}");
+    for rel in generated {
+        assert!(
+            first.contains(rel),
+            "{rel} is missing from the report: {first}"
+        );
+    }
+    assert_eq!(
+        first.matches("rewritten").count(),
+        2,
+        "neither file existed, so both were written: {first}"
+    );
+
+    let before: Vec<SystemTime> = generated
+        .iter()
+        .map(|r| modified(&sandbox.path(r)))
+        .collect();
+
+    let (second, _, code) = sandbox.run(&["index"]);
+    assert_eq!(code, 0);
+    assert_eq!(
+        second.matches("already current").count(),
+        2,
+        "nothing moved, so nothing was written: {second}"
+    );
+    for (rel, was) in generated.iter().zip(&before) {
+        assert_eq!(
+            modified(&sandbox.path(rel)),
+            *was,
+            "{rel} was rewritten with the bytes it already held"
+        );
+    }
+
+    // The other half: the skip is a comparison, not a refusal to write a file twice.
+    std::fs::write(sandbox.path(generated[0]), "stale\n").expect("a stale index");
+    let (third, _, _) = sandbox.run(&["index"]);
+    assert_eq!(third.matches("rewritten").count(), 1, "{third}");
+    assert_eq!(third.matches("already current").count(), 1, "{third}");
+    assert_ne!(
+        std::fs::read_to_string(sandbox.path(generated[0])).expect("the index"),
+        "stale\n",
+        "the file that moved was regenerated"
+    );
 }

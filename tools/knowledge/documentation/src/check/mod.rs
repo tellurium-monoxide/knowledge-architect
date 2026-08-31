@@ -106,10 +106,9 @@ pub struct Inputs<'a> {
 /// this repository is compiled in.
 ///
 /// `citations` and `structure` are kept as names for the two groupings that had consumers
-/// before the set existed. The write-time hook runs `citations` alone, deliberately: it fires
-/// after every edit, and a structural check mid-edit reports a reference whose target the
-/// writer has not typed yet. What the hook is for is the failure that is invisible to a
-/// writer — a quote that no longer says what the rule says.
+/// before the set existed: `citations` is every quote judged against the rule it names, and
+/// `structure` is every other family. They are the split a caller wanting one half asks for
+/// without listing the families in it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Only(u16);
 
@@ -350,9 +349,9 @@ mod tests {
 
     #[test]
     fn the_two_names_that_had_consumers_keep_their_meaning() {
-        // The write-time hook runs `citations` alone. It selected the citation walk and
-        // nothing else before the set existed, and a change here changes what fires on
-        // every edit.
+        // Both names had callers before the set existed, and both are still what a caller
+        // asks for when they want one half of the run rather than a list of families. A
+        // change to either changes what those callers get.
         assert_eq!(
             Only::parse("citations").expect("citations"),
             Only::CITATIONS

@@ -120,3 +120,25 @@ to `knowledge#grammars-not-prefixes`. `live`. Zero dependencies, and rejected be
 would be silent, which is the failure class this tool exists to prevent. The line-prefix scanner it
 would have resembled was the single cause of four recorded defects.
 
+**A citation locator, given a rule number and a file** — lost to `knowledge#model-then-checks`.
+`live`. Proposed because a grep is genuinely unreliable for the job: the scanner distinguishes four
+citation shapes a text search does not — the prose marker, the identifier marker, a blockquote bound
+by the number printed at its head, and an inline quote bound to the nearest preceding marker — and it
+excludes rule numbers inside code spans and name-bound string literals, which a grep reports as hits.
+It loses because `cargo knowledge model` already emits `file`, `line`, `kind` and `value` with
+markers and rule tokens as separate kinds, so filtering that dump on a rule number **is** the
+locator, from the scanner's own notion of a citation rather than from a pattern. Established by
+running it: the filter lists a rule token on a line carrying no marker, which is the shape a
+marker-grep misses and a number-grep cannot classify. What was missing was not a command but a line
+in `knowledge@README.md` saying so. The tripwire on the completeness of that dump is in
+`knowledge@docs/tripwires.md`.
+
+**`rules diff --local`, and the two dates as positional arguments** — lost to
+`thaum#named-values-where-order-decides`. `live`. `--local` compared the vendored text against a
+named release, and it loses to a mechanism rather than to an argument: `resolve` in
+`knowledge@rules/src/release.rs` answers `local` first, so a diff against the pinned date resolves
+the same bytes. The two forms differ only where the working-tree text disagrees with the version
+file, which `vendor` writes together in one call and no supported flow separates. Positional dates
+lose because `diff`'s output names no direction at all, so the pair given the wrong way round
+reports newly added rules as gone and points every renumbering backwards, and `bumping-rules` reads
+those verdicts as instructions.
