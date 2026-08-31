@@ -217,15 +217,17 @@ outstanding*. Every gate and review in this project trusts this tool's exit code
 
 **What would close it.** The clap migration in the entry below closes the class by construction:
 clap refuses an unknown flag by default, `conflicts_with` refuses the `outstanding` pair and
-`requires` the `index` one, which is the argument recorded at `xtask#clap-for-parsing`. Repairing
+`requires` the `index` one, which is the argument recorded at
+`thaum#arguments-parse-through-clap`. Repairing
 the two combinations by hand closes the two instances and leaves the class open, since the next
 flag added re-opens it.
 
 ## The CLI-taking tools still parse arguments by hand `todo`
 
-**What.** The owner intends every CLI-taking tool in this repository to parse through clap (or
-an equivalent crate), as `xtask` now does per `xtask#clap-for-parsing`. `knowledge` and
-`mutate` still parse by hand; clients may follow later.
+**What.** `thaum#arguments-parse-through-clap` binds every binary in this repository, and
+`knowledge` and `mutate` are the two under `thaum@tools/` that still parse by hand. `bench` and
+`xtask` already conform. The client's own divergence is tracked where it lives, in
+`thaum-cli@docs/open-issues.md`.
 
 **Why it matters.** Hand-rolled parsing is where the silent-acceptance class above lives, and
 each hand-rolled parser re-solves flag handling that a shared crate already solves refused-by-
