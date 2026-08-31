@@ -39,8 +39,8 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding
         &interpretation_index,
         &index::interpretation_index(model, manifest),
         inputs,
-        "regenerate it WITHOUT line numbers and read the diff: a moved title is a replaced \
-         entry, a moved file is a re-filing, a removed section is a loss",
+        "regenerate it and read the diff: a moved title is a replaced entry, a moved file is a \
+         re-filing, a removed section is a loss",
         &mut findings,
     );
     findings

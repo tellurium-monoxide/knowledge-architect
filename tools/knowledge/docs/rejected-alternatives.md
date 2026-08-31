@@ -133,12 +133,29 @@ marker-grep misses and a number-grep cannot classify. What was missing was not a
 in `knowledge@README.md` saying so. The tripwire on the completeness of that dump is in
 `knowledge@docs/tripwires.md`.
 
-**`rules diff --local`, and the two dates as positional arguments** — lost to
-`thaum#named-values-where-order-decides`. `live`. `--local` compared the vendored text against a
-named release, and it loses to a mechanism rather than to an argument: `resolve` in
-`knowledge@rules/src/release.rs` answers `local` first, so a diff against the pinned date resolves
-the same bytes. The two forms differ only where the working-tree text disagrees with the version
-file, which `vendor` writes together in one call and no supported flow separates. Positional dates
-lose because `diff`'s output names no direction at all, so the pair given the wrong way round
-reports newly added rules as gone and points every renumbering backwards, and `bumping-rules` reads
-those verdicts as instructions.
+**`rules diff --local`, the form that compared the vendored text against one named release** —
+lost to `thaum#named-values-where-order-decides`, which settled `rules diff` as two named
+releases. `live`. It loses to a mechanism rather than to an argument, and the mechanism is why
+dropping it costs nothing: `resolve` in `knowledge@rules/src/release.rs` answers `local` **first**,
+so a diff against the pinned date resolves the same bytes the flag would have. The two forms
+differ only where the working-tree text disagrees with the version file, and `vendor` writes both
+in one call, so no supported flow separates them. It was documented in no README and used by no
+skill.
+
+**`--lines` on the interpretation index**, a temporary copy carrying each citation's line numbers
+— lost to `knowledge#generated-files-are-pure`. `live`. Refuted by a census over the file's whole
+history rather than by argument: `git log -p -- docs/rules/interpretations/index.md` matches no
+line-numbered citing row, so in every commit the index has ever had, the flag's output was never
+one of them. The index gates on **file-level** citing lists deliberately — that is what keeps it
+from moving when unrelated prose shifts a line — so per-line data stood against the argument for
+the file it sat in. What it would have bought is answered instead by filtering
+`cargo knowledge model` on the rule number.
+
+**`cargo knowledge index` prints the diff it would apply, and `--write` applies it** — lost to
+`knowledge#generated-files-are-pure`. `live`. This is the `cargo fmt` / `cargo fmt --check` shape,
+and it lost to a prior-art survey rather than to reasoning. `fmt`, `gofmt` and `prettier` each
+build the check into the generator, and the discriminator is that **none of them had a separate
+verifier to build it into anything else**. Here `cargo knowledge check --only generated` is a gate
+that already names the first differing line, so the split those tools could not make is already
+made, and a second command answering the same question in its own format would leave nothing to
+say which of the two was right.

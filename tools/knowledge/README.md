@@ -25,7 +25,7 @@ Three, per `thaum#exit-code-ladder`, and the third is what makes the other two m
 | ---- | ------- | ------------------- |
 | `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; every `index` and `model` run |
 | `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `outstanding <text>` matching nothing |
-| `2` | the command could not run | an unknown or invalid argument, no project above the working directory, an input that cannot be read, `rules latest` when the extractor fails |
+| `2` | the command could not run | an unknown or invalid argument, no project above the working directory, an input that cannot be read, `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -84,9 +84,11 @@ stdout gives a file that is only observations.
 **This is also how a citation is located inside the file that holds it.** The generated rule index
 says which files cite a rule, deliberately at file level; filtering this dump on the rule number
 says where in each. It answers from the scanner's own notion of a citation rather than from a
-pattern, which matters because markers and rule tokens are separate kinds here, and because a rule
-number that is *data* — inside a code span, a fenced block or a name-bound string literal — is not
-a citation and does not appear.
+pattern, which matters because markers and rule tokens are separate kinds here. A rule number that
+is **data** — inside an inline code span, or inside a string literal bound to a name in Rust — is
+not a citation and does not appear in the dump. A number inside a **fenced block does** appear,
+because a fenced sketch cites its rules for real; root `thaum@CLAUDE.md` owns that distinction and
+this is a restatement of it.
 
 ```sh
 cargo knowledge model | awk -F'\t' '$4=="<number>" && ($3=="rule-token" || $3 ~ /^marker-/)'

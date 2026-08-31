@@ -24,7 +24,8 @@ mod corpus_cmd;
 ///
 /// Written out rather than built from `Only::NAMED`, because a clap help string is a literal.
 /// `every_family_is_named_in_the_help` is what keeps the two in step: it fails when a family
-/// is added and not listed here. A tripwire in `knowledge@docs/tripwires.md` reads this list
+/// is added and not listed here. It is the SHORT help, so `-h` prints it and not only `--help`;
+/// the tripwire below reaches for whichever a reader typed. A tripwire in `knowledge@docs/tripwires.md` reads this list
 /// out of the help, so a family missing from it is a check whose output reaches no reviewer.
 const FAMILIES: &str = "citations, generated, components, slugs, paths, interpretations, \
                         uncovered, changes, corpus, regime. `structure` names every family \
@@ -61,7 +62,7 @@ enum Command {
 #[derive(Args)]
 struct CheckArgs {
     /// Which check families to run. Without it, every one.
-    #[arg(long, value_name = "FAMILIES", value_parser = Only::parse, long_help = FAMILIES)]
+    #[arg(long, value_name = "FAMILIES", value_parser = Only::parse, help = FAMILIES)]
     only: Option<Only>,
 }
 
@@ -305,6 +306,24 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
             documentation::index::interpretation_index(&model, manifest),
         ),
     ];
+
+    // Every destination is checked before any is written. A run that wrote one index and then
+    // failed on the next exited 2 — could not run — having already changed the tree, which is
+    // the one place `thaum#exit-code-ladder`'s line blurs. A missing directory here is the
+    // manifest declaring one the tree does not have; creating it would paper over that, and the
+    // components check is what reports it.
+    for (rel, _) in &generated {
+        let path = manifest.root().join(rel);
+        let dir = path
+            .parent()
+            .ok_or_else(|| format!("{} has no parent directory", path.display()))?;
+        if !dir.is_dir() {
+            return Err(format!(
+                "{}: the directory this index is generated into is not there. Nothing was written.",
+                dir.display()
+            ));
+        }
+    }
 
     for (rel, text) in generated {
         let path = manifest.root().join(&rel);
