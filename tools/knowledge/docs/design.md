@@ -60,6 +60,13 @@ command normally owes exists because a write can lose something, and here it can
 run can do is replace a file with what the tree says that file is. It writes only where the bytes
 differ, so running it to look moves not even an mtime, and it names each file it rewrote.
 
+**That last claim is held by two refusals, not by the paths being generated.** `fs::write` follows
+a symlink and writes through it, so a generated path that is one would replace content this
+command never produced; and a destination directory the manifest declares but the tree does not
+have is a manifest defect rather than something to create. Both are checked over **every**
+destination before any is written, so a run either refuses having written nothing or writes them
+all. Remove either check and the paragraph above stops being true.
+
 **Verifying is not this command's question.** `cargo knowledge check --only generated` is the gate,
 and it names the first line at which the committed file and the regenerated one disagree. A second
 command answering the same question in its own format is what drifts, and there would be nothing to

@@ -323,15 +323,39 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
                 dir.display()
             ));
         }
+        // `fs::write` follows a symlink and writes through it, so a generated path that is one
+        // would replace whatever sits at the far end — which is the one way this command could
+        // destroy something it did not generate, and what `knowledge#generated-files-are-pure`
+        // needs to be false for its claim to hold. The sibling tool refuses one for the same
+        // reason, in `target_is_mutable`.
+        if std::fs::symlink_metadata(&path).is_ok_and(|m| m.file_type().is_symlink()) {
+            return Err(format!(
+                "{}: this index is a symlink, and writing would follow it. Nothing was written.",
+                path.display()
+            ));
+        }
     }
 
+    let mut written = 0usize;
     for (rel, text) in generated {
         let path = manifest.root().join(&rel);
         if std::fs::read_to_string(&path).ok().as_deref() == Some(text.as_str()) {
             println!("{:<40} already current", rel.display());
             continue;
         }
-        std::fs::write(&path, &text).map_err(|e| format!("{}: {e}", path.display()))?;
+        if let Err(e) = std::fs::write(&path, &text) {
+            eprintln!("error: {}: {e}", path.display());
+            // Once anything has been written the run is no longer a could-not-run, and 2
+            // promises a caller that the tree is as they left it. The checks above catch the
+            // reachable causes; a permission or device failure between them and here is what
+            // this arm is for.
+            return Ok(if written == 0 {
+                ExitCode::from(2)
+            } else {
+                ExitCode::FAILURE
+            });
+        }
+        written += 1;
         println!("{:<40} rewritten", rel.display());
     }
     Ok(ExitCode::SUCCESS)
@@ -357,8 +381,18 @@ fn outstanding(manifest: &Manifest, args: &OutstandingArgs) -> Result<ExitCode, 
         // will — the measurement already taken, what was ruled out, and often why the work was
         // deliberately left undone.
         let needle = needle.join(" ").to_lowercase();
+        // The kind filters bind here too. Computed and then not read, `--issues` printed a
+        // tripwire and `--tripwires` printed an open issue, both at exit 0 — the same
+        // accepted-and-does-the-wrong-thing shape the migration exists to remove.
         let hits: Vec<_> = entries
             .iter()
+            .filter(|e| {
+                if e.is_issue {
+                    want_issues
+                } else {
+                    want_tripwires
+                }
+            })
             .filter(|e| e.title.to_lowercase().contains(&needle))
             .collect();
         if hits.is_empty() {
@@ -639,6 +673,12 @@ mod tests {
             // Dates by position, where a swap produces a reversed work list in silence.
             vec!["knowledge", "rules", "diff", OLD, NEW],
             vec!["knowledge", "rules", "diff", "--old", OLD],
+            // A date `release::url_for` would slice the first four bytes of. Unvalidated,
+            // each of these panicked at exit 101, which the ladder has no meaning for.
+            vec!["knowledge", "rules", "diff", "--old", "202", "--new", NEW],
+            vec!["knowledge", "rules", "diff", "--old", OLD, "--new", ""],
+            vec!["knowledge", "rules", "fetch", "not-a-date"],
+            vec!["knowledge", "rules", "bump", "2026080"],
             // Arguments a command cannot run without.
             vec!["knowledge", "rules", "show"],
             vec!["knowledge", "rules", "bump"],

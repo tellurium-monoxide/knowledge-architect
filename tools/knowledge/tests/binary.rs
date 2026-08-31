@@ -445,3 +445,83 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
         "the file that moved was regenerated"
     );
 }
+
+/// Two issues and one tripwire, so the counts differ and a selection returning the wrong kind
+/// cannot pass by symmetry. An issue is recognised by the kind tag on its title, a tripwire by
+/// stating when it fires; the file it sits in is what decides which it is.
+const TWO_ISSUES: &str = "\
+# Open issues
+
+## The first thing outstanding `defect`
+
+**What.** A body, so the entry is an entry.
+
+## The second thing outstanding `todo`
+
+**What.** Another body.
+";
+
+const ONE_TRIPWIRE: &str = "\
+# Tripwires
+
+## Guarding something the fixture decided
+
+**Fires when:** a condition the fixture names is met.
+**Response:** reopen it.
+";
+
+/// The claim: each flag selects its own kind, neither selects the other's, and a search honours
+/// the flag beside it.
+///
+/// This is the command root `CLAUDE.md` sends every session to before diagnosing anything, and
+/// nothing drove it before. Recorded mutation, `cargo mutate run` over
+/// `knowledge@src/main.rs`: turning the both-flags-absent case from `(true, true)` into
+/// `(false, true)` makes a bare run report zero open issues over a tree that holds two — the
+/// exact symptom the closed tracker entry recorded — and it is caught here.
+#[test]
+fn outstanding_selects_the_kind_its_flags_name() {
+    let sandbox = Sandbox::new("outstanding", "minimal");
+    sandbox.write("docs/open-issues.md", TWO_ISSUES);
+    sandbox.write("docs/tripwires.md", ONE_TRIPWIRE);
+    // The fixture carries an entry of its own in its third registered tracker. Emptied, so the
+    // totals below are this test's and not the fixture's, and stay so if the fixture changes.
+    sandbox.write(
+        "notes/open-issues.md",
+        "# Open issues\n\nNothing outstanding here.\n",
+    );
+
+    let (all, stderr, code) = sandbox.run(&["outstanding"]);
+    assert_eq!(code, 0, "{stderr}");
+    assert!(
+        all.contains("2 open issue(s), 1 tripwire(s)"),
+        "neither flag is every kind: {all}"
+    );
+
+    let (issues, _, _) = sandbox.run(&["outstanding", "--issues"]);
+    assert!(
+        issues.contains("2 open issue(s), 0 tripwire(s)"),
+        "--issues selects issues and not tripwires: {issues}"
+    );
+    assert!(!issues.contains("Guarding something"), "{issues}");
+
+    let (tripwires, _, _) = sandbox.run(&["outstanding", "--tripwires"]);
+    assert!(
+        tripwires.contains("0 open issue(s), 1 tripwire(s)"),
+        "--tripwires selects tripwires and not issues: {tripwires}"
+    );
+    assert!(
+        !tripwires.contains("The first thing outstanding"),
+        "{tripwires}"
+    );
+
+    // The flags bind the search too. Computed and then not read, `--issues` printed a tripwire
+    // in full at exit 0.
+    let (crossed, _, code) = sandbox.run(&["outstanding", "--issues", "Guarding something"]);
+    assert_eq!(
+        code, 1,
+        "a search restricted to the other kind matches nothing: {crossed}"
+    );
+    let (found, _, code) = sandbox.run(&["outstanding", "--tripwires", "Guarding something"]);
+    assert_eq!(code, 0, "{found}");
+    assert!(found.contains("Fires when"), "the entry in full: {found}");
+}

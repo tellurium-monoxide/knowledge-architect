@@ -28,23 +28,38 @@ pub enum RulesCommand {
     /// What moved between two releases, filtered to the rules this project cites.
     Diff {
         /// The earlier release.
-        #[arg(long, value_name = "DATE")]
+        #[arg(long, value_name = "DATE", value_parser = release_date)]
         old: String,
         /// The later release.
-        #[arg(long, value_name = "DATE")]
+        #[arg(long, value_name = "DATE", value_parser = release_date)]
         new: String,
     },
     /// Fetch a release into the vendored text and repin to it.
     Fetch {
         /// Without one, the release the version file already names.
-        #[arg(value_name = "DATE")]
+        #[arg(value_name = "DATE", value_parser = release_date)]
         date: Option<String>,
     },
     /// Move the project to a release: archive, fetch, reindex, draft the changelog.
     Bump {
-        #[arg(value_name = "DATE")]
+        #[arg(value_name = "DATE", value_parser = release_date)]
         date: String,
     },
+}
+
+/// A release date as the download URLs spell it: eight digits, `YYYYMMDD`.
+///
+/// Validated here rather than where it is used: `release::url_for` takes the year with
+/// `&date[..4]`, which panics on anything shorter and on a multi-byte boundary. A bad argument
+/// is exit 2 per `thaum#exit-code-ladder`, and a clap `value_parser` is what holds that line —
+/// a panic is 101 and says nothing.
+fn release_date(s: &str) -> Result<String, String> {
+    if s.len() == 8 && s.bytes().all(|b| b.is_ascii_digit()) {
+        return Ok(s.to_string());
+    }
+    Err(format!(
+        "{s:?} is not a release date: expected eight digits, as in 20260807"
+    ))
 }
 
 pub fn run(manifest: &Manifest, command: &RulesCommand) -> Result<ExitCode, String> {
