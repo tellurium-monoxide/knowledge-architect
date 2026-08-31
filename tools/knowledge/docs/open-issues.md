@@ -87,34 +87,6 @@ long as the numbers do.
 `recording-an-interpretation`, which owns the entry shape and the numbering. The migration cost
 is enumerable at that point from the register index's citing lists.
 
-## A slug definition is not recognised in a list item `observation`
-
-**What.** A slug is recognised as a definition at the start of a line or in a table cell. A list
-item is neither, so a decision written as `- \`#slug\` — **Statement.**` is read as a _reference_
-and fails the dangling check.
-
-**Observed.** Writing `thaum#bench-is-a-tool` into `thaum@docs/design.md`, in the
-_Why each part is the way it is_ subsection of _Repository layout_. That subsection is nothing but
-consecutive bulleted arguments, which is its whole idiom, and the slug had to be broken out into a
-standalone paragraph after the list. The subsection's other arguments carry no slugs, and the one it
-cites is defined elsewhere. **Whether that is cause or coincidence is not
-established**: nobody has checked whether those arguments lack slugs because the grammar cannot hold
-one there, or because none of them was ever cited from anywhere.
-
-**Why it matters.** The checker's grammar is deciding document shape. That is legitimate where the
-shape is the point and a problem where it is not, and the two are told apart by whether a reader is
-better off — a standalone paragraph after the list reads as an afterthought rather than as its last
-argument. The cost is small and one-directional: it pushes decisions out of list-shaped sections, or
-leaves them without anchors, and an unanchored decision cannot be cited or found by `git log -G`.
-
-**What would answer it.** Two readings, and the choice is a real one rather than a bug to fix.
-Either extend the definition grammar to accept a leading list marker, which costs one alternation
-and makes the grammar match the documents; or record that a decision worth a slug is worth its own
-paragraph, in which case the current behaviour is a deliberate constraint and belongs in
-`thaum@.claude/skills/recording-a-decision/SKILL.md` beside the head instruction rather than being a
-property only a pattern states. `assumption`: the second is what was intended, since the table-cell
-form was added deliberately and the list form was not. Nothing records either way.
-
 ## The release diff calls a renumbered section a deletion `defect`
 
 **What.** `rules diff` detects a renumbered rule by its body — `by_body` in
@@ -195,21 +167,59 @@ census for each, or recording beside `knowledge#every-path-names-its-anchor` tha
 stays outside on purpose. `assumption`: the colon idiom is the one worth widening first, being
 ordinary editor output. Untested — no census taken.
 
-## The hand-rolled CLI has accepted invalid argument combinations silently `observation`
+## The hand-rolled CLI accepts invalid argument combinations silently `defect`
 
-**What.** The owner reports that this tool's command-line parsing, hand-rolled in
-`knowledge@src/main.rs`, has accepted invalid argument combinations and then done nothing,
-with no error and exit 0. Reported from past sessions; whether any such combination still
-reproduces on the current parser is `not established` — no failing invocation is on record.
+**What.** Argument parsing is hand-rolled, in `outstanding`, `check` and `index` in
+`knowledge@src/main.rs` and in the `rules` dispatch in `knowledge@src/corpus_cmd.rs`. Two flag
+combinations are accepted, do the wrong thing and exit 0. Unknown flags are accepted by every
+subcommand, also with exit 0.
 
-**Why it matters.** A tool that silently does nothing on a malformed invocation reads as a
-passing check. Every gate and review in this project trusts this tool's exit code.
+**Reproduce.** `outstanding` with both of its filters reports the project as empty:
 
-**What would close it.** Enumerating the subcommands' argument handling and either reproducing
-a silent acceptance (promoting this to `defect` with the invocation) or ruling the class out.
-The clap migration in the entry below closes it structurally: clap refuses unknown flags and
-invalid combinations by construction, which is the argument recorded at
-`xtask#clap-for-parsing`.
+```
+$ cargo knowledge outstanding --issues --tripwires
+0 open issue(s), 0 tripwire(s) across 25 tracker file(s)
+$ echo $?
+0
+```
+
+The same invocation with neither flag reports 60 open issues and 71 tripwires over the same 25
+files. In `outstanding`, `want_issues` is set from the absence of `--tripwires` and
+`want_tripwires` from the absence of `--issues`, so passing both sets both to false and the
+per-file filter selects nothing.
+
+`index` accepts a flag pair whose result the generated-file check then rejects:
+
+```
+$ cargo knowledge index --interpretations --lines --write   # exit 0
+$ cargo knowledge check --only generated                    # exit 1
+```
+
+The first writes `thaum@docs/rules/interpretations/index.md` with line numbers in it. `index`
+already refuses `--lines` without `--interpretations`, and does not refuse it with `--write`.
+
+Unknown and misplaced flags are accepted, exit 0, in `check --bogus`, `outstanding --bogus`,
+`model zzz`, `rules diff --bogus <old> <new>`, and `rules show --write 601.2`, which drops the
+flag. `check` and `outstanding` filter every `--`-prefixed token out of their positional
+arguments, and the `rules` dispatch filters `-`-prefixed ones, so an unrecognised flag reaches
+nothing that could refuse it.
+
+**Ruled out.** These are handled correctly: `check --only` with no value and with an unknown
+family, both exit 2 naming every family; `index --lines` without `--interpretations`;
+`rules diff --local`; `rules diff` with three dates; `rules show` with no number; and no
+subcommand at all. Separately, `index` collects `std::env::args()` without the `skip(2)` that
+`check` and `outstanding` apply, so it scans argv[0] for its own flag literals — harmless under
+the current flag names, and an inconsistency in the same file.
+
+**Why it matters.** `outstanding` is the command root `CLAUDE.md` sends every session to before
+diagnosing a problem, and the defective invocation prints a zero that reads as *nothing
+outstanding*. Every gate and review in this project trusts this tool's exit code.
+
+**What would close it.** The clap migration in the entry below closes the class by construction:
+clap refuses an unknown flag by default, `conflicts_with` refuses the `outstanding` pair and
+`requires` the `index` one, which is the argument recorded at `xtask#clap-for-parsing`. Repairing
+the two combinations by hand closes the two instances and leaves the class open, since the next
+flag added re-opens it.
 
 ## The CLI-taking tools still parse arguments by hand `todo`
 
@@ -225,26 +235,41 @@ default.
 the refusal of unknown flags and invalid combinations asserted by a test in each, as
 `xtask@src/main.rs` does.
 
-## A release the manifest does not know resolves from a cache nothing verifies `observation`
+## The release cache sits at a predictable shared path `observation`
 
 **What.** `resolve` in `knowledge@rules/src/release.rs` answers a release that is neither
 vendored nor archived from `std::env::temp_dir()/MagicCompRules-<date>.txt`, downloading only
 when that file is absent. When `MANIFEST.tsv` holds no row for the date — which is every bump
-target by construction, since the manifest records only superseded releases — the digest check
-has nothing to compare against, so whatever bytes sit at that path are returned with only a
-stderr warning. Reproduced during the adversarial review of the first bump: with an empty
-manifest and the cache pre-seeded with arbitrary bytes, `resolve` returned those bytes as the
-release. A `bump` then builds its diff, its effective-as-of report and its `CHANGES.md`
-skeleton from them.
+target by construction, since the manifest records only superseded releases — the digest has
+nothing to compare against, so whatever bytes sit at that path are returned. A `bump` then
+builds its diff, its effective-as-of report and its `CHANGES.md` skeleton from them.
 
-**Why it matters.** The temp path is predictable and the directory is world-writable, and a
-stale or foreign file there is indistinguishable from a download. The blast radius is bounded:
-the pinned text a bump writes is walked by `cargo knowledge check`, so grossly wrong bytes fail
-hundreds of quote verifications loudly — but a subtly wrong text that preserves the cited rules
+**Reproduce.** An empty manifest and the cache pre-seeded with arbitrary bytes: `resolve`
+returns those bytes as the release. First seen in the adversarial review of the first bump, and
+now pinned by `a_release_the_manifest_does_not_know_resolves_from_whatever_the_cache_holds` in
+`knowledge@rules/src/release.rs`, so a change that starts verifying them has to edit that test.
+
+**What is already done.** `resolve` prints the digest of the bytes it returns in both cases, and
+names their source — downloaded, or read from a pre-existing cache — through `provenance` in the
+same file. A run therefore says which text it used, and no longer asserts a fetch that did not
+happen. That turns silent trust into reported trust; it verifies nothing.
+
+**Why it matters.** The temp directory is world-writable and the path is predictable, so a stale
+or foreign file there is indistinguishable from a download. The blast radius is bounded: the
+pinned text a bump writes is walked by `cargo knowledge check`, so grossly wrong bytes fail
+hundreds of quote verifications loudly — but a subtly wrong text that preserved every cited rule
 would pin silently. First contact with a new release is inherently unverifiable against a prior
-record; trusting a shared cache by existence is the avoidable part.
+record; trusting a shared path by existence is the avoidable part.
 
-**What would close it.** Caching under a user-owned directory (or not caching across runs at
-all: the file is under 1 MB), plus printing the digest of what was actually used, would reduce
-the window to the download itself. Deciding that the residual first-contact trust is accepted,
-and saying so in `resolve`'s doc comment, would also close this as a recorded trade-off.
+**Reachability is state-dependent, not structural.** `local` answers first, and `check` resolves
+every release a document pins, reporting `2 of 2 release(s) resolved locally` on this tree — so
+the cache branch is unreached only while every pin is vendored or archived. A `cr-version` marker
+naming an unarchived release puts `check` itself on this path. `rules diff` against an unarchived
+date, `rules fetch` and `rules bump` reach it by design.
+
+**What would close it.** Caching under a user-owned directory, or not caching across runs at all
+— the file is under 1 MB — leaves only the download in the window. Either means threading the
+location through `Tree`, whose constructor has six call sites, because three tests seed the
+current path directly to exercise the digest refusal, the fold-before-digest order and the
+reproduction above. Deciding instead that a shared cache is accepted, and saying so in `resolve`'s
+doc comment, closes this as a recorded trade-off.

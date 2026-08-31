@@ -180,18 +180,47 @@ pub fn local(tree: &Tree, date: &str) -> Option<PathBuf> {
     archived.exists().then_some(archived)
 }
 
-/// A release as a local path: the vendored text, the archive, or a verified fetch.
+/// How `resolve` reports the bytes it is about to return.
+///
+/// Kept apart from the printing so the wording is checkable. Two properties it carries: the
+/// digest is reported in both cases, because the manifest records only superseded releases
+/// and a bump target therefore has no row against which anything could be checked; and the
+/// source is named, because an existing cache is returned without any download, so a line
+/// asserting a fetch would be false exactly where the bytes are least trustworthy.
+fn provenance(date: &str, digest: &str, fetched: bool, known: bool) -> String {
+    let source = if fetched {
+        "downloaded"
+    } else {
+        "read from a cache an earlier run left behind"
+    };
+    if known {
+        format!("{date}: sha256 {digest} ({source}), matching MANIFEST.tsv")
+    } else {
+        format!(
+            "warning: {date} is not in MANIFEST.tsv, so sha256 {digest} ({source}) \
+             is checked against nothing"
+        )
+    }
+}
+
+/// A release as a local path: the vendored text, the archive, or a fetch reported by digest.
 ///
 /// The archive comes before the network on purpose, because Wizards rotates its download
-/// URLs. A fetch is checked against the manifest's digest where the manifest knows the
-/// release, and a release the manifest does not know is reported as unverified rather than
-/// silently trusted.
+/// URLs. A fetch is refused unless it matches the manifest's digest, where the manifest knows
+/// the release. It does not know a bump target by construction, so nothing verifies those
+/// bytes and the digest is printed instead: it is the only record of which text a bump was
+/// built from.
+///
+/// The cache path is shared and predictable, so a file left there by an earlier run — or by
+/// anyone else — is returned without a download. What that costs and what would close it is
+/// `knowledge@docs/open-issues.md`.
 pub fn resolve(tree: &Tree, date: &str) -> Result<PathBuf, String> {
     if let Some(path) = local(tree, date) {
         return Ok(path);
     }
     let cache = std::env::temp_dir().join(format!("MagicCompRules-{date}.txt"));
-    if !cache.exists() {
+    let fetched = !cache.exists();
+    if fetched {
         let status = Command::new("curl")
             .args(["-fsSL", "-o"])
             .arg(&cache)
@@ -215,19 +244,20 @@ pub fn resolve(tree: &Tree, date: &str) -> Result<PathBuf, String> {
     let expected = std::fs::read_to_string(tree.manifest())
         .ok()
         .and_then(|t| read_manifest(&t).get(date).map(|r| r.sha256.clone()));
-    match expected {
-        Some(want) => {
-            let got = sha256(&folded);
-            if got != want {
-                let _ = std::fs::remove_file(&cache);
-                return Err(format!(
-                    "{date}: fetched text does not match the recorded sha256\n  \
-                     expected {want}\n  got      {got}"
-                ));
-            }
+    // The digest is taken whether or not a row exists to compare it against, so that the run
+    // always says which bytes it used.
+    let got = sha256(&folded);
+    match &expected {
+        Some(want) if *want != got => {
+            let _ = std::fs::remove_file(&cache);
+            return Err(format!(
+                "{date}: fetched text does not match the recorded sha256\n  \
+                 expected {want}\n  got      {got}"
+            ));
         }
-        None => eprintln!("warning: {date} is not in MANIFEST.tsv; fetched text is unverified"),
+        _ => {}
     }
+    eprintln!("{}", provenance(date, &got, fetched, expected.is_some()));
     Ok(cache)
 }
 
@@ -348,6 +378,49 @@ mod tests {
         std::fs::write(&cache, b"\xef\xbb\xbfthe rules text\r\n").expect("a seeded cache");
         let path = resolve(&tree, DATE).expect("the folded digest matches");
         assert_eq!(std::fs::read(&path).expect("the resolved file"), folded);
+        let _ = std::fs::remove_file(&cache);
+    }
+
+    #[test]
+    fn the_provenance_line_names_the_digest_and_no_fetch_that_did_not_happen() {
+        // The line is the only record of which bytes a bump was built from, so it must name
+        // the digest in both cases, and must not report a download when the cache answered.
+        let cached = provenance("20260901", "abc123", false, false);
+        assert!(cached.contains("abc123"), "{cached}");
+        assert!(cached.contains("cache"), "{cached}");
+        assert!(!cached.contains("downloaded"), "{cached}");
+        assert!(cached.contains("checked against nothing"), "{cached}");
+
+        let known = provenance("20260807", "def456", true, true);
+        assert!(known.contains("def456"), "{known}");
+        assert!(known.contains("downloaded"), "{known}");
+        assert!(known.contains("matching MANIFEST.tsv"), "{known}");
+    }
+
+    #[test]
+    fn a_release_the_manifest_does_not_know_resolves_from_whatever_the_cache_holds() {
+        // Pins the reproduction the open issue names: with no row to compare against, the
+        // seeded bytes come back. The digest is reported, not verified — so a change that
+        // starts verifying them has to edit this test, which is the point of having it.
+        const DATE: &str = "19980103";
+        let dir = std::env::temp_dir().join("knowledge-release-unknown-test");
+        std::fs::create_dir_all(&dir).expect("a scratch directory");
+        let manifest = dir.join("MANIFEST.tsv");
+        std::fs::write(&manifest, "date\turl\tsha256\tfetched\n").expect("an empty manifest");
+        let tree = Tree::new(
+            &dir,
+            dir.join("MagicCompRules.txt"),
+            dir.join("VERSION"),
+            dir.join("past"),
+            manifest,
+        );
+        let cache = std::env::temp_dir().join(format!("MagicCompRules-{DATE}.txt"));
+        std::fs::write(&cache, b"arbitrary bytes\n").expect("a seeded cache");
+        let path = resolve(&tree, DATE).expect("an unknown release resolves from the cache");
+        assert_eq!(
+            std::fs::read(&path).expect("the resolved file"),
+            b"arbitrary bytes\n"
+        );
         let _ = std::fs::remove_file(&cache);
     }
 
