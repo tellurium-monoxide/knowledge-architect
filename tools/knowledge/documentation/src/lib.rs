@@ -6,6 +6,7 @@
 //! what lets a check be tested against a model built in memory.
 
 pub mod check;
+pub mod entity;
 pub mod finding;
 pub mod gitignore;
 pub mod index;
@@ -22,4 +23,4 @@ pub use finding::Finding;
 pub use manifest::Manifest;
 pub use model::{Document, Model};
 pub use quote::{Quote, QuoteKind};
-pub use scan::{Located, MarkerForm, Observation};
+pub use scan::{Located, MarkerForm, Observation, RetiredForm, SlugSite};

@@ -301,32 +301,25 @@ fn describe(what: &Observation) -> (&'static str, String) {
         ),
         Observation::RuleToken(n) => ("rule-token", n.to_string()),
         Observation::Heading { level, text } => ("heading", format!("{level} {text}")),
-        Observation::SlugDef(s) => ("slug-def", s.clone()),
-        // Rendered as it is written, so the dump says which component a pointer names and a
-        // reference naming none is visibly different from one that does.
-        Observation::SlugRef { component, slug } => (
-            "slug-ref",
-            match component {
-                Some(c) => format!("{c}#{slug}"),
-                None => format!("#{slug}"),
+        // The site rides along, so the dump says whether a slug sat where a definition can
+        // be — a level-two or level-three heading, a cell — or somewhere the table reports.
+        Observation::SlugDef { id, site } => (
+            "slug-def",
+            match site {
+                crate::scan::SlugSite::Heading(level) => format!("{id} heading-{level}"),
+                crate::scan::SlugSite::Cell => format!("{id} cell"),
+                crate::scan::SlugSite::LineHead => format!("{id} line-head"),
             },
         ),
-        // Rendered in the syntax it is written in, so a dumped row can be grepped for in the
-        // tree it came from. The unsupported span is a different kind: the value is the raw
-        // span, and the kind column is what says it parses as no reference.
-        Observation::PathRef { anchor, path } => (
-            "path-ref",
-            format!(
-                "{}@{path}",
-                match anchor {
-                    crate::scan::PathAnchor::Component(c) => c.as_str(),
-                    crate::scan::PathAnchor::Elsewhere => crate::scan::ESCAPE_ANCHOR,
-                    crate::scan::PathAnchor::Every => "*",
-                }
-            ),
-        ),
-        Observation::UnsupportedPath(span) => ("unsupported-path", span.clone()),
-        Observation::InterpRef(n) => ("interp-ref", n.to_string()),
+        // As written, so a dumped row can be grepped for in the tree it came from.
+        Observation::Span(span) => ("span", span.clone()),
+        Observation::UnanchoredPath(span) => ("unanchored-path", span.clone()),
+        Observation::Retired(crate::scan::RetiredForm::SlugRef(span)) => {
+            ("retired-slug-ref", span.clone())
+        }
+        Observation::Retired(crate::scan::RetiredForm::RegisterNumber(n)) => {
+            ("retired-register-number", format!("R{n}"))
+        }
         Observation::Link(target) => ("link", target.clone()),
     }
 }
@@ -347,32 +340,32 @@ mod tests {
             ),
             (
                 PathBuf::from("src/b.rs"),
-                "/// see `a-component#a-slug`\nfn f() {}\n".to_string(),
+                "/// see `design@a-component@a-slug`\nfn f() {}\n".to_string(),
             ),
         ]);
         assert_eq!(model.documents().len(), 2);
         let dump = model.canonical();
-        assert!(dump.contains("docs/design/a.md\t1\tslug-def\ta-slug"));
-        assert!(dump.contains("src/b.rs\t1\tslug-ref\ta-component#a-slug"));
+        assert!(dump.contains("docs/design/a.md\t1\tslug-def\ta-slug heading-3"));
+        assert!(dump.contains("src/b.rs\t1\tspan\tdesign@a-component@a-slug"));
     }
 
-    /// A dumped path reference reads back as the text it was written as.
+    /// A dumped reference reads back as the text it was written as.
     ///
     /// The dump is what a person greps the tree with, so a row whose value cannot be found in
     /// the file the row names is worse than no row: it reports a reference that appears
-    /// nowhere. Concatenating the two halves in the wrong order produced exactly that, on
+    /// nowhere. Concatenating two halves in the wrong order once produced exactly that, on
     /// every qualified reference in the repository at once, and nothing here read the value.
     #[test]
-    fn a_qualified_path_reference_dumps_as_it_is_written() {
-        let written = "`a-component@docs/design/a.md`";
+    fn a_reference_dumps_as_it_is_written() {
+        let written = "`path@a-component@docs/design/a.md`";
         let model = Model::from_documents(vec![(
             PathBuf::from("src/b.rs"),
             format!("/// see {written}\nfn f() {{}}\n"),
         )]);
         let dump = model.canonical();
-        let value = "a-component@docs/design/a.md";
+        let value = "path@a-component@docs/design/a.md";
         assert!(
-            dump.contains(&format!("src/b.rs\t1\tpath-ref\t{value}")),
+            dump.contains(&format!("src/b.rs\t1\tspan\t{value}")),
             "dumped as written: {dump}"
         );
         // The property the row exists for, asserted rather than assumed: the value is a
@@ -380,19 +373,31 @@ mod tests {
         assert!(written.contains(value), "the value greps in its source");
     }
 
-    /// A span parsing as no reference keeps its raw text and is a different kind.
+    /// A span parsing as no reference keeps its raw text and is a different kind, and so
+    /// does each retired form.
     #[test]
-    fn an_unsupported_path_shape_dumps_as_the_span_it_was() {
+    fn an_unanchored_path_and_a_retired_form_dump_as_their_own_kinds() {
         let model = Model::from_documents(vec![(
             PathBuf::from("src/b.rs"),
-            "/// see `docs/design/a.md`\nfn f() {}\n".to_string(),
+            "/// see `docs/design/a.md` and `a-component#a-slug` and R15\nfn f() {}\n".to_string(),
         )]);
         let dump = model.canonical();
         assert!(
-            dump.contains("src/b.rs\t1\tunsupported-path\tdocs/design/a.md"),
+            dump.contains("src/b.rs\t1\tunanchored-path\tdocs/design/a.md\n"),
             "{dump}"
         );
-        assert!(!dump.contains("@"), "no separator was invented: {dump}");
+        assert!(
+            dump.contains("src/b.rs\t1\tretired-slug-ref\ta-component#a-slug\n"),
+            "{dump}"
+        );
+        assert!(
+            dump.contains("src/b.rs\t1\tretired-register-number\tR15\n"),
+            "{dump}"
+        );
+        assert!(
+            !dump.contains("@a-slug"),
+            "no separator was invented: {dump}"
+        );
     }
 
     #[test]

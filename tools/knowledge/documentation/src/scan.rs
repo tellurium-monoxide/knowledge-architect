@@ -9,9 +9,15 @@
 //! from a prefix, and three recorded defects came out of the guesses.
 //!
 //! **A rule number inside a code span or a fence is data, not a citation.** A sort key, a
-//! parser input, a line of tool output. Slug and path references are the opposite case: the
-//! conventions put them inside backticks, so a code span is where they are expected and the
-//! exclusion must not reach them.
+//! parser input, a line of tool output. References are the opposite case: the grammar puts
+//! them inside backticks, so a code span is where they are expected and the exclusion must
+//! not reach them.
+//!
+//! **The scanner tokenizes references and does not resolve them.** A backticked span holding
+//! an `@` is recorded as written; whether its head is a kind or an anchor is a fact about the
+//! project, which `entity::candidate` reads with the manifest in hand. What the scanner does
+//! decide on its own is shape: a slug definition and where it sits, the two retired forms,
+//! and the unanchored path lint, none of which needs the manifest.
 
 use std::sync::LazyLock;
 
@@ -48,36 +54,36 @@ pub enum Observation {
         level: u8,
         text: String,
     },
-    /// A slug at the head of a line or a table cell, opening a decision.
+    /// A slug written as `` `##<id>` `` in a shape that could define an entity, with where it
+    /// sits.
     ///
-    /// The name alone. Which component it belongs to is where the document sits, which is a
-    /// fact about the project rather than about the line.
-    SlugDef(String),
-    /// A slug anywhere else: a pointer at a decision, in the component that defines it.
-    SlugRef {
-        /// The component named before the `#`, and `None` where the reference names none.
-        ///
-        /// A slug is unique inside its component and not across them, so a reference naming
-        /// no component resolves to nothing. It is recorded rather than dropped: dropped, it
-        /// would be a pointer that no check can see and no reader is told about.
-        component: Option<String>,
-        slug: String,
+    /// The id alone. Which anchor and which register it belongs to is where the document
+    /// sits, which is a fact about the project rather than about the line; the entity table
+    /// decides that, and decides that a slug at the wrong level or at a line head defines
+    /// nothing.
+    SlugDef {
+        id: String,
+        site: SlugSite,
     },
-    /// A path named in prose, behind its anchor: `` `<anchor>@<path>` ``.
-    PathRef {
-        anchor: PathAnchor,
-        /// As written, trailing slash included: the slash is the writer's claim that the
-        /// target is a directory, and the check asserts it.
-        path: String,
-    },
-    /// A backticked span shaped like a path that parses as no accepted reference form.
+    /// A backticked span holding an `@` and no whitespace, as written: the input of the
+    /// reference grammar `` `<kind>@<anchor>@<id>` ``.
     ///
-    /// Recorded rather than dropped, so the check can name the accepted syntaxes: dropped,
-    /// it would be a pointer no check resolves and no reader is told about, which is how
-    /// the retired bare form dangled silently through one relocation.
-    UnsupportedPath(String),
-    /// An `R` number naming an interpretation entry.
-    InterpRef(u16),
+    /// Recorded whatever its head is, because the scanner has no manifest to ask. An email
+    /// address in backticks is one of these and is silent downstream, under the candidate
+    /// rule in `entity::candidate`. A span holding an angle bracket is not one: a placeholder
+    /// such as `<kind>@<anchor>@<id>` is how the grammar is illustrated.
+    Span(String),
+    /// A backticked span shaped like a path, with no `@`: the unanchored-path lint's input.
+    ///
+    /// Recorded rather than dropped, so the check can name the grammar: dropped, it would be
+    /// a pointer no check resolves and no reader is told about, which is how the retired bare
+    /// form dangled silently through one relocation.
+    UnanchoredPath(String),
+    /// One of the two reference forms the `@` grammar retired.
+    ///
+    /// Reported, never ignored: neither has an `@`, so without this a pointer the migration
+    /// missed would be silent, which is the founding failure class.
+    Retired(RetiredForm),
     /// A markdown link's target, as written.
     ///
     /// Resolution is the consumer's: a design README's naming check resolves it against the
@@ -85,22 +91,25 @@ pub enum Observation {
     Link(String),
 }
 
-/// What stands before the `@` of a path reference.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum PathAnchor {
-    /// A component's name; the path resolves beside that component's directory. The root is
-    /// a component like any other, named by the project.
-    Component(String),
-    /// The escape anchor: a path deliberately not resolvable in this tree.
-    Elsewhere,
-    /// `*` — every component's own copy of the path.
-    Every,
+/// Where a `` `##<id>` `` was written.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SlugSite {
+    /// At the end of a heading of this level.
+    Heading(u8),
+    /// In a table cell.
+    Cell,
+    /// At the head of a plain line: the form that predates the heading rule.
+    LineHead,
 }
 
-/// The reserved anchor word for a path deliberately not resolvable in this tree.
-///
-/// A declared component may not take this name, which `check::components` asserts.
-pub const ESCAPE_ANCHOR: &str = "elsewhere";
+/// A reference form the grammar retired.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum RetiredForm {
+    /// `` `<word>#<word>` ``, the slug reference before kinds existed. The span as written.
+    SlugRef(String),
+    /// A bare `R` followed by digits, the interpretation entry number.
+    RegisterNumber(u16),
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Located {
@@ -148,50 +157,46 @@ static SECTION_KEYWORD: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"(?i)\b(?:cr:[\s*_]*|(?:cr|rules?|sections?)[\s*_]+)(\d{3})\b").unwrap()
 });
 static HEADING: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(#{1,4})\s+(.+?)\s*$").unwrap());
-/// A reference is `` `<component>#<slug>` ``, and the component is optional only so that one
-/// written without it is still seen. The component alternative cannot match a `#`, so a
-/// definition — which opens with `##` — is not read as a reference to a slug of its own.
-static SLUG_REF: LazyLock<Regex> = LazyLock::new(|| {
+/// The retired slug reference, `` `<word>#<word>` ``: the word before the `#` is optional so
+/// that the older unqualified form is seen too. The first class cannot match a `#`, so a
+/// definition — which opens with `##` — is not read as a retired reference to itself.
+static RETIRED_SLUG_REF: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"`(\.?[A-Za-z0-9][A-Za-z0-9._-]*)?#([a-z0-9][a-z0-9-]{2,})`").unwrap()
 });
-/// The shape a component name must have for a reference to be able to name it.
+/// A slug in a heading of ANY level, in a table cell, or at the head of a plain line, each
+/// alternative in that order.
 ///
-/// The same character class the reference pattern accepts, anchored. A component whose name a
-/// reference cannot spell is one every pointer at it misses silently, so the check over the
-/// declaration asks this rather than assuming it.
-static COMPONENT_NAME: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\.?[A-Za-z0-9][A-Za-z0-9._-]*$").unwrap());
-/// A slug is DEFINED in a level-three heading, or in a table cell. Anywhere else it is a
-/// reference.
-///
-/// **The heading form takes the slug anywhere in the heading**, so the statement may precede
-/// it: `### The catalog is a question` followed by the slug reads as an outline entry, which
-/// a slug alone does not. Requiring text AFTER the slug is what made a heading carrying
-/// nothing else invisible, and every decision written that way was read as a reference to an
-/// anchor nobody defined.
-static SLUG_DEF: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"^(?:\|\s*`##([a-z0-9][a-z0-9-]{2,})`|###\s+.*?`##([a-z0-9][a-z0-9-]{2,})`)")
-        .unwrap()
+/// The heading form takes the slug anywhere in the heading, so the statement may precede it:
+/// a heading reads as an outline entry, which a slug alone does not. Requiring text AFTER the
+/// slug is what made a heading carrying nothing else invisible. Every level is matched so
+/// that the entity table can report a level-one or level-four slug as misplaced rather than
+/// see nothing; which levels define is its decision, not this pattern's.
+static SLUG_SITE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(
+        r"^(?:(#{1,4})\s+.*?`##([a-z0-9][a-z0-9-]{2,})`|\|\s*`##([a-z0-9][a-z0-9-]{2,})`|`##([a-z0-9][a-z0-9-]{2,})`)",
+    )
+    .unwrap()
 });
-/// An anchored path reference: `` `<anchor>@<path>` ``. The anchor is a component name, `*`, or
-/// the escape anchor, all one character class with the slug reference's component part.
+/// A backticked span holding an `@`, no whitespace, no backtick and no angle bracket: the
+/// reference grammar's input, recorded as written.
 ///
-/// The path class is permissive on purpose: a `..`, a `.` segment or a leading `/` still
-/// parses as a reference, so the check reports the cause rather than the span falling to
-/// the unsupported-shape lint with nothing naming what is wrong.
-static ANCHORED_PATH: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"`(\*|\.?[A-Za-z0-9][A-Za-z0-9._-]*)@([\w./+-]+)`").unwrap());
-/// A backticked span of path characters holding a slash: the unsupported-shape lint's input.
+/// Permissive on purpose. A `..`, a `.` segment, a leading `/` or a wrong segment count
+/// still parses as a span, so the check reports the cause rather than the span falling to
+/// the unanchored lint with nothing naming what is wrong. An angle bracket excludes the span
+/// because that is how a placeholder illustrates the grammar.
+static AT_SPAN: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"`([^\s`<>@]*@[^\s`<>]*)`").unwrap());
+/// A backticked span of path characters holding a slash and no `@`: the unanchored-path
+/// lint's input.
 ///
-/// The class holds everything the anchored form accepts, `@` and `*` included, so a
-/// malformed anchor is caught rather than invisible. A span holding a space, a colon or an
-/// angle bracket is not path-shaped, which is what lets meta-notation like a bracketed
-/// placeholder document the syntax without a carve-out. Requiring two segments is what
-/// keeps prose livable: a single segment with a trailing slash names a nearby directory,
-/// the way a bare filename names a file, and neither is a pointer.
+/// A span holding a space, a colon or an angle bracket is not path-shaped, which is what
+/// lets meta-notation like a bracketed placeholder document the syntax without a carve-out.
+/// Requiring two segments is what keeps prose livable: a single segment with a trailing slash
+/// names a nearby directory, the way a bare filename names a file, and neither is a pointer.
 static PATH_SHAPED: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"`([\w.@*+-]*/[\w.@*/+-]*)`").unwrap());
-static INTERP_REF: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"R(\d{1,3})\b").unwrap());
+    LazyLock::new(|| Regex::new(r"`([\w.*+-]*/[\w.*/+-]*)`").unwrap());
+/// The retired interpretation entry number: a bare `R` and up to three digits.
+static RETIRED_R: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"R(\d{1,3})\b").unwrap());
 /// A markdown link: `[text](target)`. The target may not hold a space or a closing
 /// parenthesis, which is the shape every link in this tree has.
 static MD_LINK: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\[[^\]]*\]\(([^)\s]+)\)").unwrap());
@@ -234,14 +239,6 @@ pub fn pin(parsed: &Parsed, text: &str) -> Option<String> {
         }
     }
     None
-}
-
-/// Can a slug reference name a component called this.
-///
-/// Asked of a declared component name, so that a name no pointer can spell is reported where
-/// it is declared rather than found later as a reference that resolves to nothing.
-pub fn is_component_name(name: &str) -> bool {
-    COMPONENT_NAME.is_match(name)
 }
 
 /// Scan one parsed document.
@@ -360,38 +357,46 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                     text: c[2].to_string(),
                 });
             }
-            // A FENCE suppresses the slug conventions and markdown links, and nothing else.
-            // Every document that explains how to write a reference has to hold one, and
-            // there is no way to write the illustration that is not a finding otherwise:
-            // unqualified it names no component, and qualified it names a slug the example
-            // invented. A fenced link is the same case for the design README's index.
+            // A FENCE suppresses slug definitions and markdown links, and nothing else. A
+            // definition site is a heading, and a fenced heading is an illustration, so a
+            // fenced slug neither defines nor is misplaced. A fenced link is the same case
+            // for the design README's index.
             //
-            // It does NOT suppress rule numbers. A fenced sketch in a design document comments
+            // It does NOT suppress references, in any form: a sketch names what it names on
+            // purpose, and an illustration writes a placeholder in angle brackets. It does not
+            // suppress rule numbers either — a fenced sketch in a design document comments
             // its rules on purpose, and reading those as data lost 34 citations in this tree.
             let illustration = fenced.contains(&n);
             if region.structural && !illustration {
-                // A slug DEFINES a decision, and a decision's home is a component's design
-                // document. A source comment is not one, so a slug written there defines
+                // A slug DEFINES an entity, and an entity's home is a register home under
+                // an anchor. A source comment is not one, so a slug written there defines
                 // nothing — while a REFERENCE from a source comment is ordinary and is
                 // scanned below.
-                if let Some(c) = SLUG_DEF.captures(line.trim_start()) {
-                    let slug = c.get(1).or_else(|| c.get(2)).unwrap().as_str();
-                    push(Observation::SlugDef(slug.to_string()));
+                if let Some(c) = SLUG_SITE.captures(line.trim_start()) {
+                    let (id, site) = if let Some(id) = c.get(2) {
+                        (id, SlugSite::Heading(c[1].len() as u8))
+                    } else if let Some(id) = c.get(3) {
+                        (id, SlugSite::Cell)
+                    } else {
+                        (c.get(4).unwrap(), SlugSite::LineHead)
+                    };
+                    push(Observation::SlugDef {
+                        id: id.as_str().to_string(),
+                        site,
+                    });
                 }
             }
-            // Interpretation numbers are NOT guarded by the fence, deliberately: one needs no
-            // delimiter to be found, none has been seen to fire on an example, and the
-            // register's index is built from them.
-            if region.structural {
-                for c in INTERP_REF.captures_iter(line) {
-                    let start = c.get(0).unwrap().start();
-                    let before = line[..start].chars().next_back();
-                    if before.is_some_and(|c| c.is_alphanumeric() || c == '_' || c == '.') {
-                        continue;
-                    }
-                    if let Ok(n) = c[1].parse() {
-                        push(Observation::InterpRef(n));
-                    }
+            // The retired entry number, in every prose region. The observation it replaces
+            // read markdown alone, so a number in a Rust comment was checked by nothing;
+            // a comment is prose, and a type parameter is code the scanner never sees.
+            for c in RETIRED_R.captures_iter(line) {
+                let start = c.get(0).unwrap().start();
+                let before = line[..start].chars().next_back();
+                if before.is_some_and(|c| c.is_alphanumeric() || c == '_' || c == '.') {
+                    continue;
+                }
+                if let Ok(n) = c[1].parse() {
+                    push(Observation::Retired(RetiredForm::RegisterNumber(n)));
                 }
             }
             // A markdown link is a pointer a renderer follows, recorded as written. A fenced
@@ -404,40 +409,22 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                 }
                 push(Observation::Link(c[1].to_string()));
             }
-            for c in SLUG_REF.captures_iter(line) {
-                if illustration {
-                    continue;
-                }
-                push(Observation::SlugRef {
-                    component: c.get(1).map(|m| m.as_str().to_string()),
-                    slug: c[2].to_string(),
-                });
+            for c in RETIRED_SLUG_REF.captures_iter(line) {
+                let whole = c.get(0).unwrap().as_str();
+                push(Observation::Retired(RetiredForm::SlugRef(
+                    whole.trim_matches('`').to_string(),
+                )));
             }
-            let mut anchored: Vec<(usize, usize)> = Vec::new();
-            for c in ANCHORED_PATH.captures_iter(line) {
-                let whole = c.get(0).unwrap();
-                anchored.push((whole.start(), whole.end()));
-                let anchor = match &c[1] {
-                    "*" => PathAnchor::Every,
-                    ESCAPE_ANCHOR => PathAnchor::Elsewhere,
-                    name => PathAnchor::Component(name.to_string()),
-                };
-                push(Observation::PathRef {
-                    anchor,
-                    path: c[2].to_string(),
-                });
+            for c in AT_SPAN.captures_iter(line) {
+                push(Observation::Span(c[1].to_string()));
             }
+            // The two classes are disjoint on `@`, so a span is one or the other and never
+            // both.
             for c in PATH_SHAPED.captures_iter(line) {
-                let whole = c.get(0).unwrap();
-                // Both patterns span backtick to backtick, so a span both match is the same
-                // range, already recorded as the reference it parses as.
-                if anchored.contains(&(whole.start(), whole.end())) {
-                    continue;
-                }
                 if c[1].split('/').filter(|s| !s.is_empty()).count() < 2 {
                     continue;
                 }
-                push(Observation::UnsupportedPath(c[1].to_string()));
+                push(Observation::UnanchoredPath(c[1].to_string()));
             }
         }
     }
@@ -733,7 +720,7 @@ mod tests {
         assert!(
             !scan_md(parked)
                 .iter()
-                .any(|o| matches!(o, Observation::SlugDef(_))),
+                .any(|o| matches!(o, Observation::SlugDef { .. })),
             "{:?}",
             scan_md(parked)
         );
@@ -754,317 +741,234 @@ mod tests {
         assert_eq!(tokens, vec!["104.4b".to_string()]);
     }
 
-    /// The reference a line holds, as `(component, slug)`.
-    fn refs(text: &str) -> Vec<(Option<String>, String)> {
+    /// The slug definitions a text yields, as `(id, site)`.
+    fn defs(text: &str) -> Vec<(String, SlugSite)> {
         scan_md(text)
             .into_iter()
             .filter_map(|o| match o {
-                Observation::SlugRef { component, slug } => Some((component, slug)),
+                Observation::SlugDef { id, site } => Some((id, site)),
+                _ => None,
+            })
+            .collect()
+    }
+
+    /// The `@` spans a text yields, as written.
+    fn spans(text: &str) -> Vec<String> {
+        scan_md(text)
+            .into_iter()
+            .filter_map(|o| match o {
+                Observation::Span(s) => Some(s),
+                _ => None,
+            })
+            .collect()
+    }
+
+    /// The retired forms a text yields.
+    fn retired(text: &str) -> Vec<RetiredForm> {
+        scan_md(text)
+            .into_iter()
+            .filter_map(|o| match o {
+                Observation::Retired(r) => Some(r),
+                _ => None,
+            })
+            .collect()
+    }
+
+    /// The unanchored path-shaped spans a text yields.
+    fn unanchored(text: &str) -> Vec<String> {
+        scan_md(text)
+            .into_iter()
+            .filter_map(|o| match o {
+                Observation::UnanchoredPath(s) => Some(s),
                 _ => None,
             })
             .collect()
     }
 
     #[test]
-    fn a_slug_opens_a_decision_in_a_level_three_heading_or_in_a_table_cell() {
-        // The statement precedes the slug, which is what makes the heading an outline entry.
-        let stated = "### The statement `##a-slug`";
-        assert!(scan_md(stated).contains(&Observation::SlugDef("a-slug".into())));
-        // A heading carrying nothing but the slug is a definition too. Requiring text after
-        // it is what made every such heading invisible.
-        let alone = "### `##a-slug`";
-        assert!(scan_md(alone).contains(&Observation::SlugDef("a-slug".into())));
-        let cell = "| `##in-a-cell` | holds |";
-        assert!(scan_md(cell).contains(&Observation::SlugDef("in-a-cell".into())));
-        // Mid-sentence it is a reference, not a definition.
-        let mid = "as `a-component#a-slug` records";
-        assert_eq!(
-            refs(mid),
-            vec![(Some("a-component".to_string()), "a-slug".to_string())]
-        );
-        assert!(!scan_md(mid)
-            .iter()
-            .any(|o| matches!(o, Observation::SlugDef(_))));
-    }
-
-    #[test]
-    fn a_slug_at_a_bare_line_head_is_no_longer_a_definition() {
-        // The form that predates the heading rule. It defines nothing, so every pointer at
-        // it is reported as dangling — which is how the migration is visible rather than
-        // silent.
-        let old = "`##a-slug` — **The statement.**";
-        assert!(!scan_md(old)
-            .iter()
-            .any(|o| matches!(o, Observation::SlugDef(_))));
-    }
-
-    #[test]
-    fn a_slug_in_a_deeper_or_shallower_heading_is_not_a_definition() {
-        for level in ["##", "####"] {
-            let head = format!("{level} The statement `##a-slug`");
-            assert!(
-                !scan_md(&head)
-                    .iter()
-                    .any(|o| matches!(o, Observation::SlugDef(_))),
-                "level {level} must not define"
-            );
-        }
-    }
-
-    #[test]
-    fn a_slug_inside_a_fence_is_an_illustration_rather_than_a_pointer() {
-        // Neither form is a reference there, and the same two forms outside the fence are.
-        // Without this, a document explaining the convention cannot hold an example of it:
-        // unqualified names no component, and qualified names a slug the example invented.
-        let fenced =
-            "before\n```\n`a-component#a-slug` and `#a-slug` and `##a-slug` — **A head.**\n```\nafter\n";
-        assert!(refs(fenced).is_empty(), "{:#?}", refs(fenced));
-        assert!(!scan_md(fenced)
-            .iter()
-            .any(|o| matches!(o, Observation::SlugDef(_))));
-        // The fence is what does it, not the line: the same line outside one is both.
-        let open = "`a-component#a-slug` and `#a-slug`\n";
-        assert_eq!(
-            refs(open),
-            vec![
-                (Some("a-component".to_string()), "a-slug".to_string()),
-                (None, "a-slug".to_string()),
-            ]
-        );
-    }
-
-    #[test]
-    fn a_source_comment_carries_pointers_but_defines_no_decision() {
-        // A slug's home is a component's design document, so a source comment may point at a
-        // decision and may not open one. The reference still has to be found, because that is
-        // how a doc comment cites the argument for the code under it.
-        let src = "/// argued at `a-component#a-slug`\n/// ### stated `##a-slug`\nfn f() {}\n";
-        let seen = scan_rs(src);
-        assert!(seen.contains(&Observation::SlugRef {
-            component: Some("a-component".to_string()),
-            slug: "a-slug".to_string(),
-        }));
-        assert!(!seen.iter().any(|o| matches!(o, Observation::SlugDef(_))));
-    }
-
-    #[test]
-    fn a_rule_number_in_a_bound_string_literal_is_not_a_citation_and_a_message_is() {
-        // Bound to a name it is a fixture; in a call it is a message. Under the checker's own
-        // source neither is read at all.
-        let bound = "fn f() {\n    let n = \"104.4b\";\n}\n";
-        assert!(scan_rs(bound).is_empty(), "{:?}", scan_rs(bound));
-        let message = "fn f() {\n    g(\"104.4b\");\n}\n";
-        assert!(
-            scan_rs(message)
-                .iter()
-                .any(|o| matches!(o, Observation::RuleToken(_))),
-            "{:?}",
-            scan_rs(message)
-        );
-        let data = scan(&crate::source::rs::parse(
-            message,
-            crate::source::Literals::Data,
-        ));
-        assert!(data.is_empty(), "{data:?}");
-    }
-
-    #[test]
-    fn a_rule_number_in_a_code_span_is_data_rather_than_a_citation() {
-        let live = "The sort key is 104.4b in prose.";
-        assert!(scan_md(live)
-            .iter()
-            .any(|o| matches!(o, Observation::RuleToken(_))));
-        let data = "The sort key is `104.4b` in a code span.";
-        assert!(
-            !scan_md(data)
-                .iter()
-                .any(|o| matches!(o, Observation::RuleToken(_))),
-            "{:?}",
-            scan_md(data)
-        );
-    }
-
-    #[test]
-    fn a_definition_is_not_also_read_as_a_reference_to_itself() {
-        // The reference pattern's component part is optional, so a definition — which opens
-        // with a second `#` — could match it with no component at all. It must not: every
-        // decision head in the project would then be a reference naming no component, and the
-        // check that reports those would fire on all of them at once.
-        for line in [
-            "`##a-slug`  **The statement.**",
-            "| `##in-a-cell` | holds |",
-        ] {
-            assert!(refs(line).is_empty(), "{line}");
-        }
-    }
-
-    #[test]
-    fn a_reference_naming_no_component_is_recorded_rather_than_dropped() {
-        // Dropped, it would be a pointer no check can see: nothing resolves it and nothing
-        // tells the writer it resolves to nothing.
-        assert_eq!(
-            refs("as `#a-slug` records"),
-            vec![(None, "a-slug".to_string())]
-        );
-    }
-
-    #[test]
-    fn a_component_name_is_referenceable_exactly_when_a_reference_can_spell_it() {
-        // Two patterns state the same character class, and a name accepted by one and not the
-        // other is a component every pointer at it misses in silence.
-        for name in [
-            "a-tool",
-            "an.engine",
-            ".claude",
-            "an_engine",
-            "9lives",
-            "-leading-dash",
-            "has/slash",
-            "has space",
-            "",
-        ] {
-            let scanned = refs(&format!("see `{name}#a-slug`"));
-            let spelled = scanned == vec![(Some(name.to_string()), "a-slug".to_string())];
+    fn a_slug_is_recorded_with_its_site_at_every_heading_level_a_cell_and_a_line_head() {
+        // The scanner records WHERE the slug sits and decides nothing about whether it
+        // defines: that is the entity table's, which reports a level-one or level-four slug
+        // as misplaced rather than seeing nothing.
+        for level in 1..=4u8 {
+            let head = format!("{} The statement `##a-slug`", "#".repeat(level as usize));
             assert_eq!(
-                is_component_name(name),
-                spelled,
-                "{name:?} scanned as {scanned:?}"
+                defs(&head),
+                vec![("a-slug".to_string(), SlugSite::Heading(level))],
+                "{head}"
             );
         }
-    }
-
-    /// The path references a text yields, rendered as written: `<anchor>@<path>`.
-    fn path_refs(text: &str) -> Vec<String> {
-        scan_md(text)
-            .into_iter()
-            .filter_map(|o| match o {
-                Observation::PathRef { anchor, path } => Some(match anchor {
-                    PathAnchor::Component(c) => format!("{c}@{path}"),
-                    PathAnchor::Elsewhere => format!("{ESCAPE_ANCHOR}@{path}"),
-                    PathAnchor::Every => format!("*@{path}"),
-                }),
-                _ => None,
-            })
-            .collect()
-    }
-
-    /// The unsupported path-shaped spans a text yields.
-    fn unsupported(text: &str) -> Vec<String> {
-        scan_md(text)
-            .into_iter()
-            .filter_map(|o| match o {
-                Observation::UnsupportedPath(s) => Some(s),
-                _ => None,
-            })
-            .collect()
-    }
-
-    #[test]
-    fn an_anchor_is_a_component_a_star_or_the_escape_word() {
-        // The three anchors of the grammar, each rendered back as written. The trailing
-        // slash on the second is kept: it is the writer's claim that the target is a
-        // directory, and the check asserts it.
-        let text = format!(
-            "see `a-component@docs/design/a.md` and `a-component@docs/design/` and \
-             `*@docs/design/a.md` and `{ESCAPE_ANCHOR}@docs/design/a.md`"
+        // A heading carrying nothing but the slug is recorded too. Requiring text after it
+        // is what made every such heading invisible.
+        assert_eq!(
+            defs("### `##a-slug`"),
+            vec![("a-slug".to_string(), SlugSite::Heading(3))]
         );
         assert_eq!(
-            path_refs(&text),
-            vec![
-                "a-component@docs/design/a.md".to_string(),
-                "a-component@docs/design/".to_string(),
-                "*@docs/design/a.md".to_string(),
-                format!("{ESCAPE_ANCHOR}@docs/design/a.md"),
-            ]
+            defs("| `##in-a-cell` | holds |"),
+            vec![("in-a-cell".to_string(), SlugSite::Cell)]
         );
-        assert_eq!(unsupported(&text), Vec::<String>::new());
-    }
-
-    #[test]
-    fn any_suffix_and_a_slashless_path_are_extracted() {
-        // The retired form extracted a bare path only when its suffix was one of five, so
-        // every backticked Rust path dangled silently through one relocation. The anchored
-        // form owes no suffix and no slash: a bare document name behind an anchor is a reference too.
-        let text = "see `a-component@src/b.rs` and `a-component@README.md`";
+        // The form that predates the heading rule, recorded so the table can report it.
         assert_eq!(
-            path_refs(text),
-            vec![
-                "a-component@src/b.rs".to_string(),
-                "a-component@README.md".to_string()
-            ]
+            defs("`##a-slug` — **The statement.**"),
+            vec![("a-slug".to_string(), SlugSite::LineHead)]
+        );
+        // Mid-sentence it is typography showing the shape, and nothing is recorded.
+        assert_eq!(defs("write it as `##a-slug` at the end"), Vec::new());
+    }
+
+    #[test]
+    fn a_fence_suppresses_a_definition_and_leaves_every_reference_live() {
+        // A fenced heading is an illustration, so a fenced slug defines nothing and is not
+        // misplaced either. A fenced REFERENCE is live for every kind, the retired forms
+        // included: a sketch names what it names on purpose, and an illustration writes a
+        // placeholder in angle brackets. Mutation checked: dropping the `illustration` test
+        // from the definition arm records the fenced heading as a definition.
+        let fenced = "before\n```\n### A head `##a-slug`\n`design@a-component@a-slug` and \
+                      `a-component#a-slug` and R15 and `docs/a.md`\n```\nafter\n";
+        assert_eq!(defs(fenced), Vec::new(), "{:#?}", scan_md(fenced));
+        assert_eq!(spans(fenced), vec!["design@a-component@a-slug".to_string()]);
+        let seen = retired(fenced);
+        assert_eq!(seen.len(), 2, "{seen:?}");
+        assert!(seen.contains(&RetiredForm::SlugRef("a-component#a-slug".to_string())));
+        assert!(seen.contains(&RetiredForm::RegisterNumber(15)));
+        assert_eq!(unanchored(fenced), vec!["docs/a.md".to_string()]);
+        // The same heading outside the fence is a definition.
+        assert_eq!(defs("### A head `##a-slug`\n").len(), 1);
+    }
+
+    #[test]
+    fn a_source_comment_carries_references_and_defines_nothing() {
+        // A slug's home is a register home under an anchor, so a source comment may point
+        // at an entity and may not define one. The reference still has to be found, because
+        // that is how a doc comment cites the argument for the code under it.
+        let src =
+            "/// argued at `design@a-component@a-slug`\n/// ### stated `##a-slug`\nfn f() {}\n";
+        let seen = scan_rs(src);
+        assert!(seen.contains(&Observation::Span("design@a-component@a-slug".to_string())));
+        assert!(!seen
+            .iter()
+            .any(|o| matches!(o, Observation::SlugDef { .. })));
+    }
+
+    #[test]
+    fn a_reference_in_a_bound_string_literal_is_not_one_and_a_message_is() {
+        // Bound to a name it is a fixture; in a call it is a message a human reads.
+        let bound = "fn f() {\n    let n = \"design@a-component@a-slug\";\n}\n";
+        assert!(scan_rs(bound).is_empty(), "{:?}", scan_rs(bound));
+        let message = "fn f() {\n    g(\"see `design@a-component@a-slug`\");\n}\n";
+        assert!(
+            scan_rs(message).contains(&Observation::Span("design@a-component@a-slug".to_string())),
+            "{:?}",
+            scan_rs(message)
         );
     }
 
     #[test]
-    fn a_bare_two_segment_span_is_an_unsupported_path_shape() {
-        // The retired bare form, the retired `@` escape, and a dotted upward path: each is
-        // recorded so the check can name the accepted syntaxes, never dropped.
-        for span in [
-            "docs/design/a.md",
-            "@docs/design/a.md",
-            "../../docs/design/a.md",
-            "a/b.json",
+    fn the_retired_slug_form_is_recorded_with_and_without_its_word_and_a_definition_is_not() {
+        // The two shapes the retired pattern had, each reported so the migration is visible;
+        // a definition opens with a second `#` and matches neither.
+        assert_eq!(
+            retired("as `a-component#a-slug` and `#a-slug` record"),
+            vec![
+                RetiredForm::SlugRef("a-component#a-slug".to_string()),
+                RetiredForm::SlugRef("#a-slug".to_string()),
+            ]
+        );
+        for line in [
+            "### The statement `##a-slug`",
+            "| `##in-a-cell` | holds |",
+            "`##a-slug`  **The statement.**",
         ] {
+            assert_eq!(retired(line), Vec::new(), "{line}");
+        }
+        // A placeholder in angle brackets is an illustration of the retired form too.
+        assert_eq!(retired("the shape `<word>#<word>` is retired"), Vec::new());
+    }
+
+    #[test]
+    fn the_retired_entry_number_is_a_bare_r_and_digits_outside_a_word() {
+        let text = "R15 holds, but CR:104.4b and FOR15 and 1.R3 and R2D2 do not";
+        assert_eq!(retired(text), vec![RetiredForm::RegisterNumber(15)]);
+        // In a Rust comment as in markdown: a comment is prose, and a number there names
+        // the same retired entry. Code is not prose, so a type parameter is not read.
+        let comment = scan_rs("/// per R15\nfn f<R15>() {}\n");
+        assert_eq!(
+            comment
+                .iter()
+                .filter(|o| matches!(o, Observation::Retired(_)))
+                .count(),
+            1,
+            "{comment:?}"
+        );
+        assert!(scan_rs("fn f<R15>() {}\n").is_empty());
+    }
+
+    #[test]
+    fn a_backticked_span_holding_an_at_sign_is_recorded_as_written_whatever_its_head() {
+        // The scanner has no manifest, so it cannot tell a kind from an email address; the
+        // candidate rule downstream does. The trailing slash on the second is kept: it is
+        // the writer's claim that the target is a directory, and the check asserts it.
+        let text = "see `design@a-component@a-slug` and `path@a-component@docs/design/` and \
+                    `path@*@docs/design/a.md` and `path@elsewhere@x/y` and \
+                    `a-component@docs/a.md` and `user@example.test` and `@docs/a.md`";
+        assert_eq!(
+            spans(text),
+            vec![
+                "design@a-component@a-slug".to_string(),
+                "path@a-component@docs/design/".to_string(),
+                "path@*@docs/design/a.md".to_string(),
+                "path@elsewhere@x/y".to_string(),
+                "a-component@docs/a.md".to_string(),
+                "user@example.test".to_string(),
+                "@docs/a.md".to_string(),
+            ]
+        );
+        assert_eq!(
+            unanchored(text),
+            Vec::<String>::new(),
+            "a span is one or the other"
+        );
+    }
+
+    #[test]
+    fn a_span_with_whitespace_or_an_angle_bracket_is_not_recorded() {
+        // A placeholder is how the grammar is illustrated, and a sentence in backticks is
+        // not a pointer.
+        let text = "write `<kind>@<anchor>@<id>` or `path@<component>@docs/a.md`, \
+                    not `see the a@b form`";
+        assert_eq!(spans(text), Vec::<String>::new());
+        assert_eq!(unanchored(text), Vec::<String>::new());
+    }
+
+    #[test]
+    fn a_bare_two_segment_span_is_an_unanchored_path_shape() {
+        // The retired bare form and a dotted upward path: each is recorded so the check can
+        // name the grammar, never dropped.
+        for span in ["docs/design/a.md", "../../docs/design/a.md", "a/b.json"] {
             let text = format!("see `{span}`");
-            assert_eq!(unsupported(&text), vec![span.to_string()], "{span}");
-            assert_eq!(path_refs(&text), Vec::<String>::new(), "{span}");
+            assert_eq!(unanchored(&text), vec![span.to_string()], "{span}");
+            assert_eq!(spans(&text), Vec::<String>::new(), "{span}");
         }
     }
 
     #[test]
     fn a_single_segment_span_is_a_name_rather_than_a_pointer() {
-        // A directory named beside its slash and a bare filename are prose naming a thing,
-        // the stance the retired pattern took on filenames. Flagging them would bury the
-        // real dangling references under noise.
+        // A directory named beside its slash and a bare filename are prose naming a thing.
+        // Flagging them would bury the real dangling references under noise.
         let text = "see `past/` and `citations.py` and `a/`";
-        assert_eq!(unsupported(text), Vec::<String>::new());
-        assert_eq!(path_refs(text), Vec::<String>::new());
+        assert_eq!(unanchored(text), Vec::<String>::new());
+        assert_eq!(spans(text), Vec::<String>::new());
     }
 
     #[test]
     fn meta_notation_is_not_path_shaped() {
-        // A space, a colon or an angle bracket puts a span outside the path classes, which
-        // is what lets documentation of the syntax show a placeholder without a carve-out.
-        let text = "write `<component>@docs/design/a.md` or `see the docs/design/a.md form` \
+        // A space, a colon or an angle bracket puts a span outside the path class, which is
+        // what lets documentation of the syntax show a placeholder without a carve-out.
+        let text = "write `path@<component>@docs/design/a.md` or `see the docs/design/a.md form` \
                     or `https://a.test/docs/design/a.md`";
-        assert_eq!(unsupported(text), Vec::<String>::new());
-        assert_eq!(path_refs(text), Vec::<String>::new());
-    }
-
-    #[test]
-    fn an_anchored_span_is_not_also_an_unsupported_shape() {
-        // Both patterns span backtick to backtick, so the anchored match owns its range and
-        // the lint reads the residue. Without the range check every anchored reference in
-        // the tree would be reported once as itself and once as unsupported.
-        let text = "see `a-component@docs/design/a.md`";
-        assert_eq!(path_refs(text).len(), 1);
-        assert_eq!(unsupported(text), Vec::<String>::new());
-    }
-
-    #[test]
-    fn an_interpretation_reference_is_not_found_inside_a_word_or_a_number() {
-        let text = "R15 holds, but CR:104.4b and FOR15 and 1.R3 do not";
-        let refs: Vec<u16> = scan_md(text)
-            .into_iter()
-            .filter_map(|o| match o {
-                Observation::InterpRef(n) => Some(n),
-                _ => None,
-            })
-            .collect();
-        assert_eq!(refs, vec![15]);
-    }
-
-    #[test]
-    fn interpretation_references_are_markdown_only() {
-        // In Rust an `R`-shaped token is usually a type parameter, and reading one as a
-        // citation is worse than missing one.
-        let refs = scan(&crate::source::rs::parse(
-            "fn f<R15>() {}",
-            crate::source::Literals::Prose,
-        ));
-        assert!(!refs
-            .iter()
-            .any(|l| matches!(l.what, Observation::InterpRef(_))));
+        assert_eq!(unanchored(text), Vec::<String>::new());
+        assert_eq!(spans(text), Vec::<String>::new());
     }
 
     #[test]

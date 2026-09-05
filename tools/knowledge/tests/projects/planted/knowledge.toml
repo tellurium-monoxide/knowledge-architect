@@ -31,4 +31,5 @@ manifest = "past/MANIFEST.tsv"
 
 [interpretations]
 dir = "notes/readings"
-concerns = []
+# PLANTED: a declared concern with no file.
+concerns = ["gone"]

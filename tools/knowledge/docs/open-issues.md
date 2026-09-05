@@ -107,26 +107,28 @@ way, the reproduction above must fail loudly instead of passing.
 
 ## Span and link shapes the scanner cannot see `observation`
 
-**What.** The path scanner reads one line at a time and two character classes, and the link
-scanner reads one inline pattern, so these shapes produce neither a reference nor an
-unsupported-shape observation, and no finding:
+**What.** The reference tokenizer records a backticked span holding an `@` and no whitespace,
+backtick or angle bracket; the unanchored-path lint reads one character class with no `@`; and
+the link scanner reads one inline pattern. Each shape below therefore produces neither a
+reference nor a lint observation, and no finding:
 
 ```
 `notes/a.md:12`             a colon suffix, the file-and-line idiom
-`minimal@notes/a.md,`       trailing punctuation inside the backticks
 a span wrapped across a line boundary
 a fullwidth at sign in place of the ASCII one
 [text][label]               a reference-style link, with its definition elsewhere
 [text](<notes/a.md>)        an angle-bracketed target
 ```
 
-The link shapes surface as a dangling target or an unlinked subdocument in a design README, and
-are silent in an ordinary navigation file, per the close-enough clause of
+Trailing punctuation inside the backticks, `` `path@<anchor>@notes/a.md,` ``, left this list
+when the `@` grammar landed: the span is recorded as written and resolves to nothing, so it is
+reported as dangling. The link shapes surface as a dangling target or an unlinked subdocument in
+a design README, and are silent in an ordinary navigation file, per the close-enough clause of
 `knowledge#links-are-navigation-rows`. Enumerated by an adversarial review of the
 anchored-grammar branch; a grep at that revision found no live instance of any shape, so every
 gap is latent.
 
-**Why it matters.** The unsupported-shape lint promises that no pointer class passes
+**Why it matters.** The unanchored-shape lint promises that no pointer class passes
 unregistered, and each shape above is a pointer a reader might write — the colon idiom most of
 all. The cost of widening is false positives on prose, which the lint's two-segment clause was
 tuned against; the census that tuned it did not measure these shapes.

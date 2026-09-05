@@ -131,26 +131,26 @@ fn a_family_gated_on_a_file_that_is_absent_is_reported_as_not_run() {
 
 #[test]
 fn asking_for_one_family_does_not_read_another() {
-    let (stdout, _, code) = run("planted", &["check", "--only", "slugs"]);
-    assert!(stdout.contains("checked: slugs"), "{stdout}");
-    assert!(stdout.contains("slugs:"), "{stdout}");
-    assert!(!stdout.contains("paths:"), "{stdout}");
+    let (stdout, _, code) = run("planted", &["check", "--only", "references"]);
+    assert!(stdout.contains("checked: references"), "{stdout}");
+    assert!(stdout.contains("references:"), "{stdout}");
+    assert!(!stdout.contains("components:"), "{stdout}");
     assert!(!stdout.contains("no rule says this"), "{stdout}");
-    assert_eq!(code, 1, "the project plants four slug defects: {stdout}");
+    assert_eq!(code, 1, "the project plants reference defects: {stdout}");
 }
 
 #[test]
 fn a_family_that_does_not_read_rule_text_resolves_no_release() {
     // The `pinned` project pins a release that is neither vendored nor archived, so
-    // resolving it is a network fetch that fails. Nothing about slugs needs a release, and
+    // resolving it is a network fetch that fails. Nothing about references needs a release, and
     // before resolution was scoped to the families that read rule text, every run resolved
     // every pin — so this run failed, and reached the network, for another family's reason.
     //
     // Only this direction is asserted. The opposite one is a real fetch, and a test suite
     // that reaches the network is a test suite that fails when the network does.
-    let (stdout, stderr, code) = run("pinned", &["check", "--only", "slugs"]);
+    let (stdout, stderr, code) = run("pinned", &["check", "--only", "references"]);
     assert_eq!(code, 0, "stdout {stdout} stderr {stderr}");
-    assert!(stdout.contains("checked: slugs"), "{stdout}");
+    assert!(stdout.contains("checked: references"), "{stdout}");
     assert!(
         !stderr.contains("19990101") && !stderr.contains("curl"),
         "no pin was resolved: {stderr}"
@@ -243,7 +243,7 @@ fn the_verdict_counts_the_findings_it_printed() {
 /// A clean run says so on its last line and exits zero.
 #[test]
 fn a_passing_run_ends_with_a_passed_verdict() {
-    let (stdout, _, code) = run("pinned", &["check", "--only", "slugs"]);
+    let (stdout, _, code) = run("pinned", &["check", "--only", "references"]);
     let last = stdout.lines().rfind(|l| !l.is_empty()).unwrap();
     assert_eq!(last, "PASSED: no findings", "{stdout}");
     assert_eq!(code, 0, "{stdout}");
@@ -529,7 +529,7 @@ fn outstanding_selects_the_kind_its_flags_name() {
 #[test]
 fn the_summary_names_the_checker_source_and_counts_the_files_under_it() {
     // A mock project holds no file under the checker's source: the line prints, at zero.
-    let (stdout, _, _) = run("minimal", &["check", "--only", "slugs"]);
+    let (stdout, _, _) = run("minimal", &["check", "--only", "references"]);
     assert!(
         stdout.contains("\nchecker source: ")
             && stdout.contains(", 0 file(s) with string literals read as data"),
@@ -540,7 +540,7 @@ fn the_summary_names_the_checker_source_and_counts_the_files_under_it() {
         .ancestors()
         .nth(2)
         .expect("tools/knowledge sits two levels below the root");
-    let (stdout, _, _) = run_in(checkout, &["check", "--only", "slugs"]);
+    let (stdout, _, _) = run_in(checkout, &["check", "--only", "references"]);
     let line = stdout
         .lines()
         .find(|l| l.starts_with("checker source: "))

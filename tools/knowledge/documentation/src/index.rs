@@ -273,8 +273,11 @@ fn citing_files(model: &Model, dir: &std::path::Path) -> BTreeMap<u16, BTreeMap<
         }
         let inside = doc.rel.parent() == Some(dir);
         let mut per_line: BTreeMap<u32, BTreeSet<u16>> = BTreeMap::new();
+        // The entry number is a retired reference form, and the register's file-register
+        // index replaces this one; until it lands the number is still the only handle the
+        // index has on a citing line.
         for (line, n) in doc.observations_of(|o| match o {
-            Observation::InterpRef(n) => Some(*n),
+            Observation::Retired(crate::scan::RetiredForm::RegisterNumber(n)) => Some(*n),
             _ => None,
         }) {
             per_line.entry(line).or_default().insert(n);

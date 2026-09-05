@@ -1,15 +1,19 @@
-//! The interpretation register: one file per declared concern, and every `R` number resolving
-//! to exactly one entry.
+//! The interpretation register: one file per declared concern, and every `R` number defined
+//! exactly once.
 //!
 //! A gap in the numbering is a failure and not a deletion. A superseded entry is kept and
 //! marked, so nothing legitimately removes a number, and a hole is an entry that was lost.
+//!
+//! **No reference is resolved here any more.** A bare `R` and digits is a retired form under
+//! the reference grammar, reported by the `references` family wherever it stands, so there
+//! is no token left for this check to bind to a concern file. The register's move to a
+//! declared file register replaces the rest of this module.
 
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::finding::Finding;
 use crate::manifest::Manifest;
 use crate::model::Model;
-use crate::scan::Observation;
 
 pub fn check(model: &Model, manifest: &Manifest) -> (Vec<Finding>, (usize, usize, u16)) {
     let dir = &manifest.interpretations().dir;
@@ -98,73 +102,6 @@ pub fn check(model: &Model, manifest: &Manifest) -> (Vec<Finding>, (usize, usize
         }
     }
 
-    // --- every reference resolves, and names the file that holds it -----------------
-    for doc in model.documents() {
-        if !doc.is_markdown() {
-            continue;
-        }
-        let inside = doc.rel.parent() == Some(dir.as_path());
-        // The scanner records one observation per occurrence, and the binding below re-finds
-        // every occurrence itself — so a line repeating a number is judged once, not once
-        // per copy.
-        let mut bound_checked: std::collections::HashSet<(u32, u16)> =
-            std::collections::HashSet::new();
-        for (line, number) in doc.observations_of(|o| match o {
-            Observation::InterpRef(n) => Some(*n),
-            _ => None,
-        }) {
-            let text = doc.text.lines().nth(line as usize - 1).unwrap_or("");
-            if inside && entry_heading(text).is_some() {
-                continue; // the entry's own heading defines it
-            }
-            let Some((file, _)) = seen.get(&number) else {
-                out.push(Finding::at(
-                    &doc.rel,
-                    line,
-                    format!("R{number} has no entry in the register"),
-                    "point at an entry that exists, or write the entry",
-                ));
-                continue;
-            };
-            // A reference naming the register but not the entry's file passes a path check,
-            // because the directory always resolves. This is the half the addressing decision
-            // rests on: a re-filing has to rewrite every file that names the old concern.
-            //
-            // **Each occurrence of the `R` binds to the NEAREST concern file named on its
-            // line, either side, by the gap between them.** Comparing every number against
-            // every file made a line citing one entry from each of two concerns unwritable —
-            // both pairings reported, both false — and binding only leftward un-checked the
-            // tree's commonest order, `R31's claim in <file>`. The gap runs to the name's
-            // nearer edge, because a name has length and its far edge says nothing about
-            // adjacency. A number on a line naming no concern file is unqualified and
-            // checked against none, the shape a bare reference already has.
-            if !bound_checked.insert((line, number)) {
-                continue;
-            }
-            let named = concern_files_named(text, dir);
-            for p in r_positions(text, number) {
-                let bound = named.iter().min_by_key(|(start, end, _)| {
-                    if p < *start {
-                        start - p
-                    } else {
-                        p.saturating_sub(*end)
-                    }
-                });
-                if let Some((_, _, named_file)) = bound {
-                    if named_file != file {
-                        out.push(Finding::at(
-                            &doc.rel,
-                            line,
-                            format!("R{number} is in {file}, not the {named_file} this line names"),
-                            "repair the concern file it names; a re-filing rewrites every \
-                             reference in the same change",
-                        ));
-                        break;
-                    }
-                }
-            }
-        }
-    }
     let top = seen.keys().max().copied().unwrap_or(0);
     (out, (declared.len(), seen.len(), top))
 }
@@ -177,131 +114,9 @@ fn entry_heading(line: &str) -> Option<(u16, String)> {
     Some((digits.parse().ok()?, title.trim_end().to_string()))
 }
 
-/// Concern filenames a line names, as `(name start, name end, <concern>.md)`.
-///
-/// Both edges, because the binding measures the gap to the nearer one: a name has length,
-/// and measuring to its start makes a long name further from the reference sitting right
-/// after it than a short name two words away.
-fn concern_files_named(line: &str, dir: &std::path::Path) -> Vec<(usize, usize, String)> {
-    let needle = format!("{}/", dir.file_name().unwrap_or_default().to_string_lossy());
-    let mut out = Vec::new();
-    let mut from = 0;
-    while let Some(i) = line[from..].find(&needle) {
-        let at = from + i;
-        let after = &line[at + needle.len()..];
-        let end = after
-            .find(|c: char| !(c.is_ascii_lowercase() || c == '-'))
-            .unwrap_or(after.len());
-        let stem = &after[..end];
-        if !stem.is_empty() && after[end..].starts_with(".md") {
-            let name_end = at + needle.len() + end + ".md".len();
-            out.push((at, name_end, format!("{stem}.md")));
-        }
-        from = at + needle.len();
-    }
-    out
-}
-
-/// Every place `R<number>` sits in a line, with the boundaries the scanner's pattern uses.
-///
-/// The scanner records the line and not the column, so the binding re-finds the token —
-/// every occurrence, because each binds to its own nearest file.
-fn r_positions(line: &str, number: u16) -> Vec<usize> {
-    let token = format!("R{number}");
-    let mut out = Vec::new();
-    let mut from = 0;
-    while let Some(i) = line[from..].find(&token) {
-        let at = from + i;
-        let before_ok = line[..at]
-            .chars()
-            .next_back()
-            .is_none_or(|c| !(c.is_alphanumeric() || c == '_' || c == '.'));
-        let after_ok = line[at + token.len()..]
-            .chars()
-            .next()
-            .is_none_or(|c| !c.is_ascii_digit());
-        if before_ok && after_ok {
-            out.push(at);
-        }
-        from = at + token.len();
-    }
-    out
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::Path;
-
-    // Every fixture is written as the bytes it means: the checker reads no string literal of
-    // its own source, per `knowledge#checker-source-literals-are-data`.
-
-    #[test]
-    fn a_line_naming_a_concern_file_is_read_back() {
-        let dir = Path::new("docs/rules/interpretations");
-        let names = |line: &str| -> Vec<String> {
-            concern_files_named(line, dir)
-                .into_iter()
-                .map(|(_, _, f)| f)
-                .collect()
-        };
-        let one = "see `interpretations/layers.md` for it";
-        assert_eq!(names(one), vec!["layers.md".to_string()]);
-        let two = "`../interpretations/game-loop.md` and `interpretations/layers.md`";
-        assert_eq!(
-            names(two),
-            vec!["game-loop.md".to_string(), "layers.md".to_string()]
-        );
-        // Naming the directory alone is not naming a file, and is what the check exists for.
-        let bare = "see the interpretations/ directory";
-        assert!(names(bare).is_empty());
-    }
-
-    #[test]
-    fn an_r_number_binds_to_the_nearest_concern_file_named_before_it() {
-        // The recorded defect: comparing every number against every file on the line made a
-        // line citing one entry from each of two concerns unwritable — two findings, both
-        // false. Mutation checked: restoring the every-against-every comparison fails the
-        // two-concern line below with two findings.
-        let dir = Path::new("docs/rules/interpretations");
-        let root = crate::manifest::tests::this_project();
-        let manifest = crate::Manifest::load(&root).expect("this project's manifest");
-        let entry = |n: u16| format!("## R{n} — a reading recorded for this test\n");
-        let mistargets = |line: &str| -> Vec<String> {
-            let model = crate::model::Model::from_documents(vec![
-                (dir.join("game-loop.md"), entry(1)),
-                (dir.join("object-identity.md"), entry(2)),
-                (std::path::PathBuf::from("notes/a.md"), line.to_string()),
-            ]);
-            check(&model, &manifest)
-                .0
-                .into_iter()
-                .filter(|f| f.what.contains("not the"))
-                .map(|f| f.what)
-                .collect()
-        };
-        // One entry from each concern on ONE line: both bindings are right, no finding.
-        let both = "`interpretations/game-loop.md` R1 and \
-                    `interpretations/object-identity.md` R2, together\n";
-        assert_eq!(mistargets(both), Vec::<String>::new());
-        // The tree's commonest order puts the number first — "R1's claim in <file>" — and
-        // binding only leftward un-checked every such line: a re-filing was silent at each.
-        let number_first = "per R2's claim in `interpretations/object-identity.md`, tables watch\n";
-        assert_eq!(mistargets(number_first), Vec::<String>::new());
-        let refiled = "per R1's claim in `interpretations/object-identity.md`, tables watch\n";
-        assert_eq!(mistargets(refiled).len(), 1, "{:#?}", mistargets(refiled));
-        // The nearest file before the number is the wrong one: exactly one finding.
-        let wrong = "`interpretations/object-identity.md` R1 names the wrong file\n";
-        assert_eq!(mistargets(wrong).len(), 1, "{:#?}", mistargets(wrong));
-        // A number on a line naming no concern file is unqualified and checked against none.
-        let bare = "R1 stands alone here\n";
-        assert_eq!(mistargets(bare), Vec::<String>::new());
-        // Every occurrence binds for itself: a first, correctly bound mention does not
-        // launder a second one sitting beside the wrong file.
-        let repeated = "`interpretations/game-loop.md` R1 first, then refiled under \
-                        `interpretations/object-identity.md` R1\n";
-        assert_eq!(mistargets(repeated).len(), 1, "{:#?}", mistargets(repeated));
-    }
 
     #[test]
     fn an_entry_heading_is_only_the_second_level_form() {

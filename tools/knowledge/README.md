@@ -41,11 +41,14 @@ the tail of the output has to reach the verdict rather than the counts.
 
 **The `--only` families are the checks themselves**, one per check:
 
-`citations`, `generated`, `components`, `slugs`, `paths`, `interpretations`, `uncovered`,
+`citations`, `generated`, `components`, `references`, `interpretations`, `uncovered`,
 `changes`, `corpus`, `regime`.
 
-Nine are the modules under `knowledge@documentation/src/check/`. `corpus` is the integrity check
+Eight are the modules under `knowledge@documentation/src/check/`. `corpus` is the integrity check
 over the vendored text and its archive, which reads the filesystem rather than the model.
+`references` judges every `` `<kind>@<anchor>@<id>` `` reference against the entity table — the
+`design`, `goal` and `tripwire` kinds against the slugs their register homes define, the `path`
+kind against the tree — and reports the two retired forms and the unanchored path shape.
 `structure` names every family but `citations`. A comma-separated list runs their union over the
 one walk, so asking for several costs one run rather than one run each. A run prints which families
 it performed, and a family that did not run prints no count of its own. The argument is

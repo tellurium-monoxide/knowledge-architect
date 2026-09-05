@@ -16,7 +16,7 @@
 
 use std::path::PathBuf;
 
-use documentation::{Manifest, Model, Observation};
+use documentation::{Manifest, Model, Observation, RetiredForm};
 
 fn mock(name: &str) -> Manifest {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -49,6 +49,7 @@ fn the_walk_obeys_the_project_that_declares_it() {
             "README.md".to_string(),
             "code/lib.rs".to_string(),
             "docs/design.md".to_string(),
+            "docs/goals.md".to_string(),
             "docs/open-issues.md".to_string(),
             "docs/rejected-alternatives.md".to_string(),
             "docs/tripwires.md".to_string(),
@@ -87,25 +88,28 @@ fn a_suffix_the_tool_cannot_parse_is_not_walked() {
 fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
     let model = model("minimal");
     let dump = model.canonical();
-    // A slug opening a decision, a reference to it from a Rust doc comment, a path reference,
-    // and the two marker forms — each at the line of the file it sits on.
+    // A slug opening a decision, a path reference, a goal reference, and the two marker
+    // forms — each at the line of the file it sits on.
     assert!(
-        dump.contains("docs/design.md\t5\tslug-def\tmock-anchor"),
+        dump.contains("docs/design.md\t5\tslug-def\tmock-anchor heading-3\n"),
         "{dump}"
     );
-    // The whole value, and the trailing tab is load-bearing. This assertion once named the
-    // path alone, which is a prefix of the component-suffixed value the renderer wrongly
+    // The whole value, and the trailing newline is load-bearing. This assertion once named
+    // the path alone, which is a prefix of the component-suffixed value the renderer wrongly
     // produced, so it passed against both the right output and the wrong one for as long as
     // the defect existed. A `contains` over a field that is not terminated asserts a prefix.
     assert!(
-        dump.contains("docs/design.md\t7\tpath-ref\tminimal@notes/b.md\n"),
+        dump.contains("docs/design.md\t7\tspan\tpath@minimal@notes/b.md\n"),
         "{dump}"
     );
     assert!(
         dump.contains("docs/design.md\t7\tmarker-prose\t100.1"),
         "{dump}"
     );
-    assert!(dump.contains("notes/a.md\t5\tinterp-ref\t7"), "{dump}");
+    assert!(
+        dump.contains("notes/a.md\t5\tspan\tgoal@minimal@mock-goal\n"),
+        "{dump}"
+    );
     assert!(
         dump.contains("code/lib.rs\t1\tmarker-prose\t100.1"),
         "{dump}"
@@ -150,37 +154,55 @@ fn a_tracker_outside_every_component_is_read_by_the_report() {
 }
 
 #[test]
-fn a_slug_inside_a_fence_is_neither_a_definition_nor_a_reference_in_a_real_file() {
-    // The fenced block in that document holds all three forms — a head, a qualified pointer
-    // and an unqualified one — which is what a document explaining the convention holds. None
-    // of them is an observation, and the two real pointers elsewhere in the project are.
+fn a_fenced_illustration_is_neither_a_definition_nor_a_reference_in_a_real_file() {
+    // The fenced block in that document holds a heading-shaped definition and a placeholder
+    // reference, which is what a document explaining the convention holds. Neither is an
+    // observation; the real definitions and pointers elsewhere in the project are, and
+    // nothing in this project is written in a retired form.
     let model = model("minimal");
     let observed = |f: fn(&Observation) -> Option<String>| -> Vec<String> {
-        model
+        let mut out: Vec<String> = model
             .documents()
             .iter()
             .flat_map(|d| d.observations.iter())
             .filter_map(|l| f(&l.what))
-            .collect()
+            .collect();
+        out.sort();
+        out
     };
     let defs = observed(|o| match o {
-        Observation::SlugDef(s) => Some(s.clone()),
-        _ => None,
-    });
-    assert_eq!(defs, vec!["mock-anchor".to_string()]);
-    let refs = observed(|o| match o {
-        Observation::SlugRef { component, slug } => {
-            Some(format!("{}#{slug}", component.clone().unwrap_or_default()))
-        }
+        Observation::SlugDef { id, .. } => Some(id.clone()),
         _ => None,
     });
     assert_eq!(
-        refs,
+        defs,
         vec![
-            "minimal#mock-anchor".to_string(),
-            "minimal#mock-anchor".to_string()
+            "mock-anchor".to_string(),
+            "mock-goal".to_string(),
+            "mock-tripwire".to_string()
         ]
     );
+    let spans = observed(|o| match o {
+        Observation::Span(s) => Some(s.clone()),
+        _ => None,
+    });
+    assert_eq!(
+        spans,
+        vec![
+            "design@minimal@mock-anchor".to_string(),
+            "design@minimal@mock-anchor".to_string(),
+            "design@minimal@mock-anchor".to_string(),
+            "goal@minimal@mock-goal".to_string(),
+            "path@minimal@notes/b.md".to_string(),
+            "tripwire@minimal@mock-tripwire".to_string(),
+        ]
+    );
+    let retired = observed(|o| match o {
+        Observation::Retired(RetiredForm::SlugRef(s)) => Some(s.clone()),
+        Observation::Retired(RetiredForm::RegisterNumber(n)) => Some(format!("R{n}")),
+        _ => None,
+    });
+    assert_eq!(retired, Vec::<String>::new());
 }
 
 #[test]
@@ -228,27 +250,25 @@ fn a_project_carrying_every_component_document_reports_nothing() {
         &model,
         &manifest,
         &inputs,
-        Only::COMPONENTS.union(Only::SLUGS),
+        Only::COMPONENTS.union(Only::REFERENCES),
     );
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
     assert!(found.is_empty(), "{found:#?}");
-    // The component at the root is one whether or not anything is declared beside it, and its
-    // two references resolve against it by the project's own name.
+    // The component at the root is one whether or not anything is declared beside it, and
+    // every reference resolves against it by the project's own name: one entity in each of
+    // the three heading registers, and six references across the three kinds and a path.
     assert_eq!(report.structure.components, 1);
     assert_eq!(report.structure.additional_trackers, 1);
     assert_eq!(
-        (
-            report.structure.slugs_defined,
-            report.structure.slugs_referenced
-        ),
-        (1, 1)
+        (report.structure.entities, report.structure.references),
+        (3, 6)
     );
 }
 
-/// The other accepted design home, end to end: `*@docs/design/` headed by a README that links
+/// The other accepted home shape, end to end: `*@docs/design/` headed by a README that links
 /// the one subdocument, with the anchor defined in the subdocument and referenced from the
-/// project's own README. `paths` runs too, so the fixture shows the three families passing
-/// together over a real walk.
+/// project's own README — and the goals home in the same shape, so the two-shape rule is
+/// shown to hold for a second register over a real walk.
 #[test]
 fn a_directory_design_home_passes_end_to_end() {
     use documentation::check::citations::Release;
@@ -272,16 +292,13 @@ fn a_directory_design_home_passes_end_to_end() {
         &model,
         &manifest,
         &inputs,
-        Only::COMPONENTS.union(Only::SLUGS).union(Only::PATHS),
+        Only::COMPONENTS.union(Only::REFERENCES),
     );
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
     assert!(found.is_empty(), "{found:#?}");
     assert_eq!(
-        (
-            report.structure.slugs_defined,
-            report.structure.slugs_referenced
-        ),
-        (1, 1)
+        (report.structure.entities, report.structure.references),
+        (2, 2)
     );
 }
 
@@ -368,18 +385,22 @@ mod planted {
     /// The rows must account for every finding a whole run produces, which
     /// `the_families_partition_every_finding` asserts, so a family cannot be left out of this
     /// table without a test failing.
-    const PLANTED: [(Only, usize, &str); 8] = [
+    const PLANTED: [(Only, usize, &str); 7] = [
         (Only::CITATIONS, 5, "no rule says this"),
-        (Only::SLUGS, 6, "is referenced"),
-        // A dangling anchored path, the retired bare shape, a wrong kind claim, an escape
-        // that resolves here, a root pointer reaching inside the component, a generic
-        // pointer nothing carries, and a link outside a navigation home.
-        (Only::PATHS, 7, "does not exist"),
+        // In the design home: one slug defined twice, one at a level-four heading, one at a
+        // line head. In a file that is no home: one stray definition. Then one reference of
+        // each shape the resolver tells apart — dangling, unknown anchor, two and four
+        // segments, an anchor and a reserved anchor in kind position, the two retired slug
+        // shapes, a retired entry number — and the path shapes: a dangling one, the
+        // unanchored bare form, a wrong kind claim, an escape that resolves here, a root
+        // pointer reaching inside the component, a generic pointer nothing carries, a
+        // dangling tripwire reference and a link outside a navigation home.
+        (Only::REFERENCES, 22, "is referenced"),
         // Two missing documents, plus the manifest declaring `.git`, which this project does
         // not have. One planted row across the four declared path lists rather than four
         // identical ones: what needs pinning is that a declared path is checked at all.
         (Only::COMPONENTS, 3, "carries no"),
-        (Only::INTERPRETATIONS, 1, "has no entry in the register"),
+        (Only::INTERPRETATIONS, 1, "declares the concern"),
         (Only::UNCOVERED, 1, "is outside the walk"),
         (Only::GENERATED, 2, "the generated file is missing"),
         (Only::REGIME, 20, "with no verified quote of it in range"),
@@ -387,12 +408,12 @@ mod planted {
 
     #[test]
     fn a_set_of_families_reports_exactly_the_union_of_theirs() {
-        let pair = Only::SLUGS.union(Only::PATHS);
+        let pair = Only::REFERENCES.union(Only::INTERPRETATIONS);
         let found = findings_of(current_indexes, pair);
         assert_eq!(
             found.len(),
-            13,
-            "two misplaced slug defs, four slug defects and seven path defects: {found:#?}"
+            23,
+            "twenty-two reference defects and one register defect: {found:#?}"
         );
         assert!(
             !found.iter().any(|f| f.contains("no rule says this")),
@@ -535,7 +556,7 @@ mod planted {
         // indistinguishable from a run that performed nothing at all.
         let report = report_of(Only::COMPONENTS);
         assert_eq!(report.ran.names(), vec!["components"]);
-        assert!(!report.ran.has(Only::SLUGS));
+        assert!(!report.ran.has(Only::REFERENCES));
     }
 
     #[test]
@@ -598,30 +619,54 @@ mod planted {
     }
 
     #[test]
-    fn a_slug_referenced_in_a_component_that_does_not_define_it_is_reported() {
-        let f = one("`planted#dangling-anchor` is referenced");
-        assert!(f.starts_with("notes/structure.md:9"), "{f}");
+    fn a_reference_whose_id_the_anchor_does_not_define_is_reported() {
+        let f = one("`design@planted@dangling-anchor` is referenced");
+        assert!(f.starts_with("notes/structure.md:5"), "{f}");
+        assert!(f.contains("defines no design `dangling-anchor`"), "{f}");
     }
 
     #[test]
-    fn a_reference_naming_no_component_is_reported() {
-        let f = one("`#unqualified-anchor` names no component");
-        assert!(f.starts_with("notes/structure.md:11"), "{f}");
+    fn a_reference_naming_an_anchor_that_is_not_declared_is_reported() {
+        // A different repair from the one above, and the finding says which: the id exists,
+        // and the anchor segment is what nothing resolves.
+        let f = one("`design@nowhere@twice-defined` names `nowhere`");
+        assert!(f.starts_with("notes/structure.md:7"), "{f}");
     }
 
     #[test]
-    fn a_reference_naming_a_component_that_is_not_declared_is_reported() {
-        // A different repair from the two above, and the finding says which: the slug exists,
-        // and the word before the `#` is what nothing resolves.
-        let f = one("which is no component of this project");
-        assert!(f.starts_with("notes/structure.md:13"), "{f}");
+    fn a_malformed_reference_is_reported_naming_the_segment_count() {
+        let two = one("`design@planted` is malformed");
+        assert!(two.starts_with("notes/structure.md:9"), "{two}");
+        let four = one("`design@planted@twice@defined` is malformed");
+        assert!(four.starts_with("notes/structure.md:11"), "{four}");
+    }
+
+    #[test]
+    fn an_anchor_in_kind_position_is_reported_for_a_component_and_a_reserved_word() {
+        let old = one("`planted@notes/p.md` opens with `planted`");
+        assert!(old.starts_with("notes/structure.md:13"), "{old}");
+        let reserved = one("`*@notes/p.md` opens with `*`");
+        assert!(reserved.starts_with("notes/structure.md:15"), "{reserved}");
+    }
+
+    #[test]
+    fn each_retired_form_is_reported_as_what_it_was() {
+        let qualified = one("`planted#twice-defined` is the retired slug reference form");
+        assert!(
+            qualified.starts_with("notes/structure.md:17"),
+            "{qualified}"
+        );
+        let bare = one("`#unqualified-anchor` is the retired slug reference form");
+        assert!(bare.starts_with("notes/structure.md:19"), "{bare}");
+        let number = one("`R99` is the retired interpretation entry number form");
+        assert!(number.starts_with("notes/structure.md:21"), "{number}");
     }
 
     #[test]
     fn a_reference_across_a_component_boundary_resolves() {
-        // Line 15 of that document points at the decision the component below the root
-        // records, and line 5 of the component's own design document points back. Neither is
-        // a finding, and the count in `PLANTED` is what asserts that they produce none.
+        // Line 23 of that document points at the decision the component below the root
+        // records, and the component's own design document points back. Neither is a
+        // finding, and the count in `PLANTED` is what asserts that they produce none.
         let all = findings();
         assert!(
             !all.iter().any(|f| f.contains("widget-decision")),
@@ -630,38 +675,70 @@ mod planted {
     }
 
     #[test]
-    fn a_slug_defined_twice_in_one_component_is_reported_once_naming_both_places() {
-        // A rename that left one behind. The reader who finds the stale one acts on it.
-        let f = one("is defined 2 times");
-        assert!(f.starts_with("notes/structure.md:3"), "{f}");
-        assert!(f.contains("notes/structure.md:7"), "{f}");
-        assert!(f.contains("`planted#twice-defined`"), "{f}");
+    fn a_slug_defined_twice_in_one_instance_is_reported_at_both_sites() {
+        // A rename that left one behind. The reader who opens either copy is told about the
+        // other.
+        let all = findings();
+        let dup: Vec<&String> = all
+            .iter()
+            .filter(|f| f.contains("`design@planted@twice-defined` is also defined at"))
+            .collect();
+        assert_eq!(dup.len(), 2, "{all:#?}");
+        assert!(
+            dup.iter()
+                .any(|f| f.starts_with("docs/design.md:5") && f.contains("docs/design.md:9")),
+            "{dup:#?}"
+        );
+        assert!(
+            dup.iter()
+                .any(|f| f.starts_with("docs/design.md:9") && f.contains("docs/design.md:5")),
+            "{dup:#?}"
+        );
+    }
+
+    #[test]
+    fn a_misplaced_definition_is_reported_where_it_stands_and_defines_nothing() {
+        // Three shapes over a real walk: a level-four heading and a line head inside the
+        // design home, and a level-three heading in a file that is no register home.
+        let deep = one("`##too-deep` is written at a level-4 heading");
+        assert!(deep.starts_with("docs/design.md:11"), "{deep}");
+        let head = one("`##line-head` is written at the head of a plain line");
+        assert!(head.starts_with("docs/design.md:13"), "{head}");
+        let stray = one("`##stray-anchor` is written at `notes/structure.md`");
+        assert!(stray.starts_with("notes/structure.md:3"), "{stray}");
+        assert!(stray.contains("no register home of `planted`"), "{stray}");
     }
 
     #[test]
     fn a_path_that_does_not_resolve_is_reported() {
         // Named rather than matched on "does not exist": a declared tracker that is not there
         // says the same words, and a needle matching both would pass while checking neither.
-        assert!(
-            one("`planted@notes/missing.md` does not exist").starts_with("notes/structure.md:17")
-        );
+        assert!(one("`path@planted@notes/missing.md` does not exist")
+            .starts_with("notes/structure.md:25"));
     }
 
     #[test]
-    fn each_shape_of_the_anchored_grammar_is_enforced_over_a_real_walk() {
+    fn each_shape_of_the_path_kind_is_enforced_over_a_real_walk() {
         // One planted defect per path check, end to end; the unit tests carry the shapes,
         // and this asserts the walk delivers each to its check.
-        assert!(one("follows no accepted syntax").contains("notes/missing.md"));
-        assert!(one("claims a file and names a directory").contains("planted@notes"));
-        assert!(one("resolves in this tree").contains("elsewhere@notes/p.md"));
-        assert!(one("reaches inside the component").contains("widget"));
-        assert!(one("resolves in no component").contains("*@notes/void.md"));
+        assert!(one("names no anchor").contains("notes/missing.md"));
+        assert!(one("claims a file and names a directory").contains("path@planted@notes"));
+        assert!(one("resolves in this tree").contains("path@elsewhere@notes/p.md"));
+        assert!(one("reaches inside the anchor").contains("widget"));
+        assert!(one("resolves in no component").contains("path@*@notes/void.md"));
         assert!(one("not a navigation home").contains("p.md"));
     }
 
     #[test]
-    fn a_reference_to_an_entry_that_does_not_exist_is_reported() {
-        assert!(one("has no entry in the register").starts_with("notes/structure.md:19"));
+    fn a_reference_to_another_register_is_resolved_in_that_register() {
+        let f = one("`tripwire@planted@nothing` is referenced");
+        assert!(f.starts_with("notes/structure.md:37"), "{f}");
+        assert!(f.contains("defines no tripwire `nothing`"), "{f}");
+    }
+
+    #[test]
+    fn a_declared_concern_with_no_file_is_reported() {
+        assert!(one("declares the concern `gone`").starts_with("notes/readings/gone.md"));
     }
 
     #[test]

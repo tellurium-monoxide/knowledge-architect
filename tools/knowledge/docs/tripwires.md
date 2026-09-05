@@ -51,6 +51,19 @@ once-per-claim weight of the quote obligation, and record the instance as an `ob
 rules-reviewer's genuinely-data check is where the instance surfaces.
 **Re-entry:** standing.
 
+## Guarding `knowledge#candidate-rule-and-retired-forms`' silence on an unknown head `##candidate-rule-silence`
+
+**Fires when:** a review, or a session reading a document, finds a backticked span that was
+meant as a reference and for which `cargo knowledge check` reported nothing — a typo inside the
+kind, an unmigrated span whose head is neither a kind nor an anchor, or a shape the tokenizer
+does not record. `cargo knowledge model` filtered on the file shows whether the span was
+recorded as a `span` observation at all.
+**Response:** widen the candidate rule to the shape found, at
+`knowledge#candidate-rule-and-retired-forms`, with a false-positive census over the tree for
+the widened class; or re-accept the silence knowingly and record the shape as the reviewer's.
+Open a `defect` naming the span if the decision is not reopened in the same change.
+**Re-entry:** standing, and the review of the migration that follows the grammar change.
+
 ## Guarding `knowledge#reserved-anchors`' generic rule
 
 **Fires when:** a session or a review reports a `*@` finding whose repair was unclear to

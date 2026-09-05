@@ -28,7 +28,7 @@ mod corpus_cmd;
 /// is added and not listed here. It is the SHORT help, so `-h` prints it and not only `--help`;
 /// the tripwire below reaches for whichever a reader typed. A tripwire in `knowledge@docs/tripwires.md` reads this list
 /// out of the help, so a family missing from it is a check whose output reaches no reviewer.
-const FAMILIES: &str = "citations, generated, components, slugs, paths, interpretations, \
+const FAMILIES: &str = "citations, generated, components, references, interpretations, \
                         uncovered, changes, corpus, regime. `structure` names every family \
                         but citations. A comma-separated list runs their union over one walk.";
 
@@ -162,7 +162,7 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
     let body_starts_at = manifest.rules().body_starts_at;
 
     // Only the families that read rule text get their releases resolved, and resolving a pin
-    // may fetch over the network. A run asking for slugs has no business reaching for a
+    // may fetch over the network. A run asking for references has no business reaching for a
     // release, and before this was scoped it failed on a pin it had no reason to read.
     // `generated` renders the rule index, so it needs the vendored release and no other.
     let mut releases: HashMap<Option<String>, Release> = HashMap::new();
@@ -565,18 +565,11 @@ fn counts(report: &Report) -> String {
             s.additional_trackers
         );
     }
-    if ran.has(Only::SLUGS) {
+    if ran.has(Only::REFERENCES) {
         let _ = write!(
             structural,
-            "\nslugs: {} defined, {} referenced",
-            s.slugs_defined, s.slugs_referenced
-        );
-    }
-    if ran.has(Only::PATHS) {
-        let _ = write!(
-            structural,
-            "\npaths: {} reference(s), {} link(s)",
-            s.path_references, s.links
+            "\nreferences: {} entities defined, {} reference(s), {} link(s)",
+            s.entities, s.references, s.links
         );
     }
     if ran.has(Only::INTERPRETATIONS) {
@@ -731,11 +724,11 @@ mod tests {
         assert!(bare.only.is_none(), "no --only is every family");
 
         let Command::Check(some) =
-            Cli::parse_from(["knowledge", "check", "--only", "slugs,paths"]).command
+            Cli::parse_from(["knowledge", "check", "--only", "references,generated"]).command
         else {
             panic!("check parses to the check subcommand");
         };
-        assert_eq!(some.only, Some(Only::SLUGS.union(Only::PATHS)));
+        assert_eq!(some.only, Some(Only::REFERENCES.union(Only::GENERATED)));
 
         let Command::Outstanding(o) =
             Cli::parse_from(["knowledge", "outstanding", "two", "words"]).command
@@ -806,9 +799,8 @@ mod tests {
         r.counts.orphans = 44;
         r.structure.components = 188;
         r.structure.additional_trackers = 199;
-        r.structure.slugs_defined = 55;
-        r.structure.slugs_referenced = 66;
-        r.structure.path_references = 77;
+        r.structure.entities = 55;
+        r.structure.references = 77;
         r.structure.links = 78;
         r.structure.concerns = 88;
         r.structure.entries = 99;
@@ -831,8 +823,7 @@ mod tests {
             "11/22 rule-quote fragments verified against the rule cited",
             "components: 188 declared, 5 document(s) each plus a design home, 199 additional tracker(s)",
             "lint: 33 unmarked rule reference(s), 44 orphan identifier marker(s)",
-            "slugs: 55 defined, 66 referenced",
-            "paths: 77 reference(s), 78 link(s)",
+            "references: 55 entities defined, 77 reference(s), 78 link(s)",
             "interpretations: 88 concerns, 99 entries R1-R111",
             "uncovered files: 122 scanned",
             "checker source: tools/knowledge, 200 file(s) with string literals read as data",
@@ -848,28 +839,27 @@ mod tests {
     fn a_family_asked_for_that_could_not_run_is_named_as_not_run() {
         // The failure this guards is a family gated on an input that is not there: without
         // the line, it prints an empty `checked:` and reads as a run that did nothing.
-        let mut r = report(Only::CORPUS.union(Only::SLUGS));
-        r.ran = Only::SLUGS;
+        let mut r = report(Only::CORPUS.union(Only::REFERENCES));
+        r.ran = Only::REFERENCES;
         let out = counts(&r);
-        assert!(out.contains("checked: slugs"), "{out}");
+        assert!(out.contains("checked: references"), "{out}");
         assert!(out.contains("NOT RUN: corpus"), "{out}");
         assert!(
             !out.contains("corpus:"),
             "no count for a family that did not run: {out}"
         );
         // Nothing is withheld when everything asked for ran.
-        assert!(!counts(&report(Only::SLUGS)).contains("NOT RUN"));
+        assert!(!counts(&report(Only::REFERENCES)).contains("NOT RUN"));
     }
 
     #[test]
     fn a_family_that_did_not_run_contributes_no_count() {
-        let out = counts(&report(Only::SLUGS));
-        assert!(out.contains("slugs:"), "{out}");
+        let out = counts(&report(Only::REFERENCES));
+        assert!(out.contains("references:"), "{out}");
         // Every other family's label is absent rather than present with a zero. A zero here
         // reads as "nothing found" for a check that never ran.
         for label in [
             "components:",
-            "paths:",
             "interpretations:",
             "uncovered files:",
             "corpus:",

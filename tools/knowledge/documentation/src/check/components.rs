@@ -26,13 +26,14 @@
 use std::collections::{BTreeMap, HashSet};
 use std::path::PathBuf;
 
+use crate::entity::{is_anchor_name, ESCAPE_ANCHOR, EVERY_ANCHOR};
 use crate::finding::Finding;
 use crate::manifest::{
     Component, Components, Manifest, COMPONENT_DOCUMENTS, COMPONENT_TRACKERS, DESIGN_DIR,
     DESIGN_FILE, DESIGN_README, MANIFEST_NAME,
 };
 use crate::model::Model;
-use crate::scan::{self, Observation};
+use crate::scan::Observation;
 
 use super::Inputs;
 
@@ -67,26 +68,26 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
                     places.len(),
                     places.join(", ")
                 ),
-                "rename or move one; a slug reference names its component by that one word, \
-                 so two of them cannot share it",
+                "rename or move one; a reference names its anchor by that one word, so two \
+                 of them cannot share it",
             ));
         }
-        if !scan::is_component_name(name) {
+        if !is_anchor_name(name) {
             out.push(Finding::in_file(
                 MANIFEST_NAME,
-                format!("`{name}` cannot be spelled in a slug reference"),
+                format!("`{name}` cannot be spelled in a reference"),
                 "name it in letters, digits, `.`, `-` and `_`; a component nothing can point \
                  at is one every pointer misses in silence",
             ));
         }
-        // The escape anchor is compiled in, so a component wearing it could never be the
-        // target of a path reference: every pointer at it would read as an escape.
-        if *name == scan::ESCAPE_ANCHOR {
+        // The reserved anchors are compiled in, so a component wearing one could never be
+        // the target of a path reference: every pointer at it would read as the reserved
+        // meaning.
+        if *name == ESCAPE_ANCHOR || *name == EVERY_ANCHOR {
             out.push(Finding::in_file(
                 MANIFEST_NAME,
                 format!("`{name}` is a reserved anchor and cannot name a component"),
-                "rename the component; this word marks a path deliberately not resolvable \
-                 in this tree",
+                "rename the component; this word is reserved by the path kind",
             ));
         }
     }
@@ -292,7 +293,7 @@ fn design_home(
 /// A link's target resolves against the README's own directory, the way a renderer follows
 /// it. A URL, a bare fragment and an absolute path are not index rows and are passed over; a
 /// fragment on a file target is dropped before resolution. Whether each link RESOLVES is
-/// `check::paths`' assertion, made for every navigation file alike — what is asserted here
+/// `check::references`' assertion, made for every navigation file alike — what is asserted here
 /// is the other direction, that every subdocument has a row. Backticked paths are the
 /// pointer forms of prose and do not name a subdocument: the index is made of links a
 /// reader can follow.
@@ -309,7 +310,7 @@ fn links(model: &Model, readme: &PathBuf, dir: &std::path::Path) -> HashSet<Path
             continue;
         }
         let file_part = target.split('#').next().unwrap_or(target);
-        if super::paths::has_scheme(file_part) || file_part.starts_with('/') {
+        if super::references::has_scheme(file_part) || file_part.starts_with('/') {
             continue;
         }
         resolved.insert(dir.join(file_part));
@@ -685,7 +686,7 @@ mod tests {
 
     #[test]
     fn a_link_through_an_upward_segment_does_not_discharge_the_naming() {
-        // An upward segment is refused by `check::paths`, so the index resolution here does
+        // An upward segment is refused by `check::references`, so the index resolution here does
         // not fold it away either: the row does not name the subdocument, and the naming
         // finding stands beside the refusal.
         let manifest = declaring("");
@@ -906,7 +907,7 @@ mod tests {
     #[test]
     fn a_dangling_link_is_the_paths_checks_to_report() {
         // This check asserts only the other direction — that every subdocument has a row.
-        // Whether each row resolves is `check::paths`' assertion, made for every navigation
+        // Whether each row resolves is `check::references`' assertion, made for every navigation
         // file alike, so a dangling row produces no finding here. A URL and a bare fragment
         // are rows of nothing and are passed over.
         let manifest = declaring("");

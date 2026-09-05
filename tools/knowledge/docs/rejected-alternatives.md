@@ -34,6 +34,32 @@ twelve candidate sites in one component alone, nine of them wrong, counted by ha
 defect was recorded. A targeted check patrols the collision; retiring the form makes it
 unrepresentable, and an anchored reference is what a fixed-string grep can find.
 
+**A fenced reference read as an illustration**, the stance slug references took before the
+`@` grammar — lost to `knowledge#candidate-rule-and-retired-forms`. `live`. It let a document
+explaining the convention hold an example without inventing a slug. It loses on consistency:
+path references were already live in a fence, so one kind had two stances, and a sketch in a
+design document names its decisions as deliberately as it names its paths. The illustration is a
+placeholder in angle brackets, which the tokenizer does not record.
+
+**A configurable reference separator** — lost to `knowledge#a-slug-belongs-to-a-component`,
+which fixes `@`. `live`. A project could pick the character its prose collides with least. It
+loses because every instruction, every skill and the future link preprocessor would be
+parameterised on it, and `@` already meets almost nothing in Rust and only email addresses in
+prose, which never sit in backticks here.
+
+**Paths without the kind prefix**, keeping `` `<anchor>@<path>` `` beside
+`` `<kind>@<anchor>@<id>` `` — lost to `knowledge#every-path-names-its-anchor`. `live`. It costs
+no migration of the path references, which outnumber the slug references. It loses on what it
+leaves in the scanner: two grammars, told apart by segment count, and an unsupported-shape lint
+that keeps its heuristic instead of becoming "unknown kind". Five characters at every path
+reference bought one tokenizer and one candidate rule.
+
+**A register reference with no anchor**, `<kind>@<id>` for a register a project has only one
+instance of — lost to `knowledge#a-slug-belongs-to-a-component`. `live`. It is shorter for the
+common case. It loses because the extracted tool cannot know which register is single-instance
+in a given project, and one three-part grammar serves every kind without a special case in the
+resolver or in the instructions.
+
 **Keeping the `@` prefix as the escape** — lost to `knowledge#reserved-anchors`. `live`. It
 costs no migration. It loses on the census taken at the design session: the tree held 75
 `@`-prefixed spans carrying three meanings — about 65 meant every component's own copy, a

@@ -112,14 +112,15 @@ design has outgrown it. In the directory shape, `README.md` is the head: an intr
 bullet list of markdown links, one per subdocument, each target written relative to the README.
 The decisions and their slug anchors live in the subdocuments.
 
-Five assertions carry the shape, split over three checks. `check::components` asserts exactly one
+Five assertions carry the shape, split over three places. `check::components` asserts exactly one
 home per component, that a directory home carries its `README.md`, and that the README links
 every markdown subdocument the walk covers — a gitignored scratch file owes nothing. That
-each relative link resolves is the paths family's assertion, made for every navigation file
-alike per `knowledge#links-are-navigation-rows`. `check::slugs`
+each relative link resolves is the references family's assertion, made for every navigation file
+alike per `knowledge#links-are-navigation-rows`. The entity table of `knowledge#one-entity-table`
 accepts a slug definition only in the file home or in a subdocument, matched against the owning
-component's own paths rather than against a filename suffix — a suffix match would accept a slug
-in any file whose name ends in `design.md`, a plan document included.
+anchor's own paths rather than against a filename suffix — a suffix match would accept a slug
+in any file whose name ends in `design.md`, a plan document included. The same two shapes serve
+the goals and tripwires homes, per `knowledge#a-slug-is-a-heading`.
 
 **Exactly one home, because two give a decision two candidate places to land.** That is the
 one-home failure, and the reader who finds one half acts on half the design.
@@ -297,83 +298,166 @@ would have applied to every file and expired with nothing. That asymmetry is the
 exempting a document that is about to be deleted costs the guarantee nothing, and exempting a rule
 costs it everywhere at once.
 
-### A slug is defined in a level-three heading or a table cell, and nowhere else `##a-slug-is-a-heading`
+### Every citeable thing is an entity with a kind, an anchor, an id and a definition site, held in one table built from the walk, and every check that resolves a name reads that table `##one-entity-table`
 
-The statement precedes the slug in the heading, so a document outline lists the decisions rather
-than a set of identifiers, and an editor's outline view is the index. The table cell form is
-unchanged and serves the decision tables that predate the heading rule.
+The kinds today are `design`, `goal`, `tripwire` and `path`. The first three are heading
+registers: their entities are slugs defined in the register's home under an anchor, per
+`knowledge#a-slug-is-a-heading`. The fourth is defined by the tree itself and is resolved
+against the survey, under the same anchors and with the candidate rule and segmentation the
+table's resolver applies to every kind. The table lives in
+`knowledge@documentation/src/entity.rs`, is built once per run from the model, and is what
+`check::references` resolves against.
 
-**A slug at the head of a plain line defines nothing**, which is what makes the migration off that
-form visible: it is neither a definition nor a reference, so every pointer at an unmigrated anchor is
-reported as dangling rather than resolving to a stale one. The alternative — accepting both forms —
-would have left the two indistinguishable and the migration unfinishable, because nothing would say
-which anchors had moved.
+**An anchor is a named directory carrying registers.** Today every anchor is a component, and
+every component carries the three heading registers with their homes under `docs/`. The anchor
+carries its register list and its home base as data, so a directory carrying a declared subset
+of registers at a different base — a location — is a second constructor and not a second
+resolver. The deepest anchor owns a document, as `knowledge#a-slug-belongs-to-a-component`
+states.
+
+**One table replaces five notions of a name.** Before it, slugs, paths, interpretation numbers
+and two link resolutions each had their own check and their own idea of what a name was, and
+only tracker entries could be printed by title. One table gives one resolver, one dangling
+check over every kind, one command that can print any entity given its reference, and a
+one-pass rewrite of every reference into a link when the documents are published. The cost was
+the migration of every check onto it, paid once.
+
+### A backticked `@` span is a reference candidate when its head is a kind or an anchor, the two retired forms stay findings, and every other span is silent `##candidate-rule-and-retired-forms`
+
+The scanner records every backticked span that holds an `@` and no whitespace, backtick or
+angle bracket, as written; it has no manifest, so it cannot tell a kind from an email address.
+The resolver reads the head — the text before the first `@` — and decides: a known kind is
+segmented and resolved; a declared anchor or a reserved anchor in that position is the old form
+and is reported with the repair "prefix the kind"; anything else is not a reference and reports
+nothing, so an email address or a git remote in backticks is silent unless the project declares
+an anchor by that word. Every kind but `path` takes exactly three non-empty segments; `path`
+takes an anchor and then everything after the second `@`.
+
+**The silence is bounded and named.** A typo inside the kind, `desing@<anchor>@<id>`, is silent under this
+rule, because widening it to "any span with two `@`" would report every email address with a
+plus tag. `knowledge@docs/tripwires.md` guards the gap: a review finding a reference the scanner
+reported nothing for widens the rule to the shape found.
+
+**The two retired forms are findings, permanently.** A backticked `<word>#<word>` and a bare `R`
+followed by digits each name the form they were. Neither has an `@` and neither has two path
+segments, so without this clause a slug reference or a register number the migration missed
+would be silent, which is the founding failure class. The clause does not expire with the
+migration: the argument of `knowledge#a-slug-is-a-heading`, that a retired form must stay
+visible or the migration is unfinishable, applies to both. The register number is read in every
+prose region, a Rust comment included, where the observation it replaces read markdown alone.
+
+**A reference is live wherever it is prose, fenced blocks included, for every kind.** A sketch
+names what it names on purpose, and an illustration writes a placeholder in angle brackets,
+which the tokenizer does not record. Reading a fenced slug reference as an illustration, the
+stance the old grammar took, is in `knowledge@docs/rejected-alternatives.md`. A string literal
+bound to a name in Rust yields no reference, unchanged from `knowledge#grammars-not-prefixes`.
+
+### A slug is defined at the end of a level-two or level-three heading, or in a table cell, inside a heading register's home, and nowhere else `##a-slug-is-a-heading`
+
+The statement precedes the slug in the heading, so a document outline lists the entries rather
+than a set of identifiers, and an editor's outline view is the index. The table cell form serves
+the decision tables that predate the heading rule. Level two is accepted beside level three
+because tripwire and goal entries are level-two headings; the quote scope of
+`knowledge#scope-and-distance` is not changed by this, and stays the innermost level-three
+subsection where one exists.
+
+**The homes are the design, goals and tripwires homes of the owning anchor**, each in either
+shape of `knowledge#design-home-two-shapes`: the single file, or a subdocument of the directory.
+The directory's `README.md` is the head and defines nothing, for every register and not only
+design. Which anchor owns a definition is where its document sits, per
+`knowledge#a-slug-belongs-to-a-component`.
+
+**A slug anywhere else defines nothing and is reported as a misplaced definition**: at a
+level-one or level-four heading, at the head of a plain line, in a file that is no register
+home, or in a directory home's README. The line-head form is what predates the heading rule,
+and reporting it is what makes the migration off it visible: it is neither a definition nor a
+reference, so every pointer at it dangles and the site itself is named. Accepting both forms
+would have left the two indistinguishable and the migration unfinishable, because nothing would
+say which anchors had moved. Two definitions of one id in one register instance are a finding at
+each site, each naming the other.
+
+**A fenced heading is an illustration, so a fenced slug neither defines nor is misplaced.** A
+definition site is a heading, and the scanner already reads no heading inside a fence; the one
+stance covers both. This is the one place a fence still suppresses anything in the grammar —
+references are live in a fence for every kind, per `knowledge#candidate-rule-and-retired-forms`.
 
 **Requiring text after the slug is what the first attempt got wrong.** A heading carrying nothing
 but the slug then matched nothing, and every reference to those anchors was reported as dangling
 while the definition sat in the file. The pattern takes the slug anywhere in the heading.
 
-### A slug is unique inside its component, and a reference names the component it means: `` `<component>#<slug>` `` `##a-slug-belongs-to-a-component`
+### An entity belongs to its anchor and is unique inside one register instance, and a reference names all three: `` `<kind>@<anchor>@<id>` `` `##a-slug-belongs-to-a-component`
 
-A definition is owned by where its document sits — the deepest component whose path holds it —
-rather than by anything the line says, so moving a document moves the decisions in it. Two
-components may therefore each record a decision they call the same word, which is what qualifying a
-reference buys.
+A definition is owned by where its document sits — the deepest anchor whose path holds it, and
+the register whose home holds it — rather than by anything the line says, so moving a document
+moves the entities in it. Two anchors may therefore each record an entity they call the same
+word, and two registers of one anchor may too, which is what naming the kind and the anchor in a
+reference buys. The id of a heading-register entity is still called a slug.
 
-**A reference resolves to nothing in three ways, and each is reported as the repair it needs.** The
-component is not declared; the component is declared and does not define that slug; or the
-reference names no component at all. One finding for all three would send a reader to check the
-wrong half of the pointer two times out of three.
+**A reference resolves to nothing in four ways, and each is reported as the repair it needs.**
+The kind position holds an anchor, the old form, and the repair names the kinds; the anchor is
+not declared, and the repair lists the anchors; the anchor is declared and carries no register of
+that kind, and the repair lists the anchors that do; the anchor carries the register and does not
+define that id, and the reference is dangling. One finding for all four would send a reader to
+check the wrong segment of the pointer three times out of four. Every anchor carries `path`, so
+the third way is reachable only by an anchor with a declared register subset, which is the shape
+a location takes.
 
-**A reference naming no component is recorded and reported, never dropped.** The scanner could
-require the component and see nothing without one, which needs no finding and no migration. It
-would also mean every pointer written in the older form stops being checked with nothing saying so,
-and a silent false negative is the failure this tool exists to prevent.
+**A reference that resolves to nothing is recorded and reported, never dropped.** The scanner
+could require a resolvable shape and see nothing without one, which needs no finding and no
+migration. It would also mean every pointer written in an older form stops being checked with
+nothing saying so, and a silent false negative is the failure this tool exists to prevent. The
+candidate rule that bounds this is `knowledge#candidate-rule-and-retired-forms`.
 
-### Every path reference names its anchor, and the deepest anchor wins `##every-path-names-its-anchor`
+### Every path reference names its kind and its anchor, `` `path@<anchor>@<path>` ``, and the deepest anchor wins `##every-path-names-its-anchor`
 
-A checked path reference is one backticked span, `<component>@<path>`, resolving beside the
-named component's directory. The root is a component like any other, named by `project.name`.
-There is no unanchored form: a backticked span of path characters with two or more segments
-that parses as no accepted reference is a finding naming the accepted syntaxes, so no pointer
-class passes unregistered. One segment is a name rather than a pointer, and a span holding a
-space, a colon or an angle bracket is not path-shaped, which is what lets documentation of the
-syntax show a placeholder with no carve-out.
+A checked path reference is one backticked span in the one grammar of
+`knowledge#a-slug-belongs-to-a-component`, with `path` as its kind and the path under the named
+anchor's directory as its id. The root is a component like any other, named by `project.name`.
+The kind prefix costs five characters at every path reference and buys one grammar: the scanner
+has one tokenizer, the old two-segment form `<anchor>@<path>` is reported as an anchor in kind
+position by `knowledge#candidate-rule-and-retired-forms`, and the unanchored lint is left with
+one job. There is no unanchored form: a backticked span of path characters with two or more
+segments and no `@` is a finding naming the grammar, so no pointer class passes unregistered.
+One segment is a name rather than a pointer, and a span holding a space, a colon or an angle
+bracket is not path-shaped, which is what lets documentation of the syntax show a placeholder
+with no carve-out.
 
 **The path is plain**: `..`, a `.` segment and a leading `/` are refused. An upward path is
 anchored at the wrong place by definition, and it is the shape that breaks when the referencing
-file moves.
+file moves. The id is everything after the second `@`, so a path may itself hold an `@`.
 
 **The deepest anchor wins, and inside means a proper descendant.** A reference whose target
-sits inside another component is refused with the right anchor named. What this buys is the
-same property `knowledge#a-slug-belongs-to-a-component` buys for decisions: relocating a
-component edits its one line of `thaum@knowledge.toml` and no document, and one fixed-string
-grep per anchor is a component's complete inbound-reference list. A component's own directory
-is the one target with no spelling under its own anchor, so it is named from an ancestor — a
+sits inside another anchor is refused with the right anchor named. What this buys is the
+same property `knowledge#a-slug-belongs-to-a-component` buys for every entity: relocating an
+anchor edits its one line of `thaum@knowledge.toml` and no document, and one fixed-string
+grep per anchor is an anchor's complete inbound-reference list. An anchor's own directory
+is the one target with no spelling under its own name, so it is named from an ancestor — a
 reference that names a location, which a move is expected to break.
 
-**A fenced path reference is live**, the stance `knowledge#grammars-not-prefixes` takes for
-rule numbers: a sketch names its paths on purpose, and an illustration that needs a fake path
-writes the escape anchor.
+**A fenced path reference is live**, as every reference is, per
+`knowledge#candidate-rule-and-retired-forms`: a sketch names its paths on purpose, and an
+illustration that needs a fake path writes the escape anchor or an angle-bracket placeholder.
 
-### Two anchors are reserved: the escape for a path this tree does not hold, and `*` for every component's own copy `##reserved-anchors`
+### Two anchors are reserved under the `path` kind: the escape for a path this tree does not hold, and `*` for every component's own copy `##reserved-anchors`
 
-**The escape anchor** — the word elsewhere before the `@` — marks a path deliberately not
-resolvable here: a surveyed engine's layout, a deleted file a tracker entry discusses, a
-hypothetical location. It is scanned and counted like any reference, so a typo'd escape is
-still a registered pointer; it is exempt from the existence, kind and shape assertions,
-because a foreign layout may spell anything. One assertion runs against it: a target that DOES
-resolve here, beside any component, is a finding — without it, the escape is the cheap way to
-silence the unsupported-shape finding on a real path.
+**The escape anchor** — the word elsewhere in anchor position, `path@elsewhere@<path>` — marks a
+path deliberately not resolvable here: a surveyed engine's layout, a deleted file a tracker
+entry discusses, a hypothetical location. It is scanned and counted like any reference, so a
+typo'd escape is still a registered pointer; it is exempt from the existence, kind and shape
+assertions, because a foreign layout may spell anything. One assertion runs against it: a
+target that DOES resolve here, beside any anchor, is a finding — without it, the escape is the
+cheap way to silence the unanchored finding on a real path.
 
-**The generic anchor `*`** marks each component's own copy of a path, as in
-`*@docs/tripwires.md`. It is accepted when the path is one of the compiled-in required
-document names, both design-home shapes included — naming a shape no component uses yet is
-legitimate — and otherwise when at least one component carries the path with the claimed kind.
-A generic reference nothing resolves rots exactly like a dangling one.
+**The generic anchor `*`**, `path@*@<path>`, marks each component's own copy of a path, as in
+`*@docs/tripwires.md` written with the kind in front. It is accepted when the path is one of the
+compiled-in required document names in any of its shapes — every heading register's file,
+directory and README included, so naming a shape no component uses yet is legitimate — and
+otherwise when at least one component carries the path with the claimed kind. A generic
+reference nothing resolves rots exactly like a dangling one.
 
-`check::components` refuses a declared component wearing a reserved anchor name: every pointer
-at it would read as an escape.
+**Under any other kind the two words name nothing.** A `design@*@<id>` is reported as an unknown
+anchor, and the finding says the words serve `path` alone. `check::components` refuses a
+declared component wearing either word: every pointer at it would read as the reserved meaning.
 
 ### A trailing slash claims a directory, and the survey records every path's kind `##trailing-slash-claims-directory`
 
@@ -398,8 +482,8 @@ A README is directions about what a directory holds and an index is a listing, s
 link — the row a reader follows where a renderer shows the page — is legal there and reported
 everywhere else; in prose, a pointer is a backticked anchored path. A navigation link resolves
 against the linking file's own directory, under the same kind claim and the same refusals as
-an anchored path, in the paths family; `check::components` keeps the inverse assertion, that a
-design README links every subdocument.
+an anchored path, in the references family; `check::components` keeps the inverse assertion,
+that a design README links every subdocument.
 
 **The accepted link is the plain inline form with a spaceless target**, one shape so the
 check stays one pattern. The other CommonMark shapes — reference-style, an angle-bracketed or

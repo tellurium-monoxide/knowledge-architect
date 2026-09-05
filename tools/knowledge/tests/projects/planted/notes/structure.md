@@ -1,31 +1,39 @@
 # Structure, wrong on purpose
 
-### A decision recorded here `##twice-defined`
+### A decision recorded outside every register home `##stray-anchor`
 
-And again, which is a rename that left one behind:
+A pointer into nothing: `design@planted@dangling-anchor`.
 
-### The same anchor, a second time `##twice-defined`
+A pointer at an anchor nothing declares: `design@nowhere@twice-defined`.
 
-A pointer into nothing: `planted#dangling-anchor`.
+A pointer with two segments: `design@planted`.
 
-A pointer naming no component at all: `#unqualified-anchor`.
+A pointer with four segments: `design@planted@twice@defined`.
 
-A pointer at a component nothing declares: `nowhere#twice-defined`.
+An anchor where the kind goes, the old path form: `planted@notes/p.md`.
 
-A pointer that resolves, across a boundary: `widget#widget-decision`.
+A reserved anchor where the kind goes: `*@notes/p.md`.
 
-A pointer at a file that is not there: `planted@notes/missing.md`.
+The retired slug form, qualified: `planted#twice-defined`.
 
-An entry that does not exist: R99.
+The retired slug form, unqualified: `#unqualified-anchor`.
+
+The retired entry number: R99.
+
+A pointer that resolves, across a boundary: `design@widget@widget-decision`.
+
+A pointer at a file that is not there: `path@planted@notes/missing.md`.
 
 A pointer in the retired bare shape: `notes/missing.md`.
 
-A pointer claiming a file where a directory stands: `planted@notes`.
+A pointer claiming a file where a directory stands: `path@planted@notes`.
 
-An escape wearing a path this tree holds: `elsewhere@notes/p.md`.
+An escape wearing a path this tree holds: `path@elsewhere@notes/p.md`.
 
-A root pointer reaching inside a component: `planted@parts/widget/README.md`.
+A root pointer reaching inside a component: `path@planted@parts/widget/README.md`.
 
-A generic pointer nothing carries: `*@notes/void.md`.
+A generic pointer nothing carries: `path@*@notes/void.md`.
+
+A tripwire nobody recorded: `tripwire@planted@nothing`.
 
 A link outside a navigation home: [a link](p.md).

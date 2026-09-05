@@ -9,9 +9,8 @@ pub mod citations;
 pub mod components;
 pub mod generated;
 pub mod interpretations;
-pub mod paths;
+pub mod references;
 pub mod regime;
-pub mod slugs;
 pub mod uncovered;
 
 use std::collections::{HashMap, HashSet};
@@ -29,9 +28,10 @@ use citations::{Counts, Release};
 pub struct Structure {
     pub components: usize,
     pub additional_trackers: usize,
-    pub slugs_defined: usize,
-    pub slugs_referenced: usize,
-    pub path_references: usize,
+    /// Distinct entities the table holds, reference occurrences judged against it, and the
+    /// relative markdown links resolved.
+    pub entities: usize,
+    pub references: usize,
     pub links: usize,
     pub uncovered_files: usize,
     pub concerns: usize,
@@ -121,19 +121,18 @@ impl Only {
     pub const CITATIONS: Self = Self(1 << 0);
     pub const GENERATED: Self = Self(1 << 1);
     pub const COMPONENTS: Self = Self(1 << 2);
-    pub const SLUGS: Self = Self(1 << 3);
-    pub const PATHS: Self = Self(1 << 4);
-    pub const INTERPRETATIONS: Self = Self(1 << 5);
-    pub const UNCOVERED: Self = Self(1 << 6);
-    pub const CHANGES: Self = Self(1 << 7);
-    pub const CORPUS: Self = Self(1 << 8);
-    pub const REGIME: Self = Self(1 << 9);
+    pub const REFERENCES: Self = Self(1 << 3);
+    pub const INTERPRETATIONS: Self = Self(1 << 4);
+    pub const UNCOVERED: Self = Self(1 << 5);
+    pub const CHANGES: Self = Self(1 << 6);
+    pub const CORPUS: Self = Self(1 << 7);
+    pub const REGIME: Self = Self(1 << 8);
 
     /// The empty set. What a selection naming no family would be.
     pub const NOTHING: Self = Self(0);
 
     /// Every check. What a run with no `--only` performs.
-    pub const EVERYTHING: Self = Self(0b11_1111_1111);
+    pub const EVERYTHING: Self = Self(0b1_1111_1111);
     /// Every check that is not the citation walk.
     pub const STRUCTURE: Self = Self(Self::EVERYTHING.0 & !Self::CITATIONS.0);
 
@@ -141,12 +140,11 @@ impl Only {
     ///
     /// One table, so the parser, the error message and the help cannot disagree about what
     /// exists. A check added without a row here is selectable by no name.
-    pub const NAMED: [(&'static str, Self); 10] = [
+    pub const NAMED: [(&'static str, Self); 9] = [
         ("citations", Self::CITATIONS),
         ("generated", Self::GENERATED),
         ("components", Self::COMPONENTS),
-        ("slugs", Self::SLUGS),
-        ("paths", Self::PATHS),
+        ("references", Self::REFERENCES),
         ("interpretations", Self::INTERPRETATIONS),
         ("uncovered", Self::UNCOVERED),
         ("changes", Self::CHANGES),
@@ -276,15 +274,11 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
         structure.components = counts.components;
         structure.additional_trackers = counts.additional_trackers;
     }
-    if only.has(Only::SLUGS) {
-        let (found, (defined, referenced)) = slugs::check(model, manifest);
+    if only.has(Only::REFERENCES) {
+        let (found, c) = references::check(model, manifest, inputs);
         findings.extend(found);
-        (structure.slugs_defined, structure.slugs_referenced) = (defined, referenced);
-    }
-    if only.has(Only::PATHS) {
-        let (found, c) = paths::check(model, manifest, inputs);
-        findings.extend(found);
-        structure.path_references = c.references;
+        structure.entities = c.entities;
+        structure.references = c.references;
         structure.links = c.links;
     }
     if only.has(Only::INTERPRETATIONS) {
@@ -346,12 +340,15 @@ mod tests {
 
     #[test]
     fn a_comma_list_is_the_union_of_its_members() {
-        let set = Only::parse("slugs,paths").expect("two declared names");
-        assert!(set.has(Only::SLUGS) && set.has(Only::PATHS));
+        let set = Only::parse("references,generated").expect("two declared names");
+        assert!(set.has(Only::REFERENCES) && set.has(Only::GENERATED));
         assert!(!set.has(Only::CITATIONS));
-        assert_eq!(set.names(), vec!["slugs", "paths"]);
+        assert_eq!(set.names(), vec!["generated", "references"]);
         // Order and spacing are the caller's, not a second meaning.
-        assert_eq!(Only::parse(" paths , slugs ").expect("spaced"), set);
+        assert_eq!(
+            Only::parse(" generated , references ").expect("spaced"),
+            set
+        );
     }
 
     #[test]
@@ -377,40 +374,43 @@ mod tests {
     fn membership_asks_whether_every_named_family_is_present() {
         // Overlap is not membership. `structure` is a name a caller types, so a set holding
         // one structural family must not answer yes to holding `structure`.
-        let slugs = Only::parse("slugs").expect("a family");
-        assert!(slugs.has(Only::SLUGS));
-        assert!(!slugs.has(Only::STRUCTURE));
-        assert!(!slugs.has(Only::EVERYTHING));
+        let references = Only::parse("references").expect("a family");
+        assert!(references.has(Only::REFERENCES));
+        assert!(!references.has(Only::STRUCTURE));
+        assert!(!references.has(Only::EVERYTHING));
         assert!(!Only::CITATIONS.has(Only::EVERYTHING));
         assert!(Only::EVERYTHING.has(Only::STRUCTURE));
-        assert!(Only::parse("slugs,paths")
+        assert!(Only::parse("references,generated")
             .expect("two")
-            .has(Only::SLUGS.union(Only::PATHS)));
+            .has(Only::REFERENCES.union(Only::GENERATED)));
     }
 
     #[test]
     fn a_name_repeated_or_already_covered_adds_nothing_and_removes_nothing() {
         // Union, not symmetric difference. Both inputs are ones a caller writes by hand.
-        assert_eq!(Only::parse("slugs,slugs").expect("dup"), Only::SLUGS);
-        let mixed = Only::parse("structure,slugs").expect("overlapping");
+        assert_eq!(
+            Only::parse("references,references").expect("dup"),
+            Only::REFERENCES
+        );
+        let mixed = Only::parse("structure,references").expect("overlapping");
         assert!(
-            mixed.has(Only::SLUGS),
-            "slugs must survive being named twice"
+            mixed.has(Only::REFERENCES),
+            "references must survive being named twice"
         );
         assert_eq!(mixed, Only::STRUCTURE);
     }
 
     #[test]
     fn without_removes_only_what_it_names() {
-        let pair = Only::SLUGS.union(Only::PATHS);
-        assert_eq!(pair.without(Only::PATHS), Only::SLUGS);
+        let pair = Only::REFERENCES.union(Only::GENERATED);
+        assert_eq!(pair.without(Only::GENERATED), Only::REFERENCES);
         assert_eq!(pair.without(Only::CITATIONS), pair);
         assert_eq!(Only::EVERYTHING.without(Only::CITATIONS), Only::STRUCTURE);
     }
 
     #[test]
     fn an_unknown_family_is_an_error_that_names_what_is_accepted() {
-        let e = Only::parse("slugs,nonesuch").expect_err("not a family");
+        let e = Only::parse("references,nonesuch").expect_err("not a family");
         assert!(e.contains("nonesuch"), "{e}");
         for (name, _) in Only::NAMED {
             assert!(e.contains(name), "the error should name {name}: {e}");
@@ -429,6 +429,9 @@ mod tests {
             );
         }
         // A trailing comma is a typo with one obvious meaning, and is not an empty selection.
-        assert_eq!(Only::parse("slugs,").expect("trailing comma"), Only::SLUGS);
+        assert_eq!(
+            Only::parse("references,").expect("trailing comma"),
+            Only::REFERENCES
+        );
     }
 }

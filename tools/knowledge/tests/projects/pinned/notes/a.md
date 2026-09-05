@@ -1,4 +1,4 @@
 <!-- cr-version: 19990101 -->
 
 
-A pointer to `pinned#anchor`.
+A pointer to `design@pinned@anchor`.
