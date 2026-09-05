@@ -454,9 +454,9 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
 mod tests {
     use super::*;
 
-    // Inputs to a scanner, bound to names.
-    const RULE: &str = "104.4b";
-    const OTHER: &str = "613.8c";
+    // Every fixture below is written as the bytes it means. The checker reads no string
+    // literal of its own source, per `knowledge#checker-source-literals-are-data`, so a rule
+    // number, a marker, a slug or a path in one is data and not a claim.
 
     fn scan_md(text: &str) -> Vec<Observation> {
         scan(&crate::source::md::parse(text))
@@ -491,22 +491,24 @@ mod tests {
         // A bare number beside a marked one is NOT a marker. What catches it is the
         // missing-marker lint, and that is why there is no form for a number owing no quote:
         // a number that is data goes in a code span, a fence or a name-bound literal.
-        let text = format!("per CR:{RULE}, and {OTHER} is only a number");
-        assert_eq!(markers(&text), vec![(RULE.to_string(), MarkerForm::Prose)]);
+        let text = "per CR:104.4b, and 613.8c is only a number";
+        assert_eq!(
+            markers(text),
+            vec![("104.4b".to_string(), MarkerForm::Prose)]
+        );
     }
 
     #[test]
     fn an_identifier_marker_is_found_anywhere_in_a_name() {
-        let ident = RULE.replace('.', "_");
         for name in [
-            format!("fn CR_{ident}_holds() {{}}"),
+            "fn CR_104_4b_holds() {}",
             // Prefixed. An underscore is a word character, so a bounded pattern never matched
             // here — and `test_…` is the commonest way to write the shape the convention
             // exists for, which left it unenforced for exactly that shape.
-            format!("fn test_cr_{ident}_holds() {{}}"),
+            "fn test_cr_104_4b_holds() {}",
         ] {
             let seen: Vec<(String, MarkerForm)> = scan(&crate::source::rs::parse(
-                &name,
+                name,
                 crate::source::Literals::Prose,
             ))
             .into_iter()
@@ -517,7 +519,7 @@ mod tests {
             .collect();
             assert_eq!(
                 seen,
-                vec![(RULE.to_string(), MarkerForm::Identifier)],
+                vec![("104.4b".to_string(), MarkerForm::Identifier)],
                 "{name}"
             );
         }
@@ -527,11 +529,10 @@ mod tests {
     fn an_identifier_marker_in_prose_is_told_apart_from_one_in_a_name() {
         // Only the second is what the convention exists for. A check that conflated them
         // would ask a sentence for the quote a name owes.
-        let ident = RULE.replace('.', "_");
-        let prose = format!("the test cr_{ident}_holds covers it");
+        let prose = "the test cr_104_4b_holds covers it";
         assert_eq!(
-            markers(&prose),
-            vec![(RULE.to_string(), MarkerForm::IdentifierInProse)]
+            markers(prose),
+            vec![("104.4b".to_string(), MarkerForm::IdentifierInProse)]
         );
     }
 
@@ -564,10 +565,6 @@ mod tests {
         .any(|l| matches!(l.what, Observation::RuleMarker { .. })));
     }
 
-    // A section number and its dotted rules, as inputs to the scanner.
-    const SECTION: &str = "104";
-    const IN_SECTION: &str = "104.4b";
-
     /// The tokens a line yields, as printed text.
     fn tokens(text: &str) -> Vec<String> {
         scan_md(text)
@@ -585,22 +582,22 @@ mod tests {
         // matches the FRONT of a dotted marker, so the guard is what keeps `CR:` and a dotted
         // number from reporting twice. Mutation checked: removing the subrule-digit guard
         // fails the second assertion with two markers on the line.
-        let section = format!("in the order CR:{SECTION} states them");
+        let section = "in the order CR:104 states them";
         assert_eq!(
-            markers(&section),
-            vec![(SECTION.to_string(), MarkerForm::Prose)]
+            markers(section),
+            vec![("104".to_string(), MarkerForm::Prose)]
         );
-        assert_eq!(tokens(&section), vec![SECTION.to_string()]);
-        let dotted = format!("per CR:{IN_SECTION}, the step is pinned");
+        assert_eq!(tokens(section), vec!["104".to_string()]);
+        let dotted = "per CR:104.4b, the step is pinned";
         assert_eq!(
-            markers(&dotted),
-            vec![(IN_SECTION.to_string(), MarkerForm::Prose)]
+            markers(dotted),
+            vec![("104.4b".to_string(), MarkerForm::Prose)]
         );
         // At a sentence end the dot belongs to the sentence, not the number.
-        let sentence = format!("the order is CR:{SECTION}. The next sentence.");
+        let sentence = "the order is CR:104. The next sentence.";
         assert_eq!(
-            markers(&sentence),
-            vec![(SECTION.to_string(), MarkerForm::Prose)]
+            markers(sentence),
+            vec![("104".to_string(), MarkerForm::Prose)]
         );
     }
 
@@ -610,12 +607,12 @@ mod tests {
         // the missing-marker lint reports. A dotted number after the keyword is a rule
         // reference the dotted patterns already carry, so the keyword match is discarded.
         for keyword in ["CR", "rule", "Rule", "rules", "section", "Sections"] {
-            let text = format!("named by {keyword} {SECTION} in prose");
-            assert_eq!(tokens(&text), vec![SECTION.to_string()], "{keyword}");
+            let text = format!("named by {keyword} 104 in prose");
+            assert_eq!(tokens(&text), vec!["104".to_string()], "{keyword}");
             assert!(markers(&text).is_empty(), "{keyword}");
         }
-        let dotted = format!("named by rule {IN_SECTION} in prose");
-        assert_eq!(tokens(&dotted), vec![IN_SECTION.to_string()]);
+        let dotted = "named by rule 104.4b in prose";
+        assert_eq!(tokens(dotted), vec!["104.4b".to_string()]);
     }
 
     #[test]
@@ -625,18 +622,18 @@ mod tests {
         // token rather than a marker: the marker convention is uppercase, and legitimising
         // the lowercase spelling would let two forms drift.
         for shape in [
-            format!("named by RULE {SECTION} in prose"),
-            format!("named by SECTION {SECTION} in prose"),
-            format!("named by rule *{SECTION}* in prose"),
-            format!("named by cr:{SECTION} in prose"),
+            "named by RULE 104 in prose",
+            "named by SECTION 104 in prose",
+            "named by rule *104* in prose",
+            "named by cr:104 in prose",
         ] {
-            assert_eq!(tokens(&shape), vec![SECTION.to_string()], "{shape}");
-            assert!(markers(&shape).is_empty(), "{shape}");
+            assert_eq!(tokens(shape), vec!["104".to_string()], "{shape}");
+            assert!(markers(shape).is_empty(), "{shape}");
         }
         // The uppercase marker matches the widened keyword pattern too, and must still
         // yield exactly one token beside its marker, not two.
-        let marker = format!("in the order CR:{SECTION} states them");
-        assert_eq!(tokens(&marker), vec![SECTION.to_string()]);
+        let marker = "in the order CR:104 states them";
+        assert_eq!(tokens(marker), vec!["104".to_string()]);
     }
 
     #[test]
@@ -644,16 +641,16 @@ mod tests {
         // The data carve-outs survive the section form: inside backticks the number is being
         // displayed, and whether that shelters a claim is the reviewer's question, not a
         // pattern's.
-        let sheltered = format!("named by rule `{SECTION}` in a code span");
-        assert_eq!(tokens(&sheltered), Vec::<String>::new());
+        let sheltered = "named by rule `104` in a code span";
+        assert_eq!(tokens(sheltered), Vec::<String>::new());
         // A backticked MARKER stays a marker — markers are never data — and its token keeps
         // the dotted symmetry by staying out.
-        let marker = format!("named by `CR:{SECTION}` in a code span");
+        let marker = "named by `CR:104` in a code span";
         assert_eq!(
-            markers(&marker),
-            vec![(SECTION.to_string(), MarkerForm::Prose)]
+            markers(marker),
+            vec![("104".to_string(), MarkerForm::Prose)]
         );
-        assert_eq!(tokens(&marker), Vec::<String>::new());
+        assert_eq!(tokens(marker), Vec::<String>::new());
     }
 
     #[test]
@@ -661,8 +658,8 @@ mod tests {
         // Three digits with no keyword is a count, a line number, a date fragment. The
         // keyword is what makes the token claimable, and everything below it stays the
         // reviewer's.
-        let noise = format!("the corpus holds 3 162 rules over {SECTION} files");
-        assert_eq!(tokens(&noise), Vec::<String>::new(), "{noise}");
+        let noise = "the corpus holds 3 162 rules over 104 files";
+        assert_eq!(tokens(noise), Vec::<String>::new(), "{noise}");
     }
 
     #[test]
@@ -687,14 +684,14 @@ mod tests {
     fn a_marker_inside_a_code_span_is_still_a_marker() {
         // Backticking is reflexive here, so `` `CR:x` `` reads as typography. Treating it as
         // data erased the claim entirely: no quote owed, no number resolved, nothing linted.
-        let spanned = format!("the engine follows `CR:{RULE}` here");
+        let spanned = "the engine follows `CR:104.4b` here";
         assert_eq!(
-            markers(&spanned),
-            vec![(RULE.to_string(), MarkerForm::Prose)]
+            markers(spanned),
+            vec![("104.4b".to_string(), MarkerForm::Prose)]
         );
         // A BARE number in a code span is still data — a sort key, a parser input.
-        let bare = format!("the sort key is `{RULE}`");
-        assert!(scan_md(&bare)
+        let bare = "the sort key is `104.4b`";
+        assert!(scan_md(bare)
             .iter()
             .all(|o| !matches!(o, Observation::RuleToken(_))));
     }
@@ -703,13 +700,13 @@ mod tests {
     fn an_inline_html_tag_does_not_park_its_line() {
         // Only an HTML COMMENT parks text. Treating every inline tag as one erased every
         // citation, slug and path reference on a line carrying `Vec<Player>`.
-        let tagged = format!("the engine stores a Vec<Player> and follows {RULE} here");
+        let tagged = "the engine stores a Vec<Player> and follows 104.4b here";
         assert!(
-            scan_md(&tagged)
+            scan_md(tagged)
                 .iter()
                 .any(|o| matches!(o, Observation::RuleToken(_))),
             "{:?}",
-            scan_md(&tagged)
+            scan_md(tagged)
         );
     }
 
@@ -717,13 +714,13 @@ mod tests {
     fn a_slug_inside_an_html_comment_defines_nothing() {
         // Parking a section by commenting it out left its anchor defined and pointing at
         // text no reader sees.
-        let parked = format!("<!--\n### Parked `##{SLUG}`\n-->\n");
+        let parked = "<!--\n### Parked `##a-slug`\n-->\n";
         assert!(
-            !scan_md(&parked)
+            !scan_md(parked)
                 .iter()
                 .any(|o| matches!(o, Observation::SlugDef(_))),
             "{:?}",
-            scan_md(&parked)
+            scan_md(parked)
         );
     }
 
@@ -731,26 +728,16 @@ mod tests {
     fn every_marked_number_is_also_a_bare_token() {
         // The lint asks whether a token on this line carries a marker, so both are recorded
         // and the comparison is left to the check.
-        let text = format!("per CR:{RULE}");
-        let tokens: Vec<String> = scan_md(&text)
+        let text = "per CR:104.4b";
+        let tokens: Vec<String> = scan_md(text)
             .into_iter()
             .filter_map(|o| match o {
                 Observation::RuleToken(n) => Some(n.to_string()),
                 _ => None,
             })
             .collect();
-        assert_eq!(tokens, vec![RULE.to_string()]);
+        assert_eq!(tokens, vec!["104.4b".to_string()]);
     }
-
-    // Fixture slugs and paths are INTERPOLATED into their fixtures, never written out. A
-    // checker that walks the whole tree cannot tell its own test data from a document, so a
-    // slug spelled here would define an anchor and a path spelled here would be a reference
-    // to a file that does not exist — both of which this tool's own checks then report.
-    const SLUG: &str = "a-slug";
-    const CELL_SLUG: &str = "in-a-cell";
-    const DOC_PATH: &str = "docs/design/a.md";
-
-    const COMPONENT: &str = "a-component";
 
     /// The reference a line holds, as `(component, slug)`.
     fn refs(text: &str) -> Vec<(Option<String>, String)> {
@@ -766,21 +753,21 @@ mod tests {
     #[test]
     fn a_slug_opens_a_decision_in_a_level_three_heading_or_in_a_table_cell() {
         // The statement precedes the slug, which is what makes the heading an outline entry.
-        let stated = format!("### The statement `##{SLUG}`");
-        assert!(scan_md(&stated).contains(&Observation::SlugDef(SLUG.into())));
+        let stated = "### The statement `##a-slug`";
+        assert!(scan_md(stated).contains(&Observation::SlugDef("a-slug".into())));
         // A heading carrying nothing but the slug is a definition too. Requiring text after
         // it is what made every such heading invisible.
-        let alone = format!("### `##{SLUG}`");
-        assert!(scan_md(&alone).contains(&Observation::SlugDef(SLUG.into())));
-        let cell = format!("| `##{CELL_SLUG}` | holds |");
-        assert!(scan_md(&cell).contains(&Observation::SlugDef(CELL_SLUG.into())));
+        let alone = "### `##a-slug`";
+        assert!(scan_md(alone).contains(&Observation::SlugDef("a-slug".into())));
+        let cell = "| `##in-a-cell` | holds |";
+        assert!(scan_md(cell).contains(&Observation::SlugDef("in-a-cell".into())));
         // Mid-sentence it is a reference, not a definition.
-        let mid = format!("as `{COMPONENT}#{SLUG}` records");
+        let mid = "as `a-component#a-slug` records";
         assert_eq!(
-            refs(&mid),
-            vec![(Some(COMPONENT.to_string()), SLUG.to_string())]
+            refs(mid),
+            vec![(Some("a-component".to_string()), "a-slug".to_string())]
         );
-        assert!(!scan_md(&mid)
+        assert!(!scan_md(mid)
             .iter()
             .any(|o| matches!(o, Observation::SlugDef(_))));
     }
@@ -790,8 +777,8 @@ mod tests {
         // The form that predates the heading rule. It defines nothing, so every pointer at
         // it is reported as dangling — which is how the migration is visible rather than
         // silent.
-        let old = format!("`##{SLUG}` — **The statement.**");
-        assert!(!scan_md(&old)
+        let old = "`##a-slug` — **The statement.**";
+        assert!(!scan_md(old)
             .iter()
             .any(|o| matches!(o, Observation::SlugDef(_))));
     }
@@ -799,7 +786,7 @@ mod tests {
     #[test]
     fn a_slug_in_a_deeper_or_shallower_heading_is_not_a_definition() {
         for level in ["##", "####"] {
-            let head = format!("{level} The statement `##{SLUG}`");
+            let head = format!("{level} The statement `##a-slug`");
             assert!(
                 !scan_md(&head)
                     .iter()
@@ -814,20 +801,19 @@ mod tests {
         // Neither form is a reference there, and the same two forms outside the fence are.
         // Without this, a document explaining the convention cannot hold an example of it:
         // unqualified names no component, and qualified names a slug the example invented.
-        let fenced = format!(
-            "before\n```\n`{COMPONENT}#{SLUG}` and `#{SLUG}` and `##{SLUG}` — **A head.**\n```\nafter\n"
-        );
-        assert!(refs(&fenced).is_empty(), "{:#?}", refs(&fenced));
-        assert!(!scan_md(&fenced)
+        let fenced =
+            "before\n```\n`a-component#a-slug` and `#a-slug` and `##a-slug` — **A head.**\n```\nafter\n";
+        assert!(refs(fenced).is_empty(), "{:#?}", refs(fenced));
+        assert!(!scan_md(fenced)
             .iter()
             .any(|o| matches!(o, Observation::SlugDef(_))));
         // The fence is what does it, not the line: the same line outside one is both.
-        let open = format!("`{COMPONENT}#{SLUG}` and `#{SLUG}`\n");
+        let open = "`a-component#a-slug` and `#a-slug`\n";
         assert_eq!(
-            refs(&open),
+            refs(open),
             vec![
-                (Some(COMPONENT.to_string()), SLUG.to_string()),
-                (None, SLUG.to_string()),
+                (Some("a-component".to_string()), "a-slug".to_string()),
+                (None, "a-slug".to_string()),
             ]
         );
     }
@@ -837,12 +823,11 @@ mod tests {
         // A slug's home is a component's design document, so a source comment may point at a
         // decision and may not open one. The reference still has to be found, because that is
         // how a doc comment cites the argument for the code under it.
-        let src =
-            format!("/// argued at `{COMPONENT}#{SLUG}`\n/// ### stated `##{SLUG}`\nfn f() {{}}\n");
-        let seen = scan_rs(&src);
+        let src = "/// argued at `a-component#a-slug`\n/// ### stated `##a-slug`\nfn f() {}\n";
+        let seen = scan_rs(src);
         assert!(seen.contains(&Observation::SlugRef {
-            component: Some(COMPONENT.to_string()),
-            slug: SLUG.to_string(),
+            component: Some("a-component".to_string()),
+            slug: "a-slug".to_string(),
         }));
         assert!(!seen.iter().any(|o| matches!(o, Observation::SlugDef(_))));
     }
@@ -851,18 +836,18 @@ mod tests {
     fn a_rule_number_in_a_bound_string_literal_is_not_a_citation_and_a_message_is() {
         // Bound to a name it is a fixture; in a call it is a message. Under the checker's own
         // source neither is read at all.
-        let bound = format!("fn f() {{\n    let n = \"{RULE}\";\n}}\n");
-        assert!(scan_rs(&bound).is_empty(), "{:?}", scan_rs(&bound));
-        let message = format!("fn f() {{\n    g(\"{RULE}\");\n}}\n");
+        let bound = "fn f() {\n    let n = \"104.4b\";\n}\n";
+        assert!(scan_rs(bound).is_empty(), "{:?}", scan_rs(bound));
+        let message = "fn f() {\n    g(\"104.4b\");\n}\n";
         assert!(
-            scan_rs(&message)
+            scan_rs(message)
                 .iter()
                 .any(|o| matches!(o, Observation::RuleToken(_))),
             "{:?}",
-            scan_rs(&message)
+            scan_rs(message)
         );
         let data = scan(&crate::source::rs::parse(
-            &message,
+            message,
             crate::source::Literals::Data,
         ));
         assert!(data.is_empty(), "{data:?}");
@@ -870,17 +855,17 @@ mod tests {
 
     #[test]
     fn a_rule_number_in_a_code_span_is_data_rather_than_a_citation() {
-        let live = format!("The sort key is {RULE} in prose.");
-        assert!(scan_md(&live)
+        let live = "The sort key is 104.4b in prose.";
+        assert!(scan_md(live)
             .iter()
             .any(|o| matches!(o, Observation::RuleToken(_))));
-        let data = format!("The sort key is `{RULE}` in a code span.");
+        let data = "The sort key is `104.4b` in a code span.";
         assert!(
-            !scan_md(&data)
+            !scan_md(data)
                 .iter()
                 .any(|o| matches!(o, Observation::RuleToken(_))),
             "{:?}",
-            scan_md(&data)
+            scan_md(data)
         );
     }
 
@@ -891,10 +876,10 @@ mod tests {
         // decision head in the project would then be a reference naming no component, and the
         // check that reports those would fire on all of them at once.
         for line in [
-            format!("`##{SLUG}`  **The statement.**"),
-            format!("| `##{CELL_SLUG}` | holds |"),
+            "`##a-slug`  **The statement.**",
+            "| `##in-a-cell` | holds |",
         ] {
-            assert!(refs(&line).is_empty(), "{line}");
+            assert!(refs(line).is_empty(), "{line}");
         }
     }
 
@@ -903,8 +888,8 @@ mod tests {
         // Dropped, it would be a pointer no check can see: nothing resolves it and nothing
         // tells the writer it resolves to nothing.
         assert_eq!(
-            refs(&format!("as `#{SLUG}` records")),
-            vec![(None, SLUG.to_string())]
+            refs("as `#a-slug` records"),
+            vec![(None, "a-slug".to_string())]
         );
     }
 
@@ -923,8 +908,8 @@ mod tests {
             "has space",
             "",
         ] {
-            let scanned = refs(&format!("see `{name}#{SLUG}`"));
-            let spelled = scanned == vec![(Some(name.to_string()), SLUG.to_string())];
+            let scanned = refs(&format!("see `{name}#a-slug`"));
+            let spelled = scanned == vec![(Some(name.to_string()), "a-slug".to_string())];
             assert_eq!(
                 is_component_name(name),
                 spelled,
@@ -964,18 +949,17 @@ mod tests {
         // The three anchors of the grammar, each rendered back as written. The trailing
         // slash on the second is kept: it is the writer's claim that the target is a
         // directory, and the check asserts it.
-        let dir = "docs/design/";
         let text = format!(
-            "see `{COMPONENT}@{DOC_PATH}` and `{COMPONENT}@{dir}` and `*@{DOC_PATH}` \
-             and `{ESCAPE_ANCHOR}@{DOC_PATH}`"
+            "see `a-component@docs/design/a.md` and `a-component@docs/design/` and \
+             `*@docs/design/a.md` and `{ESCAPE_ANCHOR}@docs/design/a.md`"
         );
         assert_eq!(
             path_refs(&text),
             vec![
-                format!("{COMPONENT}@{DOC_PATH}"),
-                format!("{COMPONENT}@{dir}"),
-                format!("*@{DOC_PATH}"),
-                format!("{ESCAPE_ANCHOR}@{DOC_PATH}"),
+                "a-component@docs/design/a.md".to_string(),
+                "a-component@docs/design/".to_string(),
+                "*@docs/design/a.md".to_string(),
+                format!("{ESCAPE_ANCHOR}@docs/design/a.md"),
             ]
         );
         assert_eq!(unsupported(&text), Vec::<String>::new());
@@ -986,12 +970,13 @@ mod tests {
         // The retired form extracted a bare path only when its suffix was one of five, so
         // every backticked Rust path dangled silently through one relocation. The anchored
         // form owes no suffix and no slash: a bare document name behind an anchor is a reference too.
-        let rs = "src/b.rs";
-        let bare = "README.md";
-        let text = format!("see `{COMPONENT}@{rs}` and `{COMPONENT}@{bare}`");
+        let text = "see `a-component@src/b.rs` and `a-component@README.md`";
         assert_eq!(
-            path_refs(&text),
-            vec![format!("{COMPONENT}@{rs}"), format!("{COMPONENT}@{bare}")]
+            path_refs(text),
+            vec![
+                "a-component@src/b.rs".to_string(),
+                "a-component@README.md".to_string()
+            ]
         );
     }
 
@@ -1000,13 +985,13 @@ mod tests {
         // The retired bare form, the retired `@` escape, and a dotted upward path: each is
         // recorded so the check can name the accepted syntaxes, never dropped.
         for span in [
-            DOC_PATH.to_string(),
-            format!("@{DOC_PATH}"),
-            format!("../../{DOC_PATH}"),
-            "a/b.json".to_string(),
+            "docs/design/a.md",
+            "@docs/design/a.md",
+            "../../docs/design/a.md",
+            "a/b.json",
         ] {
             let text = format!("see `{span}`");
-            assert_eq!(unsupported(&text), vec![span.clone()], "{span}");
+            assert_eq!(unsupported(&text), vec![span.to_string()], "{span}");
             assert_eq!(path_refs(&text), Vec::<String>::new(), "{span}");
         }
     }
@@ -1025,11 +1010,10 @@ mod tests {
     fn meta_notation_is_not_path_shaped() {
         // A space, a colon or an angle bracket puts a span outside the path classes, which
         // is what lets documentation of the syntax show a placeholder without a carve-out.
-        let text = format!(
-            "write `<component>@{DOC_PATH}` or `see the {DOC_PATH} form` or `https://a.test/{DOC_PATH}`"
-        );
-        assert_eq!(unsupported(&text), Vec::<String>::new());
-        assert_eq!(path_refs(&text), Vec::<String>::new());
+        let text = "write `<component>@docs/design/a.md` or `see the docs/design/a.md form` \
+                    or `https://a.test/docs/design/a.md`";
+        assert_eq!(unsupported(text), Vec::<String>::new());
+        assert_eq!(path_refs(text), Vec::<String>::new());
     }
 
     #[test]
@@ -1037,15 +1021,15 @@ mod tests {
         // Both patterns span backtick to backtick, so the anchored match owns its range and
         // the lint reads the residue. Without the range check every anchored reference in
         // the tree would be reported once as itself and once as unsupported.
-        let text = format!("see `{COMPONENT}@{DOC_PATH}`");
-        assert_eq!(path_refs(&text).len(), 1);
-        assert_eq!(unsupported(&text), Vec::<String>::new());
+        let text = "see `a-component@docs/design/a.md`";
+        assert_eq!(path_refs(text).len(), 1);
+        assert_eq!(unsupported(text), Vec::<String>::new());
     }
 
     #[test]
     fn an_interpretation_reference_is_not_found_inside_a_word_or_a_number() {
-        let text = format!("R15 holds, but CR:{RULE} and FOR15 and 1.R3 do not");
-        let refs: Vec<u16> = scan_md(&text)
+        let text = "R15 holds, but CR:104.4b and FOR15 and 1.R3 do not";
+        let refs: Vec<u16> = scan_md(text)
             .into_iter()
             .filter_map(|o| match o {
                 Observation::InterpRef(n) => Some(n),
@@ -1068,12 +1052,14 @@ mod tests {
             .any(|l| matches!(l.what, Observation::InterpRef(_))));
     }
 
+    // The one fixture still interpolated. `pin` reads the RAW text of a file, line by line,
+    // and skips only fenced lines: it never consults the literal grammar, so a pin spelled out
+    // inside a string literal on one line of this file would pin this file to that release
+    // and list it as an opt-out from the change detector in every run's summary.
+    const DATE: &str = "20260807";
+
     #[test]
     fn a_pin_is_read_from_the_whole_file() {
-        // The date is interpolated rather than written next to the marker: spelled out, this
-        // line would pin THIS file to a release, and the citation checker would report the
-        // tool's own test fixture as an opt-out from the change detector.
-        const DATE: &str = "20260807";
         let text = format!("intro\n<!-- cr-version: {DATE} -->\n");
         assert_eq!(
             pin(&crate::source::md::parse(&text), &text).as_deref(),
@@ -1088,7 +1074,6 @@ mod tests {
         // A document EXPLAINING the mechanism used to repin itself by showing the form, and
         // then verified its quotes against a release it never chose. The resolver fetches an
         // absent release, so the symptom was a network failure in a check that reads none.
-        const DATE: &str = "20260807";
         let text = format!("intro\n\n```markdown\n<!-- cr-version: {DATE} -->\n```\n");
         assert_eq!(pin(&crate::source::md::parse(&text), &text), None);
     }
