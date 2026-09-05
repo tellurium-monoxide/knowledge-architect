@@ -48,7 +48,7 @@ pub fn live_files(
 ///
 /// A directory row covers everything beneath it, which is what pruning at the directory used to
 /// do; git lists files and not directories, so the containment is asked here instead.
-pub(crate) fn skipped(rel: &Path, walk: &Walk) -> bool {
+pub fn skipped(rel: &Path, walk: &Walk) -> bool {
     walk.skip_dirs.iter().any(|d| rel.starts_with(d))
         || walk.exclude.iter().any(|e| rel.starts_with(e))
 }

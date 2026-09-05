@@ -431,6 +431,68 @@ the strength of a working-tree state.
 visible in the output rather than inferred from a finding list. The tripwire is in
 `knowledge@docs/tripwires.md`.
 
+### A commit message is a document under the regime, judged against the tree its commit carries `##a-commit-message-is-a-document`
+
+A commit message is parsed as one markdown document — its subject line, its blank line and its
+body — and every rule of the regime runs over it. A `CR:` marker owes its verbatim quote inside
+the message, within the distance rule of `knowledge#scope-and-distance`; every reference is
+judged against the entity table of `knowledge#one-entity-table`; the missing-marker lint reads
+it as it reads any other prose.
+
+**A message is history, and rule numbers are not.** Rules are edited and renumbered at
+comparable rates from release to release, so a number a message names without its text is a
+claim a far-future reader cannot check, whatever the tree holds by then. The regime exists
+against exactly that, and a surface it did not cover was a surface nothing read.
+
+Two commands, because the two moments are different:
+
+| command | judges | against |
+| --- | --- | --- |
+| `commit-message <file>` | one message, before the commit exists | the working tree's model |
+| `commits <range>` | every message the range names | each commit's own tree |
+
+**Everything a commit is judged against is read from that commit's tree.** The manifest, the
+`[walk]` rules, the documents, the generated indexes, the per-instance options and the pinned
+corpus all come through git objects, and the model is assembled in memory. Reading them from the
+working tree instead would judge a message written a hundred commits ago against decisions that
+did not exist then, and the finding list would be a list of things nobody could have known.
+
+**A commit whose tree fails is skipped and named; the range's tip is never skipped.** A message
+can only be judged where the table it resolves against is trustworthy, so a tree with findings
+of its own contributes no verdict — and a run in which every commit was skipped would be a
+vacuous pass, so the summary counts judged and skipped commits and the tip's own failure is exit
+2. A tree whose manifest will not load is skipped for that reason, which is what lets the range
+walk over commits older than a manifest migration.
+
+**A message's references resolve against its commit's tree or its first parent's.** A commit
+that closes an issue deletes the entry and names it in the message, and against its own tree
+alone every such message would dangle. The parent's model is the previous one in the walk
+wherever the walk followed the parent chain, so the union costs one extra model at the range's
+start and after each skip.
+
+**`check` reads no history.** A message is not a file of the tree, and a check whose verdict
+moved with the branch's history would be a check nobody could reproduce from a checkout: `git
+stash` alone would move it. The range is always explicit, and the gates pass the range from the
+remote `main` to `HEAD`, so what is judged is the branch's own commits and never `main`'s.
+
+**Two families do not run over a commit's tree.** `corpus`, whose subject is filesystem state
+that a tree is not, and `changes`, which resolves every release its changelog names and would
+read the whole archive out of git objects at every step of the range. Neither can decide whether
+a message's references resolve, which is the question the per-commit model exists to answer, and
+`check` is what judges a checkout against both.
+
+**The ignore rules a per-commit run asks are the working tree's.** `git check-ignore` reads the
+`.gitignore` files on disk and has no form that asks a historical tree. A commit whose ignore
+rules differed from today's is therefore judged against today's, which can cost a path reference
+asserted where that commit's own rules exempted it — a finding rather than a silence.
+
+**The hook is per-clone configuration, and no check reads it.** `core.hooksPath` is git's own
+setting and points at `path@thaum@.githooks/`, which the project commits so a review can read
+the script; `hook install` sets it and `hook status` reports it. A verdict that depended on it
+would be one nobody can trust twice, for the reason `knowledge#ignored-targets-are-not-asserted`
+refuses build state. `cargo x gates` prints the status line as information and gates on the
+range check alone.
+
 ### A parse that cannot be trusted is reported, never silent `##a-failed-parse-is-loud`
 
 A file the walk cannot read, a source the grammar cannot parse, and a source nested deeper than

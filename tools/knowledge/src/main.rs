@@ -22,6 +22,7 @@ use documentation::manifest::{ISSUE_REGISTER, TRIPWIRE_REGISTER};
 use documentation::Manifest;
 
 mod corpus_cmd;
+mod history_cmd;
 
 /// Every accepted `--only` value, as the help prints them.
 ///
@@ -59,6 +60,15 @@ enum Command {
     Index,
     /// Every observation the walk produced: file, line, kind, value.
     Model,
+    /// Judge one commit message, from a file, against the working tree.
+    CommitMessage(CommitMessageArgs),
+    /// Judge every commit message in a range, each against its own commit's tree.
+    Commits(CommitsArgs),
+    /// This clone's commit-message hook.
+    Hook {
+        #[command(subcommand)]
+        command: history_cmd::HookCommand,
+    },
     /// The corpus and its releases.
     Rules {
         #[command(subcommand)]
@@ -71,6 +81,20 @@ struct CheckArgs {
     /// Which check families to run. Without it, every one.
     #[arg(long, value_name = "FAMILIES", value_parser = Only::parse, help = FAMILIES)]
     only: Option<Only>,
+}
+
+#[derive(Args)]
+struct CommitMessageArgs {
+    /// The file holding the message. What a `commit-msg` hook is handed.
+    #[arg(value_name = "FILE")]
+    file: std::path::PathBuf,
+}
+
+#[derive(Args)]
+struct CommitsArgs {
+    /// The range to walk, as `git rev-list` reads one.
+    #[arg(value_name = "RANGE")]
+    range: String,
 }
 
 #[derive(Args)]
@@ -116,6 +140,13 @@ fn main() -> ExitCode {
         Command::Tripwires(args) => tripwires(&manifest, &args),
         Command::Index => index(&manifest),
         Command::Model => model(&manifest),
+        Command::CommitMessage(args) => {
+            history_cmd::commit_message(&manifest, &args.file, Some(checker_source()))
+        }
+        Command::Commits(args) => {
+            history_cmd::commits(&manifest, &args.range, Some(checker_source()))
+        }
+        Command::Hook { command } => history_cmd::hook(&manifest, &command),
         Command::Rules { command } => corpus_cmd::run(&manifest, &command),
     });
 

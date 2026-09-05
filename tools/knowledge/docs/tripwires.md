@@ -165,3 +165,23 @@ that ends up with a single member across the whole project.
 **Response:** reopen the open-set argument this decision reversed, in
 `knowledge@docs/rejected-alternatives.md`.
 
+
+## Guarding `knowledge#a-commit-message-is-a-document`'s skip clause `##a-commit-is-skipped-for-a-new-reason`
+
+`commits` skips a commit whose own tree fails, and the branch that introduced the command needs
+that clause: its pre-migration commits carry a manifest this tool refuses to load, and every
+commit before the tree went green carries findings. The clause was written for that transition
+and for nothing else. Left standing past it, it is the mechanism by which the range check passes
+while judging less and less: each commit that skips takes its message out of the run, and the
+summary is the only place that says so.
+
+**Fires when:** a branch merged to `main` had its `commits` run skip a commit for any reason
+other than that transition — read the `n judged, m skipped` line and the per-commit lines of the
+run over the branch.
+
+**Response:** the skip clause has outlived its reason. Delete it: a commit whose tree fails
+becomes a finding of its own rather than a silence, and `knowledge#a-commit-message-is-a-document`
+is rewritten to say so.
+
+**Re-entry:** every merge to `main`, read off the gate's own output; and
+`standing-state-reviewer` on every dispatched review.

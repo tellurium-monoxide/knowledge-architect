@@ -270,10 +270,27 @@ impl Model {
     /// It takes no walk configuration: what the walk skips decides which files exist, and a
     /// caller handing the text in has already decided that.
     pub fn from_documents(docs: Vec<(PathBuf, String)>) -> Self {
+        Self::from_documents_under(docs, None)
+    }
+
+    /// The same, with the checker's own directory named as a PROJECT-RELATIVE path.
+    ///
+    /// `build` takes an absolute directory and canonicalises it against the checkout; there is
+    /// no checkout here, so the caller states the directory the way every document in the list
+    /// is stated. A Rust file under it reads its string literals as data, per
+    /// `knowledge#checker-source-literals-are-data`. `commits` needs this because a per-commit
+    /// model is assembled from git objects and would otherwise read the tool's own fixtures as
+    /// live citations at every commit in the range.
+    pub fn from_documents_under(docs: Vec<(PathBuf, String)>, checker: Option<&Path>) -> Self {
         let docs = docs
             .into_iter()
             .map(|(rel, text)| {
-                let parsed = source::parse(&rel, &text, Literals::Prose);
+                let is_rust = rel.extension().is_some_and(|e| e == "rs");
+                let literals = match checker {
+                    Some(dir) if is_rust && rel.starts_with(dir) => Literals::Data,
+                    _ => Literals::Prose,
+                };
+                let parsed = source::parse(&rel, &text, literals);
                 let observations = scan::scan(&parsed);
                 Document {
                     rel,
@@ -281,7 +298,7 @@ impl Model {
                     text,
                     parsed,
                     observations,
-                    literals: Literals::Prose,
+                    literals,
                 }
             })
             .collect();
@@ -289,7 +306,7 @@ impl Model {
             root: PathBuf::new(),
             docs,
             listing: Vec::new(),
-            checker_source: None,
+            checker_source: checker.map(Path::to_path_buf),
         }
     }
 
@@ -461,6 +478,49 @@ mod tests {
             })
             .collect();
         assert_eq!(headings, vec![1, 1, 0]);
+    }
+
+    /// The claim: a stated checker directory reads the Rust literals under it as data, and
+    /// leaves every other file's alone.
+    ///
+    /// `commits` assembles a model per commit out of git objects, so it cannot canonicalise a
+    /// compiled path against a checkout the way `build` does. Without the directory the tool's
+    /// own fixtures are read as live citations at every commit in the range, and every commit
+    /// is then reported as a tree that fails.
+    #[test]
+    fn a_stated_checker_directory_reads_its_rust_literals_as_data() {
+        // Unbound on purpose: a literal BOUND to a name is data in either mode, per
+        // `knowledge#grammars-not-prefixes`, so a fixture written that way would pass
+        // whichever mode the model chose.
+        let source = "fn f() {\n    report(\"CR:100.1 the words a rule holds\");\n}\n";
+        let docs = vec![
+            (
+                PathBuf::from("tools/knowledge/src/a.rs"),
+                source.to_string(),
+            ),
+            (PathBuf::from("crates/engine/src/b.rs"), source.to_string()),
+        ];
+        let told = Model::from_documents_under(docs.clone(), Some(Path::new("tools/knowledge")));
+        let dump = told.canonical();
+        assert!(
+            !dump.contains("tools/knowledge/src/a.rs"),
+            "the tool's own literal is data: {dump}"
+        );
+        assert!(
+            dump.contains("crates/engine/src/b.rs\t2\tmarker-prose\t100.1"),
+            "every other file's is a claim: {dump}"
+        );
+        assert_eq!(told.checker_files(), 1);
+        assert_eq!(told.checker_source(), Some(Path::new("tools/knowledge")));
+
+        // Told nothing, every literal is prose — which is what `from_documents` gives.
+        let untold = Model::from_documents(docs);
+        assert!(
+            untold.canonical().contains("tools/knowledge/src/a.rs"),
+            "{}",
+            untold.canonical()
+        );
+        assert_eq!(untold.checker_files(), 0);
     }
 
     #[test]

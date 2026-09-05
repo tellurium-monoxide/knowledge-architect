@@ -33,6 +33,24 @@ pub struct Survey {
 
 pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
     let root = manifest.root();
+    Ok(from_listing(manifest, model, model.listing(), |rel| {
+        std::fs::read_to_string(root.join(rel)).ok()
+    }))
+}
+
+/// The same, over a stated listing and a stated way of reading a file.
+///
+/// **A commit's tree is surveyed the same way a checkout is.** `commits` builds a model per
+/// commit out of git objects, per `knowledge#a-commit-message-is-a-document`, so what exists
+/// and what sits outside the walk are answered from that tree's listing and its blobs rather
+/// than from the filesystem. `survey` is the case where the listing is the model's own and the
+/// bytes are on disk.
+pub fn from_listing(
+    manifest: &Manifest,
+    model: &Model,
+    listing: &[PathBuf],
+    read: impl Fn(&std::path::Path) -> Option<String>,
+) -> Survey {
     let walk = manifest.walk();
     let covered: HashSet<&std::path::Path> =
         model.documents().iter().map(|d| d.rel.as_path()).collect();
@@ -42,7 +60,7 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
     let mut present = HashSet::new();
     let mut directories = HashSet::new();
     let mut outside = Vec::new();
-    for rel in model.listing() {
+    for rel in listing {
         present.insert(rel.clone());
         for ancestor in rel.ancestors().skip(1) {
             if ancestor.as_os_str().is_empty() {
@@ -65,14 +83,14 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
         if skipped {
             continue;
         }
-        if let Ok(text) = std::fs::read_to_string(root.join(rel)) {
+        if let Some(text) = read(rel) {
             outside.push((rel.clone(), text));
         }
     }
     outside.sort();
-    Ok(Survey {
+    Survey {
         present,
         directories,
         outside,
-    })
+    }
 }

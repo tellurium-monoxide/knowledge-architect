@@ -349,6 +349,161 @@ fn is_date(line: &str) -> bool {
             .all(|(i, b)| i == 4 || i == 7 || b.is_ascii_digit())
 }
 
+/// The commits a range names, oldest first.
+///
+/// **Topological order, not date order.** `--reverse` alone reverses git's default
+/// reverse-chronological listing, and a commit whose recorded date precedes its parent's — a
+/// rebase across a clock skew produces one — then lands before the commit it descends from.
+/// The per-commit check reuses the previous model as the next commit's parent tree, so an
+/// order that is not the parent chain would resolve a message against the wrong tree.
+pub fn rev_list(root: &Path, range: &str) -> io::Result<Vec<String>> {
+    let out = git(root)
+        .args(["rev-list", "--reverse", "--topo-order", range])
+        .output()?;
+    Ok(String::from_utf8_lossy(&out)
+        .lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty())
+        .map(str::to_string)
+        .collect())
+}
+
+/// What one revision expression resolves to, or `None` when it names nothing.
+///
+/// A missing revision is an answer rather than a failure here: the caller asks whether HEAD is
+/// in a range and whether a commit has a first parent, and a root commit having none is
+/// ordinary. Every other git failure still reaches the caller as an error.
+pub fn rev_parse(root: &Path, expression: &str) -> Option<String> {
+    let out = git(root)
+        .args(["rev-parse", "--verify", "--quiet", expression])
+        .accept(1)
+        .output()
+        .ok()?;
+    let text = String::from_utf8_lossy(&out).trim().to_string();
+    (!text.is_empty()).then_some(text)
+}
+
+/// Every file in one commit's tree, project-relative.
+///
+/// `prefix` is where the project sits inside the repository, empty at the repository root: git
+/// names a tree's entries from the repository root whatever directory it is run in, so a
+/// project vendored as a subdirectory would otherwise get repository-relative paths that match
+/// nothing the manifest declares.
+pub fn tree_files(root: &Path, sha: &str, prefix: &Path) -> io::Result<Vec<PathBuf>> {
+    let listed = git(root)
+        .args(["ls-tree", "-r", "-z", "--name-only", sha])
+        .paths()?;
+    if prefix.as_os_str().is_empty() {
+        return Ok(listed);
+    }
+    Ok(listed
+        .into_iter()
+        .filter_map(|p| p.strip_prefix(prefix).ok().map(Path::to_path_buf))
+        .collect())
+}
+
+/// Where the working directory sits inside its repository, project-relative to the root git
+/// reports. Empty when the project IS the repository root.
+pub fn prefix(root: &Path) -> io::Result<PathBuf> {
+    let out = git(root).args(["rev-parse", "--show-prefix"]).output()?;
+    Ok(PathBuf::from(
+        String::from_utf8_lossy(&out)
+            .trim_end_matches(['\n', '\r'])
+            .to_string(),
+    ))
+}
+
+/// The contents of many blobs of one commit's tree, in one process.
+///
+/// **One `cat-file --batch`, not one process per file.** A tree of a thousand documents would
+/// otherwise spawn a thousand processes at every commit in the range. A path the tree does not
+/// hold contributes no entry rather than failing: the caller derives its request list from a
+/// listing, and a race between the two is not worth an exit 2.
+///
+/// A blob whose bytes are not UTF-8 contributes no entry either, for the reason
+/// `Model::build` keeps an unreadable file as an empty document: a lossy decoding produces
+/// text nobody wrote. The caller sees the absence and reports it.
+pub fn blobs(
+    root: &Path,
+    sha: &str,
+    paths: &[PathBuf],
+    prefix: &Path,
+) -> io::Result<BTreeMap<PathBuf, String>> {
+    if paths.is_empty() {
+        return Ok(BTreeMap::new());
+    }
+    let mut stdin = Vec::new();
+    for rel in paths {
+        stdin.extend_from_slice(format!("{sha}:").as_bytes());
+        stdin.extend_from_slice(path_bytes(&prefix.join(rel)));
+        stdin.push(b'\n');
+    }
+    let raw = git(root)
+        .args(["cat-file", "--batch"])
+        .stdin(stdin)
+        .output()?;
+    Ok(read_batch(&raw, paths))
+}
+
+/// `cat-file --batch`'s answers, paired with the requests they answer in order.
+///
+/// Split out because it is the one part of a per-commit read that can be stated in memory:
+/// git's framing is a header line and then exactly the bytes the header counted, and reading
+/// it wrong shifts every later answer onto the wrong path — which is a silent shape, since
+/// the map still comes back full.
+///
+/// `--batch` answers each request as `<oid> <type> <size>` for a hit and `<request> missing`
+/// for a miss, and a hit's body is followed by one newline. The size is read rather than a
+/// separator scanned for, because a blob may hold any byte, newlines included.
+fn read_batch(raw: &[u8], paths: &[PathBuf]) -> BTreeMap<PathBuf, String> {
+    let mut out = BTreeMap::new();
+    let mut at = 0usize;
+    let mut wanted = paths.iter();
+    while at < raw.len() {
+        let end = match raw[at..].iter().position(|b| *b == b'\n') {
+            Some(i) => at + i,
+            None => break,
+        };
+        let header = String::from_utf8_lossy(&raw[at..end]).into_owned();
+        at = end + 1;
+        let Some(rel) = wanted.next() else { break };
+        let Some(size) = header
+            .rsplit(' ')
+            .next()
+            .and_then(|n| n.parse::<usize>().ok())
+            .filter(|_| !header.ends_with(" missing"))
+        else {
+            // A miss carries no body, so nothing is consumed past its header.
+            continue;
+        };
+        let body_end = (at + size).min(raw.len());
+        if let Ok(text) = std::str::from_utf8(&raw[at..body_end]) {
+            out.insert(rel.clone(), text.to_string());
+        }
+        // The trailing newline `--batch` writes after every body.
+        at = (body_end + 1).min(raw.len());
+    }
+    out
+}
+
+/// One commit's message, subject line and body, exactly as it was written.
+pub fn commit_message(root: &Path, sha: &str) -> io::Result<String> {
+    let out = git(root).args(["log", "-1", "--format=%B", sha]).output()?;
+    Ok(String::from_utf8_lossy(&out).into_owned())
+}
+
+/// A path as the bytes git wrote, so a name no UTF-8 decoding accepts survives the round trip.
+#[cfg(unix)]
+fn path_bytes(path: &Path) -> &[u8] {
+    use std::os::unix::ffi::OsStrExt;
+    path.as_os_str().as_bytes()
+}
+
+#[cfg(not(unix))]
+fn path_bytes(path: &Path) -> Vec<u8> {
+    path.to_string_lossy().into_owned().into_bytes()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -514,6 +669,100 @@ mod tests {
         );
         assert_eq!(found.get(Path::new("docs/orphan.md")), None);
         assert!(parse_log("").is_empty());
+    }
+
+    /// The claim: each answer is paired with the request it answers, and a body is consumed
+    /// by the byte count its header states.
+    ///
+    /// A body holding a newline is the case that separates a size-driven read from a
+    /// separator-driven one, and every document in a tree holds newlines. Reading it wrong
+    /// shifts every later answer onto the wrong path and the map still comes back full, so
+    /// nothing downstream would report it.
+    #[test]
+    fn a_batch_answer_is_read_by_the_byte_count_its_header_states() {
+        let paths = vec![
+            PathBuf::from("a.md"),
+            PathBuf::from("b.md"),
+            PathBuf::from("c.md"),
+        ];
+        let first = "# A\n\nTwo lines.\n";
+        let third = "# C\n";
+        let raw = format!(
+            "aaaa blob {}\n{first}\nbbbb missing\ncccc blob {}\n{third}\n",
+            first.len(),
+            third.len()
+        );
+        let found = read_batch(raw.as_bytes(), &paths);
+        assert_eq!(
+            found.get(Path::new("a.md")).map(String::as_str),
+            Some(first)
+        );
+        assert_eq!(found.get(Path::new("b.md")), None, "a miss carries no body");
+        assert_eq!(
+            found.get(Path::new("c.md")).map(String::as_str),
+            Some(third)
+        );
+    }
+
+    #[test]
+    fn a_batch_with_nothing_in_it_answers_nothing() {
+        assert!(read_batch(b"", &[PathBuf::from("a.md")]).is_empty());
+        assert!(read_batch(b"aaaa blob 2\nhi\n", &[]).is_empty());
+    }
+
+    /// The claim: a commit's message comes back as it was written, and the walk over a range
+    /// follows the parent chain.
+    ///
+    /// The order matters because the previous commit's model is reused as the next one's
+    /// parent tree: an order that is not the chain resolves a message against the wrong tree.
+    #[test]
+    fn a_range_walks_the_parent_chain_and_each_message_comes_back_whole() {
+        let repo = std::env::temp_dir().join(format!("knowledge-git-range-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&repo);
+        std::fs::create_dir_all(&repo).expect("a repository directory");
+        for args in [
+            vec!["init", "-q"],
+            vec!["config", "user.name", "fixture"],
+            vec!["config", "user.email", "fixture@example.invalid"],
+        ] {
+            git(&repo).args(args).output().expect("a repository");
+        }
+        let mut shas = Vec::new();
+        for (n, subject) in ["the first", "the second", "the third"].iter().enumerate() {
+            std::fs::write(repo.join(format!("{n}.md")), "# A\n").expect("a document");
+            git(&repo).args(["add", "-A"]).output().expect("staged");
+            git(&repo)
+                .args(["commit", "-q", "-m", &format!("{subject}\n\nA body.")])
+                .output()
+                .expect("a commit");
+            shas.push(rev_parse(&repo, "HEAD").expect("the new head"));
+        }
+        let walked = rev_list(&repo, &format!("{}..HEAD", shas[0])).expect("a range");
+        assert_eq!(walked, shas[1..], "oldest first, along the parent chain");
+        let message = commit_message(&repo, &shas[1]).expect("a message");
+        assert!(message.starts_with("the second\n\nA body."), "{message:?}");
+        assert_eq!(rev_parse(&repo, "nowhere-at-all"), None);
+        assert_eq!(
+            rev_parse(&repo, &format!("{}^", shas[0])),
+            None,
+            "a root commit has no first parent"
+        );
+        let listed = tree_files(&repo, &shas[2], Path::new("")).expect("a tree listing");
+        assert_eq!(
+            listed,
+            vec![
+                PathBuf::from("0.md"),
+                PathBuf::from("1.md"),
+                PathBuf::from("2.md")
+            ]
+        );
+        let read = blobs(&repo, &shas[2], &listed, Path::new("")).expect("its blobs");
+        assert_eq!(read.len(), 3);
+        assert_eq!(
+            read.get(Path::new("1.md")).map(String::as_str),
+            Some("# A\n")
+        );
+        let _ = std::fs::remove_dir_all(&repo);
     }
 
     #[test]

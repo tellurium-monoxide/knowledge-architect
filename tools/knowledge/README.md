@@ -18,6 +18,10 @@ cargo knowledge tripwires [anchor] [--guarding <ref>] [text …]
                                           every tripwire entry, and what each guards
 cargo knowledge index                     regenerate every generated index in place
 cargo knowledge model                     every observation the walk produced
+cargo knowledge commit-message <file>     judge one message against the working tree
+cargo knowledge commits <range>           judge every message in the range against its own tree
+cargo knowledge hook install [--force]    point this clone at the committed hooks
+cargo knowledge hook status               whether this clone judges a message before it is written
 cargo knowledge rules show <number> …     the pinned text of a rule, shaped to be quoted
 cargo knowledge rules latest              is a newer rules release published?
 cargo knowledge rules diff --old <date> --new <date>
@@ -32,9 +36,9 @@ Three, per `thaum#exit-code-ladder`, and the third is what makes the other two m
 
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
-| `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run |
-| `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, no project above the working directory, an input that cannot be read, `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
+| `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commit-message` and `commits` with no finding, an empty range included; `hook status` on a clone that runs the committed hook |
+| `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `commit-message` or `commits` with a finding against a judged message; `hook status` on a clone that does not run it |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `hook install` refusing a `core.hooksPath` that names something else, `commits` on a range that does not resolve or whose tip carries a failing tree, no project above the working directory, an input that cannot be read, `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -205,6 +209,41 @@ declared metadata key, then a level-one title, then the declared sections.
 `[registers.issue]` accepts `kinds` and nothing else; the other three built-in registers accept
 nothing. The arguments are `knowledge#registers-are-declared` and
 `knowledge#a-file-register-is-a-directory-of-entries`.
+
+## Commit messages, and the hook
+
+**A commit message is a document under the citation regime.** It is parsed as one markdown
+document — subject line, blank line, body — and every rule runs over it: a `CR:` marker owes its
+verbatim quote inside the message, every `` `<kind>@<anchor>@<id>` `` reference resolves, and the
+missing-marker lint reads it as it reads any other prose. The argument is
+`knowledge#a-commit-message-is-a-document`.
+
+```sh
+cargo knowledge commit-message .git/COMMIT_EDITMSG   # one message, against the working tree
+cargo knowledge commits origin/main..HEAD            # the branch's own commits
+```
+
+`commits` reads everything from each commit's own tree through git objects — the manifest, the
+documents, the generated indexes, the pinned corpus — so a message is judged against the tree it
+was written against. **A commit whose tree carries findings of its own is skipped and named, and
+the range's tip is never skipped**: the summary block counts judged and skipped commits, so a run
+that judged nothing cannot read as a pass. A message's references resolve against its commit's
+tree **or its first parent's**, which is what lets a commit that closes an issue name it.
+
+`check` reads no history, and the range is always explicit. `cargo x gates` runs
+`commits origin/main..HEAD` as a gate.
+
+**The hook judges a message before the commit exists.**
+
+```sh
+cargo knowledge hook install     # core.hooksPath = .githooks
+cargo knowledge hook status      # 0 installed, 1 not
+```
+
+`thaum@.githooks/commit-msg` is committed, so a review can read it; `install` writes it where a tree
+carries none, and refuses to replace a `core.hooksPath` that names something else without
+`--force`. **No check reads the hook's status**: per-clone configuration must not move a verdict.
+`cargo x gates` prints the status line beside its verdicts and gates on nothing about it.
 
 ## What to respect
 

@@ -36,6 +36,11 @@ const ORPHAN_LOOKBACK: usize = 12;
 ///
 /// Both halves are needed. The per-rule bodies are what a quote is checked against; the whole
 /// text is what tells a misattributed quote from an invented one.
+///
+/// **Clonable, because parsing one is the single largest cost in a per-commit run.** `commits`
+/// builds a model per commit and holds a release per commit's pin; copying an already parsed
+/// release out of a cache is a memcpy where re-parsing is a walk over two megabytes.
+#[derive(Clone)]
 pub struct Release {
     pub whole: String,
     pub rules: Corpus,

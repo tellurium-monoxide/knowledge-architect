@@ -32,5 +32,17 @@ still names what the working tree no longer holds. The in-place tests under
 so a mock file is walked because this repository tracks it — which also means a new fixture file
 is walked only once it is at least staged.
 
+**A test about commit messages builds its own project.** `commits` judges a message only where
+that commit's tree carries no finding, and no mock project under `knowledge@tests/projects/`
+has such a tree: `planted` plants one per family on purpose and the others are migrated only as
+far as an earlier piece needed. `History` in `knowledge@tests/binary.rs` writes a project out,
+configures `user.name` and `user.email` in the copy's own configuration, and commits. Two
+orders it has to keep, both learned by getting them wrong:
+
+- **stage, regenerate the indexes, stage again.** The walk is git's listing, so a deleted entry
+  the index still holds is still counted and `cargo knowledge index` writes the listing the tree
+  no longer has.
+- **`--allow-empty`** on a commit whose subject is the message rather than a tree edit.
+
 Read `knowledge@docs/design.md` before changing how it works, and `bumping-rules` before adopting a
 rules release.

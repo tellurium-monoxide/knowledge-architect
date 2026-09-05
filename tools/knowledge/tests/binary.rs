@@ -1052,3 +1052,404 @@ fn a_per_user_ignore_file_does_not_decide_the_walk() {
     assert_eq!(walked_count(&out), walked_count(&plain));
     let _ = std::fs::remove_dir_all(&home);
 }
+
+// ---------------------------------------------------------------------------------------
+// Commit messages: `commit-message`, `commits`, and the hook
+// ---------------------------------------------------------------------------------------
+
+/// A throwaway repository holding a project the checks find nothing wrong with.
+///
+/// **The mock projects under `knowledge@tests/projects/` cannot serve here.** A commit is
+/// judged only where its own tree passes, and none of the mocks does: `planted` plants a
+/// defect for every family on purpose, and the others are migrated only as far as an earlier
+/// piece needed. The project below is written out so that a run over it has exactly the
+/// findings the test plants and no others.
+struct History {
+    dir: PathBuf,
+}
+
+impl History {
+    fn new(tag: &str) -> Self {
+        let dir = std::env::temp_dir().join(format!("knowledge-{tag}-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).expect("a temporary directory");
+        let history = History { dir };
+        history.git(&["init", "-q"]);
+        // An identity in the repository's own configuration, not the machine's: a fixture
+        // that read the developer's would fail wherever none is set, which is every runner.
+        history.git(&["config", "user.name", "fixture"]);
+        history.git(&["config", "user.email", "fixture@example.invalid"]);
+        history
+    }
+
+    fn git(&self, args: &[&str]) {
+        let out = Command::new("git")
+            .args(args)
+            .current_dir(&self.dir)
+            .output()
+            .expect("git runs");
+        assert!(
+            out.status.success(),
+            "git {args:?}: {}",
+            String::from_utf8_lossy(&out.stderr)
+        );
+    }
+
+    fn write(&self, rel: &str, text: &str) {
+        let path = self.dir.join(rel);
+        std::fs::create_dir_all(path.parent().expect("a parent")).expect("the parent directory");
+        std::fs::write(&path, text).expect("a written fixture file");
+    }
+
+    fn remove(&self, rel: &str) {
+        std::fs::remove_file(self.dir.join(rel)).expect("a fixture file to delete");
+    }
+
+    fn run(&self, args: &[&str]) -> (String, String, i32) {
+        run_in(&self.dir, args)
+    }
+
+    /// Regenerate the indexes, stage everything, and commit with this message.
+    ///
+    /// The indexes are regenerated first because the `generated` family compares bytes: a
+    /// commit that adds or deletes a register entry and leaves the index alone has a tree
+    /// that fails, and every such commit would be skipped rather than judged.
+    fn commit(&self, message: &str) -> String {
+        // **Staged, then regenerated, then staged again.** The walk is git's listing, so a
+        // deleted file the index still holds is walked and its register entry still counted:
+        // regenerating before the deletion is staged writes the listing the tree no longer
+        // has. A tree whose manifest this tool refuses to load regenerates no index, which is
+        // the shape one test commits on purpose, so the run's own code is not asserted.
+        self.git(&["-c", "core.excludesFile=/dev/null", "add", "-A"]);
+        self.run(&["index"]);
+        self.git(&["-c", "core.excludesFile=/dev/null", "add", "-A"]);
+        let file = self.dir.join("message.txt");
+        std::fs::write(&file, message).expect("a message file");
+        let path = file.to_string_lossy().into_owned();
+        // `--allow-empty`, because a test commits a message over a tree it did not change:
+        // the subject here is the message, and a tree edit per commit would be noise the
+        // reader has to discount.
+        self.git(&[
+            "commit",
+            "-q",
+            "--allow-empty",
+            "--cleanup=verbatim",
+            "-F",
+            &path,
+        ]);
+        std::fs::remove_file(&file).expect("the message file leaves the tree");
+        let out = Command::new("git")
+            .args(["rev-parse", "--short=7", "HEAD"])
+            .current_dir(&self.dir)
+            .output()
+            .expect("git runs");
+        String::from_utf8_lossy(&out.stdout).trim().to_string()
+    }
+}
+
+impl Drop for History {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.dir);
+    }
+}
+
+/// Everything a project owes, written out, with one design slug and one issue entry.
+///
+/// `additional_trackers` writes the retired manifest key, which is what a commit from before
+/// the manifest was migrated looks like to this tool: the manifest does not load, and the
+/// commit is skipped rather than judged.
+fn tiny_project(history: &History, additional_trackers: bool) {
+    let retired = if additional_trackers {
+        "additional-trackers = []\n"
+    } else {
+        ""
+    };
+    history.write(
+        "knowledge.toml",
+        &format!(
+            "[project]\nname = \"tiny\"\ncomponents = []\n{retired}\n\
+             [walk]\nskip-dirs = []\nskip-files = [\"corpus/CompRules.txt\"]\nexclude = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"corpus\"\ntext = \"CompRules.txt\"\nbody-starts-at = 0\n\
+             version = \"VERSION\"\npast = \"past\"\nmanifest = \"past/MANIFEST.tsv\"\n"
+        ),
+    );
+    history.write(
+        "README.md",
+        "# tiny\n\nA project a test builds so a commit has a tree with nothing wrong in it.\n",
+    );
+    history.write(
+        "CLAUDE.md",
+        "# tiny\n\nNothing here holds of any code: this project has none.\n",
+    );
+    history.write(
+        "docs/design.md",
+        "# tiny — design\n\n### A decision this project records `##tiny-anchor`\n\n\
+         It exists so that a message has something to name.\n",
+    );
+    history.write(
+        "docs/goals.md",
+        "# Goals — tiny\n\n## Be committed, so a message has a tree `##tiny-goal`\n\n\
+         The one goal of this project.\n",
+    );
+    history.write(
+        "docs/tripwires.md",
+        "# Tripwires — tiny\n\n## Guarding `design@tiny@tiny-anchor` `##tiny-tripwire`\n\n\
+         **Fires when:** the project stops being committed.\n**Response:** reopen it.\n",
+    );
+    history.write(
+        "docs/rejected-alternatives.md",
+        "# tiny — rejected alternatives\n\nNothing has lost yet.\n",
+    );
+    history.write(
+        "docs/open-issues/README.md",
+        "# Open issues — tiny\n\nOne file per entry; the listing beside this file is generated.\n",
+    );
+    history.write(
+        "docs/open-issues/a-closable-issue.md",
+        "---\nkind: observation\n---\n# A closable issue\n\n## Summary\n\n\
+         An entry a commit can delete.\n\n## Details\n\n### What\n\n\
+         This entry exists to be closed.\n\n### Why it matters\n\n\
+         A message naming a deleted entry resolves against the parent tree or against nothing.\n\n\
+         ### What would close it\n\nThe commit that deletes this file.\n",
+    );
+    history.write(
+        "corpus/CompRules.txt",
+        "100.1 A first mock rule long enough to be quoted as evidence on its own terms.\n\
+         100.2 A second mock rule, also long enough to be evidence on its own terms.\n",
+    );
+    history.write(
+        "corpus/VERSION",
+        "date:   20200101\nsource: https://example.test/rules.txt\nsha256: 0000\n",
+    );
+    history.write("corpus/past/MANIFEST.tsv", "date\turl\tsha256\tfetched\n");
+}
+
+/// The claim: a project written this way has nothing wrong with it, so a commit over it is
+/// judged rather than skipped.
+///
+/// Every test below reads a planted finding out of a run whose other findings are none. With
+/// a tree that failed, every commit would be skipped and each of those tests would pass while
+/// judging nothing at all.
+#[test]
+fn the_fixture_project_is_one_the_checks_find_nothing_wrong_with() {
+    let history = History::new("commit-clean");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    let (stdout, stderr, code) = history.run(&["check"]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+    assert!(stdout.contains("PASSED: no findings"), "{stdout}");
+}
+
+#[test]
+fn a_message_naming_nothing_that_exists_fails_and_names_the_commit_and_the_line() {
+    let history = History::new("commit-dangling");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    let sha = history.commit(
+        "A subject line\n\nA body naming `design@tiny@no-such-decision`, which is nowhere.\n",
+    );
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
+    // The commit, then the line inside the message: the body sits on line three.
+    assert!(
+        stdout.contains(&format!("commit {sha}:3")),
+        "the finding names the commit and the line: {stdout}"
+    );
+    assert!(stdout.contains("no-such-decision"), "{stdout}");
+}
+
+#[test]
+fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
+    let history = History::new("commit-parent");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    history.remove("docs/open-issues/a-closable-issue.md");
+    let sha = history
+        .commit("The closable issue is closed\n\nIt closed `issue@tiny@a-closable-issue`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(
+        code, 0,
+        "the parent tree still defines it: {stdout}{stderr}"
+    );
+    assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
+
+    // The discrimination: against the commit's own tree alone the same reference dangles.
+    // Without the parent-tree rule this message is a finding, so the pass above is not the
+    // pass of a check that resolved nothing.
+    let message = history.dir.join("closing.txt");
+    std::fs::write(
+        &message,
+        "The closable issue is closed\n\nIt closed `issue@tiny@a-closable-issue`.\n",
+    )
+    .expect("a message file");
+    let (alone, _, code) = history.run(&["commit-message", &message.to_string_lossy()]);
+    assert_eq!(code, 1, "{alone}");
+    assert!(alone.contains("a-closable-issue"), "{alone}");
+    let _ = std::fs::remove_file(&message);
+}
+
+#[test]
+fn a_rule_claimed_in_a_message_owes_its_quote_there() {
+    let history = History::new("commit-regime");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    let bare = history.commit("A subject line\n\nThe change follows CR:100.1, which it obeys.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(stdout.contains(&format!("commit {bare}:3")), "{stdout}");
+    assert!(stdout.contains("100.1 is claimed"), "{stdout}");
+}
+
+#[test]
+fn a_message_carrying_the_rules_own_words_passes() {
+    let history = History::new("commit-quoted");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    // The quote is the rule's whole body, which is what the regime asks for and what the
+    // citation family verifies against the release the commit pins.
+    history.commit(
+        "A subject line\n\nThe change follows CR:100.1: \
+         *\"A first mock rule long enough to be quoted as evidence on its own terms.\"*\n",
+    );
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+    assert!(stdout.contains("PASSED: no findings"), "{stdout}");
+}
+
+#[test]
+fn a_commit_whose_manifest_does_not_load_is_skipped_and_named_and_the_next_one_is_judged() {
+    let history = History::new("commit-premigration");
+    tiny_project(&history, true);
+    let base = history.commit("The project is created\n");
+    let old = history.commit("A commit from before the manifest was migrated\n");
+    tiny_project(&history, false);
+    let new = history.commit("The manifest is migrated\n\nIt records `design@tiny@tiny-anchor`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("{old} skipped: manifest does not load")),
+        "{stdout}"
+    );
+    assert!(stdout.contains(&format!("{new} judged")), "{stdout}");
+    assert!(stdout.contains("1 judged, 1 skipped"), "{stdout}");
+}
+
+#[test]
+fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
+    let history = History::new("commit-head-fails");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    // A live document naming a decision nothing defines: one `references` finding, in the
+    // tree rather than in the message.
+    history.write(
+        "docs/note.md",
+        "# A note\n\nIt names `design@tiny@no-such-decision`.\n",
+    );
+    let sha = history.commit("A note is added\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    // Never skipped, and the summary says what is wrong with it rather than staying silent.
+    assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
+    assert!(
+        stdout.contains("its own tree fails 1 finding(s)"),
+        "{stdout}"
+    );
+}
+
+#[test]
+fn an_empty_range_is_a_pass_that_says_it_judged_nothing() {
+    let history = History::new("commit-empty");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    let (stdout, stderr, code) = history.run(&["commits", "HEAD..HEAD"]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+    assert!(stdout.contains("no commit is in range"), "{stdout}");
+    assert!(stdout.contains("PASSED: no findings"), "{stdout}");
+}
+
+#[test]
+fn a_range_that_does_not_resolve_could_not_run() {
+    let history = History::new("commit-bad-range");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    let (stdout, stderr, code) = history.run(&["commits", "origin/nowhere..HEAD"]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(stderr.contains("does not resolve"), "{stderr}");
+}
+
+#[test]
+fn the_hook_is_not_installed_in_a_fresh_repository_and_is_after_install() {
+    let history = History::new("commit-hook");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+
+    let (before, stderr, code) = history.run(&["hook", "status"]);
+    assert_eq!(code, 1, "{before}{stderr}");
+    assert!(before.contains("not installed"), "{before}");
+    assert!(before.contains("core.hooksPath is not set"), "{before}");
+
+    let (installed, stderr, code) = history.run(&["hook", "install"]);
+    assert_eq!(code, 0, "{installed}{stderr}");
+
+    let (after, stderr, code) = history.run(&["hook", "status"]);
+    assert_eq!(code, 0, "{after}{stderr}");
+    assert!(after.contains("installed"), "{after}");
+
+    // What `install` wrote is what git will run: the script is there and executable.
+    let script = history.dir.join(".githooks/commit-msg");
+    let text = std::fs::read_to_string(&script).expect("the script");
+    assert!(text.starts_with("#!/bin/sh"), "{text}");
+    assert!(text.contains("commit-message"), "{text}");
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mode = std::fs::metadata(&script)
+            .expect("the script")
+            .permissions()
+            .mode();
+        assert!(mode & 0o111 != 0, "{mode:o}");
+    }
+}
+
+#[test]
+fn install_refuses_to_replace_a_hooks_path_that_names_something_else() {
+    let history = History::new("commit-hook-force");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    history.git(&["config", "core.hooksPath", "elsewhere"]);
+
+    let (stdout, stderr, code) = history.run(&["hook", "install"]);
+    assert_eq!(code, 2, "nothing was written: {stdout}{stderr}");
+    assert!(stderr.contains("elsewhere"), "{stderr}");
+    // Refused means unchanged, which is the half a message alone would not establish.
+    let (status, _, _) = history.run(&["hook", "status"]);
+    assert!(status.contains("elsewhere"), "{status}");
+
+    let (forced, stderr, code) = history.run(&["hook", "install", "--force"]);
+    assert_eq!(code, 0, "{forced}{stderr}");
+    let (status, _, code) = history.run(&["hook", "status"]);
+    assert_eq!(code, 0, "{status}");
+}
+
+/// The claim: the committed script is the one this tool writes, byte for byte.
+///
+/// The tool holds the script as a constant and `hook install` writes it where a tree has
+/// none; this repository commits it so a fresh clone needs only the configuration. Two
+/// copies of one file drift, and the drift is invisible: the hook keeps running the old text.
+#[test]
+fn this_repositorys_committed_hook_is_what_install_writes() {
+    let history = History::new("commit-hook-bytes");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    let (out, stderr, code) = history.run(&["hook", "install"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    let written = std::fs::read_to_string(history.dir.join(".githooks/commit-msg"))
+        .expect("the script install writes");
+    let committed = std::fs::read_to_string(
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.githooks/commit-msg"),
+    )
+    .expect("the script this repository commits");
+    assert_eq!(written, committed);
+}

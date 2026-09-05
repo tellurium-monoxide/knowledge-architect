@@ -299,3 +299,29 @@ open set was written against — a wrong label — cannot occur once an unknown 
 fallback label exists now: `knowledge@documentation/src/records.rs` reads each entry's kind out of
 its own frontmatter, and an entry that declares none has no kind rather than a wrong one.
 
+
+**`check` reading HEAD's message when the tree is clean** — lost to
+`knowledge#a-commit-message-is-a-document`. `live`. It needs no second command and no range: the
+one check the gates already run would judge the message of the commit it stands on. It loses
+because the verdict then depends on the working tree rather than on the checkout: `git stash`
+turns a run that judged a message into a run that judged none, and back, with no finding either
+way. It also judges each message exactly once, at the moment its own commit is HEAD, so a
+message written before a decision was deleted is never re-judged and the closure work list of
+`knowledge#one-entity-table` never reaches it.
+
+**References and present quotes only, in commit messages** — lost to
+`knowledge#a-commit-message-is-a-document`. `live`. It keeps the cheap half of the regime — a
+name that resolves, a quote that verifies — and drops the obligation to quote at all, so a
+message may name a rule and say what it says without carrying its text. It loses on what a
+message is: history, read years later against a corpus that has moved. Rules are edited and
+renumbered at comparable rates between releases, measured across two of them, so a number
+carrying no text is a claim its reader cannot check even where the tree still holds the right
+rule — and the tree the message described is not the tree that reader has.
+
+**`check` reading the hook's status** — lost to `knowledge#a-commit-message-is-a-document`.
+`live`. It makes the one gate everybody runs report a clone that will commit unjudged messages,
+which is the moment the information is worth most. It loses for the reason
+`knowledge#ignored-targets-are-not-asserted` refuses build state: `core.hooksPath` is per-clone
+configuration, so a check reading it answers differently on two clones of one commit, and a
+verdict nobody can reproduce is a verdict nobody can act on. `cargo x gates` prints the line
+beside its verdicts instead, where it informs and gates nothing.

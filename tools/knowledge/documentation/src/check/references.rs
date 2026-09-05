@@ -49,12 +49,28 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
 /// declared register subset, the shape a location takes.
 pub fn check_under(model: &Model, inputs: &Inputs, anchors: &Anchors) -> (Vec<Finding>, Counts) {
     let entities = Entities::build(model, anchors);
+    judge(model.documents(), &entities, anchors, inputs)
+}
+
+/// The same, over a stated document list and a stated entity table.
+///
+/// **The two are separated because a commit message is judged against a table it is no part
+/// of.** A message is a document under the regime, per
+/// `knowledge#a-commit-message-is-a-document`, and the entities it names are defined by the
+/// tree it commits — so the table is built from that tree's model and the documents judged
+/// against it are these. `check_under` is the case where the two coincide.
+pub fn judge(
+    docs: &[crate::model::Document],
+    entities: &Entities,
+    anchors: &Anchors,
+    inputs: &Inputs,
+) -> (Vec<Finding>, Counts) {
     let mut out: Vec<Finding> = Vec::new();
     let mut counts = Counts {
         entities: entities.len(),
         ..Counts::default()
     };
-    for doc in model.documents() {
+    for doc in docs {
         let nav = is_navigation(&doc.rel);
         for l in &doc.observations {
             match &l.what {
@@ -68,7 +84,7 @@ pub fn check_under(model: &Model, inputs: &Inputs, anchors: &Anchors) -> (Vec<Fi
                         } else {
                             table(
                                 &mut out, &doc.rel, l.line, span, &kind, anchor, id, anchors,
-                                &entities,
+                                entities,
                             );
                         }
                     }
