@@ -734,7 +734,8 @@ pub fn commits(
         }
 
         // The parent model is the previous commit's where the walk followed the parent chain,
-        // and is built once otherwise — at the range's first commit, and after a skip.
+        // a skipped commit's included, and is built once otherwise — at the range's first
+        // commit, and wherever the previous commit is not this one's first parent.
         let first_parent = documentation::git::rev_parse(root, &format!("{sha}^"));
         let parent_owned = match (&previous, &first_parent) {
             (Some((seen, _, _)), Some(parent)) if seen == parent => None,
