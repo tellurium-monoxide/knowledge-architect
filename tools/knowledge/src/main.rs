@@ -28,9 +28,9 @@ mod corpus_cmd;
 /// is added and not listed here. It is the SHORT help, so `-h` prints it and not only `--help`;
 /// the tripwire below reaches for whichever a reader typed. A tripwire in `knowledge@docs/tripwires.md` reads this list
 /// out of the help, so a family missing from it is a check whose output reaches no reviewer.
-const FAMILIES: &str = "citations, generated, components, references, interpretations, \
-                        uncovered, changes, corpus, regime. `structure` names every family \
-                        but citations. A comma-separated list runs their union over one walk.";
+const FAMILIES: &str = "citations, generated, registers, references, uncovered, changes, \
+                        corpus, regime. `structure` names every family but citations. A \
+                        comma-separated list runs their union over one walk.";
 
 #[derive(Parser)]
 #[command(
@@ -187,12 +187,19 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
     // The generated files are outside the walk — it excludes them by name, because a
     // generated file is not a source of citations. They are read here so a check does not.
     let mut committed = HashMap::new();
-    for rel in [
-        manifest.rules().dir.join("index.md"),
-        manifest.interpretations().dir.join("index.md"),
-    ] {
+    for rel in [manifest.rules().dir.join("index.md")] {
         if let Ok(text) = std::fs::read_to_string(manifest.root().join(&rel)) {
             committed.insert(rel, text);
+        }
+    }
+
+    // A register instance's options sit beside it and are not markdown, so the walk never
+    // reads them. They are read here for the same reason the generated files are: a check
+    // may not touch the filesystem.
+    let mut configs = HashMap::new();
+    for (_, _, home) in documentation::entity::Anchors::of(manifest).instances() {
+        if let Ok(text) = std::fs::read_to_string(manifest.root().join(&home.config)) {
+            configs.insert(home.config.clone(), text);
         }
     }
     let version = std::fs::read_to_string(tree.version()).map_err(|e| e.to_string())?;
@@ -207,6 +214,7 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
         releases: &releases,
         pinned: &pinned,
         committed: &committed,
+        configs: &configs,
         present: &survey.present,
         directories: &survey.directories,
         outside: &survey.outside,
@@ -310,18 +318,13 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
         .cloned()
         .ok_or("VERSION names no date")?;
 
-    // Both, always. They come from one model and one gate family checks them together, so a
-    // flag choosing between them bought nothing and was where an invalid combination lived.
-    let generated = [
-        (
-            manifest.rules().dir.join("index.md"),
-            documentation::index::rule_index(&model, manifest, &corpus, &pinned),
-        ),
-        (
-            manifest.interpretations().dir.join("index.md"),
-            documentation::index::interpretation_index(&model, manifest),
-        ),
-    ];
+    // Every generated index in one invocation, so a flag choosing between them buys nothing
+    // and cannot be given an invalid combination. The file-register indexes join this list
+    // when they are generated.
+    let generated = [(
+        manifest.rules().dir.join("index.md"),
+        documentation::index::rule_index(&model, manifest, &corpus, &pinned),
+    )];
 
     // Every destination is checked before any is written. A run that wrote one index and then
     // failed on the next exited 2 — could not run — having already changed the tree, which is
@@ -556,13 +559,11 @@ fn counts(report: &Report) -> String {
 
     let s = &report.structure;
     let mut structural = String::new();
-    if ran.has(Only::COMPONENTS) {
+    if ran.has(Only::REGISTERS) {
         let _ = write!(
             structural,
-            "\ncomponents: {} declared, {} document(s) each plus a design home, {} additional tracker(s)",
-            s.components,
-            documentation::manifest::COMPONENT_DOCUMENTS.len(),
-            s.additional_trackers
+            "\nregisters: {} component(s), {} location(s), {} instance(s), {} file entry(ies)",
+            s.components, s.locations, s.instances, s.entries
         );
     }
     if ran.has(Only::REFERENCES) {
@@ -570,13 +571,6 @@ fn counts(report: &Report) -> String {
             structural,
             "\nreferences: {} entities defined, {} reference(s), {} link(s)",
             s.entities, s.references, s.links
-        );
-    }
-    if ran.has(Only::INTERPRETATIONS) {
-        let _ = write!(
-            structural,
-            "\ninterpretations: {} concerns, {} entries R1-R{}",
-            s.concerns, s.entries, s.top_entry
         );
     }
     if ran.has(Only::UNCOVERED) {
@@ -798,13 +792,12 @@ mod tests {
         r.counts.unmarked = 33;
         r.counts.orphans = 44;
         r.structure.components = 188;
-        r.structure.additional_trackers = 199;
+        r.structure.locations = 199;
+        r.structure.instances = 88;
+        r.structure.entries = 99;
         r.structure.entities = 55;
         r.structure.references = 77;
         r.structure.links = 78;
-        r.structure.concerns = 88;
-        r.structure.entries = 99;
-        r.structure.top_entry = 111;
         r.structure.uncovered_files = 122;
         r.structure.checker_source = Some("tools/knowledge".into());
         r.structure.checker_files = 200;
@@ -821,10 +814,9 @@ mod tests {
         let out = counts(&numbered(Only::EVERYTHING));
         for expected in [
             "11/22 rule-quote fragments verified against the rule cited",
-            "components: 188 declared, 5 document(s) each plus a design home, 199 additional tracker(s)",
+            "registers: 188 component(s), 199 location(s), 88 instance(s), 99 file entry(ies)",
             "lint: 33 unmarked rule reference(s), 44 orphan identifier marker(s)",
             "references: 55 entities defined, 77 reference(s), 78 link(s)",
-            "interpretations: 88 concerns, 99 entries R1-R111",
             "uncovered files: 122 scanned",
             "checker source: tools/knowledge, 200 file(s) with string literals read as data",
             "corpus: 133 archived release(s), 144 manifest row(s),",
@@ -859,8 +851,7 @@ mod tests {
         // Every other family's label is absent rather than present with a zero. A zero here
         // reads as "nothing found" for a check that never ran.
         for label in [
-            "components:",
-            "interpretations:",
+            "registers:",
             "uncovered files:",
             "corpus:",
             "changelog:",

@@ -221,3 +221,51 @@ are checked today. Each would become text nothing reads.
 **A manifest row naming the exempt directory** — lost to `knowledge#the-regime-has-no-opt-out`.
 `live`. A row can be pointed at any directory, and the tree declaring it decides what conformance
 means. The compiled path can name only the checker's own source.
+
+**`additional-trackers` kept as a file list** — lost to
+`knowledge#anchors-are-components-and-locations`. `live`. It named each tracker outside every
+component directly, needed no second kind of anchor, and every check that read it worked. It
+loses because a file in that list had no anchor: nothing in the project could cite what was open
+there, and the register the rules directory holds could not be named at all. The whole of this
+tool is about citing, so a recorded thing with no name is the one shape it may not have.
+
+**A `theme` metadata key in place of group subdirectories** — lost to
+`knowledge#a-file-register-is-a-directory-of-entries`. `live`. It keeps every entry in one flat
+directory and regroups by editing one line. It loses on two counts: a subdirectory is visible to
+`ls` and to a listing without parsing any file, and a group that is not part of an entry's id
+makes regrouping a `git mv` that breaks no reference — which a metadata key would also have to
+promise, and could not, without a second rule saying the key is not part of the id.
+
+**A line cap on an entry's summary** — lost to
+`knowledge#a-file-register-is-a-directory-of-entries`. `live`. It would keep a listing's rows
+short by construction. It loses on the failing shape: a cap fires on whoever adds the last line,
+so the session that pushes an entry over it pays for every session before it, and the repair is
+to delete someone else's sentence.
+
+**The index introduction as a string in the manifest** — lost to
+`knowledge#a-file-register-is-a-directory-of-entries`. `live`. It would make the whole of a
+generated index generated, with nothing hand-written beside it. It loses because the introduction
+is prose about the project and belongs in markdown, and because a hand-written README is also what
+keeps the instance directory in git: an empty directory is not a thing git tracks, so a register
+with no entries would have no home at all.
+
+**An optional index, generated only where a project asks for one** — lost to
+`knowledge#a-file-register-is-a-directory-of-entries`. `live`. It was argued on churn: a
+generated file in every instance is a file that goes stale and fails the gate. It loses once the
+README holds the directory open, because the rows change only on create, delete, retitle, regroup
+and a metadata change — not on a wording edit — so the churn the argument feared does not happen.
+An optional index is also an opt-out, which `knowledge#the-regime-has-no-opt-out` refuses.
+
+**Per-instance register options declared at the root, in the project's own instance** — lost to
+`knowledge#registers-are-declared`. `live`. It puts every option in one place beside the
+manifest, with no second configuration file to find. It loses on where the file would sit: the
+root component's own issue directory would carry the groups of every other component's issue
+instance, which is the one-home failure written into the layout.
+
+**Refusing to load a manifest whose register declaration is wrong** — lost to
+`knowledge#registers-are-declared`. `live`. A declaration the tool cannot act on is a could-not-run
+by `thaum#exit-code-ladder`, and exiting 2 is what the retired keys do. It loses for the case where
+the tool CAN act: a bad `dir` on a built-in has a compiled default to fall back on, so refusing the
+whole run would report nothing at all about the tree — and nothing at all is what a session reads
+as conformance. The two retired keys keep the refusal because there is no default to fall back on.
+

@@ -1,3 +1,0 @@
-# Open issues
-
-Nothing outstanding.

@@ -136,3 +136,17 @@ a value or reuse across several sites, are not this.
 the decision says it is not. Establish which: if the checker reported the plain literal, that is
 the self-location tripwire above; otherwise open an `observation` and rewrite the fixture inline.
 **Re-entry:** standing.
+
+## Guarding `knowledge#a-file-register-is-a-directory-of-entries`' closed kind list `##issue-kind-list-grows`
+
+The kind list was closed so that an unknown kind is a finding naming the list, and so that the
+kind can decide which subsections an entry owes. The failure that would make the closing wrong is
+the list growing instead of being chosen from: each new situation gets a kind of its own, the list
+stops partitioning anything, and the finding stops carrying information.
+
+**Fires when:** the declared kind list of any issue register exceeds ten kinds, or a kind is added
+that ends up with a single member across the whole project.
+
+**Response:** reopen the open-set argument this decision reversed, recorded in
+`knowledge@docs/rejected-alternatives.md` when it is.
+

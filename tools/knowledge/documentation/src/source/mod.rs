@@ -21,6 +21,14 @@ pub mod rs;
 
 use std::path::Path;
 
+/// A markdown file's opening frontmatter block: its keys in declaration order, or why the
+/// block was refused.
+///
+/// The accepted subset is a block opened and closed by a line holding only `---`, at the very
+/// top of the file, holding `key: value` lines with scalar values and nothing else. No
+/// nesting, no lists, no quoting rules.
+pub type Frontmatter = Result<Vec<(String, String)>, String>;
+
 /// How a Rust file's string literals are read.
 ///
 /// Decided by the caller from where the file sits. The checker's own source is the one place
@@ -186,6 +194,19 @@ pub struct Parsed {
     /// the literals a `Data` parse dropped: a version pin spelled inside a fixture must not
     /// pin the file it sits in.
     pub literals: Literals,
+    /// The frontmatter block at the very top of a markdown file, where there is one.
+    ///
+    /// `None` where the file opens with no block at all — the common case, and a leading
+    /// thematic break is not one. `Some(Err)` where a block is opened and closed and holds a
+    /// line the accepted subset does not: a block opened and closed by a line holding only
+    /// `---`, holding `key: value` lines with scalar values and nothing else. **The subset is
+    /// refused loudly outside itself**, per `knowledge#a-failed-parse-is-loud`, because a
+    /// frontmatter line nobody can parse is metadata nobody checks.
+    ///
+    /// The block's own lines are prose to the reference scanner and data to the quote
+    /// checker: a reference in a value is a reference, and a rule number in one is a value
+    /// being displayed.
+    pub frontmatter: Option<Frontmatter>,
     /// Why this parse cannot be trusted, where it cannot.
     ///
     /// **A parse that fails must be loud.** Silently, it removes every citation in the file

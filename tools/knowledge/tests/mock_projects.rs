@@ -29,6 +29,17 @@ fn model(name: &str) -> Model {
     Model::build(&mock(name), None).expect("a model of the mock project")
 }
 
+/// Every `register.toml` beside an instance, as the binary reads them for a check.
+fn configs(manifest: &Manifest) -> std::collections::HashMap<PathBuf, String> {
+    let mut out = std::collections::HashMap::new();
+    for (_, _, home) in documentation::entity::Anchors::of(manifest).instances() {
+        if let Ok(text) = std::fs::read_to_string(manifest.root().join(&home.config)) {
+            out.insert(home.config.clone(), text);
+        }
+    }
+    out
+}
+
 fn walked(model: &Model) -> Vec<String> {
     let mut names: Vec<String> = model
         .documents()
@@ -50,12 +61,19 @@ fn the_walk_obeys_the_project_that_declares_it() {
             "code/lib.rs".to_string(),
             "docs/design.md".to_string(),
             "docs/goals.md".to_string(),
-            "docs/open-issues.md".to_string(),
+            "docs/open-issues/README.md".to_string(),
+            "docs/open-issues/index.md".to_string(),
+            "docs/open-issues/the-mock-has-one-issue.md".to_string(),
             "docs/rejected-alternatives.md".to_string(),
             "docs/tripwires.md".to_string(),
             "notes/a.md".to_string(),
             "notes/b.md".to_string(),
-            "notes/open-issues.md".to_string(),
+            "notes/open-issues/README.md".to_string(),
+            "notes/open-issues/index.md".to_string(),
+            "notes/open-issues/the-notes-are-not-a-component.md".to_string(),
+            "notes/readings/README.md".to_string(),
+            "notes/readings/index.md".to_string(),
+            "notes/readings/one-concern/a-reading-the-mock-records.md".to_string(),
         ],
         "the walk should hold every markdown and Rust file, minus every exclusion"
     );
@@ -99,7 +117,7 @@ fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
     // produced, so it passed against both the right output and the wrong one for as long as
     // the defect existed. A `contains` over a field that is not terminated asserts a prefix.
     assert!(
-        dump.contains("docs/design.md\t7\tspan\tpath@minimal@notes/b.md\n"),
+        dump.contains("docs/design.md\t7\tspan\tpath@notes@b.md\n"),
         "{dump}"
     );
     assert!(
@@ -130,9 +148,9 @@ fn the_survey_records_which_paths_are_directories() {
 }
 
 #[test]
-fn a_tracker_outside_every_component_is_read_by_the_report() {
-    // What `additional-trackers` is for: a directory carrying outstanding state and nothing
-    // else a component carries. Undeclared, this entry is in no report and nobody finds it.
+fn a_location_outside_every_component_is_read_by_the_report() {
+    // What a location is for: a directory carrying a subset of the registers and nothing else
+    // a component carries. Undeclared, this entry is in no report and nobody finds it.
     let manifest = mock("minimal");
     let model = model("minimal");
     let files: Vec<String> = documentation::outstanding::tracker_files(&model, &manifest)
@@ -140,17 +158,19 @@ fn a_tracker_outside_every_component_is_read_by_the_report() {
         .map(|p| p.display().to_string())
         .collect();
     assert!(
-        files.contains(&"notes/open-issues.md".to_string()),
+        files.contains(&"notes/open-issues".to_string()),
         "{files:#?}"
     );
     let entries = documentation::outstanding::entries(&model, &manifest);
     let here: Vec<&documentation::outstanding::Entry> = entries
         .iter()
-        .filter(|e| e.file.ends_with("notes/open-issues.md"))
+        .filter(|e| e.file.ends_with("notes/open-issues"))
         .collect();
     assert_eq!(here.len(), 1, "{entries:#?}");
-    assert!(here[0].is_issue, "an open-issues.md holds issues");
+    assert!(here[0].is_issue, "an issue instance holds issues");
+    // The kind comes out of the entry's own frontmatter, which is what the register declares.
     assert_eq!(here[0].kind.to_string(), "observation");
+    assert_eq!(here[0].title, "The notes are not a component");
 }
 
 #[test]
@@ -193,7 +213,7 @@ fn a_fenced_illustration_is_neither_a_definition_nor_a_reference_in_a_real_file(
             "design@minimal@mock-anchor".to_string(),
             "design@minimal@mock-anchor".to_string(),
             "goal@minimal@mock-goal".to_string(),
-            "path@minimal@notes/b.md".to_string(),
+            "path@notes@b.md".to_string(),
             "tripwire@minimal@mock-tripwire".to_string(),
         ]
     );
@@ -242,6 +262,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
         releases: &releases,
         pinned: "20200101",
         committed: &committed,
+        configs: &configs(&manifest),
         present: &survey.present,
         directories: &survey.directories,
         outside: &survey.outside,
@@ -250,7 +271,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
         &model,
         &manifest,
         &inputs,
-        Only::COMPONENTS.union(Only::REFERENCES),
+        Only::REGISTERS.union(Only::REFERENCES),
     );
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
     assert!(found.is_empty(), "{found:#?}");
@@ -258,10 +279,15 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     // every reference resolves against it by the project's own name: one entity in each of
     // the three heading registers, and six references across the three kinds and a path.
     assert_eq!(report.structure.components, 1);
-    assert_eq!(report.structure.additional_trackers, 1);
+    assert_eq!(report.structure.locations, 1);
+    // The root component's four registers, and the location's two.
+    assert_eq!(report.structure.instances, 6);
+    assert_eq!(report.structure.entries, 3);
+    // Three heading entities, three file entities across the three instances, and six
+    // references across the three heading kinds and a path.
     assert_eq!(
         (report.structure.entities, report.structure.references),
-        (3, 6)
+        (6, 6)
     );
 }
 
@@ -284,6 +310,7 @@ fn a_directory_design_home_passes_end_to_end() {
         releases: &releases,
         pinned: "20200101",
         committed: &committed,
+        configs: &configs(&manifest),
         present: &survey.present,
         directories: &survey.directories,
         outside: &survey.outside,
@@ -292,7 +319,7 @@ fn a_directory_design_home_passes_end_to_end() {
         &model,
         &manifest,
         &inputs,
-        Only::COMPONENTS.union(Only::REFERENCES),
+        Only::REGISTERS.union(Only::REFERENCES),
     );
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
     assert!(found.is_empty(), "{found:#?}");
@@ -327,16 +354,10 @@ mod planted {
         model: &Model,
         corpus: &rules::Corpus,
     ) -> HashMap<PathBuf, String> {
-        HashMap::from([
-            (
-                manifest.rules().dir.join("index.md"),
-                index::rule_index(model, manifest, corpus, "20200101"),
-            ),
-            (
-                manifest.interpretations().dir.join("index.md"),
-                index::interpretation_index(model, manifest),
-            ),
-        ])
+        HashMap::from([(
+            manifest.rules().dir.join("index.md"),
+            index::rule_index(model, manifest, corpus, "20200101"),
+        )])
     }
 
     fn findings_with(
@@ -364,6 +385,7 @@ mod planted {
             releases: &releases,
             pinned: "20200101",
             committed: &committed,
+            configs: &configs(&manifest),
             present: &survey.present,
             directories: &survey.directories,
             outside: &survey.outside,
@@ -385,36 +407,35 @@ mod planted {
     /// The rows must account for every finding a whole run produces, which
     /// `the_families_partition_every_finding` asserts, so a family cannot be left out of this
     /// table without a test failing.
-    const PLANTED: [(Only, usize, &str); 7] = [
+    const PLANTED: [(Only, usize, &str); 6] = [
         (Only::CITATIONS, 5, "no rule says this"),
-        // In the design home: one slug defined twice, one at a level-four heading, one at a
-        // line head. In a file that is no home: one stray definition. Then one reference of
-        // each shape the resolver tells apart — dangling, unknown anchor, two and four
-        // segments, an anchor and a reserved anchor in kind position, the two retired slug
-        // shapes, a retired entry number — and the path shapes: a dangling one, the
-        // unanchored bare form, a wrong kind claim, an escape that resolves here, a root
+        // One reference of each shape the resolver tells apart — dangling, unknown anchor,
+        // two and four segments, an anchor and a reserved anchor in kind position, the two
+        // retired slug shapes, a retired entry number — and the path shapes: a dangling one,
+        // the unanchored bare form, a wrong kind claim, an escape that resolves here, a root
         // pointer reaching inside the component, a generic pointer nothing carries, a
-        // dangling tripwire reference, a link outside a navigation home, a slug mentioned
-        // mid-line and the retired `@` escape with its empty head.
-        (Only::REFERENCES, 24, "is referenced"),
-        // Two missing documents, plus an exempt-files row naming a file that is not there.
-        // One planted row across the four declared path lists rather than four identical
-        // ones: what needs pinning is that a declared path is checked at all.
-        (Only::COMPONENTS, 3, "carries no"),
-        (Only::INTERPRETATIONS, 1, "declares the concern"),
+        // dangling tripwire reference, a link outside a navigation home, and the retired `@`
+        // escape with its empty head. The definition-site findings are `registers`'.
+        (Only::REFERENCES, 18, "is referenced"),
+        // One defect per assertion the register shapes make: a declared path that is not
+        // there, a missing heading home, the retired file shape of a file register, a missing
+        // index, an undeclared kind, a missing owed subsection, an id no reference can spell,
+        // an undeclared group, a file of another suffix, a location whose home is absent, and
+        // the six definition-site findings the entity table produces.
+        (Only::REGISTERS, 16, "PLANTED"),
         (Only::UNCOVERED, 1, "is outside the walk"),
-        (Only::GENERATED, 2, "the generated file is missing"),
+        (Only::GENERATED, 1, "the generated file is missing"),
         (Only::REGIME, 20, "with no verified quote of it in range"),
     ];
 
     #[test]
     fn a_set_of_families_reports_exactly_the_union_of_theirs() {
-        let pair = Only::REFERENCES.union(Only::INTERPRETATIONS);
+        let pair = Only::REFERENCES.union(Only::REGISTERS);
         let found = findings_of(current_indexes, pair);
         assert_eq!(
             found.len(),
-            25,
-            "twenty-four reference defects and one register defect: {found:#?}"
+            34,
+            "eighteen reference defects and sixteen register defects: {found:#?}"
         );
         assert!(
             !found.iter().any(|f| f.contains("no rule says this")),
@@ -544,6 +565,7 @@ mod planted {
             releases: &releases,
             pinned: "20200101",
             committed: &committed,
+            configs: &configs(&manifest),
             present: &survey.present,
             directories: &survey.directories,
             outside: &survey.outside,
@@ -555,8 +577,8 @@ mod planted {
     fn the_report_says_which_families_it_performed() {
         // Without this, a family carrying no count of its own — `generated`, `trackers` — is
         // indistinguishable from a run that performed nothing at all.
-        let report = report_of(Only::COMPONENTS);
-        assert_eq!(report.ran.names(), vec!["components"]);
+        let report = report_of(Only::REGISTERS);
+        assert_eq!(report.ran.names(), vec!["registers"]);
         assert!(!report.ran.has(Only::REFERENCES));
     }
 
@@ -579,8 +601,8 @@ mod planted {
         let gone = findings_with(|_, _, _| HashMap::new());
         assert_eq!(
             gone.iter().filter(|f| f.contains("is missing")).count(),
-            2,
-            "both generated files: {gone:#?}"
+            1,
+            "the one generated file: {gone:#?}"
         );
     }
 
@@ -707,7 +729,10 @@ mod planted {
         assert!(head.starts_with("docs/design.md:13"), "{head}");
         let stray = one("`##stray-anchor` is written at `notes/structure.md`");
         assert!(stray.starts_with("notes/structure.md:3"), "{stray}");
-        assert!(stray.contains("no register home of `planted`"), "{stray}");
+        assert!(
+            stray.contains("no heading register home of `planted`"),
+            "{stray}"
+        );
         let inline = one("`##twice-defined` is written at the middle of a line");
         assert!(inline.starts_with("notes/structure.md:41"), "{inline}");
     }
@@ -746,23 +771,45 @@ mod planted {
     }
 
     #[test]
-    fn a_declared_concern_with_no_file_is_reported() {
-        assert!(one("declares the concern `gone`").starts_with("notes/readings/gone.md"));
-    }
-
-    #[test]
-    fn a_component_document_that_is_missing_is_reported_at_the_path_it_belongs_at() {
-        let f = one("carries no docs/tripwires.md");
+    fn a_heading_register_home_that_is_missing_is_reported_at_the_path_it_belongs_at() {
+        let f = one("carries no tripwire home");
         assert!(f.starts_with("parts/widget/docs/tripwires.md"), "{f}");
         assert!(f.contains("`widget`"), "{f}");
     }
 
     #[test]
-    fn a_declared_tracker_outside_every_component_that_is_missing_is_reported() {
-        // The report reads the declared paths, so this one would make it under-count what is
-        // open rather than fail — which is what the declaration exists to prevent.
-        let f = one("is declared an additional tracker");
-        assert!(f.starts_with("notes/open-issues.md"), "{f}");
+    fn a_location_whose_declared_register_has_no_home_is_reported() {
+        // A location carries the registers it declares and nothing else, so a missing home is
+        // a finding against the location. Undeclared, the directory would be read by nothing.
+        let f = one("the anchor `agent-config` carries no issue directory");
+        assert!(f.starts_with("agent-config/open-issues"), "{f}");
+    }
+
+    #[test]
+    fn every_shape_a_file_register_asserts_has_a_planted_defect() {
+        // One per assertion, over a real walk: the retired file shape beside the directory,
+        // the missing index, a kind the closed list does not hold, a missing owed subsection,
+        // an id no reference can spell, a subdirectory that is no declared group, and a file
+        // of another suffix inside the instance.
+        assert!(one("retired file shape").starts_with("docs/open-issues.md"));
+        assert!(one("has no index.md").starts_with("docs/open-issues/index.md"));
+        assert!(one("no accepted value").starts_with("docs/open-issues/a-wrong-kind.md"));
+        assert!(one("no level-three subsection `What would close it`")
+            .starts_with("docs/open-issues/a-missing-subsection.md"));
+        assert!(one("cannot be an entry id").starts_with("docs/open-issues/Not_An_Id.md"));
+        assert!(one("is no declared group").contains("an-undeclared-group"));
+        assert!(one("is not an entry of the issue register").contains("nonsense.txt"));
+    }
+
+    #[test]
+    fn a_well_formed_entry_produces_no_finding() {
+        // The negative half. Without it the entry checks could fire on everything and every
+        // planted assertion above would still pass.
+        let all = findings();
+        assert!(
+            !all.iter().any(|f| f.contains("a-well-formed-one.md")),
+            "{all:#?}"
+        );
     }
 
     #[test]

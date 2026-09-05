@@ -6,8 +6,6 @@
 [project]
 name = "typography"
 components = []
-# `notes/` carries outstanding state and nothing else a component carries.
-additional-trackers = ["notes/open-issues.md"]
 
 [walk]
 skip-dirs = ["build"]
@@ -28,8 +26,3 @@ body-starts-at = 0
 version = "VERSION"
 past = "past"
 manifest = "past/MANIFEST.tsv"
-
-[interpretations]
-dir = "notes/readings"
-concerns = ["one-concern"]
-

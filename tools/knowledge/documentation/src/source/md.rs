@@ -8,19 +8,38 @@
 
 use pulldown_cmark::{Event, Options, Parser, Tag, TagEnd};
 
-use super::{Parsed, Prose, Scope, ScopeKind};
+use super::{Frontmatter, Parsed, Prose, Scope, ScopeKind};
 
 /// A markdown file: one prose region covering all of it, and a scope per heading.
 pub fn parse(text: &str) -> Parsed {
+    let (frontmatter, block_lines) = frontmatter(text);
+    // The structure is analysed over the text with the block blanked out. Left in place, the
+    // closing `---` is a setext underline for the `key: value` lines above it, so a
+    // frontmatter block would open the document with a level-two heading nobody wrote.
+    // **The blanking replaces each byte with a space rather than removing it**, so every
+    // byte offset the analysis returns is an offset into the file as written; the key lines
+    // stay in the prose region itself, so a reference in a value is still scanned.
+    let analysed = match &block_lines {
+        Some((first, last)) => blank_lines(text, *first, *last),
+        None => text.to_string(),
+    };
     let mut prose = Prose {
-        text: text.to_string(),
+        text: analysed.clone(),
         lines: (1..=text.lines().count().max(1) as u32).collect(),
         structural: true,
         code: Vec::new(),
         line_starts: Default::default(),
     };
-    let a = analyse(text, &prose);
-    let (scopes, fenced, inert) = (a.scopes, a.fenced, a.inert);
+    let a = analyse(&analysed, &prose);
+    prose.text = text.to_string();
+    let (scopes, mut fenced, inert) = (a.scopes, a.fenced, a.inert);
+    // A rule number inside the block is data, the judgement a fenced block already gets. A
+    // reference is unaffected: references are live inside a fence for every kind.
+    if let Some((first, last)) = block_lines {
+        fenced.extend(first..=last);
+        fenced.sort_unstable();
+        fenced.dedup();
+    }
     let trouble = a.unterminated.map(|line| {
         format!("an HTML comment opens at line {line} and never closes, so the rest of this file is parked")
     });
@@ -34,8 +53,100 @@ pub fn parse(text: &str) -> Parsed {
         // one is making a claim the prose form fits better.
         names: Vec::new(),
         inert,
+        frontmatter,
         trouble,
     }
+}
+
+/// `text` with every byte of lines `first..=last` replaced by a space.
+///
+/// Byte-for-byte, so every offset into the result is the same offset into the original. A
+/// line of spaces is blank to the markdown parser, which is the whole of what is wanted.
+fn blank_lines(text: &str, first: u32, last: u32) -> String {
+    let mut out = Vec::with_capacity(text.len());
+    let mut line = 1u32;
+    for byte in text.bytes() {
+        if byte == b'\n' {
+            out.push(byte);
+            line += 1;
+            continue;
+        }
+        out.push(if line >= first && line <= last {
+            b' '
+        } else {
+            byte
+        });
+    }
+    String::from_utf8(out).expect("only ASCII spaces were substituted")
+}
+
+/// The frontmatter block at the top of a markdown file, and the file lines it occupies.
+///
+/// **A block is opened by a first line holding only `---` and closed by another**, with no
+/// blank line between them. The blank line is what tells a block from a document that opens
+/// on a thematic break: a `---` followed by prose and later another `---` is two thematic
+/// breaks around a paragraph, and paragraphs are separated by blank lines. Inside the block
+/// every line is `key: value` with a scalar value; anything else refuses the block by name
+/// rather than passing as an absent optional.
+fn frontmatter(text: &str) -> (Option<Frontmatter>, Option<(u32, u32)>) {
+    let mut lines = text.lines();
+    if lines.next().map(str::trim_end) != Some("---") {
+        return (None, None);
+    }
+    let mut keys: Vec<(String, String)> = Vec::new();
+    let mut refusal: Option<String> = None;
+    for (i, line) in lines.enumerate() {
+        let n = i as u32 + 2;
+        let line = line.trim_end();
+        if line == "---" {
+            let parsed = match refusal {
+                Some(why) => Err(why),
+                None => Ok(keys),
+            };
+            return (Some(parsed), Some((1, n)));
+        }
+        if line.trim().is_empty() {
+            // Not a block: the opening `---` was a thematic break.
+            return (None, None);
+        }
+        if refusal.is_some() {
+            continue;
+        }
+        match scalar(line) {
+            Some(pair) => keys.push(pair),
+            None => {
+                refusal = Some(format!(
+                    "line {n} is not `key: value` with a scalar value, which is the whole of \
+                     the frontmatter subset"
+                ))
+            }
+        }
+    }
+    // Opened and never closed: a thematic break with no paragraph break after it.
+    (None, None)
+}
+
+/// `key: value` with a plain scalar value, which is the whole of the accepted subset.
+///
+/// No nesting, no lists, no quoting rules. A key is letters, digits, `-` and `_`; the value
+/// is the rest of the line, trimmed, and it may not be empty.
+fn scalar(line: &str) -> Option<(String, String)> {
+    if line.starts_with(char::is_whitespace) {
+        return None;
+    }
+    let (key, value) = line.split_once(':')?;
+    if key.is_empty()
+        || !key
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+    {
+        return None;
+    }
+    let value = value.trim();
+    if value.is_empty() || value.starts_with('-') || value.starts_with('{') {
+        return None;
+    }
+    Some((key.to_string(), value.to_string()))
 }
 
 /// The headings, fences and inline code spans in one prose region.
@@ -229,6 +340,57 @@ mod tests {
         let pre = p.scope_at(1).expect("a scope holds line 1");
         assert_eq!(pre.kind, ScopeKind::Preamble);
         assert_eq!((pre.first, pre.last), (1, 4));
+    }
+
+    #[test]
+    fn a_frontmatter_block_gives_up_its_keys_and_opens_no_heading() {
+        let p = parse("---\nkind: defect\nstatus: open\n---\n# The title\n\nbody\n");
+        assert_eq!(
+            p.frontmatter,
+            Some(Ok(vec![
+                ("kind".to_string(), "defect".to_string()),
+                ("status".to_string(), "open".to_string()),
+            ]))
+        );
+        // The closing `---` is a setext underline for the two key lines above it. Left in
+        // place it opens a level-two section called `kind: defect status: open`, and the
+        // document's own title then nests under metadata.
+        let s = scopes("---\nkind: defect\nstatus: open\n---\n# The title\n\nbody\n");
+        assert_eq!(s.len(), 1, "{s:#?}");
+        assert_eq!(s[0], (1, "The title".into(), 5, 7));
+        // A rule number in the block is data, so the block's lines are fenced; the key lines
+        // stay in the prose, so a reference in a value is still scanned.
+        assert_eq!(p.fenced, vec![1, 2, 3, 4]);
+        assert!(p.prose[0].text.contains("kind: defect"));
+    }
+
+    #[test]
+    fn a_line_outside_the_subset_refuses_the_block_by_name() {
+        // A typo in a key, a nested value and a list each land here rather than passing as
+        // an absent optional.
+        for (body, why) in [
+            ("---\nkind:\n  nested: 1\n---\n", "line 2"),
+            ("---\nkind:\n---\n", "line 2"),
+            ("---\nkind: defect\ntags:\n---\n", "line 3"),
+            ("---\nnot a pair\n---\n", "line 2"),
+        ] {
+            let p = parse(body);
+            assert!(
+                matches!(&p.frontmatter, Some(Err(e)) if e.contains(why)),
+                "{body:?}: {:?}",
+                p.frontmatter
+            );
+        }
+    }
+
+    #[test]
+    fn a_leading_thematic_break_is_not_a_frontmatter_block() {
+        // The blank line is what tells them apart: a paragraph break cannot sit inside a
+        // block, and a document opening on a rule has one before the next `---`.
+        assert_eq!(parse("---\n\nsome prose\n\n---\n").frontmatter, None);
+        // Opened and never closed is not a block either.
+        assert_eq!(parse("---\nkind: defect\n").frontmatter, None);
+        assert_eq!(parse("# A title\n\nbody\n").frontmatter, None);
     }
 
     #[test]

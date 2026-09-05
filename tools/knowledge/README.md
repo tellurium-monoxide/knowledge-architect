@@ -41,14 +41,14 @@ the tail of the output has to reach the verdict rather than the counts.
 
 **The `--only` families are the checks themselves**, one per check:
 
-`citations`, `generated`, `components`, `references`, `interpretations`, `uncovered`,
-`changes`, `corpus`, `regime`.
+`citations`, `generated`, `registers`, `references`, `uncovered`, `changes`, `corpus`, `regime`.
 
-Eight are the modules under `knowledge@documentation/src/check/`. `corpus` is the integrity check
+Seven are the modules under `knowledge@documentation/src/check/`. `corpus` is the integrity check
 over the vendored text and its archive, which reads the filesystem rather than the model.
-`references` judges every `` `<kind>@<anchor>@<id>` `` reference against the entity table — the
-`design`, `goal` and `tripwire` kinds against the slugs their register homes define, the `path`
-kind against the tree — and reports the two retired forms and the unanchored path shape.
+`references` judges every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a
+register kind against the entries its home defines, the `path` kind against the tree — and reports
+the two retired forms and the unanchored path shape. `registers` judges what each anchor carries:
+the homes, a file register's README, index, groups and entry shapes, and every definition site.
 `structure` names every family but `citations`. A comma-separated list runs their union over the
 one walk, so asking for several costs one run rather than one run each. A run prints which families
 it performed, and a family that did not run prints no count of its own. The argument is
@@ -63,14 +63,12 @@ contains it, and matching nothing exits 1.
 
 ## `index`
 
-Regenerates `thaum@docs/rules/index.md` and `thaum@docs/rules/interpretations/index.md`, in place,
-from one walk. It takes no flags and **writes only where the bytes differ**, naming each file it
-rewrote:
+Regenerates every generated index in place, from one walk. It takes no flags and **writes only
+where the bytes differ**, naming each file it rewrote:
 
 ```
 $ cargo knowledge index
-docs/rules/index.md                      already current
-docs/rules/interpretations/index.md      rewritten
+docs/rules/index.md                      rewritten
 ```
 
 Running it to look therefore costs nothing, not even an mtime. **Whether a generated file is
@@ -113,6 +111,37 @@ cargo knowledge model | awk -F'\t' '$4=="<number>" && ($3=="rule-token" || $3 ~ 
 - **`fetch`** vendors a release and rewrites the version file to match; without a date, the one
   already pinned.
 - **`bump`** moves the project to a release. Read `bumping-rules` before running it.
+
+## Registers
+
+**Four registers are compiled in** — `design`, `goal`, `tripwire` and `issue` — because they are
+what the word component means to this tool. A project declares further ones in
+`thaum@knowledge.toml`:
+
+```toml
+[locations.rules]              # a directory carrying a subset of the registers
+path = "docs/rules"
+registers = ["issue", "tripwire", "interpretation"]
+
+[registers.interpretation]
+scope = "opt-in"               # `component` (every component carries it) or `opt-in`
+shape = "file"                 # `file` (one file per entry) or `heading` (slugs in a home)
+dir = "interpretations"        # the basename of the home; defaults to the register's name
+sections = ["Rules", "Reading", "Consequences"]
+
+[registers.interpretation.metadata.status]
+values = ["settled", "interpretation", "ambiguous", "cr-gap"]
+```
+
+A **heading register** keeps its entries as slugged headings, in `<dir>.md` or in `<dir>/` behind
+a `README.md` that links every subdocument. A **file register** keeps one file per entry under
+`<dir>/`, beside a hand-written `README.md`, a generated `index.md` and an optional
+`register.toml` declaring the group subdirectories. An entry opens with frontmatter carrying each
+declared metadata key, then a level-one title, then the declared sections.
+
+`[registers.issue]` accepts `kinds` and nothing else; the other three built-in registers accept
+nothing. The arguments are `knowledge#registers-are-declared` and
+`knowledge#a-file-register-is-a-directory-of-entries`.
 
 ## What to respect
 

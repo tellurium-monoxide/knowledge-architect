@@ -5,10 +5,14 @@
 //! it. Before this table five checks held five notions of a name; the argument is
 //! `knowledge#one-entity-table`.
 //!
-//! **An anchor is a named directory that carries registers.** Today every anchor is a
-//! component, carrying the three built-in heading registers; a location — a directory carrying
-//! a declared subset — is the same shape with a different register list and home base, which is
-//! why `Anchor` carries both as data rather than deriving them from a component.
+//! **A kind is a register's name, or `path`.** Four registers are compiled in and a project
+//! declares the rest, so the kind set is data rather than an enum — `knowledge@documentation/src/manifest.rs`
+//! owns what a register is, and this module owns what naming one means.
+//!
+//! **An anchor is a named directory that carries registers.** A component carries every
+//! component-scoped register with its homes under `docs/`; a location carries the subset it
+//! declares, with its homes directly under its own path. Both are the same shape, which is why
+//! `Anchor` holds its register list and its home base as data.
 //!
 //! **The `path` kind is resolved against the tree, not the table.** Its ids are paths, its
 //! anchors are the same anchors plus two reserved words, and the check that resolves it needs
@@ -18,81 +22,51 @@
 use std::collections::BTreeMap;
 use std::fmt;
 use std::path::{Path, PathBuf};
-use std::sync::LazyLock;
+use std::sync::{Arc, LazyLock};
 
 use regex::Regex;
 
 use crate::finding::Finding;
-use crate::manifest::{Manifest, COMPONENT_DOCUMENTS};
+use crate::manifest::{Manifest, Register, Registers, Shape, COMPONENT_DOCUMENTS};
 use crate::model::Model;
 use crate::scan::{Observation, SlugSite};
 
-/// What a reference names, in its first segment.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum Kind {
-    /// A decision about how a component is built.
-    Design,
-    /// What a component is for.
-    Goal,
-    /// Evidence that would flip a decision.
-    Tripwire,
-    /// A file or directory. Defined by the tree itself.
-    Path,
-}
+/// The one kind that is not a register: a file or directory, defined by the tree itself.
+pub const PATH_KIND: &str = "path";
+
+/// What a reference names, in its first segment: a register's name, or `path`.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Kind(Arc<str>);
 
 impl Kind {
-    /// Every kind, in the order findings list them.
-    pub const ALL: [Kind; 4] = [Kind::Design, Kind::Goal, Kind::Tripwire, Kind::Path];
+    pub fn new(name: &str) -> Kind {
+        Kind(Arc::from(name))
+    }
 
-    /// The three heading registers, each with the basename of its home under the anchor's
-    /// home base: `<dir>.md` or `<dir>/`.
-    pub const HEADING_REGISTERS: [(Kind, &'static str); 3] = [
-        (Kind::Design, "design"),
-        (Kind::Goal, "goals"),
-        (Kind::Tripwire, "tripwires"),
-    ];
+    /// The kind of a file or directory.
+    pub fn path() -> Kind {
+        Kind::new(PATH_KIND)
+    }
+
+    pub fn is_path(&self) -> bool {
+        &*self.0 == PATH_KIND
+    }
 
     /// The word a reference spells.
-    pub fn name(self) -> &'static str {
-        match self {
-            Kind::Design => "design",
-            Kind::Goal => "goal",
-            Kind::Tripwire => "tripwire",
-            Kind::Path => "path",
-        }
-    }
-
-    pub fn parse(word: &str) -> Option<Kind> {
-        Kind::ALL.into_iter().find(|k| k.name() == word)
-    }
-
-    /// The basename of this kind's heading-register home, or `None` for `path`.
-    pub fn register_dir(self) -> Option<&'static str> {
-        Kind::HEADING_REGISTERS
-            .iter()
-            .find(|(k, _)| *k == self)
-            .map(|(_, d)| *d)
-    }
-
-    /// The kind names, comma-separated, as a finding lists them.
-    pub fn listed() -> String {
-        Kind::ALL
-            .iter()
-            .map(|k| k.name())
-            .collect::<Vec<_>>()
-            .join(", ")
+    pub fn name(&self) -> &str {
+        &self.0
     }
 }
 
 impl fmt::Display for Kind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(self.name())
+        f.write_str(&self.0)
     }
 }
 
 /// The reserved anchor word for a path deliberately not resolvable in this tree.
 ///
-/// A declared component may not take this name, which `check::components` asserts.
+/// A declared anchor may not take this name, which `check::registers` asserts.
 pub const ESCAPE_ANCHOR: &str = "elsewhere";
 
 /// The reserved anchor for every component's own copy of a path.
@@ -105,20 +79,34 @@ pub const EVERY_ANCHOR: &str = "*";
 static ANCHOR_NAME: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^\.?[A-Za-z0-9][A-Za-z0-9._-]*$").unwrap());
 
+/// The shape an entity's id must have, for every kind but `path`.
+static ENTITY_ID: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^[a-z0-9]+(?:-[a-z0-9]+)*$").unwrap());
+
 /// Can a reference name an anchor called this.
 pub fn is_anchor_name(name: &str) -> bool {
     ANCHOR_NAME.is_match(name)
 }
 
-/// The two shapes of a heading register's home, for one anchor and one kind.
+/// Can an entity be given this id.
+pub fn is_entity_id(id: &str) -> bool {
+    ENTITY_ID.is_match(id)
+}
+
+/// Where one register's entries live, for one anchor.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Home {
-    /// The single-file shape.
+    /// The single-file shape of a heading register. Not a shape a file register has.
     pub file: PathBuf,
-    /// The directory shape, whose subdocuments hold the definitions.
+    /// The directory shape: a heading register's subdocuments, or a file register's entries.
     pub dir: PathBuf,
     /// The head of the directory shape. It defines nothing.
     pub readme: PathBuf,
+    /// A file register's generated listing.
+    pub index: PathBuf,
+    /// A file register's per-instance options.
+    pub config: PathBuf,
+    pub shape: Shape,
 }
 
 /// A named directory carrying registers.
@@ -128,20 +116,37 @@ pub struct Anchor {
     pub name: String,
     /// Project-relative, and empty for the component at the root.
     pub path: PathBuf,
-    /// Where its heading-register homes sit: `<path>/docs` for a component.
+    /// Where its register homes sit: `<path>/docs` for a component, `<path>` for a location.
     pub home_base: PathBuf,
-    /// The heading registers it carries. `path` is carried by every anchor and is not listed.
-    pub registers: Vec<Kind>,
+    /// The registers it carries, by name. `path` is carried by every anchor and is not listed.
+    pub registers: Vec<String>,
+    /// Whether it is a component, which owes the compiled-in documents beside its registers.
+    pub is_component: bool,
 }
 
 impl Anchor {
-    /// A component: every built-in register, homes under `docs/`.
-    pub fn component(name: &str, path: &Path) -> Self {
+    /// A component: every component-scoped register, homes under `docs/`.
+    pub fn component(name: &str, path: &Path, registers: &Registers) -> Self {
         Self {
             name: name.to_string(),
             path: path.to_path_buf(),
             home_base: path.join("docs"),
-            registers: Kind::HEADING_REGISTERS.iter().map(|(k, _)| *k).collect(),
+            registers: registers
+                .component_scoped()
+                .map(|r| r.name.clone())
+                .collect(),
+            is_component: true,
+        }
+    }
+
+    /// A location: the registers it declares, homes directly under its own path.
+    pub fn location(name: &str, path: &Path, registers: Vec<String>) -> Self {
+        Self {
+            name: name.to_string(),
+            path: path.to_path_buf(),
+            home_base: path.to_path_buf(),
+            registers,
+            is_component: false,
         }
     }
 
@@ -151,55 +156,90 @@ impl Anchor {
     }
 
     /// Whether a reference of this kind may anchor here.
-    pub fn carries(&self, kind: Kind) -> bool {
-        kind == Kind::Path || self.registers.contains(&kind)
+    pub fn carries(&self, kind: &Kind) -> bool {
+        kind.is_path() || self.registers.iter().any(|r| r == kind.name())
     }
 
-    /// The home of one heading register here, or `None` where this anchor does not carry it.
-    pub fn home(&self, kind: Kind) -> Option<Home> {
-        if !self.carries(kind) {
-            return None;
+    /// The home of one register here, given that register's declaration.
+    pub fn home_of(&self, register: &Register) -> Home {
+        let dir = self.home_base.join(&register.dir);
+        Home {
+            file: self.home_base.join(format!("{}.md", register.dir)),
+            readme: dir.join("README.md"),
+            index: dir.join("index.md"),
+            config: dir.join("register.toml"),
+            dir,
+            shape: register.shape,
         }
-        let dir = kind.register_dir()?;
-        Some(Home {
-            file: self.home_base.join(format!("{dir}.md")),
-            dir: self.home_base.join(dir),
-            readme: self.home_base.join(dir).join("README.md"),
-        })
     }
 }
 
-/// Every anchor of a project: the component at the root first, then the declared ones.
+/// Every anchor of a project, and the registers they carry.
 #[derive(Clone, Debug)]
-pub struct Anchors(Vec<Anchor>);
+pub struct Anchors {
+    list: Vec<Anchor>,
+    registers: Registers,
+}
 
 impl Anchors {
-    /// The anchors a manifest declares: its components, each carrying every built-in register.
+    /// The anchors a manifest declares: its components, then its locations.
     pub fn of(manifest: &Manifest) -> Self {
-        Self(
-            manifest
-                .components()
-                .all()
-                .iter()
-                .map(|c| Anchor::component(&c.name, &c.path))
-                .collect(),
-        )
+        let registers = manifest.registers().clone();
+        let mut list: Vec<Anchor> = manifest
+            .components()
+            .all()
+            .iter()
+            .map(|c| Anchor::component(&c.name, &c.path, &registers))
+            .collect();
+        for (name, decl) in manifest.locations() {
+            list.push(Anchor::location(name, &decl.path, decl.registers.clone()));
+        }
+        Self { list, registers }
     }
 
     /// Anchors stated directly, for a test that needs a register list no component has.
-    pub fn from_list(anchors: Vec<Anchor>) -> Self {
-        Self(anchors)
+    pub fn from_list(list: Vec<Anchor>, registers: Registers) -> Self {
+        Self { list, registers }
     }
 
     pub fn all(&self) -> &[Anchor] {
-        &self.0
+        &self.list
+    }
+
+    pub fn registers(&self) -> &Registers {
+        &self.registers
+    }
+
+    /// The kind a word names: a declared register, or `path`.
+    pub fn kind(&self, word: &str) -> Option<Kind> {
+        if word == PATH_KIND {
+            return Some(Kind::path());
+        }
+        self.registers.by_name(word).map(|r| Kind::new(&r.name))
+    }
+
+    /// Every kind name, comma-separated, as a finding lists them.
+    pub fn kinds_listed(&self) -> String {
+        let mut names: Vec<&str> = self
+            .registers
+            .all()
+            .iter()
+            .map(|r| r.name.as_str())
+            .collect();
+        names.push(PATH_KIND);
+        names.join(", ")
     }
 
     /// The anchor a document belongs to: the deepest whose path holds it, and the root where
     /// none does. The root's path is empty and is a prefix of every path, which is what makes
     /// it the fallback rather than a case.
+    ///
+    /// **Locations count here, and that is the point.** A location sits inside a component —
+    /// both of this repository's do — and its register homes are its own, so a document under
+    /// it belongs to it and not to the component above. A component inside a location would
+    /// make the two ambiguous, and `check::registers` refuses one.
     pub fn owning(&self, rel: &Path) -> &Anchor {
-        self.0
+        self.list
             .iter()
             .filter(|a| rel.starts_with(&a.path))
             .max_by_key(|a| a.path.components().count())
@@ -208,12 +248,12 @@ impl Anchors {
 
     /// The anchor a reference names, or `None` where nothing declares that name.
     pub fn by_name(&self, name: &str) -> Option<&Anchor> {
-        self.0.iter().find(|a| a.name == name)
+        self.list.iter().find(|a| a.name == name)
     }
 
     /// Every anchor name, comma-separated, as a finding lists them.
     pub fn listed(&self) -> String {
-        self.0
+        self.list
             .iter()
             .map(|a| a.name.as_str())
             .collect::<Vec<_>>()
@@ -226,22 +266,52 @@ impl Anchors {
         word == EVERY_ANCHOR || word == ESCAPE_ANCHOR || self.by_name(word).is_some()
     }
 
+    /// The register home an anchor keeps one register in, or `None` where it carries none.
+    pub fn home(&self, anchor: &Anchor, kind: &Kind) -> Option<Home> {
+        if !anchor.carries(kind) {
+            return None;
+        }
+        self.registers
+            .by_name(kind.name())
+            .map(|r| anchor.home_of(r))
+    }
+
+    /// Every register instance of the project: an anchor, the register, and its home.
+    pub fn instances(&self) -> Vec<(&Anchor, &Register, Home)> {
+        let mut out = Vec::new();
+        for anchor in &self.list {
+            for name in &anchor.registers {
+                if let Some(register) = self.registers.by_name(name) {
+                    out.push((anchor, register, anchor.home_of(register)));
+                }
+            }
+        }
+        out
+    }
+
     /// Whether a component-relative path is a required document name in one of its shapes,
     /// and whether that shape is a directory: what the generic anchor `path@*@<path>` accepts
     /// whether or not any component carries it yet.
     ///
-    /// The compiled-in document set, and every heading register's file, directory and README:
-    /// naming a shape no component uses yet is legitimate.
-    pub fn required_kind(path: &str) -> Option<bool> {
+    /// The compiled-in document set, and every component register's homes: a heading
+    /// register's file, directory and README, and a file register's directory, README and
+    /// index. Naming a shape no component uses yet is legitimate.
+    pub fn required_kind(&self, path: &str) -> Option<bool> {
         if COMPONENT_DOCUMENTS.contains(&path) {
             return Some(false);
         }
-        for (_, dir) in Kind::HEADING_REGISTERS {
-            if path == format!("docs/{dir}.md") || path == format!("docs/{dir}/README.md") {
-                return Some(false);
-            }
+        for register in self.registers.component_scoped() {
+            let dir = &register.dir;
             if path == format!("docs/{dir}") {
                 return Some(true);
+            }
+            if path == format!("docs/{dir}/README.md") {
+                return Some(false);
+            }
+            match register.shape {
+                Shape::Heading if path == format!("docs/{dir}.md") => return Some(false),
+                Shape::File if path == format!("docs/{dir}/index.md") => return Some(false),
+                _ => {}
             }
         }
         None
@@ -300,7 +370,7 @@ pub fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
             why: "the kind segment is empty",
         };
     }
-    let Some(kind) = Kind::parse(head) else {
+    let Some(kind) = anchors.kind(head) else {
         if anchors.is_anchor_word(head) {
             return Candidate::AnchorInKindPosition { head };
         }
@@ -321,7 +391,7 @@ pub fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
             why: "the id segment is empty",
         };
     }
-    if kind != Kind::Path && id.contains('@') {
+    if !kind.is_path() && id.contains('@') {
         return Candidate::Malformed {
             why: "four or more segments; a reference has three",
         };
@@ -347,19 +417,27 @@ pub enum Resolution {
 #[derive(Debug, Default)]
 pub struct Entities {
     defined: BTreeMap<(Kind, String, String), Vec<Site>>,
-    /// Misplaced and duplicate definitions, found while building.
+    /// Misplaced, malformed and duplicate definitions, found while building.
     findings: Vec<Finding>,
 }
 
 impl Entities {
-    /// Read every slug definition out of the model and file it under its anchor and register.
+    /// Read every definition out of the model and file it under its anchor and register.
     ///
-    /// A definition is owned by where its document sits — the deepest anchor whose path holds
-    /// it — and by which of that anchor's register homes the document is. A slug outside every
-    /// home, or at a heading level the grammar does not accept, or at the head of a plain line,
+    /// A heading register's entity is a slug in one of that register's home shapes, owned by
+    /// the deepest anchor whose path holds the document. A file register's entity is a file
+    /// under the instance directory, its id the basename. A slug outside every heading home,
+    /// or at a heading level the grammar does not accept, or at the head of a plain line,
     /// defines nothing and is reported as misplaced.
     pub fn build(model: &Model, anchors: &Anchors) -> Self {
         let mut out = Self::default();
+        out.heading_definitions(model, anchors);
+        out.file_definitions(model, anchors);
+        out.report_duplicates();
+        out
+    }
+
+    fn heading_definitions(&mut self, model: &Model, anchors: &Anchors) {
         for doc in model.documents() {
             let owner = anchors.owning(&doc.rel);
             for l in &doc.observations {
@@ -377,53 +455,91 @@ impl Entities {
                         format!("`##{id}` is written at {why} and defines nothing"),
                         format!(
                             "a slug is defined at the end of a level-two or level-three \
-                             heading, or in a table cell, inside the {} home of its anchor; \
-                             move it there, or delete it",
-                            Kind::HEADING_REGISTERS
-                                .iter()
-                                .map(|(_, d)| *d)
-                                .collect::<Vec<_>>()
-                                .join(", ")
+                             heading, or in a table cell, inside a heading register's home; \
+                             this anchor's are {}; move it there, or delete it",
+                            heading_dirs(anchors, owner)
                         ),
                     )
                 };
                 match site {
                     SlugSite::Heading(level) if !(2..=3).contains(level) => {
-                        out.findings
+                        self.findings
                             .push(misplaced(format!("a level-{level} heading")));
                         continue;
                     }
                     SlugSite::LineHead => {
-                        out.findings
+                        self.findings
                             .push(misplaced("the head of a plain line".to_string()));
                         continue;
                     }
                     SlugSite::Inline => {
-                        out.findings
+                        self.findings
                             .push(misplaced("the middle of a line".to_string()));
                         continue;
                     }
                     _ => {}
                 }
-                match Self::register_of(owner, &doc.rel) {
-                    Some(Ok(kind)) => out
+                match register_of(anchors, owner, &doc.rel) {
+                    Some(Ok(kind)) => self
                         .defined
                         .entry((kind, owner.name.clone(), id.clone()))
                         .or_default()
                         .push(at),
-                    Some(Err(dir)) => out.findings.push(misplaced(format!(
+                    Some(Err(dir)) => self.findings.push(misplaced(format!(
                         "the README of the `{}` directory home",
                         dir.display()
                     ))),
-                    None => out.findings.push(misplaced(format!(
-                        "`{}`, which is no register home of `{}`",
+                    None => self.findings.push(misplaced(format!(
+                        "`{}`, which is no heading register home of `{}`",
                         doc.rel.display(),
                         owner.name
                     ))),
                 }
             }
         }
-        for ((kind, anchor, id), sites) in &out.defined {
+    }
+
+    /// One entity per file under a file register's instance directory.
+    ///
+    /// The two navigation files at the instance's top level are not entries. One inside a
+    /// group is: a group holds entries and nothing else, so a `README.md` there is an entry
+    /// whose id no reference can spell, which is reported rather than passed over.
+    fn file_definitions(&mut self, model: &Model, anchors: &Anchors) {
+        for (anchor, register, home) in anchors.instances() {
+            if register.shape != Shape::File {
+                continue;
+            }
+            for doc in model.documents() {
+                let Some(id) = entry_id(&doc.rel, &home.dir) else {
+                    continue;
+                };
+                let at = Site {
+                    file: doc.rel.clone(),
+                    line: 1,
+                };
+                if !is_entity_id(&id) {
+                    self.findings.push(Finding::in_file(
+                        &doc.rel,
+                        format!(
+                            "`{id}` cannot be an entry id of the {} register",
+                            register.name
+                        ),
+                        "name the file in lower-case words joined by hyphens; an id no \
+                         reference can spell is an entry nothing points at",
+                    ));
+                    continue;
+                }
+                self.defined
+                    .entry((Kind::new(&register.name), anchor.name.clone(), id))
+                    .or_default()
+                    .push(at);
+            }
+        }
+    }
+
+    fn report_duplicates(&mut self) {
+        let mut found = Vec::new();
+        for ((kind, anchor, id), sites) in &self.defined {
             if sites.len() < 2 {
                 continue;
             }
@@ -435,7 +551,7 @@ impl Entities {
                     .filter(|s| *s != site)
                     .map(Site::to_string)
                     .collect();
-                out.findings.push(Finding::at(
+                found.push(Finding::at(
                     &site.file,
                     site.line,
                     format!(
@@ -446,30 +562,11 @@ impl Entities {
                 ));
             }
         }
-        out
-    }
-
-    /// Which register home of `owner` holds `rel`: `Ok(kind)` for the file home or a
-    /// subdocument of the directory home, `Err(dir)` for the directory home's README, `None`
-    /// for a file that is no home.
-    fn register_of(owner: &Anchor, rel: &Path) -> Option<Result<Kind, PathBuf>> {
-        for kind in &owner.registers {
-            let home = owner.home(*kind)?;
-            if rel == home.file {
-                return Some(Ok(*kind));
-            }
-            if rel == home.readme {
-                return Some(Err(home.dir));
-            }
-            if rel.starts_with(&home.dir) {
-                return Some(Ok(*kind));
-            }
-        }
-        None
+        self.findings.extend(found);
     }
 
     /// Resolve a reference to a table kind. `path` is not this table's to resolve.
-    pub fn resolve(&self, anchors: &Anchors, kind: Kind, anchor: &str, id: &str) -> Resolution {
+    pub fn resolve(&self, anchors: &Anchors, kind: &Kind, anchor: &str, id: &str) -> Resolution {
         let Some(a) = anchors.by_name(anchor) else {
             return Resolution::UnknownAnchor;
         };
@@ -485,7 +582,7 @@ impl Entities {
         }
         if self
             .defined
-            .contains_key(&(kind, anchor.to_string(), id.to_string()))
+            .contains_key(&(kind.clone(), anchor.to_string(), id.to_string()))
         {
             Resolution::Resolved
         } else {
@@ -502,10 +599,65 @@ impl Entities {
         self.defined.is_empty()
     }
 
-    /// The misplaced and duplicate definitions found while building the table.
+    /// The misplaced, malformed and duplicate definitions found while building the table.
     pub fn definition_findings(&self) -> &[Finding] {
         &self.findings
     }
+}
+
+/// The id of a file-register entry at `rel`, for an instance rooted at `dir`, or `None`.
+///
+/// `None` for anything that is not an entry: a file outside the instance, a file of another
+/// suffix, and the two navigation files at the instance's own top level.
+fn entry_id(rel: &Path, dir: &Path) -> Option<String> {
+    let inside = rel.strip_prefix(dir).ok()?;
+    if rel.extension().is_none_or(|e| e != "md") {
+        return None;
+    }
+    let depth = inside.components().count();
+    let name = inside.file_name()?.to_string_lossy();
+    if depth == 1 && (name == "README.md" || name == "index.md") {
+        return None;
+    }
+    Some(rel.file_stem()?.to_string_lossy().into_owned())
+}
+
+/// Which heading register home of `owner` holds `rel`: `Ok(kind)` for the file home or a
+/// subdocument of the directory home, `Err(dir)` for the directory home's README, `None`
+/// for a file that is no heading home.
+fn register_of(anchors: &Anchors, owner: &Anchor, rel: &Path) -> Option<Result<Kind, PathBuf>> {
+    for name in &owner.registers {
+        let register = anchors.registers().by_name(name)?;
+        if register.shape != Shape::Heading {
+            continue;
+        }
+        let home = owner.home_of(register);
+        if rel == home.file {
+            return Some(Ok(Kind::new(name)));
+        }
+        if rel == home.readme {
+            return Some(Err(home.dir));
+        }
+        if rel.starts_with(&home.dir) {
+            return Some(Ok(Kind::new(name)));
+        }
+    }
+    None
+}
+
+/// The heading register directories one anchor carries, as a finding names them.
+fn heading_dirs(anchors: &Anchors, owner: &Anchor) -> String {
+    let dirs: Vec<&str> = owner
+        .registers
+        .iter()
+        .filter_map(|n| anchors.registers().by_name(n))
+        .filter(|r| r.shape == Shape::Heading)
+        .map(|r| r.dir.as_str())
+        .collect();
+    if dirs.is_empty() {
+        return "none".to_string();
+    }
+    dirs.join(", ")
 }
 
 #[cfg(test)]
@@ -522,18 +674,21 @@ mod tests {
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\
-             [interpretations]\ndir = \"i\"\nconcerns = []\n";
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         Anchors::of(&Manifest::parse(Path::new("/nowhere"), text).expect("a declaration"))
     }
 
     fn table(docs: Vec<(&str, &str)>) -> Entities {
+        table_under(docs, &anchors())
+    }
+
+    fn table_under(docs: Vec<(&str, &str)>, anchors: &Anchors) -> Entities {
         let model = Model::from_documents(
             docs.into_iter()
                 .map(|(p, t)| (PathBuf::from(p), t.to_string()))
                 .collect(),
         );
-        Entities::build(&model, &anchors())
+        Entities::build(&model, anchors)
     }
 
     fn findings(docs: Vec<(&str, &str)>) -> Vec<String> {
@@ -556,16 +711,56 @@ mod tests {
         assert_eq!(e.len(), 3);
         assert!(e.definition_findings().is_empty(), "{:#?}", e.findings);
         let a = anchors();
-        for kind in [Kind::Design, Kind::Goal, Kind::Tripwire] {
+        for kind in ["design", "goal", "tripwire"] {
             assert_eq!(
-                e.resolve(&a, kind, "a-project", "same"),
+                e.resolve(&a, &Kind::new(kind), "a-project", "same"),
                 Resolution::Resolved,
                 "{kind}"
             );
         }
         assert_eq!(
-            e.resolve(&a, Kind::Design, "a-project", "other"),
+            e.resolve(&a, &Kind::new("design"), "a-project", "other"),
             Resolution::Undefined
+        );
+    }
+
+    #[test]
+    fn a_file_register_defines_one_entity_per_entry_file_named_by_its_basename() {
+        // The two navigation files at the top level are not entries; a file in a group is.
+        let e = table(vec![
+            ("docs/open-issues/README.md", "# Open issues\n"),
+            ("docs/open-issues/index.md", "# Index\n"),
+            ("docs/open-issues/a-defect.md", "# A defect\n"),
+            ("docs/open-issues/a-group/another-one.md", "# Another\n"),
+        ]);
+        assert_eq!(e.len(), 2, "{:#?}", e.defined);
+        let a = anchors();
+        for id in ["a-defect", "another-one"] {
+            assert_eq!(
+                e.resolve(&a, &Kind::new("issue"), "a-project", id),
+                Resolution::Resolved,
+                "{id}"
+            );
+        }
+        assert!(e.definition_findings().is_empty(), "{:#?}", e.findings);
+    }
+
+    #[test]
+    fn an_entry_whose_basename_no_reference_can_spell_defines_nothing_and_is_reported() {
+        // A `README.md` inside a group is an entry, and its id is one nothing can point at.
+        let found = findings(vec![(
+            "docs/open-issues/a-group/README.md",
+            "# Not an entry name\n",
+        )]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("cannot be an entry id"), "{found:#?}");
+        assert_eq!(
+            table(vec![(
+                "docs/open-issues/a-group/README.md",
+                "# Not an entry name\n"
+            )])
+            .len(),
+            0
         );
     }
 
@@ -597,11 +792,17 @@ mod tests {
         let found = findings(vec![("notes/a.md", "### A decision `##stray`\n")]);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
-            found[0].starts_with("notes/a.md:1") && found[0].contains("no register home"),
+            found[0].starts_with("notes/a.md:1") && found[0].contains("no heading register home"),
             "{found:#?}"
         );
         // A file merely NAMED like a home, in a directory that is no anchor's docs/.
         let found = findings(vec![("notes/docs/design.md", "### A decision `##stray`\n")]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        // A slug inside a FILE register's instance is misplaced too: its entries are files.
+        let found = findings(vec![(
+            "docs/open-issues/an-entry.md",
+            "### A decision `##stray`\n",
+        )]);
         assert_eq!(found.len(), 1, "{found:#?}");
     }
 
@@ -632,11 +833,11 @@ mod tests {
         assert!(e.definition_findings().is_empty());
         let a = anchors();
         assert_eq!(
-            e.resolve(&a, Kind::Design, "a-part", "word"),
+            e.resolve(&a, &Kind::new("design"), "a-part", "word"),
             Resolution::Resolved
         );
         assert_eq!(
-            e.resolve(&a, Kind::Design, "a-project", "word"),
+            e.resolve(&a, &Kind::new("design"), "a-project", "word"),
             Resolution::Resolved
         );
     }
@@ -681,7 +882,7 @@ mod tests {
         assert_eq!(
             candidate("design@a-project@x-y", &a),
             Candidate::Reference {
-                kind: Kind::Design,
+                kind: Kind::new("design"),
                 anchor: "a-project",
                 id: "x-y"
             }
@@ -712,14 +913,87 @@ mod tests {
     }
 
     #[test]
+    fn a_declared_register_becomes_a_kind_the_candidate_rule_admits() {
+        // Nothing about a kind is compiled in beyond `path` and the built-in four: a project
+        // that declares a register makes its name spellable in kind position.
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [locations.notes]\npath = \"notes\"\nregisters = [\"reading\", \"tripwire\"]\n\n\
+             [registers.reading]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"readings\"\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        let a = Anchors::of(&m);
+        assert!(a.kinds_listed().contains("reading"));
+        assert_eq!(
+            candidate("reading@notes@a-reading", &a),
+            Candidate::Reference {
+                kind: Kind::new("reading"),
+                anchor: "notes",
+                id: "a-reading"
+            }
+        );
+        // Its home is under the location's own path, not under a `docs/` it does not have.
+        let e = table_under(vec![("notes/readings/a-reading.md", "# A reading\n")], &a);
+        assert_eq!(
+            e.resolve(&a, &Kind::new("reading"), "notes", "a-reading"),
+            Resolution::Resolved
+        );
+        // The location carries those registers and no others, so a built-in one it does not
+        // carry is refused there with the carriers named.
+        assert_eq!(
+            e.resolve(&a, &Kind::new("design"), "notes", "anything"),
+            Resolution::AnchorLacksRegister {
+                carriers: vec!["a-project".to_string()]
+            }
+        );
+    }
+
+    #[test]
+    fn a_location_inside_a_component_owns_the_documents_under_it() {
+        // The location sits under the root component, so the deepest anchor is the location
+        // and its heading home is its own. Read as the component's, `notes/tripwires.md` is
+        // no register home of the root and every entry in it is reported as misplaced.
+        // Mutation checked: filtering `owning` to components alone leaves this file with no
+        // home and the entity count at zero.
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [locations.notes]\npath = \"notes\"\nregisters = [\"tripwire\"]\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        let a = Anchors::of(&m);
+        let e = table_under(
+            vec![("notes/tripwires.md", "## Guarding it `##a-tripwire`\n")],
+            &a,
+        );
+        assert!(
+            e.definition_findings().is_empty(),
+            "{:#?}",
+            e.definition_findings()
+        );
+        assert_eq!(
+            e.resolve(&a, &Kind::new("tripwire"), "notes", "a-tripwire"),
+            Resolution::Resolved
+        );
+        // And not the root's: the two anchors are separate instances of one register.
+        assert_eq!(
+            e.resolve(&a, &Kind::new("tripwire"), "a-project", "a-tripwire"),
+            Resolution::Undefined
+        );
+    }
+
+    #[test]
     fn segmentation_takes_three_segments_except_that_a_path_may_hold_an_at_sign() {
-        // Mutation checked: dropping the `kind != Kind::Path` guard makes the path case
+        // Mutation checked: dropping the `!kind.is_path()` guard makes the path case
         // malformed and the first assertion fails.
         let a = anchors();
         assert_eq!(
             candidate("path@a-project@notes/a@b.md", &a),
             Candidate::Reference {
-                kind: Kind::Path,
+                kind: Kind::path(),
                 anchor: "a-project",
                 id: "notes/a@b.md"
             }
@@ -743,53 +1017,56 @@ mod tests {
     #[test]
     fn each_way_a_reference_resolves_to_nothing_is_told_apart() {
         // The fourth arm needs an anchor that exists and lacks the register, which no
-        // component has: the anchor is stated directly, the shape a location will take.
-        let root = Anchor::component("a-project", Path::new(""));
-        let bare = Anchor {
-            name: "bare".to_string(),
-            path: PathBuf::from("bare"),
-            home_base: PathBuf::from("bare"),
-            registers: vec![Kind::Tripwire],
-        };
-        let a = Anchors::from_list(vec![root, bare]);
+        // component has: the anchor is stated directly, the shape a location takes.
+        let base = anchors();
+        let root = base.by_name("a-project").expect("the root").clone();
+        let bare = Anchor::location("bare", Path::new("bare"), vec!["tripwire".to_string()]);
+        let a = Anchors::from_list(vec![root, bare], base.registers().clone());
         let model = Model::from_documents(vec![(
             PathBuf::from("docs/design.md"),
             "### A decision `##word`\n".to_string(),
         )]);
         let e = Entities::build(&model, &a);
         assert_eq!(
-            e.resolve(&a, Kind::Design, "nowhere", "word"),
+            e.resolve(&a, &Kind::new("design"), "nowhere", "word"),
             Resolution::UnknownAnchor
         );
         assert_eq!(
-            e.resolve(&a, Kind::Design, "bare", "word"),
+            e.resolve(&a, &Kind::new("design"), "bare", "word"),
             Resolution::AnchorLacksRegister {
                 carriers: vec!["a-project".to_string()]
             }
         );
         assert_eq!(
-            e.resolve(&a, Kind::Design, "a-project", "other"),
+            e.resolve(&a, &Kind::new("design"), "a-project", "other"),
             Resolution::Undefined
         );
         assert_eq!(
-            e.resolve(&a, Kind::Design, "a-project", "word"),
+            e.resolve(&a, &Kind::new("design"), "a-project", "word"),
             Resolution::Resolved
         );
         // Every anchor carries `path`, whatever its register list.
-        assert!(a.by_name("bare").unwrap().carries(Kind::Path));
+        assert!(a.by_name("bare").unwrap().carries(&Kind::path()));
     }
 
     #[test]
     fn the_required_document_set_carries_each_shape_with_its_kind() {
-        // The compiled-in files, and each heading register's file, directory and README.
-        assert_eq!(Anchors::required_kind("README.md"), Some(false));
-        assert_eq!(Anchors::required_kind("docs/tripwires.md"), Some(false));
-        assert_eq!(Anchors::required_kind("docs/goals.md"), Some(false));
-        assert_eq!(Anchors::required_kind("docs/goals"), Some(true));
-        assert_eq!(Anchors::required_kind("docs/goals/README.md"), Some(false));
-        assert_eq!(Anchors::required_kind("docs/design"), Some(true));
-        assert_eq!(Anchors::required_kind("docs/design/one.md"), None);
-        assert_eq!(Anchors::required_kind("src/lib.rs"), None);
+        // The compiled-in files, each heading register's file, directory and README, and the
+        // issue register's directory, README and index.
+        let a = anchors();
+        assert_eq!(a.required_kind("README.md"), Some(false));
+        assert_eq!(a.required_kind("docs/tripwires.md"), Some(false));
+        assert_eq!(a.required_kind("docs/goals.md"), Some(false));
+        assert_eq!(a.required_kind("docs/goals"), Some(true));
+        assert_eq!(a.required_kind("docs/goals/README.md"), Some(false));
+        assert_eq!(a.required_kind("docs/design"), Some(true));
+        assert_eq!(a.required_kind("docs/open-issues"), Some(true));
+        assert_eq!(a.required_kind("docs/open-issues/README.md"), Some(false));
+        assert_eq!(a.required_kind("docs/open-issues/index.md"), Some(false));
+        // A file register has no single-file shape, so that name is not a required document.
+        assert_eq!(a.required_kind("docs/open-issues.md"), None);
+        assert_eq!(a.required_kind("docs/design/one.md"), None);
+        assert_eq!(a.required_kind("src/lib.rs"), None);
     }
 
     #[test]

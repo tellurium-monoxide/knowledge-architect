@@ -4,7 +4,7 @@ Its layout differs from the repository that holds it on purpose.
 
 ### A decision this project records `##mock-anchor`
 
-It points at `path@minimal@notes/b.md`, and it cites CR:100.1.
+It points at `path@notes@b.md`, and it cites CR:100.1.
 
 ```
 ### Not a definition: this is inside a fence `##fenced-anchor`

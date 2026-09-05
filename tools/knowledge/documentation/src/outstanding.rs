@@ -1,13 +1,15 @@
 //! What is outstanding, across every tracker in the project.
 //!
 //! Asking otherwise takes one file open per component, and the count grows with every one that
-//! is added. The set of tracker files comes from `knowledge.toml [project]`: every component
-//! carries the same documents, and two of them are its trackers. The entries come from reading
-//! those files at run time, so no count is stored anywhere and none can go stale.
+//! is added. The instances come from the anchors and their registers: the issue register is a
+//! directory of one file per entry, and the tripwire register is a heading register in either
+//! of its two shapes. The entries come from reading those at run time, so no count is stored
+//! anywhere and none can go stale.
 
 use std::path::PathBuf;
 
-use crate::manifest::Manifest;
+use crate::entity::Anchors;
+use crate::manifest::{Manifest, Shape, ISSUE_REGISTER};
 use crate::model::Model;
 
 /// One tracker entry.
@@ -52,67 +54,126 @@ impl std::fmt::Display for Kind {
     }
 }
 
-/// Every tracker file in the project, whether or not it holds an entry.
+/// Every register instance that holds outstanding state, whether or not it holds an entry.
 ///
-/// An empty tracker is a well-formed tracker, and the count says how many exist rather than
-/// how many have something in them — the difference between the two is itself worth seeing.
+/// The issue instances and the tripwire homes, taken from the anchors rather than matched by
+/// filename: a file called `open-issues.md` in a directory that is no register home is not a
+/// tracker, and counting it would report an entry against a total the project never claimed.
+///
+/// **This is the minimum that keeps the command running while the registers move.** `show`,
+/// `issues` and `tripwires` replace it, and the entry shape they read is the register's.
 pub fn tracker_files(model: &Model, manifest: &Manifest) -> Vec<PathBuf> {
     let present: std::collections::HashSet<&PathBuf> =
         model.documents().iter().map(|d| &d.rel).collect();
-    let mut out: Vec<PathBuf> = manifest
-        .tracker_paths()
-        .into_iter()
-        .filter(|p| present.contains(p))
-        .collect();
+    let anchors = Anchors::of(manifest);
+    let mut out: Vec<PathBuf> = Vec::new();
+    for (_, register, home) in anchors.instances() {
+        match register.shape {
+            Shape::File if register.name == ISSUE_REGISTER => {
+                if present.iter().any(|p| p.starts_with(&home.dir)) {
+                    out.push(home.dir.clone());
+                }
+            }
+            Shape::Heading if register.name == "tripwire" => {
+                if present.contains(&home.file) {
+                    out.push(home.file.clone());
+                } else if present.iter().any(|p| p.starts_with(&home.dir)) {
+                    out.push(home.dir.clone());
+                }
+            }
+            _ => {}
+        }
+    }
     out.sort();
+    out.dedup();
     out
 }
 
-/// Every entry in every tracker the project declares.
+/// Every entry in every register instance that holds outstanding state.
 pub fn entries(model: &Model, manifest: &Manifest) -> Vec<Entry> {
-    // The components' own paths, not a filename match over the whole tree. A file called
-    // `open-issues.md` in a directory that is not a component is not a tracker, and counting it
-    // would report an entry against a total the project never claimed.
-    let registered: std::collections::HashSet<PathBuf> =
-        manifest.tracker_paths().into_iter().collect();
+    let anchors = Anchors::of(manifest);
     let mut out = Vec::new();
-    for doc in model.documents() {
-        if !registered.contains(&doc.rel) {
-            continue;
-        }
-        let Some(name) = doc.rel.file_name().and_then(|n| n.to_str()) else {
-            continue;
-        };
-        let is_issue = name == "open-issues.md";
-        for (title, body) in sections(&doc.text) {
-            // A heading alone does not make an entry: a tracker may carry a grouping header or
-            // a note, and counting those inflates the total this exists to make trustworthy.
-            // An entry is recognised by the required fields its own skill mandates — a
-            // tripwire states when it fires, an issue states what it is — so the test is the
-            // one a reader applies.
-            let tagged = tag_of(&title);
-            let fires = body.lines().any(states_when_it_fires);
-            if !fires && tagged.is_none() && !body.contains("**What.**") {
+    for (_, register, home) in anchors.instances() {
+        for doc in model.documents() {
+            if register.name == ISSUE_REGISTER && register.shape == Shape::File {
+                if !doc.rel.starts_with(&home.dir)
+                    || doc.rel == home.readme
+                    || doc.rel == home.index
+                {
+                    continue;
+                }
+                out.push(issue(doc, &home.dir));
                 continue;
             }
-            // The title's own tag is the label wherever there is one. `tripwire` is what a
-            // body that states when it fires produces, and nothing else can produce it — which
-            // is the whole of the fix: a kind nobody anticipated used to land there.
-            let kind = match (&tagged, fires) {
-                (Some(k), _) => Kind::Tagged(k.clone()),
-                (None, true) => Kind::Tripwire,
-                (None, false) => Kind::Tagged("issue".to_string()),
-            };
-            out.push(Entry {
-                file: doc.rel.clone(),
-                title: strip_tag(&title),
-                kind,
-                body,
-                is_issue,
-            });
+            if register.name != "tripwire" {
+                continue;
+            }
+            let in_home =
+                doc.rel == home.file || (doc.rel.starts_with(&home.dir) && doc.rel != home.readme);
+            if !in_home {
+                continue;
+            }
+            for (title, body) in sections(&doc.text) {
+                // A heading alone does not make an entry: a tracker may carry a grouping
+                // header or a note, and counting those inflates the total this exists to
+                // make trustworthy. A tripwire is recognised by the field its own skill
+                // mandates — it states when it fires.
+                if !body.lines().any(states_when_it_fires) {
+                    continue;
+                }
+                out.push(Entry {
+                    file: home_of(&home.file, &home.dir, &doc.rel),
+                    title: strip_tag(&title),
+                    kind: Kind::Tripwire,
+                    body,
+                    is_issue: false,
+                });
+            }
         }
     }
     out
+}
+
+/// One issue entry, read from the file that is the entry.
+fn issue(doc: &crate::model::Document, dir: &std::path::Path) -> Entry {
+    let kind = doc
+        .parsed
+        .frontmatter
+        .as_ref()
+        .and_then(|f| f.as_ref().ok())
+        .and_then(|keys| keys.iter().find(|(k, _)| k == "kind"))
+        .map(|(_, v)| v.clone())
+        .unwrap_or_else(|| "issue".to_string());
+    let title = doc
+        .observations
+        .iter()
+        .find_map(|l| match &l.what {
+            crate::scan::Observation::Heading { level: 1, text } => Some(text.clone()),
+            _ => None,
+        })
+        .unwrap_or_else(|| {
+            doc.rel
+                .file_stem()
+                .unwrap_or_default()
+                .to_string_lossy()
+                .into_owned()
+        });
+    Entry {
+        file: dir.to_path_buf(),
+        title,
+        kind: Kind::Tagged(kind),
+        body: doc.text.clone(),
+        is_issue: true,
+    }
+}
+
+/// Which of a heading register's two homes a document sits in, as the listing groups by.
+fn home_of(file: &std::path::Path, dir: &std::path::Path, rel: &std::path::Path) -> PathBuf {
+    if rel == file {
+        file.to_path_buf()
+    } else {
+        dir.to_path_buf()
+    }
 }
 
 /// Whether this line is a tripwire's firing field: a bold label opening with `Fires when`,

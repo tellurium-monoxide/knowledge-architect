@@ -2,9 +2,7 @@
 //!
 //! A generated file that drifts is worse than no generated file: `bumping-rules` calls the
 //! rule index *the work list* for a release, and a stale work list decides what a renumbering
-//! breaks. The interpretation index is a change detector for the register itself, and it
-//! detects nothing unless it is current — which was the objection raised against building one
-//! at all, and gating it is the answer to that objection.
+//! breaks.
 //!
 //! **The comparison is against a string.** Nothing here writes the file and restores it, so a
 //! run that dies half-way leaves the tree exactly as it found it.
@@ -31,16 +29,6 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding
         &index::rule_index(model, manifest, &vendored.rules, inputs.pinned),
         inputs,
         "regenerate it and read the diff: it is the work list a release bump reads",
-        &mut findings,
-    );
-
-    let interpretation_index = manifest.interpretations().dir.join("index.md");
-    compare(
-        &interpretation_index,
-        &index::interpretation_index(model, manifest),
-        inputs,
-        "regenerate it and read the diff: a moved title is a replaced entry, a moved file is a \
-         re-filing, a removed section is a loss",
         &mut findings,
     );
     findings

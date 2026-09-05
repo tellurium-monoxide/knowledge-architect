@@ -24,7 +24,3 @@ body-starts-at = 0
 version = "VERSION"
 past = "past"
 manifest = "past/MANIFEST.tsv"
-
-[interpretations]
-dir = "notes/readings"
-concerns = []

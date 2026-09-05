@@ -14,9 +14,9 @@
 //! missed is a finding rather than silence. The candidate rule and the retired-form lint are
 //! `knowledge#candidate-rule-and-retired-forms`.
 //!
-//! **The definition-site findings sit here for now.** Misplaced and duplicate definitions are
-//! found while the table is built; they belong to the `registers` family, which lands with the
-//! register-shape checks, and until then this family reports them.
+//! **The definition-site findings are not this family's.** Misplaced, malformed and duplicate
+//! definitions are found while the table is built, and `check::registers` reports them: where a
+//! definition may sit is a question about a register's shape.
 
 use std::path::{Path, PathBuf};
 
@@ -54,7 +54,7 @@ pub fn check_under(
     anchors: &Anchors,
 ) -> (Vec<Finding>, Counts) {
     let entities = Entities::build(model, anchors);
-    let mut out: Vec<Finding> = entities.definition_findings().to_vec();
+    let mut out: Vec<Finding> = Vec::new();
     let mut counts = Counts {
         entities: entities.len(),
         ..Counts::default()
@@ -66,14 +66,14 @@ pub fn check_under(
                 Observation::Span(span) => match entity::candidate(span, anchors) {
                     Candidate::Reference { kind, anchor, id } => {
                         counts.references += 1;
-                        if kind == Kind::Path {
+                        if kind.is_path() {
                             path(
                                 &mut out, &doc.rel, l.line, span, anchor, id, anchors, inputs,
                                 manifest,
                             );
                         } else {
                             table(
-                                &mut out, &doc.rel, l.line, span, kind, anchor, id, anchors,
+                                &mut out, &doc.rel, l.line, span, &kind, anchor, id, anchors,
                                 &entities,
                             );
                         }
@@ -90,7 +90,7 @@ pub fn check_under(
                         format!("`{span}` opens with `{head}`, an anchor, where the kind goes"),
                         format!(
                             "prefix the kind, one of {}: a path is written `path@{head}@<path>`",
-                            Kind::listed()
+                            anchors.kinds_listed()
                         ),
                     )),
                     Candidate::NotOne => {}
@@ -168,7 +168,7 @@ fn table(
     rel: &Path,
     line: u32,
     span: &str,
-    kind: Kind,
+    kind: &Kind,
     anchor: &str,
     id: &str,
     anchors: &Anchors,
@@ -197,7 +197,11 @@ fn table(
             format!("`{span}` is referenced and `{anchor}` defines no {kind} `{id}`"),
             format!(
                 "define it in the {} home of `{anchor}`, or repair the reference",
-                kind.register_dir().unwrap_or("register")
+                anchors
+                    .registers()
+                    .by_name(kind.name())
+                    .map(|r| r.dir.as_str())
+                    .unwrap_or("register")
             ),
         )),
     }
@@ -273,7 +277,7 @@ fn path(
             // shapes of each heading register are the case, where naming both is legitimate
             // while only one is in use anywhere. The set carries its own kinds, so the
             // trailing-slash claim is asserted here too.
-            if let Some(required_dir) = Anchors::required_kind(trimmed) {
+            if let Some(required_dir) = anchors.required_kind(trimmed) {
                 if claims_dir != required_dir {
                     out.push(Finding::at(
                         rel,
@@ -500,8 +504,7 @@ mod tests {
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\
-             [interpretations]\ndir = \"i\"\nconcerns = []\n";
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration")
     }
 
@@ -542,6 +545,7 @@ mod tests {
             releases: &releases,
             pinned: "",
             committed: &committed,
+            configs: &HashMap::new(),
             present: &present,
             directories: &directories,
             outside: &outside,
@@ -673,14 +677,15 @@ mod tests {
         // The third way of the four, over an anchor list no manifest produces today: an
         // anchor carrying tripwires alone. Mutation checked: with the arm's push replaced
         // by a drop, the assertion on one finding fails.
-        let root = crate::entity::Anchor::component("a-project", std::path::Path::new(""));
-        let bare = crate::entity::Anchor {
-            name: "bare".to_string(),
-            path: PathBuf::from("bare"),
-            home_base: PathBuf::from("bare"),
-            registers: vec![Kind::Tripwire],
-        };
-        let anchors = Anchors::from_list(vec![root, bare]);
+        let m = manifest();
+        let base = Anchors::of(&m);
+        let root = base.by_name("a-project").expect("the root").clone();
+        let bare = crate::entity::Anchor::location(
+            "bare",
+            std::path::Path::new("bare"),
+            vec!["tripwire".to_string()],
+        );
+        let anchors = Anchors::from_list(vec![root, bare], base.registers().clone());
         let (found, _) = checked_under(
             &manifest(),
             vec![
@@ -750,7 +755,7 @@ mod tests {
         for f in &found {
             assert!(f.contains("where the kind goes"), "{f}");
             assert!(
-                f.contains(&Kind::listed()),
+                f.contains(&Anchors::of(&manifest()).kinds_listed()),
                 "the repair names the kinds: {f}"
             );
         }
@@ -817,9 +822,10 @@ mod tests {
     }
 
     #[test]
-    fn the_definition_findings_are_reported_through_this_family() {
-        // Misplaced and duplicate definitions come out of building the table, and this
-        // family carries them until the register-shape family exists.
+    fn the_definition_findings_belong_to_the_register_family_and_not_to_this_one() {
+        // Where a definition may sit is a question about a register's shape, so
+        // `check::registers` reports it. This family still resolves against the table the
+        // same build produced, so the entity count is unaffected by the move.
         let (found, counts) = checked_docs(
             &manifest(),
             vec![
@@ -831,23 +837,7 @@ mod tests {
             ],
             &[],
         );
-        assert_eq!(found.len(), 4, "{found:#?}");
-        assert_eq!(
-            found
-                .iter()
-                .filter(|f| f.contains("defines nothing"))
-                .count(),
-            2,
-            "{found:#?}"
-        );
-        assert_eq!(
-            found
-                .iter()
-                .filter(|f| f.contains("is also defined at"))
-                .count(),
-            2,
-            "{found:#?}"
-        );
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
         assert_eq!(counts.entities, 1, "one entity, defined twice");
     }
 

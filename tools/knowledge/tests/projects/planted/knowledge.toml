@@ -6,8 +6,12 @@
 name = "planted"
 # One component below the root, carrying every document but one.
 components = ["parts/widget"]
-# Declared and not created: a tracker the report would silently under-count.
-additional-trackers = ["notes/open-issues.md"]
+
+# PLANTED: a location whose issue directory is not there. A location carries the registers it
+# declares, so the missing home is a finding against the location rather than a silent gap.
+[locations.agent-config]
+path = "agent-config"
+registers = ["issue"]
 
 [walk]
 # Not a git repository, so there is no `.git` to skip and none is declared.
@@ -28,8 +32,3 @@ body-starts-at = 0
 version = "VERSION"
 past = "past"
 manifest = "past/MANIFEST.tsv"
-
-[interpretations]
-dir = "notes/readings"
-# PLANTED: a declared concern with no file.
-concerns = ["gone"]

@@ -6,8 +6,23 @@
 [project]
 name = "minimal"
 components = []
-# `notes/` carries outstanding state and nothing else a component carries.
-additional-trackers = ["notes/open-issues.md"]
+
+# `notes/` carries outstanding state and a register of its own, and nothing else a component
+# carries. A location gives it an anchor, so its entries can be cited.
+[locations.notes]
+path = "notes"
+registers = ["issue", "reading"]
+
+# A register nothing compiles in: this project declares it, and the tool learns the kind
+# `reading` from this table alone.
+[registers.reading]
+scope = "opt-in"
+shape = "file"
+dir = "readings"
+sections = ["Rules", "Reading", "Consequences"]
+
+[registers.reading.metadata.status]
+values = ["settled", "ambiguous"]
 
 [walk]
 skip-dirs = ["build"]
@@ -28,8 +43,3 @@ body-starts-at = 0
 version = "VERSION"
 past = "past"
 manifest = "past/MANIFEST.tsv"
-
-[interpretations]
-dir = "notes/readings"
-concerns = ["one-concern"]
-

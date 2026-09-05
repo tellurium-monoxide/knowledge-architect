@@ -6,11 +6,10 @@
 
 pub mod changes;
 pub mod citations;
-pub mod components;
 pub mod generated;
-pub mod interpretations;
 pub mod references;
 pub mod regime;
+pub mod registers;
 pub mod uncovered;
 
 use std::collections::{HashMap, HashSet};
@@ -27,16 +26,17 @@ use citations::{Counts, Release};
 #[derive(Debug, Default)]
 pub struct Structure {
     pub components: usize,
-    pub additional_trackers: usize,
+    pub locations: usize,
+    /// Anchor-and-register pairs whose home was asserted, and the file-register entries
+    /// whose shape was.
+    pub instances: usize,
+    pub entries: usize,
     /// Distinct entities the table holds, reference occurrences judged against it, and the
     /// relative markdown links resolved.
     pub entities: usize,
     pub references: usize,
     pub links: usize,
     pub uncovered_files: usize,
-    pub concerns: usize,
-    pub entries: usize,
-    pub top_entry: u16,
     /// The checker's own directory as the model was told it, and how many walked Rust files
     /// sit under it with their string literals read as data. Not a family's count: it describes
     /// the walk every family read, so it is set whatever was asked for.
@@ -86,6 +86,11 @@ pub struct Inputs<'a> {
     pub pinned: &'a str,
     /// The generated files as committed, keyed by their project-relative path.
     pub committed: &'a HashMap<PathBuf, String>,
+    /// Every `register.toml` beside a register instance, keyed by its project-relative path.
+    ///
+    /// Read by the caller like the generated files, and for the same reason: a check may not
+    /// touch the filesystem, and this one is outside the walk because it is not markdown.
+    pub configs: &'a HashMap<PathBuf, String>,
     /// Every path that exists in the project, files and directories, project-relative. One
     /// listing by the caller answers every question a check has about what is there.
     pub present: &'a HashSet<PathBuf>,
@@ -120,9 +125,8 @@ pub struct Only(u16);
 impl Only {
     pub const CITATIONS: Self = Self(1 << 0);
     pub const GENERATED: Self = Self(1 << 1);
-    pub const COMPONENTS: Self = Self(1 << 2);
+    pub const REGISTERS: Self = Self(1 << 2);
     pub const REFERENCES: Self = Self(1 << 3);
-    pub const INTERPRETATIONS: Self = Self(1 << 4);
     pub const UNCOVERED: Self = Self(1 << 5);
     pub const CHANGES: Self = Self(1 << 6);
     pub const CORPUS: Self = Self(1 << 7);
@@ -132,7 +136,16 @@ impl Only {
     pub const NOTHING: Self = Self(0);
 
     /// Every check. What a run with no `--only` performs.
-    pub const EVERYTHING: Self = Self(0b1_1111_1111);
+    pub const EVERYTHING: Self = Self(
+        Self::CITATIONS.0
+            | Self::GENERATED.0
+            | Self::REGISTERS.0
+            | Self::REFERENCES.0
+            | Self::UNCOVERED.0
+            | Self::CHANGES.0
+            | Self::CORPUS.0
+            | Self::REGIME.0,
+    );
     /// Every check that is not the citation walk.
     pub const STRUCTURE: Self = Self(Self::EVERYTHING.0 & !Self::CITATIONS.0);
 
@@ -140,12 +153,11 @@ impl Only {
     ///
     /// One table, so the parser, the error message and the help cannot disagree about what
     /// exists. A check added without a row here is selectable by no name.
-    pub const NAMED: [(&'static str, Self); 9] = [
+    pub const NAMED: [(&'static str, Self); 8] = [
         ("citations", Self::CITATIONS),
         ("generated", Self::GENERATED),
-        ("components", Self::COMPONENTS),
+        ("registers", Self::REGISTERS),
         ("references", Self::REFERENCES),
-        ("interpretations", Self::INTERPRETATIONS),
         ("uncovered", Self::UNCOVERED),
         ("changes", Self::CHANGES),
         ("corpus", Self::CORPUS),
@@ -268,11 +280,13 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
     if only.has(Only::GENERATED) {
         findings.extend(generated::check(model, manifest, inputs));
     }
-    if only.has(Only::COMPONENTS) {
-        let (found, counts) = components::check(model, manifest, inputs);
+    if only.has(Only::REGISTERS) {
+        let (found, counts) = registers::check(model, manifest, inputs);
         findings.extend(found);
         structure.components = counts.components;
-        structure.additional_trackers = counts.additional_trackers;
+        structure.locations = counts.locations;
+        structure.instances = counts.instances;
+        structure.entries = counts.entries;
     }
     if only.has(Only::REFERENCES) {
         let (found, c) = references::check(model, manifest, inputs);
@@ -280,11 +294,6 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
         structure.entities = c.entities;
         structure.references = c.references;
         structure.links = c.links;
-    }
-    if only.has(Only::INTERPRETATIONS) {
-        let (found, (concerns, entries, top)) = interpretations::check(model, manifest);
-        findings.extend(found);
-        (structure.concerns, structure.entries, structure.top_entry) = (concerns, entries, top);
     }
     if only.has(Only::UNCOVERED) {
         let (found, scanned) = uncovered::check(inputs);

@@ -373,17 +373,8 @@ fn help_answers_from_outside_a_project() {
     }
 }
 
-/// The concern file the interpretation index needs a row for.
-const CONCERN: &str = "\
-# One concern
-
-## R1 — A reading, recorded so that the generated index has a row to carry
-
-The body of the reading.
-";
-
-/// The claim: `index` regenerates both files from one invocation, writes only where the bytes
-/// differ, and says which of the two it moved.
+/// The claim: `index` regenerates every generated file from one invocation, writes only where
+/// the bytes differ, and says which of them it moved.
 ///
 /// **Two assertions, because they fall to different mutations.** The report is satisfied by an
 /// implementation that compares and then writes anyway; the mtime is what catches that one.
@@ -392,11 +383,7 @@ The body of the reading.
 #[test]
 fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
     let sandbox = Sandbox::new("index", "minimal");
-    // `minimal` declares this concern directory and does not carry it, no other test needing
-    // one. The interpretation index is written into it, so it has to exist; creating it is the
-    // manifest's claim to make good, not something `index` should do on the manifest's behalf.
-    sandbox.write("notes/readings/one-concern.md", CONCERN);
-    let generated = ["corpus/index.md", "notes/readings/index.md"];
+    let generated = ["corpus/index.md"];
 
     let (first, stderr, code) = sandbox.run(&["index"]);
     assert_eq!(code, 0, "{stderr}");
@@ -408,8 +395,8 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
     }
     assert_eq!(
         first.matches("rewritten").count(),
-        2,
-        "neither file existed, so both were written: {first}"
+        1,
+        "the file did not exist, so it was written: {first}"
     );
 
     let before: Vec<SystemTime> = generated
@@ -421,7 +408,7 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
     assert_eq!(code, 0);
     assert_eq!(
         second.matches("already current").count(),
-        2,
+        1,
         "nothing moved, so nothing was written: {second}"
     );
     for (rel, was) in generated.iter().zip(&before) {
@@ -436,7 +423,7 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
     std::fs::write(sandbox.path(generated[0]), "stale\n").expect("a stale index");
     let (third, _, _) = sandbox.run(&["index"]);
     assert_eq!(third.matches("rewritten").count(), 1, "{third}");
-    assert_eq!(third.matches("already current").count(), 1, "{third}");
+    assert_eq!(third.matches("already current").count(), 0, "{third}");
     assert_ne!(
         std::fs::read_to_string(sandbox.path(generated[0])).expect("the index"),
         "stale\n",
@@ -445,18 +432,28 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
 }
 
 /// Two issues and one tripwire, so the counts differ and a selection returning the wrong kind
-/// cannot pass by symmetry. An issue is recognised by the kind tag on its title, a tripwire by
-/// stating when it fires; the file it sits in is what decides which it is.
-const TWO_ISSUES: &str = "\
-# Open issues
+/// cannot pass by symmetry. An issue is one file of the issue register, labelled by its own
+/// frontmatter; a tripwire is a heading in the tripwire home that states when it fires.
+const FIRST_ISSUE: &str = "\
+---
+kind: defect
+---
+# The first thing outstanding
 
-## The first thing outstanding `defect`
+## Summary
 
-**What.** A body, so the entry is an entry.
+A body, so the entry is an entry.
+";
 
-## The second thing outstanding `todo`
+const SECOND_ISSUE: &str = "\
+---
+kind: todo
+---
+# The second thing outstanding
 
-**What.** Another body.
+## Summary
+
+Another body.
 ";
 
 const ONE_TRIPWIRE: &str = "\
@@ -479,14 +476,16 @@ const ONE_TRIPWIRE: &str = "\
 #[test]
 fn outstanding_selects_the_kind_its_flags_name() {
     let sandbox = Sandbox::new("outstanding", "minimal");
-    sandbox.write("docs/open-issues.md", TWO_ISSUES);
+    // The fixture carries one entry in each of its two issue instances. Both are replaced, so
+    // the totals below are this test's and not the fixture's, and stay so if the fixture
+    // changes.
+    std::fs::remove_file(sandbox.path("docs/open-issues/the-mock-has-one-issue.md"))
+        .expect("the fixture's own entry");
+    std::fs::remove_file(sandbox.path("notes/open-issues/the-notes-are-not-a-component.md"))
+        .expect("the fixture's own entry");
+    sandbox.write("docs/open-issues/the-first-thing.md", FIRST_ISSUE);
+    sandbox.write("docs/open-issues/the-second-thing.md", SECOND_ISSUE);
     sandbox.write("docs/tripwires.md", ONE_TRIPWIRE);
-    // The fixture carries an entry of its own in its third registered tracker. Emptied, so the
-    // totals below are this test's and not the fixture's, and stay so if the fixture changes.
-    sandbox.write(
-        "notes/open-issues.md",
-        "# Open issues\n\nNothing outstanding here.\n",
-    );
 
     let (all, stderr, code) = sandbox.run(&["outstanding"]);
     assert_eq!(code, 0, "{stderr}");
@@ -510,6 +509,12 @@ fn outstanding_selects_the_kind_its_flags_name() {
     assert!(
         !tripwires.contains("The first thing outstanding"),
         "{tripwires}"
+    );
+    // The labels come from each entry's own frontmatter, so a listing can be built without
+    // reading the bodies.
+    assert!(
+        issues.contains("defect") && issues.contains("todo"),
+        "{issues}"
     );
 
     // The flags bind the search too. Computed and then not read, `--issues` printed a tripwire
