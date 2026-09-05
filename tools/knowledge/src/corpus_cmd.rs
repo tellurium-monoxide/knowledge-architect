@@ -189,8 +189,8 @@ fn latest(tree: &Tree) -> Result<i32, String> {
          Read the bumping-rules skill, then:\n        \
          cargo knowledge rules diff --old {pinned} --new {published}\n        \
          cargo knowledge rules bump {published}\n      \
-         Nothing here opens a tracker entry: outstanding state goes in a family's\n      \
-         open-issues.md by hand, where `cargo knowledge outstanding` can see it."
+         Nothing here opens a tracker entry: outstanding state goes in a component's\n      \
+         issue register by hand, where `cargo knowledge issues` can see it."
     );
     Ok(1)
 }

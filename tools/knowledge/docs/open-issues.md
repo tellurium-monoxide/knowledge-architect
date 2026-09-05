@@ -11,6 +11,26 @@ Read `tracking-open-issues` before adding.
 
 ---
 
+## `cargo knowledge issues` prints nothing over this repository until the migration lands `defect`
+
+**What.** `outstanding` is gone and `issues` reads the issue register, which is a directory of one
+file per entry. This repository still keeps its trackers as `*@docs/open-issues.md`, one file of
+level-two headings, which the register reports as its retired file shape. So `cargo knowledge
+issues` finds no instance with entries and prints an empty table at exit 1, and `tripwires` prints
+only the two entries that have been given slugs so far.
+
+**Why it matters.** Root `CLAUDE.md` sends every session to that command before diagnosing
+anything, and an empty listing reads as a repository with nothing recorded. That is the exact
+failure the command exists against. Three invocation sites now say so in place — root
+`CLAUDE.md`, `tracking-open-issues` and the standing-state reviewer — and a session that reads
+none of them still gets a wrong answer from the tool itself.
+
+**What would close it.** Step B of `thaum@docs/plans/knowledge-tool-overhaul.md`, which splits every
+tracker file into entries and gives every tripwire heading a slug. Nothing else is owed: the
+command is right and the tree is not migrated yet.
+
+---
+
 ## The interpretation register has no mention form, so naming an entry counts as citing it `question`
 
 **What.** The interpretation index counts every `R`-number token in a live markdown file as a

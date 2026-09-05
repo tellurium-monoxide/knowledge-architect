@@ -182,29 +182,31 @@ fn the_survey_records_which_paths_are_directories() {
 }
 
 #[test]
-fn a_location_outside_every_component_is_read_by_the_report() {
+fn a_location_outside_every_component_is_read_by_the_listings() {
     // What a location is for: a directory carrying a subset of the registers and nothing else
-    // a component carries. Undeclared, this entry is in no report and nobody finds it.
+    // a component carries. Undeclared, this entry is in no listing and nobody finds it.
+    use documentation::entity::{Anchors, Entities, Kind};
+    use documentation::manifest::ISSUE_REGISTER;
+
     let manifest = mock("minimal");
     let model = model("minimal");
-    let files: Vec<String> = documentation::outstanding::tracker_files(&model, &manifest)
-        .iter()
-        .map(|p| p.display().to_string())
-        .collect();
-    assert!(
-        files.contains(&"notes/open-issues".to_string()),
-        "{files:#?}"
-    );
-    let entries = documentation::outstanding::entries(&model, &manifest);
-    let here: Vec<&documentation::outstanding::Entry> = entries
-        .iter()
-        .filter(|e| e.file.ends_with("notes/open-issues"))
-        .collect();
-    assert_eq!(here.len(), 1, "{entries:#?}");
-    assert!(here[0].is_issue, "an issue instance holds issues");
-    // The kind comes out of the entry's own frontmatter, which is what the register declares.
-    assert_eq!(here[0].kind.to_string(), "observation");
+    let anchors = Anchors::of(&manifest);
+    let entities = Entities::build(&model, &anchors);
+    let rows =
+        documentation::records::records(&model, &anchors, &entities, &Kind::new(ISSUE_REGISTER));
+    let here: Vec<_> = rows.iter().filter(|r| r.anchor == "notes").collect();
+    assert_eq!(here.len(), 1, "{rows:#?}");
+    // The kind comes out of the entry's own frontmatter, which is what the register declares,
+    // and the anchor is the location rather than the component above it.
+    assert_eq!(here[0].metadata.as_deref(), Some("observation"));
     assert_eq!(here[0].title, "The notes are not a component");
+    assert_eq!(here[0].id, "the-notes-are-not-a-component");
+    assert_eq!(
+        here[0].site.file,
+        PathBuf::from("notes/open-issues/the-notes-are-not-a-component.md")
+    );
+    // The component's own instance is a second anchor, so the two are not one listing.
+    assert!(rows.iter().any(|r| r.anchor == "minimal"), "{rows:#?}");
 }
 
 #[test]
@@ -461,9 +463,10 @@ mod planted {
         // One defect per assertion the register shapes make: a declared path that is not
         // there, a missing heading home, the retired file shape of a file register, a missing
         // index, an undeclared kind, a missing owed subsection, an id no reference can spell,
-        // an undeclared group, a file of another suffix, a location whose home is absent, and
-        // the six definition-site findings the entity table produces.
-        (Only::REGISTERS, 16, "PLANTED"),
+        // an undeclared group, a file of another suffix, frontmatter that does not parse, a
+        // location whose home is absent, and the six definition-site findings the entity table
+        // produces.
+        (Only::REGISTERS, 17, "PLANTED"),
         (Only::UNCOVERED, 1, "is outside the walk"),
         // Three generated files: the rule index, and one index per file-register instance
         // whose directory is there. Every family is handed an empty committed set, so each
@@ -478,8 +481,8 @@ mod planted {
         let found = findings_of(current_indexes, pair);
         assert_eq!(
             found.len(),
-            34,
-            "eighteen reference defects and sixteen register defects: {found:#?}"
+            35,
+            "eighteen reference defects and seventeen register defects: {found:#?}"
         );
         assert!(
             !found.iter().any(|f| f.contains("no rule says this")),
@@ -917,6 +920,8 @@ mod planted {
         assert!(one("cannot be an entry id").starts_with("docs/open-issues/Not_An_Id.md"));
         assert!(one("is no declared group").contains("an-undeclared-group"));
         assert!(one("is not an entry of the issue register").contains("nonsense.txt"));
+        assert!(one("does not parse: line 3 declares `kind` a second time")
+            .starts_with("docs/open-issues/two-kinds.md"));
     }
 
     #[test]

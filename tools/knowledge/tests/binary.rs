@@ -341,7 +341,7 @@ fn an_invalid_invocation_exits_two_and_runs_nothing() {
     const OLD: &str = "20200101";
     const NEW: &str = "20200102";
     let invalid: [&[&str]; 6] = [
-        &["outstanding", "--issues", "--tripwires"],
+        &["issues", "--issues"],
         &["check", "--bogus"],
         &["check", "stray"],
         &["model", "zzz"],
@@ -365,7 +365,15 @@ fn help_answers_from_outside_a_project() {
     let outside = std::env::temp_dir();
     let (stdout, stderr, code) = run_in(&outside, &["--help"]);
     assert_eq!(code, 0, "{stderr}");
-    for verb in ["check", "outstanding", "index", "model", "rules"] {
+    for verb in [
+        "check",
+        "show",
+        "issues",
+        "tripwires",
+        "index",
+        "model",
+        "rules",
+    ] {
         assert!(
             stdout.contains(verb),
             "{verb} is missing from the help: {stdout}"
@@ -452,9 +460,9 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
     }
 }
 
-/// Two issues and one tripwire, so the counts differ and a selection returning the wrong kind
-/// cannot pass by symmetry. An issue is one file of the issue register, labelled by its own
-/// frontmatter; a tripwire is a heading in the tripwire home that states when it fires.
+/// Two issues and one tripwire, so the two listings differ and a command returning the wrong
+/// register cannot pass by symmetry. An issue is one file of the issue register, labelled by its
+/// own frontmatter; a tripwire is a slugged heading in the tripwire home.
 const FIRST_ISSUE: &str = "\
 ---
 kind: defect
@@ -474,80 +482,178 @@ kind: todo
 
 ## Summary
 
-Another body.
+Another body, and a reference nothing defines: `design@minimal@no-such-decision`.
+";
+
+/// PLANTED: one entry declaring `kind` twice, so the block is refused and the row has no kind.
+const TWO_KINDS: &str = "\
+---
+kind: defect
+kind: todo
+---
+# The entry that declares two kinds
+
+## Summary
+
+Two values for one thing, and whichever reader looks first decides.
 ";
 
 const ONE_TRIPWIRE: &str = "\
 # Tripwires
 
-## Guarding something the fixture decided
+## Guarding the fixture's own decision `##a-fixture-tripwire`
 
-**Fires when:** a condition the fixture names is met.
+**Fires when:** a condition the fixture names is met, guarding `design@minimal@mock-anchor`.
 **Response:** reopen it.
 ";
 
-/// The claim: each flag selects its own kind, neither selects the other's, and a search honours
-/// the flag beside it.
+/// The claim: `issues` prints one row per issue entry with the five columns in order, and each
+/// filter keeps only what it names.
 ///
-/// This is the command root `CLAUDE.md` sends every session to before diagnosing anything, and
-/// nothing drove it before. Recorded mutation, `cargo mutate run` over
-/// `knowledge@src/main.rs`: turning the both-flags-absent case from `(true, true)` into
-/// `(false, true)` makes a bare run report zero open issues over a tree that holds two — the
-/// exact symptom the closed tracker entry recorded — and it is caught here.
+/// Recorded mutation, `cargo mutate run` over `knowledge@src/main.rs`: turning the `--kind`
+/// filter's `is_none_or` into `is_some_and` empties every unfiltered listing, and turning the
+/// row's `metadata` cell into a constant makes every kind read alike. Both are caught here.
 #[test]
-fn outstanding_selects_the_kind_its_flags_name() {
-    let sandbox = Sandbox::new("outstanding", "minimal");
-    // The fixture carries one entry in each of its two issue instances. Both are replaced, so
-    // the totals below are this test's and not the fixture's, and stay so if the fixture
-    // changes.
+fn issues_lists_one_row_per_entry_and_each_filter_keeps_what_it_names() {
+    let sandbox = Sandbox::new("issues", "minimal");
+    // The fixture's own entries are replaced, so the rows below are this test's.
     std::fs::remove_file(sandbox.path("docs/open-issues/the-mock-has-one-issue.md"))
         .expect("the fixture's own entry");
     std::fs::remove_file(sandbox.path("notes/open-issues/the-notes-are-not-a-component.md"))
         .expect("the fixture's own entry");
     sandbox.write("docs/open-issues/the-first-thing.md", FIRST_ISSUE);
     sandbox.write("docs/open-issues/the-second-thing.md", SECOND_ISSUE);
+    sandbox.write("notes/open-issues/two-kinds.md", TWO_KINDS);
     sandbox.write("docs/tripwires.md", ONE_TRIPWIRE);
 
-    let (all, stderr, code) = sandbox.run(&["outstanding"]);
+    let (all, stderr, code) = sandbox.run(&["issues"]);
     assert_eq!(code, 0, "{stderr}");
-    assert!(
-        all.contains("2 open issue(s), 1 tripwire(s)"),
-        "neither flag is every kind: {all}"
-    );
-
-    let (issues, _, _) = sandbox.run(&["outstanding", "--issues"]);
-    assert!(
-        issues.contains("2 open issue(s), 0 tripwire(s)"),
-        "--issues selects issues and not tripwires: {issues}"
-    );
-    assert!(!issues.contains("Guarding something"), "{issues}");
-
-    let (tripwires, _, _) = sandbox.run(&["outstanding", "--tripwires"]);
-    assert!(
-        tripwires.contains("0 open issue(s), 1 tripwire(s)"),
-        "--tripwires selects tripwires and not issues: {tripwires}"
-    );
-    assert!(
-        !tripwires.contains("The first thing outstanding"),
-        "{tripwires}"
-    );
-    // The labels come from each entry's own frontmatter, so a listing can be built without
-    // reading the bodies.
-    assert!(
-        issues.contains("defect") && issues.contains("todo"),
-        "{issues}"
-    );
-
-    // The flags bind the search too. Computed and then not read, `--issues` printed a tripwire
-    // in full at exit 0.
-    let (crossed, _, code) = sandbox.run(&["outstanding", "--issues", "Guarding something"]);
+    let rows: Vec<&str> = all.lines().collect();
     assert_eq!(
-        code, 1,
-        "a search restricted to the other kind matches nothing: {crossed}"
+        rows[0].split_whitespace().collect::<Vec<_>>(),
+        vec!["kind", "anchor", "id", "title", "last", "change"],
+        "{all}"
     );
-    let (found, _, code) = sandbox.run(&["outstanding", "--tripwires", "Guarding something"]);
-    assert_eq!(code, 0, "{found}");
-    assert!(found.contains("Fires when"), "the entry in full: {found}");
+    // Sorted by kind then id, so `-` (the refused block) comes before `defect` before `todo`.
+    assert_eq!(rows.len(), 4, "{all}");
+    assert!(rows[1].starts_with("-  "), "{all}");
+    assert!(rows[1].contains("two-kinds"), "{all}");
+    assert!(rows[2].starts_with("defect"), "{all}");
+    assert!(rows[3].starts_with("todo"), "{all}");
+    // The anchor column tells the two instances apart.
+    assert!(rows[1].contains("notes"), "{all}");
+    assert!(rows[2].contains("minimal"), "{all}");
+    // No tripwire is an issue.
+    assert!(!all.contains("Guarding the fixture"), "{all}");
+
+    let (one_kind, _, code) = sandbox.run(&["issues", "--kind", "todo"]);
+    assert_eq!(code, 0, "{one_kind}");
+    assert_eq!(one_kind.lines().count(), 2, "{one_kind}");
+    assert!(one_kind.contains("the-second-thing"), "{one_kind}");
+
+    let (one_anchor, _, code) = sandbox.run(&["issues", "notes"]);
+    assert_eq!(code, 0, "{one_anchor}");
+    assert_eq!(one_anchor.lines().count(), 2, "{one_anchor}");
+    assert!(one_anchor.contains("two-kinds"), "{one_anchor}");
+
+    let (searched, _, code) = sandbox.run(&["issues", "second"]);
+    assert_eq!(code, 0, "{searched}");
+    assert_eq!(searched.lines().count(), 2, "{searched}");
+    assert!(searched.contains("the-second-thing"), "{searched}");
+
+    // No row is a negative answer, and the header still says what was looked for.
+    let (none, _, code) = sandbox.run(&["issues", "nothing-matches-this"]);
+    assert_eq!(code, 1, "{none}");
+    assert!(
+        none.contains("kind") && none.contains("(no entry)"),
+        "{none}"
+    );
+}
+
+/// The claim: `tripwires` prints the references each entry carries, `--guarding` keeps the rows
+/// carrying one, and no issue appears among them.
+#[test]
+fn tripwires_lists_the_decisions_each_entry_guards() {
+    let sandbox = Sandbox::new("tripwires", "minimal");
+    sandbox.write("docs/tripwires.md", ONE_TRIPWIRE);
+
+    let (all, stderr, code) = sandbox.run(&["tripwires"]);
+    assert_eq!(code, 0, "{stderr}");
+    assert_eq!(
+        all.lines()
+            .next()
+            .map(|l| l.split_whitespace().collect::<Vec<_>>()),
+        Some(vec!["anchor", "id", "title", "guarding"]),
+        "{all}"
+    );
+    let row = all.lines().nth(1).expect("one tripwire");
+    // The title loses the slug that defines the entry, and the guarded decision is a column.
+    assert!(row.contains("a-fixture-tripwire"), "{row}");
+    assert!(row.contains("Guarding the fixture's own decision"), "{row}");
+    assert!(!row.contains("##a-fixture-tripwire"), "{row}");
+    assert!(
+        row.trim_end().ends_with("design@minimal@mock-anchor"),
+        "{row}"
+    );
+    assert!(!all.contains("The mock has one issue"), "{all}");
+
+    let (kept, _, code) = sandbox.run(&["tripwires", "--guarding", "design@minimal@mock-anchor"]);
+    assert_eq!(code, 0, "{kept}");
+    assert_eq!(kept.lines().count(), 2, "{kept}");
+
+    let (dropped, _, code) =
+        sandbox.run(&["tripwires", "--guarding", "design@minimal@mock-anchor-2"]);
+    assert_eq!(code, 1, "{dropped}");
+    assert!(dropped.contains("(no entry)"), "{dropped}");
+}
+
+/// The claim: `show` prints a file entry whole and a heading entry's section, lists every inbound
+/// reference as `file:line`, exits 1 on a reference that resolves to nothing and 2 on an argument
+/// that is not reference-shaped.
+#[test]
+fn show_prints_the_entry_and_what_points_at_it() {
+    let sandbox = Sandbox::new("show", "minimal");
+    sandbox.write("docs/open-issues/the-second-thing.md", SECOND_ISSUE);
+    sandbox.write("docs/tripwires.md", ONE_TRIPWIRE);
+
+    // A file entry: the file whole, frontmatter included.
+    let (entry, stderr, code) = sandbox.run(&["show", "issue@minimal@the-second-thing"]);
+    assert_eq!(code, 0, "{stderr}");
+    assert!(entry.contains("kind: todo"), "{entry}");
+    assert!(entry.contains("## Summary"), "{entry}");
+    assert!(
+        entry.contains("docs/open-issues/the-second-thing.md:1"),
+        "{entry}"
+    );
+
+    // A heading entry: that heading's section and not the whole file.
+    let (heading, _, code) = sandbox.run(&["show", "tripwire@minimal@a-fixture-tripwire"]);
+    assert_eq!(code, 0, "{heading}");
+    assert!(heading.contains("**Fires when:**"), "{heading}");
+    assert!(
+        !heading.contains("# Tripwires\n"),
+        "the level-one head is another section: {heading}"
+    );
+
+    // The inbound half: the entry above names a decision, and that decision's `show` finds it.
+    let (inbound, _, code) = sandbox.run(&["show", "design@minimal@mock-anchor"]);
+    assert_eq!(code, 0, "{inbound}");
+    assert!(inbound.contains("referenced at:"), "{inbound}");
+    assert!(inbound.contains("docs/tripwires.md:"), "{inbound}");
+
+    // An entry nothing points at says so, rather than printing an empty list.
+    let (alone, _, code) = sandbox.run(&["show", "issue@minimal@the-second-thing"]);
+    assert_eq!(code, 0, "{alone}");
+    assert!(alone.contains("referenced by nothing"), "{alone}");
+
+    // The two failures are different questions and different codes.
+    let (gone, _, code) = sandbox.run(&["show", "issue@minimal@no-such-entry"]);
+    assert_eq!(code, 1, "{gone}");
+    assert!(gone.contains("resolves to nothing"), "{gone}");
+    for shape in ["not-a-reference", "design@minimal", "design@minimal@a@b"] {
+        let (_, err, code) = sandbox.run(&["show", shape]);
+        assert_eq!(code, 2, "{shape}: {err}");
+    }
 }
 
 /// The summary block names the checker's own directory and counts the files under it, so a

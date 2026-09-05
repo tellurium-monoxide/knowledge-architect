@@ -1,0 +1,561 @@
+//! What the recorded entries hold, for the commands that print them.
+//!
+//! `show`, `issues` and `tripwires` all ask the same three questions of an entity: where it is
+//! defined, what it says, and what points at it. This module answers them over the entity table
+//! `knowledge@documentation/src/entity.rs` builds, so a listing reads the same definition sites
+//! every check resolves against and no command holds a second notion of what an entry is.
+//!
+//! **A file register's entry is its file; a heading register's entry is its section.** That is
+//! the whole of the difference between the two shapes here: the body of the first is the file's
+//! text, and the body of the second is the heading line through to the next heading at or above
+//! its level.
+//!
+//! Nothing here reads the filesystem except `last_changed`, which spawns `git` and is called by
+//! the binary alone. Every other function is a pure function of the model, so a test states its
+//! project as text.
+
+use std::collections::BTreeMap;
+use std::path::{Path, PathBuf};
+use std::process::Command;
+
+use crate::entity::{candidate, Anchors, Candidate, Entities, Kind, Site};
+use crate::manifest::Shape;
+use crate::model::{Document, Model};
+use crate::scan::Observation;
+
+/// One recorded entry, as a row and as a body.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Record {
+    pub anchor: String,
+    pub id: String,
+    /// The entry's title: a file entry's level-one heading, a heading entry's heading text
+    /// without its slug. The id where the entry carries neither.
+    pub title: String,
+    /// Where the entry is defined.
+    pub site: Site,
+    /// The group subdirectory of a file entry, `None` at an instance's top level and for
+    /// every heading entry.
+    pub group: Option<String>,
+    /// The entry whole: a file's text, or a heading's section.
+    pub body: String,
+    /// The value of the register's first declared metadata key, where the entry carries one.
+    ///
+    /// `None` covers both an entry that declares no value and one whose frontmatter was
+    /// refused, which are the same thing to a listing and each a `registers` finding.
+    pub metadata: Option<String>,
+    /// Every `design@<anchor>@<id>` reference the entry's body carries, as written, in the
+    /// order they appear.
+    pub guards: Vec<String>,
+}
+
+/// The kind whose references a tripwire row prints: the decisions it guards.
+pub const DESIGN_KIND: &str = "design";
+
+/// Every entry of one register kind, in `(anchor, id)` order.
+///
+/// An entity whose definition site is in no walked document is skipped: the table holds it
+/// because something defined it, and a row with no body would say the register holds an entry
+/// nobody can read.
+pub fn records(model: &Model, anchors: &Anchors, entities: &Entities, kind: &Kind) -> Vec<Record> {
+    let by_path: BTreeMap<&Path, &Document> = model
+        .documents()
+        .iter()
+        .map(|d| (d.rel.as_path(), d))
+        .collect();
+    let mut out = Vec::new();
+    for (anchor_name, id, sites) in entities.of_kind(kind) {
+        // The first site: a second definition of one id is a finding of its own, and a listing
+        // that printed two rows for one entity would hide it behind a duplicate.
+        let Some(site) = sites.first() else { continue };
+        let Some(doc) = by_path.get(site.file.as_path()) else {
+            continue;
+        };
+        let shape = anchors
+            .by_name(anchor_name)
+            .and_then(|a| anchors.home(a, kind))
+            .map(|home| home.shape);
+        let record = match shape {
+            Some(Shape::File) => file_record(anchors, kind, anchor_name, id, site, doc),
+            _ => heading_record(anchor_name, id, site, doc),
+        };
+        out.push(record);
+    }
+    out
+}
+
+/// A file register's entry: the file whole.
+fn file_record(
+    anchors: &Anchors,
+    kind: &Kind,
+    anchor: &str,
+    id: &str,
+    site: &Site,
+    doc: &Document,
+) -> Record {
+    let dir = anchors
+        .by_name(anchor)
+        .and_then(|a| anchors.home(a, kind))
+        .map(|home| home.dir);
+    let group = dir.and_then(|dir| {
+        let inside = doc.rel.strip_prefix(&dir).ok()?;
+        let parts: Vec<_> = inside.components().collect();
+        (parts.len() > 1).then(|| parts[0].as_os_str().to_string_lossy().into_owned())
+    });
+    let key = anchors
+        .registers()
+        .by_name(kind.name())
+        .and_then(|r| r.metadata.first())
+        .map(|(k, _)| k.clone());
+    Record {
+        anchor: anchor.to_string(),
+        id: id.to_string(),
+        title: heading_text(doc, 1).unwrap_or_else(|| id.to_string()),
+        site: site.clone(),
+        group,
+        body: doc.text.clone(),
+        metadata: key.and_then(|k| value_of(doc, &k)),
+        guards: guards(doc, 1, u32::MAX),
+    }
+}
+
+/// A heading register's entry: the heading's own section.
+fn heading_record(anchor: &str, id: &str, site: &Site, doc: &Document) -> Record {
+    let (from, to) = section(doc, site.line);
+    Record {
+        anchor: anchor.to_string(),
+        id: id.to_string(),
+        title: strip_slug(&heading_at(doc, from).unwrap_or_else(|| id.to_string())),
+        site: site.clone(),
+        group: None,
+        body: lines(doc, from, to),
+        metadata: None,
+        guards: guards(doc, from, to),
+    }
+}
+
+impl Record {
+    /// The row a listing prints for a tripwire: the references it carries, joined.
+    pub fn guarding(&self) -> String {
+        if self.guards.is_empty() {
+            "-".to_string()
+        } else {
+            self.guards.join(" ")
+        }
+    }
+
+    /// Whether the entry's id or title holds `needle`, case-insensitively.
+    pub fn matches(&self, needle: &str) -> bool {
+        let needle = needle.to_lowercase();
+        self.id.to_lowercase().contains(&needle) || self.title.to_lowercase().contains(&needle)
+    }
+}
+
+/// Every site that references one entity, in document and line order.
+///
+/// The reference grammar's own resolver decides what is a reference, so a span this reports is
+/// one the `references` family judged, and a span it passes over is one that family called
+/// silent.
+pub fn inbound(model: &Model, anchors: &Anchors, kind: &Kind, anchor: &str, id: &str) -> Vec<Site> {
+    let mut out = Vec::new();
+    for doc in model.documents() {
+        for l in &doc.observations {
+            let Observation::Span(span) = &l.what else {
+                continue;
+            };
+            if let Candidate::Reference {
+                kind: k,
+                anchor: a,
+                id: i,
+            } = candidate(span, anchors)
+            {
+                if &k == kind && a == anchor && i == id {
+                    out.push(Site {
+                        file: doc.rel.clone(),
+                        line: l.line,
+                    });
+                }
+            }
+        }
+    }
+    out.sort_by(|a, b| (&a.file, a.line).cmp(&(&b.file, b.line)));
+    out
+}
+
+/// When each file under `dirs` last changed, as `git` reports it, keyed by project-relative
+/// path.
+///
+/// **One process for the whole listing**, per the plan: a `git log` per entry costs a process
+/// per row. An empty map is what a tree with no `git`, or no history, produces, and the caller
+/// prints a placeholder rather than failing — this column is convenience, and the hard git
+/// dependency belongs to the walk rather than to a listing.
+pub fn last_changed(root: &Path, dirs: &[PathBuf]) -> BTreeMap<PathBuf, String> {
+    if dirs.is_empty() {
+        return BTreeMap::new();
+    }
+    let mut command = Command::new("git");
+    command
+        .current_dir(root)
+        // `--relative` because the names are matched against project-relative paths, and a
+        // project that is a subdirectory of its repository would otherwise get repository-relative
+        // ones back and match nothing at all.
+        .args(["log", "--format=%cs", "--name-only", "--relative"])
+        .arg("--");
+    for dir in dirs {
+        command.arg(dir);
+    }
+    let Ok(output) = command.output() else {
+        return BTreeMap::new();
+    };
+    if !output.status.success() {
+        return BTreeMap::new();
+    }
+    parse_log(&String::from_utf8_lossy(&output.stdout))
+}
+
+/// The log as a map from path to the date of its newest commit.
+///
+/// The two line kinds are told apart by shape: `%cs` is a bare `YYYY-MM-DD`, which no path can
+/// be, so the log needs no second format field and no separator to parse.
+fn parse_log(text: &str) -> BTreeMap<PathBuf, String> {
+    let mut out = BTreeMap::new();
+    let mut date: Option<&str> = None;
+    for line in text.lines() {
+        if line.is_empty() {
+            continue;
+        }
+        if is_date(line) {
+            date = Some(line);
+            continue;
+        }
+        let Some(date) = date else { continue };
+        // The log is newest first, so the first mention of a path is its last change.
+        out.entry(PathBuf::from(line))
+            .or_insert_with(|| date.to_string());
+    }
+    out
+}
+
+fn is_date(line: &str) -> bool {
+    let bytes = line.as_bytes();
+    bytes.len() == 10
+        && bytes[4] == b'-'
+        && bytes[7] == b'-'
+        && bytes
+            .iter()
+            .enumerate()
+            .all(|(i, b)| i == 4 || i == 7 || b.is_ascii_digit())
+}
+
+/// The inclusive line range of the section holding `line`: the nearest heading at or above it,
+/// through to the next heading at the same level or shallower.
+///
+/// A slug may sit in a table cell as readily as in a heading, so the section rather than the
+/// line is what a reader is shown: a cell in a table of decisions means nothing without the
+/// table and the heading above it.
+fn section(doc: &Document, line: u32) -> (u32, u32) {
+    let mut headings: Vec<(u32, u8)> = doc
+        .observations
+        .iter()
+        .filter_map(|l| match &l.what {
+            Observation::Heading { level, .. } => Some((l.line, *level)),
+            _ => None,
+        })
+        .collect();
+    headings.sort();
+    let last = doc.text.lines().count() as u32;
+    let Some(&(from, level)) = headings.iter().rev().find(|(at, _)| *at <= line) else {
+        return (1, last);
+    };
+    let to = headings
+        .iter()
+        .find(|(at, l)| *at > from && *l <= level)
+        .map(|(at, _)| at.saturating_sub(1))
+        .unwrap_or(last);
+    (from, to)
+}
+
+/// The text of lines `from..=to`, one-based.
+fn lines(doc: &Document, from: u32, to: u32) -> String {
+    doc.text
+        .lines()
+        .skip(from.saturating_sub(1) as usize)
+        .take((to.saturating_sub(from) + 1) as usize)
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+/// The text of the first heading of `level` in the document.
+fn heading_text(doc: &Document, level: u8) -> Option<String> {
+    doc.observations.iter().find_map(|l| match &l.what {
+        Observation::Heading { level: n, text } if *n == level => Some(text.clone()),
+        _ => None,
+    })
+}
+
+/// The text of the heading on `line`, where one is there.
+fn heading_at(doc: &Document, line: u32) -> Option<String> {
+    doc.observations.iter().find_map(|l| match &l.what {
+        Observation::Heading { text, .. } if l.line == line => Some(text.clone()),
+        _ => None,
+    })
+}
+
+/// A heading's text without the slug that ends it.
+///
+/// The statement comes first and the slug last, so the title is everything before the last
+/// backticked span opening with `##`.
+fn strip_slug(text: &str) -> String {
+    let trimmed = text.trim_end();
+    let Some(inner) = trimmed.strip_suffix('`') else {
+        return trimmed.to_string();
+    };
+    let Some(at) = inner.rfind('`') else {
+        return trimmed.to_string();
+    };
+    if !inner[at + 1..].starts_with("##") {
+        return trimmed.to_string();
+    }
+    inner[..at].trim_end().to_string()
+}
+
+/// One frontmatter value of a document, where the block parsed and carries the key.
+fn value_of(doc: &Document, key: &str) -> Option<String> {
+    doc.parsed
+        .frontmatter
+        .as_ref()?
+        .as_ref()
+        .ok()?
+        .iter()
+        .find(|(k, _)| k == key)
+        .map(|(_, v)| v.clone())
+}
+
+/// Every `design@<anchor>@<id>` span written between `from` and `to`, as written.
+///
+/// Read off the scanner's spans rather than off the text, so a rule about what is a reference
+/// lives in one place. The kind is matched by name because this module knows nothing about
+/// which registers a project declares.
+fn guards(doc: &Document, from: u32, to: u32) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    for l in &doc.observations {
+        if l.line < from || l.line > to {
+            continue;
+        }
+        let Observation::Span(span) = &l.what else {
+            continue;
+        };
+        if span.starts_with(&format!("{DESIGN_KIND}@")) && !out.contains(span) {
+            out.push(span.clone());
+        }
+    }
+    out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::manifest::Manifest;
+
+    // Every fixture is inline: the checker reads no string literal of its own source, per
+    // `knowledge#checker-source-literals-are-data`.
+
+    /// A project whose root component is `a-project`, with one location carrying the issue
+    /// register alone.
+    fn anchors() -> Anchors {
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [locations.notes]\npath = \"notes\"\nregisters = [\"issue\"]\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        Anchors::of(&Manifest::parse(Path::new("/nowhere"), text).expect("a declaration"))
+    }
+
+    fn rows(docs: Vec<(&str, &str)>, kind: &str) -> Vec<Record> {
+        let anchors = anchors();
+        let model = Model::from_documents(
+            docs.into_iter()
+                .map(|(p, t)| (PathBuf::from(p), t.to_string()))
+                .collect(),
+        );
+        let entities = Entities::build(&model, &anchors);
+        records(&model, &anchors, &entities, &Kind::new(kind))
+    }
+
+    #[test]
+    fn a_file_entry_is_the_file_whole_and_carries_its_own_metadata() {
+        let text = "---\nkind: defect\n---\n# A broken thing\n\n## Summary\n\nIt broke.\n";
+        let found = rows(vec![("notes/open-issues/a-broken-thing.md", text)], "issue");
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert_eq!(found[0].anchor, "notes");
+        assert_eq!(found[0].id, "a-broken-thing");
+        assert_eq!(found[0].title, "A broken thing");
+        assert_eq!(found[0].metadata.as_deref(), Some("defect"));
+        assert_eq!(found[0].group, None);
+        assert_eq!(found[0].body, text, "the file whole, frontmatter included");
+    }
+
+    #[test]
+    fn an_entry_in_a_group_names_it_and_a_refused_block_leaves_the_kind_unread() {
+        let two_kinds = "---\nkind: defect\nkind: todo\n---\n# Two values for one thing\n";
+        let found = rows(
+            vec![("notes/open-issues/a-group/two-kinds.md", two_kinds)],
+            "issue",
+        );
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert_eq!(found[0].group.as_deref(), Some("a-group"));
+        // The block was refused, so there is no value to print. A listing showing the first of
+        // two would be choosing between them, which is what the refusal exists to avoid.
+        assert_eq!(found[0].metadata, None);
+    }
+
+    #[test]
+    fn a_heading_entry_is_its_own_section_and_loses_the_slug_from_its_title() {
+        let home = "# Tripwires\n\n\
+                    ## The first one `##first`\n\n\
+                    **Fires when:** it fires, guarding `design@a-project@a-decision`, and see \
+                    `path@a-project@docs/design.md` and `issue@notes@a-thing`.\n\n\
+                    ## The second one `##second`\n\n\
+                    **Fires when:** something else.\n";
+        let found = rows(vec![("docs/tripwires.md", home)], "tripwire");
+        assert_eq!(found.len(), 2, "{found:#?}");
+        let first = found.iter().find(|r| r.id == "first").expect("the first");
+        assert_eq!(first.title, "The first one");
+        assert_eq!(first.site.line, 3);
+        // The section stops at the next heading of the same level, so the second entry's body
+        // is not in the first's.
+        assert!(first.body.contains("it fires"), "{}", first.body);
+        assert!(!first.body.contains("something else"), "{}", first.body);
+        assert!(!first.body.contains("# Tripwires"), "{}", first.body);
+        assert_eq!(
+            first.guards,
+            vec!["design@a-project@a-decision".to_string()]
+        );
+        let second = found.iter().find(|r| r.id == "second").expect("the second");
+        assert!(second.guards.is_empty(), "{second:#?}");
+        assert_eq!(second.guarding(), "-");
+    }
+
+    #[test]
+    fn a_slug_in_a_table_cell_is_shown_with_the_section_that_holds_the_table() {
+        // A cell means nothing without its table and the heading above it, so the section is
+        // what a reader is given rather than the row.
+        let home = "# Decisions\n\n\
+                    ## A table of them\n\n\
+                    | statement | slug |\n| --- | --- |\n| It holds | `##in-a-cell` |\n";
+        let found = rows(vec![("docs/design.md", home)], "design");
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert_eq!(found[0].id, "in-a-cell");
+        assert!(
+            found[0].body.starts_with("## A table of them"),
+            "{found:#?}"
+        );
+        assert!(found[0].body.contains("| It holds |"), "{found:#?}");
+    }
+
+    #[test]
+    fn inbound_names_every_site_that_references_the_entity_and_nothing_else() {
+        let anchors = anchors();
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from("docs/design.md"),
+                "# Decisions\n\n## A decision `##a-decision`\n\nIt holds.\n".to_string(),
+            ),
+            (
+                PathBuf::from("docs/tripwires.md"),
+                "# Tripwires\n\n## One `##one`\n\nGuarding `design@a-project@a-decision`.\n"
+                    .to_string(),
+            ),
+            (
+                PathBuf::from("README.md"),
+                // Four references: the one asked for, and one differing in each segment of the
+                // key. Each of the last three is one part of the key, so a resolver dropping
+                // any comparison picks one of them up.
+                "See `design@a-project@a-decision`, `design@a-project@another`, \
+                 `design@notes@a-decision` and `tripwire@a-project@a-decision`.\n"
+                    .to_string(),
+            ),
+        ]);
+        let sites = inbound(
+            &model,
+            &anchors,
+            &Kind::new("design"),
+            "a-project",
+            "a-decision",
+        );
+        assert_eq!(
+            sites.iter().map(Site::to_string).collect::<Vec<_>>(),
+            vec!["README.md:1", "docs/tripwires.md:5"]
+        );
+        // One occurrence on that line and not four: the other three are other entities.
+        assert_eq!(
+            sites
+                .iter()
+                .filter(|s| s.file.ends_with("README.md"))
+                .count(),
+            1
+        );
+        // The definition site is not an inbound reference.
+        assert!(!sites.iter().any(|s| s.file.ends_with("design.md")));
+    }
+
+    #[test]
+    fn the_log_maps_each_path_to_its_newest_commit_and_ignores_what_precedes_a_date() {
+        // Newest first, so the first mention of a path wins; a name before any date belongs to
+        // no commit and is dropped rather than attributed to the next one.
+        let log = "docs/orphan.md\n2026-01-02\n\ndocs/a.md\ndocs/b.md\n\n\
+                   2026-01-01\n\ndocs/a.md\ndocs/c.md\n";
+        let found = parse_log(log);
+        assert_eq!(
+            found.get(Path::new("docs/a.md")).map(String::as_str),
+            Some("2026-01-02")
+        );
+        assert_eq!(
+            found.get(Path::new("docs/b.md")).map(String::as_str),
+            Some("2026-01-02")
+        );
+        assert_eq!(
+            found.get(Path::new("docs/c.md")).map(String::as_str),
+            Some("2026-01-01")
+        );
+        assert_eq!(found.get(Path::new("docs/orphan.md")), None);
+        assert!(parse_log("").is_empty());
+    }
+
+    #[test]
+    fn a_date_is_told_from_a_path_by_its_shape_alone() {
+        assert!(is_date("2026-01-02"));
+        assert!(!is_date("2026-1-2"));
+        assert!(!is_date("docs/a.md"));
+        assert!(!is_date("2026-01-022"));
+        assert!(!is_date("abcd-ef-gh"));
+    }
+
+    #[test]
+    fn a_title_keeps_every_backticked_span_that_is_not_its_slug() {
+        assert_eq!(strip_slug("A statement `##the-slug`"), "A statement");
+        assert_eq!(
+            strip_slug("A statement about `code`"),
+            "A statement about `code`"
+        );
+        assert_eq!(strip_slug("A plain statement"), "A plain statement");
+        assert_eq!(strip_slug("`##only-a-slug`"), "");
+    }
+
+    #[test]
+    fn a_needle_matches_the_id_or_the_title_in_either_case() {
+        let found = rows(
+            vec![(
+                "notes/open-issues/a-broken-thing.md",
+                "---\nkind: defect\n---\n# A Broken Thing\n",
+            )],
+            "issue",
+        );
+        assert!(found[0].matches("BROKEN"));
+        assert!(found[0].matches("a-broken"));
+        assert!(
+            !found[0].matches("defect"),
+            "the kind is a column, not the text"
+        );
+    }
+}

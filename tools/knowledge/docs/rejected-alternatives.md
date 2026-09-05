@@ -282,6 +282,6 @@ decides which subsections an entry owes: an unanticipated kind then owes the wro
 and no reader can tell. A closed list makes an unknown kind a finding naming the list and an
 addition a reviewed manifest diff, which is what the concern list already did; the failure case the
 open set was written against — a wrong label — cannot occur once an unknown kind is refused. The
-incumbent statement stands in `knowledge@documentation/src/outstanding.rs` until item 5 of
-`thaum@docs/plans/knowledge-tool-overhaul.md` rewrites that module.
+module that carried the incumbent statement is gone: `knowledge@documentation/src/records.rs`
+replaces it, and reads each entry's kind out of its own frontmatter without a fallback label.
 

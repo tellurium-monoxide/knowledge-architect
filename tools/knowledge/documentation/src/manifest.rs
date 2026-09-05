@@ -37,6 +37,10 @@ pub const COMPONENT_DOCUMENTS: [&str; 3] =
 /// The name of the built-in issue register, which is the one register that accepts a key.
 pub const ISSUE_REGISTER: &str = "issue";
 
+/// The built-in heading register of evidence that would flip a decision, by the name a
+/// reference spells in kind position.
+pub const TRIPWIRE_REGISTER: &str = "tripwire";
+
 /// The issue register's compiled kind list. Closed: an unknown kind is a finding naming it.
 pub const ISSUE_KINDS: [&str; 6] = [
     "defect",
@@ -164,7 +168,7 @@ impl Registers {
         vec![
             heading("design", "design"),
             heading("goal", "goals"),
-            heading("tripwire", "tripwires"),
+            heading(TRIPWIRE_REGISTER, "tripwires"),
             Register {
                 name: ISSUE_REGISTER.to_string(),
                 scope: Scope::Component,

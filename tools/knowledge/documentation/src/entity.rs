@@ -602,6 +602,25 @@ impl Entities {
         }
     }
 
+    /// Every entity of one kind, as anchor, id and the sites that define it.
+    ///
+    /// In `(anchor, id)` order, which is the table's own, so a listing that sorts by something
+    /// else still starts from one order rather than from a hash.
+    pub fn of_kind(&self, kind: &Kind) -> Vec<(&str, &str, &[Site])> {
+        self.defined
+            .iter()
+            .filter(|((k, _, _), _)| k == kind)
+            .map(|((_, anchor, id), sites)| (anchor.as_str(), id.as_str(), sites.as_slice()))
+            .collect()
+    }
+
+    /// Where one entity is defined, or `None` where nothing defines it.
+    pub fn sites(&self, kind: &Kind, anchor: &str, id: &str) -> Option<&[Site]> {
+        self.defined
+            .get(&(kind.clone(), anchor.to_string(), id.to_string()))
+            .map(Vec::as_slice)
+    }
+
     /// How many distinct entities the table holds.
     pub fn len(&self) -> usize {
         self.defined.len()

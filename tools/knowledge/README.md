@@ -5,8 +5,11 @@ it. One binary, reached through a cargo alias so nothing has to be installed.
 
 ```sh
 cargo knowledge check [--only a,b,c]      every check, over one walk; or only these families
-cargo knowledge outstanding [--issues | --tripwires] [text …]
-                                          every tracker entry by directory; or one in full
+cargo knowledge show <kind>@<anchor>@<id> one recorded entry, and every reference to it
+cargo knowledge issues [anchor] [--kind k] [--group g] [text …]
+                                          every issue entry, one row each
+cargo knowledge tripwires [anchor] [--guarding <ref>] [text …]
+                                          every tripwire entry, and what each guards
 cargo knowledge index                     regenerate every generated index in place
 cargo knowledge model                     every observation the walk produced
 cargo knowledge rules show <number> …     the pinned text of a rule, shaped to be quoted
@@ -24,8 +27,8 @@ Three, per `thaum#exit-code-ladder`, and the third is what makes the other two m
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
 | `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; every `index` and `model` run |
-| `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `outstanding <text>` matching nothing |
-| `2` | the command could not run | an unknown or invalid argument, no project above the working directory, an input that cannot be read, `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
+| `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, no project above the working directory, an input that cannot be read, `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -54,12 +57,36 @@ one walk, so asking for several costs one run rather than one run each. A run pr
 it performed, and a family that did not run prints no count of its own. The argument is
 `knowledge#families-are-the-checks`.
 
-## `outstanding`
+## `show`, `issues` and `tripwires`
 
-Every tracker entry in the project, grouped by the file that holds it. `--issues` and `--tripwires`
-each select one kind and **refuse each other**: the pair asks for two disjoint halves at once, which
-is what asking for neither already means. A text argument prints in full every entry whose title
-contains it, and matching nothing exits 1.
+The three commands that print what is recorded, given a reference or an anchor. All three read the
+entity table, so what they print is what `check` resolves against.
+
+**`show <kind>@<anchor>@<id>`** prints one entry and then every reference to it, as `file:line`:
+
+- a file register's entry is printed **whole**, frontmatter included;
+- a heading register's entry is printed as **its section** — the heading through to the next
+  heading at the same level or shallower. A slug in a table cell is shown with the section holding
+  the table, because a cell means nothing without it;
+- `path@<anchor>@<path>` prints the walked document's text, or says the path is outside the walk.
+
+**The two failures are different questions**: an argument that is not reference-shaped is exit 2
+with the grammar named, and a reference the grammar accepts that names nothing is exit 1.
+
+**`issues [anchor] [--kind k] [--group g] [text …]`** prints one row per issue entry — kind,
+anchor, id, title, last change — sorted by kind then id. **`tripwires [anchor] [--guarding <ref>]
+[text …]`** prints one row per tripwire entry — anchor, id, title, and every
+`` `design@<anchor>@<id>` `` reference the entry carries — sorted by anchor then id. For both, the
+text keeps the rows whose id or title contains it, case-insensitively, and **no row is exit 1**.
+
+**The first positional argument is an anchor when something declares that name**, and text
+otherwise, which is what lets one positional list mean both. A search for a word that is also an
+anchor name is written with the anchor before it.
+
+**The last-change column is git's**, taken in one `git log` for every issue instance at once. An
+entry with no commit shows `uncommitted`; where git cannot answer at all the column shows `-`.
+A date never enters a generated file, per `knowledge#generated-files-are-pure` — it is printed
+here and nowhere else.
 
 ## `index`
 

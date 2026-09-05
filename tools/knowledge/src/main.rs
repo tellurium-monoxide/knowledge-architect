@@ -17,6 +17,8 @@ use clap::{Args, Parser, Subcommand};
 
 use documentation::check::citations::Release;
 use documentation::check::{Inputs, Only, Report};
+use documentation::entity::{Anchors, Candidate, Entities, Kind};
+use documentation::manifest::{ISSUE_REGISTER, TRIPWIRE_REGISTER};
 use documentation::Manifest;
 
 mod corpus_cmd;
@@ -47,8 +49,12 @@ struct Cli {
 enum Command {
     /// Every check, over one walk; or only these families.
     Check(CheckArgs),
-    /// Every tracker entry, by directory; or the ones a search names, in full.
-    Outstanding(OutstandingArgs),
+    /// One recorded entry, whole, and every reference to it.
+    Show(ShowArgs),
+    /// Every issue entry, one row each.
+    Issues(IssuesArgs),
+    /// Every tripwire entry, one row each.
+    Tripwires(TripwiresArgs),
     /// Regenerate every generated index in place.
     Index,
     /// Every observation the walk produced: file, line, kind, value.
@@ -68,16 +74,33 @@ struct CheckArgs {
 }
 
 #[derive(Args)]
-struct OutstandingArgs {
-    /// Only the entries that need doing.
-    #[arg(long, conflicts_with = "tripwires")]
-    issues: bool,
-    /// Only the tripwires, which need nothing done.
-    #[arg(long, conflicts_with = "issues")]
-    tripwires: bool,
-    /// Print in full every entry whose title contains this text.
-    #[arg(value_name = "TEXT")]
-    needle: Vec<String>,
+struct ShowArgs {
+    /// The reference to print, `<kind>@<anchor>@<id>`.
+    #[arg(value_name = "REF")]
+    reference: String,
+}
+
+#[derive(Args)]
+struct IssuesArgs {
+    /// Only the entries of this kind.
+    #[arg(long, value_name = "KIND")]
+    kind: Option<String>,
+    /// Only the entries in this group subdirectory.
+    #[arg(long, value_name = "GROUP")]
+    group: Option<String>,
+    /// An anchor to list, then text every row's id or title must contain.
+    #[arg(value_name = "ANCHOR|TEXT")]
+    terms: Vec<String>,
+}
+
+#[derive(Args)]
+struct TripwiresArgs {
+    /// Only the entries carrying this reference.
+    #[arg(long, value_name = "REF")]
+    guarding: Option<String>,
+    /// An anchor to list, then text every row's id or title must contain.
+    #[arg(value_name = "ANCHOR|TEXT")]
+    terms: Vec<String>,
 }
 
 fn main() -> ExitCode {
@@ -88,7 +111,9 @@ fn main() -> ExitCode {
 
     let outcome = locate().and_then(|manifest| match cli.command {
         Command::Check(args) => check(&manifest, args.only.unwrap_or(Only::EVERYTHING)),
-        Command::Outstanding(args) => outstanding(&manifest, &args),
+        Command::Show(args) => show(&manifest, &args),
+        Command::Issues(args) => issues(&manifest, &args),
+        Command::Tripwires(args) => tripwires(&manifest, &args),
         Command::Index => index(&manifest),
         Command::Model => model(&manifest),
         Command::Rules { command } => corpus_cmd::run(&manifest, &command),
@@ -200,7 +225,7 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
     // reads them. They are read here for the same reason the generated files are: a check
     // may not touch the filesystem.
     let mut configs = HashMap::new();
-    for (_, _, home) in documentation::entity::Anchors::of(manifest).instances() {
+    for (_, _, home) in Anchors::of(manifest).instances() {
         if let Ok(text) = std::fs::read_to_string(manifest.root().join(&home.config)) {
             configs.insert(home.config.clone(), text);
         }
@@ -390,83 +415,259 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
     Ok(ExitCode::SUCCESS)
 }
 
-/// Every tracker entry in the project, or the entries a search names.
-fn outstanding(manifest: &Manifest, args: &OutstandingArgs) -> Result<ExitCode, String> {
-    // Each flag SELECTS its own kind. Read as each deselecting the other, passing both
-    // selected nothing and reported the project empty at exit 0 — the command root
-    // `CLAUDE.md` sends every session to before diagnosing anything. clap refuses the pair
-    // now; this reads so that a third kind could not reintroduce the shape.
-    let (want_issues, want_tripwires) = match (args.issues, args.tripwires) {
-        (false, false) => (true, true),
-        (issues, tripwires) => (issues, tripwires),
-    };
-    let needle: Vec<&str> = args.needle.iter().map(String::as_str).collect();
-
+/// One recorded entry, whole, and every reference to it.
+///
+/// **The two failure codes are different questions**, per `thaum#exit-code-ladder`: an argument
+/// that is not reference-shaped could not be run and exits 2, and a reference the grammar accepts
+/// that names nothing is a negative answer and exits 1. A reader who mistyped the grammar and a
+/// reader who named a deleted entry need different things.
+fn show(manifest: &Manifest, args: &ShowArgs) -> Result<ExitCode, String> {
     let model =
         documentation::Model::build(manifest, Some(checker_source())).map_err(|e| e.to_string())?;
-    let entries = documentation::outstanding::entries(&model, manifest);
+    let anchors = Anchors::of(manifest);
+    let reference = args.reference.trim_matches('`');
+    let (kind, anchor, id) = match documentation::entity::candidate(reference, &anchors) {
+        Candidate::Reference { kind, anchor, id } => (kind, anchor, id),
+        Candidate::Malformed { why } => {
+            return Err(format!("{reference} is malformed: {why}"));
+        }
+        Candidate::AnchorInKindPosition { head } => {
+            return Err(format!(
+                "{reference} opens with {head}, an anchor, where the kind goes: write \
+                 <kind>@<anchor>@<id>, one of {}",
+                anchors.kinds_listed()
+            ));
+        }
+        Candidate::NotOne => {
+            return Err(format!(
+                "{reference} is not a reference: write <kind>@<anchor>@<id>, the kind one of {}",
+                anchors.kinds_listed()
+            ));
+        }
+    };
 
-    if !needle.is_empty() {
-        // Print one entry in full. A recorded entry usually says more than a fresh diagnosis
-        // will — the measurement already taken, what was ruled out, and often why the work was
-        // deliberately left undone.
-        let needle = needle.join(" ").to_lowercase();
-        // The kind filters bind here too. Computed and then not read, `--issues` printed a
-        // tripwire and `--tripwires` printed an open issue, both at exit 0 — the same
-        // accepted-and-does-the-wrong-thing shape the migration exists to remove.
-        let hits: Vec<_> = entries
+    // The body first, then what points at it. A reader asking for an entry wants the entry; the
+    // inbound list is what tells them what closing it would break.
+    let mut found = false;
+    if kind.is_path() {
+        // A path's entity is the tree's, so it is shown from the walked document where there is
+        // one and from the survey where there is not: a directory and an unwalked file both
+        // exist and are both worth resolving, and neither has a body to print.
+        let Some(a) = anchors.by_name(anchor) else {
+            println!(
+                "no anchor is named {anchor}; the anchors are {}",
+                anchors.listed()
+            );
+            return Ok(ExitCode::FAILURE);
+        };
+        let rel = a.path.join(id.trim_end_matches('/'));
+        if let Some(doc) = model.documents().iter().find(|d| d.rel == rel) {
+            println!("{reference}  {}", doc.rel.display());
+            println!();
+            println!("{}", doc.text.trim_end());
+            found = true;
+        } else {
+            let survey =
+                documentation::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
+            if survey.present.contains(&rel) {
+                println!("{reference}  {}", rel.display());
+                println!();
+                println!("(outside the walk; nothing to print)");
+                found = true;
+            }
+        }
+    } else if let Some(record) =
+        documentation::records::records(&model, &anchors, &Entities::build(&model, &anchors), &kind)
+            .into_iter()
+            .find(|r| r.anchor == anchor && r.id == id)
+    {
+        println!("{reference}  {}", record.site);
+        println!();
+        println!("{}", record.body.trim_end());
+        found = true;
+    }
+    if !found {
+        println!("{reference} resolves to nothing");
+        return Ok(ExitCode::FAILURE);
+    }
+
+    let inbound = documentation::records::inbound(&model, &anchors, &kind, anchor, id);
+    println!();
+    if inbound.is_empty() {
+        println!("referenced by nothing");
+    } else {
+        println!("referenced at:");
+        for site in inbound {
+            println!("  {site}");
+        }
+    }
+    Ok(ExitCode::SUCCESS)
+}
+
+/// Every issue entry, one row each.
+fn issues(manifest: &Manifest, args: &IssuesArgs) -> Result<ExitCode, String> {
+    let model =
+        documentation::Model::build(manifest, Some(checker_source())).map_err(|e| e.to_string())?;
+    let anchors = Anchors::of(manifest);
+    let kind = Kind::new(ISSUE_REGISTER);
+    let (anchor, needle) = split_terms(&args.terms, &anchors);
+    let mut rows = documentation::records::records(
+        &model,
+        &anchors,
+        &Entities::build(&model, &anchors),
+        &kind,
+    );
+    rows.retain(|r| {
+        anchor.is_none_or(|a| r.anchor == a)
+            && args
+                .kind
+                .as_ref()
+                .is_none_or(|k| r.metadata.as_deref() == Some(k.as_str()))
+            && args
+                .group
+                .as_ref()
+                .is_none_or(|g| r.group.as_deref() == Some(g.as_str()))
+            && needle.as_ref().is_none_or(|t| r.matches(t))
+    });
+    // Kind then id, so entries of one kind read together whatever anchor they sit under.
+    rows.sort_by(|a, b| (&a.metadata, &a.id).cmp(&(&b.metadata, &b.id)));
+
+    // One `git log` for every instance directory at once. A per-row invocation is a process per
+    // entry, and this column is not worth one.
+    let dirs: Vec<std::path::PathBuf> = Anchors::of(manifest)
+        .instances()
+        .into_iter()
+        .filter(|(_, register, _)| register.name == ISSUE_REGISTER)
+        .map(|(_, _, home)| home.dir)
+        .collect();
+    let changed = documentation::records::last_changed(manifest.root(), &dirs);
+
+    let table: Vec<[String; 5]> = rows
+        .iter()
+        .map(|r| {
+            [
+                r.metadata.clone().unwrap_or_else(|| "-".to_string()),
+                r.anchor.clone(),
+                r.id.clone(),
+                r.title.clone(),
+                // No commit is `uncommitted`; git answering nothing at all is `-`, and the two
+                // are different facts: the first is a new file, the second is no history to ask.
+                match changed.get(&r.site.file) {
+                    Some(date) => date.clone(),
+                    None if changed.is_empty() => "-".to_string(),
+                    None => "uncommitted".to_string(),
+                },
+            ]
+        })
+        .collect();
+    print_rows(&["kind", "anchor", "id", "title", "last change"], &table);
+    Ok(if table.is_empty() {
+        ExitCode::FAILURE
+    } else {
+        ExitCode::SUCCESS
+    })
+}
+
+/// Every tripwire entry, one row each.
+fn tripwires(manifest: &Manifest, args: &TripwiresArgs) -> Result<ExitCode, String> {
+    let model =
+        documentation::Model::build(manifest, Some(checker_source())).map_err(|e| e.to_string())?;
+    let anchors = Anchors::of(manifest);
+    let kind = Kind::new(TRIPWIRE_REGISTER);
+    let (anchor, needle) = split_terms(&args.terms, &anchors);
+    let guarding = args
+        .guarding
+        .as_ref()
+        .map(|g| g.trim_matches('`').to_string());
+    let mut rows = documentation::records::records(
+        &model,
+        &anchors,
+        &Entities::build(&model, &anchors),
+        &kind,
+    );
+    rows.retain(|r| {
+        anchor.is_none_or(|a| r.anchor == a)
+            && guarding
+                .as_ref()
+                .is_none_or(|g| r.guards.iter().any(|c| c == g))
+            && needle.as_ref().is_none_or(|t| r.matches(t))
+    });
+    rows.sort_by(|a, b| (&a.anchor, &a.id).cmp(&(&b.anchor, &b.id)));
+
+    let table: Vec<[String; 4]> = rows
+        .iter()
+        .map(|r| {
+            [
+                r.anchor.clone(),
+                r.id.clone(),
+                r.title.clone(),
+                r.guarding(),
+            ]
+        })
+        .collect();
+    print_rows(&["anchor", "id", "title", "guarding"], &table);
+    Ok(if table.is_empty() {
+        ExitCode::FAILURE
+    } else {
+        ExitCode::SUCCESS
+    })
+}
+
+/// The positional arguments of a listing: an anchor, then the text to filter on.
+///
+/// **The first term is the anchor only when something declares that name**, which is what lets
+/// one positional list mean both. A search word that happens to be an anchor name is the one
+/// ambiguity, and it is resolved towards the anchor because that is the documented first
+/// position; a search for that word alone is written with the anchor before it.
+fn split_terms<'a>(terms: &'a [String], anchors: &Anchors) -> (Option<&'a str>, Option<String>) {
+    let mut rest = terms;
+    let mut anchor = None;
+    if let Some(first) = terms.first() {
+        if anchors.by_name(first).is_some() {
+            anchor = Some(first.as_str());
+            rest = &terms[1..];
+        }
+    }
+    let needle = (!rest.is_empty()).then(|| rest.join(" "));
+    (anchor, needle)
+}
+
+/// A table with its header, each column as wide as its widest cell.
+///
+/// The header prints over an empty table too: a listing with no row has to say what it looked
+/// for, or a filter that matched nothing reads as a project with nothing in it.
+fn print_rows<const N: usize>(header: &[&str; N], rows: &[[String; N]]) {
+    let mut width = [0usize; N];
+    for (i, name) in header.iter().enumerate() {
+        width[i] = name.chars().count();
+    }
+    for row in rows {
+        for (i, cell) in row.iter().enumerate() {
+            width[i] = width[i].max(cell.chars().count());
+        }
+    }
+    let line = |cells: &[String; N]| {
+        cells
             .iter()
-            .filter(|e| {
-                if e.is_issue {
-                    want_issues
+            .enumerate()
+            .map(|(i, c)| {
+                if i + 1 == N {
+                    c.clone()
                 } else {
-                    want_tripwires
+                    format!("{c:<w$}", w = width[i])
                 }
             })
-            .filter(|e| e.title.to_lowercase().contains(&needle))
-            .collect();
-        if hits.is_empty() {
-            println!("no entry matching {needle:?}");
-            return Ok(ExitCode::FAILURE);
-        }
-        for e in hits {
-            println!(
-                "=== {} — {} ===\n{}\n",
-                e.file.display(),
-                e.title,
-                e.body.trim()
-            );
-        }
-        return Ok(ExitCode::SUCCESS);
+            .collect::<Vec<_>>()
+            .join("  ")
+    };
+    let head: [String; N] = std::array::from_fn(|i| header[i].to_string());
+    println!("{}", line(&head));
+    for row in rows {
+        println!("{}", line(row));
     }
-
-    let mut files: Vec<&std::path::Path> = entries.iter().map(|e| e.file.as_path()).collect();
-    files.sort();
-    files.dedup();
-    let (mut issues, mut tripwires) = (0, 0);
-    for file in &files {
-        let rows: Vec<_> = entries.iter().filter(|e| e.file == *file).collect();
-        let is_issue = rows[0].is_issue;
-        if (is_issue && !want_issues) || (!is_issue && !want_tripwires) {
-            continue;
-        }
-        println!("\n{}", file.display());
-        for e in &rows {
-            println!("  {:<12} {}", e.kind, e.title);
-        }
-        if is_issue {
-            issues += rows.len();
-        } else {
-            tripwires += rows.len();
-        }
+    if rows.is_empty() {
+        println!("(no entry)");
     }
-    println!(
-        "\n{issues} open issue(s), {tripwires} tripwire(s) across {} tracker file(s)",
-        documentation::outstanding::tracker_files(&model, manifest).len()
-    );
-    println!("An issue needs doing. A tripwire does not — it is a hypothesis about a future");
-    println!("failure, and it leaves its file when it fires. See the tracking-open-issues skill.");
-    Ok(ExitCode::SUCCESS)
 }
 
 /// The last line, and the only one that states the outcome.
@@ -672,10 +873,15 @@ mod tests {
     fn every_recorded_silent_acceptance_is_refused() {
         for argv in [
             // Set from each other's absence, the pair selected neither kind.
-            vec!["knowledge", "outstanding", "--issues", "--tripwires"],
+            // The command `issues` and `tripwires` replaced, and the flags it carried.
+            vec!["knowledge", "outstanding"],
+            vec!["knowledge", "issues", "--issues"],
+            vec!["knowledge", "tripwires", "--tripwires"],
+            // `show` cannot run without the reference it prints.
+            vec!["knowledge", "show"],
             // Unknown flags, accepted by every subcommand.
             vec!["knowledge", "check", "--bogus"],
-            vec!["knowledge", "outstanding", "--bogus"],
+            vec!["knowledge", "issues", "--bogus"],
             vec![
                 "knowledge",
                 "rules",
@@ -734,20 +940,37 @@ mod tests {
         };
         assert_eq!(some.only, Some(Only::REFERENCES.union(Only::GENERATED)));
 
-        let Command::Outstanding(o) =
-            Cli::parse_from(["knowledge", "outstanding", "two", "words"]).command
+        let Command::Show(shown) = Cli::parse_from(["knowledge", "show", "design@a@b"]).command
         else {
-            panic!("outstanding parses to the outstanding subcommand");
+            panic!("show parses to the show subcommand");
         };
-        assert_eq!(o.needle, ["two", "words"]);
-        assert!(!o.issues && !o.tripwires, "neither flag is every kind");
+        assert_eq!(shown.reference, "design@a@b");
 
-        let Command::Outstanding(one) =
-            Cli::parse_from(["knowledge", "outstanding", "--tripwires"]).command
+        let Command::Issues(listed) = Cli::parse_from([
+            "knowledge",
+            "issues",
+            "--kind",
+            "defect",
+            "--group",
+            "layers",
+            "two",
+            "words",
+        ])
+        .command
         else {
-            panic!("outstanding parses to the outstanding subcommand");
+            panic!("issues parses to the issues subcommand");
         };
-        assert!(one.tripwires && !one.issues);
+        assert_eq!(listed.kind.as_deref(), Some("defect"));
+        assert_eq!(listed.group.as_deref(), Some("layers"));
+        assert_eq!(listed.terms, ["two", "words"]);
+
+        let Command::Tripwires(guarded) =
+            Cli::parse_from(["knowledge", "tripwires", "--guarding", "design@a@b"]).command
+        else {
+            panic!("tripwires parses to the tripwires subcommand");
+        };
+        assert_eq!(guarded.guarding.as_deref(), Some("design@a@b"));
+        assert!(guarded.terms.is_empty());
 
         let Command::Rules { command } =
             Cli::parse_from(["knowledge", "rules", "diff", "--old", OLD, "--new", NEW]).command
