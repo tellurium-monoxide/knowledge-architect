@@ -487,7 +487,9 @@ that closes an issue deletes the entry and names it in the message, and against 
 alone every such message would dangle. The parent's model is the previous one in the walk
 wherever the walk followed the parent chain, so the union costs one extra model at the range's
 start and after each skip. **The hook takes HEAD as the parent**, HEAD being the parent of the
-commit the draft is for, or it would refuse the shape the range check accepts. The two arms are
+commit the draft is for, or it would refuse the shape the range check accepts; it reads that
+tree only where the working tree refused something, since a message the working tree already
+resolves cannot be turned into a finding by a second table. The two arms are
 compared by the site each names — the line and the span — rather than by the words each writes,
 because two trees can refuse one reference for different reasons and comparing the words whole
 would let a reference that resolves in neither pass.

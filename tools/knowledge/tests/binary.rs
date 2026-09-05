@@ -1331,7 +1331,7 @@ fn a_draft_naming_the_entry_it_is_about_to_delete_resolves_against_head() {
 
     let (stdout, stderr, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
     assert_eq!(code, 0, "HEAD still defines it: {stdout}{stderr}");
-    assert!(stdout.contains("and HEAD"), "{stdout}");
+    assert!(stdout.contains("HEAD"), "{stdout}");
     let _ = std::fs::remove_file(&draft);
 }
 

@@ -367,11 +367,27 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
 /// changelog names, which at a commit means reading the whole archive out of git objects at
 /// every step of the range. Neither can decide whether a message's references resolve, which
 /// is the question this assembly exists to answer.
+/// How much of a commit's tree the caller needs.
+///
+/// A tree used only to resolve a message's references needs its entity table and the facts a
+/// path reference asks about, and nothing else: no release parsed, no family run. That is
+/// every parent tree, and parsing the corpus is the single largest cost in the run — which is
+/// what keeps the `commit-msg` hook, which builds HEAD's tree for exactly this, quick enough
+/// to sit in front of every commit.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Depth {
+    /// The entity table and the path facts. Nothing is judged.
+    References,
+    /// Everything: the releases the tree pins, and every family but `corpus` and `changes`.
+    Judged,
+}
+
 fn commit_tree(
     root: &Path,
     sha: &str,
     checker: Option<&Path>,
     corpora: &mut Corpora,
+    depth: Depth,
 ) -> Result<Assembly, Unloadable> {
     // The rule index is generated and named by the manifest rather than derived, so it is
     // asked for by hand; every other generated index comes from the register instances.
@@ -410,6 +426,7 @@ fn commit_tree(
     let model = Model::from_documents_under(docs, checker);
 
     let mut releases = HashMap::new();
+    let judging = depth == Depth::Judged;
     // Every release this tree cannot supply. A quote checked against no release is checked by
     // nothing at all, so each one is a finding of the tree rather than a family that quietly
     // did less: the commit is then skipped, which is the honest answer.
@@ -417,14 +434,14 @@ fn commit_tree(
     let rules_dir = manifest.rules().dir.clone();
     let corpus_rel = rules_dir.join(&manifest.rules().text);
     let body_starts_at = manifest.rules().body_starts_at;
-    if !blobs.contains_key(&corpus_rel) {
+    if judging && !blobs.contains_key(&corpus_rel) {
         unresolved.push(Finding::in_file(
             &corpus_rel,
             "this commit's tree holds no vendored release at the path its manifest names",
             "every quote in the tree and in the message verifies against nothing without it",
         ));
     }
-    if let Some(text) = blobs.get(&corpus_rel) {
+    if let Some(text) = blobs.get(&corpus_rel).filter(|_| judging) {
         let key =
             documentation::git::rev_parse(root, &documentation::git::tree_object(sha, &corpus_rel))
                 .unwrap_or_else(|| format!("{sha}:corpus"));
@@ -450,7 +467,7 @@ fn commit_tree(
         seen.dedup();
         seen
     };
-    if !pins.is_empty() {
+    if judging && !pins.is_empty() {
         let past = rules_dir.join(&manifest.rules().past);
         let wanted: Vec<PathBuf> = pins.iter().map(|d| past.join(format!("{d}.txt"))).collect();
         let archived = documentation::git::blobs(root, sha, &wanted)
@@ -507,6 +524,9 @@ fn commit_tree(
         tracked_and_ignored: Vec::new(),
         trouble: Vec::new(),
     };
+    if !judging {
+        return Ok(assembly);
+    }
     let report = check::run(
         &assembly.model,
         &assembly.manifest,
@@ -561,17 +581,37 @@ pub fn commit_message(
     // so a message naming the entry this commit deletes resolves exactly as it will once the
     // commit is walked. Without it the hook refuses the shape the gate accepts, and the
     // commit that closes an issue cannot be written at all.
+    //
+    // **It is read only where the working tree refused something.** Reading HEAD's tree costs
+    // as much as reading the working tree, and the hook sits in front of every commit; a
+    // message the working tree already resolves cannot be turned into a finding by a second
+    // table, so the common case pays nothing.
     let root = manifest.root();
     let checker_rel = checker.and_then(|c| c.strip_prefix(root).ok().map(Path::to_path_buf));
     let mut corpora = Corpora::default();
-    let parent_owned = documentation::git::rev_parse(root, "HEAD").and_then(|head| {
-        commit_tree(root, &head, checker_rel.as_deref(), &mut corpora)
+    let refused = {
+        let probe = Model::from_documents(vec![(message_rel(), text.clone())]);
+        let (found, _) =
+            check::references::judge(probe.documents(), &entities, &anchors, &tree.inputs());
+        !found.is_empty()
+    };
+    let parent_owned = refused
+        .then(|| documentation::git::rev_parse(root, "HEAD"))
+        .flatten()
+        .and_then(|head| {
+            commit_tree(
+                root,
+                &head,
+                checker_rel.as_deref(),
+                &mut corpora,
+                Depth::References,
+            )
             .ok()
             .map(|a| {
                 let e = Entities::build(&a.model, &a.anchors());
                 (a, e)
             })
-    });
+        });
     let parent = parent_owned.as_ref().map(|(a, e)| (a, e));
     let findings = relabelled(
         judge_message(&text, &tree, &entities, parent),
@@ -580,7 +620,11 @@ pub fn commit_message(
     println!(
         "\nmessage: {} line(s) judged against the working tree{}",
         text.lines().count(),
-        if parent.is_some() { " and HEAD" } else { "" }
+        if parent.is_some() {
+            " and, for what it refused, HEAD"
+        } else {
+            ""
+        }
     );
     if !findings.is_empty() {
         println!();
@@ -645,7 +689,13 @@ pub fn commits(
         // **HEAD is never skipped.** A range whose tip could not be judged would pass with
         // every commit skipped, which is the vacuous run the summary counts exist against.
         let never_skipped = *sha == last || head.as_deref() == Some(sha.as_str());
-        let assembled = commit_tree(root, sha, checker_rel.as_deref(), &mut corpora);
+        let assembled = commit_tree(
+            root,
+            sha,
+            checker_rel.as_deref(),
+            &mut corpora,
+            Depth::Judged,
+        );
         let tree = match assembled {
             Ok(tree) => tree,
             Err(Unloadable(why)) => {
@@ -688,12 +738,18 @@ pub fn commits(
         let first_parent = documentation::git::rev_parse(root, &format!("{sha}^"));
         let parent_owned = match (&previous, &first_parent) {
             (Some((seen, _, _)), Some(parent)) if seen == parent => None,
-            (_, Some(parent)) => commit_tree(root, parent, checker_rel.as_deref(), &mut corpora)
-                .ok()
-                .map(|a| {
-                    let e = Entities::build(&a.model, &a.anchors());
-                    (a, e)
-                }),
+            (_, Some(parent)) => commit_tree(
+                root,
+                parent,
+                checker_rel.as_deref(),
+                &mut corpora,
+                Depth::References,
+            )
+            .ok()
+            .map(|a| {
+                let e = Entities::build(&a.model, &a.anchors());
+                (a, e)
+            }),
             (_, None) => None,
         };
         let parent = match (&previous, &first_parent, &parent_owned) {

@@ -234,7 +234,8 @@ commit's tree **or its first parent's**, which is what lets a commit that closes
 
 `commit-message` is handed a draft rather than a commit, so it blanks out git's `#` comment block
 and the `--verbose` diff, and it takes HEAD as the parent tree — HEAD being the parent of the
-commit the draft is for. A `#` line a `-m` message keeps is therefore silent to the hook and
+commit the draft is for — reading it only where the working tree refused something, so a clean
+message costs one model. A `#` line a `-m` message keeps is therefore silent to the hook and
 reported by `commits`.
 
 `check` reads no history, and the range is always explicit. `cargo x gates` runs
