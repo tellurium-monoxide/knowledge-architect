@@ -17,7 +17,8 @@ Read `tracking-open-issues` before adding.
 entry, so a document that merely _names_ one — to point at a diff, to say where a reading is filed —
 is listed in `thaum@docs/rules/interpretations/index.md` beside the documents whose argument depends
 on the reading. Rule numbers have a way to say it and `R` numbers do not: a rule number that is data
-goes inside a code span, and the walk does not read one as a citation. No entry is named in this file on purpose, so that the illustration does not
+goes inside a code span or a name-bound string literal, and the walk does not read those as
+citations. No entry is named in this file on purpose, so that the illustration does not
 create the thing it illustrates.
 
 **Observed.** Writing the entry this one replaces, which asked whether the index should store line

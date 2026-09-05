@@ -525,3 +525,37 @@ fn outstanding_selects_the_kind_its_flags_name() {
     assert_eq!(code, 0, "{found}");
     assert!(found.contains("Fires when"), "the entry in full: {found}");
 }
+
+/// The summary block names the checker's own directory and counts the files under it, so a
+/// binary whose compiled path misses the tree is visible in every run.
+#[test]
+fn the_summary_names_the_checker_source_and_counts_the_files_under_it() {
+    // A mock project holds no file under the checker's source: the line prints, at zero.
+    let (stdout, _, _) = run("minimal", &["check", "--only", "slugs"]);
+    assert!(
+        stdout.contains("\nchecker source: ")
+            && stdout.contains(", 0 file(s) with string literals read as data"),
+        "{stdout}"
+    );
+    // This checkout does, and the binary under test was built from it.
+    let checkout = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .expect("tools/knowledge sits two levels below the root");
+    let (stdout, _, _) = run_in(checkout, &["check", "--only", "slugs"]);
+    let line = stdout
+        .lines()
+        .find(|l| l.starts_with("checker source: "))
+        .unwrap_or_else(|| panic!("no checker-source line in {stdout}"));
+    assert!(
+        line.starts_with("checker source: tools/knowledge, "),
+        "{line}"
+    );
+    let count: usize = line
+        .trim_start_matches("checker source: tools/knowledge, ")
+        .split(' ')
+        .next()
+        .and_then(|n| n.parse().ok())
+        .unwrap_or_else(|| panic!("no count in {line}"));
+    assert!(count > 0, "{line}");
+}

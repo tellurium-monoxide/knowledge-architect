@@ -93,8 +93,8 @@ dangerous case is the unquoted verbatim, which no span scanner sees.
 
 **A third marker for the quote-free class**, beside the content marker and the identifier form —
 lost to reading a number as data by its surface. `live`. Defeated by enumeration: every genuine
-quote-free use is a number being displayed, and the code span already says so structurally. A
-new marker would have been a place to hide.
+quote-free use is a number being displayed, and the code span and the name-bound string
+literal already say so structurally. A new marker would have been a place to hide.
 
 **A per-usage declaration of data spans**, each carrying the whole source line — lost to the same
 structural reading. `live`. Half the sites sit in doc comments that `cargo fmt` reflows, so the
@@ -124,7 +124,7 @@ would have resembled was the single cause of four recorded defects.
 `live`. Proposed because a grep is genuinely unreliable for the job: the scanner distinguishes four
 citation shapes a text search does not — the prose marker, the identifier marker, a blockquote bound
 by the number printed at its head, and an inline quote bound to the nearest preceding marker — and it
-excludes rule numbers inside code spans, which a grep reports as hits.
+excludes rule numbers inside code spans and name-bound string literals, which a grep reports as hits.
 It loses because `cargo knowledge model` already emits `file`, `line`, `kind` and `value` with
 markers and rule tokens as separate kinds, so filtering that dump on a rule number **is** the
 locator, from the scanner's own notion of a citation rather than from a pattern. Established by
@@ -160,18 +160,17 @@ that already names the first differing line, so the split those tools could not 
 made, and a second command answering the same question in its own format would leave nothing to
 say which of the two was right.
 
-**A string literal bound to a name read as data, in every file** — lost to
-`knowledge#checker-source-literals-are-data`. `live`. It was the first answer to the checker's own
-fixtures and it was measured too narrow: 150 interpolation sites remained in the tool's test
-modules, 69 of them arguments or return values that no binding covers. Outside the tool it freed
-nothing: zero bound literals carry a rule-shaped number, a marker, a slug or an anchored path. It
-cost three special cases in the extractor, an argument list resetting the binding, a macro token
-tree keeping it, and a `const` being both an item and a binding.
+**Every string literal outside the checker read as prose, bound to a name or not** — lost to
+`knowledge#grammars-not-prefixes`' binding rule. `live`. Proposed to remove the three special
+cases the binding rule costs the extractor, on a measurement that found no bound literal outside
+the checker carrying rule-shaped content. The measurement was wrong: built, the checker reported
+six in three crates, an address, formatted figures a display test expects and a line of tool
+output a parser is fed, and the class recurs wherever a test displays a three-digit float.
 
 **A fixture marker, a macro whose token tree the checker reads as data** — lost to
 `knowledge#checker-source-literals-are-data`. `live`. It frees every fixture and needs a
 convention at each one, which the location does not. It is the recorded fallback should a literal
-outside the tool ever need rule-shaped bytes as data, since the bound form is gone.
+outside the tool ever need rule-shaped bytes as data where no binding can hold it.
 
 **Moving the tool's unit tests under `knowledge@tests/` and excluding the directory** — lost to
 `knowledge#checker-source-literals-are-data`. `live`. Integration tests reach only public items.

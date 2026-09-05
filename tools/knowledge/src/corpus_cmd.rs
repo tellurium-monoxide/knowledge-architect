@@ -201,7 +201,8 @@ fn latest(tree: &Tree) -> Result<i32, String> {
 
 /// Which rules the project cites, from the document model.
 fn cited(manifest: &Manifest) -> Result<Vec<RuleNumber>, String> {
-    let model = documentation::Model::build(manifest).map_err(|e| e.to_string())?;
+    let model = documentation::Model::build(manifest, Some(crate::checker_source()))
+        .map_err(|e| e.to_string())?;
     let mut out: Vec<RuleNumber> = model
         .documents()
         .iter()
@@ -365,7 +366,8 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     let url = release::url_for(new);
     let (digest, lines) = vendor(tree, new, &url, new_text.as_bytes())?;
     println!("{lines} lines\ndate:   {new}\nsource: {url}\nsha256: {digest}");
-    let model = documentation::Model::build(manifest).map_err(|e| e.to_string())?;
+    let model = documentation::Model::build(manifest, Some(crate::checker_source()))
+        .map_err(|e| e.to_string())?;
     let fresh = {
         let text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
         Corpus::parse(&text, manifest.rules().body_starts_at)

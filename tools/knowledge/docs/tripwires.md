@@ -116,12 +116,3 @@ in the tool's test modules to be interpolated into a fixture.
 the decision says it is not. Establish which: if the checker reported the plain literal, that is
 the self-location tripwire above; otherwise open an `observation` and rewrite the fixture inline.
 **Re-entry:** standing.
-
-## Guarding `knowledge#grammars-not-prefixes`' literal-is-prose clause
-
-**Fires when:** a finding on a string literal outside the tool whose bytes are data rather than a
-claim: a rule-shaped number that is a parser input, a sort key or a fixture, with no sentence
-around it that says anything about the rule.
-**Response:** there is no data form for a literal outside the tool, by design. Reopen the clause
-with the fixture marker recorded in `knowledge@docs/rejected-alternatives.md` as the candidate.
-**Re-entry:** standing.

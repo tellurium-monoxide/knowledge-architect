@@ -27,7 +27,7 @@ fn mock(name: &str) -> Manifest {
 }
 
 fn model(name: &str) -> Model {
-    Model::build(&mock(name)).expect("a model of the mock project")
+    Model::build(&mock(name), None).expect("a model of the mock project")
 }
 
 fn walked(model: &Model) -> Vec<String> {
@@ -118,7 +118,7 @@ fn the_survey_records_which_paths_are_directories() {
     // The kind is a fact of the listing rather than an inference from entries beneath a
     // path, which could not tell an empty directory from a file.
     let manifest = mock("minimal");
-    let model = Model::build(&manifest).expect("a model");
+    let model = Model::build(&manifest, None).expect("a model");
     let survey = documentation::survey::survey(&manifest, &model).expect("a survey");
     assert!(survey.directories.contains(&PathBuf::from("docs")));
     assert!(survey.present.contains(&PathBuf::from("docs")));
@@ -213,7 +213,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     use std::collections::HashMap;
 
     let manifest = mock("minimal");
-    let model = Model::build(&manifest).expect("a model");
+    let model = Model::build(&manifest, None).expect("a model");
     let releases: HashMap<Option<String>, Release> = HashMap::new();
     let committed = HashMap::new();
     let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
@@ -257,7 +257,7 @@ fn a_directory_design_home_passes_end_to_end() {
     use std::collections::HashMap;
 
     let manifest = mock("dirhome");
-    let model = Model::build(&manifest).expect("a model");
+    let model = Model::build(&manifest, None).expect("a model");
     let releases: HashMap<Option<String>, Release> = HashMap::new();
     let committed = HashMap::new();
     let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
@@ -335,7 +335,7 @@ mod planted {
         only: Only,
     ) -> Vec<String> {
         let manifest = mock("planted");
-        let model = Model::build(&manifest).expect("a model");
+        let model = Model::build(&manifest, None).expect("a model");
         let tree = manifest.rules_tree();
         let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
         let release = Release::new(&text, manifest.rules().body_starts_at);
@@ -383,7 +383,7 @@ mod planted {
         (Only::INTERPRETATIONS, 1, "has no entry in the register"),
         (Only::UNCOVERED, 1, "is outside the walk"),
         (Only::GENERATED, 2, "the generated file is missing"),
-        (Only::REGIME, 19, "with no verified quote of it in range"),
+        (Only::REGIME, 20, "with no verified quote of it in range"),
     ];
 
     #[test]
@@ -507,7 +507,7 @@ mod planted {
 
     fn report_inner(only: Only, with_pin: bool) -> documentation::check::Report {
         let manifest = mock("planted");
-        let model = Model::build(&manifest).expect("a model");
+        let model = Model::build(&manifest, None).expect("a model");
         let tree = manifest.rules_tree();
         let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
         let body = manifest.rules().body_starts_at;
@@ -708,8 +708,13 @@ mod regime {
 
     /// Every finding the regime produces over the planted project.
     fn judged() -> Vec<(Rule, String)> {
+        judged_with(None)
+    }
+
+    /// The same, with the model told where the checker's own source is.
+    fn judged_with(checker_source: Option<&std::path::Path>) -> Vec<(Rule, String)> {
         let manifest = mock("planted");
-        let model = Model::build(&manifest).expect("a model");
+        let model = Model::build(&manifest, checker_source).expect("a model");
         let tree = manifest.rules_tree();
         let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
         let release = Release::new(&text, manifest.rules().body_starts_at);
@@ -807,7 +812,7 @@ mod regime {
         // The negative half. Without it the rule could fire on everything and still pass.
         let found = of(Rule::QuoteInScope);
         assert!(
-            !found.iter().any(|f| f.contains("code/regime.rs")),
+            !found.iter().any(|f| f.contains("`quoted_in_scope`")),
             "a doc comment carrying its own quote must pass: {found:#?}"
         );
     }
@@ -868,9 +873,65 @@ mod regime {
         assert!(
             !found
                 .iter()
-                .any(|f| f.contains("A rule number that is data")),
+                .any(|f| f.contains("A rule number that is data") || f.contains("`FIXTURE`")),
             "{found:#?}"
         );
+    }
+
+    #[test]
+    fn under_the_checkers_own_source_a_literal_is_data_and_its_comments_stay_prose() {
+        // The same planted file, read as the checker's own: the call message's claim is
+        // gone, and the claims the comments carry are judged exactly as before.
+        let manifest = mock("planted");
+        let code = manifest.root().join("code");
+        let model = Model::build(&manifest, Some(&code)).expect("a model");
+        let doc = model
+            .documents()
+            .iter()
+            .find(|d| d.rel == std::path::Path::new("code/regime.rs"))
+            .expect("the planted source file");
+        assert_eq!(doc.literals, documentation::source::Literals::Data);
+        let under_code = model
+            .documents()
+            .iter()
+            .filter(|d| d.rel.starts_with("code"))
+            .count();
+        assert!(under_code >= 1);
+        assert_eq!(model.checker_files(), under_code);
+        assert_eq!(
+            model.checker_source(),
+            Some(std::path::Path::new("code")),
+            "named relative to the root when it sits under it"
+        );
+        let with = judged_with(Some(&code));
+        assert!(
+            !with.iter().any(|(_, w)| w.contains("`message_in_a_call`")),
+            "{with:#?}"
+        );
+        assert!(
+            with.iter().any(|(r, _)| *r == Rule::IdentifierFullQuote),
+            "a comment-carried claim is still judged: {with:#?}"
+        );
+        // A checker directory the walk never visits exempts nothing.
+        let elsewhere = manifest.root().join("no-such-directory");
+        let model = Model::build(&manifest, Some(&elsewhere)).expect("a model");
+        assert_eq!(model.checker_files(), 0);
+        // A checker directory the whole tree sits INSIDE exempts nothing either: that is a
+        // mock project under the checker's own tests, a foreign tree.
+        let above = manifest.root().join("../../..");
+        let model = Model::build(&manifest, Some(&above)).expect("a model");
+        assert_eq!(model.checker_files(), 0);
+        assert!(
+            model.checker_source().is_some_and(|p| p.is_absolute()),
+            "named absolutely when it is not under the root"
+        );
+    }
+
+    #[test]
+    fn a_message_in_a_call_is_prose_and_claims_its_rule() {
+        // The planted `message_in_a_call` carries a marker in a call argument and no quote in
+        // its scope. Outside the checker's own source that is a claim like any other.
+        one(Rule::QuoteInScope, "claimed in `message_in_a_call`");
     }
 
     #[test]

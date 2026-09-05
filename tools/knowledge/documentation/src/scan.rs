@@ -467,10 +467,13 @@ mod tests {
 
     /// The same, over a Rust file, so a test can say which conventions reach source comments.
     fn scan_rs(text: &str) -> Vec<Observation> {
-        scan(&crate::source::rs::parse(text))
-            .into_iter()
-            .map(|l| l.what)
-            .collect()
+        scan(&crate::source::rs::parse(
+            text,
+            crate::source::Literals::Prose,
+        ))
+        .into_iter()
+        .map(|l| l.what)
+        .collect()
     }
 
     fn markers(text: &str) -> Vec<(String, MarkerForm)> {
@@ -502,13 +505,16 @@ mod tests {
             // exists for, which left it unenforced for exactly that shape.
             format!("fn test_cr_{ident}_holds() {{}}"),
         ] {
-            let seen: Vec<(String, MarkerForm)> = scan(&crate::source::rs::parse(&name))
-                .into_iter()
-                .filter_map(|l| match l.what {
-                    Observation::RuleMarker { number, form } => Some((number.to_string(), form)),
-                    _ => None,
-                })
-                .collect();
+            let seen: Vec<(String, MarkerForm)> = scan(&crate::source::rs::parse(
+                &name,
+                crate::source::Literals::Prose,
+            ))
+            .into_iter()
+            .filter_map(|l| match l.what {
+                Observation::RuleMarker { number, form } => Some((number.to_string(), form)),
+                _ => None,
+            })
+            .collect();
             assert_eq!(
                 seen,
                 vec![(RULE.to_string(), MarkerForm::Identifier)],
@@ -535,10 +541,13 @@ mod tests {
         // identifier pattern, so it passed with both suffix guards removed and pinned
         // nothing at all — while reading as though it covered names.
         const TOO_LONG: &str = "fn cr_613_8cde_holds() {}";
-        let seen: Vec<Observation> = scan(&crate::source::rs::parse(TOO_LONG))
-            .into_iter()
-            .map(|l| l.what)
-            .collect();
+        let seen: Vec<Observation> = scan(&crate::source::rs::parse(
+            TOO_LONG,
+            crate::source::Literals::Prose,
+        ))
+        .into_iter()
+        .map(|l| l.what)
+        .collect();
         assert!(
             !seen
                 .iter()
@@ -547,9 +556,12 @@ mod tests {
         );
         // The control: two letters IS a rule number, and must still be found.
         const OK: &str = "fn cr_613_8c_holds() {}";
-        assert!(scan(&crate::source::rs::parse(OK))
-            .into_iter()
-            .any(|l| matches!(l.what, Observation::RuleMarker { .. })));
+        assert!(scan(&crate::source::rs::parse(
+            OK,
+            crate::source::Literals::Prose
+        ))
+        .into_iter()
+        .any(|l| matches!(l.what, Observation::RuleMarker { .. })));
     }
 
     // A section number and its dotted rules, as inputs to the scanner.
@@ -836,11 +848,24 @@ mod tests {
     }
 
     #[test]
-    fn a_rule_number_in_a_string_literal_is_not_a_citation() {
-        // The recorded fixture problem: this tool walks its own source, so a rule number
-        // written as test data was live content and had to be interpolated to hide it.
-        let src = format!("fn f() {{\n    let n = \"{RULE}\";\n}}\n");
-        assert!(scan_rs(&src).is_empty(), "{:?}", scan_rs(&src));
+    fn a_rule_number_in_a_bound_string_literal_is_not_a_citation_and_a_message_is() {
+        // Bound to a name it is a fixture; in a call it is a message. Under the checker's own
+        // source neither is read at all.
+        let bound = format!("fn f() {{\n    let n = \"{RULE}\";\n}}\n");
+        assert!(scan_rs(&bound).is_empty(), "{:?}", scan_rs(&bound));
+        let message = format!("fn f() {{\n    g(\"{RULE}\");\n}}\n");
+        assert!(
+            scan_rs(&message)
+                .iter()
+                .any(|o| matches!(o, Observation::RuleToken(_))),
+            "{:?}",
+            scan_rs(&message)
+        );
+        let data = scan(&crate::source::rs::parse(
+            &message,
+            crate::source::Literals::Data,
+        ));
+        assert!(data.is_empty(), "{data:?}");
     }
 
     #[test]
@@ -1034,7 +1059,10 @@ mod tests {
     fn interpretation_references_are_markdown_only() {
         // In Rust an `R`-shaped token is usually a type parameter, and reading one as a
         // citation is worse than missing one.
-        let refs = scan(&crate::source::rs::parse("fn f<R15>() {}"));
+        let refs = scan(&crate::source::rs::parse(
+            "fn f<R15>() {}",
+            crate::source::Literals::Prose,
+        ));
         assert!(!refs
             .iter()
             .any(|l| matches!(l.what, Observation::InterpRef(_))));

@@ -37,6 +37,11 @@ pub struct Structure {
     pub concerns: usize,
     pub entries: usize,
     pub top_entry: u16,
+    /// The checker's own directory as the model was told it, and how many walked files sit
+    /// under it with their string literals read as data. Not a family's count: it describes
+    /// the walk every family read, so it is set whatever was asked for.
+    pub checker_source: Option<std::path::PathBuf>,
+    pub checker_files: usize,
 }
 
 /// What a whole run found and counted.
@@ -292,6 +297,8 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs, only: Only) -> R
         findings.extend(found);
         structure.uncovered_files = scanned;
     }
+    structure.checker_source = model.checker_source().map(std::path::Path::to_path_buf);
+    structure.checker_files = model.checker_files();
 
     Report {
         findings,

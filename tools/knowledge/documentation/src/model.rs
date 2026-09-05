@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 
 use crate::manifest::Manifest;
 use crate::scan::{self, Located, Observation};
-use crate::source::{self, Parsed};
+use crate::source::{self, Literals, Parsed};
 use crate::walk;
 
 /// One live document and everything that was observed in it.
@@ -19,6 +19,8 @@ pub struct Document {
     /// The release this file's quotes verify against, where it opts out of the vendored one.
     pub pin: Option<String>,
     pub observations: Vec<Located>,
+    /// How its string literals were read: `Data` only under the checker's own source.
+    pub literals: Literals,
 }
 
 impl Document {
@@ -127,12 +129,31 @@ impl Document {
 pub struct Model {
     root: PathBuf,
     docs: Vec<Document>,
+    /// The checker's own directory as the summary names it: relative to the root when it sits
+    /// under it, absolute otherwise, `None` when the caller passed none.
+    checker_source: Option<PathBuf>,
 }
 
 impl Model {
     /// Read and scan a project, as its own manifest declares it.
-    pub fn build(manifest: &Manifest) -> std::io::Result<Self> {
+    ///
+    /// `checker_source` is the directory of the checker's own source. A file under it is
+    /// parsed with its string literals as data, per
+    /// `knowledge#checker-source-literals-are-data`; every other file reads them as prose.
+    /// The binary passes its compile-time location, and a library caller checking a tree the
+    /// checker is no part of passes `None`. Both sides of the prefix test are canonicalised,
+    /// so a symlinked checkout does not defeat it, and a compiled path that resolves to
+    /// nothing exempts nothing. **The directory exempts files only when it sits inside the
+    /// tree being checked.** A tree that sits inside it instead, such as a mock project under
+    /// the checker's own tests, is a foreign project whose every literal is prose.
+    pub fn build(manifest: &Manifest, checker_source: Option<&Path>) -> std::io::Result<Self> {
         let root = manifest.root();
+        let canonical_root = root.canonicalize()?;
+        let checker = checker_source.and_then(|p| p.canonicalize().ok());
+        let inside = checker
+            .as_ref()
+            .filter(|c| c.starts_with(&canonical_root))
+            .cloned();
         let walk_config = manifest.walk();
         let mut docs = Vec::new();
         for path in walk::live_files(root, walk_config, manifest.ignore())? {
@@ -153,12 +174,17 @@ impl Model {
                         },
                         pin: None,
                         observations: Vec::new(),
+                        literals: Literals::Prose,
                     });
                     continue;
                 }
             };
             let rel = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
-            let parsed = source::parse(&rel, &text);
+            let literals = match &inside {
+                Some(c) if canonical_root.join(&rel).starts_with(c) => Literals::Data,
+                _ => Literals::Prose,
+            };
+            let parsed = source::parse(&rel, &text, literals);
             let observations: Vec<Located> = scan::scan(&parsed);
             docs.push(Document {
                 rel,
@@ -166,12 +192,36 @@ impl Model {
                 text,
                 parsed,
                 observations,
+                literals,
             });
         }
+        let checker_source = checker.map(|c| {
+            c.strip_prefix(&canonical_root)
+                .map(Path::to_path_buf)
+                .unwrap_or(c)
+        });
         Ok(Self {
             root: root.to_path_buf(),
             docs,
+            checker_source,
         })
+    }
+
+    /// The checker's own directory as the summary names it, if the caller passed one.
+    pub fn checker_source(&self) -> Option<&Path> {
+        self.checker_source.as_deref()
+    }
+
+    /// How many walked files sit under the checker's own directory.
+    ///
+    /// Zero in a checkout that holds the tool is the loud failure of
+    /// `knowledge#checker-source-literals-are-data`: the compiled path and the walked tree
+    /// disagree, and the tool's fixtures are being read as citations.
+    pub fn checker_files(&self) -> usize {
+        self.docs
+            .iter()
+            .filter(|d| d.literals == Literals::Data)
+            .count()
     }
 
     /// A model assembled from text rather than from a checkout, for a test.
@@ -182,7 +232,7 @@ impl Model {
         let docs = docs
             .into_iter()
             .map(|(rel, text)| {
-                let parsed = source::parse(&rel, &text);
+                let parsed = source::parse(&rel, &text, Literals::Prose);
                 let observations = scan::scan(&parsed);
                 Document {
                     rel,
@@ -190,12 +240,14 @@ impl Model {
                     text,
                     parsed,
                     observations,
+                    literals: Literals::Prose,
                 }
             })
             .collect();
         Self {
             root: PathBuf::new(),
             docs,
+            checker_source: None,
         }
     }
 
@@ -353,7 +405,7 @@ mod tests {
             ),
         ]);
         // Markdown carries it directly, a doc comment's content is markdown and carries it
-        // too, and a string literal is data whatever it spells.
+        // too, and a string literal bound to a name is data whatever it spells.
         let headings: Vec<usize> = model
             .documents()
             .iter()

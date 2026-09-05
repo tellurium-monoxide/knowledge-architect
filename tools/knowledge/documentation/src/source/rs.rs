@@ -5,12 +5,18 @@
 //! return type opening a line with an angle bracket is not a blockquote, a float literal is not
 //! a rule number, and a string literal in a unit test is not a citation.
 //!
+//! **Which string literals are prose is decided twice.** The caller says, through `Literals`,
+//! whether the file is the checker's own source, where every literal is a fixture and none is
+//! prose, per `knowledge#checker-source-literals-are-data`. Everywhere else the grammar says:
+//! a literal bound to a name is data, and every other literal is a message written for a
+//! human, which cites for real.
+//!
 //! **A comment's content arrives without its marker.** The grammar makes the marker its own
 //! node, so `doc_comment` is the text after `///` or `//!` and nothing has to strip anything.
 
 use tree_sitter::{Node, Parser};
 
-use super::{md, Parsed, Prose, Scope, ScopeKind};
+use super::{md, Literals, Parsed, Prose, Scope, ScopeKind};
 
 /// Node kinds that own a scope.
 ///
@@ -36,7 +42,7 @@ const ITEMS: [&str; 11] = [
 ///
 /// A file the grammar cannot parse yields no prose and no scopes, which would make every
 /// citation in it invisible — so `Parsed::trouble` says so, and a check reports it.
-pub fn parse(text: &str) -> Parsed {
+pub fn parse(text: &str, literals: Literals) -> Parsed {
     let Some(tree) = tree(text) else {
         return Parsed::default();
     };
@@ -48,6 +54,7 @@ pub fn parse(text: &str) -> Parsed {
     collect(
         root,
         text,
+        literals,
         false,
         0,
         &mut comments,
@@ -170,12 +177,13 @@ struct CommentLine {
 
 /// Node kinds whose initialiser is **named test data** rather than prose.
 ///
-/// A string bound to a name is a fixture: the recorded observation is that this tool walks its
-/// own source, so a rule number written as test data was live content and every literal had to
-/// be interpolated to hide it. A string that is NOT bound to a name is almost always a message
-/// — an assertion's explanation, a panic, a format — and those cite rules on purpose. Reading
-/// both as data lost 32 citations in this tree; reading both as prose is what the interpolation
-/// workaround existed to survive.
+/// A string bound to a name is a fixture: an address, a formatted figure a display test
+/// expects, a line of tool output a parser is fed. Measured when reading every literal as prose
+/// was tried: six such literals in three crates outside the checker, every one rule-shaped by
+/// accident. A string that is NOT bound to a name is almost always a message — an assertion's
+/// explanation, a panic, a format — and those cite rules on purpose. Reading both as data lost
+/// 32 citations in this tree. The checker's own fixtures are not what this rule is for any
+/// more: `Literals::Data` covers those by location, whatever they are bound to.
 const BINDINGS: [&str; 3] = ["const_item", "static_item", "let_declaration"];
 
 /// Node kinds that ARE a name.
@@ -220,6 +228,7 @@ const MAX_DEPTH: usize = 512;
 fn collect(
     node: Node,
     src: &str,
+    literals: Literals,
     in_binding: bool,
     depth: usize,
     comments: &mut Vec<CommentLine>,
@@ -234,7 +243,9 @@ fn collect(
     let mut cursor = node.walk();
     for child in node.children(&mut cursor) {
         match child.kind() {
-            "string_literal" | "raw_string_literal" if !in_binding => {
+            "string_literal" | "raw_string_literal"
+                if literals == Literals::Prose && !in_binding =>
+            {
                 if let Some(content) = named_child(child, "string_content") {
                     let at = content.start_position().row as u32 + 1;
                     for (i, line) in src[content.byte_range()].split('\n').enumerate() {
@@ -315,6 +326,7 @@ fn collect(
                 collect(
                     child,
                     src,
+                    literals,
                     in_binding || BINDINGS.contains(&kind),
                     depth + 1,
                     comments,
@@ -334,6 +346,7 @@ fn collect(
             "arguments" => collect(
                 child,
                 src,
+                literals,
                 false,
                 depth + 1,
                 comments,
@@ -356,6 +369,7 @@ fn collect(
                 collect(
                     child,
                     src,
+                    literals,
                     in_binding || BINDINGS.contains(&kind),
                     depth + 1,
                     comments,
@@ -367,6 +381,7 @@ fn collect(
             kind => collect(
                 child,
                 src,
+                literals,
                 in_binding || BINDINGS.contains(&kind),
                 depth + 1,
                 comments,
@@ -461,6 +476,24 @@ fn runs(comments: Vec<CommentLine>) -> Vec<Prose> {
 mod tests {
     use super::*;
 
+    /// Every test below reads a file the way the tree outside the checker is read.
+    fn parse(text: &str) -> Parsed {
+        super::parse(text, Literals::Prose)
+    }
+
+    #[test]
+    fn in_data_mode_no_string_literal_is_prose_and_every_comment_still_is() {
+        // The checker's own source. A literal in a call, in a binding or in a macro is
+        // dropped alike, and the comment above stays a region with its scope.
+        const SRC: &str = "/// per the rule 613.8c\nfn f() {\n    let s = \"613.8c\";\n    \
+                           assert!(x, \"613.8c orders them\");\n    g(\"613.8c\");\n}\n";
+        let p = super::parse(SRC, Literals::Data);
+        assert_eq!(p.prose.len(), 1, "{:?}", p.prose);
+        assert_eq!(p.prose[0].lines, vec![1]);
+        assert!(p.prose[0].text.contains(RULE));
+        assert_eq!(p.scope_at(3).map(|s| s.name.as_str()), Some("f"));
+    }
+
     /// The identifier form of a rule marker exists for names, and a name is code. Both
     /// fixtures are BOUND, so the marker inside them is data — otherwise this test would be a
     /// rule-named item of its own, owing a quote for a rule it makes no claim about.
@@ -531,14 +564,13 @@ mod tests {
         assert!(p.prose[0].text.contains(WANT));
     }
 
-    /// A rule number the tests look for. Bound, so it is data and needs no marker — which is
-    /// the property these tests exist to pin.
+    /// A rule number the tests look for.
     const RULE: &str = "613.8c";
 
     #[test]
     fn a_named_string_is_test_data_and_an_unnamed_one_is_a_message() {
-        // Bound to a name: a fixture. This tool walks its own source, and a rule number
-        // written as test data was live content until the grammar could say so.
+        // Bound to a name: a fixture. Outside the checker that is an address, a formatted
+        // figure, a line of output a parser is fed — rule-shaped by accident and data.
         const FIXTURE: &str = "fn f() {\n    let s = \"613.8c\";\n}\n";
         let fixture = parse(FIXTURE);
         assert!(

@@ -10,6 +10,7 @@
 //! could-not-run.
 
 use std::collections::HashMap;
+use std::path::Path;
 use std::process::ExitCode;
 
 use clap::{Args, Parser, Subcommand};
@@ -102,6 +103,19 @@ fn main() -> ExitCode {
     }
 }
 
+/// The checker's own source directory, compiled in.
+///
+/// The one path this binary carries about any tree is its own. `CARGO_MANIFEST_DIR` of this
+/// crate is the component's directory exactly, and the alias in `thaum@.cargo/config.toml` builds
+/// the binary from the checkout on every run, so the compiled path names the tree being
+/// checked. Every model this binary builds is told it, so that the tool's own fixtures are
+/// read as data rather than as citations, per `knowledge#checker-source-literals-are-data`.
+/// A binary built elsewhere names a directory the walk never visits, exempts nothing, and the
+/// summary block's `checker source` line shows the count at zero.
+pub(crate) fn checker_source() -> &'static Path {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+}
+
 /// The project is whatever declares itself one at or above the working directory.
 ///
 /// Nothing about any particular repository is compiled in, so pointing the tool at a mock
@@ -120,7 +134,7 @@ fn locate() -> Result<Manifest, String> {
 /// tokens are separate kinds here and a text grep tells them apart from neither each other nor
 /// from a rule number that is data.
 fn model(manifest: &Manifest) -> Result<ExitCode, String> {
-    let model = documentation::Model::build(manifest)
+    let model = documentation::Model::build(manifest, Some(checker_source()))
         .map_err(|e| format!("cannot read the project: {e}"))?;
     let dump = model.canonical();
     // The count goes to stderr so that redirecting stdout gives a file that is only
@@ -142,7 +156,8 @@ fn model(manifest: &Manifest) -> Result<ExitCode, String> {
 /// or reach the network, and a check may do neither. What a check receives is a release
 /// already parsed.
 fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
-    let model = documentation::Model::build(manifest).map_err(|e| e.to_string())?;
+    let model =
+        documentation::Model::build(manifest, Some(checker_source())).map_err(|e| e.to_string())?;
     let tree = manifest.rules_tree();
     let body_starts_at = manifest.rules().body_starts_at;
 
@@ -284,7 +299,8 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
 /// `cargo knowledge check --only generated` is the gate, and it names the first line at which
 /// the committed file and the regenerated one disagree.
 fn index(manifest: &Manifest) -> Result<ExitCode, String> {
-    let model = documentation::Model::build(manifest).map_err(|e| e.to_string())?;
+    let model =
+        documentation::Model::build(manifest, Some(checker_source())).map_err(|e| e.to_string())?;
     let tree = manifest.rules_tree();
     let corpus_text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
     let corpus = rules::Corpus::parse(&corpus_text, manifest.rules().body_starts_at);
@@ -373,7 +389,8 @@ fn outstanding(manifest: &Manifest, args: &OutstandingArgs) -> Result<ExitCode, 
     };
     let needle: Vec<&str> = args.needle.iter().map(String::as_str).collect();
 
-    let model = documentation::Model::build(manifest).map_err(|e| e.to_string())?;
+    let model =
+        documentation::Model::build(manifest, Some(checker_source())).map_err(|e| e.to_string())?;
     let entries = documentation::outstanding::entries(&model, manifest);
 
     if !needle.is_empty() {
@@ -473,6 +490,17 @@ fn counts(report: &Report) -> String {
             out,
             "\nNOT RUN: {} — asked for, and the input it reads is not there",
             skipped.names().join(", ")
+        );
+    }
+
+    // Not a family: it describes the walk every family read, and a count of zero in a
+    // checkout that holds the tool is the loud failure the decision promises.
+    if let Some(source) = &report.structure.checker_source {
+        let _ = write!(
+            out,
+            "\nchecker source: {}, {} file(s) with string literals read as data",
+            source.display(),
+            report.structure.checker_files
         );
     }
 
@@ -786,6 +814,8 @@ mod tests {
         r.structure.entries = 99;
         r.structure.top_entry = 111;
         r.structure.uncovered_files = 122;
+        r.structure.checker_source = Some("tools/knowledge".into());
+        r.structure.checker_files = 200;
         r.corpus.archived = 133;
         r.corpus.manifest_rows = 144;
         r.corpus.releases_local = 155;
@@ -805,6 +835,7 @@ mod tests {
             "paths: 77 reference(s), 78 link(s)",
             "interpretations: 88 concerns, 99 entries R1-R111",
             "uncovered files: 122 scanned",
+            "checker source: tools/knowledge, 200 file(s) with string literals read as data",
             "corpus: 133 archived release(s), 144 manifest row(s),",
             "155 of 166 release(s) resolved locally",
             "changelog: 177 rule change(s)",

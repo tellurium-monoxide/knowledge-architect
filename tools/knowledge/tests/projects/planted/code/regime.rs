@@ -18,6 +18,11 @@ fn quoted_in_scope() {
 /// A fixture BOUND to a name is data: no citation, no heading, no slug.
 const FIXTURE: &str = "100.1 and `##planted-anchor` and CR:100.1";
 
+/// A message in a call is prose. This one claims a rule with no quote in its scope.
+fn message_in_a_call() {
+    g("CR:100.1 is claimed by a message in a call");
+}
+
 /// A formatted return type opens a line with an angle bracket and is not a blockquote.
 fn long_signature()
 -> Result<(usize, usize), std::fmt::Error>

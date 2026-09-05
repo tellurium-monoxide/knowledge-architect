@@ -21,6 +21,19 @@ pub mod rs;
 
 use std::path::Path;
 
+/// How a Rust file's string literals are read.
+///
+/// Decided by the caller from where the file sits. The checker's own source is the one place
+/// whose every literal is a fixture, per `knowledge#checker-source-literals-are-data`;
+/// everywhere else the grammar decides per literal, and `rs::BINDINGS` says how.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Literals {
+    /// A string literal bound to a name is data; every other one is prose.
+    Prose,
+    /// No string literal is prose. Comments are read as in every other file.
+    Data,
+}
+
 /// A run of prose pulled out of a file, with the line it came from kept for every line of it.
 ///
 /// For a markdown file there is exactly one, covering the whole text. For a Rust file there is
@@ -190,10 +203,10 @@ impl Parsed {
 /// A suffix the walk does not cover yields nothing rather than a guess. `walk::LIVE_SUFFIXES`
 /// is what decides which those are, and `check::uncovered` asserts that a file outside it may
 /// not name a rule — so an empty parse here is never a silent gap.
-pub fn parse(path: &Path, text: &str) -> Parsed {
+pub fn parse(path: &Path, text: &str, literals: Literals) -> Parsed {
     match path.extension().and_then(|e| e.to_str()) {
         Some("md") => md::parse(text),
-        Some("rs") => rs::parse(text),
+        Some("rs") => rs::parse(text, literals),
         _ => Parsed::default(),
     }
 }

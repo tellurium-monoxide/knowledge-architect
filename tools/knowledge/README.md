@@ -85,8 +85,9 @@ stdout gives a file that is only observations.
 says which files cite a rule, deliberately at file level; filtering this dump on the rule number
 says where in each. It answers from the scanner's own notion of a citation rather than from a
 pattern, which matters because markers and rule tokens are separate kinds here. A rule number that
-is **data** — inside an inline code span, or inside a string literal of the checker's own source —
-is not a citation and does not appear in the dump. A number inside a **fenced block does** appear,
+is **data** — inside an inline code span, inside a string literal bound to a name in Rust, or
+inside any string literal of the checker's own source — is not a citation and does not appear in
+the dump. A number inside a **fenced block does** appear,
 because a fenced sketch cites its rules for real; root `thaum@CLAUDE.md` owns that distinction and
 this is a restatement of it.
 
