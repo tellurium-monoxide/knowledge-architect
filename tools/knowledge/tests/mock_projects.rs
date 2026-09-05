@@ -1,17 +1,17 @@
 //! The tool run against whole projects, not against strings.
 //!
-//! A mock project under `tools/knowledge/tests/projects/` is a complete project: it carries
+//! A mock project under `knowledge@tests/projects/` is a complete project: it carries
 //! its own `knowledge.toml` and its own documents. That is what makes these tests worth more
 //! than the in-memory ones — a fixture written as a string cannot exercise the walk, the
 //! exclusions, or a layout different from this repository's.
 //!
-//! It is also why the directory stays excluded. This file and the projects beside it sit under
-//! `tools/knowledge/tests`, which this repository's own manifest excludes: each mock project is
+//! It is also why the directory stays excluded. The projects beside this file sit under
+//! `knowledge@tests/projects/`, which this repository's own manifest excludes: each mock project is
 //! a complete foreign project, and its planted defects — a slug, a dangling path, a rule number
 //! with no quote — must be reported by the test that runs the tool over it, never as this
 //! repository's own.
 //!
-//! Cargo compiles `tests/*.rs`, so this file is a test target and `projects/` beside it is
+//! Cargo compiles every `.rs` file directly under `knowledge@tests/`, so this file is a test target and `projects/` beside it is
 //! not: a directory without a `main.rs` is data.
 
 use std::path::PathBuf;
@@ -245,7 +245,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     );
 }
 
-/// The other accepted design home, end to end: `docs/design/` headed by a README that links
+/// The other accepted design home, end to end: `*@docs/design/` headed by a README that links
 /// the one subdocument, with the anchor defined in the subdocument and referenced from the
 /// project's own README. `paths` runs too, so the fixture shows the three families passing
 /// together over a real walk.

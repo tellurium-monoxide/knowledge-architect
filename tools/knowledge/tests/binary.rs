@@ -5,7 +5,7 @@
 //! this file exists to prevent: the default selection could be changed to any subset and the
 //! whole suite still passed, so `check` could stop verifying every rule quote and exit 0.
 //!
-//! Each test runs against a mock project under `tests/projects/`, which the manifest excludes
+//! Each test runs against a mock project under `knowledge@tests/projects/`, which the manifest excludes
 //! from this repository's own walk, so the binary finds that project by walking up from the
 //! working directory exactly as it would find any other.
 
@@ -40,7 +40,7 @@ fn run(name: &str, args: &[&str]) -> (String, String, i32) {
 
 /// A throwaway copy of a mock project, for the tests whose command writes.
 ///
-/// Every other test here runs against `tests/projects/` in place, which works only while a run
+/// Every other test here runs against `knowledge@tests/projects/` in place, which works only while a run
 /// leaves the tree alone. `index` writes, so it gets a copy: writing into the fixture would
 /// leave the repository dirty, and the next run would then be comparing against the previous
 /// run's output rather than against the fixture.
