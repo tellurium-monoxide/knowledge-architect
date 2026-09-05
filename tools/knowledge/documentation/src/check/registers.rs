@@ -384,9 +384,25 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
                 ),
                 "delete the row, or restore what it names; a declaration nothing checks \
                  silently covers whatever is created at that path next. What git ignores is \
-                 pruned by the walk and is never declared here",
+                 outside the listing the walk reads and is never declared here",
             ));
         }
+    }
+
+    // **A file git both tracks and ignores is a finding naming the file.** The two states
+    // contradict each other and the contradiction is silent: the walk reads the file, because
+    // the tracked listing is unaffected by the ignore rules; and every path reference to it is
+    // asserted, because `git check-ignore` skips what the index holds. So the ignore rule says
+    // the file is out of the project and every check reads it in, and untracking it would flip
+    // both answers at once. `knowledge#git-supplies-the-walk` is the head.
+    for path in inputs.tracked_and_ignored {
+        out.push(Finding::in_file(
+            path,
+            "git tracks this file and the ignore rules also cover it".to_string(),
+            "untrack the file, or narrow the ignore rule that covers it; while both hold, the \
+             walk reads the file and a path reference to it is asserted, which is the reverse \
+             of what the ignore rule says",
+        ));
     }
 }
 
@@ -959,6 +975,8 @@ mod tests {
             present: &present,
             directories: &directories,
             outside: &outside,
+            ignored: &HashSet::new(),
+            tracked_and_ignored: &[],
         };
         check(&model, manifest, &inputs)
             .0

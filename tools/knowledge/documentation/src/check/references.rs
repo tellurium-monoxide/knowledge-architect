@@ -39,7 +39,7 @@ pub struct Counts {
 }
 
 pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Finding>, Counts) {
-    check_under(model, manifest, inputs, &Anchors::of(manifest))
+    check_under(model, inputs, &Anchors::of(manifest))
 }
 
 /// The same, over a stated anchor list.
@@ -47,12 +47,7 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
 /// What `check` derives from the manifest, a test states directly: every component carries
 /// every register, so the anchor-lacks-register arm is reachable only through an anchor with a
 /// declared register subset, the shape a location takes.
-pub fn check_under(
-    model: &Model,
-    manifest: &Manifest,
-    inputs: &Inputs,
-    anchors: &Anchors,
-) -> (Vec<Finding>, Counts) {
+pub fn check_under(model: &Model, inputs: &Inputs, anchors: &Anchors) -> (Vec<Finding>, Counts) {
     let entities = Entities::build(model, anchors);
     let mut out: Vec<Finding> = Vec::new();
     let mut counts = Counts {
@@ -69,7 +64,6 @@ pub fn check_under(
                         if kind.is_path() {
                             path(
                                 &mut out, &doc.rel, l.line, span, anchor, id, anchors, inputs,
-                                manifest,
                             );
                         } else {
                             table(
@@ -122,16 +116,7 @@ pub fn check_under(
                 // mechanism, resolved by rustdoc against the crate namespace, and this
                 // check reading those as index rows would report every intra-doc link.
                 Observation::Link(target) if doc.is_markdown() => {
-                    link(
-                        &mut out,
-                        &mut counts,
-                        doc,
-                        l.line,
-                        target,
-                        nav,
-                        inputs,
-                        manifest,
-                    );
+                    link(&mut out, &mut counts, doc, l.line, target, nav, inputs);
                 }
                 _ => {}
             }
@@ -236,7 +221,6 @@ fn path(
     path: &str,
     anchors: &Anchors,
     inputs: &Inputs,
-    manifest: &Manifest,
 ) {
     // The trailing slash is the writer's claim about the target's kind; the lookup drops it.
     let claims_dir = path.ends_with('/');
@@ -302,7 +286,9 @@ fn path(
                 .map(|a| (a, a.path.join(trimmed)))
                 .filter(|(a, t)| {
                     anchors.owning(t).path == a.path
-                        && !manifest.ignore().covers(t, claims_dir)
+                        && !inputs
+                            .ignored
+                            .contains(&crate::git::ignore_query(t, claims_dir))
                         && inputs.present.contains(t)
                 })
                 .map(|(_, t)| t)
@@ -380,17 +366,19 @@ fn path(
                 ));
                 return;
             }
-            assert_target(out, rel, line, span, &target, claims_dir, inputs, manifest);
+            assert_target(out, rel, line, span, &target, claims_dir, inputs);
         }
     }
 }
 
-/// Assert one resolved target: it exists and has the claimed kind, unless the root
-/// gitignore covers it.
+/// Assert one resolved target: it exists and has the claimed kind, unless the ignore rules
+/// cover it.
 ///
-/// The gitignore exemption runs on the ignore RULES rather than on what happens to exist,
-/// so a reference to a generated path passes on a fresh clone exactly as it passes on a
-/// built tree — a verdict that depends on build state is a check nobody can trust twice.
+/// The exemption runs on the ignore RULES, as `git check-ignore` states them, rather than on
+/// what happens to exist, so a reference to a generated path passes on a fresh clone exactly
+/// as it passes on a built tree — a verdict that depends on build state is a check nobody can
+/// trust twice. The batch was taken by the caller over `ignore_queries` below, so a target
+/// this function asks about that the collector did not gather reads as not ignored.
 #[allow(clippy::too_many_arguments)]
 fn assert_target(
     out: &mut Vec<Finding>,
@@ -400,9 +388,11 @@ fn assert_target(
     target: &PathBuf,
     claims_dir: bool,
     inputs: &Inputs,
-    manifest: &Manifest,
 ) {
-    if manifest.ignore().covers(target, claims_dir) {
+    if inputs
+        .ignored
+        .contains(&crate::git::ignore_query(target, claims_dir))
+    {
         return;
     }
     if !inputs.present.contains(target) {
@@ -441,7 +431,6 @@ fn link(
     target: &str,
     nav: bool,
     inputs: &Inputs,
-    manifest: &Manifest,
 ) {
     // A bare fragment stays on the page; on a file target a fragment rides along and is
     // dropped before resolution. A scheme leaves the project and is not this check's to
@@ -484,8 +473,53 @@ fn link(
         &resolved,
         file_part.ends_with('/'),
         inputs,
-        manifest,
     );
+}
+
+/// Every spelling a path reference in this model could ask the ignore rules about.
+///
+/// The caller batches these through one `git check-ignore` and hands the answers back in
+/// `Inputs::ignored`, because a check may spawn nothing. The set is the two arms that resolve
+/// a target: an anchored reference resolves under the anchor it names, and the generic form
+/// resolves under every anchor at once. The escape anchor resolves under none, so it
+/// contributes nothing.
+///
+/// **A spelling this misses is a target the check reads as not ignored**, which is a finding
+/// rather than a silence: the reference is asserted to exist. `an_ignored_target_is_exempt_in_
+/// every_arm_the_collector_gathers` is what holds the two lists together.
+pub fn ignore_queries(model: &Model, anchors: &Anchors) -> Vec<String> {
+    let mut out = Vec::new();
+    for doc in model.documents() {
+        for l in &doc.observations {
+            let Observation::Span(span) = &l.what else {
+                continue;
+            };
+            let Candidate::Reference { kind, anchor, id } = entity::candidate(span, anchors) else {
+                continue;
+            };
+            if !kind.is_path() {
+                continue;
+            }
+            let claims_dir = id.ends_with('/');
+            let trimmed = id.trim_end_matches('/');
+            match anchor {
+                ESCAPE_ANCHOR => {}
+                entity::EVERY_ANCHOR => {
+                    for a in anchors.all() {
+                        out.push(crate::git::ignore_query(&a.path.join(trimmed), claims_dir));
+                    }
+                }
+                name => {
+                    if let Some(a) = anchors.by_name(name) {
+                        out.push(crate::git::ignore_query(&a.path.join(trimmed), claims_dir));
+                    }
+                }
+            }
+        }
+    }
+    out.sort();
+    out.dedup();
+    out
 }
 
 #[cfg(test)]
@@ -508,27 +542,32 @@ mod tests {
         Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration")
     }
 
-    /// The same, with a `.gitignore` beside it.
-    fn manifest_ignoring(lines: &str) -> Manifest {
-        let mut m = manifest();
-        m.set_ignore(crate::gitignore::Ignore::parse(lines).expect("a parsable ignore"));
-        m
-    }
-
     /// The findings and counts over documents, against a listing.
     fn checked_docs(
         manifest: &Manifest,
         docs: Vec<(&str, &str)>,
         present: &[String],
     ) -> (Vec<String>, Counts) {
-        checked_under(manifest, docs, present, &Anchors::of(manifest))
+        checked_under(docs, present, &Anchors::of(manifest))
     }
 
     /// The same, over a stated anchor list.
     fn checked_under(
-        manifest: &Manifest,
         docs: Vec<(&str, &str)>,
         present: &[String],
+        anchors: &Anchors,
+    ) -> (Vec<String>, Counts) {
+        checked_ignoring_under(docs, present, &[], anchors)
+    }
+
+    /// The same, with a stated batch of ignore answers.
+    ///
+    /// A spelling here is what `git::ignore_query` produces and what one `git check-ignore`
+    /// batch would have returned; no test spawns git, which is the same reason a check may not.
+    fn checked_ignoring_under(
+        docs: Vec<(&str, &str)>,
+        present: &[String],
+        ignored: &[&str],
         anchors: &Anchors,
     ) -> (Vec<String>, Counts) {
         let model = Model::from_documents(
@@ -549,14 +588,31 @@ mod tests {
             present: &present,
             directories: &directories,
             outside: &outside,
+            ignored: &ignored.iter().map(|s| (*s).to_string()).collect(),
+            tracked_and_ignored: &[],
         };
-        let (found, counts) = check_under(&model, manifest, &inputs, anchors);
+        let (found, counts) = check_under(&model, &inputs, anchors);
         (found.iter().map(|f| f.to_string()).collect(), counts)
     }
 
     /// The findings and counts over one document, placed under `notes/`.
     fn checked(manifest: &Manifest, text: &str, present: &[String]) -> (Vec<String>, Counts) {
         checked_in(manifest, "notes/prose.md", text, present)
+    }
+
+    /// The same, with a stated batch of ignore answers.
+    fn checked_ignoring(
+        manifest: &Manifest,
+        text: &str,
+        present: &[String],
+        ignored: &[&str],
+    ) -> (Vec<String>, Counts) {
+        checked_ignoring_under(
+            vec![("notes/prose.md", text)],
+            present,
+            ignored,
+            &Anchors::of(manifest),
+        )
     }
 
     /// The same, with the document at a chosen path — what the navigation rule reads.
@@ -687,7 +743,6 @@ mod tests {
         );
         let anchors = Anchors::from_list(vec![root, bare], base.registers().clone());
         let (found, _) = checked_under(
-            &manifest(),
             vec![
                 ("docs/design.md", head()),
                 ("notes/a.md", "`design@bare@a-decision`\n"),
@@ -1054,24 +1109,71 @@ mod tests {
     }
 
     #[test]
-    fn a_gitignored_copy_is_not_a_generic_hit() {
-        let m = manifest_ignoring("scratch/\n");
+    fn an_ignored_copy_is_not_a_generic_hit() {
+        // The generic form asks every anchor, so an ignored copy under one of them would
+        // otherwise satisfy the reference and hide that no component really carries it.
+        let m = manifest();
         let mut present = tree();
         present.push("scratch".to_string());
         present.push("scratch/x.md".to_string());
-        let (found, _) = checked(&m, "See `path@*@scratch/x.md`.\n", &present);
+        let (found, _) = checked_ignoring(
+            &m,
+            "See `path@*@scratch/x.md`.\n",
+            &present,
+            &["scratch/x.md", "parts/a-part/scratch/x.md"],
+        );
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("resolves in no component"), "{found:#?}");
     }
 
     #[test]
-    fn a_gitignored_target_is_exempt_from_existence_and_kind() {
-        let m = manifest_ignoring("generated/\n");
+    fn an_ignored_target_is_exempt_from_existence_and_kind() {
+        // The directory claim is asked with its trailing slash and the file claim without,
+        // because that is the spelling git decides a `dir/` pattern on.
+        let m = manifest();
         let text = "See `path@a-project@generated/out.bin` and `path@a-project@generated/`.\n";
-        let (found, _) = checked(&m, text, &tree());
+        let (found, _) = checked_ignoring(&m, text, &tree(), &["generated/out.bin", "generated/"]);
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
-        let (found, _) = checked(&manifest(), text, &tree());
+        let (found, _) = checked(&m, text, &tree());
         assert_eq!(found.len(), 2, "{found:#?}");
+        // The file spelling does not answer the directory claim, and neither answers the
+        // other: a batch keyed on the bare path would exempt both from one answer.
+        let (found, _) = checked_ignoring(&m, text, &tree(), &["generated/out.bin"]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("generated/"), "{found:#?}");
+    }
+
+    #[test]
+    fn an_ignored_target_is_exempt_in_every_arm_the_collector_gathers() {
+        // The collector and the check are two lists of the same targets, and a spelling the
+        // collector misses is a target the check reads as not ignored. This binds them: the
+        // batch is exactly what the collector gathered, and it must silence the three
+        // anchored arms while the generic arm still refuses an ignored copy as a hit.
+        //
+        // It discriminates in both directions. Drop the anchored arm from the collector and
+        // the three become "does not exist"; drop the generic arm and its finding disappears,
+        // because the ignored copy then counts as a hit.
+        let m = manifest();
+        let text = "Anchored `path@a-project@gone/out.bin`, its directory \
+                    `path@a-project@gone/`, under a component `path@a-part@gone/out.bin`, and \
+                    generically `path@*@scratch/x.md`.\n";
+        let mut present = tree();
+        present.push("scratch".to_string());
+        present.push("scratch/x.md".to_string());
+        let anchors = Anchors::of(&m);
+        let model =
+            Model::from_documents(vec![(PathBuf::from("notes/prose.md"), text.to_string())]);
+        let queries = super::ignore_queries(&model, &anchors);
+        let borrowed: Vec<&str> = queries.iter().map(String::as_str).collect();
+        let (found, counts) = checked_ignoring_under(
+            vec![("notes/prose.md", text)],
+            &present,
+            &borrowed,
+            &anchors,
+        );
+        assert_eq!(counts.references, 4);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("resolves in no component"), "{found:#?}");
     }
 
     #[test]

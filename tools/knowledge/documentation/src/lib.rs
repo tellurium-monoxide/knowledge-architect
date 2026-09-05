@@ -8,7 +8,7 @@
 pub mod check;
 pub mod entity;
 pub mod finding;
-pub mod gitignore;
+pub mod git;
 pub mod index;
 pub mod manifest;
 pub mod model;

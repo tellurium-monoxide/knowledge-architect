@@ -129,6 +129,13 @@ impl Document {
 pub struct Model {
     root: PathBuf,
     docs: Vec<Document>,
+    /// Git's live listing of the project, project-relative and unfiltered: every tracked file
+    /// plus every untracked file the ignore rules do not cover.
+    ///
+    /// Kept beside the documents because the survey answers what exists out of it, and asking
+    /// git twice in one run would let the two answers disagree. A model assembled in memory
+    /// carries none.
+    listing: Vec<PathBuf>,
     /// The checker's own directory as the summary names it: relative to the root when it sits
     /// under it, absolute otherwise, `None` when the caller passed none.
     checker_source: Option<PathBuf>,
@@ -160,7 +167,11 @@ impl Model {
         let walk_config = manifest.walk();
         let mut docs = Vec::new();
         let generated = crate::index::generated_index_paths(manifest);
-        for path in walk::live_files(root, walk_config, manifest.ignore(), &generated)? {
+        // Git is the walk. No `git` on the path and a directory outside a worktree are both
+        // errors naming the reason, never an empty listing: a project reported as holding no
+        // document is a run that checked nothing and said it was clean.
+        let listing = crate::git::live_files(root)?;
+        for path in walk::live_files(root, walk_config, &listing, &generated) {
             let rel_for_error = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
             let text = match std::fs::read_to_string(&path) {
                 Ok(t) => t,
@@ -169,11 +180,23 @@ impl Model {
                 // still passes. One byte of Windows-1252 — a pasted em dash — does it. The
                 // document is kept, empty, carrying the reason, so a check reports it.
                 Err(e) => {
+                    // A path git lists and the working tree does not hold is a tracked file
+                    // deleted and not yet staged. It stays in the walk and is reported, rather
+                    // than being dropped: dropping it would take a live document out of every
+                    // check on the strength of a working-tree state, and the whole point of
+                    // reading the listing from git is that nothing does that silently.
+                    let trouble = if e.kind() == std::io::ErrorKind::NotFound {
+                        "git lists this file and the working tree does not hold it: stage the \
+                         deletion, or restore the file"
+                            .to_string()
+                    } else {
+                        format!("this file could not be read as text: {e}")
+                    };
                     docs.push(Document {
                         rel: rel_for_error,
                         text: String::new(),
                         parsed: Parsed {
-                            trouble: Some(format!("this file could not be read as text: {e}")),
+                            trouble: Some(trouble),
                             ..Parsed::default()
                         },
                         pin: None,
@@ -211,8 +234,17 @@ impl Model {
         Ok(Self {
             root: root.to_path_buf(),
             docs,
+            listing,
             checker_source,
         })
+    }
+
+    /// Git's live listing of the project, project-relative, before any manifest exclusion.
+    ///
+    /// What the survey answers "does this path exist" out of. Empty for a model assembled in
+    /// memory, which has no tree behind it.
+    pub fn listing(&self) -> &[PathBuf] {
+        &self.listing
     }
 
     /// The checker's own directory as the summary names it, if the caller passed one.
@@ -256,6 +288,7 @@ impl Model {
         Self {
             root: PathBuf::new(),
             docs,
+            listing: Vec::new(),
             checker_source: None,
         }
     }

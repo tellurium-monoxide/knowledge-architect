@@ -365,28 +365,49 @@ checked: a tree that sits inside it instead, such as a mock project under
 a rule, a finding message interpolates the number it names, and a narrower rule would cost an
 attribute lookup to protect a class with zero members.
 
-### What git ignores is pruned by the walk, and the manifest declares only what git tracks `##gitignore-prunes-the-walk`
+### Git supplies the walk, and the manifest declares only what git tracks `##git-supplies-the-walk`
 
-The root `.gitignore` is read beside `knowledge.toml` and its paths are pruned from the walk and
-from the inverse assertion that an unwalked file may not name a rule. Nothing generated is declared:
-`target` and `thaum@.claude/worktrees/` left `[walk] skip-dirs` when this landed.
+The walked set is git's listing from the manifest's directory, `git ls-files --cached --others
+--exclude-standard`, with `[walk] skip-dirs`, `skip-files` and `exclude` applied after it and the
+generated indexes removed by construction. Nothing generated is declared: `target` and
+`thaum@.claude/worktrees/` are covered by the ignore rules, so no `[walk]` row names them. A path
+reference whose target the ignore rules cover is exempt from assertion the same way, per
+`knowledge#ignored-targets-are-not-asserted`.
 
-A path reference whose target the ignore rules cover is exempt from assertion the same way,
-per `knowledge#ignored-targets-are-not-asserted`.
-
-**What it buys is that every remaining declaration is checkable.** A generated path cannot be
-asserted to exist — a fresh clone has none of them — so while the manifest named them, no check
-could ask whether a declared path was still real, and a row naming a deleted file stayed silent in
-both directions: nobody was told it was dead, and a file later created at that path inherited what
-the row granted. With the generated class removed, every path in the manifest is one git tracks and
+**Every remaining declaration is checkable.** A generated path cannot be asserted to exist — a
+fresh clone has none of them. A manifest naming one holds a row no check can ask about: nobody
+is told the row is dead, and a file later created at that path inherits what the row granted. No
+generated path is declared, so every path in the manifest is one git tracks and
 `check::registers` asserts each one exists.
 
-**Only the root file is read, and an unsupported pattern is an error.** A nested `.gitignore` is not
-honoured; a project needing one declares the path in the manifest instead. The matcher implements
-comments, a leading `/`, a trailing `/`, `*` inside a segment, and a bare name at any depth. A
-negation, `**`, `?` or a character class is refused by name, per `knowledge#a-failed-parse-is-loud` — a
-dropped ignore rule makes the walk read more than it should and a dropped negation makes it read
-less, and both are silent.
+**A tracked file cannot leave the walk.** `--cached` is unaffected by the ignore rules, so no
+ignore line, however written, can take a live document out of every check. That is what the
+hand-rolled matcher this replaced could not promise, and it is the property the whole walk is
+chosen for; the matcher and the three things it could not do are
+`knowledge@docs/rejected-alternatives.md`.
+
+**A tracked file the ignore rules also cover is a finding naming the file.** The two states
+contradict each other and the contradiction is otherwise silent: the walk reads the file, and
+`git check-ignore` skips what the index holds so a reference to it is asserted too — the reverse
+of what the ignore rule says. It is reported by `registers`, with the other findings that judge
+what a project declares about itself against the tree, rather than by `uncovered`, whose subject
+is a file the walk does not cover and which this file is not.
+
+**Everything git answers goes through one module.** `knowledge@documentation/src/git.rs` owns the
+listing, the tracked-and-ignored listing, the one `check-ignore` batch and the last-change dates,
+so the set of things this tool asks git is auditable in one read and a check keeps spawning
+nothing.
+
+**No `git`, or no worktree, is exit 2 with the reason.** Never an empty walk: a project reported as
+holding no document is a run that checked nothing and said so as a clean verdict, which is the
+failure this tool exists to prevent. The same holds for a git invocation that fails for any other
+reason, which reaches the caller carrying git's own stderr. A tracked path the working tree does
+not hold — a deletion nobody has staged — stays in the walk and is reported for the same reason:
+dropping it would take a live document out of every check on the strength of a working-tree state.
+
+**The summary block prints the walked-file count**, so two machines disagreeing about the walk is
+visible in the output rather than inferred from a finding list. The tripwire is in
+`knowledge@docs/tripwires.md`.
 
 ### A parse that cannot be trusted is reported, never silent `##a-failed-parse-is-loud`
 
@@ -645,14 +666,22 @@ beside the presence listing, so the claim is asserted as a fact in both directio
 required documents are asserted to be files rather than directories wearing document names,
 and the design home's two shapes are told apart by recorded kind.
 
-### A target the root gitignore covers is not asserted `##ignored-targets-are-not-asserted`
+### A target the ignore rules cover is not asserted `##ignored-targets-are-not-asserted`
 
-Resolution asks whether the ignore rules cover the target before asking whether it is present.
-Covered means accepted with no existence or kind assertion: a generated path cannot be
-asserted to exist, per `knowledge#gitignore-prunes-the-walk`, and deciding by the RULES rather
-than by presence makes the verdict identical on a fresh clone and a built tree. A verdict that
-depends on the checking machine's build state is a check nobody can trust twice. The exemption
-is exactly as wide as the gitignore, deliberately.
+Resolution asks `git check-ignore` whether the ignore rules cover the target before asking
+whether it is present. Covered means accepted with no existence or kind assertion: a generated
+path cannot be asserted to exist, per `knowledge#git-supplies-the-walk`, and deciding by the
+RULES rather than by presence makes the verdict identical on a fresh clone and a built tree. A
+verdict that depends on the checking machine's build state is a check nobody can trust twice.
+The exemption is exactly as wide as git's own answer, deliberately, nested ignore files included.
+
+**The question is asked with the reference's own kind claim.** A directory claim is spelled with
+its trailing slash and a file claim without, because a `dir/` pattern matches a path git can tell
+is a directory, and a target that does not exist yet is a directory only if the spelling says so.
+
+**One batch per run, taken by the caller.** A check spawns nothing, so the caller collects every
+spelling a path reference in the run could ask about, asks git once, and hands the answers in.
+A spelling the collector misses reads as not ignored, which is a finding rather than a silence.
 
 ### A relative markdown link is a navigation row, and README.md and index.md files are the navigation homes `##links-are-navigation-rows`
 

@@ -40,6 +40,25 @@ fn configs(manifest: &Manifest) -> std::collections::HashMap<PathBuf, String> {
     out
 }
 
+/// What the binary asks git for, taken over a mock project in place.
+///
+/// These tests build their models under this repository's own worktree, so git answers about
+/// the mock's files because this repository tracks them. A mock file that is not at least
+/// staged is not in the listing and is walked by nothing, which is the one thing to know when
+/// adding a fixture here.
+fn git_answers(
+    manifest: &documentation::Manifest,
+    model: &Model,
+) -> (std::collections::HashSet<String>, Vec<PathBuf>) {
+    let anchors = documentation::entity::Anchors::of(manifest);
+    let queries = documentation::check::references::ignore_queries(model, &anchors);
+    let ignored =
+        documentation::git::ignored(manifest.root(), &queries).expect("git answers the batch");
+    let tracked =
+        documentation::git::tracked_and_ignored(manifest.root()).expect("git answers the listing");
+    (ignored, tracked)
+}
+
 fn walked(model: &Model) -> Vec<String> {
     let mut names: Vec<String> = model
         .documents()
@@ -302,6 +321,8 @@ fn a_project_carrying_every_component_document_reports_nothing() {
         present: &survey.present,
         directories: &survey.directories,
         outside: &survey.outside,
+        ignored: &git_answers(&manifest, &model).0,
+        tracked_and_ignored: &git_answers(&manifest, &model).1,
     };
     let report = run(
         &model,
@@ -350,6 +371,8 @@ fn a_directory_design_home_passes_end_to_end() {
         present: &survey.present,
         directories: &survey.directories,
         outside: &survey.outside,
+        ignored: &git_answers(&manifest, &model).0,
+        tracked_and_ignored: &git_answers(&manifest, &model).1,
     };
     let report = run(
         &model,
@@ -432,6 +455,8 @@ mod planted {
             present: &survey.present,
             directories: &survey.directories,
             outside: &survey.outside,
+            ignored: &git_answers(&manifest, &model).0,
+            tracked_and_ignored: &git_answers(&manifest, &model).1,
         };
         run(&model, &manifest, &inputs, only)
             .findings
@@ -616,6 +641,8 @@ mod planted {
             present: &survey.present,
             directories: &survey.directories,
             outside: &survey.outside,
+            ignored: &git_answers(&manifest, &model).0,
+            tracked_and_ignored: &git_answers(&manifest, &model).1,
         };
         run(&model, &manifest, &inputs, only)
     }

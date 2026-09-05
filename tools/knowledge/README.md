@@ -3,6 +3,12 @@
 How this project's knowledge is held: the Comprehensive Rules corpus, and the documents that cite
 it. One binary, reached through a cargo alias so nothing has to be installed.
 
+**It needs `git` on the path, and a project inside a git worktree.** What the tool reads is what
+`git ls-files` reports from the project root, so every pattern git honours decides the walk,
+nested `.gitignore` files included, and a file git tracks is read whatever the ignore rules say.
+Neither failure is silent: no binary and no worktree are both exit 2 naming the reason, never an
+empty walk. The decision is `knowledge#git-supplies-the-walk`.
+
 ```sh
 cargo knowledge check [--only a,b,c]      every check, over one walk; or only these families
 cargo knowledge show <kind>@<anchor>@<id> one recorded entry, and every reference to it
@@ -84,7 +90,7 @@ otherwise, which is what lets one positional list mean both. A search for a word
 anchor name is written with the anchor before it.
 
 **The last-change column is git's**, taken in one `git log` for every issue instance at once. An
-entry with no commit shows `uncommitted`; where git cannot answer at all the column shows `-`.
+entry with no commit shows `uncommitted`; where git cannot answer the column shows `-`.
 A date never enters a generated file, per `knowledge#generated-files-are-pure` — it is printed
 here and nowhere else.
 

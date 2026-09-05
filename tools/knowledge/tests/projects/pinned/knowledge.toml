@@ -10,7 +10,8 @@ name = "pinned"
 components = []
 
 [walk]
-skip-dirs = [".git"]
+# Git never lists its own directory, so the walk never reaches it and no row names it.
+skip-dirs = []
 skip-files = ["corpus/CompRules.txt"]
 exclude = []
 

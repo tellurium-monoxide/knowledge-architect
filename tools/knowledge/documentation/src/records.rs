@@ -10,13 +10,12 @@
 //! text, and the body of the second is the heading line through to the next heading at or above
 //! its level.
 //!
-//! Nothing here reads the filesystem except `last_changed`, which spawns `git` and is called by
-//! the binary alone. Every other function is a pure function of the model, so a test states its
-//! project as text.
+//! Nothing here reads the filesystem or spawns a process. The last-change column a listing
+//! prints comes from `git::last_changed`, which the binary calls beside these; every function
+//! here is a pure function of the model, so a test states its project as text.
 
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::path::Path;
 
 use crate::entity::{candidate, Anchors, Candidate, Entities, Kind, Site};
 use crate::manifest::Shape;
@@ -181,71 +180,6 @@ pub fn inbound(model: &Model, anchors: &Anchors, kind: &Kind, anchor: &str, id: 
     out
 }
 
-/// When each file under `dirs` last changed, as `git` reports it, keyed by project-relative
-/// path.
-///
-/// **One process for the whole listing**, per the plan: a `git log` per entry costs a process
-/// per row. An empty map is what a tree with no `git`, or no history, produces, and the caller
-/// prints a placeholder rather than failing — this column is convenience, and the hard git
-/// dependency belongs to the walk rather than to a listing.
-pub fn last_changed(root: &Path, dirs: &[PathBuf]) -> BTreeMap<PathBuf, String> {
-    if dirs.is_empty() {
-        return BTreeMap::new();
-    }
-    let mut command = Command::new("git");
-    command
-        .current_dir(root)
-        // `--relative` because the names are matched against project-relative paths, and a
-        // project that is a subdirectory of its repository would otherwise get repository-relative
-        // ones back and match nothing at all.
-        .args(["log", "--format=%cs", "--name-only", "--relative"])
-        .arg("--");
-    for dir in dirs {
-        command.arg(dir);
-    }
-    let Ok(output) = command.output() else {
-        return BTreeMap::new();
-    };
-    if !output.status.success() {
-        return BTreeMap::new();
-    }
-    parse_log(&String::from_utf8_lossy(&output.stdout))
-}
-
-/// The log as a map from path to the date of its newest commit.
-///
-/// The two line kinds are told apart by shape: `%cs` is a bare `YYYY-MM-DD`, which no path can
-/// be, so the log needs no second format field and no separator to parse.
-fn parse_log(text: &str) -> BTreeMap<PathBuf, String> {
-    let mut out = BTreeMap::new();
-    let mut date: Option<&str> = None;
-    for line in text.lines() {
-        if line.is_empty() {
-            continue;
-        }
-        if is_date(line) {
-            date = Some(line);
-            continue;
-        }
-        let Some(date) = date else { continue };
-        // The log is newest first, so the first mention of a path is its last change.
-        out.entry(PathBuf::from(line))
-            .or_insert_with(|| date.to_string());
-    }
-    out
-}
-
-fn is_date(line: &str) -> bool {
-    let bytes = line.as_bytes();
-    bytes.len() == 10
-        && bytes[4] == b'-'
-        && bytes[7] == b'-'
-        && bytes
-            .iter()
-            .enumerate()
-            .all(|(i, b)| i == 4 || i == 7 || b.is_ascii_digit())
-}
-
 /// The inclusive line range of the section holding `line`: the nearest heading at or above it,
 /// through to the next heading at the same level or shallower.
 ///
@@ -355,6 +289,7 @@ fn guards(doc: &Document, from: u32, to: u32) -> Vec<String> {
 mod tests {
     use super::*;
     use crate::manifest::Manifest;
+    use std::path::PathBuf;
 
     // Every fixture is inline: the checker reads no string literal of its own source, per
     // `knowledge#checker-source-literals-are-data`.
@@ -509,38 +444,6 @@ mod tests {
         );
         // The definition site is not an inbound reference.
         assert!(!sites.iter().any(|s| s.file.ends_with("design.md")));
-    }
-
-    #[test]
-    fn the_log_maps_each_path_to_its_newest_commit_and_ignores_what_precedes_a_date() {
-        // Newest first, so the first mention of a path wins; a name before any date belongs to
-        // no commit and is dropped rather than attributed to the next one.
-        let log = "docs/orphan.md\n2026-01-02\n\ndocs/a.md\ndocs/b.md\n\n\
-                   2026-01-01\n\ndocs/a.md\ndocs/c.md\n";
-        let found = parse_log(log);
-        assert_eq!(
-            found.get(Path::new("docs/a.md")).map(String::as_str),
-            Some("2026-01-02")
-        );
-        assert_eq!(
-            found.get(Path::new("docs/b.md")).map(String::as_str),
-            Some("2026-01-02")
-        );
-        assert_eq!(
-            found.get(Path::new("docs/c.md")).map(String::as_str),
-            Some("2026-01-01")
-        );
-        assert_eq!(found.get(Path::new("docs/orphan.md")), None);
-        assert!(parse_log("").is_empty());
-    }
-
-    #[test]
-    fn a_date_is_told_from_a_path_by_its_shape_alone() {
-        assert!(is_date("2026-01-02"));
-        assert!(!is_date("2026-1-2"));
-        assert!(!is_date("docs/a.md"));
-        assert!(!is_date("2026-01-022"));
-        assert!(!is_date("abcd-ef-gh"));
     }
 
     #[test]

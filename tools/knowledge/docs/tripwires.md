@@ -7,6 +7,21 @@ fires. What is outstanding about the tool is `open-issues.md` beside it.
 Entry shape and the movement instruction between the two files are `tracking-open-issues`. The
 standing re-entry point is `standing-state-reviewer`, which re-reads every tracker file.
 
+## Guarding `knowledge#git-supplies-the-walk`'s portability `##walked-count-differs-between-machines`
+
+The walk is a `git` invocation, so what is checked depends on the git installed and on the
+per-clone configuration it reads. The design answers the two loud cases — no binary and no
+worktree are exit 2 — and this guards the quiet one: two machines running the same commit and
+reading a different set of files, with both runs green.
+
+**Fires when:** the walked-file count CI prints for a commit differs from the count a local run
+prints for the same commit. Both are the `walk: n file(s)` line of the summary block, which every
+`cargo knowledge check` prints whatever `--only` asked for.
+
+**Response:** open a `defect` naming both counts and the two git versions.
+
+**Re-entry:** each time CI's output is read against a local run, and at any change to the walk.
+
 ## Guarding `knowledge#grammars-not-prefixes`
 
 **Fires when:** a `.rs` file in the tree yields no prose region, or no item scope, while its text

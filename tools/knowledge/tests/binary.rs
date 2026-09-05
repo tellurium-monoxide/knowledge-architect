@@ -38,22 +38,89 @@ fn run(name: &str, args: &[&str]) -> (String, String, i32) {
     run_in(&project(name), args)
 }
 
+/// The same, with `PATH` replaced, which is how the missing-`git` case is stated.
+fn run_with_path(dir: &Path, args: &[&str], path: &Path) -> (String, String, i32) {
+    let out = Command::new(env!("CARGO_BIN_EXE_knowledge"))
+        .args(args)
+        .current_dir(dir)
+        .env("PATH", path)
+        .output()
+        .expect("the binary runs");
+    (
+        String::from_utf8_lossy(&out.stdout).into_owned(),
+        String::from_utf8_lossy(&out.stderr).into_owned(),
+        out.status.code().unwrap_or(-1),
+    )
+}
+
 /// A throwaway copy of a mock project, for the tests whose command writes.
 ///
 /// Every other test here runs against `knowledge@tests/projects/` in place, which works only while a run
 /// leaves the tree alone. `index` writes, so it gets a copy: writing into the fixture would
 /// leave the repository dirty, and the next run would then be comparing against the previous
 /// run's output rather than against the fixture.
+///
+/// **The copy is a git repository of its own.** The walk is `git ls-files` from the project
+/// root, so a copy outside any worktree walks nothing and every test over it passes for the
+/// wrong reason. `git init` and `git add -A` are what make the copied files live, and anything
+/// a test wants staged — a `.gitignore` above all — is written by `seeded` BEFORE the add.
 struct Sandbox {
     dir: PathBuf,
 }
 
 impl Sandbox {
     fn new(tag: &str, from: &str) -> Self {
+        Self::seeded(tag, from, &[])
+    }
+
+    /// The same, with extra files written into the copy before it is staged.
+    fn seeded(tag: &str, from: &str, files: &[(&str, &str)]) -> Self {
+        let dir = std::env::temp_dir().join(format!("knowledge-{tag}-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        copy_dir(&project(from), &dir);
+        let sandbox = Sandbox { dir };
+        for (rel, text) in files {
+            sandbox.write(rel, text);
+        }
+        sandbox.git(&["init", "-q"]);
+        // The developer's own global ignore file would otherwise reach into the fixture and
+        // decide which of its files are live, which is a test that answers differently per
+        // machine.
+        sandbox.git(&["config", "--local", "core.excludesFile", "/dev/null"]);
+        // `add` needs no identity, so none is configured: a fixture that wrote one would be
+        // recording a name in a temporary repository nobody reads.
+        sandbox.git(&["add", "-A"]);
+        sandbox
+    }
+
+    /// A copy that is NOT a git repository, for the tests about a project outside a worktree.
+    fn without_git(tag: &str, from: &str) -> Self {
         let dir = std::env::temp_dir().join(format!("knowledge-{tag}-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         copy_dir(&project(from), &dir);
         Sandbox { dir }
+    }
+
+    /// Stage whatever the copy holds now.
+    ///
+    /// A test that deletes a fixture file has to call this: the walk reads git's listing, and
+    /// a deleted file the index still holds is listed, read, and reported as unreadable.
+    fn stage(&self) {
+        self.git(&["add", "-A"]);
+    }
+
+    /// One git command in the copy, which must succeed.
+    fn git(&self, args: &[&str]) {
+        let out = Command::new("git")
+            .args(args)
+            .current_dir(&self.dir)
+            .output()
+            .expect("git runs");
+        assert!(
+            out.status.success(),
+            "git {args:?} in the sandbox: {}",
+            String::from_utf8_lossy(&out.stderr)
+        );
     }
 
     fn path(&self, rel: &str) -> PathBuf {
@@ -586,6 +653,7 @@ fn issues_lists_one_row_per_entry_and_each_filter_keeps_what_it_names() {
     sandbox.write("docs/open-issues/the-second-thing.md", SECOND_ISSUE);
     sandbox.write("notes/open-issues/two-kinds.md", TWO_KINDS);
     sandbox.write("docs/tripwires.md", ONE_TRIPWIRE);
+    sandbox.stage();
 
     let (all, stderr, code) = sandbox.run(&["issues"]);
     assert_eq!(code, 0, "{stderr}");
@@ -749,4 +817,161 @@ fn the_summary_names_the_checker_source_and_counts_the_files_under_it() {
         .and_then(|n| n.parse().ok())
         .unwrap_or_else(|| panic!("no count in {line}"));
     assert!(count > 0, "{line}");
+}
+
+// --- git as the walk ---------------------------------------------------------------------
+
+/// The `walk: n file(s)` count out of a summary block.
+fn walked_count(stdout: &str) -> usize {
+    let line = stdout
+        .lines()
+        .find(|l| l.starts_with("walk: "))
+        .unwrap_or_else(|| panic!("the summary block names the walked-file count: {stdout}"));
+    line.trim_start_matches("walk: ")
+        .split(' ')
+        .next()
+        .and_then(|n| n.parse().ok())
+        .unwrap_or_else(|| panic!("a number: {line}"))
+}
+
+/// A reference to a decision no home defines, for a document to carry.
+const DANGLING: &str = "# Another mock document\n\nIt points at `design@minimal@no-such-thing`.\n";
+
+/// The claim: a tracked document a `.gitignore` line covers is still walked, and the pair is a
+/// finding naming the file.
+///
+/// This is the recorded defect `A root gitignore line can unread a tracked live document`,
+/// reproduced by its own recipe. Under the hand-rolled matcher the second run printed nothing:
+/// the ignore line pruned the document from the walk AND from the inverse assertion, so the
+/// dangling reference in it was read by no check and the run exited 0. Git's tracked listing is
+/// unaffected by the ignore rules, so the reference is still found, and the contradiction
+/// between the index and the ignore rules is reported instead of being silent.
+#[test]
+fn a_tracked_document_an_ignore_line_covers_is_walked_and_reported() {
+    let sandbox = Sandbox::new("tracked-ignored", "minimal");
+    sandbox.write("notes/b.md", DANGLING);
+    sandbox.stage();
+
+    let (before, stderr, code) = sandbox.run(&["check", "--only", "references"]);
+    assert_eq!(
+        code, 1,
+        "the dangling reference is a finding: {before}{stderr}"
+    );
+    assert!(before.contains("no-such-thing"), "{before}");
+
+    // The recipe: one root gitignore line holding the document's bare filename. The document
+    // is already tracked, so `git add -A` leaves it tracked.
+    sandbox.write(".gitignore", "b.md\n");
+    sandbox.stage();
+    let (after, stderr, code) = sandbox.run(&["check", "--only", "references,registers"]);
+    assert_eq!(code, 1, "{after}{stderr}");
+    assert!(
+        after.contains("no-such-thing"),
+        "the document must still be walked: {after}"
+    );
+    assert!(
+        after.contains("notes/b.md") && after.contains("git tracks this file"),
+        "the tracked-and-ignored pair must be named: {after}"
+    );
+    // The summary says how much was walked, on a failing run as readily as a passing one.
+    assert!(walked_count(&after) > 0, "{after}");
+}
+
+/// The claim: a `.gitignore` below the root decides the walk too.
+///
+/// The matcher this replaced read the root file alone, so a document under a nested ignore was
+/// walked and its planted defect reported. Both halves are asserted, because a test that only
+/// showed the silence would pass over a walk that had stopped reading anything at all.
+#[test]
+fn a_nested_gitignore_is_honoured() {
+    let ignored = Sandbox::seeded(
+        "nested-ignored",
+        "minimal",
+        &[
+            ("notes/.gitignore", "scratch.md\n"),
+            ("notes/scratch.md", DANGLING),
+        ],
+    );
+    let (out, stderr, code) = ignored.run(&["check", "--only", "references"]);
+    assert!(
+        !out.contains("no-such-thing"),
+        "the nested ignore rule covers it: {out}{stderr}"
+    );
+    assert_eq!(code, 0, "{out}{stderr}");
+
+    let walked = Sandbox::seeded(
+        "nested-walked",
+        "minimal",
+        &[("notes/scratch.md", DANGLING)],
+    );
+    let (walked_out, stderr, code) = walked.run(&["check", "--only", "references"]);
+    assert_eq!(
+        code, 1,
+        "without the rule the file is live: {walked_out}{stderr}"
+    );
+    assert!(walked_out.contains("no-such-thing"), "{walked_out}");
+    // Exactly one file separates the two copies, and the count says so. A count that did not
+    // follow the walk would read alike here.
+    assert_eq!(walked_count(&walked_out), walked_count(&out) + 1);
+}
+
+/// The claim: no `git` on the path is exit 2 naming git, never an empty walk.
+///
+/// An empty walk is the dangerous answer: a project with no document is reported as one with
+/// nothing wrong, which is the failure class this tool exists to prevent.
+#[test]
+fn a_run_with_no_git_on_the_path_is_exit_two_naming_git() {
+    let empty = std::env::temp_dir().join(format!("knowledge-no-git-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&empty);
+    std::fs::create_dir_all(&empty).expect("a directory holding no git");
+    let (stdout, stderr, code) = run_with_path(&project("minimal"), &["check"], &empty);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(stderr.contains("git is not on the PATH"), "{stderr}");
+    assert!(!stdout.contains("PASSED"), "{stdout}");
+    let _ = std::fs::remove_dir_all(&empty);
+}
+
+/// The claim: a project directory outside any git worktree is exit 2 carrying git's own reason.
+#[test]
+fn a_project_outside_a_worktree_is_exit_two_carrying_gits_reason() {
+    let sandbox = Sandbox::without_git("no-worktree", "minimal");
+    let (stdout, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(
+        stderr.to_lowercase().contains("not a git repository"),
+        "{stderr}"
+    );
+    assert!(!stdout.contains("PASSED"), "{stdout}");
+}
+
+/// The claim: a path reference whose target the ignore rules cover is exempt from the existence
+/// assertion, and the exemption is decided by the rules rather than by what is on disk.
+///
+/// The target below is on no disk at all: it is a generated path, which is the case the
+/// exemption exists for. A run that asked the filesystem, or that asked git nothing, reports it
+/// as dangling — so the second half of the test is the same tree without the ignore line.
+#[test]
+fn a_reference_to_an_ignored_target_is_exempt_and_the_rules_decide_it() {
+    let pointer = "# A mock document\n\nIt points at `path@minimal@build-output/out.txt` and at \
+                   `path@minimal@build-output/`.\n";
+    let exempt = Sandbox::seeded(
+        "ignored-target",
+        "minimal",
+        &[(".gitignore", "build-output/\n"), ("notes/a.md", pointer)],
+    );
+    let (out, stderr, code) = exempt.run(&["check", "--only", "references"]);
+    assert_eq!(code, 0, "the ignore rules cover the target: {out}{stderr}");
+    assert!(!out.contains("build-output"), "{out}");
+
+    let asserted = Sandbox::seeded("unignored-target", "minimal", &[("notes/a.md", pointer)]);
+    let (out, stderr, code) = asserted.run(&["check", "--only", "references"]);
+    assert_eq!(
+        code, 1,
+        "without the rule the target is asserted: {out}{stderr}"
+    );
+    assert_eq!(
+        out.lines().filter(|l| l.contains("does not exist")).count(),
+        2,
+        "both the file claim and the directory claim: {out}"
+    );
 }

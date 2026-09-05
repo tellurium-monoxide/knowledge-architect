@@ -1,19 +1,25 @@
 //! Which files are read.
 //!
-//! What a line MEANS is `source`'s: the grammar for the file's kind says which byte ranges
-//! are prose, so nothing here strips a prefix off anything.
+//! **The listing is git's**, and this module applies the manifest's exclusions to it. What a
+//! line MEANS is `source`'s: the grammar for the file's kind says which byte ranges are prose,
+//! so nothing here strips a prefix off anything.
 
 use std::collections::HashSet;
 use std::path::{Component, Path, PathBuf};
 
-use crate::gitignore::Ignore;
 use crate::manifest::Walk;
 
 /// Every file in the repository whose contents are checked.
 ///
-/// A hand-maintained list cannot survive a source tree, so the set is a walk with an
+/// A hand-maintained list cannot survive a source tree, so the set is a listing with an
 /// exclusion set rather than an inclusion one: a new document is covered the moment it
 /// exists, and a file that should be exempt has to say so here, in one place, with a reason.
+///
+/// `listing` is git's live listing, project-relative: every tracked file, plus every untracked
+/// file the ignore rules do not cover. A tracked file is in it whatever the ignore rules say,
+/// per `knowledge#git-supplies-the-walk`, so no ignore line can remove a live document from the
+/// walk. What this function removes on top of that is the manifest's `skip-dirs`, `skip-files`
+/// and `exclude`, the suffixes the tool cannot parse, and the generated indexes.
 ///
 /// `generated` is every path the tool writes a generated index at, taken from the register
 /// instances. Those are **outside the walk by construction** rather than by a declared row: a
@@ -22,56 +28,32 @@ use crate::manifest::Walk;
 pub fn live_files(
     root: &Path,
     walk: &Walk,
-    ignore: &Ignore,
+    listing: &[PathBuf],
     generated: &HashSet<PathBuf>,
-) -> std::io::Result<Vec<PathBuf>> {
-    let excluded: Vec<PathBuf> = walk.exclude.iter().map(|p| root.join(p)).collect();
-    let mut out = Vec::new();
-    collect(root, root, walk, ignore, &excluded, generated, &mut out)?;
+) -> Vec<PathBuf> {
+    let mut out: Vec<PathBuf> = listing
+        .iter()
+        .filter(|rel| !skipped(rel, walk) && is_live(rel, walk) && !generated.contains(*rel))
+        .map(|rel| root.join(rel))
+        .collect();
     // Sorted by path COMPONENT, not by the path as one string. They disagree whenever one
     // directory name is a prefix of another — a/b against a-c/d, where `-` sorts before
-    // `/` — and component order is what the walk being replaced produced.
+    // `/` — and component order is what the tree walk this replaced produced.
     out.sort_by(|a, b| components(a).cmp(&components(b)));
-    Ok(out)
+    out
+}
+
+/// Whether a skipped directory or an excluded location holds this path.
+///
+/// A directory row covers everything beneath it, which is what pruning at the directory used to
+/// do; git lists files and not directories, so the containment is asked here instead.
+pub(crate) fn skipped(rel: &Path, walk: &Walk) -> bool {
+    walk.skip_dirs.iter().any(|d| rel.starts_with(d))
+        || walk.exclude.iter().any(|e| rel.starts_with(e))
 }
 
 fn components(path: &Path) -> Vec<&std::ffi::OsStr> {
     path.components().map(Component::as_os_str).collect()
-}
-
-fn collect(
-    root: &Path,
-    dir: &Path,
-    walk: &Walk,
-    ignore: &Ignore,
-    excluded: &[PathBuf],
-    generated: &HashSet<PathBuf>,
-    out: &mut Vec<PathBuf>,
-) -> std::io::Result<()> {
-    for entry in std::fs::read_dir(dir)? {
-        let path = entry?.path();
-        if path.file_name().and_then(|n| n.to_str()).is_none() {
-            continue;
-        }
-        if excluded.contains(&path) {
-            continue;
-        }
-        let rel = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
-        // What git does not track, this tool does not read, and the manifest does not have to
-        // say so. A generated directory cannot be declared and checked to exist: a fresh clone
-        // has none of them.
-        if ignore.covers(&rel, path.is_dir()) {
-            continue;
-        }
-        if path.is_dir() {
-            if !walk.skip_dirs.contains(&rel) {
-                collect(root, &path, walk, ignore, excluded, generated, out)?;
-            }
-        } else if is_live(&path, &rel, walk) && !generated.contains(&rel) {
-            out.push(path);
-        }
-    }
-    Ok(())
 }
 
 /// The file kinds this tool can parse, and therefore the whole of the walk.
@@ -87,9 +69,9 @@ fn collect(
 /// is a finding rather than a silence.
 pub const LIVE_SUFFIXES: [&str; 2] = ["md", "rs"];
 
-fn is_live(path: &Path, rel: &Path, walk: &Walk) -> bool {
+fn is_live(rel: &Path, walk: &Walk) -> bool {
     !walk.skip_files.iter().any(|f| f == rel)
-        && path
+        && rel
             .extension()
             .and_then(|e| e.to_str())
             .is_some_and(|e| LIVE_SUFFIXES.contains(&e))
@@ -109,23 +91,56 @@ mod tests {
             ..Walk::sample()
         };
         let declared = PathBuf::from("docs/rules/index.md");
-        assert!(!is_live(&declared, &declared, &walk));
+        assert!(!is_live(&declared, &walk));
         let elsewhere = PathBuf::from("docs/plans/index.md");
-        assert!(
-            is_live(&elsewhere, &elsewhere, &walk),
-            "same name, other path"
-        );
+        assert!(is_live(&elsewhere, &walk), "same name, other path");
     }
 
     #[test]
     fn the_walk_covers_markdown_and_rust_only() {
         assert_eq!(LIVE_SUFFIXES, ["md", "rs"]);
         let walk = Walk::sample();
-        assert!(is_live(Path::new("a/b.md"), Path::new("a/b.md"), &walk));
-        assert!(is_live(Path::new("a/b.rs"), Path::new("a/b.rs"), &walk));
+        assert!(is_live(Path::new("a/b.md"), &walk));
+        assert!(is_live(Path::new("a/b.rs"), &walk));
         for suffix in ["py", "sh", "toml", "yml", "json", "txt"] {
             let p = PathBuf::from(format!("a/b.{suffix}"));
-            assert!(!is_live(&p, &p, &walk), "{suffix} must not be walked");
+            assert!(!is_live(&p, &walk), "{suffix} must not be walked");
         }
+    }
+
+    #[test]
+    fn the_listing_is_filtered_by_the_manifest_and_by_the_generated_set() {
+        // Git lists files and never directories, so a `skip-dirs` or an `exclude` row has to
+        // be read as containment here. A row applied as an equality would leave every file
+        // under a skipped directory inside the walk.
+        let walk = Walk {
+            skip_dirs: vec![PathBuf::from("docs/past")],
+            skip_files: vec![PathBuf::from("docs/rules/index.md")],
+            exclude: vec![PathBuf::from("tests/projects")],
+        };
+        let listing: Vec<PathBuf> = [
+            "README.md",
+            "docs/past/old.md",
+            "docs/rules/index.md",
+            "docs/open-issues/index.md",
+            "tests/projects/minimal/README.md",
+            "src/lib.rs",
+            "Cargo.toml",
+        ]
+        .iter()
+        .map(PathBuf::from)
+        .collect();
+        let generated: HashSet<PathBuf> = [PathBuf::from("docs/open-issues/index.md")]
+            .into_iter()
+            .collect();
+        let walked = live_files(Path::new("/root"), &walk, &listing, &generated);
+        assert_eq!(
+            walked,
+            vec![
+                PathBuf::from("/root/README.md"),
+                PathBuf::from("/root/src/lib.rs"),
+            ],
+            "the listing minus every exclusion, as absolute paths"
+        );
     }
 }

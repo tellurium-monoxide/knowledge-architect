@@ -364,7 +364,6 @@ pub struct Manifest {
     /// to produce a run: a manifest that would not load reports nothing at all, and nothing at
     /// all is what a session reads as conformance.
     register_complaints: Vec<String>,
-    ignore: crate::gitignore::Ignore,
 }
 
 impl Manifest {
@@ -387,18 +386,15 @@ impl Manifest {
         Self::load(root)
     }
 
-    /// Read a manifest from a known root, and the `.gitignore` beside it.
+    /// Read a manifest from a known root.
+    ///
+    /// The ignore rules are not read here and are not this tool's to parse: git answers what it
+    /// ignores, per `knowledge#git-supplies-the-walk`.
     pub fn load(root: &Path) -> Result<Self, String> {
         let path = root.join(MANIFEST_NAME);
         let text =
             std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-        let mut out = Self::parse(root, &text).map_err(|e| format!("{}: {e}", path.display()))?;
-        let ignore_path = root.join(".gitignore");
-        if let Ok(text) = std::fs::read_to_string(&ignore_path) {
-            out.ignore = crate::gitignore::Ignore::parse(&text)
-                .map_err(|e| format!("{}: {e}", ignore_path.display()))?;
-        }
-        Ok(out)
+        Self::parse(root, &text).map_err(|e| format!("{}: {e}", path.display()))
     }
 
     /// Parse a declaration from text, against a root that is not read.
@@ -414,7 +410,6 @@ impl Manifest {
             declared,
             registers,
             register_complaints,
-            ignore: crate::gitignore::Ignore::default(),
         })
     }
 
@@ -428,11 +423,6 @@ impl Manifest {
 
     pub fn walk(&self) -> &Walk {
         &self.declared.walk
-    }
-
-    /// What the root `.gitignore` covers, which the walk does not read and may not declare.
-    pub fn ignore(&self) -> &crate::gitignore::Ignore {
-        &self.ignore
     }
 
     pub fn lint(&self) -> &Lint {
@@ -477,12 +467,6 @@ impl Manifest {
             }
         }));
         Components(all)
-    }
-
-    /// Replace the parsed ignore rules, for a test that states them without a checkout.
-    #[cfg(test)]
-    pub(crate) fn set_ignore(&mut self, ignore: crate::gitignore::Ignore) {
-        self.ignore = ignore;
     }
 
     /// The rules corpus as `rules::Tree` needs it, with every path already resolved.

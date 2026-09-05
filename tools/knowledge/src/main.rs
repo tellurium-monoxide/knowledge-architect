@@ -238,6 +238,17 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
     // One listing answers every question a check has about what is there, and it is the
     // caller's job because a check may not touch the filesystem.
     let survey = documentation::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
+    // Whether the ignore rules cover a path target is git's answer, taken in ONE batch over
+    // every spelling a reference in this run could ask about — a check spawns nothing, and a
+    // process per reference would be a process per pointer in the tree.
+    let queries = documentation::check::references::ignore_queries(
+        &model,
+        &documentation::entity::Anchors::of(manifest),
+    );
+    let ignored =
+        documentation::git::ignored(manifest.root(), &queries).map_err(|e| e.to_string())?;
+    let tracked_and_ignored =
+        documentation::git::tracked_and_ignored(manifest.root()).map_err(|e| e.to_string())?;
     let inputs = Inputs {
         releases: &releases,
         pinned: &pinned,
@@ -246,6 +257,8 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
         present: &survey.present,
         directories: &survey.directories,
         outside: &survey.outside,
+        ignored: &ignored,
+        tracked_and_ignored: &tracked_and_ignored,
     };
     let mut report = documentation::check::run(&model, manifest, &inputs, only);
 
@@ -547,7 +560,7 @@ fn issues(manifest: &Manifest, args: &IssuesArgs) -> Result<ExitCode, String> {
         .filter(|(_, register, _)| register.name == ISSUE_REGISTER)
         .map(|(_, _, home)| home.dir)
         .collect();
-    let changed = documentation::records::last_changed(manifest.root(), &dirs);
+    let changed = documentation::git::last_changed(manifest.root(), &dirs);
 
     let table: Vec<[String; 5]> = rows
         .iter()
@@ -703,6 +716,11 @@ fn counts(report: &Report) -> String {
     let mut out = String::new();
     let ran = report.ran;
     let _ = write!(out, "\nchecked: {}", ran.names().join(", "));
+    // Not a family: every family read this walk. Git supplies it, per
+    // `knowledge#git-supplies-the-walk`, so the count is what a reader compares between CI and
+    // a local run. It prints whatever was asked for, and on a failing run as readily as a
+    // passing one.
+    let _ = write!(out, "\nwalk: {} file(s)", report.structure.walked);
     let skipped = report.asked.without(ran);
     if skipped != Only::NOTHING {
         // Asked for and not performed. Without this line the two failures are the same

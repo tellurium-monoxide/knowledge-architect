@@ -1,5 +1,18 @@
 # Rejected Alternatives
 
+**A hand-rolled gitignore matcher reading the root file alone**, with the walk pruning what it
+covered — lost to `knowledge#git-supplies-the-walk`. `live`. It needed no `git` on the path and no
+process per run, and its supported subset was chosen against this repository's own file. It loses
+on three counts, each measured against the tree rather than argued: a tracked live document left
+the walk AND the inverse assertion when one root ignore line matched its bare name at any depth,
+reproduced with a one-line `.gitignore` over a copy of `knowledge@tests/projects/minimal/` and
+recorded as a defect before the reversal; a nested `.gitignore` was not honoured at all, so a
+project needing one had to declare the path in the manifest; and every pattern the matcher could
+not honour — a negation, `**`, `?`, a character class — had to be refused by name, because
+dropping an ignore rule makes the walk read more than it should and dropping a negation makes it
+read less, and both are silent. Git answers all three by construction, and the walked-file count
+over this repository was identical under the two.
+
 **Families named for the subjects that read them** — lost to `knowledge#families-are-the-checks`. `live`. A
 family per review axis would let a reader ask for its own subject in one word instead of listing the
 checks that serve it. It loses on `thaum@tools/README.md`: nothing about this repository is compiled into the
