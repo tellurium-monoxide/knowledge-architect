@@ -348,8 +348,8 @@ than its head sends them to the wrong place or makes them doubt they arrived.
 
 **What would close it.** Rename it during step B of `thaum@docs/plans/knowledge-tool-overhaul.md`,
 which rewrites every pointer in the tree mechanically, so the rename costs one more substitution
-rather than a pass of its own. The spec's own disposition row chose "rewritten in place", which is
-what this entry disagrees with.
+rather than a pass of its own. The plan's record of the heads, in its section 8, lists this one
+among those rewritten in place with the slug kept, which is what this entry disagrees with.
 
 
 ## `check` and `commits` disagree about a symlinked file, and the summary claims they agree `observation`

@@ -159,8 +159,9 @@ kind can decide which subsections an entry owes. The failure that would make the
 the list growing instead of being chosen from: each new situation gets a kind of its own, the list
 stops partitioning anything, and the finding stops carrying information.
 
-**Fires when:** the declared kind list of any issue register exceeds ten kinds, or a kind is added
-that ends up with a single member across the whole project.
+**Fires when:** the declared kind list of any issue register exceeds ten kinds, or a kind added
+after the list was closed — one outside the six compiled defaults — ends up with a single member
+across the whole project.
 
 **Response:** reopen the open-set argument this decision reversed, in
 `knowledge@docs/rejected-alternatives.md`.
