@@ -22,7 +22,7 @@ prints for the same commit. Both are the `walk: n file(s)` line of the summary b
 
 **Re-entry:** each time CI's output is read against a local run, and at any change to the walk.
 
-## Guarding `design@knowledge@grammars-not-prefixes`
+## Guarding `design@knowledge@grammars-not-prefixes` `##grammars-not-prefixes`
 
 **Fires when:** a `.rs` file in the tree yields no prose region, or no item scope, while its text
 holds a top-level `fn` — or a `tree-sitter-rust` or `pulldown-cmark` upgrade changes a node name the
@@ -34,7 +34,7 @@ indistinguishable from a clean tree. `Parsed::trouble` catches the cases the gra
 guards the case where it reports success and returns nothing.
 **Re-entry:** standing, and each time either parser's version changes.
 
-## Guarding `design@knowledge@sections-cite-the-heading`'s keyword boundary
+## Guarding `design@knowledge@sections-cite-the-heading`'s keyword boundary `##sections-cite-the-heading-keyword-boundary`
 
 **Fires when:** a review reports a section reference that claims content in a shape the lint
 cannot see — no keyword before the number, or a keyword shape outside the patterns in
@@ -46,7 +46,7 @@ Either way the review finding is the evidence; open a `defect` naming the shape 
 is not reopened in the same change.
 **Re-entry:** standing.
 
-## Guarding `design@knowledge@sections-cite-the-heading`'s reviewer delegation
+## Guarding `design@knowledge@sections-cite-the-heading`'s reviewer delegation `##sections-cite-the-heading-reviewer-delegation`
 
 **Fires when:** a section citation standing where one subrule carries the claim is found in work
 already merged to `main` — the delegation to the rules-reviewer was the only enforcement, and it
@@ -56,7 +56,7 @@ check may need mechanical support after all, or the reviewer definition's instru
 sharpening. Record the missed instance as a `defect` in the component that carries it.
 **Re-entry:** standing.
 
-## Guarding `design@knowledge@sections-cite-the-heading`'s quote obligation
+## Guarding `design@knowledge@sections-cite-the-heading`'s quote obligation `##sections-cite-the-heading-quote-obligation`
 
 **Fires when:** a diff moves a section reference into a code span, or deletes one, where the
 surrounding sentence still claims the section's content — the visible effect being that the
@@ -79,7 +79,7 @@ the widened class; or re-accept the silence knowingly and record the shape as th
 Open a `defect` naming the span if the decision is not reopened in the same change.
 **Re-entry:** standing, and the review of the migration that follows the grammar change.
 
-## Guarding `design@knowledge@reserved-anchors`' generic rule
+## Guarding `design@knowledge@reserved-anchors`' generic rule `##reserved-anchors-generic-rule`
 
 **Fires when:** a session or a review reports a finding on a `path@*@<path>` reference whose
 repair was unclear to whoever hit it — the finding named neither a path to fix nor a component
@@ -91,7 +91,7 @@ may need to become an every-component test. Record the confusing instance as an 
 with the finding text it produced.
 **Re-entry:** standing.
 
-## Guarding the citation index as a bump work list
+## Guarding the citation index as a bump work list `##citation-index-bump-work-list`
 
 **Fires when:** `path@rules@index.md`'s cited-rule count falls between two commits that add engine
 code, **and a rule that left was cited by anything other than a `path@thaum@docs/plans/` document deleted at
@@ -104,7 +104,7 @@ That leaves the engine's dependence on the corpus invisible, and a release bump 
 depends on it — which is the one thing the index exists to prevent.
 **Re-entry:** standing.
 
-## Guarding the rejected citation locator
+## Guarding the rejected citation locator `##rejected-citation-locator`
 
 **Fires when:** a rules bump lands a citation repair at a file and line that a
 `cargo knowledge model` filter for that rule number did not list. Take the filter output before the
@@ -115,7 +115,7 @@ reason failing — the answer is then either widening the scanner or a filter th
 covers, and either way the missed shape is recorded as a `defect`.
 **Re-entry:** the next rules bump, and standing.
 
-## Guarding `design@knowledge@checker-source-literals-are-data`' self-location
+## Guarding `design@knowledge@checker-source-literals-are-data`' self-location `##checker-source-literals-are-data-self-location`
 
 **Fires when:** a `cargo knowledge check` run reports a finding on a string literal in a Rust
 file under the tool's own directory, or the summary block's checker-source line is absent or
@@ -129,7 +129,7 @@ Open a `defect` carrying the path the line names and the checkout's. Reopen the 
 the mismatch is one the cargo alias cannot prevent, since the alias is what the decision rests on.
 **Re-entry:** standing.
 
-## Guarding `design@knowledge@checker-source-literals-are-data`' whole-source scope
+## Guarding `design@knowledge@checker-source-literals-are-data`' whole-source scope `##checker-source-literals-are-data-whole-source-scope`
 
 **Fires when:** a review finds a string literal in the tool's non-test source that cites a rule:
 a `CR:` marker followed by a rule number written out, with a sentence around it that says
@@ -141,7 +141,7 @@ citation into the comment above the literal, or reopen the scope half of the dec
 it to test modules, which costs an attribute lookup in the extractor.
 **Re-entry:** standing.
 
-## Guarding `design@knowledge@checker-source-literals-are-data`' purpose
+## Guarding `design@knowledge@checker-source-literals-are-data`' purpose `##checker-source-literals-are-data-purpose`
 
 **Fires when:** a test module of the tool gains a named constant whose only use is to be
 interpolated into a fixture so that its rule-shaped, slug-shaped or path-shaped bytes are not
