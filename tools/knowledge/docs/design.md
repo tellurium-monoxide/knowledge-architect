@@ -94,8 +94,7 @@ free to declare its own set would be conformant with whatever it declared, which
 being checked against nothing.
 
 **A directory that carries outstanding state without being a component is a location**, per
-`knowledge#anchors-are-components-and-locations`. It replaces the file list that named such
-trackers one at a time.
+`knowledge#anchors-are-components-and-locations`.
 
 **A component directory that does not exist is one finding rather than one per document.** Six
 findings from one cause bury the cause, and the repair for all of them is the same line of the
@@ -109,8 +108,8 @@ bullet list of markdown links, one per subdocument, each target written relative
 The entries and their slug anchors live in the subdocuments.
 
 **Both shapes serve every heading register**, so `design`, `goal` and `tripwire` accept the same
-two, and so does any heading register a project declares. The design home is where the rule was
-argued and is no longer a special case of anything.
+two, and so does any heading register a project declares. The slug names the design home because
+that is the home the rule was argued over; the statement is the register's.
 
 Five assertions carry the shape, split over three places. `check::registers` asserts exactly one
 home per anchor and register, that a directory home carries its `README.md`, and that the README
@@ -150,15 +149,14 @@ owes the compiled documents and every `component`-scoped register, with its home
 row declares and nothing else, with its homes directly under its own path — a location's
 directory is already documentation, where a component's is source code.
 
-**A location exists so that a directory outside every component can be cited.** The file list it
-replaces named such trackers one at a time, and a file in that list had no anchor: nothing could
-point at what was open there, and nothing could point at the reading a rules directory holds.
-Giving the directory a name gives every entry in it a reference, and makes relocating it one
-manifest edit, which is what `knowledge#every-path-names-its-anchor` buys everywhere else.
+**A location exists so that a directory outside every component can be cited.** Naming the
+directory gives every entry in it a reference and makes relocating it one manifest edit, which is
+what `knowledge#every-path-names-its-anchor` buys everywhere else. What a location is instead of
+is `knowledge@docs/rejected-alternatives.md`.
 
-**A location may sit inside a component; a component inside a location is refused.** Both of this
-repository's locations sit inside the root component, and the deepest anchor wins, so a document
-under `thaum@docs/rules/` belongs to the `rules` location and not to the root. The reverse nests
+**A location may sit inside a component; a component inside a location is refused.** A location
+inside one is the ordinary case, and the deepest anchor wins, so a document under a location
+belongs to it and not to the component holding it. The reverse nests
 one full register set inside a partial one and gives a document two candidate homes, so
 `check::registers` reports it.
 
@@ -195,18 +193,33 @@ two-entry instance owes no directory.
 
 **The frontmatter subset is small and refused loudly outside itself**, per
 `knowledge#a-failed-parse-is-loud`: a block opened and closed by a line holding only `---`, at the
-very top of the file, holding `key: value` lines with scalar values. A key the register does not
-declare is a finding, so a typo in a key name cannot pass as an absent optional. Frontmatter is
-required exactly when the register declares metadata, and refused when it declares none — an
-undeclared block is metadata nothing checks. Its values are prose to the reference scanner and
-data to the quote checker: a reference in a value is a reference, and a rule number in one is a
-value being displayed.
+very top of the file, holding `key: value` lines with scalar values, no key written twice. A key
+the register does not declare is a finding, so a typo in a key name cannot pass as an absent
+optional. Frontmatter is required exactly when the register declares metadata, and refused when it
+declares none — an undeclared block is metadata nothing checks.
+
+**A blank line between the delimiters means there is no block**, which is what tells a block from
+a document opening on a thematic break: a paragraph between two thematic breaks has blank lines
+around it, and a block has none.
+
+**The block is prose, entire, and its lines are marked as a fence.** That marking keeps a value
+out of the document's structure — a heading, a slug definition, a navigation link — and buys
+nothing else: a fence has never made a rule number data here, per
+`knowledge#grammars-not-prefixes`, and a marker is never data wherever it sits. So a reference in
+a value is a reference, and a `CR:` marker in a value claims its rule with nowhere in the block
+to put the quote. A marker therefore does not belong in metadata, and one is reported exactly
+where it stands.
+
+**The block is blanked byte for byte before the structure is read.** The closing `---` is a setext
+underline for the `key: value` lines above it, so left in place a block would open the document
+with a level-two heading nobody wrote. Each byte becomes a space rather than being removed, so
+every offset the analysis returns is an offset into the file as written.
 
 **The issue register's kind list is closed.** An unknown kind is a finding naming the list, and
-adding one is a reviewed manifest diff. This reverses the open-set argument the report reader was
-written under, whose failure case — an unanticipated kind labelled as a real one — cannot occur
-once an unknown kind is refused. The kind also decides the subsections the entry owes, which is
-what makes refusing an unknown one load-bearing rather than tidy.
+adding one is a reviewed manifest diff. The kind decides which subsections the entry owes, so an
+unknown one would owe the wrong three in silence, which is what makes refusing it load-bearing
+rather than tidy. The open set is in `knowledge@docs/rejected-alternatives.md`, and
+`knowledge@docs/tripwires.md` guards the closing.
 
 ### Which registers exist is the manifest's, and a register instance's own options sit beside it `##registers-are-declared`
 

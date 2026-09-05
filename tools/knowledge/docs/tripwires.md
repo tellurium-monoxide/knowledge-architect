@@ -147,6 +147,6 @@ stops partitioning anything, and the finding stops carrying information.
 **Fires when:** the declared kind list of any issue register exceeds ten kinds, or a kind is added
 that ends up with a single member across the whole project.
 
-**Response:** reopen the open-set argument this decision reversed, recorded in
-`knowledge@docs/rejected-alternatives.md` when it is.
+**Response:** reopen the open-set argument this decision reversed, in
+`knowledge@docs/rejected-alternatives.md`.
 

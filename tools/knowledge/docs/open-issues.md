@@ -226,3 +226,54 @@ is wanted; what is undecided is whether a marker may sit in one at all.
 line may not name a rule, reported the way the inverse assertion reports a rule number outside
 the walk, or the HTML comment is named in root `thaum@CLAUDE.md` as a form that carries no
 claim. Re-entry: the next tool-cleanup discussion.
+
+## A location nested inside another anchor's register home is not refused `defect`
+
+**What.** `check::registers` refuses a component inside a location, because nesting one full
+register set inside a partial one gives a document two candidate homes. The reverse nesting — a
+location whose path sits inside another anchor's register home — is accepted. A location declared
+at `<component>/docs/open-issues/nested`, carrying its own issue register, produces a dozen
+findings against the OUTER component's issue register instead: the nested location's own
+`README.md` and `index.md` are read as malformed entries of the outer register, and its directory
+is reported as a group inside a group.
+
+**Observed.** An adversarial review of the register-shape checks, over a copy of a mock project.
+Reproduce by adding such a location to any mock project's manifest and running
+`cargo knowledge check --only registers`.
+
+**Why it matters.** The findings name the wrong anchor and the wrong register, so a reader repairs
+the outer component's directory and the declaration that caused it stays. It is the same one-home
+failure the component-inside-a-location refusal exists against, reached from the other side.
+
+**What would close it.** Refuse a location whose path sits inside any anchor's register home, with
+the same finding shape the component-inside-a-location case uses.
+
+## Two anchors' register homes may overlap, and the entry count then double-counts `observation`
+
+**What.** Two registers carried by ONE anchor may not share a home: `check::registers` reports it.
+Two ANCHORS whose homes overlap are not refused — a location inside a component's register home is
+the reachable case, recorded above — and a document under the overlap is then judged once per
+instance and counted once per instance. The `registers:` summary line's entry count is the only
+visible symptom.
+
+**Why it matters.** The count is what tells a run that judged the entries from a run that judged
+none, which is the whole reason it is printed. A count nobody can trust is worse than no count.
+
+**What would close it.** The refusal the entry above asks for closes the reachable case. If a
+second one is found, count distinct documents rather than instance-and-document pairs.
+
+## The `design-home-two-shapes` slug names a decision wider than the slug `todo`
+
+**What.** The head now states the two shapes of every HEADING REGISTER's home, and the slug still
+says `design-home`. `recording-a-decision` asks for a new slug when a statement widens, at the cost
+of renaming every reference. The head is already cited for the goals and tripwires homes inside the
+same document, so a reader following the slug reads _design_ about tripwires.
+
+**Why it matters.** A slug is the name a reader navigates by, and one that names a narrower thing
+than its head sends them to the wrong place or makes them doubt they arrived.
+
+**What would close it.** Rename it during step B of `thaum@docs/plans/knowledge-tool-overhaul.md`,
+which rewrites every pointer in the tree mechanically, so the rename costs one more substitution
+rather than a pass of its own. The spec's own disposition row chose "rewritten in place", which is
+what this entry disagrees with.
+

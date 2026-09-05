@@ -807,17 +807,35 @@ pub(crate) mod tests {
             m.registers().by_name("issue").expect("issue").kinds,
             vec!["defect", "todo"]
         );
+        // Each of the five in turn: a declaration the tool then discards is configuration
+        // that looks applied and is not, so each owes its own complaint.
+        for (row, key) in [
+            ("scope = \"opt-in\"", "scope"),
+            ("shape = \"heading\"", "shape"),
+            ("dir = \"issues\"", "dir"),
+            ("sections = [\"One\"]", "sections"),
+            (
+                "[registers.issue.metadata.theme]\nvalues = [\"a\"]",
+                "metadata",
+            ),
+        ] {
+            let m = with_registers(&format!("[registers.issue]\n{row}\n"));
+            assert_eq!(m.register_complaints().len(), 1, "{key}");
+            assert!(
+                m.register_complaints()[0].contains(key),
+                "{key}: {:?}",
+                m.register_complaints()
+            );
+        }
         let m = with_registers("[registers.issue]\ndir = \"issues\"\n");
-        assert_eq!(m.register_complaints().len(), 1);
-        assert!(
-            m.register_complaints()[0].contains("dir"),
-            "{:?}",
-            m.register_complaints()
-        );
-        // The compiled directory stands whatever the declaration said.
+        // The compiled storage stands whatever the declaration said.
         assert_eq!(
             m.registers().by_name("issue").expect("issue").dir,
             "open-issues"
+        );
+        assert_eq!(
+            m.registers().by_name("issue").expect("issue").shape,
+            Shape::File
         );
         let m = with_registers("[registers.design]\nkinds = [\"a\"]\n");
         assert_eq!(m.register_complaints().len(), 1);

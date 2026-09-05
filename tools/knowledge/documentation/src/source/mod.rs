@@ -26,7 +26,13 @@ use std::path::Path;
 ///
 /// The accepted subset is a block opened and closed by a line holding only `---`, at the very
 /// top of the file, holding `key: value` lines with scalar values and nothing else. No
-/// nesting, no lists, no quoting rules.
+/// nesting, no lists, no quoting rules, and no key written twice.
+///
+/// **The block is prose, entire.** Its lines are marked as a fence so that a value cannot be
+/// read as document structure — a heading, a slug definition, a navigation link — and that is
+/// the whole of what the marking buys. A reference in a value is a reference, and a `CR:`
+/// marker in one claims its rule with nowhere in the block to put the quote, so a marker does
+/// not belong in metadata and is reported where it stands.
 pub type Frontmatter = Result<Vec<(String, String)>, String>;
 
 /// How a Rust file's string literals are read.
@@ -203,9 +209,8 @@ pub struct Parsed {
     /// refused loudly outside itself**, per `knowledge#a-failed-parse-is-loud`, because a
     /// frontmatter line nobody can parse is metadata nobody checks.
     ///
-    /// The block's own lines are prose to the reference scanner and data to the quote
-    /// checker: a reference in a value is a reference, and a rule number in one is a value
-    /// being displayed.
+    /// The block's lines are prose. Marking them as a fence keeps a value out of the
+    /// document's structure and nothing more; see [`Frontmatter`].
     pub frontmatter: Option<Frontmatter>,
     /// Why this parse cannot be trusted, where it cannot.
     ///

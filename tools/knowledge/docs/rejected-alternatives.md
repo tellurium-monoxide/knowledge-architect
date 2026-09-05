@@ -236,12 +236,6 @@ directory and regroups by editing one line. It loses on two counts: a subdirecto
 makes regrouping a `git mv` that breaks no reference — which a metadata key would also have to
 promise, and could not, without a second rule saying the key is not part of the id.
 
-**A line cap on an entry's summary** — lost to
-`knowledge#a-file-register-is-a-directory-of-entries`. `live`. It would keep a listing's rows
-short by construction. It loses on the failing shape: a cap fires on whoever adds the last line,
-so the session that pushes an entry over it pays for every session before it, and the repair is
-to delete someone else's sentence.
-
 **The index introduction as a string in the manifest** — lost to
 `knowledge#a-file-register-is-a-directory-of-entries`. `live`. It would make the whole of a
 generated index generated, with nothing hand-written beside it. It loses because the introduction
@@ -268,4 +262,16 @@ by `thaum#exit-code-ladder`, and exiting 2 is what the retired keys do. It loses
 the tool CAN act: a bad `dir` on a built-in has a compiled default to fall back on, so refusing the
 whole run would report nothing at all about the tree — and nothing at all is what a session reads
 as conformance. The two retired keys keep the refusal because there is no default to fall back on.
+
+**An open set of issue kinds, the label read off each entry as written** — lost to
+`knowledge#a-file-register-is-a-directory-of-entries`. `live`. It is the incumbent: the report
+reader derives an entry's label from the tag its own title carries rather than matching a list,
+because an entry written with a kind nobody anticipated is intended, and matching against a list
+made such an entry fall through to a label that is also a real kind. It loses once the kind
+decides which subsections an entry owes: an unanticipated kind then owes the wrong three, silently,
+and no reader can tell. A closed list makes an unknown kind a finding naming the list and an
+addition a reviewed manifest diff, which is what the concern list already did; the failure case the
+open set was written against — a wrong label — cannot occur once an unknown kind is refused. The
+incumbent statement stands in `knowledge@documentation/src/outstanding.rs` until item 5 of
+`thaum@docs/plans/knowledge-tool-overhaul.md` rewrites that module.
 

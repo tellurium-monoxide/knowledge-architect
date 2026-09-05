@@ -133,12 +133,29 @@ pub fn check_under(
                 }
             }
         }
+        let mut homes: BTreeMap<PathBuf, &str> = BTreeMap::new();
         for name in &anchor.registers {
             let Some(register) = anchors.registers().by_name(name) else {
                 continue;
             };
             counts.instances += 1;
             let home = anchor.home_of(register);
+            // Two registers at one home: the first one asked answers for every entry in it,
+            // and every reference of the other kind dangles for ever with nothing said.
+            if let Some(other) = homes.insert(home.dir.clone(), name.as_str()) {
+                out.push(Finding::in_file(
+                    &home.dir,
+                    format!(
+                        "the {} and {other} registers share the home `{}` under `{}`",
+                        register.name,
+                        home.dir.display(),
+                        anchor.name
+                    ),
+                    "give each register a directory of its own; one home answers for one \
+                     register, and the other's references resolve to nothing",
+                ));
+            }
+            outside_the_walk(&mut out, manifest, anchor, register, &home);
             match register.shape {
                 Shape::Heading => {
                     heading_home(&mut out, anchor, register, &home, model, anchors, inputs)
@@ -151,6 +168,44 @@ pub fn check_under(
     }
 
     (out, counts)
+}
+
+/// A register home the walk does not read is a register the regime does not reach.
+///
+/// The home exists, so the declared-path check passes; its entries exist, so the directory
+/// listing passes; but no document under it is in the model, so every entry-shape assertion
+/// judges nothing and the run is green. One `[walk] skip-dirs` row would take a whole
+/// register out of the regime, which `knowledge#the-regime-has-no-opt-out` refuses.
+fn outside_the_walk(
+    out: &mut Vec<Finding>,
+    manifest: &Manifest,
+    anchor: &Anchor,
+    register: &Register,
+    home: &Home,
+) {
+    let walk = manifest.walk();
+    let covers = |list: &[PathBuf]| {
+        list.iter()
+            .find(|p| home.dir.starts_with(p) || home.file.starts_with(p))
+            .cloned()
+    };
+    let hit = covers(&walk.skip_dirs)
+        .map(|p| ("[walk] skip-dirs", p))
+        .or_else(|| covers(&walk.exclude).map(|p| ("[walk] exclude", p)))
+        .or_else(|| covers(&walk.skip_files).map(|p| ("[walk] skip-files", p)));
+    if let Some((list, path)) = hit {
+        out.push(Finding::in_file(
+            MANIFEST_NAME,
+            format!(
+                "`{}` in {list} takes the {} register of `{}` out of the walk",
+                path.display(),
+                register.name,
+                anchor.name
+            ),
+            "delete the row, or move the register home out from under it; a home no \
+             document of is walked is a register every assertion passes over in silence",
+        ));
+    }
 }
 
 /// What the manifest declares about anchors, judged before anything is looked for on disk.
@@ -194,7 +249,73 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
         }
     }
 
+    // A register's name is what a reference spells in kind position, so a name outside the id
+    // grammar is a register nothing can point at, and `path` is a name the resolver answers
+    // before it ever reaches the register list.
+    for register in manifest.registers().all() {
+        if register.name == crate::entity::PATH_KIND {
+            out.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!(
+                    "`{}` is the reserved kind of a file or directory",
+                    register.name
+                ),
+                "rename the register; a reference whose kind segment is this word resolves \
+                 against the tree and never reaches the register",
+            ));
+        } else if !crate::entity::is_entity_id(&register.name) {
+            out.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!(
+                    "`{}` cannot be spelled in a reference's kind segment",
+                    register.name
+                ),
+                "name it in lower-case words joined by hyphens; a register nothing can point \
+                 at is one every pointer misses in silence",
+            ));
+        }
+    }
+
+    // A register's home is `<home base>/<dir>`, so a `dir` that is not one plain segment
+    // puts the home somewhere the anchor does not reach — and `..` puts it outside the
+    // anchor entirely, where the real home then goes unchecked.
+    for register in manifest.registers().all() {
+        if !crate::entity::is_entity_id(&register.dir) {
+            out.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!(
+                    "the {} register's directory `{}` is not one plain segment",
+                    register.name, register.dir
+                ),
+                "name it in lower-case words joined by hyphens; a `/` or a `..` puts the \
+                 home outside the anchor, and the real one is then read by nothing",
+            ));
+        }
+    }
+
     for (name, decl) in manifest.locations() {
+        // A location whose path is empty is the project root, which is a component. Left
+        // standing it is an anchor `is_root` skips, so nothing reports it, and it takes every
+        // root document from the component under `Anchors::owning`.
+        if decl.path.as_os_str().is_empty() || decl.path == Path::new(".") {
+            out.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!("[locations.{name}] names the project root"),
+                "give it a directory of its own; the root is a component, and it carries \
+                 every register already",
+            ));
+        } else if inputs.present.contains(&decl.path) && !inputs.directories.contains(&decl.path) {
+            // Presence alone is satisfied by a file, and every home under it then reads as
+            // absent, with a repair that says to create a directory inside a file.
+            out.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!(
+                    "[locations.{name}] names `{}`, which is a file",
+                    decl.path.display()
+                ),
+                "a location is a directory carrying register homes; point it at one",
+            ));
+        }
         for register in &decl.registers {
             if manifest.registers().by_name(register).is_none() {
                 out.push(Finding::in_file(
@@ -233,18 +354,22 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
     //
     // Existence, never file-ness: `skip-dirs` names directories, `exclude` names either, and
     // an archive directory is a declared skip that is legitimately empty in a fresh checkout.
+    //
+    // A location's own path is not in this list: it is an anchor, and the anchor loop below
+    // reports a directory that is not there. Both would be one fact reported twice.
     let walk = manifest.walk();
-    let locations: Vec<PathBuf> = manifest
-        .locations()
-        .values()
-        .map(|l| l.path.clone())
+    let rules = manifest.rules();
+    let corpus: Vec<PathBuf> = [&rules.text, &rules.version, &rules.past, &rules.manifest]
+        .iter()
+        .map(|p| rules.dir.join(p))
+        .chain(std::iter::once(rules.dir.clone()))
         .collect();
     let declared: [(&str, &Vec<PathBuf>); 5] = [
         ("[walk] skip-dirs", &walk.skip_dirs),
         ("[walk] skip-files", &walk.skip_files),
         ("[walk] exclude", &walk.exclude),
         ("[lint] exempt-files", &manifest.lint().exempt_files),
-        ("[locations] path", &locations),
+        ("[rules]", &corpus),
     ];
     for (list, paths) in declared {
         for path in paths {
@@ -414,9 +539,11 @@ fn file_home(
     }
     for (path, what) in [
         (&home.readme, "README.md"),
-        // The index's CONTENT is generated and the `generated` family owns it. That it is
-        // there at all is a fact about the register's shape, and it is mandatory: an index
-        // nobody generates is a listing that silently stops listing.
+        // That the index is THERE is a fact about the register's shape, and it is
+        // mandatory. Its content is generated, and nothing compares it yet: the file-register
+        // index has no generator until item 3 of
+        // `thaum@docs/plans/knowledge-tool-overhaul.md`, so until then this presence check is
+        // the whole of what holds it.
         (&home.index, "index.md"),
     ] {
         if !inputs.present.contains(path) || inputs.directories.contains(path) {
@@ -660,16 +787,39 @@ fn entry(out: &mut Vec<Finding>, register: &Register, doc: &Document) {
         .and_then(|(k, _)| values.get(k.as_str()).copied());
     let owed = register.owed_subsections(kind);
     if !owed.is_empty() {
+        // Under that section and nowhere else. Read over the whole document, the three
+        // subsections satisfy the assertion while sitting under the summary and leaving the
+        // section that owes them empty, which is the shape a reader would call a defect.
         in_order(
             out,
             doc,
             register,
             3,
             owed,
-            &headings,
+            under_last_section(register, &headings),
             "level-three subsection",
         );
     }
+}
+
+/// The headings under a register's last declared section, which is where its owed subsections
+/// sit.
+///
+/// Empty where the section is absent, so every owed subsection is reported and the absent
+/// section is reported beside them: two facts, and the reader needs both.
+fn under_last_section<'a>(
+    register: &Register,
+    headings: &'a [(u8, &'a str)],
+) -> &'a [(u8, &'a str)] {
+    let Some(last) = register.sections.last() else {
+        return headings;
+    };
+    let Some(from) = headings.iter().position(|(l, t)| *l == 2 && t == last) else {
+        return &[];
+    };
+    let rest = &headings[from + 1..];
+    let to = rest.iter().position(|(l, _)| *l <= 2).unwrap_or(rest.len());
+    &rest[..to]
 }
 
 /// Every owed heading of one level is present, in the declared order.
@@ -834,6 +984,10 @@ mod tests {
         out.push(at("docs/open-issues"));
         out.push(at("docs/open-issues/README.md"));
         out.push(at("docs/open-issues/index.md"));
+        // The corpus the declaration below names, which is a declared path like any other.
+        for name in ["r", "r/t", "r/v", "r/p", "r/m"] {
+            out.push(name.to_string());
+        }
         out
     }
 
@@ -955,6 +1109,42 @@ mod tests {
             found[0].contains("docs/goals/one.md") && found[0].contains("goal README"),
             "{found:#?}"
         );
+    }
+
+    #[test]
+    fn a_subdocument_is_a_markdown_file_this_anchor_owns_and_nothing_else() {
+        // Two things the enumeration excludes, each a false demand on the README if it did
+        // not: a Rust source under the home, which the model holds like any other document,
+        // and a markdown file belonging to an anchor nested under the home.
+        let manifest = declaring("\"docs/goals/nested\"");
+        let mut present = all_of("");
+        present.retain(|p| p != "docs/goals.md");
+        present.push("docs/goals".to_string());
+        present.push("docs/goals/README.md".to_string());
+        present.push("docs/goals/one.md".to_string());
+        present.push("docs/goals/gen.rs".to_string());
+        present.push("docs/goals/nested".to_string());
+        present.extend(all_of("docs/goals/nested"));
+        let model = Model::from_documents(vec![
+            (
+                PathBuf::from("docs/goals/README.md"),
+                "# Goals\n\n- [One](one.md)\n".to_string(),
+            ),
+            (
+                PathBuf::from("docs/goals/one.md"),
+                "## A goal `##one`\n".to_string(),
+            ),
+            (
+                PathBuf::from("docs/goals/gen.rs"),
+                "// a generator that lives beside the home\n".to_string(),
+            ),
+            (
+                PathBuf::from("docs/goals/nested/docs/goals/README.md"),
+                "# Goals\n".to_string(),
+            ),
+        ]);
+        let found = findings_over(&manifest, &present, model, &[]);
+        assert!(found.is_empty(), "{found:#?}");
     }
 
     #[test]
@@ -1134,6 +1324,35 @@ mod tests {
     }
 
     #[test]
+    fn the_owed_subsections_are_asserted_under_the_last_declared_section_and_nowhere_else() {
+        // All three present, all three under the summary, and the section that owes them
+        // left empty. Read over the whole document the entry passes, which is the shape a
+        // reader would call a defect.
+        let misplaced = "---\nkind: defect\n---\n# The title\n\n## Summary\n\n\
+                         ### What\n\nOne.\n\n### Why it matters\n\nTwo.\n\n\
+                         ### What would close it\n\nThree.\n\n## Details\n\nNothing here.\n";
+        let found = entry_findings(misplaced);
+        assert_eq!(found.len(), 3, "{found:#?}");
+        for name in ["What", "Why it matters", "What would close it"] {
+            assert!(
+                found
+                    .iter()
+                    .any(|f| f.contains(&format!("subsection `{name}`"))),
+                "{name}: {found:#?}"
+            );
+        }
+        // And the section itself absent: the subsections are owed and none is found, beside
+        // the finding naming the missing section.
+        let no_section = "---\nkind: defect\n---\n# The title\n\n## Summary\n\nWhat it is.\n";
+        let found = entry_findings(no_section);
+        assert_eq!(found.len(), 4, "{found:#?}");
+        assert!(
+            found.iter().any(|f| f.contains("section `Details`")),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
     fn a_deferred_entry_owes_a_trigger_where_the_others_owe_a_closure() {
         // The kind decides the last owed subsection, which is what makes the kind list worth
         // being closed: an unknown kind would silently owe the wrong three.
@@ -1201,10 +1420,12 @@ mod tests {
             "{:#?}",
             findings(&manifest, &present)
         );
-        // Its path is a declared path and is checked to exist.
+        // Its path is an anchor's directory, and a missing one is ONE finding rather than a
+        // declared-path finding beside it.
         let found = findings(&manifest, &all_of(""));
+        assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
-            found.iter().any(|f| f.contains("[locations] path")),
+            found[0].contains("`.claude` is declared an anchor and does not exist"),
             "{found:#?}"
         );
     }
@@ -1291,6 +1512,175 @@ mod tests {
             found.iter().any(|f| f.contains("is a reserved anchor")),
             "{found:#?}"
         );
+    }
+
+    #[test]
+    fn a_register_home_the_walk_does_not_read_is_reported_at_the_row_that_takes_it() {
+        // One `[walk]` row would otherwise take a whole register out of the regime: the home
+        // is there, its entries are there, and no document under it is in the model, so
+        // every entry-shape assertion judges nothing and the run is green.
+        for (row, list) in [
+            ("[walk] skip-dirs", "skip_dirs"),
+            ("[walk] exclude", "exclude"),
+        ] {
+            let (dirs, exclude) = if list == "skip_dirs" {
+                ("[\"docs/open-issues\"]", "[]")
+            } else {
+                ("[]", "[\"docs/open-issues\"]")
+            };
+            let manifest = declaring_full("", "", dirs, "[]", exclude, "[]");
+            let found = findings(&manifest, &all_of(""));
+            assert_eq!(found.len(), 1, "{row}: {found:#?}");
+            assert!(
+                found[0].contains(row) && found[0].contains("out of the walk"),
+                "{row}: {found:#?}"
+            );
+        }
+    }
+
+    #[test]
+    fn two_registers_of_one_anchor_may_not_share_a_home() {
+        // The first register asked answers for every entry in the shared home, and every
+        // reference of the other kind resolves to nothing for ever with nothing said.
+        let manifest = declaring_full(
+            "",
+            "[registers.note]\nscope = \"component\"\nshape = \"heading\"\ndir = \"design\"\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let found = findings(&manifest, &all_of(""));
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("share the home"), "{found:#?}");
+    }
+
+    #[test]
+    fn a_register_directory_that_is_not_one_plain_segment_is_reported() {
+        // `..` puts the home outside the anchor and the real one is then read by nothing.
+        for dir in ["", "..", "a/b", "Design"] {
+            let manifest = declaring_full(
+                "",
+                &format!(
+                    "[registers.note]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"{dir}\"\n\n"
+                ),
+                "[]",
+                "[]",
+                "[]",
+                "[]",
+            );
+            let found = findings(&manifest, &all_of(""));
+            assert_eq!(found.len(), 1, "{dir:?}: {found:#?}");
+            assert!(
+                found[0].contains("not one plain segment"),
+                "{dir:?}: {found:#?}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_location_that_names_the_root_or_a_file_is_reported() {
+        // The root is a component and carries every register already; a file satisfies a
+        // presence test and every home under it then reads as absent.
+        let manifest = declaring_full(
+            "",
+            "[locations.here]\npath = \"\"\nregisters = []\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let found = findings(&manifest, &all_of(""));
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("names the project root"), "{found:#?}");
+        let manifest = declaring_full(
+            "",
+            "[locations.here]\npath = \"README.md\"\nregisters = []\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let found = findings(&manifest, &all_of(""));
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("which is a file"), "{found:#?}");
+    }
+
+    #[test]
+    fn a_register_name_no_reference_can_spell_and_the_reserved_kind_are_each_reported() {
+        for (body, needle) in [
+            (
+                "[registers.\"odd name\"]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"odd\"\n\n",
+                "kind segment",
+            ),
+            (
+                "[registers.path]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"paths\"\n\n",
+                "reserved kind",
+            ),
+        ] {
+            let manifest = declaring_full("", body, "[]", "[]", "[]", "[]");
+            let found = findings(&manifest, &all_of(""));
+            assert_eq!(found.len(), 1, "{body:?}: {found:#?}");
+            assert!(found[0].contains(needle), "{body:?}: {found:#?}");
+        }
+    }
+
+    #[test]
+    fn an_anchor_name_no_reference_can_spell_is_reported_at_the_manifest() {
+        // The name a reference spells comes from the path's basename, so a space in the path
+        // makes an anchor nothing can point at.
+        let manifest = declaring("\"parts/my thing\"");
+        let found = findings(&manifest, &all_of(""));
+        assert!(
+            found
+                .iter()
+                .any(|f| f.contains("cannot be spelled in a reference")),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_directory_wearing_a_component_document_s_name_is_reported() {
+        // A presence test is satisfied and the walk never reads a directory as a document,
+        // so every claim that should live in it is outside every check.
+        let manifest = declaring("");
+        let mut present = all_of("");
+        present.push("CLAUDE.md/inside.md".to_string());
+        let found = findings(&manifest, &present);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("is a directory wearing the document's name"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_declaration_the_tool_then_discards_is_complained_about() {
+        // Each of these is stored and read by nobody, so without the complaint it is
+        // configuration that looks applied and is not.
+        for (body, needle) in [
+            (
+                "[registers.issue]\n[registers.issue.metadata.theme]\nvalues = [\"a\"]\n\n",
+                "sets metadata on a built-in register",
+            ),
+            (
+                "[registers.note]\nscope = \"component\"\nshape = \"heading\"\ndir = \"notes\"\n\
+                 sections = [\"One\"]\n\n",
+                "on a heading register",
+            ),
+            (
+                "[registers.note]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"notes\"\n\
+                 kinds = [\"a\"]\n\n",
+                "which only [registers.issue] takes",
+            ),
+        ] {
+            let manifest = declaring_full("", body, "[]", "[]", "[]", "[]");
+            let found = findings(&manifest, &all_of(""));
+            assert!(
+                found.iter().any(|f| f.contains(needle)),
+                "{body:?}: {found:#?}"
+            );
+        }
     }
 
     #[test]

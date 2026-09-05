@@ -239,10 +239,13 @@ impl Anchors {
     /// it belongs to it and not to the component above. A component inside a location would
     /// make the two ambiguous, and `check::registers` refuses one.
     pub fn owning(&self, rel: &Path) -> &Anchor {
+        // Depth first, and a component on a tie: two anchors at one path is a declaration
+        // `check::registers` reports, and until it is repaired the component keeps its own
+        // documents rather than every slug in them being reported as misplaced.
         self.list
             .iter()
             .filter(|a| rel.starts_with(&a.path))
-            .max_by_key(|a| a.path.components().count())
+            .max_by_key(|a| (a.path.components().count(), a.is_component))
             .expect("the anchor at the root is a prefix of every path")
     }
 
@@ -517,15 +520,24 @@ impl Entities {
                     file: doc.rel.clone(),
                     line: 1,
                 };
-                if !is_entity_id(&id) {
+                // The two navigation names are not entry ids at any depth. At the instance's
+                // top level they are the README and the index; inside a group they are an
+                // entry wearing a name that means something else, and `index` passes the id
+                // grammar, so refusing it by name is what makes the pair symmetric.
+                let navigation = matches!(
+                    doc.rel.file_name().and_then(|n| n.to_str()),
+                    Some("README.md" | "index.md")
+                );
+                if navigation || !is_entity_id(&id) {
                     self.findings.push(Finding::in_file(
                         &doc.rel,
                         format!(
                             "`{id}` cannot be an entry id of the {} register",
                             register.name
                         ),
-                        "name the file in lower-case words joined by hyphens; an id no \
-                         reference can spell is an entry nothing points at",
+                        "name the file in lower-case words joined by hyphens, and not \
+                         `README` or `index`, which name a directory's head and its listing; \
+                         an id no reference can spell is an entry nothing points at",
                     ));
                     continue;
                 }
@@ -747,21 +759,25 @@ mod tests {
 
     #[test]
     fn an_entry_whose_basename_no_reference_can_spell_defines_nothing_and_is_reported() {
-        // A `README.md` inside a group is an entry, and its id is one nothing can point at.
-        let found = findings(vec![(
+        // Both navigation names inside a group, and a stem outside the id grammar. `index`
+        // passes that grammar, so it is the one the pattern alone would let through.
+        for at in [
             "docs/open-issues/a-group/README.md",
-            "# Not an entry name\n",
-        )]);
-        assert_eq!(found.len(), 1, "{found:#?}");
-        assert!(found[0].contains("cannot be an entry id"), "{found:#?}");
-        assert_eq!(
-            table(vec![(
-                "docs/open-issues/a-group/README.md",
-                "# Not an entry name\n"
-            )])
-            .len(),
-            0
-        );
+            "docs/open-issues/a-group/index.md",
+            "docs/open-issues/Not_An_Id.md",
+        ] {
+            let found = findings(vec![(at, "# Not an entry name\n")]);
+            assert_eq!(found.len(), 1, "{at}: {found:#?}");
+            assert!(
+                found[0].contains("cannot be an entry id"),
+                "{at}: {found:#?}"
+            );
+            assert_eq!(
+                table(vec![(at, "# Not an entry name\n")]).len(),
+                0,
+                "{at} must define nothing"
+            );
+        }
     }
 
     #[test]
@@ -953,8 +969,9 @@ mod tests {
     #[test]
     fn a_location_inside_a_component_owns_the_documents_under_it() {
         // The location sits under the root component, so the deepest anchor is the location
-        // and its heading home is its own. Read as the component's, `notes/tripwires.md` is
-        // no register home of the root and every entry in it is reported as misplaced.
+        // and its heading home is its own. Read as the component's, the tripwire document
+        // under the location is no register home of the root, and every entry in it is
+        // reported as misplaced.
         // Mutation checked: filtering `owning` to components alone leaves this file with no
         // home and the entity count at zero.
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
@@ -1063,10 +1080,47 @@ mod tests {
         assert_eq!(a.required_kind("docs/open-issues"), Some(true));
         assert_eq!(a.required_kind("docs/open-issues/README.md"), Some(false));
         assert_eq!(a.required_kind("docs/open-issues/index.md"), Some(false));
+        // The README of a heading register's directory home, which is the shape a component
+        // that has not split its home yet does not carry.
+        assert_eq!(a.required_kind("docs/tripwires/README.md"), Some(false));
+        assert_eq!(a.required_kind("docs/design/README.md"), Some(false));
         // A file register has no single-file shape, so that name is not a required document.
         assert_eq!(a.required_kind("docs/open-issues.md"), None);
         assert_eq!(a.required_kind("docs/design/one.md"), None);
         assert_eq!(a.required_kind("src/lib.rs"), None);
+    }
+
+    #[test]
+    fn the_deepest_anchor_wins_and_a_component_wins_a_tie() {
+        // Deepest, not shallowest: the nested component owns its own documents. The tie is
+        // a declaration `check::registers` reports, and until it is repaired the component
+        // keeps its documents rather than every slug in them reading as misplaced.
+        let a = anchors();
+        assert_eq!(
+            a.owning(Path::new("parts/a-part/docs/design.md")).name,
+            "a-part"
+        );
+        assert_eq!(a.owning(Path::new("docs/design.md")).name, "a-project");
+        let base = anchors();
+        let root = base.by_name("a-project").expect("the root").clone();
+        let shadow = Anchor::location("shadow", Path::new(""), vec!["issue".to_string()]);
+        let tied = Anchors::from_list(vec![root, shadow], base.registers().clone());
+        assert_eq!(tied.owning(Path::new("docs/design.md")).name, "a-project");
+    }
+
+    #[test]
+    fn a_register_whose_name_merely_ends_in_the_path_word_is_not_the_path_kind() {
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [registers.subpath]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"subpaths\"\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        let a = Anchors::of(&m);
+        assert_eq!(a.kind("subpath"), Some(Kind::new("subpath")));
+        assert!(!a.kind("subpath").expect("the kind").is_path());
+        assert!(a.kind("path").expect("the path kind").is_path());
     }
 
     #[test]

@@ -33,8 +33,12 @@ pub fn parse(text: &str) -> Parsed {
     let a = analyse(&analysed, &prose);
     prose.text = text.to_string();
     let (scopes, mut fenced, inert) = (a.scopes, a.fenced, a.inert);
-    // A rule number inside the block is data, the judgement a fenced block already gets. A
-    // reference is unaffected: references are live inside a fence for every kind.
+    // The block's lines are marked as a fence, which is what keeps a metadata value from
+    // being read as document structure: a heading, a slug definition or a navigation link.
+    // It does NOT make a rule number data — a fence never has, per `knowledge#grammars-not-prefixes`
+    // — and it does not touch references, which are live inside a fence for every kind. A
+    // `CR:` marker in a value therefore claims its rule with nowhere in the block to put the
+    // quote, and is reported exactly as one anywhere else is.
     if let Some((first, last)) = block_lines {
         fenced.extend(first..=last);
         fenced.sort_unstable();
@@ -113,6 +117,11 @@ fn frontmatter(text: &str) -> (Option<Frontmatter>, Option<(u32, u32)>) {
             continue;
         }
         match scalar(line) {
+            // A key written twice is two values for one thing, and whichever reader looks
+            // first decides. Refused rather than resolved, so nobody has to know which.
+            Some((key, _)) if keys.iter().any(|(k, _): &(String, String)| *k == key) => {
+                refusal = Some(format!("line {n} declares `{key}` a second time"))
+            }
             Some(pair) => keys.push(pair),
             None => {
                 refusal = Some(format!(
@@ -143,7 +152,9 @@ fn scalar(line: &str) -> Option<(String, String)> {
         return None;
     }
     let value = value.trim();
-    if value.is_empty() || value.starts_with('-') || value.starts_with('{') {
+    // A flow collection is nesting written on one line, and a leading `-` opens a block
+    // sequence. The subset holds none of the three.
+    if value.is_empty() || value.starts_with(['-', '{', '[']) {
         return None;
     }
     Some((key.to_string(), value.to_string()))
@@ -366,13 +377,20 @@ mod tests {
 
     #[test]
     fn a_line_outside_the_subset_refuses_the_block_by_name() {
-        // A typo in a key, a nested value and a list each land here rather than passing as
-        // an absent optional.
+        // A typo in a key, a nested value, both flow collections, a key outside the charset
+        // and a key written twice each land here rather than passing as an absent optional.
         for (body, why) in [
             ("---\nkind:\n  nested: 1\n---\n", "line 2"),
             ("---\nkind:\n---\n", "line 2"),
             ("---\nkind: defect\ntags:\n---\n", "line 3"),
             ("---\nnot a pair\n---\n", "line 2"),
+            ("---\ntags: {a: b}\n---\n", "line 2"),
+            ("---\ntags: [a, b]\n---\n", "line 2"),
+            ("---\nkind.sub: x\n---\n", "line 2"),
+            (
+                "---\nkind: a\nkind: b\n---\n",
+                "declares `kind` a second time",
+            ),
         ] {
             let p = parse(body);
             assert!(
@@ -381,6 +399,39 @@ mod tests {
                 p.frontmatter
             );
         }
+    }
+
+    #[test]
+    fn a_delimiter_carrying_trailing_whitespace_still_opens_and_closes_the_block() {
+        // A trailing space is invisible in an editor. Read strictly, the opening one makes
+        // the block vanish and the closing one leaves the key lines as a setext heading,
+        // which is the shape the blanking exists to prevent.
+        for body in [
+            "--- \nkind: defect\n---\n# T\n",
+            "---\nkind: defect\n--- \n# T\n",
+        ] {
+            let p = parse(body);
+            assert_eq!(
+                p.frontmatter,
+                Some(Ok(vec![("kind".to_string(), "defect".to_string())])),
+                "{body:?}"
+            );
+            assert_eq!(scopes(body).len(), 1, "{body:?}: {:#?}", scopes(body));
+        }
+    }
+
+    #[test]
+    fn every_byte_offset_after_a_block_indexes_the_file_as_written() {
+        // The blanking replaces each byte with a space rather than removing it, so an offset
+        // the analysis returns is an offset into the original text. Removing the bytes
+        // instead leaves every code span after the block shifted by the block's length, and
+        // nothing else in the suite reads an offset past one. Non-ASCII inside the block is
+        // the case that makes "byte for byte" more than "character for character".
+        let text = "---\nkind: défaut\n---\n\nsee `path@thaum@docs/goals.md` here\n";
+        let p = parse(text);
+        let (a, b) = p.prose[0].code[0];
+        assert_eq!(&p.prose[0].text[a..b], "`path@thaum@docs/goals.md`");
+        assert!(p.prose[0].is_code(a) && !p.prose[0].is_code(a - 1));
     }
 
     #[test]
