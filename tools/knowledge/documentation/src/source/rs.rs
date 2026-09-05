@@ -462,7 +462,7 @@ fn runs(comments: Vec<CommentLine>) -> Vec<Prose> {
                 text: c.text,
                 lines: vec![c.first],
                 // A source file is not a decision's home, so a slug written in one defines
-                // nothing. `##a-slug-belongs-to-a-component` puts that home in a component's
+                // nothing. `knowledge#a-slug-belongs-to-a-component` puts that home in a component's
                 // design document.
                 structural: false,
                 code: Vec::new(),

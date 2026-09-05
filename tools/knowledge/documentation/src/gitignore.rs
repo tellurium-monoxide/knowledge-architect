@@ -13,7 +13,7 @@
 //! that subtly wrong would silently remove files from the walk, which is the failure class
 //! this tool exists to prevent.
 //!
-//! **An unsupported pattern is an error, never a guess.** `##a-failed-parse-is-loud`: a
+//! **An unsupported pattern is an error, never a guess.** `knowledge#a-failed-parse-is-loud`: a
 //! pattern this matcher cannot honour would otherwise be dropped, and dropping an ignore rule
 //! makes the walk read more than it should while dropping a negation makes it read less. Both
 //! are silent. The supported subset is what this repository's own file uses.

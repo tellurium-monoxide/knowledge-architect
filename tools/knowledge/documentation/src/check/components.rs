@@ -524,6 +524,25 @@ mod tests {
     }
 
     #[test]
+    fn a_component_wearing_a_reserved_anchor_word_is_reported() {
+        // Every pointer at such a component would read as the reserved meaning. The generic
+        // word already fails the spelling pattern; the escape word is the case this branch
+        // alone catches. Mutation checked: with the branch disabled, the second run reports
+        // nothing.
+        let manifest = declaring("\"parts/elsewhere\"");
+        let mut present = all_of("");
+        present.push("parts/elsewhere".to_string());
+        present.extend(all_of("parts/elsewhere"));
+        let present: Vec<&str> = present.iter().map(String::as_str).collect();
+        let found = findings(&manifest, &present);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].starts_with("knowledge.toml  ") && found[0].contains("reserved anchor"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
     fn the_count_is_the_components_looked_at_including_the_root() {
         let manifest = declaring("\"parts/a-part\", \"parts/another\"");
         let releases: HashMap<Option<String>, Release> = HashMap::new();

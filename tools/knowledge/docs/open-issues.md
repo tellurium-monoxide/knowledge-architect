@@ -13,10 +13,12 @@ Read `tracking-open-issues` before adding.
 
 ## The interpretation register has no mention form, so naming an entry counts as citing it `question`
 
-**What.** The interpretation walk counts every `R`-number token in a live file as a citation of that
-entry, so a document that merely _names_ one — to point at a diff, to say where a reading is filed —
-is listed in `thaum@docs/rules/interpretations/index.md` beside the documents whose argument depends
-on the reading. Rule numbers have a way to say it and `R` numbers do not: a rule number that is data
+**What.** The interpretation index counts every `R`-number token in a live markdown file as a
+citation of that entry, so a document that merely _names_ one — to point at a diff, to say where
+a reading is filed — is listed in `thaum@docs/rules/interpretations/index.md` beside the
+documents whose argument depends on the reading. The `references` family reports every such
+token as a retired form since the `@` grammar landed, and `check::interpretations` no longer
+resolves them; the index is the one reader left. Rule numbers have a way to say it and `R` numbers do not: a rule number that is data
 goes inside a code span or a name-bound string literal, and the walk does not read those as
 citations. No entry is named in this file on purpose, so that the illustration does not
 create the thing it illustrates.
@@ -120,9 +122,9 @@ a fullwidth at sign in place of the ASCII one
 [text](<notes/a.md>)        an angle-bracketed target
 ```
 
-Trailing punctuation inside the backticks, `` `path@<anchor>@notes/a.md,` ``, left this list
-when the `@` grammar landed: the span is recorded as written and resolves to nothing, so it is
-reported as dangling. The link shapes surface as a dangling target or an unlinked subdocument in
+Trailing punctuation inside the backticks, `` `path@<anchor>@notes/a.md,` ``, is not on the
+list: the span is recorded as written and resolves to nothing, so it is reported as dangling.
+The link shapes surface as a dangling target or an unlinked subdocument in
 a design README, and are silent in an ordinary navigation file, per the close-enough clause of
 `knowledge#links-are-navigation-rows`. Enumerated by an adversarial review of the
 anchored-grammar branch; a grep at that revision found no live instance of any shape, so every

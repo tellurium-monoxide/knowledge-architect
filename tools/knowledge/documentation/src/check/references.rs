@@ -39,8 +39,21 @@ pub struct Counts {
 }
 
 pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Finding>, Counts) {
-    let anchors = Anchors::of(manifest);
-    let entities = Entities::build(model, &anchors);
+    check_under(model, manifest, inputs, &Anchors::of(manifest))
+}
+
+/// The same, over a stated anchor list.
+///
+/// What `check` derives from the manifest, a test states directly: every component carries
+/// every register, so the anchor-lacks-register arm is reachable only through an anchor with a
+/// declared register subset, the shape a location takes.
+pub fn check_under(
+    model: &Model,
+    manifest: &Manifest,
+    inputs: &Inputs,
+    anchors: &Anchors,
+) -> (Vec<Finding>, Counts) {
+    let entities = Entities::build(model, anchors);
     let mut out: Vec<Finding> = entities.definition_findings().to_vec();
     let mut counts = Counts {
         entities: entities.len(),
@@ -50,17 +63,17 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
         let nav = is_navigation(&doc.rel);
         for l in &doc.observations {
             match &l.what {
-                Observation::Span(span) => match entity::candidate(span, &anchors) {
+                Observation::Span(span) => match entity::candidate(span, anchors) {
                     Candidate::Reference { kind, anchor, id } => {
                         counts.references += 1;
                         if kind == Kind::Path {
                             path(
-                                &mut out, &doc.rel, l.line, span, anchor, id, &anchors, inputs,
+                                &mut out, &doc.rel, l.line, span, anchor, id, anchors, inputs,
                                 manifest,
                             );
                         } else {
                             table(
-                                &mut out, &doc.rel, l.line, span, kind, anchor, id, &anchors,
+                                &mut out, &doc.rel, l.line, span, kind, anchor, id, anchors,
                                 &entities,
                             );
                         }
@@ -101,8 +114,9 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
                     &doc.rel,
                     l.line,
                     format!("`R{n}` is the retired interpretation entry number form"),
-                    "name the entry in the `<kind>@<anchor>@<id>` grammar; a bare `R` and \
-                     digits is no longer read as a reference",
+                    "a bare `R` and digits is no longer read as a reference: a mention names \
+                     the entry in the `<kind>@<anchor>@<id>` grammar, and an entry's own \
+                     heading loses the number when the register becomes one file per entry",
                 )),
                 // Markdown documents only: in Rust prose a markdown link is rustdoc's
                 // mechanism, resolved by rustdoc against the crate namespace, and this
@@ -245,7 +259,7 @@ fn path(
             }
         }
         entity::EVERY_ANCHOR => {
-            if let Some(why) = refused(trimmed) {
+            if let Some(why) = refused(path) {
                 out.push(Finding::at(
                     rel,
                     line,
@@ -275,15 +289,21 @@ fn path(
             // anchor's OWN copy: a path reaching a nested anchor from above is not this
             // anchor's, or the generic form would evade the deepest-anchor rule. A
             // gitignored copy is not a hit either — presence of generated content is build
-            // state, and a verdict may not depend on the checking machine's.
-            let hit = anchors.all().iter().any(|a| {
-                let t = a.path.join(trimmed);
-                anchors.owning(&t).path == a.path
-                    && !manifest.ignore().covers(&t, claims_dir)
-                    && inputs.present.contains(&t)
-                    && claims_dir == inputs.directories.contains(&t)
-            });
-            if !hit {
+            // state, and a verdict may not depend on the checking machine's. Presence and
+            // kind are asked apart, so a path some component carries under the other kind
+            // gets the kind-claim repair rather than "repair the path".
+            let carried: Vec<PathBuf> = anchors
+                .all()
+                .iter()
+                .map(|a| (a, a.path.join(trimmed)))
+                .filter(|(a, t)| {
+                    anchors.owning(t).path == a.path
+                        && !manifest.ignore().covers(t, claims_dir)
+                        && inputs.present.contains(t)
+                })
+                .map(|(_, t)| t)
+                .collect();
+            if carried.is_empty() {
                 out.push(Finding::at(
                     rel,
                     line,
@@ -291,6 +311,26 @@ fn path(
                     "the generic form names a required document, or a path at least one \
                      component carries; repair the path, or anchor at one component",
                 ));
+            } else if !carried
+                .iter()
+                .any(|t| claims_dir == inputs.directories.contains(t))
+            {
+                let is_dir = inputs.directories.contains(&carried[0]);
+                if is_dir {
+                    out.push(Finding::at(
+                        rel,
+                        line,
+                        format!("`{span}` claims a file and names a directory"),
+                        "add the trailing slash, or repair the path; the slash is the kind claim",
+                    ));
+                } else {
+                    out.push(Finding::at(
+                        rel,
+                        line,
+                        format!("`{span}` claims a directory and names a file"),
+                        "drop the trailing slash, or repair the path; the slash is the kind claim",
+                    ));
+                }
             }
         }
         name => {
@@ -307,7 +347,9 @@ fn path(
                 ));
                 return;
             };
-            if let Some(why) = refused(trimmed) {
+            // Judged on the path as written: a lone `/` trims to nothing and would resolve
+            // to the anchor's own directory, which has no spelling under its own name.
+            if let Some(why) = refused(path) {
                 out.push(Finding::at(
                     rel,
                     line,
@@ -476,6 +518,16 @@ mod tests {
         docs: Vec<(&str, &str)>,
         present: &[String],
     ) -> (Vec<String>, Counts) {
+        checked_under(manifest, docs, present, &Anchors::of(manifest))
+    }
+
+    /// The same, over a stated anchor list.
+    fn checked_under(
+        manifest: &Manifest,
+        docs: Vec<(&str, &str)>,
+        present: &[String],
+        anchors: &Anchors,
+    ) -> (Vec<String>, Counts) {
         let model = Model::from_documents(
             docs.into_iter()
                 .map(|(p, t)| (PathBuf::from(p), t.to_string()))
@@ -494,7 +546,7 @@ mod tests {
             directories: &directories,
             outside: &outside,
         };
-        let (found, counts) = check(&model, manifest, &inputs);
+        let (found, counts) = check_under(&model, manifest, &inputs, anchors);
         (found.iter().map(|f| f.to_string()).collect(), counts)
     }
 
@@ -617,6 +669,51 @@ mod tests {
     }
 
     #[test]
+    fn an_anchor_carrying_no_such_register_is_reported_with_the_anchors_that_do() {
+        // The third way of the four, over an anchor list no manifest produces today: an
+        // anchor carrying tripwires alone. Mutation checked: with the arm's push replaced
+        // by a drop, the assertion on one finding fails.
+        let root = crate::entity::Anchor::component("a-project", std::path::Path::new(""));
+        let bare = crate::entity::Anchor {
+            name: "bare".to_string(),
+            path: PathBuf::from("bare"),
+            home_base: PathBuf::from("bare"),
+            registers: vec![Kind::Tripwire],
+        };
+        let anchors = Anchors::from_list(vec![root, bare]);
+        let (found, _) = checked_under(
+            &manifest(),
+            vec![
+                ("docs/design.md", head()),
+                ("notes/a.md", "`design@bare@a-decision`\n"),
+            ],
+            &[],
+            &anchors,
+        );
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("`bare`, which carries no design register")
+                && found[0].contains("the anchors that carry one: a-project"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_markdown_link_in_a_rust_doc_comment_is_rustdocs_and_not_a_navigation_row() {
+        // Resolved by rustdoc against the crate namespace; reading it as an index row would
+        // report every intra-doc link. Mutation checked: with the `is_markdown` guard made
+        // always true, the dangling target below is reported.
+        let (found, counts) = checked_in(
+            &manifest(),
+            "src/lib.rs",
+            "/// see [the type](notes/gone.md)\nfn f() {}\n",
+            &[],
+        );
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+        assert_eq!(counts.links, 0);
+    }
+
+    #[test]
     fn a_reserved_anchor_serves_the_path_kind_alone() {
         // `*` and `elsewhere` are anchors for a path. Under a table kind they name nothing,
         // and the finding says which anchors do.
@@ -665,11 +762,19 @@ mod tests {
         // gap, guarded by a tripwire.
         let (found, counts) = checked(
             &manifest(),
-            "`user@example.test`, `git@host:x/y.git`, `desing@a-project@x`, `@docs/a.md`\n",
+            "`user@example.test`, `git@host:x/y.git`, `desing@a-project@x`, `@Test`\n",
             &[],
         );
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
         assert_eq!(counts.references, 0);
+        // An empty head in front of a path shape is not silent: it had a check before the
+        // grammar and keeps one.
+        let (found, _) = checked(&manifest(), "the retired escape `@docs/a.md`\n", &[]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("is malformed: the kind segment is empty"),
+            "{found:#?}"
+        );
     }
 
     #[test]
@@ -905,6 +1010,38 @@ mod tests {
         let (found, _) = checked(&m, "See `path@*@notes/nowhere.md`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("resolves in no component"), "{found:#?}");
+    }
+
+    #[test]
+    fn a_generic_path_a_component_carries_under_the_other_kind_gets_the_kind_claim_repair() {
+        // The path exists; only the slash claim is wrong. "Repair the path" would send the
+        // reader to a file that is there. Mutation checked: with the kind test folded back
+        // into the presence test, both report "resolves in no component".
+        let m = manifest();
+        let (found, _) = checked(&m, "See `path@*@notes/real/a.md/`.\n", &tree());
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("claims a directory and names a file"),
+            "{found:#?}"
+        );
+        let (found, _) = checked(&m, "See `path@*@notes/real`.\n", &tree());
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("claims a file and names a directory"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_lone_slash_is_refused_rather_than_resolving_to_the_anchors_own_directory() {
+        // Trimmed, `/` is nothing, and nothing joined to the anchor's path is the anchor's
+        // own directory, which has no spelling under its own name.
+        let m = manifest();
+        for span in ["path@a-part@/", "path@*@/"] {
+            let (found, _) = checked(&m, &format!("See `{span}`.\n"), &tree());
+            assert_eq!(found.len(), 1, "{span}: {found:#?}");
+            assert!(found[0].contains("is refused"), "{span}: {found:#?}");
+        }
     }
 
     #[test]

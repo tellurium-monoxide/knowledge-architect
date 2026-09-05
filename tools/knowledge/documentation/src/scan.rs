@@ -100,6 +100,8 @@ pub enum SlugSite {
     Cell,
     /// At the head of a plain line: the form that predates the heading rule.
     LineHead,
+    /// In the middle of a line, where a pointer belongs and a definition cannot be.
+    Inline,
 }
 
 /// A reference form the grammar retired.
@@ -141,7 +143,7 @@ static RULE_TOKEN: LazyLock<Regex> =
 ///
 /// The pattern alone also matches the front of a dotted marker — the boundary sits between
 /// the third digit and the dot — so the scan discards a match that a subrule digit continues.
-static CR_SECTION: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\bCR:(\d{3})\b").unwrap());
+static CR_SECTION: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\bCR:([0-9]{3})\b").unwrap());
 /// A section named through a keyword: the lint's input, never a marker.
 ///
 /// A bare three-digit number is noise at a measured ratio of hundreds of counts and line
@@ -154,7 +156,7 @@ static CR_SECTION: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\bCR:(\d{3})\
 /// and a case-varying evasion is cheaper than a code span. The `cr:` alternative also matches
 /// the uppercase marker, so the scan drops a match whose digits a marker already carries.
 static SECTION_KEYWORD: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)\b(?:cr:[\s*_]*|(?:cr|rules?|sections?)[\s*_]+)(\d{3})\b").unwrap()
+    Regex::new(r"(?i)\b(?:cr:[\s*_]*|(?:cr|rules?|sections?)[\s*_]+)([0-9]{3})\b").unwrap()
 });
 static HEADING: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(#{1,4})\s+(.+?)\s*$").unwrap());
 /// The retired slug reference, `` `<word>#<word>` ``: the word before the `#` is optional so
@@ -163,20 +165,25 @@ static HEADING: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(#{1,4})\s+(.+?
 static RETIRED_SLUG_REF: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"`(\.?[A-Za-z0-9][A-Za-z0-9._-]*)?#([a-z0-9][a-z0-9-]{2,})`").unwrap()
 });
-/// A slug in a heading of ANY level, in a table cell, or at the head of a plain line, each
-/// alternative in that order.
+/// The first slug in a heading of ANY level, or a slug at the head of a plain line. The id is
+/// `[a-z0-9]+(-[a-z0-9]+)*`.
 ///
 /// The heading form takes the slug anywhere in the heading, so the statement may precede it:
 /// a heading reads as an outline entry, which a slug alone does not. Requiring text AFTER the
 /// slug is what made a heading carrying nothing else invisible. Every level is matched so
-/// that the entity table can report a level-one or level-four slug as misplaced rather than
+/// that the entity table can report a level-one or level-five slug as misplaced rather than
 /// see nothing; which levels define is its decision, not this pattern's.
 static SLUG_SITE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(
-        r"^(?:(#{1,4})\s+.*?`##([a-z0-9][a-z0-9-]{2,})`|\|\s*`##([a-z0-9][a-z0-9-]{2,})`|`##([a-z0-9][a-z0-9-]{2,})`)",
+        r"^(?:(#{1,6})\s+.*?(`##([a-z0-9]+(?:-[a-z0-9]+)*)`)|(`##([a-z0-9]+(?:-[a-z0-9]+)*)`))",
     )
     .unwrap()
 });
+/// Every slug-shaped span in a line. In a table row each is a cell definition; elsewhere,
+/// one the pattern above did not take is a mention where a reference belongs, recorded so
+/// the table can report it rather than see nothing.
+static SLUG_ANY: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"`##([a-z0-9]+(?:-[a-z0-9]+)*)`").unwrap());
 /// A backticked span holding an `@`, no whitespace, no backtick and no angle bracket: the
 /// reference grammar's input, recorded as written.
 ///
@@ -367,21 +374,38 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
             // suppress rule numbers either — a fenced sketch in a design document comments
             // its rules on purpose, and reading those as data lost 34 citations in this tree.
             let illustration = fenced.contains(&n);
-            if region.structural && !illustration {
+            if !illustration {
                 // A slug DEFINES an entity, and an entity's home is a register home under
-                // an anchor. A source comment is not one, so a slug written there defines
-                // nothing — while a REFERENCE from a source comment is ordinary and is
-                // scanned below.
-                if let Some(c) = SLUG_SITE.captures(line.trim_start()) {
-                    let (id, site) = if let Some(id) = c.get(2) {
-                        (id, SlugSite::Heading(c[1].len() as u8))
-                    } else if let Some(id) = c.get(3) {
-                        (id, SlugSite::Cell)
+                // an anchor. A source comment is not one, so a slug written there is
+                // recorded with its site and the table reports it as misplaced — while a
+                // REFERENCE from a source comment is ordinary and is scanned below.
+                let trimmed = line.trim_start();
+                // The one span the heading or line-head form takes, by its range in the
+                // trimmed line, so every other slug-shaped span on the line is recorded as
+                // what it is: a second slug on a definition line is a mention, not a second
+                // definition. Dropped, it was neither defined nor misplaced.
+                let primary = SLUG_SITE.captures(trimmed).map(|c| {
+                    if let Some(span) = c.get(2) {
+                        (span.range(), SlugSite::Heading(c[1].len() as u8))
                     } else {
-                        (c.get(4).unwrap(), SlugSite::LineHead)
+                        (c.get(4).unwrap().range(), SlugSite::LineHead)
+                    }
+                });
+                let in_row = trimmed.starts_with('|');
+                for c in SLUG_ANY.captures_iter(trimmed) {
+                    let span = c.get(0).unwrap();
+                    let site = match &primary {
+                        Some((range, site)) if *range == span.range() => *site,
+                        // A table row: any cell, because a decision table puts the slug
+                        // in whichever column the table gives it.
+                        _ if in_row => SlugSite::Cell,
+                        // Mid-line, a slug-shaped span is a pointer written in the
+                        // definition form. Four such pointers in this tree were checked
+                        // by nothing.
+                        _ => SlugSite::Inline,
                     };
                     push(Observation::SlugDef {
-                        id: id.as_str().to_string(),
+                        id: c[1].to_string(),
                         site,
                     });
                 }
@@ -656,6 +680,21 @@ mod tests {
     }
 
     #[test]
+    fn a_non_ascii_digit_is_not_a_section_number_and_does_not_abort_the_scan() {
+        // `\d` is Unicode in the regex crate, so a fullwidth or Arabic-Indic digit run
+        // matched the section patterns and reached a parse that expected ASCII. Neither is
+        // a rule number.
+        for text in [
+            "per CR:１０４ fullwidth",
+            "per rule ١٠٤ here",
+            "CR:１０４.４b",
+        ] {
+            assert!(markers(text).is_empty(), "{text}");
+            assert!(tokens(text).is_empty(), "{text}");
+        }
+    }
+
+    #[test]
     fn a_bare_three_digit_number_is_not_a_token() {
         // Three digits with no keyword is a count, a line number, a date fragment. The
         // keyword is what makes the token claimable, and everything below it stays the
@@ -790,7 +829,7 @@ mod tests {
         // The scanner records WHERE the slug sits and decides nothing about whether it
         // defines: that is the entity table's, which reports a level-one or level-four slug
         // as misplaced rather than seeing nothing.
-        for level in 1..=4u8 {
+        for level in 1..=6u8 {
             let head = format!("{} The statement `##a-slug`", "#".repeat(level as usize));
             assert_eq!(
                 defs(&head),
@@ -804,17 +843,61 @@ mod tests {
             defs("### `##a-slug`"),
             vec![("a-slug".to_string(), SlugSite::Heading(3))]
         );
+        // Any cell of a row, and every slug the row holds.
         assert_eq!(
-            defs("| `##in-a-cell` | holds |"),
-            vec![("in-a-cell".to_string(), SlugSite::Cell)]
+            defs("| `##in-a-cell` | holds | `##last-cell` |"),
+            vec![
+                ("in-a-cell".to_string(), SlugSite::Cell),
+                ("last-cell".to_string(), SlugSite::Cell),
+            ]
+        );
+        // A second slug on a heading or line-head line is a mention, recorded as inline.
+        assert_eq!(
+            defs("### One `##first` and `##second`"),
+            vec![
+                ("first".to_string(), SlugSite::Heading(3)),
+                ("second".to_string(), SlugSite::Inline),
+            ]
+        );
+        // Indentation does not move the site.
+        assert_eq!(
+            defs("   ### Head `##indented-head`"),
+            vec![("indented-head".to_string(), SlugSite::Heading(3))]
         );
         // The form that predates the heading rule, recorded so the table can report it.
         assert_eq!(
             defs("`##a-slug` — **The statement.**"),
             vec![("a-slug".to_string(), SlugSite::LineHead)]
         );
-        // Mid-sentence it is typography showing the shape, and nothing is recorded.
-        assert_eq!(defs("write it as `##a-slug` at the end"), Vec::new());
+        // Mid-sentence it is a pointer written in the definition form, recorded so the
+        // table can report it; a placeholder is not slug-shaped and is silent.
+        assert_eq!(
+            defs("write it as `##a-slug` at the end, or `##b` and `##c-d`"),
+            vec![
+                ("a-slug".to_string(), SlugSite::Inline),
+                ("b".to_string(), SlugSite::Inline),
+                ("c-d".to_string(), SlugSite::Inline),
+            ]
+        );
+        assert_eq!(defs("write it as `##<slug>` at the end"), Vec::new());
+    }
+
+    #[test]
+    fn an_id_is_lowercase_words_joined_by_single_hyphens() {
+        // The grammar of the specification: one or more `[a-z0-9]` runs joined by single
+        // hyphens, so a one-letter id is an id and a doubled or trailing hyphen is not.
+        assert_eq!(
+            defs("### One `##a`"),
+            vec![("a".to_string(), SlugSite::Heading(3))]
+        );
+        for bad in [
+            "### One `##a--b`",
+            "### One `##a-`",
+            "### One `##-a`",
+            "### One `##A`",
+        ] {
+            assert_eq!(defs(bad), Vec::new(), "{bad}");
+        }
     }
 
     #[test]
@@ -838,17 +921,19 @@ mod tests {
     }
 
     #[test]
-    fn a_source_comment_carries_references_and_defines_nothing() {
-        // A slug's home is a register home under an anchor, so a source comment may point
-        // at an entity and may not define one. The reference still has to be found, because
-        // that is how a doc comment cites the argument for the code under it.
+    fn a_source_comment_carries_references_and_its_slugs_are_recorded_for_the_table() {
+        // A slug's home is a register home under an anchor, and a Rust file is never one,
+        // so a slug in a comment is recorded with its site for the table to report as
+        // misplaced. The reference still has to be found, because that is how a doc comment
+        // cites the argument for the code under it.
         let src =
             "/// argued at `design@a-component@a-slug`\n/// ### stated `##a-slug`\nfn f() {}\n";
         let seen = scan_rs(src);
         assert!(seen.contains(&Observation::Span("design@a-component@a-slug".to_string())));
-        assert!(!seen
-            .iter()
-            .any(|o| matches!(o, Observation::SlugDef { .. })));
+        assert!(seen.contains(&Observation::SlugDef {
+            id: "a-slug".to_string(),
+            site: SlugSite::Heading(3),
+        }));
     }
 
     #[test]
@@ -888,8 +973,14 @@ mod tests {
 
     #[test]
     fn the_retired_entry_number_is_a_bare_r_and_digits_outside_a_word() {
-        let text = "R15 holds, but CR:104.4b and FOR15 and 1.R3 and R2D2 do not";
+        let text = "R15 holds, but CR:104.4b and FOR15 and 1.R3 and R2D2 and cr_R15 do not";
         assert_eq!(retired(text), vec![RetiredForm::RegisterNumber(15)]);
+        // Inside a code span too: the number in backticks was read as a citation before
+        // the grammar, so the retired form is reported there as well.
+        assert_eq!(
+            retired("see `R15` here"),
+            vec![RetiredForm::RegisterNumber(15)]
+        );
         // In a Rust comment as in markdown: a comment is prose, and a number there names
         // the same retired entry. Code is not prose, so a type parameter is not read.
         let comment = scan_rs("/// per R15\nfn f<R15>() {}\n");

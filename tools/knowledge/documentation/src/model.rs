@@ -309,6 +309,7 @@ fn describe(what: &Observation) -> (&'static str, String) {
                 crate::scan::SlugSite::Heading(level) => format!("{id} heading-{level}"),
                 crate::scan::SlugSite::Cell => format!("{id} cell"),
                 crate::scan::SlugSite::LineHead => format!("{id} line-head"),
+                crate::scan::SlugSite::Inline => format!("{id} inline"),
             },
         ),
         // As written, so a dumped row can be grepped for in the tree it came from.

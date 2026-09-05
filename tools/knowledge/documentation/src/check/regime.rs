@@ -43,7 +43,7 @@ pub const MAX_DISTANCE: u32 = 60;
 
 /// The rules of the regime that this module enforces.
 ///
-/// The set is compiled in for the reason `##components-carry-the-same-documents` gives about the
+/// The set is compiled in for the reason `knowledge#components-carry-the-same-documents` gives about the
 /// document set: a project free to declare its own would be conformant with whatever it declared.
 /// Each is named so the fixture assertion can say which one has no planted violation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]

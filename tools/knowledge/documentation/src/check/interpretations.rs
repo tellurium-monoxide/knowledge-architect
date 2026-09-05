@@ -118,6 +118,51 @@ fn entry_heading(line: &str) -> Option<(u16, String)> {
 mod tests {
     use super::*;
 
+    /// A manifest declaring two concerns under `i/`.
+    fn declaring() -> Manifest {
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\
+             [interpretations]\ndir = \"i\"\nconcerns = [\"one\", \"two\"]\n";
+        Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration")
+    }
+
+    #[test]
+    fn a_missing_concern_an_undeclared_file_a_duplicate_and_a_hole_are_each_reported() {
+        // Every assertion the module keeps, fed in one model: `two` is declared and absent,
+        // `stray` is present and undeclared, R1 is defined twice, and R2 is a hole below R3.
+        // Mutation checked: disabling any one of the four arms fails its needle below.
+        let model = crate::model::Model::from_documents(vec![
+            (
+                std::path::PathBuf::from("i/one.md"),
+                "## R1 — first\n\n## R3 — third\n\n## R1 — first again\n".to_string(),
+            ),
+            (
+                std::path::PathBuf::from("i/stray.md"),
+                "# not declared\n".to_string(),
+            ),
+        ]);
+        let found: Vec<String> = check(&model, &declaring())
+            .0
+            .iter()
+            .map(|f| format!("{}  {}", f.location(), f.what))
+            .collect();
+        assert_eq!(found.len(), 4, "{found:#?}");
+        for needle in [
+            "declares the concern `two` and there is no file",
+            "`stray` is a concern file that the manifest does not declare",
+            "R1 is defined here and in one.md:1",
+            "the sequence has holes: R2",
+        ] {
+            assert!(
+                found.iter().any(|f| f.contains(needle)),
+                "{needle}: {found:#?}"
+            );
+        }
+    }
+
     #[test]
     fn an_entry_heading_is_only_the_second_level_form() {
         assert_eq!(entry_heading("## R2 — a reading").map(|(n, _)| n), Some(2));

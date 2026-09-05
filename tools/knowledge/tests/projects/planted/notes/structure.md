@@ -37,3 +37,7 @@ A generic pointer nothing carries: `path@*@notes/void.md`.
 A tripwire nobody recorded: `tripwire@planted@nothing`.
 
 A link outside a navigation home: [a link](p.md).
+
+A slug mentioned in the middle of a line: the decision `##twice-defined` records it.
+
+The retired escape, an empty head in front of a path: `@notes/p.md`.

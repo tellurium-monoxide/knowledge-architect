@@ -394,11 +394,12 @@ mod planted {
         // shapes, a retired entry number — and the path shapes: a dangling one, the
         // unanchored bare form, a wrong kind claim, an escape that resolves here, a root
         // pointer reaching inside the component, a generic pointer nothing carries, a
-        // dangling tripwire reference and a link outside a navigation home.
-        (Only::REFERENCES, 22, "is referenced"),
-        // Two missing documents, plus the manifest declaring `.git`, which this project does
-        // not have. One planted row across the four declared path lists rather than four
-        // identical ones: what needs pinning is that a declared path is checked at all.
+        // dangling tripwire reference, a link outside a navigation home, a slug mentioned
+        // mid-line and the retired `@` escape with its empty head.
+        (Only::REFERENCES, 24, "is referenced"),
+        // Two missing documents, plus an exempt-files row naming a file that is not there.
+        // One planted row across the four declared path lists rather than four identical
+        // ones: what needs pinning is that a declared path is checked at all.
         (Only::COMPONENTS, 3, "carries no"),
         (Only::INTERPRETATIONS, 1, "declares the concern"),
         (Only::UNCOVERED, 1, "is outside the walk"),
@@ -412,8 +413,8 @@ mod planted {
         let found = findings_of(current_indexes, pair);
         assert_eq!(
             found.len(),
-            23,
-            "twenty-two reference defects and one register defect: {found:#?}"
+            25,
+            "twenty-four reference defects and one register defect: {found:#?}"
         );
         assert!(
             !found.iter().any(|f| f.contains("no rule says this")),
@@ -707,6 +708,14 @@ mod planted {
         let stray = one("`##stray-anchor` is written at `notes/structure.md`");
         assert!(stray.starts_with("notes/structure.md:3"), "{stray}");
         assert!(stray.contains("no register home of `planted`"), "{stray}");
+        let inline = one("`##twice-defined` is written at the middle of a line");
+        assert!(inline.starts_with("notes/structure.md:41"), "{inline}");
+    }
+
+    #[test]
+    fn an_empty_head_in_front_of_a_path_shape_is_malformed_rather_than_silent() {
+        let f = one("`@notes/p.md` is malformed: the kind segment is empty");
+        assert!(f.starts_with("notes/structure.md:43"), "{f}");
     }
 
     #[test]

@@ -292,6 +292,14 @@ pub fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
     let Some((head, rest)) = span.split_once('@') else {
         return Candidate::NotOne;
     };
+    // An empty head in front of a path shape is the retired `@` escape, or a kind that
+    // was never typed; either way a pointer that would otherwise leave every check. A
+    // slashless `@word` is an annotation or a handle and stays silent.
+    if head.is_empty() && rest.contains('/') {
+        return Candidate::Malformed {
+            why: "the kind segment is empty",
+        };
+    }
     let Some(kind) = Kind::parse(head) else {
         if anchors.is_anchor_word(head) {
             return Candidate::AnchorInKindPosition { head };
@@ -388,6 +396,11 @@ impl Entities {
                     SlugSite::LineHead => {
                         out.findings
                             .push(misplaced("the head of a plain line".to_string()));
+                        continue;
+                    }
+                    SlugSite::Inline => {
+                        out.findings
+                            .push(misplaced("the middle of a line".to_string()));
                         continue;
                     }
                     _ => {}
@@ -597,7 +610,9 @@ mod tests {
         for (line, why) in [
             ("# A title `##deep`\n", "level-1"),
             ("#### A deep heading `##deep`\n", "level-4"),
+            ("##### A deeper heading `##deep`\n", "level-5"),
             ("`##deep` — **The statement.**\n", "head of a plain line"),
+            ("as `##deep` records\n", "middle of a line"),
         ] {
             let e = table(vec![("docs/design.md", line)]);
             assert_eq!(e.len(), 0, "{line:?} must define nothing");
@@ -678,14 +693,22 @@ mod tests {
                 "{span}"
             );
         }
-        // An email, a remote, a placeholder-free typo in the kind: silent.
+        // An email, a remote, a placeholder-free typo in the kind, an annotation: silent.
         for span in [
             "user@example.test",
             "git@host:x/y.git",
             "desing@a-project@x",
+            "@Test",
         ] {
             assert_eq!(candidate(span, &a), Candidate::NotOne, "{span}");
         }
+        // An empty head in front of a path shape is a pointer that would otherwise leave
+        // every check: the retired `@` escape, or a kind never typed.
+        assert!(
+            matches!(candidate("@docs/x.md", &a), Candidate::Malformed { .. }),
+            "{:?}",
+            candidate("@docs/x.md", &a)
+        );
     }
 
     #[test]

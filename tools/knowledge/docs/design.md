@@ -130,8 +130,9 @@ finds.** A markdown link is the index's row because a reader can follow it where
 shows the page, and a bullet list is its conventional shape — a table grows painful to edit as
 soon as a row outgrows a short sentence. Both directions are asserted over the same links: an
 existing subdocument no link names is reported, and a link that resolves to nothing is reported.
-A fenced link is an illustration and discharges nothing, the stance the slug conventions take,
-and a link inside a code span is typography showing the shape. **The accepted row is the plain
+A fenced link is an illustration and discharges nothing, the stance a fenced definition takes
+per `knowledge#a-slug-is-a-heading`, and a link inside a code span is typography showing the
+shape. **The accepted row is the plain
 inline form, a target without spaces**: reference-style links, angle-bracketed or quoted-title
 targets and the other CommonMark shapes are outside it, deliberately — the index is one shape
 so the check stays one pattern.
@@ -226,7 +227,7 @@ the row granted. With the generated class removed, every path in the manifest is
 **Only the root file is read, and an unsupported pattern is an error.** A nested `.gitignore` is not
 honoured; a project needing one declares the path in the manifest instead. The matcher implements
 comments, a leading `/`, a trailing `/`, `*` inside a segment, and a bare name at any depth. A
-negation, `**`, `?` or a character class is refused by name, per `##a-failed-parse-is-loud` — a
+negation, `**`, `?` or a character class is refused by name, per `knowledge#a-failed-parse-is-loud` — a
 dropped ignore rule makes the walk read more than it should and a dropped negation makes it read
 less, and both are silent.
 
@@ -315,12 +316,12 @@ of registers at a different base — a location — is a second constructor and 
 resolver. The deepest anchor owns a document, as `knowledge#a-slug-belongs-to-a-component`
 states.
 
-**One table replaces five notions of a name.** Before it, slugs, paths, interpretation numbers
-and two link resolutions each had their own check and their own idea of what a name was, and
-only tracker entries could be printed by title. One table gives one resolver, one dangling
-check over every kind, one command that can print any entity given its reference, and a
-one-pass rewrite of every reference into a link when the documents are published. The cost was
-the migration of every check onto it, paid once.
+**One table, because a notion of a name held per check drifts.** With one table there is one
+resolver, one dangling check over every kind, one command that can print any entity given its
+reference, and a one-pass rewrite of every reference into a link when the documents are
+published. A check that resolves a name of its own is the shape this refuses: two resolvers
+disagree the first time one of them is edited, and only the entities one of them knows can be
+printed or rewritten.
 
 ### A backticked `@` span is a reference candidate when its head is a kind or an anchor, the two retired forms stay findings, and every other span is silent `##candidate-rule-and-retired-forms`
 
@@ -344,7 +345,8 @@ segments, so without this clause a slug reference or a register number the migra
 would be silent, which is the founding failure class. The clause does not expire with the
 migration: the argument of `knowledge#a-slug-is-a-heading`, that a retired form must stay
 visible or the migration is unfinishable, applies to both. The register number is read in every
-prose region, a Rust comment included, where the observation it replaces read markdown alone.
+prose region, a Rust comment included: a comment is prose, and a type parameter is code the
+scanner never sees.
 
 **A reference is live wherever it is prose, fenced blocks included, for every kind.** A sketch
 names what it names on purpose, and an illustration writes a placeholder in angle brackets,
@@ -368,13 +370,24 @@ design. Which anchor owns a definition is where its document sits, per
 `knowledge#a-slug-belongs-to-a-component`.
 
 **A slug anywhere else defines nothing and is reported as a misplaced definition**: at a
-level-one or level-four heading, at the head of a plain line, in a file that is no register
-home, or in a directory home's README. The line-head form is what predates the heading rule,
+level-one heading or at one deeper than level three, at the head of a plain line, in the middle
+of a line, as a second slug on a definition line, in a file that is no register home — a Rust
+comment included — or in a directory home's README. A table row defines in any of its cells,
+because a decision table puts the slug in whichever column it has. An id is
+`[a-z0-9]+(-[a-z0-9]+)*`. The line-head form is what predates the heading rule,
 and reporting it is what makes the migration off it visible: it is neither a definition nor a
 reference, so every pointer at it dangles and the site itself is named. Accepting both forms
 would have left the two indistinguishable and the migration unfinishable, because nothing would
-say which anchors had moved. Two definitions of one id in one register instance are a finding at
-each site, each naming the other.
+say which anchors had moved. A mid-line slug is a pointer written in the definition form, and
+recording it is what makes such a pointer visible: four sat in this tree's design homes, checked
+by nothing. Two definitions of one id in one register instance are a finding at each site, each
+naming the other.
+
+**Which homes a component must carry is `check::components`' question, not the table's.** The
+table defines from every home shape of every heading register; `check::components` still
+requires `*@docs/tripwires.md` as a file and requires no goals home, and asserts the two-shape
+rule for the design home alone. The register-shape checks of
+`thaum@docs/plans/knowledge-tool-overhaul.md` settle the three.
 
 **A fenced heading is an illustration, so a fenced slug neither defines nor is misplaced.** A
 definition site is a heading, and the scanner already reads no heading inside a fence; the one

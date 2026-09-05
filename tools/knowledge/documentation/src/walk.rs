@@ -68,7 +68,7 @@ fn collect(
 /// project; which of them this tool knows how to parse is a fact about this tool, and only
 /// the second decides what may be walked. A project free to declare its own set would be
 /// conformant with whatever it declared — `suffixes = []` passes every citation check — which
-/// is the same argument `##components-carry-the-same-documents` makes about the document set.
+/// is the same argument `knowledge#components-carry-the-same-documents` makes about the document set.
 ///
 /// Nothing is left unchecked by narrowing it. `check::uncovered` asserts the inverse, that a
 /// file outside the walk may not name a rule, so a citation written in a manifest or a script

@@ -41,6 +41,14 @@ path references were already live in a fence, so one kind had two stances, and a
 design document names its decisions as deliberately as it names its paths. The illustration is a
 placeholder in angle brackets, which the tokenizer does not record.
 
+**`#` as the reference separator**, the incumbent of `` `<component>#<slug>` `` — lost to
+`knowledge#a-slug-belongs-to-a-component`, which fixes `@`. `live`. It costs no migration of
+the slug references. It loses on collision: `#` is a Rust attribute opener and a markdown
+heading marker, both of which sit inside code spans in this tree, and `:` — the other
+candidate — is a Rust path separator; `@` meets almost nothing in Rust and only email
+addresses in prose, which never sit in backticks here. It entered the tree with the first
+migration to qualified references, carrying no argument of its own.
+
 **A configurable reference separator** — lost to `knowledge#a-slug-belongs-to-a-component`,
 which fixes `@`. `live`. A project could pick the character its prose collides with least. It
 loses because every instruction, every skill and the future link preprocessor would be
@@ -49,8 +57,7 @@ prose, which never sit in backticks here.
 
 **Paths without the kind prefix**, keeping `` `<anchor>@<path>` `` beside
 `` `<kind>@<anchor>@<id>` `` — lost to `knowledge#every-path-names-its-anchor`. `live`. It costs
-no migration of the path references, which outnumber the slug references. It loses on what it
-leaves in the scanner: two grammars, told apart by segment count, and an unsupported-shape lint
+no migration of the path references. It loses on what it leaves in the scanner: two grammars, told apart by segment count, and an unsupported-shape lint
 that keeps its heuristic instead of becoming "unknown kind". Five characters at every path
 reference bought one tokenizer and one candidate rule.
 
