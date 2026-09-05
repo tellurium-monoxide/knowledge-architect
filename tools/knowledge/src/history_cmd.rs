@@ -65,29 +65,32 @@ fn message_rel() -> PathBuf {
     PathBuf::from("commit-message.md")
 }
 
-/// A message as git will store it: every comment line dropped, trailing blanks trimmed.
+/// The draft a `commit-msg` hook is handed, with git's own comment block blanked out.
 ///
-/// **The `commit-msg` hook sees the message before git's own cleanup.** The file it is handed
-/// still holds the `#` comment block git strips afterwards, and the `--verbose` diff below the
-/// scissors line. Judging those would report on text that never reaches the commit, and every
-/// `#` line would open a markdown heading, which would split the message into scopes the
-/// author did not write. Stripping them here is what makes `commit-message <file>` and
-/// `commits` judge the same bytes.
+/// **This is for the draft alone, never for a message a commit already holds.** The hook runs
+/// before git's cleanup, so the file still carries the `# Please enter the commit message…`
+/// block and, under `--verbose`, the diff below the scissors line. Judging those would report
+/// on text that never reaches the commit, and each `#` line would open a markdown heading that
+/// splits the draft into scopes nobody wrote.
+///
+/// **The line is blanked, not removed**, so every finding's line number is the line of the
+/// file the hook was handed. Removing them renumbers everything below the block.
+///
+/// A message given with `-m` keeps its `#` lines, git's default cleanup for that form being
+/// whitespace-only, and nothing in the file tells the two cases apart. The hook therefore says
+/// nothing about such a line and `commits` judges it: `commits` reads the message the commit
+/// holds and cleans nothing, so no byte of a commit leaves the regime.
 pub fn cleaned(raw: &str) -> String {
     const SCISSORS: &str = "------------------------ >8 ------------------------";
     let mut out = String::new();
+    let mut past_scissors = false;
     for line in raw.lines() {
-        if line.starts_with('#') {
-            if line.contains(SCISSORS) {
-                break;
-            }
-            continue;
+        if !past_scissors && line.starts_with('#') {
+            past_scissors = line.contains(SCISSORS);
+        } else if !past_scissors {
+            out.push_str(line);
         }
-        out.push_str(line);
         out.push('\n');
-    }
-    while out.ends_with("\n\n") {
-        out.pop();
     }
     out
 }
@@ -181,17 +184,36 @@ fn judge_message(
                 &other_anchors,
                 &other.inputs(),
             );
-            // A finding survives only where BOTH trees report it. Comparing the findings
-            // rather than the resolutions is what keeps the two arms honest: the union rule
-            // has to hold for every shape `references` reports, including a path claim whose
-            // kind changed between the trees, and a rule stated over resolutions alone would
-            // silently exempt the shapes it did not enumerate.
-            mine.into_iter().filter(|f| theirs.contains(f)).collect()
+            // **A finding survives where both trees refuse the same span on the same line,
+            // whatever each says about it.** Two trees can refuse one reference for different
+            // reasons — one because the anchor is unknown, the other because the id is not
+            // defined there — and comparing the findings whole would then intersect to
+            // nothing and let a reference that resolves in NEITHER tree pass. The site is the
+            // line and the span the finding opens with, which is what both arms name.
+            let refused: HashSet<(Option<u32>, String)> = theirs.iter().map(site).collect();
+            mine.into_iter()
+                .filter(|f| refused.contains(&site(f)))
+                .collect()
         }
     };
     out.extend(references);
     out.sort_by_key(|f| f.line);
     out
+}
+
+/// What a reference finding is about: the line, and the span it opens with.
+///
+/// Every finding the reference family writes begins with the backticked span it judged, and
+/// that span plus the line is what identifies the site across two trees that phrase their
+/// refusals differently. A finding opening with no span is its own site, spelled whole.
+fn site(finding: &Finding) -> (Option<u32>, String) {
+    let what = &finding.what;
+    let span = what
+        .strip_prefix('`')
+        .and_then(|rest| rest.split_once('`'))
+        .map(|(span, _)| span.to_string())
+        .unwrap_or_else(|| what.clone());
+    (finding.line, span)
 }
 
 /// The same findings, named by the commit or the file the message came from.
@@ -388,9 +410,20 @@ fn commit_tree(
     let model = Model::from_documents_under(docs, checker);
 
     let mut releases = HashMap::new();
+    // Every release this tree cannot supply. A quote checked against no release is checked by
+    // nothing at all, so each one is a finding of the tree rather than a family that quietly
+    // did less: the commit is then skipped, which is the honest answer.
+    let mut unresolved: Vec<Finding> = Vec::new();
     let rules_dir = manifest.rules().dir.clone();
     let corpus_rel = rules_dir.join(&manifest.rules().text);
     let body_starts_at = manifest.rules().body_starts_at;
+    if !blobs.contains_key(&corpus_rel) {
+        unresolved.push(Finding::in_file(
+            &corpus_rel,
+            "this commit's tree holds no vendored release at the path its manifest names",
+            "every quote in the tree and in the message verifies against nothing without it",
+        ));
+    }
     if let Some(text) = blobs.get(&corpus_rel) {
         let key =
             documentation::git::rev_parse(root, &documentation::git::tree_object(sha, &corpus_rel))
@@ -423,8 +456,15 @@ fn commit_tree(
         let archived = documentation::git::blobs(root, sha, &wanted)
             .map_err(|e| Unloadable(format!("its archive could not be read: {e}")))?;
         for (date, rel) in pins.iter().zip(&wanted) {
-            if let Some(text) = archived.get(rel) {
-                releases.insert(Some(date.clone()), Release::new(text, body_starts_at));
+            match archived.get(rel) {
+                Some(text) => {
+                    releases.insert(Some(date.clone()), Release::new(text, body_starts_at));
+                }
+                None => unresolved.push(Finding::in_file(
+                    rel,
+                    format!("a document of this commit pins the release {date}, and its tree holds no archive of it"),
+                    "the quotes of every file pinned there verify against nothing",
+                )),
             }
         }
     }
@@ -476,6 +516,7 @@ fn commit_tree(
             .without(Only::CHANGES),
     );
     assembly.trouble = report.findings;
+    assembly.trouble.extend(unresolved);
     for rel in missing {
         assembly.trouble.push(Finding::in_file(
             &rel,
@@ -515,13 +556,31 @@ pub fn commit_message(
     let tree = working_tree(manifest, checker)?;
     let anchors = tree.anchors();
     let entities = Entities::build(&tree.model, &anchors);
+    // **HEAD stands in for the parent tree**, as `commits` uses a commit's first parent. The
+    // message being judged belongs to a commit that does not exist yet, whose parent is HEAD,
+    // so a message naming the entry this commit deletes resolves exactly as it will once the
+    // commit is walked. Without it the hook refuses the shape the gate accepts, and the
+    // commit that closes an issue cannot be written at all.
+    let root = manifest.root();
+    let checker_rel = checker.and_then(|c| c.strip_prefix(root).ok().map(Path::to_path_buf));
+    let mut corpora = Corpora::default();
+    let parent_owned = documentation::git::rev_parse(root, "HEAD").and_then(|head| {
+        commit_tree(root, &head, checker_rel.as_deref(), &mut corpora)
+            .ok()
+            .map(|a| {
+                let e = Entities::build(&a.model, &a.anchors());
+                (a, e)
+            })
+    });
+    let parent = parent_owned.as_ref().map(|(a, e)| (a, e));
     let findings = relabelled(
-        judge_message(&text, &tree, &entities, None),
+        judge_message(&text, &tree, &entities, parent),
         &file.display().to_string(),
     );
     println!(
-        "\nmessage: {} line(s) judged against the working tree",
-        text.lines().count()
+        "\nmessage: {} line(s) judged against the working tree{}",
+        text.lines().count(),
+        if parent.is_some() { " and HEAD" } else { "" }
     );
     if !findings.is_empty() {
         println!();
@@ -539,8 +598,17 @@ pub fn commit_message(
 
 /// One commit's place in the run, as the summary block names it.
 enum Outcome {
-    Judged { trouble: usize },
-    Skipped { why: String },
+    Judged {
+        trouble: usize,
+    },
+    Skipped {
+        why: String,
+    },
+    /// The range's tip, which is never skipped and whose tree could not be assembled at all.
+    /// The run ends here, and everything walked before it is still printed.
+    Unassembled {
+        why: String,
+    },
 }
 
 /// Judge every message in a range against the tree its commit carries.
@@ -567,7 +635,9 @@ pub fn commits(
     let mut summary: Vec<(String, Outcome)> = Vec::new();
     let mut findings: Vec<Finding> = Vec::new();
     let mut previous: Option<(String, Assembly, Entities)> = None;
-    let mut head_failed = false;
+    // How many findings the tip's own tree carries, `None` where it carries none. The tip is
+    // never skipped, so its tree failing is the run's own could-not-run rather than a skip.
+    let mut tip_trouble: Option<usize> = None;
 
     let last = shas.last().cloned().unwrap_or_default();
     for sha in &shas {
@@ -580,9 +650,10 @@ pub fn commits(
             Ok(tree) => tree,
             Err(Unloadable(why)) => {
                 if never_skipped {
-                    return Err(format!(
-                        "the range's tip {short} could not be assembled: {why}"
-                    ));
+                    // Everything walked before the tip is still reported. A run that printed
+                    // an error and nothing else would say nothing about the branch it gates.
+                    summary.push((short.to_string(), Outcome::Unassembled { why }));
+                    break;
                 }
                 summary.push((
                     short.to_string(),
@@ -609,7 +680,7 @@ pub fn commits(
             continue;
         }
         if trouble > 0 {
-            head_failed = true;
+            tip_trouble = Some(trouble);
         }
 
         // The parent model is the previous commit's where the walk followed the parent chain,
@@ -631,9 +702,12 @@ pub fn commits(
             _ => None,
         };
 
-        let raw = documentation::git::commit_message(root, sha).map_err(|e| e.to_string())?;
+        // **The message as the commit holds it, cleaned of nothing.** Git applied its own
+        // cleanup before the commit existed, so a `#` line here is a line the author wrote and
+        // a second pass over it would take bytes of a commit out of the regime.
+        let message = documentation::git::commit_message(root, sha).map_err(|e| e.to_string())?;
         let entities = Entities::build(&tree.model, &tree.anchors());
-        let found = judge_message(&cleaned(&raw), &tree, &entities, parent);
+        let found = judge_message(&message, &tree, &entities, parent);
         findings.extend(relabelled(found, &format!("commit {short}")));
         summary.push((short.to_string(), Outcome::Judged { trouble }));
         previous = Some((sha.clone(), tree, entities));
@@ -643,7 +717,14 @@ pub fn commits(
         .iter()
         .filter(|(_, o)| matches!(o, Outcome::Judged { .. }))
         .count();
-    let skipped = summary.len() - judged;
+    let unassembled = summary.iter().find_map(|(short, o)| match o {
+        Outcome::Unassembled { why } => Some((short.clone(), why.clone())),
+        _ => None,
+    });
+    let skipped = summary
+        .iter()
+        .filter(|(_, o)| matches!(o, Outcome::Skipped { .. }))
+        .count();
     println!("\ncommits in {range}: {judged} judged, {skipped} skipped");
     for (short, outcome) in &summary {
         match outcome {
@@ -653,6 +734,9 @@ pub fn commits(
                  `cargo knowledge check` reports"
             ),
             Outcome::Skipped { why } => println!("  {short} skipped: {why}"),
+            Outcome::Unassembled { why } => {
+                println!("  {short} is the range's tip and its tree could not be read: {why}")
+            }
         }
     }
     if !findings.is_empty() {
@@ -661,8 +745,26 @@ pub fn commits(
             println!("{finding}");
         }
     }
-    println!("{}", verdict(findings.len()));
-    Ok(if head_failed {
+    // **The last line never says PASSED over a run that could not conclude.** A reader takes
+    // the verdict off the last line, per `path@thaum@CLAUDE.md`, and a tip whose own tree
+    // fails leaves the run saying nothing about the branch it gates.
+    println!(
+        "{}",
+        match (&unassembled, tip_trouble) {
+            (Some((short, _)), _) => format!(
+                "COULD NOT RUN: the range's tip {short} carries a tree this tool cannot read; \
+                 {} finding(s) against the messages before it",
+                findings.len()
+            ),
+            (None, Some(trouble)) => format!(
+                "COULD NOT RUN: the range's tip carries a tree with {trouble} finding(s), which \
+                 `cargo knowledge check` reports; {} finding(s) against the messages judged",
+                findings.len()
+            ),
+            (None, None) => verdict(findings.len()),
+        }
+    );
+    Ok(if unassembled.is_some() || tip_trouble.is_some() {
         // The range's tip must be judgeable, or the run says nothing about the branch it
         // gates. Its own tree is `check`'s subject, and this is the code that says so.
         ExitCode::from(2)
@@ -685,31 +787,57 @@ fn verdict(n: usize) -> String {
 // The hook
 // ---------------------------------------------------------------------------------------
 
-/// Read `core.hooksPath` from this clone's configuration. `None` when it is unset.
-fn hooks_path(root: &Path) -> Option<String> {
+/// Read `core.hooksPath` from this clone's configuration.
+///
+/// `Ok(None)` is the key being unset, which is an answer; a git that could not run at all is
+/// an error, because reporting it as unset would answer a question nobody asked and exit 1
+/// where `thaum#exit-code-ladder` asks for 2.
+fn hooks_path(root: &Path) -> Result<Option<String>, String> {
     let out = documentation::git::git(root)
         .args(["config", "--get", "core.hooksPath"])
+        // git exits 1 for a key that is not set, which is an answer.
         .accept(1)
         .output()
-        .ok()?;
+        .map_err(|e| e.to_string())?;
     let text = String::from_utf8_lossy(&out).trim().to_string();
-    (!text.is_empty()).then_some(text)
+    Ok((!text.is_empty()).then_some(text))
 }
 
-/// Whether the committed script is there and the file system will run it.
-fn script_state(root: &Path) -> (bool, bool) {
+/// What sits at the script's path: a file, and whether the file system will run it.
+///
+/// A directory there is neither, and is told apart from an absence because the two need
+/// different repairs and `install` must not try to write through one.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Script {
+    Absent,
+    NotAFile,
+    Present { executable: bool },
+}
+
+fn script_state(root: &Path) -> Script {
     let path = root.join(HOOKS_PATH).join("commit-msg");
-    let Ok(meta) = std::fs::metadata(&path) else {
-        return (false, false);
+    let Ok(meta) = std::fs::symlink_metadata(&path) else {
+        return Script::Absent;
     };
+    // A symlink is followed, because git follows it too; only what it points at decides.
+    let Ok(meta) = (if meta.file_type().is_symlink() {
+        std::fs::metadata(&path)
+    } else {
+        Ok(meta)
+    }) else {
+        return Script::Absent;
+    };
+    if !meta.is_file() {
+        return Script::NotAFile;
+    }
     #[cfg(unix)]
     let executable = {
         use std::os::unix::fs::PermissionsExt;
         meta.permissions().mode() & 0o111 != 0
     };
     #[cfg(not(unix))]
-    let executable = meta.is_file();
-    (meta.is_file(), executable)
+    let executable = true;
+    Script::Present { executable }
 }
 
 /// Give a file the executable bit, on a platform that has one.
@@ -734,7 +862,13 @@ pub fn hook(manifest: &Manifest, command: &HookCommand) -> Result<ExitCode, Stri
     let root = manifest.root();
     match command {
         HookCommand::Install { force } => {
-            if let Some(current) = hooks_path(root) {
+            // **Every refusal comes before anything is written.** Exit 2 promises the caller
+            // that the clone is as they left it, so a configuration written and then a
+            // failure on the script is the one shape this ordering exists against — the same
+            // reason `index` checks every destination before writing the first.
+            let script = root.join(HOOKS_PATH).join("commit-msg");
+            let state = script_state(root);
+            if let Some(current) = hooks_path(root)? {
                 if current != HOOKS_PATH && !force {
                     return Err(format!(
                         "core.hooksPath already names {current}, not {HOOKS_PATH}. \
@@ -743,48 +877,61 @@ pub fn hook(manifest: &Manifest, command: &HookCommand) -> Result<ExitCode, Stri
                     ));
                 }
             }
+            if state == Script::NotAFile {
+                return Err(format!(
+                    "{} is not a file, so the hook cannot be written there. Nothing was \
+                     written. Remove it, or put the script there yourself.",
+                    script.display()
+                ));
+            }
+            if state == Script::Absent {
+                // A tree that does not carry the script gets one. Configuring a hooks path
+                // that holds nothing is a hook silently doing nothing, which is the shape
+                // every check here exists against.
+                std::fs::create_dir_all(root.join(HOOKS_PATH))
+                    .map_err(|e| format!("{}: {e}", root.join(HOOKS_PATH).display()))?;
+                std::fs::write(&script, COMMIT_MSG_HOOK)
+                    .map_err(|e| format!("{}: {e}", script.display()))?;
+                make_executable(&script)?;
+            }
             documentation::git::git(root)
                 .args(["config", "core.hooksPath", HOOKS_PATH])
                 .output()
                 .map_err(|e| e.to_string())?;
             println!("core.hooksPath = {HOOKS_PATH}");
-            let script = root.join(HOOKS_PATH).join("commit-msg");
-            let (present, executable) = script_state(root);
-            if !present {
-                // A tree that does not carry the script gets one. Configuring a hooks path
-                // that holds nothing is a hook silently doing nothing, which is the shape
-                // every check here exists against.
-                std::fs::create_dir_all(root.join(HOOKS_PATH)).map_err(|e| e.to_string())?;
-                std::fs::write(&script, COMMIT_MSG_HOOK).map_err(|e| e.to_string())?;
-                make_executable(&script)?;
-                println!("{HOOKS_PATH}/commit-msg written");
-            } else {
-                if !executable {
-                    make_executable(&script)?;
-                    println!("{HOOKS_PATH}/commit-msg made executable");
-                }
-                if std::fs::read_to_string(&script).ok().as_deref() != Some(COMMIT_MSG_HOOK) {
-                    println!(
-                        "{HOOKS_PATH}/commit-msg is not the script this tool writes; \
-                         it is left as it is"
-                    );
+            match state {
+                Script::Absent => println!("{HOOKS_PATH}/commit-msg written"),
+                Script::NotAFile => unreachable!("refused above"),
+                Script::Present { executable } => {
+                    if !executable {
+                        make_executable(&script)?;
+                        println!("{HOOKS_PATH}/commit-msg made executable");
+                    }
+                    if std::fs::read_to_string(&script).ok().as_deref() != Some(COMMIT_MSG_HOOK) {
+                        println!(
+                            "{HOOKS_PATH}/commit-msg is not the script this tool writes; \
+                             it is left as it is"
+                        );
+                    }
                 }
             }
             Ok(ExitCode::SUCCESS)
         }
         HookCommand::Status => {
-            let configured = hooks_path(root);
-            let (present, executable) = script_state(root);
+            let configured = hooks_path(root)?;
             let mut missing = Vec::new();
             match &configured {
                 Some(p) if p == HOOKS_PATH => {}
                 Some(p) => missing.push(format!("core.hooksPath names {p}, not {HOOKS_PATH}")),
                 None => missing.push("core.hooksPath is not set".to_string()),
             }
-            if !present {
-                missing.push(format!("{HOOKS_PATH}/commit-msg is not there"));
-            } else if !executable {
-                missing.push(format!("{HOOKS_PATH}/commit-msg is not executable"));
+            match script_state(root) {
+                Script::Present { executable: true } => {}
+                Script::Present { executable: false } => {
+                    missing.push(format!("{HOOKS_PATH}/commit-msg is not executable"))
+                }
+                Script::NotAFile => missing.push(format!("{HOOKS_PATH}/commit-msg is not a file")),
+                Script::Absent => missing.push(format!("{HOOKS_PATH}/commit-msg is not there")),
             }
             if missing.is_empty() {
                 println!("hook: installed — every commit message is judged before it is written");
@@ -804,27 +951,34 @@ mod tests {
     // Every fixture is written as the bytes it means: the checker reads no string literal of
     // its own source, per `knowledge#checker-source-literals-are-data`.
 
-    /// The claim: git's comment block never reaches the document.
+    /// The claim: git's comment block leaves the draft, and every line below it keeps the
+    /// number it had in the file the hook was handed.
     ///
     /// The hook is handed the file BEFORE git strips it, so without this every commit would
-    /// be judged on `# On branch …` and on the `--verbose` diff — and each `#` line would
-    /// open a markdown heading, splitting the message into scopes nobody wrote.
+    /// be judged on `# On branch …` — and each `#` line would open a markdown heading,
+    /// splitting the draft into scopes nobody wrote. Removing the lines rather than blanking
+    /// them renumbers everything below, and the hook's finding then points at the wrong line
+    /// of the file the author is about to re-edit.
     #[test]
-    fn a_comment_block_and_a_verbose_diff_leave_the_message() {
+    fn a_comment_block_leaves_the_draft_and_the_lines_below_it_do_not_move() {
         let raw = "The subject line\n\
                    \n\
-                   A body naming `design@a@b`.\n\
                    # Please enter the commit message for your changes.\n\
                    #\n\
-                   # On branch main\n";
+                   # On branch main\n\
+                   A body naming `design@a@b`.\n";
+        let kept = cleaned(raw);
+        assert!(!kept.contains("On branch"), "{kept:?}");
         assert_eq!(
-            cleaned(raw),
-            "The subject line\n\nA body naming `design@a@b`.\n"
+            kept.lines().nth(5),
+            Some("A body naming `design@a@b`."),
+            "line six is still line six: {kept:?}"
         );
+        assert_eq!(kept.lines().count(), 6);
     }
 
     #[test]
-    fn everything_below_the_scissors_line_leaves_the_message() {
+    fn everything_below_the_scissors_line_leaves_the_draft() {
         let raw = "Subject\n\
                    \n\
                    Body.\n\
@@ -833,15 +987,18 @@ mod tests {
                    diff --git a/x b/x\n\
                    +a line the diff holds\n";
         let kept = cleaned(raw);
-        assert_eq!(kept, "Subject\n\nBody.\n");
-        assert!(!kept.contains("diff --git"), "{kept}");
+        assert!(!kept.contains("diff --git"), "{kept:?}");
+        assert!(!kept.contains("a line the diff holds"), "{kept:?}");
+        assert_eq!(
+            kept.lines().take(3).collect::<Vec<_>>(),
+            ["Subject", "", "Body."]
+        );
     }
 
-    /// The claim: a message that holds no comment at all is unchanged but for its trailing
-    /// blank lines, which `%B` supplies and which would otherwise move every finding's line.
+    /// The claim: a draft that holds no comment at all keeps every line it has.
     #[test]
-    fn a_plain_message_keeps_every_line_it_has() {
-        assert_eq!(cleaned("One\n\nTwo\nThree\n\n\n"), "One\n\nTwo\nThree\n");
+    fn a_plain_draft_keeps_every_line_it_has() {
+        assert_eq!(cleaned("One\n\nTwo\nThree\n"), "One\n\nTwo\nThree\n");
         assert_eq!(cleaned(""), "");
     }
 

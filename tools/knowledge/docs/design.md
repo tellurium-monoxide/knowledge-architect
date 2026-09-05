@@ -412,6 +412,12 @@ of what the ignore rule says. It is reported by `registers`, with the other find
 what a project declares about itself against the tree, rather than by `uncovered`, whose subject
 is a file the walk does not cover and which this file is not.
 
+**Reading a commit's tree needs git 2.36.** `cat-file --batch -z` takes its requests
+NUL-terminated, and a tracked filename may hold a newline: under the newline-terminated input
+such a name is two requests, git answers both, and every later answer is paired with the wrong
+path while the map still comes back full. An older git refuses the flag loudly, which is exit 2
+with git's own reason.
+
 **Everything git answers goes through one module.** `knowledge@documentation/src/git.rs` owns the
 listing, the tracked-and-ignored listing, the one `check-ignore` batch and the last-change dates,
 so the set of things this tool asks git is auditable in one read and a check keeps spawning
@@ -439,17 +445,27 @@ the message, within the distance rule of `knowledge#scope-and-distance`; every r
 judged against the entity table of `knowledge#one-entity-table`; the missing-marker lint reads
 it as it reads any other prose.
 
-**A message is history, and rule numbers are not.** Rules are edited and renumbered at
-comparable rates from release to release, so a number a message names without its text is a
-claim a far-future reader cannot check, whatever the tree holds by then. The regime exists
-against exactly that, and a surface it did not cover was a surface nothing read.
+**A message is history, and it cannot be edited.** `main`'s history is never rewritten, so a
+message's claims are fixed the moment it lands: a quote that stops verifying in a document is
+repaired by `bumping-rules`, and the same claim in a message can only be read wrong. A rule
+number carrying no text is therefore the one claim in this project that can never be repaired,
+which is why the surface the regime reached last is the one it matters most on.
+
+**A message a commit holds is judged byte for byte, and a draft is not.** `commits` reads the
+message with `%B` and cleans nothing: git applied its own cleanup before the commit existed, and
+a second pass would take bytes of a commit out of the regime — under `-m` a `#` line is
+committed verbatim. `commit-message` is handed a draft instead, before that cleanup, so it
+blanks out the `#` comment block and the `--verbose` diff below the scissors line, which never
+reach the commit. The lines are blanked rather than removed, so a finding names the line of the
+file the author is about to re-edit. A `#` line a `-m` message keeps is therefore silent to the
+hook and reported by the range check, and nothing a commit holds escapes both.
 
 Two commands, because the two moments are different:
 
 | command | judges | against |
 | --- | --- | --- |
-| `commit-message <file>` | one message, before the commit exists | the working tree's model |
-| `commits <range>` | every message the range names | each commit's own tree |
+| `commit-message <file>` | one draft, before the commit exists | the working tree, with HEAD as the parent |
+| `commits <range>` | every message the range names | each commit's own tree, with its first parent |
 
 **Everything a commit is judged against is read from that commit's tree.** The manifest, the
 `[walk]` rules, the documents, the generated indexes, the per-instance options and the pinned
@@ -457,7 +473,9 @@ corpus all come through git objects, and the model is assembled in memory. Readi
 working tree instead would judge a message written a hundred commits ago against decisions that
 did not exist then, and the finding list would be a list of things nobody could have known.
 
-**A commit whose tree fails is skipped and named; the range's tip is never skipped.** A message
+**A commit whose tree fails is skipped and named; the range's tip is never skipped.** The tip
+is the walk's last commit, and HEAD wherever the range holds it. A range with several tips —
+`--all` names one — has tips that are neither, and the guarantee is the two-ended range's. A message
 can only be judged where the table it resolves against is trustworthy, so a tree with findings
 of its own contributes no verdict — and a run in which every commit was skipped would be a
 vacuous pass, so the summary counts judged and skipped commits and the tip's own failure is exit
@@ -468,7 +486,11 @@ walk over commits older than a manifest migration.
 that closes an issue deletes the entry and names it in the message, and against its own tree
 alone every such message would dangle. The parent's model is the previous one in the walk
 wherever the walk followed the parent chain, so the union costs one extra model at the range's
-start and after each skip.
+start and after each skip. **The hook takes HEAD as the parent**, HEAD being the parent of the
+commit the draft is for, or it would refuse the shape the range check accepts. The two arms are
+compared by the site each names — the line and the span — rather than by the words each writes,
+because two trees can refuse one reference for different reasons and comparing the words whole
+would let a reference that resolves in neither pass.
 
 **`check` reads no history.** A message is not a file of the tree, and a check whose verdict
 moved with the branch's history would be a check nobody could reproduce from a checkout: `git

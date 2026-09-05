@@ -1309,6 +1309,86 @@ fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
     let _ = std::fs::remove_file(&message);
 }
 
+/// The claim: the hook accepts the commit that closes an issue.
+///
+/// The message being judged belongs to a commit that does not exist yet, whose parent is
+/// HEAD, so the union rule of `commits` has to hold here too. Without it the hook refuses
+/// exactly the shape the gate accepts and the closing commit cannot be written at all.
+#[test]
+fn a_draft_naming_the_entry_it_is_about_to_delete_resolves_against_head() {
+    let history = History::new("commit-draft-parent");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    // The deletion is staged and not committed: HEAD still defines the entry.
+    history.remove("docs/open-issues/a-closable-issue.md");
+    history.git(&["-c", "core.excludesFile=/dev/null", "add", "-A"]);
+    let draft = history.repo.join("draft.txt");
+    std::fs::write(
+        &draft,
+        "The closable issue is closed\n\nIt closed `issue@tiny@a-closable-issue`.\n",
+    )
+    .expect("a draft");
+
+    let (stdout, stderr, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
+    assert_eq!(code, 0, "HEAD still defines it: {stdout}{stderr}");
+    assert!(stdout.contains("and HEAD"), "{stdout}");
+    let _ = std::fs::remove_file(&draft);
+}
+
+/// The claim: a reference that resolves in NEITHER tree is reported, however differently the
+/// two trees phrase their refusal.
+///
+/// A commit that adds a component makes the two arms disagree about the words: the parent has
+/// no such anchor at all, the commit has the anchor and not the id. Intersecting the findings
+/// whole then produces the empty set, and a reference nothing defines anywhere passes.
+#[test]
+fn a_reference_no_tree_defines_is_reported_though_the_two_refuse_it_differently() {
+    let history = History::new("commit-both-refuse");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+
+    // A second component, which the parent tree does not know as an anchor at all.
+    for (rel, text) in [
+        ("other/README.md", "# other\n\nA second component.\n"),
+        ("other/CLAUDE.md", "# other\n\nNothing holds of it.\n"),
+        (
+            "other/docs/design.md",
+            "# other — design\n\n### It records one decision `##other-anchor`\n\nIt exists.\n",
+        ),
+        (
+            "other/docs/goals.md",
+            "# Goals — other\n\n## Be a second anchor `##other-goal`\n\nOne goal.\n",
+        ),
+        (
+            "other/docs/tripwires.md",
+            "# Tripwires — other\n\nNothing yet.\n",
+        ),
+        (
+            "other/docs/rejected-alternatives.md",
+            "# other — rejected alternatives\n\nNothing has lost yet.\n",
+        ),
+        (
+            "other/docs/open-issues/README.md",
+            "# Open issues — other\n\nOne file per entry.\n",
+        ),
+    ] {
+        history.write(rel, text);
+    }
+    let manifest = std::fs::read_to_string(history.dir.join("knowledge.toml")).expect("a manifest");
+    history.write(
+        "knowledge.toml",
+        &manifest.replace("components = []", "components = [\"other\"]"),
+    );
+    let sha = history.commit(
+        "A second component arrives\n\nIt names `design@other@no-such-slug`, which nothing defines.\n",
+    );
+
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "neither tree defines it: {stdout}{stderr}");
+    assert!(stdout.contains(&format!("commit {sha}:3")), "{stdout}");
+    assert!(stdout.contains("no-such-slug"), "{stdout}");
+}
+
 #[test]
 fn a_rule_claimed_in_a_message_owes_its_quote_there() {
     let history = History::new("commit-regime");
@@ -1355,6 +1435,32 @@ fn a_commit_whose_manifest_does_not_load_is_skipped_and_named_and_the_next_one_i
     assert!(stdout.contains("1 judged, 1 skipped"), "{stdout}");
 }
 
+/// The claim: a tree that cannot supply the release its quotes verify against is a finding,
+/// so the commit is skipped rather than judged with the citation families quietly doing less.
+///
+/// The families that read rule text are gated on a release being resolvable, and a document
+/// whose release is missing is passed over in silence. Over a per-commit tree the whole corpus
+/// can be absent, and then every quote in the tree and in the message is checked by nothing
+/// while the run reports the commit judged and clean.
+#[test]
+fn a_commit_whose_tree_supplies_no_release_is_skipped() {
+    let history = History::new("commit-no-corpus");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    history.remove("corpus/CompRules.txt");
+    let gone = history.commit("The corpus leaves the tree\n");
+    tiny_project(&history, false);
+    let back = history.commit("The corpus comes back\n");
+
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("{gone} skipped: tree fails")),
+        "{stdout}"
+    );
+    assert!(stdout.contains(&format!("{back} judged")), "{stdout}");
+}
+
 #[test]
 fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
     let history = History::new("commit-head-fails");
@@ -1375,6 +1481,68 @@ fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
         stdout.contains("its own tree fails 1 finding(s)"),
         "{stdout}"
     );
+    // A reader takes the verdict off the last line, so it may not say PASSED over exit 2.
+    let last = stdout.trim_end().lines().last().expect("a verdict line");
+    assert!(last.starts_with("COULD NOT RUN"), "{last}");
+}
+
+/// The claim: the tip's tree failing to assemble at all still prints what the run walked.
+///
+/// The tip is never skipped, so a manifest it cannot load ends the run — and a run that ended
+/// with an error and nothing else would say nothing about the branch it gates.
+#[test]
+fn a_tip_whose_manifest_does_not_load_still_prints_the_commits_before_it() {
+    let history = History::new("commit-tip-unloadable");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    let good = history.commit("A subject line\n\nIt records `design@tiny@tiny-anchor`.\n");
+    tiny_project(&history, true);
+    let bad = history.commit("The manifest goes back to a shape this tool refuses\n");
+    // The working tree gets a manifest again: the binary locates its project by reading one,
+    // so a tree holding the retired shape refuses before any range is walked. What is under
+    // test is the TIP's tree, which keeps it.
+    tiny_project(&history, false);
+
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(stdout.contains(&format!("{good} judged")), "{stdout}");
+    assert!(
+        stdout.contains(&format!(
+            "{bad} is the range's tip and its tree could not be read"
+        )),
+        "{stdout}"
+    );
+    let last = stdout.trim_end().lines().last().expect("a verdict line");
+    assert!(last.starts_with("COULD NOT RUN"), "{last}");
+}
+
+/// The claim: a `#` line a commit actually holds is judged like any other line.
+///
+/// Git's default cleanup for `-m` is whitespace-only, so such a line reaches the commit. The
+/// hook blanks comment lines out of the DRAFT it is handed, because it runs before git's own
+/// cleanup and cannot tell the two apart; `commits` reads the message the commit holds and
+/// cleans nothing, or a `CR:` marker on such a line would leave the regime in silence.
+#[test]
+fn a_hash_line_a_commit_holds_is_judged_and_not_cleaned_away() {
+    let history = History::new("commit-hash-line");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    let sha = history.commit("A subject line\n\n# A line naming `design@tiny@no-such-thing`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(stdout.contains(&format!("commit {sha}:3")), "{stdout}");
+    assert!(stdout.contains("no-such-thing"), "{stdout}");
+
+    // The other half: the same text as a DRAFT is git's own comment block and is not judged.
+    let draft = history.repo.join("draft.txt");
+    std::fs::write(
+        &draft,
+        "A subject line\n\n# A line naming `design@tiny@no-such-thing`.\n",
+    )
+    .expect("a draft");
+    let (out, _, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
+    assert_eq!(code, 0, "{out}");
+    let _ = std::fs::remove_file(&draft);
 }
 
 /// The claim: a project vendored under its repository is judged from its own paths.
@@ -1477,6 +1645,49 @@ fn install_refuses_to_replace_a_hooks_path_that_names_something_else() {
     assert_eq!(code, 0, "{forced}{stderr}");
     let (status, _, code) = history.run(&["hook", "status"]);
     assert_eq!(code, 0, "{status}");
+}
+
+/// The claim: `install` refusing writes nothing at all, configuration included.
+///
+/// Exit 2 promises the caller that the clone is as they left it. Setting `core.hooksPath` and
+/// then failing on the script leaves a clone pointed at a hooks directory that holds nothing,
+/// which is a hook silently doing nothing.
+#[test]
+fn install_refusing_leaves_the_configuration_untouched() {
+    let history = History::new("commit-hook-refuse");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    std::fs::create_dir_all(history.dir.join(".githooks/commit-msg")).expect("a directory there");
+
+    let (stdout, stderr, code) = history.run(&["hook", "install"]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(stderr.contains("commit-msg"), "{stderr}");
+    let (status, _, _) = history.run(&["hook", "status"]);
+    assert!(status.contains("core.hooksPath is not set"), "{status}");
+    assert!(status.contains("is not a file"), "{status}");
+}
+
+/// The claim: `hook status` without git says it could not run, rather than reporting the hook
+/// absent.
+///
+/// A missing git and an unset key are different facts, and `thaum#exit-code-ladder` gives them
+/// different codes: 1 is a negative answer about the subject, 2 is no answer at all.
+#[test]
+fn hook_status_without_git_could_not_run() {
+    let history = History::new("commit-hook-nogit");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    let (installed, _, code) = history.run(&["hook", "install"]);
+    assert_eq!(code, 0, "{installed}");
+
+    let empty = std::env::temp_dir().join(format!("knowledge-nopath-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&empty);
+    std::fs::create_dir_all(&empty).expect("a directory holding no git");
+    let (stdout, stderr, code) = run_with_path(&history.dir, &["hook", "status"], &empty);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(stderr.to_lowercase().contains("git"), "{stderr}");
+    assert!(!stdout.contains("not installed"), "{stdout}");
+    let _ = std::fs::remove_dir_all(&empty);
 }
 
 /// The claim: the committed script is the one this tool writes, byte for byte.

@@ -443,10 +443,15 @@ pub fn blobs(root: &Path, sha: &str, paths: &[PathBuf]) -> io::Result<BTreeMap<P
         // way and a change to it cannot reach one caller and miss the other.
         stdin.extend_from_slice(tree_object(sha, Path::new("")).as_bytes());
         stdin.extend_from_slice(path_bytes(rel));
-        stdin.push(b'\n');
+        stdin.push(0);
     }
+    // **`-z`, so a request is NUL-terminated.** A tracked filename may hold a newline; under
+    // the newline-terminated input that name becomes two requests, git answers both, and every
+    // later answer is paired with the wrong path — silently, because the map still comes back
+    // full. `-z` on `cat-file --batch` needs git 2.36 or newer, and an older git refuses the
+    // flag loudly, which is the failure this module already turns into exit 2.
     let raw = git(root)
-        .args(["cat-file", "--batch"])
+        .args(["cat-file", "--batch", "-z"])
         .stdin(stdin)
         .output()?;
     Ok(read_batch(&raw, paths))
@@ -715,6 +720,45 @@ mod tests {
     fn a_batch_with_nothing_in_it_answers_nothing() {
         assert!(read_batch(b"", &[PathBuf::from("a.md")]).is_empty());
         assert!(read_batch(b"aaaa blob 2\nhi\n", &[]).is_empty());
+    }
+
+    /// The claim: a tracked filename holding a newline does not shift every later answer.
+    ///
+    /// Under a newline-terminated batch input such a name is two requests, git answers both,
+    /// and each answer after it is paired with the wrong path. The map still comes back full,
+    /// so nothing downstream reports it: the model is simply built out of the wrong bytes.
+    #[test]
+    fn a_newline_in_a_tracked_name_does_not_shift_the_answers_after_it() {
+        let repo =
+            std::env::temp_dir().join(format!("knowledge-git-newline-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&repo);
+        std::fs::create_dir_all(&repo).expect("a repository directory");
+        for args in [
+            vec!["init", "-q"],
+            vec!["config", "user.name", "fixture"],
+            vec!["config", "user.email", "fixture@example.invalid"],
+        ] {
+            git(&repo).args(args).output().expect("a repository");
+        }
+        let odd = PathBuf::from("aa\nbb.md");
+        let plain = PathBuf::from("zz.md");
+        std::fs::write(repo.join(&odd), "# Odd\n").expect("a document with an odd name");
+        std::fs::write(repo.join(&plain), "# Plain\n").expect("a plain document");
+        git(&repo).args(["add", "-A"]).output().expect("staged");
+        git(&repo)
+            .args(["commit", "-q", "-m", "two documents"])
+            .output()
+            .expect("a commit");
+        let sha = rev_parse(&repo, "HEAD").expect("the head");
+
+        let read = blobs(&repo, &sha, &[odd.clone(), plain.clone()]).expect("both blobs");
+        assert_eq!(read.get(&odd).map(String::as_str), Some("# Odd\n"));
+        assert_eq!(
+            read.get(&plain).map(String::as_str),
+            Some("# Plain\n"),
+            "the answer after the odd name is still its own"
+        );
+        let _ = std::fs::remove_dir_all(&repo);
     }
 
     /// The claim: a commit's message comes back as it was written, and the walk over a range

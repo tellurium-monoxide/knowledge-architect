@@ -3,11 +3,12 @@
 How this project's knowledge is held: the Comprehensive Rules corpus, and the documents that cite
 it. One binary, reached through a cargo alias so nothing has to be installed.
 
-**It needs `git` on the path, and a project inside a git worktree.** What the tool reads is what
+**It needs `git` 2.36 or newer on the path, and a project inside a git worktree.** What the tool reads is what
 `git ls-files` reports from the project root, so every pattern git honours decides the walk,
 nested `.gitignore` files included, and a file git tracks is read whatever the ignore rules say.
 Neither failure is silent: no binary and no worktree are both exit 2 naming the reason, never an
-empty walk. The decision is `knowledge#git-supplies-the-walk`.
+empty walk. `commits` reads a commit's tree through `cat-file --batch -z`, which is where the
+version floor comes from. The decision is `knowledge#git-supplies-the-walk`.
 
 ```sh
 cargo knowledge check [--only a,b,c]      every check, over one walk; or only these families
@@ -38,7 +39,7 @@ Three, per `thaum#exit-code-ladder`, and the third is what makes the other two m
 | ---- | ------- | ------------------- |
 | `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commit-message` and `commits` with no finding, an empty range included; `hook status` on a clone that runs the committed hook |
 | `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `commit-message` or `commits` with a finding against a judged message; `hook status` on a clone that does not run it |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `hook install` refusing a `core.hooksPath` that names something else, `commits` on a range that does not resolve or whose tip carries a failing tree, no project above the working directory, an input that cannot be read, `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `hook install` refusing a `core.hooksPath` that names something else or a script path that is not a file, having written nothing, `hook status` where git cannot run, `commits` on a range that does not resolve or whose tip carries a failing tree, no project above the working directory, an input that cannot be read, `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -225,10 +226,16 @@ cargo knowledge commits origin/main..HEAD            # the branch's own commits
 
 `commits` reads everything from each commit's own tree through git objects — the manifest, the
 documents, the generated indexes, the pinned corpus — so a message is judged against the tree it
-was written against. **A commit whose tree carries findings of its own is skipped and named, and
-the range's tip is never skipped**: the summary block counts judged and skipped commits, so a run
-that judged nothing cannot read as a pass. A message's references resolve against its commit's
-tree **or its first parent's**, which is what lets a commit that closes an issue name it.
+was written against, byte for byte and cleaned of nothing. **A commit whose tree carries findings
+of its own is skipped and named, and the range's tip is never skipped**: the summary block counts
+judged and skipped commits, so a run that judged nothing cannot read as a pass, and a tip whose
+tree fails is exit 2 with a last line that says so. A message's references resolve against its
+commit's tree **or its first parent's**, which is what lets a commit that closes an issue name it.
+
+`commit-message` is handed a draft rather than a commit, so it blanks out git's `#` comment block
+and the `--verbose` diff, and it takes HEAD as the parent tree — HEAD being the parent of the
+commit the draft is for. A `#` line a `-m` message keeps is therefore silent to the hook and
+reported by `commits`.
 
 `check` reads no history, and the range is always explicit. `cargo x gates` runs
 `commits origin/main..HEAD` as a gate.
@@ -242,7 +249,8 @@ cargo knowledge hook status      # 0 installed, 1 not
 
 `thaum@.githooks/commit-msg` is committed, so a review can read it; `install` writes it where a tree
 carries none, and refuses to replace a `core.hooksPath` that names something else without
-`--force`. **No check reads the hook's status**: per-clone configuration must not move a verdict.
+`--force`. The script runs `cargo knowledge`, which is the alias in `thaum@.cargo/config.toml`: a
+tree without that alias needs the script rewritten to whatever reaches the binary there. **No check reads the hook's status**: per-clone configuration must not move a verdict.
 `cargo x gates` prints the status line beside its verdicts and gates on nothing about it.
 
 ## What to respect

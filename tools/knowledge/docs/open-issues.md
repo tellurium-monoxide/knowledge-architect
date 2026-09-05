@@ -349,3 +349,45 @@ which rewrites every pointer in the tree mechanically, so the rename costs one m
 rather than a pass of its own. The spec's own disposition row chose "rewritten in place", which is
 what this entry disagrees with.
 
+
+## `check` and `commits` disagree about a symlinked file, and the summary claims they agree `observation`
+
+**What.** `check` reads a file's bytes through the filesystem, so a symlink at a walked path
+yields the bytes of what it points at. `commits` reads the tree blob, whose content for a
+symlink entry is the target's path as text. The two therefore build different models of the same
+commit whenever a walked `.md` or `.rs` path is a symlink. `commits`' summary line says a
+skipped or failing commit's tree "fails n finding(s), which `cargo knowledge check` reports",
+and for such a tree `check` reports a different number.
+
+**Reproduce.** In a project with a clean tree, add a symlink whose name ends in `.md` beside a
+document that carries a dangling reference, pointing at it; stage both and commit.
+`cargo knowledge check` reports the reference twice, once per path;
+`cargo knowledge commits <base>..HEAD` reports it once.
+
+**Why it matters.** Small today and only in one direction: `commits` reads less, so a document
+reachable only through a symlink is judged by the range check and not by its own bytes. The
+misleading half is the summary line, which sends a reader to a command that answers differently.
+The same class as the submodule-and-symlinked-directory entry above, which is where the walk's
+own answer is recorded; this entry is about the two readers disagreeing rather than about the
+walk.
+
+**What would close it.** Either the summary line stops attributing its count to `check`, or the
+per-commit read resolves a symlink entry the way the filesystem does. The second is what makes
+the two models one, and it needs a decision about whether a symlink out of the tree is followed
+at all.
+
+## Judging a message costs time quadratic in its line count `observation`
+
+**What.** The message analysis is quadratic in the number of lines. Measured on a debug build of
+this tool, one reference per line: 1 000 lines in 0.08 s, 5 000 in 0.94 s, 10 000 in 3.35 s,
+20 000 in 13 s, and 200 000 lines (4.7 MB) not finished after 120 s. Re-take with
+`cargo knowledge commit-message <file>` over a generated file of the wanted size.
+
+**Why it matters.** The hook sits in front of every commit, and `git commit -F` accepts a
+generated file. A message of a few hundred lines — which is what this project writes — costs
+nothing measurable, so this is a hazard rather than present pain.
+
+**What would close it.** Locating the quadratic term and removing it, or a stated cap on the
+message size the command will read. The scanner's own line-offset lookup was already made
+logarithmic for documents, so the term is likely in the same shape somewhere the message path
+reaches differently.
