@@ -123,6 +123,62 @@ pinned release printing the same title under two sections. Closing means the rep
 reporting the section as renumbered, and a genuinely deleted section still reporting `GONE`.
 
 
+## A file the walk cannot read is reported by the citation family alone `defect`
+
+**What.** `Model::build` keeps a file it cannot read as an empty document carrying the reason, and
+`check::citations` is the only family that prints it. So `cargo knowledge check --only structure`,
+and every single-family run that is not `citations`, is silent about a document whose every
+citation, reference and slug left the model.
+
+**Reproduce.** Copy `knowledge@tests/projects/minimal/`, `git init` and `git add -A` in the copy,
+delete `knowledge@tests/projects/minimal/notes/b.md` from the copy, then run
+`check --only citations` and `check --only structure` in it. The first names the file; the second
+prints findings and does not.
+
+**Why it matters.** `knowledge#a-failed-parse-is-loud` promises that a file the walk cannot read
+is a finding naming the file, with no family named. A reviewer running one family reads a clean
+verdict over a document nothing read. The full run does report it, so the gate is not blind; a
+narrower run is.
+
+**What would close it.** The trouble report moving out of `citations` to a place every run
+performs — the summary block, or a family that always runs — so that no selection can hide it. A
+test that asserts the finding under a selection that excludes `citations`.
+
+## A submodule's and a symlinked directory's contents are read by nothing `defect`
+
+**What.** The walk is git's listing, and `git ls-files` reports a submodule as one gitlink entry
+and a symlinked directory as one symlink entry, descending into neither. Both have no suffix the
+walk covers, so both are dropped and named by no finding. Every document inside is outside the
+walk AND outside the inverse assertion of `uncovered`.
+
+**Reproduce.** Add a submodule holding a `.md` file that cites a rule the release does not hold,
+and a symlink to a directory holding another. `cargo knowledge check` reports neither. The tree
+walk this replaced reported both.
+
+**Why it matters.** A component vendored as a submodule would be conformant by vacuum, which is
+the binding `no-silent-gap` criterion of the overhaul plan. It is bounded today because this
+repository holds no submodule and no symlinked directory, so nothing is currently unread.
+
+**What would close it.** A finding naming every gitlink and every symlink entry in the listing,
+so a project that grows one is told rather than silently narrowed. Deciding, in
+`knowledge#git-supplies-the-walk`, whether a submodule's own listing should be walked as a
+project of its own instead.
+
+## A path with a newline in it breaks the one-finding-per-line output `observation`
+
+**What.** A finding is printed as one line opening with its path. A filename holding a newline is
+printed raw, so the finding spans two lines and the first is a truncated path.
+
+**Reproduce.** Commit a `.md` file whose name holds a newline and a rule number with no quote,
+then read `cargo knowledge check`.
+
+**Why it matters.** Nothing parses this output today, so it costs a reader one confusing line.
+It stops being cosmetic the moment anything reads the output by line, which a hook or a CI
+annotation would.
+
+**What would close it.** Escaping a path in `Finding`'s display, or refusing such a name in the
+walk with a finding of its own.
+
 ## Span and link shapes the scanner cannot see `observation`
 
 **What.** The reference tokenizer records a backticked span holding an `@` and no whitespace,

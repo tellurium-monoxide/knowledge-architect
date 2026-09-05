@@ -5,7 +5,7 @@
 //! so nothing here strips a prefix off anything.
 
 use std::collections::HashSet;
-use std::path::{Component, Path, PathBuf};
+use std::path::{Path, PathBuf};
 
 use crate::manifest::Walk;
 
@@ -36,10 +36,11 @@ pub fn live_files(
         .filter(|rel| !skipped(rel, walk) && is_live(rel, walk) && !generated.contains(*rel))
         .map(|rel| root.join(rel))
         .collect();
-    // Sorted by path COMPONENT, not by the path as one string. They disagree whenever one
-    // directory name is a prefix of another — a/b against a-c/d, where `-` sorts before
-    // `/` — and component order is what the tree walk this replaced produced.
-    out.sort_by(|a, b| components(a).cmp(&components(b)));
+    // Sorted by path COMPONENT, not by the path as one string, which `Path`'s own ordering is.
+    // The two disagree whenever one directory name is a prefix of another — a/b against
+    // a-c/d, where `-` sorts before `/` — and component order is what the tree walk this
+    // replaced produced and what the model dump is read in.
+    out.sort();
     out
 }
 
@@ -50,10 +51,6 @@ pub fn live_files(
 pub(crate) fn skipped(rel: &Path, walk: &Walk) -> bool {
     walk.skip_dirs.iter().any(|d| rel.starts_with(d))
         || walk.exclude.iter().any(|e| rel.starts_with(e))
-}
-
-fn components(path: &Path) -> Vec<&std::ffi::OsStr> {
-    path.components().map(Component::as_os_str).collect()
 }
 
 /// The file kinds this tool can parse, and therefore the whole of the walk.
@@ -106,6 +103,33 @@ mod tests {
             let p = PathBuf::from(format!("a/b.{suffix}"));
             assert!(!is_live(&p, &walk), "{suffix} must not be walked");
         }
+    }
+
+    #[test]
+    fn the_order_is_by_path_component_and_not_by_the_path_as_one_string() {
+        // The two disagree whenever one directory name is a prefix of another. By component
+        // the third segment decides — `a` before `a-c` before `a.md`; as one string the
+        // separators decide instead — a-c/d.md before a.md before a/b.md. Every caller
+        // that reads the walk in order, the model dump above all, depends on which. `Path`
+        // orders by component, so this guards the property rather than one comparator.
+        let listing: Vec<PathBuf> = ["a-c/d.md", "a/b.md", "a.md"]
+            .iter()
+            .map(PathBuf::from)
+            .collect();
+        let walked = live_files(
+            Path::new("/root"),
+            &Walk::sample(),
+            &listing,
+            &HashSet::new(),
+        );
+        assert_eq!(
+            walked,
+            vec![
+                PathBuf::from("/root/a/b.md"),
+                PathBuf::from("/root/a-c/d.md"),
+                PathBuf::from("/root/a.md"),
+            ]
+        );
     }
 
     #[test]

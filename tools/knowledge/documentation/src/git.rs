@@ -84,6 +84,14 @@ impl Invocation {
         let mut command = Command::new("git");
         command
             .current_dir(&self.root)
+            // **The per-user ignore file is pinned away.** `core.excludesFile` lives in the
+            // developer's home and is no part of the project, so honouring it would make the
+            // walked set a property of the machine rather than of the commit: a line there
+            // takes an untracked live document out of every check on one clone and not on
+            // another. What still decides the walk is the tree's own ignore files and git's
+            // per-clone exclude file, which git offers no way to pin; the tripwire in
+            // `knowledge@docs/tripwires.md` guards what remains.
+            .args(["-c", "core.excludesFile=/dev/null"])
             .args(&self.args)
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
@@ -150,13 +158,13 @@ impl Invocation {
 
     /// The same, with the output read as a NUL-separated list of project-relative paths.
     pub fn paths(self) -> io::Result<Vec<PathBuf>> {
-        Ok(nul_separated(&self.output()?)
-            .into_iter()
-            .map(PathBuf::from)
-            .collect())
+        Ok(nul_paths(&self.output()?))
     }
 
     /// The command as an error message names it.
+    ///
+    /// The pinned configuration is left out: it is the same on every invocation and naming it
+    /// in every message would bury the subcommand that failed.
     fn shown(&self) -> String {
         let mut out = String::from("git");
         for arg in &self.args {
@@ -168,11 +176,40 @@ impl Invocation {
 }
 
 /// Split `-z` output on NUL, dropping the empty tail the last separator leaves.
-fn nul_separated(bytes: &[u8]) -> Vec<String> {
-    String::from_utf8_lossy(bytes)
-        .split('\0')
-        .filter(|s| !s.is_empty())
-        .map(str::to_string)
+fn nul_separated(bytes: &[u8]) -> Vec<&[u8]> {
+    bytes.split(|b| *b == 0).filter(|s| !s.is_empty()).collect()
+}
+
+/// The same, read as project-relative paths.
+///
+/// **A path is bytes, not text.** A filename holding a byte sequence that is not UTF-8 is
+/// legal on this platform and git reports it as it is under `-z`; decoding it lossily would
+/// substitute a replacement character and produce a path nothing on disk answers to. The file
+/// would then read as unreadable — or, where nothing reports that, leave every check while the
+/// run stayed green, which is the failure `knowledge#git-supplies-the-walk` exists against.
+fn nul_paths(bytes: &[u8]) -> Vec<PathBuf> {
+    nul_separated(bytes).into_iter().map(as_path).collect()
+}
+
+#[cfg(unix)]
+fn as_path(bytes: &[u8]) -> PathBuf {
+    use std::os::unix::ffi::OsStrExt;
+    PathBuf::from(OsStr::from_bytes(bytes))
+}
+
+/// Everywhere else the platform has no bytes-to-path conversion, and a name it cannot spell is
+/// a name git could not have produced there.
+#[cfg(not(unix))]
+fn as_path(bytes: &[u8]) -> PathBuf {
+    PathBuf::from(String::from_utf8_lossy(bytes).into_owned())
+}
+
+/// The same, read as text. Used only for `check-ignore`'s echo of spellings this tool wrote,
+/// which came from documents and are therefore UTF-8 by construction.
+fn nul_strings(bytes: &[u8]) -> Vec<String> {
+    nul_separated(bytes)
+        .into_iter()
+        .map(|b| String::from_utf8_lossy(b).into_owned())
         .collect()
 }
 
@@ -252,7 +289,7 @@ pub fn ignored(root: &Path, queries: &[String]) -> io::Result<HashSet<String>> {
         .accept(1)
         .stdin(stdin)
         .output()?;
-    Ok(nul_separated(&out).into_iter().collect())
+    Ok(nul_strings(&out).into_iter().collect())
 }
 
 /// When each file under `dirs` last changed, as `git` reports it, keyed by project-relative
@@ -321,11 +358,30 @@ mod tests {
         // `-z` terminates each entry, so the last byte is a separator and a naive split leaves
         // an empty name that resolves to the project root itself.
         assert_eq!(
-            nul_separated(b"a.md\0b/c.rs\0"),
-            vec!["a.md".to_string(), "b/c.rs".to_string()]
+            nul_paths(b"a.md\0b/c.rs\0"),
+            vec![PathBuf::from("a.md"), PathBuf::from("b/c.rs")]
         );
-        assert_eq!(nul_separated(b""), Vec::<String>::new());
-        assert_eq!(nul_separated(b"\0"), Vec::<String>::new());
+        assert_eq!(nul_paths(b""), Vec::<PathBuf>::new());
+        assert_eq!(nul_paths(b"\0"), Vec::<PathBuf>::new());
+    }
+
+    #[test]
+    fn a_name_that_is_not_utf_eight_is_carried_as_bytes() {
+        // A filename holding a byte no UTF-8 decoding accepts is legal here and git reports it
+        // verbatim under `-z`. Decoded lossily it becomes a path nothing on disk answers to,
+        // and the file leaves every check while the run stays green.
+        #[cfg(unix)]
+        {
+            use std::os::unix::ffi::OsStrExt;
+            let found = nul_paths(b"notes/re\xffadme.txt\0plain.md\0");
+            assert_eq!(found.len(), 2);
+            assert_eq!(
+                found[0].as_os_str().as_bytes(),
+                b"notes/re\xffadme.txt",
+                "the byte survives the round trip"
+            );
+            assert_eq!(found[1], PathBuf::from("plain.md"));
+        }
     }
 
     #[test]
@@ -395,6 +451,46 @@ mod tests {
             Err(_) => panic!("the batch never returned"),
         }
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn the_log_names_paths_relative_to_the_project_and_not_to_the_repository() {
+        // A project vendored as a subdirectory of its repository is the case: without
+        // `--relative` git answers with repository-relative names, which match no
+        // project-relative key and leave every row's last-change column empty.
+        let repo = std::env::temp_dir().join(format!("knowledge-git-log-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&repo);
+        let project = repo.join("nested");
+        std::fs::create_dir_all(project.join("notes")).expect("a nested project");
+        std::fs::write(project.join("notes/a.md"), "# A\n").expect("a document");
+        git(&repo)
+            .args(["init", "-q"])
+            .output()
+            .expect("a repository");
+        git(&repo)
+            .args(["add", "-A"])
+            .output()
+            .expect("the document staged");
+        git(&repo)
+            .args([
+                "-c",
+                "user.name=fixture",
+                "-c",
+                "user.email=fixture@example.invalid",
+                "commit",
+                "-qm",
+                "one",
+            ])
+            .output()
+            .expect("a commit, which a log needs");
+
+        let found = last_changed(&project, &[PathBuf::from("notes")]);
+        assert_eq!(
+            found.keys().collect::<Vec<_>>(),
+            vec![&PathBuf::from("notes/a.md")],
+            "project-relative, not `nested/notes/a.md`"
+        );
+        let _ = std::fs::remove_dir_all(&repo);
     }
 
     #[test]

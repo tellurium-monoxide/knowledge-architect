@@ -17,9 +17,17 @@ caller and handed in. A tree with no `git`, or a project outside a worktree, is 
 reason; an empty walk is never an answer. The decision is `knowledge#git-supplies-the-walk`.
 
 **A test that copies a mock project runs `git init` and `git add -A` in the copy**, or the walk
-is empty and the test proves nothing; `Sandbox` in `knowledge@tests/binary.rs` does it. A test
-that then deletes or writes a fixture file stages again, and a test about ignore behaviour writes
-its `.gitignore` BEFORE the first `git add -A`. The in-place tests under
+is empty and the test proves nothing; `Sandbox` in `knowledge@tests/binary.rs` does it. Two
+consequences a test about ignore behaviour has to choose between, because the ignore rules act on
+untracked files alone:
+
+- for a file that must be **ignored**, write the `.gitignore` before the first `git add -A`, so
+  the add never tracks it. `Sandbox::seeded` is that order.
+- for a file that must be **tracked and ignored**, stage it first and add the `.gitignore`
+  after, so the add finds the file already in the index.
+
+A test that deletes or rewrites a fixture file after the first add stages again, or git's listing
+still names what the working tree no longer holds. The in-place tests under
 `knowledge@tests/projects/` need none of this: they build under this repository's own worktree,
 so a mock file is walked because this repository tracks it — which also means a new fixture file
 is walked only once it is at least staged.

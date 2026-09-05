@@ -479,9 +479,10 @@ fn link(
 /// Every spelling a path reference in this model could ask the ignore rules about.
 ///
 /// The caller batches these through one `git check-ignore` and hands the answers back in
-/// `Inputs::ignored`, because a check may spawn nothing. The set is the two arms that resolve
-/// a target: an anchored reference resolves under the anchor it names, and the generic form
-/// resolves under every anchor at once. The escape anchor resolves under none, so it
+/// `Inputs::ignored`, because a check may spawn nothing. **Every arm that reaches
+/// `assert_target` is here**, and there are three: an anchored reference resolves under the
+/// anchor it names, the generic form resolves under every anchor at once, and a relative
+/// markdown link resolves beside its own file. The escape anchor resolves under none, so it
 /// contributes nothing.
 ///
 /// **A spelling this misses is a target the check reads as not ignored**, which is a finding
@@ -490,30 +491,58 @@ fn link(
 pub fn ignore_queries(model: &Model, anchors: &Anchors) -> Vec<String> {
     let mut out = Vec::new();
     for doc in model.documents() {
+        let nav = is_navigation(&doc.rel);
         for l in &doc.observations {
-            let Observation::Span(span) = &l.what else {
-                continue;
-            };
-            let Candidate::Reference { kind, anchor, id } = entity::candidate(span, anchors) else {
-                continue;
-            };
-            if !kind.is_path() {
-                continue;
-            }
-            let claims_dir = id.ends_with('/');
-            let trimmed = id.trim_end_matches('/');
-            match anchor {
-                ESCAPE_ANCHOR => {}
-                entity::EVERY_ANCHOR => {
-                    for a in anchors.all() {
-                        out.push(crate::git::ignore_query(&a.path.join(trimmed), claims_dir));
+            match &l.what {
+                Observation::Span(span) => {
+                    let Candidate::Reference { kind, anchor, id } =
+                        entity::candidate(span, anchors)
+                    else {
+                        continue;
+                    };
+                    if !kind.is_path() {
+                        continue;
+                    }
+                    let claims_dir = id.ends_with('/');
+                    let trimmed = id.trim_end_matches('/');
+                    match anchor {
+                        ESCAPE_ANCHOR => {}
+                        entity::EVERY_ANCHOR => {
+                            for a in anchors.all() {
+                                out.push(crate::git::ignore_query(
+                                    &a.path.join(trimmed),
+                                    claims_dir,
+                                ));
+                            }
+                        }
+                        name => {
+                            if let Some(a) = anchors.by_name(name) {
+                                out.push(crate::git::ignore_query(
+                                    &a.path.join(trimmed),
+                                    claims_dir,
+                                ));
+                            }
+                        }
                     }
                 }
-                name => {
-                    if let Some(a) = anchors.by_name(name) {
-                        out.push(crate::git::ignore_query(&a.path.join(trimmed), claims_dir));
+                // The arms `link` returns on before resolving are the arms that ask git
+                // nothing, in the order it takes them.
+                Observation::Link(target) if doc.is_markdown() && nav => {
+                    if target.starts_with('#') {
+                        continue;
                     }
+                    let file_part = target.split('#').next().unwrap_or(target);
+                    if has_scheme(file_part) || refused(file_part).is_some() {
+                        continue;
+                    }
+                    let dir = doc.rel.parent().unwrap_or(Path::new(""));
+                    let resolved = dir.join(file_part.trim_end_matches('/'));
+                    out.push(crate::git::ignore_query(
+                        &resolved,
+                        file_part.ends_with('/'),
+                    ));
                 }
+                _ => {}
             }
         }
     }
@@ -1150,28 +1179,31 @@ mod tests {
         // batch is exactly what the collector gathered, and it must silence the three
         // anchored arms while the generic arm still refuses an ignored copy as a hit.
         //
-        // It discriminates in both directions. Drop the anchored arm from the collector and
-        // the three become "does not exist"; drop the generic arm and its finding disappears,
-        // because the ignored copy then counts as a hit.
+        // It discriminates in both directions. Drop the anchored or the link arm from the
+        // collector and those targets become "does not exist"; drop the generic arm and its
+        // finding disappears, because the ignored copy then counts as a hit.
         let m = manifest();
         let text = "Anchored `path@a-project@gone/out.bin`, its directory \
                     `path@a-project@gone/`, under a component `path@a-part@gone/out.bin`, and \
                     generically `path@*@scratch/x.md`.\n";
+        // A relative markdown link is the third arm that reaches the same assertion. It is
+        // legal in a navigation home alone, so the document that carries it is one.
+        let link = "See [the output](gone/out.bin) and [its directory](gone/).\n";
         let mut present = tree();
         present.push("scratch".to_string());
         present.push("scratch/x.md".to_string());
         let anchors = Anchors::of(&m);
-        let model =
-            Model::from_documents(vec![(PathBuf::from("notes/prose.md"), text.to_string())]);
+        let docs = vec![("notes/prose.md", text), ("notes/README.md", link)];
+        let model = Model::from_documents(
+            docs.iter()
+                .map(|(p, t)| (PathBuf::from(*p), (*t).to_string()))
+                .collect(),
+        );
         let queries = super::ignore_queries(&model, &anchors);
         let borrowed: Vec<&str> = queries.iter().map(String::as_str).collect();
-        let (found, counts) = checked_ignoring_under(
-            vec![("notes/prose.md", text)],
-            &present,
-            &borrowed,
-            &anchors,
-        );
+        let (found, counts) = checked_ignoring_under(docs, &present, &borrowed, &anchors);
         assert_eq!(counts.references, 4);
+        assert_eq!(counts.links, 2);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("resolves in no component"), "{found:#?}");
     }

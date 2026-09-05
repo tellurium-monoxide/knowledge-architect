@@ -313,6 +313,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     let releases: HashMap<Option<String>, Release> = HashMap::new();
     let committed = HashMap::new();
     let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+    let git = git_answers(&manifest, &model);
     let inputs = Inputs {
         releases: &releases,
         pinned: "20200101",
@@ -321,8 +322,8 @@ fn a_project_carrying_every_component_document_reports_nothing() {
         present: &survey.present,
         directories: &survey.directories,
         outside: &survey.outside,
-        ignored: &git_answers(&manifest, &model).0,
-        tracked_and_ignored: &git_answers(&manifest, &model).1,
+        ignored: &git.0,
+        tracked_and_ignored: &git.1,
     };
     let report = run(
         &model,
@@ -363,6 +364,7 @@ fn a_directory_design_home_passes_end_to_end() {
     let releases: HashMap<Option<String>, Release> = HashMap::new();
     let committed = HashMap::new();
     let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+    let git = git_answers(&manifest, &model);
     let inputs = Inputs {
         releases: &releases,
         pinned: "20200101",
@@ -371,8 +373,8 @@ fn a_directory_design_home_passes_end_to_end() {
         present: &survey.present,
         directories: &survey.directories,
         outside: &survey.outside,
-        ignored: &git_answers(&manifest, &model).0,
-        tracked_and_ignored: &git_answers(&manifest, &model).1,
+        ignored: &git.0,
+        tracked_and_ignored: &git.1,
     };
     let report = run(
         &model,
@@ -447,6 +449,7 @@ mod planted {
         let releases = HashMap::from([(None, release)]);
         let survey =
             documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+        let git = git_answers(&manifest, &model);
         let inputs = Inputs {
             releases: &releases,
             pinned: "20200101",
@@ -455,8 +458,8 @@ mod planted {
             present: &survey.present,
             directories: &survey.directories,
             outside: &survey.outside,
-            ignored: &git_answers(&manifest, &model).0,
-            tracked_and_ignored: &git_answers(&manifest, &model).1,
+            ignored: &git.0,
+            tracked_and_ignored: &git.1,
         };
         run(&model, &manifest, &inputs, only)
             .findings
@@ -633,6 +636,7 @@ mod planted {
         }
         let survey =
             documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+        let git = git_answers(&manifest, &model);
         let inputs = Inputs {
             releases: &releases,
             pinned: "20200101",
@@ -641,8 +645,8 @@ mod planted {
             present: &survey.present,
             directories: &survey.directories,
             outside: &survey.outside,
-            ignored: &git_answers(&manifest, &model).0,
-            tracked_and_ignored: &git_answers(&manifest, &model).1,
+            ignored: &git.0,
+            tracked_and_ignored: &git.1,
         };
         run(&model, &manifest, &inputs, only)
     }

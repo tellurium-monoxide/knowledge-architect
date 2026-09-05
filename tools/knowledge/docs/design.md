@@ -386,6 +386,25 @@ hand-rolled matcher this replaced could not promise, and it is the property the 
 chosen for; the matcher and the three things it could not do are
 `knowledge@docs/rejected-alternatives.md`.
 
+**Git's answer is the answer, and two things it does not descend into are therefore unchecked.**
+A submodule is one gitlink entry in the listing and a symlinked directory is one symlink entry, so
+neither's contents are read, where the tree walk this replaced read both. Neither has a suffix the
+walk covers, so both are dropped by suffix and named by nothing. That is a gap the criterion
+`no-silent-gap` does not like and this design accepts for now: a component vendored as a submodule
+would be conformant by vacuum. `knowledge@docs/open-issues.md` carries it.
+
+**The per-user ignore file is pinned away.** `core.excludesFile` lives in a developer's home and
+is no part of any project, so every invocation runs with it pointed at the null device: a line
+there would otherwise take an untracked live document out of every check on one clone and not on
+another. What still decides the walk beside the tree's own ignore files is git's per-clone exclude
+file, which git offers no way to pin, and that is what the tripwire in
+`knowledge@docs/tripwires.md` is left guarding.
+
+**A path is bytes, not text.** The `-z` output is split on NUL and turned into paths byte for
+byte. A name holding a byte no UTF-8 decoding accepts is legal here, and decoding it lossily
+produces a path nothing on disk answers to — so the file leaves every check, and where nothing
+reports the failed read the run stays green. That is the shape this whole head exists against.
+
 **A tracked file the ignore rules also cover is a finding naming the file.** The two states
 contradict each other and the contradiction is otherwise silent: the walk reads the file, and
 `git check-ignore` skips what the index holds so a reference to it is asserted too — the reverse
@@ -400,10 +419,13 @@ nothing.
 
 **No `git`, or no worktree, is exit 2 with the reason.** Never an empty walk: a project reported as
 holding no document is a run that checked nothing and said so as a clean verdict, which is the
-failure this tool exists to prevent. The same holds for a git invocation that fails for any other
-reason, which reaches the caller carrying git's own stderr. A tracked path the working tree does
-not hold — a deletion nobody has staged — stays in the walk and is reported for the same reason:
-dropping it would take a live document out of every check on the strength of a working-tree state.
+failure this tool exists to prevent. **Every invocation a verdict depends on fails that way** —
+the listing, the tracked-and-ignored listing and the `check-ignore` batch — carrying git's own
+stderr, whatever the reason. The one invocation that degrades instead is `last_changed`, which
+fills a listing's convenience column and moves no verdict: where git answers nothing the column
+shows `-`. A tracked path the working tree does not hold — a deletion nobody has staged — stays
+in the walk and is reported, because dropping it would take a live document out of every check on
+the strength of a working-tree state.
 
 **The summary block prints the walked-file count**, so two machines disagreeing about the walk is
 visible in the output rather than inferred from a finding list. The tripwire is in

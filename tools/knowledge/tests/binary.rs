@@ -40,12 +40,17 @@ fn run(name: &str, args: &[&str]) -> (String, String, i32) {
 
 /// The same, with `PATH` replaced, which is how the missing-`git` case is stated.
 fn run_with_path(dir: &Path, args: &[&str], path: &Path) -> (String, String, i32) {
-    let out = Command::new(env!("CARGO_BIN_EXE_knowledge"))
-        .args(args)
-        .current_dir(dir)
-        .env("PATH", path)
-        .output()
-        .expect("the binary runs");
+    run_with_env(dir, args, &[("PATH", path)])
+}
+
+/// The same, with environment variables replaced.
+fn run_with_env(dir: &Path, args: &[&str], env: &[(&str, &Path)]) -> (String, String, i32) {
+    let mut command = Command::new(env!("CARGO_BIN_EXE_knowledge"));
+    command.args(args).current_dir(dir);
+    for (name, value) in env {
+        command.env(name, value);
+    }
+    let out = command.output().expect("the binary runs");
     (
         String::from_utf8_lossy(&out.stdout).into_owned(),
         String::from_utf8_lossy(&out.stderr).into_owned(),
@@ -83,13 +88,9 @@ impl Sandbox {
             sandbox.write(rel, text);
         }
         sandbox.git(&["init", "-q"]);
-        // The developer's own global ignore file would otherwise reach into the fixture and
-        // decide which of its files are live, which is a test that answers differently per
-        // machine.
-        sandbox.git(&["config", "--local", "core.excludesFile", "/dev/null"]);
         // `add` needs no identity, so none is configured: a fixture that wrote one would be
         // recording a name in a temporary repository nobody reads.
-        sandbox.git(&["add", "-A"]);
+        sandbox.stage();
         sandbox
     }
 
@@ -105,8 +106,13 @@ impl Sandbox {
     ///
     /// A test that deletes a fixture file has to call this: the walk reads git's listing, and
     /// a deleted file the index still holds is listed, read, and reported as unreadable.
+    ///
+    /// **The per-user ignore file is pinned away for this invocation and for no other.** `add`
+    /// honours it, so a developer's global rule would otherwise decide which fixture files are
+    /// tracked. Nothing is written to the copy's configuration: the tool's own pin is what a
+    /// test of that pin has to be able to see.
     fn stage(&self) {
-        self.git(&["add", "-A"]);
+        self.git(&["-c", "core.excludesFile=/dev/null", "add", "-A"]);
     }
 
     /// One git command in the copy, which must succeed.
@@ -840,8 +846,8 @@ const DANGLING: &str = "# Another mock document\n\nIt points at `design@minimal@
 /// The claim: a tracked document a `.gitignore` line covers is still walked, and the pair is a
 /// finding naming the file.
 ///
-/// This is the recorded defect `A root gitignore line can unread a tracked live document`,
-/// reproduced by its own recipe. Under the hand-rolled matcher the second run printed nothing:
+/// The recipe is the one the tracker entry this closed carried, and the entry is gone with the
+/// defect. Under the hand-rolled matcher the second run printed nothing:
 /// the ignore line pruned the document from the walk AND from the inverse assertion, so the
 /// dangling reference in it was read by no check and the run exited 0. Git's tracked listing is
 /// unaffected by the ignore rules, so the reference is still found, and the contradiction
@@ -974,4 +980,75 @@ fn a_reference_to_an_ignored_target_is_exempt_and_the_rules_decide_it() {
         2,
         "both the file claim and the directory claim: {out}"
     );
+}
+
+/// The claim: a tracked file the working tree does not hold is reported, not dropped.
+///
+/// An unstaged deletion leaves a path in git's listing with no bytes behind it. Dropping it
+/// would take a live document out of every check on the strength of a working-tree state, which
+/// is the shape `knowledge#a-failed-parse-is-loud` refuses. The finding names the deletion
+/// rather than reporting an encoding failure, because the two need different repairs.
+#[test]
+fn a_tracked_file_the_working_tree_does_not_hold_is_reported() {
+    let sandbox = Sandbox::new("deleted-tracked", "minimal");
+    let (before, stderr, code) = sandbox.run(&["check", "--only", "citations"]);
+    assert_eq!(
+        code, 0,
+        "the fixture starts clean under this family: {before}{stderr}"
+    );
+
+    std::fs::remove_file(sandbox.path("notes/b.md")).expect("a staged fixture file");
+    let (out, stderr, code) = sandbox.run(&["check", "--only", "citations"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    assert!(
+        out.contains("notes/b.md") && out.contains("the working tree does not hold it"),
+        "{out}"
+    );
+    assert_eq!(
+        walked_count(&out),
+        walked_count(&before),
+        "the path stays in the walk while the index holds it"
+    );
+
+    // Staging the deletion is the repair, and it takes the path out of the listing.
+    sandbox.stage();
+    let (after, stderr, code) = sandbox.run(&["check", "--only", "citations"]);
+    assert_eq!(code, 0, "{after}{stderr}");
+    assert!(!after.contains("notes/b.md"), "{after}");
+    assert_eq!(walked_count(&after), walked_count(&before) - 1);
+}
+
+/// The claim: the developer's own global ignore file does not decide what is walked.
+///
+/// `core.excludesFile` lives in the home directory and is no part of any project, so a line in
+/// it would take an untracked live document out of every check on one clone and not on another.
+/// The run is pinned against it, and this states the pin by giving the run a home directory
+/// whose git configuration ignores one of the fixture's files.
+#[test]
+fn a_per_user_ignore_file_does_not_decide_the_walk() {
+    // The document is left UNTRACKED on purpose: the ignore rules act on untracked files
+    // alone, so a staged one would be listed whatever any ignore file said and the test would
+    // pass over the pin without touching it.
+    let sandbox = Sandbox::new("global-ignore", "minimal");
+    sandbox.write("notes/scratch.md", DANGLING);
+    let home = std::env::temp_dir().join(format!("knowledge-home-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&home);
+    std::fs::create_dir_all(home.join(".config/git")).expect("a fake home");
+    std::fs::write(home.join(".config/git/ignore"), "scratch.md\n").expect("a global rule");
+    std::fs::write(
+        home.join(".gitconfig"),
+        "[core]\n\texcludesFile = ~/.config/git/ignore\n",
+    )
+    .expect("a global configuration");
+
+    let config = home.join(".config");
+    let env: Vec<(&str, &Path)> = vec![("HOME", home.as_path()), ("XDG_CONFIG_HOME", &config)];
+    let (out, stderr, code) = run_with_env(&sandbox.dir, &["check", "--only", "references"], &env);
+    assert_eq!(code, 1, "the document stays live: {out}{stderr}");
+    assert!(out.contains("no-such-thing"), "{out}");
+
+    // The same run without the fake home, so the count is the same either way.
+    let (plain, _, _) = sandbox.run(&["check", "--only", "references"]);
+    assert_eq!(walked_count(&out), walked_count(&plain));
+    let _ = std::fs::remove_dir_all(&home);
 }
