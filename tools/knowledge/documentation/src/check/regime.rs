@@ -650,29 +650,24 @@ pub fn run(
 mod tests {
     use super::*;
 
-    /// Two rules sharing a body exactly, and one that shares with nothing.
-    ///
-    /// Not contrived: 90 rules in the pinned release have a body contained whole inside
-    /// another rule's, `103.4` inside `119.1` among them.
-    /// A parent with one subrule, for the parent-rule cases. Bound to a name so the numbers in
-    /// it are data: written inline they are unbound literals, which the scanner reads as prose.
+    // Every fixture below is written inline: the checker reads no string literal of its own
+    // source, per `knowledge#checker-source-literals-are-data`.
+
+    /// A parent with one subrule, for the parent-rule cases.
     const PARENT_CORPUS: &str = concat!(
         "100.8 A parent body long enough to be evidence on its own terms.\n",
         "100.8a A subrule saying its own thing, which the parent does not say.\n",
     );
 
+    /// Two rules sharing a body exactly, and one that shares with nothing.
+    ///
+    /// Not contrived: 90 rules in the pinned release have a body contained whole inside
+    /// another rule's, `103.4` inside `119.1` among them.
     const CORPUS: &str = concat!(
         "100.5 A body long enough to be evidence and shared by two rules exactly.\n",
         "100.6 A body long enough to be evidence and shared by two rules exactly.\n",
         "100.7 A different body, also long enough to be evidence, and shared with nothing.\n",
     );
-
-    // Bound to names so the scanner reads them as data. Written inline they are unbound
-    // literals, which is prose, and each one becomes a claim this file owes a quote for.
-    const SHARED_A: &str = "100.5";
-    const SHARED_B: &str = "100.6";
-    const ALONE: &str = "100.7";
-    const SHARED_TEXT: &str = "A body long enough to be evidence and shared by two rules exactly.";
 
     fn release() -> Release {
         Release::new(CORPUS, 0)
@@ -692,12 +687,8 @@ mod tests {
             .collect()
     }
 
-    // A section and its title, bound as parser inputs.
-    const SECTION_N: &str = "100";
-    const SECTION_TITLE: &str = "A Section Title Long Enough";
-
     fn section_release() -> Release {
-        Release::new(&format!("{SECTION_N}. {SECTION_TITLE}\n{CORPUS}"), 0)
+        Release::new(&format!("100. A Section Title Long Enough\n{CORPUS}"), 0)
     }
 
     fn judged(text: &str, release: &Release, rule: Rule) -> Vec<String> {
@@ -719,23 +710,20 @@ mod tests {
         // and distance rules as a subrule quote. Both quote forms discharge it: the
         // blockquote binds by the printed head, the inline form by the nearest marker.
         let release = section_release();
-        let bare = format!("### A section\n\nin the order CR:{SECTION_N} states them\n");
-        let owed = judged(&bare, &release, Rule::QuoteInScope);
+        let bare = "### A section\n\nin the order CR:100 states them\n";
+        let owed = judged(bare, &release, Rule::QuoteInScope);
         assert_eq!(owed.len(), 1, "{owed:#?}");
-        assert!(owed[0].contains(SECTION_N), "{owed:#?}");
-        let block = format!(
-            "### A section\n\nin the order CR:{SECTION_N} states them:\n\n\
-             > {SECTION_N}. {SECTION_TITLE}\n"
-        );
+        assert!(owed[0].contains("100"), "{owed:#?}");
+        let block = "### A section\n\nin the order CR:100 states them:\n\n\
+                     > 100. A Section Title Long Enough\n";
         assert_eq!(
-            judged(&block, &release, Rule::QuoteInScope),
+            judged(block, &release, Rule::QuoteInScope),
             Vec::<String>::new()
         );
-        let inline = format!(
-            "### A section\n\nin the order CR:{SECTION_N}, *\"{SECTION_TITLE}\"*, states them\n"
-        );
+        let inline =
+            "### A section\n\nin the order CR:100, *\"A Section Title Long Enough\"*, states them\n";
         assert_eq!(
-            judged(&inline, &release, Rule::QuoteInScope),
+            judged(inline, &release, Rule::QuoteInScope),
             Vec::<String>::new()
         );
     }
@@ -746,27 +734,26 @@ mod tests {
         // titles long enough to clear the fragment floor were exposed: the pinned release
         // holds nine of thirty characters or more. Mutation checked: removing the section
         // branch from `completeness` passes the elided long title silently.
-        const LONG_N: &str = "200";
-        const LONG_TITLE: &str = "A Title Comfortably Longer Than The Fragment Floor";
-        let release = Release::new(&format!("{LONG_N}. {LONG_TITLE}\n{CORPUS}"), 0);
-        let elided = format!(
-            "### A section\n\nper CR:{LONG_N}, *\"A Title Comfortably Longer Than The…\"*\n"
+        let release = Release::new(
+            &format!("200. A Title Comfortably Longer Than The Fragment Floor\n{CORPUS}"),
+            0,
         );
-        let found = judged(&elided, &release, Rule::OmissionMarked);
+        let elided = "### A section\n\nper CR:200, *\"A Title Comfortably Longer Than The…\"*\n";
+        let found = judged(elided, &release, Rule::OmissionMarked);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("heading entire"), "{found:#?}");
         // An ellipsis-only quote quotes nothing and must not discharge anything.
-        let empty = format!("### A section\n\nper CR:{LONG_N}, *\"…\"*\n");
-        assert_eq!(judged(&empty, &release, Rule::OmissionMarked).len(), 1);
+        let empty = "### A section\n\nper CR:200, *\"…\"*\n";
+        assert_eq!(judged(empty, &release, Rule::OmissionMarked).len(), 1);
         // The whole title is complete: no mark owed, in either form, with or without the
         // printed number at its head.
         for clean in [
-            format!("### A section\n\nper CR:{LONG_N}, *\"{LONG_TITLE}\"*\n"),
-            format!("### A section\n\nper CR:{LONG_N}:\n\n> {LONG_N}. {LONG_TITLE}\n"),
-            format!("### A section\n\nper CR:{LONG_N}, *\"{LONG_N}. {LONG_TITLE}\"*\n"),
+            "### A section\n\nper CR:200, *\"A Title Comfortably Longer Than The Fragment Floor\"*\n",
+            "### A section\n\nper CR:200:\n\n> 200. A Title Comfortably Longer Than The Fragment Floor\n",
+            "### A section\n\nper CR:200, *\"200. A Title Comfortably Longer Than The Fragment Floor\"*\n",
         ] {
             assert_eq!(
-                judged(&clean, &release, Rule::OmissionMarked),
+                judged(clean, &release, Rule::OmissionMarked),
                 Vec::<String>::new(),
                 "{clean}"
             );
@@ -779,8 +766,8 @@ mod tests {
         // passes vacuously, so `*"…"*` used to satisfy `quote-in-scope` while quoting
         // nothing. Mutation checked: removing the emptiness guard from `verified` passes
         // this with zero findings.
-        let text = format!("### A section\n\nper CR:{SHARED_A}, *\"…\"*\n");
-        let found = judged(&text, &release(), Rule::QuoteInScope);
+        let text = "### A section\n\nper CR:100.5, *\"…\"*\n";
+        let found = judged(text, &release(), Rule::QuoteInScope);
         assert_eq!(found.len(), 1, "{found:#?}");
     }
 
@@ -788,9 +775,8 @@ mod tests {
     fn a_section_the_release_does_not_print_is_reported_as_such() {
         // The finding must say SECTION, or the repairer greps the rules body for a dotted
         // number that never existed.
-        const ABSENT: &str = "999";
-        let text = format!("### A section\n\nnothing here, per CR:{ABSENT}\n");
-        let found = judged(&text, &section_release(), Rule::NumberResolves);
+        let text = "### A section\n\nnothing here, per CR:999\n";
+        let found = judged(text, &section_release(), Rule::NumberResolves);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("no such section"), "{found:#?}");
     }
@@ -802,15 +788,14 @@ mod tests {
         // parent-rule finding. Mutation checked: keying the parent test on `major` alone
         // fires it for every section with rules.
         let release = section_release();
-        let block =
-            format!("### A section\n\nper CR:{SECTION_N}:\n\n> {SECTION_N}. {SECTION_TITLE}\n");
+        let block = "### A section\n\nper CR:100:\n\n> 100. A Section Title Long Enough\n";
         for rule in [
             Rule::OmissionMarked,
             Rule::FragmentLongEnough,
             Rule::ParentRuleIsNotItsSubrules,
         ] {
             assert_eq!(
-                judged(&block, &release, rule),
+                judged(block, &release, rule),
                 Vec::<String>::new(),
                 "{rule:?}"
             );
@@ -823,12 +808,13 @@ mod tests {
         // and because both bodies hold the text nothing verifies wrongly — so without this
         // rule there is no finding at all, and the generated index records the wrong rule as
         // cited, which is the bump work list.
-        let found = findings(&format!(
-            "per CR:{SHARED_A}, which CR:{SHARED_B} restates, *\"{SHARED_TEXT}\"*\n"
-        ));
+        let found = findings(
+            "per CR:100.5, which CR:100.6 restates, \
+             *\"A body long enough to be evidence and shared by two rules exactly.\"*\n",
+        );
         assert_eq!(found.len(), 1, "{found:#?}");
-        assert!(found[0].contains(SHARED_B), "{found:#?}");
-        assert!(found[0].contains(SHARED_A), "{found:#?}");
+        assert!(found[0].contains("100.6"), "{found:#?}");
+        assert!(found[0].contains("100.5"), "{found:#?}");
     }
 
     #[test]
@@ -837,16 +823,13 @@ mod tests {
         // `parent-rule-is-not-its-subrules` forbids a whole-body quote of a rule with
         // subrules. Together they leave a name citing a parent rule with no legal repair but a
         // rename — which is what three migrating sessions did, three different ways.
-        const PARENT: &str = "100.8";
-        let text = format!(
-            "/// Per CR:{PARENT}:\n\
-             ///\n\
-             /// > {PARENT} A parent body long enough to be evidence on its own terms.\n\
-             fn cr_100_8_a_test() {{}}\n"
-        );
+        let text = "/// Per CR:100.8:\n\
+                    ///\n\
+                    /// > 100.8 A parent body long enough to be evidence on its own terms.\n\
+                    fn cr_100_8_a_test() {}\n";
         let model = crate::model::Model::from_documents(vec![(
             std::path::PathBuf::from("code/a.rs"),
-            text,
+            text.to_string(),
         )]);
         let doc = model.documents()[0].clone();
         let release = Release::new(PARENT_CORPUS, 0);
@@ -865,10 +848,9 @@ mod tests {
         // The control: the same whole-body quote with NO name citing it is still reported.
         let plain = crate::model::Model::from_documents(vec![(
             std::path::PathBuf::from("code/b.md"),
-            format!(
-                "### A section\n\nPer CR:{PARENT}:\n\n\
-                 > {PARENT} A parent body long enough to be evidence on its own terms.\n"
-            ),
+            "### A section\n\nPer CR:100.8:\n\n\
+             > 100.8 A parent body long enough to be evidence on its own terms.\n"
+                .to_string(),
         )]);
         let plain = plain.documents()[0].clone();
         let still: Vec<String> = check(&plain, &release)
@@ -886,13 +868,11 @@ mod tests {
         // the whole of what the rule states, so stopping there is allowed and doing it
         // invisibly is not. Without the disclosure form the rule has no legal repair when the
         // claim rests on the parent's own body, which is most of the time.
-        const PARENT: &str = "100.8";
-        const BODY: &str = "A parent body long enough to be evidence on its own terms.";
         let release = Release::new(PARENT_CORPUS, 0);
-        let parent_findings = |text: String| -> Vec<String> {
+        let parent_findings = |text: &str| -> Vec<String> {
             let model = crate::model::Model::from_documents(vec![(
                 std::path::PathBuf::from("notes/a.md"),
-                text,
+                text.to_string(),
             )]);
             check(&model.documents()[0].clone(), &release)
                 .0
@@ -901,13 +881,15 @@ mod tests {
                 .map(|j| j.finding.what)
                 .collect()
         };
-        let bare = parent_findings(format!(
-            "### A section\n\nPer CR:{PARENT}:\n\n> {PARENT} {BODY}\n"
-        ));
+        let bare = parent_findings(
+            "### A section\n\nPer CR:100.8:\n\n\
+             > 100.8 A parent body long enough to be evidence on its own terms.\n",
+        );
         assert_eq!(bare.len(), 1, "presented as the entire rule: {bare:#?}");
-        let disclosed = parent_findings(format!(
-            "### A section\n\nPer CR:{PARENT}:\n\n> {PARENT} {BODY} …\n"
-        ));
+        let disclosed = parent_findings(
+            "### A section\n\nPer CR:100.8:\n\n\
+             > 100.8 A parent body long enough to be evidence on its own terms. …\n",
+        );
         assert_eq!(
             disclosed,
             Vec::<String>::new(),
@@ -920,9 +902,10 @@ mod tests {
         // Every one of the ten lines in this repository carrying two prose markers and an
         // inline quote is this shape, so the rule must stay silent on it or it reports ten
         // correct citations.
-        let found = findings(&format!(
-            "per CR:{ALONE}, and the rule CR:{SHARED_A} says *\"{SHARED_TEXT}\"*\n"
-        ));
+        let found = findings(
+            "per CR:100.7, and the rule CR:100.5 says \
+             *\"A body long enough to be evidence and shared by two rules exactly.\"*\n",
+        );
         assert_eq!(found, Vec::<String>::new());
     }
 
@@ -931,9 +914,10 @@ mod tests {
         // The other half of the divergence: the text belongs to the introducing rule and the
         // nearest marker is a rule that does NOT hold it. `citations` reports that as a
         // mismatch, and a second finding here would put two on one repair.
-        let found = findings(&format!(
-            "per CR:{SHARED_A}, and unlike CR:{ALONE}, the rule says *\"{SHARED_TEXT}\"*\n"
-        ));
+        let found = findings(
+            "per CR:100.5, and unlike CR:100.7, the rule says \
+             *\"A body long enough to be evidence and shared by two rules exactly.\"*\n",
+        );
         assert_eq!(found, Vec::<String>::new());
     }
 
@@ -942,10 +926,10 @@ mod tests {
         // A block takes the number printed at its head, so no other marker could have owned
         // it however many precede it. This is the repair the finding recommends, and it has to
         // actually be a repair.
-        let found = findings(&format!(
-            "The rule is CR:{SHARED_A}, which CR:{SHARED_B} restates:\n\n\
-             > {SHARED_A} {SHARED_TEXT}\n"
-        ));
+        let found = findings(
+            "The rule is CR:100.5, which CR:100.6 restates:\n\n\
+             > 100.5 A body long enough to be evidence and shared by two rules exactly.\n",
+        );
         assert_eq!(found, Vec::<String>::new());
     }
 }

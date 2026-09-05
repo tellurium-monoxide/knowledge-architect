@@ -227,13 +227,11 @@ mod tests {
 
     #[test]
     fn a_backticked_span_that_is_not_a_kind_is_not_a_tag() {
-        // Titles routinely end with a path, a slug or an identifier in backticks.
-        // Built from parts: a slug or a path spelled out here is a real reference, and this
-        // project's own checks then have to resolve it.
-        const SLUG: &str = "some-slug";
-        const FILE: &str = "outstanding.py";
-        assert_eq!(tag_of(&format!("The subject of `{FILE}`")), None);
-        assert_eq!(tag_of(&format!("Guarding `#{SLUG}`")), None);
+        // Titles routinely end with a path, a slug or an identifier in backticks. The slug
+        // and the path are written inline: the checker reads no string literal of its own
+        // source, per `knowledge#checker-source-literals-are-data`.
+        assert_eq!(tag_of("The subject of `outstanding.py`"), None);
+        assert_eq!(tag_of("Guarding `#some-slug`"), None);
         assert_eq!(tag_of("A title ending in `CamelCase`"), None);
     }
 

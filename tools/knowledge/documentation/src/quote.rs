@@ -403,23 +403,16 @@ fn regex_bare() -> &'static regex::Regex {
 mod tests {
     use super::*;
 
-    const RULE: &str = "104.4b";
-    const OTHER: &str = "613.8c";
+    // Every fixture below is written inline: the checker reads no string literal of its own
+    // source, per `knowledge#checker-source-literals-are-data`.
 
     fn rules_of(quotes: &[Quote]) -> Vec<String> {
         quotes.iter().map(|q| q.rule.to_string()).collect()
     }
 
-    // A fixture is BOUND to a name, never written into a call. The tool walks its own
-    // source, and a string handed straight to a function is prose that a check reads: a
-    // blockquote spelled there is a blockquote of this file, holding commentary. Bound, it is
-    // data, which is the whole of the distinction `source::rs` draws.
-    const TWO_BLOCKS: &str = "> one\n> two\n\nprose\n> three\n";
-    const NESTED: &str = ">> nested\n";
-
     #[test]
     fn a_block_joins_its_lines_and_ends_at_a_blank_or_unquoted_line() {
-        let b = blocks(TWO_BLOCKS);
+        let b = blocks("> one\n> two\n\nprose\n> three\n");
         assert_eq!(b.len(), 2);
         assert_eq!(b[0].text(), "one two");
         assert_eq!(b[0].lines.len(), 2, "the lines stay separate");
@@ -430,13 +423,13 @@ mod tests {
 
     #[test]
     fn a_nested_marker_is_flattened_out_of_the_text() {
-        assert_eq!(blocks(NESTED)[0].text(), "nested");
+        assert_eq!(blocks(">> nested\n")[0].text(), "nested");
     }
 
     #[test]
     fn an_italic_quote_takes_the_nearest_marker_before_it() {
-        let text = format!("per CR:{OTHER} and then CR:{RULE}, *\"the quoted text\"*");
-        assert_eq!(rules_of(&inline(&text)), vec![RULE.to_string()]);
+        let text = "per CR:613.8c and then CR:104.4b, *\"the quoted text\"*";
+        assert_eq!(rules_of(&inline(text)), vec!["104.4b".to_string()]);
     }
 
     #[test]
@@ -444,73 +437,72 @@ mod tests {
         // A section citation owes its heading line, so the binder must let the dotless
         // marker own a quote — and nearest-wins must hold across the two forms, or a
         // sentence citing a section and then a rule binds the rule's quote to the section.
-        const SECTION: &str = "104";
-        let text = format!("per CR:{SECTION}, *\"the quoted heading line\"*");
-        assert_eq!(rules_of(&inline(&text)), vec![SECTION.to_string()]);
-        let both = format!("per CR:{SECTION} and then CR:{RULE}, *\"the quoted text\"*");
-        assert_eq!(rules_of(&inline(&both)), vec![RULE.to_string()]);
-        let alternatives: Vec<String> = inline(&both)[0]
+        let text = "per CR:104, *\"the quoted heading line\"*";
+        assert_eq!(rules_of(&inline(text)), vec!["104".to_string()]);
+        let both = "per CR:104 and then CR:104.4b, *\"the quoted text\"*";
+        assert_eq!(rules_of(&inline(both)), vec!["104.4b".to_string()]);
+        let alternatives: Vec<String> = inline(both)[0]
             .alternatives
             .iter()
             .map(|r| r.to_string())
             .collect();
-        assert_eq!(alternatives, vec![SECTION.to_string()]);
+        assert_eq!(alternatives, vec!["104".to_string()]);
     }
 
     #[test]
     fn an_italic_quote_reaches_a_marker_on_the_line_above() {
-        let text = format!("per CR:{RULE},\n*\"the quoted text\"*");
-        assert_eq!(rules_of(&inline(&text)), vec![RULE.to_string()]);
+        let text = "per CR:104.4b,\n*\"the quoted text\"*";
+        assert_eq!(rules_of(&inline(text)), vec!["104.4b".to_string()]);
     }
 
     #[test]
     fn an_italic_quote_reaches_across_a_paragraph_break_only_when_it_is_the_paragraph() {
         // A DISPLAY quote — marker, colon, blank line, quote alone — is the shape the
         // convention prescribes, and stopping at the break bound it to nothing.
-        let display = format!("per CR:{RULE}:\n\n*\"the quoted text\"*");
-        assert_eq!(rules_of(&inline(&display)), vec![RULE.to_string()]);
+        let display = "per CR:104.4b:\n\n*\"the quoted text\"*";
+        assert_eq!(rules_of(&inline(display)), vec!["104.4b".to_string()]);
         // Ordinary prose in the paragraph, and the quote may not borrow the marker above.
-        let midway = format!("per CR:{RULE}\n\nprose first, *\"the quoted text\"*");
-        assert!(inline(&midway).is_empty());
+        let midway = "per CR:104.4b\n\nprose first, *\"the quoted text\"*";
+        assert!(inline(midway).is_empty());
     }
 
     #[test]
     fn a_plain_quote_needs_a_marker_on_its_own_line() {
-        let above = format!("per CR:{RULE}\n\"a plain quoted span\"");
+        let above = "per CR:104.4b\n\"a plain quoted span\"";
         assert!(
-            inline(&above).is_empty(),
+            inline(above).is_empty(),
             "a marker one line up must not own it"
         );
-        let same = format!("per CR:{RULE}, \"a plain quoted span\"");
-        assert_eq!(rules_of(&inline(&same)), vec![RULE.to_string()]);
+        let same = "per CR:104.4b, \"a plain quoted span\"";
+        assert_eq!(rules_of(&inline(same)), vec!["104.4b".to_string()]);
     }
 
     #[test]
     fn a_short_plain_span_is_not_evidence() {
-        let text = format!("per CR:{RULE}, \"too short\"");
-        assert!(inline(&text).is_empty());
+        let text = "per CR:104.4b, \"too short\"";
+        assert!(inline(text).is_empty());
     }
 
     #[test]
     fn a_doubled_delimiter_is_bold_and_not_a_quote() {
-        let text = format!("per CR:{RULE}, **\"emphasised, not quoted\"**");
-        assert!(inline(&text).is_empty());
+        let text = "per CR:104.4b, **\"emphasised, not quoted\"**";
+        assert!(inline(text).is_empty());
     }
 
     #[test]
     fn a_plain_span_inside_an_italic_one_is_not_counted_twice() {
-        let text = format!("per CR:{RULE}, *\"the quoted text is long\"*");
-        assert_eq!(inline(&text).len(), 1);
+        let text = "per CR:104.4b, *\"the quoted text is long\"*";
+        assert_eq!(inline(text).len(), 1);
     }
 
     #[test]
     fn an_italic_quote_may_be_identified_by_a_trailing_bare_number() {
         // The form that predates markers, still accepted so un-retrofitted quotes stay
         // checked. A plain span may not use it.
-        let text = format!("*\"the quoted text\"* ({RULE})");
-        assert_eq!(rules_of(&inline(&text)), vec![RULE.to_string()]);
-        let plain = format!("\"a plain quoted span\" ({RULE})");
-        assert!(inline(&plain).is_empty());
+        let text = "*\"the quoted text\"* (104.4b)";
+        assert_eq!(rules_of(&inline(text)), vec!["104.4b".to_string()]);
+        let plain = "\"a plain quoted span\" (104.4b)";
+        assert!(inline(plain).is_empty());
     }
 
     #[test]
@@ -520,9 +512,9 @@ mod tests {
         // make quotes wrong, it made them ABSENT: 89 of 661 verified fragments left the walk
         // and three consecutive runs printed a pass. The parser represents both delimiters as
         // one emphasis node; this pins that the distinction stays gone.
-        let underscored = format!("per CR:{RULE}, _\"the quoted text\"_");
-        assert_eq!(rules_of(&inline(&underscored)), vec![RULE.to_string()]);
-        assert_eq!(inline(&underscored)[0].body, "the quoted text");
+        let underscored = "per CR:104.4b, _\"the quoted text\"_";
+        assert_eq!(rules_of(&inline(underscored)), vec!["104.4b".to_string()]);
+        assert_eq!(inline(underscored)[0].body, "the quoted text");
     }
 
     #[test]
@@ -530,37 +522,35 @@ mod tests {
         // `norm` already folds these because they arrive in real input. A scanner that tested
         // only the straight form did not leave such a quote wrong, it left it ABSENT — the
         // emphasis-normalisation incident again, through the other delimiter.
-        const OPEN: char = '\u{201c}';
-        const CLOSE: char = '\u{201d}';
-        let curly = format!("per CR:{RULE}, *{OPEN}the quoted text{CLOSE}*");
-        assert_eq!(rules_of(&inline(&curly)), vec![RULE.to_string()]);
-        assert_eq!(inline(&curly)[0].body, "the quoted text");
+        let curly = "per CR:104.4b, *\u{201c}the quoted text\u{201d}*";
+        assert_eq!(rules_of(&inline(curly)), vec!["104.4b".to_string()]);
+        assert_eq!(inline(curly)[0].body, "the quoted text");
     }
 
     #[test]
     fn a_display_quote_alone_in_its_paragraph_reaches_the_marker_above_it() {
         // The shape the convention prescribes: marker, colon, blank line, quote. Stopping at
         // the paragraph break bound it to nothing.
-        let display = format!("the engine follows CR:{RULE}:\n\n*\"the quoted text\"*\n");
-        assert_eq!(rules_of(&inline(&display)), vec![RULE.to_string()]);
+        let display = "the engine follows CR:104.4b:\n\n*\"the quoted text\"*\n";
+        assert_eq!(rules_of(&inline(display)), vec!["104.4b".to_string()]);
         // The reach is granted only when the quote IS the paragraph, so an ordinary
         // quotation mid-paragraph cannot borrow a marker from the text above it.
-        let midway = format!("per CR:{RULE}\n\nprose first, *\"the quoted text\"*\n");
-        assert!(inline(&midway).is_empty());
+        let midway = "per CR:104.4b\n\nprose first, *\"the quoted text\"*\n";
+        assert!(inline(midway).is_empty());
     }
 
     #[test]
     fn every_unclaimed_span_is_returned_for_the_caller_to_judge() {
         let orphan = "it says *\"some quoted text here\"* and nothing marks it";
         assert_eq!(unclaimed(orphan).len(), 1);
-        let claimed = format!("per CR:{RULE}, *\"some quoted text here\"*");
-        assert!(unclaimed(&claimed).is_empty());
+        let claimed = "per CR:104.4b, *\"some quoted text here\"*";
+        assert!(unclaimed(claimed).is_empty());
     }
 
     #[test]
     fn a_quote_reports_the_line_it_starts_on() {
-        let text = format!("one\ntwo\nper CR:{RULE}, *\"the quoted text\"*");
-        assert_eq!(inline(&text)[0].line, 3);
+        let text = "one\ntwo\nper CR:104.4b, *\"the quoted text\"*";
+        assert_eq!(inline(text)[0].line, 3);
     }
 
     #[test]
@@ -568,7 +558,7 @@ mod tests {
         // The window is a byte count and documents carry em dashes; a naive slice would cut
         // one in half.
         let pad = "—".repeat(200);
-        let text = format!("{pad}per CR:{RULE}, *\"the quoted text\"*");
-        assert_eq!(rules_of(&inline(&text)), vec![RULE.to_string()]);
+        let text = format!("{pad}per CR:104.4b, *\"the quoted text\"*");
+        assert_eq!(rules_of(&inline(&text)), vec!["104.4b".to_string()]);
     }
 }
