@@ -377,26 +377,18 @@ mod tests {
     use std::collections::{HashMap, HashSet};
     use std::path::PathBuf;
 
-    // Interpolated, never spelled out: the tool's own source is walked, so a path or an
-    // anchored reference written literally here would be real content.
-    const PART: &str = "parts/a-part";
-    const NAME: &str = "a-part";
-    const PROJECT: &str = "a-project";
-    const DOC: &str = "notes/real/a.md";
-    const DIR: &str = "notes/real/";
-    const NOWHERE: &str = "notes/nowhere.md";
+    // Every fixture spells its path inline: the checker reads no string literal of its own
+    // source, per `knowledge#checker-source-literals-are-data`.
 
     /// A manifest declaring one component beside the root, against a root nothing reads.
     fn manifest() -> Manifest {
-        let text = format!(
-            "[project]\nname = \"a-project\"\ncomponents = [\"{PART}\"]\n\n\
+        let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\
-             [interpretations]\ndir = \"i\"\nconcerns = []\n"
-        );
-        Manifest::parse(std::path::Path::new("/nowhere"), &text).expect("a declaration")
+             [interpretations]\ndir = \"i\"\nconcerns = []\n";
+        Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration")
     }
 
     /// The same, with a `.gitignore` beside it.
@@ -439,10 +431,10 @@ mod tests {
     /// The mock component's tree: the document, and the directory chain above it.
     fn tree() -> Vec<String> {
         vec![
-            format!("{PART}/{DOC}"),
-            format!("{PART}/notes/real"),
-            format!("{PART}/notes"),
-            PART.to_string(),
+            "parts/a-part/notes/real/a.md".to_string(),
+            "parts/a-part/notes/real".to_string(),
+            "parts/a-part/notes".to_string(),
+            "parts/a-part".to_string(),
             "parts".to_string(),
         ]
     }
@@ -450,11 +442,10 @@ mod tests {
     #[test]
     fn a_reference_resolves_beside_its_component_and_a_dangling_one_is_reported() {
         let m = manifest();
-        let (found, counts) = checked(&m, &format!("See `{NAME}@{DOC}`.\n"), &tree());
+        let (found, counts) = checked(&m, "See `a-part@notes/real/a.md`.\n", &tree());
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
         assert_eq!(counts.references, 1);
-        let gone = "notes/gone.md";
-        let (found, _) = checked(&m, &format!("See `{NAME}@{gone}`.\n"), &tree());
+        let (found, _) = checked(&m, "See `a-part@notes/gone.md`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("does not exist"), "{found:#?}");
     }
@@ -462,16 +453,15 @@ mod tests {
     #[test]
     fn the_root_anchors_by_the_projects_name() {
         let m = manifest();
-        let at_root = "notes/root.md";
-        let present = vec![at_root.to_string(), "notes".to_string()];
-        let (found, _) = checked(&m, &format!("See `{PROJECT}@{at_root}`.\n"), &present);
+        let present = vec!["notes/root.md".to_string(), "notes".to_string()];
+        let (found, _) = checked(&m, "See `a-project@notes/root.md`.\n", &present);
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
     }
 
     #[test]
     fn an_unknown_anchor_is_reported_as_no_component() {
         let m = manifest();
-        let (found, _) = checked(&m, &format!("See `nonesuch@{DOC}`.\n"), &tree());
+        let (found, _) = checked(&m, "See `nonesuch@notes/real/a.md`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("no component"), "{found:#?}");
     }
@@ -480,20 +470,19 @@ mod tests {
     fn a_trailing_slash_claims_a_directory_and_its_absence_claims_a_file() {
         // Both directions of the kind claim, plus the two matching shapes staying silent.
         let m = manifest();
-        let (found, _) = checked(&m, &format!("See `{NAME}@{DIR}`.\n"), &tree());
+        let (found, _) = checked(&m, "See `a-part@notes/real/`.\n", &tree());
         assert_eq!(
             found,
             Vec::<String>::new(),
             "a directory with its slash: {found:#?}"
         );
-        let trimmed = DIR.trim_end_matches('/');
-        let (found, _) = checked(&m, &format!("See `{NAME}@{trimmed}`.\n"), &tree());
+        let (found, _) = checked(&m, "See `a-part@notes/real`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
             found[0].contains("claims a file and names a directory"),
             "{found:#?}"
         );
-        let (found, _) = checked(&m, &format!("See `{NAME}@{DOC}/`.\n"), &tree());
+        let (found, _) = checked(&m, "See `a-part@notes/real/a.md/`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
             found[0].contains("claims a directory and names a file"),
@@ -506,8 +495,12 @@ mod tests {
         // Mutation checked: with the refusal deleted, the upward form resolves and the
         // first assertion sees no finding.
         let m = manifest();
-        for path in [format!("../{DOC}"), format!("./{DOC}"), format!("/{DOC}")] {
-            let (found, _) = checked(&m, &format!("See `{NAME}@{path}`.\n"), &tree());
+        for path in [
+            "../notes/real/a.md",
+            "./notes/real/a.md",
+            "/notes/real/a.md",
+        ] {
+            let (found, _) = checked(&m, &format!("See `a-part@{path}`.\n"), &tree());
             assert_eq!(found.len(), 1, "{path}: {found:#?}");
             assert!(found[0].contains("is refused"), "{path}: {found:#?}");
         }
@@ -518,13 +511,17 @@ mod tests {
         // What makes a component move cost one manifest line: the reference must anchor at
         // the component, so no document names the component's location.
         let m = manifest();
-        let (found, _) = checked(&m, &format!("See `{PROJECT}@{PART}/{DOC}`.\n"), &tree());
+        let (found, _) = checked(
+            &m,
+            "See `a-project@parts/a-part/notes/real/a.md`.\n",
+            &tree(),
+        );
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
             found[0].contains("reaches inside the component"),
             "{found:#?}"
         );
-        assert!(found[0].contains(NAME), "{found:#?}");
+        assert!(found[0].contains("a-part"), "{found:#?}");
     }
 
     #[test]
@@ -532,7 +529,7 @@ mod tests {
         // Inside means a proper descendant, so the one spelling of where a component lives
         // is legal — and it is a location, which a move is expected to break.
         let m = manifest();
-        let (found, _) = checked(&m, &format!("See `{PROJECT}@{PART}/`.\n"), &tree());
+        let (found, _) = checked(&m, "See `a-project@parts/a-part/`.\n", &tree());
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
     }
 
@@ -542,14 +539,21 @@ mod tests {
         // path. Mutation checked: with the resolution test deleted, the second half sees
         // no finding.
         let m = manifest();
-        let foreign = "foreign-project/src/thing.java";
-        let (found, counts) = checked(&m, &format!("See `{ESCAPE_ANCHOR}@{foreign}`.\n"), &tree());
+        let (found, counts) = checked(
+            &m,
+            &format!("See `{ESCAPE_ANCHOR}@foreign-project/src/thing.java`.\n"),
+            &tree(),
+        );
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
         assert_eq!(
             counts.references, 1,
             "an escape is still a counted reference"
         );
-        let (found, _) = checked(&m, &format!("See `{ESCAPE_ANCHOR}@{DOC}`.\n"), &tree());
+        let (found, _) = checked(
+            &m,
+            &format!("See `{ESCAPE_ANCHOR}@notes/real/a.md`.\n"),
+            &tree(),
+        );
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("resolves in this tree"), "{found:#?}");
     }
@@ -563,9 +567,9 @@ mod tests {
         let (found, _) = checked(&m, &homes, &tree());
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
         // A path one component carries passes; one nobody carries is reported.
-        let (found, _) = checked(&m, &format!("See `*@{DOC}`.\n"), &tree());
+        let (found, _) = checked(&m, "See `*@notes/real/a.md`.\n", &tree());
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
-        let (found, _) = checked(&m, &format!("See `*@{NOWHERE}`.\n"), &tree());
+        let (found, _) = checked(&m, "See `*@notes/nowhere.md`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("resolves in no component"), "{found:#?}");
     }
@@ -575,7 +579,7 @@ mod tests {
         // Without the owning test, a root-relative deep path resolves through the root
         // component and the generic form evades the deepest-anchor rule.
         let m = manifest();
-        let (found, _) = checked(&m, &format!("See `*@{PART}/{DOC}`.\n"), &tree());
+        let (found, _) = checked(&m, "See `*@parts/a-part/notes/real/a.md`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("resolves in no component"), "{found:#?}");
     }
@@ -599,11 +603,10 @@ mod tests {
         // Presence of generated content is build state: the same reference must fail on a
         // fresh clone and a built tree alike, so an ignored copy never carries a generic.
         let m = manifest_ignoring("scratch/\n");
-        let generated = "scratch/x.md";
         let mut present = tree();
         present.push("scratch".to_string());
-        present.push(generated.to_string());
-        let (found, _) = checked(&m, &format!("See `*@{generated}`.\n"), &present);
+        present.push("scratch/x.md".to_string());
+        let (found, _) = checked(&m, "See `*@scratch/x.md`.\n", &present);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("resolves in no component"), "{found:#?}");
     }
@@ -613,9 +616,12 @@ mod tests {
         // The same leading-slash arm an anchored path meets; skipped before the refusal,
         // an absolute link resolved nowhere and was reported by nothing.
         let m = manifest();
-        let present = vec![format!("{PART}/{DOC}"), PART.to_string()];
-        let at = format!("{PART}/notes/README.md");
-        let (found, _) = checked_in(&m, &at, "[x](/no/such/place.md)\n", &present);
+        let present = vec![
+            "parts/a-part/notes/real/a.md".to_string(),
+            "parts/a-part".to_string(),
+        ];
+        let at = "parts/a-part/notes/README.md";
+        let (found, _) = checked_in(&m, at, "[x](/no/such/place.md)\n", &present);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("is refused"), "{found:#?}");
     }
@@ -625,7 +631,7 @@ mod tests {
         // The enforcement half of the grammar: the retired bare form is reported, never
         // silently unresolved.
         let m = manifest();
-        let (found, _) = checked(&m, &format!("See `{DOC}`.\n"), &tree());
+        let (found, _) = checked(&m, "See `notes/real/a.md`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
             found[0].contains("follows no accepted syntax"),
@@ -638,13 +644,11 @@ mod tests {
         // Decided by the ignore rules rather than by presence, so the verdict on a fresh
         // clone equals the verdict on a built tree. The target here is in neither listing.
         let m = manifest_ignoring("generated/\n");
-        let out_file = "generated/out.bin";
-        let out_dir = "generated/";
-        let text = format!("See `{PROJECT}@{out_file}` and `{PROJECT}@{out_dir}`.\n");
-        let (found, _) = checked(&m, &text, &tree());
+        let text = "See `a-project@generated/out.bin` and `a-project@generated/`.\n";
+        let (found, _) = checked(&m, text, &tree());
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
         // The same references with no ignore rule are two findings.
-        let (found, _) = checked(&manifest(), &text, &tree());
+        let (found, _) = checked(&manifest(), text, &tree());
         assert_eq!(found.len(), 2, "{found:#?}");
     }
 
@@ -653,24 +657,24 @@ mod tests {
         let m = manifest();
         let text = "[a](real/a.md)\n";
         let present = vec![
-            format!("{PART}/{DOC}"),
-            format!("{PART}/notes/real"),
-            format!("{PART}/notes"),
-            PART.to_string(),
+            "parts/a-part/notes/real/a.md".to_string(),
+            "parts/a-part/notes/real".to_string(),
+            "parts/a-part/notes".to_string(),
+            "parts/a-part".to_string(),
         ];
-        let at = format!("{PART}/notes/README.md");
-        let (found, counts) = checked_in(&m, &at, text, &present);
+        let at = "parts/a-part/notes/README.md";
+        let (found, counts) = checked_in(&m, at, text, &present);
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
         assert_eq!(counts.links, 1);
-        let index = format!("{PART}/notes/index.md");
-        let (found, _) = checked_in(&m, &index, text, &present);
+        let index = "parts/a-part/notes/index.md";
+        let (found, _) = checked_in(&m, index, text, &present);
         assert_eq!(
             found,
             Vec::<String>::new(),
             "an index.md is a navigation home: {found:#?}"
         );
-        let prose = format!("{PART}/notes/prose.md");
-        let (found, _) = checked_in(&m, &prose, text, &present);
+        let prose = "parts/a-part/notes/prose.md";
+        let (found, _) = checked_in(&m, prose, text, &present);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("not a navigation home"), "{found:#?}");
     }
@@ -679,18 +683,18 @@ mod tests {
     fn a_navigation_link_resolves_beside_its_file_and_a_dangling_one_is_reported() {
         let m = manifest();
         let present = vec![
-            format!("{PART}/{DOC}"),
-            format!("{PART}/notes/real"),
-            format!("{PART}/notes"),
-            PART.to_string(),
+            "parts/a-part/notes/real/a.md".to_string(),
+            "parts/a-part/notes/real".to_string(),
+            "parts/a-part/notes".to_string(),
+            "parts/a-part".to_string(),
         ];
-        let at = format!("{PART}/notes/README.md");
-        let (found, _) = checked_in(&m, &at, "[gone](real/gone.md)\n", &present);
+        let at = "parts/a-part/notes/README.md";
+        let (found, _) = checked_in(&m, at, "[gone](real/gone.md)\n", &present);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("does not exist"), "{found:#?}");
         // A fragment rides along and is dropped; a URL and a bare fragment are passed over.
         let ok = "[a](real/a.md#top) [site](https://a.test/x) [up](#head)\n";
-        let (found, counts) = checked_in(&m, &at, ok, &present);
+        let (found, counts) = checked_in(&m, at, ok, &present);
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
         assert_eq!(counts.links, 1, "only the relative link is this check's");
     }
@@ -700,9 +704,12 @@ mod tests {
         // The ban is against staleness under relocation, and it is what lets a directory
         // move wholesale with its links intact.
         let m = manifest();
-        let present = vec![format!("{PART}/{DOC}"), PART.to_string()];
-        let at = format!("{PART}/notes/real/README.md");
-        let (found, _) = checked_in(&m, &at, "[a](../real/a.md)\n", &present);
+        let present = vec![
+            "parts/a-part/notes/real/a.md".to_string(),
+            "parts/a-part".to_string(),
+        ];
+        let at = "parts/a-part/notes/real/README.md";
+        let (found, _) = checked_in(&m, at, "[a](../real/a.md)\n", &present);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("is refused"), "{found:#?}");
     }

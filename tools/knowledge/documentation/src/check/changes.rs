@@ -283,8 +283,6 @@ fn strip_leading_number(quote: &str) -> String {
 mod tests {
     use super::*;
 
-    const RULE: &str = "104.4b";
-
     #[test]
     fn a_file_without_the_append_only_marker_is_rejected() {
         assert!(parse("# Changes\n\n## 20260807\n").is_err());
@@ -298,7 +296,7 @@ mod tests {
         let text = format!(
             "| `20260807` |\n\n{MARKER} -->\n\n\
              ## 20260807\n\n```meta\nprevious: 20260101\ndate: 20260807\n```\n\n\
-             ### edited {RULE}\n\n> {RULE} The new text.\n\n\
+             ### edited 104.4b\n\n> 104.4b The new text.\n\n\
              ```meta\ncited-by: one file\naction: quote-updated\n```\n\n\
              What it cost us.\n"
         );
@@ -318,7 +316,7 @@ mod tests {
         // Exactly what a bump appends, with the action left blank for a human to fill in.
         let text = format!(
             "| `20260807` |\n\n{MARKER} -->\n\n## 20260807\n\n\
-             ### gone {RULE}\n\n```meta\ncited-by: one file\naction:   \n```\n\n"
+             ### gone 104.4b\n\n```meta\ncited-by: one file\naction:   \n```\n\n"
         );
         let (sections, _) = parse(&text).expect("parses");
         let entry = &sections[0].entries[0];

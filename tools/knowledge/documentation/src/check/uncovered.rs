@@ -70,15 +70,10 @@ mod tests {
 
     #[test]
     fn a_rule_number_is_found_however_it_is_written() {
-        const RULE: &str = "104.4b";
-        for line in [
-            format!("see {RULE} here"),
-            format!("CR:{RULE}"),
-            format!("(rule {RULE}.)"),
-        ] {
+        for line in ["see 104.4b here", "CR:104.4b", "(rule 104.4b.)"] {
             assert_eq!(
-                first_rule_number(&line).map(|r| r.to_string()).as_deref(),
-                Some(RULE),
+                first_rule_number(line).map(|r| r.to_string()).as_deref(),
+                Some("104.4b"),
                 "{line}"
             );
         }
@@ -101,25 +96,21 @@ mod tests {
         // The branch made the section form citable, so an unwalked file naming one is the
         // exact silence this module's assertion exists to prevent — while a bare three-digit
         // number stays a count or a date fragment.
-        const SECTION: &str = "104";
-        for line in [
-            format!("per CR:{SECTION} the game ends"),
-            format!("see rule {SECTION} here"),
-        ] {
+        for line in ["per CR:104 the game ends", "see rule 104 here"] {
             assert_eq!(
-                first_rule_number(&line).map(|r| r.to_string()).as_deref(),
-                Some(SECTION),
+                first_rule_number(line).map(|r| r.to_string()).as_deref(),
+                Some("104"),
                 "{line}"
             );
         }
         for line in [
-            format!("{SECTION} files were scanned"),
-            format!("rule {SECTION}.4b is dotted, and its own token wins"),
+            "104 files were scanned",
+            "rule 104.4b is dotted, and its own token wins",
         ] {
-            let found = first_rule_number(&line);
+            let found = first_rule_number(line);
             assert_ne!(
                 found.as_ref().map(|r| r.to_string()).as_deref(),
-                Some(SECTION),
+                Some("104"),
                 "{line}: {found:?}"
             );
         }

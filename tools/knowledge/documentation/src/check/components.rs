@@ -543,9 +543,10 @@ mod tests {
         assert_eq!(counts.additional_trackers, 0);
     }
 
-    // Interpolated, never spelled out: this tool's own source is walked, so a backticked
-    // path written literally in a fixture is a real reference to a file this repository
-    // does not have.
+    // Two subdocuments of the directory-shaped design home. Named because the listing, the
+    // model and the assertions all spell them; a fixture that needs one inline writes it out,
+    // since the checker reads no string literal of its own source, per
+    // `knowledge#checker-source-literals-are-data`.
     const SUB_A: &str = "docs/design/one-subject.md";
     const SUB_B: &str = "docs/design/another-subject.md";
 
@@ -673,7 +674,7 @@ mod tests {
             ),
             (
                 PathBuf::from("README.md"),
-                format!("See [the subject]({SUB_A}).\n"),
+                "See [the subject](docs/design/one-subject.md).\n".to_string(),
             ),
             (PathBuf::from(SUB_A), "a subject\n".to_string()),
         ]);
@@ -815,7 +816,7 @@ mod tests {
         let model = Model::from_documents(vec![
             (
                 PathBuf::from(DESIGN_README),
-                format!("# design\n\n- `{SUB_A}`\n"),
+                "# design\n\n- `docs/design/one-subject.md`\n".to_string(),
             ),
             (PathBuf::from(SUB_A), "a subject\n".to_string()),
         ]);
