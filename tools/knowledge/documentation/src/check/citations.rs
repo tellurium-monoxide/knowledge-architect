@@ -533,8 +533,8 @@ fn contains_number(body: &str, t: &str) -> bool {
 mod tests {
     use super::*;
 
-    const A: &str = "100.1";
-    const B: &str = "100.2";
+    // Every fixture is written as the bytes it means: the checker reads no string literal of
+    // its own source, per `knowledge#checker-source-literals-are-data`.
 
     fn n(s: &str) -> RuleNumber {
         RuleNumber::parse(s).expect("a rule number")
@@ -560,19 +560,17 @@ mod tests {
 
     #[test]
     fn a_block_quoting_one_rule_yields_one_part() {
-        let parts = split_rules(&lines(&format!("{A} The whole of it.")));
-        assert_eq!(parts, vec![(n(A), "The whole of it.".to_string())]);
+        let parts = split_rules(&lines("100.1 The whole of it."));
+        assert_eq!(parts, vec![(n("100.1"), "The whole of it.".to_string())]);
     }
 
     #[test]
     fn a_rule_wrapped_over_several_lines_is_still_one_part() {
-        let parts = split_rules(&lines(&format!(
-            "{A} The first half of it\nand the second half."
-        )));
+        let parts = split_rules(&lines("100.1 The first half of it\nand the second half."));
         assert_eq!(
             parts,
             vec![(
-                n(A),
+                n("100.1"),
                 "The first half of it and the second half.".to_string()
             )]
         );
@@ -580,14 +578,12 @@ mod tests {
 
     #[test]
     fn consecutive_rules_split_at_each_line_that_opens_with_a_number() {
-        let parts = split_rules(&lines(&format!(
-            "{A} First rule text.\n{B} Second rule text."
-        )));
+        let parts = split_rules(&lines("100.1 First rule text.\n100.2 Second rule text."));
         assert_eq!(
             parts,
             vec![
-                (n(A), "First rule text.".to_string()),
-                (n(B), "Second rule text.".to_string()),
+                (n("100.1"), "First rule text.".to_string()),
+                (n("100.2"), "Second rule text.".to_string()),
             ]
         );
     }
@@ -596,11 +592,11 @@ mod tests {
     fn a_cross_reference_inside_a_body_no_longer_splits_the_block() {
         // The recorded defect. Everything after the parenthetical used to be bound to the
         // cross-referenced rule and reported against it.
-        let parts = split_rules(&lines(&format!(
-            "{A} A rule that says see rule {B} and then continues."
-        )));
+        let parts = split_rules(&lines(
+            "100.1 A rule that says see rule 100.2 and then continues.",
+        ));
         assert_eq!(parts.len(), 1, "a mid-line number is a cross-reference");
-        assert_eq!(parts[0].0, n(A));
+        assert_eq!(parts[0].0, n("100.1"));
     }
 
     #[test]
@@ -608,9 +604,9 @@ mod tests {
         // The residual case line position alone does not answer: a document wraps its
         // blockquotes, and the wrap can land the number at the start of a line. A rule is a
         // complete statement, so nothing begins after a dangling lowercase word.
-        let parts = split_rules(&lines(&format!(
-            "{A} A rule whose sentence runs on. See rules\n{B} and the one after it."
-        )));
+        let parts = split_rules(&lines(
+            "100.1 A rule whose sentence runs on. See rules\n100.2 and the one after it.",
+        ));
         assert_eq!(parts.len(), 1, "the line above ended mid-sentence");
     }
 
@@ -618,23 +614,16 @@ mod tests {
     fn a_heading_shaped_rule_does_not_suppress_the_rule_after_it() {
         // `701.2 Activate` ends with no punctuation and is still complete. Treating an
         // unterminated line as mid-sentence would swallow every rule that follows a heading.
-        let parts = split_rules(&lines(&format!("{A} Card Types\n{B} The rule after it.")));
+        let parts = split_rules(&lines("100.1 Card Types\n100.2 The rule after it."));
         assert_eq!(parts.len(), 2);
-        assert_eq!(parts[1].0, n(B));
+        assert_eq!(parts[1].0, n("100.2"));
     }
 
-    // A section, its title as the corpus prints it, and one rule under it — parser inputs,
-    // bound so the walk reads them as data.
-    const SECTION_N: &str = "104";
-    const SECTION_TITLE: &str = "A Section Title Long Enough";
-    const IN_SECTION: &str = "104.1";
-
+    /// A section, its title as the corpus prints it, and one rule under it.
     fn section_release() -> Release {
         Release::new(
-            &format!(
-                "{SECTION_N}. {SECTION_TITLE}\n\
-                 {IN_SECTION} A rule under the section, long enough to be evidence.\n"
-            ),
+            "104. A Section Title Long Enough\n\
+             104.1 A rule under the section, long enough to be evidence.\n",
             0,
         )
     }
@@ -646,18 +635,14 @@ mod tests {
         // and it must not be read as commentary, which is what the dotted-only head test
         // made of it. Mutation checked: reverting `leading_number` to dotted-only turns the
         // first assertion into a commentary finding.
-        let doc = doc_with(&format!(
-            "per CR:{SECTION_N}:\n\n> {SECTION_N}. {SECTION_TITLE}\n"
-        ));
+        let doc = doc_with("per CR:104:\n\n> 104. A Section Title Long Enough\n");
         let (findings, counts) = check(&doc, &section_release(), false);
         assert_eq!(findings, Vec::new(), "{findings:#?}");
         assert_eq!(counts.commentary, 0);
         assert_eq!((counts.fragments, counts.verified), (1, 1));
 
         // A title the release does not print is the failure the quote exists to catch.
-        let wrong = doc_with(&format!(
-            "per CR:{SECTION_N}:\n\n> {SECTION_N}. A Wrong Title Entirely Presented\n"
-        ));
+        let wrong = doc_with("per CR:104:\n\n> 104. A Wrong Title Entirely Presented\n");
         let (findings, counts) = check(&wrong, &section_release(), false);
         assert_eq!(counts.unverified, 1, "{findings:#?}");
     }
@@ -667,14 +652,10 @@ mod tests {
         // Most section titles are under the thirty-character floor, and a whole-body quote
         // has nothing more of the rule to keep — counting it "checked, but weak" would let
         // the migration swell that count into noise. An elided fragment stays counted.
-        let doc = doc_with(&format!(
-            "per CR:{SECTION_N}:\n\n> {SECTION_N}. {SECTION_TITLE}\n"
-        ));
+        let doc = doc_with("per CR:104:\n\n> 104. A Section Title Long Enough\n");
         let (_, counts) = check(&doc, &section_release(), false);
         assert_eq!(counts.short, 0);
-        let elided = doc_with(&format!(
-            "per CR:{IN_SECTION}, *\"A rule under the section…\"*\n"
-        ));
+        let elided = doc_with("per CR:104.1, *\"A rule under the section…\"*\n");
         let (_, counts) = check(&elided, &section_release(), false);
         assert_eq!(counts.short, 1, "an elided short fragment is still counted");
     }
@@ -684,15 +665,13 @@ mod tests {
         // The widened lint gate: a keyword-form section reference outside the carve-outs is
         // named with no marker, exactly as a bare dotted number is. Inside a verified
         // quote's range it is the corpus's own cross-reference and owes nothing.
-        let bare = doc_with(&format!("named by rule {SECTION_N} in prose\n"));
+        let bare = doc_with("named by rule 104 in prose\n");
         let (findings, counts) = lint(&bare);
         assert_eq!(counts.0, 1, "{findings:#?}");
-        let marked = doc_with(&format!("in the order CR:{SECTION_N} states them\n"));
+        let marked = doc_with("in the order CR:104 states them\n");
         assert_eq!(lint(&marked).1 .0, 0, "the marker carries the claim");
-        let quoted = doc_with(&format!(
-            "per CR:{IN_SECTION}, *\"a fragment long enough to be evidence. See rule \
-             {SECTION_N}.\"*\n"
-        ));
+        let quoted =
+            doc_with("per CR:104.1, *\"a fragment long enough to be evidence. See rule 104.\"*\n");
         assert_eq!(lint(&quoted).1 .0, 0, "a cross-reference inside a quote");
     }
 
@@ -703,14 +682,17 @@ mod tests {
         // citation that verifies, so nothing downstream reports it. Mutation checked:
         // dropping the `alternatives` branch fails the first assertion with the
         // retarget-only hint.
-        const A_TEXT: &str = "a first body long enough to be checked as evidence";
-        const B_TEXT: &str = "a second body long enough to be checked as evidence";
-        let release = Release::new(&format!("{A} {A_TEXT}\n{B} {B_TEXT}\n"), 0);
-        // The writer means A; the sentence names B in between; the quote binds to B and
-        // misattributes.
-        let doc = doc_with(&format!(
-            "per CR:{A}, which CR:{B} restates, *\"{A_TEXT}\"*\n"
-        ));
+        let release = Release::new(
+            "100.1 a first body long enough to be checked as evidence\n\
+             100.2 a second body long enough to be checked as evidence\n",
+            0,
+        );
+        // The writer means the first rule; the sentence names the second in between; the
+        // quote binds to the second and misattributes.
+        let doc = doc_with(
+            "per CR:100.1, which CR:100.2 restates, \
+             *\"a first body long enough to be checked as evidence\"*\n",
+        );
         let (findings, counts) = check(&doc, &release, true);
         assert_eq!(counts.misattributed, 1, "{findings:#?}");
         let hint = &findings
@@ -720,7 +702,8 @@ mod tests {
             .action;
         assert!(hint.contains("NEAREST marker"), "{hint}");
         // The control: with one marker on the line, the hint stays the retarget.
-        let alone = doc_with(&format!("per CR:{B}, *\"{A_TEXT}\"*\n"));
+        let alone =
+            doc_with("per CR:100.2, *\"a first body long enough to be checked as evidence\"*\n");
         let (findings, _) = check(&alone, &release, true);
         let hint = &findings
             .iter()
@@ -736,17 +719,15 @@ mod tests {
         // formatter so a line reads `> {`. The grammar parser never lets a code line into
         // the prose stream, so the commentary check cannot reach it — while a doc-comment
         // quote in the same file is still extracted and verified.
-        let src = format!(
-            "/// Per CR:{A}:\n///\n/// > {A} a fragment long enough to be evidence here.\n\
-             fn f() -> Result<\n    (usize, usize),\n    String,\n> {{\n    todo!()\n}}\n"
-        );
-        let model =
-            crate::model::Model::from_documents(vec![(std::path::PathBuf::from("code/a.rs"), src)]);
+        let src =
+            "/// Per CR:100.1:\n///\n/// > 100.1 a fragment long enough to be evidence here.\n\
+                   fn f() -> Result<\n    (usize, usize),\n    String,\n> {\n    todo!()\n}\n";
+        let model = crate::model::Model::from_documents(vec![(
+            std::path::PathBuf::from("code/a.rs"),
+            src.to_string(),
+        )]);
         let doc = model.documents()[0].clone();
-        let release = Release::new(
-            &format!("{A} a fragment long enough to be evidence here.\n"),
-            0,
-        );
+        let release = Release::new("100.1 a fragment long enough to be evidence here.\n", 0);
         let (findings, counts) = check(&doc, &release, false);
         assert_eq!(findings, Vec::new(), "{findings:#?}");
         assert_eq!(counts.commentary, 0, "the code line is not a blockquote");
@@ -759,17 +740,15 @@ mod tests {
         // quote — and a substring test let `104.1` inside the quote exempt a claiming
         // `section 104` written in prose on the quote's line. Mutation checked: reverting
         // `contains_number` to `contains` fails the first assertion with zero findings.
-        let doc = doc_with(&format!(
-            "per CR:{IN_SECTION}, *\"a fragment long enough to be evidence, see rule \
-             {IN_SECTION} here.\"* and section {SECTION_N} places no other bound\n"
-        ));
+        let doc = doc_with(
+            "per CR:104.1, *\"a fragment long enough to be evidence, see rule 104.1 here.\"* \
+             and section 104 places no other bound\n",
+        );
         let (findings, counts) = lint(&doc);
         assert_eq!(counts.0, 1, "{findings:#?}");
         // The control: the section's own cross-reference inside the quote stays sheltered.
-        let genuine = doc_with(&format!(
-            "per CR:{IN_SECTION}, *\"a fragment long enough, see section {SECTION_N} \
-             there.\"*\n"
-        ));
+        let genuine =
+            doc_with("per CR:104.1, *\"a fragment long enough, see section 104 there.\"*\n");
         assert_eq!(lint(&genuine).1 .0, 0);
     }
 
@@ -779,9 +758,7 @@ mod tests {
         // same text, and reporting it as belonging to another rule sent the writer at a
         // retarget that does not exist. Mutation checked: dropping `section_body` from the
         // verdict path fails this with a misattribution finding.
-        let doc = doc_with(&format!(
-            "per CR:{SECTION_N}, *\"{SECTION_N}. {SECTION_TITLE}\"*\n"
-        ));
+        let doc = doc_with("per CR:104, *\"104. A Section Title Long Enough\"*\n");
         let (findings, counts) = check(&doc, &section_release(), false);
         assert_eq!(findings, Vec::new(), "{findings:#?}");
         assert_eq!((counts.verified, counts.misattributed), (1, 0));
@@ -792,13 +769,13 @@ mod tests {
         // 569 of 3 162 rules name another rule inside their own body, so roughly one rule in
         // six could not be quoted through its cross-reference. The exemption this pins is
         // SPAN-shaped; the line-shaped one it replaces covered only the block form.
-        let doc = doc_with(&format!(
-            "per CR:{A}, *\"a fragment long enough to be evidence. See rule {B}.\"*\n"
-        ));
+        let doc = doc_with(
+            "per CR:100.1, *\"a fragment long enough to be evidence. See rule 100.2.\"*\n",
+        );
         let (found, counts) = lint(&doc);
         assert_eq!(counts.0, 0, "{found:#?}");
         // The control: the same number in ordinary prose on the same line IS reported.
-        let bare = doc_with(&format!("per CR:{A}, and also {B} in prose\n"));
+        let bare = doc_with("per CR:100.1, and also 100.2 in prose\n");
         assert_eq!(lint(&bare).1 .0, 1);
     }
 
@@ -808,10 +785,10 @@ mod tests {
         // BLOCK through a different path, so a block whose range is wrong is invisible there
         // — and the field is public and its contract is stated, so it is asserted directly
         // rather than through a caller that happens not to consult it.
-        let doc = doc_with(&format!(
-            "per CR:{A}:\n\n> {A} a fragment long enough to be evidence,\n> and it continues \
-             on a second line.\n"
-        ));
+        let doc = doc_with(
+            "per CR:100.1:\n\n> 100.1 a fragment long enough to be evidence,\n> and it continues \
+             on a second line.\n",
+        );
         let block = quotes(&doc)
             .into_iter()
             .find(|q| q.kind == QuoteKind::Block)
@@ -822,9 +799,9 @@ mod tests {
             "a two-line block spans two lines"
         );
 
-        let inline = quotes(&doc_with(&format!(
-            "per CR:{A}, *\"a fragment long enough to be evidence,\nand it continues here.\"*\n"
-        )))
+        let inline = quotes(&doc_with(
+            "per CR:100.1, *\"a fragment long enough to be evidence,\nand it continues here.\"*\n",
+        ))
         .into_iter()
         .find(|q| q.kind == QuoteKind::Inline)
         .expect("the inline quote is found");
@@ -837,18 +814,18 @@ mod tests {
         // the regime asks for long quotes — so the exemption holding only on the line the
         // quote OPENS on is the common case, not the corner. A doc comment held to 100
         // columns wraps almost every whole-body quote.
-        let doc = doc_with(&format!(
-            "per CR:{A}, *\"a fragment long enough to be evidence,\nand it continues here. \
-             See rule {B}.\"*\n"
-        ));
+        let doc = doc_with(
+            "per CR:100.1, *\"a fragment long enough to be evidence,\nand it continues here. \
+             See rule 100.2.\"*\n",
+        );
         let (found, counts) = lint(&doc);
         assert_eq!(counts.0, 0, "{found:#?}");
         // The control, and the reason the fix is a RANGE rather than a per-line exemption: a
         // bare number in ordinary prose on a continuation line is still reported.
-        let bare = doc_with(&format!(
-            "per CR:{A}, *\"a fragment long enough to be evidence,\nand it continues here.\"* \
-             and then {B} in prose\n"
-        ));
+        let bare = doc_with(
+            "per CR:100.1, *\"a fragment long enough to be evidence,\nand it continues here.\"* \
+             and then 100.2 in prose\n",
+        );
         assert_eq!(lint(&bare).1 .0, 1);
     }
 

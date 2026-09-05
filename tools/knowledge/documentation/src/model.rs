@@ -327,29 +327,25 @@ fn describe(what: &Observation) -> (&'static str, String) {
 mod tests {
     use super::*;
 
-    // Interpolated, never spelled out: this tool's checks walk their own source, and a slug
-    // or a path written literally here becomes a real anchor or a real dangling reference.
-    const SLUG: &str = "a-slug";
-    const COMPONENT: &str = "a-component";
-    const DOC: &str = "docs/design/a.md";
-    const SRC: &str = "src/b.rs";
+    // Every fixture is written as the bytes it means: the checker reads no string literal of
+    // its own source, per `knowledge#checker-source-literals-are-data`.
 
     #[test]
     fn a_model_can_be_assembled_without_a_checkout() {
         let model = Model::from_documents(vec![
             (
-                PathBuf::from(DOC),
-                format!("### `##{SLUG}` **The statement.**\n"),
+                PathBuf::from("docs/design/a.md"),
+                "### `##a-slug` **The statement.**\n".to_string(),
             ),
             (
-                PathBuf::from(SRC),
-                format!("/// see `{COMPONENT}#{SLUG}`\nfn f() {{}}\n"),
+                PathBuf::from("src/b.rs"),
+                "/// see `a-component#a-slug`\nfn f() {}\n".to_string(),
             ),
         ]);
         assert_eq!(model.documents().len(), 2);
         let dump = model.canonical();
-        assert!(dump.contains(&format!("{DOC}\t1\tslug-def\t{SLUG}")));
-        assert!(dump.contains(&format!("{SRC}\t1\tslug-ref\t{COMPONENT}#{SLUG}")));
+        assert!(dump.contains("docs/design/a.md\t1\tslug-def\ta-slug"));
+        assert!(dump.contains("src/b.rs\t1\tslug-ref\ta-component#a-slug"));
     }
 
     /// A dumped path reference reads back as the text it was written as.
@@ -360,32 +356,32 @@ mod tests {
     /// every qualified reference in the repository at once, and nothing here read the value.
     #[test]
     fn a_qualified_path_reference_dumps_as_it_is_written() {
-        let written = format!("`{COMPONENT}@{DOC}`");
+        let written = "`a-component@docs/design/a.md`";
         let model = Model::from_documents(vec![(
-            PathBuf::from(SRC),
+            PathBuf::from("src/b.rs"),
             format!("/// see {written}\nfn f() {{}}\n"),
         )]);
         let dump = model.canonical();
-        let value = format!("{COMPONENT}@{DOC}");
+        let value = "a-component@docs/design/a.md";
         assert!(
-            dump.contains(&format!("{SRC}\t1\tpath-ref\t{value}")),
+            dump.contains(&format!("src/b.rs\t1\tpath-ref\t{value}")),
             "dumped as written: {dump}"
         );
         // The property the row exists for, asserted rather than assumed: the value is a
         // substring of the line it was read from.
-        assert!(written.contains(&value), "the value greps in its source");
+        assert!(written.contains(value), "the value greps in its source");
     }
 
     /// A span parsing as no reference keeps its raw text and is a different kind.
     #[test]
     fn an_unsupported_path_shape_dumps_as_the_span_it_was() {
         let model = Model::from_documents(vec![(
-            PathBuf::from(SRC),
-            format!("/// see `{DOC}`\nfn f() {{}}\n"),
+            PathBuf::from("src/b.rs"),
+            "/// see `docs/design/a.md`\nfn f() {}\n".to_string(),
         )]);
         let dump = model.canonical();
         assert!(
-            dump.contains(&format!("{SRC}\t1\tunsupported-path\t{DOC}")),
+            dump.contains("src/b.rs\t1\tunsupported-path\tdocs/design/a.md"),
             "{dump}"
         );
         assert!(!dump.contains("@"), "no separator was invented: {dump}");
