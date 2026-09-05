@@ -150,6 +150,7 @@ pub fn parse(text: &str, literals: Literals) -> Parsed {
         fenced,
         names,
         inert: Vec::new(),
+        literals,
         trouble,
     }
 }

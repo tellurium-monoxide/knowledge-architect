@@ -207,11 +207,25 @@ static PIN: LazyLock<Regex> =
 /// a check that reads no network for anything else.
 pub fn pin(parsed: &Parsed, text: &str) -> Option<String> {
     let fenced: std::collections::HashSet<u32> = parsed.fenced.iter().copied().collect();
+    // Under the checker's own source a pin is read from the comments only. The raw text holds
+    // the fixtures a `Data` parse dropped, and a pin spelled inside one of them pinned the file
+    // it sat in to that release, per `knowledge#checker-source-literals-are-data`.
+    let prose: Option<std::collections::HashSet<u32>> =
+        (parsed.literals == crate::source::Literals::Data).then(|| {
+            parsed
+                .prose
+                .iter()
+                .flat_map(|p| p.lines.iter().copied())
+                .collect()
+        });
     for (i, line) in text.lines().enumerate() {
         let n = i as u32 + 1;
         // Fenced only. The pin IS an HTML comment, so skipping the inert lines would find
         // no pin anywhere; what matters is that an ILLUSTRATION of one does not bind.
         if fenced.contains(&n) {
+            continue;
+        }
+        if prose.as_ref().is_some_and(|p| !p.contains(&n)) {
             continue;
         }
         if let Some(c) = PIN.captures(line) {
@@ -1052,18 +1066,12 @@ mod tests {
             .any(|l| matches!(l.what, Observation::InterpRef(_))));
     }
 
-    // The one fixture still interpolated. `pin` reads the RAW text of a file, line by line,
-    // and skips only fenced lines: it never consults the literal grammar, so a pin spelled out
-    // inside a string literal on one line of this file would pin this file to that release
-    // and list it as an opt-out from the change detector in every run's summary.
-    const DATE: &str = "20260807";
-
     #[test]
     fn a_pin_is_read_from_the_whole_file() {
-        let text = format!("intro\n<!-- cr-version: {DATE} -->\n");
+        let text = "intro\n<!-- cr-version: 20260807 -->\n";
         assert_eq!(
-            pin(&crate::source::md::parse(&text), &text).as_deref(),
-            Some(DATE)
+            pin(&crate::source::md::parse(text), text).as_deref(),
+            Some("20260807")
         );
         const NONE: &str = "no pin here";
         assert_eq!(pin(&crate::source::md::parse(NONE), NONE), None);
@@ -1074,7 +1082,26 @@ mod tests {
         // A document EXPLAINING the mechanism used to repin itself by showing the form, and
         // then verified its quotes against a release it never chose. The resolver fetches an
         // absent release, so the symptom was a network failure in a check that reads none.
-        let text = format!("intro\n\n```markdown\n<!-- cr-version: {DATE} -->\n```\n");
-        assert_eq!(pin(&crate::source::md::parse(&text), &text), None);
+        let text = "intro\n\n```markdown\n<!-- cr-version: 20260807 -->\n```\n";
+        assert_eq!(pin(&crate::source::md::parse(text), text), None);
+    }
+
+    #[test]
+    fn a_pin_inside_a_dropped_literal_binds_nothing_and_one_in_a_comment_does() {
+        // The checker's own source: the fixture below is exactly the shape this file carries,
+        // and read from the raw text it pinned this file to that release.
+        use crate::source::{rs, Literals};
+        let inside = "fn f() {\n    let s = \"<!-- cr-version: 20260807 -->\";\n}\n";
+        assert_eq!(pin(&rs::parse(inside, Literals::Data), inside), None);
+        assert_eq!(
+            pin(&rs::parse(inside, Literals::Prose), inside).as_deref(),
+            Some("20260807"),
+            "outside the checker the raw text is read, as before"
+        );
+        let comment = "// <!-- cr-version: 20260807 -->\nfn f() {}\n";
+        assert_eq!(
+            pin(&rs::parse(comment, Literals::Data), comment).as_deref(),
+            Some("20260807")
+        );
     }
 }

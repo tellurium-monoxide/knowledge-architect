@@ -26,9 +26,10 @@ use std::path::Path;
 /// Decided by the caller from where the file sits. The checker's own source is the one place
 /// whose every literal is a fixture, per `knowledge#checker-source-literals-are-data`;
 /// everywhere else the grammar decides per literal, and `rs::BINDINGS` says how.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Literals {
     /// A string literal bound to a name is data; every other one is prose.
+    #[default]
     Prose,
     /// No string literal is prose. Comments are read as in every other file.
     Data,
@@ -179,6 +180,12 @@ pub struct Parsed {
     /// Nothing in one is live. Parking a decision by commenting its section out is ordinary,
     /// and it left the slug defined and the anchor pointing at a section no reader can see.
     pub inert: Vec<u32>,
+    /// How the file's string literals were read. Markdown has none and reports `Prose`.
+    ///
+    /// Carried so that a reader of the RAW text, such as the pin scanner, can stay out of
+    /// the literals a `Data` parse dropped: a version pin spelled inside a fixture must not
+    /// pin the file it sits in.
+    pub literals: Literals,
     /// Why this parse cannot be trusted, where it cannot.
     ///
     /// **A parse that fails must be loud.** Silently, it removes every citation in the file
