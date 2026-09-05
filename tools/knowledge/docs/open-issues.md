@@ -11,6 +11,73 @@ Read `tracking-open-issues` before adding.
 
 ---
 
+## The inverse assertion reads the prose marker form alone `defect`
+
+**What.** `first_rule_number` in `knowledge@documentation/src/check/uncovered.rs` finds a dotted
+rule number by splitting on characters that are neither alphanumeric nor a dot, and a section
+number by a word-bounded regex over the keyword forms. The identifier form, which root
+`thaum@CLAUDE.md` accepts wherever a name cannot hold punctuation, uses underscores, so neither
+finder sees it. A file outside the walk may therefore carry `cr_613_8c` in a job name, a fixture
+name or a dotfile, and nothing reports it.
+
+**Reproduce.** In `knowledge@tests/projects/dirhome/`, which is clean, write a
+workflow file under `path@thaum@.github/workflows/` holding a line `run: cargo test cr_100_1` and run
+`cargo knowledge check --only uncovered`: `PASSED: no findings`. Replace the token with the
+prose form behind its marker and the same run reports the line. Found by an adversarial review
+of the mock-project piece.
+
+**Why it matters.** The module's own head states the assertion without qualifying the form:
+outside the walk, a rule number is forbidden. One of the two accepted forms is exempt in fact
+and not in any statement, and the founding case for the family was a workflow file — exactly
+where a test name is written.
+
+**What would close it.** Reading the identifier form in the same finder, with the same
+prose-form message, and a planted case in `knowledge@tests/projects/planted/` beside the
+existing one. Deciding instead that an unwalked file may carry the identifier form, and saying
+so in the module head and in root `thaum@CLAUDE.md`, closes it as a recorded exemption.
+
+## The changelog's own counts are asserted by nothing `defect`
+
+**What.** `check::changes` verifies a section's summary-table row, its four `meta` keys, its
+source url, its recorded digest and every blockquote against the release the section pins. It
+compares no count: neither the `edited`, `renumbered` and `gone` values in the `meta` block nor
+the same three columns in the summary table are checked against the entries the section carries.
+
+**Reproduce.** In `knowledge@tests/projects/dirhome/`, whose one section legitimately carries no
+entry, edit its `CHANGES.md` so the table row reads `| 3 | 2 | 1 |` and the `meta` block says
+`edited: 3`, `renumbered: 2`, `gone: 1`. `cargo knowledge check --only changes` prints
+`changelog: 0 rule change(s)` and `PASSED: no findings`. Found by an adversarial review of the
+mock-project piece.
+
+**Why it matters.** `bumping-rules` reads the changelog as its work list, and the counts are the
+first thing a reader takes off it. A section claiming six changes above zero entries sends
+whoever reads it looking for triage that was never owed, or hides triage that was.
+
+**What would close it.** Comparing each of the three counts against the entries the section
+holds, classified by the verb its title opens with, and reporting a mismatch as a finding naming
+both numbers. The table row and the `meta` block are two statements of one fact, so the check
+covers both or says which one is authoritative.
+
+## A `PLANTED` row may name a test that does not exist `observation`
+
+**What.** Two rows of `PLANTED` in `knowledge@tests/mock_projects.rs` carry
+`Planted::ByTheBinary(<test name>)`, because `changes` and `corpus` are not in `check::run`. The
+name is a string used inside an assertion message and nothing resolves it, so deleting or
+renaming the binary test it points at leaves both test files green.
+
+**Reproduce.** Rename `the_changelog_and_the_archive_each_carry_a_planted_defect` in
+`knowledge@tests/binary.rs` and empty its body. `cargo test -p knowledge` stays green. Found by
+the spec-conformity review of the mock-project piece.
+
+**Why it matters.** It is the same shape as the entry this piece closed, moved one step: the
+partition test now refuses a family with no row, and a row can still name an assertion nobody
+makes. The two families would go back to being unchecked against a real project with no test
+saying so.
+
+**What would close it.** Reaching the two families from `knowledge@tests/mock_projects.rs`, which
+means a callable that runs them over a stated tree the way `check::run` runs the other six; or a
+test that resolves the named test, which Rust offers no direct way to do.
+
 ## `cargo knowledge issues` prints nothing over this repository until the migration lands `defect`
 
 **What.** `outstanding` is gone and `issues` reads the issue register, which is a directory of one

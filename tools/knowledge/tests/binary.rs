@@ -761,6 +761,30 @@ fn issues_lists_one_row_per_entry_and_each_filter_keeps_what_it_names() {
     );
 }
 
+/// The claim: `--group` keeps the rows whose entry sits in the group it names, and drops the
+/// ungrouped ones.
+///
+/// The only grouped ISSUE instance in any mock is `dirhome`'s, and it is read in place rather
+/// than copied: the command writes nothing. Both directions are asserted, because a filter that
+/// dropped every row would satisfy a test that only checked the grouped entry was gone.
+#[test]
+fn issues_group_filter_keeps_the_entries_of_the_group_it_names() {
+    let (all, stderr, code) = run("dirhome", &["issues"]);
+    assert_eq!(code, 0, "{stderr}");
+    assert!(all.contains("a-grouped-entry"), "{all}");
+    assert!(all.contains("an-ungrouped-entry"), "{all}");
+
+    let (grouped, _, code) = run("dirhome", &["issues", "--group", "housekeeping"]);
+    assert_eq!(code, 0, "{grouped}");
+    assert!(grouped.contains("a-grouped-entry"), "{grouped}");
+    assert!(!grouped.contains("an-ungrouped-entry"), "{grouped}");
+
+    // A group the instance does not declare keeps nothing, and no row is exit 1.
+    let (none, _, code) = run("dirhome", &["issues", "--group", "no-such-group"]);
+    assert_eq!(code, 1, "{none}");
+    assert!(!none.contains("a-grouped-entry"), "{none}");
+}
+
 /// The claim: `tripwires` prints the references each entry carries, `--guarding` keeps the rows
 /// carrying one, and no issue appears among them.
 #[test]
@@ -1116,8 +1140,8 @@ fn a_per_user_ignore_file_does_not_decide_the_walk() {
 /// A throwaway repository holding a project the checks find nothing wrong with.
 ///
 /// **The mock projects under `knowledge@tests/projects/` are not used here.** A commit is
-/// judged only where its own tree passes, and `dirhome` is the one mock whose tree does — so a
-/// copy of it could serve as a base. The project below is written out anyway, because each test
+/// judged only where its own tree passes, and `dirhome` is the mock over which every family
+/// runs and finds nothing — so a copy of it could serve as a base. The project below is written out anyway, because each test
 /// below states the exact findings its commits carry, and a mock's contents are shared with
 /// every other test over it: a document added here for one commit's sake would move another
 /// test's counts.

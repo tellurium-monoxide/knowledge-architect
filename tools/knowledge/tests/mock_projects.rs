@@ -43,9 +43,10 @@ fn configs(manifest: &Manifest) -> std::collections::HashMap<PathBuf, String> {
 /// What the binary asks git for, taken over a mock project in place.
 ///
 /// These tests build their models under this repository's own worktree, so git answers about
-/// the mock's files because this repository tracks them. A mock file that is not at least
-/// staged is not in the listing and is walked by nothing, which is the one thing to know when
-/// adding a fixture here.
+/// the mock's files out of this repository's own listing. That listing is
+/// `--cached --others --exclude-standard`, so a new fixture file is in it whether or not it is
+/// staged; an ignore rule is what takes one out, and a deletion has to be staged or the path
+/// stays in the listing with no bytes behind it.
 fn git_answers(
     manifest: &documentation::Manifest,
     model: &Model,
@@ -86,6 +87,7 @@ fn the_walk_obeys_the_project_that_declares_it() {
             "docs/tripwires.md".to_string(),
             "notes/a.md".to_string(),
             "notes/b.md".to_string(),
+            "notes/decisions.md".to_string(),
             "notes/open-issues/README.md".to_string(),
             "notes/open-issues/the-notes-are-not-a-component.md".to_string(),
             "notes/readings/README.md".to_string(),
@@ -252,6 +254,7 @@ fn a_fenced_illustration_is_neither_a_definition_nor_a_reference_in_a_real_file(
     assert_eq!(
         defs,
         vec![
+            "a-note-the-location-keeps".to_string(),
             "mock-anchor".to_string(),
             "mock-goal".to_string(),
             "mock-tripwire".to_string()
@@ -268,7 +271,9 @@ fn a_fenced_illustration_is_neither_a_definition_nor_a_reference_in_a_real_file(
             "design@minimal@mock-anchor".to_string(),
             "design@minimal@mock-anchor".to_string(),
             "goal@minimal@mock-goal".to_string(),
+            "note@notes@a-note-the-location-keeps".to_string(),
             "path@notes@b.md".to_string(),
+            "path@notes@decisions.md".to_string(),
             "tripwire@minimal@mock-tripwire".to_string(),
         ]
     );
@@ -334,18 +339,18 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
     assert!(found.is_empty(), "{found:#?}");
     // The component at the root is one whether or not anything is declared beside it, and
-    // every reference resolves against it by the project's own name: one entity in each of
-    // the three heading registers, and six references across the three kinds and a path.
+    // every reference resolves against it by the project's own name.
     assert_eq!(report.structure.components, 1);
     assert_eq!(report.structure.locations, 1);
-    // The root component's four registers, and the location's two.
-    assert_eq!(report.structure.instances, 6);
+    // The root component's four registers, and the location's three.
+    assert_eq!(report.structure.instances, 7);
     assert_eq!(report.structure.entries, 3);
-    // Three heading entities, three file entities across the three instances, and six
-    // references across the three heading kinds and a path.
+    // Four heading entities — one in each built-in register and one in the declared heading
+    // register the location carries — three file entities across the three file instances, and
+    // eight references across the four heading kinds and two paths.
     assert_eq!(
         (report.structure.entities, report.structure.references),
-        (6, 6)
+        (7, 8)
     );
 }
 

@@ -1,6 +1,7 @@
 # WHAT THIS MOCK EXERCISES: detection. Its documents are wrong on purpose, one planted defect
 # per check family, and a test asserts the findings themselves rather than merely that
-# something failed. Every family owes a row in `PLANTED` in `knowledge@tests/mock_projects.rs`,
+# something failed. Every family owes a row in `PLANTED` in
+# `path@knowledge@tests/mock_projects.rs`,
 # so a new defect goes here and its count goes there. `changes` and `corpus` are the two whose
 # subject is a file rather than the model, so their planted defects — a changelog section
 # quoting a rule as something the release does not say, and an archived release whose bytes are
