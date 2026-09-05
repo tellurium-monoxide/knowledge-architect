@@ -165,6 +165,8 @@ that ends up with a single member across the whole project.
 **Response:** reopen the open-set argument this decision reversed, in
 `knowledge@docs/rejected-alternatives.md`.
 
+**Re-entry:** every manifest diff that touches `[registers.issue] kinds`, and
+`standing-state-reviewer` on every dispatched review.
 
 ## Guarding `knowledge#a-commit-message-is-a-document`'s skip clause `##a-commit-is-skipped-for-a-new-reason`
 

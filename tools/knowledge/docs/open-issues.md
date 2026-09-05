@@ -83,8 +83,10 @@ test that resolves the named test, which Rust offers no direct way to do.
 **What.** `outstanding` is gone and `issues` reads the issue register, which is a directory of one
 file per entry. This repository still keeps its trackers as `*@docs/open-issues.md`, one file of
 level-two headings, which the register reports as its retired file shape. So `cargo knowledge
-issues` finds no instance with entries and prints an empty table at exit 1, and `tripwires` prints
-only the two entries that have been given slugs so far.
+issues` finds no instance with entries and prints an empty table at exit 1. `tripwires` prints only
+the entries that have been given slugs, four in this tool's own file, and its `guarding` column
+is `-` for each, because a tripwire heading names the decision it guards in the retired
+`<component>#<slug>` form and the column reads `design@<anchor>@<id>` references alone.
 
 **Why it matters.** Root `CLAUDE.md` sends every session to that command before diagnosing
 anything, and an empty listing reads as a repository with nothing recorded. That is the exact
@@ -97,53 +99,6 @@ tracker file into entries and gives every tripwire heading a slug. Nothing else 
 command is right and the tree is not migrated yet.
 
 ---
-
-## The interpretation register has no mention form, so naming an entry counts as citing it `question`
-
-**What.** The interpretation index counts every `R`-number token in a live markdown file as a
-citation of that entry, so a document that merely _names_ one — to point at a diff, to say where
-a reading is filed — is listed in `thaum@docs/rules/interpretations/index.md` beside the
-documents whose argument depends on the reading. The `references` family reports every such
-token as a retired form since the `@` grammar landed, and `check::interpretations` no longer
-resolves them; the index is the one reader left. Rule numbers have a way to say it and `R` numbers do not: a rule number that is data
-goes inside a code span or a name-bound string literal, and the walk does not read those as
-citations. No entry is named in this file on purpose, so that the illustration does not
-create the thing it illustrates.
-
-**Observed.** Writing the entry this one replaces, which asked whether the index should store line
-numbers. Its first draft named two entries by number as examples of index churn; regenerating then
-moved both from 6 citing files to 7 and from 4 to 5, the index counting that draft as citing them.
-It did not — it named them to point at a diff. The draft was rewritten around the problem by naming
-the concern files instead.
-
-**Why it matters.** The index is the per-entry half of a release bump, and a citing list is read as
-a work list: a file listed there with no dependency on the reading sends someone to check something
-that cannot have broken. The error is one-directional and grows with the register — every document
-that discusses the register rather than resting on it inflates the blast radius of every entry it
-names.
-
-**What would answer it.** Decide whether an `R` number inside a code span stops counting as a
-citation, the way a rule number in one does. That is the structural answer the rule side already
-uses, and it needs no new marker. The decision belongs with `recording-an-interpretation`, which
-owns the entry shape.
-
-## Whether register entries should carry text slugs in place of `R` numbers `question`
-
-**What.** Interpretation entries are named by an `R` and a sequence number, and the owner
-proposed replacing the numbers with content-named slugs, the shape design decisions already use.
-The numbering's purpose is unclear, a number is inconvenient to cite from memory, and a text slug
-would dissolve the mention-form question above along the way — a slug in a code span is already
-the established data shape, while an entry number written anywhere counts as a citation, which
-this entry's own first draft demonstrated by joining two citing lists in the generated index.
-Proposed and deliberately deferred at the linting-scope discussion.
-
-**Why it matters.** Every document and doc comment that cites a reading carries the number, so
-the rename grows more expensive with each entry — and the mention-form question stays open as
-long as the numbers do.
-
-**What would answer it.** The next tool-cleanup discussion, arguing it with
-`recording-an-interpretation`, which owns the entry shape and the numbering. The migration cost
-is enumerable at that point from the register index's citing lists.
 
 ## The release diff calls a renumbered section a deletion `defect`
 
