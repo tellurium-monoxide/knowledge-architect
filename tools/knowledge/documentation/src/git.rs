@@ -109,14 +109,29 @@ impl Invocation {
                 ))
             }
         })?;
-        if let Some(bytes) = &self.stdin {
-            use std::io::Write;
-            // The pipe is closed by the drop at the end of the block, which is what lets git
-            // finish reading `--stdin` and exit. Without it the wait below never returns.
+        // **The input is written by a thread, and the parent goes straight to reading.** Both
+        // pipes are 64KB deep, and `check-ignore` answers while it reads: over a batch whose
+        // answers exceed that, git blocks writing its output while a parent still writing its
+        // input blocks too, and neither ever moves. Measured at 50 000 queries, which is one
+        // reference per line of a large document set. The pipe is dropped when the thread ends,
+        // which is what lets git finish reading and exit.
+        let writer = self.stdin.map(|bytes| {
             let mut pipe = child.stdin.take().expect("a piped stdin");
-            pipe.write_all(bytes)?;
-        }
+            std::thread::spawn(move || {
+                use std::io::Write;
+                match pipe.write_all(&bytes) {
+                    // git stopped reading and is on its way out; its exit code is the answer.
+                    Err(e) if e.kind() == io::ErrorKind::BrokenPipe => Ok(()),
+                    other => other,
+                }
+            })
+        });
         let out = child.wait_with_output()?;
+        if let Some(writer) = writer {
+            writer
+                .join()
+                .map_err(|_| io::Error::other(format!("`{shown}`: the input writer panicked")))??;
+        }
         let code = out.status.code().unwrap_or(-1);
         if !self.accept.contains(&code) {
             let stderr = String::from_utf8_lossy(&out.stderr).trim().to_string();
@@ -354,6 +369,32 @@ mod tests {
             ignored(&dir, &[String::new()]).expect("an empty spelling asks nothing"),
             HashSet::new()
         );
+    }
+
+    #[test]
+    fn a_batch_larger_than_a_pipe_buffer_does_not_deadlock() {
+        // Both pipes hold 64KB and `check-ignore` answers while it reads, so a parent that
+        // writes the whole input before reading a byte of output stops moving as soon as the
+        // answers pass that. Before the input was written by its own thread, this hung
+        // forever; the recv timeout is what turns a hang into a failing test.
+        let dir = std::env::temp_dir().join(format!("knowledge-git-batch-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).expect("a temporary directory");
+        assert!(git(&dir).args(["init", "-q"]).output().is_ok_and(|_| true));
+        std::fs::write(dir.join(".gitignore"), "*.gen\n").expect("an ignore rule");
+        let count = 50_000;
+        let queries: Vec<String> = (0..count).map(|i| format!("f{i}.gen")).collect();
+        let (tx, rx) = std::sync::mpsc::channel();
+        let probe = dir.clone();
+        std::thread::spawn(move || {
+            let _ = tx.send(ignored(&probe, &queries).map(|s| s.len()));
+        });
+        match rx.recv_timeout(std::time::Duration::from_secs(60)) {
+            Ok(Ok(found)) => assert_eq!(found, count),
+            Ok(Err(e)) => panic!("{e}"),
+            Err(_) => panic!("the batch never returned"),
+        }
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]
