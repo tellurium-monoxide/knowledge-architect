@@ -25,7 +25,7 @@ and for such a tree `check` reports a different number.
 Small today and only in one direction: `commits` reads less, so a document
 reachable only through a symlink is judged by the range check and not by its own bytes. The
 misleading half is the summary line, which sends a reader to a command that answers differently.
-The same class as the submodule-and-symlinked-directory entry above, which is where the walk's
+The same class as `issue@knowledge@submodule-and-symlink-contents-unread`, which is where the walk's
 own answer is recorded; this entry is about the two readers disagreeing rather than about the
 walk.
 
