@@ -227,6 +227,9 @@ fn section_head(line: &str) -> Option<(u16, &str)> {
 mod tests {
     use super::*;
 
+    // Every fixture is inline: the checker reads no string literal of its own source, per
+    // `knowledge#checker-source-literals-are-data`.
+
     #[test]
     fn a_sibling_numbered_with_a_digit_is_not_a_subrule() {
         // `612.10` is a SIBLING of `612.1`, not a subrule of it. A plain prefix test could not
@@ -239,23 +242,12 @@ mod tests {
             "100.2 A parent rule.\n",
             "100.2a Its subrule, numbered with a letter.\n",
         );
-        // BOUND, so the numbers are fixture data. Written into the call they are prose, and
-        // this crate is walked like any other.
-        const LEAF: &str = "100.1";
-        const PARENT: &str = "100.2";
         let c = Corpus::parse(TEXT, 0);
-        let leaf = RuleNumber::parse(LEAF).expect("a rule number");
-        let parent = RuleNumber::parse(PARENT).expect("a rule number");
+        let leaf = RuleNumber::parse("100.1").expect("a rule number");
+        let parent = RuleNumber::parse("100.2").expect("a rule number");
         assert!(!c.has_subrules(&leaf), "a digit makes it a sibling");
         assert!(c.has_subrules(&parent), "a letter makes it a subrule");
     }
-
-    // Bound to names, so no other line holds a bare number. These are inputs to a parser,
-    // not claims about what any rule says.
-    const FIRST: &str = "100.1";
-    const SECOND: &str = "100.2";
-    const CONDITIONED: &str = "104.4b";
-    const LAYERED: &str = "613.8c";
 
     /// This project's corpus opens with 181 lines of contents.
     const CONTENTS_LINES: usize = 181;
@@ -277,27 +269,23 @@ mod tests {
 
     #[test]
     fn a_rule_runs_to_the_next_number() {
-        let c = parse_contents(&body_lines(&format!(
-            "{FIRST} First rule.\n{SECOND} Second rule.\n"
-        )));
+        let c = parse_contents(&body_lines("100.1 First rule.\n100.2 Second rule.\n"));
         assert_eq!(c.len(), 2);
-        assert_eq!(c.get(&n(FIRST)), Some("First rule."));
+        assert_eq!(c.get(&n("100.1")), Some("First rule."));
     }
 
     #[test]
     fn continuation_lines_join_the_rule() {
-        let c = parse_contents(&body_lines(&format!(
-            "{FIRST} Head\n  wrapped on\n  three lines\n"
-        )));
-        assert_eq!(c.get(&n(FIRST)), Some("Head wrapped on three lines"));
+        let c = parse_contents(&body_lines("100.1 Head\n  wrapped on\n  three lines\n"));
+        assert_eq!(c.get(&n("100.1")), Some("Head wrapped on three lines"));
     }
 
     #[test]
     fn a_blank_line_and_a_section_heading_both_end_a_rule() {
-        let c = parse_contents(&body_lines(&format!("{FIRST} Head\n\ntrailing prose\n")));
-        assert_eq!(c.get(&n(FIRST)), Some("Head"));
-        let c = parse_contents(&body_lines(&format!("{FIRST} Head\n200. Section\ntitle\n")));
-        assert_eq!(c.get(&n(FIRST)), Some("Head"));
+        let c = parse_contents(&body_lines("100.1 Head\n\ntrailing prose\n"));
+        assert_eq!(c.get(&n("100.1")), Some("Head"));
+        let c = parse_contents(&body_lines("100.1 Head\n200. Section\ntitle\n"));
+        assert_eq!(c.get(&n("100.1")), Some("Head"));
     }
 
     #[test]
@@ -305,10 +293,7 @@ mod tests {
         // What a whole-section citation quotes is the heading line, so the corpus must hold
         // it. The rules maps stay exactly as they were — the digest test below is the guard —
         // and only the section-form lookups reach the titles.
-        const SECTION_LINE: &str = "100. A Section Title";
-        let c = parse_contents(&body_lines(&format!(
-            "{SECTION_LINE}\n{FIRST} First rule.\n"
-        )));
+        let c = parse_contents(&body_lines("100. A Section Title\n100.1 First rule.\n"));
         let section = RuleNumber::section(100);
         assert_eq!(c.get(&section), Some("A Section Title"));
         assert_eq!(c.raw(&section), Some("A Section Title"));
@@ -326,10 +311,9 @@ mod tests {
         // The table of contents duplicates every heading, so parsing from the top would bind
         // each title twice; `body_starts_at` is the property that prevents it, for sections
         // exactly as for rules.
-        const SECTION_LINE: &str = "100. A Contents Title";
-        let mut text = format!("{SECTION_LINE}\n");
+        let mut text = "100. A Contents Title\n".to_string();
         text.push_str(&"filler\n".repeat(CONTENTS_LINES - 1));
-        text.push_str(&format!("{FIRST} Real rule.\n"));
+        text.push_str("100.1 Real rule.\n");
         let c = Corpus::parse(&text, CONTENTS_LINES);
         assert!(!c.contains(&RuleNumber::section(100)));
     }
@@ -337,36 +321,34 @@ mod tests {
     #[test]
     fn the_first_occurrence_of_a_number_wins() {
         // The Glossary repeats numbers; a later one must not overwrite the rule's body.
-        let c = parse_contents(&body_lines(&format!(
-            "{FIRST} The rule.\n\n{FIRST} The glossary gloss.\n"
-        )));
-        assert_eq!(c.get(&n(FIRST)), Some("The rule."));
+        let c = parse_contents(&body_lines(
+            "100.1 The rule.\n\n100.1 The glossary gloss.\n",
+        ));
+        assert_eq!(c.get(&n("100.1")), Some("The rule."));
     }
 
     #[test]
     fn the_table_of_contents_is_not_parsed() {
         // A numbered line above the body start is a contents entry, not a rule.
-        let mut text = format!("{FIRST} Contents entry\n");
+        let mut text = "100.1 Contents entry\n".to_string();
         text.push_str(&"filler\n".repeat(CONTENTS_LINES - 1));
-        text.push_str(&format!("{SECOND} Real rule.\n"));
+        text.push_str("100.2 Real rule.\n");
         let c = Corpus::parse(&text, CONTENTS_LINES);
-        assert!(!c.contains(&n(FIRST)));
+        assert!(!c.contains(&n("100.1")));
         assert_eq!(c.len(), 1);
     }
 
     #[test]
     fn a_trailing_full_stop_on_the_number_is_not_part_of_it() {
-        let c = parse_contents(&body_lines(&format!("{FIRST}. With a stop.\n")));
-        assert_eq!(c.get(&n(FIRST)), Some("With a stop."));
+        let c = parse_contents(&body_lines("100.1. With a stop.\n"));
+        assert_eq!(c.get(&n("100.1")), Some("With a stop."));
     }
 
     #[test]
     fn the_body_excludes_the_number_so_a_move_can_be_detected() {
-        let c = parse_contents(&body_lines(&format!(
-            "{CONDITIONED} Text that could move.\n"
-        )));
-        assert_eq!(c.get(&n(CONDITIONED)), Some("Text that could move."));
-        assert!(!c.get(&n(CONDITIONED)).unwrap().contains(CONDITIONED));
+        let c = parse_contents(&body_lines("104.4b Text that could move.\n"));
+        assert_eq!(c.get(&n("104.4b")), Some("Text that could move."));
+        assert!(!c.get(&n("104.4b")).unwrap().contains("104.4b"));
     }
 
     /// The release the cross-implementation digest below was taken against.
@@ -418,9 +400,9 @@ mod tests {
 
     #[test]
     fn typography_is_normalised_into_the_body() {
-        let c = parse_contents(&body_lines(&format!(
-            "{LAYERED} It\u{2019}s   \u{201c}applied\u{201d}.\n"
-        )));
-        assert_eq!(c.get(&n(LAYERED)), Some("It's \"applied\"."));
+        let c = parse_contents(&body_lines(
+            "613.8c It\u{2019}s   \u{201c}applied\u{201d}.\n",
+        ));
+        assert_eq!(c.get(&n("613.8c")), Some("It's \"applied\"."));
     }
 }

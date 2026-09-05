@@ -169,8 +169,8 @@ fn others<'a>(
 mod tests {
     use super::*;
 
-    // Inputs to a comparison, not claims about content — each bound to a name so no other
-    // line carries a bare number.
+    // Inputs to a comparison, not claims about content: three numbers the tests move text
+    // between.
     const A: &str = "100.1";
     const B: &str = "100.2";
     const C: &str = "100.3";

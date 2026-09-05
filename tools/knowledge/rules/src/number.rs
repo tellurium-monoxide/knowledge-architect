@@ -124,10 +124,8 @@ impl fmt::Display for RuleNumber {
 mod tests {
     use super::*;
 
-    // Every rule number below is bound to a name. They are input to a parser, not claims
-    // about what any rule says, and `selftest.py` already uses this shape for the same
-    // reason: a test about the checker cannot move the checker's numbers. Binding them once
-    // keeps every other line free of a bare number.
+    // Inputs to a parser, not claims about what any rule says. Each is named for the shape
+    // it exercises, because the same seven serve every test below.
     const PLAIN: &str = "400.1";
     const SECOND: &str = "400.2";
     const TENTH: &str = "400.10";

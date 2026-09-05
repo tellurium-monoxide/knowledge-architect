@@ -121,23 +121,18 @@ mod tests {
     use super::*;
     use std::path::{Path, PathBuf};
 
-    // Interpolated, never spelled out: this tool's own source is walked, so a slug written
-    // literally here defines a real anchor and a reference here is a real pointer.
-    const SLUG: &str = "a-decision";
-    const ROOT: &str = "a-project";
-    const PART: &str = "a-part";
+    // Every fixture is inline: the checker reads no string literal of its own source, per
+    // `knowledge#checker-source-literals-are-data`.
 
     /// A project whose root component is `a-project` and which declares one component under `parts/`.
     fn manifest() -> Manifest {
-        let text = format!(
-            "[project]\nname = \"{ROOT}\"\ncomponents = [\"parts/{PART}\"]\n\n\
+        let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n\n\
-             [interpretations]\ndir = \"i\"\nconcerns = []\n"
-        );
-        Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
+             [interpretations]\ndir = \"i\"\nconcerns = []\n";
+        Manifest::parse(Path::new("/nowhere"), text).expect("a declaration")
     }
 
     fn findings(docs: Vec<(&str, String)>) -> Vec<String> {
@@ -153,8 +148,9 @@ mod tests {
             .collect()
     }
 
-    fn head(slug: &str) -> String {
-        format!("### `##{slug}` — **The decision.**\n")
+    /// A design-home line defining the slug `a-decision`.
+    fn head() -> String {
+        "### `##a-decision` — **The decision.**\n".to_string()
     }
 
     #[test]
@@ -164,11 +160,11 @@ mod tests {
         let found = findings(vec![
             (
                 "docs/design.md",
-                format!("{}\nIt rests on `{PART}#{SLUG}`.\n", head(SLUG)),
+                format!("{}\nIt rests on `a-part#a-decision`.\n", head()),
             ),
             (
-                &format!("parts/{PART}/docs/design.md"),
-                format!("{}\nIt rests on `{ROOT}#{SLUG}`.\n", head(SLUG)),
+                "parts/a-part/docs/design.md",
+                format!("{}\nIt rests on `a-project#a-decision`.\n", head()),
             ),
         ]);
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
@@ -179,8 +175,8 @@ mod tests {
         // What qualifying a reference buys: two components may each decide something they call
         // the same word, and nothing has to invent a second word for one of them.
         let found = findings(vec![
-            ("docs/design.md", head(SLUG)),
-            (&format!("parts/{PART}/docs/design.md"), head(SLUG)),
+            ("docs/design.md", head()),
+            ("parts/a-part/docs/design.md", head()),
         ]);
         assert!(found.is_empty(), "{found:#?}");
     }
@@ -190,18 +186,16 @@ mod tests {
         // Two documents of one component, so the duplicate is a property of the component
         // rather than of a file — which is the case a per-file check would miss.
         let found = findings(vec![
-            ("docs/design.md", head(SLUG)),
-            ("docs/rejected-alternatives.md", head(SLUG)),
+            ("docs/design.md", head()),
+            ("docs/rejected-alternatives.md", head()),
         ]);
         assert_eq!(found.len(), 2, "{found:#?}");
         assert!(
-            found[0].contains(&format!(
-                "`#{SLUG}` defined outside its component's design home"
-            )),
+            found[0].contains("`#a-decision` defined outside its component's design home"),
             "{found:#?}"
         );
         assert!(
-            found[1].contains(&format!("`{ROOT}#{SLUG}` is defined 2 times")),
+            found[1].contains("`a-project#a-decision` is defined 2 times"),
             "{found:#?}"
         );
         assert!(
@@ -214,14 +208,13 @@ mod tests {
     #[test]
     fn each_way_a_reference_resolves_to_nothing_is_reported_as_the_repair_it_needs() {
         let found = findings(vec![
-            ("docs/design.md", head(SLUG)),
+            ("docs/design.md", head()),
             (
                 "docs/open-issues.md",
-                format!(
-                    "Naming none: `#{SLUG}`.\n\
-                     Naming a component that is not declared: `nothing-declares-this#{SLUG}`.\n\
-                     Naming one that does not define it: `{PART}#{SLUG}`.\n"
-                ),
+                "Naming none: `#a-decision`.\n\
+                 Naming a component that is not declared: `nothing-declares-this#a-decision`.\n\
+                 Naming one that does not define it: `a-part#a-decision`.\n"
+                    .to_string(),
             ),
         ]);
         assert_eq!(found.len(), 3, "{found:#?}");
@@ -246,11 +239,11 @@ mod tests {
         let found = findings(vec![
             (
                 "docs/design/one-subject.md",
-                format!("{}\nIt rests on `{PART}#{SLUG}`.\n", head(SLUG)),
+                format!("{}\nIt rests on `a-part#a-decision`.\n", head()),
             ),
             (
-                &format!("parts/{PART}/docs/design/one-subject.md"),
-                format!("{}\nIt rests on `{ROOT}#{SLUG}`.\n", head(SLUG)),
+                "parts/a-part/docs/design/one-subject.md",
+                format!("{}\nIt rests on `a-project#a-decision`.\n", head()),
             ),
         ]);
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
@@ -260,7 +253,7 @@ mod tests {
     fn the_design_directorys_readme_is_not_a_definition_home() {
         // The README is the head and the table of contents. A decision recorded there
         // competes with the subdocuments as a home, which is what the split exists to end.
-        let found = findings(vec![("docs/design/README.md", head(SLUG))]);
+        let found = findings(vec![("docs/design/README.md", head())]);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
             found[0].contains("outside its component's design home"),
@@ -273,7 +266,7 @@ mod tests {
         // The rule matches the owning component's own paths, never a filename suffix: a
         // suffix match accepted a slug in any file whose name ends in `design.md`, which a
         // plan document's can.
-        let found = findings(vec![("notes/a-plan-design.md", head(SLUG))]);
+        let found = findings(vec![("notes/a-plan-design.md", head())]);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
             found[0].starts_with("notes/a-plan-design.md:1"),
@@ -290,7 +283,7 @@ mod tests {
         // The fixture path ends with the home's whole path, component by component. The
         // match is against the owning component's own document, so the suffix shape is as
         // foreign as any other file.
-        let found = findings(vec![("notes/docs/design.md", head(SLUG))]);
+        let found = findings(vec![("notes/docs/design.md", head())]);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
             found[0].contains("outside its component's design home"),
@@ -304,14 +297,14 @@ mod tests {
         // the report is concerned, and counting the mentions would make the two numbers read
         // as a coverage ratio they are not.
         let docs = vec![
-            (PathBuf::from("docs/design.md"), head(SLUG)),
+            (PathBuf::from("docs/design.md"), head()),
             (
                 PathBuf::from("docs/open-issues.md"),
-                format!("`{ROOT}#{SLUG}` and again `{ROOT}#{SLUG}`.\n"),
+                "`a-project#a-decision` and again `a-project#a-decision`.\n".to_string(),
             ),
             (
                 PathBuf::from("README.md"),
-                format!("`{ROOT}#{SLUG}` a third time.\n"),
+                "`a-project#a-decision` a third time.\n".to_string(),
             ),
         ];
         let model = Model::from_documents(docs);

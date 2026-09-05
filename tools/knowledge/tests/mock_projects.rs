@@ -5,12 +5,11 @@
 //! than the in-memory ones — a fixture written as a string cannot exercise the walk, the
 //! exclusions, or a layout different from this repository's.
 //!
-//! It is also what stops fixtures leaking. This file and the projects beside it sit under
-//! `tools/knowledge/tests`, which this repository's own manifest excludes, so a planted slug,
-//! a dangling path or a rule number here is invisible to the checks that run on the
-//! repository. Written as a literal into a test that IS walked, each of those would be a real
-//! anchor, a real broken reference and a real citation — which is what happened before this
-//! directory existed, four times, each caught by a checker rather than by review.
+//! It is also why the directory stays excluded. This file and the projects beside it sit under
+//! `tools/knowledge/tests`, which this repository's own manifest excludes: each mock project is
+//! a complete foreign project, and its planted defects — a slug, a dangling path, a rule number
+//! with no quote — must be reported by the test that runs the tool over it, never as this
+//! repository's own.
 //!
 //! Cargo compiles `tests/*.rs`, so this file is a test target and `projects/` beside it is
 //! not: a directory without a `main.rs` is data.

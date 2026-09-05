@@ -81,14 +81,10 @@ pub fn run(manifest: &Manifest, command: &RulesCommand) -> Result<ExitCode, Stri
 /// this returns is a citation the checker resolves rather than a rendering of one — which is
 /// the whole property, since the caller pastes it into a document.
 fn quoted(number: &RuleNumber, body: &str) -> String {
-    // Bound to a name rather than written inline, because an unbound literal is prose the
-    // scanner reads: inline, this format string is a blockquote holding no rule text, which
-    // is exactly the finding the convention exists to raise.
-    const BLOCKQUOTE: &str = ">";
     // A section head prints its dot, and the blockquote form needs it: a caller pastes what
     // this prints, and three bare digits opening a blockquote read as commentary.
     let dot = if number.is_section() { "." } else { "" };
-    format!("{BLOCKQUOTE} {number}{dot} {body}")
+    format!("> {number}{dot} {body}")
 }
 
 /// The pinned text of one or more rules, shaped to be quoted.
@@ -496,6 +492,9 @@ fn today() -> String {
 mod tests {
     use super::*;
 
+    // Every fixture is inline: the checker reads no string literal of its own source, per
+    // `knowledge#checker-source-literals-are-data`.
+
     #[test]
     fn the_effective_report_names_a_re_export_only_when_the_lines_agree() {
         // The mutation this guards against: inverting the agreement test, which would call a
@@ -549,12 +548,9 @@ mod tests {
 
     #[test]
     fn a_citing_list_is_read_out_of_the_pre_bump_index() {
-        // Bound, so the numbers are fixture data: an index line and a lookup key, not
-        // claims about what either rule says.
-        const RULE: &str = "104.4b";
-        const ABSENT: &str = "900.1";
-        let index = format!("| `{RULE}` | 2 | one.md · A<br>two.md |\n");
-        let n = RuleNumber::parse(RULE).expect("a rule number");
+        // An index line and a lookup key, not claims about what either rule says.
+        let index = "| `104.4b` | 2 | one.md · A<br>two.md |\n";
+        let n = RuleNumber::parse("104.4b").expect("a rule number");
         let cited_by = |rule: &RuleNumber| -> String {
             index
                 .lines()
@@ -564,7 +560,7 @@ mod tests {
                 .unwrap_or_else(|| "(not cited)".to_string())
         };
         assert_eq!(cited_by(&n), "one.md · A, two.md");
-        let absent = RuleNumber::parse(ABSENT).expect("a rule number");
+        let absent = RuleNumber::parse("900.1").expect("a rule number");
         assert_eq!(cited_by(&absent), "(not cited)");
     }
 

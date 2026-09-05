@@ -338,7 +338,6 @@ fn rules_show_prints_the_release_typography_and_not_the_folded_form() {
 /// other than what was asked.
 #[test]
 fn an_invalid_invocation_exits_two_and_runs_nothing() {
-    // Bound, so the dates are fixture data rather than prose.
     const OLD: &str = "20200101";
     const NEW: &str = "20200102";
     let invalid: [&[&str]; 6] = [
@@ -374,8 +373,7 @@ fn help_answers_from_outside_a_project() {
     }
 }
 
-/// The concern file the interpretation index needs a row for. No rule number in it: this file
-/// is inside the walk, and a number in an unbound literal is prose the scanner reads.
+/// The concern file the interpretation index needs a row for.
 const CONCERN: &str = "\
 # One concern
 

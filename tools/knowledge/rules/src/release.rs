@@ -323,14 +323,13 @@ mod tests {
     fn a_digest_mismatch_refuses_the_bytes_and_clears_the_cache() {
         // The refusal is the property the manifest exists for; a mutant that disables it
         // must fail here, not survive the suite.
-        const DATE: &str = "19980102";
         let dir = std::env::temp_dir().join("knowledge-release-mismatch-test");
         std::fs::create_dir_all(&dir).expect("a scratch directory");
         let manifest = dir.join("MANIFEST.tsv");
         std::fs::write(
             &manifest,
             format!(
-                "{DATE}\thttps://e.test/r.txt\t{}\t2026-01-01\n",
+                "19980102\thttps://e.test/r.txt\t{}\t2026-01-01\n",
                 sha256(b"what the manifest recorded\n")
             ),
         )
@@ -342,9 +341,9 @@ mod tests {
             dir.join("past"),
             manifest,
         );
-        let cache = std::env::temp_dir().join(format!("MagicCompRules-{DATE}.txt"));
+        let cache = std::env::temp_dir().join("MagicCompRules-19980102.txt");
         std::fs::write(&cache, b"something else entirely\n").expect("a seeded cache");
-        let err = resolve(&tree, DATE).expect_err("the digests differ");
+        let err = resolve(&tree, "19980102").expect_err("the digests differ");
         assert!(err.contains("does not match"), "{err}");
         assert!(!cache.exists(), "the refused cache is cleared");
     }
@@ -354,7 +353,6 @@ mod tests {
         // A scratch corpus whose manifest records the digest of the FOLDED text, and a cache
         // seeded with the raw BOM+CRLF bytes Wizards would serve. Resolving must fold before
         // comparing, or the digest check refuses the exact bytes the publisher sends.
-        const DATE: &str = "19980101";
         let folded = b"the rules text\n";
         let dir = std::env::temp_dir().join("knowledge-release-fold-test");
         std::fs::create_dir_all(&dir).expect("a scratch directory");
@@ -362,7 +360,7 @@ mod tests {
         std::fs::write(
             &manifest,
             format!(
-                "{DATE}\thttps://e.test/r.txt\t{}\t2026-01-01\n",
+                "19980101\thttps://e.test/r.txt\t{}\t2026-01-01\n",
                 sha256(folded)
             ),
         )
@@ -374,9 +372,9 @@ mod tests {
             dir.join("past"),
             manifest,
         );
-        let cache = std::env::temp_dir().join(format!("MagicCompRules-{DATE}.txt"));
+        let cache = std::env::temp_dir().join("MagicCompRules-19980101.txt");
         std::fs::write(&cache, b"\xef\xbb\xbfthe rules text\r\n").expect("a seeded cache");
-        let path = resolve(&tree, DATE).expect("the folded digest matches");
+        let path = resolve(&tree, "19980101").expect("the folded digest matches");
         assert_eq!(std::fs::read(&path).expect("the resolved file"), folded);
         let _ = std::fs::remove_file(&cache);
     }
@@ -402,7 +400,6 @@ mod tests {
         // Pins the reproduction the open issue names: with no row to compare against, the
         // seeded bytes come back. The digest is reported, not verified — so a change that
         // starts verifying them has to edit this test, which is the point of having it.
-        const DATE: &str = "19980103";
         let dir = std::env::temp_dir().join("knowledge-release-unknown-test");
         std::fs::create_dir_all(&dir).expect("a scratch directory");
         let manifest = dir.join("MANIFEST.tsv");
@@ -414,9 +411,9 @@ mod tests {
             dir.join("past"),
             manifest,
         );
-        let cache = std::env::temp_dir().join(format!("MagicCompRules-{DATE}.txt"));
+        let cache = std::env::temp_dir().join("MagicCompRules-19980103.txt");
         std::fs::write(&cache, b"arbitrary bytes\n").expect("a seeded cache");
-        let path = resolve(&tree, DATE).expect("an unknown release resolves from the cache");
+        let path = resolve(&tree, "19980103").expect("an unknown release resolves from the cache");
         assert_eq!(
             std::fs::read(&path).expect("the resolved file"),
             b"arbitrary bytes\n"

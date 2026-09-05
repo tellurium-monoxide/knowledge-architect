@@ -403,6 +403,9 @@ mod tests {
     use super::*;
     use std::path::PathBuf;
 
+    // Every fixture is inline: the checker reads no string literal of its own source, per
+    // `knowledge#checker-source-literals-are-data`.
+
     /// A declaration whose rules directory and register directory are one level deep.
     fn declaring() -> Manifest {
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
@@ -419,10 +422,9 @@ mod tests {
         // A markdown link a renderer follows, with the upward segments the index's own
         // directory requires — legal here because the generated files sit outside the walk
         // and regenerate, so the link cannot go stale.
-        const RULE: &str = "100.1";
-        let corpus = Corpus::parse(&format!("{RULE} A mock rule body.\n"), 0);
+        let corpus = Corpus::parse("100.1 A mock rule body.\n", 0);
         let doc = "parts/x/doc.md";
-        let model = Model::from_documents(vec![(PathBuf::from(doc), format!("per CR:{RULE}\n"))]);
+        let model = Model::from_documents(vec![(PathBuf::from(doc), "per CR:100.1\n".to_string())]);
         let index = rule_index(&model, &declaring(), &corpus, "20200101");
         let row = format!("[{doc}](../{doc})");
         assert!(index.contains(&row), "{index}");
@@ -456,18 +458,16 @@ mod tests {
     #[test]
     fn a_blockquoted_number_is_read_from_its_bold_marker() {
         // An entry's primary rule is written this way and often carries no marker anywhere.
-        // Interpolated, never spelled out: a literal here is a citation of this file.
-        const RULE: &str = "104.4b";
-        // Bound, not written into the call: a blockquote handed straight to a function is a
-        // blockquote of this file, and the check over commentary reads it.
-        const QUOTED: &str = "> **104.4b** If a game…";
-        const STOPPED: &str = "> **104.4b.** With a stop";
-        const PLAIN: &str = "> plain quoted text";
-        let unquoted = format!("**{RULE}** not in a blockquote");
-        assert_eq!(blockquoted_number(QUOTED).as_deref(), Some(RULE));
-        assert_eq!(blockquoted_number(STOPPED).as_deref(), Some(RULE));
-        assert!(blockquoted_number(PLAIN).is_none());
-        assert!(blockquoted_number(&unquoted).is_none());
+        assert_eq!(
+            blockquoted_number("> **104.4b** If a game…").as_deref(),
+            Some("104.4b")
+        );
+        assert_eq!(
+            blockquoted_number("> **104.4b.** With a stop").as_deref(),
+            Some("104.4b")
+        );
+        assert!(blockquoted_number("> plain quoted text").is_none());
+        assert!(blockquoted_number("**104.4b** not in a blockquote").is_none());
     }
 
     #[test]

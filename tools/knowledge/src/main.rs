@@ -631,8 +631,8 @@ mod tests {
     use crate::corpus_cmd::RulesCommand;
     use clap::Parser;
 
-    // Bound to names, so these are fixture data rather than citations: a rule number in an
-    // unbound string literal is prose the scanner reads, and this file is inside the walk.
+    // Arguments handed to the parser, and what it must hand back: each is named because it
+    // appears on both sides of an assertion.
     const RULE: &str = "601.2";
     const ANOTHER_RULE: &str = "104.1";
     const OLD: &str = "20260807";
