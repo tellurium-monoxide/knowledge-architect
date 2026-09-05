@@ -63,13 +63,43 @@ contains it, and matching nothing exits 1.
 
 ## `index`
 
-Regenerates every generated index in place, from one walk. It takes no flags and **writes only
-where the bytes differ**, naming each file it rewrote:
+Regenerates every generated index in place, from one walk: the rule index, and one `index.md` per
+file-register instance whose directory is there. It takes no flags and **writes only where the
+bytes differ**, naming each file it rewrote:
 
 ```
 $ cargo knowledge index
 docs/rules/index.md                      rewritten
+docs/rules/interpretations/index.md      already current
 ```
+
+**A file-register index is a fixed shape, and its bytes are a contract**, per
+`knowledge#a-file-register-index-is-rows`:
+
+```markdown
+**Generated — do not edit.** `cargo knowledge index`
+
+2 entries
+
+| kind | title |
+| --- | --- |
+| defect | [A thing that is broken](a-thing-that-is-broken.md) |
+
+## a-group
+
+| kind | title |
+| --- | --- |
+| todo | [Work left undone](a-group/work-left-undone.md) |
+```
+
+The columns are the register's declared metadata keys ordered by name, then the title as a link
+relative to the index's own directory. Ungrouped entries come first, under no heading; rows sort by
+the first metadata key and then by id. No summary and no date: a row changes on create, delete,
+retitle, regroup and a metadata change, and on nothing else.
+
+**Every generated index is outside the walk**, the rule index by a `[walk] skip-files` row and a
+file-register index by construction — the tool derives that set from the register instances, so no
+manifest row names one and none can be created inside the walk.
 
 Running it to look therefore costs nothing, not even an mtime. **Whether a generated file is
 current is not this command's question** — that is `cargo knowledge check --only generated`, which

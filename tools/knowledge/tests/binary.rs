@@ -383,7 +383,14 @@ fn help_answers_from_outside_a_project() {
 #[test]
 fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
     let sandbox = Sandbox::new("index", "minimal");
-    let generated = ["corpus/index.md"];
+    // The rule index, which the mock does not carry, and one per file-register instance,
+    // which it does. One invocation writes every one of them.
+    let generated = [
+        "corpus/index.md",
+        "docs/open-issues/index.md",
+        "notes/open-issues/index.md",
+        "notes/readings/index.md",
+    ];
 
     let (first, stderr, code) = sandbox.run(&["index"]);
     assert_eq!(code, 0, "{stderr}");
@@ -396,7 +403,12 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
     assert_eq!(
         first.matches("rewritten").count(),
         1,
-        "the file did not exist, so it was written: {first}"
+        "only the rule index did not exist, so only it was written: {first}"
+    );
+    assert_eq!(
+        first.matches("already current").count(),
+        generated.len() - 1,
+        "the committed file-register indexes are what the generator produces: {first}"
     );
 
     let before: Vec<SystemTime> = generated
@@ -408,7 +420,7 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
     assert_eq!(code, 0);
     assert_eq!(
         second.matches("already current").count(),
-        1,
+        generated.len(),
         "nothing moved, so nothing was written: {second}"
     );
     for (rel, was) in generated.iter().zip(&before) {
@@ -419,16 +431,25 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
         );
     }
 
-    // The other half: the skip is a comparison, not a refusal to write a file twice.
-    std::fs::write(sandbox.path(generated[0]), "stale\n").expect("a stale index");
+    // The other half: the skip is a comparison, not a refusal to write a file twice. Both
+    // kinds of index are staled, so neither is held current by the other.
+    for rel in [generated[0], generated[1]] {
+        std::fs::write(sandbox.path(rel), "stale\n").expect("a stale index");
+    }
     let (third, _, _) = sandbox.run(&["index"]);
-    assert_eq!(third.matches("rewritten").count(), 1, "{third}");
-    assert_eq!(third.matches("already current").count(), 0, "{third}");
-    assert_ne!(
-        std::fs::read_to_string(sandbox.path(generated[0])).expect("the index"),
-        "stale\n",
-        "the file that moved was regenerated"
+    assert_eq!(third.matches("rewritten").count(), 2, "{third}");
+    assert_eq!(
+        third.matches("already current").count(),
+        generated.len() - 2,
+        "{third}"
     );
+    for rel in [generated[0], generated[1]] {
+        assert_ne!(
+            std::fs::read_to_string(sandbox.path(rel)).expect("the index"),
+            "stale\n",
+            "{rel} moved and was regenerated"
+        );
+    }
 }
 
 /// Two issues and one tripwire, so the counts differ and a selection returning the wrong kind

@@ -159,7 +159,8 @@ impl Model {
             .cloned();
         let walk_config = manifest.walk();
         let mut docs = Vec::new();
-        for path in walk::live_files(root, walk_config, manifest.ignore())? {
+        let generated = crate::index::generated_index_paths(manifest);
+        for path in walk::live_files(root, walk_config, manifest.ignore(), &generated)? {
             let rel_for_error = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
             let text = match std::fs::read_to_string(&path) {
                 Ok(t) => t,

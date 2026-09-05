@@ -33,6 +33,9 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
     let mut present = HashSet::new();
     let mut directories = HashSet::new();
     let mut outside = Vec::new();
+    // A generated index is outside the walk by construction, and outside the inverse
+    // assertion with it: its rows are a function of the tree rather than a claim anybody wrote.
+    let generated = crate::index::generated_index_paths(manifest);
     let mut stack = vec![root.to_path_buf()];
     while let Some(dir) = stack.pop() {
         for entry in std::fs::read_dir(&dir)? {
@@ -76,7 +79,8 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
             let skipped = walk.skip_dirs.iter().any(|d| rel.starts_with(d))
                 || walk.skip_files.contains(&rel)
                 || walk.exclude.iter().any(|e| rel.starts_with(e))
-                || manifest.ignore().covers(&rel, false);
+                || manifest.ignore().covers(&rel, false)
+                || generated.contains(&rel);
             if !skipped && !covered.contains(rel.as_path()) {
                 if let Ok(text) = std::fs::read_to_string(&path) {
                     outside.push((rel, text));

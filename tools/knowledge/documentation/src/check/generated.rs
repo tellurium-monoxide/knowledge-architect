@@ -17,20 +17,32 @@ use crate::model::Model;
 use super::Inputs;
 
 /// Compare each generated file with what it would be generated as now.
+///
+/// **The rule index is gated on the vendored release and the file-register indexes are not.**
+/// A run that could not resolve the release still judges every index whose generator reads the
+/// model alone, because a family that reported nothing would say the listings are current.
 pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding> {
     let mut findings = Vec::new();
-    let Some(vendored) = inputs.releases.get(&None) else {
-        return findings;
-    };
 
-    let rule_index = manifest.rules().dir.join("index.md");
-    compare(
-        &rule_index,
-        &index::rule_index(model, manifest, &vendored.rules, inputs.pinned),
-        inputs,
-        "regenerate it and read the diff: it is the work list a release bump reads",
-        &mut findings,
-    );
+    if let Some(vendored) = inputs.releases.get(&None) {
+        compare(
+            &manifest.rules().dir.join("index.md"),
+            &index::rule_index(model, manifest, &vendored.rules, inputs.pinned),
+            inputs,
+            "regenerate it and read the diff: it is the work list a release bump reads",
+            &mut findings,
+        );
+    }
+    for (rel, expected) in index::file_register_indexes(model, manifest, inputs.directories) {
+        compare(
+            &rel,
+            &expected,
+            inputs,
+            "run `cargo knowledge index`; the listing is a function of the entries beside it, \
+             and a hand edit is what this reports",
+            &mut findings,
+        );
+    }
     findings
 }
 

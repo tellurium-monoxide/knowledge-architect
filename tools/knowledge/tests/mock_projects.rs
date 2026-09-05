@@ -62,21 +62,55 @@ fn the_walk_obeys_the_project_that_declares_it() {
             "docs/design.md".to_string(),
             "docs/goals.md".to_string(),
             "docs/open-issues/README.md".to_string(),
-            "docs/open-issues/index.md".to_string(),
             "docs/open-issues/the-mock-has-one-issue.md".to_string(),
             "docs/rejected-alternatives.md".to_string(),
             "docs/tripwires.md".to_string(),
             "notes/a.md".to_string(),
             "notes/b.md".to_string(),
             "notes/open-issues/README.md".to_string(),
-            "notes/open-issues/index.md".to_string(),
             "notes/open-issues/the-notes-are-not-a-component.md".to_string(),
             "notes/readings/README.md".to_string(),
-            "notes/readings/index.md".to_string(),
             "notes/readings/one-concern/a-reading-the-mock-records.md".to_string(),
         ],
-        "the walk should hold every markdown and Rust file, minus every exclusion"
+        "the walk should hold every markdown and Rust file, minus every exclusion and \
+         every generated index"
     );
+}
+
+/// A generated index leaves the walk because the tool derives the set from the register
+/// instances, and no manifest row names one.
+///
+/// Both halves matter. Inside the walk, the rows of a listing would be read as this project's
+/// own claims; inside the inverse assertion of `uncovered`, they would be reported as a file no
+/// checker reads. The mock declares one `skip-files` row and it names neither index.
+#[test]
+fn a_generated_index_is_outside_the_walk_and_outside_the_inverse_assertion() {
+    let manifest = mock("minimal");
+    let model = model("minimal");
+    let generated = documentation::index::generated_index_paths(&manifest);
+    assert_eq!(generated.len(), 3, "{generated:?}");
+    for rel in &generated {
+        assert!(
+            !manifest.walk().skip_files.contains(rel),
+            "{} is declared, not derived",
+            rel.display()
+        );
+    }
+    let walked = walked(&model);
+    let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+    for rel in &generated {
+        let name = rel.display().to_string();
+        assert!(
+            std::path::Path::new(&manifest.root().join(rel)).exists(),
+            "{name} should be a file the mock carries"
+        );
+        assert!(!walked.contains(&name), "{name} should not be walked");
+        assert!(
+            !survey.outside.iter().any(|(p, _)| p == rel),
+            "{name} should not be reported as a file no checker reads"
+        );
+        assert!(survey.present.contains(rel), "{name} still exists");
+    }
 }
 
 #[test]
@@ -354,10 +388,17 @@ mod planted {
         model: &Model,
         corpus: &rules::Corpus,
     ) -> HashMap<PathBuf, String> {
-        HashMap::from([(
+        let survey = documentation::survey::survey(manifest, model).expect("a survey of the mock");
+        let mut out = HashMap::from([(
             manifest.rules().dir.join("index.md"),
             index::rule_index(model, manifest, corpus, "20200101"),
-        )])
+        )]);
+        out.extend(index::file_register_indexes(
+            model,
+            manifest,
+            &survey.directories,
+        ));
+        out
     }
 
     fn findings_with(
@@ -424,7 +465,10 @@ mod planted {
         // the six definition-site findings the entity table produces.
         (Only::REGISTERS, 16, "PLANTED"),
         (Only::UNCOVERED, 1, "is outside the walk"),
-        (Only::GENERATED, 1, "the generated file is missing"),
+        // Three generated files: the rule index, and one index per file-register instance
+        // whose directory is there. Every family is handed an empty committed set, so each
+        // is reported missing.
+        (Only::GENERATED, 3, "the generated file is missing"),
         (Only::REGIME, 20, "with no verified quote of it in range"),
     ];
 
@@ -596,13 +640,87 @@ mod planted {
         assert!(hits[0].starts_with("corpus/index.md:1"), "{}", hits[0]);
     }
 
+    /// A file-register index is judged the same way, and by its own bytes.
+    ///
+    /// The hand edit is in the rows rather than in the banner, because the banner is the one
+    /// line a generator that produced nothing at all would still get right.
+    #[test]
+    fn a_hand_edited_file_register_index_is_reported_at_the_line_that_was_edited() {
+        let path = PathBuf::from("parts/widget/docs/open-issues/index.md");
+        let edited = findings_with(|m, model, corpus| {
+            let mut c = current_indexes(m, model, corpus);
+            let text = c[&path].replace("| todo |", "| defect |");
+            c.insert(path.clone(), text);
+            c
+        });
+        let hits: Vec<&String> = edited
+            .iter()
+            .filter(|f| f.contains("out of date"))
+            .collect();
+        assert_eq!(hits.len(), 1, "{edited:#?}");
+        // The banner, the blank line, the count, the blank line, the header, the rule, the
+        // row: the edit is in the row and the finding names it.
+        assert!(
+            hits[0].starts_with("parts/widget/docs/open-issues/index.md:7"),
+            "{}",
+            hits[0]
+        );
+    }
+
+    /// The index committed beside the widget's issue instance still says the instance is
+    /// empty, and an entry sits beside it. This is the planted defect for a stale listing, and
+    /// it is read off the tree rather than supplied, so nothing but the generator decides it.
+    #[test]
+    fn an_index_the_tree_holds_stale_is_reported_against_the_bytes_on_disk() {
+        let manifest = mock("planted");
+        let model = Model::build(&manifest, None).expect("a model");
+        let survey =
+            documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+        let generated = index::file_register_indexes(&model, &manifest, &survey.directories);
+        let path = PathBuf::from("parts/widget/docs/open-issues/index.md");
+        let (_, expected) = generated
+            .iter()
+            .find(|(rel, _)| *rel == path)
+            .expect("the widget instance is generated");
+        let text =
+            std::fs::read_to_string(manifest.root().join(&path)).expect("the committed index");
+        assert_ne!(&text, expected, "the planted index is stale");
+        assert!(text.contains("0 entries"), "{text}");
+        assert!(expected.contains("1 entries"), "{expected}");
+
+        // And the family reports it, over the bytes the tree holds rather than over a map a
+        // test wrote: the count line is line three, and that is what the finding names.
+        let stale = findings_of(
+            |m, _, _| {
+                let mut out = HashMap::new();
+                for rel in index::generated_index_paths(m) {
+                    if let Ok(text) = std::fs::read_to_string(m.root().join(&rel)) {
+                        out.insert(rel, text);
+                    }
+                }
+                out
+            },
+            Only::GENERATED,
+        );
+        assert_eq!(
+            stale,
+            vec![
+                "corpus/index.md  the generated file is missing".to_string(),
+                "docs/open-issues/index.md  the generated file is missing".to_string(),
+                "parts/widget/docs/open-issues/index.md:3  the generated file is out of date"
+                    .to_string(),
+            ],
+            "{stale:#?}"
+        );
+    }
+
     #[test]
     fn a_generated_file_that_is_absent_is_reported_as_missing() {
         let gone = findings_with(|_, _, _| HashMap::new());
         assert_eq!(
             gone.iter().filter(|f| f.contains("is missing")).count(),
-            1,
-            "the one generated file: {gone:#?}"
+            3,
+            "the rule index and the two file-register indexes: {gone:#?}"
         );
     }
 
@@ -821,7 +939,7 @@ mod planted {
         );
         // Every planted defect found and nothing else, counted against `PLANTED` so the two
         // cannot drift apart. Taken over the same empty set of committed files that table is
-        // stated against, which is what gives `generated` its two findings.
+        // stated against, which is what gives `generated` its three findings.
         let planted: usize = PLANTED.iter().map(|(_, n, _)| n).sum();
         let whole = findings_of(|_, _, _| HashMap::new(), Only::EVERYTHING);
         assert_eq!(whole.len(), planted, "{whole:#?}");

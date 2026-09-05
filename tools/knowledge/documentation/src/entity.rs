@@ -621,7 +621,7 @@ impl Entities {
 ///
 /// `None` for anything that is not an entry: a file outside the instance, a file of another
 /// suffix, and the two navigation files at the instance's own top level.
-fn entry_id(rel: &Path, dir: &Path) -> Option<String> {
+pub fn entry_id(rel: &Path, dir: &Path) -> Option<String> {
     let inside = rel.strip_prefix(dir).ok()?;
     if rel.extension().is_none_or(|e| e != "md") {
         return None;

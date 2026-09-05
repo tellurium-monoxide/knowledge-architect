@@ -250,6 +250,16 @@ README holds the directory open, because the rows change only on create, delete,
 and a metadata change — not on a wording edit — so the churn the argument feared does not happen.
 An optional index is also an opt-out, which `knowledge#the-regime-has-no-opt-out` refuses.
 
+**A summary column, or a last-change date, in a file register's index** — lost to
+`knowledge#a-file-register-index-is-rows`. `live`. Either would let a reader take in what an
+instance holds without opening a file, which is the whole point of a listing. The summary loses on
+churn: it changes on every wording edit of every entry, so an index that today is regenerated on
+create, delete, retitle, regroup and a metadata change would go stale on each one and fail the gate.
+The date loses outright to `knowledge#generated-files-are-pure`: the last change is git's, not the
+walked tree's, so a generator reading it would rewrite the file on a rebase and report a file stale
+that nobody had touched. Both are answered by a command instead, `issues` for the dates and
+`show <ref>` for the body.
+
 **Per-instance register options declared at the root, in the project's own instance** — lost to
 `knowledge#registers-are-declared`. `live`. It puts every option in one place beside the
 manifest, with no second configuration file to find. It loses on where the file would sit: the

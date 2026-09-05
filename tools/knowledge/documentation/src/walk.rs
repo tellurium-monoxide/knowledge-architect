@@ -3,6 +3,7 @@
 //! What a line MEANS is `source`'s: the grammar for the file's kind says which byte ranges
 //! are prose, so nothing here strips a prefix off anything.
 
+use std::collections::HashSet;
 use std::path::{Component, Path, PathBuf};
 
 use crate::gitignore::Ignore;
@@ -13,10 +14,20 @@ use crate::manifest::Walk;
 /// A hand-maintained list cannot survive a source tree, so the set is a walk with an
 /// exclusion set rather than an inclusion one: a new document is covered the moment it
 /// exists, and a file that should be exempt has to say so here, in one place, with a reason.
-pub fn live_files(root: &Path, walk: &Walk, ignore: &Ignore) -> std::io::Result<Vec<PathBuf>> {
+///
+/// `generated` is every path the tool writes a generated index at, taken from the register
+/// instances. Those are **outside the walk by construction** rather than by a declared row: a
+/// generated file is not a source of citations, and deriving the set from the instances is what
+/// keeps a new instance from arriving with its index inside the walk.
+pub fn live_files(
+    root: &Path,
+    walk: &Walk,
+    ignore: &Ignore,
+    generated: &HashSet<PathBuf>,
+) -> std::io::Result<Vec<PathBuf>> {
     let excluded: Vec<PathBuf> = walk.exclude.iter().map(|p| root.join(p)).collect();
     let mut out = Vec::new();
-    collect(root, root, walk, ignore, &excluded, &mut out)?;
+    collect(root, root, walk, ignore, &excluded, generated, &mut out)?;
     // Sorted by path COMPONENT, not by the path as one string. They disagree whenever one
     // directory name is a prefix of another — a/b against a-c/d, where `-` sorts before
     // `/` — and component order is what the walk being replaced produced.
@@ -34,6 +45,7 @@ fn collect(
     walk: &Walk,
     ignore: &Ignore,
     excluded: &[PathBuf],
+    generated: &HashSet<PathBuf>,
     out: &mut Vec<PathBuf>,
 ) -> std::io::Result<()> {
     for entry in std::fs::read_dir(dir)? {
@@ -53,9 +65,9 @@ fn collect(
         }
         if path.is_dir() {
             if !walk.skip_dirs.contains(&rel) {
-                collect(root, &path, walk, ignore, excluded, out)?;
+                collect(root, &path, walk, ignore, excluded, generated, out)?;
             }
-        } else if is_live(&path, &rel, walk) {
+        } else if is_live(&path, &rel, walk) && !generated.contains(&rel) {
             out.push(path);
         }
     }

@@ -55,6 +55,14 @@ that one.
 comparing rather than by writing the file and reading it back. Two things follow, and both are
 load-bearing.
 
+**One list names them, and the writer and the gate both read it.** `cargo knowledge index` and
+`check --only generated` take the same pairs of destination and expected bytes, so neither can
+generate a file the other does not know about, nor disagree about what is in one. The rule index
+is the manifest's `[rules] dir` plus `index.md`; every other one is derived from the file-register
+instances, one per instance whose directory is there. **An instance with no directory contributes
+no index**: generating into it would create a register home as a side effect of a listing, and the
+missing home is what `check::registers` reports.
+
 **Writing one destroys nothing**, so `cargo knowledge index` takes no flags. The dry run a write
 command normally owes exists because a write can lose something, and here it cannot: the worst a
 run can do is replace a file with what the tree says that file is. It writes only where the bytes
@@ -220,6 +228,39 @@ adding one is a reviewed manifest diff. The kind decides which subsections the e
 unknown one would owe the wrong three in silence, which is what makes refusing it load-bearing
 rather than tidy. The open set is in `knowledge@docs/rejected-alternatives.md`, and
 `knowledge@docs/tripwires.md` guards the closing.
+
+### A file register's index is a banner, a count and one row per entry, and its bytes are the contract `##a-file-register-index-is-rows`
+
+The generated `index.md` of a file-register instance, in order:
+
+| line | content |
+| --- | --- |
+| 1 | `**Generated — do not edit.** \`cargo knowledge index\`` |
+| 2 | blank |
+| 3 | `<n> entries`, over every entry of the instance, grouped or not |
+| then | the ungrouped entries' table, under no heading |
+| then | per group, a blank line, `## <group>`, and that group's table |
+
+A table's columns are the register's declared metadata keys, **ordered by name**, then `title`
+holding the entry's level-one heading as a link to the file, relative to the index's own
+directory. Rows sort by the first metadata key and then by id, or by id alone where the register
+declares none. Groups sort by name, and the ungrouped entries come first.
+
+**The bytes are a contract because `generated` compares bytes.** Any change here fails the gate on
+every committed index at once, which is the cost of the comparison being exact; the gain is that a
+listing cannot drift by a character without being named.
+
+**Rows only: no summary and no date.** A row changes on create, delete, retitle, regroup and a
+metadata change, and on nothing else, so an index is regenerated rarely. A summary column would
+restale it on every wording edit, and a date would break
+`knowledge#generated-files-are-pure` outright. Both are in `knowledge@docs/rejected-alternatives.md`.
+
+**The rows come from the walked entries, not from the instance's declarations.** A group is the
+subdirectory an entry sits in, so an undeclared group still lists its entries and a declared group
+holding none prints no heading; an entry whose id, title or metadata the shape check refuses is
+still listed, under its basename and an empty cell. A listing that hid what the directory holds
+because a declaration disagreed would be a listing that stops listing, and the declaration is
+`check::registers`' to report.
 
 ### Which registers exist is the manifest's, and a register instance's own options sit beside it `##registers-are-declared`
 
@@ -627,6 +668,13 @@ intra-doc link.
 **The generated indexes emit links**, relative to their own directory, upward segments
 included. Generated text cannot go stale, which is what the upward ban on hand-written links
 exists against.
+
+**A generated index is outside the walk by construction, so its rows are read by nothing.** The
+tool derives the set from the register instances rather than from a declared row, which is why no
+`[walk] skip-files` row names a file-register index and a new instance cannot arrive with its
+index inside the walk. The rule index keeps its row, being the rules half's. Outside the walk also
+means outside the inverse assertion of the `uncovered` family: a listing is a function of the tree
+rather than a claim anybody wrote, so a rule number appearing in one is not an unquoted citation.
 
 ### The release watch learns the newest release from the page Wizards announces it on, and treats "no match" as a failure rather than as an answer `##watch-reads-the-page`
 

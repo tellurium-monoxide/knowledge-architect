@@ -184,10 +184,13 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
         }
     }
 
-    // The generated files are outside the walk — it excludes them by name, because a
-    // generated file is not a source of citations. They are read here so a check does not.
+    // The generated files are outside the walk — the rule index by a declared row, every
+    // file-register index by construction — because a generated file is not a source of
+    // citations. They are read here so a check does not.
     let mut committed = HashMap::new();
-    for rel in [manifest.rules().dir.join("index.md")] {
+    let mut generated_paths = vec![manifest.rules().dir.join("index.md")];
+    generated_paths.extend(documentation::index::generated_index_paths(manifest));
+    for rel in generated_paths {
         if let Ok(text) = std::fs::read_to_string(manifest.root().join(&rel)) {
             committed.insert(rel, text);
         }
@@ -319,12 +322,19 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
         .ok_or("VERSION names no date")?;
 
     // Every generated index in one invocation, so a flag choosing between them buys nothing
-    // and cannot be given an invalid combination. The file-register indexes join this list
-    // when they are generated.
-    let generated = [(
+    // and cannot be given an invalid combination: the rule index, then one per file-register
+    // instance. The survey answers which instance directories are there, and an instance
+    // without one contributes no index rather than having its home created here.
+    let survey = documentation::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
+    let mut generated = vec![(
         manifest.rules().dir.join("index.md"),
         documentation::index::rule_index(&model, manifest, &corpus, &pinned),
     )];
+    generated.extend(documentation::index::file_register_indexes(
+        &model,
+        manifest,
+        &survey.directories,
+    ));
 
     // Every destination is checked before any is written. A run that wrote one index and then
     // failed on the next exited 2 — could not run — having already changed the tree, which is
