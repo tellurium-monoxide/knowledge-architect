@@ -179,10 +179,11 @@ skill.
 — lost to `knowledge#generated-files-are-pure`. `live`. Refuted by a census over the file's whole
 history rather than by argument: `git log -p -- docs/rules/interpretations/index.md` matches no
 line-numbered citing row, so in every commit the index has ever had, the flag's output was never
-one of them. The index gates on **file-level** citing lists deliberately — that is what keeps it
-from moving when unrelated prose shifts a line — so per-line data stood against the argument for
-the file it sat in. What it would have bought is answered instead by filtering
-`cargo knowledge model` on the rule number.
+one of them. Every generated index gates on data that does not move when unrelated prose shifts a
+line — the interpretation index carries one row per entry, with no line and no citing list at all,
+and the rule index names its citing files at file level — so per-line data stood against the
+argument for the file it would have sat in. What it would have bought is answered instead by
+filtering `cargo knowledge model` on the rule number.
 
 **`cargo knowledge index` prints the diff it would apply, and `--write` applies it** — lost to
 `knowledge#generated-files-are-pure`. `live`. This is the `cargo fmt` / `cargo fmt --check` shape,
@@ -274,14 +275,14 @@ whole run would report nothing at all about the tree — and nothing at all is w
 as conformance. The two retired keys keep the refusal because there is no default to fall back on.
 
 **An open set of issue kinds, the label read off each entry as written** — lost to
-`knowledge#a-file-register-is-a-directory-of-entries`. `live`. It is the incumbent: the report
-reader derives an entry's label from the tag its own title carries rather than matching a list,
+`knowledge#a-file-register-is-a-directory-of-entries`. `live`. It was the incumbent: the listing
+derived an entry's label from the tag its own title carried rather than matching a list,
 because an entry written with a kind nobody anticipated is intended, and matching against a list
 made such an entry fall through to a label that is also a real kind. It loses once the kind
 decides which subsections an entry owes: an unanticipated kind then owes the wrong three, silently,
 and no reader can tell. A closed list makes an unknown kind a finding naming the list and an
 addition a reviewed manifest diff, which is what the concern list already did; the failure case the
-open set was written against — a wrong label — cannot occur once an unknown kind is refused. The
-module that carried the incumbent statement is gone: `knowledge@documentation/src/records.rs`
-replaces it, and reads each entry's kind out of its own frontmatter without a fallback label.
+open set was written against — a wrong label — cannot occur once an unknown kind is refused. No
+fallback label exists now: `knowledge@documentation/src/records.rs` reads each entry's kind out of
+its own frontmatter, and an entry that declares none has no kind rather than a wrong one.
 

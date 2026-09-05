@@ -19,8 +19,10 @@ use super::Inputs;
 /// Compare each generated file with what it would be generated as now.
 ///
 /// **The rule index is gated on the vendored release and the file-register indexes are not.**
-/// A run that could not resolve the release still judges every index whose generator reads the
-/// model alone, because a family that reported nothing would say the listings are current.
+/// The binary resolves the release before it calls this family, so no run of `check` reaches here
+/// without one; what the gate buys is that a caller assembling its own `Inputs` — every test here
+/// does — cannot silence the whole family by handing it no release, which would report the
+/// listings current without comparing a byte.
 pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding> {
     let mut findings = Vec::new();
 
@@ -86,6 +88,41 @@ fn first_difference(a: &str, b: &str) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_run_with_no_release_still_judges_the_file_register_indexes() {
+        use crate::manifest::Manifest;
+        use std::collections::{HashMap, HashSet};
+        use std::path::PathBuf;
+
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        let manifest = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        let model = Model::from_documents(Vec::new());
+        let releases = HashMap::new();
+        let committed = HashMap::new();
+        let configs = HashMap::new();
+        let present: HashSet<PathBuf> = HashSet::new();
+        let directories: HashSet<PathBuf> = [PathBuf::from("docs/open-issues")].into();
+        let inputs = Inputs {
+            releases: &releases,
+            pinned: "20200101",
+            committed: &committed,
+            configs: &configs,
+            present: &present,
+            directories: &directories,
+            outside: &[],
+        };
+        let found: Vec<String> = check(&model, &manifest, &inputs)
+            .iter()
+            .map(|f| f.location())
+            .collect();
+        // The issue instance's index, and not the rule index, which has no release to render.
+        assert_eq!(found, vec!["docs/open-issues/index.md".to_string()]);
+    }
 
     #[test]
     fn the_first_differing_line_is_reported() {

@@ -365,7 +365,14 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
     // failed on the next exited 2 — could not run — having already changed the tree, which is
     // the one place `thaum#exit-code-ladder`'s line blurs. A missing directory here is the
     // manifest declaring one the tree does not have; creating it would paper over that, and the
-    // components check is what reports it.
+    // registers check is what reports it.
+    //
+    // **The missing-directory arm is unreachable as the destinations stand**, and is kept for
+    // the next generator rather than for this one: a file-register index is generated only for
+    // an instance whose directory the survey found, and the rule index's directory holds the
+    // corpus text this function already failed to read. A generator whose destination sits
+    // outside both makes it reachable again, and there is nothing to construct for a test until
+    // one does.
     for (rel, _) in &generated {
         let path = manifest.root().join(rel);
         let dir = path

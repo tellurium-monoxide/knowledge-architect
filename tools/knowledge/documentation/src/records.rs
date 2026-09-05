@@ -415,6 +415,8 @@ mod tests {
                     ## The first one `##first`\n\n\
                     **Fires when:** it fires, guarding `design@a-project@a-decision`, and see \
                     `path@a-project@docs/design.md` and `issue@notes@a-thing`.\n\n\
+                    **Response:** reopen `design@a-project@a-decision`, and read \
+                    `design@a-project@another-one`.\n\n\
                     ## The second one `##second`\n\n\
                     **Fires when:** something else.\n";
         let found = rows(vec![("docs/tripwires.md", home)], "tripwire");
@@ -427,9 +429,19 @@ mod tests {
         assert!(first.body.contains("it fires"), "{}", first.body);
         assert!(!first.body.contains("something else"), "{}", first.body);
         assert!(!first.body.contains("# Tripwires"), "{}", first.body);
+        // Only the design references: a path and an issue reference sit beside them and are not
+        // decisions this tripwire guards. The first is written twice in the section and appears
+        // once, in the order the entry names them.
         assert_eq!(
             first.guards,
-            vec!["design@a-project@a-decision".to_string()]
+            vec![
+                "design@a-project@a-decision".to_string(),
+                "design@a-project@another-one".to_string(),
+            ]
+        );
+        assert_eq!(
+            first.guarding(),
+            "design@a-project@a-decision design@a-project@another-one"
         );
         let second = found.iter().find(|r| r.id == "second").expect("the second");
         assert!(second.guards.is_empty(), "{second:#?}");

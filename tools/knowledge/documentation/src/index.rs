@@ -222,7 +222,11 @@ pub fn file_register_index(model: &Model, register: &Register, home: &Home) -> S
             out.push_str(&format!("| {} |\n", vec!["---"; header.len()].join(" | ")));
         }
         let mut cells: Vec<String> = row.values.iter().map(|v| cell(v)).collect();
-        cells.push(format!("[{}]({})", cell(&row.title), row.link));
+        cells.push(format!(
+            "[{}]({})",
+            link_text(&row.title),
+            link_target(&row.link)
+        ));
         out.push_str(&format!("| {} |\n", cells.join(" | ")));
     }
     out
@@ -257,6 +261,40 @@ fn title(doc: &Document, id: &str) -> String {
 /// A value as one table cell: a pipe inside it would end the cell and shift every column.
 fn cell(text: &str) -> String {
     text.replace('|', r"\|")
+}
+
+/// A title as the text of a markdown link.
+///
+/// A `]` closes the link early, and a `(` after it is then read as the destination of the
+/// truncated link — so a title holding `](` **redirects the row at whatever it names**. The
+/// index is outside the walk by construction, so no link check would ever see it. A pipe ends
+/// the cell as it does anywhere else.
+fn link_text(text: &str) -> String {
+    let mut out = String::new();
+    for c in text.chars() {
+        if matches!(c, '|' | '[' | ']') {
+            out.push('\\');
+        }
+        out.push(c);
+    }
+    out
+}
+
+/// An entry's path as a link destination.
+///
+/// The pipe is the cell's, as everywhere. The inline destination form additionally ends at the
+/// first space and cannot hold an unbalanced parenthesis, so a path with either takes the
+/// angle-bracket form, which ends only at an unescaped `>`. Both are reachable through a group
+/// directory, whose name no grammar constrains.
+fn link_target(path: &str) -> String {
+    let escaped = path.replace('|', r"\|");
+    if escaped
+        .chars()
+        .any(|c| c.is_whitespace() || matches!(c, '(' | ')'))
+    {
+        return format!("<{}>", escaped.replace('<', r"\<").replace('>', r"\>"));
+    }
+    escaped
 }
 
 /// Every file-register index of the project, with the bytes it should hold.
@@ -483,6 +521,21 @@ mod tests {
     }
 
     #[test]
+    fn the_title_is_the_level_one_heading_and_not_the_first_heading_of_any_level() {
+        // A file register's entry owes a level-one title; one that opens on a deeper heading is
+        // a `registers` finding, and the index falls back to the id rather than promoting it.
+        let out = rendered(
+            vec![(
+                "notes/deep.md",
+                "---\nstatus: open\n---\n## A level-two opening\n\n# The real title\n",
+            )],
+            true,
+        );
+        assert!(out.contains("[The real title](deep.md)"), "{out}");
+        assert!(!out.contains("A level-two opening"), "{out}");
+    }
+
+    #[test]
     fn an_entry_with_no_value_and_no_title_still_takes_a_row() {
         // Both are `registers` findings. The index is a listing of what is there, so an entry
         // the shape check refuses is still listed, under its id and an empty cell.
@@ -491,18 +544,106 @@ mod tests {
     }
 
     #[test]
-    fn a_pipe_in_a_title_is_escaped_so_the_columns_do_not_shift() {
+    fn every_half_of_a_row_is_escaped_against_the_syntax_it_sits_in() {
+        // Each of these produces a well-formed entry that `registers` reports nothing about, so
+        // the index is the only thing standing between the tree and a corrupt table.
         let out = rendered(
-            vec![(
-                "notes/piped.md",
-                "---\nstatus: open\n---\n# A title with a | in it\n",
-            )],
+            vec![
+                (
+                    "notes/piped.md",
+                    "---\nstatus: open\n---\n# A title with a | in it\n",
+                ),
+                (
+                    "notes/bracket.md",
+                    // The dangerous one: `](` closes the link early and what follows becomes
+                    // the destination, so the row would point wherever the title says.
+                    "---\nstatus: open\n---\n# A title with ](evil.md) inside\n",
+                ),
+                (
+                    // A group name is a directory name, which no grammar constrains, and it
+                    // reaches the row through the link's destination.
+                    "notes/pi|pe/z.md",
+                    "---\nstatus: open\n---\n# Z\n",
+                ),
+                ("notes/a b(c)/y.md", "---\nstatus: open\n---\n# Y\n"),
+            ],
             true,
         );
+        // Every row has exactly three cell separators: two columns and the closing pipe.
+        for line in out.lines().filter(|l| l.contains("](")) {
+            let unescaped = line
+                .char_indices()
+                .filter(|(i, c)| *c == '|' && !line[..*i].ends_with('\\'))
+                .count();
+            assert_eq!(unescaped, 3, "{line}");
+        }
         assert!(
             out.contains(r"| open | [A title with a \| in it](piped.md) |"),
             "{out}"
         );
+        assert!(
+            out.contains(r"| open | [A title with \](evil.md) inside](bracket.md) |"),
+            "{out}"
+        );
+        assert!(out.contains(r"[Z](pi\|pe/z.md)"), "{out}");
+        // A space or a parenthesis ends an inline destination, so the path takes the
+        // angle-bracket form instead.
+        assert!(out.contains("[Y](<a b(c)/y.md>)"), "{out}");
+    }
+
+    #[test]
+    fn the_generated_list_is_sorted_by_destination_and_names_each_once() {
+        // The dedup below removes CONSECUTIVE duplicates, so it does nothing unless the list is
+        // sorted first: dropping the sort silently disarms it.
+        let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/b\", \"parts/a\"]\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        let manifest = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("declared");
+        let model = Model::from_documents(Vec::new());
+        let dirs: HashSet<PathBuf> = [
+            "docs/open-issues",
+            "parts/a/docs/open-issues",
+            "parts/b/docs/open-issues",
+        ]
+        .iter()
+        .map(PathBuf::from)
+        .collect();
+        let paths: Vec<String> = file_register_indexes(&model, &manifest, &dirs)
+            .into_iter()
+            .map(|(rel, _)| rel.display().to_string())
+            .collect();
+        assert_eq!(
+            paths,
+            vec![
+                "docs/open-issues/index.md".to_string(),
+                "parts/a/docs/open-issues/index.md".to_string(),
+                "parts/b/docs/open-issues/index.md".to_string(),
+            ],
+            "the components are declared b before a, and the list is sorted"
+        );
+        // And the set of destinations is what `generated_index_paths` names, with no duplicate.
+        let declared = generated_index_paths(&manifest);
+        assert_eq!(declared.len(), paths.len());
+    }
+
+    #[test]
+    fn one_home_shared_by_two_registers_is_one_destination_and_not_two() {
+        // Two registers declaring one directory is a `registers` finding. Until it is repaired,
+        // this command must not write the same destination twice in one run.
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [locations.notes]\npath = \"notes\"\nregisters = [\"one\", \"two\"]\n\n\
+             [registers.one]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"shared\"\n\n\
+             [registers.two]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"shared\"\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        let manifest = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("declared");
+        let model = Model::from_documents(Vec::new());
+        let dirs: HashSet<PathBuf> = [PathBuf::from("notes/shared")].into_iter().collect();
+        assert_eq!(file_register_indexes(&model, &manifest, &dirs).len(), 1);
     }
 
     #[test]

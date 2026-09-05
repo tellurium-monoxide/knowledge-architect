@@ -26,9 +26,9 @@ Three, per `thaum#exit-code-ladder`, and the third is what makes the other two m
 
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
-| `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; every `index` and `model` run |
+| `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run |
 | `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, no project above the working directory, an input that cannot be read, `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, no project above the working directory, an input that cannot be read, `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped

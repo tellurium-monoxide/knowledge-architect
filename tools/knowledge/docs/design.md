@@ -55,12 +55,16 @@ that one.
 comparing rather than by writing the file and reading it back. Two things follow, and both are
 load-bearing.
 
-**One list names them, and the writer and the gate both read it.** `cargo knowledge index` and
-`check --only generated` take the same pairs of destination and expected bytes, so neither can
-generate a file the other does not know about, nor disagree about what is in one. The rule index
-is the manifest's `[rules] dir` plus `index.md`; every other one is derived from the file-register
-instances, one per instance whose directory is there. **An instance with no directory contributes
-no index**: generating into it would create a register home as a side effect of a listing, and the
+**One list names the file-register indexes, and the writer and the gate both read it.**
+`cargo knowledge index` and `check --only generated` take the same pairs of destination and expected
+bytes from one function, so neither can generate one the other does not know about, nor disagree
+about what is in it. Each is derived from the file-register instances, one per instance whose
+directory is there. **The rule index is the exception**: it is the manifest's `[rules] dir` plus
+`index.md`, and the two assemble that pair separately, because the gate renders it only where the
+vendored release resolved and the writer always has one. They agree because the expression is
+written twice, which is weaker than the file-register half.
+
+**An instance with no directory contributes no index**: generating into it would create a register home as a side effect of a listing, and the
 missing home is what `check::registers` reports.
 
 **Writing one destroys nothing**, so `cargo knowledge index` takes no flags. The dry run a write
@@ -191,7 +195,8 @@ The introduction is prose about the project and belongs in markdown, and the REA
 keeps the directory in git, which an empty directory cannot be. The index is mandatory: with the
 README already holding the directory open, the churn argument against generating one has no weight
 left, and a listing nobody generates is one that silently stops listing. This head owns that the
-index exists; what it holds is `knowledge#generated-files-are-pure`.
+index exists; what it holds is `knowledge#a-file-register-index-is-rows`, and that it is generated
+rather than written by hand is `knowledge#generated-files-are-pure`.
 
 **Grouping is a subdirectory, declared beside the instance.** A subdirectory is visible to `ls`
 and to a listing without parsing anything, and the group is not part of an entry's id, so
@@ -245,6 +250,10 @@ A table's columns are the register's declared metadata keys, **ordered by name**
 holding the entry's level-one heading as a link to the file, relative to the index's own
 directory. Rows sort by the first metadata key and then by id, or by id alone where the register
 declares none. Groups sort by name, and the ungrouped entries come first.
+
+**A `|` inside a cell is escaped as `\|`.** It is the one character of a title or of a metadata
+value that would otherwise end the cell and shift every column right of it, turning a listing into
+a table that says something else. Nothing else in a cell is rewritten.
 
 **The bytes are a contract because `generated` compares bytes.** Any change here fails the gate on
 every committed index at once, which is the cost of the comparison being exact; the gain is that a
