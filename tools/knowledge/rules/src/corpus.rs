@@ -228,7 +228,7 @@ mod tests {
     use super::*;
 
     // Every fixture is inline: the checker reads no string literal of its own source, per
-    // `knowledge#checker-source-literals-are-data`.
+    // `design@knowledge@checker-source-literals-are-data`.
 
     #[test]
     fn a_sibling_numbered_with_a_digit_is_not_a_subrule() {

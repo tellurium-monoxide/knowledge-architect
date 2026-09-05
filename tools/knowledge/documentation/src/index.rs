@@ -111,7 +111,7 @@ impl PartialOrd for Sort {
     }
 }
 
-/// `thaum@docs/rules/index.md`: every rule cited, and what depends on it.
+/// `path@rules@index.md`: every rule cited, and what depends on it.
 ///
 /// This is what makes a bump actionable — when a rule changes or is renumbered, it says
 /// exactly what has to be re-read.
@@ -171,7 +171,7 @@ struct Row {
 
 /// The index of one file-register instance, byte for byte as `check::generated` compares it.
 ///
-/// The shape is a contract, not a rendering choice: `knowledge#a-file-register-index-is-rows`
+/// The shape is a contract, not a rendering choice: `design@knowledge@a-file-register-index-is-rows`
 /// states it, and a generator that disagreed with the committed bytes would fail the gate on
 /// every entry edit.
 ///
@@ -367,7 +367,7 @@ mod tests {
     use std::path::PathBuf;
 
     // Every fixture is inline: the checker reads no string literal of its own source, per
-    // `knowledge#checker-source-literals-are-data`.
+    // `design@knowledge@checker-source-literals-are-data`.
 
     /// A declaration whose rules directory and register directory are one level deep.
     fn declaring() -> Manifest {

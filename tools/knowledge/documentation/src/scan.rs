@@ -222,7 +222,7 @@ pub fn pin(parsed: &Parsed, text: &str) -> Option<String> {
     let fenced: std::collections::HashSet<u32> = parsed.fenced.iter().copied().collect();
     // Under the checker's own source a pin is read from the comments only. The raw text holds
     // the fixtures a `Data` parse dropped, and a pin spelled inside one of them pinned the file
-    // it sat in to that release, per `knowledge#checker-source-literals-are-data`.
+    // it sat in to that release, per `design@knowledge@checker-source-literals-are-data`.
     let prose: Option<std::collections::HashSet<u32>> =
         (parsed.literals == crate::source::Literals::Data).then(|| {
             parsed
@@ -481,7 +481,7 @@ mod tests {
     use super::*;
 
     // Every fixture below is written as the bytes it means. The checker reads no string
-    // literal of its own source, per `knowledge#checker-source-literals-are-data`, so a rule
+    // literal of its own source, per `design@knowledge@checker-source-literals-are-data`, so a rule
     // number, a marker, a slug or a path in one is data and not a claim.
 
     fn scan_md(text: &str) -> Vec<Observation> {

@@ -2,7 +2,7 @@
 //!
 //! `show`, `issues` and `tripwires` all ask the same three questions of an entity: where it is
 //! defined, what it says, and what points at it. This module answers them over the entity table
-//! `knowledge@documentation/src/entity.rs` builds, so a listing reads the same definition sites
+//! `path@knowledge@documentation/src/entity.rs` builds, so a listing reads the same definition sites
 //! every check resolves against and no command holds a second notion of what an entry is.
 //!
 //! **A file register's entry is its file; a heading register's entry is its section.** That is
@@ -292,7 +292,7 @@ mod tests {
     use std::path::PathBuf;
 
     // Every fixture is inline: the checker reads no string literal of its own source, per
-    // `knowledge#checker-source-literals-are-data`.
+    // `design@knowledge@checker-source-literals-are-data`.
 
     /// A project whose root component is `a-project`, with one location carrying the issue
     /// register alone.

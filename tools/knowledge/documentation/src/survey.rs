@@ -8,7 +8,7 @@
 //! what git tracks plus what it neither tracks nor ignores. Build output and on-demand
 //! directories are therefore absent whether or not the checking machine has built anything, so
 //! the same commit surveys the same on a fresh clone and on a working tree — which is what
-//! `knowledge#ignored-targets-are-not-asserted` rests on.
+//! `design@knowledge@ignored-targets-are-not-asserted` rests on.
 
 use std::collections::HashSet;
 use std::path::PathBuf;
@@ -41,7 +41,7 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
 /// The same, over a stated listing and a stated way of reading a file.
 ///
 /// **A commit's tree is surveyed the same way a checkout is.** `commits` builds a model per
-/// commit out of git objects, per `knowledge#a-commit-message-is-a-document`, so what exists
+/// commit out of git objects, per `design@knowledge@a-commit-message-is-a-document`, so what exists
 /// and what sits outside the walk are answered from that tree's listing and its blobs rather
 /// than from the filesystem. `survey` is the case where the listing is the model's own and the
 /// bytes are on disk.

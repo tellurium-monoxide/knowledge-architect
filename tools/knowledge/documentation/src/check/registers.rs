@@ -10,11 +10,11 @@
 //! issue directory has what is open about it in no report.
 //!
 //! **Two register shapes, and this module asserts both.** A heading register has the two homes
-//! of `knowledge#design-home-two-shapes`: the single file, or the directory whose `README.md`
+//! of `design@knowledge@heading-register-two-shapes`: the single file, or the directory whose `README.md`
 //! links every subdocument. A file register has one home, a directory holding one file per
 //! entry beside a hand-written `README.md`, a generated `index.md` and an optional
 //! `register.toml`; the entries' frontmatter, title, sections and owed subsections are asserted
-//! here, per `knowledge#a-file-register-is-a-directory-of-entries`.
+//! here, per `design@knowledge@a-file-register-is-a-directory-of-entries`.
 //!
 //! **The definition-site findings belong here.** Which slug defines what is the entity table's
 //! question; whether a definition sits somewhere a definition may sit is a question about a
@@ -175,7 +175,7 @@ pub fn check_under(
 /// The home exists, so the declared-path check passes; its entries exist, so the directory
 /// listing passes; but no document under it is in the model, so every entry-shape assertion
 /// judges nothing and the run is green. One `[walk] skip-dirs` row would take a whole
-/// register out of the regime, which `knowledge#the-regime-has-no-opt-out` refuses.
+/// register out of the regime, which `design@knowledge@the-regime-has-no-opt-out` refuses.
 fn outside_the_walk(
     out: &mut Vec<Finding>,
     manifest: &Manifest,
@@ -394,7 +394,7 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
     // the tracked listing is unaffected by the ignore rules; and every path reference to it is
     // asserted, because `git check-ignore` skips what the index holds. So the ignore rule says
     // the file is out of the project and every check reads it in, and untracking it would flip
-    // both answers at once. `knowledge#git-supplies-the-walk` is the head.
+    // both answers at once. `design@knowledge@git-supplies-the-walk` is the head.
     for path in inputs.tracked_and_ignored {
         out.push(Finding::in_file(
             path,
@@ -558,7 +558,7 @@ fn file_home(
         // That the index is THERE is a fact about the register's shape, and it is
         // mandatory. Its content is generated, and nothing compares it yet: the file-register
         // index has no generator until item 3 of
-        // `thaum@docs/plans/knowledge-tool-overhaul.md`, so until then this presence check is
+        // `path@thaum@docs/plans/knowledge-tool-overhaul.md`, so until then this presence check is
         // the whole of what holds it.
         (&home.index, "index.md"),
     ] {
@@ -915,7 +915,7 @@ mod tests {
     use std::path::PathBuf;
 
     // Every fixture is written as the bytes it means: the checker reads no string literal of
-    // its own source, per `knowledge#checker-source-literals-are-data`.
+    // its own source, per `design@knowledge@checker-source-literals-are-data`.
 
     /// A manifest declaring `components`, against a root nothing reads.
     fn declaring(components: &str) -> Manifest {

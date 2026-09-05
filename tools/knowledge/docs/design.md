@@ -2,14 +2,14 @@
 
 Recorded intent for this tool: how it is built internally, and why. Present tense, each decision
 carrying a slug anchor, cited from elsewhere with `knowledge` as its component. What lost to a decision here is
-`knowledge@docs/rejected-alternatives.md`, and `recording-a-decision` owns the shape.
+`path@knowledge@docs/rejected-alternatives.md`, and `recording-a-decision` owns the shape.
 
-**What belongs here rather than in `thaum@docs/design.md`:** a decision that does **not** survive
+**What belongs here rather than in `path@thaum@docs/design.md`:** a decision that does **not** survive
 deleting this tool. How it works and how the pieces inside divide the work belongs here.
 
-What otherwise shapes it is `thaum@tools/README.md`, `knowledge.toml`, and the module documentation at
-the top of each file under `knowledge@documentation/src/`, `knowledge@rules/src/` and
-`knowledge@src/`.
+What otherwise shapes it is `path@thaum@tools/README.md`, `knowledge.toml`, and the module documentation at
+the top of each file under `path@knowledge@documentation/src/`, `path@knowledge@rules/src/` and
+`path@knowledge@src/`.
 
 The heads are grouped by subject. A group heading carries no decision; each decision is one
 level-three head below it.
@@ -48,10 +48,10 @@ name, both handed in, but its subject is the changelog rather than the model.
 
 ### `--only` selects a set over the check families, one family per check, and a family is named for its check rather than for whoever reads it `##families-are-the-checks`
 
-All but one are the modules under `knowledge@documentation/src/check/`. The remaining one is `corpus`,
+All but one are the modules under `path@knowledge@documentation/src/check/`. The remaining one is `corpus`,
 which is `rules::integrity::check` and sits outside them because its subject is filesystem state
 rather than the model. `changes` is a module there and is invoked by the binary beside `corpus`,
-outside `check::run`, per `knowledge#model-then-checks`. `Only` is a set, so one invocation asks for any combination of them. A report
+outside `check::run`, per `design@knowledge@model-then-checks`. `Only` is a set, so one invocation asks for any combination of them. A report
 states which families it performed, and a family that did not run contributes no count: printed as a
 zero, a count nobody took reads as _nothing found_ for a check that never ran, which is the failure
 this tool exists to prevent. Two names cover the groupings that had callers before the set existed:
@@ -74,9 +74,9 @@ the whole run with no file named and no finding printed.
 The walked set is git's listing from the manifest's directory, `git ls-files --cached --others
 --exclude-standard`, with `[walk] skip-dirs`, `skip-files` and `exclude` applied after it and the
 generated indexes removed by construction. Nothing generated is declared: `target` and
-`thaum@.claude/worktrees/` are covered by the ignore rules, so no `[walk]` row names them. A path
+`path@agent-config@worktrees/` are covered by the ignore rules, so no `[walk]` row names them. A path
 reference whose target the ignore rules cover is exempt from assertion the same way, per
-`knowledge#ignored-targets-are-not-asserted`.
+`design@knowledge@ignored-targets-are-not-asserted`.
 
 **Every remaining declaration is checkable.** A generated path cannot be asserted to exist — a
 fresh clone has none of them. A manifest naming one holds a row no check can ask about: nobody
@@ -88,21 +88,21 @@ generated path is declared, so every path in the manifest is one git tracks and
 ignore line, however written, can take a live document out of every check. That is what the
 hand-rolled matcher this replaced could not promise, and it is the property the whole walk is
 chosen for; the matcher and the three things it could not do are
-`knowledge@docs/rejected-alternatives.md`.
+`path@knowledge@docs/rejected-alternatives.md`.
 
 **Git's answer is the answer, and two things it does not descend into are therefore unchecked.**
 A submodule is one gitlink entry in the listing and a symlinked directory is one symlink entry, so
 neither's contents are read, where the tree walk this replaced read both. Neither has a suffix the
 walk covers, so both are dropped by suffix and named by nothing. That is a gap the criterion
 `no-silent-gap` does not like and this design accepts for now: a component vendored as a submodule
-would be conformant by vacuum. `knowledge@docs/open-issues.md` carries it.
+would be conformant by vacuum. `path@knowledge@docs/open-issues.md` carries it.
 
 **The per-user ignore file is pinned away.** `core.excludesFile` lives in a developer's home and
 is no part of any project, so every invocation runs with it pointed at the null device: a line
 there would otherwise take an untracked live document out of every check on one clone and not on
 another. What still decides the walk beside the tree's own ignore files is git's per-clone exclude
 file, which git offers no way to pin, and that is what the tripwire in
-`knowledge@docs/tripwires.md` is left guarding.
+`path@knowledge@docs/tripwires.md` is left guarding.
 
 **A path is bytes, not text.** The `-z` output is split on NUL and turned into paths byte for
 byte. A name holding a byte no UTF-8 decoding accepts is legal here, and decoding it lossily
@@ -122,7 +122,7 @@ such a name is two requests, git answers both, and every later answer is paired 
 path while the map still comes back full. An older git refuses the flag loudly, which is exit 2
 with git's own reason.
 
-**Everything git answers goes through one module.** `knowledge@documentation/src/git.rs` owns the
+**Everything git answers goes through one module.** `path@knowledge@documentation/src/git.rs` owns the
 listing, the tracked-and-ignored listing, the one `check-ignore` batch, the last-change dates, and
 every read of history — `rev-list`, `rev-parse`, a commit's file list, its blobs and its message —
 so the set of things this tool asks git is auditable in one read and a check keeps spawning
@@ -140,7 +140,7 @@ the strength of a working-tree state.
 
 **The summary block prints the walked-file count**, so two machines disagreeing about the walk is
 visible in the output rather than inferred from a finding list. The tripwire is in
-`knowledge@docs/tripwires.md`.
+`path@knowledge@docs/tripwires.md`.
 
 ### Every rule of the regime is enforced, and a project cannot exempt itself from one `##the-regime-has-no-opt-out`
 
@@ -149,7 +149,7 @@ same thing in every tree this tool checks. There is no flag, no list and no seve
 regime either holds over a document or the run fails.
 
 **A declared register adds obligations and removes none**, which is what keeps
-`knowledge#registers-are-declared` inside this head rather than an exception to it. Declaring one
+`design@knowledge@registers-are-declared` inside this head rather than an exception to it. Declaring one
 gives a project a kind, a shape and a home to be checked against; it cannot loosen the four built
 in, and it cannot exempt a document from anything. A manifest that declares no register is checked
 exactly as it was.
@@ -167,20 +167,20 @@ costs it everywhere at once.
 The project root is one of them, named by `project.name`; every other is a project-relative
 directory, named by the basename of that path. Nothing is discovered by filename, so a document in a
 directory that is not a component is not that kind of document: nothing counts it and nothing
-reports it. A component carries `README.md`, `CLAUDE.md`, `*@docs/rejected-alternatives.md`, and
+reports it. A component carries `README.md`, `CLAUDE.md`, `path@*@docs/rejected-alternatives.md`, and
 the home of every `component`-scoped register — the four built-in ones, and any the manifest
 declares at that scope. A component that does not carry one it owes is a finding, and
-`knowledge@documentation/src/check/registers.rs` is where both directions are asserted.
+`path@knowledge@documentation/src/check/registers.rs` is where both directions are asserted.
 
 **Which components exist is declared, and what a component carries is compiled in.** That is the
-one exception to `thaum@tools/README.md`'s rule that nothing about a repository is compiled into the tool,
+one exception to `path@thaum@tools/README.md`'s rule that nothing about a repository is compiled into the tool,
 and it is not an exception to it: the document list and the four built-in registers in
 `manifest.rs` are not this repository's, they are what the word _component_ means here. A project
 free to declare its own set would be conformant with whatever it declared, which is the same as
 being checked against nothing.
 
 **A directory that carries outstanding state without being a component is a location**, per
-`knowledge#anchors-are-components-and-locations`.
+`design@knowledge@anchors-are-components-and-locations`.
 
 **A component directory that does not exist is one finding rather than one per document.** Six
 findings from one cause bury the cause, and the repair for all of them is the same line of the
@@ -189,7 +189,7 @@ manifest.
 ### An anchor is a component or a location, and a location carries the registers it declares `##anchors-are-components-and-locations`
 
 Both are named directories that carry registers, and both are path anchors under
-`knowledge#every-path-names-its-anchor`. What separates them is what they owe. A **component**
+`design@knowledge@every-path-names-its-anchor`. What separates them is what they owe. A **component**
 owes the compiled documents and every `component`-scoped register, with its homes under
 `<component>/docs/`. A **location** owes the homes of the registers its `[locations.<name>]`
 row declares and nothing else, with its homes directly under its own path — a location's
@@ -197,8 +197,8 @@ directory is already documentation, where a component's is source code.
 
 **A location exists so that a directory outside every component can be cited.** Naming the
 directory gives every entry in it a reference and makes relocating it one manifest edit, which is
-what `knowledge#every-path-names-its-anchor` buys everywhere else. What a location is instead of
-is `knowledge@docs/rejected-alternatives.md`.
+what `design@knowledge@every-path-names-its-anchor` buys everywhere else. What a location is instead of
+is `path@knowledge@docs/rejected-alternatives.md`.
 
 **A location may sit inside a component; a component inside a location is refused.** A location
 inside one is the ordinary case, and the deepest anchor wins, so a document under a location
@@ -238,7 +238,7 @@ load reports nothing at all, and nothing at all is what a session reads as confo
 manifest keeps what each declaration got wrong and `check::registers` reports it, while the
 compiled defaults carry the run.
 
-### A heading register's home is `<dir>.md` or a `<dir>/` directory, never both `##design-home-two-shapes`
+### A heading register's home is `<dir>.md` or a `<dir>/` directory, never both `##heading-register-two-shapes`
 
 The single file serves an anchor whose register fits one document. The directory serves one whose
 register has outgrown it. In the directory shape, `README.md` is the head: an introduction, and a
@@ -253,7 +253,7 @@ Five assertions carry the shape, split over three places. `check::registers` ass
 home per anchor and register, that a directory home carries its `README.md`, and that the README
 links every markdown subdocument the walk covers — a gitignored scratch file owes nothing. That
 each relative link resolves is the references family's assertion, made for every navigation file
-alike per `knowledge#links-are-navigation-rows`. The entity table of `knowledge#one-entity-table`
+alike per `design@knowledge@links-are-navigation-rows`. The entity table of `design@knowledge@one-entity-table`
 accepts a slug definition only in the file home or in a subdocument, matched against the owning
 anchor's own paths rather than against a filename suffix — a suffix match would accept a slug
 in any file whose name ends in `design.md`, a plan document included.
@@ -267,7 +267,7 @@ shows the page, and a bullet list is its conventional shape — a table grows pa
 soon as a row outgrows a short sentence. Both directions are asserted over the same links: an
 existing subdocument no link names is reported, and a link that resolves to nothing is reported.
 A fenced link is an illustration and discharges nothing, the stance a fenced definition takes
-per `knowledge#a-slug-is-a-heading`, and a link inside a code span is typography showing the
+per `design@knowledge@a-slug-is-a-heading`, and a link inside a code span is typography showing the
 shape. **The accepted row is the plain
 inline form, a target without spaces**: reference-style links, angle-bracketed or quoted-title
 targets and the other CommonMark shapes are outside it, deliberately — the index is one shape
@@ -297,8 +297,8 @@ The introduction is prose about the project and belongs in markdown, and the REA
 keeps the directory in git, which an empty directory cannot be. The index is mandatory: with the
 README already holding the directory open, the churn argument against generating one has no weight
 left, and a listing nobody generates is one that silently stops listing. This head owns that the
-index exists; what it holds is `knowledge#a-file-register-index-is-rows`, and that it is generated
-rather than written by hand is `knowledge#generated-files-are-pure`.
+index exists; what it holds is `design@knowledge@a-file-register-index-is-rows`, and that it is generated
+rather than written by hand is `design@knowledge@generated-files-are-pure`.
 
 **Grouping is a subdirectory, declared beside the instance.** A subdirectory is visible to `ls`
 and to a listing without parsing anything, and the group is not part of an entry's id, so
@@ -307,7 +307,7 @@ drifting, and it is checked in both directions. An entry may sit ungrouped at th
 two-entry instance owes no directory.
 
 **The frontmatter subset is small and refused loudly outside itself**, per
-`knowledge#a-failed-parse-is-loud`: a block opened and closed by a line holding only `---`, at the
+`design@knowledge@a-failed-parse-is-loud`: a block opened and closed by a line holding only `---`, at the
 very top of the file, holding `key: value` lines with scalar values, no key written twice. A key
 the register does not declare is a finding, so a typo in a key name cannot pass as an absent
 optional. Frontmatter is required exactly when the register declares metadata, and refused when it
@@ -320,7 +320,7 @@ around it, and a block has none.
 **The block is prose, entire, and its lines are marked as a fence.** That marking keeps a value
 out of the document's structure — a heading, a slug definition, a navigation link — and buys
 nothing else: a fence has never made a rule number data here, per
-`knowledge#grammars-not-prefixes`, and a marker is never data wherever it sits. So a reference in
+`design@knowledge@grammars-not-prefixes`, and a marker is never data wherever it sits. So a reference in
 a value is a reference, and a `CR:` marker in a value claims its rule with nowhere in the block
 to put the quote. A marker therefore does not belong in metadata, and one is reported exactly
 where it stands.
@@ -333,8 +333,8 @@ every offset the analysis returns is an offset into the file as written.
 **The issue register's kind list is closed.** An unknown kind is a finding naming the list, and
 adding one is a reviewed manifest diff. The kind decides which subsections the entry owes, so an
 unknown one would owe the wrong three in silence, which is what makes refusing it load-bearing
-rather than tidy. The open set is in `knowledge@docs/rejected-alternatives.md`, and
-`knowledge@docs/tripwires.md` guards the closing.
+rather than tidy. The open set is in `path@knowledge@docs/rejected-alternatives.md`, and
+`path@knowledge@docs/tripwires.md` guards the closing.
 
 ### A file register's index is a banner, a count and one row per entry, and its bytes are the contract `##a-file-register-index-is-rows`
 
@@ -364,7 +364,7 @@ listing cannot drift by a character without being named.
 **Rows only: no summary and no date.** A row changes on create, delete, retitle, regroup and a
 metadata change, and on nothing else, so an index is regenerated rarely. A summary column would
 restale it on every wording edit, and a date would break
-`knowledge#generated-files-are-pure` outright. Both are in `knowledge@docs/rejected-alternatives.md`.
+`design@knowledge@generated-files-are-pure` outright. Both are in `path@knowledge@docs/rejected-alternatives.md`.
 
 **The rows come from the walked entries, not from the instance's declarations.** A group is the
 subdirectory an entry sits in, so an undeclared group still lists its entries and a declared group
@@ -375,9 +375,9 @@ because a declaration disagreed would be a listing that stops listing, and the d
 
 ### A generated file's content is a function of the walked tree, so `index` writes it with no dry run `##generated-files-are-pure`
 
-`thaum@docs/rules/index.md` holds no hand-written bytes, and neither does any file-register
+`path@rules@index.md` holds no hand-written bytes, and neither does any file-register
 `index.md`. Each is what its generator returns over the model, which is what lets
-`knowledge@documentation/src/check/generated.rs` verify one by regenerating into a `String` and
+`path@knowledge@documentation/src/check/generated.rs` verify one by regenerating into a `String` and
 comparing rather than by writing the file and reading it back. Two things follow, and both are
 load-bearing.
 
@@ -421,18 +421,18 @@ check would report a file stale that nobody had changed, and `index` would rewri
 **A kind is a register's name, or `path`.** The four built-in registers give the kinds `design`,
 `goal`, `tripwire` and `issue`, and a project's own declarations give the rest, so the kind set is
 data rather than a compiled enumeration. A heading register's entities are slugs defined in the
-register's home under an anchor, per `knowledge#a-slug-is-a-heading`; a file register's are the
+register's home under an anchor, per `design@knowledge@a-slug-is-a-heading`; a file register's are the
 files under its instance directory, one per entry, per
-`knowledge#a-file-register-is-a-directory-of-entries`. `path` is defined by the tree itself and is
+`design@knowledge@a-file-register-is-a-directory-of-entries`. `path` is defined by the tree itself and is
 resolved against the survey, under the same anchors and with the candidate rule and segmentation
 the table's resolver applies to every kind. The table lives in
-`knowledge@documentation/src/entity.rs`, is built once per run from the model, and is what
+`path@knowledge@documentation/src/entity.rs`, is built once per run from the model, and is what
 `check::references` resolves against.
 
 **An anchor is a named directory carrying registers**, per
-`knowledge#anchors-are-components-and-locations`. It carries its register list and its home base
+`design@knowledge@anchors-are-components-and-locations`. It carries its register list and its home base
 as data, so a component and a location are two constructors and not two resolvers. The deepest
-anchor owns a document, as `knowledge#a-slug-belongs-to-a-component` states.
+anchor owns a document, as `design@knowledge@a-slug-belongs-to-a-component` states.
 
 **One table, because a notion of a name held per check drifts.** With one table there is one
 resolver, one dangling check over every kind, one command that can print any entity given its
@@ -447,15 +447,15 @@ The statement precedes the slug in the heading, so a document outline lists the 
 than a set of identifiers, and an editor's outline view is the index. The table cell form serves
 the decision tables that predate the heading rule. Level two is accepted beside level three
 because tripwire and goal entries are level-two headings; the quote scope of
-`knowledge#scope-and-distance` is not changed by this, and stays the innermost level-three
+`design@knowledge@scope-and-distance` is not changed by this, and stays the innermost level-three
 subsection where one exists.
 
 **The homes are the design, goals and tripwires homes of the owning anchor**, and the home of
 any heading register the project declares, each in either shape of
-`knowledge#design-home-two-shapes`: the single file, or a subdocument of the directory.
+`design@knowledge@heading-register-two-shapes`: the single file, or a subdocument of the directory.
 The directory's `README.md` is the head and defines nothing, for every register and not only
 design. Which anchor owns a definition is where its document sits, per
-`knowledge#a-slug-belongs-to-a-component`.
+`design@knowledge@a-slug-belongs-to-a-component`.
 
 **A slug anywhere else defines nothing and is reported as a misplaced definition**: at a
 level-one heading or at one deeper than level three, at the head of a plain line, in the middle
@@ -479,7 +479,7 @@ register family's.
 **A fenced heading is an illustration, so a fenced slug neither defines nor is misplaced.** A
 definition site is a heading, and the scanner already reads no heading inside a fence; the one
 stance covers both. This is the one place a fence still suppresses anything in the grammar —
-references are live in a fence for every kind, per `knowledge#candidate-rule-and-retired-forms`.
+references are live in a fence for every kind, per `design@knowledge@candidate-rule-and-retired-forms`.
 
 **Requiring text after the slug is what the first attempt got wrong.** A heading carrying nothing
 but the slug then matched nothing, and every reference to those anchors was reported as dangling
@@ -506,7 +506,7 @@ a location takes.
 could require a resolvable shape and see nothing without one, which needs no finding and no
 migration. It would also mean every pointer written in an older form stops being checked with
 nothing saying so, and a silent false negative is the failure this tool exists to prevent. The
-candidate rule that bounds this is `knowledge#candidate-rule-and-retired-forms`.
+candidate rule that bounds this is `design@knowledge@candidate-rule-and-retired-forms`.
 
 ### A backticked `@` span is a reference candidate when its head is a kind or an anchor, the two retired forms stay findings, and every other span is silent `##candidate-rule-and-retired-forms`
 
@@ -521,14 +521,14 @@ takes an anchor and then everything after the second `@`.
 
 **The silence is bounded and named.** A typo inside the kind, `desing@<anchor>@<id>`, is silent under this
 rule, because widening it to "any span with two `@`" would report every email address with a
-plus tag. `knowledge@docs/tripwires.md` guards the gap: a review finding a reference the scanner
+plus tag. `path@knowledge@docs/tripwires.md` guards the gap: a review finding a reference the scanner
 reported nothing for widens the rule to the shape found.
 
 **The two retired forms are findings, permanently.** A backticked `<word>#<word>` and a bare `R`
 followed by digits each name the form they were. Neither has an `@` and neither has two path
 segments, so without this clause a slug reference or a register number the migration missed
 would be silent, which is the founding failure class. The clause does not expire with the
-migration: the argument of `knowledge#a-slug-is-a-heading`, that a retired form must stay
+migration: the argument of `design@knowledge@a-slug-is-a-heading`, that a retired form must stay
 visible or the migration is unfinishable, applies to both. The register number is read in every
 prose region, a Rust comment included: a comment is prose, and a type parameter is code the
 scanner never sees.
@@ -536,17 +536,17 @@ scanner never sees.
 **A reference is live wherever it is prose, fenced blocks included, for every kind.** A sketch
 names what it names on purpose, and an illustration writes a placeholder in angle brackets,
 which the tokenizer does not record. Reading a fenced slug reference as an illustration, the
-stance the old grammar took, is in `knowledge@docs/rejected-alternatives.md`. A string literal
-bound to a name in Rust yields no reference, unchanged from `knowledge#grammars-not-prefixes`.
+stance the old grammar took, is in `path@knowledge@docs/rejected-alternatives.md`. A string literal
+bound to a name in Rust yields no reference, unchanged from `design@knowledge@grammars-not-prefixes`.
 
 ### Every path reference names its kind and its anchor, `` `path@<anchor>@<path>` ``, and the deepest anchor wins `##every-path-names-its-anchor`
 
 A checked path reference is one backticked span in the one grammar of
-`knowledge#a-slug-belongs-to-a-component`, with `path` as its kind and the path under the named
+`design@knowledge@a-slug-belongs-to-a-component`, with `path` as its kind and the path under the named
 anchor's directory as its id. The root is a component like any other, named by `project.name`.
 The kind prefix costs five characters at every path reference and buys one grammar: the scanner
 has one tokenizer, the old two-segment form `<anchor>@<path>` is reported as an anchor in kind
-position by `knowledge#candidate-rule-and-retired-forms`, and the unanchored lint is left with
+position by `design@knowledge@candidate-rule-and-retired-forms`, and the unanchored lint is left with
 one job. There is no unanchored form: a backticked span of path characters with two or more
 segments and no `@` is a finding naming the grammar, so no pointer class passes unregistered.
 One segment is a name rather than a pointer, and a span holding a space, a colon or an angle
@@ -559,14 +559,14 @@ file moves. The id is everything after the second `@`, so a path may itself hold
 
 **The deepest anchor wins, and inside means a proper descendant.** A reference whose target
 sits inside another anchor is refused with the right anchor named. What this buys is the
-same property `knowledge#a-slug-belongs-to-a-component` buys for every entity: relocating an
-anchor edits its one line of `thaum@knowledge.toml` and no document, and one fixed-string
+same property `design@knowledge@a-slug-belongs-to-a-component` buys for every entity: relocating an
+anchor edits its one line of `path@thaum@knowledge.toml` and no document, and one fixed-string
 grep per anchor is an anchor's complete inbound-reference list. An anchor's own directory
 is the one target with no spelling under its own name, so it is named from an ancestor — a
 reference that names a location, which a move is expected to break.
 
 **A fenced path reference is live**, as every reference is, per
-`knowledge#candidate-rule-and-retired-forms`: a sketch names its paths on purpose, and an
+`design@knowledge@candidate-rule-and-retired-forms`: a sketch names its paths on purpose, and an
 illustration that needs a fake path writes the escape anchor or an angle-bracket placeholder.
 
 ### Two anchors are reserved under the `path` kind: the escape for a path this tree does not hold, and `*` for every component's own copy `##reserved-anchors`
@@ -580,7 +580,7 @@ target that DOES resolve here, beside any anchor, is a finding — without it, t
 cheap way to silence the unanchored finding on a real path.
 
 **The generic anchor `*`**, `path@*@<path>`, marks each component's own copy of a path, as in
-`*@docs/tripwires.md` written with the kind in front. It is accepted when the path is one of the
+`path@*@docs/tripwires.md` written with the kind in front. It is accepted when the path is one of the
 required document names in any of its shapes — the compiled documents, every heading register's
 file, directory and README, and every file register's directory, README and index, so naming a
 shape no component uses yet is legitimate — and otherwise when at least one component carries the
@@ -604,7 +604,7 @@ heading register's two shapes are told apart by recorded kind.
 
 Resolution asks `git check-ignore` whether the ignore rules cover the target before asking
 whether it is present. Covered means accepted with no existence or kind assertion: a generated
-path cannot be asserted to exist, per `knowledge#git-supplies-the-walk`, and deciding by the
+path cannot be asserted to exist, per `design@knowledge@git-supplies-the-walk`, and deciding by the
 RULES rather than by presence makes the verdict identical on a fresh clone and a built tree. A
 verdict that depends on the checking machine's build state is a check nobody can trust twice.
 The exemption is exactly as wide as git's own answer, deliberately, nested ignore files included.
@@ -631,7 +631,7 @@ check stays one pattern. The other CommonMark shapes — reference-style, an ang
 quoted-title target — are outside the scanner: a row written in one surfaces as a dangling
 target or an unlinked subdocument rather than as a finding naming the shape, and that is
 judged close enough while this head states the accepted form. The shapes themselves are
-enumerated in `knowledge@docs/open-issues.md`.
+enumerated in `path@knowledge@docs/open-issues.md`.
 
 **Markdown documents only.** In Rust prose a markdown link is rustdoc's mechanism, resolved by
 rustdoc against the crate namespace, and reading those as index rows would report every
@@ -655,7 +655,7 @@ rather than a claim anybody wrote, so a rule number appearing in one is not an u
 A markdown document is prose entire. A Rust file is prose only where its grammar says so — its
 comments, and the string literals that are not bound to a name. Nothing is decided by a line's
 prefix. The one file set whose literals are never prose is the checker's own source, per
-`knowledge#checker-source-literals-are-data`.
+`design@knowledge@checker-source-literals-are-data`.
 
 **A doc comment's content is markdown**, so the markdown analysis runs over a document and over
 every Rust comment alike, and a heading, a fence or a blockquote means the same in both.
@@ -672,7 +672,7 @@ data lost 34 citations. A string literal is data only when BOUND to a name — a
 message cites rules for a human to read on failure, and reading every literal as data lost 32
 of them. A macro body is not an argument list, so a binding still applies inside one. **Reading
 every literal as prose is a recorded losing alternative**, in
-`knowledge@docs/rejected-alternatives.md`, with the bound literals outside the checker that carry
+`path@knowledge@docs/rejected-alternatives.md`, with the bound literals outside the checker that carry
 a rule-shaped number by accident. What the binding rule no longer serves is the checker's own
 fixtures, which have their own answer below.
 
@@ -685,7 +685,7 @@ is nowhere to put it.
 
 Under the tool's own directory a string literal is never prose. Its comments are prose like
 every other file's, and everywhere else in a tree a string literal is prose unless it is bound
-to a name, per `knowledge#grammars-not-prefixes`.
+to a name, per `design@knowledge@grammars-not-prefixes`.
 
 **The tool's unit tests are the one place in a tree whose fixtures are rule-shaped on purpose.**
 A number, a marker, a slug, a path or a version pin is written so that a test can watch a check
@@ -695,14 +695,14 @@ because the test modules point at decisions and paths for real, and those pointe
 
 **The directory is compiled in, never declared.** The `knowledge` binary crate evaluates
 `CARGO_MANIFEST_DIR` at build time, and that is the component's directory exactly. The alias in
-`thaum@.cargo/config.toml` builds the binary from the checkout on every invocation, so the
+`path@thaum@.cargo/config.toml` builds the binary from the checkout on every invocation, so the
 compiled path is the tree being checked. The binary hands the path to the walk, and the
 `documentation` library bakes nothing in. The root and the compiled path are canonicalised before
 the prefix test, so a symlinked checkout does not defeat it; a symlink inside the tree is not
 followed. A manifest row is not an option, because a row can be pointed at any directory, which
-is the shape `knowledge#the-regime-has-no-opt-out` exists to refuse: only the checker's own source
+is the shape `design@knowledge@the-regime-has-no-opt-out` exists to refuse: only the checker's own source
 can ever be exempt, and it is exempt by construction. The row's entry is in
-`knowledge@docs/rejected-alternatives.md`.
+`path@knowledge@docs/rejected-alternatives.md`.
 
 **The failure is loud.** A binary built from one checkout and run against another finds no file
 under its compiled path, exempts nothing, and reports the tool's fixtures as citations. The
@@ -710,7 +710,7 @@ summary block names the checker's directory, relative to the root when it sits u
 absolute otherwise, even when the compiled directory no longer exists, and prints the count of
 Rust files it covered, so the state is visible in every run. The directory exempts files only when it sits inside the tree being
 checked: a tree that sits inside it instead, such as a mock project under
-`knowledge@tests/projects/`, is a foreign project and every literal in it is prose.
+`path@knowledge@tests/projects/`, is a foreign project and every literal in it is prose.
 
 **Whole source rather than test modules only.** The non-test source holds no literal that cites
 a rule, a finding message interpolates the number it names, and a narrower rule would cost an
@@ -767,8 +767,8 @@ list covering sections.
 
 A commit message is parsed as one markdown document — its subject line, its blank line and its
 body — and every rule of the regime runs over it. A `CR:` marker owes its verbatim quote inside
-the message, within the distance rule of `knowledge#scope-and-distance`; every reference is
-judged against the entity table of `knowledge#one-entity-table`; the missing-marker lint reads
+the message, within the distance rule of `design@knowledge@scope-and-distance`; every reference is
+judged against the entity table of `design@knowledge@one-entity-table`; the missing-marker lint reads
 it as it reads any other prose.
 
 **A message is history, and it cannot be edited.** `main`'s history is never rewritten, so a
@@ -843,7 +843,7 @@ asserted where that commit's own rules exempted it — a finding rather than a s
 **The hook is per-clone configuration, and no check reads it.** `core.hooksPath` is git's own
 setting and points at `path@thaum@.githooks/`, which the project commits so a review can read
 the script; `hook install` sets it and `hook status` reports it. A verdict that depended on it
-would be one nobody can trust twice, for the reason `knowledge#ignored-targets-are-not-asserted`
+would be one nobody can trust twice, for the reason `design@knowledge@ignored-targets-are-not-asserted`
 refuses build state. `cargo x gates` prints the status line as information and gates on the
 range check alone.
 

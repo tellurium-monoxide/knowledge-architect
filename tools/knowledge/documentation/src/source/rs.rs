@@ -7,7 +7,7 @@
 //!
 //! **Which string literals are prose is decided twice.** The caller says, through `Literals`,
 //! whether the file is the checker's own source, where every literal is a fixture and none is
-//! prose, per `knowledge#checker-source-literals-are-data`. Everywhere else the grammar says:
+//! prose, per `design@knowledge@checker-source-literals-are-data`. Everywhere else the grammar says:
 //! a literal bound to a name is data, and every other literal is a message written for a
 //! human, which cites for real.
 //!
@@ -465,7 +465,7 @@ fn runs(comments: Vec<CommentLine>) -> Vec<Prose> {
                 text: c.text,
                 lines: vec![c.first],
                 // A source file is not a decision's home, so a slug written in one defines
-                // nothing. `knowledge#a-slug-belongs-to-a-component` puts that home in a component's
+                // nothing. `design@knowledge@a-slug-belongs-to-a-component` puts that home in a component's
                 // design document.
                 structural: false,
                 code: Vec::new(),

@@ -3,10 +3,10 @@
 //! An entity has a **kind**, an **anchor**, an **id** and a **definition site**. The table is
 //! built once from the model, and a reference `` `<kind>@<anchor>@<id>` `` is resolved against
 //! it. Before this table five checks held five notions of a name; the argument is
-//! `knowledge#one-entity-table`.
+//! `design@knowledge@one-entity-table`.
 //!
 //! **A kind is a register's name, or `path`.** Four registers are compiled in and a project
-//! declares the rest, so the kind set is data rather than an enum — `knowledge@documentation/src/manifest.rs`
+//! declares the rest, so the kind set is data rather than an enum — `path@knowledge@documentation/src/manifest.rs`
 //! owns what a register is, and this module owns what naming one means.
 //!
 //! **An anchor is a named directory that carries registers.** A component carries every
@@ -356,7 +356,7 @@ pub enum Candidate<'a> {
 /// **Which spans are candidates.** The head — the text before the first `@` — is a known kind,
 /// a declared anchor or a reserved anchor; anything else is not a reference and is silent, so
 /// an email address or a git remote in backticks reports nothing. A typo inside the kind is
-/// silent for the same reason, which `knowledge@docs/tripwires.md` guards.
+/// silent for the same reason, which `path@knowledge@docs/tripwires.md` guards.
 ///
 /// **Segmentation.** Every kind but `path` takes exactly three segments; `path` takes an anchor
 /// and then everything after the second `@` as its id, so a path may hold an `@`. An empty
@@ -697,7 +697,7 @@ mod tests {
     use std::path::PathBuf;
 
     // Every fixture is inline: the checker reads no string literal of its own source, per
-    // `knowledge#checker-source-literals-are-data`.
+    // `design@knowledge@checker-source-literals-are-data`.
 
     /// A project whose root component is `a-project` with one component under `parts/`.
     fn anchors() -> Anchors {

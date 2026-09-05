@@ -1,24 +1,24 @@
 # Knowledge checker
 
 **Nothing about this repository is compiled into the tool.** Every list a check reads comes from
-`thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
+`path@thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
 root — so the same binary checks this repository and a mock project under
-`knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says so
+`path@knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says so
 there, in one place, with a reason beside it. The one thing compiled in is the tool's own
 directory, taken from `CARGO_MANIFEST_DIR` of the binary crate, so that the string literals of its
 own source are read as data rather than as citations, per
-`knowledge#checker-source-literals-are-data`. That is a fact about the tool, not about any tree.
+`design@knowledge@checker-source-literals-are-data`. That is a fact about the tool, not about any tree.
 
 **`git` 2.36 or newer is a hard dependency, and every invocation lives in
-`knowledge@documentation/src/git.rs`.** The floor is `cat-file --batch -z`, which `commits`
+`path@knowledge@documentation/src/git.rs`.** The floor is `cat-file --batch -z`, which `commits`
 reads a commit's tree with. The walk is `git ls-files` from the project root, the
 ignore question a path reference asks is one `git check-ignore` batch per run, and a listing's
 last-change column is one `git log`. A check may spawn nothing, so each of those is taken by the
 caller and handed in. A tree with no `git`, or a project outside a worktree, is exit 2 with the
-reason; an empty walk is never an answer. The decision is `knowledge#git-supplies-the-walk`.
+reason; an empty walk is never an answer. The decision is `design@knowledge@git-supplies-the-walk`.
 
 **A test that copies a mock project runs `git init` and `git add -A` in the copy**, or the walk
-is empty and the test proves nothing; `Sandbox` in `knowledge@tests/binary.rs` does it. Two
+is empty and the test proves nothing; `Sandbox` in `path@knowledge@tests/binary.rs` does it. Two
 consequences a test about ignore behaviour has to choose between, because the ignore rules act on
 untracked files alone:
 
@@ -29,7 +29,7 @@ untracked files alone:
 
 A test that deletes or rewrites a fixture file after the first add stages again, or git's listing
 still names what the working tree no longer holds. The in-place tests under
-`knowledge@tests/projects/` need none of this: they build under this repository's own worktree,
+`path@knowledge@tests/projects/` need none of this: they build under this repository's own worktree,
 so a mock file is walked because this repository's listing holds it. **Staging is not what puts
 it there.** The listing is `--cached --others --exclude-standard`, so a new fixture file is
 walked the moment it exists, tracked or not; what removes one is an ignore rule, and what a
@@ -51,7 +51,7 @@ the fixture.
 **A test about commit messages builds its own project.** `commits` judges a message only where
 that commit's tree carries no finding. `dirhome` is the one mock over which every family runs
 and finds nothing, so a copy of it could serve as a base; `History` in
-`knowledge@tests/binary.rs` writes a project out
+`path@knowledge@tests/binary.rs` writes a project out
 anyway, because each test states the exact findings the commits it makes carry and a mock's
 contents are shared with every other test over it. `History` writes the project out,
 configures `user.name` and `user.email` in the copy's own configuration, and commits. Two
@@ -62,5 +62,5 @@ orders it has to keep, both learned by getting them wrong:
   no longer has.
 - **`--allow-empty`** on a commit whose subject is the message rather than a tree edit.
 
-Read `knowledge@docs/design.md` before changing how it works, and `bumping-rules` before adopting a
+Read `path@knowledge@docs/design.md` before changing how it works, and `bumping-rules` before adopting a
 rules release.

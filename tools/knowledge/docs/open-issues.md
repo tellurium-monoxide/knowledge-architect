@@ -1,7 +1,7 @@
 # Open issues — the knowledge tool
 
 What is outstanding about `knowledge` itself: the checks, the release machinery, the archive.
-What is outstanding about the _rules and their readings_ is `thaum@docs/rules/`.
+What is outstanding about the _rules and their readings_ is `path@thaum@docs/rules/`.
 
 **Read this file before concluding that a checker behaviour is a new problem.** Every entry states
 its **kind** as a tag on its title and carries **What**, **Why it matters**, and **What would close
@@ -13,14 +13,14 @@ Read `tracking-open-issues` before adding.
 
 ## The inverse assertion reads the prose marker form alone `defect`
 
-**What.** `first_rule_number` in `knowledge@documentation/src/check/uncovered.rs` finds a dotted
+**What.** `first_rule_number` in `path@knowledge@documentation/src/check/uncovered.rs` finds a dotted
 rule number by splitting on characters that are neither alphanumeric nor a dot, and a section
 number by a word-bounded regex over the keyword forms. The identifier form, which root
-`thaum@CLAUDE.md` accepts wherever a name cannot hold punctuation, uses underscores, so neither
+`path@thaum@CLAUDE.md` accepts wherever a name cannot hold punctuation, uses underscores, so neither
 finder sees it. A file outside the walk may therefore carry `cr_613_8c` in a job name, a fixture
 name or a dotfile, and nothing reports it.
 
-**Reproduce.** In `knowledge@tests/projects/dirhome/`, which is clean, write a
+**Reproduce.** In `path@knowledge@tests/projects/dirhome/`, which is clean, write a
 workflow file under `path@thaum@.github/workflows/` holding a line `run: cargo test cr_100_1` and run
 `cargo knowledge check --only uncovered`: `PASSED: no findings`. Replace the token with the
 prose form behind its marker and the same run reports the line. Found by an adversarial review
@@ -32,9 +32,9 @@ and not in any statement, and the founding case for the family was a workflow fi
 where a test name is written.
 
 **What would close it.** Reading the identifier form in the same finder, with the same
-prose-form message, and a planted case in `knowledge@tests/projects/planted/` beside the
+prose-form message, and a planted case in `path@knowledge@tests/projects/planted/` beside the
 existing one. Deciding instead that an unwalked file may carry the identifier form, and saying
-so in the module head and in root `thaum@CLAUDE.md`, closes it as a recorded exemption.
+so in the module head and in root `path@thaum@CLAUDE.md`, closes it as a recorded exemption.
 
 ## The changelog's own counts are asserted by nothing `defect`
 
@@ -43,7 +43,7 @@ source url, its recorded digest and every blockquote against the release the sec
 compares no count: neither the `edited`, `renumbered` and `gone` values in the `meta` block nor
 the same three columns in the summary table are checked against the entries the section carries.
 
-**Reproduce.** In `knowledge@tests/projects/dirhome/`, whose one section legitimately carries no
+**Reproduce.** In `path@knowledge@tests/projects/dirhome/`, whose one section legitimately carries no
 entry, edit its `CHANGES.md` so the table row reads `| 3 | 2 | 1 |` and the `meta` block says
 `edited: 3`, `renumbered: 2`, `gone: 1`. `cargo knowledge check --only changes` prints
 `changelog: 0 rule change(s)` and `PASSED: no findings`. Found by an adversarial review of the
@@ -60,13 +60,13 @@ covers both or says which one is authoritative.
 
 ## A `PLANTED` row may name a test that does not exist `observation`
 
-**What.** Two rows of `PLANTED` in `knowledge@tests/mock_projects.rs` carry
+**What.** Two rows of `PLANTED` in `path@knowledge@tests/mock_projects.rs` carry
 `Planted::ByTheBinary(<test name>)`, because `changes` and `corpus` are not in `check::run`. The
 name is a string used inside an assertion message and nothing resolves it, so deleting or
 renaming the binary test it points at leaves both test files green.
 
 **Reproduce.** Rename `the_changelog_and_the_archive_each_carry_a_planted_defect` in
-`knowledge@tests/binary.rs` and empty its body. `cargo test -p knowledge` stays green. Found by
+`path@knowledge@tests/binary.rs` and empty its body. `cargo test -p knowledge` stays green. Found by
 the spec-conformity review of the mock-project piece.
 
 **Why it matters.** It is the same shape as the entry this piece closed, moved one step: the
@@ -74,14 +74,14 @@ partition test now refuses a family with no row, and a row can still name an ass
 makes. The two families would go back to being unchecked against a real project with no test
 saying so.
 
-**What would close it.** Reaching the two families from `knowledge@tests/mock_projects.rs`, which
+**What would close it.** Reaching the two families from `path@knowledge@tests/mock_projects.rs`, which
 means a callable that runs them over a stated tree the way `check::run` runs the other six; or a
 test that resolves the named test, which Rust offers no direct way to do.
 
 ## `cargo knowledge issues` prints nothing over this repository until the migration lands `defect`
 
 **What.** `outstanding` is gone and `issues` reads the issue register, which is a directory of one
-file per entry. This repository still keeps its trackers as `*@docs/open-issues.md`, one file of
+file per entry. This repository still keeps its trackers as `path@*@docs/open-issues.md`, one file of
 level-two headings, which the register reports as its retired file shape. So `cargo knowledge
 issues` finds no instance with entries and prints an empty table at exit 1. `tripwires` prints only
 the entries that have been given slugs, four in this tool's own file, and its `guarding` column
@@ -94,7 +94,7 @@ failure the command exists against. Three invocation sites now say so in place �
 `CLAUDE.md`, `tracking-open-issues` and the standing-state reviewer — and a session that reads
 none of them still gets a wrong answer from the tool itself.
 
-**What would close it.** Step B of `thaum@docs/plans/knowledge-tool-overhaul.md`, which splits every
+**What would close it.** Step B of `path@thaum@docs/plans/knowledge-tool-overhaul.md`, which splits every
 tracker file into entries and gives every tripwire heading a slug. Nothing else is owed: the
 command is right and the tree is not migrated yet.
 
@@ -103,7 +103,7 @@ command is right and the tree is not migrated yet.
 ## The release diff calls a renumbered section a deletion `defect`
 
 **What.** `rules diff` detects a renumbered rule by its body — `by_body` in
-`knowledge@rules/src/diff.rs` builds its move maps from `Corpus::iter`, which deliberately
+`path@knowledge@rules/src/diff.rs` builds its move maps from `Corpus::iter`, which deliberately
 excludes sections — so a section that is renumbered between releases is reported `GONE` while its
 own subrules are reported `MOVED` directly beneath. A retitled section is reported correctly as
 changed.
@@ -115,7 +115,7 @@ renumbered and one gone. Found by an adversarial review of the branch that made 
 
 **Why it matters.** Section citations owe heading quotes now, so a release that renumbers a
 section breaks every citing site, and the diff is the work list a bump reads — per
-`knowledge#sections-cite-the-heading`, the index's section rows say *where*, and the diff is what
+`design@knowledge@sections-cite-the-heading`, the index's section rows say *where*, and the diff is what
 says *what kind* of change moved under them. Root `CLAUDE.md` calls renumbering the dangerous
 case, and `bumping-rules` reads the diff's verdicts as its instructions.
 
@@ -132,12 +132,12 @@ reporting the section as renumbered, and a genuinely deleted section still repor
 and every single-family run that is not `citations`, is silent about a document whose every
 citation, reference and slug left the model.
 
-**Reproduce.** Copy `knowledge@tests/projects/minimal/`, `git init` and `git add -A` in the copy,
-delete `knowledge@tests/projects/minimal/notes/b.md` from the copy, then run
+**Reproduce.** Copy `path@knowledge@tests/projects/minimal/`, `git init` and `git add -A` in the copy,
+delete `path@knowledge@tests/projects/minimal/notes/b.md` from the copy, then run
 `check --only citations` and `check --only structure` in it. The first names the file; the second
 prints findings and does not.
 
-**Why it matters.** `knowledge#a-failed-parse-is-loud` promises that a file the walk cannot read
+**Why it matters.** `design@knowledge@a-failed-parse-is-loud` promises that a file the walk cannot read
 is a finding naming the file, with no family named. A reviewer running one family reads a clean
 verdict over a document nothing read. The full run does report it, so the gate is not blind; a
 narrower run is.
@@ -163,7 +163,7 @@ repository holds no submodule and no symlinked directory, so nothing is currentl
 
 **What would close it.** A finding naming every gitlink and every symlink entry in the listing,
 so a project that grows one is told rather than silently narrowed. Deciding, in
-`knowledge#git-supplies-the-walk`, whether a submodule's own listing should be walked as a
+`design@knowledge@git-supplies-the-walk`, whether a submodule's own listing should be walked as a
 project of its own instead.
 
 ## A path with a newline in it breaks the one-finding-per-line output `observation`
@@ -200,7 +200,7 @@ Trailing punctuation inside the backticks, `` `path@<anchor>@notes/a.md,` ``, is
 list: the span is recorded as written and resolves to nothing, so it is reported as dangling.
 The link shapes surface as a dangling target or an unlinked subdocument in
 a design README, and are silent in an ordinary navigation file, per the close-enough clause of
-`knowledge#links-are-navigation-rows`. Enumerated by an adversarial review of the
+`design@knowledge@links-are-navigation-rows`. Enumerated by an adversarial review of the
 anchored-grammar branch; a grep at that revision found no live instance of any shape, so every
 gap is latent.
 
@@ -210,16 +210,16 @@ all. The cost of widening is false positives on prose, which the lint's two-segm
 tuned against; the census that tuned it did not measure these shapes.
 
 **What would close it.** Widening the classes shape by shape with a measured false-positive
-census for each, or recording beside `knowledge#every-path-names-its-anchor` that a named shape
+census for each, or recording beside `design@knowledge@every-path-names-its-anchor` that a named shape
 stays outside on purpose. `assumption`: the colon idiom is the one worth widening first, being
 ordinary editor output. Untested — no census taken.
 
 ## Nothing tests that `rules diff` receives its two dates the right way round `deferred`
 
-**What.** `thaum#named-values-where-order-decides` exists because a reversed `rules diff` reports
+**What.** `design@thaum@named-values-where-order-decides` exists because a reversed `rules diff` reports
 newly added rules as gone and points every renumbering backwards, and `bumping-rules` reads those
 verdicts as instructions. The direction is asserted at the parse layer, and `rules::diff::diff`
-has its own unit tests, but the wiring between them — the dispatch in `knowledge@src/corpus_cmd.rs`
+has its own unit tests, but the wiring between them — the dispatch in `path@knowledge@src/corpus_cmd.rs`
 that hands `old` and `new` to `diff` — has no test. Found by an adversarial review of the clap
 migration.
 
@@ -239,7 +239,7 @@ that pins its direction is inside the work they are doing.
 
 ## The release cache sits at a predictable shared path `observation`
 
-**What.** `resolve` in `knowledge@rules/src/release.rs` answers a release that is neither
+**What.** `resolve` in `path@knowledge@rules/src/release.rs` answers a release that is neither
 vendored nor archived from `std::env::temp_dir()/MagicCompRules-<date>.txt`, downloading only
 when that file is absent. When `MANIFEST.tsv` holds no row for the date — which is every bump
 target by construction, since the manifest records only superseded releases — the digest has
@@ -249,7 +249,7 @@ builds its diff, its effective-as-of report and its `CHANGES.md` skeleton from t
 **Reproduce.** An empty manifest and the cache pre-seeded with arbitrary bytes: `resolve`
 returns those bytes as the release. First seen in the adversarial review of the first bump, and
 now pinned by `a_release_the_manifest_does_not_know_resolves_from_whatever_the_cache_holds` in
-`knowledge@rules/src/release.rs`, so a change that starts verifying them has to edit that test.
+`path@knowledge@rules/src/release.rs`, so a change that starts verifying them has to edit that test.
 
 **What is already done.** `resolve` prints the digest of the bytes it returns in both cases, and
 names their source — downloaded, or read from a pre-existing cache — through `provenance` in the
@@ -279,15 +279,15 @@ doc comment, closes this as a recorded trade-off.
 ## A rule marker inside a markdown HTML comment is read by nothing, and no instruction says so `question`
 
 **What.** The markdown grammar marks every line inside an HTML comment as inert, and the scanner
-takes no observation from an inert line, in `knowledge@documentation/src/source/md.rs` and the
-inert branch of `scan` in `knowledge@documentation/src/scan.rs`. A `CR:` marker with a quote, a
+takes no observation from an inert line, in `path@knowledge@documentation/src/source/md.rs` and the
+inert branch of `scan` in `path@knowledge@documentation/src/scan.rs`. A `CR:` marker with a quote, a
 slug reference or a path reference written inside `<!-- … -->` in a markdown document is
-therefore verified by nothing and reported by nothing. Root `thaum@CLAUDE.md` enumerates the
+therefore verified by nothing and reported by nothing. Root `path@thaum@CLAUDE.md` enumerates the
 places a rule number is data and says there is no third form, and names no such place.
 
 **Observed.** By the rules axis of the review of the branch that landed
-`knowledge#checker-source-literals-are-data`, on a scratch copy of the `minimal` mock project
-under `knowledge@tests/projects/`: a line naming a mock rule behind a marker, with a claim and no
+`design@knowledge@checker-source-literals-are-data`, on a scratch copy of the `minimal` mock project
+under `path@knowledge@tests/projects/`: a line naming a mock rule behind a marker, with a claim and no
 quote, appended to its `README.md` inside an HTML comment added no finding, and the same line
 outside one added the expected claim-without-quote finding. Reproduces.
 
@@ -298,7 +298,7 @@ is wanted; what is undecided is whether a marker may sit in one at all.
 
 **What would answer it.** A decision, recorded in this component's design home: either an inert
 line may not name a rule, reported the way the inverse assertion reports a rule number outside
-the walk, or the HTML comment is named in root `thaum@CLAUDE.md` as a form that carries no
+the walk, or the HTML comment is named in root `path@thaum@CLAUDE.md` as a form that carries no
 claim. Re-entry: the next tool-cleanup discussion.
 
 ## A location nested inside another anchor's register home is not refused `defect`
@@ -336,7 +336,7 @@ none, which is the whole reason it is printed. A count nobody can trust is worse
 **What would close it.** The refusal the entry above asks for closes the reachable case. If a
 second one is found, count distinct documents rather than instance-and-document pairs.
 
-## The `design-home-two-shapes` slug names a decision wider than the slug `todo`
+## The `heading-register-two-shapes` slug names a decision wider than the slug `todo`
 
 **What.** The head now states the two shapes of every HEADING REGISTER's home, and the slug still
 says `design-home`. `recording-a-decision` asks for a new slug when a statement widens, at the cost
@@ -346,7 +346,7 @@ same document, so a reader following the slug reads _design_ about tripwires.
 **Why it matters.** A slug is the name a reader navigates by, and one that names a narrower thing
 than its head sends them to the wrong place or makes them doubt they arrived.
 
-**What would close it.** Rename it during step B of `thaum@docs/plans/knowledge-tool-overhaul.md`,
+**What would close it.** Rename it during step B of `path@thaum@docs/plans/knowledge-tool-overhaul.md`,
 which rewrites every pointer in the tree mechanically, so the rename costs one more substitution
 rather than a pass of its own. The plan's record of the heads, in its section 8, lists this one
 among those rewritten in place with the slug kept, which is what this entry disagrees with.

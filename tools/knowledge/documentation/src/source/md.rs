@@ -35,7 +35,7 @@ pub fn parse(text: &str) -> Parsed {
     let (scopes, mut fenced, inert) = (a.scopes, a.fenced, a.inert);
     // The block's lines are marked as a fence, which is what keeps a metadata value from
     // being read as document structure: a heading, a slug definition or a navigation link.
-    // It does NOT make a rule number data — a fence never has, per `knowledge#grammars-not-prefixes`
+    // It does NOT make a rule number data — a fence never has, per `design@knowledge@grammars-not-prefixes`
     // — and it does not touch references, which are live inside a fence for every kind. A
     // `CR:` marker in a value therefore claims its rule with nowhere in the block to put the
     // quote, and is reported exactly as one anywhere else is.

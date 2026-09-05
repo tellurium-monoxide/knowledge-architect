@@ -5,7 +5,7 @@
 //! marker owes its quote inside the message within the distance rule, every reference resolves
 //! through the entity table, and the missing-marker lint reads it as it reads any other prose.
 //! The decision, and why a message is judged against a tree read from git objects rather than
-//! against the working tree, is `knowledge#a-commit-message-is-a-document`.
+//! against the working tree, is `design@knowledge@a-commit-message-is-a-document`.
 //!
 //! Three commands live here. `commit-message <file>` judges one message against the working
 //! tree and is what the `commit-msg` hook calls. `commits <range>` walks the range and judges
@@ -58,7 +58,7 @@ pub enum HookCommand {
 
 /// The rel path a message is parsed under.
 ///
-/// The suffix is what selects the markdown grammar, per `knowledge#grammars-not-prefixes`, so
+/// The suffix is what selects the markdown grammar, per `design@knowledge@grammars-not-prefixes`, so
 /// a message needs one; the findings are relabelled with the commit or the file before they
 /// are printed, and no reader ever sees this name.
 fn message_rel() -> PathBuf {
@@ -848,7 +848,7 @@ fn verdict(n: usize) -> String {
 ///
 /// `Ok(None)` is the key being unset, which is an answer; a git that could not run at all is
 /// an error, because reporting it as unset would answer a question nobody asked and exit 1
-/// where `thaum#exit-code-ladder` asks for 2.
+/// where `design@thaum@exit-code-ladder` asks for 2.
 fn hooks_path(root: &Path) -> Result<Option<String>, String> {
     let out = documentation::git::git(root)
         .args(["config", "--get", "core.hooksPath"])
@@ -1006,7 +1006,7 @@ mod tests {
     use super::*;
 
     // Every fixture is written as the bytes it means: the checker reads no string literal of
-    // its own source, per `knowledge#checker-source-literals-are-data`.
+    // its own source, per `design@knowledge@checker-source-literals-are-data`.
 
     /// The claim: git's comment block leaves the draft, and every line below it keeps the
     /// number it had in the file the hook was handed.

@@ -6,13 +6,13 @@
 //! walk; a `path` reference is resolved against the survey under the same anchors. A reference
 //! that resolves to nothing is reported as the repair it needs, four ways: the kind position
 //! holds an anchor, the anchor is unknown, the anchor does not carry that register, or the id
-//! is not defined there. The argument is `knowledge#a-slug-belongs-to-a-component`.
+//! is not defined there. The argument is `design@knowledge@a-slug-belongs-to-a-component`.
 //!
 //! **Nothing pointer-shaped passes unregistered.** A span with no `@` that is shaped like a
 //! path is reported as unanchored, and the two forms the grammar retired — `` `<word>#<word>` ``
 //! and a bare `R` with digits — are reported as what they were, so a pointer the migration
 //! missed is a finding rather than silence. The candidate rule and the retired-form lint are
-//! `knowledge#candidate-rule-and-retired-forms`.
+//! `design@knowledge@candidate-rule-and-retired-forms`.
 //!
 //! **The definition-site findings are not this family's.** Misplaced, malformed and duplicate
 //! definitions are found while the table is built, and `check::registers` reports them: where a
@@ -56,7 +56,7 @@ pub fn check_under(model: &Model, inputs: &Inputs, anchors: &Anchors) -> (Vec<Fi
 ///
 /// **The two are separated because a commit message is judged against a table it is no part
 /// of.** A message is a document under the regime, per
-/// `knowledge#a-commit-message-is-a-document`, and the entities it names are defined by the
+/// `design@knowledge@a-commit-message-is-a-document`, and the entities it names are defined by the
 /// tree it commits — so the table is built from that tree's model and the documents judged
 /// against it are these. `check_under` is the case where the two coincide.
 pub fn judge(
@@ -575,7 +575,7 @@ mod tests {
     use std::path::PathBuf;
 
     // Every fixture spells its reference inline: the checker reads no string literal of its
-    // own source, per `knowledge#checker-source-literals-are-data`.
+    // own source, per `design@knowledge@checker-source-literals-are-data`.
 
     /// A manifest declaring one component beside the root, against a root nothing reads.
     fn manifest() -> Manifest {

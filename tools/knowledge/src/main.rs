@@ -5,8 +5,8 @@
 //! its own location, and then a check could not be run against a model built in memory —
 //! which is the property the whole shape rests on.
 //!
-//! Arguments are declared, never parsed by hand, per `thaum#arguments-parse-through-clap`, and
-//! the exit codes are `thaum#exit-code-ladder`: 0 ran-and-clean, 1 ran-and-negative, 2
+//! Arguments are declared, never parsed by hand, per `design@thaum@arguments-parse-through-clap`, and
+//! the exit codes are `design@thaum@exit-code-ladder`: 0 ran-and-clean, 1 ran-and-negative, 2
 //! could-not-run.
 
 use std::collections::HashMap;
@@ -29,7 +29,7 @@ mod history_cmd;
 /// Written out rather than built from `Only::NAMED`, because a clap help string is a literal.
 /// `every_family_is_named_in_the_help` is what keeps the two in step: it fails when a family
 /// is added and not listed here. It is the SHORT help, so `-h` prints it and not only `--help`;
-/// the tripwire below reaches for whichever a reader typed. A tripwire in `knowledge@docs/tripwires.md` reads this list
+/// the tripwire below reaches for whichever a reader typed. A tripwire in `path@knowledge@docs/tripwires.md` reads this list
 /// out of the help, so a family missing from it is a check whose output reaches no reviewer.
 const FAMILIES: &str = "citations, generated, registers, references, uncovered, changes, \
                         corpus, regime. `structure` names every family but citations. A \
@@ -162,10 +162,10 @@ fn main() -> ExitCode {
 /// The checker's own source directory, compiled in.
 ///
 /// The one path this binary carries about any tree is its own. `CARGO_MANIFEST_DIR` of this
-/// crate is the component's directory exactly, and the alias in `thaum@.cargo/config.toml` builds
+/// crate is the component's directory exactly, and the alias in `path@thaum@.cargo/config.toml` builds
 /// the binary from the checkout on every run, so the compiled path names the tree being
 /// checked. Every model this binary builds is told it, so that the tool's own fixtures are
-/// read as data rather than as citations, per `knowledge#checker-source-literals-are-data`.
+/// read as data rather than as citations, per `design@knowledge@checker-source-literals-are-data`.
 /// A binary built elsewhere names a directory the walk never visits, exempts nothing, and the
 /// summary block's `checker source` line shows the count at zero.
 pub(crate) fn checker_source() -> &'static Path {
@@ -175,7 +175,7 @@ pub(crate) fn checker_source() -> &'static Path {
 /// The project is whatever declares itself one at or above the working directory.
 ///
 /// Nothing about any particular repository is compiled in, so pointing the tool at a mock
-/// project under `knowledge@tests/projects/` needs no flag and no special case.
+/// project under `path@knowledge@tests/projects/` needs no flag and no special case.
 fn locate() -> Result<Manifest, String> {
     let cwd =
         std::env::current_dir().map_err(|e| format!("cannot read the working directory: {e}"))?;
@@ -369,7 +369,7 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
 
 /// Regenerate every generated index in place.
 ///
-/// **It writes only where the bytes differ**, per `knowledge#generated-files-are-pure`: what a
+/// **It writes only where the bytes differ**, per `design@knowledge@generated-files-are-pure`: what a
 /// generated file holds is a function of the walked tree, so rewriting an already current one
 /// moves nothing but its mtime, and running this to look must cost nothing. It takes no flags
 /// for the same reason — nothing here can lose content, so there is nothing for a dry run to
@@ -407,7 +407,7 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
 
     // Every destination is checked before any is written. A run that wrote one index and then
     // failed on the next exited 2 — could not run — having already changed the tree, which is
-    // the one place `thaum#exit-code-ladder`'s line blurs. A missing directory here is the
+    // the one place `design@thaum@exit-code-ladder`'s line blurs. A missing directory here is the
     // manifest declaring one the tree does not have; creating it would paper over that, and the
     // registers check is what reports it.
     //
@@ -430,7 +430,7 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
         }
         // `fs::write` follows a symlink and writes through it, so a generated path that is one
         // would replace whatever sits at the far end — which is the one way this command could
-        // destroy something it did not generate, and what `knowledge#generated-files-are-pure`
+        // destroy something it did not generate, and what `design@knowledge@generated-files-are-pure`
         // needs to be false for its claim to hold. The sibling tool refuses one for the same
         // reason, in `target_is_mutable`.
         if std::fs::symlink_metadata(&path).is_ok_and(|m| m.file_type().is_symlink()) {
@@ -468,7 +468,7 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
 
 /// One recorded entry, whole, and every reference to it.
 ///
-/// **The two failure codes are different questions**, per `thaum#exit-code-ladder`: an argument
+/// **The two failure codes are different questions**, per `design@thaum@exit-code-ladder`: an argument
 /// that is not reference-shaped could not be run and exits 2, and a reference the grammar accepts
 /// that names nothing is a negative answer and exits 1. A reader who mistyped the grammar and a
 /// reader who named a deleted entry need different things.
@@ -748,7 +748,7 @@ fn counts(report: &Report) -> String {
     let ran = report.ran;
     let _ = write!(out, "\nchecked: {}", ran.names().join(", "));
     // Not a family: every family read this walk. Git supplies it, per
-    // `knowledge#git-supplies-the-walk`, so the count is what a reader compares between CI and
+    // `design@knowledge@git-supplies-the-walk`, so the count is what a reader compares between CI and
     // a local run. It prints whatever was asked for, and on a failing run as readily as a
     // passing one.
     let _ = write!(out, "\nwalk: {} file(s)", report.structure.walked);
@@ -905,7 +905,7 @@ mod tests {
     ///
     /// `FAMILIES` is a literal because a clap help string has to be one, so nothing but this
     /// keeps it in step with `Only::NAMED`. The tripwire guarding
-    /// `knowledge#families-are-the-checks` reads the family list out of the help, so a family
+    /// `design@knowledge@families-are-the-checks` reads the family list out of the help, so a family
     /// missing from it is a check whose output reaches no reviewer and nothing reports that.
     #[test]
     fn every_family_is_named_in_the_help() {

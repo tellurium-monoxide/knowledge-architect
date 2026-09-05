@@ -2,7 +2,7 @@
 //!
 //! Nothing about any particular repository is compiled into this tool. Every list a check
 //! reads comes from here, so the same binary checks this repository and a mock project under
-//! `knowledge@tests/projects/` with no special case anywhere, and a path that should not be checked has
+//! `path@knowledge@tests/projects/` with no special case anywhere, and a path that should not be checked has
 //! to say so in one file with a reason beside it.
 //!
 //! The file's presence is also what makes a directory a project root. That is one mechanism
@@ -12,7 +12,7 @@
 //! **Four registers are compiled in and the rest are declared.** `design`, `goal`, `tripwire`
 //! and `issue` are what the word component means here, so a project neither adds nor removes
 //! them; `[registers.<name>]` declares further ones, and `[locations.<name>]` names a
-//! directory that carries a subset of them. The argument is `knowledge#registers-are-declared`.
+//! directory that carries a subset of them. The argument is `design@knowledge@registers-are-declared`.
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -389,7 +389,7 @@ impl Manifest {
     /// Read a manifest from a known root.
     ///
     /// The ignore rules are not read here and are not this tool's to parse: git answers what it
-    /// ignores, per `knowledge#git-supplies-the-walk`.
+    /// ignores, per `design@knowledge@git-supplies-the-walk`.
     pub fn load(root: &Path) -> Result<Self, String> {
         let path = root.join(MANIFEST_NAME);
         let text =

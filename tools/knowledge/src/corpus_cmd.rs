@@ -15,7 +15,7 @@ use rules::release::{self, Tree};
 use rules::{Corpus, RuleNumber};
 
 /// The corpus verbs. Dates are named rather than positional wherever two of them meet, per
-/// `thaum#named-values-where-order-decides`; a lone date has no order to get wrong.
+/// `design@thaum@named-values-where-order-decides`; a lone date has no order to get wrong.
 #[derive(Subcommand)]
 pub enum RulesCommand {
     /// The pinned text of one or more rules, shaped to be quoted.
@@ -51,7 +51,7 @@ pub enum RulesCommand {
 ///
 /// Validated here rather than where it is used: `release::url_for` takes the year with
 /// `&date[..4]`, which panics on anything shorter and on a multi-byte boundary. A bad argument
-/// is exit 2 per `thaum#exit-code-ladder`, and a clap `value_parser` is what holds that line —
+/// is exit 2 per `design@thaum@exit-code-ladder`, and a clap `value_parser` is what holds that line —
 /// a panic is 101 and says nothing.
 fn release_date(s: &str) -> Result<String, String> {
     if s.len() == 8 && s.bytes().all(|b| b.is_ascii_digit()) {
@@ -493,7 +493,7 @@ mod tests {
     use super::*;
 
     // Every fixture is inline: the checker reads no string literal of its own source, per
-    // `knowledge#checker-source-literals-are-data`.
+    // `design@knowledge@checker-source-literals-are-data`.
 
     #[test]
     fn the_effective_report_names_a_re_export_only_when_the_lines_agree() {

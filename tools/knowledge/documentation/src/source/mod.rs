@@ -38,7 +38,7 @@ pub type Frontmatter = Result<Vec<(String, String)>, String>;
 /// How a Rust file's string literals are read.
 ///
 /// Decided by the caller from where the file sits. The checker's own source is the one place
-/// whose every literal is a fixture, per `knowledge#checker-source-literals-are-data`;
+/// whose every literal is a fixture, per `design@knowledge@checker-source-literals-are-data`;
 /// everywhere else the grammar decides per literal, and `rs::BINDINGS` says how.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Literals {
@@ -67,7 +67,7 @@ pub struct Prose {
     /// Whether this run may carry a decision's anchor and a document's structure.
     ///
     /// Markdown only. A slug definition inside a doc comment would move a decision's home into
-    /// a source file, which `knowledge#a-slug-belongs-to-a-component` places in a component's design
+    /// a source file, which `design@knowledge@a-slug-belongs-to-a-component` places in a component's design
     /// document.
     pub structural: bool,
     /// Byte ranges in `text` that are inline code spans.
@@ -206,7 +206,7 @@ pub struct Parsed {
     /// thematic break is not one. `Some(Err)` where a block is opened and closed and holds a
     /// line the accepted subset does not: a block opened and closed by a line holding only
     /// `---`, holding `key: value` lines with scalar values and nothing else. **The subset is
-    /// refused loudly outside itself**, per `knowledge#a-failed-parse-is-loud`, because a
+    /// refused loudly outside itself**, per `design@knowledge@a-failed-parse-is-loud`, because a
     /// frontmatter line nobody can parse is metadata nobody checks.
     ///
     /// The block's lines are prose. Marking them as a fence keeps a value out of the

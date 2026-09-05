@@ -5,7 +5,7 @@
 //! this file exists to prevent: the default selection could be changed to any subset and the
 //! whole suite still passed, so `check` could stop verifying every rule quote and exit 0.
 //!
-//! Each test runs against a mock project under `knowledge@tests/projects/`, which the manifest excludes
+//! Each test runs against a mock project under `path@knowledge@tests/projects/`, which the manifest excludes
 //! from this repository's own walk, so the binary finds that project by walking up from the
 //! working directory exactly as it would find any other.
 
@@ -60,7 +60,7 @@ fn run_with_env(dir: &Path, args: &[&str], env: &[(&str, &Path)]) -> (String, St
 
 /// A throwaway copy of a mock project, for the tests whose command writes.
 ///
-/// Every other test here runs against `knowledge@tests/projects/` in place, which works only while a run
+/// Every other test here runs against `path@knowledge@tests/projects/` in place, which works only while a run
 /// leaves the tree alone. `index` writes, so it gets a copy: writing into the fixture would
 /// leave the repository dirty, and the next run would then be comparing against the previous
 /// run's output rather than against the fixture.
@@ -326,7 +326,7 @@ fn a_passing_run_ends_with_a_passed_verdict() {
 /// and each names it.
 ///
 /// `changes` reads the changelog and `corpus` reads the archive, so neither has a model to be
-/// handed and neither is reachable from `knowledge@tests/mock_projects.rs`. Their row in that
+/// handed and neither is reachable from `path@knowledge@tests/mock_projects.rs`. Their row in that
 /// file's `PLANTED` table names this test. Both are gated on the changelog being readable, so
 /// the planted changelog is what makes either of them run over a mock at all.
 #[test]
@@ -458,10 +458,10 @@ fn rules_show_prints_the_release_typography_and_not_the_folded_form() {
 
 /// The claim: an invocation the hand-rolled parser accepted now exits 2 and runs nothing.
 ///
-/// The parse-level half of this lives beside the declaration in `knowledge@src/main.rs`. This
+/// The parse-level half of this lives beside the declaration in `path@knowledge@src/main.rs`. This
 /// is the same claim at the process boundary, which is what a gate and a session actually
 /// read: a `try_parse_from` returning `Err` says nothing about the code the process leaves
-/// with, and 2 is `thaum#exit-code-ladder`'s could-not-run.
+/// with, and 2 is `design@thaum@exit-code-ladder`'s could-not-run.
 ///
 /// Every row exited **0** against the implementation this replaces, each having done something
 /// other than what was asked.
@@ -593,7 +593,7 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
 /// refuses having written nothing or writes them all.
 ///
 /// On `main` there was one destination and the ordering was vacuous. With one index per
-/// file-register instance it is not: reordering the two loops in `knowledge@src/main.rs` would
+/// file-register instance it is not: reordering the two loops in `path@knowledge@src/main.rs` would
 /// leave a run that wrote three indexes and then exited 2 — could not run — over a tree it had
 /// already changed.
 #[test]
@@ -700,7 +700,7 @@ const ONE_TRIPWIRE: &str = "\
 /// The claim: `issues` prints one row per issue entry with the five columns in order, and each
 /// filter keeps only what it names.
 ///
-/// Recorded mutation, `cargo mutate run` over `knowledge@src/main.rs`: turning the `--kind`
+/// Recorded mutation, `cargo mutate run` over `path@knowledge@src/main.rs`: turning the `--kind`
 /// filter's `is_none_or` into `is_some_and` empties every unfiltered listing, and turning the
 /// row's `metadata` cell into a constant makes every kind read alike. Both are caught here.
 #[test]
@@ -1066,7 +1066,7 @@ fn a_reference_to_an_ignored_target_is_exempt_and_the_rules_decide_it() {
 ///
 /// An unstaged deletion leaves a path in git's listing with no bytes behind it. Dropping it
 /// would take a live document out of every check on the strength of a working-tree state, which
-/// is the shape `knowledge#a-failed-parse-is-loud` refuses. The finding names the deletion
+/// is the shape `design@knowledge@a-failed-parse-is-loud` refuses. The finding names the deletion
 /// rather than reporting an encoding failure, because the two need different repairs.
 #[test]
 fn a_tracked_file_the_working_tree_does_not_hold_is_reported() {
@@ -1139,7 +1139,7 @@ fn a_per_user_ignore_file_does_not_decide_the_walk() {
 
 /// A throwaway repository holding a project the checks find nothing wrong with.
 ///
-/// **The mock projects under `knowledge@tests/projects/` are not used here.** A commit is
+/// **The mock projects under `path@knowledge@tests/projects/` are not used here.** A commit is
 /// judged only where its own tree passes, and `dirhome` is the mock over which every family
 /// runs and finds nothing — so a copy of it could serve as a base. The project below is written out anyway, because each test
 /// below states the exact findings its commits carry, and a mock's contents are shared with
@@ -1751,7 +1751,7 @@ fn install_refusing_leaves_the_configuration_untouched() {
 /// The claim: `hook status` without git says it could not run, rather than reporting the hook
 /// absent.
 ///
-/// A missing git and an unset key are different facts, and `thaum#exit-code-ladder` gives them
+/// A missing git and an unset key are different facts, and `design@thaum@exit-code-ladder` gives them
 /// different codes: 1 is a negative answer about the subject, 2 is no answer at all.
 #[test]
 fn hook_status_without_git_could_not_run() {

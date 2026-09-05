@@ -539,7 +539,7 @@ mod tests {
     use super::*;
 
     // Every fixture is written as the bytes it means: the checker reads no string literal of
-    // its own source, per `knowledge#checker-source-literals-are-data`.
+    // its own source, per `design@knowledge@checker-source-literals-are-data`.
 
     fn n(s: &str) -> RuleNumber {
         RuleNumber::parse(s).expect("a rule number")

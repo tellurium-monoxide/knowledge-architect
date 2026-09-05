@@ -8,7 +8,7 @@ it. One binary, reached through a cargo alias so nothing has to be installed.
 nested `.gitignore` files included, and a file git tracks is read whatever the ignore rules say.
 Neither failure is silent: no binary and no worktree are both exit 2 naming the reason, never an
 empty walk. `commits` reads a commit's tree through `cat-file --batch -z`, which is where the
-version floor comes from. The decision is `knowledge#git-supplies-the-walk`.
+version floor comes from. The decision is `design@knowledge@git-supplies-the-walk`.
 
 ```sh
 cargo knowledge check [--only a,b,c]      every check, over one walk; or only these families
@@ -33,7 +33,7 @@ cargo knowledge rules bump <date>         archive, fetch, reindex, draft the cha
 
 ## Exit codes
 
-Three, per `thaum#exit-code-ladder`, and the third is what makes the other two mean anything.
+Three, per `design@thaum@exit-code-ladder`, and the third is what makes the other two mean anything.
 
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
@@ -57,7 +57,7 @@ the tail of the output has to reach the verdict rather than the counts.
 
 `citations`, `generated`, `registers`, `references`, `uncovered`, `changes`, `corpus`, `regime`.
 
-Seven are the modules under `knowledge@documentation/src/check/`. `corpus` is the integrity check
+Seven are the modules under `path@knowledge@documentation/src/check/`. `corpus` is the integrity check
 over the vendored text and its archive, which reads the filesystem rather than the model.
 `references` judges every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a
 register kind against the entries its home defines, the `path` kind against the tree — and reports
@@ -69,7 +69,7 @@ their subject is the changelog and the archive rather than the model.
 `structure` names every family but `citations`. A comma-separated list runs their union over the
 one walk, so asking for several costs one run rather than one run each. A run prints which families
 it performed, and a family that did not run prints no count of its own. The argument is
-`knowledge#families-are-the-checks`.
+`design@knowledge@families-are-the-checks`.
 
 ## `show`, `issues` and `tripwires`
 
@@ -99,7 +99,7 @@ anchor name is written with the anchor before it.
 
 **The last-change column is git's**, taken in one `git log` for every issue instance at once. An
 entry with no commit shows `uncommitted`; where git cannot answer the column shows `-`.
-A date never enters a generated file, per `knowledge#generated-files-are-pure` — it is printed
+A date never enters a generated file, per `design@knowledge@generated-files-are-pure` — it is printed
 here and nowhere else.
 
 ## `index`
@@ -115,7 +115,7 @@ docs/rules/interpretations/index.md      already current
 ```
 
 **A file-register index is a fixed shape, and its bytes are a contract**, per
-`knowledge#a-file-register-index-is-rows`:
+`design@knowledge@a-file-register-index-is-rows`:
 
 ```markdown
 **Generated — do not edit.** `cargo knowledge index`
@@ -145,7 +145,7 @@ manifest row names one and none can be created inside the walk.
 Running it to look therefore costs nothing, not even an mtime. **Whether a generated file is
 current is not this command's question** — that is `cargo knowledge check --only generated`, which
 is a gate and names the first line at which the committed file and the regenerated one disagree.
-Both halves are `knowledge#generated-files-are-pure`.
+Both halves are `design@knowledge@generated-files-are-pure`.
 
 ## `model`
 
@@ -160,7 +160,7 @@ pattern, which matters because markers and rule tokens are separate kinds here. 
 is **data** — inside an inline code span, inside a string literal bound to a name in Rust, or
 inside any string literal of the checker's own source — is not a citation and does not appear in
 the dump. A number inside a **fenced block does** appear,
-because a fenced sketch cites its rules for real; root `thaum@CLAUDE.md` owns that distinction and
+because a fenced sketch cites its rules for real; root `path@thaum@CLAUDE.md` owns that distinction and
 this is a restatement of it.
 
 ```sh
@@ -178,7 +178,7 @@ cargo knowledge model | awk -F'\t' '$4=="<number>" && ($3=="rule-token" || $3 ~ 
   extractor failing rather than as an answer.
 - **`diff`** names its two releases, `--old` and `--new`, both required. They are flags rather than
   positions because the output names no direction, so the pair given the wrong way round reports
-  new rules as gone and points every renumbering backwards — `thaum#named-values-where-order-decides`.
+  new rules as gone and points every renumbering backwards — `design@thaum@named-values-where-order-decides`.
 - **`fetch`** vendors a release and rewrites the version file to match; without a date, the one
   already pinned.
 - **`bump`** moves the project to a release. Read `bumping-rules` before running it.
@@ -187,7 +187,7 @@ cargo knowledge model | awk -F'\t' '$4=="<number>" && ($3=="rule-token" || $3 ~ 
 
 **Four registers are compiled in** — `design`, `goal`, `tripwire` and `issue` — because they are
 what the word component means to this tool. A project declares further ones in
-`thaum@knowledge.toml`:
+`path@thaum@knowledge.toml`:
 
 ```toml
 [locations.rules]              # a directory carrying a subset of the registers
@@ -211,8 +211,8 @@ a `README.md` that links every subdocument. A **file register** keeps one file p
 declared metadata key, then a level-one title, then the declared sections.
 
 `[registers.issue]` accepts `kinds` and nothing else; the other three built-in registers accept
-nothing. The arguments are `knowledge#registers-are-declared` and
-`knowledge#a-file-register-is-a-directory-of-entries`.
+nothing. The arguments are `design@knowledge@registers-are-declared` and
+`design@knowledge@a-file-register-is-a-directory-of-entries`.
 
 ## Commit messages, and the hook
 
@@ -220,7 +220,7 @@ nothing. The arguments are `knowledge#registers-are-declared` and
 document — subject line, blank line, body — and every rule runs over it: a `CR:` marker owes its
 verbatim quote inside the message, every `` `<kind>@<anchor>@<id>` `` reference resolves, and the
 missing-marker lint reads it as it reads any other prose. The argument is
-`knowledge#a-commit-message-is-a-document`.
+`design@knowledge@a-commit-message-is-a-document`.
 
 ```sh
 cargo knowledge commit-message .git/COMMIT_EDITMSG   # one message, against the working tree
@@ -251,21 +251,21 @@ cargo knowledge hook install     # core.hooksPath = .githooks
 cargo knowledge hook status      # 0 installed, 1 not
 ```
 
-`thaum@.githooks/commit-msg` is committed, so a review can read it; `install` writes it where a tree
+`path@thaum@.githooks/commit-msg` is committed, so a review can read it; `install` writes it where a tree
 carries none, and refuses to replace a `core.hooksPath` that names something else without
-`--force`. The script runs `cargo knowledge`, which is the alias in `thaum@.cargo/config.toml`: a
+`--force`. The script runs `cargo knowledge`, which is the alias in `path@thaum@.cargo/config.toml`: a
 tree without that alias needs the script rewritten to whatever reaches the binary there. **No check reads the hook's status**: per-clone configuration must not move a verdict.
 `cargo x gates` prints the status line beside its verdicts and gates on nothing about it.
 
 ## What to respect
 
 **Nothing about this repository is compiled into the tool.** Every list a check reads comes from
-`thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
+`path@thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
 root — so the same binary checks this repository and a mock project under
-`knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says
+`path@knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says
 so there, in one place, with a reason beside it. The one thing compiled in is the tool's own
 directory, so that the string literals of its own source are read as data, per
-`knowledge#checker-source-literals-are-data`; that is a fact about the tool, not about any tree.
+`design@knowledge@checker-source-literals-are-data`; that is a fact about the tool, not about any tree.
 
-Read `knowledge@docs/design.md` before changing how it works, and `bumping-rules` before adopting a
+Read `path@knowledge@docs/design.md` before changing how it works, and `bumping-rules` before adopting a
 rules release.

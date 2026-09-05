@@ -1,17 +1,17 @@
 //! The tool run against whole projects, not against strings.
 //!
-//! A mock project under `knowledge@tests/projects/` is a complete project: it carries
+//! A mock project under `path@knowledge@tests/projects/` is a complete project: it carries
 //! its own `knowledge.toml` and its own documents. That is what makes these tests worth more
 //! than the in-memory ones — a fixture written as a string cannot exercise the walk, the
 //! exclusions, or a layout different from this repository's.
 //!
 //! It is also why the directory stays excluded. The projects beside this file sit under
-//! `knowledge@tests/projects/`, which this repository's own manifest excludes: each mock project is
+//! `path@knowledge@tests/projects/`, which this repository's own manifest excludes: each mock project is
 //! a complete foreign project, and its planted defects — a slug, a dangling path, a rule number
 //! with no quote — must be reported by the test that runs the tool over it, never as this
 //! repository's own.
 //!
-//! Cargo compiles every `.rs` file directly under `knowledge@tests/`, so this file is a test target and `projects/` beside it is
+//! Cargo compiles every `.rs` file directly under `path@knowledge@tests/`, so this file is a test target and `projects/` beside it is
 //! not: a directory without a `main.rs` is data.
 
 use std::path::PathBuf;
@@ -363,7 +363,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
 ///
 /// The rule index is compared only where a project carries one. `minimal` deliberately carries
 /// none, which is what lets `index_rewrites_what_moved_and_leaves_what_is_current_alone` in
-/// `knowledge@tests/binary.rs` watch a generated file be created.
+/// `path@knowledge@tests/binary.rs` watch a generated file be created.
 #[test]
 fn every_committed_index_is_what_the_generator_writes() {
     for name in ["minimal", "dirhome", "pinned", "typography"] {
@@ -391,15 +391,15 @@ fn every_committed_index_is_what_the_generator_writes() {
 
 /// `dirhome` is the conformant fixture, and this is the assertion that keeps it one.
 ///
-/// It carries the other accepted heading-register shape — `*@docs/design/` and
-/// `*@docs/goals/`, each headed by a README linking its subdocument, with the entries defined
+/// It carries the other accepted heading-register shape — `path@*@docs/design/` and
+/// `path@*@docs/goals/`, each headed by a README linking its subdocument, with the entries defined
 /// in the subdocuments — and the only ISSUE instance in any mock that declares a group. Every
 /// generated file it holds is committed and current.
 ///
 /// **Both directions matter.** `planted` shows that the families still detect; a project that
 /// is right in every shape shows that they do not report over a conformant tree, which is what
 /// a false positive would look like. The counterpart at the process boundary is
-/// `the_conformant_mock_passes_every_family` in `knowledge@tests/binary.rs`, which reaches the
+/// `the_conformant_mock_passes_every_family` in `path@knowledge@tests/binary.rs`, which reaches the
 /// two families `run` does not carry.
 #[test]
 fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
@@ -537,7 +537,7 @@ mod planted {
     enum Planted {
         /// `run` reports it. The number is how many findings the family produces alone.
         InRun(usize),
-        /// The binary reports it. The name is the test in `knowledge@tests/binary.rs` that
+        /// The binary reports it. The name is the test in `path@knowledge@tests/binary.rs` that
         /// asserts the finding, and `run` must produce nothing for the family.
         ByTheBinary(&'static str),
     }

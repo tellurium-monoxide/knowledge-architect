@@ -3,7 +3,7 @@
 //! **Git is the walk.** What this tool reads is what `git ls-files` reports from the manifest's
 //! directory, so a nested `.gitignore` is honoured, every pattern git honours is honoured, and a
 //! file git tracks can no longer leave the walk. The hand-rolled matcher this replaced could do
-//! none of the three, per `knowledge#git-supplies-the-walk`.
+//! none of the three, per `design@knowledge@git-supplies-the-walk`.
 //!
 //! **One module owns the process boundary.** A check is a pure function over the model and may
 //! spawn nothing, so every call here is made by the caller that builds the model or prints a
@@ -90,7 +90,7 @@ impl Invocation {
             // takes an untracked live document out of every check on one clone and not on
             // another. What still decides the walk is the tree's own ignore files and git's
             // per-clone exclude file, which git offers no way to pin; the tripwire in
-            // `knowledge@docs/tripwires.md` guards what remains.
+            // `path@knowledge@docs/tripwires.md` guards what remains.
             .args(["-c", "core.excludesFile=/dev/null"])
             .args(&self.args)
             .stdout(Stdio::piped())
@@ -186,7 +186,7 @@ fn nul_separated(bytes: &[u8]) -> Vec<&[u8]> {
 /// legal on this platform and git reports it as it is under `-z`; decoding it lossily would
 /// substitute a replacement character and produce a path nothing on disk answers to. The file
 /// would then read as unreadable — or, where nothing reports that, leave every check while the
-/// run stayed green, which is the failure `knowledge#git-supplies-the-walk` exists against.
+/// run stayed green, which is the failure `design@knowledge@git-supplies-the-walk` exists against.
 fn nul_paths(bytes: &[u8]) -> Vec<PathBuf> {
     nul_separated(bytes).into_iter().map(as_path).collect()
 }
@@ -258,7 +258,7 @@ pub fn tracked_and_ignored(root: &Path) -> io::Result<Vec<PathBuf>> {
 /// matches a path git can tell is a directory, and a target that does not exist yet — which is
 /// the whole point of exempting generated paths — is a directory only if the spelling says so.
 /// Asking by the claim rather than by what is on disk is what makes the verdict identical on a
-/// fresh clone and a built tree, per `knowledge#ignored-targets-are-not-asserted`.
+/// fresh clone and a built tree, per `design@knowledge@ignored-targets-are-not-asserted`.
 pub fn ignore_query(target: &Path, claims_dir: bool) -> String {
     let mut out = target.to_string_lossy().into_owned();
     if claims_dir && !out.ends_with('/') {

@@ -404,7 +404,7 @@ mod tests {
     use super::*;
 
     // Every fixture below is written inline: the checker reads no string literal of its own
-    // source, per `knowledge#checker-source-literals-are-data`.
+    // source, per `design@knowledge@checker-source-literals-are-data`.
 
     fn rules_of(quotes: &[Quote]) -> Vec<String> {
         quotes.iter().map(|q| q.rule.to_string()).collect()

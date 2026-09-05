@@ -146,7 +146,7 @@ impl Model {
     ///
     /// `checker_source` is the directory of the checker's own source. A file under it is
     /// parsed with its string literals as data, per
-    /// `knowledge#checker-source-literals-are-data`; every other file reads them as prose.
+    /// `design@knowledge@checker-source-literals-are-data`; every other file reads them as prose.
     /// The binary passes its compile-time location, and a library caller checking a tree the
     /// checker is no part of passes `None`. The root and the compiled path are canonicalised
     /// before the prefix test, so a symlinked checkout does not defeat it; a symlink inside
@@ -256,7 +256,7 @@ impl Model {
     /// as data.
     ///
     /// Zero in a checkout that holds the tool is the loud failure of
-    /// `knowledge#checker-source-literals-are-data`: the compiled path and the walked tree
+    /// `design@knowledge@checker-source-literals-are-data`: the compiled path and the walked tree
     /// disagree, and the tool's fixtures are being read as citations.
     pub fn checker_files(&self) -> usize {
         self.docs
@@ -278,7 +278,7 @@ impl Model {
     /// `build` takes an absolute directory and canonicalises it against the checkout; there is
     /// no checkout here, so the caller states the directory the way every document in the list
     /// is stated. A Rust file under it reads its string literals as data, per
-    /// `knowledge#checker-source-literals-are-data`. `commits` needs this because a per-commit
+    /// `design@knowledge@checker-source-literals-are-data`. `commits` needs this because a per-commit
     /// model is assembled from git objects and would otherwise read the tool's own fixtures as
     /// live citations at every commit in the range.
     pub fn from_documents_under(docs: Vec<(PathBuf, String)>, checker: Option<&Path>) -> Self {
@@ -381,7 +381,7 @@ mod tests {
     use super::*;
 
     // Every fixture is written as the bytes it means: the checker reads no string literal of
-    // its own source, per `knowledge#checker-source-literals-are-data`.
+    // its own source, per `design@knowledge@checker-source-literals-are-data`.
 
     #[test]
     fn a_model_can_be_assembled_without_a_checkout() {
@@ -490,7 +490,7 @@ mod tests {
     #[test]
     fn a_stated_checker_directory_reads_its_rust_literals_as_data() {
         // Unbound on purpose: a literal BOUND to a name is data in either mode, per
-        // `knowledge#grammars-not-prefixes`, so a fixture written that way would pass
+        // `design@knowledge@grammars-not-prefixes`, so a fixture written that way would pass
         // whichever mode the model chose.
         let source = "fn f() {\n    report(\"CR:100.1 the words a rule holds\");\n}\n";
         let docs = vec![

@@ -17,7 +17,7 @@ use crate::manifest::Walk;
 ///
 /// `listing` is git's live listing, project-relative: every tracked file, plus every untracked
 /// file the ignore rules do not cover. A tracked file is in it whatever the ignore rules say,
-/// per `knowledge#git-supplies-the-walk`, so no ignore line can remove a live document from the
+/// per `design@knowledge@git-supplies-the-walk`, so no ignore line can remove a live document from the
 /// walk. What this function removes on top of that is the manifest's `skip-dirs`, `skip-files`
 /// and `exclude`, the suffixes the tool cannot parse, and the generated indexes.
 ///
@@ -59,7 +59,7 @@ pub fn skipped(rel: &Path, walk: &Walk) -> bool {
 /// project; which of them this tool knows how to parse is a fact about this tool, and only
 /// the second decides what may be walked. A project free to declare its own set would be
 /// conformant with whatever it declared — `suffixes = []` passes every citation check — which
-/// is the same argument `knowledge#components-carry-the-same-documents` makes about the document set.
+/// is the same argument `design@knowledge@components-carry-the-same-documents` makes about the document set.
 ///
 /// Nothing is left unchecked by narrowing it. `check::uncovered` asserts the inverse, that a
 /// file outside the walk may not name a rule, so a citation written in a manifest or a script

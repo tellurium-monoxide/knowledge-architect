@@ -43,7 +43,7 @@ pub const MAX_DISTANCE: u32 = 60;
 
 /// The rules of the regime that this module enforces.
 ///
-/// The set is compiled in for the reason `knowledge#components-carry-the-same-documents` gives about the
+/// The set is compiled in for the reason `design@knowledge@components-carry-the-same-documents` gives about the
 /// document set: a project free to declare its own would be conformant with whatever it declared.
 /// Each is named so the fixture assertion can say which one has no planted violation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -651,7 +651,7 @@ mod tests {
     use super::*;
 
     // Every fixture below is written inline: the checker reads no string literal of its own
-    // source, per `knowledge#checker-source-literals-are-data`.
+    // source, per `design@knowledge@checker-source-literals-are-data`.
 
     /// A parent with one subrule, for the parent-rule cases.
     const PARENT_CORPUS: &str = concat!(
