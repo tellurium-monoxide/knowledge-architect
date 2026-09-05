@@ -1065,15 +1065,32 @@ fn a_per_user_ignore_file_does_not_decide_the_walk() {
 /// piece needed. The project below is written out so that a run over it has exactly the
 /// findings the test plants and no others.
 struct History {
+    /// The project's own directory, which is where every command is run.
     dir: PathBuf,
+    /// The repository's root, which is `dir` unless the project is vendored under it.
+    repo: PathBuf,
 }
 
 impl History {
     fn new(tag: &str) -> Self {
-        let dir = std::env::temp_dir().join(format!("knowledge-{tag}-{}", std::process::id()));
-        let _ = std::fs::remove_dir_all(&dir);
+        Self::at(tag, "")
+    }
+
+    /// The same, with the project `under` a subdirectory of its repository.
+    ///
+    /// A project vendored that way is what the manifest's `find` already supports, and every
+    /// git question the per-commit read asks has to be answered project-relative rather than
+    /// repository-relative.
+    fn at(tag: &str, under: &str) -> Self {
+        let repo = std::env::temp_dir().join(format!("knowledge-{tag}-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&repo);
+        let dir = if under.is_empty() {
+            repo.clone()
+        } else {
+            repo.join(under)
+        };
         std::fs::create_dir_all(&dir).expect("a temporary directory");
-        let history = History { dir };
+        let history = History { dir, repo };
         history.git(&["init", "-q"]);
         // An identity in the repository's own configuration, not the machine's: a fixture
         // that read the developer's would fail wherever none is set, which is every runner.
@@ -1082,10 +1099,12 @@ impl History {
         history
     }
 
+    /// One git command at the REPOSITORY root, which is where `init`, `add` and `commit`
+    /// belong: `add -A` run inside a subdirectory stages that subdirectory alone.
     fn git(&self, args: &[&str]) {
         let out = Command::new("git")
             .args(args)
-            .current_dir(&self.dir)
+            .current_dir(&self.repo)
             .output()
             .expect("git runs");
         assert!(
@@ -1123,7 +1142,7 @@ impl History {
         self.git(&["-c", "core.excludesFile=/dev/null", "add", "-A"]);
         self.run(&["index"]);
         self.git(&["-c", "core.excludesFile=/dev/null", "add", "-A"]);
-        let file = self.dir.join("message.txt");
+        let file = self.repo.join("message.txt");
         std::fs::write(&file, message).expect("a message file");
         let path = file.to_string_lossy().into_owned();
         // `--allow-empty`, because a test commits a message over a tree it did not change:
@@ -1140,7 +1159,7 @@ impl History {
         std::fs::remove_file(&file).expect("the message file leaves the tree");
         let out = Command::new("git")
             .args(["rev-parse", "--short=7", "HEAD"])
-            .current_dir(&self.dir)
+            .current_dir(&self.repo)
             .output()
             .expect("git runs");
         String::from_utf8_lossy(&out.stdout).trim().to_string()
@@ -1149,7 +1168,7 @@ impl History {
 
 impl Drop for History {
     fn drop(&mut self) {
-        let _ = std::fs::remove_dir_all(&self.dir);
+        let _ = std::fs::remove_dir_all(&self.repo);
     }
 }
 
@@ -1355,6 +1374,33 @@ fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
     assert!(
         stdout.contains("its own tree fails 1 finding(s)"),
         "{stdout}"
+    );
+}
+
+/// The claim: a project vendored under its repository is judged from its own paths.
+///
+/// Every git question a per-commit read asks is answered relative to the working directory —
+/// `ls-tree` is scoped to it and names entries relative to it, and a blob is asked for as
+/// `<sha>:./<path>`. Asked repository-relative instead, the listing carries a prefix the
+/// manifest never declares, so every document falls out of the walk and every reference in a
+/// message dangles while the working tree's own `check` passes.
+#[test]
+fn a_project_vendored_under_its_repository_is_judged_from_its_own_paths() {
+    let history = History::at("commit-nested", "vendored");
+    tiny_project(&history, false);
+    // A file at the repository root, outside the project: nothing about it may reach the walk.
+    std::fs::write(history.repo.join("outside.md"), "# Outside\n").expect("a file outside");
+    let base = history.commit("The project is created\n");
+    let sha = history.commit("A subject line\n\nIt records `design@tiny@tiny-anchor`.\n");
+
+    let (clean, stderr, code) = history.run(&["check"]);
+    assert_eq!(code, 0, "the working tree is clean: {clean}{stderr}");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "and so is the commit's tree: {stdout}{stderr}");
+    assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
+    assert!(
+        !stdout.contains("its own tree fails"),
+        "the listing carried no repository prefix: {stdout}"
     );
 }
 

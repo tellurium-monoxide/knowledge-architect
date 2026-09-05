@@ -295,18 +295,12 @@ struct FromTree {
 /// Deliberately not the whole tree. A path under a skipped directory, an excluded path and a
 /// skipped file are read by no family, and the corpus alone is two megabytes at every commit
 /// in the range.
-fn read_tree(
-    root: &Path,
-    sha: &str,
-    prefix: &Path,
-    generated_extra: &[PathBuf],
-) -> Result<FromTree, Unloadable> {
-    let listing = documentation::git::tree_files(root, sha, prefix)
+fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<FromTree, Unloadable> {
+    let listing = documentation::git::tree_files(root, sha)
         .map_err(|e| Unloadable(format!("its tree could not be listed: {e}")))?;
     let manifest_rel = PathBuf::from(MANIFEST_NAME);
-    let declaration =
-        documentation::git::blobs(root, sha, std::slice::from_ref(&manifest_rel), prefix)
-            .map_err(|e| Unloadable(format!("its {MANIFEST_NAME} could not be read: {e}")))?;
+    let declaration = documentation::git::blobs(root, sha, std::slice::from_ref(&manifest_rel))
+        .map_err(|e| Unloadable(format!("its {MANIFEST_NAME} could not be read: {e}")))?;
     let Some(text) = declaration.get(&manifest_rel) else {
         return Err(Unloadable(format!("its tree holds no {MANIFEST_NAME}")));
     };
@@ -334,7 +328,7 @@ fn read_tree(
     }
     wanted.sort();
     wanted.dedup();
-    let blobs = documentation::git::blobs(root, sha, &wanted, prefix)
+    let blobs = documentation::git::blobs(root, sha, &wanted)
         .map_err(|e| Unloadable(format!("its blobs could not be read: {e}")))?;
     Ok(FromTree {
         manifest,
@@ -354,13 +348,12 @@ fn read_tree(
 fn commit_tree(
     root: &Path,
     sha: &str,
-    prefix: &Path,
     checker: Option<&Path>,
     corpora: &mut Corpora,
 ) -> Result<Assembly, Unloadable> {
     // The rule index is generated and named by the manifest rather than derived, so it is
     // asked for by hand; every other generated index comes from the register instances.
-    let read = read_tree(root, sha, prefix, &[])?;
+    let read = read_tree(root, sha, &[])?;
     let manifest = read.manifest;
     let anchors = Anchors::of(&manifest);
     let generated = documentation::index::generated_index_paths(&manifest);
@@ -376,7 +369,7 @@ fn commit_tree(
     }
     extra.retain(|rel| read.listing.contains(rel) && !blobs.contains_key(rel));
     if !extra.is_empty() {
-        let more = documentation::git::blobs(root, sha, &extra, prefix)
+        let more = documentation::git::blobs(root, sha, &extra)
             .map_err(|e| Unloadable(format!("its generated files could not be read: {e}")))?;
         blobs.extend(more);
     }
@@ -399,11 +392,9 @@ fn commit_tree(
     let corpus_rel = rules_dir.join(&manifest.rules().text);
     let body_starts_at = manifest.rules().body_starts_at;
     if let Some(text) = blobs.get(&corpus_rel) {
-        let key = documentation::git::rev_parse(
-            root,
-            &format!("{sha}:{}", prefix.join(&corpus_rel).display()),
-        )
-        .unwrap_or_else(|| format!("{sha}:corpus"));
+        let key =
+            documentation::git::rev_parse(root, &documentation::git::tree_object(sha, &corpus_rel))
+                .unwrap_or_else(|| format!("{sha}:corpus"));
         let release = corpora
             .parsed
             .entry(key)
@@ -429,7 +420,7 @@ fn commit_tree(
     if !pins.is_empty() {
         let past = rules_dir.join(&manifest.rules().past);
         let wanted: Vec<PathBuf> = pins.iter().map(|d| past.join(format!("{d}.txt"))).collect();
-        let archived = documentation::git::blobs(root, sha, &wanted, prefix)
+        let archived = documentation::git::blobs(root, sha, &wanted)
             .map_err(|e| Unloadable(format!("its archive could not be read: {e}")))?;
         for (date, rel) in pins.iter().zip(&wanted) {
             if let Some(text) = archived.get(rel) {
@@ -567,7 +558,6 @@ pub fn commits(
         println!("{}", verdict(0));
         return Ok(ExitCode::SUCCESS);
     }
-    let prefix = documentation::git::prefix(root).map_err(|e| e.to_string())?;
     // The checker's own directory, project-relative, so a per-commit model reads the tool's
     // own fixtures as data the way `check` does.
     let checker_rel = checker.and_then(|c| c.strip_prefix(root).ok().map(Path::to_path_buf));
@@ -585,7 +575,7 @@ pub fn commits(
         // **HEAD is never skipped.** A range whose tip could not be judged would pass with
         // every commit skipped, which is the vacuous run the summary counts exist against.
         let never_skipped = *sha == last || head.as_deref() == Some(sha.as_str());
-        let assembled = commit_tree(root, sha, &prefix, checker_rel.as_deref(), &mut corpora);
+        let assembled = commit_tree(root, sha, checker_rel.as_deref(), &mut corpora);
         let tree = match assembled {
             Ok(tree) => tree,
             Err(Unloadable(why)) => {
@@ -627,14 +617,12 @@ pub fn commits(
         let first_parent = documentation::git::rev_parse(root, &format!("{sha}^"));
         let parent_owned = match (&previous, &first_parent) {
             (Some((seen, _, _)), Some(parent)) if seen == parent => None,
-            (_, Some(parent)) => {
-                commit_tree(root, parent, &prefix, checker_rel.as_deref(), &mut corpora)
-                    .ok()
-                    .map(|a| {
-                        let e = Entities::build(&a.model, &a.anchors());
-                        (a, e)
-                    })
-            }
+            (_, Some(parent)) => commit_tree(root, parent, checker_rel.as_deref(), &mut corpora)
+                .ok()
+                .map(|a| {
+                    let e = Entities::build(&a.model, &a.anchors());
+                    (a, e)
+                }),
             (_, None) => None,
         };
         let parent = match (&previous, &first_parent, &parent_owned) {

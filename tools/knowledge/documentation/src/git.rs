@@ -385,32 +385,42 @@ pub fn rev_parse(root: &Path, expression: &str) -> Option<String> {
 
 /// Every file in one commit's tree, project-relative.
 ///
-/// `prefix` is where the project sits inside the repository, empty at the repository root: git
-/// names a tree's entries from the repository root whatever directory it is run in, so a
-/// project vendored as a subdirectory would otherwise get repository-relative paths that match
-/// nothing the manifest declares.
-pub fn tree_files(root: &Path, sha: &str, prefix: &Path) -> io::Result<Vec<PathBuf>> {
-    let listed = git(root)
+/// **Run from the project root, `ls-tree` is scoped to it and names its entries relative to
+/// it.** That is the default and `--full-name` is what turns it off, so a project vendored as
+/// a subdirectory of its repository gets exactly the paths its manifest declares, and nothing
+/// from outside it. The same holds of the blob requests below, which name a path relative to
+/// the working directory.
+pub fn tree_files(root: &Path, sha: &str) -> io::Result<Vec<PathBuf>> {
+    git(root)
         .args(["ls-tree", "-r", "-z", "--name-only", sha])
-        .paths()?;
-    if prefix.as_os_str().is_empty() {
-        return Ok(listed);
-    }
-    Ok(listed
-        .into_iter()
-        .filter_map(|p| p.strip_prefix(prefix).ok().map(Path::to_path_buf))
-        .collect())
+        .paths()
 }
 
-/// Where the working directory sits inside its repository, project-relative to the root git
-/// reports. Empty when the project IS the repository root.
-pub fn prefix(root: &Path) -> io::Result<PathBuf> {
-    let out = git(root).args(["rev-parse", "--show-prefix"]).output()?;
-    Ok(PathBuf::from(
-        String::from_utf8_lossy(&out)
-            .trim_end_matches(['\n', '\r'])
-            .to_string(),
-    ))
+/// How one path in one commit's tree is named to `cat-file` and `rev-parse`.
+///
+/// `<rev>:./<path>` resolves relative to the working directory, where `<rev>:<path>` resolves
+/// from the repository root. The first is what a project-relative path needs.
+pub fn tree_object(sha: &str, rel: &Path) -> String {
+    format!("{sha}:./{}", rel.display())
+}
+
+#[cfg(test)]
+mod object_naming {
+    use super::*;
+
+    /// The claim: a path is named to git relative to the working directory.
+    ///
+    /// `<rev>:<path>` resolves from the repository root, so a project vendored under its
+    /// repository would ask for every one of its documents at a path the root does not hold
+    /// and git would answer `missing` to all of them.
+    #[test]
+    fn a_tree_object_is_named_relative_to_the_working_directory() {
+        assert_eq!(
+            tree_object("abc", Path::new("docs/a.md")),
+            "abc:./docs/a.md"
+        );
+        assert_eq!(tree_object("abc", Path::new("")), "abc:./");
+    }
 }
 
 /// The contents of many blobs of one commit's tree, in one process.
@@ -423,19 +433,16 @@ pub fn prefix(root: &Path) -> io::Result<PathBuf> {
 /// A blob whose bytes are not UTF-8 contributes no entry either, for the reason
 /// `Model::build` keeps an unreadable file as an empty document: a lossy decoding produces
 /// text nobody wrote. The caller sees the absence and reports it.
-pub fn blobs(
-    root: &Path,
-    sha: &str,
-    paths: &[PathBuf],
-    prefix: &Path,
-) -> io::Result<BTreeMap<PathBuf, String>> {
+pub fn blobs(root: &Path, sha: &str, paths: &[PathBuf]) -> io::Result<BTreeMap<PathBuf, String>> {
     if paths.is_empty() {
         return Ok(BTreeMap::new());
     }
     let mut stdin = Vec::new();
     for rel in paths {
-        stdin.extend_from_slice(format!("{sha}:").as_bytes());
-        stdin.extend_from_slice(path_bytes(&prefix.join(rel)));
+        // The one spelling, shared with the object lookup, so a path is named to git in one
+        // way and a change to it cannot reach one caller and miss the other.
+        stdin.extend_from_slice(tree_object(sha, Path::new("")).as_bytes());
+        stdin.extend_from_slice(path_bytes(rel));
         stdin.push(b'\n');
     }
     let raw = git(root)
@@ -747,7 +754,7 @@ mod tests {
             None,
             "a root commit has no first parent"
         );
-        let listed = tree_files(&repo, &shas[2], Path::new("")).expect("a tree listing");
+        let listed = tree_files(&repo, &shas[2]).expect("a tree listing");
         assert_eq!(
             listed,
             vec![
@@ -756,7 +763,7 @@ mod tests {
                 PathBuf::from("2.md")
             ]
         );
-        let read = blobs(&repo, &shas[2], &listed, Path::new("")).expect("its blobs");
+        let read = blobs(&repo, &shas[2], &listed).expect("its blobs");
         assert_eq!(read.len(), 3);
         assert_eq!(
             read.get(Path::new("1.md")).map(String::as_str),
