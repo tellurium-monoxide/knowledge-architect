@@ -33,10 +33,19 @@ still names what the working tree no longer holds. The in-place tests under
 so a mock file is walked because this repository tracks it — which also means a new fixture file
 is walked only once it is at least staged.
 
+**Five mock projects, and each is for one thing.** The head comment of each
+`knowledge.toml` says what its project exercises, and that comment is where a session decides
+which one to touch. In short: `planted` is detection, one defect per check family; `dirhome`
+is conformance, every family running and finding nothing; `minimal` is the walk, the
+exclusions, a location and a declared register; `pinned` is release resolution; `typography`
+is what `rules show` prints. **Plant a defect in `planted` and nowhere else** — a finding in
+any other project is a defect in the tool or in the fixture.
+
 **A test about commit messages builds its own project.** `commits` judges a message only where
-that commit's tree carries no finding, and no mock project under `knowledge@tests/projects/`
-has such a tree: `planted` plants one per family on purpose and the others are migrated only as
-far as an earlier piece needed. `History` in `knowledge@tests/binary.rs` writes a project out,
+that commit's tree carries no finding. `dirhome` is the one mock whose tree carries none, so a
+copy of it could serve as a base; `History` in `knowledge@tests/binary.rs` writes a project out
+anyway, because each test states the exact findings the commits it makes carry and a mock's
+contents are shared with every other test over it. `History` writes the project out,
 configures `user.name` and `user.email` in the copy's own configuration, and commits. Two
 orders it has to keep, both learned by getting them wrong:
 

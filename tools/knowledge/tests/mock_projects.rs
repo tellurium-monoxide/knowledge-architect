@@ -349,21 +349,75 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     );
 }
 
-/// The other accepted home shape, end to end: `*@docs/design/` headed by a README that links
-/// the one subdocument, with the anchor defined in the subdocument and referenced from the
-/// project's own README — and the goals home in the same shape, so the two-shape rule is
-/// shown to hold for a second register over a real walk.
+/// Every index a mock project commits is what the generator writes, byte for byte.
+///
+/// `planted` is excluded because a stale index and a missing one are two of its planted
+/// `generated` defects. For the other four the property is the opposite one: a committed index
+/// that has drifted would make every test over that project run against a listing the tree does
+/// not have, and the drift is invisible until someone runs `cargo knowledge index`.
+///
+/// The rule index is compared only where a project carries one. `minimal` deliberately carries
+/// none, which is what lets `index_rewrites_what_moved_and_leaves_what_is_current_alone` in
+/// `knowledge@tests/binary.rs` watch a generated file be created.
 #[test]
-fn a_directory_design_home_passes_end_to_end() {
+fn every_committed_index_is_what_the_generator_writes() {
+    for name in ["minimal", "dirhome", "pinned", "typography"] {
+        let manifest = mock(name);
+        let model = model(name);
+        let survey =
+            documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+        for (rel, want) in
+            documentation::index::file_register_indexes(&model, &manifest, &survey.directories)
+        {
+            let got = std::fs::read_to_string(manifest.root().join(&rel))
+                .unwrap_or_else(|e| panic!("{name}: {}: {e}", rel.display()));
+            assert_eq!(got, want, "{name}: {} has drifted", rel.display());
+        }
+        let rel = manifest.rules().dir.join("index.md");
+        let Ok(got) = std::fs::read_to_string(manifest.root().join(&rel)) else {
+            continue;
+        };
+        let text = std::fs::read_to_string(manifest.rules_tree().text()).expect("the mock corpus");
+        let corpus = rules::Corpus::parse(&text, manifest.rules().body_starts_at);
+        let want = documentation::index::rule_index(&model, &manifest, &corpus, "20200101");
+        assert_eq!(got, want, "{name}: {} has drifted", rel.display());
+    }
+}
+
+/// `dirhome` is the conformant fixture, and this is the assertion that keeps it one.
+///
+/// It carries the other accepted heading-register shape — `*@docs/design/` and
+/// `*@docs/goals/`, each headed by a README linking its subdocument, with the entries defined
+/// in the subdocuments — and the only ISSUE instance in any mock that declares a group. Every
+/// generated file it holds is committed and current.
+///
+/// **Both directions matter.** `planted` shows that the families still detect; a project that
+/// is right in every shape shows that they do not report over a conformant tree, which is what
+/// a false positive would look like. The counterpart at the process boundary is
+/// `the_conformant_mock_passes_every_family` in `knowledge@tests/binary.rs`, which reaches the
+/// two families `run` does not carry.
+#[test]
+fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
     use documentation::check::citations::Release;
     use documentation::check::{run, Inputs, Only};
     use std::collections::HashMap;
 
     let manifest = mock("dirhome");
     let model = Model::build(&manifest, None).expect("a model");
-    let releases: HashMap<Option<String>, Release> = HashMap::new();
-    let committed = HashMap::new();
+    let tree = manifest.rules_tree();
+    let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
+    let body = manifest.rules().body_starts_at;
+    let releases = HashMap::from([(None, Release::new(&text, body))]);
     let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+    // The committed generated files, read from the tree rather than regenerated, so a
+    // committed index that has gone stale fails here.
+    let mut committed = HashMap::new();
+    let mut paths = vec![manifest.rules().dir.join("index.md")];
+    paths.extend(documentation::index::generated_index_paths(&manifest));
+    for rel in paths {
+        let text = std::fs::read_to_string(manifest.root().join(&rel)).expect("a committed index");
+        committed.insert(rel, text);
+    }
     let git = git_answers(&manifest, &model);
     let inputs = Inputs {
         releases: &releases,
@@ -376,18 +430,16 @@ fn a_directory_design_home_passes_end_to_end() {
         ignored: &git.0,
         tracked_and_ignored: &git.1,
     };
-    let report = run(
-        &model,
-        &manifest,
-        &inputs,
-        Only::REGISTERS.union(Only::REFERENCES),
-    );
+    let report = run(&model, &manifest, &inputs, Only::EVERYTHING);
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
     assert!(found.is_empty(), "{found:#?}");
+    // Two slugs and two issue entries, one of them grouped: a run that stopped reading the
+    // group subdirectory would still report nothing, and this is what says it read it.
     assert_eq!(
         (report.structure.entities, report.structure.references),
-        (2, 2)
+        (4, 2)
     );
+    assert_eq!(report.structure.entries, 2, "one grouped, one ungrouped");
 }
 
 /// The checks run against a project whose documents are wrong on purpose.
@@ -472,14 +524,27 @@ mod planted {
         findings_with(current_indexes)
     }
 
+    /// Where a family's planted defect is asserted.
+    ///
+    /// Two variants because two families are not in `run`. `changes` reads the changelog and
+    /// `corpus` reads the archive, and neither subject is the model, so the binary calls them
+    /// and a test over `run` can only assert that they contribute nothing to it.
+    enum Planted {
+        /// `run` reports it. The number is how many findings the family produces alone.
+        InRun(usize),
+        /// The binary reports it. The name is the test in `knowledge@tests/binary.rs` that
+        /// asserts the finding, and `run` must produce nothing for the family.
+        ByTheBinary(&'static str),
+    }
+
     /// Every planted defect this project carries, by the family that reports it.
     ///
-    /// Each row is a family, the number of findings it owns, and a fragment of one of them.
-    /// The rows must account for every finding a whole run produces, which
-    /// `the_families_partition_every_finding` asserts, so a family cannot be left out of this
-    /// table without a test failing.
-    const PLANTED: [(Only, usize, &str); 6] = [
-        (Only::CITATIONS, 5, "no rule says this"),
+    /// Each row is a family, where its planted defect is asserted, and a fragment of one of
+    /// them. `the_families_partition_every_finding` reads `Only::NAMED` and demands a row for
+    /// each name, so a family with no planted defect fails that test rather than passing
+    /// unnoticed.
+    const PLANTED: [(Only, Planted, &str); 8] = [
+        (Only::CITATIONS, Planted::InRun(5), "no rule says this"),
         // One reference of each shape the resolver tells apart — dangling, unknown anchor,
         // two and four segments, an anchor and a reserved anchor in kind position, the two
         // retired slug shapes, a retired entry number — and the path shapes: a dangling one,
@@ -487,20 +552,40 @@ mod planted {
         // pointer reaching inside the component, a generic pointer nothing carries, a
         // dangling tripwire reference, a link outside a navigation home, and the retired `@`
         // escape with its empty head. The definition-site findings are `registers`'.
-        (Only::REFERENCES, 18, "is referenced"),
+        (Only::REFERENCES, Planted::InRun(18), "is referenced"),
         // One defect per assertion the register shapes make: a declared path that is not
         // there, a missing heading home, the retired file shape of a file register, a missing
         // index, an undeclared kind, a missing owed subsection, an id no reference can spell,
         // an undeclared group, a file of another suffix, frontmatter that does not parse, a
         // location whose home is absent, and the six definition-site findings the entity table
         // produces.
-        (Only::REGISTERS, 17, "PLANTED"),
-        (Only::UNCOVERED, 1, "is outside the walk"),
+        (Only::REGISTERS, Planted::InRun(17), "PLANTED"),
+        (Only::UNCOVERED, Planted::InRun(1), "is outside the walk"),
         // Three generated files: the rule index, and one index per file-register instance
         // whose directory is there. Every family is handed an empty committed set, so each
         // is reported missing.
-        (Only::GENERATED, 3, "the generated file is missing"),
-        (Only::REGIME, 20, "with no verified quote of it in range"),
+        (
+            Only::GENERATED,
+            Planted::InRun(3),
+            "the generated file is missing",
+        ),
+        (
+            Only::REGIME,
+            Planted::InRun(20),
+            "with no verified quote of it in range",
+        ),
+        // The changelog's one section quotes a rule as something the release does not say.
+        (
+            Only::CHANGES,
+            Planted::ByTheBinary("the_changelog_and_the_archive_each_carry_a_planted_defect"),
+            "the quoted text is not what",
+        ),
+        // The archived release's bytes are not the ones its manifest row records.
+        (
+            Only::CORPUS,
+            Planted::ByTheBinary("the_changelog_and_the_archive_each_carry_a_planted_defect"),
+            "does not match the manifest's",
+        ),
     ];
 
     #[test]
@@ -566,17 +651,24 @@ mod planted {
         whole.sort();
         assert_eq!(apart, whole, "the families must partition a whole run");
 
-        for (family, planted, _) in PLANTED {
+        // Read off `Only::NAMED` rather than off `PLANTED`, so a family added to the library
+        // with no planted defect fails here instead of being absent from both.
+        for (name, family) in Only::NAMED {
+            let (_, planted, _) = PLANTED
+                .iter()
+                .find(|(f, _, _)| *f == family)
+                .unwrap_or_else(|| panic!("{name} has no row: every family owes a planted defect"));
             let (_, found) = per_family
                 .iter()
                 .find(|(f, _)| *f == family)
                 .expect("a declared family");
-            assert_eq!(
-                found.len(),
-                planted,
-                "{} planted {planted}: {found:#?}",
-                family.names().join(",")
-            );
+            match planted {
+                Planted::InRun(n) => assert_eq!(found.len(), *n, "{name} planted {n}: {found:#?}"),
+                Planted::ByTheBinary(test) => assert!(
+                    found.is_empty(),
+                    "{name} is asserted by {test}, so `run` must report nothing: {found:#?}"
+                ),
+            }
         }
     }
 
@@ -976,7 +1068,13 @@ mod planted {
         // Every planted defect found and nothing else, counted against `PLANTED` so the two
         // cannot drift apart. Taken over the same empty set of committed files that table is
         // stated against, which is what gives `generated` its three findings.
-        let planted: usize = PLANTED.iter().map(|(_, n, _)| n).sum();
+        let planted: usize = PLANTED
+            .iter()
+            .map(|(_, p, _)| match p {
+                Planted::InRun(n) => *n,
+                Planted::ByTheBinary(_) => 0,
+            })
+            .sum();
         let whole = findings_of(|_, _, _| HashMap::new(), Only::EVERYTHING);
         assert_eq!(whole.len(), planted, "{whole:#?}");
     }

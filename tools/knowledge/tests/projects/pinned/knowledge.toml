@@ -1,9 +1,9 @@
-# A mock project whose one document pins a release that is neither vendored nor archived.
-#
-# Resolving that pin is the only thing here that can reach the network, so this project
-# separates the families that read rule text from the families that do not: a run asking for
-# slugs must succeed without touching it, and a run asking for citations must fail on it.
-
+# WHAT THIS MOCK EXERCISES: release resolution. Its one document pins a release that is
+# neither vendored nor archived, and resolving that pin is the only thing in any mock that can
+# reach the network — so this project separates the families that read rule text from the
+# families that do not: a run asking for references must succeed without touching it, and a run
+# asking for citations must fail on it. Everything else here is conformant, so a finding from
+# another family is a defect rather than a fixture.
 
 [project]
 name = "pinned"
@@ -12,7 +12,7 @@ components = []
 [walk]
 # Git never lists its own directory, so the walk never reaches it and no row names it.
 skip-dirs = []
-skip-files = ["corpus/CompRules.txt"]
+skip-files = ["corpus/CompRules.txt", "corpus/index.md"]
 exclude = []
 
 [lint]

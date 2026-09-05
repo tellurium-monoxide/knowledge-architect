@@ -1,6 +1,10 @@
-# A mock project whose documents are wrong on purpose. Every defect below is one the checker
-# must find; a test asserts the findings themselves, not merely that something failed.
-
+# WHAT THIS MOCK EXERCISES: detection. Its documents are wrong on purpose, one planted defect
+# per check family, and a test asserts the findings themselves rather than merely that
+# something failed. Every family owes a row in `PLANTED` in `knowledge@tests/mock_projects.rs`,
+# so a new defect goes here and its count goes there. `changes` and `corpus` are the two whose
+# subject is a file rather than the model, so their planted defects — a changelog section
+# quoting a rule as something the release does not say, and an archived release whose bytes are
+# not the ones its manifest row records — are asserted through the binary instead.
 
 [project]
 name = "planted"
@@ -16,8 +20,9 @@ registers = ["issue"]
 [walk]
 # Not a git repository, so there is no `.git` to skip and none is declared.
 skip-dirs = []
-# The rules text is not a citation of itself.
-skip-files = ["corpus/CompRules.txt"]
+# The rules text is not a citation of itself, and the changelog pins its own release per
+# section, so both are read by the family that owns them rather than by the walk.
+skip-files = ["corpus/CompRules.txt", "corpus/CHANGES.md"]
 exclude = []
 
 [lint]

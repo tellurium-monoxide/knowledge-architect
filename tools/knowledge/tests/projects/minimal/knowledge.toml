@@ -1,7 +1,11 @@
-# A mock project. Its layout differs from the repository that holds it on purpose: the rules
-# corpus is `corpus/` rather than `docs/rules/`, its text has another name, and its body
-# starts on the first line. Anything the tool gets right here it gets right from this file
-# rather than from a constant.
+# WHAT THIS MOCK EXERCISES: the walk and the anchors that are not components. It declares a
+# location, `notes/`, and a register nothing compiles in, `reading`, whose instance is grouped
+# by a `register.toml`; it exercises all three exclusion kinds, both single-file heading-home
+# shapes, and three file-register instances at once. It deliberately carries no rule index, so
+# a test of `index` can watch a generated file be created. Its layout differs from the
+# repository that holds it on purpose: the rules corpus is `corpus/` rather than `docs/rules/`,
+# its text has another name, and its body starts on the first line. Anything the tool gets
+# right here it gets right from this file rather than from a constant.
 
 [project]
 name = "minimal"
@@ -26,7 +30,9 @@ values = ["settled", "ambiguous"]
 
 [walk]
 skip-dirs = ["build"]
-skip-files = ["notes/generated.md"]
+# The rules text is not a citation of itself. No row names the rule index: this project does
+# not carry one, which is what lets a test of `index` watch a generated file be created.
+skip-files = ["notes/generated.md", "corpus/CompRules.txt"]
 exclude = ["vendor"]
 
 [lint]

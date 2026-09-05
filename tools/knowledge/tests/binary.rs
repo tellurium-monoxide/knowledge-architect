@@ -322,6 +322,62 @@ fn a_passing_run_ends_with_a_passed_verdict() {
     assert_eq!(code, 0, "{stdout}");
 }
 
+/// The claim: the two families `check::run` does not carry have a planted defect of their own,
+/// and each names it.
+///
+/// `changes` reads the changelog and `corpus` reads the archive, so neither has a model to be
+/// handed and neither is reachable from `knowledge@tests/mock_projects.rs`. Their row in that
+/// file's `PLANTED` table names this test. Both are gated on the changelog being readable, so
+/// the planted changelog is what makes either of them run over a mock at all.
+#[test]
+fn the_changelog_and_the_archive_each_carry_a_planted_defect() {
+    let (stdout, stderr, code) = run("planted", &["check", "--only", "changes"]);
+    assert!(
+        stdout.contains("the quoted text is not what 100.1 says in 20200101"),
+        "stdout {stdout} stderr {stderr}"
+    );
+    assert_eq!(code, 1, "{stdout}");
+
+    let (stdout, stderr, code) = run("planted", &["check", "--only", "corpus"]);
+    assert!(
+        stdout.contains("does not match the manifest's 0000000000000000"),
+        "stdout {stdout} stderr {stderr}"
+    );
+    assert_eq!(code, 1, "{stdout}");
+
+    // Neither family leaks into the other, which is the property the model-side leak test
+    // gives the six families it can reach and cannot give these two.
+    let (changes, _, _) = run("planted", &["check", "--only", "changes"]);
+    let (corpus, _, _) = run("planted", &["check", "--only", "corpus"]);
+    assert!(
+        !changes.contains("does not match the manifest's"),
+        "{changes}"
+    );
+    assert!(!corpus.contains("the quoted text is not what"), "{corpus}");
+}
+
+/// The claim: the conformant mock passes, with every one of the eight families having run.
+///
+/// The counterpart of `planted`. A family gated on an input that is not there is reported
+/// `NOT RUN` rather than clean, so a project that made every family run and found nothing is a
+/// different statement from a project that exited 0 — and before this mock carried a
+/// changelog, an archive-free corpus and a committed rule index, no mock could make it.
+#[test]
+fn the_conformant_mock_passes_every_family() {
+    let (stdout, stderr, code) = run("dirhome", &["check"]);
+    assert_eq!(code, 0, "stdout {stdout} stderr {stderr}");
+    assert!(!stdout.contains("NOT RUN"), "{stdout}");
+    let checked = stdout
+        .lines()
+        .find(|l| l.starts_with("checked: "))
+        .unwrap_or_else(|| panic!("{stdout}"));
+    for (name, _) in documentation::check::Only::NAMED {
+        assert!(checked.contains(name), "{name} did not run: {stdout}");
+    }
+    let last = stdout.lines().rfind(|l| !l.is_empty()).unwrap();
+    assert_eq!(last, "PASSED: no findings", "{stdout}");
+}
+
 /// `rules show` prints a rule in the shape a citation is written in.
 ///
 /// The migration this exists for pastes the printed line into a document as a blockquote, so
@@ -1059,11 +1115,12 @@ fn a_per_user_ignore_file_does_not_decide_the_walk() {
 
 /// A throwaway repository holding a project the checks find nothing wrong with.
 ///
-/// **The mock projects under `knowledge@tests/projects/` cannot serve here.** A commit is
-/// judged only where its own tree passes, and none of the mocks does: `planted` plants a
-/// defect for every family on purpose, and the others are migrated only as far as an earlier
-/// piece needed. The project below is written out so that a run over it has exactly the
-/// findings the test plants and no others.
+/// **The mock projects under `knowledge@tests/projects/` are not used here.** A commit is
+/// judged only where its own tree passes, and `dirhome` is the one mock whose tree does — so a
+/// copy of it could serve as a base. The project below is written out anyway, because each test
+/// below states the exact findings its commits carry, and a mock's contents are shared with
+/// every other test over it: a document added here for one commit's sake would move another
+/// test's counts.
 struct History {
     /// The project's own directory, which is where every command is run.
     dir: PathBuf,

@@ -11,26 +11,6 @@ Read `tracking-open-issues` before adding.
 
 ---
 
-## Two check families have no planted defect, and the test that would say so counts a hand-written table `defect`
-
-**What.** `changes` and `corpus` appear in `Only::NAMED` and in no row of the `PLANTED` table in
-`knowledge@tests/mock_projects.rs`. The test that is supposed to make a missing family visible,
-`the_families_partition_every_finding`, iterates `PLANTED` rather than `Only::NAMED`, so a family
-absent from the table is absent from the assertion too and the run stays green.
-
-**Why it matters.** `thaum@docs/plans/knowledge-tool-overhaul.md` section 8 states that the family
-list is read from the library "so a family without a test is a compile-time fact". It is not: the
-two families have gone untested against a real project since before the overhaul branch, and
-nothing reported it. A family that stops detecting looks exactly like one that finds nothing.
-
-**What would close it.** Iterating `Only::NAMED` in the partition test and giving `changes` and
-`corpus` a planted defect each in `knowledge@tests/projects/planted/` — a changelog section naming a
-release the archive does not hold, and an archived release whose digest does not match its manifest
-row. Found by the spec-conformity reviewer of the overhaul's items 3 and 5, and not repaired there
-because both families are outside those pieces.
-
----
-
 ## `cargo knowledge issues` prints nothing over this repository until the migration lands `defect`
 
 **What.** `outstanding` is gone and `issues` reads the issue register, which is a directory of one
