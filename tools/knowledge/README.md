@@ -117,7 +117,9 @@ cargo knowledge model | awk -F'\t' '$4=="<number>" && ($3=="rule-token" || $3 ~ 
 `thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
 root — so the same binary checks this repository and a mock project under
 `knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says
-so there, in one place, with a reason beside it.
+so there, in one place, with a reason beside it. The one thing compiled in is the tool's own
+directory, so that the string literals of its own source are read as data, per
+`knowledge#checker-source-literals-are-data`; that is a fact about the tool, not about any tree.
 
 Read `knowledge@docs/design.md` before changing how it works, and `bumping-rules` before adopting a
 rules release.

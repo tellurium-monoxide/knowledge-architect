@@ -200,7 +200,8 @@ static PIN: LazyLock<Regex> =
 
 /// The release a file's quotes verify against: its own pin, or `None` for the vendored one.
 ///
-/// **An illustration of the syntax is not a pin.** This runs over the raw file, so a document
+/// **An illustration of the syntax is not a pin.** This runs over the raw file, except under
+/// the checker's own source where only the comments are read, so a document
 /// EXPLAINING the mechanism — a README, a plan, a skill — used to repin itself by showing the
 /// form in a fenced example, and then verified its quotes against a release it never chose. The
 /// resolver fetches an absent release over the network, so the symptom was a `curl` failure in
@@ -504,7 +505,7 @@ mod tests {
     fn a_prose_marker_is_told_from_an_ordinary_number() {
         // A bare number beside a marked one is NOT a marker. What catches it is the
         // missing-marker lint, and that is why there is no form for a number owing no quote:
-        // a number that is data goes in a code span, a fence or a name-bound literal.
+        // a number that is data goes in a code span or a name-bound literal.
         let text = "per CR:104.4b, and 613.8c is only a number";
         assert_eq!(
             markers(text),

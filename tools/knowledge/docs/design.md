@@ -161,10 +161,9 @@ not data — a sketch in a design document comments its rules on purpose, and re
 data lost 34 citations. A string literal is data only when BOUND to a name — an assertion's
 message cites rules for a human to read on failure, and reading every literal as data lost 32
 of them. A macro body is not an argument list, so a binding still applies inside one. **Reading
-every literal as prose was tried and measured too**: six bound literals in three crates outside
-the checker carry a rule-shaped number by accident, an address, a formatted figure a display
-test expects, a line of tool output a parser is fed. The class recurs wherever a test displays a
-three-digit float, so the binding rule stays, and what it no longer serves is the checker's own
+every literal as prose is a recorded losing alternative**, in
+`knowledge@docs/rejected-alternatives.md`, with the bound literals outside the checker that carry
+a rule-shaped number by accident. What the binding rule no longer serves is the checker's own
 fixtures, which have their own answer below.
 
 **A name is the one thing prose cannot reach**, and the identifier form of a rule marker exists
@@ -188,16 +187,18 @@ because the test modules point at decisions and paths for real, and those pointe
 `CARGO_MANIFEST_DIR` at build time, and that is the component's directory exactly. The alias in
 `thaum@.cargo/config.toml` builds the binary from the checkout on every invocation, so the
 compiled path is the tree being checked. The binary hands the path to the walk, and the
-`documentation` library bakes nothing in. Compiled path and walked path are canonicalised before
-the prefix test, so a symlinked checkout does not defeat it. A manifest row was refused because a
-row can be pointed at any directory, which is the shape `knowledge#the-regime-has-no-opt-out`
-exists to refuse: only the checker's own source can ever be exempt, and it is exempt by
-construction.
+`documentation` library bakes nothing in. The root and the compiled path are canonicalised before
+the prefix test, so a symlinked checkout does not defeat it; a symlink inside the tree is not
+followed. A manifest row is not an option, because a row can be pointed at any directory, which
+is the shape `knowledge#the-regime-has-no-opt-out` exists to refuse: only the checker's own source
+can ever be exempt, and it is exempt by construction. The row's entry is in
+`knowledge@docs/rejected-alternatives.md`.
 
 **The failure is loud.** A binary built from one checkout and run against another finds no file
 under its compiled path, exempts nothing, and reports the tool's fixtures as citations. The
-summary block prints the compiled path and the count of files it covered, so the state is
-visible in every run. The directory exempts files only when it sits inside the tree being
+summary block names the checker's directory, relative to the root when it sits under it and
+absolute otherwise, even when the compiled directory no longer exists, and prints the count of
+Rust files it covered, so the state is visible in every run. The directory exempts files only when it sits inside the tree being
 checked: a tree that sits inside it instead, such as a mock project under
 `knowledge@tests/projects/`, is a foreign project and every literal in it is prose.
 

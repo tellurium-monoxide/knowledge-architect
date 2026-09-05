@@ -893,7 +893,7 @@ mod regime {
         let under_code = model
             .documents()
             .iter()
-            .filter(|d| d.rel.starts_with("code"))
+            .filter(|d| d.rel.starts_with("code") && d.rel.extension().is_some_and(|e| e == "rs"))
             .count();
         assert!(under_code >= 1);
         assert_eq!(model.checker_files(), under_code);
@@ -911,10 +911,18 @@ mod regime {
             with.iter().any(|(r, _)| *r == Rule::IdentifierFullQuote),
             "a comment-carried claim is still judged: {with:#?}"
         );
-        // A checker directory the walk never visits exempts nothing.
+        // A checker directory that does not exist exempts nothing, and is still named: the
+        // summary line is how a binary compiled from a directory that is gone says so.
         let elsewhere = manifest.root().join("no-such-directory");
         let model = Model::build(&manifest, Some(&elsewhere)).expect("a model");
         assert_eq!(model.checker_files(), 0);
+        assert!(
+            model
+                .checker_source()
+                .is_some_and(|p| p.ends_with("no-such-directory")),
+            "{:?}",
+            model.checker_source()
+        );
         // A checker directory the whole tree sits INSIDE exempts nothing either: that is a
         // mock project under the checker's own tests, a foreign tree.
         let above = manifest.root().join("../../..");
@@ -924,6 +932,24 @@ mod regime {
             model.checker_source().is_some_and(|p| p.is_absolute()),
             "named absolutely when it is not under the root"
         );
+    }
+
+    /// The root is canonicalised before the prefix test, so a checkout reached through a
+    /// symlink still finds the checker's directory inside it. Without the canonicalisation
+    /// the joined path starts with the link and the real directory starts with its target,
+    /// and nothing is exempt.
+    #[cfg(unix)]
+    #[test]
+    fn a_symlinked_root_still_finds_the_checker_directory_inside_it() {
+        let real = mock("planted").root().to_path_buf();
+        let link =
+            std::env::temp_dir().join(format!("knowledge-symlinked-root-{}", std::process::id()));
+        let _ = std::fs::remove_file(&link);
+        std::os::unix::fs::symlink(&real, &link).expect("a symlink to the mock project");
+        let manifest = Manifest::load(&link).expect("the manifest through the symlink");
+        let model = Model::build(&manifest, Some(&real.join("code"))).expect("a model");
+        let _ = std::fs::remove_file(&link);
+        assert!(model.checker_files() >= 1, "{:?}", model.checker_source());
     }
 
     #[test]

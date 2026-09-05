@@ -174,7 +174,7 @@ outside the tool ever need rule-shaped bytes as data where no binding can hold i
 
 **Moving the tool's unit tests under `knowledge@tests/` and excluding the directory** — lost to
 `knowledge#checker-source-literals-are-data`. `live`. Integration tests reach only public items.
-Measured: 31 files carry a test module, about 300 tests, most over private functions, so the
+Measured: 31 files carry a test module, 349 tests, most over private functions, so the
 move makes those public or drops the tests.
 
 **Literals as data in every `cfg(test)` module of every crate** — lost to

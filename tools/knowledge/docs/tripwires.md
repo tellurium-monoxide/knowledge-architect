@@ -89,20 +89,25 @@ covers, and either way the missed shape is recorded as a `defect`.
 
 ## Guarding `knowledge#checker-source-literals-are-data`' self-location
 
-**Fires when:** a `cargo knowledge check` run reports a finding on a string literal under the
-tool's own directory, or the summary block's checker-source line reports zero files covered in a
-checkout that holds the tool.
+**Fires when:** a `cargo knowledge check` run reports a finding on a string literal in a Rust
+file under the tool's own directory, or the summary block's checker-source line is absent or
+names a directory other than the tool's in a checkout that holds the tool. The cheap half is the
+binary test `the_summary_names_the_checker_source_and_counts_the_files_under_it` in
+`knowledge@tests/binary.rs`, which asserts the line over this checkout; what it cannot reach is
+a binary built from another checkout and run here.
 **Response:** the compiled path and the walked tree disagree: a binary built from another
-checkout, a canonicalisation gap, a symlinked checkout the prefix test does not see through. Open
-a `defect` carrying both paths. Reopen the decision only if the mismatch is one the cargo alias
-cannot prevent, since the alias is what the decision rests on.
+checkout, a canonicalisation gap, a symlink inside the tree the prefix test does not follow.
+Open a `defect` carrying the path the line names and the checkout's. Reopen the decision only if
+the mismatch is one the cargo alias cannot prevent, since the alias is what the decision rests on.
 **Re-entry:** standing.
 
 ## Guarding `knowledge#checker-source-literals-are-data`' whole-source scope
 
-**Fires when:** a review finds a string literal in the tool's non-test source that carries a
-`CR:` marker. The rules-reviewer's data check is where it surfaces: nothing mechanical reads
-that literal any more.
+**Fires when:** a review finds a string literal in the tool's non-test source that cites a rule:
+a `CR:` marker followed by a rule number written out, with a sentence around it that says
+something about the rule. A message that interpolates the number it names, and the marker
+pattern itself in the scanner, do not fire it. The rules-reviewer's data check is where it
+surfaces: nothing mechanical reads that literal any more.
 **Response:** the whole-source scope gave that citation up on a count of zero. Either move the
 citation into the comment above the literal, or reopen the scope half of the decision and narrow
 it to test modules, which costs an attribute lookup in the extractor.
@@ -110,8 +115,10 @@ it to test modules, which costs an attribute lookup in the extractor.
 
 ## Guarding `knowledge#checker-source-literals-are-data`' purpose
 
-**Fires when:** a named constant holding a rule-shaped number, a marker, a slug or a path appears
-in the tool's test modules to be interpolated into a fixture.
+**Fires when:** a test module of the tool gains a named constant whose only use is to be
+interpolated into a fixture so that its rule-shaped, slug-shaped or path-shaped bytes are not
+spelled at the site. A constant of the module under test, and a constant the tests also read as
+a value or reuse across several sites, are not this.
 **Response:** the interpolation habit has outlived its reason, or a literal is still read where
 the decision says it is not. Establish which: if the checker reported the plain literal, that is
 the self-location tripwire above; otherwise open an `observation` and rewrite the fixture inline.

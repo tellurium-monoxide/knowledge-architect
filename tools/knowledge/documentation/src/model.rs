@@ -141,11 +141,14 @@ impl Model {
     /// parsed with its string literals as data, per
     /// `knowledge#checker-source-literals-are-data`; every other file reads them as prose.
     /// The binary passes its compile-time location, and a library caller checking a tree the
-    /// checker is no part of passes `None`. Both sides of the prefix test are canonicalised,
-    /// so a symlinked checkout does not defeat it, and a compiled path that resolves to
-    /// nothing exempts nothing. **The directory exempts files only when it sits inside the
-    /// tree being checked.** A tree that sits inside it instead, such as a mock project under
-    /// the checker's own tests, is a foreign project whose every literal is prose.
+    /// checker is no part of passes `None`. The root and the compiled path are canonicalised
+    /// before the prefix test, so a symlinked checkout does not defeat it; a symlink inside
+    /// the tree is not followed. A compiled path that resolves to nothing exempts nothing and
+    /// is still named by `checker_source`, so the summary can say so. **The directory exempts
+    /// files only when it sits inside the tree being checked.** A tree that sits inside it
+    /// instead, such as a mock project under the checker's own tests, is a foreign project
+    /// whose every literal is prose. Only a Rust file is marked `Data`: markdown has no
+    /// literals, and `checker_files` counts what the mode changed.
     pub fn build(manifest: &Manifest, checker_source: Option<&Path>) -> std::io::Result<Self> {
         let root = manifest.root();
         let canonical_root = root.canonicalize()?;
@@ -180,8 +183,9 @@ impl Model {
                 }
             };
             let rel = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
+            let is_rust = rel.extension().is_some_and(|e| e == "rs");
             let literals = match &inside {
-                Some(c) if canonical_root.join(&rel).starts_with(c) => Literals::Data,
+                Some(c) if is_rust && canonical_root.join(&rel).starts_with(c) => Literals::Data,
                 _ => Literals::Prose,
             };
             let parsed = source::parse(&rel, &text, literals);
@@ -195,7 +199,10 @@ impl Model {
                 literals,
             });
         }
-        let checker_source = checker.map(|c| {
+        // Named even when it does not exist: the summary line is how a binary compiled from
+        // a directory that is gone says so, and a missing line is the silent shape.
+        let checker_source = checker_source.map(|given| {
+            let c = checker.clone().unwrap_or_else(|| given.to_path_buf());
             c.strip_prefix(&canonical_root)
                 .map(Path::to_path_buf)
                 .unwrap_or(c)
@@ -212,7 +219,8 @@ impl Model {
         self.checker_source.as_deref()
     }
 
-    /// How many walked files sit under the checker's own directory.
+    /// How many walked Rust files sit under the checker's own directory, their literals read
+    /// as data.
     ///
     /// Zero in a checkout that holds the tool is the loud failure of
     /// `knowledge#checker-source-literals-are-data`: the compiled path and the walked tree

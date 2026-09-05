@@ -3,7 +3,7 @@
 //! The grammar answers both, and that is the whole reason it is here. A line-oriented scanner
 //! can only guess from a prefix, and every guess it made is a recorded defect: a formatted
 //! return type opening a line with an angle bracket is not a blockquote, a float literal is not
-//! a rule number, and a string literal in a unit test is not a citation.
+//! a rule number, and a string literal bound to a name is not a citation.
 //!
 //! **Which string literals are prose is decided twice.** The caller says, through `Literals`,
 //! whether the file is the checker's own source, where every literal is a fixture and none is
