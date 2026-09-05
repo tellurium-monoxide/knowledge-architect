@@ -11,45 +11,13 @@ Read `tracking-open-issues` before adding.
 
 ---
 
-## The tool's own fixtures are indistinguishable from real content `observation`
-
-**What.** The checks walk the whole project, including their own source. A rule number, a slug, a
-path, a `cr-version` marker or an identifier marker written as a literal in a test is therefore real
-content: it is linted, it defines an anchor, it is a reference that must resolve, and it can pin the
-file it sits in to a release.
-
-**Observed** seven times while the tool was written, and an eighth at the first release bump —
-rule-shaped bytes in the fold tests' fixtures, repaired to neutral text in the change "Test
-fixtures stop looking like rule citations" — each caught by a checker rather than by review:
-bare rule numbers in fixtures; a `cr-version` fixture that pinned its whole file to a release; an
-identifier marker written out in a doc comment; fixture slugs that defined a real anchor and three
-dangling references; a concern filename; two relative paths; and a slug in a title fixture.
-
-**Why it matters.** The structural answer exists — `knowledge@tests/projects/` is excluded by the manifest, so
-anything there is invisible — but it only covers integration tests. A unit test still lives in a
-walked file, and the standing workaround is to interpolate every literal, which makes the tests
-measurably harder to read: `format!("`#{SLUG}` — …")` in place of the thing it means. The cost is
-paid by every future check module.
-
-**What would answer it.** Three candidates, and the choice is real rather than a bug to fix.
-Either unit tests that carry such literals move to `knowledge@tests/projects/`, which costs a file per case
-and buys readable fixtures; or a way to mark a span as fixture text, which is a new convention and
-a new thing to get wrong; or a per-family exemption in the manifest, exempting only the citation
-families over a named path. The third was argued and parked at the linting-scope discussion, and
-it carries a conflict to argue before it can win: `knowledge#the-regime-has-no-opt-out` accepts
-only files that are leaving the tree, and the walk asserts that an unwalked file may not name a
-rule, so the shape has to say what happens to that assertion. `assumption`: the first, because the
-exclusion already exists and needs no new concept. Untested — nobody has tried moving one.
-Re-entry: the next tool-cleanup discussion.
-
 ## The interpretation register has no mention form, so naming an entry counts as citing it `question`
 
 **What.** The interpretation walk counts every `R`-number token in a live file as a citation of that
 entry, so a document that merely _names_ one — to point at a diff, to say where a reading is filed —
 is listed in `thaum@docs/rules/interpretations/index.md` beside the documents whose argument depends
 on the reading. Rule numbers have a way to say it and `R` numbers do not: a rule number that is data
-goes inside a code span, a fenced block or a name-bound string literal, and the walk does not read
-those as citations. No entry is named in this file on purpose, so that the illustration does not
+goes inside a code span, and the walk does not read one as a citation. No entry is named in this file on purpose, so that the illustration does not
 create the thing it illustrates.
 
 **Observed.** Writing the entry this one replaces, which asked whether the index should store line

@@ -86,3 +86,42 @@ it lost is that the model dump is complete for this purpose, and a repair the fi
 reason failing — the answer is then either widening the scanner or a filter that states what it
 covers, and either way the missed shape is recorded as a `defect`.
 **Re-entry:** the next rules bump, and standing.
+
+## Guarding `knowledge#checker-source-literals-are-data`' self-location
+
+**Fires when:** a `cargo knowledge check` run reports a finding on a string literal under the
+tool's own directory, or the summary block's checker-source line reports zero files covered in a
+checkout that holds the tool.
+**Response:** the compiled path and the walked tree disagree: a binary built from another
+checkout, a canonicalisation gap, a symlinked checkout the prefix test does not see through. Open
+a `defect` carrying both paths. Reopen the decision only if the mismatch is one the cargo alias
+cannot prevent, since the alias is what the decision rests on.
+**Re-entry:** standing.
+
+## Guarding `knowledge#checker-source-literals-are-data`' whole-source scope
+
+**Fires when:** a review finds a string literal in the tool's non-test source that carries a
+`CR:` marker. The rules-reviewer's data check is where it surfaces: nothing mechanical reads
+that literal any more.
+**Response:** the whole-source scope gave that citation up on a count of zero. Either move the
+citation into the comment above the literal, or reopen the scope half of the decision and narrow
+it to test modules, which costs an attribute lookup in the extractor.
+**Re-entry:** standing.
+
+## Guarding `knowledge#checker-source-literals-are-data`' purpose
+
+**Fires when:** a named constant holding a rule-shaped number, a marker, a slug or a path appears
+in the tool's test modules to be interpolated into a fixture.
+**Response:** the interpolation habit has outlived its reason, or a literal is still read where
+the decision says it is not. Establish which: if the checker reported the plain literal, that is
+the self-location tripwire above; otherwise open an `observation` and rewrite the fixture inline.
+**Re-entry:** standing.
+
+## Guarding `knowledge#grammars-not-prefixes`' literal-is-prose clause
+
+**Fires when:** a finding on a string literal outside the tool whose bytes are data rather than a
+claim: a rule-shaped number that is a parser input, a sort key or a fixture, with no sentence
+around it that says anything about the rule.
+**Response:** there is no data form for a literal outside the tool, by design. Reopen the clause
+with the fixture marker recorded in `knowledge@docs/rejected-alternatives.md` as the candidate.
+**Re-entry:** standing.

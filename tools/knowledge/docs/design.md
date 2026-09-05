@@ -143,8 +143,9 @@ with the subdocuments as a home, which is what the split exists to end.
 ### The grammar for a file's kind decides which of its bytes are prose `##grammars-not-prefixes`
 
 A markdown document is prose entire. A Rust file is prose only where its grammar says so — its
-comments, and the string literals that are not bound to a name. Nothing is decided by a line's
-prefix.
+comments and its string literals. Nothing is decided by a line's prefix. The one file set whose
+literals are not prose is the checker's own source, per
+`knowledge#checker-source-literals-are-data`.
 
 **A doc comment's content is markdown**, so the markdown analysis runs over a document and over
 every Rust comment alike, and a heading, a fence or a blockquote means the same in both.
@@ -157,14 +158,49 @@ front of it.
 
 **Three readings of "data" were too broad and the measurement caught each.** A fenced block is
 not data — a sketch in a design document comments its rules on purpose, and reading fences as
-data lost 34 citations. A string literal is data only when BOUND to a name — an assertion's
-message cites rules for a human to read on failure, and reading every literal as data lost 32
-of them. A macro body is not an argument list, so a binding still applies inside one.
+data lost 34 citations. A string literal is not data either — an assertion's message cites
+rules for a human to read on failure, and reading every literal as data lost 32 of them. **A
+literal bound to a name is prose like any other**: the tree outside the checker holds no bound
+literal carrying a rule-shaped number, a marker, a slug or an anchored path, so a binding rule
+frees nothing there, and the extractor is one flag rather than three special cases — an
+argument list, a macro body and a `const` that is both an item and a binding each needed one.
+The fixtures a binding rule was built for live in the checker's own source, which has its own
+answer below.
 
 **A name is the one thing prose cannot reach**, and the identifier form of a rule marker exists
 for names. Names are collected where they are DECLARED. Collecting every occurrence made a call
 site and a `use` import citations owing the rule's whole body in the caller's scope, where there
 is nowhere to put it.
+
+### The checker's own source reads its string literals as data `##checker-source-literals-are-data`
+
+Under the tool's own directory a string literal is never prose. Its comments are prose like
+every other file's, and everywhere else in a tree every string literal is prose, bound or not.
+
+**The tool's unit tests are the one place in a tree whose fixtures are rule-shaped on purpose.**
+A number, a marker, a slug, a path or a version pin is written so that a test can watch a check
+react to it. Read as prose each one is a live claim, and hiding each behind a named constant to
+be interpolated made the tests harder to read than the code they test. Comments stay prose
+because the test modules point at decisions and paths for real, and those pointers stay checked.
+
+**The directory is compiled in, never declared.** The `knowledge` binary crate evaluates
+`CARGO_MANIFEST_DIR` at build time, and that is the component's directory exactly. The alias in
+`thaum@.cargo/config.toml` builds the binary from the checkout on every invocation, so the
+compiled path is the tree being checked. The binary hands the path to the walk, and the
+`documentation` library bakes nothing in. Compiled path and walked path are canonicalised before
+the prefix test, so a symlinked checkout does not defeat it. A manifest row was refused because a
+row can be pointed at any directory, which is the shape `knowledge#the-regime-has-no-opt-out`
+exists to refuse: only the checker's own source can ever be exempt, and it is exempt by
+construction.
+
+**The failure is loud.** A binary built from one checkout and run against another finds no file
+under its compiled path, exempts nothing, and reports the tool's fixtures as citations. The
+summary block prints the compiled path and the count of files it covered, so the state is
+visible in every run.
+
+**Whole source rather than test modules only.** The non-test source holds no literal that cites
+a rule, a finding message interpolates the number it names, and a narrower rule would cost an
+attribute lookup to protect a class with zero members.
 
 ### What git ignores is pruned by the walk, and the manifest declares only what git tracks `##gitignore-prunes-the-walk`
 
