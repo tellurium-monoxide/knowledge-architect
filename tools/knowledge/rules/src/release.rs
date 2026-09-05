@@ -213,7 +213,7 @@ fn provenance(date: &str, digest: &str, fetched: bool, known: bool) -> String {
 ///
 /// The cache path is shared and predictable, so a file left there by an earlier run — or by
 /// anyone else — is returned without a download. What that costs and what would close it is
-/// `path@knowledge@docs/open-issues.md`.
+/// `path@knowledge@docs/open-issues/`.
 pub fn resolve(tree: &Tree, date: &str) -> Result<PathBuf, String> {
     if let Some(path) = local(tree, date) {
         return Ok(path);

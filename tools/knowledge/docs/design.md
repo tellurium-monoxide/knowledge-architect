@@ -95,7 +95,7 @@ A submodule is one gitlink entry in the listing and a symlinked directory is one
 neither's contents are read, where the tree walk this replaced read both. Neither has a suffix the
 walk covers, so both are dropped by suffix and named by nothing. That is a gap the criterion
 `no-silent-gap` does not like and this design accepts for now: a component vendored as a submodule
-would be conformant by vacuum. `path@knowledge@docs/open-issues.md` carries it.
+would be conformant by vacuum. `path@knowledge@docs/open-issues/` carries it.
 
 **The per-user ignore file is pinned away.** `core.excludesFile` lives in a developer's home and
 is no part of any project, so every invocation runs with it pointed at the null device: a line
@@ -631,7 +631,7 @@ check stays one pattern. The other CommonMark shapes — reference-style, an ang
 quoted-title target — are outside the scanner: a row written in one surfaces as a dangling
 target or an unlinked subdocument rather than as a finding naming the shape, and that is
 judged close enough while this head states the accepted form. The shapes themselves are
-enumerated in `path@knowledge@docs/open-issues.md`.
+enumerated in `path@knowledge@docs/open-issues/`.
 
 **Markdown documents only.** In Rust prose a markdown link is rustdoc's mechanism, resolved by
 rustdoc against the crate namespace, and reading those as index rows would report every

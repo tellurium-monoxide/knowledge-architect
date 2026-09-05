@@ -2,7 +2,7 @@
 
 Evidence that would reopen a decision about `knowledge` itself. **A tripwire is not something
 to do**: it is a hypothesis about a future failure plus the response, and it leaves this file when it
-fires. What is outstanding about the tool is `open-issues.md` beside it.
+fires. What is outstanding about the tool is `path@knowledge@docs/open-issues/` beside it.
 
 Entry shape and the movement instruction between the two files are `tracking-open-issues`. The
 standing re-entry point is `standing-state-reviewer`, which re-reads every tracker file.
