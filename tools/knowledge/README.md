@@ -37,9 +37,9 @@ Three, per `thaum#exit-code-ladder`, and the third is what makes the other two m
 
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
-| `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commit-message` and `commits` with no finding, an empty range included; `hook status` on a clone that runs the committed hook |
-| `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `commit-message` or `commits` with a finding against a judged message; `hook status` on a clone that does not run it |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `hook install` refusing a `core.hooksPath` that names something else or a script path that is not a file, having written nothing, `hook status` where git cannot run, `commits` on a range that does not resolve or whose tip carries a failing tree, no project above the working directory, an input that cannot be read, `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
+| `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; `rules diff` with no change; `rules show` on numbers the release holds; `rules fetch` and `rules bump` having done what they name; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commit-message` and `commits` with no finding, an empty range included; `hook install` having set `core.hooksPath`; `hook status` on a clone that runs the committed hook |
+| `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commit-message` or `commits` with a finding against a judged message; `hook status` on a clone that does not run it |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `hook install` refusing a `core.hooksPath` that names something else or a script path that is not a file, having written nothing, `hook status` where git cannot run, `commits` on a range that does not resolve or whose tip carries a failing tree, no project above the working directory, no `git` on the path or a project outside a worktree, an input that cannot be read, a release that cannot be resolved — a pin neither vendored nor archived that the network does not answer — `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -62,7 +62,10 @@ over the vendored text and its archive, which reads the filesystem rather than t
 `references` judges every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a
 register kind against the entries its home defines, the `path` kind against the tree — and reports
 the two retired forms and the unanchored path shape. `registers` judges what each anchor carries:
-the homes, a file register's README, index, groups and entry shapes, and every definition site.
+the homes, a file register's README, index, groups and entry shapes, and every definition site;
+it also asserts that every path the manifest declares exists, and names every file git both
+tracks and ignores. `changes` and `corpus` are run by the binary beside `check::run`, because
+their subject is the changelog and the archive rather than the model.
 `structure` names every family but `citations`. A comma-separated list runs their union over the
 one walk, so asking for several costs one run rather than one run each. A run prints which families
 it performed, and a family that did not run prints no count of its own. The argument is
