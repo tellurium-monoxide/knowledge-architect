@@ -77,6 +77,14 @@ pub fn check_under(
              storage is what the word component means and is not declared",
         ));
     }
+    for complaint in manifest.path_complaints() {
+        out.push(Finding::in_file(
+            MANIFEST_NAME,
+            complaint.clone(),
+            "spell the path the way git lists it, relative to the manifest's directory with \
+             no `..` and no leading `/`; the row is acted on by nothing until then",
+        ));
+    }
     declarations(&mut out, manifest, anchors, inputs);
 
     let mut counts = Counts {
@@ -1658,6 +1666,34 @@ mod tests {
     }
 
     #[test]
+    fn a_declared_path_the_manifest_refused_is_reported_here_and_acted_on_by_nothing() {
+        // A `..` row in `exclude` would otherwise be reported absent and, read as one more
+        // segment, could pass or fail the nesting check for a place it does not name. The
+        // complaint is the one finding: the row is gone, so nothing reports it absent, and a
+        // dot-spelled location is judged at the path it means.
+        let manifest = declaring_full(
+            "",
+            "[locations.papers]\npath = \"./docs/plans\"\nregisters = [\"issue\"]\n\n",
+            "[]",
+            "[]",
+            "[\"vendor/../vendor\"]",
+            "[]",
+        );
+        let mut present = all_of("");
+        present.push("docs/plans".to_string());
+        present.push("docs/plans/open-issues".to_string());
+        present.push("docs/plans/open-issues/README.md".to_string());
+        present.push("docs/plans/open-issues/index.md".to_string());
+        let found = findings(&manifest, &present);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].starts_with(MANIFEST_NAME)
+                && found[0].contains("`vendor/../vendor` in [walk] exclude spells a `..` segment"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
     fn a_declared_path_that_does_not_exist_is_reported_wherever_it_is_declared() {
         let manifest = declaring_full("", "", "[\"gone\"]", "[]", "[]", "[]");
         let found = findings(&manifest, &all_of(""));
@@ -1767,6 +1803,19 @@ mod tests {
         let manifest = declaring_full(
             "",
             "[locations.here]\npath = \"\"\nregisters = []\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let found = findings(&manifest, &all_of(""));
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("names the project root"), "{found:#?}");
+        // Spelled `.`, the same declaration: one finding, and not a second one saying the
+        // directory `.` does not exist.
+        let manifest = declaring_full(
+            "",
+            "[locations.here]\npath = \".\"\nregisters = []\n\n",
             "[]",
             "[]",
             "[]",

@@ -82,7 +82,11 @@ reference whose target the ignore rules cover is exempt from assertion the same 
 fresh clone has none of them. A manifest naming one holds a row no check can ask about: nobody
 is told the row is dead, and a file later created at that path inherits what the row granted. No
 generated path is declared, so every path in the manifest is one git tracks and
-`check::registers` asserts each one exists.
+`check::registers` asserts each one exists. **A declared path is spelled the way git lists
+it**, with no `.` segment, no `..` segment and no leading `/`: a `.` segment is dropped when
+the manifest loads, so two spellings of one directory are one declaration, and a row holding
+`..` or an absolute path is refused as a finding and acted on by nothing, because what it
+names depends on where the manifest sits rather than on the tree.
 
 **A tracked file cannot leave the walk.** `--cached` is unaffected by the ignore rules, so no
 ignore line, however written, can take a live document out of every check. That is what the

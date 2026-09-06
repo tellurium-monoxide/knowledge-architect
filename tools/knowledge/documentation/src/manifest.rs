@@ -364,6 +364,10 @@ pub struct Manifest {
     /// to produce a run: a manifest that would not load reports nothing at all, and nothing at
     /// all is what a session reads as conformance.
     register_complaints: Vec<String>,
+    /// Every declared path this tool refused to act on, in the same words. The row is dropped
+    /// from its list, and a `[rules]` path, which has no list to be dropped from, stands as
+    /// spelled.
+    path_complaints: Vec<String>,
 }
 
 impl Manifest {
@@ -403,13 +407,15 @@ impl Manifest {
     /// needs no checkout — the same reason a check is a pure function over the model.
     pub fn parse(root: &Path, text: &str) -> Result<Self, String> {
         retired_keys(text)?;
-        let declared: Declared = toml::from_str(text).map_err(|e| e.to_string())?;
+        let mut declared: Declared = toml::from_str(text).map_err(|e| e.to_string())?;
         let (registers, register_complaints) = build_registers(&declared.registers);
+        let path_complaints = normalise_paths(&mut declared);
         Ok(Self {
             root: root.to_path_buf(),
             declared,
             registers,
             register_complaints,
+            path_complaints,
         })
     }
 
@@ -441,6 +447,11 @@ impl Manifest {
     /// What the register declarations got wrong, for `check::registers` to report.
     pub fn register_complaints(&self) -> &[String] {
         &self.register_complaints
+    }
+
+    /// Every declared path the tool refused, for `check::registers` to report.
+    pub fn path_complaints(&self) -> &[String] {
+        &self.path_complaints
     }
 
     /// The locations this project declares, by name.
@@ -513,6 +524,90 @@ fn retired_keys(text: &str) -> Result<(), String> {
 }
 
 /// Fold the declarations into the compiled-in registers, and say what each one got wrong.
+/// Every path the manifest declares, spelled the way git lists it.
+///
+/// **A declared path is compared against git's listing, and git spells a path with no `.`
+/// segment, no `..` segment and no leading `/`.** A row spelled otherwise matched nothing, so
+/// a location declared with `path = "./docs"` was reported absent while `docs` existed, and
+/// a `..` segment was read by the nesting check as one more component of the path. A `.`
+/// segment is dropped, so a dot-spelled and a plain `docs` are one declaration; a `..`
+/// segment and an absolute
+/// path are refused, because what they name depends on where the manifest sits rather than
+/// on the tree. A refused row leaves its list and is reported, so it is acted on by nothing.
+///
+/// Returns the complaints, one per refused row.
+fn normalise_paths(declared: &mut Declared) -> Vec<String> {
+    let mut complaints = Vec::new();
+    let project = &mut declared.project;
+    normalise_list(
+        "[project] components",
+        &mut project.components,
+        &mut complaints,
+    );
+    declared.locations.retain(|name, decl| {
+        normalise_one(
+            &format!("[locations.{name}] path"),
+            &mut decl.path,
+            &mut complaints,
+        )
+    });
+    let walk = &mut declared.walk;
+    normalise_list("[walk] skip-dirs", &mut walk.skip_dirs, &mut complaints);
+    normalise_list("[walk] skip-files", &mut walk.skip_files, &mut complaints);
+    normalise_list("[walk] exclude", &mut walk.exclude, &mut complaints);
+    normalise_list(
+        "[lint] exempt-files",
+        &mut declared.lint.exempt_files,
+        &mut complaints,
+    );
+    let rules = &mut declared.rules;
+    for (key, path) in [
+        ("dir", &mut rules.dir),
+        ("text", &mut rules.text),
+        ("version", &mut rules.version),
+        ("past", &mut rules.past),
+        ("manifest", &mut rules.manifest),
+    ] {
+        // Kept as spelled where refused: the corpus has no list to drop a row from, and the
+        // `registers` family reports the path as not existing beside the complaint.
+        normalise_one(&format!("[rules] {key}"), path, &mut complaints);
+    }
+    complaints
+}
+
+/// Normalise every path of one list, dropping the rows that are refused.
+fn normalise_list(list: &str, paths: &mut Vec<PathBuf>, complaints: &mut Vec<String>) {
+    paths.retain_mut(|path| normalise_one(list, path, complaints));
+}
+
+/// Normalise one path in place, or record why it is refused and say so with `false`.
+fn normalise_one(list: &str, path: &mut PathBuf, complaints: &mut Vec<String>) -> bool {
+    use std::path::Component as Segment;
+    let mut out = PathBuf::new();
+    for segment in path.components() {
+        match segment {
+            Segment::CurDir => {}
+            Segment::Normal(name) => out.push(name),
+            Segment::ParentDir => {
+                complaints.push(format!(
+                    "`{}` in {list} spells a `..` segment",
+                    path.display()
+                ));
+                return false;
+            }
+            Segment::RootDir | Segment::Prefix(_) => {
+                complaints.push(format!(
+                    "`{}` in {list} is not project-relative",
+                    path.display()
+                ));
+                return false;
+            }
+        }
+    }
+    *path = out;
+    true
+}
+
 fn build_registers(declared: &BTreeMap<String, RegisterDecl>) -> (Registers, Vec<String>) {
     let mut out = Registers::built_in();
     let mut complaints = Vec::new();
@@ -631,10 +726,25 @@ pub(crate) mod tests {
     /// Written out rather than taken from a checkout: what is under test is what the file
     /// says, and the paths below need not exist for that.
     fn declaring(components: &str) -> Manifest {
+        declaring_full(components, "", "[]", "[]", "[]", "[]")
+    }
+
+    /// The same, with every path list the manifest can declare spelled out, and `extra`
+    /// holding whole tables.
+    fn declaring_full(
+        components: &str,
+        extra: &str,
+        skip_dirs: &str,
+        skip_files: &str,
+        exclude: &str,
+        exempt: &str,
+    ) -> Manifest {
         let text = format!(
             "[project]\nname = \"a-project\"\ncomponents = [{components}]\n\n\
-             [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
+             {extra}\
+             [walk]\nskip-dirs = {skip_dirs}\nskip-files = {skip_files}\n\
+             exclude = {exclude}\n\n\
+             [lint]\nexempt-files = {exempt}\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
         );
@@ -657,6 +767,90 @@ pub(crate) mod tests {
         assert!(root.is_root());
         // Named by the project, because it has no basename to be named by.
         assert_eq!(root.name, "a-project");
+    }
+
+    #[test]
+    fn a_dot_segment_is_dropped_from_every_declared_path() {
+        // A dot-spelled `docs` and a plain one are one declaration: git lists neither a `.`
+        // segment nor a trailing separator, and a row spelled with one matched nothing.
+        let m = declaring_full(
+            "\"./crates/./an-engine/\"",
+            "[locations.papers]\npath = \"./docs/plans\"\nregisters = [\"issue\"]\n\n\
+             [locations.here]\npath = \".\"\nregisters = [\"issue\"]\n\n",
+            "[\"./build\"]",
+            "[\"docs/./index.md\"]",
+            "[\"./vendor/\"]",
+            "[\"./notes/x.md\"]",
+        );
+        assert!(m.path_complaints().is_empty(), "{:?}", m.path_complaints());
+        let components = m.components();
+        assert_eq!(components.all()[1].path, PathBuf::from("crates/an-engine"));
+        assert_eq!(components.all()[1].name, "an-engine");
+        assert_eq!(m.locations()["papers"].path, PathBuf::from("docs/plans"));
+        assert_eq!(
+            m.locations()["here"].path,
+            PathBuf::new(),
+            "`.` is the root, spelled the way the root component spells it"
+        );
+        assert_eq!(m.walk().skip_dirs, vec![PathBuf::from("build")]);
+        assert_eq!(m.walk().skip_files, vec![PathBuf::from("docs/index.md")]);
+        assert_eq!(m.walk().exclude, vec![PathBuf::from("vendor")]);
+        assert_eq!(m.lint().exempt_files, vec![PathBuf::from("notes/x.md")]);
+    }
+
+    #[test]
+    fn a_parent_segment_or_an_absolute_path_is_a_complaint_and_the_row_is_dropped() {
+        // What such a row names depends on where the manifest sits, not on the tree, and
+        // the nesting check would read `..` as one more segment of the path.
+        let m = declaring_full(
+            "\"crates/../crates/an-engine\", \"tools/a-tool\"",
+            "[locations.up]\npath = \"docs/../docs\"\nregisters = [\"issue\"]\n\n",
+            "[\"/build\"]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let complaints = m.path_complaints();
+        assert_eq!(complaints.len(), 3, "{complaints:#?}");
+        assert!(
+            complaints[0].contains("`crates/../crates/an-engine` in [project] components")
+                && complaints[0].contains("`..` segment"),
+            "{complaints:#?}"
+        );
+        assert!(
+            complaints[1].contains("in [locations.up] path"),
+            "{complaints:#?}"
+        );
+        assert!(
+            complaints[2].contains("`/build` in [walk] skip-dirs is not project-relative"),
+            "{complaints:#?}"
+        );
+        let components = m.components();
+        let names: Vec<&str> = components.all().iter().map(|c| c.name.as_str()).collect();
+        assert_eq!(
+            names,
+            vec!["a-project", "a-tool"],
+            "the refused row is gone"
+        );
+        assert!(m.locations().is_empty());
+        assert!(m.walk().skip_dirs.is_empty());
+    }
+
+    #[test]
+    fn a_refused_rules_path_stands_as_spelled() {
+        let text = "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
+                    skip-files = []\nexclude = []\n\n[lint]\nexempt-files = []\n\n[rules]\n\
+                    dir = \"../corpus\"\ntext = \"./t\"\nbody-starts-at = 0\nversion = \"v\"\n\
+                    past = \"p\"\nmanifest = \"m\"\n";
+        let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        assert_eq!(m.path_complaints().len(), 1, "{:?}", m.path_complaints());
+        assert!(m.path_complaints()[0].contains("in [rules] dir"));
+        assert_eq!(
+            m.rules().dir,
+            PathBuf::from("../corpus"),
+            "kept, to be reported absent"
+        );
+        assert_eq!(m.rules().text, PathBuf::from("t"));
     }
 
     #[test]
