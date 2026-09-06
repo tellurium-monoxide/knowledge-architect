@@ -22,7 +22,9 @@ A check never reads a file, spawns a process, or knows how the walk works. Anyth
 fetch for itself is resolved by the caller and handed in: the parsed releases, the pinned date, the
 generated files as committed, the per-instance `register.toml` files, one listing of what exists
 and which of those paths are directories, the files the walk does not cover, and git's answer for
-every path spelling a reference in the run could ask about.
+every path spelling a reference in the run could ask about. The phases that precede the checks
+are pure over the same inputs, per `design@knowledge@phases-gate-the-report`, and the one input
+only the last phase needs, the releases, is resolved only once it is reached.
 
 Four things follow, and each of them is something the implementation this replaced paid for.
 
@@ -248,8 +250,11 @@ is `path@knowledge@docs/rejected-alternatives.md`.
 **An anchor may sit inside another anchor's directory, never at the same path, and never
 comparable with one of its register homes.** A location inside a component is the ordinary case,
 and the deepest anchor wins, so a document under a location belongs to it and not to the
-component holding it. Four declarations take that rule away, and `check::registers` reports each
-one against the manifest:
+component holding it. Four declarations take that rule away. Each is a complaint of the manifest's
+resolution, and **the refused anchor is no anchor**: it owns nothing, carries nothing and is
+asserted against nothing, per `design@knowledge@registers-are-declared`. Candidates are taken
+shallowest first, a component before a location at equal depth and declaration order after
+that, so of two that collide the deeper or the later one is the one refused:
 
 - **a component inside a location.** It nests one full register set inside a partial one and
   gives a document two candidate homes.
@@ -296,10 +301,15 @@ is `groups`. A key other than `groups` is a finding, a file with no `groups` is 
 unknown-key message. A manifest is migrated once, and that message is the whole of what the
 migrator gets.
 
-**A declaration that is wrong is a finding rather than a load failure.** A manifest that will not
-load reports nothing at all, and nothing at all is what a session reads as conformance. So the
-manifest keeps what each declaration got wrong and `check::registers` reports it, while the
-compiled defaults carry the run.
+**A declaration that is wrong is a finding rather than a load failure, and it is absent from the
+configuration.** A manifest that will not load reports nothing at all, and nothing at all is what
+a session reads as conformance. So `Manifest::parse` resolves the declaration into a
+configuration and a list of complaints, each in the shape a finding takes, and every complaint
+is the first phase of a run, per `design@knowledge@phases-gate-the-report`. What a complaint is
+about is not in the configuration: a refused register is no register, a refused anchor is no
+anchor, a refused row is not in its list, so nothing acts on it and its consequences are never
+reported as defects of the tree. The one table with no default is `[rules]`: a corpus path the
+tool refuses fails the load, naming the row, because a path kept as spelled was joined and read.
 
 ### A heading register's home is `<dir>.md` or a `<dir>/` directory, never both `##heading-register-two-shapes`
 

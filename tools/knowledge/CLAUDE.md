@@ -64,5 +64,14 @@ orders it has to keep, both learned by getting them wrong:
   no longer has.
 - **`--allow-empty`** on a commit whose subject is the message rather than a tree edit.
 
+**A check that produces something another check reads is a phase, not a check.** A run is
+four phases, per `design@knowledge@phases-gate-the-report`, and every check of the last phase
+consumes the entity table and produces nothing another check reads; that is what lets a
+finding be classified by where it is produced. A new check whose findings another check would
+read goes before its consumers, in `check::foundation`, and stops the run when it finds
+anything. A new finding about what the model could not read — a home, a file, a declaration —
+goes in `check::tree` or in resolution, never in a module of the last phase, or nothing gates
+it.
+
 Read `path@knowledge@docs/design.md` before changing how it works, and `bumping-rules` before adopting a
 rules release.

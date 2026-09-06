@@ -188,3 +188,39 @@ is rewritten to say so.
 
 **Re-entry:** every merge to `main`, read off the gate's own output; and
 `standing-state-reviewer` on every dispatched review.
+
+## Guarding `design@knowledge@phases-gate-the-report`'s whole-report stop `##a-way-past-the-phase-gate`
+
+The report stops at the first phase that finds anything, and the whole report stops: the
+per-document form, hiding only what an unread file could have defined, lost on cost. The
+failure this guards is the gate felt as an obstacle — one unreadable scratch file hides every
+citation finding and stops `index` until it is fixed — and answered with a way around it, which
+is the check-family selection under another name.
+
+**Fires when:** a flag, an environment variable or a manifest row is proposed or added that lets
+a run report a later phase while an earlier one holds findings, or lets a writer write over an
+incomplete model.
+
+**Response:** reopen the granularity decision with the per-document form, rather than adding the
+way around.
+
+**Re-entry:** `standing-state-reviewer` on every dispatched review, and any change to the
+arguments of `check`, `index` or `rules bump`.
+
+## Guarding `design@knowledge@phases-gate-the-report`'s one producer chain `##a-second-producer-chain`
+
+The classification of a finding by the phase that produces it rests on one chain: the manifest
+feeds the walk, the walk the model, the model the entity table, and every check consumes the
+table and produces nothing another check reads. A check whose findings another check reads
+would be a second chain, and its findings would undermine its consumers' with nothing gating
+them.
+
+**Fires when:** a check under `path@knowledge@documentation/src/check/` reads another check's
+findings, or a check's output is stored for another check to consume.
+
+**Response:** open a `design` issue proposing the new phase and its place in the order; the
+producing check is a phase, not a check of the last one, and it goes before its consumers in
+`check::foundation`.
+
+**Re-entry:** `standing-state-reviewer` on every dispatched review, and any new module under
+the check directory.
