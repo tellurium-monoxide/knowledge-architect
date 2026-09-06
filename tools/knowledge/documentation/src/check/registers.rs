@@ -556,10 +556,9 @@ fn file_home(
     for (path, what) in [
         (&home.readme, "README.md"),
         // That the index is THERE is a fact about the register's shape, and it is
-        // mandatory. Its content is generated, and nothing compares it yet: the file-register
-        // index has no generator until item 3 of
-        // `path@thaum@docs/plans/knowledge-tool-overhaul.md`, so until then this presence check is
-        // the whole of what holds it.
+        // mandatory. What it holds is `check::generated`'s question, which compares the
+        // committed bytes against a regeneration; this presence check reports the missing
+        // file under the shape, and `generated` names the command that writes it.
         (&home.index, "index.md"),
     ] {
         if !inputs.present.contains(path) || inputs.directories.contains(path) {
