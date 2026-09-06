@@ -92,9 +92,9 @@ chosen for; the matcher and the three things it could not do are
 
 **Git's answer is the answer, and two things it does not descend into are therefore unchecked.**
 A submodule is one gitlink entry in the listing and a symlinked directory is one symlink entry, so
-neither's contents are read, where the tree walk this replaced read both. Neither has a suffix the
-walk covers, so both are dropped by suffix and named by nothing. That is a gap the criterion
-`no-silent-gap` does not like and this design accepts for now: a component vendored as a submodule
+neither's contents are read. Neither has a suffix the walk covers, so both are dropped by suffix
+and named by nothing. That is a gap in the property this walk exists for — nothing leaves every
+check while the run stays green — and this design accepts it: a component vendored as a submodule
 would be conformant by vacuum. `path@knowledge@docs/open-issues/` carries it.
 
 **The per-user ignore file is pinned away.** `core.excludesFile` lives in a developer's home and

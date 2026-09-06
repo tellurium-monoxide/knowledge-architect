@@ -20,8 +20,9 @@ walk AND outside the inverse assertion of `uncovered`.
 
 ### Why it matters
 
-A component vendored as a submodule would be conformant by vacuum, which is
-the binding `no-silent-gap` criterion of the overhaul plan. It is bounded today because this
+A component vendored as a submodule would be conformant by vacuum, which breaks the property
+`design@knowledge@git-supplies-the-walk` exists for: nothing leaves every check while the run stays
+green. It is bounded today because this
 repository holds no submodule and no symlinked directory, so nothing is currently unread.
 
 ### What would close it
