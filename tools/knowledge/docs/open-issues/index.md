@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-13 entries
+14 entries
 
 | kind | title |
 | --- | --- |
@@ -11,6 +11,7 @@
 | defect | [A file outside the walk that cannot be read is silent to the inverse assertion](unreadable-file-outside-the-walk-is-silent.md) |
 | deferred | [Nothing tests that `rules diff` receives its two dates the right way round](rules-diff-date-order-untested.md) |
 | deferred | [Only a line break is refused in a file name, and Windows forbids more](windows-forbidden-names-not-refused.md) |
+| design | [A submodule is a project of its own, or nothing, and the tool has no model for either](a-submodule-is-a-project-of-its-own.md) |
 | observation | [`check` and `commits` disagree about a symlinked file, and the summary claims they agree](check-and-commits-disagree-on-symlinks.md) |
 | observation | [Judging a message costs time quadratic in its line count](judging-a-message-is-quadratic.md) |
 | observation | [A `PLANTED` row may name a test that does not exist](planted-row-may-name-a-missing-test.md) |
