@@ -52,7 +52,7 @@ name, both handed in, but its subject is the changelog rather than the model.
 
 Findings are not independent. Some say what the model could not read or resolve, and every
 finding computed from that model afterwards is then unreliable in both directions, missing and
-false. A list that mixed the two advertised a completeness it did not have. So a run is four
+false. A list that mixes the two advertises a completeness it does not have. So a run is four
 phases, each of the first three building one input of the next:
 
 | phase | produced by | what it reports |
@@ -81,10 +81,8 @@ already ends at a failing tip.
 
 **Nothing selects a subset of the checks.** The checks cross the phases — what `registers`
 asserts sits in phases 2 and 4, what `references` asserts in 3 and 4 — so a selection could be
-honoured only with a second bookkeeping saying which part of a check a stop withheld. Every
-consumer of the selection was a reviewer dispatched on a tree the gate already passes, where
-the selected and the full run print one verdict, and the full run over this repository costs
-under a second. The selection is `path@knowledge@docs/rejected-alternatives.md`.
+honoured only with a second bookkeeping saying which part of a check a stop withheld. The
+selection, and what it bought, is `path@knowledge@docs/rejected-alternatives.md`.
 
 **One producer chain, and a rule for a second.** The manifest feeds the walk, the walk the
 model, the model the table, and every check consumes the table. A future check whose findings
@@ -116,7 +114,7 @@ reference whose target the ignore rules cover is exempt from assertion the same 
 fresh clone has none of them. A manifest naming one holds a row no check can ask about: nobody
 is told the row is dead, and a file later created at that path inherits what the row granted. No
 generated path is declared, so every path in the manifest is one git tracks and
-`check::registers` asserts each one exists. **A declared path is spelled the way git lists
+`check::tree` asserts each one exists. **A declared path is spelled the way git lists
 it**, with no `.` segment, no `..` segment and no leading `/`: a `.` segment is dropped when
 the manifest loads, so two spellings of one directory are one declaration, and a row holding
 `..` or an absolute path is refused as a finding and acted on by nothing, because what it
@@ -151,7 +149,7 @@ reports the failed read the run stays green. That is the shape this whole head e
 finding is one line opening with its path, an index row is one line, and a reference is one
 backticked span, so a file whose name holds a newline or a carriage return can be printed by
 nothing here and pointed at by nothing; Windows refuses to create one, so a tree holding it cannot
-be checked out there. The walk drops the file, no family reads it, and `registers` reports it
+be checked out there. The walk drops the file, no check reads it, and `check::tree` reports it
 once with the line break escaped — `Finding` escapes a line break in the path it is located at
 and in the statement it makes, so a reader taking the output by line meets one finding per line
 whatever route a name took to reach it. A project that means to keep such a file names it in `skip-files` or in an ignore rule.
@@ -309,7 +307,8 @@ is the first phase of a run, per `design@knowledge@phases-gate-the-report`. What
 about is not in the configuration: a refused register is no register, a refused anchor is no
 anchor, a refused row is not in its list, so nothing acts on it and its consequences are never
 reported as defects of the tree. The one table with no default is `[rules]`: a corpus path the
-tool refuses fails the load, naming the row, because a path kept as spelled was joined and read.
+tool refuses fails the load, naming the row, because a path kept as spelled would be joined and
+read.
 
 ### A heading register's home is `<dir>.md` or a `<dir>/` directory, never both `##heading-register-two-shapes`
 
@@ -322,9 +321,9 @@ The entries and their slug anchors live in the subdocuments.
 two, and so does any heading register a project declares. The slug names the design home because
 that is the home the rule was argued over; the statement is the register's.
 
-Five assertions carry the shape, split over three places. `check::registers` asserts exactly one
-home per anchor and register, that a directory home carries its `README.md`, and that the README
-links every markdown subdocument the walk covers — a gitignored scratch file owes nothing. That
+Five assertions carry the shape, split over three places. `check::tree` asserts exactly one
+home per anchor and register and that a directory home carries its `README.md`;
+`check::registers` asserts that the README links every markdown subdocument the walk covers — a gitignored scratch file owes nothing. That
 each relative link resolves is the references family's assertion, made for every navigation file
 alike per `design@knowledge@links-are-navigation-rows`. The entity table of `design@knowledge@one-entity-table`
 accepts a slug definition only in the file home or in a subdocument, matched against the owning
@@ -464,7 +463,7 @@ vendored release resolved and the writer always has one. They agree because the 
 written twice, which is weaker than the file-register half.
 
 **An instance with no directory contributes no index**: generating into it would create a register home as a side effect of a listing, and the
-missing home is what `check::registers` reports.
+missing home is what `check::tree` reports.
 
 **Writing one destroys nothing**, so `cargo knowledge index` takes no flags. The dry run a write
 command normally owes exists because a write can lose something, and here it cannot: the worst a
@@ -544,10 +543,10 @@ recording it is what makes such a pointer visible: four sat in this tree's desig
 by nothing. Two definitions of one id in one register instance are a finding at each site, each
 naming the other.
 
-**Which homes an anchor must carry is `check::registers`' question, not the table's.** The
+**Which homes an anchor must carry is `check::tree`'s question, not the table's.** The
 table defines from every home shape of every heading register the anchor carries, and reports a
-definition that sits where none may; whether the home is there at all, and in which shape, is the
-register family's.
+definition that sits where none may; whether the home is there at all, and in which shape, is
+`check::tree`'s.
 
 **A fenced heading is an illustration, so a fenced slug neither defines nor is misplaced.** A
 definition site is a heading, and the scanner already reads no heading inside a fence; the one
@@ -662,8 +661,9 @@ rather than written out, so a project that declares one gets its homes in the se
 reference nothing resolves rots exactly like a dangling one.
 
 **Under any other kind the two words name nothing.** A `design@*@<id>` is reported as an unknown
-anchor, and the finding says the words serve `path` alone. `check::registers` refuses a
-declared component wearing either word: every pointer at it would read as the reserved meaning.
+anchor, and the finding says the words serve `path` alone. The manifest's resolution refuses an
+anchor wearing either word, and it is no anchor: every pointer at it would read as the reserved
+meaning.
 
 ### A trailing slash claims a directory, and the survey records every path's kind `##trailing-slash-claims-directory`
 
@@ -717,7 +717,7 @@ exists against.
 **A generated index is outside the walk by construction, so its rows are read by nothing.** The
 tool derives the set from the register instances rather than from a declared row, which is why no
 `[walk] skip-files` row names a file-register index and a new instance cannot arrive with its
-index inside the walk. The rule index keeps its row, being the rules half's. Outside the walk also
+index inside the walk; the rule index is in the same set, so no row names it either. Outside the walk also
 means outside the inverse assertion of the `uncovered` family: a listing is a function of the tree
 rather than a claim anybody wrote, so a rule number appearing in one is not an unquoted citation.
 

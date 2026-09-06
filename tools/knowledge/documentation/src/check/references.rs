@@ -923,9 +923,9 @@ mod tests {
     }
 
     #[test]
-    fn the_definition_findings_belong_to_the_register_family_and_not_to_this_one() {
-        // Where a definition may sit is a question about a register's shape, so
-        // `check::registers` reports it. This family still resolves against the table the
+    fn the_definition_findings_belong_to_the_entity_table_and_not_to_this_check() {
+        // Where a definition may sit is the entity table's finding, phase 3, which stops the
+        // run before this check runs. This check still resolves against the table the
         // same build produced, so the entity count is unaffected by the move.
         let (found, counts) = checked_docs(
             &manifest(),

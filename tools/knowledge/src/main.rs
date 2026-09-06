@@ -412,7 +412,7 @@ fn print_report(report: &Report) {
 /// protect.
 ///
 /// **Whether a generated file is current is not this command's question.**
-/// `cargo knowledge check --only generated` is the gate, and it names the first line at which
+/// The `generated` check of `cargo knowledge check` is the gate, and it names the first line at which
 /// the committed file and the regenerated one disagree.
 fn index(manifest: &Manifest) -> Result<ExitCode, String> {
     let model =

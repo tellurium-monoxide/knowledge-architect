@@ -19,19 +19,29 @@ and let a run that read no rule text resolve no release. It loses to the phases:
 them, so a selection is honoured only with a second bookkeeping saying which part of a check a
 stop withheld; every consumer was a reviewer on a tree the gate already passes, where the selected
 and the full run print one verdict; and resolving releases at the last phase gives every early
-stop the no-network property the selection gave one run. Measured on this repository, a full run
-took 0.85 s and a references-only run 0.45 s, so the selection bought 0.4 s.
+stop the no-network property the selection gave one run. What it bought was measured: a full run
+over this repository against a references-only one, with the GNU time command, and the figures
+are in the message of the change that removed the selection. A full run of `cargo knowledge check`
+over this repository growing past a few seconds is what would reopen it.
 
 **Families named for the subjects that read them** — lost to `design@knowledge@phases-gate-the-report`.
-`void`: no selection exists to name families for. The reason it lost while one did still holds
+`live`. No selection exists to name families for, and the reason it lost while one did holds
 against any that returns: nothing about this repository is compiled into the tool, per
 `path@thaum@tools/README.md`, and a subject's name inside the parser is exactly that repository
 knowledge, compiled in.
 
 **One family per invocation, instead of a set** — lost to `design@knowledge@phases-gate-the-report`.
-`void`: no selection exists. The reason it lost while one did, from `design@knowledge@model-then-checks`,
-still holds against any that returns: the walk happens once per invocation, so a caller wanting
-five families would read every live document five times.
+`live`. No selection exists, and the reason it lost while one did, from
+`design@knowledge@model-then-checks`, holds against any that returns: the walk happens once per
+invocation, so a caller wanting five families would read every live document five times.
+
+**A per-document phase gate, hiding only what an unread file could have defined** — lost to
+`design@knowledge@phases-gate-the-report`. `live`. It would let a citation finding in one file
+print while another file is unreadable, at the cost of tracing which entities the unread file
+could have defined and hiding only the findings that name them, roughly three times the machinery
+of the whole-report stop. It lost on that cost, and because the tree-level facts of phase 2 — a
+home that is not there, a refused declaration — have no per-file scope to trace. It is the form
+the tripwire on the whole-report stop reopens with, which is why it is here.
 
 **A slug unique across the whole project, with the component named for the reader only** — lost to
 `design@knowledge@a-slug-belongs-to-a-component`. `live`. It keeps one meaning per word everywhere and needs

@@ -16,10 +16,10 @@
 //! `register.toml`; the entries' frontmatter, title, sections and owed subsections are asserted
 //! here, per `design@knowledge@a-file-register-is-a-directory-of-entries`.
 //!
-//! **The definition-site findings belong here.** Which slug defines what is the entity table's
-//! question; whether a definition sits somewhere a definition may sit is a question about a
-//! register's shape, so the table's misplaced, malformed and duplicate findings are reported by
-//! this family.
+//! **Whether what is there exists is not this check's question.** An anchor or a home that is
+//! not there is `check::tree`'s finding, phase 2, and a definition sitting where none may is
+//! the entity table's, phase 3; both stop the run before this check reads anything. What is
+//! asserted here is the shape of what the earlier phases found present.
 
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::path::{Path, PathBuf};
@@ -1387,8 +1387,8 @@ mod tests {
     }
 
     #[test]
-    fn a_misplaced_definition_is_this_family_s_finding() {
-        // Moved from `references`, which parked it while the register shapes were unbuilt.
+    fn a_misplaced_definition_is_reported_in_the_union_the_helper_reads() {
+        // The entity table's finding, phase 3, which the helper here reads beside this check's.
         let manifest = declaring("");
         let model = Model::from_documents(vec![(
             PathBuf::from("docs/design.md"),
