@@ -398,7 +398,7 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
               1. write the interpretation under each subsection and set its action:\n  \
               2. add a row to the summary table at the top of CHANGES.md\n  \
               3. cargo knowledge check\n  \
-              4. commit the rules text, the version file, past/, both indexes, CHANGES.md and\n     \
+              4. commit the rules text, the version file, past/, the rule index, CHANGES.md and\n     \
               every document whose quote or decision changed, TOGETHER. past/ is not\n     \
               optional: a container pinned to the outgoing release resolves from it, and\n     \
               leaving it out breaks that permanently and offline.");
