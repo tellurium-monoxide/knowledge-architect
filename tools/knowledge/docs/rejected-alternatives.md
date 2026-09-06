@@ -13,18 +13,25 @@ dropping an ignore rule makes the walk read more than it should and dropping a n
 read less, and both are silent. Git answers all three by construction, and the walked-file count
 over this repository was identical under the two.
 
-**Families named for the subjects that read them** — lost to `design@knowledge@families-are-the-checks`. `live`. A
-family per review axis would let a reader ask for its own subject in one word instead of listing the
-checks that serve it. It loses on `path@thaum@tools/README.md`: nothing about this repository is compiled into the
-tool, and every list a check reads comes from `path@thaum@knowledge.toml`. A subject's name inside
-`Only::parse` is exactly that repository knowledge, compiled in. Which families serve a subject
-belongs to whoever reads them.
+**Selecting a subset of the checks with `--only`, one family per check** — lost to
+`design@knowledge@phases-gate-the-report`. `live`. It let a reviewer run the checks of its own axis
+and let a run that read no rule text resolve no release. It loses to the phases: the checks cross
+them, so a selection is honoured only with a second bookkeeping saying which part of a check a
+stop withheld; every consumer was a reviewer on a tree the gate already passes, where the selected
+and the full run print one verdict; and resolving releases at the last phase gives every early
+stop the no-network property the selection gave one run. Measured on this repository, a full run
+took 0.85 s and a references-only run 0.45 s, so the selection bought 0.4 s.
 
-**One family per invocation, instead of a set** — lost to `design@knowledge@families-are-the-checks`. `live`. It
-needs no set type and no comma parsing, and each invocation stays one word. It loses to
-`design@knowledge@model-then-checks`, which records what a walk costs: the walk happens once per invocation, so a
-caller wanting five families reads every live document five times, which is the shape the single
-walk was built to remove.
+**Families named for the subjects that read them** — lost to `design@knowledge@phases-gate-the-report`.
+`void`: no selection exists to name families for. The reason it lost while one did still holds
+against any that returns: nothing about this repository is compiled into the tool, per
+`path@thaum@tools/README.md`, and a subject's name inside the parser is exactly that repository
+knowledge, compiled in.
+
+**One family per invocation, instead of a set** — lost to `design@knowledge@phases-gate-the-report`.
+`void`: no selection exists. The reason it lost while one did, from `design@knowledge@model-then-checks`,
+still holds against any that returns: the walk happens once per invocation, so a caller wanting
+five families would read every live document five times.
 
 **A slug unique across the whole project, with the component named for the reader only** — lost to
 `design@knowledge@a-slug-belongs-to-a-component`. `live`. It keeps one meaning per word everywhere and needs
@@ -202,7 +209,7 @@ filtering `cargo knowledge model` on the rule number.
 `design@knowledge@generated-files-are-pure`. `live`. This is the `cargo fmt` / `cargo fmt --check` shape,
 and it lost to a prior-art survey rather than to reasoning. `fmt`, `gofmt` and `prettier` each
 build the check into the generator, and the discriminator is that **none of them had a separate
-verifier to build it into anything else**. Here `cargo knowledge check --only generated` is a gate
+verifier to build it into anything else**. Here the `generated` check of `cargo knowledge check` is a gate
 that already names the first differing line, so the split those tools could not make is already
 made, and a second command answering the same question in its own format would leave nothing to
 say which of the two was right.

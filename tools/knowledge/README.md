@@ -13,7 +13,7 @@ empty walk. `commits` reads a commit's tree through `cat-file --batch -z`, which
 version floor comes from. The decision is `design@knowledge@git-supplies-the-walk`.
 
 ```sh
-cargo knowledge check [--only a,b,c]      every check, over one walk; or only these families
+cargo knowledge check                     every check, over one walk, in four phases
 cargo knowledge show <kind>@<anchor>@<id> one recorded entry, and every reference to it
 cargo knowledge issues [anchor] [--kind k] [--group g] [text …]
                                           every issue entry, one row each
@@ -55,23 +55,32 @@ rather than tracked beside it, so it cannot disagree with the exit code. **The o
 contract**: the summary block prints on a failing run as well as a passing one, so a reader taking
 the tail of the output has to reach the verdict rather than the counts.
 
-**The `--only` families are the checks themselves**, one per check:
+**A run is four phases, and it stops at the first that finds anything.** Phase 1 resolves the
+manifest: a declaration the tool refuses is reported and acted on by nothing. Phase 2 reads the
+tree against what the manifest declares: a file the walk could not read, a name it refuses, an
+anchor or a register home that is not there, a declared path that does not exist, a file git both
+tracks and ignores. Phase 3 builds the entity table: a slug or an entry id where none may sit, or
+defined twice. Each of these says the model is incomplete, and a finding computed from the model
+afterwards would be unreliable in both directions, so the run prints that phase's findings, says
+which phases were not judged, and exits 1. Phase 4 is every check, over the complete model:
 
 `citations`, `generated`, `registers`, `references`, `uncovered`, `changes`, `corpus`, `regime`.
 
-Seven are the modules under `path@knowledge@documentation/src/check/`. `corpus` is the integrity check
-over the vendored text and its archive, which reads the filesystem rather than the model.
-`references` judges every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a
-register kind against the entries its home defines, the `path` kind against the tree — and reports
-the two retired forms and the unanchored path shape. `registers` judges what each anchor carries:
-the homes, a file register's README, index, groups and entry shapes, and every definition site;
-it also asserts that every path the manifest declares exists, and names every file git both
-tracks and ignores. `changes` and `corpus` are run by the binary beside `check::run`, because
-their subject is the changelog and the archive rather than the model.
-`structure` names every family but `citations`. A comma-separated list runs their union over the
-one walk, so asking for several costs one run rather than one run each. A run prints which families
-it performed, and a family that did not run prints no count of its own. The argument is
-`design@knowledge@families-are-the-checks`.
+Six are modules under `path@knowledge@documentation/src/check/`. `corpus` is the integrity check
+over the vendored text and its archive, which reads the filesystem rather than the model, and
+`changes` reads the changelog; both are run by the binary beside `check::run`. `references` judges
+every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a register kind against the
+entries its home defines, the `path` kind against the tree — and reports the two retired forms and
+the unanchored path shape. `registers` judges the shape of what each anchor carries: a file
+register's README, index, groups and entry shapes, and a directory home's links. A check the tree
+gives no input to is printed as not run rather than counted. There is no way to select a subset:
+the checks cross the phases, and a run over a passing tree costs under a second. The argument is
+`design@knowledge@phases-gate-the-report`.
+
+`index`, `rules bump` and the `commit-msg` hook run the first three phases too, and refuse with
+exit 2 while one of them holds anything: an index generated over an incomplete model lists rows
+nobody asked for, and a message judged against an incomplete entity table is judged against
+nothing.
 
 ## `show`, `issues` and `tripwires`
 
@@ -145,7 +154,7 @@ file-register index by construction — the tool derives that set from the regis
 manifest row names one and none can be created inside the walk.
 
 Running it to look therefore costs nothing, not even an mtime. **Whether a generated file is
-current is not this command's question** — that is `cargo knowledge check --only generated`, which
+current is not this command's question** — that is `cargo knowledge check`, whose `generated` check
 is a gate and names the first line at which the committed file and the regenerated one disagree.
 Both halves are `design@knowledge@generated-files-are-pure`.
 

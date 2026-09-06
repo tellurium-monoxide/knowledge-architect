@@ -310,13 +310,18 @@ fn the_corpus_parses_under_the_project_that_declares_where_its_body_starts() {
 #[test]
 fn a_project_carrying_every_component_document_reports_nothing() {
     use documentation::check::citations::Release;
-    use documentation::check::{run, Inputs, Only};
+    use documentation::check::{run, Inputs};
     use std::collections::HashMap;
 
     let manifest = mock("minimal");
     let model = Model::build(&manifest, None).expect("a model");
     let releases: HashMap<Option<String>, Release> = HashMap::new();
-    let committed = HashMap::new();
+    let mut committed = HashMap::new();
+    for rel in documentation::index::generated_paths(&manifest) {
+        if let Ok(text) = std::fs::read_to_string(manifest.root().join(&rel)) {
+            committed.insert(rel, text);
+        }
+    }
     let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
     let git = git_answers(&manifest, &model);
     let inputs = Inputs {
@@ -331,12 +336,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
         tracked_and_ignored: &git.1,
         refused: &survey.refused,
     };
-    let report = run(
-        &model,
-        &manifest,
-        &inputs,
-        Only::REGISTERS.union(Only::REFERENCES),
-    );
+    let report = run(&model, &manifest, &inputs);
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
     assert!(found.is_empty(), "{found:#?}");
     // The component at the root is one whether or not anything is declared beside it, and
@@ -405,7 +405,7 @@ fn every_committed_index_is_what_the_generator_writes() {
 #[test]
 fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
     use documentation::check::citations::Release;
-    use documentation::check::{run, Inputs, Only};
+    use documentation::check::{run, Inputs};
     use std::collections::HashMap;
 
     let manifest = mock("dirhome");
@@ -437,7 +437,7 @@ fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
         tracked_and_ignored: &git.1,
         refused: &survey.refused,
     };
-    let report = run(&model, &manifest, &inputs, Only::EVERYTHING);
+    let report = run(&model, &manifest, &inputs);
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
     assert!(found.is_empty(), "{found:#?}");
     // Two slugs and two issue entries, one of them grouped: a run that stopped reading the
@@ -460,7 +460,7 @@ fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
 /// checked against intent instead, which is what a fixture is for.
 mod planted {
     use super::*;
-    use documentation::check::{citations::Release, run, Inputs, Only};
+    use documentation::check::{citations::Release, run, Inputs};
     use documentation::index;
     use std::collections::HashMap;
     use std::path::PathBuf;
@@ -487,16 +487,9 @@ mod planted {
         out
     }
 
+    /// The findings of one run of the last phase, with the committed files as stated.
     fn findings_with(
         committed: impl Fn(&Manifest, &Model, &rules::Corpus) -> HashMap<PathBuf, String>,
-    ) -> Vec<String> {
-        findings_of(committed, Only::EVERYTHING)
-    }
-
-    /// The findings of one run, over whichever families `only` names.
-    fn findings_of(
-        committed: impl Fn(&Manifest, &Model, &rules::Corpus) -> HashMap<PathBuf, String>,
-        only: Only,
     ) -> Vec<String> {
         let manifest = mock("planted");
         let model = Model::build(&manifest, None).expect("a model");
@@ -521,7 +514,7 @@ mod planted {
             tracked_and_ignored: &git.1,
             refused: &survey.refused,
         };
-        run(&model, &manifest, &inputs, only)
+        run(&model, &manifest, &inputs)
             .findings
             .iter()
             .map(|f| format!("{}  {}", f.location(), f.what))
@@ -532,27 +525,27 @@ mod planted {
         findings_with(current_indexes)
     }
 
-    /// Where a family's planted defect is asserted.
+    /// Where a check's planted defect is asserted.
     ///
-    /// Two variants because two families are not in `run`. `changes` reads the changelog and
+    /// Two variants because two checks are not in `run`. `changes` reads the changelog and
     /// `corpus` reads the archive, and neither subject is the model, so the binary calls them
     /// and a test over `run` can only assert that they contribute nothing to it.
     enum Planted {
-        /// `run` reports it. The number is how many findings the family produces alone.
+        /// `run` reports it. The number is how many findings the check produces.
         InRun(usize),
         /// The binary reports it. The name is the test in `path@knowledge@tests/binary.rs` that
-        /// asserts the finding, and `run` must produce nothing for the family.
+        /// asserts the finding, and `run` must produce nothing for the check.
         ByTheBinary(&'static str),
     }
 
-    /// Every planted defect this project carries, by the family that reports it.
+    /// Every planted defect this project carries, by the check that reports it.
     ///
-    /// Each row is a family, where its planted defect is asserted, and a fragment of one of
-    /// them. `the_families_partition_every_finding` reads `Only::NAMED` and demands a row for
-    /// each name, so a family with no planted defect fails that test rather than passing
+    /// Each row is a check, where its planted defect is asserted, and a fragment of one of
+    /// them. `every_check_has_a_row_and_the_run_is_their_sum` reads `CHECKS` and demands a row
+    /// for each name, so a check with no planted defect fails that test rather than passing
     /// unnoticed.
-    const PLANTED: [(Only, Planted, &str); 8] = [
-        (Only::CITATIONS, Planted::InRun(5), "no rule says this"),
+    const PLANTED: [(&str, Planted, &str); 8] = [
+        ("citations", Planted::InRun(5), "no rule says this"),
         // One reference of each shape the resolver tells apart — dangling, unknown anchor,
         // two and four segments, an anchor and a reserved anchor in kind position, the two
         // retired slug shapes, a retired entry number — and the path shapes: a dangling one,
@@ -560,134 +553,72 @@ mod planted {
         // pointer reaching inside the component, a generic pointer nothing carries, a
         // dangling tripwire reference, a link outside a navigation home, and the retired `@`
         // escape with its empty head. The definition-site findings are `registers`'.
-        (Only::REFERENCES, Planted::InRun(18), "is referenced"),
+        ("references", Planted::InRun(18), "is referenced"),
         // One defect per shape assertion over what is there: a missing index, an undeclared
         // kind, a missing owed subsection, an undeclared group, a file of another suffix, and
         // frontmatter that does not parse. Whether a home EXISTS is phase 2, and the
         // definition-site findings are phase 3: both are `unsound`'s, below.
-        (Only::REGISTERS, Planted::InRun(6), "PLANTED"),
-        (Only::UNCOVERED, Planted::InRun(1), "is outside the walk"),
+        ("registers", Planted::InRun(6), "issue register"),
+        ("uncovered", Planted::InRun(1), "is outside the walk"),
         // Four generated files: the rule index, and one index per file-register instance
         // whose directory is there. Every family is handed an empty committed set, so each
         // is reported missing.
         (
-            Only::GENERATED,
+            "generated",
             Planted::InRun(4),
             "the generated file is missing",
         ),
         (
-            Only::REGIME,
+            "regime",
             Planted::InRun(20),
             "with no verified quote of it in range",
         ),
         // The changelog's one section quotes a rule as something the release does not say.
         (
-            Only::CHANGES,
+            "changes",
             Planted::ByTheBinary("the_changelog_and_the_archive_each_carry_a_planted_defect"),
             "the quoted text is not what",
         ),
         // The archived release's bytes are not the ones its manifest row records.
         (
-            Only::CORPUS,
+            "corpus",
             Planted::ByTheBinary("the_changelog_and_the_archive_each_carry_a_planted_defect"),
             "does not match the manifest's",
         ),
     ];
 
     #[test]
-    fn a_set_of_families_reports_exactly_the_union_of_theirs() {
-        let pair = Only::REFERENCES.union(Only::REGISTERS);
-        let found = findings_of(current_indexes, pair);
-        assert_eq!(
-            found.len(),
-            24,
-            "eighteen reference defects and six register defects: {found:#?}"
-        );
-        assert!(
-            !found.iter().any(|f| f.contains("no rule says this")),
-            "the citation family did not run: {found:#?}"
-        );
-    }
-
-    /// Every family, and the findings each produces when run alone.
-    ///
-    /// EVERY family is fed the same empty set of committed files, so `generated` has findings
-    /// of its own in every run. Unlike the other eight it reports on what the tree does NOT
-    /// contain, so under current indexes it is silent — and a family that is silent cannot
-    /// leak visibly, which is how a deleted gate on it survived a leak test that gave the
-    /// other families a different input.
-    fn findings_per_family() -> Vec<(Only, Vec<String>)> {
-        Only::NAMED
-            .iter()
-            .map(|(_, family)| (*family, findings_of(|_, _, _| HashMap::new(), *family)))
-            .collect()
-    }
-
-    #[test]
-    fn no_family_reports_a_finding_that_belongs_to_another() {
-        // The leak test. A gate deleted from any family makes that family's findings appear
-        // in every other family's run, so the pairwise intersection stops being empty. This
-        // catches a leak from a family that plants no defect of its own, which counting
-        // findings per family cannot.
-        let per_family = findings_per_family();
-        for (a, found_a) in &per_family {
-            for (b, found_b) in &per_family {
-                if a == b {
-                    continue;
-                }
-                let shared: Vec<&String> = found_a.iter().filter(|f| found_b.contains(f)).collect();
-                assert!(
-                    shared.is_empty(),
-                    "{} and {} both report {shared:#?}",
-                    a.names().join(","),
-                    b.names().join(",")
-                );
-            }
+    fn every_check_has_a_row_and_the_run_is_their_sum() {
+        // Read off `CHECKS` rather than off `PLANTED`, so a check added to the library with
+        // no planted defect fails here instead of being absent from both. And nothing is
+        // invented by running them together: the whole run is the sum of the rows, taken
+        // over the empty set of committed files the table is stated against.
+        for name in documentation::check::CHECKS {
+            assert!(
+                PLANTED.iter().any(|(n, _, _)| *n == name),
+                "{name} has no row: every check owes a planted defect"
+            );
         }
-    }
-
-    #[test]
-    fn the_families_partition_every_finding() {
-        // Nothing is lost between the families and nothing is invented by running them
-        // together, so `PLANTED` is a complete account rather than a sample.
-        let per_family = findings_per_family();
-        let mut apart: Vec<String> = per_family.iter().flat_map(|(_, f)| f.clone()).collect();
-        let mut whole = findings_of(|_, _, _| HashMap::new(), Only::EVERYTHING);
-        apart.sort();
-        whole.sort();
-        assert_eq!(apart, whole, "the families must partition a whole run");
-
-        // Read off `Only::NAMED` rather than off `PLANTED`, so a family added to the library
-        // with no planted defect fails here instead of being absent from both.
-        for (name, family) in Only::NAMED {
-            let (_, planted, _) = PLANTED
-                .iter()
-                .find(|(f, _, _)| *f == family)
-                .unwrap_or_else(|| panic!("{name} has no row: every family owes a planted defect"));
-            let (_, found) = per_family
-                .iter()
-                .find(|(f, _)| *f == family)
-                .expect("a declared family");
+        let planted: usize = PLANTED
+            .iter()
+            .map(|(_, p, _)| match p {
+                Planted::InRun(n) => *n,
+                Planted::ByTheBinary(_) => 0,
+            })
+            .sum();
+        let whole = findings_with(|_, _, _| HashMap::new());
+        assert_eq!(whole.len(), planted, "{whole:#?}");
+        for (name, planted, fragment) in PLANTED {
             match planted {
-                Planted::InRun(n) => assert_eq!(found.len(), *n, "{name} planted {n}: {found:#?}"),
+                Planted::InRun(n) => assert!(
+                    (1..=n).contains(&whole.iter().filter(|f| f.contains(fragment)).count()),
+                    "{name}: {fragment:?} in {whole:#?}"
+                ),
                 Planted::ByTheBinary(test) => assert!(
-                    found.is_empty(),
-                    "{name} is asserted by {test}, so `run` must report nothing: {found:#?}"
+                    !whole.iter().any(|f| f.contains(fragment)),
+                    "{name} is asserted by {test}, so `run` must report nothing of it: {whole:#?}"
                 ),
             }
-        }
-    }
-
-    #[test]
-    fn every_family_reports_exactly_what_it_was_asked_for() {
-        // `ran` under-reporting is as wrong as over-reporting, and only one direction was
-        // pinned before: a report that names fewer families than ran makes a check that
-        // happened look like one that did not.
-        for (name, family) in Only::NAMED {
-            let report = report_of(family);
-            assert_eq!(report.ran, family, "{name}");
-            assert_eq!(report.ran.names(), vec![name], "{name}");
-            assert_eq!(report.asked, family, "{name}");
         }
     }
 
@@ -696,7 +627,7 @@ mod planted {
         // The walk orders documents by path component and this list orders them by display
         // path, so the two disagree whenever a directory name is a prefix of another. Without
         // the sort the block reshuffles between runs on an unchanged tree.
-        let report = report_with_pin(Only::CITATIONS);
+        let report = report_with_pin();
         let files: Vec<&str> = report.pinned.iter().map(|(f, _, _)| f.as_str()).collect();
         assert!(
             files.len() >= 2,
@@ -707,20 +638,16 @@ mod planted {
         assert_eq!(files, sorted, "pinned containers must be sorted");
     }
 
-    /// One run's whole report, over `only`, with the generated files current.
-    fn report_of(only: Only) -> documentation::check::Report {
-        report_inner(only, false)
-    }
-
-    /// The same, with the pinned release the two `cr-version` fixtures name also supplied.
+    /// One run's whole report, with the pinned release the two `cr-version` fixtures name also
+    /// supplied.
     ///
     /// A pinned document is skipped unless its release is in the map, so the fixtures are
     /// invisible to every other test here and change no count.
-    fn report_with_pin(only: Only) -> documentation::check::Report {
-        report_inner(only, true)
+    fn report_with_pin() -> documentation::check::Report {
+        report_inner(true)
     }
 
-    fn report_inner(only: Only, with_pin: bool) -> documentation::check::Report {
+    fn report_inner(with_pin: bool) -> documentation::check::Report {
         let manifest = mock("planted");
         let model = Model::build(&manifest, None).expect("a model");
         let tree = manifest.rules_tree();
@@ -747,16 +674,7 @@ mod planted {
             tracked_and_ignored: &git.1,
             refused: &survey.refused,
         };
-        run(&model, &manifest, &inputs, only)
-    }
-
-    #[test]
-    fn the_report_says_which_families_it_performed() {
-        // Without this, a family carrying no count of its own — `generated`, `trackers` — is
-        // indistinguishable from a run that performed nothing at all.
-        let report = report_of(Only::REGISTERS);
-        assert_eq!(report.ran.names(), vec!["registers"]);
-        assert!(!report.ran.has(Only::REFERENCES));
+        run(&model, &manifest, &inputs)
     }
 
     #[test]
@@ -823,18 +741,18 @@ mod planted {
 
         // And the family reports it, over the bytes the tree holds rather than over a map a
         // test wrote: the count line is line three, and that is what the finding names.
-        let stale = findings_of(
-            |m, _, _| {
-                let mut out = HashMap::new();
-                for rel in index::generated_index_paths(m) {
-                    if let Ok(text) = std::fs::read_to_string(m.root().join(&rel)) {
-                        out.insert(rel, text);
-                    }
+        let stale: Vec<String> = findings_with(|m, _, _| {
+            let mut out = HashMap::new();
+            for rel in index::generated_index_paths(m) {
+                if let Ok(text) = std::fs::read_to_string(m.root().join(&rel)) {
+                    out.insert(rel, text);
                 }
-                out
-            },
-            Only::GENERATED,
-        );
+            }
+            out
+        })
+        .into_iter()
+        .filter(|f| f.contains("the generated file"))
+        .collect();
         assert_eq!(
             stale,
             vec![
@@ -1025,7 +943,7 @@ mod planted {
                 Planted::ByTheBinary(_) => 0,
             })
             .sum();
-        let whole = findings_of(|_, _, _| HashMap::new(), Only::EVERYTHING);
+        let whole = findings_with(|_, _, _| HashMap::new());
         assert_eq!(whole.len(), planted, "{whole:#?}");
     }
 }

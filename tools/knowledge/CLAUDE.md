@@ -45,11 +45,10 @@ and finding nothing; `minimal` is the walk, the exclusions, a location and a dec
 register; `pinned` is release resolution; `typography` is what `rules show` prints. **Plant a
 phase-4 defect in `planted`, a phase-2 or phase-3 one in `unsound`, and nowhere else.** Over
 the other four, `cargo knowledge check` run from the mock's own directory reports exactly
-this, each deliberate and each named in its own manifest: `dirhome` and `typography` pass with
-no finding; `minimal` reports one finding, its missing rule index; `pinned` exits 2 on a full
-run, because its one pin resolves only over the network, and passes a run that reads no rule
-text, such as `--only references`. Anything else a run reports in those four is a defect in
-the tool or in the fixture.
+this, each deliberate and each named in its own manifest: `dirhome`, `minimal` and
+`typography` pass with no finding; `pinned` exits 2, because its one pin resolves only over
+the network, which a run reaches at the last phase and at no phase before. Anything else a run
+reports in those four is a defect in the tool or in the fixture.
 
 **A test about commit messages builds its own project.** `commits` judges a message only where
 that commit's tree carries no finding. `dirhome` is the one mock over which every family runs

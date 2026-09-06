@@ -19,24 +19,13 @@ use output::{out, outln};
 use clap::{Args, Parser, Subcommand};
 
 use documentation::check::citations::Release;
-use documentation::check::{Inputs, Only, Phase, Report};
+use documentation::check::{Inputs, Phase, Report, CHECKS};
 use documentation::entity::{Anchors, Candidate, Entities, Kind};
 use documentation::manifest::{ISSUE_REGISTER, TRIPWIRE_REGISTER};
 use documentation::Manifest;
 
 mod corpus_cmd;
 mod history_cmd;
-
-/// Every accepted `--only` value, as the help prints them.
-///
-/// Written out rather than built from `Only::NAMED`, because a clap help string is a literal.
-/// `every_family_is_named_in_the_help` is what keeps the two in step: it fails when a family
-/// is added and not listed here. It is the SHORT help, so `-h` prints it and not only `--help`;
-/// the tripwire below reaches for whichever a reader typed. A tripwire in `path@knowledge@docs/tripwires.md` reads this list
-/// out of the help, so a family missing from it is a check whose output reaches no reviewer.
-const FAMILIES: &str = "citations, generated, registers, references, uncovered, changes, \
-                        corpus, regime. `structure` names every family but citations. A \
-                        comma-separated list runs their union over one walk.";
 
 #[derive(Parser)]
 #[command(
@@ -51,8 +40,8 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
-    /// Every check, over one walk; or only these families.
-    Check(CheckArgs),
+    /// Every check, over one walk, in four phases.
+    Check,
     /// One recorded entry, whole, and every reference to it.
     Show(ShowArgs),
     /// Every issue entry, one row each.
@@ -77,13 +66,6 @@ enum Command {
         #[command(subcommand)]
         command: corpus_cmd::RulesCommand,
     },
-}
-
-#[derive(Args)]
-struct CheckArgs {
-    /// Which check families to run. Without it, every one.
-    #[arg(long, value_name = "FAMILIES", value_parser = Only::parse, help = FAMILIES)]
-    only: Option<Only>,
 }
 
 #[derive(Args)]
@@ -137,7 +119,7 @@ fn main() -> ExitCode {
     let cli = Cli::parse();
 
     let outcome = locate().and_then(|manifest| match cli.command {
-        Command::Check(args) => check(&manifest, args.only.unwrap_or(Only::EVERYTHING)),
+        Command::Check => check(&manifest),
         Command::Show(args) => show(&manifest, &args),
         Command::Issues(args) => issues(&manifest, &args),
         Command::Tripwires(args) => tripwires(&manifest, &args),
@@ -250,7 +232,7 @@ fn model(manifest: &Manifest) -> Result<ExitCode, String> {
 /// Releases are resolved here rather than inside a check: resolving one may read the archive
 /// or reach the network, and a check may do neither. What a check receives is a release
 /// already parsed.
-fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
+fn check(manifest: &Manifest) -> Result<ExitCode, String> {
     let model =
         documentation::Model::build(manifest, Some(checker_source())).map_err(|e| e.to_string())?;
     let tree = manifest.rules_tree();
@@ -317,17 +299,15 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
         return Ok(ExitCode::FAILURE);
     }
 
-    // Only the families that read rule text get their releases resolved, and resolving a pin
-    // may fetch over the network. A run asking for references has no business reaching for a
-    // release, and before this was scoped it failed on a pin it had no reason to read.
-    // `generated` renders the rule index, so it needs the vendored release and no other.
+    // The last phase reads rule text, and resolving a pin may fetch over the network. The
+    // foundation has passed, so the releases are needed now and by nothing before.
     let mut releases: HashMap<Option<String>, Release> = HashMap::new();
-    if only.has(Only::CITATIONS) || only.has(Only::GENERATED) || only.has(Only::REGIME) {
+    {
         let vendored = std::fs::read_to_string(tree.text())
             .map_err(|e| format!("{}: {e}", tree.text().display()))?;
         releases.insert(None, Release::new(&vendored, body_starts_at));
     }
-    if only.has(Only::CITATIONS) || only.has(Only::REGIME) {
+    {
         for doc in model.documents() {
             let Some(date) = &doc.pin else { continue };
             if releases.contains_key(&doc.pin) {
@@ -344,21 +324,19 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
         releases: &releases,
         ..inputs
     };
-    let mut report = documentation::check::run(&model, manifest, &inputs, only);
+    let mut report = documentation::check::run(&model, manifest, &inputs);
 
     // The changelog is outside the walk: each section pins its own release, so it is checked
     // against that release rather than the vendored one. The caller resolves them, as with
     // every other release.
     let changes_path = manifest.rules().dir.join("CHANGES.md");
-    let wants_changes = only.has(Only::CHANGES);
-    let wants_corpus = only.has(Only::CORPUS);
-    if wants_changes || wants_corpus {
-        // Both families are gated on the changelog being readable, so when it is not there
+    {
+        // Both checks are gated on the changelog being readable, so when it is not there
         // neither ran. Saying otherwise would print a zero for a check nobody performed,
         // which for `corpus` means reporting provenance clean without having read a byte
         // of it.
         if std::fs::read_to_string(manifest.root().join(&changes_path)).is_err() {
-            report.ran = report.ran.without(Only::CHANGES.union(Only::CORPUS));
+            report.not_run = vec!["changes", "corpus"];
         }
         if let Ok(text) = std::fs::read_to_string(manifest.root().join(&changes_path)) {
             let (sections, _) = documentation::check::changes::parse(&text).unwrap_or_default();
@@ -374,13 +352,13 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
                     rules::Corpus::parse(&text, body_starts_at),
                 );
             }
-            if wants_changes {
+            {
                 let (found, changes) =
                     documentation::check::changes::check(&changes_path, &text, &corpora, &digests);
                 report.findings.extend(found);
                 report.changelog_changes = changes;
             }
-            if wants_corpus {
+            {
                 // Every release the changelog names must already be in the tree, alongside
                 // the pin. The changelog is parsed above whichever family asked for it,
                 // because this check reads it for the release list rather than to check it.
@@ -803,7 +781,6 @@ fn counts(report: &Report) -> String {
     use std::fmt::Write;
 
     let mut out = String::new();
-    let ran = report.ran;
     if report.phase != Phase::Content {
         // A stop names itself, and prints what every phase read: the walk. No family count
         // follows, because no family ran, and a zero would read as nothing found.
@@ -819,20 +796,25 @@ fn counts(report: &Report) -> String {
         }
         return out;
     }
-    let _ = write!(out, "\nchecked: {}", ran.names().join(", "));
-    // Not a family: every family read this walk. Git supplies it, per
+    // Every check the last phase performed, by name. The line is what makes a check that
+    // carries no count of its own — `generated` — legible as having run.
+    let checked: Vec<&str> = CHECKS
+        .iter()
+        .copied()
+        .filter(|name| !report.not_run.contains(name))
+        .collect();
+    let _ = write!(out, "\nchecked: {}", checked.join(", "));
+    // Not a check: every check read this walk. Git supplies it, per
     // `design@knowledge@git-supplies-the-walk`, so the count is what a reader compares between CI and
-    // a local run. It prints whatever was asked for, and on a failing run as readily as a
-    // passing one.
+    // a local run. It prints on a failing run as readily as a passing one.
     let _ = write!(out, "\nwalk: {} file(s)", report.structure.walked);
-    let skipped = report.asked.without(ran);
-    if skipped != Only::NOTHING {
-        // Asked for and not performed. Without this line the two failures are the same
-        // output: a family that ran and found nothing, and one that could not run at all.
+    if !report.not_run.is_empty() {
+        // Not performed. Without this line the two failures are the same output: a check
+        // that ran and found nothing, and one that could not run at all.
         let _ = write!(
             out,
-            "\nNOT RUN: {} — asked for, and the input it reads is not there",
-            skipped.names().join(", ")
+            "\nNOT RUN: {} — the input it reads is not there",
+            report.not_run.join(", ")
         );
     }
 
@@ -847,7 +829,7 @@ fn counts(report: &Report) -> String {
         );
     }
 
-    if ran.has(Only::CITATIONS) {
+    {
         let c = &report.counts;
         let _ = write!(
             out,
@@ -899,28 +881,28 @@ fn counts(report: &Report) -> String {
 
     let s = &report.structure;
     let mut structural = String::new();
-    if ran.has(Only::REGISTERS) {
+    {
         let _ = write!(
             structural,
             "\nregisters: {} component(s), {} location(s), {} instance(s), {} file entry(ies)",
             s.components, s.locations, s.instances, s.entries
         );
     }
-    if ran.has(Only::REFERENCES) {
+    {
         let _ = write!(
             structural,
             "\nreferences: {} entities defined, {} reference(s), {} link(s)",
             s.entities, s.references, s.links
         );
     }
-    if ran.has(Only::UNCOVERED) {
+    {
         let _ = write!(
             structural,
             "\nuncovered files: {} scanned",
             s.uncovered_files
         );
     }
-    if ran.has(Only::CORPUS) {
+    if !report.not_run.contains(&"corpus") {
         let _ = write!(
             structural,
             "\ncorpus: {} archived release(s), {} manifest row(s), {} of {} release(s) resolved locally",
@@ -930,14 +912,14 @@ fn counts(report: &Report) -> String {
             report.corpus.releases_needed
         );
     }
-    if ran.has(Only::CHANGES) {
+    if !report.not_run.contains(&"changes") {
         let _ = write!(
             structural,
             "\nchangelog: {} rule change(s)",
             report.changelog_changes
         );
     }
-    if ran.has(Only::REGIME) {
+    {
         let _ = write!(
             structural,
             "\nregime: {} claim(s) judged against their scope",
@@ -954,7 +936,7 @@ fn counts(report: &Report) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{counts, Cli, Command, Only, Report, FAMILIES};
+    use super::{counts, Cli, Command, Report, CHECKS};
     use crate::corpus_cmd::RulesCommand;
     use clap::Parser;
     use documentation::check::Phase;
@@ -973,23 +955,6 @@ mod tests {
     fn cli_declaration_is_consistent() {
         use clap::CommandFactory;
         Cli::command().debug_assert();
-    }
-
-    /// The claim: every family the tool accepts is named in the help.
-    ///
-    /// `FAMILIES` is a literal because a clap help string has to be one, so nothing but this
-    /// keeps it in step with `Only::NAMED`. The tripwire guarding
-    /// `design@knowledge@families-are-the-checks` reads the family list out of the help, so a family
-    /// missing from it is a check whose output reaches no reviewer and nothing reports that.
-    #[test]
-    fn every_family_is_named_in_the_help() {
-        for (name, _) in Only::NAMED {
-            assert!(
-                FAMILIES.contains(name),
-                "{name} is accepted by --only and absent from its help"
-            );
-        }
-        assert!(FAMILIES.contains("structure"), "the grouping name too");
     }
 
     /// The claim: every combination the hand-rolled parser accepted is refused, and refused
@@ -1058,17 +1023,12 @@ mod tests {
     /// the half that says the interface still exists.
     #[test]
     fn the_accepted_shapes_parse_to_what_they_name() {
-        let Command::Check(bare) = Cli::parse_from(["knowledge", "check"]).command else {
-            panic!("check parses to the check subcommand");
-        };
-        assert!(bare.only.is_none(), "no --only is every family");
-
-        let Command::Check(some) =
-            Cli::parse_from(["knowledge", "check", "--only", "references,generated"]).command
-        else {
-            panic!("check parses to the check subcommand");
-        };
-        assert_eq!(some.only, Some(Only::REFERENCES.union(Only::GENERATED)));
+        assert!(matches!(
+            Cli::parse_from(["knowledge", "check"]).command,
+            Command::Check
+        ));
+        // Every check runs on every run: a selection is refused as an unknown argument.
+        assert!(Cli::try_parse_from(["knowledge", "check", "--only", "references"]).is_err());
 
         let Command::Show(shown) = Cli::parse_from(["knowledge", "show", "design@a@b"]).command
         else {
@@ -1129,7 +1089,7 @@ mod tests {
         ));
     }
 
-    fn report(ran: Only) -> Report {
+    fn report() -> Report {
         Report {
             phase: Phase::Content,
             regime: Default::default(),
@@ -1139,8 +1099,7 @@ mod tests {
             corpus: Default::default(),
             changelog_changes: 0,
             pinned: Vec::new(),
-            ran,
-            asked: ran,
+            not_run: Vec::new(),
         }
     }
 
@@ -1149,8 +1108,8 @@ mod tests {
     /// Distinct values on purpose: with zeros everywhere, two counts printed in the wrong
     /// order render identically, so the headline could read `328/328 verified` while meaning
     /// the reverse and no assertion would move.
-    fn numbered(ran: Only) -> Report {
-        let mut r = report(ran);
+    fn numbered() -> Report {
+        let mut r = report();
         r.counts.verified = 11;
         r.counts.fragments = 22;
         r.counts.unmarked = 33;
@@ -1175,7 +1134,7 @@ mod tests {
 
     #[test]
     fn every_count_is_rendered_in_the_position_its_label_promises() {
-        let out = counts(&numbered(Only::EVERYTHING));
+        let out = counts(&numbered());
         for expected in [
             "11/22 rule-quote fragments verified against the rule cited",
             "registers: 188 component(s), 199 location(s), 88 instance(s), 99 file entry(ies)",
@@ -1192,56 +1151,64 @@ mod tests {
     }
 
     #[test]
-    fn a_family_asked_for_that_could_not_run_is_named_as_not_run() {
-        // The failure this guards is a family gated on an input that is not there: without
-        // the line, it prints an empty `checked:` and reads as a run that did nothing.
-        let mut r = report(Only::CORPUS.union(Only::REFERENCES));
-        r.ran = Only::REFERENCES;
+    fn a_check_that_could_not_run_is_named_as_not_run_and_contributes_no_count() {
+        // The failure this guards is a check gated on an input that is not there: a zero
+        // for it would read as "nothing found" for a check that never ran, and its name in
+        // `checked:` would say it did.
+        let mut r = report();
+        r.not_run = vec!["changes", "corpus"];
         let out = counts(&r);
-        assert!(out.contains("checked: references"), "{out}");
-        assert!(out.contains("NOT RUN: corpus"), "{out}");
+        assert!(out.contains("NOT RUN: changes, corpus"), "{out}");
         assert!(
-            !out.contains("corpus:"),
-            "no count for a family that did not run: {out}"
+            !out.contains("corpus:") && !out.contains("changelog:"),
+            "no count for a check that did not run: {out}"
         );
-        // Nothing is withheld when everything asked for ran.
-        assert!(!counts(&report(Only::REFERENCES)).contains("NOT RUN"));
+        let checked = out
+            .lines()
+            .find(|l| l.starts_with("checked:"))
+            .expect("the line");
+        assert!(
+            !checked.contains("corpus") && !checked.contains("changes"),
+            "{checked}"
+        );
+        // Nothing is withheld when everything ran.
+        assert!(!counts(&report()).contains("NOT RUN"));
     }
 
     #[test]
-    fn a_family_that_did_not_run_contributes_no_count() {
-        let out = counts(&report(Only::REFERENCES));
-        assert!(out.contains("references:"), "{out}");
-        // Every other family's label is absent rather than present with a zero. A zero here
-        // reads as "nothing found" for a check that never ran.
-        for label in [
-            "registers:",
-            "uncovered files:",
-            "corpus:",
-            "changelog:",
-            "lint:",
-            "fragments verified",
-        ] {
-            assert!(!out.contains(label), "{label} should be absent from {out}");
-        }
-    }
-
-    #[test]
-    fn the_families_that_ran_are_named_even_when_they_carry_no_count() {
-        // `generated` reports findings and counts nothing, so this line is the only thing
-        // separating "ran and found nothing" from "did not run".
-        let out = counts(&report(Only::GENERATED));
-        assert!(out.contains("checked: generated"), "{out}");
-        assert!(!out.contains("NOT RUN"), "{out}");
-    }
-
-    #[test]
-    fn a_full_run_names_every_family_and_prints_both_blocks() {
-        let out = counts(&report(Only::EVERYTHING));
-        for (name, _) in Only::NAMED {
-            assert!(out.contains(name), "{name} should be named in {out}");
+    fn a_full_run_names_every_check_and_prints_both_blocks() {
+        // `generated` reports findings and counts nothing, so the `checked:` line is the
+        // only thing separating "ran and found nothing" from "did not run".
+        let out = counts(&report());
+        let checked = out
+            .lines()
+            .find(|l| l.starts_with("checked:"))
+            .expect("the line");
+        for name in CHECKS {
+            assert!(
+                checked.contains(name),
+                "{name} should be named in {checked}"
+            );
         }
         assert!(out.contains("fragments verified"), "{out}");
         assert!(out.contains("changelog:"), "{out}");
+    }
+
+    #[test]
+    fn a_stop_prints_its_line_and_no_check_count() {
+        let mut r = report();
+        r.phase = Phase::Tree;
+        r.findings
+            .push(documentation::Finding::in_file("a.md", "what", "action"));
+        let out = counts(&r);
+        assert!(
+            out.contains("phase 2: 1 finding(s); phases 3 and 4 were not judged"),
+            "{out}"
+        );
+        assert!(out.contains("walk: "), "{out}");
+        assert!(
+            !out.contains("checked:") && !out.contains("registers:"),
+            "{out}"
+        );
     }
 }

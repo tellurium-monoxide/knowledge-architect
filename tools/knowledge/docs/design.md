@@ -46,17 +46,49 @@ check over documents, which stays pure. `changes` runs beside them, from the bin
 inside `check::run`: it is a pure function over the changelog's text and the releases its sections
 name, both handed in, but its subject is the changelog rather than the model.
 
-### `--only` selects a set over the check families, one family per check, and a family is named for its check rather than for whoever reads it `##families-are-the-checks`
+### A finding is classified by the phase that produces it, the report stops at the first non-empty phase, and every check runs at the last `##phases-gate-the-report`
 
-All but one are the modules under `path@knowledge@documentation/src/check/`. The remaining one is `corpus`,
-which is `rules::integrity::check` and sits outside them because its subject is filesystem state
-rather than the model. `changes` is a module there and is invoked by the binary beside `corpus`,
-outside `check::run`, per `design@knowledge@model-then-checks`. `Only` is a set, so one invocation asks for any combination of them. A report
-states which families it performed, and a family that did not run contributes no count: printed as a
-zero, a count nobody took reads as _nothing found_ for a check that never ran, which is the failure
-this tool exists to prevent. Two names cover the groupings that had callers before the set existed:
-`citations` is every quote judged against the rule it names, and `structure` is every family but
-that one.
+Findings are not independent. Some say what the model could not read or resolve, and every
+finding computed from that model afterwards is then unreliable in both directions, missing and
+false. A list that mixed the two advertised a completeness it did not have. So a run is four
+phases, each of the first three building one input of the next:
+
+| phase | produced by | what it reports |
+| ----- | ----------- | --------------- |
+| 1 | `Manifest::parse` | a declaration the tool refused, which is then absent from the configuration |
+| 2 | `check::tree` | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out |
+| 3 | `Entities::build` | a slug or an entry id where none may sit, or defined twice |
+| 4 | every check | everything computed over a complete model |
+
+A finding is classified by **the place it is produced**, never by a label at its site, so a
+finding added to a building step is gated because of where it is raised, and nothing in the
+last phase can undermine anything, because no check reads another check's findings. The run
+stops at the first phase that produced anything, prints those findings, and opens its summary
+with the phase, the count and the phases not judged, so a stop is never mistaken for a pass;
+a clean run names every check it performed. The whole report stops: the per-document form,
+hiding only what an unread file could have defined, was three times the machinery for facts
+that mostly have no per-file scope, and `path@knowledge@docs/tripwires.md` guards that choice.
+
+**Releases are resolved when the last phase is reached**, so a run that stops earlier fetches
+nothing, whatever it would have judged. **A writer refuses over an incomplete model**: `index`
+and `rules bump` run the first three phases before touching anything and exit 2 naming the
+phase, since an index generated over such a model lists rows nobody asked for. **The
+`commit-msg` hook refuses the same way**: a message judged against an incomplete entity table
+is judged against nothing, so it names the phase and the commit is not made; the range form
+already ends at a failing tip.
+
+**Nothing selects a subset of the checks.** The checks cross the phases — what `registers`
+asserts sits in phases 2 and 4, what `references` asserts in 3 and 4 — so a selection could be
+honoured only with a second bookkeeping saying which part of a check a stop withheld. Every
+consumer of the selection was a reviewer dispatched on a tree the gate already passes, where
+the selected and the full run print one verdict, and the full run over this repository costs
+under a second. The selection is `path@knowledge@docs/rejected-alternatives.md`.
+
+**One producer chain, and a rule for a second.** The manifest feeds the walk, the walk the
+model, the model the table, and every check consumes the table. A future check whose findings
+another check reads would be a second chain, and nothing prevents one: such a check is a phase,
+not a check of the last one, and it goes before its consumers. `path@knowledge@CLAUDE.md`
+restates that at the point of adding a check, and a tripwire names the event.
 
 ### A parse that cannot be trusted is reported, never silent `##a-failed-parse-is-loud`
 
@@ -413,7 +445,7 @@ comparing rather than by writing the file and reading it back. Two things follow
 load-bearing.
 
 **One list names the file-register indexes, and the writer and the gate both read it.**
-`cargo knowledge index` and `check --only generated` take the same pairs of destination and expected
+`cargo knowledge index` and the `generated` check take the same pairs of destination and expected
 bytes from one function, so neither can generate one the other does not know about, nor disagree
 about what is in it. Each is derived from the file-register instances, one per instance whose
 directory is there. **The rule index is the exception**: it is the manifest's `[rules] dir` plus
@@ -436,7 +468,7 @@ have is a manifest defect rather than something to create. Both are checked over
 destination before any is written, so a run either refuses having written nothing or writes them
 all. Remove either check and the paragraph above stops being true.
 
-**Verifying is not this command's question.** `cargo knowledge check --only generated` is the gate,
+**Verifying is not this command's question.** The `generated` check of `cargo knowledge check` is the gate,
 and it names the first line at which the committed file and the regenerated one disagree. A second
 command answering the same question in its own format is what drifts, and there would be nothing to
 say which of the two was right.

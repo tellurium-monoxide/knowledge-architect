@@ -16,7 +16,7 @@ reading a different set of files, with both runs green.
 
 **Fires when:** the walked-file count CI prints for a commit differs from the count a local run
 prints for the same commit. Both are the `walk: n file(s)` line of the summary block, which every
-`cargo knowledge check` prints whatever `--only` asked for.
+`cargo knowledge check` prints on a stop as on a pass.
 
 **Response:** open a `defect` naming both counts and the two git versions.
 

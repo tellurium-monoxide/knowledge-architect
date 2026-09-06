@@ -40,6 +40,6 @@ so in the module head and in root `path@thaum@CLAUDE.md`, closes it as a recorde
 
 In `path@knowledge@tests/projects/dirhome/`, which is clean, write a
 workflow file under `path@thaum@.github/workflows/` holding a line `run: cargo test cr_100_1` and run
-`cargo knowledge check --only uncovered`: `PASSED: no findings`. Replace the token with the
+`cargo knowledge check`: `PASSED: no findings`. Replace the token with the
 prose form behind its marker and the same run reports the line. Found by an adversarial review
 of the mock-project piece.

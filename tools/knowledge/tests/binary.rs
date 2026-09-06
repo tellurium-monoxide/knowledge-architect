@@ -174,12 +174,12 @@ fn modified(path: &Path) -> SystemTime {
 /// whatever was asked for, and no later finding prints.
 ///
 /// The `unsound` project plants one defect per phase-2 assertion, and behind them the
-/// phase-3 ones; a full run and a `citations`-only run both stop at phase 2, so no selection
-/// can hide the unread file. Every phase-4 planted defect is `planted`'s, which reaches phase
-/// 4 because it is clean before it.
+/// phase-3 ones; a run stops at phase 2, so nothing can hide the unread file. Every phase-4
+/// planted defect is `planted`'s, which reaches phase 4 because it is clean before it.
 #[test]
 fn a_run_over_an_incomplete_model_reports_that_phase_alone_whatever_was_asked_for() {
-    for args in [vec!["check"], vec!["check", "--only", "citations"]] {
+    {
+        let args = ["check"];
         let (stdout, stderr, code) = run("unsound", &args);
         assert_eq!(code, 1, "{args:?}: {stdout}{stderr}");
         assert!(
@@ -275,12 +275,12 @@ fn a_writer_refuses_over_an_incomplete_model_and_writes_nothing() {
 }
 
 #[test]
-fn a_run_with_no_only_performs_every_family() {
+fn a_run_performs_every_check() {
     let (stdout, _, code) = run("planted", &["check"]);
-    for (name, _) in documentation::check::Only::NAMED {
+    for name in documentation::check::CHECKS {
         assert!(
             stdout.contains(name),
-            "the default must name {name} as checked: {stdout}"
+            "the run must name {name} as checked: {stdout}"
         );
     }
     // The citation walk is the one whose absence is silent: the project plants five citation
@@ -293,41 +293,39 @@ fn a_run_with_no_only_performs_every_family() {
 }
 
 #[test]
-fn a_family_gated_on_a_file_that_is_absent_is_reported_as_not_run() {
-    // `minimal` carries no changelog, so `corpus` cannot run there. Before this was pinned
-    // the run printed `checked: corpus` and a row of zeros, which reads as provenance
-    // verified against a corpus nothing had read.
-    let (stdout, _, code) = run("minimal", &["check", "--only", "corpus"]);
-    assert!(stdout.contains("NOT RUN: corpus"), "{stdout}");
+fn a_check_gated_on_a_file_that_is_absent_is_reported_as_not_run() {
+    // `minimal` carries no changelog, so `corpus` and `changes` cannot run there. Before this
+    // was pinned the run printed `checked: corpus` and a row of zeros, which reads as
+    // provenance verified against a corpus nothing had read.
+    let (stdout, _, code) = run("minimal", &["check"]);
+    assert!(stdout.contains("NOT RUN: changes, corpus"), "{stdout}");
     assert!(
-        !stdout.contains("archived release(s)"),
-        "no count for a family that did not run: {stdout}"
+        !stdout.contains("archived release(s)") && !stdout.contains("changelog:"),
+        "no count for a check that did not run: {stdout}"
     );
+    let checked = stdout
+        .lines()
+        .find(|l| l.starts_with("checked: "))
+        .unwrap_or_else(|| panic!("{stdout}"));
+    assert!(!checked.contains("corpus"), "{checked}");
     assert_eq!(code, 0, "{stdout}");
 }
 
 #[test]
-fn asking_for_one_family_does_not_read_another() {
-    let (stdout, _, code) = run("planted", &["check", "--only", "references"]);
-    assert!(stdout.contains("checked: references"), "{stdout}");
-    assert!(stdout.contains("references:"), "{stdout}");
-    assert!(!stdout.contains("components:"), "{stdout}");
-    assert!(!stdout.contains("no rule says this"), "{stdout}");
-    assert_eq!(code, 1, "the project plants reference defects: {stdout}");
-}
-
-#[test]
-fn a_family_that_does_not_read_rule_text_resolves_no_release() {
+fn a_run_that_stops_before_the_last_phase_resolves_no_release() {
     // The `pinned` project pins a release that is neither vendored nor archived, so
-    // resolving it is a network fetch that fails. Nothing about references needs a release, and
-    // before resolution was scoped to the families that read rule text, every run resolved
-    // every pin — so this run failed, and reached the network, for another family's reason.
+    // resolving it is a network fetch that fails. A run that stops at phase 2 needs no
+    // release, and resolves none: before releases were resolved after the foundation, every
+    // run resolved every pin, and reached the network, for a phase it never got to.
     //
     // Only this direction is asserted. The opposite one is a real fetch, and a test suite
     // that reaches the network is a test suite that fails when the network does.
-    let (stdout, stderr, code) = run("pinned", &["check", "--only", "references"]);
-    assert_eq!(code, 0, "stdout {stdout} stderr {stderr}");
-    assert!(stdout.contains("checked: references"), "{stdout}");
+    let sandbox = Sandbox::seeded("pinned-stop", "pinned", &[("notes/latin1.md", "x")]);
+    std::fs::write(sandbox.path("notes/latin1.md"), b"# A\n\ncaf\xe9\n").expect("bytes");
+    sandbox.stage();
+    let (stdout, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "stdout {stdout} stderr {stderr}");
+    assert!(stdout.contains("phase 2:"), "{stdout}");
     assert!(
         !stderr.contains("19990101") && !stderr.contains("curl"),
         "no pin was resolved: {stderr}"
@@ -335,12 +333,10 @@ fn a_family_that_does_not_read_rule_text_resolves_no_release() {
 }
 
 #[test]
-fn an_unknown_family_names_what_is_accepted_and_checks_nothing() {
-    let (stdout, stderr, code) = run("planted", &["check", "--only", "nosuch"]);
-    assert!(stderr.contains("nosuch"), "{stderr}");
-    for (name, _) in documentation::check::Only::NAMED {
-        assert!(stderr.contains(name), "{stderr}");
-    }
+fn check_takes_no_selection() {
+    // Every check runs on every run, in the phases; a selection would cut across them.
+    let (stdout, stderr, code) = run("planted", &["check", "--only", "references"]);
+    assert!(stderr.contains("--only"), "{stderr}");
     assert!(stdout.is_empty(), "nothing was checked: {stdout}");
     assert_eq!(code, 2, "{stderr}");
 }
@@ -420,13 +416,13 @@ fn the_verdict_counts_the_findings_it_printed() {
 /// A clean run says so on its last line and exits zero.
 #[test]
 fn a_passing_run_ends_with_a_passed_verdict() {
-    let (stdout, _, code) = run("pinned", &["check", "--only", "references"]);
+    let (stdout, _, code) = run("dirhome", &["check"]);
     let last = stdout.lines().rfind(|l| !l.is_empty()).unwrap();
     assert_eq!(last, "PASSED: no findings", "{stdout}");
     assert_eq!(code, 0, "{stdout}");
 }
 
-/// The claim: the two families `check::run` does not carry have a planted defect of their own,
+/// The claim: the two checks `check::run` does not carry have a planted defect of their own,
 /// and each names it.
 ///
 /// `changes` reads the changelog and `corpus` reads the archive, so neither has a model to be
@@ -435,29 +431,16 @@ fn a_passing_run_ends_with_a_passed_verdict() {
 /// the planted changelog is what makes either of them run over a mock at all.
 #[test]
 fn the_changelog_and_the_archive_each_carry_a_planted_defect() {
-    let (stdout, stderr, code) = run("planted", &["check", "--only", "changes"]);
+    let (stdout, stderr, code) = run("planted", &["check"]);
     assert!(
         stdout.contains("the quoted text is not what 100.1 says in 20200101"),
         "stdout {stdout} stderr {stderr}"
     );
-    assert_eq!(code, 1, "{stdout}");
-
-    let (stdout, stderr, code) = run("planted", &["check", "--only", "corpus"]);
     assert!(
         stdout.contains("does not match the manifest's 0000000000000000"),
         "stdout {stdout} stderr {stderr}"
     );
     assert_eq!(code, 1, "{stdout}");
-
-    // Neither family leaks into the other, which is the property the model-side leak test
-    // gives the six families it can reach and cannot give these two.
-    let (changes, _, _) = run("planted", &["check", "--only", "changes"]);
-    let (corpus, _, _) = run("planted", &["check", "--only", "corpus"]);
-    assert!(
-        !changes.contains("does not match the manifest's"),
-        "{changes}"
-    );
-    assert!(!corpus.contains("the quoted text is not what"), "{corpus}");
 }
 
 /// The claim: the conformant mock passes, with every one of the eight families having run.
@@ -475,7 +458,7 @@ fn the_conformant_mock_passes_every_family() {
         .lines()
         .find(|l| l.starts_with("checked: "))
         .unwrap_or_else(|| panic!("{stdout}"));
-    for (name, _) in documentation::check::Only::NAMED {
+    for name in documentation::check::CHECKS {
         assert!(checked.contains(name), "{name} did not run: {stdout}");
     }
     let last = stdout.lines().rfind(|l| !l.is_empty()).unwrap();
@@ -624,8 +607,10 @@ fn help_answers_from_outside_a_project() {
 #[test]
 fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
     let sandbox = Sandbox::new("index", "minimal");
-    // The rule index, which the mock does not carry, and one per file-register instance,
+    // The rule index, which this copy does not carry, and one per file-register instance,
     // which it does. One invocation writes every one of them.
+    std::fs::remove_file(sandbox.path("corpus/index.md")).expect("the committed rule index");
+    sandbox.stage();
     let generated = [
         "corpus/index.md",
         "docs/open-issues/index.md",
@@ -704,7 +689,8 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
 fn a_refused_destination_stops_the_run_before_anything_is_written() {
     let sandbox = Sandbox::new("index-refusal", "minimal");
     // The three that would be written: two staled file-register indexes, and the rule index,
-    // which the mock does not carry at all.
+    // which this copy does not carry at all.
+    std::fs::remove_file(sandbox.path("corpus/index.md")).expect("the committed rule index");
     let staled = ["docs/open-issues/index.md", "notes/open-issues/index.md"];
     for rel in staled {
         sandbox.write(rel, "stale\n");
@@ -980,7 +966,7 @@ fn show_prints_the_entry_and_what_points_at_it() {
 #[test]
 fn the_summary_names_the_checker_source_and_counts_the_files_under_it() {
     // A mock project holds no file under the checker's source: the line prints, at zero.
-    let (stdout, _, _) = run("minimal", &["check", "--only", "references"]);
+    let (stdout, _, _) = run("minimal", &["check"]);
     assert!(
         stdout.contains("\nchecker source: ")
             && stdout.contains(", 0 file(s) with string literals read as data"),
@@ -991,7 +977,7 @@ fn the_summary_names_the_checker_source_and_counts_the_files_under_it() {
         .ancestors()
         .nth(2)
         .expect("tools/knowledge sits two levels below the root");
-    let (stdout, _, _) = run_in(checkout, &["check", "--only", "references"]);
+    let (stdout, _, _) = run_in(checkout, &["check"]);
     let line = stdout
         .lines()
         .find(|l| l.starts_with("checker source: "))
@@ -1042,7 +1028,7 @@ fn a_tracked_document_an_ignore_line_covers_is_walked_and_reported() {
     sandbox.write("notes/b.md", DANGLING);
     sandbox.stage();
 
-    let (before, stderr, code) = sandbox.run(&["check", "--only", "references"]);
+    let (before, stderr, code) = sandbox.run(&["check"]);
     assert_eq!(
         code, 1,
         "the dangling reference is a finding: {before}{stderr}"
@@ -1053,7 +1039,7 @@ fn a_tracked_document_an_ignore_line_covers_is_walked_and_reported() {
     // is already tracked, so `git add -A` leaves it tracked.
     sandbox.write(".gitignore", "b.md\n");
     sandbox.stage();
-    let (after, stderr, code) = sandbox.run(&["check", "--only", "references,registers"]);
+    let (after, stderr, code) = sandbox.run(&["check"]);
     assert_eq!(code, 1, "{after}{stderr}");
     // The contradiction is a phase-2 fact, so the run stops there and the dangling reference
     // is not judged; that the document is still walked is what the walk count says.
@@ -1086,7 +1072,7 @@ fn a_name_holding_a_newline_is_one_finding_on_one_line_and_its_contents_are_read
     // reference that would be a finding if the file were read. The refusal is the one finding,
     // on one line, with the newline escaped; the reference inside is reported by nothing.
     let sandbox = Sandbox::seeded("newline-name", "minimal", &[("notes/a\nb.md", DANGLING)]);
-    let (out, stderr, code) = sandbox.run(&["check", "--only", "registers,references"]);
+    let (out, stderr, code) = sandbox.run(&["check"]);
     assert_eq!(code, 1, "{out}{stderr}");
     let about: Vec<&str> = out.lines().filter(|l| l.contains("notes/a")).collect();
     assert_eq!(about.len(), 1, "{out}");
@@ -1109,7 +1095,7 @@ fn a_name_holding_a_newline_is_one_finding_on_one_line_and_its_contents_are_read
         ),
     );
     kept.stage();
-    let (out, stderr, code) = kept.run(&["check", "--only", "registers,references"]);
+    let (out, stderr, code) = kept.run(&["check"]);
     assert_eq!(code, 0, "{out}{stderr}");
     assert!(!out.contains("notes/a"), "{out}");
 }
@@ -1124,7 +1110,7 @@ fn a_nested_gitignore_is_honoured() {
             ("notes/scratch.md", DANGLING),
         ],
     );
-    let (out, stderr, code) = ignored.run(&["check", "--only", "references"]);
+    let (out, stderr, code) = ignored.run(&["check"]);
     assert!(
         !out.contains("no-such-thing"),
         "the nested ignore rule covers it: {out}{stderr}"
@@ -1136,7 +1122,7 @@ fn a_nested_gitignore_is_honoured() {
         "minimal",
         &[("notes/scratch.md", DANGLING)],
     );
-    let (walked_out, stderr, code) = walked.run(&["check", "--only", "references"]);
+    let (walked_out, stderr, code) = walked.run(&["check"]);
     assert_eq!(
         code, 1,
         "without the rule the file is live: {walked_out}{stderr}"
@@ -1191,12 +1177,12 @@ fn a_reference_to_an_ignored_target_is_exempt_and_the_rules_decide_it() {
         "minimal",
         &[(".gitignore", "build-output/\n"), ("notes/a.md", pointer)],
     );
-    let (out, stderr, code) = exempt.run(&["check", "--only", "references"]);
+    let (out, stderr, code) = exempt.run(&["check"]);
     assert_eq!(code, 0, "the ignore rules cover the target: {out}{stderr}");
     assert!(!out.contains("build-output"), "{out}");
 
     let asserted = Sandbox::seeded("unignored-target", "minimal", &[("notes/a.md", pointer)]);
-    let (out, stderr, code) = asserted.run(&["check", "--only", "references"]);
+    let (out, stderr, code) = asserted.run(&["check"]);
     assert_eq!(
         code, 1,
         "without the rule the target is asserted: {out}{stderr}"
@@ -1217,14 +1203,14 @@ fn a_reference_to_an_ignored_target_is_exempt_and_the_rules_decide_it() {
 #[test]
 fn a_tracked_file_the_working_tree_does_not_hold_is_reported() {
     let sandbox = Sandbox::new("deleted-tracked", "minimal");
-    let (before, stderr, code) = sandbox.run(&["check", "--only", "citations"]);
+    let (before, stderr, code) = sandbox.run(&["check"]);
     assert_eq!(
         code, 0,
         "the fixture starts clean under this family: {before}{stderr}"
     );
 
     std::fs::remove_file(sandbox.path("notes/b.md")).expect("a staged fixture file");
-    let (out, stderr, code) = sandbox.run(&["check", "--only", "citations"]);
+    let (out, stderr, code) = sandbox.run(&["check"]);
     assert_eq!(code, 1, "{out}{stderr}");
     assert!(
         out.contains("notes/b.md") && out.contains("the working tree does not hold it"),
@@ -1236,11 +1222,20 @@ fn a_tracked_file_the_working_tree_does_not_hold_is_reported() {
         "the path stays in the walk while the index holds it"
     );
 
-    // Staging the deletion is the repair, and it takes the path out of the listing.
+    // Staging the deletion is the repair, and it takes the path out of the listing. What is
+    // then reported is the fixture's own pointer at the file, dangling, which is the tree's
+    // fact and not the walk's.
     sandbox.stage();
-    let (after, stderr, code) = sandbox.run(&["check", "--only", "citations"]);
-    assert_eq!(code, 0, "{after}{stderr}");
-    assert!(!after.contains("notes/b.md"), "{after}");
+    let (after, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{after}{stderr}");
+    assert!(
+        !after.contains("the working tree does not hold it"),
+        "{after}"
+    );
+    assert!(
+        after.contains("`path@notes@b.md` does not exist"),
+        "{after}"
+    );
     assert_eq!(walked_count(&after), walked_count(&before) - 1);
 }
 
@@ -1269,12 +1264,12 @@ fn a_per_user_ignore_file_does_not_decide_the_walk() {
 
     let config = home.join(".config");
     let env: Vec<(&str, &Path)> = vec![("HOME", home.as_path()), ("XDG_CONFIG_HOME", &config)];
-    let (out, stderr, code) = run_with_env(&sandbox.dir, &["check", "--only", "references"], &env);
+    let (out, stderr, code) = run_with_env(&sandbox.dir, &["check"], &env);
     assert_eq!(code, 1, "the document stays live: {out}{stderr}");
     assert!(out.contains("no-such-thing"), "{out}");
 
     // The same run without the fake home, so the count is the same either way.
-    let (plain, _, _) = sandbox.run(&["check", "--only", "references"]);
+    let (plain, _, _) = sandbox.run(&["check"]);
     assert_eq!(walked_count(&out), walked_count(&plain));
     let _ = std::fs::remove_dir_all(&home);
 }

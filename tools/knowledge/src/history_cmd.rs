@@ -20,7 +20,7 @@ use std::process::ExitCode;
 use clap::Subcommand;
 
 use documentation::check::citations::Release;
-use documentation::check::{self, Inputs, Only};
+use documentation::check::{self, Inputs};
 use documentation::entity::{Anchors, Entities};
 use documentation::manifest::MANIFEST_NAME;
 use documentation::survey::Survey;
@@ -544,14 +544,7 @@ fn commit_tree(
         match check::foundation(&assembly.model, &assembly.manifest, &assembly.inputs()) {
             Err(stop) => stop.findings,
             Ok(()) => {
-                let report = check::run(
-                    &assembly.model,
-                    &assembly.manifest,
-                    &assembly.inputs(),
-                    Only::EVERYTHING
-                        .without(Only::CORPUS)
-                        .without(Only::CHANGES),
-                );
+                let report = check::run(&assembly.model, &assembly.manifest, &assembly.inputs());
                 let mut trouble = report.findings;
                 trouble.extend(unresolved);
                 trouble
