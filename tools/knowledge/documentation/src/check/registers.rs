@@ -161,7 +161,8 @@ pub fn check_under(
                     heading_home(&mut out, anchor, register, &home, model, anchors, inputs)
                 }
                 Shape::File => {
-                    counts.entries += file_home(&mut out, anchor, register, &home, model, inputs);
+                    counts.entries +=
+                        file_home(&mut out, anchor, register, &home, model, anchors, inputs);
                 }
             }
         }
@@ -543,6 +544,7 @@ fn file_home(
     register: &Register,
     home: &Home,
     model: &Model,
+    anchors: &Anchors,
     inputs: &Inputs,
 ) -> usize {
     // The single-file shape a heading register accepts is not a shape here, and a project
@@ -596,11 +598,16 @@ fn file_home(
     }
 
     let groups = config(out, register, home, inputs);
-    directory_contents(out, register, home, &groups, inputs);
+    // What sits under an anchor nested inside this home is that anchor's, as the heading
+    // shape reads it: the nesting is refused by `nesting`, and reading the nested anchor's
+    // files as entries of this register would report the refusal's consequences against
+    // the wrong register and the wrong anchor, nine times over.
+    let owned = |rel: &Path| anchors.owning(rel).path == anchor.path;
+    directory_contents(out, register, home, &groups, inputs, &owned);
 
     let mut judged = 0;
     for doc in model.documents() {
-        if !is_entry(&doc.rel, home) {
+        if !is_entry(&doc.rel, home) || !owned(&doc.rel) {
             continue;
         }
         judged += 1;
@@ -635,18 +642,22 @@ fn config(
 
 /// Every subdirectory is a declared group, every declared group is a subdirectory, groups
 /// nest one level, and nothing but an entry and the options file sits in the instance.
+///
+/// `owned` says whether a path under the home belongs to this instance's anchor; what a
+/// nested anchor owns is left to it.
 fn directory_contents(
     out: &mut Vec<Finding>,
     register: &Register,
     home: &Home,
     groups: &BTreeSet<String>,
     inputs: &Inputs,
+    owned: &dyn Fn(&Path) -> bool,
 ) {
     let mut present: BTreeSet<String> = BTreeSet::new();
     let mut paths: Vec<&PathBuf> = inputs
         .present
         .iter()
-        .filter(|p| p.starts_with(&home.dir) && **p != home.dir)
+        .filter(|p| p.starts_with(&home.dir) && **p != home.dir && owned(p))
         .collect();
     paths.sort();
     for path in paths {
@@ -1885,14 +1896,21 @@ mod tests {
         present.push("docs/open-issues/nested/open-issues".to_string());
         present.push("docs/open-issues/nested/open-issues/README.md".to_string());
         present.push("docs/open-issues/nested/open-issues/index.md".to_string());
-        let found = findings(&manifest, &present);
-        let nesting: Vec<&String> = found
-            .iter()
-            .filter(|f| f.contains("sits inside the issue home"))
-            .collect();
-        assert_eq!(nesting.len(), 1, "{found:#?}");
+        present.push("docs/open-issues/nested/scratch.txt".to_string());
+        // The nested anchor's README is a walked document and a stray file sits beside its
+        // home, and nothing under the nested anchor is an entry, a group or a stray file of
+        // the OUTER register: the refusal is the one finding, so a reader repairs the
+        // declaration and not the directory.
+        let model = Model::from_documents(vec![(
+            PathBuf::from("docs/open-issues/nested/open-issues/README.md"),
+            "# Nested issues\n".to_string(),
+        )]);
+        let found = findings_over(&manifest, &present, model, &[]);
+        assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
-            nesting[0].contains("`nested`") && nesting[0].contains("`a-project`"),
+            found[0].contains("sits inside the issue home")
+                && found[0].contains("`nested`")
+                && found[0].contains("`a-project`"),
             "{found:#?}"
         );
     }

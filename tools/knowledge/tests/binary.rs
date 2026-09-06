@@ -983,6 +983,23 @@ fn a_name_holding_a_newline_is_one_finding_on_one_line_and_its_contents_are_read
         "{out}"
     );
     assert!(!out.contains("no-such-thing"), "read by nothing: {out}");
+
+    // The declared way to keep such a file: a `skip-files` row, which a TOML string spells
+    // with an escape. The row takes the file out of the walk like any other, so the run
+    // passes and the file is still read by nothing.
+    let kept = Sandbox::seeded("newline-kept", "minimal", &[("notes/a\nb.md", DANGLING)]);
+    let manifest = std::fs::read_to_string(kept.path("knowledge.toml")).expect("the manifest");
+    kept.write(
+        "knowledge.toml",
+        &manifest.replace(
+            "skip-files = [\"notes/generated.md\",",
+            "skip-files = [\"notes/a\\nb.md\", \"notes/generated.md\",",
+        ),
+    );
+    kept.stage();
+    let (out, stderr, code) = kept.run(&["check", "--only", "registers,references"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    assert!(!out.contains("notes/a"), "{out}");
 }
 
 #[test]

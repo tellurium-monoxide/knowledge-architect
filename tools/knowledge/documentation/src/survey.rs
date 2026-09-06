@@ -76,12 +76,6 @@ pub fn from_listing(
         if covered.contains(rel.as_path()) {
             continue;
         }
-        // A name the walk refuses is a file no check reads, and one finding names it. It
-        // stays in `present`: the refusal is about the file's contents, not its existence.
-        if crate::walk::refused(rel) {
-            refused.push(rel.clone());
-            continue;
-        }
         // `outside` asks the opposite question to `present`: files of THIS project that no
         // checker reads, and which may therefore not name a rule. A skipped directory, a
         // skipped filename and an excluded path are all left out — the first two because they
@@ -91,6 +85,13 @@ pub fn from_listing(
             || walk.skip_files.contains(rel)
             || generated.contains(rel);
         if skipped {
+            continue;
+        }
+        // A name the walk refuses is a file no check reads, and one finding names it. It
+        // stays in `present`: the refusal is about the file's contents, not its existence.
+        // After the skips, so that a `skip-files` row is the declared way to keep one.
+        if crate::walk::refused(rel) {
+            refused.push(rel.clone());
             continue;
         }
         if let Some(text) = read(rel) {
@@ -143,5 +144,29 @@ mod tests {
         );
         assert!(survey.present.contains(&PathBuf::from("notes/a\nb.md")));
         assert!(survey.directories.contains(&PathBuf::from("notes")));
+    }
+
+    #[test]
+    fn a_refused_name_a_skip_files_row_declares_is_kept_and_reported_by_nothing() {
+        // The declared way to keep such a file: the row takes it out of the walk like any
+        // other, so it is neither refused nor outside. An ignore rule does the same by
+        // keeping it out of the listing altogether.
+        let manifest = Manifest::parse(
+            Path::new("/nowhere"),
+            "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = [\"old\"]\n\
+             skip-files = [\"notes/a\\nb.md\"]\nexclude = []\n\n[lint]\nexempt-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\nversion = \"v\"\n\
+             past = \"p\"\nmanifest = \"m\"\n",
+        )
+        .expect("a declaration");
+        let model = Model::from_documents(Vec::new());
+        let listing: Vec<PathBuf> = ["notes/a\nb.md", "old/c\nd.md"]
+            .iter()
+            .map(PathBuf::from)
+            .collect();
+        let survey = from_listing(&manifest, &model, &listing, |_| Some("text".to_string()));
+        assert!(survey.refused.is_empty(), "{:?}", survey.refused);
+        assert!(survey.outside.is_empty());
+        assert!(survey.present.contains(&PathBuf::from("notes/a\nb.md")));
     }
 }

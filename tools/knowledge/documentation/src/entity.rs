@@ -516,6 +516,12 @@ impl Entities {
                 let Some(id) = entry_id(&doc.rel, &home.dir) else {
                     continue;
                 };
+                // A document an anchor nested inside this home owns is that anchor's, not
+                // an entry here: the nesting is `check::registers`' finding, and reading the
+                // nested anchor's files as entries would report it against the wrong register.
+                if anchors.owning(&doc.rel).path != anchor.path {
+                    continue;
+                }
                 let at = Site {
                     file: doc.rel.clone(),
                     line: 1,
