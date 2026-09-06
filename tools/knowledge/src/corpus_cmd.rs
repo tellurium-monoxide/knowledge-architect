@@ -312,6 +312,11 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
         outln!("already pinned at {new}");
         return Ok(0);
     }
+    // Before anything is fetched, archived or written: the rule index this command
+    // regenerates is a generated file, and a writer refuses over an incomplete model.
+    let model = documentation::Model::build(manifest, Some(crate::checker_source()))
+        .map_err(|e| e.to_string())?;
+    crate::complete_working_tree(manifest, &model)?;
     outln!("== {old} -> {new} ==");
 
     let old_text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
@@ -363,8 +368,6 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     let url = release::url_for(new);
     let (digest, lines) = vendor(tree, new, &url, new_text.as_bytes())?;
     outln!("{lines} lines\ndate:   {new}\nsource: {url}\nsha256: {digest}");
-    let model = documentation::Model::build(manifest, Some(crate::checker_source()))
-        .map_err(|e| e.to_string())?;
     let fresh = {
         let text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
         Corpus::parse(&text, manifest.rules().body_starts_at)

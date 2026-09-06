@@ -327,12 +327,22 @@ pub fn file_register_indexes(
     out
 }
 
-/// Every path this tool generates a file-register index at, whether or not the directory is
-/// there.
+/// Every path this tool writes a generated file at: the rule index, and one index per
+/// file-register instance, whether or not the directory is there.
 ///
-/// **This is what puts a generated index outside the walk by construction.** The set is
-/// derived from the register instances, so no `[walk] skip-files` row names one and a new
-/// instance cannot be created with its index inside the walk.
+/// **This is what puts a generated file outside the walk by construction.** The set is
+/// derived from the manifest's corpus and register instances, so no `[walk] skip-files` row
+/// names one and a new instance cannot be created with its index inside the walk. A
+/// generated file that was walked would be read as a document: the rule index's table cells
+/// carry every slug the tree defines, and each read as a definition where none may sit.
+pub fn generated_paths(manifest: &Manifest) -> HashSet<PathBuf> {
+    let mut out = generated_index_paths(manifest);
+    out.insert(manifest.rules().dir.join("index.md"));
+    out
+}
+
+/// Every path this tool generates a file-register index at, whether or not the directory is
+/// there. The rule index is not one; `generated_paths` is the whole set.
 pub fn generated_index_paths(manifest: &Manifest) -> HashSet<PathBuf> {
     Anchors::of(manifest)
         .instances()

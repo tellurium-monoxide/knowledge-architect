@@ -166,7 +166,7 @@ impl Model {
             .cloned();
         let walk_config = manifest.walk();
         let mut docs = Vec::new();
-        let generated = crate::index::generated_index_paths(manifest);
+        let generated = crate::index::generated_paths(manifest);
         // Git is the walk. No `git` on the path and a directory outside a worktree are both
         // errors naming the reason, never an empty listing: a project reported as holding no
         // document is a run that checked nothing and said it was clean.

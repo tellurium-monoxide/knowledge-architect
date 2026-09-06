@@ -9,7 +9,7 @@
 //! the exit codes are `design@thaum@exit-code-ladder`: 0 ran-and-clean, 1 ran-and-negative, 2
 //! could-not-run.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
 use std::process::ExitCode;
 
@@ -159,6 +159,42 @@ fn main() -> ExitCode {
             eprintln!("error: {e}");
             ExitCode::from(2)
         }
+    }
+}
+
+/// The working tree's survey, once the first three phases have found the model complete.
+///
+/// **A writer refuses over an incomplete model.** An index generated over a model missing a
+/// home, an unreadable file or a refused declaration lists rows nobody asked for, so a command
+/// that writes a generated file asks this first and touches nothing when it refuses: the
+/// answer is exit 2 naming the phase, and `check` is what reports the findings. Releases are
+/// not needed by the phases this runs, so nothing is fetched to refuse.
+pub(crate) fn complete_working_tree(
+    manifest: &Manifest,
+    model: &documentation::Model,
+) -> Result<documentation::survey::Survey, String> {
+    let survey = documentation::survey::survey(manifest, model).map_err(|e| e.to_string())?;
+    let tracked_and_ignored =
+        documentation::git::tracked_and_ignored(manifest.root()).map_err(|e| e.to_string())?;
+    let inputs = Inputs {
+        releases: &HashMap::new(),
+        pinned: "",
+        committed: &HashMap::new(),
+        configs: &HashMap::new(),
+        present: &survey.present,
+        directories: &survey.directories,
+        outside: &survey.outside,
+        ignored: &HashSet::new(),
+        tracked_and_ignored: &tracked_and_ignored,
+        refused: &survey.refused,
+    };
+    match documentation::check::foundation(model, manifest, &inputs) {
+        Ok(()) => Ok(survey),
+        Err(stop) => Err(format!(
+            "the model is incomplete: {}. `cargo knowledge check` reports them. Nothing was \
+             written.",
+            stop.phase.stop_line(stop.findings.len())
+        )),
     }
 }
 
@@ -416,7 +452,7 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
     // and cannot be given an invalid combination: the rule index, then one per file-register
     // instance. The survey answers which instance directories are there, and an instance
     // without one contributes no index rather than having its home created here.
-    let survey = documentation::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
+    let survey = complete_working_tree(manifest, &model)?;
     let mut generated = vec![(
         manifest.rules().dir.join("index.md"),
         documentation::index::rule_index(&model, manifest, &corpus, &pinned),

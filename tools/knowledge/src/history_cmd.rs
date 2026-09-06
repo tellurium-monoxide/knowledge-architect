@@ -396,7 +396,7 @@ fn commit_tree(
     let read = read_tree(root, sha, &[])?;
     let manifest = read.manifest;
     let anchors = Anchors::of(&manifest);
-    let generated = documentation::index::generated_index_paths(&manifest);
+    let generated = documentation::index::generated_paths(&manifest);
     let walked =
         documentation::walk::live_files(Path::new(""), manifest.walk(), &read.listing, &generated);
     let mut blobs = read.blobs;
@@ -586,6 +586,23 @@ pub fn commit_message(
     let raw = std::fs::read_to_string(file).map_err(|e| format!("{}: {e}", file.display()))?;
     let text = cleaned(&raw);
     let tree = working_tree(manifest, checker)?;
+    // The message is judged against the working tree's entity table, and a table built over
+    // an incomplete model refuses a reference into what was not read. So the hook does not
+    // judge at all then: it names the phase and the commit is not made, which is what the
+    // range form does at a failing tip. `git commit --no-verify` is the escape for a fix in
+    // progress.
+    if let Err(stop) = check::foundation(&tree.model, &tree.manifest, &tree.inputs()) {
+        outln!("{}", stop.phase.stop_line(stop.findings.len()));
+        outln!();
+        for finding in &stop.findings {
+            outln!("{finding}");
+        }
+        outln!(
+            "COULD NOT JUDGE: the working tree leaves the model incomplete, so the message was \
+             judged against nothing; fix the tree, or commit with --no-verify"
+        );
+        return Ok(ExitCode::from(2));
+    }
     let anchors = tree.anchors();
     let entities = Entities::build(&tree.model, &anchors);
     // **HEAD stands in for the parent tree**, as `commits` uses a commit's first parent. The

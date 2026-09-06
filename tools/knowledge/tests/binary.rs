@@ -242,6 +242,38 @@ fn a_definition_site_defect_stops_the_run_at_phase_three() {
     );
 }
 
+/// The claim: a command that writes a generated file refuses over an incomplete model, before
+/// touching anything, and says which phase and where the findings are.
+#[test]
+fn a_writer_refuses_over_an_incomplete_model_and_writes_nothing() {
+    let sandbox = Sandbox::new("writer-unsound", "unsound");
+    let index = sandbox.path("parts/widget/docs/open-issues/index.md");
+    let before = std::fs::read_to_string(&index).expect("the committed index");
+    let (stdout, stderr, code) = sandbox.run(&["index"]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(
+        stderr.contains("phase 2:") && stderr.contains("Nothing was written"),
+        "{stderr}"
+    );
+    assert!(!stdout.contains("rewritten"), "{stdout}");
+    assert_eq!(
+        std::fs::read_to_string(&index).expect("the index"),
+        before,
+        "the index is untouched"
+    );
+
+    // `rules bump` regenerates the rule index, so it asks the same question first: before
+    // the fetch, so a refusal reaches no network and archives nothing.
+    let (stdout, stderr, code) = sandbox.run(&["rules", "bump", "20990101"]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(stderr.contains("phase 2:"), "{stderr}");
+    assert!(
+        !stdout.contains("fetching") && !stdout.contains("archived"),
+        "{stdout}"
+    );
+    assert!(!sandbox.path("corpus/past/20200101.txt").exists());
+}
+
 #[test]
 fn a_run_with_no_only_performs_every_family() {
     let (stdout, _, code) = run("planted", &["check"]);
@@ -1507,6 +1539,33 @@ fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
     assert_eq!(code, 1, "{alone}");
     assert!(alone.contains("a-closable-issue"), "{alone}");
     let _ = std::fs::remove_file(&message);
+}
+
+/// The claim: the hook does not judge a message against an incomplete working tree. It
+/// names the phase, and the commit is not made.
+///
+/// A table built over a model missing a file would refuse a reference into that file, so a
+/// verdict over it is no verdict. The range form ends at a failing tip the same way.
+#[test]
+fn the_hook_refuses_to_judge_over_an_incomplete_working_tree() {
+    let history = History::new("commit-incomplete");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    // Untracked, and the walk lists it: one byte of Windows-1252 makes it unreadable.
+    history.write_bytes("docs/latin1.md", b"# A note\n\ncaf\xe9\n");
+    let draft = history.repo.join("draft.txt");
+    std::fs::write(&draft, "A message with nothing wrong in it\n").expect("a draft");
+    let (stdout, stderr, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(
+        stdout.contains("phase 2:") && stdout.contains("latin1.md"),
+        "{stdout}"
+    );
+    assert!(
+        stdout.trim_end().ends_with("--no-verify") && stdout.contains("COULD NOT JUDGE"),
+        "{stdout}"
+    );
+    let _ = std::fs::remove_file(&draft);
 }
 
 /// The claim: the hook accepts the commit that closes an issue.
