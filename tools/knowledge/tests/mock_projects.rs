@@ -329,6 +329,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
         outside: &survey.outside,
         ignored: &git.0,
         tracked_and_ignored: &git.1,
+        refused: &survey.refused,
     };
     let report = run(
         &model,
@@ -434,6 +435,7 @@ fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
         outside: &survey.outside,
         ignored: &git.0,
         tracked_and_ignored: &git.1,
+        refused: &survey.refused,
     };
     let report = run(&model, &manifest, &inputs, Only::EVERYTHING);
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
@@ -517,6 +519,7 @@ mod planted {
             outside: &survey.outside,
             ignored: &git.0,
             tracked_and_ignored: &git.1,
+            refused: &survey.refused,
         };
         run(&model, &manifest, &inputs, only)
             .findings
@@ -744,6 +747,7 @@ mod planted {
             outside: &survey.outside,
             ignored: &git.0,
             tracked_and_ignored: &git.1,
+            refused: &survey.refused,
         };
         run(&model, &manifest, &inputs, only)
     }

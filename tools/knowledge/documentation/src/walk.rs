@@ -33,7 +33,9 @@ pub fn live_files(
 ) -> Vec<PathBuf> {
     let mut out: Vec<PathBuf> = listing
         .iter()
-        .filter(|rel| !skipped(rel, walk) && is_live(rel, walk) && !generated.contains(*rel))
+        .filter(|rel| {
+            !skipped(rel, walk) && is_live(rel, walk) && !generated.contains(*rel) && !refused(rel)
+        })
         .map(|rel| root.join(rel))
         .collect();
     // Sorted by path COMPONENT, not by the path as one string, which `Path`'s own ordering is.
@@ -42,6 +44,20 @@ pub fn live_files(
     // replaced produced and what the model dump is read in.
     out.sort();
     out
+}
+
+/// Whether the walk refuses this path for its name alone: a line break in it.
+///
+/// A finding is one line opening with its path, an index row is one line, and a reference is
+/// one backticked span, so a name holding a newline or a carriage return can be printed by
+/// nothing here and pointed at by nothing. Windows refuses to create such a file at all, so a
+/// tree holding one cannot be checked out there. The file is not read, and the caller reports
+/// it once by name; `skip-files` or an ignore rule is how a project keeps one deliberately.
+pub fn refused(rel: &Path) -> bool {
+    rel.as_os_str()
+        .as_encoded_bytes()
+        .iter()
+        .any(|b| *b == b'\n' || *b == b'\r')
 }
 
 /// Whether a skipped directory or an excluded location holds this path.
@@ -91,6 +107,28 @@ mod tests {
         assert!(!is_live(&declared, &walk));
         let elsewhere = PathBuf::from("docs/plans/index.md");
         assert!(is_live(&elsewhere, &walk), "same name, other path");
+    }
+
+    #[test]
+    fn a_name_holding_a_line_break_is_refused_and_leaves_the_walk() {
+        // Both bytes that end a line for some reader of the output; a tab or a space is
+        // awkward and is not refused, because it breaks no line.
+        assert!(refused(Path::new("docs/a\nb.md")));
+        assert!(refused(Path::new("docs/a\rb.md")));
+        assert!(refused(Path::new("do\ncs/b.md")), "in a directory name too");
+        assert!(!refused(Path::new("docs/a b.md")));
+        assert!(!refused(Path::new("docs/a\tb.md")));
+        let listing: Vec<PathBuf> = ["docs/a\nb.md", "docs/b.md"]
+            .iter()
+            .map(PathBuf::from)
+            .collect();
+        let walked = live_files(
+            Path::new("/root"),
+            &Walk::sample(),
+            &listing,
+            &HashSet::new(),
+        );
+        assert_eq!(walked, vec![PathBuf::from("/root/docs/b.md")]);
     }
 
     #[test]

@@ -109,6 +109,15 @@ byte. A name holding a byte no UTF-8 decoding accepts is legal here, and decodin
 produces a path nothing on disk answers to — so the file leaves every check, and where nothing
 reports the failed read the run stays green. That is the shape this whole head exists against.
 
+**A name holding a line break is refused, and the refusal is a finding naming the file.** A
+finding is one line opening with its path, an index row is one line, and a reference is one
+backticked span, so a file whose name holds a newline or a carriage return can be printed by
+nothing here and pointed at by nothing; Windows refuses to create one, so a tree holding it cannot
+be checked out there. The walk drops the file, no family reads it, and `registers` reports it
+once with the line break escaped — `Finding` escapes a line break in any path it prints, so a
+reader taking the output by line meets one finding per line whatever route a name took to reach
+it. A project that means to keep such a file names it in `skip-files` or in an ignore rule.
+
 **A tracked file the ignore rules also cover is a finding naming the file.** The two states
 contradict each other and the contradiction is otherwise silent: the walk reads the file, and
 `git check-ignore` skips what the index holds so a reference to it is asserted too — the reverse
@@ -200,11 +209,29 @@ directory gives every entry in it a reference and makes relocating it one manife
 what `design@knowledge@every-path-names-its-anchor` buys everywhere else. What a location is instead of
 is `path@knowledge@docs/rejected-alternatives.md`.
 
-**A location may sit inside a component; a component inside a location is refused.** A location
-inside one is the ordinary case, and the deepest anchor wins, so a document under a location
-belongs to it and not to the component holding it. The reverse nests
-one full register set inside a partial one and gives a document two candidate homes, so
-`check::registers` reports it.
+**An anchor may sit inside another anchor's directory, never at the same path, and never
+comparable with one of its register homes.** A location inside a component is the ordinary case,
+and the deepest anchor wins, so a document under a location belongs to it and not to the
+component holding it. Four declarations take that rule away, and `check::registers` reports each
+one against the manifest:
+
+- **a component inside a location.** It nests one full register set inside a partial one and
+  gives a document two candidate homes.
+- **an anchor inside, or at, another anchor's register home.** Every file under it would be read
+  as an entry or a subdocument of the outer register, and reported against that register and its
+  anchor rather than against the declaration that caused it.
+- **an anchor whose directory holds another anchor's register home** — a location at a
+  component's `docs/`. Being deeper, it would own every document in that home, and each slug
+  defined there would be misplaced against an anchor carrying no such register.
+- **two anchors at one path.** Neither is deeper, so nothing decides which owns the documents
+  under it.
+
+The principle behind the four is that no two declarations give one path two meanings. The same
+principle refuses a component register whose directory spells a compiled document's name, which
+would make `path@*@docs/rejected-alternatives.md` both the document and a register's home. Outside
+those shapes two anchors' homes cannot overlap: a home sits under its anchor's directory, so two
+overlapping homes put one anchor's directory on the path to the other's home, which is one of the
+shapes above.
 
 **A component cannot opt in to an `opt-in` register.** No syntax exists for it, and a component
 that wants one declares a location under its own directory. One mechanism, and the register list

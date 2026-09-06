@@ -115,6 +115,8 @@ pub struct Inputs<'a> {
     pub ignored: &'a HashSet<String>,
     /// The files git both tracks and ignores, each of which is a finding.
     pub tracked_and_ignored: &'a [PathBuf],
+    /// The files the walk refuses by name, per `walk::refused`, each of which is a finding.
+    pub refused: &'a [PathBuf],
 }
 
 /// Which families of checks to run.

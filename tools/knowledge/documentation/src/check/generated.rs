@@ -117,6 +117,7 @@ mod tests {
             outside: &[],
             ignored: &HashSet::new(),
             tracked_and_ignored: &[],
+            refused: &[],
         };
         let found: Vec<String> = check(&model, &manifest, &inputs)
             .iter()

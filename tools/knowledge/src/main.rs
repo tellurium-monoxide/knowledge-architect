@@ -293,6 +293,7 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
         outside: &survey.outside,
         ignored: &ignored,
         tracked_and_ignored: &tracked_and_ignored,
+        refused: &survey.refused,
     };
     let mut report = documentation::check::run(&model, manifest, &inputs, only);
 

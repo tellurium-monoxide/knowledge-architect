@@ -29,6 +29,9 @@ pub struct Survey {
     pub directories: HashSet<PathBuf>,
     /// The readable files the walk does not cover, with their text.
     pub outside: Vec<(PathBuf, String)>,
+    /// The files the walk refuses by name, per `walk::refused`. Read by nothing, in `outside`
+    /// no more than in the model, and reported once each by the caller's checks.
+    pub refused: Vec<PathBuf>,
 }
 
 pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
@@ -60,6 +63,7 @@ pub fn from_listing(
     let mut present = HashSet::new();
     let mut directories = HashSet::new();
     let mut outside = Vec::new();
+    let mut refused = Vec::new();
     for rel in listing {
         present.insert(rel.clone());
         for ancestor in rel.ancestors().skip(1) {
@@ -70,6 +74,12 @@ pub fn from_listing(
             directories.insert(ancestor.to_path_buf());
         }
         if covered.contains(rel.as_path()) {
+            continue;
+        }
+        // A name the walk refuses is a file no check reads, and one finding names it. It
+        // stays in `present`: the refusal is about the file's contents, not its existence.
+        if crate::walk::refused(rel) {
+            refused.push(rel.clone());
             continue;
         }
         // `outside` asks the opposite question to `present`: files of THIS project that no
@@ -88,9 +98,50 @@ pub fn from_listing(
         }
     }
     outside.sort();
+    refused.sort();
     Survey {
         present,
         directories,
         outside,
+        refused,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::manifest::Manifest;
+    use std::path::Path;
+
+    #[test]
+    fn a_refused_name_is_present_and_neither_outside_nor_silent() {
+        // Outside the walk it would be read by `check::uncovered`, whose finding would print
+        // the name raw; in the model it would be a document. It is a third thing, listed for
+        // one finding, and it still exists for every question about what is there.
+        let manifest = Manifest::parse(
+            Path::new("/nowhere"),
+            "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
+             skip-files = []\nexclude = []\n\n[lint]\nexempt-files = []\n\n[rules]\n\
+             dir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\nversion = \"v\"\n\
+             past = \"p\"\nmanifest = \"m\"\n",
+        )
+        .expect("a declaration");
+        let model = Model::from_documents(Vec::new());
+        let listing: Vec<PathBuf> = ["notes/a\nb.md", "notes/c.yml"]
+            .iter()
+            .map(PathBuf::from)
+            .collect();
+        let survey = from_listing(&manifest, &model, &listing, |_| Some("text".to_string()));
+        assert_eq!(survey.refused, vec![PathBuf::from("notes/a\nb.md")]);
+        assert_eq!(
+            survey
+                .outside
+                .iter()
+                .map(|(p, _)| p.clone())
+                .collect::<Vec<_>>(),
+            vec![PathBuf::from("notes/c.yml")]
+        );
+        assert!(survey.present.contains(&PathBuf::from("notes/a\nb.md")));
+        assert!(survey.directories.contains(&PathBuf::from("notes")));
     }
 }

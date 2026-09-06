@@ -133,6 +133,7 @@ impl Assembly {
             outside: &self.survey.outside,
             ignored: &self.ignored,
             tracked_and_ignored: &self.tracked_and_ignored,
+            refused: &self.survey.refused,
         }
     }
 

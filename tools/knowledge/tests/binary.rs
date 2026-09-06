@@ -969,6 +969,23 @@ fn a_tracked_document_an_ignore_line_covers_is_walked_and_reported() {
 /// walked and its planted defect reported. Both halves are asserted, because a test that only
 /// showed the silence would pass over a walk that had stopped reading anything at all.
 #[test]
+fn a_name_holding_a_newline_is_one_finding_on_one_line_and_its_contents_are_read_by_nothing() {
+    // The reproduction the issue named: a markdown file whose name holds a newline, holding a
+    // reference that would be a finding if the file were read. The refusal is the one finding,
+    // on one line, with the newline escaped; the reference inside is reported by nothing.
+    let sandbox = Sandbox::seeded("newline-name", "minimal", &[("notes/a\nb.md", DANGLING)]);
+    let (out, stderr, code) = sandbox.run(&["check", "--only", "registers,references"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    let about: Vec<&str> = out.lines().filter(|l| l.contains("notes/a")).collect();
+    assert_eq!(about.len(), 1, "{out}");
+    assert!(
+        about[0].starts_with("notes/a\\nb.md  ") && about[0].contains("holds a line break"),
+        "{out}"
+    );
+    assert!(!out.contains("no-such-thing"), "read by nothing: {out}");
+}
+
+#[test]
 fn a_nested_gitignore_is_honoured() {
     let ignored = Sandbox::seeded(
         "nested-ignored",
