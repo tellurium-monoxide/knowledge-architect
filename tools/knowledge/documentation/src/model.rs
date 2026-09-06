@@ -136,6 +136,8 @@ pub struct Model {
     /// git twice in one run would let the two answers disagree. A model assembled in memory
     /// carries none.
     listing: Vec<PathBuf>,
+    /// The listing's symlink and gitlink entries, which the walk reads through neither.
+    links: Vec<crate::git::Entry>,
     /// The checker's own directory as the summary names it: relative to the root when it sits
     /// under it, absolute otherwise, `None` when the caller passed none.
     checker_source: Option<PathBuf>,
@@ -170,8 +172,20 @@ impl Model {
         // Git is the walk. No `git` on the path and a directory outside a worktree are both
         // errors naming the reason, never an empty listing: a project reported as holding no
         // document is a run that checked nothing and said it was clean.
-        let listing = crate::git::live_files(root)?;
-        for path in walk::live_files(root, walk_config, &listing, &generated) {
+        let entries = crate::git::entries(root)?;
+        let listing: Vec<PathBuf> = entries.iter().map(|e| e.rel.clone()).collect();
+        // A symlink or a gitlink is not a document: the walk reads through neither, and
+        // `check::tree` names each as what it is.
+        let files: Vec<PathBuf> = entries
+            .iter()
+            .filter(|e| e.kind == crate::git::EntryKind::File)
+            .map(|e| e.rel.clone())
+            .collect();
+        let links: Vec<crate::git::Entry> = entries
+            .into_iter()
+            .filter(|e| e.kind != crate::git::EntryKind::File)
+            .collect();
+        for path in walk::live_files(root, walk_config, &files, &generated) {
             let rel_for_error = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
             let text = match std::fs::read_to_string(&path) {
                 Ok(t) => t,
@@ -235,6 +249,7 @@ impl Model {
             root: root.to_path_buf(),
             docs,
             listing,
+            links,
             checker_source,
         })
     }
@@ -245,6 +260,11 @@ impl Model {
     /// memory, which has no tree behind it.
     pub fn listing(&self) -> &[PathBuf] {
         &self.listing
+    }
+
+    /// The listing's symlink and gitlink entries, each a phase-2 finding.
+    pub fn links(&self) -> &[crate::git::Entry] {
+        &self.links
     }
 
     /// The checker's own directory as the summary names it, if the caller passed one.
@@ -306,6 +326,7 @@ impl Model {
             root: PathBuf::new(),
             docs,
             listing: Vec::new(),
+            links: Vec::new(),
             checker_source: checker.map(Path::to_path_buf),
         }
     }

@@ -137,6 +137,7 @@ impl Assembly {
             ignored: &self.ignored,
             tracked_and_ignored: &self.tracked_and_ignored,
             refused: &self.survey.refused,
+            links: &self.survey.links,
         }
     }
 
@@ -315,7 +316,10 @@ struct Corpora {
 /// Everything read from one commit's tree, before the checks run over it.
 struct FromTree {
     manifest: Manifest,
+    /// Every path of the tree, the symlink and gitlink entries included.
     listing: Vec<PathBuf>,
+    /// The symlink and gitlink entries, which are read as no document.
+    links: Vec<documentation::git::Entry>,
     blobs: std::collections::BTreeMap<PathBuf, String>,
 }
 
@@ -326,8 +330,19 @@ struct FromTree {
 /// skipped file are read by no family, and the corpus alone is two megabytes at every commit
 /// in the range.
 fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<FromTree, Unloadable> {
-    let listing = documentation::git::tree_files(root, sha)
+    let entries = documentation::git::tree_entries(root, sha)
         .map_err(|e| Unloadable(format!("its tree could not be listed: {e}")))?;
+    let listing: Vec<PathBuf> = entries.iter().map(|e| e.rel.clone()).collect();
+    let links: Vec<documentation::git::Entry> = entries
+        .iter()
+        .filter(|e| e.kind != documentation::git::EntryKind::File)
+        .cloned()
+        .collect();
+    let files: Vec<PathBuf> = entries
+        .into_iter()
+        .filter(|e| e.kind == documentation::git::EntryKind::File)
+        .map(|e| e.rel)
+        .collect();
     let manifest_rel = PathBuf::from(MANIFEST_NAME);
     let declaration = documentation::git::blobs(root, sha, std::slice::from_ref(&manifest_rel))
         .map_err(|e| Unloadable(format!("its {MANIFEST_NAME} could not be read: {e}")))?;
@@ -336,7 +351,7 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
     };
     let manifest = Manifest::parse(root, text).map_err(Unloadable)?;
     let walk = manifest.walk();
-    let mut wanted: Vec<PathBuf> = listing
+    let mut wanted: Vec<PathBuf> = files
         .iter()
         .filter(|rel| !documentation::walk::skipped(rel, walk) && !walk.skip_files.contains(rel))
         .cloned()
@@ -363,6 +378,7 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
     Ok(FromTree {
         manifest,
         listing,
+        links,
         blobs,
     })
 }
@@ -403,8 +419,15 @@ fn commit_tree(
     let manifest = read.manifest;
     let anchors = Anchors::of(&manifest);
     let generated = documentation::index::generated_paths(&manifest);
+    // The walk reads through no symlink and no gitlink, so the files alone are walked.
+    let files: Vec<PathBuf> = read
+        .listing
+        .iter()
+        .filter(|rel| !read.links.iter().any(|e| e.rel == **rel))
+        .cloned()
+        .collect();
     let walked =
-        documentation::walk::live_files(Path::new(""), manifest.walk(), &read.listing, &generated);
+        documentation::walk::live_files(Path::new(""), manifest.walk(), &files, &generated);
     let mut blobs = read.blobs;
     // The generated indexes and the per-instance options sit outside the walk and are read by
     // the caller, exactly as `check` reads them off the filesystem.
@@ -515,9 +538,10 @@ fn commit_tree(
             configs.insert(home.config.clone(), text.clone());
         }
     }
-    let survey = documentation::survey::from_listing(&manifest, &model, &read.listing, |rel| {
-        blobs.get(rel).cloned()
-    });
+    let survey =
+        documentation::survey::from_listing(&manifest, &model, &read.listing, &read.links, |rel| {
+            blobs.get(rel).cloned()
+        });
     // **The ignore rules are the working tree's.** `git check-ignore` reads the `.gitignore`
     // files that are on disk and has no form that asks a historical tree, so a commit whose
     // ignore rules differ from today's is judged against today's. What that can cost is a

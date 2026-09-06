@@ -221,15 +221,78 @@ fn nul_strings(bytes: &[u8]) -> Vec<String> {
 /// applies them to `--others` alone, which is where build output and on-demand directories are
 /// dropped. Every remaining exclusion is the manifest's, and `walk::live_files` applies it.
 pub fn live_files(root: &Path) -> io::Result<Vec<PathBuf>> {
-    git(root)
-        .args([
-            "ls-files",
-            "-z",
-            "--cached",
-            "--others",
-            "--exclude-standard",
-        ])
-        .paths()
+    Ok(entries(root)?
+        .into_iter()
+        .filter(|e| e.kind == EntryKind::File)
+        .map(|e| e.rel)
+        .collect())
+}
+
+/// What an entry of a listing is, by the mode git records for it.
+///
+/// A symlink is mode `120000` and a submodule's gitlink `160000`, in the index and in every
+/// commit's tree alike, so the two readers of a tree classify an entry the same way before
+/// either reads a byte. Neither is a document: a symlink read through the filesystem yields
+/// its target's bytes and read from a tree yields the target's path as text, and a checkout
+/// without symlinks holds that text as a plain file; a gitlink names a commit of another
+/// repository, under which the listing never descends.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum EntryKind {
+    File,
+    Symlink,
+    Gitlink,
+}
+
+/// One entry of a listing: its project-relative path and what it is.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Entry {
+    pub rel: PathBuf,
+    pub kind: EntryKind,
+}
+
+/// Every entry of the live listing with its kind: what git tracks, by the mode the index
+/// records, plus what it neither tracks nor ignores, by what the working tree holds.
+///
+/// An untracked entry has no index mode, so its kind is read off the filesystem without
+/// following it; a tracked one is classified by the index, which is what a checkout that
+/// could not create the symlink still records.
+pub fn entries(root: &Path) -> io::Result<Vec<Entry>> {
+    let staged = git(root)
+        .args(["ls-files", "-z", "-s", "--cached"])
+        .output()?;
+    let mut out: Vec<Entry> = nul_separated(&staged)
+        .into_iter()
+        .filter_map(mode_and_path)
+        .collect();
+    let others = git(root)
+        .args(["ls-files", "-z", "--others", "--exclude-standard"])
+        .paths()?;
+    for rel in others {
+        let kind = match std::fs::symlink_metadata(root.join(&rel)) {
+            Ok(meta) if meta.file_type().is_symlink() => EntryKind::Symlink,
+            _ => EntryKind::File,
+        };
+        out.push(Entry { rel, kind });
+    }
+    out.sort_by(|a, b| a.rel.cmp(&b.rel));
+    Ok(out)
+}
+
+/// One line of `ls-files -s` or `ls-tree -r`: the mode is the first field, the path follows
+/// the first tab, and the fields between differ between the two and are read by nothing. The
+/// first tab, because the fields hold none and the path may.
+fn mode_and_path(line: &[u8]) -> Option<Entry> {
+    let space = line.iter().position(|b| *b == b' ')?;
+    let tab = line.iter().position(|b| *b == b'\t')?;
+    let kind = match &line[..space] {
+        b"120000" => EntryKind::Symlink,
+        b"160000" => EntryKind::Gitlink,
+        _ => EntryKind::File,
+    };
+    Some(Entry {
+        rel: as_path(&line[tab + 1..]),
+        kind,
+    })
 }
 
 /// The files git both tracks and ignores.
@@ -391,9 +454,19 @@ pub fn rev_parse(root: &Path, expression: &str) -> Option<String> {
 /// from outside it. The same holds of the blob requests below, which name a path relative to
 /// the working directory.
 pub fn tree_files(root: &Path, sha: &str) -> io::Result<Vec<PathBuf>> {
-    git(root)
-        .args(["ls-tree", "-r", "-z", "--name-only", sha])
-        .paths()
+    Ok(tree_entries(root, sha)?
+        .into_iter()
+        .map(|e| e.rel)
+        .collect())
+}
+
+/// The same, with each entry's kind, read off the mode the tree records.
+pub fn tree_entries(root: &Path, sha: &str) -> io::Result<Vec<Entry>> {
+    let listed = git(root).args(["ls-tree", "-r", "-z", sha]).output()?;
+    Ok(nul_separated(&listed)
+        .into_iter()
+        .filter_map(mode_and_path)
+        .collect())
 }
 
 /// How one path in one commit's tree is named to `cat-file` and `rev-parse`.
@@ -727,6 +800,31 @@ mod tests {
     /// Under a newline-terminated batch input such a name is two requests, git answers both,
     /// and each answer after it is paired with the wrong path. The map still comes back full,
     /// so nothing downstream reports it: the model is simply built out of the wrong bytes.
+    #[test]
+    fn a_listing_line_is_classified_by_its_mode_in_both_formats() {
+        // `ls-files -s`: mode, object, stage, tab, path. `ls-tree -r`: mode, type, object,
+        // tab, path. The mode is the first field of both, and the path follows the last tab.
+        let staged =
+            mode_and_path(b"120000 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0\tdocs/link.md")
+                .expect("an entry");
+        assert_eq!(staged.kind, EntryKind::Symlink);
+        assert_eq!(staged.rel, PathBuf::from("docs/link.md"));
+        let tree =
+            mode_and_path(b"160000 commit e69de29bb2d1d6434b8b29ae775ad8c2e48c5391\tvendor/sub")
+                .expect("an entry");
+        assert_eq!(tree.kind, EntryKind::Gitlink);
+        assert_eq!(tree.rel, PathBuf::from("vendor/sub"));
+        let file = mode_and_path(b"100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391\ta\tb.md")
+            .expect("an entry");
+        assert_eq!(file.kind, EntryKind::File);
+        assert_eq!(
+            file.rel,
+            PathBuf::from("a\tb.md"),
+            "the path may hold a tab"
+        );
+        assert!(mode_and_path(b"no tab here").is_none());
+    }
+
     #[test]
     fn a_newline_in_a_tracked_name_does_not_shift_the_answers_after_it() {
         let repo =

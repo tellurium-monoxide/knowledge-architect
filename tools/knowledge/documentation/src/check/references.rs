@@ -636,6 +636,7 @@ mod tests {
             ignored: &ignored.iter().map(|s| (*s).to_string()).collect(),
             tracked_and_ignored: &[],
             refused: &[],
+            links: &[],
         };
         let (found, counts) = check_under(&model, &inputs, anchors);
         (found.iter().map(|f| f.to_string()).collect(), counts)

@@ -305,6 +305,102 @@ fn a_missing_version_file_is_a_phase_two_finding_naming_it() {
     assert!(stderr.contains("phase 2:"), "{stderr}");
 }
 
+/// The claim: a symlink at a walked name is read as no document and is a phase-2 finding,
+/// `check` and `commits` agree on it by the mode git records, and a `skip-files` row keeps it.
+#[test]
+fn a_symlink_is_a_phase_two_finding_in_both_readers_and_a_skip_row_keeps_it() {
+    let sandbox = Sandbox::new("symlink", "minimal");
+    std::os::unix::fs::symlink("a.md", sandbox.path("notes/link.md")).expect("a symlink");
+    sandbox.stage();
+    let (stdout, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains("phase 2: 1 finding(s)") && stdout.contains("`notes/link.md` is a symlink"),
+        "{stdout}"
+    );
+    // Untracked, the same: the kind is read off the working tree where the index has none.
+    let untracked = Sandbox::new("symlink-untracked", "minimal");
+    std::os::unix::fs::symlink("a.md", untracked.path("notes/link.md")).expect("a symlink");
+    let (stdout, _, code) = untracked.run(&["check"]);
+    assert_eq!(code, 1, "{stdout}");
+    assert!(stdout.contains("`notes/link.md` is a symlink"), "{stdout}");
+
+    let manifest = std::fs::read_to_string(sandbox.path("knowledge.toml")).expect("the manifest");
+    sandbox.write(
+        "knowledge.toml",
+        &manifest.replace(
+            "skip-files = [\"notes/generated.md\",",
+            "skip-files = [\"notes/link.md\", \"notes/generated.md\",",
+        ),
+    );
+    sandbox.stage();
+    let (stdout, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+    assert!(!stdout.contains("link.md"), "{stdout}");
+}
+
+/// The claim: a submodule's gitlink is a phase-2 finding naming it, and an `exclude` row is
+/// the declared silence. The entry is written straight into the index, since a submodule
+/// needs no checkout to be one.
+#[test]
+fn a_gitlink_is_a_phase_two_finding_and_an_exclude_row_declares_the_silence() {
+    let history = History::new("gitlink");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    // A gitlink names a commit, which need not be reachable; the empty directory is what an
+    // uninitialised submodule looks like, and what keeps the staging step from removing it.
+    std::fs::create_dir_all(history.dir.join("vendor/sub")).expect("the submodule's place");
+    history.git(&[
+        "update-index",
+        "--add",
+        "--cacheinfo",
+        "160000,e69de29bb2d1d6434b8b29ae775ad8c2e48c5391,vendor/sub",
+    ]);
+    let (stdout, stderr, code) = history.run(&["check"]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains("phase 2: 1 finding(s)") && stdout.contains("`vendor/sub` is a submodule"),
+        "{stdout}"
+    );
+    let sha = history.commit("A submodule is added\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!(
+            "{sha} is the range's tip and its tree stops at phase 2 with 1 finding(s)"
+        )),
+        "the two readers agree: {stdout}"
+    );
+
+    let manifest =
+        std::fs::read_to_string(history.dir.join("knowledge.toml")).expect("the manifest");
+    history.write(
+        "knowledge.toml",
+        &manifest.replace("exclude = []", "exclude = [\"vendor/sub\"]"),
+    );
+    let (stdout, stderr, code) = history.run(&["check"]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+}
+
+/// The claim: a committed symlink at a walked name is one phase-2 finding in `commits` too,
+/// read off the tree's mode, and is walked as no document there either.
+#[test]
+fn a_committed_symlink_is_one_phase_two_finding_in_commits() {
+    let history = History::new("commit-symlink");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    std::os::unix::fs::symlink("design.md", history.dir.join("docs/link.md")).expect("a symlink");
+    let sha = history.commit("A symlink is added\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!(
+            "{sha} is the range's tip and its tree stops at phase 2 with 1 finding(s)"
+        )),
+        "one finding, the symlink, and not a second for a document nothing could read: {stdout}"
+    );
+}
+
 #[test]
 fn a_run_performs_every_check() {
     let (stdout, _, code) = run("planted", &["check"]);

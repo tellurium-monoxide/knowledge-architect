@@ -59,7 +59,7 @@ the tail of the output has to reach the verdict rather than the counts.
 manifest: a declaration the tool refuses is reported and acted on by nothing. Phase 2 reads the
 tree against what the manifest declares: a file the walk could not read, a name it refuses, an
 anchor or a register home that is not there, a home a walk row keeps out, a declared path that
-does not exist, a file git both tracks and ignores. Phase 3 builds the entity table: a slug or an entry id where none may sit, or
+does not exist, a file git both tracks and ignores, a symlink or a submodule. Phase 3 builds the entity table: a slug or an entry id where none may sit, or
 defined twice. Each of these says the model is incomplete, and a finding computed from the model
 afterwards would be unreliable in both directions, so the run prints that phase's findings, says
 which phases were not judged, and exits 1. Phase 4 is every check, over the complete model:

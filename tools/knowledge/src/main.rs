@@ -169,6 +169,7 @@ pub(crate) fn complete_working_tree(
         ignored: &HashSet::new(),
         tracked_and_ignored: &tracked_and_ignored,
         refused: &survey.refused,
+        links: &survey.links,
     };
     match documentation::check::foundation(model, manifest, &inputs) {
         Ok(()) => Ok(survey),
@@ -293,6 +294,7 @@ fn check(manifest: &Manifest) -> Result<ExitCode, String> {
         ignored: &ignored,
         tracked_and_ignored: &tracked_and_ignored,
         refused: &survey.refused,
+        links: &survey.links,
     };
     if let Err(stop) = documentation::check::foundation(&model, manifest, &inputs) {
         let report = Report::stopped(stop, &model);

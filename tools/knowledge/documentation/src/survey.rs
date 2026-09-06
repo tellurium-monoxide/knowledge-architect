@@ -13,6 +13,7 @@
 use std::collections::HashSet;
 use std::path::PathBuf;
 
+use crate::git::Entry;
 use crate::manifest::Manifest;
 use crate::model::Model;
 
@@ -32,13 +33,20 @@ pub struct Survey {
     /// The files the walk refuses by name, per `walk::refused`. Read by nothing, in `outside`
     /// no more than in the model, and reported once each by the caller's checks.
     pub refused: Vec<PathBuf>,
+    /// The listing's symlink and gitlink entries a manifest row does not keep, each read by
+    /// nothing and reported once.
+    pub links: Vec<Entry>,
 }
 
 pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
     let root = manifest.root();
-    Ok(from_listing(manifest, model, model.listing(), |rel| {
-        std::fs::read_to_string(root.join(rel)).ok()
-    }))
+    Ok(from_listing(
+        manifest,
+        model,
+        model.listing(),
+        model.links(),
+        |rel| std::fs::read_to_string(root.join(rel)).ok(),
+    ))
 }
 
 /// The same, over a stated listing and a stated way of reading a file.
@@ -52,6 +60,7 @@ pub fn from_listing(
     manifest: &Manifest,
     model: &Model,
     listing: &[PathBuf],
+    links: &[Entry],
     read: impl Fn(&std::path::Path) -> Option<String>,
 ) -> Survey {
     let walk = manifest.walk();
@@ -100,11 +109,19 @@ pub fn from_listing(
     }
     outside.sort();
     refused.sort();
+    // A symlink or a gitlink a walk row covers is kept as declared, like any other file the
+    // rows keep out; the rest are reported.
+    let links: Vec<Entry> = links
+        .iter()
+        .filter(|e| !crate::walk::skipped(&e.rel, walk) && !walk.skip_files.contains(&e.rel))
+        .cloned()
+        .collect();
     Survey {
         present,
         directories,
         outside,
         refused,
+        links,
     }
 }
 
@@ -132,7 +149,9 @@ mod tests {
             .iter()
             .map(PathBuf::from)
             .collect();
-        let survey = from_listing(&manifest, &model, &listing, |_| Some("text".to_string()));
+        let survey = from_listing(&manifest, &model, &listing, &[], |_| {
+            Some("text".to_string())
+        });
         // In path order, whatever order git listed them in, as every listing here is.
         assert_eq!(
             survey.refused,
@@ -171,7 +190,9 @@ mod tests {
             .iter()
             .map(PathBuf::from)
             .collect();
-        let survey = from_listing(&manifest, &model, &listing, |_| Some("text".to_string()));
+        let survey = from_listing(&manifest, &model, &listing, &[], |_| {
+            Some("text".to_string())
+        });
         assert!(survey.refused.is_empty(), "{:?}", survey.refused);
         assert!(survey.outside.is_empty());
         assert!(survey.present.contains(&PathBuf::from("notes/a\nb.md")));

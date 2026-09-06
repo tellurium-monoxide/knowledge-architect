@@ -126,12 +126,16 @@ hand-rolled matcher this replaced could not promise, and it is the property the 
 chosen for; the matcher and the three things it could not do are
 `path@knowledge@docs/rejected-alternatives.md`.
 
-**Git's answer is the answer, and two things it does not descend into are therefore unchecked.**
-A submodule is one gitlink entry in the listing and a symlinked directory is one symlink entry, so
-neither's contents are read. Neither has a suffix the walk covers, so both are dropped by suffix
-and named by nothing. That is a gap in the property this walk exists for — nothing leaves every
-check while the run stays green — and this design accepts it: a component vendored as a submodule
-would be conformant by vacuum. `path@knowledge@docs/open-issues/` carries it.
+**A symlink and a gitlink are read as no document, and each is a phase-2 finding naming it.**
+Git records a symlink as mode `120000` and a submodule's gitlink as `160000`, in the index and in
+every commit's tree alike, so the listing classifies an entry by mode before either reader touches
+a byte and `check` and `commits` agree by construction. Read through the filesystem a symlink
+yields its target's bytes, read from a tree it yields the target's path as text, and a checkout on
+a platform without symlinks holds that text as a plain file, so two readers of one tree would
+judge two documents; a gitlink names a commit of another repository the listing never descends
+into, so everything under it would be conformant by vacuum. A `skip-files` row keeps a symlink
+and an `exclude` row a submodule, as declared silences. What a submodule is to the project that
+holds it is an open question, in `path@knowledge@docs/open-issues/`.
 
 **The per-user ignore file is pinned away.** `core.excludesFile` lives in a developer's home and
 is no part of any project, so every invocation runs with it pointed at the null device: a line

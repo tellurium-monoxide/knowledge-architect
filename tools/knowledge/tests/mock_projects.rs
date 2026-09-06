@@ -335,6 +335,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
         ignored: &git.0,
         tracked_and_ignored: &git.1,
         refused: &survey.refused,
+        links: &survey.links,
     };
     let report = run(&model, &manifest, &inputs);
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
@@ -436,6 +437,7 @@ fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
         ignored: &git.0,
         tracked_and_ignored: &git.1,
         refused: &survey.refused,
+        links: &survey.links,
     };
     let report = run(&model, &manifest, &inputs);
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
@@ -513,6 +515,7 @@ mod planted {
             ignored: &git.0,
             tracked_and_ignored: &git.1,
             refused: &survey.refused,
+            links: &survey.links,
         };
         run(&model, &manifest, &inputs)
             .findings
@@ -673,6 +676,7 @@ mod planted {
             ignored: &git.0,
             tracked_and_ignored: &git.1,
             refused: &survey.refused,
+            links: &survey.links,
         };
         run(&model, &manifest, &inputs)
     }
@@ -979,6 +983,7 @@ mod unsound {
             ignored: &git.0,
             tracked_and_ignored: &git.1,
             refused: &survey.refused,
+            links: &survey.links,
         };
         assert!(
             manifest.complaints().is_empty(),
@@ -1110,6 +1115,7 @@ mod unsound {
                 ignored: &git.0,
                 tracked_and_ignored: &git.1,
                 refused: &survey.refused,
+                links: &survey.links,
             };
             let outcome = foundation(&model, &manifest, &inputs);
             assert!(outcome.is_ok(), "{name}: {:#?}", outcome.err());

@@ -12,6 +12,7 @@ use std::path::PathBuf;
 
 use crate::entity::{Anchor, Anchors, Home};
 use crate::finding::Finding;
+use crate::git::EntryKind;
 use crate::manifest::{Manifest, Register, Shape, COMPONENT_DOCUMENTS, MANIFEST_NAME};
 use crate::model::Model;
 
@@ -307,6 +308,36 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
              walk reads the file and a path reference to it is asserted, which is the reverse \
              of what the ignore rule says",
         ));
+    }
+
+    // **A symlink and a gitlink are findings naming the entry.** The walk reads through
+    // neither: a symlink read off the filesystem yields its target's bytes and read off a
+    // commit's tree yields the target's path as text, and a checkout without symlinks holds
+    // that text as a plain file, so two readers of one tree would judge two documents; a
+    // gitlink names a commit of another repository the listing never descends into. A walk
+    // row is the declared way to keep either.
+    for entry in inputs.links {
+        let (what, action) = match entry.kind {
+            EntryKind::Symlink => (
+                format!(
+                    "`{}` is a symlink, and the walk reads no document through one",
+                    entry.rel.display()
+                ),
+                "replace it with the file it points at, or with a reference to that file; a \
+                 checkout without symlinks holds the target's path as text here, so two readers \
+                 of this tree would judge two documents. Name it in [walk] skip-files to keep it",
+            ),
+            EntryKind::Gitlink => (
+                format!(
+                    "`{}` is a submodule, and the walk reads nothing under it",
+                    entry.rel.display()
+                ),
+                "name it in [walk] exclude to declare the silence; the tool models no \
+                 submodule, and the knowledge tool's open issues hold the question",
+            ),
+            EntryKind::File => continue,
+        };
+        out.push(Finding::in_file(&entry.rel, what, action));
     }
 
     // **A name the walk refuses is a finding naming the file**, per `walk::refused`. The file

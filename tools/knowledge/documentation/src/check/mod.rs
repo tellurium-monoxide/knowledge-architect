@@ -227,6 +227,8 @@ pub struct Inputs<'a> {
     pub tracked_and_ignored: &'a [PathBuf],
     /// The files the walk refuses by name, per `walk::refused`, each of which is a finding.
     pub refused: &'a [PathBuf],
+    /// The listing's symlink and gitlink entries no walk row keeps, each of which is a finding.
+    pub links: &'a [crate::git::Entry],
 }
 
 /// The checks of the last phase, by the name each one's count line carries.
@@ -384,6 +386,7 @@ mod phase_tests {
             ignored: &HashSet::new(),
             tracked_and_ignored: &[],
             refused: &[],
+            links: &[],
         };
         foundation(model, manifest, &inputs)
     }

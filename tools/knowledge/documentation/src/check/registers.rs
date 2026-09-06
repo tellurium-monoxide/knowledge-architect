@@ -603,6 +603,7 @@ mod tests {
             ignored: &HashSet::new(),
             tracked_and_ignored: &[],
             refused: &[],
+            links: &[],
         };
         // The union the phases would print one at a time: the complaints, the tree, the
         // definitions, then the shapes. A test here asserts each function's own findings;
@@ -1650,6 +1651,7 @@ mod tests {
             ignored: &HashSet::new(),
             tracked_and_ignored: &[],
             refused: &refused,
+            links: &[],
         };
         let found =
             crate::check::tree::check(&Model::from_documents(Vec::new()), &manifest, &inputs);
