@@ -53,17 +53,13 @@ impl Finding {
     /// This is the half a terminal turns into a link, so it is built once here rather than
     /// formatted at each call site where one check would eventually differ from the rest.
     ///
-    /// **A finding is one line, whatever the path holds.** A line break in the file's name
-    /// is written as `\n` or `\r`, so a reader taking the output by line meets a finding
-    /// per line rather than a truncated path and a stray tail. The walk refuses such a name,
-    /// so the one finding that reports the refusal is the ordinary way a path reaches here.
+    /// **A finding's first line is one line, whatever the path holds.** A line break in the
+    /// file's name is written as `\n` or `\r`, so a reader taking the output by line meets a
+    /// finding per line rather than a truncated path and a stray tail. The walk refuses such
+    /// a name, so the one finding that reports the refusal is the ordinary way a path
+    /// reaches here; `Display` escapes the statement the same way.
     pub fn location(&self) -> String {
-        let file = self
-            .file
-            .display()
-            .to_string()
-            .replace('\n', "\\n")
-            .replace('\r', "\\r");
+        let file = escaped(&self.file.display().to_string());
         match self.line {
             Some(n) => format!("{file}:{n}"),
             None => file,
@@ -73,14 +69,22 @@ impl Finding {
 
 impl fmt::Display for Finding {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // The statement is escaped like the location: a path a check formatted into it — an
+        // anchor's path out of the manifest, a declared row — may hold a line break the walk
+        // never saw, and the first line is the one a reader takes by line.
         write!(
             f,
             "{}  {}\n    → {}",
             self.location(),
-            self.what,
+            escaped(&self.what),
             self.action
         )
     }
+}
+
+/// The text with each line break written as `\n` or `\r`.
+fn escaped(text: &str) -> String {
+    text.replace('\n', "\\n").replace('\r', "\\r")
 }
 
 #[cfg(test)]
@@ -105,8 +109,13 @@ mod tests {
 
     #[test]
     fn a_line_break_in_the_path_is_escaped_so_the_finding_stays_one_line() {
-        let f = Finding::in_file("docs/a\nb\rc.md", "what", "action");
+        let f = Finding::in_file("docs/a\nb\rc.md", "two anchors sit at `pa\npers`", "action");
         assert_eq!(f.location(), "docs/a\\nb\\rc.md");
+        assert!(
+            f.to_string()
+                .starts_with("docs/a\\nb\\rc.md  two anchors sit at `pa\\npers`\n"),
+            "{f}"
+        );
         let shown = f.to_string();
         assert_eq!(
             shown.lines().count(),

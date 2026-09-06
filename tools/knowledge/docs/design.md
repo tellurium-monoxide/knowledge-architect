@@ -114,9 +114,9 @@ finding is one line opening with its path, an index row is one line, and a refer
 backticked span, so a file whose name holds a newline or a carriage return can be printed by
 nothing here and pointed at by nothing; Windows refuses to create one, so a tree holding it cannot
 be checked out there. The walk drops the file, no family reads it, and `registers` reports it
-once with the line break escaped — `Finding` escapes a line break in any path it prints, so a
-reader taking the output by line meets one finding per line whatever route a name took to reach
-it. A project that means to keep such a file names it in `skip-files` or in an ignore rule.
+once with the line break escaped — `Finding` escapes a line break in the path it is located at
+and in the statement it makes, so a reader taking the output by line meets one finding per line
+whatever route a name took to reach it. A project that means to keep such a file names it in `skip-files` or in an ignore rule.
 
 **A tracked file the ignore rules also cover is a finding naming the file.** The two states
 contradict each other and the contradiction is otherwise silent: the walk reads the file, and

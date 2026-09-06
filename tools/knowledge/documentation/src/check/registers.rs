@@ -295,14 +295,10 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
         }
         // A component's homes sit under `docs/` beside its compiled documents, so a directory
         // name that spells one of those makes one file both the document and a register's
-        // home. Every heading register has the file shape, so the `.md` is what collides.
-        let wearing = [
-            format!("docs/{}.md", register.dir),
-            format!("docs/{}", register.dir),
-        ]
-        .into_iter()
-        .find(|home| COMPONENT_DOCUMENTS.contains(&home.as_str()));
-        if let Some(document) = wearing.filter(|_| register.scope == Scope::Component) {
+        // home. Every heading register has the file shape, so the `.md` is what collides;
+        // the compiled documents are all files, so the directory shape collides with none.
+        let document = format!("docs/{}.md", register.dir);
+        if register.scope == Scope::Component && COMPONENT_DOCUMENTS.contains(&document.as_str()) {
             out.push(Finding::in_file(
                 MANIFEST_NAME,
                 format!(
@@ -986,15 +982,16 @@ fn nesting(out: &mut Vec<Finding>, anchors: &Anchors) {
                     out.push(Finding::in_file(
                         MANIFEST_NAME,
                         format!(
-                            "the {} `{}` sits inside the {} home `{}` of `{}`",
+                            "the {} `{}` sits inside the {} register's directory `{}` of `{}`",
                             kind(inner),
                             inner.name,
                             register.name,
                             home.display(),
                             outer.name
                         ),
-                        "move it out; a register home holds that register's entries and \
-                         nothing else, and every file under the anchor would be read as one",
+                        "move it out; the directory is the register's home in one shape and \
+                         reserved in the other, and every file under the anchor would be \
+                         read as an entry or a subdocument of it",
                     ));
                 } else if home.starts_with(&inner.path) {
                     held.push(&register.name);
@@ -1326,7 +1323,10 @@ mod tests {
         ]);
         let found = findings_over(&manifest, &present, model, &[]);
         assert_eq!(found.len(), 1, "{found:#?}");
-        assert!(found[0].contains("sits inside the goal home"), "{found:#?}");
+        assert!(
+            found[0].contains("sits inside the goal register's directory"),
+            "{found:#?}"
+        );
     }
 
     #[test]
@@ -1908,9 +1908,59 @@ mod tests {
         let found = findings_over(&manifest, &present, model, &[]);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
-            found[0].contains("sits inside the issue home")
-                && found[0].contains("`nested`")
-                && found[0].contains("`a-project`"),
+            found[0].contains("the location `nested` sits inside the issue register's directory")
+                && found[0].contains("`docs/open-issues` of `a-project`"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn an_anchor_at_exactly_another_s_register_home_is_reported() {
+        // At the home, not only inside it: the anchor's directory IS the outer register's
+        // directory, and every file it holds would be read twice.
+        let manifest = declaring_full(
+            "",
+            "[locations.at]\npath = \"docs/open-issues\"\nregisters = [\"tripwire\"]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let mut present = all_of("");
+        present.push("docs/open-issues/tripwires.md".to_string());
+        let found = findings(&manifest, &present);
+        assert!(
+            found.iter().any(|f| f.contains(
+                "the location `at` sits inside the issue register's directory `docs/open-issues`"
+            )),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_component_inside_a_location_s_home_is_one_finding_and_not_two() {
+        // The pair is refused as a component inside a location, and not judged again for the
+        // home it also sits in: one declaration, one finding.
+        let manifest = declaring_full(
+            "\"notes/open-issues/part\"",
+            "[locations.notes]\npath = \"notes\"\nregisters = [\"issue\"]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let mut present = all_of("");
+        present.push("notes".to_string());
+        present.push("notes/open-issues".to_string());
+        present.push("notes/open-issues/README.md".to_string());
+        present.push("notes/open-issues/index.md".to_string());
+        present.push("notes/open-issues/part".to_string());
+        present.extend(all_of("notes/open-issues/part"));
+        let found = findings(&manifest, &present);
+        let about: Vec<&String> = found.iter().filter(|f| f.contains("`part`")).collect();
+        assert_eq!(about.len(), 1, "{found:#?}");
+        assert!(
+            about[0].contains("the component `part` sits inside the location `notes`"),
             "{found:#?}"
         );
     }
@@ -1937,7 +1987,10 @@ mod tests {
         // findings from one declaration would bury the declaration.
         assert_eq!(holding.len(), 1, "{found:#?}");
         assert!(
-            holding[0].contains("design, goal, tripwire and issue homes"),
+            holding[0].contains(
+                "the location `papers` at `docs` holds the design, goal, tripwire and issue \
+                 homes of `a-project`"
+            ),
             "{found:#?}"
         );
     }
@@ -1960,8 +2013,18 @@ mod tests {
         let found = findings_over(&manifest, &present, model, &[]);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
-            found[0].contains("`nested`") && found[0].contains("sits inside the goal home"),
+            found[0].contains("the component `nested` sits inside the goal register's directory"),
             "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn the_homes_a_finding_lists_read_as_prose_at_every_count() {
+        assert_eq!(list_homes(&["design"]), "design home");
+        assert_eq!(list_homes(&["design", "goal"]), "design and goal homes");
+        assert_eq!(
+            list_homes(&["design", "goal", "issue"]),
+            "design, goal and issue homes"
         );
     }
 
@@ -2042,7 +2105,7 @@ mod tests {
         let committed = HashMap::new();
         let present: HashSet<PathBuf> = all_of("").iter().map(PathBuf::from).collect();
         let directories = crate::check::testing::implied_directories(&present);
-        let refused = vec![PathBuf::from("docs/a\nb.md")];
+        let refused = vec![PathBuf::from("docs/a\nb.md"), PathBuf::from("docs/c\rd.md")];
         let inputs = Inputs {
             releases: &releases,
             pinned: "",
@@ -2056,14 +2119,12 @@ mod tests {
             refused: &refused,
         };
         let found = check(&Model::from_documents(Vec::new()), &manifest, &inputs).0;
-        assert_eq!(found.len(), 1, "{found:#?}");
-        assert!(found[0].what.contains("holds a line break"), "{found:#?}");
-        assert_eq!(found[0].to_string().lines().count(), 2, "{}", found[0]);
-        assert!(
-            found[0].to_string().starts_with("docs/a\\nb.md  "),
-            "{}",
-            found[0]
-        );
+        assert_eq!(found.len(), 2, "{found:#?}");
+        for (finding, head) in found.iter().zip(["docs/a\\nb.md  ", "docs/c\\rd.md  "]) {
+            assert!(finding.what.contains("holds a line break"), "{found:#?}");
+            assert_eq!(finding.to_string().lines().count(), 2, "{finding}");
+            assert!(finding.to_string().starts_with(head), "{finding}");
+        }
     }
 
     #[test]

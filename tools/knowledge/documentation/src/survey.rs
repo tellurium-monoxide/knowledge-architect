@@ -128,12 +128,19 @@ mod tests {
         )
         .expect("a declaration");
         let model = Model::from_documents(Vec::new());
-        let listing: Vec<PathBuf> = ["notes/a\nb.md", "notes/c.yml"]
+        let listing: Vec<PathBuf> = ["notes/z\rq.md", "notes/a\nb.md", "notes/c.yml"]
             .iter()
             .map(PathBuf::from)
             .collect();
         let survey = from_listing(&manifest, &model, &listing, |_| Some("text".to_string()));
-        assert_eq!(survey.refused, vec![PathBuf::from("notes/a\nb.md")]);
+        // In path order, whatever order git listed them in, as every listing here is.
+        assert_eq!(
+            survey.refused,
+            vec![
+                PathBuf::from("notes/a\nb.md"),
+                PathBuf::from("notes/z\rq.md")
+            ]
+        );
         assert_eq!(
             survey
                 .outside
