@@ -12,6 +12,7 @@
 //! each message against its own commit's tree. `hook install` and `hook status` are per-clone
 //! configuration, read by no check.
 
+use crate::output::outln;
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
@@ -617,7 +618,7 @@ pub fn commit_message(
         judge_message(&text, &tree, &entities, parent),
         &file.display().to_string(),
     );
-    println!(
+    outln!(
         "\nmessage: {} line(s) judged against the working tree{}",
         text.lines().count(),
         if parent.is_some() {
@@ -627,12 +628,12 @@ pub fn commit_message(
         }
     );
     if !findings.is_empty() {
-        println!();
+        outln!();
         for finding in &findings {
-            println!("{finding}");
+            outln!("{finding}");
         }
     }
-    println!("{}", verdict(findings.len()));
+    outln!("{}", verdict(findings.len()));
     Ok(if findings.is_empty() {
         ExitCode::SUCCESS
     } else {
@@ -666,8 +667,8 @@ pub fn commits(
         format!("{range} does not resolve to a range of commits: {e}\n       a shallow clone resolves no range until it fetches full depth")
     })?;
     if shas.is_empty() {
-        println!("\ncommits: no commit is in range {range}");
-        println!("{}", verdict(0));
+        outln!("\ncommits: no commit is in range {range}");
+        outln!("{}", verdict(0));
         return Ok(ExitCode::SUCCESS);
     }
     // The checker's own directory, project-relative, so a per-commit model reads the tool's
@@ -782,30 +783,30 @@ pub fn commits(
         .iter()
         .filter(|(_, o)| matches!(o, Outcome::Skipped { .. }))
         .count();
-    println!("\ncommits in {range}: {judged} judged, {skipped} skipped");
+    outln!("\ncommits in {range}: {judged} judged, {skipped} skipped");
     for (short, outcome) in &summary {
         match outcome {
-            Outcome::Judged { trouble: 0 } => println!("  {short} judged"),
-            Outcome::Judged { trouble } => println!(
+            Outcome::Judged { trouble: 0 } => outln!("  {short} judged"),
+            Outcome::Judged { trouble } => outln!(
                 "  {short} judged; its own tree fails {trouble} finding(s), which \
                  `cargo knowledge check` reports"
             ),
-            Outcome::Skipped { why } => println!("  {short} skipped: {why}"),
+            Outcome::Skipped { why } => outln!("  {short} skipped: {why}"),
             Outcome::Unassembled { why } => {
-                println!("  {short} is the range's tip and its tree could not be read: {why}")
+                outln!("  {short} is the range's tip and its tree could not be read: {why}")
             }
         }
     }
     if !findings.is_empty() {
-        println!();
+        outln!();
         for finding in &findings {
-            println!("{finding}");
+            outln!("{finding}");
         }
     }
     // **The last line never says PASSED over a run that could not conclude.** A reader takes
     // the verdict off the last line, per `path@thaum@CLAUDE.md`, and a tip whose own tree
     // fails leaves the run saying nothing about the branch it gates.
-    println!(
+    outln!(
         "{}",
         match (&unassembled, tip_trouble) {
             (Some((short, _)), _) => format!(
@@ -955,17 +956,17 @@ pub fn hook(manifest: &Manifest, command: &HookCommand) -> Result<ExitCode, Stri
                 .args(["config", "core.hooksPath", HOOKS_PATH])
                 .output()
                 .map_err(|e| e.to_string())?;
-            println!("core.hooksPath = {HOOKS_PATH}");
+            outln!("core.hooksPath = {HOOKS_PATH}");
             match state {
-                Script::Absent => println!("{HOOKS_PATH}/commit-msg written"),
+                Script::Absent => outln!("{HOOKS_PATH}/commit-msg written"),
                 Script::NotAFile => unreachable!("refused above"),
                 Script::Present { executable } => {
                     if !executable {
                         make_executable(&script)?;
-                        println!("{HOOKS_PATH}/commit-msg made executable");
+                        outln!("{HOOKS_PATH}/commit-msg made executable");
                     }
                     if std::fs::read_to_string(&script).ok().as_deref() != Some(COMMIT_MSG_HOOK) {
-                        println!(
+                        outln!(
                             "{HOOKS_PATH}/commit-msg is not the script this tool writes; \
                              it is left as it is"
                         );
@@ -991,11 +992,11 @@ pub fn hook(manifest: &Manifest, command: &HookCommand) -> Result<ExitCode, Stri
                 Script::Absent => missing.push(format!("{HOOKS_PATH}/commit-msg is not there")),
             }
             if missing.is_empty() {
-                println!("hook: installed — every commit message is judged before it is written");
+                outln!("hook: installed — every commit message is judged before it is written");
                 return Ok(ExitCode::SUCCESS);
             }
-            println!("hook: not installed — {}", missing.join("; "));
-            println!("      `cargo knowledge hook install` sets it up");
+            outln!("hook: not installed — {}", missing.join("; "));
+            outln!("      `cargo knowledge hook install` sets it up");
             Ok(ExitCode::FAILURE)
         }
     }

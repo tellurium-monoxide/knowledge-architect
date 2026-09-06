@@ -13,6 +13,9 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::process::ExitCode;
 
+mod output;
+use output::{out, outln};
+
 use clap::{Args, Parser, Subcommand};
 
 use documentation::check::citations::Release;
@@ -202,7 +205,7 @@ fn model(manifest: &Manifest) -> Result<ExitCode, String> {
         model.documents().len(),
         dump.lines().count()
     );
-    print!("{dump}");
+    out!("{dump}");
     Ok(ExitCode::SUCCESS)
 }
 
@@ -352,14 +355,14 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
     // the whole point: a caller reading the tail of the output has to reach the answer, and
     // when the findings came first every `| tail` and every `| grep` for a count printed a
     // success-shaped report over a failing run.
-    print!("{}", counts(&report));
+    out!("{}", counts(&report));
     if !report.findings.is_empty() {
-        println!();
+        outln!();
         for finding in &report.findings {
-            println!("{finding}");
+            outln!("{finding}");
         }
     }
-    println!("{}", verdict(&report));
+    outln!("{}", verdict(&report));
     Ok(if report.failed() {
         ExitCode::FAILURE
     } else {
@@ -445,7 +448,7 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
     for (rel, text) in generated {
         let path = manifest.root().join(&rel);
         if std::fs::read_to_string(&path).ok().as_deref() == Some(text.as_str()) {
-            println!("{:<40} already current", rel.display());
+            outln!("{:<40} already current", rel.display());
             continue;
         }
         if let Err(e) = std::fs::write(&path, &text) {
@@ -461,7 +464,7 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
             });
         }
         written += 1;
-        println!("{:<40} rewritten", rel.display());
+        outln!("{:<40} rewritten", rel.display());
     }
     Ok(ExitCode::SUCCESS)
 }
@@ -505,7 +508,7 @@ fn show(manifest: &Manifest, args: &ShowArgs) -> Result<ExitCode, String> {
         // one and from the survey where there is not: a directory and an unwalked file both
         // exist and are both worth resolving, and neither has a body to print.
         let Some(a) = anchors.by_name(anchor) else {
-            println!(
+            outln!(
                 "no anchor is named {anchor}; the anchors are {}",
                 anchors.listed()
             );
@@ -513,17 +516,17 @@ fn show(manifest: &Manifest, args: &ShowArgs) -> Result<ExitCode, String> {
         };
         let rel = a.path.join(id.trim_end_matches('/'));
         if let Some(doc) = model.documents().iter().find(|d| d.rel == rel) {
-            println!("{reference}  {}", doc.rel.display());
-            println!();
-            println!("{}", doc.text.trim_end());
+            outln!("{reference}  {}", doc.rel.display());
+            outln!();
+            outln!("{}", doc.text.trim_end());
             found = true;
         } else {
             let survey =
                 documentation::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
             if survey.present.contains(&rel) {
-                println!("{reference}  {}", rel.display());
-                println!();
-                println!("(outside the walk; nothing to print)");
+                outln!("{reference}  {}", rel.display());
+                outln!();
+                outln!("(outside the walk; nothing to print)");
                 found = true;
             }
         }
@@ -532,24 +535,24 @@ fn show(manifest: &Manifest, args: &ShowArgs) -> Result<ExitCode, String> {
             .into_iter()
             .find(|r| r.anchor == anchor && r.id == id)
     {
-        println!("{reference}  {}", record.site);
-        println!();
-        println!("{}", record.body.trim_end());
+        outln!("{reference}  {}", record.site);
+        outln!();
+        outln!("{}", record.body.trim_end());
         found = true;
     }
     if !found {
-        println!("{reference} resolves to nothing");
+        outln!("{reference} resolves to nothing");
         return Ok(ExitCode::FAILURE);
     }
 
     let inbound = documentation::records::inbound(&model, &anchors, &kind, anchor, id);
-    println!();
+    outln!();
     if inbound.is_empty() {
-        println!("referenced by nothing");
+        outln!("referenced by nothing");
     } else {
-        println!("referenced at:");
+        outln!("referenced at:");
         for site in inbound {
-            println!("  {site}");
+            outln!("  {site}");
         }
     }
     Ok(ExitCode::SUCCESS)
@@ -712,12 +715,12 @@ fn print_rows<const N: usize>(header: &[&str; N], rows: &[[String; N]]) {
             .join("  ")
     };
     let head: [String; N] = std::array::from_fn(|i| header[i].to_string());
-    println!("{}", line(&head));
+    outln!("{}", line(&head));
     for row in rows {
-        println!("{}", line(row));
+        outln!("{}", line(row));
     }
     if rows.is_empty() {
-        println!("(no entry)");
+        outln!("(no entry)");
     }
 }
 

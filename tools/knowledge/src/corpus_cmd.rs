@@ -4,6 +4,7 @@
 //! see what a release changed, notice that a new one exists, fetch one, and move the project
 //! to it. They are the reason the tool is named for its subject and not for checking.
 
+use crate::output::outln;
 use std::collections::HashMap;
 use std::path::Path;
 use std::process::ExitCode;
@@ -111,25 +112,25 @@ fn show(manifest: &Manifest, tree: &Tree, numbers: &[String]) -> Result<i32, Str
         // makes every one of those quotes differ from the pinned text in the exact way root
         // `CLAUDE.md` calls the smallest form of paraphrase.
         let Some(body) = parsed.as_ref().and_then(|n| corpus.raw(n)) else {
-            println!("\n!! {arg} — the pinned release holds no such rule");
+            outln!("\n!! {arg} — the pinned release holds no such rule");
             unresolved += 1;
             continue;
         };
         let number = parsed.expect("a body was found under a parsed number");
-        println!("\n{}", quoted(&number, body));
+        outln!("\n{}", quoted(&number, body));
 
         // What the reader has to know before quoting this, and nothing else. Both notes name
         // a rule of the regime that the text in front of them can fail.
         let subrules = corpus.subrules(&number);
         if !subrules.is_empty() {
             let names: Vec<String> = subrules.iter().map(|n| n.to_string()).collect();
-            println!(
+            outln!(
                 "   subrules, which this body does NOT say: {}",
                 names.join(" ")
             );
         }
         if body.chars().count() < documentation::check::regime::MIN_FRAGMENT {
-            println!("   under the fragment floor: quote this body whole, which always passes");
+            outln!("   under the fragment floor: quote this body whole, which always passes");
         }
     }
     Ok(i32::from(unresolved > 0))
@@ -164,7 +165,7 @@ fn latest(tree: &Tree) -> Result<i32, String> {
     let pinned = pinned_date(tree)?;
     let page = String::from_utf8_lossy(&curl(rules::watch::PAGE)?).to_string();
     let Some(published) = rules::watch::newest(&page) else {
-        println!(
+        outln!(
             "FAIL  {} carries no rules link this can read.\n      \
              This is the EXTRACTOR failing, not an answer about the corpus:\n      \
              check the page by hand, then fix the pattern in rules/src/watch.rs.",
@@ -173,18 +174,18 @@ fn latest(tree: &Tree) -> Result<i32, String> {
         return Ok(2);
     };
     if published == pinned {
-        println!("pinned at {pinned}; published {published} — up to date");
+        outln!("pinned at {pinned}; published {published} — up to date");
         return Ok(0);
     }
     if published < pinned {
-        println!(
+        outln!(
             "FAIL  published {published} is EARLIER than the pinned {pinned}.\n      \
              The page rolled back, or the version file names a release that was never\n      \
              published. Neither is a bump; establish which before doing anything."
         );
         return Ok(2);
     }
-    println!(
+    outln!(
         "FAIL  a newer release is published: {published} (pinned at {pinned}).\n      \
          Read the bumping-rules skill, then:\n        \
          cargo knowledge rules diff --old {pinned} --new {published}\n        \
@@ -228,7 +229,7 @@ fn diff(manifest: &Manifest, tree: &Tree, old: &str, new: &str) -> Result<i32, S
     let cited = cited(manifest)?;
     let changes = rules::diff::diff(&old, &new, &cited);
     for change in &changes {
-        println!("\n{change}");
+        outln!("\n{change}");
     }
     let real = cited
         .iter()
@@ -242,7 +243,7 @@ fn diff(manifest: &Manifest, tree: &Tree, old: &str, new: &str) -> Result<i32, S
             rules::diff::Change::Gone { .. } => gone += 1,
         }
     }
-    println!("\n{real} cited rules: {edited} edited, {moved} renumbered, {gone} gone");
+    outln!("\n{real} cited rules: {edited} edited, {moved} renumbered, {gone} gone");
     Ok(i32::from(!changes.is_empty()))
 }
 
@@ -256,9 +257,9 @@ fn fetch(tree: &Tree, date: Option<String>) -> Result<i32, String> {
         None => pinned_date(tree)?,
     };
     let url = release::url_for(&date);
-    println!("fetching {url}");
+    outln!("fetching {url}");
     let (digest, lines) = vendor(tree, &date, &url, &curl(&url)?)?;
-    println!("{lines} lines\ndate:   {date}\nsource: {url}\nsha256: {digest}");
+    outln!("{lines} lines\ndate:   {date}\nsource: {url}\nsha256: {digest}");
     Ok(0)
 }
 
@@ -308,10 +309,10 @@ fn effective_report(old_text: &str, new_text: &str, old: &str, new: &str) -> Str
 fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     let old = pinned_date(tree)?;
     if old == new {
-        println!("already pinned at {new}");
+        outln!("already pinned at {new}");
         return Ok(0);
     }
-    println!("== {old} -> {new} ==");
+    outln!("== {old} -> {new} ==");
 
     let old_text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
     let old_corpus = Corpus::parse(&old_text, manifest.rules().body_starts_at);
@@ -322,10 +323,10 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     let cited = cited(manifest)?;
     let changes = rules::diff::diff(&old_corpus, &new_corpus, &cited);
     for change in &changes {
-        println!("\n{change}");
+        outln!("\n{change}");
     }
 
-    println!("\n{}", effective_report(&old_text, &new_text, &old, new));
+    outln!("\n{}", effective_report(&old_text, &new_text, &old, new));
 
     // Archive the OUTGOING release before it is overwritten. A release that is no longer
     // vendored is still needed — to compare two, and to hold any container pinned to it — and
@@ -333,7 +334,7 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     // permanently.
     let archived = tree.past().join(format!("{old}.txt"));
     if archived.exists() {
-        println!("past/{old}.txt already archived");
+        outln!("past/{old}.txt already archived");
     } else {
         std::fs::create_dir_all(tree.past()).map_err(|e| e.to_string())?;
         std::fs::copy(tree.text(), &archived).map_err(|e| e.to_string())?;
@@ -346,7 +347,7 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
             today()
         );
         append(tree.manifest(), &row)?;
-        println!("archived {old} -> past/{old}.txt (+ a manifest row)");
+        outln!("archived {old} -> past/{old}.txt (+ a manifest row)");
     }
 
     // Snapshot the PRE-bump index. The section skeleton reads it for each rule's citing list,
@@ -361,7 +362,7 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     // with nothing tying the two together.
     let url = release::url_for(new);
     let (digest, lines) = vendor(tree, new, &url, new_text.as_bytes())?;
-    println!("{lines} lines\ndate:   {new}\nsource: {url}\nsha256: {digest}");
+    outln!("{lines} lines\ndate:   {new}\nsource: {url}\nsha256: {digest}");
     let model = documentation::Model::build(manifest, Some(crate::checker_source()))
         .map_err(|e| e.to_string())?;
     let fresh = {
@@ -389,11 +390,11 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
             .join(manifest.rules().dir.join("CHANGES.md")),
         &section,
     )?;
-    println!(
+    outln!(
         "\nCHANGES.md: appended {new}. Every subsection's interpretation paragraph is EMPTY \
          on purpose, and the changelog check fails until a human writes it."
     );
-    println!("\nNext, by hand:\n  \
+    outln!("\nNext, by hand:\n  \
               1. write the interpretation under each subsection and set its action:\n  \
               2. add a row to the summary table at the top of CHANGES.md\n  \
               3. cargo knowledge check\n  \

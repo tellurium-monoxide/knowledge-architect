@@ -1791,3 +1791,24 @@ fn this_repositorys_committed_hook_is_what_install_writes() {
     .expect("the script this repository commits");
     assert_eq!(written, committed);
 }
+
+/// A reader that closes the pipe early ends the run quietly with exit 2, never with a panic
+/// on stderr: `cargo knowledge model | head` is how a citation is located, and the panic the
+/// standard print macros raise on a broken pipe made that idiom print a backtrace hint.
+#[test]
+fn a_closed_stdout_ends_the_run_quietly_with_exit_2() {
+    let (reader, writer) = std::io::pipe().expect("a pipe");
+    drop(reader);
+    let out = Command::new(env!("CARGO_BIN_EXE_knowledge"))
+        .args(["model"])
+        .current_dir(project("planted"))
+        .stdout(writer)
+        .output()
+        .expect("the binary runs");
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert_eq!(out.status.code(), Some(2), "stderr: {stderr}");
+    assert!(
+        !stderr.contains("panicked") && !stderr.contains("Broken pipe"),
+        "the closed pipe must not be reported: {stderr}"
+    );
+}
