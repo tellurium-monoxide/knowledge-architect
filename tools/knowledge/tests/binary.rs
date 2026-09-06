@@ -274,6 +274,37 @@ fn a_writer_refuses_over_an_incomplete_model_and_writes_nothing() {
     assert!(!sandbox.path("corpus/past/20200101.txt").exists());
 }
 
+/// The claim: a writer refuses on every phase-2 fact, the tracked-and-ignored file included,
+/// which `complete_working_tree` has to ask git for itself.
+#[test]
+fn a_writer_refuses_over_a_tracked_and_ignored_file() {
+    let sandbox = Sandbox::new("writer-tracked-ignored", "minimal");
+    sandbox.write(".gitignore", "b.md\n");
+    sandbox.stage();
+    let (stdout, stderr, code) = sandbox.run(&["index"]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(stderr.contains("phase 2:"), "{stderr}");
+    assert!(!stdout.contains("rewritten"), "{stdout}");
+}
+
+/// The claim: a corpus file that is not there is phase 2's finding, named by its path, rather
+/// than an error from reading it before the phases run.
+#[test]
+fn a_missing_version_file_is_a_phase_two_finding_naming_it() {
+    let sandbox = Sandbox::new("no-version", "minimal");
+    std::fs::remove_file(sandbox.path("corpus/VERSION")).expect("the version file");
+    sandbox.stage();
+    let (stdout, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains("phase 2:") && stdout.contains("`corpus/VERSION` is declared in [rules]"),
+        "{stdout}"
+    );
+    let (stdout, stderr, code) = sandbox.run(&["index"]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(stderr.contains("phase 2:"), "{stderr}");
+}
+
 #[test]
 fn a_run_performs_every_check() {
     let (stdout, _, code) = run("planted", &["check"]);
@@ -1712,9 +1743,41 @@ fn a_commit_holding_a_blob_that_is_not_text_fails_its_tree() {
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 2, "{stdout}{stderr}");
     assert!(
-        stdout.contains(&format!("{sha} judged; its own tree fails 1 finding(s)")),
+        stdout.contains(&format!(
+            "{sha} is the range's tip and its tree stops at phase 2 with 1 finding(s)"
+        )),
         "{stdout}"
     );
+}
+
+/// The claim: a tip whose tree stops before the last phase has its message judged against
+/// nothing, and the run says so rather than printing a finding computed over the incomplete
+/// entity table.
+#[test]
+fn a_tip_whose_tree_stops_before_the_last_phase_is_not_judged() {
+    let history = History::new("commit-stopped-tip");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    // The new decision is defined in a file the walk cannot read, so against the table the
+    // reference would dangle; the message is right, and the tree is what is wrong.
+    history.write_bytes(
+        "docs/new.md",
+        b"# New\n\n### A new decision `##new-one`\n\ncaf\xe9\n",
+    );
+    let sha = history.commit("Adds `design@tiny@new-one`\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!(
+            "{sha} is the range's tip and its tree stops at phase 2"
+        )),
+        "{stdout}"
+    );
+    assert!(
+        !stdout.contains("is referenced and"),
+        "no finding computed over the incomplete table: {stdout}"
+    );
+    assert!(stdout.contains("COULD NOT RUN"), "{stdout}");
 }
 
 #[test]

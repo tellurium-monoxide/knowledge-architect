@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-12 entries
+13 entries
 
 | kind | title |
 | --- | --- |
@@ -8,6 +8,7 @@
 | defect | [The inverse assertion reads the prose marker form alone](inverse-assertion-reads-prose-markers-only.md) |
 | defect | [The release diff calls a renumbered section a deletion](release-diff-calls-renumbered-section-deletion.md) |
 | defect | [A submodule's and a symlinked directory's contents are read by nothing](submodule-and-symlink-contents-unread.md) |
+| defect | [A file outside the walk that cannot be read is silent to the inverse assertion](unreadable-file-outside-the-walk-is-silent.md) |
 | deferred | [Nothing tests that `rules diff` receives its two dates the right way round](rules-diff-date-order-untested.md) |
 | deferred | [Only a line break is refused in a file name, and Windows forbids more](windows-forbidden-names-not-refused.md) |
 | observation | [`check` and `commits` disagree about a symlinked file, and the summary claims they agree](check-and-commits-disagree-on-symlinks.md) |

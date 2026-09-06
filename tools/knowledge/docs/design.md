@@ -251,8 +251,9 @@ and the deepest anchor wins, so a document under a location belongs to it and no
 component holding it. Four declarations take that rule away. Each is a complaint of the manifest's
 resolution, and **the refused anchor is no anchor**: it owns nothing, carries nothing and is
 asserted against nothing, per `design@knowledge@registers-are-declared`. Candidates are taken
-shallowest first, a component before a location at equal depth and declaration order after
-that, so of two that collide the deeper or the later one is the one refused:
+shallowest first, a component before a location at equal depth, then components in declaration
+order and locations in name order, so of two that collide the deeper or the later one in that
+order is the one refused:
 
 - **a component inside a location.** It nests one full register set inside a partial one and
   gives a document two candidate homes.

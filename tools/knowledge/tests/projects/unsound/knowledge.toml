@@ -24,7 +24,7 @@ skip-dirs = []
 # The rules text is not a citation of itself; the changelog pins its own release per section;
 # and the rule index is generated. No row names a file-register index: the tool derives that
 # set from the register instances, so those are outside the walk by construction.
-skip-files = ["corpus/CompRules.txt", "corpus/CHANGES.md", "corpus/index.md"]
+skip-files = ["corpus/CompRules.txt", "corpus/CHANGES.md"]
 exclude = []
 
 [lint]

@@ -110,11 +110,14 @@ struct Assembly {
     survey: Survey,
     ignored: HashSet<String>,
     tracked_and_ignored: Vec<PathBuf>,
-    /// What is wrong with the tree itself, judged by every family but `corpus` and `changes`.
+    /// What is wrong with the tree itself, judged by every check but `corpus` and `changes`.
     ///
     /// Empty for the working tree, which this command does not judge: `check` is what judges
     /// a checkout, and judging it twice would put the tree's findings inside a message's.
     trouble: Vec<Finding>,
+    /// The phase the tree's run stopped in, where it stopped before the last: its entity
+    /// table is then incomplete, and a message judged against it is judged against nothing.
+    stopped: Option<check::Phase>,
 }
 
 impl Assembly {
@@ -241,15 +244,17 @@ fn working_tree(manifest: &Manifest, checker: Option<&Path>) -> Result<Assembly,
     let model = Model::build(manifest, checker).map_err(|e| e.to_string())?;
     let tree = manifest.rules_tree();
     let body_starts_at = manifest.rules().body_starts_at;
-    let vendored = std::fs::read_to_string(tree.text())
-        .map_err(|e| format!("{}: {e}", tree.text().display()))?;
+    // Read leniently: a corpus file that is not there is a phase-2 finding of the tree, which
+    // the foundation reports before anything here is needed, and a message's references
+    // need no release.
     let mut releases = HashMap::new();
-    releases.insert(None, Release::new(&vendored, body_starts_at));
-    let version = std::fs::read_to_string(tree.version()).map_err(|e| e.to_string())?;
-    let pinned = rules::release::read_version(&version)
-        .get("date")
-        .cloned()
-        .ok_or("VERSION names no date")?;
+    if let Ok(vendored) = std::fs::read_to_string(tree.text()) {
+        releases.insert(None, Release::new(&vendored, body_starts_at));
+    }
+    let pinned = std::fs::read_to_string(tree.version())
+        .ok()
+        .and_then(|v| rules::release::read_version(&v).get("date").cloned())
+        .unwrap_or_default();
     let anchors = Anchors::of(manifest);
     let mut committed = HashMap::new();
     let mut generated_paths = vec![manifest.rules().dir.join("index.md")];
@@ -282,6 +287,7 @@ fn working_tree(manifest: &Manifest, checker: Option<&Path>) -> Result<Assembly,
         ignored,
         tracked_and_ignored,
         trouble: Vec::new(),
+        stopped: None,
     })
 }
 
@@ -534,6 +540,7 @@ fn commit_tree(
         // A commit holds no index, so nothing is both tracked and ignored in a tree.
         tracked_and_ignored: Vec::new(),
         trouble: Vec::new(),
+        stopped: None,
     };
     if !judging {
         return Ok(assembly);
@@ -542,7 +549,10 @@ fn commit_tree(
     // that phase's findings as its trouble and is judged no further.
     assembly.trouble =
         match check::foundation(&assembly.model, &assembly.manifest, &assembly.inputs()) {
-            Err(stop) => stop.findings,
+            Err(stop) => {
+                assembly.stopped = Some(stop.phase);
+                stop.findings
+            }
             Ok(()) => {
                 let report = check::run(&assembly.model, &assembly.manifest, &assembly.inputs());
                 let mut trouble = report.findings;
@@ -675,6 +685,12 @@ enum Outcome {
     Unassembled {
         why: String,
     },
+    /// The range's tip, whose tree stopped before the last phase: its message was judged
+    /// against nothing, and the run ends here.
+    Unjudged {
+        phase: u8,
+        trouble: usize,
+    },
 }
 
 /// Judge every message in a range against the tree its commit carries.
@@ -754,6 +770,19 @@ pub fn commits(
         if trouble > 0 {
             tip_trouble = Some(trouble);
         }
+        // A tip whose tree stopped before the last phase has an incomplete entity table, and
+        // a message judged against it would be judged against nothing: the run ends here,
+        // naming the phase, as the hook does over the working tree.
+        if let Some(phase) = tree.stopped {
+            summary.push((
+                short.to_string(),
+                Outcome::Unjudged {
+                    phase: phase.number(),
+                    trouble,
+                },
+            ));
+            break;
+        }
 
         // The parent model is the previous commit's where the walk followed the parent chain,
         // a skipped commit's included, and is built once otherwise — at the range's first
@@ -816,6 +845,11 @@ pub fn commits(
             Outcome::Unassembled { why } => {
                 outln!("  {short} is the range's tip and its tree could not be read: {why}")
             }
+            Outcome::Unjudged { phase, trouble } => outln!(
+                "  {short} is the range's tip and its tree stops at phase {phase} with {trouble} \
+                 finding(s), which `cargo knowledge check` reports; its message was judged \
+                 against nothing"
+            ),
         }
     }
     if !findings.is_empty() {

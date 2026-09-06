@@ -58,15 +58,15 @@ the tail of the output has to reach the verdict rather than the counts.
 **A run is four phases, and it stops at the first that finds anything.** Phase 1 resolves the
 manifest: a declaration the tool refuses is reported and acted on by nothing. Phase 2 reads the
 tree against what the manifest declares: a file the walk could not read, a name it refuses, an
-anchor or a register home that is not there, a declared path that does not exist, a file git both
-tracks and ignores. Phase 3 builds the entity table: a slug or an entry id where none may sit, or
+anchor or a register home that is not there, a home a walk row keeps out, a declared path that
+does not exist, a file git both tracks and ignores. Phase 3 builds the entity table: a slug or an entry id where none may sit, or
 defined twice. Each of these says the model is incomplete, and a finding computed from the model
 afterwards would be unreliable in both directions, so the run prints that phase's findings, says
 which phases were not judged, and exits 1. Phase 4 is every check, over the complete model:
 
 `citations`, `generated`, `registers`, `references`, `uncovered`, `changes`, `corpus`, `regime`.
 
-Six are modules under `path@knowledge@documentation/src/check/`. `corpus` is the integrity check
+Seven are modules under `path@knowledge@documentation/src/check/`. `corpus` is the integrity check
 over the vendored text and its archive, which reads the filesystem rather than the model, and
 `changes` reads the changelog; both are run by the binary beside `check::run`. `references` judges
 every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a register kind against the
@@ -149,9 +149,9 @@ relative to the index's own directory. Ungrouped entries come first, under no he
 the first metadata key and then by id. No summary and no date: a row changes on create, delete,
 retitle, regroup and a metadata change, and on nothing else.
 
-**Every generated index is outside the walk**, the rule index by a `[walk] skip-files` row and a
-file-register index by construction — the tool derives that set from the register instances, so no
-manifest row names one and none can be created inside the walk.
+**Every generated index is outside the walk by construction** — the tool derives the set, the rule
+index and one per file-register instance, from the manifest, so no `[walk] skip-files` row names one
+and none can be created inside the walk.
 
 Running it to look therefore costs nothing, not even an mtime. **Whether a generated file is
 current is not this command's question** — that is `cargo knowledge check`, whose `generated` check

@@ -403,6 +403,39 @@ mod phase_tests {
     }
 
     #[test]
+    fn every_complaint_prints_at_phase_one() {
+        let m = manifest(
+            "[locations.up]\npath = \"docs/../docs\"\nregisters = [\"issue\"]\n\n\
+             [locations.abs]\npath = \"/abs\"\nregisters = [\"issue\"]\n",
+        );
+        let stop = foundation_over(&m, complete_tree(), &Model::from_documents(Vec::new()))
+            .expect_err("the run stops");
+        assert_eq!(stop.phase, Phase::Resolution);
+        assert_eq!(stop.findings.len(), 2, "{:#?}", stop.findings);
+    }
+
+    #[test]
+    fn a_corpus_at_the_root_is_a_legal_declaration() {
+        // `dir = "."` normalises to the empty path, which git never lists: the corpus rows
+        // are its four files, and the directory itself is asserted by nothing.
+        let text = "[project]\nname = \"p\"\ncomponents = []\n\n\
+                    [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n\n\
+                    [lint]\nexempt-files = []\n\n\
+                    [rules]\ndir = \".\"\ntext = \"t\"\nbody-starts-at = 0\n\
+                    version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        let m = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration");
+        let mut present = complete_tree();
+        for rel in ["r", "r/t", "r/v", "r/p", "r/m"] {
+            present.remove(&PathBuf::from(rel));
+        }
+        for rel in ["t", "v", "p", "m"] {
+            present.insert(PathBuf::from(rel));
+        }
+        let outcome = foundation_over(&m, present, &Model::from_documents(Vec::new()));
+        assert!(outcome.is_ok(), "{:#?}", outcome.err());
+    }
+
+    #[test]
     fn a_location_holding_the_root_s_homes_is_the_one_finding_and_owns_no_slug() {
         // The shape the cascade entry was about: a location at the root's `docs/`, refused for
         // holding the four homes, and a slug in the design home that it would have owned. The

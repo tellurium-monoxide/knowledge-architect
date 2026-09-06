@@ -1662,6 +1662,60 @@ mod tests {
     }
 
     #[test]
+    fn a_directory_wearing_a_home_s_or_a_head_s_name_is_neither() {
+        // A directory named like the file home is no file home, and one named like the
+        // README is no head: the survey records each path's kind, and both impostors land
+        // in the no-home and no-head arms by fact.
+        let manifest = declaring("");
+        let mut present = all_of("");
+        present.retain(|p| p != "docs/design.md");
+        present.push("docs/design.md".to_string());
+        present.push("docs/design.md/inside.md".to_string());
+        let found = findings(&manifest, &present);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("carries no design home"), "{found:#?}");
+
+        let mut present = all_of("");
+        present.retain(|p| p != "docs/goals.md");
+        present.push("docs/goals".to_string());
+        present.push("docs/goals/README.md".to_string());
+        present.push("docs/goals/README.md/inside.md".to_string());
+        let found = findings(&manifest, &present);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("`docs/goals` has no README.md"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_skip_files_row_over_a_file_shaped_home_takes_the_register_out_of_the_walk() {
+        let manifest = declaring_full("", "", "[]", "[\"docs/design.md\"]", "[]", "[]");
+        let found = findings(&manifest, &all_of(""));
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("`docs/design.md` in [walk] skip-files takes the design register"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_location_that_is_a_file_is_reported_once() {
+        // The second finding would ask to create a directory inside a file.
+        let manifest = declaring_full(
+            "",
+            "[locations.here]\npath = \"README.md\"\nregisters = [\"issue\"]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let found = findings(&manifest, &all_of(""));
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("which is a file"), "{found:#?}");
+    }
+
+    #[test]
     fn a_register_directory_wearing_a_compiled_document_s_name_is_reported() {
         // `path@*@docs/rejected-alternatives.md` is a compiled document of every component; a
         // heading register at that directory name would make the same file its home, so

@@ -13,7 +13,7 @@ components = []
 [walk]
 skip-dirs = []
 # The rules text is not a citation of itself, and the rule index is generated.
-skip-files = ["corpus/CompRules.txt", "corpus/index.md"]
+skip-files = ["corpus/CompRules.txt"]
 exclude = []
 
 [lint]

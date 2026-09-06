@@ -259,11 +259,12 @@ fn check(manifest: &Manifest) -> Result<ExitCode, String> {
             configs.insert(home.config.clone(), text);
         }
     }
-    let version = std::fs::read_to_string(tree.version()).map_err(|e| e.to_string())?;
-    let pinned = rules::release::read_version(&version)
-        .get("date")
-        .cloned()
-        .ok_or("VERSION names no date")?;
+    // Read leniently until the foundation has passed: a version file that is not there is a
+    // phase-2 finding naming its path, which is more than an error from reading it first says.
+    let pinned = std::fs::read_to_string(tree.version())
+        .ok()
+        .and_then(|v| rules::release::read_version(&v).get("date").cloned())
+        .unwrap_or_default();
     // One listing answers every question a check has about what is there, and it is the
     // caller's job because a check may not touch the filesystem.
     let survey = documentation::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
@@ -297,6 +298,12 @@ fn check(manifest: &Manifest) -> Result<ExitCode, String> {
         let report = Report::stopped(stop, &model);
         print_report(&report);
         return Ok(ExitCode::FAILURE);
+    }
+    if pinned.is_empty() {
+        return Err(format!(
+            "{}: names no date, and the last phase verifies every quote against it",
+            tree.version().display()
+        ));
     }
 
     // The last phase reads rule text, and resolving a pin may fetch over the network. The
@@ -417,10 +424,15 @@ fn print_report(report: &Report) {
 fn index(manifest: &Manifest) -> Result<ExitCode, String> {
     let model =
         documentation::Model::build(manifest, Some(checker_source())).map_err(|e| e.to_string())?;
+    // The gate first: a corpus file that is not there is phase 2's finding, named by path,
+    // and reading it before the gate would turn that into an error naming nothing.
+    let survey = complete_working_tree(manifest, &model)?;
     let tree = manifest.rules_tree();
-    let corpus_text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
+    let corpus_text = std::fs::read_to_string(tree.text())
+        .map_err(|e| format!("{}: {e}", tree.text().display()))?;
     let corpus = rules::Corpus::parse(&corpus_text, manifest.rules().body_starts_at);
-    let version = std::fs::read_to_string(tree.version()).map_err(|e| e.to_string())?;
+    let version = std::fs::read_to_string(tree.version())
+        .map_err(|e| format!("{}: {e}", tree.version().display()))?;
     let pinned = rules::release::read_version(&version)
         .get("date")
         .cloned()
@@ -430,7 +442,6 @@ fn index(manifest: &Manifest) -> Result<ExitCode, String> {
     // and cannot be given an invalid combination: the rule index, then one per file-register
     // instance. The survey answers which instance directories are there, and an instance
     // without one contributes no index rather than having its home created here.
-    let survey = complete_working_tree(manifest, &model)?;
     let mut generated = vec![(
         manifest.rules().dir.join("index.md"),
         documentation::index::rule_index(&model, manifest, &corpus, &pinned),

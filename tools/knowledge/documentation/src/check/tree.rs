@@ -51,6 +51,11 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding
             ));
             continue;
         }
+        // A location whose path is a file is `declarations`' finding, above; asserting its
+        // homes as well would ask for a directory inside a file.
+        if !anchor.is_root() && !inputs.directories.contains(&anchor.path) {
+            continue;
+        }
         if anchor.is_component {
             for name in COMPONENT_DOCUMENTS {
                 let path = anchor.path.join(name);
@@ -256,10 +261,12 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
     // reports a directory that is not there. Both would be one fact reported twice.
     let walk = manifest.walk();
     let rules = manifest.rules();
+    // The corpus directory itself is not a row: its four files are, and a directory with
+    // none of them is reported four times over. Asserting the directory would also refuse a
+    // corpus at the root, whose directory is the empty path git never lists.
     let corpus: Vec<PathBuf> = [&rules.text, &rules.version, &rules.past, &rules.manifest]
         .iter()
         .map(|p| rules.dir.join(p))
-        .chain(std::iter::once(rules.dir.clone()))
         .collect();
     let declared: [(&str, &Vec<PathBuf>); 5] = [
         ("[walk] skip-dirs", &walk.skip_dirs),

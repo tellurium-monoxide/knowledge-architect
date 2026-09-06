@@ -730,9 +730,11 @@ impl Candidate {
 /// anchor**: it owns nothing, carries nothing and is asserted against nothing, so the
 /// consequences of the declaration are not reported as defects of the tree.
 ///
-/// Candidates are taken shallowest first, a component before a location at equal depth and
-/// declaration order after that, and each is judged against the anchors already accepted. So
-/// of two anchors that collide, the deeper one, or the later one, is the one refused:
+/// Candidates are taken shallowest first, a component before a location at equal depth,
+/// declaration order among components and name order among locations after that — a
+/// location's declaration order is not kept, the table being keyed by name — and each is
+/// judged against the anchors already accepted. So of two anchors that collide, the deeper
+/// one, or the later one in that order, is the one refused:
 ///
 /// - **a name no reference can spell, or a reserved one, or one an accepted anchor already
 ///   has**: every pointer at it would miss or read as the other.
@@ -817,7 +819,8 @@ fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &
             declared_at: format!("[locations.{name}]"),
         });
     }
-    // Stable, so declaration order decides among equals.
+    // Stable, so among equals the order the candidates were pushed in decides: components in
+    // declaration order, then locations in name order.
     candidates.sort_by_key(|c| (c.depth(), !c.is_component));
 
     let mut accepted: Vec<Candidate> = Vec::new();
@@ -1254,6 +1257,29 @@ pub(crate) mod tests {
         );
         assert!(m.registers().by_name("path").is_none());
         assert!(m.registers().by_name("Notes").is_none());
+        assert_eq!(m.locations()["papers"].registers, vec!["issue".to_string()]);
+    }
+
+    #[test]
+    fn a_location_carrying_two_registers_at_one_directory_keeps_the_first_named() {
+        let m = declaring_full(
+            "",
+            "[registers.note]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"open-issues\"\n\n\
+             [locations.papers]\npath = \"papers\"\nregisters = [\"issue\", \"note\"]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        assert_eq!(whats(&m).len(), 1, "{:?}", whats(&m));
+        assert!(
+            whats(&m)[0].contains(
+                "[locations.papers] carries the note and issue registers at one directory, \
+                 `open-issues`"
+            ),
+            "{:?}",
+            whats(&m)
+        );
         assert_eq!(m.locations()["papers"].registers, vec!["issue".to_string()]);
     }
 
