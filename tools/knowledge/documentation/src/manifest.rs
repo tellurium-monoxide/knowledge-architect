@@ -19,6 +19,8 @@ use std::path::{Path, PathBuf};
 
 use serde::Deserialize;
 
+use crate::finding::Finding;
+
 /// The file that both marks a project root and declares its conformance surface.
 pub const MANIFEST_NAME: &str = "knowledge.toml";
 
@@ -358,16 +360,14 @@ pub struct Manifest {
     root: PathBuf,
     declared: Declared,
     registers: Registers,
-    /// What the register declarations got wrong, in the words `check::registers` reports.
+    /// Every declaration this tool refused, in the shape `check` reports.
     ///
-    /// Held rather than returned, because a declaration this tool refuses to act on still has
-    /// to produce a run: a manifest that would not load reports nothing at all, and nothing at
-    /// all is what a session reads as conformance.
-    register_complaints: Vec<String>,
-    /// Every declared path this tool refused to act on, in the same words. The row is dropped
-    /// from its list, and a `[rules]` path, which has no list to be dropped from, stands as
-    /// spelled.
-    path_complaints: Vec<String>,
+    /// **A refused declaration is absent from the configuration**, so nothing acts on it: a
+    /// refused register is not a register, a refused anchor is not an anchor, a refused row is
+    /// not in its list. Held rather than returned, because a manifest that would not load
+    /// reports nothing at all, and nothing at all is what a session reads as conformance. The
+    /// one table with no default is `[rules]`, whose refusal fails the load instead.
+    complaints: Vec<Finding>,
 }
 
 impl Manifest {
@@ -408,14 +408,16 @@ impl Manifest {
     pub fn parse(root: &Path, text: &str) -> Result<Self, String> {
         retired_keys(text)?;
         let mut declared: Declared = toml::from_str(text).map_err(|e| e.to_string())?;
-        let (registers, register_complaints) = build_registers(&declared.registers);
-        let path_complaints = normalise_paths(&mut declared);
+        let mut complaints = Vec::new();
+        let mut registers = build_registers(&declared.registers, &mut complaints);
+        resolve_registers(&mut registers, &mut complaints);
+        normalise_paths(&mut declared, &mut complaints)?;
+        resolve_anchors(&mut declared, &registers, &mut complaints);
         Ok(Self {
             root: root.to_path_buf(),
             declared,
             registers,
-            register_complaints,
-            path_complaints,
+            complaints,
         })
     }
 
@@ -444,14 +446,9 @@ impl Manifest {
         &self.registers
     }
 
-    /// What the register declarations got wrong, for `check::registers` to report.
-    pub fn register_complaints(&self) -> &[String] {
-        &self.register_complaints
-    }
-
-    /// Every declared path the tool refused, for `check::registers` to report.
-    pub fn path_complaints(&self) -> &[String] {
-        &self.path_complaints
+    /// Every declaration the tool refused, for `check` to report first.
+    pub fn complaints(&self) -> &[Finding] {
+        &self.complaints
     }
 
     /// The locations this project declares, by name.
@@ -531,34 +528,31 @@ fn retired_keys(text: &str) -> Result<(), String> {
 /// a location declared with `path = "./docs"` was reported absent while `docs` existed, and
 /// a `..` segment was read by the nesting check as one more component of the path. A `.`
 /// segment is dropped, so a dot-spelled and a plain `docs` are one declaration; a `..`
-/// segment and an absolute
-/// path are refused, because what they name depends on where the manifest sits rather than
-/// on the tree. A refused row leaves its list and is reported, so it is acted on by nothing.
+/// segment and an absolute path are refused, because what they name depends on where the
+/// manifest sits rather than on the tree. A refused row leaves its list and is reported, so it
+/// is acted on by nothing.
 ///
-/// Returns the complaints, one per refused row.
-fn normalise_paths(declared: &mut Declared) -> Vec<String> {
-    let mut complaints = Vec::new();
+/// **A refused `[rules]` path fails the load.** The corpus has no list to drop a row from and
+/// no default to stand in, and a path kept as spelled was joined and read: `index` once wrote
+/// through a `..` corpus directory into a sibling tree.
+fn normalise_paths(declared: &mut Declared, complaints: &mut Vec<Finding>) -> Result<(), String> {
     let project = &mut declared.project;
-    normalise_list(
-        "[project] components",
-        &mut project.components,
-        &mut complaints,
-    );
+    normalise_list("[project] components", &mut project.components, complaints);
     declared.locations.retain(|name, decl| {
         normalise_one(
             &format!("[locations.{name}] path"),
             &mut decl.path,
-            &mut complaints,
+            complaints,
         )
     });
     let walk = &mut declared.walk;
-    normalise_list("[walk] skip-dirs", &mut walk.skip_dirs, &mut complaints);
-    normalise_list("[walk] skip-files", &mut walk.skip_files, &mut complaints);
-    normalise_list("[walk] exclude", &mut walk.exclude, &mut complaints);
+    normalise_list("[walk] skip-dirs", &mut walk.skip_dirs, complaints);
+    normalise_list("[walk] skip-files", &mut walk.skip_files, complaints);
+    normalise_list("[walk] exclude", &mut walk.exclude, complaints);
     normalise_list(
         "[lint] exempt-files",
         &mut declared.lint.exempt_files,
-        &mut complaints,
+        complaints,
     );
     let rules = &mut declared.rules;
     for (key, path) in [
@@ -568,49 +562,384 @@ fn normalise_paths(declared: &mut Declared) -> Vec<String> {
         ("past", &mut rules.past),
         ("manifest", &mut rules.manifest),
     ] {
-        // Kept as spelled where refused: the corpus has no list to drop a row from, and the
-        // `registers` family reports the path as not existing beside the complaint.
-        normalise_one(&format!("[rules] {key}"), path, &mut complaints);
+        let mut refused = Vec::new();
+        if !normalise_one(&format!("[rules] {key}"), path, &mut refused) {
+            return Err(format!(
+                "{}; the corpus has no default to stand in for it",
+                refused[0].what
+            ));
+        }
     }
-    complaints
+    Ok(())
 }
 
 /// Normalise every path of one list, dropping the rows that are refused.
-fn normalise_list(list: &str, paths: &mut Vec<PathBuf>, complaints: &mut Vec<String>) {
+fn normalise_list(list: &str, paths: &mut Vec<PathBuf>, complaints: &mut Vec<Finding>) {
     paths.retain_mut(|path| normalise_one(list, path, complaints));
 }
 
 /// Normalise one path in place, or record why it is refused and say so with `false`.
-fn normalise_one(list: &str, path: &mut PathBuf, complaints: &mut Vec<String>) -> bool {
+fn normalise_one(list: &str, path: &mut PathBuf, complaints: &mut Vec<Finding>) -> bool {
     use std::path::Component as Segment;
     let mut out = PathBuf::new();
     for segment in path.components() {
-        match segment {
-            Segment::CurDir => {}
-            Segment::Normal(name) => out.push(name),
-            Segment::ParentDir => {
-                complaints.push(format!(
-                    "`{}` in {list} spells a `..` segment",
-                    path.display()
-                ));
-                return false;
+        let why = match segment {
+            Segment::CurDir => continue,
+            Segment::Normal(name) => {
+                out.push(name);
+                continue;
             }
-            Segment::RootDir | Segment::Prefix(_) => {
-                complaints.push(format!(
-                    "`{}` in {list} is not project-relative",
-                    path.display()
-                ));
-                return false;
-            }
-        }
+            Segment::ParentDir => "spells a `..` segment",
+            Segment::RootDir | Segment::Prefix(_) => "is not project-relative",
+        };
+        complaints.push(Finding::in_file(
+            MANIFEST_NAME,
+            format!("`{}` in {list} {why}", path.display()),
+            "spell the path the way git lists it, relative to the manifest's directory with \
+             no `..` and no leading `/`; the row is acted on by nothing until then",
+        ));
+        return false;
     }
     *path = out;
     true
 }
 
-fn build_registers(declared: &BTreeMap<String, RegisterDecl>) -> (Registers, Vec<String>) {
+/// A declared register is one a reference can name, at a home inside its anchor.
+///
+/// A register's name is what a reference spells in kind position, so a name outside the id
+/// grammar is a register nothing can point at, and `path` is a name the resolver answers
+/// before it ever reaches the register list. Its home is `<home base>/<dir>`, so a `dir` that
+/// is not one plain segment puts the home somewhere the anchor does not reach, and a `dir`
+/// spelling a compiled document makes one file both the document and the home. Each is a
+/// complaint, and the register is not declared. The built-in four are named and placed by
+/// this tool and are never refused here.
+fn resolve_registers(registers: &mut Registers, complaints: &mut Vec<Finding>) {
+    registers.0.retain(|register| {
+        if register.built_in {
+            return true;
+        }
+        let refusal = if register.name == crate::entity::PATH_KIND {
+            Some((
+                format!(
+                    "`{}` is the reserved kind of a file or directory",
+                    register.name
+                ),
+                "rename the register; a reference whose kind segment is this word resolves \
+                 against the tree and never reaches the register",
+            ))
+        } else if !crate::entity::is_entity_id(&register.name) {
+            Some((
+                format!(
+                    "`{}` cannot be spelled in a reference's kind segment",
+                    register.name
+                ),
+                "name it in lower-case words joined by hyphens; a register nothing can point \
+                 at is one every pointer misses in silence",
+            ))
+        } else if !crate::entity::is_entity_id(&register.dir) {
+            Some((
+                format!(
+                    "the {} register's directory `{}` is not one plain segment",
+                    register.name, register.dir
+                ),
+                "name it in lower-case words joined by hyphens; a `/` or a `..` puts the \
+                 home outside the anchor, and the real one is then read by nothing",
+            ))
+        } else if register.scope == Scope::Component
+            && COMPONENT_DOCUMENTS.contains(&format!("docs/{}.md", register.dir).as_str())
+        {
+            // Every heading register has the file shape, so the `.md` is what collides; the
+            // compiled documents are all files, so the directory shape collides with none.
+            Some((
+                format!(
+                    "the {} register's directory `{}` makes its home the compiled document \
+                     `docs/{}.md`",
+                    register.name, register.dir, register.dir
+                ),
+                "give the register another directory; a compiled document is what every \
+                 component carries, and a file that is also a register home means two things",
+            ))
+        } else {
+            None
+        };
+        match refusal {
+            Some((what, action)) => {
+                complaints.push(Finding::in_file(MANIFEST_NAME, what, action));
+                false
+            }
+            None => true,
+        }
+    });
+}
+
+/// One anchor as the declaration names it, before it is accepted.
+struct Candidate {
+    name: String,
+    path: PathBuf,
+    is_component: bool,
+    /// Every register directory the anchor would carry, with the register's name.
+    homes: Vec<(String, PathBuf)>,
+    /// Where the declaration sits, as a complaint names it.
+    declared_at: String,
+}
+
+impl Candidate {
+    fn depth(&self) -> usize {
+        self.path.components().count()
+    }
+
+    fn kind(&self) -> &'static str {
+        if self.is_component {
+            "component"
+        } else {
+            "location"
+        }
+    }
+}
+
+/// No two anchors give one path two meanings, and every anchor is one a reference can name.
+///
+/// An anchor is a directory, and its register homes sit under it. The deepest anchor owns
+/// every document under its path, per `design@knowledge@every-path-names-its-anchor`, so an
+/// anchor inside another's directory is the ordinary case — this repository's two locations
+/// both sit inside the root component. What that rule cannot absorb is refused here, per
+/// `design@knowledge@anchors-are-components-and-locations`, and **the refused anchor is not an
+/// anchor**: it owns nothing, carries nothing and is asserted against nothing, so the
+/// consequences of the declaration are not reported as defects of the tree.
+///
+/// Candidates are taken shallowest first, a component before a location at equal depth and
+/// declaration order after that, and each is judged against the anchors already accepted. So
+/// of two anchors that collide, the deeper one, or the later one, is the one refused:
+///
+/// - **a name no reference can spell, or a reserved one, or one an accepted anchor already
+///   has**: every pointer at it would miss or read as the other.
+/// - **the root's path, spelled by a component or a location**: the root is a component and
+///   carries every register already.
+/// - **a component inside a location**: it nests a full register set inside a partial one.
+/// - **the same path as an accepted anchor**: nothing decides which owns the documents under it.
+/// - **inside, or at, an accepted anchor's register directory**: every file under it would
+///   be read as an entry or a subdocument of that register.
+/// - **holding an accepted anchor's register directory**: being deeper, it would own every
+///   document in that home, and each slug defined there would be misplaced.
+fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &mut Vec<Finding>) {
+    let component_homes = |path: &Path| -> Vec<(String, PathBuf)> {
+        registers
+            .component_scoped()
+            .map(|r| (r.name.clone(), path.join("docs").join(&r.dir)))
+            .collect()
+    };
+    let mut candidates: Vec<Candidate> = vec![Candidate {
+        name: declared.project.name.clone(),
+        path: PathBuf::new(),
+        is_component: true,
+        homes: component_homes(Path::new("")),
+        declared_at: "[project] name".to_string(),
+    }];
+    for path in &declared.project.components {
+        candidates.push(Candidate {
+            name: path
+                .file_name()
+                .map(|n| n.to_string_lossy().into_owned())
+                .unwrap_or_default(),
+            path: path.clone(),
+            is_component: true,
+            homes: component_homes(path),
+            declared_at: format!("[project] components row `{}`", path.display()),
+        });
+    }
+    for (name, decl) in &mut declared.locations {
+        // A location carries the registers it names, and a name that is no register is a
+        // complaint against the row rather than a register the location silently lacks.
+        decl.registers.retain(|register| {
+            let known = registers.by_name(register).is_some();
+            if !known {
+                complaints.push(Finding::in_file(
+                    MANIFEST_NAME,
+                    format!("[locations.{name}] carries `{register}`, which is no register"),
+                    format!(
+                        "declare it in [registers.{register}], or name one of {}",
+                        registers.listed()
+                    ),
+                ));
+            }
+            known
+        });
+        candidates.push(Candidate {
+            name: name.clone(),
+            path: decl.path.clone(),
+            is_component: false,
+            homes: decl
+                .registers
+                .iter()
+                .filter_map(|r| registers.by_name(r))
+                .map(|r| (r.name.clone(), decl.path.join(&r.dir)))
+                .collect(),
+            declared_at: format!("[locations.{name}]"),
+        });
+    }
+    // Stable, so declaration order decides among equals.
+    candidates.sort_by_key(|c| (c.depth(), !c.is_component));
+
+    let mut accepted: Vec<Candidate> = Vec::new();
+    for candidate in candidates {
+        let mut refuse = |what: String, action: &str| {
+            complaints.push(Finding::in_file(MANIFEST_NAME, what, action));
+        };
+        if !crate::entity::is_anchor_name(&candidate.name) {
+            refuse(
+                format!(
+                    "{} gives the anchor the name `{}`, which cannot be spelled in a reference",
+                    candidate.declared_at, candidate.name
+                ),
+                "name it in letters, digits, `.`, `-` and `_`; an anchor nothing can point \
+                 at is one every pointer misses in silence",
+            );
+            continue;
+        }
+        // The reserved anchors are compiled in, so an anchor wearing one could never be the
+        // target of a path reference: every pointer at it would read as the reserved meaning.
+        if candidate.name == crate::entity::ESCAPE_ANCHOR
+            || candidate.name == crate::entity::EVERY_ANCHOR
+        {
+            refuse(
+                format!(
+                    "{} gives the anchor the reserved name `{}`",
+                    candidate.declared_at, candidate.name
+                ),
+                "rename it; this word is reserved by the path kind",
+            );
+            continue;
+        }
+        if let Some(other) = accepted.iter().find(|a| a.name == candidate.name) {
+            refuse(
+                format!(
+                    "`{}` names 2 anchors: {} and {}",
+                    candidate.name,
+                    place(other),
+                    place(&candidate)
+                ),
+                "rename or move one; a reference names its anchor by that one word, so two \
+                 of them cannot share it",
+            );
+            continue;
+        }
+        if candidate.path.as_os_str().is_empty() && !accepted.is_empty() {
+            refuse(
+                format!("{} names the project root", candidate.declared_at),
+                "give it a directory of its own; the root is a component, and it carries \
+                 every register already",
+            );
+            continue;
+        }
+        let collision = accepted
+            .iter()
+            .find_map(|outer| collides(outer, &candidate));
+        if let Some((what, action)) = collision {
+            refuse(what, action);
+            continue;
+        }
+        accepted.push(candidate);
+    }
+
+    declared
+        .project
+        .components
+        .retain(|path| accepted.iter().any(|a| a.is_component && a.path == *path));
+    declared
+        .locations
+        .retain(|name, _| accepted.iter().any(|a| !a.is_component && a.name == *name));
+}
+
+/// How a complaint names an anchor's place: its path, or the root.
+fn place(candidate: &Candidate) -> String {
+    if candidate.path.as_os_str().is_empty() {
+        "the project root".to_string()
+    } else {
+        format!("`{}`", candidate.path.display())
+    }
+}
+
+/// Why `inner`, which is at least as deep as `outer`, cannot be an anchor beside it.
+fn collides(outer: &Candidate, inner: &Candidate) -> Option<(String, &'static str)> {
+    if !inner.path.starts_with(&outer.path) {
+        return None;
+    }
+    if inner.path == outer.path {
+        return Some((
+            format!(
+                "two anchors sit at `{}`: `{}`, `{}`",
+                inner.path.display(),
+                outer.name,
+                inner.name
+            ),
+            "move one; the deepest anchor owns every document under its path, and at one \
+             path nothing decides which of the two that is",
+        ));
+    }
+    if inner.is_component && !outer.is_component {
+        return Some((
+            format!(
+                "the component `{}` sits inside the location `{}`",
+                inner.name, outer.name
+            ),
+            "move one out of the other; a location carries a subset of the registers and a \
+             component carries them all, so nesting gives one document two homes",
+        ));
+    }
+    let mut held: Vec<&str> = Vec::new();
+    for (register, home) in &outer.homes {
+        if inner.path.starts_with(home) {
+            return Some((
+                format!(
+                    "the {} `{}` sits inside the {register} register's directory `{}` of `{}`",
+                    inner.kind(),
+                    inner.name,
+                    home.display(),
+                    outer.name
+                ),
+                "move it out; the directory is the register's home in one shape and reserved \
+                 in the other, and every file under the anchor would be read as an entry or a \
+                 subdocument of it",
+            ));
+        }
+        if home.starts_with(&inner.path) {
+            held.push(register);
+        }
+    }
+    if held.is_empty() {
+        return None;
+    }
+    Some((
+        format!(
+            "the {} `{}` at `{}` holds the {} of `{}`",
+            inner.kind(),
+            inner.name,
+            inner.path.display(),
+            list_homes(&held),
+            outer.name
+        ),
+        "move it out; the deepest anchor owns every document under its path, so each slug \
+         defined in those homes would be misplaced against an anchor that carries no such \
+         register",
+    ))
+}
+
+/// `design home`, `design and goal homes`, `design, goal and issue homes`.
+fn list_homes(registers: &[&str]) -> String {
+    match registers {
+        [one] => format!("{one} home"),
+        [head @ .., last] => format!("{} and {last} homes", head.join(", ")),
+        [] => String::new(),
+    }
+}
+
+/// Fold the declarations into the compiled-in registers, and say what each one got wrong.
+fn build_registers(
+    declared: &BTreeMap<String, RegisterDecl>,
+    complaints: &mut Vec<Finding>,
+) -> Registers {
     let mut out = Registers::built_in();
-    let mut complaints = Vec::new();
+    let mut complaints = Complaints(complaints);
     for (name, decl) in declared {
         let built_in = out.iter().position(|r| r.name == *name);
         if let Some(at) = built_in {
@@ -701,7 +1030,21 @@ fn build_registers(declared: &BTreeMap<String, RegisterDecl>) -> (Registers, Vec
             built_in: false,
         });
     }
-    (Registers(out), complaints)
+    Registers(out)
+}
+
+/// The register complaints, each carrying the one action every one of them shares.
+struct Complaints<'a>(&'a mut Vec<Finding>);
+
+impl Complaints<'_> {
+    fn push(&mut self, what: String) {
+        self.0.push(Finding::in_file(
+            MANIFEST_NAME,
+            what,
+            "a declared register states its scope and its shape; a built-in register's \
+             storage is what the word component means and is not declared",
+        ));
+    }
 }
 
 #[cfg(test)]
@@ -727,6 +1070,21 @@ pub(crate) mod tests {
     /// says, and the paths below need not exist for that.
     fn declaring(components: &str) -> Manifest {
         declaring_full(components, "", "[]", "[]", "[]", "[]")
+    }
+
+    /// The statement of each complaint, in order.
+    fn whats(m: &Manifest) -> Vec<String> {
+        m.complaints().iter().map(|f| f.what.clone()).collect()
+    }
+
+    #[test]
+    fn the_homes_a_complaint_lists_read_as_prose_at_every_count() {
+        assert_eq!(list_homes(&["design"]), "design home");
+        assert_eq!(list_homes(&["design", "goal"]), "design and goal homes");
+        assert_eq!(
+            list_homes(&["design", "goal", "issue"]),
+            "design, goal and issue homes"
+        );
     }
 
     /// The same, with every path list the manifest can declare spelled out, and `extra`
@@ -782,20 +1140,95 @@ pub(crate) mod tests {
             "[\"./vendor/\"]",
             "[\"./notes/x.md\"]",
         );
-        assert!(m.path_complaints().is_empty(), "{:?}", m.path_complaints());
+        // `.` is the root, spelled the way the root component spells it, and the root is a
+        // component already: the one complaint, and the location is no anchor.
+        assert_eq!(
+            whats(&m),
+            vec!["[locations.here] names the project root".to_string()]
+        );
         let components = m.components();
         assert_eq!(components.all()[1].path, PathBuf::from("crates/an-engine"));
         assert_eq!(components.all()[1].name, "an-engine");
         assert_eq!(m.locations()["papers"].path, PathBuf::from("docs/plans"));
-        assert_eq!(
-            m.locations()["here"].path,
-            PathBuf::new(),
-            "`.` is the root, spelled the way the root component spells it"
-        );
+        assert!(!m.locations().contains_key("here"));
         assert_eq!(m.walk().skip_dirs, vec![PathBuf::from("build")]);
         assert_eq!(m.walk().skip_files, vec![PathBuf::from("docs/index.md")]);
         assert_eq!(m.walk().exclude, vec![PathBuf::from("vendor")]);
         assert_eq!(m.lint().exempt_files, vec![PathBuf::from("notes/x.md")]);
+    }
+
+    #[test]
+    fn the_refused_anchor_is_the_deeper_one_whatever_the_declaration_order() {
+        // `a` is declared first and sits inside `b`'s issue directory. Judged in declaration
+        // order `a` would be accepted and `b` refused for holding `a`'s home; judged
+        // shallowest first, `b` stands and `a` is the one refused.
+        let m = declaring_full(
+            "",
+            "[locations.a]\npath = \"notes/open-issues/x\"\nregisters = [\"issue\"]\n\n\
+             [locations.b]\npath = \"notes\"\nregisters = [\"issue\"]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        assert_eq!(whats(&m).len(), 1, "{:?}", whats(&m));
+        assert!(
+            whats(&m)[0].contains("the location `a` sits inside the issue register's directory"),
+            "{:?}",
+            whats(&m)
+        );
+        assert!(m.locations().contains_key("b"));
+        assert!(!m.locations().contains_key("a"));
+    }
+
+    #[test]
+    fn a_refused_register_is_no_register_and_a_location_naming_it_says_so() {
+        let m = declaring_full(
+            "",
+            "[registers.path]\nscope = \"opt-in\"\nshape = \"file\"\n\n\
+             [registers.Notes]\nscope = \"opt-in\"\nshape = \"file\"\n\n\
+             [locations.papers]\npath = \"papers\"\nregisters = [\"path\", \"issue\"]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let whats = whats(&m);
+        assert!(
+            whats
+                .iter()
+                .any(|w| w.contains("`path` is the reserved kind")),
+            "{whats:?}"
+        );
+        assert!(
+            whats
+                .iter()
+                .any(|w| w.contains("`Notes` cannot be spelled in a reference's kind segment")),
+            "{whats:?}"
+        );
+        assert!(
+            whats
+                .iter()
+                .any(|w| w.contains("[locations.papers] carries `path`, which is no register")),
+            "{whats:?}"
+        );
+        assert!(m.registers().by_name("path").is_none());
+        assert!(m.registers().by_name("Notes").is_none());
+        assert_eq!(m.locations()["papers"].registers, vec!["issue".to_string()]);
+    }
+
+    #[test]
+    fn two_anchors_sharing_a_name_keep_the_first_declared() {
+        let m = declaring("\"a/widget\", \"b/widget\"");
+        assert_eq!(whats(&m).len(), 1, "{:?}", whats(&m));
+        assert!(
+            whats(&m)[0].contains("`widget` names 2 anchors: `a/widget` and `b/widget`"),
+            "{:?}",
+            whats(&m)
+        );
+        let components = m.components();
+        let paths: Vec<&Path> = components.all().iter().map(|c| c.path.as_path()).collect();
+        assert_eq!(paths, vec![Path::new(""), Path::new("a/widget")]);
     }
 
     #[test]
@@ -806,12 +1239,18 @@ pub(crate) mod tests {
             "\"crates/../crates/an-engine\", \"tools/a-tool\"",
             "[locations.up]\npath = \"docs/../docs\"\nregisters = [\"issue\"]\n\n",
             "[\"/build\"]",
-            "[]",
-            "[]",
-            "[]",
+            "[\"../x.md\"]",
+            "[\"/vendor\"]",
+            "[\"../y.md\"]",
         );
-        let complaints = m.path_complaints();
-        assert_eq!(complaints.len(), 3, "{complaints:#?}");
+        let complaints = whats(&m);
+        assert_eq!(complaints.len(), 6, "{complaints:#?}");
+        for label in ["[walk] skip-files", "[walk] exclude", "[lint] exempt-files"] {
+            assert!(
+                complaints.iter().any(|c| c.contains(label)),
+                "{label}: {complaints:#?}"
+            );
+        }
         assert!(
             complaints[0].contains("`crates/../crates/an-engine` in [project] components")
                 && complaints[0].contains("`..` segment"),
@@ -837,19 +1276,36 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn a_refused_rules_path_stands_as_spelled() {
-        let text = "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
-                    skip-files = []\nexclude = []\n\n[lint]\nexempt-files = []\n\n[rules]\n\
-                    dir = \"../corpus\"\ntext = \"./t\"\nbody-starts-at = 0\nversion = \"v\"\n\
-                    past = \"p\"\nmanifest = \"m\"\n";
-        let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
-        assert_eq!(m.path_complaints().len(), 1, "{:?}", m.path_complaints());
-        assert!(m.path_complaints()[0].contains("in [rules] dir"));
-        assert_eq!(
-            m.rules().dir,
-            PathBuf::from("../corpus"),
-            "kept, to be reported absent"
-        );
+    fn a_refused_rules_path_fails_the_load_and_a_dot_spelled_one_is_normalised() {
+        // The corpus has no default to stand in for a refused row, and a path kept as
+        // spelled was joined and read: `index` once wrote through a `..` corpus directory.
+        // Every one of the five rows fails the same way.
+        let rules = |dir: &str, text: &str, version: &str, past: &str, manifest: &str| {
+            format!(
+                "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
+                 skip-files = []\nexclude = []\n\n[lint]\nexempt-files = []\n\n[rules]\n\
+                 dir = \"{dir}\"\ntext = \"{text}\"\nbody-starts-at = 0\nversion = \"{version}\"\n\
+                 past = \"{past}\"\nmanifest = \"{manifest}\"\n"
+            )
+        };
+        for (key, text) in [
+            ("dir", rules("../corpus", "t", "v", "p", "m")),
+            ("text", rules("corpus", "/t", "v", "p", "m")),
+            ("version", rules("corpus", "t", "../v", "p", "m")),
+            ("past", rules("corpus", "t", "v", "../p", "m")),
+            ("manifest", rules("corpus", "t", "v", "p", "/m")),
+        ] {
+            let e = Manifest::parse(Path::new("/nowhere"), &text).expect_err(key);
+            assert!(e.contains(&format!("in [rules] {key}")), "{key}: {e}");
+            assert!(e.contains("no default"), "{key}: {e}");
+        }
+        let m = Manifest::parse(
+            Path::new("/nowhere"),
+            &rules("./corpus", "./t", "v", "p", "m"),
+        )
+        .expect("a declaration");
+        assert!(whats(&m).is_empty(), "{:?}", whats(&m));
+        assert_eq!(m.rules().dir, PathBuf::from("corpus"));
         assert_eq!(m.rules().text, PathBuf::from("t"));
     }
 
@@ -914,7 +1370,7 @@ pub(crate) mod tests {
                 .shape,
             Shape::Heading
         );
-        assert!(m.register_complaints().is_empty());
+        assert!(whats(&m).is_empty());
     }
 
     /// A register declaration, folded into the built-in four.
@@ -952,39 +1408,23 @@ pub(crate) mod tests {
             )]
         );
         assert!(!r.built_in);
-        assert!(
-            m.register_complaints().is_empty(),
-            "{:#?}",
-            m.register_complaints()
-        );
+        assert!(whats(&m).is_empty(), "{:#?}", whats(&m));
     }
 
     #[test]
     fn a_declared_register_with_no_scope_or_no_shape_is_a_complaint() {
         let m = with_registers("[registers.reading]\nshape = \"file\"\n");
-        assert_eq!(m.register_complaints().len(), 1);
-        assert!(
-            m.register_complaints()[0].contains("scope"),
-            "{:?}",
-            m.register_complaints()
-        );
+        assert_eq!(whats(&m).len(), 1);
+        assert!(whats(&m)[0].contains("scope"), "{:?}", whats(&m));
         let m = with_registers("[registers.reading]\nscope = \"opt-in\"\n");
-        assert!(
-            m.register_complaints()[0].contains("shape"),
-            "{:?}",
-            m.register_complaints()
-        );
+        assert!(whats(&m)[0].contains("shape"), "{:?}", whats(&m));
     }
 
     #[test]
     fn a_built_in_register_accepts_kinds_on_issue_and_nothing_anywhere_else() {
         // The one extensible thing about a built-in, and the refusals beside it.
         let m = with_registers("[registers.issue]\nkinds = [\"defect\", \"todo\"]\n");
-        assert!(
-            m.register_complaints().is_empty(),
-            "{:?}",
-            m.register_complaints()
-        );
+        assert!(whats(&m).is_empty(), "{:?}", whats(&m));
         assert_eq!(
             m.registers().by_name("issue").expect("issue").kinds,
             vec!["defect", "todo"]
@@ -1002,12 +1442,8 @@ pub(crate) mod tests {
             ),
         ] {
             let m = with_registers(&format!("[registers.issue]\n{row}\n"));
-            assert_eq!(m.register_complaints().len(), 1, "{key}");
-            assert!(
-                m.register_complaints()[0].contains(key),
-                "{key}: {:?}",
-                m.register_complaints()
-            );
+            assert_eq!(whats(&m).len(), 1, "{key}");
+            assert!(whats(&m)[0].contains(key), "{key}: {:?}", whats(&m));
         }
         let m = with_registers("[registers.issue]\ndir = \"issues\"\n");
         // The compiled storage stands whatever the declaration said.
@@ -1020,12 +1456,8 @@ pub(crate) mod tests {
             Shape::File
         );
         let m = with_registers("[registers.design]\nkinds = [\"a\"]\n");
-        assert_eq!(m.register_complaints().len(), 1);
-        assert!(
-            m.register_complaints()[0].contains("kinds"),
-            "{:?}",
-            m.register_complaints()
-        );
+        assert_eq!(whats(&m).len(), 1);
+        assert!(whats(&m)[0].contains("kinds"), "{:?}", whats(&m));
     }
 
     #[test]

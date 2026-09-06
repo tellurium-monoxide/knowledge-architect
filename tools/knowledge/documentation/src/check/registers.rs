@@ -26,9 +26,9 @@ use std::path::{Path, PathBuf};
 
 use serde::Deserialize;
 
-use crate::entity::{Anchor, Anchors, Entities, Home, ESCAPE_ANCHOR, EVERY_ANCHOR};
+use crate::entity::{Anchor, Anchors, Entities, Home};
 use crate::finding::Finding;
-use crate::manifest::{Manifest, Register, Scope, Shape, COMPONENT_DOCUMENTS, MANIFEST_NAME};
+use crate::manifest::{Manifest, Register, Shape, COMPONENT_DOCUMENTS, MANIFEST_NAME};
 use crate::model::{Document, Model};
 use crate::scan::Observation;
 
@@ -69,23 +69,8 @@ pub fn check_under(
     // What the manifest itself got wrong, first: a register nobody can name and an anchor
     // nothing can point at break every pointer at them, which a reader would otherwise meet
     // as a dangling reference somewhere else entirely.
-    for complaint in manifest.register_complaints() {
-        out.push(Finding::in_file(
-            MANIFEST_NAME,
-            complaint.clone(),
-            "a declared register states its scope and its shape; a built-in register's \
-             storage is what the word component means and is not declared",
-        ));
-    }
-    for complaint in manifest.path_complaints() {
-        out.push(Finding::in_file(
-            MANIFEST_NAME,
-            complaint.clone(),
-            "spell the path the way git lists it, relative to the manifest's directory with \
-             no `..` and no leading `/`; the row is acted on by nothing until then",
-        ));
-    }
-    declarations(&mut out, manifest, anchors, inputs);
+    out.extend(manifest.complaints().iter().cloned());
+    declarations(&mut out, manifest, inputs);
 
     let mut counts = Counts {
         components: anchors.all().iter().filter(|a| a.is_component).count(),
@@ -218,120 +203,9 @@ fn outside_the_walk(
 }
 
 /// What the manifest declares about anchors, judged before anything is looked for on disk.
-fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, inputs: &Inputs) {
-    let mut by_name: BTreeMap<&str, Vec<String>> = BTreeMap::new();
-    for anchor in anchors.all() {
-        by_name
-            .entry(anchor.name.as_str())
-            .or_default()
-            .push(where_it_is(anchor));
-    }
-    for (name, places) in &by_name {
-        if places.len() > 1 {
-            out.push(Finding::in_file(
-                MANIFEST_NAME,
-                format!(
-                    "`{name}` names {} anchors: {}",
-                    places.len(),
-                    places.join(", ")
-                ),
-                "rename or move one; a reference names its anchor by that one word, so two \
-                 of them cannot share it",
-            ));
-        }
-        if !crate::entity::is_anchor_name(name) {
-            out.push(Finding::in_file(
-                MANIFEST_NAME,
-                format!("`{name}` cannot be spelled in a reference"),
-                "name it in letters, digits, `.`, `-` and `_`; an anchor nothing can point \
-                 at is one every pointer misses in silence",
-            ));
-        }
-        // The reserved anchors are compiled in, so an anchor wearing one could never be the
-        // target of a path reference: every pointer at it would read as the reserved meaning.
-        if *name == ESCAPE_ANCHOR || *name == EVERY_ANCHOR {
-            out.push(Finding::in_file(
-                MANIFEST_NAME,
-                format!("`{name}` is a reserved anchor and cannot name an anchor"),
-                "rename it; this word is reserved by the path kind",
-            ));
-        }
-    }
-
-    // A register's name is what a reference spells in kind position, so a name outside the id
-    // grammar is a register nothing can point at, and `path` is a name the resolver answers
-    // before it ever reaches the register list.
-    for register in manifest.registers().all() {
-        if register.name == crate::entity::PATH_KIND {
-            out.push(Finding::in_file(
-                MANIFEST_NAME,
-                format!(
-                    "`{}` is the reserved kind of a file or directory",
-                    register.name
-                ),
-                "rename the register; a reference whose kind segment is this word resolves \
-                 against the tree and never reaches the register",
-            ));
-        } else if !crate::entity::is_entity_id(&register.name) {
-            out.push(Finding::in_file(
-                MANIFEST_NAME,
-                format!(
-                    "`{}` cannot be spelled in a reference's kind segment",
-                    register.name
-                ),
-                "name it in lower-case words joined by hyphens; a register nothing can point \
-                 at is one every pointer misses in silence",
-            ));
-        }
-    }
-
-    // A register's home is `<home base>/<dir>`, so a `dir` that is not one plain segment
-    // puts the home somewhere the anchor does not reach — and `..` puts it outside the
-    // anchor entirely, where the real home then goes unchecked.
-    for register in manifest.registers().all() {
-        if !crate::entity::is_entity_id(&register.dir) {
-            out.push(Finding::in_file(
-                MANIFEST_NAME,
-                format!(
-                    "the {} register's directory `{}` is not one plain segment",
-                    register.name, register.dir
-                ),
-                "name it in lower-case words joined by hyphens; a `/` or a `..` puts the \
-                 home outside the anchor, and the real one is then read by nothing",
-            ));
-            continue;
-        }
-        // A component's homes sit under `docs/` beside its compiled documents, so a directory
-        // name that spells one of those makes one file both the document and a register's
-        // home. Every heading register has the file shape, so the `.md` is what collides;
-        // the compiled documents are all files, so the directory shape collides with none.
-        let document = format!("docs/{}.md", register.dir);
-        if register.scope == Scope::Component && COMPONENT_DOCUMENTS.contains(&document.as_str()) {
-            out.push(Finding::in_file(
-                MANIFEST_NAME,
-                format!(
-                    "the {} register's directory `{}` makes its home the compiled document \
-                     `{document}`",
-                    register.name, register.dir
-                ),
-                "give the register another directory; a compiled document is what every \
-                 component carries, and a file that is also a register home means two things",
-            ));
-        }
-    }
-
+fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
     for (name, decl) in manifest.locations() {
-        // A location whose path is empty is the project root, which is a component. Left
-        // standing it is an anchor `is_root` skips, so nothing reports it, and it takes every
-        // root document from the component under `Anchors::owning`.
-        if decl.path.as_os_str().is_empty() || decl.path == Path::new(".") {
-            out.push(Finding::in_file(
-                MANIFEST_NAME,
-                format!("[locations.{name}] names the project root"),
-                "give it a directory of its own; the root is a component, and it carries \
-                 every register already",
-            ));
-        } else if inputs.present.contains(&decl.path) && !inputs.directories.contains(&decl.path) {
+        if inputs.present.contains(&decl.path) && !inputs.directories.contains(&decl.path) {
             // Presence alone is satisfied by a file, and every home under it then reads as
             // absent, with a repair that says to create a directory inside a file.
             out.push(Finding::in_file(
@@ -343,20 +217,7 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
                 "a location is a directory carrying register homes; point it at one",
             ));
         }
-        for register in &decl.registers {
-            if manifest.registers().by_name(register).is_none() {
-                out.push(Finding::in_file(
-                    MANIFEST_NAME,
-                    format!("[locations.{name}] carries `{register}`, which is no register"),
-                    format!(
-                        "declare it in [registers.{register}], or name one of {}",
-                        manifest.registers().listed()
-                    ),
-                ));
-            }
-        }
     }
-    nesting(out, anchors);
 
     // **Every path the manifest declares is checked to exist.** A row naming a deleted file is
     // silent in both directions: nobody is told it is dead, and a file later created at that
@@ -903,137 +764,6 @@ fn in_order(
     }
 }
 
-/// No two anchors give one path two meanings.
-///
-/// An anchor is a directory, and its register homes sit under it. The deepest anchor owns
-/// every document under its path, per `design@knowledge@every-path-names-its-anchor`, so an
-/// anchor inside another's directory is the ordinary case — this repository's two locations
-/// both sit inside the root component. What that rule cannot absorb is an anchor whose
-/// directory is comparable with another anchor's register home, and both directions are
-/// refused here, per `design@knowledge@anchors-are-components-and-locations`:
-///
-/// - **the deeper anchor sits inside, or at, a home of the shallower one.** Every file under
-///   it would be read as an entry or a subdocument of the outer register, and reported
-///   against that register and its anchor rather than against the declaration.
-/// - **the deeper anchor's directory holds a home of the shallower one.** Being deeper, it
-///   would own every document in that home, and each slug defined there would be reported
-///   as misplaced against an anchor that carries no such register.
-///
-/// Two anchors at one path are the third shape: neither is deeper, `Anchors::owning` picks
-/// one on a tie, and every document under the path belongs to whichever it picked.
-///
-/// A component inside a location is refused on its own terms first, whether or not a home is
-/// involved: it nests a full register set inside a partial one. The pair is then not judged
-/// again here, so one declaration is one finding.
-fn nesting(out: &mut Vec<Finding>, anchors: &Anchors) {
-    let mut by_path: BTreeMap<&Path, Vec<&str>> = BTreeMap::new();
-    for anchor in anchors.all() {
-        by_path
-            .entry(anchor.path.as_path())
-            .or_default()
-            .push(anchor.name.as_str());
-    }
-    for (path, names) in &by_path {
-        // A location naming the root is reported as that by `declarations`, and the root
-        // component sitting at the same path is the same fact.
-        if names.len() > 1 && !path.as_os_str().is_empty() {
-            let named: Vec<String> = names.iter().map(|n| format!("`{n}`")).collect();
-            out.push(Finding::in_file(
-                MANIFEST_NAME,
-                format!(
-                    "two anchors sit at `{}`: {}",
-                    path.display(),
-                    named.join(", ")
-                ),
-                "move one; the deepest anchor owns every document under its path, and at one \
-                 path nothing decides which of the two that is",
-            ));
-        }
-    }
-
-    let kind = |anchor: &Anchor| {
-        if anchor.is_component {
-            "component"
-        } else {
-            "location"
-        }
-    };
-    for outer in anchors.all() {
-        for inner in anchors.all() {
-            if inner.path.components().count() <= outer.path.components().count()
-                || !inner.path.starts_with(&outer.path)
-            {
-                continue;
-            }
-            if inner.is_component && !outer.is_component {
-                out.push(Finding::in_file(
-                    MANIFEST_NAME,
-                    format!(
-                        "the component `{}` sits inside the location `{}`",
-                        inner.name, outer.name
-                    ),
-                    "move one out of the other; a location carries a subset of the registers \
-                     and a component carries them all, so nesting gives one document two homes",
-                ));
-                continue;
-            }
-            let mut held: Vec<&str> = Vec::new();
-            for name in &outer.registers {
-                let Some(register) = anchors.registers().by_name(name) else {
-                    continue;
-                };
-                // The directory shape alone: a heading register's file sits beside its
-                // directory, so whatever holds the one holds the other, and an anchor cannot
-                // sit inside a file.
-                let home = outer.home_of(register).dir;
-                if inner.path.starts_with(&home) {
-                    out.push(Finding::in_file(
-                        MANIFEST_NAME,
-                        format!(
-                            "the {} `{}` sits inside the {} register's directory `{}` of `{}`",
-                            kind(inner),
-                            inner.name,
-                            register.name,
-                            home.display(),
-                            outer.name
-                        ),
-                        "move it out; the directory is the register's home in one shape and \
-                         reserved in the other, and every file under the anchor would be \
-                         read as an entry or a subdocument of it",
-                    ));
-                } else if home.starts_with(&inner.path) {
-                    held.push(&register.name);
-                }
-            }
-            if !held.is_empty() {
-                out.push(Finding::in_file(
-                    MANIFEST_NAME,
-                    format!(
-                        "the {} `{}` at `{}` holds the {} of `{}`",
-                        kind(inner),
-                        inner.name,
-                        inner.path.display(),
-                        list_homes(&held),
-                        outer.name
-                    ),
-                    "move it out; the deepest anchor owns every document under its path, so \
-                     each slug defined in those homes would be misplaced against an anchor \
-                     that carries no such register",
-                ));
-            }
-        }
-    }
-}
-
-/// `design home`, `design and goal homes`, `design, goal and issue homes`.
-fn list_homes(registers: &[&str]) -> String {
-    match registers {
-        [one] => format!("{one} home"),
-        [head @ .., last] => format!("{} and {last} homes", head.join(", ")),
-        [] => String::new(),
-    }
-}
-
 /// Every path the README's markdown links resolve to.
 ///
 /// A link's target resolves against the README's own directory, the way a renderer follows
@@ -1061,15 +791,6 @@ fn links(model: &Model, readme: &PathBuf, dir: &Path) -> HashSet<PathBuf> {
         resolved.insert(dir.join(file_part));
     }
     resolved
-}
-
-/// How a finding names an anchor's place: its path, or the root.
-fn where_it_is(anchor: &Anchor) -> String {
-    if anchor.is_root() {
-        "the project root".to_string()
-    } else {
-        anchor.path.display().to_string()
-    }
 }
 
 #[cfg(test)]
@@ -1297,20 +1018,16 @@ mod tests {
 
     #[test]
     fn a_subdocument_is_a_markdown_file_this_anchor_owns_and_nothing_else() {
-        // Two things the enumeration excludes, each a false demand on the README if it did
-        // not: a Rust source under the home, which the model holds like any other document,
-        // and a markdown file belonging to an anchor nested under the home. The nested
-        // anchor is itself refused, and that refusal is the one finding: the README is not
-        // asked to link a document the refused anchor owns.
-        let manifest = declaring("\"docs/goals/nested\"");
+        // A Rust source under the home is held by the model like any other document and is
+        // no subdocument, so the README is not asked to link it. An anchor nested under the
+        // home is refused at resolution and is no anchor, so no second exclusion is needed.
+        let manifest = declaring("");
         let mut present = all_of("");
         present.retain(|p| p != "docs/goals.md");
         present.push("docs/goals".to_string());
         present.push("docs/goals/README.md".to_string());
         present.push("docs/goals/one.md".to_string());
         present.push("docs/goals/gen.rs".to_string());
-        present.push("docs/goals/nested".to_string());
-        present.extend(all_of("docs/goals/nested"));
         let model = Model::from_documents(vec![
             (
                 PathBuf::from("docs/goals/README.md"),
@@ -1324,17 +1041,9 @@ mod tests {
                 PathBuf::from("docs/goals/gen.rs"),
                 "// a generator that lives beside the home\n".to_string(),
             ),
-            (
-                PathBuf::from("docs/goals/nested/docs/goals/README.md"),
-                "# Goals\n".to_string(),
-            ),
         ]);
         let found = findings_over(&manifest, &present, model, &[]);
-        assert_eq!(found.len(), 1, "{found:#?}");
-        assert!(
-            found[0].contains("sits inside the goal register's directory"),
-            "{found:#?}"
-        );
+        assert!(found.is_empty(), "{found:#?}");
     }
 
     #[test]
@@ -1623,14 +1332,14 @@ mod tests {
     #[test]
     fn a_location_naming_no_such_register_and_a_component_inside_one_are_each_reported() {
         let manifest = declaring_full(
-            "\"docs/a-part\"",
-            "[locations.docs]\npath = \"docs\"\nregisters = [\"nonesuch\"]\n\n",
+            "\"notes/a-part\"",
+            "[locations.notes]\npath = \"notes\"\nregisters = [\"nonesuch\"]\n\n",
             "[]",
             "[]",
             "[]",
             "[]",
         );
-        let found = findings(&manifest, &["docs"]);
+        let found = findings(&manifest, &["notes"]);
         assert!(
             found
                 .iter()
@@ -1640,7 +1349,12 @@ mod tests {
         assert!(
             found
                 .iter()
-                .any(|f| f.contains("sits inside the location `docs`")),
+                .any(|f| f.contains("sits inside the location `notes`")),
+            "{found:#?}"
+        );
+        // The refused component is no anchor: nothing asserts its documents.
+        assert!(
+            !found.iter().any(|f| f.contains("`a-part` carries no")),
             "{found:#?}"
         );
     }
@@ -1674,7 +1388,7 @@ mod tests {
         let manifest = declaring_full(
             "",
             "[locations.papers]\npath = \"./docs/plans\"\nregisters = [\"issue\"]\n\n",
-            "[]",
+            "[\"/build\"]",
             "[]",
             "[\"vendor/../vendor\"]",
             "[]",
@@ -1685,10 +1399,16 @@ mod tests {
         present.push("docs/plans/open-issues/README.md".to_string());
         present.push("docs/plans/open-issues/index.md".to_string());
         let found = findings(&manifest, &present);
-        assert_eq!(found.len(), 1, "{found:#?}");
+        // Every complaint, not the first: two refused rows are two findings.
+        assert_eq!(found.len(), 2, "{found:#?}");
         assert!(
             found[0].starts_with(MANIFEST_NAME)
-                && found[0].contains("`vendor/../vendor` in [walk] exclude spells a `..` segment"),
+                && found[0].contains("`/build` in [walk] skip-dirs is not project-relative"),
+            "{found:#?}"
+        );
+        assert!(
+            found[1].starts_with(MANIFEST_NAME)
+                && found[1].contains("`vendor/../vendor` in [walk] exclude spells a `..` segment"),
             "{found:#?}"
         );
     }
@@ -1727,7 +1447,9 @@ mod tests {
         );
         let found = findings(&manifest, &["x"]);
         assert!(
-            found.iter().any(|f| f.contains("is a reserved anchor")),
+            found
+                .iter()
+                .any(|f| f.contains("the reserved name `elsewhere`")),
             "{found:#?}"
         );
     }
@@ -1946,19 +1668,30 @@ mod tests {
         present.push("docs/open-issues/nested/open-issues/README.md".to_string());
         present.push("docs/open-issues/nested/open-issues/index.md".to_string());
         present.push("docs/open-issues/nested/scratch.txt".to_string());
-        // The nested anchor's README is a walked document and a stray file sits beside its
-        // home, and nothing under the nested anchor is an entry, a group or a stray file of
-        // the OUTER register: the refusal is the one finding, so a reader repairs the
-        // declaration and not the directory.
+        // The refused location is no anchor. The complaint comes first, nothing is asserted
+        // against `nested` as an anchor, and what its directory then is — a stray
+        // subdirectory of the outer issue register — is reported as that, which is true of
+        // the tree. The phase gate is what keeps those later findings off the report.
         let model = Model::from_documents(vec![(
             PathBuf::from("docs/open-issues/nested/open-issues/README.md"),
             "# Nested issues\n".to_string(),
         )]);
         let found = findings_over(&manifest, &present, model, &[]);
-        assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
             found[0].contains("the location `nested` sits inside the issue register's directory")
                 && found[0].contains("`docs/open-issues` of `a-project`"),
+            "{found:#?}"
+        );
+        assert!(
+            !found
+                .iter()
+                .any(|f| f.contains("of `nested`") || f.contains("anchor `nested`")),
+            "{found:#?}"
+        );
+        assert!(
+            found
+                .iter()
+                .any(|f| f.contains("`nested` is a subdirectory of the issue register")),
             "{found:#?}"
         );
     }
@@ -2006,10 +1739,21 @@ mod tests {
         present.push("notes/open-issues/part".to_string());
         present.extend(all_of("notes/open-issues/part"));
         let found = findings(&manifest, &present);
-        let about: Vec<&String> = found.iter().filter(|f| f.contains("`part`")).collect();
-        assert_eq!(about.len(), 1, "{found:#?}");
+        let complaints: Vec<&String> = found
+            .iter()
+            .filter(|f| f.starts_with(MANIFEST_NAME) && f.contains("`part`"))
+            .collect();
+        assert_eq!(complaints.len(), 1, "{found:#?}");
         assert!(
-            about[0].contains("the component `part` sits inside the location `notes`"),
+            complaints[0].contains("the component `part` sits inside the location `notes`"),
+            "{found:#?}"
+        );
+        // What the refused component's directory then is: a stray subdirectory of the
+        // location's issue register, which is true of the tree.
+        assert!(
+            found
+                .iter()
+                .any(|f| f.contains("`part` is a subdirectory of the issue register")),
             "{found:#?}"
         );
     }
@@ -2064,16 +1808,6 @@ mod tests {
         assert!(
             found[0].contains("the component `nested` sits inside the goal register's directory"),
             "{found:#?}"
-        );
-    }
-
-    #[test]
-    fn the_homes_a_finding_lists_read_as_prose_at_every_count() {
-        assert_eq!(list_homes(&["design"]), "design home");
-        assert_eq!(list_homes(&["design", "goal"]), "design and goal homes");
-        assert_eq!(
-            list_homes(&["design", "goal", "issue"]),
-            "design, goal and issue homes"
         );
     }
 
