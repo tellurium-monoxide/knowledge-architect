@@ -310,6 +310,25 @@ impl Model {
         }
     }
 
+    /// Add a document the caller could not read, empty and carrying the reason.
+    ///
+    /// The way `build` keeps an unreadable file: in the model, so that `check::tree` reports
+    /// it and the run stops there, rather than absent, which is the silence the walk exists
+    /// against. `commits` uses it for a tree entry whose blob is not text.
+    pub fn push_unreadable(&mut self, rel: PathBuf, trouble: String) {
+        self.docs.push(Document {
+            rel,
+            text: String::new(),
+            parsed: Parsed {
+                trouble: Some(trouble),
+                ..Parsed::default()
+            },
+            pin: None,
+            observations: Vec::new(),
+            literals: Literals::Prose,
+        });
+    }
+
     pub fn root(&self) -> &Path {
         &self.root
     }

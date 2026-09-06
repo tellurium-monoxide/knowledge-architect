@@ -670,6 +670,29 @@ fn resolve_registers(registers: &mut Registers, complaints: &mut Vec<Finding>) {
             None => true,
         }
     });
+    // Two component registers at one directory: the first one asked would answer for every
+    // entry in the shared home, and every reference of the other kind would dangle for ever
+    // with nothing said. The later-declared one is refused; the built-in four come first.
+    let mut taken: Vec<(String, String)> = Vec::new();
+    registers.0.retain(|register| {
+        if register.scope != Scope::Component {
+            return true;
+        }
+        if let Some((other, _)) = taken.iter().find(|(_, dir)| *dir == register.dir) {
+            complaints.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!(
+                    "the {} and {other} registers share the home directory `{}`",
+                    register.name, register.dir
+                ),
+                "give each register a directory of its own; one home answers for one \
+                 register, and the other's references resolve to nothing",
+            ));
+            return false;
+        }
+        taken.push((register.name.clone(), register.dir.clone()));
+        true
+    });
 }
 
 /// One anchor as the declaration names it, before it is accepted.
@@ -750,9 +773,9 @@ fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &
     for (name, decl) in &mut declared.locations {
         // A location carries the registers it names, and a name that is no register is a
         // complaint against the row rather than a register the location silently lacks.
+        let mut dirs: Vec<(String, String)> = Vec::new();
         decl.registers.retain(|register| {
-            let known = registers.by_name(register).is_some();
-            if !known {
+            let Some(known) = registers.by_name(register) else {
                 complaints.push(Finding::in_file(
                     MANIFEST_NAME,
                     format!("[locations.{name}] carries `{register}`, which is no register"),
@@ -761,8 +784,25 @@ fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &
                         registers.listed()
                     ),
                 ));
+                return false;
+            };
+            // Two of its registers at one directory: the same collision the component
+            // registers are refused for, per location.
+            if let Some((other, _)) = dirs.iter().find(|(_, dir)| *dir == known.dir) {
+                complaints.push(Finding::in_file(
+                    MANIFEST_NAME,
+                    format!(
+                        "[locations.{name}] carries the {} and {other} registers at one \
+                         directory, `{}`",
+                        known.name, known.dir
+                    ),
+                    "give each register a directory of its own; one home answers for one \
+                     register, and the other's references resolve to nothing",
+                ));
+                return false;
             }
-            known
+            dirs.push((known.name.clone(), known.dir.clone()));
+            true
         });
         candidates.push(Candidate {
             name: name.clone(),

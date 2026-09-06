@@ -561,20 +561,18 @@ mod planted {
         // dangling tripwire reference, a link outside a navigation home, and the retired `@`
         // escape with its empty head. The definition-site findings are `registers`'.
         (Only::REFERENCES, Planted::InRun(18), "is referenced"),
-        // One defect per assertion the register shapes make: a declared path that is not
-        // there, a missing heading home, the retired file shape of a file register, a missing
-        // index, an undeclared kind, a missing owed subsection, an id no reference can spell,
-        // an undeclared group, a file of another suffix, frontmatter that does not parse, a
-        // location whose home is absent, and the six definition-site findings the entity table
-        // produces.
-        (Only::REGISTERS, Planted::InRun(17), "PLANTED"),
+        // One defect per shape assertion over what is there: a missing index, an undeclared
+        // kind, a missing owed subsection, an undeclared group, a file of another suffix, and
+        // frontmatter that does not parse. Whether a home EXISTS is phase 2, and the
+        // definition-site findings are phase 3: both are `unsound`'s, below.
+        (Only::REGISTERS, Planted::InRun(6), "PLANTED"),
         (Only::UNCOVERED, Planted::InRun(1), "is outside the walk"),
-        // Three generated files: the rule index, and one index per file-register instance
+        // Four generated files: the rule index, and one index per file-register instance
         // whose directory is there. Every family is handed an empty committed set, so each
         // is reported missing.
         (
             Only::GENERATED,
-            Planted::InRun(3),
+            Planted::InRun(4),
             "the generated file is missing",
         ),
         (
@@ -602,8 +600,8 @@ mod planted {
         let found = findings_of(current_indexes, pair);
         assert_eq!(
             found.len(),
-            35,
-            "eighteen reference defects and seventeen register defects: {found:#?}"
+            24,
+            "eighteen reference defects and six register defects: {found:#?}"
         );
         assert!(
             !found.iter().any(|f| f.contains("no rule says this")),
@@ -854,8 +852,8 @@ mod planted {
         let gone = findings_with(|_, _, _| HashMap::new());
         assert_eq!(
             gone.iter().filter(|f| f.contains("is missing")).count(),
-            3,
-            "the rule index and the two file-register indexes: {gone:#?}"
+            4,
+            "the rule index and the three file-register indexes: {gone:#?}"
         );
     }
 
@@ -951,46 +949,6 @@ mod planted {
     }
 
     #[test]
-    fn a_slug_defined_twice_in_one_instance_is_reported_at_both_sites() {
-        // A rename that left one behind. The reader who opens either copy is told about the
-        // other.
-        let all = findings();
-        let dup: Vec<&String> = all
-            .iter()
-            .filter(|f| f.contains("`design@planted@twice-defined` is also defined at"))
-            .collect();
-        assert_eq!(dup.len(), 2, "{all:#?}");
-        assert!(
-            dup.iter()
-                .any(|f| f.starts_with("docs/design.md:5") && f.contains("docs/design.md:9")),
-            "{dup:#?}"
-        );
-        assert!(
-            dup.iter()
-                .any(|f| f.starts_with("docs/design.md:9") && f.contains("docs/design.md:5")),
-            "{dup:#?}"
-        );
-    }
-
-    #[test]
-    fn a_misplaced_definition_is_reported_where_it_stands_and_defines_nothing() {
-        // Three shapes over a real walk: a level-four heading and a line head inside the
-        // design home, and a level-three heading in a file that is no register home.
-        let deep = one("`##too-deep` is written at a level-4 heading");
-        assert!(deep.starts_with("docs/design.md:11"), "{deep}");
-        let head = one("`##line-head` is written at the head of a plain line");
-        assert!(head.starts_with("docs/design.md:13"), "{head}");
-        let stray = one("`##stray-anchor` is written at `notes/structure.md`");
-        assert!(stray.starts_with("notes/structure.md:3"), "{stray}");
-        assert!(
-            stray.contains("no heading register home of `planted`"),
-            "{stray}"
-        );
-        let inline = one("`##twice-defined` is written at the middle of a line");
-        assert!(inline.starts_with("notes/structure.md:41"), "{inline}");
-    }
-
-    #[test]
     fn an_empty_head_in_front_of_a_path_shape_is_malformed_rather_than_silent() {
         let f = one("`@notes/p.md` is malformed: the kind segment is empty");
         assert!(f.starts_with("notes/structure.md:43"), "{f}");
@@ -1024,32 +982,15 @@ mod planted {
     }
 
     #[test]
-    fn a_heading_register_home_that_is_missing_is_reported_at_the_path_it_belongs_at() {
-        let f = one("carries no tripwire home");
-        assert!(f.starts_with("parts/widget/docs/tripwires.md"), "{f}");
-        assert!(f.contains("`widget`"), "{f}");
-    }
-
-    #[test]
-    fn a_location_whose_declared_register_has_no_home_is_reported() {
-        // A location carries the registers it declares and nothing else, so a missing home is
-        // a finding against the location. Undeclared, the directory would be read by nothing.
-        let f = one("the anchor `agent-config` carries no issue directory");
-        assert!(f.starts_with("agent-config/open-issues"), "{f}");
-    }
-
-    #[test]
     fn every_shape_a_file_register_asserts_has_a_planted_defect() {
-        // One per assertion, over a real walk: the retired file shape beside the directory,
-        // the missing index, a kind the closed list does not hold, a missing owed subsection,
-        // an id no reference can spell, a subdirectory that is no declared group, and a file
-        // of another suffix inside the instance.
-        assert!(one("retired file shape").starts_with("docs/open-issues.md"));
+        // One per shape assertion, over a real walk: the missing index, a kind the closed
+        // list does not hold, a missing owed subsection, a subdirectory that is no declared
+        // group, and a file of another suffix inside the instance. The retired file shape
+        // and an id no reference can spell are `unsound`'s.
         assert!(one("has no index.md").starts_with("docs/open-issues/index.md"));
         assert!(one("no accepted value").starts_with("docs/open-issues/a-wrong-kind.md"));
         assert!(one("no level-three subsection `What would close it`")
             .starts_with("docs/open-issues/a-missing-subsection.md"));
-        assert!(one("cannot be an entry id").starts_with("docs/open-issues/Not_An_Id.md"));
         assert!(one("is no declared group").contains("an-undeclared-group"));
         assert!(one("is not an entry of the issue register").contains("nonsense.txt"));
         assert!(one("does not parse: line 3 declares `kind` a second time")
@@ -1086,6 +1027,175 @@ mod planted {
             .sum();
         let whole = findings_of(|_, _, _| HashMap::new(), Only::EVERYTHING);
         assert_eq!(whole.len(), planted, "{whole:#?}");
+    }
+}
+
+/// The phase gate, against a project that plants one defect per assertion of the phases that
+/// read the tree, and behind them the definition-site defects of the entity table.
+///
+/// The gate is what keeps a finding computed over an incomplete model off the report: a run
+/// over this project stops at phase 2. These tests reach each phase's own function, so the
+/// phase-3 defects are asserted even though a run never prints them.
+mod unsound {
+    use super::*;
+    use documentation::check::{foundation, tree, Inputs, Phase};
+    use documentation::entity::{Anchors, Entities};
+    use std::collections::HashMap;
+
+    /// The findings of `tree::check`, phase 2, over the project.
+    fn phase_two() -> Vec<String> {
+        let manifest = mock("unsound");
+        let model = Model::build(&manifest, None).expect("a model");
+        let survey =
+            documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+        let git = git_answers(&manifest, &model);
+        let releases = HashMap::new();
+        let inputs = Inputs {
+            releases: &releases,
+            pinned: "20200101",
+            committed: &HashMap::new(),
+            configs: &configs(&manifest),
+            present: &survey.present,
+            directories: &survey.directories,
+            outside: &survey.outside,
+            ignored: &git.0,
+            tracked_and_ignored: &git.1,
+            refused: &survey.refused,
+        };
+        assert!(
+            manifest.complaints().is_empty(),
+            "{:#?}",
+            manifest.complaints()
+        );
+        let stopped = foundation(&model, &manifest, &inputs).expect_err("the run stops");
+        assert_eq!(stopped.phase, Phase::Tree);
+        let found: Vec<String> = tree::check(&model, &manifest, &inputs)
+            .iter()
+            .map(|f| format!("{}  {}", f.location(), f.what))
+            .collect();
+        let printed: Vec<String> = stopped
+            .findings
+            .iter()
+            .map(|f| format!("{}  {}", f.location(), f.what))
+            .collect();
+        assert_eq!(
+            printed, found,
+            "the stop carries exactly phase 2's findings"
+        );
+        found
+    }
+
+    /// The findings of the entity table, phase 3, over the project.
+    fn phase_three() -> Vec<String> {
+        let manifest = mock("unsound");
+        let model = Model::build(&manifest, None).expect("a model");
+        let anchors = Anchors::of(&manifest);
+        Entities::build(&model, &anchors)
+            .definition_findings()
+            .iter()
+            .map(|f| format!("{}  {}", f.location(), f.what))
+            .collect()
+    }
+
+    fn one_of(all: &[String], needle: &str) -> String {
+        let hits: Vec<&String> = all.iter().filter(|f| f.contains(needle)).collect();
+        assert_eq!(hits.len(), 1, "expected exactly one {needle:?} in {all:#?}");
+        hits[0].clone()
+    }
+
+    #[test]
+    fn every_phase_two_assertion_has_a_planted_defect_and_nothing_else_is_reported() {
+        let found = phase_two();
+        assert!(one_of(&found, "could not be read as text").starts_with("notes/latin1.md:1"));
+        assert!(one_of(
+            &found,
+            "is declared in [lint] exempt-files and does not exist"
+        )
+        .contains("notes/gone.md"));
+        assert!(one_of(&found, "retired file shape").starts_with("docs/open-issues.md"));
+        let home = one_of(&found, "carries no tripwire home");
+        assert!(home.starts_with("parts/widget/docs/tripwires.md"), "{home}");
+        assert!(home.contains("`widget`"), "{home}");
+        // A location carries the registers it declares and nothing else, so a missing home
+        // is a finding against the location. Undeclared, the directory would be read by
+        // nothing.
+        assert!(one_of(
+            &found,
+            "the anchor `agent-config` carries no issue directory"
+        )
+        .starts_with("agent-config/open-issues"));
+        assert_eq!(found.len(), 5, "{found:#?}");
+    }
+
+    #[test]
+    fn a_slug_defined_twice_in_one_instance_is_reported_at_both_sites() {
+        // A rename that left one behind. The reader who opens either copy is told about the
+        // other.
+        let all = phase_three();
+        let dup: Vec<&String> = all
+            .iter()
+            .filter(|f| f.contains("`design@unsound@twice-defined` is also defined at"))
+            .collect();
+        assert_eq!(dup.len(), 2, "{all:#?}");
+        assert!(
+            dup.iter().any(|f| f.starts_with("docs/design/planted.md:3")
+                && f.contains("docs/design/planted.md:7")),
+            "{dup:#?}"
+        );
+        assert!(
+            dup.iter().any(|f| f.starts_with("docs/design/planted.md:7")
+                && f.contains("docs/design/planted.md:3")),
+            "{dup:#?}"
+        );
+    }
+
+    #[test]
+    fn a_misplaced_definition_is_reported_where_it_stands_and_defines_nothing() {
+        // Three shapes over a real walk: a level-four heading and a line head inside the
+        // design home, and a level-three heading in a file that is no register home.
+        let all = phase_three();
+        let deep = one_of(&all, "`##too-deep` is written at a level-4 heading");
+        assert!(deep.starts_with("docs/design/planted.md:9"), "{deep}");
+        let head = one_of(&all, "`##line-head` is written at the head of a plain line");
+        assert!(head.starts_with("docs/design/planted.md:11"), "{head}");
+        let stray = one_of(&all, "`##stray-anchor` is written at `notes/structure.md`");
+        assert!(stray.starts_with("notes/structure.md:3"), "{stray}");
+        assert!(
+            stray.contains("no heading register home of `unsound`"),
+            "{stray}"
+        );
+        let inline = one_of(&all, "`##twice-defined` is written at the middle of a line");
+        assert!(inline.starts_with("notes/structure.md:5"), "{inline}");
+        assert!(one_of(&all, "cannot be an entry id").starts_with("docs/open-issues/Not_An_Id.md"));
+        assert_eq!(all.len(), 7, "{all:#?}");
+    }
+
+    /// The negative half of the gate: the projects that reach phase 4 have nothing in the
+    /// first three, so a stop is never mistaken for a pass and a pass never hides a stop.
+    #[test]
+    fn planted_and_dirhome_are_complete_through_phase_three() {
+        for name in ["planted", "dirhome"] {
+            let manifest = mock(name);
+            let model = Model::build(&manifest, None).expect("a model");
+            let survey =
+                documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
+            let git = git_answers(&manifest, &model);
+            let releases = HashMap::new();
+            let inputs = Inputs {
+                releases: &releases,
+                pinned: "20200101",
+                committed: &HashMap::new(),
+                configs: &configs(&manifest),
+                present: &survey.present,
+                directories: &survey.directories,
+                outside: &survey.outside,
+                ignored: &git.0,
+                tracked_and_ignored: &git.1,
+                refused: &survey.refused,
+            };
+            let outcome = foundation(&model, &manifest, &inputs);
+            assert!(outcome.is_ok(), "{name}: {:#?}", outcome.err());
+        }
     }
 }
 

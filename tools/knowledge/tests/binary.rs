@@ -170,6 +170,78 @@ fn modified(path: &Path) -> SystemTime {
         .expect("an mtime")
 }
 
+/// The claim: a run over a tree the walk could not read completely reports that phase alone,
+/// whatever was asked for, and no later finding prints.
+///
+/// The `unsound` project plants one defect per phase-2 assertion, and behind them the
+/// phase-3 ones; a full run and a `citations`-only run both stop at phase 2, so no selection
+/// can hide the unread file. Every phase-4 planted defect is `planted`'s, which reaches phase
+/// 4 because it is clean before it.
+#[test]
+fn a_run_over_an_incomplete_model_reports_that_phase_alone_whatever_was_asked_for() {
+    for args in [vec!["check"], vec!["check", "--only", "citations"]] {
+        let (stdout, stderr, code) = run("unsound", &args);
+        assert_eq!(code, 1, "{args:?}: {stdout}{stderr}");
+        assert!(
+            stdout.contains("phase 2:") && stdout.contains("phases 3 and 4 were not judged"),
+            "{args:?}: {stdout}"
+        );
+        assert!(
+            stdout.contains("could not be read as text") && stdout.contains("latin1.md"),
+            "the unreadable file is named: {args:?}: {stdout}"
+        );
+        assert!(
+            stdout.contains("carries no tripwire home")
+                && stdout.contains("carries no issue directory")
+                && stdout.contains("retired file shape")
+                && stdout.contains("notes/gone.md"),
+            "{args:?}: {stdout}"
+        );
+        // Nothing of phase 3 or 4: no definition-site finding, no count of any family.
+        assert!(
+            !stdout.contains("defines nothing")
+                && !stdout.contains("is also defined at")
+                && !stdout.contains("cannot be an entry id")
+                && !stdout.contains("checked:")
+                && !stdout.contains("references:"),
+            "{args:?}: {stdout}"
+        );
+    }
+    let (stdout, _, _) = run("planted", &["check"]);
+    assert!(
+        !stdout.contains("phase ") && stdout.contains("checked:"),
+        "planted reaches phase 4: {stdout}"
+    );
+}
+
+/// The claim: a definition-site defect alone stops the run at phase 3, and the references
+/// that would dangle because of it are not judged.
+#[test]
+fn a_definition_site_defect_stops_the_run_at_phase_three() {
+    let sandbox = Sandbox::seeded(
+        "phase-three",
+        "dirhome",
+        &[(
+            "docs/design/misplaced.md",
+            "# Misplaced\n\n#### Too deep `##too-deep`\n\nIt points at `design@dirhome@too-deep`.\n",
+        )],
+    );
+    let (stdout, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains("phase 3:") && stdout.contains("phase 4 was not judged"),
+        "{stdout}"
+    );
+    assert!(
+        stdout.contains("`##too-deep` is written at a level-4 heading"),
+        "{stdout}"
+    );
+    assert!(
+        !stdout.contains("is referenced") && !stdout.contains("not linked from"),
+        "no phase-4 finding: {stdout}"
+    );
+}
+
 #[test]
 fn a_run_with_no_only_performs_every_family() {
     let (stdout, _, code) = run("planted", &["check"]);
@@ -951,9 +1023,17 @@ fn a_tracked_document_an_ignore_line_covers_is_walked_and_reported() {
     sandbox.stage();
     let (after, stderr, code) = sandbox.run(&["check", "--only", "references,registers"]);
     assert_eq!(code, 1, "{after}{stderr}");
-    assert!(
-        after.contains("no-such-thing"),
+    // The contradiction is a phase-2 fact, so the run stops there and the dangling reference
+    // is not judged; that the document is still walked is what the walk count says.
+    assert_eq!(
+        walked_count(&after),
+        walked_count(&before),
         "the document must still be walked: {after}"
+    );
+    assert!(after.contains("phase 2:"), "{after}");
+    assert!(
+        !after.contains("no-such-thing"),
+        "nothing later is judged over an incomplete model: {after}"
     );
     assert!(
         after.contains("notes/b.md") && after.contains("git tracks this file"),
@@ -1230,9 +1310,14 @@ impl History {
     }
 
     fn write(&self, rel: &str, text: &str) {
+        self.write_bytes(rel, text.as_bytes());
+    }
+
+    /// The same, for bytes that are not text: a blob the walk reads as a document.
+    fn write_bytes(&self, rel: &str, bytes: &[u8]) {
         let path = self.dir.join(rel);
         std::fs::create_dir_all(path.parent().expect("a parent")).expect("the parent directory");
-        std::fs::write(&path, text).expect("a written fixture file");
+        std::fs::write(&path, bytes).expect("a written fixture file");
     }
 
     fn remove(&self, rel: &str) {
@@ -1557,6 +1642,27 @@ fn a_commit_whose_manifest_does_not_load_is_skipped_and_named_and_the_next_one_i
 /// whose release is missing is passed over in silence. Over a per-commit tree the whole corpus
 /// can be absent, and then every quote in the tree and in the message is checked by nothing
 /// while the run reports the commit judged and clean.
+/// The claim: a tree entry the walk reads as a document and whose blob is not text is a
+/// finding of that tree, so the commit is skipped for it rather than judged clean over a
+/// document nothing read.
+#[test]
+fn a_commit_holding_a_blob_that_is_not_text_fails_its_tree() {
+    let history = History::new("commit-blob");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    history.write_bytes(
+        "docs/latin1.md",
+        b"# A note\n\nOne byte of Windows-1252: caf\xe9.\n",
+    );
+    let sha = history.commit("A note that is not text is added\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("{sha} judged; its own tree fails 1 finding(s)")),
+        "{stdout}"
+    );
+}
+
 #[test]
 fn a_commit_whose_tree_supplies_no_release_is_skipped() {
     let history = History::new("commit-no-corpus");

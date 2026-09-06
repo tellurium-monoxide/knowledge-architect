@@ -1,0 +1,41 @@
+# WHAT THIS MOCK EXERCISES: the phase gate. It carries one planted defect per assertion of
+# the first phases that read the tree — a declared path that is not there, a missing heading
+# home, the retired file shape of a file register, a location whose home is absent, a file
+# the walk cannot read as text — and, behind them, the definition-site defects of the entity
+# table: a slug defined twice, one at a level the grammar does not accept, one at the head of
+# a plain line, one outside every register home, one in the middle of a line, and an entry id
+# no reference can spell. A run over it stops at phase 2 and prints those findings alone; the
+# tests in `path@knowledge@tests/mock_projects.rs` reach the phase-3 defects by calling the
+# entity table directly. The phase-4 defects, one per family, are `planted`'s, which is clean
+# through phase 3 for exactly that reason.
+
+[project]
+name = "unsound"
+components = ["parts/widget"]
+
+# PLANTED: a location whose issue directory is not there. A location carries the registers it
+# declares, so the missing home is a finding against the location rather than a silent gap.
+[locations.agent-config]
+path = "agent-config"
+registers = ["issue"]
+
+[walk]
+skip-dirs = []
+# The rules text is not a citation of itself; the changelog pins its own release per section;
+# and the rule index is generated. No row names a file-register index: the tool derives that
+# set from the register instances, so those are outside the walk by construction.
+skip-files = ["corpus/CompRules.txt", "corpus/CHANGES.md", "corpus/index.md"]
+exclude = []
+
+[lint]
+# PLANTED: `notes/gone.md` is not there. An exemption naming a file that does not exist is the
+# stale row this check reports — silent otherwise, and inherited by whatever is created there.
+exempt-files = ["notes/gone.md"]
+
+[rules]
+dir = "corpus"
+text = "CompRules.txt"
+body-starts-at = 0
+version = "VERSION"
+past = "past"
+manifest = "past/MANIFEST.tsv"

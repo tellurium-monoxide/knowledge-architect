@@ -425,7 +425,16 @@ fn commit_tree(
             None => missing.push(rel.clone()),
         }
     }
-    let model = Model::from_documents_under(docs, checker);
+    let mut model = Model::from_documents_under(docs, checker);
+    for rel in missing {
+        model.push_unreadable(
+            rel,
+            "this tree entry holds no text the tool can read; the walk reads it as a \
+             document, so a binary blob at this path leaves a live document out of every \
+             check"
+                .to_string(),
+        );
+    }
 
     let mut releases = HashMap::new();
     let judging = depth == Depth::Judged;
@@ -529,24 +538,25 @@ fn commit_tree(
     if !judging {
         return Ok(assembly);
     }
-    let report = check::run(
-        &assembly.model,
-        &assembly.manifest,
-        &assembly.inputs(),
-        Only::EVERYTHING
-            .without(Only::CORPUS)
-            .without(Only::CHANGES),
-    );
-    assembly.trouble = report.findings;
-    assembly.trouble.extend(unresolved);
-    for rel in missing {
-        assembly.trouble.push(Finding::in_file(
-            &rel,
-            "this tree entry holds no text the tool can read",
-            "the walk reads it as a document, so a binary blob at this path leaves a live \
-             document out of every check",
-        ));
-    }
+    // The phases, as `check` runs them: a tree that stops in one of the first three carries
+    // that phase's findings as its trouble and is judged no further.
+    assembly.trouble =
+        match check::foundation(&assembly.model, &assembly.manifest, &assembly.inputs()) {
+            Err(stop) => stop.findings,
+            Ok(()) => {
+                let report = check::run(
+                    &assembly.model,
+                    &assembly.manifest,
+                    &assembly.inputs(),
+                    Only::EVERYTHING
+                        .without(Only::CORPUS)
+                        .without(Only::CHANGES),
+                );
+                let mut trouble = report.findings;
+                trouble.extend(unresolved);
+                trouble
+            }
+        };
     Ok(assembly)
 }
 

@@ -4,10 +4,6 @@ Every defect this project carries is one a checker must find.
 
 ### A decision recorded here `##twice-defined`
 
-And again, which is a rename that left one behind:
-
-### The same anchor, a second time `##twice-defined`
-
-#### A slug at a level the grammar does not accept `##too-deep`
-
-`##line-head` — **The form that predates the heading rule.**
+The one decision this project defines at the root; the one with the same name a second
+time, the one at a level the grammar does not accept and the one at the head of a plain
+line are planted in the `unsound` project, whose run stops before they are read.

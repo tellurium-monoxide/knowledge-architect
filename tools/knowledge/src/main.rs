@@ -19,7 +19,7 @@ use output::{out, outln};
 use clap::{Args, Parser, Subcommand};
 
 use documentation::check::citations::Release;
-use documentation::check::{Inputs, Only, Report};
+use documentation::check::{Inputs, Only, Phase, Report};
 use documentation::entity::{Anchors, Candidate, Entities, Kind};
 use documentation::manifest::{ISSUE_REGISTER, TRIPWIRE_REGISTER};
 use documentation::Manifest;
@@ -220,29 +220,6 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
     let tree = manifest.rules_tree();
     let body_starts_at = manifest.rules().body_starts_at;
 
-    // Only the families that read rule text get their releases resolved, and resolving a pin
-    // may fetch over the network. A run asking for references has no business reaching for a
-    // release, and before this was scoped it failed on a pin it had no reason to read.
-    // `generated` renders the rule index, so it needs the vendored release and no other.
-    let mut releases: HashMap<Option<String>, Release> = HashMap::new();
-    if only.has(Only::CITATIONS) || only.has(Only::GENERATED) || only.has(Only::REGIME) {
-        let vendored = std::fs::read_to_string(tree.text())
-            .map_err(|e| format!("{}: {e}", tree.text().display()))?;
-        releases.insert(None, Release::new(&vendored, body_starts_at));
-    }
-    if only.has(Only::CITATIONS) || only.has(Only::REGIME) {
-        for doc in model.documents() {
-            let Some(date) = &doc.pin else { continue };
-            if releases.contains_key(&doc.pin) {
-                continue;
-            }
-            let path = rules::release::resolve(&tree, date)?;
-            let text =
-                std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-            releases.insert(doc.pin.clone(), Release::new(&text, body_starts_at));
-        }
-    }
-
     // The generated files are outside the walk — the rule index by a declared row, every
     // file-register index by construction — because a generated file is not a source of
     // citations. They are read here so a check does not.
@@ -283,8 +260,11 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
         documentation::git::ignored(manifest.root(), &queries).map_err(|e| e.to_string())?;
     let tracked_and_ignored =
         documentation::git::tracked_and_ignored(manifest.root()).map_err(|e| e.to_string())?;
+    // The first three phases need no release: a run that stops in one of them fetches
+    // nothing, whatever it would have judged.
+    let no_releases: HashMap<Option<String>, Release> = HashMap::new();
     let inputs = Inputs {
-        releases: &releases,
+        releases: &no_releases,
         pinned: &pinned,
         committed: &committed,
         configs: &configs,
@@ -294,6 +274,39 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
         ignored: &ignored,
         tracked_and_ignored: &tracked_and_ignored,
         refused: &survey.refused,
+    };
+    if let Err(stop) = documentation::check::foundation(&model, manifest, &inputs) {
+        let report = Report::stopped(stop, &model);
+        print_report(&report);
+        return Ok(ExitCode::FAILURE);
+    }
+
+    // Only the families that read rule text get their releases resolved, and resolving a pin
+    // may fetch over the network. A run asking for references has no business reaching for a
+    // release, and before this was scoped it failed on a pin it had no reason to read.
+    // `generated` renders the rule index, so it needs the vendored release and no other.
+    let mut releases: HashMap<Option<String>, Release> = HashMap::new();
+    if only.has(Only::CITATIONS) || only.has(Only::GENERATED) || only.has(Only::REGIME) {
+        let vendored = std::fs::read_to_string(tree.text())
+            .map_err(|e| format!("{}: {e}", tree.text().display()))?;
+        releases.insert(None, Release::new(&vendored, body_starts_at));
+    }
+    if only.has(Only::CITATIONS) || only.has(Only::REGIME) {
+        for doc in model.documents() {
+            let Some(date) = &doc.pin else { continue };
+            if releases.contains_key(&doc.pin) {
+                continue;
+            }
+            let path = rules::release::resolve(&tree, date)?;
+            let text =
+                std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+            releases.insert(doc.pin.clone(), Release::new(&text, body_starts_at));
+        }
+    }
+
+    let inputs = Inputs {
+        releases: &releases,
+        ..inputs
     };
     let mut report = documentation::check::run(&model, manifest, &inputs, only);
 
@@ -352,23 +365,28 @@ fn check(manifest: &Manifest, only: Only) -> Result<ExitCode, String> {
             }
         }
     }
-    // The summary first, the findings under it, the verdict on the last line. The order is
-    // the whole point: a caller reading the tail of the output has to reach the answer, and
-    // when the findings came first every `| tail` and every `| grep` for a count printed a
-    // success-shaped report over a failing run.
-    out!("{}", counts(&report));
+    print_report(&report);
+    Ok(if report.failed() {
+        ExitCode::FAILURE
+    } else {
+        ExitCode::SUCCESS
+    })
+}
+
+/// The summary first, the findings under it, the verdict on the last line.
+///
+/// The order is the whole point: a caller reading the tail of the output has to reach the
+/// answer, and when the findings came first every `| tail` and every `| grep` for a count
+/// printed a success-shaped report over a failing run.
+fn print_report(report: &Report) {
+    out!("{}", counts(report));
     if !report.findings.is_empty() {
         outln!();
         for finding in &report.findings {
             outln!("{finding}");
         }
     }
-    outln!("{}", verdict(&report));
-    Ok(if report.failed() {
-        ExitCode::FAILURE
-    } else {
-        ExitCode::SUCCESS
-    })
+    outln!("{}", verdict(report));
 }
 
 /// Regenerate every generated index in place.
@@ -750,6 +768,21 @@ fn counts(report: &Report) -> String {
 
     let mut out = String::new();
     let ran = report.ran;
+    if report.phase != Phase::Content {
+        // A stop names itself, and prints what every phase read: the walk. No family count
+        // follows, because no family ran, and a zero would read as nothing found.
+        let _ = write!(out, "\n{}", report.phase.stop_line(report.findings.len()));
+        let _ = write!(out, "\nwalk: {} file(s)", report.structure.walked);
+        if let Some(source) = &report.structure.checker_source {
+            let _ = write!(
+                out,
+                "\nchecker source: {}, {} file(s) with string literals read as data",
+                source.display(),
+                report.structure.checker_files
+            );
+        }
+        return out;
+    }
     let _ = write!(out, "\nchecked: {}", ran.names().join(", "));
     // Not a family: every family read this walk. Git supplies it, per
     // `design@knowledge@git-supplies-the-walk`, so the count is what a reader compares between CI and
@@ -888,6 +921,7 @@ mod tests {
     use super::{counts, Cli, Command, Only, Report, FAMILIES};
     use crate::corpus_cmd::RulesCommand;
     use clap::Parser;
+    use documentation::check::Phase;
 
     // Arguments handed to the parser, and what it must hand back: each is named because it
     // appears on both sides of an assertion.
@@ -1061,6 +1095,7 @@ mod tests {
 
     fn report(ran: Only) -> Report {
         Report {
+            phase: Phase::Content,
             regime: Default::default(),
             findings: Vec::new(),
             counts: Default::default(),

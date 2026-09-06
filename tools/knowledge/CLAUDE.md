@@ -35,18 +35,21 @@ it there.** The listing is `--cached --others --exclude-standard`, so a new fixt
 walked the moment it exists, tracked or not; what removes one is an ignore rule, and what a
 deletion needs is staging, or the path stays in the listing with no bytes behind it.
 
-**Five mock projects, and each is for one thing.** The head comment of each
+**Six mock projects, and each is for one thing.** The head comment of each
 `knowledge.toml` says what its project exercises, and that comment is where a session decides
-which one to touch. In short: `planted` is detection, one defect per check family; `dirhome`
-is conformance, every family running and finding nothing; `minimal` is the walk, the
-exclusions, a location and a declared register; `pinned` is release resolution; `typography`
-is what `rules show` prints. **Plant a defect in `planted` and nowhere else.** Over the other
-four, `cargo knowledge check` run from the mock's own directory reports exactly this, each
-deliberate and each named in its own manifest: `dirhome` and `typography` pass with no finding;
-`minimal` reports one finding, its missing rule index; `pinned` exits 2 on a full run, because
-its one pin resolves only over the network, and passes a run that reads no rule text, such as
-`--only references`. Anything else a run reports in those four is a defect in the tool or in
-the fixture.
+which one to touch. In short: `planted` is detection in the last phase, one defect per check
+family, and it is clean through the phases before it so a run reaches them; `unsound` is the
+phase gate, one defect per assertion of phase 2 and, behind them, the definition-site defects
+of phase 3, so a run over it stops at phase 2; `dirhome` is conformance, every family running
+and finding nothing; `minimal` is the walk, the exclusions, a location and a declared
+register; `pinned` is release resolution; `typography` is what `rules show` prints. **Plant a
+phase-4 defect in `planted`, a phase-2 or phase-3 one in `unsound`, and nowhere else.** Over
+the other four, `cargo knowledge check` run from the mock's own directory reports exactly
+this, each deliberate and each named in its own manifest: `dirhome` and `typography` pass with
+no finding; `minimal` reports one finding, its missing rule index; `pinned` exits 2 on a full
+run, because its one pin resolves only over the network, and passes a run that reads no rule
+text, such as `--only references`. Anything else a run reports in those four is a defect in
+the tool or in the fixture.
 
 **A test about commit messages builds its own project.** `commits` judges a message only where
 that commit's tree carries no finding. `dirhome` is the one mock over which every family runs

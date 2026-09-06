@@ -254,17 +254,8 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
     let mut findings = Vec::new();
     let mut counts = Counts::default();
 
-    // A parse that could not be trusted must be LOUD. Silently it removes every citation in
-    // the file from the walk while the run reports success — indistinguishable from a clean
-    // file, and the guard the premortem named for a grammar that changes under an upgrade.
-    if let Some(trouble) = &doc.parsed.trouble {
-        findings.push(Finding::at(
-            &doc.rel,
-            1,
-            trouble.clone(),
-            "nothing here is verified; fix the source, or the citations in it are unchecked",
-        ));
-    }
+    // A parse that could not be trusted is `check::tree`'s finding, and the run stops there
+    // before this check reads the document.
 
     let mut quotes = doc.inline_quotes();
     for block in doc.blocks() {

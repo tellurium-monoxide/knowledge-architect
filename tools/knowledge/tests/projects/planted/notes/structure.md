@@ -1,6 +1,6 @@
 # Structure, wrong on purpose
 
-### A decision recorded outside every register home `##stray-anchor`
+### Pointers, one of each shape the resolver tells apart
 
 A pointer into nothing: `design@planted@dangling-anchor`.
 
@@ -38,6 +38,6 @@ A tripwire nobody recorded: `tripwire@planted@nothing`.
 
 A link outside a navigation home: [a link](p.md).
 
-A slug mentioned in the middle of a line: the decision `##twice-defined` records it.
+A slug mentioned in the middle of a line is planted in the `unsound` project.
 
 The retired escape, an empty head in front of a path: `@notes/p.md`.

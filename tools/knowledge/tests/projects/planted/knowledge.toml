@@ -12,8 +12,8 @@ name = "planted"
 # One component below the root, carrying every document but one.
 components = ["parts/widget"]
 
-# PLANTED: a location whose issue directory is not there. A location carries the registers it
-# declares, so the missing home is a finding against the location rather than a silent gap.
+# A location carrying its issue directory; the one whose directory is not there is planted
+# in the `unsound` project.
 [locations.agent-config]
 path = "agent-config"
 registers = ["issue"]
@@ -27,9 +27,9 @@ skip-files = ["corpus/CompRules.txt", "corpus/CHANGES.md"]
 exclude = []
 
 [lint]
-# PLANTED: `notes/gone.md` is not there. An exemption naming a file that does not exist is the
-# stale row this check reports — silent otherwise, and inherited by whatever is created there.
-exempt-files = ["notes/exempt.md", "notes/gone.md"]
+# The exemption names a file that is there; the stale row, naming one that is not, is
+# planted in the `unsound` project.
+exempt-files = ["notes/exempt.md"]
 
 [rules]
 dir = "corpus"
