@@ -8,7 +8,8 @@ kind: todo
 `cargo knowledge tripwires` prints, per entry, every `design@<anchor>@<id>` reference the entry
 carries, and `--guarding <ref>` filters on the same set. A tripwire guarding a reading of the
 rules names an `interpretation@rules@<id>` entry instead, so every entry of the `rules` location
-prints `-` in that column and none of them is reachable through `--guarding`.
+whose only reference is its reading prints `-` in that column and is unreachable through
+`--guarding`.
 
 ## Details
 
@@ -16,7 +17,8 @@ prints `-` in that column and none of them is reachable through `--guarding`.
 
 `guards` in `path@knowledge@documentation/src/records.rs` keeps a span when its kind is
 `design` and drops every other kind. Observed on the current tree: `cargo knowledge tripwires
-rules` prints `-` under `guarding` for every row, and
+rules` prints `-` under `guarding` for 17 of its 18 rows, the one exception being an entry whose
+body also names a decision of the engine, and
 `cargo knowledge tripwires --guarding interpretation@rules@visibility-rules-only-grant` prints
 `(no entry)` and exits 1, while `path@rules@tripwires.md` holds a heading opening with
 `` Guarding `interpretation@rules@visibility-rules-only-grant` ``. The tool matches its own

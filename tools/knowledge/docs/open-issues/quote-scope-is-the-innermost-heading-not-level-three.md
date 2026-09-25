@@ -14,7 +14,7 @@ of the two is right is undecided.
 
 ### What
 
-Established from the source, not from a run. `sections` in
+Established from the source, not from a run. `analyse` in
 `path@knowledge@documentation/src/source/md.rs` collects a heading of every level, `ScopeKind::Section`
 in `path@knowledge@documentation/src/source/mod.rs` carries the level as data, and `scope_at` picks
 the deepest section holding a line. So a claim under a level-four heading is judged inside that
@@ -24,8 +24,9 @@ document with level-two headings only judges each claim against its level-two se
 
 ### Why it matters
 
-Intent and code disagree, and a reader placing a quote by either rule can be reported by the
-other: a quote put in a level-three body above a level-four claim, legal under the design, is a
+Intent and code disagree: the entry strains `design@knowledge@scope-and-distance`, whose
+statement the code does not implement. A reader placing a quote by either rule can be reported
+by the other: a quote put in a level-three body above a level-four claim, legal under the design, is a
 finding under the code. `assumption`: no live document in this tree carries a claim under a
 level-four heading whose quote sits in the level-three body above, since the check passes.
 
