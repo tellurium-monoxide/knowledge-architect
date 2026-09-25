@@ -18,7 +18,7 @@ listing and to `tripwires --guarding`, which is the silence the register exists 
 from headings at levels two and three that carry a slug, and reports a slug that sits where none
 may. A heading with no slug is neither, so it produces no entity and no finding. Reproduced over
 a copy of `path@knowledge@tests/projects/dirhome/`, after `git init` and `git add -A` in the copy,
-by appending this to its `docs/tripwires.md` and staging it:
+by appending this to the copy's tripwires home and staging it:
 
 ```markdown
 ## Guarding nothing in particular, a heading with no slug
