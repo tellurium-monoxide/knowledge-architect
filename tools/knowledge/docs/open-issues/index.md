@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-12 entries
+15 entries
 
 | kind | title |
 | --- | --- |
@@ -15,4 +15,7 @@
 | observation | [A `PLANTED` row may name a test that does not exist](planted-row-may-name-a-missing-test.md) |
 | observation | [The release cache sits at a predictable shared path](release-cache-at-a-shared-path.md) |
 | observation | [Span and link shapes the scanner cannot see](span-and-link-shapes-unseen.md) |
+| question | [The quote scope is the innermost heading section at any level, where the design says the level-three subsection](quote-scope-is-the-innermost-heading-not-level-three.md) |
 | question | [A rule marker inside a markdown HTML comment is read by nothing, and no instruction says so](rule-marker-inside-markdown-html-comment.md) |
+| todo | [The tripwire listing's `guarding` column reads references of the `design` kind only](guarding-reads-design-references-only.md) |
+| todo | [The scanner's module doc says a rule number in a fence is data, and the code reads a fence as live](scanner-module-doc-says-a-fence-is-data.md) |
