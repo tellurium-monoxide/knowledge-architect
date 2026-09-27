@@ -318,26 +318,14 @@ impl Walk {
     }
 }
 
+/// What the manifest declares, as written.
+///
+/// **Every other top-level table is kept, as written, for an extension to claim**, per
+/// `design@knowledge@an-extension-claims-its-manifest-tables`. That is why this struct refuses no
+/// unknown field: `serde(flatten)` cannot be combined with that refusal, and phase 1 refuses a
+/// table no registered extension claims instead, so a misspelt table is still reported.
 #[derive(Debug, Clone, Deserialize)]
-#[serde(deny_unknown_fields, rename_all = "kebab-case")]
-pub struct Rules {
-    /// Files exempt from the missing-marker lint, by their project-relative PATH.
-    ///
-    /// **Not by name.** A bare name matched anywhere, so a second file with the same basename
-    /// inherited an exemption argued for one document. Quotes in these files are still
-    /// verified.
-    #[serde(default)]
-    pub exempt_files: Vec<PathBuf>,
-    pub dir: PathBuf,
-    pub text: PathBuf,
-    pub body_starts_at: usize,
-    pub version: PathBuf,
-    pub past: PathBuf,
-    pub manifest: PathBuf,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-#[serde(deny_unknown_fields, rename_all = "kebab-case")]
+#[serde(rename_all = "kebab-case")]
 struct Declared {
     project: Project,
     #[serde(default)]
@@ -345,7 +333,8 @@ struct Declared {
     #[serde(default)]
     registers: BTreeMap<String, RegisterDecl>,
     walk: Walk,
-    rules: Rules,
+    #[serde(flatten)]
+    tables: BTreeMap<String, toml::Value>,
 }
 
 /// A project: where its root is, and what it declares.
@@ -359,9 +348,15 @@ pub struct Manifest {
     /// **A refused declaration is absent from the configuration**, so nothing acts on it: a
     /// refused register is not a register, a refused anchor is not an anchor, a refused row is
     /// not in its list. Held rather than returned, because a manifest that would not load
-    /// reports nothing at all, and nothing at all is what a session reads as conformance. The
-    /// one table with no default is `[rules]`, whose refusal fails the load instead.
+    /// reports nothing at all, and nothing at all is what a session reads as conformance. An
+    /// extension's complaints about its own tables join them when it is configured.
     complaints: Vec<Finding>,
+    /// The paths each extension declares, by the label a finding names them with, asserted to
+    /// exist in phase 2 with the core's own declared paths.
+    extension_paths: Vec<(String, Vec<PathBuf>)>,
+    /// The files each extension generates, which the walk leaves out and the `generated` check
+    /// reads as committed.
+    extension_generated: Vec<PathBuf>,
 }
 
 impl Manifest {
@@ -412,6 +407,8 @@ impl Manifest {
             declared,
             registers,
             complaints,
+            extension_paths: Vec::new(),
+            extension_generated: Vec::new(),
         })
     }
 
@@ -427,8 +424,37 @@ impl Manifest {
         &self.declared.walk
     }
 
-    pub fn rules(&self) -> &Rules {
-        &self.declared.rules
+    /// A top-level table the core does not own, as written, for the extension that claims it.
+    pub fn table(&self, name: &str) -> Option<&toml::Value> {
+        self.declared.tables.get(name)
+    }
+
+    /// The names of every top-level table the core does not own.
+    pub fn extension_tables(&self) -> impl Iterator<Item = &str> {
+        self.declared.tables.keys().map(String::as_str)
+    }
+
+    /// The paths each configured extension declares, by the label a finding names them with.
+    pub fn extension_paths(&self) -> &[(String, Vec<PathBuf>)] {
+        &self.extension_paths
+    }
+
+    /// The files each configured extension generates.
+    pub fn extension_generated(&self) -> &[PathBuf] {
+        &self.extension_generated
+    }
+
+    /// Record what configuring the extensions produced: complaints, declared paths, generated
+    /// files. Only `extension::configure` calls this.
+    pub(crate) fn record_extensions(
+        &mut self,
+        complaints: Vec<Finding>,
+        paths: Vec<(String, Vec<PathBuf>)>,
+        generated: Vec<PathBuf>,
+    ) {
+        self.complaints.extend(complaints);
+        self.extension_paths.extend(paths);
+        self.extension_generated.extend(generated);
     }
 
     /// Every register this project has, the four built in first.
@@ -465,21 +491,6 @@ impl Manifest {
             }
         }));
         Components(all)
-    }
-
-    /// The rules corpus as `rules::Tree` needs it, with every path already resolved.
-    ///
-    /// The `rules` library is handed explicit paths rather than the manifest, so it keeps
-    /// knowing nothing about how a project is laid out or where its declaration lives.
-    pub fn rules_tree(&self) -> rules::Tree {
-        let dir = self.root.join(&self.declared.rules.dir);
-        rules::Tree::new(
-            &self.root,
-            dir.join(&self.declared.rules.text),
-            dir.join(&self.declared.rules.version),
-            dir.join(&self.declared.rules.past),
-            dir.join(&self.declared.rules.manifest),
-        )
     }
 }
 
@@ -521,10 +532,6 @@ fn retired_keys(text: &str) -> Result<(), String> {
 /// segment and an absolute path are refused, because what they name depends on where the
 /// manifest sits rather than on the tree. A refused row leaves its list and is reported, so it
 /// is acted on by nothing.
-///
-/// **A refused `[rules]` path fails the load.** The corpus has no list to drop a row from and
-/// no default to stand in, and a path kept as spelled was joined and read: `index` once wrote
-/// through a `..` corpus directory into a sibling tree.
 fn normalise_paths(declared: &mut Declared, complaints: &mut Vec<Finding>) -> Result<(), String> {
     let project = &mut declared.project;
     normalise_list("[project] components", &mut project.components, complaints);
@@ -539,37 +546,16 @@ fn normalise_paths(declared: &mut Declared, complaints: &mut Vec<Finding>) -> Re
     normalise_list("[walk] skip-dirs", &mut walk.skip_dirs, complaints);
     normalise_list("[walk] skip-files", &mut walk.skip_files, complaints);
     normalise_list("[walk] exclude", &mut walk.exclude, complaints);
-    normalise_list(
-        "[rules] exempt-files",
-        &mut declared.rules.exempt_files,
-        complaints,
-    );
-    let rules = &mut declared.rules;
-    for (key, path) in [
-        ("dir", &mut rules.dir),
-        ("text", &mut rules.text),
-        ("version", &mut rules.version),
-        ("past", &mut rules.past),
-        ("manifest", &mut rules.manifest),
-    ] {
-        let mut refused = Vec::new();
-        if !normalise_one(&format!("[rules] {key}"), path, &mut refused) {
-            return Err(format!(
-                "{}; the corpus has no default to stand in for it",
-                refused[0].what
-            ));
-        }
-    }
     Ok(())
 }
 
 /// Normalise every path of one list, dropping the rows that are refused.
-fn normalise_list(list: &str, paths: &mut Vec<PathBuf>, complaints: &mut Vec<Finding>) {
+pub fn normalise_list(list: &str, paths: &mut Vec<PathBuf>, complaints: &mut Vec<Finding>) {
     paths.retain_mut(|path| normalise_one(list, path, complaints));
 }
 
 /// Normalise one path in place, or record why it is refused and say so with `false`.
-fn normalise_one(list: &str, path: &mut PathBuf, complaints: &mut Vec<Finding>) -> bool {
+pub fn normalise_one(list: &str, path: &mut PathBuf, complaints: &mut Vec<Finding>) -> bool {
     use std::path::Component as Segment;
     let mut out = PathBuf::new();
     for segment in path.components() {
@@ -1144,7 +1130,7 @@ pub(crate) mod tests {
     #[test]
     fn this_repository_declares_a_readable_manifest() {
         let m = Manifest::load(&this_project()).expect("knowledge.toml");
-        assert!(m.rules_tree().text().is_file());
+        assert!(m.table("rules").is_some(), "the rules extension's table");
         assert!(m.registers().by_name("design").is_some());
     }
 
@@ -1186,7 +1172,6 @@ pub(crate) mod tests {
         assert_eq!(m.walk().skip_dirs, vec![PathBuf::from("build")]);
         assert_eq!(m.walk().skip_files, vec![PathBuf::from("docs/index.md")]);
         assert_eq!(m.walk().exclude, vec![PathBuf::from("vendor")]);
-        assert_eq!(m.rules().exempt_files, vec![PathBuf::from("notes/x.md")]);
     }
 
     #[test]
@@ -1299,12 +1284,10 @@ pub(crate) mod tests {
             "[\"../y.md\"]",
         );
         let complaints = whats(&m);
-        assert_eq!(complaints.len(), 6, "{complaints:#?}");
-        for label in [
-            "[walk] skip-files",
-            "[walk] exclude",
-            "[rules] exempt-files",
-        ] {
+        // The `[rules] exempt-files` row is the rules extension's to normalise, and its own
+        // test refuses it; the manifest keeps the table as written.
+        assert_eq!(complaints.len(), 5, "{complaints:#?}");
+        for label in ["[walk] skip-files", "[walk] exclude"] {
             assert!(
                 complaints.iter().any(|c| c.contains(label)),
                 "{label}: {complaints:#?}"
@@ -1332,40 +1315,6 @@ pub(crate) mod tests {
         );
         assert!(m.locations().is_empty());
         assert!(m.walk().skip_dirs.is_empty());
-    }
-
-    #[test]
-    fn a_refused_rules_path_fails_the_load_and_a_dot_spelled_one_is_normalised() {
-        // The corpus has no default to stand in for a refused row, and a path kept as
-        // spelled was joined and read: `index` once wrote through a `..` corpus directory.
-        // Every one of the five rows fails the same way.
-        let rules = |dir: &str, text: &str, version: &str, past: &str, manifest: &str| {
-            format!(
-                "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
-                 skip-files = []\nexclude = []\n\n[rules]\n\
-                 dir = \"{dir}\"\ntext = \"{text}\"\nbody-starts-at = 0\nversion = \"{version}\"\n\
-                 past = \"{past}\"\nmanifest = \"{manifest}\"\n"
-            )
-        };
-        for (key, text) in [
-            ("dir", rules("../corpus", "t", "v", "p", "m")),
-            ("text", rules("corpus", "/t", "v", "p", "m")),
-            ("version", rules("corpus", "t", "../v", "p", "m")),
-            ("past", rules("corpus", "t", "v", "../p", "m")),
-            ("manifest", rules("corpus", "t", "v", "p", "/m")),
-        ] {
-            let e = Manifest::parse(Path::new("/nowhere"), &text).expect_err(key);
-            assert!(e.contains(&format!("in [rules] {key}")), "{key}: {e}");
-            assert!(e.contains("no default"), "{key}: {e}");
-        }
-        let m = Manifest::parse(
-            Path::new("/nowhere"),
-            &rules("./corpus", "./t", "v", "p", "m"),
-        )
-        .expect("a declaration");
-        assert!(whats(&m).is_empty(), "{:?}", whats(&m));
-        assert_eq!(m.rules().dir, PathBuf::from("corpus"));
-        assert_eq!(m.rules().text, PathBuf::from("t"));
     }
 
     #[test]
@@ -1561,24 +1510,6 @@ pub(crate) mod tests {
         let e =
             Manifest::parse(Path::new("/nowhere"), &with_trackers).expect_err("the retired key");
         assert!(e.contains("[locations."), "{e}");
-    }
-
-    #[test]
-    fn the_exemption_list_is_read_from_rules_and_a_lint_table_is_refused() {
-        // The list exempts from the missing-marker lint and the quote regime, both of the
-        // rules half, so it belongs to the rules table; a `[lint]` table read as empty would drop every exemption it still holds.
-        let base = "[project]\nname = \"a\"\ncomponents = []\n\n\
-             [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
-        let m = Manifest::parse(Path::new("/nowhere"), base).expect("no list is an empty one");
-        assert!(m.rules().exempt_files.is_empty());
-        let e = Manifest::parse(
-            Path::new("/nowhere"),
-            &format!("{base}\n[lint]\nexempt-files = [\"notes/x.md\"]\n"),
-        )
-        .expect_err("the table the list left");
-        assert!(e.contains("lint"), "{e}");
     }
 
     #[test]

@@ -16,7 +16,7 @@ use std::path::{Path, PathBuf};
 
 use crate::check::Inputs;
 use crate::finding::Finding;
-use crate::manifest::Manifest;
+use crate::manifest::{Manifest, MANIFEST_NAME};
 use crate::model::{Document, Model};
 
 /// What a tree is prepared for.
@@ -118,8 +118,73 @@ pub struct ExtensionReport {
     pub summary: String,
 }
 
-/// An extension, configured once per run.
+/// What an extension made of its tables.
+#[derive(Default)]
+pub struct Resolution {
+    /// Declarations it refused, each a finding of phase 1. A refused declaration is absent
+    /// from its configuration, as the core's are.
+    pub complaints: Vec<Finding>,
+    /// The paths it declares, by the label a finding names them with. Phase 2 asserts that
+    /// each exists, with the core's own declared paths.
+    pub paths: Vec<(String, Vec<PathBuf>)>,
+    /// The files it generates. The walk leaves them out, and the `generated` check reads them
+    /// as committed.
+    pub generated: Vec<PathBuf>,
+}
+
+/// Configure every extension against a manifest, and record in the manifest what each made of
+/// its tables.
+///
+/// **A table no registered extension claims, and a claimed table the manifest does not hold,
+/// are phase-1 findings**, per `design@knowledge@an-extension-claims-its-manifest-tables`. The
+/// first is a declaration nothing reads, which a session would take for a regime in force; the
+/// second would let a manifest switch an extension off by leaving its table out.
+pub fn configure(manifest: &mut Manifest, extensions: &mut [Box<dyn Extension>]) {
+    let mut complaints = Vec::new();
+    let claimed: Vec<&str> = extensions
+        .iter()
+        .flat_map(|e| e.tables().iter().copied())
+        .collect();
+    for table in manifest.extension_tables() {
+        if !claimed.contains(&table) {
+            complaints.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!("[{table}] is a table no extension of this binary reads"),
+                "delete it, or run the binary that registers the extension it belongs to; a \
+                 declaration nothing reads looks like a check in force",
+            ));
+        }
+    }
+    let present: Vec<String> = manifest.extension_tables().map(str::to_string).collect();
+    for table in &claimed {
+        if !present.iter().any(|p| p == table) {
+            complaints.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!("[{table}] is missing, and an extension this binary registers reads it"),
+                "declare it; a manifest cannot switch an extension off by leaving its table out",
+            ));
+        }
+    }
+    let mut paths = Vec::new();
+    let mut generated = Vec::new();
+    for extension in extensions.iter_mut() {
+        let resolution = extension.resolve(manifest);
+        complaints.extend(resolution.complaints);
+        paths.extend(resolution.paths);
+        generated.extend(resolution.generated);
+    }
+    manifest.record_extensions(complaints, paths, generated);
+}
+
+/// An extension, configured once per manifest.
 pub trait Extension {
+    /// The top-level manifest tables it reads.
+    fn tables(&self) -> &'static [&'static str];
+
+    /// Read its tables out of the manifest. Called once per manifest, before the walk, by
+    /// [`configure`]; a table it claims that the manifest does not hold is already reported.
+    fn resolve(&mut self, manifest: &Manifest) -> Resolution;
+
     /// The names of its checks, as the `checked:` line prints them after the core's.
     fn checks(&self) -> &'static [&'static str];
 
@@ -145,4 +210,75 @@ pub trait Prepared {
 
     /// The files the extension generates, with the bytes they must hold for this tree.
     fn generated(&self, model: &Model, manifest: &Manifest) -> Vec<Generated>;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{configure, Extension, Prepared, Purpose, Resolution, Tree};
+    use crate::manifest::Manifest;
+    use crate::model::Model;
+    use std::path::Path;
+
+    /// An extension that claims one table and reads nothing out of it.
+    struct Claiming;
+
+    impl Extension for Claiming {
+        fn tables(&self) -> &'static [&'static str] {
+            &["claimed"]
+        }
+        fn resolve(&mut self, _: &Manifest) -> Resolution {
+            Resolution::default()
+        }
+        fn checks(&self) -> &'static [&'static str] {
+            &[]
+        }
+        fn prepare(
+            &mut self,
+            _: &Manifest,
+            _: &Model,
+            _: Tree<'_>,
+            _: Purpose,
+        ) -> Result<Box<dyn Prepared>, String> {
+            Err("not prepared in this test".to_string())
+        }
+    }
+
+    fn manifest_with(tables: &str) -> Manifest {
+        let text = format!(
+            "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
+             skip-files = []\n\n{tables}"
+        );
+        Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
+    }
+
+    fn complaints(tables: &str, extensions: &mut [Box<dyn Extension>]) -> Vec<String> {
+        let mut manifest = manifest_with(tables);
+        configure(&mut manifest, extensions);
+        manifest
+            .complaints()
+            .iter()
+            .map(|f| f.what.clone())
+            .collect()
+    }
+
+    #[test]
+    fn a_table_no_extension_claims_is_a_complaint() {
+        // A `[lint]` table left behind, read by nothing, would look like a check in force.
+        let found = complaints("[lint]\nexempt-files = []\n", &mut []);
+        assert_eq!(found.len(), 1, "{found:?}");
+        assert!(
+            found[0].contains("[lint] is a table no extension"),
+            "{found:?}"
+        );
+        let found = complaints("[claimed]\n", &mut [Box::new(Claiming)]);
+        assert!(found.is_empty(), "a claimed table is read: {found:?}");
+    }
+
+    #[test]
+    fn a_claimed_table_the_manifest_leaves_out_is_a_complaint() {
+        // Otherwise a manifest could switch an extension off by leaving its table out.
+        let found = complaints("", &mut [Box::new(Claiming)]);
+        assert_eq!(found.len(), 1, "{found:?}");
+        assert!(found[0].contains("[claimed] is missing"), "{found:?}");
+    }
 }

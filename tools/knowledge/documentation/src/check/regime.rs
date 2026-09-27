@@ -18,7 +18,6 @@
 use rules::{norm, RuleNumber};
 
 use crate::finding::Finding;
-use crate::manifest::Manifest;
 use crate::model::{Document, Model};
 use crate::scan::{MarkerForm, Observation};
 use crate::source::ScopeKind;
@@ -620,7 +619,7 @@ fn unquoted(
 /// Run the regime over every document in a model.
 pub fn run(
     model: &Model,
-    manifest: &Manifest,
+    exempt_files: &[std::path::PathBuf],
     releases: &std::collections::HashMap<Option<String>, Release>,
 ) -> (Vec<Finding>, Counts) {
     let mut findings = Vec::new();
@@ -635,7 +634,7 @@ pub fn run(
         // suppression list longer than the findings, which is the argument the exemption
         // already makes. That list is the only exemption path the regime has, and it names
         // FILES that are leaving the tree — never a rule, and never for the whole tree.
-        if manifest.rules().exempt_files.contains(&doc.rel) {
+        if exempt_files.contains(&doc.rel) {
             continue;
         }
         let (judged, claims) = check(doc, release);

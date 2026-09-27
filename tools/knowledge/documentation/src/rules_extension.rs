@@ -7,14 +7,62 @@
 //! `path@thaum@docs/plans/knowledge-core-split.md`.
 
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+
+use serde::Deserialize;
 
 use crate::check::citations::{self, Release};
 use crate::check::{changes, regime, uncovered, Inputs};
-use crate::extension::{Extension, ExtensionReport, Generated, Prepared, Purpose, Tree};
+use crate::extension::{
+    Extension, ExtensionReport, Generated, Prepared, Purpose, Resolution, Tree,
+};
 use crate::finding::Finding;
-use crate::manifest::Manifest;
+use crate::manifest::{normalise_list, normalise_one, Manifest, MANIFEST_NAME};
 use crate::model::{Document, Model};
+
+/// The `[rules]` table: where the corpus is, and which files are exempt from the lint.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields, rename_all = "kebab-case")]
+pub struct RulesConfig {
+    /// Files exempt from the missing-marker lint and the quote regime, by their
+    /// project-relative PATH.
+    ///
+    /// **Not by name.** A bare name matched anywhere, so a second file with the same basename
+    /// inherited an exemption argued for one document. Quotes in these files are still
+    /// verified.
+    #[serde(default)]
+    pub exempt_files: Vec<PathBuf>,
+    pub dir: PathBuf,
+    pub text: PathBuf,
+    /// The zero-based line the rules body begins on: a property of the corpus, not of the
+    /// parser.
+    pub body_starts_at: usize,
+    pub version: PathBuf,
+    pub past: PathBuf,
+    pub manifest: PathBuf,
+}
+
+impl RulesConfig {
+    /// The rules corpus as `rules::Tree` needs it, with every path already resolved.
+    ///
+    /// The `rules` library is handed explicit paths rather than the manifest, so it keeps
+    /// knowing nothing about how a project is laid out or where its declaration lives.
+    pub fn tree(&self, root: &Path) -> rules::Tree {
+        let dir = root.join(&self.dir);
+        rules::Tree::new(
+            root,
+            dir.join(&self.text),
+            dir.join(&self.version),
+            dir.join(&self.past),
+            dir.join(&self.manifest),
+        )
+    }
+
+    /// Where the rule index is written: the corpus directory.
+    pub fn rule_index_path(&self) -> PathBuf {
+        self.dir.join("index.md")
+    }
+}
 
 /// The checks of this extension, by the name each one's count line carries.
 pub const CHECKS: [&str; 5] = ["citations", "uncovered", "changes", "corpus", "regime"];
@@ -29,9 +77,87 @@ pub struct RulesExtension {
     /// largest cost in a per-commit run, and two commits pinning one date may still carry
     /// different bytes — a fold, a re-fetch. The object name answers both questions at once.
     parsed: HashMap<String, Release>,
+    /// The `[rules]` table as resolved against the last manifest configured, `None` where it
+    /// was refused.
+    config: Option<RulesConfig>,
+}
+
+impl RulesExtension {
+    /// The `[rules]` table as resolved, for the `rules` commands, which read the corpus
+    /// without running a check.
+    pub fn config(&self) -> Option<&RulesConfig> {
+        self.config.as_ref()
+    }
 }
 
 impl Extension for RulesExtension {
+    fn tables(&self) -> &'static [&'static str] {
+        &["rules"]
+    }
+
+    /// **A refused `[rules]` path is a phase-1 finding, and the table is then absent.** The
+    /// corpus has no list to drop a row from and no default to stand in, and a path kept as
+    /// spelled was joined and read: `index` once wrote through a `..` corpus directory into a
+    /// sibling tree.
+    fn resolve(&mut self, manifest: &Manifest) -> Resolution {
+        self.config = None;
+        let mut resolution = Resolution::default();
+        let Some(value) = manifest.table("rules") else {
+            return resolution;
+        };
+        let mut config: RulesConfig = match value.clone().try_into() {
+            Ok(config) => config,
+            Err(e) => {
+                resolution.complaints.push(Finding::in_file(
+                    MANIFEST_NAME,
+                    format!("[rules] cannot be read: {e}"),
+                    "declare `dir`, `text`, `body-starts-at`, `version`, `past` and `manifest`, \
+                     and optionally `exempt-files`; the citation regime runs over nothing \
+                     until then",
+                ));
+                return resolution;
+            }
+        };
+        normalise_list(
+            "[rules] exempt-files",
+            &mut config.exempt_files,
+            &mut resolution.complaints,
+        );
+        let mut refused = false;
+        for (key, path) in [
+            ("dir", &mut config.dir),
+            ("text", &mut config.text),
+            ("version", &mut config.version),
+            ("past", &mut config.past),
+            ("manifest", &mut config.manifest),
+        ] {
+            refused |= !normalise_one(&format!("[rules] {key}"), path, &mut resolution.complaints);
+        }
+        if refused {
+            return resolution;
+        }
+        // The corpus directory itself is not a row: its four files are, and a directory with
+        // none of them is reported four times over. Asserting the directory would also refuse
+        // a corpus at the root, whose directory is the empty path git never lists.
+        let corpus: Vec<PathBuf> = [
+            &config.text,
+            &config.version,
+            &config.past,
+            &config.manifest,
+        ]
+        .iter()
+        .map(|p| config.dir.join(p))
+        .collect();
+        resolution.paths.push((
+            "[rules] exempt-files".to_string(),
+            config.exempt_files.clone(),
+        ));
+        resolution.paths.push(("[rules]".to_string(), corpus));
+        resolution.generated.push(config.rule_index_path());
+        self.config = Some(config);
+        resolution
+    }
+
     fn checks(&self) -> &'static [&'static str] {
         &CHECKS
     }
@@ -43,9 +169,13 @@ impl Extension for RulesExtension {
         tree: Tree<'_>,
         purpose: Purpose,
     ) -> Result<Box<dyn Prepared>, String> {
+        let config = self
+            .config
+            .clone()
+            .ok_or("the [rules] table was refused, and phase 1 reports why")?;
         match tree {
-            Tree::Checkout(_) => checkout(manifest, model, purpose),
-            Tree::Commit(commit) => self.commit(manifest, model, commit),
+            Tree::Checkout(_) => checkout(&config, manifest, model, purpose),
+            Tree::Commit(commit) => self.commit(config, model, commit),
         }
         .map(|p| Box::new(p) as Box<dyn Prepared>)
     }
@@ -55,9 +185,14 @@ impl Extension for RulesExtension {
 ///
 /// Resolving a pin may read the archive or reach the network, which is why it happens here and
 /// not inside a check.
-fn checkout(manifest: &Manifest, model: &Model, purpose: Purpose) -> Result<RulesPrepared, String> {
-    let tree = manifest.rules_tree();
-    let body_starts_at = manifest.rules().body_starts_at;
+fn checkout(
+    config: &RulesConfig,
+    manifest: &Manifest,
+    model: &Model,
+    purpose: Purpose,
+) -> Result<RulesPrepared, String> {
+    let tree = config.tree(manifest.root());
+    let body_starts_at = config.body_starts_at;
     if purpose == Purpose::Index {
         // Only the vendored release: the rule index lists what the tree cites against it, and
         // regenerating it fetches nothing.
@@ -70,7 +205,12 @@ fn checkout(manifest: &Manifest, model: &Model, purpose: Purpose) -> Result<Rule
             .cloned()
             .ok_or("VERSION names no date")?;
         let releases = HashMap::from([(None, Release::new(&text, body_starts_at))]);
-        return Ok(RulesPrepared::new(releases, pinned, purpose));
+        return Ok(RulesPrepared::new(
+            config.clone(),
+            releases,
+            pinned,
+            purpose,
+        ));
     }
     let pinned = std::fs::read_to_string(tree.version())
         .ok()
@@ -98,8 +238,8 @@ fn checkout(manifest: &Manifest, model: &Model, purpose: Purpose) -> Result<Rule
             releases.insert(doc.pin.clone(), Release::new(&text, body_starts_at));
         }
     }
-    let mut prepared = RulesPrepared::new(releases, pinned, purpose);
-    prepared.changelog = changelog(manifest)?;
+    let mut prepared = RulesPrepared::new(config.clone(), releases, pinned, purpose);
+    prepared.changelog = changelog(config, manifest)?;
     Ok(prepared)
 }
 
@@ -108,10 +248,10 @@ fn checkout(manifest: &Manifest, model: &Model, purpose: Purpose) -> Result<Rule
 /// The changelog is outside the walk: each section pins its own release, so it is checked
 /// against that release rather than the vendored one, and resolving one may fetch. `None` when
 /// the changelog is not there, which leaves `changes` and `corpus` not run.
-fn changelog(manifest: &Manifest) -> Result<Option<Changelog>, String> {
-    let tree = manifest.rules_tree();
-    let body_starts_at = manifest.rules().body_starts_at;
-    let path = manifest.rules().dir.join("CHANGES.md");
+fn changelog(config: &RulesConfig, manifest: &Manifest) -> Result<Option<Changelog>, String> {
+    let tree = config.tree(manifest.root());
+    let body_starts_at = config.body_starts_at;
+    let path = config.dir.join("CHANGES.md");
     let Ok(text) = std::fs::read_to_string(manifest.root().join(&path)) else {
         return Ok(None);
     };
@@ -157,14 +297,14 @@ impl RulesExtension {
     /// verifies against the archive the COMMIT holds, never against the working tree's.
     fn commit(
         &mut self,
-        manifest: &Manifest,
+        config: RulesConfig,
         model: &Model,
         commit: &crate::extension::CommitTree,
     ) -> Result<RulesPrepared, String> {
-        let rules_dir = manifest.rules().dir.clone();
-        let corpus_rel = rules_dir.join(&manifest.rules().text);
-        let version_rel = rules_dir.join(&manifest.rules().version);
-        let body_starts_at = manifest.rules().body_starts_at;
+        let rules_dir = config.dir.clone();
+        let corpus_rel = rules_dir.join(&config.text);
+        let version_rel = rules_dir.join(&config.version);
+        let body_starts_at = config.body_starts_at;
         let read = commit
             .read(&[corpus_rel.clone(), version_rel.clone()])
             .map_err(|e| format!("its corpus could not be read: {e}"))?;
@@ -199,7 +339,7 @@ impl RulesExtension {
         pins.sort();
         pins.dedup();
         if !pins.is_empty() {
-            let past = rules_dir.join(&manifest.rules().past);
+            let past = rules_dir.join(&config.past);
             let wanted: Vec<PathBuf> = pins.iter().map(|d| past.join(format!("{d}.txt"))).collect();
             let archived = commit
                 .read(&wanted)
@@ -220,7 +360,7 @@ impl RulesExtension {
                 }
             }
         }
-        let mut prepared = RulesPrepared::new(releases, pinned, Purpose::Commit);
+        let mut prepared = RulesPrepared::new(config, releases, pinned, Purpose::Commit);
         prepared.unresolved = unresolved;
         Ok(prepared)
     }
@@ -228,6 +368,7 @@ impl RulesExtension {
 
 /// The rules extension prepared for one tree: the releases its quotes verify against.
 pub struct RulesPrepared {
+    config: RulesConfig,
     /// A pin — `None` for the vendored release — to the parsed release.
     releases: HashMap<Option<String>, Release>,
     /// The release the project is pinned at, as its own version file states it.
@@ -242,11 +383,13 @@ pub struct RulesPrepared {
 impl RulesPrepared {
     /// Prepared from releases already parsed, which is how a test hands in the corpus of a mock.
     pub fn new(
+        config: RulesConfig,
         releases: HashMap<Option<String>, Release>,
         pinned: String,
         purpose: Purpose,
     ) -> Self {
         RulesPrepared {
+            config,
             releases,
             pinned,
             purpose,
@@ -300,7 +443,8 @@ impl RulesPrepared {
                 .iter()
                 .map(|v| (v.clone(), format!("the changelog section {v}"))),
         );
-        let (problems, counts) = rules::integrity::check(&manifest.rules_tree(), &needed);
+        let (problems, counts) =
+            rules::integrity::check(&self.config.tree(manifest.root()), &needed);
         for p in problems {
             report
                 .findings
@@ -329,7 +473,7 @@ impl Prepared for RulesPrepared {
             let Some(release) = self.releases.get(&doc.pin) else {
                 continue;
             };
-            let exempt = manifest.rules().exempt_files.contains(&doc.rel);
+            let exempt = self.config.exempt_files.contains(&doc.rel);
             let (found, c) = citations::check(doc, release, exempt);
             report.findings.extend(found);
             let t = &mut summary.citations;
@@ -343,7 +487,7 @@ impl Prepared for RulesPrepared {
             t.orphans += c.orphans;
         }
         summary.pinned = self.pinned_containers(model);
-        let (found, counts) = regime::run(model, manifest, &self.releases);
+        let (found, counts) = regime::run(model, &self.config.exempt_files, &self.releases);
         report.findings.extend(found);
         summary.regime = counts;
         let (found, scanned) = uncovered::check(inputs);
@@ -371,21 +515,16 @@ impl Prepared for RulesPrepared {
         out
     }
 
-    fn generated(&self, model: &Model, manifest: &Manifest) -> Vec<Generated> {
+    fn generated(&self, model: &Model, _: &Manifest) -> Vec<Generated> {
         let Some(vendored) = self.releases.get(&None) else {
             return Vec::new();
         };
         vec![Generated {
-            rel: rule_index_path(manifest),
-            text: crate::index::rule_index(model, manifest, &vendored.rules, &self.pinned),
+            rel: self.config.rule_index_path(),
+            text: crate::index::rule_index(model, &self.config.dir, &vendored.rules, &self.pinned),
             action: "regenerate it and read the diff: it is the work list a release bump reads",
         }]
     }
-}
-
-/// Where the rule index is written: the corpus directory the manifest declares.
-pub fn rule_index_path(manifest: &Manifest) -> PathBuf {
-    manifest.rules().dir.join("index.md")
 }
 
 /// The extension's block of the summary.
@@ -465,8 +604,116 @@ fn render(s: &Summary, not_run: &[&str]) -> String {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::{render, Summary};
+pub(crate) mod tests {
+    use super::{render, RulesConfig, RulesExtension, Summary};
+    use crate::extension::Extension;
+    use crate::manifest::Manifest;
+    use std::path::{Path, PathBuf};
+
+    /// The `[rules]` table of a manifest, as the extension resolves it.
+    pub(crate) fn configured(manifest: &Manifest) -> RulesConfig {
+        let mut rules = RulesExtension::default();
+        let resolution = rules.resolve(manifest);
+        assert!(
+            resolution.complaints.is_empty(),
+            "{:?}",
+            resolution.complaints
+        );
+        rules.config().cloned().expect("a [rules] table")
+    }
+
+    fn manifest_with(rules: &str) -> Manifest {
+        let text = format!(
+            "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
+             skip-files = []\nexclude = []\n\n[rules]\n{rules}"
+        );
+        Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
+    }
+
+    fn corpus_rows(dir: &str, text: &str, version: &str, past: &str, manifest: &str) -> String {
+        format!(
+            "dir = \"{dir}\"\ntext = \"{text}\"\nbody-starts-at = 0\nversion = \"{version}\"\n\
+             past = \"{past}\"\nmanifest = \"{manifest}\"\n"
+        )
+    }
+
+    #[test]
+    fn this_repository_declares_a_corpus_that_is_there() {
+        let manifest =
+            Manifest::load(&crate::manifest::tests::this_project()).expect("knowledge.toml");
+        assert!(configured(&manifest).tree(manifest.root()).text().is_file());
+    }
+
+    #[test]
+    fn a_refused_corpus_path_is_a_complaint_and_leaves_no_table() {
+        // The corpus has no default to stand in for a refused row, and a path kept as
+        // spelled was joined and read: `index` once wrote through a `..` corpus directory.
+        // Every one of the five rows is refused the same way.
+        for (key, rows) in [
+            ("dir", corpus_rows("../corpus", "t", "v", "p", "m")),
+            ("text", corpus_rows("corpus", "/t", "v", "p", "m")),
+            ("version", corpus_rows("corpus", "t", "../v", "p", "m")),
+            ("past", corpus_rows("corpus", "t", "v", "../p", "m")),
+            ("manifest", corpus_rows("corpus", "t", "v", "p", "/m")),
+        ] {
+            let mut rules = RulesExtension::default();
+            let resolution = rules.resolve(&manifest_with(&rows));
+            assert!(
+                resolution
+                    .complaints
+                    .iter()
+                    .any(|c| c.what.contains(&format!("in [rules] {key}"))),
+                "{key}: {:?}",
+                resolution.complaints
+            );
+            assert!(rules.config().is_none(), "{key}: a refused table is absent");
+            assert!(resolution.generated.is_empty(), "{key}");
+        }
+        let config = configured(&manifest_with(&corpus_rows(
+            "./corpus", "./t", "v", "p", "m",
+        )));
+        assert_eq!(config.dir, PathBuf::from("corpus"));
+        assert_eq!(config.text, PathBuf::from("t"));
+    }
+
+    #[test]
+    fn the_exemption_list_defaults_to_empty_and_a_refused_row_leaves_it() {
+        let config = configured(&manifest_with(&corpus_rows("r", "t", "v", "p", "m")));
+        assert!(config.exempt_files.is_empty());
+        let rows = format!(
+            "exempt-files = [\"./notes/x.md\", \"../y.md\"]\n{}",
+            corpus_rows("r", "t", "v", "p", "m")
+        );
+        let mut rules = RulesExtension::default();
+        let resolution = rules.resolve(&manifest_with(&rows));
+        assert_eq!(
+            resolution.complaints.len(),
+            1,
+            "{:?}",
+            resolution.complaints
+        );
+        assert!(resolution.complaints[0]
+            .what
+            .contains("[rules] exempt-files"));
+        let config = rules.config().expect("the table stands");
+        assert_eq!(config.exempt_files, vec![PathBuf::from("notes/x.md")]);
+    }
+
+    #[test]
+    fn the_corpus_paths_and_the_rule_index_are_declared_for_the_core() {
+        let mut rules = RulesExtension::default();
+        let resolution = rules.resolve(&manifest_with(&corpus_rows("r", "t", "v", "p", "m")));
+        assert_eq!(resolution.generated, vec![PathBuf::from("r/index.md")]);
+        let corpus = resolution
+            .paths
+            .iter()
+            .find(|(label, _)| label == "[rules]")
+            .expect("the corpus row");
+        assert_eq!(
+            corpus.1,
+            ["r/t", "r/v", "r/p", "r/m"].map(PathBuf::from).to_vec()
+        );
+    }
 
     /// A summary whose every number is different from every other, so two counts printed in
     /// the wrong order cannot render alike.

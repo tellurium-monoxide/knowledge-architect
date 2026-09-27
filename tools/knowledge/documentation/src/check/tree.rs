@@ -251,9 +251,8 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
 
     // **Every path the manifest declares is checked to exist.** A row naming a deleted file is
     // silent in both directions: nobody is told it is dead, and a file later created at that
-    // path inherits what the row grants. That matters most for `exempt-files`, which
-    // `check::regime::run` reads as well as the lint, so a stale row there can exempt a
-    // document from the whole citation regime without anyone deciding to.
+    // path inherits what the row grants: an extension's exemption list, for one, exempts a
+    // document from whatever that extension checks without anyone deciding to.
     //
     // Existence, never file-ness: `skip-dirs` names directories, `exclude` names either, and
     // an archive directory is a declared skip that is legitimately empty in a fresh checkout.
@@ -261,21 +260,19 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
     // A location's own path is not in this list: it is an anchor, and the anchor loop below
     // reports a directory that is not there. Both would be one fact reported twice.
     let walk = manifest.walk();
-    let rules = manifest.rules();
-    // The corpus directory itself is not a row: its four files are, and a directory with
-    // none of them is reported four times over. Asserting the directory would also refuse a
-    // corpus at the root, whose directory is the empty path git never lists.
-    let corpus: Vec<PathBuf> = [&rules.text, &rules.version, &rules.past, &rules.manifest]
-        .iter()
-        .map(|p| rules.dir.join(p))
-        .collect();
-    let declared: [(&str, &Vec<PathBuf>); 5] = [
+    let mut declared: Vec<(&str, &Vec<PathBuf>)> = vec![
         ("[walk] skip-dirs", &walk.skip_dirs),
         ("[walk] skip-files", &walk.skip_files),
         ("[walk] exclude", &walk.exclude),
-        ("[rules] exempt-files", &manifest.rules().exempt_files),
-        ("[rules]", &corpus),
     ];
+    // Each extension's declared paths, per
+    // `design@knowledge@an-extension-plugs-in-through-phased-hooks`.
+    declared.extend(
+        manifest
+            .extension_paths()
+            .iter()
+            .map(|(label, paths)| (label.as_str(), paths)),
+    );
     for (list, paths) in declared {
         for path in paths {
             if inputs.present.contains(path) {

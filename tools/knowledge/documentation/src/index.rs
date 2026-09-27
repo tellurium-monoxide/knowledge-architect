@@ -8,7 +8,7 @@
 //! between commits. A comparison against a string needs neither.
 
 use std::collections::{BTreeMap, BTreeSet, HashSet};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use rules::{Corpus, RuleNumber};
 
@@ -115,8 +115,8 @@ impl PartialOrd for Sort {
 ///
 /// This is what makes a bump actionable — when a rule changes or is renumbered, it says
 /// exactly what has to be re-read.
-pub fn rule_index(model: &Model, manifest: &Manifest, corpus: &Corpus, pinned: &str) -> String {
-    let cites = citations(model, &manifest.rules().dir);
+pub fn rule_index(model: &Model, dir: &Path, corpus: &Corpus, pinned: &str) -> String {
+    let cites = citations(model, dir);
     let (known, unknown): (Vec<_>, Vec<_>) = cites
         .iter()
         .partition(|(Sort(rule), _)| corpus.contains(rule));
@@ -327,17 +327,17 @@ pub fn file_register_indexes(
     out
 }
 
-/// Every path this tool writes a generated file at: the rule index, and one index per
-/// file-register instance, whether or not the directory is there.
+/// Every path this tool writes a generated file at: each file a configured extension generates,
+/// and one index per file-register instance, whether or not the directory is there.
 ///
 /// **This is what puts a generated file outside the walk by construction.** The set is
-/// derived from the manifest's corpus and register instances, so no `[walk] skip-files` row
+/// derived from the extensions and the register instances, so no `[walk] skip-files` row
 /// names one and a new instance cannot be created with its index inside the walk. A
 /// generated file that was walked would be read as a document: the rule index's table cells
 /// carry every slug the tree defines, and each read as a definition where none may sit.
 pub fn generated_paths(manifest: &Manifest) -> HashSet<PathBuf> {
     let mut out = generated_index_paths(manifest);
-    out.insert(manifest.rules().dir.join("index.md"));
+    out.extend(manifest.extension_generated().iter().cloned());
     out
 }
 
@@ -379,15 +379,6 @@ mod tests {
     // Every fixture is inline: the checker reads no string literal of its own source, per
     // `design@knowledge@checker-source-literals-are-data`.
 
-    /// A declaration whose rules directory and register directory are one level deep.
-    fn declaring() -> Manifest {
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
-             [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
-        Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration")
-    }
-
     #[test]
     fn a_rule_index_row_links_relative_to_the_index_directory() {
         // A markdown link a renderer follows, with the upward segments the index's own
@@ -396,7 +387,7 @@ mod tests {
         let corpus = Corpus::parse("100.1 A mock rule body.\n", 0);
         let doc = "parts/x/doc.md";
         let model = Model::from_documents(vec![(PathBuf::from(doc), "per CR:100.1\n".to_string())]);
-        let index = rule_index(&model, &declaring(), &corpus, "20200101");
+        let index = rule_index(&model, Path::new("r"), &corpus, "20200101");
         let row = format!("[{doc}](../{doc})");
         assert!(index.contains(&row), "{index}");
     }

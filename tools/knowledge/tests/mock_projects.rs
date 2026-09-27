@@ -29,15 +29,40 @@ fn run_rules(
 ) -> documentation::check::Report {
     use documentation::extension::Purpose;
     use documentation::rules_extension::{RulesPrepared, CHECKS};
-    let prepared = RulesPrepared::new(releases, "20200101".to_string(), Purpose::Check);
+    let prepared = RulesPrepared::new(
+        rules(manifest),
+        releases,
+        "20200101".to_string(),
+        Purpose::Check,
+    );
     documentation::check::run_with(model, manifest, inputs, &[(&CHECKS, &prepared)])
 }
 
+/// A mock project's manifest, configured with the rules extension as the binary configures it,
+/// so the rule index is outside the walk and a refused `[rules]` table is a complaint.
 fn mock(name: &str) -> Manifest {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("tests/projects")
         .join(name);
-    Manifest::load(&root).expect("the mock project's manifest")
+    let mut manifest = Manifest::load(&root).expect("the mock project's manifest");
+    let mut extensions: Vec<Box<dyn documentation::extension::Extension>> = vec![Box::new(
+        documentation::rules_extension::RulesExtension::default(),
+    )];
+    documentation::extension::configure(&mut manifest, &mut extensions);
+    manifest
+}
+
+/// A mock project's `[rules]` table, as the rules extension resolves it.
+fn rules(manifest: &Manifest) -> documentation::rules_extension::RulesConfig {
+    use documentation::extension::Extension;
+    let mut extension = documentation::rules_extension::RulesExtension::default();
+    let resolution = extension.resolve(manifest);
+    assert!(
+        resolution.complaints.is_empty(),
+        "{:?}",
+        resolution.complaints
+    );
+    extension.config().cloned().expect("a [rules] table")
 }
 
 fn model(name: &str) -> Model {
@@ -304,9 +329,9 @@ fn the_corpus_parses_under_the_project_that_declares_where_its_body_starts() {
     // This mock's text has no table of contents, so its body starts at line zero. The
     // repository's starts at 181. Nothing in the parser knows either number.
     let manifest = mock("minimal");
-    let tree = manifest.rules_tree();
+    let tree = rules(&manifest).tree(manifest.root());
     let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
-    let corpus = rules::Corpus::parse(&text, manifest.rules().body_starts_at);
+    let corpus = rules::Corpus::parse(&text, rules(&manifest).body_starts_at);
     assert_eq!(corpus.len(), 2);
     let second = rules::RuleNumber::parse("100.2").expect("a rule number");
     assert_eq!(
@@ -392,13 +417,15 @@ fn every_committed_index_is_what_the_generator_writes() {
                 .unwrap_or_else(|e| panic!("{name}: {}: {e}", rel.display()));
             assert_eq!(got, want, "{name}: {} has drifted", rel.display());
         }
-        let rel = manifest.rules().dir.join("index.md");
+        let rel = rules(&manifest).dir.join("index.md");
         let Ok(got) = std::fs::read_to_string(manifest.root().join(&rel)) else {
             continue;
         };
-        let text = std::fs::read_to_string(manifest.rules_tree().text()).expect("the mock corpus");
-        let corpus = rules::Corpus::parse(&text, manifest.rules().body_starts_at);
-        let want = documentation::index::rule_index(&model, &manifest, &corpus, "20200101");
+        let text = std::fs::read_to_string(rules(&manifest).tree(manifest.root()).text())
+            .expect("the mock corpus");
+        let corpus = rules::Corpus::parse(&text, rules(&manifest).body_starts_at);
+        let want =
+            documentation::index::rule_index(&model, &rules(&manifest).dir, &corpus, "20200101");
         assert_eq!(got, want, "{name}: {} has drifted", rel.display());
     }
 }
@@ -423,15 +450,15 @@ fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
 
     let manifest = mock("dirhome");
     let model = Model::build(&manifest, None).expect("a model");
-    let tree = manifest.rules_tree();
+    let tree = rules(&manifest).tree(manifest.root());
     let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
-    let body = manifest.rules().body_starts_at;
+    let body = rules(&manifest).body_starts_at;
     let releases = HashMap::from([(None, Release::new(&text, body))]);
     let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
     // The committed generated files, read from the tree rather than regenerated, so a
     // committed index that has gone stale fails here.
     let mut committed = HashMap::new();
-    let mut paths = vec![manifest.rules().dir.join("index.md")];
+    let mut paths = vec![rules(&manifest).dir.join("index.md")];
     paths.extend(documentation::index::generated_index_paths(&manifest));
     for rel in paths {
         let text = std::fs::read_to_string(manifest.root().join(&rel)).expect("a committed index");
@@ -488,8 +515,8 @@ mod planted {
     ) -> HashMap<PathBuf, String> {
         let survey = documentation::survey::survey(manifest, model).expect("a survey of the mock");
         let mut out = HashMap::from([(
-            manifest.rules().dir.join("index.md"),
-            index::rule_index(model, manifest, corpus, "20200101"),
+            rules(manifest).dir.join("index.md"),
+            index::rule_index(model, &rules(manifest).dir, corpus, "20200101"),
         )]);
         out.extend(index::file_register_indexes(
             model,
@@ -505,10 +532,10 @@ mod planted {
     ) -> Vec<String> {
         let manifest = mock("planted");
         let model = Model::build(&manifest, None).expect("a model");
-        let tree = manifest.rules_tree();
+        let tree = rules(&manifest).tree(manifest.root());
         let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
-        let release = Release::new(&text, manifest.rules().body_starts_at);
-        let corpus = rules::Corpus::parse(&text, manifest.rules().body_starts_at);
+        let release = Release::new(&text, rules(&manifest).body_starts_at);
+        let corpus = rules::Corpus::parse(&text, rules(&manifest).body_starts_at);
         let committed = committed(&manifest, &model, &corpus);
         let releases = HashMap::from([(None, release)]);
         let survey =
@@ -650,13 +677,19 @@ mod planted {
         use documentation::rules_extension::RulesPrepared;
         let manifest = mock("planted");
         let model = Model::build(&manifest, None).expect("a model");
-        let text = std::fs::read_to_string(manifest.rules_tree().text()).expect("the mock corpus");
-        let body = manifest.rules().body_starts_at;
+        let text = std::fs::read_to_string(rules(&manifest).tree(manifest.root()).text())
+            .expect("the mock corpus");
+        let body = rules(&manifest).body_starts_at;
         let releases = HashMap::from([
             (None, Release::new(&text, body)),
             (Some("20200101".to_string()), Release::new(&text, body)),
         ]);
-        let prepared = RulesPrepared::new(releases, "20200101".to_string(), Purpose::Check);
+        let prepared = RulesPrepared::new(
+            rules(&manifest),
+            releases,
+            "20200101".to_string(),
+            Purpose::Check,
+        );
         let pinned = prepared.pinned_containers(&model);
         let files: Vec<&str> = pinned.iter().map(|(f, _, _)| f.as_str()).collect();
         assert!(
@@ -672,7 +705,7 @@ mod planted {
     fn a_generated_file_that_has_drifted_is_reported_at_the_line_it_drifted_on() {
         let stale = findings_with(|m, model, corpus| {
             let mut c = current_indexes(m, model, corpus);
-            let path = m.rules().dir.join("index.md");
+            let path = rules(m).dir.join("index.md");
             let text = c[&path].replace("Rule citation index", "Rule citation index (edited)");
             c.insert(path, text);
             c
@@ -1126,9 +1159,9 @@ mod regime {
     fn judged_with(checker_source: Option<&std::path::Path>) -> Vec<(Rule, String)> {
         let manifest = mock("planted");
         let model = Model::build(&manifest, checker_source).expect("a model");
-        let tree = manifest.rules_tree();
+        let tree = rules(&manifest).tree(manifest.root());
         let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
-        let release = Release::new(&text, manifest.rules().body_starts_at);
+        let release = Release::new(&text, rules(&manifest).body_starts_at);
         let mut out = Vec::new();
         for doc in model.documents() {
             if doc.pin.is_some() {

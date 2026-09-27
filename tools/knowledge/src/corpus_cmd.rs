@@ -11,6 +11,7 @@ use std::process::ExitCode;
 
 use clap::Subcommand;
 
+use documentation::rules_extension::{RulesConfig, RulesExtension};
 use documentation::Manifest;
 use rules::release::{self, Tree};
 use rules::{Corpus, RuleNumber};
@@ -64,13 +65,30 @@ fn release_date(s: &str) -> Result<String, String> {
 }
 
 pub fn run(manifest: &Manifest, command: &RulesCommand) -> Result<ExitCode, String> {
-    let tree = manifest.rules_tree();
+    // The manifest as the rules extension resolves it, so a model built here leaves the rule
+    // index out of the walk as `check` does, and a refused `[rules]` table stops the command.
+    let mut configured = manifest.clone();
+    let mut extensions: Vec<Box<dyn documentation::extension::Extension>> =
+        vec![Box::new(RulesExtension::default())];
+    documentation::extension::configure(&mut configured, &mut extensions);
+    let mut rules = RulesExtension::default();
+    use documentation::extension::Extension;
+    let resolution = rules.resolve(&configured);
+    if let Some(first) = resolution.complaints.first() {
+        return Err(format!("{first}"));
+    }
+    let config = rules
+        .config()
+        .cloned()
+        .ok_or("the manifest declares no [rules] table")?;
+    let manifest = &configured;
+    let tree = config.tree(manifest.root());
     let code = match command {
-        RulesCommand::Show { numbers } => show(manifest, &tree, numbers)?,
+        RulesCommand::Show { numbers } => show(&config, &tree, numbers)?,
         RulesCommand::Latest => latest(&tree)?,
-        RulesCommand::Diff { old, new } => diff(manifest, &tree, old, new)?,
+        RulesCommand::Diff { old, new } => diff(manifest, &config, &tree, old, new)?,
         RulesCommand::Fetch { date } => fetch(&tree, date.clone())?,
-        RulesCommand::Bump { date } => bump(manifest, &tree, date)?,
+        RulesCommand::Bump { date } => bump(manifest, &config, &tree, date)?,
     };
     Ok(ExitCode::from(code as u8))
 }
@@ -98,10 +116,10 @@ fn quoted(number: &RuleNumber, body: &str) -> String {
 /// **A number that resolves to nothing fails the run.** A session that asked for a rule and
 /// got silence writes the citation from recollection, which is the one thing root `CLAUDE.md`
 /// forbids outright.
-fn show(manifest: &Manifest, tree: &Tree, numbers: &[String]) -> Result<i32, String> {
+fn show(config: &RulesConfig, tree: &Tree, numbers: &[String]) -> Result<i32, String> {
     let text = std::fs::read_to_string(tree.text())
         .map_err(|e| format!("{}: {e}", tree.text().display()))?;
-    let corpus = Corpus::parse(&text, manifest.rules().body_starts_at);
+    let corpus = Corpus::parse(&text, config.body_starts_at);
 
     let mut unresolved = 0;
     for arg in numbers {
@@ -214,18 +232,21 @@ fn cited(manifest: &Manifest) -> Result<Vec<RuleNumber>, String> {
     Ok(out)
 }
 
-fn corpus_at(tree: &Tree, manifest: &Manifest, date: &str) -> Result<Corpus, String> {
+fn corpus_at(tree: &Tree, config: &RulesConfig, date: &str) -> Result<Corpus, String> {
     let path = release::resolve(tree, date)?;
     let text = std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-    Ok(Corpus::parse(&text, manifest.rules().body_starts_at))
+    Ok(Corpus::parse(&text, config.body_starts_at))
 }
 
 /// What moved between two releases, filtered to the rules this project cites.
-fn diff(manifest: &Manifest, tree: &Tree, old: &str, new: &str) -> Result<i32, String> {
-    let (old, new) = (
-        corpus_at(tree, manifest, old)?,
-        corpus_at(tree, manifest, new)?,
-    );
+fn diff(
+    manifest: &Manifest,
+    config: &RulesConfig,
+    tree: &Tree,
+    old: &str,
+    new: &str,
+) -> Result<i32, String> {
+    let (old, new) = (corpus_at(tree, config, old)?, corpus_at(tree, config, new)?);
     let cited = cited(manifest)?;
     let changes = rules::diff::diff(&old, &new, &cited);
     for change in &changes {
@@ -306,7 +327,7 @@ fn effective_report(old_text: &str, new_text: &str, old: &str, new: &str) -> Str
 /// The checkers ARE the change detector: every citation is a verbatim quote, so a quote that
 /// stops verifying is a rule that moved under a decision we made. What this prints is a work
 /// list, not a build break to silence.
-fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
+fn bump(manifest: &Manifest, config: &RulesConfig, tree: &Tree, new: &str) -> Result<i32, String> {
     let old = pinned_date(tree)?;
     if old == new {
         outln!("already pinned at {new}");
@@ -320,11 +341,11 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     outln!("== {old} -> {new} ==");
 
     let old_text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
-    let old_corpus = Corpus::parse(&old_text, manifest.rules().body_starts_at);
+    let old_corpus = Corpus::parse(&old_text, config.body_starts_at);
     let new_path = release::resolve(tree, new)?;
     let new_text =
         std::fs::read_to_string(&new_path).map_err(|e| format!("{}: {e}", new_path.display()))?;
-    let new_corpus = Corpus::parse(&new_text, manifest.rules().body_starts_at);
+    let new_corpus = Corpus::parse(&new_text, config.body_starts_at);
     let cited = cited(manifest)?;
     let changes = rules::diff::diff(&old_corpus, &new_corpus, &cited);
     for change in &changes {
@@ -359,7 +380,7 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     // and regenerating first would drop every renumbered or deleted rule into the index's
     // "not rules in this release" footnote — so the work list would report "(not cited)" for
     // exactly the rules the diff just flagged as the dangerous case.
-    let index_path = manifest.root().join(manifest.rules().dir.join("index.md"));
+    let index_path = manifest.root().join(config.rule_index_path());
     let pre_index = std::fs::read_to_string(&index_path).unwrap_or_default();
 
     // Vendor the SAME bytes the diff and the report were computed from. Fetching again here
@@ -370,11 +391,11 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     outln!("{lines} lines\ndate:   {new}\nsource: {url}\nsha256: {digest}");
     let fresh = {
         let text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;
-        Corpus::parse(&text, manifest.rules().body_starts_at)
+        Corpus::parse(&text, config.body_starts_at)
     };
     std::fs::write(
         &index_path,
-        documentation::index::rule_index(&model, manifest, &fresh, new),
+        documentation::index::rule_index(&model, &config.dir, &fresh, new),
     )
     .map_err(|e| e.to_string())?;
 
@@ -388,9 +409,7 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
         new,
     );
     append(
-        &manifest
-            .root()
-            .join(manifest.rules().dir.join("CHANGES.md")),
+        &manifest.root().join(config.dir.join("CHANGES.md")),
         &section,
     )?;
     outln!(

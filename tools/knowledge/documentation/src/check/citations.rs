@@ -874,7 +874,8 @@ mod tests {
         fn produces_exactly_one_part_at_every_realistic_wrap_width() {
             let root = crate::manifest::tests::this_project();
             let manifest = crate::Manifest::load(&root).expect("this project's manifest");
-            let tree = manifest.rules_tree();
+            let config = crate::rules_extension::tests::configured(&manifest);
+            let tree = config.tree(manifest.root());
             let version = std::fs::read_to_string(tree.version()).expect("VERSION");
             let pinned = rules::release::read_version(&version)["date"].clone();
             if pinned != DIGEST_RELEASE {
@@ -882,7 +883,7 @@ mod tests {
                 return;
             }
             let text = std::fs::read_to_string(tree.text()).expect("the rules text");
-            let corpus = rules::Corpus::parse(&text, manifest.rules().body_starts_at);
+            let corpus = rules::Corpus::parse(&text, config.body_starts_at);
             for width in [72, 80, 98, 110, 120] {
                 let mut bad = Vec::new();
                 for (number, body) in corpus.iter() {

@@ -98,6 +98,11 @@ pub fn run(
     checker: &Path,
     extensions: &mut [Box<dyn Extension>],
 ) -> Result<ExitCode, String> {
+    // Every command reads the manifest as its extensions resolved it: the files they generate
+    // are outside every walk, and a table they refuse is phase 1 of `check`.
+    let mut configured = manifest.clone();
+    crate::extension::configure(&mut configured, extensions);
+    let manifest = &configured;
     match command {
         Command::Check => check(manifest, checker, extensions),
         Command::Show(args) => show(manifest, &args, checker),

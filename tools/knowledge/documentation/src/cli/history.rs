@@ -257,10 +257,11 @@ fn commit_tree(
     extensions: &mut [Box<dyn Extension>],
     depth: Depth,
 ) -> Result<Assembly, Unloadable> {
-    // The rule index is generated and named by the manifest rather than derived, so it is
-    // asked for by hand; every other generated index comes from the register instances.
     let read = read_tree(root, sha, &[])?;
-    let manifest = read.manifest;
+    // Configured against this commit's own manifest, so the files its extensions generate
+    // are left out of its walk and read as committed, and a table it refuses is its phase 1.
+    let mut manifest = read.manifest;
+    crate::extension::configure(&mut manifest, extensions);
     let anchors = Anchors::of(&manifest);
     let generated = crate::index::generated_paths(&manifest);
     // The walk reads through no symlink and no gitlink, so the files alone are walked.
@@ -274,8 +275,7 @@ fn commit_tree(
     let mut blobs = read.blobs;
     // The generated indexes and the per-instance options sit outside the walk and are read by
     // the caller, exactly as `check` reads them off the filesystem.
-    let mut extra: Vec<PathBuf> = vec![manifest.rules().dir.join("index.md")];
-    extra.extend(generated.iter().cloned());
+    let mut extra: Vec<PathBuf> = generated.iter().cloned().collect();
     for (_, _, home) in anchors.instances() {
         extra.push(home.config.clone());
     }
@@ -311,7 +311,7 @@ fn commit_tree(
     let judging = depth == Depth::Judged;
 
     let mut committed = HashMap::new();
-    for rel in extra_generated(&manifest, &generated) {
+    for rel in extra_generated(&generated) {
         if let Some(text) = blobs.get(&rel) {
             committed.insert(rel, text.clone());
         }
@@ -392,11 +392,10 @@ fn commit_tree(
     Ok(assembly)
 }
 
-/// Every generated file whose committed bytes a check compares against: the rule index, and
-/// one index per file-register instance.
-fn extra_generated(manifest: &Manifest, generated: &HashSet<PathBuf>) -> Vec<PathBuf> {
-    let mut out = vec![manifest.rules().dir.join("index.md")];
-    out.extend(generated.iter().cloned());
+/// Every generated file whose committed bytes a check compares against: each file an
+/// extension generates, and one index per file-register instance.
+fn extra_generated(generated: &HashSet<PathBuf>) -> Vec<PathBuf> {
+    let mut out: Vec<PathBuf> = generated.iter().cloned().collect();
     out.sort();
     out.dedup();
     out

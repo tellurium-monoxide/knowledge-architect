@@ -111,9 +111,7 @@ belongs to, per `design@knowledge@phases-gate-the-report`:
 
 | call | when | what the extension does |
 | ---- | ---- | -------------------- |
-| resolve | phase 1 | reads the tables it claims; a complaint is a finding of the phase |
-| generated paths | before the walk | names the files it generates, which the walk leaves out and reads as committed |
-| assert the tree | phase 2 | reports a declared path that does not exist |
+| resolve | phase 1, before the walk | reads the tables it claims, and returns its complaints, the paths it declares and the files it generates; the core reports the complaints in phase 1, asserts in phase 2 that each declared path exists, and leaves the generated files out of the walk and reads them as committed |
 | prepare | once phases 1 to 3 passed | reads what its checks need for one tree, and may fail the run as could-not-run |
 | check | phase 4 | its checks, with the count lines and the not-run names its summary prints |
 | judge a message | `commits` | the rules a commit message is judged by, against that commit's prepared tree |
