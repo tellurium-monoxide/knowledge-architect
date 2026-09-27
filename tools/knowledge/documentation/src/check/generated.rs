@@ -1,14 +1,15 @@
 //! The generated indexes are current.
 //!
 //! A generated file that drifts is worse than no generated file: `bumping-rules` calls the
-//! rule index *the work list* for a release, and a stale work list decides what a renumbering
-//! breaks.
+//! rule index, which the rules extension generates, *the work list* for a release, and a stale
+//! work list decides what a renumbering breaks.
 //!
 //! **The comparison is against a string.** Nothing here writes the file and restores it, so a
 //! run that dies half-way leaves the tree exactly as it found it.
 
 use std::path::Path;
 
+use crate::extension::Generated;
 use crate::finding::Finding;
 use crate::index;
 use crate::manifest::Manifest;
@@ -16,24 +17,22 @@ use crate::model::Model;
 
 use super::Inputs;
 
-/// Compare each generated file with what it would be generated as now.
+/// Compare each generated file with what it would be generated as now: every file an
+/// extension generates, then one index per file-register instance.
 ///
-/// **The rule index is gated on the vendored release and the file-register indexes are not.**
-/// The binary resolves the release before it calls this family, so no run of `check` reaches here
-/// without one; what the gate buys is that a caller assembling its own `Inputs` — every test here
-/// does — cannot silence the whole family by handing it no release, which would report the
-/// listings current without comparing a byte.
-pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding> {
+/// An extension's files arrive already rendered, because only the extension can render them;
+/// the file-register indexes are rendered here, so a caller handing in no extension still has
+/// every listing compared.
+pub fn check(
+    model: &Model,
+    manifest: &Manifest,
+    inputs: &Inputs,
+    extension_files: &[Generated],
+) -> Vec<Finding> {
     let mut findings = Vec::new();
 
-    if let Some(vendored) = inputs.releases.get(&None) {
-        compare(
-            &manifest.rules().dir.join("index.md"),
-            &index::rule_index(model, manifest, &vendored.rules, inputs.pinned),
-            inputs,
-            "regenerate it and read the diff: it is the work list a release bump reads",
-            &mut findings,
-        );
+    for file in extension_files {
+        compare(&file.rel, &file.text, inputs, file.action, &mut findings);
     }
     for (rel, expected) in index::file_register_indexes(model, manifest, inputs.directories) {
         compare(
@@ -90,7 +89,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn a_run_with_no_release_still_judges_the_file_register_indexes() {
+    fn a_run_with_no_extension_still_judges_the_file_register_indexes() {
         use crate::manifest::Manifest;
         use std::collections::{HashMap, HashSet};
         use std::path::PathBuf;
@@ -101,14 +100,11 @@ mod tests {
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         let manifest = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         let model = Model::from_documents(Vec::new());
-        let releases = HashMap::new();
         let committed = HashMap::new();
         let configs = HashMap::new();
         let present: HashSet<PathBuf> = HashSet::new();
         let directories: HashSet<PathBuf> = [PathBuf::from("docs/open-issues")].into();
         let inputs = Inputs {
-            releases: &releases,
-            pinned: "20200101",
             committed: &committed,
             configs: &configs,
             present: &present,
@@ -119,11 +115,11 @@ mod tests {
             refused: &[],
             links: &[],
         };
-        let found: Vec<String> = check(&model, &manifest, &inputs)
+        let found: Vec<String> = check(&model, &manifest, &inputs, &[])
             .iter()
             .map(|f| f.location())
             .collect();
-        // The issue instance's index, and not the rule index, which has no release to render.
+        // The issue instance's index, and nothing an extension would have generated.
         assert_eq!(found, vec!["docs/open-issues/index.md".to_string()]);
     }
 

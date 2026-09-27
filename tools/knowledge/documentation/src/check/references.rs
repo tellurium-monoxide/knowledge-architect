@@ -611,14 +611,11 @@ mod tests {
                 .map(|(p, t)| (PathBuf::from(p), t.to_string()))
                 .collect(),
         );
-        let releases = HashMap::new();
         let committed = HashMap::new();
         let present: HashSet<PathBuf> = present.iter().map(PathBuf::from).collect();
         let directories = crate::check::testing::implied_directories(&present);
         let outside = Vec::new();
         let inputs = Inputs {
-            releases: &releases,
-            pinned: "",
             committed: &committed,
             configs: &HashMap::new(),
             present: &present,

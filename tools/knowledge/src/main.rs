@@ -55,7 +55,14 @@ fn main() -> ExitCode {
     let cli = Cli::parse();
 
     let outcome = documentation::cli::locate().and_then(|manifest| match cli.command {
-        Command::Core(command) => documentation::cli::run(command, &manifest, checker_source()),
+        Command::Core(command) => {
+            // This repository's own subject, the Comprehensive Rules, is an extension of the
+            // core, per `design@thaum@knowledge-is-a-generic-core`.
+            let mut extensions: Vec<Box<dyn documentation::extension::Extension>> = vec![Box::new(
+                documentation::rules_extension::RulesExtension::default(),
+            )];
+            documentation::cli::run(command, &manifest, checker_source(), &mut extensions)
+        }
         Command::Rules { command } => corpus_cmd::run(&manifest, &command),
     });
 

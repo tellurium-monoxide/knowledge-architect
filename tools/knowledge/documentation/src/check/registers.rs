@@ -534,7 +534,6 @@ fn links(model: &Model, readme: &PathBuf, dir: &Path) -> HashSet<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::check::citations::Release;
     use crate::manifest::{COMPONENT_DOCUMENTS, MANIFEST_NAME};
     use std::collections::HashMap;
     use std::path::PathBuf;
@@ -582,7 +581,6 @@ mod tests {
         model: Model,
         configs: &[(&str, &str)],
     ) -> Vec<String> {
-        let releases: HashMap<Option<String>, Release> = HashMap::new();
         let committed = HashMap::new();
         let present: HashSet<PathBuf> = present.iter().map(|p| PathBuf::from(p.as_ref())).collect();
         let directories = crate::check::testing::implied_directories(&present);
@@ -592,8 +590,6 @@ mod tests {
             .map(|(p, t)| (PathBuf::from(p), t.to_string()))
             .collect();
         let inputs = Inputs {
-            releases: &releases,
-            pinned: "",
             committed: &committed,
             configs: &configs,
             present: &present,
@@ -1634,14 +1630,11 @@ mod tests {
     #[test]
     fn a_refused_name_is_one_finding_naming_the_file_on_one_line() {
         let manifest = declaring("");
-        let releases: HashMap<Option<String>, Release> = HashMap::new();
         let committed = HashMap::new();
         let present: HashSet<PathBuf> = all_of("").iter().map(PathBuf::from).collect();
         let directories = crate::check::testing::implied_directories(&present);
         let refused = vec![PathBuf::from("docs/a\nb.md"), PathBuf::from("docs/c\rd.md")];
         let inputs = Inputs {
-            releases: &releases,
-            pinned: "",
             committed: &committed,
             configs: &HashMap::new(),
             present: &present,

@@ -20,9 +20,9 @@ use output::{out, outln};
 
 use clap::{Args, Subcommand};
 
-use crate::check::citations::Release;
-use crate::check::{Inputs, Phase, Report, CHECKS};
+use crate::check::{Inputs, Phase, Report};
 use crate::entity::{Anchors, Candidate, Entities, Kind};
+use crate::extension::{Extension, Prepared, Purpose, Tree};
 use crate::manifest::{ISSUE_REGISTER, TRIPWIRE_REGISTER};
 use crate::Manifest;
 
@@ -89,15 +89,25 @@ pub struct TripwiresArgs {
 /// `checker` is every directory of the running binary's own source, compiled into it, per
 /// `design@knowledge@checker-source-literals-are-data`. The exit code is
 /// `design@thaum@exit-code-ladder`: `Err` is could-not-run, and the caller prints it and exits 2.
-pub fn run(command: Command, manifest: &Manifest, checker: &Path) -> Result<ExitCode, String> {
+/// `extensions` is every extension the binary registers, per
+/// `design@knowledge@an-extension-plugs-in-through-phased-hooks`; the core's own binary passes
+/// none.
+pub fn run(
+    command: Command,
+    manifest: &Manifest,
+    checker: &Path,
+    extensions: &mut [Box<dyn Extension>],
+) -> Result<ExitCode, String> {
     match command {
-        Command::Check => check(manifest, checker),
+        Command::Check => check(manifest, checker, extensions),
         Command::Show(args) => show(manifest, &args, checker),
         Command::Issues(args) => issues(manifest, &args, checker),
         Command::Tripwires(args) => tripwires(manifest, &args, checker),
-        Command::Index => index(manifest, checker),
+        Command::Index => index(manifest, checker, extensions),
         Command::Model => model(manifest, checker),
-        Command::Commits(args) => history::commits(manifest, &args.range, Some(checker)),
+        Command::Commits(args) => {
+            history::commits(manifest, &args.range, Some(checker), extensions)
+        }
     }
 }
 
@@ -116,8 +126,6 @@ pub fn complete_working_tree(
     let tracked_and_ignored =
         crate::git::tracked_and_ignored(manifest.root()).map_err(|e| e.to_string())?;
     let inputs = Inputs {
-        releases: &HashMap::new(),
-        pinned: "",
         committed: &HashMap::new(),
         configs: &HashMap::new(),
         present: &survey.present,
@@ -172,23 +180,22 @@ fn model(manifest: &Manifest, checker: &Path) -> Result<ExitCode, String> {
     Ok(ExitCode::SUCCESS)
 }
 
-/// Every check, over one walk.
+/// Every check, over one walk: the core's, then each extension's.
 ///
-/// Releases are resolved here rather than inside a check: resolving one may read the archive
-/// or reach the network, and a check may do neither. What a check receives is a release
-/// already parsed.
-fn check(manifest: &Manifest, checker: &Path) -> Result<ExitCode, String> {
+/// An extension prepares its tree here rather than inside a check: preparing may read the
+/// archive or reach the network, and a check may do neither.
+fn check(
+    manifest: &Manifest,
+    checker: &Path,
+    extensions: &mut [Box<dyn Extension>],
+) -> Result<ExitCode, String> {
     let model = crate::Model::build(manifest, Some(checker)).map_err(|e| e.to_string())?;
-    let tree = manifest.rules_tree();
-    let body_starts_at = manifest.rules().body_starts_at;
 
     // The generated files are outside the walk — the rule index by a declared row, every
     // file-register index by construction — because a generated file is not a source of
     // citations. They are read here so a check does not.
     let mut committed = HashMap::new();
-    let mut generated_paths = vec![manifest.rules().dir.join("index.md")];
-    generated_paths.extend(crate::index::generated_index_paths(manifest));
-    for rel in generated_paths {
+    for rel in crate::index::generated_paths(manifest) {
         if let Ok(text) = std::fs::read_to_string(manifest.root().join(&rel)) {
             committed.insert(rel, text);
         }
@@ -203,12 +210,6 @@ fn check(manifest: &Manifest, checker: &Path) -> Result<ExitCode, String> {
             configs.insert(home.config.clone(), text);
         }
     }
-    // Read leniently until the foundation has passed: a version file that is not there is a
-    // phase-2 finding naming its path, which is more than an error from reading it first says.
-    let pinned = std::fs::read_to_string(tree.version())
-        .ok()
-        .and_then(|v| rules::release::read_version(&v).get("date").cloned())
-        .unwrap_or_default();
     // One listing answers every question a check has about what is there, and it is the
     // caller's job because a check may not touch the filesystem.
     let survey = crate::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
@@ -220,12 +221,7 @@ fn check(manifest: &Manifest, checker: &Path) -> Result<ExitCode, String> {
     let ignored = crate::git::ignored(manifest.root(), &queries).map_err(|e| e.to_string())?;
     let tracked_and_ignored =
         crate::git::tracked_and_ignored(manifest.root()).map_err(|e| e.to_string())?;
-    // The first three phases need no release: a run that stops in one of them fetches
-    // nothing, whatever it would have judged.
-    let no_releases: HashMap<Option<String>, Release> = HashMap::new();
     let inputs = Inputs {
-        releases: &no_releases,
-        pinned: &pinned,
         committed: &committed,
         configs: &configs,
         present: &survey.present,
@@ -241,93 +237,22 @@ fn check(manifest: &Manifest, checker: &Path) -> Result<ExitCode, String> {
         print_report(&report);
         return Ok(ExitCode::FAILURE);
     }
-    if pinned.is_empty() {
-        return Err(format!(
-            "{}: names no date, and the last phase verifies every quote against it",
-            tree.version().display()
-        ));
-    }
 
-    // The last phase reads rule text, and resolving a pin may fetch over the network. The
-    // foundation has passed, so the releases are needed now and by nothing before.
-    let mut releases: HashMap<Option<String>, Release> = HashMap::new();
-    {
-        let vendored = std::fs::read_to_string(tree.text())
-            .map_err(|e| format!("{}: {e}", tree.text().display()))?;
-        releases.insert(None, Release::new(&vendored, body_starts_at));
+    // The foundation has passed, so what each extension reads is needed now and by nothing
+    // before: a run that stopped earlier resolved and fetched nothing.
+    let mut prepared: Vec<(&'static [&'static str], Box<dyn Prepared>)> = Vec::new();
+    for extension in extensions.iter_mut() {
+        let p = extension.prepare(
+            manifest,
+            &model,
+            Tree::Checkout(manifest.root()),
+            Purpose::Check,
+        )?;
+        prepared.push((extension.checks(), p));
     }
-    {
-        for doc in model.documents() {
-            let Some(date) = &doc.pin else { continue };
-            if releases.contains_key(&doc.pin) {
-                continue;
-            }
-            let path = rules::release::resolve(&tree, date)?;
-            let text =
-                std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-            releases.insert(doc.pin.clone(), Release::new(&text, body_starts_at));
-        }
-    }
-
-    let inputs = Inputs {
-        releases: &releases,
-        ..inputs
-    };
-    let mut report = crate::check::run(&model, manifest, &inputs);
-
-    // The changelog is outside the walk: each section pins its own release, so it is checked
-    // against that release rather than the vendored one. The caller resolves them, as with
-    // every other release.
-    let changes_path = manifest.rules().dir.join("CHANGES.md");
-    {
-        // Both checks are gated on the changelog being readable, so when it is not there
-        // neither ran. Saying otherwise would print a zero for a check nobody performed,
-        // which for `corpus` means reporting provenance clean without having read a byte
-        // of it.
-        if std::fs::read_to_string(manifest.root().join(&changes_path)).is_err() {
-            report.not_run = vec!["changes", "corpus"];
-        }
-        if let Ok(text) = std::fs::read_to_string(manifest.root().join(&changes_path)) {
-            let (sections, _) = crate::check::changes::parse(&text).unwrap_or_default();
-            let mut corpora = HashMap::new();
-            let mut digests = HashMap::new();
-            for section in &sections {
-                let path = rules::release::resolve(&tree, &section.version)?;
-                let bytes = std::fs::read(&path).map_err(|e| e.to_string())?;
-                digests.insert(section.version.clone(), rules::release::sha256(&bytes));
-                let text = String::from_utf8_lossy(&bytes).to_string();
-                corpora.insert(
-                    section.version.clone(),
-                    rules::Corpus::parse(&text, body_starts_at),
-                );
-            }
-            {
-                let (found, changes) =
-                    crate::check::changes::check(&changes_path, &text, &corpora, &digests);
-                report.findings.extend(found);
-                report.changelog_changes = changes;
-            }
-            {
-                // Every release the changelog names must already be in the tree, alongside
-                // the pin. The changelog is parsed above whichever family asked for it,
-                // because this check reads it for the release list rather than to check it.
-                let mut needed = vec![(pinned.clone(), "the pin".to_string())];
-                needed.extend(sections.iter().map(|s| {
-                    (
-                        s.version.clone(),
-                        format!("the changelog section {}", s.version),
-                    )
-                }));
-                let (problems, corpus_counts) = rules::integrity::check(&tree, &needed);
-                for p in problems {
-                    report
-                        .findings
-                        .push(crate::Finding::in_file(&p.about, p.what, p.action));
-                }
-                report.corpus = corpus_counts;
-            }
-        }
-    }
+    let with: Vec<(&[&'static str], &dyn Prepared)> =
+        prepared.iter().map(|(c, p)| (*c, p.as_ref())).collect();
+    let report = crate::check::run_with(&model, manifest, &inputs, &with);
     print_report(&report);
     Ok(if report.failed() {
         ExitCode::FAILURE
@@ -363,30 +288,35 @@ fn print_report(report: &Report) {
 /// **Whether a generated file is current is not this command's question.**
 /// The `generated` check of `cargo knowledge check` is the gate, and it names the first line at which
 /// the committed file and the regenerated one disagree.
-fn index(manifest: &Manifest, checker: &Path) -> Result<ExitCode, String> {
+fn index(
+    manifest: &Manifest,
+    checker: &Path,
+    extensions: &mut [Box<dyn Extension>],
+) -> Result<ExitCode, String> {
     let model = crate::Model::build(manifest, Some(checker)).map_err(|e| e.to_string())?;
-    // The gate first: a corpus file that is not there is phase 2's finding, named by path,
-    // and reading it before the gate would turn that into an error naming nothing.
+    // The gate first: a file an extension reads that is not there is phase 2's finding, named
+    // by path, and reading it before the gate would turn that into an error naming nothing.
     let survey = complete_working_tree(manifest, &model)?;
-    let tree = manifest.rules_tree();
-    let corpus_text = std::fs::read_to_string(tree.text())
-        .map_err(|e| format!("{}: {e}", tree.text().display()))?;
-    let corpus = rules::Corpus::parse(&corpus_text, manifest.rules().body_starts_at);
-    let version = std::fs::read_to_string(tree.version())
-        .map_err(|e| format!("{}: {e}", tree.version().display()))?;
-    let pinned = rules::release::read_version(&version)
-        .get("date")
-        .cloned()
-        .ok_or("VERSION names no date")?;
 
-    // Every generated index in one invocation, so a flag choosing between them buys nothing
-    // and cannot be given an invalid combination: the rule index, then one per file-register
-    // instance. The survey answers which instance directories are there, and an instance
-    // without one contributes no index rather than having its home created here.
-    let mut generated = vec![(
-        manifest.rules().dir.join("index.md"),
-        crate::index::rule_index(&model, manifest, &corpus, &pinned),
-    )];
+    // Every generated file in one invocation, so a flag choosing between them buys nothing and
+    // cannot be given an invalid combination: each extension's, then one index per
+    // file-register instance. The survey answers which instance directories are there, and an
+    // instance without one contributes no index rather than having its home created here.
+    let mut generated = Vec::new();
+    for extension in extensions.iter_mut() {
+        let prepared = extension.prepare(
+            manifest,
+            &model,
+            Tree::Checkout(manifest.root()),
+            Purpose::Index,
+        )?;
+        generated.extend(
+            prepared
+                .generated(&model, manifest)
+                .into_iter()
+                .map(|g| (g.rel, g.text)),
+        );
+    }
     generated.extend(crate::index::file_register_indexes(
         &model,
         manifest,
@@ -402,7 +332,7 @@ fn index(manifest: &Manifest, checker: &Path) -> Result<ExitCode, String> {
     // **The missing-directory arm is unreachable as the destinations stand**, and is kept for
     // the next generator rather than for this one: a file-register index is generated only for
     // an instance whose directory the survey found, and the rule index's directory holds the
-    // corpus text this function already failed to read. A generator whose destination sits
+    // corpus text the rules extension already failed to read. A generator whose destination sits
     // outside both makes it reachable again, and there is nothing to construct for a test until
     // one does.
     for (rel, _) in &generated {
@@ -716,11 +646,11 @@ fn verdict(report: &Report) -> String {
 
 /// What a run looked at, as the block printed above the findings.
 ///
-/// **A family that did not run contributes nothing.** Its counts are not zero, they are
+/// **A check that did not run contributes nothing.** Its counts are not zero, they are
 /// unasked, and a zero would read as "nothing found" for a check that never ran. The
-/// `checked:` line is what makes that legible for the two families that carry no count of
-/// their own: without it, a run of `generated` alone and a run that performed nothing look
-/// the same.
+/// `checked:` line is what makes that legible for a check that carries no count of its own,
+/// such as `generated`: without it, a run of `generated` alone and a run that performed
+/// nothing look the same.
 fn counts(report: &Report) -> String {
     use std::fmt::Write;
 
@@ -742,7 +672,8 @@ fn counts(report: &Report) -> String {
     }
     // Every check the last phase performed, by name. The line is what makes a check that
     // carries no count of its own — `generated` — legible as having run.
-    let checked: Vec<&str> = CHECKS
+    let checked: Vec<&str> = report
+        .checks
         .iter()
         .copied()
         .filter(|name| !report.not_run.contains(name))
@@ -762,7 +693,7 @@ fn counts(report: &Report) -> String {
         );
     }
 
-    // Not a family: it describes the walk every family read, and a count of zero in a
+    // Not a check: it describes the walk every check read, and a count of zero in a
     // checkout that holds the tool is the loud failure the decision promises.
     if let Some(source) = &report.structure.checker_source {
         let _ = write!(
@@ -773,106 +704,21 @@ fn counts(report: &Report) -> String {
         );
     }
 
-    {
-        let c = &report.counts;
-        let _ = write!(
-            out,
-            "\n{}/{} rule-quote fragments verified against the rule cited",
-            c.verified, c.fragments
-        );
-        if c.misattributed > 0 {
-            let _ = write!(
-                out,
-                "\n{} fragment(s) verify against a DIFFERENT rule",
-                c.misattributed
-            );
-        }
-        if c.commentary > 0 {
-            let _ = write!(
-                out,
-                "\n{} blockquote(s) hold commentary, not rule text",
-                c.commentary
-            );
-        }
-        if c.short > 0 {
-            let _ = write!(
-                out,
-                "\n{} elided fragment(s) under {} chars: checked, but weak evidence",
-                c.short,
-                crate::check::citations::MIN_FRAGMENT
-            );
-        }
-        if report.pinned.is_empty() {
-            let _ = write!(
-                out,
-                "\n\nno pinned containers: every quote tracks the vendored release"
-            );
-        } else {
-            let _ = write!(
-                out,
-                "\n\npinned containers (their quotes do not track the vendored release):"
-            );
-            for (file, date, quotes) in &report.pinned {
-                let _ = write!(out, "\n  {file}: cr-version {date}, {quotes} quote(s)");
-            }
-        }
-        let _ = write!(
-            out,
-            "\n\nlint: {} unmarked rule reference(s), {} orphan identifier marker(s)",
-            c.unmarked, c.orphans
-        );
-    }
-
     let s = &report.structure;
-    let mut structural = String::new();
-    {
-        let _ = write!(
-            structural,
-            "\nregisters: {} component(s), {} location(s), {} instance(s), {} file entry(ies)",
-            s.components, s.locations, s.instances, s.entries
-        );
-    }
-    {
-        let _ = write!(
-            structural,
-            "\nreferences: {} entities defined, {} reference(s), {} link(s)",
-            s.entities, s.references, s.links
-        );
-    }
-    {
-        let _ = write!(
-            structural,
-            "\nuncovered files: {} scanned",
-            s.uncovered_files
-        );
-    }
-    if !report.not_run.contains(&"corpus") {
-        let _ = write!(
-            structural,
-            "\ncorpus: {} archived release(s), {} manifest row(s), {} of {} release(s) resolved locally",
-            report.corpus.archived,
-            report.corpus.manifest_rows,
-            report.corpus.releases_local,
-            report.corpus.releases_needed
-        );
-    }
-    if !report.not_run.contains(&"changes") {
-        let _ = write!(
-            structural,
-            "\nchangelog: {} rule change(s)",
-            report.changelog_changes
-        );
-    }
-    {
-        let _ = write!(
-            structural,
-            "\nregime: {} claim(s) judged against their scope",
-            report.regime.claims
-        );
-    }
-    if !structural.is_empty() {
-        out.push('\n');
-        out.push_str(&structural);
+    let _ = write!(
+        out,
+        "\n\nregisters: {} component(s), {} location(s), {} instance(s), {} file entry(ies)",
+        s.components, s.locations, s.instances, s.entries
+    );
+    let _ = write!(
+        out,
+        "\nreferences: {} entities defined, {} reference(s), {} link(s)",
+        s.entities, s.references, s.links
+    );
+    // Each extension's block, after the core's lines, per
+    // `design@knowledge@an-extension-plugs-in-through-phased-hooks`.
+    for summary in &report.summaries {
+        out.push_str(summary);
     }
     out.push('\n');
     out
@@ -880,34 +726,27 @@ fn counts(report: &Report) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{counts, Report, CHECKS};
-    use crate::check::Phase;
+    use super::{counts, Report};
+    use crate::check::{Phase, CHECKS};
 
     fn report() -> Report {
         Report {
             phase: Phase::Content,
-            regime: Default::default(),
             findings: Vec::new(),
-            counts: Default::default(),
             structure: Default::default(),
-            corpus: Default::default(),
-            changelog_changes: 0,
-            pinned: Vec::new(),
+            checks: CHECKS.to_vec(),
             not_run: Vec::new(),
+            summaries: Vec::new(),
         }
     }
 
     /// A report whose every number is different from every other.
     ///
     /// Distinct values on purpose: with zeros everywhere, two counts printed in the wrong
-    /// order render identically, so the headline could read `328/328 verified` while meaning
-    /// the reverse and no assertion would move.
+    /// order render identically, so a line could read the reverse of what it means and no
+    /// assertion would move.
     fn numbered() -> Report {
         let mut r = report();
-        r.counts.verified = 11;
-        r.counts.fragments = 22;
-        r.counts.unmarked = 33;
-        r.counts.orphans = 44;
         r.structure.components = 188;
         r.structure.locations = 199;
         r.structure.instances = 88;
@@ -915,14 +754,8 @@ mod tests {
         r.structure.entities = 55;
         r.structure.references = 77;
         r.structure.links = 78;
-        r.structure.uncovered_files = 122;
         r.structure.checker_source = Some("tools/knowledge".into());
         r.structure.checker_files = 200;
-        r.corpus.archived = 133;
-        r.corpus.manifest_rows = 144;
-        r.corpus.releases_local = 155;
-        r.corpus.releases_needed = 166;
-        r.changelog_changes = 177;
         r
     }
 
@@ -930,33 +763,34 @@ mod tests {
     fn every_count_is_rendered_in_the_position_its_label_promises() {
         let out = counts(&numbered());
         for expected in [
-            "11/22 rule-quote fragments verified against the rule cited",
             "registers: 188 component(s), 199 location(s), 88 instance(s), 99 file entry(ies)",
-            "lint: 33 unmarked rule reference(s), 44 orphan identifier marker(s)",
             "references: 55 entities defined, 77 reference(s), 78 link(s)",
-            "uncovered files: 122 scanned",
             "checker source: tools/knowledge, 200 file(s) with string literals read as data",
-            "corpus: 133 archived release(s), 144 manifest row(s),",
-            "155 of 166 release(s) resolved locally",
-            "changelog: 177 rule change(s)",
         ] {
             assert!(out.contains(expected), "missing {expected:?} in {out}");
         }
     }
 
     #[test]
-    fn a_check_that_could_not_run_is_named_as_not_run_and_contributes_no_count() {
-        // The failure this guards is a check gated on an input that is not there: a zero
-        // for it would read as "nothing found" for a check that never ran, and its name in
-        // `checked:` would say it did.
+    fn each_extension_block_follows_the_core_lines_in_order() {
+        let mut r = numbered();
+        r.summaries = vec!["\nfirst: 1".to_string(), "\nsecond: 2".to_string()];
+        let out = counts(&r);
+        let references = out.find("references:").expect("the core line");
+        let first = out.find("first: 1").expect("the first block");
+        let second = out.find("second: 2").expect("the second block");
+        assert!(references < first && first < second, "{out}");
+    }
+
+    #[test]
+    fn a_check_that_could_not_run_is_named_as_not_run_and_left_out_of_checked() {
+        // The failure this guards is a check gated on an input that is not there: its name in
+        // `checked:` would say it ran.
         let mut r = report();
+        r.checks.extend(["changes", "corpus"]);
         r.not_run = vec!["changes", "corpus"];
         let out = counts(&r);
         assert!(out.contains("NOT RUN: changes, corpus"), "{out}");
-        assert!(
-            !out.contains("corpus:") && !out.contains("changelog:"),
-            "no count for a check that did not run: {out}"
-        );
         let checked = out
             .lines()
             .find(|l| l.starts_with("checked:"))
@@ -970,22 +804,22 @@ mod tests {
     }
 
     #[test]
-    fn a_full_run_names_every_check_and_prints_both_blocks() {
+    fn a_full_run_names_every_check_it_performed() {
         // `generated` reports findings and counts nothing, so the `checked:` line is the
         // only thing separating "ran and found nothing" from "did not run".
-        let out = counts(&report());
+        let mut r = report();
+        r.checks.push("an-extension-check");
+        let out = counts(&r);
         let checked = out
             .lines()
             .find(|l| l.starts_with("checked:"))
             .expect("the line");
-        for name in CHECKS {
+        for name in CHECKS.iter().chain(&["an-extension-check"]) {
             assert!(
                 checked.contains(name),
                 "{name} should be named in {checked}"
             );
         }
-        assert!(out.contains("fragments verified"), "{out}");
-        assert!(out.contains("changelog:"), "{out}");
     }
 
     #[test]

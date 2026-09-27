@@ -20,7 +20,7 @@ use crate::finding::Finding;
 use crate::manifest::Manifest;
 use crate::model::Model;
 
-use citations::{Counts, Release};
+use crate::extension::{Generated, Prepared};
 
 /// What the structural checks looked at, so that finding nothing is distinguishable from
 /// looking at nothing.
@@ -37,7 +37,6 @@ pub struct Structure {
     pub entities: usize,
     pub references: usize,
     pub links: usize,
-    pub uncovered_files: usize,
     /// How many files the walk read. Not a family's count: it describes the walk every family
     /// read, so it is set whatever was asked for. It is printed because git is the walk, per
     /// `design@knowledge@git-supplies-the-walk`, and two machines answering differently has to be
@@ -143,21 +142,16 @@ pub struct Report {
     /// the phase that stopped it otherwise, when nothing later was judged.
     pub phase: Phase,
     pub findings: Vec<Finding>,
-    pub counts: Counts,
     pub structure: Structure,
-    /// What the corpus checks looked at. They are the one family that reads the filesystem
-    /// itself, because their subject IS filesystem state.
-    pub corpus: rules::integrity::Counts,
-    pub changelog_changes: usize,
-    /// What the regime found.
-    pub regime: regime::Counts,
-    /// Files that opted out of the vendored release, and how many quotes each carries.
-    pub pinned: Vec<(String, String, usize)>,
+    /// Every check the last phase performed or was asked to: the core's, then each
+    /// extension's, in the order the `checked:` line prints them.
+    pub checks: Vec<&'static str>,
     /// The checks the tree gave no input to, by name. Each is printed as not run rather
     /// than counted, because a count nobody took would read as "nothing found" for a check
-    /// that never happened. Today the two are `changes` and `corpus` where there is no
-    /// changelog.
+    /// that never happened.
     pub not_run: Vec<&'static str>,
+    /// Each extension's block of the summary, in the order the extensions were registered.
+    pub summaries: Vec<String>,
 }
 
 impl Report {
@@ -177,13 +171,10 @@ impl Report {
         Report {
             phase: stop.phase,
             findings: stop.findings,
-            counts: Counts::default(),
             structure,
-            corpus: rules::integrity::Counts::default(),
-            changelog_changes: 0,
-            regime: regime::Counts::default(),
-            pinned: Vec::new(),
+            checks: Vec::new(),
             not_run: Vec::new(),
+            summaries: Vec::new(),
         }
     }
 }
@@ -195,10 +186,6 @@ impl Report {
 /// read the archive; reading a generated file reaches outside the walk, which excludes those
 /// files by name.
 pub struct Inputs<'a> {
-    /// A pin — `None` for the vendored release — to the parsed release.
-    pub releases: &'a HashMap<Option<String>, Release>,
-    /// The release the project is pinned at, as its own version file states it.
-    pub pinned: &'a str,
     /// The generated files as committed, keyed by their project-relative path.
     pub committed: &'a HashMap<PathBuf, String>,
     /// Every `register.toml` beside a register instance, keyed by its project-relative path.
@@ -231,65 +218,24 @@ pub struct Inputs<'a> {
     pub links: &'a [crate::git::Entry],
 }
 
-/// The checks of the last phase, by the name each one's count line carries.
+/// The core's checks of the last phase, by the name each one's count line carries.
 ///
-/// One per check: seven are the modules under `check/`, and `corpus` is the integrity check
-/// over the vendored text and its archive, which the binary runs beside `changes` because
-/// their subject is the changelog and the archive rather than the model. Every one runs on
-/// every run that reaches the last phase; a check the tree gives no input to is named as not
-/// run rather than counted as clean.
-pub const CHECKS: [&str; 8] = [
-    "citations",
-    "generated",
-    "registers",
-    "references",
-    "uncovered",
-    "changes",
-    "corpus",
-    "regime",
-];
+/// One per module under `check/` that runs in the last phase. Every one runs on every run that
+/// reaches the last phase. An extension adds its own, per
+/// `design@knowledge@an-extension-plugs-in-through-phased-hooks`.
+pub const CHECKS: [&str; 3] = ["generated", "registers", "references"];
 
-/// Run the last phase, over a model `foundation` found complete: every check, one walk.
-pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Report {
-    let releases = inputs.releases;
+/// Run the core's checks of the last phase, over a model `foundation` found complete, with
+/// the files each extension generates compared by the `generated` check.
+pub fn run(
+    model: &Model,
+    manifest: &Manifest,
+    inputs: &Inputs,
+    extension_files: &[Generated],
+) -> Report {
     let mut findings = Vec::new();
-    let mut counts = Counts::default();
-    let mut pinned = Vec::new();
-
-    {
-        for doc in model.documents() {
-            let Some(release) = releases.get(&doc.pin) else {
-                continue;
-            };
-            let exempt = manifest.rules().exempt_files.contains(&doc.rel);
-            let (found, c) = citations::check(doc, release, exempt);
-            findings.extend(found);
-            counts.fragments += c.fragments;
-            counts.verified += c.verified;
-            counts.misattributed += c.misattributed;
-            counts.unverified += c.unverified;
-            counts.short += c.short;
-            counts.commentary += c.commentary;
-            counts.unmarked += c.unmarked;
-            counts.orphans += c.orphans;
-
-            // Opting out of the change detector is COUNTED, never invisible.
-            if let Some(pin) = &doc.pin {
-                let quotes = doc.inline_quotes().len() + doc.blocks().len();
-                pinned.push((doc.rel.display().to_string(), pin.clone(), quotes));
-            }
-        }
-        pinned.sort();
-    }
-
-    let regime = {
-        let (found, counts) = regime::run(model, manifest, releases);
-        findings.extend(found);
-        counts
-    };
-
     let mut structure = Structure::default();
-    findings.extend(generated::check(model, manifest, inputs));
+    findings.extend(generated::check(model, manifest, inputs, extension_files));
     {
         let (found, counts) = registers::check(model, manifest, inputs);
         findings.extend(found);
@@ -305,11 +251,6 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Report {
         structure.references = c.references;
         structure.links = c.links;
     }
-    {
-        let (found, scanned) = uncovered::check(inputs);
-        findings.extend(found);
-        structure.uncovered_files = scanned;
-    }
     structure.walked = model.documents().len();
     structure.checker_source = model.checker_source().map(std::path::Path::to_path_buf);
     structure.checker_files = model.checker_files();
@@ -317,14 +258,34 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Report {
     Report {
         phase: Phase::Content,
         findings,
-        counts,
         structure,
-        corpus: rules::integrity::Counts::default(),
-        changelog_changes: 0,
-        regime,
-        pinned,
+        checks: CHECKS.to_vec(),
         not_run: Vec::new(),
+        summaries: Vec::new(),
     }
+}
+
+/// The last phase over the core and every prepared extension: the core's checks, then each
+/// extension's, merged into one report.
+pub fn run_with(
+    model: &Model,
+    manifest: &Manifest,
+    inputs: &Inputs,
+    extensions: &[(&[&'static str], &dyn Prepared)],
+) -> Report {
+    let files: Vec<Generated> = extensions
+        .iter()
+        .flat_map(|(_, p)| p.generated(model, manifest))
+        .collect();
+    let mut report = run(model, manifest, inputs, &files);
+    for (checks, prepared) in extensions {
+        let theirs = prepared.check(model, manifest, inputs);
+        report.checks.extend(checks.iter().copied());
+        report.findings.extend(theirs.findings);
+        report.not_run.extend(theirs.not_run);
+        report.summaries.push(theirs.summary);
+    }
+    report
 }
 
 #[cfg(test)]
@@ -375,8 +336,6 @@ mod phase_tests {
     ) -> Result<(), Stop> {
         let directories = testing::implied_directories(&present);
         let inputs = Inputs {
-            releases: &HashMap::new(),
-            pinned: "",
             committed: &HashMap::new(),
             configs: &HashMap::new(),
             present: &present,

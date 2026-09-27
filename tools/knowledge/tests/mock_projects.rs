@@ -18,6 +18,21 @@ use std::path::PathBuf;
 
 use documentation::{Manifest, Model, Observation, RetiredForm};
 
+/// The last phase over a mock, with the rules extension prepared from releases the test
+/// parsed itself. No changelog is read, so `changes` and `corpus` do not run: the binary tests
+/// are what assert them.
+fn run_rules(
+    model: &Model,
+    manifest: &Manifest,
+    inputs: &documentation::check::Inputs,
+    releases: std::collections::HashMap<Option<String>, documentation::check::citations::Release>,
+) -> documentation::check::Report {
+    use documentation::extension::Purpose;
+    use documentation::rules_extension::{RulesPrepared, CHECKS};
+    let prepared = RulesPrepared::new(releases, "20200101".to_string(), Purpose::Check);
+    documentation::check::run_with(model, manifest, inputs, &[(&CHECKS, &prepared)])
+}
+
 fn mock(name: &str) -> Manifest {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("tests/projects")
@@ -309,7 +324,7 @@ fn the_corpus_parses_under_the_project_that_declares_where_its_body_starts() {
 #[test]
 fn a_project_carrying_every_component_document_reports_nothing() {
     use documentation::check::citations::Release;
-    use documentation::check::{run, Inputs};
+    use documentation::check::Inputs;
     use std::collections::HashMap;
 
     let manifest = mock("minimal");
@@ -324,8 +339,6 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     let survey = documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
     let git = git_answers(&manifest, &model);
     let inputs = Inputs {
-        releases: &releases,
-        pinned: "20200101",
         committed: &committed,
         configs: &configs(&manifest),
         present: &survey.present,
@@ -336,7 +349,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
         refused: &survey.refused,
         links: &survey.links,
     };
-    let report = run(&model, &manifest, &inputs);
+    let report = run_rules(&model, &manifest, &inputs, releases);
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
     assert!(found.is_empty(), "{found:#?}");
     // The component at the root is one whether or not anything is declared beside it, and
@@ -405,7 +418,7 @@ fn every_committed_index_is_what_the_generator_writes() {
 #[test]
 fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
     use documentation::check::citations::Release;
-    use documentation::check::{run, Inputs};
+    use documentation::check::Inputs;
     use std::collections::HashMap;
 
     let manifest = mock("dirhome");
@@ -426,8 +439,6 @@ fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
     }
     let git = git_answers(&manifest, &model);
     let inputs = Inputs {
-        releases: &releases,
-        pinned: "20200101",
         committed: &committed,
         configs: &configs(&manifest),
         present: &survey.present,
@@ -438,7 +449,7 @@ fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
         refused: &survey.refused,
         links: &survey.links,
     };
-    let report = run(&model, &manifest, &inputs);
+    let report = run_rules(&model, &manifest, &inputs, releases);
     let found: Vec<String> = report.findings.iter().map(|f| f.to_string()).collect();
     assert!(found.is_empty(), "{found:#?}");
     // Two slugs and two issue entries, one of them grouped: a run that stopped reading the
@@ -461,7 +472,7 @@ fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
 /// checked against intent instead, which is what a fixture is for.
 mod planted {
     use super::*;
-    use documentation::check::{citations::Release, run, Inputs};
+    use documentation::check::{citations::Release, Inputs};
     use documentation::index;
     use std::collections::HashMap;
     use std::path::PathBuf;
@@ -504,8 +515,6 @@ mod planted {
             documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
         let git = git_answers(&manifest, &model);
         let inputs = Inputs {
-            releases: &releases,
-            pinned: "20200101",
             committed: &committed,
             configs: &configs(&manifest),
             present: &survey.present,
@@ -516,7 +525,7 @@ mod planted {
             refused: &survey.refused,
             links: &survey.links,
         };
-        run(&model, &manifest, &inputs)
+        run_rules(&model, &manifest, &inputs, releases)
             .findings
             .iter()
             .map(|f| format!("{}  {}", f.location(), f.what))
@@ -591,13 +600,17 @@ mod planted {
 
     #[test]
     fn every_check_has_a_row_and_the_run_is_their_sum() {
-        // Read off `CHECKS` rather than off `PLANTED`, so a check added to the library with
-        // no planted defect fails here instead of being absent from both. And nothing is
-        // invented by running them together: the whole run is the sum of the rows, taken
-        // over the empty set of committed files the table is stated against.
-        for name in documentation::check::CHECKS {
+        // Read off the core's `CHECKS` and the rules extension's rather than off `PLANTED`,
+        // so a check added to either with no planted defect fails here instead of being
+        // absent from both. And nothing is invented by running them together: the whole run
+        // is the sum of the rows, taken over the empty set of committed files the table is
+        // stated against.
+        for name in documentation::check::CHECKS
+            .iter()
+            .chain(&documentation::rules_extension::CHECKS)
+        {
             assert!(
-                PLANTED.iter().any(|(n, _, _)| *n == name),
+                PLANTED.iter().any(|(n, _, _)| n == name),
                 "{name} has no row: every check owes a planted defect"
             );
         }
@@ -629,8 +642,23 @@ mod planted {
         // The walk orders documents by path component and this list orders them by display
         // path, so the two disagree whenever a directory name is a prefix of another. Without
         // the sort the block reshuffles between runs on an unchanged tree.
-        let report = report_with_pin();
-        let files: Vec<&str> = report.pinned.iter().map(|(f, _, _)| f.as_str()).collect();
+        //
+        // A pinned document is skipped unless its release is in the map, so the pinned release
+        // the two `cr-version` fixtures name is supplied here and nowhere else, and the
+        // fixtures change no count of any other test.
+        use documentation::extension::Purpose;
+        use documentation::rules_extension::RulesPrepared;
+        let manifest = mock("planted");
+        let model = Model::build(&manifest, None).expect("a model");
+        let text = std::fs::read_to_string(manifest.rules_tree().text()).expect("the mock corpus");
+        let body = manifest.rules().body_starts_at;
+        let releases = HashMap::from([
+            (None, Release::new(&text, body)),
+            (Some("20200101".to_string()), Release::new(&text, body)),
+        ]);
+        let prepared = RulesPrepared::new(releases, "20200101".to_string(), Purpose::Check);
+        let pinned = prepared.pinned_containers(&model);
+        let files: Vec<&str> = pinned.iter().map(|(f, _, _)| f.as_str()).collect();
         assert!(
             files.len() >= 2,
             "the fixture must pin at least two: {files:#?}"
@@ -638,46 +666,6 @@ mod planted {
         let mut sorted = files.clone();
         sorted.sort();
         assert_eq!(files, sorted, "pinned containers must be sorted");
-    }
-
-    /// One run's whole report, with the pinned release the two `cr-version` fixtures name also
-    /// supplied.
-    ///
-    /// A pinned document is skipped unless its release is in the map, so the fixtures are
-    /// invisible to every other test here and change no count.
-    fn report_with_pin() -> documentation::check::Report {
-        report_inner(true)
-    }
-
-    fn report_inner(with_pin: bool) -> documentation::check::Report {
-        let manifest = mock("planted");
-        let model = Model::build(&manifest, None).expect("a model");
-        let tree = manifest.rules_tree();
-        let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
-        let body = manifest.rules().body_starts_at;
-        let corpus = rules::Corpus::parse(&text, body);
-        let committed = current_indexes(&manifest, &model, &corpus);
-        let mut releases = HashMap::from([(None, Release::new(&text, body))]);
-        if with_pin {
-            releases.insert(Some("20200101".to_string()), Release::new(&text, body));
-        }
-        let survey =
-            documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
-        let git = git_answers(&manifest, &model);
-        let inputs = Inputs {
-            releases: &releases,
-            pinned: "20200101",
-            committed: &committed,
-            configs: &configs(&manifest),
-            present: &survey.present,
-            directories: &survey.directories,
-            outside: &survey.outside,
-            ignored: &git.0,
-            tracked_and_ignored: &git.1,
-            refused: &survey.refused,
-            links: &survey.links,
-        };
-        run(&model, &manifest, &inputs)
     }
 
     #[test]
@@ -973,10 +961,7 @@ mod unsound {
         let survey =
             documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
         let git = git_answers(&manifest, &model);
-        let releases = HashMap::new();
         let inputs = Inputs {
-            releases: &releases,
-            pinned: "20200101",
             committed: &HashMap::new(),
             configs: &configs(&manifest),
             present: &survey.present,
@@ -1105,10 +1090,7 @@ mod unsound {
             let survey =
                 documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
             let git = git_answers(&manifest, &model);
-            let releases = HashMap::new();
             let inputs = Inputs {
-                releases: &releases,
-                pinned: "20200101",
                 committed: &HashMap::new(),
                 configs: &configs(&manifest),
                 present: &survey.present,

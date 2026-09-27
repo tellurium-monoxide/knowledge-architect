@@ -8,6 +8,7 @@
 pub mod check;
 pub mod cli;
 pub mod entity;
+pub mod extension;
 pub mod finding;
 pub mod git;
 pub mod index;
@@ -15,6 +16,7 @@ pub mod manifest;
 pub mod model;
 pub mod quote;
 pub mod records;
+pub mod rules_extension;
 pub mod scan;
 pub mod source;
 pub mod survey;

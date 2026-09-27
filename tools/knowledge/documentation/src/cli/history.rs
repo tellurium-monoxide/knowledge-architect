@@ -15,9 +15,9 @@ use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use crate::check::citations::Release;
 use crate::check::{self, Inputs};
 use crate::entity::{Anchors, Entities};
+use crate::extension::{CommitTree, Extension, Prepared, Purpose, Tree};
 use crate::manifest::MANIFEST_NAME;
 use crate::survey::Survey;
 use crate::{Finding, Manifest, Model};
@@ -42,8 +42,9 @@ fn message_rel() -> PathBuf {
 struct Assembly {
     manifest: Manifest,
     model: Model,
-    releases: HashMap<Option<String>, Release>,
-    pinned: String,
+    /// Each extension prepared for this tree, with its check names; empty for a tree assembled
+    /// for its references alone.
+    prepared: Vec<(&'static [&'static str], Box<dyn Prepared>)>,
     committed: HashMap<PathBuf, String>,
     configs: HashMap<PathBuf, String>,
     survey: Survey,
@@ -64,8 +65,6 @@ impl Assembly {
 
     fn inputs(&self) -> Inputs<'_> {
         Inputs {
-            releases: &self.releases,
-            pinned: &self.pinned,
             committed: &self.committed,
             configs: &self.configs,
             present: &self.survey.present,
@@ -77,20 +76,15 @@ impl Assembly {
             links: &self.survey.links,
         }
     }
-
-    /// The release a message's quotes verify against: the one the tree pins.
-    fn release(&self) -> Option<&Release> {
-        self.releases.get(&None)
-    }
 }
 
 /// Judge one message against a tree, and optionally against a second one for its references.
 ///
 /// **References resolve against either tree, every other rule against the first.** A commit
 /// that closes an issue deletes the entry file and names it in the message; against its own
-/// tree alone every such message would dangle. Quote verification and the distance rule have
-/// no such asymmetry: what a message says about a rule is judged against the release the
-/// commit pins, and nothing about the parent bears on it.
+/// tree alone every such message would dangle. An extension's rules have no such asymmetry:
+/// what a message says about its subject is judged against what the commit's own tree holds,
+/// and nothing about the parent bears on it.
 fn judge_message(
     text: &str,
     primary: &Assembly,
@@ -101,13 +95,8 @@ fn judge_message(
     let doc = &model.documents()[0];
     let mut out = Vec::new();
 
-    if let Some(release) = primary.release() {
-        // The message is never lint-exempt: the exemption list names files that are leaving
-        // the tree, and a message is written now.
-        let (found, _) = check::citations::check(doc, release, false);
-        out.extend(found);
-        let (judged, _) = check::regime::check(doc, release);
-        out.extend(judged.into_iter().map(|j| j.finding));
+    for (_, prepared) in &primary.prepared {
+        out.extend(prepared.check_message(doc));
     }
 
     let anchors = primary.anchors();
@@ -181,16 +170,6 @@ fn relabelled(findings: Vec<Finding>, label: &str) -> Vec<Finding> {
 /// produces, and the second names its finding count.
 struct Unloadable(String);
 
-/// A parsed release kept across commits, keyed by the blob the commit's tree holds.
-///
-/// **Keyed by the object name, not by the pinned date.** Parsing the corpus is the single
-/// largest cost in a per-commit run, and two commits pinning one date may still carry
-/// different bytes — a fold, a re-fetch. The object name answers both questions at once.
-#[derive(Default)]
-struct Corpora {
-    parsed: HashMap<String, Release>,
-}
-
 /// Everything read from one commit's tree, before the checks run over it.
 struct FromTree {
     manifest: Manifest,
@@ -239,16 +218,6 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
             wanted.push(rel.clone());
         }
     }
-    // The corpus and the version file are skipped by the walk and are still needed: every
-    // quote in the tree and in the message verifies against them.
-    for rel in [
-        manifest.rules().dir.join(&manifest.rules().text),
-        manifest.rules().dir.join(&manifest.rules().version),
-    ] {
-        if listing.contains(&rel) {
-            wanted.push(rel);
-        }
-    }
     wanted.sort();
     wanted.dedup();
     let blobs = crate::git::blobs(root, sha, &wanted)
@@ -270,22 +239,22 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
 enum Depth {
     /// The entity table and the path facts. Nothing is judged.
     References,
-    /// Everything: the releases the tree pins, and every family but `corpus` and `changes`.
+    /// Everything: every check of the core, and each extension prepared for a commit.
     Judged,
 }
 
 /// Assemble one tree into a model, and judge it as far as `depth` asks.
 ///
-/// **`corpus` and `changes` are the two families whose subject is not the model.** `corpus`
-/// reads the filesystem, which a commit's tree is not; `changes` resolves every release its
-/// changelog names, which at a commit means reading the whole archive out of git objects at
-/// every step of the range. Neither can decide whether a message's references resolve, which
-/// is the question this assembly exists to answer.
+/// **An extension is prepared for a commit, not for a checkout.** A check whose subject is
+/// filesystem state has no subject in a commit's tree, and one that would read the whole
+/// archive at every step of the range decides nothing about whether a message's references
+/// resolve, which is the question this assembly exists to answer; the extension leaves both
+/// out, per `design@knowledge@a-commit-message-is-a-document`.
 fn commit_tree(
     root: &Path,
     sha: &str,
     checker: Option<&Path>,
-    corpora: &mut Corpora,
+    extensions: &mut [Box<dyn Extension>],
     depth: Depth,
 ) -> Result<Assembly, Unloadable> {
     // The rule index is generated and named by the manifest rather than derived, so it is
@@ -339,65 +308,7 @@ fn commit_tree(
         );
     }
 
-    let mut releases = HashMap::new();
     let judging = depth == Depth::Judged;
-    // Every release this tree cannot supply. A quote checked against no release is checked by
-    // nothing at all, so each one is a finding of the tree rather than a family that quietly
-    // did less: the commit then fails the range, which is the honest answer.
-    let mut unresolved: Vec<Finding> = Vec::new();
-    let rules_dir = manifest.rules().dir.clone();
-    let corpus_rel = rules_dir.join(&manifest.rules().text);
-    let body_starts_at = manifest.rules().body_starts_at;
-    if judging && !blobs.contains_key(&corpus_rel) {
-        unresolved.push(Finding::in_file(
-            &corpus_rel,
-            "this commit's tree holds no vendored release at the path its manifest names",
-            "every quote in the tree and in the message verifies against nothing without it",
-        ));
-    }
-    if let Some(text) = blobs.get(&corpus_rel).filter(|_| judging) {
-        let key = crate::git::rev_parse(root, &crate::git::tree_object(sha, &corpus_rel))
-            .unwrap_or_else(|| format!("{sha}:corpus"));
-        let release = corpora
-            .parsed
-            .entry(key)
-            .or_insert_with(|| Release::new(text, body_starts_at));
-        releases.insert(None, release.clone());
-    }
-    let pinned = blobs
-        .get(&rules_dir.join(&manifest.rules().version))
-        .and_then(|t| rules::release::read_version(t).get("date").cloned())
-        .unwrap_or_default();
-    // A document that opts out of the vendored release verifies against the archive the
-    // COMMIT holds, never against the working tree's.
-    let pins: Vec<String> = {
-        let mut seen: Vec<String> = model
-            .documents()
-            .iter()
-            .filter_map(|d| d.pin.clone())
-            .collect();
-        seen.sort();
-        seen.dedup();
-        seen
-    };
-    if judging && !pins.is_empty() {
-        let past = rules_dir.join(&manifest.rules().past);
-        let wanted: Vec<PathBuf> = pins.iter().map(|d| past.join(format!("{d}.txt"))).collect();
-        let archived = crate::git::blobs(root, sha, &wanted)
-            .map_err(|e| Unloadable(format!("its archive could not be read: {e}")))?;
-        for (date, rel) in pins.iter().zip(&wanted) {
-            match archived.get(rel) {
-                Some(text) => {
-                    releases.insert(Some(date.clone()), Release::new(text, body_starts_at));
-                }
-                None => unresolved.push(Finding::in_file(
-                    rel,
-                    format!("a document of this commit pins the release {date}, and its tree holds no archive of it"),
-                    "the quotes of every file pinned there verify against nothing",
-                )),
-            }
-        }
-    }
 
     let mut committed = HashMap::new();
     for rel in extra_generated(&manifest, &generated) {
@@ -428,8 +339,7 @@ fn commit_tree(
     let mut assembly = Assembly {
         manifest,
         model,
-        releases,
-        pinned,
+        prepared: Vec::new(),
         committed,
         configs,
         survey,
@@ -451,10 +361,32 @@ fn commit_tree(
                 stop.findings
             }
             Ok(()) => {
-                let report = check::run(&assembly.model, &assembly.manifest, &assembly.inputs());
-                let mut trouble = report.findings;
-                trouble.extend(unresolved);
-                trouble
+                // The foundation passed, so each extension reads what it needs from this
+                // commit's git objects now, and a tree that stopped earlier read nothing.
+                let commit = CommitTree::new(root, sha, read.listing, blobs);
+                for extension in extensions.iter_mut() {
+                    let prepared = extension
+                        .prepare(
+                            &assembly.manifest,
+                            &assembly.model,
+                            Tree::Commit(&commit),
+                            Purpose::Commit,
+                        )
+                        .map_err(Unloadable)?;
+                    assembly.prepared.push((extension.checks(), prepared));
+                }
+                let with: Vec<(&[&'static str], &dyn Prepared)> = assembly
+                    .prepared
+                    .iter()
+                    .map(|(c, p)| (*c, p.as_ref()))
+                    .collect();
+                check::run_with(
+                    &assembly.model,
+                    &assembly.manifest,
+                    &assembly.inputs(),
+                    &with,
+                )
+                .findings
             }
         };
     Ok(assembly)
@@ -503,6 +435,7 @@ pub fn commits(
     manifest: &Manifest,
     range: &str,
     checker: Option<&Path>,
+    extensions: &mut [Box<dyn Extension>],
 ) -> Result<ExitCode, String> {
     let root = manifest.root();
     let shas = crate::git::rev_list(root, range).map_err(|e| {
@@ -518,7 +451,6 @@ pub fn commits(
     let checker_rel = checker.and_then(|c| c.strip_prefix(root).ok().map(Path::to_path_buf));
     let head = crate::git::rev_parse(root, "HEAD");
 
-    let mut corpora = Corpora::default();
     let mut summary: Vec<(String, Outcome)> = Vec::new();
     let mut findings: Vec<Finding> = Vec::new();
     let mut previous: Option<(String, Assembly, Entities)> = None;
@@ -532,13 +464,7 @@ pub fn commits(
         // **The tip is judged apart.** Its tree failing is the run's own could-not-run rather
         // than a finding, since `check` over the checkout is what reports that tree.
         let is_tip = *sha == last || head.as_deref() == Some(sha.as_str());
-        let assembled = commit_tree(
-            root,
-            sha,
-            checker_rel.as_deref(),
-            &mut corpora,
-            Depth::Judged,
-        );
+        let assembled = commit_tree(root, sha, checker_rel.as_deref(), extensions, Depth::Judged);
         let tree = match assembled {
             Ok(tree) => tree,
             Err(Unloadable(why)) => {
@@ -620,7 +546,7 @@ pub fn commits(
                 root,
                 parent,
                 checker_rel.as_deref(),
-                &mut corpora,
+                extensions,
                 Depth::References,
             )
             .ok()
