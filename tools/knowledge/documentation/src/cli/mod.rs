@@ -109,7 +109,7 @@ pub fn run(
         Command::Issues(args) => issues(manifest, &args, checker),
         Command::Tripwires(args) => tripwires(manifest, &args, checker),
         Command::Index => index(manifest, checker, extensions),
-        Command::Model => model(manifest, checker),
+        Command::Model => model(manifest, checker, extensions),
         Command::Commits(args) => {
             history::commits(manifest, &args.range, Some(checker), extensions)
         }
@@ -168,10 +168,16 @@ pub fn locate() -> Result<Manifest, String> {
 /// how a citation is located inside the file the rule index names, because markers and rule
 /// tokens are separate kinds here and a text grep tells them apart from neither each other nor
 /// from a rule number that is data.
-fn model(manifest: &Manifest, checker: &Path) -> Result<ExitCode, String> {
+fn model(
+    manifest: &Manifest,
+    checker: &Path,
+    extensions: &mut [Box<dyn Extension>],
+) -> Result<ExitCode, String> {
     let model = crate::Model::build(manifest, Some(checker))
         .map_err(|e| format!("cannot read the project: {e}"))?;
-    let dump = model.canonical();
+    let extra: Vec<crate::model::DumpRow> =
+        extensions.iter().flat_map(|e| e.dump(&model)).collect();
+    let dump = model.canonical_with(&extra);
     // The count goes to stderr so that redirecting stdout gives a file that is only
     // observations, while a reader still learns how much was walked. A document with nothing
     // in it produces no line, so the two numbers together are what say whether the walk agrees

@@ -19,7 +19,7 @@ use rules::{norm, RuleNumber};
 
 use crate::finding::Finding;
 use crate::model::{Document, Model};
-use crate::scan::{MarkerForm, Observation};
+use crate::rules_scan::{self, MarkerForm, RuleObservation};
 use crate::source::ScopeKind;
 
 use super::citations::{clip, Release};
@@ -398,11 +398,12 @@ fn ambiguous_binding(
 
 /// Judge one document against every rule of the regime.
 pub fn check(doc: &Document, release: &Release) -> (Vec<Judged>, usize) {
+    let scanned = rules_scan::of(doc);
     let mut out = Vec::new();
     let quotes = verified(doc, release);
     let mut claims = 0;
 
-    for span in doc.unclaimed_quotes() {
+    for span in crate::quote::unclaimed_of(doc) {
         // **The corpus decides.** The emphasised form quotes this project's own documents as
         // often as it quotes a rule, so a span alone declares nothing — but a span whose text
         // is IN THE RELEASE is rule text by definition, and rule text with no marker is
@@ -430,15 +431,14 @@ pub fn check(doc: &Document, release: &Release) -> (Vec<Judged>, usize) {
     // two rules cannot both be satisfied and a name citing a parent rule has no legal repair
     // but a rename. Three sessions hit it independently and invented three different
     // workarounds, which is what an unsatisfiable pair of instructions produces.
-    let named: Vec<(RuleNumber, u32)> = doc
-        .observations_of(|o| match o {
-            Observation::RuleMarker { number, form } if *form == MarkerForm::Identifier => {
-                Some(number.clone())
-            }
-            _ => None,
-        })
-        .map(|(line, number)| (number, line))
-        .collect();
+    let named: Vec<(RuleNumber, u32)> = rules_scan::rules_of(&scanned, |o| match o {
+        RuleObservation::Marker { number, form } if *form == MarkerForm::Identifier => {
+            Some(number.clone())
+        }
+        _ => None,
+    })
+    .map(|(line, number)| (number, line))
+    .collect();
 
     for quote in super::citations::quotes(doc) {
         out.extend(completeness(doc, release, &quote));
@@ -488,8 +488,8 @@ pub fn check(doc: &Document, release: &Release) -> (Vec<Judged>, usize) {
         }
     }
 
-    for (line, (number, form)) in doc.observations_of(|o| match o {
-        Observation::RuleMarker { number, form } => Some((number.clone(), *form)),
+    for (line, (number, form)) in rules_scan::rules_of(&scanned, |o| match o {
+        RuleObservation::Marker { number, form } => Some((number.clone(), *form)),
         _ => None,
     }) {
         // Every marker, whatever its form, asserts that this number is a rule — or, in the
@@ -626,7 +626,7 @@ pub fn run(
     let mut counts = Counts::default();
 
     for doc in model.documents() {
-        let Some(release) = releases.get(&doc.pin) else {
+        let Some(release) = releases.get(&rules_scan::pin_of(doc)) else {
             continue;
         };
         // A file the manifest exempts from the lint is exempt here too. It is declared stale

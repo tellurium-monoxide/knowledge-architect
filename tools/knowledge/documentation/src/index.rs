@@ -65,28 +65,35 @@ fn citations(model: &Model, index_dir: &std::path::Path) -> BTreeMap<Sort, Vec<S
             rel_from(index_dir, &doc.rel).display()
         );
         let mut heading = String::new();
-        let mut by_line: BTreeMap<u32, Vec<&Observation>> = BTreeMap::new();
+        // The headings are the core's observations and the tokens the rules scan's, so the
+        // two are gathered per line rather than read as one stream.
+        let mut by_line: BTreeMap<u32, (Option<&str>, Vec<RuleNumber>)> = BTreeMap::new();
         for l in &doc.observations {
-            by_line.entry(l.line).or_default().push(&l.what);
+            if let Observation::Heading { text, .. } = &l.what {
+                by_line
+                    .entry(l.line)
+                    .or_default()
+                    .0
+                    .get_or_insert(text.as_str());
+            }
         }
-        for (_, observations) in by_line {
-            if let Some(Observation::Heading { text, .. }) = observations
-                .iter()
-                .find(|o| matches!(o, Observation::Heading { .. }))
-                .copied()
-            {
+        for l in crate::rules_scan::of(doc) {
+            if let crate::rules_scan::RuleObservation::Token(rule) = l.what {
+                by_line.entry(l.line).or_default().1.push(rule);
+            }
+        }
+        for (_, (line_heading, tokens)) in by_line {
+            if let Some(text) = line_heading {
                 // Everything from an em dash onwards is the statement, not the name.
                 heading = text.split('—').next().unwrap_or(text).trim().to_string();
             }
-            for o in observations {
-                if let Observation::RuleToken(rule) = o {
-                    let where_ = if heading.is_empty() {
-                        name.clone()
-                    } else {
-                        format!("{name} · {heading}")
-                    };
-                    out.entry(Sort(rule.clone())).or_default().insert(where_);
-                }
+            for rule in tokens {
+                let where_ = if heading.is_empty() {
+                    name.clone()
+                } else {
+                    format!("{name} · {heading}")
+                };
+                out.entry(Sort(rule)).or_default().insert(where_);
             }
         }
     }

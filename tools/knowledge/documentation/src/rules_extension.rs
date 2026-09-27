@@ -162,6 +162,33 @@ impl Extension for RulesExtension {
         &CHECKS
     }
 
+    fn dump(&self, model: &Model) -> Vec<crate::model::DumpRow> {
+        use crate::rules_scan::{MarkerForm, RuleObservation};
+        let mut rows = Vec::new();
+        for (doc, document) in model.documents().iter().enumerate() {
+            for l in crate::rules_scan::of(document) {
+                let (kind, value) = match l.what {
+                    RuleObservation::Marker { number, form } => (
+                        match form {
+                            MarkerForm::Prose => "marker-prose",
+                            MarkerForm::Identifier => "marker-ident",
+                            MarkerForm::IdentifierInProse => "marker-ident-prose",
+                        },
+                        number.to_string(),
+                    ),
+                    RuleObservation::Token(n) => ("rule-token", n.to_string()),
+                };
+                rows.push(crate::model::DumpRow {
+                    doc,
+                    line: l.line,
+                    kind,
+                    value,
+                });
+            }
+        }
+        rows
+    }
+
     fn prepare(
         &mut self,
         manifest: &Manifest,
@@ -228,14 +255,15 @@ fn checkout(
     releases.insert(None, Release::new(&vendored, body_starts_at));
     {
         for doc in model.documents() {
-            let Some(date) = &doc.pin else { continue };
-            if releases.contains_key(&doc.pin) {
+            let pin = crate::rules_scan::pin_of(doc);
+            let Some(date) = &pin else { continue };
+            if releases.contains_key(&pin) {
                 continue;
             }
             let path = rules::release::resolve(&tree, date)?;
             let text =
                 std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-            releases.insert(doc.pin.clone(), Release::new(&text, body_starts_at));
+            releases.insert(pin.clone(), Release::new(&text, body_starts_at));
         }
     }
     let mut prepared = RulesPrepared::new(config.clone(), releases, pinned, purpose);
@@ -334,7 +362,7 @@ impl RulesExtension {
         let mut pins: Vec<String> = model
             .documents()
             .iter()
-            .filter_map(|d| d.pin.clone())
+            .filter_map(crate::rules_scan::pin_of)
             .collect();
         pins.sort();
         pins.dedup();
@@ -406,11 +434,14 @@ impl RulesPrepared {
         let mut pinned: Vec<(String, String, usize)> = model
             .documents()
             .iter()
-            .filter(|doc| self.releases.contains_key(&doc.pin))
             .filter_map(|doc| {
-                let pin = doc.pin.as_ref()?;
-                let quotes = doc.inline_quotes().len() + doc.blocks().len();
-                Some((doc.rel.display().to_string(), pin.clone(), quotes))
+                let pin = crate::rules_scan::pin_of(doc)?;
+                if !self.releases.contains_key(&Some(pin.clone())) {
+                    return None;
+                }
+                let quotes =
+                    crate::quote::inline_of(doc).len() + crate::quote::blocks_of(doc).len();
+                Some((doc.rel.display().to_string(), pin, quotes))
             })
             .collect();
         pinned.sort();
@@ -470,7 +501,7 @@ impl Prepared for RulesPrepared {
         let mut report = ExtensionReport::default();
         let mut summary = Summary::default();
         for doc in model.documents() {
-            let Some(release) = self.releases.get(&doc.pin) else {
+            let Some(release) = self.releases.get(&crate::rules_scan::pin_of(doc)) else {
                 continue;
             };
             let exempt = self.config.exempt_files.contains(&doc.rel);

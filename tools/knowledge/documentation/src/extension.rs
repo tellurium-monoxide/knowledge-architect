@@ -188,6 +188,10 @@ pub trait Extension {
     /// The names of its checks, as the `checked:` line prints them after the core's.
     fn checks(&self) -> &'static [&'static str];
 
+    /// Its observation rows for `model`, merged into the core's. Runs without the foundation,
+    /// as `model` does.
+    fn dump(&self, model: &Model) -> Vec<crate::model::DumpRow>;
+
     /// Read what its checks need for one tree. Runs only once the core's first three phases
     /// passed over that tree, so a run that stops earlier resolves and fetches nothing. `Err`
     /// is could-not-run.
@@ -231,6 +235,9 @@ mod tests {
         }
         fn checks(&self) -> &'static [&'static str] {
             &[]
+        }
+        fn dump(&self, _: &Model) -> Vec<crate::model::DumpRow> {
+            Vec::new()
         }
         fn prepare(
             &mut self,

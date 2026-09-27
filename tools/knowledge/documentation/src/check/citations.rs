@@ -14,8 +14,8 @@ use rules::{norm, Corpus, RuleNumber};
 
 use crate::finding::Finding;
 use crate::model::Document;
-use crate::quote::{Quote, QuoteKind};
-use crate::scan::{MarkerForm, Observation};
+use crate::quote::{self, Quote, QuoteKind};
+use crate::rules_scan::{self, MarkerForm, RuleObservation};
 
 /// Below this a fragment matches too easily to be evidence of the rule CITED.
 ///
@@ -226,8 +226,8 @@ pub fn fragments(body: &str) -> (Vec<String>, usize) {
 ///
 /// Shared with `regime`, which asks whether a claim has one rather than whether it verifies.
 pub fn quotes(doc: &Document) -> Vec<Quote> {
-    let mut out = doc.inline_quotes();
-    for block in doc.blocks() {
+    let mut out = quote::inline_of(doc);
+    for block in quote::blocks_of(doc) {
         let lines: Vec<String> = block
             .lines
             .iter()
@@ -257,8 +257,8 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
     // A parse that could not be trusted is `check::tree`'s finding, and the run stops there
     // before this check reads the document.
 
-    let mut quotes = doc.inline_quotes();
-    for block in doc.blocks() {
+    let mut quotes = quote::inline_of(doc);
+    for block in quote::blocks_of(doc) {
         let lines: Vec<String> = block
             .lines
             .iter()
@@ -367,6 +367,7 @@ pub fn check(doc: &Document, release: &Release, lint_exempt: bool) -> (Vec<Findi
 /// Rule-number-shaped tokens carrying no marker, and identifier markers with no prose marker
 /// above them.
 fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
+    let scanned = rules_scan::of(doc);
     let mut findings = Vec::new();
     let (mut unmarked, mut orphans) = (0, 0);
     let numbered: Vec<(u32, &str)> = doc
@@ -390,8 +391,7 @@ fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
     // verified; and skipping it here as though it were rule text meant nothing looked at it
     // at all. The canonical citation example in this project's own root instructions is that
     // shape, and an edit reversing the rule it quotes was reported by nothing.
-    let quoted_lines: std::collections::HashSet<u32> = doc
-        .blocks()
+    let quoted_lines: std::collections::HashSet<u32> = quote::blocks_of(doc)
         .iter()
         .flat_map(|b| b.line..b.line + b.lines.len() as u32)
         .collect();
@@ -434,23 +434,21 @@ fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
                 (*first..=*last).contains(&n) && contains_number(body, &t)
             })
         };
-        let marked: Vec<&RuleNumber> = doc
-            .observations
+        let marked: Vec<&RuleNumber> = scanned
             .iter()
             .filter(|l| l.line == n)
             .filter_map(|l| match &l.what {
-                Observation::RuleMarker { number, form } if *form != MarkerForm::Identifier => {
+                RuleObservation::Marker { number, form } if *form != MarkerForm::Identifier => {
                     Some(number)
                 }
                 _ => None,
             })
             .collect();
-        for (_, token) in doc
-            .observations_of(|o| match o {
-                Observation::RuleToken(t) => Some(t),
-                _ => None,
-            })
-            .filter(|(at, _)| *at == n)
+        for (_, token) in rules_scan::rules_of(&scanned, |o| match o {
+            RuleObservation::Token(t) => Some(t),
+            _ => None,
+        })
+        .filter(|(at, _)| *at == n)
         {
             if !marked.contains(&token) && !inside_a_quote(token) {
                 unmarked += 1;
@@ -470,8 +468,8 @@ fn lint(doc: &Document) -> (Vec<Finding>, (usize, usize)) {
 
     // The identifier form sits in a NAME, which is code, so it has no prose line of its own to
     // iterate. It is judged from its file line instead, against the prose above it.
-    for (n, ident) in doc.observations_of(|o| match o {
-        Observation::RuleMarker { number, form } if *form == MarkerForm::Identifier => Some(number),
+    for (n, ident) in rules_scan::rules_of(&scanned, |o| match o {
+        RuleObservation::Marker { number, form } if *form == MarkerForm::Identifier => Some(number),
         _ => None,
     }) {
         let above: String = numbered

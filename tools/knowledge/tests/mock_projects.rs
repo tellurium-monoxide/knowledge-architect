@@ -199,8 +199,12 @@ fn a_suffix_the_tool_cannot_parse_is_not_walked() {
 
 #[test]
 fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
+    use documentation::extension::Extension;
     let model = model("minimal");
-    let dump = model.canonical();
+    // The dump `cargo knowledge model` prints: the core's rows with the rules extension's
+    // merged in.
+    let rules = documentation::rules_extension::RulesExtension::default();
+    let dump = model.canonical_with(&rules.dump(&model));
     // A slug opening a decision, a path reference, a goal reference, and the two marker
     // forms — each at the line of the file it sits on.
     assert!(
@@ -1164,7 +1168,7 @@ mod regime {
         let release = Release::new(&text, rules(&manifest).body_starts_at);
         let mut out = Vec::new();
         for doc in model.documents() {
-            if doc.pin.is_some() {
+            if documentation::rules_scan::pin_of(doc).is_some() {
                 continue;
             }
             let (found, _) = regime::check(doc, &release);

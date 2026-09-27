@@ -6,6 +6,7 @@
 //! not lose a quote, it attributes it to the wrong rule — and a quote checked against the
 //! wrong rule is the failure the whole regime exists to catch.
 
+use crate::model::Document;
 use pulldown_cmark::{Event, Options, Parser, Tag, TagEnd};
 use rules::RuleNumber;
 
@@ -397,6 +398,65 @@ fn regex_bare() -> &'static regex::Regex {
     static R: std::sync::LazyLock<regex::Regex> =
         std::sync::LazyLock::new(|| regex::Regex::new(r"\b(\d{3}\.\d+[a-z]{0,2})\b").unwrap());
     &R
+}
+
+// ---------------------------------------------------------------------------------------
+// Over a document of the model
+// ---------------------------------------------------------------------------------------
+
+/// Every inline quote in the document, at the FILE line it sits on.
+///
+/// Extraction runs per prose region rather than over the file, which is what makes a
+/// paragraph lookback stop at the end of a comment: a marker in one doc comment cannot own
+/// a quote in the next function's.
+pub fn inline_of(doc: &Document) -> Vec<Quote> {
+    doc.parsed
+        .prose
+        .iter()
+        .flat_map(|region| {
+            inline(&region.text)
+                .into_iter()
+                .map(|mut q| {
+                    // Both endpoints, or a wrapped quote reports a range that starts in
+                    // the file and ends in the region.
+                    q.line = region.file_line(q.line as usize - 1);
+                    q.last = region.file_line(q.last as usize - 1);
+                    q
+                })
+                .collect::<Vec<_>>()
+        })
+        .collect()
+}
+
+/// Every `>` block in the document, at the FILE line it starts on.
+pub fn blocks_of(doc: &Document) -> Vec<Block> {
+    doc.parsed
+        .prose
+        .iter()
+        .flat_map(|region| {
+            blocks(&region.text)
+                .into_iter()
+                .map(|mut b| {
+                    b.line = region.file_line(b.line as usize - 1);
+                    b
+                })
+                .collect::<Vec<_>>()
+        })
+        .collect()
+}
+
+/// Every emphasised quotation in the document that no marker claims.
+pub fn unclaimed_of(doc: &Document) -> Vec<(u32, String)> {
+    doc.parsed
+        .prose
+        .iter()
+        .flat_map(|region| {
+            unclaimed(&region.text)
+                .into_iter()
+                .map(|(l, body)| (region.file_line(l as usize - 1), body))
+                .collect::<Vec<_>>()
+        })
+        .collect()
 }
 
 #[cfg(test)]

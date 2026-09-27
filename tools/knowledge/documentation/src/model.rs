@@ -16,8 +16,6 @@ pub struct Document {
     pub text: String,
     /// Its prose and its scopes, as the parser for its suffix found them.
     pub parsed: Parsed,
-    /// The release this file's quotes verify against, where it opts out of the vendored one.
-    pub pin: Option<String>,
     pub observations: Vec<Located>,
     /// How its string literals were read: `Data` only under the checker's own source.
     pub literals: Literals,
@@ -26,61 +24,6 @@ pub struct Document {
 impl Document {
     pub fn is_markdown(&self) -> bool {
         self.rel.extension().is_some_and(|e| e == "md")
-    }
-
-    /// Every inline quote in the document, at the FILE line it sits on.
-    ///
-    /// Extraction runs per prose region rather than over the file, which is what makes a
-    /// paragraph lookback stop at the end of a comment: a marker in one doc comment cannot own
-    /// a quote in the next function's.
-    pub fn inline_quotes(&self) -> Vec<crate::quote::Quote> {
-        self.parsed
-            .prose
-            .iter()
-            .flat_map(|region| {
-                crate::quote::inline(&region.text)
-                    .into_iter()
-                    .map(|mut q| {
-                        // Both endpoints, or a wrapped quote reports a range that starts in
-                        // the file and ends in the region.
-                        q.line = region.file_line(q.line as usize - 1);
-                        q.last = region.file_line(q.last as usize - 1);
-                        q
-                    })
-                    .collect::<Vec<_>>()
-            })
-            .collect()
-    }
-
-    /// Every `>` block in the document, at the FILE line it starts on.
-    pub fn blocks(&self) -> Vec<crate::quote::Block> {
-        self.parsed
-            .prose
-            .iter()
-            .flat_map(|region| {
-                crate::quote::blocks(&region.text)
-                    .into_iter()
-                    .map(|mut b| {
-                        b.line = region.file_line(b.line as usize - 1);
-                        b
-                    })
-                    .collect::<Vec<_>>()
-            })
-            .collect()
-    }
-
-    /// Every emphasised quotation in the document that no marker claims.
-    pub fn unclaimed_quotes(&self) -> Vec<(u32, String)> {
-        self.parsed
-            .prose
-            .iter()
-            .flat_map(|region| {
-                crate::quote::unclaimed(&region.text)
-                    .into_iter()
-                    .map(|(l, body)| (region.file_line(l as usize - 1), body))
-                    .collect::<Vec<_>>()
-            })
-            .collect()
     }
 
     /// The prose on a file line, where that line carries any.
@@ -213,7 +156,6 @@ impl Model {
                             trouble: Some(trouble),
                             ..Parsed::default()
                         },
-                        pin: None,
                         observations: Vec::new(),
                         literals: Literals::Prose,
                     });
@@ -230,7 +172,6 @@ impl Model {
             let observations: Vec<Located> = scan::scan(&parsed);
             docs.push(Document {
                 rel,
-                pin: scan::pin(&parsed, &text),
                 text,
                 parsed,
                 observations,
@@ -314,7 +255,6 @@ impl Model {
                 let observations = scan::scan(&parsed);
                 Document {
                     rel,
-                    pin: scan::pin(&parsed, &text),
                     text,
                     parsed,
                     observations,
@@ -344,7 +284,6 @@ impl Model {
                 trouble: Some(trouble),
                 ..Parsed::default()
             },
-            pin: None,
             observations: Vec::new(),
             literals: Literals::Prose,
         });
@@ -363,34 +302,52 @@ impl Model {
     /// This exists to be compared against another implementation of the same walk and scan,
     /// over the whole tree at once rather than over a sample.
     pub fn canonical(&self) -> String {
-        let mut out = String::new();
-        for doc in &self.docs {
+        self.canonical_with(&[])
+    }
+
+    /// The same, with each extension's rows merged in: per document and line, an extension's
+    /// rows before the core's, as one scanner emitting both would order them.
+    pub fn canonical_with(&self, extra: &[DumpRow]) -> String {
+        // (document, line, source, order) sorts every row; the source puts an extension's
+        // row first on a shared line, and the order keeps each source's own sequence.
+        let mut rows: Vec<(usize, u32, u8, usize, String)> = Vec::new();
+        for (i, doc) in self.docs.iter().enumerate() {
             let rel = doc.rel.display();
-            for Located { line, what } in &doc.observations {
+            for (k, Located { line, what }) in doc.observations.iter().enumerate() {
                 let (kind, value) = describe(what);
                 if kind.is_empty() {
                     continue;
                 }
-                out.push_str(&format!("{rel}\t{line}\t{kind}\t{value}\n"));
+                rows.push((i, *line, 1, k, format!("{rel}\t{line}\t{kind}\t{value}\n")));
             }
         }
-        out
+        for (k, row) in extra.iter().enumerate() {
+            let rel = self.docs[row.doc].rel.display();
+            rows.push((
+                row.doc,
+                row.line,
+                0,
+                k,
+                format!("{rel}\t{}\t{}\t{}\n", row.line, row.kind, row.value),
+            ));
+        }
+        rows.sort_by_key(|r| (r.0, r.1, r.2, r.3));
+        rows.into_iter().map(|r| r.4).collect()
     }
+}
+
+/// One row an extension adds to the canonical dump: the document by its index in the model,
+/// the line, the kind and the value.
+pub struct DumpRow {
+    pub doc: usize,
+    pub line: u32,
+    pub kind: &'static str,
+    pub value: String,
 }
 
 /// `(kind, value)` for the canonical dump. An empty kind is left out of it.
 fn describe(what: &Observation) -> (&'static str, String) {
-    use crate::scan::MarkerForm::*;
     match what {
-        Observation::RuleMarker { number, form } => (
-            match form {
-                Prose => "marker-prose",
-                Identifier => "marker-ident",
-                IdentifierInProse => "marker-ident-prose",
-            },
-            number.to_string(),
-        ),
-        Observation::RuleToken(n) => ("rule-token", n.to_string()),
         Observation::Heading { level, text } => ("heading", format!("{level} {text}")),
         // The site rides along, so the dump says whether a slug sat where a definition can
         // be — a level-two or level-three heading, a cell — or somewhere the table reports.
@@ -526,7 +483,7 @@ mod tests {
         // Unbound on purpose: a literal BOUND to a name is data in either mode, per
         // `design@knowledge@grammars-not-prefixes`, so a fixture written that way would pass
         // whichever mode the model chose.
-        let source = "fn f() {\n    report(\"CR:100.1 the words a rule holds\");\n}\n";
+        let source = "fn f() {\n    report(\"see `design@a-component@a-slug`\");\n}\n";
         let docs = vec![
             (
                 PathBuf::from("tools/knowledge/src/a.rs"),
@@ -541,7 +498,7 @@ mod tests {
             "the tool's own literal is data: {dump}"
         );
         assert!(
-            dump.contains("crates/engine/src/b.rs\t2\tmarker-prose\t100.1"),
+            dump.contains("crates/engine/src/b.rs\t2\tspan\tdesign@a-component@a-slug"),
             "every other file's is a claim: {dump}"
         );
         assert_eq!(told.checker_files(), 1);

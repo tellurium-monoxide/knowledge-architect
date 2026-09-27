@@ -221,9 +221,9 @@ fn cited(manifest: &Manifest) -> Result<Vec<RuleNumber>, String> {
     let mut out: Vec<RuleNumber> = model
         .documents()
         .iter()
-        .flat_map(|d| d.observations.iter())
-        .filter_map(|l| match &l.what {
-            documentation::Observation::RuleToken(n) => Some(n.clone()),
+        .flat_map(documentation::rules_scan::of)
+        .filter_map(|l| match l.what {
+            documentation::rules_scan::RuleObservation::Token(n) => Some(n),
             _ => None,
         })
         .collect();
