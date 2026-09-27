@@ -34,38 +34,6 @@ indistinguishable from a clean tree. `Parsed::trouble` catches the cases the gra
 guards the case where it reports success and returns nothing.
 **Re-entry:** standing, and each time either parser's version changes.
 
-## Guarding `design@knowledge@sections-cite-the-heading`'s keyword boundary `##sections-cite-the-heading-keyword-boundary`
-
-**Fires when:** a review reports a section reference that claims content in a shape the lint
-cannot see — no keyword before the number, or a keyword shape outside the patterns in
-`path@knowledge@documentation/src/scan.rs`. The census behind the decision listed every shape the tree
-held; this fires on the first shape it did not.
-**Response:** reopen `design@knowledge@sections-cite-the-heading`'s boundary: widen the pattern to the
-new shape, or re-accept the keyword boundary knowingly and record the shape as the reviewer's.
-Either way the review finding is the evidence; open a `defect` naming the shape if the decision
-is not reopened in the same change.
-**Re-entry:** standing.
-
-## Guarding `design@knowledge@sections-cite-the-heading`'s reviewer delegation `##sections-cite-the-heading-reviewer-delegation`
-
-**Fires when:** a section citation standing where one subrule carries the claim is found in work
-already merged to `main` — the delegation to the rules-reviewer was the only enforcement, and it
-missed.
-**Response:** reopen the delegation half of `design@knowledge@sections-cite-the-heading`: the semantic
-check may need mechanical support after all, or the reviewer definition's instruction needs
-sharpening. Record the missed instance as a `defect` in the component that carries it.
-**Re-entry:** standing.
-
-## Guarding `design@knowledge@sections-cite-the-heading`'s quote obligation `##sections-cite-the-heading-quote-obligation`
-
-**Fires when:** a diff moves a section reference into a code span, or deletes one, where the
-surrounding sentence still claims the section's content — the visible effect being that the
-heading-quote obligation is avoided rather than met.
-**Response:** the readability the heading quote bought is inverting into avoidance. Reopen the
-once-per-claim weight of the quote obligation, and record the instance as an `observation`; the
-rules-reviewer's genuinely-data check is where the instance surfaces.
-**Re-entry:** standing.
-
 ## Guarding `design@knowledge@candidate-rule-and-retired-forms`' silence on an unknown head `##candidate-rule-silence`
 
 **Fires when:** a review, or a session reading a document, finds a backticked span that was
@@ -91,30 +59,6 @@ may need to become an every-component test. Record the confusing instance as an 
 with the finding text it produced.
 **Re-entry:** standing.
 
-## Guarding the citation index as a bump work list `##citation-index-bump-work-list`
-
-**Fires when:** `path@rules@index.md`'s cited-rule count falls between two commits that add engine
-code, **and a rule that left was cited by anything other than a `path@thaum@docs/plans/` document deleted at
-its landing**. The count is in the file's own header, and the old index names each lost rule's
-citers. A plan file leaves the tree with its slice by design and takes its citations with it, so a
-fall it fully accounts for guards nothing; without that clause this fires at every landing that
-deletes a plan file.
-**Response:** the regime is being satisfied by dropping rule numbers rather than by quoting them.
-That leaves the engine's dependence on the corpus invisible, and a release bump then misses what
-depends on it — which is the one thing the index exists to prevent.
-**Re-entry:** standing.
-
-## Guarding the rejected citation locator `##rejected-citation-locator`
-
-**Fires when:** a rules bump lands a citation repair at a file and line that a
-`cargo knowledge model` filter for that rule number did not list. Take the filter output before the
-repairs and compare it against the diff the bump produced.
-**Response:** reopen the rejected locator in `path@knowledge@docs/rejected-alternatives.md`. The reason
-it lost is that the model dump is complete for this purpose, and a repair the filter missed is that
-reason failing — the answer is then either widening the scanner or a filter that states what it
-covers, and either way the missed shape is recorded as a `defect`.
-**Re-entry:** the next rules bump, and standing.
-
 ## Guarding `design@knowledge@checker-source-literals-are-data`' self-location `##checker-source-literals-are-data-self-location`
 
 **Fires when:** a `cargo knowledge check` run reports a finding on a string literal in a Rust
@@ -128,18 +72,6 @@ a binary built from another checkout and run here.
 checkout, a canonicalisation gap, a symlink inside the tree the prefix test does not follow.
 Open a `defect` carrying the path the line names and the checkout's. Reopen the decision only if
 the mismatch is one the cargo alias cannot prevent, since the alias is what the decision rests on.
-**Re-entry:** standing.
-
-## Guarding `design@knowledge@checker-source-literals-are-data`' whole-source scope `##checker-source-literals-are-data-whole-source-scope`
-
-**Fires when:** a review finds a string literal in the tool's non-test source that cites a rule:
-a `CR:` marker followed by a rule number written out, with a sentence around it that says
-something about the rule. A message that interpolates the number it names, and the marker
-pattern itself in the scanner, do not fire it. The rules-reviewer's data check is where it
-surfaces: nothing mechanical reads that literal any more.
-**Response:** the whole-source scope gave that citation up on a count of zero. Either move the
-citation into the comment above the literal, or reopen the scope half of the decision and narrow
-it to test modules, which costs an attribute lookup in the extractor.
 **Re-entry:** standing.
 
 ## Guarding `design@knowledge@checker-source-literals-are-data`' purpose `##checker-source-literals-are-data-purpose`
@@ -186,8 +118,9 @@ check-family selection under another name.
 **Response:** reopen the granularity decision with the per-document form, rather than adding the
 way around.
 
-**Fires when:** a check under `path@knowledge@documentation/src/check/` reads another check's
-findings, or a check's output is stored for another check to consume — a second producer chain,
+**Fires when:** a check of the core, under `path@knowledge@documentation/src/check/`, or a check of
+an extension reads another check's findings, or a check's output is stored for another check to
+consume — a second producer chain,
 whose findings would undermine its consumers' with nothing gating them.
 
 **Response:** open a `design` issue proposing the new phase and its place in the order; the
@@ -195,7 +128,8 @@ producing check is a phase, not a check of the last one, and it goes before its 
 `check::foundation`.
 
 **Re-entry:** `standing-state-reviewer` on every dispatched review; any change to the arguments
-of `check`, `index` or `rules bump`; and any new module under the check directory.
+of `check`, `index` or a writing command of an extension; any new module under the check
+directory; and any new check of an extension.
 
 ## Guarding `design@knowledge@an-extension-builds-its-own-model`' closed entity table `##extension-defines-a-kind`
 

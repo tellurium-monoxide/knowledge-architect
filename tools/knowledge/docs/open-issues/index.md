@@ -1,26 +1,18 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-20 entries
+12 entries
 
 | kind | title |
 | --- | --- |
-| defect | [The changelog's own counts are asserted by nothing](changelog-counts-asserted-by-nothing.md) |
 | defect | [A worktree build sharing the target directory leaves the live checker exempting no fixture](checker-source-path-stale-after-shared-target-build.md) |
-| defect | [The inverse assertion reads the prose marker form alone](inverse-assertion-reads-prose-markers-only.md) |
 | defect | [`commits` treats HEAD as the tip when a range holds HEAD before its last commit](range-tip-is-head-where-the-range-holds-it.md) |
-| defect | [The release diff calls a renumbered section a deletion](release-diff-calls-renumbered-section-deletion.md) |
 | defect | [A file outside the walk that cannot be read is silent to the inverse assertion](unreadable-file-outside-the-walk-is-silent.md) |
 | defect | [A level-two heading with no slug in a tripwires home is silently not an entry](unslugged-tripwire-heading-is-silent.md) |
 | deferred | [The citation regime could be offered by the core over any pinned text](citation-regime-over-any-pinned-text.md) |
-| deferred | [Nothing tests that `rules diff` receives its two dates the right way round](rules-diff-date-order-untested.md) |
 | deferred | [Only a line break is refused in a file name, and Windows forbids more](windows-forbidden-names-not-refused.md) |
 | design | [A submodule is a project of its own, or nothing, and the tool has no model for either](a-submodule-is-a-project-of-its-own.md) |
 | observation | [`commits` assembles the whole tree of a commit whose manifest fails phase 1](commits-assembles-a-tree-whose-phase-one-fails.md) |
 | observation | [Judging a message costs time quadratic in its line count](judging-a-message-is-quadratic.md) |
-| observation | [A `PLANTED` row may name a test that does not exist](planted-row-may-name-a-missing-test.md) |
-| observation | [The release cache sits at a predictable shared path](release-cache-at-a-shared-path.md) |
 | observation | [Span and link shapes the scanner cannot see](span-and-link-shapes-unseen.md) |
-| question | [Is the per-file release pin useful, and worth keeping?](per-file-release-pin-is-unused.md) |
-| question | [The quote scope is the innermost heading section at any level, where the design says the level-three subsection](quote-scope-is-the-innermost-heading-not-level-three.md) |
 | question | [A rule marker inside a markdown HTML comment is read by nothing, and no instruction says so](rule-marker-inside-markdown-html-comment.md) |
 | todo | [The tripwire listing's `guarding` column reads references of the `design` kind only](guarding-reads-design-references-only.md) |

@@ -5,7 +5,7 @@ covered — lost to `design@knowledge@git-supplies-the-walk`. `live`. It needed 
 process per run, and its supported subset was chosen against this repository's own file. It loses
 on three counts, each measured against the tree rather than argued: a tracked live document left
 the walk AND the inverse assertion when one root ignore line matched its bare name at any depth,
-reproduced with a one-line `.gitignore` over a copy of `path@rules-corpus@tests/projects/minimal/` and
+reproduced with a one-line `.gitignore` over a copy of `path@knowledge@tests/projects/minimal/` and
 recorded as a defect before the reversal; a nested `.gitignore` was not honoured at all, so a
 project needing one had to declare the path in the manifest; and every pattern the matcher could
 not honour — a negation, `**`, `?`, a character class — had to be refused by name, because
@@ -143,59 +143,6 @@ them. `live`. The measured cost of the set: relocating the nine game-driving sui
 every backticked Rust path across five knowledge documents and the checker reported none of
 them, because no suffix in the set covered them; the sweep had to be grep-driven.
 
-**A third-party mirror as the source** — lost to `design@knowledge@watch-reads-the-page`. `live`. Mirrors keep
-stable index pages and would be less brittle than Wizards' HTML. It loses on what the corpus is: the
-Comprehensive Rules are this project's only authority, and putting a third party between the project
-and its authority as the _change signal_ is a dependency nothing else here has.
-
-**A per-rule deferral in the manifest, retiring itself at a backlog of zero** — lost to
-`design@knowledge@the-regime-has-no-opt-out`. `live`. It was built to carry one migration and it did, but
-what it left standing is a way for any tree to be conformant with less than the regime. A deferral
-names a rule, so it applies to every file and expires with none; the file-level exemption it is
-replaced by expires with its subject. The self-retiring report made the list hard to forget and did
-nothing about that.
-
-**Banning elision outright**, so every quote is a full body checked by equality — lost to the
-completeness rules `design@knowledge@scope-and-distance` sits beside. `live`. It is the strongest check
-available and the cost was measured: about 90 000 characters of rule text across the tree, roughly
-1 200 lines, with the operative clause buried inside each one. Marking every omission delivers the
-content of the incident this would have prevented.
-
-**A blessed structural form for section references owing nothing**, the space form for location
-and the marker only for claims — lost to `design@knowledge@sections-cite-the-heading`. `live`. It costs
-nearly no migration and reads naturally. It loses on what it leaves open: a claiming reference
-written in the unmarked form passes every check forever, which is the exact gap the census was
-taken to close — and the census showed the two uses are not mechanically separable, so no lint
-could ever tell an honest structural use from a dodge.
-
-**A lint that detects claiming references**, reporting a section number only where the sentence
-claims content — lost to `design@knowledge@sections-cite-the-heading`. `live`. Classified by hand over
-the whole tree: claiming and structural references differ only in what the surrounding sentence
-does, with no separating pattern, so the lint either drowns in the structural majority or misses
-the claims it exists for. The shape test is decidable; the claim test is the reviewer's.
-
-**A checker for verbatim rule quotes that nothing marks** — lost to the rules-reviewer owning the
-class, per its definition's sweep instruction. `live`. Measured over `interpretations/`: checking
-every plain quoted span against the corpus produces four false positives per true finding — the
-project's own coinages, card text and quoted external prose all sit in plain quotes — and a gate
-at that ratio gets muted. The buildable version reads only spans already written as quotes; the
-dangerous case is the unquoted verbatim, which no span scanner sees.
-
-**A third marker for the quote-free class**, beside the content marker and the identifier form —
-lost to reading a number as data by its surface. `live`. Defeated by enumeration: every genuine
-quote-free use is a number being displayed, and the code span and the name-bound string
-literal already say so structurally. A new marker would have been a place to hide.
-
-**A per-usage declaration of data spans**, each carrying the whole source line — lost to the same
-structural reading. `live`. Half the sites sit in doc comments that `cargo fmt` reflows, so the
-declaration would break on commits that changed nothing but whitespace, and a gate that cries wolf
-earns exemptions of its own.
-
-**A permissive discharge by slug pointer**, a marker present with its quote at the far end of the
-pointer — lost to the pointer REPLACING the marker. `live`. A marker present means the file is
-listed in the generated rule index as citing that rule, so a file that merely points at a decision
-joins the bump work list for a rule it does not depend on.
-
 **`syn` as the Rust parser** — lost to `design@knowledge@grammars-not-prefixes`. `live`. Prototyped: it
 parses all 68 files without error, but doc comments survive only as attributes and ordinary comments
 are discarded during lexing, so a rule cited in a `//` comment inside a function body needs a second
@@ -209,28 +156,6 @@ crate of compiler internals that churns weekly.
 to `design@knowledge@grammars-not-prefixes`. `live`. Zero dependencies, and rejected because a mis-scope
 would be silent, which is the failure class this tool exists to prevent. The line-prefix scanner it
 would have resembled was the single cause of four recorded defects.
-
-**A citation locator, given a rule number and a file** — lost to `design@knowledge@model-then-checks`.
-`live`. Proposed because a grep is genuinely unreliable for the job: the scanner distinguishes four
-citation shapes a text search does not — the prose marker, the identifier marker, a blockquote bound
-by the number printed at its head, and an inline quote bound to the nearest preceding marker — and it
-excludes rule numbers inside code spans and name-bound string literals, which a grep reports as hits.
-It loses because `cargo knowledge model` already emits `file`, `line`, `kind` and `value` with
-markers and rule tokens as separate kinds, so filtering that dump on a rule number **is** the
-locator, from the scanner's own notion of a citation rather than from a pattern. Established by
-running it: the filter lists a rule token on a line carrying no marker, which is the shape a
-marker-grep misses and a number-grep cannot classify. What was missing was not a command but a line
-in `path@knowledge@README.md` saying so. The tripwire on the completeness of that dump is in
-`path@knowledge@docs/tripwires.md`.
-
-**`rules diff --local`, the form that compared the vendored text against one named release** —
-lost to `design@thaum@named-values-where-order-decides`, which settled `rules diff` as two named
-releases. `live`. It loses to a mechanism rather than to an argument, and the mechanism is why
-dropping it costs nothing: `resolve` in `path@rules-corpus@rules/src/release.rs` answers `local` **first**,
-so a diff against the pinned date resolves the same bytes the flag would have. The two forms
-differ only where the working-tree text disagrees with the version file, and `vendor` writes both
-in one call, so no supported flow separates them. It was documented in no README and used by no
-skill.
 
 **`--lines` on the interpretation index**, a temporary copy carrying each citation's line numbers
 — lost to `design@knowledge@generated-files-are-pure`. `live`. Refuted by a census over the file's whole
@@ -263,7 +188,7 @@ output a parser is fed, and the class recurs wherever a test displays a three-di
 convention at each one, which the location does not. It is the recorded fallback should a literal
 outside the tool ever need rule-shaped bytes as data where no binding can hold it.
 
-**Moving the tool's unit tests under `path@rules-corpus@tests/` and excluding the directory** — lost to
+**Moving the tool's unit tests under `path@knowledge@tests/` and excluding the directory** — lost to
 `design@knowledge@checker-source-literals-are-data`. `live`. Integration tests reach only public items.
 Measured: 31 files carry a test module, 349 tests, most over private functions, so the
 move makes those public or drops the tests.

@@ -8,8 +8,7 @@ carrying a slug anchor, cited from elsewhere with `knowledge` as its component. 
 deleting this tool. How it works and how the pieces inside divide the work belongs here.
 
 What otherwise shapes it is `path@thaum@tools/README.md`, `knowledge.toml`, and the module documentation at
-the top of each file under `path@knowledge@documentation/src/`, `path@rules-corpus@rules/src/` and
-`path@knowledge@src/`.
+the top of each file under `path@knowledge@documentation/src/` and `path@knowledge@src/`.
 
 The heads are grouped by subject. A group heading carries no decision; each decision is one
 level-three head below it.
@@ -77,7 +76,8 @@ that mostly have no per-file scope, and `path@knowledge@docs/tripwires.md` guard
 
 **An extension prepares its tree when the last phase is reached**, so a run that stops earlier
 resolves no release and fetches nothing, whatever it would have judged. **A writer refuses over an incomplete model**: `index`
-and `rules bump` run the first three phases before touching anything and exit 2 naming the
+and a writing command of an extension, such as `rules bump`, run the first three phases before
+touching anything and exit 2 naming the
 phase, since an index generated over such a model lists rows nobody asked for. The range form
 of `commits` ends the same way at a tip whose tree stops early: a message judged against an
 incomplete entity table is judged against nothing.
@@ -295,13 +295,11 @@ gives a project a kind, a shape and a home to be checked against; it cannot loos
 in, and it cannot exempt a document from anything. A manifest that declares no register is checked
 exactly as it was.
 
-**The one exemption path is `[rules] exempt-files`, and it names FILES rather than rules.** It
-sits in the rules table because both things it exempts from, the missing-marker lint and the
-quote regime, belong to the rules half of the tool. A file
-there is one that is leaving the tree, so the exemption expires with its subject; a rule held back
-would have applied to every file and expired with nothing. That asymmetry is the whole of it —
-exempting a document that is about to be deleted costs the guarantee nothing, and exempting a rule
-costs it everywhere at once.
+**An exemption, where an extension offers one, names FILES rather than rules.** The core offers
+none. A file named is one that is leaving the tree, so the exemption expires with its subject; a
+rule held back would have applied to every file and expired with nothing. That asymmetry is the
+whole of it — exempting a document that is about to be deleted costs the guarantee nothing, and
+exempting a rule costs it everywhere at once.
 
 ## 2. What a tree carries: anchors and registers
 
@@ -396,8 +394,8 @@ is `groups`. A key other than `groups` is a finding, a file with no `groups` is 
 **A manifest still written in the retired grammar is refused by name.** `[interpretations]` and
 `additional-trackers` each produce an error naming what replaces them, rather than the
 unknown-key message. A manifest is migrated once, and that message is the whole of what the
-migrator gets. `[lint]`, whose one key moved into `[rules]`, gets no such message: the message
-would name a table of an extension inside the core, so it is refused as any unknown table is.
+migrator gets. A table an extension stops claiming gets no such message: the message would name
+an extension's table inside the core, so it is refused as any table no extension claims is.
 
 **A declaration that is wrong is a finding rather than a load failure, and it is absent from the
 configuration.** A manifest that will not load reports nothing at all, and nothing at all is what
@@ -491,11 +489,9 @@ around it, and a block has none.
 
 **The block is prose, entire, and its lines are marked as a fence.** That marking keeps a value
 out of the document's structure — a heading, a slug definition, a navigation link — and buys
-nothing else: a fence has never made a rule number data here, per
-`design@knowledge@grammars-not-prefixes`, and a marker is never data wherever it sits. So a reference in
-a value is a reference, and a `CR:` marker in a value claims its rule with nowhere in the block
-to put the quote. A marker therefore does not belong in metadata, and one is reported exactly
-where it stands.
+nothing else: a fence has never made its contents data here, per
+`design@knowledge@grammars-not-prefixes`. So a reference in a value is a reference, and an
+extension that reads its own markers in prose reads them in a value too.
 
 **The block is blanked byte for byte before the structure is read.** The closing `---` is a setext
 underline for the `key: value` lines above it, so left in place a block would open the document
@@ -547,8 +543,8 @@ because a declaration disagreed would be a listing that stops listing, and the d
 
 ### A generated file's content is a function of the walked tree, so `index` writes it with no dry run `##generated-files-are-pure`
 
-`path@rules@index.md` holds no hand-written bytes, and neither does any file-register
-`index.md`. Each is what its generator returns over the model, which is what lets
+No generated file holds hand-written bytes: not a file-register `index.md`, and not a file an
+extension generates. Each is what its generator returns over the model, which is what lets
 `path@knowledge@documentation/src/check/generated.rs` verify one by regenerating into a `String` and
 comparing rather than by writing the file and reading it back. Two things follow, and both are
 load-bearing.
@@ -618,9 +614,7 @@ printed or rewritten.
 The statement precedes the slug in the heading, so a document outline lists the entries rather
 than a set of identifiers, and an editor's outline view is the index. The table cell form serves
 the decision tables that predate the heading rule. Level two is accepted beside level three
-because tripwire and goal entries are level-two headings; the quote scope of
-`design@knowledge@scope-and-distance` is not changed by this, and stays the innermost level-three
-subsection where one exists.
+because tripwire and goal entries are level-two headings.
 
 **The homes are the design, goals and tripwires homes of the owning anchor**, and the home of
 any heading register the project declares, each in either shape of
@@ -819,11 +813,11 @@ exists against.
 tool derives the set from the register instances rather than from a declared row, which is why no
 `[walk] skip-files` row names a file-register index and a new instance cannot arrive with its
 index inside the walk; an extension's generated files, such as the rule index, are in the same
-set, so no row names them either. Outside the walk also
-means outside the inverse assertion of the `uncovered` family: a listing is a function of the tree
-rather than a claim anybody wrote, so a rule number appearing in one is not an unquoted citation.
+set, so no row names them either. Outside the walk also means outside the files the survey hands
+over as unwalked: a listing is a function of the tree rather than a claim anybody wrote, so no
+check reads its rows as one.
 
-## 4. What is prose, and what a quote owes
+## 4. What is prose
 
 ### The grammar for a file's kind decides which of its bytes are prose `##grammars-not-prefixes`
 
@@ -890,72 +884,25 @@ summary block names each of the checker's directories, relative to the root when
 absolute otherwise, even when the compiled directory no longer exists, and prints the count of
 Rust files it covered, so the state is visible in every run. A directory exempts files only when
 it sits inside the tree being checked: a tree that sits inside it instead, such as a mock project under
-`path@rules-corpus@tests/projects/`, is a foreign project and every literal in it is prose.
+`path@knowledge@tests/projects/`, is a foreign project and every literal in it is prose.
 
 **Whole source rather than test modules only.** The non-test source holds no literal that cites
 a rule, a finding message interpolates the number it names, and a narrower rule would cost an
 attribute lookup to protect a class with zero members.
-
-### A quote's claims are judged against the innermost scope, within a bounded distance `##scope-and-distance`
-
-The scope is the level-three subsection in a document and the item in Rust, and there is no
-outward search. A quote may sit either side of the claim it discharges, within
-`MAX_DISTANCE` lines of it.
-
-**Sessions reach files by grep and partial read**, so a quote a thousand lines above a claim is
-one the reader never sees — and a reader who cannot see the rule text cannot tell a right
-citation from a wrong one.
-
-**Either direction, because the conventional shape introduces the rule and then quotes it.**
-Requiring the quote to precede its marker was written into the plan and was wrong; what the
-distance is for is that a reader sees both at once, which does not depend on the order.
-
-**A Rust item's scope reaches up over its doc comment and its attributes**, which the grammar
-makes siblings. Without that the claim in a doc comment and the name it documents fall in
-different scopes, which is the one pair that must agree.
-
-### A whole-section citation owes the section's heading line, and the lint gates the keyword shape `##sections-cite-the-heading`
-
-A rule number with no subrule part cites a whole section: the dotless marker, owing a verbatim
-quote of the section's heading — the title the release prints, entire, with the printed number
-standing at a blockquote's head and tolerated at an inline quote's front — under the same scope
-and distance rules as a subrule quote. The corpus holds section titles apart from the rule
-bodies: the canonical digest, the release diff and move detection read the rule bodies alone, and
-only the lookups route on the section form.
-
-**The lint discriminates by grammatical shape, never by judging what a sentence claims.** Measured
-over this tree when the decision was argued: claiming and structural section references differ
-only in what the surrounding sentence does, every one of them sits behind the word CR, rule,
-rules or section, and bare three-digit numbers are counts, line numbers and date fragments at
-hundreds to a handful. So the keyword shape is the gate — reported exactly as an unmarked dotted
-number is — bare numbers stay invisible on purpose, and everything semantic is the
-rules-reviewer's, named in its definition: whether a marked reference's claim about its section is
-true, whether a section citation dodges a subrule that carries the claim, and whether a number in
-a code span is genuinely data. Re-take the census with the keyword patterns over `*.md` and
-`*.rs`; a claiming shape the patterns cannot see reopens this decision, and a tripwire beside it
-says so.
-
-**The heading line is the quote because it is the claim every section reference makes at
-minimum** — which part of the specification the text stands against — and because no fragment of
-a section's body can discharge a claim about the whole. A renumbering or retitling breaks the
-quote loudly at every citing site, so the generated rule index's section rows are the bump work
-list covering sections.
 
 ## 5. Commit messages
 
 ### A commit message is a document under the regime, judged against the tree its commit carries `##a-commit-message-is-a-document`
 
 A commit message is parsed as one markdown document — its subject line, its blank line and its
-body — and every rule of the regime runs over it. A `CR:` marker owes its verbatim quote inside
-the message, within the distance rule of `design@knowledge@scope-and-distance`; every reference is
-judged against the entity table of `design@knowledge@one-entity-table`; the missing-marker lint reads
-it as it reads any other prose.
+body — and every rule of the regime runs over it: every reference is judged against the entity
+table of `design@knowledge@one-entity-table`, and each registered extension judges the message
+against the tree it prepared for that commit.
 
 **A message is history, and it cannot be edited.** `main`'s history is never rewritten, so a
-message's claims are fixed the moment it lands: a quote that stops verifying in a document is
-repaired by `bumping-rules`, and the same claim in a message can only be read wrong. A rule
-number carrying no text is therefore the one claim in this project that can never be repaired,
-which is why the surface the regime reached last is the one it matters most on.
+message's claims are fixed the moment it lands: a pointer that stops resolving in a document is
+repaired where it stands, and the same pointer in a message can only be read wrong. That is why
+the surface the regime reached last is the one it matters most on.
 
 **A message is judged byte for byte, as the commit holds it.** `commits` reads the message
 with `%B` and cleans nothing: git applied its own cleanup before the commit existed, and a
@@ -974,8 +921,8 @@ an amend, a reword or a squash is the commit being replaced, so it refuses histo
 range check accepts.
 
 **Everything a commit is judged against is read from that commit's tree.** The manifest, the
-`[walk]` rules, the documents, the generated indexes, the per-instance options and the pinned
-corpus all come through git objects, and the model is assembled in memory. Reading them from the
+`[walk]` rules, the documents, the generated indexes, the per-instance options and every file an
+extension reads all come through git objects, and the model is assembled in memory. Reading them from the
 working tree instead would judge a message written a hundred commits ago against decisions that
 did not exist then, and the finding list would be a list of things nobody could have known.
 
@@ -1003,9 +950,8 @@ alone every such message would dangle. The parent's model is the previous commit
 the walk followed the parent chain — a failed commit's tree still serves as the next commit's
 parent, since its entities are read and not its verdict — so an extra model is built only at
 the range's start and where the chain was not followed. A parent tree is assembled for its
-entity table and the facts a path reference asks about, and nothing else: no release is parsed
-and no family runs over it, because nobody reads its verdict and parsing the corpus is the
-largest cost in a per-commit run. The two arms are compared by the site each names — the line and the span — rather than by the words each writes,
+entity table and the facts a path reference asks about, and nothing else: no extension is
+prepared for it and no check runs over it, because nobody reads its verdict. The two arms are compared by the site each names — the line and the span — rather than by the words each writes,
 because two trees can refuse one reference for different reasons and comparing the words whole
 would let a reference that resolves in neither pass.
 
@@ -1014,11 +960,11 @@ moved with the branch's history would be a check nobody could reproduce from a c
 stash` alone would move it. The range is always explicit, and the gates pass the range from the
 remote `main` to `HEAD`, so what is judged is the branch's own commits and never `main`'s.
 
-**Two families do not run over a commit's tree.** `corpus`, whose subject is filesystem state
-that a tree is not, and `changes`, which resolves every release its changelog names and would
-read the whole archive out of git objects at every step of the range. Neither can decide whether
-a message's references resolve, which is the question the per-commit model exists to answer, and
-`check` is what judges a checkout against both.
+**An extension leaves out, over a commit's tree, a check whose subject is not the tree.** A
+check of filesystem state has no subject there, and one that would read every archived input at
+every step of the range decides nothing about whether a message's references resolve, which is
+the question the per-commit model exists to answer; `check` is what judges a checkout against
+it.
 
 **The ignore rules a per-commit run asks are the working tree's.** `git check-ignore` reads the
 `.gitignore` files on disk and has no form that asks a historical tree. A commit whose ignore
@@ -1026,32 +972,3 @@ rules differed from today's is therefore judged against today's, which can cost 
 asserted where that commit's own rules exempted it — a finding rather than a silence. Since a
 failing tree fails the range, a branch that changes its ignore rules orders its commits for it
 as a branch that makes the checker stricter does: the change first, or a squash.
-
-## 6. The rules half
-
-### The release watch learns the newest release from the page Wizards announces it on, and treats "no match" as a failure rather than as an answer `##watch-reads-the-page`
-
-Two properties decide the shape, and they pull the same way.
-
-The first is that **the URL is not stable and the announcement is**. The download URL is built from
-a date, so probing forward-dated candidates would need no HTML at all — and the release resolver's
-own comment records why that is the wrong bet: Wizards rotates its download URLs. A rotation makes
-every probe miss, and the page carries whatever URL is served now.
-
-The second is that **a detector cannot be allowed to report absence when what failed is itself**.
-The page is HTML nobody here controls, so the extractor will eventually match nothing; reading that
-as "no new release" would keep the run green while the watch is dead, and the first symptom would be
-a citation failing months later. No match exits non-zero and says the extractor is what broke. That
-is also why the extractor's own cases run in the merge check and again immediately before the live
-query. **Four of the nine must return nothing** — an empty page, a page without the link, a link
-with no date, and a malformed date — and those four are the ones the design turns on: a false
-negative is silent, while a wrong date is loud and is corrected by whoever reads it. A test asserts
-that count, so weakening one of the four into a passing case is visible.
-
-### One function answers whether a release is already in the tree; another resolves one, fetching if it must `##local-release-is-separate`
-
-The split exists so the question can be asked without taking the third branch: the corpus check
-asserts that every release the tooling needs is vendored or archived, and asking that through the
-resolver would answer it by fetching, which is the thing being asserted against. A bump archives the
-outgoing release, so the property holds by construction; what it does not survive is a bump
-committed without the archive.
