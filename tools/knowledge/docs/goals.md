@@ -5,7 +5,12 @@ won or lost and lives in `path@knowledge@docs/design.md`.
 
 ## The project's documents stay tidy and do not grow stale `##documents-stay-current`
 
-## The rules of the project, the citation regime first among them, are followed mechanically `##the-regime-is-mechanical`
+## The instructions a project declares about its documents are enforced by a check `##declared-instructions-are-checked`
+
+A project states in its manifest what it records, where each kind of record lives, and how one
+record points at another. A tree that passes the check conforms to all of it, and no project can
+hold part of it back. Conformance is established by running one command, not by a reviewer
+remembering the instructions.
 
 ## Relocating or refactoring what exists costs one manifest edit and no document `##relocation-is-one-manifest-edit`
 

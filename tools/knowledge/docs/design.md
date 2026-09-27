@@ -257,9 +257,10 @@ whatever route a name took to reach it. A project that means to keep such a file
 **A tracked file the ignore rules also cover is a finding naming the file.** The two states
 contradict each other and the contradiction is otherwise silent: the walk reads the file, and
 `git check-ignore` skips what the index holds so a reference to it is asserted too — the reverse
-of what the ignore rule says. It is reported by `registers`, with the other findings that judge
-what a project declares about itself against the tree, rather than by `uncovered`, whose subject
-is a file the walk does not cover and which this file is not.
+of what the ignore rule says. It is reported in phase 2, by `check::tree`, with the other findings
+that judge what the tree holds against what the project declares. The run stops there, as for
+every phase-2 finding, per `design@knowledge@phases-gate-the-report`: the model holds a file the
+project says is out of it, so a finding computed from that model is unreliable.
 
 **Reading a commit's tree needs git 2.36.** `cat-file --batch -z` takes its requests
 NUL-terminated, and a tracked filename may hold a newline: under the newline-terminated input
