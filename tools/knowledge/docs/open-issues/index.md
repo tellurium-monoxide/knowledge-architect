@@ -1,10 +1,11 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-17 entries
+18 entries
 
 | kind | title |
 | --- | --- |
 | defect | [The changelog's own counts are asserted by nothing](changelog-counts-asserted-by-nothing.md) |
+| defect | [A worktree build sharing the target directory leaves the live checker exempting no fixture](checker-source-path-stale-after-shared-target-build.md) |
 | defect | [The inverse assertion reads the prose marker form alone](inverse-assertion-reads-prose-markers-only.md) |
 | defect | [The release diff calls a renumbered section a deletion](release-diff-calls-renumbered-section-deletion.md) |
 | defect | [A file outside the walk that cannot be read is silent to the inverse assertion](unreadable-file-outside-the-walk-is-silent.md) |
