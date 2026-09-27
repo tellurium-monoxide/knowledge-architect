@@ -299,8 +299,8 @@ fn working_tree(manifest: &Manifest, checker: Option<&Path>) -> Result<Assembly,
 /// Why a commit's tree could not be assembled at all.
 ///
 /// Distinct from a tree that assembled and failed its checks: the first is reported as
-/// `manifest does not load`, which is what every pre-migration commit of the branch that
-/// introduced this command produces, and the second names its finding count.
+/// `its tree does not load`, which is what a commit whose manifest the tip checker refuses
+/// produces, and the second names its finding count.
 struct Unloadable(String);
 
 /// A parsed release kept across commits, keyed by the blob the commit's tree holds.
@@ -469,7 +469,7 @@ fn commit_tree(
     let judging = depth == Depth::Judged;
     // Every release this tree cannot supply. A quote checked against no release is checked by
     // nothing at all, so each one is a finding of the tree rather than a family that quietly
-    // did less: the commit is then skipped, which is the honest answer.
+    // did less: the commit then fails the range, which is the honest answer.
     let mut unresolved: Vec<Finding> = Vec::new();
     let rules_dir = manifest.rules().dir.clone();
     let corpus_rel = rules_dir.join(&manifest.rules().text);
@@ -701,10 +701,13 @@ enum Outcome {
     Judged {
         trouble: usize,
     },
-    Skipped {
+    /// A commit before the tip whose tree does not load, or carries findings under the tip
+    /// checker. Each is a finding of the run. Its message is still judged wherever the tree
+    /// reached the last phase, and `why` says when it was not.
+    Failed {
         why: String,
     },
-    /// The range's tip, which is never skipped and whose tree could not be assembled at all.
+    /// The range's tip, whose tree could not be assembled at all.
     /// The run ends here, and everything walked before it is still printed.
     Unassembled {
         why: String,
@@ -741,16 +744,16 @@ pub fn commits(
     let mut summary: Vec<(String, Outcome)> = Vec::new();
     let mut findings: Vec<Finding> = Vec::new();
     let mut previous: Option<(String, Assembly, Entities)> = None;
-    // How many findings the tip's own tree carries, `None` where it carries none. The tip is
-    // never skipped, so its tree failing is the run's own could-not-run rather than a skip.
+    // How many findings the tip's own tree carries, `None` where it carries none. The tip's
+    // tree failing is the run's own could-not-run rather than a finding.
     let mut tip_trouble: Option<usize> = None;
 
     let last = shas.last().cloned().unwrap_or_default();
     for sha in &shas {
         let short = &sha[..7.min(sha.len())];
-        // **HEAD is never skipped.** A range whose tip could not be judged would pass with
-        // every commit skipped, which is the vacuous run the summary counts exist against.
-        let never_skipped = *sha == last || head.as_deref() == Some(sha.as_str());
+        // **The tip is judged apart.** Its tree failing is the run's own could-not-run rather
+        // than a finding, since `check` over the checkout is what reports that tree.
+        let is_tip = *sha == last || head.as_deref() == Some(sha.as_str());
         let assembled = commit_tree(
             root,
             sha,
@@ -761,16 +764,25 @@ pub fn commits(
         let tree = match assembled {
             Ok(tree) => tree,
             Err(Unloadable(why)) => {
-                if never_skipped {
+                if is_tip {
                     // Everything walked before the tip is still reported. A run that printed
                     // an error and nothing else would say nothing about the branch it gates.
                     summary.push((short.to_string(), Outcome::Unassembled { why }));
                     break;
                 }
+                // **Every commit of the range must load under the tip checker.** A branch that
+                // changes the manifest format puts that change in its first commit, or is
+                // squashed, per `design@knowledge@a-commit-message-is-a-document`.
+                findings.push(Finding::in_file(
+                    format!("commit {short}"),
+                    format!("this commit's tree does not load under the tip checker: {why}"),
+                    "every commit of the range must load; put the change that needs it in the \
+                     branch's first commit, or squash the branch",
+                ));
                 summary.push((
                     short.to_string(),
-                    Outcome::Skipped {
-                        why: format!("manifest does not load: {why}"),
+                    Outcome::Failed {
+                        why: format!("its tree does not load: {why}"),
                     },
                 ));
                 previous = None;
@@ -778,26 +790,38 @@ pub fn commits(
             }
         };
         let trouble = tree.trouble.len();
-        if trouble > 0 && !never_skipped {
-            summary.push((
-                short.to_string(),
-                Outcome::Skipped {
-                    why: format!("tree fails {trouble} finding(s)"),
-                },
-            ));
-            // The tree still becomes the next commit's parent: its entities are read, not
-            // its verdict, and a message that names an entry this commit deleted needs them.
-            let entities = Entities::build(&tree.model, &tree.anchors());
-            previous = Some((sha.clone(), tree, entities));
-            continue;
+        if trouble > 0 && !is_tip {
+            // **Every commit of the range must pass under the tip checker**, so the tree's own
+            // findings are the run's, each named by the commit and by the file inside it.
+            findings.extend(tree.trouble.iter().cloned().map(|mut f| {
+                f.file = PathBuf::from(format!("commit {short}: {}", f.file.display()));
+                f
+            }));
+            let why = match tree.stopped {
+                Some(phase) => format!(
+                    "its tree stops at phase {} with {trouble} finding(s); its message was \
+                     judged against nothing",
+                    phase.number()
+                ),
+                None => format!("its tree fails {trouble} finding(s)"),
+            };
+            summary.push((short.to_string(), Outcome::Failed { why }));
+            if tree.stopped.is_some() {
+                // An incomplete table would refuse a reference into what the walk could not
+                // read, so the message is judged by nothing. The tree still serves as the next
+                // commit's parent: its entities are read, not its verdict.
+                let entities = Entities::build(&tree.model, &tree.anchors());
+                previous = Some((sha.clone(), tree, entities));
+                continue;
+            }
         }
-        if trouble > 0 {
+        if trouble > 0 && is_tip {
             tip_trouble = Some(trouble);
         }
         // A tip whose tree stopped before the last phase has an incomplete entity table, and
         // a message judged against it would be judged against nothing: the run ends here,
         // naming the phase, as the hook does over the working tree.
-        if let Some(phase) = tree.stopped {
+        if let (true, Some(phase)) = (is_tip, tree.stopped) {
             summary.push((
                 short.to_string(),
                 Outcome::Unjudged {
@@ -809,7 +833,7 @@ pub fn commits(
         }
 
         // The parent model is the previous commit's where the walk followed the parent chain,
-        // a skipped commit's included, and is built once otherwise — at the range's first
+        // a failed commit's included, and is built once otherwise — at the range's first
         // commit, and wherever the previous commit is not this one's first parent.
         let first_parent = documentation::git::rev_parse(root, &format!("{sha}^"));
         let parent_owned = match (&previous, &first_parent) {
@@ -841,7 +865,9 @@ pub fn commits(
         let entities = Entities::build(&tree.model, &tree.anchors());
         let found = judge_message(&message, &tree, &entities, parent);
         findings.extend(relabelled(found, &format!("commit {short}")));
-        summary.push((short.to_string(), Outcome::Judged { trouble }));
+        if is_tip || trouble == 0 {
+            summary.push((short.to_string(), Outcome::Judged { trouble }));
+        }
         previous = Some((sha.clone(), tree, entities));
     }
 
@@ -853,11 +879,11 @@ pub fn commits(
         Outcome::Unassembled { why } => Some((short.clone(), why.clone())),
         _ => None,
     });
-    let skipped = summary
+    let failed = summary
         .iter()
-        .filter(|(_, o)| matches!(o, Outcome::Skipped { .. }))
+        .filter(|(_, o)| matches!(o, Outcome::Failed { .. }))
         .count();
-    outln!("\ncommits in {range}: {judged} judged, {skipped} skipped");
+    outln!("\ncommits in {range}: {judged} judged, {failed} failed");
     for (short, outcome) in &summary {
         match outcome {
             Outcome::Judged { trouble: 0 } => outln!("  {short} judged"),
@@ -865,7 +891,7 @@ pub fn commits(
                 "  {short} judged; its own tree fails {trouble} finding(s), which \
                  `cargo knowledge check` reports"
             ),
-            Outcome::Skipped { why } => outln!("  {short} skipped: {why}"),
+            Outcome::Failed { why, .. } => outln!("  {short} failed: {why}"),
             Outcome::Unassembled { why } => {
                 outln!("  {short} is the range's tip and its tree could not be read: {why}")
             }

@@ -877,19 +877,28 @@ corpus all come through git objects, and the model is assembled in memory. Readi
 working tree instead would judge a message written a hundred commits ago against decisions that
 did not exist then, and the finding list would be a list of things nobody could have known.
 
-**A commit whose tree fails is skipped and named; the range's tip is never skipped.** The tip
-is the walk's last commit, and HEAD wherever the range holds it. A range with several tips —
-`--all` names one — has tips that are neither, and the guarantee is the two-ended range's. A message
-can only be judged where the table it resolves against is trustworthy, so a tree with findings
-of its own contributes no verdict — and a run in which every commit was skipped would be a
-vacuous pass, so the summary counts judged and skipped commits and the tip's own failure is exit
-2. A tree whose manifest will not load is skipped for that reason, which is what lets the range
-walk over commits older than a manifest migration.
+**Every commit of the range is judged by the tip checker, and a tree that fails is a finding.**
+The tip checker is the binary built from the working tree, and it judges every commit's tree and
+every commit's message. A commit before the tip whose tree does not load, or carries findings,
+fails the run with exit 1: its tree's findings are printed, each named by the commit and by the
+file inside it, and its message is still judged wherever the tree reached the last phase, since
+its entity table is then complete. Where the tree stopped earlier, the message is judged against
+nothing and the run says so. The tip is the walk's last commit, and HEAD wherever the range holds
+it; a range with several tips — `--all` names one — has tips that are neither, and the guarantee
+is the two-ended range's. The tip's own tree failing is exit 2 rather than a finding, because
+`check` over the checkout is what reports that tree. The summary counts judged and failed commits.
+
+**A branch that makes the checker stricter orders its commits for it.** A new check, or a change
+to the manifest format, makes every earlier commit of the same branch fail under the tip checker.
+Such a branch puts that change in its first commit, with every fix the tree needs to pass it, or
+is squashed to one commit before its review. Checker changes are rare and land on branches of
+their own, so this costs a history edit on those branches alone; the alternative that avoids it,
+building each commit's own checker, costs one release build per commit on every branch.
 
 **A message's references resolve against its commit's tree or its first parent's.** A commit
 that closes an issue deletes the entry and names it in the message, and against its own tree
 alone every such message would dangle. The parent's model is the previous commit's wherever
-the walk followed the parent chain — a skipped commit's tree still serves as the next commit's
+the walk followed the parent chain — a failed commit's tree still serves as the next commit's
 parent, since its entities are read and not its verdict — so an extra model is built only at
 the range's start and where the chain was not followed. A parent tree is assembled for its
 entity table and the facts a path reference asks about, and nothing else: no release is parsed

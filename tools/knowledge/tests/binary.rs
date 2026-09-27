@@ -1486,7 +1486,8 @@ impl History {
     ///
     /// The indexes are regenerated first because the `generated` family compares bytes: a
     /// commit that adds or deletes a register entry and leaves the index alone has a tree
-    /// that fails, and every such commit would be skipped rather than judged.
+    /// that fails, and every such commit would fail the range for its tree rather than for
+    /// what the test planted.
     fn commit(&self, message: &str) -> String {
         // **Staged, then regenerated, then staged again.** The walk is git's listing, so a
         // deleted file the index still holds is walked and its register entry still counted:
@@ -1530,7 +1531,7 @@ impl Drop for History {
 ///
 /// `additional_trackers` writes the retired manifest key, which is what a commit from before
 /// the manifest was migrated looks like to this tool: the manifest does not load, and the
-/// commit is skipped rather than judged.
+/// commit fails the range.
 fn tiny_project(history: &History, additional_trackers: bool) {
     let retired = if additional_trackers {
         "additional-trackers = []\n"
@@ -1599,11 +1600,11 @@ fn tiny_project(history: &History, additional_trackers: bool) {
 }
 
 /// The claim: a project written this way has nothing wrong with it, so a commit over it is
-/// judged rather than skipped.
+/// judged and contributes no finding of its tree.
 ///
 /// Every test below reads a planted finding out of a run whose other findings are none. With
-/// a tree that failed, every commit would be skipped and each of those tests would pass while
-/// judging nothing at all.
+/// a tree that failed, every commit would carry its tree's findings and each test's counts
+/// would be counts of the fixture.
 #[test]
 fn the_fixture_project_is_one_the_checks_find_nothing_wrong_with() {
     let history = History::new("commit-clean");
@@ -1798,8 +1799,14 @@ fn a_message_carrying_the_rules_own_words_passes() {
     assert!(stdout.contains("PASSED: no findings"), "{stdout}");
 }
 
+/// The claim: a commit before the tip whose manifest does not load fails the run and is
+/// named, and the commit after it is still judged.
+///
+/// Its message cannot be judged, since no table exists to resolve it against, so the tree's
+/// failure is the finding. A run that passed over it would take the message out of the regime
+/// with exit 0.
 #[test]
-fn a_commit_whose_manifest_does_not_load_is_skipped_and_named_and_the_next_one_is_judged() {
+fn a_commit_whose_manifest_does_not_load_fails_the_run_and_the_next_one_is_judged() {
     let history = History::new("commit-premigration");
     tiny_project(&history, true);
     let base = history.commit("The project is created\n");
@@ -1807,24 +1814,87 @@ fn a_commit_whose_manifest_does_not_load_is_skipped_and_named_and_the_next_one_i
     tiny_project(&history, false);
     let new = history.commit("The manifest is migrated\n\nIt records `design@tiny@tiny-anchor`.\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
-    assert_eq!(code, 0, "{stdout}{stderr}");
+    assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(
-        stdout.contains(&format!("{old} skipped: manifest does not load")),
+        stdout.contains(&format!("{old} failed: its tree does not load")),
         "{stdout}"
     );
     assert!(stdout.contains(&format!("{new} judged")), "{stdout}");
-    assert!(stdout.contains("1 judged, 1 skipped"), "{stdout}");
+    assert!(stdout.contains("1 judged, 1 failed"), "{stdout}");
+    assert!(
+        stdout.contains(&format!("commit {old}  this commit's tree does not load")),
+        "the finding names the commit: {stdout}"
+    );
+    let last = stdout.trim_end().lines().last().expect("a verdict line");
+    assert!(last.starts_with("FAILED"), "{last}");
 }
 
-/// The claim: a tree that cannot supply the release its quotes verify against is a finding,
-/// so the commit is skipped rather than judged with the citation families quietly doing less.
+/// The claim: a commit before the tip whose tree carries a finding fails the run with that
+/// finding, named by the commit and the file, and its message is still judged.
 ///
-/// The families that read rule text are gated on a release being resolvable, and a document
-/// whose release is missing is passed over in silence. Over a per-commit tree the whole corpus
-/// can be absent, and then every quote in the tree and in the message is checked by nothing
-/// while the run reports the commit judged and clean.
+/// The tip checker judges every commit of the branch, so a tree that fails at any commit is a
+/// finding of the branch. Its message is judged too, since the tree reached the last phase and
+/// its table is complete: a dangling reference in it is reported beside the tree's own.
+#[test]
+fn a_failing_tree_before_the_tip_is_a_finding_and_its_message_is_still_judged() {
+    let history = History::new("commit-middle-fails");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    history.write(
+        "docs/note.md",
+        "# A note\n\nIt names `design@tiny@no-such-decision`.\n",
+    );
+    let mid = history.commit("A note is added\n\nIt names `design@tiny@no-such-message-ref`.\n");
+    history.remove("docs/note.md");
+    let fixed = history.commit("The note leaves\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("{mid} failed: its tree fails 1 finding(s)")),
+        "{stdout}"
+    );
+    assert!(stdout.contains(&format!("{fixed} judged")), "{stdout}");
+    assert!(stdout.contains("1 judged, 1 failed"), "{stdout}");
+    // The tree's finding, named by the commit and by the file inside it.
+    assert!(
+        stdout.contains(&format!("commit {mid}: docs/note.md:3")),
+        "the tree's finding names the commit and the file: {stdout}"
+    );
+    // The message's finding, on line three of the message.
+    assert!(stdout.contains(&format!("commit {mid}:3")), "{stdout}");
+    assert!(stdout.contains("no-such-message-ref"), "{stdout}");
+}
+
+/// The claim: a commit before the tip whose tree stops before the last phase fails the run,
+/// and its message is judged against nothing, which the run says.
+///
+/// Its entity table is incomplete, so a finding against the message would be computed over
+/// what the walk could not read. The tree's own findings are what is reported.
+#[test]
+fn a_tree_before_the_tip_that_stops_early_fails_and_its_message_is_not_judged() {
+    let history = History::new("commit-middle-stops");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    history.write_bytes("docs/latin1.md", b"# A note\n\ncaf\xe9\n");
+    let mid =
+        history.commit("A note that is not text\n\nIt names `design@tiny@no-such-message-ref`.\n");
+    history.remove("docs/latin1.md");
+    history.commit("The note leaves\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("{mid} failed: its tree stops at phase 2")),
+        "{stdout}"
+    );
+    assert!(stdout.contains("latin1.md"), "{stdout}");
+    assert!(
+        !stdout.contains("no-such-message-ref"),
+        "no finding computed over the incomplete table: {stdout}"
+    );
+}
+
 /// The claim: a tree entry the walk reads as a document and whose blob is not text is a
-/// finding of that tree, so the commit is skipped for it rather than judged clean over a
+/// finding of that tree, so the commit fails for it rather than being judged clean over a
 /// document nothing read.
 #[test]
 fn a_commit_holding_a_blob_that_is_not_text_fails_its_tree() {
@@ -1876,8 +1946,15 @@ fn a_tip_whose_tree_stops_before_the_last_phase_is_not_judged() {
     assert!(stdout.contains("COULD NOT RUN"), "{stdout}");
 }
 
+/// The claim: a tree that cannot supply the release its quotes verify against is a finding,
+/// so the commit fails the run rather than being judged with the citation families doing less.
+///
+/// The families that read rule text are gated on a release being resolvable, and a document
+/// whose release is missing is passed over in silence. Over a per-commit tree the whole corpus
+/// can be absent, and then every quote in the tree and in the message is checked by nothing
+/// while the run reports the commit judged and clean.
 #[test]
-fn a_commit_whose_tree_supplies_no_release_is_skipped() {
+fn a_commit_whose_tree_supplies_no_release_fails_the_run() {
     let history = History::new("commit-no-corpus");
     tiny_project(&history, false);
     let base = history.commit("The project is created\n");
@@ -1887,9 +1964,15 @@ fn a_commit_whose_tree_supplies_no_release_is_skipped() {
     let back = history.commit("The corpus comes back\n");
 
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
-    assert_eq!(code, 0, "{stdout}{stderr}");
+    assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(
-        stdout.contains(&format!("{gone} skipped: tree fails")),
+        stdout.contains(&format!("{gone} failed: its tree stops at phase 2")),
+        "{stdout}"
+    );
+    // The manifest declares the corpus, so its absence is a finding of the declaration.
+    assert!(
+        stdout.contains(&format!("commit {gone}: knowledge.toml"))
+            && stdout.contains("CompRules.txt"),
         "{stdout}"
     );
     assert!(stdout.contains(&format!("{back} judged")), "{stdout}");
@@ -1909,7 +1992,7 @@ fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
     let sha = history.commit("A note is added\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 2, "{stdout}{stderr}");
-    // Never skipped, and the summary says what is wrong with it rather than staying silent.
+    // The tip, and the summary says what is wrong with it rather than staying silent.
     assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
     assert!(
         stdout.contains("its own tree fails 1 finding(s)"),
@@ -1922,7 +2005,7 @@ fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
 
 /// The claim: the tip's tree failing to assemble at all still prints what the run walked.
 ///
-/// The tip is never skipped, so a manifest it cannot load ends the run — and a run that ended
+/// A manifest the tip cannot load ends the run — and a run that ended
 /// with an error and nothing else would say nothing about the branch it gates.
 #[test]
 fn a_tip_whose_manifest_does_not_load_still_prints_the_commits_before_it() {

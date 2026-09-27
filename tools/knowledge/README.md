@@ -240,10 +240,12 @@ cargo knowledge commits origin/main..HEAD            # the branch's own commits
 
 `commits` reads everything from each commit's own tree through git objects — the manifest, the
 documents, the generated indexes, the pinned corpus — so a message is judged against the tree it
-was written against, byte for byte and cleaned of nothing. **A commit whose tree carries findings
-of its own is skipped and named, and the range's tip is never skipped**: the summary block counts
-judged and skipped commits, so a run that judged nothing cannot read as a pass, and a tip whose
-tree fails is exit 2 with a last line that says so. A message's references resolve against its
+was written against, byte for byte and cleaned of nothing. **A commit before the tip whose tree does not
+load or carries findings fails the run**, with its tree's findings named by the commit and the
+file, and its message is still judged where its tree reached the last phase; the summary block
+counts judged and failed commits, and a tip whose tree fails is exit 2 with a last line that says
+so. The checker that judges every commit is the one built from the working tree, so a branch that
+makes it stricter puts that change in its first commit or is squashed before review. A message's references resolve against its
 commit's tree **or its first parent's**, which is what lets a commit that closes an issue name it.
 
 `commit-message` is handed a draft rather than a commit, so it blanks out git's `#` comment block

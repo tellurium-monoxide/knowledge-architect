@@ -13,6 +13,16 @@ dropping an ignore rule makes the walk read more than it should and dropping a n
 read less, and both are silent. Git answers all three by construction, and the walked-file count
 over this repository was identical under the two.
 
+**Skipping a commit whose tree fails, in `commits`** — lost to
+`design@knowledge@a-commit-message-is-a-document`. `live`. A commit before the tip whose tree did
+not load or carried findings was named in the summary and judged no further, so the range could
+walk over commits older than a manifest migration, and over the commits of a branch before its
+tree went green. It loses because each skipped commit took its message out of the regime while the
+run exited 0, and the summary line was the only trace. The migration it served is done, and a
+branch that tightens the checker orders or squashes its commits instead. Judging each commit with
+the checker built from its own tree would also serve a migration branch; it costs one release
+build per commit of every range.
+
 **Selecting a subset of the checks with `--only`, one family per check** — lost to
 `design@knowledge@phases-gate-the-report`. `live`. It let a reviewer run the checks of its own axis
 and let a run that read no rule text resolve no release. It loses to the phases: the checks cross
