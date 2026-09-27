@@ -45,7 +45,7 @@ pub struct Structure {
     /// The checker's own directory as the model was told it, and how many walked Rust files
     /// sit under it with their string literals read as data. Not a family's count: it describes
     /// the walk every family read, so it is set whatever was asked for.
-    pub checker_source: Option<std::path::PathBuf>,
+    pub checker_sources: Vec<std::path::PathBuf>,
     pub checker_files: usize,
 }
 
@@ -164,7 +164,7 @@ impl Report {
     pub fn stopped(stop: Stop, model: &Model) -> Self {
         let structure = Structure {
             walked: model.documents().len(),
-            checker_source: model.checker_source().map(std::path::Path::to_path_buf),
+            checker_sources: model.checker_sources().to_vec(),
             checker_files: model.checker_files(),
             ..Structure::default()
         };
@@ -252,7 +252,7 @@ pub fn run(
         structure.links = c.links;
     }
     structure.walked = model.documents().len();
-    structure.checker_source = model.checker_source().map(std::path::Path::to_path_buf);
+    structure.checker_sources = model.checker_sources().to_vec();
     structure.checker_files = model.checker_files();
 
     Report {

@@ -216,8 +216,14 @@ fn latest(tree: &Tree) -> Result<i32, String> {
 
 /// Which rules the project cites, from the document model.
 fn cited(manifest: &Manifest) -> Result<Vec<RuleNumber>, String> {
-    let model = documentation::Model::build(manifest, Some(crate::checker_source()))
-        .map_err(|e| e.to_string())?;
+    let model = documentation::Model::build(
+        manifest,
+        &crate::checker_sources()
+            .iter()
+            .map(|p| p.as_path())
+            .collect::<Vec<_>>(),
+    )
+    .map_err(|e| e.to_string())?;
     let mut out: Vec<RuleNumber> = model
         .documents()
         .iter()
@@ -335,8 +341,14 @@ fn bump(manifest: &Manifest, config: &RulesConfig, tree: &Tree, new: &str) -> Re
     }
     // Before anything is fetched, archived or written: the rule index this command
     // regenerates is a generated file, and a writer refuses over an incomplete model.
-    let model = documentation::Model::build(manifest, Some(crate::checker_source()))
-        .map_err(|e| e.to_string())?;
+    let model = documentation::Model::build(
+        manifest,
+        &crate::checker_sources()
+            .iter()
+            .map(|p| p.as_path())
+            .collect::<Vec<_>>(),
+    )
+    .map_err(|e| e.to_string())?;
     documentation::cli::complete_working_tree(manifest, &model)?;
     outln!("== {old} -> {new} ==");
 

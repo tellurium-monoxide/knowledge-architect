@@ -81,34 +81,38 @@ pub struct Model {
     listing: Vec<PathBuf>,
     /// The listing's symlink and gitlink entries, which the walk reads through neither.
     links: Vec<crate::git::Entry>,
-    /// The checker's own directory as the summary names it: relative to the root when it sits
-    /// under it, absolute otherwise, `None` when the caller passed none.
-    checker_source: Option<PathBuf>,
+    /// The checker's own directories as the summary names them: each relative to the root when
+    /// it sits under it, absolute otherwise, empty when the caller passed none.
+    checker_sources: Vec<PathBuf>,
 }
 
 impl Model {
     /// Read and scan a project, as its own manifest declares it.
     ///
-    /// `checker_source` is the directory of the checker's own source. A file under it is
-    /// parsed with its string literals as data, per
-    /// `design@knowledge@checker-source-literals-are-data`; every other file reads them as prose.
-    /// The binary passes its compile-time location, and a library caller checking a tree the
-    /// checker is no part of passes `None`. The root and the compiled path are canonicalised
-    /// before the prefix test, so a symlinked checkout does not defeat it; a symlink inside
-    /// the tree is not followed. A compiled path that resolves to nothing exempts nothing and
-    /// is still named by `checker_source`, so the summary can say so. **The directory exempts
-    /// files only when it sits inside the tree being checked.** A tree that sits inside it
+    /// `checker_sources` are the directories of the checker's own source, one per Component
+    /// the running binary is built from. A file under one is parsed with its string literals as
+    /// data, per `design@knowledge@checker-source-literals-are-data`; every other file reads
+    /// them as prose. The binary passes the compile-time locations its libraries export, and a
+    /// library caller checking a tree the checker is no part of passes none. The root and the
+    /// compiled paths are canonicalised before the prefix test, so a symlinked checkout does
+    /// not defeat it; a symlink inside the tree is not followed. A compiled path that resolves
+    /// to nothing exempts nothing and is still named, so the summary can say so. **A directory
+    /// exempts files only when it sits inside the tree being checked.** A tree that sits inside it
     /// instead, such as a mock project under the checker's own tests, is a foreign project
     /// whose every literal is prose. Only a Rust file is marked `Data`: markdown has no
     /// literals, and `checker_files` counts what the mode changed.
-    pub fn build(manifest: &Manifest, checker_source: Option<&Path>) -> std::io::Result<Self> {
+    pub fn build(manifest: &Manifest, checker_sources: &[&Path]) -> std::io::Result<Self> {
         let root = manifest.root();
         let canonical_root = root.canonicalize()?;
-        let checker = checker_source.and_then(|p| p.canonicalize().ok());
-        let inside = checker
-            .as_ref()
+        let checkers: Vec<(&Path, Option<PathBuf>)> = checker_sources
+            .iter()
+            .map(|p| (*p, p.canonicalize().ok()))
+            .collect();
+        let inside: Vec<PathBuf> = checkers
+            .iter()
+            .filter_map(|(_, c)| c.clone())
             .filter(|c| c.starts_with(&canonical_root))
-            .cloned();
+            .collect();
         let walk_config = manifest.walk();
         let mut docs = Vec::new();
         let generated = crate::index::generated_paths(manifest);
@@ -164,9 +168,13 @@ impl Model {
             };
             let rel = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
             let is_rust = rel.extension().is_some_and(|e| e == "rs");
-            let literals = match &inside {
-                Some(c) if is_rust && canonical_root.join(&rel).starts_with(c) => Literals::Data,
-                _ => Literals::Prose,
+            let under = inside
+                .iter()
+                .any(|c| canonical_root.join(&rel).starts_with(c));
+            let literals = if is_rust && under {
+                Literals::Data
+            } else {
+                Literals::Prose
             };
             let parsed = source::parse(&rel, &text, literals);
             let observations: Vec<Located> = scan::scan(&parsed);
@@ -180,18 +188,21 @@ impl Model {
         }
         // Named even when it does not exist: the summary line is how a binary compiled from
         // a directory that is gone says so, and a missing line is the silent shape.
-        let checker_source = checker_source.map(|given| {
-            let c = checker.clone().unwrap_or_else(|| given.to_path_buf());
-            c.strip_prefix(&canonical_root)
-                .map(Path::to_path_buf)
-                .unwrap_or(c)
-        });
+        let checker_sources = checkers
+            .into_iter()
+            .map(|(given, canonical)| {
+                let c = canonical.unwrap_or_else(|| given.to_path_buf());
+                c.strip_prefix(&canonical_root)
+                    .map(Path::to_path_buf)
+                    .unwrap_or(c)
+            })
+            .collect();
         Ok(Self {
             root: root.to_path_buf(),
             docs,
             listing,
             links,
-            checker_source,
+            checker_sources,
         })
     }
 
@@ -208,9 +219,9 @@ impl Model {
         &self.links
     }
 
-    /// The checker's own directory as the summary names it, if the caller passed one.
-    pub fn checker_source(&self) -> Option<&Path> {
-        self.checker_source.as_deref()
+    /// The checker's own directories as the summary names them, empty if the caller passed none.
+    pub fn checker_sources(&self) -> &[PathBuf] {
+        &self.checker_sources
     }
 
     /// How many walked Rust files sit under the checker's own directory, their literals read
@@ -231,7 +242,7 @@ impl Model {
     /// It takes no walk configuration: what the walk skips decides which files exist, and a
     /// caller handing the text in has already decided that.
     pub fn from_documents(docs: Vec<(PathBuf, String)>) -> Self {
-        Self::from_documents_under(docs, None)
+        Self::from_documents_under(docs, &[])
     }
 
     /// The same, with the checker's own directory named as a PROJECT-RELATIVE path.
@@ -242,14 +253,15 @@ impl Model {
     /// `design@knowledge@checker-source-literals-are-data`. `commits` needs this because a per-commit
     /// model is assembled from git objects and would otherwise read the tool's own fixtures as
     /// live citations at every commit in the range.
-    pub fn from_documents_under(docs: Vec<(PathBuf, String)>, checker: Option<&Path>) -> Self {
+    pub fn from_documents_under(docs: Vec<(PathBuf, String)>, checker: &[&Path]) -> Self {
         let docs = docs
             .into_iter()
             .map(|(rel, text)| {
                 let is_rust = rel.extension().is_some_and(|e| e == "rs");
-                let literals = match checker {
-                    Some(dir) if is_rust && rel.starts_with(dir) => Literals::Data,
-                    _ => Literals::Prose,
+                let literals = if is_rust && checker.iter().any(|dir| rel.starts_with(dir)) {
+                    Literals::Data
+                } else {
+                    Literals::Prose
                 };
                 let parsed = source::parse(&rel, &text, literals);
                 let observations = scan::scan(&parsed);
@@ -267,7 +279,7 @@ impl Model {
             docs,
             listing: Vec::new(),
             links: Vec::new(),
-            checker_source: checker.map(Path::to_path_buf),
+            checker_sources: checker.iter().map(|p| p.to_path_buf()).collect(),
         }
     }
 
@@ -491,7 +503,7 @@ mod tests {
             ),
             (PathBuf::from("crates/engine/src/b.rs"), source.to_string()),
         ];
-        let told = Model::from_documents_under(docs.clone(), Some(Path::new("tools/knowledge")));
+        let told = Model::from_documents_under(docs.clone(), &[Path::new("tools/knowledge")]);
         let dump = told.canonical();
         assert!(
             !dump.contains("tools/knowledge/src/a.rs"),
@@ -502,7 +514,7 @@ mod tests {
             "every other file's is a claim: {dump}"
         );
         assert_eq!(told.checker_files(), 1);
-        assert_eq!(told.checker_source(), Some(Path::new("tools/knowledge")));
+        assert_eq!(told.checker_sources(), [PathBuf::from("tools/knowledge")]);
 
         // Told nothing, every literal is prose — which is what `from_documents` gives.
         let untold = Model::from_documents(docs);
@@ -512,6 +524,30 @@ mod tests {
             untold.canonical()
         );
         assert_eq!(untold.checker_files(), 0);
+    }
+
+    /// The claim: every stated checker directory exempts the Rust literals under it, since the
+    /// tool's source spans one Component per library a binary is built from.
+    #[test]
+    fn each_stated_checker_directory_reads_its_rust_literals_as_data() {
+        let source = "fn f() {\n    report(\"see `design@a-component@a-slug`\");\n}\n";
+        let docs = vec![
+            (PathBuf::from("tools/core/src/a.rs"), source.to_string()),
+            (
+                PathBuf::from("tools/extension/src/b.rs"),
+                source.to_string(),
+            ),
+            (PathBuf::from("crates/engine/src/c.rs"), source.to_string()),
+        ];
+        let told = Model::from_documents_under(
+            docs,
+            &[Path::new("tools/core"), Path::new("tools/extension")],
+        );
+        let dump = told.canonical();
+        assert!(!dump.contains("tools/core/src/a.rs"), "{dump}");
+        assert!(!dump.contains("tools/extension/src/b.rs"), "{dump}");
+        assert!(dump.contains("crates/engine/src/c.rs"), "{dump}");
+        assert_eq!(told.checker_files(), 2);
     }
 
     #[test]

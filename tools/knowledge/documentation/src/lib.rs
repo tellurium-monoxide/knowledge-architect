@@ -28,3 +28,15 @@ pub use manifest::Manifest;
 pub use model::{Document, Model};
 pub use quote::{Quote, QuoteKind};
 pub use scan::{Located, Observation, RetiredForm, SlugSite};
+
+/// The directory of the Component this library belongs to: the parent of its own crate
+/// directory, evaluated at build time.
+///
+/// A binary built from this library hands it to the walk with the directories of its other
+/// libraries, so the tool's own fixtures are read as data, per
+/// `design@knowledge@checker-source-literals-are-data`. Once the library is consumed as a
+/// published crate, the directory is outside the tree being checked and exempts nothing.
+pub fn component_dir() -> std::path::PathBuf {
+    let crate_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+    crate_dir.parent().unwrap_or(crate_dir).to_path_buf()
+}

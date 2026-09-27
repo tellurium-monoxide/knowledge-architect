@@ -95,7 +95,7 @@ pub struct TripwiresArgs {
 pub fn run(
     command: Command,
     manifest: &Manifest,
-    checker: &Path,
+    checker: &[&Path],
     extensions: &mut [Box<dyn Extension>],
 ) -> Result<ExitCode, String> {
     // Every command reads the manifest as its extensions resolved it: the files they generate
@@ -110,9 +110,7 @@ pub fn run(
         Command::Tripwires(args) => tripwires(manifest, &args, checker),
         Command::Index => index(manifest, checker, extensions),
         Command::Model => model(manifest, checker, extensions),
-        Command::Commits(args) => {
-            history::commits(manifest, &args.range, Some(checker), extensions)
-        }
+        Command::Commits(args) => history::commits(manifest, &args.range, checker, extensions),
     }
 }
 
@@ -170,10 +168,10 @@ pub fn locate() -> Result<Manifest, String> {
 /// from a rule number that is data.
 fn model(
     manifest: &Manifest,
-    checker: &Path,
+    checker: &[&Path],
     extensions: &mut [Box<dyn Extension>],
 ) -> Result<ExitCode, String> {
-    let model = crate::Model::build(manifest, Some(checker))
+    let model = crate::Model::build(manifest, checker)
         .map_err(|e| format!("cannot read the project: {e}"))?;
     let extra: Vec<crate::model::DumpRow> =
         extensions.iter().flat_map(|e| e.dump(&model)).collect();
@@ -197,10 +195,10 @@ fn model(
 /// archive or reach the network, and a check may do neither.
 fn check(
     manifest: &Manifest,
-    checker: &Path,
+    checker: &[&Path],
     extensions: &mut [Box<dyn Extension>],
 ) -> Result<ExitCode, String> {
-    let model = crate::Model::build(manifest, Some(checker)).map_err(|e| e.to_string())?;
+    let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
 
     // The generated files are outside the walk — the rule index by a declared row, every
     // file-register index by construction — because a generated file is not a source of
@@ -301,10 +299,10 @@ fn print_report(report: &Report) {
 /// the committed file and the regenerated one disagree.
 fn index(
     manifest: &Manifest,
-    checker: &Path,
+    checker: &[&Path],
     extensions: &mut [Box<dyn Extension>],
 ) -> Result<ExitCode, String> {
-    let model = crate::Model::build(manifest, Some(checker)).map_err(|e| e.to_string())?;
+    let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
     // The gate first: a file an extension reads that is not there is phase 2's finding, named
     // by path, and reading it before the gate would turn that into an error naming nothing.
     let survey = complete_working_tree(manifest, &model)?;
@@ -401,8 +399,8 @@ fn index(
 /// that is not reference-shaped could not be run and exits 2, and a reference the grammar accepts
 /// that names nothing is a negative answer and exits 1. A reader who mistyped the grammar and a
 /// reader who named a deleted entry need different things.
-fn show(manifest: &Manifest, args: &ShowArgs, checker: &Path) -> Result<ExitCode, String> {
-    let model = crate::Model::build(manifest, Some(checker)).map_err(|e| e.to_string())?;
+fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitCode, String> {
+    let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
     let anchors = Anchors::of(manifest);
     let reference = args.reference.trim_matches('`');
     let (kind, anchor, id) = match crate::entity::candidate(reference, &anchors) {
@@ -483,8 +481,8 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &Path) -> Result<ExitCode
 }
 
 /// Every issue entry, one row each.
-fn issues(manifest: &Manifest, args: &IssuesArgs, checker: &Path) -> Result<ExitCode, String> {
-    let model = crate::Model::build(manifest, Some(checker)).map_err(|e| e.to_string())?;
+fn issues(manifest: &Manifest, args: &IssuesArgs, checker: &[&Path]) -> Result<ExitCode, String> {
+    let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
     let anchors = Anchors::of(manifest);
     let kind = Kind::new(ISSUE_REGISTER);
     let (anchor, needle) = split_terms(&args.terms, &anchors);
@@ -545,9 +543,9 @@ fn issues(manifest: &Manifest, args: &IssuesArgs, checker: &Path) -> Result<Exit
 fn tripwires(
     manifest: &Manifest,
     args: &TripwiresArgs,
-    checker: &Path,
+    checker: &[&Path],
 ) -> Result<ExitCode, String> {
-    let model = crate::Model::build(manifest, Some(checker)).map_err(|e| e.to_string())?;
+    let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
     let anchors = Anchors::of(manifest);
     let kind = Kind::new(TRIPWIRE_REGISTER);
     let (anchor, needle) = split_terms(&args.terms, &anchors);
@@ -662,6 +660,14 @@ fn verdict(report: &Report) -> String {
 /// `checked:` line is what makes that legible for a check that carries no count of its own,
 /// such as `generated`: without it, a run of `generated` alone and a run that performed
 /// nothing look the same.
+/// The checker's directories as the summary line names them, comma-separated.
+fn sources(dirs: &[std::path::PathBuf]) -> String {
+    dirs.iter()
+        .map(|d| d.display().to_string())
+        .collect::<Vec<_>>()
+        .join(", ")
+}
+
 fn counts(report: &Report) -> String {
     use std::fmt::Write;
 
@@ -671,11 +677,11 @@ fn counts(report: &Report) -> String {
         // follows, because no family ran, and a zero would read as nothing found.
         let _ = write!(out, "\n{}", report.phase.stop_line(report.findings.len()));
         let _ = write!(out, "\nwalk: {} file(s)", report.structure.walked);
-        if let Some(source) = &report.structure.checker_source {
+        if !report.structure.checker_sources.is_empty() {
             let _ = write!(
                 out,
                 "\nchecker source: {}, {} file(s) with string literals read as data",
-                source.display(),
+                sources(&report.structure.checker_sources),
                 report.structure.checker_files
             );
         }
@@ -706,11 +712,11 @@ fn counts(report: &Report) -> String {
 
     // Not a check: it describes the walk every check read, and a count of zero in a
     // checkout that holds the tool is the loud failure the decision promises.
-    if let Some(source) = &report.structure.checker_source {
+    if !report.structure.checker_sources.is_empty() {
         let _ = write!(
             out,
             "\nchecker source: {}, {} file(s) with string literals read as data",
-            source.display(),
+            sources(&report.structure.checker_sources),
             report.structure.checker_files
         );
     }
@@ -765,7 +771,7 @@ mod tests {
         r.structure.entities = 55;
         r.structure.references = 77;
         r.structure.links = 78;
-        r.structure.checker_source = Some("tools/knowledge".into());
+        r.structure.checker_sources = vec!["tools/knowledge".into()];
         r.structure.checker_files = 200;
         r
     }

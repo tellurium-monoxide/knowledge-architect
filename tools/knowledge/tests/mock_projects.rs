@@ -66,7 +66,7 @@ fn rules(manifest: &Manifest) -> documentation::rules_extension::RulesConfig {
 }
 
 fn model(name: &str) -> Model {
-    Model::build(&mock(name), None).expect("a model of the mock project")
+    Model::build(&mock(name), &[]).expect("a model of the mock project")
 }
 
 /// Every `register.toml` beside an instance, as the binary reads them for a check.
@@ -238,7 +238,7 @@ fn the_survey_records_which_paths_are_directories() {
     // The kind is a fact of the listing rather than an inference from entries beneath a
     // path, which could not tell an empty directory from a file.
     let manifest = mock("minimal");
-    let model = Model::build(&manifest, None).expect("a model");
+    let model = Model::build(&manifest, &[]).expect("a model");
     let survey = documentation::survey::survey(&manifest, &model).expect("a survey");
     assert!(survey.directories.contains(&PathBuf::from("docs")));
     assert!(survey.present.contains(&PathBuf::from("docs")));
@@ -357,7 +357,7 @@ fn a_project_carrying_every_component_document_reports_nothing() {
     use std::collections::HashMap;
 
     let manifest = mock("minimal");
-    let model = Model::build(&manifest, None).expect("a model");
+    let model = Model::build(&manifest, &[]).expect("a model");
     let releases: HashMap<Option<String>, Release> = HashMap::new();
     let mut committed = HashMap::new();
     for rel in documentation::index::generated_paths(&manifest) {
@@ -453,7 +453,7 @@ fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
     use std::collections::HashMap;
 
     let manifest = mock("dirhome");
-    let model = Model::build(&manifest, None).expect("a model");
+    let model = Model::build(&manifest, &[]).expect("a model");
     let tree = rules(&manifest).tree(manifest.root());
     let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
     let body = rules(&manifest).body_starts_at;
@@ -535,7 +535,7 @@ mod planted {
         committed: impl Fn(&Manifest, &Model, &rules::Corpus) -> HashMap<PathBuf, String>,
     ) -> Vec<String> {
         let manifest = mock("planted");
-        let model = Model::build(&manifest, None).expect("a model");
+        let model = Model::build(&manifest, &[]).expect("a model");
         let tree = rules(&manifest).tree(manifest.root());
         let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
         let release = Release::new(&text, rules(&manifest).body_starts_at);
@@ -680,7 +680,7 @@ mod planted {
         use documentation::extension::Purpose;
         use documentation::rules_extension::RulesPrepared;
         let manifest = mock("planted");
-        let model = Model::build(&manifest, None).expect("a model");
+        let model = Model::build(&manifest, &[]).expect("a model");
         let text = std::fs::read_to_string(rules(&manifest).tree(manifest.root()).text())
             .expect("the mock corpus");
         let body = rules(&manifest).body_starts_at;
@@ -752,7 +752,7 @@ mod planted {
     #[test]
     fn an_index_the_tree_holds_stale_is_reported_against_the_bytes_on_disk() {
         let manifest = mock("planted");
-        let model = Model::build(&manifest, None).expect("a model");
+        let model = Model::build(&manifest, &[]).expect("a model");
         let survey =
             documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
         let generated = index::file_register_indexes(&model, &manifest, &survey.directories);
@@ -994,7 +994,7 @@ mod unsound {
     /// The findings of `tree::check`, phase 2, over the project.
     fn phase_two() -> Vec<String> {
         let manifest = mock("unsound");
-        let model = Model::build(&manifest, None).expect("a model");
+        let model = Model::build(&manifest, &[]).expect("a model");
         let survey =
             documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
         let git = git_answers(&manifest, &model);
@@ -1035,7 +1035,7 @@ mod unsound {
     /// The findings of the entity table, phase 3, over the project.
     fn phase_three() -> Vec<String> {
         let manifest = mock("unsound");
-        let model = Model::build(&manifest, None).expect("a model");
+        let model = Model::build(&manifest, &[]).expect("a model");
         let anchors = Anchors::of(&manifest);
         Entities::build(&model, &anchors)
             .definition_findings()
@@ -1123,7 +1123,7 @@ mod unsound {
     fn planted_and_dirhome_are_complete_through_phase_three() {
         for name in ["planted", "dirhome"] {
             let manifest = mock(name);
-            let model = Model::build(&manifest, None).expect("a model");
+            let model = Model::build(&manifest, &[]).expect("a model");
             let survey =
                 documentation::survey::survey(&manifest, &model).expect("a survey of the mock");
             let git = git_answers(&manifest, &model);
@@ -1156,13 +1156,13 @@ mod regime {
 
     /// Every finding the regime produces over the planted project.
     fn judged() -> Vec<(Rule, String)> {
-        judged_with(None)
+        judged_with(&[])
     }
 
     /// The same, with the model told where the checker's own source is.
-    fn judged_with(checker_source: Option<&std::path::Path>) -> Vec<(Rule, String)> {
+    fn judged_with(checker_sources: &[&std::path::Path]) -> Vec<(Rule, String)> {
         let manifest = mock("planted");
-        let model = Model::build(&manifest, checker_source).expect("a model");
+        let model = Model::build(&manifest, checker_sources).expect("a model");
         let tree = rules(&manifest).tree(manifest.root());
         let text = std::fs::read_to_string(tree.text()).expect("the mock corpus");
         let release = Release::new(&text, rules(&manifest).body_starts_at);
@@ -1332,7 +1332,7 @@ mod regime {
         // gone, and the claims the comments carry are judged exactly as before.
         let manifest = mock("planted");
         let code = manifest.root().join("code");
-        let model = Model::build(&manifest, Some(&code)).expect("a model");
+        let model = Model::build(&manifest, &[code.as_path()]).expect("a model");
         let doc = model
             .documents()
             .iter()
@@ -1347,11 +1347,11 @@ mod regime {
         assert!(under_code >= 1);
         assert_eq!(model.checker_files(), under_code);
         assert_eq!(
-            model.checker_source(),
-            Some(std::path::Path::new("code")),
+            model.checker_sources(),
+            [std::path::PathBuf::from("code")],
             "named relative to the root when it sits under it"
         );
-        let with = judged_with(Some(&code));
+        let with = judged_with(&[code.as_path()]);
         assert!(
             !with.iter().any(|(_, w)| w.contains("`message_in_a_call`")),
             "{with:#?}"
@@ -1363,22 +1363,26 @@ mod regime {
         // A checker directory that does not exist exempts nothing, and is still named: the
         // summary line is how a binary compiled from a directory that is gone says so.
         let elsewhere = manifest.root().join("no-such-directory");
-        let model = Model::build(&manifest, Some(&elsewhere)).expect("a model");
+        let model = Model::build(&manifest, &[elsewhere.as_path()]).expect("a model");
         assert_eq!(model.checker_files(), 0);
         assert!(
             model
-                .checker_source()
+                .checker_sources()
+                .first()
                 .is_some_and(|p| p.ends_with("no-such-directory")),
             "{:?}",
-            model.checker_source()
+            model.checker_sources()
         );
         // A checker directory the whole tree sits INSIDE exempts nothing either: that is a
         // mock project under the checker's own tests, a foreign tree.
         let above = manifest.root().join("../../..");
-        let model = Model::build(&manifest, Some(&above)).expect("a model");
+        let model = Model::build(&manifest, &[above.as_path()]).expect("a model");
         assert_eq!(model.checker_files(), 0);
         assert!(
-            model.checker_source().is_some_and(|p| p.is_absolute()),
+            model
+                .checker_sources()
+                .first()
+                .is_some_and(|p| p.is_absolute()),
             "named absolutely when it is not under the root"
         );
     }
@@ -1396,9 +1400,9 @@ mod regime {
         let _ = std::fs::remove_file(&link);
         std::os::unix::fs::symlink(&real, &link).expect("a symlink to the mock project");
         let manifest = Manifest::load(&link).expect("the manifest through the symlink");
-        let model = Model::build(&manifest, Some(&real.join("code"))).expect("a model");
+        let model = Model::build(&manifest, &[real.join("code").as_path()]).expect("a model");
         let _ = std::fs::remove_file(&link);
-        assert!(model.checker_files() >= 1, "{:?}", model.checker_source());
+        assert!(model.checker_files() >= 1, "{:?}", model.checker_sources());
     }
 
     #[test]

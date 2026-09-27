@@ -9,7 +9,7 @@
 //! the exit codes are `design@thaum@exit-code-ladder`: 0 ran-and-clean, 1 ran-and-negative, 2
 //! could-not-run.
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use clap::{Parser, Subcommand};
@@ -61,7 +61,9 @@ fn main() -> ExitCode {
             let mut extensions: Vec<Box<dyn documentation::extension::Extension>> = vec![Box::new(
                 documentation::rules_extension::RulesExtension::default(),
             )];
-            documentation::cli::run(command, &manifest, checker_source(), &mut extensions)
+            let dirs = checker_sources();
+            let dirs: Vec<&Path> = dirs.iter().map(PathBuf::as_path).collect();
+            documentation::cli::run(command, &manifest, &dirs, &mut extensions)
         }
         Command::Rules { command } => corpus_cmd::run(&manifest, &command),
     });
@@ -75,17 +77,18 @@ fn main() -> ExitCode {
     }
 }
 
-/// The checker's own source directory, compiled in.
+/// The checker's own source directories, compiled in: one per Component its libraries belong
+/// to, per `design@knowledge@checker-source-literals-are-data`.
 ///
-/// The one path this binary carries about any tree is its own. `CARGO_MANIFEST_DIR` of this
-/// crate is the component's directory exactly, and the alias in `path@thaum@.cargo/config.toml` builds
-/// the binary from the checkout on every run, so the compiled path names the tree being
-/// checked. Every model this binary builds is told it, so that the tool's own fixtures are
-/// read as data rather than as citations, per `design@knowledge@checker-source-literals-are-data`.
-/// A binary built elsewhere names a directory the walk never visits, exempts nothing, and the
-/// summary block's `checker source` line shows the count at zero.
-pub(crate) fn checker_source() -> &'static Path {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
+/// Every model this binary builds is told them, so that the tool's own fixtures are read as
+/// data rather than as citations. The alias in `path@thaum@.cargo/config.toml` builds the binary
+/// from the checkout on every run, so each compiled path names the tree being checked. A binary
+/// built elsewhere names directories the walk never visits, exempts nothing, and the summary
+/// block's `checker source` line shows the count at zero.
+pub(crate) fn checker_sources() -> Vec<PathBuf> {
+    let mut dirs = vec![documentation::component_dir()];
+    dirs.dedup();
+    dirs
 }
 
 #[cfg(test)]

@@ -253,7 +253,7 @@ enum Depth {
 fn commit_tree(
     root: &Path,
     sha: &str,
-    checker: Option<&Path>,
+    checker: &[&Path],
     extensions: &mut [Box<dyn Extension>],
     depth: Depth,
 ) -> Result<Assembly, Unloadable> {
@@ -433,7 +433,7 @@ enum Outcome {
 pub fn commits(
     manifest: &Manifest,
     range: &str,
-    checker: Option<&Path>,
+    checker: &[&Path],
     extensions: &mut [Box<dyn Extension>],
 ) -> Result<ExitCode, String> {
     let root = manifest.root();
@@ -445,9 +445,13 @@ pub fn commits(
         outln!("{}", verdict(0));
         return Ok(ExitCode::SUCCESS);
     }
-    // The checker's own directory, project-relative, so a per-commit model reads the tool's
+    // The checker's own directories, project-relative, so a per-commit model reads the tool's
     // own fixtures as data the way `check` does.
-    let checker_rel = checker.and_then(|c| c.strip_prefix(root).ok().map(Path::to_path_buf));
+    let checker_rel: Vec<PathBuf> = checker
+        .iter()
+        .filter_map(|c| c.strip_prefix(root).ok().map(Path::to_path_buf))
+        .collect();
+    let checker_rel: Vec<&Path> = checker_rel.iter().map(PathBuf::as_path).collect();
     let head = crate::git::rev_parse(root, "HEAD");
 
     let mut summary: Vec<(String, Outcome)> = Vec::new();
@@ -463,7 +467,7 @@ pub fn commits(
         // **The tip is judged apart.** Its tree failing is the run's own could-not-run rather
         // than a finding, since `check` over the checkout is what reports that tree.
         let is_tip = *sha == last || head.as_deref() == Some(sha.as_str());
-        let assembled = commit_tree(root, sha, checker_rel.as_deref(), extensions, Depth::Judged);
+        let assembled = commit_tree(root, sha, &checker_rel, extensions, Depth::Judged);
         let tree = match assembled {
             Ok(tree) => tree,
             Err(Unloadable(why)) => {
@@ -541,18 +545,14 @@ pub fn commits(
         let first_parent = crate::git::rev_parse(root, &format!("{sha}^"));
         let parent_owned = match (&previous, &first_parent) {
             (Some((seen, _, _)), Some(parent)) if seen == parent => None,
-            (_, Some(parent)) => commit_tree(
-                root,
-                parent,
-                checker_rel.as_deref(),
-                extensions,
-                Depth::References,
-            )
-            .ok()
-            .map(|a| {
-                let e = Entities::build(&a.model, &a.anchors());
-                (a, e)
-            }),
+            (_, Some(parent)) => {
+                commit_tree(root, parent, &checker_rel, extensions, Depth::References)
+                    .ok()
+                    .map(|a| {
+                        let e = Entities::build(&a.model, &a.anchors());
+                        (a, e)
+                    })
+            }
             (_, None) => None,
         };
         let parent = match (&previous, &first_parent, &parent_owned) {
