@@ -1,1 +1,0 @@
-A file the walk does not cover, naming rule 100.1 where nothing can verify it.

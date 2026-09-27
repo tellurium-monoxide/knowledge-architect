@@ -17,7 +17,7 @@ listing and to `tripwires --guarding`, which is the silence the register exists 
 `heading_definitions` in `path@knowledge@documentation/src/entity.rs` builds the entity table
 from headings at levels two and three that carry a slug, and reports a slug that sits where none
 may. A heading with no slug is neither, so it produces no entity and no finding. Reproduced over
-a copy of `path@knowledge@tests/projects/dirhome/`, after `git init` and `git add -A` in the copy,
+a copy of `path@rules-corpus@tests/projects/dirhome/`, after `git init` and `git add -A` in the copy,
 by appending this to the copy's tripwires home and staging it:
 
 ```markdown
@@ -47,7 +47,7 @@ class with no report.
 ### What would close it
 
 The `registers` family reporting a level-two heading with no slug in a tripwires home as a
-finding naming the heading, with a fixture in `path@knowledge@tests/projects/planted/` and a
+finding naming the heading, with a fixture in `path@rules-corpus@tests/projects/planted/` and a
 test asserting it; the reviewer sentence that says to read the homes as well as the listing then
 leaves. Whether the same finding is owed in a design home and a goals home is decided at the same
 time, and the answer is recorded here or in `path@knowledge@docs/design.md`.

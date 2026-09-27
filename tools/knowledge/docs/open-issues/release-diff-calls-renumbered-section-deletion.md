@@ -6,7 +6,7 @@ kind: defect
 ## Summary
 
 `rules diff` detects a renumbered rule by its body — `by_body` in
-`path@knowledge@rules/src/diff.rs` builds its move maps from `Corpus::iter`, which deliberately
+`path@rules-corpus@rules/src/diff.rs` builds its move maps from `Corpus::iter`, which deliberately
 excludes sections — so a section that is renumbered between releases is reported `GONE` while
 its own subrules are reported `MOVED` directly beneath.
 
@@ -15,7 +15,7 @@ its own subrules are reported `MOVED` directly beneath.
 ### What
 
 `rules diff` detects a renumbered rule by its body — `by_body` in
-`path@knowledge@rules/src/diff.rs` builds its move maps from `Corpus::iter`, which deliberately
+`path@rules-corpus@rules/src/diff.rs` builds its move maps from `Corpus::iter`, which deliberately
 excludes sections — so a section that is renumbered between releases is reported `GONE` while its
 own subrules are reported `MOVED` directly beneath. A retitled section is reported correctly as
 changed.

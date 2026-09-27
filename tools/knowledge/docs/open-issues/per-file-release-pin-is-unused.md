@@ -21,7 +21,7 @@ for the file and verifies the file's quotes against it, and its summary prints o
 pinned file, or `no pinned containers: every quote tracks the vendored release` when there is
 none. On the current tree the summary prints the latter. A grep for `cr-version` outside the
 tool's own directory hits nothing; inside it, the scanner, the summary line, the fixtures of
-`path@knowledge@tests/mock_projects.rs` and one sentence of
+`path@rules-corpus@tests/mock_projects.rs` and one sentence of
 `issue@knowledge@release-cache-at-a-shared-path`. No head in `path@knowledge@docs/design.md`
 records the mechanism as a decision.
 

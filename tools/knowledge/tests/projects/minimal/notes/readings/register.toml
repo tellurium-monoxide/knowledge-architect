@@ -1,3 +1,0 @@
-# The groups of this instance. A group is a subdirectory, and the declaration is what keeps
-# the naming from drifting.
-groups = ["one-concern"]

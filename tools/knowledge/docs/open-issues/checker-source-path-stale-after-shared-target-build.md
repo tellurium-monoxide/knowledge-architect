@@ -36,7 +36,7 @@ first checkout's `target/`. Observed on the branch that landed step 4c of slice 
 - in the root afterwards: `checker source: <the worktree's absolute path>/tools/knowledge, 0
   file(s) with string literals read as data`, and `phase 3: 57 finding(s)`, every one a slug or a
   reference planted in a fixture under `path@knowledge@documentation/src/` or
-  `path@knowledge@tests/`;
+  `path@rules-corpus@tests/`;
 - the same after `git worktree remove`;
 - `cargo clean --release -p knowledge -p documentation`, then the check in the root: 38 files
   exempted, `PASSED: no findings`.
@@ -46,7 +46,7 @@ subagent ran `cargo knowledge check` on the tip of origin/main in a temporary ch
 scratchpad directory, outside `$HOME/.claude/worktrees`, and removed it. The root then printed
 `checker source: <that checkout's absolute path>/tools/knowledge, 0 file(s) with string literals
 read as data` and `phase 3: 57 finding(s)`, all under `path@knowledge@documentation/src/` and
-`path@knowledge@tests/`. Whether that reviewer set `CARGO_TARGET_DIR` is `not established`: its
+`path@rules-corpus@tests/`. Whether that reviewer set `CARGO_TARGET_DIR` is `not established`: its
 report does not say, and `path@thaum@.cargo/config.toml` sets no `target-dir`.
 
 A cheaper recovery than the clean, observed on that occurrence:

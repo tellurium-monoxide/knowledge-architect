@@ -17,7 +17,7 @@ names no rule.
 `from_listing` in `path@knowledge@documentation/src/survey.rs` reads each file outside the walk
 through the closure the caller hands it, and keeps only the files that read as text: a read that
 fails is `None` and the path is not in `outside`. Observed by an adversarial review over a copy of
-`path@knowledge@tests/projects/minimal/`: a text file under the mock's notes directory, outside
+`path@rules-corpus@tests/projects/minimal/`: a text file under the mock's notes directory, outside
 the walk by its suffix, holding a marked mock rule number and one accented byte in Windows-1252,
 and the same file made unreadable with mode 000, both gave `PASSED: no findings`, while the
 same content readable and in UTF-8 was the `uncovered` finding. The walk's own files

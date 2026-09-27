@@ -1,19 +1,12 @@
 [package]
 name = "knowledge"
-description = "How this project's knowledge is held: the rules corpus, and the documents that cite it."
+description = "What a project's documents hold, and whether it still holds: the walk, the entity table, references, registers and generated indexes."
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
 
-# See the note in `rules/Cargo.toml` on why tool dependencies are not in the workspace
-# dependency table.
+# See the note in `../rules-corpus/rules/Cargo.toml` on why tool dependencies are not in the
+# workspace dependency table.
 [dependencies]
-citations = { path = "citations" }
 documentation = { path = "documentation" }
-rules = { path = "rules" }
 clap = { version = "4", features = ["derive"] }
-
-# The integration tests read the family list out of the library rather than repeating it,
-# so a family added without a test is a compile-time fact rather than a silent gap.
-[dev-dependencies]
-documentation = { path = "documentation", features = ["testing"] }

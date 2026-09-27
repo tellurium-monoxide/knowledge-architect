@@ -40,6 +40,6 @@ claim. Re-entry: the next tool-cleanup discussion.
 
 By the rules axis of the review of the branch that landed
 `design@knowledge@checker-source-literals-are-data`, on a scratch copy of the `minimal` mock project
-under `path@knowledge@tests/projects/`: a line naming a mock rule behind a marker, with a claim and no
+under `path@rules-corpus@tests/projects/`: a line naming a mock rule behind a marker, with a claim and no
 quote, appended to its `README.md` inside an HTML comment added no finding, and the same line
 outside one added the expected claim-without-quote finding. Reproduces.

@@ -122,7 +122,7 @@ file under one of the tool's own directories, or the summary block's checker-sou
 absent or names directories other than the Components of the tool's source in a checkout that
 holds them. The cheap half is the
 binary test `the_summary_names_the_checker_source_and_counts_the_files_under_it` in
-`path@knowledge@tests/binary.rs`, which asserts the line over this checkout; what it cannot reach is
+`path@rules-corpus@tests/binary.rs`, which asserts the line over this checkout; what it cannot reach is
 a binary built from another checkout and run here.
 **Response:** the compiled path and the walked tree disagree: a binary built from another
 checkout, a canonicalisation gap, a symlink inside the tree the prefix test does not follow.

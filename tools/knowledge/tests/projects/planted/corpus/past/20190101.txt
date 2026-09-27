@@ -1,2 +1,0 @@
-The previous mock release. Its bytes are not the ones the manifest row records, which is
-what the corpus family reports and nothing else does.

@@ -35,5 +35,5 @@ level-four heading whose quote sits in the level-three body above, since the che
 A decision. Either the two heads are rewritten to say the innermost heading section at any
 level, with root `path@thaum@CLAUDE.md` following, or `scope_at` folds level four and deeper into
 the enclosing level-three section. Either way, a test in
-`path@knowledge@citations/src/check/regime.rs` naming the level a claim under a level-four
+`path@rules-corpus@citations/src/check/regime.rs` naming the level a claim under a level-four
 heading is judged against.

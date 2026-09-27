@@ -5,7 +5,7 @@ covered — lost to `design@knowledge@git-supplies-the-walk`. `live`. It needed 
 process per run, and its supported subset was chosen against this repository's own file. It loses
 on three counts, each measured against the tree rather than argued: a tracked live document left
 the walk AND the inverse assertion when one root ignore line matched its bare name at any depth,
-reproduced with a one-line `.gitignore` over a copy of `path@knowledge@tests/projects/minimal/` and
+reproduced with a one-line `.gitignore` over a copy of `path@rules-corpus@tests/projects/minimal/` and
 recorded as a defect before the reversal; a nested `.gitignore` was not honoured at all, so a
 project needing one had to declare the path in the manifest; and every pattern the matcher could
 not honour — a negation, `**`, `?`, a character class — had to be refused by name, because
@@ -226,7 +226,7 @@ in `path@knowledge@README.md` saying so. The tripwire on the completeness of tha
 **`rules diff --local`, the form that compared the vendored text against one named release** —
 lost to `design@thaum@named-values-where-order-decides`, which settled `rules diff` as two named
 releases. `live`. It loses to a mechanism rather than to an argument, and the mechanism is why
-dropping it costs nothing: `resolve` in `path@knowledge@rules/src/release.rs` answers `local` **first**,
+dropping it costs nothing: `resolve` in `path@rules-corpus@rules/src/release.rs` answers `local` **first**,
 so a diff against the pinned date resolves the same bytes the flag would have. The two forms
 differ only where the working-tree text disagrees with the version file, and `vendor` writes both
 in one call, so no supported flow separates them. It was documented in no README and used by no
@@ -263,7 +263,7 @@ output a parser is fed, and the class recurs wherever a test displays a three-di
 convention at each one, which the location does not. It is the recorded fallback should a literal
 outside the tool ever need rule-shaped bytes as data where no binding can hold it.
 
-**Moving the tool's unit tests under `path@knowledge@tests/` and excluding the directory** — lost to
+**Moving the tool's unit tests under `path@rules-corpus@tests/` and excluding the directory** — lost to
 `design@knowledge@checker-source-literals-are-data`. `live`. Integration tests reach only public items.
 Measured: 31 files carry a test module, 349 tests, most over private functions, so the
 move makes those public or drops the tests.

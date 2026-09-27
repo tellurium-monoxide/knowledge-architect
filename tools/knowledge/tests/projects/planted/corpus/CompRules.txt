@@ -1,8 +1,0 @@
-100.1 The first mock rule says exactly this and nothing else.
-100.1a A subrule of the first mock rule, saying its own thing entirely.
-100.2 The second mock rule says something completely different.
-100.3 A rule whose body is long enough to be cut at either end without the cut showing, so that a quote of its middle is evidence of nothing unless the omission is marked.
-100.4 Short.
-100.5 A rule long enough to be evidence, restated word for word by another rule.
-100.6 A rule long enough to be evidence, restated word for word by another rule. And a tail of its own.
-100.7 A rule whose body carries the release’s own curly apostrophe inside it.

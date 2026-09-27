@@ -2,7 +2,7 @@
 //!
 //! Nothing about any particular repository is compiled into this tool. Every list a check
 //! reads comes from here, so the same binary checks this repository and a mock project under
-//! `path@knowledge@tests/projects/` with no special case anywhere, and a path that should not be checked has
+//! `path@rules-corpus@tests/projects/` with no special case anywhere, and a path that should not be checked has
 //! to say so in one file with a reason beside it.
 //!
 //! The file's presence is also what makes a directory a project root. That is one mechanism

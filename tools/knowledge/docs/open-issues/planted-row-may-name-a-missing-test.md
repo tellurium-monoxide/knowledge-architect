@@ -5,14 +5,14 @@ kind: observation
 
 ## Summary
 
-Two rows of `PLANTED` in `path@knowledge@tests/mock_projects.rs` carry
+Two rows of `PLANTED` in `path@rules-corpus@tests/mock_projects.rs` carry
 `Planted::ByTheBinary(<test name>)`, because `changes` and `corpus` are not in `check::run`.
 
 ## Details
 
 ### What
 
-Two rows of `PLANTED` in `path@knowledge@tests/mock_projects.rs` carry
+Two rows of `PLANTED` in `path@rules-corpus@tests/mock_projects.rs` carry
 `Planted::ByTheBinary(<test name>)`, because `changes` and `corpus` are not in `check::run`. The
 name is a string used inside an assertion message and nothing resolves it, so deleting or
 renaming the binary test it points at leaves both test files green.
@@ -26,12 +26,12 @@ saying so.
 
 ### What would close it
 
-Reaching the two families from `path@knowledge@tests/mock_projects.rs`, which
+Reaching the two families from `path@rules-corpus@tests/mock_projects.rs`, which
 means a callable that runs them over a stated tree the way `check::run` runs the other six; or a
 test that resolves the named test, which Rust offers no direct way to do.
 
 ### Reproduce
 
 Rename `the_changelog_and_the_archive_each_carry_a_planted_defect` in
-`path@knowledge@tests/binary.rs` and empty its body. `cargo test -p knowledge` stays green. Found by
+`path@rules-corpus@tests/binary.rs` and empty its body. `cargo test -p knowledge` stays green. Found by
 the spec-conformity review of the mock-project piece.

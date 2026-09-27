@@ -9,7 +9,7 @@ kind: deferred
 newly added rules as gone and points every renumbering backwards, and `bumping-rules` reads
 those verdicts as instructions. The direction is asserted at the parse layer, and
 `rules::diff::diff` has its own unit tests, but the wiring between them — the dispatch in
-`path@knowledge@src/corpus_cmd.rs` that hands `old` and `new` to `diff` — has no test.
+`path@rules-corpus@src/corpus_cmd.rs` that hands `old` and `new` to `diff` — has no test.
 
 ## Details
 
@@ -18,7 +18,7 @@ those verdicts as instructions. The direction is asserted at the parse layer, an
 `design@thaum@named-values-where-order-decides` exists because a reversed `rules diff` reports
 newly added rules as gone and points every renumbering backwards, and `bumping-rules` reads those
 verdicts as instructions. The direction is asserted at the parse layer, and `rules::diff::diff`
-has its own unit tests, but the wiring between them — the dispatch in `path@knowledge@src/corpus_cmd.rs`
+has its own unit tests, but the wiring between them — the dispatch in `path@rules-corpus@src/corpus_cmd.rs`
 that hands `old` and `new` to `diff` — has no test. Found by an adversarial review of the clap
 migration.
 

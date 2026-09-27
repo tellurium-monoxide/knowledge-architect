@@ -8,7 +8,7 @@ carrying a slug anchor, cited from elsewhere with `knowledge` as its component. 
 deleting this tool. How it works and how the pieces inside divide the work belongs here.
 
 What otherwise shapes it is `path@thaum@tools/README.md`, `knowledge.toml`, and the module documentation at
-the top of each file under `path@knowledge@documentation/src/`, `path@knowledge@rules/src/` and
+the top of each file under `path@knowledge@documentation/src/`, `path@rules-corpus@rules/src/` and
 `path@knowledge@src/`.
 
 The heads are grouped by subject. A group heading carries no decision; each decision is one
@@ -890,7 +890,7 @@ summary block names each of the checker's directories, relative to the root when
 absolute otherwise, even when the compiled directory no longer exists, and prints the count of
 Rust files it covered, so the state is visible in every run. A directory exempts files only when
 it sits inside the tree being checked: a tree that sits inside it instead, such as a mock project under
-`path@knowledge@tests/projects/`, is a foreign project and every literal in it is prose.
+`path@rules-corpus@tests/projects/`, is a foreign project and every literal in it is prose.
 
 **Whole source rather than test modules only.** The non-test source holds no literal that cites
 a rule, a finding message interpolates the number it names, and a narrower rule would cost an

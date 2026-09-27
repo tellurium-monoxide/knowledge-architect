@@ -1,0 +1,12 @@
+# The smallest conformant project for the core binary, with no extension: it declares no table
+# the core does not own, and it carries every document the root component owes. The core binary
+# passes over it; a copy that adds a `[rules]` table is refused, because no extension of that
+# binary claims it.
+
+[project]
+name = "core-mock"
+components = []
+
+[walk]
+skip-dirs = []
+skip-files = []

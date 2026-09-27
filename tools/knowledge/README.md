@@ -1,7 +1,15 @@
 # Knowledge checker
 
-How this project's knowledge is held: the Comprehensive Rules corpus, and the documents that cite
-it. One binary, reached through a cargo alias so nothing has to be installed.
+How a project's knowledge is held: its documents, the references between them and the registers
+they carry. This Component is the generic core; this repository's Comprehensive Rules half is an
+extension of it, `path@rules-corpus@README.md`, per `design@thaum@knowledge-is-a-generic-core`.
+
+**Two binaries.** `cargo knowledge` runs the binary of rules-corpus: every command below, with
+the rules extension registered, reached through a cargo alias so nothing has to be installed. The
+core's own binary, the package `knowledge`, runs the same commands but `rules` with no extension.
+Over a manifest holding a table no extension of it claims, such as `[rules]`, it reports that
+table in phase 1, rather than skip in silence what the table configures, per
+`design@knowledge@an-extension-claims-its-manifest-tables`.
 
 **It needs `git` 2.36 or newer on the path, and a project inside a git worktree.** What the tool reads is what
 `git ls-files` reports from the project root, so every pattern git honours decides the walk,
@@ -253,9 +261,10 @@ the range is run after each commit, and a finding in the newest commit is repair
 **Nothing about this repository is compiled into the tool.** Every list a check reads comes from
 `path@thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
 root — so the same binary checks this repository and a mock project under
-`path@knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says
-so there, in one place, with a reason beside it. The one thing compiled in is the tool's own
-directory, so that the string literals of its own source are read as data, per
+`path@rules-corpus@tests/projects/` with no special case anywhere. A path that should not be checked says
+so there, in one place, with a reason beside it. What is compiled in is the directory of each
+Component a binary's libraries belong to, so that the string literals of the tool's own source are
+read as data, per
 `design@knowledge@checker-source-literals-are-data`; that is a fact about the tool, not about any tree.
 
 Read `path@knowledge@docs/design.md` before changing how it works, and `bumping-rules` before adopting a

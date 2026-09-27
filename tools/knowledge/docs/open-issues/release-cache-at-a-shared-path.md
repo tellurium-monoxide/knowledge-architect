@@ -5,7 +5,7 @@ kind: observation
 
 ## Summary
 
-`resolve` in `path@knowledge@rules/src/release.rs` answers a release that is neither vendored
+`resolve` in `path@rules-corpus@rules/src/release.rs` answers a release that is neither vendored
 nor archived from `std::env::temp_dir()/MagicCompRules-<date>.txt`, downloading only when that
 file is absent. When `MANIFEST.tsv` holds no row for the date — which is every bump target by
 construction, since the manifest records only superseded releases — the digest has nothing to
@@ -15,7 +15,7 @@ compare against, so whatever bytes sit at that path are returned.
 
 ### What
 
-`resolve` in `path@knowledge@rules/src/release.rs` answers a release that is neither
+`resolve` in `path@rules-corpus@rules/src/release.rs` answers a release that is neither
 vendored nor archived from `std::env::temp_dir()/MagicCompRules-<date>.txt`, downloading only
 when that file is absent. When `MANIFEST.tsv` holds no row for the date — which is every bump
 target by construction, since the manifest records only superseded releases — the digest has
@@ -45,7 +45,7 @@ doc comment, closes this as a recorded trade-off.
 An empty manifest and the cache pre-seeded with arbitrary bytes: `resolve`
 returns those bytes as the release. First seen in the adversarial review of the first bump, and
 now pinned by `a_release_the_manifest_does_not_know_resolves_from_whatever_the_cache_holds` in
-`path@knowledge@rules/src/release.rs`, so a change that starts verifying them has to edit that test.
+`path@rules-corpus@rules/src/release.rs`, so a change that starts verifying them has to edit that test.
 
 ### What is already done
 

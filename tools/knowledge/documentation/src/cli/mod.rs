@@ -152,7 +152,7 @@ pub fn complete_working_tree(
 /// The project is whatever declares itself one at or above the working directory.
 ///
 /// Nothing about any particular repository is compiled in, so pointing the tool at a mock
-/// project under `path@knowledge@tests/projects/` needs no flag and no special case.
+/// project under `path@rules-corpus@tests/projects/` needs no flag and no special case.
 pub fn locate() -> Result<Manifest, String> {
     let cwd =
         std::env::current_dir().map_err(|e| format!("cannot read the working directory: {e}"))?;

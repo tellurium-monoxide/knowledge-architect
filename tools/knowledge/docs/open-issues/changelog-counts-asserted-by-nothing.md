@@ -33,7 +33,7 @@ covers both or says which one is authoritative.
 
 ### Reproduce
 
-In `path@knowledge@tests/projects/dirhome/`, whose one section legitimately carries no
+In `path@rules-corpus@tests/projects/dirhome/`, whose one section legitimately carries no
 entry, edit its `CHANGES.md` so the table row reads `| 3 | 2 | 1 |` and the `meta` block says
 `edited: 3`, `renumbered: 2`, `gone: 1`. `cargo knowledge check` prints
 `changelog: 0 rule change(s)` and `PASSED: no findings`. Found by an adversarial review of the

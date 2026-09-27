@@ -5,7 +5,7 @@ kind: defect
 
 ## Summary
 
-`first_rule_number` in `path@knowledge@citations/src/check/uncovered.rs` finds a dotted
+`first_rule_number` in `path@rules-corpus@citations/src/check/uncovered.rs` finds a dotted
 rule number by splitting on characters that are neither alphanumeric nor a dot, and a section
 number by a word-bounded regex over the keyword forms. The identifier form, which root
 `path@thaum@CLAUDE.md` accepts wherever a name cannot hold punctuation, uses underscores, so
@@ -15,7 +15,7 @@ neither finder sees it.
 
 ### What
 
-`first_rule_number` in `path@knowledge@citations/src/check/uncovered.rs` finds a dotted
+`first_rule_number` in `path@rules-corpus@citations/src/check/uncovered.rs` finds a dotted
 rule number by splitting on characters that are neither alphanumeric nor a dot, and a section
 number by a word-bounded regex over the keyword forms. The identifier form, which root
 `path@thaum@CLAUDE.md` accepts wherever a name cannot hold punctuation, uses underscores, so neither
@@ -32,13 +32,13 @@ where a test name is written.
 ### What would close it
 
 Reading the identifier form in the same finder, with the same
-prose-form message, and a planted case in `path@knowledge@tests/projects/planted/` beside the
+prose-form message, and a planted case in `path@rules-corpus@tests/projects/planted/` beside the
 existing one. Deciding instead that an unwalked file may carry the identifier form, and saying
 so in the module head and in root `path@thaum@CLAUDE.md`, closes it as a recorded exemption.
 
 ### Reproduce
 
-In `path@knowledge@tests/projects/dirhome/`, which is clean, write a
+In `path@rules-corpus@tests/projects/dirhome/`, which is clean, write a
 workflow file under `path@thaum@.github/workflows/` holding a line `run: cargo test cr_100_1` and run
 `cargo knowledge check`: `PASSED: no findings`. Replace the token with the
 prose form behind its marker and the same run reports the line. Found by an adversarial review

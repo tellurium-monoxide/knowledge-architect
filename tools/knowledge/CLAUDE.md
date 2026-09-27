@@ -3,11 +3,13 @@
 **Nothing about this repository is compiled into the tool.** Every list a check reads comes from
 `path@thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
 root — so the same binary checks this repository and a mock project under
-`path@knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says so
-there, in one place, with a reason beside it. The one thing compiled in is the tool's own
-directory, taken from `CARGO_MANIFEST_DIR` of the binary crate, so that the string literals of its
-own source are read as data rather than as citations, per
-`design@knowledge@checker-source-literals-are-data`. That is a fact about the tool, not about any tree.
+`path@rules-corpus@tests/projects/` with no special case anywhere. A path that should not be checked says so
+there, in one place, with a reason beside it. What is compiled in is the directory of each
+Component a binary's libraries belong to — `documentation::component_dir` for the core,
+`citations::component_dir` for the rules extension, each the parent of its crate's
+`CARGO_MANIFEST_DIR` — so that the string literals of the tool's own source are read as data
+rather than as citations, per `design@knowledge@checker-source-literals-are-data`. That is a fact
+about the tool, not about any tree.
 
 **`git` 2.36 or newer is a hard dependency, and every invocation lives in
 `path@knowledge@documentation/src/git.rs`.** The floor is `cat-file --batch -z`, which `commits`
@@ -18,7 +20,7 @@ caller and handed in. A tree with no `git`, or a project outside a worktree, is 
 reason; an empty walk is never an answer. The decision is `design@knowledge@git-supplies-the-walk`.
 
 **A test that copies a mock project runs `git init` and `git add -A` in the copy**, or the walk
-is empty and the test proves nothing; `Sandbox` in `path@knowledge@tests/binary.rs` does it. Two
+is empty and the test proves nothing; `Sandbox` in `path@rules-corpus@tests/binary.rs` does it. Two
 consequences a test about ignore behaviour has to choose between, because the ignore rules act on
 untracked files alone:
 
@@ -29,7 +31,7 @@ untracked files alone:
 
 A test that deletes or rewrites a fixture file after the first add stages again, or git's listing
 still names what the working tree no longer holds. The in-place tests under
-`path@knowledge@tests/projects/` need none of this: they build under this repository's own worktree,
+`path@rules-corpus@tests/projects/` need none of this: they build under this repository's own worktree,
 so a mock file is walked because this repository's listing holds it. **Staging is not what puts
 it there.** The listing is `--cached --others --exclude-standard`, so a new fixture file is
 walked the moment it exists, tracked or not; what removes one is an ignore rule, and what a
@@ -54,7 +56,7 @@ reports in those four is a defect in the tool or in the fixture.
 tip whose tree carries a finding, and exits 2 when the tip's does, so each commit a test makes
 has a tree with none, except the one it plants. `dirhome` is the one mock over which every family runs
 and finds nothing, so a copy of it could serve as a base; `History` in
-`path@knowledge@tests/binary.rs` writes a project out
+`path@rules-corpus@tests/binary.rs` writes a project out
 anyway, because each test states the exact findings the commits it makes carry and a mock's
 contents are shared with every other test over it. `History` writes the project out,
 configures `user.name` and `user.email` in the copy's own configuration, and commits. Two
