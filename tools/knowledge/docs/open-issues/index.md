@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-12 entries
+13 entries
 
 | kind | title |
 | --- | --- |
@@ -15,4 +15,5 @@
 | observation | [`commits` assembles the whole tree of a commit whose manifest fails phase 1](commits-assembles-a-tree-whose-phase-one-fails.md) |
 | observation | [Judging a message costs time quadratic in its line count](judging-a-message-is-quadratic.md) |
 | observation | [Span and link shapes the scanner cannot see](span-and-link-shapes-unseen.md) |
+| todo | [No test shows that `commits` reads the checker's own directories as data in each commit's tree](commits-exempts-checker-directories-untested.md) |
 | todo | [The tripwire listing's `guarding` column reads references of the `design` kind only](guarding-reads-design-references-only.md) |

@@ -196,6 +196,45 @@ fn the_core_binary_passes_over_a_project_that_declares_only_what_the_core_reads(
     assert!(out.ends_with("PASSED: no findings\n"), "{out}");
 }
 
+/// The core binary compiles in its own Component's directory, so the core's fixtures are read as
+/// data, per `design@knowledge@checker-source-literals-are-data`. Over this checkout it stops at
+/// phase 1 on the rules table it does not own, and a stop still names the directory and counts the
+/// core's walked Rust files.
+#[test]
+fn the_core_binary_names_its_own_directory_and_counts_the_files_under_it() {
+    let checkout = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .expect("tools/knowledge sits two levels below the root");
+    let (code, out) = check(checkout);
+    assert_eq!(code, 1, "{out}");
+    let line = out
+        .lines()
+        .find(|l| l.starts_with("checker source: "))
+        .unwrap_or_else(|| panic!("no checker-source line in {out}"));
+    let listing = Command::new("git")
+        .args(["ls-files", "--cached", "--others", "--exclude-standard"])
+        .current_dir(checkout)
+        .output()
+        .expect("git lists the checkout");
+    let listing = String::from_utf8_lossy(&listing.stdout).into_owned();
+    let core = listing
+        .lines()
+        .filter(|l| {
+            l.starts_with("tools/knowledge/")
+                && l.ends_with(".rs")
+                && !l.contains("/tests/projects/")
+        })
+        .count();
+    assert!(core > 0);
+    assert_eq!(
+        line,
+        format!(
+            "checker source: tools/knowledge, {core} file(s) with string literals read as data"
+        )
+    );
+}
+
 #[test]
 fn the_core_binary_refuses_a_table_no_extension_of_it_claims() {
     // A copy, so the table is added to nothing another test reads. The walk is git's listing,
