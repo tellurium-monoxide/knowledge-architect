@@ -1407,8 +1407,8 @@ fn a_per_user_ignore_file_does_not_decide_the_walk() {
 
 /// A throwaway repository holding a project the checks find nothing wrong with.
 ///
-/// **The mock projects under `path@knowledge@tests/projects/` are not used here.** A commit is
-/// judged only where its own tree passes, and `dirhome` is the mock over which every family
+/// **The mock projects under `path@knowledge@tests/projects/` are not used here.** A commit whose
+/// tree fails fails the range, and `dirhome` is the mock over which every family
 /// runs and finds nothing — so a copy of it could serve as a base. The project below is written out anyway, because each test
 /// below states the exact findings its commits carry, and a mock's contents are shared with
 /// every other test over it: a document added here for one commit's sake would move another

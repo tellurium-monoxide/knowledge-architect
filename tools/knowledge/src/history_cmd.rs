@@ -276,9 +276,6 @@ enum Depth {
 
 /// Assemble one tree into a model, and judge it as far as `depth` asks.
 ///
-/// `id` is a commit or a tree object: every read goes through `git ls-tree` and
-/// `<id>:<path>`, which accept both.
-///
 /// **`corpus` and `changes` are the two families whose subject is not the model.** `corpus`
 /// reads the filesystem, which a commit's tree is not; `changes` resolves every release its
 /// changelog names, which at a commit means reading the whole archive out of git objects at

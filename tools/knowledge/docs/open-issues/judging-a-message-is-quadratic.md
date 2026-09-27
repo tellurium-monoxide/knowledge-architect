@@ -15,10 +15,11 @@ in 13 s, and 200 000 lines (4.7 MB) not finished after 120 s.
 
 The message analysis is quadratic in the number of lines. Measured on a debug build of
 this tool, one reference per line: 1 000 lines in 0.08 s, 5 000 in 0.94 s, 10 000 in 3.35 s,
-20 000 in 13 s, and 200 000 lines (4.7 MB) not finished after 120 s. Those figures were taken
-with a single-message command the tool no longer has; re-take with `cargo knowledge commits
-HEAD~1..HEAD` after committing a generated message of the wanted size with `git commit -F`, and
-subtract the run over an empty message, which is the cost of assembling the tree.
+20 000 in 13 s, and 200 000 lines (4.7 MB) not finished after 120 s. Re-take with
+`cargo knowledge commits HEAD~1..HEAD` after committing a generated message of the wanted size
+with `git commit --allow-empty -F <file>`, and subtract the same run over a one-line message,
+which is the cost of assembling the tree. The alias builds in release, so a re-take is not
+comparable with the debug figures above.
 
 ### Why it matters
 

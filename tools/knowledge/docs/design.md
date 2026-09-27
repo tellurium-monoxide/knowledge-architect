@@ -861,7 +861,7 @@ verbatim.
 
 **One command judges messages, after the commit exists.** `commits <range>` judges every commit
 of the range against its own tree, with its first parent. It is run over `HEAD~1..HEAD` after
-each commit, so a finding in the newest commit is repaired by `git commit --amend`, and over the
+each commit, so a finding in the newest commit's message is repaired by `git commit --amend`, and over the
 branch by the gates and by CI before any merge, which is where the guarantee lies: `main` is
 never rewritten, so what must not happen is a message with a finding reaching it, and the range
 check before the merge excludes that. No hook judges a draft before the commit exists. A hook

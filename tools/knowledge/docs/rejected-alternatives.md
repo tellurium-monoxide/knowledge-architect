@@ -25,8 +25,9 @@ build per commit of every range.
 
 **A `commit-msg` hook judging each message before the commit exists** — lost to
 `design@knowledge@a-commit-message-is-a-document`. `live`. It repaired a message by an edit of
-the draft rather than by an amend, and cost 0.62 s per commit on this machine against 1.6 s for
-`commits HEAD~1..HEAD` after it. It loses on three counts. The range check runs in the gates and
+the draft rather than by an amend, and cost 0.62 s per commit against 1.6 s for
+`commits HEAD~1..HEAD` after it; the figures and the two refusals are in the message of the change
+that removed the hook. It loses on three counts. The range check runs in the gates and
 in CI before every merge, so the hook guarded nothing the merge does not. It judged a message
 against HEAD as the parent, which under an amend or a reword is the commit being replaced: a
 rebase rewording two messages that `commits` accepted was refused by it twice and needed
@@ -36,8 +37,8 @@ had to check. The variant that also refused a staged tree carrying findings is t
 **The `commit-msg` hook refusing a commit whose staged tree carries content findings** — lost to
 `design@knowledge@a-commit-message-is-a-document`. `live`. It would catch a failing tree at the
 moment it is written rather than at the range check. It loses because every work-in-progress
-commit would then need `--no-verify`, which disables the message check as well, and `commits`
-already judges each commit's tree before a merge.
+commit would then need a way around the hook, and `commits` already judges each commit's tree
+before a merge.
 
 **Selecting a subset of the checks with `--only`, one family per check** — lost to
 `design@knowledge@phases-gate-the-report`. `live`. It let a reviewer run the checks of its own axis
