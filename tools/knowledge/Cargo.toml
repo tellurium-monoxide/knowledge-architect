@@ -8,6 +8,7 @@ publish.workspace = true
 # See the note in `rules/Cargo.toml` on why tool dependencies are not in the workspace
 # dependency table.
 [dependencies]
+citations = { path = "citations" }
 documentation = { path = "documentation" }
 rules = { path = "rules" }
 clap = { version = "4", features = ["derive"] }

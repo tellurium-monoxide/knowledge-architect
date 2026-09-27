@@ -17,10 +17,10 @@
 
 use rules::{norm, RuleNumber};
 
-use crate::finding::Finding;
-use crate::model::{Document, Model};
 use crate::rules_scan::{self, MarkerForm, RuleObservation};
-use crate::source::ScopeKind;
+use documentation::finding::Finding;
+use documentation::model::{Document, Model};
+use documentation::source::ScopeKind;
 
 use super::citations::{clip, Release};
 
@@ -673,7 +673,7 @@ mod tests {
     }
 
     fn findings(text: &str) -> Vec<String> {
-        let model = crate::model::Model::from_documents(vec![(
+        let model = documentation::model::Model::from_documents(vec![(
             std::path::PathBuf::from("notes/a.md"),
             text.to_string(),
         )]);
@@ -691,7 +691,7 @@ mod tests {
     }
 
     fn judged(text: &str, release: &Release, rule: Rule) -> Vec<String> {
-        let model = crate::model::Model::from_documents(vec![(
+        let model = documentation::model::Model::from_documents(vec![(
             std::path::PathBuf::from("notes/a.md"),
             text.to_string(),
         )]);
@@ -826,7 +826,7 @@ mod tests {
                     ///\n\
                     /// > 100.8 A parent body long enough to be evidence on its own terms.\n\
                     fn cr_100_8_a_test() {}\n";
-        let model = crate::model::Model::from_documents(vec![(
+        let model = documentation::model::Model::from_documents(vec![(
             std::path::PathBuf::from("code/a.rs"),
             text.to_string(),
         )]);
@@ -845,7 +845,7 @@ mod tests {
         );
 
         // The control: the same whole-body quote with NO name citing it is still reported.
-        let plain = crate::model::Model::from_documents(vec![(
+        let plain = documentation::model::Model::from_documents(vec![(
             std::path::PathBuf::from("code/b.md"),
             "### A section\n\nPer CR:100.8:\n\n\
              > 100.8 A parent body long enough to be evidence on its own terms.\n"
@@ -869,7 +869,7 @@ mod tests {
         // claim rests on the parent's own body, which is most of the time.
         let release = Release::new(PARENT_CORPUS, 0);
         let parent_findings = |text: &str| -> Vec<String> {
-            let model = crate::model::Model::from_documents(vec![(
+            let model = documentation::model::Model::from_documents(vec![(
                 std::path::PathBuf::from("notes/a.md"),
                 text.to_string(),
             )]);

@@ -25,10 +25,10 @@ fn run_rules(
     model: &Model,
     manifest: &Manifest,
     inputs: &documentation::check::Inputs,
-    releases: std::collections::HashMap<Option<String>, documentation::check::citations::Release>,
+    releases: std::collections::HashMap<Option<String>, citations::check::citations::Release>,
 ) -> documentation::check::Report {
+    use citations::rules_extension::{RulesPrepared, CHECKS};
     use documentation::extension::Purpose;
-    use documentation::rules_extension::{RulesPrepared, CHECKS};
     let prepared = RulesPrepared::new(
         rules(manifest),
         releases,
@@ -46,16 +46,16 @@ fn mock(name: &str) -> Manifest {
         .join(name);
     let mut manifest = Manifest::load(&root).expect("the mock project's manifest");
     let mut extensions: Vec<Box<dyn documentation::extension::Extension>> = vec![Box::new(
-        documentation::rules_extension::RulesExtension::default(),
+        citations::rules_extension::RulesExtension::default(),
     )];
     documentation::extension::configure(&mut manifest, &mut extensions);
     manifest
 }
 
 /// A mock project's `[rules]` table, as the rules extension resolves it.
-fn rules(manifest: &Manifest) -> documentation::rules_extension::RulesConfig {
+fn rules(manifest: &Manifest) -> citations::rules_extension::RulesConfig {
     use documentation::extension::Extension;
-    let mut extension = documentation::rules_extension::RulesExtension::default();
+    let mut extension = citations::rules_extension::RulesExtension::default();
     let resolution = extension.resolve(manifest);
     assert!(
         resolution.complaints.is_empty(),
@@ -203,7 +203,7 @@ fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
     let model = model("minimal");
     // The dump `cargo knowledge model` prints: the core's rows with the rules extension's
     // merged in.
-    let rules = documentation::rules_extension::RulesExtension::default();
+    let rules = citations::rules_extension::RulesExtension::default();
     let dump = model.canonical_with(&rules.dump(&model));
     // A slug opening a decision, a path reference, a goal reference, and the two marker
     // forms — each at the line of the file it sits on.
@@ -352,7 +352,7 @@ fn the_corpus_parses_under_the_project_that_declares_where_its_body_starts() {
 /// declares one component — the one at the root — and carries every document it owes.
 #[test]
 fn a_project_carrying_every_component_document_reports_nothing() {
-    use documentation::check::citations::Release;
+    use citations::check::citations::Release;
     use documentation::check::Inputs;
     use std::collections::HashMap;
 
@@ -429,7 +429,7 @@ fn every_committed_index_is_what_the_generator_writes() {
             .expect("the mock corpus");
         let corpus = rules::Corpus::parse(&text, rules(&manifest).body_starts_at);
         let want =
-            documentation::index::rule_index(&model, &rules(&manifest).dir, &corpus, "20200101");
+            citations::rule_index::rule_index(&model, &rules(&manifest).dir, &corpus, "20200101");
         assert_eq!(got, want, "{name}: {} has drifted", rel.display());
     }
 }
@@ -448,7 +448,7 @@ fn every_committed_index_is_what_the_generator_writes() {
 /// two families `run` does not carry.
 #[test]
 fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
-    use documentation::check::citations::Release;
+    use citations::check::citations::Release;
     use documentation::check::Inputs;
     use std::collections::HashMap;
 
@@ -503,7 +503,8 @@ fn the_conformant_mock_reports_nothing_over_every_family_the_model_carries() {
 /// checked against intent instead, which is what a fixture is for.
 mod planted {
     use super::*;
-    use documentation::check::{citations::Release, Inputs};
+    use citations::check::citations::Release;
+    use documentation::check::Inputs;
     use documentation::index;
     use std::collections::HashMap;
     use std::path::PathBuf;
@@ -520,7 +521,7 @@ mod planted {
         let survey = documentation::survey::survey(manifest, model).expect("a survey of the mock");
         let mut out = HashMap::from([(
             rules(manifest).dir.join("index.md"),
-            index::rule_index(model, &rules(manifest).dir, corpus, "20200101"),
+            citations::rule_index::rule_index(model, &rules(manifest).dir, corpus, "20200101"),
         )]);
         out.extend(index::file_register_indexes(
             model,
@@ -638,7 +639,7 @@ mod planted {
         // stated against.
         for name in documentation::check::CHECKS
             .iter()
-            .chain(&documentation::rules_extension::CHECKS)
+            .chain(&citations::rules_extension::CHECKS)
         {
             assert!(
                 PLANTED.iter().any(|(n, _, _)| n == name),
@@ -677,8 +678,8 @@ mod planted {
         // A pinned document is skipped unless its release is in the map, so the pinned release
         // the two `cr-version` fixtures name is supplied here and nowhere else, and the
         // fixtures change no count of any other test.
+        use citations::rules_extension::RulesPrepared;
         use documentation::extension::Purpose;
-        use documentation::rules_extension::RulesPrepared;
         let manifest = mock("planted");
         let model = Model::build(&manifest, &[]).expect("a model");
         let text = std::fs::read_to_string(rules(&manifest).tree(manifest.root()).text())
@@ -1151,8 +1152,8 @@ mod unsound {
 /// neither exists until a real document is walked.
 mod regime {
     use super::*;
-    use documentation::check::citations::Release;
-    use documentation::check::regime::{self, Rule};
+    use citations::check::citations::Release;
+    use citations::check::regime::{self, Rule};
 
     /// Every finding the regime produces over the planted project.
     fn judged() -> Vec<(Rule, String)> {
@@ -1168,7 +1169,7 @@ mod regime {
         let release = Release::new(&text, rules(&manifest).body_starts_at);
         let mut out = Vec::new();
         for doc in model.documents() {
-            if documentation::rules_scan::pin_of(doc).is_some() {
+            if citations::rules_scan::pin_of(doc).is_some() {
                 continue;
             }
             let (found, _) = regime::check(doc, &release);

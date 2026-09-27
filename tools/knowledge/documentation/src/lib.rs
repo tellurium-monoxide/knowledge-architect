@@ -14,10 +14,7 @@ pub mod git;
 pub mod index;
 pub mod manifest;
 pub mod model;
-pub mod quote;
 pub mod records;
-pub mod rules_extension;
-pub mod rules_scan;
 pub mod scan;
 pub mod source;
 pub mod survey;
@@ -26,7 +23,6 @@ pub mod walk;
 pub use finding::Finding;
 pub use manifest::Manifest;
 pub use model::{Document, Model};
-pub use quote::{Quote, QuoteKind};
 pub use scan::{Located, Observation, RetiredForm, SlugSite};
 
 /// The directory of the Component this library belongs to: the parent of its own crate

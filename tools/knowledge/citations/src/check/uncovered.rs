@@ -14,9 +14,9 @@
 
 use rules::RuleNumber;
 
-use crate::finding::Finding;
+use documentation::finding::Finding;
 
-use super::Inputs;
+use documentation::check::Inputs;
 
 pub fn check(inputs: &Inputs) -> (Vec<Finding>, usize) {
     let mut out = Vec::new();

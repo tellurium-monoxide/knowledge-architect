@@ -4,14 +4,10 @@
 //! the single walk a property of the design rather than of anyone's care, and it is what lets
 //! a check be run against a model assembled in memory.
 
-pub mod changes;
-pub mod citations;
 pub mod generated;
 pub mod references;
-pub mod regime;
 pub mod registers;
 pub mod tree;
-pub mod uncovered;
 
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;

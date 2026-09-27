@@ -5,7 +5,7 @@ kind: defect
 
 ## Summary
 
-`first_rule_number` in `path@knowledge@documentation/src/check/uncovered.rs` finds a dotted
+`first_rule_number` in `path@knowledge@citations/src/check/uncovered.rs` finds a dotted
 rule number by splitting on characters that are neither alphanumeric nor a dot, and a section
 number by a word-bounded regex over the keyword forms. The identifier form, which root
 `path@thaum@CLAUDE.md` accepts wherever a name cannot hold punctuation, uses underscores, so
@@ -15,7 +15,7 @@ neither finder sees it.
 
 ### What
 
-`first_rule_number` in `path@knowledge@documentation/src/check/uncovered.rs` finds a dotted
+`first_rule_number` in `path@knowledge@citations/src/check/uncovered.rs` finds a dotted
 rule number by splitting on characters that are neither alphanumeric nor a dot, and a section
 number by a word-bounded regex over the keyword forms. The identifier form, which root
 `path@thaum@CLAUDE.md` accepts wherever a name cannot hold punctuation, uses underscores, so neither

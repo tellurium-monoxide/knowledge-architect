@@ -12,13 +12,14 @@ use std::path::{Path, PathBuf};
 use serde::Deserialize;
 
 use crate::check::citations::{self, Release};
-use crate::check::{changes, regime, uncovered, Inputs};
-use crate::extension::{
+use crate::check::{changes, regime, uncovered};
+use documentation::check::Inputs;
+use documentation::extension::{
     Extension, ExtensionReport, Generated, Prepared, Purpose, Resolution, Tree,
 };
-use crate::finding::Finding;
-use crate::manifest::{normalise_list, normalise_one, Manifest, MANIFEST_NAME};
-use crate::model::{Document, Model};
+use documentation::finding::Finding;
+use documentation::manifest::{normalise_list, normalise_one, Manifest, MANIFEST_NAME};
+use documentation::model::{Document, Model};
 
 /// The `[rules]` table: where the corpus is, and which files are exempt from the lint.
 #[derive(Debug, Clone, Deserialize)]
@@ -162,7 +163,7 @@ impl Extension for RulesExtension {
         &CHECKS
     }
 
-    fn dump(&self, model: &Model) -> Vec<crate::model::DumpRow> {
+    fn dump(&self, model: &Model) -> Vec<documentation::model::DumpRow> {
         use crate::rules_scan::{MarkerForm, RuleObservation};
         let mut rows = Vec::new();
         for (doc, document) in model.documents().iter().enumerate() {
@@ -178,7 +179,7 @@ impl Extension for RulesExtension {
                     ),
                     RuleObservation::Token(n) => ("rule-token", n.to_string()),
                 };
-                rows.push(crate::model::DumpRow {
+                rows.push(documentation::model::DumpRow {
                     doc,
                     line: l.line,
                     kind,
@@ -327,7 +328,7 @@ impl RulesExtension {
         &mut self,
         config: RulesConfig,
         model: &Model,
-        commit: &crate::extension::CommitTree,
+        commit: &documentation::extension::CommitTree,
     ) -> Result<RulesPrepared, String> {
         let rules_dir = config.dir.clone();
         let corpus_rel = rules_dir.join(&config.text);
@@ -552,7 +553,12 @@ impl Prepared for RulesPrepared {
         };
         vec![Generated {
             rel: self.config.rule_index_path(),
-            text: crate::index::rule_index(model, &self.config.dir, &vendored.rules, &self.pinned),
+            text: crate::rule_index::rule_index(
+                model,
+                &self.config.dir,
+                &vendored.rules,
+                &self.pinned,
+            ),
             action: "regenerate it and read the diff: it is the work list a release bump reads",
         }]
     }
@@ -637,9 +643,14 @@ fn render(s: &Summary, not_run: &[&str]) -> String {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::{render, RulesConfig, RulesExtension, Summary};
-    use crate::extension::Extension;
-    use crate::manifest::Manifest;
+    use documentation::extension::Extension;
+    use documentation::manifest::Manifest;
     use std::path::{Path, PathBuf};
+
+    /// This repository's manifest: the nearest one above this crate.
+    pub(crate) fn this_project() -> Manifest {
+        Manifest::find(Path::new(env!("CARGO_MANIFEST_DIR"))).expect("this project's manifest")
+    }
 
     /// The `[rules]` table of a manifest, as the extension resolves it.
     pub(crate) fn configured(manifest: &Manifest) -> RulesConfig {
@@ -670,8 +681,7 @@ pub(crate) mod tests {
 
     #[test]
     fn this_repository_declares_a_corpus_that_is_there() {
-        let manifest =
-            Manifest::load(&crate::manifest::tests::this_project()).expect("knowledge.toml");
+        let manifest = this_project();
         assert!(configured(&manifest).tree(manifest.root()).text().is_file());
     }
 

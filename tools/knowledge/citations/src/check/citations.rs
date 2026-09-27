@@ -12,10 +12,10 @@
 
 use rules::{norm, Corpus, RuleNumber};
 
-use crate::finding::Finding;
-use crate::model::Document;
 use crate::quote::{self, Quote, QuoteKind};
 use crate::rules_scan::{self, MarkerForm, RuleObservation};
+use documentation::finding::Finding;
+use documentation::model::Document;
 
 /// Below this a fragment matches too easily to be evidence of the rule CITED.
 ///
@@ -535,8 +535,8 @@ mod tests {
     }
 
     /// A one-document model over markdown, for a check that reads observations.
-    fn doc_with(text: &str) -> crate::model::Document {
-        let model = crate::model::Model::from_documents(vec![(
+    fn doc_with(text: &str) -> documentation::model::Document {
+        let model = documentation::model::Model::from_documents(vec![(
             std::path::PathBuf::from("notes/a.md"),
             text.to_string(),
         )]);
@@ -716,7 +716,7 @@ mod tests {
         let src =
             "/// Per CR:100.1:\n///\n/// > 100.1 a fragment long enough to be evidence here.\n\
                    fn f() -> Result<\n    (usize, usize),\n    String,\n> {\n    todo!()\n}\n";
-        let model = crate::model::Model::from_documents(vec![(
+        let model = documentation::model::Model::from_documents(vec![(
             std::path::PathBuf::from("code/a.rs"),
             src.to_string(),
         )]);
@@ -870,8 +870,7 @@ mod tests {
 
         #[test]
         fn produces_exactly_one_part_at_every_realistic_wrap_width() {
-            let root = crate::manifest::tests::this_project();
-            let manifest = crate::Manifest::load(&root).expect("this project's manifest");
+            let manifest = crate::rules_extension::tests::this_project();
             let config = crate::rules_extension::tests::configured(&manifest);
             let tree = config.tree(manifest.root());
             let version = std::fs::read_to_string(tree.version()).expect("VERSION");

@@ -11,7 +11,7 @@ use std::process::ExitCode;
 
 use clap::Subcommand;
 
-use documentation::rules_extension::{RulesConfig, RulesExtension};
+use citations::rules_extension::{RulesConfig, RulesExtension};
 use documentation::Manifest;
 use rules::release::{self, Tree};
 use rules::{Corpus, RuleNumber};
@@ -96,7 +96,7 @@ pub fn run(manifest: &Manifest, command: &RulesCommand) -> Result<ExitCode, Stri
 /// One rule as a citation is written: the marker, the number as printed, then the body entire.
 ///
 /// The number leads the line because that is what binds the body to a rule.
-/// `documentation::check::citations::split_rules` reads it off the front of the line, so what
+/// `citations::check::citations::split_rules` reads it off the front of the line, so what
 /// this returns is a citation the checker resolves rather than a rendering of one — which is
 /// the whole property, since the caller pastes it into a document.
 fn quoted(number: &RuleNumber, body: &str) -> String {
@@ -147,7 +147,7 @@ fn show(config: &RulesConfig, tree: &Tree, numbers: &[String]) -> Result<i32, St
                 names.join(" ")
             );
         }
-        if body.chars().count() < documentation::check::regime::MIN_FRAGMENT {
+        if body.chars().count() < citations::check::regime::MIN_FRAGMENT {
             outln!("   under the fragment floor: quote this body whole, which always passes");
         }
     }
@@ -227,9 +227,9 @@ fn cited(manifest: &Manifest) -> Result<Vec<RuleNumber>, String> {
     let mut out: Vec<RuleNumber> = model
         .documents()
         .iter()
-        .flat_map(documentation::rules_scan::of)
+        .flat_map(citations::rules_scan::of)
         .filter_map(|l| match l.what {
-            documentation::rules_scan::RuleObservation::Token(n) => Some(n),
+            citations::rules_scan::RuleObservation::Token(n) => Some(n),
             _ => None,
         })
         .collect();
@@ -407,7 +407,7 @@ fn bump(manifest: &Manifest, config: &RulesConfig, tree: &Tree, new: &str) -> Re
     };
     std::fs::write(
         &index_path,
-        documentation::index::rule_index(&model, &config.dir, &fresh, new),
+        citations::rule_index::rule_index(&model, &config.dir, &fresh, new),
     )
     .map_err(|e| e.to_string())?;
 
@@ -622,7 +622,7 @@ mod tests {
                 .strip_prefix("> ")
                 .expect("the line opens as a blockquote")
                 .to_string();
-            let parts = documentation::check::citations::split_rules(&[stripped]);
+            let parts = citations::check::citations::split_rules(&[stripped]);
             assert_eq!(
                 parts,
                 vec![(number.clone(), body.to_string())],

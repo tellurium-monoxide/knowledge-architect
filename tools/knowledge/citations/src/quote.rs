@@ -6,7 +6,7 @@
 //! not lose a quote, it attributes it to the wrong rule — and a quote checked against the
 //! wrong rule is the failure the whole regime exists to catch.
 
-use crate::model::Document;
+use documentation::model::Document;
 use pulldown_cmark::{Event, Options, Parser, Tag, TagEnd};
 use rules::RuleNumber;
 

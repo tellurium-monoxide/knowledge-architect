@@ -13,8 +13,8 @@ use std::sync::LazyLock;
 use regex::Regex;
 use rules::RuleNumber;
 
-use crate::model::Document;
-use crate::source::Parsed;
+use documentation::model::Document;
+use documentation::source::Parsed;
 
 /// How a rule number was written.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -104,7 +104,7 @@ pub fn pin(parsed: &Parsed, text: &str) -> Option<String> {
     // the fixtures a `Data` parse dropped, and a pin spelled inside one of them pinned the file
     // it sat in to that release, per `design@knowledge@checker-source-literals-are-data`.
     let prose: Option<std::collections::HashSet<u32>> =
-        (parsed.literals == crate::source::Literals::Data).then(|| {
+        (parsed.literals == documentation::source::Literals::Data).then(|| {
             parsed
                 .prose
                 .iter()
@@ -280,7 +280,7 @@ mod tests {
     // number or a marker in one is data and not a claim.
 
     fn scan_md(text: &str) -> Vec<RuleObservation> {
-        scan(&crate::source::md::parse(text))
+        scan(&documentation::source::md::parse(text))
             .into_iter()
             .map(|l| l.what)
             .collect()
@@ -317,9 +317,9 @@ mod tests {
             // exists for, which left it unenforced for exactly that shape.
             "fn test_cr_104_4b_holds() {}",
         ] {
-            let seen: Vec<(String, MarkerForm)> = scan(&crate::source::rs::parse(
+            let seen: Vec<(String, MarkerForm)> = scan(&documentation::source::rs::parse(
                 name,
-                crate::source::Literals::Prose,
+                documentation::source::Literals::Prose,
             ))
             .into_iter()
             .filter_map(|l| match l.what {
@@ -352,9 +352,9 @@ mod tests {
         // identifier pattern, so it passed with both suffix guards removed and pinned
         // nothing at all — while reading as though it covered names.
         const TOO_LONG: &str = "fn cr_613_8cde_holds() {}";
-        let seen: Vec<RuleObservation> = scan(&crate::source::rs::parse(
+        let seen: Vec<RuleObservation> = scan(&documentation::source::rs::parse(
             TOO_LONG,
-            crate::source::Literals::Prose,
+            documentation::source::Literals::Prose,
         ))
         .into_iter()
         .map(|l| l.what)
@@ -367,9 +367,9 @@ mod tests {
         );
         // The control: two letters IS a rule number, and must still be found.
         const OK: &str = "fn cr_613_8c_holds() {}";
-        assert!(scan(&crate::source::rs::parse(
+        assert!(scan(&documentation::source::rs::parse(
             OK,
-            crate::source::Literals::Prose
+            documentation::source::Literals::Prose
         ))
         .into_iter()
         .any(|l| matches!(l.what, RuleObservation::Marker { .. })));
@@ -537,11 +537,11 @@ mod tests {
     fn a_pin_is_read_from_the_whole_file() {
         let text = "intro\n<!-- cr-version: 20260807 -->\n";
         assert_eq!(
-            pin(&crate::source::md::parse(text), text).as_deref(),
+            pin(&documentation::source::md::parse(text), text).as_deref(),
             Some("20260807")
         );
         const NONE: &str = "no pin here";
-        assert_eq!(pin(&crate::source::md::parse(NONE), NONE), None);
+        assert_eq!(pin(&documentation::source::md::parse(NONE), NONE), None);
     }
 
     #[test]
@@ -550,14 +550,14 @@ mod tests {
         // then verified its quotes against a release it never chose. The resolver fetches an
         // absent release, so the symptom was a network failure in a check that reads none.
         let text = "intro\n\n```markdown\n<!-- cr-version: 20260807 -->\n```\n";
-        assert_eq!(pin(&crate::source::md::parse(text), text), None);
+        assert_eq!(pin(&documentation::source::md::parse(text), text), None);
     }
 
     #[test]
     fn a_pin_inside_a_dropped_literal_binds_nothing_and_one_in_a_comment_does() {
         // The checker's own source: the fixture below is exactly the shape this file carries,
         // and read from the raw text it pinned this file to that release.
-        use crate::source::{rs, Literals};
+        use documentation::source::{rs, Literals};
         let inside = "fn f() {\n    let s = \"<!-- cr-version: 20260807 -->\";\n}\n";
         assert_eq!(pin(&rs::parse(inside, Literals::Data), inside), None);
         assert_eq!(

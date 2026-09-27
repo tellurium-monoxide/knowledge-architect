@@ -10,7 +10,7 @@
 
 use rules::{norm, Corpus, RuleNumber};
 
-use crate::finding::Finding;
+use documentation::finding::Finding;
 
 /// The vocabulary a section entry's `action:` may use.
 ///

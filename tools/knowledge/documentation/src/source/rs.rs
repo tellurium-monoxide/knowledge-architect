@@ -498,19 +498,18 @@ mod tests {
         assert_eq!(p.scope_at(3).map(|s| s.name.as_str()), Some("f"));
     }
 
-    /// The identifier form of a rule marker exists for names, and a name is code. Both
-    /// fixtures are BOUND, so the marker inside them is data — otherwise this test would be a
-    /// rule-named item of its own, owing a quote for a rule it makes no claim about.
-    const NAMED: &str = "fn cr_100_1_holds() {}\n";
-    const WANTED: &str = "cr_100_1_holds";
+    /// A name is code, and an extension that reads names finds them here, as the rules
+    /// extension reads the identifier form of a rule marker. Both fixtures are bound, so they are
+    /// data in any reading.
+    const NAMED: &str = "fn helper_holds() {}\n";
+    const WANTED: &str = "helper_holds";
 
     #[test]
     fn a_name_is_collected_where_it_is_declared_and_not_where_it_is_used() {
-        // A call site has no doc comment to carry a quote, and no scope of its own that the
-        // rule belongs to. Collecting it made every caller of a rule-named helper owe the
-        // rule's whole body.
-        const SRC: &str = "fn cr_100_1_holds() {}\nfn caller() { cr_100_1_holds(); }\n";
-        const WANTED: &str = "cr_100_1_holds";
+        // A call site has no doc comment to carry what the name claims, and no scope of its
+        // own. Collecting it made every caller of a named helper owe what the name owes.
+        const SRC: &str = "fn helper_holds() {}\nfn caller() { helper_holds(); }\n";
+        const WANTED: &str = "helper_holds";
         let lines: Vec<u32> = parse(SRC)
             .names
             .into_iter()
@@ -521,9 +520,9 @@ mod tests {
     }
 
     #[test]
-    fn a_variable_declared_for_a_rule_is_a_name() {
-        const SRC: &str = "fn f() {\n    let cr_100_1_seen = 1;\n}\n";
-        const WANTED: &str = "cr_100_1_seen";
+    fn a_declared_variable_is_a_name() {
+        const SRC: &str = "fn f() {\n    let value_seen = 1;\n}\n";
+        const WANTED: &str = "value_seen";
         assert!(
             parse(SRC).names.iter().any(|(l, n)| *l == 2 && n == WANTED),
             "{:?}",

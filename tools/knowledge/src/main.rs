@@ -59,7 +59,7 @@ fn main() -> ExitCode {
             // This repository's own subject, the Comprehensive Rules, is an extension of the
             // core, per `design@thaum@knowledge-is-a-generic-core`.
             let mut extensions: Vec<Box<dyn documentation::extension::Extension>> = vec![Box::new(
-                documentation::rules_extension::RulesExtension::default(),
+                citations::rules_extension::RulesExtension::default(),
             )];
             let dirs = checker_sources();
             let dirs: Vec<&Path> = dirs.iter().map(PathBuf::as_path).collect();
@@ -86,7 +86,7 @@ fn main() -> ExitCode {
 /// built elsewhere names directories the walk never visits, exempts nothing, and the summary
 /// block's `checker source` line shows the count at zero.
 pub(crate) fn checker_sources() -> Vec<PathBuf> {
-    let mut dirs = vec![documentation::component_dir()];
+    let mut dirs = vec![documentation::component_dir(), citations::component_dir()];
     dirs.dedup();
     dirs
 }
