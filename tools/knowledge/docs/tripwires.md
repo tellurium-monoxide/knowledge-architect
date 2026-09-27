@@ -118,8 +118,9 @@ covers, and either way the missed shape is recorded as a `defect`.
 ## Guarding `design@knowledge@checker-source-literals-are-data`' self-location `##checker-source-literals-are-data-self-location`
 
 **Fires when:** a `cargo knowledge check` run reports a finding on a string literal in a Rust
-file under the tool's own directory, or the summary block's checker-source line is absent or
-names a directory other than the tool's in a checkout that holds the tool. The cheap half is the
+file under one of the tool's own directories, or the summary block's checker-source line is
+absent or names directories other than the Components of the tool's source in a checkout that
+holds them. The cheap half is the
 binary test `the_summary_names_the_checker_source_and_counts_the_files_under_it` in
 `path@knowledge@tests/binary.rs`, which asserts the line over this checkout; what it cannot reach is
 a binary built from another checkout and run here.
@@ -195,3 +196,16 @@ producing check is a phase, not a check of the last one, and it goes before its 
 
 **Re-entry:** `standing-state-reviewer` on every dispatched review; any change to the arguments
 of `check`, `index` or `rules bump`; and any new module under the check directory.
+
+## Guarding `design@knowledge@an-extension-builds-its-own-model`' closed entity table `##extension-defines-a-kind`
+
+A family scans the core's parse on its own and cannot add a kind to the entity table, so its
+subject cannot be cited in the `<kind>@<anchor>@<id>` grammar.
+
+**Fires when:** a proposed feature, in a design discussion or a review, needs a reference whose
+kind a family defines rather than the core — a kind naming one rule of a corpus, for example —
+and the need is stated as a requirement rather than as an option.
+**Response:** reopen `design@knowledge@a-family-extends-the-core-through-phased-hooks` to add a
+call through which a family contributes entities and their definition sites before phase 3, and
+re-check `design@knowledge@an-extension-builds-its-own-model` against it.
+**Re-entry:** standing.

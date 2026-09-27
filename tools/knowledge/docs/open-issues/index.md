@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-19 entries
+20 entries
 
 | kind | title |
 | --- | --- |
@@ -11,6 +11,7 @@
 | defect | [The release diff calls a renumbered section a deletion](release-diff-calls-renumbered-section-deletion.md) |
 | defect | [A file outside the walk that cannot be read is silent to the inverse assertion](unreadable-file-outside-the-walk-is-silent.md) |
 | defect | [A level-two heading with no slug in a tripwires home is silently not an entry](unslugged-tripwire-heading-is-silent.md) |
+| deferred | [The citation regime could be offered by the core over any pinned text](citation-regime-over-any-pinned-text.md) |
 | deferred | [Nothing tests that `rules diff` receives its two dates the right way round](rules-diff-date-order-untested.md) |
 | deferred | [Only a line break is refused in a file name, and Windows forbids more](windows-forbidden-names-not-refused.md) |
 | design | [A submodule is a project of its own, or nothing, and the tool has no model for either](a-submodule-is-a-project-of-its-own.md) |

@@ -343,3 +343,33 @@ open set was written against — a wrong label — cannot occur once an unknown 
 fallback label exists now: `path@knowledge@documentation/src/records.rs` reads each entry's kind out of
 its own frontmatter, and an entry that declares none has no kind rather than a wrong one.
 
+
+**A model generic over the family's observation type**, `Model<E>` with the family's
+observations in each document's list — lost to `design@knowledge@an-extension-builds-its-own-model`.
+`live`. It scans each document once, and the family's observations are typed and sit beside the
+core's. It loses because the type parameter reaches every type and every check signature that
+touches a document, to carry data the core never reads: at the split, 18 of the 28 Rust files of
+the core's library and binary named `Model`, `Document`, `Observation` or `Located`
+(`git grep -lwE`). Two families would also need a hand-written composition of their two types.
+
+**A type-erased slot per document**, a map from family name to a boxed value that each family
+downcasts — lost to `design@knowledge@an-extension-builds-its-own-model`. `live`. It keeps one
+model and needs no type parameter. It loses because the family keeps the same data outside the
+core with its type checked at compile time, so the slot adds a downcast that can fail at run time
+and gains nothing.
+
+**A namespace for a family's tables**, `[extensions.<name>]` — lost to
+`design@knowledge@a-family-claims-its-manifest-tables`. `live`. It shows in the manifest itself
+which tables are a family's. It loses because the refusal of an unclaimed table already reports a
+table nobody owns, and because it changes the manifest format of every project and every mock
+for no check that reads the difference.
+
+**The interpretation entry number kept as a retired form permanently**, a bare `R` followed by
+digits reported wherever prose holds it — lost to
+`design@knowledge@candidate-rule-and-retired-forms`. `live`. It was kept because a retired form
+must stay visible or the migration is unfinishable, and it was read in every prose region, Rust
+comments included. It loses because the migration is finished, the tree holds no such span, and
+the number is thaum's own register's: kept, the lint would have had to move into thaum's family
+when the core was split from the rules half. The commit history holds the form in 65 of the 500
+messages before that split, counted with the lint's own pattern; the slug reference, which stays
+a finding, is in 64 of them, so exposure in history does not separate the two.

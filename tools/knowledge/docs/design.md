@@ -19,17 +19,20 @@ level-three head below it.
 ### The model is built once, and every check is a pure function over it `##model-then-checks`
 
 A check never reads a file, spawns a process, or knows how the walk works. Anything a check cannot
-fetch for itself is resolved by the caller and handed in: the parsed releases, the pinned date, the
-generated files as committed, the per-instance `register.toml` files, one listing of what exists
-and which of those paths are directories, the files the walk does not cover, and git's answer for
-every path spelling a reference in the run could ask about. The phases that precede the checks
-are pure over the same inputs, per `design@knowledge@phases-gate-the-report`, and the one input
-only the last phase needs, the releases, is resolved only once it is reached.
+fetch for itself is resolved by the caller and handed in: the generated files as committed, the
+per-instance `register.toml` files, one listing of what exists and which of those paths are
+directories, the files the walk does not cover, and git's answer for every path spelling a
+reference in the run could ask about. A family's checks read, besides these, what the family's
+own preparation read for the tree, per `design@knowledge@a-family-extends-the-core-through-phased-hooks`.
+The phases that precede the checks are pure over the same inputs, per
+`design@knowledge@phases-gate-the-report`, and a family prepares only once the last phase is
+reached.
 
 Four things follow, and each of them is something the implementation this replaced paid for.
 
 **The single walk is a property of the design rather than of anyone's care.** One run reads each
-live document once and scans each line once. The implementation being replaced performed four tree
+live document once and parses it once. The core scans each line once, and each family once more
+over the same parse, per `design@knowledge@an-extension-builds-its-own-model`. The implementation being replaced performed four tree
 walks and 311 file reads over 104 documents per run, then spawned its citation checker twice more to
 do it again.
 
@@ -57,10 +60,10 @@ phases, each of the first three building one input of the next:
 
 | phase | produced by | what it reports |
 | ----- | ----------- | --------------- |
-| 1 | `Manifest::parse` | a declaration the tool refused, which is then absent from the configuration |
-| 2 | `check::tree` | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out |
+| 1 | `Manifest::parse`, and each family's resolution of its tables | a declaration the tool refused, which is then absent from the configuration |
+| 2 | `check::tree`, and each family's assertion of its declared paths | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out |
 | 3 | `Entities::build` | a slug or an entry id where none may sit, or defined twice |
-| 4 | every check | everything computed over a complete model |
+| 4 | every check, the core's and each family's | everything computed over a complete model |
 
 A finding is classified by **the place it is produced**, never by a label at its site, so a
 finding added to a building step is gated because of where it is raised, and nothing in the
@@ -71,8 +74,8 @@ a clean run names every check it performed. The whole report stops: the per-docu
 hiding only what an unread file could have defined, was three times the machinery for facts
 that mostly have no per-file scope, and `path@knowledge@docs/tripwires.md` guards that choice.
 
-**Releases are resolved when the last phase is reached**, so a run that stops earlier fetches
-nothing, whatever it would have judged. **A writer refuses over an incomplete model**: `index`
+**A family prepares its tree when the last phase is reached**, so a run that stops earlier
+resolves no release and fetches nothing, whatever it would have judged. **A writer refuses over an incomplete model**: `index`
 and `rules bump` run the first three phases before touching anything and exit 2 naming the
 phase, since an index generated over such a model lists rows nobody asked for. The range form
 of `commits` ends the same way at a tip whose tree stops early: a message judged against an
@@ -88,6 +91,81 @@ model, the model the table, and every check consumes the table. A future check w
 another check reads would be a second chain, and nothing prevents one: such a check is a phase,
 not a check of the last one, and it goes before its consumers. `path@knowledge@CLAUDE.md`
 restates that at the point of adding a check, and a tripwire names the event.
+
+### A domain's checks plug in as a family compiled into the binary, and the core binary registers none `##a-family-extends-the-core-through-phased-hooks`
+
+The core checks what every project carries: the walk, the parse, the entity table, references,
+registers, generated indexes and commit messages. A subject that belongs to one project, such as
+thaum's verification of rule quotes against a pinned corpus, is a **family**: a set of checks, the
+manifest tables they read, and the files they generate. A binary registers its families at
+compile time. The core's own binary registers none, and a project that needs a family builds a
+binary that registers it. There is no loading at run time, because Rust has no stable ABI a
+plugin could be built against.
+
+The core calls a family at fixed points of the run, and each call sits in the phase its output
+belongs to, per `design@knowledge@phases-gate-the-report`:
+
+| call | when | what the family does |
+| ---- | ---- | -------------------- |
+| resolve | phase 1 | reads the tables it claims; a complaint is a finding of the phase |
+| generated paths | before the walk | names the files it generates, which the walk leaves out and reads as committed |
+| assert the tree | phase 2 | reports a declared path that does not exist |
+| prepare | once phases 1 to 3 passed | reads what its checks need for one tree, and may fail the run as could-not-run |
+| check | phase 4 | its checks, with the count lines and the not-run names its summary prints |
+| judge a message | `commits` | the rules a commit message is judged by, against that commit's prepared tree |
+| generate | `index`, and phase 4 | the contents of the files it generates |
+| dump | `model` | its observation rows |
+
+**A family is configured once per manifest and prepared once per tree.** `commits` judges several
+trees in one run, and a message is judged against what its own commit's tree holds, so the
+prepared state belongs to the tree and not to the family. A parent tree, assembled for its entity
+table alone, prepares no family.
+
+**A family reads the tree through the core.** Over the checkout it may read the filesystem under
+the root, because a subject such as a vendored corpus is filesystem state, per
+`design@knowledge@model-then-checks`. Over a commit it reads git objects only, through the same
+batch reader the core assembles that tree with, which also names each blob so that a family can
+cache what it parsed from one blob across commits.
+
+**The core's summary prints its own count lines, then each family's**, and the list of checks
+performed names the core's checks, then each family's.
+
+### A family scans the core's parse on its own, and the core's model carries nothing for it `##an-extension-builds-its-own-model`
+
+The core's model holds what the walk read and the parse produced, and the observations the core's
+checks read. It has no field that exists for a family. A family reads the parse through the core's
+public API: each document's text, its prose regions and scopes, which spans are code, the Rust
+names, the inert lines and the fences. It scans a second time and keys what it finds by document,
+in the model it was given.
+
+This is what keeps the core free of any one project's subject, which
+`goal@knowledge@documentation-half-publishes-alone` requires. A model generic over a family's
+observation type would carry a type parameter into every check signature for the same data, and
+a type-erased slot per document would hold it inside the core with no type checking; both are in
+`path@knowledge@docs/rejected-alternatives.md`.
+
+**The cost is one more scan per family.** Each document is still read once and parsed once, per
+`design@knowledge@model-then-checks`. The cost of the second scan is not measured.
+
+**A family cannot add a kind to the entity table.** A reference kind is the core's, so a family's
+subject cannot be cited as `<kind>@<anchor>@<id>`. Nothing needs that today, and
+`path@knowledge@docs/tripwires.md` names the event that would.
+
+### A family claims the manifest tables it reads, and the core refuses a table nobody claims `##a-family-claims-its-manifest-tables`
+
+The core parses the tables it owns. Every other top-level table goes to the registered family
+that claims it. A table that no registered family claims is a phase-1 finding, and so is a table a
+registered family claims that the manifest does not hold.
+
+**Both refusals serve `design@knowledge@the-regime-has-no-opt-out`.** An unclaimed table is a
+declaration nothing reads, which a session would take for a regime in force. A missing claimed
+table would let a manifest switch a family off by leaving its table out. So the binary decides
+which families run over a tree, and the manifest cannot remove one: the core binary run over a
+manifest that declares `[rules]` reports the table as unclaimed, rather than skipping the regime
+in silence.
+
+**A table keeps the family's own name at the top level.** A namespace for extension tables is in
+`path@knowledge@docs/rejected-alternatives.md`.
 
 ### A parse that cannot be trusted is reported, never silent `##a-failed-parse-is-loud`
 
@@ -311,9 +389,9 @@ configuration and a list of complaints, each in the shape a finding takes, and e
 is the first phase of a run, per `design@knowledge@phases-gate-the-report`. What a complaint is
 about is not in the configuration: a refused register is no register, a refused anchor is no
 anchor, a refused row is not in its list, so nothing acts on it and its consequences are never
-reported as defects of the tree. The one table with no default is `[rules]`: a corpus path the
-tool refuses fails the load, naming the row, because a path kept as spelled would be joined and
-read.
+reported as defects of the tree. A family's tables follow the same rule, per
+`design@knowledge@a-family-claims-its-manifest-tables`: its complaints are phase-1 findings, and a
+run that holds one stops before the family reads anything.
 
 ### A heading register's home is `<dir>.md` or a `<dir>/` directory, never both `##heading-register-two-shapes`
 
@@ -585,7 +663,7 @@ migration. It would also mean every pointer written in an older form stops being
 nothing saying so, and a silent false negative is the failure this tool exists to prevent. The
 candidate rule that bounds this is `design@knowledge@candidate-rule-and-retired-forms`.
 
-### A backticked `@` span is a reference candidate when its head is a kind or an anchor, the two retired forms stay findings, and every other span is silent `##candidate-rule-and-retired-forms`
+### A backticked `@` span is a reference candidate when its head is a kind or an anchor, the retired slug reference stays a finding, and every other span is silent `##candidate-rule-and-retired-forms`
 
 The scanner records every backticked span that holds an `@` and no whitespace, backtick or
 angle bracket, as written; it has no manifest, so it cannot tell a kind from an email address.
@@ -601,14 +679,15 @@ rule, because widening it to "any span with two `@`" would report every email ad
 plus tag. `path@knowledge@docs/tripwires.md` guards the gap: a review finding a reference the scanner
 reported nothing for widens the rule to the shape found.
 
-**The two retired forms are findings, permanently.** A backticked `<word>#<word>` and a bare `R`
-followed by digits each name the form they were. Neither has an `@` and neither has two path
-segments, so without this clause a slug reference or a register number the migration missed
-would be silent, which is the founding failure class. The clause does not expire with the
-migration: the argument of `design@knowledge@a-slug-is-a-heading`, that a retired form must stay
-visible or the migration is unfinishable, applies to both. The register number is read in every
-prose region, a Rust comment included: a comment is prose, and a type parameter is code the
-scanner never sees.
+**The retired slug reference is a finding, permanently.** A backticked `<word>#<word>` names the
+form it was. It has no `@` and no two path segments, so without this clause a slug reference the
+migration missed would be silent, which is the founding failure class. The clause does not expire
+with the migration: the commit history is read by every session that runs `git log`, it holds
+the form, and a reference copied out of it would be checked by nothing.
+
+**The interpretation register's old entry numbers are not read.** They were thaum's own, and a
+lint naming them would belong to thaum's family rather than to the core; the migration they served
+is finished. Keeping that lint permanently is in `path@knowledge@docs/rejected-alternatives.md`.
 
 **A reference is live wherever it is prose, fenced blocks included, for every kind.** A sketch
 names what it names on purpose, and an illustration writes a placeholder in angle brackets,
@@ -771,11 +850,16 @@ react to it. Read as prose each one is a live claim, and hiding each behind a na
 be interpolated made the tests harder to read than the code they test. Comments stay prose
 because the test modules point at decisions and paths for real, and those pointers stay checked.
 
-**The directory is compiled in, never declared.** The `knowledge` binary crate evaluates
-`CARGO_MANIFEST_DIR` at build time, and that is the component's directory exactly. The alias in
-`path@thaum@.cargo/config.toml` builds the binary from the checkout on every invocation, so the
-compiled path is the tree being checked. The binary hands the path to the walk, and the
-`documentation` library bakes nothing in. The root and the compiled path are canonicalised before
+**The directories are compiled in, never declared.** The tool's source spans one Component per
+binary: the core's, and the Component of each family the binary registers. Each library exports
+the directory of the Component it belongs to, the parent of its own `CARGO_MANIFEST_DIR`
+evaluated at build time, and the binary hands the list of its libraries' directories to the walk.
+A library's own directory would not do: the core library's leaves the core's binary and tests
+outside it, and a binary sees only the libraries it depends on. The alias in
+`path@thaum@.cargo/config.toml` builds the binary from the checkout on every invocation, so each
+compiled path is the tree being checked. Once the core is consumed as a published crate, its
+directory is outside the tree and exempts nothing, which is correct: its source is then not part
+of the tree. The root and the compiled path are canonicalised before
 the prefix test, so a symlinked checkout does not defeat it; a symlink inside the tree is not
 followed. A manifest row is not an option, because a row can be pointed at any directory, which
 is the shape `design@knowledge@the-regime-has-no-opt-out` exists to refuse: only the checker's own source
@@ -783,8 +867,8 @@ can ever be exempt, and it is exempt by construction. The row's entry is in
 `path@knowledge@docs/rejected-alternatives.md`.
 
 **The failure is loud.** A binary built from one checkout and run against another finds no file
-under its compiled path, exempts nothing, and reports the tool's fixtures as citations. The
-summary block names the checker's directory, relative to the root when it sits under it and
+under its compiled paths, exempts nothing, and reports the tool's fixtures as citations. The
+summary block names each of the checker's directories, relative to the root when it sits under it and
 absolute otherwise, even when the compiled directory no longer exists, and prints the count of
 Rust files it covered, so the state is visible in every run. The directory exempts files only when it sits inside the tree being
 checked: a tree that sits inside it instead, such as a mock project under
