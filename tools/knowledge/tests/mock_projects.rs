@@ -279,7 +279,6 @@ fn a_fenced_illustration_is_neither_a_definition_nor_a_reference_in_a_real_file(
     );
     let retired = observed(|o| match o {
         Observation::Retired(RetiredForm::SlugRef(s)) => Some(s.clone()),
-        Observation::Retired(RetiredForm::RegisterNumber(n)) => Some(format!("R{n}")),
         _ => None,
     });
     assert_eq!(retired, Vec::<String>::new());
@@ -551,12 +550,12 @@ mod planted {
         ("citations", Planted::InRun(5), "no rule says this"),
         // One reference of each shape the resolver tells apart — dangling, unknown anchor,
         // two and four segments, an anchor and a reserved anchor in kind position, the two
-        // retired slug shapes, a retired entry number — and the path shapes: a dangling one,
+        // retired slug shapes — and the path shapes: a dangling one,
         // the unanchored bare form, a wrong kind claim, an escape that resolves here, a root
         // pointer reaching inside the component, a generic pointer nothing carries, a
         // dangling tripwire reference, a link outside a navigation home, and the retired `@`
         // escape with its empty head. The definition-site findings are `registers`'.
-        ("references", Planted::InRun(18), "is referenced"),
+        ("references", Planted::InRun(17), "is referenced"),
         // One defect per shape assertion over what is there: a missing index, an undeclared
         // kind, a missing owed subsection, an undeclared group, a file of another suffix, and
         // frontmatter that does not parse. Whether a home EXISTS is phase 2, and the
@@ -846,7 +845,7 @@ mod planted {
     }
 
     #[test]
-    fn each_retired_form_is_reported_as_what_it_was() {
+    fn the_retired_slug_form_is_reported_as_what_it_was_and_a_bare_entry_number_is_not() {
         let qualified = one("`planted#twice-defined` is the retired slug reference form");
         assert!(
             qualified.starts_with("notes/structure.md:17"),
@@ -854,8 +853,11 @@ mod planted {
         );
         let bare = one("`#unqualified-anchor` is the retired slug reference form");
         assert!(bare.starts_with("notes/structure.md:19"), "{bare}");
-        let number = one("`R99` is the retired interpretation entry number form");
-        assert!(number.starts_with("notes/structure.md:21"), "{number}");
+        let all = findings();
+        assert!(
+            !all.iter().any(|f| f.starts_with("notes/structure.md:21")),
+            "{all:#?}"
+        );
     }
 
     #[test]

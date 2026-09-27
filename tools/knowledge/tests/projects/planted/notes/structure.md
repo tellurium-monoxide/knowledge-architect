@@ -18,7 +18,7 @@ The retired slug form, qualified: `planted#twice-defined`.
 
 The retired slug form, unqualified: `#unqualified-anchor`.
 
-The retired entry number: R99.
+A bare entry number, which nothing reads any more: R99.
 
 A pointer that resolves, across a boundary: `design@widget@widget-decision`.
 

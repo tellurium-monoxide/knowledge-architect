@@ -9,9 +9,9 @@
 //! is not defined there. The argument is `design@knowledge@a-slug-belongs-to-a-component`.
 //!
 //! **Nothing pointer-shaped passes unregistered.** A span with no `@` that is shaped like a
-//! path is reported as unanchored, and the two forms the grammar retired — `` `<word>#<word>` ``
-//! and a bare `R` with digits — are reported as what they were, so a pointer the migration
-//! missed is a finding rather than silence. The candidate rule and the retired-form lint are
+//! path is reported as unanchored, and the slug reference the grammar retired,
+//! `` `<word>#<word>` ``, is reported as what it was, so a pointer the migration missed or
+//! copied out of the commit history is a finding rather than silence. The candidate rule and the retired-form lint are
 //! `design@knowledge@candidate-rule-and-retired-forms`.
 //!
 //! **The definition-site findings are not this family's.** Misplaced, malformed and duplicate
@@ -119,14 +119,6 @@ pub fn judge(
                     format!("`{span}` is the retired slug reference form"),
                     "write `design@<component>@<slug>`; the form with a `#` is no longer read \
                      as a reference",
-                )),
-                Observation::Retired(RetiredForm::RegisterNumber(n)) => out.push(Finding::at(
-                    &doc.rel,
-                    l.line,
-                    format!("`R{n}` is the retired interpretation entry number form"),
-                    "a bare `R` and digits is no longer read as a reference: a mention names \
-                     the entry in the `<kind>@<anchor>@<id>` grammar, and an entry's own \
-                     heading loses the number when the register becomes one file per entry",
                 )),
                 // Markdown documents only: in Rust prose a markdown link is rustdoc's
                 // mechanism, resolved by rustdoc against the crate namespace, and this
@@ -884,25 +876,19 @@ mod tests {
     }
 
     #[test]
-    fn the_retired_forms_are_findings_naming_what_they_were() {
+    fn the_retired_slug_form_is_a_finding_naming_what_it_was() {
         let (found, counts) = checked(
             &manifest(),
             "`a-project#a-decision`, `#a-decision` and R15\n",
             &[],
         );
-        assert_eq!(found.len(), 3, "{found:#?}");
+        assert_eq!(found.len(), 2, "a bare R and digits is not one: {found:#?}");
         assert_eq!(
             found
                 .iter()
                 .filter(|f| f.contains("retired slug reference form"))
                 .count(),
             2,
-            "{found:#?}"
-        );
-        assert!(
-            found
-                .iter()
-                .any(|f| f.contains("`R15` is the retired interpretation entry number form")),
             "{found:#?}"
         );
         assert_eq!(counts.references, 0, "a retired form is not a reference");

@@ -67,8 +67,8 @@ Seven are modules under `path@knowledge@documentation/src/check/`. `corpus` is t
 over the vendored text and its archive, which reads the filesystem rather than the model, and
 `changes` reads the changelog; both are run by the binary beside `check::run`. `references` judges
 every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a register kind against the
-entries its home defines, the `path` kind against the tree — and reports the two retired forms and
-the unanchored path shape. `registers` judges the shape of what each anchor carries: a file
+entries its home defines, the `path` kind against the tree — and reports the retired slug
+reference form and the unanchored path shape. `registers` judges the shape of what each anchor carries: a file
 register's README, index, groups and entry shapes, and a directory home's links. A check the tree
 gives no input to is printed as not run rather than counted. There is no way to select a subset:
 the checks cross the phases, and a run over a passing tree costs under a second. The argument is

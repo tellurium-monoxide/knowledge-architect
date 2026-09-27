@@ -409,9 +409,6 @@ fn describe(what: &Observation) -> (&'static str, String) {
         Observation::Retired(crate::scan::RetiredForm::SlugRef(span)) => {
             ("retired-slug-ref", span.clone())
         }
-        Observation::Retired(crate::scan::RetiredForm::RegisterNumber(n)) => {
-            ("retired-register-number", format!("R{n}"))
-        }
         Observation::Link(target) => ("link", target.clone()),
     }
 }
@@ -466,7 +463,7 @@ mod tests {
     }
 
     /// A span parsing as no reference keeps its raw text and is a different kind, and so
-    /// does each retired form.
+    /// does the retired slug form. A bare `R` and digits is no observation at all.
     #[test]
     fn an_unanchored_path_and_a_retired_form_dump_as_their_own_kinds() {
         let model = Model::from_documents(vec![(
@@ -482,10 +479,7 @@ mod tests {
             dump.contains("src/b.rs\t1\tretired-slug-ref\ta-component#a-slug\n"),
             "{dump}"
         );
-        assert!(
-            dump.contains("src/b.rs\t1\tretired-register-number\tR15\n"),
-            "{dump}"
-        );
+        assert!(!dump.contains("R15"), "{dump}");
         assert!(
             !dump.contains("@a-slug"),
             "no separator was invented: {dump}"

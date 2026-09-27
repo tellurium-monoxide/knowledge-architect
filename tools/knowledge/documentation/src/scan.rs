@@ -16,7 +16,7 @@
 //! **The scanner tokenizes references and does not resolve them.** A backticked span holding
 //! an `@` is recorded as written; whether its head is a kind or an anchor is a fact about the
 //! project, which `entity::candidate` reads with the manifest in hand. What the scanner does
-//! decide on its own is shape: a slug definition and where it sits, the two retired forms,
+//! decide on its own is shape: a slug definition and where it sits, the retired slug form,
 //! and the unanchored path lint, none of which needs the manifest.
 
 use std::sync::LazyLock;
@@ -79,9 +79,9 @@ pub enum Observation {
     /// a pointer no check resolves and no reader is told about, which is how the retired bare
     /// form dangled silently through one relocation.
     UnanchoredPath(String),
-    /// One of the two reference forms the `@` grammar retired.
+    /// A reference form the `@` grammar retired.
     ///
-    /// Reported, never ignored: neither has an `@`, so without this a pointer the migration
+    /// Reported, never ignored: it has no `@`, so without this a pointer the migration
     /// missed would be silent, which is the founding failure class.
     Retired(RetiredForm),
     /// A markdown link's target, as written.
@@ -109,8 +109,6 @@ pub enum SlugSite {
 pub enum RetiredForm {
     /// `` `<word>#<word>` ``, the slug reference before kinds existed. The span as written.
     SlugRef(String),
-    /// A bare `R` followed by digits, the interpretation entry number.
-    RegisterNumber(u16),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -202,8 +200,6 @@ static AT_SPAN: LazyLock<Regex> =
 /// names a nearby directory, the way a bare filename names a file, and neither is a pointer.
 static PATH_SHAPED: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"`([\w.*+-]*/[\w.*/+-]*)`").unwrap());
-/// The retired interpretation entry number: a bare `R` and up to three digits.
-static RETIRED_R: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"R(\d{1,3})\b").unwrap());
 /// A markdown link: `[text](target)`. The target may not hold a space or a closing
 /// parenthesis, which is the shape every link in this tree has.
 static MD_LINK: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\[[^\]]*\]\(([^)\s]+)\)").unwrap());
@@ -408,19 +404,6 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                         id: c[1].to_string(),
                         site,
                     });
-                }
-            }
-            // The retired entry number, in every prose region. The observation it replaces
-            // read markdown alone, so a number in a Rust comment was checked by nothing;
-            // a comment is prose, and a type parameter is code the scanner never sees.
-            for c in RETIRED_R.captures_iter(line) {
-                let start = c.get(0).unwrap().start();
-                let before = line[..start].chars().next_back();
-                if before.is_some_and(|c| c.is_alphanumeric() || c == '_' || c == '.') {
-                    continue;
-                }
-                if let Ok(n) = c[1].parse() {
-                    push(Observation::Retired(RetiredForm::RegisterNumber(n)));
                 }
             }
             // A markdown link is a pointer a renderer follows, recorded as written. A fenced
@@ -903,7 +886,7 @@ mod tests {
     #[test]
     fn a_fence_suppresses_a_definition_and_leaves_every_reference_live() {
         // A fenced heading is an illustration, so a fenced slug defines nothing and is not
-        // misplaced either. A fenced REFERENCE is live for every kind, the retired forms
+        // misplaced either. A fenced REFERENCE is live for every kind, the retired slug form
         // included: a sketch names what it names on purpose, and an illustration writes a
         // placeholder in angle brackets. Mutation checked: dropping the `illustration` test
         // from the definition arm records the fenced heading as a definition.
@@ -911,10 +894,10 @@ mod tests {
                       `a-component#a-slug` and R15 and `docs/a.md`\n```\nafter\n";
         assert_eq!(defs(fenced), Vec::new(), "{:#?}", scan_md(fenced));
         assert_eq!(spans(fenced), vec!["design@a-component@a-slug".to_string()]);
-        let seen = retired(fenced);
-        assert_eq!(seen.len(), 2, "{seen:?}");
-        assert!(seen.contains(&RetiredForm::SlugRef("a-component#a-slug".to_string())));
-        assert!(seen.contains(&RetiredForm::RegisterNumber(15)));
+        assert_eq!(
+            retired(fenced),
+            vec![RetiredForm::SlugRef("a-component#a-slug".to_string())]
+        );
         assert_eq!(unanchored(fenced), vec!["docs/a.md".to_string()]);
         // The same heading outside the fence is a definition.
         assert_eq!(defs("### A head `##a-slug`\n").len(), 1);
@@ -972,27 +955,15 @@ mod tests {
     }
 
     #[test]
-    fn the_retired_entry_number_is_a_bare_r_and_digits_outside_a_word() {
-        let text = "R15 holds, but CR:104.4b and FOR15 and 1.R3 and R2D2 and cr_R15 do not";
-        assert_eq!(retired(text), vec![RetiredForm::RegisterNumber(15)]);
-        // Inside a code span too: the number in backticks was read as a citation before
-        // the grammar, so the retired form is reported there as well.
-        assert_eq!(
-            retired("see `R15` here"),
-            vec![RetiredForm::RegisterNumber(15)]
-        );
-        // In a Rust comment as in markdown: a comment is prose, and a number there names
-        // the same retired entry. Code is not prose, so a type parameter is not read.
-        let comment = scan_rs("/// per R15\nfn f<R15>() {}\n");
-        assert_eq!(
-            comment
-                .iter()
-                .filter(|o| matches!(o, Observation::Retired(_)))
-                .count(),
-            1,
+    fn a_bare_r_and_digits_is_not_a_retired_form_in_any_prose() {
+        // The interpretation register's old entry number is thaum's own, and its migration is
+        // finished; the core reads it as nothing, in markdown, in a code span and in a comment.
+        assert_eq!(retired("R15 holds, and `R15` here"), Vec::new());
+        let comment = scan_rs("/// per R15\nfn f() {}\n");
+        assert!(
+            !comment.iter().any(|o| matches!(o, Observation::Retired(_))),
             "{comment:?}"
         );
-        assert!(scan_rs("fn f<R15>() {}\n").is_empty());
     }
 
     #[test]
