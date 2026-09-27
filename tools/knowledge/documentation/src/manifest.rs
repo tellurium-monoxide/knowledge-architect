@@ -496,8 +496,8 @@ impl Manifest {
 
 /// Refuse a manifest still written in the retired grammar, naming what replaces each key.
 ///
-/// `deny_unknown_fields` would refuse both anyway, and its message names the key and nothing
-/// else. A manifest is edited by hand once per project, so the one moment either key is met is
+/// Both would be refused anyway — an unknown top-level table as unclaimed in phase 1, a key of
+/// `[project]` by its `deny_unknown_fields` — and neither message names what replaces it. A manifest is edited by hand once per project, so the one moment either key is met is
 /// the moment the reader needs the replacement named.
 fn retired_keys(text: &str) -> Result<(), String> {
     let value: toml::Value = toml::from_str(text).map_err(|e| e.to_string())?;

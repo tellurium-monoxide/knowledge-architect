@@ -77,9 +77,9 @@ pub fn skipped(rel: &Path, walk: &Walk) -> bool {
 /// conformant with whatever it declared — `suffixes = []` passes every citation check — which
 /// is the same argument `design@knowledge@components-carry-the-same-documents` makes about the document set.
 ///
-/// Nothing is left unchecked by narrowing it. `check::uncovered` asserts the inverse, that a
-/// file outside the walk may not name a rule, so a citation written in a manifest or a script
-/// is a finding rather than a silence.
+/// A file outside the walk is not lost to every check by narrowing it: the survey hands each one,
+/// with its text, to the checks as `Inputs::outside`, so an extension can assert the inverse —
+/// thaum's rules extension asserts that such a file names no rule.
 pub const LIVE_SUFFIXES: [&str; 2] = ["md", "rs"];
 
 fn is_live(rel: &Path, walk: &Walk) -> bool {

@@ -30,7 +30,7 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding
                 &doc.rel,
                 1,
                 trouble.clone(),
-                "nothing here is verified; fix the source, or the citations in it are unchecked",
+                "nothing here is verified; fix the source, or what it says is checked by nothing",
             ));
         }
     }

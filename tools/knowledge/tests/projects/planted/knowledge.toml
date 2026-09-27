@@ -19,7 +19,5 @@ registers = ["issue"]
 [walk]
 # Not a git repository, so there is no `.git` to skip and none is declared.
 skip-dirs = []
-# The rules text is not a citation of itself, and the changelog pins its own release per
-# section, so both are read by the family that owns them rather than by the walk.
 skip-files = []
 exclude = []

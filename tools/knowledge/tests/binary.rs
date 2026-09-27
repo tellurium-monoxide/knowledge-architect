@@ -4,7 +4,7 @@
 //! Each test runs against a mock project under `path@knowledge@tests/projects/`, which this
 //! repository's manifest excludes from its own walk, so the binary finds that project by walking
 //! up from the working directory exactly as it would find any other. The tests of the binary
-//! with the rules extension, over projects with a corpus, are `path@knowledge@tests/binary.rs`.
+//! with the rules extension, over projects with a corpus, are `path@rules-corpus@tests/binary.rs`.
 
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -159,12 +159,7 @@ fn copy_dir(from: &Path, to: &Path) {
     }
 }
 
-/// The claim: a run over a tree the walk could not read completely reports that phase alone,
-/// whatever was asked for, and no later finding prints.
-///
-/// The `unsound` project plants one defect per phase-2 assertion, and behind them the
-/// phase-3 ones; a run stops at phase 2, so nothing can hide the unread file. Every phase-4
-/// planted defect is `planted`'s, which reaches phase 4 because it is clean before it.
+/// The smallest conformant mock, which declares no table the core does not own.
 fn mock() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/projects/core")
 }
@@ -179,20 +174,6 @@ fn check(dir: &Path) -> (i32, String) {
         out.status.code().unwrap_or(-1),
         String::from_utf8_lossy(&out.stdout).to_string(),
     )
-}
-
-/// Copy a directory tree, files only.
-fn copy(from: &Path, to: &Path) {
-    std::fs::create_dir_all(to).expect("a directory");
-    for entry in std::fs::read_dir(from).expect("a readable directory") {
-        let entry = entry.expect("an entry");
-        let target = to.join(entry.file_name());
-        if entry.file_type().expect("a type").is_dir() {
-            copy(&entry.path(), &target);
-        } else {
-            std::fs::copy(entry.path(), &target).expect("a copy");
-        }
-    }
 }
 
 fn git(dir: &Path, args: &[&str]) {
@@ -221,7 +202,7 @@ fn the_core_binary_refuses_a_table_no_extension_of_it_claims() {
     // so the copy is its own repository.
     let dir = std::env::temp_dir().join(format!("knowledge-core-claims-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
-    copy(&mock(), &dir);
+    copy_dir(&mock(), &dir);
     let manifest = dir.join("knowledge.toml");
     let mut text = std::fs::read_to_string(&manifest).expect("the mock manifest");
     text.push_str(
@@ -486,12 +467,6 @@ fn tiny_project(history: &History, additional_trackers: bool) {
     );
 }
 
-/// The claim: a project written this way has nothing wrong with it, so a commit over it is
-/// judged and contributes no finding of its tree.
-///
-/// Every test below reads a planted finding out of a run whose other findings are none. With
-/// a tree that failed, every commit would carry its tree's findings and each test's counts
-/// would be counts of the fixture.
 /// The claim: a definition-site defect alone stops the run at phase 3, and the references
 /// that would dangle because of it are not judged.
 #[test]
@@ -665,6 +640,10 @@ fn the_verdict_counts_the_findings_it_printed() {
     );
 }
 
+/// The claim: `issues` prints one row per issue entry with the five columns in order, and each
+/// filter keeps only what it names.
+///
+/// Recorded mutation, `cargo mutate run` over `path@knowledge@documentation/src/cli/mod.rs`: turning the `--kind`
 /// filter's `is_none_or` into `is_some_and` empties every unfiltered listing, and turning the
 /// row's `metadata` cell into a constant makes every kind read alike. Both are caught here.
 #[test]
@@ -883,11 +862,8 @@ fn a_tracked_document_an_ignore_line_covers_is_walked_and_reported() {
     assert!(walked_count(&after) > 0, "{after}");
 }
 
-/// The claim: a `.gitignore` below the root decides the walk too.
-///
-/// The matcher this replaced read the root file alone, so a document under a nested ignore was
-/// walked and its planted defect reported. Both halves are asserted, because a test that only
-/// showed the silence would pass over a walk that had stopped reading anything at all.
+/// The claim: a name holding a line break is one finding, on one line, and the file is read by
+/// nothing; a `skip-files` row keeps it.
 #[test]
 fn a_name_holding_a_newline_is_one_finding_on_one_line_and_its_contents_are_read_by_nothing() {
     // The reproduction the issue named: a markdown file whose name holds a newline, holding a
@@ -922,6 +898,11 @@ fn a_name_holding_a_newline_is_one_finding_on_one_line_and_its_contents_are_read
     assert!(!out.contains("notes/a"), "{out}");
 }
 
+/// The claim: a `.gitignore` below the root decides the walk too.
+///
+/// The matcher this replaced read the root file alone, so a document under a nested ignore was
+/// walked and its planted defect reported. Both halves are asserted, because a test that only
+/// showed the silence would pass over a walk that had stopped reading anything at all.
 #[test]
 fn a_nested_gitignore_is_honoured() {
     let ignored = Sandbox::seeded(

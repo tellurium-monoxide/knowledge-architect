@@ -30,8 +30,8 @@ reached.
 Four things follow, and each of them is something the implementation this replaced paid for.
 
 **The single walk is a property of the design rather than of anyone's care.** One run reads each
-live document once and parses it once. The core scans each line once, and each extension once more
-over the same parse, per `design@knowledge@an-extension-builds-its-own-model`. The implementation being replaced performed four tree
+live document once and parses it once. The core scans each line once; an extension scans the same
+parse again, as often as its checks need, per `design@knowledge@an-extension-builds-its-own-model`. The implementation being replaced performed four tree
 walks and 311 file reads over 104 documents per run, then spawned its citation checker twice more to
 do it again.
 
@@ -61,7 +61,7 @@ phases, each of the first three building one input of the next:
 | phase | produced by | what it reports |
 | ----- | ----------- | --------------- |
 | 1 | `Manifest::parse`, and each extension's resolution of its tables | a declaration the tool refused, which is then absent from the configuration |
-| 2 | `check::tree`, and each extension's assertion of its declared paths | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out |
+| 2 | `check::tree`, over the core's declared paths and the paths each extension declares | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out |
 | 3 | `Entities::build` | a slug or an entry id where none may sit, or defined twice |
 | 4 | every check, the core's and each extension's | everything computed over a complete model |
 
@@ -146,8 +146,12 @@ observation type would carry a type parameter into every check signature for the
 a type-erased slot per document would hold it inside the core with no type checking; both are in
 `path@knowledge@docs/rejected-alternatives.md`.
 
-**The cost is one more scan per extension.** Each document is still read once and parsed once, per
-`design@knowledge@model-then-checks`. The cost of the second scan is not measured.
+**The cost is the extension's own scans.** Each document is still read once and parsed once, per
+`design@knowledge@model-then-checks`, and an extension scans the parse as often as its checks
+need: thaum's rules extension scans each document in each check that reads it. Over this
+repository that costs 0.07 s per `check`, measured when the scan moved out of the core with
+`cargo knowledge check` timed three times before and after. A measurement that grows to a share
+of the run comparable with the walk and the parse reopens caching the scan inside the extension.
 
 **An extension cannot add a kind to the entity table.** A reference kind is the core's, so an extension's
 subject cannot be cited as `<kind>@<anchor>@<id>`. Nothing needs that today, and
@@ -698,7 +702,7 @@ the form, and a reference copied out of it would be checked by nothing.
 
 **The interpretation register's old entry numbers are not read.** They were thaum's own, and a
 lint naming them would belong to thaum's extension rather than to the core, and the migration they
-served is finished, so deleting the lint was a smaller change than moving it. Keeping that lint permanently is in `path@knowledge@docs/rejected-alternatives.md`.
+served is finished. Keeping that lint permanently is in `path@knowledge@docs/rejected-alternatives.md`.
 
 **A reference is live wherever it is prose, fenced blocks included, for every kind.** A sketch
 names what it names on purpose, and an illustration writes a placeholder in angle brackets,

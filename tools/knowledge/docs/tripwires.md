@@ -74,6 +74,18 @@ Open a `defect` carrying the path the line names and the checkout's. Reopen the 
 the mismatch is one the cargo alias cannot prevent, since the alias is what the decision rests on.
 **Re-entry:** standing.
 
+## Guarding `design@knowledge@checker-source-literals-are-data`' whole-source scope `##checker-source-literals-are-data-whole-source-scope`
+
+**Fires when:** a review finds a string literal in the tool's non-test source that cites a rule:
+a `CR:` marker followed by a rule number written out, with a sentence around it that says
+something about the rule. A message that interpolates the number it names, and the marker
+pattern itself in the scanner, do not fire it. The rules-reviewer's data check is where it
+surfaces: nothing mechanical reads that literal any more.
+**Response:** the whole-source scope gave that citation up on a count of zero. Either move the
+citation into the comment above the literal, or reopen the scope half of the decision and narrow
+it to test modules, which costs an attribute lookup in the extractor.
+**Re-entry:** standing.
+
 ## Guarding `design@knowledge@checker-source-literals-are-data`' purpose `##checker-source-literals-are-data-purpose`
 
 **Fires when:** a test module of the tool gains a named constant whose only use is to be

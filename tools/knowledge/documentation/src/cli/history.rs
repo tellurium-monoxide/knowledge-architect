@@ -1,9 +1,9 @@
-//! Commit messages under the citation regime, judged by `commits` over a range.
+//! Commit messages under the regime, judged by `commits` over a range.
 //!
 //! **A commit message is a document.** It is parsed as one markdown document — the subject
-//! line, the blank line and the body — and every rule of the regime runs over it: a `CR:`
-//! marker owes its quote inside the message within the distance rule, every reference resolves
-//! through the entity table, and the missing-marker lint reads it as it reads any other prose.
+//! line, the blank line and the body — and every rule of the regime runs over it: every
+//! reference resolves through the entity table, and each registered extension judges it against
+//! the tree it prepared for that commit.
 //! The decision, and why a message is judged against a tree read from git objects rather than
 //! against the working tree, is `design@knowledge@a-commit-message-is-a-document`.
 //!

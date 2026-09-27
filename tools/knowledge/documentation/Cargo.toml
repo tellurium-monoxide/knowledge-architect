@@ -1,6 +1,6 @@
 [package]
 name = "documentation"
-description = "This repository's own documents: the walk, the model, and every check over it."
+description = "A project's documents: the walk, the model, and the core's checks over it."
 version.workspace = true
 edition.workspace = true
 publish.workspace = true

@@ -2,7 +2,7 @@
 
 **Nothing about this repository is compiled into the tool.** Every list a check reads comes from
 `path@thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
-root — so the same binary checks this repository and a mock project under
+root — so one binary checks this repository and a mock project under
 `path@knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says so
 there, in one place, with a reason beside it. What is compiled in is the directory of each
 Component a binary's libraries belong to — `documentation::component_dir` for the core,

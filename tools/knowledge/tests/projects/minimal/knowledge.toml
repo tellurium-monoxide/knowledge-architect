@@ -36,8 +36,6 @@ dir = "decisions"
 
 [walk]
 skip-dirs = ["build"]
-# The rules text is not a citation of itself. No row names the rule index: the tool derives
-# every generated file from this manifest, and a test of `index` removes the committed one from
-# its copy to watch it be created.
+# No row names a file-register index: the tool derives every generated file from this manifest.
 skip-files = ["notes/generated.md"]
 exclude = ["vendor"]

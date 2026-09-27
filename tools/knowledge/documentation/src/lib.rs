@@ -1,4 +1,4 @@
-//! This repository's own documents: the walk, the model, and every check over it.
+//! A project's documents: the walk, the model, and the core's checks over it.
 //!
 //! The shape is one model built once, then checks that are pure functions over it. A check
 //! never touches the filesystem, spawns a process, or knows how the walk works — which is

@@ -310,6 +310,9 @@ fn every_committed_index_is_what_the_generator_writes() {
 }
 
 /// The core's rows carry the line of the file they sit on.
+///
+/// The whole value is asserted, and the trailing newline is load-bearing: a `contains` over a
+/// field that is not terminated asserts a prefix, and passes against a value with more after it.
 #[test]
 fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
     let dump = model("minimal").canonical();
@@ -380,6 +383,9 @@ mod planted {
     /// Every planted defect this project carries, by the core check that reports it: the check,
     /// how many findings it produces, and a fragment of one. `every_check_has_a_row` reads
     /// `CHECKS` and demands a row for each, so a check with no planted defect fails there.
+    ///
+    /// The definition-site findings are not here: whether a home EXISTS is phase 2, and a slug
+    /// or an entry id where none may sit is phase 3, and both are `unsound`'s.
     const PLANTED: [(&str, usize, &str); 3] = [
         // One reference of each shape the resolver tells apart — dangling, unknown anchor,
         // two and four segments, an anchor and a reserved anchor in kind position, the two
@@ -399,6 +405,9 @@ mod planted {
 
     #[test]
     fn every_check_has_a_row_and_the_run_is_their_sum() {
+        // Read off `CHECKS` rather than off `PLANTED`, so a check added to the library with no
+        // planted defect fails here instead of being absent from both. And nothing is invented
+        // by running them together: the whole run is the sum of the rows.
         for name in CHECKS {
             assert!(
                 PLANTED.iter().any(|(n, _, _)| *n == name),
@@ -408,10 +417,11 @@ mod planted {
         let whole = findings_with(|_, _| HashMap::new());
         let planted: usize = PLANTED.iter().map(|(_, n, _)| n).sum();
         assert_eq!(whole.len(), planted, "{whole:#?}");
-        for (name, _, fragment) in PLANTED {
+        for (name, n, fragment) in PLANTED {
+            let hits = whole.iter().filter(|f| f.contains(fragment)).count();
             assert!(
-                whole.iter().any(|f| f.contains(fragment)),
-                "{name}: {fragment:?} in {whole:#?}"
+                (1..=n).contains(&hits),
+                "{name}: {hits} of {fragment:?}, expected 1 to {n}, in {whole:#?}"
             );
         }
     }
@@ -649,6 +659,11 @@ mod unsound {
     fn every_phase_two_assertion_has_a_planted_defect_and_nothing_else_is_reported() {
         let found = phase_two();
         assert!(one_of(&found, "could not be read as text").starts_with("notes/latin1.md:1"));
+        assert!(one_of(
+            &found,
+            "is declared in [walk] skip-files and does not exist"
+        )
+        .contains("notes/gone.md"));
         assert!(one_of(&found, "retired file shape").starts_with("docs/open-issues.md"));
         let home = one_of(&found, "carries no tripwire home");
         assert!(home.starts_with("parts/widget/docs/tripwires.md"), "{home}");
@@ -660,7 +675,7 @@ mod unsound {
             "the anchor `agent-config` carries no issue directory"
         )
         .starts_with("agent-config/open-issues"));
-        assert_eq!(found.len(), 4, "{found:#?}");
+        assert_eq!(found.len(), 5, "{found:#?}");
     }
 
     #[test]
