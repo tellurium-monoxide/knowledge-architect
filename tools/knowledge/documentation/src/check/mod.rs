@@ -261,7 +261,7 @@ pub fn run(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Report {
             let Some(release) = releases.get(&doc.pin) else {
                 continue;
             };
-            let exempt = manifest.lint().exempt_files.contains(&doc.rel);
+            let exempt = manifest.rules().exempt_files.contains(&doc.rel);
             let (found, c) = citations::check(doc, release, exempt);
             findings.extend(found);
             counts.fragments += c.fragments;
@@ -336,7 +336,6 @@ mod phase_tests {
         let text = format!(
             "[project]\nname = \"p\"\ncomponents = []\n\n{extra}\n\
              [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
         );
@@ -423,7 +422,6 @@ mod phase_tests {
         // are its four files, and the directory itself is asserted by nothing.
         let text = "[project]\nname = \"p\"\ncomponents = []\n\n\
                     [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n\n\
-                    [lint]\nexempt-files = []\n\n\
                     [rules]\ndir = \".\"\ntext = \"t\"\nbody-starts-at = 0\n\
                     version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         let m = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration");

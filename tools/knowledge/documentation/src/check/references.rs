@@ -581,7 +581,6 @@ mod tests {
     fn manifest() -> Manifest {
         let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration")

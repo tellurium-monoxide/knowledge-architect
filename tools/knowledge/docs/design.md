@@ -202,7 +202,8 @@ gives a project a kind, a shape and a home to be checked against; it cannot loos
 in, and it cannot exempt a document from anything. A manifest that declares no register is checked
 exactly as it was.
 
-**The one exemption path is `[lint] exempt-files`, and it names FILES rather than rules.** A file
+**The one exemption path is `[rules] exempt-files`, and it names FILES rather than rules.** It
+sits in the rules table because it exempts from the missing-marker lint alone. A file
 there is one that is leaving the tree, so the exemption expires with its subject; a rule held back
 would have applied to every file and expired with nothing. That asymmetry is the whole of it —
 exempting a document that is about to be deleted costs the guarantee nothing, and exempting a rule

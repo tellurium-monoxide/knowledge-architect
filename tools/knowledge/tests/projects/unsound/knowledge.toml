@@ -27,12 +27,10 @@ skip-dirs = []
 skip-files = ["corpus/CompRules.txt", "corpus/CHANGES.md"]
 exclude = []
 
-[lint]
+[rules]
 # PLANTED: `notes/gone.md` is not there. An exemption naming a file that does not exist is the
 # stale row this check reports — silent otherwise, and inherited by whatever is created there.
 exempt-files = ["notes/gone.md"]
-
-[rules]
 dir = "corpus"
 text = "CompRules.txt"
 body-starts-at = 0

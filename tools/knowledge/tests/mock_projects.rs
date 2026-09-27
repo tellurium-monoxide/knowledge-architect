@@ -1032,7 +1032,7 @@ mod unsound {
         assert!(one_of(&found, "could not be read as text").starts_with("notes/latin1.md:1"));
         assert!(one_of(
             &found,
-            "is declared in [lint] exempt-files and does not exist"
+            "is declared in [rules] exempt-files and does not exist"
         )
         .contains("notes/gone.md"));
         assert!(one_of(&found, "retired file shape").starts_with("docs/open-issues.md"));

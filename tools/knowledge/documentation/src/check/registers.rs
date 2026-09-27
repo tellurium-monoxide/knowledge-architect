@@ -561,8 +561,7 @@ mod tests {
              {extra}\n\
              [walk]\nskip-dirs = {skip_dirs}\nskip-files = {skip_files}\n\
              exclude = {exclude}\n\n\
-             [lint]\nexempt-files = {exempt}\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             [rules]\nexempt-files = {exempt}\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
         );
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")

@@ -383,7 +383,6 @@ mod tests {
     fn declaring() -> Manifest {
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration")
@@ -413,7 +412,6 @@ mod tests {
             "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              [registers.note]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"notes\"\n{metadata}\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
         );
@@ -607,7 +605,6 @@ mod tests {
         // sorted first: dropping the sort silently disarms it.
         let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/b\", \"parts/a\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         let manifest = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("declared");
@@ -647,7 +644,6 @@ mod tests {
              [registers.one]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"shared\"\n\n\
              [registers.two]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"shared\"\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         let manifest = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("declared");

@@ -1543,7 +1543,6 @@ fn tiny_project(history: &History, additional_trackers: bool) {
         &format!(
             "[project]\nname = \"tiny\"\ncomponents = []\n{retired}\n\
              [walk]\nskip-dirs = []\nskip-files = [\"corpus/CompRules.txt\"]\nexclude = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"corpus\"\ntext = \"CompRules.txt\"\nbody-starts-at = 0\n\
              version = \"VERSION\"\npast = \"past\"\nmanifest = \"past/MANIFEST.tsv\"\n"
         ),

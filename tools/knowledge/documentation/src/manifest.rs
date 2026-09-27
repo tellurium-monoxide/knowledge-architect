@@ -320,7 +320,7 @@ impl Walk {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields, rename_all = "kebab-case")]
-pub struct Lint {
+pub struct Rules {
     /// Files exempt from the missing-marker lint, by their project-relative PATH.
     ///
     /// **Not by name.** A bare name matched anywhere, so a second file with the same basename
@@ -328,11 +328,6 @@ pub struct Lint {
     /// verified.
     #[serde(default)]
     pub exempt_files: Vec<PathBuf>,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-#[serde(deny_unknown_fields, rename_all = "kebab-case")]
-pub struct Rules {
     pub dir: PathBuf,
     pub text: PathBuf,
     pub body_starts_at: usize,
@@ -350,7 +345,6 @@ struct Declared {
     #[serde(default)]
     registers: BTreeMap<String, RegisterDecl>,
     walk: Walk,
-    lint: Lint,
     rules: Rules,
 }
 
@@ -431,10 +425,6 @@ impl Manifest {
 
     pub fn walk(&self) -> &Walk {
         &self.declared.walk
-    }
-
-    pub fn lint(&self) -> &Lint {
-        &self.declared.lint
     }
 
     pub fn rules(&self) -> &Rules {
@@ -550,8 +540,8 @@ fn normalise_paths(declared: &mut Declared, complaints: &mut Vec<Finding>) -> Re
     normalise_list("[walk] skip-files", &mut walk.skip_files, complaints);
     normalise_list("[walk] exclude", &mut walk.exclude, complaints);
     normalise_list(
-        "[lint] exempt-files",
-        &mut declared.lint.exempt_files,
+        "[rules] exempt-files",
+        &mut declared.rules.exempt_files,
         complaints,
     );
     let rules = &mut declared.rules;
@@ -1145,8 +1135,7 @@ pub(crate) mod tests {
              {extra}\
              [walk]\nskip-dirs = {skip_dirs}\nskip-files = {skip_files}\n\
              exclude = {exclude}\n\n\
-             [lint]\nexempt-files = {exempt}\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             [rules]\nexempt-files = {exempt}\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
         );
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
@@ -1197,7 +1186,7 @@ pub(crate) mod tests {
         assert_eq!(m.walk().skip_dirs, vec![PathBuf::from("build")]);
         assert_eq!(m.walk().skip_files, vec![PathBuf::from("docs/index.md")]);
         assert_eq!(m.walk().exclude, vec![PathBuf::from("vendor")]);
-        assert_eq!(m.lint().exempt_files, vec![PathBuf::from("notes/x.md")]);
+        assert_eq!(m.rules().exempt_files, vec![PathBuf::from("notes/x.md")]);
     }
 
     #[test]
@@ -1311,7 +1300,11 @@ pub(crate) mod tests {
         );
         let complaints = whats(&m);
         assert_eq!(complaints.len(), 6, "{complaints:#?}");
-        for label in ["[walk] skip-files", "[walk] exclude", "[lint] exempt-files"] {
+        for label in [
+            "[walk] skip-files",
+            "[walk] exclude",
+            "[rules] exempt-files",
+        ] {
             assert!(
                 complaints.iter().any(|c| c.contains(label)),
                 "{label}: {complaints:#?}"
@@ -1349,7 +1342,7 @@ pub(crate) mod tests {
         let rules = |dir: &str, text: &str, version: &str, past: &str, manifest: &str| {
             format!(
                 "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
-                 skip-files = []\nexclude = []\n\n[lint]\nexempt-files = []\n\n[rules]\n\
+                 skip-files = []\nexclude = []\n\n[rules]\n\
                  dir = \"{dir}\"\ntext = \"{text}\"\nbody-starts-at = 0\nversion = \"{version}\"\n\
                  past = \"{past}\"\nmanifest = \"{manifest}\"\n"
             )
@@ -1445,7 +1438,6 @@ pub(crate) mod tests {
             "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              {body}\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
         );
@@ -1551,7 +1543,6 @@ pub(crate) mod tests {
         // is migrated once, and the message is the whole of what the migrator gets.
         let base = "[project]\nname = \"a\"\ncomponents = []\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         let e = Manifest::parse(
@@ -1570,6 +1561,24 @@ pub(crate) mod tests {
         let e =
             Manifest::parse(Path::new("/nowhere"), &with_trackers).expect_err("the retired key");
         assert!(e.contains("[locations."), "{e}");
+    }
+
+    #[test]
+    fn the_exemption_list_is_read_from_rules_and_a_lint_table_is_refused() {
+        // The list exempts from the missing-marker lint alone, so it belongs to the rules
+        // table; a `[lint]` table read as empty would drop every exemption it still holds.
+        let base = "[project]\nname = \"a\"\ncomponents = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        let m = Manifest::parse(Path::new("/nowhere"), base).expect("no list is an empty one");
+        assert!(m.rules().exempt_files.is_empty());
+        let e = Manifest::parse(
+            Path::new("/nowhere"),
+            &format!("{base}\n[lint]\nexempt-files = [\"notes/x.md\"]\n"),
+        )
+        .expect_err("the table the list left");
+        assert!(e.contains("lint"), "{e}");
     }
 
     #[test]

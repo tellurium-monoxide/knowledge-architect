@@ -635,7 +635,7 @@ pub fn run(
         // suppression list longer than the findings, which is the argument the exemption
         // already makes. That list is the only exemption path the regime has, and it names
         // FILES that are leaving the tree — never a rule, and never for the whole tree.
-        if manifest.lint().exempt_files.contains(&doc.rel) {
+        if manifest.rules().exempt_files.contains(&doc.rel) {
             continue;
         }
         let (judged, claims) = check(doc, release);

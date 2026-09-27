@@ -15,9 +15,6 @@ skip-dirs = []
 skip-files = ["corpus/CompRules.txt"]
 exclude = []
 
-[lint]
-exempt-files = []
-
 [rules]
 dir = "corpus"
 text = "CompRules.txt"

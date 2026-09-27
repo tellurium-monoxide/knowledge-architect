@@ -26,12 +26,10 @@ skip-dirs = []
 skip-files = ["corpus/CompRules.txt", "corpus/CHANGES.md"]
 exclude = []
 
-[lint]
+[rules]
 # The exemption names a file that is there; the stale row, naming one that is not, is
 # planted in the `unsound` project.
 exempt-files = ["notes/exempt.md"]
-
-[rules]
 dir = "corpus"
 text = "CompRules.txt"
 body-starts-at = 0

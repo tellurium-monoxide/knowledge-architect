@@ -16,14 +16,12 @@ skip-dirs = []
 skip-files = ["corpus/CompRules.txt"]
 exclude = []
 
-[lint]
+[rules]
 # Nothing here is exempt. The row named `notes/stale.md`, a file this project has never had,
 # and nothing exercised it; the exemption path is covered by `planted`, which has a file to
 # exempt and a test that it is not linted. Found when the check that every declared path
 # exists was written, which is the defect that check exists for.
 exempt-files = []
-
-[rules]
 dir = "corpus"
 text = "CompRules.txt"
 body-starts-at = 0

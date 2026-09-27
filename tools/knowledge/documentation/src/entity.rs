@@ -709,7 +709,6 @@ mod tests {
     fn anchors() -> Anchors {
         let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         Anchors::of(&Manifest::parse(Path::new("/nowhere"), text).expect("a declaration"))
@@ -961,7 +960,6 @@ mod tests {
              [locations.notes]\npath = \"notes\"\nregisters = [\"reading\", \"tripwire\"]\n\n\
              [registers.reading]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"readings\"\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
@@ -1002,7 +1000,6 @@ mod tests {
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              [locations.notes]\npath = \"notes\"\nregisters = [\"tripwire\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
@@ -1138,7 +1135,6 @@ mod tests {
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              [registers.subpath]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"subpaths\"\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [lint]\nexempt-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");

@@ -273,7 +273,7 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
         ("[walk] skip-dirs", &walk.skip_dirs),
         ("[walk] skip-files", &walk.skip_files),
         ("[walk] exclude", &walk.exclude),
-        ("[lint] exempt-files", &manifest.lint().exempt_files),
+        ("[rules] exempt-files", &manifest.rules().exempt_files),
         ("[rules]", &corpus),
     ];
     for (list, paths) in declared {
