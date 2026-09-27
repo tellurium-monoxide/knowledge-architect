@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-19 entries
+20 entries
 
 | kind | title |
 | --- | --- |
@@ -15,6 +15,7 @@
 | deferred | [Nothing tests that `rules diff` receives its two dates the right way round](rules-diff-date-order-untested.md) |
 | deferred | [Only a line break is refused in a file name, and Windows forbids more](windows-forbidden-names-not-refused.md) |
 | design | [A submodule is a project of its own, or nothing, and the tool has no model for either](a-submodule-is-a-project-of-its-own.md) |
+| observation | [`commits` assembles the whole tree of a commit whose manifest fails phase 1](commits-assembles-a-tree-whose-phase-one-fails.md) |
 | observation | [Judging a message costs time quadratic in its line count](judging-a-message-is-quadratic.md) |
 | observation | [A `PLANTED` row may name a test that does not exist](planted-row-may-name-a-missing-test.md) |
 | observation | [The release cache sits at a predictable shared path](release-cache-at-a-shared-path.md) |

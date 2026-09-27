@@ -147,9 +147,14 @@ pub fn configure(manifest: &mut Manifest, extensions: &mut [Box<dyn Extension>])
         .collect();
     for table in manifest.extension_tables() {
         if !claimed.contains(&table) {
+            let what = if manifest.table(table).is_some_and(toml::Value::is_table) {
+                format!("[{table}] is a table no extension of this binary reads")
+            } else {
+                format!("`{table}` is a top-level key no extension of this binary reads")
+            };
             complaints.push(Finding::in_file(
                 MANIFEST_NAME,
-                format!("[{table}] is a table no extension of this binary reads"),
+                what,
                 "delete it, or run the binary that registers the extension it belongs to; a \
                  declaration nothing reads looks like a check in force",
             ));
@@ -279,6 +284,22 @@ mod tests {
         );
         let found = complaints("[claimed]\n", &mut [Box::new(Claiming)]);
         assert!(found.is_empty(), "a claimed table is read: {found:?}");
+        // A key that is not a table is named as what it is. It stands before the first table,
+        // or TOML reads it as a key of that table.
+        let mut manifest = Manifest::parse(
+            Path::new("/nowhere"),
+            "stray = 1\n[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
+             skip-files = []\n",
+        )
+        .expect("a declaration");
+        configure(&mut manifest, &mut []);
+        let found: Vec<String> = manifest
+            .complaints()
+            .iter()
+            .map(|f| f.what.clone())
+            .collect();
+        assert_eq!(found.len(), 1, "{found:?}");
+        assert!(found[0].contains("`stray` is a top-level key"), "{found:?}");
     }
 
     #[test]
