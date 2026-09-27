@@ -1,0 +1,25 @@
+# WHAT THIS MOCK EXERCISES, for the core binary: detection. Its documents are wrong on purpose,
+# one planted defect per core check of the last phase, and a test asserts the findings
+# themselves rather than merely that something failed. Every core check owes a row in
+# `PLANTED` in `path@knowledge@tests/mock_projects.rs`, so a new defect goes here and its count
+# goes there. Its rules twin, planting the rules checks' defects, is
+# `path@rules-corpus@tests/projects/planted/`.
+
+[project]
+name = "planted"
+# One component below the root, carrying every document but one.
+components = ["parts/widget"]
+
+# A location carrying its issue directory; the one whose directory is not there is planted
+# in the `unsound` project.
+[locations.agent-config]
+path = "agent-config"
+registers = ["issue"]
+
+[walk]
+# Not a git repository, so there is no `.git` to skip and none is declared.
+skip-dirs = []
+# The rules text is not a citation of itself, and the changelog pins its own release per
+# section, so both are read by the family that owns them rather than by the walk.
+skip-files = []
+exclude = []

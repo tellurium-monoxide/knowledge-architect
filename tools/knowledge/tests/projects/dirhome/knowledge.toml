@@ -1,0 +1,17 @@
+# WHAT THIS MOCK EXERCISES, for the core binary: conformance. Every core check runs over it
+# and finds nothing, which is the assertion `planted` cannot make. It carries the directory
+# shape of a heading home — `docs/design/` and `docs/goals/`, each headed by a README linking
+# its subdocument — the only ISSUE instance in any core mock that declares a group, and every
+# generated file committed and current. Plant no defect here.
+
+[project]
+name = "dirhome"
+components = []
+
+[walk]
+skip-dirs = []
+# The rules text is not a citation of itself; the changelog pins its own release per section;
+# and the rule index is generated. No row names a file-register index: the tool derives that
+# set from the register instances, so those are outside the walk by construction.
+skip-files = []
+exclude = []

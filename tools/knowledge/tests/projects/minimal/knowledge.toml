@@ -1,0 +1,43 @@
+# WHAT THIS MOCK EXERCISES, for the core binary: the walk and the anchors that are not
+# components. It declares a location, `notes/`, and two registers nothing compiles in, one of
+# each shape: `reading`, a file register whose instance is grouped by a `register.toml`, and
+# `note`, a heading register. It exercises all three exclusion kinds, both single-file
+# heading-home shapes, and three file-register instances at once. It declares no table the core
+# does not own. Its rules twin, with a corpus, is `path@rules-corpus@tests/projects/minimal/`.
+
+[project]
+name = "minimal"
+components = []
+
+# `notes/` carries outstanding state and a register of its own, and nothing else a component
+# carries. A location gives it an anchor, so its entries can be cited.
+[locations.notes]
+path = "notes"
+registers = ["issue", "reading", "note"]
+
+# A register nothing compiles in: this project declares it, and the tool learns the kind
+# `reading` from this table alone.
+[registers.reading]
+scope = "opt-in"
+shape = "file"
+dir = "readings"
+sections = ["Rules", "Reading", "Consequences"]
+
+[registers.reading.metadata.status]
+values = ["settled", "ambiguous"]
+
+# The other shape a declared register may take. Nothing compiles this one in either, and it is
+# the only heading-shaped DECLARED register in any mock project: without it the heading shape is
+# exercised by the built-in three alone, whose homes the tool knows without reading a manifest.
+[registers.note]
+scope = "opt-in"
+shape = "heading"
+dir = "decisions"
+
+[walk]
+skip-dirs = ["build"]
+# The rules text is not a citation of itself. No row names the rule index: the tool derives
+# every generated file from this manifest, and a test of `index` removes the committed one from
+# its copy to watch it be created.
+skip-files = ["notes/generated.md"]
+exclude = ["vendor"]

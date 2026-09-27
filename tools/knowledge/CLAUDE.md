@@ -20,7 +20,7 @@ caller and handed in. A tree with no `git`, or a project outside a worktree, is 
 reason; an empty walk is never an answer. The decision is `design@knowledge@git-supplies-the-walk`.
 
 **A test that copies a mock project runs `git init` and `git add -A` in the copy**, or the walk
-is empty and the test proves nothing; `Sandbox` in `path@rules-corpus@tests/binary.rs` does it. Two
+is empty and the test proves nothing; `Sandbox` in `path@knowledge@tests/binary.rs` does it. Two
 consequences a test about ignore behaviour has to choose between, because the ignore rules act on
 untracked files alone:
 
@@ -31,32 +31,31 @@ untracked files alone:
 
 A test that deletes or rewrites a fixture file after the first add stages again, or git's listing
 still names what the working tree no longer holds. The in-place tests under
-`path@rules-corpus@tests/projects/` need none of this: they build under this repository's own worktree,
+`path@knowledge@tests/projects/` need none of this: they build under this repository's own worktree,
 so a mock file is walked because this repository's listing holds it. **Staging is not what puts
 it there.** The listing is `--cached --others --exclude-standard`, so a new fixture file is
 walked the moment it exists, tracked or not; what removes one is an ignore rule, and what a
 deletion needs is staging, or the path stays in the listing with no bytes behind it.
 
-**Six mock projects, and each is for one thing.** The head comment of each
-`knowledge.toml` says what its project exercises, and that comment is where a session decides
-which one to touch. In short: `planted` is detection in the last phase, one defect per check
-family, and it is clean through the phases before it so a run reaches them; `unsound` is the
-phase gate, one defect per assertion of phase 2 and, behind them, the definition-site defects
-of phase 3, so a run over it stops at phase 2; `dirhome` is conformance, every family running
-and finding nothing; `minimal` is the walk, the exclusions, a location and a declared
-register; `pinned` is release resolution; `typography` is what `rules show` prints. **Plant a
-phase-4 defect in `planted`, a phase-2 or phase-3 one in `unsound`, and nowhere else.** Over
-the other four, `cargo knowledge check` run from the mock's own directory reports exactly
-this, each deliberate and each named in its own manifest: `dirhome`, `minimal` and
-`typography` pass with no finding; `pinned` exits 2, because its one pin resolves only over
-the network, which a run reaches at the last phase and at no phase before. Anything else a run
-reports in those four is a defect in the tool or in the fixture.
+**Five mock projects for the core binary, and each is for one thing.** They declare no table the
+core does not own. The head comment of each `knowledge.toml` says what its project exercises,
+and that comment is where a session decides which one to touch. In short: `planted` is detection
+in the last phase, one defect per core check, and it is clean through the phases before it so a
+run reaches them; `unsound` is the phase gate, one defect per assertion of phase 2 and, behind
+them, the definition-site defects of phase 3, so a run over it stops at phase 2; `dirhome` is
+conformance, every core check running and finding nothing; `minimal` is the walk, the
+exclusions, a location and a declared register; `core` is the smallest conformant project, and
+the tests of the core binary's refusal of a table it does not own. **Plant a phase-4 defect in
+`planted`, a phase-2 or phase-3 one in `unsound`, and nowhere else.** The core binary run from
+`dirhome`, `minimal` or `core` reports no finding; anything else it reports there is a defect in
+the tool or in the fixture. The rules extension's mocks, with a corpus, are
+`path@rules-corpus@tests/projects/`.
 
 **A test about commit messages builds its own project.** `commits` fails every commit before the
 tip whose tree carries a finding, and exits 2 when the tip's does, so each commit a test makes
 has a tree with none, except the one it plants. `dirhome` is the one mock over which every family runs
 and finds nothing, so a copy of it could serve as a base; `History` in
-`path@rules-corpus@tests/binary.rs` writes a project out
+`path@knowledge@tests/binary.rs` writes a project out
 anyway, because each test states the exact findings the commits it makes carry and a mock's
 contents are shared with every other test over it. `History` writes the project out,
 configures `user.name` and `user.email` in the copy's own configuration, and commits. Two

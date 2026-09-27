@@ -1,0 +1,4 @@
+# The groups of this instance. A group is a subdirectory, and the declaration is what keeps the
+# naming from drifting. This is the only ISSUE instance in any mock project that declares one,
+# so it is what exercises the index's group headings and the `--group` filter of `issues`.
+groups = ["housekeeping"]
