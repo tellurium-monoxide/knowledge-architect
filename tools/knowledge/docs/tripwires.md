@@ -199,13 +199,13 @@ of `check`, `index` or `rules bump`; and any new module under the check director
 
 ## Guarding `design@knowledge@an-extension-builds-its-own-model`' closed entity table `##extension-defines-a-kind`
 
-A family scans the core's parse on its own and cannot add a kind to the entity table, so its
+An extension scans the core's parse on its own and cannot add a kind to the entity table, so its
 subject cannot be cited in the `<kind>@<anchor>@<id>` grammar.
 
 **Fires when:** a proposed feature, in a design discussion or a review, needs a reference whose
-kind a family defines rather than the core — a kind naming one rule of a corpus, for example —
+kind an extension defines rather than the core — a kind naming one rule of a corpus, for example —
 and the need is stated as a requirement rather than as an option.
-**Response:** reopen `design@knowledge@a-family-extends-the-core-through-phased-hooks` to add a
-call through which a family contributes entities and their definition sites before phase 3, and
+**Response:** reopen `design@knowledge@an-extension-plugs-in-through-phased-hooks` to add a
+call through which an extension contributes entities and their definition sites before phase 3, and
 re-check `design@knowledge@an-extension-builds-its-own-model` against it.
 **Re-entry:** standing.

@@ -22,16 +22,16 @@ A check never reads a file, spawns a process, or knows how the walk works. Anyth
 fetch for itself is resolved by the caller and handed in: the generated files as committed, the
 per-instance `register.toml` files, one listing of what exists and which of those paths are
 directories, the files the walk does not cover, and git's answer for every path spelling a
-reference in the run could ask about. A family's checks read, besides these, what the family's
-own preparation read for the tree, per `design@knowledge@a-family-extends-the-core-through-phased-hooks`.
+reference in the run could ask about. An extension's checks read, besides these, what the extension's
+own preparation read for the tree, per `design@knowledge@an-extension-plugs-in-through-phased-hooks`.
 The phases that precede the checks are pure over the same inputs, per
-`design@knowledge@phases-gate-the-report`, and a family prepares only once the last phase is
+`design@knowledge@phases-gate-the-report`, and an extension prepares only once the last phase is
 reached.
 
 Four things follow, and each of them is something the implementation this replaced paid for.
 
 **The single walk is a property of the design rather than of anyone's care.** One run reads each
-live document once and parses it once. The core scans each line once, and each family once more
+live document once and parses it once. The core scans each line once, and each extension once more
 over the same parse, per `design@knowledge@an-extension-builds-its-own-model`. The implementation being replaced performed four tree
 walks and 311 file reads over 104 documents per run, then spawned its citation checker twice more to
 do it again.
@@ -44,12 +44,13 @@ all — which is what made a planted-defect corpus cheap enough to build rather 
 and writing the old bytes back — a check that mutates the tree it is checking, and the reason the
 merge check's history replay needed a discarding checkout between commits.
 
-**The corpus checks are the one exception, and they say so where they live.** Whether the vendored
-bytes match the pin, whether the archive has provenance, whether a needed release is present — their
-subject _is_ filesystem state, so there is no model to hand them. That is a different thing from a
-check over documents, which stays pure. `changes` runs beside them, from the binary rather than
-inside `check::run`: it is a pure function over the changelog's text and the releases its sections
-name, both handed in, but its subject is the changelog rather than the model.
+**A check whose subject is filesystem state is the one exception, and it says so where it
+lives.** Whether a vendored corpus matches its pin, whether an archive has provenance, whether a
+needed release is present: there is no model to hand such a check, so an extension reads that
+state while it prepares a checkout, per `design@knowledge@an-extension-plugs-in-through-phased-hooks`.
+That is a different thing from a check over documents, which stays pure. A check over another
+document than the model's, such as a changelog, is pure too: the extension hands it the text and
+the releases it names.
 
 ### A finding is classified by the phase that produces it, the report stops at the first non-empty phase, and every check runs at the last `##phases-gate-the-report`
 
@@ -60,10 +61,10 @@ phases, each of the first three building one input of the next:
 
 | phase | produced by | what it reports |
 | ----- | ----------- | --------------- |
-| 1 | `Manifest::parse`, and each family's resolution of its tables | a declaration the tool refused, which is then absent from the configuration |
-| 2 | `check::tree`, and each family's assertion of its declared paths | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out |
+| 1 | `Manifest::parse`, and each extension's resolution of its tables | a declaration the tool refused, which is then absent from the configuration |
+| 2 | `check::tree`, and each extension's assertion of its declared paths | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out |
 | 3 | `Entities::build` | a slug or an entry id where none may sit, or defined twice |
-| 4 | every check, the core's and each family's | everything computed over a complete model |
+| 4 | every check, the core's and each extension's | everything computed over a complete model |
 
 A finding is classified by **the place it is produced**, never by a label at its site, so a
 finding added to a building step is gated because of where it is raised, and nothing in the
@@ -74,7 +75,7 @@ a clean run names every check it performed. The whole report stops: the per-docu
 hiding only what an unread file could have defined, was three times the machinery for facts
 that mostly have no per-file scope, and `path@knowledge@docs/tripwires.md` guards that choice.
 
-**A family prepares its tree when the last phase is reached**, so a run that stops earlier
+**An extension prepares its tree when the last phase is reached**, so a run that stops earlier
 resolves no release and fetches nothing, whatever it would have judged. **A writer refuses over an incomplete model**: `index`
 and `rules bump` run the first three phases before touching anything and exit 2 naming the
 phase, since an index generated over such a model lists rows nobody asked for. The range form
@@ -92,20 +93,23 @@ another check reads would be a second chain, and nothing prevents one: such a ch
 not a check of the last one, and it goes before its consumers. `path@knowledge@CLAUDE.md`
 restates that at the point of adding a check, and a tripwire names the event.
 
-### A domain's checks plug in as a family compiled into the binary, and the core binary registers none `##a-family-extends-the-core-through-phased-hooks`
+### A domain's checks plug in as an extension compiled into the binary, and the core binary registers none `##an-extension-plugs-in-through-phased-hooks`
 
 The core checks what every project carries: the walk, the parse, the entity table, references,
 registers, generated indexes and commit messages. A subject that belongs to one project, such as
-thaum's verification of rule quotes against a pinned corpus, is a **family**: a set of checks, the
-manifest tables they read, and the files they generate. A binary registers its families at
-compile time. The core's own binary registers none, and a project that needs a family builds a
+thaum's verification of rule quotes against a pinned corpus, is an **extension**: a set of checks, the
+manifest tables they read, and the files they generate. Each of its checks is listed and counted
+like a check of the core. This is what `goal@knowledge@documentation-half-publishes-alone`
+requires: the core is published for other projects, and nothing of thaum's subject is compiled
+into it. A binary registers its extensions at
+compile time. The core's own binary registers none, and a project that needs an extension builds a
 binary that registers it. There is no loading at run time, because Rust has no stable ABI a
 plugin could be built against.
 
-The core calls a family at fixed points of the run, and each call sits in the phase its output
+The core calls an extension at fixed points of the run, and each call sits in the phase its output
 belongs to, per `design@knowledge@phases-gate-the-report`:
 
-| call | when | what the family does |
+| call | when | what the extension does |
 | ---- | ---- | -------------------- |
 | resolve | phase 1 | reads the tables it claims; a complaint is a finding of the phase |
 | generated paths | before the walk | names the files it generates, which the walk leaves out and reads as committed |
@@ -116,56 +120,69 @@ belongs to, per `design@knowledge@phases-gate-the-report`:
 | generate | `index`, and phase 4 | the contents of the files it generates |
 | dump | `model` | its observation rows |
 
-**A family is configured once per manifest and prepared once per tree.** `commits` judges several
+**An extension is configured once per manifest and prepared once per tree.** `commits` judges several
 trees in one run, and a message is judged against what its own commit's tree holds, so the
-prepared state belongs to the tree and not to the family. A parent tree, assembled for its entity
-table alone, prepares no family.
+prepared state belongs to the tree and not to the extension. A parent tree, assembled for its entity
+table alone, prepares no extension.
 
-**A family reads the tree through the core.** Over the checkout it may read the filesystem under
+**An extension reads the tree through the core.** Over the checkout it may read the filesystem under
 the root, because a subject such as a vendored corpus is filesystem state, per
 `design@knowledge@model-then-checks`. Over a commit it reads git objects only, through the same
-batch reader the core assembles that tree with, which also names each blob so that a family can
+batch reader the core assembles that tree with, which also names each blob so that an extension can
 cache what it parsed from one blob across commits.
 
-**The core's summary prints its own count lines, then each family's**, and the list of checks
-performed names the core's checks, then each family's.
+**The core's summary prints its own count lines, then each extension's**, and the list of checks
+performed names the core's checks, then each extension's.
 
-### A family scans the core's parse on its own, and the core's model carries nothing for it `##an-extension-builds-its-own-model`
+### An extension scans the core's parse on its own, and the core's model carries nothing for it `##an-extension-builds-its-own-model`
 
 The core's model holds what the walk read and the parse produced, and the observations the core's
-checks read. It has no field that exists for a family. A family reads the parse through the core's
+checks read. It has no field that exists for an extension. An extension reads the parse through the core's
 public API: each document's text, its prose regions and scopes, which spans are code, the Rust
 names, the inert lines and the fences. It scans a second time and keys what it finds by document,
 in the model it was given.
 
 This is what keeps the core free of any one project's subject, which
-`goal@knowledge@documentation-half-publishes-alone` requires. A model generic over a family's
+`goal@knowledge@documentation-half-publishes-alone` requires. A model generic over an extension's
 observation type would carry a type parameter into every check signature for the same data, and
 a type-erased slot per document would hold it inside the core with no type checking; both are in
 `path@knowledge@docs/rejected-alternatives.md`.
 
-**The cost is one more scan per family.** Each document is still read once and parsed once, per
+**The cost is one more scan per extension.** Each document is still read once and parsed once, per
 `design@knowledge@model-then-checks`. The cost of the second scan is not measured.
 
-**A family cannot add a kind to the entity table.** A reference kind is the core's, so a family's
+**An extension cannot add a kind to the entity table.** A reference kind is the core's, so an extension's
 subject cannot be cited as `<kind>@<anchor>@<id>`. Nothing needs that today, and
 `path@knowledge@docs/tripwires.md` names the event that would.
 
-### A family claims the manifest tables it reads, and the core refuses a table nobody claims `##a-family-claims-its-manifest-tables`
+### An extension claims the manifest tables it reads, and the core refuses a table nobody claims `##an-extension-claims-its-manifest-tables`
 
-The core parses the tables it owns. Every other top-level table goes to the registered family
-that claims it. A table that no registered family claims is a phase-1 finding, and so is a table a
-registered family claims that the manifest does not hold.
+The core parses the tables it owns. Every other top-level table goes to the registered extension
+that claims it. A table that no registered extension claims is a phase-1 finding, and so is a table a
+registered extension claims that the manifest does not hold.
 
 **Both refusals serve `design@knowledge@the-regime-has-no-opt-out`.** An unclaimed table is a
 declaration nothing reads, which a session would take for a regime in force. A missing claimed
-table would let a manifest switch a family off by leaving its table out. So the binary decides
-which families run over a tree, and the manifest cannot remove one: the core binary run over a
+table would let a manifest switch an extension off by leaving its table out. So the binary decides
+which extensions run over a tree, and the manifest cannot remove one: the core binary run over a
 manifest that declares `[rules]` reports the table as unclaimed, rather than skipping the regime
 in silence.
 
-**A table keeps the family's own name at the top level.** A namespace for extension tables is in
+**A table keeps the extension's own name at the top level.** A namespace for extension tables is in
 `path@knowledge@docs/rejected-alternatives.md`.
+
+### The core's commands are a library module, so a binary that registers extensions offers them unchanged `##the-core-cli-is-a-library-module`
+
+The commands of the core, `check`, `show`, `issues`, `tripwires`, `index`, `model` and `commits`,
+and the code that runs them, are a module of the core library rather than of its binary. A binary
+that registers extensions flattens the core's command enum into its own and adds the commands of
+its extensions beside them, so the core's commands keep one spelling, one set of arguments and one
+exit-code contract in every binary. The core's binary is that module with no extension registered.
+
+A binary crate cannot be depended on, so a command set held in the core's binary would be copied
+into every binary that registers an extension, and the copies would drift. The helpers an
+extension's own commands need from a run, such as assembling a complete working tree, are public
+in the same module for the same reason.
 
 ### A parse that cannot be trusted is reported, never silent `##a-failed-parse-is-loud`
 
@@ -281,7 +298,8 @@ in, and it cannot exempt a document from anything. A manifest that declares no r
 exactly as it was.
 
 **The one exemption path is `[rules] exempt-files`, and it names FILES rather than rules.** It
-sits in the rules table because it exempts from the missing-marker lint alone. A file
+sits in the rules table because both things it exempts from, the missing-marker lint and the
+quote regime, belong to the rules half of the tool. A file
 there is one that is leaving the tree, so the exemption expires with its subject; a rule held back
 would have applied to every file and expired with nothing. That asymmetry is the whole of it —
 exempting a document that is about to be deleted costs the guarantee nothing, and exempting a rule
@@ -380,7 +398,8 @@ is `groups`. A key other than `groups` is a finding, a file with no `groups` is 
 **A manifest still written in the retired grammar is refused by name.** `[interpretations]` and
 `additional-trackers` each produce an error naming what replaces them, rather than the
 unknown-key message. A manifest is migrated once, and that message is the whole of what the
-migrator gets.
+migrator gets. `[lint]`, whose one key moved into `[rules]`, gets no such message: the message
+would name a table of an extension inside the core, so it is refused as any unknown table is.
 
 **A declaration that is wrong is a finding rather than a load failure, and it is absent from the
 configuration.** A manifest that will not load reports nothing at all, and nothing at all is what
@@ -389,9 +408,9 @@ configuration and a list of complaints, each in the shape a finding takes, and e
 is the first phase of a run, per `design@knowledge@phases-gate-the-report`. What a complaint is
 about is not in the configuration: a refused register is no register, a refused anchor is no
 anchor, a refused row is not in its list, so nothing acts on it and its consequences are never
-reported as defects of the tree. A family's tables follow the same rule, per
-`design@knowledge@a-family-claims-its-manifest-tables`: its complaints are phase-1 findings, and a
-run that holds one stops before the family reads anything.
+reported as defects of the tree. An extension's tables follow the same rule, per
+`design@knowledge@an-extension-claims-its-manifest-tables`: its complaints are phase-1 findings, and a
+run that holds one stops before the extension reads anything.
 
 ### A heading register's home is `<dir>.md` or a `<dir>/` directory, never both `##heading-register-two-shapes`
 
@@ -540,10 +559,10 @@ load-bearing.
 `cargo knowledge index` and the `generated` check take the same pairs of destination and expected
 bytes from one function, so neither can generate one the other does not know about, nor disagree
 about what is in it. Each is derived from the file-register instances, one per instance whose
-directory is there. **The rule index is the exception**: it is the manifest's `[rules] dir` plus
-`index.md`, and the two assemble that pair separately, because the gate renders it only where the
-vendored release resolved and the writer always has one. They agree because the expression is
-written twice, which is weaker than the file-register half.
+directory is there. **An extension's generated files are read the same way**: the extension
+names their paths before the walk and renders their bytes when prepared, and the writer and the
+gate both take them from those two calls, per
+`design@knowledge@an-extension-plugs-in-through-phased-hooks`.
 
 **An instance with no directory contributes no index**: generating into it would create a register home as a side effect of a listing, and the
 missing home is what `check::tree` reports.
@@ -686,8 +705,8 @@ with the migration: the commit history is read by every session that runs `git l
 the form, and a reference copied out of it would be checked by nothing.
 
 **The interpretation register's old entry numbers are not read.** They were thaum's own, and a
-lint naming them would belong to thaum's family rather than to the core; the migration they served
-is finished. Keeping that lint permanently is in `path@knowledge@docs/rejected-alternatives.md`.
+lint naming them would belong to thaum's extension rather than to the core, and the migration they
+served is finished, so deleting the lint was a smaller change than moving it. Keeping that lint permanently is in `path@knowledge@docs/rejected-alternatives.md`.
 
 **A reference is live wherever it is prose, fenced blocks included, for every kind.** A sketch
 names what it names on purpose, and an illustration writes a placeholder in angle brackets,
@@ -801,7 +820,8 @@ exists against.
 **A generated index is outside the walk by construction, so its rows are read by nothing.** The
 tool derives the set from the register instances rather than from a declared row, which is why no
 `[walk] skip-files` row names a file-register index and a new instance cannot arrive with its
-index inside the walk; the rule index is in the same set, so no row names it either. Outside the walk also
+index inside the walk; an extension's generated files, such as the rule index, are in the same
+set, so no row names them either. Outside the walk also
 means outside the inverse assertion of the `uncovered` family: a listing is a function of the tree
 rather than a claim anybody wrote, so a rule number appearing in one is not an unquoted citation.
 
@@ -840,7 +860,7 @@ is nowhere to put it.
 
 ### The checker's own source reads its string literals as data `##checker-source-literals-are-data`
 
-Under the tool's own directory a string literal is never prose. Its comments are prose like
+Under the tool's own directories a string literal is never prose. Its comments are prose like
 every other file's, and everywhere else in a tree a string literal is prose unless it is bound
 to a name, per `design@knowledge@grammars-not-prefixes`.
 
@@ -850,8 +870,8 @@ react to it. Read as prose each one is a live claim, and hiding each behind a na
 be interpolated made the tests harder to read than the code they test. Comments stay prose
 because the test modules point at decisions and paths for real, and those pointers stay checked.
 
-**The directories are compiled in, never declared.** The tool's source spans one Component per
-binary: the core's, and the Component of each family the binary registers. Each library exports
+**The directories are compiled in, never declared.** A binary's source spans several
+Components: the core's, and the Component of each extension the binary registers. Each library exports
 the directory of the Component it belongs to, the parent of its own `CARGO_MANIFEST_DIR`
 evaluated at build time, and the binary hands the list of its libraries' directories to the walk.
 A library's own directory would not do: the core library's leaves the core's binary and tests
@@ -870,8 +890,8 @@ can ever be exempt, and it is exempt by construction. The row's entry is in
 under its compiled paths, exempts nothing, and reports the tool's fixtures as citations. The
 summary block names each of the checker's directories, relative to the root when it sits under it and
 absolute otherwise, even when the compiled directory no longer exists, and prints the count of
-Rust files it covered, so the state is visible in every run. The directory exempts files only when it sits inside the tree being
-checked: a tree that sits inside it instead, such as a mock project under
+Rust files it covered, so the state is visible in every run. A directory exempts files only when
+it sits inside the tree being checked: a tree that sits inside it instead, such as a mock project under
 `path@knowledge@tests/projects/`, is a foreign project and every literal in it is prose.
 
 **Whole source rather than test modules only.** The non-test source holds no literal that cites

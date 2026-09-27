@@ -6,7 +6,8 @@ kind: deferred
 ## Summary
 
 thaum verifies every quote of a Comprehensive Rule against a pinned copy of the rules, and that
-machinery lives in thaum's own family, not in the core. Its mechanism is not specific to the rules:
+machinery is placed in thaum's own extension, not in the core, by
+`design@knowledge@an-extension-plugs-in-through-phased-hooks`. Its mechanism is not specific to the rules:
 a marker, an identifier form, a number grammar, a pinned text parsed into numbered entries, and
 the scope and distance a quote must sit within. A project that cites a specification, a standard
 or a law verbatim could use it. No project using the core needs it yet.
@@ -25,17 +26,17 @@ The mechanism has two parts that separate cleanly:
   release watch reading Wizards' page, the archive of past releases and its manifest, and the
   changelog check.
 
-Offering the generic part from the core would mean a corpus trait the family implements, with
+Offering the generic part from the core would mean a corpus trait the extension implements, with
 the marker, the identifier prefix and the number grammar declared rather than compiled in.
 
 ### Why it matters
 
 `goal@knowledge@documentation-half-publishes-alone` publishes the core for other projects. A
-project that needs a verbatim-citation check and finds one only inside thaum's family has to copy
+project that needs a verbatim-citation check and finds one only inside thaum's extension has to copy
 it, and two copies drift.
 
-It strains no recorded decision. `design@knowledge@a-family-extends-the-core-through-phased-hooks`
-already lets a family carry the whole regime, which is how thaum carries it.
+It strains no recorded decision. `design@knowledge@an-extension-plugs-in-through-phased-hooks`
+already lets an extension carry the whole regime, which is where thaum's design places it.
 
 ### Trigger
 

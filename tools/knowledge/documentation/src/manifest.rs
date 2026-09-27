@@ -1565,8 +1565,8 @@ pub(crate) mod tests {
 
     #[test]
     fn the_exemption_list_is_read_from_rules_and_a_lint_table_is_refused() {
-        // The list exempts from the missing-marker lint alone, so it belongs to the rules
-        // table; a `[lint]` table read as empty would drop every exemption it still holds.
+        // The list exempts from the missing-marker lint and the quote regime, both of the
+        // rules half, so it belongs to the rules table; a `[lint]` table read as empty would drop every exemption it still holds.
         let base = "[project]\nname = \"a\"\ncomponents = []\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
