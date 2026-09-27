@@ -10,17 +10,17 @@
 //! One command lives here: `commits <range>` walks the range and judges each commit's message
 //! and tree against that commit's own tree.
 
-use crate::output::outln;
+use super::output::outln;
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use documentation::check::citations::Release;
-use documentation::check::{self, Inputs};
-use documentation::entity::{Anchors, Entities};
-use documentation::manifest::MANIFEST_NAME;
-use documentation::survey::Survey;
-use documentation::{Finding, Manifest, Model};
+use crate::check::citations::Release;
+use crate::check::{self, Inputs};
+use crate::entity::{Anchors, Entities};
+use crate::manifest::MANIFEST_NAME;
+use crate::survey::Survey;
+use crate::{Finding, Manifest, Model};
 
 // ---------------------------------------------------------------------------------------
 // The message as a document
@@ -197,7 +197,7 @@ struct FromTree {
     /// Every path of the tree, the symlink and gitlink entries included.
     listing: Vec<PathBuf>,
     /// The symlink and gitlink entries, which are read as no document.
-    links: Vec<documentation::git::Entry>,
+    links: Vec<crate::git::Entry>,
     blobs: std::collections::BTreeMap<PathBuf, String>,
 }
 
@@ -208,21 +208,21 @@ struct FromTree {
 /// skipped file are read by no family, and the corpus alone is two megabytes at every commit
 /// in the range.
 fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<FromTree, Unloadable> {
-    let entries = documentation::git::tree_entries(root, sha)
+    let entries = crate::git::tree_entries(root, sha)
         .map_err(|e| Unloadable(format!("its tree could not be listed: {e}")))?;
     let listing: Vec<PathBuf> = entries.iter().map(|e| e.rel.clone()).collect();
-    let links: Vec<documentation::git::Entry> = entries
+    let links: Vec<crate::git::Entry> = entries
         .iter()
-        .filter(|e| e.kind != documentation::git::EntryKind::File)
+        .filter(|e| e.kind != crate::git::EntryKind::File)
         .cloned()
         .collect();
     let files: Vec<PathBuf> = entries
         .into_iter()
-        .filter(|e| e.kind == documentation::git::EntryKind::File)
+        .filter(|e| e.kind == crate::git::EntryKind::File)
         .map(|e| e.rel)
         .collect();
     let manifest_rel = PathBuf::from(MANIFEST_NAME);
-    let declaration = documentation::git::blobs(root, sha, std::slice::from_ref(&manifest_rel))
+    let declaration = crate::git::blobs(root, sha, std::slice::from_ref(&manifest_rel))
         .map_err(|e| Unloadable(format!("its {MANIFEST_NAME} could not be read: {e}")))?;
     let Some(text) = declaration.get(&manifest_rel) else {
         return Err(Unloadable(format!("its tree holds no {MANIFEST_NAME}")));
@@ -231,7 +231,7 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
     let walk = manifest.walk();
     let mut wanted: Vec<PathBuf> = files
         .iter()
-        .filter(|rel| !documentation::walk::skipped(rel, walk) && !walk.skip_files.contains(rel))
+        .filter(|rel| !crate::walk::skipped(rel, walk) && !walk.skip_files.contains(rel))
         .cloned()
         .collect();
     for rel in generated_extra {
@@ -251,7 +251,7 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
     }
     wanted.sort();
     wanted.dedup();
-    let blobs = documentation::git::blobs(root, sha, &wanted)
+    let blobs = crate::git::blobs(root, sha, &wanted)
         .map_err(|e| Unloadable(format!("its blobs could not be read: {e}")))?;
     Ok(FromTree {
         manifest,
@@ -293,7 +293,7 @@ fn commit_tree(
     let read = read_tree(root, sha, &[])?;
     let manifest = read.manifest;
     let anchors = Anchors::of(&manifest);
-    let generated = documentation::index::generated_paths(&manifest);
+    let generated = crate::index::generated_paths(&manifest);
     // The walk reads through no symlink and no gitlink, so the files alone are walked.
     let files: Vec<PathBuf> = read
         .listing
@@ -301,8 +301,7 @@ fn commit_tree(
         .filter(|rel| !read.links.iter().any(|e| e.rel == **rel))
         .cloned()
         .collect();
-    let walked =
-        documentation::walk::live_files(Path::new(""), manifest.walk(), &files, &generated);
+    let walked = crate::walk::live_files(Path::new(""), manifest.walk(), &files, &generated);
     let mut blobs = read.blobs;
     // The generated indexes and the per-instance options sit outside the walk and are read by
     // the caller, exactly as `check` reads them off the filesystem.
@@ -313,7 +312,7 @@ fn commit_tree(
     }
     extra.retain(|rel| read.listing.contains(rel) && !blobs.contains_key(rel));
     if !extra.is_empty() {
-        let more = documentation::git::blobs(root, sha, &extra)
+        let more = crate::git::blobs(root, sha, &extra)
             .map_err(|e| Unloadable(format!("its generated files could not be read: {e}")))?;
         blobs.extend(more);
     }
@@ -357,9 +356,8 @@ fn commit_tree(
         ));
     }
     if let Some(text) = blobs.get(&corpus_rel).filter(|_| judging) {
-        let key =
-            documentation::git::rev_parse(root, &documentation::git::tree_object(sha, &corpus_rel))
-                .unwrap_or_else(|| format!("{sha}:corpus"));
+        let key = crate::git::rev_parse(root, &crate::git::tree_object(sha, &corpus_rel))
+            .unwrap_or_else(|| format!("{sha}:corpus"));
         let release = corpora
             .parsed
             .entry(key)
@@ -385,7 +383,7 @@ fn commit_tree(
     if judging && !pins.is_empty() {
         let past = rules_dir.join(&manifest.rules().past);
         let wanted: Vec<PathBuf> = pins.iter().map(|d| past.join(format!("{d}.txt"))).collect();
-        let archived = documentation::git::blobs(root, sha, &wanted)
+        let archived = crate::git::blobs(root, sha, &wanted)
             .map_err(|e| Unloadable(format!("its archive could not be read: {e}")))?;
         for (date, rel) in pins.iter().zip(&wanted) {
             match archived.get(rel) {
@@ -414,7 +412,7 @@ fn commit_tree(
         }
     }
     let survey =
-        documentation::survey::from_listing(&manifest, &model, &read.listing, &read.links, |rel| {
+        crate::survey::from_listing(&manifest, &model, &read.listing, &read.links, |rel| {
             blobs.get(rel).cloned()
         });
     // **The ignore rules are the working tree's.** `git check-ignore` reads the `.gitignore`
@@ -424,7 +422,7 @@ fn commit_tree(
     // rather than a silence, which fails the range; a branch that changes its ignore rules
     // orders its commits for it, per `design@knowledge@a-commit-message-is-a-document`.
     let queries = check::references::ignore_queries(&model, &anchors);
-    let ignored = documentation::git::ignored(root, &queries)
+    let ignored = crate::git::ignored(root, &queries)
         .map_err(|e| Unloadable(format!("its ignore rules could not be asked: {e}")))?;
 
     let mut assembly = Assembly {
@@ -507,7 +505,7 @@ pub fn commits(
     checker: Option<&Path>,
 ) -> Result<ExitCode, String> {
     let root = manifest.root();
-    let shas = documentation::git::rev_list(root, range).map_err(|e| {
+    let shas = crate::git::rev_list(root, range).map_err(|e| {
         format!("{range} does not resolve to a range of commits: {e}\n       a shallow clone resolves no range until it fetches full depth")
     })?;
     if shas.is_empty() {
@@ -518,7 +516,7 @@ pub fn commits(
     // The checker's own directory, project-relative, so a per-commit model reads the tool's
     // own fixtures as data the way `check` does.
     let checker_rel = checker.and_then(|c| c.strip_prefix(root).ok().map(Path::to_path_buf));
-    let head = documentation::git::rev_parse(root, "HEAD");
+    let head = crate::git::rev_parse(root, "HEAD");
 
     let mut corpora = Corpora::default();
     let mut summary: Vec<(String, Outcome)> = Vec::new();
@@ -615,7 +613,7 @@ pub fn commits(
         // The parent model is the previous commit's where the walk followed the parent chain,
         // a failed commit's included, and is built once otherwise — at the range's first
         // commit, and wherever the previous commit is not this one's first parent.
-        let first_parent = documentation::git::rev_parse(root, &format!("{sha}^"));
+        let first_parent = crate::git::rev_parse(root, &format!("{sha}^"));
         let parent_owned = match (&previous, &first_parent) {
             (Some((seen, _, _)), Some(parent)) if seen == parent => None,
             (_, Some(parent)) => commit_tree(
@@ -641,7 +639,7 @@ pub fn commits(
         // **The message as the commit holds it, cleaned of nothing.** Git applied its own
         // cleanup before the commit existed, so a `#` line here is a line the author wrote and
         // a second pass over it would take bytes of a commit out of the regime.
-        let message = documentation::git::commit_message(root, sha).map_err(|e| e.to_string())?;
+        let message = crate::git::commit_message(root, sha).map_err(|e| e.to_string())?;
         let entities = Entities::build(&tree.model, &tree.anchors());
         let found = judge_message(&message, &tree, &entities, parent);
         findings.extend(relabelled(found, &format!("commit {short}")));

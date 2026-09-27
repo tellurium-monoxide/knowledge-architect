@@ -8,6 +8,9 @@ publish.workspace = true
 # See the note in `../rules/Cargo.toml` on why tool dependencies are not in the workspace
 # dependency table.
 [dependencies]
+# The core's commands are a library module, so a binary that registers an extension flattens
+# them into its own, per `design@knowledge@the-core-cli-is-a-library-module`.
+clap = { version = "4", features = ["derive"] }
 # The two parsers. A Rust doc comment's content is markdown, so the markdown parser runs over
 # both file kinds and the Rust grammar's job is to say which byte ranges are prose at all.
 pulldown-cmark = { version = "0.13", default-features = false }

@@ -809,7 +809,7 @@ fn index_rewrites_what_moved_and_leaves_what_is_current_alone() {
 /// refuses having written nothing or writes them all.
 ///
 /// On `main` there was one destination and the ordering was vacuous. With one index per
-/// file-register instance it is not: reordering the two loops in `path@knowledge@src/main.rs` would
+/// file-register instance it is not: reordering the two loops in `path@knowledge@documentation/src/cli/mod.rs` would
 /// leave a run that wrote three indexes and then exited 2 — could not run — over a tree it had
 /// already changed.
 #[test]
@@ -917,7 +917,7 @@ const ONE_TRIPWIRE: &str = "\
 /// The claim: `issues` prints one row per issue entry with the five columns in order, and each
 /// filter keeps only what it names.
 ///
-/// Recorded mutation, `cargo mutate run` over `path@knowledge@src/main.rs`: turning the `--kind`
+/// Recorded mutation, `cargo mutate run` over `path@knowledge@documentation/src/cli/mod.rs`: turning the `--kind`
 /// filter's `is_none_or` into `is_some_and` empties every unfiltered listing, and turning the
 /// row's `metadata` cell into a constant makes every kind read alike. Both are caught here.
 #[test]

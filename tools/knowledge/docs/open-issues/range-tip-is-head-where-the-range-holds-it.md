@@ -5,7 +5,7 @@ kind: defect
 
 ## Summary
 
-In `commits`, `path@knowledge@src/history_cmd.rs`, a commit is the tip when it is the walk's last
+In `commits`, `path@knowledge@documentation/src/cli/history.rs`, a commit is the tip when it is the walk's last
 commit **or** HEAD. With HEAD detached inside the range, HEAD is misreported as the tip: its tree
 failing gives exit 2 with "COULD NOT RUN" rather than a finding naming the commit, and a HEAD
 whose tree stops early ends the walk before the commits after it.

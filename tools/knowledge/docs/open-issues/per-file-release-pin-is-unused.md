@@ -16,7 +16,7 @@ place is undecided, and the working belief is that it does not.
 ### What
 
 `pin` in `path@knowledge@documentation/src/scan.rs` matches the first such comment outside a fence
-and returns its date; the `check` command in `path@knowledge@src/main.rs` resolves that release
+and returns its date; the `check` command in `path@knowledge@documentation/src/cli/mod.rs` resolves that release
 for the file and verifies the file's quotes against it, and its summary prints one line per
 pinned file, or `no pinned containers: every quote tracks the vendored release` when there is
 none. On the current tree the summary prints the latter. A grep for `cr-version` outside the

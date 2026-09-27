@@ -6,6 +6,7 @@
 //! what lets a check be tested against a model built in memory.
 
 pub mod check;
+pub mod cli;
 pub mod entity;
 pub mod finding;
 pub mod git;

@@ -4,7 +4,7 @@
 //! see what a release changed, notice that a new one exists, fetch one, and move the project
 //! to it. They are the reason the tool is named for its subject and not for checking.
 
-use crate::output::outln;
+use crate::outln;
 use std::collections::HashMap;
 use std::path::Path;
 use std::process::ExitCode;
@@ -316,7 +316,7 @@ fn bump(manifest: &Manifest, tree: &Tree, new: &str) -> Result<i32, String> {
     // regenerates is a generated file, and a writer refuses over an incomplete model.
     let model = documentation::Model::build(manifest, Some(crate::checker_source()))
         .map_err(|e| e.to_string())?;
-    crate::complete_working_tree(manifest, &model)?;
+    documentation::cli::complete_working_tree(manifest, &model)?;
     outln!("== {old} -> {new} ==");
 
     let old_text = std::fs::read_to_string(tree.text()).map_err(|e| e.to_string())?;

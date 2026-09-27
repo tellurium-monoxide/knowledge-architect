@@ -15,7 +15,7 @@
 use std::io::{ErrorKind, Write};
 
 /// Writes formatted output to stdout, ending the process with exit 2 on a broken pipe.
-pub(crate) fn write(args: std::fmt::Arguments<'_>) {
+pub fn write(args: std::fmt::Arguments<'_>) {
     let stdout = std::io::stdout();
     let mut lock = stdout.lock();
     if let Err(e) = lock.write_fmt(args) {
@@ -28,12 +28,12 @@ pub(crate) fn write(args: std::fmt::Arguments<'_>) {
 }
 
 macro_rules! out {
-    ($($arg:tt)*) => { $crate::output::write(format_args!($($arg)*)) };
+    ($($arg:tt)*) => { $crate::cli::output::write(format_args!($($arg)*)) };
 }
 
 macro_rules! outln {
-    () => { $crate::output::write(format_args!("\n")) };
-    ($($arg:tt)*) => { $crate::output::write(format_args!("{}\n", format_args!($($arg)*))) };
+    () => { $crate::cli::output::write(format_args!("\n")) };
+    ($($arg:tt)*) => { $crate::cli::output::write(format_args!("{}\n", format_args!($($arg)*))) };
 }
 
 pub(crate) use {out, outln};
