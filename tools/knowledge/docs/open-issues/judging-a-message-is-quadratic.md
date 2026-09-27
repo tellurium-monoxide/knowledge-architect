@@ -15,12 +15,14 @@ in 13 s, and 200 000 lines (4.7 MB) not finished after 120 s.
 
 The message analysis is quadratic in the number of lines. Measured on a debug build of
 this tool, one reference per line: 1 000 lines in 0.08 s, 5 000 in 0.94 s, 10 000 in 3.35 s,
-20 000 in 13 s, and 200 000 lines (4.7 MB) not finished after 120 s. Re-take with
-`cargo knowledge commit-message <file>` over a generated file of the wanted size.
+20 000 in 13 s, and 200 000 lines (4.7 MB) not finished after 120 s. Those figures were taken
+with a single-message command the tool no longer has; re-take with `cargo knowledge commits
+HEAD~1..HEAD` after committing a generated message of the wanted size with `git commit -F`, and
+subtract the run over an empty message, which is the cost of assembling the tree.
 
 ### Why it matters
 
-The hook sits in front of every commit, and `git commit -F` accepts a
+`commits` runs after each commit and in every gate run and CI run, and `git commit -F` accepts a
 generated file. A message of a few hundred lines — which is what this project writes — costs
 nothing measurable, so this is a hazard rather than present pain.
 

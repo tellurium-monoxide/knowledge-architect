@@ -1402,7 +1402,7 @@ fn a_per_user_ignore_file_does_not_decide_the_walk() {
 }
 
 // ---------------------------------------------------------------------------------------
-// Commit messages: `commit-message`, `commits`, and the hook
+// Commit messages: `commits`
 // ---------------------------------------------------------------------------------------
 
 /// A throwaway repository holding a project the checks find nothing wrong with.
@@ -1648,192 +1648,6 @@ fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
         "the parent tree still defines it: {stdout}{stderr}"
     );
     assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
-
-    // The discrimination: against the commit's own tree alone the same reference dangles.
-    // Without the parent-tree rule this message is a finding, so the pass above is not the
-    // pass of a check that resolved nothing.
-    let message = history.dir.join("closing.txt");
-    std::fs::write(
-        &message,
-        "The closable issue is closed\n\nIt closed `issue@tiny@a-closable-issue`.\n",
-    )
-    .expect("a message file");
-    let (alone, _, code) = history.run(&["commit-message", &message.to_string_lossy()]);
-    assert_eq!(code, 1, "{alone}");
-    assert!(alone.contains("a-closable-issue"), "{alone}");
-    let _ = std::fs::remove_file(&message);
-}
-
-/// The claim: the hook does not judge a message against an incomplete index tree. It names
-/// the phase, and the commit is not made.
-///
-/// A table built over a model missing a file would refuse a reference into that file, so a
-/// verdict over it is no verdict. The range form ends at a failing tip the same way.
-#[test]
-fn the_hook_refuses_to_judge_over_an_incomplete_index() {
-    let history = History::new("commit-incomplete");
-    tiny_project(&history, false);
-    history.commit("The project is created\n");
-    // Staged, so the commit would hold it: one byte of Windows-1252 makes it unreadable.
-    history.write_bytes("docs/latin1.md", b"# A note\n\ncaf\xe9\n");
-    history.git(&["add", "docs/latin1.md"]);
-    let draft = history.repo.join("draft.txt");
-    std::fs::write(&draft, "A message with nothing wrong in it\n").expect("a draft");
-    let (stdout, stderr, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
-    assert_eq!(code, 2, "{stdout}{stderr}");
-    assert!(
-        stdout.contains("phase 2:") && stdout.contains("latin1.md"),
-        "{stdout}"
-    );
-    assert!(
-        stdout.trim_end().ends_with("--no-verify") && stdout.contains("COULD NOT JUDGE"),
-        "{stdout}"
-    );
-    let _ = std::fs::remove_file(&draft);
-}
-
-/// The claim: the hook judges a draft against the tree the commit will hold, which is the
-/// index, and not against the working tree.
-///
-/// A decision written to disk and not staged is not in the commit, so a message naming it
-/// dangles once the commit exists, and `commits` reports it. The hook refuses it first.
-#[test]
-fn a_draft_naming_a_decision_the_index_does_not_hold_is_refused() {
-    let history = History::new("commit-unstaged");
-    tiny_project(&history, false);
-    history.commit("The project is created\n");
-    let design = std::fs::read_to_string(history.dir.join("docs/design.md")).expect("a design");
-    history.write(
-        "docs/design.md",
-        &format!("{design}\n### A decision on disk alone `##on-disk-alone`\n\nIt is not staged.\n"),
-    );
-    let draft = history.repo.join("draft.txt");
-    std::fs::write(
-        &draft,
-        "A subject line\n\nIt records `design@tiny@on-disk-alone`.\n",
-    )
-    .expect("a draft");
-
-    let (stdout, stderr, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
-    assert_eq!(code, 1, "the index does not define it: {stdout}{stderr}");
-    assert!(stdout.contains("on-disk-alone"), "{stdout}");
-
-    // Staged, the same draft passes: the index is what was read.
-    history.git(&["add", "docs/design.md"]);
-    let (stdout, stderr, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
-    assert_eq!(code, 0, "the index defines it now: {stdout}{stderr}");
-    let _ = std::fs::remove_file(&draft);
-}
-
-/// The claim: the hook reads the index git names in `GIT_INDEX_FILE`, which is how
-/// `git commit <path>` and `git commit -a` hand it the tree the commit will hold.
-///
-/// Under `git commit <path>` the commit holds HEAD plus that path, whatever else is staged in
-/// the repository's own index. A hook reading the default index would judge a tree the commit
-/// does not have.
-#[test]
-fn the_hook_reads_the_index_git_names_in_its_environment() {
-    let history = History::new("commit-index-file");
-    tiny_project(&history, false);
-    history.commit("The project is created\n");
-    let design = std::fs::read_to_string(history.dir.join("docs/design.md")).expect("a design");
-    history.write(
-        "docs/design.md",
-        &format!("{design}\n### A decision staged apart `##staged-apart`\n\nIt is staged.\n"),
-    );
-    history.git(&["add", "docs/design.md"]);
-    // A second index holding HEAD's tree alone, as `git commit <other path>` would build.
-    let other = history.repo.join(".git/other-index");
-    let out = Command::new("git")
-        .args(["read-tree", "HEAD"])
-        .env("GIT_INDEX_FILE", &other)
-        .current_dir(&history.repo)
-        .output()
-        .expect("git runs");
-    assert!(
-        out.status.success(),
-        "{}",
-        String::from_utf8_lossy(&out.stderr)
-    );
-    let draft = history.repo.join("draft.txt");
-    std::fs::write(
-        &draft,
-        "A subject line\n\nIt records `design@tiny@staged-apart`.\n",
-    )
-    .expect("a draft");
-    let path = draft.to_string_lossy().into_owned();
-
-    let (stdout, stderr, code) = history.run(&["commit-message", &path]);
-    assert_eq!(code, 0, "the default index defines it: {stdout}{stderr}");
-    let (stdout, stderr, code) = run_with_env(
-        &history.dir,
-        &["commit-message", &path],
-        &[("GIT_INDEX_FILE", &other)],
-    );
-    assert_eq!(code, 1, "the named index does not: {stdout}{stderr}");
-    assert!(stdout.contains("staged-apart"), "{stdout}");
-    let _ = std::fs::remove_file(&draft);
-}
-
-/// The claim: a relative `GIT_INDEX_FILE`, which a plain `git commit` hands its hook, is read
-/// relative to the repository's top level, whatever directory the project sits in.
-///
-/// Git runs the hook at the top level and names the default index relative to it. A project
-/// vendored under its repository runs the tool from its own directory, and a path joined to
-/// that directory names no index at all.
-#[test]
-fn a_relative_index_path_is_read_from_the_repository_top_level() {
-    let history = History::at("commit-index-relative", "vendored");
-    tiny_project(&history, false);
-    history.commit("The project is created\n");
-    let design = std::fs::read_to_string(history.dir.join("docs/design.md")).expect("a design");
-    history.write(
-        "docs/design.md",
-        &format!("{design}\n### A decision staged here `##staged-here`\n\nIt is staged.\n"),
-    );
-    history.git(&["add", "-A"]);
-    let draft = history.repo.join("draft.txt");
-    std::fs::write(
-        &draft,
-        "A subject line\n\nIt records `design@tiny@staged-here`.\n",
-    )
-    .expect("a draft");
-    let (stdout, stderr, code) = run_with_env(
-        &history.dir,
-        &["commit-message", &draft.to_string_lossy()],
-        &[("GIT_INDEX_FILE", Path::new(".git/index"))],
-    );
-    assert_eq!(
-        code, 0,
-        "the repository's index defines it: {stdout}{stderr}"
-    );
-    let _ = std::fs::remove_file(&draft);
-}
-
-/// The claim: the hook accepts the commit that closes an issue.
-///
-/// The message being judged belongs to a commit that does not exist yet, whose parent is
-/// HEAD, so the union rule of `commits` has to hold here too. Without it the hook refuses
-/// exactly the shape the gate accepts and the closing commit cannot be written at all.
-#[test]
-fn a_draft_naming_the_entry_it_is_about_to_delete_resolves_against_head() {
-    let history = History::new("commit-draft-parent");
-    tiny_project(&history, false);
-    history.commit("The project is created\n");
-    // The deletion is staged and not committed: HEAD still defines the entry.
-    history.remove("docs/open-issues/a-closable-issue.md");
-    history.git(&["-c", "core.excludesFile=/dev/null", "add", "-A"]);
-    let draft = history.repo.join("draft.txt");
-    std::fs::write(
-        &draft,
-        "The closable issue is closed\n\nIt closed `issue@tiny@a-closable-issue`.\n",
-    )
-    .expect("a draft");
-
-    let (stdout, stderr, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
-    assert_eq!(code, 0, "HEAD still defines it: {stdout}{stderr}");
-    assert!(stdout.contains("HEAD"), "{stdout}");
-    let _ = std::fs::remove_file(&draft);
 }
 
 /// The claim: a reference that resolves in NEITHER tree is reported, however differently the
@@ -2154,10 +1968,9 @@ fn a_tip_whose_manifest_does_not_load_still_prints_the_commits_before_it() {
 
 /// The claim: a `#` line a commit actually holds is judged like any other line.
 ///
-/// Git's default cleanup for `-m` is whitespace-only, so such a line reaches the commit. The
-/// hook blanks comment lines out of the DRAFT it is handed, because it runs before git's own
-/// cleanup and cannot tell the two apart; `commits` reads the message the commit holds and
-/// cleans nothing, or a `CR:` marker on such a line would leave the regime in silence.
+/// Git's default cleanup for `-m` is whitespace-only, so such a line reaches the commit.
+/// `commits` reads the message the commit holds and cleans nothing, or a `CR:` marker on such a
+/// line would leave the regime in silence.
 #[test]
 fn a_hash_line_a_commit_holds_is_judged_and_not_cleaned_away() {
     let history = History::new("commit-hash-line");
@@ -2168,17 +1981,6 @@ fn a_hash_line_a_commit_holds_is_judged_and_not_cleaned_away() {
     assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(stdout.contains(&format!("commit {sha}:3")), "{stdout}");
     assert!(stdout.contains("no-such-thing"), "{stdout}");
-
-    // The other half: the same text as a DRAFT is git's own comment block and is not judged.
-    let draft = history.repo.join("draft.txt");
-    std::fs::write(
-        &draft,
-        "A subject line\n\n# A line naming `design@tiny@no-such-thing`.\n",
-    )
-    .expect("a draft");
-    let (out, _, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
-    assert_eq!(code, 0, "{out}");
-    let _ = std::fs::remove_file(&draft);
 }
 
 /// The claim: a project vendored under its repository is judged from its own paths.
@@ -2227,124 +2029,6 @@ fn a_range_that_does_not_resolve_could_not_run() {
     let (stdout, stderr, code) = history.run(&["commits", "origin/nowhere..HEAD"]);
     assert_eq!(code, 2, "{stdout}{stderr}");
     assert!(stderr.contains("does not resolve"), "{stderr}");
-}
-
-#[test]
-fn the_hook_is_not_installed_in_a_fresh_repository_and_is_after_install() {
-    let history = History::new("commit-hook");
-    tiny_project(&history, false);
-    history.commit("The project is created\n");
-
-    let (before, stderr, code) = history.run(&["hook", "status"]);
-    assert_eq!(code, 1, "{before}{stderr}");
-    assert!(before.contains("not installed"), "{before}");
-    assert!(before.contains("core.hooksPath is not set"), "{before}");
-
-    let (installed, stderr, code) = history.run(&["hook", "install"]);
-    assert_eq!(code, 0, "{installed}{stderr}");
-
-    let (after, stderr, code) = history.run(&["hook", "status"]);
-    assert_eq!(code, 0, "{after}{stderr}");
-    assert!(after.contains("installed"), "{after}");
-
-    // What `install` wrote is what git will run: the script is there and executable.
-    let script = history.dir.join(".githooks/commit-msg");
-    let text = std::fs::read_to_string(&script).expect("the script");
-    assert!(text.starts_with("#!/bin/sh"), "{text}");
-    assert!(text.contains("commit-message"), "{text}");
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        let mode = std::fs::metadata(&script)
-            .expect("the script")
-            .permissions()
-            .mode();
-        assert!(mode & 0o111 != 0, "{mode:o}");
-    }
-}
-
-#[test]
-fn install_refuses_to_replace_a_hooks_path_that_names_something_else() {
-    let history = History::new("commit-hook-force");
-    tiny_project(&history, false);
-    history.commit("The project is created\n");
-    history.git(&["config", "core.hooksPath", "elsewhere"]);
-
-    let (stdout, stderr, code) = history.run(&["hook", "install"]);
-    assert_eq!(code, 2, "nothing was written: {stdout}{stderr}");
-    assert!(stderr.contains("elsewhere"), "{stderr}");
-    // Refused means unchanged, which is the half a message alone would not establish.
-    let (status, _, _) = history.run(&["hook", "status"]);
-    assert!(status.contains("elsewhere"), "{status}");
-
-    let (forced, stderr, code) = history.run(&["hook", "install", "--force"]);
-    assert_eq!(code, 0, "{forced}{stderr}");
-    let (status, _, code) = history.run(&["hook", "status"]);
-    assert_eq!(code, 0, "{status}");
-}
-
-/// The claim: `install` refusing writes nothing at all, configuration included.
-///
-/// Exit 2 promises the caller that the clone is as they left it. Setting `core.hooksPath` and
-/// then failing on the script leaves a clone pointed at a hooks directory that holds nothing,
-/// which is a hook silently doing nothing.
-#[test]
-fn install_refusing_leaves_the_configuration_untouched() {
-    let history = History::new("commit-hook-refuse");
-    tiny_project(&history, false);
-    history.commit("The project is created\n");
-    std::fs::create_dir_all(history.dir.join(".githooks/commit-msg")).expect("a directory there");
-
-    let (stdout, stderr, code) = history.run(&["hook", "install"]);
-    assert_eq!(code, 2, "{stdout}{stderr}");
-    assert!(stderr.contains("commit-msg"), "{stderr}");
-    let (status, _, _) = history.run(&["hook", "status"]);
-    assert!(status.contains("core.hooksPath is not set"), "{status}");
-    assert!(status.contains("is not a file"), "{status}");
-}
-
-/// The claim: `hook status` without git says it could not run, rather than reporting the hook
-/// absent.
-///
-/// A missing git and an unset key are different facts, and `design@thaum@exit-code-ladder` gives them
-/// different codes: 1 is a negative answer about the subject, 2 is no answer at all.
-#[test]
-fn hook_status_without_git_could_not_run() {
-    let history = History::new("commit-hook-nogit");
-    tiny_project(&history, false);
-    history.commit("The project is created\n");
-    let (installed, _, code) = history.run(&["hook", "install"]);
-    assert_eq!(code, 0, "{installed}");
-
-    let empty = std::env::temp_dir().join(format!("knowledge-nopath-{}", std::process::id()));
-    let _ = std::fs::remove_dir_all(&empty);
-    std::fs::create_dir_all(&empty).expect("a directory holding no git");
-    let (stdout, stderr, code) = run_with_path(&history.dir, &["hook", "status"], &empty);
-    assert_eq!(code, 2, "{stdout}{stderr}");
-    assert!(stderr.to_lowercase().contains("git"), "{stderr}");
-    assert!(!stdout.contains("not installed"), "{stdout}");
-    let _ = std::fs::remove_dir_all(&empty);
-}
-
-/// The claim: the committed script is the one this tool writes, byte for byte.
-///
-/// The tool holds the script as a constant and `hook install` writes it where a tree has
-/// none; this repository commits it so a fresh clone needs only the configuration. Two
-/// copies of one file drift, and the drift is invisible: the hook keeps running the old text.
-#[test]
-fn this_repositorys_committed_hook_is_what_install_writes() {
-    let history = History::new("commit-hook-bytes");
-    tiny_project(&history, false);
-    history.commit("The project is created\n");
-    let (out, stderr, code) = history.run(&["hook", "install"]);
-    assert_eq!(code, 0, "{out}{stderr}");
-    let written = std::fs::read_to_string(history.dir.join(".githooks/commit-msg"))
-        .expect("the script install writes");
-    let committed = std::fs::read_to_string(
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.githooks/commit-msg"),
-    )
-    .expect("the script this repository commits");
-    assert_eq!(written, committed);
 }
 
 /// A reader that closes the pipe early ends the run quietly with exit 2, never with a panic

@@ -1,4 +1,4 @@
-//! Commit messages under the citation regime, and the hook that judges one before it exists.
+//! Commit messages under the citation regime, judged by `commits` over a range.
 //!
 //! **A commit message is a document.** It is parsed as one markdown document — the subject
 //! line, the blank line and the body — and every rule of the regime runs over it: a `CR:`
@@ -7,17 +7,13 @@
 //! The decision, and why a message is judged against a tree read from git objects rather than
 //! against the working tree, is `design@knowledge@a-commit-message-is-a-document`.
 //!
-//! Three commands live here. `commit-message <file>` judges one message against the tree the
-//! index holds and is what the `commit-msg` hook calls. `commits <range>` walks the range and judges
-//! each message against its own commit's tree. `hook install` and `hook status` are per-clone
-//! configuration, read by no check.
+//! One command lives here: `commits <range>` walks the range and judges each commit's message
+//! and tree against that commit's own tree.
 
 use crate::output::outln;
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-
-use clap::Subcommand;
 
 use documentation::check::citations::Release;
 use documentation::check::{self, Inputs};
@@ -25,33 +21,6 @@ use documentation::entity::{Anchors, Entities};
 use documentation::manifest::MANIFEST_NAME;
 use documentation::survey::Survey;
 use documentation::{Finding, Manifest, Model};
-
-/// Where the hook script sits, and the value `core.hooksPath` takes.
-///
-/// A tracked directory rather than the repository's own hooks directory, which git does not
-/// track: a hook nobody can commit is a hook every clone installs by hand and no review reads.
-pub const HOOKS_PATH: &str = ".githooks";
-
-/// The script, byte for byte.
-///
-/// Two lines and no logic. Everything the hook decides is decided by the command it calls, so
-/// a change to the rules is a change to the tool rather than to a file every clone already
-/// pointed at. The project commits it at `path@thaum@.githooks/commit-msg`; `hook install`
-/// writes it where a tree does not carry one, which is what makes the command work in a
-/// repository that is not this one.
-pub const COMMIT_MSG_HOOK: &str = "#!/bin/sh\nexec cargo knowledge commit-message \"$1\"\n";
-
-#[derive(Subcommand)]
-pub enum HookCommand {
-    /// Point this clone's `core.hooksPath` at the committed hooks.
-    Install {
-        /// Overwrite a `core.hooksPath` that names something else.
-        #[arg(long)]
-        force: bool,
-    },
-    /// Whether this clone runs the committed hooks.
-    Status,
-}
 
 // ---------------------------------------------------------------------------------------
 // The message as a document
@@ -64,36 +33,6 @@ pub enum HookCommand {
 /// are printed, and no reader ever sees this name.
 fn message_rel() -> PathBuf {
     PathBuf::from("commit-message.md")
-}
-
-/// The draft a `commit-msg` hook is handed, with git's own comment block blanked out.
-///
-/// **This is for the draft alone, never for a message a commit already holds.** The hook runs
-/// before git's cleanup, so the file still carries the `# Please enter the commit message…`
-/// block and, under `--verbose`, the diff below the scissors line. Judging those would report
-/// on text that never reaches the commit, and each `#` line would open a markdown heading that
-/// splits the draft into scopes nobody wrote.
-///
-/// **The line is blanked, not removed**, so every finding's line number is the line of the
-/// file the hook was handed. Removing them renumbers everything below the block.
-///
-/// A message given with `-m` keeps its `#` lines, git's default cleanup for that form being
-/// whitespace-only, and nothing in the file tells the two cases apart. The hook therefore says
-/// nothing about such a line and `commits` judges it: `commits` reads the message the commit
-/// holds and cleans nothing, so no byte of a commit leaves the regime.
-pub fn cleaned(raw: &str) -> String {
-    const SCISSORS: &str = "------------------------ >8 ------------------------";
-    let mut out = String::new();
-    let mut past_scissors = false;
-    for line in raw.lines() {
-        if !past_scissors && line.starts_with('#') {
-            past_scissors = line.contains(SCISSORS);
-        } else if !past_scissors {
-            out.push_str(line);
-        }
-        out.push('\n');
-    }
-    out
 }
 
 /// Everything one tree contributes to judging a message written against it.
@@ -111,8 +50,7 @@ struct Assembly {
     ignored: HashSet<String>,
     tracked_and_ignored: Vec<PathBuf>,
     /// What is wrong with the tree itself: every check but `corpus` and `changes` at
-    /// `Depth::Judged`, the first three phases alone at `Depth::Foundation`, nothing at
-    /// `Depth::References`.
+    /// `Depth::Judged`, nothing at `Depth::References`.
     trouble: Vec<Finding>,
     /// The phase the tree's run stopped in, where it stopped before the last: its entity
     /// table is then incomplete, and a message judged against it is judged against nothing.
@@ -332,11 +270,6 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
 enum Depth {
     /// The entity table and the path facts. Nothing is judged.
     References,
-    /// The releases the tree pins, and the first three phases: what a message's own checks
-    /// need, and whether the entity table is complete. What the `commit-msg` hook builds for
-    /// the index, since judging the tree's content is `commits`' work and it sits in front of
-    /// every commit.
-    Foundation,
     /// Everything: the releases the tree pins, and every family but `corpus` and `changes`.
     Judged,
 }
@@ -411,7 +344,7 @@ fn commit_tree(
     }
 
     let mut releases = HashMap::new();
-    let judging = depth != Depth::References;
+    let judging = depth == Depth::Judged;
     // Every release this tree cannot supply. A quote checked against no release is checked by
     // nothing at all, so each one is a finding of the tree rather than a family that quietly
     // did less: the commit then fails the range, which is the honest answer.
@@ -522,7 +455,6 @@ fn commit_tree(
                 assembly.stopped = Some(stop.phase);
                 stop.findings
             }
-            Ok(()) if depth == Depth::Foundation => Vec::new(),
             Ok(()) => {
                 let report = check::run(&assembly.model, &assembly.manifest, &assembly.inputs());
                 let mut trouble = report.findings;
@@ -546,134 +478,6 @@ fn extra_generated(manifest: &Manifest, generated: &HashSet<PathBuf>) -> Vec<Pat
 // ---------------------------------------------------------------------------------------
 // The commands
 // ---------------------------------------------------------------------------------------
-
-/// The tree the index holds, as a tree object: what the commit a `commit-msg` hook runs for
-/// will hold.
-///
-/// **The index is the one `GIT_INDEX_FILE` names, where git names one.** `git commit <path>`
-/// and `git commit -a` hand the hook a temporary index through it, holding HEAD plus what the
-/// commit takes; the default index would be a tree the commit does not have. The variable is
-/// inherited as it is: a plain commit names the default index relative to the repository's top
-/// level, and git resolves it against that top level from any directory, the project root of a
-/// project vendored under its repository included.
-///
-/// `git write-tree` writes the tree object into the repository and refuses an index holding
-/// unmerged entries. Nothing references the object, and `git gc` removes it.
-fn index_tree(root: &Path) -> Result<String, String> {
-    let out = documentation::git::git(root)
-        .args(["write-tree"])
-        .output()
-        .map_err(|e| {
-            format!(
-                "the index could not be written as a tree, so the message has no tree to be \
-                 judged against: {e}"
-            )
-        })?;
-    Ok(String::from_utf8_lossy(&out).trim().to_string())
-}
-
-/// Judge the message in one file against the tree the index holds.
-///
-/// What the `commit-msg` hook calls, so it must be fast enough to sit in front of every
-/// commit. It assembles the index's tree at `Depth::Foundation`: the release its quotes verify
-/// against and the first three phases, without the content families `commits` runs later.
-pub fn commit_message(
-    manifest: &Manifest,
-    file: &Path,
-    checker: Option<&Path>,
-) -> Result<ExitCode, String> {
-    let raw = std::fs::read_to_string(file).map_err(|e| format!("{}: {e}", file.display()))?;
-    let text = cleaned(&raw);
-    let root = manifest.root();
-    let checker_rel = checker.and_then(|c| c.strip_prefix(root).ok().map(Path::to_path_buf));
-    let mut corpora = Corpora::default();
-    let index = index_tree(root)?;
-    let tree = commit_tree(
-        root,
-        &index,
-        checker_rel.as_deref(),
-        &mut corpora,
-        Depth::Foundation,
-    )
-    .map_err(|Unloadable(why)| format!("the index's tree could not be read: {why}"))?;
-    // The message is judged against the index's entity table, and a table built over an
-    // incomplete model refuses a reference into what was not read. So the hook does not judge
-    // at all then: it names the phase and the commit is not made, which is what the range form
-    // does at a failing tip. `git commit --no-verify` is the escape for a fix in progress.
-    if let Some(phase) = tree.stopped {
-        outln!("{}", phase.stop_line(tree.trouble.len()));
-        outln!();
-        for finding in &tree.trouble {
-            outln!("{finding}");
-        }
-        outln!(
-            "COULD NOT JUDGE: the index leaves the model incomplete, so the message was judged \
-             against nothing; fix the staged tree, or commit with --no-verify"
-        );
-        return Ok(ExitCode::from(2));
-    }
-    let anchors = tree.anchors();
-    let entities = Entities::build(&tree.model, &anchors);
-    // **HEAD stands in for the parent tree**, as `commits` uses a commit's first parent. The
-    // message being judged belongs to a commit that does not exist yet, whose parent is HEAD,
-    // so a message naming the entry this commit deletes resolves exactly as it will once the
-    // commit is walked. Without it the hook refuses the shape the gate accepts, and the
-    // commit that closes an issue cannot be written at all.
-    //
-    // **It is read only where the index refused something.** Reading HEAD's tree costs as much
-    // as reading the index's, and the hook sits in front of every commit; a message the index
-    // already resolves cannot be turned into a finding by a second table, so the common case
-    // pays nothing.
-    let refused = {
-        let probe = Model::from_documents(vec![(message_rel(), text.clone())]);
-        let (found, _) =
-            check::references::judge(probe.documents(), &entities, &anchors, &tree.inputs());
-        !found.is_empty()
-    };
-    let parent_owned = refused
-        .then(|| documentation::git::rev_parse(root, "HEAD"))
-        .flatten()
-        .and_then(|head| {
-            commit_tree(
-                root,
-                &head,
-                checker_rel.as_deref(),
-                &mut corpora,
-                Depth::References,
-            )
-            .ok()
-            .map(|a| {
-                let e = Entities::build(&a.model, &a.anchors());
-                (a, e)
-            })
-        });
-    let parent = parent_owned.as_ref().map(|(a, e)| (a, e));
-    let findings = relabelled(
-        judge_message(&text, &tree, &entities, parent),
-        &file.display().to_string(),
-    );
-    outln!(
-        "\nmessage: {} line(s) judged against the index{}",
-        text.lines().count(),
-        if parent.is_some() {
-            " and, for what it refused, HEAD"
-        } else {
-            ""
-        }
-    );
-    if !findings.is_empty() {
-        outln!();
-        for finding in &findings {
-            outln!("{finding}");
-        }
-    }
-    outln!("{}", verdict(findings.len()));
-    Ok(if findings.is_empty() {
-        ExitCode::SUCCESS
-    } else {
-        ExitCode::FAILURE
-    })
-}
 
 /// One commit's place in the run, as the summary block names it.
 enum Outcome {
@@ -799,7 +603,7 @@ pub fn commits(
         }
         // A tip whose tree stopped before the last phase has an incomplete entity table, and
         // a message judged against it would be judged against nothing: the run ends here,
-        // naming the phase, as the hook does over the index.
+        // naming the phase.
         if let (true, Some(phase)) = (is_tip, tree.stopped) {
             summary.push((
                 short.to_string(),
@@ -925,224 +729,12 @@ fn verdict(n: usize) -> String {
     }
 }
 
-// ---------------------------------------------------------------------------------------
-// The hook
-// ---------------------------------------------------------------------------------------
-
-/// Read `core.hooksPath` from this clone's configuration.
-///
-/// `Ok(None)` is the key being unset, which is an answer; a git that could not run at all is
-/// an error, because reporting it as unset would answer a question nobody asked and exit 1
-/// where `design@thaum@exit-code-ladder` asks for 2.
-fn hooks_path(root: &Path) -> Result<Option<String>, String> {
-    let out = documentation::git::git(root)
-        .args(["config", "--get", "core.hooksPath"])
-        // git exits 1 for a key that is not set, which is an answer.
-        .accept(1)
-        .output()
-        .map_err(|e| e.to_string())?;
-    let text = String::from_utf8_lossy(&out).trim().to_string();
-    Ok((!text.is_empty()).then_some(text))
-}
-
-/// What sits at the script's path: a file, and whether the file system will run it.
-///
-/// A directory there is neither, and is told apart from an absence because the two need
-/// different repairs and `install` must not try to write through one.
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum Script {
-    Absent,
-    NotAFile,
-    Present { executable: bool },
-}
-
-fn script_state(root: &Path) -> Script {
-    let path = root.join(HOOKS_PATH).join("commit-msg");
-    let Ok(meta) = std::fs::symlink_metadata(&path) else {
-        return Script::Absent;
-    };
-    // A symlink is followed, because git follows it too; only what it points at decides.
-    let Ok(meta) = (if meta.file_type().is_symlink() {
-        std::fs::metadata(&path)
-    } else {
-        Ok(meta)
-    }) else {
-        return Script::Absent;
-    };
-    if !meta.is_file() {
-        return Script::NotAFile;
-    }
-    #[cfg(unix)]
-    let executable = {
-        use std::os::unix::fs::PermissionsExt;
-        meta.permissions().mode() & 0o111 != 0
-    };
-    #[cfg(not(unix))]
-    let executable = true;
-    Script::Present { executable }
-}
-
-/// Give a file the executable bit, on a platform that has one.
-fn make_executable(path: &Path) -> Result<(), String> {
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        let mut permissions = std::fs::metadata(path)
-            .map_err(|e| format!("{}: {e}", path.display()))?
-            .permissions();
-        permissions.set_mode(permissions.mode() | 0o755);
-        std::fs::set_permissions(path, permissions).map_err(|e| format!("{}: {e}", path.display()))
-    }
-    #[cfg(not(unix))]
-    {
-        let _ = path;
-        Ok(())
-    }
-}
-
-pub fn hook(manifest: &Manifest, command: &HookCommand) -> Result<ExitCode, String> {
-    let root = manifest.root();
-    match command {
-        HookCommand::Install { force } => {
-            // **Every refusal comes before anything is written.** Exit 2 promises the caller
-            // that the clone is as they left it, so a configuration written and then a
-            // failure on the script is the one shape this ordering exists against — the same
-            // reason `index` checks every destination before writing the first.
-            let script = root.join(HOOKS_PATH).join("commit-msg");
-            let state = script_state(root);
-            if let Some(current) = hooks_path(root)? {
-                if current != HOOKS_PATH && !force {
-                    return Err(format!(
-                        "core.hooksPath already names {current}, not {HOOKS_PATH}. \
-                         Nothing was written. Pass --force to replace it, or point that \
-                         directory at the committed hooks yourself."
-                    ));
-                }
-            }
-            if state == Script::NotAFile {
-                return Err(format!(
-                    "{} is not a file, so the hook cannot be written there. Nothing was \
-                     written. Remove it, or put the script there yourself.",
-                    script.display()
-                ));
-            }
-            if state == Script::Absent {
-                // A tree that does not carry the script gets one. Configuring a hooks path
-                // that holds nothing is a hook silently doing nothing, which is the shape
-                // every check here exists against.
-                std::fs::create_dir_all(root.join(HOOKS_PATH))
-                    .map_err(|e| format!("{}: {e}", root.join(HOOKS_PATH).display()))?;
-                std::fs::write(&script, COMMIT_MSG_HOOK)
-                    .map_err(|e| format!("{}: {e}", script.display()))?;
-                make_executable(&script)?;
-            }
-            documentation::git::git(root)
-                .args(["config", "core.hooksPath", HOOKS_PATH])
-                .output()
-                .map_err(|e| e.to_string())?;
-            outln!("core.hooksPath = {HOOKS_PATH}");
-            match state {
-                Script::Absent => outln!("{HOOKS_PATH}/commit-msg written"),
-                Script::NotAFile => unreachable!("refused above"),
-                Script::Present { executable } => {
-                    if !executable {
-                        make_executable(&script)?;
-                        outln!("{HOOKS_PATH}/commit-msg made executable");
-                    }
-                    if std::fs::read_to_string(&script).ok().as_deref() != Some(COMMIT_MSG_HOOK) {
-                        outln!(
-                            "{HOOKS_PATH}/commit-msg is not the script this tool writes; \
-                             it is left as it is"
-                        );
-                    }
-                }
-            }
-            Ok(ExitCode::SUCCESS)
-        }
-        HookCommand::Status => {
-            let configured = hooks_path(root)?;
-            let mut missing = Vec::new();
-            match &configured {
-                Some(p) if p == HOOKS_PATH => {}
-                Some(p) => missing.push(format!("core.hooksPath names {p}, not {HOOKS_PATH}")),
-                None => missing.push("core.hooksPath is not set".to_string()),
-            }
-            match script_state(root) {
-                Script::Present { executable: true } => {}
-                Script::Present { executable: false } => {
-                    missing.push(format!("{HOOKS_PATH}/commit-msg is not executable"))
-                }
-                Script::NotAFile => missing.push(format!("{HOOKS_PATH}/commit-msg is not a file")),
-                Script::Absent => missing.push(format!("{HOOKS_PATH}/commit-msg is not there")),
-            }
-            if missing.is_empty() {
-                outln!("hook: installed — every commit message is judged before it is written");
-                return Ok(ExitCode::SUCCESS);
-            }
-            outln!("hook: not installed — {}", missing.join("; "));
-            outln!("      `cargo knowledge hook install` sets it up");
-            Ok(ExitCode::FAILURE)
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     // Every fixture is written as the bytes it means: the checker reads no string literal of
     // its own source, per `design@knowledge@checker-source-literals-are-data`.
-
-    /// The claim: git's comment block leaves the draft, and every line below it keeps the
-    /// number it had in the file the hook was handed.
-    ///
-    /// The hook is handed the file BEFORE git strips it, so without this every commit would
-    /// be judged on `# On branch …` — and each `#` line would open a markdown heading,
-    /// splitting the draft into scopes nobody wrote. Removing the lines rather than blanking
-    /// them renumbers everything below, and the hook's finding then points at the wrong line
-    /// of the file the author is about to re-edit.
-    #[test]
-    fn a_comment_block_leaves_the_draft_and_the_lines_below_it_do_not_move() {
-        let raw = "The subject line\n\
-                   \n\
-                   # Please enter the commit message for your changes.\n\
-                   #\n\
-                   # On branch main\n\
-                   A body naming `design@a@b`.\n";
-        let kept = cleaned(raw);
-        assert!(!kept.contains("On branch"), "{kept:?}");
-        assert_eq!(
-            kept.lines().nth(5),
-            Some("A body naming `design@a@b`."),
-            "line six is still line six: {kept:?}"
-        );
-        assert_eq!(kept.lines().count(), 6);
-    }
-
-    #[test]
-    fn everything_below_the_scissors_line_leaves_the_draft() {
-        let raw = "Subject\n\
-                   \n\
-                   Body.\n\
-                   # ------------------------ >8 ------------------------\n\
-                   # Do not modify or remove the line above.\n\
-                   diff --git a/x b/x\n\
-                   +a line the diff holds\n";
-        let kept = cleaned(raw);
-        assert!(!kept.contains("diff --git"), "{kept:?}");
-        assert!(!kept.contains("a line the diff holds"), "{kept:?}");
-        assert_eq!(
-            kept.lines().take(3).collect::<Vec<_>>(),
-            ["Subject", "", "Body."]
-        );
-    }
-
-    /// The claim: a draft that holds no comment at all keeps every line it has.
-    #[test]
-    fn a_plain_draft_keeps_every_line_it_has() {
-        assert_eq!(cleaned("One\n\nTwo\nThree\n"), "One\n\nTwo\nThree\n");
-        assert_eq!(cleaned(""), "");
-    }
 
     /// The claim: the line a finding names is the line of the message, counted from one.
     ///
@@ -1161,17 +753,5 @@ mod tests {
         assert_eq!(verdict(0), "PASSED: no findings");
         assert_eq!(verdict(1), "FAILED: 1 finding above");
         assert_eq!(verdict(3), "FAILED: 3 findings above");
-    }
-
-    /// The claim: the committed script is the two lines the design states, and the value
-    /// `hook install` writes is the directory it sits in.
-    #[test]
-    fn the_hook_script_is_two_lines_and_names_the_command() {
-        let lines: Vec<&str> = COMMIT_MSG_HOOK.lines().collect();
-        assert_eq!(lines.len(), 2, "{COMMIT_MSG_HOOK:?}");
-        assert_eq!(lines[0], "#!/bin/sh");
-        assert!(lines[1].contains("commit-message"), "{}", lines[1]);
-        assert!(lines[1].contains("\"$1\""), "{}", lines[1]);
-        assert_eq!(HOOKS_PATH, ".githooks");
     }
 }

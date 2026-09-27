@@ -46,8 +46,8 @@ package ids, each with a fingerprint of its own that stays fresh, and one uplift
 the `knowledge` file under the release profile of the shared target directory that the last build wrote.
 
 `cargo knowledge index` refuses to write while phase 3 holds findings, so it fails the same way.
-Whether the installed commit hook and `cargo x gates` run the same binary, and refuse a commit or
-fail the `knowledge` gate for the same reason, is `not established`.
+Whether `cargo x gates` runs the same binary, and fails the `knowledge` gate for the same reason,
+is `not established`.
 
 ### Why it matters
 

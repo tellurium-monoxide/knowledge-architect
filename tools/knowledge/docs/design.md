@@ -74,10 +74,9 @@ that mostly have no per-file scope, and `path@knowledge@docs/tripwires.md` guard
 **Releases are resolved when the last phase is reached**, so a run that stops earlier fetches
 nothing, whatever it would have judged. **A writer refuses over an incomplete model**: `index`
 and `rules bump` run the first three phases before touching anything and exit 2 naming the
-phase, since an index generated over such a model lists rows nobody asked for. **The
-`commit-msg` hook refuses the same way**: a message judged against an incomplete entity table
-is judged against nothing, so it names the phase and the commit is not made; the range form
-already ends at a failing tip.
+phase, since an index generated over such a model lists rows nobody asked for. The range form
+of `commits` ends the same way at a tip whose tree stops early: a message judged against an
+incomplete entity table is judged against nothing.
 
 **Nothing selects a subset of the checks.** The checks cross the phases — what `registers`
 asserts sits in phases 2 and 4, what `references` asserts in 3 and 4 — so a selection could be
@@ -855,21 +854,21 @@ repaired by `bumping-rules`, and the same claim in a message can only be read wr
 number carrying no text is therefore the one claim in this project that can never be repaired,
 which is why the surface the regime reached last is the one it matters most on.
 
-**A message a commit holds is judged byte for byte, and a draft is not.** `commits` reads the
-message with `%B` and cleans nothing: git applied its own cleanup before the commit existed, and
-a second pass would take bytes of a commit out of the regime — under `-m` a `#` line is
-committed verbatim. `commit-message` is handed a draft instead, before that cleanup, so it
-blanks out the `#` comment block and the `--verbose` diff below the scissors line, which never
-reach the commit. The lines are blanked rather than removed, so a finding names the line of the
-file the author is about to re-edit. A `#` line a `-m` message keeps is therefore silent to the
-hook and reported by the range check, and nothing a commit holds escapes both.
+**A message is judged byte for byte, as the commit holds it.** `commits` reads the message
+with `%B` and cleans nothing: git applied its own cleanup before the commit existed, and a
+second pass would take bytes of a commit out of the regime — under `-m` a `#` line is committed
+verbatim.
 
-Two commands, because the two moments are different:
-
-| command | judges | against |
-| --- | --- | --- |
-| `commit-message <file>` | one draft, before the commit exists | the tree the index holds, with HEAD as the parent |
-| `commits <range>` | every message the range names | each commit's own tree, with its first parent |
+**One command judges messages, after the commit exists.** `commits <range>` judges every commit
+of the range against its own tree, with its first parent. It is run over `HEAD~1..HEAD` after
+each commit, so a finding in the newest commit is repaired by `git commit --amend`, and over the
+branch by the gates and by CI before any merge, which is where the guarantee lies: `main` is
+never rewritten, so what must not happen is a message with a finding reaching it, and the range
+check before the merge excludes that. No hook judges a draft before the commit exists. A hook
+repeats the range check's message half, not its tree half, at every commit; it is per-clone
+state a session has to install and check; and it resolves a message against HEAD, which under
+an amend, a reword or a squash is the commit being replaced, so it refuses history edits the
+range check accepts.
 
 **Everything a commit is judged against is read from that commit's tree.** The manifest, the
 `[walk]` rules, the documents, the generated indexes, the per-instance options and the pinned
@@ -903,23 +902,9 @@ parent, since its entities are read and not its verdict — so an extra model is
 the range's start and where the chain was not followed. A parent tree is assembled for its
 entity table and the facts a path reference asks about, and nothing else: no release is parsed
 and no family runs over it, because nobody reads its verdict and parsing the corpus is the
-largest cost in a per-commit run. **The hook takes HEAD as the parent**, HEAD being the parent of the
-commit the draft is for, or it would refuse the shape the range check accepts; it reads that
-tree only where the index refused something, since a message the index already resolves cannot
-be turned into a finding by a second table. The two arms are
-compared by the site each names — the line and the span — rather than by the words each writes,
+largest cost in a per-commit run. The two arms are compared by the site each names — the line and the span — rather than by the words each writes,
 because two trees can refuse one reference for different reasons and comparing the words whole
 would let a reference that resolves in neither pass.
-
-**The hook judges the draft against the tree the index holds**, which is the tree the commit
-will hold: `git write-tree` over the index git names in `GIT_INDEX_FILE`, which is a temporary
-one under `git commit <path>` and `git commit -a`. The working tree differs from it after a
-partial `git add`, and by every untracked file, so a hook reading the working tree accepts
-messages `commits` then refuses, and under the instruction that every commit passes that costs a
-history edit. The hook runs the first three phases over that tree and no content family: a
-tree it cannot complete is refused with exit 2, since a message judged against an incomplete
-table is judged against nothing, and a tree carrying content findings is `commits`' to report,
-so work in progress stays committable.
 
 **`check` reads no history.** A message is not a file of the tree, and a check whose verdict
 moved with the branch's history would be a check nobody could reproduce from a checkout: `git
@@ -938,13 +923,6 @@ rules differed from today's is therefore judged against today's, which can cost 
 asserted where that commit's own rules exempted it — a finding rather than a silence. Since a
 failing tree fails the range, a branch that changes its ignore rules orders its commits for it
 as a branch that makes the checker stricter does: the change first, or a squash.
-
-**The hook is per-clone configuration, and no check reads it.** `core.hooksPath` is git's own
-setting and points at `path@thaum@.githooks/`, which the project commits so a review can read
-the script; `hook install` sets it and `hook status` reports it. A verdict that depended on it
-would be one nobody can trust twice, for the reason `design@knowledge@ignored-targets-are-not-asserted`
-refuses build state. `cargo x gates` prints the status line as information and gates on the
-range check alone.
 
 ## 6. The rules half
 

@@ -23,6 +23,16 @@ branch that tightens the checker orders or squashes its commits instead. Judging
 the checker built from its own tree would also serve a migration branch; it costs one release
 build per commit of every range.
 
+**A `commit-msg` hook judging each message before the commit exists** — lost to
+`design@knowledge@a-commit-message-is-a-document`. `live`. It repaired a message by an edit of
+the draft rather than by an amend, and cost 0.62 s per commit on this machine against 1.6 s for
+`commits HEAD~1..HEAD` after it. It loses on three counts. The range check runs in the gates and
+in CI before every merge, so the hook guarded nothing the merge does not. It judged a message
+against HEAD as the parent, which under an amend or a reword is the commit being replaced: a
+rebase rewording two messages that `commits` accepted was refused by it twice and needed
+`--no-verify`. And it was per-clone configuration every clone had to install and every session
+had to check. The variant that also refused a staged tree carrying findings is the entry below.
+
 **The `commit-msg` hook refusing a commit whose staged tree carries content findings** — lost to
 `design@knowledge@a-commit-message-is-a-document`. `live`. It would catch a failing tree at the
 moment it is written rather than at the range check. It loses because every work-in-progress

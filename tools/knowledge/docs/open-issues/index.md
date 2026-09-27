@@ -1,18 +1,16 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-21 entries
+19 entries
 
 | kind | title |
 | --- | --- |
 | defect | [The changelog's own counts are asserted by nothing](changelog-counts-asserted-by-nothing.md) |
 | defect | [A worktree build sharing the target directory leaves the live checker exempting no fixture](checker-source-path-stale-after-shared-target-build.md) |
-| defect | [The hook reads the commit being replaced as the parent under `git commit --amend`](hook-under-amend-reads-the-replaced-commit.md) |
 | defect | [The inverse assertion reads the prose marker form alone](inverse-assertion-reads-prose-markers-only.md) |
 | defect | [`commits` treats HEAD as the tip when a range holds HEAD before its last commit](range-tip-is-head-where-the-range-holds-it.md) |
 | defect | [The release diff calls a renumbered section a deletion](release-diff-calls-renumbered-section-deletion.md) |
 | defect | [A file outside the walk that cannot be read is silent to the inverse assertion](unreadable-file-outside-the-walk-is-silent.md) |
 | defect | [A level-two heading with no slug in a tripwires home is silently not an entry](unslugged-tripwire-heading-is-silent.md) |
-| defect | [A project vendored under its repository cannot be judged by the hook in a linked worktree](vendored-project-in-a-linked-worktree.md) |
 | deferred | [Nothing tests that `rules diff` receives its two dates the right way round](rules-diff-date-order-untested.md) |
 | deferred | [Only a line break is refused in a file name, and Windows forbids more](windows-forbidden-names-not-refused.md) |
 | design | [A submodule is a project of its own, or nothing, and the tool has no model for either](a-submodule-is-a-project-of-its-own.md) |

@@ -21,10 +21,7 @@ cargo knowledge tripwires [anchor] [--guarding <ref>] [text …]
                                           every tripwire entry, and what each guards
 cargo knowledge index                     regenerate every generated index in place
 cargo knowledge model                     every observation the walk produced
-cargo knowledge commit-message <file>     judge one message against the index's tree
 cargo knowledge commits <range>           judge every commit in the range, message and tree, against its own tree
-cargo knowledge hook install [--force]    point this clone at the committed hooks
-cargo knowledge hook status               whether this clone judges a message before it is written
 cargo knowledge rules show <number> …     the pinned text of a rule, shaped to be quoted
 cargo knowledge rules latest              is a newer rules release published?
 cargo knowledge rules diff --old <date> --new <date>
@@ -39,9 +36,9 @@ Three, per `design@thaum@exit-code-ladder`, and the third is what makes the othe
 
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
-| `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; `rules diff` with no change; `rules show` on numbers the release holds; `rules fetch` and `rules bump` having done what they name; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commit-message` and `commits` with no finding, an empty range included; `hook install` having set `core.hooksPath`; `hook status` on a clone that runs the committed hook |
-| `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commit-message` or `commits` with a finding against a judged message; `hook status` on a clone that does not run it |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `hook install` refusing a `core.hooksPath` that names something else or a script path that is not a file, having written nothing, `hook status` where git cannot run, `commits` on a range that does not resolve or whose tip carries a failing tree, no project above the working directory, no `git` on the path or a project outside a worktree, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, a release that cannot be resolved — a pin neither vendored nor archived that the network does not answer — `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
+| `0` | the command ran and its subject is in order | `check` with no findings; `rules latest` up to date; `rules diff` with no change; `rules show` on numbers the release holds; `rules fetch` and `rules bump` having done what they name; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commits` with no finding, an empty range included |
+| `1` | the command ran and reports a negative answer | `check` with findings; `rules diff` with changes; `rules show` on a number the release does not hold; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree before the tip |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve or whose tip carries a failing tree, no project above the working directory, no `git` on the path or a project outside a worktree, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, a release that cannot be resolved — a pin neither vendored nor archived that the network does not answer — `rules latest` when it cannot produce a comparison — the extractor matched nothing, or the published date is earlier than the pinned one |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -77,10 +74,8 @@ gives no input to is printed as not run rather than counted. There is no way to 
 the checks cross the phases, and a run over a passing tree costs under a second. The argument is
 `design@knowledge@phases-gate-the-report`.
 
-`index`, `rules bump` and the `commit-msg` hook run the first three phases too, and refuse with
-exit 2 while one of them holds anything: an index generated over an incomplete model lists rows
-nobody asked for, and a message judged against an incomplete entity table is judged against
-nothing.
+`index` and `rules bump` run the first three phases too, and refuse with exit 2 while one of
+them holds anything: an index generated over an incomplete model lists rows nobody asked for.
 
 ## `show`, `issues` and `tripwires`
 
@@ -225,7 +220,7 @@ declared metadata key, then a level-one title, then the declared sections.
 nothing. The arguments are `design@knowledge@registers-are-declared` and
 `design@knowledge@a-file-register-is-a-directory-of-entries`.
 
-## Commit messages, and the hook
+## Commit messages
 
 **A commit message is a document under the citation regime.** It is parsed as one markdown
 document — subject line, blank line, body — and every rule runs over it: a `CR:` marker owes its
@@ -234,8 +229,8 @@ missing-marker lint reads it as it reads any other prose. The argument is
 `design@knowledge@a-commit-message-is-a-document`.
 
 ```sh
-cargo knowledge commit-message .git/COMMIT_EDITMSG   # one message, against the index's tree
-cargo knowledge commits origin/main..HEAD            # the branch's own commits
+cargo knowledge commits HEAD~1..HEAD        # the commit just made
+cargo knowledge commits origin/main..HEAD   # the branch's own commits
 ```
 
 `commits` reads everything from each commit's own tree through git objects — the manifest, the
@@ -244,33 +239,14 @@ was written against, byte for byte and cleaned of nothing. **A commit before the
 load or carries findings fails the run**, with its tree's findings named by the commit and the
 file, and its message is still judged where its tree reached the last phase; the summary block
 counts judged and failed commits, and a tip whose tree fails is exit 2 with a last line that says
-so. The checker that judges every commit is the one built from the working tree, so a branch that
-makes it stricter puts that change in its first commit or is squashed before review. A message's references resolve against its
-commit's tree **or its first parent's**, which is what lets a commit that closes an issue name it.
-
-`commit-message` is handed a draft rather than a commit, so it blanks out git's `#` comment block
-and the `--verbose` diff. It judges the draft against the tree the index holds, the one git names
-in `GIT_INDEX_FILE` under `git commit <path>` and `git commit -a`, and it runs the first three
-phases over that tree and no content family. It takes HEAD as the parent tree — HEAD being the
-parent of the commit the draft is for — reading it only where the index refused something, so a
-clean message costs one model. A `#` line a `-m` message keeps is therefore silent to the hook and
-reported by `commits`.
+so. The checker that judges every commit is the one built from the working tree, so a branch
+that makes it stricter puts that change in its first commit or is squashed before review. A
+message's references resolve against its commit's tree **or its first parent's**, which is what
+lets a commit that closes an issue name it. No hook judges a message before the commit exists:
+the range is run after each commit, and a finding in the newest commit is repaired by an amend.
 
 `check` reads no history, and the range is always explicit. `cargo x gates` runs
 `commits origin/main..HEAD` as a gate.
-
-**The hook judges a message before the commit exists.**
-
-```sh
-cargo knowledge hook install     # core.hooksPath = .githooks
-cargo knowledge hook status      # 0 installed, 1 not
-```
-
-`path@thaum@.githooks/commit-msg` is committed, so a review can read it; `install` writes it where a tree
-carries none, and refuses to replace a `core.hooksPath` that names something else without
-`--force`. The script runs `cargo knowledge`, which is the alias in `path@thaum@.cargo/config.toml`: a
-tree without that alias needs the script rewritten to whatever reaches the binary there. **No check reads the hook's status**: per-clone configuration must not move a verdict.
-`cargo x gates` prints the status line beside its verdicts and gates on nothing about it.
 
 ## What to respect
 
