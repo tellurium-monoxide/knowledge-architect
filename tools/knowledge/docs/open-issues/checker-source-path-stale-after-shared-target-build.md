@@ -41,6 +41,21 @@ first checkout's `target/`. Observed on the branch that landed step 4c of slice 
 - `cargo clean --release -p knowledge -p documentation`, then the check in the root: 38 files
   exempted, `PASSED: no findings`.
 
+A second occurrence, on a branch editing only the agent configuration: a `routing-reviewer`
+subagent ran `cargo knowledge check` on the tip of origin/main in a temporary checkout under the session's
+scratchpad directory, outside `$HOME/.claude/worktrees`, and removed it. The root then printed
+`checker source: <that checkout's absolute path>/tools/knowledge, 0 file(s) with string literals
+read as data` and `phase 3: 57 finding(s)`, all under `path@knowledge@documentation/src/` and
+`path@knowledge@tests/`. Whether that reviewer set `CARGO_TARGET_DIR` is `not established`: its
+report does not say, and `path@thaum@.cargo/config.toml` sets no `target-dir`.
+
+A cheaper recovery than the clean, observed on that occurrence:
+
+```sh
+touch tools/knowledge/src/main.rs tools/knowledge/documentation/src/lib.rs
+cargo knowledge check          # rebuilds; 38 files exempted, PASSED: no findings
+```
+
 Why cargo reuses the binary is `not established`. The assumption is that the two checkouts are two
 package ids, each with a fingerprint of its own that stays fresh, and one uplifted binary at
 the `knowledge` file under the release profile of the shared target directory that the last build wrote.
