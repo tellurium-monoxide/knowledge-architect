@@ -7,8 +7,8 @@
 //! The decision, and why a message is judged against a tree read from git objects rather than
 //! against the working tree, is `design@knowledge@a-commit-message-is-a-document`.
 //!
-//! Three commands live here. `commit-message <file>` judges one message against the working
-//! tree and is what the `commit-msg` hook calls. `commits <range>` walks the range and judges
+//! Three commands live here. `commit-message <file>` judges one message against the tree the
+//! index holds and is what the `commit-msg` hook calls. `commits <range>` walks the range and judges
 //! each message against its own commit's tree. `hook install` and `hook status` are per-clone
 //! configuration, read by no check.
 
@@ -110,10 +110,9 @@ struct Assembly {
     survey: Survey,
     ignored: HashSet<String>,
     tracked_and_ignored: Vec<PathBuf>,
-    /// What is wrong with the tree itself, judged by every check but `corpus` and `changes`.
-    ///
-    /// Empty for the working tree, which this command does not judge: `check` is what judges
-    /// a checkout, and judging it twice would put the tree's findings inside a message's.
+    /// What is wrong with the tree itself: every check but `corpus` and `changes` at
+    /// `Depth::Judged`, the first three phases alone at `Depth::Foundation`, nothing at
+    /// `Depth::References`.
     trouble: Vec<Finding>,
     /// The phase the tree's run stopped in, where it stopped before the last: its entity
     /// table is then incomplete, and a message judged against it is judged against nothing.
@@ -234,65 +233,6 @@ fn relabelled(findings: Vec<Finding>, label: &str) -> Vec<Finding> {
 }
 
 // ---------------------------------------------------------------------------------------
-// The working tree
-// ---------------------------------------------------------------------------------------
-
-/// The working tree, assembled the way `check` assembles it, minus what a message cannot need.
-///
-/// `changes` and `corpus` are left out because neither reads the model, and the tree's own
-/// findings are left out because `check` is what reports them.
-fn working_tree(manifest: &Manifest, checker: Option<&Path>) -> Result<Assembly, String> {
-    let model = Model::build(manifest, checker).map_err(|e| e.to_string())?;
-    let tree = manifest.rules_tree();
-    let body_starts_at = manifest.rules().body_starts_at;
-    // Read leniently: a corpus file that is not there is a phase-2 finding of the tree, which
-    // the foundation reports before anything here is needed, and a message's references
-    // need no release.
-    let mut releases = HashMap::new();
-    if let Ok(vendored) = std::fs::read_to_string(tree.text()) {
-        releases.insert(None, Release::new(&vendored, body_starts_at));
-    }
-    let pinned = std::fs::read_to_string(tree.version())
-        .ok()
-        .and_then(|v| rules::release::read_version(&v).get("date").cloned())
-        .unwrap_or_default();
-    let anchors = Anchors::of(manifest);
-    let mut committed = HashMap::new();
-    let mut generated_paths = vec![manifest.rules().dir.join("index.md")];
-    generated_paths.extend(documentation::index::generated_index_paths(manifest));
-    for rel in generated_paths {
-        if let Ok(text) = std::fs::read_to_string(manifest.root().join(&rel)) {
-            committed.insert(rel, text);
-        }
-    }
-    let mut configs = HashMap::new();
-    for (_, _, home) in anchors.instances() {
-        if let Ok(text) = std::fs::read_to_string(manifest.root().join(&home.config)) {
-            configs.insert(home.config.clone(), text);
-        }
-    }
-    let survey = documentation::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
-    let queries = check::references::ignore_queries(&model, &anchors);
-    let ignored =
-        documentation::git::ignored(manifest.root(), &queries).map_err(|e| e.to_string())?;
-    let tracked_and_ignored =
-        documentation::git::tracked_and_ignored(manifest.root()).map_err(|e| e.to_string())?;
-    Ok(Assembly {
-        manifest: manifest.clone(),
-        model,
-        releases,
-        pinned,
-        committed,
-        configs,
-        survey,
-        ignored,
-        tracked_and_ignored,
-        trouble: Vec::new(),
-        stopped: None,
-    })
-}
-
-// ---------------------------------------------------------------------------------------
 // One commit's tree
 // ---------------------------------------------------------------------------------------
 
@@ -383,29 +323,34 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
     })
 }
 
-/// Assemble one commit's tree into a model, and judge it with every family but `corpus` and
-/// `changes`.
+/// How much of a tree the caller needs.
+///
+/// A tree used only to resolve a message's references needs its entity table and the facts a
+/// path reference asks about, and nothing else: no release parsed, no family run. That is
+/// every parent tree, and parsing the corpus is the single largest cost in the run.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Depth {
+    /// The entity table and the path facts. Nothing is judged.
+    References,
+    /// The releases the tree pins, and the first three phases: what a message's own checks
+    /// need, and whether the entity table is complete. What the `commit-msg` hook builds for
+    /// the index, since judging the tree's content is `commits`' work and it sits in front of
+    /// every commit.
+    Foundation,
+    /// Everything: the releases the tree pins, and every family but `corpus` and `changes`.
+    Judged,
+}
+
+/// Assemble one tree into a model, and judge it as far as `depth` asks.
+///
+/// `id` is a commit or a tree object: every read goes through `git ls-tree` and
+/// `<id>:<path>`, which accept both.
 ///
 /// **`corpus` and `changes` are the two families whose subject is not the model.** `corpus`
 /// reads the filesystem, which a commit's tree is not; `changes` resolves every release its
 /// changelog names, which at a commit means reading the whole archive out of git objects at
 /// every step of the range. Neither can decide whether a message's references resolve, which
 /// is the question this assembly exists to answer.
-/// How much of a commit's tree the caller needs.
-///
-/// A tree used only to resolve a message's references needs its entity table and the facts a
-/// path reference asks about, and nothing else: no release parsed, no family run. That is
-/// every parent tree, and parsing the corpus is the single largest cost in the run — which is
-/// what keeps the `commit-msg` hook, which builds HEAD's tree for exactly this, quick enough
-/// to sit in front of every commit.
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum Depth {
-    /// The entity table and the path facts. Nothing is judged.
-    References,
-    /// Everything: the releases the tree pins, and every family but `corpus` and `changes`.
-    Judged,
-}
-
 fn commit_tree(
     root: &Path,
     sha: &str,
@@ -466,7 +411,7 @@ fn commit_tree(
     }
 
     let mut releases = HashMap::new();
-    let judging = depth == Depth::Judged;
+    let judging = depth != Depth::References;
     // Every release this tree cannot supply. A quote checked against no release is checked by
     // nothing at all, so each one is a finding of the tree rather than a family that quietly
     // did less: the commit then fails the range, which is the honest answer.
@@ -577,6 +522,7 @@ fn commit_tree(
                 assembly.stopped = Some(stop.phase);
                 stop.findings
             }
+            Ok(()) if depth == Depth::Foundation => Vec::new(),
             Ok(()) => {
                 let report = check::run(&assembly.model, &assembly.manifest, &assembly.inputs());
                 let mut trouble = report.findings;
@@ -601,10 +547,38 @@ fn extra_generated(manifest: &Manifest, generated: &HashSet<PathBuf>) -> Vec<Pat
 // The commands
 // ---------------------------------------------------------------------------------------
 
-/// Judge the message in one file against the working tree.
+/// The tree the index holds, as a tree object: what the commit a `commit-msg` hook runs for
+/// will hold.
+///
+/// **The index is the one `GIT_INDEX_FILE` names, where git names one.** `git commit <path>`
+/// and `git commit -a` hand the hook a temporary index through it, holding HEAD plus what the
+/// commit takes; the default index would be a tree the commit does not have. A plain commit
+/// hands the default index as a path relative to the hook's working directory, which is the
+/// repository's top level; it is made absolute here, since every git this tool runs starts in
+/// the project root, and a project vendored under its repository has a different one.
+///
+/// `git write-tree` writes the tree object into the repository and refuses an index holding
+/// unmerged entries. Nothing references the object, and `git gc` removes it.
+fn index_tree(root: &Path) -> Result<String, String> {
+    let mut invocation = documentation::git::git(root).args(["write-tree"]);
+    if let Some(named) = std::env::var_os("GIT_INDEX_FILE") {
+        let named = PathBuf::from(named);
+        if named.is_relative() {
+            let cwd = std::env::current_dir().map_err(|e| e.to_string())?;
+            invocation = invocation.env("GIT_INDEX_FILE", cwd.join(named));
+        }
+    }
+    let out = invocation.output().map_err(|e| {
+        format!("the index could not be written as a tree, so the message has no tree to be judged against: {e}")
+    })?;
+    Ok(String::from_utf8_lossy(&out).trim().to_string())
+}
+
+/// Judge the message in one file against the tree the index holds.
 ///
 /// What the `commit-msg` hook calls, so it must be fast enough to sit in front of every
-/// commit. What it costs is one model of the tree, which is what `check` already pays.
+/// commit. It assembles the index's tree at `Depth::Foundation`: the release its quotes verify
+/// against and the first three phases, without the content families `commits` runs later.
 pub fn commit_message(
     manifest: &Manifest,
     file: &Path,
@@ -612,21 +586,31 @@ pub fn commit_message(
 ) -> Result<ExitCode, String> {
     let raw = std::fs::read_to_string(file).map_err(|e| format!("{}: {e}", file.display()))?;
     let text = cleaned(&raw);
-    let tree = working_tree(manifest, checker)?;
-    // The message is judged against the working tree's entity table, and a table built over
-    // an incomplete model refuses a reference into what was not read. So the hook does not
-    // judge at all then: it names the phase and the commit is not made, which is what the
-    // range form does at a failing tip. `git commit --no-verify` is the escape for a fix in
-    // progress.
-    if let Err(stop) = check::foundation(&tree.model, &tree.manifest, &tree.inputs()) {
-        outln!("{}", stop.phase.stop_line(stop.findings.len()));
+    let root = manifest.root();
+    let checker_rel = checker.and_then(|c| c.strip_prefix(root).ok().map(Path::to_path_buf));
+    let mut corpora = Corpora::default();
+    let index = index_tree(root)?;
+    let tree = commit_tree(
+        root,
+        &index,
+        checker_rel.as_deref(),
+        &mut corpora,
+        Depth::Foundation,
+    )
+    .map_err(|Unloadable(why)| format!("the index's tree could not be read: {why}"))?;
+    // The message is judged against the index's entity table, and a table built over an
+    // incomplete model refuses a reference into what was not read. So the hook does not judge
+    // at all then: it names the phase and the commit is not made, which is what the range form
+    // does at a failing tip. `git commit --no-verify` is the escape for a fix in progress.
+    if let Some(phase) = tree.stopped {
+        outln!("{}", phase.stop_line(tree.trouble.len()));
         outln!();
-        for finding in &stop.findings {
+        for finding in &tree.trouble {
             outln!("{finding}");
         }
         outln!(
-            "COULD NOT JUDGE: the working tree leaves the model incomplete, so the message was \
-             judged against nothing; fix the tree, or commit with --no-verify"
+            "COULD NOT JUDGE: the index leaves the model incomplete, so the message was judged \
+             against nothing; fix the staged tree, or commit with --no-verify"
         );
         return Ok(ExitCode::from(2));
     }
@@ -638,13 +622,10 @@ pub fn commit_message(
     // commit is walked. Without it the hook refuses the shape the gate accepts, and the
     // commit that closes an issue cannot be written at all.
     //
-    // **It is read only where the working tree refused something.** Reading HEAD's tree costs
-    // as much as reading the working tree, and the hook sits in front of every commit; a
-    // message the working tree already resolves cannot be turned into a finding by a second
-    // table, so the common case pays nothing.
-    let root = manifest.root();
-    let checker_rel = checker.and_then(|c| c.strip_prefix(root).ok().map(Path::to_path_buf));
-    let mut corpora = Corpora::default();
+    // **It is read only where the index refused something.** Reading HEAD's tree costs as much
+    // as reading the index's, and the hook sits in front of every commit; a message the index
+    // already resolves cannot be turned into a finding by a second table, so the common case
+    // pays nothing.
     let refused = {
         let probe = Model::from_documents(vec![(message_rel(), text.clone())]);
         let (found, _) =
@@ -674,7 +655,7 @@ pub fn commit_message(
         &file.display().to_string(),
     );
     outln!(
-        "\nmessage: {} line(s) judged against the working tree{}",
+        "\nmessage: {} line(s) judged against the index{}",
         text.lines().count(),
         if parent.is_some() {
             " and, for what it refused, HEAD"

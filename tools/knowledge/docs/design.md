@@ -868,7 +868,7 @@ Two commands, because the two moments are different:
 
 | command | judges | against |
 | --- | --- | --- |
-| `commit-message <file>` | one draft, before the commit exists | the working tree, with HEAD as the parent |
+| `commit-message <file>` | one draft, before the commit exists | the tree the index holds, with HEAD as the parent |
 | `commits <range>` | every message the range names | each commit's own tree, with its first parent |
 
 **Everything a commit is judged against is read from that commit's tree.** The manifest, the
@@ -905,11 +905,21 @@ entity table and the facts a path reference asks about, and nothing else: no rel
 and no family runs over it, because nobody reads its verdict and parsing the corpus is the
 largest cost in a per-commit run. **The hook takes HEAD as the parent**, HEAD being the parent of the
 commit the draft is for, or it would refuse the shape the range check accepts; it reads that
-tree only where the working tree refused something, since a message the working tree already
-resolves cannot be turned into a finding by a second table. The two arms are
+tree only where the index refused something, since a message the index already resolves cannot
+be turned into a finding by a second table. The two arms are
 compared by the site each names — the line and the span — rather than by the words each writes,
 because two trees can refuse one reference for different reasons and comparing the words whole
 would let a reference that resolves in neither pass.
+
+**The hook judges the draft against the tree the index holds**, which is the tree the commit
+will hold: `git write-tree` over the index git names in `GIT_INDEX_FILE`, which is a temporary
+one under `git commit <path>` and `git commit -a`. The working tree differs from it after a
+partial `git add`, and by every untracked file, so a hook reading the working tree accepts
+messages `commits` then refuses, and under the rule that every commit passes that costs a
+history edit. The hook runs the first three phases over that tree and no content family: a
+tree it cannot complete is refused with exit 2, since a message judged against an incomplete
+table is judged against nothing, and a tree carrying content findings is `commits`' to report,
+so work in progress stays committable.
 
 **`check` reads no history.** A message is not a file of the tree, and a check whose verdict
 moved with the branch's history would be a check nobody could reproduce from a checkout: `git

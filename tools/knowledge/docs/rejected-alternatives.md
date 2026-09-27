@@ -23,6 +23,12 @@ branch that tightens the checker orders or squashes its commits instead. Judging
 the checker built from its own tree would also serve a migration branch; it costs one release
 build per commit of every range.
 
+**The `commit-msg` hook refusing a commit whose staged tree carries content findings** — lost to
+`design@knowledge@a-commit-message-is-a-document`. `live`. It would catch a failing tree at the
+moment it is written rather than at the range check. It loses because every work-in-progress
+commit would then need `--no-verify`, which disables the message check as well, and `commits`
+already judges each commit's tree before a merge.
+
 **Selecting a subset of the checks with `--only`, one family per check** — lost to
 `design@knowledge@phases-gate-the-report`. `live`. It let a reviewer run the checks of its own axis
 and let a run that read no rule text resolve no release. It loses to the phases: the checks cross

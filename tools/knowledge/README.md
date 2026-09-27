@@ -21,7 +21,7 @@ cargo knowledge tripwires [anchor] [--guarding <ref>] [text …]
                                           every tripwire entry, and what each guards
 cargo knowledge index                     regenerate every generated index in place
 cargo knowledge model                     every observation the walk produced
-cargo knowledge commit-message <file>     judge one message against the working tree
+cargo knowledge commit-message <file>     judge one message against the index's tree
 cargo knowledge commits <range>           judge every message in the range against its own tree
 cargo knowledge hook install [--force]    point this clone at the committed hooks
 cargo knowledge hook status               whether this clone judges a message before it is written
@@ -234,7 +234,7 @@ missing-marker lint reads it as it reads any other prose. The argument is
 `design@knowledge@a-commit-message-is-a-document`.
 
 ```sh
-cargo knowledge commit-message .git/COMMIT_EDITMSG   # one message, against the working tree
+cargo knowledge commit-message .git/COMMIT_EDITMSG   # one message, against the index's tree
 cargo knowledge commits origin/main..HEAD            # the branch's own commits
 ```
 
@@ -249,9 +249,11 @@ makes it stricter puts that change in its first commit or is squashed before rev
 commit's tree **or its first parent's**, which is what lets a commit that closes an issue name it.
 
 `commit-message` is handed a draft rather than a commit, so it blanks out git's `#` comment block
-and the `--verbose` diff, and it takes HEAD as the parent tree — HEAD being the parent of the
-commit the draft is for — reading it only where the working tree refused something, so a clean
-message costs one model. A `#` line a `-m` message keeps is therefore silent to the hook and
+and the `--verbose` diff. It judges the draft against the tree the index holds, the one git names
+in `GIT_INDEX_FILE` under `git commit <path>` and `git commit -a`, and it runs the first three
+phases over that tree and no content family. It takes HEAD as the parent tree — HEAD being the
+parent of the commit the draft is for — reading it only where the index refused something, so a
+clean message costs one model. A `#` line a `-m` message keeps is therefore silent to the hook and
 reported by `commits`.
 
 `check` reads no history, and the range is always explicit. `cargo x gates` runs

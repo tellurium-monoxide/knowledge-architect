@@ -52,7 +52,7 @@ enum Command {
     Index,
     /// Every observation the walk produced: file, line, kind, value.
     Model,
-    /// Judge one commit message, from a file, against the working tree.
+    /// Judge one commit message, from a file, against the tree the index holds.
     CommitMessage(CommitMessageArgs),
     /// Judge every commit message in a range, each against its own commit's tree.
     Commits(CommitsArgs),

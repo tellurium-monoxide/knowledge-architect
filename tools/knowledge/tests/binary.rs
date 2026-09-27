@@ -1664,18 +1664,19 @@ fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
     let _ = std::fs::remove_file(&message);
 }
 
-/// The claim: the hook does not judge a message against an incomplete working tree. It
-/// names the phase, and the commit is not made.
+/// The claim: the hook does not judge a message against an incomplete index tree. It names
+/// the phase, and the commit is not made.
 ///
 /// A table built over a model missing a file would refuse a reference into that file, so a
 /// verdict over it is no verdict. The range form ends at a failing tip the same way.
 #[test]
-fn the_hook_refuses_to_judge_over_an_incomplete_working_tree() {
+fn the_hook_refuses_to_judge_over_an_incomplete_index() {
     let history = History::new("commit-incomplete");
     tiny_project(&history, false);
     history.commit("The project is created\n");
-    // Untracked, and the walk lists it: one byte of Windows-1252 makes it unreadable.
+    // Staged, so the commit would hold it: one byte of Windows-1252 makes it unreadable.
     history.write_bytes("docs/latin1.md", b"# A note\n\ncaf\xe9\n");
+    history.git(&["add", "docs/latin1.md"]);
     let draft = history.repo.join("draft.txt");
     std::fs::write(&draft, "A message with nothing wrong in it\n").expect("a draft");
     let (stdout, stderr, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
@@ -1688,6 +1689,89 @@ fn the_hook_refuses_to_judge_over_an_incomplete_working_tree() {
         stdout.trim_end().ends_with("--no-verify") && stdout.contains("COULD NOT JUDGE"),
         "{stdout}"
     );
+    let _ = std::fs::remove_file(&draft);
+}
+
+/// The claim: the hook judges a draft against the tree the commit will hold, which is the
+/// index, and not against the working tree.
+///
+/// A decision written to disk and not staged is not in the commit, so a message naming it
+/// dangles once the commit exists, and `commits` reports it. The hook refuses it first.
+#[test]
+fn a_draft_naming_a_decision_the_index_does_not_hold_is_refused() {
+    let history = History::new("commit-unstaged");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    let design = std::fs::read_to_string(history.dir.join("docs/design.md")).expect("a design");
+    history.write(
+        "docs/design.md",
+        &format!("{design}\n### A decision on disk alone `##on-disk-alone`\n\nIt is not staged.\n"),
+    );
+    let draft = history.repo.join("draft.txt");
+    std::fs::write(
+        &draft,
+        "A subject line\n\nIt records `design@tiny@on-disk-alone`.\n",
+    )
+    .expect("a draft");
+
+    let (stdout, stderr, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
+    assert_eq!(code, 1, "the index does not define it: {stdout}{stderr}");
+    assert!(stdout.contains("on-disk-alone"), "{stdout}");
+
+    // Staged, the same draft passes: the index is what was read.
+    history.git(&["add", "docs/design.md"]);
+    let (stdout, stderr, code) = history.run(&["commit-message", &draft.to_string_lossy()]);
+    assert_eq!(code, 0, "the index defines it now: {stdout}{stderr}");
+    let _ = std::fs::remove_file(&draft);
+}
+
+/// The claim: the hook reads the index git names in `GIT_INDEX_FILE`, which is how
+/// `git commit <path>` and `git commit -a` hand it the tree the commit will hold.
+///
+/// Under `git commit <path>` the commit holds HEAD plus that path, whatever else is staged in
+/// the repository's own index. A hook reading the default index would judge a tree the commit
+/// does not have.
+#[test]
+fn the_hook_reads_the_index_git_names_in_its_environment() {
+    let history = History::new("commit-index-file");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    let design = std::fs::read_to_string(history.dir.join("docs/design.md")).expect("a design");
+    history.write(
+        "docs/design.md",
+        &format!("{design}\n### A decision staged apart `##staged-apart`\n\nIt is staged.\n"),
+    );
+    history.git(&["add", "docs/design.md"]);
+    // A second index holding HEAD's tree alone, as `git commit <other path>` would build.
+    let other = history.repo.join(".git/other-index");
+    let out = Command::new("git")
+        .args(["read-tree", "HEAD"])
+        .env("GIT_INDEX_FILE", &other)
+        .current_dir(&history.repo)
+        .output()
+        .expect("git runs");
+    assert!(
+        out.status.success(),
+        "{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let draft = history.repo.join("draft.txt");
+    std::fs::write(
+        &draft,
+        "A subject line\n\nIt records `design@tiny@staged-apart`.\n",
+    )
+    .expect("a draft");
+    let path = draft.to_string_lossy().into_owned();
+
+    let (stdout, stderr, code) = history.run(&["commit-message", &path]);
+    assert_eq!(code, 0, "the default index defines it: {stdout}{stderr}");
+    let (stdout, stderr, code) = run_with_env(
+        &history.dir,
+        &["commit-message", &path],
+        &[("GIT_INDEX_FILE", &other)],
+    );
+    assert_eq!(code, 1, "the named index does not: {stdout}{stderr}");
+    assert!(stdout.contains("staged-apart"), "{stdout}");
     let _ = std::fs::remove_file(&draft);
 }
 
