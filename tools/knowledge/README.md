@@ -22,7 +22,7 @@ cargo knowledge tripwires [anchor] [--guarding <ref>] [text …]
 cargo knowledge index                     regenerate every generated index in place
 cargo knowledge model                     every observation the walk produced
 cargo knowledge commit-message <file>     judge one message against the index's tree
-cargo knowledge commits <range>           judge every message in the range against its own tree
+cargo knowledge commits <range>           judge every commit in the range, message and tree, against its own tree
 cargo knowledge hook install [--force]    point this clone at the committed hooks
 cargo knowledge hook status               whether this clone judges a message before it is written
 cargo knowledge rules show <number> …     the pinned text of a rule, shaped to be quoted

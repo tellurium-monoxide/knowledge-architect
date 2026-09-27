@@ -36,8 +36,6 @@ pub struct Invocation {
     /// Exit codes that are answers rather than failures. `git check-ignore` exits 1 to say
     /// "none of these", which is a result and not an error.
     accept: Vec<i32>,
-    /// Variables set over the inherited environment.
-    envs: Vec<(OsString, OsString)>,
 }
 
 /// A git invocation rooted at `root`, with nothing asked yet.
@@ -47,7 +45,6 @@ pub fn git(root: &Path) -> Invocation {
         args: Vec::new(),
         stdin: None,
         accept: vec![0],
-        envs: Vec::new(),
     }
 }
 
@@ -69,13 +66,6 @@ impl Invocation {
 
     pub fn stdin(mut self, bytes: Vec<u8>) -> Self {
         self.stdin = Some(bytes);
-        self
-    }
-
-    /// Set one environment variable for this invocation, over what the process inherits.
-    pub fn env(mut self, key: impl AsRef<OsStr>, value: impl AsRef<OsStr>) -> Self {
-        self.envs
-            .push((key.as_ref().to_os_string(), value.as_ref().to_os_string()));
         self
     }
 
@@ -103,7 +93,6 @@ impl Invocation {
             // `path@knowledge@docs/tripwires.md` guards what remains.
             .args(["-c", "core.excludesFile=/dev/null"])
             .args(&self.args)
-            .envs(self.envs.iter().map(|(k, v)| (k, v)))
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .stdin(if self.stdin.is_some() {

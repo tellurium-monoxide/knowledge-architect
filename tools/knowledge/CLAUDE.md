@@ -50,8 +50,9 @@ this, each deliberate and each named in its own manifest: `dirhome`, `minimal` a
 the network, which a run reaches at the last phase and at no phase before. Anything else a run
 reports in those four is a defect in the tool or in the fixture.
 
-**A test about commit messages builds its own project.** `commits` fails every commit whose
-tree carries a finding, so each commit a test makes has a tree with none, except the one it plants. `dirhome` is the one mock over which every family runs
+**A test about commit messages builds its own project.** `commits` fails every commit before the
+tip whose tree carries a finding, and exits 2 when the tip's does, so each commit a test makes
+has a tree with none, except the one it plants. `dirhome` is the one mock over which every family runs
 and finds nothing, so a copy of it could serve as a base; `History` in
 `path@knowledge@tests/binary.rs` writes a project out
 anyway, because each test states the exact findings the commits it makes carry and a mock's

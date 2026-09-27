@@ -915,7 +915,7 @@ would let a reference that resolves in neither pass.
 will hold: `git write-tree` over the index git names in `GIT_INDEX_FILE`, which is a temporary
 one under `git commit <path>` and `git commit -a`. The working tree differs from it after a
 partial `git add`, and by every untracked file, so a hook reading the working tree accepts
-messages `commits` then refuses, and under the rule that every commit passes that costs a
+messages `commits` then refuses, and under the instruction that every commit passes that costs a
 history edit. The hook runs the first three phases over that tree and no content family: a
 tree it cannot complete is refused with exit 2, since a message judged against an incomplete
 table is judged against nothing, and a tree carrying content findings is `commits`' to report,
@@ -935,7 +935,9 @@ a message's references resolve, which is the question the per-commit model exist
 **The ignore rules a per-commit run asks are the working tree's.** `git check-ignore` reads the
 `.gitignore` files on disk and has no form that asks a historical tree. A commit whose ignore
 rules differed from today's is therefore judged against today's, which can cost a path reference
-asserted where that commit's own rules exempted it — a finding rather than a silence.
+asserted where that commit's own rules exempted it — a finding rather than a silence. Since a
+failing tree fails the range, a branch that changes its ignore rules orders its commits for it
+as a branch that makes the checker stricter does: the change first, or a squash.
 
 **The hook is per-clone configuration, and no check reads it.** `core.hooksPath` is git's own
 setting and points at `path@thaum@.githooks/`, which the project commits so a review can read

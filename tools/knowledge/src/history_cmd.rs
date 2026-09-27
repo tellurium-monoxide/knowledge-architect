@@ -491,8 +491,8 @@ fn commit_tree(
     // files that are on disk and has no form that asks a historical tree, so a commit whose
     // ignore rules differ from today's is judged against today's. What that can cost is a
     // path reference asserted where the commit's own rules would have exempted it — a finding
-    // rather than a silence, and the range check's subject is the message rather than the
-    // tree it names.
+    // rather than a silence, which fails the range; a branch that changes its ignore rules
+    // orders its commits for it, per `design@knowledge@a-commit-message-is-a-document`.
     let queries = check::references::ignore_queries(&model, &anchors);
     let ignored = documentation::git::ignored(root, &queries)
         .map_err(|e| Unloadable(format!("its ignore rules could not be asked: {e}")))?;
@@ -552,25 +552,23 @@ fn extra_generated(manifest: &Manifest, generated: &HashSet<PathBuf>) -> Vec<Pat
 ///
 /// **The index is the one `GIT_INDEX_FILE` names, where git names one.** `git commit <path>`
 /// and `git commit -a` hand the hook a temporary index through it, holding HEAD plus what the
-/// commit takes; the default index would be a tree the commit does not have. A plain commit
-/// hands the default index as a path relative to the hook's working directory, which is the
-/// repository's top level; it is made absolute here, since every git this tool runs starts in
-/// the project root, and a project vendored under its repository has a different one.
+/// commit takes; the default index would be a tree the commit does not have. The variable is
+/// inherited as it is: a plain commit names the default index relative to the repository's top
+/// level, and git resolves it against that top level from any directory, the project root of a
+/// project vendored under its repository included.
 ///
 /// `git write-tree` writes the tree object into the repository and refuses an index holding
 /// unmerged entries. Nothing references the object, and `git gc` removes it.
 fn index_tree(root: &Path) -> Result<String, String> {
-    let mut invocation = documentation::git::git(root).args(["write-tree"]);
-    if let Some(named) = std::env::var_os("GIT_INDEX_FILE") {
-        let named = PathBuf::from(named);
-        if named.is_relative() {
-            let cwd = std::env::current_dir().map_err(|e| e.to_string())?;
-            invocation = invocation.env("GIT_INDEX_FILE", cwd.join(named));
-        }
-    }
-    let out = invocation.output().map_err(|e| {
-        format!("the index could not be written as a tree, so the message has no tree to be judged against: {e}")
-    })?;
+    let out = documentation::git::git(root)
+        .args(["write-tree"])
+        .output()
+        .map_err(|e| {
+            format!(
+                "the index could not be written as a tree, so the message has no tree to be \
+                 judged against: {e}"
+            )
+        })?;
     Ok(String::from_utf8_lossy(&out).trim().to_string())
 }
 
@@ -801,7 +799,7 @@ pub fn commits(
         }
         // A tip whose tree stopped before the last phase has an incomplete entity table, and
         // a message judged against it would be judged against nothing: the run ends here,
-        // naming the phase, as the hook does over the working tree.
+        // naming the phase, as the hook does over the index.
         if let (true, Some(phase)) = (is_tip, tree.stopped) {
             summary.push((
                 short.to_string(),

@@ -1775,6 +1775,41 @@ fn the_hook_reads_the_index_git_names_in_its_environment() {
     let _ = std::fs::remove_file(&draft);
 }
 
+/// The claim: a relative `GIT_INDEX_FILE`, which a plain `git commit` hands its hook, is read
+/// relative to the repository's top level, whatever directory the project sits in.
+///
+/// Git runs the hook at the top level and names the default index relative to it. A project
+/// vendored under its repository runs the tool from its own directory, and a path joined to
+/// that directory names no index at all.
+#[test]
+fn a_relative_index_path_is_read_from_the_repository_top_level() {
+    let history = History::at("commit-index-relative", "vendored");
+    tiny_project(&history, false);
+    history.commit("The project is created\n");
+    let design = std::fs::read_to_string(history.dir.join("docs/design.md")).expect("a design");
+    history.write(
+        "docs/design.md",
+        &format!("{design}\n### A decision staged here `##staged-here`\n\nIt is staged.\n"),
+    );
+    history.git(&["add", "-A"]);
+    let draft = history.repo.join("draft.txt");
+    std::fs::write(
+        &draft,
+        "A subject line\n\nIt records `design@tiny@staged-here`.\n",
+    )
+    .expect("a draft");
+    let (stdout, stderr, code) = run_with_env(
+        &history.dir,
+        &["commit-message", &draft.to_string_lossy()],
+        &[("GIT_INDEX_FILE", Path::new(".git/index"))],
+    );
+    assert_eq!(
+        code, 0,
+        "the repository's index defines it: {stdout}{stderr}"
+    );
+    let _ = std::fs::remove_file(&draft);
+}
+
 /// The claim: the hook accepts the commit that closes an issue.
 ///
 /// The message being judged belongs to a commit that does not exist yet, whose parent is
