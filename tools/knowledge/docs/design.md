@@ -904,9 +904,18 @@ is the shape `design@knowledge@the-regime-has-no-opt-out` exists to refuse: only
 can ever be exempt, and it is exempt by construction. The row's entry is in
 `path@knowledge@docs/rejected-alternatives.md`.
 
-**The failure is loud.** A binary built from one checkout and run against another finds no file
-under its compiled paths, exempts nothing, and reports the tool's fixtures as citations. The
-summary block names each of the checker's directories, relative to the root when it sits under it and
+**A binary built from another checkout of the tool is refused.** Two checkouts sharing one
+target directory leave the last build's binary for both, and cargo does not rebuild it for the
+other checkout, whose own package is still fresh; observed on this repository, the other
+checkout then runs that binary, its code and not only its compiled paths. Before any command,
+the binary compares where each library it links was compiled with the tree it is run over: a tree
+that holds the same package, by the name its `Cargo.toml` declares, at a trailing run of the
+compiled directory but not at the compiled directory itself is a second checkout, and the run
+exits 2 naming both directories and the `cargo clean` that rebuilds from this one. A tree holding
+no copy is left alone, which covers a mock project under the tool's directory and a project
+consuming a library as a published crate.
+
+**The failure that remains is loud.** The summary block names each of the checker's directories, relative to the root when it sits under it and
 absolute otherwise, even when the compiled directory no longer exists, and prints the count of
 Rust files it covered, so the state is visible in every run. A directory exempts files only when
 it sits inside the tree being checked: a tree that sits inside it instead, such as a mock project under

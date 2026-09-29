@@ -976,6 +976,35 @@ fn a_symlink_with_a_refused_name_is_one_finding() {
     assert!(about[0].contains("symlink"), "{out}");
 }
 
+/// The claim: a tree holding the core's own crate at another path than the binary was built
+/// from is a second checkout of the tool, and no command runs over it: the binary would judge it
+/// with the other checkout's code.
+///
+/// The copy stands for the second checkout: a crate declaring the core's package name at the
+/// path relative to the tree the core has in this repository. The reverse arrangement, two
+/// checkouts building into one target directory, is what produces this state in practice.
+#[test]
+fn a_tree_holding_the_tool_at_another_path_than_the_binarys_is_refused() {
+    let sandbox = Sandbox::seeded(
+        "foreign-build",
+        "minimal",
+        &[(
+            "tools/knowledge/documentation/Cargo.toml",
+            "[package]\nname = \"documentation\"\n",
+        )],
+    );
+    for command in [&["check"][..], &["issues"][..]] {
+        let (out, stderr, code) = sandbox.run(command);
+        assert_eq!(code, 2, "{command:?}: {out}{stderr}");
+        assert!(stderr.contains("built from another checkout"), "{stderr}");
+        assert!(
+            stderr.contains("cargo clean --release -p knowledge -p documentation"),
+            "{stderr}"
+        );
+        assert!(out.is_empty(), "nothing ran: {out}");
+    }
+}
+
 /// The claim: a name holding a line break is one finding, on one line, and the file is read by
 /// nothing; a `skip-files` row keeps it.
 #[test]

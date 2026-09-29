@@ -29,8 +29,16 @@ fn main() -> ExitCode {
     // per `design@knowledge@checker-source-literals-are-data`.
     let dir = documentation::component_dir();
     let dirs: Vec<&Path> = vec![dir.as_path()];
-    let outcome = documentation::cli::locate()
-        .and_then(|manifest| documentation::cli::run(cli.command, &manifest, &dirs, &mut []));
+    let outcome = documentation::cli::locate().and_then(|manifest| {
+        // A binary built from another checkout would judge this tree with that checkout's
+        // code, so no command runs, per `design@knowledge@checker-source-literals-are-data`.
+        documentation::build_origin::refuse_a_foreign_build(
+            manifest.root(),
+            &[documentation::build_origin::this_library()],
+            &[env!("CARGO_PKG_NAME"), "documentation"],
+        )?;
+        documentation::cli::run(cli.command, &manifest, &dirs, &mut [])
+    });
     match outcome {
         Ok(code) => code,
         Err(e) => {

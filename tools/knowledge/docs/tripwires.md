@@ -66,10 +66,12 @@ file under one of the tool's own directories, or the summary block's checker-sou
 absent or names directories other than the Components of the tool's source in a checkout that
 holds them. The cheap half is the
 binary test `the_summary_names_the_checker_source_and_counts_the_files_under_it` in
-`path@rules-corpus@tests/binary.rs`, which asserts the line over this checkout; what it cannot reach is
-a binary built from another checkout and run here.
-**Response:** the compiled path and the walked tree disagree: a binary built from another
-checkout, a canonicalisation gap, a symlink inside the tree the prefix test does not follow.
+`path@rules-corpus@tests/binary.rs`, which asserts the line over this checkout. A binary built from
+another checkout of the tool is refused before any command runs, which the two
+`a_tree_holding_the_*_at_another_path_than_the_binarys_is_refused` tests assert, so it does not
+reach this tripwire.
+**Response:** the compiled path and the walked tree disagree in a way the refusal does not see: a
+canonicalisation gap, a symlink inside the tree the prefix test does not follow.
 Open a `defect` carrying the path the line names and the checkout's. Reopen the decision only if
 the mismatch is one the cargo alias cannot prevent, since the alias is what the decision rests on.
 **Re-entry:** standing.
