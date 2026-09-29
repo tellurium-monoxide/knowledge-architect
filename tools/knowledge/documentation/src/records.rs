@@ -18,7 +18,7 @@ use std::collections::BTreeMap;
 use std::path::Path;
 
 use crate::entity::{candidate, Anchors, Candidate, Entities, Kind, Site};
-use crate::manifest::Shape;
+use crate::manifest::{Registers, Shape, ISSUE_REGISTER, TRIPWIRE_REGISTER};
 use crate::model::{Document, Model};
 use crate::scan::Observation;
 
@@ -42,13 +42,20 @@ pub struct Record {
     /// `None` covers both an entry that declares no value and one whose frontmatter was
     /// refused, which are the same thing to a listing and each a `registers` finding.
     pub metadata: Option<String>,
-    /// Every `design@<anchor>@<id>` reference the entry's body carries, as written, in the
-    /// order they appear.
+    /// Every reference to a guarded kind the entry's body carries, as written, in the order
+    /// they appear. [`guarded`] says which kinds those are.
     pub guards: Vec<String>,
 }
 
-/// The kind whose references a tripwire row prints: the decisions it guards.
-pub const DESIGN_KIND: &str = "design";
+/// Whether a reference of this kind names something a tripwire guards.
+///
+/// A tripwire guards what is recorded as settled: a decision, a goal, or the entry of a
+/// register a project declares, such as a reading of a specification. Every register kind but
+/// two, then. An `issue` reference in a tripwire names what its response opens, and a
+/// `tripwire` reference names another guard; neither is guarded. `path` is no register.
+pub fn guarded(registers: &Registers, kind: &str) -> bool {
+    kind != ISSUE_REGISTER && kind != TRIPWIRE_REGISTER && registers.by_name(kind).is_some()
+}
 
 /// Every entry of one register kind, in `(anchor, id)` order.
 ///
@@ -75,7 +82,7 @@ pub fn records(model: &Model, anchors: &Anchors, entities: &Entities, kind: &Kin
             .map(|home| home.shape);
         let record = match shape {
             Some(Shape::File) => file_record(anchors, kind, anchor_name, id, site, doc),
-            _ => heading_record(anchor_name, id, site, doc),
+            _ => heading_record(anchors, anchor_name, id, site, doc),
         };
         out.push(record);
     }
@@ -113,12 +120,18 @@ fn file_record(
         group,
         body: doc.text.clone(),
         metadata: key.and_then(|k| value_of(doc, &k)),
-        guards: guards(doc, 1, u32::MAX),
+        guards: guards(anchors.registers(), doc, 1, u32::MAX),
     }
 }
 
 /// A heading register's entry: the heading's own section.
-fn heading_record(anchor: &str, id: &str, site: &Site, doc: &Document) -> Record {
+fn heading_record(
+    anchors: &Anchors,
+    anchor: &str,
+    id: &str,
+    site: &Site,
+    doc: &Document,
+) -> Record {
     let (from, to) = section(doc, site.line);
     Record {
         anchor: anchor.to_string(),
@@ -128,7 +141,7 @@ fn heading_record(anchor: &str, id: &str, site: &Site, doc: &Document) -> Record
         group: None,
         body: lines(doc, from, to),
         metadata: None,
-        guards: guards(doc, from, to),
+        guards: guards(anchors.registers(), doc, from, to),
     }
 }
 
@@ -264,12 +277,11 @@ fn value_of(doc: &Document, key: &str) -> Option<String> {
         .map(|(_, v)| v.clone())
 }
 
-/// Every `design@<anchor>@<id>` span written between `from` and `to`, as written.
+/// Every span of a [`guarded`] kind written between `from` and `to`, as written.
 ///
 /// Read off the scanner's spans rather than off the text, so a rule about what is a reference
-/// lives in one place. The kind is matched by name because this module knows nothing about
-/// which registers a project declares.
-fn guards(doc: &Document, from: u32, to: u32) -> Vec<String> {
+/// lives in one place.
+fn guards(registers: &Registers, doc: &Document, from: u32, to: u32) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
     for l in &doc.observations {
         if l.line < from || l.line > to {
@@ -278,7 +290,8 @@ fn guards(doc: &Document, from: u32, to: u32) -> Vec<String> {
         let Observation::Span(span) = &l.what else {
             continue;
         };
-        if span.starts_with(&format!("{DESIGN_KIND}@")) && !out.contains(span) {
+        let kind = span.split('@').next().unwrap_or_default();
+        if guarded(registers, kind) && !out.contains(span) {
             out.push(span.clone());
         }
     }
@@ -295,10 +308,12 @@ mod tests {
     // `design@knowledge@checker-source-literals-are-data`.
 
     /// A project whose root component is `a-project`, with one location carrying the issue
-    /// register alone.
+    /// register and a declared `reading` register.
     fn anchors() -> Anchors {
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
-             [locations.notes]\npath = \"notes\"\nregisters = [\"issue\"]\n\n\
+             [locations.notes]\npath = \"notes\"\nregisters = [\"issue\", \"reading\"]\n\n\
+             [registers.reading]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"readings\"\n\
+             sections = [\"Reading\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
              version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
@@ -350,7 +365,8 @@ mod tests {
                     **Fires when:** it fires, guarding `design@a-project@a-decision`, and see \
                     `path@a-project@docs/design.md` and `issue@notes@a-thing`.\n\n\
                     **Response:** reopen `design@a-project@a-decision`, and read \
-                    `design@a-project@another-one`.\n\n\
+                    `design@a-project@another-one`, `reading@notes@a-reading`, \
+                    `goal@a-project@a-goal` and `tripwire@a-project@second`.\n\n\
                     ## The second one `##second`\n\n\
                     **Fires when:** something else.\n";
         let found = rows(vec![("docs/tripwires.md", home)], "tripwire");
@@ -363,19 +379,22 @@ mod tests {
         assert!(first.body.contains("it fires"), "{}", first.body);
         assert!(!first.body.contains("something else"), "{}", first.body);
         assert!(!first.body.contains("# Tripwires"), "{}", first.body);
-        // Only the design references: a path and an issue reference sit beside them and are not
-        // decisions this tripwire guards. The first is written twice in the section and appears
-        // once, in the order the entry names them.
+        // Every guarded kind, a declared register's included: a path, an issue and a tripwire
+        // reference sit beside them and are not what this tripwire guards. The first is written
+        // twice in the section and appears once, in the order the entry names them.
         assert_eq!(
             first.guards,
             vec![
                 "design@a-project@a-decision".to_string(),
                 "design@a-project@another-one".to_string(),
+                "reading@notes@a-reading".to_string(),
+                "goal@a-project@a-goal".to_string(),
             ]
         );
         assert_eq!(
             first.guarding(),
-            "design@a-project@a-decision design@a-project@another-one"
+            "design@a-project@a-decision design@a-project@another-one \
+             reading@notes@a-reading goal@a-project@a-goal"
         );
         let second = found.iter().find(|r| r.id == "second").expect("the second");
         assert!(second.guards.is_empty(), "{second:#?}");

@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-14 entries
+13 entries
 
 | kind | title |
 | --- | --- |
@@ -17,4 +17,3 @@
 | observation | [Span and link shapes the scanner cannot see](span-and-link-shapes-unseen.md) |
 | question | [`check` judges the working tree, and a commit records the index](check-judges-the-working-tree-not-the-index.md) |
 | todo | [No test shows that `commits` reads the checker's own directories as data in each commit's tree](commits-exempts-checker-directories-untested.md) |
-| todo | [The tripwire listing's `guarding` column reads references of the `design` kind only](guarding-reads-design-references-only.md) |
