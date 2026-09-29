@@ -1333,7 +1333,7 @@ fn a_commit_whose_manifest_does_not_load_fails_the_run_and_the_next_one_is_judge
 /// finding of the branch. Its message is judged too, since the tree reached the last phase and
 /// its table is complete: a dangling reference in it is reported beside the tree's own.
 #[test]
-fn a_failing_tree_before_the_tip_is_a_finding_and_its_message_is_still_judged() {
+fn a_failing_tree_is_a_finding_and_its_message_is_still_judged() {
     let history = History::new("commit-middle-fails");
     tiny_project(&history, false);
     let base = history.commit("The project is created\n");
@@ -1368,7 +1368,7 @@ fn a_failing_tree_before_the_tip_is_a_finding_and_its_message_is_still_judged() 
 /// Its entity table is incomplete, so a finding against the message would be computed over
 /// what the walk could not read. The tree's own findings are what is reported.
 #[test]
-fn a_tree_before_the_tip_that_stops_early_fails_and_its_message_is_not_judged() {
+fn a_tree_that_stops_early_fails_and_its_message_is_not_judged() {
     let history = History::new("commit-middle-stops");
     tiny_project(&history, false);
     let base = history.commit("The project is created\n");
@@ -1418,7 +1418,7 @@ fn a_commit_holding_a_blob_that_is_not_text_fails_its_tree() {
 /// table.
 #[test]
 fn a_last_commit_whose_tree_stops_before_the_last_phase_fails_and_its_message_is_unjudged() {
-    let history = History::new("commit-stopped-tip");
+    let history = History::new("commit-stopped-last");
     tiny_project(&history, false);
     let base = history.commit("The project is created\n");
     // The new decision is defined in a file the walk cannot read, so against the table the
@@ -1583,7 +1583,7 @@ fn a_head_inside_the_range_is_judged_like_any_other_commit() {
 /// any other commit's, and the commits before it are still printed.
 #[test]
 fn a_last_commit_whose_manifest_does_not_load_is_a_finding_of_the_run() {
-    let history = History::new("commit-tip-unloadable");
+    let history = History::new("commit-last-unloadable");
     tiny_project(&history, false);
     let base = history.commit("The project is created\n");
     let good = history.commit("A subject line\n\nIt records `design@tiny@tiny-anchor`.\n");
