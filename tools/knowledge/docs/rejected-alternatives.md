@@ -14,7 +14,7 @@ read less, and both are silent. Git answers all three by construction, and the w
 over this repository was identical under the two.
 
 **Skipping a commit whose tree fails, in `commits`** — lost to
-`design@knowledge@a-commit-message-is-a-document`. `live`. A commit before the tip whose tree did
+`design@knowledge@a-commit-message-is-a-document`. `live`. A commit whose tree did
 not load or carried findings was named in the summary and judged no further, so the range could
 walk over commits older than a manifest migration, and over the commits of a branch before its
 tree went green. It loses because each skipped commit took its message out of the regime while the

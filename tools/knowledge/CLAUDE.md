@@ -54,9 +54,9 @@ the tests of the core binary's refusal of a table it does not own. **Plant a pha
 the tool or in the fixture. The rules extension's mocks, with a corpus, are
 `path@rules-corpus@tests/projects/`.
 
-**A test about commit messages builds its own project.** `commits` fails every commit before the
-tip whose tree carries a finding, and exits 2 when the tip's does, so each commit a test makes
-has a tree with none, except the one it plants. `dirhome` is the one mock over which every family runs
+**A test about commit messages builds its own project.** `commits` fails every commit whose tree
+carries a finding, the last one included, so each commit a test makes has a tree with none,
+except the one it plants. `dirhome` is the one mock over which every family runs
 and finds nothing, so a copy of it could serve as a base; `History` in
 `path@knowledge@tests/binary.rs` writes a project out
 anyway, because each test states the exact findings the commits it makes carry and a mock's

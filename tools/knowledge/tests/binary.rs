@@ -593,10 +593,10 @@ fn a_gitlink_is_a_phase_two_finding_and_an_exclude_row_declares_the_silence() {
     );
     let sha = history.commit("A submodule is added\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
-    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(
         stdout.contains(&format!(
-            "{sha} is the range's tip and its tree stops at phase 2 with 1 finding(s)"
+            "{sha} failed: its tree stops at phase 2 with 1 finding(s)"
         )),
         "the two readers agree: {stdout}"
     );
@@ -621,10 +621,10 @@ fn a_committed_symlink_is_one_phase_two_finding_in_commits() {
     std::os::unix::fs::symlink("design.md", history.dir.join("docs/link.md")).expect("a symlink");
     let sha = history.commit("A symlink is added\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
-    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(
         stdout.contains(&format!(
-            "{sha} is the range's tip and its tree stops at phase 2 with 1 finding(s)"
+            "{sha} failed: its tree stops at phase 2 with 1 finding(s)"
         )),
         "one finding, the symlink, and not a second for a document nothing could read: {stdout}"
     );
@@ -1404,20 +1404,20 @@ fn a_commit_holding_a_blob_that_is_not_text_fails_its_tree() {
     );
     let sha = history.commit("A note that is not text is added\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
-    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(
         stdout.contains(&format!(
-            "{sha} is the range's tip and its tree stops at phase 2 with 1 finding(s)"
+            "{sha} failed: its tree stops at phase 2 with 1 finding(s)"
         )),
         "{stdout}"
     );
 }
 
-/// The claim: a tip whose tree stops before the last phase has its message judged against
-/// nothing, and the run says so rather than printing a finding computed over the incomplete
-/// entity table.
+/// The claim: a last commit whose tree stops before the last phase fails the run like any other
+/// commit, and has its message judged against nothing rather than against the incomplete entity
+/// table.
 #[test]
-fn a_tip_whose_tree_stops_before_the_last_phase_is_not_judged() {
+fn a_last_commit_whose_tree_stops_before_the_last_phase_fails_and_its_message_is_unjudged() {
     let history = History::new("commit-stopped-tip");
     tiny_project(&history, false);
     let base = history.commit("The project is created\n");
@@ -1429,10 +1429,11 @@ fn a_tip_whose_tree_stops_before_the_last_phase_is_not_judged() {
     );
     let sha = history.commit("Adds `design@tiny@new-one`\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
-    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(
         stdout.contains(&format!(
-            "{sha} is the range's tip and its tree stops at phase 2"
+            "{sha} failed: its tree stops at phase 2 with 1 finding(s); its message was judged \
+             against nothing"
         )),
         "{stdout}"
     );
@@ -1440,11 +1441,14 @@ fn a_tip_whose_tree_stops_before_the_last_phase_is_not_judged() {
         !stdout.contains("is referenced and"),
         "no finding computed over the incomplete table: {stdout}"
     );
-    assert!(stdout.contains("COULD NOT RUN"), "{stdout}");
+    let last = stdout.trim_end().lines().last().expect("a verdict line");
+    assert!(last.starts_with("FAILED"), "{last}");
 }
 
+/// The claim: the range's last commit is judged like every other: its failing tree is a
+/// finding naming the commit, and exit 1.
 #[test]
-fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
+fn a_last_commit_whose_tree_fails_is_a_finding_of_the_run() {
     let history = History::new("commit-head-fails");
     tiny_project(&history, false);
     let base = history.commit("The project is created\n");
@@ -1456,16 +1460,19 @@ fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
     );
     let sha = history.commit("A note is added\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
-    assert_eq!(code, 2, "{stdout}{stderr}");
-    // The tip, and the summary says what is wrong with it rather than staying silent.
-    assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
+    assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(
-        stdout.contains("its own tree fails 1 finding(s)"),
+        stdout.contains(&format!("{sha} failed: its tree fails 1 finding(s)")),
         "{stdout}"
     );
-    // A reader takes the verdict off the last line, so it may not say PASSED over exit 2.
+    assert!(
+        stdout
+            .lines()
+            .any(|l| l.starts_with(&format!("commit {sha}: docs/note.md"))),
+        "{stdout}"
+    );
     let last = stdout.trim_end().lines().last().expect("a verdict line");
-    assert!(last.starts_with("COULD NOT RUN"), "{last}");
+    assert!(last.starts_with("FAILED"), "{last}");
 }
 
 /// The claim: `commits` reads every checker directory it is given as data in each commit's
@@ -1473,9 +1480,8 @@ fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
 ///
 /// The binary compiles its own directories in, and they are not inside a temporary history,
 /// so this calls the library with directories inside it. Two tool directories each hold a
-/// Rust source whose unbound string literal names a decision nothing defines; the commit
-/// holding them is before the tip, which removes them, so its tree failing is a finding and
-/// exit 1.
+/// Rust source whose unbound string literal names a decision nothing defines, in a commit whose
+/// successor removes them, so only that commit's tree can fail.
 #[test]
 fn commits_reads_every_checker_directory_as_data_in_each_commits_tree() {
     let history = History::new("commit-checker-dirs");
@@ -1535,9 +1541,8 @@ fn a_tree_whose_phase_one_fails_serves_as_no_parent() {
     );
 }
 
-/// The claim: the tip is the range's last commit, wherever HEAD is. A HEAD checked out inside
-/// the range is judged like any commit before the tip: its failing tree is a finding naming
-/// it, and exit 1.
+/// The claim: where HEAD sits changes nothing. A HEAD checked out inside the range is judged
+/// like any other commit: its failing tree is a finding naming it, and exit 1.
 #[test]
 fn a_head_inside_the_range_is_judged_as_a_commit_before_the_tip() {
     let history = History::new("commit-head-inside");
@@ -1564,12 +1569,10 @@ fn a_head_inside_the_range_is_judged_as_a_commit_before_the_tip() {
     assert!(verdict.starts_with("FAILED"), "{verdict}");
 }
 
-/// The claim: the tip's tree failing to assemble at all still prints what the run walked.
-///
-/// A manifest the tip cannot load ends the run — and a run that ended
-/// with an error and nothing else would say nothing about the branch it gates.
+/// The claim: a last commit whose tree cannot be assembled at all is a finding of the run, like
+/// any other commit's, and the commits before it are still printed.
 #[test]
-fn a_tip_whose_manifest_does_not_load_still_prints_the_commits_before_it() {
+fn a_last_commit_whose_manifest_does_not_load_is_a_finding_of_the_run() {
     let history = History::new("commit-tip-unloadable");
     tiny_project(&history, false);
     let base = history.commit("The project is created\n");
@@ -1578,20 +1581,18 @@ fn a_tip_whose_manifest_does_not_load_still_prints_the_commits_before_it() {
     let bad = history.commit("The manifest goes back to a shape this tool refuses\n");
     // The working tree gets a manifest again: the binary locates its project by reading one,
     // so a tree holding the retired shape refuses before any range is walked. What is under
-    // test is the TIP's tree, which keeps it.
+    // test is the last commit's tree, which keeps it.
     tiny_project(&history, false);
 
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
-    assert_eq!(code, 2, "{stdout}{stderr}");
+    assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(stdout.contains(&format!("{good} judged")), "{stdout}");
     assert!(
-        stdout.contains(&format!(
-            "{bad} is the range's tip and its tree could not be read"
-        )),
+        stdout.contains(&format!("{bad} failed: its tree does not load")),
         "{stdout}"
     );
     let last = stdout.trim_end().lines().last().expect("a verdict line");
-    assert!(last.starts_with("COULD NOT RUN"), "{last}");
+    assert!(last.starts_with("FAILED"), "{last}");
 }
 
 /// The claim: a `#` line a commit actually holds is judged like any other line.

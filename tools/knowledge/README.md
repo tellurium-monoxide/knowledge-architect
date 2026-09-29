@@ -43,7 +43,7 @@ Three, per `design@thaum@exit-code-ladder`, and the third is what makes the othe
 | ---- | ------- | ------------------- |
 | `0` | the command ran and its subject is in order | `check` with no findings; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commits` with no finding, an empty range included |
 | `1` | the command ran and reports a negative answer | `check` with findings; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree before the tip |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve or whose tip carries a failing tree, no project above the working directory, no `git` on the path or a project outside a worktree, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -209,11 +209,10 @@ cargo knowledge commits origin/main..HEAD   # the branch's own commits
 
 `commits` reads everything from each commit's own tree through git objects — the manifest, the
 documents, the generated indexes, every file an extension reads — so a message is judged against the tree it
-was written against, byte for byte and cleaned of nothing. **A commit before the tip whose tree does not
-load or carries findings fails the run**, with its tree's findings named by the commit and the
-file, and its message is still judged where its tree reached the last phase; the summary block
-counts judged and failed commits, and a tip whose tree fails is exit 2 with a last line that says
-so. The checker that judges every commit is the one built from the working tree, so a branch
+was written against, byte for byte and cleaned of nothing. **A commit whose tree does not load or
+carries findings fails the run**, the range's last commit included, with its tree's findings
+named by the commit and the file, and its message is still judged where its tree reached the last
+phase; the summary block counts judged and failed commits. The checker that judges every commit is the one built from the working tree, so a branch
 that makes it stricter puts that change in its first commit or is squashed before review. A
 message's references resolve against its commit's tree **or its first parent's**, which is what
 lets a commit that closes an issue name it; a parent whose manifest fails phase 1 is not read, and
@@ -222,6 +221,23 @@ the range is run after each commit, and a finding in the newest commit is repair
 
 `check` reads no history, and the range is always explicit. `cargo x gates` runs
 `commits origin/main..HEAD` as a gate.
+
+**The range need not end at the checkout.** Any range `git rev-list` resolves is judged, commit by
+commit, and where HEAD sits changes nothing. The uses a range serves:
+
+| use | range |
+| --- | --- |
+| the commit just made, before it is amended or built on | `HEAD~1..HEAD` |
+| a branch's own commits, before review and merge | `<base>..HEAD` |
+| CI over a pull request, which checks out the branch's head | `<base>..HEAD` |
+| a pre-push hook: git gives it, per pushed ref, the local and the remote sha, and with `git push origin other-branch` the local sha is not HEAD | `<remote sha>..<local sha>` |
+| a branch that is not checked out, reviewed locally | `<base>..<branch>` |
+| an audit of old history, such as the commits made before a manifest migration | `<first>^..<last>` |
+
+`<base>` is the branch the work merges into, as the remote holds it.
+
+Two things are still read from the working tree, whatever the range: the binary that judges, and
+git's ignore rules, which `git check-ignore` answers for the files on disk only.
 
 ## What to respect
 

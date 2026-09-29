@@ -950,16 +950,15 @@ did not exist then, and the finding list would be a list of things nobody could 
 
 **Every commit of the range is judged by the tip checker, and a tree that fails is a finding.**
 The tip checker is the binary built from the working tree, and it judges every commit's tree and
-every commit's message. A commit before the tip whose tree does not load, or carries findings,
-fails the run with exit 1: its tree's findings are printed, each named by the commit and by the
-file inside it, and its message is still judged wherever the tree reached the last phase, since
-its entity table is then complete. Where the tree stopped earlier, the message is judged against
-nothing and the run says so. The tip is the walk's last commit, wherever HEAD is; a range with several tips — `--all` names
-one — has tips that are not its last commit, and the guarantee is the two-ended range's. The
-tip's own tree failing is exit 2 rather than a finding, because for a range ending at HEAD, which
-is every range the gates pass, `check` over the checkout is what reports that tree. For a range
-ending at another commit the exit is the same, and no `check` over the checkout judges that
-tree. The summary counts judged and failed commits.
+every commit's message. **Every commit of the range is judged alike, the last one included, and
+wherever HEAD is.** A commit whose tree does not load, or carries findings, fails the run with
+exit 1: its tree's findings are printed, each named by the commit and by the file inside it, and
+its message is still judged wherever the tree reached the last phase, since its entity table is
+then complete. Where the tree stopped earlier, the message is judged against nothing and the run
+says so. No commit is set apart as the range's tip: a range that does not end at the checkout,
+such as a pre-push hook's or an audit of old history, holds no commit that `check` has judged,
+and treating its last commit specially would leave that commit's failure unreported as a finding.
+The summary counts judged and failed commits.
 
 **A branch that makes the checker stricter orders its commits for it.** A new check, or a change
 to the manifest format, makes every earlier commit of the same branch fail under the tip checker.

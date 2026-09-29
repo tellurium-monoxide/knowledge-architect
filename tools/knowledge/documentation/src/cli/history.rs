@@ -476,29 +476,19 @@ fn extra_generated(generated: &HashSet<PathBuf>) -> Vec<PathBuf> {
 
 /// One commit's place in the run, as the summary block names it.
 enum Outcome {
-    Judged {
-        trouble: usize,
-    },
-    /// A commit before the tip whose tree does not load, or carries findings under the tip
-    /// checker. Each is a finding of the run. Its message is still judged wherever the tree
-    /// reached the last phase, and `why` says when it was not.
-    Failed {
-        why: String,
-    },
-    /// The range's tip, whose tree could not be assembled at all.
-    /// The run ends here, and everything walked before it is still printed.
-    Unassembled {
-        why: String,
-    },
-    /// The range's tip, whose tree stopped before the last phase: its message was judged
-    /// against nothing, and the run ends here.
-    Unjudged {
-        phase: u8,
-        trouble: usize,
-    },
+    /// Its tree passed, and its message was judged.
+    Judged,
+    /// Its tree does not load, or carries findings under the tip checker. Each is a finding of
+    /// the run. Its message is still judged wherever the tree reached the last phase, and
+    /// `why` says when it was not.
+    Failed { why: String },
 }
 
-/// Judge every message in a range against the tree its commit carries.
+/// Judge every commit of a range, its tree and its message, alike.
+///
+/// **No commit of the range is judged apart**, the last one included: a tree that fails is a
+/// finding naming the commit, whichever commit it is, per
+/// `design@knowledge@a-commit-message-is-a-document`.
 pub fn commits(
     manifest: &Manifest,
     range: &str,
@@ -525,29 +515,13 @@ pub fn commits(
     let mut summary: Vec<(String, Outcome)> = Vec::new();
     let mut findings: Vec<Finding> = Vec::new();
     let mut previous: Option<(String, Assembly, Entities)> = None;
-    // How many findings the tip's own tree carries, `None` where it carries none. The tip's
-    // tree failing is the run's own could-not-run rather than a finding.
-    let mut tip_trouble: Option<usize> = None;
 
-    let last = shas.last().cloned().unwrap_or_default();
     for sha in &shas {
         let short = &sha[..7.min(sha.len())];
-        // **The tip is judged apart.** Its tree failing is the run's own could-not-run rather
-        // than a finding, since for a range ending at HEAD `check` over the checkout is what
-        // reports that tree.
-        // The walk's last commit alone: a HEAD checked out inside the range is judged like any
-        // commit before the tip.
-        let is_tip = *sha == last;
         let assembled = commit_tree(root, sha, &checker_rel, extensions, Depth::Judged);
         let tree = match assembled {
             Ok(tree) => tree,
             Err(Unloadable(why)) => {
-                if is_tip {
-                    // Everything walked before the tip is still reported. A run that printed
-                    // an error and nothing else would say nothing about the branch it gates.
-                    summary.push((short.to_string(), Outcome::Unassembled { why }));
-                    break;
-                }
                 // **Every commit of the range must load under the tip checker.** A branch that
                 // changes the manifest format puts that change in its first commit, or is
                 // squashed, per `design@knowledge@a-commit-message-is-a-document`.
@@ -568,7 +542,7 @@ pub fn commits(
             }
         };
         let trouble = tree.trouble.len();
-        if trouble > 0 && !is_tip {
+        if trouble > 0 {
             // **Every commit of the range must pass under the tip checker**, so the tree's own
             // findings are the run's, each named by the commit and by the file inside it.
             findings.extend(tree.trouble.iter().cloned().map(|mut f| {
@@ -592,22 +566,6 @@ pub fn commits(
                 previous = Some((sha.clone(), tree, entities));
                 continue;
             }
-        }
-        if trouble > 0 && is_tip {
-            tip_trouble = Some(trouble);
-        }
-        // A tip whose tree stopped before the last phase has an incomplete entity table, and
-        // a message judged against it would be judged against nothing: the run ends here,
-        // naming the phase.
-        if let (true, Some(phase)) = (is_tip, tree.stopped) {
-            summary.push((
-                short.to_string(),
-                Outcome::Unjudged {
-                    phase: phase.number(),
-                    trouble,
-                },
-            ));
-            break;
         }
 
         // The parent model is the previous commit's where the walk followed the parent chain,
@@ -639,41 +597,22 @@ pub fn commits(
         let entities = Entities::build(&tree.model, &tree.anchors());
         let found = judge_message(&message, &tree, &entities, parent);
         findings.extend(relabelled(found, &format!("commit {short}")));
-        if is_tip || trouble == 0 {
-            summary.push((short.to_string(), Outcome::Judged { trouble }));
+        if trouble == 0 {
+            summary.push((short.to_string(), Outcome::Judged));
         }
         previous = Some((sha.clone(), tree, entities));
     }
 
     let judged = summary
         .iter()
-        .filter(|(_, o)| matches!(o, Outcome::Judged { .. }))
+        .filter(|(_, o)| matches!(o, Outcome::Judged))
         .count();
-    let unassembled = summary.iter().find_map(|(short, o)| match o {
-        Outcome::Unassembled { why } => Some((short.clone(), why.clone())),
-        _ => None,
-    });
-    let failed = summary
-        .iter()
-        .filter(|(_, o)| matches!(o, Outcome::Failed { .. }))
-        .count();
+    let failed = summary.len() - judged;
     outln!("\ncommits in {range}: {judged} judged, {failed} failed");
     for (short, outcome) in &summary {
         match outcome {
-            Outcome::Judged { trouble: 0 } => outln!("  {short} judged"),
-            Outcome::Judged { trouble } => outln!(
-                "  {short} judged; its own tree fails {trouble} finding(s), which \
-                 `cargo knowledge check` reports"
-            ),
-            Outcome::Failed { why, .. } => outln!("  {short} failed: {why}"),
-            Outcome::Unassembled { why } => {
-                outln!("  {short} is the range's tip and its tree could not be read: {why}")
-            }
-            Outcome::Unjudged { phase, trouble } => outln!(
-                "  {short} is the range's tip and its tree stops at phase {phase} with {trouble} \
-                 finding(s), which `cargo knowledge check` reports; its message was judged \
-                 against nothing"
-            ),
+            Outcome::Judged => outln!("  {short} judged"),
+            Outcome::Failed { why } => outln!("  {short} failed: {why}"),
         }
     }
     if !findings.is_empty() {
@@ -682,30 +621,8 @@ pub fn commits(
             outln!("{finding}");
         }
     }
-    // **The last line never says PASSED over a run that could not conclude.** A reader takes
-    // the verdict off the last line, per `path@thaum@CLAUDE.md`, and a tip whose own tree
-    // fails leaves the run saying nothing about the branch it gates.
-    outln!(
-        "{}",
-        match (&unassembled, tip_trouble) {
-            (Some((short, _)), _) => format!(
-                "COULD NOT RUN: the range's tip {short} carries a tree this tool cannot read; \
-                 {} finding(s) against the messages before it",
-                findings.len()
-            ),
-            (None, Some(trouble)) => format!(
-                "COULD NOT RUN: the range's tip carries a tree with {trouble} finding(s), which \
-                 `cargo knowledge check` reports; {} finding(s) against the messages judged",
-                findings.len()
-            ),
-            (None, None) => verdict(findings.len()),
-        }
-    );
-    Ok(if unassembled.is_some() || tip_trouble.is_some() {
-        // The range's tip must be judgeable, or the run says nothing about the branch it
-        // gates. Its own tree is `check`'s subject, and this is the code that says so.
-        ExitCode::from(2)
-    } else if findings.is_empty() {
+    outln!("{}", verdict(findings.len()));
+    Ok(if findings.is_empty() {
         ExitCode::SUCCESS
     } else {
         ExitCode::FAILURE
