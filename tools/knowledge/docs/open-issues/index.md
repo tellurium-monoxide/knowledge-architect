@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-9 entries
+8 entries
 
 | kind | title |
 | --- | --- |
@@ -12,4 +12,3 @@
 | observation | [`commits` assembles the whole tree of a commit whose manifest fails phase 1](commits-assembles-a-tree-whose-phase-one-fails.md) |
 | observation | [Judging a message costs time quadratic in its line count](judging-a-message-is-quadratic.md) |
 | observation | [Span and link shapes the scanner cannot see](span-and-link-shapes-unseen.md) |
-| question | [`check` judges the working tree, and a commit records the index](check-judges-the-working-tree-not-the-index.md) |
