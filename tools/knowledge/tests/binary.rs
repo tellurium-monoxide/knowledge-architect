@@ -1421,6 +1421,42 @@ fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
     assert!(last.starts_with("COULD NOT RUN"), "{last}");
 }
 
+/// The claim: `commits` reads every checker directory it is given as data in each commit's
+/// tree, per `design@knowledge@checker-source-literals-are-data`, and not only the first.
+///
+/// The binary compiles its own directories in, and they are not inside a temporary history,
+/// so this calls the library with directories inside it. Two tool directories each hold a
+/// Rust source whose unbound string literal names a decision nothing defines; the commit
+/// holding them is before the tip, which removes them, so its tree failing is a finding and
+/// exit 1.
+#[test]
+fn commits_reads_every_checker_directory_as_data_in_each_commits_tree() {
+    let history = History::new("commit-checker-dirs");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    for tool in ["tool-a", "tool-b"] {
+        history.write(
+            &format!("{tool}/src/lib.rs"),
+            "pub fn f() {\n    println!(\"{}\", \"`design@tiny@no-such-decision`\");\n}\n",
+        );
+    }
+    history.commit("Two tools are added\n");
+    history.remove("tool-a/src/lib.rs");
+    history.remove("tool-b/src/lib.rs");
+    history.commit("The tools are removed\n");
+    let manifest = documentation::manifest::Manifest::find(&history.dir).expect("the manifest");
+    let range = format!("{base}..HEAD");
+    let (a, b) = (history.dir.join("tool-a"), history.dir.join("tool-b"));
+    let judge = |dirs: &[&Path]| {
+        documentation::cli::history::commits(&manifest, &range, dirs, &mut [])
+            .expect("the run completes")
+    };
+    // The literals are live where no directory covers them, so the fixture can fail.
+    assert_eq!(judge(&[]), std::process::ExitCode::FAILURE);
+    assert_eq!(judge(&[&a]), std::process::ExitCode::FAILURE);
+    assert_eq!(judge(&[&a, &b]), std::process::ExitCode::SUCCESS);
+}
+
 /// The claim: the tip is the range's last commit, wherever HEAD is. A HEAD checked out inside
 /// the range is judged like any commit before the tip: its failing tree is a finding naming
 /// it, and exit 1.

@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-10 entries
+9 entries
 
 | kind | title |
 | --- | --- |
@@ -13,4 +13,3 @@
 | observation | [Judging a message costs time quadratic in its line count](judging-a-message-is-quadratic.md) |
 | observation | [Span and link shapes the scanner cannot see](span-and-link-shapes-unseen.md) |
 | question | [`check` judges the working tree, and a commit records the index](check-judges-the-working-tree-not-the-index.md) |
-| todo | [No test shows that `commits` reads the checker's own directories as data in each commit's tree](commits-exempts-checker-directories-untested.md) |
