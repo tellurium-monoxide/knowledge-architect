@@ -46,18 +46,72 @@ pub fn live_files(
     out
 }
 
-/// Whether the walk refuses this path for its name alone: a line break in it.
-///
-/// A finding is one line opening with its path, an index row is one line, and a reference is
-/// one backticked span, so a name holding a newline or a carriage return can be printed by
-/// nothing here and pointed at by nothing. Windows refuses to create such a file at all, so a
-/// tree holding one cannot be checked out there. The file is not read, and the caller reports
-/// it once by name; `skip-files` or an ignore rule is how a project keeps one deliberately.
+/// Whether the walk refuses this path for its name alone. [`refusal`] says why.
 pub fn refused(rel: &Path) -> bool {
-    rel.as_os_str()
-        .as_encoded_bytes()
-        .iter()
-        .any(|b| *b == b'\n' || *b == b'\r')
+    refusal(rel).is_some()
+}
+
+/// Why the walk refuses this path for its name alone, or `None` when it does not.
+///
+/// Two grounds, and the second covers more names than the first:
+///
+/// - **A line break fits nowhere here.** A finding is one line opening with its path, an index
+///   row is one line, and a reference is one backticked span, so a name holding a newline or a
+///   carriage return can be printed by nothing here and pointed at by nothing.
+/// - **Windows refuses to create the file**, so a tree holding it cannot be checked out there.
+///   In any one component of the path: a character of `<>:"|?*\`, a control character below
+///   the space, a trailing space or period, or a device name — `CON`, `PRN`, `AUX`, `NUL`,
+///   `COM0` to `COM9` and `LPT0` to `LPT9`, with the superscript digits `¹²³` as well — in any
+///   case and whatever follows its first period.
+///
+/// A line break is named first, since it is the ground that holds on every platform. The file
+/// is not read, and the caller reports it once by name; `skip-files` or an ignore rule is how a
+/// project keeps one deliberately. A name that is not UTF-8 is judged on the bytes it has.
+pub fn refusal(rel: &Path) -> Option<String> {
+    let bytes = rel.as_os_str().as_encoded_bytes();
+    if bytes.iter().any(|b| *b == b'\n' || *b == b'\r') {
+        return Some("holds a line break".to_string());
+    }
+    let text = String::from_utf8_lossy(bytes);
+    for component in text.split('/') {
+        if let Some(c) = component.chars().find(|c| (*c as u32) < 0x20) {
+            return Some(format!(
+                "holds the control character U+{:04X}, which Windows forbids in a name",
+                c as u32
+            ));
+        }
+        if let Some(c) = component.chars().find(|c| "<>:\"|?*\\".contains(*c)) {
+            return Some(format!("holds `{c}`, which Windows forbids in a name"));
+        }
+        if component.ends_with(' ') || component.ends_with('.') {
+            return Some(format!(
+                "has the component `{component}`, and Windows forbids a name ending in a space \
+                 or a period"
+            ));
+        }
+        if is_device_name(component) {
+            return Some(format!(
+                "has the component `{component}`, which Windows reserves as a device name"
+            ));
+        }
+    }
+    None
+}
+
+/// Whether Windows reads this name as a device: the part before its first period is one of
+/// the reserved names, in any case.
+fn is_device_name(component: &str) -> bool {
+    let stem = component.split('.').next().unwrap_or_default();
+    let upper = stem.to_uppercase();
+    if ["CON", "PRN", "AUX", "NUL"].contains(&upper.as_str()) {
+        return true;
+    }
+    let mut chars = upper.chars();
+    let head: String = chars.by_ref().take(3).collect();
+    let rest: Vec<char> = chars.collect();
+    (head == "COM" || head == "LPT")
+        && rest.len() == 1
+        && (rest[0].is_ascii_digit() || "¹²³".contains(rest[0]))
 }
 
 /// Whether a skipped directory or an excluded location holds this path.
@@ -117,7 +171,6 @@ mod tests {
         assert!(refused(Path::new("docs/a\rb.md")));
         assert!(refused(Path::new("do\ncs/b.md")), "in a directory name too");
         assert!(!refused(Path::new("docs/a b.md")));
-        assert!(!refused(Path::new("docs/a\tb.md")));
         let listing: Vec<PathBuf> = ["docs/a\nb.md", "docs/b.md"]
             .iter()
             .map(PathBuf::from)
@@ -129,6 +182,56 @@ mod tests {
             &HashSet::new(),
         );
         assert_eq!(walked, vec![PathBuf::from("/root/docs/b.md")]);
+    }
+
+    #[test]
+    fn a_name_windows_cannot_create_is_refused_and_says_why() {
+        for (path, why) in [
+            ("docs/a\tb.md", "U+0009"),
+            ("docs/a\u{1}b.md", "U+0001"),
+            ("docs/a:b.md", "`:`"),
+            ("docs/a<b.md", "`<`"),
+            ("docs/a>b.md", "`>`"),
+            ("docs/a\"b.md", "`\"`"),
+            ("docs/a|b.md", "`|`"),
+            ("docs/a?b.md", "`?`"),
+            ("docs/a*b.md", "`*`"),
+            ("docs/a\\b.md", "`\\`"),
+            ("docs/a.md ", "ending in a space or a period"),
+            ("docs./a.md", "ending in a space or a period"),
+            ("docs/nul", "device name"),
+            ("docs/CON.md", "device name"),
+            ("docs/Aux.tar.gz", "device name"),
+            ("prn/a.md", "device name"),
+            ("docs/com1.md", "device name"),
+            ("docs/LPT9", "device name"),
+            ("docs/com\u{b9}.md", "device name"),
+        ] {
+            let found = refusal(Path::new(path));
+            assert!(
+                found.as_deref().is_some_and(|f| f.contains(why)),
+                "{path:?}: {found:?}"
+            );
+        }
+        // Line breaks first, and the reason every other test asserts.
+        assert_eq!(
+            refusal(Path::new("docs/a\nb:c.md")).as_deref(),
+            Some("holds a line break")
+        );
+        // Names that only look close.
+        for path in [
+            "docs/a b.md",
+            "docs/.hidden",
+            "docs/console.md",
+            "docs/null.md",
+            "docs/com10.md",
+            "docs/com.md",
+            "docs/lpt.md",
+            "docs/a.nul",
+            "docs/caf\u{e9}.md",
+        ] {
+            assert_eq!(refusal(Path::new(path)), None, "{path:?}");
+        }
     }
 
     #[test]

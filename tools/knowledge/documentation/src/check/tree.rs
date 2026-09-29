@@ -341,11 +341,12 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
     // was read by no check, so a rule quote in it is verified by nothing, and a reference is
     // one backticked span, so nothing can point at it either.
     for path in inputs.refused {
+        let why = crate::walk::refusal(path).unwrap_or_else(|| "is refused".to_string());
         out.push(Finding::in_file(
             path,
-            "this file's name holds a line break, and no check read it".to_string(),
-            "rename the file; a name with a newline or a carriage return in it fits on no \
-             output line, in no reference and in no Windows checkout. Name it in [walk] \
+            format!("this file's name {why}, and no check read it"),
+            "rename the file; a name with a line break in it fits on no output line and in no \
+             reference, and Windows creates no file under a name it forbids. Name it in [walk] \
              skip-files or in an ignore rule to keep it as it is",
         ));
     }

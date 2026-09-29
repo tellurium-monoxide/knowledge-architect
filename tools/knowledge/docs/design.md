@@ -245,12 +245,21 @@ byte. A name holding a byte no UTF-8 decoding accepts is legal here, and decodin
 produces a path nothing on disk answers to — so the file leaves every check, and where nothing
 reports the failed read the run stays green. That is the shape this whole head exists against.
 
-**A name holding a line break is refused, and the refusal is a finding naming the file.** A
-finding is one line opening with its path, an index row is one line, and a reference is one
-backticked span, so a file whose name holds a newline or a carriage return can be printed by
-nothing here and pointed at by nothing; Windows refuses to create one, so a tree holding it cannot
-be checked out there. The walk drops the file, no check reads it, and `check::tree` reports it
-once with the line break escaped — `Finding` escapes a line break in the path it is located at
+**A name holding a line break, or one Windows cannot create, is refused, and the refusal is a
+finding naming the file and the reason.** Two grounds, and the second covers more names than the
+first:
+
+- A finding is one line opening with its path, an index row is one line, and a reference is one
+  backticked span, so a file whose name holds a newline or a carriage return can be printed by
+  nothing here and pointed at by nothing.
+- Windows refuses to create a file whose path has a component holding one of `<>:"|?*\` or a
+  control character below the space, ending in a space or a period, or naming a device: `CON`,
+  `PRN`, `AUX`, `NUL`, `COM0` to `COM9` and `LPT0` to `LPT9`, with the superscript digits `¹²³`,
+  in any case and whatever follows the first period. A tree holding one cannot be checked out
+  there, and a project learns it from this gate rather than from a failed checkout.
+
+The walk drops the file, no check reads it, and `check::tree` reports it
+once with any line break escaped — `Finding` escapes a line break in the path it is located at
 and in the statement it makes, so a reader taking the output by line meets one finding per line
 whatever route a name took to reach it. A project that means to keep such a file names it in `skip-files` or in an ignore rule.
 

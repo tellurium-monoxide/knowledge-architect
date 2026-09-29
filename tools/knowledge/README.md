@@ -14,8 +14,9 @@ table in phase 1, rather than skip in silence what the table configures, per
 **It needs `git` 2.36 or newer on the path, and a project inside a git worktree.** What the tool reads is what
 `git ls-files` reports from the project root, so every pattern git honours decides the walk,
 nested `.gitignore` files included, and a file git tracks is read whatever the ignore rules say.
-A file whose name holds a line break is read by nothing and reported once, with the break
-escaped: name it in `[walk] skip-files` or in an ignore rule to keep it.
+A file whose name holds a line break, or a name Windows cannot create, is read by nothing and
+reported once with the reason, any line break escaped: name it in `[walk] skip-files` or in an
+ignore rule to keep it.
 Neither failure is silent: no binary and no worktree are both exit 2 naming the reason, never an
 empty walk. `commits` reads a commit's tree through `cat-file --batch -z`, which is where the
 version floor comes from. The decision is `design@knowledge@git-supplies-the-walk`.

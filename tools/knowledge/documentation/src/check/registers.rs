@@ -1633,7 +1633,11 @@ mod tests {
         let committed = HashMap::new();
         let present: HashSet<PathBuf> = all_of("").iter().map(PathBuf::from).collect();
         let directories = crate::check::testing::implied_directories(&present);
-        let refused = vec![PathBuf::from("docs/a\nb.md"), PathBuf::from("docs/c\rd.md")];
+        let refused = vec![
+            PathBuf::from("docs/a\nb.md"),
+            PathBuf::from("docs/c\rd.md"),
+            PathBuf::from("docs/e:f.md"),
+        ];
         let inputs = Inputs {
             committed: &committed,
             configs: &HashMap::new(),
@@ -1647,9 +1651,13 @@ mod tests {
         };
         let found =
             crate::check::tree::check(&Model::from_documents(Vec::new()), &manifest, &inputs);
-        assert_eq!(found.len(), 2, "{found:#?}");
-        for (finding, head) in found.iter().zip(["docs/a\\nb.md  ", "docs/c\\rd.md  "]) {
-            assert!(finding.what.contains("holds a line break"), "{found:#?}");
+        assert_eq!(found.len(), 3, "{found:#?}");
+        for (finding, (head, why)) in found.iter().zip([
+            ("docs/a\\nb.md  ", "holds a line break"),
+            ("docs/c\\rd.md  ", "holds a line break"),
+            ("docs/e:f.md  ", "holds `:`, which Windows forbids"),
+        ]) {
+            assert!(finding.what.contains(why), "{found:#?}");
             assert_eq!(finding.to_string().lines().count(), 2, "{finding}");
             assert!(finding.to_string().starts_with(head), "{finding}");
         }
