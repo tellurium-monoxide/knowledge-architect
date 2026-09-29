@@ -223,6 +223,13 @@ owner's ruling is that a rule cited in another crate's unit test stays checked.
 `live`. Measured: 17 assertion messages in `thaum-testing`'s tests cite a rule behind a marker and
 are checked today. Each would become text nothing reads.
 
+**The binary finding the checker's directories at run time**, from the tree or its manifest, in
+place of refusing a binary built elsewhere — lost to `design@knowledge@a-foreign-build-is-refused`.
+`live`. Reproduced on this repository: a binary built from a second checkout into the first one's
+target directory, run in the first, printed a verdict string changed only in the second, so the
+other checkout's code runs and not only its compiled paths; correct paths would still judge the
+tree with the wrong code. The exemption half of the argument is the manifest-row entry below.
+
 **A manifest row naming the exempt directory** — lost to `design@knowledge@the-regime-has-no-opt-out`.
 `live`. A row can be pointed at any directory, and the tree declaring it decides what conformance
 means. The compiled path can name only the checker's own source.

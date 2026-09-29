@@ -895,7 +895,8 @@ evaluated at build time, and the binary hands the list of its libraries' directo
 A library's own directory would not do: the core library's leaves the core's binary and tests
 outside it, and a binary sees only the libraries it depends on. The alias in
 `path@thaum@.cargo/config.toml` builds the binary from the checkout on every invocation, so each
-compiled path is the tree being checked. Once the core is consumed as a published crate, its
+compiled path is the tree being checked, unless another checkout shares the target directory,
+which `design@knowledge@a-foreign-build-is-refused` refuses. Once the core is consumed as a published crate, its
 directory is outside the tree and exempts nothing, which is correct: its source is then not part
 of the tree. The root and the compiled path are canonicalised before
 the prefix test, so a symlinked checkout does not defeat it; a symlink inside the tree is not
@@ -903,17 +904,6 @@ followed. A manifest row is not an option, because a row can be pointed at any d
 is the shape `design@knowledge@the-regime-has-no-opt-out` exists to refuse: only the checker's own source
 can ever be exempt, and it is exempt by construction. The row's entry is in
 `path@knowledge@docs/rejected-alternatives.md`.
-
-**A binary built from another checkout of the tool is refused.** Two checkouts sharing one
-target directory leave the last build's binary for both, and cargo does not rebuild it for the
-other checkout, whose own package is still fresh; observed on this repository, the other
-checkout then runs that binary, its code and not only its compiled paths. Before any command,
-the binary compares where each library it links was compiled with the tree it is run over: a tree
-that holds the same package, by the name its `Cargo.toml` declares, at a trailing run of the
-compiled directory but not at the compiled directory itself is a second checkout, and the run
-exits 2 naming both directories and the `cargo clean` that rebuilds from this one. A tree holding
-no copy is left alone, which covers a mock project under the tool's directory and a project
-consuming a library as a published crate.
 
 **The failure that remains is loud.** The summary block names each of the checker's directories, relative to the root when it sits under it and
 absolute otherwise, even when the compiled directory no longer exists, and prints the count of
@@ -924,6 +914,34 @@ it sits inside the tree being checked: a tree that sits inside it instead, such 
 **Whole source rather than test modules only.** The non-test source holds no literal that cites
 a rule, a finding message interpolates the number it names, and a narrower rule would cost an
 attribute lookup to protect a class with zero members.
+
+### A binary built from another checkout of the tool is refused before any command `##a-foreign-build-is-refused`
+
+Two checkouts sharing one
+target directory leave the last build's binary for both, and cargo does not rebuild it for the
+other checkout, whose own package is still fresh; observed on this repository, the other
+checkout then runs that binary, its code and not only its compiled paths. Before any command,
+the binary compares where its own crate and each library it links were compiled with the tree it
+is run over: a tree that holds the same package, by the name its `Cargo.toml` declares, at a
+trailing run of the compiled directory but not at the compiled directory itself is a second
+checkout, and the run exits 2 naming both directories and the `cargo clean` of every workspace
+package the binary links, which rebuilds them from this one. The binary's own crate is listed
+because it is rebuilt whenever anything it links is, so its compiled directory is always the last
+build's; a worktree nested in the tree is a second checkout like any other. A tree holding no
+copy is left alone, which covers a mock project under the tool's directory and a project
+consuming a library as a published crate.
+
+**Two limits, both from reading only names and places.** A second checkout that moved the crate
+to another relative path is not seen, and runs; the loud failure below still names it. A tree
+holding an unrelated crate of the same name at the same relative path is taken for a copy, and
+refused; a binary run through this repository's alias never meets one.
+
+**The refusal, not a correction of the paths.** Finding the directories at run time would exempt
+the right files and leave the other checkout's code judging this tree. Every command is refused,
+not only those that read literals, because every command runs that code. Each library a binary
+links exports its crate directory and its package name, and the binary hands the list over, so an
+extension's library is covered by listing it; this constrains every extension binary, per
+`design@knowledge@checker-source-literals-are-data`, whose compiled directories this check reads.
 
 ## 5. Commit messages
 

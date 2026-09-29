@@ -67,13 +67,17 @@ absent or names directories other than the Components of the tool's source in a 
 holds them. The cheap half is the
 binary test `the_summary_names_the_checker_source_and_counts_the_files_under_it` in
 `path@rules-corpus@tests/binary.rs`, which asserts the line over this checkout. A binary built from
-another checkout of the tool is refused before any command runs, which the two
-`a_tree_holding_the_*_at_another_path_than_the_binarys_is_refused` tests assert, so it does not
-reach this tripwire.
+another checkout of the tool is refused before any command runs, per
+`design@knowledge@a-foreign-build-is-refused`, which the two
+`a_tree_holding_the_*_at_another_path_than_the_binarys_is_refused` tests assert, one in
+`path@knowledge@tests/binary.rs` and one in `path@rules-corpus@tests/binary.rs`, so it reaches
+this tripwire only where the refusal cannot see it.
 **Response:** the compiled path and the walked tree disagree in a way the refusal does not see: a
-canonicalisation gap, a symlink inside the tree the prefix test does not follow.
+second checkout that moved the tool's crates to another relative path, a canonicalisation gap, a
+symlink inside the tree the prefix test does not follow.
 Open a `defect` carrying the path the line names and the checkout's. Reopen the decision only if
-the mismatch is one the cargo alias cannot prevent, since the alias is what the decision rests on.
+the mismatch is one neither the cargo alias nor the refusal can prevent, since the two together
+are what the decision rests on.
 **Re-entry:** standing.
 
 ## Guarding `design@knowledge@checker-source-literals-are-data`' whole-source scope `##checker-source-literals-are-data-whole-source-scope`

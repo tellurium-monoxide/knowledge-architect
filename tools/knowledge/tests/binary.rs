@@ -1003,6 +1003,23 @@ fn a_tree_holding_the_tool_at_another_path_than_the_binarys_is_refused() {
         );
         assert!(out.is_empty(), "nothing ran: {out}");
     }
+
+    // The binary's own crate, which is rebuilt when anything it links is: a second checkout
+    // that changed only the binary is refused through it.
+    let own = Sandbox::seeded(
+        "foreign-build-own",
+        "minimal",
+        &[(
+            "tools/knowledge/Cargo.toml",
+            "[package]\nname = \"knowledge\"\n",
+        )],
+    );
+    let (out, stderr, code) = own.run(&["check"]);
+    assert_eq!(code, 2, "{out}{stderr}");
+    assert!(
+        stderr.contains("its `knowledge` was compiled at"),
+        "{stderr}"
+    );
 }
 
 /// The claim: a name holding a line break is one finding, on one line, and the file is read by

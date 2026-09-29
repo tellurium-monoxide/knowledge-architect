@@ -31,10 +31,17 @@ fn main() -> ExitCode {
     let dirs: Vec<&Path> = vec![dir.as_path()];
     let outcome = documentation::cli::locate().and_then(|manifest| {
         // A binary built from another checkout would judge this tree with that checkout's
-        // code, so no command runs, per `design@knowledge@checker-source-literals-are-data`.
+        // code, so no command runs, per `design@knowledge@a-foreign-build-is-refused`.
         documentation::build_origin::refuse_a_foreign_build(
             manifest.root(),
-            &[documentation::build_origin::this_library()],
+            &[
+                // The binary's own crate first: it is rebuilt whenever anything it links is.
+                documentation::build_origin::Library {
+                    crate_dir: std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")),
+                    package: env!("CARGO_PKG_NAME"),
+                },
+                documentation::build_origin::this_library(),
+            ],
             &[env!("CARGO_PKG_NAME"), "documentation"],
         )?;
         documentation::cli::run(cli.command, &manifest, &dirs, &mut [])

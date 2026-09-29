@@ -1,7 +1,7 @@
 //! Whether the running binary was built from the tree it checks.
 //!
-//! Every command judges a tree with the binary the cargo alias builds from the checkout, per
-//! `design@knowledge@checker-source-literals-are-data`. Two checkouts that share one target
+//! Every command judges a tree with the binary the cargo alias builds from the checkout, and
+//! one built from another checkout is refused, per `design@knowledge@a-foreign-build-is-refused`. Two checkouts that share one target
 //! directory break that: the last build writes the one binary both run, and cargo does not
 //! rebuild it for the other checkout, whose own package is still fresh. That checkout then runs
 //! another checkout's code, and its tool fixtures, exempted under the other checkout's paths, are
@@ -36,21 +36,22 @@ pub fn this_library() -> Library {
 
 /// The first library the tree holds a second copy of, with the copy's directory.
 ///
-/// A library is skipped when its compiled directory sits inside the tree, which is the ordinary
-/// case. Otherwise every trailing run of the compiled directory's components is tried under
-/// the root, and a directory there whose `Cargo.toml` declares the same package name is the
-/// copy. A trailing run is the only place a checkout of the same repository can hold it, and
-/// trying each one needs no knowledge of where the repository's root was.
+/// Every trailing run of the compiled directory's components, the empty one included, is tried
+/// under the root, and a directory there whose `Cargo.toml` declares the same package name, and
+/// which is not the compiled directory itself, is the copy. A trailing run is where a checkout
+/// of the same repository holds the crate, wherever that checkout sits, a worktree nested in
+/// the tree included; trying each one needs no knowledge of where the repository's root was.
+/// Both sides are canonicalised before they are compared, so a tree reached through a symlink
+/// is not its own copy.
+///
+/// Two limits follow from reading only names and places. A checkout that moved the crate to
+/// another relative path is not seen. A tree holding an unrelated crate of the same name at the
+/// same relative path is taken for a copy.
 pub fn foreign_copy(root: &Path, libraries: &[Library]) -> Option<(Library, PathBuf)> {
-    let root = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
+    let canonical = |p: &Path| p.canonicalize().unwrap_or_else(|_| p.to_path_buf());
+    let root = canonical(root);
     for library in libraries {
-        let compiled = library
-            .crate_dir
-            .canonicalize()
-            .unwrap_or_else(|_| library.crate_dir.clone());
-        if compiled.starts_with(&root) {
-            continue;
-        }
+        let compiled = canonical(&library.crate_dir);
         let parts: Vec<&std::ffi::OsStr> = compiled
             .components()
             .filter_map(|c| match c {
@@ -58,11 +59,13 @@ pub fn foreign_copy(root: &Path, libraries: &[Library]) -> Option<(Library, Path
                 _ => None,
             })
             .collect();
-        for start in (0..parts.len()).rev() {
+        for start in (0..=parts.len()).rev() {
             let candidate: PathBuf = parts[start..]
                 .iter()
                 .fold(root.clone(), |dir, part| dir.join(part));
-            if declares(&candidate.join("Cargo.toml"), library.package) {
+            if declares(&candidate.join("Cargo.toml"), library.package)
+                && canonical(&candidate) != compiled
+            {
                 return Some((library.clone(), candidate));
             }
         }
@@ -184,6 +187,50 @@ mod tests {
         scratch.crate_at("three/tools/tool/lib", "another-tool");
         assert_eq!(
             foreign_copy(&scratch.0.join("three"), &[library(built)]),
+            None
+        );
+    }
+
+    #[test]
+    fn a_checkout_nested_in_the_tree_a_deep_crate_and_a_crate_at_the_root_are_found() {
+        let scratch = Scratch::new("nested");
+        // A worktree nested in the tree: its compiled directory sits under the root, and the
+        // root holds the crate at the same trailing run.
+        let tree = scratch.0.join("tree");
+        let nested = scratch.crate_at("tree/.worktrees/inner/tools/tool/lib", "a-tool");
+        let copy = scratch.crate_at("tree/tools/tool/lib", "a-tool");
+        let found = foreign_copy(&tree, &[library(nested)]);
+        assert_eq!(
+            found.map(|(_, dir)| dir.canonicalize().expect("the copy")),
+            Some(copy.canonicalize().expect("the copy"))
+        );
+        // Five components deep.
+        let deep = scratch.crate_at("one/a/b/c/d/lib", "a-tool");
+        scratch.crate_at("two/a/b/c/d/lib", "a-tool");
+        assert!(foreign_copy(&scratch.0.join("two"), &[library(deep)]).is_some());
+        // A crate at its repository's root, where the empty trailing run is the copy.
+        let at_root = scratch.crate_at("first", "a-tool");
+        scratch.crate_at("second", "a-tool");
+        assert!(foreign_copy(&scratch.0.join("second"), &[library(at_root)]).is_some());
+    }
+
+    #[test]
+    fn a_tree_reached_through_a_symlink_is_not_its_own_copy() {
+        let scratch = Scratch::new("symlink");
+        let built = scratch.crate_at("one/tools/tool/lib", "a-tool");
+        let link = scratch.0.join("link");
+        std::os::unix::fs::symlink(scratch.0.join("one"), &link).expect("a symlink");
+        assert_eq!(foreign_copy(&link, &[library(built)]), None);
+        // A symlink inside the tree that resolves to the compiled directory is the same
+        // directory, not a copy.
+        let real = scratch.crate_at("tree/real/tool/lib", "a-tool");
+        std::os::unix::fs::symlink(
+            scratch.0.join("tree/real/tool"),
+            scratch.0.join("tree/tool"),
+        )
+        .expect("a symlink");
+        assert_eq!(
+            foreign_copy(&scratch.0.join("tree"), &[library(real)]),
             None
         );
     }
