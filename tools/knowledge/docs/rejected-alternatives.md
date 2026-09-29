@@ -23,6 +23,29 @@ branch that tightens the checker orders or squashes its commits instead. Judging
 the checker built from its own tree would also serve a migration branch; it costs one release
 build per commit of every range.
 
+**`check` and `commits` refusing a pipe on stdout** — lost to
+`design@knowledge@a-commit-message-is-a-document`. `live`. It was meant to stop
+`cargo knowledge check | tail -n 10 && git commit`, which commits over a failing tree because
+the shell takes the exit status of `tail`. It was built and reviewed, and it loses because it
+cannot stop that chain: a process inside a pipeline does not set the pipeline's status.
+Reproduced with the refusal in place, `bash -c 'cargo knowledge check | tail -n 3 && echo
+commit'` printed the refusal, then `commit`, and exited 0. The chained command still ran, now
+over a tree the checker had not judged at all. Two further costs were measured. The test was
+`is_fifo` on stdout, and ksh93 builds its pipelines from sockets, so `knowledge check | tail`
+under ksh93 was not refused. And every caller that captures the output had to give the child a
+regular file: `cargo x gates` and the test helpers of both binaries; the xtask side is its own
+entry in `path@xtask@docs/rejected-alternatives.md`. A mechanism that stops the chain has to
+act before the shell runs it, on the command text. The merge is guarded either way by the range
+check this entry lost to.
+
+**A `commit` subcommand that runs the checks and then `git commit`** — lost to
+`design@knowledge@a-commit-message-is-a-document`. `live`. It would judge the tree and the
+message at the moment of committing. It loses on three counts. It has to offer `git commit`'s
+interface: `-a`, `-m` and `-F`, the editor, pathspecs, `--amend`, `-p`. A session can still
+call `git commit` directly, so it guards nothing a session does not opt into. And judging a
+message before the commit exists repeats the reason the `commit-msg` hook below lost: under an
+amend or a reword, HEAD is the commit being replaced.
+
 **A `commit-msg` hook judging each message before the commit exists** — lost to
 `design@knowledge@a-commit-message-is-a-document`. `live`. It repaired a message by an edit of
 the draft rather than by an amend, and cost 0.62 s per commit against 1.6 s for
