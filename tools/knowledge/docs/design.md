@@ -78,9 +78,9 @@ that mostly have no per-file scope, and `path@knowledge@docs/tripwires.md` guard
 resolves no release and fetches nothing, whatever it would have judged. **A writer refuses over an incomplete model**: `index`
 and a writing command of an extension, such as `rules bump`, run the first three phases before
 touching anything and exit 2 naming the
-phase, since an index generated over such a model lists rows nobody asked for. The range form
-of `commits` ends the same way at a tip whose tree stops early: a message judged against an
-incomplete entity table is judged against nothing.
+phase, since an index generated over such a model lists rows nobody asked for. `commits` judges
+no message against a commit whose tree stops early, and says so, since a message judged against
+an incomplete entity table is judged against nothing.
 
 **Nothing selects a subset of the checks.** The checks cross the phases — what `registers`
 asserts sits in phases 2 and 4, what `references` asserts in 3 and 4 — so a selection could be
@@ -197,9 +197,13 @@ is the failure this tool exists to prevent.
 extension may assert that no unwalked file says something, as the rules extension does of a rule
 number. Its bytes are handed over decoded lossily when they are not UTF-8: the question is
 whether an ASCII token appears, and a lossy decoding keeps every ASCII byte, where a walked
-document read lossily would be text nobody wrote. A file whose bytes cannot be had at all, in
-`check` or in `commits`, is a phase-2 finding naming it. A symlink and a gitlink are no file to
-read, and are reported as links.
+document read lossily would be text nobody wrote. **A binary file is handed to no check**, by
+git's own test, a NUL byte in its first 8000 bytes, in `check` and in `commits` alike: its bytes
+are no prose anybody wrote a claim in, and a number in them, such as a PDF's page size, is data.
+Every other state is a phase-2 finding naming the file, each with its own repair: a path git
+lists and the working tree does not hold, a directory where git lists one entry, and a file whose
+bytes cannot be had at all. A symlink and a gitlink are no file to read, and are reported as
+links.
 
 One byte of Windows-1252 — a pasted em dash — put a document outside the walk AND outside the
 inverse assertion, so a fabricated quote in it was read by nothing. Unbounded recursion aborted

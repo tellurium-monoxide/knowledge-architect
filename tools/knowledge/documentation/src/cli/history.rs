@@ -297,10 +297,9 @@ fn commit_tree(
     if !manifest.complaints().is_empty() {
         // Phase 1 failed, so no blob was read and nothing is assembled: the tree is judged no
         // further, and it serves as no parent, per
-        // `design@knowledge@a-commit-message-is-a-document`. The empty assembly is what makes
-        // that so: kept as the next commit's parent, it defines no entity, so a reference
-        // resolves against the next commit's own tree alone. The early return in `read_tree`
-        // changes no verdict and is what saves reading the blobs.
+        // `design@knowledge@a-commit-message-is-a-document`; the range walk keeps no parent for
+        // it. The early return in `read_tree` changes no verdict and is what saves reading the
+        // blobs.
         let model = Model::from_documents(Vec::new());
         let survey = crate::survey::from_listing(&manifest, &model, &[], &[], |_| {
             crate::survey::Outside::Missing
@@ -389,7 +388,9 @@ fn commit_tree(
         &read.listing,
         &read.links,
         |rel| match blobs.get(rel) {
-            Some(text) => crate::survey::Outside::Text(text.clone()),
+            // The same binary test `check` applies on disk: a NUL is valid UTF-8, so a blob
+            // that decoded may still be binary.
+            Some(text) => crate::survey::Outside::from_bytes(text.as_bytes()),
             None => read.not_text.get(rel).cloned().unwrap_or_else(|| {
                 crate::survey::Outside::Unreadable("the tree holds no blob for it".to_string())
             }),
@@ -558,6 +559,14 @@ pub fn commits(
                 None => format!("its tree fails {trouble} finding(s)"),
             };
             summary.push((short.to_string(), Outcome::Failed { why }));
+            if tree.stopped == Some(check::Phase::Resolution) {
+                // Phase 1 failed and nothing of the tree was read, so it serves as no parent.
+                // An empty tree kept as a parent would not be the same: a finding is kept only
+                // when the parent refuses the reference too, and an empty tree accepts some a
+                // real one refuses, such as an escape naming a path the tree holds.
+                previous = None;
+                continue;
+            }
             if tree.stopped.is_some() {
                 // An incomplete table would refuse a reference into what the walk could not
                 // read, so the message is judged by nothing. The tree still serves as the next
@@ -577,6 +586,8 @@ pub fn commits(
             (_, Some(parent)) => {
                 commit_tree(root, parent, &checker_rel, extensions, Depth::References)
                     .ok()
+                    // A parent whose phase 1 fails was not read, and serves as no parent.
+                    .filter(|a| a.stopped != Some(check::Phase::Resolution))
                     .map(|a| {
                         let e = Entities::build(&a.model, &a.anchors());
                         (a, e)

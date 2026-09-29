@@ -349,10 +349,12 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
                 "stage the deletion, or restore the file",
             ),
             Outside::Directory => (
-                "git lists this directory as one untracked entry, a repository nested in this \
-                 one, and no check reads anything under it"
+                "git lists this path and the working tree holds a directory there, so no check \
+                 reads anything under it: a repository nested in this one, or a tracked file \
+                 replaced by a directory"
                     .to_string(),
-                "name it in an ignore rule or in [walk] skip-dirs to declare the silence",
+                "for a nested repository, name it in an ignore rule or in [walk] skip-dirs to \
+                 declare the silence; for a replaced file, stage the change or restore the file",
             ),
             Outside::Unreadable(why) => (
                 format!(

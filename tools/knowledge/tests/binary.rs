@@ -1296,7 +1296,7 @@ fn a_reference_no_tree_defines_is_reported_though_the_two_refuse_it_differently(
     assert!(stdout.contains("no-such-slug"), "{stdout}");
 }
 
-/// The claim: a commit before the tip whose manifest does not load fails the run and is
+/// The claim: a commit whose manifest does not load fails the run and is
 /// named, and the commit after it is still judged.
 ///
 /// Its message cannot be judged, since no table exists to resolve it against, so the tree's
@@ -1326,7 +1326,7 @@ fn a_commit_whose_manifest_does_not_load_fails_the_run_and_the_next_one_is_judge
     assert!(last.starts_with("FAILED"), "{last}");
 }
 
-/// The claim: a commit before the tip whose tree carries a finding fails the run with that
+/// The claim: a commit whose tree carries a finding fails the run with that
 /// finding, named by the commit and the file, and its message is still judged.
 ///
 /// The tip checker judges every commit of the branch, so a tree that fails at any commit is a
@@ -1362,7 +1362,7 @@ fn a_failing_tree_before_the_tip_is_a_finding_and_its_message_is_still_judged() 
     assert!(stdout.contains("no-such-message-ref"), "{stdout}");
 }
 
-/// The claim: a commit before the tip whose tree stops before the last phase fails the run,
+/// The claim: a commit whose tree stops before the last phase fails the run,
 /// and its message is judged against nothing, which the run says.
 ///
 /// Its entity table is incomplete, so a finding against the message would be computed over
@@ -1524,8 +1524,11 @@ fn a_tree_whose_phase_one_fails_serves_as_no_parent() {
     let failed = history.commit("A table no extension claims\n");
     history.write("knowledge.toml", &manifest);
     history.remove("docs/open-issues/a-closable-issue.md");
-    let next = history.commit("Closes `issue@tiny@a-closable-issue`.\n");
-    history.commit("The tip\n");
+    // The escape names a path this tree holds, so a real parent refuses it as the next tree
+    // does and the finding stands; an empty tree kept as a parent would accept it and drop it.
+    let next =
+        history.commit("Closes `issue@tiny@a-closable-issue`. See `path@elsewhere@README.md`.\n");
+    history.commit("The last commit\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(
@@ -1539,12 +1542,19 @@ fn a_tree_whose_phase_one_fails_serves_as_no_parent() {
                 && l.contains("issue@tiny@a-closable-issue")),
         "{stdout}"
     );
+    assert!(
+        stdout
+            .lines()
+            .any(|l| l.starts_with(&format!("commit {next}:"))
+                && l.contains("path@elsewhere@README.md")),
+        "{stdout}"
+    );
 }
 
 /// The claim: where HEAD sits changes nothing. A HEAD checked out inside the range is judged
 /// like any other commit: its failing tree is a finding naming it, and exit 1.
 #[test]
-fn a_head_inside_the_range_is_judged_as_a_commit_before_the_tip() {
+fn a_head_inside_the_range_is_judged_like_any_other_commit() {
     let history = History::new("commit-head-inside");
     tiny_project(&history, false);
     let base = history.commit("The project is created\n");

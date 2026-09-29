@@ -55,7 +55,8 @@ pub enum Outside {
     /// Git lists it and the working tree does not hold it: a tracked file deleted and not
     /// staged.
     Missing,
-    /// A directory git lists as one untracked entry, which is a repository nested in this one.
+    /// A directory where git lists one entry: a repository nested in this one, listed untracked,
+    /// or a tracked file the working tree replaced by a directory.
     Directory,
     /// Its bytes could not be had, with the reason.
     Unreadable(String),
@@ -188,6 +189,16 @@ mod tests {
     use super::*;
     use crate::manifest::Manifest;
     use std::path::Path;
+
+    #[test]
+    fn a_nul_byte_in_the_probed_prefix_makes_a_file_binary_and_one_past_it_does_not() {
+        let mut bytes = vec![b'a'; BINARY_PROBE + 10];
+        bytes[BINARY_PROBE - 1] = 0;
+        assert_eq!(Outside::from_bytes(&bytes), Outside::Binary);
+        bytes[BINARY_PROBE - 1] = b'a';
+        bytes[BINARY_PROBE] = 0;
+        assert!(matches!(Outside::from_bytes(&bytes), Outside::Text(_)));
+    }
 
     #[test]
     fn a_refused_name_is_present_and_neither_outside_nor_silent() {
