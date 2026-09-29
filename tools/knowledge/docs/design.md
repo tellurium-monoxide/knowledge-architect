@@ -931,17 +931,21 @@ build's; a worktree nested in the tree is a second checkout like any other. A tr
 copy is left alone, which covers a mock project under the tool's directory and a project
 consuming a library as a published crate.
 
-**Two limits, both from reading only names and places.** A second checkout that moved the crate
-to another relative path is not seen, and runs; the loud failure below still names it. A tree
-holding an unrelated crate of the same name at the same relative path is taken for a copy, and
-refused; a binary run through this repository's alias never meets one.
+**Three limits.** Two come from reading only names and places. A second checkout that moved the
+crate to another relative path is not seen, and runs; the loud failure of
+`design@knowledge@checker-source-literals-are-data`, printed by `check`, still names it. A tree
+holding an unrelated crate of the same name at the same relative path, one component long or
+more, is taken for a copy, and refused; a binary run through this repository's alias never meets
+one. The third comes from where the check lives: it is part of the binary it judges, so a binary
+built from a checkout older than the refusal, or from one that changed it, runs unrefused.
 
 **The refusal, not a correction of the paths.** Finding the directories at run time would exempt
 the right files and leave the other checkout's code judging this tree. Every command is refused,
 not only those that read literals, because every command runs that code. Each library a binary
 links exports its crate directory and its package name, and the binary hands the list over, so an
-extension's library is covered by listing it; this constrains every extension binary, per
-`design@knowledge@checker-source-literals-are-data`, whose compiled directories this check reads.
+extension's library is covered by listing it; this constrains every extension binary. The values
+it reads are each crate's own directory and package name, beside the Component directories that
+`design@knowledge@checker-source-literals-are-data` compiles in.
 
 ## 5. Commit messages
 

@@ -998,7 +998,15 @@ fn a_tree_holding_the_tool_at_another_path_than_the_binarys_is_refused() {
         assert_eq!(code, 2, "{command:?}: {out}{stderr}");
         assert!(stderr.contains("built from another checkout"), "{stderr}");
         assert!(
-            stderr.contains("cargo clean --release -p knowledge -p documentation"),
+            // The profile of the clean is the binary's, which is this test's.
+            stderr.contains(&format!(
+                "cargo clean{} -p knowledge -p documentation`",
+                if cfg!(debug_assertions) {
+                    ""
+                } else {
+                    " --release"
+                }
+            )),
             "{stderr}"
         );
         assert!(out.is_empty(), "nothing ran: {out}");

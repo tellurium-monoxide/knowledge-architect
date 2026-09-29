@@ -8,8 +8,10 @@ there, in one place, with a reason beside it. What is compiled in is the directo
 Component a binary's libraries belong to — `documentation::component_dir` for the core,
 `citations::component_dir` for the rules extension, each the parent of its crate's
 `CARGO_MANIFEST_DIR` — so that the string literals of the tool's own source are read as data
-rather than as citations, per `design@knowledge@checker-source-literals-are-data`. That is a fact
-about the tool, not about any tree.
+rather than as citations, per `design@knowledge@checker-source-literals-are-data`. Each crate's own
+directory and package name are compiled in too, so a binary built from another checkout of the
+tool is refused, per `design@knowledge@a-foreign-build-is-refused`. That is a fact about the tool,
+not about any tree.
 
 **`git` 2.36 or newer is a hard dependency, and every invocation lives in
 `path@knowledge@documentation/src/git.rs`.** The floor is `cat-file --batch -z`, which `commits`

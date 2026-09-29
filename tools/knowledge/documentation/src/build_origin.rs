@@ -36,7 +36,7 @@ pub fn this_library() -> Library {
 
 /// The first library the tree holds a second copy of, with the copy's directory.
 ///
-/// Every trailing run of the compiled directory's components, the empty one included, is tried
+/// Every trailing run of the compiled directory's components, one component long or more, is tried
 /// under the root, and a directory there whose `Cargo.toml` declares the same package name, and
 /// which is not the compiled directory itself, is the copy. A trailing run is where a checkout
 /// of the same repository holds the crate, wherever that checkout sits, a worktree nested in
@@ -59,7 +59,9 @@ pub fn foreign_copy(root: &Path, libraries: &[Library]) -> Option<(Library, Path
                 _ => None,
             })
             .collect();
-        for start in (0..=parts.len()).rev() {
+        // Not the empty run: it would make the root's own `Cargo.toml` a candidate, and refuse
+        // every project whose root package shares a name with a linked crate.
+        for start in (0..parts.len()).rev() {
             let candidate: PathBuf = parts[start..]
                 .iter()
                 .fold(root.clone(), |dir, part| dir.join(part));
@@ -85,11 +87,17 @@ pub fn refuse_a_foreign_build(
     let Some((library, copy)) = foreign_copy(root, libraries) else {
         return Ok(());
     };
+    // The profile this binary was built in, since `cargo clean -p` clears one profile only.
+    let profile = if cfg!(debug_assertions) {
+        ""
+    } else {
+        " --release"
+    };
     let clean: String = packages.iter().map(|p| format!(" -p {p}")).collect();
     Err(format!(
         "this binary was built from another checkout: its `{}` was compiled at {}, and the tree \
          being checked holds that package at {}\n       a target directory shared between two \
-         checkouts does this; rebuild from this one with `cargo clean --release{clean}`",
+         checkouts does this; rebuild from this one with `cargo clean{profile}{clean}`",
         library.package,
         library.crate_dir.display(),
         copy.display(),
@@ -208,10 +216,25 @@ mod tests {
         let deep = scratch.crate_at("one/a/b/c/d/lib", "a-tool");
         scratch.crate_at("two/a/b/c/d/lib", "a-tool");
         assert!(foreign_copy(&scratch.0.join("two"), &[library(deep)]).is_some());
-        // A crate at its repository's root, where the empty trailing run is the copy.
-        let at_root = scratch.crate_at("first", "a-tool");
-        scratch.crate_at("second", "a-tool");
-        assert!(foreign_copy(&scratch.0.join("second"), &[library(at_root)]).is_some());
+        // A project whose root package shares the name is not taken for a copy: the empty
+        // trailing run is not tried.
+        let elsewhere = scratch.crate_at("built/a-tool", "a-tool");
+        scratch.crate_at("unrelated", "a-tool");
+        assert_eq!(
+            foreign_copy(&scratch.0.join("unrelated"), &[library(elsewhere)]),
+            None
+        );
+    }
+
+    #[test]
+    fn a_crate_compiled_through_a_symlink_is_not_a_copy_of_itself() {
+        // `cargo build --manifest-path` through a symlinked path compiles that path in.
+        let scratch = Scratch::new("compiled-symlink");
+        scratch.crate_at("one/tools/tool/lib", "a-tool");
+        let link = scratch.0.join("link");
+        std::os::unix::fs::symlink(scratch.0.join("one"), &link).expect("a symlink");
+        let through = library(link.join("tools/tool/lib"));
+        assert_eq!(foreign_copy(&scratch.0.join("one"), &[through]), None);
     }
 
     #[test]
@@ -248,8 +271,13 @@ mod tests {
         .expect_err("a refusal");
         assert!(why.contains(&built.display().to_string()), "{why}");
         assert!(why.contains("two"), "{why}");
+        let profile = if cfg!(debug_assertions) {
+            ""
+        } else {
+            " --release"
+        };
         assert!(
-            why.contains("cargo clean --release -p a-binary -p a-tool"),
+            why.contains(&format!("cargo clean{profile} -p a-binary -p a-tool")),
             "{why}"
         );
         assert_eq!(
