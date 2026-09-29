@@ -469,7 +469,6 @@ pub fn commits(
         .filter_map(|c| c.strip_prefix(root).ok().map(Path::to_path_buf))
         .collect();
     let checker_rel: Vec<&Path> = checker_rel.iter().map(PathBuf::as_path).collect();
-    let head = crate::git::rev_parse(root, "HEAD");
 
     let mut summary: Vec<(String, Outcome)> = Vec::new();
     let mut findings: Vec<Finding> = Vec::new();
@@ -483,7 +482,9 @@ pub fn commits(
         let short = &sha[..7.min(sha.len())];
         // **The tip is judged apart.** Its tree failing is the run's own could-not-run rather
         // than a finding, since `check` over the checkout is what reports that tree.
-        let is_tip = *sha == last || head.as_deref() == Some(sha.as_str());
+        // The walk's last commit alone: a HEAD checked out inside the range is judged like any
+        // commit before the tip.
+        let is_tip = *sha == last;
         let assembled = commit_tree(root, sha, &checker_rel, extensions, Depth::Judged);
         let tree = match assembled {
             Ok(tree) => tree,

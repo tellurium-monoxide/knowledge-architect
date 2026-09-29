@@ -1,11 +1,10 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-11 entries
+10 entries
 
 | kind | title |
 | --- | --- |
 | defect | [A worktree build sharing the target directory leaves the live checker exempting no fixture](checker-source-path-stale-after-shared-target-build.md) |
-| defect | [`commits` treats HEAD as the tip when a range holds HEAD before its last commit](range-tip-is-head-where-the-range-holds-it.md) |
 | defect | [A level-two heading with no slug in a tripwires home is silently not an entry](unslugged-tripwire-heading-is-silent.md) |
 | deferred | [The citation regime could be offered by the core over any pinned text](citation-regime-over-any-pinned-text.md) |
 | deferred | [The core leaves this repository as a crate of its own](the-core-leaves-this-repository.md) |

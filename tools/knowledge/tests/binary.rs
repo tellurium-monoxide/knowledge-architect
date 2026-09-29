@@ -1421,6 +1421,35 @@ fn a_range_whose_tip_carries_a_failing_tree_could_not_run() {
     assert!(last.starts_with("COULD NOT RUN"), "{last}");
 }
 
+/// The claim: the tip is the range's last commit, wherever HEAD is. A HEAD checked out inside
+/// the range is judged like any commit before the tip: its failing tree is a finding naming
+/// it, and exit 1.
+#[test]
+fn a_head_inside_the_range_is_judged_as_a_commit_before_the_tip() {
+    let history = History::new("commit-head-inside");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    history.write(
+        "docs/note.md",
+        "# A note\n\nIt names `design@tiny@no-such-decision`.\n",
+    );
+    let planted = history.commit("A note is added\n");
+    history.remove("docs/note.md");
+    let last = history.commit("The note is removed\n");
+    history.git(&["checkout", "-q", "--detach", &planted]);
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..{last}")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout
+            .lines()
+            .any(|l| l.starts_with(&format!("commit {planted}: docs/note.md"))),
+        "{stdout}"
+    );
+    assert!(stdout.contains(&format!("{last} judged")), "{stdout}");
+    let verdict = stdout.trim_end().lines().last().expect("a verdict line");
+    assert!(verdict.starts_with("FAILED"), "{verdict}");
+}
+
 /// The claim: the tip's tree failing to assemble at all still prints what the run walked.
 ///
 /// A manifest the tip cannot load ends the run — and a run that ended
