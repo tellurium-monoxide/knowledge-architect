@@ -178,10 +178,10 @@ struct FromTree {
     /// The symlink and gitlink entries, which are read as no document.
     links: Vec<crate::git::Entry>,
     blobs: std::collections::BTreeMap<PathBuf, String>,
-    /// The wanted blobs whose bytes are not UTF-8, decoded lossily. Read by the survey alone,
-    /// which asks of a file outside the walk only whether it names something, as `check`
-    /// does of the same file on disk. A walked path here is still a document with no text.
-    not_text: std::collections::BTreeMap<PathBuf, String>,
+    /// The wanted blobs whose bytes are not UTF-8, as the survey reads them: binary, or text
+    /// decoded lossily, as `check` reads the same file on disk. Read by the survey alone; a
+    /// walked path here is still a document with no text.
+    not_text: std::collections::BTreeMap<PathBuf, crate::survey::Outside>,
 }
 
 /// Read one commit's tree: its manifest, configured against the extensions, its listing, and
@@ -252,7 +252,7 @@ fn read_tree(
                 blobs.insert(rel, text);
             }
             Err(e) => {
-                not_text.insert(rel, String::from_utf8_lossy(e.as_bytes()).into_owned());
+                not_text.insert(rel, crate::survey::Outside::from_bytes(e.as_bytes()));
             }
         }
     }
@@ -297,9 +297,14 @@ fn commit_tree(
     if !manifest.complaints().is_empty() {
         // Phase 1 failed, so no blob was read and nothing is assembled: the tree is judged no
         // further, and it serves as no parent, per
-        // `design@knowledge@a-commit-message-is-a-document`.
+        // `design@knowledge@a-commit-message-is-a-document`. The empty assembly is what makes
+        // that so: kept as the next commit's parent, it defines no entity, so a reference
+        // resolves against the next commit's own tree alone. The early return in `read_tree`
+        // changes no verdict and is what saves reading the blobs.
         let model = Model::from_documents(Vec::new());
-        let survey = crate::survey::from_listing(&manifest, &model, &[], &[], |_| None);
+        let survey = crate::survey::from_listing(&manifest, &model, &[], &[], |_| {
+            crate::survey::Outside::Missing
+        });
         let trouble = if depth == Depth::Judged {
             manifest.complaints().to_vec()
         } else {
@@ -378,10 +383,18 @@ fn commit_tree(
             configs.insert(home.config.clone(), text.clone());
         }
     }
-    let survey =
-        crate::survey::from_listing(&manifest, &model, &read.listing, &read.links, |rel| {
-            blobs.get(rel).or_else(|| read.not_text.get(rel)).cloned()
-        });
+    let survey = crate::survey::from_listing(
+        &manifest,
+        &model,
+        &read.listing,
+        &read.links,
+        |rel| match blobs.get(rel) {
+            Some(text) => crate::survey::Outside::Text(text.clone()),
+            None => read.not_text.get(rel).cloned().unwrap_or_else(|| {
+                crate::survey::Outside::Unreadable("the tree holds no blob for it".to_string())
+            }),
+        },
+    );
     // **The ignore rules are the working tree's.** `git check-ignore` reads the `.gitignore`
     // files that are on disk and has no form that asks a historical tree, so a commit whose
     // ignore rules differ from today's is judged against today's. What that can cost is a
@@ -520,7 +533,8 @@ pub fn commits(
     for sha in &shas {
         let short = &sha[..7.min(sha.len())];
         // **The tip is judged apart.** Its tree failing is the run's own could-not-run rather
-        // than a finding, since `check` over the checkout is what reports that tree.
+        // than a finding, since for a range ending at HEAD `check` over the checkout is what
+        // reports that tree.
         // The walk's last commit alone: a HEAD checked out inside the range is judged like any
         // commit before the tip.
         let is_tip = *sha == last;
@@ -570,11 +584,6 @@ pub fn commits(
                 None => format!("its tree fails {trouble} finding(s)"),
             };
             summary.push((short.to_string(), Outcome::Failed { why }));
-            if tree.stopped == Some(check::Phase::Resolution) {
-                // Phase 1 failed and nothing of the tree was read, so it serves as no parent.
-                previous = None;
-                continue;
-            }
             if tree.stopped.is_some() {
                 // An incomplete table would refuse a reference into what the walk could not
                 // read, so the message is judged by nothing. The tree still serves as the next
@@ -610,8 +619,6 @@ pub fn commits(
             (_, Some(parent)) => {
                 commit_tree(root, parent, &checker_rel, extensions, Depth::References)
                     .ok()
-                    // A parent whose phase 1 fails was not read, and serves as no parent.
-                    .filter(|a| a.stopped != Some(check::Phase::Resolution))
                     .map(|a| {
                         let e = Entities::build(&a.model, &a.anchors());
                         (a, e)

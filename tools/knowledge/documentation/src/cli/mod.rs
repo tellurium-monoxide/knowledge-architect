@@ -76,7 +76,8 @@ pub struct IssuesArgs {
 
 #[derive(Args)]
 pub struct TripwiresArgs {
-    /// Only the entries carrying this reference.
+    /// Only the entries guarding this entry: a decision, a goal or a declared register's
+    /// entry, as the `guarding` column lists them.
     #[arg(long, value_name = "REF")]
     pub guarding: Option<String>,
     /// An anchor to list, then text every row's id or title must contain.

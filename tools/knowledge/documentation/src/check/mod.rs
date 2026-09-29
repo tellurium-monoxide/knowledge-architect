@@ -196,9 +196,9 @@ pub struct Inputs<'a> {
     /// a required document is a file, and a reference's trailing slash claims a directory.
     pub directories: &'a HashSet<PathBuf>,
     /// Files the walk does not cover, with their text — excluding the paths the manifest
-    /// excludes, which are other projects rather than unchecked files of this one. `None` is a
-    /// file that could not be read, and each is a finding.
-    pub outside: &'a [(PathBuf, Option<String>)],
+    /// excludes, which are other projects rather than unchecked files of this one. A state
+    /// other than text or binary is a finding.
+    pub outside: &'a [(PathBuf, crate::survey::Outside)],
     /// The path spellings the ignore rules cover, out of every spelling a path reference in
     /// this run could ask about.
     ///

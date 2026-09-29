@@ -11,7 +11,7 @@ no entry from an entry whose slug is missing: a tripwire written without a slug 
 nothing, is listed by nothing and is reported by nothing. The owner decided the repair: each
 heading register declares the one level its entries sit at, a heading at that level with no
 slug is a finding, a slug at any other level is a finding, and table cells stop defining
-entries. The work is scheduled as a branch of its own.
+entries. The work goes on a branch of its own.
 
 ## Details
 
@@ -88,5 +88,9 @@ A branch that:
   `path@knowledge@tests/projects/planted/`, declares a level on the `note` register of both
   `minimal` mocks, and tests both findings;
 - rewrites the sentences stating "level two or level three" and table cells in root
-  `path@thaum@CLAUDE.md` and `recording-a-decision`, and drops the standing-state reviewer's
-  sentence telling it to read the homes as well as the listing.
+  `path@thaum@CLAUDE.md`, `recording-a-decision`, the decision-record reviewer's definition and
+  the core README's description of `show`,
+  and drops the standing-state reviewer's sentence telling it to read the homes as well as the
+  listing;
+- decides whether the old rule, a slug at level two or three or in a table cell, earns an entry
+  in `path@knowledge@docs/rejected-alternatives.md` under `recording-a-decision` section 6.

@@ -49,7 +49,6 @@ pub fn parse(text: &str) -> Parsed {
     });
     prose.code = a.code;
     Parsed {
-        literals: super::Literals::Prose,
         prose: vec![prose],
         scopes,
         fenced,

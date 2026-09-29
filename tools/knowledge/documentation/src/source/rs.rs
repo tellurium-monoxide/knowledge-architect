@@ -153,7 +153,6 @@ pub fn parse(text: &str, literals: Literals) -> Parsed {
         // Frontmatter is a markdown file's own opening block. A Rust file has none, and a
         // doc comment that opens with `---` is a thematic break inside prose.
         frontmatter: None,
-        literals,
         trouble,
     }
 }

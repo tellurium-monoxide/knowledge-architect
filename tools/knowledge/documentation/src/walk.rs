@@ -53,19 +53,12 @@ pub fn refused(rel: &Path) -> bool {
 
 /// Why the walk refuses this path for its name alone, or `None` when it does not.
 ///
-/// Two grounds, and the second covers more names than the first:
-///
-/// - **A line break fits nowhere here.** A finding is one line opening with its path, an index
-///   row is one line, and a reference is one backticked span, so a name holding a newline or a
-///   carriage return can be printed by nothing here and pointed at by nothing.
-/// - **Windows refuses to create the file**, so a tree holding it cannot be checked out there.
-///   In any one component of the path: a character of `<>:"|?*\`, a control character below
-///   the space, a trailing space or period, or a device name — `CON`, `PRN`, `AUX`, `NUL`,
-///   `COM0` to `COM9` and `LPT0` to `LPT9`, with the superscript digits `¹²³` as well — in any
-///   case and whatever follows its first period.
-///
-/// A line break is named first, since it is the ground that holds on every platform. The file
-/// is not read, and the caller reports it once by name; `skip-files` or an ignore rule is how a
+/// Refused: a line break anywhere, and in any one component of the path a character of
+/// `<>:"|?*\`, a control character below the space, a trailing space or period, or a Windows
+/// device name — `CON`, `PRN`, `AUX`, `NUL`, `COM0` to `COM9` and `LPT0` to `LPT9`, with the
+/// superscript digits `¹²³` as well — in any case and whatever follows its first period. A line
+/// break is named first. The grounds are `design@knowledge@git-supplies-the-walk`. The file is
+/// not read, and the caller reports it once by name; `skip-files` or an ignore rule is how a
 /// project keeps one deliberately. A name that is not UTF-8 is judged on the bytes it has.
 pub fn refusal(rel: &Path) -> Option<String> {
     let bytes = rel.as_os_str().as_encoded_bytes();
@@ -189,6 +182,7 @@ mod tests {
         for (path, why) in [
             ("docs/a\tb.md", "U+0009"),
             ("docs/a\u{1}b.md", "U+0001"),
+            ("docs/a\u{1f}b.md", "U+001F"),
             ("docs/a:b.md", "`:`"),
             ("docs/a<b.md", "`<`"),
             ("docs/a>b.md", "`>`"),
@@ -205,6 +199,8 @@ mod tests {
             ("prn/a.md", "device name"),
             ("docs/com1.md", "device name"),
             ("docs/LPT9", "device name"),
+            ("docs/com0.md", "device name"),
+            ("docs/lpt0", "device name"),
             ("docs/com\u{b9}.md", "device name"),
         ] {
             let found = refusal(Path::new(path));

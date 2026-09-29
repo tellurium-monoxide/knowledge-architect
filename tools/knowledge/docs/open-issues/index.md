@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo knowledge index`
 
-7 entries
+8 entries
 
 | kind | title |
 | --- | --- |
@@ -11,3 +11,4 @@
 | observation | [Judging a message costs time quadratic in its line count](judging-a-message-is-quadratic.md) |
 | observation | [Span and link shapes the scanner cannot see](span-and-link-shapes-unseen.md) |
 | todo | [A heading register declares no entry level, so a heading that lost its slug is silently no entry](heading-register-entry-level-undeclared.md) |
+| todo | [The unreadable-file test asserts nothing when it runs as root](unreadable-file-test-is-vacuous-as-root.md) |

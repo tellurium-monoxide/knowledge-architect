@@ -28,21 +28,59 @@ pub struct Survey {
     /// exactly where a listed file sits under it. A directory holding no file at all cannot be
     /// committed, so nothing that git can report is missed.
     pub directories: HashSet<PathBuf>,
-    /// The files the walk does not cover, with their text, or `None` for a file that could
-    /// not be read.
+    /// The files the walk does not cover, each with what reading it gave.
     ///
-    /// Every such file is listed, so the assertion that an unwalked file names no rule has no
-    /// file it silently skips. A file whose bytes are not UTF-8 is read lossily by the caller:
-    /// the question asked of it is whether it names a rule, and a rule number is ASCII, which
-    /// a lossy decoding keeps. `None` is what is left, a file whose bytes could not be had at
-    /// all, and the caller's checks report it.
-    pub outside: Vec<(PathBuf, Option<String>)>,
+    /// Every such file is listed, so the assertion that an unwalked file names nothing has no
+    /// file it silently skips; the states are [`Outside`]'s, and the argument is
+    /// `design@knowledge@a-failed-parse-is-loud`.
+    pub outside: Vec<(PathBuf, Outside)>,
     /// The files the walk refuses by name, per `walk::refused`. Read by nothing, in `outside`
     /// no more than in the model, and reported once each by the caller's checks.
     pub refused: Vec<PathBuf>,
     /// The listing's symlink and gitlink entries a manifest row does not keep, each read by
     /// nothing and reported once.
     pub links: Vec<Entry>,
+}
+
+/// What reading a file outside the walk gave.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Outside {
+    /// Its text, decoded lossily where its bytes are not UTF-8: the question asked of it is
+    /// whether an ASCII token appears, and a lossy decoding keeps every ASCII byte.
+    Text(String),
+    /// A NUL byte in its first [`BINARY_PROBE`] bytes, git's own test for a binary file. It is
+    /// handed to no check: its bytes are no prose anybody wrote a claim in, and a number in it,
+    /// such as a PDF's page size, is data.
+    Binary,
+    /// Git lists it and the working tree does not hold it: a tracked file deleted and not
+    /// staged.
+    Missing,
+    /// A directory git lists as one untracked entry, which is a repository nested in this one.
+    Directory,
+    /// Its bytes could not be had, with the reason.
+    Unreadable(String),
+}
+
+/// How many leading bytes the binary test reads, as git's own does.
+pub const BINARY_PROBE: usize = 8000;
+
+impl Outside {
+    /// A file's state from its bytes: [`Outside::Binary`] or [`Outside::Text`].
+    pub fn from_bytes(bytes: &[u8]) -> Self {
+        if bytes[..bytes.len().min(BINARY_PROBE)].contains(&0) {
+            Outside::Binary
+        } else {
+            Outside::Text(String::from_utf8_lossy(bytes).into_owned())
+        }
+    }
+
+    /// The text an extension judges, where there is one.
+    pub fn text(&self) -> Option<&str> {
+        match self {
+            Outside::Text(t) => Some(t),
+            _ => None,
+        }
+    }
 }
 
 pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
@@ -53,9 +91,15 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
         model.listing(),
         model.links(),
         |rel| {
-            std::fs::read(root.join(rel))
-                .ok()
-                .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
+            let path = root.join(rel);
+            match std::fs::metadata(&path) {
+                Err(e) if e.kind() == std::io::ErrorKind::NotFound => Outside::Missing,
+                Ok(m) if m.is_dir() => Outside::Directory,
+                _ => match std::fs::read(&path) {
+                    Ok(bytes) => Outside::from_bytes(&bytes),
+                    Err(e) => Outside::Unreadable(e.to_string()),
+                },
+            }
         },
     ))
 }
@@ -72,7 +116,7 @@ pub fn from_listing(
     model: &Model,
     listing: &[PathBuf],
     links: &[Entry],
-    read: impl Fn(&std::path::Path) -> Option<String>,
+    read: impl Fn(&std::path::Path) -> Outside,
 ) -> Survey {
     let walk = manifest.walk();
     let covered: HashSet<&std::path::Path> =
@@ -107,6 +151,11 @@ pub fn from_listing(
         if skipped {
             continue;
         }
+        // A symlink or a gitlink is no file to read: each is reported, or kept by a row, as a
+        // link below, and reading or refusing one would report it a second time.
+        if links.iter().any(|e| e.rel == *rel) {
+            continue;
+        }
         // A name the walk refuses is a file no check reads, and one finding names it. It
         // stays in `present`: the refusal is about the file's contents, not its existence.
         // After the skips, so that a `skip-files` row is the declared way to keep one.
@@ -114,14 +163,9 @@ pub fn from_listing(
             refused.push(rel.clone());
             continue;
         }
-        // A symlink or a gitlink is no file to read: each is reported, or kept by a row, as a
-        // link below, and reading one would report it a second time as unreadable.
-        if links.iter().any(|e| e.rel == *rel) {
-            continue;
-        }
         outside.push((rel.clone(), read(rel)));
     }
-    outside.sort();
+    outside.sort_by(|a, b| a.0.cmp(&b.0));
     refused.sort();
     // A symlink or a gitlink a walk row covers is kept as declared, like any other file the
     // rows keep out; the rest are reported.
@@ -164,7 +208,7 @@ mod tests {
             .map(PathBuf::from)
             .collect();
         let survey = from_listing(&manifest, &model, &listing, &[], |_| {
-            Some("text".to_string())
+            Outside::Text("text".to_string())
         });
         // In path order, whatever order git listed them in, as every listing here is.
         assert_eq!(
@@ -205,7 +249,7 @@ mod tests {
             .map(PathBuf::from)
             .collect();
         let survey = from_listing(&manifest, &model, &listing, &[], |_| {
-            Some("text".to_string())
+            Outside::Text("text".to_string())
         });
         assert!(survey.refused.is_empty(), "{:?}", survey.refused);
         assert!(survey.outside.is_empty());

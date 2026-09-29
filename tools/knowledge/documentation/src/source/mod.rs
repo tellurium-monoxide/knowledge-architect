@@ -194,12 +194,6 @@ pub struct Parsed {
     /// Nothing in one is live. Parking a decision by commenting its section out is ordinary,
     /// and it left the slug defined and the anchor pointing at a section no reader can see.
     pub inert: Vec<u32>,
-    /// How the file's string literals were read. Markdown has none and reports `Prose`.
-    ///
-    /// Carried so that a reader of the RAW text, such as the pin scanner, can stay out of
-    /// the literals a `Data` parse dropped: a version pin spelled inside a fixture must not
-    /// pin the file it sits in.
-    pub literals: Literals,
     /// The frontmatter block at the very top of a markdown file, where there is one.
     ///
     /// `None` where the file opens with no block at all — the common case, and a leading

@@ -954,9 +954,12 @@ every commit's message. A commit before the tip whose tree does not load, or car
 fails the run with exit 1: its tree's findings are printed, each named by the commit and by the
 file inside it, and its message is still judged wherever the tree reached the last phase, since
 its entity table is then complete. Where the tree stopped earlier, the message is judged against
-nothing and the run says so. The tip is the walk's last commit, wherever HEAD is; a range with several tips — `--all` names one — has tips that are neither, and the guarantee
-is the two-ended range's. The tip's own tree failing is exit 2 rather than a finding, because
-`check` over the checkout is what reports that tree. The summary counts judged and failed commits.
+nothing and the run says so. The tip is the walk's last commit, wherever HEAD is; a range with several tips — `--all` names
+one — has tips that are not its last commit, and the guarantee is the two-ended range's. The
+tip's own tree failing is exit 2 rather than a finding, because for a range ending at HEAD, which
+is every range the gates pass, `check` over the checkout is what reports that tree. For a range
+ending at another commit the exit is the same, and no `check` over the checkout judges that
+tree. The summary counts judged and failed commits.
 
 **A branch that makes the checker stricter orders its commits for it.** A new check, or a change
 to the manifest format, makes every earlier commit of the same branch fail under the tip checker.

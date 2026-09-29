@@ -340,17 +340,30 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
     // **A file outside the walk that could not be read is a finding naming it.** An extension
     // may assert that no unwalked file says something, and a file it cannot read is one it
     // cannot judge; the run stops here rather than pass it over.
-    for (path, text) in inputs.outside {
-        if text.is_none() {
-            out.push(Finding::in_file(
-                path,
-                "this file is outside the walk and could not be read, so no check judged what \
-                 it says"
+    for (path, read) in inputs.outside {
+        use crate::survey::Outside;
+        let (what, action) = match read {
+            Outside::Text(_) | Outside::Binary => continue,
+            Outside::Missing => (
+                "git lists this file and the working tree does not hold it".to_string(),
+                "stage the deletion, or restore the file",
+            ),
+            Outside::Directory => (
+                "git lists this directory as one untracked entry, a repository nested in this \
+                 one, and no check reads anything under it"
                     .to_string(),
+                "name it in an ignore rule or in [walk] skip-dirs to declare the silence",
+            ),
+            Outside::Unreadable(why) => (
+                format!(
+                    "this file is outside the walk and could not be read, so no check judged \
+                     what it says: {why}"
+                ),
                 "make it readable to the user running the check, or name it in [walk] \
                  skip-files if it is deliberately unchecked",
-            ));
-        }
+            ),
+        };
+        out.push(Finding::in_file(path, what, action));
     }
 
     // **A name the walk refuses is a finding naming the file**, per `walk::refused`. The file

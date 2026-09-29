@@ -41,8 +41,11 @@ deletion needs is staging, or the path stays in the listing with no bytes behind
 core does not own. The head comment of each `knowledge.toml` says what its project exercises,
 and that comment is where a session decides which one to touch. In short: `planted` is detection
 in the last phase, one defect per core check, and it is clean through the phases before it so a
-run reaches them; `unsound` is the phase gate, one defect per assertion of phase 2 and, behind
-them, the definition-site defects of phase 3, so a run over it stops at phase 2; `dirhome` is
+run reaches them; `unsound` is the phase gate, one defect per assertion of phase 2 that a
+committed file can hold and, behind them, the definition-site defects of phase 3, so a run over
+it stops at phase 2. The phase-2 states no committed fixture can hold — a refused name, a symlink,
+a file deleted or unreadable on disk, a nested repository — are built by the tests of
+`path@knowledge@tests/binary.rs` in a copy; `dirhome` is
 conformance, every core check running and finding nothing; `minimal` is the walk, the
 exclusions, a location and a declared register; `core` is the smallest conformant project, and
 the tests of the core binary's refusal of a table it does not own. **Plant a phase-4 defect in

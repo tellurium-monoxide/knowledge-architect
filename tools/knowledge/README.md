@@ -216,7 +216,8 @@ counts judged and failed commits, and a tip whose tree fails is exit 2 with a la
 so. The checker that judges every commit is the one built from the working tree, so a branch
 that makes it stricter puts that change in its first commit or is squashed before review. A
 message's references resolve against its commit's tree **or its first parent's**, which is what
-lets a commit that closes an issue name it. No hook judges a message before the commit exists:
+lets a commit that closes an issue name it; a parent whose manifest fails phase 1 is not read, and
+serves as no parent. No hook judges a message before the commit exists:
 the range is run after each commit, and a finding in the newest commit is repaired by an amend.
 
 `check` reads no history, and the range is always explicit. `cargo x gates` runs

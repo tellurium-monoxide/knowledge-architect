@@ -929,6 +929,53 @@ fn an_unreadable_file_outside_the_walk_is_a_phase_two_finding_naming_it() {
     assert_eq!(code, 0, "{out}{stderr}");
 }
 
+/// The claim: a file outside the walk that git lists and the disk does not hold, and an untracked
+/// nested repository, are each a phase-2 finding with a statement of its own, not the one for a
+/// file that could not be read.
+#[test]
+fn a_missing_file_and_a_nested_repository_outside_the_walk_are_named_for_what_they_are() {
+    let sandbox = Sandbox::seeded("missing-outside", "minimal", &[("notes/old.txt", "x\n")]);
+    std::fs::remove_file(sandbox.path("notes/old.txt")).expect("the file");
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    let about: Vec<&str> = out
+        .lines()
+        .filter(|l| l.contains("notes/old.txt"))
+        .collect();
+    assert_eq!(about.len(), 1, "{out}");
+    assert!(
+        about[0].contains("the working tree does not hold it"),
+        "{out}"
+    );
+    assert!(out.contains("stage the deletion"), "{out}");
+
+    let nested = Sandbox::new("nested-outside", "minimal");
+    nested.write("sub/a.txt", "x\n");
+    git(&nested.path("sub"), &["init", "-q"]);
+    let (out, stderr, code) = nested.run(&["check"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    let about: Vec<&str> = out.lines().filter(|l| l.starts_with("sub")).collect();
+    assert_eq!(about.len(), 1, "{out}");
+    assert!(
+        about[0].contains("a repository nested in this one"),
+        "{out}"
+    );
+}
+
+/// The claim: a symlink whose name the walk refuses is one finding, the link's, and not a second
+/// for its name.
+#[test]
+fn a_symlink_with_a_refused_name_is_one_finding() {
+    let sandbox = Sandbox::new("symlink-refused", "minimal");
+    std::os::unix::fs::symlink("README.md", sandbox.path("a:b")).expect("a symlink");
+    sandbox.stage();
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    let about: Vec<&str> = out.lines().filter(|l| l.starts_with("a:b")).collect();
+    assert_eq!(about.len(), 1, "{out}");
+    assert!(about[0].contains("symlink"), "{out}");
+}
+
 /// The claim: a name holding a line break is one finding, on one line, and the file is read by
 /// nothing; a `skip-files` row keeps it.
 #[test]
