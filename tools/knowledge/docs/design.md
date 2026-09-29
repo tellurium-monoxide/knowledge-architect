@@ -193,6 +193,14 @@ the walk goes all produce a finding naming the file. Silence would remove every 
 from the walk while the run reported success, which is indistinguishable from a clean file and
 is the failure this tool exists to prevent.
 
+**A file outside the walk is held to the same, for the question an extension asks of it.** An
+extension may assert that no unwalked file says something, as the rules extension does of a rule
+number. Its bytes are handed over decoded lossily when they are not UTF-8: the question is
+whether an ASCII token appears, and a lossy decoding keeps every ASCII byte, where a walked
+document read lossily would be text nobody wrote. A file whose bytes cannot be had at all, in
+`check` or in `commits`, is a phase-2 finding naming it. A symlink and a gitlink are no file to
+read, and are reported as links.
+
 One byte of Windows-1252 — a pasted em dash — put a document outside the walk AND outside the
 inverse assertion, so a fabricated quote in it was read by nothing. Unbounded recursion aborted
 the whole run with no file named and no finding printed.

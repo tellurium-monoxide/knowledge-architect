@@ -901,6 +901,34 @@ fn a_tracked_document_an_ignore_line_covers_is_walked_and_reported() {
     assert!(walked_count(&after) > 0, "{after}");
 }
 
+/// The claim: a file outside the walk that cannot be read stops the run at phase 2, naming it,
+/// where it used to be left out of the files an extension judges with no finding.
+#[test]
+fn an_unreadable_file_outside_the_walk_is_a_phase_two_finding_naming_it() {
+    use std::os::unix::fs::PermissionsExt;
+    let sandbox = Sandbox::seeded("unreadable-outside", "minimal", &[("notes/old.txt", "x\n")]);
+    let path = sandbox.path("notes/old.txt");
+    std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o000)).expect("chmod");
+    // A process that reads through the mode, as root does, cannot reproduce the failure.
+    if std::fs::read(&path).is_ok() {
+        return;
+    }
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o644)).expect("chmod");
+    assert_eq!(code, 1, "{out}{stderr}");
+    assert!(out.contains("phase 2:"), "{out}");
+    let about: Vec<&str> = out
+        .lines()
+        .filter(|l| l.contains("notes/old.txt"))
+        .collect();
+    assert_eq!(about.len(), 1, "{out}");
+    assert!(about[0].contains("could not be read"), "{out}");
+
+    // Readable again, it is an ordinary file outside the walk, and the run passes.
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+}
+
 /// The claim: a name holding a line break is one finding, on one line, and the file is read by
 /// nothing; a `skip-files` row keeps it.
 #[test]

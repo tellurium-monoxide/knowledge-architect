@@ -178,6 +178,10 @@ struct FromTree {
     /// The symlink and gitlink entries, which are read as no document.
     links: Vec<crate::git::Entry>,
     blobs: std::collections::BTreeMap<PathBuf, String>,
+    /// The wanted blobs whose bytes are not UTF-8, decoded lossily. Read by the survey alone,
+    /// which asks of a file outside the walk only whether it names something, as `check`
+    /// does of the same file on disk. A walked path here is still a document with no text.
+    not_text: std::collections::BTreeMap<PathBuf, String>,
 }
 
 /// Read one commit's tree: its manifest, its listing, and the text of everything the walk or
@@ -220,13 +224,26 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
     }
     wanted.sort();
     wanted.dedup();
-    let blobs = crate::git::blobs(root, sha, &wanted)
-        .map_err(|e| Unloadable(format!("its blobs could not be read: {e}")))?;
+    let mut blobs = std::collections::BTreeMap::new();
+    let mut not_text = std::collections::BTreeMap::new();
+    for (rel, bytes) in crate::git::blob_bytes(root, sha, &wanted)
+        .map_err(|e| Unloadable(format!("its blobs could not be read: {e}")))?
+    {
+        match String::from_utf8(bytes) {
+            Ok(text) => {
+                blobs.insert(rel, text);
+            }
+            Err(e) => {
+                not_text.insert(rel, String::from_utf8_lossy(e.as_bytes()).into_owned());
+            }
+        }
+    }
     Ok(FromTree {
         manifest,
         listing,
         links,
         blobs,
+        not_text,
     })
 }
 
@@ -324,7 +341,7 @@ fn commit_tree(
     }
     let survey =
         crate::survey::from_listing(&manifest, &model, &read.listing, &read.links, |rel| {
-            blobs.get(rel).cloned()
+            blobs.get(rel).or_else(|| read.not_text.get(rel)).cloned()
         });
     // **The ignore rules are the working tree's.** `git check-ignore` reads the `.gitignore`
     // files that are on disk and has no form that asks a historical tree, so a commit whose

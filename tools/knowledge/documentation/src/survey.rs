@@ -17,8 +17,8 @@ use crate::git::Entry;
 use crate::manifest::Manifest;
 use crate::model::Model;
 
-/// Every project-relative path git reports with its kind, and the readable files the walk
-/// does not cover.
+/// Every project-relative path git reports with its kind, and the files the walk does not
+/// cover.
 pub struct Survey {
     /// Every project-relative path that exists, files and directories together.
     pub present: HashSet<PathBuf>,
@@ -28,8 +28,15 @@ pub struct Survey {
     /// exactly where a listed file sits under it. A directory holding no file at all cannot be
     /// committed, so nothing that git can report is missed.
     pub directories: HashSet<PathBuf>,
-    /// The readable files the walk does not cover, with their text.
-    pub outside: Vec<(PathBuf, String)>,
+    /// The files the walk does not cover, with their text, or `None` for a file that could
+    /// not be read.
+    ///
+    /// Every such file is listed, so the assertion that an unwalked file names no rule has no
+    /// file it silently skips. A file whose bytes are not UTF-8 is read lossily by the caller:
+    /// the question asked of it is whether it names a rule, and a rule number is ASCII, which
+    /// a lossy decoding keeps. `None` is what is left, a file whose bytes could not be had at
+    /// all, and the caller's checks report it.
+    pub outside: Vec<(PathBuf, Option<String>)>,
     /// The files the walk refuses by name, per `walk::refused`. Read by nothing, in `outside`
     /// no more than in the model, and reported once each by the caller's checks.
     pub refused: Vec<PathBuf>,
@@ -45,7 +52,11 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
         model,
         model.listing(),
         model.links(),
-        |rel| std::fs::read_to_string(root.join(rel)).ok(),
+        |rel| {
+            std::fs::read(root.join(rel))
+                .ok()
+                .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
+        },
     ))
 }
 
@@ -103,9 +114,12 @@ pub fn from_listing(
             refused.push(rel.clone());
             continue;
         }
-        if let Some(text) = read(rel) {
-            outside.push((rel.clone(), text));
+        // A symlink or a gitlink is no file to read: each is reported, or kept by a row, as a
+        // link below, and reading one would report it a second time as unreadable.
+        if links.iter().any(|e| e.rel == *rel) {
+            continue;
         }
+        outside.push((rel.clone(), read(rel)));
     }
     outside.sort();
     refused.sort();

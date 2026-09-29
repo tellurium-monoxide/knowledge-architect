@@ -337,6 +337,22 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
         out.push(Finding::in_file(&entry.rel, what, action));
     }
 
+    // **A file outside the walk that could not be read is a finding naming it.** An extension
+    // may assert that no unwalked file says something, and a file it cannot read is one it
+    // cannot judge; the run stops here rather than pass it over.
+    for (path, text) in inputs.outside {
+        if text.is_none() {
+            out.push(Finding::in_file(
+                path,
+                "this file is outside the walk and could not be read, so no check judged what \
+                 it says"
+                    .to_string(),
+                "make it readable to the user running the check, or name it in [walk] \
+                 skip-files if it is deliberately unchecked",
+            ));
+        }
+    }
+
     // **A name the walk refuses is a finding naming the file**, per `walk::refused`. The file
     // was read by no check, so a rule quote in it is verified by nothing, and a reference is
     // one backticked span, so nothing can point at it either.

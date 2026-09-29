@@ -505,8 +505,22 @@ mod object_naming {
 ///
 /// A blob whose bytes are not UTF-8 contributes no entry either, for the reason
 /// `Model::build` keeps an unreadable file as an empty document: a lossy decoding produces
-/// text nobody wrote. The caller sees the absence and reports it.
+/// text nobody wrote. The caller sees the absence and reports it. [`blob_bytes`] answers the
+/// bytes whatever they are.
 pub fn blobs(root: &Path, sha: &str, paths: &[PathBuf]) -> io::Result<BTreeMap<PathBuf, String>> {
+    Ok(blob_bytes(root, sha, paths)?
+        .into_iter()
+        .filter_map(|(rel, bytes)| Some((rel, String::from_utf8(bytes).ok()?)))
+        .collect())
+}
+
+/// The bytes of many blobs of one commit's tree, in one process, as [`blobs`] reads them and
+/// with no decoding. A path the tree does not hold contributes no entry.
+pub fn blob_bytes(
+    root: &Path,
+    sha: &str,
+    paths: &[PathBuf],
+) -> io::Result<BTreeMap<PathBuf, Vec<u8>>> {
     if paths.is_empty() {
         return Ok(BTreeMap::new());
     }
@@ -540,7 +554,7 @@ pub fn blobs(root: &Path, sha: &str, paths: &[PathBuf]) -> io::Result<BTreeMap<P
 /// `--batch` answers each request as `<oid> <type> <size>` for a hit and `<request> missing`
 /// for a miss, and a hit's body is followed by one newline. The size is read rather than a
 /// separator scanned for, because a blob may hold any byte, newlines included.
-fn read_batch(raw: &[u8], paths: &[PathBuf]) -> BTreeMap<PathBuf, String> {
+fn read_batch(raw: &[u8], paths: &[PathBuf]) -> BTreeMap<PathBuf, Vec<u8>> {
     let mut out = BTreeMap::new();
     let mut at = 0usize;
     let mut wanted = paths.iter();
@@ -562,9 +576,7 @@ fn read_batch(raw: &[u8], paths: &[PathBuf]) -> BTreeMap<PathBuf, String> {
             continue;
         };
         let body_end = (at + size).min(raw.len());
-        if let Ok(text) = std::str::from_utf8(&raw[at..body_end]) {
-            out.insert(rel.clone(), text.to_string());
-        }
+        out.insert(rel.clone(), raw[at..body_end].to_vec());
         // The trailing newline `--batch` writes after every body.
         at = (body_end + 1).min(raw.len());
     }
@@ -779,13 +791,13 @@ mod tests {
         );
         let found = read_batch(raw.as_bytes(), &paths);
         assert_eq!(
-            found.get(Path::new("a.md")).map(String::as_str),
-            Some(first)
+            found.get(Path::new("a.md")).map(Vec::as_slice),
+            Some(first.as_bytes())
         );
         assert_eq!(found.get(Path::new("b.md")), None, "a miss carries no body");
         assert_eq!(
-            found.get(Path::new("c.md")).map(String::as_str),
-            Some(third)
+            found.get(Path::new("c.md")).map(Vec::as_slice),
+            Some(third.as_bytes())
         );
     }
 
