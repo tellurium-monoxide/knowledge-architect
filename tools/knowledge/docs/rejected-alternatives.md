@@ -34,9 +34,8 @@ over a tree the checker had not judged at all. Two further costs were measured. 
 `is_fifo` on stdout, and ksh93 builds its pipelines from sockets, so `knowledge check | tail`
 under ksh93 was not refused. And every caller that captures the output had to give the child a
 regular file: `cargo x gates` and the test helpers of both binaries; the xtask side is its own
-entry in `path@xtask@docs/rejected-alternatives.md`. A mechanism that stops the chain has to
-act before the shell runs it, on the command text. The merge is guarded either way by the range
-check this entry lost to.
+entry in `path@xtask@docs/rejected-alternatives.md`. The merge is guarded either way by the
+range check this entry lost to.
 
 **A `commit` subcommand that runs the checks and then `git commit`** — lost to
 `design@knowledge@a-commit-message-is-a-document`. `live`. It would judge the tree and the
