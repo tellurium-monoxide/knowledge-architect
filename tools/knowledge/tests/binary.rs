@@ -1457,6 +1457,37 @@ fn commits_reads_every_checker_directory_as_data_in_each_commits_tree() {
     assert_eq!(judge(&[&a, &b]), std::process::ExitCode::SUCCESS);
 }
 
+/// The claim: a commit whose manifest fails phase 1 is read no further and serves as no
+/// parent, per `design@knowledge@a-commit-message-is-a-document`. The next commit's message then
+/// resolves against its own tree alone, so naming an entry that only the failed tree held
+/// dangles.
+#[test]
+fn a_tree_whose_phase_one_fails_serves_as_no_parent() {
+    let history = History::new("commit-phase-one-parent");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    let manifest = std::fs::read_to_string(history.dir.join("knowledge.toml")).expect("manifest");
+    history.write("knowledge.toml", &format!("{manifest}\n[lint]\n"));
+    let failed = history.commit("A table no extension claims\n");
+    history.write("knowledge.toml", &manifest);
+    history.remove("docs/open-issues/a-closable-issue.md");
+    let next = history.commit("Closes `issue@tiny@a-closable-issue`.\n");
+    history.commit("The tip\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("{failed} failed: its tree stops at phase 1")),
+        "{stdout}"
+    );
+    assert!(
+        stdout
+            .lines()
+            .any(|l| l.starts_with(&format!("commit {next}:"))
+                && l.contains("issue@tiny@a-closable-issue")),
+        "{stdout}"
+    );
+}
+
 /// The claim: the tip is the range's last commit, wherever HEAD is. A HEAD checked out inside
 /// the range is judged like any commit before the tip: its failing tree is a finding naming
 /// it, and exit 1.

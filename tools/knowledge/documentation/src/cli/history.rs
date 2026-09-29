@@ -184,13 +184,19 @@ struct FromTree {
     not_text: std::collections::BTreeMap<PathBuf, String>,
 }
 
-/// Read one commit's tree: its manifest, its listing, and the text of everything the walk or
-/// the inverse assertion reads.
+/// Read one commit's tree: its manifest, configured against the extensions, its listing, and
+/// the text of everything the walk or the inverse assertion reads.
 ///
 /// Deliberately not the whole tree. A path under a skipped directory, an excluded path and a
 /// skipped file are read by no family, and the corpus alone is two megabytes at every commit
-/// in the range.
-fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<FromTree, Unloadable> {
+/// in the range. **A manifest carrying a phase-1 complaint reads nothing further**: the tree
+/// stops at phase 1, and nothing it holds is judged or read as a parent.
+fn read_tree(
+    root: &Path,
+    sha: &str,
+    generated_extra: &[PathBuf],
+    extensions: &mut [Box<dyn Extension>],
+) -> Result<FromTree, Unloadable> {
     let entries = crate::git::tree_entries(root, sha)
         .map_err(|e| Unloadable(format!("its tree could not be listed: {e}")))?;
     let listing: Vec<PathBuf> = entries.iter().map(|e| e.rel.clone()).collect();
@@ -210,7 +216,19 @@ fn read_tree(root: &Path, sha: &str, generated_extra: &[PathBuf]) -> Result<From
     let Some(text) = declaration.get(&manifest_rel) else {
         return Err(Unloadable(format!("its tree holds no {MANIFEST_NAME}")));
     };
-    let manifest = Manifest::parse(root, text).map_err(Unloadable)?;
+    let mut manifest = Manifest::parse(root, text).map_err(Unloadable)?;
+    // Configured against this commit's own manifest, so the files its extensions generate
+    // are left out of its walk and read as committed, and a table it refuses is its phase 1.
+    crate::extension::configure(&mut manifest, extensions);
+    if !manifest.complaints().is_empty() {
+        return Ok(FromTree {
+            manifest,
+            listing,
+            links,
+            blobs: Default::default(),
+            not_text: Default::default(),
+        });
+    }
     let walk = manifest.walk();
     let mut wanted: Vec<PathBuf> = files
         .iter()
@@ -274,11 +292,32 @@ fn commit_tree(
     extensions: &mut [Box<dyn Extension>],
     depth: Depth,
 ) -> Result<Assembly, Unloadable> {
-    let read = read_tree(root, sha, &[])?;
-    // Configured against this commit's own manifest, so the files its extensions generate
-    // are left out of its walk and read as committed, and a table it refuses is its phase 1.
-    let mut manifest = read.manifest;
-    crate::extension::configure(&mut manifest, extensions);
+    let read = read_tree(root, sha, &[], extensions)?;
+    let manifest = read.manifest;
+    if !manifest.complaints().is_empty() {
+        // Phase 1 failed, so no blob was read and nothing is assembled: the tree is judged no
+        // further, and it serves as no parent, per
+        // `design@knowledge@a-commit-message-is-a-document`.
+        let model = Model::from_documents(Vec::new());
+        let survey = crate::survey::from_listing(&manifest, &model, &[], &[], |_| None);
+        let trouble = if depth == Depth::Judged {
+            manifest.complaints().to_vec()
+        } else {
+            Vec::new()
+        };
+        return Ok(Assembly {
+            manifest,
+            model,
+            prepared: Vec::new(),
+            committed: HashMap::new(),
+            configs: HashMap::new(),
+            survey,
+            ignored: HashSet::new(),
+            tracked_and_ignored: Vec::new(),
+            trouble,
+            stopped: Some(check::Phase::Resolution),
+        });
+    }
     let anchors = Anchors::of(&manifest);
     let generated = crate::index::generated_paths(&manifest);
     // The walk reads through no symlink and no gitlink, so the files alone are walked.
@@ -531,6 +570,11 @@ pub fn commits(
                 None => format!("its tree fails {trouble} finding(s)"),
             };
             summary.push((short.to_string(), Outcome::Failed { why }));
+            if tree.stopped == Some(check::Phase::Resolution) {
+                // Phase 1 failed and nothing of the tree was read, so it serves as no parent.
+                previous = None;
+                continue;
+            }
             if tree.stopped.is_some() {
                 // An incomplete table would refuse a reference into what the walk could not
                 // read, so the message is judged by nothing. The tree still serves as the next
@@ -566,6 +610,8 @@ pub fn commits(
             (_, Some(parent)) => {
                 commit_tree(root, parent, &checker_rel, extensions, Depth::References)
                     .ok()
+                    // A parent whose phase 1 fails was not read, and serves as no parent.
+                    .filter(|a| a.stopped != Some(check::Phase::Resolution))
                     .map(|a| {
                         let e = Entities::build(&a.model, &a.anchors());
                         (a, e)

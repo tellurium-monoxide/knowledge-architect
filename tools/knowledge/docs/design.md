@@ -970,7 +970,11 @@ that closes an issue deletes the entry and names it in the message, and against 
 alone every such message would dangle. The parent's model is the previous commit's wherever
 the walk followed the parent chain — a failed commit's tree still serves as the next commit's
 parent, since its entities are read and not its verdict — so an extra model is built only at
-the range's start and where the chain was not followed. A parent tree is assembled for its
+the range's start and where the chain was not followed. **A tree whose manifest fails phase 1 is
+the exception**: nothing of it is read past its manifest, it is judged no further, and it serves
+as no parent, so the next commit's message resolves against its own tree alone. Such a commit
+has already failed the range, and reading its whole tree for its successor's sake dominates the
+time `commits` takes over a range of them. A parent tree is assembled for its
 entity table and the facts a path reference asks about, and nothing else: no extension is
 prepared for it and no check runs over it, because nobody reads its verdict. The two arms are compared by the site each names — the line and the span — rather than by the words each writes,
 because two trees can refuse one reference for different reasons and comparing the words whole
