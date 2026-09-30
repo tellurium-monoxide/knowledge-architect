@@ -444,6 +444,9 @@ impl Entities {
 
     fn heading_definitions(&mut self, model: &Model, anchors: &Anchors) {
         for doc in model.documents() {
+            // Two passes produce this document's findings, and a reader walks it top to
+            // bottom, so they are put in line order once both are done.
+            let first = self.findings.len();
             let owner = anchors.owning(&doc.rel);
             let home = register_of(anchors, owner, &doc.rel);
             if let Some(Ok(register)) = home {
@@ -506,6 +509,7 @@ impl Entities {
                     ))),
                 }
             }
+            self.findings[first..].sort_by_key(|f| f.line);
         }
     }
 
@@ -711,11 +715,17 @@ pub fn entry_id(rel: &Path, dir: &Path) -> Option<String> {
 /// Which heading register home of `owner` holds `rel`: `Ok(register)` for the file home or a
 /// subdocument of the directory home, `Err(dir)` for the directory home's README, `None`
 /// for a file that is no heading home.
+///
+/// Markdown only: a home holds documents, so a source file under a directory home is not one,
+/// and its comments' headings owe no slug and define nothing.
 fn register_of<'a>(
     anchors: &'a Anchors,
     owner: &Anchor,
     rel: &Path,
 ) -> Option<Result<&'a Register, PathBuf>> {
+    if rel.extension().is_none_or(|e| e != "md") {
+        return None;
+    }
     for name in &owner.registers {
         let register = anchors.registers().by_name(name)?;
         if register.shape != Shape::Heading {
@@ -744,14 +754,14 @@ fn heading_homes(anchors: &Anchors, owner: &Anchor) -> String {
         .filter_map(|n| anchors.registers().by_name(n))
         .filter(|r| r.shape == Shape::Heading)
         .map(|r| match r.level {
-            Some(level) => format!("{} at level {level}", r.dir),
-            None => r.dir.clone(),
+            Some(level) => format!("{} at level {level}, in `{}`", r.name, r.dir),
+            None => format!("{}, in `{}`", r.name, r.dir),
         })
         .collect();
     if dirs.is_empty() {
         return "none".to_string();
     }
-    dirs.join(", ")
+    dirs.join("; ")
 }
 
 #[cfg(test)]
@@ -941,7 +951,7 @@ mod tests {
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].what.contains("level-3"), "{found:#?}");
         // The action names each home with the level its entries sit at.
-        assert!(found[0].action.contains("goals at level 2"), "{found:#?}");
+        assert!(found[0].action.contains("goal at level 2"), "{found:#?}");
     }
 
     #[test]
@@ -977,6 +987,55 @@ mod tests {
         let found = findings(vec![("docs/design.md", "   ### Indented and unslugged\n")]);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("carries no slug"), "{found:#?}");
+    }
+
+    #[test]
+    fn a_reference_on_an_unslugged_heading_is_not_its_slug() {
+        // The shape a tripwire takes: its heading names what it guards. A reference span on
+        // the line is no slug, so the heading is still unslugged.
+        let found = findings(vec![(
+            "docs/tripwires.md",
+            "## Guarding `design@a-project@a-decision`\n",
+        )]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("carries no slug"), "{found:#?}");
+    }
+
+    #[test]
+    fn a_rust_file_under_a_directory_home_is_no_register_document() {
+        // A home holds markdown. A doc comment's heading owes no slug, and a slug in one is
+        // misplaced, whatever directory the file sits in.
+        let e = table(vec![(
+            "docs/design/example.rs",
+            "//! ### A heading in a doc comment\n//! ### Another `##from-rust`\nfn f() {}\n",
+        )]);
+        assert_eq!(e.len(), 0, "{:#?}", e.defined);
+        let found: Vec<String> = e
+            .definition_findings()
+            .iter()
+            .map(|f| f.what.clone())
+            .collect();
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("no heading register home"), "{found:#?}");
+    }
+
+    #[test]
+    fn the_findings_of_one_document_come_in_line_order() {
+        // The unslugged-heading findings and the misplaced ones are produced by two passes,
+        // and a reader walks the file top to bottom.
+        let found = findings(vec![(
+            "docs/design.md",
+            "#### Deep `##a-deep-one`\n\n### No slug\n\n#### Deep `##another`\n",
+        )]);
+        let lines: Vec<&str> = found
+            .iter()
+            .map(|f| f.split("  ").next().unwrap())
+            .collect();
+        assert_eq!(
+            lines,
+            vec!["docs/design.md:1", "docs/design.md:3", "docs/design.md:5"],
+            "{found:#?}"
+        );
     }
 
     #[test]
@@ -1037,6 +1096,30 @@ mod tests {
                 .any(|f| f.starts_with("docs/notes.md:7") && f.contains("carries no slug")),
             "{found:#?}"
         );
+    }
+
+    #[test]
+    fn a_register_declared_at_level_six_sees_its_headings() {
+        // The deepest level markdown has: a heading there is observed, so an unslugged one
+        // is reported and a slugged one defines.
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [registers.note]\nscope = \"component\"\nshape = \"heading\"\ndir = \"notes\"\n\
+             level = 6\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        let a = Anchors::of(&m);
+        let e = table_under(
+            vec![(
+                "docs/notes.md",
+                "###### A note `##a-note`\n\n###### No slug\n",
+            )],
+            &a,
+        );
+        assert_eq!(e.len(), 1);
+        assert_eq!(e.definition_findings().len(), 1, "{:#?}", e.findings);
+        assert!(e.definition_findings()[0].what.contains("carries no slug"));
     }
 
     #[test]
