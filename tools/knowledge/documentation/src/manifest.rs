@@ -62,7 +62,8 @@ pub const DEFERRED_SUBSECTIONS: [&str; 3] = ["What", "Why it matters", "Trigger"
 /// Where a register keeps its entries.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Shape {
-    /// Entries are headings carrying a slug, in `<dir>.md` or in `<dir>/` behind a README.
+    /// Entries are headings at the register's level carrying a slug, in `<dir>.md` or in
+    /// `<dir>/` behind a README.
     Heading,
     /// Entries are files `<id>.md` under `<dir>/`, beside a README and a generated index.
     File,
@@ -104,6 +105,8 @@ pub struct Register {
     pub shape: Shape,
     /// The basename of the home under the anchor's home base.
     pub dir: String,
+    /// Heading shape: the one heading level every entry sits at. `None` for the file shape.
+    pub level: Option<u8>,
     /// File shape: the level-two headings every entry carries, in order.
     pub sections: Vec<String>,
     /// File shape: each frontmatter key an entry carries, with its closed value set.
@@ -157,25 +160,27 @@ impl Registers {
 
     /// The four compiled-in registers, before any declaration is read.
     fn built_in() -> Vec<Register> {
-        let heading = |name: &str, dir: &str| Register {
+        let heading = |name: &str, dir: &str, level: u8| Register {
             name: name.to_string(),
             scope: Scope::Component,
             shape: Shape::Heading,
             dir: dir.to_string(),
+            level: Some(level),
             sections: Vec::new(),
             metadata: Vec::new(),
             kinds: Vec::new(),
             built_in: true,
         };
         vec![
-            heading("design", "design"),
-            heading("goal", "goals"),
-            heading(TRIPWIRE_REGISTER, "tripwires"),
+            heading("design", "design", 3),
+            heading("goal", "goals", 2),
+            heading(TRIPWIRE_REGISTER, "tripwires", 2),
             Register {
                 name: ISSUE_REGISTER.to_string(),
                 scope: Scope::Component,
                 shape: Shape::File,
                 dir: "open-issues".to_string(),
+                level: None,
                 sections: vec!["Summary".to_string(), "Details".to_string()],
                 metadata: vec![(
                     "kind".to_string(),
@@ -195,6 +200,7 @@ pub struct RegisterDecl {
     pub scope: Option<String>,
     pub shape: Option<String>,
     pub dir: Option<String>,
+    pub level: Option<i64>,
     #[serde(default)]
     pub sections: Vec<String>,
     #[serde(default)]
@@ -975,6 +981,9 @@ fn build_registers(
             if decl.dir.is_some() {
                 wrong.push("dir");
             }
+            if decl.level.is_some() {
+                wrong.push("level");
+            }
             if !decl.sections.is_empty() {
                 wrong.push("sections");
             }
@@ -1034,11 +1043,38 @@ fn build_registers(
                  which has neither"
             ));
         }
+        let level = match (shape, decl.level) {
+            // Level one is the document's title, so no register's entries sit there.
+            (Shape::Heading, Some(level @ 2..=6)) => Some(level as u8),
+            (Shape::Heading, Some(level)) => {
+                complaints.push(format!(
+                    "[registers.{name}] declares level {level}; a heading register's entries \
+                     sit at a heading level from 2 to 6"
+                ));
+                None
+            }
+            (Shape::Heading, None) => {
+                complaints.push(format!(
+                    "[registers.{name}] declares no level; a heading register declares the \
+                     heading level its entries sit at, from 2 to 6"
+                ));
+                None
+            }
+            (Shape::File, Some(_)) => {
+                complaints.push(format!(
+                    "[registers.{name}] declares a level on a file register, whose entries \
+                     are files"
+                ));
+                None
+            }
+            (Shape::File, None) => None,
+        };
         out.push(Register {
             name: name.clone(),
             scope,
             shape,
             dir: decl.dir.clone().unwrap_or_else(|| name.clone()),
+            level,
             sections: decl.sections.clone(),
             metadata: decl
                 .metadata
@@ -1465,6 +1501,78 @@ pub(crate) mod tests {
         let m = with_registers("[registers.design]\nkinds = [\"a\"]\n");
         assert_eq!(whats(&m).len(), 1);
         assert!(whats(&m)[0].contains("kinds"), "{:?}", whats(&m));
+    }
+
+    #[test]
+    fn the_built_in_heading_registers_carry_their_entry_level_and_issue_none() {
+        let m = declaring("");
+        let level = |name: &str| m.registers().by_name(name).expect("a register").level;
+        assert_eq!(level("design"), Some(3));
+        assert_eq!(level("goal"), Some(2));
+        assert_eq!(level("tripwire"), Some(2));
+        assert_eq!(level("issue"), None);
+    }
+
+    #[test]
+    fn a_heading_register_declares_its_level_and_a_file_register_does_not() {
+        let heading = "[registers.note]\nscope = \"opt-in\"\nshape = \"heading\"\n";
+        let m = with_registers(&format!("{heading}level = 4\n"));
+        assert!(whats(&m).is_empty(), "{:?}", whats(&m));
+        assert_eq!(m.registers().by_name("note").expect("note").level, Some(4));
+        // Missing: the check could not tell an entry from section text.
+        let m = with_registers(heading);
+        assert_eq!(whats(&m).len(), 1, "{:?}", whats(&m));
+        assert!(
+            whats(&m)[0].contains("declares no level"),
+            "{:?}",
+            whats(&m)
+        );
+        // Out of range. Level one is the document's title, and markdown has six levels.
+        for bad in [0, 1, 7] {
+            let m = with_registers(&format!("{heading}level = {bad}\n"));
+            assert_eq!(whats(&m).len(), 1, "{bad}: {:?}", whats(&m));
+            assert!(
+                whats(&m)[0].contains(&format!("declares level {bad}")),
+                "{bad}: {:?}",
+                whats(&m)
+            );
+        }
+        for good in [2, 6] {
+            let m = with_registers(&format!("{heading}level = {good}\n"));
+            assert!(whats(&m).is_empty(), "{good}: {:?}", whats(&m));
+        }
+        // Not an integer: refused when the manifest is read, naming the key.
+        let text = format!(
+            "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             {heading}level = \"3\"\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
+        );
+        let e = Manifest::parse(Path::new("/nowhere"), &text).expect_err("a string level");
+        assert!(e.contains("level"), "{e}");
+        // On a file register: its entries are files, so a level would be read by nothing.
+        let m = with_registers(
+            "[registers.reading]\nscope = \"opt-in\"\nshape = \"file\"\nlevel = 2\n",
+        );
+        assert_eq!(whats(&m).len(), 1, "{:?}", whats(&m));
+        assert!(
+            whats(&m)[0].contains("on a file register"),
+            "{:?}",
+            whats(&m)
+        );
+        assert_eq!(
+            m.registers().by_name("reading").expect("reading").level,
+            None
+        );
+        // On a built-in register, whose level is compiled in.
+        let m = with_registers("[registers.design]\nlevel = 2\n");
+        assert_eq!(whats(&m).len(), 1, "{:?}", whats(&m));
+        assert!(whats(&m)[0].contains("sets level"), "{:?}", whats(&m));
+        assert_eq!(
+            m.registers().by_name("design").expect("design").level,
+            Some(3)
+        );
     }
 
     #[test]

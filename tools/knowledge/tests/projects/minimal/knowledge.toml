@@ -33,6 +33,7 @@ values = ["settled", "ambiguous"]
 scope = "opt-in"
 shape = "heading"
 dir = "decisions"
+level = 2
 
 [walk]
 skip-dirs = ["build"]

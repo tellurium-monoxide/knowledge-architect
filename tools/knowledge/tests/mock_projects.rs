@@ -702,23 +702,38 @@ mod unsound {
 
     #[test]
     fn a_misplaced_definition_is_reported_where_it_stands_and_defines_nothing() {
-        // Three shapes over a real walk: a level-four heading and a line head inside the
-        // design home, and a level-three heading in a file that is no register home.
+        // Four shapes over a real walk: a level-four heading, a line head and a table cell
+        // inside the design home, and a level-three heading in a file that is no register
+        // home.
         let all = phase_three();
         let deep = one_of(&all, "`##too-deep` is written at a level-4 heading");
         assert!(deep.starts_with("docs/design/planted.md:9"), "{deep}");
         let head = one_of(&all, "`##line-head` is written at the head of a plain line");
         assert!(head.starts_with("docs/design/planted.md:11"), "{head}");
-        let stray = one_of(&all, "`##stray-anchor` is written at `notes/structure.md`");
+        let cell = one_of(&all, "`##in-a-cell` is written in a table cell");
+        assert!(cell.starts_with("docs/design/planted.md:17"), "{cell}");
+        let stray = one_of(&all, "`##stray-anchor` is written in `notes/structure.md`");
         assert!(stray.starts_with("notes/structure.md:3"), "{stray}");
         assert!(
             stray.contains("no heading register home of `unsound`"),
             "{stray}"
         );
-        let inline = one_of(&all, "`##twice-defined` is written at the middle of a line");
+        let inline = one_of(&all, "`##twice-defined` is written in the middle of a line");
         assert!(inline.starts_with("notes/structure.md:5"), "{inline}");
         assert!(one_of(&all, "cannot be an entry id").starts_with("docs/open-issues/Not_An_Id.md"));
-        assert_eq!(all.len(), 7, "{all:#?}");
+        assert_eq!(all.len(), 9, "{all:#?}");
+    }
+
+    #[test]
+    fn a_heading_at_the_register_level_with_no_slug_is_reported_and_defines_nothing() {
+        // A tripwire or a decision written without its slug reads as an entry, and nothing
+        // lists it. The design register's level is three; the level-one title and the
+        // level-four heading beside it owe nothing.
+        let all = phase_three();
+        let lost = one_of(&all, "carries no slug");
+        assert!(lost.starts_with("docs/design/planted.md:13"), "{lost}");
+        assert!(lost.contains("level-3 heading"), "{lost}");
+        assert!(lost.contains("design home"), "{lost}");
     }
 
     /// The negative half of the gate: the projects that reach phase 4 have nothing in the

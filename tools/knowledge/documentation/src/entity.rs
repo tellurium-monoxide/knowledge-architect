@@ -427,11 +427,13 @@ pub struct Entities {
 impl Entities {
     /// Read every definition out of the model and file it under its anchor and register.
     ///
-    /// A heading register's entity is a slug in one of that register's home shapes, owned by
-    /// the deepest anchor whose path holds the document. A file register's entity is a file
-    /// under the instance directory, its id the basename. A slug outside every heading home,
-    /// or at a heading level the grammar does not accept, or at the head of a plain line,
-    /// defines nothing and is reported as misplaced.
+    /// A heading register's entity is a slug ending a heading at the register's declared
+    /// level, in one of that register's home shapes, owned by the deepest anchor whose path
+    /// holds the document. A file register's entity is a file under the instance directory,
+    /// its id the basename. A slug outside every heading home, at a heading of another level,
+    /// in a table cell, at the head of a plain line or mid-line defines nothing and is
+    /// reported as misplaced; a heading at the declared level that carries no slug is
+    /// reported too, because it reads as an entry and nothing lists it.
     pub fn build(model: &Model, anchors: &Anchors) -> Self {
         let mut out = Self::default();
         out.heading_definitions(model, anchors);
@@ -443,61 +445,108 @@ impl Entities {
     fn heading_definitions(&mut self, model: &Model, anchors: &Anchors) {
         for doc in model.documents() {
             let owner = anchors.owning(&doc.rel);
+            let home = register_of(anchors, owner, &doc.rel);
+            if let Some(Ok(register)) = home {
+                self.unslugged_headings(doc, register);
+            }
             for l in &doc.observations {
                 let Observation::SlugDef { id, site } = &l.what else {
                     continue;
-                };
-                let at = Site {
-                    file: doc.rel.clone(),
-                    line: l.line,
                 };
                 let misplaced = |why: String| {
                     Finding::at(
                         &doc.rel,
                         l.line,
-                        format!("`##{id}` is written at {why} and defines nothing"),
+                        format!("`##{id}` is written {why} and defines nothing"),
                         format!(
-                            "a slug is defined at the end of a level-two or level-three \
-                             heading, or in a table cell, inside a heading register's home; \
-                             this anchor's are {}; move it there, or delete it",
-                            heading_dirs(anchors, owner)
+                            "a slug is defined at the end of a heading at its register's \
+                             level, inside that register's home; this anchor's heading \
+                             registers are {}; move it there, or delete it",
+                            heading_homes(anchors, owner)
                         ),
                     )
                 };
-                match site {
-                    SlugSite::Heading(level) if !(2..=3).contains(level) => {
-                        self.findings
-                            .push(misplaced(format!("a level-{level} heading")));
+                let level = match site {
+                    SlugSite::Heading(level) => *level,
+                    SlugSite::Cell => {
+                        self.findings.push(misplaced("in a table cell".to_string()));
                         continue;
                     }
                     SlugSite::LineHead => {
                         self.findings
-                            .push(misplaced("the head of a plain line".to_string()));
+                            .push(misplaced("at the head of a plain line".to_string()));
                         continue;
                     }
                     SlugSite::Inline => {
                         self.findings
-                            .push(misplaced("the middle of a line".to_string()));
+                            .push(misplaced("in the middle of a line".to_string()));
                         continue;
                     }
-                    _ => {}
-                }
-                match register_of(anchors, owner, &doc.rel) {
-                    Some(Ok(kind)) => self
+                };
+                match &home {
+                    Some(Ok(register)) if register.level == Some(level) => self
                         .defined
-                        .entry((kind, owner.name.clone(), id.clone()))
+                        .entry((Kind::new(&register.name), owner.name.clone(), id.clone()))
                         .or_default()
-                        .push(at),
+                        .push(Site {
+                            file: doc.rel.clone(),
+                            line: l.line,
+                        }),
+                    Some(Ok(_)) => self
+                        .findings
+                        .push(misplaced(format!("at a level-{level} heading"))),
                     Some(Err(dir)) => self.findings.push(misplaced(format!(
-                        "the README of the `{}` directory home",
+                        "in the README of the `{}` directory home",
                         dir.display()
                     ))),
                     None => self.findings.push(misplaced(format!(
-                        "`{}`, which is no heading register home of `{}`",
+                        "in `{}`, which is no heading register home of `{}`",
                         doc.rel.display(),
                         owner.name
                     ))),
                 }
+            }
+        }
+    }
+
+    /// Report every heading at the register's level that carries no slug.
+    ///
+    /// Every heading at that level in the register's home is an entry, so one without a slug
+    /// is an entry nothing lists and no reference can name. A heading at another level is
+    /// section text and owes nothing.
+    fn unslugged_headings(&mut self, doc: &crate::model::Document, register: &Register) {
+        let Some(level) = register.level else {
+            return;
+        };
+        // The scanner records the first slug of a heading line at that heading's own level,
+        // so any slug on the line is the heading's.
+        let slugged: std::collections::HashSet<u32> = doc
+            .observations
+            .iter()
+            .filter(|l| matches!(l.what, Observation::SlugDef { .. }))
+            .map(|l| l.line)
+            .collect();
+        for l in &doc.observations {
+            match &l.what {
+                Observation::Heading { level: n, text }
+                    if *n == level && !slugged.contains(&l.line) =>
+                {
+                    self.findings.push(Finding::at(
+                        &doc.rel,
+                        l.line,
+                        format!(
+                            "the level-{level} heading \"{text}\" in a {} home carries no slug",
+                            register.name
+                        ),
+                        format!(
+                            "every level-{level} heading in a {} home is an entry: end it with \
+                             its slug, written as two hashes and the id in backticks, or move \
+                             it to another level if it is no entry",
+                            register.name
+                        ),
+                    ));
+                }
+                _ => {}
             }
         }
     }
@@ -659,10 +708,14 @@ pub fn entry_id(rel: &Path, dir: &Path) -> Option<String> {
     Some(rel.file_stem()?.to_string_lossy().into_owned())
 }
 
-/// Which heading register home of `owner` holds `rel`: `Ok(kind)` for the file home or a
+/// Which heading register home of `owner` holds `rel`: `Ok(register)` for the file home or a
 /// subdocument of the directory home, `Err(dir)` for the directory home's README, `None`
 /// for a file that is no heading home.
-fn register_of(anchors: &Anchors, owner: &Anchor, rel: &Path) -> Option<Result<Kind, PathBuf>> {
+fn register_of<'a>(
+    anchors: &'a Anchors,
+    owner: &Anchor,
+    rel: &Path,
+) -> Option<Result<&'a Register, PathBuf>> {
     for name in &owner.registers {
         let register = anchors.registers().by_name(name)?;
         if register.shape != Shape::Heading {
@@ -670,26 +723,30 @@ fn register_of(anchors: &Anchors, owner: &Anchor, rel: &Path) -> Option<Result<K
         }
         let home = owner.home_of(register);
         if rel == home.file {
-            return Some(Ok(Kind::new(name)));
+            return Some(Ok(register));
         }
         if rel == home.readme {
             return Some(Err(home.dir));
         }
         if rel.starts_with(&home.dir) {
-            return Some(Ok(Kind::new(name)));
+            return Some(Ok(register));
         }
     }
     None
 }
 
-/// The heading register directories one anchor carries, as a finding names them.
-fn heading_dirs(anchors: &Anchors, owner: &Anchor) -> String {
-    let dirs: Vec<&str> = owner
+/// The heading register homes one anchor carries, each with its entry level, as a finding
+/// names them.
+fn heading_homes(anchors: &Anchors, owner: &Anchor) -> String {
+    let dirs: Vec<String> = owner
         .registers
         .iter()
         .filter_map(|n| anchors.registers().by_name(n))
         .filter(|r| r.shape == Shape::Heading)
-        .map(|r| r.dir.as_str())
+        .map(|r| match r.level {
+            Some(level) => format!("{} at level {level}", r.dir),
+            None => r.dir.clone(),
+        })
         .collect();
     if dirs.is_empty() {
         return "none".to_string();
@@ -850,10 +907,15 @@ mod tests {
     fn a_slug_at_the_wrong_heading_level_or_at_a_line_head_is_misplaced_even_in_a_home() {
         for (line, why) in [
             ("# A title `##deep`\n", "level-1"),
+            // One level off the design register's level three, above and below.
+            ("## A grouping `##deep`\n", "level-2"),
             ("#### A deep heading `##deep`\n", "level-4"),
             ("##### A deeper heading `##deep`\n", "level-5"),
             ("`##deep` — **The statement.**\n", "head of a plain line"),
             ("as `##deep` records\n", "middle of a line"),
+            // A table cell defines nothing, in any column.
+            ("| A decision in a row | `##deep` |\n", "table cell"),
+            ("| `##deep` | A decision in a row |\n", "table cell"),
         ] {
             let e = table(vec![("docs/design.md", line)]);
             assert_eq!(e.len(), 0, "{line:?} must define nothing");
@@ -861,6 +923,111 @@ mod tests {
             assert_eq!(found.len(), 1, "{line:?}: {found:#?}");
             assert!(found[0].contains(why), "{line:?}: {found:#?}");
         }
+    }
+
+    #[test]
+    fn a_slug_is_judged_against_the_level_of_the_register_whose_home_holds_it() {
+        // The same level-three heading defines in the design home and is misplaced in the
+        // goals home, whose level is two; the reverse holds for a level-two heading.
+        let e = table(vec![
+            ("docs/design.md", "### A decision `##at-three`\n"),
+            ("docs/goals.md", "## A goal `##at-two`\n"),
+        ]);
+        assert_eq!(e.len(), 2);
+        assert!(e.definition_findings().is_empty(), "{:#?}", e.findings);
+        let e = table(vec![("docs/goals.md", "### A goal `##at-three`\n")]);
+        assert_eq!(e.len(), 0);
+        let found = e.definition_findings();
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].what.contains("level-3"), "{found:#?}");
+        // The action names each home with the level its entries sit at.
+        assert!(found[0].action.contains("goals at level 2"), "{found:#?}");
+    }
+
+    #[test]
+    fn a_heading_at_the_register_level_with_no_slug_is_a_finding_and_no_other_is() {
+        // The reproduction of the issue this closes: a tripwire written without a slug.
+        let found = findings(vec![("docs/tripwires.md", "## Guarding it\n")]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].starts_with("docs/tripwires.md:1")
+                && found[0].contains("\"Guarding it\"")
+                && found[0].contains("level-2")
+                && found[0].contains("carries no slug"),
+            "{found:#?}"
+        );
+        assert_eq!(
+            table(vec![("docs/tripwires.md", "## Guarding it\n")]).len(),
+            0
+        );
+        // In the design home, level three owes a slug, and the title, a level-two grouping
+        // and a level-four heading owe none.
+        let found = findings(vec![(
+            "docs/design.md",
+            "# Decisions\n\n## A grouping\n\n### Lost its slug\n\n#### Detail\n",
+        )]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].starts_with("docs/design.md:5"), "{found:#?}");
+    }
+
+    #[test]
+    fn the_readme_of_a_directory_home_owes_no_slug() {
+        // It is the head of the home: an introduction, not an entry.
+        let found = findings(vec![
+            ("docs/design/README.md", "# Design\n\n### How to read it\n"),
+            (
+                "docs/tripwires/README.md",
+                "# Tripwires\n\n## How to read them\n",
+            ),
+        ]);
+        assert!(found.is_empty(), "{found:#?}");
+        // A file that is no home owes nothing either.
+        assert!(findings(vec![("notes/a.md", "### A heading\n")]).is_empty());
+    }
+
+    #[test]
+    fn a_declared_register_is_judged_at_the_level_it_declares() {
+        // Level five, which no built-in register uses, so the level is read from the
+        // declaration and not compiled in, and a heading that deep is seen at all.
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [registers.note]\nscope = \"component\"\nshape = \"heading\"\ndir = \"notes\"\n\
+             level = 5\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n\
+             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
+             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+        let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        assert!(m.complaints().is_empty(), "{:#?}", m.complaints());
+        let a = Anchors::of(&m);
+        let e = table_under(
+            vec![(
+                "docs/notes.md",
+                "# Notes\n\n##### A note `##a-note`\n\n### Too shallow `##shallow`\n\n\
+                 ##### No slug\n",
+            )],
+            &a,
+        );
+        assert_eq!(
+            e.resolve(&a, &Kind::new("note"), "a-project", "a-note"),
+            Resolution::Resolved
+        );
+        let found: Vec<String> = e
+            .definition_findings()
+            .iter()
+            .map(|f| format!("{}  {}", f.location(), f.what))
+            .collect();
+        assert_eq!(found.len(), 2, "{found:#?}");
+        assert!(
+            found
+                .iter()
+                .any(|f| f.starts_with("docs/notes.md:5") && f.contains("level-3")),
+            "{found:#?}"
+        );
+        assert!(
+            found
+                .iter()
+                .any(|f| f.starts_with("docs/notes.md:7") && f.contains("carries no slug")),
+            "{found:#?}"
+        );
     }
 
     #[test]

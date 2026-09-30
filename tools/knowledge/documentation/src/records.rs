@@ -196,9 +196,8 @@ pub fn inbound(model: &Model, anchors: &Anchors, kind: &Kind, anchor: &str, id: 
 /// The inclusive line range of the section holding `line`: the nearest heading at or above it,
 /// through to the next heading at the same level or shallower.
 ///
-/// A slug may sit in a table cell as readily as in a heading, so the section rather than the
-/// line is what a reader is shown: a cell in a table of decisions means nothing without the
-/// table and the heading above it.
+/// An entry is its heading and the body under it, so the section rather than the line is what
+/// a reader is shown.
 fn section(doc: &Document, line: u32) -> (u32, u32) {
     let mut headings: Vec<(u32, u8)> = doc
         .observations
@@ -399,23 +398,6 @@ mod tests {
         let second = found.iter().find(|r| r.id == "second").expect("the second");
         assert!(second.guards.is_empty(), "{second:#?}");
         assert_eq!(second.guarding(), "-");
-    }
-
-    #[test]
-    fn a_slug_in_a_table_cell_is_shown_with_the_section_that_holds_the_table() {
-        // A cell means nothing without its table and the heading above it, so the section is
-        // what a reader is given rather than the row.
-        let home = "# Decisions\n\n\
-                    ## A table of them\n\n\
-                    | statement | slug |\n| --- | --- |\n| It holds | `##in-a-cell` |\n";
-        let found = rows(vec![("docs/design.md", home)], "design");
-        assert_eq!(found.len(), 1, "{found:#?}");
-        assert_eq!(found[0].id, "in-a-cell");
-        assert!(
-            found[0].body.starts_with("## A table of them"),
-            "{found:#?}"
-        );
-        assert!(found[0].body.contains("| It holds |"), "{found:#?}");
     }
 
     #[test]

@@ -1230,7 +1230,7 @@ mod tests {
         // reference of the other kind resolves to nothing for ever with nothing said.
         let manifest = declaring_full(
             "",
-            "[registers.note]\nscope = \"component\"\nshape = \"heading\"\ndir = \"design\"\n\n",
+            "[registers.note]\nscope = \"component\"\nshape = \"heading\"\nlevel = 3\ndir = \"design\"\n\n",
             "[]",
             "[]",
             "[]",
@@ -1363,7 +1363,7 @@ mod tests {
                 "sets metadata on a built-in register",
             ),
             (
-                "[registers.note]\nscope = \"component\"\nshape = \"heading\"\ndir = \"notes\"\n\
+                "[registers.note]\nscope = \"component\"\nshape = \"heading\"\nlevel = 3\ndir = \"notes\"\n\
                  sections = [\"One\"]\n\n",
                 "on a heading register",
             ),
@@ -1724,7 +1724,7 @@ mod tests {
         // one path would carry two meanings.
         let manifest = declaring_full(
             "",
-            "[registers.note]\nscope = \"component\"\nshape = \"heading\"\n\
+            "[registers.note]\nscope = \"component\"\nshape = \"heading\"\nlevel = 3\n\
              dir = \"rejected-alternatives\"\n\n",
             "[]",
             "[]",

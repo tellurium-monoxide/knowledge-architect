@@ -73,7 +73,7 @@ pub enum Observation {
 pub enum SlugSite {
     /// At the end of a heading of this level.
     Heading(u8),
-    /// In a table cell.
+    /// In a table cell, which defines nothing.
     Cell,
     /// At the head of a plain line: the form that predates the heading rule.
     LineHead,
@@ -95,7 +95,9 @@ pub struct Located {
     pub what: Observation,
 }
 
-static HEADING: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(#{1,4})\s+(.+?)\s*$").unwrap());
+/// A heading of any level markdown has, so that a register may declare its entries at any
+/// of them and a heading there is seen.
+static HEADING: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(#{1,6})\s+(.+?)\s*$").unwrap());
 /// The retired slug reference, `` `<word>#<word>` ``: the word before the `#` is optional so
 /// that the older unqualified form is seen too. The first class cannot match a `#`, so a
 /// definition — which opens with `##` — is not read as a retired reference to itself.
@@ -116,9 +118,9 @@ static SLUG_SITE: LazyLock<Regex> = LazyLock::new(|| {
     )
     .unwrap()
 });
-/// Every slug-shaped span in a line. In a table row each is a cell definition; elsewhere,
-/// one the pattern above did not take is a mention where a reference belongs, recorded so
-/// the table can report it rather than see nothing.
+/// Every slug-shaped span in a line. In a table row each is recorded as a cell; elsewhere,
+/// one the pattern above did not take is a mention where a reference belongs. Both are
+/// recorded so the table can report them rather than see nothing.
 static SLUG_ANY: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"`##([a-z0-9]+(?:-[a-z0-9]+)*)`").unwrap());
 /// A backticked span holding an `@`, no whitespace, no backtick and no angle bracket: the
@@ -213,8 +215,7 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
                     let span = c.get(0).unwrap();
                     let site = match &primary {
                         Some((range, site)) if *range == span.range() => *site,
-                        // A table row: any cell, because a decision table puts the slug
-                        // in whichever column the table gives it.
+                        // A table row: any cell, so a slug in any column is reported.
                         _ if in_row => SlugSite::Cell,
                         // Mid-line, a slug-shaped span is a pointer written in the
                         // definition form. Four such pointers in this tree were checked

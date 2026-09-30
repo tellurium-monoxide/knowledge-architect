@@ -463,7 +463,7 @@ shows the page, and a bullet list is its conventional shape — a table grows pa
 soon as a row outgrows a short sentence. Both directions are asserted over the same links: an
 existing subdocument no link names is reported, and a link that resolves to nothing is reported.
 A fenced link is an illustration and discharges nothing, the stance a fenced definition takes
-per `design@knowledge@a-slug-is-a-heading`, and a link inside a code span is typography showing the
+per `design@knowledge@an-entry-is-a-heading-at-the-register-level`, and a link inside a code span is typography showing the
 shape. **The accepted row is the plain
 inline form, a target without spaces**: reference-style links, angle-bracketed or quoted-title
 targets and the other CommonMark shapes are outside it, deliberately — the index is one shape
@@ -615,7 +615,7 @@ check would report a file stale that nobody had changed, and `index` would rewri
 **A kind is a register's name, or `path`.** The four built-in registers give the kinds `design`,
 `goal`, `tripwire` and `issue`, and a project's own declarations give the rest, so the kind set is
 data rather than a compiled enumeration. A heading register's entities are slugs defined in the
-register's home under an anchor, per `design@knowledge@a-slug-is-a-heading`; a file register's are the
+register's home under an anchor, per `design@knowledge@an-entry-is-a-heading-at-the-register-level`; a file register's are the
 files under its instance directory, one per entry, per
 `design@knowledge@a-file-register-is-a-directory-of-entries`. `path` is defined by the tree itself and is
 resolved against the survey, under the same anchors and with the candidate rule and segmentation
@@ -635,33 +635,47 @@ published. A check that resolves a name of its own is the shape this refuses: tw
 disagree the first time one of them is edited, and only the entities one of them knows can be
 printed or rewritten.
 
-### A slug is defined at the end of a level-two or level-three heading, or in a table cell, inside a heading register's home, and nowhere else `##a-slug-is-a-heading`
+### Each heading register declares the one heading level its entries sit at, every heading at that level in its home carries a slug, and a slug nowhere else defines anything `##an-entry-is-a-heading-at-the-register-level`
 
-The statement precedes the slug in the heading, so a document outline lists the entries rather
-than a set of identifiers, and an editor's outline view is the index. The table cell form serves
-the decision tables that predate the heading rule. Level two is accepted beside level three
-because tripwire and goal entries are level-two headings.
+**The level is part of the register.** `design` sits at level three, `goal` and `tripwire` at
+level two, compiled in; a declared heading register states its level with the `level` key of its
+`[registers.<name>]` table, from 2 to 6, and a file register takes none. Level one is the
+document's title. With a declared level, "every heading at level N is an entry, and only those"
+is a checked invariant, so the tool can tell a heading that is no entry from an entry whose slug
+is missing. Without it, a tripwire written without a slug is defined nowhere, listed by nothing
+and reported by nothing.
+
+**The statement precedes the slug in the heading**, so a document outline lists the entries
+rather than a set of identifiers, and an editor's outline view is the index. A heading at another
+level is section text and owes nothing: a design home groups its level-three decisions under
+level-two subjects.
 
 **The homes are the design, goals and tripwires homes of the owning anchor**, and the home of
 any heading register the project declares, each in either shape of
 `design@knowledge@heading-register-two-shapes`: the single file, or a subdocument of the directory.
-The directory's `README.md` is the head and defines nothing, for every register and not only
-design. Which anchor owns a definition is where its document sits, per
+The directory's `README.md` is the head: it defines nothing and owes no slug, for every register
+and not only design. Which anchor owns a definition is where its document sits, per
 `design@knowledge@a-slug-belongs-to-a-component`.
 
-**A slug anywhere else defines nothing and is reported as a misplaced definition**: at a
-level-one heading or at one deeper than level three, at the head of a plain line, in the middle
-of a line, as a second slug on a definition line, in a file that is no register home — a Rust
-comment included — or in a directory home's README. A table row defines in any of its cells,
-because a decision table puts the slug in whichever column it has. An id is
-`[a-z0-9]+(-[a-z0-9]+)*`. The line-head form is what predates the heading rule,
-and reporting it is what makes the migration off it visible: it is neither a definition nor a
-reference, so every pointer at it dangles and the site itself is named. Accepting both forms
-would have left the two indistinguishable and the migration unfinishable, because nothing would
-say which anchors had moved. A mid-line slug is a pointer written in the definition form, and
-recording it is what makes such a pointer visible: four sat in this tree's design homes, checked
-by nothing. Two definitions of one id in one register instance are a finding at each site, each
-naming the other.
+**Two findings, both about the definition site.** A heading at the register's level with no slug
+in its home is reported, naming the heading. A slug anywhere else defines nothing and is reported
+as a misplaced definition: at a heading of another level, level one included, in a table cell, at
+the head of a plain line, in the middle of a line, as a second slug on a definition line, in a
+file that is no register home — a Rust comment included — or in a directory home's README. An id
+is `[a-z0-9]+(-[a-z0-9]+)*`.
+
+- **A table cell defines nothing.** A decision written as a row has no heading, so the outline no
+  longer lists every decision, and one register would have two definition sites.
+- **The line-head form is what predates the heading rule**, and reporting it is what makes the
+  migration off it visible: it is neither a definition nor a reference, so every pointer at it
+  dangles and the site itself is named. Accepting both forms would have left the two
+  indistinguishable and the migration unfinishable, because nothing would say which anchors had
+  moved.
+- **A mid-line slug is a pointer written in the definition form**, and recording it is what makes
+  such a pointer visible: four sat in this tree's design homes, checked by nothing.
+
+Two definitions of one id in one register instance are a finding at each site, each naming the
+other.
 
 **Which homes an anchor must carry is `check::tree`'s question, not the table's.** The
 table defines from every home shape of every heading register the anchor carries, and reports a

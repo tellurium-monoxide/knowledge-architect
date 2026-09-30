@@ -361,8 +361,8 @@ pub struct DumpRow {
 fn describe(what: &Observation) -> (&'static str, String) {
     match what {
         Observation::Heading { level, text } => ("heading", format!("{level} {text}")),
-        // The site rides along, so the dump says whether a slug sat where a definition can
-        // be — a level-two or level-three heading, a cell — or somewhere the table reports.
+        // The site rides along, so the dump says where a slug sat; whether that site defines
+        // is the entity table's decision, which depends on the register's level.
         Observation::SlugDef { id, site } => (
             "slug-def",
             match site {
