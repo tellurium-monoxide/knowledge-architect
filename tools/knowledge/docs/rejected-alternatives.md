@@ -327,3 +327,22 @@ the number is thaum's own register's: kept, the lint would have had to move into
 when the core was split from the rules half. The commit history holds the form in 65 of the 500
 messages before that split, counted with the lint's own pattern; the slug reference, which stays
 a finding, is in 64 of them, so exposure in history does not separate the two.
+
+**A slug defined at the end of any level-two or level-three heading, or in a table cell, with no
+level declared by the register** — lost to
+`design@knowledge@an-entry-is-a-heading-at-the-register-level`. `live`. It needed no manifest
+key, it let a register keep entries at either level, and the table cell served decision tables
+written before the heading form. It loses because it cannot tell a heading that is no entry from
+an entry whose slug is missing: a tripwire written without a slug is defined nowhere, listed by
+no `tripwires` run and reported by no check, and a reviewer reading the listing as the list of
+what to re-read never opens it. With one declared level per register, every heading at that level
+is an entry and one without a slug is a finding. A table row has no heading, so a decision defined
+in a cell is missing from the document outline, which is the index the heading form exists to
+give.
+
+**Table cells kept as a second definition site, behind a per-register manifest key** — lost to
+`design@knowledge@an-entry-is-a-heading-at-the-register-level`. `live`. It would have kept decision
+tables readable as tables, and left the declared level to govern headings alone. It loses because
+one register would then have two definition sites, and the outline would again fail to list every
+entry of a register that opts in. The one home that held cell definitions converts to headings
+without losing any content.
