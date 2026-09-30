@@ -65,13 +65,14 @@ with the finding text it produced.
 file under one of the tool's own directories, or the summary block's checker-source line is
 absent or names directories other than the Components of the tool's source in a checkout that
 holds them. The cheap half is the
-binary test `the_summary_names_the_checker_source_and_counts_the_files_under_it` in
-`path@rules-corpus@tests/binary.rs`, which asserts the line over this checkout. A binary built from
+binary test `the_core_binary_names_its_own_directory_and_counts_the_files_under_it` in
+`path@knowledge@tests/binary.rs`, which asserts the line over this checkout. A binary built from
 another checkout of the tool is refused before any command runs, per
-`design@knowledge@a-foreign-build-is-refused`, which the two
-`a_tree_holding_the_*_at_another_path_than_the_binarys_is_refused` tests assert, one in
-`path@knowledge@tests/binary.rs` and one in `path@rules-corpus@tests/binary.rs`, so it reaches
-this tripwire only where the refusal cannot see it.
+`design@knowledge@a-foreign-build-is-refused`, which
+`a_tree_holding_the_tool_at_another_path_than_the_binarys_is_refused` in
+`path@knowledge@tests/binary.rs` asserts, so it reaches this tripwire only where the refusal
+cannot see it. A binary that registers extensions owes the same two tests over its own
+Components, in its own suite.
 **Response:** the compiled path and the walked tree disagree in a way the refusal does not see: a
 second checkout that moved the tool's crates to another relative path, a canonicalisation gap, a
 symlink inside the tree the prefix test does not follow.

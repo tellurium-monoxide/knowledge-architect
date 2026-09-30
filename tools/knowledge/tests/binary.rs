@@ -3,8 +3,7 @@
 //!
 //! Each test runs against a mock project under `path@knowledge@tests/projects/`, which this
 //! repository's manifest excludes from its own walk, so the binary finds that project by walking
-//! up from the working directory exactly as it would find any other. The tests of the binary
-//! with the rules extension, over projects with a corpus, are `path@rules-corpus@tests/binary.rs`.
+//! up from the working directory exactly as it would find any other.
 
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -449,19 +448,14 @@ impl Drop for History {
 
 /// Everything a project owes, written out, with one design slug and one issue entry.
 ///
-/// `additional_trackers` writes the retired manifest key, which is what a commit from before
-/// the manifest was migrated looks like to this tool: the manifest does not load, and the
-/// commit fails the range.
-fn tiny_project(history: &History, additional_trackers: bool) {
-    let retired = if additional_trackers {
-        "additional-trackers = []\n"
-    } else {
-        ""
-    };
+/// `unloadable` writes a `[project]` key the grammar does not know, so the manifest does not
+/// load and the commit fails the range.
+fn tiny_project(history: &History, unloadable: bool) {
+    let unknown = if unloadable { "no-such-key = []\n" } else { "" };
     history.write(
         "knowledge.toml",
         &format!(
-            "[project]\nname = \"tiny\"\ncomponents = []\n{retired}\n\
+            "[project]\nname = \"tiny\"\ncomponents = []\n{unknown}\n\
              [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n"
         ),
     );
@@ -901,20 +895,23 @@ fn a_tracked_document_an_ignore_line_covers_is_walked_and_reported() {
     assert!(walked_count(&after) > 0, "{after}");
 }
 
-/// The claim: a file outside the walk that cannot be read stops the run at phase 2, naming it,
-/// where it used to be left out of the files an extension judges with no finding.
+/// The claim: a file outside the walk that cannot be read stops the run at phase 2, naming it.
+///
+/// The read is made to fail by a loop, not by a mode: the tracked file is replaced on disk by a
+/// symlink to itself, which every user fails to open, root included, where root reads through a
+/// mode of 000. The index still records a regular file, so the listing does not report a
+/// symlink and the file reaches the read.
 #[test]
 fn an_unreadable_file_outside_the_walk_is_a_phase_two_finding_naming_it() {
-    use std::os::unix::fs::PermissionsExt;
     let sandbox = Sandbox::seeded("unreadable-outside", "minimal", &[("notes/old.txt", "x\n")]);
     let path = sandbox.path("notes/old.txt");
-    std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o000)).expect("chmod");
-    // A process that reads through the mode, as root does, cannot reproduce the failure.
-    if std::fs::read(&path).is_ok() {
-        return;
-    }
+    std::fs::remove_file(&path).expect("the file");
+    std::os::unix::fs::symlink("old.txt", &path).expect("a symlink to itself");
+    assert!(
+        std::fs::read(&path).is_err(),
+        "the loop must fail every read, or this test asserts nothing"
+    );
     let (out, stderr, code) = sandbox.run(&["check"]);
-    std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o644)).expect("chmod");
     assert_eq!(code, 1, "{out}{stderr}");
     assert!(out.contains("phase 2:"), "{out}");
     let about: Vec<&str> = out
@@ -925,6 +922,8 @@ fn an_unreadable_file_outside_the_walk_is_a_phase_two_finding_naming_it() {
     assert!(about[0].contains("could not be read"), "{out}");
 
     // Readable again, it is an ordinary file outside the walk, and the run passes.
+    std::fs::remove_file(&path).expect("the symlink");
+    std::fs::write(&path, "x\n").expect("the file");
     let (out, stderr, code) = sandbox.run(&["check"]);
     assert_eq!(code, 0, "{out}{stderr}");
 }
@@ -1644,7 +1643,7 @@ fn a_last_commit_whose_manifest_does_not_load_is_a_finding_of_the_run() {
     tiny_project(&history, true);
     let bad = history.commit("The manifest goes back to a shape this tool refuses\n");
     // The working tree gets a manifest again: the binary locates its project by reading one,
-    // so a tree holding the retired shape refuses before any range is walked. What is under
+    // so a tree whose manifest does not load refuses before any range is walked. What is under
     // test is the last commit's tree, which keeps it.
     tiny_project(&history, false);
 

@@ -7,8 +7,8 @@
 //! could not be run against a model built in memory — which is the property the whole shape
 //! rests on.
 //!
-//! Arguments are declared, never parsed by hand, per `design@thaum@arguments-parse-through-clap`, and
-//! the exit codes are `design@thaum@exit-code-ladder`: 0 ran-and-clean, 1 ran-and-negative, 2
+//! Arguments are declared, never parsed by hand, per `design@knowledge@arguments-parse-through-clap`, and
+//! the exit codes are `design@knowledge@exit-code-ladder`: 0 ran-and-clean, 1 ran-and-negative, 2
 //! could-not-run.
 
 use std::collections::{HashMap, HashSet};
@@ -89,7 +89,7 @@ pub struct TripwiresArgs {
 ///
 /// `checker` is every directory of the running binary's own source, compiled into it, per
 /// `design@knowledge@checker-source-literals-are-data`. The exit code is
-/// `design@thaum@exit-code-ladder`: `Err` is could-not-run, and the caller prints it and exits 2.
+/// `design@knowledge@exit-code-ladder`: `Err` is could-not-run, and the caller prints it and exits 2.
 /// `extensions` is every extension the binary registers, per
 /// `design@knowledge@an-extension-plugs-in-through-phased-hooks`; the core's own binary passes
 /// none.
@@ -335,7 +335,7 @@ fn index(
 
     // Every destination is checked before any is written. A run that wrote one index and then
     // failed on the next exited 2 — could not run — having already changed the tree, which is
-    // the one place `design@thaum@exit-code-ladder`'s line blurs. A missing directory here is the
+    // the one place `design@knowledge@exit-code-ladder`'s line blurs. A missing directory here is the
     // manifest declaring one the tree does not have; creating it would paper over that, and the
     // registers check is what reports it.
     //
@@ -396,7 +396,7 @@ fn index(
 
 /// One recorded entry, whole, and every reference to it.
 ///
-/// **The two failure codes are different questions**, per `design@thaum@exit-code-ladder`: an argument
+/// **The two failure codes are different questions**, per `design@knowledge@exit-code-ladder`: an argument
 /// that is not reference-shaped could not be run and exits 2, and a reference the grammar accepts
 /// that names nothing is a negative answer and exits 1. A reader who mistyped the grammar and a
 /// reader who named a deleted entry need different things.
@@ -805,16 +805,16 @@ mod tests {
         // The failure this guards is a check gated on an input that is not there: its name in
         // `checked:` would say it ran.
         let mut r = report();
-        r.checks.extend(["changes", "corpus"]);
-        r.not_run = vec!["changes", "corpus"];
+        r.checks.extend(["history", "sources"]);
+        r.not_run = vec!["history", "sources"];
         let out = counts(&r);
-        assert!(out.contains("NOT RUN: changes, corpus"), "{out}");
+        assert!(out.contains("NOT RUN: history, sources"), "{out}");
         let checked = out
             .lines()
             .find(|l| l.starts_with("checked:"))
             .expect("the line");
         assert!(
-            !checked.contains("corpus") && !checked.contains("changes"),
+            !checked.contains("sources") && !checked.contains("history"),
             "{checked}"
         );
         // Nothing is withheld when everything ran.

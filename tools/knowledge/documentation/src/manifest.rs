@@ -401,7 +401,6 @@ impl Manifest {
     /// The half of `load` that touches no filesystem, so a test over what a project declares
     /// needs no checkout — the same reason a check is a pure function over the model.
     pub fn parse(root: &Path, text: &str) -> Result<Self, String> {
-        retired_keys(text)?;
         let mut declared: Declared = toml::from_str(text).map_err(|e| e.to_string())?;
         let mut complaints = Vec::new();
         let mut registers = build_registers(&declared.registers, &mut complaints);
@@ -498,33 +497,6 @@ impl Manifest {
         }));
         Components(all)
     }
-}
-
-/// Refuse a manifest still written in the retired grammar, naming what replaces each key.
-///
-/// Both would be refused anyway — an unknown top-level table as unclaimed in phase 1, a key of
-/// `[project]` by its `deny_unknown_fields` — and neither message names what replaces it. A manifest is edited by hand once per project, so the one moment either key is met is
-/// the moment the reader needs the replacement named.
-fn retired_keys(text: &str) -> Result<(), String> {
-    let value: toml::Value = toml::from_str(text).map_err(|e| e.to_string())?;
-    if value.get("interpretations").is_some() {
-        return Err("[interpretations] is retired: declare the register in \
-                    [registers.<name>] with `scope`, `shape`, `dir`, `sections` and \
-                    `metadata`, and give it a home with [locations.<name>]"
-            .to_string());
-    }
-    if value
-        .get("project")
-        .and_then(|p| p.get("additional-trackers"))
-        .is_some()
-    {
-        return Err(
-            "[project] additional-trackers is retired: declare the directory as \
-                    [locations.<name>] with `path` and the `registers` it carries"
-                .to_string(),
-        );
-    }
-    Ok(())
 }
 
 /// Fold the declarations into the compiled-in registers, and say what each one got wrong.
@@ -1150,15 +1122,14 @@ pub(crate) mod tests {
         skip_dirs: &str,
         skip_files: &str,
         exclude: &str,
-        exempt: &str,
+        ext_files: &str,
     ) -> Manifest {
         let text = format!(
             "[project]\nname = \"a-project\"\ncomponents = [{components}]\n\n\
              {extra}\
              [walk]\nskip-dirs = {skip_dirs}\nskip-files = {skip_files}\n\
              exclude = {exclude}\n\n\
-             [rules]\nexempt-files = {exempt}\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
+             [ext]\nfiles = {ext_files}\n"
         );
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
     }
@@ -1166,7 +1137,6 @@ pub(crate) mod tests {
     #[test]
     fn this_repository_declares_a_readable_manifest() {
         let m = Manifest::load(&this_project()).expect("knowledge.toml");
-        assert!(m.table("rules").is_some(), "the rules extension's table");
         assert!(m.registers().by_name("design").is_some());
     }
 
@@ -1320,8 +1290,8 @@ pub(crate) mod tests {
             "[\"../y.md\"]",
         );
         let complaints = whats(&m);
-        // The `[rules] exempt-files` row is the rules extension's to normalise, and its own
-        // test refuses it; the manifest keeps the table as written.
+        // The `[ext] files` row belongs to an extension's table, which is the extension's to
+        // normalise; the manifest keeps the table as written.
         assert_eq!(complaints.len(), 5, "{complaints:#?}");
         for label in ["[walk] skip-files", "[walk] exclude"] {
             assert!(
@@ -1423,8 +1393,7 @@ pub(crate) mod tests {
             "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              {body}\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
+             "
         );
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
     }
@@ -1546,8 +1515,7 @@ pub(crate) mod tests {
             "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              {heading}level = \"3\"\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
+             "
         );
         let e = Manifest::parse(Path::new("/nowhere"), &text).expect_err("a string level");
         assert!(e.contains("level"), "{e}");
@@ -1592,32 +1560,6 @@ pub(crate) mod tests {
         let l = m.locations().get("agent-config").expect("the location");
         assert_eq!(l.path, PathBuf::from(".claude"));
         assert_eq!(l.registers, vec!["issue"]);
-    }
-
-    #[test]
-    fn the_two_retired_keys_are_refused_by_name_with_their_replacement() {
-        // `deny_unknown_fields` refuses both anyway and names neither replacement. A manifest
-        // is migrated once, and the message is the whole of what the migrator gets.
-        let base = "[project]\nname = \"a\"\ncomponents = []\n\n\
-             [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
-        let e = Manifest::parse(
-            Path::new("/nowhere"),
-            &format!("{base}\n[interpretations]\ndir = \"i\"\nconcerns = []\n"),
-        )
-        .expect_err("the retired table");
-        assert!(
-            e.contains("[registers.") && e.contains("[locations."),
-            "{e}"
-        );
-        let with_trackers = base.replace(
-            "components = []",
-            "components = []\nadditional-trackers = [\"x/open-issues.md\"]",
-        );
-        let e =
-            Manifest::parse(Path::new("/nowhere"), &with_trackers).expect_err("the retired key");
-        assert!(e.contains("[locations."), "{e}");
     }
 
     #[test]

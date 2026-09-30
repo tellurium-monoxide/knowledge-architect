@@ -56,6 +56,13 @@ pub enum Observation {
     /// a pointer no check resolves and no reader is told about, which is how the retired bare
     /// form dangled silently through one relocation.
     UnanchoredPath(String),
+    /// A backticked span that opens on one line and closes on the next, and that is a
+    /// reference candidate or a path once its two halves are joined: the joined text.
+    ///
+    /// Read line by line, neither half is a closed span, so without this the pointer is
+    /// resolved by nothing. It is reported rather than resolved: a renderer shows the line
+    /// break as a space inside the span.
+    WrappedSpan(String),
     /// A reference form the `@` grammar retired.
     ///
     /// Reported, never ignored: it has no `@`, so without this a pointer the migration
@@ -138,23 +145,57 @@ static AT_SPAN: LazyLock<Regex> =
 /// A backticked span of path characters holding a slash and no `@`: the unanchored-path
 /// lint's input.
 ///
-/// A span holding a space, a colon or an angle bracket is not path-shaped, which is what
-/// lets meta-notation like a bracketed placeholder document the syntax without a carve-out.
-/// Requiring two segments is what keeps prose livable: a single segment with a trailing slash
-/// names a nearby directory, the way a bare filename names a file, and neither is a pointer.
+/// A span holding a space, an angle bracket, or a colon anywhere but in a line suffix is not
+/// path-shaped, which is what lets meta-notation like a bracketed placeholder document the
+/// syntax without a carve-out. A line suffix, `:12` or `:12-14`, and a heading fragment after
+/// a `#` keep the span a path: the first is what an editor prints for a location, and
+/// each still points at a file. Requiring two segments is what keeps prose livable: a single
+/// segment with a trailing slash names a nearby directory, the way a bare filename names a
+/// file, and neither is a pointer.
 static PATH_SHAPED: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"`([\w.*+-]*/[\w.*/+-]*)`").unwrap());
-/// A markdown link: `[text](target)`. The target may not hold a space or a closing
-/// parenthesis, which is the shape every link in this tree has.
-static MD_LINK: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\[[^\]]*\]\(([^)\s]+)\)").unwrap());
+    LazyLock::new(|| Regex::new(r"`([\w.*+-]*/[\w.*/+-]*(?::\d+(?:-\d+)?|#[\w-]+)?)`").unwrap());
+/// The whole of a span's text that makes it a pointer, for a span joined across a line
+/// break: a reference candidate as [`AT_SPAN`] reads one, or a path as [`PATH_SHAPED`] does.
+static AT_WHOLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^[^\s`<>@]*@[^\s`<>]*$").unwrap());
+static PATH_WHOLE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^[\w.*+-]*/[\w.*/+-]*(?::\d+(?:-\d+)?|#[\w-]+)?$").unwrap());
+/// A code span delimited by two backticks, whose content may hold a single one.
+static DOUBLE_TICK: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"``[^`]*``").unwrap());
+/// A markdown inline link: `[text](target)`, `[text](<target>)`, either with a title after
+/// it in double or single quotes. A bare target holds no space; an angle-bracketed one may,
+/// as CommonMark reads it. The target is the first or the second group.
+static MD_LINK: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r#"\[[^\]]*\]\((?:<([^>]*)>|([^)\s<]+))(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)"#).unwrap()
+});
+/// A markdown link definition, `[label]: target`, at the head of a line: what a
+/// reference-style link `[text][label]` resolves through. A label opening with `^` is a
+/// footnote, whose definition holds text rather than a target.
+static LINK_DEF: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^ {0,3}\[[^\]^][^\]]*\]:\s*(?:<([^>]*)>|(\S+))").unwrap());
+
+/// Whether a span's text, joined across a line break, is a pointer.
+fn pointer_shaped(text: &str) -> bool {
+    AT_WHOLE.is_match(text) || (PATH_WHOLE.is_match(text) && segments(text) >= 2)
+}
+
+/// The number of non-empty path segments, before any line suffix or fragment.
+fn segments(span: &str) -> usize {
+    let path = span.split([':', '#']).next().unwrap_or(span);
+    path.split('/').filter(|s| !s.is_empty()).count()
+}
 
 /// Scan one parsed document.
 pub fn scan(parsed: &Parsed) -> Vec<Located> {
     let fenced: std::collections::HashSet<u32> = parsed.fenced.iter().copied().collect();
     let inert: std::collections::HashSet<u32> = parsed.inert.iter().copied().collect();
     let mut out = Vec::new();
+    // Recorded at the line the span opens on, which the per-line `push` below cannot name.
+    let mut wrapped = Vec::new();
     for region in &parsed.prose {
         let mut line_start = 0usize;
+        // A backticked span the previous line left open: that line, and the text after the
+        // opening backtick.
+        let mut open: Option<(u32, String)> = None;
         for (i, line) in region.text.split('\n').enumerate() {
             let at = line_start;
             line_start += line.len() + 1;
@@ -162,6 +203,7 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
             // Commented out. Parking a section by wrapping it in an HTML comment left its
             // slug defined and its anchor pointing at text no reader sees.
             if inert.contains(&n) {
+                open = None;
                 continue;
             }
             let mut push = |what| out.push(Located { line: n, what });
@@ -235,11 +277,53 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
             // link is an illustration, like a fenced slug, and one inside a code span is
             // typography showing the shape: the design README naming check reads links, and
             // an example must neither discharge a real obligation nor owe a real target.
+            // **A span the previous line left open closes at this line's first backtick.**
+            // Its two halves joined are recorded when they make a pointer, and the closing
+            // half is blanked for the patterns below, or its backtick would pair with the next
+            // one and shift every span after it. A fence holds shell text, where a backtick
+            // is literal, so a span neither opens nor closes there. Blanking keeps every byte
+            // offset, which `data` reads.
+            let mut line = std::borrow::Cow::Borrowed(line);
+            match open.take() {
+                Some((opened, head)) if !illustration => {
+                    if let Some(close) = line.find('`') {
+                        let joined = format!("{}{}", head.trim(), line[..close].trim());
+                        if pointer_shaped(&joined) {
+                            wrapped.push(Located {
+                                line: opened,
+                                what: Observation::WrappedSpan(joined),
+                            });
+                        }
+                        line = std::borrow::Cow::Owned(format!(
+                            "{}{}",
+                            " ".repeat(close + 1),
+                            &line[close + 1..]
+                        ));
+                    }
+                }
+                _ => {}
+            }
+            if !illustration {
+                let singles =
+                    DOUBLE_TICK.replace_all(&line, |c: &regex::Captures| " ".repeat(c[0].len()));
+                if singles.matches('`').count() % 2 == 1 {
+                    let from = singles.rfind('`').unwrap() + 1;
+                    open = Some((n, line[from..].to_string()));
+                }
+            }
+            let line: &str = &line;
             for c in MD_LINK.captures_iter(line) {
                 if illustration || data(c.get(0).unwrap()) {
                     continue;
                 }
-                push(Observation::Link(c[1].to_string()));
+                let target = c.get(1).or_else(|| c.get(2)).unwrap();
+                push(Observation::Link(target.as_str().to_string()));
+            }
+            if let Some(c) = LINK_DEF.captures(line) {
+                if !illustration && !data(c.get(0).unwrap()) {
+                    let target = c.get(1).or_else(|| c.get(2)).unwrap();
+                    push(Observation::Link(target.as_str().to_string()));
+                }
             }
             for c in RETIRED_SLUG_REF.captures_iter(line) {
                 let whole = c.get(0).unwrap().as_str();
@@ -253,13 +337,14 @@ pub fn scan(parsed: &Parsed) -> Vec<Located> {
             // The two classes are disjoint on `@`, so a span is one or the other and never
             // both.
             for c in PATH_SHAPED.captures_iter(line) {
-                if c[1].split('/').filter(|s| !s.is_empty()).count() < 2 {
+                if segments(&c[1]) < 2 {
                     continue;
                 }
                 push(Observation::UnanchoredPath(c[1].to_string()));
             }
         }
     }
+    out.extend(wrapped);
     out.sort_by_key(|l| l.line);
     out
 }
@@ -589,5 +674,146 @@ mod tests {
                     or `https://a.test/docs/design/a.md`";
         assert_eq!(unanchored(text), Vec::<String>::new());
         assert_eq!(spans(text), Vec::<String>::new());
+    }
+
+    /// The links a text yields, as their targets.
+    fn links(text: &str) -> Vec<String> {
+        scan_md(text)
+            .into_iter()
+            .filter_map(|o| match o {
+                Observation::Link(t) => Some(t),
+                _ => None,
+            })
+            .collect()
+    }
+
+    /// The spans a text yields that cross a line break, joined.
+    fn wrapped(text: &str) -> Vec<String> {
+        scan_md(text)
+            .into_iter()
+            .filter_map(|o| match o {
+                Observation::WrappedSpan(s) => Some(s),
+                _ => None,
+            })
+            .collect()
+    }
+
+    #[test]
+    fn a_pointer_span_across_a_line_break_is_recorded_joined_and_nothing_else_is_misread() {
+        // Each half holds no closed span, so read line by line the reference was neither a
+        // span nor a path: resolved by nothing. The closing backtick on the second line
+        // must not pair with the next one, or every span after it is shifted.
+        let text =
+            "the walk in `path@an-engine@src/\nrules/layers.rs` reads `path@a@b.md` and `c/d.md`\n";
+        assert_eq!(
+            wrapped(text),
+            vec!["path@an-engine@src/rules/layers.rs".to_string()]
+        );
+        assert_eq!(spans(text), vec!["path@a@b.md".to_string()]);
+        assert_eq!(unanchored(text), vec!["c/d.md".to_string()]);
+        // A path split the same way is recorded too.
+        assert_eq!(
+            wrapped("see `docs/design/\na.md` here\n"),
+            vec!["docs/design/a.md".to_string()]
+        );
+    }
+
+    #[test]
+    fn a_wrapped_span_is_located_at_the_line_it_opens_on() {
+        let text = "one\ntwo `path@a@\nb.md` three\n";
+        let located: Vec<u32> = scan(&crate::source::md::parse(text))
+            .into_iter()
+            .filter(|l| matches!(l.what, Observation::WrappedSpan(_)))
+            .map(|l| l.line)
+            .collect();
+        assert_eq!(located, vec![2]);
+    }
+
+    #[test]
+    fn a_wrapped_span_that_is_no_pointer_is_not_recorded() {
+        // Prose in a code span wraps across lines all the time; only a span that would be a
+        // reference or a path once joined is a pointer nothing reads.
+        for text in [
+            "a `cargo x\nsoak` run\n",
+            "the `**bold\nclause.**` form\n",
+            "one `word/\n` and nothing\n",
+        ] {
+            assert_eq!(wrapped(text), Vec::<String>::new(), "{text}");
+        }
+        // A span a fence holds is an illustration of shell text, where a backtick is literal.
+        assert_eq!(
+            wrapped("```sh\necho `path@a@\nb.md`\n```\n"),
+            Vec::<String>::new()
+        );
+    }
+
+    #[test]
+    fn the_closing_half_of_a_wrapped_span_opens_nothing_on_its_line() {
+        // The second line holds the closing backtick and one whole span: three backticks. If
+        // the closing one still counted, the line would leave a span open, and the third
+        // line's first backtick would close it rather than open its own span.
+        let text = "in `path@a@\nb.md` and `c/d.md` here,\nthen `e/f.md` too\n";
+        assert_eq!(wrapped(text), vec!["path@a@b.md".to_string()]);
+        assert_eq!(
+            unanchored(text),
+            vec!["c/d.md".to_string(), "e/f.md".to_string()]
+        );
+    }
+
+    #[test]
+    fn a_fence_leaves_no_span_open_for_the_prose_after_it() {
+        // A closing fence is three backticks, an odd count: read as prose it would open a
+        // span, and the next line's first backtick would close it and shift every span on
+        // that line.
+        let text = "```sh\necho x\n```\nSee `path@a@b.md` and `c/d.md`.\n";
+        assert_eq!(spans(text), vec!["path@a@b.md".to_string()]);
+        assert_eq!(unanchored(text), vec!["c/d.md".to_string()]);
+        assert_eq!(wrapped(text), Vec::<String>::new());
+    }
+
+    #[test]
+    fn a_line_or_fragment_suffix_keeps_a_span_path_shaped() {
+        // The file-and-line idiom editors print, and a heading fragment: each is a pointer
+        // with no anchor, and the suffix used to put it outside the path class.
+        for span in ["notes/a.md:12", "notes/a.md:12-14", "notes/a.md#a-heading"] {
+            let text = format!("see `{span}`");
+            assert_eq!(unanchored(&text), vec![span.to_string()], "{span}");
+        }
+        // One segment stays a name, whatever its suffix.
+        assert_eq!(unanchored("see `a.md:12`"), Vec::<String>::new());
+    }
+
+    #[test]
+    fn an_angle_bracketed_or_titled_link_target_is_recorded_without_its_markup() {
+        assert_eq!(links("[t](<notes/a.md>)"), vec!["notes/a.md".to_string()]);
+        assert_eq!(
+            links("[t](<notes/my file.md>)"),
+            vec!["notes/my file.md".to_string()]
+        );
+        assert_eq!(
+            links("[t](notes/a.md \"A title\")"),
+            vec!["notes/a.md".to_string()]
+        );
+        assert_eq!(
+            links("[t](notes/a.md 'A title')"),
+            vec!["notes/a.md".to_string()]
+        );
+        assert_eq!(links("[t](notes/a.md)"), vec!["notes/a.md".to_string()]);
+    }
+
+    #[test]
+    fn a_link_definition_is_recorded_as_a_link_and_a_footnote_is_not() {
+        // A reference-style link resolves through its definition, so the definition is the
+        // target a renderer follows.
+        assert_eq!(
+            links("[t][m]\n\n[m]: notes/a.md\n"),
+            vec!["notes/a.md".to_string()]
+        );
+        assert_eq!(
+            links("   [m]: <notes/a.md> \"T\"\n"),
+            vec!["notes/a.md".to_string()]
+        );
+        assert_eq!(links("[^1]: a footnote\n"), Vec::<String>::new());
+        assert_eq!(links("`[m]: notes/a.md`\n"), Vec::<String>::new());
     }
 }

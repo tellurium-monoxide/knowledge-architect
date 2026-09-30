@@ -4,8 +4,6 @@
 //! own `knowledge.toml` and its own documents, and it declares no table the core does not own.
 //! That is what makes these tests worth more than the in-memory ones — a fixture written as a
 //! string cannot exercise the walk, the exclusions, or a layout different from this repository's.
-//! The rules extension's tests over whole projects, with a corpus, are in
-//! `path@rules-corpus@tests/`.
 //!
 //! The directory stays excluded by this repository's own manifest: each mock project is a
 //! complete foreign project, and its planted defects must be reported by the test that runs the

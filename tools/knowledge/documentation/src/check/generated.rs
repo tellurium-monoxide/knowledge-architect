@@ -96,8 +96,7 @@ mod tests {
 
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+             ";
         let manifest = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         let model = Model::from_documents(Vec::new());
         let committed = HashMap::new();

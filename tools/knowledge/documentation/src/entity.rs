@@ -776,8 +776,7 @@ mod tests {
     fn anchors() -> Anchors {
         let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+             ";
         Anchors::of(&Manifest::parse(Path::new("/nowhere"), text).expect("a declaration"))
     }
 
@@ -1061,8 +1060,7 @@ mod tests {
              [registers.note]\nscope = \"component\"\nshape = \"heading\"\ndir = \"notes\"\n\
              level = 5\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+             ";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         assert!(m.complaints().is_empty(), "{:#?}", m.complaints());
         let a = Anchors::of(&m);
@@ -1106,8 +1104,7 @@ mod tests {
              [registers.note]\nscope = \"component\"\nshape = \"heading\"\ndir = \"notes\"\n\
              level = 6\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+             ";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         let a = Anchors::of(&m);
         let e = table_under(
@@ -1219,8 +1216,7 @@ mod tests {
              [locations.notes]\npath = \"notes\"\nregisters = [\"reading\", \"tripwire\"]\n\n\
              [registers.reading]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"readings\"\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+             ";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         let a = Anchors::of(&m);
         assert!(a.kinds_listed().contains("reading"));
@@ -1259,8 +1255,7 @@ mod tests {
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              [locations.notes]\npath = \"notes\"\nregisters = [\"tripwire\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+             ";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         let a = Anchors::of(&m);
         let e = table_under(
@@ -1394,8 +1389,7 @@ mod tests {
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              [registers.subpath]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"subpaths\"\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+             ";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         let a = Anchors::of(&m);
         assert_eq!(a.kind("subpath"), Some(Kind::new("subpath")));

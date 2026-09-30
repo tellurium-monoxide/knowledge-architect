@@ -294,20 +294,18 @@ mod phase_tests {
         let text = format!(
             "[project]\nname = \"p\"\ncomponents = []\n\n{extra}\n\
              [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
+             "
         );
         Manifest::parse(std::path::Path::new("/nowhere"), &text).expect("a declaration")
     }
 
-    /// The tree every component owes, in the file-shaped heading homes, plus the corpus.
+    /// The tree every component owes, in the file-shaped heading homes.
     /// Directories are listed too: what exists is asked of `present`, and a checkout's
     /// listing holds a directory wherever a file sits under it.
     fn complete_tree() -> HashSet<PathBuf> {
         [
             "docs",
             "docs/open-issues",
-            "r",
             "README.md",
             "CLAUDE.md",
             "docs/rejected-alternatives.md",
@@ -316,10 +314,6 @@ mod phase_tests {
             "docs/tripwires.md",
             "docs/open-issues/README.md",
             "docs/open-issues/index.md",
-            "r/t",
-            "r/v",
-            "r/p",
-            "r/m",
         ]
         .iter()
         .map(PathBuf::from)
@@ -370,26 +364,6 @@ mod phase_tests {
             .expect_err("the run stops");
         assert_eq!(stop.phase, Phase::Resolution);
         assert_eq!(stop.findings.len(), 2, "{:#?}", stop.findings);
-    }
-
-    #[test]
-    fn a_corpus_at_the_root_is_a_legal_declaration() {
-        // `dir = "."` normalises to the empty path, which git never lists: the corpus rows
-        // are its four files, and the directory itself is asserted by nothing.
-        let text = "[project]\nname = \"p\"\ncomponents = []\n\n\
-                    [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n\n\
-                    [rules]\ndir = \".\"\ntext = \"t\"\nbody-starts-at = 0\n\
-                    version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
-        let m = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration");
-        let mut present = complete_tree();
-        for rel in ["r", "r/t", "r/v", "r/p", "r/m"] {
-            present.remove(&PathBuf::from(rel));
-        }
-        for rel in ["t", "v", "p", "m"] {
-            present.insert(PathBuf::from(rel));
-        }
-        let outcome = foundation_over(&m, present, &Model::from_documents(Vec::new()));
-        assert!(outcome.is_ok(), "{:#?}", outcome.err());
     }
 
     #[test]

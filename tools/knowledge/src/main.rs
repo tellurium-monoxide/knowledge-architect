@@ -2,8 +2,7 @@
 //! `design@knowledge@the-core-cli-is-a-library-module`.
 //!
 //! A project whose manifest declares only what the core reads runs this. A project with a
-//! subject of its own builds a binary that registers the extension for it, as
-//! tools/rules-corpus/ does for this repository.
+//! subject of its own builds a binary that registers the extension for it.
 
 use std::path::Path;
 use std::process::ExitCode;
@@ -52,5 +51,29 @@ fn main() -> ExitCode {
             eprintln!("error: {e}");
             ExitCode::from(2)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // clap's own consistency check over the whole derive, the core's commands flattened in:
+    // two arguments claiming one name, a conflict naming an argument that does not exist. A
+    // malformed declaration is otherwise found at the first invocation that reaches it, per
+    // `design@knowledge@arguments-parse-through-clap`.
+    #[test]
+    fn cli_declaration_is_consistent() {
+        use clap::CommandFactory;
+        Cli::command().debug_assert();
+    }
+
+    /// The claim: an argument nobody declared is refused while parsing, which exits 2, rather
+    /// than ignored.
+    #[test]
+    fn an_unknown_argument_is_refused() {
+        assert!(Cli::try_parse_from(["knowledge", "check"]).is_ok());
+        assert!(Cli::try_parse_from(["knowledge", "check", "--only", "references"]).is_err());
+        assert!(Cli::try_parse_from(["knowledge", "no-such-command"]).is_err());
     }
 }

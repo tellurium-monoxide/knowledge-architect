@@ -1,5 +1,5 @@
 ---
-kind: design
+kind: deferred
 ---
 # A submodule is a project of its own, or nothing, and the tool has no model for either
 
@@ -8,7 +8,7 @@ kind: design
 The walk reads nothing under a submodule's gitlink entry and names it as a phase-2 finding, and
 an `exclude` row is the declared silence. Behind the finding is a question the tool has not
 decided: what a submodule is to a project this tool checks. Two answers are defensible, and this
-entry parks both until a project holds one.
+entry parks both until a project needs a submodule that uses the tool itself.
 
 ## Details
 
@@ -41,12 +41,13 @@ submodule is a second manifest inside the first's tree.
 
 A project vendored as a submodule is conformant by vacuum until its gitlink is excluded, and the
 finding is what says so. The cost of deciding early is a design discussion and a modelling
-change nobody needs yet; the cost of deciding late is nil while no checked project holds a
-submodule.
+change nobody needs yet; the cost of deciding late is nil while no checked project needs a
+submodule that uses the tool.
 
-### What would close it
+### Trigger
 
-The first project this tool checks that holds a submodule, or the tool's preparation for
-publication outside this repository, whichever comes first: that is the discussion at which
-the two readings above are argued, and it starts from them. Until then, nothing is owed: the
-gitlink is named, and the row that keeps it is a declaration a reader can find.
+A project needs a submodule that is itself checked by this tool: a project of the owner's, or a
+request from a user of the tool. Whoever adds that submodule has to decide how its documents are
+checked, so the two readings above are part of that work, and the discussion starts from them.
+A submodule that does not use the tool does not trigger this entry: an `exclude` row naming its
+gitlink is the declared silence, and the phase-2 finding asks for it.

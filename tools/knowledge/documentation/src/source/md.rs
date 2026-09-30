@@ -426,10 +426,10 @@ mod tests {
         // instead leaves every code span after the block shifted by the block's length, and
         // nothing else in the suite reads an offset past one. Non-ASCII inside the block is
         // the case that makes "byte for byte" more than "character for character".
-        let text = "---\nkind: défaut\n---\n\nsee `path@thaum@docs/goals.md` here\n";
+        let text = "---\nkind: défaut\n---\n\nsee `path@a-project@docs/goals.md` here\n";
         let p = parse(text);
         let (a, b) = p.prose[0].code[0];
-        assert_eq!(&p.prose[0].text[a..b], "`path@thaum@docs/goals.md`");
+        assert_eq!(&p.prose[0].text[a..b], "`path@a-project@docs/goals.md`");
         assert!(p.prose[0].is_code(a) && !p.prose[0].is_code(a - 1));
     }
 

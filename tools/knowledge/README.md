@@ -1,15 +1,15 @@
 # Knowledge checker
 
 How a project's knowledge is held: its documents, the references between them and the registers
-they carry. This Component is the generic core; this repository's Comprehensive Rules half is an
-extension of it, `path@rules-corpus@README.md`, per `design@thaum@knowledge-is-a-generic-core`.
+they carry. This Component is the generic core. A subject that belongs to one project is an
+extension of it, per `design@knowledge@an-extension-plugs-in-through-phased-hooks`.
 
-**Two binaries.** `cargo knowledge` runs the binary of rules-corpus: every command below, with
-the rules extension registered, reached through a cargo alias so nothing has to be installed. The
-core's own binary, the package `knowledge`, runs the same commands but `rules` with no extension.
-Over a manifest holding a table no extension of it claims, such as `[rules]`, it reports that
-table in phase 1, rather than skip in silence what the table configures, per
-`design@knowledge@an-extension-claims-its-manifest-tables`.
+**The core's binary, and a binary per set of extensions.** The core's own binary, the package
+`knowledge`, runs every command below with no extension registered. A binary that registers
+extensions runs the same commands unchanged, and its extensions' own commands beside them, per
+`design@knowledge@the-core-cli-is-a-library-module`. Over a manifest holding a table no
+extension of the binary claims, the binary reports that table in phase 1, rather than skip in
+silence what the table configures, per `design@knowledge@an-extension-claims-its-manifest-tables`.
 
 **It needs `git` 2.36 or newer on the path, and a project inside a git worktree.** What the tool reads is what
 `git ls-files` reports from the project root, so every pattern git honours decides the walk,
@@ -33,11 +33,9 @@ cargo knowledge model                     every observation the walk produced
 cargo knowledge commits <range>           judge every commit in the range, message and tree, against its own tree
 ```
 
-The `rules` commands are the rules extension's, in `path@rules-corpus@README.md`.
-
 ## Exit codes
 
-Three, per `design@thaum@exit-code-ladder`, and the third is what makes the other two mean anything.
+Three, per `design@knowledge@exit-code-ladder`, and the third is what makes the other two mean anything.
 
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
@@ -165,8 +163,8 @@ stdout gives a file that is only observations.
 ## Registers
 
 **Four registers are compiled in** — `design`, `goal`, `tripwire` and `issue` — because they are
-what the word component means to this tool. A project declares further ones in
-`path@thaum@knowledge.toml`:
+what the word component means to this tool. A project declares further ones in its
+`knowledge.toml`:
 
 ```toml
 [locations.rules]              # a directory carrying a subset of the registers
@@ -251,13 +249,13 @@ git's ignore rules, which `git check-ignore` answers for the files on disk only.
 
 ## What to respect
 
-**Nothing about this repository is compiled into the tool.** Every list a check reads comes from
-`path@thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
-root — so one binary checks this repository and a mock project under
-`path@knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says
-so there, in one place, with a reason beside it. What is compiled in is the directory of each
-Component a binary's libraries belong to, so that the string literals of the tool's own source are
-read as data, per
-`design@knowledge@checker-source-literals-are-data`; that is a fact about the tool, not about any tree.
+**Nothing about a project is compiled into the tool.** Every list a check reads comes from the
+project's `knowledge.toml`, which is both the manifest and the marker that makes a directory a
+project root. So one binary checks any project and every mock project under
+`path@knowledge@tests/projects/` with no special case. A path that should not be checked says so
+there, in one place, with a reason beside it. What is compiled in describes the tool, not a tree:
+the directory of each Component a binary's libraries belong to, so that the string literals of
+the tool's own source are read as data. The decision is
+`design@knowledge@nothing-of-a-project-is-compiled-in`.
 
 Read `path@knowledge@docs/design.md` before changing how it works.

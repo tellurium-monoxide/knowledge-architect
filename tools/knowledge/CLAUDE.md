@@ -1,14 +1,15 @@
 # Knowledge checker
 
-**Nothing about this repository is compiled into the tool.** Every list a check reads comes from
-`path@thaum@knowledge.toml`, which is both the manifest and the marker that makes a directory a project
-root — so one binary checks this repository and a mock project under
-`path@knowledge@tests/projects/` with no special case anywhere. A path that should not be checked says so
-there, in one place, with a reason beside it. What is compiled in is the directory of each
-Component a binary's libraries belong to — `documentation::component_dir` for the core,
-`citations::component_dir` for the rules extension, each the parent of its crate's
-`CARGO_MANIFEST_DIR` — so that the string literals of the tool's own source are read as data
-rather than as citations, per `design@knowledge@checker-source-literals-are-data`. Each crate's own
+**Nothing about a project is compiled into the tool**, per
+`design@knowledge@nothing-of-a-project-is-compiled-in`. Every list a check reads comes from the
+project's `knowledge.toml`, which is both the manifest and the marker that makes a directory a
+project root. So one binary checks any project and a mock project under
+`path@knowledge@tests/projects/` with no special case anywhere. A path that should not be checked
+says so there, in one place, with a reason beside it. What is compiled in is the directory of each
+Component a binary's libraries belong to — `documentation::component_dir` for the core, and the
+same function in each extension's library, each the parent of its crate's `CARGO_MANIFEST_DIR` —
+so that the string literals of the tool's own source are read as data, per
+`design@knowledge@checker-source-literals-are-data`. Each crate's own
 directory and package name are compiled in too, so a binary built from another checkout of the
 tool is refused, per `design@knowledge@a-foreign-build-is-refused`. That is a fact about the tool,
 not about any tree.
@@ -53,8 +54,7 @@ exclusions, a location and a declared register; `core` is the smallest conforman
 the tests of the core binary's refusal of a table it does not own. **Plant a phase-4 defect in
 `planted`, a phase-2 or phase-3 one in `unsound`, and nowhere else.** The core binary run from
 `dirhome`, `minimal` or `core` reports no finding; anything else it reports there is a defect in
-the tool or in the fixture. The rules extension's mocks, with a corpus, are
-`path@rules-corpus@tests/projects/`.
+the tool or in the fixture.
 
 **A test about commit messages builds its own project.** `commits` fails every commit whose tree
 carries a finding, the last one included, so each commit a test makes has a tree with none,

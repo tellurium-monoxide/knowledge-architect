@@ -2,8 +2,7 @@
 # one planted defect per core check of the last phase, and a test asserts the findings
 # themselves rather than merely that something failed. Every core check owes a row in
 # `PLANTED` in `path@knowledge@tests/mock_projects.rs`, so a new defect goes here and its count
-# goes there. Its rules twin, planting the rules checks' defects, is
-# `path@rules-corpus@tests/projects/planted/`.
+# goes there.
 
 [project]
 name = "planted"

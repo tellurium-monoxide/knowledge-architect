@@ -105,13 +105,35 @@ pub fn judge(
                     )),
                     Candidate::NotOne => {}
                 },
-                Observation::UnanchoredPath(span) => out.push(Finding::at(
+                Observation::UnanchoredPath(span) => {
+                    // A line suffix or a fragment is part of the span but no part of a path
+                    // reference, whose id is the file: the repair says to drop it.
+                    let located = span.contains([':', '#']);
+                    out.push(Finding::at(
+                        &doc.rel,
+                        l.line,
+                        format!("`{span}` is shaped like a path and names no anchor"),
+                        format!(
+                            "write `path@<anchor>@<path>`, `path@elsewhere@<path>` for a path \
+                             outside this tree, or `path@*@<path>` for every component's own \
+                             copy; or rephrase so the span is not path-shaped{}",
+                            if located {
+                                ". A reference names a file: drop the line number or the \
+                                 fragment, and name the function or the heading in prose"
+                            } else {
+                                ""
+                            }
+                        ),
+                    ))
+                }
+                Observation::WrappedSpan(span) => out.push(Finding::at(
                     &doc.rel,
                     l.line,
-                    format!("`{span}` is shaped like a path and names no anchor"),
-                    "write `path@<anchor>@<path>`, `path@elsewhere@<path>` for a path outside \
-                     this tree, or `path@*@<path>` for every component's own copy; or rephrase \
-                     so the span is not path-shaped",
+                    format!(
+                        "`{span}` crosses a line break, so no check reads it as the pointer it is"
+                    ),
+                    "keep the span on one line: a line break inside backticks is read as two \
+                     halves, and a renderer shows it as a space",
                 )),
                 Observation::Retired(RetiredForm::SlugRef(span)) => out.push(Finding::at(
                     &doc.rel,
@@ -573,8 +595,7 @@ mod tests {
     fn manifest() -> Manifest {
         let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+             ";
         Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration")
     }
 
@@ -1219,6 +1240,39 @@ mod tests {
         );
     }
 
+    #[test]
+    fn a_located_path_is_told_to_drop_its_suffix() {
+        let m = manifest();
+        for span in ["notes/real/a.md:12", "notes/real/a.md#a-heading"] {
+            let (found, _) = checked(&m, &format!("See `{span}`.\n"), &tree());
+            assert_eq!(found.len(), 1, "{found:#?}");
+            assert!(
+                found[0].contains("names no anchor") && found[0].contains("drop the"),
+                "{found:#?}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_pointer_span_across_a_line_break_is_a_finding_naming_it_joined() {
+        // Whether it would resolve is not asked: the span is reported for its shape, and
+        // the repair puts it on one line, where this check reads it.
+        let m = manifest();
+        let text = "The walk in `path@a-part@notes/\nreal/a.md` reads it.\n";
+        let (found, counts) = checked(&m, text, &tree());
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("`path@a-part@notes/real/a.md`")
+                && found[0].contains("crosses a line break")
+                && found[0].contains("one line"),
+            "{found:#?}"
+        );
+        assert_eq!(
+            counts.references, 0,
+            "a wrapped span is no reference until it is fixed"
+        );
+    }
+
     // --- links -----------------------------------------------------------------------
 
     #[test]
@@ -1274,6 +1328,31 @@ mod tests {
         let (found, counts) = checked_in(&m, at, ok, &present);
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
         assert_eq!(counts.links, 1, "only the relative link is this check's");
+    }
+
+    #[test]
+    fn an_angle_bracketed_a_titled_and_a_defined_target_resolve_like_a_plain_one() {
+        // An angle-bracketed target was read with its brackets and reported as dangling
+        // when the file existed; a titled one and a definition were read by nothing.
+        let m = manifest();
+        let present = vec![
+            "parts/a-part/notes/real/a.md".to_string(),
+            "parts/a-part/notes/real".to_string(),
+            "parts/a-part/notes".to_string(),
+            "parts/a-part".to_string(),
+        ];
+        let at = "parts/a-part/notes/README.md";
+        let ok = "[a](<real/a.md>) [b](real/a.md \"T\") [c][d]\n\n[d]: real/a.md\n";
+        let (found, counts) = checked_in(&m, at, ok, &present);
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+        assert_eq!(counts.links, 3);
+        let gone = "[a](<real/gone.md>) [b](real/gone.md \"T\") [c][d]\n\n[d]: real/gone.md\n";
+        let (found, _) = checked_in(&m, at, gone, &present);
+        assert_eq!(found.len(), 3, "{found:#?}");
+        assert!(
+            found.iter().all(|f| f.contains("does not exist")),
+            "{found:#?}"
+        );
     }
 
     #[test]

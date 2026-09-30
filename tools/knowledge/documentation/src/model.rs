@@ -375,6 +375,7 @@ fn describe(what: &Observation) -> (&'static str, String) {
         // As written, so a dumped row can be grepped for in the tree it came from.
         Observation::Span(span) => ("span", span.clone()),
         Observation::UnanchoredPath(span) => ("unanchored-path", span.clone()),
+        Observation::WrappedSpan(span) => ("wrapped-span", span.clone()),
         Observation::Retired(crate::scan::RetiredForm::SlugRef(span)) => {
             ("retired-slug-ref", span.clone())
         }

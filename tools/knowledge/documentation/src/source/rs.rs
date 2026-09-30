@@ -488,12 +488,12 @@ mod tests {
     fn in_data_mode_no_string_literal_is_prose_and_every_comment_still_is() {
         // The checker's own source. A literal in a call, in a binding or in a macro is
         // dropped alike, and the comment above stays a region with its scope.
-        const SRC: &str = "/// per the rule 613.8c\nfn f() {\n    let s = \"613.8c\";\n    \
-                           assert!(x, \"613.8c orders them\");\n    g(\"613.8c\");\n}\n";
+        const SRC: &str = "/// per note token-42\nfn f() {\n    let s = \"token-42\";\n    \
+                           assert!(x, \"token-42 orders them\");\n    g(\"token-42\");\n}\n";
         let p = super::parse(SRC, Literals::Data);
         assert_eq!(p.prose.len(), 1, "{:?}", p.prose);
         assert_eq!(p.prose[0].lines, vec![1]);
-        assert!(p.prose[0].text.contains(RULE));
+        assert!(p.prose[0].text.contains(TOKEN));
         assert_eq!(p.scope_at(3).map(|s| s.name.as_str()), Some("f"));
     }
 
@@ -558,42 +558,41 @@ mod tests {
     #[test]
     fn a_blockquote_across_doc_lines_is_one_region() {
         // The reason a run is the unit: judged line by line this is three fragments.
-        const SRC: &str =
-            "/// per the rule:\n/// > 100.1 A line.\n/// > continued here.\nfn f() {}\n";
+        const SRC: &str = "/// per the note:\n/// > A line.\n/// > continued here.\nfn f() {}\n";
         let p = parse(SRC);
         assert_eq!(p.prose.len(), 1);
-        const WANT: &str = "> 100.1 A line.\n> continued here.";
+        const WANT: &str = "> A line.\n> continued here.";
         assert!(p.prose[0].text.contains(WANT));
     }
 
-    /// A rule number the tests look for.
-    const RULE: &str = "613.8c";
+    /// A token the tests look for.
+    const TOKEN: &str = "token-42";
 
     #[test]
     fn a_named_string_is_test_data_and_an_unnamed_one_is_a_message() {
         // Bound to a name: a fixture. Outside the checker that is an address, a formatted
-        // figure, a line of output a parser is fed — rule-shaped by accident and data.
-        const FIXTURE: &str = "fn f() {\n    let s = \"613.8c\";\n}\n";
+        // figure, a line of output a parser is fed — data, whatever it looks like.
+        const FIXTURE: &str = "fn f() {\n    let s = \"token-42\";\n}\n";
         let fixture = parse(FIXTURE);
         assert!(
-            fixture.prose.iter().all(|r| !r.text.contains(RULE)),
+            fixture.prose.iter().all(|r| !r.text.contains(TOKEN)),
             "{:?}",
             fixture.prose
         );
-        // Not bound: an assertion's message, which cites the rule on purpose and belongs in
-        // the citation index like any other claim.
-        const MESSAGE: &str = "fn f() {\n    assert!(x, \"613.8c orders them\");\n}\n";
+        // Not bound: an assertion's message, written for a person to read, and prose like
+        // any other claim.
+        const MESSAGE: &str = "fn f() {\n    assert!(x, \"token-42 orders them\");\n}\n";
         let message = parse(MESSAGE);
         assert!(
-            message.prose.iter().any(|r| r.text.contains(RULE)),
+            message.prose.iter().any(|r| r.text.contains(TOKEN)),
             "{:?}",
             message.prose
         );
         // An argument is not the binding's value: the message is prose even here.
-        const INSIDE: &str = "fn f() {\n    let x = y.expect(\"613.8c orders them\");\n}\n";
+        const INSIDE: &str = "fn f() {\n    let x = y.expect(\"token-42 orders them\");\n}\n";
         let inside = parse(INSIDE);
         assert!(
-            inside.prose.iter().any(|r| r.text.contains(RULE)),
+            inside.prose.iter().any(|r| r.text.contains(TOKEN)),
             "{:?}",
             inside.prose
         );

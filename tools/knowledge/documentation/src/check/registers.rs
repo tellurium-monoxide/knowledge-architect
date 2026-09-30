@@ -553,15 +553,14 @@ mod tests {
         skip_dirs: &str,
         skip_files: &str,
         exclude: &str,
-        exempt: &str,
+        ext_files: &str,
     ) -> Manifest {
         let text = format!(
             "[project]\nname = \"a-project\"\ncomponents = [{components}]\n\n\
              {extra}\n\
              [walk]\nskip-dirs = {skip_dirs}\nskip-files = {skip_files}\n\
              exclude = {exclude}\n\n\
-             [rules]\nexempt-files = {exempt}\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n"
+             [ext]\nfiles = {ext_files}\n"
         );
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
     }

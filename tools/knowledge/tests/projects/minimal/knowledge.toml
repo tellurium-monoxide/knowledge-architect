@@ -3,7 +3,7 @@
 # each shape: `reading`, a file register whose instance is grouped by a `register.toml`, and
 # `note`, a heading register. It exercises all three exclusion kinds, both single-file
 # heading-home shapes, and three file-register instances at once. It declares no table the core
-# does not own. Its rules twin, with a corpus, is `path@rules-corpus@tests/projects/minimal/`.
+# does not own.
 
 [project]
 name = "minimal"

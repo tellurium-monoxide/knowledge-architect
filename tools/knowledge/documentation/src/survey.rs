@@ -208,9 +208,7 @@ mod tests {
         let manifest = Manifest::parse(
             Path::new("/nowhere"),
             "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
-             skip-files = []\nexclude = []\n\n[rules]\n\
-             dir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\nversion = \"v\"\n\
-             past = \"p\"\nmanifest = \"m\"\n",
+             skip-files = []\nexclude = []\n",
         )
         .expect("a declaration");
         let model = Model::from_documents(Vec::new());
@@ -249,9 +247,7 @@ mod tests {
         let manifest = Manifest::parse(
             Path::new("/nowhere"),
             "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = [\"old\"]\n\
-             skip-files = [\"notes/a\\nb.md\"]\nexclude = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\nversion = \"v\"\n\
-             past = \"p\"\nmanifest = \"m\"\n",
+             skip-files = [\"notes/a\\nb.md\"]\nexclude = []\n",
         )
         .expect("a declaration");
         let model = Model::from_documents(Vec::new());

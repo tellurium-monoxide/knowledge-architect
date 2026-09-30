@@ -75,9 +75,9 @@ over this repository growing past a few seconds is what would reopen it.
 
 **Families named for the subjects that read them** — lost to `design@knowledge@phases-gate-the-report`.
 `live`. No selection exists to name families for, and the reason it lost while one did holds
-against any that returns: nothing about this repository is compiled into the tool, per
-`path@thaum@tools/README.md`, and a subject's name inside the parser is exactly that repository
-knowledge, compiled in.
+against any that returns: nothing about a project is compiled into the tool, per
+`design@knowledge@nothing-of-a-project-is-compiled-in`, and a subject's name inside the parser
+is exactly that project's knowledge, compiled in.
 
 **One family per invocation, instead of a set** — lost to `design@knowledge@phases-gate-the-report`.
 `live`. No selection exists, and the reason it lost while one did, from
@@ -278,12 +278,20 @@ manifest, with no second configuration file to find. It loses on where the file 
 root component's own issue directory would carry the groups of every other component's issue
 instance, which is the one-home failure written into the layout.
 
+**One link shape, the plain inline form with a spaceless target**, so that the scanner stays
+one pattern — lost to `design@knowledge@links-are-navigation-rows`. `live`. A row written in
+another shape was not silent: an angle-bracketed target was read with its brackets and an
+existing file was reported as missing, which a test in a navigation README showed. A directory
+home's README written with link definitions would have been reported as linking none of its
+subdocuments. Both are wrong findings, where the head had judged the gap to be a silence.
+
 **Refusing to load a manifest whose register declaration is wrong** — lost to
 `design@knowledge@registers-are-declared`. `live`. A declaration the tool cannot act on is a could-not-run
-by `design@thaum@exit-code-ladder`, and exiting 2 is what the retired keys do. It loses for the case where
-the tool CAN act: a bad `dir` on a built-in has a compiled default to fall back on, so refusing the
-whole run would report nothing at all about the tree — and nothing at all is what a session reads
-as conformance. The two retired keys keep the refusal because there is no default to fall back on.
+by `design@knowledge@exit-code-ladder`, and exiting 2 is what a manifest the grammar cannot
+parse does, a key of `[project]` it does not know included. It loses for the case where the tool
+CAN act: a bad `dir` on a built-in has a compiled default to fall back on, so refusing the whole
+run would report nothing at all about the tree — and nothing at all is what a session reads as
+conformance. An unknown key keeps the refusal because there is no default to fall back on.
 
 **An open set of issue kinds, the label read off each entry as written** — lost to
 `design@knowledge@a-file-register-is-a-directory-of-entries`. `live`. It was the incumbent: the listing

@@ -4,16 +4,38 @@ Recorded intent for this tool: how it is built internally, and why. Present tens
 carrying a slug anchor, cited from elsewhere with `knowledge` as its component. What lost to a decision here is
 `path@knowledge@docs/rejected-alternatives.md`, and `recording-a-decision` owns the shape.
 
-**What belongs here rather than in `path@thaum@docs/design.md`:** a decision that does **not** survive
-deleting this tool. How it works and how the pieces inside divide the work belongs here.
+**What belongs here:** a decision that does **not** survive deleting this tool. How it works and
+how the pieces inside divide the work belongs here.
 
-What otherwise shapes it is `path@thaum@tools/README.md`, `knowledge.toml`, and the module documentation at
-the top of each file under `path@knowledge@documentation/src/` and `path@knowledge@src/`.
+What otherwise shapes it is the module documentation at the top of each file under
+`path@knowledge@documentation/src/` and `path@knowledge@src/`.
 
 The heads are grouped by subject. A group heading carries no decision; each decision is one
 level-three head below it.
 
 ## 1. The shape of a run
+
+### Nothing about a project is compiled into the tool, and the manifest declares every list a check reads `##nothing-of-a-project-is-compiled-in`
+
+Every list a check reads comes from the project's `knowledge.toml`: the components, the
+locations, the registers, the walk's exclusions. The manifest is also the marker that makes a
+directory a project root. So one binary checks any project, and every mock project under
+`path@knowledge@tests/projects/`, with no special case in the code. A path that must not be
+checked is declared there, in one place, with its reason beside it.
+
+The constraint derives from `goal@knowledge@documentation-half-publishes-alone`. A list
+compiled in for one project is a list every other project is checked against. It also keeps the
+tests honest: a mock runs the same code path as a real tree, so a test over a mock tests the
+code that checks the real tree.
+
+Three things are compiled in, and none of them describes a project:
+
+- **What the word _component_ means**: the documents a component carries and the four built-in
+  registers, per `design@knowledge@components-carry-the-same-documents`.
+- **The directory of each Component of the tool's own source**, so that its string literals are
+  read as data, per `design@knowledge@checker-source-literals-are-data`.
+- **Each crate's own directory and package name**, so that a binary built from another checkout
+  is refused, per `design@knowledge@a-foreign-build-is-refused`.
 
 ### The model is built once, and every check is a pure function over it `##model-then-checks`
 
@@ -186,6 +208,43 @@ into every binary that registers an extension, and the copies would drift. The h
 extension's own commands need from a run, such as assembling a complete working tree, are public
 in the same module for the same reason.
 
+### Every command's exit code says whether it ran before it says what it found `##exit-code-ladder`
+
+| code | meaning |
+| ---- | ---------------------------------------------------------------------- |
+| 0    | the command ran, and its subject is in order                           |
+| 1    | the command ran, and reports a negative answer about its subject       |
+| 2    | the command could not run: bad arguments, no project, unreadable input |
+
+This binds the core's commands in every binary that offers them, per
+`design@knowledge@the-core-cli-is-a-library-module`. `path@knowledge@README.md` lists which
+outcome of each command maps to which code.
+
+**The third code is what makes the other two mean anything.** A project runs `check` and
+`commits` as gates, in CI and in a session, and reads the exit code without reading the output.
+Without code 2, a mistyped invocation or an unreadable input is indistinguishable from a tree
+that fails its check, and a gate that treats both as a failure cannot say which one to repair.
+
+clap supplies 2 for a parse failure, per `design@knowledge@arguments-parse-through-clap`, so
+the boundary costs nothing at the parse. What the ladder costs is that a command routes its own
+unreadable-input errors to 2 rather than to the code it uses for a negative answer.
+
+### Every command's arguments are declared through clap, and every binary tests its declaration `##arguments-parse-through-clap`
+
+The core's commands are a clap `Subcommand` enum, `documentation::cli::Command`, and a binary
+that registers extensions flattens it into its own derive, per
+`design@knowledge@the-core-cli-is-a-library-module`. So clap is part of the core's public
+interface, and a binary built on the core parses through clap too.
+
+These binaries run blind, as gates, so an unknown flag or an invalid combination has to be a
+refusal rather than a no-op. A hand-written parser refuses only the combinations its author
+thought of. With clap, an unknown argument is refused by default, and exclusivity is a
+declaration (`conflicts_with`, `requires`, `ArgGroup`) that a test checks as a whole.
+
+**Each binary tests its own declaration**, with clap's `Command::debug_assert`, and asserts that
+an unknown argument is refused. A declaration is checked only by such a test: clap finds a
+malformed one at the first invocation that reaches it, not at build time.
+
 ### A parse that cannot be trusted is reported, never silent `##a-failed-parse-is-loud`
 
 A file the walk cannot read, a source the grammar cannot parse, and a source nested deeper than
@@ -339,10 +398,10 @@ the home of every `component`-scoped register — the four built-in ones, and an
 declares at that scope. A component that does not carry one it owes is a finding, and
 `path@knowledge@documentation/src/check/registers.rs` is where both directions are asserted.
 
-**Which components exist is declared, and what a component carries is compiled in.** That is the
-one exception to `path@thaum@tools/README.md`'s rule that nothing about a repository is compiled into the tool,
-and it is not an exception to it: the document list and the four built-in registers in
-`manifest.rs` are not this repository's, they are what the word _component_ means here. A project
+**Which components exist is declared, and what a component carries is compiled in.** That is
+not an exception to `design@knowledge@nothing-of-a-project-is-compiled-in`: the document list and
+the four built-in registers in `manifest.rs` belong to no project, they are what the word
+_component_ means here. A project
 free to declare its own set would be conformant with whatever it declared, which is the same as
 being checked against nothing.
 
@@ -416,12 +475,6 @@ the manifest without a table keyed by anchor, and the shape that avoids the tabl
 at the root — would put one component's groups in another's directory. Today the only such option
 is `groups`. A key other than `groups` is a finding, a file with no `groups` is a finding, and a
 `register.toml` beside a heading register is one too.
-
-**A manifest still written in the retired grammar is refused by name.** `[interpretations]` and
-`additional-trackers` each produce an error naming what replaces them, rather than the
-unknown-key message. A manifest is migrated once, and that message is the whole of what the
-migrator gets. A table an extension stops claiming gets no such message: the message would name
-an extension's table inside the core, so it is refused as any table no extension claims is.
 
 **A declaration that is wrong is a finding rather than a load failure, and it is absent from the
 configuration.** A manifest that will not load reports nothing at all, and nothing at all is what
@@ -730,6 +783,17 @@ rule, because widening it to "any span with two `@`" would report every email ad
 plus tag. `path@knowledge@docs/tripwires.md` guards the gap: a review finding a reference the scanner
 reported nothing for widens the rule to the shape found.
 
+**A span is one line.** A backticked span that opens on one line and closes on the next is a
+finding when its two halves, joined, would be a reference candidate or a path: read line by
+line, neither half is a closed span, so the pointer would be resolved by nothing, and a
+renderer shows the line break as a space inside it. A wrapped span that is no pointer, such as
+a command or a clause in backticks, is prose and reports nothing. A fence holds shell text,
+where a backtick is literal, so a span neither opens nor closes there.
+
+**A fullwidth at sign is not an `@`.** A span written with `＠` is no candidate, and nothing
+reports it. Reading lookalike characters as the grammar's would put every script's
+punctuation inside the tokenizer, and the census of walked markdown finds no such span.
+
 **The retired slug reference is a finding, permanently.** A backticked `<word>#<word>` names the
 form it was. It has no `@` and no two path segments, so without this clause a slug reference the
 migration missed would be silent, which is the founding failure class. The clause does not expire
@@ -756,9 +820,27 @@ has one tokenizer, the old two-segment form `<anchor>@<path>` is reported as an 
 position by `design@knowledge@candidate-rule-and-retired-forms`, and the unanchored lint is left with
 one job. There is no unanchored form: a backticked span of path characters with two or more
 segments and no `@` is a finding naming the grammar, so no pointer class passes unregistered.
-One segment is a name rather than a pointer, and a span holding a space, a colon or an angle
-bracket is not path-shaped, which is what lets documentation of the syntax show a placeholder
-with no carve-out.
+One segment is a name rather than a pointer, and a span holding a space, an angle bracket, or a
+colon anywhere but in a line suffix is not path-shaped, which is what lets documentation of
+the syntax show a placeholder with no carve-out.
+
+**A line suffix or a fragment keeps a span path-shaped.** A path followed by `:12`, the
+location an editor prints, and a path followed by a `#` and a heading fragment each point at a
+file, so each is a finding. Its repair names the file and drops the suffix: a reference is to a file,
+and a line number goes stale at the next edit.
+
+**Four shapes are outside the lint on purpose**, each silent:
+
+- a path in plain prose, with no backticks. The backticks are what mark a pointer, and plain
+  text stays free prose. The census of hand-written markdown finds three such paths.
+- a span holding a space, such as a path with a space in a name. It is prose as much as a
+  path, and one census hit was a URL, the other a phrase.
+- a span opening with `~/` or `$VAR/`. It names a path outside every tree this tool checks.
+- a span written with a backslash separator. No project this tool checks writes one, and the
+  census finds none.
+
+Each widening would be measured the way the two-segment rule was: a census of what it reports
+in a tree that is conformant.
 
 **The path is plain**: `..`, a `.` segment and a leading `/` are refused. An upward path is
 anchored at the wrong place by definition, and it is the shape that breaks when the referencing
@@ -767,7 +849,7 @@ file moves. The id is everything after the second `@`, so a path may itself hold
 **The deepest anchor wins, and inside means a proper descendant.** A reference whose target
 sits inside another anchor is refused with the right anchor named. What this buys is the
 same property `design@knowledge@a-slug-belongs-to-a-component` buys for every entity: relocating an
-anchor edits its one line of `path@thaum@knowledge.toml` and no document, and one fixed-string
+anchor edits its one line of the project's `knowledge.toml` and no document, and one fixed-string
 grep per anchor is an anchor's complete inbound-reference list. An anchor's own directory
 is the one target with no spelling under its own name, so it is named from an ancestor — a
 reference that names a location, which a move is expected to break.
@@ -834,12 +916,15 @@ against the linking file's own directory, under the same kind claim and the same
 an anchored path, in the references family; `check::registers` keeps the inverse assertion,
 that a directory home's README links every subdocument, for every heading register.
 
-**The accepted link is the plain inline form with a spaceless target**, one shape so the
-check stays one pattern. The other CommonMark shapes — reference-style, an angle-bracketed or
-quoted-title target — are outside the scanner: a row written in one surfaces as a dangling
-target or an unlinked subdocument rather than as a finding naming the shape, and that is
-judged close enough while this head states the accepted form. The shapes themselves are
-enumerated in `path@knowledge@docs/open-issues/`.
+**Every CommonMark link shape a row is written in is read, and resolved like the plain one.**
+The inline form `[text](target)`, with an angle-bracketed target that may hold a space, and
+with a title in double or single quotes after the target. And the definition `[label]: target`
+at the head of a line, which is the target a reference-style link `[text][label]` resolves
+through; a label opening with `^` is a footnote, whose definition holds text. An image,
+`![alt](target)`, is a link to its target.
+
+**An HTML link, `<a href="…">`, is not read.** Markdown is where a row is written, and the
+census of walked markdown finds no HTML link.
 
 **Markdown documents only.** In Rust prose a markdown link is rustdoc's mechanism, resolved by
 rustdoc against the crate namespace, and reading those as index rows would report every
@@ -907,8 +992,8 @@ Components: the core's, and the Component of each extension the binary registers
 the directory of the Component it belongs to, the parent of its own `CARGO_MANIFEST_DIR`
 evaluated at build time, and the binary hands the list of its libraries' directories to the walk.
 A library's own directory would not do: the core library's leaves the core's binary and tests
-outside it, and a binary sees only the libraries it depends on. The alias in
-`path@thaum@.cargo/config.toml` builds the binary from the checkout on every invocation, so each
+outside it, and a binary sees only the libraries it depends on. A binary run
+through a cargo alias over `cargo run` is built from the checkout on every invocation, so each
 compiled path is the tree being checked, unless another checkout shares the target directory,
 which `design@knowledge@a-foreign-build-is-refused` refuses. Once the core is consumed as a published crate, its
 directory is outside the tree and exempts nothing, which is correct: its source is then not part

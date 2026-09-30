@@ -16,24 +16,32 @@ has to do that this repository's documents would otherwise not tell it.
 ### What
 
 The move itself: tools/knowledge/ becomes a repository, its crates are published, and this
-repository depends on the published `documentation` crate. What the core still carries of this
-repository, each to be rewritten or dropped when it leaves:
+repository depends on the published `documentation` crate. The core's documents point at
+nothing outside tools/knowledge/: `git grep -n -e rules-corpus -e "@thaum@" -- tools/knowledge`
+lists this entry alone. What the core still carries of this repository, each item to be
+rewritten when it leaves:
 
-- **Pointers into rules-corpus**, where the core's documents describe how this repository
-  composes the two halves: the core's README and scoped `CLAUDE.md`, the issue register's README
-  and two issue entries, the self-location tripwire, the two core mocks' head comments, the core's
-  `main.rs`, and the module comments of both integration test files.
-  `git grep -n rules-corpus -- tools/knowledge` lists them.
-- **Pointers into the rest of this repository**: every `design@thaum@<id>`, `goal@thaum@<id>` and
-  `path@thaum@<path>` reference under tools/knowledge/. `git grep -n "@thaum@" -- tools/knowledge`
-  lists them.
-- **Rule-shaped residue that compiles nothing about the rules but reads as thaum's**: unit-test
-  manifests that write a `[rules]` table (`git grep -n "\[rules\]" --
-  tools/knowledge/documentation`), the `const RULE` fixtures of the Rust grammar's tests, the check
-  names `changes` and `corpus` in one rendering test of `cli`, and the retired-key message naming
-  thaum's old `[interpretations]` table in `retired_keys`.
-- **The one-home question for each generic head that argues from a rules example**: the example
-  is evidence for a core decision and stays unless the new repository wants its own.
+- **Tests that read this repository's layout.** Each passes here and fails in a repository
+  where the core sits at the root:
+  - in `path@knowledge@documentation/src/manifest.rs`, `this_project`, which walks three
+    directories up from the `documentation` crate, and the two tests over it,
+    `this_repository_declares_a_readable_manifest` and
+    `the_walk_up_finds_the_root_from_below_it`, the second joining
+    the path tools/knowledge/documentation/src to the root;
+  - in `path@knowledge@tests/binary.rs`,
+    `the_core_binary_names_its_own_directory_and_counts_the_files_under_it`, which walks two
+    directories up, counts files under the prefix tools/knowledge/, and expects exit 1 because
+    this repository's manifest holds a `[rules]` table the core does not claim;
+  - in the same file, `a_tree_holding_the_tool_at_another_path_than_the_binarys_is_refused`,
+    which plants tools/knowledge/Cargo.toml and tools/knowledge/documentation/Cargo.toml in
+    a mock: the relative path the refusal compares is the crate's path in this repository.
+- **The mocks' exclusion.** The module comments of `path@knowledge@tests/binary.rs` and
+  `path@knowledge@tests/mock_projects.rs` state that this repository's manifest excludes
+  `path@knowledge@tests/projects/`. The new repository's manifest owes the same row.
+- **Examples drawn from this repository.** The README's register example is this repository's
+  `interpretation` register, and several design heads, rejected alternatives and comments name
+  thaum's rules extension as the example of an extension. Each example is evidence for a core
+  decision and stays, unless the new repository wants its own.
 
 ### Why it matters
 

@@ -314,8 +314,7 @@ mod tests {
              [registers.reading]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"readings\"\n\
              sections = [\"Reading\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
-             [rules]\ndir = \"r\"\ntext = \"t\"\nbody-starts-at = 0\n\
-             version = \"v\"\npast = \"p\"\nmanifest = \"m\"\n";
+             ";
         Anchors::of(&Manifest::parse(Path::new("/nowhere"), text).expect("a declaration"))
     }
 

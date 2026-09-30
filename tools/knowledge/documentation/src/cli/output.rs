@@ -5,7 +5,7 @@
 //! `ErrorKind::BrokenPipe`, and the standard `print!` macros turn that into a panic whose
 //! message lands on stderr of whoever piped the output into `head`. A closed stdout means the
 //! run could not deliver its output, which is the ladder's exit 2 per
-//! `design@thaum@exit-code-ladder`; it is never a verdict, so neither 0 nor 1 may be reported
+//! `design@knowledge@exit-code-ladder`; it is never a verdict, so neither 0 nor 1 may be reported
 //! for it. Nothing is printed to stderr for it either: the reader closed the pipe on purpose.
 //!
 //! The `SIGPIPE` default disposition is not restored instead, because that would also kill the
