@@ -177,21 +177,28 @@ registers = ["issue", "tripwire", "interpretation"]
 scope = "opt-in"               # `component` (every component carries it) or `opt-in`
 shape = "file"                 # `file` (one file per entry) or `heading` (slugs in a home)
 dir = "interpretations"        # the basename of the home; defaults to the register's name
-                               # `level = 3` on a heading register: the level its entries sit at
 sections = ["Rules", "Reading", "Consequences"]
 
 [registers.interpretation.metadata.status]
 values = ["settled", "interpretation", "ambiguous", "cr-gap"]
+
+[registers.note]
+scope = "opt-in"
+shape = "heading"
+dir = "decisions"
+level = 2                      # a heading register only: the heading level its entries sit at
 ```
 
 A **heading register** keeps its entries as slugged headings, in `<dir>.md` or in `<dir>/` behind
 a `README.md` that links every subdocument. It declares `level`, from 2 to 6: every heading at that
 level in its home is an entry and carries a slug, and a slug at any other level defines nothing,
 per `design@knowledge@an-entry-is-a-heading-at-the-register-level`. The built-in levels are 3 for
-`design` and 2 for `goal` and `tripwire`. A file register takes no `level`. A **file register** keeps one file per entry under
-`<dir>/`, beside a hand-written `README.md`, a generated `index.md` and an optional
-`register.toml` declaring the group subdirectories. An entry opens with frontmatter carrying each
-declared metadata key, then a level-one title, then the declared sections.
+`design` and 2 for `goal` and `tripwire`.
+
+A **file register** takes no `level`. It keeps one file per entry under `<dir>/`, beside a
+hand-written `README.md`, a generated `index.md` and an optional `register.toml` declaring the
+group subdirectories. An entry opens with frontmatter carrying each declared metadata key, then a
+level-one title, then the declared sections.
 
 `[registers.issue]` accepts `kinds` and nothing else; the other three built-in registers accept
 nothing, `level` included. The arguments are `design@knowledge@registers-are-declared` and

@@ -96,8 +96,11 @@ pub struct Located {
 }
 
 /// A heading of any level markdown has, so that a register may declare its entries at any
-/// of them and a heading there is seen.
-static HEADING: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(#{1,6})\s+(.+?)\s*$").unwrap());
+/// of them and a heading there is seen. Up to three spaces of indentation, as markdown reads
+/// one: the slug pattern below takes an indented heading too, and a heading the two patterns
+/// disagreed on defined an entry that the unslugged-heading check could not see.
+static HEADING: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^ {0,3}(#{1,6})\s+(.+?)\s*$").unwrap());
 /// The retired slug reference, `` `<word>#<word>` ``: the word before the `#` is optional so
 /// that the older unqualified form is seen too. The first class cannot match a `#`, so a
 /// definition — which opens with `##` — is not read as a retired reference to itself.

@@ -971,6 +971,15 @@ mod tests {
     }
 
     #[test]
+    fn an_indented_heading_is_judged_like_any_other() {
+        // Markdown reads a heading indented by up to three spaces as a heading, so the
+        // invariant holds of it: unslugged, it is reported.
+        let found = findings(vec![("docs/design.md", "   ### Indented and unslugged\n")]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("carries no slug"), "{found:#?}");
+    }
+
+    #[test]
     fn the_readme_of_a_directory_home_owes_no_slug() {
         // It is the head of the home: an introduction, not an entry.
         let found = findings(vec![

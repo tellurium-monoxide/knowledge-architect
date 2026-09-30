@@ -401,12 +401,12 @@ of a component stays a fact about the word _component_ rather than a per-compone
 
 ### Which registers exist is the manifest's, and a register instance's own options sit beside it `##registers-are-declared`
 
-`[registers.<name>]` declares a register's `scope`, `shape`, `dir`, `sections` and
+`[registers.<name>]` declares a register's `scope`, `shape`, `dir`, `level`, `sections` and
 `metadata.<key>.values`; `[locations.<name>]` declares a directory and the registers it carries.
 Four registers are compiled in — `design`, `goal`, `tripwire`, `issue` — and a declaration for one
 of them accepts `kinds` on `issue` and nothing else, because their storage is what the word
-component means. Setting `scope`, `shape`, `dir`, `sections` or `metadata` on a built-in is a
-finding, and the compiled value stands.
+component means. Setting `scope`, `shape`, `dir`, `level`, `sections` or `metadata` on a
+built-in is a finding, and the compiled value stands.
 
 **Declarations go in the manifest because its header promises that what is checked is said in one
 place.** Its bulk is comments, which is what a declaration owes a reader.
@@ -664,9 +664,9 @@ the head of a plain line, in the middle of a line, as a second slug on a definit
 file that is no register home — a Rust comment included — or in a directory home's README. An id
 is `[a-z0-9]+(-[a-z0-9]+)*`.
 
-- **A table cell defines nothing.** A decision written as a row has no heading, so the outline no
-  longer lists every decision, and one register would have two definition sites.
-- **The line-head form is what predates the heading rule**, and reporting it is what makes the
+- **A table cell defines nothing.** A decision written as a row has no heading, so the outline does
+  not list every decision, and one register would have two definition sites.
+- **The line-head form is what predates the heading form**, and reporting it is what makes the
   migration off it visible: it is neither a definition nor a reference, so every pointer at it
   dangles and the site itself is named. Accepting both forms would have left the two
   indistinguishable and the migration unfinishable, because nothing would say which anchors had
