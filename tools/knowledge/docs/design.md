@@ -517,10 +517,9 @@ soon as a row outgrows a short sentence. Both directions are asserted over the s
 existing subdocument no link names is reported, and a link that resolves to nothing is reported.
 A fenced link is an illustration and discharges nothing, the stance a fenced definition takes
 per `design@knowledge@an-entry-is-a-heading-at-the-register-level`, and a link inside a code span is typography showing the
-shape. **The accepted row is the plain
-inline form, a target without spaces**: reference-style links, angle-bracketed or quoted-title
-targets and the other CommonMark shapes are outside it, deliberately — the index is one shape
-so the check stays one pattern.
+shape. **A row is any link shape `design@knowledge@links-are-navigation-rows` reads**, a link
+definition included, so a README written with reference-style links indexes its subdocuments
+like one written with inline links.
 A backticked path in the README stays what it is everywhere: a checked pointer in prose, not a
 row of the index.
 
@@ -784,15 +783,19 @@ plus tag. `path@knowledge@docs/tripwires.md` guards the gap: a review finding a 
 reported nothing for widens the rule to the shape found.
 
 **A span is one line.** A backticked span that opens on one line and closes on the next is a
-finding when its two halves, joined, would be a reference candidate or a path: read line by
-line, neither half is a closed span, so the pointer would be resolved by nothing, and a
-renderer shows the line break as a space inside it. A wrapped span that is no pointer, such as
-a command or a clause in backticks, is prose and reports nothing. A fence holds shell text,
-where a backtick is literal, so a span neither opens nor closes there.
+finding when its two halves, joined, would be a reference candidate or a path, and the half
+before the break holds an `@` or a `/`: read line by line, neither half is a closed span, so
+the pointer would be resolved by nothing, and a renderer shows the line break as a space inside
+it. A wrapped span that is no pointer, such as a command or a clause in backticks, is prose and
+reports nothing. The backtick runs are read as CommonMark reads them: a span closes on a run of
+the length that opened it, a backslash escapes a backtick outside a span, and a blank line ends
+an open span. **This reading only adds findings.** Every other pattern reads each line as
+written, so a line whose backticks are misread can gain a wrong finding and cannot lose a
+reference or a path it held.
 
 **A fullwidth at sign is not an `@`.** A span written with `＠` is no candidate, and nothing
 reports it. Reading lookalike characters as the grammar's would put every script's
-punctuation inside the tokenizer, and the census of walked markdown finds no such span.
+punctuation inside the tokenizer, and a census of walked markdown finds no such span.
 
 **The retired slug reference is a finding, permanently.** A backticked `<word>#<word>` names the
 form it was. It has no `@` and no two path segments, so without this clause a slug reference the
@@ -824,23 +827,26 @@ One segment is a name rather than a pointer, and a span holding a space, an angl
 colon anywhere but in a line suffix is not path-shaped, which is what lets documentation of
 the syntax show a placeholder with no carve-out.
 
-**A line suffix or a fragment keeps a span path-shaped.** A path followed by `:12`, the
-location an editor prints, and a path followed by a `#` and a heading fragment each point at a
-file, so each is a finding. Its repair names the file and drops the suffix: a reference is to a file,
+**A line suffix or a fragment keeps a span path-shaped, after a file with an extension.** A
+path followed by `:12`, the location an editor prints, and a path followed by a `#` and a
+heading fragment opening with a letter each point into a file, so each is a finding. Without an
+extension, or with a number after the `#`, the suffix is an image tag or an issue number, and
+the span is not path-shaped. Its repair names the file and drops the suffix: a reference is to a file,
 and a line number goes stale at the next edit.
 
 **Four shapes are outside the lint on purpose**, each silent:
 
 - a path in plain prose, with no backticks. The backticks are what mark a pointer, and plain
-  text stays free prose. The census of hand-written markdown finds three such paths.
+  text stays free prose.
 - a span holding a space, such as a path with a space in a name. It is prose as much as a
-  path, and one census hit was a URL, the other a phrase.
+  path.
 - a span opening with `~/` or `$VAR/`. It names a path outside every tree this tool checks.
 - a span written with a backslash separator. No project this tool checks writes one, and the
   census finds none.
 
-Each widening would be measured the way the two-segment rule was: a census of what it reports
-in a tree that is conformant.
+Each widening would be measured the way the two-segment clause was: a census of what it
+reports in a tree that is conformant. The census that kept these four outside is in the commit
+that recorded them, found with `git log -G'outside the lint on purpose'`.
 
 **The path is plain**: `..`, a `.` segment and a leading `/` are refused. An upward path is
 anchored at the wrong place by definition, and it is the shape that breaks when the referencing
@@ -916,9 +922,9 @@ against the linking file's own directory, under the same kind claim and the same
 an anchored path, in the references family; `check::registers` keeps the inverse assertion,
 that a directory home's README links every subdocument, for every heading register.
 
-**Every CommonMark link shape a row is written in is read, and resolved like the plain one.**
+**Every markdown link shape a row is written in is read, and resolved like the plain one.**
 The inline form `[text](target)`, with an angle-bracketed target that may hold a space, and
-with a title in double or single quotes after the target. And the definition `[label]: target`
+with a title in double quotes, single quotes or parentheses after the target. And the definition `[label]: target`
 at the head of a line, which is the target a reference-style link `[text][label]` resolves
 through; a label opening with `^` is a footnote, whose definition holds text. An image,
 `![alt](target)`, is a link to its target.
@@ -1034,8 +1040,8 @@ consuming a library as a published crate.
 crate to another relative path is not seen, and runs; the loud failure of
 `design@knowledge@checker-source-literals-are-data`, printed by `check`, still names it. A tree
 holding an unrelated crate of the same name at the same relative path, one component long or
-more, is taken for a copy, and refused; a binary run through this repository's alias never meets
-one. The third comes from where the check lives: it is part of the binary it judges, so a binary
+more, is taken for a copy, and refused; a binary run through an alias that builds it from the
+checkout never meets one. The third comes from where the check lives: it is part of the binary it judges, so a binary
 built from a checkout older than the refusal, or from one that changed it, runs unrefused.
 
 **The refusal, not a correction of the paths.** Finding the directories at run time would exempt
@@ -1045,6 +1051,13 @@ links exports its crate directory and its package name, and the binary hands the
 extension's library is covered by listing it; this constrains every extension binary. The values
 it reads are each crate's own directory and package name, beside the Component directories that
 `design@knowledge@checker-source-literals-are-data` compiles in.
+
+**Every binary tests both halves over its own Components.** Over a checkout holding the tool,
+the summary's checker-source line names each Component whose library the binary links and
+counts the walked Rust files under them. And a tree holding one of the binary's crates at
+another relative path is refused. The core's binary does this in
+`path@knowledge@tests/binary.rs`; an extension binary does it in its own suite, because only it
+links its extension's library.
 
 ## 5. Commit messages
 

@@ -10,6 +10,8 @@ extensions runs the same commands unchanged, and its extensions' own commands be
 `design@knowledge@the-core-cli-is-a-library-module`. Over a manifest holding a table no
 extension of the binary claims, the binary reports that table in phase 1, rather than skip in
 silence what the table configures, per `design@knowledge@an-extension-claims-its-manifest-tables`.
+The commands below are written `cargo knowledge <command>`: a cargo alias a project defines over
+the binary it runs, the core's or its extension binary, built from the checkout.
 
 **It needs `git` 2.36 or newer on the path, and a project inside a git worktree.** What the tool reads is what
 `git ls-files` reports from the project root, so every pattern git honours decides the walk,

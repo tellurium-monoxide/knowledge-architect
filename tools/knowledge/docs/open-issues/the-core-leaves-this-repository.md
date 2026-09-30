@@ -46,8 +46,8 @@ rewritten when it leaves:
 ### Why it matters
 
 Until the core leaves, a project other than this one can use it only by depending on this
-repository by path or git URL, and the core's documents keep pointing at a layout the new
-repository will not have.
+repository by path or git URL. The tests listed above fail in the new repository until they are
+rewritten.
 
 ### Trigger
 

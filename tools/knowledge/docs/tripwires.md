@@ -71,13 +71,13 @@ another checkout of the tool is refused before any command runs, per
 `design@knowledge@a-foreign-build-is-refused`, which
 `a_tree_holding_the_tool_at_another_path_than_the_binarys_is_refused` in
 `path@knowledge@tests/binary.rs` asserts, so it reaches this tripwire only where the refusal
-cannot see it. A binary that registers extensions owes the same two tests over its own
-Components, in its own suite.
+cannot see it. An extension binary's own pair is owed by
+`design@knowledge@a-foreign-build-is-refused`.
 **Response:** the compiled path and the walked tree disagree in a way the refusal does not see: a
 second checkout that moved the tool's crates to another relative path, a canonicalisation gap, a
 symlink inside the tree the prefix test does not follow.
 Open a `defect` carrying the path the line names and the checkout's. Reopen the decision only if
-the mismatch is one neither the cargo alias nor the refusal can prevent, since the two together
+the mismatch is one neither an alias that builds from the checkout nor the refusal can prevent, since the two together
 are what the decision rests on.
 **Re-entry:** standing.
 
