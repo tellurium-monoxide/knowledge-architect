@@ -34,6 +34,9 @@ cargo klarch issues
 cargo klarch tripwires
 ```
 
+**Run them in a worktree of your own, never in the live tree**, as the dispatcher's brief says, with
+any build output inside it.
+
 The first asserts what every anchor the manifest declares carries: each Component its required
 documents and the home of every register it owes, each location the homes of the registers it
 declares, and for a file register its `README.md`, its `index.md`, its declared groups and the
@@ -59,7 +62,8 @@ registers it declares. Grepping the one you happen to think of is not the check.
 **Every Component carries a tripwires home, `docs/tripwires.md` or a `docs/tripwires/`
 directory.** A tripwire guards a recorded decision, and a decision lives in the Component it is
 about, so its tripwire does too. `cargo klarch tripwires` lists every entry the tripwire homes
-define; that listing is what tells you which exist. The `guarding` column names every reference
+define; that listing is what tells you which exist, rather than a count written anywhere. It lists entries,
+not homes: open every tripwires home as well, since an empty one does not appear in it. The `guarding` column names every reference
 each entry carries to a decision, a goal or a declared register's entry.
 
 **Read every entry in every one of those homes, not the subset whose subject the diff touches.**

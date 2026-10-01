@@ -34,16 +34,18 @@ are reading. If a check seems to need one, say so as a finding rather than worki
 ## 1. Tools to carry your task
 
 Your instruments are the decision-carrying documents the diff touches, and the diff itself. The
-documents are exactly two per Component: its design home (`docs/design.md`, or the subdocuments
+homes of decisions are exactly two per Component: its design home (`docs/design.md`, or the subdocuments
 of a `docs/design/` directory whose `README.md` is the head), which holds the current design, and
 its `docs/rejected-alternatives.md`, which holds what lost. The project's root is a Component too.
-Nothing else in the repository is decision-carrying: not a `README.md`, not an issue entry, and not
-the plans directory, whose plan documents hold shapes for unbuilt work that are deliberately not
-decisions and carry no slugs.
+Nothing else in the repository is the home of a decision: not a `README.md`, not an issue entry, and
+not the plans directory, whose plan documents hold shapes for unbuilt work that are deliberately not
+decisions and carry no slugs. A scoped `CLAUDE.md` or a skill may restate a decision as a directive;
+it is searched on a reversal, and it is never the decision's home.
 
-`git log` over the branch is read for three things only: the names its messages cite, under the
-last predicate; on a reversal, what the message says was searched for the incumbent; and, when a
-plan document is deleted, that the deleting commit names its path. None of the checks of
+`git log` over the branch is read for what its messages cite and claim: the names they cite and
+every factual sentence about the tree, under the last predicate; on a reversal, what was searched
+for the incumbent; the owner's ruling on any tripwire the branch adds; and, when a plan document is
+deleted, that the deleting commit names its path. None of the checks of
 `cargo klarch check` will help with your task. Do not run it.
 
 ## 2. The predicates

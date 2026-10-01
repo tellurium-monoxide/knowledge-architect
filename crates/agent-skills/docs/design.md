@@ -214,7 +214,7 @@ that left, and each landing commit says where its results live; releases are in 
 progress file would be a third document about the same work, with a lifetime of its own, against
 the one place for what is open of `goal@knowledge-architect@structure-and-workflow-work-together`.
 
-### A transcript reviewer checks a plan document against the owner's words `##transcript-reviewer-agent`
+### A transcript reviewer checks a record of a discussion against the owner's words `##transcript-reviewer-agent`
 
 The installed agent `knowledge-architect-transcript-conformity-reviewer` reads the transcript of a
 discussion and checks that a document records the owner's decisions as made: each state, the scope
@@ -238,3 +238,15 @@ depended on it. This is the shape a structure for plan documents, with registers
 read without rewriting them: `issue@core@structured-plan-documents`. The milestone document of
 this repository's v0.1 predates this decision and is the one exception: it is one file, and other
 documents cite its sections and steps until it leaves.
+
+## Reviews
+
+### The standing-state review runs before every merge `##conformance-before-every-merge`
+
+The installed dispatching-a-review sends the standing-state reviewer before every merge to the
+main branch, whatever the change. That reviewer is the standing re-entry point of every tripwire
+home, as the installed tracking-open-issues states, and a tripwire is read again only when some
+review reads it. A re-entry point that depends on whether a change looked related to a tripwire is
+one that a change touching the guarded decision indirectly skips: the reviewer reads every entry of
+every home, not the subset the diff seems to concern. This serves
+`goal@knowledge-architect@documentation-stays-consistent`.

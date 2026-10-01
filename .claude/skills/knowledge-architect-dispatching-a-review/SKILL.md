@@ -15,7 +15,7 @@ names it: the project's development procedure says when a piece of code is ready
 activity's skill for its moment. The one moment that belongs to no activity is **before merging
 anything to the main branch**.
 
-Not covered here: **being** any of the reviewers (the conformance reviewers
+Not covered here: **being** any of the reviewers (the record reviewers
 `knowledge-architect-routing-reviewer`, `knowledge-architect-decision-record-reviewer` and
 `knowledge-architect-standing-state-reviewer`; the plan-document reviewers
 `knowledge-architect-cold-implementer-reviewer` and `knowledge-architect-code-claims-reviewer`;
@@ -38,7 +38,9 @@ and `knowledge-architect-transcript-conformity-reviewer`, all dispatched rather 
 | transcript conformity | `knowledge-architect-transcript-conformity-reviewer`: does a document record the owner's decisions as the owner made them | a document records the decisions of a discussion whose transcript is available: a plan document, a harvest, a record of a design session |
 
 Each of these is conditional on the work. In other skills, more axes are added to this list, when
-the work has properties these axes do not reach. **An axis that applies and was not run is said,
+the work has properties these axes do not reach. **An axis named by an agent is dispatched as that
+agent. An axis with no agent is dispatched as a fresh general-purpose subagent**, briefed with the
+axis's question as this table states it, the commit range, and the files that carry the standard. **An axis that applies and was not run is said,
 with the reason, in the commit that records the review.**
 
 ## 2. The invariants
@@ -72,8 +74,8 @@ re-checking.
 - **Every reviewer that runs tests, a mutation, the checker or any binary gets its own worktree,
   detached at the commit under review, never the live tree.** A run in the live tree races the
   dispatcher's own edits, and a worktree that shares the branch ref moves under the reviewer at the
-  dispatcher's next commit. Place it where it pollutes no search, and remove it with
-  `git worktree remove` once the review and the repairs are done. **The reviewer's build output
+  dispatcher's next commit. The shape is `git worktree add --detach <path> <commit>`, at a path where it pollutes no search,
+and `git worktree remove <path>` once the review and the repairs are done. **The reviewer's build output
   stays inside its worktree.** A build directory two checkouts share lets the live checkout run the
   reviewer's build, which judges the live tree with the reviewer's code. In a Rust project, the
   reviewer sets `CARGO_TARGET_DIR` to a directory inside its worktree.
@@ -89,12 +91,19 @@ re-checking.
 - issues, one file each in the affected anchor's issue directory
   (`knowledge-architect-tracking-open-issues`).
 
-**A repair made on the branch is a new commit, appended.** Folding a fix into the commit it repairs
-hides what the review found from the landing history.
+**Where the branch's commits reach the main branch unchanged** (a fast-forward or a rebase merge):
 
-**A commit message carrying a mistake can be repaired by amending**, only while it is the newest
-commit and the tree carries no uncommitted work. Confirm afterwards that the amend changed no file.
+- **A repair made on the branch is a new commit, appended.** Folding a fix into the commit it
+  repairs hides what the review found from the landing history.
+- **A commit message carrying a mistake is repaired by amending** while it is the newest commit, and
+  by a history edit of the branch after that. Either only with no uncommitted work in the tree, and
+  each confirmed afterwards to have lost no content: for an amend, that it changed no file.
+- **A paragraph in the commit message** records the review.
 
-**A paragraph in the commit message** tells what was reviewed, on which axes, how consequential the
+**Where the project squashes a branch into one commit on merge**, the record of the review goes
+where the project keeps what survives the merge: the squashed commit's message, or the pull
+request. Follow the project's own rules on that.
+
+The record tells what was reviewed, on which axes, how consequential the
 findings were, which were repaired, which were left and why, and which axis was not run and why.
 Every claim that paragraph makes about the tree is checked before it is written, like any other.

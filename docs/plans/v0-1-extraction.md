@@ -852,7 +852,8 @@ A merge to main publishes nothing. Any number of merges land between two release
   crates/agent-skills/content from the walk, with the reason written beside the row; the release
   grep and the reviews judge it until the mechanical check of shipped text exists.
 - **CI:** thaum's ci.yml at e98e296, with its comments adapted.
-- **Skills and reviews before step 5.** This repository has no skills of its own until step 5.
+- **Skills and reviews before step 5.** From step 5's PR 3 on, the reviews use the installed
+  dispatching-a-review and its agents (4.7). Before it: this repository had no skills of its own.
   **Default:** steps 2 to 4 follow thaum's skills, read from thaum's checkout at e98e296: developing
   for the Rust work (without `cargo mutate run`, which is not ported; a test is shown to
   discriminate by reverting the change in a scratch worktree), tracking-open-issues for section 5,
@@ -884,9 +885,9 @@ name and in its frontmatter name. The tables give the base names.
 
 | agent | source | what changes |
 | --- | --- | --- |
-| standing-state-reviewer | thaum's | thaum's locations and the slices.md section removed; what replaces that section follows the planning skill's decision on acceptance criteria |
-| decision-record-reviewer | thaum's | the restated thaum arms replaced by a pointer to the installed recording-a-decision |
-| routing-reviewer | thaum's | the section names of thaum's root CLAUDE.md replaced by what the setting-up skill writes |
+| standing-state-reviewer | thaum's | thaum's locations and the slices.md section removed; it reads the acceptance criteria of plan documents (3.6) and reports work listed in two places |
+| decision-record-reviewer | thaum's | the restated thaum arms replaced by a pointer to the installed recording-a-decision; predicates added for the standing argument, a head written before its work lands, a tripwire without the owner's word, and a commit message's claims |
+| routing-reviewer | thaum's | the section names of thaum's root CLAUDE.md replaced by the project's knowledge table, which setting-up writes; thaum's predicate on consumer-facing statements dropped, as a convention of a project; a reference from outside the plans directory into a plan document, and the file kinds the checker does not read, added |
 | code-claims-reviewer | thaum's | "slice document" becomes "spec or milestone document" |
 | cold-implementer-reviewer | thaum's | the same |
 | transcript-conformity-reviewer | new, step 5 PR 2 | reads a discussion's transcript and checks a document against the owner's words (3.6) |
@@ -1284,12 +1285,15 @@ skill and comes before the PR that needs it.
    rather than of the workflow. standing-state-reviewer reads acceptance criteria in plan documents
    and checks that no work is listed in two places. dispatching-a-review generalizes the worktree
    rule with a note for Rust, makes conformance apply before every merge, and states that an axis
-   not run is said. Harvest: transcript-reviewer-agent gains its axis clause. The root CLAUDE.md
+   not run is said. Harvest: transcript-reviewer-agent gains its axis clause, and, from the
+   review, conformance-before-every-merge. The root CLAUDE.md
    routes reviews to the installed skill and agents.
 5. **Session C, then PR 4: configuration.** setting-up, maintaining-agent-config, and the primer
-   with its import line in the root CLAUDE.md, whose skills table becomes the routing table.
-   maintaining-agent-config moves here from the planning group because it keeps the table
-   setting-up writes. The issues on skill patching and on creating a component are opened.
+   with its import line in the root CLAUDE.md, whose skills table becomes the routing table.   maintaining-agent-config moves here from the planning group because it keeps the table
+   setting-up writes. This repository's own project skills start here, and one of them carries the
+   review predicate thaum's routing-reviewer had and the shipped one dropped: a consumer-facing
+   decision is recorded like any other, and no decision is argued on the grounds that changing it
+   later would be breaking (the root CLAUDE.md's Release status). The issues on skill patching and on creating a component are opened.
 6. **Session D, then PR 5:** setting-goals and retrospective.
 7. **PR 6:** the setting-goals skill is run with the owner on every component of this repository,
    as its first real use (approved). A change to goals is the owner's, and needs no review.
@@ -1305,5 +1309,8 @@ skill and comes before the PR that needs it.
 **Step 7. Release 0.1.0.** Reads 4.5.
 
 - The release procedure of 4.5. This document is deleted in the release commit.
+- Before publishing: every installed skill or agent that the shipped text names is in the shipped
+  set, and every document the shipped text relies on in a project, such as the knowledge table,
+  is written by an installed skill (`design@agent-skills@no-external-handoff`).
 
 Then thaum's migration spec applies.

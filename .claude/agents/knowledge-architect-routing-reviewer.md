@@ -28,7 +28,9 @@ cargo klarch check
 ```
 
 Your checks are `references` and `registers`; a run that stops before its last phase ran
-neither, and says so.
+neither, and says so. The last three rows of the table below are found in an earlier phase, so when
+they appear, references and registers were not judged. **Run the checker in a worktree of your own,
+never in the live tree**, as the dispatcher's brief says, with any build output inside it.
 
 The command prints `checked:` naming what it ran, a `references:` line counting the entities
 defined, the references and the navigation links, and a `registers:` line counting the components,
@@ -38,7 +40,7 @@ reverse is a family of pointers about to dangle.
 
 | failure | what it actually means |
 | --- | --- |
-| `is referenced and` … `defines no` | a pointer into nothing: the anchor carries the register and no entry there has that id. Define it where the decision is made, or point at the entry that exists. |
+| `is referenced and` … `defines no` | a pointer into nothing: the anchor carries the register and no entry there has that id. Cheap to create and expensive to notice later. Define it where the decision is made, or point at the entry that exists. |
 | `names` … `which is no anchor of this project`, or `which carries no` … `register` | the wrong segment of the reference: an anchor nobody declares, or one that does not carry that register. The finding lists the anchors that would resolve. |
 | `opens with` … `an anchor, where the kind goes`; `is the retired slug reference form` | a pointer in a retired grammar. It resolves to nothing until it is rewritten as `<kind>@<anchor>@<id>`. |
 | `is shaped like a path and names no anchor` | an unanchored path in prose, checked by nothing until it is anchored. |
@@ -88,8 +90,8 @@ instruction. `knowledge-architect-maintaining-agent-config` owns the test.
 **Does a decision sit in the right Component?** One question decides it: *does this decision survive
 deleting the Component?* No, and it belongs in that Component's own design home. Yes, and it
 belongs in the root Component's design home, which holds only what is true of the project as a
-whole: which Components exist and how they depend on each other, and the principles every
-Component follows.
+whole: which Components exist and how they depend on each other, the principles every Component
+follows, and the order in which they are built.
 
 The failure this catches is one-directional in practice: a decision about one Component filed at the
 project level reads as binding on all of them. Check that direction first.

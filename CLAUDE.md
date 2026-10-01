@@ -441,8 +441,10 @@ activity whose installed skill exists follows it. Every other activity follows t
 from thaum's checkout at commit e98e296, for example with
 `git -C <thaum checkout> show e98e296:<skill path>`. Their thaum-specific parts do not apply: the
 rules and their citations, slices.md, thaum's anchors, `cargo mutate run`, and
-`cargo knowledge`, which is `cargo klarch` here. The reviewers are this repository's installed
-agents, dispatched by their names. The milestone document's section 4.6 is where this is decided.
+`cargo knowledge`, which is `cargo klarch` here. An axis that has an installed reviewer agent is
+dispatched as that agent, and any other axis as a fresh general-purpose subagent, per
+`knowledge-architect-dispatching-a-review`. The milestone document's sections 4.6 and 4.7 are where
+this is decided.
 
 | skill | read it when |
 | --- | --- |
@@ -451,7 +453,7 @@ agents, dispatched by their names. The milestone document's section 4.6 is where
 | `knowledge-architect-planning` (installed) | a design discussion has converged and its work needs a spec or a milestone, in the same session; a step of a milestone is about to be implemented or lands; the work of a spec lands |
 | `knowledge-architect-discussing-design-decisions` (named, not installed yet) | served by `designing-together`, below |
 | `knowledge-architect-maintaining-agent-config` (named, not installed yet) | served by thaum's `maintaining-agent-config`, below |
-| `knowledge-architect-dispatching-a-review` (installed) | before merging anything to main, and when an activity's skill says its work is ready for review. It names the axes and the installed reviewer agent of each |
+| `knowledge-architect-dispatching-a-review` (installed) | before merging anything to main, and when an activity's skill says its work is ready for review. It names the axes, and the installed reviewer agent of those that have one |
 | `developing` (in thaum) | before starting or iterating on a change to the Rust source. A test is shown to discriminate by reverting the change in a scratch worktree, since `cargo mutate run` is not ported |
 | `maintaining-agent-config` (in thaum) | before adding or editing this file, a scoped `CLAUDE.md`, any skill, any subagent definition, or the knowledge table |
 | `designing-together` (the owner's plugin, outside this project) | for design questions with an open solution space. Its thread names may conflict with this project's decision slugs, and its tripwires are recorded through `knowledge-architect-tracking-open-issues`. Its step 8 is replaced by `knowledge-architect-planning`, and its step 9 by the harvest at landing of `knowledge-architect-recording-a-decision` |
