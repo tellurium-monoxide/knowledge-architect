@@ -1,0 +1,19 @@
+# The workspace: the checker's crate, the crate that carries the agent skills it installs, and the
+# maintenance tool. The layout is `design@knowledge-architect@repo-layout`.
+
+[workspace]
+resolver = "2"
+members = [
+    "crates/core",
+    "crates/agent-skills",
+    "tools/xtask",
+]
+
+# One version for every crate, so the installed skills always match the checker that installed
+# them, per `design@knowledge-architect@version-lockstep`. It stays 0.0.0 until the first release.
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/tellurium-monoxide/knowledge-architect"
+keywords = ["agentic", "software-design", "documentation", "design-decisions", "ai-agents"]

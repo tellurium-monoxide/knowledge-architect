@@ -1,0 +1,41 @@
+# What this project declares must stay conformant, and what is exempt from it.
+#
+# This file is the manifest the checker reads, and its presence is what makes a directory a
+# project root: the checker walks up from the working directory looking for this name and refuses
+# to run without it. Nothing about this repository is compiled into the checker, per
+# `design@core@nothing-of-a-project-is-compiled-in`.
+#
+# The walk parses `.md` and `.rs` and nothing else, so no reference in this file is checked. A
+# comment here names a decision in the reference grammar, `<kind>@<anchor>@<id>`, and writes a
+# path relative to this file's own directory.
+
+# The components. The project root is a component too, named by `name`; every other one is named
+# by the basename of its directory, so a crate directory is named by its role and never by its
+# package: a directory named `knowledge-architect` would collide with the root's name.
+[project]
+name = "knowledge-architect"
+components = [
+    "crates/core",
+    "crates/agent-skills",
+    "tools/xtask",
+]
+
+# This repository's own agent configuration carries an issue register, for defects of the
+# configuration itself.
+[locations.agent-config]
+path = ".claude"
+registers = ["issue"]
+
+[walk]
+
+# Directories and files skipped by project-relative path. Every row is checked to exist.
+skip-dirs = []
+skip-files = []
+
+# Paths skipped by location, each one another project rather than a part of this one.
+#
+# The core's mock projects are complete projects of their own: their documents are fixtures, and a
+# checker that read them would report a fixture's planted defect as a defect of this repository.
+exclude = [
+    "crates/core/tests/projects",
+]

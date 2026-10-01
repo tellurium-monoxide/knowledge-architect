@@ -1,0 +1,13 @@
+[package]
+name = "xtask"
+description = "Workflow automation: runs multi-command workflows and distills their output."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+# A maintenance tool of this repository, never published.
+publish = false
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+# The manifest's file name, so the root finder spells it in one place, the core's constant.
+knowledge-architect = { path = "../../crates/core" }

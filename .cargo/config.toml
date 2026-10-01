@@ -1,0 +1,8 @@
+# `cargo klarch <subcommand>` runs the checker built from this checkout, in release mode: it runs
+# many times per session, after each commit and in the gates, and a release build is paid once per
+# source change. It builds from the checkout, so a target directory shared with another checkout
+# makes the binary refuse to run, per `design@core@a-foreign-build-is-refused`. `-q` keeps cargo's
+# progress out of a checker's output, which is read as a report.
+[alias]
+klarch = "run -q --release -p knowledge-architect --"
+x = "run -q -p xtask --"

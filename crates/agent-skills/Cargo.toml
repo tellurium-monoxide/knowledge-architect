@@ -1,0 +1,10 @@
+[package]
+name = "knowledge-architect-agent-skills"
+description = "The agent skills, subagent definitions and primer that knowledge-architect installs into a project."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+# What the published package ships, as a whitelist.
+include = ["src/**", "Cargo.toml", "README.md", "LICENSE-MIT", "LICENSE-APACHE"]

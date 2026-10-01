@@ -1,0 +1,74 @@
+# The merge check for a pull request.
+#
+# ONE STEP RUNS THE GATES: `cargo x gates`, whose list in tools/xtask/src/gates.rs is the one
+# gate list. Why each flag is CI's is `design@xtask@gates-list-primary-home`; the log groups and
+# the error annotation are `design@xtask@annotations-under-actions`.
+#
+# The merge procedure it serves is root CLAUDE.md `Git`: a branch is merged by a local
+# fast-forward once this job passed on the pull request's current head.
+#
+name: ci
+
+on:
+  pull_request:
+    # No `push` trigger: `main` receives exactly the tested head under a fast-forward merge,
+    # and a push trigger beside this one bills every push to an open pull request twice.
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# Read-only: nothing here writes to the repository, comments on the pull request, or
+# publishes anything, so the job is given no token that could.
+permissions:
+  contents: read
+
+# A later push to one pull request cancels the run on the earlier head. A cancelled run
+# reports `cancelled`, not `success`, so the merge predicate, which reads the checks of the
+# current head, never counts it.
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    # A draft is not checked. A job skipped by `if:` reports `skipped`, which GitHub counts as
+    # passing, so the merge predicate reads the draft flag itself.
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    # A hung job runs up to the default 360 minutes, so the limit stays explicit.
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # The branch's head, not the default merge ref: that ref is a synthetic merge
+          # commit, which would be the last commit of the range `commits` judges and never lands.
+          ref: ${{ github.event.pull_request.head.sha }}
+          # FULL DEPTH. The range check resolves origin/main..HEAD and the rebased gate asks
+          # whether HEAD contains origin/main; a shallow clone answers neither.
+          fetch-depth: 0
+
+      - name: toolchains
+        # Named separately so a runner image that cannot provide the toolchain pinned in
+        # rust-toolchain.toml fails here, with the missing thing in the step name. `nproc`
+        # puts the runner's CPU count in every log.
+        run: |
+          nproc
+          cargo --version
+          rustc --version
+
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        # Pinned by commit: a third-party action in a job holding a token. Its default
+        # `cache-workspace-crates: false` is load-bearing: the workspace crates, the
+        # checker among them, are rebuilt on every run, so a restored binary never carries a
+        # stale checker path.
+
+      - name: gates
+        # `cargo --locked x`: the `x` alias resolves the workspace before the tool starts, and
+        # without cargo's own flag it rewrites a drifted Cargo.lock before any gate sees it.
+        run: cargo --locked x gates --locked --fail-fast --require-rebased --full
+
+      - name: gate logs
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: gate-logs
+          path: target/gates/

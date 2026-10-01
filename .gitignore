@@ -1,0 +1,4 @@
+target/
+
+# Worktrees made on demand for isolated work and reviews.
+.claude/worktrees

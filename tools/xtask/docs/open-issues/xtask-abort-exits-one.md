@@ -1,0 +1,32 @@
+---
+kind: observation
+---
+# A gates run that could not start exits 1, as a failed gate does
+
+## Summary
+
+When `cargo x gates` cannot run at all (no working directory, no project root above it, a pipe on
+stdout outside CI), its `abort` returns exit 1. A run where a gate failed also exits 1. No recorded
+decision says which exit-code contract binds xtask.
+
+## Details
+
+### What
+
+`abort` in `path@xtask@src/gates.rs` returns `ExitCode::FAILURE`. In thaum, xtask's design said it
+followed thaum's exit-code ladder, under which a command that could not run exits 2; that pointer
+did not survive the extraction, because the ladder of this repository,
+`design@core@exit-code-ladder`, binds only the checker's commands. Whether xtask should follow it
+is not established: CI reads only "zero or not", and no caller here distinguishes 1 from 2 today.
+
+It reproduces: `cargo x gates | cat` outside CI prints the pipe refusal and exits 1.
+
+### Why it matters
+
+A caller that wants to tell "a gate failed" from "the gates never ran" cannot. It strains
+`design@xtask@verdict-from-exit-codes` only if a consumer of the exit code appears.
+
+### What would close it
+
+A decision that xtask follows the checker's ladder (and `abort` exits 2), or that it keeps one
+failure code and says why.

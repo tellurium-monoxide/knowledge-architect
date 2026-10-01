@@ -1,0 +1,7 @@
+# The formatting gate is the fmt gate of `cargo x gates`, and this file exists so the gate means
+# the same thing on every machine and in CI. `style_edition` is the only setting: it is
+# what rustfmt would otherwise infer from each crate's Cargo edition, so pinning it here
+# is a no-op against the current source and stops the style moving on its own the day
+# the crates adopt a newer edition. That move then becomes a deliberate change to this
+# line with its own diff, rather than a reformat nobody chose.
+style_edition = "2021"
