@@ -5,7 +5,8 @@
 //! check is then a pure function over that model: it touches no file and spawns no process.
 //! The project's `knowledge-architect.toml` declares what is checked, and nothing about a
 //! project is compiled in. The decisions behind the design, with their arguments, are in the
-//! repository, at `path@core@docs/design.md`.
+//! repository, <https://github.com/tellurium-monoxide/knowledge-architect>, at
+//! `path@core@docs/design.md`.
 //!
 //! # Who uses this library
 //!
@@ -21,15 +22,16 @@
 //! | module | for |
 //! | --- | --- |
 //! | the crate root | the nouns every consumer meets: [`Manifest`], [`Model`], [`Document`], [`Finding`], [`MANIFEST_NAME`], [`component_dir`] |
-//! | [`cli`] | the `main` of a binary: the commands, running one, finding the project, refusing a build from another checkout |
+//! | [`cli`] | the `main` of a binary: the commands, running one, finding the project, refusing a build from another checkout, gathering a run's inputs |
 //! | [`extension`] | writing an extension: the two traits, what the core hands them, and what they return |
 //! | [`document`] | reading a document's parse: prose regions, scopes, code spans, observations |
 //! | [`testing`] | testing an extension over a mock project, as the binary would run it |
 //!
 //! # A binary that registers an extension
 //!
-//! The binary flattens the core's [`cli::Command`] into its own command enum, and hands a
-//! parsed command to [`cli::run`] with its extensions:
+//! The binary depends on clap 4 with its `derive` feature, the major version this crate uses,
+//! because [`cli::Command`] derives clap's `Subcommand`. It flattens [`cli::Command`] into its
+//! own command enum, and hands a parsed command to [`cli::run`] with its extensions:
 //!
 //! ```no_run
 //! use std::path::Path;
@@ -49,18 +51,27 @@
 //! enum Commands {
 //!     #[command(flatten)]
 //!     Core(cli::Command),
-//!     // The extension's own commands go here.
+//!     // Each command of the extension is one more variant here.
 //! }
 //!
 //! fn main() -> ExitCode {
-//!     let Commands::Core(command) = Cli::parse().command;
+//!     let command = match Cli::parse().command {
+//!         Commands::Core(command) => command,
+//!         // Each command of the extension is one more arm here.
+//!     };
 //!     // The directory of the binary's own crate: its string literals are read as data.
 //!     let own = Path::new(env!("CARGO_MANIFEST_DIR"));
 //!     let mut extensions: Vec<Box<dyn Extension>> = Vec::new(); // Box::new(TheExtension), …
 //!     let outcome = cli::locate().and_then(|manifest| {
 //!         cli::refuse_a_foreign_build(
 //!             manifest.root(),
-//!             &[cli::this_library()],
+//!             // Every library the binary links, the binary's own crate included, and one
+//!             // entry per crate of the extension's library.
+//!             &[
+//!                 cli::this_library(),
+//!                 cli::Library { crate_dir: own.to_path_buf(), package: env!("CARGO_PKG_NAME") },
+//!             ],
+//!             // The packages of the project's own workspace that the binary links.
 //!             &[env!("CARGO_PKG_NAME")],
 //!         )?;
 //!         cli::run(command, &manifest, &[own], &mut extensions)
@@ -73,25 +84,51 @@
 //! ```
 //!
 //! [`cli::run`] returns `Err` when the command could not run, and the binary exits 2 with it.
-//! Exit 0 and exit 1 are the command's verdict: in order, and not in order.
+//! Otherwise it returns the command's verdict: exit 0 when the command ran and found nothing,
+//! exit 1 when it ran and found something to report.
+//!
+//! [`cli::refuse_a_foreign_build`] refuses a binary built from another checkout of the project,
+//! because that binary would judge this tree with the other checkout's code. A binary tests the
+//! refusal in its own suite, over its own crates.
 //!
 //! # Writing an extension
 //!
-//! An extension implements [`extension::Extension`]. The core calls it at fixed points of a run:
+//! An extension implements [`extension::Extension`]. Three of its methods describe it:
+//! `tables` names the top-level manifest tables it reads, `checks` names its checks, and `dump`
+//! returns its rows for the `model` command. The core calls the others at fixed points of a
+//! run:
 //!
 //! 1. [`extension::configure`] calls `resolve` once per manifest, before the walk. The
 //!    extension reads the tables it claims with [`Manifest::table`], and returns its complaints,
-//!    the paths it declares and the files it generates.
-//! 2. Once the first three phases found nothing, `prepare` reads what its checks need for one
-//!    tree, a [`extension::Tree`]: the working tree, or one commit's tree under `commits`. It
-//!    returns an [`extension::Prepared`].
+//!    the paths it declares and the files it generates. A table it claims that the manifest
+//!    does not hold, and a table no extension claims, are reported in phase 1.
+//! 2. Once the first three phases have found nothing, `prepare` reads what its checks need for
+//!    one tree, an [`extension::Tree`]: the working tree, or one commit's tree under `commits`.
+//!    It returns an [`extension::Prepared`].
 //! 3. `Prepared::check` runs its checks in the last phase. It reads the model and the
 //!    [`extension::Inputs`] the core gathered, and returns an [`extension::ExtensionReport`].
-//!    `check_message` judges a commit message, and `generated` returns the files it generates.
+//!    `check_message` judges a commit message, and `generated` returns the files the
+//!    extension generates.
 //!
 //! A check is a pure function: what it needs from the filesystem or the network is read in
-//! `prepare`. An extension builds its own model from the core's parse. It reads each
-//! [`Document`]'s [`document::Parsed`] and scans it again for its subject.
+//! `prepare`.
+//!
+//! [`Manifest::table`] returns a `toml::Value`, so an extension that reads its table depends on
+//! the toml crate at the major version this crate uses, 1.
+//!
+//! # Reading a document
+//!
+//! The core's model holds nothing for an extension. An extension reads each [`Document`] of
+//! [`Model::documents`] and scans its parse again for its own subject:
+//!
+//! - [`Document::parsed`] is a [`document::Parsed`]: the prose regions as
+//!   [`document::Prose`], the code spans inside each, the scopes (a markdown section or a Rust
+//!   item), the fenced lines and the Rust names.
+//! - [`Document::observations`] are what the core's scanner recorded, each a
+//!   [`document::Located`] [`document::Observation`]: headings, slug definitions, reference
+//!   candidates and links.
+//! - [`document::md::parse`] and [`document::rs::parse`] parse a text in a unit test, without
+//!   a project.
 //!
 //! # Testing an extension
 //!
@@ -119,12 +156,14 @@
 //! ```
 //!
 //! A mock project is a directory inside the repository with its own `knowledge-architect.toml`.
-//! git's listing is what the walk reads, so its files are walked as soon as they exist.
+//! git's listing is what the walk reads, so a mock's files are walked as soon as they exist, and
+//! an ignore rule must not cover them. The project's own manifest excludes the mock's directory
+//! with a `[walk] exclude` row, or the mock's planted defects are reported as the project's own.
 //!
 //! # Compatibility
 //!
-//! A breaking change to this API is a major change of the crate's versioning policy. While the
-//! version is 0.x, it bumps 0.MINOR.
+//! Under the crate's versioning policy, a breaking change to this API is major. While the
+//! version is 0.x, a major change bumps 0.MINOR, so a break never ships in a patch.
 //!
 //! - [`cli::Command`], [`extension::Inputs`], [`extension::ExtensionReport`] and
 //!   [`extension::Resolution`] are `#[non_exhaustive]`. A new command, input or field in them
@@ -135,8 +174,11 @@
 //!   when doing nothing is correct for an extension that does not know it. A hook whose absence
 //!   would make a verdict wrong has none, and adding it is a breaking change.
 
+// The compatibility rules above restate `design@core@ne-minimal` and
+// `design@core@trait-defaults`.
+
 // A `pub` item no consumer can reach is refused, so an item is public only through the
-// re-exports below and the role modules.
+// re-exports below and the role modules, per `design@core@api-facade`.
 #![warn(unreachable_pub)]
 
 // The implementation modules. They are private: what a consumer uses is re-exported below

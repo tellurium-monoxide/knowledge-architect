@@ -22,3 +22,11 @@ One section per released version. Each item is tagged with the surface it touche
 - `manifest`: a `command` that is empty or holds a line break or a backtick is refused.
 - `cli`: `install-agent-skills` refuses a symbolic link on an owned path, and a manifest holding a
   refused declaration.
+- `library`: the public API is the crate root and four modules: `cli` for a binary's `main`,
+  `extension` for writing an extension, `document` for reading a document's parse, `testing`
+  for running the core over a mock project. Every other module is private.
+- `library`: `cli::Gathered` gathers what a run reads before any check; `complete_working_tree`
+  returns it.
+- `library`: `cli::Command`, `extension::Inputs`, `extension::ExtensionReport` and
+  `extension::Resolution` are non-exhaustive.
+- `library`: the `testing` feature is removed.

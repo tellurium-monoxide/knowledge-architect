@@ -1827,3 +1827,42 @@ fn no_harness_owes_no_claude_md_and_installs_nothing() {
         .path(".claude/agents/knowledge-architect-kept.md")
         .exists());
 }
+
+/// Every file under `dir` with its bytes, `.git` left out.
+fn tree_bytes(dir: &Path) -> std::collections::BTreeMap<PathBuf, Vec<u8>> {
+    let mut out = std::collections::BTreeMap::new();
+    let mut stack = vec![dir.to_path_buf()];
+    while let Some(d) = stack.pop() {
+        for entry in std::fs::read_dir(&d).expect("a readable directory") {
+            let path = entry.expect("a directory entry").path();
+            if path.file_name().is_some_and(|n| n == ".git") {
+                continue;
+            }
+            if path.is_dir() {
+                stack.push(path);
+            } else {
+                let bytes = std::fs::read(&path).expect("a readable file");
+                out.insert(
+                    path.strip_prefix(dir)
+                        .expect("under the copy")
+                        .to_path_buf(),
+                    bytes,
+                );
+            }
+        }
+    }
+    out
+}
+
+/// The claim: a writer refuses over an incomplete model. `index` over `unsound`, which stops at
+/// phase 2, exits 2, says why, and writes nothing.
+#[test]
+fn index_over_an_incomplete_model_refuses_and_writes_nothing() {
+    let sandbox = Sandbox::new("index-refuses", "unsound");
+    let before = tree_bytes(&sandbox.dir);
+    let (out, err, code) = sandbox.run(&["index"]);
+    assert_eq!(code, 2, "stdout:\n{out}\nstderr:\n{err}");
+    assert!(err.contains("the model is incomplete"), "{err}");
+    assert!(err.contains("Nothing was written."), "{err}");
+    assert!(tree_bytes(&sandbox.dir) == before, "index changed the tree");
+}

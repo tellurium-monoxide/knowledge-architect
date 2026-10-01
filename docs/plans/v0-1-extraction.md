@@ -377,7 +377,7 @@ which says "A library's own directory would not do", is rewritten in the same st
 
 ### 4.4 The public Rust API
 
-Decided in the step 4 design session, held on 2026-10-01 in this repository between the owner and
+Decided in the step 4 design session, held in this repository between the owner and
 an agent, under the designing-together skill. The design below is converged: every thread is
 closed on the owner's word. It is harvested into the core's design home when step 4's code lands
 (harvest-after-implementation).
@@ -448,7 +448,7 @@ Read in the core's source:
 | facade-membership | approved | the membership of 4.4.4 |
 | ne-minimal | approved | `#[non_exhaustive]` on `cli::Command`, `extension::Inputs`, `extension::ExtensionReport` and `extension::Resolution` only. Every other public enum and struct stays exhaustive. Re-examined before the project leaves 0.x. |
 | gathered-inputs | approved | `cli::Gathered` assembles what `check` fetches before any check runs. No caller writes an `Inputs` literal. |
-| core-test-surface | approved | nothing becomes public for the core's own tests. The 7 test sites that use items no extension needs are rewritten. |
+| core-test-surface | approved | nothing becomes public for the core's own tests. The tests that use items no extension needs are rewritten or moved into the crate; 4.4.4 says which. |
 | trait-defaults | approved, then refined on the owner's word | a hook added to `Extension` or `Prepared` after v0.1 gets a default body only when doing nothing is a correct answer for an extension that does not know the hook. A hook whose absence would make a verdict wrong is added without a default, as a deliberate break. |
 | refinement-2 | approved | refinement 2 of the versioning policy stays as it is, with no exemption |
 | ne-command, ne-observation, ne-slug-site, ne-retired-form, ne-outside, ne-scope-kind, ne-phase, ne-tree, ne-purpose, ne-literals | superseded by ne-minimal | the round-1 verdicts, one per public enum |
@@ -460,8 +460,9 @@ Read in the core's source:
 module is both a namespace and a privacy boundary. `pub use` publishes an item at a path
 independent of the file it is defined in, as `std::vec::Vec` is defined in the `alloc` crate.
 The implementation modules (`walk`, `git`, `scan`, `source`, `survey`, `entity`, `records`,
-`index`, `check`, `agents`, `manifest`, `model`, `finding`, `build_origin`, `extension`) become
-private, and lib.rs re-exports by role:
+`index`, `check`, `agents`, `manifest`, `model`, `finding`, `build_origin`) become private, and
+lib.rs re-exports by role. `cli` and `extension` stay public modules: each is a role module and
+the code of that role. (The spec listed `extension` among the private modules.)
 
 ```
 knowledge_architect
@@ -511,8 +512,10 @@ impl Gathered {
 }
 ```
 
-The `check` command, `complete_working_tree` and the tests are built on it, so the assembly
-exists once instead of 3 times in the core and 5 times in rules-corpus. `over` reads the
+The `check` command, `complete_working_tree` and an extension's tests are built on it, so no
+caller outside the crate assembles the inputs; the core assembled them 3 times and rules-corpus
+5 times. The core's own mock-project tests still assemble them by hand, because some hand a
+check an input that differs from the tree's. `over` reads the
 committed generated files through `index::generated_paths`, as `check` does. That is the set
 rules-corpus's tests read by hand: the rule index and the register indexes.
 
@@ -581,7 +584,7 @@ under `knowledge_architect::`.
 | `finding::Finding`, `manifest::Manifest`, `manifest::MANIFEST_NAME`, `model::{Model, Document}` | the root |
 | `model::DumpRow`, `survey::Outside` | `extension::` |
 | `manifest::{normalise_list, normalise_one}`, `index::{label, rel_from}` | `extension::` |
-| `check::Inputs` | `extension::Inputs`, non-exhaustive: a literal no longer compiles; `cli::Gathered::over(..)?.inputs()` |
+| `check::Inputs` | `extension::Inputs`, non-exhaustive: a literal no longer compiles. Bind `let gathered = cli::Gathered::over(..)?;` then `let inputs = gathered.inputs();`: the inputs borrow the `Gathered`, so a chained call fails with E0716 |
 | `extension::{ExtensionReport, Resolution}` | unchanged path, non-exhaustive: `Default` and field writes still compile |
 | `scan::{Observation, Located}`, `source::{Parsed, Prose, Scope, ScopeKind, Literals}`, `source::md::parse`, `source::rs::parse` | `document::` |
 | `check::{Report, Stop, Phase, Structure, CHECKS, run_with, foundation}` | `testing::` |
@@ -599,7 +602,7 @@ under `knowledge_architect::`.
 | `#[non_exhaustive]` on every enum expected to grow, the round-1 table | ne-minimal | it assumed the attribute prevents breakage. It only relabels a break that hits consumers who opted into it, removes their exhaustive option, and buys no version number under 0.x. |
 | keep the `Inputs` literal and accept a break per new input | gathered-inputs | step 3 added two inputs and broke all five rules-corpus literals. Each later input would do the same. |
 | keep the core's test-only items public under `#[doc(hidden)]` | core-test-surface | it publishes a second, unstated contract |
-| gate the core's test-only items behind the `testing` feature | core-test-surface | it reverses the approved removal of the feature, for items a rewrite of 7 test sites makes unnecessary |
+| gate the core's test-only items behind the `testing` feature | core-test-surface | it reverses the approved removal of the feature, for items a unit-test module inside the crate reaches without either |
 | a do-nothing default body for every later hook | trait-defaults, refined | a judging hook defaulted to nothing turns a compile error into a check that silently does not run |
 | an exemption from refinement 2 | refinement-2 | under 0.x the refinement changes no version number, so an exemption would buy nothing before 1.0 |
 
@@ -1103,8 +1106,8 @@ Each item below is one commit that passes the check, unless an item's intermedia
 1. **Gathered.** `cli::Gathered::{over, inputs}`. The `check` command and
    `complete_working_tree` are rebuilt on it, with no change of behaviour: the existing tests stay
    green unchanged.
-2. **The core's tests.** The 7 test sites of 4.4.4's table move onto `run_with`, `foundation`,
-   `cli::run`, or a unit test, each keeping its assertion.
+2. **The core's tests.** The mock-project tests move whole into `path@core@src/mock_projects.rs`,
+   and the commits test of the binary tests calls `cli::run`, per 4.4.4.
 3. **The facade.** The implementation modules become private; lib.rs re-exports by role, per
    4.4.4; the methods and fields outside the membership become `pub(crate)`. main.rs, the tests
    and xtask move to the public paths. Every `private_interfaces` warning is resolved by the

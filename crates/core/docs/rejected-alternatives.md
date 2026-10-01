@@ -365,8 +365,11 @@ document is still compiled in and checked. Doubt remains on the second half of t
 
 **The implementation's module tree as the public API**, with only its visibility narrowed — lost
 to `design@core@api-facade`. `live`. A consumer would learn the internal layout: thaum's rules
-extension named 13 of the 16 modules that were public. Moving an item between files would be a library
-break, and the public surface would be computed from 25 modules rather than read in one file.
+extension at thaum's e98e296 named 13 of the 16 modules public at aefb45a: the distinct names
+`git grep -o "documentation::[a-z_]*"` prints over its tools/rules-corpus, the function
+`component_dir` aside. Moving an item between files
+would be a library break, and the public surface would be computed from the whole module tree
+rather than read in one file.
 
 **`#[non_exhaustive]` on every public enum expected to grow** — lost to `design@core@ne-minimal`.
 `live`. It assumed the attribute prevents breakage. It relabels a break that hits only the

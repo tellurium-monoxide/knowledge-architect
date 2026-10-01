@@ -186,6 +186,7 @@ impl Report {
 ///
 /// Non-exhaustive: a caller outside this crate gets one from [`crate::cli::Gathered`], so a new
 /// input is not a breaking change for it.
+// Non-exhaustive per `design@core@ne-minimal`.
 #[non_exhaustive]
 pub struct Inputs<'a> {
     /// The generated files as committed, keyed by their project-relative path.

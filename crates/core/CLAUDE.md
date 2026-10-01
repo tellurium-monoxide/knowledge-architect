@@ -82,11 +82,11 @@ it.
 
 **An item is public only through the facade**, per `design@core@api-facade`: a re-export in
 `path@core@src/lib.rs`, or one of the role modules `cli`, `extension`, `document` and `testing`.
-Every other module is private, and lib.rs's `#![warn(unreachable_pub)]` refuses a `pub` item no
-consumer can reach, so a new item a consumer needs is re-exported where its use belongs, and an
-internal one is `pub(crate)`. A type in a public signature is public too, or the compiler reports
+Every other module is private. lib.rs's `#![warn(unreachable_pub)]` refuses a `pub` item no
+consumer can reach. So a new item a consumer needs is re-exported where its use belongs, and an
+internal item is `pub(crate)`. A type in a public signature is public too, or the compiler reports
 it. A test that needs a private item is a unit test inside the crate, never a reason to publish it.
-`path@core@tests/extension_api.rs` uses the public paths alone: an item an extension needs that
-the facade leaves out fails to compile there.
+`path@core@tests/extension_api.rs` uses the public paths alone, so an item it uses that the facade
+leaves out fails to compile there.
 
 Read `path@core@docs/design.md` before changing how it works.

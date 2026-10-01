@@ -116,6 +116,7 @@ pub struct Generated {
 ///
 /// Non-exhaustive: an extension starts from `ExtensionReport::default()` and writes the fields
 /// it fills, so a new field is not a breaking change for it.
+// Non-exhaustive per `design@core@ne-minimal`.
 #[derive(Default)]
 #[non_exhaustive]
 pub struct ExtensionReport {
@@ -131,6 +132,7 @@ pub struct ExtensionReport {
 /// What an extension made of its tables.
 ///
 /// Non-exhaustive, for the reason [`ExtensionReport`] is.
+// Non-exhaustive per `design@core@ne-minimal`.
 #[derive(Default)]
 #[non_exhaustive]
 pub struct Resolution {

@@ -213,12 +213,14 @@ in the same module for the same reason.
 
 **What a run fetches before any check is gathered once, in this module.** `Gathered` reads the
 committed generated files, every `register.toml`, one survey, the two git batches and the shipped
-agent files, and lends them as the `Inputs` a check of the working tree reads. `check`, the refusal of a writer
-over an incomplete model, and an extension's tests all build on it. So the assembly exists once,
-and no caller outside the crate writes an `Inputs` literal, which `design@core@ne-minimal` makes
-impossible anyway. A new input is then a change inside the core alone.
+agent files, and lends them as the `Inputs` a check of the working tree reads. `check`, the
+commands that write files (through `complete_working_tree`, which refuses over an incomplete
+model), and an extension's tests all build on it. So no caller outside the crate assembles
+`Inputs`, which `design@core@ne-minimal` makes impossible for a literal. A new input is then a
+change inside the core alone. The core's own mock-project tests still assemble `Inputs` by hand:
+some of them hand a check an input that differs from the tree's, such as no committed file.
 
-### The public API is a facade of four role modules, and every implementation module is private `##api-facade`
+### The public API is a facade of four role modules, and every other module is private `##api-facade`
 
 The library has three kinds of consumer: a binary that registers an extension, the extension, and
 the extension's tests. **Testing an extension over a mock project is part of what the library
@@ -227,8 +229,10 @@ publishes**, because a project that adopts the tool with a subject of its own, p
 its own. `design@core@a-foreign-build-is-refused` already requires every extension binary to test
 the refusal in its own suite.
 
-Every module that implements the checker is private. The crate root re-exports the nouns every
-consumer meets, and four public modules re-export the rest, one per kind of use:
+Every module except the four role modules is private. The crate root re-exports the nouns every
+consumer meets, and the four role modules hold the rest, one per kind of use. `cli` and
+`extension` are both a role module and the code of that role; `document` and `testing` only
+re-export:
 
 | module | what it serves |
 | --- | --- |
@@ -244,8 +248,9 @@ consumer meets, and four public modules re-export the rest, one per kind of use:
   its fields expose `Entry` and `Outside`, so those are public although no consumer names them.
 - **A `pub` item no consumer can reach is refused.** lib.rs carries `#![warn(unreachable_pub)]`,
   and the clippy gate runs with `-D warnings`, so an item is public only through the facade.
-- **A value the core hands out is read, not built.** On the public types, the read-only methods
-  are public, and the constructors and the methods only the core calls are not.
+- **A value only the core produces is read, not built.** `Report`, `CommitTree` and `Outside`
+  have public read-only methods and no public constructor. A value a consumer starts from, such
+  as a `Manifest`, a `Model` or a `Finding`, keeps its public constructors.
 - **Nothing becomes public for the core's own tests.** A test that needs a private item is a
   unit-test module inside the crate, as `path@core@src/mock_projects.rs` is.
 - `Manifest::command` is public although thaum's extension does not call it: an extension's
@@ -270,13 +275,16 @@ and `extension::Resolution`. Every other public enum and struct is exhaustive on
   `extension::Tree` must make every extension say how it reads it. A wildcard would read the
   working tree while the run judges another tree: a wrong verdict, with exit 0.
 - **The attribute's gain is the library's:** a variant added to an enum without it is a breaking
-  change under Rust's semver rules. Under 0.x that gain is nil, because the policy's major and
-  minor both bump 0.MINOR, and every variant foreseen arrives with a minor-level change anyway.
+  change under Rust's semver rules. Under 0.x that gain is nil, because major and minor both
+  bump 0.MINOR, per `design@knowledge-architect@versioning-policy`. Every variant now foreseen
+  comes with a change that already bumps 0.MINOR: a check change, a new command, a new run
+  mode.
 - So the attribute goes only where no consumer can usefully match or build a literal: a binary
   hands a `Command` to `cli::run` unmatched, `Inputs` comes from `Gathered`, and an extension
   fills the two reports from `Default`, which the attribute allows.
 - `Generated`, `DumpRow` and `Library` stay constructible by literal. A new field there is a new
-  obligation on the extension, and the compile error says so.
+  obligation on the extension or the binary that builds the value, and the compile error says
+  so.
 
 After 1.0 the attribute decides minor against major for every added variant, so this is
 re-examined before the project leaves 0.x, per `design@knowledge-architect@stays-at-zero-x`.

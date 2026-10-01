@@ -2,7 +2,7 @@
 //! tests run it.
 //!
 //! The claim is that the public API suffices to write an extension and to test it over a mock
-//! project: configure it, gather the inputs, run the foundation, then the whole run with the
+//! project: configure it, gather the inputs, run phases 1 to 3, then the last phase with the
 //! extension prepared. An integration test is compiled as a separate crate, so a public item
 //! this file needs that the facade leaves private is a compile error here.
 
@@ -75,7 +75,8 @@ impl Prepared for Prepared1 {
                 "nothing: this extension reports it to show it ran",
             ));
         }
-        report.summary = format!("first-heading: {} file(s) present", inputs.present.len());
+        // Each line of a summary starts with a newline, as the core's lines do.
+        report.summary = format!("\nfirst-heading: {} file(s) present", inputs.present.len());
         report
     }
 
@@ -149,7 +150,7 @@ fn an_extension_written_against_the_public_api_runs_over_a_mock_project() {
         report
             .summaries
             .iter()
-            .any(|s| s.starts_with("first-heading: ")),
+            .any(|s| s.starts_with("\nfirst-heading: ")),
         "{:?}",
         report.summaries
     );
