@@ -14,10 +14,16 @@ use std::collections::BTreeMap;
 use std::io;
 use std::path::{Path, PathBuf};
 
-use crate::check::Inputs;
+// What an extension's hooks are handed and return, defined in the modules that produce them.
+pub use crate::check::Inputs;
 use crate::finding::Finding;
+pub use crate::git::{Entry, EntryKind};
+pub use crate::index::{label, rel_from};
+pub use crate::manifest::{normalise_list, normalise_one};
 use crate::manifest::{Manifest, MANIFEST_NAME};
+pub use crate::model::DumpRow;
 use crate::model::{Document, Model};
+pub use crate::survey::Outside;
 
 /// What a tree is prepared for.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -51,7 +57,7 @@ pub struct CommitTree {
 }
 
 impl CommitTree {
-    pub fn new(
+    pub(crate) fn new(
         root: &Path,
         sha: &str,
         listing: Vec<PathBuf>,

@@ -38,7 +38,7 @@ use super::Inputs;
 
 /// What the check looked at.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-pub struct Counts {
+pub(crate) struct Counts {
     pub components: usize,
     pub locations: usize,
     /// Anchor-and-register pairs whose home was asserted.
@@ -54,13 +54,13 @@ struct RegisterConfig {
     groups: Vec<String>,
 }
 
-pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Finding>, Counts) {
+pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Finding>, Counts) {
     let anchors = Anchors::of(manifest);
     check_under(model, manifest, inputs, &anchors)
 }
 
 /// The same, over a stated anchor list, for a test that needs anchors no manifest declares.
-pub fn check_under(
+pub(crate) fn check_under(
     model: &Model,
     manifest: &Manifest,
     inputs: &Inputs,

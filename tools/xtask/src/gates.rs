@@ -9,7 +9,7 @@ use clap::Args;
 use std::path::Path;
 use std::process::ExitCode;
 
-use knowledge_architect::manifest::MANIFEST_NAME;
+use knowledge_architect::MANIFEST_NAME;
 
 #[derive(Args)]
 pub struct GatesArgs {

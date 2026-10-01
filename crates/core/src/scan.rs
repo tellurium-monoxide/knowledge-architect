@@ -268,7 +268,7 @@ fn joined(head: &str, tail: &str) -> Option<String> {
 }
 
 /// Scan one parsed document.
-pub fn scan(parsed: &Parsed) -> Vec<Located> {
+pub(crate) fn scan(parsed: &Parsed) -> Vec<Located> {
     let fenced: std::collections::HashSet<u32> = parsed.fenced.iter().copied().collect();
     let inert: std::collections::HashSet<u32> = parsed.inert.iter().copied().collect();
     let mut out = Vec::new();

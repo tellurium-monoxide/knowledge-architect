@@ -31,13 +31,13 @@ fn main() -> ExitCode {
     let outcome = knowledge_architect::cli::locate().and_then(|manifest| {
         // A binary built from another checkout would judge this tree with that checkout's
         // code, so no command runs, per `design@core@a-foreign-build-is-refused`.
-        knowledge_architect::build_origin::refuse_a_foreign_build(
+        knowledge_architect::cli::refuse_a_foreign_build(
             manifest.root(),
             // The library and the binary are one crate, so its one entry covers both. The crate
             // of installed text is linked too, so a stale copy of it is refused as well.
             &[
-                knowledge_architect::build_origin::this_library(),
-                knowledge_architect::build_origin::Library {
+                knowledge_architect::cli::this_library(),
+                knowledge_architect::cli::Library {
                     crate_dir: std::path::PathBuf::from(
                         knowledge_architect_agent_skills::CRATE_DIR,
                     ),

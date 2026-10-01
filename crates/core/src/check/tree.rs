@@ -18,7 +18,7 @@ use crate::model::Model;
 
 use super::Inputs;
 
-pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding> {
+pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding> {
     let mut out = Vec::new();
 
     // A parse that could not be trusted must be LOUD. Silently it removes every citation in

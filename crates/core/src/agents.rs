@@ -10,33 +10,36 @@ use std::path::{Path, PathBuf};
 use crate::manifest::{owned_path, Manifest};
 
 /// What the shipped text writes where the project's declared command goes.
-pub const PLACEHOLDER: &str = "{{command}}";
+pub(crate) const PLACEHOLDER: &str = "{{command}}";
 
 /// The install path of the primer, which the project's root CLAUDE.md imports.
-pub const PRIMER: &str = ".claude/knowledge-architect/PRIMER.md";
+pub(crate) const PRIMER: &str = ".claude/knowledge-architect/PRIMER.md";
 
 /// The line of the root CLAUDE.md that imports the primer, alone on its line.
-pub const IMPORT_LINE: &str = "@.claude/knowledge-architect/PRIMER.md";
+pub(crate) const IMPORT_LINE: &str = "@.claude/knowledge-architect/PRIMER.md";
 
 /// A shipped template with the project's command filled in, with LF line endings.
-pub fn render(template: &str, command: &str) -> String {
+pub(crate) fn render(template: &str, command: &str) -> String {
     lf(&template.replace(PLACEHOLDER, command))
 }
 
 /// The text with every CRLF line ending made LF, so a checkout that converts line endings holds
 /// the same installed text as one that does not.
-pub fn lf(text: &str) -> String {
+pub(crate) fn lf(text: &str) -> String {
     text.replace("\r\n", "\n")
 }
 
 /// Every file this version installs into the project, at its install path, rendered. Empty when
 /// the project serves no agent harness.
-pub fn shipped(manifest: &Manifest) -> Vec<(PathBuf, String)> {
+pub(crate) fn shipped(manifest: &Manifest) -> Vec<(PathBuf, String)> {
     shipped_from(manifest, knowledge_architect_agent_skills::FILES)
 }
 
 /// The same, over a stated set of templates: what a test hands in.
-pub fn shipped_from(manifest: &Manifest, templates: &[(&str, &str)]) -> Vec<(PathBuf, String)> {
+pub(crate) fn shipped_from(
+    manifest: &Manifest,
+    templates: &[(&str, &str)],
+) -> Vec<(PathBuf, String)> {
     if !manifest.serves_claude() {
         return Vec::new();
     }
@@ -51,7 +54,7 @@ pub fn shipped_from(manifest: &Manifest, templates: &[(&str, &str)]) -> Vec<(Pat
 /// A line inside a fenced block, an indented code block or an HTML comment is not prose, and an
 /// agent harness does not evaluate an import there, so it does not count. A byte-order mark
 /// before the first line is not part of it.
-pub fn imports_primer(text: &str) -> bool {
+pub(crate) fn imports_primer(text: &str) -> bool {
     let text = text.strip_prefix('\u{feff}').unwrap_or(text);
     let mut fence: Option<&str> = None;
     let mut comment = false;
@@ -89,7 +92,7 @@ pub fn imports_primer(text: &str) -> bool {
 
 /// What an install did, each list in path order.
 #[derive(Debug, Default)]
-pub struct Installed {
+pub(crate) struct Installed {
     /// The shipped files whose bytes the install wrote, because they were missing or differed.
     pub written: Vec<PathBuf>,
     /// The files of the owned namespace that the shipped set does not hold, removed.
@@ -103,7 +106,7 @@ pub struct Installed {
 /// **A symbolic link on an owned path is refused before anything is touched**: following one
 /// would write or delete in another directory, possibly another project's. The error names the
 /// path, and so does every filesystem error.
-pub fn install(root: &Path, shipped: &[(PathBuf, String)]) -> Result<Installed, String> {
+pub(crate) fn install(root: &Path, shipped: &[(PathBuf, String)]) -> Result<Installed, String> {
     for rel in [
         ".claude",
         ".claude/skills",

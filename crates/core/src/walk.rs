@@ -26,7 +26,7 @@ use crate::manifest::Walk;
 /// agent file, derived from the agent table per `design@core@owned-namespace-check`. Neither is a
 /// source of claims this project wrote, and deriving the set from the declarations is what keeps a
 /// new instance or a new installed file from arriving inside the walk.
-pub fn live_files(
+pub(crate) fn live_files(
     root: &Path,
     walk: &Walk,
     listing: &[PathBuf],
@@ -48,7 +48,7 @@ pub fn live_files(
 }
 
 /// Whether the walk refuses this path for its name alone. [`refusal`] says why.
-pub fn refused(rel: &Path) -> bool {
+pub(crate) fn refused(rel: &Path) -> bool {
     refusal(rel).is_some()
 }
 
@@ -61,7 +61,7 @@ pub fn refused(rel: &Path) -> bool {
 /// break is named first. The grounds are `design@core@git-supplies-the-walk`. The file is
 /// not read, and the caller reports it once by name; `skip-files` or an ignore rule is how a
 /// project keeps one deliberately. A name that is not UTF-8 is judged on the bytes it has.
-pub fn refusal(rel: &Path) -> Option<String> {
+pub(crate) fn refusal(rel: &Path) -> Option<String> {
     let bytes = rel.as_os_str().as_encoded_bytes();
     if bytes.iter().any(|b| *b == b'\n' || *b == b'\r') {
         return Some("holds a line break".to_string());
@@ -112,7 +112,7 @@ fn is_device_name(component: &str) -> bool {
 ///
 /// A directory row covers everything beneath it, which is what pruning at the directory used to
 /// do; git lists files and not directories, so the containment is asked here instead.
-pub fn skipped(rel: &Path, walk: &Walk) -> bool {
+pub(crate) fn skipped(rel: &Path, walk: &Walk) -> bool {
     walk.skip_dirs.iter().any(|d| rel.starts_with(d))
         || walk.exclude.iter().any(|e| rel.starts_with(e))
 }
@@ -128,7 +128,7 @@ pub fn skipped(rel: &Path, walk: &Walk) -> bool {
 /// A file outside the walk is not lost to every check by narrowing it: the survey hands each one,
 /// with its text, to the checks as `Inputs::outside`, so an extension can assert the inverse —
 /// thaum's rules extension asserts that such a file names no rule.
-pub const LIVE_SUFFIXES: [&str; 2] = ["md", "rs"];
+pub(crate) const LIVE_SUFFIXES: [&str; 2] = ["md", "rs"];
 
 fn is_live(rel: &Path, walk: &Walk) -> bool {
     !walk.skip_files.iter().any(|f| f == rel)

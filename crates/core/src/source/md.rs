@@ -165,7 +165,7 @@ fn scalar(line: &str) -> Option<(String, String)> {
 /// region whose lines are not contiguous in the file. Scopes and fences come out in FILE
 /// lines; code spans come out as byte ranges in `text`, because a scanner tests them against
 /// the offset of the token it just matched.
-pub fn analyse(text: &str, prose: &Prose) -> Analysis {
+pub(crate) fn analyse(text: &str, prose: &Prose) -> Analysis {
     let mut heads: Vec<(u8, String, u32)> = Vec::new();
     let mut fenced: Vec<u32> = Vec::new();
     let mut code: Vec<(usize, usize)> = Vec::new();
@@ -279,7 +279,7 @@ pub fn analyse(text: &str, prose: &Prose) -> Analysis {
 
 /// What one prose region holds, in the terms every check downstream asks in.
 #[derive(Debug, Default)]
-pub struct Analysis {
+pub(crate) struct Analysis {
     /// Sections, in file lines.
     pub scopes: Vec<Scope>,
     /// File lines inside a code block.

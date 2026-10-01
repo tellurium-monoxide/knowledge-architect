@@ -23,7 +23,7 @@ use super::Inputs;
 /// An extension's files arrive already rendered, because only the extension can render them;
 /// the file-register indexes are rendered here, so a caller handing in no extension still has
 /// every listing compared.
-pub fn check(
+pub(crate) fn check(
     model: &Model,
     manifest: &Manifest,
     inputs: &Inputs,

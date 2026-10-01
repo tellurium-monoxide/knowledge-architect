@@ -33,13 +33,13 @@ use super::Inputs;
 /// judged (every kind, the escape and generic forms included), and the relative markdown links
 /// it resolved.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-pub struct Counts {
+pub(crate) struct Counts {
     pub entities: usize,
     pub references: usize,
     pub links: usize,
 }
 
-pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Finding>, Counts) {
+pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Finding>, Counts) {
     check_under(model, inputs, &Anchors::of(manifest))
 }
 
@@ -48,7 +48,11 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Findin
 /// What `check` derives from the manifest, a test states directly: every component carries
 /// every register, so the anchor-lacks-register arm is reachable only through an anchor with a
 /// declared register subset, the shape a location takes.
-pub fn check_under(model: &Model, inputs: &Inputs, anchors: &Anchors) -> (Vec<Finding>, Counts) {
+pub(crate) fn check_under(
+    model: &Model,
+    inputs: &Inputs,
+    anchors: &Anchors,
+) -> (Vec<Finding>, Counts) {
     let entities = Entities::build(model, anchors);
     judge(model.documents(), &entities, anchors, inputs)
 }
@@ -60,7 +64,7 @@ pub fn check_under(model: &Model, inputs: &Inputs, anchors: &Anchors) -> (Vec<Fi
 /// `design@core@a-commit-message-is-a-document`, and the entities it names are defined by the
 /// tree it commits — so the table is built from that tree's model and the documents judged
 /// against it are these. `check_under` is the case where the two coincide.
-pub fn judge(
+pub(crate) fn judge(
     docs: &[crate::model::Document],
     entities: &Entities,
     anchors: &Anchors,
@@ -521,7 +525,7 @@ fn link(
 /// **A spelling this misses is a target the check reads as not ignored**, which is a finding
 /// rather than a silence: the reference is asserted to exist. `an_ignored_target_is_exempt_in_
 /// every_arm_the_collector_gathers` is what holds the two lists together.
-pub fn ignore_queries(model: &Model, anchors: &Anchors) -> Vec<String> {
+pub(crate) fn ignore_queries(model: &Model, anchors: &Anchors) -> Vec<String> {
     let mut out = Vec::new();
     for doc in model.documents() {
         let nav = is_navigation(&doc.rel);

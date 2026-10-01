@@ -1531,8 +1531,7 @@ fn commits_reads_every_checker_directory_as_data_in_each_commits_tree() {
     history.remove("tool-a/src/lib.rs");
     history.remove("tool-b/src/lib.rs");
     history.commit("The tools are removed\n");
-    let manifest =
-        knowledge_architect::manifest::Manifest::find(&history.dir).expect("the manifest");
+    let manifest = knowledge_architect::Manifest::find(&history.dir).expect("the manifest");
     let range = format!("{base}..HEAD");
     let (a, b) = (history.dir.join("tool-a"), history.dir.join("tool-b"));
     let judge = |dirs: &[&Path]| {

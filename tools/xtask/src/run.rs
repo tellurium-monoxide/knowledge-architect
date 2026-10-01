@@ -118,10 +118,7 @@ pub fn announce(name: &str) {
 pub fn project_root(start: &Path) -> Option<PathBuf> {
     start
         .ancestors()
-        .find(|dir| {
-            dir.join(knowledge_architect::manifest::MANIFEST_NAME)
-                .is_file()
-        })
+        .find(|dir| dir.join(knowledge_architect::MANIFEST_NAME).is_file())
         .map(Path::to_path_buf)
 }
 
@@ -189,9 +186,7 @@ mod tests {
     fn project_root_walks_up_to_the_manifest() {
         let here = std::env::current_dir().expect("the test has a working directory");
         let root = project_root(&here).expect("the crate sits inside the checkout");
-        assert!(root
-            .join(knowledge_architect::manifest::MANIFEST_NAME)
-            .is_file());
+        assert!(root.join(knowledge_architect::MANIFEST_NAME).is_file());
         assert!(here.starts_with(&root));
         assert_eq!(project_root(Path::new("/")), None);
     }

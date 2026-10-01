@@ -21,7 +21,7 @@ use crate::survey::Outside;
 
 use super::Inputs;
 
-pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding> {
+pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding> {
     let mut out = Vec::new();
     if !manifest.serves_claude() {
         return out;

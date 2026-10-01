@@ -5,22 +5,32 @@
 //! what makes the single walk a property of the design rather than of anyone's care, and
 //! what lets a check be tested against a model built in memory.
 
-pub mod agents;
-pub mod build_origin;
-pub mod check;
+// A `pub` item no consumer can reach is refused, so an item is public only through the
+// re-exports below and the role modules.
+#![warn(unreachable_pub)]
+
+// The implementation modules. They are private: what a consumer uses is re-exported below
+// and by the four role modules, so a file can move without changing a public path.
+mod agents;
+mod build_origin;
+mod check;
+mod entity;
+mod finding;
+mod git;
+mod index;
+mod manifest;
+mod model;
+mod records;
+mod scan;
+mod source;
+mod survey;
+mod walk;
+
+// The role modules: one per kind of consumer.
 pub mod cli;
-pub mod entity;
+pub mod document;
 pub mod extension;
-pub mod finding;
-pub mod git;
-pub mod index;
-pub mod manifest;
-pub mod model;
-pub mod records;
-pub mod scan;
-pub mod source;
-pub mod survey;
-pub mod walk;
+pub mod testing;
 
 // The core run against whole mock projects. A unit-test module rather than an integration
 // test, because its assertions read the walk, the survey and the entity table, which are not
@@ -29,9 +39,8 @@ pub mod walk;
 mod mock_projects;
 
 pub use finding::Finding;
-pub use manifest::Manifest;
+pub use manifest::{Manifest, MANIFEST_NAME};
 pub use model::{Document, Model};
-pub use scan::{Located, Observation, RetiredForm, SlugSite};
 
 /// The directory of the Component this library belongs to: its own crate directory, evaluated at
 /// build time.

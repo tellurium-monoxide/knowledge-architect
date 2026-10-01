@@ -70,7 +70,7 @@ struct Row {
 /// a declared group holding none prints no heading. `check::registers` is what reports the
 /// declaration, and an index that hid an entry because of it would be a listing that stops
 /// listing.
-pub fn file_register_index(
+pub(crate) fn file_register_index(
     model: &Model,
     register: &Register,
     home: &Home,
@@ -200,7 +200,7 @@ fn link_target(path: &str) -> String {
 /// **An instance whose directory is not there contributes nothing.** Generating into it would
 /// create a register home as a side effect of a listing; the missing home is a `registers`
 /// finding, which is where a reader is told about it.
-pub fn file_register_indexes(
+pub(crate) fn file_register_indexes(
     model: &Model,
     manifest: &Manifest,
     directories: &HashSet<PathBuf>,
@@ -230,7 +230,7 @@ pub fn file_register_indexes(
 /// names one and a new instance cannot be created with its index inside the walk. A
 /// generated file that was walked would be read as a document: the rule index's table cells
 /// carry every slug the tree defines, and each read as a definition where none may sit.
-pub fn generated_paths(manifest: &Manifest) -> HashSet<PathBuf> {
+pub(crate) fn generated_paths(manifest: &Manifest) -> HashSet<PathBuf> {
     let mut out = generated_index_paths(manifest);
     out.extend(manifest.extension_generated().iter().cloned());
     out
@@ -238,32 +238,13 @@ pub fn generated_paths(manifest: &Manifest) -> HashSet<PathBuf> {
 
 /// Every path this tool generates a file-register index at, whether or not the directory is
 /// there. The rule index is not one; `generated_paths` is the whole set.
-pub fn generated_index_paths(manifest: &Manifest) -> HashSet<PathBuf> {
+pub(crate) fn generated_index_paths(manifest: &Manifest) -> HashSet<PathBuf> {
     Anchors::of(manifest)
         .instances()
         .into_iter()
         .filter(|(_, register, _)| register.shape == Shape::File)
         .map(|(_, _, home)| home.index)
         .collect()
-}
-
-/// Greedy wrap on whitespace that never breaks a word, matching the generator being replaced.
-pub fn wrap(text: &str, width: usize) -> Vec<String> {
-    let mut out = Vec::new();
-    let mut line = String::new();
-    for word in text.split_whitespace() {
-        if !line.is_empty() && line.chars().count() + 1 + word.chars().count() > width {
-            out.push(std::mem::take(&mut line));
-        }
-        if !line.is_empty() {
-            line.push(' ');
-        }
-        line.push_str(word);
-    }
-    if !line.is_empty() {
-        out.push(line);
-    }
-    out
 }
 
 #[cfg(test)]
@@ -520,12 +501,5 @@ mod tests {
         let model = Model::from_documents(Vec::new());
         let dirs: HashSet<PathBuf> = [PathBuf::from("notes/shared")].into_iter().collect();
         assert_eq!(file_register_indexes(&model, &manifest, &dirs).len(), 1);
-    }
-
-    #[test]
-    fn wrapping_never_breaks_a_word_and_fills_greedily() {
-        assert_eq!(wrap("aaa bbb ccc", 7), vec!["aaa bbb", "ccc"]);
-        assert_eq!(wrap("averylongword", 4), vec!["averylongword"]);
-        assert_eq!(wrap("", 10), Vec::<String>::new());
     }
 }

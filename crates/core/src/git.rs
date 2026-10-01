@@ -29,7 +29,7 @@ use std::process::{Command, Stdio};
 /// A builder rather than a function per call so that a new question — a revision list, a tree
 /// listing, a commit message — is one more method chain here rather than one more place that
 /// knows how to spawn a process and how to read its failure.
-pub struct Invocation {
+pub(crate) struct Invocation {
     root: PathBuf,
     args: Vec<OsString>,
     stdin: Option<Vec<u8>>,
@@ -39,7 +39,7 @@ pub struct Invocation {
 }
 
 /// A git invocation rooted at `root`, with nothing asked yet.
-pub fn git(root: &Path) -> Invocation {
+pub(crate) fn git(root: &Path) -> Invocation {
     Invocation {
         root: root.to_path_buf(),
         args: Vec::new(),
@@ -49,7 +49,7 @@ pub fn git(root: &Path) -> Invocation {
 }
 
 impl Invocation {
-    pub fn args<I, S>(mut self, args: I) -> Self
+    pub(crate) fn args<I, S>(mut self, args: I) -> Self
     where
         I: IntoIterator<Item = S>,
         S: AsRef<OsStr>,
@@ -59,18 +59,13 @@ impl Invocation {
         self
     }
 
-    pub fn arg(mut self, arg: impl AsRef<OsStr>) -> Self {
-        self.args.push(arg.as_ref().to_os_string());
-        self
-    }
-
-    pub fn stdin(mut self, bytes: Vec<u8>) -> Self {
+    pub(crate) fn stdin(mut self, bytes: Vec<u8>) -> Self {
         self.stdin = Some(bytes);
         self
     }
 
     /// Also treat this exit code as an answer.
-    pub fn accept(mut self, code: i32) -> Self {
+    pub(crate) fn accept(mut self, code: i32) -> Self {
         self.accept.push(code);
         self
     }
@@ -79,7 +74,7 @@ impl Invocation {
     ///
     /// The two failures a caller must be able to tell apart from an empty answer are named in
     /// the error: git is not there, or git refused. Both reach the binary as exit 2.
-    pub fn output(self) -> io::Result<Vec<u8>> {
+    pub(crate) fn output(self) -> io::Result<Vec<u8>> {
         let shown = self.shown();
         let mut command = Command::new("git");
         command
@@ -157,7 +152,7 @@ impl Invocation {
     }
 
     /// The same, with the output read as a NUL-separated list of project-relative paths.
-    pub fn paths(self) -> io::Result<Vec<PathBuf>> {
+    pub(crate) fn paths(self) -> io::Result<Vec<PathBuf>> {
         Ok(nul_paths(&self.output()?))
     }
 
@@ -213,21 +208,6 @@ fn nul_strings(bytes: &[u8]) -> Vec<String> {
         .collect()
 }
 
-/// Every live file of the project: what git tracks, plus what it does not track and does not
-/// ignore.
-///
-/// This is the walk's source. `--cached` is unaffected by the ignore rules, which is why a
-/// tracked file cannot leave the walk however the ignore rules are written; `--exclude-standard`
-/// applies them to `--others` alone, which is where build output and on-demand directories are
-/// dropped. Every remaining exclusion is the manifest's, and `walk::live_files` applies it.
-pub fn live_files(root: &Path) -> io::Result<Vec<PathBuf>> {
-    Ok(entries(root)?
-        .into_iter()
-        .filter(|e| e.kind == EntryKind::File)
-        .map(|e| e.rel)
-        .collect())
-}
-
 /// What an entry of a listing is, by the mode git records for it.
 ///
 /// A symlink is mode `120000` and a submodule's gitlink `160000`, in the index and in every
@@ -256,7 +236,12 @@ pub struct Entry {
 /// An untracked entry has no index mode, so its kind is read off the filesystem without
 /// following it; a tracked one is classified by the index, which is what a checkout that
 /// could not create the symlink still records.
-pub fn entries(root: &Path) -> io::Result<Vec<Entry>> {
+///
+/// This is the walk's source. `--cached` is unaffected by the ignore rules, which is why a
+/// tracked file cannot leave the walk however the ignore rules are written; `--exclude-standard`
+/// applies them to `--others` alone, which is where build output and on-demand directories are
+/// dropped. Every remaining exclusion is the manifest's, and `walk::live_files` applies it.
+pub(crate) fn entries(root: &Path) -> io::Result<Vec<Entry>> {
     let staged = git(root)
         .args(["ls-files", "-z", "-s", "--cached"])
         .output()?;
@@ -303,7 +288,7 @@ fn mode_and_path(line: &[u8]) -> Option<Entry> {
 /// reader of the ignore rules concludes the file is out of the project while every check reads
 /// it, and deleting the file from the index flips both answers at once. The repair is to untrack
 /// the file, or to narrow the rule that covers it.
-pub fn tracked_and_ignored(root: &Path) -> io::Result<Vec<PathBuf>> {
+pub(crate) fn tracked_and_ignored(root: &Path) -> io::Result<Vec<PathBuf>> {
     git(root)
         .args([
             "ls-files",
@@ -322,7 +307,7 @@ pub fn tracked_and_ignored(root: &Path) -> io::Result<Vec<PathBuf>> {
 /// the whole point of exempting generated paths — is a directory only if the spelling says so.
 /// Asking by the claim rather than by what is on disk is what makes the verdict identical on a
 /// fresh clone and a built tree, per `design@core@ignored-targets-are-not-asserted`.
-pub fn ignore_query(target: &Path, claims_dir: bool) -> String {
+pub(crate) fn ignore_query(target: &Path, claims_dir: bool) -> String {
     let mut out = target.to_string_lossy().into_owned();
     if claims_dir && !out.ends_with('/') {
         out.push('/');
@@ -335,7 +320,7 @@ pub fn ignore_query(target: &Path, claims_dir: bool) -> String {
 /// One process per run rather than one per reference: a project with a thousand path references
 /// would otherwise spawn a thousand. `check-ignore` exits 1 when nothing matched, which is an
 /// answer, and the empty input is answered without spawning anything at all.
-pub fn ignored(root: &Path, queries: &[String]) -> io::Result<HashSet<String>> {
+pub(crate) fn ignored(root: &Path, queries: &[String]) -> io::Result<HashSet<String>> {
     let wanted: Vec<&String> = queries.iter().filter(|q| !q.is_empty()).collect();
     if wanted.is_empty() {
         return Ok(HashSet::new());
@@ -362,7 +347,7 @@ pub fn ignored(root: &Path, queries: &[String]) -> io::Result<HashSet<String>> {
 /// empty map is what a tree with no history produces, and the caller prints a placeholder
 /// rather than failing — this column is convenience, and the hard git dependency belongs to the
 /// walk rather than to a listing.
-pub fn last_changed(root: &Path, dirs: &[PathBuf]) -> BTreeMap<PathBuf, String> {
+pub(crate) fn last_changed(root: &Path, dirs: &[PathBuf]) -> BTreeMap<PathBuf, String> {
     if dirs.is_empty() {
         return BTreeMap::new();
     }
@@ -419,7 +404,7 @@ fn is_date(line: &str) -> bool {
 /// rebase across a clock skew produces one — then lands before the commit it descends from.
 /// The per-commit check reuses the previous model as the next commit's parent tree, so an
 /// order that is not the parent chain would resolve a message against the wrong tree.
-pub fn rev_list(root: &Path, range: &str) -> io::Result<Vec<String>> {
+pub(crate) fn rev_list(root: &Path, range: &str) -> io::Result<Vec<String>> {
     let out = git(root)
         .args(["rev-list", "--reverse", "--topo-order", range])
         .output()?;
@@ -436,7 +421,7 @@ pub fn rev_list(root: &Path, range: &str) -> io::Result<Vec<String>> {
 /// A missing revision is an answer rather than a failure here: the caller asks whether HEAD is
 /// in a range and whether a commit has a first parent, and a root commit having none is
 /// ordinary. Every other git failure still reaches the caller as an error.
-pub fn rev_parse(root: &Path, expression: &str) -> Option<String> {
+pub(crate) fn rev_parse(root: &Path, expression: &str) -> Option<String> {
     let out = git(root)
         .args(["rev-parse", "--verify", "--quiet", expression])
         .accept(1)
@@ -446,22 +431,15 @@ pub fn rev_parse(root: &Path, expression: &str) -> Option<String> {
     (!text.is_empty()).then_some(text)
 }
 
-/// Every file in one commit's tree, project-relative.
+/// Every entry of one commit's tree, project-relative, with its kind read off the mode the tree
+/// records.
 ///
 /// **Run from the project root, `ls-tree` is scoped to it and names its entries relative to
 /// it.** That is the default and `--full-name` is what turns it off, so a project vendored as
 /// a subdirectory of its repository gets exactly the paths its manifest declares, and nothing
 /// from outside it. The same holds of the blob requests below, which name a path relative to
 /// the working directory.
-pub fn tree_files(root: &Path, sha: &str) -> io::Result<Vec<PathBuf>> {
-    Ok(tree_entries(root, sha)?
-        .into_iter()
-        .map(|e| e.rel)
-        .collect())
-}
-
-/// The same, with each entry's kind, read off the mode the tree records.
-pub fn tree_entries(root: &Path, sha: &str) -> io::Result<Vec<Entry>> {
+pub(crate) fn tree_entries(root: &Path, sha: &str) -> io::Result<Vec<Entry>> {
     let listed = git(root).args(["ls-tree", "-r", "-z", sha]).output()?;
     Ok(nul_separated(&listed)
         .into_iter()
@@ -473,7 +451,7 @@ pub fn tree_entries(root: &Path, sha: &str) -> io::Result<Vec<Entry>> {
 ///
 /// `<rev>:./<path>` resolves relative to the working directory, where `<rev>:<path>` resolves
 /// from the repository root. The first is what a project-relative path needs.
-pub fn tree_object(sha: &str, rel: &Path) -> String {
+pub(crate) fn tree_object(sha: &str, rel: &Path) -> String {
     format!("{sha}:./{}", rel.display())
 }
 
@@ -507,7 +485,11 @@ mod object_naming {
 /// `Model::build` keeps an unreadable file as an empty document: a lossy decoding produces
 /// text nobody wrote. The caller sees the absence and reports it. [`blob_bytes`] answers the
 /// bytes whatever they are.
-pub fn blobs(root: &Path, sha: &str, paths: &[PathBuf]) -> io::Result<BTreeMap<PathBuf, String>> {
+pub(crate) fn blobs(
+    root: &Path,
+    sha: &str,
+    paths: &[PathBuf],
+) -> io::Result<BTreeMap<PathBuf, String>> {
     Ok(blob_bytes(root, sha, paths)?
         .into_iter()
         .filter_map(|(rel, bytes)| Some((rel, String::from_utf8(bytes).ok()?)))
@@ -516,7 +498,7 @@ pub fn blobs(root: &Path, sha: &str, paths: &[PathBuf]) -> io::Result<BTreeMap<P
 
 /// The bytes of many blobs of one commit's tree, in one process, as [`blobs`] reads them and
 /// with no decoding. A path the tree does not hold contributes no entry.
-pub fn blob_bytes(
+pub(crate) fn blob_bytes(
     root: &Path,
     sha: &str,
     paths: &[PathBuf],
@@ -584,7 +566,7 @@ fn read_batch(raw: &[u8], paths: &[PathBuf]) -> BTreeMap<PathBuf, Vec<u8>> {
 }
 
 /// One commit's message, subject line and body, exactly as it was written.
-pub fn commit_message(root: &Path, sha: &str) -> io::Result<String> {
+pub(crate) fn commit_message(root: &Path, sha: &str) -> io::Result<String> {
     let out = git(root).args(["log", "-1", "--format=%B", sha]).output()?;
     Ok(String::from_utf8_lossy(&out).into_owned())
 }
@@ -658,7 +640,7 @@ mod tests {
         std::fs::create_dir_all(&dir).expect("a temporary directory");
         // A temporary directory is not inside any worktree, so git refuses. The message is
         // git's own, because a reworded one goes stale against the version installed.
-        let e = live_files(&dir).expect_err("not a worktree").to_string();
+        let e = entries(&dir).expect_err("not a worktree").to_string();
         assert!(e.contains("ls-files"), "{e}");
         assert!(e.to_lowercase().contains("not a git repository"), "{e}");
         let _ = std::fs::remove_dir_all(&dir);
@@ -908,7 +890,11 @@ mod tests {
             None,
             "a root commit has no first parent"
         );
-        let listed = tree_files(&repo, &shas[2]).expect("a tree listing");
+        let listed: Vec<PathBuf> = tree_entries(&repo, &shas[2])
+            .expect("a tree listing")
+            .into_iter()
+            .map(|e| e.rel)
+            .collect();
         assert_eq!(
             listed,
             vec![

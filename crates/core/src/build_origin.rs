@@ -47,7 +47,7 @@ pub fn this_library() -> Library {
 /// Two limits follow from reading only names and places. A checkout that moved the crate to
 /// another relative path is not seen. A tree holding an unrelated crate of the same name at the
 /// same relative path is taken for a copy.
-pub fn foreign_copy(root: &Path, libraries: &[Library]) -> Option<(Library, PathBuf)> {
+pub(crate) fn foreign_copy(root: &Path, libraries: &[Library]) -> Option<(Library, PathBuf)> {
     let canonical = |p: &Path| p.canonicalize().unwrap_or_else(|_| p.to_path_buf());
     let root = canonical(root);
     for library in libraries {

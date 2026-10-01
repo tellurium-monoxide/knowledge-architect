@@ -24,7 +24,7 @@ use crate::scan::Observation;
 
 /// One recorded entry, as a row and as a body.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Record {
+pub(crate) struct Record {
     pub anchor: String,
     pub id: String,
     /// The entry's title: a file entry's level-one heading, a heading entry's heading text
@@ -53,7 +53,7 @@ pub struct Record {
 /// register a project declares, such as a reading of a specification. Every register kind but
 /// two, then. An `issue` reference in a tripwire names what its response opens, and a
 /// `tripwire` reference names another guard; neither is guarded. `path` is no register.
-pub fn guarded(registers: &Registers, kind: &str) -> bool {
+pub(crate) fn guarded(registers: &Registers, kind: &str) -> bool {
     kind != ISSUE_REGISTER && kind != TRIPWIRE_REGISTER && registers.by_name(kind).is_some()
 }
 
@@ -62,7 +62,12 @@ pub fn guarded(registers: &Registers, kind: &str) -> bool {
 /// An entity whose definition site is in no walked document is skipped: the table holds it
 /// because something defined it, and a row with no body would say the register holds an entry
 /// nobody can read.
-pub fn records(model: &Model, anchors: &Anchors, entities: &Entities, kind: &Kind) -> Vec<Record> {
+pub(crate) fn records(
+    model: &Model,
+    anchors: &Anchors,
+    entities: &Entities,
+    kind: &Kind,
+) -> Vec<Record> {
     let by_path: BTreeMap<&Path, &Document> = model
         .documents()
         .iter()
@@ -147,7 +152,7 @@ fn heading_record(
 
 impl Record {
     /// The row a listing prints for a tripwire: the references it carries, joined.
-    pub fn guarding(&self) -> String {
+    pub(crate) fn guarding(&self) -> String {
         if self.guards.is_empty() {
             "-".to_string()
         } else {
@@ -156,7 +161,7 @@ impl Record {
     }
 
     /// Whether the entry's id or title holds `needle`, case-insensitively.
-    pub fn matches(&self, needle: &str) -> bool {
+    pub(crate) fn matches(&self, needle: &str) -> bool {
         let needle = needle.to_lowercase();
         self.id.to_lowercase().contains(&needle) || self.title.to_lowercase().contains(&needle)
     }
@@ -167,7 +172,13 @@ impl Record {
 /// The reference grammar's own resolver decides what is a reference, so a span this reports is
 /// one the `references` family judged, and a span it passes over is one that family called
 /// silent.
-pub fn inbound(model: &Model, anchors: &Anchors, kind: &Kind, anchor: &str, id: &str) -> Vec<Site> {
+pub(crate) fn inbound(
+    model: &Model,
+    anchors: &Anchors,
+    kind: &Kind,
+    anchor: &str,
+    id: &str,
+) -> Vec<Site> {
     let mut out = Vec::new();
     for doc in model.documents() {
         for l in &doc.observations {

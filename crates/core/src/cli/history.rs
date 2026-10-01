@@ -506,7 +506,7 @@ enum Outcome {
 /// **No commit of the range is judged apart**, the last one included: a tree that fails is a
 /// finding naming the commit, whichever commit it is, per
 /// `design@core@a-commit-message-is-a-document`.
-pub fn commits(
+pub(super) fn commits(
     manifest: &Manifest,
     range: &str,
     checker: &[&Path],

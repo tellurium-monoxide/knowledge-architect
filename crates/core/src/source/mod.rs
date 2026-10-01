@@ -16,8 +16,8 @@
 //! document and the innermost enclosing item in Rust, and it never searches outward: a quote a
 //! thousand lines above the claim is one the reader never sees.
 
-pub mod md;
-pub mod rs;
+pub(crate) mod md;
+pub(crate) mod rs;
 
 use std::path::Path;
 
@@ -78,8 +78,7 @@ pub struct Prose {
     /// quote-free class needing no marker of its own.
     pub code: Vec<(usize, usize)>,
     /// Byte offset of each line of `text`, built once on first use.
-    #[doc(hidden)]
-    pub line_starts: std::sync::OnceLock<Vec<usize>>,
+    pub(crate) line_starts: std::sync::OnceLock<Vec<usize>>,
 }
 
 impl Prose {
@@ -230,7 +229,7 @@ impl Parsed {
 /// A suffix the walk does not cover yields nothing rather than a guess. `walk::LIVE_SUFFIXES`
 /// is what decides which those are, and `check::uncovered` asserts that a file outside it may
 /// not name a rule — so an empty parse here is never a silent gap.
-pub fn parse(path: &Path, text: &str, literals: Literals) -> Parsed {
+pub(crate) fn parse(path: &Path, text: &str, literals: Literals) -> Parsed {
     match path.extension().and_then(|e| e.to_str()) {
         Some("md") => md::parse(text),
         Some("rs") => rs::parse(text, literals),

@@ -11,7 +11,8 @@
 
 use std::path::PathBuf;
 
-use crate::{Manifest, Model, Observation, RetiredForm};
+use crate::scan::{Observation, RetiredForm};
+use crate::{Manifest, Model};
 
 fn mock(name: &str) -> Manifest {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))

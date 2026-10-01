@@ -25,10 +25,14 @@ use crate::extension::{Extension, Prepared, Purpose, Tree};
 use crate::manifest::{ISSUE_REGISTER, TRIPWIRE_REGISTER};
 use crate::Manifest;
 
-pub mod history;
+mod history;
 
 mod gathered;
 pub use gathered::Gathered;
+
+// A binary's `main` refuses a build made from another checkout before any command, per
+// `design@core@a-foreign-build-is-refused`.
+pub use crate::build_origin::{refuse_a_foreign_build, this_library, Library};
 
 /// The core's commands. A binary flattens this enum into its own.
 #[derive(Subcommand)]

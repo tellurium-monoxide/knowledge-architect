@@ -19,7 +19,7 @@ use crate::model::Model;
 
 /// Every project-relative path git reports with its kind, and the files the walk does not
 /// cover.
-pub struct Survey {
+pub(crate) struct Survey {
     /// Every project-relative path that exists, files and directories together.
     pub present: HashSet<PathBuf>,
     /// The subset of `present` that is directories.
@@ -67,11 +67,11 @@ pub enum Outside {
 }
 
 /// How many leading bytes the binary test reads, as git's own does.
-pub const BINARY_PROBE: usize = 8000;
+pub(crate) const BINARY_PROBE: usize = 8000;
 
 impl Outside {
     /// A file's state from its bytes: [`Outside::Binary`] or [`Outside::Text`].
-    pub fn from_bytes(bytes: &[u8]) -> Self {
+    pub(crate) fn from_bytes(bytes: &[u8]) -> Self {
         if bytes[..bytes.len().min(BINARY_PROBE)].contains(&0) {
             Outside::Binary
         } else {
@@ -88,7 +88,7 @@ impl Outside {
     }
 }
 
-pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
+pub(crate) fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
     let root = manifest.root();
     Ok(from_listing(
         manifest,
@@ -116,7 +116,7 @@ pub fn survey(manifest: &Manifest, model: &Model) -> std::io::Result<Survey> {
 /// and what sits outside the walk are answered from that tree's listing and its blobs rather
 /// than from the filesystem. `survey` is the case where the listing is the model's own and the
 /// bytes are on disk.
-pub fn from_listing(
+pub(crate) fn from_listing(
     manifest: &Manifest,
     model: &Model,
     listing: &[PathBuf],

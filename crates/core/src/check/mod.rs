@@ -4,11 +4,11 @@
 //! the single walk a property of the design rather than of anyone's care, and it is what lets
 //! a check be run against a model assembled in memory.
 
-pub mod agents;
-pub mod generated;
-pub mod references;
-pub mod registers;
-pub mod tree;
+pub(crate) mod agents;
+pub(crate) mod generated;
+pub(crate) mod references;
+pub(crate) mod registers;
+pub(crate) mod tree;
 
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
@@ -159,7 +159,7 @@ impl Report {
 
     /// The report of a run that stopped: the stop's findings and nothing later, with what
     /// the walk read still counted, since every phase read it.
-    pub fn stopped(stop: Stop, model: &Model) -> Self {
+    pub(crate) fn stopped(stop: Stop, model: &Model) -> Self {
         let structure = Structure {
             walked: model.documents().len(),
             checker_sources: model.checker_sources().to_vec(),
@@ -232,7 +232,7 @@ pub const CHECKS: [&str; 3] = ["generated", "registers", "references"];
 
 /// Run the core's checks of the last phase, over a model `foundation` found complete, with
 /// the files each extension generates compared by the `generated` check.
-pub fn run(
+pub(crate) fn run(
     model: &Model,
     manifest: &Manifest,
     inputs: &Inputs,
@@ -444,7 +444,7 @@ pub(crate) mod testing {
     ///
     /// A test states its tree as a list of paths, the way a checkout lists one, and the kinds
     /// follow from the shape. A test that needs a childless directory inserts it directly.
-    pub fn implied_directories(present: &HashSet<PathBuf>) -> HashSet<PathBuf> {
+    pub(crate) fn implied_directories(present: &HashSet<PathBuf>) -> HashSet<PathBuf> {
         present
             .iter()
             .filter(|p| present.iter().any(|q| *q != **p && q.starts_with(p)))

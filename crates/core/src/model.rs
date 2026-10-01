@@ -213,12 +213,12 @@ impl Model {
     ///
     /// What the survey answers "does this path exist" out of. Empty for a model assembled in
     /// memory, which has no tree behind it.
-    pub fn listing(&self) -> &[PathBuf] {
+    pub(crate) fn listing(&self) -> &[PathBuf] {
         &self.listing
     }
 
     /// The listing's symlink and gitlink entries, each a phase-2 finding.
-    pub fn links(&self) -> &[crate::git::Entry] {
+    pub(crate) fn links(&self) -> &[crate::git::Entry] {
         &self.links
     }
 
@@ -256,7 +256,7 @@ impl Model {
     /// `design@core@checker-source-literals-are-data`. `commits` needs this because a per-commit
     /// model is assembled from git objects and would otherwise read the tool's own fixtures as
     /// live citations at every commit in the range.
-    pub fn from_documents_under(docs: Vec<(PathBuf, String)>, checker: &[&Path]) -> Self {
+    pub(crate) fn from_documents_under(docs: Vec<(PathBuf, String)>, checker: &[&Path]) -> Self {
         let docs = docs
             .into_iter()
             .map(|(rel, text)| {
@@ -291,7 +291,7 @@ impl Model {
     /// The way `build` keeps an unreadable file: in the model, so that `check::tree` reports
     /// it and the run stops there, rather than absent, which is the silence the walk exists
     /// against. `commits` uses it for a tree entry whose blob is not text.
-    pub fn push_unreadable(&mut self, rel: PathBuf, trouble: String) {
+    pub(crate) fn push_unreadable(&mut self, rel: PathBuf, trouble: String) {
         self.docs.push(Document {
             rel,
             text: String::new(),
@@ -316,7 +316,8 @@ impl Model {
     ///
     /// This exists to be compared against another implementation of the same walk and scan,
     /// over the whole tree at once rather than over a sample.
-    pub fn canonical(&self) -> String {
+    #[cfg(test)]
+    pub(crate) fn canonical(&self) -> String {
         self.canonical_with(&[])
     }
 
