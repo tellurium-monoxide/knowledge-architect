@@ -1212,12 +1212,13 @@ skill and comes before the PR that needs it.
      no-external-handoff, harvest-after-implementation, standing-argument-in-head,
      losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id, and, from the review,
      premortem-tripwires-on-the-owners-word. The alternative of 3.2 that lost to
-     losing-alternatives-filter enters the rejected alternatives on its third test, the owner's
+     losing-alternatives-filter enters the rejected alternatives on its fourth test, the owner's
      doubt. The issue on a mechanical check of the shipped text is opened, and the core's issue on
-     references read in Markdown and Rust only.
-   - **Pending:** the fork removes thaum's third recording test of §2, "its argument turns on a
-     rules reading", and the second of §6, a reason citing a rule, and adds no replacement. The
-     owner rules on whether a generic replacement is wanted.
+     references read in Markdown and Rust only.   - thaum's third recording test of §2, "its argument turns on a rules reading", and the second
+     of §6, a reason citing a rule, are replaced by their generic form: the argument, or the
+     reason, turns on a reading of an external specification the project implements, such as a
+     standard, a protocol or a rule set (owner, 2026-10-01: "Agreed on the generic
+     external-specification test").
 3. **Session B, then PR 2: planning.** The document vocabulary, what replaces slices.md as the
    list of milestones and the home of acceptance criteria, and whether the transcript-conformity
    reviewer is an installed agent. Then the fork. It harvests spec-leaves-at-landing,

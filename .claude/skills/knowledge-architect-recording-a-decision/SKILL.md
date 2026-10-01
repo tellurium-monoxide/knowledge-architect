@@ -76,8 +76,14 @@ records dozens per unit of work stops being readable and stops being ranked.
 **A decision earns an entry in a design home only if at least one of these holds:**
 
 1. reversing it would change a type or a signature that **crosses the boundary of a separately
-   built unit**: a crate, a package, a library, a module others import; or
-2. it **constrains work that has not been built**.
+   built unit**: a crate, a package, a library, a module others import;
+2. it **constrains work that has not been built**; or
+3. **its argument turns on a reading of an external specification the project implements**: a
+   standard, a protocol, a rule set.
+
+Test 3 matters most in a project that implements a specification. A choice that turns on what the
+specification means is expensive to get wrong and expensive to derive again, and it is visible: the
+argument quotes or cites the specification.
 
 Otherwise it belongs in an **inline comment at the code it explains, plus the commit message**.
 That is not a lesser home: the comment is read by everyone who touches the code, and the commit
@@ -215,17 +221,18 @@ question is whether **a shape lost to an argument**.
 
 1. it would change a signature crossing the boundary of a separately built unit, or a serialized
    format;
-2. it was refuted by **evidence that cost work to obtain**: a measurement, a prototype, a survey of
+2. its reason rests on a reading of an external specification the project implements;
+3. it was refuted by **evidence that cost work to obtain**: a measurement, a prototype, a survey of
    other projects;
-3. there is still some doubt that the winning alternative will achieve every goal of the project or
+4. there is still some doubt that the winning alternative will achieve every goal of the project or
    of its Component.
 
-Test 2 is the load-bearing one. Proposing something again costs one discussion round, and that is
+Test 3 is the load-bearing one. Proposing something again costs one discussion round, and that is
 healthy. What decides an entry is whether the refutation can be derived again inside that round.
 Reasoning derives again for free, so an alternative that lost to an argument any competent reader
 reconstructs needs no entry. Evidence does not, so an alternative refuted by measurement does.
 
-Test 3 gives future design sessions the alternatives that were not chosen, so they can start from
+Test 4 gives future design sessions the alternatives that were not chosen, so they can start from
 somewhere when the chosen one proves insufficient.
 
 An alternative meeting none of those stays in the spec and the commit message, and nowhere else.
@@ -266,7 +273,7 @@ reason is.** _"Refuted by measurement"_ satisfies neither: it asserts that a che
 somewhere and does not say where.
 
 **A reversal moves the old winner into this file** with the reason it lost, if it meets one of the
-three tests.
+four tests.
 
 **A rejected alternative that is reopened, chosen and implemented moves out of the file.** The file
 must not describe as rejected a design the project now has.

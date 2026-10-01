@@ -88,7 +88,8 @@ without a clone of the repository cannot reach a deliberation.
 
 A losing alternative earns an entry in the rejected alternatives only if it passes the tests of the
 installed recording-a-decision skill: it would change a signature crossing the boundary of a
-separately built unit or a serialized format, it was refuted by evidence that cost work, or a doubt
+separately built unit or a serialized format, its reason rests on a reading of an external
+specification the project implements, it was refuted by evidence that cost work, or a doubt
 remains that the winner meets every goal. The rest stay in the spec and the commit message.
 `goal@knowledge-architect@design-is-recorded-with-its-arguments` asks that a later session need not
 derive an argument again: an alternative refuted by reasoning is derived again in the one round its
