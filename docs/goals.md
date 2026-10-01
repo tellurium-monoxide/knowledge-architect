@@ -29,9 +29,11 @@ guessing, and no two parts contradict each other. Writing the code itself is lef
 ## The documentation structure and the workflow work together `##structure-and-workflow-work-together`
 
 The workflow writes into the structure, and the structure gives the workflow what it needs: one
-place to find each decision with its argument, and one place for what is open. The tool computes
-the workflow's work lists: what a reversed decision touches, and which issues and tripwires a
-change must re-read. Neither is designed without the other.
+place to find each decision with its argument, and one place for what is open. Both live in the
+repository beside the code, as files an agent reads and edits like any other, rather than in an
+external tracker it would need a separate tool to reach. The tool computes the workflow's work
+lists: what a reversed decision touches, and which issues and tripwires a change must re-read.
+Neither is designed without the other.
 
 ## The documentation stays consistent with the code and with itself `##documentation-stays-consistent`
 
@@ -48,10 +50,11 @@ its own judgement for a ruling.
 
 ## Any project can adopt it `##any-project-can-adopt-it`
 
-Nothing about one project is compiled in. A project declares its structure in its manifest, and
-the installed skills name no project's paths. A project pins the version it uses, and moves to a
-new one when it chooses. The target is projects developed mostly by AI agents. A project without
-agents can still use the checker alone.
+Nothing about one project is compiled in. A project declares its structure in its manifest, and the
+installed skills name no project's paths. Every record is cited in one readable grammar, the same in
+every project, so what an agent learns in one project applies in the next. A project pins the
+version it uses, and moves to a new one when it chooses. The target is projects developed mostly by
+AI agents. A project without agents can still use the checker alone.
 
 ## The workflow improves through real use `##the-workflow-improves-through-real-use`
 
