@@ -211,6 +211,85 @@ into every binary that registers an extension, and the copies would drift. The h
 extension's own commands need from a run, such as assembling a complete working tree, are public
 in the same module for the same reason.
 
+**What a run fetches before any check is gathered once, in this module.** `Gathered` reads the
+committed generated files, every `register.toml`, one survey, the two git batches and the shipped
+agent files, and lends them as the `Inputs` a check of the working tree reads. `check`, the refusal of a writer
+over an incomplete model, and an extension's tests all build on it. So the assembly exists once,
+and no caller outside the crate writes an `Inputs` literal, which `design@core@ne-minimal` makes
+impossible anyway. A new input is then a change inside the core alone.
+
+### The public API is a facade of four role modules, and every implementation module is private `##api-facade`
+
+The library has three kinds of consumer: a binary that registers an extension, the extension, and
+the extension's tests. **Testing an extension over a mock project is part of what the library
+publishes**, because a project that adopts the tool with a subject of its own, per
+`goal@knowledge-architect@any-project-can-adopt-it`, has to test that subject as the core tests
+its own. `design@core@a-foreign-build-is-refused` already requires every extension binary to test
+the refusal in its own suite.
+
+Every module that implements the checker is private. The crate root re-exports the nouns every
+consumer meets, and four public modules re-export the rest, one per kind of use:
+
+| module | what it serves |
+| --- | --- |
+| `cli` | a binary's `main`: the commands, running one, finding the project, refusing a foreign build, gathering a run's inputs |
+| `extension` | writing an extension: its two traits, what the core hands them, what they return |
+| `document` | reading a document's parse, per `design@core@an-extension-builds-its-own-model` |
+| `testing` | running the core over a mock project as the binary does |
+
+- **The public surface is read in one file**, lib.rs, and the role modules beside it. It is
+  not computed from the implementation's module tree, so moving an item between files changes no
+  public path, and is no library break under `design@knowledge-architect@versioning-policy`.
+- **A public signature keeps its types public.** `Inputs` is in `Prepared::check`'s signature and
+  its fields expose `Entry` and `Outside`, so those are public although no consumer names them.
+- **A `pub` item no consumer can reach is refused.** lib.rs carries `#![warn(unreachable_pub)]`,
+  and the clippy gate runs with `-D warnings`, so an item is public only through the facade.
+- **A value the core hands out is read, not built.** On the public types, the read-only methods
+  are public, and the constructors and the methods only the core calls are not.
+- **Nothing becomes public for the core's own tests.** A test that needs a private item is a
+  unit-test module inside the crate, as `path@core@src/mock_projects.rs` is.
+- `Manifest::command` is public although thaum's extension does not call it: an extension's
+  finding that names a repair command owes the project's declared command, per
+  `design@core@declared-command`.
+
+### Only the four types no consumer can usefully match or build are non-exhaustive `##ne-minimal`
+
+`#[non_exhaustive]` sits on `cli::Command`, `extension::Inputs`, `extension::ExtensionReport`
+and `extension::Resolution`. Every other public enum and struct is exhaustive on purpose.
+
+| | consumer matches exhaustively | consumer uses `if let`, `==`, `matches!` or `_` |
+| --- | --- | --- |
+| enum without the attribute, variant added | compile error at the match | compiles, nothing changes |
+| enum with the attribute, variant added | impossible: the attribute forced `_` | compiles, nothing changes |
+
+- **Without the attribute, a new variant breaks only a consumer who chose an exhaustive match**,
+  which is a consumer asking to be told. The attribute takes that choice from every consumer. The
+  lint that would warn on a wildcard hiding a new variant, `non_exhaustive_omitted_patterns`, is
+  unstable on the pinned toolchain.
+- **For an enum the core hands an extension, the compile error is wanted.** A third
+  `extension::Tree` must make every extension say how it reads it. A wildcard would read the
+  working tree while the run judges another tree: a wrong verdict, with exit 0.
+- **The attribute's gain is the library's:** a variant added to an enum without it is a breaking
+  change under Rust's semver rules. Under 0.x that gain is nil, because the policy's major and
+  minor both bump 0.MINOR, and every variant foreseen arrives with a minor-level change anyway.
+- So the attribute goes only where no consumer can usefully match or build a literal: a binary
+  hands a `Command` to `cli::run` unmatched, `Inputs` comes from `Gathered`, and an extension
+  fills the two reports from `Default`, which the attribute allows.
+- `Generated`, `DumpRow` and `Library` stay constructible by literal. A new field there is a new
+  obligation on the extension, and the compile error says so.
+
+After 1.0 the attribute decides minor against major for every added variant, so this is
+re-examined before the project leaves 0.x, per `design@knowledge-architect@stays-at-zero-x`.
+
+### A hook added to `Extension` or `Prepared` has a default body only when doing nothing is a correct answer `##trait-defaults`
+
+The two traits have no default method. A hook added later gets a default body only when an
+extension that does not know the hook is still right to do nothing, such as a new dump. A hook
+whose absence would make a verdict wrong is added without a default, and adding it is a breaking
+change. The argument is the one of `design@core@ne-minimal`: suppose a pre-commit mode adds
+`Prepared::check_staged` with a default that returns no findings. Every existing extension
+compiles unchanged, its checks silently do not run in the new mode, and the run reports success.
+
 ### The library and the binary are one crate, `knowledge-architect` `##single-crate`
 
 The library, imported as `knowledge_architect`, and the binary are two targets of one package. The

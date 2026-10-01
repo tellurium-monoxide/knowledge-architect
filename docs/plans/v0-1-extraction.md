@@ -550,15 +550,20 @@ hook such as a new dump gets a default; a hook that judges does not.
 changes no version number, by refinement 1: its effects are that a library break never ships in a
 patch, and the CHANGELOG item is tagged `library`.
 
-**Core tests (core-test-surface).** The 7 items only the core's tests use, and their replacement:
+**Core tests (core-test-surface).** Nothing becomes public for the core's own tests. The spec
+counted 7 items only those tests use. The module that held most of them, the mock-project tests,
+reads 16 items the facade leaves private and builds `Inputs` literals, so it moved whole into
+the crate as the unit-test module `path@core@src/mock_projects.rs`, with no assertion changed.
+The one test in `path@core@tests/binary.rs` that called `cli::history::commits` runs `cli::run`
+with `Command::Commits`.
 
-| item | replaced by |
-| --- | --- |
-| `check::run` | `testing::run_with(.., &[])` |
-| `check::agents::check` | `testing::foundation`, which runs it |
-| `records::records`, `entity::Kind`, `manifest::ISSUE_REGISTER` | the test moves into records.rs as a unit test over the mock project's path |
-| `cli::history::commits` | `cli::run` with `Command::Commits`, or a unit test in history.rs, whichever keeps the assertion unchanged |
-| `scan::RetiredForm` | public anyway, as `document::RetiredForm`, through `Observation` |
+**What the implementation added to the membership.** On the public types, the read-only methods
+the membership did not name stay public: `Phase::{number, stop_line}`, `Report::failed`,
+`Parsed::scope_at`, `Prose::{file_line, is_code, file_line_at}`, `Scope::{holds, depth}`,
+`CommitTree::{holds, read, object_id}`, `Outside::text`. The constructors `Report::stopped`,
+`CommitTree::new` and `Outside::from_bytes` are `pub(crate)`. lib.rs carries
+`#![warn(unreachable_pub)]`, so the clippy gate refuses a `pub` item outside the facade.
+`complete_working_tree` returns the `Gathered` instead of the survey.
 
 **The description.** The crate-level documentation of lib.rs, which ships in the package and
 renders on docs.rs, with a pointer to it from the core's README. Its sections follow the four
@@ -584,6 +589,7 @@ under `knowledge_architect::`.
 | `check::references::ignore_queries`, `git::{ignored, tracked_and_ignored}`, `entity::Anchors`, `entity::Home`, `survey::{survey, Survey}`, `index::{generated_paths, generated_index_paths}` | private: `cli::Gathered::over`, which takes the git batches, reads the register.toml files and the committed generated files |
 | `index::file_register_indexes`, in the test that every committed index is current | private: `testing::run_with` over the mock, whose `generated` check reports a drifted index |
 | `cli::Command` | unchanged path, non-exhaustive; rules-corpus matches it only through `matches!` and `let … else` |
+| `cli::complete_working_tree` | unchanged path; it returns `cli::Gathered` instead of the survey. rules-corpus discards the value through `?`, so its call compiles unchanged |
 
 #### 4.4.6 Losing alternatives
 
@@ -1085,8 +1091,12 @@ was built.
 - Review axes: spec conformity against 4.3, self-consistency, decision recording (the reversals),
   and an adversarial reviewer.
 
-**Step 4. The public API.** Reads 4.4 and 4.5. **The design session is held**: 4.4 is its
-outcome. What remains is the implementation, on the branch public-api.
+**Step 4. The public API.** Reads 4.4 and 4.5. **Landed on the branch public-api**: the
+design session's outcome is 4.4, and the eight items below are implemented. Where the
+implementation differs from the spec, 4.4.4 says so. The harvest is done: the core's entries
+api-facade, ne-minimal and trait-defaults, Gathered in the-core-cli-is-a-library-module, the
+two tripwires, six rejected alternatives, the core's CLAUDE.md contract, and the root's
+versioning-policy and stays-at-zero-x.
 
 Each item below is one commit that passes the check, unless an item's intermediate tree cannot.
 
@@ -1122,6 +1132,9 @@ Each item below is one commit that passes the check, unless an item's intermedia
   transcript-conformity reviewer if the owner chooses an installed agent.
 - The manifest switches to the default harness, and the repository installs and commits its own
   skills.
+- The first shipped file gives the CLI's wiring of the shipped files its test. Today
+  `agents::shipped` returns an empty list, so a mutation that hands `Gathered` an empty list
+  instead of it is caught by no test (step 4, item 1).
 - The three agent-skills issues of section 5 are opened when the install and the skills they
   depend on exist.
 - **Approved:** the setting-goals skill is then run with the owner on every component of this

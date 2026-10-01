@@ -88,7 +88,10 @@ is what lets a project pin one version and move when it chooses, per
 - **Under 0.x, Cargo has two positions.** A requirement "0.3" accepts 0.3.2 and refuses 0.4. So
   while at 0.x, major and minor both bump 0.MINOR, and patch bumps 0.x.PATCH.
 - **The library API is a surface of its own.** A breaking change there makes an extension fail to
-  compile, which is worse than a new finding, so it is major.
+  compile, which is worse than a new finding, so it is major. Under 0.x this changes no version
+  number, by the point above: a library break and a stricter check both bump 0.MINOR. What it
+  changes is that a library break never ships in a patch. Which changes to the library are
+  breaking is narrowed by `design@core@ne-minimal`.
 - **The manifest test.** Under a minor release every manifest that was valid stays valid. Renaming
   a key is major, unless the old spelling stays accepted with a deprecation finding.
 - **Size does not make a major.** A major that sometimes means "breaking" and sometimes means
@@ -115,6 +118,9 @@ it are implemented, or at least argued thoroughly. Those recorded so far are
 `issue@core@a-home-for-developer-contracts-outside-agent-configuration`.
 The others are opened when the work their premise rests on lands, per the milestone document
 `path@knowledge-architect@docs/plans/v0-1-extraction.md`, and join this list then.
+
+Leaving 0.x re-examines `design@core@ne-minimal`. After 1.0, a variant added to one of the
+library's exhaustive enums is a major, where under 0.x it bumps 0.MINOR.
 
 ## 3. How work reaches main
 

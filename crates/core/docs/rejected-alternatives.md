@@ -362,3 +362,30 @@ component's contracts for a developer are routed, so requiring it guarantees the
 for the agent document alone: the declaration that removes it removes nothing else, so every other
 document is still compiled in and checked. Doubt remains on the second half of the argument, and
 `issue@core@a-home-for-developer-contracts-outside-agent-configuration` records it.
+
+**The implementation's module tree as the public API**, with only its visibility narrowed — lost
+to `design@core@api-facade`. `live`. A consumer would learn the internal layout: thaum's rules
+extension named 13 of the 16 modules that were public. Moving an item between files would be a library
+break, and the public surface would be computed from 25 modules rather than read in one file.
+
+**`#[non_exhaustive]` on every public enum expected to grow** — lost to `design@core@ne-minimal`.
+`live`. It assumed the attribute prevents breakage. It relabels a break that hits only the
+consumers who opted into an exhaustive match, and removes that option from every consumer. Under
+0.x it buys no version number, because major and minor both bump 0.MINOR.
+
+**A struct literal of `Inputs` in each caller, accepting a break per new input** — lost to
+`design@core@the-core-cli-is-a-library-module`, which gathers the inputs. `live`. The checker
+surface of v0.1 added two inputs and broke all five literals in thaum's rules extension; each
+later input would do the same.
+
+**The items only the core's own tests use kept public under `#[doc(hidden)]`** — lost to
+`design@core@api-facade`. `live`. It publishes a second contract that nothing states, beside the
+one the facade states.
+
+**The items only the core's own tests use gated behind a `testing` feature** — lost to
+`design@core@api-facade`. `live`. A unit-test module inside the crate reaches them with no feature
+and no second surface, and the feature gated nothing before.
+
+**A default body that does nothing on every hook added to the extension traits** — lost to
+`design@core@trait-defaults`. `live`. A judging hook defaulted to nothing turns a compile error
+into a check that silently does not run, with exit 0.
