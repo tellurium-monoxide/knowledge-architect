@@ -13,7 +13,7 @@ use std::path::PathBuf;
 use crate::entity::{Anchor, Anchors, Home};
 use crate::finding::Finding;
 use crate::git::EntryKind;
-use crate::manifest::{Manifest, Register, Shape, COMPONENT_DOCUMENTS, MANIFEST_NAME};
+use crate::manifest::{Manifest, Register, Shape, MANIFEST_NAME};
 use crate::model::Model;
 
 use super::Inputs;
@@ -58,7 +58,7 @@ pub fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<Finding
             continue;
         }
         if anchor.is_component {
-            for name in COMPONENT_DOCUMENTS {
+            for name in manifest.required_documents() {
                 let path = anchor.path.join(name);
                 if !inputs.present.contains(&path) {
                     out.push(Finding::in_file(

@@ -74,6 +74,12 @@ impl Assembly {
             tracked_and_ignored: &self.tracked_and_ignored,
             refused: &self.survey.refused,
             links: &self.survey.links,
+            // A commit's installed files are not compared: the running binary ships its own
+            // version's text, and an older commit's installed set would fail against it with no
+            // repair a commit in history can take. `check` on the working tree enforces them,
+            // per `design@core@owned-namespace-check`.
+            installed: &[],
+            shipped: &[],
         }
     }
 }
@@ -331,7 +337,17 @@ fn commit_tree(
         .filter(|rel| !read.links.iter().any(|e| e.rel == **rel))
         .cloned()
         .collect();
-    let walked = crate::walk::live_files(Path::new(""), manifest.walk(), &files, &generated);
+    // An installed file leaves the walk as a generated one does, per
+    // `design@core@owned-namespace-check`; a commit's installed files are not compared, so their
+    // blobs are not read.
+    let installed: Vec<PathBuf> = files
+        .iter()
+        .filter(|f| manifest.owned(f))
+        .cloned()
+        .collect();
+    let mut excluded = generated.clone();
+    excluded.extend(installed.iter().cloned());
+    let walked = crate::walk::live_files(Path::new(""), manifest.walk(), &files, &excluded);
     let mut blobs = read.blobs;
     // The generated indexes and the per-instance options sit outside the walk and are read by
     // the caller, exactly as `check` reads them off the filesystem.

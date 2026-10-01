@@ -1,7 +1,8 @@
 //! Every anchor carries the registers it owes, in the shape that register has.
 //!
 //! An anchor is a component or a location. A **component** carries its README, its scoped
-//! `CLAUDE.md`, its rejected-alternatives document, and every component-scoped register; a
+//! `CLAUDE.md` while the project serves the `claude` harness, its rejected-alternatives document,
+//! and every component-scoped register; a
 //! **location** carries the registers it declares and nothing else. What that buys is one home
 //! per anchor for each kind of statement, and one place to look for it.
 //!
@@ -601,6 +602,8 @@ mod tests {
             tracked_and_ignored: &[],
             refused: &[],
             links: &[],
+            installed: &[],
+            shipped: &[],
         };
         // The union the phases would print one at a time: the complaints, the tree, the
         // definitions, then the shapes. A test here asserts each function's own findings;
@@ -1650,6 +1653,8 @@ mod tests {
             tracked_and_ignored: &[],
             refused: &refused,
             links: &[],
+            installed: &[],
+            shipped: &[],
         };
         let found =
             crate::check::tree::check(&Model::from_documents(Vec::new()), &manifest, &inputs);

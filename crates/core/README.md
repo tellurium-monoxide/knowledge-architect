@@ -1,4 +1,4 @@
-# Knowledge checker
+# The core checker
 
 How a project's knowledge is held: its documents, the references between them and the registers
 they carry. This Component is the generic core. A subject that belongs to one project is an
@@ -10,8 +10,11 @@ that registers extensions runs the same commands unchanged, and its extensions' 
 `design@core@the-core-cli-is-a-library-module`. Over a manifest holding a table no
 extension of the binary claims, the binary reports that table in phase 1, rather than skip in
 silence what the table configures, per `design@core@an-extension-claims-its-manifest-tables`.
-The commands below are written `cargo klarch <command>`: a cargo alias a project defines over
-the binary it runs, the core's or its extension binary, built from the checkout.
+The commands below are written `cargo klarch <command>`, the command this repository declares: a
+cargo alias over the binary it runs, built from the checkout. A project declares its own command
+with `[project] command`, and `klarch` is the command when it declares none. The checker prints
+the declared command in its messages, in the header of every generated index, and in the agent
+files it installs, per `design@core@declared-command`.
 
 **It needs `git` 2.36 or newer on the path, and a project inside a git worktree.** What the tool reads is what
 `git ls-files` reports from the project root, so every pattern git honours decides the walk,
@@ -33,6 +36,7 @@ cargo klarch tripwires [anchor] [--guarding <ref>] [text …]
 cargo klarch index                     regenerate every generated index in place
 cargo klarch model                     every observation the walk produced
 cargo klarch commits <range>           judge every commit in the range, message and tree, against its own tree
+cargo klarch install-agent-skills      write the agent files this version ships, remove the ones it does not
 ```
 
 ## Exit codes
@@ -41,9 +45,9 @@ Three, per `design@core@exit-code-ladder`, and the third is what makes the other
 
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
-| `0` | the command ran and its subject is in order | `check` with no findings; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commits` with no finding, an empty range included |
+| `0` | the command ran and its subject is in order | `check` with no findings; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commits` with no finding, an empty range included; `install-agent-skills` having written and removed what it had to, or found nothing to do |
 | `1` | the command ran and reports a negative answer | `check` with findings; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, `install-agent-skills` over a manifest holding a refused declaration, over a symbolic link on an owned path, or when a write or a removal failed, naming the path, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -61,7 +65,9 @@ the tail of the output has to reach the verdict rather than the counts.
 manifest: a declaration the tool refuses is reported and acted on by nothing. Phase 2 reads the
 tree against what the manifest declares: a file the walk could not read, a name it refuses, an
 anchor or a register home that is not there, a home a walk row keeps out, a declared path that
-does not exist, a file git both tracks and ignores, a symlink or a submodule. Phase 3 builds the entity table: a slug or an entry id where none may sit, or
+does not exist, a file git both tracks and ignores, a symlink or a submodule, and, under the `claude` agent
+harness, an installed agent file missing, differing or unshipped, a deletion of one not staged, or
+a root CLAUDE.md that does not import a shipped primer. Phase 3 builds the entity table: a slug or an entry id where none may sit, or
 defined twice. Each of these says the model is incomplete, and a finding computed from the model
 afterwards would be unreliable in both directions, so the run prints that phase's findings, says
 which phases were not judged, and exits 1. Phase 4 is every check, over the complete model: the
@@ -127,7 +133,7 @@ crates/core/docs/open-issues/index.md    already current
 `design@core@a-file-register-index-is-rows`:
 
 ```markdown
-**Generated — do not edit.** `cargo klarch index`
+**Generated — do not edit.** `<command> index`
 
 2 entries
 
@@ -155,6 +161,30 @@ Running it to look therefore costs nothing, not even an mtime. **Whether a gener
 current is not this command's question** — that is `cargo klarch check`, whose `generated` check
 is a gate and names the first line at which the committed file and the regenerated one disagree.
 Both halves are `design@core@generated-files-are-pure`.
+
+## `install-agent-skills`
+
+Under the `claude` agent harness, the default, the checker installs the agent skills, subagent
+definitions and a primer, and this command writes them into the project's `.claude/` directory,
+each rendered with the project's declared command. It removes every file of its own namespace the
+version does not ship: a skill directory or an agent file whose name starts with
+`knowledge-architect-`, and the directory .claude/knowledge-architect/. A project's own skill
+takes a name of its own, and the command never touches it. It never edits the root CLAUDE.md
+either: when the primer is shipped and the root CLAUDE.md does not import it, it says so, and the
+line to add is one holding exactly an at sign followed by .claude/knowledge-architect/PRIMER.md.
+
+Commit what it writes. `check` compares each installed file with what the version ships, byte for
+byte, and stops in phase 2 on a missing, differing or unshipped file, so a project that moves to a
+new version runs the install with the move. The decision is `design@core@owned-namespace-check`.
+
+```toml
+[agents]
+harness = ["claude"]   # the default when the table is absent
+# harness = []         # no agent configuration: no install, no check, no CLAUDE.md required
+```
+
+With `harness = []` no component owes a CLAUDE.md, and nothing is installed or checked, per
+`design@core@agents-table`. This version ships no file yet, so the install writes nothing.
 
 ## `model`
 

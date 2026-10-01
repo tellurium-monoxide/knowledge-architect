@@ -55,6 +55,18 @@ package. The license files sit at the root and as copies in each directory under
 carries neither. This keeps what a project receives to what it uses, per
 `goal@knowledge-architect@any-project-can-adopt-it`.
 
+### The checker carries the agent workflow and writes it into a project `##binary-bundles-workflow`
+
+The skills, subagent definitions and primer of the agent workflow are embedded in the checker, and
+a command of the checker writes them into a project, rendered for it. There is no plugin and no
+marketplace. One artifact has one version, so the installed workflow is always the one the
+project's pinned checker describes, per `design@knowledge-architect@version-lockstep`, and every
+project holds the version it pinned, whatever another project on the same machine uses. Whether
+the installed files match is checked like any other part of the tree, per
+`design@core@owned-namespace-check`, rather than warned about. A project installs one thing, with
+one command, and a later provider's layout is a target the same command writes, which serves
+`goal@knowledge-architect@any-project-can-adopt-it`.
+
 ## 2. Versions and releases
 
 ### Every crate carries one version, and so does the installed text `##version-lockstep`
@@ -99,7 +111,8 @@ converges. The project leaves 0.x once the open issues recorded from the discuss
 it are implemented, or at least argued thoroughly. Those recorded so far are
 `issue@core@structured-plan-documents`, `issue@core@tooling-for-project-skills`,
 `issue@core@configuration-for-several-agent-providers`,
-`issue@core@a-component-states-at-least-one-goal` and `issue@core@cross-project-references`.
+`issue@core@a-component-states-at-least-one-goal`, `issue@core@cross-project-references` and
+`issue@core@a-home-for-developer-contracts-outside-agent-configuration`.
 The others are opened when the work their premise rests on lands, per the milestone document
 `path@knowledge-architect@docs/plans/v0-1-extraction.md`, and join this list then.
 

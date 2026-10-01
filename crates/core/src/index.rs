@@ -70,7 +70,12 @@ struct Row {
 /// a declared group holding none prints no heading. `check::registers` is what reports the
 /// declaration, and an index that hid an entry because of it would be a listing that stops
 /// listing.
-pub fn file_register_index(model: &Model, register: &Register, home: &Home) -> String {
+pub fn file_register_index(
+    model: &Model,
+    register: &Register,
+    home: &Home,
+    command: &str,
+) -> String {
     let keys: Vec<&str> = register.metadata.iter().map(|(k, _)| k.as_str()).collect();
     let mut rows: Vec<Row> = Vec::new();
     for doc in model.documents() {
@@ -97,7 +102,7 @@ pub fn file_register_index(model: &Model, register: &Register, home: &Home) -> S
         (&a.group, a.values.first(), &a.id).cmp(&(&b.group, b.values.first(), &b.id))
     });
 
-    let mut out = String::from("**Generated — do not edit.** `cargo klarch index`\n\n");
+    let mut out = format!("**Generated — do not edit.** `{command} index`\n\n");
     out.push_str(&format!("{} entries\n", rows.len()));
     let mut open: Option<&Option<String>> = None;
     for row in &rows {
@@ -207,7 +212,7 @@ pub fn file_register_indexes(
         }
         out.push((
             home.index.clone(),
-            file_register_index(model, register, &home),
+            file_register_index(model, register, &home, manifest.command()),
         ));
     }
     out.sort_by(|a, b| a.0.cmp(&b.0));
@@ -308,7 +313,7 @@ mod tests {
                 .map(|(p, t)| (PathBuf::from(p), t.to_string()))
                 .collect(),
         );
-        file_register_index(&model, &register(with_metadata), &home())
+        file_register_index(&model, &register(with_metadata), &home(), "cargo klarch")
     }
 
     #[test]

@@ -649,6 +649,8 @@ mod tests {
             tracked_and_ignored: &[],
             refused: &[],
             links: &[],
+            installed: &[],
+            shipped: &[],
         };
         let (found, counts) = check_under(&model, &inputs, anchors);
         (found.iter().map(|f| f.to_string()).collect(), counts)

@@ -45,6 +45,9 @@ pub enum Command {
     Model,
     /// Judge every commit message in a range, each against its own commit's tree.
     Commits(CommitsArgs),
+    /// Write the agent files this version ships into the project, and remove the ones it no
+    /// longer ships.
+    InstallAgentSkills,
 }
 
 #[derive(Args)]
@@ -112,7 +115,50 @@ pub fn run(
         Command::Index => index(manifest, checker, extensions),
         Command::Model => model(manifest, checker, extensions),
         Command::Commits(args) => history::commits(manifest, &args.range, checker, extensions),
+        Command::InstallAgentSkills => install_agent_skills(manifest),
     }
+}
+
+/// Write the shipped agent files into the project, per `design@core@owned-namespace-check`.
+///
+/// Exit 0 when the installed set is the shipped one afterwards, 2 when the filesystem refused a
+/// write. It edits nothing outside the installer's namespace: a missing primer import line is
+/// said, not written, because the root CLAUDE.md belongs to the project.
+fn install_agent_skills(manifest: &Manifest) -> Result<ExitCode, String> {
+    if !manifest.complaints().is_empty() {
+        return Err(format!(
+            "the manifest holds declarations this tool refused: `{} check` reports them. \
+             Nothing was installed.",
+            manifest.command()
+        ));
+    }
+    if !manifest.serves_claude() {
+        outln!("the project declares no agent harness: nothing was installed");
+        return Ok(ExitCode::SUCCESS);
+    }
+    let shipped = crate::agents::shipped(manifest);
+    let done = crate::agents::install(manifest.root(), &shipped)?;
+    for rel in &done.written {
+        outln!("wrote    {}", rel.display());
+    }
+    for rel in &done.deleted {
+        outln!("deleted  {}", rel.display());
+    }
+    if done.written.is_empty() && done.deleted.is_empty() {
+        outln!("the installed set is already the shipped one");
+    }
+    let primer = std::path::Path::new(crate::agents::PRIMER);
+    if shipped.iter().any(|(p, _)| p == primer) {
+        let claude = std::fs::read_to_string(manifest.root().join(crate::manifest::AGENT_DOCUMENT))
+            .unwrap_or_default();
+        if !crate::agents::imports_primer(&claude) {
+            outln!(
+                "the root CLAUDE.md does not import the primer: add a line holding exactly `{}`",
+                crate::agents::IMPORT_LINE
+            );
+        }
+    }
+    Ok(ExitCode::SUCCESS)
 }
 
 /// The working tree's survey, once the first three phases have found the model complete.
@@ -129,6 +175,7 @@ pub fn complete_working_tree(
     let survey = crate::survey::survey(manifest, model).map_err(|e| e.to_string())?;
     let tracked_and_ignored =
         crate::git::tracked_and_ignored(manifest.root()).map_err(|e| e.to_string())?;
+    let shipped = crate::agents::shipped(manifest);
     let inputs = Inputs {
         committed: &HashMap::new(),
         configs: &HashMap::new(),
@@ -139,13 +186,16 @@ pub fn complete_working_tree(
         tracked_and_ignored: &tracked_and_ignored,
         refused: &survey.refused,
         links: &survey.links,
+        installed: &survey.installed,
+        shipped: &shipped,
     };
     match crate::check::foundation(model, manifest, &inputs) {
         Ok(()) => Ok(survey),
         Err(stop) => Err(format!(
-            "the model is incomplete: {}. `cargo klarch check` reports them. Nothing was \
+            "the model is incomplete: {}. `{} check` reports them. Nothing was \
              written.",
-            stop.phase.stop_line(stop.findings.len())
+            stop.phase.stop_line(stop.findings.len()),
+            manifest.command()
         )),
     }
 }
@@ -231,6 +281,7 @@ fn check(
     let ignored = crate::git::ignored(manifest.root(), &queries).map_err(|e| e.to_string())?;
     let tracked_and_ignored =
         crate::git::tracked_and_ignored(manifest.root()).map_err(|e| e.to_string())?;
+    let shipped = crate::agents::shipped(manifest);
     let inputs = Inputs {
         committed: &committed,
         configs: &configs,
@@ -241,6 +292,8 @@ fn check(
         tracked_and_ignored: &tracked_and_ignored,
         refused: &survey.refused,
         links: &survey.links,
+        installed: &survey.installed,
+        shipped: &shipped,
     };
     if let Err(stop) = crate::check::foundation(&model, manifest, &inputs) {
         let report = Report::stopped(stop, &model);

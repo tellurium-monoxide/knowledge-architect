@@ -1726,3 +1726,102 @@ fn a_closed_stdout_ends_the_run_quietly_with_exit_2() {
         "the closed pipe must not be reported: {stderr}"
     );
 }
+
+/// The claim: a file in the installer's namespace that this version does not ship stops the check
+/// in phase 2, and is not walked as a document; `install-agent-skills` removes it and leaves a
+/// project's own skill, and the check then passes. Per `design@core@owned-namespace-check`.
+/// Mutations: dropping the namespace from the walk's exclusions walks the stray file as a
+/// document; dropping the unshipped branch of `check::agents` lets the first run pass.
+#[test]
+fn a_stray_file_in_the_installers_namespace_stops_the_check_and_the_install_removes_it() {
+    let sandbox = Sandbox::seeded(
+        "stray-installed",
+        "minimal",
+        &[
+            (
+                ".claude/agents/knowledge-architect-stray.md",
+                "a reference `design@nowhere@nothing` that is read by nothing\n",
+            ),
+            (".claude/skills/project-own/SKILL.md", "# Project skill\n"),
+        ],
+    );
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    assert!(out.contains("phase 2: 1 finding(s)"), "{out}");
+    assert!(
+        out.contains(".claude/agents/knowledge-architect-stray.md  this file sits in the installer's namespace"),
+        "{out}"
+    );
+    let (out, stderr, code) = sandbox.run(&["install-agent-skills"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    assert!(
+        out.contains("deleted  .claude/agents/knowledge-architect-stray.md"),
+        "{out}"
+    );
+    assert!(!sandbox
+        .path(".claude/agents/knowledge-architect-stray.md")
+        .exists());
+    assert!(sandbox.path(".claude/skills/project-own/SKILL.md").exists());
+    // git still lists the deleted file until the deletion is staged, and the check says so.
+    let (out, _, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}");
+    assert!(out.contains("the deletion is not staged"), "{out}");
+    sandbox.stage();
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+}
+
+/// The claim: `commits` does not compare a commit's installed files, so a commit holding a file of
+/// the installer's namespace that the running version does not ship is judged on its message and
+/// its documents alone, while `check` on the working tree still reports it. Per
+/// `design@core@owned-namespace-check`. Mutation: giving the per-commit inputs the installed set
+/// fails the range.
+#[test]
+fn commits_does_not_compare_installed_files_and_check_does() {
+    let history = History::new("commit-installed");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    history.write(
+        ".claude/agents/knowledge-architect-older.md",
+        "an installed file of another version\n",
+    );
+    history.commit("An installed file of another version is committed\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+    let (stdout, _, code) = history.run(&["check"]);
+    assert_eq!(code, 1, "{stdout}");
+    assert!(stdout.contains("does not ship it"), "{stdout}");
+}
+
+/// The claim: under `harness = []` a component owes no CLAUDE.md, the namespace is walked like any
+/// other path, and the install writes and deletes nothing. Mutations: requiring the compiled
+/// document set regardless of the harness, or running the install without its harness guard,
+/// each fail a case.
+#[test]
+fn no_harness_owes_no_claude_md_and_installs_nothing() {
+    let sandbox = Sandbox::seeded(
+        "no-harness",
+        "minimal",
+        &[(
+            ".claude/agents/knowledge-architect-kept.md",
+            "# A file the project keeps\n",
+        )],
+    );
+    let manifest =
+        std::fs::read_to_string(sandbox.path("knowledge-architect.toml")).expect("the manifest");
+    std::fs::write(
+        sandbox.path("knowledge-architect.toml"),
+        format!("{manifest}\n[agents]\nharness = []\n"),
+    )
+    .expect("the manifest is rewritten");
+    std::fs::remove_file(sandbox.path("CLAUDE.md")).expect("the root CLAUDE.md is removed");
+    sandbox.stage();
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    let (out, stderr, code) = sandbox.run(&["install-agent-skills"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    assert!(out.contains("nothing was installed"), "{out}");
+    assert!(sandbox
+        .path(".claude/agents/knowledge-architect-kept.md")
+        .exists());
+}

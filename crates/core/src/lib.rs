@@ -5,6 +5,7 @@
 //! what makes the single walk a property of the design rather than of anyone's care, and
 //! what lets a check be tested against a model built in memory.
 
+pub mod agents;
 pub mod build_origin;
 pub mod check;
 pub mod cli;

@@ -1,8 +1,8 @@
 //! Every git invocation the core makes, in one place.
 //!
 //! **Git is the walk.** What this tool reads is what `git ls-files` reports from the manifest's
-//! directory, so a nested `.gitignore` is honoured, every pattern git honours is honoured, and a
-//! file git tracks can no longer leave the walk. The hand-rolled matcher this replaced could do
+//! directory, so a nested `.gitignore` is honoured, every pattern git honours is honoured, and no
+//! ignore rule can take a file git tracks out of the walk. The hand-rolled matcher this replaced could do
 //! none of the three, per `design@core@git-supplies-the-walk`.
 //!
 //! **One module owns the process boundary.** A check is a pure function over the model and may

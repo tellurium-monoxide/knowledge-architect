@@ -1,7 +1,7 @@
 # WHAT THIS MOCK EXERCISES, for the core binary: detection. Its documents are wrong on purpose,
 # one planted defect per core check of the last phase, and a test asserts the findings
 # themselves rather than merely that something failed. Every core check owes a row in
-# `PLANTED` in `path@knowledge@tests/mock_projects.rs`, so a new defect goes here and its count
+# `PLANTED` in `path@core@tests/mock_projects.rs`, so a new defect goes here and its count
 # goes there.
 
 [project]

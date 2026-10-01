@@ -281,6 +281,8 @@ fn the_conformant_mocks_report_nothing_over_every_core_check() {
             tracked_and_ignored: &git.1,
             refused: &survey.refused,
             links: &survey.links,
+            installed: &survey.installed,
+            shipped: &[],
         };
         assert!(
             foundation(&model, &manifest, &inputs).is_ok(),
@@ -374,6 +376,8 @@ mod planted {
             tracked_and_ignored: &git.1,
             refused: &survey.refused,
             links: &survey.links,
+            installed: &survey.installed,
+            shipped: &[],
         };
         run(&model, &manifest, &inputs, &[])
             .findings
@@ -619,6 +623,8 @@ mod unsound {
             tracked_and_ignored: &git.1,
             refused: &survey.refused,
             links: &survey.links,
+            installed: &survey.installed,
+            shipped: &[],
         };
         assert!(
             manifest.complaints().is_empty(),
@@ -627,7 +633,11 @@ mod unsound {
         );
         let stopped = foundation(&model, &manifest, &inputs).expect_err("the run stops");
         assert_eq!(stopped.phase, Phase::Tree);
-        let found: Vec<String> = tree::check(&model, &manifest, &inputs)
+        let mut tree_and_agents = tree::check(&model, &manifest, &inputs);
+        tree_and_agents.extend(knowledge_architect::check::agents::check(
+            &model, &manifest, &inputs,
+        ));
+        let found: Vec<String> = tree_and_agents
             .iter()
             .map(|f| format!("{}  {}", f.location(), f.what))
             .collect();
@@ -681,7 +691,11 @@ mod unsound {
             "the anchor `agent-config` carries no issue directory"
         )
         .starts_with("agent-config/open-issues"));
-        assert_eq!(found.len(), 5, "{found:#?}");
+        // A file in the installer's namespace that no version ships, per
+        // `design@core@owned-namespace-check`.
+        assert!(one_of(&found, "does not ship it")
+            .starts_with(".claude/agents/knowledge-architect-planted.md"));
+        assert_eq!(found.len(), 6, "{found:#?}");
     }
 
     #[test]
@@ -762,6 +776,8 @@ mod unsound {
                 tracked_and_ignored: &git.1,
                 refused: &survey.refused,
                 links: &survey.links,
+                installed: &survey.installed,
+                shipped: &[],
             };
             let outcome = foundation(&model, &manifest, &inputs);
             assert!(outcome.is_ok(), "{name}: {:#?}", outcome.err());

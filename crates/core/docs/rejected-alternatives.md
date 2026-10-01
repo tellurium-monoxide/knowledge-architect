@@ -354,3 +354,11 @@ tables readable as tables, and left the declared level to govern headings alone.
 one register would then have two definition sites, and the outline would again fail to list every
 entry of a register that opts in. The one home that held cell definitions converts to headings
 without losing any content.
+
+**CLAUDE.md required in every component, whatever the project declares** — lost to
+`design@core@agents-table`. `live`. Its argument was that what a component carries is compiled in,
+because a project free to declare its own set is checked against nothing, and CLAUDE.md is where a
+component's contracts for a developer are routed, so requiring it guarantees them a home. It loses
+for the agent document alone: the declaration that removes it removes nothing else, so every other
+document is still compiled in and checked. Doubt remains on the second half of the argument, and
+`issue@core@a-home-for-developer-contracts-outside-agent-configuration` records it.

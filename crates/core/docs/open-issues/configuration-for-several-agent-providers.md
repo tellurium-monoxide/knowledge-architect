@@ -1,26 +1,26 @@
 ---
 kind: deferred
 ---
-# The required documents assume one agent provider's file name
+# The agent configuration serves one provider's harness
 
 ## Summary
 
-Every component must carry a CLAUDE.md, the file name one agent harness reads. Projects often keep
-their agent instructions in a generic AGENTS.md, with CLAUDE.md, GEMINI.md and others as symlinks
-to it or as files importing it. The checker has no notion of either.
+`[agents] harness` declares the agent harnesses a project serves, and the checker knows one,
+`claude`: it requires a CLAUDE.md in every component and installs into the `.claude/` layout.
+Projects often keep their agent instructions in a generic AGENTS.md, with CLAUDE.md, GEMINI.md and
+others as symlinks to it or as files importing it. The checker has no harness for either.
 
 ## Details
 
 ### What
 
-A way for a project to declare which agent providers it serves, each requiring its own file, with
-AGENTS.md as the generic one. The shape is open.
+Harness values for other providers, each requiring its own file and installing into its own
+layout, and AGENTS.md as the generic file. The mechanism exists; what each value requires is open.
 
 ### Why it matters
 
-It strains `design@core@components-carry-the-same-documents`, which compiles CLAUDE.md in as a
-required document. A project that works with several providers keeps copies in sync by hand, or
-cannot adopt the checker's required set, which threatens
+It extends `design@core@agents-table`, whose list holds one value. A project that works with
+several providers keeps copies in sync by hand, or serves one provider only, which threatens
 `goal@knowledge-architect@any-project-can-adopt-it`.
 
 ### Trigger

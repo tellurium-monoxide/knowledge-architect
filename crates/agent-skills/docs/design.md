@@ -6,8 +6,7 @@ named, and how they divide the work. Present tense, each decision carrying a slu
 `path@agent-skills@docs/rejected-alternatives.md`.
 
 **What belongs here:** a decision about the installed text that does not survive deleting this
-component. How the checker will install and verify the text belongs to the core, and is recorded in
-`path@core@docs/design.md` when it is built.
+component. How the checker installs and verifies the text is `design@core@owned-namespace-check`.
 
 No decision is recorded yet: the skills are written in a later step, and their decisions are
 recorded when they land.

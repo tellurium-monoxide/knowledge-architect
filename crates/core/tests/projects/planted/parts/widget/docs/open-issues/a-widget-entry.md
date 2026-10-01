@@ -11,7 +11,7 @@ The index beside this file still says the instance holds no entry.
 
 ### What
 
-The entry was added and `cargo klarch index` was not run.
+The entry was added and `klarch index` was not run.
 
 ### Why it matters
 

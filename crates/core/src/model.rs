@@ -115,7 +115,6 @@ impl Model {
             .collect();
         let walk_config = manifest.walk();
         let mut docs = Vec::new();
-        let generated = crate::index::generated_paths(manifest);
         // Git is the walk. No `git` on the path and a directory outside a worktree are both
         // errors naming the reason, never an empty listing: a project reported as holding no
         // document is a run that checked nothing and said it was clean.
@@ -132,6 +131,10 @@ impl Model {
             .into_iter()
             .filter(|e| e.kind != crate::git::EntryKind::File)
             .collect();
+        // A generated file and an installed one are outside the walk by construction: the
+        // first is a function of the tree, the second is judged by its bytes alone.
+        let mut generated = crate::index::generated_paths(manifest);
+        generated.extend(files.iter().filter(|f| manifest.owned(f)).cloned());
         for path in walk::live_files(root, walk_config, &files, &generated) {
             let rel_for_error = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
             let text = match std::fs::read_to_string(&path) {

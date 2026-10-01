@@ -39,8 +39,11 @@ pub fn check(
             &rel,
             &expected,
             inputs,
-            "run `cargo klarch index`; the listing is a function of the entries beside it, \
-             and a hand edit is what this reports",
+            &format!(
+                "run `{} index`; the listing is a function of the entries beside it, \
+                 and a hand edit is what this reports",
+                manifest.command()
+            ),
             &mut findings,
         );
     }
@@ -113,6 +116,8 @@ mod tests {
             tracked_and_ignored: &[],
             refused: &[],
             links: &[],
+            installed: &[],
+            shipped: &[],
         };
         let found: Vec<String> = check(&model, &manifest, &inputs, &[])
             .iter()

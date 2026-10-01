@@ -15,3 +15,13 @@ the files under a package directory, so a single package holding both components
 at crates/. That makes crates/ a package holding two components, which mixes a crate with the
 directories around it, and a third crate could not live under it. Users name one crate either way,
 because cargo fetches a dependency without being asked.
+
+**The agent workflow as a plugin published on a marketplace** — lost to
+`design@knowledge-architect@binary-bundles-workflow`. `live`. A Claude Code plugin is how the
+harness distributes skills, and it was designed in full: a marketplace in this repository, the
+plugin pinned to each release's tag and sha, a hook printing the primer and warning on a version
+mismatch. It loses on three facts. Two artifacts, the crate and the plugin, had to be released in
+step, and a release had to edit the marketplace after tagging. The harness's plugin cache is per
+user, so two projects on one machine needing two versions was never shown to work. And a version
+mismatch could only be warned about, where an installed file can be checked. A custom marketplace
+gave no discoverability in exchange.

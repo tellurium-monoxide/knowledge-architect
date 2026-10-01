@@ -14,6 +14,9 @@
 # package: a directory named `knowledge-architect` would collide with the root's name.
 [project]
 name = "knowledge-architect"
+# The command this repository runs the checker by: the cargo alias that builds it from the
+# checkout. It is printed in messages and generated headers, per `design@core@declared-command`.
+command = "cargo klarch"
 components = [
     "crates/core",
     "crates/agent-skills",

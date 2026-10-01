@@ -28,7 +28,7 @@ compiled in for one project is a list every other project is checked against. It
 tests honest: a mock runs the same code path as a real tree, so a test over a mock tests the
 code that checks the real tree.
 
-Three things are compiled in, and none of them describes a project:
+Four things are compiled in, and none of them describes a project:
 
 - **What the word _component_ means**: the documents a component carries and the four built-in
   registers, per `design@core@components-carry-the-same-documents`.
@@ -36,6 +36,9 @@ Three things are compiled in, and none of them describes a project:
   read as data, per `design@core@checker-source-literals-are-data`.
 - **Each crate's own directory and package name**, so that a binary built from another checkout
   is refused, per `design@core@a-foreign-build-is-refused`.
+- **The agent harnesses it knows, and the installer's namespace in a project's agent
+  configuration**, per `design@core@agents-table` and `design@core@owned-namespace-check`: what
+  this tool writes, not what a project holds.
 
 ### The model is built once, and every check is a pure function over it `##model-then-checks`
 
@@ -83,7 +86,7 @@ phases, each of the first three building one input of the next:
 | phase | produced by | what it reports |
 | ----- | ----------- | --------------- |
 | 1 | `Manifest::parse`, and each extension's resolution of its tables | a declaration the tool refused, which is then absent from the configuration |
-| 2 | `check::tree`, over the core's declared paths and the paths each extension declares | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out |
+| 2 | `check::tree`, over the core's declared paths and the paths each extension declares, and `check::agents`, over the installed agent configuration | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out, an installed agent file missing, differing or unshipped, a root CLAUDE.md that does not import a shipped primer |
 | 3 | `Entities::build` | a slug or an entry id where none may sit, or defined twice |
 | 4 | every check, the core's and each extension's | everything computed over a complete model |
 
@@ -286,8 +289,8 @@ the whole run with no file named and no finding printed.
 ### Git supplies the walk, and the manifest declares only what git tracks `##git-supplies-the-walk`
 
 The walked set is git's listing from the manifest's directory, `git ls-files --cached --others
---exclude-standard`, with `[walk] skip-dirs`, `skip-files` and `exclude` applied after it and the
-generated indexes removed by construction. Nothing generated is declared: `target` and
+--exclude-standard`, with `[walk] skip-dirs`, `skip-files` and `exclude` applied after it, and the
+generated indexes and the installed agent files removed by construction. Nothing generated is declared: `target` and
 `path@agent-config@worktrees/` are covered by the ignore rules, so no `[walk]` row names them. A path
 reference whose target the ignore rules cover is exempt from assertion the same way, per
 `design@core@ignored-targets-are-not-asserted`.
@@ -302,8 +305,11 @@ the manifest loads, so two spellings of one directory are one declaration, and a
 `..` or an absolute path is refused as a finding and acted on by nothing, because what it
 names depends on where the manifest sits rather than on the tree.
 
-**A tracked file cannot leave the walk.** `--cached` is unaffected by the ignore rules, so no
-ignore line, however written, can take a live document out of every check. That is what the
+**No ignore rule can take a tracked file out of the walk.** `--cached` is unaffected by the ignore
+rules, so no ignore line, however written, can take a live document out of every check. What
+leaves the walk does so by the manifest: a declared row, or an exclusion derived from a
+declaration, as the generated indexes and the installed agent files are, per
+`design@core@owned-namespace-check`. That is what the
 hand-rolled matcher this replaced could not promise, and it is the property the whole walk is
 chosen for; the matcher and the three things it could not do are
 `path@core@docs/rejected-alternatives.md`.
@@ -383,17 +389,22 @@ the strength of a working-tree state.
 visible in the output rather than inferred from a finding list. The tripwire is in
 `path@core@docs/tripwires.md`.
 
-### Every rule of the regime is enforced, and a project cannot exempt itself from one `##the-regime-has-no-opt-out`
+### Every rule over a document is enforced, and no declaration exempts a document from one `##the-regime-has-no-opt-out`
 
-The rule set is compiled in and the manifest declares nothing about it, so conformance means the
-same thing in every tree this tool checks. There is no flag, no list and no severity: a rule of the
-regime either holds over a document or the run fails.
+The rules over documents are compiled in and the manifest declares nothing about them, so
+conformance of a document means the same thing in every tree this tool checks. There is no flag, no
+list and no severity: a rule either holds over a document or the run fails.
 
 **A declared register adds obligations and removes none**, which is what keeps
 `design@core@registers-are-declared` inside this head rather than an exception to it. Declaring one
 gives a project a kind, a shape and a home to be checked against; it cannot loosen the four built
 in, and it cannot exempt a document from anything. A manifest that declares no register is checked
 exactly as it was.
+
+**One declaration removes obligations, and they are the agent configuration's alone.** A project
+that declares no agent harness, per `design@core@agents-table`, owes no CLAUDE.md and no installed
+agent file: these are documents a component carries, not rules over the documents it has. Every
+document the project carries is checked exactly as under the default.
 
 **An exemption, where an extension offers one, names FILES rather than rules.** The core offers
 none. A file named is one that is leaving the tree, so the exemption expires with its subject; a
@@ -408,17 +419,20 @@ exempting a rule costs it everywhere at once.
 The project root is one of them, named by `project.name`; every other is a project-relative
 directory, named by the basename of that path. Nothing is discovered by filename, so a document in a
 directory that is not a component is not that kind of document: nothing counts it and nothing
-reports it. A component carries `README.md`, `CLAUDE.md`, `path@*@docs/rejected-alternatives.md`, and
-the home of every `component`-scoped register — the four built-in ones, and any the manifest
+reports it. A component carries `README.md`, `path@*@docs/rejected-alternatives.md`, `CLAUDE.md` while the
+project serves the `claude` agent harness (per `design@core@agents-table`), and the home of every
+`component`-scoped register — the four built-in ones, and any the manifest
 declares at that scope. A component that does not carry one it owes is a finding, and
 `path@core@src/check/registers.rs` is where both directions are asserted.
 
 **Which components exist is declared, and what a component carries is compiled in.** That is
 not an exception to `design@core@nothing-of-a-project-is-compiled-in`: the document list and
 the four built-in registers in `manifest.rs` belong to no project, they are what the word
-_component_ means here. A project
-free to declare its own set would be conformant with whatever it declared, which is the same as
-being checked against nothing.
+_component_ means here. A project free to declare its own set would be conformant with whatever
+it declared, which is the same as being checked against nothing. The one declaration that changes
+the set is the agent harness, and it removes only the agent document. The flaw this leaves, that a
+developer's contracts lose their required home in a project without agents, is
+`issue@core@a-home-for-developer-contracts-outside-agent-configuration`.
 
 **A directory that carries outstanding state without being a component is a location**, per
 `design@core@anchors-are-components-and-locations`.
@@ -603,7 +617,7 @@ The generated `index.md` of a file-register instance, in order:
 
 | line | content |
 | --- | --- |
-| 1 | `**Generated — do not edit.** \`cargo klarch index\`` |
+| 1 | `**Generated — do not edit.** \`<command> index\``, with the project's declared command, per `design@core@declared-command` |
 | 2 | blank |
 | 3 | `<n> entries`, over every entry of the instance, grouped or not |
 | then | the ungrouped entries' table, under no heading |
@@ -1163,3 +1177,70 @@ rules differed from today's is therefore judged against today's, which can cost 
 asserted where that commit's own rules exempted it — a finding rather than a silence. Since a
 failing tree fails the range, a branch that changes its ignore rules orders its commits for it
 as a branch that makes the checker stricter does: the change first, or a squash.
+
+## 6. The agent configuration
+
+### The `[agents]` table declares which agent harnesses a project serves `##agents-table`
+
+`[agents] harness` lists the agent harnesses the project serves. The tool knows one, `claude`, and
+it is the default when the table is absent, because the tool is built for projects developed
+mostly by agents. Under `claude`, every component carries a CLAUDE.md, and the agent files this
+version ships must be installed, per `design@core@owned-namespace-check`. An empty list declares
+no agent configuration: no CLAUDE.md is required, and nothing is installed or checked. A value the
+tool does not know is refused in phase 1, and leaves the list.
+
+Under an empty list, the files of the installer's namespace are walked as the project's own
+documents, like any others. A harness for another provider is a value added to the list, requiring
+its own file and its own layout, which `issue@core@configuration-for-several-agent-providers`
+records. This is what serves `goal@knowledge-architect@any-project-can-adopt-it` for a project
+without agents.
+
+### A project declares the command it runs the checker by `##declared-command`
+
+`[project] command` names the command a project runs the checker by; when it is absent the command
+is `klarch`, the binary's name. The checker prints it in its messages, in the header of every
+generated index, and in the agent files it installs, which are templates holding the placeholder
+`{{command}}`. No fixed name serves every project: a project with an extension runs its own
+binary, as thaum runs its rules extension through a cargo alias, and the core's binary refuses a
+manifest holding a table only an extension claims. An extension project therefore declares a
+command that runs its own binary, preferably a cargo alias such as `cargo klarch`, and does not
+install its binary under the plain name. A command that cannot be printed on one line in a code
+span, empty or holding a line break or a backtick, is refused in phase 1, and the default stands.
+This serves `goal@knowledge-architect@any-project-can-adopt-it`: every project, extended or not,
+reads instructions that name the command it actually runs.
+
+### The installed agent files are committed, and checked byte for byte in a namespace the installer owns `##owned-namespace-check`
+
+`install-agent-skills` writes each file this version ships at its install path, rendered with the
+project's command, and deletes every file of the installer's namespace that the version does not
+ship. The namespace is the prefix `knowledge-architect-` among the skill directories and the agent
+files of `.claude/`, and the directory .claude/knowledge-architect/. A project's own skill takes
+a name of its own, so ownership is decided by a name, with no record and no history: a renamed
+skill shows as the old file to remove and the new one missing; one install repairs both, and the
+removal awaits staging like any deletion, which the check names until it is staged.
+
+The installed files are committed, so a session started from a fresh clone, a web session or a
+review in a new worktree has them without building anything, which serves
+`goal@knowledge-architect@agents-get-a-complete-workflow`. A symbolic link on an owned path is
+refused by the install before it touches anything, because following one would write or delete in
+another directory. Under `claude`, phase 2 reports each
+shipped file missing or whose bytes differ from its rendered template, each file of the namespace
+the version does not ship, and a root CLAUDE.md that does not import the shipped primer with a line
+holding exactly an at sign followed by .claude/knowledge-architect/PRIMER.md. These are facts about what the tree
+holds, like a missing required document, so a run stops before references while one stands, per
+`design@core@phases-gate-the-report`. A command that writes a generated file refuses while one
+stands, as over any phase-2 finding;
+`issue@core@installed-file-findings-belong-in-phase-four` records why the last phase would fit
+them better. Only `check` compares: `commits` does not, because the running binary ships its own
+version's text, and an older commit's installed set would fail against it with no repair a commit
+already in history can take. The comparison is of bytes: the binary holds the text, so a
+digest would add a dependency and nothing else. The installed files are outside the walk by
+construction, as the generated indexes are: their prose is the shipped text's, judged where that
+text is written, and its illustration paths would otherwise be reported in every installing
+project.
+
+The install edits nothing outside the namespace. In particular it does not edit the root
+CLAUDE.md, which belongs to the project: it says the import line is missing, and the check reports
+it with the line as its repair. A change a project needs to an installed skill belongs in a skill
+of its own, routed from the project's CLAUDE.md.
+

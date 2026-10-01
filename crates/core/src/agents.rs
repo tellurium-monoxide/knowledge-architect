@@ -1,0 +1,387 @@
+//! The text the checker installs into a project's agent configuration, rendered for that project.
+//!
+//! The text itself is the crate `knowledge-architect-agent-skills`. This module renders it with
+//! the project's declared command, writes it, and says what the installed set must be; the check
+//! of an installed set is `check::agents`. The decisions are `design@core@agents-table`,
+//! `design@core@owned-namespace-check` and `design@core@declared-command`.
+
+use std::path::{Path, PathBuf};
+
+use crate::manifest::{owned_path, Manifest};
+
+/// What the shipped text writes where the project's declared command goes.
+pub const PLACEHOLDER: &str = "{{command}}";
+
+/// The install path of the primer, which the project's root CLAUDE.md imports.
+pub const PRIMER: &str = ".claude/knowledge-architect/PRIMER.md";
+
+/// The line of the root CLAUDE.md that imports the primer, alone on its line.
+pub const IMPORT_LINE: &str = "@.claude/knowledge-architect/PRIMER.md";
+
+/// A shipped template with the project's command filled in, with LF line endings.
+pub fn render(template: &str, command: &str) -> String {
+    lf(&template.replace(PLACEHOLDER, command))
+}
+
+/// The text with every CRLF line ending made LF, so a checkout that converts line endings holds
+/// the same installed text as one that does not.
+pub fn lf(text: &str) -> String {
+    text.replace("\r\n", "\n")
+}
+
+/// Every file this version installs into the project, at its install path, rendered. Empty when
+/// the project serves no agent harness.
+pub fn shipped(manifest: &Manifest) -> Vec<(PathBuf, String)> {
+    shipped_from(manifest, knowledge_architect_agent_skills::FILES)
+}
+
+/// The same, over a stated set of templates: what a test hands in.
+pub fn shipped_from(manifest: &Manifest, templates: &[(&str, &str)]) -> Vec<(PathBuf, String)> {
+    if !manifest.serves_claude() {
+        return Vec::new();
+    }
+    templates
+        .iter()
+        .map(|(path, text)| (PathBuf::from(path), render(text, manifest.command())))
+        .collect()
+}
+
+/// Whether a root CLAUDE.md holds the primer's import line, alone on a line of prose.
+///
+/// A line inside a fenced block, an indented code block or an HTML comment is not prose, and an
+/// agent harness does not evaluate an import there, so it does not count. A byte-order mark
+/// before the first line is not part of it.
+pub fn imports_primer(text: &str) -> bool {
+    let text = text.strip_prefix('\u{feff}').unwrap_or(text);
+    let mut fence: Option<&str> = None;
+    let mut comment = false;
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if let Some(open) = fence {
+            if trimmed.starts_with(open) {
+                fence = None;
+            }
+            continue;
+        }
+        if comment {
+            if trimmed.contains("-->") {
+                comment = false;
+            }
+            continue;
+        }
+        if trimmed.starts_with("```") || trimmed.starts_with("~~~") {
+            fence = Some(&trimmed[..3]);
+            continue;
+        }
+        if trimmed.starts_with("<!--") {
+            comment = !trimmed.contains("-->");
+            continue;
+        }
+        if line.starts_with("    ") || line.starts_with('\t') {
+            continue;
+        }
+        if trimmed == IMPORT_LINE {
+            return true;
+        }
+    }
+    false
+}
+
+/// What an install did, each list in path order.
+#[derive(Debug, Default)]
+pub struct Installed {
+    /// The shipped files whose bytes the install wrote, because they were missing or differed.
+    pub written: Vec<PathBuf>,
+    /// The files of the owned namespace that the shipped set does not hold, removed.
+    pub deleted: Vec<PathBuf>,
+}
+
+/// Write every shipped file whose bytes differ from what is on disk, and delete every file of the
+/// owned namespace that the shipped set does not hold. It edits nothing outside the namespace: in
+/// particular not the root CLAUDE.md, which belongs to the project.
+///
+/// **A symbolic link on an owned path is refused before anything is touched**: following one
+/// would write or delete in another directory, possibly another project's. The error names the
+/// path, and so does every filesystem error.
+pub fn install(root: &Path, shipped: &[(PathBuf, String)]) -> Result<Installed, String> {
+    for rel in [
+        ".claude",
+        ".claude/skills",
+        ".claude/agents",
+        ".claude/knowledge-architect",
+    ] {
+        refuse_link(root, Path::new(rel))?;
+    }
+    for (rel, _) in shipped {
+        for ancestor in rel.ancestors() {
+            refuse_link(root, ancestor)?;
+        }
+    }
+    let at = |rel: &Path, e: std::io::Error| format!("{}: {e}", rel.display());
+    let mut out = Installed::default();
+    for (rel, text) in shipped {
+        let path = root.join(rel);
+        if std::fs::read(&path).ok().as_deref() == Some(text.as_bytes()) {
+            continue;
+        }
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent).map_err(|e| at(rel, e))?;
+        }
+        std::fs::write(&path, text).map_err(|e| at(rel, e))?;
+        out.written.push(rel.clone());
+    }
+    for rel in owned_on_disk(root)? {
+        if !shipped.iter().any(|(s, _)| *s == rel) {
+            std::fs::remove_file(root.join(&rel)).map_err(|e| at(&rel, e))?;
+            out.deleted.push(rel);
+        }
+    }
+    remove_empty_owned_dirs(root).map_err(|e| at(Path::new(".claude/skills"), e))?;
+    out.written.sort();
+    out.deleted.sort();
+    Ok(out)
+}
+
+/// An error naming the path when it is a symbolic link.
+fn refuse_link(root: &Path, rel: &Path) -> Result<(), String> {
+    if rel.as_os_str().is_empty() {
+        return Ok(());
+    }
+    match std::fs::symlink_metadata(root.join(rel)) {
+        Ok(m) if m.file_type().is_symlink() => Err(format!(
+            "{} is a symbolic link: the install writes and deletes only inside the project, so \
+             it refuses to follow one",
+            rel.display()
+        )),
+        _ => Ok(()),
+    }
+}
+
+/// Every file of the owned namespace on disk, tracked or not, project-relative.
+fn owned_on_disk(root: &Path) -> Result<Vec<PathBuf>, String> {
+    let mut out = Vec::new();
+    for base in [
+        ".claude/knowledge-architect",
+        ".claude/skills",
+        ".claude/agents",
+    ] {
+        files_under(root, Path::new(base), &mut out)?;
+    }
+    out.retain(|rel| owned_path(rel));
+    out.sort();
+    Ok(out)
+}
+
+/// Every file under a directory, without following a symbolic link: an owned link is refused.
+fn files_under(root: &Path, rel: &Path, out: &mut Vec<PathBuf>) -> Result<(), String> {
+    let at = |e: std::io::Error| format!("{}: {e}", rel.display());
+    let entries = match std::fs::read_dir(root.join(rel)) {
+        Ok(entries) => entries,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(e) => return Err(at(e)),
+    };
+    for entry in entries {
+        let entry = entry.map_err(at)?;
+        let child = rel.join(entry.file_name());
+        let kind = entry.file_type().map_err(at)?;
+        if kind.is_symlink() {
+            if owned_path(&child) || owned_path(&child.join("x")) {
+                refuse_link(root, &child)?;
+            }
+        } else if kind.is_dir() {
+            files_under(root, &child, out)?;
+        } else {
+            out.push(child);
+        }
+    }
+    Ok(())
+}
+
+/// Remove the owned directories a deletion left empty, so a removed skill leaves no directory.
+fn remove_empty_owned_dirs(root: &Path) -> std::io::Result<()> {
+    let skills = root.join(".claude/skills");
+    if let Ok(entries) = std::fs::read_dir(&skills) {
+        for entry in entries.flatten() {
+            let name = entry.file_name();
+            let owned = name
+                .to_str()
+                .is_some_and(|n| n.starts_with(crate::manifest::OWNED_PREFIX));
+            if owned && entry.file_type()?.is_dir() && is_empty_tree(&entry.path())? {
+                std::fs::remove_dir_all(entry.path())?;
+            }
+        }
+    }
+    Ok(())
+}
+
+fn is_empty_tree(dir: &Path) -> std::io::Result<bool> {
+    for entry in std::fs::read_dir(dir)? {
+        let entry = entry?;
+        if !entry.file_type()?.is_dir() || !is_empty_tree(&entry.path())? {
+            return Ok(false);
+        }
+    }
+    Ok(true)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn manifest(extra: &str) -> Manifest {
+        let text = format!(
+            "[project]\nname = \"p\"\ncomponents = []\n{extra}\n\
+             [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n"
+        );
+        Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
+    }
+
+    /// The claim: the placeholder takes the declared command, and the default command when
+    /// none is declared. Mutation: rendering with a fixed command fails the declared case.
+    #[test]
+    fn the_shipped_text_is_rendered_with_the_declared_command() {
+        let templates = [(
+            ".claude/agents/knowledge-architect-a.md",
+            "run `{{command}} check`",
+        )];
+        let declared = manifest("command = \"cargo klarch\"\n");
+        assert_eq!(
+            shipped_from(&declared, &templates)[0].1,
+            "run `cargo klarch check`"
+        );
+        assert_eq!(
+            shipped_from(&manifest(""), &templates)[0].1,
+            "run `klarch check`"
+        );
+    }
+
+    /// The claim: a project that serves no harness is shipped nothing.
+    #[test]
+    fn no_harness_ships_nothing() {
+        let templates = [(".claude/agents/knowledge-architect-a.md", "text")];
+        let none = manifest("\n[agents]\nharness = []\n");
+        assert!(shipped_from(&none, &templates).is_empty());
+    }
+
+    /// The claim: the import line counts alone on its line, with surrounding spaces ignored, and
+    /// not as part of another line.
+    #[test]
+    fn the_import_line_is_found_alone_on_its_line() {
+        assert!(imports_primer(
+            "# P\n\n  @.claude/knowledge-architect/PRIMER.md  \n"
+        ));
+        assert!(!imports_primer(
+            "see @.claude/knowledge-architect/PRIMER.md for more\n"
+        ));
+    }
+
+    /// The claim: an install writes what is missing or differs, removes an unshipped file of the
+    /// namespace with its emptied skill directory, and touches nothing outside the namespace.
+    #[test]
+    fn an_install_writes_the_shipped_set_and_removes_the_rest_of_the_namespace() {
+        let root = std::env::temp_dir().join(format!("ka-install-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        let write = |rel: &str, text: &str| {
+            let p = root.join(rel);
+            std::fs::create_dir_all(p.parent().unwrap()).unwrap();
+            std::fs::write(p, text).unwrap();
+        };
+        write(".claude/skills/knowledge-architect-old/SKILL.md", "old");
+        write(".claude/skills/project-own/SKILL.md", "kept");
+        write(".claude/agents/knowledge-architect-a.md", "stale");
+        write("CLAUDE.md", "# P\n");
+        let shipped = vec![
+            (
+                PathBuf::from(".claude/agents/knowledge-architect-a.md"),
+                "fresh".to_string(),
+            ),
+            (PathBuf::from(PRIMER), "primer".to_string()),
+        ];
+        let done = install(&root, &shipped).expect("the install runs");
+        assert_eq!(
+            done.written,
+            vec![
+                PathBuf::from(".claude/agents/knowledge-architect-a.md"),
+                PathBuf::from(PRIMER)
+            ]
+        );
+        assert_eq!(
+            done.deleted,
+            vec![PathBuf::from(
+                ".claude/skills/knowledge-architect-old/SKILL.md"
+            )]
+        );
+        assert!(!root.join(".claude/skills/knowledge-architect-old").exists());
+        assert!(root.join(".claude/skills/project-own/SKILL.md").exists());
+        assert_eq!(
+            std::fs::read_to_string(root.join("CLAUDE.md")).unwrap(),
+            "# P\n"
+        );
+        let again = install(&root, &shipped).expect("a second install runs");
+        assert!(again.written.is_empty() && again.deleted.is_empty());
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    /// The claim: a line inside a fence, an indented code block or an HTML comment does not
+    /// count as the import, and a byte-order mark before it does not hide it. Mutations: matching
+    /// any trimmed line, or a prefix of one, fails the first cases; not stripping the mark fails
+    /// the last.
+    #[test]
+    fn only_a_prose_line_counts_as_the_import() {
+        for text in [
+            "```\n@.claude/knowledge-architect/PRIMER.md\n```\n",
+            "~~~md\n@.claude/knowledge-architect/PRIMER.md\n~~~\n",
+            "<!--\n@.claude/knowledge-architect/PRIMER.md\n-->\n",
+            "<!-- @.claude/knowledge-architect/PRIMER.md -->\n",
+            "    @.claude/knowledge-architect/PRIMER.md\n",
+            "@.claude/knowledge-architect/PRIMER.md.bak\n",
+        ] {
+            assert!(!imports_primer(text), "{text:?}");
+        }
+        assert!(imports_primer(
+            "\u{feff}@.claude/knowledge-architect/PRIMER.md\r\n"
+        ));
+        assert!(imports_primer(
+            "```\ncode\n```\n@.claude/knowledge-architect/PRIMER.md\n"
+        ));
+    }
+
+    /// The claim: an install refuses a symbolic link on an owned path before touching anything,
+    /// and names it. Mutation: following the link deletes the other directory's file.
+    #[cfg(unix)]
+    #[test]
+    fn an_install_refuses_a_symlinked_namespace() {
+        let base = std::env::temp_dir().join(format!("ka-link-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&base);
+        let shared = base.join("shared/knowledge-architect-other");
+        std::fs::create_dir_all(&shared).unwrap();
+        std::fs::write(shared.join("SKILL.md"), "keep").unwrap();
+        let root = base.join("proj");
+        std::fs::create_dir_all(root.join(".claude")).unwrap();
+        std::os::unix::fs::symlink(base.join("shared"), root.join(".claude/skills")).unwrap();
+        let e = install(&root, &[]).expect_err("a link is refused");
+        assert!(e.contains(".claude/skills is a symbolic link"), "{e}");
+        assert!(shared.join("SKILL.md").exists());
+        let _ = std::fs::remove_dir_all(&base);
+    }
+
+    /// The claim: an unshipped file under the installer's own directory is removed, and a
+    /// project's own skill directory, empty or not, is never touched. Mutations: dropping the
+    /// installer's directory from the scan, or removing empty skill directories without the
+    /// prefix test, each fail a case.
+    #[test]
+    fn the_install_scans_its_own_directory_and_spares_the_projects() {
+        let root = std::env::temp_dir().join(format!("ka-scan-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(root.join(".claude/knowledge-architect")).unwrap();
+        std::fs::write(root.join(".claude/knowledge-architect/OLD.md"), "old").unwrap();
+        std::fs::create_dir_all(root.join(".claude/skills/project-empty")).unwrap();
+        let done = install(&root, &[]).expect("the install runs");
+        assert_eq!(
+            done.deleted,
+            vec![PathBuf::from(".claude/knowledge-architect/OLD.md")]
+        );
+        assert!(root.join(".claude/skills/project-empty").is_dir());
+        let _ = std::fs::remove_dir_all(&root);
+    }
+}

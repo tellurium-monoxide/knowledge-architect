@@ -18,7 +18,7 @@ The repository is a virtual workspace with four Components, per
 | --- | --- | --- |
 | `knowledge-architect` | the root | the project itself |
 | `core` | crates/core | package `knowledge-architect`: the checker library and the binary `klarch` |
-| `agent-skills` | crates/agent-skills | package `knowledge-architect-agent-skills`: the text the checker will install, empty until the skills are written |
+| `agent-skills` | crates/agent-skills | package `knowledge-architect-agent-skills`: the text the checker installs, empty until the skills are written |
 | `xtask` | tools/xtask | the maintenance tool, `cargo x gates`; never published |
 
 **The project was extracted from thaum, and the extraction is not finished.** The work in progress

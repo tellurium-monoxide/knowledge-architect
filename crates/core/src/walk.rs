@@ -19,12 +19,13 @@ use crate::manifest::Walk;
 /// file the ignore rules do not cover. A tracked file is in it whatever the ignore rules say,
 /// per `design@core@git-supplies-the-walk`, so no ignore line can remove a live document from the
 /// walk. What this function removes on top of that is the manifest's `skip-dirs`, `skip-files`
-/// and `exclude`, the suffixes the tool cannot parse, and the generated indexes.
+/// and `exclude`, the suffixes the tool cannot parse, and the paths in `generated`.
 ///
-/// `generated` is every path the tool writes a generated index at, taken from the register
-/// instances. Those are **outside the walk by construction** rather than by a declared row: a
-/// generated file is not a source of citations, and deriving the set from the instances is what
-/// keeps a new instance from arriving with its index inside the walk.
+/// `generated` is every path the caller takes out of the walk by construction rather than by a
+/// declared row: each generated index, derived from the register instances, and each installed
+/// agent file, derived from the agent table per `design@core@owned-namespace-check`. Neither is a
+/// source of claims this project wrote, and deriving the set from the declarations is what keeps a
+/// new instance or a new installed file from arriving inside the walk.
 pub fn live_files(
     root: &Path,
     walk: &Walk,

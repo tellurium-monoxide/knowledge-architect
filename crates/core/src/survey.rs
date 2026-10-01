@@ -40,6 +40,10 @@ pub struct Survey {
     /// The listing's symlink and gitlink entries a manifest row does not keep, each read by
     /// nothing and reported once.
     pub links: Vec<Entry>,
+    /// The files of the installer's namespace, each with what reading it gave. They are outside
+    /// the walk, and their bytes are judged by `check::agents` alone, per
+    /// `design@core@owned-namespace-check`.
+    pub installed: Vec<(PathBuf, Outside)>,
 }
 
 /// What reading a file outside the walk gave.
@@ -129,6 +133,7 @@ pub fn from_listing(
     let mut directories = HashSet::new();
     let mut outside = Vec::new();
     let mut refused = Vec::new();
+    let mut installed = Vec::new();
     for rel in listing {
         present.insert(rel.clone());
         for ancestor in rel.ancestors().skip(1) {
@@ -139,6 +144,12 @@ pub fn from_listing(
             directories.insert(ancestor.to_path_buf());
         }
         if covered.contains(rel.as_path()) {
+            continue;
+        }
+        // An installed file is read for its bytes, which the installed-file check compares;
+        // its prose is the shipped text's, judged where that text is written.
+        if manifest.owned(rel) {
+            installed.push((rel.clone(), read(rel)));
             continue;
         }
         // `outside` asks the opposite question to `present`: files of THIS project that no
@@ -167,6 +178,7 @@ pub fn from_listing(
         outside.push((rel.clone(), read(rel)));
     }
     outside.sort_by(|a, b| a.0.cmp(&b.0));
+    installed.sort_by(|a, b| a.0.cmp(&b.0));
     refused.sort();
     // A symlink or a gitlink a walk row covers is kept as declared, like any other file the
     // rows keep out; the rest are reported.
@@ -181,6 +193,7 @@ pub fn from_listing(
         outside,
         refused,
         links,
+        installed,
     }
 }
 

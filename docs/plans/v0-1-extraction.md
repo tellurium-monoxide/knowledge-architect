@@ -681,8 +681,10 @@ The core's issue the-core-leaves-this-repository is closed by step 2.
 - A plugin's install cache is shared across projects, with one directory per version. A
   project-scope install is recorded in the user-level installed_plugins.json with its own version.
   binary-bundles-workflow made the question of two versions at once moot.
-- The `@path` import in CLAUDE.md is documented, and the owner is confident it works. It was not
-  exercised in the session. Step 3 verifies it.
+- The `@path` import in CLAUDE.md works, verified in step 3 on 2026-10-01 with Claude Code: in a
+  scratch project whose CLAUDE.md held only the import line, a `claude -p` session quoted a marker
+  sentence of the imported file without using any tool, and so did a general-purpose subagent
+  dispatched from a second session.
 
 ### 6.3 The state of the skills at the start (one subagent, 2026-09-30)
 
@@ -823,24 +825,41 @@ Lands as one commit, squashed before review (4.6).
 - Review axes: self-consistency, fidelity of relocation, decision recording, routing of knowledge,
   conformance.
 
-**Step 3. The checker's new surface.** Reads 4.3 and 6.2.
+**Step 3. The checker's new surface.** Reads 4.3 and 6.2. **Landed on the branch
+checker-surface**, as described below; where this differs from 4.3, the core's design home is what
+was built.
 
-- First, the `@` import. In a scratch project, a CLAUDE.md imports a file holding one recognisable
-  sentence. The agent runs `claude -p` there, asking a session to quote the sentence, then asking
-  it to dispatch a subagent that quotes it. The result is written into 6.2. If either fails, the
-  step stops and the owner rules, because primer-by-import rests on it.
-- The issue on a home for developer contracts outside agent configuration (section 5) is opened
-  with the `[agents]` table.
-- Then the declared command, the `[agents]` table, the conditional CLAUDE.md requirement,
-  `install-agent-skills`, the build.rs of agent-skills, the checks of 4.3 point 5, and the walk
-  exclusion of content/ in this repository's manifest. This repository's manifest declares
-  `harness = []` in the same commit.
-- Fixtures. The existing mocks declare `harness = []`. So do the projects tests build in code (the
-  sandbox helpers of tests/binary.rs). One new mock carries an installed set, with one planted
-  defect of each check, against a fixture shipped set passed by the test. Each test is shown to fail
-  without the code.
-- Done when the gates pass.
-- Review axes: spec conformity against 4.3, self-consistency, decision recording (the reversals).
+- The `@` import was verified first (6.2).
+- The declared command is `command` in `[project]`, `klarch` when absent, refused in phase 1 when
+  empty or holding a line break or a backtick. This repository declares `cargo klarch`. The
+  placeholder is `{{command}}`.
+- The `[agents]` table, the conditional CLAUDE.md requirement, `install-agent-skills` and the checks
+  of 4.3 point 5 are built. A `[agents]` table must hold `harness`; an absent table is the default.
+  Rendering and the comparison make line endings LF. The import line is required only when the
+  primer is shipped, and only on a line of prose: not in a fence, an indented block or a comment. A
+  root CLAUDE.md a walk row keeps out is reported, since no row may waive the import.
+- The install writes only the files whose bytes differ, refuses a symbolic link on an owned path
+  and a manifest holding a refused declaration, and names the path of any failure. A stray it
+  deletes is reported until the deletion is staged.
+- `commits` does not compare installed files (owner, 2026-10-01): the running binary ships its own
+  version's text, and an older commit has no repair.
+- The findings stay in phase 2 (owner, 2026-10-01), although the core's placement rule puts them in
+  the last phase; `issue@core@installed-file-findings-belong-in-phase-four` records the move, and
+  that a writer such as `index` refuses while one stands. The issue on a home for developer
+  contracts outside agent configuration is opened.
+- install-command-name, the check side of installed-files-committed and of primer-by-import are
+  recorded inside the entry owned-namespace-check, not as entries of their own: each is one clause
+  of that decision. The agents-table is its own entry, and the three partial reversals are
+  rewritten in place.
+- Moved to step 5, because content/ does not exist and an exclusion row must name a path that
+  exists: the build.rs of agent-skills, the walk exclusion of content/, and the mocks' and sandboxes'
+  `harness = []` (with nothing shipped, the default harness changes nothing for them). This
+  repository does not declare `harness = []` for the same reason.
+- Fixtures: the phase-2 defect is planted in the `unsound` mock, per the core's CLAUDE.md, and the
+  other defects are planted in unit tests over fixture sets and in sandboxes. Tests were shown to
+  discriminate by mutation.
+- Review axes: spec conformity against 4.3, self-consistency, decision recording (the reversals),
+  and an adversarial reviewer.
 
 **Step 4. The public API.** Reads 4.4 and 4.5.
 

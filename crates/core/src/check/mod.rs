@@ -4,6 +4,7 @@
 //! the single walk a property of the design rather than of anyone's care, and it is what lets
 //! a check be run against a model assembled in memory.
 
+pub mod agents;
 pub mod generated;
 pub mod references;
 pub mod registers;
@@ -112,7 +113,8 @@ pub fn foundation(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Result
             findings: complaints.to_vec(),
         });
     }
-    let findings = tree::check(model, manifest, inputs);
+    let mut findings = tree::check(model, manifest, inputs);
+    findings.extend(agents::check(model, manifest, inputs));
     if !findings.is_empty() {
         return Err(Stop {
             phase: Phase::Tree,
@@ -213,6 +215,12 @@ pub struct Inputs<'a> {
     pub refused: &'a [PathBuf],
     /// The listing's symlink and gitlink entries no walk row keeps, each of which is a finding.
     pub links: &'a [crate::git::Entry],
+    /// The files of the installer's namespace, with what reading each gave, per
+    /// `design@core@owned-namespace-check`.
+    pub installed: &'a [(PathBuf, crate::survey::Outside)],
+    /// What the installed set must be: every shipped file at its install path, rendered with
+    /// the project's command. Empty when the project serves no agent harness.
+    pub shipped: &'a [(PathBuf, String)],
 }
 
 /// The core's checks of the last phase, by the name each one's count line carries.
@@ -336,6 +344,8 @@ mod phase_tests {
             tracked_and_ignored: &[],
             refused: &[],
             links: &[],
+            installed: &[],
+            shipped: &[],
         };
         foundation(model, manifest, &inputs)
     }

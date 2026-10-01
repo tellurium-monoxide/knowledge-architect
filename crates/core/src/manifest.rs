@@ -24,7 +24,8 @@ use crate::finding::Finding;
 /// The file that both marks a project root and declares its conformance surface.
 pub const MANIFEST_NAME: &str = "knowledge-architect.toml";
 
-/// The documents every component carries beside its registers, relative to its own directory.
+/// The documents a component carries beside its registers, relative to its own directory; which
+/// of them a project owes is [`Manifest::required_documents`].
 ///
 /// Compiled in, unlike every other list a check reads. WHICH components a project has is that
 /// project's own knowledge and is declared in `[project]`; WHAT a component is, is this tool's
@@ -35,6 +36,22 @@ pub const MANIFEST_NAME: &str = "knowledge-architect.toml";
 /// shape that register accepts, and `check::registers` asserts them from the register list.
 pub const COMPONENT_DOCUMENTS: [&str; 3] =
     ["README.md", "CLAUDE.md", "docs/rejected-alternatives.md"];
+
+/// The document of `COMPONENT_DOCUMENTS` that holds agent instructions, required only while the
+/// project declares the `claude` harness, per `design@core@agents-table`.
+pub const AGENT_DOCUMENT: &str = "CLAUDE.md";
+
+/// The command a project runs the checker by when its manifest declares none: the name of the
+/// binary this crate installs, per `design@core@declared-command`.
+pub const DEFAULT_COMMAND: &str = "klarch";
+
+/// The agent harnesses a manifest may declare, per `design@core@agents-table`.
+pub const HARNESSES: [&str; 1] = ["claude"];
+
+/// The prefix that owns a namespace in a project's agent configuration, per
+/// `design@core@owned-namespace-check`. Every skill directory and agent file whose name starts
+/// with it, and every file under .claude/knowledge-architect/, belongs to the installer.
+pub const OWNED_PREFIX: &str = "knowledge-architect-";
 
 /// The name of the built-in issue register, which is the one register that accepts a key.
 pub const ISSUE_REGISTER: &str = "issue";
@@ -237,6 +254,18 @@ pub struct Project {
     pub name: String,
     /// One project-relative directory per component below the root, in declaration order.
     pub components: Vec<PathBuf>,
+    /// The command this project runs the checker by, printed in messages, in generated index
+    /// headers and in the installed skills. [`DEFAULT_COMMAND`] when absent.
+    #[serde(default)]
+    pub command: Option<String>,
+}
+
+/// The `[agents]` table: which agent harnesses the project serves.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields, rename_all = "kebab-case")]
+pub struct AgentsDecl {
+    /// The harnesses, each one of [`HARNESSES`]. Empty declares no agent configuration.
+    pub harness: Vec<String>,
 }
 
 /// One component: a directory carrying its own documents and every component register.
@@ -339,6 +368,8 @@ struct Declared {
     #[serde(default)]
     registers: BTreeMap<String, RegisterDecl>,
     walk: Walk,
+    #[serde(default)]
+    agents: Option<AgentsDecl>,
     #[serde(flatten)]
     tables: BTreeMap<String, toml::Value>,
 }
@@ -407,6 +438,8 @@ impl Manifest {
         resolve_registers(&mut registers, &mut complaints);
         normalise_paths(&mut declared, &mut complaints)?;
         resolve_anchors(&mut declared, &registers, &mut complaints);
+        resolve_agents(&mut declared, &mut complaints);
+        resolve_command(&mut declared, &mut complaints);
         Ok(Self {
             root: root.to_path_buf(),
             declared,
@@ -427,6 +460,40 @@ impl Manifest {
 
     pub fn walk(&self) -> &Walk {
         &self.declared.walk
+    }
+
+    /// The command this project runs the checker by, per `design@core@declared-command`.
+    pub fn command(&self) -> &str {
+        self.declared
+            .project
+            .command
+            .as_deref()
+            .unwrap_or(DEFAULT_COMMAND)
+    }
+
+    /// Whether the project serves the `claude` harness: the default when no `[agents]` table
+    /// is declared, per `design@core@agents-table`.
+    pub fn serves_claude(&self) -> bool {
+        match &self.declared.agents {
+            None => true,
+            Some(agents) => agents.harness.iter().any(|h| h == "claude"),
+        }
+    }
+
+    /// The documents every component is required to carry: [`COMPONENT_DOCUMENTS`], without
+    /// [`AGENT_DOCUMENT`] when the project serves no harness that reads it.
+    pub fn required_documents(&self) -> Vec<&'static str> {
+        COMPONENT_DOCUMENTS
+            .iter()
+            .copied()
+            .filter(|d| *d != AGENT_DOCUMENT || self.serves_claude())
+            .collect()
+    }
+
+    /// Whether a project-relative path belongs to the installer's namespace, per
+    /// `design@core@owned-namespace-check`. Nothing does when the project serves no harness.
+    pub fn owned(&self, rel: &Path) -> bool {
+        self.serves_claude() && owned_path(rel)
     }
 
     /// A top-level table the core does not own, as written, for the extension that claims it.
@@ -1074,6 +1141,66 @@ impl Complaints<'_> {
     }
 }
 
+/// The installer's namespace under the `claude` harness: .claude/knowledge-architect/ and
+/// everything under it, a skill directory `.claude/skills/<OWNED_PREFIX>…/` and everything under
+/// it, and an agent file `.claude/agents/<OWNED_PREFIX>…`.
+pub fn owned_path(rel: &Path) -> bool {
+    // A path is bytes: a component that is not UTF-8 belongs to no name this tool writes, so the
+    // whole path is outside the namespace rather than read with that component dropped.
+    let Some(parts) = rel
+        .iter()
+        .map(|c| c.to_str())
+        .collect::<Option<Vec<&str>>>()
+    else {
+        return false;
+    };
+    match parts.as_slice() {
+        [".claude", "knowledge-architect", _, ..] => true,
+        [".claude", "skills", dir, _, ..] => dir.starts_with(OWNED_PREFIX),
+        [".claude", "agents", file] => file.starts_with(OWNED_PREFIX),
+        _ => false,
+    }
+}
+
+/// Refuse a command that cannot be printed on one line inside a code span, and keep the default.
+/// It is printed in every repair line and generated header, so a line break would split a finding
+/// and a backtick would end its span early.
+fn resolve_command(declared: &mut Declared, complaints: &mut Vec<Finding>) {
+    let Some(command) = declared.project.command.as_deref() else {
+        return;
+    };
+    if command.trim().is_empty() || command.contains(['\n', '\r', '`']) {
+        complaints.push(Finding::in_file(
+            MANIFEST_NAME,
+            format!("[project] command {command:?} cannot be printed as one command"),
+            "declare a non-empty command on one line, with no backtick",
+        ));
+        declared.project.command = None;
+    }
+}
+
+/// Refuse a harness this tool does not know, and keep the rest, per `design@core@agents-table`.
+/// A refused value leaves the list, so nothing acts on it.
+fn resolve_agents(declared: &mut Declared, complaints: &mut Vec<Finding>) {
+    let Some(agents) = declared.agents.as_mut() else {
+        return;
+    };
+    agents.harness.retain(|h| {
+        let known = HARNESSES.contains(&h.as_str());
+        if !known {
+            complaints.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!("[agents] harness `{h}` is no harness this tool knows"),
+                format!(
+                    "declare one of {}, or an empty list for no agent configuration",
+                    HARNESSES.join(", ")
+                ),
+            ));
+        }
+        known
+    });
+}
+
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
@@ -1132,6 +1259,107 @@ pub(crate) mod tests {
              [ext]\nfiles = {ext_files}\n"
         );
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
+    }
+
+    /// A declaration with one table added after the project and before the walk.
+    fn with_agents(extra: &str) -> Manifest {
+        let text = format!(
+            "[project]\nname = \"p\"\ncomponents = []\n\n{extra}\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n"
+        );
+        Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
+    }
+
+    /// The claim: without an `[agents]` table the project serves `claude` and every component
+    /// owes a CLAUDE.md; `harness = []` drops that document and nothing else. Mutation: ignoring
+    /// the harness in `required_documents` fails the empty case.
+    #[test]
+    fn the_agent_document_is_required_only_under_the_claude_harness() {
+        let default = with_agents("");
+        assert!(default.serves_claude());
+        assert!(default.required_documents().contains(&AGENT_DOCUMENT));
+        let none = with_agents("[agents]\nharness = []\n");
+        assert!(!none.serves_claude());
+        assert_eq!(
+            none.required_documents(),
+            vec!["README.md", "docs/rejected-alternatives.md"]
+        );
+        assert!(!none.owned(Path::new(".claude/agents/knowledge-architect-a.md")));
+    }
+
+    /// The claim: a harness the tool does not know is a phase-1 complaint naming it, and leaves
+    /// the list. Mutation: keeping an unknown value loses the complaint.
+    #[test]
+    fn an_unknown_harness_is_refused_and_named() {
+        let m = with_agents("[agents]\nharness = [\"claude\", \"gemini\"]\n");
+        let complaints: Vec<&str> = m.complaints().iter().map(|f| f.what.as_str()).collect();
+        assert_eq!(
+            complaints,
+            ["[agents] harness `gemini` is no harness this tool knows"]
+        );
+        assert!(m.serves_claude());
+    }
+
+    /// The claim: the namespace is the prefixed skill directories and agent files, and the
+    /// installer's own directory; a project's own skill and anything else are outside it.
+    #[test]
+    fn the_owned_namespace_is_named_by_its_prefix() {
+        for owned in [
+            ".claude/skills/knowledge-architect-planning/SKILL.md",
+            ".claude/skills/knowledge-architect-planning/notes/a.md",
+            ".claude/agents/knowledge-architect-routing-reviewer.md",
+            ".claude/knowledge-architect/PRIMER.md",
+        ] {
+            assert!(owned_path(Path::new(owned)), "{owned}");
+        }
+        for other in [
+            ".claude/skills/thaum-developing/SKILL.md",
+            ".claude/agents/thaum-rules-reviewer.md",
+            ".claude/knowledge-architect",
+            ".claude/skills/knowledge-architect-planning",
+            ".claude/skills/project-knowledge-architect-x/SKILL.md",
+            ".claude/agents/project-knowledge-architect-x.md",
+            ".claude/agents/knowledge-architect-dir/nested.md",
+            "docs/knowledge-architect-x.md",
+            "CLAUDE.md",
+        ] {
+            assert!(!owned_path(Path::new(other)), "{other}");
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::ffi::OsStrExt;
+            let bytes = b"x\xff/.claude/agents/knowledge-architect-x.md";
+            let odd = Path::new(std::ffi::OsStr::from_bytes(bytes));
+            assert!(
+                !owned_path(odd),
+                "a component that is not UTF-8 owns nothing"
+            );
+        }
+    }
+
+    /// The claim: a command that cannot be printed on one line in a code span is refused in
+    /// phase 1, and the default takes its place.
+    #[test]
+    fn an_unprintable_command_is_refused() {
+        for bad in ["\"\"", "\"a\\nb\"", "\"a`b\""] {
+            let text = format!(
+                "[project]\nname = \"p\"\ncomponents = []\ncommand = {bad}\n\n\
+                 [walk]\nskip-dirs = []\nskip-files = []\n"
+            );
+            let m = Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration");
+            assert_eq!(m.complaints().len(), 1, "{bad}");
+            assert_eq!(m.command(), "klarch", "{bad}");
+        }
+    }
+
+    /// The claim: the command is the declared one, and `klarch` when none is declared.
+    #[test]
+    fn the_command_is_declared_or_the_binary_name() {
+        assert_eq!(with_agents("").command(), "klarch");
+        let text = "[project]\nname = \"p\"\ncomponents = []\ncommand = \"cargo klarch\"\n\n\
+                    [walk]\nskip-dirs = []\nskip-files = []\n";
+        let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        assert_eq!(m.command(), "cargo klarch");
     }
 
     #[test]
