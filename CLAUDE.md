@@ -247,9 +247,11 @@ list of what references an entry: `show` computes it.
 
 `path@knowledge-architect@docs/plans/` holds temporary documents that describe work to be done.
 They are committed on the work's branch. A correction is applied in place, so a partial reading
-cannot mislead. When a plan document is deleted, and what it must carry, is decided in step 5 of
-the milestone document, together with the vocabulary of plan documents; until then, the
-milestone document's own head says when it leaves.
+cannot mislead. A plan document is deleted in the commit that completes its last harvest, and that
+commit's message names its path, so `git log --diff-filter=D` on the directory lists every deleted
+one. This is a restatement of a decision taken in section 3.5 of the milestone document, which the
+planning skill harvests. The milestone document itself leaves in the release commit of its step 7,
+as its head says. The vocabulary of plan documents is decided with the planning skill.
 
 ## Verify before relying on anything
 
@@ -445,6 +447,10 @@ apply. The milestone document's section 4.6 is where this is decided.
 | --- | --- |
 | `knowledge-architect-recording-a-decision` (installed) | a design or contract decision has been made or reversed, to decide whether it earns durable text and where |
 | `knowledge-architect-tracking-open-issues` (installed) | before diagnosing any behaviour as a new problem; when parking anything; when a recorded tripwire fires; when work closes any of these |
+| `knowledge-architect-planning` (named by the installed skills, not installed yet) | served by thaum's `planning-a-slice`, for a spec or a milestone document |
+| `knowledge-architect-discussing-design-decisions` (named, not installed yet) | served by `designing-together`, below |
+| `knowledge-architect-maintaining-agent-config` (named, not installed yet) | served by thaum's `maintaining-agent-config`, below |
+| `knowledge-architect-standing-state-reviewer` (named, not installed yet) | served by a general-purpose subagent briefed with thaum's agent file of that name |
 | `developing` (in thaum) | before starting or iterating on a change to the Rust source. A test is shown to discriminate by reverting the change in a scratch worktree, since `cargo mutate run` is not ported |
 | `dispatching-a-review` (in thaum) | before merging anything to main, and when an activity's skill says its work is ready for review |
 | `maintaining-agent-config` (in thaum) | before adding or editing this file, a scoped `CLAUDE.md`, any skill, any subagent definition, or the knowledge table |

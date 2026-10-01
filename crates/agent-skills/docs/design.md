@@ -40,14 +40,17 @@ construction. So no check reads this text: the reviews of each change to it judg
 mechanical check exists, which `issue@agent-skills@shipped-text-is-reference-free-mechanically`
 tracks.
 
-### An installed skill names only installed skills `##no-external-handoff`
+### An installed skill names only installed skills and the project's own `##no-external-handoff`
 
-An installed skill or agent hands off only to another skill or agent of the installed set. It
-never names a plugin or a skill from outside the set. A skill outside the set may be absent in the project, or
-present at a version that contradicts the installed one, and either breaks
-`goal@knowledge-architect@agents-get-a-complete-workflow`, under which no two parts of the workflow
-contradict each other. Where an installed skill needs an activity the set does not cover yet, it
-says what the activity is and leaves the next step to the owner.
+An installed skill or agent hands off only to another skill or agent of the set its version ships,
+or to the project's own skills. It never names a plugin or a skill from outside the set. A skill
+outside the set may be absent in the project, or present at a version that contradicts the
+installed one, and either breaks `goal@knowledge-architect@agents-get-a-complete-workflow`, under
+which no two parts of the workflow contradict each other.
+
+The set is written across several changes before a version is released, so a skill may name a
+member of the set by its installed name before that member lands. No release ships a name its set
+does not hold.
 
 ## The workflow the skills carry
 
@@ -55,7 +58,9 @@ says what the activity is and leaves the next step to the owner.
 
 A decision is written into the design homes in the change that lands the work implementing it, not
 when the spec is written. A design head is a claim about the code as it stands, so a head written
-before the code is a hypothesis presented as a fact. While the work is open, the spec or the
+before the code is a hypothesis presented as a fact, and
+`goal@knowledge-architect@documentation-stays-consistent` asks that the documentation stay
+consistent with the code. While the work is open, the spec or the
 milestone document on its branch is the only place the decision exists. A decision with no
 implementing work, one that constrains work nobody has started, is recorded when it is made.
 
@@ -74,14 +79,20 @@ defeat are in the head. The deliberation is not, because every session reads the
 before it changes code, and a head that carried its whole deliberation would make that read cost
 the length of every discussion ever held. History serves the reader who needs it: a deleted spec is
 listed by `git log --diff-filter=D` on the plans directory, and its last state is one `git show`
-away.
+away. That agents take that route is measured, not assumed: a scan of a project's session logs for
+a `git show` or `git log` command naming a deleted plan document re-takes it, and a scan that finds
+none in a project whose specs are deleted reopens this decision. The cost is accepted: a reader
+without a clone of the repository cannot reach a deliberation.
 
 ### An alternative earns an entry by the recording tests, not by having lost `##losing-alternatives-filter`
 
 A losing alternative earns an entry in the rejected alternatives only if it passes the tests of the
-installed recording-a-decision skill: it would change an interface something outside its Component
-depends on, it was refuted by evidence that cost work, or a doubt remains that the winner meets
-every goal. The rest stay in the spec and the commit message. Recording every losing thread of
+installed recording-a-decision skill: it would change a signature crossing the boundary of a
+separately built unit or a serialized format, it was refuted by evidence that cost work, or a doubt
+remains that the winner meets every goal. The rest stay in the spec and the commit message.
+`goal@knowledge-architect@design-is-recorded-with-its-arguments` asks that a later session need not
+derive an argument again: an alternative refuted by reasoning is derived again in the one round its
+proposal costs, and one refuted by evidence is not. Recording every losing thread of
 every discussion would grow the rejected alternatives by proposals nobody would raise again, and a
 reader proposing an alternative would have to search through them to find the few whose refutation
 cannot be derived again in one round.
@@ -95,6 +106,14 @@ carries whole, stay in the spec only. So do the shapes of a question that produc
 since an entry names the decision its alternative lost to. The state of a thread records how it
 closed, not whether an argument defeated a shape, and a rule keyed on the state would drop a
 superseded thread that lost on its merits.
+
+### A tripwire from a premortem is written at harvest, on the owner's word `##premortem-tripwires-on-the-owners-word`
+
+A premortem's surviving causes become tripwires only where the owner rules that they should, and
+each is written at the harvest of the decision it guards, in the tripwires home of the Component
+that owns that decision. A tripwire names its decision's head, so the head exists first. Whether a
+risk is worth watching is a weighing, and the weighing is the owner's, per
+`goal@knowledge-architect@the-owner-decides`.
 
 ### A design thread's slug becomes its entry's slug `##thread-slug-is-entry-id`
 

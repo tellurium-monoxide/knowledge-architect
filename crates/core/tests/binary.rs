@@ -421,8 +421,9 @@ impl History {
         // **Staged, then regenerated, then staged again.** The walk is git's listing, so a
         // deleted file the index still holds is walked and its register entry still counted:
         // regenerating before the deletion is staged writes the listing the tree no longer
-        // has. A tree whose manifest this tool refuses to load regenerates no index, which is
-        // the shape one test commits on purpose, so the run's own code is not asserted.
+        // has. A tree whose manifest this tool refuses to load regenerates no index, and neither
+        // does a tree that stops at phase 2, such as one missing a shipped file; tests commit
+        // both shapes on purpose, so the run's own code is not asserted.
         self.git(&["-c", "core.excludesFile=/dev/null", "add", "-A"]);
         self.run(&["index"]);
         self.git(&["-c", "core.excludesFile=/dev/null", "add", "-A"]);

@@ -184,23 +184,24 @@ Owner principles stated in the discussion, which bound the inventory:
 ### 3.5 Step 5, session A
 
 Held in this repository on 2026-10-01 under the designing-together skill, on the three points of
-4.8 marked for step 5. The owner's reading: designing-together has not been updated for a while and
-lags behind thaum's skills where they disagree, and several of thaum's instructions exist to
-override it. Facts it rested on: thaum deleted 27 plan documents from docs/plans/
+4.8 marked for step 5. The owner's reading: "I have not updated significantly designing-together
+for a while … designing-together is mostly behind thaum where they disagree. Quite a few
+instructions in thaum are meant to cancel/override ones from designing-together". Facts it rested on: thaum deleted 27 plan documents from docs/plans/
 (`git log --diff-filter=D --name-only -- docs/plans` at e98e296), and a scan of the Bash tool calls
 in thaum's 31 session logs found `git show` or `git log` on a deleted plan document's path in 6 of
-them, so agents do retrieve deleted specs through history.
+them, so agents do retrieve deleted specs through history. Some of those 6 may have read a document
+while it still existed on a branch; the scan did not separate those cases.
 
 | thread | state | decision |
 | --- | --- | --- |
 | spec-leaves-at-landing | approved | a spec or milestone document is deleted in the commit that completes its last harvest, and that commit's message names its path. Owner: "This is the workflow I've been pushing … it works well." Harvest: planning (PR 2) |
 | standing-argument-in-head | approved | a design head carries the standing argument, every premise whose failure would reopen the decision; the deliberation stays in the spec, then in history; the commit message carries it only when there was no spec. Owner: "the correct interpretation of what I've been doing in thaum" |
-| losing-shape-test | approved | a thread is a candidate for the rejected alternatives when a shape lost to an argument, whatever its state: ruled out, withdrawn with a defeating reason, or superseded with a distinct shape that lost |
+| losing-shape-test | approved | a thread is a candidate for the rejected alternatives when a shape lost to an argument, whatever its state: ruled out, withdrawn with a defeating reason, or superseded with a distinct shape that lost. A shape that lost when the question produced no decision stays in the spec, or is an issue if the question stays open |
 | designing-hands-off-to-planning | approved | the design-discussion skill ends at convergence, the premortem and the owner's tripwire rulings; the planning skill writes the spec or the milestone document, in the same session, because the ledger lives only in the conversation. Built in PR 2 (receiving side) and step 6 |
-| no-external-handoff | approved | an installed skill names only installed skills, never a plugin or a skill outside the set. designing-together 0.6.0 names superpowers:brainstorming once, in its bounded-problem branch |
-| bounded-problem-branch | approved, its first default ruled out | until a skill for bounded problems exists, the design-discussion skill classifies the problem as bounded, states its strongest open reading, and leaves the next step to the owner. That skill will be installed (owner); its todo is opened in step 6 |
-| designing-skill-name | approved | the design-discussion skill is installed as knowledge-architect-discussing-design-decisions. Owner: "a bit verbose, but at least it is not ambiguous"; "design" alone reads as visual design. The owner reports the skill works well for game design, the gameplay part |
-| document-vocabulary | in-discussion, carried to session B | its home is the planning skill |
+| no-external-handoff | approved | an installed skill names only installed skills, and the project's own skills through the routing table; never a plugin or a skill outside the set. The owner: "it should not hand off to any skill outside the project". designing-together 0.6.0 names superpowers:brainstorming once, in its bounded-problem branch |
+| bounded-problem-branch | first default ruled out; the interim text presumed settled | until a skill for bounded problems exists, the design-discussion skill classifies the problem as bounded, states its strongest open reading, and leaves the next step to the owner. The owner did not rule on this interim text by name; "Let's start on PR 1" is the agent's reading of acceptance, and step 6 shows it to the owner again. The owner: "Ultimately, I'd like to make my own skill for this use case", and "The bounded problem skill will be installed as part of this project". This document schedules its todo in step 6 |
+| designing-skill-name | approved | the design-discussion skill is installed as knowledge-architect-discussing-design-decisions. Owner: "a bit verbose, but at least it is not ambiguous"; "design" alone reads as visual design. The owner: "I think this designing skill is mostly aimed at programming tasks", it "still performs well on other types of tasks too", it performs "very well for game design (gameplay part)", and "I initially created it to work on a game actually. But for the coding part." |
+| document-vocabulary | home approved; the words carried to session B | its home is the planning skill |
 
 Ruled out in session A:
 
@@ -209,13 +210,21 @@ Ruled out in session A:
 | keeping the spec after harvest, in an archive directory outside the walk | spec-leaves-at-landing | a kept spec is a second home for every decision it carried. Walked, its references break at every later reversal; outside the walk, it is unchecked text a grep finds with no marker that it is stale |
 | leaving the spec's fate to the project, designing-together's rule | spec-leaves-at-landing | the installed planning skill would have nothing to say where its document's work ends, which fails one-workflow |
 | all argument in the commit message, the literal rule of thaum's recording-a-decision | standing-argument-in-head | a head without its premises fails design-is-recorded-with-its-arguments, and contradicts thaum's own knowledge table ("and why it is built that way") |
-| the full deliberation in the head, the maximal reading of designing-together | standing-argument-in-head | every session reads the design homes before it changes code; the core's 40 heads already take 1333 lines |
+| the full deliberation in the head, the maximal reading of designing-together | standing-argument-in-head | every session reads the design homes before it changes code; the core's design home, 40 entries, takes 1333 lines |
+| every withdrawn and superseded thread in the record, designing-together's rule | losing-shape-test | it lost before, in losing-alternatives-filter, for ruled-out threads, and the same argument applies |
 | a rule keyed on the thread's state | losing-shape-test | it would drop a superseded thread that lost on its merits, such as always-on-primer (3.3) |
-| the bounded problem goes to the planning skill's spec | bounded-problem-branch | the owner: a bounded problem still needs investigation, testing and the owner's approval, which a spec gives it none of |
-| keeping the name designing-together; arguing-a-design; designing-software | designing-skill-name | the first keeps "designing" as the only content word; the second reads as confrontational and keeps "a design"; the third names one domain while the skill works outside code |
+| the bounded problem goes to the planning skill's spec | bounded-problem-branch | the owner: "The bounded problem still needs some sort of investigation, testing, and approval from the owner, IMO." The agent's reading: a spec gives it none of these |
+| keeping the name designing-together; arguing-a-design; designing-software | designing-skill-name | the first keeps "designing" as the only content word; for the second, "arguing" can read as confrontational to a non-native reader, and "a design" stays; the third names one domain while the skill works outside code |
 
-No tripwire was recorded: each premortem cause has a guard in a review axis or a git command, and
-the cost that a reader without a clone cannot reach a deliberation was accepted (owner).
+Argued by the agent and not ruled on: keeping "a short requirements pass" inline in the
+design-discussion skill, against sending the bounded problem to planning. The agent argued it
+describes an activity with no owner. The owner's ruling on bounded-problem-branch made the
+question moot.
+
+No tripwire was recorded: each premortem cause has a guard in a review axis or a git command. The
+cost that a reader without a clone cannot reach a deliberation was put to the owner in round 1 and
+not answered there; the owner accepted it through "I agree with yuou on the tripwires" (verbatim), answering
+the premortem that listed it.
 
 ## 4. The decided design
 
@@ -874,7 +883,7 @@ settled.
   path (spec-leaves-at-landing).
 - **Who writes the spec.** The planning skill, in the session the discussion converged in
   (designing-hands-off-to-planning).
-- **Hand-offs.** Only to installed skills (no-external-handoff).
+- **Hand-offs.** Only to installed skills, and to the project's own skills (no-external-handoff).
 - **Tripwires from a premortem** are written at harvest, in the tripwires home of the component
   that owns the guarded decision, and only on the owner's word.
 - **Spec and milestone.** One document per layer. It is detailed about the design and concise about
@@ -1018,7 +1027,7 @@ its docs/design.md.
 | 3 | core | agents-table, with the three reversals of 4.3 point 3; install-command-name; owned-namespace-check; installed-files-committed (the check side); primer-by-import (the check side, and that the install does not edit CLAUDE.md); declared-command; the phase of the new findings (phases-gate-the-report) |
 | 3 | knowledge-architect (root) | binary-bundles-workflow |
 | 4 | core, root | public-api: the session's decisions, per 4.4.8 |
-| 5, PR 1 | agent-skills | done: content-mirrors-the-install-layout (new), shipped-text-is-reference-free, no-external-handoff, harvest-after-implementation, standing-argument-in-head, losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id. installed-prefix-length needs no entry: `design@core@owned-namespace-check` states the prefix |
+| 5, PR 1 | agent-skills | done: content-mirrors-the-install-layout (new), shipped-text-is-reference-free, no-external-handoff, harvest-after-implementation, standing-argument-in-head, losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id, premortem-tripwires-on-the-owners-word. installed-prefix-length needs no entry: `design@core@owned-namespace-check` states the prefix |
 | 5 | agent-skills | goal-lifecycle, plugin-inventory, overlay-by-separate-skills, routing-table, skill-name-prefix, goals-required, gates-convention, exact-pin, installed-files-committed (the instruction side), primer-by-import (the delivery side), declared-command (the extension rule), spec-and-milestone, spec-leaves-at-landing, designing-hands-off-to-planning (the planning side), document-vocabulary, transcript-conformity-review, retrospective-destination, premortem-as-watch-points, the interim rule of cross-project-references |
 | 6 | agent-skills | designing-together-retirement, designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning, the kept items of the intake |
 
@@ -1201,16 +1210,19 @@ skill and comes before the PR that needs it.
      root CLAUDE.md's skills table sends those two activities to the installed skills;
    - harvest: content-mirrors-the-install-layout, shipped-text-is-reference-free,
      no-external-handoff, harvest-after-implementation, standing-argument-in-head,
-     losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id. No losing
-     alternative passed the recording tests. The issue on a mechanical check of the shipped text
-     is opened.
-   - **The fork removes thaum's third recording test of §2**, "its argument turns on a rules
-     reading", and the second of §6, a reason citing a rule, and adds no replacement. The owner
-     rules on whether a generic replacement is wanted.
+     losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id, and, from the review,
+     premortem-tripwires-on-the-owners-word. The alternative of 3.2 that lost to
+     losing-alternatives-filter enters the rejected alternatives on its third test, the owner's
+     doubt. The issue on a mechanical check of the shipped text is opened, and the core's issue on
+     references read in Markdown and Rust only.
+   - **Pending:** the fork removes thaum's third recording test of §2, "its argument turns on a
+     rules reading", and the second of §6, a reason citing a rule, and adds no replacement. The
+     owner rules on whether a generic replacement is wanted.
 3. **Session B, then PR 2: planning.** The document vocabulary, what replaces slices.md as the
    list of milestones and the home of acceptance criteria, and whether the transcript-conformity
    reviewer is an installed agent. Then the fork. It harvests spec-leaves-at-landing,
-   designing-hands-off-to-planning and spec-and-milestone.
+   designing-hands-off-to-planning and spec-and-milestone, and adds a reference to
+   spec-leaves-at-landing in the head standing-argument-in-head, whose argument rests on it.
 4. **PR 3: the review group**, dispatching-a-review and the five agents, plus the
    transcript-conformity agent if chosen. After planning, because standing-state-reviewer follows
    planning's decision on acceptance criteria, and two reviewers use its vocabulary.

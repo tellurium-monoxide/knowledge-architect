@@ -30,3 +30,6 @@ One section per released version. Each item is tagged with the surface it touche
 - `library`: `cli::Command`, `extension::Inputs`, `extension::ExtensionReport` and
   `extension::Resolution` are non-exhaustive.
 - `library`: the `testing` feature is removed.
+- `agent-skills`: the first installed skills, recording-a-decision and tracking-open-issues. The
+  package ships its build script and its content/ directory, from which the list of shipped files
+  is generated.

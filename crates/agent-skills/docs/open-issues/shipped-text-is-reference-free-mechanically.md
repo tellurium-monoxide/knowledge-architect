@@ -23,7 +23,8 @@ shipped text rather than as documents. The shape is not decided.
 
 `design@agent-skills@shipped-text-is-reference-free` rests on the reviews alone. A live reference
 that a review misses ships, and in every installing project it is a dangling reference the project
-cannot repair, because the file is the installer's and the check compares its bytes. The walk
+cannot repair, against `goal@knowledge-architect@any-project-can-adopt-it`, because the file is
+the installer's and the check compares its bytes. The walk
 exclusion of content/ in `path@knowledge-architect@knowledge-architect.toml` exists only because
 no such check exists.
 
@@ -31,4 +32,5 @@ no such check exists.
 
 The check, run by `cargo x gates`, failing on a live reference or a path of this repository planted
 in a scratch copy of content/, and the walk exclusion of content/ either removed or kept with the
-check as its stated reason.
+check as its stated reason. The release procedure planned in the milestone document greps the
+shipped text for references; the check replaces that grep.

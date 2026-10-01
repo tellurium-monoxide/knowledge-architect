@@ -110,7 +110,9 @@ is reopened, and on the goal what stands between the project and it. A reference
 the text is revisited when the entry it names changes. An entry that strains no recorded decision
 names none rather than the nearest one. The inverse holds in code: a guard, a workaround, a stub or
 a test that exists because of an entry names it, `issue@<anchor>@<id>`, in the comment at the site.
-Closing the entry then dangles the comment, and the site is revisited.
+Closing the entry then dangles the comment, and the site is revisited. The checker reads
+Markdown and Rust source only: a reference in a comment of another language is not read, and
+closing its entry needs a grep for the reference.
 
 **Every entry states its kind**, in the frontmatter. Without it, a missing section is ambiguous
 between "this kind has none" and "the author did not write one", and that is exactly what a reader
@@ -166,9 +168,9 @@ A `deferred` entry's trigger and a tripwire's firing evidence answer the same qu
 make someone do this. Both are subject to one test.
 
 **A trigger must name an occasion whose own work already includes the work the trigger names.**
-Otherwise it names a tax on a session doing something else, and such a session is expected to leave
-alone what it met outside its task. The trigger fires, the session correctly declines, and nothing
-schedules the work.
+Otherwise it names a tax on a session doing something else. Such a session finishes its own task
+and reports what it met outside it, rather than doing that work. The trigger fires, the session
+correctly declines, and nothing schedules the work.
 
 A trigger passes when it names the change that would make the missing work necessary: whoever makes
 that change is already deciding what the work must do. A size threshold on a document fails it: it
@@ -221,7 +223,7 @@ home again, on the review axis whose whole subject they are. An entry may name a
 register exists to avoid, not to become.
 
 **If a script could check the firing evidence, it is not a tripwire: it is an assertion**, a test
-or a check the project's gates run. A threshold with no enforcement is a wish. Apply
+or a check the project runs on every commit. A threshold with no enforcement is a wish. Apply
 the trigger test above first, though: an assertion whose occasion fails it blocks a session rather
 than scheduling anyone.
 
@@ -236,9 +238,9 @@ The two kinds are coupled by movement, and that is what keeps both honest.
   usually a one-shot hypothesis, _if this happens, that decision was wrong_, and firing consumes it.
   A tripwire guarding a guarantee that holds for the life of the project is not consumed by one
   instance of it being broken: the guarantee is still owed after the repair. Restate it so it names
-  the _class_ rather than the instance, and record the instance as the issue. A tripwire deleted at
-  its first firing leaves the class unguarded, and the same class of defect can then recur with
-  nothing to catch it.
+  the _class_ rather than the instance, and record the instance as the issue. This has been observed:
+  a tripwire guarding untrusted input was deleted at its first firing, and the same class of defect
+  then recurred twice, both found by a review after the guard was gone.
 - A tripwire whose decision is **reversed** is deleted outright.
 - A tripwire is **absorbed** when another entry already guards the same decision: fold its firing
   condition into that entry rather than leaving one decision guarded from two places, where a
@@ -256,12 +258,13 @@ The two kinds are coupled by movement, and that is what keeps both honest.
 
 If a closed entry still holds something live, such as an instruction about how to work in that
 area or an uncertainty that survived the fix, that content is not an open issue. Move it to the
-owning design head or the Component's scoped `CLAUDE.md`, **then** delete the file.
+owning document head, a design or a goal, or to the scoped `CLAUDE.md` nearest the code it is about,
+**then** delete the file.
 
 Deleting or renaming an entry means fixing what points at it. Every `issue@<anchor>@<id>` and
 `tripwire@<anchor>@<slug>` reference to a deleted entry becomes a dangling-reference finding of
-`{{command}} check`, a comment in source code included, and that list is the work list the deletion
-produces. A commit message that names the closed entry resolves against the parent commit's tree,
+`{{command}} check`, a comment in Rust source included, and that list is the work list the deletion
+produces. A reference in a file the checker does not read is found by grep. A commit message that names the closed entry resolves against the parent commit's tree,
 so the closing commit may still name it. `{{command}} show <ref>` prints the inbound references
 before you delete.
 

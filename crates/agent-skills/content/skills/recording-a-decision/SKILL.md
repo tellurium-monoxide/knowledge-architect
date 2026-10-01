@@ -36,8 +36,9 @@ tree ends with two homes for one question, the old one still asserting what the 
 
 **Search for the statement you are about to replace, not for a slug.** The slug you would look for
 is the one you have not written yet, and the incumbent's own name is rarely the words you are
-thinking in. Grep the subject's terms across the design homes and the rejected alternatives, then
-`git log -G'<term>'` for the argument behind them. Say what you searched and what it returned. A
+thinking in. Grep the subject's terms across every document that carries decisions (the design homes, the
+rejected alternatives, the scoped `CLAUDE.md` files) and the comments of the code the subject
+touches, then `git log -G'<term>'` for the argument behind them. Say what you searched and what it returned. A
 search that returned nothing is a finding worth one line in the commit message.
 
 **If nothing holds it, carry on to §2.** If something does, do all of the following, in the same
@@ -53,8 +54,10 @@ change:
   statement. Keep the old slug only where it still names the same decision. The slug must stay
   aligned with the full scope of the decision: it is often the only part a reader sees, in a
   citing document or in code. A slug that misdescribes its decision misinforms every reader of
-  every citation, so rename it even when that means rewriting every reference in the project. A
-  rename is cheap and the checker lists every reference it leaves dangling.
+  every citation, or undermines the decision it names, so rename it even when that means rewriting every reference in the project. A
+  rename is cheap, and the checker lists every reference it leaves dangling in the files it reads:
+  Markdown and Rust source. A reference in a comment of another language is not read, so grep for
+  the slug as well.
 - **Move the incumbent into the Component's rejected alternatives** (§6) with its reason and a
   validity marker, stated as strongly as it was originally made, if it meets one of §6's tests.
 - **Delete the tripwires guarding the reversed decision.** A tripwire whose decision is reversed
@@ -72,9 +75,8 @@ records dozens per unit of work stops being readable and stops being ranked.
 
 **A decision earns an entry in a design home only if at least one of these holds:**
 
-1. reversing it would change an **interface that something outside its Component depends on**: a
-   type or a signature another Component or a consumer compiles or links against, a stored or
-   exchanged data format, a command line, a file another tool reads; or
+1. reversing it would change a type or a signature that **crosses the boundary of a separately
+   built unit**: a crate, a package, a library, a module others import; or
 2. it **constrains work that has not been built**.
 
 Otherwise it belongs in an **inline comment at the code it explains, plus the commit message**.
@@ -155,9 +157,9 @@ of a plain line, in the middle of a line or in a file that is not the design hom
 `{{command}} check` reports it as a misplaced definition, and every reference to it as dangling.
 The slug is an id in the grammar `[a-z0-9]+(-[a-z0-9]+)*`, unique in the design home.
 
-**When the decision was a thread of a design discussion, its slug is the thread's name**, unless
-that name collides with an entry the Component already holds. The discussion minted it in the
-same grammar for that reason.
+**When the decision was a thread of a design discussion, its slug is the thread's name.** The
+discussion minted it in the same grammar and checked it for a collision with the Component's
+entries before using it, for that reason.
 
 **A list item is not a definition site either**, so a decision written as one bullet among several
 carries no anchor and cannot be cited or found by `git log -G`. This is a constraint on the
@@ -211,8 +213,8 @@ question is whether **a shape lost to an argument**.
 
 **An alternative earns an entry only if at least one of these holds:**
 
-1. adopting it would change an interface that something outside its Component depends on, in the
-   sense of §2's first test;
+1. it would change a signature crossing the boundary of a separately built unit, or a serialized
+   format;
 2. it was refuted by **evidence that cost work to obtain**: a measurement, a prototype, a survey of
    other projects;
 3. there is still some doubt that the winning alternative will achieve every goal of the project or
@@ -230,7 +232,7 @@ An alternative meeting none of those stays in the spec and the commit message, a
 
 **A losing alternative is not recorded to make sure it is never proposed again.** It is recorded
 so that the next time someone brings it to the table, the arguments that justified the rejection
-are known, and it is possible to examine whether they still hold.
+are known, and it is possible to examine whether they still hold at the time of reopening.
 
 **Write the entry so that it cannot be read as the current design.** Name the alternative and the
 reason it lost. Do not describe how it would work: an entry detailed enough to build from is the one
@@ -253,7 +255,8 @@ reason.
   question on a dead argument.
 
 **`live` records that the reason held against the arguments seen, not that the question is shut.**
-A new argument or new evidence reopens any entry here at any time, and that is an ordinary move.
+A new argument or new evidence reopens any entry here at any time, and that is an ordinary move
+rather than a transgression.
 The record decides what counts as new: an alternative is argued-and-lost only where a recorded
 reason covers the discriminating fact. A reworded proposal that defeats or evades the recorded
 reason is new by definition.
