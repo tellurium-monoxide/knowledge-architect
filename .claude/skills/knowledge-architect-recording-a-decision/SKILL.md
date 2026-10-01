@@ -194,6 +194,10 @@ head depends on. **A reference is a claim that this head is revisited when that 
 so a reference whose entry's change would leave the head unaffected is not written. Never list what
 cites this head: `cargo klarch show design@<component>@<slug>` computes it.
 
+A decision that relies on the checker of this workflow states that it relies on the checker
+working as intended. It cannot reference the checker's own decisions: a reference resolves only
+against the project that holds it.
+
 The slug is an identifier. Code comments, tripwires, other documents and `git log -G` all cite it,
 so **renaming one means rewriting every reference in the same change.** Grep before you rename.
 

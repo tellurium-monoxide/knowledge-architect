@@ -138,9 +138,10 @@ impl Sandbox {
         run_in(&self.dir, args)
     }
 
-    /// Make the copy serve the `claude` harness, and stage it. The mocks declare `harness = []`,
-    /// because the shipped set changes with every version of the skills; a test about the
-    /// installed set declares the harness in its own copy.
+    /// Make the copy serve the `claude` harness, as a project that adopted the workflow does: the
+    /// manifest declares the harness, and the root CLAUDE.md imports the shipped primer. Then
+    /// stage it. The mocks declare `harness = []`, because the shipped set changes with every
+    /// version of the skills; a test about the installed set declares the harness in its own copy.
     fn serve_claude(&self) {
         let path = self.path("knowledge-architect.toml");
         let manifest = std::fs::read_to_string(&path).expect("the manifest");
@@ -150,6 +151,11 @@ impl Sandbox {
             manifest.replace("harness = []", "harness = [\"claude\"]"),
         )
         .expect("the manifest is rewritten");
+        let claude = std::fs::read_to_string(self.path("CLAUDE.md")).expect("the root CLAUDE.md");
+        self.write(
+            "CLAUDE.md",
+            &format!("{claude}\n@.claude/knowledge-architect/PRIMER.md\n"),
+        );
         self.stage();
     }
 }

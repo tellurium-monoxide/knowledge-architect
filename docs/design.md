@@ -180,3 +180,15 @@ hand-written one is stale at the next reference written elsewhere.
 included; a string literal bound to a name yields none. So a comment in code naming an issue is
 as live as a sentence in a document, and closing the issue reaches the code. This serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
+
+## 5. This repository's agent configuration
+
+### This repository's own skills and agents take the prefix klarch- `##klarch-prefix`
+
+This repository installs the workflow it ships, and a project's own skills carry the project's
+name as a prefix, per `design@agent-skills@skill-name-prefix`. Here that name is
+`knowledge-architect`, which is the installer's namespace: a project skill named after it would be
+reported as unshipped by `design@core@owned-namespace-check`, and removed by the install. So this
+repository's own skills and agents take the prefix `klarch-`, the binary's name. The installed
+skills do not mention the case: the collision arises only in this repository, and a rule for it in
+the shipped text would be read by every installing project for nothing.

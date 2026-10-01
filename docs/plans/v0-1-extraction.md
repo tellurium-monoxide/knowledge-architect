@@ -268,8 +268,31 @@ guard in a skill instruction, a review axis or a git command: a todo left open b
 milestone's criteria deleted unreported; a later step needing a deleted step's deliberation; a
 transcript unavailable or too large; a fixed section padded in a small spec.
 
-## 4. The decided design
+### 3.7 Step 5, session C
 
+Held in this repository on 2026-10-01 under the designing-together skill, on setting-up,
+maintaining-agent-config and the primer. Fact it rested on: a scratch project with an 8-line
+manifest (`[project]` with a name and no Component, `[walk]` with its three lists) is accepted by
+the install, which writes every shipped file; the check then lists every document the project
+owes, each with its repair. So the setting-up skill is reached after that bootstrap.
+
+| thread | state | decision |
+| --- | --- | --- |
+| knowledge-table-home | approved | the workflow's rows of the knowledge table ship in the primer; the project's own rows sit in its root CLAUDE.md. Owner: "3 looks good" |
+| primer-limit | approved | no line limit; the content test: the primer holds only what every session needs and no installed skill delivers. Owner: "I don't think there is a need for such a strict limit … design work is meant for higher tiers of LLMs" |
+| primer-content | approved | the goals as the only statements assumed to be the owner's, with the conflict rule, on the owner's refinement: "goals are the only thing that can be assumed as coming from the owners of the project … if a recorded decision conflicts with a goal, it is likely to be that the owners missed it"; intent and claims; the check before diagnosing; something met outside the task takes four cases, and a turn ends with a "Met outside the task" section. The owner's observation: an agent "would find a fairly small issue, decide it was too small to create an open issue entry about it, but not fix it either, instead reporting it in conversation as a short oneliner". On test 2: "as long as it does passes the test you wrote, I have no problem with that level of autonomous fix" |
+| plans-directory-declared | approved | a row of the project's knowledge table, default docs/plans/; a manifest key belongs to the structured-plan issue |
+| routing-table-shape | approved | installed skill or agent → the project skills that add to it; no "read it when" column. Owner: "It feels like duplication" |
+| adopting-existing-docs | approved | an inventory, a proposal, the owner's rulings, and one todo issue for the move (the premortem's C4 clause); the move is a milestone |
+| pinned-binary-wording | approved | 4.5's default: both ways presented |
+| skill-name-prefix | finding accepted | this repository's own skills take the prefix klarch-. The owner: the installed skills do not mention the case, "The collision risk outside of this exact project is ridiculously small. This would only add noise to every project that uses this workflow" |
+
+No tripwire was recorded (owner: "Record no tripwires"). The premortem's causes, each with its
+guard: a primer row changed by an upgrade and contradicted by a project row; a behaviour change
+fixed under test 2; the primer growing; an inventory never followed by a move (converted into the
+todo clause); a root CLAUDE.md with no plans directory row.
+
+## 4. The decided design
 ### 4.1 Repository layout
 
 ```
@@ -895,8 +918,8 @@ name and in its frontmatter name. The tables give the base names.
 Not installed, and staying in thaum: developing, recording-an-interpretation, bumping-rules,
 rules-reviewer. A future creating-a-component skill is an open issue.
 
-**The primer.** PRIMER.md is at most 40 lines (the agent's proposal when the primer was a hook,
-approved with it). It states how to read a goal against a design head, names the installed skills
+**The primer.** PRIMER.md has no line limit; it holds only what every session needs and no
+installed skill delivers (3.7). It states how to read a goal against a design head, names the installed skills
 and when each applies, and points at them without restating them.
 
 **Order inside step 5.** The forked skills name the design-discussion skill, which step 6
@@ -982,8 +1005,8 @@ owner's scheduling is a `todo`, not a `deferred`.
 | xtask-abort-exits-one | xtask | observation | step 2 (done) | found by the review of step 2: no exit-code contract binds xtask |
 | a home for developer contracts outside agent configuration | core | deferred | step 3 | with `harness = []`, the content routed to CLAUDE.md loses its home; the owner's long-term answer is a home independent of any harness |
 | shipped text is reference-free, mechanically | agent-skills | todo | step 5, PR 1 (done) | a check replacing the release grep and the walk exclusion of content/. A `todo`: no occasion was found whose own work includes building the check, so no trigger passes the trigger test |
-| skill patching | agent-skills | deferred | step 5 | patches stored as diffs per project. Answers watch point P1. |
-| creating a component | agent-skills | todo | step 5 | a future skill; the owner has not converged on what a new component requires |
+| skill patching | agent-skills | deferred | step 5, PR 4 (done) | patches stored as diffs per project. Answers watch point P1. |
+| creating a component | agent-skills | todo | step 5, PR 4 (done) | a future skill; the owner has not converged on what a new component requires |
 | a skill for bounded problems | agent-skills | todo | step 6 | the skill the design-discussion skill cannot name until it exists (3.5); its premise is that skill's bounded branch |
 
 The core's issue the-core-leaves-this-repository is closed by step 2.
@@ -1073,7 +1096,8 @@ its docs/design.md.
 | 4 | core, root | public-api: the session's decisions, per 4.4.8 |
 | 5, PR 1 | agent-skills | done: content-mirrors-the-install-layout (new), shipped-text-is-reference-free, no-external-handoff, harvest-after-implementation, standing-argument-in-head, losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id, premortem-tripwires-on-the-owners-word. installed-prefix-length needs no entry: `design@core@owned-namespace-check` states the prefix |
 | 5, PR 2 | agent-skills | done: the decisions of 3.6 and spec-and-milestone, spec-leaves-at-landing, designing-hands-off-to-planning (the planning side) |
-| 5 | agent-skills | goal-lifecycle, plugin-inventory, overlay-by-separate-skills, routing-table, skill-name-prefix, goals-required, gates-convention, exact-pin, installed-files-committed (the instruction side), primer-by-import (the delivery side), declared-command (the extension rule), retrospective-destination, premortem-as-watch-points, the interim rule of cross-project-references |
+| 5, PR 4 | agent-skills, root | done: the decisions of 3.7 and overlay-by-separate-skills, routing-table, skill-name-prefix, goals-required, gates-convention, exact-pin, declared-command (the extension rule), the interim rule of cross-project-references; klarch-prefix in the root |
+| 5 | agent-skills | goal-lifecycle, plugin-inventory, retrospective-destination, premortem-as-watch-points |
 | 6 | agent-skills | designing-together-retirement, designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning, the kept items of the intake |
 
 **Losing alternatives.** Section 3.2 and the absorbed shapes of 3.3 are judged against
@@ -1289,11 +1313,23 @@ skill and comes before the PR that needs it.
    review, conformance-before-every-merge. The root CLAUDE.md
    routes reviews to the installed skill and agents.
 5. **Session C, then PR 4: configuration.** setting-up, maintaining-agent-config, and the primer
-   with its import line in the root CLAUDE.md, whose skills table becomes the routing table.   maintaining-agent-config moves here from the planning group because it keeps the table
-   setting-up writes. This repository's own project skills start here, and one of them carries the
+   with its import line in the root CLAUDE.md, whose skills table becomes the routing table.   maintaining-agent-config moves here from the planning group because it keeps the table   setting-up writes. This repository's own project skills start here, and one of them carries the
    review predicate thaum's routing-reviewer had and the shipped one dropped: a consumer-facing
    decision is recorded like any other, and no decision is argued on the grounds that changing it
-   later would be breaking (the root CLAUDE.md's Release status). The issues on skill patching and on creating a component are opened.
+   later would be breaking (the root CLAUDE.md's Release status). Session C is **done**, 3.7.
+   **Landed on the branch installed-configuration-skills:** setting-up, maintaining-agent-config
+   and the primer; the root CLAUDE.md imports the primer, keeps only this repository's rows of
+   the knowledge table, carries the routing table and the klarch- prefix, and points the
+   orthogonal-finding rule at the primer's four cases; the project agent
+   klarch-release-status-reviewer; the core's README gains the bootstrap; recording-a-decision
+   gains the interim rule of cross-project-references. Harvest in the agent-skills design home:
+   knowledge-table-home, primer-limit, primer-content, plans-directory-declared,
+   routing-table-shape (absorbing routing-table), overlay-by-separate-skills, skill-name-prefix,
+   adopting-existing-docs, exact-pin (absorbing pinned-binary-wording and the extension rule of
+   declared-command), gates-convention, goals-required, relying-on-the-checker (the interim rule of
+   cross-project-references); in the root design home, klarch-prefix. installed-files-committed
+   and primer-by-import need no entry of their own: the core's owned-namespace-check states both
+   sides. The issues on skill patching and on creating a Component are opened. The issues on skill patching and on creating a component are opened.
 6. **Session D, then PR 5:** setting-goals and retrospective.
 7. **PR 6:** the setting-goals skill is run with the owner on every component of this repository,
    as its first real use (approved). A change to goals is the owner's, and needs no review.

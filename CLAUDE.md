@@ -1,5 +1,10 @@
 # knowledge-architect
 
+@.claude/knowledge-architect/PRIMER.md
+
+The line above imports the installed primer of the workflow: its directives and the workflow's
+rows of the knowledge table. This file adds what is this repository's own.
+
 A documentation checker and an agent workflow, shipped as Rust crates. The checker verifies that a
 project's documents stay consistent with its code and with each other, through declared registers
 and checked references. The workflow is a set of agent skills that the checker embeds and writes
@@ -181,26 +186,18 @@ this, and they pay for the drift it admits:
   needed at a point of delivery is a delivery decision, and those belong to the owner of the
   configuration.
 
+The workflow's rows of the knowledge table are in the primer. This repository's own rows:
+
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
-| what the project is for, and what would show it achieved | `path@knowledge-architect@docs/goals.md` | the owner abandons the goal |
-| what one Component is for, and what would show it achieved | that Component's `path@*@docs/goals.md` | the owner abandons the goal |
-| the general architecture of the project | the root's design home head | the design changes: the head is rewritten in place |
-| how a Component is built, and why it is built that way | the Component's design home head | the design changes: the head is rewritten in place |
-| the engineering alternative that lost for a Component or the project, and why | the Component's `path@*@docs/rejected-alternatives.md` | never. A reversal moves the old winner into it if it meets the recording tests of `knowledge-architect-recording-a-decision` |
-| what is outstanding: a defect, an unexplained observation, an unanswered question, missing work | one file in the owning anchor's issue directory: the Component's `path@*@docs/open-issues/`, or the agent-config location's open-issues directory for the agent configuration | the issue closes |
-| evidence that would flip a recorded decision about code that exists | the Component's tripwires home, `path@*@docs/tripwires.md` | the tripwire fires, or the decision it guards is gone |
-| a contract or a trap in a Component, true of the code as it stands, that only a developer needs | the Component's scoped `path@*@CLAUDE.md` | the contract changes or the trap is removed |
-| how a user can use a Component, what to respect | the Component's `path@*@README.md`. For a published crate it is the crates.io page, and it points to docs.rs for the library API | the contract changes |
-| directions about what to find where in a directory | a `README.md` file in that directory | the directory's content changes |
+| descriptions of unbuilt work and the plans to build it: specs and milestones. Provisional, carries no slug | the plans directory, `path@knowledge-architect@docs/plans/` | the planned work lands |
+| what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
+| how a user can use a published crate | the Component's `path@*@README.md`, which is also the crates.io page; it points to docs.rs for the library API | the contract changes |
+| the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
 | what changed in each release, per surface | CHANGELOG.md at the root, one section per version | never: append-only |
 | a finding established outside this project that a decision here leans on | `docs/grounding/<subject>.md` in the Component the decision belongs to | the source is superseded, or a better one lands |
-| what a caller must respect to use a type or a function, and the description of a crate's library API | that item's doc comment; for the library API, the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
-| why a piece of code is shaped the way it is, and where that holds | an inline comment at the code it explains | that code changes |
-| how to perform an activity | the owning skill | the procedure changes |
 | a Component that maintains the repository rather than shipping in it | `tools/<name>/`, one directory per tool | the tool is retired |
-| descriptions of unbuilt work and the plans to build it. Provisional, carries no slug | `path@knowledge-architect@docs/plans/` | the planned work lands |
-| **none of the above fits** | **ask, before writing it anywhere** | the table gains the row |
+| **none of these, nor a row of the primer** | **ask, before writing it anywhere** | the table gains the row |
 
 **The last row is for a statement with no home, not for a choice between two.** When two rows
 could fit, pick one, say which you picked, and continue. A genuine gap means this table is
@@ -355,9 +352,10 @@ not of what should be done.
 - **If it goes directly against the current task, or overlaps a place you have to edit, fix it in
   the same change.** Report the fix to the user at the end of the task. If the fix is not obvious,
   stop and ask the user.
-- **If it is orthogonal to the task at hand, do not silently fix it.** A non-conformant file you
-  meet while doing something else is outside your task: finish the task, then say what you found
-  and let the owner decide.
+- **If it is orthogonal to the task at hand, it takes the four cases of the primer's "Something met
+  outside the task"**: stop if it bears on the current work, fix it in a commit of its own if the
+  diff alone shows the fix right, open an issue if its `Why it matters` can be written, and name it
+  as dropped otherwise. The turn ends with its "Met outside the task" section.
 
 ## Verify mechanically
 
@@ -436,30 +434,28 @@ request.
 the matching skill before doing that kind of work.
 
 **This repository installs its own skills**, with `cargo klarch install-agent-skills`, and
-commits them under .claude. Step 5 of the milestone document writes them one group at a time. An
-activity whose installed skill exists follows it. Every other activity follows thaum's skill, read
-from thaum's checkout at commit e98e296, for example with
-`git -C <thaum checkout> show e98e296:<skill path>`. Their thaum-specific parts do not apply: the
-rules and their citations, slices.md, thaum's anchors, `cargo mutate run`, and
-`cargo knowledge`, which is `cargo klarch` here. An axis that has an installed reviewer agent is
+commits them under .claude. The harness lists each installed skill with its description, so a
+session finds which applies there. An axis of a review that has an installed reviewer agent is
 dispatched as that agent, and any other axis as a fresh general-purpose subagent, per
-`knowledge-architect-dispatching-a-review`. The milestone document's sections 4.6 and 4.7 are where
-this is decided.
+`knowledge-architect-dispatching-a-review`.
 
-| skill | read it when |
+**This repository's own skills and agents take the prefix `klarch-`**, not the project's name: a
+name beginning with `knowledge-architect-` is the installer's, and the install would delete it.
+
+**The routing table**: what this repository adds to an installed skill or agent.
+
+| installed | this repository's additions |
 | --- | --- |
-| `knowledge-architect-recording-a-decision` (installed) | a design or contract decision has been made or reversed, to decide whether it earns durable text and where |
-| `knowledge-architect-tracking-open-issues` (installed) | before diagnosing any behaviour as a new problem; when parking anything; when a recorded tripwire fires; when work closes any of these |
-| `knowledge-architect-planning` (installed) | a design discussion has converged and its work needs a spec or a milestone, in the same session; a step of a milestone is about to be implemented or lands; the work of a spec lands |
-| `knowledge-architect-discussing-design-decisions` (named, not installed yet) | served by `designing-together`, below |
-| `knowledge-architect-maintaining-agent-config` (named, not installed yet) | served by thaum's `maintaining-agent-config`, below |
-| `knowledge-architect-dispatching-a-review` (installed) | before merging anything to main, and when an activity's skill says its work is ready for review. It names the axes, and the installed reviewer agent of those that have one |
-| `developing` (in thaum) | before starting or iterating on a change to the Rust source. A test is shown to discriminate by reverting the change in a scratch worktree, since `cargo mutate run` is not ported |
-| `maintaining-agent-config` (in thaum) | before adding or editing this file, a scoped `CLAUDE.md`, any skill, any subagent definition, or the knowledge table |
-| `designing-together` (the owner's plugin, outside this project) | for design questions with an open solution space. Its thread names may conflict with this project's decision slugs, and its tripwires are recorded through `knowledge-architect-tracking-open-issues`. Its step 8 is replaced by `knowledge-architect-planning`, and its step 9 by the harvest at landing of `knowledge-architect-recording-a-decision` |
+| `knowledge-architect-dispatching-a-review` | `klarch-release-status-reviewer`, an axis for every change that records or argues a decision |
 
-**Step 5 replaces this table** with the routing table of the installed skills: each skill this
-repository's own binary installs, and the project skills that add to it.
+**Two activities use skills from outside this repository.** Step 6 of the milestone document
+installs the first. The second is left to each project by the workflow, and this repository follows
+thaum's until it writes its own.
+
+| activity | served by |
+| --- | --- |
+| a design discussion, which the installed skills name `knowledge-architect-discussing-design-decisions` | the owner's plugin `designing-together`. Its thread names may conflict with this project's decision slugs, and its tripwires are recorded through `knowledge-architect-tracking-open-issues`. Its step 8 is replaced by `knowledge-architect-planning`, and its step 9 by the harvest at landing of `knowledge-architect-recording-a-decision` |
+| a change to the Rust source | thaum's `developing`, read from thaum's checkout at commit e98e296 with `git -C <thaum checkout> show e98e296:.claude/skills/developing/SKILL.md`. Its thaum-specific parts do not apply: the rules and their citations, slices.md, thaum's anchors, and `cargo knowledge`, which is `cargo klarch` here. A test is shown to discriminate by reverting the change in a scratch worktree, since `cargo mutate run` is not ported |
 
 ## Git
 

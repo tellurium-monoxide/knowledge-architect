@@ -250,3 +250,109 @@ review reads it. A re-entry point that depends on whether a change looked relate
 one that a change touching the guarded decision indirectly skips: the reviewer reads every entry of
 every home, not the subset the diff seems to concern. This serves
 `goal@knowledge-architect@documentation-stays-consistent`.
+
+## The configuration a project holds
+
+### The workflow's rows of the knowledge table ship in the primer; the project's own rows sit in its root CLAUDE.md `##knowledge-table-home`
+
+The knowledge table maps each kind of statement to its one home. Its rows for the workflow's own
+records (a goal, a decision, a losing alternative, an issue, a tripwire, a contract, a plan
+document) ship in the installed primer, and move with the version. A project's own rows, such as
+its plans directory or a register it declares, sit in its root `CLAUDE.md`, which the project
+owns. A table written whole into each project at setup would keep the old routing after an upgrade
+that changes it, against `goal@knowledge-architect@agents-get-a-complete-workflow`. A table shipped
+whole would leave a project no place for its own rows, against
+`design@agent-skills@overlay-by-separate-skills`.
+
+### The primer holds only what every session needs and no installed skill delivers `##primer-limit`
+
+The primer reaches every session of every installing project, so its content test is the bound,
+not a count of lines: a line that restates a skill, or a convention of one project, does not go in
+it. The workflow targets frontier-tier models, which the design-discussion work requires, so a
+size limit would protect a reader the workflow does not serve.
+
+### The primer carries the goals rule, the intent-and-claims rule, and the rule for what is met outside the task `##primer-content`
+
+Besides the knowledge table and the list of installed skills, the primer carries three directives
+the skills rely on and no skill delivers. **The goals are the only statements assumed to come from
+the owner**: a recorded decision was reviewed, but its review can miss an implication, more often as
+agentic work grows, so a decision that conflicts with a goal goes to the owner and the goal
+prevails, per `goal@knowledge-architect@the-owner-decides`. **A design home is intent and a claim
+about the code goes stale**, so the code is checked against the first and the second is verified
+before it is relied on. **Something met outside the task** takes the first of four outcomes that
+applies: stop if it bears on the current work; fix it in a commit of its own if the diff alone
+shows the fix right; open an issue if its reason and its closing condition can be written; name it
+as dropped otherwise. A turn that met anything ends with a section listing every item and its
+outcome. The owner observed that the earlier rule, "do not fix it silently, say what you found",
+let an agent leave a small defect as one line inside a long report, where it was missed: every
+outcome now leaves a record or a listed line.
+
+### A project states its plans directory in its own rows of the knowledge table `##plans-directory-declared`
+
+The setting-up skill proposes docs/plans/ and writes the path the owner accepts as the first of
+the project's rows. A manifest key would be a checker change that nothing reads yet; it belongs to
+a structure for plan documents, `issue@core@structured-plan-documents`.
+
+### The routing table lists only what a project adds to an installed skill `##routing-table-shape`
+
+The project's root `CLAUDE.md` carries one row per installed skill or agent that a project skill or
+agent adds to, naming the additions. The setting-up skill writes the table, and the
+maintaining-agent-config skill keeps it. It carries no "read it when" column: the harness already
+lists every skill with its description, and a copy of it would drift. A project skill that adds to
+no installed one needs no row.
+
+### A project adds to the workflow through skills of its own, never by editing an installed one `##overlay-by-separate-skills`
+
+An installed skill is complete on its own. A project adds its conventions through its own skills,
+agents and root `CLAUDE.md`, under its own names. An installed file is compared byte for byte with
+the pinned version and overwritten by the install, so an edit to it fails the check and is lost at
+the next install; a project skill with the same base name as an installed one would load beside it,
+not replace it. Where a project skill would have to contradict an installed one, the installed text
+is wrong for that project, and the owner reports it.
+
+### A project's own skills and agents carry its name as a prefix `##skill-name-prefix`
+
+A project skill or agent is named `<project>-<activity>`, the directory or file name equal to the
+frontmatter `name`, so it is told apart from an installed one and from another project's. A colon,
+as in `<project>:<activity>`, is not used: a subagent's name cannot hold one, and a skill so named
+cannot be told apart from a plugin's.
+
+### Setting up stops at a conformant structure, and the move of existing documents is planned work `##adopting-existing-docs`
+
+For a project that already has documentation, the setting-up skill takes an inventory of it,
+proposes a destination for each document, takes the owner's rulings, and opens one `todo` issue for
+the move. The move runs as a milestone when the owner schedules it. A migration is a decision with
+arguments of its own, such as which recorded decisions still hold, and it fits in one session only
+for a small project. The issue keeps the old documents beside the new homes listed as outstanding
+work, per `design@agent-skills@planned-work-is-an-issue`.
+
+### A project pins the checker exactly, and runs its pinned binary from inside the project `##exact-pin`
+
+A project depends on one exact version of the checker, so moving it is an explicit edit, and the
+installed skills move with it. A dependency builds no executable for the project, so a Rust project
+runs the pinned version through a small crate of its workspace whose `main` calls the library's
+command line, and any other project installs it into a directory of its own with
+`cargo install --locked --root`. A machine-wide install would give two projects on one machine one
+version, which is the problem the bundling of the skills into the checker removed. A project with an
+extension runs its own binary and does not install it under the plain name `klarch`, since two
+binaries of that name on the path run whichever comes first, per `design@core@declared-command`.
+
+### The setting-up skill recommends one gates command, and ships no code for it `##gates-convention`
+
+One command runs every check a project owes before a merge, runs them all when one fails, and exits
+non-zero when any fails, so a verdict is one exit code and nothing is read through a pipe. In a Rust
+project the conventional shape is a maintenance crate run through a cargo alias. The workflow
+recommends the shape and ships no code: the checks a project owes are its own.
+
+### Every Component states at least one goal `##goals-required`
+
+The setting-up skill does not finish a Component without at least one goal, stated with the owner.
+A Component with no goal gives its design nothing to derive a binding constraint from, and its
+decisions bind only as presumptions, against `goal@knowledge-architect@the-owner-decides`. Nothing
+checks it mechanically yet: `issue@core@a-component-states-at-least-one-goal`.
+
+### A decision that relies on the checker says so, and references none of its decisions `##relying-on-the-checker`
+
+A project cannot reference an entry of another project, so a decision that relies on the checker
+states that it relies on the checker working as intended. This holds until a form for such
+references exists, `issue@core@cross-project-references`.

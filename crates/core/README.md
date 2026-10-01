@@ -188,7 +188,26 @@ harness = ["claude"]   # the default when the table is absent
 ```
 
 With `harness = []` no component owes a CLAUDE.md, and nothing is installed or checked, per
-`design@core@agents-table`. This version ships no file yet, so the install writes nothing.
+`design@core@agents-table`.
+
+**Adopting the workflow starts with the install.** The skill that sets a project up,
+knowledge-architect-setting-up, is one of the files it writes, so a project first holds the
+smallest manifest the install accepts, at its root:
+
+```toml
+[project]
+name = "<project name>"
+components = []
+
+[walk]
+skip-dirs = []
+skip-files = []
+exclude = []
+```
+
+Then `klarch install-agent-skills` writes the skills, the agents and the primer, and an agent
+session follows the installed setting-up skill from there. `klarch check` lists every document the
+project still owes, each with its repair.
 
 ## `model`
 

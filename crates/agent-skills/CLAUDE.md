@@ -19,4 +19,8 @@ illustration as a placeholder in angle brackets, and writes the project's comman
 placeholder, per `design@agent-skills@shipped-text-is-reference-free`. A skill names another
 installed skill by its installed name, which carries the installer's prefix.
 
+**The primer reaches every session of every installing project**, so it holds only what every
+session needs and no installed skill delivers, per `design@agent-skills@primer-limit`. A line that
+restates a skill, or a convention of one project, does not go in it.
+
 The decisions about the skills are `path@agent-skills@docs/design.md`.

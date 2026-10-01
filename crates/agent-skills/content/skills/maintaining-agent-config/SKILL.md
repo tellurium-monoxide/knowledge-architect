@@ -1,0 +1,138 @@
+---
+name: knowledge-architect-maintaining-agent-config
+description: MUST use before adding or editing the project's root CLAUDE.md, a scoped CLAUDE.md next to code, a project skill, or a project subagent definition, and after installing a new version of the workflow. Covers choosing between root, a skill, a scoped file and an agent; how a skill's scope and description are shaped; the content instructions; the project's rows of the knowledge table; the routing table that maps each installed skill to the project skills that add to it; and why an installed file is never edited.
+---
+
+# Maintaining the agent configuration
+
+Scope: the project's own agent configuration, the text an agent reads to work in this project.
+Its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own skills and its own subagent definitions.
+
+Not covered here: **the installed files**, the skills, agents and primer that
+`{{command}} install-agent-skills` writes. They are never edited by hand (§5). **Where the argument
+for a decision about the configuration lands**: `knowledge-architect-recording-a-decision`; this
+skill owns how to write the configuration, that one owns where the argument goes. **Setting the
+configuration up the first time**: `knowledge-architect-setting-up`.
+
+## 1. Content and style of agent-facing files
+
+Everything written in a `SKILL.md`, a subagent definition or a `CLAUDE.md` follows these:
+
+- **Current reality only**: no history, no dates, no commit hashes, no session records. Examples
+  kept minimal. What "once was" never goes into an agent-facing file.
+- **No cautionary narratives.** They cost context, divert the attention, and buy less instruction
+  strength than they cost.
+- **References are checked like anywhere else.** A project's skills and agents are walked by
+  `{{command}} check`, and a live reference in them must resolve. Run it after editing one.
+
+## 2. Where a piece of agent-facing text goes
+
+An agent needs two kinds of text: **knowledge** about the project (what exists, how it works) and
+**instructions** about the tasks it performs. They are split first by kind, then by **when the place
+reaches a session**.
+
+### Knowledge
+
+| place | when it reaches a session | what it holds |
+| --- | --- | --- |
+| root `CLAUDE.md` | every session, unconditionally | the knowledge every task needs |
+| a scoped `CLAUDE.md` | when a session reads or edits a file in that directory, or opens it | the contracts and traps of one Component |
+| an issue directory | when a session looks for open issues | what is outstanding in that Component or location |
+
+### Instructions
+
+| place | when it reaches a session | what it holds |
+| --- | --- | --- |
+| root `CLAUDE.md` | every session, unconditionally | instructions that span all activities, the project's rows of the knowledge table, the routing table |
+| a skill | its description is listed every session; its body loads only when invoked | a procedure, and the knowledge shaped by a task. Length is nearly free, so a skill can be thorough |
+| a subagent definition | only when a subagent of that type is spawned, and then from its first token | a task only ever done by a subagent, such as a reviewer following a fixed standard |
+
+#### Dispatching between them
+
+**The unit is an activity**: the scope over which a complete set of procedures makes sense.
+Decided in order; the first match wins.
+
+1. **Is it needed by every activity?** Then it is **baseline**: root `CLAUDE.md`. **Reading is
+   always baseline**, because a session cannot know what it will read before reading it. **Producing
+   is an activity, unless the producing is itself universal**, as committing is: every session
+   commits.
+2. **Otherwise, does it produce a nameable artifact?** Then it is an **activity**, and it owns a
+   skill. The discriminator is artifact versus property, not locality: a property that must hold in
+   every file produces no artifact and is baseline.
+3. **Is it shared by two or more activities but not all?** Then it is a **sub-activity**: its own
+   skill, named as a prerequisite by each activity that needs it. The installed recording, tracking
+   and dispatching skills are this.
+4. **Is it read only by a fresh subagent?** Then it is a subagent definition. A definition sets a
+   **standard**, not a one-off task, because it must be reusable. A review axis whose content
+   depends too much on the task to be standardized stays as a line in the activity's skill.
+
+## 3. Shaping a skill
+
+- **Name it with an `-ing` verb form**, and give it the project's prefix: the project's name and a
+  hyphen, as in `<project>-developing`. The directory name and the frontmatter `name` are equal. The
+  same prefix names the project's subagent definitions.
+- **Begin the description with MUST**, and make the trigger **symptom-shaped, not request-shaped**.
+  A session rarely asks to "track open issues"; it does meet a behaviour that looks wrong. Write the
+  symptom.
+- **State what the skill does not cover**, naming the skill that does. A seam left unnamed becomes a
+  dead zone where neither skill loads.
+- When two skills legitimately both apply to one change, say so, and in what order.
+
+**One skill covers one activity.** A description naming several unrelated scopes is matched by no
+task, so it loads for none. Enumerating the facets of one activity is the opposite move and is
+correct. The test is whether a single task can want all of them at once.
+
+**A skill is self-sufficient.** It restates every piece of knowledge its activity needs, such as a
+build command, a dispatch table or a common trap, even where it is stated elsewhere. It points only
+to **task material**, data that varies per instance, and to **a named prerequisite skill**, one
+complete instruction. The test, per pointer: could a session complete this activity correctly
+without opening it? If not, the content belongs in the skill. Each pointer is an extra read a
+session must remember, and the more there are, the less likely all are followed.
+
+## 4. The two tables of the root CLAUDE.md
+
+**The project's rows of the knowledge table.** The installed primer carries the workflow's own rows:
+where a goal, a decision, a losing alternative, an issue, a tripwire, a contract or a plan document
+goes. The project's root `CLAUDE.md` carries the rows that are the project's alone, under a heading
+of its own: its plans directory, its changelog, a register it declares, a directory with a
+convention of its own. The last row of the combined table is **ask the owner before writing it
+anywhere**. It is for a statement with no home, not for a choice between two: when two rows could
+fit, pick one, say which, and carry on. **Each answer ends as a new project row**, so the fallback
+limits itself: if it fires often, the table is wrong. A project row never restates or contradicts a
+row of the primer; one that would is a question for the owner.
+
+**The routing table.** One row per installed skill or agent that a project skill or agent adds to:
+
+| installed | project additions |
+| --- | --- |
+| `knowledge-architect-<installed skill>` | `<project>-<activity>` |
+
+A project skill that adds to no installed one needs no row: its own description triggers it. When
+a project skill is added, renamed or removed, its row changes in the same commit.
+
+## 5. Installed files are never edited
+
+An installed skill, agent or primer is compared byte for byte with the version the project pins, and
+the install overwrites it. **A change the project needs is a project skill or agent of its own**,
+with its own name and its row in the routing table. It adds to the installed text: an extra step,
+an extra review axis, a convention of the project. It never contradicts it. Where it would have to
+contradict it, the installed text is wrong for this project: say so to the owner, who may report it
+to the workflow's maintainers.
+
+## 6. After installing a new version
+
+`{{command}} install-agent-skills` writes the files the new version ships and removes the ones it no
+longer ships. In the same commit:
+
+- read the new primer's table against the project's rows, and raise any project row that now
+  restates or contradicts a primer row;
+- update the routing table: a row whose installed skill was renamed or removed changes or goes;
+- read each project skill against the installed skill it adds to, for an instruction that now
+  contradicts it;
+- run `{{command}} check`.
+
+## 7. Reviewing a configuration change
+
+Dispatch a review when an instruction is written and a mechanism is in place to deliver it, per
+`knowledge-architect-dispatching-a-review`. This skill adds no axis of its own: a change to the
+configuration is a change to prose, which that skill's axes cover.
