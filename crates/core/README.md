@@ -16,6 +16,10 @@ with `[project] command`, and `klarch` is the command when it declares none. The
 the declared command in its messages, in the header of every generated index, and in the agent
 files it installs, per `design@core@declared-command`.
 
+**The library is for a binary that registers an extension.** Its public API, and how to write and
+test an extension with it, is described in the crate documentation of `path@core@src/lib.rs`,
+which docs.rs renders for each published version.
+
 **It needs `git` 2.36 or newer on the path, and a project inside a git worktree.** What the tool reads is what
 `git ls-files` reports from the project root, so every pattern git honours decides the walk,
 nested `.gitignore` files included, and a file git tracks is read whatever the ignore rules say.
