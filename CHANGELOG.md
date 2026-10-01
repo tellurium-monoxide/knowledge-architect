@@ -33,3 +33,4 @@ One section per released version. Each item is tagged with the surface it touche
 - `agent-skills`: the first installed skills, recording-a-decision and tracking-open-issues. The
   package ships its build script and its content/ directory, from which the list of shipped files
   is generated.
+- `agent-skills`: the planning skill, and the transcript-conformity reviewer agent.

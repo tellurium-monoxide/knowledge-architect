@@ -77,7 +77,8 @@ message.
 tell what a change costs without deriving the argument again, so the premises a reversal must
 defeat are in the head. The deliberation is not, because every session reads the design homes
 before it changes code, and a head that carried its whole deliberation would make that read cost
-the length of every discussion ever held. History serves the reader who needs it: a deleted spec is
+the length of every discussion ever held. History serves the reader who needs it, because a spec leaves when its work lands, per
+`design@agent-skills@spec-leaves-at-landing`: a deleted spec is
 listed by `git log --diff-filter=D` on the plans directory, and its last state is one `git show`
 away. That agents take that route is measured, not assumed: a scan of a project's session logs for
 a `git show` or `git log` command naming a deleted plan document re-takes it, and a scan that finds
@@ -126,3 +127,97 @@ the thread is approved and its decision earns an entry, the entry's heading ends
 slug, so the spec, the commit messages and the design home name the decision with one identifier.
 This holds until plan documents have a structure the checker reads, which
 `issue@core@structured-plan-documents` tracks.
+
+## Plan documents
+
+### The words: plan document, spec, milestone, plans directory `##document-vocabulary`
+
+A plan document is any document in the plans directory, the one directory where a project keeps
+them. A spec is the plan document of work done in one branch and one PR. A milestone is work across
+several PRs with design sessions between them; its plan documents are its milestone document and
+one spec per step. The word "plan" alone never names a document, because it was the word that
+carried the confusion between the directory, the documents and their kinds. The words follow common
+usage among developers, which the owner made binding: a milestone groups the work toward one goal,
+as GitLab's and GitHub's milestones group issues and pull requests, and a spec says what will be
+built and how before the code exists. "Design doc", the closest common term, lost because "design"
+already names the durable register.
+
+### One document per layer, and no snippet is authority `##spec-and-milestone`
+
+The work of one PR has one plan document, its spec. A milestone's document extends the spec's
+sections over several steps, and each step has its own spec. A plan document is detailed about the
+design and concise about the implementation sequence. No untested code snippet in it is presented
+as authority: a snippet is labelled as an illustration of a shape. A spec plus a separate detailed
+implementation plan lost: both carry the same decisions and the second drifts from the first, and
+the owner observed that implementers force such plans' untested snippets into the code at any
+cost, copying their comments verbatim. A detailed plan, if one is ever written for a less capable
+implementer, covers a bounded amount of work and opens by saying it rests on assumptions.
+
+### A milestone is a directory, its head a README, each step a spec `##milestone-is-a-directory`
+
+A milestone's plan documents are one directory in the plans directory: the milestone document is
+its `README.md`, and each step's spec is a file beside it. The head is a README because the checker
+resolves a relative link only in a `README.md` or an `index.md`, so the head can link each step's
+spec as a navigation row. A step's spec leaves when its step lands, since its decisions are then in
+the design homes; the README leaves with the last step and keeps what crosses steps.
+
+### A plan document leaves when its work lands `##spec-leaves-at-landing`
+
+A spec is deleted in the commit that completes its last harvest, and that commit's message names
+its path. A plan document kept after its harvest is a second home for every decision it carried,
+and it starts drifting at the first later reversal. Walked by the checker, its references break at
+every reversal, and someone repairs a document about finished work; left out of the walk, it is
+unchecked text that a grep finds with no marker that it is stale. Either breaks
+`goal@knowledge-architect@documentation-stays-consistent`. Leaving the choice to each project lost
+too: the installed planning skill would have nothing to say where a document's work ends.
+
+### The planning skill writes the plan document, in the session that converged `##designing-hands-off-to-planning`
+
+A design discussion ends at convergence, the premortem and the owner's rulings on tripwires. The
+planning skill writes the spec or the milestone, in the same session. One skill owns the
+document's shape: two skills describing the sections of one document would drift apart, against
+`goal@knowledge-architect@agents-get-a-complete-workflow`. The session matters because the
+discussion's ledger lives only in the conversation, and a document written from memory in a later
+session loses the losing arguments and the conditions of each closure.
+
+### Acceptance criteria live in the plan document of the work that judges them `##acceptance-criteria-in-the-document`
+
+An acceptance criterion, a check on a recorded decision that only the work's built code can apply,
+is written in the plan document of that work. Every landing reports on the criteria it judges, and
+when the document leaves, a criterion that recurs becomes a tripwire and a spent one is deleted. A
+separate file of criteria would hold statements about the same work with the same lifetime, drift
+from the document, and stay behind when the document leaves. The plan document is written in the
+session that converged, so the criteria and the document are born together.
+
+### Undesigned work is an issue, and no list of milestones is kept `##planned-work-is-an-issue`
+
+Work that is known but not designed is a `todo` or `deferred` issue in the owning anchor, with its
+leads in the entry. The plan document that schedules it closes the issue in the commit that adds
+the document. `goal@knowledge-architect@structure-and-workflow-work-together` asks for one place for
+what is open, and a roadmap file would be a second one beside the issue register: two schedules
+drift. The cost, accepted by the owner: the order of future work has no home.
+
+### No record of landed work is kept `##no-progress-record`
+
+No installed skill asks for a file recording what has landed. History lists every plan document
+that left, and each landing commit says where its results live; releases are in the changelog. A
+progress file would be a third document about the same work, with a lifetime of its own.
+
+### A transcript reviewer checks a plan document against the owner's words `##transcript-conformity-review`
+
+The installed agent `knowledge-architect-transcript-conformity-reviewer` reads the transcript of a
+discussion and checks that a document records the owner's decisions as made: each state, the scope
+of each decision, the verbatim quotations, and nothing the owner said left out. The planning skill
+dispatches it on every plan document written from a discussion whose transcript is available. It
+is an agent, not a line in a skill, because its standard and its extraction rule are fixed, and the
+rule is learned from a failure: a filter on text substrings once dropped one of the owner's
+messages. It serves `goal@knowledge-architect@the-owner-decides`: on its first use, it was the only
+reviewer of six to find a decision recorded narrower than the owner's approval.
+
+### Plan documents keep a fixed shape a later structure can read `##structure-ready`
+
+A plan document's layout, its section titles and its order are fixed, and every thread, step and
+acceptance criterion carries an identifier in the entry grammar, written plain and never as a
+backticked span. Nothing outside the plans directory cites an item of a plan document. This is the
+shape a structure for plan documents, with registers of their own, can read without rewriting
+them: `issue@core@structured-plan-documents`.

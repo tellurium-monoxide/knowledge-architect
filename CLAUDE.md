@@ -245,13 +245,15 @@ list of what references an entry: `show` computes it.
 
 ### Plan documents
 
-`path@knowledge-architect@docs/plans/` holds temporary documents that describe work to be done.
-They are committed on the work's branch. A correction is applied in place, so a partial reading
-cannot mislead. A plan document is deleted in the commit that completes its last harvest, and that
-commit's message names its path, so `git log --diff-filter=D` on the directory lists every deleted
-one. This is a restatement of a decision taken in section 3.5 of the milestone document, which the
-planning skill harvests. The milestone document itself leaves in the release commit of its step 7,
-as its head says. The vocabulary of plan documents is decided with the planning skill.
+`path@knowledge-architect@docs/plans/` is this repository's plans directory. It holds plan
+documents and nothing else: a spec for the work of one PR, a milestone directory for work across
+several PRs. They are committed on the work's branch. A correction is applied in place, so a
+partial reading cannot mislead. A plan document is deleted in the commit that completes its last
+harvest, and that commit's message names its path. This is a restatement; its home is
+`design@agent-skills@spec-leaves-at-landing`, and the procedure is the installed
+`knowledge-architect-planning`. The milestone document of v0.1 is one file, written before
+`design@agent-skills@milestone-is-a-directory`, and it leaves in the release commit of its step 7,
+as its head says.
 
 ## Verify before relying on anything
 
@@ -447,10 +449,12 @@ apply. The milestone document's section 4.6 is where this is decided.
 | --- | --- |
 | `knowledge-architect-recording-a-decision` (installed) | a design or contract decision has been made or reversed, to decide whether it earns durable text and where |
 | `knowledge-architect-tracking-open-issues` (installed) | before diagnosing any behaviour as a new problem; when parking anything; when a recorded tripwire fires; when work closes any of these |
-| `knowledge-architect-planning` (named by the installed skills, not installed yet) | served by thaum's `planning-a-slice`, for a spec or a milestone document |
+| `knowledge-architect-planning` (installed) | a design discussion has converged and its work needs a spec or a milestone, in the same session; a step of a milestone is about to be implemented or lands; the work of a spec lands |
 | `knowledge-architect-discussing-design-decisions` (named, not installed yet) | served by `designing-together`, below |
 | `knowledge-architect-maintaining-agent-config` (named, not installed yet) | served by thaum's `maintaining-agent-config`, below |
-| `knowledge-architect-standing-state-reviewer` (named, not installed yet) | served by a general-purpose subagent briefed with thaum's agent file of that name |
+| `knowledge-architect-standing-state-reviewer`, `knowledge-architect-cold-implementer-reviewer`, `knowledge-architect-code-claims-reviewer` (named, not installed yet) | each served by a general-purpose subagent briefed with thaum's agent file of the same base name |
+| `knowledge-architect-dispatching-a-review` (named, not installed yet) | served by thaum's `dispatching-a-review`, below |
+| `knowledge-architect-transcript-conformity-reviewer` (installed agent) | dispatched, never read: by the planning skill on every plan document written from a discussion, and on any document that records the decisions of a discussion whose transcript is available |
 | `developing` (in thaum) | before starting or iterating on a change to the Rust source. A test is shown to discriminate by reverting the change in a scratch worktree, since `cargo mutate run` is not ported |
 | `dispatching-a-review` (in thaum) | before merging anything to main, and when an activity's skill says its work is ready for review |
 | `maintaining-agent-config` (in thaum) | before adding or editing this file, a scoped `CLAUDE.md`, any skill, any subagent definition, or the knowledge table |
