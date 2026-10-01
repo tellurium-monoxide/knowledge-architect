@@ -25,9 +25,10 @@ needs it stops there.
 
 | word | meaning |
 | --- | --- |
-| spec | the document of short work: its design and a concise implementation sequence |
-| milestone document | the same for work across several PRs |
-| plan | the docs/plans/ directory, and nothing else. A "detailed implementation plan" is the separate step-by-step document of the superpowers workflow, which this design rejects (3.2). |
+| plan document | any document in the plans directory, docs/plans/ in this repository (3.6) |
+| spec | the plan document of work done in one branch and one PR: its design and a concise implementation sequence |
+| milestone document | the plan document of work across several PRs. Under the planning skill a milestone is a directory; this one is a single file (3.6) |
+| detailed implementation plan | the separate step-by-step document of the superpowers workflow, which this design rejects (3.2) |
 | harvest | writing the decisions of a landed step into the design homes |
 | material finding | information that arrived after a thread closed and defeats a named part of that closure |
 | watch point | a question the retrospective skill asks at the end of a session |
@@ -120,10 +121,10 @@ its thread name becomes the entry's slug unless it collides (thread-slug-is-entr
 | harvest-after-implementation | decisions are recorded in the design homes when the work that implements them lands, not when the spec is written | |
 | losing-alternatives-filter | recording-a-decision's rule wins: an alternative earns an entry only if it passes that skill's tests. The rest stay in the spec and the commit message. | the owner judges the rule "still a little imperfect", not improved now |
 | spec-and-milestone | short work has one document, the spec. Work across several PRs with intermediate design sessions has a milestone document, which extends the spec in place. | plus the owner's content rule against untested snippets, 4.8 |
-| document-vocabulary | **decided in session B of step 5**, 3.6. Session A settled its home: the definitions live in the planning skill. The proposal on the table: "spec" for short work, "milestone document" for long work, "plan" for the docs/plans/ directory only. | this document uses the proposal meanwhile |
+| document-vocabulary | **decided in session B of step 5**, 3.6. Session A settled its home: the definitions live in the planning skill. | this document uses the decided words |
 | designing-together-retirement | option (a): the designing-together skill is forked into this project as the designing skill, and the owner archives the old repository. Its decision record is not carried as history: each item is shown to the owner, who rules on keeping it and on its wording, because "AI agents did most of that record … Some might not fully aligned with everything today" (owner). Its README content is kept. | (b), carrying the history, lost on cost, 3.2 |
 | plugin-inventory | the skills and agents listed in 4.7 | maintaining-agent-config is included |
-| transcript-conformity-review | the planning skill's review of a spec or milestone document includes one reviewer that reads the verbatim transcript of the design discussion and checks the document against the decisions taken in it. Whether it is an installed agent, and whether dispatching-a-review lists it as an axis, is decided in step 5. | owner: "Probably, this mode of review should become standard in the planning skills", then "agreed, defer the decision to step 5" |
+| transcript-conformity-review | the planning skill's review of a spec or milestone document includes one reviewer that reads the verbatim transcript of the design discussion and checks the document against the decisions taken in it. It is an installed agent, and dispatching-a-review lists it as an axis: decided in session B of step 5, 3.6, by the thread transcript-reviewer-agent, which absorbs this one. | owner: "Probably, this mode of review should become standard in the planning skills", then "agreed, defer the decision to step 5" |
 | retrospective-destination | the retrospective writes a file in a scratch location of the user's machine, then offers to open an issue on this repository, and opens it only on the owner's word | 4.7 carries its trigger and purpose |
 | premortem-as-watch-points | P1, P2 and P3 of section 7 are not tripwires. They are watch points in the retrospective skill. | a skill-patching issue answers P1 |
 | package-include-whitelist | each crate's Cargo.toml declares an `include` whitelist | tests and docs are not shipped |
@@ -238,13 +239,13 @@ conform with common usage, especially in the developing community".
 
 | thread | state | decision |
 | --- | --- | --- |
-| document-vocabulary | approved | plan document: any document in the plans directory; spec: the plan document of one PR; milestone: work across several PRs, its plan documents a directory; plans directory: where a project keeps them, its path the project's choice. "Plan" alone never names a document. On common usage, the owner: "milestone" matches, "equivalent to its usage in GitLab"; on "spec", "upon further thinking, I'm starting to believe it matches". On "plan document", the owner noted that thaum's plans directory held documents that were "not actually strictly plans … Maybe that's what was wrong, though, and we should keep your definition" |
+| document-vocabulary | approved | plan document: any document in the plans directory; spec: the plan document of one PR; milestone: work across several PRs, its plan documents a directory; plans directory: where a project keeps them, its path the project's choice. "Plan" alone never names a document. On common usage, the owner: "milestone" matches, "equivalent to its usage in GitLab for example (not sure if github or other such projects also use it this way)"; the agent's account of GitHub's milestones and of "spec" was from training knowledge, not checked in the session, and the owner accepted the words with "Agreed on all three"; on "spec", "upon further thinking, I'm starting to believe it matches". On "plan document", the owner noted that thaum's plans directory held documents that were "not actually strictly plans … Maybe that's what was wrong, though, and we should keep your definition" |
 | acceptance-criteria-in-the-document | approved | a criterion lives in the plan document of the work that judges it; reported at each landing; at the document's departure, one that recurs becomes a tripwire and a spent one is deleted |
-| planned-work-is-an-issue | approved | known, undesigned work is a todo or deferred issue; the plan document that schedules it closes the issue; no list file. The cost, put to the owner and not answered by name: the order of future work has no home. Agreed without that answer, read as accepted |
+| planned-work-is-an-issue | approved | known, undesigned work is a todo or deferred issue; the plan document that schedules it closes the issue; no list file. The cost, put to the owner and not answered by name: the order of future work has no home. Accepted in the closing checkpoint, which displayed "the order of future work has no home, accepted" and which the owner answered "Agreed, no tripwires, start PR 2". Two homes for order were offered and not taken: a "next" line in a milestone document's head, and a future structured plan register |
 | no-progress-record | approved | no record of landed work. The owner: "This is barely useful in thaum, it should probably get deleted." |
-| transcript-reviewer-agent | approved | the installed agent knowledge-architect-transcript-conformity-reviewer; the planning skill dispatches it; dispatching-a-review lists it as an axis. Absorbs transcript-conformity-review of 3.1 |
+| transcript-reviewer-agent | approved | the installed agent knowledge-architect-transcript-conformity-reviewer; the planning skill dispatches it; dispatching-a-review lists it as an axis, harvested with PR 3. Absorbs transcript-conformity-review of 3.1 |
 | milestone-is-a-directory | approved | the owner's refinement: "a milestone should be a subdirectory under the plan directory. Each step's spec gets its own file under it." The head is its README.md; a step's spec leaves at its landing, the README with the last step. This document stays one file (owner) |
-| structure-ready | approved | the planning skill fixes the layout, the section titles and plain identifiers for every item, and nothing outside the plans directory cites an item of a plan document. The owner's idea of structured plan documents, "I don't want to design this system right now, just keep the idea as an open issue for now", is recorded in the core's issue on structured plan documents |
+| structure-ready | approved | the planning skill fixes the layout, the section titles and plain identifiers for every item, written with a hash sign; nothing outside the plans directory cites an item of a plan document, and a `path` reference to a whole plan document stays allowed. The owner's reason: "I'd like at least to design the skills so that they can be quickly made compatible with structured documents and file layouts." The owner's condition: "keep an open issue recorded about this "plan" … with the arguments and ideas we've already made about it in this conversation"; they are in the core's issue on structured plan documents, under What and Why it matters. The owner's idea of structured plan documents, "I don't want to design this system right now, just keep the idea as an open issue for now", is recorded in the core's issue on structured plan documents |
 
 Ruled out in session B:
 
@@ -256,6 +257,11 @@ Ruled out in session B:
 | a roadmap file in the plans directory, thaum's slices.md | planned-work-is-an-issue | a second place for what is open, against structure-and-workflow-work-together |
 | a review-axis line in the planning skill, instead of an agent | transcript-reviewer-agent | each dispatcher would write its own brief, and a brief that drops the type-filter rule repeats the failure that taught it |
 | every file of a milestone leaving with the milestone | milestone-is-a-directory | after each step's harvest it keeps text that repeats the design homes |
+| keeping a record of landed work | no-progress-record | it serves a reader without git access, the cost accepted in session A, and is a third document about the same work |
+
+Argued by the agent and not ruled on by name: under document-vocabulary, that a statement with no
+home goes through the knowledge table's last row and never into the plans directory by default.
+The planning skill carries it (§3).
 
 No tripwire was recorded (owner: "Agreed, no tripwires"). The premortem's causes, each with its
 guard in a skill instruction, a review axis or a git command: a todo left open beside its spec; a
@@ -883,6 +889,7 @@ name and in its frontmatter name. The tables give the base names.
 | routing-reviewer | thaum's | the section names of thaum's root CLAUDE.md replaced by what the setting-up skill writes |
 | code-claims-reviewer | thaum's | "slice document" becomes "spec or milestone document" |
 | cold-implementer-reviewer | thaum's | the same |
+| transcript-conformity-reviewer | new, step 5 PR 2 | reads a discussion's transcript and checks a document against the owner's words (3.6) |
 
 Not installed, and staying in thaum: developing, recording-an-interpretation, bumping-rules,
 rules-reviewer. A future creating-a-component skill is an open issue.
@@ -1063,8 +1070,8 @@ its docs/design.md.
 | 3 | core | agents-table, with the three reversals of 4.3 point 3; install-command-name; owned-namespace-check; installed-files-committed (the check side); primer-by-import (the check side, and that the install does not edit CLAUDE.md); declared-command; the phase of the new findings (phases-gate-the-report) |
 | 3 | knowledge-architect (root) | binary-bundles-workflow |
 | 4 | core, root | public-api: the session's decisions, per 4.4.8 |
-| 5, PR 2 | agent-skills | done: the decisions of 3.6 and spec-and-milestone, spec-leaves-at-landing, designing-hands-off-to-planning (the planning side) |
 | 5, PR 1 | agent-skills | done: content-mirrors-the-install-layout (new), shipped-text-is-reference-free, no-external-handoff, harvest-after-implementation, standing-argument-in-head, losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id, premortem-tripwires-on-the-owners-word. installed-prefix-length needs no entry: `design@core@owned-namespace-check` states the prefix |
+| 5, PR 2 | agent-skills | done: the decisions of 3.6 and spec-and-milestone, spec-leaves-at-landing, designing-hands-off-to-planning (the planning side) |
 | 5 | agent-skills | goal-lifecycle, plugin-inventory, overlay-by-separate-skills, routing-table, skill-name-prefix, goals-required, gates-convention, exact-pin, installed-files-committed (the instruction side), primer-by-import (the delivery side), declared-command (the extension rule), retrospective-destination, premortem-as-watch-points, the interim rule of cross-project-references |
 | 6 | agent-skills | designing-together-retirement, designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning, the kept items of the intake |
 
@@ -1222,8 +1229,7 @@ Each item below is one commit that passes the check, unless an item's intermedia
 **Step 5. The installed skills and agents, except designing.** Reads 4.6, 4.7, 4.8, 7.
 
 - Forked and unified per 4.7 and 4.8, with the open points of 4.8 brought to the owner. The new
-  ones are written with the owner: setting-up, setting-goals, retrospective, the primer, and the
-  transcript-conformity reviewer if the owner chooses an installed agent.
+  ones are written with the owner: setting-up, setting-goals, retrospective, the primer, and the  transcript-conformity reviewer, installed in PR 2 (3.6).
 - **There is no harness switch to make.** This repository's manifest has no `[agents]` table, and
   an absent table means the `claude` harness. So the first file in content/ makes the check require
   its installed copy, and every later change to content/ is installed in the same commit.
@@ -1263,11 +1269,8 @@ skill and comes before the PR that needs it.
    sketch. Harvest: document-vocabulary, spec-and-milestone, milestone-is-a-directory,
    spec-leaves-at-landing, designing-hands-off-to-planning (its planning side),
    acceptance-criteria-in-the-document, planned-work-is-an-issue, no-progress-record,
-   transcript-conformity-review (absorbing transcript-reviewer-agent), structure-ready; the head
-   standing-argument-in-head gains its reference to spec-leaves-at-landing. No losing alternative
-   of 3.6, nor of 3.5 for these decisions, passes the recording tests: none changes a signature
-   or a format, none reads an external specification, none was refuted by evidence that cost
-   work, and no doubt about a goal was stated.
+   transcript-reviewer-agent (absorbing transcript-conformity-review), structure-ready; the head
+   standing-argument-in-head gains its reference to spec-leaves-at-landing. Of the losing alternatives of 3.2, 3.5 and 3.6 for these decisions, one passes the recording tests: the spec plus a separate detailed implementation plan (3.2), refuted by the owner's observation over real sessions. The others change no signature or format, read no external specification, were refuted by argument, and leave no stated doubt about a goal. The review of PR 2 renamed the head of the transcript reviewer to the approved thread's slug, transcript-reviewer-agent, and made a recurring acceptance criterion a tripwire on the owner's word only.
 4. **PR 3: the review group**, dispatching-a-review and the five agents; it lists the
    transcript-conformity agent as an axis. After planning, because standing-state-reviewer follows
    planning's decision on acceptance criteria, and two reviewers use its vocabulary.

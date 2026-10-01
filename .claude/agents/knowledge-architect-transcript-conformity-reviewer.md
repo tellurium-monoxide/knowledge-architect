@@ -23,22 +23,29 @@ table approves nothing.
 **Reproduce anything you assert.** Every finding quotes the document and the transcript, verbatim.
 Drop what you cannot quote.
 
-**You have no `Write` or `Edit`.** You may write your extraction script and its output to a scratch
-directory the brief names, and nowhere else.
+**You do not use `Write` or `Edit`.** You may write your extraction script and its output to a
+scratch directory the brief names, through the shell, and nowhere else.
 
 ## 1. Extract the transcript
 
 The brief names the session log, and the first and last message of the discussion inside it. The
 log of the `claude` harness is a JSONL file, one JSON object per line. Keep the lines whose `type`
-is `user` or `assistant`. From each, keep the text: a user message's `message.content` may be a
-plain string, or a list of items; keep the items whose `type` is `text`. Drop tool calls, tool
-results, and every other line.
+is `user` or `assistant`. From each, keep the text: a message's `message.content` may be a plain
+string, or a list of items; keep the items whose `type` is `text`. Drop tool calls, tool results,
+and every other line.
 
-**Select by message type only, never by a substring of the text.** A filter on text content drops
-messages whose wording happens to match it, and an owner's message dropped that way is a ruling
-the review never sees.
+**Not every `user` line is the owner's.** The harness also writes, as `user` lines, text it
+injects: a line whose `isMeta` is true (a loaded skill, a message from another agent), and a line
+whose `origin.kind` is not `human` (a background task's notification, a message from a peer
+agent). Label each `user` line as the owner's or as injected, by those fields, and keep both in the
+extraction. Only a line labelled the owner's carries the owner's word. Where a log carries neither
+field, say so, and treat a line whose text opens with a harness tag, such as `<task-notification>`
+or `<system-reminder>`, as injected.
 
-Cut the result to the discussion's first and last message, as the brief names them, and keep the
+**Select and label by the fields of each line, never by a substring of its text.** A filter on text
+content drops messages whose wording happens to match it, and an owner's message dropped that way
+is a ruling the review never sees. The one use of the text is to locate the discussion's first and
+last message, which the brief names by their opening words. Cut the result there, and keep the
 order of the lines.
 
 ## 2. Read the discussion

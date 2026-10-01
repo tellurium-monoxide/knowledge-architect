@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-planning
-description: MUST use when a design discussion has converged and its work needs a written plan, in the same session as the convergence; whenever a step of a milestone is about to be implemented or lands; and when the work of a spec lands. Covers the plan document vocabulary (spec, milestone, plans directory), choosing between a spec and a milestone, the file layout and the fixed sections, item identifiers, cutting the steps, acceptance criteria, the per-step design audit, the reviews before a plan document is committed, the harvest, and the deletion that ends a plan document's life.
+description: MUST use when a design discussion has converged and its work needs a spec or a milestone, in the same session as the convergence; whenever a step of a milestone is about to be implemented or lands; and when the work of a spec lands. Covers the plan document vocabulary (spec, milestone, plans directory), choosing between a spec and a milestone, the file layout and the fixed sections, item identifiers, cutting the steps, acceptance criteria, the per-step design audit, the reviews before a plan document is committed, the harvest, and the deletion that ends a plan document's life.
 ---
 
 # Planning
@@ -18,9 +18,10 @@ audit and at each landing.
 - **Writing the code** of a step, its claims and its tests: the project's own development
   procedure. This workflow installs none.
 - **Dispatching the reviewers**: `knowledge-architect-dispatching-a-review`.
-- **Recording** what a landing establishes: `knowledge-architect-recording-a-decision` for the
-  decisions and the losing alternatives, `knowledge-architect-tracking-open-issues` for the
-  tripwires and the issues.
+- **Recording** what a landing establishes. Recording is not done once at the end of the
+  discussion: it is done at each landing, as the harvest of §7. The procedure is
+  `knowledge-architect-recording-a-decision` for the decisions and the losing alternatives, and
+  `knowledge-architect-tracking-open-issues` for the tripwires and the issues.
 
 ## Terms
 
@@ -34,7 +35,7 @@ audit and at each landing.
 | **thread** | one proposal of the discussion, carrying a state; an approved thread is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
 | **acceptance criterion** | a check on a recorded decision that only the work's built code can apply |
-| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet |
+| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named, and the thread stays closed until the owner's word |
 | **audit** | the reading of a step's entry against the tree and the design homes before the step is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
 
@@ -63,7 +64,8 @@ several PRs becomes a milestone: the spec becomes the milestone document, and th
 cut from its implementation sequence.
 
 **Work that is known but not designed is not a plan document.** It is a `todo` issue, or a
-`deferred` one if an event gates it, in the owning anchor's issue register, with its leads in the
+`deferred` one if an event gates it (the default kinds; a project that declares its own kinds uses
+the nearest), in the owning anchor's issue register, with its leads in the
 entry. The plan document that schedules it closes that issue in the commit that adds the plan
 document, so the work is listed in one place at a time. There is no roadmap file and no record of
 landed work: `{{command}} issues --kind todo` lists what is planned and undesigned, and history
@@ -93,25 +95,31 @@ lists what landed.
 **Written for a session that did not witness the discussion.** That is the standard every section
 is held to, and §8's reviews check it.
 
-**The sections are fixed, with these titles, in this order.** A section with nothing to hold says
+**The sections are fixed, with these titles, in this order.** The titles are what a later structure
+for plan documents reads. A section with nothing to hold says
 so in one line rather than being omitted, so a reader can tell an empty section from a missing one.
 
 | section | holds |
 | --- | --- |
 | status and audience | what the document is for; that it leaves when its work lands; that where it and a design home disagree, the design home wins; that every name it uses is defined in it or exists in the code; that where the owner's word is needed and the owner is absent, the work does not proceed on that point |
+| how a step is worked | in a milestone document: §7 of this skill, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
 | names | every project shorthand the document uses, expanded to the file, function or command it names |
 | what the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
 | what is already decided | the recorded decisions the design rests on and does not argue again, as references |
 | criteria | criterion, kind, source, satisfaction |
-| threads | every thread with its identifier, its final state and its resolution, and the durable home that will harvest it |
+| threads | every thread with its identifier, its final state and its resolution, a column naming the section that carries its shape, and a column naming the durable home that will harvest it |
+| new names, in one place | every new name the design uses (a type, a function, a field, an event, a bound, a counter) in one fenced block with the file it goes in; a name that exists in the code is listed as existing |
 | decided design | one subsection per approved thread: the shape, the argument, the nearest rival and the fact that defeated it |
-| losing alternatives | every ruled-out thread, every thread withdrawn with its defeating reason, and every superseded thread under the thread that absorbed it, each with the fact that decided it |
+| mapping tables | one table per total function the code will need, over its whole domain: which existing thing becomes which new thing. Empty when the work needs none |
+| losing alternatives | every ruled-out thread, every thread withdrawn with its defeating reason, and every superseded thread under the thread that absorbed it, each with the thread it lost to and the fact that decided it |
 | readings | where the work reads an external specification the project implements: each reading it makes, and where it is recorded. Empty for work that reads none |
-| premortem | each cause, the thread it stresses, and its verdict: survives into a named claim, criterion or guard; becomes a tripwire, on the owner's word; or fired and the thread reopened |
+| premortem | each cause, the thread it stresses, and its verdict: survives into a named claim, criterion or guard; converted into a named clause of the design; becomes a tripwire, on the owner's word; or fired and the thread reopened |
 | acceptance criteria | §6 |
 | implementation sequence | the steps, §5. Concise: what each step builds and what it fails alone on |
+| order rationale | one sentence per pair of adjacent steps |
 | defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, with the thread it bears on, until the owner rules |
-| harvest | what lands where, and when |
+| harvest | what lands where and when: one row per step, and one for the document itself |
+| later consequences | what each later piece of work adds or replaces, so a later reader knows what was deliberately left |
 
 **The milestone document holds the same sections** for the whole milestone, and its implementation
 sequence lists the steps, each linked to its spec. **A step's spec holds** the step's entry (§5),
@@ -133,8 +141,8 @@ and, when the step had a design session of its own, that session's design in the
 
 **Identifiers.** Every thread, step and acceptance criterion carries an identifier in the grammar
 `[a-z0-9]+(-[a-z0-9]+)*`. A thread keeps the slug the discussion minted. An identifier is written in
-plain text with a hash sign before it, never as a backticked span, which the checker would read as
-a reference candidate. Nothing outside the plans directory cites an item of a plan document: a
+plain text with a hash sign before it, never in backticks: the checker reports a backticked hash
+and identifier as a retired reference form. Nothing outside the plans directory cites an item of a plan document: a
 design head that cited one would dangle when the document leaves. A `path` reference to a whole
 plan document is allowed, and its dangling at deletion lists the texts that depended on it.
 
@@ -146,8 +154,8 @@ documents can read without rewriting them.
 **Each step must be able to fail without another step's new machinery entangled in the
 failure.** Every other test here serves that one.
 
-- **The first step lands the mechanism empty and measures it.** No content that uses it, and its
-  cost measured against a recorded baseline where the Component has one. Every later failure is
+- **The first step lands the mechanism empty and measures it.** No content that uses it, no
+  observable change against the instruments the Component already has, and its cost measured against a recorded baseline where the Component has one. Every later failure is
   then a failure of the content and not of the mechanism.
 - **Order by dependency.** A step that needs a mechanism comes after the step that proves it.
 - **A step touches at most one subsystem it did not build.** Two subsystems in one step are two
@@ -162,6 +170,9 @@ A step's entry carries, in this order:
 - **Claims**: each with the test that could refute it, and how the test is shown to fail against a
   wrong implementation. A claim whose instrument does not exist names the instrument the step
   lands first.
+- **Fixtures**, where the Component drives its tests with authored content: each written in the
+  vocabulary that exists, or naming the addition it makes. A fixture that needs something the
+  vocabulary cannot express is a finding against the design, not a note for the implementer.
 - **Audit subjects**: the files, decisions and specification passages the step's audit is already
   known to have to read.
 - **Fails alone on**: the one or two observations that tell this step's failure from every other
@@ -189,9 +200,10 @@ default marked as the owner's to reset.
 - **A criterion that fires** leaves the document at once, as an issue entry or a reopened decision,
   under `knowledge-architect-tracking-open-issues`.
 - **When the document leaves**, its last landing commit reports on every criterion once more. One
-  that did not fire and recurs at later work becomes a tripwire guarding the harvested decision,
-  in the shape `knowledge-architect-tracking-open-issues` gives. One that is spent is deleted with
-  the document.
+  that did not fire and recurs at later work is proposed to the owner as a tripwire, and written on
+  the owner's word in the tripwires home of the Component that owns the guarded decision, naming
+  the harvested head, in the shape `knowledge-architect-tracking-open-issues` gives. One that is
+  spent, or that the owner declines, is deleted with the document.
 
 ## 7. Working a step
 
@@ -204,11 +216,12 @@ finds it there.
    code as it stands and against the design homes. List every gap: a shape the code refutes, a
    passage of a specification the entry did not read, a name the entry uses that the code does not
    have, a consequence the entry did not see. Sort each gap:
-   - **Applied in place.** The gap has one answer the document's decisions already imply. Write the
-     answer into the step's spec under a heading saying the audit's findings are applied as the
-     step's binding shape, each finding stating the gap, the answer and the decision it follows
-     from. Commit the amended spec alone, and say in the message how many gaps were applied and that
-     none reopens a discussion.
+   - **Applied in place.** The gap has one answer the document's decisions already imply, or is a
+     choice among shapes the document rules out all but one of. Write the answer into the step's
+     spec under a heading saying the audit's findings are applied as the step's binding shape, each
+     finding stating the gap, the answer and the decision it follows from. Commit the amended spec
+     alone, with a subject of the shape `The <step> design audit, applied in place: <n> gaps, none
+     reopening a discussion`. Earlier audits are found with `git log --grep='design audit'`.
    - **Load-bearing.** The gap is material, or is a choice between two shapes neither of which the
      document rules out, or needs a ruling the document marks as the owner's. Record it in the
      step's spec as open at the audit, with the discriminating fact, stop the step, and open a
@@ -216,15 +229,17 @@ finds it there.
      converged design goes into the step's spec, in the sections of §4, and owes §8's reviews. The
      step resumes from it.
 3. **Claims, tests, implementation, gates, commit**, per the project's development procedure. The
-   commit names how each claim's test was shown to fail against a wrong implementation.
+   commit names how each claim's test was shown to fail against a wrong implementation, and says
+   of any claim whose test cannot yet do so why not.
 4. **Review before the merge**, per `knowledge-architect-dispatching-a-review`. A repair is a
    further commit. A finding not repaired becomes an issue entry.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this step (§6).
 6. **The harvest**, per the step's rows in the harvest section: the decisions and the losing
    alternatives under `knowledge-architect-recording-a-decision`, then the tripwires and the issues
    under `knowledge-architect-tracking-open-issues`. A tripwire names the head that harvested its
-   decision, so the head is written first.
-7. **The step's spec leaves** in the landing commit, as in §9. What crosses steps stays in the
+   decision, so the head is written first. Where a design home is a directory, a new subdocument is
+   linked from its README.
+7. **The step's spec leaves** in the commit that completes its harvest, as in §9. What crosses steps stays in the
    milestone document, amended in place where the landing changed it.
 
 ## 8. Reviews before a plan document is committed
@@ -232,28 +247,37 @@ finds it there.
 Before a plan document is committed, and again after a revision that changes a decided shape (an
 audit applied in place is not one), it is read by fresh reviewers that did not witness the
 discussion. **Fresh, never a fork**: a fork inherits the discussion and reads the document as its
-author. Dispatch them through `knowledge-architect-dispatching-a-review`:
+author. Dispatch them through `knowledge-architect-dispatching-a-review`, with the invariants that
+skill lists, the blind brief included:
 
 - `knowledge-architect-cold-implementer-reviewer` reads the document as the implementer of its first
-  step and reports every place where it cannot act.
+  step and reports every place where it cannot act: undefined names, shapes without enough detail
+  to write, procedure gaps, ambiguities, and what it would have to reconstruct from a conversation
+  it did not see. It also applies the readiness checks below.
 - `knowledge-architect-code-claims-reviewer` verifies every statement the document makes about the
-  code as it stands.
+  code as it stands, and reports each as confirmed, wrong or imprecise, with the evidence.
 - `knowledge-architect-transcript-conformity-reviewer` reads the discussion's transcript and checks
   that the document records what was decided, and only that. Dispatch it whenever the transcript is
   available. When it is not, say so, and why, in the commit that adds the document.
 
 **What their findings become.** Check each finding against the tree, or against the transcript,
 before acting on it. A material finding is answered with a default, written into the sections it
-touches, and listed under the defaults awaiting the owner, with the thread it bears on. A finding
+touches, and listed under the defaults awaiting the owner, with the thread it bears on. The owner
+rules on each at the first audit, or at once if present, and a ruled default leaves the list. A finding
 that is a gap with one answer is applied in place. A finding that is wrong is dropped, with the
 reproduction that showed it wrong kept in the commit message.
 
-**The readiness checks**, applied by the author before dispatch and by the cold implementer after:
+**The readiness checks**, applied by the author before dispatch and by the cold implementer after.
+This list is their one home; the reviewer reads it here.
 
-- every name the document uses is defined in it or exists in the code;
+- every name the document uses is defined in the names sections or exists in the code;
+- every total function the code will need is a mapping table;
+- every fixture is expressible in the vocabulary that exists, or names its addition;
+- a milestone document carries the procedure of §7;
 - every number is a measurement with its instrument, or a default marked as the owner's;
 - every premise a later step or change ends is stated with its guard;
-- every statement about the code names the file and the function;
+- every statement about the code names the file and the function, and its truth is the code-claims
+  reviewer's to establish;
 - every acceptance criterion names the decision it guards, the step judging it, the observable that
   fires it and the response;
 - every thread maps to a section and to a harvest home;

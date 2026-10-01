@@ -31,10 +31,10 @@ rewriting them, is `design@agent-skills@structure-ready`:
 - the layout: a spec is a file in the plans directory; a milestone is a directory holding its
   milestone document as `README.md` and one spec per step, per
   `design@agent-skills@milestone-is-a-directory`;
-- the section titles and their order, the same in every plan document;
+- the section titles, the same in every plan document;
 - an identifier in the entry grammar on every thread, step and acceptance criterion, written in
-  plain text with a hash sign. A backticked identifier would be a misplaced definition today; a
-  structure would turn the plain identifiers into definitions with a mechanical edit;
+  plain text with a hash sign. In backticks, the checker reports it today as the retired reference
+  form; a structure would turn the plain identifiers into definitions with a mechanical edit;
 - nothing outside the plans directory cites an item of a plan document. A `path` reference to a
   whole plan document is allowed.
 

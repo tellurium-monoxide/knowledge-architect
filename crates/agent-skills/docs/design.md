@@ -135,12 +135,12 @@ This holds until plan documents have a structure the checker reads, which
 A plan document is any document in the plans directory, the one directory where a project keeps
 them. A spec is the plan document of work done in one branch and one PR. A milestone is work across
 several PRs with design sessions between them; its plan documents are its milestone document and
-one spec per step. The word "plan" alone never names a document, because it was the word that
-carried the confusion between the directory, the documents and their kinds. The words follow common
-usage among developers, which the owner made binding: a milestone groups the work toward one goal,
-as GitLab's and GitHub's milestones group issues and pull requests, and a spec says what will be
-built and how before the code exists. "Design doc", the closest common term, lost because "design"
-already names the durable register.
+one spec per step. The word "plan" alone never names a document: it would name the directory, a
+document and a kind of document at once. The words follow common usage among developers, which the
+owner made binding: a milestone groups the work toward one goal, as GitLab's milestones do, and a
+spec says what will be built and how before the code exists, in the sense engineering teams give
+the word. "Design doc", the closest common term, lost because "design" already names the durable
+register.
 
 ### One document per layer, and no snippet is authority `##spec-and-milestone`
 
@@ -148,46 +148,55 @@ The work of one PR has one plan document, its spec. A milestone's document exten
 sections over several steps, and each step has its own spec. A plan document is detailed about the
 design and concise about the implementation sequence. No untested code snippet in it is presented
 as authority: a snippet is labelled as an illustration of a shape. A spec plus a separate detailed
-implementation plan lost: both carry the same decisions and the second drifts from the first, and
-the owner observed that implementers force such plans' untested snippets into the code at any
-cost, copying their comments verbatim. A detailed plan, if one is ever written for a less capable
-implementer, covers a bounded amount of work and opens by saying it rests on assumptions.
+implementation plan lost: both carry the same decisions and the second drifts from the first,
+against `goal@knowledge-architect@documentation-stays-consistent`, and the owner observed that
+implementers force such plans' untested snippets into the code at any cost, copying their comments
+verbatim. A detailed plan, if one is ever written for a less capable implementer, covers a bounded
+amount of work and opens by saying it rests on assumptions.
 
 ### A milestone is a directory, its head a README, each step a spec `##milestone-is-a-directory`
 
 A milestone's plan documents are one directory in the plans directory: the milestone document is
 its `README.md`, and each step's spec is a file beside it. The head is a README because the checker
-resolves a relative link only in a `README.md` or an `index.md`, so the head can link each step's
-spec as a navigation row. A step's spec leaves when its step lands, since its decisions are then in
-the design homes; the README leaves with the last step and keeps what crosses steps.
+resolves a relative link only in a `README.md` or an `index.md`, per
+`design@core@links-are-navigation-rows`, so the head can link each step's spec as a navigation row.
+A step's spec is a spec, so it leaves when its step lands, per
+`design@agent-skills@spec-leaves-at-landing`: its decisions are then in the design homes. The
+README leaves with the last step and keeps what crosses steps.
 
 ### A plan document leaves when its work lands `##spec-leaves-at-landing`
 
-A spec is deleted in the commit that completes its last harvest, and that commit's message names
-its path. A plan document kept after its harvest is a second home for every decision it carried,
-and it starts drifting at the first later reversal. Walked by the checker, its references break at
-every reversal, and someone repairs a document about finished work; left out of the walk, it is
-unchecked text that a grep finds with no marker that it is stale. Either breaks
+A plan document is deleted in the commit that completes its last harvest, and that commit's message
+names its path. A plan document kept after its harvest is a second home for every decision it
+carried, and it starts drifting at the first later reversal. Walked by the checker, its references
+break at every reversal, and someone repairs a document about finished work; left out of the walk,
+it is unchecked text that a grep finds with no marker that it is stale. Either breaks
 `goal@knowledge-architect@documentation-stays-consistent`. Leaving the choice to each project lost
-too: the installed planning skill would have nothing to say where a document's work ends.
+too: the installed planning skill would have nothing to say where a document's work ends, against
+`goal@knowledge-architect@agents-get-a-complete-workflow`.
 
 ### The planning skill writes the plan document, in the session that converged `##designing-hands-off-to-planning`
 
-A design discussion ends at convergence, the premortem and the owner's rulings on tripwires. The
-planning skill writes the spec or the milestone, in the same session. One skill owns the
-document's shape: two skills describing the sections of one document would drift apart, against
-`goal@knowledge-architect@agents-get-a-complete-workflow`. The session matters because the
-discussion's ledger lives only in the conversation, and a document written from memory in a later
-session loses the losing arguments and the conditions of each closure.
+The planning skill starts where a design discussion has converged, and writes the spec or the
+milestone in the same session. The design-discussion skill, not yet installed, is bound to end at
+convergence, the premortem and the owner's rulings on tripwires, and to write no plan document of
+its own. One skill owns the document's shape: two skills describing the sections of one document
+would drift apart, against `goal@knowledge-architect@agents-get-a-complete-workflow`. The session
+matters because the discussion's ledger lives only in the conversation, and a document written from
+memory in a later session loses the losing arguments and the conditions of each closure.
 
 ### Acceptance criteria live in the plan document of the work that judges them `##acceptance-criteria-in-the-document`
 
 An acceptance criterion, a check on a recorded decision that only the work's built code can apply,
-is written in the plan document of that work. Every landing reports on the criteria it judges, and
-when the document leaves, a criterion that recurs becomes a tripwire and a spent one is deleted. A
-separate file of criteria would hold statements about the same work with the same lifetime, drift
-from the document, and stay behind when the document leaves. The plan document is written in the
-session that converged, so the criteria and the document are born together.
+is written in its own section of the plan document of that work. Each names the decision it guards,
+the step that judges it, the observable that fires it and the response. Every landing reports on
+the criteria it judges. When the document leaves, a criterion that recurs is proposed to the owner
+as a tripwire and written on the owner's word, per
+`design@agent-skills@premortem-tripwires-on-the-owners-word`; any other is deleted. A separate file
+of criteria would hold statements about the same work with the same lifetime, drift from the
+document, against `goal@knowledge-architect@documentation-stays-consistent`, and stay behind when
+the document leaves. The plan document is written in the session that converged, so the criteria
+and the document are born together.
 
 ### Undesigned work is an issue, and no list of milestones is kept `##planned-work-is-an-issue`
 
@@ -195,15 +204,17 @@ Work that is known but not designed is a `todo` or `deferred` issue in the ownin
 leads in the entry. The plan document that schedules it closes the issue in the commit that adds
 the document. `goal@knowledge-architect@structure-and-workflow-work-together` asks for one place for
 what is open, and a roadmap file would be a second one beside the issue register: two schedules
-drift. The cost, accepted by the owner: the order of future work has no home.
+drift. The cost: the order of future work has no home. The owner accepted it in the checkpoint that
+closed the discussion, without answering the question put to it earlier.
 
 ### No record of landed work is kept `##no-progress-record`
 
 No installed skill asks for a file recording what has landed. History lists every plan document
 that left, and each landing commit says where its results live; releases are in the changelog. A
-progress file would be a third document about the same work, with a lifetime of its own.
+progress file would be a third document about the same work, with a lifetime of its own, against
+the one place for what is open of `goal@knowledge-architect@structure-and-workflow-work-together`.
 
-### A transcript reviewer checks a plan document against the owner's words `##transcript-conformity-review`
+### A transcript reviewer checks a plan document against the owner's words `##transcript-reviewer-agent`
 
 The installed agent `knowledge-architect-transcript-conformity-reviewer` reads the transcript of a
 discussion and checks that a document records the owner's decisions as made: each state, the scope
@@ -211,13 +222,18 @@ of each decision, the verbatim quotations, and nothing the owner said left out. 
 dispatches it on every plan document written from a discussion whose transcript is available. It
 is an agent, not a line in a skill, because its standard and its extraction rule are fixed, and the
 rule is learned from a failure: a filter on text substrings once dropped one of the owner's
-messages. It serves `goal@knowledge-architect@the-owner-decides`: on its first use, it was the only
-reviewer of six to find a decision recorded narrower than the owner's approval.
+messages. It serves `goal@knowledge-architect@the-owner-decides`: in the review of the change that
+installed the first skills, a reviewer briefed with this standard was the one of six to find a
+decision recorded narrower than the owner's approval; two others found the same head contradicting
+the shipped text.
 
-### Plan documents keep a fixed shape a later structure can read `##structure-ready`
+### Plan documents written under the planning skill keep a shape a later structure can read `##structure-ready`
 
-A plan document's layout, its section titles and its order are fixed, and every thread, step and
-acceptance criterion carries an identifier in the entry grammar, written plain and never as a
-backticked span. Nothing outside the plans directory cites an item of a plan document. This is the
-shape a structure for plan documents, with registers of their own, can read without rewriting
-them: `issue@core@structured-plan-documents`.
+A plan document's layout and its section titles are fixed, and every thread, step and acceptance
+criterion carries an identifier in the entry grammar, written plain with a hash sign and never in
+backticks. Nothing outside the plans directory cites an item of such a plan document; a `path`
+reference to a whole plan document is allowed, and its dangling at deletion lists the texts that
+depended on it. This is the shape a structure for plan documents, with registers of their own, can
+read without rewriting them: `issue@core@structured-plan-documents`. The milestone document of
+this repository's v0.1 predates this decision and is the one exception: it is one file, and other
+documents cite its sections and steps until it leaves.

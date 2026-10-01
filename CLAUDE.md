@@ -249,7 +249,7 @@ list of what references an entry: `show` computes it.
 documents and nothing else: a spec for the work of one PR, a milestone directory for work across
 several PRs. They are committed on the work's branch. A correction is applied in place, so a
 partial reading cannot mislead. A plan document is deleted in the commit that completes its last
-harvest, and that commit's message names its path. This is a restatement; its home is
+harvest, and that commit's message names its path. This is a restatement; its homes are `design@agent-skills@document-vocabulary` and
 `design@agent-skills@spec-leaves-at-landing`, and the procedure is the installed
 `knowledge-architect-planning`. The milestone document of v0.1 is one file, written before
 `design@agent-skills@milestone-is-a-directory`, and it leaves in the release commit of its step 7,
@@ -441,7 +441,7 @@ activity whose installed skill exists follows it. Every other activity follows t
 from thaum's checkout at commit e98e296, for example with
 `git -C <thaum checkout> show e98e296:<skill path>`. Their thaum-specific parts do not apply: the
 rules and their citations, slices.md, thaum's anchors, `cargo mutate run`, and
-`cargo knowledge`, which is `cargo klarch` here. thaum's reviewer agents are not loaded here: each
+`cargo knowledge`, which is `cargo klarch` here. thaum's reviewer agents are not installed here: each
 review is a general-purpose subagent, briefed with the path of thaum's agent file and told which parts do not
 apply. The milestone document's section 4.6 is where this is decided.
 
@@ -453,12 +453,12 @@ apply. The milestone document's section 4.6 is where this is decided.
 | `knowledge-architect-discussing-design-decisions` (named, not installed yet) | served by `designing-together`, below |
 | `knowledge-architect-maintaining-agent-config` (named, not installed yet) | served by thaum's `maintaining-agent-config`, below |
 | `knowledge-architect-standing-state-reviewer`, `knowledge-architect-cold-implementer-reviewer`, `knowledge-architect-code-claims-reviewer` (named, not installed yet) | each served by a general-purpose subagent briefed with thaum's agent file of the same base name |
-| `knowledge-architect-dispatching-a-review` (named, not installed yet) | served by thaum's `dispatching-a-review`, below |
+| `knowledge-architect-dispatching-a-review` (named, not installed yet) | served by thaum's `dispatching-a-review`, below, without its rule that the cold implementer never reads a spec |
 | `knowledge-architect-transcript-conformity-reviewer` (installed agent) | dispatched, never read: by the planning skill on every plan document written from a discussion, and on any document that records the decisions of a discussion whose transcript is available |
 | `developing` (in thaum) | before starting or iterating on a change to the Rust source. A test is shown to discriminate by reverting the change in a scratch worktree, since `cargo mutate run` is not ported |
 | `dispatching-a-review` (in thaum) | before merging anything to main, and when an activity's skill says its work is ready for review |
 | `maintaining-agent-config` (in thaum) | before adding or editing this file, a scoped `CLAUDE.md`, any skill, any subagent definition, or the knowledge table |
-| `designing-together` (the owner's plugin, outside this project) | for design questions with an open solution space. Its thread names may conflict with this project's decision slugs, and its tripwires are recorded through `knowledge-architect-tracking-open-issues` |
+| `designing-together` (the owner's plugin, outside this project) | for design questions with an open solution space. Its thread names may conflict with this project's decision slugs, and its tripwires are recorded through `knowledge-architect-tracking-open-issues`. Its step 8 is replaced by `knowledge-architect-planning`, and its step 9 by the harvest at landing of `knowledge-architect-recording-a-decision` |
 
 **Step 5 replaces this table** with the routing table of the installed skills: each skill this
 repository's own binary installs, and the project skills that add to it.
