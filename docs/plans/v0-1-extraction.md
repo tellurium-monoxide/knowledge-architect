@@ -1273,7 +1273,19 @@ skill and comes before the PR that needs it.
    standing-argument-in-head gains its reference to spec-leaves-at-landing. Of the losing alternatives of 3.2, 3.5 and 3.6 for these decisions, one passes the recording tests: the spec plus a separate detailed implementation plan (3.2), refuted by the owner's observation over real sessions. The others change no signature or format, read no external specification, were refuted by argument, and leave no stated doubt about a goal. The review of PR 2 renamed the head of the transcript reviewer to the approved thread's slug, transcript-reviewer-agent, and made a recurring acceptance criterion a tripwire on the owner's word only.
 4. **PR 3: the review group**, dispatching-a-review and the five agents; it lists the
    transcript-conformity agent as an axis. After planning, because standing-state-reviewer follows
-   planning's decision on acceptance criteria, and two reviewers use its vocabulary.
+   planning's decision on acceptance criteria, and two reviewers use its vocabulary. **Landed on
+   the branch installed-review-group.** The forks follow 4.7. The cold-implementer exclusion
+   "never for a spec" is removed (default of 4.7). decision-record-reviewer points at the installed
+   recording-a-decision for the recording tests instead of restating thaum's, and adds the
+   predicates the reviews of PR 1 and PR 2 repeatedly found: the standing argument with its
+   references, and a tripwire written without the owner's word. routing-reviewer judges against
+   the project's knowledge table in its root CLAUDE.md, which setting-up writes (PR 4), and drops
+   thaum's predicate on consumer-facing statements, a convention of thaum and of this repository
+   rather than of the workflow. standing-state-reviewer reads acceptance criteria in plan documents
+   and checks that no work is listed in two places. dispatching-a-review generalizes the worktree
+   rule with a note for Rust, makes conformance apply before every merge, and states that an axis
+   not run is said. Harvest: transcript-reviewer-agent gains its axis clause. The root CLAUDE.md
+   routes reviews to the installed skill and agents.
 5. **Session C, then PR 4: configuration.** setting-up, maintaining-agent-config, and the primer
    with its import line in the root CLAUDE.md, whose skills table becomes the routing table.
    maintaining-agent-config moves here from the planning group because it keeps the table

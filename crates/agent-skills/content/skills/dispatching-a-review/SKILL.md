@@ -1,0 +1,100 @@
+---
+name: knowledge-architect-dispatching-a-review
+description: MUST use before merging anything to the main branch, and whenever an activity's own skill says a unit of its work is ready for review — how to send independent subagent reviewers at it, how to write a brief that cannot mislead them, and where their findings land. The axes to send are the dispatching activity's, and its skill names them.
+---
+
+# Dispatching a review
+
+Scope: sending independent reviewers at work you produced, whatever kind of work it is. One
+sub-activity, required as a prerequisite by every activity that produces something reviewable.
+
+**When to dispatch is the activity's**, because the moment differs and so does the vocabulary that
+names it: the project's development procedure says when a piece of code is ready,
+`knowledge-architect-planning` says when a plan document is, and
+`knowledge-architect-maintaining-agent-config` says when a configuration change is. Read your
+activity's skill for its moment. The one moment that belongs to no activity is **before merging
+anything to the main branch**.
+
+Not covered here: **being** any of the reviewers (the conformance reviewers
+`knowledge-architect-routing-reviewer`, `knowledge-architect-decision-record-reviewer` and
+`knowledge-architect-standing-state-reviewer`; the plan-document reviewers
+`knowledge-architect-cold-implementer-reviewer` and `knowledge-architect-code-claims-reviewer`;
+and `knowledge-architect-transcript-conformity-reviewer`, all dispatched rather than read), and
+**recording** what a review changes (`knowledge-architect-recording-a-decision`,
+`knowledge-architect-tracking-open-issues`).
+
+## 1. The axes
+
+| axis | what it does | applicable when |
+| --- | --- | --- |
+| spec conformity | does the work implement what was decided, item by item. If deviations happened during implementation, are they justified? | a spec or a milestone step's spec was written before the work |
+| self-consistency | does the result contradict itself. Two instructions a reader cannot both obey, a pointer into content that is not there, a statement no longer true | nearly all the time |
+| fidelity of relocation | where content moved, was anything lost? A reason dropped, a number changed, an argument compressed to an assertion | content was relocated, or forked from another source |
+| routing of knowledge | `knowledge-architect-routing-reviewer` | a durable statement was added or moved |
+| decision recording | `knowledge-architect-decision-record-reviewer`. If a plan document was written, hand it to this reviewer too | a decision was made, reversed or harvested |
+| conformance | `knowledge-architect-standing-state-reviewer` | before every merge to the main branch, since it is the standing re-entry point of every tripwire |
+| cold implementer | `knowledge-architect-cold-implementer-reviewer`: can a session that did not see the discussion act on the plan document | a spec or a milestone was written under `knowledge-architect-planning`, or a decided shape in one revised; that skill names the moment |
+| code claims | `knowledge-architect-code-claims-reviewer`: is every statement the plan document makes about existing code true of the tree | the same moment |
+| transcript conformity | `knowledge-architect-transcript-conformity-reviewer`: does a document record the owner's decisions as the owner made them | a document records the decisions of a discussion whose transcript is available: a plan document, a harvest, a record of a design session |
+
+Each of these is conditional on the work. In other skills, more axes are added to this list, when
+the work has properties these axes do not reach. **An axis that applies and was not run is said,
+with the reason, in the commit that records the review.**
+
+## 2. The invariants
+
+These hold whatever the axes are. They are what makes a finding worth acting on rather than
+re-checking.
+
+- **Each axis is a separate subagent, and none sees another's findings.** Reviewers given a shared
+  findings list converge on it.
+- **Each reviewer is fresh, never a fork.** A fork inherits the session's discussion and reads the
+  work as its author.
+- **At least one reviewer is briefed blind**: given the task and no list of what anyone else found,
+  and no summary of what is believed to be true. The finding that changes a design is usually the
+  one nobody was looking for.
+- **Reproduce before claiming.** Every reviewer is told to reproduce anything it asserts, and to
+  drop what it cannot. This is the instruction most likely to be dropped when the procedure is
+  rewritten, and it is the whole difference between a finding you act on and a finding you re-check.
+- **A brief must not assert what the tree contains.** Give the task and the standard, and tell the
+  reviewer to establish the state itself. A brief that describes the implementation sends a reviewer
+  to test something that may not be there, and it cannot tell a wrong brief from a broken artifact
+  unless it was told to look.
+- **Name what is reviewed as a commit range**, `<main branch>..<commit under review>` for a branch
+  about to merge: the diff and every commit message in it are the subject, and a reviewer given a
+  branch name alone guesses the base.
+- **Name the files that carry the standard rather than restating it.** A subagent inherits the
+  session's snapshot of the root `CLAUDE.md`, so a session that has just edited it is briefing from
+  a copy that no longer matches disk. Point at the file; do not paraphrase what it says.
+- **The dispatcher does not defend the work.** Findings arrive as claims to check, not as attacks to
+  answer. Verify each against the tree before relaying or acting on it; a reviewer can be wrong, and
+  saying so requires the same reproduction the reviewer owed.
+- **Every reviewer that runs tests, a mutation, the checker or any binary gets its own worktree,
+  detached at the commit under review, never the live tree.** A run in the live tree races the
+  dispatcher's own edits, and a worktree that shares the branch ref moves under the reviewer at the
+  dispatcher's next commit. Place it where it pollutes no search, and remove it with
+  `git worktree remove` once the review and the repairs are done. **The reviewer's build output
+  stays inside its worktree.** A build directory two checkouts share lets the live checkout run the
+  reviewer's build, which judges the live tree with the reviewer's code. In a Rust project, the
+  reviewer sets `CARGO_TARGET_DIR` to a directory inside its worktree.
+- **No reviewer edits the tree, and none runs an operation that can lose content**: no stash, no
+  reset, no checkout of a path.
+
+## 3. What a review leaves behind
+
+**Findings** become either of:
+
+- repairs, done on the branch before merge, if the defect is too large to consider the task
+  achieved;
+- issues, one file each in the affected anchor's issue directory
+  (`knowledge-architect-tracking-open-issues`).
+
+**A repair made on the branch is a new commit, appended.** Folding a fix into the commit it repairs
+hides what the review found from the landing history.
+
+**A commit message carrying a mistake can be repaired by amending**, only while it is the newest
+commit and the tree carries no uncommitted work. Confirm afterwards that the amend changed no file.
+
+**A paragraph in the commit message** tells what was reviewed, on which axes, how consequential the
+findings were, which were repaired, which were left and why, and which axis was not run and why.
+Every claim that paragraph makes about the tree is checked before it is written, like any other.

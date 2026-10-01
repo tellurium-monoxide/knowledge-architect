@@ -218,8 +218,9 @@ the one place for what is open of `goal@knowledge-architect@structure-and-workfl
 
 The installed agent `knowledge-architect-transcript-conformity-reviewer` reads the transcript of a
 discussion and checks that a document records the owner's decisions as made: each state, the scope
-of each decision, the verbatim quotations, and nothing the owner said left out. The planning skill
-dispatches it on every plan document written from a discussion whose transcript is available. It
+of each decision, the verbatim quotations, and nothing the owner said left out. The planning skill dispatches it on every plan document written from a
+discussion whose transcript is available, and the installed dispatching-a-review lists it as the
+axis for any document that records the decisions of such a discussion. It
 is an agent, not a line in a skill, because its standard and its extraction rule are fixed, and the
 rule is learned from a failure: a filter on text substrings once dropped one of the owner's
 messages. It serves `goal@knowledge-architect@the-owner-decides`: in the review of the change that
