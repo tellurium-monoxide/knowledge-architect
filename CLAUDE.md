@@ -190,11 +190,11 @@ this, and they pay for the drift it admits:
 | what is outstanding: a defect, an unexplained observation, an unanswered question, missing work | one file in the owning anchor's issue directory: the Component's `path@*@docs/open-issues/`, or the agent-config location's open-issues directory for the agent configuration | the issue closes |
 | evidence that would flip a recorded decision about code that exists | the Component's tripwires home, `path@*@docs/tripwires.md` | the tripwire fires, or the decision it guards is gone |
 | a contract or a trap in a Component, true of the code as it stands, that only a developer needs | the Component's scoped `path@*@CLAUDE.md` | the contract changes or the trap is removed |
-| how a user can use a Component, what to respect, the description of its public API | the Component's `path@*@README.md` | the contract changes |
+| how a user can use a Component, what to respect | the Component's `path@*@README.md`. For a published crate it is the crates.io page, and it points to docs.rs for the library API | the contract changes |
 | directions about what to find where in a directory | a `README.md` file in that directory | the directory's content changes |
 | what changed in each release, per surface | CHANGELOG.md at the root, one section per version | never: append-only |
 | a finding established outside this project that a decision here leans on | `docs/grounding/<subject>.md` in the Component the decision belongs to | the source is superseded, or a better one lands |
-| what a caller must respect to use a type or a function | that item's doc comment | its contract changes |
+| what a caller must respect to use a type or a function, and the description of a crate's library API | that item's doc comment; for the library API, the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
 | why a piece of code is shaped the way it is, and where that holds | an inline comment at the code it explains | that code changes |
 | how to perform an activity | the owning skill | the procedure changes |
 | a Component that maintains the repository rather than shipping in it | `tools/<name>/`, one directory per tool | the tool is retired |

@@ -17,8 +17,8 @@ the declared command in its messages, in the header of every generated index, an
 files it installs, per `design@core@declared-command`.
 
 **The library is for a binary that registers an extension.** Its public API, and how to write and
-test an extension with it, is described in the crate documentation of `path@core@src/lib.rs`,
-which docs.rs renders for each published version.
+test an extension with it, is described at <https://docs.rs/knowledge-architect>, for each
+published version. The text is the crate documentation of `path@core@src/lib.rs`.
 
 **It needs `git` 2.36 or newer on the path, and a project inside a git worktree.** What the tool reads is what
 `git ls-files` reports from the project root, so every pattern git honours decides the walk,

@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-11 entries
+12 entries
 
 | kind | title |
 | --- | --- |
@@ -14,4 +14,5 @@
 | question | [An extension reads its manifest table as a `toml::Value`, so the core's toml version is part of the public API](manifest-table-exposes-the-toml-crate.md) |
 | todo | [The installed-file findings sit in phase 2, where the core's placement rule puts them in phase 4](installed-file-findings-belong-in-phase-four.md) |
 | todo | [Plan documents have no structure the checker enforces](structured-plan-documents.md) |
+| todo | [The core's README is also the crates.io page, and it is written for a reader of this repository](the-readme-is-the-crates-io-page.md) |
 | todo | [The checker does not read the structure of a project's own skills](tooling-for-project-skills.md) |
