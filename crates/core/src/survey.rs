@@ -52,7 +52,7 @@ pub enum Outside {
     /// Its text, decoded lossily where its bytes are not UTF-8: the question asked of it is
     /// whether an ASCII token appears, and a lossy decoding keeps every ASCII byte.
     Text(String),
-    /// A NUL byte in its first [`BINARY_PROBE`] bytes, git's own test for a binary file. It is
+    /// A NUL byte in its first 8000 bytes, `BINARY_PROBE`, git's own test for a binary file. It is
     /// handed to no check: its bytes are no prose anybody wrote a claim in, and a number in it,
     /// such as a PDF's page size, is data.
     Binary,
