@@ -11,7 +11,6 @@
 //! the exit codes are `design@core@exit-code-ladder`: 0 ran-and-clean, 1 ran-and-negative, 2
 //! could-not-run.
 
-use std::collections::{HashMap, HashSet};
 use std::path::Path;
 use std::process::ExitCode;
 
@@ -20,13 +19,16 @@ use output::{out, outln};
 
 use clap::{Args, Subcommand};
 
-use crate::check::{Inputs, Phase, Report};
+use crate::check::{Phase, Report};
 use crate::entity::{Anchors, Candidate, Entities, Kind};
 use crate::extension::{Extension, Prepared, Purpose, Tree};
 use crate::manifest::{ISSUE_REGISTER, TRIPWIRE_REGISTER};
 use crate::Manifest;
 
 pub mod history;
+
+mod gathered;
+pub use gathered::Gathered;
 
 /// The core's commands. A binary flattens this enum into its own.
 #[derive(Subcommand)]
@@ -161,7 +163,8 @@ fn install_agent_skills(manifest: &Manifest) -> Result<ExitCode, String> {
     Ok(ExitCode::SUCCESS)
 }
 
-/// The working tree's survey, once the first three phases have found the model complete.
+/// What a run gathers from the working tree, once the first three phases have found the model
+/// complete.
 ///
 /// **A writer refuses over an incomplete model.** An index generated over a model missing a
 /// home, an unreadable file or a refused declaration lists rows nobody asked for, so a command
@@ -171,26 +174,11 @@ fn install_agent_skills(manifest: &Manifest) -> Result<ExitCode, String> {
 pub fn complete_working_tree(
     manifest: &Manifest,
     model: &crate::Model,
-) -> Result<crate::survey::Survey, String> {
-    let survey = crate::survey::survey(manifest, model).map_err(|e| e.to_string())?;
-    let tracked_and_ignored =
-        crate::git::tracked_and_ignored(manifest.root()).map_err(|e| e.to_string())?;
-    let shipped = crate::agents::shipped(manifest);
-    let inputs = Inputs {
-        committed: &HashMap::new(),
-        configs: &HashMap::new(),
-        present: &survey.present,
-        directories: &survey.directories,
-        outside: &survey.outside,
-        ignored: &HashSet::new(),
-        tracked_and_ignored: &tracked_and_ignored,
-        refused: &survey.refused,
-        links: &survey.links,
-        installed: &survey.installed,
-        shipped: &shipped,
-    };
+) -> Result<Gathered, String> {
+    let gathered = Gathered::over(manifest, model)?;
+    let inputs = gathered.inputs();
     match crate::check::foundation(model, manifest, &inputs) {
-        Ok(()) => Ok(survey),
+        Ok(()) => Ok(gathered),
         Err(stop) => Err(format!(
             "the model is incomplete: {}. `{} check` reports them. Nothing was \
              written.",
@@ -251,50 +239,9 @@ fn check(
 ) -> Result<ExitCode, String> {
     let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
 
-    // The generated files are outside the walk — the rule index by a declared row, every
-    // file-register index by construction — because a generated file is not a source of
-    // citations. They are read here so a check does not.
-    let mut committed = HashMap::new();
-    for rel in crate::index::generated_paths(manifest) {
-        if let Ok(text) = std::fs::read_to_string(manifest.root().join(&rel)) {
-            committed.insert(rel, text);
-        }
-    }
-
-    // A register instance's options sit beside it and are not markdown, so the walk never
-    // reads them. They are read here for the same reason the generated files are: a check
-    // may not touch the filesystem.
-    let mut configs = HashMap::new();
-    for (_, _, home) in Anchors::of(manifest).instances() {
-        if let Ok(text) = std::fs::read_to_string(manifest.root().join(&home.config)) {
-            configs.insert(home.config.clone(), text);
-        }
-    }
-    // One listing answers every question a check has about what is there, and it is the
-    // caller's job because a check may not touch the filesystem.
-    let survey = crate::survey::survey(manifest, &model).map_err(|e| e.to_string())?;
-    // Whether the ignore rules cover a path target is git's answer, taken in ONE batch over
-    // every spelling a reference in this run could ask about — a check spawns nothing, and a
-    // process per reference would be a process per pointer in the tree.
-    let queries =
-        crate::check::references::ignore_queries(&model, &crate::entity::Anchors::of(manifest));
-    let ignored = crate::git::ignored(manifest.root(), &queries).map_err(|e| e.to_string())?;
-    let tracked_and_ignored =
-        crate::git::tracked_and_ignored(manifest.root()).map_err(|e| e.to_string())?;
-    let shipped = crate::agents::shipped(manifest);
-    let inputs = Inputs {
-        committed: &committed,
-        configs: &configs,
-        present: &survey.present,
-        directories: &survey.directories,
-        outside: &survey.outside,
-        ignored: &ignored,
-        tracked_and_ignored: &tracked_and_ignored,
-        refused: &survey.refused,
-        links: &survey.links,
-        installed: &survey.installed,
-        shipped: &shipped,
-    };
+    // What a check may not fetch for itself is fetched here, once.
+    let gathered = Gathered::over(manifest, &model)?;
+    let inputs = gathered.inputs();
     if let Err(stop) = crate::check::foundation(&model, manifest, &inputs) {
         let report = Report::stopped(stop, &model);
         print_report(&report);
@@ -359,7 +306,7 @@ fn index(
     let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
     // The gate first: a file an extension reads that is not there is phase 2's finding, named
     // by path, and reading it before the gate would turn that into an error naming nothing.
-    let survey = complete_working_tree(manifest, &model)?;
+    let gathered = complete_working_tree(manifest, &model)?;
 
     // Every generated file in one invocation, so a flag choosing between them buys nothing and
     // cannot be given an invalid combination: each extension's, then one index per
@@ -383,7 +330,7 @@ fn index(
     generated.extend(crate::index::file_register_indexes(
         &model,
         manifest,
-        &survey.directories,
+        gathered.inputs().directories,
     ));
 
     // Every destination is checked before any is written. A run that wrote one index and then
