@@ -35,7 +35,11 @@ pub use gathered::Gathered;
 pub use crate::build_origin::{refuse_a_foreign_build, this_library, Library};
 
 /// The core's commands. A binary flattens this enum into its own.
+///
+/// Non-exhaustive: a binary hands a parsed command to [`run`] without matching it, so a new
+/// command is not a breaking change for any binary.
 #[derive(Subcommand)]
+#[non_exhaustive]
 pub enum Command {
     /// Every check, over one walk, in four phases.
     Check,

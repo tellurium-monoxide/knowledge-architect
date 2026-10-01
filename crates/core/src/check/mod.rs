@@ -183,6 +183,10 @@ impl Report {
 /// filesystem or the network is resolved by the caller and handed in. Resolving a release may
 /// read the archive; reading a generated file reaches outside the walk, which excludes those
 /// files by name.
+///
+/// Non-exhaustive: a caller outside this crate gets one from [`crate::cli::Gathered`], so a new
+/// input is not a breaking change for it.
+#[non_exhaustive]
 pub struct Inputs<'a> {
     /// The generated files as committed, keyed by their project-relative path.
     pub committed: &'a HashMap<PathBuf, String>,

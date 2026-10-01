@@ -113,7 +113,11 @@ pub struct Generated {
 }
 
 /// What an extension's checks produced over one tree.
+///
+/// Non-exhaustive: an extension starts from `ExtensionReport::default()` and writes the fields
+/// it fills, so a new field is not a breaking change for it.
 #[derive(Default)]
+#[non_exhaustive]
 pub struct ExtensionReport {
     pub findings: Vec<Finding>,
     /// The names of the checks that got no input and did not run, printed as not run rather
@@ -125,7 +129,10 @@ pub struct ExtensionReport {
 }
 
 /// What an extension made of its tables.
+///
+/// Non-exhaustive, for the reason [`ExtensionReport`] is.
 #[derive(Default)]
+#[non_exhaustive]
 pub struct Resolution {
     /// Declarations it refused, each a finding of phase 1. A refused declaration is absent
     /// from its configuration, as the core's are.
