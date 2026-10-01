@@ -133,7 +133,7 @@ its thread name becomes the entry's slug unless it collides (thread-slug-is-entr
 | exact-pin | the setting-up skill recommends pinning the checker exactly, as `knowledge-architect = "=0.1.0"` | finding unacknowledged by the owner, 4.5: a dependency builds no executable; its default stands |
 | license | MIT OR Apache-2.0, for the whole repository | |
 | versioning-policy | the owner's scheme with five refinements, 4.5. A patch can bring a finding (owner, 2026-10-01). | |
-| public-api | the public Rust API is decided and described before v0.1, in a design session of its own | 4.4 |
+| public-api | the public Rust API is decided and described before v0.1, in a design session of its own | held in step 4; its ledger is 4.4.3 |
 | v01-scope | option (b): v0.1 is everything, the checker, the full skill and agent set and the designing-together intake. Option (a) was a v0.1 with a skill skeleton only. | |
 | session-sequence | this project is completed and published first, over several sessions, without touching thaum. Then thaum migrates in a separate session. Two documents. | |
 | spec-home | this document lives in this repository's docs/plans/ | |
@@ -377,44 +377,268 @@ which says "A library's own directory would not do", is rewritten in the same st
 
 ### 4.4 The public Rust API
 
-Decided and described before v0.1, in a design session that is step 4. Measured on thaum's tree at
-commit 5db731e; step 4 re-takes them on this repository after step 2's renames:
+Decided in the step 4 design session, held on 2026-10-01 in this repository between the owner and
+an agent, under the designing-together skill. The design below is converged: every thread is
+closed on the owner's word. It is harvested into the core's design home when step 4's code lands
+(harvest-after-implementation).
+
+#### 4.4.1 Facts the session rested on
+
+Measured on this repository at aefb45a, the main of step 3, on the owner's machine.
 
 | fact | value | how to re-take it |
 | --- | --- | --- |
-| `pub mod` declared in lib.rs | 15; across all of src/ there are 23 | read lib.rs; grep |
-| lines containing "pub " in the library's src/ | 408, of which 405 outside `#[cfg(test)]` items | grep, with a brace-tracked count of test items |
-| `pub(crate)` items outside tests | 4 | grep |
+| `pub mod` declared in lib.rs | 16; across all of src/ there are 25 | read lib.rs; grep |
+| public items of the library | 155: 46 structs, 15 enums, 2 traits, 71 functions, 20 constants, 1 type alias; plus 8 re-exports at the root, 102 inherent public methods and 148 public fields | rustdoc's JSON output, `RUSTC_BOOTSTRAP=1 cargo rustdoc -p knowledge-architect --lib -- -Z unstable-options --output-format json`, into a scratch target directory, walked from the crate root |
+| `pub(crate)` lines | 6, two of them test modules | grep |
 | `#[non_exhaustive]` | 0 | grep |
-| modules rules-corpus names | 13 | grep for `documentation::` over thaum's tools/rules-corpus |
-| distinct paths rules-corpus names | about 53, brace imports expanded | the same grep, expanded |
+| the `testing` feature | gates nothing: no `cfg(feature` in the tree | grep |
+| items rules-corpus uses, at thaum e98e296 | 61 of the 155, in 13 of the 16 modules; 25 of them only in its tests | a subagent's item-level read of every rules-corpus file, mapped onto the inventory |
+| items no consumer uses | 87: neither rules-corpus nor this repository outside the library | the same mapping, with main.rs, the core's tests and xtask |
+| lines naming the library in rules-corpus | 98, in 13 files | `git grep -n "documentation::" e98e296 -- tools/rules-corpus` in thaum |
+| rules-corpus's library usage on thaum's branch knowledge-architect-migration | identical to e98e296: the branch adds only its migration document | `git diff --stat e98e296 knowledge-architect-migration` |
 
-Examples of what rules-corpus uses: `model::Model`, `extension::Extension`, `check::Inputs`,
-`survey::survey`, `source::Literals`, `build_origin::refuse_a_foreign_build`. rules-corpus's tests
-also call `check::run_with`, which an open issue of thaum (planted-row-may-name-a-missing-test)
-relies on.
+What a change on the core's side breaks in rules-corpus today:
 
-Inputs agreed for the session:
+- **Struct literals:** `build_origin::Library` (2 sites, src), `extension::Generated` (src),
+  `model::DumpRow` (src), `check::Inputs` (5 sites, tests).
+- **One exhaustive match:** `extension::Tree`, at citations/src/rules_extension.rs line 202.
+- **Two trait implementations:** `Extension`, 5 of 5 methods, and `Prepared`, 3 of 3. Neither
+  trait has a default method.
+- Every other enum use is `==`, `matches!`, `if let` or a wildcard.
+- **Already broken:** step 3 added the fields `installed` and `shipped` to `check::Inputs`, so the
+  5 literals in rules-corpus's tests/mock_projects.rs no longer compile. Each of the five is the
+  same assembly: one survey, the two git batches, the register.toml files, and a literal of 9
+  fields. They differ only in `committed`, which is empty or read from disk.
 
-- the public surface is what an extension needs plus the CLI module. Every other item becomes
-  `pub(crate)`.
-- `#[non_exhaustive]` is decided enum by enum, weighing two things: whether the enum is expected to
-  grow, and what a consumer would want to use. The owner wants a pass over each enum, not a blanket
-  rule, and is not yet sure an exemption from refinement 2 is needed.
-- the session re-examines refinement 2 of the versioning policy on concrete cases. Adding a variant
-  to a `#[non_exhaustive]` enum is non-breaking by Rust's own definition.
+Two behaviours observed on the pinned toolchain, 1.98.0, with a two-crate example:
 
-Inputs found while writing:
+- a match without a wildcard over an enum of another crate that gained a variant fails with
+  E0004, "pattern `Tree::Index` not covered", at the match;
+- over a `#[non_exhaustive]` enum, the same match fails with E0004, "pattern `_` not covered",
+  from the first build. The lint that would warn on a wildcard hiding a new variant,
+  `non_exhaustive_omitted_patterns`, is unstable: rustc answers "unknown lint".
 
-- **Approved default:** the library's `testing` feature gates nothing today and is dropped. One
-  gate existed from commit b70eaef until fcef9fd, which removed it with the rest of a migration's
-  scaffolding. thaum's rules-corpus requests the feature in a dev-dependency, and the migration
-  removes that request.
-- `MANIFEST_NAME` stays public: tools/xtask here and thaum's bench, mutate and xtask use it.
-- **Default:** the description is the crate-level documentation of lib.rs, which ships in the
-  package and renders on docs.rs, with a pointer to it from the core's README.
+Read in the core's source:
 
-The result is harvested as decisions of the core.
+- `check::run_with(.., &[])` runs what `check::run(.., &[])` runs. The only addition of
+  `run_with` is the extensions' generated files and checks, and with no extension there are none.
+- `check::foundation` runs phases 1 to 3: the manifest's complaints, `tree::check` with
+  `agents::check`, then `Entities::build` and `definition_findings`.
+- `index::generated_paths` is `generated_index_paths` extended with
+  `Manifest::extension_generated`, which `extension::configure` fills. So over a configured
+  manifest it names the extensions' generated files as well.
+
+#### 4.4.2 Criteria
+
+| criterion | kind | satisfied by |
+| --- | --- | --- |
+| the public surface is what an extension needs plus the CLI module, and every other item is `pub(crate)` (agreed input) | binding | surface-rule, facade-membership |
+| thaum-keeps-working: rules-corpus can be ported onto v0.1, and what moved is listed for thaum's migration | binding | facade-membership; the map in 4.4.5 |
+| `MANIFEST_NAME` stays public: xtask here, and bench, mutate and xtask in thaum after its migration | binding | facade-membership: a root re-export |
+| the core's own test suite keeps running | binding | core-test-surface |
+| thaum's issue planted-row-may-name-a-missing-test closes through `check::run_with` | weighed | facade-membership: `testing::run_with` |
+
+#### 4.4.3 The ledger of the session
+
+| thread | state | decision |
+| --- | --- | --- |
+| surface-rule | approved | an extension's tests are in scope. The library publishes the utilities an extension needs to test itself against a mock project. The owner: "Publishing at least basic testing utilities is indeed important, for a tool that ships like an extensible framework." |
+| api-facade | approved | the public API is a facade organised by consumer role. The implementation modules become private, and lib.rs re-exports. Shape (B). |
+| facade-membership | approved | the membership of 4.4.4 |
+| ne-minimal | approved | `#[non_exhaustive]` on `cli::Command`, `extension::Inputs`, `extension::ExtensionReport` and `extension::Resolution` only. Every other public enum and struct stays exhaustive. Re-examined before the project leaves 0.x. |
+| gathered-inputs | approved | `cli::Gathered` assembles what `check` fetches before any check runs. No caller writes an `Inputs` literal. |
+| core-test-surface | approved | nothing becomes public for the core's own tests. The 7 test sites that use items no extension needs are rewritten. |
+| trait-defaults | approved, then refined on the owner's word | a hook added to `Extension` or `Prepared` after v0.1 gets a default body only when doing nothing is a correct answer for an extension that does not know the hook. A hook whose absence would make a verdict wrong is added without a default, as a deliberate break. |
+| refinement-2 | approved | refinement 2 of the versioning policy stays as it is, with no exemption |
+| ne-command, ne-observation, ne-slug-site, ne-retired-form, ne-outside, ne-scope-kind, ne-phase, ne-tree, ne-purpose, ne-literals | superseded by ne-minimal | the round-1 verdicts, one per public enum |
+| ne-structs | superseded by ne-minimal | `#[non_exhaustive]` on the structs an extension fills through `Default`, and none on those it builds by literal |
+
+#### 4.4.4 The decided design
+
+**The facade (api-facade, facade-membership).** In Rust the crate is the outer namespace, and a
+module is both a namespace and a privacy boundary. `pub use` publishes an item at a path
+independent of the file it is defined in, as `std::vec::Vec` is defined in the `alloc` crate.
+The implementation modules (`walk`, `git`, `scan`, `source`, `survey`, `entity`, `records`,
+`index`, `check`, `agents`, `manifest`, `model`, `finding`, `build_origin`, `extension`) become
+private, and lib.rs re-exports by role:
+
+```
+knowledge_architect
+├── Manifest       methods find, load, parse, root, table, complaints, command
+├── Model          methods build, documents, root, from_documents, canonical_with,
+│                          checker_sources, checker_files
+├── Document       fields rel, text, parsed, observations, literals
+│                  methods is_markdown, prose_line, prose_lines, observations_of
+├── Finding        fields file, line, what, action; methods at, in_file, location; Display
+├── MANIFEST_NAME, component_dir
+│
+├── document   the parse an extension reads: Parsed, Prose, Scope, ScopeKind, Literals,
+│              Frontmatter, Located, Observation, SlugSite, RetiredForm, md::parse, rs::parse
+├── extension  writing an extension: Extension, Prepared, configure, Tree, CommitTree, Purpose,
+│              Resolution, ExtensionReport, Generated, DumpRow, Inputs, Entry, EntryKind,
+│              Outside, normalise_list, normalise_one, label, rel_from
+├── cli        a binary's main: Command, ShowArgs, IssuesArgs, TripwiresArgs, CommitsArgs, run,
+│              locate, complete_working_tree, Gathered, output::write, Library, this_library,
+│              refuse_a_foreign_build
+└── testing    testing an extension: run_with, foundation, Report, Stop, Phase, Structure, CHECKS
+```
+
+- Everything else is `pub(crate)`. That includes 11 of `Manifest`'s 18 public methods, 5 of
+  `Model`'s 12, and `Prose::line_starts`, today a `#[doc(hidden)]` public cache field.
+- **A public signature keeps its types public.** `Inputs` is in `Prepared::check`'s signature, and
+  its public fields expose `git::Entry` and `survey::Outside`; so `Entry`, `EntryKind` and
+  `Outside` are public although no consumer names them. The compiler's `private_interfaces`
+  lint reports any other case met while narrowing.
+- **Beyond what rules-corpus uses today:** `Manifest::command`, because an extension's finding
+  that names a repair command owes the project's declared command, per
+  `design@core@declared-command`; `Model::root`; `Document::is_markdown` and
+  `observations_of`, read-only conveniences over public fields.
+- The `testing` module is always compiled. It is not the `testing` feature, which is dropped as
+  approved.
+
+**Gathered (gathered-inputs).** It sits in `cli`, beside `complete_working_tree`, because
+`design@core@the-core-cli-is-a-library-module` places the helpers an extension's own commands
+need from a run in that module, and rules-corpus calls `complete_working_tree` in production.
+
+```rust
+pub struct Gathered { /* owned; private fields */ }
+impl Gathered {
+    /// What `check` fetches before any check runs: the committed generated files, every
+    /// register.toml, one survey, the two git batches, the shipped agent files.
+    pub fn over(manifest: &Manifest, model: &Model) -> Result<Gathered, String>;
+    pub fn inputs(&self) -> Inputs<'_>;
+}
+```
+
+The `check` command, `complete_working_tree` and the tests are built on it, so the assembly
+exists once instead of 3 times in the core and 5 times in rules-corpus. `over` reads the
+committed generated files through `index::generated_paths`, as `check` does. That is the set
+rules-corpus's tests read by hand: the rule index and the register indexes.
+
+**Non-exhaustive (ne-minimal).** The argument that decided it:
+
+| | consumer matches exhaustively | consumer uses `if let`, `==`, `matches!` or `_` |
+| --- | --- | --- |
+| enum without the attribute, variant added | compile error at the match | compiles, nothing changes |
+| enum with the attribute, variant added | impossible: the attribute forced `_` | compiles, nothing changes |
+
+- Without the attribute, a new variant breaks only a consumer who chose to match exhaustively,
+  which is a consumer asking to be told. The attribute removes that choice from every consumer.
+  For an enum the core hands to an extension, the compile error is wanted. An example is
+  `Tree`: a third tree kind must make every extension say how it reads it. A wildcard would read
+  the working tree while the run judges another tree, a wrong verdict with exit 0.
+- The attribute's gain is on the library's side. A variant added to an enum without it is a
+  breaking change under Rust's semver rules. **Under 0.x that gain is nil.** By refinement 1,
+  major and minor both bump 0.MINOR. Every variant foreseen arrives with a minor-level change
+  anyway: a check change, a command addition, a new run mode. After 1.0 it decides minor against
+  major, so ne-minimal is re-examined before the project leaves 0.x.
+- So the attribute goes only where no consumer can usefully match: `cli::Command`, which a binary
+  flattens through clap and hands to `cli::run` unmatched; `Inputs`, which `Gathered` builds;
+  `ExtensionReport` and `extension::Resolution`, which an extension fills through `Default`
+  and field writes, both of which the attribute allows.
+- `Generated`, `DumpRow` and `Library` stay constructible by literal. A new field there is a new
+  obligation on the extension, and the compile error says so.
+
+**Trait hooks (trait-defaults, refined).** The refinement came from the premortem, through the
+same argument as ne-minimal. Suppose a later version adds `Prepared::check_staged` with a default
+that returns no findings. rules-corpus compiles unchanged, its citation checks silently do not run
+in the new mode, and the run reports success. That is the wildcard on `Tree`, moved to a trait. A
+hook such as a new dump gets a default; a hook that judges does not.
+
+**Versioning (refinement-2).** A breaking change to the library stays major. Under 0.x this
+changes no version number, by refinement 1: its effects are that a library break never ships in a
+patch, and the CHANGELOG item is tagged `library`.
+
+**Core tests (core-test-surface).** The 7 items only the core's tests use, and their replacement:
+
+| item | replaced by |
+| --- | --- |
+| `check::run` | `testing::run_with(.., &[])` |
+| `check::agents::check` | `testing::foundation`, which runs it |
+| `records::records`, `entity::Kind`, `manifest::ISSUE_REGISTER` | the test moves into records.rs as a unit test over the mock project's path |
+| `cli::history::commits` | `cli::run` with `Command::Commits`, or a unit test in history.rs, whichever keeps the assertion unchanged |
+| `scan::RetiredForm` | public anyway, as `document::RetiredForm`, through `Observation` |
+
+**The description.** The crate-level documentation of lib.rs, which ships in the package and
+renders on docs.rs, with a pointer to it from the core's README. Its sections follow the four
+role modules.
+
+#### 4.4.5 What moves, for thaum's migration
+
+thaum's migration spec says "list in this spec what moved or became private before editing".
+This is that list, from rules-corpus's uses at e98e296. A path not listed keeps its spelling
+under `knowledge_architect::`.
+
+| rules-corpus today, under `documentation::` | v0.1 |
+| --- | --- |
+| `build_origin::{Library, this_library, refuse_a_foreign_build}` | `cli::` |
+| `finding::Finding`, `manifest::Manifest`, `manifest::MANIFEST_NAME`, `model::{Model, Document}` | the root |
+| `model::DumpRow`, `survey::Outside` | `extension::` |
+| `manifest::{normalise_list, normalise_one}`, `index::{label, rel_from}` | `extension::` |
+| `check::Inputs` | `extension::Inputs`, non-exhaustive: a literal no longer compiles; `cli::Gathered::over(..)?.inputs()` |
+| `extension::{ExtensionReport, Resolution}` | unchanged path, non-exhaustive: `Default` and field writes still compile |
+| `scan::{Observation, Located}`, `source::{Parsed, Prose, Scope, ScopeKind, Literals}`, `source::md::parse`, `source::rs::parse` | `document::` |
+| `check::{Report, Stop, Phase, Structure, CHECKS, run_with, foundation}` | `testing::` |
+| `check::tree::check`, `entity::Entities::{build, definition_findings}` | private: `testing::foundation`, reading `Stop::phase` |
+| `check::references::ignore_queries`, `git::{ignored, tracked_and_ignored}`, `entity::Anchors`, `entity::Home`, `survey::{survey, Survey}`, `index::{generated_paths, generated_index_paths}` | private: `cli::Gathered::over`, which takes the git batches, reads the register.toml files and the committed generated files |
+| `index::file_register_indexes`, in the test that every committed index is current | private: `testing::run_with` over the mock, whose `generated` check reports a drifted index |
+| `cli::Command` | unchanged path, non-exhaustive; rules-corpus matches it only through `matches!` and `let … else` |
+
+#### 4.4.6 Losing alternatives
+
+| alternative | lost to | why it lost |
+| --- | --- | --- |
+| (A) keep the implementation module tree as the public tree, and only trim visibility | api-facade | a consumer learns the internal layout: rules-corpus touches 13 of 16 modules today. Moving an item between files is a library break. The public surface is computed from 25 modules instead of read from one file. |
+| `#[non_exhaustive]` on every enum expected to grow, the round-1 table | ne-minimal | it assumed the attribute prevents breakage. It only relabels a break that hits consumers who opted into it, removes their exhaustive option, and buys no version number under 0.x. |
+| keep the `Inputs` literal and accept a break per new input | gathered-inputs | step 3 added two inputs and broke all five rules-corpus literals. Each later input would do the same. |
+| keep the core's test-only items public under `#[doc(hidden)]` | core-test-surface | it publishes a second, unstated contract |
+| gate the core's test-only items behind the `testing` feature | core-test-surface | it reverses the approved removal of the feature, for items a rewrite of 7 test sites makes unnecessary |
+| a do-nothing default body for every later hook | trait-defaults, refined | a judging hook defaulted to nothing turns a compile error into a check that silently does not run |
+| an exemption from refinement 2 | refinement-2 | under 0.x the refinement changes no version number, so an exemption would buy nothing before 1.0 |
+
+Withdrawn: `Gathered::with_committed`, a setter for the committed files. Its proposer withdrew
+it once the source showed that `over` reads the same set rules-corpus's tests read.
+
+Not argued as a thread: a `prelude` module, the Rust convention of one glob import for the names
+most users need. The agent advised against it, because a glob import hides where a name comes
+from, and the root already holds the six shared names.
+
+#### 4.4.7 Premortem and tripwires
+
+Assume v0.1 shipped this API and failed. The causes found:
+
+| # | cause | thread stressed | where it goes |
+| --- | --- | --- | --- |
+| A1 | thaum's migration, or another extension, needs an item that is `pub(crate)` in v0.1, such as `records::records` for a listing command or `entity::Entities` to resolve references in its own subject | facade-membership | tripwire private-item-needed |
+| A2 | an extension test needs an `Inputs` that no tree on disk produces, such as an `Outside::Unreadable` planted in memory: `Inputs` is non-exhaustive and `Gathered`'s fields are private | gathered-inputs, ne-minimal | tripwire inputs-builder-needed |
+| A3 | a public item's doc comment links to an item that became private, and docs.rs renders a broken link. No gate runs `cargo doc`. | api-facade | step 4 runs `cargo doc` with `RUSTDOCFLAGS=-D warnings` once before the PR is ready |
+| A4 | a later judging hook with a do-nothing default silently skips an extension's checks | trait-defaults | answered by the refinement |
+| A5 | at 1.0, every variant added to an exhaustive enum is a major | ne-minimal | a cost by design; the re-entry is the exit from 0.x, `design@knowledge-architect@stays-at-zero-x` |
+
+The owner ruled that both tripwires are recorded. They go in the core's tripwires home,
+`path@core@docs/tripwires.md`, in step 4's landing commit, each guarding the design entry it
+names once that entry exists:
+
+- **private-item-needed**, guarding the facade's membership. Fires when a consumer, thaum's
+  migration first, needs an item that is `pub(crate)` in v0.1 and no public item replaces it.
+  Response: re-expose it under its role module, as a 0.MINOR, and add it to the facade's entry.
+- **inputs-builder-needed**, guarding Gathered. Fires when an extension test needs an `Inputs`
+  value that `Gathered::over` cannot produce from a tree on disk. Response: add a builder on
+  `Gathered`.
+
+#### 4.4.8 Harvest
+
+In step 4's landing commit:
+
+| home | what |
+| --- | --- |
+| the core's design home | a new entry for the facade by consumer role, carrying surface-rule and facade-membership (the role modules, the closure rule, the four items beyond current use); a new entry for ne-minimal, with its re-entry before 1.0; a new entry for the hook rule of trait-defaults; Gathered written into `design@core@the-core-cli-is-a-library-module`, whose head already names "assembling a complete working tree" |
+| the core's tripwires home | private-item-needed and inputs-builder-needed |
+| the root's design home | `design@knowledge-architect@versioning-policy`: that refinement 2 changes no version number under 0.x; `design@knowledge-architect@stays-at-zero-x`: that leaving 0.x re-examines ne-minimal |
+| the core's rejected alternatives | each row of 4.4.6 that passes recording-a-decision's tests. The likeliest: shape (A), and the round-1 `#[non_exhaustive]` table, whose defeat cost a compiled experiment |
+| the core's CLAUDE.md | the contract a developer needs: a new public item goes in a role module of lib.rs, and its signature's types follow it |
+| lib.rs | the description |
 
 ### 4.5 Versioning and release
 
@@ -432,7 +656,7 @@ The result is harvested as decisions of the core.
    0.3 to 0.4. So while at 0.x, the scheme's major and minor both bump 0.MINOR, and its patch bumps
    0.x.PATCH. A stricter check therefore arrives only with a 0.MINOR bump.
 2. **The library API is a fourth surface.** A breaking change there makes an extension fail to
-   compile. So it is major. Re-examined in step 4.
+   compile. So it is major. Re-examined in step 4 and kept, with no exemption (4.4.4).
 3. **The manifest test.** Under a minor release, every manifest that was valid stays valid.
    Renaming a key is major, unless the old spelling stays accepted with a deprecation finding.
 4. **"Very significant additions" do not make a major.** A major that sometimes means "breaking"
@@ -740,7 +964,7 @@ its docs/design.md.
 | 2 | xtask | xtask-gates; the gate rename; the root finder's use of `MANIFEST_NAME` |
 | 3 | core | agents-table, with the three reversals of 4.3 point 3; install-command-name; owned-namespace-check; installed-files-committed (the check side); primer-by-import (the check side, and that the install does not edit CLAUDE.md); declared-command; the phase of the new findings (phases-gate-the-report) |
 | 3 | knowledge-architect (root) | binary-bundles-workflow |
-| 4 | core | public-api |
+| 4 | core, root | public-api: the session's decisions, per 4.4.8 |
 | 5 | agent-skills | goal-lifecycle, plugin-inventory, installed-prefix-length, overlay-by-separate-skills, routing-table, skill-name-prefix, shipped-text-is-reference-free, goals-required, gates-convention, exact-pin, installed-files-committed (the instruction side), primer-by-import (the delivery side), declared-command (the extension rule), thread-slug-is-entry-id, harvest-after-implementation, losing-alternatives-filter, spec-and-milestone, document-vocabulary, transcript-conformity-review, retrospective-destination, premortem-as-watch-points, the interim rule of cross-project-references |
 | 6 | agent-skills | designing-together-retirement, the kept items of the intake |
 
@@ -861,12 +1085,35 @@ was built.
 - Review axes: spec conformity against 4.3, self-consistency, decision recording (the reversals),
   and an adversarial reviewer.
 
-**Step 4. The public API.** Reads 4.4 and 4.5.
+**Step 4. The public API.** Reads 4.4 and 4.5. **The design session is held**: 4.4 is its
+outcome. What remains is the implementation, on the branch public-api.
 
-- A design session with the owner, on the inputs of 4.4. Then the visibility changes, the
-  `#[non_exhaustive]` decisions, the description, the removal of the `testing` feature.
-- Done when the gates pass and the description is written.
-- Review axes: spec conformity against the session's outcome, decision recording.
+Each item below is one commit that passes the check, unless an item's intermediate tree cannot.
+
+1. **Gathered.** `cli::Gathered::{over, inputs}`. The `check` command and
+   `complete_working_tree` are rebuilt on it, with no change of behaviour: the existing tests stay
+   green unchanged.
+2. **The core's tests.** The 7 test sites of 4.4.4's table move onto `run_with`, `foundation`,
+   `cli::run`, or a unit test, each keeping its assertion.
+3. **The facade.** The implementation modules become private; lib.rs re-exports by role, per
+   4.4.4; the methods and fields outside the membership become `pub(crate)`. main.rs, the tests
+   and xtask move to the public paths. Every `private_interfaces` warning is resolved by the
+   closure rule, and any item it forces public is reported to the owner before the PR is ready.
+4. **Non-exhaustive and the feature.** `#[non_exhaustive]` on the four items of ne-minimal. The
+   `testing` feature is removed from crates/core/Cargo.toml.
+5. **The API test. Default:** an integration test written against the public paths only: a
+   minimal extension, configured, gathered with `cli::Gathered` and run with `testing::run_with`
+   over a mock project. It shows that the extension surface suffices without an internal item.
+   It is shown to discriminate by making one item it uses `pub(crate)` in a scratch worktree.
+6. **The description** in lib.rs, its sections following the role modules, and the pointer from
+   the core's README.
+7. **Doc links.** `cargo doc -p knowledge-architect --no-deps` with `RUSTDOCFLAGS=-D warnings`
+   passes (premortem A3). It is run once, not added as a gate.
+8. **Harvest** per 4.4.8, and this document corrected where the implementation differs.
+
+- Done when `cargo x gates` passes, the doc run of item 7 passes, and the description is written.
+- Review axes: spec conformity against 4.4, decision recording, and conformance of the
+  description to the language rules.
 
 **Step 5. The installed skills and agents, except designing.** Reads 4.6, 4.7, 4.8, 7.
 
