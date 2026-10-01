@@ -22,6 +22,12 @@ pub mod source;
 pub mod survey;
 pub mod walk;
 
+// The core run against whole mock projects. A unit-test module rather than an integration
+// test, because its assertions read the walk, the survey and the entity table, which are not
+// public.
+#[cfg(test)]
+mod mock_projects;
+
 pub use finding::Finding;
 pub use manifest::Manifest;
 pub use model::{Document, Model};

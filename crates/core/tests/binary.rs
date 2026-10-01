@@ -1536,8 +1536,11 @@ fn commits_reads_every_checker_directory_as_data_in_each_commits_tree() {
     let range = format!("{base}..HEAD");
     let (a, b) = (history.dir.join("tool-a"), history.dir.join("tool-b"));
     let judge = |dirs: &[&Path]| {
-        knowledge_architect::cli::history::commits(&manifest, &range, dirs, &mut [])
-            .expect("the run completes")
+        let command =
+            knowledge_architect::cli::Command::Commits(knowledge_architect::cli::CommitsArgs {
+                range: range.clone(),
+            });
+        knowledge_architect::cli::run(command, &manifest, dirs, &mut []).expect("the run completes")
     };
     // The literals are live where no directory covers them, so the fixture can fail.
     assert_eq!(judge(&[]), std::process::ExitCode::FAILURE);

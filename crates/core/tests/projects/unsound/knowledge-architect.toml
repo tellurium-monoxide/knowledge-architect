@@ -6,7 +6,7 @@
 # at the head of a plain line, one in a table cell, one outside every register home, one in the
 # middle of a line, a heading at its register's level with no slug, and an entry id no reference
 # can spell. A run over it stops at phase 2 and prints those findings
-# alone; the tests in `path@core@tests/mock_projects.rs` reach the phase-3 defects by
+# alone; the tests in `path@core@src/mock_projects.rs` reach the phase-3 defects by
 # calling the entity table directly. The phase-4 defects, one per check, are `planted`'s, which is
 # clean through phase 3 for exactly that reason.
 

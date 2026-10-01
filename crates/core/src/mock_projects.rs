@@ -11,7 +11,7 @@
 
 use std::path::PathBuf;
 
-use knowledge_architect::{Manifest, Model, Observation, RetiredForm};
+use crate::{Manifest, Model, Observation, RetiredForm};
 
 fn mock(name: &str) -> Manifest {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -27,7 +27,7 @@ fn model(name: &str) -> Model {
 /// Every `register.toml` beside an instance, as the binary reads them for a check.
 fn configs(manifest: &Manifest) -> std::collections::HashMap<PathBuf, String> {
     let mut out = std::collections::HashMap::new();
-    for (_, _, home) in knowledge_architect::entity::Anchors::of(manifest).instances() {
+    for (_, _, home) in crate::entity::Anchors::of(manifest).instances() {
         if let Ok(text) = std::fs::read_to_string(manifest.root().join(&home.config)) {
             out.insert(home.config.clone(), text);
         }
@@ -43,15 +43,14 @@ fn configs(manifest: &Manifest) -> std::collections::HashMap<PathBuf, String> {
 /// staged; an ignore rule is what takes one out, and a deletion has to be staged or the path
 /// stays in the listing with no bytes behind it.
 fn git_answers(
-    manifest: &knowledge_architect::Manifest,
+    manifest: &crate::Manifest,
     model: &Model,
 ) -> (std::collections::HashSet<String>, Vec<PathBuf>) {
-    let anchors = knowledge_architect::entity::Anchors::of(manifest);
-    let queries = knowledge_architect::check::references::ignore_queries(model, &anchors);
-    let ignored = knowledge_architect::git::ignored(manifest.root(), &queries)
-        .expect("git answers the batch");
-    let tracked = knowledge_architect::git::tracked_and_ignored(manifest.root())
-        .expect("git answers the listing");
+    let anchors = crate::entity::Anchors::of(manifest);
+    let queries = crate::check::references::ignore_queries(model, &anchors);
+    let ignored = crate::git::ignored(manifest.root(), &queries).expect("git answers the batch");
+    let tracked =
+        crate::git::tracked_and_ignored(manifest.root()).expect("git answers the listing");
     (ignored, tracked)
 }
 
@@ -103,7 +102,7 @@ fn the_walk_obeys_the_project_that_declares_it() {
 fn a_generated_index_is_outside_the_walk_and_outside_the_inverse_assertion() {
     let manifest = mock("minimal");
     let model = model("minimal");
-    let generated = knowledge_architect::index::generated_index_paths(&manifest);
+    let generated = crate::index::generated_index_paths(&manifest);
     assert_eq!(generated.len(), 3, "{generated:?}");
     for rel in &generated {
         assert!(
@@ -113,8 +112,7 @@ fn a_generated_index_is_outside_the_walk_and_outside_the_inverse_assertion() {
         );
     }
     let walked = walked(&model);
-    let survey =
-        knowledge_architect::survey::survey(&manifest, &model).expect("a survey of the mock");
+    let survey = crate::survey::survey(&manifest, &model).expect("a survey of the mock");
     for rel in &generated {
         let name = rel.display().to_string();
         assert!(
@@ -159,7 +157,7 @@ fn the_survey_records_which_paths_are_directories() {
     // path, which could not tell an empty directory from a file.
     let manifest = mock("minimal");
     let model = Model::build(&manifest, &[]).expect("a model");
-    let survey = knowledge_architect::survey::survey(&manifest, &model).expect("a survey");
+    let survey = crate::survey::survey(&manifest, &model).expect("a survey");
     assert!(survey.directories.contains(&PathBuf::from("docs")));
     assert!(survey.present.contains(&PathBuf::from("docs")));
     assert!(!survey.directories.contains(&PathBuf::from("README.md")));
@@ -170,19 +168,14 @@ fn the_survey_records_which_paths_are_directories() {
 fn a_location_outside_every_component_is_read_by_the_listings() {
     // What a location is for: a directory carrying a subset of the registers and nothing else
     // a component carries. Undeclared, this entry is in no listing and nobody finds it.
-    use knowledge_architect::entity::{Anchors, Entities, Kind};
-    use knowledge_architect::manifest::ISSUE_REGISTER;
+    use crate::entity::{Anchors, Entities, Kind};
+    use crate::manifest::ISSUE_REGISTER;
 
     let manifest = mock("minimal");
     let model = model("minimal");
     let anchors = Anchors::of(&manifest);
     let entities = Entities::build(&model, &anchors);
-    let rows = knowledge_architect::records::records(
-        &model,
-        &anchors,
-        &entities,
-        &Kind::new(ISSUE_REGISTER),
-    );
+    let rows = crate::records::records(&model, &anchors, &entities, &Kind::new(ISSUE_REGISTER));
     let here: Vec<_> = rows.iter().filter(|r| r.anchor == "notes").collect();
     assert_eq!(here.len(), 1, "{rows:#?}");
     // The kind comes out of the entry's own frontmatter, which is what the register declares,
@@ -255,17 +248,16 @@ fn a_fenced_illustration_is_neither_a_definition_nor_a_reference_in_a_real_file(
 /// A project that carries what it declares reports nothing, over every core check.
 #[test]
 fn the_conformant_mocks_report_nothing_over_every_core_check() {
-    use knowledge_architect::check::{foundation, run, Inputs};
+    use crate::check::{foundation, run, Inputs};
     use std::collections::HashMap;
     for name in ["minimal", "dirhome", "core"] {
         let manifest = mock(name);
         let model = model(name);
-        let survey =
-            knowledge_architect::survey::survey(&manifest, &model).expect("a survey of the mock");
+        let survey = crate::survey::survey(&manifest, &model).expect("a survey of the mock");
         // The committed generated files, read from the tree rather than regenerated, so a
         // committed index that has gone stale fails here.
         let mut committed = HashMap::new();
-        for rel in knowledge_architect::index::generated_paths(&manifest) {
+        for rel in crate::index::generated_paths(&manifest) {
             if let Ok(text) = std::fs::read_to_string(manifest.root().join(&rel)) {
                 committed.insert(rel, text);
             }
@@ -303,13 +295,10 @@ fn every_committed_index_is_what_the_generator_writes() {
     for name in ["minimal", "dirhome", "core"] {
         let manifest = mock(name);
         let model = model(name);
-        let survey =
-            knowledge_architect::survey::survey(&manifest, &model).expect("a survey of the mock");
-        for (rel, want) in knowledge_architect::index::file_register_indexes(
-            &model,
-            &manifest,
-            &survey.directories,
-        ) {
+        let survey = crate::survey::survey(&manifest, &model).expect("a survey of the mock");
+        for (rel, want) in
+            crate::index::file_register_indexes(&model, &manifest, &survey.directories)
+        {
             let have = std::fs::read_to_string(manifest.root().join(&rel)).expect("committed");
             assert_eq!(have, want, "{name}: {}", rel.display());
         }
@@ -343,15 +332,14 @@ fn observations_come_out_of_a_real_walk_with_real_line_numbers() {
 
 mod planted {
     use super::*;
-    use knowledge_architect::check::{run, Inputs, CHECKS};
+    use crate::check::{run, Inputs, CHECKS};
     use std::collections::HashMap;
     use std::path::PathBuf;
 
     /// The file-register indexes this project would have if they were current.
     fn current_indexes(manifest: &Manifest, model: &Model) -> HashMap<PathBuf, String> {
-        let survey =
-            knowledge_architect::survey::survey(manifest, model).expect("a survey of the mock");
-        knowledge_architect::index::file_register_indexes(model, manifest, &survey.directories)
+        let survey = crate::survey::survey(manifest, model).expect("a survey of the mock");
+        crate::index::file_register_indexes(model, manifest, &survey.directories)
             .into_iter()
             .collect()
     }
@@ -363,8 +351,7 @@ mod planted {
         let manifest = mock("planted");
         let model = Model::build(&manifest, &[]).expect("a model");
         let committed = committed(&manifest, &model);
-        let survey =
-            knowledge_architect::survey::survey(&manifest, &model).expect("a survey of the mock");
+        let survey = crate::survey::survey(&manifest, &model).expect("a survey of the mock");
         let git = git_answers(&manifest, &model);
         let inputs = Inputs {
             committed: &committed,
@@ -602,16 +589,15 @@ mod planted {
 
 mod unsound {
     use super::*;
-    use knowledge_architect::check::{foundation, tree, Inputs, Phase};
-    use knowledge_architect::entity::{Anchors, Entities};
+    use crate::check::{foundation, tree, Inputs, Phase};
+    use crate::entity::{Anchors, Entities};
     use std::collections::HashMap;
 
     /// The findings of `tree::check`, phase 2, over the project.
     fn phase_two() -> Vec<String> {
         let manifest = mock("unsound");
         let model = Model::build(&manifest, &[]).expect("a model");
-        let survey =
-            knowledge_architect::survey::survey(&manifest, &model).expect("a survey of the mock");
+        let survey = crate::survey::survey(&manifest, &model).expect("a survey of the mock");
         let git = git_answers(&manifest, &model);
         let inputs = Inputs {
             committed: &HashMap::new(),
@@ -634,9 +620,7 @@ mod unsound {
         let stopped = foundation(&model, &manifest, &inputs).expect_err("the run stops");
         assert_eq!(stopped.phase, Phase::Tree);
         let mut tree_and_agents = tree::check(&model, &manifest, &inputs);
-        tree_and_agents.extend(knowledge_architect::check::agents::check(
-            &model, &manifest, &inputs,
-        ));
+        tree_and_agents.extend(crate::check::agents::check(&model, &manifest, &inputs));
         let found: Vec<String> = tree_and_agents
             .iter()
             .map(|f| format!("{}  {}", f.location(), f.what))
@@ -763,8 +747,7 @@ mod unsound {
         for name in ["planted", "dirhome"] {
             let manifest = mock(name);
             let model = Model::build(&manifest, &[]).expect("a model");
-            let survey = knowledge_architect::survey::survey(&manifest, &model)
-                .expect("a survey of the mock");
+            let survey = crate::survey::survey(&manifest, &model).expect("a survey of the mock");
             let git = git_answers(&manifest, &model);
             let inputs = Inputs {
                 committed: &HashMap::new(),
