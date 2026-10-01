@@ -2,10 +2,10 @@
 //! subagent definitions and the primer.
 //!
 //! Each entry is the path the file is installed at, relative to the project root, and its text.
-//! The set is empty until the skills are written.
+//! The list is generated from this crate's content/ directory by its build script.
 
-/// Every file the installer writes, as its install path and its text.
-pub static FILES: &[(&str, &str)] = &[];
+/// Every file the installer writes, as its install path and its text, in path order.
+pub static FILES: &[(&str, &str)] = include!(concat!(env!("OUT_DIR"), "/files.rs"));
 
 /// This crate's directory, compiled in, so a binary that links it can refuse a build made from
 /// another checkout, per `design@core@a-foreign-build-is-refused`.

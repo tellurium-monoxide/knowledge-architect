@@ -2,14 +2,15 @@
 
 A documentation checker and an agent workflow, shipped as Rust crates. The checker verifies that a
 project's documents stay consistent with its code and with each other, through declared registers
-and checked references. The workflow is a set of agent skills that the checker will embed and write
-into a project on request; it is not built yet. The goals are `path@knowledge-architect@docs/goals.md`.
+and checked references. The workflow is a set of agent skills that the checker embeds and writes
+into a project on request. Part of it is written, and the milestone document schedules the rest.
+The goals are `path@knowledge-architect@docs/goals.md`.
 
 **The goals bind the design, and nothing else in it does.** A constraint derived from a goal binds
 an argument outright. One derived from a recorded decision binds it as a stated presumption, which
 a better argument can rebut. Recorded decisions were often argued before the code existed, so
 implementation is expected to prove some of them wrong: reversing one is an ordinary move, and
-`recording-a-decision` owns what it costs.
+`knowledge-architect-recording-a-decision` owns what it costs.
 
 The repository is a virtual workspace with four Components, per
 `design@knowledge-architect@repo-layout`:
@@ -18,7 +19,7 @@ The repository is a virtual workspace with four Components, per
 | --- | --- | --- |
 | `knowledge-architect` | the root | the project itself |
 | `core` | crates/core | package `knowledge-architect`: the checker library and the binary `klarch` |
-| `agent-skills` | crates/agent-skills | package `knowledge-architect-agent-skills`: the text the checker installs, empty until the skills are written |
+| `agent-skills` | crates/agent-skills | package `knowledge-architect-agent-skills`: the text the checker installs into a project |
 | `xtask` | tools/xtask | the maintenance tool, `cargo x gates`; never published |
 
 **The project was extracted from thaum, and the extraction is not finished.** The work in progress
@@ -56,7 +57,7 @@ State the consequences of a request explicitly. Never assume the user has consid
 - **Current reality only**: no dates in a head, no changelogs outside CHANGELOG.md, no "formerly
   known as".
 - Avoid numbers that may go stale, except in issues that follow the cold-reader standard of the
-  `tracking-open-issues` skill.
+  `knowledge-architect-tracking-open-issues` skill.
 
 ## Mechanical validation of documents
 
@@ -186,7 +187,7 @@ this, and they pay for the drift it admits:
 | what one Component is for, and what would show it achieved | that Component's `path@*@docs/goals.md` | the owner abandons the goal |
 | the general architecture of the project | the root's design home head | the design changes: the head is rewritten in place |
 | how a Component is built, and why it is built that way | the Component's design home head | the design changes: the head is rewritten in place |
-| the engineering alternative that lost for a Component or the project, and why | the Component's `path@*@docs/rejected-alternatives.md` | never. A reversal moves the old winner into it if it meets the recording tests of `recording-a-decision` |
+| the engineering alternative that lost for a Component or the project, and why | the Component's `path@*@docs/rejected-alternatives.md` | never. A reversal moves the old winner into it if it meets the recording tests of `knowledge-architect-recording-a-decision` |
 | what is outstanding: a defect, an unexplained observation, an unanswered question, missing work | one file in the owning anchor's issue directory: the Component's `path@*@docs/open-issues/`, or the agent-config location's open-issues directory for the agent configuration | the issue closes |
 | evidence that would flip a recorded decision about code that exists | the Component's tripwires home, `path@*@docs/tripwires.md` | the tripwire fires, or the decision it guards is gone |
 | a contract or a trap in a Component, true of the code as it stands, that only a developer needs | the Component's scoped `path@*@CLAUDE.md` | the contract changes or the trap is removed |
@@ -328,7 +329,8 @@ The issue and tripwire registers are spread over every Component and the agent-c
 grepping the one you happen to think of is not the check. The three commands read the same entity
 table that `cargo klarch check` resolves against. A recorded entry usually says more than a fresh
 diagnosis will: the measurement already taken, what was ruled out, and often why the work was left
-undone on purpose. The `tracking-open-issues` skill says what to do with what you find, either way.
+undone on purpose. The `knowledge-architect-tracking-open-issues` skill says what to do with what
+you find, either way.
 
 ### Precedent is not authority
 
@@ -429,22 +431,24 @@ request.
 **A skill is one activity**: the scope over which a complete set of procedures makes sense. Read
 the matching skill before doing that kind of work.
 
-**This repository has no skills of its own yet.** Until step 5 of the milestone document, the work
-follows thaum's skills, read from thaum's checkout at commit e98e296, for example with
+**This repository installs its own skills**, with `cargo klarch install-agent-skills`, and
+commits them under .claude. Step 5 of the milestone document writes them one group at a time. An
+activity whose installed skill exists follows it. Every other activity follows thaum's skill, read
+from thaum's checkout at commit e98e296, for example with
 `git -C <thaum checkout> show e98e296:<skill path>`. Their thaum-specific parts do not apply: the
 rules and their citations, slices.md, thaum's anchors, `cargo mutate run`, and
 `cargo knowledge`, which is `cargo klarch` here. thaum's reviewer agents are not loaded here: each
 review is a general-purpose subagent, briefed with the path of thaum's agent file and told which parts do not
 apply. The milestone document's section 4.6 is where this is decided.
 
-| skill (in thaum) | read it when |
+| skill | read it when |
 | --- | --- |
-| `developing` | before starting or iterating on a change to the Rust source. A test is shown to discriminate by reverting the change in a scratch worktree, since `cargo mutate run` is not ported |
-| `dispatching-a-review` | before merging anything to main, and when an activity's skill says its work is ready for review |
-| `recording-a-decision` | a design or contract decision has been made or reversed, to decide whether it earns durable text and where |
-| `tracking-open-issues` | before diagnosing any behaviour as a new problem; when parking anything; when a recorded tripwire fires; when work closes any of these |
-| `maintaining-agent-config` | before adding or editing this file, a scoped `CLAUDE.md`, any skill, any subagent definition, or the knowledge table |
-| `designing-together` (the owner's plugin, outside this project) | for design questions with an open solution space. Its thread names may conflict with this project's decision slugs, and its tripwires are recorded through `tracking-open-issues` |
+| `knowledge-architect-recording-a-decision` (installed) | a design or contract decision has been made or reversed, to decide whether it earns durable text and where |
+| `knowledge-architect-tracking-open-issues` (installed) | before diagnosing any behaviour as a new problem; when parking anything; when a recorded tripwire fires; when work closes any of these |
+| `developing` (in thaum) | before starting or iterating on a change to the Rust source. A test is shown to discriminate by reverting the change in a scratch worktree, since `cargo mutate run` is not ported |
+| `dispatching-a-review` (in thaum) | before merging anything to main, and when an activity's skill says its work is ready for review |
+| `maintaining-agent-config` (in thaum) | before adding or editing this file, a scoped `CLAUDE.md`, any skill, any subagent definition, or the knowledge table |
+| `designing-together` (the owner's plugin, outside this project) | for design questions with an open solution space. Its thread names may conflict with this project's decision slugs, and its tripwires are recorded through `knowledge-architect-tracking-open-issues` |
 
 **Step 5 replaces this table** with the routing table of the installed skills: each skill this
 repository's own binary installs, and the project skills that add to it.
@@ -507,7 +511,7 @@ git merge-base --is-ancestor origin/main HEAD    # if false, rebase
 - The axes come from the dispatching activity's own skill.
 - Critical findings are repaired before the merge.
 - The commit that lands the repairs says what was reviewed and what was decided.
-- Any finding not repaired becomes an issue entry, per `tracking-open-issues`.
+- Any finding not repaired becomes an issue entry, per `knowledge-architect-tracking-open-issues`.
 - Once the branch is rebased and the repairs are pushed, mark the pull request ready:
   `gh pr ready`. That starts CI, and every later push re-runs it. First check that GitHub has
   taken the push: `gh pr view <branch> --json headRefOid` must equal `git rev-parse HEAD`. A pull

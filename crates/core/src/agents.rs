@@ -239,6 +239,20 @@ mod tests {
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
     }
 
+    /// The claim: every file this version ships is installed inside the owned namespace, so the
+    /// install edits nothing a project owns. The install paths come from the build script of
+    /// `knowledge-architect-agent-skills`. Mutation: a prefix other than the owned one in that
+    /// script fails it.
+    #[test]
+    fn every_shipped_file_is_installed_in_the_owned_namespace() {
+        for (path, _) in knowledge_architect_agent_skills::FILES {
+            assert!(
+                owned_path(Path::new(path)),
+                "{path} is outside the namespace"
+            );
+        }
+    }
+
     /// The claim: the placeholder takes the declared command, and the default command when
     /// none is declared. Mutation: rendering with a fixed command fails the declared case.
     #[test]

@@ -7,4 +7,4 @@ that the installed files match it.
 
 A project depends on `knowledge-architect`, never on this crate directly: cargo fetches it.
 
-The set is empty in this version. The skills arrive in a later release.
+The set is incomplete in this version: it grows until the first release.

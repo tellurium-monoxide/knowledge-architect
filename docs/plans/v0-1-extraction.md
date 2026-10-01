@@ -80,7 +80,7 @@ session, under its own spec.
 | self-hosted: this repository passes its own check and installs its own skills | binding | repo-layout, crate-directory; the check from step 2, the installed skills from step 5 |
 | thaum-keeps-working: after the split, thaum's checker runs rules-corpus on the published core, and thaum's gates pass | binding | session-sequence: thaum is untouched until v0.1 exists, then migrated under its own spec |
 | nothing-compiled-in: no installed skill names a path or a convention of one project | binding | overlay-by-separate-skills, shipped-text-is-reference-free, declared-command |
-| one-workflow: the installed skills never give two contradictory instructions | binding | thread-slug-is-entry-id, harvest-after-implementation, losing-alternatives-filter, spec-and-milestone. **Not yet fully met:** four points of 4.8 were never discussed, and steps 5 and 6 resolve them with the owner. |
+| one-workflow: the installed skills never give two contradictory instructions | binding | thread-slug-is-entry-id, harvest-after-implementation, losing-alternatives-filter, spec-and-milestone, and the session A threads of 3.5. **Not yet fully met:** the material-findings test of 4.8 is resolved with the owner in step 6. |
 
 ## 3. The ledger
 
@@ -120,7 +120,7 @@ its thread name becomes the entry's slug unless it collides (thread-slug-is-entr
 | harvest-after-implementation | decisions are recorded in the design homes when the work that implements them lands, not when the spec is written | |
 | losing-alternatives-filter | recording-a-decision's rule wins: an alternative earns an entry only if it passes that skill's tests. The rest stay in the spec and the commit message. | the owner judges the rule "still a little imperfect", not improved now |
 | spec-and-milestone | short work has one document, the spec. Work across several PRs with intermediate design sessions has a milestone document, which extends the spec in place. | plus the owner's content rule against untested snippets, 4.8 |
-| document-vocabulary | **open until step 5** (owner, 2026-10-01): the owner rediscusses it when the planning skill is forked. The proposal on the table: "spec" for short work, "milestone document" for long work, "plan" for the docs/plans/ directory only. | this document uses the proposal meanwhile |
+| document-vocabulary | **open until session B of step 5** (owner, 2026-10-01): the owner rediscusses it when the planning skill is forked. Session A settled its home: the definitions live in the planning skill. The proposal on the table: "spec" for short work, "milestone document" for long work, "plan" for the docs/plans/ directory only. | this document uses the proposal meanwhile |
 | designing-together-retirement | option (a): the designing-together skill is forked into this project as the designing skill, and the owner archives the old repository. Its decision record is not carried as history: each item is shown to the owner, who rules on keeping it and on its wording, because "AI agents did most of that record … Some might not fully aligned with everything today" (owner). Its README content is kept. | (b), carrying the history, lost on cost, 3.2 |
 | plugin-inventory | the skills and agents listed in 4.7 | maintaining-agent-config is included |
 | transcript-conformity-review | the planning skill's review of a spec or milestone document includes one reviewer that reads the verbatim transcript of the design discussion and checks the document against the decisions taken in it. Whether it is an installed agent, and whether dispatching-a-review lists it as an axis, is decided in step 5. | owner: "Probably, this mode of review should become standard in the planning skills", then "agreed, defer the decision to step 5" |
@@ -180,6 +180,42 @@ Owner principles stated in the discussion, which bound the inventory:
 | thread | re-entry | home |
 | --- | --- | --- |
 | cross-project-references | the owner takes it up, or finds it needed. The owner: "I doubt there is a real need to reference design decisions of another project". Until then, a design decision that relies on the tool states that it relies on the tool working as intended. | a deferred issue in the core, which owns the reference grammar (step 2); the interim rule in the agent-skills design home, step 5 |
+
+### 3.5 Step 5, session A
+
+Held in this repository on 2026-10-01 under the designing-together skill, on the three points of
+4.8 marked for step 5. The owner's reading: designing-together has not been updated for a while and
+lags behind thaum's skills where they disagree, and several of thaum's instructions exist to
+override it. Facts it rested on: thaum deleted 27 plan documents from docs/plans/
+(`git log --diff-filter=D --name-only -- docs/plans` at e98e296), and a scan of the Bash tool calls
+in thaum's 31 session logs found `git show` or `git log` on a deleted plan document's path in 6 of
+them, so agents do retrieve deleted specs through history.
+
+| thread | state | decision |
+| --- | --- | --- |
+| spec-leaves-at-landing | approved | a spec or milestone document is deleted in the commit that completes its last harvest, and that commit's message names its path. Owner: "This is the workflow I've been pushing … it works well." Harvest: planning (PR 2) |
+| standing-argument-in-head | approved | a design head carries the standing argument, every premise whose failure would reopen the decision; the deliberation stays in the spec, then in history; the commit message carries it only when there was no spec. Owner: "the correct interpretation of what I've been doing in thaum" |
+| losing-shape-test | approved | a thread is a candidate for the rejected alternatives when a shape lost to an argument, whatever its state: ruled out, withdrawn with a defeating reason, or superseded with a distinct shape that lost |
+| designing-hands-off-to-planning | approved | the design-discussion skill ends at convergence, the premortem and the owner's tripwire rulings; the planning skill writes the spec or the milestone document, in the same session, because the ledger lives only in the conversation. Built in PR 2 (receiving side) and step 6 |
+| no-external-handoff | approved | an installed skill names only installed skills, never a plugin or a skill outside the set. designing-together 0.6.0 names superpowers:brainstorming once, in its bounded-problem branch |
+| bounded-problem-branch | approved, its first default ruled out | until a skill for bounded problems exists, the design-discussion skill classifies the problem as bounded, states its strongest open reading, and leaves the next step to the owner. That skill will be installed (owner); its todo is opened in step 6 |
+| designing-skill-name | approved | the design-discussion skill is installed as knowledge-architect-discussing-design-decisions. Owner: "a bit verbose, but at least it is not ambiguous"; "design" alone reads as visual design. The owner reports the skill works well for game design, the gameplay part |
+| document-vocabulary | in-discussion, carried to session B | its home is the planning skill |
+
+Ruled out in session A:
+
+| alternative | lost to | why it lost |
+| --- | --- | --- |
+| keeping the spec after harvest, in an archive directory outside the walk | spec-leaves-at-landing | a kept spec is a second home for every decision it carried. Walked, its references break at every later reversal; outside the walk, it is unchecked text a grep finds with no marker that it is stale |
+| leaving the spec's fate to the project, designing-together's rule | spec-leaves-at-landing | the installed planning skill would have nothing to say where its document's work ends, which fails one-workflow |
+| all argument in the commit message, the literal rule of thaum's recording-a-decision | standing-argument-in-head | a head without its premises fails design-is-recorded-with-its-arguments, and contradicts thaum's own knowledge table ("and why it is built that way") |
+| the full deliberation in the head, the maximal reading of designing-together | standing-argument-in-head | every session reads the design homes before it changes code; the core's 40 heads already take 1333 lines |
+| a rule keyed on the thread's state | losing-shape-test | it would drop a superseded thread that lost on its merits, such as always-on-primer (3.3) |
+| the bounded problem goes to the planning skill's spec | bounded-problem-branch | the owner: a bounded problem still needs investigation, testing and the owner's approval, which a spec gives it none of |
+| keeping the name designing-together; arguing-a-design; designing-software | designing-skill-name | the first keeps "designing" as the only content word; the second reads as confrontational and keeps "a design"; the third names one domain while the skill works outside code |
+
+No tripwire was recorded: each premortem cause has a guard in a review axis or a git command, and
+the cost that a reader without a clone cannot reach a deliberation was accepted (owner).
 
 ## 4. The decided design
 
@@ -787,7 +823,7 @@ name and in its frontmatter name. The tables give the base names.
 | --- | --- | --- |
 | setting-up | new | the manifest and the homes, the `[agents]` table, the declared command and the extension rule of 4.3 point 2, the install, the primer import line, the routing table, the xtask gates convention, the exact pin and how a pinned binary is run (4.5), the requirement of at least one goal per component |
 | setting-goals | new | eliciting goals from the owner; how a goal binds design in the long term; brevity; goals are the owner's intent and never the agent's; goal-lifecycle: a goal leaves only when the owner abandons it |
-| designing | designing-together 0.6.0 | unified per 4.8 (step 6) |
+| discussing-design-decisions | designing-together 0.6.0 | unified per 4.8 (step 6); its spec step moves to planning, and its bounded-problem branch names no outside skill (3.5) |
 | planning | thaum's planning-a-slice | the spec path and the milestone path; the vocabulary; the transcript-conformity review; the owner's content rule; what replaces slices.md as the list of milestones and the home of acceptance criteria is decided in this step |
 | recording-a-decision | thaum's | thaum's examples and its rules-specific arms removed. Arms that name a crate boundary are made language-neutral. |
 | tracking-open-issues | thaum's | thaum's locations, worked examples and rule quotes removed |
@@ -810,8 +846,10 @@ rules-reviewer. A future creating-a-component skill is an open issue.
 approved with it). It states how to read a goal against a design head, names the installed skills
 and when each applies, and points at them without restating them.
 
-**Order inside step 5.** The forked planning and dispatching skills name the designing skill,
-which step 6 creates. Until step 6 they name it by its final installed name. The check does not see
+**Order inside step 5.** The forked skills name the design-discussion skill, which step 6
+creates. Until step 6 they name it by its final installed name,
+knowledge-architect-discussing-design-decisions. The same holds for every skill or agent a fork
+names before its own PR lands. The check does not see
 a one-segment name, so nothing fails in between.
 
 ### 4.8 The unified workflow
@@ -828,7 +866,15 @@ settled.
   is a hypothesis. While the work is open, the spec on its branch is the only place the decision
   exists.
 - **Losing alternatives.** recording-a-decision's tests decide which earn an entry. The rest stay
-  in the spec and the commit message.
+  in the spec and the commit message. A thread is a candidate when a shape lost to an argument,
+  whatever its state (losing-shape-test).
+- **Where the argument lives.** The head carries the standing argument; the spec, then history,
+  carries the deliberation (standing-argument-in-head).
+- **The spec after harvest.** Deleted in the commit of its last harvest, whose message names its
+  path (spec-leaves-at-landing).
+- **Who writes the spec.** The planning skill, in the session the discussion converged in
+  (designing-hands-off-to-planning).
+- **Hand-offs.** Only to installed skills (no-external-handoff).
 - **Tripwires from a premortem** are written at harvest, in the tripwires home of the component
   that owns the guarded decision, and only on the owner's word.
 - **Spec and milestone.** One document per layer. It is detailed about the design and concise about
@@ -837,19 +883,16 @@ settled.
   amount of work and opens with a disclaimer that its content rests on assumptions and may be
   wrong. **Default:** a snippet in a spec is labelled as an illustration of a shape.
 
-**Not settled in the discussion, resolved with the owner:**
+**Not settled in the discussion, resolved with the owner:** the three points of step 5 were
+settled in its session A (3.5). One remains:
 
-- in step 5: whether the spec is kept after harvest (thaum deletes it at merge; designing-together
-  leaves it to the project);
-- in step 5: where the argument for a decision lives (designing-together puts it in the record;
-  recording-a-decision puts it in the commit message);
-- in step 5: where withdrawn and superseded threads go;
 - in step 6: the material-findings test. designing-together states it; thaum's planning-a-slice
   rewords it and adds "with a default named, and the thread stays closed until the owner's word".
 
 ### 4.9 The designing-together intake (step 6)
 
-- The skill is forked from designing-together 0.6.0, on its branch `next`.
+- The skill is forked from designing-together 0.6.0, on its branch `next`, and installed as
+  knowledge-architect-discussing-design-decisions (3.5).
 - Its decision record, docs/decisions.md on `next`, has 18 level-two sections
   (`git show next:docs/decisions.md | grep -c "^## "`). One of them, "How the decision record is
   kept", is about the file itself. The owner asked for each item to be listed. **Default:** an item
@@ -885,9 +928,10 @@ owner's scheduling is a `todo`, not a `deferred`.
 | configuration-for-several-agent-providers | core | deferred | step 2 (done) | AGENTS.md as the generic file, with other providers' files as symlinks or imports |
 | xtask-abort-exits-one | xtask | observation | step 2 (done) | found by the review of step 2: no exit-code contract binds xtask |
 | a home for developer contracts outside agent configuration | core | deferred | step 3 | with `harness = []`, the content routed to CLAUDE.md loses its home; the owner's long-term answer is a home independent of any harness |
-| shipped text is reference-free, mechanically | agent-skills | deferred | step 5 | a check replacing the release grep and the walk exclusion of content/ |
+| shipped text is reference-free, mechanically | agent-skills | todo | step 5, PR 1 (done) | a check replacing the release grep and the walk exclusion of content/. A `todo`: no occasion was found whose own work includes building the check, so no trigger passes the trigger test |
 | skill patching | agent-skills | deferred | step 5 | patches stored as diffs per project. Answers watch point P1. |
 | creating a component | agent-skills | todo | step 5 | a future skill; the owner has not converged on what a new component requires |
+| a skill for bounded problems | agent-skills | todo | step 6 | the skill the design-discussion skill cannot name until it exists (3.5); its premise is that skill's bounded branch |
 
 The core's issue the-core-leaves-this-repository is closed by step 2.
 
@@ -924,8 +968,8 @@ The core's issue the-core-leaves-this-repository is closed by step 2.
 - Thaum-only: developing, recording-an-interpretation, bumping-rules, rules-reviewer.
 - Mostly generic, with thaum lines: tracking-open-issues, dispatching-a-review, planning-a-slice,
   recording-a-decision, maintaining-agent-config, and the five other agents.
-- Seven conflicts between designing-together and thaum's skills. Numbers 1, 2, 3 and 5 are settled
-  in 4.8; 4, 6 and 7 are open there:
+- Seven conflicts between designing-together and thaum's skills, all settled in 4.8: numbers 1, 2,
+  3 and 5 in the discussion, 4, 6 and 7 in step 5's session A:
   1. thread names against slugs;
   2. when recording happens (designing-together's step 9 records before implementation;
      planning-a-slice records at each harvest);
@@ -974,8 +1018,9 @@ its docs/design.md.
 | 3 | core | agents-table, with the three reversals of 4.3 point 3; install-command-name; owned-namespace-check; installed-files-committed (the check side); primer-by-import (the check side, and that the install does not edit CLAUDE.md); declared-command; the phase of the new findings (phases-gate-the-report) |
 | 3 | knowledge-architect (root) | binary-bundles-workflow |
 | 4 | core, root | public-api: the session's decisions, per 4.4.8 |
-| 5 | agent-skills | goal-lifecycle, plugin-inventory, installed-prefix-length, overlay-by-separate-skills, routing-table, skill-name-prefix, shipped-text-is-reference-free, goals-required, gates-convention, exact-pin, installed-files-committed (the instruction side), primer-by-import (the delivery side), declared-command (the extension rule), thread-slug-is-entry-id, harvest-after-implementation, losing-alternatives-filter, spec-and-milestone, document-vocabulary, transcript-conformity-review, retrospective-destination, premortem-as-watch-points, the interim rule of cross-project-references |
-| 6 | agent-skills | designing-together-retirement, the kept items of the intake |
+| 5, PR 1 | agent-skills | done: content-mirrors-the-install-layout (new), shipped-text-is-reference-free, no-external-handoff, harvest-after-implementation, standing-argument-in-head, losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id. installed-prefix-length needs no entry: `design@core@owned-namespace-check` states the prefix |
+| 5 | agent-skills | goal-lifecycle, plugin-inventory, overlay-by-separate-skills, routing-table, skill-name-prefix, goals-required, gates-convention, exact-pin, installed-files-committed (the instruction side), primer-by-import (the delivery side), declared-command (the extension rule), spec-and-milestone, spec-leaves-at-landing, designing-hands-off-to-planning (the planning side), document-vocabulary, transcript-conformity-review, retrospective-destination, premortem-as-watch-points, the interim rule of cross-project-references |
+| 6 | agent-skills | designing-together-retirement, designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning, the kept items of the intake |
 
 **Losing alternatives.** Section 3.2 and the absorbed shapes of 3.3 are judged against
 recording-a-decision's tests at the harvest of the decision they lost to. The likeliest to pass:
@@ -1133,24 +1178,55 @@ Each item below is one commit that passes the check, unless an item's intermedia
 - Forked and unified per 4.7 and 4.8, with the open points of 4.8 brought to the owner. The new
   ones are written with the owner: setting-up, setting-goals, retrospective, the primer, and the
   transcript-conformity reviewer if the owner chooses an installed agent.
-- The manifest switches to the default harness, and the repository installs and commits its own
-  skills.
-- The first shipped file gives the CLI's wiring of the shipped files its test. Today
-  `agents::shipped` returns an empty list, so a mutation that hands `Gathered` an empty list
-  instead of it is caught by no test (step 4, item 1).
-- The three agent-skills issues of section 5 are opened when the install and the skills they
-  depend on exist.
-- **Approved:** the setting-goals skill is then run with the owner on every component of this
-  repository, as its first real use.
-- Several PRs are allowed, one per group: the recording group (recording-a-decision,
-  tracking-open-issues), the review group (dispatching-a-review and the agents), the planning group
-  (planning, maintaining-agent-config), the new skills.
+- **There is no harness switch to make.** This repository's manifest has no `[agents]` table, and
+  an absent table means the `claude` harness. So the first file in content/ makes the check require
+  its installed copy, and every later change to content/ is installed in the same commit.
 - Review axes for a skill: self-consistency, routing of knowledge, and whether it names anything of
   one project (nothing-compiled-in).
 
+The order, approved by the owner on 2026-10-01. Each design session runs under the designing-together
+skill and comes before the PR that needs it.
+
+1. **Session A**: the three open points of 4.8. **Done**, 3.5.
+2. **PR 1, the infrastructure and the recording group.** **Landed on the branch
+   installed-recording-skills:**
+   - build.rs of agent-skills generates `FILES` from content/; the package ships build.rs and
+     content/; the manifest takes content/ out of the walk;
+   - every mock but `unsound` declares `harness = []`, and so does the commits tests' project; a
+     test about the installed set declares the harness in its own copy. `unsound` keeps the
+     default for its planted namespace file;
+   - the wiring test, `the_check_and_the_install_receive_the_shipped_set`, and a test that every
+     shipped file lies in the owned namespace;
+   - the forks of recording-a-decision and tracking-open-issues, installed and committed. The
+     root CLAUDE.md's skills table sends those two activities to the installed skills;
+   - harvest: content-mirrors-the-install-layout, shipped-text-is-reference-free,
+     no-external-handoff, harvest-after-implementation, standing-argument-in-head,
+     losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id. No losing
+     alternative passed the recording tests. The issue on a mechanical check of the shipped text
+     is opened.
+   - **The fork removes thaum's third recording test of §2**, "its argument turns on a rules
+     reading", and the second of §6, a reason citing a rule, and adds no replacement. The owner
+     rules on whether a generic replacement is wanted.
+3. **Session B, then PR 2: planning.** The document vocabulary, what replaces slices.md as the
+   list of milestones and the home of acceptance criteria, and whether the transcript-conformity
+   reviewer is an installed agent. Then the fork. It harvests spec-leaves-at-landing,
+   designing-hands-off-to-planning and spec-and-milestone.
+4. **PR 3: the review group**, dispatching-a-review and the five agents, plus the
+   transcript-conformity agent if chosen. After planning, because standing-state-reviewer follows
+   planning's decision on acceptance criteria, and two reviewers use its vocabulary.
+5. **Session C, then PR 4: configuration.** setting-up, maintaining-agent-config, and the primer
+   with its import line in the root CLAUDE.md, whose skills table becomes the routing table.
+   maintaining-agent-config moves here from the planning group because it keeps the table
+   setting-up writes. The issues on skill patching and on creating a component are opened.
+6. **Session D, then PR 5:** setting-goals and retrospective.
+7. **PR 6:** the setting-goals skill is run with the owner on every component of this repository,
+   as its first real use (approved). A change to goals is the owner's, and needs no review.
+
 **Step 6. The designing-together intake.** Reads 4.8 and 4.9.
 
-- The fork of the designing skill, unified per 4.8. Then the record, item by item with the owner.
+- The fork of the design-discussion skill, unified per 4.8, installed as
+  knowledge-architect-discussing-design-decisions. Then the record, item by item with the owner.
+- The issue on a skill for bounded problems is opened, with the bounded branch (3.5).
 - Review axes: transcript conformity against the intake session, with the transcript extracted as
   the head says, and self-consistency.
 

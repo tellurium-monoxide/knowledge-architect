@@ -40,3 +40,8 @@ skip-dirs = ["build"]
 # No row names a file-register index: the tool derives every generated file from this manifest.
 skip-files = ["notes/generated.md"]
 exclude = ["vendor"]
+
+# This mock installs nothing. The shipped set changes with every version of the skills, and a
+# fixture that held its installed copy would change with them.
+[agents]
+harness = []

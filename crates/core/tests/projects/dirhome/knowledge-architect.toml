@@ -15,3 +15,8 @@ skip-dirs = []
 # so those are outside the walk by construction.
 skip-files = []
 exclude = []
+
+# This mock installs nothing. The shipped set changes with every version of the skills, and a
+# fixture that held its installed copy would change with them.
+[agents]
+harness = []

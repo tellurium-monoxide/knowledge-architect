@@ -137,6 +137,21 @@ impl Sandbox {
     fn run(&self, args: &[&str]) -> (String, String, i32) {
         run_in(&self.dir, args)
     }
+
+    /// Make the copy serve the `claude` harness, and stage it. The mocks declare `harness = []`,
+    /// because the shipped set changes with every version of the skills; a test about the
+    /// installed set declares the harness in its own copy.
+    fn serve_claude(&self) {
+        let path = self.path("knowledge-architect.toml");
+        let manifest = std::fs::read_to_string(&path).expect("the manifest");
+        assert_eq!(manifest.matches("harness = []").count(), 1, "{manifest}");
+        std::fs::write(
+            &path,
+            manifest.replace("harness = []", "harness = [\"claude\"]"),
+        )
+        .expect("the manifest is rewritten");
+        self.stage();
+    }
 }
 
 impl Drop for Sandbox {
@@ -451,7 +466,8 @@ fn tiny_project(history: &History, unloadable: bool) {
         "knowledge-architect.toml",
         &format!(
             "[project]\nname = \"tiny\"\ncomponents = []\n{unknown}\n\
-             [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n"
+             [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n\n\
+             [agents]\nharness = []\n"
         ),
     );
     history.write(
@@ -1747,9 +1763,15 @@ fn a_stray_file_in_the_installers_namespace_stops_the_check_and_the_install_remo
             (".claude/skills/project-own/SKILL.md", "# Project skill\n"),
         ],
     );
+    sandbox.serve_claude();
     let (out, stderr, code) = sandbox.run(&["check"]);
     assert_eq!(code, 1, "{out}{stderr}");
-    assert!(out.contains("phase 2: 1 finding(s)"), "{out}");
+    // The stray file, and each shipped file the copy does not hold yet.
+    let expected = format!(
+        "phase 2: {} finding(s)",
+        knowledge_architect_agent_skills::FILES.len() + 1
+    );
+    assert!(out.contains(&expected), "{out}");
     assert!(
         out.contains(".claude/agents/knowledge-architect-stray.md  this file sits in the installer's namespace"),
         "{out}"
@@ -1783,6 +1805,14 @@ fn commits_does_not_compare_installed_files_and_check_does() {
     let history = History::new("commit-installed");
     tiny_project(&history, false);
     let base = history.commit("The project is created\n");
+    // The harness is declared after the base commit has generated the indexes: `index` refuses
+    // while the shipped files are missing, so the indexes are not regenerated after this.
+    let manifest = std::fs::read_to_string(history.dir.join("knowledge-architect.toml"))
+        .expect("the manifest");
+    history.write(
+        "knowledge-architect.toml",
+        &manifest.replace("harness = []", "harness = [\"claude\"]"),
+    );
     history.write(
         ".claude/agents/knowledge-architect-older.md",
         "an installed file of another version\n",
@@ -1811,11 +1841,7 @@ fn no_harness_owes_no_claude_md_and_installs_nothing() {
     );
     let manifest =
         std::fs::read_to_string(sandbox.path("knowledge-architect.toml")).expect("the manifest");
-    std::fs::write(
-        sandbox.path("knowledge-architect.toml"),
-        format!("{manifest}\n[agents]\nharness = []\n"),
-    )
-    .expect("the manifest is rewritten");
+    assert!(manifest.contains("[agents]\nharness = []\n"), "{manifest}");
     std::fs::remove_file(sandbox.path("CLAUDE.md")).expect("the root CLAUDE.md is removed");
     sandbox.stage();
     let (out, stderr, code) = sandbox.run(&["check"]);
@@ -1826,6 +1852,48 @@ fn no_harness_owes_no_claude_md_and_installs_nothing() {
     assert!(sandbox
         .path(".claude/agents/knowledge-architect-kept.md")
         .exists());
+}
+
+/// The claim: the binary hands the check and the install the files this version ships. Before
+/// the install, the check reports each one missing; the install writes each, rendered with the
+/// project's command, here the default; then the check passes. Per
+/// `design@core@owned-namespace-check`. Rendering with a declared command is a unit test of
+/// `agents`. Mutations: handing `Gathered` an empty set instead of
+/// `agents::shipped` lets the first check pass; handing the install an empty set writes nothing.
+#[test]
+fn the_check_and_the_install_receive_the_shipped_set() {
+    let files = knowledge_architect_agent_skills::FILES;
+    assert!(
+        !files.is_empty(),
+        "this version ships no file, so the test proves nothing"
+    );
+    let sandbox = Sandbox::new("shipped-set", "minimal");
+    sandbox.serve_claude();
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    assert!(
+        out.contains(&format!("phase 2: {} finding(s)", files.len())),
+        "{out}"
+    );
+    for (rel, _) in files {
+        assert!(out.contains(rel), "{rel} is not reported missing:\n{out}");
+    }
+    let (out, stderr, code) = sandbox.run(&["install-agent-skills"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    for (rel, template) in files {
+        assert!(out.contains(&format!("wrote    {rel}")), "{out}");
+        let installed = std::fs::read_to_string(sandbox.path(rel)).expect("an installed file");
+        assert_eq!(
+            installed,
+            template
+                .replace("{{command}}", "klarch")
+                .replace("\r\n", "\n"),
+            "{rel}"
+        );
+    }
+    sandbox.stage();
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 0, "{out}{stderr}");
 }
 
 /// Every file under `dir` with its bytes, `.git` left out.

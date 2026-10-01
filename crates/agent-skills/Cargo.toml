@@ -7,4 +7,4 @@ license.workspace = true
 repository.workspace = true
 keywords.workspace = true
 # What the published package ships, as a whitelist.
-include = ["src/**", "Cargo.toml", "README.md", "LICENSE-MIT", "LICENSE-APACHE"]
+include = ["src/**", "build.rs", "content/**", "Cargo.toml", "README.md", "LICENSE-MIT", "LICENSE-APACHE"]

@@ -4,8 +4,8 @@ Evidence that would reopen a decision about the core checker itself. **A tripwir
 to do**: it is a hypothesis about a future failure plus the response, and it leaves this file when it
 fires. What is outstanding about the tool is `path@core@docs/open-issues/` beside it.
 
-Entry shape and the movement instruction between the two files are `tracking-open-issues`. The
-standing re-entry point is the standing-state review, which re-reads every tracker file.
+Entry shape and the movement instruction between the two files are
+`knowledge-architect-tracking-open-issues`. The standing re-entry point is the standing-state review, which re-reads every tracker file.
 
 ## Guarding `design@core@git-supplies-the-walk`'s portability `##walked-count-differs-between-machines`
 
