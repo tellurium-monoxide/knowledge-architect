@@ -267,31 +267,42 @@ whole would leave a project no place for its own rows, against
 ### The primer holds only what every session needs and no installed skill delivers `##primer-limit`
 
 The primer reaches every session of every installing project, so its content test is the bound,
-not a count of lines: a line that restates a skill, or a convention of one project, does not go in
-it. The workflow targets frontier-tier models, which the design-discussion work requires, so a
-size limit would protect a reader the workflow does not serve.
+not a count of lines: it holds what every session needs and no installed skill delivers at the
+moment it is needed. A convention of one project does not go in it, and neither does a procedure a
+skill delivers when it loads. The workflow targets frontier-tier models, which the
+design-discussion work requires, so a size limit would protect a reader the workflow does not
+serve.
 
-### The primer carries the goals rule, the intent-and-claims rule, and the rule for what is met outside the task `##primer-content`
+### The primer carries the goals rule, the intent-and-claims rule, the check before diagnosing, and the rule for what is met outside the task `##primer-content`
 
-Besides the knowledge table and the list of installed skills, the primer carries three directives
-the skills rely on and no skill delivers. **The goals are the only statements assumed to come from
-the owner**: a recorded decision was reviewed, but its review can miss an implication, more often as
-agentic work grows, so a decision that conflicts with a goal goes to the owner and the goal
-prevails, per `goal@knowledge-architect@the-owner-decides`. **A design home is intent and a claim
-about the code goes stale**, so the code is checked against the first and the second is verified
-before it is relied on. **Something met outside the task** takes the first of four outcomes that
-applies: stop if it bears on the current work; fix it in a commit of its own if the diff alone
-shows the fix right; open an issue if its reason and its closing condition can be written; name it
-as dropped otherwise. A turn that met anything ends with a section listing every item and its
-outcome. The owner observed that the earlier rule, "do not fix it silently, say what you found",
-let an agent leave a small defect as one line inside a long report, where it was missed: every
-outcome now leaves a record or a listed line.
+Besides the knowledge table and the list of installed skills, the primer carries four directives
+the skills rely on and no skill delivers at the moment they apply.
+
+- **The goals are the only statements assumed to come from the owner.** A recorded decision was
+  reviewed, but its review can miss a detail or an implication, more often as the volume of agentic
+  work grows. When a decision conflicts with a goal, the likely cause is that the owner missed the
+  conflict: the goal prevails, and the conflict goes to the owner, per
+  `goal@knowledge-architect@the-owner-decides`.
+- **A design home is intent, and a claim about the code goes stale**: the code is checked against
+  the first, and the second is verified before it is relied on.
+- **Before diagnosing anything as a problem, a session checks whether it is already recorded**,
+  with the listing commands of the checker.
+- **Something met outside the task takes the first of four outcomes that applies.** If it bears on
+  the current work, stop and present it to the owner at the top of the turn, with a default. If its
+  fix is checkable from the diff alone, because it changes no behaviour, no decision and no test
+  outcome, fix it in a commit of its own. If its `Why it matters` and its `What would close it` can
+  be written, open an issue. Otherwise name it, with why it is dropped. A turn that met anything
+  ends with a section listing every item and its outcome. A one-line mention inside a long report
+  is easy to miss, as the owner observed in real sessions, so every outcome leaves a record or a
+  listed line. The owner rules that a fix under the second outcome needs no word of theirs.
 
 ### A project states its plans directory in its own rows of the knowledge table `##plans-directory-declared`
 
-The setting-up skill proposes docs/plans/ and writes the path the owner accepts as the first of
-the project's rows. A manifest key would be a checker change that nothing reads yet; it belongs to
-a structure for plan documents, `issue@core@structured-plan-documents`.
+The setting-up skill proposes docs/plans/ and writes the path the owner accepts among the
+project's rows. A manifest key would be a checker change that nothing reads yet; it belongs to a
+structure for plan documents, `issue@core@structured-plan-documents`. Nothing checks that the row
+exists, so a project whose root `CLAUDE.md` lacks it leaves the planning skill without a plans
+directory: a known limit until that structure exists.
 
 ### The routing table lists only what a project adds to an installed skill `##routing-table-shape`
 
@@ -305,10 +316,12 @@ no installed one needs no row.
 
 An installed skill is complete on its own. A project adds its conventions through its own skills,
 agents and root `CLAUDE.md`, under its own names. An installed file is compared byte for byte with
-the pinned version and overwritten by the install, so an edit to it fails the check and is lost at
-the next install; a project skill with the same base name as an installed one would load beside it,
-not replace it. Where a project skill would have to contradict an installed one, the installed text
-is wrong for that project, and the owner reports it.
+the pinned version and overwritten by the install, per `design@core@owned-namespace-check`, so an
+edit to it fails the check and is lost at the next install; a project skill with the same base
+name as an installed one would load beside it, not replace it. Where a project skill would have to
+contradict an installed one, the installed text is wrong for that project, and the owner reports
+it. A project that needs to change one instruction has no means yet:
+`issue@agent-skills@patching-an-installed-skill`.
 
 ### A project's own skills and agents carry its name as a prefix `##skill-name-prefix`
 
@@ -321,10 +334,10 @@ cannot be told apart from a plugin's.
 
 For a project that already has documentation, the setting-up skill takes an inventory of it,
 proposes a destination for each document, takes the owner's rulings, and opens one `todo` issue for
-the move. The move runs as a milestone when the owner schedules it. A migration is a decision with
-arguments of its own, such as which recorded decisions still hold, and it fits in one session only
-for a small project. The issue keeps the old documents beside the new homes listed as outstanding
-work, per `design@agent-skills@planned-work-is-an-issue`.
+the move. The move itself is a milestone of its own, written under the planning skill. A migration
+is a decision with arguments of its own, such as which recorded decisions still hold, and it fits
+in one session only for a small project. The issue keeps the old documents beside the new homes
+listed as outstanding work, per `design@agent-skills@planned-work-is-an-issue`.
 
 ### A project pins the checker exactly, and runs its pinned binary from inside the project `##exact-pin`
 
@@ -333,9 +346,9 @@ installed skills move with it. A dependency builds no executable for the project
 runs the pinned version through a small crate of its workspace whose `main` calls the library's
 command line, and any other project installs it into a directory of its own with
 `cargo install --locked --root`. A machine-wide install would give two projects on one machine one
-version, which is the problem the bundling of the skills into the checker removed. A project with an
-extension runs its own binary and does not install it under the plain name `klarch`, since two
-binaries of that name on the path run whichever comes first, per `design@core@declared-command`.
+version, which is what bundling the workflow into the checker avoids, per
+`design@knowledge-architect@binary-bundles-workflow`. A project with an extension runs its own
+binary under a name of its own, per `design@core@declared-command`.
 
 ### The setting-up skill recommends one gates command, and ships no code for it `##gates-convention`
 

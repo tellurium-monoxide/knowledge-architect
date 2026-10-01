@@ -17,9 +17,10 @@ Checks over the structure of a project's own skills. Long term; the shape is ope
 
 ### Why it matters
 
-The workflow this project plans to ship asks a project to name its skills with its own prefix and
-to route each shipped skill to the project skills that extend it. A skill that breaks either is
-found by review or not at all.
+The installed workflow asks a project to name its skills with its own prefix, per
+`design@agent-skills@skill-name-prefix`, and to route each installed skill to the project skills
+that add to it, per `design@agent-skills@routing-table-shape`. A skill that breaks either is found
+by review or not at all.
 
 ### What would close it
 

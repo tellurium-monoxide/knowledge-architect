@@ -17,3 +17,9 @@ second drifts from the first. Its refutation rests on what the owner observed ov
 implementers force such a plan's untested snippets into the code at any cost and copy their
 comments verbatim. That observation cannot be derived again in one discussion round, and workflows
 that write such plans are in common use, so the alternative will be proposed again.
+
+**Reporting a finding met outside the task without recording it** ("finish the task, then say what
+you found") — lost to `design@agent-skills@primer-content`. `live`. The owner observed, over real
+sessions, that an agent left a small defect neither fixed nor recorded, as a one-line mention inside
+a long report, where it is easy to miss. That observation cannot be derived again in one discussion
+round, and the rule it defeats is the common one.

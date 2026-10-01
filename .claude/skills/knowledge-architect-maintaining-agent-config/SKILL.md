@@ -36,8 +36,8 @@ reaches a session**.
 | place | when it reaches a session | what it holds |
 | --- | --- | --- |
 | root `CLAUDE.md` | every session, unconditionally | the knowledge every task needs |
-| a scoped `CLAUDE.md` | when a session reads or edits a file in that directory, or opens it | the contracts and traps of one Component |
-| an issue directory | when a session looks for open issues | what is outstanding in that Component or location |
+| a scoped `CLAUDE.md` | when a session reads, writes or edits a file in that directory, or opens it | the contracts and traps of one Component |
+| an issue directory | when a session searches for open issues: before recording a new one, or when asked to fix one | what is outstanding in that Component or location |
 
 ### Instructions
 
@@ -53,11 +53,12 @@ reaches a session**.
 Decided in order; the first match wins.
 
 1. **Is it needed by every activity?** Then it is **baseline**: root `CLAUDE.md`. **Reading is
-   always baseline**, because a session cannot know what it will read before reading it. **Producing
-   is an activity, unless the producing is itself universal**, as committing is: every session
-   commits.
+   always baseline**, because a session cannot know what it will read before reading it, and so
+   cannot know which skill it would have needed. **Producing is an activity, unless the producing
+   is itself universal**, as committing is: every session commits.
 2. **Otherwise, does it produce a nameable artifact?** Then it is an **activity**, and it owns a
-   skill. The discriminator is artifact versus property, not locality: a property that must hold in
+   skill. The discriminator is artifact versus property, not locality: work that produces one work
+   list across every file it touches is still an activity, while a property that must hold in
    every file produces no artifact and is baseline.
 3. **Is it shared by two or more activities but not all?** Then it is a **sub-activity**: its own
    skill, named as a prerequisite by each activity that needs it. The installed recording, tracking
@@ -79,15 +80,17 @@ Decided in order; the first match wins.
 - When two skills legitimately both apply to one change, say so, and in what order.
 
 **One skill covers one activity.** A description naming several unrelated scopes is matched by no
-task, so it loads for none. Enumerating the facets of one activity is the opposite move and is
+task, so it loads for none. The cause looks like the wording of the description, but the content
+was scoped wrong before the description was written: fix the scope, not the wording. Enumerating the facets of one activity is the opposite move and is
 correct. The test is whether a single task can want all of them at once.
 
 **A skill is self-sufficient.** It restates every piece of knowledge its activity needs, such as a
 build command, a dispatch table or a common trap, even where it is stated elsewhere. It points only
 to **task material**, data that varies per instance, and to **a named prerequisite skill**, one
-complete instruction. The test, per pointer: could a session complete this activity correctly
-without opening it? If not, the content belongs in the skill. Each pointer is an extra read a
-session must remember, and the more there are, the less likely all are followed.
+complete instruction rather than a fragment to reassemble. The test, per pointer: could a session complete this activity correctly
+without opening it? If not, the content belongs in the skill. What this guards against is
+dilution rather than length: each pointer is an extra read a session must remember, and the more
+there are, the less likely all are followed.
 
 ## 4. The two tables of the root CLAUDE.md
 
@@ -97,9 +100,12 @@ goes. The project's root `CLAUDE.md` carries the rows that are the project's alo
 of its own: its plans directory, its changelog, a register it declares, a directory with a
 convention of its own. The last row of the combined table is **ask the owner before writing it
 anywhere**. It is for a statement with no home, not for a choice between two: when two rows could
-fit, pick one, say which, and carry on. **Each answer ends as a new project row**, so the fallback
-limits itself: if it fires often, the table is wrong. A project row never restates or contradicts a
-row of the primer; one that would is a question for the owner.
+fit, pick one, say which, and carry on. A genuine gap means the table is incomplete, and what the
+table holds is a decision about the shape of the configuration, which is the owner's. **Each answer
+ends as a new project row**, so the fallback limits itself: if it fires often, the table is what
+needs changing, rather than the entry. A project row may refine a row of the primer with what is
+the project's own, such as the path of its plans directory; it never contradicts one, and a row
+that only repeats one is removed.
 
 **The routing table.** One row per installed skill or agent that a project skill or agent adds to:
 

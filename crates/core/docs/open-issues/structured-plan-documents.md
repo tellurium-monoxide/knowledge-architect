@@ -23,7 +23,9 @@ stated when the planning skill was designed; nothing of it is decided:
 - each carries its own items, under registers of their own: design decisions taken and not yet
   harvested, a milestone's steps, acceptance criteria;
 - those items are citable, under reference rules of their own. For instance, an item of a spec
-  cannot be referenced from outside the plans directory.
+  cannot be referenced from outside the plans directory;
+- the plans directory declared in the manifest, which today is a row of the project's knowledge
+  table, per `design@agent-skills@plans-directory-declared`.
 
 The shape the planning skill fixes today, so that such a structure reads existing documents without
 rewriting them, is `design@agent-skills@structure-ready`:

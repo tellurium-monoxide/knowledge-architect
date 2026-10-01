@@ -392,3 +392,10 @@ and no second surface, and the feature gated nothing before.
 **A default body that does nothing on every hook added to the extension traits** — lost to
 `design@core@trait-defaults`. `live`. A judging hook defaulted to nothing turns a compile error
 into a check that silently does not run, with exit 0.
+
+**The primer delivered by a session-start hook that prints it** — lost to
+`design@core@owned-namespace-check`, which delivers it by an import line in the root CLAUDE.md.
+`live`. A hook needs the installer to edit the user's settings file, which belongs to the user,
+and it needs a shell. It is kept because a doubt remains: the import is verified for the main
+session and a subagent of the `claude` harness, and another context or harness might not follow
+it.

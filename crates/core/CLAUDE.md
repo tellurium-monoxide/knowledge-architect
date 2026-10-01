@@ -60,8 +60,8 @@ the tool or in the fixture.
 of the skills, so a mock serving the `claude` harness would need the installed copy of that set,
 and would change with it. `unsound` keeps the default harness for its planted file in the
 installer's namespace: its unit tests hand the check an empty shipped set, and the binary run over
-it only has to stop at phase 2, whatever else phase 2 lists. A test about the installed set declares the harness in its own copy, and imports the primer from
-its root CLAUDE.md, as `Sandbox::serve_claude` in `path@core@tests/binary.rs` does.
+it only has to stop at phase 2, whatever else phase 2 lists. A test about the installed set
+declares the harness in its own copy, and imports the primer from its root CLAUDE.md, as `Sandbox::serve_claude` in `path@core@tests/binary.rs` does.
 
 **A test about commit messages builds its own project.** `commits` fails every commit whose tree
 carries a finding, the last one included, so each commit a test makes has a tree with none,

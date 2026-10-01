@@ -279,20 +279,38 @@ owes, each with its repair. So the setting-up skill is reached after that bootst
 | thread | state | decision |
 | --- | --- | --- |
 | knowledge-table-home | approved | the workflow's rows of the knowledge table ship in the primer; the project's own rows sit in its root CLAUDE.md. Owner: "3 looks good" |
-| primer-limit | approved | no line limit; the content test: the primer holds only what every session needs and no installed skill delivers. Owner: "I don't think there is a need for such a strict limit … design work is meant for higher tiers of LLMs" |
-| primer-content | approved | the goals as the only statements assumed to be the owner's, with the conflict rule, on the owner's refinement: "goals are the only thing that can be assumed as coming from the owners of the project … if a recorded decision conflicts with a goal, it is likely to be that the owners missed it"; intent and claims; the check before diagnosing; something met outside the task takes four cases, and a turn ends with a "Met outside the task" section. The owner's observation: an agent "would find a fairly small issue, decide it was too small to create an open issue entry about it, but not fix it either, instead reporting it in conversation as a short oneliner". On test 2: "as long as it does passes the test you wrote, I have no problem with that level of autonomous fix" |
+| primer-limit | approved | no line limit; the content test: the primer holds only what every session needs and no installed skill delivers. It reverses the 40-line limit approved in the first discussion (4.7); the agent's raise to about 70 lines lost to it. Owner: "I don't think there is a need for such a strict limit on the PRIMER size. Though that might be because I'm used to using frontier level agents … The decisive point I have on this is that I doubt a mid tier LLM would be able to work properly with the complex workflow of this project. design work is meant for higher tiers of LLMs", "raising the limit to 70 is inconsequential IMO, and it could be raised significantly higher without risk. I did not even remember a limit had been setup for this", and the closing word: "Agreed on primer-limit with this shape, no limit, only content test." |
+| primer-content | approved | the goals as the only statements assumed to be the owner's, with the conflict rule, on the owner's refinement: "goals are the only thing that can be assumed as coming from the owners of the project … if a recorded decision conflicts with a goal, it is likely to be that the owners missed it (or failed to understand the implications)"; intent and claims; the check before diagnosing; something met outside the task takes four cases, and a turn ends with a "Met outside the task" section. The owner's observation: an agent "would find a fairly small issue, decide it was too small to create an open issue entry about it, but not fix it either, instead reporting it in conversation as a short oneliner". On test 2: "as long as it does passes the test you wrote, I have no problem with that level of autonomous fix" |
 | plans-directory-declared | approved | a row of the project's knowledge table, default docs/plans/; a manifest key belongs to the structured-plan issue |
 | routing-table-shape | approved | installed skill or agent → the project skills that add to it; no "read it when" column. Owner: "It feels like duplication" |
-| adopting-existing-docs | approved | an inventory, a proposal, the owner's rulings, and one todo issue for the move (the premortem's C4 clause); the move is a milestone |
+| adopting-existing-docs | approved | an inventory, a proposal, the owner's rulings, and one todo issue for the move (the premortem's C4 clause); the move is a milestone. The owner: "Might take a while until I find an opportunity to test it though." |
 | pinned-binary-wording | approved | 4.5's default: both ways presented |
 | skill-name-prefix | finding accepted | this repository's own skills take the prefix klarch-. The owner: the installed skills do not mention the case, "The collision risk outside of this exact project is ridiculously small. This would only add noise to every project that uses this workflow" |
 
-No tripwire was recorded (owner: "Record no tripwires"). The premortem's causes, each with its
-guard: a primer row changed by an upgrade and contradicted by a project row; a behaviour change
-fixed under test 2; the primer growing; an inventory never followed by a move (converted into the
-todo clause); a root CLAUDE.md with no plans directory row.
+Ruled out in session C:
+
+| alternative | lost to | why it lost |
+| --- | --- | --- |
+| setting-up writes the whole knowledge table into the project's root CLAUDE.md | knowledge-table-home | the copy keeps the old routing after an upgrade that changes it, against one-workflow |
+| the whole knowledge table ships as an installed file | knowledge-table-home | a file compared byte for byte leaves a project no place for its own rows, against overlay-by-separate-skills |
+| the knowledge table in a second shipped file the primer points at | knowledge-table-home | every session would perform one more read, the pointer cost maintaining-agent-config warns about |
+| a primer limit raised to about 70 lines | primer-limit | a count bounds the wrong thing; the content test bounds what goes in |
+| test 2 as "propose the fix in the section" rather than fixing it | primer-content | the owner: "Test 2 letting an agent fix something without my word is what I want" |
+| "finish the task, then say what you found", the earlier rule | primer-content | the owner's observation of real sessions; recorded in agent-skills' rejected alternatives |
+
+Added by the agent while writing the primer and not put to the owner by name (a **default**): its
+paragraph on when to write a reference, which carries this repository's rule into every project.
+
+No tripwire was recorded (owner: "Record no tripwires"). The premortem's causes and their guards:
+a primer row changed by an upgrade and contradicted by a project row (maintaining-agent-config
+re-reads the project's rows at an upgrade, and the routing reviewer reads both tables); a behaviour
+change fixed under test 2 (its own commit, listed in the turn's section, read by the branch's
+review); the primer growing (the content test); an inventory never followed by a move (converted
+into the todo clause); a root CLAUDE.md with no plans directory row (setting-up writes it and
+nothing checks it, a known limit recorded in plans-directory-declared).
 
 ## 4. The decided design
+
 ### 4.1 Repository layout
 
 ```
@@ -910,7 +928,7 @@ name and in its frontmatter name. The tables give the base names.
 | --- | --- | --- |
 | standing-state-reviewer | thaum's | thaum's locations and the slices.md section removed; it reads the acceptance criteria of plan documents (3.6) and reports work listed in two places |
 | decision-record-reviewer | thaum's | the restated thaum arms replaced by a pointer to the installed recording-a-decision; predicates added for the standing argument, a head written before its work lands, a tripwire without the owner's word, and a commit message's claims |
-| routing-reviewer | thaum's | the section names of thaum's root CLAUDE.md replaced by the project's knowledge table, which setting-up writes; thaum's predicate on consumer-facing statements dropped, as a convention of a project; a reference from outside the plans directory into a plan document, and the file kinds the checker does not read, added |
+| routing-reviewer | thaum's | the section names of thaum's root CLAUDE.md replaced by the knowledge table: the primer's rows and the project's rows in its root CLAUDE.md; thaum's predicate on consumer-facing statements dropped, as a convention of a project; a reference from outside the plans directory into a plan document, and the file kinds the checker does not read, added |
 | code-claims-reviewer | thaum's | "slice document" becomes "spec or milestone document" |
 | cold-implementer-reviewer | thaum's | the same |
 | transcript-conformity-reviewer | new, step 5 PR 2 | reads a discussion's transcript and checks a document against the owner's words (3.6) |
@@ -919,8 +937,9 @@ Not installed, and staying in thaum: developing, recording-an-interpretation, bu
 rules-reviewer. A future creating-a-component skill is an open issue.
 
 **The primer.** PRIMER.md has no line limit; it holds only what every session needs and no
-installed skill delivers (3.7). It states how to read a goal against a design head, names the installed skills
-and when each applies, and points at them without restating them.
+installed skill delivers at the moment it is needed (3.7). It carries the goals rule, intent and
+claims, the check before diagnosing, the four cases for what is met outside the task, the
+workflow's rows of the knowledge table, and one line per installed skill.
 
 **Order inside step 5.** The forked skills name the design-discussion skill, which step 6
 creates. Until step 6 they name it by its final installed name,
@@ -1313,7 +1332,9 @@ skill and comes before the PR that needs it.
    review, conformance-before-every-merge. The root CLAUDE.md
    routes reviews to the installed skill and agents.
 5. **Session C, then PR 4: configuration.** setting-up, maintaining-agent-config, and the primer
-   with its import line in the root CLAUDE.md, whose skills table becomes the routing table.   maintaining-agent-config moves here from the planning group because it keeps the table   setting-up writes. This repository's own project skills start here, and one of them carries the
+   with its import line in the root CLAUDE.md, whose skills table becomes the routing table.
+   maintaining-agent-config moves here from the planning group because it keeps the table
+   setting-up writes. This repository's own project skills start here, and one of them carries the
    review predicate thaum's routing-reviewer had and the shipped one dropped: a consumer-facing
    decision is recorded like any other, and no decision is argued on the grounds that changing it
    later would be breaking (the root CLAUDE.md's Release status). Session C is **done**, 3.7.
@@ -1325,11 +1346,16 @@ skill and comes before the PR that needs it.
    gains the interim rule of cross-project-references. Harvest in the agent-skills design home:
    knowledge-table-home, primer-limit, primer-content, plans-directory-declared,
    routing-table-shape (absorbing routing-table), overlay-by-separate-skills, skill-name-prefix,
-   adopting-existing-docs, exact-pin (absorbing pinned-binary-wording and the extension rule of
-   declared-command), gates-convention, goals-required, relying-on-the-checker (the interim rule of
-   cross-project-references); in the root design home, klarch-prefix. installed-files-committed
-   and primer-by-import need no entry of their own: the core's owned-namespace-check states both
-   sides. The issues on skill patching and on creating a Component are opened. The issues on skill patching and on creating a component are opened.
+   adopting-existing-docs, exact-pin (absorbing pinned-binary-wording), gates-convention,
+   goals-required, relying-on-the-checker (the interim rule of cross-project-references); in the
+   root design home, klarch-prefix. installed-files-committed and primer-by-import need no entry
+   of their own: the core's owned-namespace-check states both sides. The issues on skill patching
+   and on creating a Component are opened. From the review: the primer delivered by a hook enters
+   the core's rejected alternatives on its fourth test, the doubt of premortem P2, and the earlier
+   rule for a finding met outside the task enters agent-skills' on its third. Of the criteria of
+   section 2, this PR serves self-hosted (this repository installs and imports its own workflow),
+   owner-intent and nothing-compiled-in (goals-required, overlay-by-separate-skills, and the
+   reviews of the shipped text); one-workflow waits on step 6.
 6. **Session D, then PR 5:** setting-goals and retrospective.
 7. **PR 6:** the setting-goals skill is run with the owner on every component of this repository,
    as its first real use (approved). A change to goals is the owner's, and needs no review.

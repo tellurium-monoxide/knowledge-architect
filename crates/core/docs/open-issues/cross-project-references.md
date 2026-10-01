@@ -23,7 +23,7 @@ design homes. Nothing about the shape is decided.
 It would extend `design@core@a-slug-belongs-to-a-component`, under which every reference names an
 anchor of its own project. The owner doubts there is a real need: a design decision of a project
 that relies on the checker states that it relies on the checker working as intended, and needs no
-pointer into the checker's design. thaum meets the question first: when it moves onto the
+pointer into the checker's design, per `design@agent-skills@relying-on-the-checker`. thaum meets the question first: when it moves onto the
 published checker, its documents hold over a hundred references into the checker's decisions
 (113 lines in 35 files outside the checker, counted on thaum's main at e98e296), and its
 migration rewrites them as prose or drops them.

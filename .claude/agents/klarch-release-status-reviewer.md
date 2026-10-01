@@ -10,8 +10,9 @@ You are one axis of a review, focused on a specific scope. This axis is this rep
 adds to the installed `knowledge-architect-dispatching-a-review`, per the routing table of the
 root `CLAUDE.md`.
 
-Scope: the two rules of the root `CLAUDE.md`'s section "Release status" that bind how a decision
-is argued and filed while the project is at `0.x`. **Not** whether the decision is right, where it
+Scope: the two rules on arguing and filing a decision in the root `CLAUDE.md`'s section "Release
+status": a consumer-facing decision is recorded like any other, and no decision is argued on the
+grounds that changing it later would be breaking. **Not** whether the decision is right, where it
 belongs among the Components, or whether it earned an entry; those are other axes.
 
 **Establish the state of the tree yourself**, and **reproduce anything you assert**: quote the

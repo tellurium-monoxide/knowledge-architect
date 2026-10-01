@@ -28,8 +28,11 @@ skip-files = []
 exclude = []
 ```
 
-After `klarch install-agent-skills`, `cargo klarch check` lists every document the project still
-owes, each with its repair. That list is this skill's work list.
+After the first install, `cargo klarch check` lists every document the project still owes, each with
+its repair. That list is this skill's work list.
+
+The checker needs `git` 2.36 or newer, and a project inside a git repository. Building it needs a
+Rust toolchain, whatever the project's own language.
 
 **Every step that writes a durable statement on the owner's behalf is shown to the owner first**:
 the Components, the goals, the place of each existing document. The owner rules; the agent proposes.
@@ -43,7 +46,7 @@ them.
 - **A Rust project** adds a small crate to its workspace whose `main` calls the library's command
   line, depends on `knowledge-architect = "=<version>"`, and runs it through a cargo alias, for
   instance `cargo klarch`. The `=` pins exactly; without it, `"<version>"` accepts every later
-  version below the next minor one. `Cargo.lock` records the exact version, and `--locked` turns
+  version below the next breaking one. `Cargo.lock` records the exact version, and `--locked` turns
   any change to it into a failure. A dependency alone builds no executable for the project:
   `cargo run -p` runs only the project's own packages, which is why the small crate exists.
 - **Any other project** installs the binary into a directory of its own, ignored by git:
@@ -96,10 +99,10 @@ Every Component carries the same documents. `cargo klarch check` names each one 
 | --- | --- |
 | `README.md` | how a user uses the Component |
 | `CLAUDE.md` | the contracts and traps a developer needs, true of the code as it stands |
-| `docs/goals.md` | what the Component is for: at least one goal, under `knowledge-architect-setting-goals` |
-| `docs/design.md` | how it is built and why; it may hold no entry yet |
+| `docs/goals.md`, or `docs/goals/` with a `README.md` | what the Component is for: at least one goal, under `knowledge-architect-setting-goals` |
+| `docs/design.md`, or `docs/design/` with a `README.md` | how it is built and why; it may hold no entry yet |
 | `docs/rejected-alternatives.md` | what lost, and why; it may hold no entry yet |
-| `docs/tripwires.md` | evidence that would flip a decision; it may hold no entry yet |
+| `docs/tripwires.md`, or `docs/tripwires/` with a `README.md` | evidence that would flip a decision; it may hold no entry yet |
 | `docs/open-issues/` | one file per outstanding item, a hand-written `README.md` and an `index.md` that `cargo klarch index` generates |
 
 Each document opens with a short introduction saying what it holds and what it does not. An empty

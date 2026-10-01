@@ -190,5 +190,6 @@ name as a prefix, per `design@agent-skills@skill-name-prefix`. Here that name is
 `knowledge-architect`, which is the installer's namespace: a project skill named after it would be
 reported as unshipped by `design@core@owned-namespace-check`, and removed by the install. So this
 repository's own skills and agents take the prefix `klarch-`, the binary's name. The installed
-skills do not mention the case: the collision arises only in this repository, and a rule for it in
-the shipped text would be read by every installing project for nothing.
+skills do not mention the case: outside this repository the collision is unlikely, and a rule for
+it in the shipped text would be read by every installing project for a risk the owner judges very
+small.

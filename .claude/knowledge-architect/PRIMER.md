@@ -9,7 +9,7 @@ delivers. The project's own rules are in its root `CLAUDE.md`, beside this prime
 ## Goals bind; decisions bind as a presumption
 
 **The goals are the only statements assumed to come from the owner.** Each Component states them
-in its `docs/goals.md`, one heading per goal. A recorded decision was reviewed, but its review can
+in its goals home, `docs/goals.md` or `docs/goals/`, one heading per goal. A recorded decision was reviewed, but its review can
 miss a detail or an implication, more often as the volume of agentic work grows. A decision binds
 as a presumption, which a better argument may rebut, and reversing one is an ordinary move with a
 procedure (`knowledge-architect-recording-a-decision`). **When a decision conflicts with a goal,
@@ -47,19 +47,22 @@ for the owner's ruling, or dropped (with the reason). A mention inside other pro
 **Every durable decision has exactly one home.** A second mention of a decision is a reference to
 it, never a copy, because a copy starts drifting the moment it is written. **A directive is
 different**: it is restated wherever it has to be delivered, with a reference to its home beside
-it, and where the two disagree the restatement is the defect.
+it, and where the two disagree the restatement is the defect. A restatement is never replaced by a
+reference on one-home grounds: whether a directive is needed where it is restated is the owner's
+decision.
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
-| what the project, or one Component, is for | that Component's `docs/goals.md` (the project's root is a Component) | the owner abandons the goal |
+| what the project, or one Component, is for, and what would show it achieved | that Component's goals home, `docs/goals.md` or `docs/goals/` (the project's root is a Component) | the owner abandons the goal |
 | how the project or a Component is built, and why | that Component's design home, `docs/design.md` or `docs/design/` | the design changes: the entry is rewritten in place |
-| an alternative that lost, and why | that Component's `docs/rejected-alternatives.md` | never; a reversal moves the old winner into it |
+| the engineering alternative that lost, and why | that Component's `docs/rejected-alternatives.md` | never; a reversal moves the old winner into it if it meets a recording test of `knowledge-architect-recording-a-decision` |
 | what is outstanding: a defect, an unexplained observation, an open question, missing work | one file in the owning anchor's issue directory, `docs/open-issues/` in a Component | the issue closes |
-| evidence that would flip a recorded decision about code that exists | the owning Component's `docs/tripwires.md` | it fires, or its decision is gone |
-| a contract or a trap a developer needs, true of the code as it stands | the scoped `CLAUDE.md` nearest the code | the contract changes |
-| how a user uses a Component | its `README.md` | the contract changes |
+| evidence that would flip a recorded decision about code that exists | the owning Component's tripwires home, `docs/tripwires.md` or `docs/tripwires/` | it fires, or its decision is gone |
+| a contract or a trap that only a developer needs, true of the code as it stands | the scoped `CLAUDE.md` nearest the code | the contract changes or the trap is removed |
+| how a user can use a Component, and what to respect | its `README.md` | the contract changes |
+| directions about what to find where in a directory | a `README.md` in that directory | the directory's content changes |
 | what a caller must respect to use a type or a function | that item's doc comment | its contract changes |
-| why a piece of code is shaped the way it is | an inline comment at that code | that code changes |
+| why a piece of code is shaped the way it is, and where that holds | an inline comment at that code | that code changes |
 | work that is designed and not built: a spec or a milestone | the project's plans directory, named in its root `CLAUDE.md` | the work lands |
 | how to perform an activity | the owning skill | the procedure changes |
 | **none of these, nor a row of the project's own** | **ask the owner before writing it anywhere** | the table gains the row |
@@ -69,9 +72,12 @@ the head of the decision it supports, the entry of the defect it characterises, 
 threshold it is, or else the commit message that took it.
 
 **A reference is written wherever the text would have to be revisited if the entry it names
-changed**: a design head names the goal it derives from, an issue names the decision it strains, a
-code comment names the issue it exists because of, a tripwire names its decision, a commit message
-names every entry it opens, closes or reverses. A reference is one backticked span,
+changed**: a design head names the goal it derives from and a decision of another Component it
+depends on; an issue names the decision it strains and the goal it threatens; a guard, a
+workaround, a stub or a test that exists because of an issue names it in the comment at the site; a
+tripwire names its decision; a rejected alternative names the decision it lost to; a commit message
+names every entry it opens, closes, reverses or argues from. A reference whose entry's change would
+leave the text unaffected is not written. A reference is one backticked span,
 `<kind>@<anchor>@<id>`; an illustration that must not resolve writes a placeholder in angle
 brackets. The checker reads Markdown and Rust source; a reference anywhere else is found by grep.
 

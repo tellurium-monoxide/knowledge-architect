@@ -186,13 +186,15 @@ this, and they pay for the drift it admits:
   needed at a point of delivery is a delivery decision, and those belong to the owner of the
   configuration.
 
-The workflow's rows of the knowledge table are in the primer. This repository's own rows:
+The workflow's rows of the knowledge table are in the primer, per
+`design@agent-skills@knowledge-table-home`. This repository's own rows, each refining or adding to
+the primer's:
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
 | descriptions of unbuilt work and the plans to build it: specs and milestones. Provisional, carries no slug | the plans directory, `path@knowledge-architect@docs/plans/` | the planned work lands |
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
-| how a user can use a published crate | the Component's `path@*@README.md`, which is also the crates.io page; it points to docs.rs for the library API | the contract changes |
+| how a user can use a published crate, beyond the primer's README row | its `path@*@README.md` is also its crates.io page, and points to docs.rs for the library API | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
 | what changed in each release, per surface | CHANGELOG.md at the root, one section per version | never: append-only |
 | a finding established outside this project that a decision here leans on | `docs/grounding/<subject>.md` in the Component the decision belongs to | the source is superseded, or a better one lands |
@@ -246,11 +248,11 @@ list of what references an entry: `show` computes it.
 documents and nothing else: a spec for the work of one PR, a milestone directory for work across
 several PRs. They are committed on the work's branch. A correction is applied in place, so a
 partial reading cannot mislead. A plan document is deleted in the commit that completes its last
-harvest, and that commit's message names its path. This is a restatement; its homes are `design@agent-skills@document-vocabulary` and
-`design@agent-skills@spec-leaves-at-landing`, and the procedure is the installed
-`knowledge-architect-planning`. The milestone document of v0.1 is one file, written before
-`design@agent-skills@milestone-is-a-directory`, and it leaves in the release commit of its step 7,
-as its head says.
+harvest, and that commit's message names its path. This is a restatement; its homes are
+`design@agent-skills@document-vocabulary` and `design@agent-skills@spec-leaves-at-landing`, and
+the procedure is the installed `knowledge-architect-planning`. The milestone document of v0.1 is
+one file, written before `design@agent-skills@milestone-is-a-directory`, and it leaves in the
+release commit of its step 7, as its head says.
 
 ## Verify before relying on anything
 
@@ -349,13 +351,16 @@ not of what should be done.
 - **Do not spread non-conformance while working around it.** Starting from an existing document or
   entry copies its defects with it. Read what you copied against the instructions before extending
   it.
-- **If it goes directly against the current task, or overlaps a place you have to edit, fix it in
-  the same change.** Report the fix to the user at the end of the task. If the fix is not obvious,
-  stop and ask the user.
-- **If it is orthogonal to the task at hand, it takes the four cases of the primer's "Something met
-  outside the task"**: stop if it bears on the current work, fix it in a commit of its own if the
-  diff alone shows the fix right, open an issue if its `Why it matters` can be written, and name it
-  as dropped otherwise. The turn ends with its "Met outside the task" section.
+- **Non-conformance met outside the task takes the first of the primer's four cases that
+  applies.** This is a restatement; its home is `design@agent-skills@primer-content`.
+  1. It bears on the current work: stop and present it to the owner at the top of the turn, with a
+     default.
+  2. Its fix is checkable from the diff alone, because it changes no behaviour, no decision and no
+     test outcome: fix it in a commit of its own.
+  3. Its `Why it matters` and its `What would close it` can be written: open an issue.
+  4. Otherwise: name it, with why it is dropped.
+
+  The turn ends with a "Met outside the task" section listing every item and its outcome.
 
 ## Verify mechanically
 
@@ -441,6 +446,7 @@ dispatched as that agent, and any other axis as a fresh general-purpose subagent
 
 **This repository's own skills and agents take the prefix `klarch-`**, not the project's name: a
 name beginning with `knowledge-architect-` is the installer's, and the install would delete it.
+This is a restatement; its home is `design@knowledge-architect@klarch-prefix`.
 
 **The routing table**: what this repository adds to an installed skill or agent.
 

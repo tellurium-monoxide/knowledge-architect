@@ -60,8 +60,9 @@ yours to resolve by reading, and they are where this axis's real failures surviv
 ## 2. The predicates
 
 Each has a named consequence when the answer is wrong. The table they are judged against is the
-project's knowledge table, in its root `CLAUDE.md`, which maps each kind of statement to its one
-home and reaches every session including yours. Read it before judging.
+knowledge table, which maps each kind of statement to its one home: the workflow's rows in the
+installed primer, which the root `CLAUDE.md` imports, and the project's own rows in the root
+`CLAUDE.md`. Read both before judging.
 
 **Does an argument have two homes?** What is bound is the *why*: an argument, a losing argument, the
 evidence a decision rests on. Added to a second document it becomes a copy, and the copy a reader

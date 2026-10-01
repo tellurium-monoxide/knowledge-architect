@@ -10,8 +10,9 @@
 //!
 //! # Who uses this library
 //!
-//! A project that needs no check of its own runs the `klarch` binary and never names this
-//! library. The library is for a project with a subject of its own, such as quotes that must
+//! A project that needs no check of its own runs the `klarch` binary. A Rust project that pins the
+//! checker in its own workspace builds that binary itself, as the example below with no
+//! extension. The library is otherwise for a project with a subject of its own, such as quotes that must
 //! match a pinned corpus. Such a project writes an **extension**: a set of checks, the manifest
 //! tables they read, and the files they generate. It compiles the extension into a binary of its
 //! own, which runs every command of `klarch` unchanged and the extension's checks beside the
