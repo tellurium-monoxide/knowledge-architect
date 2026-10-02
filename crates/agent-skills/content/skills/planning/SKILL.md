@@ -261,8 +261,8 @@ finds it there.
 
 ## 8. Reviews of a plan document
 
-A plan document is committed on its branch first, and that commit is what the reviewers read; each
-repair is a further commit. It is read again after a revision that changes a decided shape (an
+A plan document is committed on its branch first, and that commit is what the reviewers read; a
+repair lands after it, as a further commit or folded where `knowledge-architect-review` says. It is read again after a revision that changes a decided shape (an
 audit applied in place is not one). Its reviewers are fresh, and did not witness the
 discussion. **Fresh, never a fork**: a fork inherits the discussion and reads the document as its
 author. Dispatch them through `knowledge-architect-review`, with the invariants that

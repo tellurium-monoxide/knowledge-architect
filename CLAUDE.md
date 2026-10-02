@@ -474,9 +474,9 @@ Linear history, no merge commits, and no direct push to main. This section is a 
 - **Every commit of the branch must pass the check under the branch tip's checker.** The
   `commits` gate judges each commit's tree with the tip's binary, and refuses a tree with no
   manifest or with findings. So a step whose intermediate trees cannot pass lands as one commit,
-  squashed before review. Review repairs are new commits after it, and each one passes, except a
-  repair that makes an earlier commit fail, such as one that changes what the checker judges: it
-  is folded into the earliest commit it repairs, per point 2.
+  squashed before review. Review repairs are new commits after it, and each one passes. A repair
+  that would leave an earlier commit failing, such as one that changes what the checker judges, is
+  folded into the earliest commit it repairs instead, per point 2.
 - **The branch writes its CHANGELOG.md entries**, in the `Next release` section, for each change
   that passes one of three tests, under the subsection of that test:
   - **Migration**: a consumer must change something in its own files; one entry per thing, saying
@@ -512,9 +512,9 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   be rewritten and force-pushed, since origin holds the old head until then. A branch that a live
   worktree has checked out is rewritten only after that worktree is removed.
 - A repair from a review is a new commit, which edits no history. The exception is a repair that
-  would leave an earlier commit failing under the branch tip's checker, which this repository's
-  constant rewriting of the checker makes common: it is folded into the earliest commit it
-  repairs, with a clean tree, and the commit that records the review says what was folded.
+  would leave an earlier commit failing under the branch tip's checker: it is folded into the
+  earliest commit it repairs, with a clean tree, and the commit that records the review says what
+  was folded.
 - To test a previous state of the project, create a worktree in a place where it pollutes
   nothing, such as the worktrees directory under .claude, which is ignored. Do not use
   `git stash` or another operation that can lose content. Remove the worktree and its branch once
@@ -535,7 +535,8 @@ git merge-base --is-ancestor origin/main HEAD    # if false, rebase
 - Use `knowledge-architect-review` before the merge.
 - The axes come from the dispatching activity's own skill.
 - Critical findings are repaired before the merge.
-- The commit that lands the repairs says what was reviewed and what was decided.
+- The commit that lands the repairs says what was reviewed and what was decided. Where every
+  repair was folded, a commit of its own after them says it.
 - Any finding not repaired becomes an issue entry, per `knowledge-architect-issue-tracking`.
 - Once the branch is rebased and the repairs are pushed, mark the pull request ready:
   `gh pr ready`. That starts CI, and every later push re-runs it. First check that GitHub has

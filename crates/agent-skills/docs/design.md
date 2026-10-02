@@ -341,13 +341,23 @@ document and step owes is the baseline, and writing it as a criterion in
 every plan document would be noise, and would become the habitual criterion in place of a specific
 one that is harder to find.
 
-### A plan document is committed before its reviews, and each repair is a further commit `##plan-reviewed-as-a-commit`
+### A plan document is committed before its reviews, and a repair lands after them `##plan-reviewed-as-a-commit`
 
 The planning skill has a plan document's reviewers read its commit, not the working tree. The review
 skill names what a reviewer reads as a commit range and gives each reviewer that runs a binary a
 worktree detached at the commit under review; a document still uncommitted has neither, so the two
-skills could not both be obeyed. A repair after the review is a further commit, as the review
-skill makes every repair by default, so the history shows what the review found.
+skills could not both be obeyed. A repair lands after the review, per
+`design@agent-skills@review-repair-appended-or-folded`.
+
+### A review repair is appended, and folded only where appending leaves an earlier commit failing `##review-repair-appended-or-folded`
+
+The review skill has a repair land as a new commit after the work it repairs, which edits no
+history. Where a project requires every commit of a branch to pass checks the repair changes, an
+appended repair leaves the earlier commits failing, and the project's rule and this one leave no
+legal move; the repair is then folded into the earliest commit it repairs, with a clean tree,
+confirmed to have lost no content. The record of the review says what was folded, so the landing
+history still says what the review found. The rule exists to avoid history edits, not to keep a
+repair apart from what it repairs.
 
 ### A milestone document whose first step changes the gates lands in a merge of its own `##milestone-lands-before-gate-change`
 
