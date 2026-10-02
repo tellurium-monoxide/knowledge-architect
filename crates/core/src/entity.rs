@@ -66,7 +66,7 @@ impl fmt::Display for Kind {
 
 /// The reserved anchor word for a path deliberately not resolvable in this tree.
 ///
-/// A declared anchor may not take this name, which `check::registers` asserts.
+/// A declared anchor may not take this name, which `manifest::resolve_anchors` asserts.
 pub(crate) const ESCAPE_ANCHOR: &str = "elsewhere";
 
 /// The reserved anchor for every component's own copy of a path.
@@ -238,7 +238,7 @@ impl Anchors {
     /// **Locations count here, and that is the point.** A location sits inside a component —
     /// as both of thaum's do — and its register homes are its own, so a document under
     /// it belongs to it and not to the component above. A component inside a location would
-    /// make the two ambiguous, and `check::registers` refuses one.
+    /// make the two ambiguous, and `manifest::collides` refuses one.
     pub(crate) fn owning(&self, rel: &Path) -> &Anchor {
         // Depth first, and a component on a tie: two anchors at one path is a declaration
         // `check::registers` reports, and until it is repaired the component keeps its own
