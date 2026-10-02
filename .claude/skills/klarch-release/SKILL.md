@@ -74,8 +74,8 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    request, and the review under `knowledge-architect-review`. Its axes include
    `klarch-changelog-reviewer`, dispatched on `v<previous>..HEAD`: every change of the range has
    the entries the policy owes, each entry's class is right, and the version is their highest
-   class. A repair is a new commit, and steps
-   4 to 8 run again on the head if it touched a crate.
+   class. A repair is a new commit, or is folded per root `CLAUDE.md`, section Git, point 2, and
+   steps 4 to 8 run again on the head if it touched a crate.
 
 ## 2. Merge, then publish
 

@@ -34,23 +34,21 @@ subsection is omitted.
 
 ### Workflow
 
-- `agent-skills`, patch: a plan document lists the tripwires and issues that reference each decision
-  its work reverses or rewrites.
-- `agent-skills`, patch: a plan document is committed before its reviews, and each repair is a
-  further commit.
+- `agent-skills`, patch: a plan document names every text that references a decision its work
+  reverses or rewrites, restatements in a `CLAUDE.md` or a skill included, with the step or the
+  harvest that judges or updates each.
+- `agent-skills`, patch: a plan document is committed before its reviews, and each repair lands
+  after them.
 - `agent-skills`, patch: a milestone document whose first step changes what the gates check lands in
   a merge of its own, before that step.
 - `agent-skills`, patch: a design discussion's first round states which grounding commands ran, and
   a measured fact carries the command that re-takes it.
 - `agent-skills`, patch: a retrospective names each finding by a letter and a number (W, C, P), and
   states the version of knowledge-architect the session used.
-- `agent-skills`, patch: a plan document names every text that references a decision its work
-  reverses or rewrites, restatements in a `CLAUDE.md` or a skill included, with the step that
-  updates each.
 - `agent-skills`, patch: a design audit lists an answer that widens or narrows a ruling of the owner
   as a default awaiting the owner, ruled at the audit before its point is implemented.
 - `agent-skills`, patch: a step's harvest is reviewed before the merge, on the decision-record,
-  routing, standing-state and transcript-conformity axes.
+  routing and standing-state axes, and on transcript conformity where the transcript is available.
 - `agent-skills`, patch: a review repair that would leave an earlier commit of the branch failing
   the project's checks is folded into that commit by a history edit, and the review's record says
   so.

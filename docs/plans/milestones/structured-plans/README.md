@@ -215,6 +215,15 @@ harvest that judges each:
 | `issue@core@a-planned-path-can-be-named` | `design@core@reserved-anchors`, `design@core@every-path-names-its-anchor` | step 1 |
 | `issue@core@cross-project-references` | `design@core@a-slug-belongs-to-a-component` | step 2 |
 | `tripwire@agent-skills@ledger-lost-before-hand-off` | `design@agent-skills@design-hands-off-to-planning` | step 3, as above |
+| the root `CLAUDE.md`, "Mechanical validation of documents", its bullet on heading-register entries | `design@core@an-entry-is-a-heading-at-the-register-level` | step 2, which updates it |
+| the core's README, its section on heading registers | `design@core@an-entry-is-a-heading-at-the-register-level` | step 2, which updates it |
+| the root `CLAUDE.md`, "Mechanical validation of documents", its bullet on the reference form | `design@core@a-slug-belongs-to-a-component` | step 2, which updates it |
+| the comments of the core that cite it: the module comment of `path@core@src/check/references.rs`, and comments in `path@core@src/source/mod.rs` and `path@core@src/source/rs.rs` | `design@core@a-slug-belongs-to-a-component` | step 2, which judges each |
+| the root `CLAUDE.md`, "Precedent is not authority", its restatement of the four cases | `design@agent-skills@primer-content` | step 3, which updates it with the primer |
+| the root `CLAUDE.md`, "Plan documents" | `design@agent-skills@document-vocabulary` | step 3, already in its spec |
+
+The heads in the design homes that cite these decisions are judged at the harvest of the step that
+rewrites the decision they cite.
 
 ## Criteria
 

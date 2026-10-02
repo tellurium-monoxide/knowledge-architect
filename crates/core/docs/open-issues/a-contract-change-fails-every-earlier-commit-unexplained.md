@@ -23,8 +23,9 @@ does not say so, and the repair it names, `index`, cannot repair a commit alread
 ### Why it matters
 
 `design@core@a-commit-message-is-a-document` judges every commit's tree with the tip's checker,
-so a change to a generated file's contract is a change that fails earlier trees, and the root
-`CLAUDE.md` asks for such a repair to be folded into the earliest commit by a history edit. A
+so a change to a generated file's contract is a change that fails earlier trees, and
+`design@knowledge-architect@git-flow` folds such a repair into the earliest commit by a history
+edit. A
 reader of the finding as it stands repairs nothing, or runs `index` on the tip, which does not
 change the earlier commits; the cause is found only by reasoning from the pattern.
 

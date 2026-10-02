@@ -53,7 +53,9 @@ an entry in that Component's `path@*@docs/open-issues/`. It is not licence to fo
    recording threshold takes `knowledge-architect-decision-recording` as well.
 6. **Review** (§3), at any checkpoint where a coherent piece works, not only at the end. It follows
    the commit because a reviewer working on its own copy of the tree sees committed content only,
-   so uncommitted work is reviewed by nobody. A repair the review asks for is a further commit.
+   so uncommitted work is reviewed by nobody. A repair the review asks for is a further commit,
+   unless it would leave an earlier commit failing under the branch tip's checker: it is then
+   folded into the earliest commit it repairs, per root `CLAUDE.md`, section Git, point 2.
 
 ## 2. Claims, and tests that discriminate
 
