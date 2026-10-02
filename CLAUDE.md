@@ -254,9 +254,9 @@ the procedure is the installed `knowledge-architect-planning`.
 
 ## Verify before relying on anything
 
-A document can describe the shape the code was committed at rather than the shape it has. Many of
-the core's documents were written in thaum's tree; their figures measured there are attributed to
-thaum.
+A document can describe the shape the code was committed at rather than the shape it has. Some of
+the core's documents were first written in another project, thaum; a figure measured there names
+thaum as its source.
 Confidence is not correlated with correctness: the more obvious a behaviour looks, the less likely
 anyone has checked it.
 
@@ -282,8 +282,7 @@ test mechanism, an open issue's diagnosis; the list is illustrative, not a bound
 - **Re-verify a conclusion before acting on it**, and correct it in place the moment evidence
   contradicts it.
 - **A transfer from another project names the property it depends on, and checks that the property
-  holds here.** Naming the pattern is not enough. This applies to what was carried over from thaum
-  as much as to any other project.
+  holds here.** Naming the pattern is not enough.
 
 **Evidence here is textual and cheap**: a verbatim reading of a file, a measurement over a tree, a
 failing test. Build it rather than trading intuitions.
@@ -486,9 +485,7 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   files.** Examples (non-exhaustive): `reset --hard`, `checkout -- <path>`, `restore`, `clean`,
   `stash`, `commit --amend`, `rebase`.
 - **Take extra care when applying a mutation that will need reverting.** Stage the file before
-  applying the mutation, for example, so the revert does not depend on a restore. Running
-  `checkout -- <path>` with uncommitted changes to revert a mutation has already happened several
-  times in thaum, where this instruction comes from.
+  applying the mutation, for example, so the revert does not depend on a restore.
 - **With a clean tree, editing the branch's own history is an ordinary move**: rewording or
   amending a commit message, squashing, rebasing. It is bounded by two verifications before the
   old head is dropped: that the tree was clean, and that no content was lost. For a rewrite that
