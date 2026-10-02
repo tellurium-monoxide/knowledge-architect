@@ -157,7 +157,8 @@ fn directory_home(
 ///   every plan document sits in a home.
 /// - **milestones/ holds its README.md, its index.md and one directory per milestone**, each
 ///   holding a README.md, and no milestone directory holds a register.toml or a subdirectory.
-/// - **A plan's name is no other anchor's and no reserved word** (clause P2): a milestone
+/// - **A plan's name is no other anchor's and no reserved word**, per
+///   `design@core@a-plan-name-reads-as-nothing-else`: a milestone
 ///   directory's name and a spec's id, compared with the components, the locations and each
 ///   other. A milestone the comparison refuses is no anchor, per `entity::milestone_refusal`.
 ///
@@ -290,7 +291,8 @@ fn plans_layout(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
         }
     }
 
-    // Clause P2 over the specs: a spec's id is the name step 2 makes an anchor, so it may be
+    // The same rule over the specs, per `design@core@a-plan-name-reads-as-nothing-else`: a spec's id is a name
+    // the next step of the plans layout makes an anchor, so it may be
     // no component's, location's or reserved word, and no milestone's.
     let mut ids: Vec<(String, &PathBuf)> = inputs
         .present

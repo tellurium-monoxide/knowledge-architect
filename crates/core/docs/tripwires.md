@@ -48,18 +48,6 @@ the widened class; or re-accept the silence knowingly and record the shape as th
 Open a `defect` naming the span if the decision is not reopened in the same change.
 **Re-entry:** standing, and the review of the migration that follows the grammar change.
 
-## Guarding `design@core@reserved-anchors`' generic rule `##reserved-anchors-generic-rule`
-
-**Fires when:** a session or a review reports a finding on a `path@*@<path>` reference whose
-repair was unclear to whoever hit it — the finding named neither a path to fix nor a component
-to anchor at that the repairer could act on, or the reference passed while meaning something the
-writer did not intend, such as a path every crate happens to carry without being generic.
-**Response:** reopen the generic anchor's checking rule at `design@core@reserved-anchors`: the
-accepted set may need to be the required documents alone, or the at-least-one-component test
-may need to become an every-component test. Record the confusing instance as an `observation`
-with the finding text it produced.
-**Re-entry:** standing.
-
 ## Guarding `design@core@checker-source-literals-are-data`' self-location `##checker-source-literals-are-data-self-location`
 
 **Fires when:** a `cargo klarch check` run reports a finding on a string literal in a Rust
@@ -186,8 +174,8 @@ project.
 
 ## Guarding `design@core@plans-at-root`: a project asks for more than one plans directory `##plans-directory-split-asked`
 
-One plans directory rests on two premises: most work spans components, and no project holds so many
-open plans that a split helps. A project that outgrows them asks for the split before it builds one.
+The decision rests on the premises its head states. A project that outgrows them asks for the
+split before it builds one.
 
 **Fires when:** a project's owner, in a design discussion, an issue or a review, asks for a plans
 directory per component, or for more than one plans directory in a project.
