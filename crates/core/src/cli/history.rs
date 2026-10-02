@@ -640,7 +640,7 @@ pub(super) fn commits(
                     Outcome::Judged
                 } else {
                     Outcome::Failed {
-                        why: format!("it cites {citations} commit(s) of the range by SHA"),
+                        why: format!("it cites the range by SHA {citations} time(s)"),
                     }
                 },
             ));
@@ -674,7 +674,7 @@ pub(super) fn commits(
     })
 }
 
-/// Every citation of a commit of the range in `text`: a run of 7 to 40 lowercase hex digits,
+/// Every citation of a commit of the range in `text`: a run of 7 to 64 lowercase hex digits,
 /// with no ASCII letter, digit or underscore on either side, that is a prefix of one of `shas`.
 /// Each is the line, counted from one, the run as written, and the full SHA it names.
 ///
@@ -703,7 +703,8 @@ fn branch_sha_citations<'a>(text: &str, shas: &'a [String]) -> Vec<(u32, String,
             }
             let word = &line[start..end];
             let hex = word.bytes().all(|b| matches!(b, b'0'..=b'9' | b'a'..=b'f'));
-            if hex && (7..=40).contains(&word.len()) {
+            // 64 digits is a SHA under SHA-256.
+            if hex && (7..=64).contains(&word.len()) {
                 if let Some(sha) = shas.iter().find(|s| s.starts_with(word)) {
                     out.push((i as u32 + 1, word.to_string(), sha.as_str()));
                 }
@@ -776,7 +777,7 @@ mod tests {
         assert_eq!(out[0].what, "what");
     }
 
-    /// The claim: a run of 7 to 40 lowercase hex digits bounded by non-word bytes is a citation
+    /// The claim: a run of 7 to 64 lowercase hex digits bounded by non-word bytes is a citation
     /// exactly when it prefixes a SHA of the range. Mutations: dropping the left or the right
     /// boundary fails the embedded cases, lowering the minimum to 6 fails the six-digit case,
     /// and matching any hex run fails the outside-the-range case.
@@ -812,6 +813,11 @@ mod tests {
         assert!(cited("0123456ABC").is_empty());
         // A hex run that prefixes no SHA of the range: main's, or another project's.
         assert!(cited("bd93004 and e98e296").is_empty());
+        // A run that shares the first 7 digits and then differs is no prefix.
+        assert!(cited("0123456ff").is_empty());
+        // A SHA-256 SHA, 64 digits, is a citation of itself.
+        let long = vec!["ab".repeat(32)];
+        assert_eq!(branch_sha_citations(&"ab".repeat(32), &long).len(), 1);
     }
 
     #[test]

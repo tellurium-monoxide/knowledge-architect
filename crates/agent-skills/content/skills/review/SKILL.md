@@ -95,7 +95,8 @@ A transcript reviewer's **agent's addition**, detail the author added inside the
 owner's ruling, is neither: it is kept, and the record of the review lists it as the agent's, so the
 owner can contest it. It is removed only on the owner's word.
 
-**Where the branch's commits reach the main branch unchanged** (a fast-forward or a rebase merge):
+**Where the branch's commits reach the main branch as they are** (a fast-forward, or a rebase merge,
+which keeps their trees and messages and may give them new SHAs):
 
 - **A repair made on the branch is a new commit, appended.** Folding a fix into the commit it
   repairs hides what the review found from the landing history.

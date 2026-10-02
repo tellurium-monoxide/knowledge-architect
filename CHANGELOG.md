@@ -1,6 +1,7 @@
 # Changelog
 
-One section per released version. Each item is tagged with the surface it touches: `checks`,
+One section per released version, and one working section, `Unreleased`, for the changes since the
+last release, which the release renames to its version. Each item is tagged with the surface it touches: `checks`,
 `cli`, `manifest`, `library`, `agent-skills`, `gates`. The versioning policy is
 `design@knowledge-architect@versioning-policy`.
 

@@ -284,7 +284,7 @@ serves as no parent. No hook judges a message before the commit exists:
 the range is run after each commit, and a finding in the newest commit is repaired by an amend.
 
 **A project whose merges rewrite SHAs refuses citations of its branch's own commits.** Under
-`[commits] refuse-branch-shas = true`, `commits` reports every run of 7 to 40 lowercase hex digits
+`[commits] refuse-branch-shas = true`, `commits` reports every run of 7 to 64 lowercase hex digits
 that prefixes the SHA of a commit of the range, in a message or in a document of a commit's tree:
 a rebase merge gives those commits new SHAs, and the citation would then name nothing. Name such
 a commit by its subject. A SHA already on the main branch may be cited. The option is off when

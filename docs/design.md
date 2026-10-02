@@ -105,6 +105,8 @@ it. The cost accepted: a fix to the gates alone is released as a version of ever
   exactly meets this only when it moves the pin.
 - **CHANGELOG.md** has one section per version, each item tagged with the surface it touches:
   checks, cli, manifest, library, agent-skills, gates. The version number alone cannot say which.
+  One working section above them, named `Unreleased`, holds the changes since the last release,
+  and the release renames it to its version.
 
 A version stricter than a patch never reaches a project through a plain `cargo update` while at
 0.x, and a release that changes only skill text publishes all three crates with identical code. A
@@ -165,9 +167,12 @@ statement false until a repair lands. The procedure is
   it, a merge button that rebases makes CI meaningless when history was not already linear, as
   the owner put it.
 - GitHub's rebase merge gives the branch's commits new SHAs, even when the branch is already up
-  to date with main: its documentation says it "always updates the committer information and
-  creates new commit SHAs", and a probe repository measured it, per
-  `design@core@branch-shas-are-refused`. So neither a commit message nor a document cites the SHA
+  to date with main. Its documentation says it "always updates the committer information and
+  creates new commit SHAs". A probe repository, tellurium-monoxide/rebase-merge-probe, archived,
+  with a ruleset identical to this repository's, measured it: an up-to-date pull request of two
+  commits reached main with the same trees, the same author, a new committer and new SHAs.
+  `gh api repos/tellurium-monoxide/rebase-merge-probe/pulls/1/commits` and
+  `gh api repos/tellurium-monoxide/rebase-merge-probe/commits` re-read both sides. So neither a commit message nor a document cites the SHA
   of a commit of its own branch: it names that commit by its subject. `commits` refuses such a
   citation, under this repository's manifest.
 
