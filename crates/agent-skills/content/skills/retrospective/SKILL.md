@@ -51,7 +51,8 @@ done instead.
 
 **A finding about how the owner works is judged against the skill's expectation set** (§5). A
 finding that describes the owner's behaviour where §5 states the skill assumes otherwise is
-reported as outside that skill's scope rather than as a defect of it. A finding that two installed instructions leave no move satisfying both is always in scope,
+reported as outside that skill's scope, with the assumption quoted, rather than as a defect of it.
+A finding that two installed instructions leave no move satisfying both is always in scope,
 whatever the owner did.
 
 End with **proposals**: for each finding that has one, what to change, and where.
