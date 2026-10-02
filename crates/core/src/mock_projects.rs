@@ -96,6 +96,29 @@ fn the_walk_obeys_the_project_that_declares_it() {
     );
 }
 
+/// The indexes of the plans homes and of each milestone leave the walk too: the walk asks for
+/// the generated paths with git's listing, which places the milestones. Mutation checked:
+/// `Model::build` asking with an empty listing, which walks the milestone's index.
+#[test]
+fn the_plans_indexes_are_outside_the_walk() {
+    let names = walked(&model("dirhome"));
+    let plans: Vec<&String> = names
+        .iter()
+        .filter(|n| n.starts_with("docs/plans/"))
+        .collect();
+    assert_eq!(
+        plans,
+        vec![
+            "docs/plans/README.md",
+            "docs/plans/milestones/README.md",
+            "docs/plans/milestones/a-milestone/README.md",
+            "docs/plans/milestones/a-milestone/a-step.md",
+            "docs/plans/specs/README.md",
+            "docs/plans/specs/a-spec.md",
+        ]
+    );
+}
+
 /// A generated index leaves the walk because the tool derives the set from the register
 /// instances, and no manifest row names one.
 ///
@@ -771,7 +794,14 @@ mod unsound {
             .contains("is not lower-case words"));
         assert!(one_of(&found, "the spec `agent-config`").contains("is the name of a location"));
         assert!(one_of(&found, "the spec `twice`").contains("is also the name of a milestone"));
-        assert_eq!(found.len(), 15, "{found:#?}");
+        // A file beside a directory that is no milestone is no retired single file of any home,
+        // so the layout check names it.
+        assert!(one_of(
+            &found,
+            "`docs/plans/milestones/widget.md` sits in milestones/"
+        )
+        .starts_with("docs/plans/milestones/widget.md"));
+        assert_eq!(found.len(), 16, "{found:#?}");
     }
 
     #[test]

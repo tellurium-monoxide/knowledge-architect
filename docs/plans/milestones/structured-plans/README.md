@@ -170,8 +170,8 @@ These are rewritten or reversed by this work, each at the harvest named in the h
   `design@core@components-carry-the-same-documents`, `design@core@registers-are-declared` (it
   states that four registers are compiled in, which D1 makes six),
   `design@core@a-file-register-is-a-directory-of-entries` and
-  `design@core@a-file-register-index-is-rows` (the directory entry of D10, and the owning-anchor
-  filter of the index);
+  `design@core@a-file-register-index-is-rows` (the directory entry of D10, and its index, rendered
+  from the milestone anchors rather than filtered from the files, per step 1's audit finding 8);
 - step 2, core: `design@core@an-entry-is-a-heading-at-the-register-level`,
   `design@core@a-slug-belongs-to-a-component`;
 - step 3, agent-skills: `design@agent-skills@plans-directory-declared`,

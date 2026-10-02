@@ -317,11 +317,13 @@ fn path(
             // state, and a verdict may not depend on the checking machine's. Presence and
             // kind are asked apart, so a path some component carries under the other kind
             // gets the kind-claim repair rather than "repair the path".
-            // A milestone carries no `path` kind, so it holds no copy the generic form names.
+            // The generic form names a copy the project's own anchors carry. The anchors the
+            // tool constructs hold plan documents, which are cited by their kind (clause P1),
+            // so none of them holds a copy it names.
             let carried: Vec<PathBuf> = anchors
                 .all()
                 .iter()
-                .filter(|a| a.carries(&Kind::path()))
+                .filter(|a| a.constructed.is_none())
                 .map(|a| (a, a.path.join(trimmed)))
                 .filter(|(a, t)| {
                     anchors.owning(t).path == a.path
@@ -447,31 +449,32 @@ fn path(
 /// where the target sits, not by whether it exists: a path to a deleted step spec gets the same
 /// repair as one to a present one.
 fn plan_document(anchors: &Anchors, target: &Path) -> Option<String> {
-    let owner = anchors.owning(target);
-    match owner.constructed {
-        Some(Constructed::Milestone) => {
-            let m = &owner.name;
-            let inside = target.strip_prefix(&owner.path).ok()?;
-            let step = (inside.extension().is_some_and(|e| e == "md")
-                && inside.components().count() == 1)
-                .then(|| inside.file_stem())
-                .flatten()
-                .map(|s| s.to_string_lossy().into_owned())
-                .filter(|s| s != "README" && s != "index");
-            Some(match step {
-                Some(step) => format!("spec@{m}@{step}"),
-                None => format!("milestone@{PLANS_ANCHOR}@{m}"),
-            })
-        }
-        Some(Constructed::Plans) => {
-            let specs = anchors
-                .registers()
-                .by_name(crate::manifest::SPEC_REGISTER)
-                .map(|r| owner.home_of(r).dir)?;
-            entity::entry_id(target, &specs).map(|id| format!("spec@{PLANS_ANCHOR}@{id}"))
-        }
-        None => None,
+    use crate::manifest::{MILESTONES_HOME, SPECS_HOME};
+    let plans = anchors
+        .all()
+        .iter()
+        .find(|a| a.constructed == Some(Constructed::Plans))?;
+    if let Ok(inside) = target.strip_prefix(plans.path.join(MILESTONES_HOME)) {
+        let parts: Vec<String> = inside
+            .components()
+            .map(|c| c.as_os_str().to_string_lossy().into_owned())
+            .collect();
+        // The first segment names a milestone only in the id grammar: a directory of another
+        // name is no milestone, and its finding is phase 2's.
+        let m = parts.first().filter(|m| entity::is_entity_id(m))?;
+        let step = match parts.as_slice() {
+            [_, file] => file
+                .strip_suffix(".md")
+                .filter(|s| *s != "README" && *s != "index"),
+            _ => None,
+        };
+        return Some(match step {
+            Some(step) => format!("spec@{m}@{step}"),
+            None => format!("milestone@{PLANS_ANCHOR}@{m}"),
+        });
     }
+    entity::entry_id(target, &plans.path.join(SPECS_HOME))
+        .map(|id| format!("spec@{PLANS_ANCHOR}@{id}"))
 }
 
 /// Assert one resolved target: it exists and has the claimed kind, unless the ignore rules
@@ -890,6 +893,127 @@ mod tests {
         assert!(found
             .iter()
             .any(|f| f.contains("`m` defines no spec `none`")));
+    }
+
+    /// The claim: the repair P1 names is the form that resolves for each position: a step for
+    /// a step spec, the milestone for its README, its index or anything deeper, a spec for a
+    /// spec, and nothing for a navigation file. Mutations checked: the README and index filter,
+    /// and the one-segment test, each removed from `plan_document`.
+    #[test]
+    fn the_p1_repair_names_the_form_for_each_position() {
+        let m = manifest();
+        let anchors = Anchors::of(&m, &[] as &[PathBuf]);
+        for (target, form) in [
+            ("docs/plans/milestones/m/a-step.md", Some("spec@m@a-step")),
+            (
+                "docs/plans/milestones/m/README.md",
+                Some("milestone@plans@m"),
+            ),
+            (
+                "docs/plans/milestones/m/index.md",
+                Some("milestone@plans@m"),
+            ),
+            (
+                "docs/plans/milestones/m/sub/x.md",
+                Some("milestone@plans@m"),
+            ),
+            (
+                "docs/plans/milestones/m/a.md/x.md",
+                Some("milestone@plans@m"),
+            ),
+            ("docs/plans/milestones/m", Some("milestone@plans@m")),
+            ("docs/plans/specs/a-spec.md", Some("spec@plans@a-spec")),
+            ("docs/plans/specs/README.md", None),
+            ("docs/plans/milestones/README.md", None),
+            ("docs/plans/README.md", None),
+        ] {
+            assert_eq!(
+                plan_document(&anchors, Path::new(target)).as_deref(),
+                form,
+                "{target}"
+            );
+        }
+    }
+
+    /// The claim: a milestone's name in the kind position is no retired form, so an email
+    /// address or a git remote stays silent when a milestone of that name exists. Mutation
+    /// checked: `Anchors::is_anchor_word` counting milestone anchors.
+    #[test]
+    fn a_milestone_name_in_the_kind_position_is_silent() {
+        let m = manifest();
+        let tree: Vec<PathBuf> = ["docs/plans/milestones/git/README.md"]
+            .iter()
+            .map(PathBuf::from)
+            .collect();
+        let anchors = Anchors::of(&m, &tree);
+        assert!(anchors.by_name("git").is_some());
+        let text = "The remote is `git@github.com:org/repo.git`.\n";
+        let (found, counts) = checked_under(vec![("notes/prose.md", text)], &[], &anchors);
+        assert!(found.is_empty(), "{found:#?}");
+        assert_eq!(counts.references, 0);
+    }
+
+    /// The claims of the reference arms that reach a plan document another way: the generic
+    /// form names no copy the plans anchors hold, so a spec is no copy of any component; and a
+    /// milestone whose README the walk does not read defines nothing, so a reference to it
+    /// dangles. Mutations checked: the filter on the tool's anchors removed from the `*` arm of
+    /// `path`; the walked-README test removed from `Entities::directory_definitions`.
+    #[test]
+    fn a_plan_document_reached_through_the_generic_form_or_out_of_the_walk_resolves_nothing() {
+        let m = manifest();
+        let tree: Vec<PathBuf> = [
+            "docs/plans/specs/a-spec.md",
+            "docs/plans/milestones/m/README.md",
+            "docs/plans/milestones/m/a-step.md",
+        ]
+        .iter()
+        .map(PathBuf::from)
+        .collect();
+        let anchors = Anchors::of(&m, &tree);
+        let present: Vec<String> = tree.iter().map(|p| p.display().to_string()).collect();
+        // The milestone's README is in the tree and not in the walk.
+        let docs = vec![
+            ("docs/plans/specs/a-spec.md", "# A spec\n"),
+            ("docs/plans/milestones/m/a-step.md", "# A step\n"),
+            (
+                "notes/prose.md",
+                "`path@*@specs/a-spec.md`, `path@*@a-step.md` and `milestone@plans@m`.\n",
+            ),
+        ];
+        let (found, _) = checked_under(docs, &present, &anchors);
+        assert_eq!(found.len(), 3, "{found:#?}");
+        assert_eq!(
+            found
+                .iter()
+                .filter(|f| f.contains("resolves in no component"))
+                .count(),
+            2,
+            "{found:#?}"
+        );
+        assert!(found
+            .iter()
+            .any(|f| f.contains("`plans` defines no milestone `m`")));
+    }
+
+    /// The claim: a plan document is judged by where it sits, not by whether it exists, so a
+    /// citation of a deleted milestone or of a deleted step gets the kind form too. Mutation
+    /// checked: `plan_document` asking the owning anchor, which a deleted milestone no longer is.
+    #[test]
+    fn a_deleted_plan_document_cited_by_its_path_gets_the_kind_form() {
+        let m = manifest();
+        let present: Vec<PathBuf> = ["docs/plans", "docs/plans/milestones"]
+            .iter()
+            .map(PathBuf::from)
+            .collect();
+        let anchors = Anchors::of(&m, &present);
+        let text = "`path@plans@milestones/gone/` and `path@plans@milestones/gone/a-step.md` and \
+                    `path@plans@specs/gone.md` are gone.\n";
+        let present: Vec<String> = present.iter().map(|p| p.display().to_string()).collect();
+        let (found, _) = checked_under(vec![("notes/prose.md", text)], &present, &anchors);
+        assert_eq!(found.len(), 3, "{found:#?}");
+        assert!(found
+            .iter()
+            .all(|f| f.contains("cites a plan document by its path")));
     }
 
     #[test]

@@ -14,7 +14,7 @@ audit's subject line.
 
 ## Builds
 
-Everything below is in crates/core, except items 8 and 9. No plan document gains items in this step:
+Everything below is in crates/core, except items 9 and 11. No plan document gains items in this step:
 identifiers stay plain `#id` text until step 2.
 
 1. **The anchor `plans`**, at docs/plans/ of the root Component, constructed by the tool as a
@@ -87,8 +87,8 @@ The owner may contest each; the audit applies them in place unless the code refu
   refused by P1 is phase 4, planted in `planted`.
 - **`register.toml`** (D10): one under milestones/ and one inside a milestone directory are each a
   phase-2 finding.
-- **Spec basenames** (D13): the files directly under specs/. A step spec's basename is scoped to its
-  milestone and is not a plan name.
+- **Spec basenames** (D13): every entry id of specs/, grouped or not (audit finding 6). A step
+  spec's basename is scoped to its milestone and is not a plan name.
 - **How one register has two homes** (D9), and **which listing feeds the generated paths of
   milestone indexes** (D11): implementation choices, settled at the audit and written into this
   spec as applied in place.
@@ -155,9 +155,9 @@ claim or reading is corrected in place too.
 9. **P1 is judged before the deepest-anchor rule.** Gap: a plan document cited from the root both
    reaches inside `plans` and is a plan document. Answer: the P1 finding, whose repair is the form
    that resolves; the table's last row covers targets that are not plan documents. Follows from P1.
-10. **The generic anchor `*` skips an anchor that carries no `path` kind.** Gap: the `*` arm of
-    `path()` in `path@core@src/check/references.rs` tries every anchor. Answer: a milestone anchor
-    is skipped. Follows from P1.
+10. **The generic anchor `*` skips the anchors the tool constructs.** Gap: the `*` arm of
+    `path()` in `path@core@src/check/references.rs` tries every anchor. Answer: `plans` and the
+    milestone anchors are skipped, since what they hold is cited by its kind. Follows from P1.
 11. **A `<dir>.md` sibling is reported once.** Gap: `check::tree`'s `file_home` reports
     `<home base>/<dir>.md` as the File shape's retired single file; for `spec` under `plans` that
     is docs/plans/specs.md, which D17 also refuses, and for a milestone anchor it is
@@ -201,7 +201,8 @@ step.
   stays green. Mutation: drop the requirement of one home's `index.md`, and the test of the next
   claim fails.
 - **A missing plans directory, plans `README.md` or plans home is a phase-2 finding** (D1): new
-  tests in the `unsound` module of `path@core@src/mock_projects.rs`, one per missing path. A
+  tests beside the other missing-home tests in `path@core@src/check/registers.rs`, one per missing
+  path, since one committed mock cannot both carry a home and lack it. A
   home's missing `README.md` or `index.md` is phase 4, as in every File home (audit finding 1),
   and a new test asserts it for the milestones home. Mutation: skip the requirement.
 - **`spec@plans@<id>`, `milestone@plans@<id>` and `spec@<milestone>@<step>` resolve**, each to its
@@ -222,7 +223,8 @@ step.
   `register.toml` under milestones/ are each a phase-2 finding, planted in `unsound`. Mutation:
   accept a directory without a README as an entry.
 - **A milestone's `index.md` and each home's `index.md` are generated and checked** like every
-  File-shape index, by `file_register_index` (`path@core@src/index.rs`) and
+  register index, by `index::file_register_indexes` (`path@core@src/index.rs`), which renders the
+  milestones home with `directory_register_index` (audit finding 8), and
   `path@core@src/check/generated.rs`, and the milestones/ index lists each milestone once and no
   file inside one: a new test in `path@core@src/index.rs`. Mutation: render the milestones home
   with the File renderer (audit finding 8).

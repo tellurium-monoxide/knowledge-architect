@@ -156,7 +156,7 @@ fn directory_home(
 /// - **The plans directory holds its README.md, specs/ and milestones/, and nothing else**, so
 ///   every plan document sits in a home.
 /// - **milestones/ holds its README.md, its index.md and one directory per milestone**, each
-///   holding a README.md, and no milestone directory holds a register.toml.
+///   holding a README.md, and no milestone directory holds a register.toml or a subdirectory.
 /// - **A plan's name is no other anchor's and no reserved word** (clause P2): a milestone
 ///   directory's name and a spec's id, compared with the components, the locations and each
 ///   other. A milestone the comparison refuses is no anchor, per `entity::milestone_refusal`.
@@ -243,6 +243,20 @@ fn plans_layout(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
                          its steps `spec@<id>@<step>`, so its name must not read as anything \
                          else",
                     ));
+                } else {
+                    // A milestone's step specs sit beside its README, so a subdirectory is no
+                    // group there: the File shape would ask for a register.toml, which is
+                    // refused below.
+                    for inner in children(path) {
+                        if inputs.directories.contains(inner) {
+                            out.push(Finding::in_file(
+                                inner,
+                                format!("`{}` is a subdirectory of a milestone", inner.display()),
+                                "move its step specs up beside the milestone's README; a milestone \
+                                 holds its README, its index and one file per step",
+                            ));
+                        }
+                    }
                 }
                 let config = path.join("register.toml");
                 if inputs.present.contains(&config) {
@@ -254,12 +268,12 @@ fn plans_layout(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
                 }
                 continue;
             }
-            // The `<id>.md` beside a milestone is its home's retired single file, which
-            // `file_home` names.
-            let beside = path
-                .file_stem()
-                .is_some_and(|s| placed.contains_key(&*s.to_string_lossy()))
-                && path.extension().is_some_and(|e| e == "md");
+            // The `<id>.md` beside a milestone anchor is its home's retired single file, which
+            // `file_home` names; beside a directory that is no anchor, nothing else names it.
+            let beside = path.file_stem().is_some_and(|s| {
+                let name = s.to_string_lossy();
+                placed.contains_key(&*name) && entity::milestone_refusal(&name, manifest).is_none()
+            }) && path.extension().is_some_and(|e| e == "md");
             if name == "README.md" || name == "index.md" || beside {
                 continue;
             }

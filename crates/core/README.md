@@ -285,14 +285,15 @@ spec@<milestone>@<step>       a step spec, docs/plans/milestones/<milestone>/<st
 ```
 
 A `path` citation of a plan document is refused, and the finding names the form above. The
-README and index files of the plans directory and of its two homes are cited by path, as in
-`path@plans@README.md`.
+plans directory's README, and the README and index of each of its two homes, are cited by path,
+as in `path@plans@README.md`.
 
 **A plan's name reads as nothing else.** A milestone's name or a spec's id that is the name of a
 component, of a location or of `plans`, `elsewhere` or `*`, and one name used under both homes,
 are findings. So is a milestone name outside the id grammar, `[a-z0-9]+(-[a-z0-9]+)*`.
 
-A tree that breaks this layout stops the run at phase 2. The arguments are
+A tree that breaks this layout stops the run at phase 2, except a home's missing `README.md` or
+`index.md`, which is a finding of the last phase as in every file register. The arguments are
 `design@core@anchors-are-components-and-locations` and `design@core@reserved-anchors`.
 
 ## Commit messages
