@@ -4,14 +4,14 @@
 # gate list. Why each flag is CI's is `design@xtask@gates-list-primary-home`; the log groups and
 # the error annotation are `design@gates@annotations-under-actions`.
 #
-# The merge procedure it serves is root CLAUDE.md `Git`: a branch is merged by a local
-# fast-forward once this job passed on the pull request's current head.
+# The merge procedure it serves is root CLAUDE.md `Git`: a pull request is merged through GitHub
+# once this job passed on its current head, which a ruleset on main requires up to date with main.
 #
 name: ci
 
 on:
   pull_request:
-    # No `push` trigger: `main` receives exactly the tested head under a fast-forward merge,
+    # No `push` trigger: `main` receives the tested tree, the branch being up to date with it,
     # and a push trigger beside this one bills every push to an open pull request twice.
     types: [opened, synchronize, reopened, ready_for_review]
 
