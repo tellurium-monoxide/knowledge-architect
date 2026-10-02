@@ -360,8 +360,13 @@ impl Anchors {
 
     /// Whether `word` could stand in the anchor position of some reference: a declared
     /// anchor, or a word the tool reserves.
+    ///
+    /// A milestone's name is not one: the retired form this answers for is a path written with
+    /// no kind, and a milestone carries no `path` kind, so no such span ever named one. Its name
+    /// comes from the tree, so counting it would turn an email address or a git remote in an
+    /// unrelated document into a finding the moment a milestone of that name is created.
     pub(crate) fn is_anchor_word(&self, word: &str) -> bool {
-        is_reserved_anchor(word) || self.by_name(word).is_some()
+        is_reserved_anchor(word) || self.by_name(word).is_some_and(|a| !a.is_milestone())
     }
 
     /// The register home an anchor keeps one register in, or `None` where it carries none.
@@ -419,23 +424,34 @@ impl Anchors {
 /// Each directory directly under the milestones home that holds a `README.md`, by basename:
 /// the milestone anchors a tree places, before [`milestone_refusal`] judges their names.
 ///
-/// A directory with no `README.md` is no milestone, and `check::tree` reports it.
+/// A directory with no `README.md` is no milestone, and `check::tree` reports it. So is one
+/// whose `README.md` is a directory: a listing of files and directories holds that path too,
+/// and a listing of files alone does not, so it is read off what sits under it. Every caller
+/// then builds the same anchors, whichever listing it holds.
 pub(crate) fn milestone_dirs<'a>(
     paths: impl IntoIterator<Item = &'a PathBuf>,
 ) -> BTreeMap<String, PathBuf> {
     let home = Path::new(PLANS_DIR).join(MILESTONES_HOME);
     let mut out = BTreeMap::new();
+    let mut not_files = Vec::new();
     for path in paths {
         let Ok(inside) = path.strip_prefix(&home) else {
             continue;
         };
         let parts: Vec<_> = inside.components().collect();
-        if let [dir, readme] = parts.as_slice() {
-            if readme.as_os_str() == "README.md" {
+        match parts.as_slice() {
+            [dir, readme] if readme.as_os_str() == "README.md" => {
                 let name = dir.as_os_str().to_string_lossy().into_owned();
                 out.insert(name, home.join(dir));
             }
+            [dir, readme, _, ..] if readme.as_os_str() == "README.md" => {
+                not_files.push(dir.as_os_str().to_string_lossy().into_owned());
+            }
+            _ => {}
         }
+    }
+    for name in not_files {
+        out.remove(&name);
     }
     out
 }
@@ -452,6 +468,11 @@ pub(crate) fn milestone_refusal(name: &str, manifest: &Manifest) -> Option<Strin
     }
     if is_reserved_anchor(name) {
         return Some("is a word the tool reserves".to_string());
+    }
+    // The `<id>.md` beside a milestone is its home's retired single file, and beside `index`
+    // that is the milestones home's own generated listing.
+    if name == "index" {
+        return Some("names the listing of milestones/".to_string());
     }
     if manifest.components().all().iter().any(|c| c.name == name) {
         return Some("is the name of a component".to_string());
@@ -704,7 +725,7 @@ impl Entities {
     fn file_definitions(&mut self, model: &Model, anchors: &Anchors) {
         for (anchor, register, home) in anchors.instances() {
             if register.shape == Shape::Directory {
-                self.directory_definitions(anchors, anchor, register, &home);
+                self.directory_definitions(model, anchors, anchor, register, &home);
                 continue;
             }
             if register.shape != Shape::File {
@@ -756,9 +777,13 @@ impl Entities {
     /// One entity per milestone anchor directly under a Directory home, defined at its README.
     ///
     /// The entries are anchors, so they are read off the anchor list rather than off the
-    /// documents: a directory the tree holds that is no anchor is `check::tree`'s finding.
+    /// documents: a directory the tree holds that is no anchor is `check::tree`'s finding. A
+    /// milestone whose README the walk does not read defines nothing, as a File entry the walk
+    /// leaves out defines nothing, so every reference to it dangles rather than passing over a
+    /// document no check judged.
     fn directory_definitions(
         &mut self,
+        model: &Model,
         anchors: &Anchors,
         anchor: &Anchor,
         register: &Register,
@@ -766,6 +791,10 @@ impl Entities {
     ) {
         for entry in anchors.all() {
             if !entry.is_milestone() || entry.path.parent() != Some(home.dir.as_path()) {
+                continue;
+            }
+            let readme = entry.path.join("README.md");
+            if !model.documents().iter().any(|d| d.rel == readme) {
                 continue;
             }
             self.defined
@@ -776,7 +805,7 @@ impl Entities {
                 ))
                 .or_default()
                 .push(Site {
-                    file: entry.path.join("README.md"),
+                    file: readme,
                     line: 1,
                 });
         }

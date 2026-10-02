@@ -1289,6 +1289,182 @@ mod tests {
         assert!(!manifest.locations().contains_key("plans"));
         assert!(manifest.plans());
         assert_eq!(manifest.locations()["notes"].registers, vec!["issue"]);
+        // The repair for a register nothing declares offers the ones a location may name.
+        let manifest = declaring_full(
+            "",
+            "[locations.notes]\npath = \"notes\"\nregisters = [\"nonesuch\"]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let action = &manifest.complaints()[0].action;
+        assert!(
+            action.contains("issue") && !action.contains("spec"),
+            "{action}"
+        );
+    }
+
+    /// The claim: a declared anchor at the plans directory is the one refused, and the tool's
+    /// `plans` stands, so the repair names the declaration a project can change. Mutation
+    /// checked: `plans` pushed after the declared locations.
+    #[test]
+    fn a_declared_anchor_at_the_plans_directory_is_refused_and_plans_stands() {
+        for row in [
+            "[locations.papers]\npath = \"docs/plans\"\nregisters = []\n\n",
+            "[locations.papers]\npath = \"docs/plans/specs/inner\"\nregisters = []\n\n",
+        ] {
+            let manifest = declaring_full("", row, "[]", "[]", "[]", "[]");
+            assert!(manifest.plans(), "{row}");
+            assert!(!manifest.locations().contains_key("papers"), "{row}");
+            assert_eq!(
+                manifest.complaints().len(),
+                1,
+                "{row}: {:#?}",
+                manifest.complaints()
+            );
+        }
+        let manifest = declaring("\"docs/plans\"");
+        assert!(manifest.plans());
+        assert_eq!(
+            manifest.components().all().len(),
+            1,
+            "{:#?}",
+            manifest.complaints()
+        );
+    }
+
+    /// The claims of the layout's odd shapes, each one finding in phase 2: a plans README that
+    /// is a directory, a milestone whose README is a directory (no anchor, so no milestone), the
+    /// retired single file of specs/ and of a milestone (named once, by the File rule), and a
+    /// milestone named like a location (D15). Mutations checked, each failing this test: the
+    /// directory test dropped from the plans README check; `|| *path == specs.file` deleted;
+    /// `|| beside` deleted; the location arm of `milestone_refusal` deleted.
+    #[test]
+    fn each_odd_shape_of_the_plans_layout_is_one_phase_two_finding() {
+        let manifest = declaring_full(
+            "",
+            "[locations.notes]\npath = \"notes\"\nregisters = [\"issue\"]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let base = || {
+            let mut present = all_of("");
+            for p in ["notes", "notes/open-issues", "notes/open-issues/README.md"] {
+                present.push(p.to_string());
+            }
+            present.push("notes/open-issues/index.md".to_string());
+            present
+        };
+        assert!(tree_findings(&manifest, &base()).is_empty());
+        for (added, removed, at, what) in [
+            (
+                vec!["docs/plans/README.md/inner.md"],
+                vec!["docs/plans/README.md"],
+                "docs/plans/README.md",
+                "the plans directory has no README.md",
+            ),
+            (
+                vec!["docs/plans/milestones/m/README.md/inner.md"],
+                vec![],
+                "docs/plans/milestones/m",
+                "holds no README.md, so it is no milestone",
+            ),
+            (
+                vec!["docs/plans/specs.md"],
+                vec![],
+                "docs/plans/specs.md",
+                "retired file shape of the spec register",
+            ),
+            (
+                vec![
+                    "docs/plans/milestones/m/README.md",
+                    "docs/plans/milestones/m.md",
+                ],
+                vec![],
+                "docs/plans/milestones/m.md",
+                "retired file shape of the spec register",
+            ),
+            (
+                vec!["docs/plans/milestones/notes/README.md"],
+                vec![],
+                "docs/plans/milestones/notes",
+                "is the name of a location",
+            ),
+            (
+                vec!["docs/plans/milestones/plans/README.md"],
+                vec![],
+                "docs/plans/milestones/plans",
+                "is a word the tool reserves",
+            ),
+            (
+                vec!["docs/plans/milestones/index/README.md"],
+                vec![],
+                "docs/plans/milestones/index",
+                "names the listing of milestones/",
+            ),
+            (
+                vec![
+                    "docs/plans/milestones/m/README.md",
+                    "docs/plans/milestones/m/sub/a-step.md",
+                ],
+                vec![],
+                "docs/plans/milestones/m/sub",
+                "is a subdirectory of a milestone",
+            ),
+        ] {
+            let mut present = base();
+            present.retain(|p| !removed.contains(&p.as_str()));
+            // A listing holds every directory above a file, as the survey's does.
+            for path in &added {
+                for ancestor in std::path::Path::new(path).ancestors() {
+                    let a = ancestor.display().to_string();
+                    if !a.is_empty() && !present.contains(&a) {
+                        present.push(a);
+                    }
+                }
+            }
+            let found = tree_findings(&manifest, &present);
+            assert_eq!(found.len(), 1, "{added:?}: {found:#?}");
+            assert!(
+                found[0].starts_with(at) && found[0].contains(what),
+                "{added:?}: {found:#?}"
+            );
+        }
+        // A milestone whose README is a directory is no anchor, so nothing defines it.
+        let present: Vec<PathBuf> = ["docs/plans/milestones/m/README.md/inner.md"]
+            .iter()
+            .map(PathBuf::from)
+            .collect();
+        assert!(Anchors::of(&manifest, &present).by_name("m").is_none());
+    }
+
+    /// The claim: a component register whose home at the root would be the plans directory is
+    /// refused at the declaration, and the tool's `plans` stands.
+    #[test]
+    fn a_component_register_at_the_plans_directory_is_refused() {
+        let manifest = declaring_full(
+            "",
+            "[registers.proposal]\nscope = \"component\"\nshape = \"file\"\ndir = \"plans\"\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let complaints: Vec<&str> = manifest
+            .complaints()
+            .iter()
+            .map(|f| f.what.as_str())
+            .collect();
+        assert_eq!(complaints.len(), 1, "{complaints:#?}");
+        assert!(
+            complaints[0].contains("[registers.proposal]")
+                || complaints[0].contains("proposal register")
+        );
+        assert!(manifest.plans());
+        assert!(manifest.registers().by_name("proposal").is_none());
     }
 
     /// The findings of phase 2 alone, over a listing.

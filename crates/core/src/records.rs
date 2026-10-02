@@ -345,6 +345,38 @@ mod tests {
         records(&model, &anchors, &entities, &Kind::new(kind))
     }
 
+    /// The claim: a milestone's record is its README whole, under no group, whatever headings
+    /// it holds. Mutation checked: the Directory arm of `records` removed, which reads the
+    /// README as a heading section and stops at its second level-one heading.
+    #[test]
+    fn a_milestone_entry_is_its_readme_whole() {
+        let text = "# A milestone\n\nIts plan.\n\n# A second top heading\n\nMore of it.\n";
+        let docs = [("docs/plans/milestones/m/README.md", text)];
+        let tree: Vec<PathBuf> = docs.iter().map(|(p, _)| PathBuf::from(p)).collect();
+        let manifest = Manifest::parse(
+            Path::new("/nowhere"),
+            "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n",
+        )
+        .expect("a declaration");
+        let anchors = Anchors::of(&manifest, &tree);
+        let model = Model::from_documents(
+            docs.iter()
+                .map(|(p, t)| (PathBuf::from(p), t.to_string()))
+                .collect(),
+        );
+        let entities = Entities::build(&model, &anchors);
+        let found = records(&model, &anchors, &entities, &Kind::new("milestone"));
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert_eq!(
+            (found[0].anchor.as_str(), found[0].id.as_str()),
+            ("plans", "m")
+        );
+        assert_eq!(found[0].title, "A milestone");
+        assert_eq!(found[0].group, None);
+        assert_eq!(found[0].body, text);
+    }
+
     #[test]
     fn a_file_entry_is_the_file_whole_and_carries_its_own_metadata() {
         let text = "---\nkind: defect\n---\n# A broken thing\n\n## Summary\n\nIt broke.\n";

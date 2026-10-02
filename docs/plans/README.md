@@ -7,8 +7,9 @@ else:
 - [specs/](specs/README.md): one file per spec, the plan of work done in one pull request,
   cited `spec@plans@<id>`;
 - [milestones/](milestones/README.md): one directory per milestone, work across several pull
-  requests, cited `milestone@plans@<id>`. Its `README.md` is the milestone document, and each
-  other file in it is the spec of one step, cited `spec@<milestone>@<step>`.
+  requests, cited `milestone@plans@<id>`. Its `README.md` is the milestone document, its
+  `index.md` is the generated listing of its steps, and each other file in it is the spec of one
+  step, cited `spec@<milestone>@<step>`.
 
 A plan document leaves in the commit that completes its last harvest, so between pieces of planned
 work the two homes hold only their README and their generated index. The procedure is the

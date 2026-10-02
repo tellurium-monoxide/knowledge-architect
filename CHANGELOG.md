@@ -19,8 +19,9 @@ subsection is omitted.
   `spec@plans@<id>`, a milestone as `milestone@plans@<id>` and a step of a milestone as
   `spec@<milestone>@<step>`. A citation from outside the plans directory of a file inside it is
   refused as reaching inside the anchor `plans`.
-- `manifest`, major: a declared anchor named `plans`, a `[registers.spec]` or
-  `[registers.milestone]` table, and a location naming `spec` or `milestone` are refused.
+- `manifest`, major: a declared anchor named `plans` and a `[registers.spec]` or
+  `[registers.milestone]` table are refused, and so is `spec` or `milestone` in a location's
+  `registers` list.
 
 ### New features
 

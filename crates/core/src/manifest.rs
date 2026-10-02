@@ -166,10 +166,12 @@ impl Registers {
         self.0.iter().find(|r| r.name == name)
     }
 
-    /// Every register name, comma-separated, as a finding lists them.
+    /// Every register a declaration may name, comma-separated, as a finding lists them: all
+    /// but the two plan registers, which are the anchor `plans`' alone.
     pub(crate) fn listed(&self) -> String {
         self.0
             .iter()
+            .filter(|r| !Self::is_plan_register(&r.name))
             .map(|r| r.name.as_str())
             .collect::<Vec<_>>()
             .join(", ")
@@ -722,6 +724,19 @@ fn resolve_registers(registers: &mut Registers, complaints: &mut Vec<Finding>) {
                  home outside the anchor, and the real one is then read by nothing",
             ))
         } else if register.scope == Scope::Component
+            && Path::new("docs").join(&register.dir) == Path::new(PLANS_DIR)
+        {
+            // Every component carries the register, the root included, whose home would then be
+            // the plans directory the tool places the anchor `plans` at.
+            Some((
+                format!(
+                    "the {} register's directory `{}` makes its home at the root {PLANS_DIR}/",
+                    register.name, register.dir
+                ),
+                "give the register another directory; the plans directory is the anchor `plans`, \
+                 which the tool constructs, and one directory answers for one anchor",
+            ))
+        } else if register.scope == Scope::Component
             && COMPONENT_DOCUMENTS.contains(&format!("docs/{}.md", register.dir).as_str())
         {
             // Every heading register has the file shape, so the `.md` is what collides; the
@@ -849,6 +864,22 @@ fn resolve_anchors(
         declared_at: "[project] name".to_string(),
         tool_built: false,
     }];
+    // Pushed right after the root, so the stable sort below puts it first among the anchors
+    // of its depth: a declared anchor at the plans directory is then the one refused, and the
+    // repair a complaint names is the declaration a project can change.
+    let plans_dir = PathBuf::from(PLANS_DIR);
+    candidates.push(Candidate {
+        name: crate::entity::PLANS_ANCHOR.to_string(),
+        homes: [SPEC_REGISTER, MILESTONE_REGISTER]
+            .iter()
+            .filter_map(|r| registers.by_name(r))
+            .map(|r| (r.name.clone(), plans_dir.join(&r.dir)))
+            .collect(),
+        path: plans_dir,
+        is_component: false,
+        declared_at: format!("the anchor `plans` the tool constructs at {PLANS_DIR}/"),
+        tool_built: true,
+    });
     for path in &declared.project.components {
         candidates.push(Candidate {
             name: path
@@ -921,24 +952,9 @@ fn resolve_anchors(
             tool_built: false,
         });
     }
-    // Pushed last: among the locations at its depth it is the one refused, so the repair a
-    // complaint names is the declaration a project can change.
-    let plans_dir = PathBuf::from(PLANS_DIR);
-    candidates.push(Candidate {
-        name: crate::entity::PLANS_ANCHOR.to_string(),
-        homes: [SPEC_REGISTER, MILESTONE_REGISTER]
-            .iter()
-            .filter_map(|r| registers.by_name(r))
-            .map(|r| (r.name.clone(), plans_dir.join(&r.dir)))
-            .collect(),
-        path: plans_dir,
-        is_component: false,
-        declared_at: format!("the anchor `plans` the tool constructs at {PLANS_DIR}/"),
-        tool_built: true,
-    });
-    // Stable, so among equals the order the candidates were pushed in decides: components in
-    // declaration order, then locations in name order, then `plans`.
-    candidates.sort_by_key(|c| (c.depth(), !c.is_component));
+    // Stable, so among equals the order the candidates were pushed in decides: `plans` first,
+    // then components in declaration order, then locations in name order.
+    candidates.sort_by_key(|c| (c.depth(), !(c.is_component || c.tool_built)));
 
     let mut accepted: Vec<Candidate> = Vec::new();
     let mut plans = false;
