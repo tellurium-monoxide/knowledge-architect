@@ -64,6 +64,9 @@ identifiers stay plain `#id` text until step 2.
    specs, which still resolve after the move.
 10. **Nothing else directly under docs/plans/** (D17): a file or directory there other than
     `README.md`, `specs/` and `milestones/` is a phase-2 finding.
+11. **This step's CHANGELOG.md entries**, under `design@knowledge-architect@changelog-entries`:
+    the plans layout is a migration entry (a project moves its plan documents into `specs/` and
+    `milestones/`), and the `spec` and `milestone` kinds a new-feature entry.
 
 ### Readings of the ruled defaults
 

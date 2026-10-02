@@ -192,7 +192,7 @@ the primer's:
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md` is also its crates.io page, and points to docs.rs for the library API | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
-| what a consumer must change, can start using, or will see agents do differently, per release | CHANGELOG.md at the root: one section per version, and the `Next release` section | a released section's content never changes; its structure may, and the `Next release` section may change at any time |
+| what a consumer must change, can start using, or will see agents do differently, per release | CHANGELOG.md at the root: one section per version, and the `Next release` section | a released section's content never changes; its structure may, and the `Next release` section may change at any time, per `design@knowledge-architect@changelog-entries` |
 | a finding established outside this project that a decision here leans on | `docs/grounding/<subject>.md` in the Component the decision belongs to | the source is superseded, or a better one lands |
 | a Component that maintains the repository rather than shipping in it | `tools/<name>/`, one directory per tool | the tool is retired |
 | **none of these, nor a row of the primer** | **ask, before writing it anywhere** | the table gains the row |
@@ -472,11 +472,20 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   manifest or with findings. So a step whose intermediate trees cannot pass lands as one commit,
   squashed before review. Review repairs are new commits after it, and each one passes.
 - **The branch writes its CHANGELOG.md entries**, in the `Next release` section, for each change
-  that passes one of three tests: a consumer must change something in its own files (one entry per
-  thing, saying what); a consumer can start using something new; a person watching agent sessions
-  would see a new or removed action, file, commit, pull-request shape or question. Running the
-  install of the agent skills again is never an entry. Each entry carries its surface and its bump
-  class. This is a restatement; its home is `design@knowledge-architect@versioning-policy`.
+  that passes one of three tests, under the subsection of that test:
+  - **Migration**: a consumer must change something in its own files; one entry per thing, saying
+    what. Running the install of the agent skills again is never an entry.
+  - **New features**: a consumer can start using something new.
+  - **Workflow**: a change to the installed skills that a person watching agent sessions would see:
+    a new or removed action, file, commit, pull-request shape or question. A rewording is not one.
+
+  An entry reads ``- `<surface>`, <class>: <what>``. The surface is one of `checks`, `cli`,
+  `manifest`, `library`, `agent-skills`, `gates`, and entries are sorted in that order. The class is
+  patch for a skill change or a code change that changes no check and no command, minor for a check
+  added or made stricter or an addition that changes nothing existing, major for a change that may
+  require a change in a project or breaks a command or the library API. A change with no entry is
+  at most a patch. This is a restatement; its homes are `design@knowledge-architect@changelog-entries`
+  and `design@knowledge-architect@versioning-policy`.
 
 2. **No operation that can lose content, committed or not.**
 
@@ -561,4 +570,5 @@ git checkout main && git pull --ff-only && git branch -D <branch>
   `design@knowledge-architect@stays-at-zero-x`. How each kind of change is versioned is
   `design@knowledge-architect@versioning-policy`.
 - **Do not argue a decision on the grounds that changing it later would be breaking.** An argument
-  that a change is expensive names the cost it has today, a consumer's migration included.
+  that a change is expensive names the cost it has today, a consumer's migration included. This is
+  a restatement; its home is `design@knowledge-architect@no-future-breaking-cost-argument`.
