@@ -107,7 +107,7 @@ so in one line rather than being omitted, so a reader can tell an empty section 
 | how a step is worked | in a milestone document: §7 of this skill, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
 | names | every project shorthand the document uses, expanded to the file, function or command it names |
 | what the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
-| what is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every tripwire and issue that `cargo klarch show` lists as referencing it, and the harvest that judges each |
+| what is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `cargo klarch show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step or harvest that judges or updates each |
 | criteria | criterion, kind, source, satisfaction |
 | threads | every thread with its identifier, its final state and its resolution, a column naming the section that carries its shape, and a column naming the durable home that will harvest it |
 | new names, in one place | every new name the design uses (a type, a function, a field, an event, a bound, a counter) in one fenced block with the file it goes in; a name that exists in the code is listed as existing |
@@ -232,6 +232,10 @@ finds it there.
      finding stating the gap, the answer and the decision it follows from. Commit the amended spec
      alone, with a subject of the shape `The <step> design audit, applied in place: <n> gaps, none
      reopening a discussion`. Earlier audits are found with `git log --grep='design audit'`.
+     **An answer that widens or narrows a ruling of the owner, or adds an obligation to one, is a
+     scope change even when it is the one answer the document implies.** It is written into the
+     step's spec with the others, and also listed there as a default awaiting the owner, who rules
+     on it at the audit; the implementation of that point does not start before the ruling.
    - **Load-bearing.** The gap is material, or is a choice between two shapes neither of which the
      document rules out, or needs a ruling the document marks as the owner's. Record it in the
      step's spec as open at the audit, with the discriminating fact, stop the step, and open a
@@ -241,14 +245,17 @@ finds it there.
 3. **Claims, tests, implementation, gates, commit**, per the project's development procedure. The
    commit names how each claim's test was shown to fail against a wrong implementation, and says
    of any claim whose test cannot yet do so why not.
-4. **Review before the merge**, per `knowledge-architect-review`. A repair is a
-   further commit. A finding not repaired becomes an issue entry.
+4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
+   or folded where that skill says. A finding not repaired becomes an issue entry.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this step (§6).
 6. **The harvest**, per the step's rows in the harvest section: the decisions and the losing
    alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
    under `knowledge-architect-issue-tracking`. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
-   linked from its README.
+   linked from its README. **The harvest is reviewed before the merge**, per
+   `knowledge-architect-review`, on the decision-record, routing and standing-state axes, and on
+   transcript conformity where the discussion's transcript is available: it writes the record those
+   axes judge, so the review of point 4 cannot see it.
 7. **The step's spec leaves** in the commit that completes its harvest, as in §9. What crosses steps stays in the
    milestone document, amended in place where the landing changed it.
 
@@ -296,8 +303,8 @@ This list is their one home; the reviewer reads it here.
 - every acceptance criterion names the decision it guards, the step judging it, the observable that
   fires it and the response;
 - every thread maps to a section and to a harvest home;
-- every tripwire and issue referencing a decision the work reverses or rewrites is named, with the
-  harvest that judges it;
+- every text referencing a decision the work reverses or rewrites is named, with the step or
+  harvest that judges or updates it;
 - every section of §4 is present, and an empty one says so.
 
 ## 9. When a plan document leaves

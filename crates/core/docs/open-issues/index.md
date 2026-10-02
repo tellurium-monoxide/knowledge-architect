@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-16 entries
+17 entries
 
 | kind | title |
 | --- | --- |
@@ -13,6 +13,7 @@
 | deferred | [A project cannot reference an entry of another project](cross-project-references.md) |
 | observation | [Judging a message costs time quadratic in its line count](judging-a-message-is-quadratic.md) |
 | question | [An extension reads its manifest table as a `toml::Value`, so the core's toml version is part of the public API](manifest-table-exposes-the-toml-crate.md) |
+| todo | [A change to a generated file's contract fails every earlier commit with no word on the cause](a-contract-change-fails-every-earlier-commit-unexplained.md) |
 | todo | [A plan document has no way to name a file its own work will create](a-planned-path-can-be-named.md) |
 | todo | [The installed-file findings sit in phase 2, where the core's placement rule puts them in phase 4](installed-file-findings-belong-in-phase-four.md) |
 | todo | [References are read in Markdown and Rust files only](references-are-read-in-markdown-and-rust-only.md) |

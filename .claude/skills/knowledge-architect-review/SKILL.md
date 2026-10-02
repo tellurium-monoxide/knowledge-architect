@@ -98,8 +98,11 @@ owner can contest it. It is removed only on the owner's word.
 **Where the branch's commits reach the main branch as they are** (a fast-forward, or a rebase merge,
 which keeps their trees and messages and may give them new SHAs):
 
-- **A repair made on the branch is a new commit, appended.** Folding a fix into the commit it
-  repairs hides what the review found from the landing history.
+- **A repair made on the branch is a new commit, appended**, which edits no history. Where the
+  project requires every commit of a branch to pass checks the repair changes, an appended repair
+  leaves the earlier commits failing; it is then folded into the earliest commit it repairs, by a
+  history edit with no uncommitted work in the tree, confirmed afterwards to have lost no content.
+  Either way, the paragraph recording the review says what was repaired, and what was folded.
 - **A commit message carrying a mistake is repaired by amending** while it is the newest commit, and
   by a history edit of the branch after that. Either only with no uncommitted work in the tree, and
   each confirmed afterwards to have lost no content: for an amend, that it changed no file.

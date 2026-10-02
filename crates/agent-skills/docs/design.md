@@ -346,8 +346,8 @@ one that is harder to find.
 The planning skill has a plan document's reviewers read its commit, not the working tree. The review
 skill names what a reviewer reads as a commit range and gives each reviewer that runs a binary a
 worktree detached at the commit under review; a document still uncommitted has neither, so the two
-skills could not both be obeyed. A repair after the review is a further commit, as everywhere else,
-so the history shows what the review found.
+skills could not both be obeyed. A repair after the review is a further commit, as the review
+skill makes every repair by default, so the history shows what the review found.
 
 ### A milestone document whose first step changes the gates lands in a merge of its own `##milestone-lands-before-gate-change`
 

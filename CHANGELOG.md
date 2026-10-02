@@ -44,6 +44,16 @@ subsection is omitted.
   a measured fact carries the command that re-takes it.
 - `agent-skills`, patch: a retrospective names each finding by a letter and a number (W, C, P), and
   states the version of knowledge-architect the session used.
+- `agent-skills`, patch: a plan document names every text that references a decision its work
+  reverses or rewrites, restatements in a `CLAUDE.md` or a skill included, with the step that
+  updates each.
+- `agent-skills`, patch: a design audit lists an answer that widens or narrows a ruling of the owner
+  as a default awaiting the owner, ruled at the audit before its point is implemented.
+- `agent-skills`, patch: a step's harvest is reviewed before the merge, on the decision-record,
+  routing, standing-state and transcript-conformity axes.
+- `agent-skills`, patch: a review repair that would leave an earlier commit of the branch failing
+  the project's checks is folded into that commit by a history edit, and the review's record says
+  so.
 
 ## 0.1.0
 
