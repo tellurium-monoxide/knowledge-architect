@@ -7,4 +7,5 @@ that the installed files match it.
 
 A project depends on `knowledge-architect`, never on this crate directly: cargo fetches it.
 
-The set is incomplete in this version: it grows until the first release.
+No installed skill covers a bounded problem yet: a clear requirement whose main risk is
+over-building.

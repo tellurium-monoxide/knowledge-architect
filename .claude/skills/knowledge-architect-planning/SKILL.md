@@ -35,7 +35,7 @@ audit and at each landing.
 | **thread** | one proposal of the discussion, carrying a state; an approved thread is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
 | **acceptance criterion** | a check on a recorded decision that only the work's built code can apply |
-| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named, and the thread stays closed until the owner's word |
+| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named, and the thread stays closed until the owner's word. The full protocol is `knowledge-architect-discussing-design-decisions`, under Decision authority |
 | **audit** | the reading of a step's entry against the tree and the design homes before the step is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
 

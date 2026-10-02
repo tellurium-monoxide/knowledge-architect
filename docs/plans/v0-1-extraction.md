@@ -1137,7 +1137,7 @@ owner's scheduling is a `todo`, not a `deferred`.
 | shipped text is reference-free, mechanically | agent-skills | todo | step 5, PR 1 (done) | a check replacing the release grep and the walk exclusion of content/. A `todo`: no occasion was found whose own work includes building the check, so no trigger passes the trigger test |
 | skill patching | agent-skills | deferred | step 5, PR 4 (done) | patches stored as diffs per project. Answers watch point P1. |
 | creating a component | agent-skills | todo | step 5, PR 4 (done) | a future skill; the owner has not converged on what a new component requires |
-| a skill for bounded problems | agent-skills | todo | step 6 | the skill the design-discussion skill cannot name until it exists (3.5); its premise is that skill's bounded branch |
+| a skill for bounded problems | agent-skills | todo | step 6 (done) | the skill the design-discussion skill cannot name until it exists (3.5); its premise is that skill's bounded branch |
 
 The core's issue the-core-leaves-this-repository is closed by step 2.
 
@@ -1230,7 +1230,8 @@ its docs/design.md.
 | 5, PR 5 | agent-skills, root | done: the decisions of 3.8, goal-lifecycle, retrospective-destination, premortem-as-watch-points; retrospective-findings-stay-here in the root |
 | 5b, PR 1 | gates, agent-skills, root | done: gates-crate, a-project-holds-its-gate-list, the-library-owns-the-flags, one-spawn-helper; six entries moved from xtask; gates-convention, repo-layout and version-lockstep rewritten |
 | 5b, PR 2 | agent-skills | done: xtask-pins-checker, setup-rust-section; exact-pin rewritten |
-| 6 | agent-skills | plugin-inventory (the design-discussion skill completes the set), designing-together-retirement, designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning, the kept items of the intake |
+| 6, PR 1 | agent-skills | done: designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning; plugin-inventory needs no entry, the goal one-skill-per-activity states the set |
+| 6, PR 2 | agent-skills | designing-together-retirement, the kept items of the intake |
 
 **Losing alternatives.** Section 3.2 and the absorbed shapes of 3.3 are judged against
 recording-a-decision's tests at the harvest of the decision they lost to. The likeliest to pass:
@@ -1522,6 +1523,19 @@ Step 7 publishes three crates.
 - The fork of the design-discussion skill, unified per 4.8, installed as
   knowledge-architect-discussing-design-decisions. Then the record, item by item with the owner.
 - The issue on a skill for bounded problems is opened, with the bounded branch (3.5).
+- Order, approved by the owner: the fork lands first, in its own PR, then the intake. The full
+  material-findings test lives in the design-discussion skill; the planning skill's Terms keep their
+  one-line summary, with a pointer to it (approved).
+- **The fork landed on the branch step-6a-discussing-design-decisions:** the skill, forked from
+  designing-together 0.6.0; its steps 8 and 9 replaced by a hand-off to the planning skill; thread
+  slugs in the entry grammar, checked with `show`, written #slug; tripwires only on the owner's
+  word, at harvest; grounding through the checker's commands; criteria from a goal binding outright;
+  the bounded branch naming no outside skill. The primer lists it, the root CLAUDE.md no longer
+  routes the activity to the plugin, and `issue@agent-skills@a-skill-for-bounded-problems` is open.
+  Harvest: designing-skill-name and bounded-problem-branch; designing-hands-off-to-planning
+  rewritten in place. plugin-inventory earns no entry: `goal@agent-skills@one-skill-per-activity`
+  states the set, and the root goal agents-get-a-complete-workflow leaves writing code to each
+  project.
 - Review axes: transcript conformity against the intake session, with the transcript extracted as
   the head says, and self-consistency.
 

@@ -461,13 +461,11 @@ standing direction under that skill; its home is
 | --- | --- |
 | `knowledge-architect-dispatching-a-review` | `klarch-release-status-reviewer`, an axis for every change that records or argues a decision |
 
-**Two activities use skills from outside this repository.** Step 6 of the milestone document
-installs the first. The second is left to each project by the workflow, and this repository follows
-thaum's until it writes its own.
+**One activity uses a skill from outside this repository.** The workflow leaves a change to the
+code to each project, and this repository follows thaum's until it writes its own.
 
 | activity | served by |
 | --- | --- |
-| a design discussion, which the installed skills name `knowledge-architect-discussing-design-decisions` | the owner's plugin `designing-together`. Its thread names may conflict with this project's decision slugs, and its tripwires are recorded through `knowledge-architect-tracking-open-issues`. Its step 8 is replaced by `knowledge-architect-planning`, and its step 9 by the harvest at landing of `knowledge-architect-recording-a-decision` |
 | a change to the Rust source | thaum's `developing`, read from thaum's checkout at commit e98e296 with `git -C <thaum checkout> show e98e296:.claude/skills/developing/SKILL.md`. Its thaum-specific parts do not apply: the rules and their citations, slices.md, thaum's anchors, and `cargo knowledge`, which is `cargo klarch` here. A test is shown to discriminate by reverting the change in a scratch worktree, since `cargo mutate run` is not ported |
 
 ## Git

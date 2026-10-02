@@ -86,6 +86,8 @@ brackets. The checker reads Markdown and Rust source; a reference anywhere else 
 - `knowledge-architect-recording-a-decision`: a design decision has been made or reversed.
 - `knowledge-architect-tracking-open-issues`: before diagnosing a problem; parking anything; a
   tripwire fires; work closes an entry.
+- `knowledge-architect-discussing-design-decisions`: a design question has an open solution space;
+  keep-or-change about an existing design; a bug trend suggests the design is the problem.
 - `knowledge-architect-planning`: a design discussion converged; a step of a milestone starts or
   lands.
 - `knowledge-architect-dispatching-a-review`: before merging to the main branch, or when an
