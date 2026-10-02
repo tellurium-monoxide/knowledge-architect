@@ -1282,6 +1282,82 @@ fn a_message_naming_nothing_that_exists_fails_and_names_the_commit_and_the_line(
     assert!(stdout.contains("no-such-decision"), "{stdout}");
 }
 
+/// `tiny_project`, with `[commits] refuse-branch-shas = true` in its manifest.
+fn tiny_project_refusing_branch_shas(history: &History) {
+    tiny_project(history, false);
+    let manifest = history.dir.join("knowledge-architect.toml");
+    let text = std::fs::read_to_string(&manifest).expect("the manifest");
+    std::fs::write(
+        &manifest,
+        format!("{text}\n[commits]\nrefuse-branch-shas = true\n"),
+    )
+    .expect("the manifest is rewritten");
+}
+
+/// The claim: under `refuse-branch-shas`, a message citing a commit of the range by its SHA
+/// fails, naming the commit and the line, and the citing commit is counted as failed.
+#[test]
+fn a_message_citing_a_commit_of_the_range_by_sha_fails_under_refuse_branch_shas() {
+    let history = History::new("commit-branch-sha");
+    tiny_project_refusing_branch_shas(&history);
+    let base = history.commit("The project is created\n");
+    let first = history.commit("A first change\n");
+    let second = history.commit(&format!("A second change\n\nIt follows {first}.\n"));
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(stdout.contains(&format!("commit {second}:3")), "{stdout}");
+    assert!(
+        stdout.contains(&format!("`{first}` cites commit {first}")),
+        "{stdout}"
+    );
+    assert!(stdout.contains(&format!("{second} failed")), "{stdout}");
+    assert!(stdout.contains(&format!("{first} judged")), "{stdout}");
+}
+
+/// The claim: a document of a commit's tree citing a commit of the range fails too, named by
+/// the commit and the file.
+#[test]
+fn a_document_citing_a_commit_of_the_range_by_sha_fails_under_refuse_branch_shas() {
+    let history = History::new("commit-branch-sha-doc");
+    tiny_project_refusing_branch_shas(&history);
+    let base = history.commit("The project is created\n");
+    let first = history.commit("A first change\n");
+    history.write(
+        "README.md",
+        &format!("# tiny\n\nA project a test builds. It changed in {first}.\n"),
+    );
+    let second = history.commit("The readme names a change\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("commit {second}: README.md:3")),
+        "{stdout}"
+    );
+}
+
+/// The claim: a SHA outside the range passes under the option, and a citation of the range
+/// passes without it. Mutations: matching any hex run fails the first half, and ignoring the
+/// manifest fails the second.
+#[test]
+fn a_sha_outside_the_range_or_a_project_without_the_option_passes() {
+    let history = History::new("commit-main-sha");
+    tiny_project_refusing_branch_shas(&history);
+    let base = history.commit("The project is created\n");
+    history.commit(&format!(
+        "A change\n\nIt builds on {base}, already on the main branch.\n"
+    ));
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+
+    let plain = History::new("commit-branch-sha-off");
+    tiny_project(&plain, false);
+    let base = plain.commit("The project is created\n");
+    let first = plain.commit("A first change\n");
+    plain.commit(&format!("A second change\n\nIt follows {first}.\n"));
+    let (stdout, stderr, code) = plain.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+}
+
 #[test]
 fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
     let history = History::new("commit-parent");

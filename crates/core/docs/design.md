@@ -1266,6 +1266,24 @@ asserted where that commit's own rules exempted it — a finding rather than a s
 failing tree fails the range, a branch that changes its ignore rules orders its commits for it
 as a branch that makes the checker stricter does: the change first, or a squash.
 
+### `commits` refuses a citation of a commit of its range by SHA, where the manifest turns it on `##branch-shas-are-refused`
+
+Under `[commits] refuse-branch-shas = true`, `commits` reports every run of 7 to 40 lowercase hex
+digits, bounded by bytes that are not ASCII letters, digits or `_`, that prefixes the SHA of a
+commit of the range it judges: in each commit's message, and in each document of that commit's
+tree as the walk reads it. The range a branch is judged over is its own commits, so these are
+exactly the commits a rebase merge gives new SHAs; a citation of one would name nothing once the
+branch merges. A SHA on the main branch, or of another project, is never in the range and passes.
+GitHub's rebase merge rewrites them even for a branch already up to date with the main branch: a
+probe repository, tellurium-monoxide/rebase-merge-probe, merged two commits of an up-to-date
+pull request and received the same trees under new SHAs and a new committer. A project that
+merges by fast-forward keeps its SHAs, so the check is off unless the manifest turns it on.
+
+The check lives in `commits` because it already holds every input: the range's commits, each
+message byte for byte, and each commit's tree assembled into a model. A gate of its own would
+list the range and read the messages again. A SHA in a file the walk does not read is not seen,
+which is the checker's scope everywhere else.
+
 ## 6. The agent configuration
 
 ### The `[agents]` table declares which agent harnesses a project serves `##agents-table`

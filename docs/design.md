@@ -164,11 +164,12 @@ statement false until a repair lands. The procedure is
 - The strict check makes the tree CI judged the tree main receives, which is what matters. Without
   it, a merge button that rebases makes CI meaningless when history was not already linear, as
   the owner put it.
-- GitHub's documentation says its rebase merge "always updates the committer information and
-  creates new commit SHAs". So a commit message never cites the SHA of a commit of its own
-  branch: it names that commit by its subject, since the SHA it would cite never reaches main.
-  The owner expects GitHub to keep the SHAs when history is already linear; the rule stands until
-  a merge under the ruleset shows which holds.
+- GitHub's rebase merge gives the branch's commits new SHAs, even when the branch is already up
+  to date with main: its documentation says it "always updates the committer information and
+  creates new commit SHAs", and a probe repository measured it, per
+  `design@core@branch-shas-are-refused`. So neither a commit message nor a document cites the SHA
+  of a commit of its own branch: it names that commit by its subject. `commits` refuses such a
+  citation, under this repository's manifest.
 
 ### Every component builds under one pinned toolchain `##toolchain-is-pinned`
 

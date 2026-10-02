@@ -542,10 +542,11 @@ git checkout main && git pull --ff-only && git branch -D <branch>
 
 - The draft flag is read here because a job skipped on a draft reports `skipped`, which GitHub
   counts as passing.
-- GitHub's rebase merge gives main the branch's commits with the same trees and messages, and,
-  per GitHub's documentation, new SHAs. So **a commit message never cites the SHA of a commit of
-  its own branch**: it names that commit by its subject. A SHA already on main may be cited. The
-  rule stands until a merge under the ruleset shows whether GitHub keeps the SHAs.
+- GitHub's rebase merge gives main the branch's commits with the same trees and messages, and new
+  SHAs, as a probe repository measured. So **neither a commit message nor a document cites the
+  SHA of a commit of its own branch**: name that commit by its subject. A SHA already on main may
+  be cited. `cargo klarch commits` refuses such a citation, per
+  `design@core@branch-shas-are-refused`.
 - The local branch is deleted with `-D`: its commits are not ancestors of main, since their SHAs
   differ.
 - A merge to main publishes nothing. A release is a separate procedure, per

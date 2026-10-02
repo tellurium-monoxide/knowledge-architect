@@ -250,6 +250,16 @@ pub(crate) struct AgentsDecl {
     pub harness: Vec<String>,
 }
 
+/// The `[commits]` table: what `commits` judges beyond the rules every message is held to.
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(deny_unknown_fields, rename_all = "kebab-case")]
+pub(crate) struct CommitsDecl {
+    /// Refuse a message or a document that cites a commit of the judged range by its SHA,
+    /// per `design@core@branch-shas-are-refused`. Off when absent.
+    #[serde(default)]
+    pub refuse_branch_shas: bool,
+}
+
 /// One component: a directory carrying its own documents and every component register.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct Component {
@@ -350,6 +360,8 @@ struct Declared {
     walk: Walk,
     #[serde(default)]
     agents: Option<AgentsDecl>,
+    #[serde(default)]
+    commits: Option<CommitsDecl>,
     #[serde(flatten)]
     tables: BTreeMap<String, toml::Value>,
 }
@@ -445,6 +457,15 @@ impl Manifest {
             .command
             .as_deref()
             .unwrap_or(DEFAULT_COMMAND)
+    }
+
+    /// Whether `commits` refuses a citation of a commit of its range by SHA: off unless the
+    /// `[commits]` table turns it on, per `design@core@branch-shas-are-refused`.
+    pub(crate) fn refuses_branch_shas(&self) -> bool {
+        self.declared
+            .commits
+            .as_ref()
+            .is_some_and(|c| c.refuse_branch_shas)
     }
 
     /// Whether the project serves the `claude` harness: the default when no `[agents]` table
@@ -1244,6 +1265,20 @@ pub(crate) mod tests {
              [walk]\nskip-dirs = []\nskip-files = []\n"
         );
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
+    }
+
+    /// The claim: `commits` refuses branch SHAs only where `[commits] refuse-branch-shas` is
+    /// true, and an unknown key of the table is refused with the manifest. Mutation: defaulting
+    /// the flag to true fails the absent case.
+    #[test]
+    fn branch_shas_are_refused_only_where_the_manifest_turns_it_on() {
+        assert!(!with_agents("").refuses_branch_shas());
+        assert!(!with_agents("[commits]\n").refuses_branch_shas());
+        assert!(!with_agents("[commits]\nrefuse-branch-shas = false\n").refuses_branch_shas());
+        assert!(with_agents("[commits]\nrefuse-branch-shas = true\n").refuses_branch_shas());
+        let text = "[project]\nname = \"p\"\ncomponents = []\n\n[commits]\nno-such-key = true\n\n\
+                    [walk]\nskip-dirs = []\nskip-files = []\n";
+        assert!(Manifest::parse(Path::new("/nowhere"), text).is_err());
     }
 
     /// The claim: without an `[agents]` table the project serves `claude` and every component
