@@ -381,8 +381,9 @@ choices whose option space genuinely is closed and consequence-free.
    issues and the tripwires, with `{{command}} issues` and
    `{{command}} tripwires`; and, for each entry the question bears on,
    `{{command}} show <kind>@<anchor>@<id>`, which prints the entry and
-   every reference to it. Where the record is silent, read the code and
-   its history; where it is empty, state that the record starts with this
+   every reference to it. The first round states which of these were
+   read and run, and which entries they found that the question bears
+   on. Where the record is silent, read the code and its history; where it is empty, state that the record starts with this
    discussion. A record that
    carries a verdict but no decision — a review, an audit, an
    automated report, a prescribed change nobody ruled on — grounds
@@ -458,8 +459,8 @@ choices whose option space genuinely is closed and consequence-free.
    not a courtesy. Argued agreement is legitimate. Objecting to a
    proposal you have no argument against damages the discussion the
    same way agreeing with one you have not tested does. A factual claim
-   doing closing work carries its provenance — measured, read in a
-   named source, or assumed — and a thread may close over assumed
+   doing closing work carries its provenance — measured, with the
+   command that re-takes it, read in a named source, or assumed — and a thread may close over assumed
    claims only if each assumption is recorded as a tripwire on that
    closure. In the other direction, reverse when the opposing
    argument explains something your position cannot, or survives an

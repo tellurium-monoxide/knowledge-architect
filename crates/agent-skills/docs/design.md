@@ -336,6 +336,11 @@ document, against `goal@knowledge-architect@documentation-stays-consistent`, and
 the document leaves. The plan document is written in the session that converged, so the criteria
 and the document are born together.
 
+The result a scheduled review is expected to give is not a criterion, by the owner's ruling: passing
+the reviews every plan document and step owes is the baseline, and writing it as a criterion in
+every plan document would be noise, and would become the habitual criterion in place of a specific
+one that is harder to find.
+
 ### Undesigned work is an issue, and no list of milestones is kept `##planned-work-is-an-issue`
 
 Work that is known but not designed is a `todo` or `deferred` issue in the owning anchor, with its
