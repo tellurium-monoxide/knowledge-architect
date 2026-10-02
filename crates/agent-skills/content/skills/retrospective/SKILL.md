@@ -50,9 +50,8 @@ done instead.
 - Did this session miss something a project skill adds to an installed skill?
 
 **A finding about how the owner works is judged against the skill's expectation set** (§5). A
-finding that describes the owner's behaviour where an installed skill states it assumes otherwise is
-reported as outside that skill's scope, with the assumption quoted, and not as a defect of the
-skill. A finding that two installed instructions leave no move satisfying both is always in scope,
+finding that describes the owner's behaviour where §5 states the skill assumes otherwise is
+reported as outside that skill's scope rather than as a defect of it. A finding that two installed instructions leave no move satisfying both is always in scope,
 whatever the owner did.
 
 End with **proposals**: for each finding that has one, what to change, and where.
@@ -106,7 +105,8 @@ defect of the skill (§2). A skill not listed here states none yet.
   known by either party. Given a decision already made, it argues against it, because testing a
   proposal is what it is for.
 - **The owner gives the word that closes a thread.** The agent can move threads between open states
-  but cannot close one; that asymmetry is the design. Doing neither leaves threads open, and the
+  but cannot close one for the owner, except in the two cases the skill declares; that asymmetry is
+  the design. Doing neither leaves threads open, and the
   discussion cannot converge. There is no way to hand a decision to the agent: "your judgement" is
   an approval like any other, and every finding that follows it still returns to the owner.
 - **A closed thread is not frozen.** The owner's word reopens one at any time, and needs no new
@@ -126,7 +126,8 @@ defect of the skill (§2). A skill not listed here states none yet.
   authority is not in the conversation, the discussion converges on a verdict nobody present can
   act on.
 - **A discussion runs in one session, and its memory does not outlive it.** The ledger lives in the
-  conversation, and what survives is what the planning skill wrote into the plan document. A
+  conversation, and what survives is what `knowledge-architect-planning` wrote into the plan
+  document, and then the records harvested from it. A
   previous discussion is not resumed in a new session: a new session starts a new discussion,
   grounded on the record. A resumed session with its full transcript restored is the same session.
 - **The owner is trying to converge**: arguing, ruling, or saying stop. Several rules are released
@@ -134,7 +135,8 @@ defect of the skill (§2). A skill not listed here states none yet.
   wrong result.
 - **The owner accepts a methodology, not a script for every exchange.** Conduct outside what the
   skill describes is the agent's judgement, not a gap to be filled.
-- **The project's design intent is recorded, or the project is new.** The skill grounds itself in the
-  goals, the design homes, the rejected alternatives, the open issues and the tripwires, or failing
+- **The project's design intent is discoverable, or the project is new.** The skill grounds itself in
+  the goals, the design homes, the rejected alternatives, the README files, the open issues and the
+  tripwires, or failing
   those in the code and its history. Intent that exists only in someone's memory is not reachable,
   and proposals will contradict decisions already made without either party noticing.

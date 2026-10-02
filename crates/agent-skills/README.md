@@ -58,7 +58,8 @@ about an existing architecture — the assistant:
 - hands the converged design to `knowledge-architect-planning`, which
   writes the spec or the milestone in the same session; each decision
   is recorded in its design home when the work implementing it lands,
-  and a losing alternative where the recording tests keep it;
+  or when it is made if no work implements it, and a losing alternative
+  where the recording tests keep it;
 - writes in plain technical English: explicit quantities and invariants
   over qualitative wording, no idioms, no aphorisms.
 
@@ -139,7 +140,8 @@ discussion converges on a verdict nobody present can act on.
 
 **A discussion runs in one session, and memory does not outlive it.**
 The thread ledger lives in the conversation, not in a file, so what
-survives is what the planning skill wrote into the plan document. Picking up a
+survives is what the planning skill wrote into the plan document, and
+then the records harvested from it. Picking up a
 previous design discussion in a *new* session is not supported: a new
 session starts a new discussion, grounded on the record like any
 other. Resuming a *session* is a different thing and works — if your
@@ -161,17 +163,20 @@ every way a conversation can go, and it is not extended each time one
 goes a new way. Conduct outside what is described here is the
 assistant's judgement, not a gap to be filled.
 
-Two assumptions are about the project rather than about you:
+One assumption is about the project rather than about you:
 
 **Design intent is discoverable, or the project is new.** The skill
 grounds itself before proposing, by reading the goals, the design
-homes, the rejected alternatives, the open issues and the tripwires, or
-failing those the code and its history. A
+homes, the rejected alternatives, the README files, the open issues
+and the tripwires, or failing those the code and its history. A
 greenfield project is handled explicitly. Intent that exists only in
 someone's memory is not reachable, and proposals will contradict
 decisions already made without either party noticing.
 
 ## Model requirements
+
+The decision this section is the evidence for is
+`design@agent-skills@frontier-tier-only`.
 
 The skill is written for frontier-tier models, and the requirement is
 capability, not compliance: it asks the assistant to maintain a
@@ -219,9 +224,8 @@ The skill was designed from practice and mapped against published work
 afterwards; the correspondence below is claimed at the level of
 mechanisms, not as experimental validation of the skill itself. The
 mapping relates the skill to existing work and does not govern it:
-where published work contradicts a mechanism, that is recorded and
-watched, and real use decides whether it becomes a reason to change
-anything.
+where published work contradicts a mechanism, that is recorded here,
+and real use decides whether it becomes a reason to change anything.
 
 - **Convergence proposed, never requested.** [RFC 7282, "On Consensus
   and Humming in the IETF"](https://www.rfc-editor.org/rfc/rfc7282.html)
@@ -330,9 +334,7 @@ mapping rather than from the sources directly.
   opposite of this skill — gIBIS ships nine typed link types, DRL
   around sixteen, and Dung 1995 defines its semantics purely over the
   attack relation — so the counter-position is the mainstream. The
-  practice stands; its stated reason did not, and that reason has been
-  replaced rather than reworded, under the skill's own rule about
-  qualitative claims doing closing work.
+  practice stands, on the structural reason the skill states.
 - **"Consolidating costs latency and nothing else" is contradicted.**
   Fitz et al. 2019 (n=237) found batching notifications three times a
   day improved mood and productivity, hourly was null, and

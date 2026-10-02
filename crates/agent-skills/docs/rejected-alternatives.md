@@ -1,7 +1,7 @@
 # Rejected alternatives — agent skills
 
-The alternatives that lost to a decision of `path@agent-skills@docs/design.md`, each with what it
-lost to and why.
+The alternatives that lost to a decision of `path@agent-skills@docs/design.md`, or to a goal where
+the owner ruled that the winning position needs no entry, each with what it lost to and why.
 
 **Recording every losing thread of a design discussion** — lost to
 `design@agent-skills@losing-alternatives-filter`. `live`. The rejected alternatives would grow by
@@ -24,11 +24,12 @@ sessions, that an agent left a small defect neither fixed nor recorded, as a one
 a long report, where it is easy to miss. That observation cannot be derived again in one discussion
 round, and the rule it defeats is the common one.
 
-**Writing the skills so that weaker models can follow them** — lost to
-`design@agent-skills@frontier-tier-only`. `live`. A scripted comparison showed a smaller model
-reproducing the design-discussion skill's format without its discipline, so simpler wording would
-change the format and not the behaviour. That comparison cannot be derived again in one discussion
-round, and simplifying for a cheaper model is a change that will be proposed again.
+**Writing the design-discussion skill so that weaker models can follow it** — lost to
+`design@agent-skills@frontier-tier-only`. `live`. Rejected as a design goal: the workflow uses
+weaker models as implementers conducted by a frontier model, not as the owner's counterpart in a
+discussion. The scripted comparison that entry cites, which cannot be derived again in one
+discussion round, showed a smaller model reproducing the format without the discipline.
+Simplifying for a cheaper model is a change that will be proposed again.
 
 **A delegated state, under which the owner hands a decision to the agent within a stated boundary,
 or a note recording that judgement was handed over** — lost to

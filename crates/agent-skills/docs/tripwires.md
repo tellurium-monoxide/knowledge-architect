@@ -16,6 +16,6 @@ a file during the discussion" as the candidate.
 
 **Fires when:** a finding that two installed instructions leave no move satisfying both is closed
 by citing an expectation set.
-**Response:** reopen the finding, and reread the entry's boundary sentence for the wording that
-allowed it.
+**Response:** open a `defect` naming the finding and the set cited, and reopen
+`design@agent-skills@expectation-set-bounds-scope` if its boundary sentence admits the reading.
 **Re-entry:** the standing-state review of the change that closed the finding.

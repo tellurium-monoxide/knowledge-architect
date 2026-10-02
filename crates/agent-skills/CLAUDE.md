@@ -25,7 +25,7 @@ restates a skill, or a convention of one project, does not go in it.
 
 ## Editing an installed skill
 
-An edit of a skill or an agent under `path@agent-skills@content/` passes three tests, in order. This
+An edit of an installed skill under `path@agent-skills@content/` passes three tests, in order. This
 is a restatement; its homes are the entries named.
 
 1. **Scope.** A finding about the owner's behaviour outside the skill's expectation set is not a

@@ -423,7 +423,7 @@ depends on; a fix to the gates needs a release of every crate, under version-loc
 The intake ran in 17 rounds, one per section of designing-together's record on `next`, then its
 open-items.md, its CLAUDE.md and its README, each ruled by the owner in the terminal. Framing, ruled
 first: F1, the owner's principle that prose about how to write prose is unbounded, approved as an
-entry; F2, the test for keeping an item, approved for the intake and not recorded. Of 161 items of
+entry; F2, the test for keeping an item, approved with this plan document as its only home, in 4.9. Of 161 items of
 the record, the kept ones:
 
 | round | section | outcome |
@@ -431,13 +431,13 @@ the record, the kept ones:
 | 1 | how the record is kept (9) | all dropped |
 | 2 | the referencing rule (18) | 16 dropped; 2 folded into frontier-tier-only |
 | 3 | model tier (3) | entry frontier-tier-only; rejected alternative on weaker models; 1 dropped |
-| 4 | evidence standard (28) | entry additions-need-real-use, with the no-size-budget fold; 26 dropped |
+| 4 | evidence standard (28) | entry additions-need-real-use, with the no-size-budget fold; 25 dropped |
 | 5 | expectation set (3), pre-release review (4), field reports (3) | entry expectation-set-bounds-scope; 9 dropped |
 | 6, 7 | regression harness (9), release mechanics (13) | all dropped, unseen, on the owner's word |
-| 8 | structure the flow (2), scaffold (3) | entries structure-the-flow, outcome-over-display; 3 dropped |
+| 8 | structure the flow (2), scaffold (3) | entries structure-the-flow, and outcome-over-display from the scaffold section's head; 4 dropped |
 | 9 | Language (10) | all dropped: the owner chose position A, the section stays in the skill unrecorded |
-| 10 | rule triggers (8) | all dropped; the head judged covered by the owner |
-| 11 | no delegation grant (9) | no entry, on the owner's word ("I don't think there is any reason someone would reopen that"); one rejected alternative, lost to the goal the-owner-decides; 7 dropped |
+| 10 | rule triggers (8) | all dropped; the head judged covered by the owner, except the yes-or-no form, which the owner judged "not particularly important" |
+| 11 | no delegation grant (9) | no entry, on the owner's word ("I don't think there is any reason someone would reopen that"); one rejected alternative, lost to the goal the-owner-decides, the first entry of that file to name a goal, which the agent pointed out before the owner ruled "Goal reference is fine"; 7 dropped. The owner's remark, not ruled on: "Maybe the difference is that the agent would phrase decision records a bit differently, reflecting that it was not explicitly approved by the owner." |
 | 12 | criteria (12) | all dropped |
 | 13 | what comes back (1), gaplessness (7) | entry capability-over-conformance; 7 dropped |
 | 14 | the ledger and the record (19) | rejected alternative on a ledger file, lost to designing-hands-off-to-planning; 16 dropped |
@@ -446,7 +446,7 @@ the record, the kept ones:
 | 17 | README | kept, with eight edits for the fork; Install dropped |
 
 Then a design discussion, under the installed design-discussion skill, on three ideas the owner
-raised in round 1 ("The expectation set is probably the most valuable piece ... a model worth
+raised, two in round 1 and one in round 10 ("The expectation set is probably the most valuable piece ... a model worth
 following for the other installed skills ... Maybe it should also be mentionned in the
 retrospective skill"):
 
@@ -457,6 +457,30 @@ retrospective skill"):
 | retrospective-reads-expectations | approved | the retrospective's §2 judges a finding about the owner's behaviour against the set, a contradiction always in scope |
 | expectation-sets-per-skill | approved | a todo issue; only the design skill's set moves now |
 | triggers-as-tests | approved | no text |
+
+Thread to slug: edit-rules-cover-every-skill widened additions-need-real-use,
+capability-over-conformance and expectation-set-bounds-scope in place; expectation-set-location and
+retrospective-reads-expectations are harvested into expectation-set-bounds-scope and the
+retrospective's §2 and §5; expectation-sets-per-skill is the issue
+expectation-sets-for-the-installed-skills. The cost accepted with edit-rules-cover-every-skill: "the
+evidence behind those rules came from one skill. The thaum-derived skills were never edited under
+them. A skill that turns out to need a different standard would have to argue its exception."
+L2's reversal condition: L2 wins if a second installed activity ever needs the set. The caveat of
+round 13 stands: the control arm that told a systematically wrong default from an occasional one is
+not ported, so real sessions are the only instrument.
+
+| criterion | kind | satisfaction |
+| --- | --- | --- |
+| no-contradiction | binding | met: retrospective-reads-expectations keeps a contradiction always in scope |
+| reachable-where-applied | binding | met: L3 ships the set inside the retrospective skill |
+| minimal-record | binding, presumption | met: no entry for wording |
+| bounded-growth | weighed | met: the other sets wait for a todo issue; triggers-as-tests adds nothing |
+| no-policing | weighed | met: the set stays out of the skill the agent runs |
+
+Premortem: a retrospective dismisses a real defect as outside scope (stresses
+retrospective-reads-expectations); the widened rules block a needed addition to a skill forked from
+thaum (stresses edit-rules-cover-every-skill); the retrospective grows past one reading once the
+sets are written (stresses expectation-set-location, and would show at the todo issue).
 
 Ruled out: L1, the set inside each skill, on no-policing (the agent running the skill would check
 the owner against a list); L2, a separate installed file, on cost (a core layout change for a file
@@ -1153,6 +1177,11 @@ settled in its session A (3.5). The fourth was settled in step 6:
   head. For each item the agent proposes a wording. The owner rules on keeping it and on the
   wording. A kept item becomes a slugged entry in the agent-skills design home, or a rejected
   alternative, by recording-a-decision's rules. A dropped item is listed in the commit message.
+- **The test for keeping an item (F2), approved by the owner with this document as its only home:**
+  an item becomes a design entry only if (1) it fixes a behaviour an agent follows, which a rewording
+  could undo unnoticed, and (2) its argument rests on evidence that cost work, or it binds the skill
+  to another installed skill or a goal. A rejected bullet is kept only if it passes
+  recording-a-decision's alternative tests. Everything else is dropped.
 - The dated history is not carried. It stays in the archived repository.
 - The README's content is kept: what the skill does, what it expects of the user, and its grounding
   in the literature. **Default:** it goes into the agent-skills component's README, adapted.

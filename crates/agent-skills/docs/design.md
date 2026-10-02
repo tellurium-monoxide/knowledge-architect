@@ -108,10 +108,14 @@ instruction bought for display fidelity costs more rules than it saves. Together
 
 ## How the installed text changes
 
+The measurements and incidents these entries cite were taken in the designing-together repository,
+whose record is docs/decisions.md on its branch next.
+
 ### The record of the installed text keeps intent and coherence, not wording `##instruction-record-is-minimal`
 
-A decision about the installed text is recorded only where it keeps the owner's intent on record, or
-keeps two parts of the workflow consistent. A rewording, and the rationale for how one instruction
+A decision about the installed text is recorded only where it keeps the owner's intent on record, as
+`goal@knowledge-architect@design-is-recorded-with-its-arguments` asks, or keeps two parts of the
+workflow consistent, as `goal@agent-skills@one-skill-per-activity` asks. A rewording, and the rationale for how one instruction
 is phrased, is not recorded. Such proposals can be made without bound, unlike a technical decision,
 which costs implementation work. The commit message carries a rewording's argument.
 
@@ -127,9 +131,9 @@ literature and synthetic scenarios originate no edit. The skill text carries no 
 edit is judged on whether it changes behaviour, and two real sessions held the design-discussion
 skill's full ledger discipline at several hundred lines without drift. The rule derives from
 `goal@knowledge-architect@the-workflow-improves-through-real-use`, which is stated for the whole
-workflow, so it covers every installed skill. A rule written in the designing-together repository
-for an abandoned discussion was argued, approved, written and reverted in one session, because its
-case was already covered; no observation would have admitted it.
+workflow, so it covers every installed skill. The evidence behind it came from one skill, and the
+skills forked from thaum were never edited under it: a skill that needs a different standard argues
+its exception.
 
 ### A gap in an installed skill is worth text when it is a missing capability `##capability-over-conformance`
 
@@ -151,10 +155,11 @@ behaviour and the project's shape that the skill is built on, each naming what d
 does not hold. The set is the scope test for every proposed edit of the skill: a finding that
 describes an owner's behaviour outside the set is not a gap, and no instruction is written for it.
 The set scopes the owner's behaviour only. A finding that two installed instructions leave no move
-satisfying both is always in scope.
+satisfying both is always in scope, because `goal@agent-skills@one-skill-per-activity` is met only
+while no two installed instructions contradict.
 
 The sets live in the retrospective skill, the one installed activity that judges whether something
-is a defect of an installed skill. The retrospective runs in the installing project, which holds the
+is a defect of an installed skill, per `design@agent-skills@retro-content`. The retrospective runs in the installing project, which holds the
 installed files and not this component's README, so a set the retrospective applies has to ship. A
 set inside the skill it bounds would be read on every use of that skill, and an agent reading it
 would check the owner against a list. The README restates each set for the owner, who is the one it
@@ -385,7 +390,7 @@ The primer reaches every session of every installing project, so its content tes
 not a count of lines: it holds what every session needs and no installed skill delivers at the
 moment it is needed. A convention of one project does not go in it, and neither does a procedure a
 skill delivers when it loads. The workflow targets frontier-tier models, which the
-design-discussion work requires, so a size limit would protect a reader the workflow does not
+design-discussion work requires, per `design@agent-skills@frontier-tier-only`, so a size limit would protect a reader the workflow does not
 serve.
 
 ### The primer carries the goals rule, the intent-and-claims rule, the check before diagnosing, and the rule for what is met outside the task `##primer-content`

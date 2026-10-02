@@ -13,11 +13,11 @@ installed skills state none, so a retrospective finding about them cannot be jud
 ### What
 
 An expectation set lists the assumptions an installed skill makes about the owner's behaviour and
-the project's shape, each naming what degrades when it does not hold. The owner judged the
-design-discussion skill's set a model worth following for the other installed skills, "not
-necessarily with the same set". Each set states assumptions about the owner's behaviour, which
-are the owner's to state, so each is written with the owner, item by item, and lands in the
-retrospective skill, with its restatement in the README of the agent-skills component.
+the project's shape, each naming what degrades when it does not hold. The owner: "It is probably a
+model worth following for the other installed skills (not necessarily with the same set)." Each
+set states assumptions about the owner's behaviour, which are the owner's to state, so each is
+written with the owner, item by item, and lands in the retrospective skill, with its restatement
+in the README of the agent-skills component.
 
 ### Why it matters
 

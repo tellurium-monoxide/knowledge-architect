@@ -43,3 +43,5 @@ each time.
 
 An installed skill for bounded problems, written with the owner, and the design-discussion skill's
 bounded branch naming it, with `design@agent-skills@bounded-problem-branch` rewritten in place.
+The lead under What, if no session has shown it by then, is carried to an issue of its own about
+the design-discussion skill, since it becomes testable only once this skill exists.
