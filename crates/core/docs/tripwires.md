@@ -183,3 +183,16 @@ non-exhaustive and `Gathered`'s fields are private, so such a test cannot be wri
 if it is not added in the same change.
 **Re-entry:** each extension test that plants a defect in the inputs rather than in a mock
 project.
+
+## Guarding `design@core@plans-at-root`: a project asks for more than one plans directory `##plans-directory-split-asked`
+
+One plans directory rests on two premises: most work spans components, and no project holds so many
+open plans that a split helps. A project that outgrows them asks for the split before it builds one.
+
+**Fires when:** a project's owner, in a design discussion, an issue or a review, asks for a plans
+directory per component, or for more than one plans directory in a project.
+**Response:** reopen `design@core@plans-at-root` with the alternative it lost, a plans directory
+in every component, in `path@core@docs/rejected-alternatives.md`. Every citation already names its
+anchor, so a split adds anchors and rewrites none.
+**Re-entry:** the standing-state review on every dispatched review, and each design discussion
+about plan documents.
