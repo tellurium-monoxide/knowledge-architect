@@ -54,17 +54,31 @@ The set is written across several changes before a version is released, so a ski
 member of the set by its installed name before that member lands. No release ships a name its set
 does not hold.
 
-### The design-discussion skill is named discussing-design-decisions `##designing-skill-name`
+### A skill is named by its activity, as a noun of one or two words `##naming-rule`
 
-The skill is installed as `knowledge-architect-discussing-design-decisions`. The word "design"
-alone is often read as visual design. The full name is not ambiguous, and its length is the cost
-accepted for that. It names no domain: the owner uses the skill for programming and for game design, so
-a name such as designing-software would exclude a use it serves.
+An installed skill is named by the activity it covers, as an activity noun in common usage, in one
+or two words after the installer's prefix: planning, review, issue-tracking, decision-recording.
+It is never named as an artifact the activity writes, because the text names both: a skill called
+"decision-record" would share its name with the design homes and rejected alternatives the
+design skill calls the decision record, and one called "open-issues" with the issue directory. A
+name built on a verb form reads as a sentence and grows long, as
+`knowledge-architect-discussing-design-decisions` did. The rule binds a project's own skills too,
+through the agent-configuration skill.
+
+### The design skill is named design `##design-skill-name`
+
+The skill is installed as `knowledge-architect-design`. The installer's prefix places it inside
+knowledge-architect, so the name is never read alone, and the reading of "design" as visual design
+does not arise. It names no domain: the owner uses the skill for programming, for game design, and
+for designing names and rules, always to advance a project. The name "project-design" lost: in
+project-management usage it means shaping a project's plan, which the planning skill does.
+"design" also names the design register, which the design skill does not write: in prose, the noun
+that follows, "the design skill" or "the design home", tells them apart.
 
 ### Until a skill for bounded problems is installed, a bounded problem goes back to the owner `##bounded-problem-branch`
 
 A problem that arrives bounded, a clear requirement whose main risk is over-building, is not a
-design discussion. The design-discussion skill says so, states the strongest open reading of the
+design discussion. The design skill says so, states the strongest open reading of the
 problem beside the bounded one, and leaves the next step to the owner. It names no skill for the
 bounded case, because no installed skill covers it, per `design@agent-skills@no-external-handoff`.
 It does not send the problem to the planning skill either: the owner holds that a bounded problem
@@ -72,9 +86,9 @@ still needs investigation and testing, and a spec records a design and its imple
 without running either. The skill that will cover it is
 `issue@agent-skills@a-skill-for-bounded-problems`; when it lands, this branch names it.
 
-### The design-discussion skill is written for frontier-tier models only `##frontier-tier-only`
+### The design skill is written for frontier-tier models only `##frontier-tier-only`
 
-The design-discussion skill is not simplified for smaller models. A smaller model takes part in the
+The design skill is not simplified for smaller models. A smaller model takes part in the
 workflow as an implementer of what the owner and a frontier model decided, not as the owner's
 counterpart in the discussion. So "a smaller model would not follow this" is not an argument for or
 against any wording of the skill. Its description states "Requires a frontier-tier model
@@ -84,7 +98,7 @@ scripted four-turn discussion run on three models, described in `path@agent-skil
 smaller one reproduced the ledger's format, and it endorsed a weak proposal, invented states outside
 the closed set, and dropped open threads between rounds.
 
-### The design-discussion skill structures how a discussion is conducted, never what is proposed `##structure-the-flow`
+### The design skill structures how a discussion is conducted, never what is proposed `##structure-the-flow`
 
 The skill fixes the flow: proposals are argued, threads carry states, and closure waits for the
 owner's word. It never fixes what may be proposed. The failure it was written against is the
@@ -96,7 +110,7 @@ and the nearest-rival test, under which "no rival worth naming" is a claim to te
 specifies what must be proposed, rather than how a proposal is argued and tracked, works against
 this entry.
 
-### The design-discussion skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
+### The design skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
 
 The threads, states and tables exist so the owner can keep track when an agent produces much
 content at once. A discussion that reaches a well-argued outcome with an imperfect table has
@@ -128,7 +142,7 @@ the gap, not the wording that fills it. A review finding originates an edit only
 is provable by reading: a contradiction, a broken trigger, a factual error. A finding that predicts
 a behaviour is parked as an issue, which states what a real session would have to show. Published
 literature and synthetic scenarios originate no edit. The skill text carries no size budget: an
-edit is judged on whether it changes behaviour, and two real sessions held the design-discussion
+edit is judged on whether it changes behaviour, and two real sessions held the design
 skill's full ledger discipline at several hundred lines without drift. The rule derives from
 `goal@knowledge-architect@the-workflow-improves-through-real-use`, which is stated for the whole
 workflow, so it covers every installed skill. The evidence behind it came from one skill, and the
@@ -144,7 +158,7 @@ rules that scripted one exchange. So a gap is weighed by its kind. A capability 
 agent does not have, such as a way to investigate, to discriminate between positions, or to record
 what the next session needs; filling it is worth text. A conformance gap is a move the agent has and
 might not make; filling it is worth text only where the default behaviour is systematically wrong,
-not occasionally absent, as the design-discussion skill's rules against agreeing without testing
+not occasionally absent, as the design skill's rules against agreeing without testing
 are. When both readings fit, the capability form is written: a tool and the judgement to use it,
 not a script for one interaction.
 
@@ -167,7 +181,7 @@ describes. It works with `design@agent-skills@additions-need-real-use`: that ent
 admits an addition, and this one says which gaps are worth admitting. In the designing-together
 repository, a rule for an abandoned discussion was argued, approved, written and reverted in one
 session, and four further review findings about the user's behaviour were queued behind it on the
-same reasoning. Only the design-discussion skill states a set so far:
+same reasoning. Only the design skill states a set so far:
 `issue@agent-skills@expectation-sets-for-the-installed-skills`.
 
 ## The workflow the skills carry
@@ -206,7 +220,7 @@ without a clone of the repository cannot reach a deliberation.
 ### An alternative earns an entry by the recording tests, not by having lost `##losing-alternatives-filter`
 
 A losing alternative earns an entry in the rejected alternatives only if it passes the tests of the
-installed recording-a-decision skill: it would change a signature crossing the boundary of a
+installed decision-recording skill: it would change a signature crossing the boundary of a
 separately built unit or a serialized format, its reason rests on a reading of an external
 specification the project implements, it was refuted by evidence that cost work, or a doubt
 remains that the winner meets every goal. The rest stay in the spec and the commit message.
@@ -296,7 +310,7 @@ too: the installed planning skill would have nothing to say where a document's w
 ### The planning skill writes the plan document, in the session that converged `##designing-hands-off-to-planning`
 
 The planning skill starts where a design discussion has converged, and writes the spec or the
-milestone in the same session. The design-discussion skill ends at convergence, the premortem and
+milestone in the same session. The design skill ends at convergence, the premortem and
 the owner's rulings on tripwires, and writes no plan document of its own. Its decisions are
 recorded when their work lands, per `design@agent-skills@harvest-after-implementation`. One skill owns the document's shape: two skills describing the sections of one document
 would drift apart, against `goal@knowledge-architect@agents-get-a-complete-workflow`. The session
@@ -337,7 +351,7 @@ the one place for what is open of `goal@knowledge-architect@structure-and-workfl
 The installed agent `knowledge-architect-transcript-conformity-reviewer` reads the transcript of a
 discussion and checks that a document records the owner's decisions as made: each state, the scope
 of each decision, the verbatim quotations, and nothing the owner said left out. The planning skill dispatches it on every plan document written from a
-discussion whose transcript is available, and the installed dispatching-a-review lists it as the
+discussion whose transcript is available, and the installed review lists it as the
 axis for any document that records the decisions of such a discussion. It
 is an agent, not a line in a skill, because its standard and its extraction rule are fixed, and the
 rule is learned from a failure: a filter on text substrings once dropped one of the owner's
@@ -364,9 +378,9 @@ documents cite its sections and steps until it leaves.
 
 ### The standing-state review runs before every merge `##conformance-before-every-merge`
 
-The installed dispatching-a-review sends the standing-state reviewer before every merge to the
+The installed review sends the standing-state reviewer before every merge to the
 main branch, whatever the change. That reviewer is the standing re-entry point of every tripwire
-home, as the installed tracking-open-issues states, and a tripwire is read again only when some
+home, as the installed issue-tracking states, and a tripwire is read again only when some
 review reads it. A re-entry point that depends on whether a change looked related to a tripwire is
 one that a change touching the guarded decision indirectly skips: the reviewer reads every entry of
 every home, not the subset the diff seems to concern. This serves
@@ -393,8 +407,8 @@ The primer reaches every session of every installing project, so its content tes
 not a count of lines: it holds what every session needs and no installed skill delivers at the
 moment it is needed. A convention of one project does not go in it, and neither does a procedure a
 skill delivers when it loads. The workflow targets frontier-tier models, which the
-design-discussion work requires, per `design@agent-skills@frontier-tier-only`, so a size limit would protect a reader the workflow does not
-serve.
+design work requires, per `design@agent-skills@frontier-tier-only`, so a size limit would protect a
+reader the workflow does not serve.
 
 ### The primer carries the goals rule, the intent-and-claims rule, the check before diagnosing, and the rule for what is met outside the task `##primer-content`
 
@@ -426,7 +440,7 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
 
 ### A project states its plans directory in its own rows of the knowledge table `##plans-directory-declared`
 
-The setting-up skill proposes docs/plans/ and writes the path the owner accepts among the
+The setup skill proposes docs/plans/ and writes the path the owner accepts among the
 project's rows. A manifest key would be a checker change that nothing reads yet; it belongs to a
 structure for plan documents, `issue@core@structured-plan-documents`. Nothing checks that the row
 exists, so a project whose root `CLAUDE.md` lacks it leaves the planning skill without a plans
@@ -435,8 +449,8 @@ directory: a known limit until that structure exists.
 ### The routing table lists only what a project adds to an installed skill `##routing-table-shape`
 
 The project's root `CLAUDE.md` carries one row per installed skill or agent that a project skill or
-agent adds to, naming the additions. The setting-up skill writes the table, and the
-maintaining-agent-config skill keeps it. It carries no "read it when" column: the harness already
+agent adds to, naming the additions. The setup skill writes the table, and the
+agent-configuration skill keeps it. It carries no "read it when" column: the harness already
 lists every skill with its description, and a copy of it would drift. A project skill that adds to
 no installed one needs no row.
 
@@ -460,7 +474,7 @@ cannot be told apart from a plugin's.
 
 ### Setting up stops at a conformant structure, and the move of existing documents is planned work `##adopting-existing-docs`
 
-For a project that already has documentation, the setting-up skill takes an inventory of it,
+For a project that already has documentation, the setup skill takes an inventory of it,
 proposes a destination for each document, takes the owner's rulings, and opens one `todo` issue for
 the move. The move itself is a milestone of its own, written under the planning skill. A migration
 is a decision with arguments of its own, such as which recorded decisions still hold, and it fits
@@ -478,13 +492,13 @@ version, which is what bundling the workflow into the checker avoids, per
 `design@knowledge-architect@binary-bundles-workflow`. A project with an extension runs its own
 binary under a name of its own, per `design@core@declared-command`.
 
-### The setting-up skill recommends one gates command, run by the published gates library `##gates-convention`
+### The setup skill recommends one gates command, run by the published gates library `##gates-convention`
 
 One command runs every check a project owes before a merge, runs them all when one fails, and exits
 non-zero when any fails, so a verdict is one exit code and nothing is read through a pipe. In a Rust
 project it is a command of the maintenance crate, per `design@agent-skills@xtask-pins-checker`, so
 every adopting project runs the gates refined in this repository and in thaum. The gates a project
-owes are its own list. The setting-up skill proposes two goals for such a tool, for the owner's
+owes are its own list. The setup skill proposes two goals for such a tool, for the owner's
 ruling: one command runs every check owed before a merge, and a task performed repeatedly becomes a
 command of the tool.
 
@@ -500,19 +514,19 @@ and gives the project's other repeated tasks a place, per
 `goal@knowledge-architect@setup-brings-quality-tools`. The cost accepted: building the gates builds
 the checker, which the check gate needs anyway.
 
-### setting-up shows a Rust project its maintenance crate `##setup-rust-section`
+### setup shows a Rust project its maintenance crate `##setup-rust-section`
 
-The setting-up skill ends with a section for a Rust project: the maintenance crate's manifest, its
+The setup skill ends with a section for a Rust project: the maintenance crate's manifest, its
 aliases, its main, the recommended gates and a continuous integration workflow that runs them on
 every ready pull request, each labelled as an illustration to adapt. It serves
 `goal@knowledge-architect@setup-brings-quality-tools`. The section is for Rust because the project
 is focused on Rust, the language whose comments the checker reads; another language gets a section
 of its own when a project needs one. No check compiles its snippet:
-`issue@agent-skills@the-setting-up-snippet-is-unchecked`.
+`issue@agent-skills@the-setup-snippet-is-unchecked`.
 
 ### Every Component states at least one goal `##goals-required`
 
-The setting-up skill does not finish a Component without at least one goal, stated with the owner.
+The setup skill does not finish a Component without at least one goal, stated with the owner.
 A Component with no goal gives its design nothing of its own to be judged against, and a goal that
 is a Component's responsibility left unstated is one nobody is responsible for, against
 `goal@knowledge-architect@the-owner-decides`. What those goals are is
@@ -582,9 +596,9 @@ and design from the moment it is written, met or not. When nothing fulfils it ye
 document schedules the work, a `todo` issue holds that work and references the goal, so the gap
 between the goal and the tree is listed as outstanding work.
 
-### Goals change only through the setting-goals skill `##when-setting-goals-runs`
+### Goals change only through the goal-setting skill `##when-setting-goals-runs`
 
-The setting-goals skill runs at setup for every Component, when the owner states, rewords or
+The goal-setting skill runs at setup for every Component, when the owner states, rewords or
 abandons a purpose, and when a decision conflicts with a goal and the primer's rule sends the
 conflict to the owner. An agent never edits a goal outside it, since a goal binds outright where a
 decision binds as a presumption, per `goal@knowledge-architect@the-owner-decides`.

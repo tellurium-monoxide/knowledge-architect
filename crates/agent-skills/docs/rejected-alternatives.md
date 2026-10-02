@@ -24,7 +24,7 @@ sessions, that an agent left a small defect neither fixed nor recorded, as a one
 a long report, where it is easy to miss. That observation cannot be derived again in one discussion
 round, and the rule it defeats is the common one.
 
-**Writing the design-discussion skill so that weaker models can follow it** — lost to
+**Writing the design skill so that weaker models can follow it** — lost to
 `design@agent-skills@frontier-tier-only`. `live`. Rejected as a design goal: the workflow uses
 weaker models as implementers conducted by a frontier model, not as the owner's counterpart in a
 discussion. The scripted comparison that entry cites, which cannot be derived again in one

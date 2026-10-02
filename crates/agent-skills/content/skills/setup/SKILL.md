@@ -1,17 +1,17 @@
 ---
-name: knowledge-architect-setting-up
+name: knowledge-architect-setup
 description: MUST use when a project adopts the knowledge-architect workflow, after the first install has run, and when a project moves its pin of the checker to another version. Covers how the checker is pinned and run, the declared command, the manifest and its Components, the documents and register homes each Component carries, the primer's import line, the project's rows of the knowledge table and its routing table, the project's skill prefix, the gates convention, what happens to the documentation the project already has, and, in a Rust project, the maintenance crate, its aliases, its gates and its continuous integration.
 ---
 
 # Setting up
 
 Scope: making a project conformant to the workflow, from a manifest the first install accepted to
-a tree over which `cargo klarch check` passes, with the owner's goals stated. And moving the pin of
+a tree over which `{{command}} check` passes, with the owner's goals stated. And moving the pin of
 the checker to another version.
 
-Not covered here: **stating the goals**, `knowledge-architect-setting-goals`; **moving the existing
+Not covered here: **stating the goals**, `knowledge-architect-goal-setting`; **moving the existing
 documentation into the new homes**, which is planned work of its own (§8); **writing the project's
-own skills**, `knowledge-architect-maintaining-agent-config`.
+own skills**, `knowledge-architect-agent-configuration`.
 
 **Reaching this skill.** The skill is one of the files the install writes, so a session reads it
 once the project holds a manifest the install accepts and the install has run. The smallest such
@@ -28,7 +28,7 @@ skip-files = []
 exclude = []
 ```
 
-After the first install, `cargo klarch check` lists every document the project still owes, each with
+After the first install, `{{command}} check` lists every document the project still owes, each with
 its repair. That list is this skill's work list.
 
 The checker needs `git` 2.36 or newer, and a project inside a git repository. Building it needs a
@@ -94,21 +94,21 @@ one. `[agents] harness` is absent for the default, the `claude` harness.
 
 ## 4. The documents each Component carries
 
-Every Component carries the same documents. `cargo klarch check` names each one missing:
+Every Component carries the same documents. `{{command}} check` names each one missing:
 
 | document | holds |
 | --- | --- |
 | `README.md` | how a user uses the Component |
 | `CLAUDE.md` | the contracts and traps a developer needs, true of the code as it stands |
-| `docs/goals.md`, or `docs/goals/` with a `README.md` | what the Component is for: at least one goal, under `knowledge-architect-setting-goals` |
+| `docs/goals.md`, or `docs/goals/` with a `README.md` | what the Component is for: at least one goal, under `knowledge-architect-goal-setting` |
 | `docs/design.md`, or `docs/design/` with a `README.md` | how it is built and why; it may hold no entry yet |
 | `docs/rejected-alternatives.md` | what lost, and why; it may hold no entry yet |
 | `docs/tripwires.md`, or `docs/tripwires/` with a `README.md` | evidence that would flip a decision; it may hold no entry yet |
-| `docs/open-issues/` | one file per outstanding item, a hand-written `README.md` and an `index.md` that `cargo klarch index` generates |
+| `docs/open-issues/` | one file per outstanding item, a hand-written `README.md` and an `index.md` that `{{command}} index` generates |
 
 Each document opens with a short introduction saying what it holds and what it does not. An empty
 register home says it holds no entry yet. **Every Component states at least one goal**: run
-`knowledge-architect-setting-goals` with the owner for each one.
+`knowledge-architect-goal-setting` with the owner for each one.
 
 ## 5. The root CLAUDE.md
 
@@ -136,7 +136,7 @@ list to the published library knowledge-architect-gates. The library runs the ga
 the project's own.
 
 A maintenance tool of that kind is a Component of its own, which serves the project rather than its
-consumers. Propose these two goals for it, under `knowledge-architect-setting-goals`, for the owner's
+consumers. Propose these two goals for it, under `knowledge-architect-goal-setting`, for the owner's
 ruling like any draft:
 
 ```markdown
@@ -157,7 +157,7 @@ left to be done by hand.
 
 ## 7. Finish
 
-- `cargo klarch index`, then `cargo klarch check` until it passes.
+- `{{command}} index`, then `{{command}} check` until it passes.
 - Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together.
 
 ## 8. Existing documentation
@@ -187,9 +187,9 @@ To move to another version:
    gates library's, which move together, or the version of the local install.
 2. Read the changelog of every version crossed. A minor version under `0.x`, or any major version,
    may make a check stricter or ask for a change to the project's layout.
-3. Run `cargo klarch install-agent-skills`, then follow `knowledge-architect-maintaining-agent-config`
+3. Run `{{command}} install-agent-skills`, then follow `knowledge-architect-agent-configuration`
    for what an upgrade owes the project's own configuration.
-4. `cargo klarch check`, and commit the pin, the installed files and the repairs together.
+4. `{{command}} check`, and commit the pin, the installed files and the repairs together.
 
 ## In a Rust project
 

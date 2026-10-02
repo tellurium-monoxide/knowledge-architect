@@ -1,5 +1,5 @@
 ---
-name: knowledge-architect-setting-goals
+name: knowledge-architect-goal-setting
 description: MUST use when a Component has no goal, when the owner states a new purpose or abandons one, when a recorded decision conflicts with a goal, and before writing or editing any goals home. Covers what a goal is and how it differs from a decision, how the owner's intent is drawn out and written as a draft the owner rules on goal by goal, the shape of a goal entry, how a Component's goal names the project goal it refines, where each goal sits, and why a goal leaves only on the owner's word.
 ---
 
@@ -9,8 +9,8 @@ Scope: the goals homes of the project, one per Component, `docs/goals.md` or `do
 a goal, changing its wording, and removing it.
 
 Not covered here: **a decision about how something is built**, which is
-`knowledge-architect-recording-a-decision`; **setting up the rest of a Component**,
-`knowledge-architect-setting-up`.
+`knowledge-architect-decision-recording`; **setting up the rest of a Component**,
+`knowledge-architect-setup`.
 
 **The goals are the only statements assumed to come from the owner.** Every design decision binds
 as a presumption, and a goal binds outright: a constraint derived from a goal rules a proposal out.
@@ -49,7 +49,7 @@ one. Every Component
 states at least one goal.
 
 A Component's goal that refines a goal of the project's root names it, with a reference in its
-body: `goal@<root anchor>@<slug>`. Then `cargo klarch show goal@<root anchor>@<slug>` lists every
+body: `goal@<root anchor>@<slug>`. Then `{{command}} show goal@<root anchor>@<slug>` lists every
 Component goal that refines it, and removing the root goal leaves each of those references dangling,
 which the check reports.
 
@@ -78,12 +78,12 @@ is argued from one.
 **A goal need not be met yet.** A goal is the owner's intent about where the project should get to,
 and it constrains future work and design from the moment it is written. When nothing fulfils it yet and
 no plan document schedules the work that would, open a `todo` issue for that work, under
-`knowledge-architect-tracking-open-issues`, and reference the goal from it.
+`knowledge-architect-issue-tracking`, and reference the goal from it.
 
 ## 4. When this runs again
 
 - **The owner states a new purpose, abandons one, or rewords one.** A goal is added or reworded
-  through §3. When one is removed, every reference to it dangles, and `cargo klarch check` lists each
+  through §3. When one is removed, every reference to it dangles, and `{{command}} check` lists each
   one: each is a text that derived something from the goal, and is read again.
 - **A decision conflicts with a goal**, and the primer's rule sends the conflict to the owner. The
   goal prevails until the owner rules; if the ruling changes the goal, it changes through §3.

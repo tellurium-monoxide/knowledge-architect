@@ -9,7 +9,7 @@ Scope: looking back at one session's use of the workflow, and turning what was u
 wrong into findings the owner can act on. Real sessions are the test of the workflow, and this is
 how they report.
 
-Not covered here: **opening an issue entry in the project**, `knowledge-architect-tracking-open-issues`.
+Not covered here: **opening an issue entry in the project**, `knowledge-architect-issue-tracking`.
 
 ## 1. When it is offered
 
@@ -85,7 +85,7 @@ Show the owner both files verbatim. The owner may edit them. Then, **on the owne
 where the owner directs**:
 
 - **The project's file**: each finding the owner keeps becomes an issue entry in the project's own
-  register, under `knowledge-architect-tracking-open-issues`.
+  register, under `knowledge-architect-issue-tracking`.
 - **The workflow's file**: it becomes an issue on the repository of knowledge-architect,
   <https://github.com/tellurium-monoxide/knowledge-architect>, opened with
   `gh issue create --repo tellurium-monoxide/knowledge-architect --title "<title>" --body-file <file>`.
@@ -100,7 +100,7 @@ An installed skill is built on assumptions about how the owner works. Each names
 it does not hold. They are not rules the owner is asked to follow; they bound what counts as a
 defect of the skill (§2). A skill not listed here states none yet.
 
-### `knowledge-architect-discussing-design-decisions`
+### `knowledge-architect-design`
 
 - **The owner brings a design question, not a task order.** The mode assumes the answer is not yet
   known by either party. Given a decision already made, it argues against it, because testing a

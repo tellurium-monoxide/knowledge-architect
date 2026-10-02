@@ -1,11 +1,11 @@
 ---
 kind: todo
 ---
-# No check compiles the maintenance crate the setting-up skill shows
+# No check compiles the maintenance crate the setup skill shows
 
 ## Summary
 
-The setting-up skill's section for a Rust project shows a maintenance crate's main, written against
+The setup skill's section for a Rust project shows a maintenance crate's main, written against
 the public interfaces of the checker's library and the gates library. Nothing compiles it, so a
 change to either interface can leave the shipped snippet broken while every gate passes.
 
@@ -14,7 +14,7 @@ change to either interface can leave the shipped snippet broken while every gate
 ### What
 
 A test that extracts the Rust block of the section from
-`path@agent-skills@content/skills/setting-up/SKILL.md`, compiles it against this workspace's crates,
+`path@agent-skills@content/skills/setup/SKILL.md`, compiles it against this workspace's crates,
 and fails when it does not compile; or the snippet moved into a compiled example that the section
 quotes from.
 

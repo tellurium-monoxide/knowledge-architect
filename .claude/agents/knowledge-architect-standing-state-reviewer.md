@@ -77,7 +77,7 @@ available is deciding in advance which entries were worth reading.
 a slug may be guarded from more than one direction. That is where a firing has been missed.
 
 A tripwire that has fired **leaves its home**. Delete it there and create the consequence, an
-issue file or a reopened decision. `knowledge-architect-tracking-open-issues` owns the movement.
+issue file or a reopened decision. `knowledge-architect-issue-tracking` owns the movement.
 **A fired-but-still-listed entry is the failure state.**
 
 One exception: **a tripwire guarding a standing guarantee is restated rather than deleted.** A

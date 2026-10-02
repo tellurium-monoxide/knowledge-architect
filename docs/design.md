@@ -77,7 +77,7 @@ skills of that exact version, and the core pins the agent-skills crate at it exa
 therefore never runs a checker whose installed skills describe another version's commands, which
 is what lets a project pin one version and move when it chooses, per
 `goal@knowledge-architect@any-project-can-adopt-it`. The gates library is in the same lockstep: the
-setting-up skill that recommends it is the same version's, so a project pins one version for all of
+setup skill that recommends it is the same version's, so a project pins one version for all of
 it. The cost accepted: a fix to the gates alone is released as a version of every crate.
 
 ### Versions follow the owner's scheme, mapped onto Cargo's two positions under 0.x `##versioning-policy`

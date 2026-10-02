@@ -1,5 +1,5 @@
 ---
-name: knowledge-architect-discussing-design-decisions
+name: knowledge-architect-design
 description: MUST use when a design discussion has an open solution space — requirements still being discovered, several defensible shapes, a technical choice with real trade-offs — when evaluating whether to keep or change an existing design or architecture, when a recurring bug trend suggests the design itself is the problem, or when a discussion is reverting to multiple-choice menus, minimal-solution defaults, or approval-seeking closers. Covers threads and their states, criteria, decision authority and material findings, the loop from grounding to convergence and the premortem, the hand-off to planning, and keep-or-change verdicts. Requires a frontier-tier model (Opus-class or stronger).
 ---
 
@@ -118,7 +118,7 @@ cheap to reverse deserves one round and a one-sentence argument — still
 a named thread and a ledger line; skip the full table, the premortem,
 and the plan document. The deliberation goes in the message of the commit
 that implements the decision, and the decision is recorded at that landing
-like any other, under `knowledge-architect-recording-a-decision`. To take that path, state what reversal touches, in
+like any other, under `knowledge-architect-decision-recording`. To take that path, state what reversal touches, in
 nouns. Take the full path if reversal touches ANY of these four:
 stored data that would have to be migrated; an interface other code or
 other people already consume; behavior users have adapted to, in the
@@ -325,7 +325,7 @@ binding criterion that is unmet blocks convergence, and no word
 waives it in place: the moves are to change the proposal, or for the
 owner to demote the criterion to weighed — a change to the criterion,
 recorded as one. A criterion derived from a goal is demoted only by
-changing the goal, under `knowledge-architect-setting-goals`. Were acceptance available to both kinds, binding and
+changing the goal, under `knowledge-architect-goal-setting`. Were acceptance available to both kinds, binding and
 weighed would differ only in how much ceremony the acceptance takes.
 Convergence holds only when every criterion carries a satisfaction
 line and no binding criterion is unmet (loop step 6).
@@ -528,7 +528,7 @@ choices whose option space genuinely is closed and consequence-free.
    Some may be out of scope of the project, and the owner is the only judge of that.
    A tripwire the owner rules to record is written at the harvest of the decision
    it guards, in the tripwires home of the Component that owns that decision,
-   under `knowledge-architect-tracking-open-issues`: a tripwire names its decision's
+   under `knowledge-architect-issue-tracking`: a tripwire names its decision's
    design entry, so the entry exists first.
 
    Every tripwire, here and everywhere else, is recorded only on the
@@ -552,11 +552,11 @@ converged design: every thread with its final state, the losing
 alternatives with their reasons, and the tripwires the premortem produced.
 The decision record is the durable harvest of that account, written when
 the work that implements each decision lands, under
-`knowledge-architect-recording-a-decision`: an approved thread becomes a
+`knowledge-architect-decision-recording`: an approved thread becomes a
 design entry under its own slug when it earns one, and a shape that lost
 to an argument earns a rejected-alternative entry only when that skill's
 tests say so. Open state goes to the issue register and the tripwires
-homes, under `knowledge-architect-tracking-open-issues`. A decision that no
+homes, under `knowledge-architect-issue-tracking`. A decision that no
 work implements is recorded when it is made. Findings made during
 planning or implementation surface through the material-findings
 protocol (Decision authority), except a load-bearing gap found at a
@@ -573,7 +573,7 @@ the same exchange, plus:
   evidence is lost when the incident closes. At the trigger moment,
   record the instance and the suspicion
   as an observation, not a verdict: an issue entry of kind `design`,
-  under `knowledge-architect-tracking-open-issues`. Finish the fix; then argue the
+  under `knowledge-architect-issue-tracking`. Finish the fix; then argue the
   direction in a discussion whose entry point is the recorded trend,
   not the incident — a new session when the incident still dominates
   the context. Propose that discussion by name before the current

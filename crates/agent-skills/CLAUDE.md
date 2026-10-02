@@ -39,7 +39,7 @@ is a restatement; its homes are the entries named.
 3. **Kind.** A missing capability is worth text; a conformance rule only where the default is
    systematically wrong (`design@agent-skills@capability-over-conformance`).
 
-For the design-discussion skill, a finding about an intermediate table rather than the outcome is
+For the design skill, a finding about an intermediate table rather than the outcome is
 not worth text (`design@agent-skills@outcome-over-display`). A rewording needs no design entry
 (`design@agent-skills@instruction-record-is-minimal`).
 

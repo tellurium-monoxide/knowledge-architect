@@ -5,7 +5,7 @@ kind: todo
 
 ## Summary
 
-The setting-up skill creates the Components a project starts with. A Component added later, a new
+The setup skill creates the Components a project starts with. A Component added later, a new
 crate or a new service, owes the same documents and at least one goal, and no installed skill says
 what creating one involves beyond the documents the check reports missing.
 
@@ -25,5 +25,5 @@ documents exist, empty, and a goal that is its responsibility is then stated now
 
 ### What would close it
 
-The skill, designed with the owner and installed, and the setting-up skill pointing at it for a
+The skill, designed with the owner and installed, and the setup skill pointing at it for a
 Component added after setup.

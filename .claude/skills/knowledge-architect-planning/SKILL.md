@@ -13,15 +13,15 @@ audit and at each landing.
 **Not covered here**, each named where it lives:
 
 - **The design discussion** that produces the converged design:
-  `knowledge-architect-discussing-design-decisions`. It ends at convergence, the premortem and the
+  `knowledge-architect-design`. It ends at convergence, the premortem and the
   owner's rulings on tripwires, and hands off to this skill.
 - **Writing the code** of a step, its claims and its tests: the project's own development
   procedure. This workflow installs none.
-- **Dispatching the reviewers**: `knowledge-architect-dispatching-a-review`.
+- **Dispatching the reviewers**: `knowledge-architect-review`.
 - **Recording** what a landing establishes. Recording is not done once at the end of the
   discussion: it is done at each landing, as the harvest of §7. The procedure is
-  `knowledge-architect-recording-a-decision` for the decisions and the losing alternatives, and
-  `knowledge-architect-tracking-open-issues` for the tripwires and the issues.
+  `knowledge-architect-decision-recording` for the decisions and the losing alternatives, and
+  `knowledge-architect-issue-tracking` for the tripwires and the issues.
 
 ## Terms
 
@@ -35,7 +35,7 @@ audit and at each landing.
 | **thread** | one proposal of the discussion, carrying a state; an approved thread is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
 | **acceptance criterion** | a check on a recorded decision that only the work's built code can apply |
-| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named, and the thread stays closed until the owner's word. The full protocol is `knowledge-architect-discussing-design-decisions`, under Decision authority |
+| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named, and the thread stays closed until the owner's word. The full protocol is `knowledge-architect-design`, under Decision authority |
 | **audit** | the reading of a step's entry against the tree and the design homes before the step is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
 
@@ -198,11 +198,11 @@ default marked as the owner's to reset.
 - **At each landing**, the landing commit reports on every criterion judged there, one line each:
   the decision guarded, fired or not, the evidence, the response taken.
 - **A criterion that fires** leaves the document at once, as an issue entry or a reopened decision,
-  under `knowledge-architect-tracking-open-issues`.
+  under `knowledge-architect-issue-tracking`.
 - **When the document leaves**, its last landing commit reports on every criterion once more. One
   that did not fire and recurs at later work is proposed to the owner as a tripwire, and written on
   the owner's word in the tripwires home of the Component that owns the guarded decision, naming
-  the harvested head, in the shape `knowledge-architect-tracking-open-issues` gives. One that is
+  the harvested head, in the shape `knowledge-architect-issue-tracking` gives. One that is
   spent, or that the owner declines, is deleted with the document.
 
 ## 7. Working a step
@@ -225,18 +225,18 @@ finds it there.
    - **Load-bearing.** The gap is material, or is a choice between two shapes neither of which the
      document rules out, or needs a ruling the document marks as the owner's. Record it in the
      step's spec as open at the audit, with the discriminating fact, stop the step, and open a
-     design session with the owner under `knowledge-architect-discussing-design-decisions`. Its
+     design session with the owner under `knowledge-architect-design`. Its
      converged design goes into the step's spec, in the sections of §4, and owes §8's reviews. The
      step resumes from it.
 3. **Claims, tests, implementation, gates, commit**, per the project's development procedure. The
    commit names how each claim's test was shown to fail against a wrong implementation, and says
    of any claim whose test cannot yet do so why not.
-4. **Review before the merge**, per `knowledge-architect-dispatching-a-review`. A repair is a
+4. **Review before the merge**, per `knowledge-architect-review`. A repair is a
    further commit. A finding not repaired becomes an issue entry.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this step (§6).
 6. **The harvest**, per the step's rows in the harvest section: the decisions and the losing
-   alternatives under `knowledge-architect-recording-a-decision`, then the tripwires and the issues
-   under `knowledge-architect-tracking-open-issues`. A tripwire names the head that harvested its
+   alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
+   under `knowledge-architect-issue-tracking`. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
    linked from its README.
 7. **The step's spec leaves** in the commit that completes its harvest, as in §9. What crosses steps stays in the
@@ -247,7 +247,7 @@ finds it there.
 Before a plan document is committed, and again after a revision that changes a decided shape (an
 audit applied in place is not one), it is read by fresh reviewers that did not witness the
 discussion. **Fresh, never a fork**: a fork inherits the discussion and reads the document as its
-author. Dispatch them through `knowledge-architect-dispatching-a-review`, with the invariants that
+author. Dispatch them through `knowledge-architect-review`, with the invariants that
 skill lists, the blind brief included:
 
 - `knowledge-architect-cold-implementer-reviewer` reads the document as the implementer of its first

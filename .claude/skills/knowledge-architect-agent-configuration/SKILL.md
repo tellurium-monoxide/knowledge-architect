@@ -1,5 +1,5 @@
 ---
-name: knowledge-architect-maintaining-agent-config
+name: knowledge-architect-agent-configuration
 description: MUST use before adding or editing the project's root CLAUDE.md, a scoped CLAUDE.md next to code, a project skill, or a project subagent definition, and after installing a new version of the workflow. Covers choosing between root, a skill, a scoped file and an agent; how a skill's scope and description are shaped; the content instructions; the project's rows of the knowledge table; the routing table that maps each installed skill to the project skills that add to it; and why an installed file is never edited.
 ---
 
@@ -10,9 +10,9 @@ Its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own skills and its own s
 
 Not covered here: **the installed files**, the skills, agents and primer that
 `cargo klarch install-agent-skills` writes. They are never edited by hand (§5). **Where the argument
-for a decision about the configuration lands**: `knowledge-architect-recording-a-decision`; this
+for a decision about the configuration lands**: `knowledge-architect-decision-recording`; this
 skill owns how to write the configuration, that one owns where the argument goes. **Setting the
-configuration up the first time**: `knowledge-architect-setting-up`.
+configuration up the first time**: `knowledge-architect-setup`.
 
 ## 1. Content and style of agent-facing files
 
@@ -69,9 +69,11 @@ Decided in order; the first match wins.
 
 ## 3. Shaping a skill
 
-- **Name it with an `-ing` verb form**, and give it the project's prefix: the project's name and a
-  hyphen, as in `<project>-developing`. The directory name and the frontmatter `name` are equal. The
-  same prefix names the project's subagent definitions.
+- **Name it by its activity, as a noun of one or two words in common usage** (planning, review,
+  issue-tracking), never as an artifact the activity writes: the text names both, and a skill named
+  like its artifact cannot be told from it. Give it the project's prefix: the project's name and a
+  hyphen, as in `<project>-development`. The directory name and the frontmatter `name` are equal.
+  The same prefix names the project's subagent definitions.
 - **Begin the description with MUST**, and make the trigger **symptom-shaped, not request-shaped**.
   A session rarely asks to "track open issues"; it does meet a behaviour that looks wrong. Write the
   symptom.
@@ -140,5 +142,5 @@ longer ships. In the same commit:
 ## 7. Reviewing a configuration change
 
 Dispatch a review when an instruction is written and a mechanism is in place to deliver it, per
-`knowledge-architect-dispatching-a-review`. This skill adds no axis of its own: a change to the
+`knowledge-architect-review`. This skill adds no axis of its own: a change to the
 configuration is a change to prose, which that skill's axes cover.

@@ -14,7 +14,7 @@ rejected alternatives with what an entry there owes, and whether a reversal did 
 reversal owes. **Not** whether the decision is right, and not _which_ document family owns it,
 which is the routing axis.
 
-**The standard is the installed skill `knowledge-architect-recording-a-decision`.** Read it in
+**The standard is the installed skill `knowledge-architect-decision-recording`.** Read it in
 full before anything else: its tests for an entry and for a losing alternative, its split between
 the design home and history, and its reversal procedure are what you judge against. This
 definition does not restate them.

@@ -15,7 +15,7 @@ The goals are `path@knowledge-architect@docs/goals.md`.
 an argument outright. One derived from a recorded decision binds it as a stated presumption, which
 a better argument can rebut. Recorded decisions were often argued before the code existed, so
 implementation is expected to prove some of them wrong: reversing one is an ordinary move, and
-`knowledge-architect-recording-a-decision` owns what it costs.
+`knowledge-architect-decision-recording` owns what it costs.
 
 The repository is a virtual workspace with five Components, per
 `design@knowledge-architect@repo-layout`:
@@ -63,7 +63,7 @@ State the consequences of a request explicitly. Never assume the user has consid
 - **Current reality only**: no dates in a head, no changelogs outside CHANGELOG.md, no "formerly
   known as".
 - Avoid numbers that may go stale, except in issues that follow the cold-reader standard of the
-  `knowledge-architect-tracking-open-issues` skill.
+  `knowledge-architect-issue-tracking` skill.
 
 ## Mechanical validation of documents
 
@@ -333,7 +333,7 @@ The issue and tripwire registers are spread over every Component and the agent-c
 grepping the one you happen to think of is not the check. The three commands read the same entity
 table that `cargo klarch check` resolves against. A recorded entry usually says more than a fresh
 diagnosis will: the measurement already taken, what was ruled out, and often why the work was left
-undone on purpose. The `knowledge-architect-tracking-open-issues` skill says what to do with what
+undone on purpose. The `knowledge-architect-issue-tracking` skill says what to do with what
 you find, either way.
 
 ### Precedent is not authority
@@ -443,7 +443,7 @@ the matching skill before doing that kind of work.
 commits them under .claude. The harness lists each installed skill with its description, so a
 session finds which applies there. An axis of a review that has an installed reviewer agent is
 dispatched as that agent, and any other axis as a fresh general-purpose subagent, per
-`knowledge-architect-dispatching-a-review`.
+`knowledge-architect-review`.
 
 **This repository's own skills and agents take the prefix `klarch-`**, not the project's name: a
 name beginning with `knowledge-architect-` is the installer's, and the install would delete it.
@@ -459,7 +459,7 @@ standing direction under that skill; its home is
 
 | installed | this repository's additions |
 | --- | --- |
-| `knowledge-architect-dispatching-a-review` | `klarch-release-status-reviewer`, an axis for every change that records or argues a decision |
+| `knowledge-architect-review` | `klarch-release-status-reviewer`, an axis for every change that records or argues a decision |
 
 **One activity uses a skill from outside this repository.** The workflow leaves a change to the
 code to each project, and this repository follows thaum's until it writes its own.
@@ -522,11 +522,11 @@ git merge-base --is-ancestor origin/main HEAD    # if false, rebase
 
 4. **Work is reviewed before any merge to main.**
 
-- Use `knowledge-architect-dispatching-a-review` before the merge.
+- Use `knowledge-architect-review` before the merge.
 - The axes come from the dispatching activity's own skill.
 - Critical findings are repaired before the merge.
 - The commit that lands the repairs says what was reviewed and what was decided.
-- Any finding not repaired becomes an issue entry, per `knowledge-architect-tracking-open-issues`.
+- Any finding not repaired becomes an issue entry, per `knowledge-architect-issue-tracking`.
 - Once the branch is rebased and the repairs are pushed, mark the pull request ready:
   `gh pr ready`. That starts CI, and every later push re-runs it. First check that GitHub has
   taken the push: `gh pr view <branch> --json headRefOid` must equal `git rev-parse HEAD`. A pull

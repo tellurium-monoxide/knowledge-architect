@@ -2,7 +2,7 @@
 
 Evidence that would flip a decision recorded in `path@xtask@docs/design.md`. An entry leaves when
 it fires or when the decision it guards is gone; what to do when one fires is
-`knowledge-architect-tracking-open-issues`.
+`knowledge-architect-issue-tracking`.
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: knowledge-architect-dispatching-a-review
+name: knowledge-architect-review
 description: MUST use before merging anything to the main branch, and whenever an activity's own skill says a unit of its work is ready for review — how to send independent subagent reviewers at it, how to write a brief that cannot mislead them, and where their findings land. The axes to send are the dispatching activity's, and its skill names them.
 ---
 
@@ -11,7 +11,7 @@ sub-activity, required as a prerequisite by every activity that produces somethi
 **When to dispatch is the activity's**, because the moment differs and so does the vocabulary that
 names it: the project's development procedure says when a piece of code is ready,
 `knowledge-architect-planning` says when a plan document is, and
-`knowledge-architect-maintaining-agent-config` says when a configuration change is. Read your
+`knowledge-architect-agent-configuration` says when a configuration change is. Read your
 activity's skill for its moment. The one moment that belongs to no activity is **before merging
 anything to the main branch**.
 
@@ -20,8 +20,8 @@ Not covered here: **being** any of the reviewers (the record reviewers
 `knowledge-architect-standing-state-reviewer`; the plan-document reviewers
 `knowledge-architect-cold-implementer-reviewer` and `knowledge-architect-code-claims-reviewer`;
 and `knowledge-architect-transcript-conformity-reviewer`, all dispatched rather than read), and
-**recording** what a review changes (`knowledge-architect-recording-a-decision`,
-`knowledge-architect-tracking-open-issues`).
+**recording** what a review changes (`knowledge-architect-decision-recording`,
+`knowledge-architect-issue-tracking`).
 
 ## 1. The axes
 
@@ -89,7 +89,7 @@ and `git worktree remove <path>` once the review and the repairs are done. **The
 - repairs, done on the branch before merge, if the defect is too large to consider the task
   achieved;
 - issues, one file each in the affected anchor's issue directory
-  (`knowledge-architect-tracking-open-issues`).
+  (`knowledge-architect-issue-tracking`).
 
 A transcript reviewer's **agent's addition**, detail the author added inside the scope of an
 owner's ruling, is neither: it is kept, and the record of the review lists it as the agent's, so the

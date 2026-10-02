@@ -486,6 +486,22 @@ Ruled out: L1, the set inside each skill, on no-policing (the agent running the 
 the owner against a list); L2, a separate installed file, on cost (a core layout change for a file
 one skill reads). No tripwire, on the owner's word.
 
+### 3.12 Before step 7, the skill names
+
+The owner reopened designing-skill-name: "naming an "action" makes the skill names into full
+sentences, which is weird and often too long". A design discussion under the design skill:
+
+| thread | state | decision |
+| --- | --- | --- |
+| naming-rule | approved | R3: an activity noun in common usage, one or two words, never an artifact the activity writes. R2, a noun of the subject, lost: "decision-record" is the design skill's term for the record, and "open-issues" the issue directory |
+| skill-names | approved | discussing-design-decisions to design, recording-a-decision to decision-recording, tracking-open-issues to issue-tracking, dispatching-a-review to review, maintaining-agent-config to agent-configuration (owner: "I agree with knowledge-architect-agent-configuration"), setting-up to setup, setting-goals to goal-setting; planning and retrospective unchanged |
+| issue-tracking-name | approved | T1, issue-tracking. The owner: "it forgets that it also handles tripwires"; splitting the skill lost to the movement coupling of its two kinds. T2, open-state-tracking, lost on R3's length and common usage |
+| design-skill-name | approved | design. The owner: "Since the skill is always present in the context of knowledge-architect, I don't think there is that much of a need to disambiguate with visual design at all"; the not-visual criterion of session A is withdrawn. project-design lost to the collision with planning in project-management usage. Supersedes designing-skill-name |
+| design-discussion-phrase | approved at the checkpoint | in prose, "the design skill" |
+
+No tripwire, on the owner's word. Harvest: naming-rule and design-skill-name in agent-skills;
+designing-skill-name rewritten in place under the new slug.
+
 ## 4. The decided design
 
 ### 4.1 Repository layout
@@ -1120,9 +1136,9 @@ installed skill delivers at the moment it is needed (3.7). It carries the goals 
 claims, the check before diagnosing, the four cases for what is met outside the task, the
 workflow's rows of the knowledge table, and one line per installed skill.
 
-**Order inside step 5.** The forked skills name the design-discussion skill, which step 6
+**Order inside step 5.** The forked skills name the design skill, which step 6
 creates. Until step 6 they name it by its final installed name,
-knowledge-architect-discussing-design-decisions. The same holds for every skill or agent a fork
+knowledge-architect-design. The same holds for every skill or agent a fork
 names before its own PR lands. The check does not see
 a one-segment name, so nothing fails in between.
 
@@ -1162,13 +1178,13 @@ settled in its session A (3.5). The fourth was settled in step 6:
 
 - the material-findings test. designing-together states it; thaum's planning-a-slice rewords it
   and adds "with a default named, and the thread stays closed until the owner's word". The owner
-  approved the default: the full test lives in the design-discussion skill, and the planning
+  approved the default: the full test lives in the design skill, and the planning
   skill's Terms keep a one-line summary pointing to it.
 
 ### 4.9 The designing-together intake (step 6)
 
 - The skill is forked from designing-together 0.6.0, on its branch `next`, and installed as
-  knowledge-architect-discussing-design-decisions (3.5).
+  knowledge-architect-design (3.5).
 - Its decision record, docs/decisions.md on `next`, has 18 level-two sections
   (`git show next:docs/decisions.md | grep -c "^## "`). One of them, "How the decision record is
   kept", is about the file itself. The owner asked for each item to be listed. **Approved** at the
@@ -1213,7 +1229,7 @@ owner's scheduling is a `todo`, not a `deferred`.
 | shipped text is reference-free, mechanically | agent-skills | todo | step 5, PR 1 (done) | a check replacing the release grep and the walk exclusion of content/. A `todo`: no occasion was found whose own work includes building the check, so no trigger passes the trigger test |
 | skill patching | agent-skills | deferred | step 5, PR 4 (done) | patches stored as diffs per project. Answers watch point P1. |
 | creating a component | agent-skills | todo | step 5, PR 4 (done) | a future skill; the owner has not converged on what a new component requires |
-| a skill for bounded problems | agent-skills | todo | step 6 (done) | the skill the design-discussion skill cannot name until it exists (3.5); its premise is that skill's bounded branch |
+| a skill for bounded problems | agent-skills | todo | step 6 (done) | the skill the design skill cannot name until it exists (3.5); its premise is that skill's bounded branch |
 
 The core's issue the-core-leaves-this-repository is closed by step 2.
 
@@ -1596,11 +1612,11 @@ Step 7 publishes three crates.
 
 **Step 6. The designing-together intake.** Reads 4.8 and 4.9.
 
-- The fork of the design-discussion skill, unified per 4.8, installed as
-  knowledge-architect-discussing-design-decisions. Then the record, item by item with the owner.
+- The fork of the design skill, unified per 4.8, installed as
+  knowledge-architect-design. Then the record, item by item with the owner.
 - The issue on a skill for bounded problems is opened, with the bounded branch (3.5).
 - Order, approved by the owner: the fork lands first, in its own PR, then the intake. The full
-  material-findings test lives in the design-discussion skill; the planning skill's Terms keep their
+  material-findings test lives in the design skill; the planning skill's Terms keep their
   one-line summary, with a pointer to it (approved).
 - **The fork landed on the branch step-6a-discussing-design-decisions:** the skill, forked from
   designing-together 0.6.0; its steps 8 and 9 replaced by a hand-off to the planning skill; thread
@@ -1646,6 +1662,9 @@ Step 7 publishes three crates.
   retrospective; nothing-compiled-in holds, the retrospective's §5 naming no path of this
   repository; self-hosted holds; owner-intent, ship-isolation and thaum-keeps-working are not
   touched.
+- **The skill names landed on the branch skill-names** (3.12): seven installed skills renamed, the
+  naming rule of the agent-configuration skill replaced by R3, harvest naming-rule and
+  design-skill-name.
 - Review axes: transcript conformity against the intake session, with the transcript extracted as
   the head says, and self-consistency.
 

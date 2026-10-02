@@ -1,5 +1,5 @@
 ---
-name: knowledge-architect-tracking-open-issues
+name: knowledge-architect-issue-tracking
 description: MUST use before diagnosing any behaviour as a new problem or defect; when parking anything for later (an unexplained observation, an open question, deferred work, a suspicion); when a recorded tripwire fires; and when work closes any of these. Covers where the issue and tripwire registers live, the entry file shape, the entry kinds and their required subsections, the cold-reader standard, and the movement instruction between the two kinds.
 ---
 
@@ -215,7 +215,7 @@ there with no slug is reported. A slug at another level, at the head of a plain 
 `README.md` of a directory-shaped home, defines nothing and is reported as misplaced.
 
 **A tripwire from a premortem is written on the owner's word only**, at the harvest of the decision
-it guards, per `knowledge-architect-recording-a-decision`.
+it guards, per `knowledge-architect-decision-recording`.
 
 One standing re-entry point: `knowledge-architect-standing-state-reviewer` reads every tripwire
 home again, on the review axis whose whole subject they are. An entry may name a narrower one.

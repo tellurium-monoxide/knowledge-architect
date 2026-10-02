@@ -1,11 +1,11 @@
 ---
 kind: todo
 ---
-# Only the design-discussion skill states what it expects of the owner
+# Only the design skill states what it expects of the owner
 
 ## Summary
 
-The retrospective skill carries one expectation set, the design-discussion skill's. The other
+The retrospective skill carries one expectation set, the design skill's. The other
 installed skills state none, so a retrospective finding about them cannot be judged against one.
 
 ## Details

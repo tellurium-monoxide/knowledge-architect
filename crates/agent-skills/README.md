@@ -10,11 +10,11 @@ A project depends on `knowledge-architect`, never on this crate directly: cargo 
 No installed skill covers a bounded problem yet: a clear requirement whose main risk is
 over-building. The skill is `issue@agent-skills@a-skill-for-bounded-problems`.
 
-The sections below describe one skill of the set, the design-discussion skill,
-`knowledge-architect-discussing-design-decisions`: it runs design discussions as open, argued
+The sections below describe one skill of the set, the design skill,
+`knowledge-architect-design`: it runs design discussions as open, argued
 exchanges instead of narrowing questionnaires.
 
-## The design-discussion skill: what it changes
+## The design skill: what it changes
 
 When a design question has an open solution space — requirements still
 being discovered, several defensible shapes, a keep-or-change question

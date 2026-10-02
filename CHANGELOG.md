@@ -30,18 +30,23 @@ One section per released version. Each item is tagged with the surface it touche
 - `library`: `cli::Command`, `extension::Inputs`, `extension::ExtensionReport` and
   `extension::Resolution` are non-exhaustive.
 - `library`: the `testing` feature is removed.
-- `agent-skills`: the first installed skills, recording-a-decision and tracking-open-issues. The
+- `agent-skills`: the first installed skills, decision-recording and issue-tracking. The
   package ships its build script and its content/ directory, from which the list of shipped files
   is generated.
 - `agent-skills`: the planning skill, and the transcript-conformity reviewer agent.
-- `agent-skills`: dispatching-a-review, and the reviewer agents standing-state, decision-record,
+- `agent-skills`: review, and the reviewer agents standing-state, decision-record,
   routing, code-claims and cold-implementer.
-- `agent-skills`: setting-up, maintaining-agent-config, and the primer, which the project's root
+- `agent-skills`: setup, agent-configuration, and the primer, which the project's root
   CLAUDE.md imports.
-- `agent-skills`: setting-goals and the retrospective.
-- `agent-skills`: setting-goals places a goal in the Component responsible for it; setting-up
+- `agent-skills`: goal-setting and the retrospective.
+- `agent-skills`: goal-setting places a goal in the Component responsible for it; setup
   proposes two goals for a project's maintenance tool.
 - `gates`: the package knowledge-architect-gates, the library that runs a project's merge gates,
   with the recommended list of a Rust project that uses the checker.
-- `agent-skills`: setting-up gains a section for a Rust project: one maintenance crate pins the
+- `agent-skills`: setup gains a section for a Rust project: one maintenance crate pins the
   checker and runs the gates library, with its aliases and a continuous integration workflow.
+- `agent-skills`: the design skill, forked from designing-together 0.6.0; the retrospective carries
+  its expectation set.
+- `agent-skills`: every installed skill is named by its activity as a noun: design,
+  decision-recording, issue-tracking, review, setup, goal-setting, agent-configuration, planning,
+  retrospective.

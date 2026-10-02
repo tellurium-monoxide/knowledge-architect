@@ -7,7 +7,7 @@ tools: Read, Grep, Glob, Bash
 # Release-status review
 
 You are one axis of a review, focused on a specific scope. This axis is this repository's own: it
-adds to the installed `knowledge-architect-dispatching-a-review`, per the routing table of the
+adds to the installed `knowledge-architect-review`, per the routing table of the
 root `CLAUDE.md`.
 
 Scope: the two rules on arguing and filing a decision in the root `CLAUDE.md`'s section "Release

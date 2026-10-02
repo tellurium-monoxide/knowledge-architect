@@ -12,7 +12,7 @@ delivers. The project's own rules are in its root `CLAUDE.md`, beside this prime
 in its goals home, `docs/goals.md` or `docs/goals/`, one heading per goal. A recorded decision was reviewed, but its review can
 miss a detail or an implication, more often as the volume of agentic work grows. A decision binds
 as a presumption, which a better argument may rebut, and reversing one is an ordinary move with a
-procedure (`knowledge-architect-recording-a-decision`). **When a decision conflicts with a goal,
+procedure (`knowledge-architect-decision-recording`). **When a decision conflicts with a goal,
 the likely cause is that the owner missed the conflict: the goal prevails, and the conflict goes to
 the owner.** It is not resolved by following the decision.
 
@@ -35,7 +35,7 @@ Something met while doing other work takes the first of these that applies:
 | --- | --- | --- |
 | 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | stop and present it to the owner at the top of the turn, with a default |
 | 2 | its fix is checkable from the diff alone: it changes no behaviour, no decision and no test outcome (a typo, a stale pointer, wording that is now false, a broken link) | fix it, in a commit of its own |
-| 3 | its `Why it matters` and its `What would close it` can be written | open an issue entry (`knowledge-architect-tracking-open-issues`) |
+| 3 | its `Why it matters` and its `What would close it` can be written | open an issue entry (`knowledge-architect-issue-tracking`) |
 | 4 | none of the above | name it, with why it is dropped |
 
 **A turn that met anything outside its task ends with a section titled "Met outside the task"**,
@@ -55,7 +55,7 @@ decision.
 | --- | --- | --- |
 | what the project, or one Component, is for, and what would show it achieved | that Component's goals home, `docs/goals.md` or `docs/goals/` (the project's root is a Component) | the owner abandons the goal |
 | how the project or a Component is built, and why | that Component's design home, `docs/design.md` or `docs/design/` | the design changes: the entry is rewritten in place |
-| the engineering alternative that lost, and why | that Component's `docs/rejected-alternatives.md` | never; a reversal moves the old winner into it if it meets a recording test of `knowledge-architect-recording-a-decision` |
+| the engineering alternative that lost, and why | that Component's `docs/rejected-alternatives.md` | never; a reversal moves the old winner into it if it meets a recording test of `knowledge-architect-decision-recording` |
 | what is outstanding: a defect, an unexplained observation, an open question, missing work | one file in the owning anchor's issue directory, `docs/open-issues/` in a Component | the issue closes |
 | evidence that would flip a recorded decision about code that exists | the owning Component's tripwires home, `docs/tripwires.md` or `docs/tripwires/` | it fires, or its decision is gone |
 | a contract or a trap that only a developer needs, true of the code as it stands | the scoped `CLAUDE.md` nearest the code | the contract changes or the trap is removed |
@@ -83,19 +83,19 @@ brackets. The checker reads Markdown and Rust source; a reference anywhere else 
 
 ## The installed skills
 
-- `knowledge-architect-recording-a-decision`: a design decision has been made or reversed.
-- `knowledge-architect-tracking-open-issues`: before diagnosing a problem; parking anything; a
+- `knowledge-architect-decision-recording`: a design decision has been made or reversed.
+- `knowledge-architect-issue-tracking`: before diagnosing a problem; parking anything; a
   tripwire fires; work closes an entry.
-- `knowledge-architect-discussing-design-decisions`: a design question has an open solution space;
+- `knowledge-architect-design`: a design question has an open solution space;
   keep-or-change about an existing design; a bug trend suggests the design is the problem.
 - `knowledge-architect-planning`: a design discussion converged; a step of a milestone starts or
   lands.
-- `knowledge-architect-dispatching-a-review`: before merging to the main branch, or when an
+- `knowledge-architect-review`: before merging to the main branch, or when an
   activity's skill says its work is ready.
-- `knowledge-architect-maintaining-agent-config`: before editing a `CLAUDE.md`, a skill or an agent.
-- `knowledge-architect-setting-up`: the project adopts the workflow, or a version upgrade is
+- `knowledge-architect-agent-configuration`: before editing a `CLAUDE.md`, a skill or an agent.
+- `knowledge-architect-setup`: the project adopts the workflow, or a version upgrade is
   installed.
-- `knowledge-architect-setting-goals`: before writing or editing any goals home; a Component has no
+- `knowledge-architect-goal-setting`: before writing or editing any goals home; a Component has no
   goal; the owner states or abandons a purpose; a decision conflicts with a goal.
 - `knowledge-architect-retrospective`: once per session, offered when a branch the session worked on
   merges, a plan document leaves, or the session ends.

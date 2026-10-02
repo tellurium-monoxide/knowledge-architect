@@ -1,5 +1,5 @@
 ---
-name: knowledge-architect-recording-a-decision
+name: knowledge-architect-decision-recording
 description: MUST use when a design decision has been made or reversed — a choice about how the project or one of its Components is built, including anything a consumer of it may depend on — in order to decide whether it earns durable text at all (most implementation choices do not) and where that text lands. Covers when recording happens, the reversal check that comes before everything else, the recording tests, which Component owns it, the split between the design home, the rejected alternatives and history, slug anchors, and the tripwires a premortem produces.
 ---
 
@@ -9,11 +9,11 @@ Scope: turning a decision about **what we build** into durable text. Whether it 
 at all, when it is written, which Component owns it, what goes in the design home, what stays in
 history, and what the premortem leaves behind.
 
-Not covered here: **having** the discussion (`knowledge-architect-discussing-design-decisions`);
+Not covered here: **having** the discussion (`knowledge-architect-design`);
 **writing the spec or the milestone document** that carries a decision until its work lands
 (`knowledge-architect-planning`); **parking something undecided**, and writing a tripwire's entry
-(`knowledge-architect-tracking-open-issues`). A decision about the agent configuration itself is
-both this and `knowledge-architect-maintaining-agent-config`: that skill owns how to write the
+(`knowledge-architect-issue-tracking`). A decision about the agent configuration itself is
+both this and `knowledge-architect-agent-configuration`: that skill owns how to write the
 configuration, this one owns where the argument lands.
 
 ## 0. When recording happens
@@ -61,7 +61,7 @@ change:
 - **Move the incumbent into the Component's rejected alternatives** (§6) with its reason and a
   validity marker, stated as strongly as it was originally made, if it meets one of §6's tests.
 - **Delete the tripwires guarding the reversed decision.** A tripwire whose decision is reversed
-  goes outright. `knowledge-architect-tracking-open-issues` owns that movement.
+  goes outright. `knowledge-architect-issue-tracking` owns that movement.
 - **Repair what pointed at the old behaviour**: skills, subagent definitions, scoped `CLAUDE.md`
   files, generated headers. Grep the behaviour's wording as well as the slug, since a pointer that
   describes the behaviour without naming it is the one a slug grep misses.
@@ -143,7 +143,7 @@ In the Component's design home. That is its `docs/design.md`, or, for a Componen
 outgrown one file, its `docs/design/` directory. In the directory shape the decision goes in the
 subdocument owning its subject, never in the directory's `README.md`, which is the head and the
 index. A new subdocument is linked from that index, `[title](file.md)`, the target relative to the
-README, conventionally one bullet per subdocument. `cargo klarch check` refuses one that is not.
+README, conventionally one bullet per subdocument. `{{command}} check` refuses one that is not.
 
 Rewrite it **as if the design had always been so**. Present tense, no dates, no "formerly", no
 account of the change. If you find yourself writing "we used to…", that sentence belongs in the
@@ -160,7 +160,7 @@ outline reads as decisions under level-two subjects. **Every level-three heading
 is an entry** and carries a slug: one without is a finding, so a heading that is section text sits
 at level two or four. Nowhere else: a slug at another heading level, in a table cell, at the head
 of a plain line, in the middle of a line or in a file that is not the design home defines nothing.
-`cargo klarch check` reports it as a misplaced definition, and every reference to it as dangling.
+`{{command}} check` reports it as a misplaced definition, and every reference to it as dangling.
 The slug is an id in the grammar `[a-z0-9]+(-[a-z0-9]+)*`, unique in the design home.
 
 **When the decision was a thread of a design discussion, its slug is the thread's name.** The
@@ -192,7 +192,7 @@ resolve writes a placeholder in angle brackets.
 presumption, and the reference is what tells a reader which. A decision of another Component the
 head depends on. **A reference is a claim that this head is revisited when that entry changes**,
 so a reference whose entry's change would leave the head unaffected is not written. Never list what
-cites this head: `cargo klarch show design@<component>@<slug>` computes it.
+cites this head: `{{command}} show design@<component>@<slug>` computes it.
 
 A decision that relies on the checker of this workflow states that it relies on the checker
 working as intended. It cannot reference the checker's own decisions: a reference resolves only
@@ -219,7 +219,7 @@ question is whether **a shape lost to an argument**.
 | withdrawn with no defeating reason | the spec only. It carries no argument a later reader could test. |
 | superseded, when the absorbing thread carries its shape whole | the spec only |
 | superseded, when a distinct shape lost | judged by the tests below, as a ruled-out thread |
-| a shape that lost, when the question produced no decision | the spec only. An entry names the decision it lost to, and there is none. If the question stays open, it is an issue under `knowledge-architect-tracking-open-issues`. |
+| a shape that lost, when the question produced no decision | the spec only. An entry names the decision it lost to, and there is none. If the question stays open, it is an issue under `knowledge-architect-issue-tracking`. |
 
 **An alternative earns an entry only if at least one of these holds:**
 
@@ -288,12 +288,12 @@ A design discussion ends with a premortem, and the owner rules on which of its s
 become tripwires. **A tripwire is written at harvest, with the decision it guards, and only on the
 owner's word.** It goes in the tripwires home of the Component that owns the guarded decision, so
 the decision's head exists before the tripwire that names it. Its shape and its lifecycle are
-`knowledge-architect-tracking-open-issues`.
+`knowledge-architect-issue-tracking`.
 
 ## 8. Before you finish
 
 ```sh
-cargo klarch check
+{{command}} check
 ```
 
 Every reference you wrote must resolve.

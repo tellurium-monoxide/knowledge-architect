@@ -7,7 +7,7 @@ failed, and one verdict taken from the children's exit codes alone.
 A project calls it from its own maintenance binary, conventionally a crate named `xtask` run
 through the cargo alias `cargo x`. The binary holds the project's gate list, usually the
 recommended list of a Rust project that uses knowledge-architect, and hands it to the library with
-the flags it parsed. How to set that up is part of the setting-up skill that knowledge-architect
+the flags it parsed. How to set that up is part of the setup skill that knowledge-architect
 installs; the library's interface is at <https://docs.rs/knowledge-architect-gates>.
 
 ## What a run produces
