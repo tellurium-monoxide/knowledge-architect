@@ -241,7 +241,7 @@ impl Anchors {
     /// make the two ambiguous, and `manifest::collides` refuses one.
     pub(crate) fn owning(&self, rel: &Path) -> &Anchor {
         // Depth first, and a component on a tie: two anchors at one path is a declaration
-        // `check::registers` reports, and until it is repaired the component keeps its own
+        // `manifest::collides` refuses, and until it is repaired the component keeps its own
         // documents rather than every slug in them being reported as misplaced.
         self.list
             .iter()
@@ -571,7 +571,7 @@ impl Entities {
                     continue;
                 };
                 // A document an anchor nested inside this home owns is that anchor's, not
-                // an entry here: the nesting is `check::registers`' finding, and reading the
+                // an entry here: the nesting is `manifest::collides`' finding, and reading the
                 // nested anchor's files as entries would report it against the wrong register.
                 if anchors.owning(&doc.rel).path != anchor.path {
                     continue;
@@ -1365,7 +1365,7 @@ mod tests {
     #[test]
     fn the_deepest_anchor_wins_and_a_component_wins_a_tie() {
         // Deepest, not shallowest: the nested component owns its own documents. The tie is
-        // a declaration `check::registers` reports, and until it is repaired the component
+        // a declaration `manifest::collides` refuses, and until it is repaired the component
         // keeps its documents rather than every slug in them reading as misplaced.
         let a = anchors();
         assert_eq!(

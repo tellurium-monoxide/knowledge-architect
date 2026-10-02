@@ -216,8 +216,8 @@ pub(crate) fn file_register_indexes(
         ));
     }
     out.sort_by(|a, b| a.0.cmp(&b.0));
-    // Two registers sharing one home is a declaration `check::registers` reports; writing the
-    // same destination twice in one run is not this command's way of saying so.
+    // Two registers sharing one home is a declaration `manifest::resolve_registers` refuses;
+    // writing the same destination twice in one run is not this command's way of saying so.
     out.dedup_by(|a, b| a.0 == b.0);
     out
 }
