@@ -466,11 +466,11 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
 ### A project states its plans directory in its own rows of the knowledge table `##plans-directory-declared`
 
 The setup skill proposes docs/plans/ and writes the path the owner accepts among the
-project's rows. A manifest key would be a checker change that nothing reads yet; it belongs to a
-structure for plan documents, scheduled in
-`milestone@plans@structured-plans`. Nothing checks that the row
-exists, so a project whose root `CLAUDE.md` lacks it leaves the planning skill without a plans
-directory: a known limit until that structure exists.
+project's rows. The checker now fixes the plans directory at docs/plans/, per
+`design@core@plans-dir-fixed`, so the row can name no other path; it stays while the installed
+skills read the plans directory from the row, which `milestone@plans@structured-plans` changes.
+Nothing checks that the row exists, so a project whose root `CLAUDE.md` lacks it leaves the
+planning skill without a plans directory: a known limit until the skills read the fixed path.
 
 ### The routing table lists only what a project adds to an installed skill `##routing-table-shape`
 

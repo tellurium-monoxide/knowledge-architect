@@ -28,7 +28,7 @@ did not witness that discussion.
 
 The step specs, in implementation order:
 
-- [Step 1, #plans-structure](plans-structure.md)
+- Step 1, #plans-structure: landed; its spec left in the commit that completed its harvest.
 - [Step 2, #plan-items](plan-items.md)
 - [Step 3, #workflow-text](workflow-text.md)
 
@@ -115,7 +115,11 @@ unruled; the implementation of a point whose default is unruled does not start, 
 
 ## What the work is
 
-**Today**, measured at main's commit 90a4b56:
+**Step 1 has landed.** The checker builds the plans anchor, its `spec` and `milestone` registers
+and one anchor per milestone, and `design@core@plan-register` and the heads beside it record the
+design. The list below describes the tree before step 1, and holds for what steps 2 and 3 change.
+
+**Before step 1**, measured at main's commit 90a4b56:
 
 - **The plans directory is a row of the knowledge table**, not something the checker knows. The
   root `CLAUDE.md` names it, per `design@agent-skills@plans-directory-declared`. The checker reads
@@ -706,9 +710,12 @@ until its harvest.
 | #file-anchor-fits-path-model | #plan-anchor | step 2 | making a spec file an anchor needs a change to `Anchors::owning` or to the deepest-anchor rule beyond excluding plan anchors from the `path` kind | stop step 2; design session with the owner |
 | #roadmap-needs-no-code | #roadmap-home | step 3 | writing the roadmap's instructions needs a checker rule that ordinary reference checking does not give | stop step 3; put it to the owner |
 
+#milestone-fits-file-register was judged at step 1's landing and did not fire; the landing
+commit reports the evidence. It is reported once more when this document leaves.
+
 ## Implementation sequence
 
-1. [#plans-structure](plans-structure.md): the plans anchor, the `spec` and `milestone` registers,
+1. #plans-structure, landed: the plans anchor, the `spec` and `milestone` registers,
    the milestone anchors, clauses P1 and P2; this repository's plans directory takes the new
    layout. Fails alone on: a tree whose plans homes hold nothing reports a finding.
 2. [#plan-items](plan-items.md): items by section, spec files as anchors, citations scoped to their

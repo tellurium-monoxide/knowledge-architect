@@ -294,7 +294,8 @@ are findings. So is a milestone name outside the id grammar, `[a-z0-9]+(-[a-z0-9
 
 A tree that breaks this layout stops the run at phase 2, except a home's missing `README.md` or
 `index.md`, which is a finding of the last phase as in every file register. The arguments are
-`design@core@anchors-are-components-and-locations` and `design@core@reserved-anchors`.
+`design@core@plan-register`, `design@core@plans-split-dirs`, `design@core@plan-document-kinds`
+and `design@core@a-plan-name-reads-as-nothing-else`.
 
 ## Commit messages
 
