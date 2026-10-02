@@ -6,7 +6,8 @@ kind: todo
 ## Summary
 
 The owner intends a mechanical checker for CHANGELOG.md, with a model of its sections and entries.
-Today the shape that `design@knowledge-architect@changelog-entries` fixes is checked only by
+Today the shape that `design@knowledge-architect@changelog-entries` and the preamble of
+`path@knowledge-architect@CHANGELOG.md` fix is checked only by
 `klarch-changelog-reviewer`, once per release, by reading.
 
 ## Details
@@ -16,7 +17,9 @@ Today the shape that `design@knowledge-architect@changelog-entries` fixes is che
 CHANGELOG.md has a structure a parser can read: one section per released version and a
 `Next release` section; inside each, the subsections Migration, New features and Workflow; each
 entry of the shape ``- `<surface>`, <class>: <what>``, with a surface from a closed list, a class
-from patch, minor and major, and entries sorted by surface. Nothing parses it. A mechanical check
+from patch, minor and major, and entries sorted by surface as the preamble states. Nothing parses
+it. The one released section, `0.1.0`, predates this shape: it has no subsections and no classes,
+and adding a class to a released entry would change its content, which the decision forbids. A mechanical check
 could assert, on every commit rather than at the release:
 
 - the section, subsection and entry shapes, the closed lists of surfaces and classes, and the order
@@ -33,12 +36,13 @@ the reviewer.
 A shape defect, a misspelt surface, a class outside the list or an entry out of order, is found
 today only at the release, by a subagent reading the file, and a released section's content can
 change with nothing reporting it. It strains `design@knowledge-architect@changelog-entries`, whose
-rules on released sections and on the order of entries have no mechanical guard, against
+rule on released sections has no mechanical guard, nor has the preamble's order of entries, against
 `goal@knowledge-architect@documentation-stays-consistent`.
 
 ### What would close it
 
 A design discussion with the owner deciding where the check lives: a check of the core, which any
 project could use with a changelog shape it declares, or a gate of this repository in its
-maintenance tool. Then the check, with a test for each assertion above that fails on a planted
+maintenance tool, and what the check does with a section released before the shape existed. Then
+the check, with a test for each assertion above that fails on a planted
 defect, and the reviewer's predicates narrowed to what the check cannot assert.

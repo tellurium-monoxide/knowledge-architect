@@ -663,13 +663,16 @@ project, one for knowledge-architect. A finding on an interaction whose fix may 
 goes in both. The project's findings never leave the project, so only the workflow's file is held
 to the rule that it carries nothing of the project beyond what a finding needs.
 
-### A retrospective names each finding by a letter and a number, and records the version it ran `##finding-ids`
+### A retrospective names each finding by a letter and a number `##finding-ids`
 
 Each finding carries an id: W for the installed skills and agents, C for the checker, P for the
 project's own instructions, and a number within each letter. The owner rules on findings one by
 one, and an id lets a ruling, a fix or a commit cite one without restating it. An interaction
-finding has one id per file, each naming the other, because the workflow's file may be published
-without the project's.
+finding whose fix may fall on either side sits in both files, per
+`design@agent-skills@retro-two-files`, and has one id in each, each naming the other, because the
+workflow's file may be published without the project's.
+
+### A retrospective records the version of knowledge-architect the session used `##version-in-report`
 
 Both files state the version of knowledge-architect the session used, so a finding can be judged
 against the text that produced it. In a project that pins the checker, the pin is that version,

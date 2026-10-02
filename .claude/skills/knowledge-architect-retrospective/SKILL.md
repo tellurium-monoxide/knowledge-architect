@@ -45,9 +45,9 @@ done instead.
 **Each finding is named by a letter and a number**, so that a fix, an issue or a commit can cite it
 in a few characters, as "W3 of the retrospective of <date>": **W** for the installed skills and
 agents, **C** for the checker, **P** for the project's own instructions. Numbers run from 1 within
-each letter, in order of appearance, so an id is unique within one retrospective. A finding on an
-interaction gets one id in each file, and each names the other, since the two files may be read
-apart. The three questions below take no id: they are answers, not findings.
+each letter, in order of appearance, so an id is unique within one retrospective. An interaction
+finding whose fix may fall on either side goes in both files (§3) and gets one id in each, each
+naming the other, since the two files may be read apart. The three questions below take no id: they are answers, not findings.
 
 1. **The installed skills and agents.**
 2. **The project's own instructions**: its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own
