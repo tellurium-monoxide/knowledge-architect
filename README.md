@@ -10,15 +10,15 @@ It is built for projects developed mostly by AI agents, and has two parts that w
   display the records a session must read before it changes something.
 - **An agent workflow**, a set of skills and subagent definitions the checker installs into a
   project: setting up, writing goals, designing, planning, recording decisions, tracking open
-  issues, reviewing, and a retrospective. *Not yet shipped: it arrives with the first release.*
+  issues, reviewing, and a retrospective.
 
 Why it exists, and what it aims for, is `path@knowledge-architect@docs/goals.md`.
 
 ## Status
 
 The version is 0.1.0, the first release, published on crates.io. The project stays at
-0.x, with breaking changes allowed, until its first design discussion's open issues are settled,
-per `design@knowledge-architect@stays-at-zero-x`.
+0.x, with breaking changes allowed, until the owner's word, given only once its first design
+discussion's open issues are settled, per `design@knowledge-architect@stays-at-zero-x`.
 
 ## Using the checker
 

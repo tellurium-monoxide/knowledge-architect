@@ -27,7 +27,7 @@ audit and at each landing.
 
 | word | meaning |
 | --- | --- |
-| **plan document** | any document in the plans directory. Temporary: it leaves when its work lands |
+| **plan document** | any document in the plans directory except its `README.md`. Temporary: it leaves when its work lands |
 | **plans directory** | the one directory where a project keeps its plan documents. Its path is the project's choice, stated in its root `CLAUDE.md` |
 | **spec** | the plan document of work done in one branch and one PR: the converged design and a concise implementation sequence |
 | **milestone** | work across several PRs, with design sessions between them. Its plan documents are one directory: the **milestone document**, its `README.md`, and one spec per step |
@@ -84,7 +84,9 @@ lists what landed.
 - The milestone document links each step's spec as a navigation row, `[<step title>](<step>.md)`.
   The checker resolves a relative link only in a `README.md` or an `index.md`, which is why the head
   is a README.
-- **The plans directory holds plan documents and nothing else.** A document with another lifetime,
+- **The plans directory holds plan documents and nothing else**, except one `README.md` that says
+  what the directory holds. It keeps the directory, and the path the root `CLAUDE.md` names for it,
+  in the tree while no plan is open. A document with another lifetime,
   such as a record of how far a subject is implemented or a survey that outlives its work, has its
   own home. If none fits, ask the owner before writing it anywhere.
 - A plan document carries **no slug anchor**: a slug is a definition other documents may cite, and

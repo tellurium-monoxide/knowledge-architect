@@ -244,7 +244,7 @@ list of what references an entry: `show` computes it.
 ### Plan documents
 
 `path@knowledge-architect@docs/plans/` is this repository's plans directory. It holds plan
-documents and nothing else: a spec for the work of one PR, a milestone directory for work across
+documents and nothing else, except a README that keeps it in the tree while no plan is open: a spec for the work of one PR, a milestone directory for work across
 several PRs. They are committed on the work's branch. A correction is applied in place, so a
 partial reading cannot mislead. A plan document is deleted in the commit that completes its last
 harvest, and that commit's message names its path. This is a restatement; its homes are
@@ -544,15 +544,17 @@ git checkout main && git merge --ff-only <branch> && git push
 - The local fast-forward keeps every commit's SHA, so the commit CI tested is the commit main
   receives, and GitHub marks the pull request merged. Never merge with GitHub's own buttons: a
   rebase merge there rewrites every SHA.
-- A merge to main publishes nothing. A release is a separate procedure.
+- A merge to main publishes nothing. A release is a separate procedure, per
+  `design@knowledge-architect@publish-after-merge`.
 
 ## Release status
 
 **The version is `0.1.0`, the first published release.** Its three crates are on crates.io. Nothing
 has a consumer yet; thaum is expected to be the first one.
 
-- **The project stays at 0.x, and breaking changes stay allowed**, until the open issues of the
-  design discussion that produced it are implemented, or at least argued thoroughly, per
+- **The project stays at 0.x, and breaking changes stay allowed**, until the owner's word, given
+  only once the open issues of the design discussion that produced it are implemented, or at least
+  argued thoroughly, per
   `design@knowledge-architect@stays-at-zero-x`. How each kind of change is versioned is
   `design@knowledge-architect@versioning-policy`.
 - **Do not argue a decision on the grounds that changing it later would be breaking.** An argument

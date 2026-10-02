@@ -47,3 +47,9 @@ properties a thread ledger lacks: the state is corroborated against something ou
 such as git, and every system that lets a model overwrite its state caps it hard. A thread ledger's
 only corroborant is the conversation, which is what compaction removes. In the runs of the
 designing-together skill, thread states were correct without a file.
+
+**A separate installed file holding the expectation sets, read only by those who judge findings** —
+lost to `design@agent-skills@expectation-set-bounds-scope`. `live`. It would keep the sets out of
+every skill's text and out of the retrospective, at the cost of a change to the install layout for
+a file one skill reads. It wins if a second installed activity ever needs the sets, which
+`issue@agent-skills@expectation-sets-for-the-installed-skills` may bring about.

@@ -399,3 +399,15 @@ into a check that silently does not run, with exit 0.
 and it needs a shell. It is kept because a doubt remains: the import is verified for the main
 session and a subagent of the `claude` harness, and another context or harness might not follow
 it.
+
+**The binary named knowledge-architect, after its package** — lost to `design@core@binary-name`.
+`live`. The binary's name is the default of the declared command, which a project types at every
+run, and the owner wanted it short to type. Renaming the binary is a change to the command-line
+surface every installing project scripts against, so the alternative will be raised again whenever
+the name is questioned.
+
+**An install record file listing what the installer wrote** (option (c) of the owned namespace) —
+lost to `design@core@owned-namespace-check`. `live`. The checker would read a committed file of its
+own format to know which installed files are its own. It is one more committed file, which can
+itself be edited, while the prefix makes ownership readable from a path alone with no record and
+no history.

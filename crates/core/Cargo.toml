@@ -8,7 +8,7 @@ repository.workspace = true
 keywords.workspace = true
 # What the published package ships, as a whitelist: a new directory is shipped only once it is
 # listed here, so the test fixtures and the design documents never reach the package.
-include = ["src/**", "Cargo.toml", "README.md", "LICENSE-MIT", "LICENSE-APACHE"]
+include = ["/src/**", "/Cargo.toml", "/README.md", "/LICENSE-MIT", "/LICENSE-APACHE"]
 
 # The library is imported as `knowledge_architect`; the binary is `klarch`, short to type, as the
 # default command a project runs.

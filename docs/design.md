@@ -107,18 +107,20 @@ it. The cost accepted: a fix to the gates alone is released as a version of ever
   checks, cli, manifest, library, agent-skills, gates. The version number alone cannot say which.
 
 A version stricter than a patch never reaches a project through a plain `cargo update` while at
-0.x, and a release that changes only skill text publishes both crates with identical code. A
+0.x, and a release that changes only skill text publishes all three crates with identical code. A
 project can therefore tell from the version alone whether moving to it may require work, per
 `goal@knowledge-architect@any-project-can-adopt-it`.
 
-### The project stays at 0.x until its first design discussion's open issues are settled `##stays-at-zero-x`
+### The project stays at 0.x until the owner's word, given once its first design discussion's open issues are settled `##stays-at-zero-x`
 
 Breaking changes are allowed, and expected, while the shape of the tool and of its workflow
 converges. The project leaves 0.x only on the owner's word, and not before the open issues recorded
-from the discussion that designed it are implemented, or at least argued thoroughly. Those are
-`issue@core@structured-plan-documents`, `issue@core@tooling-for-project-skills`,
-`issue@core@configuration-for-several-agent-providers`,
-`issue@core@a-component-states-at-least-one-goal`, `issue@core@cross-project-references` and
+from the discussion that designed it are implemented, or at least argued thoroughly: both are
+required. Whether the tool and its workflow have converged is a weighing, and the weighing is the
+owner's, per `goal@knowledge-architect@the-owner-decides`. Those issues are
+`issue@core@structured-plan-documents`,
+`issue@core@tooling-for-project-skills`, `issue@core@configuration-for-several-agent-providers`,
+`issue@core@a-component-states-at-least-one-goal`, `issue@core@cross-project-references`,
 `issue@core@a-home-for-developer-contracts-outside-agent-configuration`,
 `issue@agent-skills@shipped-text-is-reference-free-mechanically`,
 `issue@agent-skills@patching-an-installed-skill`,
@@ -127,6 +129,18 @@ from the discussion that designed it are implemented, or at least argued thoroug
 
 Leaving 0.x re-examines `design@core@ne-minimal`. After 1.0, a variant added to one of the
 library's exhaustive enums is a major, where under 0.x it bumps 0.MINOR.
+
+### A version is published from main, after its merge, on the owner's word `##publish-after-merge`
+
+A merge to main publishes nothing, and any number of merges land between two releases. A release
+is a branch like any other: reviewed, merged once CI passes on its head, and only then tagged and
+published from main's head, on the owner's word given at that moment. The order follows what can
+be undone. A mistake on main is repaired by a later commit, while a version published on crates.io
+can be yanked and never deleted, so the irreversible step comes last, after review and CI have
+judged exactly what it publishes, and the tag names a commit on main. The cost: main states the
+new version for the minutes between the merge and the publish, and a failed publish leaves that
+statement false until a repair lands. The procedure is
+`path@agent-config@skills/klarch-release/SKILL.md`.
 
 ## 3. How work reaches main
 
