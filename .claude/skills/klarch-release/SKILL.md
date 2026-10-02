@@ -30,7 +30,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    `git grep -n '<previous version>'` finds every site that still names the previous one. An
    example inside a skill, such as an xtask manifest's own version, is not a site.
 2. **The changelog.** Rename CHANGELOG.md's `## Next release` to `## <version>`. Each branch wrote
-   its own entries there, per `design@knowledge-architect@versioning-policy`, and step 9's review
+   its own entries there, per `design@knowledge-architect@changelog-entries`, and step 9's review
    checks them. The version chosen at step 1 follows the highest bump class among its entries,
    a patch at least.
 3. **Commit**, with `cargo klarch check` before and `cargo klarch commits HEAD~1..HEAD` after.

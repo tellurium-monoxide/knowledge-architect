@@ -1,8 +1,10 @@
 # Changelog
 
 One section per released version, and one working section above them, `Next release`, which the
-release renames to its version. The policy that shapes this file, its entries, their categories and
-their classes is `design@knowledge-architect@versioning-policy`.
+release renames to its version. Which change gets an entry, under which subsection, and with which
+class is `design@knowledge-architect@changelog-entries`. Inside a subsection, entries are sorted by
+surface, in the order `checks`, `cli`, `manifest`, `library`, `agent-skills`, `gates`; an empty
+subsection is omitted.
 
 ## Next release
 

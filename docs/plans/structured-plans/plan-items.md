@@ -41,6 +41,9 @@ Everything below is in crates/core, except the last item.
    their table under Threads into a level-two Arguments section (D7), and the threads, criteria
    and acceptance criteria from their table rows into headings. It is an edit of the document's
    structure, not of its content.
+7. **This step's CHANGELOG.md entries**, under `design@knowledge-architect@changelog-entries`:
+   the item kinds are a new-feature entry, and the section check a migration entry for a plan
+   document a project already holds.
 
 ## Claims
 

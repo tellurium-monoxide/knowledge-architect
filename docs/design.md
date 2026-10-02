@@ -104,34 +104,42 @@ it. The cost accepted: a fix to the gates alone is released as a version of ever
   files differ from the new text until it runs the install. A project that pins the checker
   exactly meets this only when it moves the pin.
 - **CHANGELOG.md** has one section per version, and one working section above them, `Next
-  release`, which the release renames to its version. An entry is written for a consumer planning
-  a move to the version, under one of three subsections, and a change passing none of their tests
-  gets no entry:
-  - **Migration**: one entry per thing a consumer must change in its own files, saying what.
-    Running the install of the agent skills again is never an entry; a change the consumer must
-    make to its own files because of the new skills is one.
-  - **New features**: something a consumer can start using, in one line; the documentation
-    carries the detail.
-  - **Workflow**: a change to the installed skills that a person watching agent sessions would
-    observe: a new or removed action, file, commit, pull-request shape, or question put to the
-    owner. A rewording or a clarification is not one.
-
-  Each entry carries the surface it touches, one of checks, cli, manifest, library, agent-skills,
-  gates, since the version number alone cannot say which, and the bump class the table above
-  gives it. Entries are sorted by surface, in that order, inside each subsection, and an empty
-  subsection is omitted. **A change with no entry is at most a patch**: every minor or major change
-  passes the migration or the new-feature test. So the release's bump is the highest class among
-  its entries, a patch at least.
-
-  The branch that makes a change writes its entries. The working section may be reworded,
-  restructured or pruned at any time, and a change reversed before the release leaves it, since it
-  describes the release's net effect. A released section's content never changes; its structure
-  may.
+  release`, which the release renames to its version. Which change gets an entry, and with which
+  class, is `design@knowledge-architect@changelog-entries`.
 
 A version stricter than a patch never reaches a project through a plain `cargo update` while at
 0.x, and a release that changes only skill text publishes all three crates with identical code. A
 project can therefore tell from the version alone whether moving to it may require work, per
 `goal@knowledge-architect@any-project-can-adopt-it`.
+
+### The changelog records what a consumer must plan for, and the branch that makes a change writes its entries `##changelog-entries`
+
+An entry of CHANGELOG.md is written for a consumer planning a move to the version. It exists when
+the change passes one of three tests, and sits under the subsection of that test:
+
+- **Migration**: one entry per thing a consumer must change in its own files, saying what.
+  Running the install of the agent skills again is never an entry; a change the consumer must make
+  to its own files because of the new skills is one.
+- **New features**: something a consumer can start using, in one line; the documentation carries
+  the detail.
+- **Workflow**: a change to the installed skills that a person watching agent sessions would
+  observe: a new or removed action, file, commit, pull-request shape, or question put to the owner.
+  A rewording or a clarification is not one.
+
+Each entry carries the surface it touches, one of checks, cli, manifest, library, agent-skills,
+gates, since the version number alone cannot say which, and the bump class
+`design@knowledge-architect@versioning-policy` gives it. **A change with no entry is at most a
+patch**: every minor or major change passes the migration or the new-feature test. So the
+release's bump is the highest class among its entries, a patch at least, and a review of the
+release can tell a missing entry from a change that owes none.
+
+The branch that makes a change writes its entries, because its author knows what changed and in
+which class at that moment; rebuilt at the release from commit messages, an entry is lost when
+nothing asks for it, as one change to a shipped skill after 0.1.0 was. The release is reviewed
+once against these tests, rather than every merge, because a release branch can repair any gap
+before anything is published. The working section may be reworded, restructured or pruned at any
+time, and a change reversed before the release leaves it, since the section describes the
+release's net effect. A released section's content never changes; its structure may.
 
 ### The project stays at 0.x until the owner's word, given once its first design discussion's open issues are settled `##stays-at-zero-x`
 
@@ -152,6 +160,15 @@ documents, is argued and scheduled as the milestone
 
 Leaving 0.x re-examines `design@core@ne-minimal`. After 1.0, a variant added to one of the
 library's exhaustive enums is a major, where under 0.x it bumps 0.MINOR.
+
+### A decision is never argued on the grounds that changing it later would be breaking `##no-future-breaking-cost-argument`
+
+An argument that a change is expensive names the cost it has today, a consumer's migration
+included. While the project stays at 0.x, breaking changes are allowed, per
+`design@knowledge-architect@stays-at-zero-x`, so a cost that exists only in a future where
+changes are refused argues against nothing; accepted, it would freeze the design before it has
+converged. A consumer that pins a version pays a migration only when it moves its pin, and that
+migration is a present cost, named in the changelog's migration entries.
 
 ### A version is published from main, after its merge, on the owner's word `##publish-after-merge`
 

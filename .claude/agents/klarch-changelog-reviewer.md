@@ -19,15 +19,16 @@ reproduce. **You do not use `Write` or `Edit`**, and you run nothing that change
 
 ## The standard
 
-The policy is `design@knowledge-architect@versioning-policy`, in docs/design.md. Read it in full:
-its bump table and its CHANGELOG.md bullet are the standard. In short, a change gets an entry when
+The standard is two heads of docs/design.md, read in full: `design@knowledge-architect@changelog-entries`
+for the entries, and `design@knowledge-architect@versioning-policy` for its bump table. CHANGELOG.md's
+own preamble states the order of entries. In short, a change gets an entry when
 it passes one of three tests, under the subsection of that test:
 
 - **Migration**: a consumer must change something in its own files. One entry per thing, saying
   what. Running the install of the agent skills again is never an entry; a change the consumer
   must make to its own files because of the new skills is one.
 - **New features**: a consumer can start using something new.
-- **Workflow**: a person watching agent sessions would observe a new or removed action, file,
+- **Workflow**: a change to the installed skills that a person watching agent sessions would observe a new or removed action, file,
   commit, pull-request shape, or question put to the owner. A rewording is not one.
 
 ## The predicates
@@ -42,12 +43,13 @@ you conclude.
 **Is an entry wrong?** For each entry: the subsection matches the test it passes; its surface is
 the one the change touches; its class is the one the bump table gives; a migration entry says what
 the consumer changes; an entry describes the release's net effect, so a change reversed inside the
-range has no entry. Entries are sorted by surface, in the policy's order, inside each subsection.
+range has no entry. Entries follow the order CHANGELOG.md's preamble states.
 
 **Is the version right?** It follows the highest class among the entries, a patch at least, under
 the policy's mapping onto Cargo's two positions while at 0.x.
 
-**Is a decision argued on the grounds that changing it later would be breaking?** Read every design
+**Is a decision argued on the grounds that changing it later would be breaking?** The rule is
+`design@knowledge-architect@no-future-breaking-cost-argument`. Read every design
 head, rejected alternative and commit message the range adds or rewrites. An argument that a change
 is expensive names the cost it has today, a consumer's migration included. One that defends a choice
 by a future cost to consumers, with no present cost named, is a finding. A version bump is not an
