@@ -28,9 +28,6 @@ The repository is a virtual workspace with five Components, per
 | `gates` | crates/gates | package `knowledge-architect-gates`: the library that runs a project's merge gates |
 | `xtask` | tools/xtask | the maintenance tool, `cargo x gates`; never published |
 
-**The project was extracted from thaum.** Many examples in the core's documents are drawn from
-thaum's tree, and they stay where they are evidence.
-
 ## Language, tone and style
 
 ### Always
@@ -245,7 +242,9 @@ list of what references an entry: `show` computes it.
 
 `path@knowledge-architect@docs/plans/` is this repository's plans directory. It holds plan
 documents and nothing else, except a README that keeps it in the tree while no plan is open: a spec for the work of one PR, a milestone directory for work across
-several PRs. They are committed on the work's branch. A correction is applied in place, so a
+several PRs. They are committed on the work's branch, except a plan document whose work changes
+what the gates check: it is merged in a pull request of its own before its first step, because the
+gates as that step changes them would refuse every earlier commit of the step's branch. A correction is applied in place, so a
 partial reading cannot mislead. A plan document is deleted in the commit that completes its last
 harvest, and that commit's message names its path. This is a restatement; its homes are
 `design@agent-skills@document-vocabulary` and `design@agent-skills@spec-leaves-at-landing`, and
