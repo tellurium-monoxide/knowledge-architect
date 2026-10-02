@@ -1,24 +1,27 @@
 # Changelog
 
-One section per released version, and one working section, `Unreleased`, for the changes since the
-last release, which the release renames to its version. Each item is tagged with the surface it touches: `checks`,
-`cli`, `manifest`, `library`, `agent-skills`, `gates`. The versioning policy is
-`design@knowledge-architect@versioning-policy`.
+One section per released version, and one working section above them, `Next release`, which the
+release renames to its version. The policy that shapes this file, its entries, their categories and
+their classes is `design@knowledge-architect@versioning-policy`.
 
-## Unreleased
+## Next release
 
-- `checks`: `commits` refuses a citation of a commit of its range by SHA, in a message or in a
-  document of a commit's tree, where the manifest turns it on.
-- `manifest`: `[commits] refuse-branch-shas`, off when absent.
-- `agent-skills`: a plan document lists the tripwires and issues that reference each decision its
-  work reverses or rewrites, and the readiness checks ask for them.
-- `agent-skills`: a plan document is committed before its reviews, and each repair is a further
-  commit.
-- `agent-skills`: a milestone document whose first step changes what the gates check lands in a
-  merge of its own, before that step.
-- `agent-skills`: the result a scheduled review is expected to give is not an acceptance criterion.
-- `agent-skills`: a design discussion's first round states which grounding commands ran, and a
-  measured fact carries the command that re-takes it.
+### New features
+
+- `checks`, minor: `commits` refuses a citation of a commit of its range by SHA, in a message or in
+  a document of a commit's tree, where the manifest turns it on.
+- `manifest`, minor: `[commits] refuse-branch-shas`, off when absent.
+
+### Workflow
+
+- `agent-skills`, patch: a plan document lists the tripwires and issues that reference each decision
+  its work reverses or rewrites.
+- `agent-skills`, patch: a plan document is committed before its reviews, and each repair is a
+  further commit.
+- `agent-skills`, patch: a milestone document whose first step changes what the gates check lands in
+  a merge of its own, before that step.
+- `agent-skills`, patch: a design discussion's first round states which grounding commands ran, and
+  a measured fact carries the command that re-takes it.
 
 ## 0.1.0
 
