@@ -72,22 +72,24 @@ win.
   Components, the locations and the registers. Nothing about this repository is compiled into the
   checker, per `design@core@nothing-of-a-project-is-compiled-in`.
 
-- A **register** is one kind of recorded thing together with its storage. Four are built in, and
-  every Component carries them. `design`, `goal` and `tripwire` are **heading registers**: their
-  entries are headings carrying a slug. `issue` is a **file register**: its entries are one file
-  each. A project may declare more, per `design@core@registers-are-declared`. This one declares
-  none.
+- A **register** is one kind of recorded thing together with its storage. Six are built in.
+  Every Component carries four of them: `design`, `goal` and `tripwire` are **heading
+  registers**: their entries are headings carrying a slug. `issue` is a **file register**: its
+  entries are one file each. The other two, `spec` and `milestone`, hold plan documents and are
+  carried by the anchor `plans`, per `design@core@plan-register`. A project may declare more, per
+  `design@core@registers-are-declared`. This one declares none.
 
 - An **anchor** is a named directory that carries registers. A **Component** is an anchor that
-  carries the required documents and every built-in register. Its name is the basename of its
-  directory, and the project root is the Component named `knowledge-architect`. A **location** is
+  carries the required documents and every built-in component register. Its name is the basename
+  of its directory, and the project root is the Component named `knowledge-architect`. A **location** is
   an anchor that carries only the registers it declares, with their homes directly under its path.
-  One location exists: `agent-config`, at .claude, carrying `issue`. The decision is
+  One location is declared: `agent-config`, at .claude, carrying `issue`. The tool constructs two
+  more kinds: `plans`, at docs/plans/, and one anchor per milestone directory. The decision is
   `design@core@anchors-are-components-and-locations`.
 
 - **Each Component carries the same required documents**, per
   `design@core@components-carry-the-same-documents`: `path@*@README.md`, `path@*@CLAUDE.md`,
-  `path@*@docs/rejected-alternatives.md`, and the home of each built-in register.
+  `path@*@docs/rejected-alternatives.md`, and the home of each built-in component register.
   - A heading register's home is one file, `docs/<dir>.md`, or a directory, `docs/<dir>/`, once
     it outgrows one file. The directory's `README.md` is the head: an introduction, and markdown
     links naming every subdocument, each target relative to the README. The entries sit in the
@@ -129,7 +131,9 @@ win.
     location is named from that anchor, never from one above it. So relocating an anchor edits the
     manifest and no document. A file under crates/core is `path@core@<file>`, and one under .claude
     is `path@agent-config@<file>`.
-  - Two anchors are reserved under `path` alone, per `design@core@reserved-anchors`.
+  - Two anchors are reserved under `path` alone, and the word `plans` names the anchor the tool
+    constructs, per `design@core@reserved-anchors`. A plan document is cited by its kind,
+    `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<step>`, never by its path.
     `path@*@<path>` names every Component's own copy of a path, as in `path@*@docs/tripwires.md`.
     `path@elsewhere@<path>` names a path that is deliberately not resolvable in this tree: another
     project's layout, a deleted or hypothetical file. It is never checked for existence, and it is
@@ -240,14 +244,14 @@ list of what references an entry: `show` computes it.
 
 ### Plan documents
 
-`path@knowledge-architect@docs/plans/` is this repository's plans directory. It holds plan
-documents and nothing else, except a README that keeps it in the tree while no plan is open: a spec for the work of one PR, a milestone directory for work across
-several PRs. They are committed on the work's branch, except a milestone document whose first step
-changes what the gates check: it is merged in a pull request of its own before that step, because
+`path@knowledge-architect@docs/plans/` is this repository's plans directory. It holds a README and
+two homes: specs/, one file per spec for the work of one PR, and milestones/, one directory per
+milestone for work across several PRs. Plan documents are committed on the work's branch, except a
+milestone document whose first step changes what the gates check: it is merged in a pull request of its own before that step, because
 the gates as the step changes them would judge the commit that added the document, per the
 per-commit rule of `design@knowledge-architect@git-flow`. A correction is applied in place, so a
 partial reading cannot mislead. A plan document is deleted in the commit that completes its last
-harvest, and that commit's message names its path. This is a restatement; its homes are
+harvest, and that commit's message cites it by its kind. This is a restatement; its homes are
 `design@agent-skills@document-vocabulary`, `design@agent-skills@spec-leaves-at-landing` and
 `design@agent-skills@milestone-lands-before-gate-change`, and
 the procedure is the installed `knowledge-architect-planning`.
