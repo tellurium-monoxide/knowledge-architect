@@ -80,7 +80,7 @@ tool knows; the output then stays live in the job log.
 
 `--require-rebased` adds the gates marked as rebase checks. The recommended list holds one,
 `rebased`, first: `git merge-base --is-ancestor <base> HEAD`, where the base is the main branch
-as the project names it, such as origin/main. Under a fast-forward merge, the tree CI judges
+as the project names it, such as origin/main. Under a fast-forward or rebase merge, the tree CI judges
 is the tree the main branch receives only when the branch contains the base; a branch cut before
 `main` moved is tested alone and lands on a different tree. It is first because it builds
 nothing. It is behind a flag because a branch not yet rebased is normal while it is worked on;

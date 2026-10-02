@@ -506,7 +506,8 @@ Linear history, no merge commits, and no direct push to main. This section is a 
 - **Confirm that what you committed is what you wrote** before moving on. A reverted file is a
   file that once passed.
 
-3. **The branch is rebased on main before review and merge.**
+3. **The branch is rebased on main before review and merge.** GitHub's ruleset refuses to merge a
+   pull request whose branch is behind main; the local check below finds it earlier.
 
 ```sh
 git fetch origin main
@@ -541,9 +542,10 @@ git checkout main && git pull --ff-only && git branch -D <branch>
 
 - The draft flag is read here because a job skipped on a draft reports `skipped`, which GitHub
   counts as passing.
-- GitHub's rebase merge gives main the branch's commits with the same trees and messages, and new
-  SHAs. So **a commit message never cites the SHA of a commit of its own branch**: it names that
-  commit by its subject. A SHA already on main may be cited.
+- GitHub's rebase merge gives main the branch's commits with the same trees and messages, and,
+  per GitHub's documentation, new SHAs. So **a commit message never cites the SHA of a commit of
+  its own branch**: it names that commit by its subject. A SHA already on main may be cited. The
+  rule stands until a merge under the ruleset shows whether GitHub keeps the SHAs.
 - The local branch is deleted with `-D`: its commits are not ancestors of main, since their SHAs
   differ.
 - A merge to main publishes nothing. A release is a separate procedure, per

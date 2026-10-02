@@ -158,12 +158,17 @@ statement false until a repair lands. The procedure is
 - main accepts no direct push. A GitHub ruleset on main, with no bypass, the owner included,
   requires a pull request, the status check of CI on a branch up to date with main, and a linear
   history, and blocks force pushes and deletion. The pull request is merged with GitHub's rebase
-  merge, the only method enabled. The strict check makes the tree CI judged the tree main
-  receives, which is what matters. The commits keep their trees and messages, and get new
-  committer data and SHAs: GitHub's rebase merge "always updates the committer information and
-  creates new commit SHAs". A local fast-forward pushed to main kept the SHAs, and lost to
-  enforcement: the rules are now checked by GitHub, not by the session's discipline. main's
-  history is never rewritten.
+  merge, the only method enabled. The rules are checked by GitHub, not by a session's discipline.
+  A fast-forward pushed from a checkout is a direct push, which the ruleset refuses, and GitHub
+  offers no fast-forward merge method. main's history is never rewritten.
+- The strict check makes the tree CI judged the tree main receives, which is what matters. Without
+  it, a merge button that rebases makes CI meaningless when history was not already linear, as
+  the owner put it.
+- GitHub's documentation says its rebase merge "always updates the committer information and
+  creates new commit SHAs". So a commit message never cites the SHA of a commit of its own
+  branch: it names that commit by its subject, since the SHA it would cite never reaches main.
+  The owner expects GitHub to keep the SHAs when history is already linear; the rule stands until
+  a merge under the ruleset shows which holds.
 
 ### Every component builds under one pinned toolchain `##toolchain-is-pinned`
 
