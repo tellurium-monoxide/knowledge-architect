@@ -22,16 +22,17 @@ forbids.
 
 What the owner has stated about the skill:
 
-- it is installed as part of this project, under its own name;
-- a bounded problem still needs investigation, testing, and the owner's approval, so the planning
-  skill's spec alone is not enough for it;
-- the owner intends to write it.
+- "The bounded problem skill will be installed as part of this project."
+- "The bounded problem still needs some sort of investigation, testing, and approval from the
+  owner", which is why it does not go to the planning skill, per
+  `design@agent-skills@bounded-problem-branch`.
+- "Ultimately, I'd like to make my own skill for this use case."
 
 ### Why it matters
 
-`goal@agent-skills@one-skill-per-activity` is met while no activity of the workflow is left
-without its skill. Handling a bounded problem is such an activity, and today a session that meets
-one has no instruction past the classification.
+The owner has decided that the skill is installed. Until it is, a session that meets a bounded
+problem has no instruction past the classification, and the next step depends on the owner's word
+each time.
 
 ### What would close it
 

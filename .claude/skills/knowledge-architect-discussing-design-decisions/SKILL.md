@@ -96,9 +96,10 @@ It ends the argument, but it does not end your duties around it:
   next checkpoint — or the end of the current change, whichever comes
   first — the finding stays on the thread's ledger line, marked
   unacknowledged, and is carried into the plan document that
-  `knowledge-architect-planning` writes from the ledger: the ledger does
-  not outlive the discussion and the plan document does. It is not a
-  fired tripwire. This is not
+  `knowledge-architect-planning` writes from the ledger, among its
+  defaults awaiting the owner; on the cheap path below, into the message
+  of the commit that implements the decision. The ledger does not outlive
+  the discussion, and those do. It is not a fired tripwire. This is not
   approval-seeking: you are surfacing information
   that arrived after the closure. If the check surfaces nothing
   material, proceed — no confirmation round.
@@ -108,14 +109,16 @@ It ends the argument, but it does not end your duties around it:
   comply while still disagreeing, record the disagreement as a parked
   thread carrying both a tripwire and a re-entry point (a declared
   exception to owner-only closure — see Who moves what), and note the
-  acknowledged consequence on the ledger so the plan document carries it
-  and the next session knows the decision was informed.
+  acknowledged consequence on the ledger, so that the plan document, or
+  the commit message on the cheap path, carries it and the next session
+  knows the decision was informed.
 
 **Depth is proportionate to the cost of being wrong.** A decision that is
 cheap to reverse deserves one round and a one-sentence argument — still
 a named thread and a ledger line; skip the full table, the premortem,
-and the plan document: the decision and its argument go in the message of
-the commit that implements it. To take that path, state what reversal touches, in
+and the plan document. The deliberation goes in the message of the commit
+that implements the decision, and the decision is recorded at that landing
+like any other, under `knowledge-architect-recording-a-decision`. To take that path, state what reversal touches, in
 nouns. Take the full path if reversal touches ANY of these four:
 stored data that would have to be migrated; an interface other code or
 other people already consume; behavior users have adapted to, in the
@@ -136,8 +139,8 @@ defensible shape for the solution, the space is open, and this skill
 applies. Otherwise present both readings, so the owner rules on the
 classification knowing both, and leave the next step to the owner: no
 installed skill covers a bounded problem yet. This applies in both
-directions: a bounded problem deserves narrowing, an open one deserves
-argument, and misclassifying in either direction wastes the discussion.
+directions: a bounded problem does not need a design discussion, an open
+one needs argument, and misclassifying in either direction wastes the discussion.
 Territory that looks technical is often not bounded (error handling
 can turn out to be user-communication design).
 
@@ -305,7 +308,9 @@ lost, deferred, absorbed, retracted — and a criterion has
 none of them. It is instead one of two kinds. A **binding** criterion
 rules out any proposal that fails it. A **weighed** criterion makes
 failing it a cost the owner rules on. Criteria may be stated in the
-discussion or DERIVED from the project's own record. A criterion derived
+discussion or DERIVED from what the project has recorded: its goals, its
+decisions, and the directives and contracts of its `CLAUDE.md` and
+`README.md` files. A criterion derived
 from a goal is binding: the goals are the owner's intent. A criterion
 derived from a recorded decision is binding as a stated presumption until
 the owner says otherwise, because a decision binds only as a presumption
@@ -319,12 +324,11 @@ criterion rather than a blanket confirmation; or **unmet**.
 binding criterion that is unmet blocks convergence, and no word
 waives it in place: the moves are to change the proposal, or for the
 owner to demote the criterion to weighed — a change to the criterion,
-recorded as one. Were acceptance available to both kinds, binding and
+recorded as one. A criterion derived from a goal is demoted only by
+changing the goal, under `knowledge-architect-setting-goals`. Were acceptance available to both kinds, binding and
 weighed would differ only in how much ceremony the acceptance takes.
 Convergence holds only when every criterion carries a satisfaction
-line and no binding criterion is unmet (loop step 6). A criterion derived
-from a goal is demoted only by changing the goal, under
-`knowledge-architect-setting-goals`.
+line and no binding criterion is unmet (loop step 6).
 
 **`presumed-settled`** is a labeled claim about the owner: they are
 continuing the discussion in a way that assumes this thread's
@@ -341,10 +345,10 @@ alone. You may only PROPOSE a reopening, with a new argument or new
 evidence named — the material-findings protocol (Decision authority)
 owns the mechanics: the thread stays closed until the owner's word.
 The record arbitrates novelty: an alternative counts as
-argued-and-lost only when a recorded `ruled-out` thread — in this
-discussion's ledger, in a plan document, or as an entry of a rejected
-alternatives home — or a `withdrawn` thread recorded with a defeating
-reason covers it. To
+argued-and-lost only when a recorded ruled-out alternative — a
+`ruled-out` thread of this discussion's ledger or of a plan document, or
+an entry of a rejected alternatives home — or a `withdrawn` thread
+recorded with a defeating reason covers it. To
 decline surfacing a finding, cite that record; if no recorded reason
 covers the discriminating fact, the finding is new. A reworded
 proposal that defeats or evades the recorded reason is new by
@@ -372,7 +376,8 @@ choices whose option space genuinely is closed and consequence-free.
 
 1. **Ground first**: read the project's record before proposing. The
    goals homes of the project's root and of every Component the question
-   touches; their design homes; their rejected alternatives; the open
+   touches; their design homes; their rejected alternatives; their
+   `README.md` files, which state their contracts; the open
    issues and the tripwires, with `cargo klarch issues` and
    `cargo klarch tripwires`; and, for each entry the question bears on,
    `cargo klarch show <kind>@<anchor>@<id>`, which prints the entry and
@@ -411,8 +416,8 @@ choices whose option space genuinely is closed and consequence-free.
 2. **Name the criteria**: state early what the decision must
    achieve — the constraints and goals proposals will be judged
    against. Criteria are argued and refined like anything else, and
-   they may be DERIVED from the project's goals and recorded decisions as
-   well as stated in the discussion. They are tracked apart from proposals
+   they may be DERIVED from what the project has recorded as well as
+   stated in the discussion. They are tracked apart from proposals
    (see Criteria, above), and the convergence check reads their
    satisfaction.
 3. **Round**: bring argued proposals, including your own new ideas.
@@ -516,15 +521,18 @@ choices whose option space genuinely is closed and consequence-free.
    a decided thread. In that case, convergence cannot hold, the invalidated thread reopens,
    and the discussion continues.
 
-   If the design holds against the premortem, what survives is proposed as tripwires.
-   Ask the owner, for each, whether it is recorded.
+   If the design holds against the premortem, what survives is proposed as tripwires,
+   except a cause that only the built code can check: that is an acceptance
+   criterion, which `knowledge-architect-planning` writes into the plan document.
+   Ask the owner, for each tripwire, whether it is recorded.
    Some may be out of scope of the project, and the owner is the only judge of that.
    A tripwire the owner rules to record is written at the harvest of the decision
    it guards, in the tripwires home of the Component that owns that decision,
    under `knowledge-architect-tracking-open-issues`: a tripwire names its decision's
    design entry, so the entry exists first.
 
-   Every tripwire, here and everywhere else, meets the
+   Every tripwire, here and everywhere else, is recorded only on the
+   owner's word, and meets the
    falsifiability bar: evidence specific enough that both parties
    would agree it fired — an event, a count crossing a bound.
 
@@ -548,9 +556,11 @@ the work that implements each decision lands, under
 design entry under its own slug when it earns one, and a shape that lost
 to an argument earns a rejected-alternative entry only when that skill's
 tests say so. Open state goes to the issue register and the tripwires
-homes, under `knowledge-architect-tracking-open-issues`. Findings made
-during planning or implementation surface through the material-findings
-protocol (Decision authority).
+homes, under `knowledge-architect-tracking-open-issues`. A decision that no
+work implements is recorded when it is made. Findings made during
+planning or implementation surface through the material-findings
+protocol (Decision authority), except a load-bearing gap found at a
+step's audit, which stops that step under `knowledge-architect-planning`.
 
 ## Keep-or-change (evaluating an incumbent design)
 
@@ -609,4 +619,5 @@ is not the shape for it.
   recurring failures
 - Tripwires: the specific evidence that would flip this verdict
 - Losing alternatives: what they were, and where the winner absorbs them
-- Recorded at: the design entry of the owning Component, at the harvest
+- Recorded at: the plan document; at the harvest, the design entry of the
+  owning Component, when the verdict earns one

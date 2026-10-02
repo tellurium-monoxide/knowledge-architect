@@ -57,8 +57,8 @@ does not hold.
 ### The design-discussion skill is named discussing-design-decisions `##designing-skill-name`
 
 The skill is installed as `knowledge-architect-discussing-design-decisions`. The word "design"
-alone reads as visual design, and the skill names the activity in full so its description is not
-read as one. It names no domain: the owner uses the skill for programming and for game design, so
+alone is often read as visual design. The full name is not ambiguous, and its length is the cost
+accepted for that. It names no domain: the owner uses the skill for programming and for game design, so
 a name such as designing-software would exclude a use it serves.
 
 ### Until a skill for bounded problems is installed, a bounded problem goes back to the owner `##bounded-problem-branch`
@@ -66,9 +66,10 @@ a name such as designing-software would exclude a use it serves.
 A problem that arrives bounded, a clear requirement whose main risk is over-building, is not a
 design discussion. The design-discussion skill says so, states the strongest open reading of the
 problem beside the bounded one, and leaves the next step to the owner. It names no skill for the
-bounded case, because no installed skill covers it, per `design@agent-skills@no-external-handoff`,
-and the planning skill's spec gives a bounded problem none of what it still needs: investigation,
-testing, and the owner's approval. The skill that will cover it is
+bounded case, because no installed skill covers it, per `design@agent-skills@no-external-handoff`.
+It does not send the problem to the planning skill either: the owner holds that a bounded problem
+still needs investigation and testing, and a spec records a design and its implementation sequence
+without running either. The skill that will cover it is
 `issue@agent-skills@a-skill-for-bounded-problems`; when it lands, this branch names it.
 
 ## The workflow the skills carry
@@ -198,7 +199,8 @@ too: the installed planning skill would have nothing to say where a document's w
 
 The planning skill starts where a design discussion has converged, and writes the spec or the
 milestone in the same session. The design-discussion skill ends at convergence, the premortem and
-the owner's rulings on tripwires, and writes no plan document and no record of its own. One skill owns the document's shape: two skills describing the sections of one document
+the owner's rulings on tripwires, and writes no plan document of its own. Its decisions are
+recorded when their work lands, per `design@agent-skills@harvest-after-implementation`. One skill owns the document's shape: two skills describing the sections of one document
 would drift apart, against `goal@knowledge-architect@agents-get-a-complete-workflow`. The session
 matters because the discussion's ledger lives only in the conversation, and a document written from
 memory in a later session loses the losing arguments and the conditions of each closure.

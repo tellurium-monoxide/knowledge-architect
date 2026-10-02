@@ -8,4 +8,4 @@ that the installed files match it.
 A project depends on `knowledge-architect`, never on this crate directly: cargo fetches it.
 
 No installed skill covers a bounded problem yet: a clear requirement whose main risk is
-over-building.
+over-building. The skill is `issue@agent-skills@a-skill-for-bounded-problems`.
