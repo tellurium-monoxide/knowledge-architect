@@ -419,8 +419,8 @@ A goal is written in the goals home of the Component whose responsibility it is 
 when decisions of other Components serve it too: a goal of any Component can be referenced from
 anywhere, per `design@core@a-slug-belongs-to-a-component`, so serving it does not require moving
 it. The root's goals state what the project provides to its consumers. A published Component
-serves those consumers, so its goals are nearly always sub-goals that refine a root goal, more
-specific than the root states, and each references the root goal it refines. A Component that
+serves those consumers, so its goals are encouraged to be sub-goals that refine a root goal, more
+specific than the root states, and each such goal references the root goal it refines. A Component that
 serves only the project, such as a maintenance tool, serves all of the root's goals at once, and
 its goals need not refine one. Placing a goal at the root because several Components serve it lost:
 it would lead to an excessive promotion of goals into the root, and leave a goal with no Component

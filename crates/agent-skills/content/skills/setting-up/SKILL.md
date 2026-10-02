@@ -141,9 +141,10 @@ ruling like any draft:
 ## Every check the project owes before a merge runs from one command `##one-command-runs-every-gate`
 
 One command runs every check a branch must pass before it merges: formatting, the document check,
-the commit messages, the linter and the tests. It runs them all when one fails, and gives one
-verdict as its exit code. It is met while a session needs no other command to know whether a branch
-may merge, and the continuous integration runs the same command.
+the commit messages, the linter where the project has one, and the tests. It runs them all when one
+fails, and gives one verdict as its exit code. It is met while a session needs no other command to
+know whether a branch may merge, and, where the project has continuous integration, it runs the
+same command.
 
 ## A task performed repeatedly in the project is a command of the tool `##repeated-tasks-are-automated`
 

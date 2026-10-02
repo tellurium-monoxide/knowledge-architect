@@ -42,9 +42,10 @@ what the goal means, and **what would show it is met**.
 **Where a goal goes.** A goal is written in the goals home of the Component whose responsibility it
 is to fulfil it, even when other Components' decisions serve it too: any goal can be referenced from
 anywhere. The root's goals state what the project provides to its consumers. A published Component
-serves those consumers, so its goals are nearly always sub-goals: more specific than a root goal,
-perhaps not stated by it, and still to be fulfilled. A Component that serves only the project, such
-as a maintenance tool, serves every root goal at once, and its goals need not refine one. Every Component
+serves those consumers, so its goals are encouraged to be sub-goals: more specific than a root
+goal, perhaps not stated by it, and still to be fulfilled. A Component that serves only the
+project, such as a maintenance tool, serves every root goal at once, and its goals need not refine
+one. Every Component
 states at least one goal.
 
 A Component's goal that refines a goal of the project's root names it, with a reference in its
