@@ -352,9 +352,9 @@ listed as outstanding work, per `design@agent-skills@planned-work-is-an-issue`.
 
 A project depends on one exact version of the checker, so moving it is an explicit edit, and the
 installed skills move with it. A dependency builds no executable for the project, so a Rust project
-runs the pinned version through a small crate of its workspace whose `main` calls the library's
-command line, and any other project installs it into a directory of its own with
-`cargo install --locked --root`. A machine-wide install would give two projects on one machine one
+runs the pinned version through its maintenance crate, per
+`design@agent-skills@xtask-pins-checker`, and any other project installs it into a directory of its
+own with `cargo install --locked --root`. A machine-wide install would give two projects on one machine one
 version, which is what bundling the workflow into the checker avoids, per
 `design@knowledge-architect@binary-bundles-workflow`. A project with an extension runs its own
 binary under a name of its own, per `design@core@declared-command`.
@@ -370,6 +370,27 @@ the gates refined in this repository and in thaum, per
 The setting-up skill proposes two goals for such a tool, for the owner's ruling: one command runs
 every check owed before a merge, and a task performed repeatedly becomes a command of the tool.
 
+
+### In a Rust project, one maintenance crate pins the checker and runs the gates `##xtask-pins-checker`
+
+The maintenance crate of a Rust project depends on the checker and on the gates library, both
+pinned exactly, and serves two cargo aliases: `cargo x` for its own commands, the gates among them,
+and `cargo klarch` for the checker's commands, which it carries under a command of its own through
+the core's library. One crate does what two would otherwise do: the gates run the checker this
+crate pins, and its other repeated tasks have a place beside them, per
+`goal@gates@gates-from-a-list`. The cost accepted: building the gates builds the checker, which the
+check gate needs anyway.
+
+### setting-up shows a Rust project its maintenance crate, built and run `##setup-rust-section`
+
+The setting-up skill ends with a section for a Rust project: the maintenance crate's manifest, its
+aliases, its main, the recommended gates and a continuous integration workflow that runs them on
+every ready pull request. The crate, its aliases and its main were built and run in a scratch
+adopting project before they were written, all six gates passing; the workflow is a reduction of
+this repository's own. Each is labelled as an illustration to adapt. It serves
+`goal@knowledge-architect@setup-brings-quality-tools`. The section is for Rust because the project is
+focused on Rust, the language whose comments the checker reads; another language gets a section of
+its own when a project needs one.
 ### Every Component states at least one goal `##goals-required`
 
 The setting-up skill does not finish a Component without at least one goal, stated with the owner.

@@ -1228,6 +1228,7 @@ its docs/design.md.
 | 5, PR 4 | agent-skills, root | done: the decisions of 3.7 and overlay-by-separate-skills, routing-table, skill-name-prefix, goals-required, gates-convention, exact-pin, declared-command (the extension rule), the interim rule of cross-project-references; klarch-prefix in the root |
 | 5, PR 5 | agent-skills, root | done: the decisions of 3.8, goal-lifecycle, retrospective-destination, premortem-as-watch-points; retrospective-findings-stay-here in the root |
 | 5b, PR 1 | gates, agent-skills, root | done: gates-crate, a-project-holds-its-gate-list, the-library-owns-the-flags, one-spawn-helper; six entries moved from xtask; gates-convention, repo-layout and version-lockstep rewritten |
+| 5b, PR 2 | agent-skills | done: xtask-pins-checker, setup-rust-section; exact-pin rewritten |
 | 6 | agent-skills | plugin-inventory (the design-discussion skill completes the set), designing-together-retirement, designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning, the kept items of the intake |
 
 **Losing alternatives.** Section 3.2 and the absorbed shapes of 3.3 are judged against
@@ -1505,7 +1506,13 @@ skill and comes before the PR that needs it.
    self-hosted holds, `cargo x gates` running through the library; owner-intent and one-workflow
    are not touched.
 2. **setting-up's Rust section**, with xtask-pins-checker. It does the work of the issue on setting-up
-   leading to every quality tool, which item 1 closes as scheduled here.
+   leading to every quality tool, which item 1 closes as scheduled here. **Landed on the branch
+   setup-rust-section:** setting-up gains its section "In a Rust project", whose crate, aliases,
+   main and gates were built and run in a scratch adopting project against this checkout, all six
+   gates passing; §1 runs the pinned checker from that crate; harvest: xtask-pins-checker and
+   setup-rust-section, exact-pin rewritten in place. Of the criteria of section 2: nothing-compiled-in
+   holds, the section naming no path of this repository and its snippets being generic; the others
+   are not touched.
 
 Step 7 publishes three crates.
 

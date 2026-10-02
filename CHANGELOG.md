@@ -43,3 +43,5 @@ One section per released version. Each item is tagged with the surface it touche
   proposes two goals for a project's maintenance tool.
 - `gates`: the package knowledge-architect-gates, the library that runs a project's merge gates,
   with the recommended list of a Rust project that uses the checker.
+- `agent-skills`: setting-up gains a section for a Rust project: one maintenance crate pins the
+  checker and runs the gates library, with its aliases and a continuous integration workflow.

@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-setting-up
-description: MUST use when a project adopts the knowledge-architect workflow, after the first install has run, and when a project moves its pin of the checker to another version. Covers how the checker is pinned and run, the declared command, the manifest and its Components, the documents and register homes each Component carries, the primer's import line, the project's rows of the knowledge table and its routing table, the project's skill prefix, the gates convention, and what happens to the documentation the project already has.
+description: MUST use when a project adopts the knowledge-architect workflow, after the first install has run, and when a project moves its pin of the checker to another version. Covers how the checker is pinned and run, the declared command, the manifest and its Components, the documents and register homes each Component carries, the primer's import line, the project's rows of the knowledge table and its routing table, the project's skill prefix, the gates convention, what happens to the documentation the project already has, and, in a Rust project, the maintenance crate, its aliases, its gates and its continuous integration.
 ---
 
 # Setting up
@@ -43,12 +43,13 @@ A project runs the checker at the version it chose, and moves to another version
 edit. The installed skills move with it, since one version of the checker ships one version of
 them.
 
-- **A Rust project** adds a small crate to its workspace whose `main` calls the library's command
-  line, depends on `knowledge-architect = "=<version>"`, and runs it through a cargo alias, for
-  instance `cargo klarch`. The `=` pins exactly; without it, `"<version>"` accepts every later
-  version below the next breaking one. `Cargo.lock` records the exact version, and `--locked` turns
-  any change to it into a failure. A dependency alone builds no executable for the project:
-  `cargo run -p` runs only the project's own packages, which is why the small crate exists.
+- **A Rust project** runs the checker from its maintenance crate, which depends on
+  `knowledge-architect = "=<version>"` and serves the checker's commands through the cargo alias
+  `cargo klarch`, as "In a Rust project" below shows. The `=` pins exactly; without it,
+  `"<version>"` accepts every later version below the next breaking one. `Cargo.lock` records the
+  exact version, and `--locked` turns any change to it into a failure. A dependency alone builds
+  no executable for the project: `cargo run -p` runs only the project's own packages, which is why
+  the crate serves the checker's commands itself.
 - **Any other project** installs the binary into a directory of its own, ignored by git:
   `cargo install --locked --root <dir> knowledge-architect --version =<version>`. The binary is
   `<dir>/bin/klarch`. A plain `cargo install` is machine-wide, and two projects on one machine
@@ -129,10 +130,10 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
 Recommend one command that runs every check the project owes before a merge (formatting, the
 document check, the commit messages, the linters, the tests), runs them all even when one fails,
 and exits non-zero when any fails. A verdict is then one exit code, and nothing is read from output
-filtered through a pipe. In a Rust project, the shape is a maintenance crate in the workspace, run
-through a cargo alias such as `cargo x gates`, whose gates command hands the project's gate list
-to the published library knowledge-architect-gates. The library runs the gates; the list is the
-project's own.
+filtered through a pipe. In a Rust project, the shape is the maintenance crate of "In a Rust project"
+below, run through the cargo alias `cargo x gates`, whose gates command hands the project's gate
+list to the published library knowledge-architect-gates. The library runs the gates; the list is
+the project's own.
 
 A maintenance tool of that kind is a Component of its own, which serves the project rather than its
 consumers. Propose these two goals for it, under `knowledge-architect-setting-goals`, for the owner's
@@ -182,10 +183,156 @@ Setting up stops at a conformant structure, the goals, and that issue.
 
 To move to another version:
 
-1. Edit the pin: the version in the small crate's `Cargo.toml`, or the version of the local
-   install.
+1. Edit the pin: both versions in the maintenance crate's `Cargo.toml`, the checker's and the
+   gates library's, which move together, or the version of the local install.
 2. Read the changelog of every version crossed. A minor version under `0.x`, or any major version,
    may make a check stricter or ask for a change to the project's layout.
 3. Run `{{command}} install-agent-skills`, then follow `knowledge-architect-maintaining-agent-config`
    for what an upgrade owes the project's own configuration.
 4. `{{command}} check`, and commit the pin, the installed files and the repairs together.
+
+## In a Rust project
+
+A Rust project gets its gates and its pinned checker from one maintenance crate, conventionally
+`tools/xtask`, a member of its workspace that is never published. The crate, the aliases and the
+main below were built and run in a scratch project, all its gates passing; the continuous
+integration workflow is a reduction of one in use. All are illustrations of the shape, to adapt.
+
+**The crate.** It depends on the checker and on the gates library, both pinned exactly to the
+version the project uses, and on clap:
+
+```toml
+[package]
+name = "xtask"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+knowledge-architect = "=<version>"
+knowledge-architect-gates = "=<version>"
+```
+
+**The aliases**, in `.cargo/config.toml`: `cargo x` runs the crate's own commands, and
+`cargo klarch` runs the checker it pins, in release mode. Declare `cargo klarch` as the project's
+command (§2).
+
+```toml
+[alias]
+x = "run -q -p xtask --"
+klarch = "run -q --release -p xtask -- klarch"
+```
+
+**Its main**: a `gates` command over the recommended list of the gates library, and a `klarch`
+command carrying the checker's own commands.
+
+```rust
+use std::path::Path;
+use std::process::ExitCode;
+
+use clap::{Parser, Subcommand};
+use knowledge_architect::cli;
+use knowledge_architect_gates::{project_root, rust_project, Checker, GatesArgs};
+
+#[derive(Parser)]
+struct Cli {
+    #[command(subcommand)]
+    command: Command,
+}
+
+#[derive(Subcommand)]
+enum Command {
+    /// Run every gate a branch must pass before it merges.
+    Gates(GatesArgs),
+    /// The knowledge-architect checker, at the version this crate pins.
+    Klarch {
+        #[command(subcommand)]
+        command: cli::Command,
+    },
+}
+
+fn main() -> ExitCode {
+    match Cli::parse().command {
+        Command::Gates(args) => {
+            let cwd = std::env::current_dir().expect("a working directory");
+            let Some(root) = project_root(&cwd, knowledge_architect::MANIFEST_NAME) else {
+                eprintln!("xtask: not inside the project");
+                return ExitCode::FAILURE;
+            };
+            let checker = Checker {
+                package: "xtask",
+                prefix: &["klarch"],
+            };
+            knowledge_architect_gates::run(&root, &rust_project(checker, "origin/main"), &args)
+        }
+        Command::Klarch { command } => {
+            let own = Path::new(env!("CARGO_MANIFEST_DIR"));
+            let outcome = cli::locate().and_then(|manifest| {
+                cli::refuse_a_foreign_build(
+                    manifest.root(),
+                    &[
+                        cli::this_library(),
+                        cli::Library {
+                            crate_dir: own.to_path_buf(),
+                            package: env!("CARGO_PKG_NAME"),
+                        },
+                    ],
+                    &[env!("CARGO_PKG_NAME")],
+                )?;
+                cli::run(command, &manifest, &[own], &mut [])
+            });
+            outcome.unwrap_or_else(|e| {
+                eprintln!("error: {e}");
+                ExitCode::from(2)
+            })
+        }
+    }
+}
+```
+
+**The gates.** `rust_project` gives, in cost order: `rebased` behind `--require-rebased`, `fmt`,
+`check`, `commits` over the branch's own commits, `clippy` with warnings denied, and `test`. Add
+a gate the project owes by pushing a `Gate` to that list, with the distiller that shows its failure;
+remove one only on the owner's word. Pass the main branch as git names it, such as `origin/main`.
+The tool writes every gate's complete output under `target/gates/`, refuses to write its report
+into a pipe, and exits non-zero when any gate fails: read a run in the terminal, or redirect it to
+a file.
+
+**A project with an extension** depends on the crate that holds its extension instead of the
+checker alone, and its `klarch` command registers the extension, as that crate's documentation
+shows. Its gates' `Checker` names the same package and prefix.
+
+**Continuous integration** runs the same command on every pull request that is ready, with a
+history deep enough for the range and the rebase check:
+
+```yaml
+name: ci
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+permissions:
+  contents: read
+jobs:
+  check:
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: gates
+        run: cargo --locked x gates --locked --fail-fast --require-rebased --full
+      - name: gate logs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gate-logs
+          path: target/gates/
+```
+
+`cargo --locked x` keeps cargo from rewriting a drifted `Cargo.lock` before the tool starts, and
+the tool's own `--locked` reaches every gate that resolves dependencies. The head commit is checked
+out rather than a merge commit, so the range the commits gate judges is the branch's own. A draft
+is skipped, so a merge is decided on a ready pull request's checks.
