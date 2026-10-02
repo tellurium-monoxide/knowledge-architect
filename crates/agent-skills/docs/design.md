@@ -336,10 +336,25 @@ document, against `goal@knowledge-architect@documentation-stays-consistent`, and
 the document leaves. The plan document is written in the session that converged, so the criteria
 and the document are born together.
 
-The result a scheduled review is expected to give is not a criterion, by the owner's ruling: passing
-the reviews every plan document and step owes is the baseline, and writing it as a criterion in
+The result a scheduled review is expected to give is not a criterion: passing the reviews every plan
+document and step owes is the baseline, and writing it as a criterion in
 every plan document would be noise, and would become the habitual criterion in place of a specific
 one that is harder to find.
+
+### A plan document is committed before its reviews, and each repair is a further commit `##plan-reviewed-as-a-commit`
+
+The planning skill has a plan document's reviewers read its commit, not the working tree. The review
+skill names what a reviewer reads as a commit range and gives each reviewer that runs a binary a
+worktree detached at the commit under review; a document still uncommitted has neither, so the two
+skills could not both be obeyed. A repair after the review is a further commit, as everywhere else,
+so the history shows what the review found.
+
+### A milestone document whose first step changes the gates lands in a merge of its own `##milestone-lands-before-gate-change`
+
+When the first step of a milestone changes what the project's gates check, the milestone document is
+merged on its own before that step begins. On the step's branch, the gates as that step changes
+them would judge the commit that added the document, whose tree predates the change. A spec has no
+such split: its document and its work are one branch.
 
 ### Undesigned work is an issue, and no list of milestones is kept `##planned-work-is-an-issue`
 

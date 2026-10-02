@@ -195,9 +195,18 @@ compaction before the plan document is written, and its response reopens with th
 its premise: the ledger is assembled from the transcript on disk. It has not fired: this session's
 transcript holds no compaction marker. The discussion did not see it; the review before the merge
 found it. Step 3's harvest rewrites it to watch assembly from the transcript, absorbs T2 into it if
-both guard the same head, or deletes it, under `knowledge-architect-issue-tracking`. The tripwires
-guarding the core heads of steps 1 and 2, such as `tripwire@core@reserved-anchors-generic-rule`
-and `tripwire@core@issue-kind-list-grows`, are re-read at those steps' audits.
+both guard the same head, or deletes it, under `knowledge-architect-issue-tracking`.
+
+What else references a decision this work rewrites, as `cargo klarch show` lists it, and the
+harvest that judges each:
+
+| entry | references | judged at |
+| --- | --- | --- |
+| `tripwire@core@reserved-anchors-generic-rule` | `design@core@reserved-anchors` | step 1 |
+| `tripwire@core@issue-kind-list-grows` | `design@core@a-file-register-is-a-directory-of-entries` | step 1 |
+| `issue@core@a-planned-path-can-be-named` | `design@core@reserved-anchors`, `design@core@every-path-names-its-anchor` | step 1 |
+| `issue@core@cross-project-references` | `design@core@a-slug-belongs-to-a-component` | step 2 |
+| `tripwire@agent-skills@ledger-lost-before-hand-off` | `design@agent-skills@design-hands-off-to-planning` | step 3, as above |
 
 ## Criteria
 

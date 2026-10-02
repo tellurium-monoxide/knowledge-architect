@@ -14,8 +14,8 @@ last release, which the release renames to its version. Each item is tagged with
   work reverses or rewrites, and the readiness checks ask for them.
 - `agent-skills`: a plan document is committed before its reviews, and each repair is a further
   commit.
-- `agent-skills`: a plan document whose work changes what the gates check lands in a merge of its
-  own, before the first step.
+- `agent-skills`: a milestone document whose first step changes what the gates check lands in a
+  merge of its own, before that step.
 - `agent-skills`: the result a scheduled review is expected to give is not an acceptance criterion.
 - `agent-skills`: a design discussion's first round states which grounding commands ran, and a
   measured fact carries the command that re-takes it.

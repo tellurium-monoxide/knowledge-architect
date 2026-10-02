@@ -15,7 +15,8 @@ plans directory.
 
 ### What
 
-In the structured-plans milestone document, about 30 backticked paths that did not exist yet were
+In the structured-plans milestone document,
+`path@knowledge-architect@docs/plans/structured-plans/README.md`, about 30 backticked paths that did not exist yet were
 each reported as a path to anchor. The repair the finding suggests, `path@elsewhere@<path>`, names
 "a deleted or hypothetical file" and is refused when its target resolves, which the plan's own work
 makes true. The author wrote the paths as plain text. A form is missing that says "this path is

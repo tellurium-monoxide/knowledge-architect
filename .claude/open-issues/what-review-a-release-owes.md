@@ -36,7 +36,8 @@ Leads the agent gave the owner, not ruled on:
 
 An axis that a review dispatches before every merge costs a subagent each time. One that checks only
 what the baseline already states adds cost and no finding, while the changelog and the bump, which a
-release depends on, are checked by nobody until `klarch-release` runs.
+release depends on and `design@knowledge-architect@versioning-policy` decides, are checked by nobody
+until `klarch-release` runs.
 
 ### What would close it
 

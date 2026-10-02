@@ -459,8 +459,8 @@ choices whose option space genuinely is closed and consequence-free.
    not a courtesy. Argued agreement is legitimate. Objecting to a
    proposal you have no argument against damages the discussion the
    same way agreeing with one you have not tested does. A factual claim
-   doing closing work carries its provenance — measured, with the
-   command that re-takes it, read in a named source, or assumed — and a thread may close over assumed
+   doing closing work carries its provenance — measured (with the
+   command that re-takes it), read in a named source, or assumed — and a thread may close over assumed
    claims only if each assumption is recorded as a tripwire on that
    closure. In the other direction, reverse when the opposing
    argument explains something your position cannot, or survives an
