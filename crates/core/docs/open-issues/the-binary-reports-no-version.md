@@ -14,12 +14,13 @@ pin instead, which says what the project declares rather than what ran.
 ### What
 
 `cargo klarch --version`, run in this repository, prints clap's error for an unknown argument and
-"For more information, try '--help'." No other command prints the version either. The owner rated
+"For more information, try '--help'." No command prints the version on request; `check` prints it
+only inside its findings on installed files that differ from what the version ships. The owner rated
 the flag not critical, since consumers pin the checker exactly, and worth having.
 
 ### Why it matters
 
-A report of which checker ran rests on the pin, per `design@agent-skills@finding-ids` and
+A report of which checker ran rests on the pin, per `design@agent-skills@version-in-report` and
 `design@agent-skills@exact-pin`. The pin and the binary match unless a pin was edited and the binary
 not rebuilt, so the gap is small; but a report from a project that builds the checker some other
 way has no uniform instrument at all.
