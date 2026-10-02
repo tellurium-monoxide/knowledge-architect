@@ -9,8 +9,8 @@ documentation structure and the workflow are designed to work together.
 A goal is met or unmet. A decision about how the project is built is won or lost, and lives in the
 design home. **A goal stays in this document while it is met.** A goal removed when it is achieved
 stops being checked, and can stop being met without anyone noticing. A goal leaves only when it is
-abandoned, on the owner's word. The goals are the owner's intent: an agent may propose wording, and
-the owner decides it.
+abandoned, on the owner's word, per `design@agent-skills@goal-lifecycle`. The goals are the
+owner's intent: an agent may propose wording, and the owner decides it.
 
 ## The documentation records the design, with the intent and the arguments behind it `##design-is-recorded-with-its-arguments`
 
