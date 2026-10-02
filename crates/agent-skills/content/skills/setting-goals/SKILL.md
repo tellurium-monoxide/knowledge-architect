@@ -1,0 +1,77 @@
+---
+name: knowledge-architect-setting-goals
+description: MUST use when a Component has no goal, when the owner states a new purpose or abandons one, when a recorded decision conflicts with a goal, and before writing or editing any goals home. Covers what a goal is and how it differs from a decision, how the owner's intent is drawn out and written as a draft the owner rules on goal by goal, the shape of a goal entry, how a Component's goal names the project goal it serves, and why a goal leaves only on the owner's word.
+---
+
+# Setting goals
+
+Scope: the goals homes of the project, one per Component, `docs/goals.md` or `docs/goals/`. Writing
+a goal, changing its wording, and removing it.
+
+Not covered here: **a decision about how something is built**, which is
+`knowledge-architect-recording-a-decision`; **setting up the rest of a Component**,
+`knowledge-architect-setting-up`.
+
+**The goals are the only statements assumed to come from the owner.** Every design decision binds
+as a presumption, and a goal binds outright: a constraint derived from a goal rules a proposal out.
+That is why no goal is written that the owner did not rule on, and why an agent never edits a goal
+outside this skill.
+
+## 1. A goal, and what is not one
+
+**A goal is met or unmet. A decision is won or lost.** A goal states an outcome: what the project or
+the Component is for, and for whom. It never states a mechanism. The test, for each sentence: if it
+changed, would the Component be for something else (a goal), or would it reach the same end another
+way (a decision, which belongs in the design home)?
+
+A goal stays in its home **while it is met**. One removed when it is achieved stops being checked,
+and can stop being met without anyone noticing. **A goal leaves only when the owner abandons it**,
+on the owner's word.
+
+## 2. The shape of a goal entry
+
+A level-two heading stating the goal as a sentence, its slug at the end, then one short paragraph:
+what the goal means, and **what would show it is met**.
+
+```markdown
+## <The goal, stated as a sentence> `##<slug>`
+
+<What it means, in two to four sentences, and what would show it is met.>
+```
+
+A Component's goal that serves a goal of the project's root names it, with a reference in its
+body: `goal@<root anchor>@<slug>`. When the root goal is reworded or abandoned, the reference lists
+every Component goal that served it.
+
+The head of the goals home says what it holds: a goal is met or unmet, it stays while it is met,
+and it leaves only on the owner's word. Goals stay short: a goals home is read whenever a decision
+is argued from one.
+
+## 3. Drawing out the owner's intent
+
+**The owner states, the agent helps write, and the owner rules on every goal.**
+
+1. **Ask the owner to state their intent** for the Component, and any goals they already have, in
+   their own words. Three questions help: what is it for, and for whom; what would show that it
+   fails at that; what is it explicitly not for.
+2. **Refine the wording** of what the owner stated. **Propose further goals** from the existing
+   documentation, or from the code and content when the documentation does not say enough.
+3. **Write a draft that goes into the goals home verbatim if it is approved**: short, one heading
+   and one paragraph per goal. **Mark each goal with its source**: "the owner's statement", or
+   "proposed from <the document or the code it was read from>". The source mark is not written to
+   the goals home.
+4. **Ask the owner to read the draft in full, and to rule on each goal by its slug**: approved, or
+   dropped. A goal with no ruling is neither written nor dropped: ask again for it by its slug. A
+   goal the owner rewords is shown again in its new wording before it is written.
+5. Write the approved goals, exactly as approved, and nothing else.
+
+## 4. When this runs again
+
+- **A new purpose, or one abandoned.** The owner says so; the goal is added through §3, or removed
+  in a change of its own. Every reference to a removed goal dangles, and `{{command}} check` lists
+  each one: each is a text that derived something from the goal, and is read again.
+- **A decision conflicts with a goal.** The goal prevails, and the conflict goes to the owner. If the
+  owner's ruling is that the goal no longer says what they intend, its wording changes through §3.
+- **A goal's wording no longer matches the owner's intent**: the same, through §3.
+
+Each change of a goal is its own commit, and its message quotes the owner's ruling.

@@ -448,6 +448,10 @@ dispatched as that agent, and any other axis as a fresh general-purpose subagent
 name beginning with `knowledge-architect-` is the installer's, and the install would delete it.
 This is a restatement; its home is `design@knowledge-architect@klarch-prefix`.
 
+**A retrospective's findings stay in this repository.** Here the project is also the workflow's
+upstream, so both files of `knowledge-architect-retrospective` become entries in this repository's
+own issue registers, on the owner's word, rather than an issue on GitHub.
+
 **The routing table**: what this repository adds to an installed skill or agent.
 
 | installed | this repository's additions |

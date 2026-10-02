@@ -313,6 +313,40 @@ review); the primer growing (the content test); an inventory never followed by a
 into the todo clause); a root CLAUDE.md with no plans directory row (setting-up writes it and
 nothing checks it, a known limit recorded in plans-directory-declared).
 
+### 3.8 Step 5, session D
+
+Held in this repository on 2026-10-02 under the designing-together skill, on setting-goals and the
+retrospective. It rested on the decisions of 3.1 that shape them: goal-lifecycle, goals-required,
+retrospective-destination and premortem-as-watch-points.
+
+| thread | state | decision |
+| --- | --- | --- |
+| goal-entry-shape | approved | a heading stating an outcome, and one paragraph saying what it means and what would show it met; the goal-versus-decision test |
+| eliciting-goals | approved, on the owner's refinement | the owner states intent and any goals; the agent refines the wording and proposes further goals from the documentation or the code; it writes a short draft that goes in verbatim, each goal marked with its source; the owner rules on every goal by slug, approved or dropped, and a goal with no ruling is asked about again. The owner: "the agent should still help humans writing this document, while making sure it reflects the owner's mind", and "an unnamed goal should not be dropped silently either … Each goal should require a ruling, "approved" or "drop"" |
+| component-goal-serves-root | approved | a Component's goal references the root goal it serves |
+| when-setting-goals-runs | approved | at setup, at a new or abandoned purpose, at a goal-versus-decision conflict; an agent edits a goal through the skill only |
+| retro-trigger | approved | offered once per session, at a merge, a plan document leaving, or the session's end |
+| retro-content | approved, on the owner's refinement | four subjects: the installed skills and agents, the project's own instructions, how the two interact, and the checker (defects, blind spots, usability, "more CLI options for example"), plus the three watch points |
+| retro-two-files | approved, the owner's proposal | one file per project, each finding sorted by whose text must change; an interaction finding in both |
+| retro-file-location | approved | a directory outside the project, chosen by the owner once |
+| retro-to-issue | approved | the owner reads both files verbatim; the project's findings become its own issue entries and the workflow's file an issue on knowledge-architect's repository, on the owner's word. In this repository both go to its own register, which its root CLAUDE.md states |
+
+Ruled out in session D:
+
+| alternative | lost to | why it lost |
+| --- | --- | --- |
+| the agent drafts nothing, and only proposes wording from the owner's answers | eliciting-goals | it gave up helping the owner write the document |
+| the agent drafts goals and the owner corrects them | eliciting-goals | a goal accepted by not objecting is not the owner's word |
+| an unruled goal dropped silently | eliciting-goals | an unnamed goal may not be the owner's intent either (owner) |
+| a retrospective of the installed skills only | retro-content | an adopting project meets the workflow's failures in its own instructions and their interaction with the installed ones too (owner) |
+
+No tripwire was recorded (owner: "Outside of that, nothing to change, all is approved", answering
+a checkpoint whose default was no tripwire). The premortem's causes and their guards: goals approved
+by slug without reading (the draft is short and marks each goal's source); the retrospective always
+declined (offered once, at a defined moment); project content in a public issue (the project's
+findings stay in the other file, and the owner reads the workflow's file verbatim); a finding in
+neither file (an interaction finding goes in both).
+
 ## 4. The decided design
 
 ### 4.1 Repository layout
@@ -1120,8 +1154,8 @@ its docs/design.md.
 | 5, PR 1 | agent-skills | done: content-mirrors-the-install-layout (new), shipped-text-is-reference-free, no-external-handoff, harvest-after-implementation, standing-argument-in-head, losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id, premortem-tripwires-on-the-owners-word. installed-prefix-length needs no entry: `design@core@owned-namespace-check` states the prefix |
 | 5, PR 2 | agent-skills | done: the decisions of 3.6 and spec-and-milestone, spec-leaves-at-landing, designing-hands-off-to-planning (the planning side) |
 | 5, PR 4 | agent-skills, root | done: the decisions of 3.7 and overlay-by-separate-skills, routing-table, skill-name-prefix, goals-required, gates-convention, exact-pin, declared-command (the extension rule), the interim rule of cross-project-references; klarch-prefix in the root |
-| 5 | agent-skills | goal-lifecycle, plugin-inventory, retrospective-destination, premortem-as-watch-points |
-| 6 | agent-skills | designing-together-retirement, designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning, the kept items of the intake |
+| 5, PR 5 | agent-skills | done: the decisions of 3.8, goal-lifecycle, retrospective-destination, premortem-as-watch-points |
+| 6 | agent-skills | plugin-inventory (the design-discussion skill completes the set), designing-together-retirement, designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning, the kept items of the intake |
 
 **Losing alternatives.** Section 3.2 and the absorbed shapes of 3.3 are judged against
 recording-a-decision's tests at the harvest of the decision they lost to. The likeliest to pass:
@@ -1360,7 +1394,13 @@ skill and comes before the PR that needs it.
    section 2, this PR serves self-hosted (this repository installs and imports its own workflow),
    owner-intent and nothing-compiled-in (goals-required, overlay-by-separate-skills, and the
    reviews of the shipped text); one-workflow waits on step 6.
-6. **Session D, then PR 5:** setting-goals and retrospective.
+6. **Session D, then PR 5:** setting-goals and retrospective. Session D is **done**, 3.8.
+   **Landed on the branch installed-goals-and-retrospective:** the two skills; the primer lists
+   them; the root CLAUDE.md says where this repository's retrospective findings go. Harvest in the
+   agent-skills design home: goal-lifecycle, goal-entry-shape, eliciting-goals,
+   component-goal-serves-root, when-setting-goals-runs, retro-trigger, retro-content (absorbing
+   premortem-as-watch-points), retro-two-files, retro-file-location and retro-to-issue (absorbing
+   retrospective-destination). plugin-inventory waits for step 6, which completes the set.
 7. **PR 6:** the setting-goals skill is run with the owner on every component of this repository,
    as its first real use (approved). A change to goals is the owner's, and needs no review.
 

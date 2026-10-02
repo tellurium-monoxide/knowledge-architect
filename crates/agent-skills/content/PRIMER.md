@@ -93,6 +93,10 @@ brackets. The checker reads Markdown and Rust source; a reference anywhere else 
 - `knowledge-architect-maintaining-agent-config`: before editing a `CLAUDE.md`, a skill or an agent.
 - `knowledge-architect-setting-up`: the project adopts the workflow, or a version upgrade is
   installed.
+- `knowledge-architect-setting-goals`: a Component has no goal; the owner states or abandons a
+  purpose; a decision conflicts with a goal.
+- `knowledge-architect-retrospective`: once per session, offered when a pull request merges, a plan
+  document leaves, or the session ends.
 
 A project's own skills add to these, and never replace them. Which project skill adds to which
 installed one is the routing table of the project's root `CLAUDE.md`. Read the installed skill and
