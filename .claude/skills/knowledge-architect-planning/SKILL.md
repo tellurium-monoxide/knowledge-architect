@@ -257,7 +257,7 @@ skill lists, the blind brief included:
 - `knowledge-architect-code-claims-reviewer` verifies every statement the document makes about the
   code as it stands, and reports each as confirmed, wrong or imprecise, with the evidence.
 - `knowledge-architect-transcript-conformity-reviewer` reads the discussion's transcript and checks
-  that the document records what was decided, and only that. Dispatch it whenever the transcript is
+  that the document records what was decided, no wider and no narrower. Dispatch it whenever the transcript is
   available. When it is not, say so, and why, in the commit that adds the document.
 
 **What their findings become.** Check each finding against the tree, or against the transcript,
@@ -265,9 +265,11 @@ before acting on it. A material finding is answered with a default, written into
 touches, and listed under the defaults awaiting the owner, with the thread it bears on. The owner
 rules on each at the first audit, or at once if present, and a ruled default leaves the list. A finding
 that is a gap with one answer is applied in place. A finding that is wrong is dropped, with the
-reproduction that showed it wrong kept in the commit message. An agent's addition, detail inside
-the scope of a ruling that the owner has not seen, is kept and listed in the commit message as the
-agent's, so the owner can contest it; it is removed only on the owner's word.
+reproduction that showed it wrong kept in the commit message. A scope change, a clause that widens or narrows
+a ruling or adds an obligation to it, is put to the owner, listed under the defaults awaiting the
+owner. An agent's addition, detail the author added inside the scope of an owner's ruling, is kept
+and listed in the commit message as the agent's, so the owner can contest it; it is removed only on
+the owner's word.
 
 **The readiness checks**, applied by the author before dispatch and by the cold implementer after.
 This list is their one home; the reviewer reads it here.

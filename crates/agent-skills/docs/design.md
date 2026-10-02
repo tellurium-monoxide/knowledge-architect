@@ -346,7 +346,7 @@ installed the first skills, a reviewer briefed with this standard was the one of
 decision recorded narrower than the owner's approval; two others found the same head contradicting
 the shipped text. It sorts what a document added into a scope change, which goes to the owner, and
 an agent's addition, detail inside a ruling, which is kept and listed as the agent's until the owner
-rules. Reported alike, both read as defects, and the author undid a defensible detail the owner then
+rules. Reported alike, both read as defects, and the author undid a detail, which the owner then ruled
 restored.
 
 ### Plan documents written under the planning skill keep a shape a later structure can read `##structure-ready`

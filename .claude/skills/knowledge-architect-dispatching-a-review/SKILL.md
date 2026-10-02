@@ -92,7 +92,7 @@ and `git worktree remove <path>` once the review and the repairs are done. **The
   (`knowledge-architect-tracking-open-issues`).
 
 A transcript reviewer's **agent's addition**, detail the author added inside the scope of an
-owner's ruling, is neither: it is kept, and the review paragraph lists it as the agent's, so the
+owner's ruling, is neither: it is kept, and the record of the review lists it as the agent's, so the
 owner can contest it. It is removed only on the owner's word.
 
 **Where the branch's commits reach the main branch unchanged** (a fast-forward or a rebase merge):

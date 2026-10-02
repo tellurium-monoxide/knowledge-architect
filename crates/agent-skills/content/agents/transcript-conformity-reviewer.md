@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-transcript-conformity-reviewer
-description: The transcript-conformity axis of a dispatched review of a document that records the decisions of a discussion with the owner, such as a spec or a milestone document. Reads the discussion's transcript and checks that the document records what was decided, and only that. Dispatch it; do not read it.
+description: The transcript-conformity axis of a dispatched review of a document that records the decisions of a discussion with the owner, such as a spec or a milestone document. Reads the discussion's transcript and checks that the document records what was decided, no wider and no narrower. Dispatch it; do not read it.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -63,10 +63,10 @@ For each thread and each losing alternative the document records:
 
 - **the state** is the one the owner's words gave. A thread the owner did not rule on is not
   recorded as approved;
-- **the decision** says what was approved, and no more and no less. A clause the owner's approval
+- **the decision** says what was approved, no wider and no narrower. A clause the owner's approval
   covered and the document dropped is a finding. A clause the document added is one of two classes:
   a **scope change**, which widens or narrows what the owner ruled or adds an obligation to it; or
-  an **agent's addition**, detail inside the scope of the ruling, such as a clarification, a
+  an **agent's addition**, detail the author added inside the scope of the ruling, such as a clarification, a
   cross-reference or a reporting detail that serves the approved rule. Say which, and why;
 - **every quotation attributed to the owner** is verbatim, and its qualifiers are kept;
 - **every argument attributed to the owner** is the owner's. An argument the agent made is not
