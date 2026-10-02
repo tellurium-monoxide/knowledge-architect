@@ -40,8 +40,9 @@ what the goal means, and **what would show it is met**.
 ```
 
 A Component's goal that serves a goal of the project's root names it, with a reference in its
-body: `goal@<root anchor>@<slug>`. When the root goal is reworded or abandoned, the reference lists
-every Component goal that served it.
+body: `goal@<root anchor>@<slug>`. Then `{{command}} show goal@<root anchor>@<slug>` lists every
+Component goal that served it, and removing the root goal leaves each of those references dangling,
+which the check reports.
 
 The head of the goals home says what it holds: a goal is met or unmet, it stays while it is met,
 and it leaves only on the owner's word. Goals stay short: a goals home is read whenever a decision
@@ -67,11 +68,12 @@ is argued from one.
 
 ## 4. When this runs again
 
-- **A new purpose, or one abandoned.** The owner says so; the goal is added through §3, or removed
-  in a change of its own. Every reference to a removed goal dangles, and `{{command}} check` lists
-  each one: each is a text that derived something from the goal, and is read again.
-- **A decision conflicts with a goal.** The goal prevails, and the conflict goes to the owner. If the
-  owner's ruling is that the goal no longer says what they intend, its wording changes through §3.
-- **A goal's wording no longer matches the owner's intent**: the same, through §3.
+- **The owner states a new purpose, abandons one, or rewords one.** A goal is added or reworded
+  through §3. When one is removed, every reference to it dangles, and `{{command}} check` lists each
+  one: each is a text that derived something from the goal, and is read again.
+- **A decision conflicts with a goal**, and the primer's rule sends the conflict to the owner. The
+  goal prevails until the owner rules; if the ruling changes the goal, it changes through §3.
 
-Each change of a goal is its own commit, and its message quotes the owner's ruling.
+The goals ruled on in one session are written in one commit, whose message quotes each ruling. A
+goal's removal and the repair of every reference it leaves dangling are one commit, so the commit
+passes the check.

@@ -29,10 +29,12 @@ namespace, since an install path outside it would write a file the project owns.
 
 The text under content/ is read in every project that installs it, so it names no path, no
 Component and no convention of this repository, per `goal@knowledge-architect@any-project-can-adopt-it`.
-It holds no live reference: a reference resolves only against the tree it stands in, and no tree
-but this one holds this repository's entries. An illustration writes a placeholder in angle
-brackets. The command a project runs is written as the placeholder that the install fills with the
-project's declared command, per `design@core@declared-command`.
+The one name it holds on purpose is the workflow's own upstream repository, where a retrospective's
+findings on the workflow go, per `design@agent-skills@retrospective-destination`. It holds no live
+reference: a reference resolves only against the tree it stands in, and no tree but this one holds
+this repository's entries. An illustration writes a placeholder in angle brackets. The command a
+project runs is written as the placeholder that the install fills with the project's declared
+command, per `design@core@declared-command`.
 
 This repository's manifest takes content/ out of the walk, because its illustration paths would be
 reported as paths of this repository. The installed copies under .claude are out of the walk by
@@ -387,7 +389,8 @@ when the owner abandons it, per `goal@knowledge-architect@the-owner-decides`.
 
 ### A goal entry states an outcome, and what would show it met `##goal-entry-shape`
 
-A goal is a level-two heading stating an outcome as a sentence, with its slug, and one short
+A goal is a heading stating an outcome as a sentence, with its slug, at the level the core gives
+the goal register, per `design@core@an-entry-is-a-heading-at-the-register-level`, and one short
 paragraph saying what it means and what would show it is met. It never states a mechanism: the test
 is whether a change would make the Component for something else, which is a goal, or reach the same
 end another way, which is a decision. Goals stay short, because a goals home is read whenever a
@@ -395,16 +398,16 @@ decision is argued from one.
 
 ### The owner states intent, the agent drafts, and the owner rules on every goal by its slug `##eliciting-goals`
 
-The agent asks the owner to state their intent and any goals they have, refines the wording,
-proposes further goals from the documentation or the code, and writes a short draft that goes into
-the goals home verbatim if approved. Each goal in the draft is marked with its source, the owner's
-statement or what it was proposed from, and the owner rules on each one by its slug: approved or
-dropped. A goal with no ruling is asked about again; it is neither written nor dropped silently,
-because an unnamed goal may not be the owner's intent either. The agent still helps a person write
-the document, and the rulings by slug keep it the owner's, per
-`goal@knowledge-architect@the-owner-decides`. Drafting nothing and only asking lost: it gave up the
-help with the wording. Drafting and letting the owner correct lost too: a goal accepted by not
-objecting is not the owner's word.
+The agent asks the owner to state their intent and any goals they have, refines the wording, and
+proposes further goals from the documentation, or from the code and content when the documentation
+does not say enough. It writes a short draft that goes into the goals home verbatim if approved,
+each goal marked with its source, the owner's statement or what it was proposed from, and asks the
+owner to read it in full. The owner rules on each goal by its slug: approved or dropped. A goal
+with no ruling is asked about again; it is neither written nor dropped silently, because an unnamed
+goal may not be the owner's intent either. The agent still helps a person write the document, and
+the rulings by slug keep it the owner's, per `goal@knowledge-architect@the-owner-decides`. Drafting
+nothing and only asking lost: it gave up the help with the wording. Drafting and letting the owner
+correct lost too: a goal accepted by not objecting is not the owner's word.
 
 ### A Component's goal names the project goal it serves `##component-goal-serves-root`
 
@@ -414,10 +417,10 @@ abandoning the root goal lists every Component goal derived from it, per
 
 ### Goals change only through the setting-goals skill `##when-setting-goals-runs`
 
-The setting-goals skill runs at setup for every Component, when the owner states or abandons a
-purpose, and when a decision conflicts with a goal and the owner rules that the goal's wording no
-longer says what they intend. An agent never edits a goal outside it, since a goal binds outright
-where a decision binds as a presumption.
+The setting-goals skill runs at setup for every Component, when the owner states, rewords or
+abandons a purpose, and when a decision conflicts with a goal and the primer's rule sends the
+conflict to the owner. An agent never edits a goal outside it, since a goal binds outright where a
+decision binds as a presumption, per `goal@knowledge-architect@the-owner-decides`.
 
 ## The retrospective
 
@@ -428,23 +431,29 @@ session worked on has merged, a plan document has left, or the owner says the se
 It runs only if the owner accepts. A moment named by an event can be followed by any agent where
 "a moment it judges right" could not, and offering it once keeps it from interrupting work.
 
-### A retrospective examines four subjects and asks three standing questions `##retro-content`
+### A retrospective examines four subjects `##retro-content`
 
-It examines the installed skills and agents, the project's own instructions, how the two interact,
-and the checker: its defects, its blind spots, its false findings, and what would make it easier to
-use. For each it lists what was unclear, missing or wrong, quoting the instruction. It always asks
-whether the session needed to change an installed skill, whether the primer reached the session and
-its subagents, and whether a project skill's addition was missed: the three premortem causes the
-owner made questions rather than tripwires. Its scope is wider than the installed text because a
-project adopting the workflow meets its failures in its own instructions and in their interaction
-with the installed ones as often as in the installed ones, per
+It opens with what the session did, at the level of the workflow, and examines the installed skills
+and agents, the project's own instructions, how the two interact, and the checker: its defects, its
+blind spots, its false findings, and what would make it easier to use. For each it lists what was
+unclear, missing or wrong, quoting the instruction. Its scope is wider than the installed text so
+that it is useful to a project adopting the workflow, whose problems may come from its own
+instructions and from their interaction with the installed ones as well, per
 `goal@knowledge-architect@the-workflow-improves-through-real-use`.
+
+### A retrospective asks three standing questions, on the decisions they watch `##premortem-as-watch-points`
+
+Every retrospective asks whether the session needed to change an installed skill, whether the
+primer reached the session and its subagents, and whether a project skill's addition was missed.
+Each watches a decision whose failure would be seen in real sessions before any check could see it:
+`design@agent-skills@overlay-by-separate-skills`, the primer's delivery by an import line in
+`design@core@owned-namespace-check`, and `design@agent-skills@routing-table-shape`.
 
 ### A retrospective writes one file per project whose text must change `##retro-two-files`
 
 Each finding goes to the file of the project whose text or code must change: one file for the
 project, one for knowledge-architect. A finding on an interaction whose fix may fall on either side
-goes in both. The project's findings never leave the machine, so only the workflow's file is held
+goes in both. The project's findings never leave the project, so only the workflow's file is held
 to the rule that it carries nothing of the project beyond what a finding needs.
 
 ### The retrospective's files live outside the project, where the owner chose `##retro-file-location`
@@ -452,10 +461,9 @@ to the rule that it carries nothing of the project beyond what a finding needs.
 The files go to a directory outside the project, which the owner chooses the first time. Inside
 the project they would enter its history if committed, and be lost to the next clean if ignored.
 
-### Nothing of a retrospective leaves the machine without the owner's reading and word `##retro-to-issue`
+### Nothing of a retrospective leaves the machine without the owner's reading and word `##retrospective-destination`
 
-The owner reads both files verbatim and may edit them. On the owner's word, the project's findings
-become issue entries in its own register, and the workflow's file becomes an issue on
-knowledge-architect's repository, through `gh` or by the text and the address. The repository is
-the workflow's own upstream, not a path of the installing project, so naming it keeps
-`design@agent-skills@shipped-text-is-reference-free`.
+The owner reads both files verbatim and may edit them. On the owner's word, and where the owner
+directs, the project's findings become issue entries in its own register, and the workflow's file
+becomes an issue on knowledge-architect's repository, through `gh` or by the text and the address.
+The repository is the workflow's own upstream, the one name of a project the shipped text holds.

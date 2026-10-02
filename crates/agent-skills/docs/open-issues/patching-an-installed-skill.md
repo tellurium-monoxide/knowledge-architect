@@ -25,11 +25,13 @@ decided.
 whose need is a contradiction is left two moves: report it to this repository, or declare
 `harness = []` and lose the installed workflow, the checks of `design@core@owned-namespace-check`
 and the overlay rule with it. That threatens `goal@knowledge-architect@any-project-can-adopt-it`.
-It is the first cause of the premortem of the design discussion that produced the workflow, kept as
-a question of the retrospective rather than as a tripwire.
+The retrospective asks about it at every session, per
+`design@agent-skills@premortem-as-watch-points`.
 
 ### Trigger
 
-A retrospective report filed on this repository names a session that needed to change or remove an
+A retrospective's workflow file, filed as an issue on knowledge-architect's repository or, for a
+session in this repository, as an entry in its registers, per
+`design@agent-skills@retrospective-destination`, names a session that needed to change or remove an
 instruction of an installed skill. The session that triages that report decides what the workflow
 changes, and this means is one of the answers it weighs.

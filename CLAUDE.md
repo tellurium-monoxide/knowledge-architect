@@ -450,7 +450,9 @@ This is a restatement; its home is `design@knowledge-architect@klarch-prefix`.
 
 **A retrospective's findings stay in this repository.** Here the project is also the workflow's
 upstream, so both files of `knowledge-architect-retrospective` become entries in this repository's
-own issue registers, on the owner's word, rather than an issue on GitHub.
+own issue registers, on the owner's word, rather than an issue on GitHub. This is the owner's
+standing direction under that skill; its home is
+`design@knowledge-architect@retrospective-findings-stay-here`.
 
 **The routing table**: what this repository adds to an installed skill or agent.
 

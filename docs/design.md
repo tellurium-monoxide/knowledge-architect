@@ -193,3 +193,12 @@ repository's own skills and agents take the prefix `klarch-`, the binary's name.
 skills do not mention the case: outside this repository the collision is unlikely, and a rule for
 it in the shipped text would be read by every installing project for a risk the owner judges very
 small.
+
+### This repository's retrospective findings go to its own registers `##retrospective-findings-stay-here`
+
+A retrospective writes one file for the project and one for the workflow, and the workflow's file
+becomes an issue on knowledge-architect's repository where the owner directs it there, per
+`design@agent-skills@retrospective-destination`. Here the project is that repository, so the owner
+directs both files to this repository's own issue registers: an issue on GitHub would be a second
+place for what is open, beside the registers, against
+`goal@knowledge-architect@structure-and-workflow-work-together`.

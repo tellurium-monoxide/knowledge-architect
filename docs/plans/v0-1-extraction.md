@@ -31,7 +31,7 @@ needs it stops there.
 | detailed implementation plan | the separate step-by-step document of the superpowers workflow, which this design rejects (3.2) |
 | harvest | writing the decisions of a landed step into the design homes |
 | material finding | information that arrived after a thread closed and defeats a named part of that closure |
-| watch point | a question the retrospective skill asks at the end of a session |
+| watch point | one of the three questions the retrospective skill asks every time it runs (3.8) |
 | thread | one question of the discussion, named by a slug |
 | arm | one of the numbered tests in recording-a-decision that decide whether a decision or an alternative earns an entry |
 | history line | a line that records a past state on purpose, such as a line of a progress log, and is not rewritten by a rename |
@@ -322,14 +322,23 @@ retrospective-destination and premortem-as-watch-points.
 | thread | state | decision |
 | --- | --- | --- |
 | goal-entry-shape | approved | a heading stating an outcome, and one paragraph saying what it means and what would show it met; the goal-versus-decision test |
-| eliciting-goals | approved, on the owner's refinement | the owner states intent and any goals; the agent refines the wording and proposes further goals from the documentation or the code; it writes a short draft that goes in verbatim, each goal marked with its source; the owner rules on every goal by slug, approved or dropped, and a goal with no ruling is asked about again. The owner: "the agent should still help humans writing this document, while making sure it reflects the owner's mind", and "an unnamed goal should not be dropped silently either … Each goal should require a ruling, "approved" or "drop"" |
+| eliciting-goals | approved, on the owner's refinement | the owner states intent and any goals; the agent refines the wording and proposes further goals from the documentation or the code; it writes a short draft that goes in verbatim, each goal marked with its source; the agent asks the owner to read it in full ("ask the owner to read it thorougly"); the owner rules on every goal by slug, approved or dropped, and a goal with no ruling is asked about again. Proposals come from the code or content "if not enough documentation". The owner: "the agent should still help humans writing this document, while making sure it reflects the owner's mind", and "an unnamed goal should not be dropped silently either IMO. Each goal should require a ruling, "approved" or "drop"" |
 | component-goal-serves-root | approved | a Component's goal references the root goal it serves |
 | when-setting-goals-runs | approved | at setup, at a new or abandoned purpose, at a goal-versus-decision conflict; an agent edits a goal through the skill only |
 | retro-trigger | approved | offered once per session, at a merge, a plan document leaving, or the session's end |
-| retro-content | approved, on the owner's refinement | four subjects: the installed skills and agents, the project's own instructions, how the two interact, and the checker (defects, blind spots, usability, "more CLI options for example"), plus the three watch points |
-| retro-two-files | approved, the owner's proposal | one file per project, each finding sorted by whose text must change; an interaction finding in both |
+| retro-content | approved, on the owner's refinement | a paragraph on what the session did, then four subjects: the installed skills and agents, the project's own instructions, how the two interact, and the checker (defects, blind spots, usability, "more CLI options for example"), plus the three watch points. The owner's reason: "to be interesting for external projects to use, it should not only cover what the installed skills and agents did … (there might be problems coming from that too)" |
+| retro-two-files | approved, the owner's proposal | one file per project, each finding sorted by whose text must change; an interaction finding in both. Only the workflow's file can become public, so only it is held to carry nothing of the project beyond what a finding needs |
 | retro-file-location | approved | a directory outside the project, chosen by the owner once |
-| retro-to-issue | approved | the owner reads both files verbatim; the project's findings become its own issue entries and the workflow's file an issue on knowledge-architect's repository, on the owner's word. In this repository both go to its own register, which its root CLAUDE.md states |
+| retro-to-issue | approved | harvested as retrospective-destination, the slug of the thread of 3.1 it refines. The owner reads the workflow's file verbatim; the project's findings become its own issue entries and the workflow's file an issue on knowledge-architect's repository, on the owner's word. In this repository both go to its own register, which its root CLAUDE.md states |
+
+Added by the agent while writing the skills, after the session, and not ruled on by name (each a
+**default**, put to the owner with the review of PR 5): the owner reads both retrospective files
+verbatim, not only the workflow's; the files are routed "where the owner directs", which carries
+this repository's standing direction; the directory is recorded, on the owner's word, in the
+owner's user-level agent configuration, since a later session has no memory of an earlier one; in
+setting-goals, the three questions kept as an aid to stating intent, a reworded goal shown again
+before it is written, a paragraph of two to four sentences, the source mark kept out of the goals
+home, and the goals of one session written in one commit.
 
 Ruled out in session D:
 
@@ -960,7 +969,7 @@ name and in its frontmatter name. The tables give the base names.
 | tracking-open-issues | thaum's | thaum's locations, worked examples and rule quotes removed |
 | dispatching-a-review | thaum's | the Rust worktree paragraph made generic, with a note for Rust projects; slice axes renamed for milestones. **Default:** the cold-implementer exclusion "never for a spec" is removed, because its premise is gone: a later session can continue a spec. |
 | maintaining-agent-config | thaum's | thaum's examples removed; the routing table and the prefix rule added |
-| retrospective | new | the agent offers it at a moment it judges right, at the end of a session that finished a piece of work under this workflow, and runs it only if the owner allows it. Its purpose, in the owner's words: "reflect on how the workflow was used, and give constructive remarks about what could be improved, what might be missing, what is unclear". It writes its file, asks the watch points of section 7, and offers an issue on this repository. |
+| retrospective | new | offered once per session at a merge, a plan document leaving, or the session's end, and run only if the owner accepts; its four subjects, its three standing questions, its two files outside the project, and where each goes on the owner's word (3.8) |
 
 | agent | source | what changes |
 | --- | --- | --- |
@@ -1154,7 +1163,7 @@ its docs/design.md.
 | 5, PR 1 | agent-skills | done: content-mirrors-the-install-layout (new), shipped-text-is-reference-free, no-external-handoff, harvest-after-implementation, standing-argument-in-head, losing-alternatives-filter, losing-shape-test, thread-slug-is-entry-id, premortem-tripwires-on-the-owners-word. installed-prefix-length needs no entry: `design@core@owned-namespace-check` states the prefix |
 | 5, PR 2 | agent-skills | done: the decisions of 3.6 and spec-and-milestone, spec-leaves-at-landing, designing-hands-off-to-planning (the planning side) |
 | 5, PR 4 | agent-skills, root | done: the decisions of 3.7 and overlay-by-separate-skills, routing-table, skill-name-prefix, goals-required, gates-convention, exact-pin, declared-command (the extension rule), the interim rule of cross-project-references; klarch-prefix in the root |
-| 5, PR 5 | agent-skills | done: the decisions of 3.8, goal-lifecycle, retrospective-destination, premortem-as-watch-points |
+| 5, PR 5 | agent-skills, root | done: the decisions of 3.8, goal-lifecycle, retrospective-destination, premortem-as-watch-points; retrospective-findings-stay-here in the root |
 | 6 | agent-skills | plugin-inventory (the design-discussion skill completes the set), designing-together-retirement, designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning, the kept items of the intake |
 
 **Losing alternatives.** Section 3.2 and the absorbed shapes of 3.3 are judged against
@@ -1398,9 +1407,14 @@ skill and comes before the PR that needs it.
    **Landed on the branch installed-goals-and-retrospective:** the two skills; the primer lists
    them; the root CLAUDE.md says where this repository's retrospective findings go. Harvest in the
    agent-skills design home: goal-lifecycle, goal-entry-shape, eliciting-goals,
-   component-goal-serves-root, when-setting-goals-runs, retro-trigger, retro-content (absorbing
-   premortem-as-watch-points), retro-two-files, retro-file-location and retro-to-issue (absorbing
-   retrospective-destination). plugin-inventory waits for step 6, which completes the set.
+   component-goal-serves-root, when-setting-goals-runs, retro-trigger, retro-content,
+   premortem-as-watch-points, retro-two-files, retro-file-location and retrospective-destination
+   (absorbing retro-to-issue); in the root, retrospective-findings-stay-here. plugin-inventory
+   waits for step 6, which completes the set. Of the criteria of section 2: owner-intent is served
+   by setting-goals, whose first use is PR 6; nothing-compiled-in holds, the upstream repository
+   being the one name the shipped text holds on purpose; self-hosted holds, both skills being
+   installed here; one-workflow waits on step 6; ship-isolation and thaum-keeps-working are not
+   touched by this PR.
 7. **PR 6:** the setting-goals skill is run with the owner on every component of this repository,
    as its first real use (approved). A change to goals is the owner's, and needs no review.
 
