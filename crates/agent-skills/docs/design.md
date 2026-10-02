@@ -138,7 +138,7 @@ workflow consistent, as `goal@agent-skills@one-skill-per-activity` asks. A rewor
 is phrased, is not recorded. Such proposals can be made without bound, unlike a technical decision,
 which costs implementation work. The commit message carries a rewording's argument.
 
-### An instruction is added to an installed skill only on evidence from real use `##additions-need-real-use`
+### An instruction is added to an installed skill or agent only on evidence from real use `##additions-need-real-use`
 
 Real use originates an addition: a behaviour seen in a real session, produced unprompted or asked
 for by the owner mid-session, with the owner naming what the session would have lacked without it,
@@ -150,11 +150,12 @@ literature and synthetic scenarios originate no edit. The skill text carries no 
 edit is judged on whether it changes behaviour, and two real sessions held the design
 skill's full ledger discipline at several hundred lines without drift. The rule derives from
 `goal@knowledge-architect@the-workflow-improves-through-real-use`, which is stated for the whole
-workflow, so it covers every installed skill. The evidence behind it came from one skill, and the
-skills forked from thaum were never edited under it: a skill that needs a different standard argues
-its exception.
+workflow, so it covers every installed skill and every installed agent: a reviewer agent grows
+the same way, one predicted check at a time. The evidence behind it came from one skill, and the
+skills and agents forked from thaum were never edited under it: one that needs a different
+standard argues its exception.
 
-### A gap in an installed skill is worth text when it is a missing capability `##capability-over-conformance`
+### A gap in an installed skill or agent is worth text when it is a missing capability `##capability-over-conformance`
 
 No wording makes a methodology self-enforcing: a rule set edited toward leaving no gap grows one
 rule per observed interaction, and each new rule creates surface against the rules already there.
