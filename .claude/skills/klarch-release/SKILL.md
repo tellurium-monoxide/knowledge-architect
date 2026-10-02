@@ -85,7 +85,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
 
     ```sh
     git checkout main && git pull --ff-only
-    test "$(git rev-parse HEAD)" = "<the merged release commit>"
+    test "$(git rev-parse HEAD^{tree})" = "$(git rev-parse <the reviewed branch head>^{tree})"
     git tag -a v<version> -m "Release <version>"
     cargo publish --workspace
     git push origin v<version>      # only once all three crates are published
