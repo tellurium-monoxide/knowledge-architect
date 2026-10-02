@@ -82,6 +82,8 @@ None: the step changes no code.
 ## Audit subjects
 
 - every head named in the harvest section's step 3 row of the milestone document;
+- `tripwire@agent-skills@ledger-lost-before-hand-off`, judged at this step's harvest per the
+  milestone document's "What is already decided";
 - `path@agent-skills@docs/rejected-alternatives.md`, the entry "Writing the discussion's ledger to a
   file during the discussion", which stays as it is;
 - the root `CLAUDE.md`, its knowledge-table row for unbuilt work and its "Plan documents" section;

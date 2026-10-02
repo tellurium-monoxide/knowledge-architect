@@ -182,6 +182,8 @@ Every fixture is expressible with what exists: a file, a directory, a reference 
   `generated_paths`, which reads no tree today;
 - `path@core@src/check/tree.rs` `file_home`; `path@core@src/check/registers.rs` `file_home`,
   `directory_contents`, `is_entry`, `entry`;
+- the tripwires guarding the heads this step rewrites: `cargo klarch tripwires` lists them, among
+  them `tripwire@core@reserved-anchors-generic-rule` and `tripwire@core@issue-kind-list-grows`;
 - acceptance criterion #milestone-fits-file-register of the milestone document.
 
 ## Fails alone on
