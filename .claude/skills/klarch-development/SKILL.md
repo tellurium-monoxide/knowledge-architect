@@ -16,7 +16,7 @@ tests Rust. It passes over a workflow file without seeing it, so a session that 
 for one of those gets a green gate on an unverified change.
 
 - The installed skills, agents and primer under `path@agent-skills@content/` follow
-  `path@agent-skills@CLAUDE.md`, section "Editing an installed skill", and
+  `path@agent-skills@CLAUDE.md`, section "Editing an installed skill or agent", and
   `knowledge-architect-agent-configuration`.
 - This repository's own agent configuration is `knowledge-architect-agent-configuration`.
 - A release is `klarch-release`.

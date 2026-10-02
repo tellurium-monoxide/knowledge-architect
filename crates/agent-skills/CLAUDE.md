@@ -23,10 +23,11 @@ installed skill by its installed name, which carries the installer's prefix.
 session needs and no installed skill delivers, per `design@agent-skills@primer-limit`. A line that
 restates a skill, or a convention of one project, does not go in it.
 
-## Editing an installed skill
+## Editing an installed skill or agent
 
-An edit of an installed skill under `path@agent-skills@content/` passes three tests, in order. This
-is a restatement; its homes are the entries named.
+An edit of an installed skill under `path@agent-skills@content/` passes the three tests below, in
+order; an edit of an installed agent passes the second and the third, since an agent never works
+with the owner and has no expectation set. This is a restatement; its homes are the entries named.
 
 1. **Scope.** A finding about the owner's behaviour outside the skill's expectation set is not a
    gap, and no instruction is written for it. The sets are in §5 of
