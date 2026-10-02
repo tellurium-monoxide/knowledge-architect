@@ -43,6 +43,7 @@ In this repository, the checker built from the checkout runs as `cargo klarch <s
 | --- | --- |
 | crates/core | the checker: package `knowledge-architect`, binary `klarch` |
 | crates/agent-skills | the text the checker installs into a project |
+| crates/gates | the library that runs a project's merge gates, `cargo x gates` here |
 | tools/xtask | this repository's gates, `cargo x gates` |
 | docs/ | the project's goals, design decisions, rejected alternatives, tripwires and open issues |
 

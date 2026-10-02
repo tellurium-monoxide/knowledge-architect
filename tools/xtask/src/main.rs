@@ -5,9 +5,9 @@
 //! variant below, per `design@xtask@one-module-per-subcommand`.
 
 mod gates;
-mod run;
 
 use clap::{Parser, Subcommand};
+use knowledge_architect_gates::GatesArgs;
 use std::process::ExitCode;
 
 #[derive(Parser)]
@@ -20,7 +20,7 @@ struct Cli {
 #[derive(Subcommand)]
 enum Command {
     /// Run the CI gates, keep full logs, print what needs acting.
-    Gates(gates::GatesArgs),
+    Gates(GatesArgs),
 }
 
 fn main() -> ExitCode {

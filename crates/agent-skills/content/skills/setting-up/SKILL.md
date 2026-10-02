@@ -129,9 +129,10 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
 Recommend one command that runs every check the project owes before a merge (formatting, the
 document check, the commit messages, the linters, the tests), runs them all even when one fails,
 and exits non-zero when any fails. A verdict is then one exit code, and nothing is read from output
-filtered through a pipe. In a Rust project, the conventional shape is a maintenance crate in the
-workspace, run through a cargo alias such as `cargo x gates`. The workflow ships no code for it;
-the project writes its own.
+filtered through a pipe. In a Rust project, the shape is a maintenance crate in the workspace, run
+through a cargo alias such as `cargo x gates`, whose gates command hands the project's gate list
+to the published library knowledge-architect-gates. The library runs the gates; the list is the
+project's own.
 
 A maintenance tool of that kind is a Component of its own, which serves the project rather than its
 consumers. Propose these two goals for it, under `knowledge-architect-setting-goals`, for the owner's

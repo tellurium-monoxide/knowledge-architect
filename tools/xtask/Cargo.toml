@@ -11,3 +11,5 @@ publish = false
 clap = { version = "4", features = ["derive"] }
 # The manifest's file name, so the root finder spells it in one place, the core's constant.
 knowledge-architect = { path = "../../crates/core" }
+# The gates' runner, which this repository publishes for other projects and uses itself.
+knowledge-architect-gates = { path = "../../crates/gates" }

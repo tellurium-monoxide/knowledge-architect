@@ -20,6 +20,7 @@ command = "cargo klarch"
 components = [
     "crates/core",
     "crates/agent-skills",
+    "crates/gates",
     "tools/xtask",
 ]
 

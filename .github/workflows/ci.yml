@@ -2,7 +2,7 @@
 #
 # ONE STEP RUNS THE GATES: `cargo x gates`, whose list in tools/xtask/src/gates.rs is the one
 # gate list. Why each flag is CI's is `design@xtask@gates-list-primary-home`; the log groups and
-# the error annotation are `design@xtask@annotations-under-actions`.
+# the error annotation are `design@gates@annotations-under-actions`.
 #
 # The merge procedure it serves is root CLAUDE.md `Git`: a branch is merged by a local
 # fast-forward once this job passed on the pull request's current head.

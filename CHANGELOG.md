@@ -1,7 +1,7 @@
 # Changelog
 
 One section per released version. Each item is tagged with the surface it touches: `checks`,
-`cli`, `manifest`, `library`, `agent-skills`. The versioning policy is
+`cli`, `manifest`, `library`, `agent-skills`, `gates`. The versioning policy is
 `design@knowledge-architect@versioning-policy`.
 
 ## Unreleased
@@ -41,3 +41,5 @@ One section per released version. Each item is tagged with the surface it touche
 - `agent-skills`: setting-goals and the retrospective.
 - `agent-skills`: setting-goals places a goal in the Component responsible for it; setting-up
   proposes two goals for a project's maintenance tool.
+- `gates`: the package knowledge-architect-gates, the library that runs a project's merge gates,
+  with the recommended list of a Rust project that uses the checker.

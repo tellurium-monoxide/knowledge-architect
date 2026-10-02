@@ -397,6 +397,27 @@ the work. After it, the owner ruled that the maintenance-tool goals keep the lin
 the continuous integration as conditional on the project ("I would make those conditional on the
 project, not drop the items that not every project has").
 
+### 3.10 Step 5b, the gates library
+
+Held on 2026-10-02, on the owner's proposal after the goal setup-brings-quality-tools: "I'd be
+inclined to publish the gates task logic as a reusable crate. Right now, thaum and
+knowledge-architect will already be sharing most of that". Facts it rested on: xtask's source was
+1,038 lines and 314 of tests, of which four points were this repository's own (the gate list, the
+checker's package, the range origin/main..HEAD, the root finder's use of the manifest's name);
+thaum's gates.rs at e98e296 was 788 lines with the same six gates.
+
+| thread | state | decision |
+| --- | --- | --- |
+| gates-crate | approved | the gates runner is a published library, knowledge-architect-gates, in crates/gates; a project's own maintenance binary hands it the project root, its gate list and the parsed flags; the library offers the recommended list of a Rust project. It reverses the "ships no code" of gates-convention |
+| xtask-pins-checker | approved | in an adopting Rust project, one maintenance crate pins the checker exactly and runs the gates, serving `cargo x` and `cargo klarch`. Harvested with step 5b's second PR |
+| setup-rust-section | approved | setting-up ends with a section "In a Rust project": the xtask crate, the aliases, the default gate list, the declared command, a CI workflow. Step 5b's second PR. The owner: "I'm only planning to work on Rust project, personally … for now it is fully focused on Rust" |
+
+Ruled out: a `gates` command of the checker's binary (it would make the document checker a build
+runner, and a list in TOML cannot carry a distiller), and a published gates binary configured by a
+file. No tripwire was recorded. The premortem: the library's interface still carries this
+repository's assumptions; a project with an extension runs another checker binary, which its xtask
+depends on; a fix to the gates needs a release of every crate, under version-lockstep.
+
 ## 4. The decided design
 
 ### 4.1 Repository layout
@@ -1462,6 +1483,19 @@ skill and comes before the PR that needs it.
    todo issue on the rendered site is opened; the decision goal-placement is recorded beside
    goals-required, and setting-goals and setting-up carry it, the latter with the two goals of a
    maintenance tool. The skill changes are reviewed; the goals are not.
+
+**Step 5b. The gates library.** Reads 3.10. Two PRs, before step 6, on the owner's word.
+
+1. **The crate.** **Landed on the branch gates-crate:** crates/gates, the Component gates, package
+   knowledge-architect-gates; xtask reduced to its gate list and its main; the decisions on how the
+   gates run move from xtask's design home to the gates', with the rejected alternative of the
+   spawn helper and the issue on the exit code of a run that could not start; gates-convention and
+   repo-layout rewritten; the versioning policy and the changelog name the gates library as a
+   surface. The new Component's goals are the owner's to rule on before it merges.
+2. **setting-up's Rust section**, with xtask-pins-checker. It closes or narrows the issue on
+   setting-up leading to every quality tool.
+
+Step 7 publishes three crates.
 
 **Step 6. The designing-together intake.** Reads 4.8 and 4.9.
 

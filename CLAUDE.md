@@ -17,7 +17,7 @@ a better argument can rebut. Recorded decisions were often argued before the cod
 implementation is expected to prove some of them wrong: reversing one is an ordinary move, and
 `knowledge-architect-recording-a-decision` owns what it costs.
 
-The repository is a virtual workspace with four Components, per
+The repository is a virtual workspace with five Components, per
 `design@knowledge-architect@repo-layout`:
 
 | Component | directory | what it is |
@@ -25,6 +25,7 @@ The repository is a virtual workspace with four Components, per
 | `knowledge-architect` | the root | the project itself |
 | `core` | crates/core | package `knowledge-architect`: the checker library and the binary `klarch` |
 | `agent-skills` | crates/agent-skills | package `knowledge-architect-agent-skills`: the text the checker installs into a project |
+| `gates` | crates/gates | package `knowledge-architect-gates`: the library that runs a project's merge gates |
 | `xtask` | tools/xtask | the maintenance tool, `cargo x gates`; never published |
 
 **The project was extracted from thaum, and the extraction is not finished.** The work in progress
@@ -120,7 +121,7 @@ win.
 - **Every reference is one backticked span, `<kind>@<anchor>@<id>`**, per
   `design@core@a-slug-belongs-to-a-component`. The kind is a register's name or `path`. The anchor
   is a Component or a location. The id is the entry's. Examples: `design@core@reserved-anchors`,
-  `design@xtask@gates-run-all`, `path@core@docs/tripwires.md`. A reference that resolves to nothing
+  `design@gates@gates-run-all`, `path@core@docs/tripwires.md`. A reference that resolves to nothing
   is reported with the repair it needs: the kind is unknown, the anchor is unknown, the anchor
   carries no register of that kind, or the id is not defined there. A reference that names no
   anchor is refused, including inside the file that defines the id.
@@ -385,7 +386,7 @@ restatement.
 
 **Do not filter the tool's output through pipes.** A hand-built filter pipeline hides lines and
 loses the exit code. `cargo x gates` refuses a pipe on stdout for that reason, outside GitHub
-Actions, per `design@xtask@verdict-from-exit-codes`. When the text is wanted, redirect it to a
+Actions, per `design@gates@verdict-from-exit-codes`. When the text is wanted, redirect it to a
 file.
 
 `cargo klarch` runs the checker built from this checkout, in release mode. A single gate is still

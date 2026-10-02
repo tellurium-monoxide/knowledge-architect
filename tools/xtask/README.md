@@ -1,9 +1,10 @@
 # xtask
 
 Workflow automation for this repository. Each subcommand is one workflow; the first is
-`gates`, which runs the project's gates — what CI runs — keeps every byte they emit, and
-prints only what needs acting on. The gate list in `path@xtask@src/gates.rs` is the primary home of
-what the gates are, per `design@xtask@gates-list-primary-home`.
+`gates`, which runs the project's gates (what CI runs) through the published gates library,
+`path@gates@README.md`, keeps every byte they emit, and prints only what needs acting on. The gate
+list in `path@xtask@src/gates.rs` is the primary home of what the gates are, per
+`design@xtask@gates-list-primary-home`.
 
 ## Usage
 
@@ -29,11 +30,11 @@ The gates, in cost order:
 ## What a run produces
 
 **Stdout must be a terminal or a file.** `gates` refuses to start when stdout is a pipe, per
-`design@xtask@verdict-from-exit-codes`: a pipe's reader replaces the exit code and a filter drops
+`design@gates@verdict-from-exit-codes`: a pipe's reader replaces the exit code and a filter drops
 lines. When the text is wanted, redirect: `cargo x gates > target/gates/run.txt 2>&1`. Under
 GitHub Actions (`GITHUB_ACTIONS=true`) a pipe is accepted, since the runner reads the exit code
 itself, and each gate is wrapped in `::group::` and, when it fails, one `::error` line, per
-`design@xtask@annotations-under-actions`.
+`design@gates@annotations-under-actions`.
 
 - **stdout**: one verdict line per gate. Each failed gate adds a distilled extract, headed by
   the path of its log.
@@ -42,7 +43,7 @@ itself, and each gate is wrapped in `::group::` and, when it fails, one `::error
 - **A slow-tests line** whenever libtest warned that a test ran over 60 seconds, naming the
   tests.
 - **Exit code**: 0 exactly when every gate ran and passed. Output handling never changes it,
-  per `design@xtask@verdict-from-exit-codes` — so scripts and sessions can trust the code without
+  per `design@gates@verdict-from-exit-codes` — so scripts and sessions can trust the code without
   reading anything.
 
 ## What to respect

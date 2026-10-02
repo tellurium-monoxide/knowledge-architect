@@ -359,14 +359,16 @@ version, which is what bundling the workflow into the checker avoids, per
 `design@knowledge-architect@binary-bundles-workflow`. A project with an extension runs its own
 binary under a name of its own, per `design@core@declared-command`.
 
-### The setting-up skill recommends one gates command, and ships no code for it `##gates-convention`
+### The setting-up skill recommends one gates command, run by the published gates library `##gates-convention`
 
 One command runs every check a project owes before a merge, runs them all when one fails, and exits
 non-zero when any fails, so a verdict is one exit code and nothing is read through a pipe. In a Rust
-project the conventional shape is a maintenance crate run through a cargo alias. The workflow
-recommends the shape and ships no code: the checks a project owes are its own. The setting-up
-skill proposes two goals for such a tool, for the owner's ruling: one command runs every check owed
-before a merge, and a task performed repeatedly becomes a command of the tool.
+project the shape is a maintenance crate run through a cargo alias, whose gates command hands its
+gate list to the published library, per `design@gates@gates-crate`, so every adopting project runs
+the gates refined in this repository and in thaum, per
+`goal@knowledge-architect@setup-brings-quality-tools`. The gates a project owes are its own list.
+The setting-up skill proposes two goals for such a tool, for the owner's ruling: one command runs
+every check owed before a merge, and a task performed repeatedly becomes a command of the tool.
 
 ### Every Component states at least one goal `##goals-required`
 

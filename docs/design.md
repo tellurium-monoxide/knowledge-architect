@@ -16,8 +16,8 @@ skills are shaped is `path@agent-skills@docs/design.md`.
 
 The root holds the workspace manifest, the checker's manifest and the project's documents, and no
 crate. Each crate sits under crates/ in a directory named by what it does: crates/core is the
-checker, crates/agent-skills carries the text the checker installs. The maintenance tool sits under
-tools/xtask. Each of the three is a component, so each carries its own design home, goals and
+checker, crates/agent-skills carries the text the checker installs, crates/gates runs a project's
+merge gates. The maintenance tool sits under tools/xtask. Each of the four is a component, so each carries its own design home, goals and
 registers, and a decision about one of them lives beside its code.
 
 A crate directory is never named after its package. A component is named by the basename of its
@@ -91,7 +91,8 @@ is what lets a project pin one version and move when it chooses, per
   compile, which is worse than a new finding, so it is major. Under 0.x a library break and a
   stricter check therefore get the same version number, 0.MINOR, by the point above. The rule
   still keeps a library break out of a patch. Which changes to the library are
-  breaking is narrowed by `design@core@ne-minimal`.
+  breaking is narrowed by `design@core@ne-minimal`. The gates library's API is a surface of the
+  same kind: a break there makes a project's maintenance binary fail to compile.
 - **The manifest test.** Under a minor release every manifest that was valid stays valid. Renaming
   a key is major, unless the old spelling stays accepted with a deprecation finding.
 - **Size does not make a major.** A major that sometimes means "breaking" and sometimes means
@@ -100,7 +101,7 @@ is what lets a project pin one version and move when it chooses, per
   files differ from the new text until it runs the install. A project that pins the checker
   exactly meets this only when it moves the pin.
 - **CHANGELOG.md** has one section per version, each item tagged with the surface it touches:
-  checks, cli, manifest, library, agent-skills. The version number alone cannot say which.
+  checks, cli, manifest, library, agent-skills, gates. The version number alone cannot say which.
 
 A version stricter than a patch never reaches a project through a plain `cargo update` while at
 0.x, and a release that changes only skill text publishes both crates with identical code. A

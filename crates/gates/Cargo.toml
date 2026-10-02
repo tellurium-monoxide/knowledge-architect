@@ -1,0 +1,14 @@
+[package]
+name = "knowledge-architect-gates"
+description = "Runs a project's merge gates as one command: complete logs, distilled failures, one verdict from exit codes."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+# What the published package ships, as a whitelist.
+include = ["src/**", "Cargo.toml", "README.md", "LICENSE-MIT", "LICENSE-APACHE"]
+
+[dependencies]
+# The gates' flags derive clap's `Args`, so a project's own binary flattens them into its command.
+clap = { version = "4", features = ["derive"] }

@@ -90,7 +90,7 @@ fn with_history(project: &Path, origin_at: &str) {
     git(&["update-ref", "refs/remotes/origin/main", &target]);
 }
 
-// The claim behind `design@xtask@verdict-from-exit-codes`'s pipe refusal: a pipe on stdout is
+// The claim behind `design@gates@verdict-from-exit-codes`'s pipe refusal: a pipe on stdout is
 // refused before any gate runs, because the pipe's reader would replace the exit code the run
 // exists to deliver. A harness capturing through a pipe is exactly that shape, so this is the
 // one test that captures through one. Mutation check: dropping the refusal makes every fake
@@ -132,7 +132,7 @@ fn a_failing_gate_fails_the_run_and_the_rest_still_log() {
 // The claim: a gate's child never inherits a caller-exported RUSTC_BOOTSTRAP either — a
 // local `cargo x gates` under that export would otherwise pass nightly-gated code that CI
 // rejects, the false-green class the verdict run exists to exclude. Mutation check:
-// dropping the `env_remove` in `run.rs` is caught by the bootstrap=[] assertion, since
+// dropping the `env_remove` in the gates library's spawn helper is caught by the bootstrap=[] assertion, since
 // `xtask_in` exports the hostile value.
 #[test]
 fn gate_children_never_inherit_a_caller_exported_bootstrap() {

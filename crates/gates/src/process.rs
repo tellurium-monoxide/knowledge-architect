@@ -1,5 +1,5 @@
-//! Spawning a child and capturing what it said. The one piece every subcommand shares,
-//! per `design@xtask@one-module-per-subcommand`: a new subcommand calls this and never edits it.
+//! Spawning a child and capturing what it said. The gates use it, and a project's own commands
+//! may too: a new command calls this and never edits it.
 
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -113,12 +113,12 @@ pub fn announce(name: &str) {
     }
 }
 
-/// The project root: the nearest ancestor of `start` holding the checker's manifest, the same
-/// walk the checker does. `None` outside a checkout.
-pub fn project_root(start: &Path) -> Option<PathBuf> {
+/// The project root: the nearest ancestor of `start` holding a file named `marker`, such as the
+/// checker's manifest. `None` when no ancestor holds one.
+pub fn project_root(start: &Path, marker: &str) -> Option<PathBuf> {
     start
         .ancestors()
-        .find(|dir| dir.join(knowledge_architect::MANIFEST_NAME).is_file())
+        .find(|dir| dir.join(marker).is_file())
         .map(Path::to_path_buf)
 }
 
@@ -160,8 +160,8 @@ mod tests {
     fn an_added_env_reaches_the_child() {
         let spec = Spec {
             program: "sh",
-            args: &["-c", "printf %s \"$XTASK_PROBE\""],
-            envs: &[("XTASK_PROBE", "reached")],
+            args: &["-c", "printf %s \"$GATES_PROBE\""],
+            envs: &[("GATES_PROBE", "reached")],
             cwd: Path::new("."),
         };
         let done = run_captured(&spec, false).expect("sh spawns");
@@ -171,7 +171,7 @@ mod tests {
     #[test]
     fn a_missing_program_is_an_error_not_a_failed_gate() {
         let spec = Spec {
-            program: "xtask-no-such-program",
+            program: "gates-no-such-program",
             args: &[],
             envs: &[],
             cwd: Path::new("."),
@@ -179,15 +179,14 @@ mod tests {
         assert!(run_captured(&spec, false).is_err());
     }
 
-    // The claim: the walk finds this repository's root from inside the crate, and finds
-    // nothing from the filesystem root. Mutation check: returning `start` itself fails
-    // the manifest assertion below.
+    // The claim: the walk finds the nearest ancestor holding the marker, and nothing from the
+    // filesystem root. Mutation check: returning `start` itself fails the marker assertion.
     #[test]
-    fn project_root_walks_up_to_the_manifest() {
+    fn project_root_walks_up_to_the_marker() {
         let here = std::env::current_dir().expect("the test has a working directory");
-        let root = project_root(&here).expect("the crate sits inside the checkout");
-        assert!(root.join(knowledge_architect::MANIFEST_NAME).is_file());
+        let root = project_root(&here, "Cargo.lock").expect("the crate sits inside a workspace");
+        assert!(root.join("Cargo.lock").is_file());
         assert!(here.starts_with(&root));
-        assert_eq!(project_root(Path::new("/")), None);
+        assert_eq!(project_root(Path::new("/"), "Cargo.lock"), None);
     }
 }
