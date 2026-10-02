@@ -628,7 +628,7 @@ instructions and from their interaction with the installed ones as well, per
 
 ### A retrospective asks three standing questions, on the decisions they watch `##premortem-as-watch-points`
 
-Every retrospective asks whether the session needed to change an installed skill, whether the
+Every retrospective asks whether the session needed to change an installed skill or agent, whether the
 primer reached the session and its subagents, and whether a project skill's addition was missed.
 Each watches a decision whose failure would be seen in real sessions before any check could see it:
 `design@agent-skills@overlay-by-separate-skills`, the primer's delivery by an import line in
