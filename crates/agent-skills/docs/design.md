@@ -263,8 +263,8 @@ plain, with a hash sign before it, never as a backticked span, which the checker
 reference candidate. When
 the thread is approved and its decision earns an entry, the entry's heading ends with the same
 slug, so the spec, the commit messages and the design home name the decision with one identifier.
-This holds until plan documents have a structure the checker reads, which
-`issue@core@structured-plan-documents` tracks.
+This holds until plan documents have a structure the checker reads, which the milestone
+`path@knowledge-architect@docs/plans/structured-plans/README.md` builds.
 
 ## Plan documents
 
@@ -376,7 +376,9 @@ criterion carries an identifier in the entry grammar, written plain with a hash 
 backticks. Nothing outside the plans directory cites an item of such a plan document; a `path`
 reference to a whole plan document is allowed, and its dangling at deletion lists the texts that
 depended on it. This is the shape a structure for plan documents, with registers of their own, can
-read without rewriting them: `issue@core@structured-plan-documents`.
+read without rewriting them. The milestone
+`path@knowledge-architect@docs/plans/structured-plans/README.md` builds that structure and
+reverses this decision at its harvest.
 
 ## Reviews
 
@@ -446,7 +448,9 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
 
 The setup skill proposes docs/plans/ and writes the path the owner accepts among the
 project's rows. A manifest key would be a checker change that nothing reads yet; it belongs to a
-structure for plan documents, `issue@core@structured-plan-documents`. Nothing checks that the row
+structure for plan documents, which the milestone
+`path@knowledge-architect@docs/plans/structured-plans/README.md` builds. Nothing checks
+that the row
 exists, so a project whose root `CLAUDE.md` lacks it leaves the planning skill without a plans
 directory: a known limit until that structure exists.
 
