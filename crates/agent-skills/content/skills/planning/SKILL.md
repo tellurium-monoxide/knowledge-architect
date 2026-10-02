@@ -107,7 +107,7 @@ so in one line rather than being omitted, so a reader can tell an empty section 
 | how a step is worked | in a milestone document: §7 of this skill, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
 | names | every project shorthand the document uses, expanded to the file, function or command it names |
 | what the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
-| what is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every tripwire and issue that `{{command}} show` lists as referencing it, and the step whose harvest judges each |
+| what is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every tripwire and issue that `{{command}} show` lists as referencing it, and the harvest that judges each |
 | criteria | criterion, kind, source, satisfaction |
 | threads | every thread with its identifier, its final state and its resolution, a column naming the section that carries its shape, and a column naming the durable home that will harvest it |
 | new names, in one place | every new name the design uses (a type, a function, a field, an event, a bound, a counter) in one fenced block with the file it goes in; a name that exists in the code is listed as existing |
@@ -165,8 +165,8 @@ failure.** Every other test here serves that one.
 - **The last step consumes**: the measurements, the report, the harvest.
 - **One branch and one merge per step**, each merged before the next step begins, and reviewed
   before the merge.
-- **A plan document whose work changes what the project's gates check lands in a merge of its own,
-  before the first step.** On the first step's branch, the gates as that step changes them would
+- **A milestone document whose first step changes what the project's gates check lands in a merge
+  of its own, before that step.** On the step's branch, the gates as that step changes them would
   judge the commit that added the document, whose tree predates the change.
 
 A step's entry carries, in this order:
@@ -296,8 +296,8 @@ This list is their one home; the reviewer reads it here.
 - every acceptance criterion names the decision it guards, the step judging it, the observable that
   fires it and the response;
 - every thread maps to a section and to a harvest home;
-- every tripwire guarding a decision the work reverses or rewrites is named, with the step whose
-  harvest judges it;
+- every tripwire and issue referencing a decision the work reverses or rewrites is named, with the
+  harvest that judges it;
 - every section of §4 is present, and an empty one says so.
 
 ## 9. When a plan document leaves

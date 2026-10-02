@@ -72,7 +72,8 @@ The installed text has no unit tests; its claims are checked by the checker and 
   `@` span whose head is a kind finds only placeholders in angle brackets.
 - **No two installed texts contradict** on the plans directory, the roadmap, assembly or built
   intent: the self-consistency axis of `knowledge-architect-review`, and the
-  `klarch-release-status-reviewer`.
+  `klarch-release-status-reviewer`, whose future `issue@agent-config@what-review-a-release-owes`
+  decides.
 - **#roadmap-needs-no-code** of the milestone document does not fire.
 
 ## Fixtures
