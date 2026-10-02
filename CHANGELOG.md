@@ -24,6 +24,8 @@ subsection is omitted.
   a merge of its own, before that step.
 - `agent-skills`, patch: a design discussion's first round states which grounding commands ran, and
   a measured fact carries the command that re-takes it.
+- `agent-skills`, patch: a retrospective names each finding by a letter and a number (W, C, P), and
+  states the version of knowledge-architect the session used.
 
 ## 0.1.0
 
