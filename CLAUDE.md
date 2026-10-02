@@ -457,12 +457,9 @@ standing direction under that skill; its home is
 | --- | --- |
 | `knowledge-architect-review` | `klarch-release-status-reviewer`, an axis for every change that records or argues a decision |
 
-**One activity uses a skill from outside this repository.** The workflow leaves a change to the
-code to each project, and this repository follows thaum's until it writes its own.
-
-| activity | served by |
-| --- | --- |
-| a change to the Rust source | thaum's `developing`, read from thaum's checkout at commit e98e296 with `git -C <thaum checkout> show e98e296:.claude/skills/developing/SKILL.md`. Its thaum-specific parts do not apply: the rules and their citations, slices.md, thaum's anchors, and `cargo knowledge`, which is `cargo klarch` here. A test is shown to discriminate by reverting the change in a scratch worktree, since `cargo mutate run` is not ported |
+**This repository's own skills, `klarch-development` and `klarch-release`, add to no installed
+skill**, so the routing table above holds no row for them; the harness lists each with its
+description.
 
 ## Git
 
