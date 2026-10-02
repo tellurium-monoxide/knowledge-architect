@@ -191,7 +191,10 @@ statement false until a repair lands. The procedure is
 - No operation that can lose content, committed or not. With a clean tree, editing the branch's
   own history is an ordinary move, bounded by verifying that nothing was lost.
 - The branch is rebased on main before review and merge, and reviewed before any merge. A repair
-  from a review is a new commit.
+  from a review is a new commit, so that no history is edited for it; a repair that would leave an
+  earlier commit failing the per-commit rule below is folded into the earliest commit it repairs,
+  and the commit recording the review says what was folded. The checker is rewritten on most
+  branches, so a repair that changes what it judges is common here.
 - **Every commit of a branch passes the check under the branch tip's checker**, as
   `design@core@a-commit-message-is-a-document` decides. So work whose intermediate trees cannot
   pass lands as one commit, squashed before review.

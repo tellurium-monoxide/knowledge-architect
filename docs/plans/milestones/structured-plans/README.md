@@ -67,6 +67,9 @@ unruled; the implementation of a point whose default is unruled does not start, 
      finding stating the gap, the answer and the decision it follows from. Commit the amended spec
      alone, with a subject of the shape `The <step> design audit, applied in place: <n> gaps, none
      reopening a discussion`. Earlier audits are found with `git log --grep='design audit'`.
+     An answer that widens or narrows a ruling of the owner, or adds an obligation to one, is a
+     scope change even when it is the one answer this document implies: it is also listed as a
+     default awaiting the owner, who rules on it at the audit, before its point is implemented.
    - **Load-bearing.** The gap is material, or is a choice between two shapes neither of which this
      document rules out, or needs a ruling marked here as the owner's. Record it in the step's
      spec as open at the audit, with the discriminating fact, stop the step, and open a design
@@ -76,14 +79,15 @@ unruled; the implementation of a point whose default is unruled does not start, 
 3. **Claims, tests, implementation, gates, commit**, per `klarch-development`. The commit names how
    each claim's test was shown to fail against a wrong implementation, and says of any claim whose
    test cannot yet do so why not.
-4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit. A
-   finding not repaired becomes an issue entry.
+4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
+   or folded where that skill says. A finding not repaired becomes an issue entry.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this step.
 6. **The harvest**, per the step's rows in the harvest section: the decisions and the losing
    alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
    under `knowledge-architect-issue-tracking`. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
-   linked from its README.
+   linked from its README. The harvest is reviewed before the merge, on the decision-record,
+   routing and standing-state axes, and on transcript conformity where the transcript is available.
 7. **The step's spec leaves** in the commit that completes its harvest, as in §9 of the skill. What
    crosses steps stays in this document, amended in place where the landing changed it.
 
