@@ -1491,7 +1491,8 @@ skill and comes before the PR that needs it.
    gates run move from xtask's design home to the gates', with the rejected alternative of the
    spawn helper and the issue on the exit code of a run that could not start; gates-convention and
    repo-layout rewritten; the versioning policy and the changelog name the gates library as a
-   surface. The new Component's goals are the owner's to rule on before it merges.
+   surface. The new Component's goal, gates-from-a-list, was drafted from the owner's statement and approved by
+   its slug.
 2. **setting-up's Rust section**, with xtask-pins-checker. It closes or narrows the issue on
    setting-up leading to every quality tool.
 
