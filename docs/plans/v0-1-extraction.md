@@ -331,8 +331,8 @@ retrospective-destination and premortem-as-watch-points.
 | retro-file-location | approved | a directory outside the project, chosen by the owner once |
 | retro-to-issue | approved | harvested as retrospective-destination, the slug of the thread of 3.1 it refines. The owner reads the workflow's file verbatim; the project's findings become its own issue entries and the workflow's file an issue on knowledge-architect's repository, on the owner's word. In this repository both go to its own register, which its root CLAUDE.md states |
 
-Added by the agent while writing the skills, after the session, and not ruled on by name (each a
-**default**, put to the owner with the review of PR 5): the owner reads both retrospective files
+Added by the agent while writing the skills, after the session, and approved by the owner with the
+review of PR 5 ("Agreed on all the repairs"): the owner reads both retrospective files
 verbatim, not only the workflow's; the files are routed "where the owner directs", which carries
 this repository's standing direction; the directory is recorded, on the owner's word, in the
 owner's user-level agent configuration, since a later session has no memory of an earlier one; in
