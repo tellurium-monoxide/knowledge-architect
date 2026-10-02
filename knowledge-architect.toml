@@ -48,3 +48,9 @@ exclude = [
     # check of shipped text exists: issue@agent-skills@shipped-text-is-reference-free-mechanically.
     "crates/agent-skills/content",
 ]
+
+# GitHub's rebase merge gives a branch's commits new SHAs, so a message or a document of the
+# branch that cites one of them by SHA would name nothing once it merges, per
+# `design@core@branch-shas-are-refused`.
+[commits]
+refuse-branch-shas = true

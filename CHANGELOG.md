@@ -4,6 +4,12 @@ One section per released version. Each item is tagged with the surface it touche
 `cli`, `manifest`, `library`, `agent-skills`, `gates`. The versioning policy is
 `design@knowledge-architect@versioning-policy`.
 
+## Unreleased
+
+- `checks`: `commits` refuses a citation of a commit of its range by SHA, in a message or in a
+  document of a commit's tree, where the manifest turns it on.
+- `manifest`: `[commits] refuse-branch-shas`, off when absent.
+
 ## 0.1.0
 
 - `manifest`: the manifest file is `knowledge-architect.toml`.

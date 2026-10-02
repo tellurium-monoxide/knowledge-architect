@@ -624,8 +624,26 @@ pub(super) fn commits(
         let entities = Entities::build(&tree.model, &tree.anchors());
         let found = judge_message(&message, &tree, &entities, parent);
         findings.extend(relabelled(found, &format!("commit {short}")));
+        // **Read from this commit's own manifest**, as everything a commit is judged against
+        // is, per `design@core@a-commit-message-is-a-document`.
+        let cited = if tree.manifest.refuses_branch_shas() {
+            branch_sha_findings(short, &message, &tree, &shas, range)
+        } else {
+            Vec::new()
+        };
+        let citations = cited.len();
+        findings.extend(cited);
         if trouble == 0 {
-            summary.push((short.to_string(), Outcome::Judged));
+            summary.push((
+                short.to_string(),
+                if citations == 0 {
+                    Outcome::Judged
+                } else {
+                    Outcome::Failed {
+                        why: format!("it cites {citations} commit(s) of the range by SHA"),
+                    }
+                },
+            ));
         }
         previous = Some((sha.clone(), tree, entities));
     }
@@ -656,6 +674,81 @@ pub(super) fn commits(
     })
 }
 
+/// Every citation of a commit of the range in `text`: a run of 7 to 40 lowercase hex digits,
+/// with no ASCII letter, digit or underscore on either side, that is a prefix of one of `shas`.
+/// Each is the line, counted from one, the run as written, and the full SHA it names.
+///
+/// **Only the range's commits are refused**, per `design@core@branch-shas-are-refused`: they are
+/// the ones a rebase merge gives a new SHA. A SHA on the main branch, or of another project, is
+/// never a prefix of one of them, except by a collision of its first 7 digits, so a citation of
+/// either passes.
+fn branch_sha_citations<'a>(text: &str, shas: &'a [String]) -> Vec<(u32, String, &'a str)> {
+    fn is_word(b: u8) -> bool {
+        b.is_ascii_alphanumeric() || b == b'_'
+    }
+    let mut out = Vec::new();
+    for (i, line) in text.split('\n').enumerate() {
+        let bytes = line.as_bytes();
+        let mut start = 0;
+        while start < bytes.len() {
+            if !is_word(bytes[start]) {
+                start += 1;
+                continue;
+            }
+            // A word ends at the first byte that is not ASCII alphanumeric or `_`, so both
+            // ends of the slice sit on ASCII bytes and the slice is valid UTF-8.
+            let mut end = start;
+            while end < bytes.len() && is_word(bytes[end]) {
+                end += 1;
+            }
+            let word = &line[start..end];
+            let hex = word.bytes().all(|b| matches!(b, b'0'..=b'9' | b'a'..=b'f'));
+            if hex && (7..=40).contains(&word.len()) {
+                if let Some(sha) = shas.iter().find(|s| s.starts_with(word)) {
+                    out.push((i as u32 + 1, word.to_string(), sha.as_str()));
+                }
+            }
+            start = end;
+        }
+    }
+    out
+}
+
+/// The findings for every citation of a commit of the range in one commit's message and in its
+/// tree's documents, each named by the commit and by the site.
+fn branch_sha_findings(
+    short: &str,
+    message: &str,
+    tree: &Assembly,
+    shas: &[String],
+    range: &str,
+) -> Vec<Finding> {
+    let finding = |file: String, (line, word, sha): (u32, String, &str)| {
+        Finding::at(
+            file,
+            line,
+            format!(
+                "`{word}` cites commit {}, a commit of the range {range}, by its SHA; a rebase \
+                 merge gives that commit a new SHA, and the citation then names nothing",
+                &sha[..7.min(sha.len())]
+            ),
+            "name that commit by its subject; a SHA on the main branch may be cited",
+        )
+    };
+    let mut out: Vec<Finding> = branch_sha_citations(message, shas)
+        .into_iter()
+        .map(|c| finding(format!("commit {short}"), c))
+        .collect();
+    for doc in tree.model.documents() {
+        out.extend(
+            branch_sha_citations(&doc.text, shas)
+                .into_iter()
+                .map(|c| finding(format!("commit {short}: {}", doc.rel.display()), c)),
+        );
+    }
+    out
+}
+
 fn verdict(n: usize) -> String {
     match n {
         0 => "PASSED: no findings".to_string(),
@@ -681,6 +774,44 @@ mod tests {
         let out = relabelled(found, "commit abc1234");
         assert_eq!(out[0].location(), "commit abc1234:4");
         assert_eq!(out[0].what, "what");
+    }
+
+    /// The claim: a run of 7 to 40 lowercase hex digits bounded by non-word bytes is a citation
+    /// exactly when it prefixes a SHA of the range. Mutations: dropping the left or the right
+    /// boundary fails the embedded cases, lowering the minimum to 6 fails the six-digit case,
+    /// and matching any hex run fails the outside-the-range case.
+    #[test]
+    fn a_citation_is_a_bounded_hex_prefix_of_a_sha_of_the_range() {
+        let shas = vec![
+            "0123456789abcdef0123456789abcdef01234567".to_string(),
+            "fedcba9876543210fedcba9876543210fedcba98".to_string(),
+        ];
+        let cited = |text: &str| -> Vec<(u32, String)> {
+            branch_sha_citations(text, &shas)
+                .into_iter()
+                .map(|(l, w, _)| (l, w))
+                .collect()
+        };
+        assert_eq!(cited("see 0123456 here"), vec![(1, "0123456".to_string())]);
+        assert_eq!(
+            cited("x\n(fedcba98765)."),
+            vec![(2, "fedcba98765".to_string())]
+        );
+        assert_eq!(
+            cited("0123456789abcdef0123456789abcdef01234567"),
+            vec![(1, "0123456789abcdef0123456789abcdef01234567".to_string())]
+        );
+        assert_eq!(
+            cited("`0123456`, é 0123456-x"),
+            vec![(1, "0123456".to_string()), (1, "0123456".to_string())]
+        );
+        // Six digits, or a run inside a longer word, cite nothing.
+        assert!(cited("012345 is short").is_empty());
+        assert!(cited("x0123456 and 0123456y and 0123456_z").is_empty());
+        // Upper case is not how git prints a SHA.
+        assert!(cited("0123456ABC").is_empty());
+        // A hex run that prefixes no SHA of the range: main's, or another project's.
+        assert!(cited("bd93004 and e98e296").is_empty());
     }
 
     #[test]
