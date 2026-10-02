@@ -200,7 +200,7 @@ while it still existed on a branch; the scan did not separate those cases.
 | losing-shape-test | approved | a thread is a candidate for the rejected alternatives when a shape lost to an argument, whatever its state: ruled out, withdrawn with a defeating reason, or superseded with a distinct shape that lost. A shape that lost when the question produced no decision stays in the spec, or is an issue if the question stays open |
 | designing-hands-off-to-planning | approved | the design-discussion skill ends at convergence, the premortem and the owner's tripwire rulings; the planning skill writes the spec or the milestone document, in the same session, because the ledger lives only in the conversation. Built in PR 2 (receiving side) and step 6 |
 | no-external-handoff | approved | an installed skill names only installed skills, and the project's own skills through the routing table; never a plugin or a skill outside the set. The owner: "it should not hand off to any skill outside the project". designing-together 0.6.0 names superpowers:brainstorming once, in its bounded-problem branch |
-| bounded-problem-branch | first default ruled out; the interim text presumed settled | until a skill for bounded problems exists, the design-discussion skill classifies the problem as bounded, states its strongest open reading, and leaves the next step to the owner. The owner did not rule on this interim text by name; "Let's start on PR 1" is the agent's reading of acceptance, and step 6 shows it to the owner again. Shown again in step 6; still presumed settled until the owner's word. The owner: "Ultimately, I'd like to make my own skill for this use case", and "The bounded problem skill will be installed as part of this project". This document schedules its todo in step 6 |
+| bounded-problem-branch | first default ruled out; the interim text approved in step 6 | until a skill for bounded problems exists, the design-discussion skill classifies the problem as bounded, states its strongest open reading, and leaves the next step to the owner. The owner did not rule on this interim text by name; "Let's start on PR 1" is the agent's reading of acceptance, and step 6 shows it to the owner again. Shown again in step 6, and approved there. The owner: "Ultimately, I'd like to make my own skill for this use case", and "The bounded problem skill will be installed as part of this project". This document schedules its todo in step 6 |
 | designing-skill-name | approved | the design-discussion skill is installed as knowledge-architect-discussing-design-decisions. Owner: "a bit verbose, but at least it is not ambiguous"; "design" alone reads as visual design. The owner: "I think this designing skill is mostly aimed at programming tasks", it "still performs well on other types of tasks too", it performs "very well for game design (gameplay part)", and "I initially created it to work on a game actually. But for the coding part." |
 | document-vocabulary | home approved; the words carried to session B | its home is the planning skill |
 
@@ -1233,7 +1233,7 @@ its docs/design.md.
 | 5, PR 5 | agent-skills, root | done: the decisions of 3.8, goal-lifecycle, retrospective-destination, premortem-as-watch-points; retrospective-findings-stay-here in the root |
 | 5b, PR 1 | gates, agent-skills, root | done: gates-crate, a-project-holds-its-gate-list, the-library-owns-the-flags, one-spawn-helper; six entries moved from xtask; gates-convention, repo-layout and version-lockstep rewritten |
 | 5b, PR 2 | agent-skills | done: xtask-pins-checker, setup-rust-section; exact-pin rewritten |
-| 6, PR 1 | agent-skills | done: designing-skill-name, bounded-problem-branch (awaiting the owner's word), the design side of designing-hands-off-to-planning; plugin-inventory needs no entry in the agent's reading, the goal one-skill-per-activity states the set |
+| 6, PR 1 | agent-skills | done: designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning; plugin-inventory needs no entry (approved), the goal one-skill-per-activity states the set |
 | 6, PR 2 | agent-skills | designing-together-retirement, the kept items of the intake |
 
 **Losing alternatives.** Section 3.2 and the absorbed shapes of 3.3 are judged against
@@ -1536,7 +1536,7 @@ Step 7 publishes three crates.
   the bounded branch naming no outside skill. The primer lists it, the root CLAUDE.md no longer
   routes the activity to the plugin, and `issue@agent-skills@a-skill-for-bounded-problems` is open.
   Harvest: designing-skill-name and bounded-problem-branch; designing-hands-off-to-planning
-  rewritten in place. plugin-inventory earns no entry in the agent's reading (below).
+  rewritten in place. plugin-inventory earns no entry (below).
 - The intake format of 4.9 is approved, with the owner's condition: "I agree with the proposed
   intake format, with my remarks weighed in the proposed outcomes." The remarks: "prose about how
   to write prose is unbounded"; new instructions, rewordings and rationales "can be proposed
@@ -1545,16 +1545,18 @@ Step 7 publishes three crates.
   the workflow stays coherent. But we have to be quite careful about the scope of what we record."
   The agent proposed a two-part test for keeping an item, and recording the principle itself as a
   decision of agent-skills. **Neither is ruled on**: both are shown to the owner in the intake.
-- **Awaiting the owner's word, from the fork's PR:**
-  - bounded-problem-branch: the interim text was shown to the owner again in this step (3.5). It is
-    harvested as written, and stays presumed settled until the owner rules on it by name.
+- **Ruled by the owner on the fork's PR**: "Agreed on all four, option (a) for the goal is fine."
+  - bounded-problem-branch: the interim text was shown to the owner again in this step (3.5), and
+    approved as written.
   - plugin-inventory earning no entry, because `goal@agent-skills@one-skill-per-activity` states
-    the set: the agent's reading.
+    the set: approved.
   - the cheap path: it skips the plan document, puts the deliberation in the commit message, and
-    records the decision at landing like any other.
+    records the decision at landing like any other: approved.
   - a criterion derived from a goal binds outright, and is demoted only by changing the goal. Its
     basis is the primer's "Goals bind; decisions bind as a presumption" and the setting-goals
-    skill's "a goal binds outright".
+    skill's "a goal binds outright": approved.
+  - the issue on a skill for bounded problems argues from the owner's decision to install it, and
+    the goal one-skill-per-activity is not changed: option (a), approved.
 - Of the criteria of section 2: one-workflow is met for the material-findings test, and a review of
   the installed set found one contradiction, between the design skill's material-findings protocol
   and the planning skill's audit, repaired in the design skill; nothing-compiled-in holds, the skill
