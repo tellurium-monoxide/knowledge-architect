@@ -27,12 +27,27 @@ again in that session.
 Open with **what the session did**: one paragraph, at the level of the workflow ("a design
 discussion and two merged branches"), not of the project's subject matter.
 
+Then **the version of knowledge-architect the session used**, in one line:
+
+- where the project pins the checker, the exact version of the pin;
+- where the project builds the checker from its own source, the main commit the session's tree
+  contains, described with `git describe --tags $(git merge-base HEAD <main branch>)`, the branch
+  the session worked on, and whether the tree held uncommitted changes. A commit of the branch
+  itself is not named: a merge that rewrites the branch's commits leaves it pointing at nothing.
+
 Then read back over the session: the instructions that were followed, where they were followed with
 difficulty, where they were not followed, and what the owner corrected. Then, for each of the four
 subjects below, list what was **unclear** (it could be read two ways), **missing** (the session had
 to decide something no instruction covered), or **wrong** (following it produced a defect or a
 correction). Each item quotes the instruction, says what happened when it was followed, and what was
 done instead.
+
+**Each finding is named by a letter and a number**, so that a fix, an issue or a commit can cite it
+in a few characters, as "W3 of the retrospective of <date>": **W** for the installed skills and
+agents, **C** for the checker, **P** for the project's own instructions. Numbers run from 1 within
+each letter, in order of appearance, so an id is unique within one retrospective. A finding on an
+interaction gets one id in each file, and each names the other, since the two files may be read
+apart. The three questions below take no id: they are answers, not findings.
 
 1. **The installed skills and agents.**
 2. **The project's own instructions**: its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own
@@ -63,8 +78,8 @@ Each finding goes to the file of the project whose text or code must change:
 
 | file | holds |
 | --- | --- |
-| `<YYYY-MM-DD>-<project>.md` | what the session did, the findings on the project's own instructions, and the project's side of an interaction |
-| `<YYYY-MM-DD>-<project>-workflow.md` | what the session did, the findings on the installed skills and agents and on the checker, the workflow's side of an interaction, and the three questions |
+| `<YYYY-MM-DD>-<project>.md` | what the session did and the version it used, the findings on the project's own instructions, and the project's side of an interaction |
+| `<YYYY-MM-DD>-<project>-workflow.md` | what the session did and the version it used, the findings on the installed skills and agents and on the checker, the workflow's side of an interaction, and the three questions |
 
 An interaction finding whose fix may fall on either side goes in both files, each written from its
 own side.
