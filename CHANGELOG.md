@@ -4,7 +4,7 @@ One section per released version. Each item is tagged with the surface it touche
 `cli`, `manifest`, `library`, `agent-skills`, `gates`. The versioning policy is
 `design@knowledge-architect@versioning-policy`.
 
-## Unreleased
+## 0.1.0
 
 - `manifest`: the manifest file is `knowledge-architect.toml`.
 - `cli`: the binary is `klarch`.
@@ -50,3 +50,5 @@ One section per released version. Each item is tagged with the surface it touche
 - `agent-skills`: every installed skill is named by its activity as a noun: design,
   decision-recording, issue-tracking, review, setup, goal-setting, agent-configuration, planning,
   retrospective.
+- `agent-skills`: the transcript-conformity reviewer tells a scope change from an agent's addition,
+  and the planning and review skills keep an addition until the owner rules.

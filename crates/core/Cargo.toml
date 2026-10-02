@@ -31,4 +31,4 @@ tree-sitter = "0.25"
 tree-sitter-rust = "0.24"
 serde = { version = "1", features = ["derive"] }
 toml = "1.1.4"
-knowledge-architect-agent-skills = { path = "../agent-skills", version = "=0.0.0" }
+knowledge-architect-agent-skills = { path = "../agent-skills", version = "=0.1.0" }

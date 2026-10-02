@@ -32,5 +32,5 @@ no such check exists.
 
 The check, run by `cargo x gates`, failing on a live reference or a path of this repository planted
 in a scratch copy of content/, and the walk exclusion of content/ either removed or kept with the
-check as its stated reason. The release procedure planned in the milestone document greps the
-shipped text for references; the check replaces that grep.
+check as its stated reason. The release procedure, `path@agent-config@skills/klarch-release/SKILL.md`,
+checks the shipped text for references by hand; the check replaces that step.

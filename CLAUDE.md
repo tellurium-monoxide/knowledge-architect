@@ -8,7 +8,7 @@ rows of the knowledge table. This file adds what is this repository's own.
 A documentation checker and an agent workflow, shipped as Rust crates. The checker verifies that a
 project's documents stay consistent with its code and with each other, through declared registers
 and checked references. The workflow is a set of agent skills that the checker embeds and writes
-into a project on request. Part of it is written, and the milestone document schedules the rest.
+into a project on request.
 The goals are `path@knowledge-architect@docs/goals.md`.
 
 **The goals bind the design, and nothing else in it does.** A constraint derived from a goal binds
@@ -28,10 +28,8 @@ The repository is a virtual workspace with five Components, per
 | `gates` | crates/gates | package `knowledge-architect-gates`: the library that runs a project's merge gates |
 | `xtask` | tools/xtask | the maintenance tool, `cargo x gates`; never published |
 
-**The project was extracted from thaum, and the extraction is not finished.** The work in progress
-is `path@knowledge-architect@docs/plans/v0-1-extraction.md`. Its head says how a session continues
-it. Many examples in the core's documents are drawn from thaum's tree, and they stay where they are
-evidence.
+**The project was extracted from thaum.** Many examples in the core's documents are drawn from
+thaum's tree, and they stay where they are evidence.
 
 ## Language, tone and style
 
@@ -251,9 +249,7 @@ several PRs. They are committed on the work's branch. A correction is applied in
 partial reading cannot mislead. A plan document is deleted in the commit that completes its last
 harvest, and that commit's message names its path. This is a restatement; its homes are
 `design@agent-skills@document-vocabulary` and `design@agent-skills@spec-leaves-at-landing`, and
-the procedure is the installed `knowledge-architect-planning`. The milestone document of v0.1 is
-one file, written before `design@agent-skills@milestone-is-a-directory`, and it leaves in the
-release commit of its step 7, as its head says.
+the procedure is the installed `knowledge-architect-planning`.
 
 ## Verify before relying on anything
 
@@ -552,8 +548,8 @@ git checkout main && git merge --ff-only <branch> && git push
 
 ## Release status
 
-**The version is `0.0.0`, and nothing is published yet.** Nothing is on crates.io, and nothing
-has a consumer. thaum is expected to be the first one, after v0.1 is published.
+**The version is `0.1.0`, the first published release.** Its three crates are on crates.io. Nothing
+has a consumer yet; thaum is expected to be the first one.
 
 - **The project stays at 0.x, and breaking changes stay allowed**, until the open issues of the
   design discussion that produced it are implemented, or at least argued thoroughly, per

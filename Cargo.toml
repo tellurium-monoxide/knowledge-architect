@@ -11,9 +11,9 @@ members = [
 ]
 
 # One version for every crate, so the installed skills always match the checker that installed
-# them, per `design@knowledge-architect@version-lockstep`. It stays 0.0.0 until the first release.
+# them, per `design@knowledge-architect@version-lockstep`.
 [workspace.package]
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/tellurium-monoxide/knowledge-architect"

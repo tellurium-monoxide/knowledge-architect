@@ -114,14 +114,16 @@ project can therefore tell from the version alone whether moving to it may requi
 ### The project stays at 0.x until its first design discussion's open issues are settled `##stays-at-zero-x`
 
 Breaking changes are allowed, and expected, while the shape of the tool and of its workflow
-converges. The project leaves 0.x once the open issues recorded from the discussion that designed
-it are implemented, or at least argued thoroughly. Those recorded so far are
+converges. The project leaves 0.x only on the owner's word, and not before the open issues recorded
+from the discussion that designed it are implemented, or at least argued thoroughly. Those are
 `issue@core@structured-plan-documents`, `issue@core@tooling-for-project-skills`,
 `issue@core@configuration-for-several-agent-providers`,
 `issue@core@a-component-states-at-least-one-goal`, `issue@core@cross-project-references` and
-`issue@core@a-home-for-developer-contracts-outside-agent-configuration`.
-The others are opened when the work their premise rests on lands, per the milestone document
-`path@knowledge-architect@docs/plans/v0-1-extraction.md`, and join this list then.
+`issue@core@a-home-for-developer-contracts-outside-agent-configuration`,
+`issue@agent-skills@shipped-text-is-reference-free-mechanically`,
+`issue@agent-skills@patching-an-installed-skill`,
+`issue@agent-skills@a-skill-for-creating-a-component` and
+`issue@agent-skills@a-skill-for-bounded-problems`.
 
 Leaving 0.x re-examines `design@core@ne-minimal`. After 1.0, a variant added to one of the
 library's exhaustive enums is a major, where under 0.x it bumps 0.MINOR.

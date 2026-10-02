@@ -375,9 +375,7 @@ criterion carries an identifier in the entry grammar, written plain with a hash 
 backticks. Nothing outside the plans directory cites an item of such a plan document; a `path`
 reference to a whole plan document is allowed, and its dangling at deletion lists the texts that
 depended on it. This is the shape a structure for plan documents, with registers of their own, can
-read without rewriting them: `issue@core@structured-plan-documents`. The milestone document of
-this repository's v0.1 predates this decision and is the one exception: it is one file, and other
-documents cite its sections and steps until it leaves.
+read without rewriting them: `issue@core@structured-plan-documents`.
 
 ## Reviews
 

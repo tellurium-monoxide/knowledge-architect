@@ -16,7 +16,7 @@ Why it exists, and what it aims for, is `path@knowledge-architect@docs/goals.md`
 
 ## Status
 
-Unreleased. The version is 0.0.0, and nothing is published on crates.io yet. The project stays at
+The version is 0.1.0, the first release, published on crates.io. The project stays at
 0.x, with breaking changes allowed, until its first design discussion's open issues are settled,
 per `design@knowledge-architect@stays-at-zero-x`.
 
