@@ -103,10 +103,30 @@ it. The cost accepted: a fix to the gates alone is released as a version of ever
 - **A patch can bring a finding.** A skill change is a patch, and after it a project's installed
   files differ from the new text until it runs the install. A project that pins the checker
   exactly meets this only when it moves the pin.
-- **CHANGELOG.md** has one section per version, each item tagged with the surface it touches:
-  checks, cli, manifest, library, agent-skills, gates. The version number alone cannot say which.
-  One working section above them, named `Unreleased`, holds the changes since the last release,
-  and the release renames it to its version.
+- **CHANGELOG.md** has one section per version, and one working section above them, `Next
+  release`, which the release renames to its version. An entry is written for a consumer planning
+  a move to the version, under one of three subsections, and a change passing none of their tests
+  gets no entry:
+  - **Migration**: one entry per thing a consumer must change in its own files, saying what.
+    Running the install of the agent skills again is never an entry; a change the consumer must
+    make to its own files because of the new skills is one.
+  - **New features**: something a consumer can start using, in one line; the documentation
+    carries the detail.
+  - **Workflow**: a change to the installed skills that a person watching agent sessions would
+    observe: a new or removed action, file, commit, pull-request shape, or question put to the
+    owner. A rewording or a clarification is not one.
+
+  Each entry carries the surface it touches, one of checks, cli, manifest, library, agent-skills,
+  gates, since the version number alone cannot say which, and the bump class the table above
+  gives it. Entries are sorted by surface, in that order, inside each subsection, and an empty
+  subsection is omitted. **A change with no entry is at most a patch**: every minor or major change
+  passes the migration or the new-feature test. So the release's bump is the highest class among
+  its entries, a patch at least.
+
+  The branch that makes a change writes its entries. The working section may be reworded,
+  restructured or pruned at any time, and a change reversed before the release leaves it, since it
+  describes the release's net effect. A released section's content never changes; its structure
+  may.
 
 A version stricter than a patch never reaches a project through a plain `cargo update` while at
 0.x, and a release that changes only skill text publishes all three crates with identical code. A

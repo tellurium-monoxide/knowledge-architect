@@ -24,14 +24,15 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    - the exact pin `knowledge-architect-agent-skills = { …, version = "=<version>" }` in
      crates/core/Cargo.toml;
    - Cargo.lock, which any cargo command rewrites for the four workspace packages;
-   - the status lines: the opening sentence of `## Release status` in the root `CLAUDE.md`, and of
-     `## Status` in the root README.md. Rewrite their wording, not only the number.
+   - the status line: the opening sentence of `## Status` in the root README.md. Rewrite its
+     wording, not only the number.
 
    `git grep -n '<previous version>'` finds every site that still names the previous one. An
    example inside a skill, such as an xtask manifest's own version, is not a site.
-2. **The changelog.** Add a section `## <version>` at the top of CHANGELOG.md, with one item per
-   change since the previous release, each tagged with its surface. `git log v<previous>..main`
-   lists the changes.
+2. **The changelog.** Rename CHANGELOG.md's `## Next release` to `## <version>`. Each branch wrote
+   its own entries there, per `design@knowledge-architect@versioning-policy`, and step 9's review
+   checks them. The version chosen at step 1 follows the highest bump class among its entries,
+   a patch at least.
 3. **Commit**, with `cargo klarch check` before and `cargo klarch commits HEAD~1..HEAD` after.
    Cargo refuses to package an uncommitted tree, so the commit comes before the next steps.
 4. **The shipped text holds no live reference.** List every backticked span with an `@` under
@@ -70,13 +71,16 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    agent-skills before the core, which depends on it. Its warnings "ignoring test `binary`" and
    "ignoring test `extension_api`" are expected: the whitelist keeps the tests out.
 9. **The gates and the review.** `cargo x gates --require-rebased`, then the push, the draft pull
-   request, and the review under `knowledge-architect-review`. A repair is a new commit, and steps
+   request, and the review under `knowledge-architect-review`. Its axes include
+   `klarch-changelog-reviewer`, dispatched on `v<previous>..HEAD`: every change of the range has
+   the entries the policy owes, each entry's class is right, and the version is their highest
+   class. A repair is a new commit, and steps
    4 to 8 run again on the head if it touched a crate.
 
 ## 2. Merge, then publish
 
 10. **Merge** under the root `CLAUDE.md`'s merge predicate. From this moment until step 12, main's
-    status lines name a version that is not yet on crates.io.
+    README status line names a version that is not yet on crates.io.
 11. **The owner's word, given at that moment.** Without it, nothing is published. The owner is
     logged in to crates.io in the shell the agent runs in, with `cargo login`, and the token never
     passes through the agent. The token needs the scopes publish-new and publish-update, and the
@@ -102,5 +106,5 @@ crate it uploaded stays published.
   the same tagged commit. If that cannot succeed without a change to the code, the uploaded crates
   keep the version, and the next release is the next patch version for all three, per
   version-lockstep; the uploaded version is yanked only if it is broken.
-- **In either case**, main's status lines are wrong until a repair lands, through a branch and a
+- **In either case**, main's README status line is wrong until a repair lands, through a branch and a
   pull request like any other change.

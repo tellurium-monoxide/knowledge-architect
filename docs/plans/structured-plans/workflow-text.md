@@ -60,7 +60,8 @@ The installed text lives under crates/agent-skills/content/ and names no project
    diff is shown to the owner before it is committed (round 3); it loses its plans-directory row and
    rewrites its "Plan documents" section and its "Intent" bullet;
    `path@knowledge-architect@docs/plans/README.md` describes
-   the two homes; the CHANGELOG gains the section for the next version.
+   the two homes; CHANGELOG.md's `Next release` section gains this milestone's entries, under the tests of
+   `design@knowledge-architect@versioning-policy`; the plans layout is a migration entry.
 
 ## Claims
 
@@ -71,9 +72,7 @@ The installed text has no unit tests; its claims are checked by the checker and 
   backticked
   `@` span whose head is a kind finds only placeholders in angle brackets.
 - **No two installed texts contradict** on the plans directory, the roadmap, assembly or built
-  intent: the self-consistency axis of `knowledge-architect-review`, and the
-  `klarch-release-status-reviewer`, whose future `issue@agent-config@what-review-a-release-owes`
-  decides.
+  intent: the self-consistency axis of `knowledge-architect-review`.
 - **#roadmap-needs-no-code** of the milestone document does not fire.
 
 ## Fixtures

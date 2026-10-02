@@ -192,7 +192,7 @@ the primer's:
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md` is also its crates.io page, and points to docs.rs for the library API | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
-| what changed in each release, per surface | CHANGELOG.md at the root, one section per version | never: append-only |
+| what a consumer must change, can start using, or will see agents do differently, per release | CHANGELOG.md at the root: one section per version, and the `Next release` section | a released section's content never changes; its structure may, and the `Next release` section may change at any time |
 | a finding established outside this project that a decision here leans on | `docs/grounding/<subject>.md` in the Component the decision belongs to | the source is superseded, or a better one lands |
 | a Component that maintains the repository rather than shipping in it | `tools/<name>/`, one directory per tool | the tool is retired |
 | **none of these, nor a row of the primer** | **ask, before writing it anywhere** | the table gains the row |
@@ -451,15 +451,10 @@ own issue registers, on the owner's word, rather than an issue on GitHub. This i
 standing direction under that skill; its home is
 `design@knowledge-architect@retrospective-findings-stay-here`.
 
-**The routing table**: what this repository adds to an installed skill or agent.
-
-| installed | this repository's additions |
-| --- | --- |
-| `knowledge-architect-review` | `klarch-release-status-reviewer`, an axis for every change that records or argues a decision |
-
+**The routing table**: what this repository adds to an installed skill or agent. It holds no row.
 **This repository's own skills, `klarch-development` and `klarch-release`, add to no installed
-skill**, so the routing table above holds no row for them; the harness lists each with its
-description.
+skill**, and its one agent, `klarch-changelog-reviewer`, is dispatched by `klarch-release`; the
+harness lists each with its description.
 
 ## Git
 
@@ -476,6 +471,12 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   `commits` gate judges each commit's tree with the tip's binary, and refuses a tree with no
   manifest or with findings. So a step whose intermediate trees cannot pass lands as one commit,
   squashed before review. Review repairs are new commits after it, and each one passes.
+- **The branch writes its CHANGELOG.md entries**, in the `Next release` section, for each change
+  that passes one of three tests: a consumer must change something in its own files (one entry per
+  thing, saying what); a consumer can start using something new; a person watching agent sessions
+  would see a new or removed action, file, commit, pull-request shape or question. Running the
+  install of the agent skills again is never an entry. Each entry carries its surface and its bump
+  class. This is a restatement; its home is `design@knowledge-architect@versioning-policy`.
 
 2. **No operation that can lose content, committed or not.**
 
@@ -560,10 +561,4 @@ git checkout main && git pull --ff-only && git branch -D <branch>
   `design@knowledge-architect@stays-at-zero-x`. How each kind of change is versioned is
   `design@knowledge-architect@versioning-policy`.
 - **Do not argue a decision on the grounds that changing it later would be breaking.** An argument
-  that a change is expensive has to name the cost it actually has today.
-- **A consumer-facing decision is recorded like any other**, in the owning Component's design
-  home. It is not marked, not separated, and not weighted differently. Nothing is binding yet, so
-  the test that would separate the two families cannot be applied, and a second home for the same
-  statements is what lets them drift.
-- **A design head that says something false is still a defect**, under _current reality only_,
-  whatever the release status.
+  that a change is expensive names the cost it has today, a consumer's migration included.
