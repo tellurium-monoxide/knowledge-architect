@@ -298,8 +298,12 @@ Ruled out in session C:
 | test 2 as "propose the fix in the section" rather than fixing it | primer-content | the owner: "Test 2 letting an agent fix something without my word is what I want" |
 | "finish the task, then say what you found", the earlier rule | primer-content | the owner's observation of real sessions; recorded in agent-skills' rejected alternatives |
 
-Added by the agent while writing the primer and not put to the owner by name (a **default**): its
-paragraph on when to write a reference, which carries this repository's rule into every project.
+Added by the agent while writing the primer, then put to the owner after the review and approved:
+its paragraph on when to write a reference. The owner: "The reference one in particular is quite
+important, because that is the premise on which this whole project relies on to be useful: that
+entries from registers are referenced wherever they are load bearing, so that the scope of
+reversing a decision can be assessed more easily". Approved at the same time: a project row of the
+knowledge table may refine a primer row and never contradicts one.
 
 No tripwire was recorded (owner: "Record no tripwires"). The premortem's causes and their guards:
 a primer row changed by an upgrade and contradicted by a project row (maintaining-agent-config

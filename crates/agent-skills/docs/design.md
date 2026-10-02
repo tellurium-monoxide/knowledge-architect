@@ -262,7 +262,9 @@ its plans directory or a register it declares, sit in its root `CLAUDE.md`, whic
 owns. A table written whole into each project at setup would keep the old routing after an upgrade
 that changes it, against `goal@knowledge-architect@agents-get-a-complete-workflow`. A table shipped
 whole would leave a project no place for its own rows, against
-`design@agent-skills@overlay-by-separate-skills`.
+`design@agent-skills@overlay-by-separate-skills`. A project row may refine a primer row with what is
+the project's own, such as the path of its plans directory; it never contradicts one, and a row
+that only repeats one is removed.
 
 ### The primer holds only what every session needs and no installed skill delivers `##primer-limit`
 
@@ -275,8 +277,13 @@ serve.
 
 ### The primer carries the goals rule, the intent-and-claims rule, the check before diagnosing, and the rule for what is met outside the task `##primer-content`
 
-Besides the knowledge table and the list of installed skills, the primer carries four directives
-the skills rely on and no skill delivers at the moment they apply.
+Besides the knowledge table and the list of installed skills, the primer carries the rule on when
+to write a reference, and four directives the skills rely on and no skill delivers at the moment
+they apply. **A reference is written wherever the text would have to be revisited if the entry it
+names changed.** That rule is the premise the workflow relies on to be useful: an entry of a
+register is referenced wherever it is load-bearing, so the checker can list what a reversal, a
+closure or a firing touches, and the scope of reversing a decision can be assessed from that list,
+per `goal@knowledge-architect@structure-and-workflow-work-together`.
 
 - **The goals are the only statements assumed to come from the owner.** A recorded decision was
   reviewed, but its review can miss a detail or an implication, more often as the volume of agentic
