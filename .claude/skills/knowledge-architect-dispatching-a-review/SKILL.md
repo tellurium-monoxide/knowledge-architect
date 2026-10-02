@@ -91,6 +91,10 @@ and `git worktree remove <path>` once the review and the repairs are done. **The
 - issues, one file each in the affected anchor's issue directory
   (`knowledge-architect-tracking-open-issues`).
 
+A transcript reviewer's **agent's addition**, detail the author added inside the scope of an
+owner's ruling, is neither: it is kept, and the review paragraph lists it as the agent's, so the
+owner can contest it. It is removed only on the owner's word.
+
 **Where the branch's commits reach the main branch unchanged** (a fast-forward or a rebase merge):
 
 - **A repair made on the branch is a new commit, appended.** Folding a fix into the commit it

@@ -344,7 +344,10 @@ rule is learned from a failure: a filter on text substrings once dropped one of 
 messages. It serves `goal@knowledge-architect@the-owner-decides`: in the review of the change that
 installed the first skills, a reviewer briefed with this standard was the one of six to find a
 decision recorded narrower than the owner's approval; two others found the same head contradicting
-the shipped text.
+the shipped text. It sorts what a document added into a scope change, which goes to the owner, and
+an agent's addition, detail inside a ruling, which is kept and listed as the agent's until the owner
+rules. Reported alike, both read as defects, and the author undid a defensible detail the owner then
+restored.
 
 ### Plan documents written under the planning skill keep a shape a later structure can read `##structure-ready`
 

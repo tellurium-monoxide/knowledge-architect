@@ -265,7 +265,9 @@ before acting on it. A material finding is answered with a default, written into
 touches, and listed under the defaults awaiting the owner, with the thread it bears on. The owner
 rules on each at the first audit, or at once if present, and a ruled default leaves the list. A finding
 that is a gap with one answer is applied in place. A finding that is wrong is dropped, with the
-reproduction that showed it wrong kept in the commit message.
+reproduction that showed it wrong kept in the commit message. An agent's addition, detail inside
+the scope of a ruling that the owner has not seen, is kept and listed in the commit message as the
+agent's, so the owner can contest it; it is removed only on the owner's word.
 
 **The readiness checks**, applied by the author before dispatch and by the cold implementer after.
 This list is their one home; the reviewer reads it here.

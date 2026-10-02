@@ -64,7 +64,10 @@ For each thread and each losing alternative the document records:
 - **the state** is the one the owner's words gave. A thread the owner did not rule on is not
   recorded as approved;
 - **the decision** says what was approved, and no more and no less. A clause the owner's approval
-  covered and the document dropped is a finding, as is a clause the document added;
+  covered and the document dropped is a finding. A clause the document added is one of two classes:
+  a **scope change**, which widens or narrows what the owner ruled or adds an obligation to it; or
+  an **agent's addition**, detail inside the scope of the ruling, such as a clarification, a
+  cross-reference or a reporting detail that serves the approved rule. Say which, and why;
 - **every quotation attributed to the owner** is verbatim, and its qualifiers are kept;
 - **every argument attributed to the owner** is the owner's. An argument the agent made is not
   presented as the owner's;
@@ -79,11 +82,12 @@ For each thread and each losing alternative the document records:
 
 Findings, each with:
 
-- its severity: **critical** when it misstates a ruling, a state or the scope of a decision;
-  **minor** when it misattributes, drops a qualifier, a caveat or a statement that bears on a
-  decision; **nit** otherwise;
+- its severity: **critical** when it misstates a ruling, a state or the scope of a decision, a
+  scope change included; **minor** when it misattributes, drops a qualifier, a caveat or a statement
+  that bears on a decision; **nit** otherwise, an agent's addition included;
 - the two quotations, document and transcript;
-- the repair.
+- the repair. For a scope change: put it to the owner. For an agent's addition: list it as the
+  agent's, never remove it; whether it stays is the owner's word.
 
 Then one line per thread found conformant. State where you wrote the extraction, so the dispatcher
 can check it.
