@@ -1306,12 +1306,79 @@ fn a_message_citing_a_commit_of_the_range_by_sha_fails_under_refuse_branch_shas(
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(stdout.contains(&format!("commit {second}:3")), "{stdout}");
+    // The cited commit is named by its 7-digit abbreviation, followed by the rest of the sentence.
     assert!(
-        stdout.contains(&format!("`{first}` cites commit {first}")),
+        stdout.contains(&format!(
+            "`{first}` cites commit {first}, a commit of the range"
+        )),
         "{stdout}"
     );
     assert!(stdout.contains(&format!("{second} failed")), "{stdout}");
     assert!(stdout.contains(&format!("{first} judged")), "{stdout}");
+}
+
+/// The claim: whether a commit is judged for branch SHAs is read from that commit's own
+/// manifest, not from the working tree's. Mutation: reading the working tree's manifest, which
+/// the last commit turns the option off in, lets the citing commit pass.
+#[test]
+fn a_commit_is_judged_for_branch_shas_under_its_own_manifest() {
+    let history = History::new("commit-branch-sha-own-manifest");
+    tiny_project_refusing_branch_shas(&history);
+    let base = history.commit("The project is created\n");
+    let first = history.commit("A first change\n");
+    let second = history.commit(&format!("A second change\n\nIt follows {first}.\n"));
+    let manifest = history.dir.join("knowledge-architect.toml");
+    let text = std::fs::read_to_string(&manifest).expect("the manifest");
+    std::fs::write(
+        &manifest,
+        text.replace("refuse-branch-shas = true", "refuse-branch-shas = false"),
+    )
+    .expect("the manifest is rewritten");
+    let third = history.commit("The option is turned off\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(stdout.contains(&format!("{second} failed")), "{stdout}");
+    assert!(stdout.contains(&format!("{third} judged")), "{stdout}");
+}
+
+/// The claim: a commit whose tree carries a finding of its own is still judged for branch SHAs,
+/// and both are reported. Mutation: judging citations only where the tree is clean drops them.
+#[test]
+fn a_citation_in_a_commit_whose_tree_fails_is_reported_beside_the_tree_finding() {
+    let history = History::new("commit-branch-sha-failing-tree");
+    tiny_project_refusing_branch_shas(&history);
+    let base = history.commit("The project is created\n");
+    let first = history.commit("A first change\n");
+    history.write(
+        "README.md",
+        "# tiny\n\nA project a test builds. It names `design@tiny@no-such-decision`.\n",
+    );
+    let second = history.commit(&format!("A second change\n\nIt follows {first}.\n"));
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(stdout.contains("no-such-decision"), "{stdout}");
+    assert!(stdout.contains(&format!("commit {second}:3")), "{stdout}");
+}
+
+/// The claim: a Rust document is read whole, its code included. Mutation: reading Markdown
+/// documents alone misses it.
+#[test]
+fn a_rust_document_citing_a_commit_of_the_range_fails() {
+    let history = History::new("commit-branch-sha-rust");
+    tiny_project_refusing_branch_shas(&history);
+    let base = history.commit("The project is created\n");
+    let first = history.commit("A first change\n");
+    history.write(
+        "src/lib.rs",
+        &format!("const FOLLOWS: &str = \"{first}\";\n"),
+    );
+    let second = history.commit("A source file names a change\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("commit {second}: src/lib.rs:1")),
+        "{stdout}"
+    );
 }
 
 /// The claim: a document of a commit's tree citing a commit of the range fails too, named by
