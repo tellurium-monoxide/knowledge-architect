@@ -8,7 +8,7 @@
 //! **A file register's entry is its file; a heading register's entry is its section.** That is
 //! the whole of the difference between the two shapes here: the body of the first is the file's
 //! text, and the body of the second is the heading line through to the next heading at or above
-//! its level.
+//! its level. A Directory register's entry, a milestone, is its README's file.
 //!
 //! Nothing here reads the filesystem or spawns a process. The last-change column a listing
 //! prints comes from `git::last_changed`, which the binary calls beside these; every function
@@ -87,6 +87,11 @@ pub(crate) fn records(
             .map(|home| home.shape);
         let record = match shape {
             Some(Shape::File) => file_record(anchors, kind, anchor_name, id, site, doc),
+            // A Directory entry is its README, whole; the directory is the entry, not a group.
+            Some(Shape::Directory) => Record {
+                group: None,
+                ..file_record(anchors, kind, anchor_name, id, site, doc)
+            },
             _ => heading_record(anchors, anchor_name, id, site, doc),
         };
         out.push(record);
@@ -326,7 +331,7 @@ mod tests {
              sections = [\"Reading\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
-        Anchors::of(&Manifest::parse(Path::new("/nowhere"), text).expect("a declaration"))
+        Anchors::declared(&Manifest::parse(Path::new("/nowhere"), text).expect("a declaration"))
     }
 
     fn rows(docs: Vec<(&str, &str)>, kind: &str) -> Vec<Record> {

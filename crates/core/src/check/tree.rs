@@ -8,12 +8,14 @@
 //! is then unreliable in both directions, so `check::foundation` reports this phase and
 //! judges nothing later. What this phase leaves standing, `check::registers` reads for shape.
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
-use crate::entity::{Anchor, Anchors, Home};
+use crate::entity::{self, Anchor, Anchors, Constructed, Home};
 use crate::finding::Finding;
 use crate::git::EntryKind;
-use crate::manifest::{Manifest, Register, Shape, MANIFEST_NAME};
+use crate::manifest::{
+    Manifest, Register, Shape, MANIFEST_NAME, MILESTONE_REGISTER, PLANS_DIR, SPEC_REGISTER,
+};
 use crate::model::Model;
 
 use super::Inputs;
@@ -37,10 +39,25 @@ pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<
 
     declarations(&mut out, manifest, inputs);
 
-    let anchors = Anchors::of(manifest);
+    let anchors = Anchors::of(manifest, inputs.present);
     for anchor in anchors.all() {
         // An anchor directory that is not there is ONE finding. One per document it does not
         // carry would bury the single fact that explains all of them.
+        if anchor.constructed == Some(Constructed::Plans)
+            && !inputs.directories.contains(&anchor.path)
+        {
+            out.push(Finding::in_file(
+                &anchor.path,
+                format!(
+                    "the plans directory `{}` does not exist",
+                    anchor.path.display()
+                ),
+                "create it with a README.md, specs/ and milestones/; the tool constructs the \
+                 anchor `plans` there in every project, and its two homes are where plan \
+                 documents live",
+            ));
+            continue;
+        }
         if !anchor.is_root() && !inputs.present.contains(&anchor.path) {
             out.push(Finding::in_file(
                 &anchor.path,
@@ -85,6 +102,17 @@ pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<
                 }
             }
         }
+        if anchor.constructed == Some(Constructed::Plans) {
+            let readme = anchor.path.join("README.md");
+            if !inputs.present.contains(&readme) || inputs.directories.contains(&readme) {
+                out.push(Finding::in_file(
+                    &readme,
+                    "the plans directory has no README.md".to_string(),
+                    "create it; it says what the plans directory holds, and keeps it in git \
+                     while no plan document is open",
+                ));
+            }
+        }
         for name in &anchor.registers {
             let Some(register) = anchors.registers().by_name(name) else {
                 continue;
@@ -94,10 +122,190 @@ pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<
             match register.shape {
                 Shape::Heading => heading_home(&mut out, anchor, register, &home, inputs),
                 Shape::File => file_home(&mut out, anchor, register, &home, inputs),
+                Shape::Directory => directory_home(&mut out, anchor, register, &home, inputs),
             }
         }
     }
+    plans_layout(&mut out, manifest, &anchors, inputs);
     out
+}
+
+/// A Directory register has its directory. What it holds is `plans_layout`'s question.
+fn directory_home(
+    out: &mut Vec<Finding>,
+    anchor: &Anchor,
+    register: &Register,
+    home: &Home,
+    inputs: &Inputs,
+) {
+    if !inputs.directories.contains(&home.dir) {
+        out.push(Finding::in_file(
+            &home.dir,
+            format!(
+                "the anchor `{}` carries no {} directory",
+                anchor.name, register.name
+            ),
+            "create it with a README.md and an index.md; each of its entries is a directory \
+             holding a README.md",
+        ));
+    }
+}
+
+/// What the plans directory and its milestones home hold, and the names of the plans.
+///
+/// - **The plans directory holds its README.md, specs/ and milestones/, and nothing else**, so
+///   every plan document sits in a home.
+/// - **milestones/ holds its README.md, its index.md and one directory per milestone**, each
+///   holding a README.md, and no milestone directory holds a register.toml.
+/// - **A plan's name is no other anchor's and no reserved word** (clause P2): a milestone
+///   directory's name and a spec's id, compared with the components, the locations and each
+///   other. A milestone the comparison refuses is no anchor, per `entity::milestone_refusal`.
+///
+/// Each is phase 2: the anchors and the entries of the plans layout are read off the tree, so a
+/// later phase over a tree that breaks one would judge plan documents no anchor owns.
+fn plans_layout(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, inputs: &Inputs) {
+    let Some(plans) = anchors
+        .all()
+        .iter()
+        .find(|a| a.constructed == Some(Constructed::Plans))
+    else {
+        return;
+    };
+    // A missing plans directory is one finding, above, and the rest would bury it.
+    if !inputs.directories.contains(&plans.path) {
+        return;
+    }
+    let (Some(spec), Some(milestone)) = (
+        anchors.registers().by_name(SPEC_REGISTER),
+        anchors.registers().by_name(MILESTONE_REGISTER),
+    ) else {
+        return;
+    };
+    let specs = plans.home_of(spec);
+    let milestones = plans.home_of(milestone);
+    let children = |dir: &Path| -> Vec<&PathBuf> {
+        let mut out: Vec<&PathBuf> = inputs
+            .present
+            .iter()
+            .filter(|p| p.parent() == Some(dir))
+            .collect();
+        out.sort();
+        out
+    };
+
+    for path in children(&plans.path) {
+        // The retired single file of `specs/` is `file_home`'s finding, named once.
+        if *path == plans.path.join("README.md")
+            || *path == specs.dir
+            || *path == milestones.dir
+            || *path == specs.file
+        {
+            continue;
+        }
+        out.push(Finding::in_file(
+            path,
+            format!(
+                "`{}` sits in the plans directory, which holds its README.md, specs/ and \
+                 milestones/ and nothing else",
+                path.display()
+            ),
+            format!(
+                "move a spec into {PLANS_DIR}/specs/ and a milestone into \
+                 {PLANS_DIR}/milestones/, and anything else out of the plans directory"
+            ),
+        ));
+    }
+
+    let placed = entity::milestone_dirs(inputs.present.iter());
+    if inputs.directories.contains(&milestones.dir) {
+        for path in children(&milestones.dir) {
+            let name = path
+                .file_name()
+                .unwrap_or_default()
+                .to_string_lossy()
+                .into_owned();
+            if inputs.directories.contains(path) {
+                if !placed.contains_key(&name) {
+                    out.push(Finding::in_file(
+                        path,
+                        format!(
+                            "`{}` holds no README.md, so it is no milestone",
+                            path.display()
+                        ),
+                        "create its README.md, the milestone document, or move the directory \
+                         out of milestones/",
+                    ));
+                } else if let Some(why) = entity::milestone_refusal(&name, manifest) {
+                    out.push(Finding::in_file(
+                        path,
+                        format!("the milestone `{name}` is no anchor: its name {why}"),
+                        "rename the directory; a milestone is cited `milestone@plans@<id>` and \
+                         its steps `spec@<id>@<step>`, so its name must not read as anything \
+                         else",
+                    ));
+                }
+                let config = path.join("register.toml");
+                if inputs.present.contains(&config) {
+                    out.push(Finding::in_file(
+                        &config,
+                        "a milestone directory holds no register.toml".to_string(),
+                        "delete it; a milestone's step specs sit beside its README, ungrouped",
+                    ));
+                }
+                continue;
+            }
+            // The `<id>.md` beside a milestone is its home's retired single file, which
+            // `file_home` names.
+            let beside = path
+                .file_stem()
+                .is_some_and(|s| placed.contains_key(&*s.to_string_lossy()))
+                && path.extension().is_some_and(|e| e == "md");
+            if name == "README.md" || name == "index.md" || beside {
+                continue;
+            }
+            out.push(Finding::in_file(
+                path,
+                format!(
+                    "`{}` sits in milestones/, which holds its README.md, its index.md and one \
+                     directory per milestone",
+                    path.display()
+                ),
+                "a milestone is a directory holding its README.md; move a single-file plan \
+                 into specs/, and anything else out",
+            ));
+        }
+    }
+
+    // Clause P2 over the specs: a spec's id is the name step 2 makes an anchor, so it may be
+    // no component's, location's or reserved word, and no milestone's.
+    let mut ids: Vec<(String, &PathBuf)> = inputs
+        .present
+        .iter()
+        .filter(|p| !inputs.directories.contains(*p))
+        .filter_map(|p| entity::entry_id(p, &specs.dir).map(|id| (id, p)))
+        .collect();
+    ids.sort();
+    for (id, path) in ids {
+        let why = if entity::is_reserved_anchor(&id) {
+            Some("is a word the tool reserves")
+        } else if manifest.components().all().iter().any(|c| c.name == id) {
+            Some("is the name of a component")
+        } else if manifest.locations().contains_key(&id) {
+            Some("is the name of a location")
+        } else if placed.contains_key(&id) {
+            Some("is also the name of a milestone")
+        } else {
+            None
+        };
+        if let Some(why) = why {
+            out.push(Finding::in_file(
+                path,
+                format!("the spec `{id}`'s name {why}"),
+                "rename the file; a plan's name is cited in an anchor's place, so it must not \
+                 read as another anchor or another plan",
+            ));
+        }
+    }
 }
 
 /// A heading register has exactly one home shape, and the directory shape has a head.

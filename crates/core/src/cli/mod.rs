@@ -339,6 +339,7 @@ fn index(
     generated.extend(crate::index::file_register_indexes(
         &model,
         manifest,
+        gathered.inputs().present,
         gathered.inputs().directories,
     ));
 
@@ -411,7 +412,7 @@ fn index(
 /// reader who named a deleted entry need different things.
 fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitCode, String> {
     let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
-    let anchors = Anchors::of(manifest);
+    let anchors = Anchors::of(manifest, model.listing());
     let reference = args.reference.trim_matches('`');
     let (kind, anchor, id) = match crate::entity::candidate(reference, &anchors) {
         Candidate::Reference { kind, anchor, id } => (kind, anchor, id),
@@ -493,7 +494,7 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
 /// Every issue entry, one row each.
 fn issues(manifest: &Manifest, args: &IssuesArgs, checker: &[&Path]) -> Result<ExitCode, String> {
     let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
-    let anchors = Anchors::of(manifest);
+    let anchors = Anchors::of(manifest, model.listing());
     let kind = Kind::new(ISSUE_REGISTER);
     let (anchor, needle) = split_terms(&args.terms, &anchors);
     let mut rows =
@@ -515,7 +516,7 @@ fn issues(manifest: &Manifest, args: &IssuesArgs, checker: &[&Path]) -> Result<E
 
     // One `git log` for every instance directory at once. A per-row invocation is a process per
     // entry, and this column is not worth one.
-    let dirs: Vec<std::path::PathBuf> = Anchors::of(manifest)
+    let dirs: Vec<std::path::PathBuf> = anchors
         .instances()
         .into_iter()
         .filter(|(_, register, _)| register.name == ISSUE_REGISTER)
@@ -556,7 +557,7 @@ fn tripwires(
     checker: &[&Path],
 ) -> Result<ExitCode, String> {
     let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
-    let anchors = Anchors::of(manifest);
+    let anchors = Anchors::of(manifest, model.listing());
     let kind = Kind::new(TRIPWIRE_REGISTER);
     let (anchor, needle) = split_terms(&args.terms, &anchors);
     let guarding = args

@@ -121,7 +121,7 @@ pub fn foundation(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Result
             findings,
         });
     }
-    let anchors = crate::entity::Anchors::of(manifest);
+    let anchors = crate::entity::Anchors::of(manifest, inputs.present);
     let findings = crate::entity::Entities::build(model, &anchors)
         .definition_findings()
         .to_vec();
@@ -329,6 +329,7 @@ mod phase_tests {
             "docs/open-issues/index.md",
         ]
         .iter()
+        .chain(testing::PLANS_TREE.iter())
         .map(PathBuf::from)
         .collect()
     }
@@ -444,6 +445,19 @@ mod phase_tests {
 pub(crate) mod testing {
     use std::collections::HashSet;
     use std::path::PathBuf;
+
+    /// The plans layout every project owes at its root, with no plan document in it: the plans
+    /// directory, its README, and its two homes with their README and index.
+    pub(crate) const PLANS_TREE: [&str; 8] = [
+        "docs/plans",
+        "docs/plans/README.md",
+        "docs/plans/specs",
+        "docs/plans/specs/README.md",
+        "docs/plans/specs/index.md",
+        "docs/plans/milestones",
+        "docs/plans/milestones/README.md",
+        "docs/plans/milestones/index.md",
+    ];
 
     /// The directories a flat listing implies: every path with an entry beneath it.
     ///

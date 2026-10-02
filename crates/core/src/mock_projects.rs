@@ -26,9 +26,9 @@ fn model(name: &str) -> Model {
 }
 
 /// Every `register.toml` beside an instance, as the binary reads them for a check.
-fn configs(manifest: &Manifest) -> std::collections::HashMap<PathBuf, String> {
+fn configs(manifest: &Manifest, model: &Model) -> std::collections::HashMap<PathBuf, String> {
     let mut out = std::collections::HashMap::new();
-    for (_, _, home) in crate::entity::Anchors::of(manifest).instances() {
+    for (_, _, home) in crate::entity::Anchors::of(manifest, model.listing()).instances() {
         if let Ok(text) = std::fs::read_to_string(manifest.root().join(&home.config)) {
             out.insert(home.config.clone(), text);
         }
@@ -47,7 +47,7 @@ fn git_answers(
     manifest: &crate::Manifest,
     model: &Model,
 ) -> (std::collections::HashSet<String>, Vec<PathBuf>) {
-    let anchors = crate::entity::Anchors::of(manifest);
+    let anchors = crate::entity::Anchors::of(manifest, model.listing());
     let queries = crate::check::references::ignore_queries(model, &anchors);
     let ignored = crate::git::ignored(manifest.root(), &queries).expect("git answers the batch");
     let tracked =
@@ -78,6 +78,9 @@ fn the_walk_obeys_the_project_that_declares_it() {
             "docs/goals.md".to_string(),
             "docs/open-issues/README.md".to_string(),
             "docs/open-issues/the-mock-has-one-issue.md".to_string(),
+            "docs/plans/README.md".to_string(),
+            "docs/plans/milestones/README.md".to_string(),
+            "docs/plans/specs/README.md".to_string(),
             "docs/rejected-alternatives.md".to_string(),
             "docs/tripwires.md".to_string(),
             "notes/a.md".to_string(),
@@ -103,8 +106,10 @@ fn the_walk_obeys_the_project_that_declares_it() {
 fn a_generated_index_is_outside_the_walk_and_outside_the_inverse_assertion() {
     let manifest = mock("minimal");
     let model = model("minimal");
-    let generated = crate::index::generated_index_paths(&manifest);
-    assert_eq!(generated.len(), 3, "{generated:?}");
+    let generated = crate::index::generated_index_paths(&manifest, model.listing());
+    // The issue home of the root and of the location, the readings home, and the two plans
+    // homes, which every project carries.
+    assert_eq!(generated.len(), 5, "{generated:?}");
     for rel in &generated {
         assert!(
             !manifest.walk().skip_files.contains(rel),
@@ -174,7 +179,7 @@ fn a_location_outside_every_component_is_read_by_the_listings() {
 
     let manifest = mock("minimal");
     let model = model("minimal");
-    let anchors = Anchors::of(&manifest);
+    let anchors = Anchors::of(&manifest, model.listing());
     let entities = Entities::build(&model, &anchors);
     let rows = crate::records::records(&model, &anchors, &entities, &Kind::new(ISSUE_REGISTER));
     let here: Vec<_> = rows.iter().filter(|r| r.anchor == "notes").collect();
@@ -258,7 +263,7 @@ fn the_conformant_mocks_report_nothing_over_every_core_check() {
         // The committed generated files, read from the tree rather than regenerated, so a
         // committed index that has gone stale fails here.
         let mut committed = HashMap::new();
-        for rel in crate::index::generated_paths(&manifest) {
+        for rel in crate::index::generated_paths(&manifest, model.listing()) {
             if let Ok(text) = std::fs::read_to_string(manifest.root().join(&rel)) {
                 committed.insert(rel, text);
             }
@@ -266,7 +271,7 @@ fn the_conformant_mocks_report_nothing_over_every_core_check() {
         let git = git_answers(&manifest, &model);
         let inputs = Inputs {
             committed: &committed,
-            configs: &configs(&manifest),
+            configs: &configs(&manifest, &model),
             present: &survey.present,
             directories: &survey.directories,
             outside: &survey.outside,
@@ -297,9 +302,12 @@ fn every_committed_index_is_what_the_generator_writes() {
         let manifest = mock(name);
         let model = model(name);
         let survey = crate::survey::survey(&manifest, &model).expect("a survey of the mock");
-        for (rel, want) in
-            crate::index::file_register_indexes(&model, &manifest, &survey.directories)
-        {
+        for (rel, want) in crate::index::file_register_indexes(
+            &model,
+            &manifest,
+            &survey.present,
+            &survey.directories,
+        ) {
             let have = std::fs::read_to_string(manifest.root().join(&rel)).expect("committed");
             assert_eq!(have, want, "{name}: {}", rel.display());
         }
@@ -340,7 +348,7 @@ mod planted {
     /// The file-register indexes this project would have if they were current.
     fn current_indexes(manifest: &Manifest, model: &Model) -> HashMap<PathBuf, String> {
         let survey = crate::survey::survey(manifest, model).expect("a survey of the mock");
-        crate::index::file_register_indexes(model, manifest, &survey.directories)
+        crate::index::file_register_indexes(model, manifest, &survey.present, &survey.directories)
             .into_iter()
             .collect()
     }
@@ -356,7 +364,7 @@ mod planted {
         let git = git_answers(&manifest, &model);
         let inputs = Inputs {
             committed: &committed,
-            configs: &configs(&manifest),
+            configs: &configs(&manifest, &model),
             present: &survey.present,
             directories: &survey.directories,
             outside: &survey.outside,
@@ -390,15 +398,18 @@ mod planted {
         // retired slug shapes — and the path shapes: a dangling one, the unanchored bare form,
         // a wrong kind claim, an escape that resolves here, a root pointer reaching inside the
         // component, a generic pointer nothing carries, a dangling tripwire reference, a link
-        // outside a navigation home, and the retired `@` escape with its empty head.
-        ("references", 17, "is referenced"),
+        // outside a navigation home, and the retired `@` escape with its empty head. Then the
+        // five refusals of the plans layout, in notes/plans.md: a spec, a milestone directory,
+        // a step spec cited by path, a milestone named as a path's anchor, and a pointer from
+        // the root reaching inside `plans`.
+        ("references", 22, "is referenced"),
         // One defect per shape assertion over what is there: a missing index, an undeclared
         // kind, a missing owed subsection, an undeclared group, a file of another suffix, and
         // frontmatter that does not parse.
         ("registers", 6, "issue register"),
-        // Three file-register indexes, and the run is handed an empty committed set, so each
-        // is reported missing.
-        ("generated", 3, "the generated file is missing"),
+        // Six register indexes: three issue homes, the two plans homes and the one milestone.
+        // The run is handed an empty committed set, so each is reported missing.
+        ("generated", 6, "the generated file is missing"),
     ];
 
     #[test]
@@ -429,9 +440,63 @@ mod planted {
         let gone = findings_with(|_, _| HashMap::new());
         assert_eq!(
             gone.iter().filter(|f| f.contains("is missing")).count(),
-            3,
-            "the three file-register indexes: {gone:#?}"
+            6,
+            "the six register indexes: {gone:#?}"
         );
+    }
+
+    /// Clause P1 of the plans layout: a plan document is cited by its kind, so each `path`
+    /// citation of one is refused with the kind form that resolves, from any anchor; and a
+    /// pointer from the root at a file of `plans` that is no plan document reaches inside it.
+    #[test]
+    fn a_plan_document_cited_by_its_path_is_refused_with_the_form_that_resolves() {
+        let manifest = mock("planted");
+        let model = Model::build(&manifest, &[]).expect("a model");
+        let committed = current_indexes(&manifest, &model);
+        let survey = crate::survey::survey(&manifest, &model).expect("a survey of the mock");
+        let git = git_answers(&manifest, &model);
+        let inputs = Inputs {
+            committed: &committed,
+            configs: &configs(&manifest, &model),
+            present: &survey.present,
+            directories: &survey.directories,
+            outside: &survey.outside,
+            ignored: &git.0,
+            tracked_and_ignored: &git.1,
+            refused: &survey.refused,
+            links: &survey.links,
+            installed: &survey.installed,
+            shipped: &[],
+        };
+        let here: Vec<(u32, String, String)> = run(&model, &manifest, &inputs, &[])
+            .findings
+            .into_iter()
+            .filter(|f| f.file == std::path::Path::new("notes/plans.md"))
+            .map(|f| (f.line.unwrap_or(0), f.what, f.action))
+            .collect();
+        let at = |line: u32| -> (String, String) {
+            let hit = here.iter().find(|(l, _, _)| *l == line);
+            let (_, what, action) = hit.unwrap_or_else(|| panic!("line {line}: {here:#?}"));
+            (what.clone(), action.clone())
+        };
+        let (what, action) = at(6);
+        assert!(what.contains("cites a plan document by its path"), "{what}");
+        assert!(action.contains("`spec@plans@a-spec`"), "{action}");
+        let (what, action) = at(7);
+        assert!(what.contains("cites a plan document by its path"), "{what}");
+        assert!(action.contains("`milestone@plans@m-one`"), "{action}");
+        let (what, action) = at(8);
+        assert!(what.contains("cites a plan document by its path"), "{what}");
+        assert!(action.contains("`spec@m-one@a-step`"), "{action}");
+        let (what, action) = at(9);
+        assert!(
+            what.contains("names the milestone `m-one`, which carries no path kind"),
+            "{what}"
+        );
+        assert!(action.contains("`spec@m-one@<step>`"), "{action}");
+        let (what, _) = at(10);
+        assert!(what.contains("reaches inside the anchor `plans`"), "{what}");
+        assert_eq!(here.len(), 5, "{here:#?}");
     }
 
     fn one(needle: &str) -> String {
@@ -548,7 +613,7 @@ mod planted {
         assert!(one("names no anchor").contains("notes/missing.md"));
         assert!(one("claims a file and names a directory").contains("path@planted@notes"));
         assert!(one("resolves in this tree").contains("path@elsewhere@notes/p.md"));
-        assert!(one("reaches inside the anchor").contains("widget"));
+        assert!(one("reaches inside the anchor `widget`").starts_with("notes/structure.md:33"));
         assert!(one("resolves in no component").contains("path@*@notes/void.md"));
         assert!(one("not a navigation home").contains("p.md"));
     }
@@ -602,7 +667,7 @@ mod unsound {
         let git = git_answers(&manifest, &model);
         let inputs = Inputs {
             committed: &HashMap::new(),
-            configs: &configs(&manifest),
+            configs: &configs(&manifest, &model),
             present: &survey.present,
             directories: &survey.directories,
             outside: &survey.outside,
@@ -642,7 +707,7 @@ mod unsound {
     fn phase_three() -> Vec<String> {
         let manifest = mock("unsound");
         let model = Model::build(&manifest, &[]).expect("a model");
-        let anchors = Anchors::of(&manifest);
+        let anchors = Anchors::of(&manifest, model.listing());
         Entities::build(&model, &anchors)
             .definition_findings()
             .iter()
@@ -680,7 +745,33 @@ mod unsound {
         // `design@core@owned-namespace-check`.
         assert!(one_of(&found, "does not ship it")
             .starts_with(".claude/agents/knowledge-architect-planted.md"));
-        assert_eq!(found.len(), 6, "{found:#?}");
+        // The plans layout, each phase 2 because its anchors and entries are read off the
+        // tree: D17's one file outside both homes, D10's directory with no README, stray file
+        // and two options files, and P2's four names.
+        assert!(one_of(&found, "sits in the plans directory").starts_with("docs/plans/stray.md"));
+        assert!(one_of(&found, "holds no README.md, so it is no milestone")
+            .starts_with("docs/plans/milestones/no-readme"));
+        assert!(one_of(
+            &found,
+            "`docs/plans/milestones/stray.md` sits in milestones/"
+        )
+        .starts_with("docs/plans/milestones/stray.md"));
+        assert!(one_of(
+            &found,
+            "`docs/plans/milestones/register.toml` sits in milestones/"
+        )
+        .starts_with("docs/plans/milestones/register.toml"));
+        assert!(
+            one_of(&found, "a milestone directory holds no register.toml")
+                .starts_with("docs/plans/milestones/twice/register.toml")
+        );
+        assert!(one_of(&found, "the milestone `widget` is no anchor")
+            .contains("is the name of a component"));
+        assert!(one_of(&found, "the milestone `Not_An_Id` is no anchor")
+            .contains("is not lower-case words"));
+        assert!(one_of(&found, "the spec `agent-config`").contains("is the name of a location"));
+        assert!(one_of(&found, "the spec `twice`").contains("is also the name of a milestone"));
+        assert_eq!(found.len(), 15, "{found:#?}");
     }
 
     #[test]
@@ -752,7 +843,7 @@ mod unsound {
             let git = git_answers(&manifest, &model);
             let inputs = Inputs {
                 committed: &HashMap::new(),
-                configs: &configs(&manifest),
+                configs: &configs(&manifest, &model),
                 present: &survey.present,
                 directories: &survey.directories,
                 outside: &survey.outside,

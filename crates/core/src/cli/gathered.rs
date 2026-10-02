@@ -38,14 +38,14 @@ impl Gathered {
         // citations. The set includes the extensions' files once `extension::configure` has
         // run over the manifest.
         let mut committed = HashMap::new();
-        for rel in crate::index::generated_paths(manifest) {
+        for rel in crate::index::generated_paths(manifest, model.listing()) {
             if let Ok(text) = std::fs::read_to_string(manifest.root().join(&rel)) {
                 committed.insert(rel, text);
             }
         }
         // A register instance's options sit beside it and are not markdown, so the walk never
         // reads them.
-        let anchors = Anchors::of(manifest);
+        let anchors = Anchors::of(manifest, model.listing());
         let mut configs = HashMap::new();
         for (_, _, home) in anchors.instances() {
             if let Ok(text) = std::fs::read_to_string(manifest.root().join(&home.config)) {

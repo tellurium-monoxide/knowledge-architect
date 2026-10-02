@@ -9,10 +9,12 @@
 //! rather than two: a directory either declares itself a project or it does not, and the tool
 //! refuses to run outside one instead of guessing a root from its own location.
 //!
-//! **Four registers are compiled in and the rest are declared.** `design`, `goal`, `tripwire`
+//! **Six registers are compiled in and the rest are declared.** `design`, `goal`, `tripwire`
 //! and `issue` are what the word component means here, so a project neither adds nor removes
-//! them; `[registers.<name>]` declares further ones, and `[locations.<name>]` names a
-//! directory that carries a subset of them. The argument is `design@core@registers-are-declared`.
+//! them; `spec` and `milestone` are the plan documents, carried by the anchor `plans` alone,
+//! which the tool constructs at [`PLANS_DIR`]. `[registers.<name>]` declares further ones, and
+//! `[locations.<name>]` names a directory that carries a subset of them. The argument is
+//! `design@core@registers-are-declared`.
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -60,6 +62,24 @@ pub(crate) const ISSUE_REGISTER: &str = "issue";
 /// reference spells in kind position.
 pub(crate) const TRIPWIRE_REGISTER: &str = "tripwire";
 
+/// The built-in register of plan documents: a spec file, or a step spec inside a milestone.
+pub(crate) const SPEC_REGISTER: &str = "spec";
+
+/// The built-in register of milestones, whose entries are directories.
+pub(crate) const MILESTONE_REGISTER: &str = "milestone";
+
+/// Where the tool constructs the anchor `plans`, relative to the project root.
+///
+/// Fixed rather than declared: a built-in register's storage is what the tool defines, and a
+/// declared plans directory would be the only declared path in that family.
+pub(crate) const PLANS_DIR: &str = "docs/plans";
+
+/// The home of the `spec` register under [`PLANS_DIR`].
+pub(crate) const SPECS_HOME: &str = "specs";
+
+/// The home of the `milestone` register under [`PLANS_DIR`].
+pub(crate) const MILESTONES_HOME: &str = "milestones";
+
 /// The issue register's compiled kind list. Closed: an unknown kind is a finding naming it.
 pub(crate) const ISSUE_KINDS: [&str; 6] = [
     "defect",
@@ -84,6 +104,9 @@ pub(crate) enum Shape {
     Heading,
     /// Entries are files `<id>.md` under `<dir>/`, beside a README and a generated index.
     File,
+    /// Entries are directories `<id>/` under `<dir>/`, each holding a `README.md`, beside a
+    /// README and a generated index. Only `milestone` has it: each entry is an anchor of its own.
+    Directory,
 }
 
 /// Which anchors carry a register.
@@ -112,7 +135,7 @@ pub(crate) struct Register {
     pub metadata: Vec<(String, Vec<String>)>,
     /// The issue register alone: the kinds an entry may declare.
     pub kinds: Vec<String>,
-    /// Whether this register is one of the four the tool compiles in.
+    /// Whether this register is one of the six the tool compiles in.
     pub built_in: bool,
 }
 
@@ -130,7 +153,7 @@ impl Register {
     }
 }
 
-/// Every register of a project: the four built in, then the declared ones by name.
+/// Every register of a project: the six built in, then the declared ones by name.
 #[derive(Debug, Clone)]
 pub(crate) struct Registers(Vec<Register>);
 
@@ -157,7 +180,7 @@ impl Registers {
         self.0.iter().filter(|r| r.scope == Scope::Component)
     }
 
-    /// The four compiled-in registers, before any declaration is read.
+    /// The six compiled-in registers, before any declaration is read.
     fn built_in() -> Vec<Register> {
         let heading = |name: &str, dir: &str, level: u8| Register {
             name: name.to_string(),
@@ -188,7 +211,32 @@ impl Registers {
                 kinds: ISSUE_KINDS.iter().map(|k| k.to_string()).collect(),
                 built_in: true,
             },
+            // The two plan registers are opt-in: the anchor `plans`, which the tool constructs,
+            // names both, and no declared anchor may. Their sections are checked from the step
+            // that reads plan items, so an entry owes a title and nothing else here.
+            plan(SPEC_REGISTER, Shape::File, SPECS_HOME),
+            plan(MILESTONE_REGISTER, Shape::Directory, MILESTONES_HOME),
         ]
+    }
+
+    /// Whether `name` is one of the two registers only the anchor `plans` carries.
+    pub(crate) fn is_plan_register(name: &str) -> bool {
+        name == SPEC_REGISTER || name == MILESTONE_REGISTER
+    }
+}
+
+/// One of the two plan registers, which no declaration can change.
+fn plan(name: &str, shape: Shape, dir: &str) -> Register {
+    Register {
+        name: name.to_string(),
+        scope: Scope::OptIn,
+        shape,
+        dir: dir.to_string(),
+        level: None,
+        sections: Vec::new(),
+        metadata: Vec::new(),
+        kinds: Vec::new(),
+        built_in: true,
     }
 }
 
@@ -372,6 +420,9 @@ pub struct Manifest {
     root: PathBuf,
     declared: Declared,
     registers: Registers,
+    /// Whether the anchor `plans` the tool constructs at [`PLANS_DIR`] was accepted beside the
+    /// declared anchors. `false` only when a declaration collides with it, which is a complaint.
+    plans: bool,
     /// Every declaration this tool refused, in the shape `check` reports.
     ///
     /// **A refused declaration is absent from the configuration**, so nothing acts on it: a
@@ -429,13 +480,14 @@ impl Manifest {
         let mut registers = build_registers(&declared.registers, &mut complaints);
         resolve_registers(&mut registers, &mut complaints);
         normalise_paths(&mut declared, &mut complaints)?;
-        resolve_anchors(&mut declared, &registers, &mut complaints);
+        let plans = resolve_anchors(&mut declared, &registers, &mut complaints);
         resolve_agents(&mut declared, &mut complaints);
         resolve_command(&mut declared, &mut complaints);
         Ok(Self {
             root: root.to_path_buf(),
             declared,
             registers,
+            plans,
             complaints,
             extension_paths: Vec::new(),
             extension_generated: Vec::new(),
@@ -526,9 +578,15 @@ impl Manifest {
         self.extension_generated.extend(generated);
     }
 
-    /// Every register this project has, the four built in first.
+    /// Every register this project has, the six built in first.
     pub(crate) fn registers(&self) -> &Registers {
         &self.registers
+    }
+
+    /// Whether the anchor `plans` exists: the tool constructs it at [`PLANS_DIR`] in every
+    /// project, unless a declaration collides with it, which is a complaint.
+    pub(crate) fn plans(&self) -> bool {
+        self.plans
     }
 
     /// Every declaration the tool refused, for `check` to report first.
@@ -629,7 +687,7 @@ pub fn normalise_one(list: &str, path: &mut PathBuf, complaints: &mut Vec<Findin
 /// before it ever reaches the register list. Its home is `<home base>/<dir>`, so a `dir` that
 /// is not one plain segment puts the home somewhere the anchor does not reach, and a `dir`
 /// spelling a compiled document makes one file both the document and the home. Each is a
-/// complaint, and the register is not declared. The built-in four are named and placed by
+/// complaint, and the register is not declared. The built-in six are named and placed by
 /// this tool and are never refused here.
 fn resolve_registers(registers: &mut Registers, complaints: &mut Vec<Finding>) {
     registers.0.retain(|register| {
@@ -690,7 +748,7 @@ fn resolve_registers(registers: &mut Registers, complaints: &mut Vec<Finding>) {
     });
     // Two component registers at one directory: the first one asked would answer for every
     // entry in the shared home, and every reference of the other kind would dangle for ever
-    // with nothing said. The later-declared one is refused; the built-in four come first.
+    // with nothing said. The later-declared one is refused; the built-in six come first.
     let mut taken: Vec<(String, String)> = Vec::new();
     registers.0.retain(|register| {
         if register.scope != Scope::Component {
@@ -722,6 +780,8 @@ struct Candidate {
     homes: Vec<(String, PathBuf)>,
     /// Where the declaration sits, as a complaint names it.
     declared_at: String,
+    /// Whether this is the anchor `plans`, which the tool constructs rather than a row declares.
+    tool_built: bool,
 }
 
 impl Candidate {
@@ -755,7 +815,8 @@ impl Candidate {
 /// one, or the later one in that order, is the one refused:
 ///
 /// - **a name no reference can spell, or a reserved one, or one an accepted anchor already
-///   has**: every pointer at it would miss or read as the other.
+///   has**: every pointer at it would miss or read as the other. `plans` is reserved for the
+///   anchor the tool constructs.
 /// - **the root's path, spelled by a component or a location**: the root is a component and
 ///   carries every register already.
 /// - **a component inside a location**: it nests a full register set inside a partial one.
@@ -764,7 +825,16 @@ impl Candidate {
 ///   be read as an entry or a subdocument of that register.
 /// - **holding an accepted anchor's register directory**: being deeper, it would own every
 ///   document in that home, and each slug defined there would be misplaced.
-fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &mut Vec<Finding>) {
+///
+/// **The anchor `plans` is judged like a location**, after the declared ones of its depth, so
+/// a declared anchor at [`PLANS_DIR`] or inside one of its homes is the one refused. A declared
+/// location naming a plan register is refused that register: `plans` alone carries them.
+/// Returns whether `plans` was accepted.
+fn resolve_anchors(
+    declared: &mut Declared,
+    registers: &Registers,
+    complaints: &mut Vec<Finding>,
+) -> bool {
     let component_homes = |path: &Path| -> Vec<(String, PathBuf)> {
         registers
             .component_scoped()
@@ -777,6 +847,7 @@ fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &
         is_component: true,
         homes: component_homes(Path::new("")),
         declared_at: "[project] name".to_string(),
+        tool_built: false,
     }];
     for path in &declared.project.components {
         candidates.push(Candidate {
@@ -788,6 +859,7 @@ fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &
             is_component: true,
             homes: component_homes(path),
             declared_at: format!("[project] components row `{}`", path.display()),
+            tool_built: false,
         });
     }
     for (name, decl) in &mut declared.locations {
@@ -806,6 +878,17 @@ fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &
                 ));
                 return false;
             };
+            if Registers::is_plan_register(register) {
+                complaints.push(Finding::in_file(
+                    MANIFEST_NAME,
+                    format!("[locations.{name}] carries `{register}`, a plan register"),
+                    format!(
+                        "remove it from the row; the anchor `plans`, which the tool constructs at \
+                         {PLANS_DIR}/, carries it alone"
+                    ),
+                ));
+                return false;
+            }
             // Two of its registers at one directory: the same collision the component
             // registers are refused for, per location.
             if let Some((other, _)) = dirs.iter().find(|(_, dir)| *dir == known.dir) {
@@ -835,13 +918,30 @@ fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &
                 .map(|r| (r.name.clone(), decl.path.join(&r.dir)))
                 .collect(),
             declared_at: format!("[locations.{name}]"),
+            tool_built: false,
         });
     }
+    // Pushed last: among the locations at its depth it is the one refused, so the repair a
+    // complaint names is the declaration a project can change.
+    let plans_dir = PathBuf::from(PLANS_DIR);
+    candidates.push(Candidate {
+        name: crate::entity::PLANS_ANCHOR.to_string(),
+        homes: [SPEC_REGISTER, MILESTONE_REGISTER]
+            .iter()
+            .filter_map(|r| registers.by_name(r))
+            .map(|r| (r.name.clone(), plans_dir.join(&r.dir)))
+            .collect(),
+        path: plans_dir,
+        is_component: false,
+        declared_at: format!("the anchor `plans` the tool constructs at {PLANS_DIR}/"),
+        tool_built: true,
+    });
     // Stable, so among equals the order the candidates were pushed in decides: components in
-    // declaration order, then locations in name order.
+    // declaration order, then locations in name order, then `plans`.
     candidates.sort_by_key(|c| (c.depth(), !c.is_component));
 
     let mut accepted: Vec<Candidate> = Vec::new();
+    let mut plans = false;
     for candidate in candidates {
         let mut refuse = |what: String, action: &str| {
             complaints.push(Finding::in_file(MANIFEST_NAME, what, action));
@@ -857,17 +957,16 @@ fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &
             );
             continue;
         }
-        // The reserved anchors are compiled in, so an anchor wearing one could never be the
-        // target of a path reference: every pointer at it would read as the reserved meaning.
-        if candidate.name == crate::entity::ESCAPE_ANCHOR
-            || candidate.name == crate::entity::EVERY_ANCHOR
-        {
+        // The reserved words are compiled in, so an anchor wearing one could never be the
+        // target of a reference: every pointer at it would read as the reserved meaning. The
+        // one candidate that wears `plans` is the anchor the tool constructs.
+        if !candidate.tool_built && crate::entity::is_reserved_anchor(&candidate.name) {
             refuse(
                 format!(
                     "{} gives the anchor the reserved name `{}`",
                     candidate.declared_at, candidate.name
                 ),
-                "rename it; this word is reserved by the path kind",
+                "rename it; this word is reserved by the tool",
             );
             continue;
         }
@@ -899,6 +998,7 @@ fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &
             refuse(what, action);
             continue;
         }
+        plans |= candidate.tool_built;
         accepted.push(candidate);
     }
 
@@ -906,9 +1006,12 @@ fn resolve_anchors(declared: &mut Declared, registers: &Registers, complaints: &
         .project
         .components
         .retain(|path| accepted.iter().any(|a| a.is_component && a.path == *path));
-    declared
-        .locations
-        .retain(|name, _| accepted.iter().any(|a| !a.is_component && a.name == *name));
+    declared.locations.retain(|name, _| {
+        accepted
+            .iter()
+            .any(|a| !a.is_component && !a.tool_built && a.name == *name)
+    });
+    plans
 }
 
 /// How a complaint names an anchor's place: its path, or the root.
@@ -1002,6 +1105,19 @@ fn build_registers(
     let mut out = Registers::built_in();
     let mut complaints = Complaints(complaints);
     for (name, decl) in declared {
+        // The plan registers' storage is the plans layout, which the tool fixes, so a table
+        // for one changes nothing whatever it sets, and is refused as a whole.
+        if Registers::is_plan_register(name) {
+            complaints.0.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!("[registers.{name}] declares a plan register"),
+                format!(
+                    "delete the table; `{name}` is carried by the anchor `plans` alone, which the \
+                     tool constructs at {PLANS_DIR}/ with a fixed layout"
+                ),
+            ));
+            continue;
+        }
         let built_in = out.iter().position(|r| r.name == *name);
         if let Some(at) = built_in {
             // A built-in register's storage is what the word component means, so a
@@ -1096,14 +1212,15 @@ fn build_registers(
                 ));
                 None
             }
-            (Shape::File, Some(_)) => {
+            // A declared shape is `heading` or `file`; `Directory` is the milestone register's.
+            (Shape::File | Shape::Directory, Some(_)) => {
                 complaints.push(format!(
                     "[registers.{name}] declares a level on a file register, whose entries \
                      are files"
                 ));
                 None
             }
-            (Shape::File, None) => None,
+            (Shape::File | Shape::Directory, None) => None,
         };
         out.push(Register {
             name: name.clone(),
@@ -1396,7 +1513,7 @@ pub(crate) mod tests {
         // segment nor a trailing separator, and a row spelled with one matched nothing.
         let m = declaring_full(
             "\"./crates/./an-engine/\"",
-            "[locations.papers]\npath = \"./docs/plans\"\nregisters = [\"issue\"]\n\n\
+            "[locations.papers]\npath = \"./docs/papers\"\nregisters = [\"issue\"]\n\n\
              [locations.here]\npath = \".\"\nregisters = [\"issue\"]\n\n",
             "[\"./build\"]",
             "[\"docs/./index.md\"]",
@@ -1412,7 +1529,7 @@ pub(crate) mod tests {
         let components = m.components();
         assert_eq!(components.all()[1].path, PathBuf::from("crates/an-engine"));
         assert_eq!(components.all()[1].name, "an-engine");
-        assert_eq!(m.locations()["papers"].path, PathBuf::from("docs/plans"));
+        assert_eq!(m.locations()["papers"].path, PathBuf::from("docs/papers"));
         assert!(!m.locations().contains_key("here"));
         assert_eq!(m.walk().skip_dirs, vec![PathBuf::from("build")]);
         assert_eq!(m.walk().skip_files, vec![PathBuf::from("docs/index.md")]);
@@ -1602,7 +1719,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn the_four_built_in_registers_exist_before_anything_is_declared() {
+    fn the_six_built_in_registers_exist_before_anything_is_declared() {
         let m = declaring("");
         let names: Vec<&str> = m
             .registers()
@@ -1610,7 +1727,24 @@ pub(crate) mod tests {
             .iter()
             .map(|r| r.name.as_str())
             .collect();
-        assert_eq!(names, vec!["design", "goal", "tripwire", "issue"]);
+        assert_eq!(
+            names,
+            vec!["design", "goal", "tripwire", "issue", "spec", "milestone"]
+        );
+        // The two plan registers are carried by `plans` alone, so no component owes them.
+        let spec = m.registers().by_name("spec").expect("the spec register");
+        assert_eq!((spec.shape, spec.scope), (Shape::File, Scope::OptIn));
+        assert_eq!(spec.dir, "specs");
+        let milestone = m
+            .registers()
+            .by_name("milestone")
+            .expect("the milestone register");
+        assert_eq!(
+            (milestone.shape, milestone.scope),
+            (Shape::Directory, Scope::OptIn)
+        );
+        assert_eq!(milestone.dir, "milestones");
+        assert!(m.plans());
         let issue = m.registers().by_name("issue").expect("the issue register");
         assert_eq!(issue.shape, Shape::File);
         assert_eq!(issue.dir, "open-issues");
@@ -1626,7 +1760,7 @@ pub(crate) mod tests {
         assert!(whats(&m).is_empty());
     }
 
-    /// A register declaration, folded into the built-in four.
+    /// A register declaration, folded into the built-in six.
     fn with_registers(body: &str) -> Manifest {
         let text = format!(
             "[project]\nname = \"a-project\"\ncomponents = []\n\n\

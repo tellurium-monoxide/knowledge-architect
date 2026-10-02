@@ -392,7 +392,7 @@ Notes on the table, from the review of this document:
 | a39 | 2 | owner | #plans-at-root, #plans-per-anchor | Most work spans several Components, and there should never be so many planned tasks open at once that a split makes sense. | "there should never be that many planned tasks open at once that splitting the directory would make sense" |
 | a40 | 2 | owner | #plans-at-root (later reused by the agent for #cross-plan-references) | Plans tend to break each other when one is designed before the other is implemented. | "plans have a tendency to break each other, when they are designed before the other is implemented" |
 | a41 | 2 | owner | #roadmap-orders-issues | The shape builds the roadmap from several register shapes using only references. | "It brings together multiple register shapes to form the roadmap using only references" |
-| a42 | 2 | owner | #plan-document-kinds | The owner wants plan documents cited by kind: `milestone@knowledge-architect@structured-plans`, and `spec@...@...`. | "I'd like to be able to reference `path@knowledge-architect@docs/plans/structured-plans/` as `milestone@knowledge-architect@structured-plans`" |
+| a42 | 2 | owner | #plan-document-kinds | The owner wants plan documents cited by kind: milestone@knowledge-architect@structured-plans, and spec@...@... | "I'd like to be able to reference path@knowledge-architect@docs/plans/structured-plans/ as milestone@knowledge-architect@structured-plans" |
 | a43 | 2 | owner | #spec-records-the-exchange | Milestones are also created through the design skill, so the record applies to them; the README is the "milestone spec". | "Milestones are created through the design skill too after all." |
 | a44 | 2 | owner | #spec-written-during-discussion | The recorded decision against a written delta (agent overhead hurts the discussion) predates model progress; the owner observed Opus 5.5 carry design discussions interleaved with implementation without significant problem, and confirmed it failed in the Opus 5 time. | "I confirmed this was not working in the Opus 5 time. So the progress is real." |
 | a45 | 2 | owner | #design-home-is-built-intent | Once plans are structured registers, design homes carry built intent and plans carry unbuilt intent. | "design docs can carry the meaning of \"built intent\", while plans carry \"unbuilt intent\"" |
@@ -431,7 +431,7 @@ Notes on the table, from the review of this document:
 | a78 | 3 | agent | #plans-split-dirs, #plan-document-kinds | The core's `Shape` has `Heading` and `File`; a file register already checks a level-one title and declared level-two sections, which is planning's fixed section list. | "checked by code that exists" |
 | a79 | 3 | agent | #plans-split-dirs, #plan-anchor | A milestone directory is a file register home (README, generated index, one file per entry), so `spec@<milestone>@harvest` is an ordinary reference, unique only inside its milestone. | "a step's basename only needs to be unique inside its milestone" |
 | a80 | 3 | agent | #plans-location | A reserved anchor `plans` fixed by the tool, like `*` and `elsewhere`, removes the project name from citations. | "so the project name goes away" |
-| a81 | 3 | agent | #plan-document-kinds | `milestone@plans@<id>` needs a directory entry, the one new piece of register shape; the free alternative is citing the README by path, kept out because the owner asked for `milestone@`. | "You asked for `milestone@`, so I keep it, and name it as the cost." |
+| a81 | 3 | agent | #plan-document-kinds | `milestone@plans@<id>` needs a directory entry, the one new piece of register shape; the free alternative is citing the README by path, kept out because the owner asked for milestone@. | "You asked for milestone@, so I keep it, and name it as the cost." |
 | a82 | 3 | agent | #plan-items-by-section | Today a heading register has one home and one level and nothing scopes a citation, so items need their own model: section gives kind, scope is the plan anchor; a spec file as anchor is also new. | "Items need a model of their own" |
 | a83 | 3 | agent | #plan-items-by-section | Extensions run in phase 4 after the entity table is built, so items cannot be an extension; they are core work. | "So the items cannot be added as an extension." |
 | a84 | 3 | agent | #cross-plan-references | Under the owner's bound, B cites A whole and is revisited when A leaves; the only missed event (A reverses x while open) needs two concurrent dependent plans, which the owner said is rare, so the agent withdraws. | "whole-plan citations already give the dependency" |
@@ -441,7 +441,7 @@ Notes on the table, from the review of this document:
 | a88 | 4 | agent | #retiring-plan-opens-issue | For a milestone B, the issue tells the next step's design audit (planning §7.2) what changed. | "The issue tells that audit what changed." |
 | a89 | 4 | agent | #retiring-plan-opens-issue | The issue's `Why it matters` cites the leaving plan's harvested design entries, since the plan no longer exists after that commit; its path goes in the commit message. | "cites the leaving plan's harvested design entries, not the leaving plan" |
 | a90 | 4 | agent | #roadmap-home | The owner's set-in-stone argument (a1) applies: docs/roadmap.md at the root, fixed name, optional, no new checker code. | "the same argument applies here" |
-| a91 | 4 | agent | #roadmap-home | The rival, `path@knowledge-architect@docs/plans/README.md`, breaks "the plans directory holds plan documents and nothing else", because a roadmap outlives every plan it lists. | "a roadmap outlives every plan it lists" |
+| a91 | 4 | agent | #roadmap-home | The rival, `path@plans@README.md`, breaks "the plans directory holds plan documents and nothing else", because a roadmap outlives every plan it lists. | "a roadmap outlives every plan it lists" |
 | a92 | 4 | agent | #argument-segmentation | Where one argument ends in prose is a judgement the extracting subagent would make; default: consolidate at assembly, checked by the transcript reviewer. | "where one argument ends and the next begins is a judgement" |
 | a93 | 4 | agent | #argument-segmentation | The rival, marking arguments in each round, makes extraction exact at a per-round cost, which the recorded alternative warned about. | "The cost is per round" |
 | a94 | 5 | agent | (criterion existing-plans-readable; `structure-ready`) | The agent corrects R2: existing-plans-readable is binding as a presumption and blocks convergence; since the plan shape changes, `structure-ready` is reversed at harvest and the criterion leaves with it. | "In round 2 I called it \"weighed\", and that was wrong." |
@@ -501,7 +501,7 @@ home docs/plans/milestones/, an entry a directory `<id>/` holding a `README.md`,
 `milestone@plans@<id>`. The directory entry is the one new register shape, kept because the
 owner asked for the `milestone` kind (a42, a81); its rules are default D10. The specs under
 `specs/` and the step specs of a milestone are one kind, `spec`, in different anchors: the owner
-asked that specs be cited `spec@...@...` (round 2), proposed `spec@<milestone-name>@harvest` for a
+asked that specs be cited spec@...@... (round 2), proposed `spec@<milestone-name>@harvest` for a
 step (round 3), and approved the shape (round 4). Nearest rival: one register with two kinds taken
 from the entry's shape (a51), defeated by the owner's "I'm not too keen on building a new
 kind/shape of registers just for that." (a66).
@@ -656,7 +656,7 @@ ones.
 | content-named argument slugs | #argument-ids | a name for each of dozens of statements that are never harvested (a61, a69) |
 | two registers sharing one home directory | #plans-split-dirs | the core has no rule for two registers at one directory (round 2); the owner's split gives each its own |
 | keeping `path` citations of plan documents legal beside the kind form | #plan-document-kinds | `cargo klarch show spec@…` would miss the citations written as paths (a53) |
-| no `milestone` kind, a milestone cited by a path to its README | #plan-document-kinds | the owner asked for `milestone@` (a42); its cost, the directory entry, is named (a81) |
+| no `milestone` kind, a milestone cited by a path to its README | #plan-document-kinds | the owner asked for milestone@ (a42); its cost, the directory entry, is named (a81) |
 | unique step basenames across the plans directory, or prefixed with the milestone's name | #plan-document-kinds | the owner's own option (a68), set aside by the shape the owner approved, `spec@<milestone>@<step>`, where a basename is unique inside its milestone only (a79) |
 | the roadmap in the plans directory's README | #roadmap-home | a roadmap outlives every plan it lists, and the plans directory holds plan documents only (a91) |
 
