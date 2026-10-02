@@ -204,9 +204,9 @@ fn file_home(
 
     let groups = config(out, register, home, inputs);
     // What sits under an anchor nested inside this home is that anchor's, as the heading
-    // shape reads it: the nesting is refused by `nesting`, and reading the nested anchor's
-    // files as entries of this register would report the refusal's consequences against
-    // the wrong register and the wrong anchor, nine times over.
+    // shape reads it: the nesting is refused by `manifest::collides`, and reading the nested
+    // anchor's files as entries of this register would report the refusal's consequences
+    // against the wrong register and the wrong anchor, nine times over.
     let owned = |rel: &Path| anchors.owning(rel).path == anchor.path;
     directory_contents(out, register, home, &groups, inputs, &owned);
 
