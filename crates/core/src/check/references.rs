@@ -15,7 +15,7 @@
 //! `design@core@candidate-rule-and-retired-forms`.
 //!
 //! **The definition-site findings are not this family's.** Misplaced, malformed and duplicate
-//! definitions are found while the table is built, and `check::registers` reports them: where a
+//! definitions are found while the table is built, and `check::foundation` reports them: where a
 //! definition may sit is a question about a register's shape.
 
 use crate::manifest::MANIFEST_NAME;
