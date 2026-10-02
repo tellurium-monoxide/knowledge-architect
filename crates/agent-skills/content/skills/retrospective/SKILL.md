@@ -45,7 +45,7 @@ done instead.
 
 **Always ask these three questions**, and answer each with what the session shows:
 
-- Did this session need to change an installed skill, and what for?
+- Did this session need to change an installed skill or agent, and what for?
 - Was the primer present in this session, and in its subagents?
 - Did this session miss something a project skill adds to an installed skill?
 
