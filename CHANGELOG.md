@@ -39,3 +39,5 @@ One section per released version. Each item is tagged with the surface it touche
 - `agent-skills`: setting-up, maintaining-agent-config, and the primer, which the project's root
   CLAUDE.md imports.
 - `agent-skills`: setting-goals and the retrospective.
+- `agent-skills`: setting-goals places a goal in the Component responsible for it; setting-up
+  proposes two goals for a project's maintenance tool.

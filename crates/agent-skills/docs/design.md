@@ -369,9 +369,23 @@ recommends the shape and ships no code: the checks a project owes are its own.
 ### Every Component states at least one goal `##goals-required`
 
 The setting-up skill does not finish a Component without at least one goal, stated with the owner.
-A Component with no goal gives its design nothing to derive a binding constraint from, and its
-decisions bind only as presumptions, against `goal@knowledge-architect@the-owner-decides`. Nothing
-checks it mechanically yet: `issue@core@a-component-states-at-least-one-goal`.
+A Component with no goal gives its design nothing of its own to be judged against, and a goal that
+is a Component's responsibility left unstated is one nobody is responsible for, against
+`goal@knowledge-architect@the-owner-decides`. What those goals are is
+`design@agent-skills@goal-placement`. Nothing checks it mechanically yet:
+`issue@core@a-component-states-at-least-one-goal`.
+
+### A goal sits in the Component responsible for fulfilling it `##goal-placement`
+
+A goal is written in the goals home of the Component whose responsibility it is to fulfil it, even
+when decisions of other Components serve it too: a goal of any Component can be referenced from
+anywhere, so serving it does not require moving it. The root's goals state what the project
+provides to its consumers. A published Component serves those consumers, so its goals are nearly
+always sub-goals that refine a root goal, more specific than the root states, and each references
+the root goal it refines. A Component that serves only the project, such as a maintenance tool,
+serves all of the root's goals at once, and its goals refine none. Promoting a goal to the root
+because several Components serve it lost: it would fill the root with goals no single Component is
+responsible for.
 
 ### A decision that relies on the checker says so, and references none of its decisions `##relying-on-the-checker`
 

@@ -39,7 +39,15 @@ what the goal means, and **what would show it is met**.
 <What it means, in two to four sentences, and what would show it is met.>
 ```
 
-A Component's goal that serves a goal of the project's root names it, with a reference in its
+**Where a goal goes.** A goal is written in the goals home of the Component whose responsibility it
+is to fulfil it, even when other Components' decisions serve it too: any goal can be referenced from
+anywhere. The root's goals state what the project provides to its consumers. A published Component
+serves those consumers, so its goals are nearly always sub-goals: more specific than a root goal,
+perhaps not stated by it, and still to be fulfilled. A Component that serves only the project, such
+as a maintenance tool, serves every root goal at once, and its goals refine none. Every Component
+states at least one goal.
+
+A Component's goal that refines a goal of the project's root names it, with a reference in its
 body: `goal@<root anchor>@<slug>`. Then `{{command}} show goal@<root anchor>@<slug>` lists every
 Component goal that served it, and removing the root goal leaves each of those references dangling,
 which the check reports.
@@ -65,6 +73,11 @@ is argued from one.
    dropped. A goal with no ruling is neither written nor dropped: ask again for it by its slug. A
    goal the owner rewords is shown again in its new wording before it is written.
 5. Write the approved goals, exactly as approved, and nothing else.
+
+**A goal need not be met yet.** A goal is the owner's intent about where the project should get to,
+and it constrains future work and design from the moment it is written. When nothing fulfils it yet,
+open a `todo` issue for the work that would, under `knowledge-architect-tracking-open-issues`, and
+reference the goal from it.
 
 ## 4. When this runs again
 

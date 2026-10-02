@@ -356,6 +356,28 @@ declined (offered once, at a defined moment); project content in a public issue 
 findings stay in the other file, and the owner reads the workflow's file verbatim); a finding in
 neither file (an interaction finding goes in both).
 
+### 3.9 Step 5, the goals pass (PR 6)
+
+Held on 2026-10-02 under the installed setting-goals skill, its first real use. The owner questioned
+goals-required: "I'm wondering whether requiring one goal per component is actually a good idea".
+Evidence taken: agent-skills' design entries cite 23 goals, all the root's; the core's cite 7, all
+the root's; xtask's cite none; no text cites a goal of the core. A first proposal, placing each goal
+in the smallest scope serving it, lost to the owner's argument that it "might lead to excessive
+promotion of goals into the root documents".
+
+| thread | state | decision |
+| --- | --- | --- |
+| goal-placement | approved | a goal sits in the Component responsible for fulfilling it; the root's goals state what the project provides to its consumers; a published Component's goals are nearly always sub-goals refining a root goal; a Component serving only the project has goals that refine none. The owner: "goals stay confined to the main component whose responsibiliy is fulfilling them", "components that are published are serving external consumers, and project goals are what describe what we intend to provide to external consumers", and of xtask, "they serve all of them all the time". goals-required stands |
+| the-owner-decides at the root | approved | it stays a root goal. The owner: "on the core side, it also justifies that we have a goals register that is separate from design registers … It does applies constraints on the core component, and also on the workflow we are providing to external consumers" |
+| maintenance-tool goals in setting-up | approved | setting-up proposes one-command-runs-every-gate and repeated-tasks-are-automated, in the approved wording, for a project's maintenance tool. The owner: "I would also recommend setting these two goals (with those wordings) in the project setting-up skill" |
+| an unmet goal | approved | a goal need not be met yet; it is the owner's intent and constrains future work; a `todo` issue holds the work that would fulfil it. The owner: "A goal does not need to be fulfilled *right now*. It is my intent about where I want the project to reach, and constrains future work and design" |
+
+The goals ruled on by slug: xtask's one-command-runs-every-gate (reworded, the reference to a root
+goal dropped) and repeated-tasks-are-automated; agent-skills' one-skill-per-activity and
+installed-text-works-anywhere; the core's documents-stay-current, declared-instructions-are-checked,
+relocation-is-one-manifest-edit and records-reach-their-reader, each with a paragraph proposed from
+the core's records, and documents-render-as-a-linked-site, kept as written, with a `todo` issue.
+
 ## 4. The decided design
 
 ### 4.1 Repository layout
@@ -1416,7 +1438,11 @@ skill and comes before the PR that needs it.
    installed here; one-workflow waits on step 6; ship-isolation and thaum-keeps-working are not
    touched by this PR.
 7. **PR 6:** the setting-goals skill is run with the owner on every component of this repository,
-   as its first real use (approved). A change to goals is the owner's, and needs no review.
+   as its first real use (approved). A change to goals is the owner's, and needs no review. **Landed
+   on the branch goals-of-every-component** (3.9): every Component states its goals; the core's
+   todo issue on the rendered site is opened; the decision goal-placement is recorded beside
+   goals-required, and setting-goals and setting-up carry it, the latter with the two goals of a
+   maintenance tool. The skill changes are reviewed; the goals are not.
 
 **Step 6. The designing-together intake.** Reads 4.8 and 4.9.
 
