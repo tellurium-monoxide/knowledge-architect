@@ -552,8 +552,7 @@ git checkout main && git pull --ff-only && git branch -D <branch>
 
 ## Release status
 
-**The version is `0.1.0`, the first published release.** Its three crates are on crates.io. Nothing
-has a consumer yet; thaum is expected to be the first one.
+**The crates are published on crates.io, and at least one consumer is known.**
 
 - **The project stays at 0.x, and breaking changes stay allowed**, until the owner's word, given
   only once the open issues of the design discussion that produced it are implemented, or at least
