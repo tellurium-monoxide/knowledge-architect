@@ -72,6 +72,99 @@ still needs investigation and testing, and a spec records a design and its imple
 without running either. The skill that will cover it is
 `issue@agent-skills@a-skill-for-bounded-problems`; when it lands, this branch names it.
 
+### The design-discussion skill is written for frontier-tier models only `##frontier-tier-only`
+
+The design-discussion skill is not simplified for smaller models. A smaller model takes part in the
+workflow as an implementer of what the owner and a frontier model decided, not as the owner's
+counterpart in the discussion. So "a smaller model would not follow this" is not an argument for or
+against any wording of the skill. Its description states "Requires a frontier-tier model
+(Opus-class or stronger)": a model below that bar produces the format without the discipline, and
+the description is the only text an installer reads before the first run. The evidence is a
+scripted four-turn discussion run on three models, described in `path@agent-skills@README.md`: the
+smaller one reproduced the ledger's format, and it endorsed a weak proposal, invented states outside
+the closed set, and dropped open threads between rounds.
+
+### The design-discussion skill structures how a discussion is conducted, never what is proposed `##structure-the-flow`
+
+The skill fixes the flow: proposals are argued, threads carry states, and closure waits for the
+owner's word. It never fixes what may be proposed. The failure it was written against is the
+solution quota: a mode that asks for two or three options gets two or three, and where one shape
+applies, the others are fabricated to fill the count. A fabricated alternative makes a real
+proposal appear to have won a contest that never happened, and spends the round that could have
+tested it. The instructions that implement this are "never pad with alternatives to reach a count"
+and the nearest-rival test, under which "no rival worth naming" is a claim to test. An edit that
+specifies what must be proposed, rather than how a proposal is argued and tracked, works against
+this entry.
+
+### The design-discussion skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
+
+The threads, states and tables exist so the owner can keep track when an agent produces much
+content at once. A discussion that reaches a well-argued outcome with an imperfect table has
+worked. A finding about the skill is worth an instruction only if it corrupts the outcome: what
+gets recorded, what gets built, or what the owner believes was decided. A finding that makes only an
+intermediate display imperfect is not, since agent behaviour is not deterministic and an
+instruction bought for display fidelity costs more rules than it saves. Together with
+`design@agent-skills@expectation-set-bounds-scope`, this entry bounds which findings become text.
+
+## How the installed text changes
+
+### The record of the installed text keeps intent and coherence, not wording `##instruction-record-is-minimal`
+
+A decision about the installed text is recorded only where it keeps the owner's intent on record, or
+keeps two parts of the workflow consistent. A rewording, and the rationale for how one instruction
+is phrased, is not recorded. Such proposals can be made without bound, unlike a technical decision,
+which costs implementation work. The commit message carries a rewording's argument.
+
+### An instruction is added to an installed skill only on evidence from real use `##additions-need-real-use`
+
+Real use originates an addition: a behaviour seen in a real session, produced unprompted or asked
+for by the owner mid-session, with the owner naming what the session would have lacked without it,
+and a one-sentence statement of the mechanism that produced the need. An unprompted behaviour shows
+the gap, not the wording that fills it. A review finding originates an edit only where its defect
+is provable by reading: a contradiction, a broken trigger, a factual error. A finding that predicts
+a behaviour is parked as an issue, which states what a real session would have to show. Published
+literature and synthetic scenarios originate no edit. The skill text carries no size budget: an
+edit is judged on whether it changes behaviour, and two real sessions held the design-discussion
+skill's full ledger discipline at several hundred lines without drift. The rule derives from
+`goal@knowledge-architect@the-workflow-improves-through-real-use`, which is stated for the whole
+workflow, so it covers every installed skill. A rule written in the designing-together repository
+for an abandoned discussion was argued, approved, written and reverted in one session, because its
+case was already covered; no observation would have admitted it.
+
+### A gap in an installed skill is worth text when it is a missing capability `##capability-over-conformance`
+
+No wording makes a methodology self-enforcing: a rule set edited toward leaving no gap grows one
+rule per observed interaction, and each new rule creates surface against the rules already there.
+In one revision of designing-together, 34 edits produced 10 interaction defects, nearly all between
+rules that scripted one exchange. So a gap is weighed by its kind. A capability gap is a move the
+agent does not have, such as a way to investigate, to discriminate between positions, or to record
+what the next session needs; filling it is worth text. A conformance gap is a move the agent has and
+might not make; filling it is worth text only where the default behaviour is systematically wrong,
+not occasionally absent, as the design-discussion skill's rules against agreeing without testing
+are. When both readings fit, the capability form is written: a tool and the judgement to use it,
+not a script for one interaction.
+
+### An installed skill's scope is bounded by a stated expectation set, which the retrospective carries `##expectation-set-bounds-scope`
+
+An installed skill may state what it expects of the owner: the assumptions about the owner's
+behaviour and the project's shape that the skill is built on, each naming what degrades when it
+does not hold. The set is the scope test for every proposed edit of the skill: a finding that
+describes an owner's behaviour outside the set is not a gap, and no instruction is written for it.
+The set scopes the owner's behaviour only. A finding that two installed instructions leave no move
+satisfying both is always in scope.
+
+The sets live in the retrospective skill, the one installed activity that judges whether something
+is a defect of an installed skill. The retrospective runs in the installing project, which holds the
+installed files and not this component's README, so a set the retrospective applies has to ship. A
+set inside the skill it bounds would be read on every use of that skill, and an agent reading it
+would check the owner against a list. The README restates each set for the owner, who is the one it
+describes. It works with `design@agent-skills@additions-need-real-use`: that entry says what evidence
+admits an addition, and this one says which gaps are worth admitting. In the designing-together
+repository, a rule for an abandoned discussion was argued, approved, written and reverted in one
+session, and four further review findings about the user's behaviour were queued behind it on the
+same reasoning. Only the design-discussion skill states a set so far:
+`issue@agent-skills@expectation-sets-for-the-installed-skills`.
+
 ## The workflow the skills carry
 
 ### A decision is recorded when the work that implements it lands `##harvest-after-implementation`

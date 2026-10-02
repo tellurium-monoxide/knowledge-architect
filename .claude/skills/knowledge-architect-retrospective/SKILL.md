@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-retrospective
-description: MUST use once per session, at the first of these moments, to offer a retrospective to the owner - a branch the session worked on has merged into the main branch, a plan document has left, or the owner says the session is ending - and run it only if the owner accepts. Covers what the retrospective examines (the installed skills and agents, the project's own instructions, how the two interact, and the checker), the three questions it always asks, the two files it writes outside the project, and how each file reaches the project that must change.
+description: MUST use once per session, at the first of these moments, to offer a retrospective to the owner - a branch the session worked on has merged into the main branch, a plan document has left, or the owner says the session is ending - and run it only if the owner accepts. Covers what the retrospective examines (the installed skills and agents, the project's own instructions, how the two interact, and the checker), the three questions it always asks, the expectation sets that bound what counts as a defect of an installed skill, the two files it writes outside the project, and how each file reaches the project that must change.
 ---
 
 # Retrospective
@@ -49,6 +49,12 @@ done instead.
 - Was the primer present in this session, and in its subagents?
 - Did this session miss something a project skill adds to an installed skill?
 
+**A finding about how the owner works is judged against the skill's expectation set** (§5). A
+finding that describes the owner's behaviour where an installed skill states it assumes otherwise is
+reported as outside that skill's scope, with the assumption quoted, and not as a defect of the
+skill. A finding that two installed instructions leave no move satisfying both is always in scope,
+whatever the owner did.
+
 End with **proposals**: for each finding that has one, what to change, and where.
 
 ## 3. Two files, sorted by whose text must change
@@ -87,3 +93,48 @@ where the owner directs**:
   page.
 
 Nothing leaves the machine without the owner having read it.
+
+## 5. What the installed skills expect of the owner
+
+An installed skill is built on assumptions about how the owner works. Each names what degrades when
+it does not hold. They are not rules the owner is asked to follow; they bound what counts as a
+defect of the skill (§2). A skill not listed here states none yet.
+
+### `knowledge-architect-discussing-design-decisions`
+
+- **The owner brings a design question, not a task order.** The mode assumes the answer is not yet
+  known by either party. Given a decision already made, it argues against it, because testing a
+  proposal is what it is for.
+- **The owner gives the word that closes a thread.** The agent can move threads between open states
+  but cannot close one; that asymmetry is the design. Doing neither leaves threads open, and the
+  discussion cannot converge. There is no way to hand a decision to the agent: "your judgement" is
+  an approval like any other, and every finding that follows it still returns to the owner.
+- **A closed thread is not frozen.** The owner's word reopens one at any time, and needs no new
+  argument; the agent does. Nothing about having been recorded makes a decision final.
+- **The owner says why when rejecting something.** A ruled-out thread carries its reason into the
+  record, and the reopening rule reads that reason to decide whether a later proposal is new. A
+  rejection with no reason cannot do that work, so the same argument comes back.
+- **The owner reads the summary tables and contests what is wrong in them.** The batch confirmation
+  at a checkpoint closes everything in the table at once. Confirming without reading records
+  decisions the owner did not make.
+- **The owner corrects a stated misreading.** A message that could close a thread but does not
+  clearly leaves it `presumed-settled`, with the agent's reading stated. Uncorrected, a wrong
+  reading hardens into the record as though the owner had ruled.
+- **The owner ends a discussion rather than dropping it.** "Stop, build X" and "park this" both end
+  the argument at once. Abandoning silently leaves the criteria and the losing arguments unrecorded.
+- **The owner is the person who can decide.** Every decision routes to the owner. If the real
+  authority is not in the conversation, the discussion converges on a verdict nobody present can
+  act on.
+- **A discussion runs in one session, and its memory does not outlive it.** The ledger lives in the
+  conversation, and what survives is what the planning skill wrote into the plan document. A
+  previous discussion is not resumed in a new session: a new session starts a new discussion,
+  grounded on the record. A resumed session with its full transcript restored is the same session.
+- **The owner is trying to converge**: arguing, ruling, or saying stop. Several rules are released
+  only by the owner's word, and withholding it leaves the discussion parked rather than producing a
+  wrong result.
+- **The owner accepts a methodology, not a script for every exchange.** Conduct outside what the
+  skill describes is the agent's judgement, not a gap to be filled.
+- **The project's design intent is recorded, or the project is new.** The skill grounds itself in the
+  goals, the design homes, the rejected alternatives, the open issues and the tripwires, or failing
+  those in the code and its history. Intent that exists only in someone's memory is not reachable,
+  and proposals will contradict decisions already made without either party noticing.

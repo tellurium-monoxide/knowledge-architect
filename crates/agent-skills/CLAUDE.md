@@ -23,4 +23,24 @@ installed skill by its installed name, which carries the installer's prefix.
 session needs and no installed skill delivers, per `design@agent-skills@primer-limit`. A line that
 restates a skill, or a convention of one project, does not go in it.
 
+## Editing an installed skill
+
+An edit of a skill or an agent under `path@agent-skills@content/` passes three tests, in order. This
+is a restatement; its homes are the entries named.
+
+1. **Scope.** A finding about the owner's behaviour outside the skill's expectation set is not a
+   gap, and no instruction is written for it. The sets are in §5 of
+   `path@agent-skills@content/skills/retrospective/SKILL.md`; a skill not listed there has none yet.
+   A finding that two installed instructions leave no move satisfying both is always in scope
+   (`design@agent-skills@expectation-set-bounds-scope`).
+2. **Necessity.** A contradiction, a broken trigger or a factual error is repaired on reading. An
+   addition needs an observation from a real session, the owner's named lack, and a one-sentence
+   mechanism; a predicted behaviour is parked as an issue (`design@agent-skills@additions-need-real-use`).
+3. **Kind.** A missing capability is worth text; a conformance rule only where the default is
+   systematically wrong (`design@agent-skills@capability-over-conformance`).
+
+For the design-discussion skill, a finding about an intermediate table rather than the outcome is
+not worth text (`design@agent-skills@outcome-over-display`). A rewording needs no design entry
+(`design@agent-skills@instruction-record-is-minimal`).
+
 The decisions about the skills are `path@agent-skills@docs/design.md`.

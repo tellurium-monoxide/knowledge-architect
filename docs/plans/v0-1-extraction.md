@@ -418,6 +418,50 @@ file. No tripwire was recorded. The premortem: the library's interface still car
 repository's assumptions; a project with an extension runs another checker binary, which its xtask
 depends on; a fix to the gates needs a release of every crate, under version-lockstep.
 
+### 3.11 Step 6, the designing-together intake
+
+The intake ran in 17 rounds, one per section of designing-together's record on `next`, then its
+open-items.md, its CLAUDE.md and its README, each ruled by the owner in the terminal. Framing, ruled
+first: F1, the owner's principle that prose about how to write prose is unbounded, approved as an
+entry; F2, the test for keeping an item, approved for the intake and not recorded. Of 161 items of
+the record, the kept ones:
+
+| round | section | outcome |
+| --- | --- | --- |
+| 1 | how the record is kept (9) | all dropped |
+| 2 | the referencing rule (18) | 16 dropped; 2 folded into frontier-tier-only |
+| 3 | model tier (3) | entry frontier-tier-only; rejected alternative on weaker models; 1 dropped |
+| 4 | evidence standard (28) | entry additions-need-real-use, with the no-size-budget fold; 26 dropped |
+| 5 | expectation set (3), pre-release review (4), field reports (3) | entry expectation-set-bounds-scope; 9 dropped |
+| 6, 7 | regression harness (9), release mechanics (13) | all dropped, unseen, on the owner's word |
+| 8 | structure the flow (2), scaffold (3) | entries structure-the-flow, outcome-over-display; 3 dropped |
+| 9 | Language (10) | all dropped: the owner chose position A, the section stays in the skill unrecorded |
+| 10 | rule triggers (8) | all dropped; the head judged covered by the owner |
+| 11 | no delegation grant (9) | no entry, on the owner's word ("I don't think there is any reason someone would reopen that"); one rejected alternative, lost to the goal the-owner-decides; 7 dropped |
+| 12 | criteria (12) | all dropped |
+| 13 | what comes back (1), gaplessness (7) | entry capability-over-conformance; 7 dropped |
+| 14 | the ledger and the record (19) | rejected alternative on a ledger file, lost to designing-hands-off-to-planning; 16 dropped |
+| 15 | open-items.md | second-defensible-shape folded into the bounded-problems issue as a lead; tripwires ledger-lost-before-hand-off and expectation-set-closes-a-contradiction, on the owner's word; the rest dropped |
+| 16 | CLAUDE.md (6 sections) | a directive in the agent-skills CLAUDE.md; the rest dropped; the standing risk reversed here |
+| 17 | README | kept, with eight edits for the fork; Install dropped |
+
+Then a design discussion, under the installed design-discussion skill, on three ideas the owner
+raised in round 1 ("The expectation set is probably the most valuable piece ... a model worth
+following for the other installed skills ... Maybe it should also be mentionned in the
+retrospective skill"):
+
+| thread | state | decision |
+| --- | --- | --- |
+| edit-rules-cover-every-skill | approved | additions-need-real-use, capability-over-conformance and expectation-set-bounds-scope cover every installed skill; the CLAUDE.md directive is "Editing an installed skill" |
+| expectation-set-location | approved | L3: the sets live in the retrospective skill, which runs where this README is not installed; the README restates the design skill's set. Owner: "The retrospective activity needs this knowledge in any case" |
+| retrospective-reads-expectations | approved | the retrospective's §2 judges a finding about the owner's behaviour against the set, a contradiction always in scope |
+| expectation-sets-per-skill | approved | a todo issue; only the design skill's set moves now |
+| triggers-as-tests | approved | no text |
+
+Ruled out: L1, the set inside each skill, on no-policing (the agent running the skill would check
+the owner against a list); L2, a separate installed file, on cost (a core layout change for a file
+one skill reads). No tripwire, on the owner's word.
+
 ## 4. The decided design
 
 ### 4.1 Repository layout
@@ -1234,7 +1278,7 @@ its docs/design.md.
 | 5b, PR 1 | gates, agent-skills, root | done: gates-crate, a-project-holds-its-gate-list, the-library-owns-the-flags, one-spawn-helper; six entries moved from xtask; gates-convention, repo-layout and version-lockstep rewritten |
 | 5b, PR 2 | agent-skills | done: xtask-pins-checker, setup-rust-section; exact-pin rewritten |
 | 6, PR 1 | agent-skills | done: designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning; plugin-inventory needs no entry (approved), the goal one-skill-per-activity states the set |
-| 6, PR 2 | agent-skills | designing-together-retirement, the kept items of the intake |
+| 6, PR 2 | agent-skills | done: instruction-record-is-minimal, frontier-tier-only, additions-need-real-use, expectation-set-bounds-scope, structure-the-flow, outcome-over-display, capability-over-conformance; three rejected alternatives; tripwires ledger-lost-before-hand-off and expectation-set-closes-a-contradiction. designing-together-retirement needs no entry in the agent's reading: a migration done once, whose outcome is these entries |
 
 **Losing alternatives.** Section 3.2 and the absorbed shapes of 3.3 are judged against
 recording-a-decision's tests at the harvest of the decision they lost to. The likeliest to pass:
@@ -1563,6 +1607,16 @@ Step 7 publishes three crates.
   naming no path of this repository and writing the command as the install placeholder;
   self-hosted holds, the skill installed and checked here; owner-intent, ship-isolation and
   thaum-keeps-working are not touched.
+- **The intake landed on the branch step-6b-designing-together-intake** (3.11): the kept items as
+  entries, rejected alternatives and tripwires of agent-skills; the retrospective carries the design
+  skill's expectation set in a new §5, and §2 judges findings against it; the agent-skills CLAUDE.md
+  restates the editing rules; the README carries the skill's description, expectations, model
+  requirements, literature and origin; `issue@agent-skills@expectation-sets-for-the-installed-skills`
+  is open. The owner archives the designing-together repository. Of the criteria of section 2:
+  one-workflow holds, a contradiction between installed instructions staying in scope of every
+  retrospective; nothing-compiled-in holds, the retrospective's §5 naming no path of this
+  repository; self-hosted holds; owner-intent, ship-isolation and thaum-keeps-working are not
+  touched.
 - Review axes: transcript conformity against the intake session, with the transcript extracted as
   the head says, and self-consistency.
 

@@ -23,3 +23,26 @@ you found") — lost to `design@agent-skills@primer-content`. `live`. The owner 
 sessions, that an agent left a small defect neither fixed nor recorded, as a one-line mention inside
 a long report, where it is easy to miss. That observation cannot be derived again in one discussion
 round, and the rule it defeats is the common one.
+
+**Writing the skills so that weaker models can follow them** — lost to
+`design@agent-skills@frontier-tier-only`. `live`. A scripted comparison showed a smaller model
+reproducing the design-discussion skill's format without its discipline, so simpler wording would
+change the format and not the behaviour. That comparison cannot be derived again in one discussion
+round, and simplifying for a cheaper model is a change that will be proposed again.
+
+**A delegated state, under which the owner hands a decision to the agent within a stated boundary,
+or a note recording that judgement was handed over** — lost to
+`goal@knowledge-architect@the-owner-decides`. `live`. A word that hands judgement over is an
+approval like any other, as is approving every default on a quick read. The state was decided and
+reversed in one revision of designing-together, after five of that revision's eight blocking review
+findings fell on it: inside a grant, a correction whose own action could not be undone ran with no
+word from the owner.
+
+**Writing the discussion's ledger to a file during the discussion, so it survives compaction or a
+new session** — lost to `design@agent-skills@designing-hands-off-to-planning`. `live`. An artifact an
+agent must update every round is one it forgets to update, and a stale ledger stated with
+confidence is worse than none. A survey of agent systems that keep state files found two
+properties a thread ledger lacks: the state is corroborated against something outside the model,
+such as git, and every system that lets a model overwrite its state caps it hard. A thread ledger's
+only corroborant is the conversation, which is what compaction removes. In the runs of the
+designing-together skill, thread states were correct without a file.

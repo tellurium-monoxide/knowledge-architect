@@ -28,6 +28,11 @@ What the owner has stated about the skill:
   `design@agent-skills@bounded-problem-branch`.
 - "Ultimately, I'd like to make my own skill for this use case."
 
+A lead for the skill: a review of designing-together predicted that "a second defensible shape is
+nameable for nearly any request", which would make the design-discussion skill's open-space test
+classify almost every problem as open, and leave the bounded case nearly unreachable. No session
+has shown it. The classification the new skill receives is where it would show.
+
 ### Why it matters
 
 The owner has decided that the skill is installed. Until it is, a session that meets a bounded
