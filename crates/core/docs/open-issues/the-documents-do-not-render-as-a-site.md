@@ -13,7 +13,8 @@ into a link, the result built by mdbook and hosted with the project. Nothing bui
 ### What
 
 A preprocessing pass that rewrites each reference into a link to its entry, and an mdbook build of
-the result, hosted with the project once it is released. Nothing about the shape is decided.
+the result, hosted with the project once it is released. Beyond the mdbook build the goal names,
+nothing about the shape is decided.
 
 ### Why it matters
 

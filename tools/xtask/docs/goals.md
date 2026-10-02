@@ -3,7 +3,7 @@
 What this tool is for. A goal is met or unmet, where a decision about how the tool is built is
 won or lost and lives in `path@xtask@docs/design.md`. A goal stays here while it is met, and leaves
 only when the owner abandons it. This tool serves the project rather than its consumers, so its
-goals refine no goal of `path@knowledge-architect@docs/goals.md`.
+goals need not refine a goal of `path@knowledge-architect@docs/goals.md`.
 
 ## Every check the project owes before a merge runs from one command `##one-command-runs-every-gate`
 

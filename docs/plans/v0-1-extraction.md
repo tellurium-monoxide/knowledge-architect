@@ -359,24 +359,36 @@ neither file (an interaction finding goes in both).
 ### 3.9 Step 5, the goals pass (PR 6)
 
 Held on 2026-10-02 under the installed setting-goals skill, its first real use. The owner questioned
-goals-required: "I'm wondering whether requiring one goal per component is actually a good idea".
-Evidence taken: agent-skills' design entries cite 23 goals, all the root's; the core's cite 7, all
-the root's; xtask's cite none; no text cites a goal of the core. A first proposal, placing each goal
-in the smallest scope serving it, lost to the owner's argument that it "might lead to excessive
-promotion of goals into the root documents".
+goals-required: "I'm wondering whether requiring one goal per component is actually a good idea. I
+feel like agent-skills goals might already be covered by poject level goals". Evidence taken:
+agent-skills' design entries hold 23 references to 7 distinct goals, all the root's; the core's
+hold 7 references to 2 distinct goals, all the root's; xtask's hold none; no text references a goal
+of the core. The owner's reading of it: in a larger project "the root goals are very large, and
+they can only be fulfilled by assembling multiple components, each serving sub-goals".
+
+Two proposals of the agent lost. The first, a Component stating goals only for what the root's
+goals do not cover, was superseded by the agent itself before any ruling. The second, placing each
+goal in the smallest scope serving it, lost to the owner's argument that it "might lead to
+excessive promotion of goals into the root documents".
 
 | thread | state | decision |
 | --- | --- | --- |
-| goal-placement | approved | a goal sits in the Component responsible for fulfilling it; the root's goals state what the project provides to its consumers; a published Component's goals are nearly always sub-goals refining a root goal; a Component serving only the project has goals that refine none. The owner: "goals stay confined to the main component whose responsibiliy is fulfilling them", "components that are published are serving external consumers, and project goals are what describe what we intend to provide to external consumers", and of xtask, "they serve all of them all the time". goals-required stands |
-| the-owner-decides at the root | approved | it stays a root goal. The owner: "on the core side, it also justifies that we have a goals register that is separate from design registers … It does applies constraints on the core component, and also on the workflow we are providing to external consumers" |
-| maintenance-tool goals in setting-up | approved | setting-up proposes one-command-runs-every-gate and repeated-tasks-are-automated, in the approved wording, for a project's maintenance tool. The owner: "I would also recommend setting these two goals (with those wordings) in the project setting-up skill" |
-| an unmet goal | approved | a goal need not be met yet; it is the owner's intent and constrains future work; a `todo` issue holds the work that would fulfil it. The owner: "A goal does not need to be fulfilled *right now*. It is my intent about where I want the project to reach, and constrains future work and design" |
+| goal-placement | approved | a goal sits in the Component responsible for fulfilling it; the root's goals state what the project provides to its consumers; a published Component's goals are nearly always sub-goals refining a root goal; a Component serving only the project has goals that need not refine one. The owner: "goals stay confined to the main component whose responsibiliy is fulfilling them", "components that are published are serving external consumers, and project goals are what describe what we intend to provide to external consumers", and of xtask, "they serve all of them all the time". goals-required stands |
+| the-owner-decides at the root | approved | it stays a root goal. The owner: "I would not move it down I think … on the core side, it also justifies that we have a goals register that is separate from design registers (even though this is not something that warrants a recorded decision). It does applies constraints on the core component, and also on the workflow we are providing to external consumers" |
+| maintenance-tool goals in setting-up | approved | setting-up proposes one-command-runs-every-gate and repeated-tasks-are-automated for a project's maintenance tool, in the approved wording without the sentence "None exists today", which describes this repository. The owner: "I would also recommend setting these two goals (with those wordings) in the project setting-up skill" |
+| an unmet goal | approved | a goal need not be met yet; it is the owner's intent and constrains future work. For documents-render-as-a-linked-site, a `todo` issue holds the work ("Maybe a todo entry "fulfill this goal" could be added to go with it"); the general rule, a `todo` issue for every unmet goal no plan schedules, is the agent's default. The owner: "A goal does not need to be fulfilled *right now*. It is my intent about where I want the project to reach, and constrains future work and design" |
 
 The goals ruled on by slug: xtask's one-command-runs-every-gate (reworded, the reference to a root
 goal dropped) and repeated-tasks-are-automated; agent-skills' one-skill-per-activity and
 installed-text-works-anywhere; the core's documents-stay-current, declared-instructions-are-checked,
 relocation-is-one-manifest-edit and records-reach-their-reader, each with a paragraph proposed from
-the core's records, and documents-render-as-a-linked-site, kept as written, with a `todo` issue.
+the core's records, and documents-render-as-a-linked-site, kept as written, with a `todo` issue. The
+owner: "should be added to the core goals IMO (or maybe even to root)"; it stays in the core.
+
+Not ruled on: the goal-check issue, which the agent's default leaves open; whether any root goal
+other than the-owner-decides moves to a Component; the rewritten argument of goals-required; the
+heads the agent wrote for the goals homes of agent-skills and xtask. The last three were put to the
+owner with the review.
 
 ## 4. The decided design
 

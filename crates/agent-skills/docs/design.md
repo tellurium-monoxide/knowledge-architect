@@ -364,7 +364,9 @@ binary under a name of its own, per `design@core@declared-command`.
 One command runs every check a project owes before a merge, runs them all when one fails, and exits
 non-zero when any fails, so a verdict is one exit code and nothing is read through a pipe. In a Rust
 project the conventional shape is a maintenance crate run through a cargo alias. The workflow
-recommends the shape and ships no code: the checks a project owes are its own.
+recommends the shape and ships no code: the checks a project owes are its own. The setting-up
+skill proposes two goals for such a tool, for the owner's ruling: one command runs every check owed
+before a merge, and a task performed repeatedly becomes a command of the tool.
 
 ### Every Component states at least one goal `##goals-required`
 
@@ -374,18 +376,6 @@ is a Component's responsibility left unstated is one nobody is responsible for, 
 `goal@knowledge-architect@the-owner-decides`. What those goals are is
 `design@agent-skills@goal-placement`. Nothing checks it mechanically yet:
 `issue@core@a-component-states-at-least-one-goal`.
-
-### A goal sits in the Component responsible for fulfilling it `##goal-placement`
-
-A goal is written in the goals home of the Component whose responsibility it is to fulfil it, even
-when decisions of other Components serve it too: a goal of any Component can be referenced from
-anywhere, so serving it does not require moving it. The root's goals state what the project
-provides to its consumers. A published Component serves those consumers, so its goals are nearly
-always sub-goals that refine a root goal, more specific than the root states, and each references
-the root goal it refines. A Component that serves only the project, such as a maintenance tool,
-serves all of the root's goals at once, and its goals refine none. Promoting a goal to the root
-because several Components serve it lost: it would fill the root with goals no single Component is
-responsible for.
 
 ### A decision that relies on the checker says so, and references none of its decisions `##relying-on-the-checker`
 
@@ -423,11 +413,32 @@ the rulings by slug keep it the owner's, per `goal@knowledge-architect@the-owner
 nothing and only asking lost: it gave up the help with the wording. Drafting and letting the owner
 correct lost too: a goal accepted by not objecting is not the owner's word.
 
-### A Component's goal names the project goal it serves `##component-goal-serves-root`
+### A goal sits in the Component responsible for fulfilling it `##goal-placement`
 
-A Component's goal that serves a goal of the root carries a reference to it, so rewording or
+A goal is written in the goals home of the Component whose responsibility it is to fulfil it, even
+when decisions of other Components serve it too: a goal of any Component can be referenced from
+anywhere, per `design@core@a-slug-belongs-to-a-component`, so serving it does not require moving
+it. The root's goals state what the project provides to its consumers. A published Component
+serves those consumers, so its goals are nearly always sub-goals that refine a root goal, more
+specific than the root states, and each references the root goal it refines. A Component that
+serves only the project, such as a maintenance tool, serves all of the root's goals at once, and
+its goals need not refine one. Placing a goal at the root because several Components serve it lost:
+it would lead to an excessive promotion of goals into the root, and leave a goal with no Component
+responsible for it, against `goal@knowledge-architect@the-owner-decides`.
+
+### A Component's goal names the project goal it refines `##component-goal-refines-root`
+
+A Component's goal that refines a goal of the root carries a reference to it, so rewording or
 abandoning the root goal lists every Component goal derived from it, per
-`design@knowledge-architect@a-reference-claims-a-revisit`.
+`design@knowledge-architect@a-reference-claims-a-revisit`. Which goals refine a root goal is
+`design@agent-skills@goal-placement`.
+
+### A goal need not be met yet `##an-unmet-goal-is-intent`
+
+A goal is the owner's intent about where the project should get to, and it constrains future work
+and design from the moment it is written, met or not. When nothing fulfils it yet and no plan
+document schedules the work, a `todo` issue holds that work and references the goal, so the gap
+between the goal and the tree is listed as outstanding work.
 
 ### Goals change only through the setting-goals skill `##when-setting-goals-runs`
 

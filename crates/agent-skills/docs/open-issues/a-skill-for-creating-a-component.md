@@ -20,7 +20,7 @@ has not converged on what a new Component requires.
 ### Why it matters
 
 A Component created without its goals or its design home's introduction passes the check once its
-documents exist, empty, and its decisions then bind only as presumptions, against
+documents exist, empty, and a goal that is its responsibility is then stated nowhere, against
 `design@agent-skills@goals-required`.
 
 ### What would close it

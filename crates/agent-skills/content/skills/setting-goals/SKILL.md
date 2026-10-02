@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-setting-goals
-description: MUST use when a Component has no goal, when the owner states a new purpose or abandons one, when a recorded decision conflicts with a goal, and before writing or editing any goals home. Covers what a goal is and how it differs from a decision, how the owner's intent is drawn out and written as a draft the owner rules on goal by goal, the shape of a goal entry, how a Component's goal names the project goal it serves, and why a goal leaves only on the owner's word.
+description: MUST use when a Component has no goal, when the owner states a new purpose or abandons one, when a recorded decision conflicts with a goal, and before writing or editing any goals home. Covers what a goal is and how it differs from a decision, how the owner's intent is drawn out and written as a draft the owner rules on goal by goal, the shape of a goal entry, how a Component's goal names the project goal it refines, where each goal sits, and why a goal leaves only on the owner's word.
 ---
 
 # Setting goals
@@ -44,12 +44,12 @@ is to fulfil it, even when other Components' decisions serve it too: any goal ca
 anywhere. The root's goals state what the project provides to its consumers. A published Component
 serves those consumers, so its goals are nearly always sub-goals: more specific than a root goal,
 perhaps not stated by it, and still to be fulfilled. A Component that serves only the project, such
-as a maintenance tool, serves every root goal at once, and its goals refine none. Every Component
+as a maintenance tool, serves every root goal at once, and its goals need not refine one. Every Component
 states at least one goal.
 
 A Component's goal that refines a goal of the project's root names it, with a reference in its
 body: `goal@<root anchor>@<slug>`. Then `{{command}} show goal@<root anchor>@<slug>` lists every
-Component goal that served it, and removing the root goal leaves each of those references dangling,
+Component goal that refines it, and removing the root goal leaves each of those references dangling,
 which the check reports.
 
 The head of the goals home says what it holds: a goal is met or unmet, it stays while it is met,
@@ -75,9 +75,9 @@ is argued from one.
 5. Write the approved goals, exactly as approved, and nothing else.
 
 **A goal need not be met yet.** A goal is the owner's intent about where the project should get to,
-and it constrains future work and design from the moment it is written. When nothing fulfils it yet,
-open a `todo` issue for the work that would, under `knowledge-architect-tracking-open-issues`, and
-reference the goal from it.
+and it constrains future work and design from the moment it is written. When nothing fulfils it yet and
+no plan document schedules the work that would, open a `todo` issue for that work, under
+`knowledge-architect-tracking-open-issues`, and reference the goal from it.
 
 ## 4. When this runs again
 
