@@ -363,34 +363,34 @@ binary under a name of its own, per `design@core@declared-command`.
 
 One command runs every check a project owes before a merge, runs them all when one fails, and exits
 non-zero when any fails, so a verdict is one exit code and nothing is read through a pipe. In a Rust
-project the shape is a maintenance crate run through a cargo alias, whose gates command hands its
-gate list to the published library, per `design@gates@gates-crate`, so every adopting project runs
-the gates refined in this repository and in thaum, per
-`goal@knowledge-architect@setup-brings-quality-tools`. The gates a project owes are its own list.
-The setting-up skill proposes two goals for such a tool, for the owner's ruling: one command runs
-every check owed before a merge, and a task performed repeatedly becomes a command of the tool.
-
+project it is a command of the maintenance crate, per `design@agent-skills@xtask-pins-checker`, so
+every adopting project runs the gates refined in this repository and in thaum. The gates a project
+owes are its own list. The setting-up skill proposes two goals for such a tool, for the owner's
+ruling: one command runs every check owed before a merge, and a task performed repeatedly becomes a
+command of the tool.
 
 ### In a Rust project, one maintenance crate pins the checker and runs the gates `##xtask-pins-checker`
 
 The maintenance crate of a Rust project depends on the checker and on the gates library, both
 pinned exactly, and serves two cargo aliases: `cargo x` for its own commands, the gates among them,
 and `cargo klarch` for the checker's commands, which it carries under a command of its own through
-the core's library. One crate does what two would otherwise do: the gates run the checker this
-crate pins, and its other repeated tasks have a place beside them, per
-`goal@gates@gates-from-a-list`. The cost accepted: building the gates builds the checker, which the
-check gate needs anyway.
+the core's library, per `design@core@the-core-cli-is-a-library-module`. The gates run through the
+published library, per `design@gates@gates-crate`, and the checker they run is the one this crate
+pins. One crate does what a crate for the checker and a crate for the gates would otherwise do,
+and gives the project's other repeated tasks a place, per
+`goal@knowledge-architect@setup-brings-quality-tools`. The cost accepted: building the gates builds
+the checker, which the check gate needs anyway.
 
-### setting-up shows a Rust project its maintenance crate, built and run `##setup-rust-section`
+### setting-up shows a Rust project its maintenance crate `##setup-rust-section`
 
 The setting-up skill ends with a section for a Rust project: the maintenance crate's manifest, its
 aliases, its main, the recommended gates and a continuous integration workflow that runs them on
-every ready pull request. The crate, its aliases and its main were built and run in a scratch
-adopting project before they were written, all six gates passing; the workflow is a reduction of
-this repository's own. Each is labelled as an illustration to adapt. It serves
-`goal@knowledge-architect@setup-brings-quality-tools`. The section is for Rust because the project is
-focused on Rust, the language whose comments the checker reads; another language gets a section of
-its own when a project needs one.
+every ready pull request, each labelled as an illustration to adapt. It serves
+`goal@knowledge-architect@setup-brings-quality-tools`. The section is for Rust because the project
+is focused on Rust, the language whose comments the checker reads; another language gets a section
+of its own when a project needs one. No check compiles its snippet:
+`issue@agent-skills@the-setting-up-snippet-is-unchecked`.
+
 ### Every Component states at least one goal `##goals-required`
 
 The setting-up skill does not finish a Component without at least one goal, stated with the owner.

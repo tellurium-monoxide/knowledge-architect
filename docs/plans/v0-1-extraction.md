@@ -937,7 +937,8 @@ workspace. thaum pins its checker only because its own crate rules-corpus links 
 project without an extension has two ways to run a pinned binary:
 
 - a small crate in its workspace whose main calls the library's CLI, run through a cargo alias, as
-  thaum does with its extension;
+  thaum does with its extension. Since step 5b this is the project's maintenance crate, which also
+  runs the gates (3.10, xtask-pins-checker);
 - `cargo install --locked --root <dir> knowledge-architect --version =x.y.z` into a project-local,
   gitignored directory. The binary lands in `<dir>/bin/klarch`, and the declared command names it.
   This also serves projects not written in Rust.

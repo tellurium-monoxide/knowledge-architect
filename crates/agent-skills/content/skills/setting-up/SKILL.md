@@ -193,10 +193,9 @@ To move to another version:
 
 ## In a Rust project
 
-A Rust project gets its gates and its pinned checker from one maintenance crate, conventionally
-`tools/xtask`, a member of its workspace that is never published. The crate, the aliases and the
-main below were built and run in a scratch project, all its gates passing; the continuous
-integration workflow is a reduction of one in use. All are illustrations of the shape, to adapt.
+A Rust project gets its gates and its pinned checker from one maintenance crate, a package named
+`xtask` in a directory such as `xtask/` or `tools/xtask/`, a member of its workspace that is never
+published. The shapes below are illustrations, to adapt.
 
 **The crate.** It depends on the checker and on the gates library, both pinned exactly to the
 version the project uses, and on clap:
@@ -296,7 +295,7 @@ fn main() -> ExitCode {
 a gate the project owes by pushing a `Gate` to that list, with the distiller that shows its failure;
 remove one only on the owner's word. Pass the main branch as git names it, such as `origin/main`.
 The tool writes every gate's complete output under `target/gates/`, refuses to write its report
-into a pipe, and exits non-zero when any gate fails: read a run in the terminal, or redirect it to
+into a pipe outside GitHub Actions, and exits non-zero when any gate fails: read a run in the terminal, or redirect it to
 a file.
 
 **A project with an extension** depends on the crate that holds its extension instead of the
@@ -317,6 +316,7 @@ jobs:
   check:
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
         with:
@@ -335,4 +335,6 @@ jobs:
 `cargo --locked x` keeps cargo from rewriting a drifted `Cargo.lock` before the tool starts, and
 the tool's own `--locked` reaches every gate that resolves dependencies. The head commit is checked
 out rather than a merge commit, so the range the commits gate judges is the branch's own. A draft
-is skipped, so a merge is decided on a ready pull request's checks.
+is skipped, and GitHub counts a skipped job as passing: whoever merges reads the draft flag, and
+checks that the job ran on the pull request's current head. A hung job stops at its time limit
+rather than the default of six hours.
