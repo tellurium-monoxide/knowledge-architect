@@ -386,9 +386,14 @@ the core's records, and documents-render-as-a-linked-site, kept as written, with
 owner: "should be added to the core goals IMO (or maybe even to root)"; it stays in the core.
 
 Not ruled on: the goal-check issue, which the agent's default leaves open; whether any root goal
-other than the-owner-decides moves to a Component; the rewritten argument of goals-required; the
-heads the agent wrote for the goals homes of agent-skills and xtask. The last three were put to the
-owner with the review. After it, the owner ruled that the maintenance-tool goals keep the linter and
+other than the-owner-decides moves to a Component. Put to the owner after the review and approved
+("approved for all four"): the rewritten argument of goals-required, the heads the agent wrote for
+the goals homes of agent-skills and xtask, and a new root goal, setup-brings-quality-tools, from the
+owner's statement: "Part of my intent with this set-up skill is to facilitate/automate setting up
+new projects that uses knowledge-architect and have a similar layout and QA tools as thaum … it
+promotes setting up various QA tools, with recommended shapes that have been proven useful and
+synergize well in particular with knowledge-architect itself". It is unmet, and a todo issue holds
+the work. After it, the owner ruled that the maintenance-tool goals keep the linter and
 the continuous integration as conditional on the project ("I would make those conditional on the
 project, not drop the items that not every project has").
 

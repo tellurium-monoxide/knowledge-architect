@@ -60,3 +60,11 @@ AI agents. A project without agents can still use the checker alone.
 
 Real sessions are the test of the workflow, not synthetic scenarios. The retrospective collects
 what was unclear, missing or wrong, and the owner decides what changes.
+
+## Adopting the workflow sets up quality tools proven to work with it `##setup-brings-quality-tools`
+
+A project that adopts knowledge-architect is led to set up the quality-assurance tools that have
+proven useful alongside it, in recommended shapes that work well with the checker: one command
+running every check owed before a merge, continuous integration running that command, commit
+messages checked as documents, and the checks of the project's language. It is met while a project
+set up by following the workflow reaches these tools without designing them itself.
