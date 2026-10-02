@@ -5,19 +5,21 @@
 //! it. Before this table five checks held five notions of a name; the argument is
 //! `design@core@one-entity-table`.
 //!
-//! **A kind is a register's name, or `path`.** Four registers are compiled in and a project
+//! **A kind is a register's name, or `path`.** Six registers are compiled in and a project
 //! declares the rest, so the kind set is data rather than an enum — `path@core@src/manifest.rs`
 //! owns what a register is, and this module owns what naming one means.
 //!
 //! **An anchor is a named directory that carries registers.** A component carries every
 //! component-scoped register with its homes under `docs/`; a location carries the subset it
 //! declares, with its homes directly under its own path. Both are the same shape, which is why
-//! `Anchor` holds its register list and its home base as data.
+//! `Anchor` holds its register list and its home base as data. Two kinds of location are
+//! constructed by the tool rather than declared: `plans`, at the plans directory, and one anchor
+//! per milestone directory, read off the tree.
 //!
 //! **The `path` kind is resolved against the tree, not the table.** Its ids are paths, its
-//! anchors are the same anchors plus two reserved words, and the check that resolves it needs
-//! the survey. What this module gives it is the candidate rule, the segmentation and the anchor
-//! lookup, so one grammar has one reader.
+//! anchors are the same anchors but the milestones, plus two reserved words, and the check that
+//! resolves it needs the survey. What this module gives it is the candidate rule, the
+//! segmentation and the anchor lookup, so one grammar has one reader.
 
 use std::collections::BTreeMap;
 use std::fmt;
@@ -27,7 +29,10 @@ use std::sync::{Arc, LazyLock};
 use regex::Regex;
 
 use crate::finding::Finding;
-use crate::manifest::{Manifest, Register, Registers, Shape, COMPONENT_DOCUMENTS};
+use crate::manifest::{
+    Manifest, Register, Registers, Shape, COMPONENT_DOCUMENTS, MILESTONES_HOME, MILESTONE_REGISTER,
+    PLANS_DIR, SPEC_REGISTER,
+};
 use crate::model::Model;
 use crate::scan::{Observation, SlugSite};
 
@@ -71,6 +76,15 @@ pub(crate) const ESCAPE_ANCHOR: &str = "elsewhere";
 
 /// The reserved anchor for every component's own copy of a path.
 pub(crate) const EVERY_ANCHOR: &str = "*";
+
+/// The reserved name of the anchor the tool constructs at the plans directory.
+pub(crate) const PLANS_ANCHOR: &str = "plans";
+
+/// Whether a word is reserved by the tool, so no declared anchor and no plan may wear it: the
+/// two words of the `path` kind, and the plans anchor's name.
+pub(crate) fn is_reserved_anchor(word: &str) -> bool {
+    word == ESCAPE_ANCHOR || word == EVERY_ANCHOR || word == PLANS_ANCHOR
+}
 
 /// The shape an anchor name must have for a reference to be able to name it.
 ///
@@ -122,6 +136,21 @@ pub(crate) struct Anchor {
     pub registers: Vec<String>,
     /// Whether it is a component, which owes the compiled-in documents beside its registers.
     pub is_component: bool,
+    /// Which location the tool constructs this is, or `None` for a declared anchor.
+    pub constructed: Option<Constructed>,
+}
+
+/// The two locations the tool constructs rather than a manifest row declares.
+///
+/// Each is a location in every respect but the three this names, each a decision of the plans
+/// layout: what `plans` owes, where a milestone keeps its register, and which kinds it carries.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Constructed {
+    /// The anchor `plans` at the plans directory. It owes a `README.md` beside its two homes.
+    Plans,
+    /// One milestone directory. Its one register, `spec`, has its home at the anchor's own
+    /// path, and it carries no `path` kind: a plan document is cited by its kind.
+    Milestone,
 }
 
 impl Anchor {
@@ -136,6 +165,7 @@ impl Anchor {
                 .map(|r| r.name.clone())
                 .collect(),
             is_component: true,
+            constructed: None,
         }
     }
 
@@ -147,7 +177,33 @@ impl Anchor {
             home_base: path.to_path_buf(),
             registers,
             is_component: false,
+            constructed: None,
         }
+    }
+
+    /// The anchor `plans`, carrying the two plan registers.
+    pub(crate) fn plans() -> Self {
+        Self {
+            constructed: Some(Constructed::Plans),
+            ..Self::location(
+                PLANS_ANCHOR,
+                Path::new(PLANS_DIR),
+                vec![SPEC_REGISTER.to_string(), MILESTONE_REGISTER.to_string()],
+            )
+        }
+    }
+
+    /// The anchor of one milestone directory, carrying `spec` at its own path.
+    pub(crate) fn milestone(name: &str, path: &Path) -> Self {
+        Self {
+            constructed: Some(Constructed::Milestone),
+            ..Self::location(name, path, vec![SPEC_REGISTER.to_string()])
+        }
+    }
+
+    /// Whether this is a milestone anchor, which carries no `path` kind.
+    pub(crate) fn is_milestone(&self) -> bool {
+        self.constructed == Some(Constructed::Milestone)
     }
 
     /// Whether this is the component at the project root.
@@ -155,16 +211,30 @@ impl Anchor {
         self.path.as_os_str().is_empty()
     }
 
-    /// Whether a reference of this kind may anchor here.
+    /// Whether a reference of this kind may anchor here. Every anchor carries `path` but a
+    /// milestone, whose documents are cited by their kind.
     pub(crate) fn carries(&self, kind: &Kind) -> bool {
-        kind.is_path() || self.registers.iter().any(|r| r == kind.name())
+        if kind.is_path() {
+            return !self.is_milestone();
+        }
+        self.registers.iter().any(|r| r == kind.name())
     }
 
     /// The home of one register here, given that register's declaration.
+    ///
+    /// A milestone keeps its `spec` register at its own path, so the File shape's retired
+    /// single file is the `<id>.md` beside the milestone directory.
     pub(crate) fn home_of(&self, register: &Register) -> Home {
-        let dir = self.home_base.join(&register.dir);
+        let (dir, file) = if self.is_milestone() {
+            (self.path.clone(), self.path.with_extension("md"))
+        } else {
+            (
+                self.home_base.join(&register.dir),
+                self.home_base.join(format!("{}.md", register.dir)),
+            )
+        };
         Home {
-            file: self.home_base.join(format!("{}.md", register.dir)),
+            file,
             readme: dir.join("README.md"),
             index: dir.join("index.md"),
             config: dir.join("register.toml"),
@@ -182,8 +252,17 @@ pub(crate) struct Anchors {
 }
 
 impl Anchors {
-    /// The anchors a manifest declares: its components, then its locations.
-    pub(crate) fn of(manifest: &Manifest) -> Self {
+    /// The anchors of one tree: the components and locations its manifest declares, then the
+    /// anchor `plans` and one anchor per milestone directory the tree holds.
+    ///
+    /// **`paths` is the tree's listing**, files and directories or files alone: the milestone
+    /// anchors are read off it, so every caller that builds the anchors of a tree hands in that
+    /// tree's own paths, a commit's included. A milestone directory whose name
+    /// [`milestone_refusal`] refuses is no anchor, and `check::tree` reports it.
+    pub(crate) fn of<'a>(
+        manifest: &Manifest,
+        paths: impl IntoIterator<Item = &'a PathBuf>,
+    ) -> Self {
         let registers = manifest.registers().clone();
         let mut list: Vec<Anchor> = manifest
             .components()
@@ -194,7 +273,22 @@ impl Anchors {
         for (name, decl) in manifest.locations() {
             list.push(Anchor::location(name, &decl.path, decl.registers.clone()));
         }
+        if manifest.plans() {
+            list.push(Anchor::plans());
+            for (name, path) in milestone_dirs(paths) {
+                if milestone_refusal(&name, manifest).is_none() {
+                    list.push(Anchor::milestone(&name, &path));
+                }
+            }
+        }
         Self { list, registers }
+    }
+
+    /// The anchors of a manifest over a tree that places no milestone, for a test about the
+    /// declared anchors alone.
+    #[cfg(test)]
+    pub(crate) fn declared(manifest: &Manifest) -> Self {
+        Self::of(manifest, &[] as &[PathBuf])
     }
 
     /// Anchors stated directly, for a test that needs a register list no component has.
@@ -265,9 +359,9 @@ impl Anchors {
     }
 
     /// Whether `word` could stand in the anchor position of some reference: a declared
-    /// anchor, or one of the two words reserved for `path`.
+    /// anchor, or a word the tool reserves.
     pub(crate) fn is_anchor_word(&self, word: &str) -> bool {
-        word == EVERY_ANCHOR || word == ESCAPE_ANCHOR || self.by_name(word).is_some()
+        is_reserved_anchor(word) || self.by_name(word).is_some()
     }
 
     /// The register home an anchor keeps one register in, or `None` where it carries none.
@@ -320,6 +414,52 @@ impl Anchors {
         }
         None
     }
+}
+
+/// Each directory directly under the milestones home that holds a `README.md`, by basename:
+/// the milestone anchors a tree places, before [`milestone_refusal`] judges their names.
+///
+/// A directory with no `README.md` is no milestone, and `check::tree` reports it.
+pub(crate) fn milestone_dirs<'a>(
+    paths: impl IntoIterator<Item = &'a PathBuf>,
+) -> BTreeMap<String, PathBuf> {
+    let home = Path::new(PLANS_DIR).join(MILESTONES_HOME);
+    let mut out = BTreeMap::new();
+    for path in paths {
+        let Ok(inside) = path.strip_prefix(&home) else {
+            continue;
+        };
+        let parts: Vec<_> = inside.components().collect();
+        if let [dir, readme] = parts.as_slice() {
+            if readme.as_os_str() == "README.md" {
+                let name = dir.as_os_str().to_string_lossy().into_owned();
+                out.insert(name, home.join(dir));
+            }
+        }
+    }
+    out
+}
+
+/// Why a milestone directory's name makes it no anchor, or `None` when it is one.
+///
+/// A milestone is cited `spec@<id>@<step>` and `milestone@plans@<id>`, so its name is an entity
+/// id, and it is no other anchor's name and no reserved word, or a reference would read as the
+/// other anchor (clause P2 of the plans layout). Judged against the anchors the manifest
+/// accepted.
+pub(crate) fn milestone_refusal(name: &str, manifest: &Manifest) -> Option<String> {
+    if !is_entity_id(name) {
+        return Some("is not lower-case words joined by hyphens".to_string());
+    }
+    if is_reserved_anchor(name) {
+        return Some("is a word the tool reserves".to_string());
+    }
+    if manifest.components().all().iter().any(|c| c.name == name) {
+        return Some("is the name of a component".to_string());
+    }
+    if manifest.locations().contains_key(name) {
+        return Some("is the name of a location".to_string());
+    }
+    None
 }
 
 /// Where something was written.
@@ -563,6 +703,10 @@ impl Entities {
     /// whose id no reference can spell, which is reported rather than passed over.
     fn file_definitions(&mut self, model: &Model, anchors: &Anchors) {
         for (anchor, register, home) in anchors.instances() {
+            if register.shape == Shape::Directory {
+                self.directory_definitions(anchors, anchor, register, &home);
+                continue;
+            }
             if register.shape != Shape::File {
                 continue;
             }
@@ -606,6 +750,35 @@ impl Entities {
                     .or_default()
                     .push(at);
             }
+        }
+    }
+
+    /// One entity per milestone anchor directly under a Directory home, defined at its README.
+    ///
+    /// The entries are anchors, so they are read off the anchor list rather than off the
+    /// documents: a directory the tree holds that is no anchor is `check::tree`'s finding.
+    fn directory_definitions(
+        &mut self,
+        anchors: &Anchors,
+        anchor: &Anchor,
+        register: &Register,
+        home: &Home,
+    ) {
+        for entry in anchors.all() {
+            if !entry.is_milestone() || entry.path.parent() != Some(home.dir.as_path()) {
+                continue;
+            }
+            self.defined
+                .entry((
+                    Kind::new(&register.name),
+                    anchor.name.clone(),
+                    entry.name.clone(),
+                ))
+                .or_default()
+                .push(Site {
+                    file: entry.path.join("README.md"),
+                    line: 1,
+                });
         }
     }
 
@@ -773,7 +946,7 @@ mod tests {
         let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
-        Anchors::of(&Manifest::parse(Path::new("/nowhere"), text).expect("a declaration"))
+        Anchors::declared(&Manifest::parse(Path::new("/nowhere"), text).expect("a declaration"))
     }
 
     fn table(docs: Vec<(&str, &str)>) -> Entities {
@@ -1059,7 +1232,7 @@ mod tests {
              ";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         assert!(m.complaints().is_empty(), "{:#?}", m.complaints());
-        let a = Anchors::of(&m);
+        let a = Anchors::declared(&m);
         let e = table_under(
             vec![(
                 "docs/notes.md",
@@ -1102,7 +1275,7 @@ mod tests {
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
-        let a = Anchors::of(&m);
+        let a = Anchors::declared(&m);
         let e = table_under(
             vec![(
                 "docs/notes.md",
@@ -1206,7 +1379,7 @@ mod tests {
 
     #[test]
     fn a_declared_register_becomes_a_kind_the_candidate_rule_admits() {
-        // Nothing about a kind is compiled in beyond `path` and the built-in four: a project
+        // Nothing about a kind is compiled in beyond `path` and the built-in six: a project
         // that declares a register makes its name spellable in kind position.
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              [locations.notes]\npath = \"notes\"\nregisters = [\"reading\", \"tripwire\"]\n\n\
@@ -1214,7 +1387,7 @@ mod tests {
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
-        let a = Anchors::of(&m);
+        let a = Anchors::declared(&m);
         assert!(a.kinds_listed().contains("reading"));
         assert_eq!(
             candidate("reading@notes@a-reading", &a),
@@ -1253,7 +1426,7 @@ mod tests {
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
-        let a = Anchors::of(&m);
+        let a = Anchors::declared(&m);
         let e = table_under(
             vec![("notes/tripwires.md", "## Guarding it `##a-tripwire`\n")],
             &a,
@@ -1387,7 +1560,7 @@ mod tests {
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
-        let a = Anchors::of(&m);
+        let a = Anchors::declared(&m);
         assert_eq!(a.kind("subpath"), Some(Kind::new("subpath")));
         assert!(!a.kind("subpath").expect("the kind").is_path());
         assert!(a.kind("path").expect("the path kind").is_path());

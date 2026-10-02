@@ -217,8 +217,9 @@ stdout gives a file that is only observations.
 
 ## Registers
 
-**Four registers are compiled in** — `design`, `goal`, `tripwire` and `issue` — because they are
-what the word component means to this tool. A project declares further ones in its
+**Six registers are compiled in.** `design`, `goal`, `tripwire` and `issue` are what the word
+component means to this tool. `spec` and `milestone` are the plan documents, described under
+"Plan documents" below. A project declares further ones in its
 `knowledge-architect.toml`. The first two tables are from thaum, whose `rules` location carries
 an `interpretation` register:
 
@@ -254,9 +255,45 @@ hand-written `README.md`, a generated `index.md` and an optional `register.toml`
 group subdirectories. An entry opens with frontmatter carrying each declared metadata key, then a
 level-one title, then the declared sections.
 
-`[registers.issue]` accepts `kinds` and nothing else; the other three built-in registers accept
-nothing, `level` included. The arguments are `design@core@registers-are-declared` and
+`[registers.issue]` accepts `kinds` and nothing else; the design, goal and tripwire registers
+accept nothing, `level` included, and a table for `spec` or `milestone` is refused whole. The
+arguments are `design@core@registers-are-declared` and
 `design@core@a-file-register-is-a-directory-of-entries`.
+
+## Plan documents
+
+**Every project carries a plans directory, docs/plans/ at its root**, and the tool constructs an
+anchor named `plans` there. No manifest row declares it, and a declared anchor named `plans` is
+refused. It holds three things and nothing else:
+
+| path | what it is |
+| --- | --- |
+| docs/plans/README.md | hand-written: what the directory holds |
+| docs/plans/specs/ | the `spec` register: one file `<id>.md` per spec, beside a hand-written `README.md` and a generated `index.md`, as any file register |
+| docs/plans/milestones/ | the `milestone` register: one directory `<id>/` per milestone, beside a hand-written `README.md` and a generated `index.md` |
+
+**Each milestone directory is an anchor of its own**, named by its basename. Its `README.md` is the
+milestone document, its `index.md` is generated and lists its steps, and every other `.md` file in
+it is the spec of one step. A directory under milestones/ with no `README.md` is a finding.
+
+**A plan document is cited by its kind, never by its path**:
+
+```text
+spec@plans@<id>               a spec, docs/plans/specs/<id>.md
+milestone@plans@<id>          a milestone, docs/plans/milestones/<id>/
+spec@<milestone>@<step>       a step spec, docs/plans/milestones/<milestone>/<step>.md
+```
+
+A `path` citation of a plan document is refused, and the finding names the form above. The
+README and index files of the plans directory and of its two homes are cited by path, as in
+`path@plans@README.md`.
+
+**A plan's name reads as nothing else.** A milestone's name or a spec's id that is the name of a
+component, of a location or of `plans`, `elsewhere` or `*`, and one name used under both homes,
+are findings. So is a milestone name outside the id grammar, `[a-z0-9]+(-[a-z0-9]+)*`.
+
+A tree that breaks this layout stops the run at phase 2. The arguments are
+`design@core@anchors-are-components-and-locations` and `design@core@reserved-anchors`.
 
 ## Commit messages
 

@@ -133,7 +133,7 @@ impl Model {
             .collect();
         // A generated file and an installed one are outside the walk by construction: the
         // first is a function of the tree, the second is judged by its bytes alone.
-        let mut generated = crate::index::generated_paths(manifest);
+        let mut generated = crate::index::generated_paths(manifest, &listing);
         generated.extend(files.iter().filter(|f| manifest.owned(f)).cloned());
         for path in walk::live_files(root, walk_config, &files, &generated) {
             let rel_for_error = path.strip_prefix(root).unwrap_or(&path).to_path_buf();

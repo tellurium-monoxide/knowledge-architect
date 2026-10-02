@@ -21,7 +21,9 @@
 use crate::manifest::MANIFEST_NAME;
 use std::path::{Path, PathBuf};
 
-use crate::entity::{self, Anchors, Candidate, Entities, Kind, Resolution, ESCAPE_ANCHOR};
+use crate::entity::{
+    self, Anchors, Candidate, Constructed, Entities, Kind, Resolution, ESCAPE_ANCHOR, PLANS_ANCHOR,
+};
 use crate::finding::Finding;
 use crate::manifest::Manifest;
 use crate::model::Model;
@@ -40,7 +42,7 @@ pub(crate) struct Counts {
 }
 
 pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Finding>, Counts) {
-    check_under(model, inputs, &Anchors::of(manifest))
+    check_under(model, inputs, &Anchors::of(manifest, inputs.present))
 }
 
 /// The same, over a stated anchor list.
@@ -315,9 +317,11 @@ fn path(
             // state, and a verdict may not depend on the checking machine's. Presence and
             // kind are asked apart, so a path some component carries under the other kind
             // gets the kind-claim repair rather than "repair the path".
+            // A milestone carries no `path` kind, so it holds no copy the generic form names.
             let carried: Vec<PathBuf> = anchors
                 .all()
                 .iter()
+                .filter(|a| a.carries(&Kind::path()))
                 .map(|a| (a, a.path.join(trimmed)))
                 .filter(|(a, t)| {
                     anchors.owning(t).path == a.path
@@ -372,6 +376,19 @@ fn path(
                 ));
                 return;
             };
+            if a.is_milestone() {
+                out.push(Finding::at(
+                    rel,
+                    line,
+                    format!("`{span}` names the milestone `{name}`, which carries no path kind"),
+                    format!(
+                        "cite a step spec as `spec@{name}@<step>` and the milestone document as \
+                         `milestone@{PLANS_ANCHOR}@{name}`; a plan document has one name, so \
+                         `show` finds every citation of it"
+                    ),
+                ));
+                return;
+            }
             // Judged on the path as written: a lone `/` trims to nothing and would resolve
             // to the anchor's own directory, which has no spelling under its own name.
             if let Some(why) = refused(path) {
@@ -384,6 +401,20 @@ fn path(
                 return;
             }
             let target = a.path.join(trimmed);
+            // Clause P1, before the deepest-anchor rule: a plan document cited by its path is
+            // refused from every anchor, and the repair names the one form that resolves.
+            if let Some(form) = plan_document(anchors, &target) {
+                out.push(Finding::at(
+                    rel,
+                    line,
+                    format!("`{span}` cites a plan document by its path"),
+                    format!(
+                        "cite it as `{form}`; a plan document has one name, so `show` finds \
+                         every citation of it"
+                    ),
+                ));
+                return;
+            }
             // The deepest anchor wins: a reference reaching inside another anchor breaks
             // when that anchor moves, and the anchor is what a move must not break. Inside
             // means a PROPER descendant: an anchor's own directory has no spelling under
@@ -405,6 +436,41 @@ fn path(
             }
             assert_target(out, rel, line, span, &target, claims_dir, inputs);
         }
+    }
+}
+
+/// The kind form of a plan document at `target`, or `None` when no plan document is there.
+///
+/// A plan document is a spec file of `specs/`, a milestone directory, or a file inside a
+/// milestone directory (clause P1 of the plans layout). The README and the index of the plans
+/// directory and of its two homes are not plan documents, and are cited by path. Judged by
+/// where the target sits, not by whether it exists: a path to a deleted step spec gets the same
+/// repair as one to a present one.
+fn plan_document(anchors: &Anchors, target: &Path) -> Option<String> {
+    let owner = anchors.owning(target);
+    match owner.constructed {
+        Some(Constructed::Milestone) => {
+            let m = &owner.name;
+            let inside = target.strip_prefix(&owner.path).ok()?;
+            let step = (inside.extension().is_some_and(|e| e == "md")
+                && inside.components().count() == 1)
+                .then(|| inside.file_stem())
+                .flatten()
+                .map(|s| s.to_string_lossy().into_owned())
+                .filter(|s| s != "README" && s != "index");
+            Some(match step {
+                Some(step) => format!("spec@{m}@{step}"),
+                None => format!("milestone@{PLANS_ANCHOR}@{m}"),
+            })
+        }
+        Some(Constructed::Plans) => {
+            let specs = anchors
+                .registers()
+                .by_name(crate::manifest::SPEC_REGISTER)
+                .map(|r| owner.home_of(r).dir)?;
+            entity::entry_id(target, &specs).map(|id| format!("spec@{PLANS_ANCHOR}@{id}"))
+        }
+        None => None,
     }
 }
 
@@ -612,7 +678,7 @@ mod tests {
         docs: Vec<(&str, &str)>,
         present: &[String],
     ) -> (Vec<String>, Counts) {
-        checked_under(docs, present, &Anchors::of(manifest))
+        checked_under(docs, present, &Anchors::declared(manifest))
     }
 
     /// The same, over a stated anchor list.
@@ -676,7 +742,7 @@ mod tests {
             vec![("notes/prose.md", text)],
             present,
             ignored,
-            &Anchors::of(manifest),
+            &Anchors::declared(manifest),
         )
     }
 
@@ -793,13 +859,46 @@ mod tests {
         );
     }
 
+    /// The claim: a spec of `specs/`, a milestone and a step spec each resolve by their kind,
+    /// each in its own anchor, and an absent id in each is the ordinary dangling finding.
+    /// Mutation checked: `file_definitions` filing a milestone's step specs under `plans`.
+    #[test]
+    fn the_plan_kinds_resolve_each_in_its_own_anchor() {
+        let m = manifest();
+        let docs = vec![
+            ("docs/plans/specs/a-spec.md", "# A spec\n"),
+            ("docs/plans/milestones/m/README.md", "# A milestone\n"),
+            ("docs/plans/milestones/m/a-step.md", "# A step\n"),
+            (
+                "notes/prose.md",
+                "`spec@plans@a-spec`, `milestone@plans@m` and `spec@m@a-step` resolve;\n\
+                 `spec@plans@none`, `milestone@plans@none` and `spec@m@none` do not.\n",
+            ),
+        ];
+        let present: Vec<PathBuf> = docs.iter().map(|(p, _)| PathBuf::from(p)).collect();
+        let anchors = Anchors::of(&m, &present);
+        let present: Vec<String> = docs.iter().map(|(p, _)| p.to_string()).collect();
+        let (found, counts) = checked_under(docs, &present, &anchors);
+        assert_eq!(counts.references, 6, "{found:#?}");
+        assert_eq!(found.len(), 3, "{found:#?}");
+        assert!(found
+            .iter()
+            .any(|f| f.contains("`plans` defines no spec `none`")));
+        assert!(found
+            .iter()
+            .any(|f| f.contains("`plans` defines no milestone `none`")));
+        assert!(found
+            .iter()
+            .any(|f| f.contains("`m` defines no spec `none`")));
+    }
+
     #[test]
     fn an_anchor_carrying_no_such_register_is_reported_with_the_anchors_that_do() {
         // The third way of the four, over an anchor list no manifest produces today: an
         // anchor carrying tripwires alone. Mutation checked: with the arm's push replaced
         // by a drop, the assertion on one finding fails.
         let m = manifest();
-        let base = Anchors::of(&m);
+        let base = Anchors::declared(&m);
         let root = base.by_name("a-project").expect("the root").clone();
         let bare = crate::entity::Anchor::location(
             "bare",
@@ -875,7 +974,7 @@ mod tests {
         for f in &found {
             assert!(f.contains("where the kind goes"), "{f}");
             assert!(
-                f.contains(&Anchors::of(&manifest()).kinds_listed()),
+                f.contains(&Anchors::declared(&manifest()).kinds_listed()),
                 "the repair names the kinds: {f}"
             );
         }
@@ -1222,7 +1321,7 @@ mod tests {
         let mut present = tree();
         present.push("scratch".to_string());
         present.push("scratch/x.md".to_string());
-        let anchors = Anchors::of(&m);
+        let anchors = Anchors::declared(&m);
         let docs = vec![("notes/prose.md", text), ("notes/README.md", link)];
         let model = Model::from_documents(
             docs.iter()

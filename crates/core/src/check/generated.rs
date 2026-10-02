@@ -34,7 +34,9 @@ pub(crate) fn check(
     for file in extension_files {
         compare(&file.rel, &file.text, inputs, file.action, &mut findings);
     }
-    for (rel, expected) in index::file_register_indexes(model, manifest, inputs.directories) {
+    for (rel, expected) in
+        index::file_register_indexes(model, manifest, inputs.present, inputs.directories)
+    {
         compare(
             &rel,
             &expected,

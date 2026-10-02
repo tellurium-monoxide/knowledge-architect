@@ -516,6 +516,21 @@ fn tiny_project(history: &History, unloadable: bool) {
          A message naming a deleted entry resolves against the parent tree or against nothing.\n\n\
          ### What would close it\n\nThe commit that deletes this file.\n",
     );
+    // The plans layout every project carries, holding no plan document; `commit` generates
+    // the two indexes.
+    history.write(
+        "docs/plans/README.md",
+        "# Plans — tiny\n\nNo plan document is open.\n",
+    );
+    history.write(
+        "docs/plans/specs/README.md",
+        "# Specs — tiny\n\nOne file per spec; the listing beside this file is generated.\n",
+    );
+    history.write(
+        "docs/plans/milestones/README.md",
+        "# Milestones — tiny\n\nOne directory per milestone; the listing beside this file is \
+         generated.\n",
+    );
 }
 
 /// The claim: a definition-site defect alone stops the run at phase 3, and the references
@@ -1437,6 +1452,85 @@ fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
     assert_eq!(
         code, 0,
         "the parent tree still defines it: {stdout}{stderr}"
+    );
+    assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
+}
+
+/// The claim: a commit message citing a plan document in the commit that deletes it resolves
+/// against the parent, for a spec of `specs/` and for a step spec, and also when the whole
+/// milestone leaves, so its anchor is gone from the commit's tree. The deletion that ends a plan
+/// document's life is written this way, since a `path` citation of one is refused.
+#[test]
+fn a_message_naming_the_plan_document_its_commit_deletes_resolves_against_the_parent() {
+    let history = History::new("commit-plan-parent");
+    tiny_project(&history, false);
+    history.write("docs/plans/specs/a-spec.md", "# A spec that lands\n");
+    history.write(
+        "docs/plans/milestones/a-milestone/README.md",
+        "# A milestone that lands\n\nIts steps: [the first](first.md), [the last](last.md); \
+         [the index](index.md).\n",
+    );
+    history.write(
+        "docs/plans/milestones/a-milestone/first.md",
+        "# Its first step\n",
+    );
+    history.write(
+        "docs/plans/milestones/a-milestone/last.md",
+        "# Its last step\n",
+    );
+    let base = history.commit("The plans are written\n");
+    history.remove("docs/plans/specs/a-spec.md");
+    history.remove("docs/plans/milestones/a-milestone/first.md");
+    history.write(
+        "docs/plans/milestones/a-milestone/README.md",
+        "# A milestone that lands\n\nIts step: [the last](last.md); [the index](index.md).\n",
+    );
+    let spec = history.commit(
+        "The spec and the first step land\n\nThey leave: `spec@plans@a-spec` and \
+         `spec@a-milestone@first`.\n",
+    );
+    for rel in ["README.md", "last.md", "index.md"] {
+        history.remove(&format!("docs/plans/milestones/a-milestone/{rel}"));
+    }
+    let milestone = history.commit(
+        "The milestone lands\n\nIt leaves: `milestone@plans@a-milestone` and \
+         `spec@a-milestone@last`.\n",
+    );
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(
+        code, 0,
+        "the parent tree still defines each: {stdout}{stderr}"
+    );
+    assert!(stdout.contains(&format!("{spec} judged")), "{stdout}");
+    assert!(stdout.contains(&format!("{milestone} judged")), "{stdout}");
+}
+
+/// The claim: the anchors a message is judged against are its commit's, milestone anchors
+/// included, and not the working tree's. The milestone's deletion is staged and not committed
+/// before the range is judged, so git's listing of the working tree holds no anchor
+/// `a-milestone`, and a run that read the anchors off it would find none in either tree.
+#[test]
+fn a_commit_s_milestone_anchors_are_read_off_its_own_tree() {
+    let history = History::new("commit-milestone-anchor");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    history.write(
+        "docs/plans/milestones/a-milestone/README.md",
+        "# A milestone\n\nIts step: [the step](a-step.md); [the index](index.md).\n",
+    );
+    history.write(
+        "docs/plans/milestones/a-milestone/a-step.md",
+        "# Its step\n",
+    );
+    let sha = history.commit("A milestone is planned\n\nIts step is `spec@a-milestone@a-step`.\n");
+    for rel in ["README.md", "a-step.md", "index.md"] {
+        history.remove(&format!("docs/plans/milestones/a-milestone/{rel}"));
+    }
+    history.git(&["add", "-A"]);
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(
+        code, 0,
+        "the commit's own tree defines it: {stdout}{stderr}"
     );
     assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
 }

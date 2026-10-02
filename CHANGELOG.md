@@ -8,8 +8,25 @@ subsection is omitted.
 
 ## Next release
 
+### Migration
+
+- `checks`, major: every project carries docs/plans/ at its root, holding a `README.md`, specs/ and
+  milestones/, and each of the two holds a `README.md` and a generated `index.md`. Move each spec
+  into specs/ as one file, and each milestone into milestones/ as a directory holding its
+  `README.md`; then run `index`. Any other file or directory directly under docs/plans/ is a
+  finding.
+- `checks`, major: a `path` citation of a plan document is refused. Cite a spec as
+  `spec@plans@<id>`, a milestone as `milestone@plans@<id>` and a step of a milestone as
+  `spec@<milestone>@<step>`. A citation from outside the plans directory of a file inside it is
+  refused as reaching inside the anchor `plans`.
+- `manifest`, major: a declared anchor named `plans`, a `[registers.spec]` or
+  `[registers.milestone]` table, and a location naming `spec` or `milestone` are refused.
+
 ### New features
 
+- `checks`, minor: the reference kinds `spec` and `milestone`, carried by the anchor `plans`, and
+  one anchor per milestone directory, carrying `spec` for its step specs. `show` prints a spec
+  or a milestone document, and every reference to it.
 - `checks`, minor: `commits` refuses a citation of a commit of its range by SHA, in a message or in
   a document of a commit's tree, where the manifest turns it on.
 - `manifest`, minor: `[commits] refuse-branch-shas`, off when absent.

@@ -149,7 +149,7 @@ from the discussion that designed it are implemented, or at least argued thoroug
 required. Whether the tool and its workflow have converged is a weighing, and the weighing is the
 owner's, per `goal@knowledge-architect@the-owner-decides`. The first of them, a structure for plan
 documents, is argued and scheduled as the milestone
-`path@knowledge-architect@docs/plans/structured-plans/README.md`. The others are
+`milestone@plans@structured-plans`. The others are
 `issue@core@tooling-for-project-skills`, `issue@core@configuration-for-several-agent-providers`,
 `issue@core@a-component-states-at-least-one-goal`, `issue@core@cross-project-references`,
 `issue@core@a-home-for-developer-contracts-outside-agent-configuration`,

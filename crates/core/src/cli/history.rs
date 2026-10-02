@@ -60,7 +60,7 @@ struct Assembly {
 
 impl Assembly {
     fn anchors(&self) -> Anchors {
-        Anchors::of(&self.manifest)
+        Anchors::of(&self.manifest, &self.survey.present)
     }
 
     fn inputs(&self) -> Inputs<'_> {
@@ -328,8 +328,10 @@ fn commit_tree(
             stopped: Some(check::Phase::Resolution),
         });
     }
-    let anchors = Anchors::of(&manifest);
-    let generated = crate::index::generated_paths(&manifest);
+    // The commit's own listing places its milestone anchors, so a message is judged against
+    // the anchors of the tree it commits rather than of the working tree.
+    let anchors = Anchors::of(&manifest, &read.listing);
+    let generated = crate::index::generated_paths(&manifest, &read.listing);
     // The walk reads through no symlink and no gitlink, so the files alone are walked.
     let files: Vec<PathBuf> = read
         .listing

@@ -59,7 +59,7 @@ The installed text lives under crates/agent-skills/content/ and names no project
    `cargo klarch install-agent-skills`; the root `CLAUDE.md` is the owner's configuration, so its
    diff is shown to the owner before it is committed (round 3); it loses its plans-directory row and
    rewrites its "Plan documents" section and its "Intent" bullet;
-   `path@knowledge-architect@docs/plans/README.md` describes
+   `path@plans@README.md` describes
    the two homes; CHANGELOG.md's `Next release` section gains this step's entries, under the tests of
    `design@knowledge-architect@changelog-entries`.
 

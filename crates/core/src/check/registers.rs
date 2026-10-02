@@ -10,12 +10,14 @@
 //! its design recorded wherever the last session happened to put it, and a component with no
 //! issue directory has what is open about it in no report.
 //!
-//! **Two register shapes, and this module asserts both.** A heading register has the two homes
+//! **Three register shapes, and this module asserts each.** A heading register has the two homes
 //! of `design@core@heading-register-two-shapes`: the single file, or the directory whose `README.md`
 //! links every subdocument. A file register has one home, a directory holding one file per
 //! entry beside a hand-written `README.md`, a generated `index.md` and an optional
 //! `register.toml`; the entries' frontmatter, title, sections and owed subsections are asserted
-//! here, per `design@core@a-file-register-is-a-directory-of-entries`.
+//! here, per `design@core@a-file-register-is-a-directory-of-entries`. A Directory register, the
+//! milestones home, owes the same two navigation files, and each of its entries is a directory
+//! whose README is asserted as a File entry is.
 //!
 //! **Whether what is there exists is not this check's question.** An anchor or a home that is
 //! not there is `check::tree`'s finding, phase 2, and a definition sitting where none may is
@@ -55,7 +57,7 @@ struct RegisterConfig {
 }
 
 pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> (Vec<Finding>, Counts) {
-    let anchors = Anchors::of(manifest);
+    let anchors = Anchors::of(manifest, inputs.present);
     check_under(model, manifest, inputs, &anchors)
 }
 
@@ -89,6 +91,10 @@ pub(crate) fn check_under(
                 Shape::File => {
                     counts.entries +=
                         file_home(&mut out, anchor, register, &home, model, anchors, inputs);
+                }
+                Shape::Directory => {
+                    counts.entries +=
+                        directory_home(&mut out, register, &home, model, anchors, inputs);
                 }
             }
         }
@@ -180,6 +186,61 @@ fn file_home(
     if !inputs.directories.contains(&home.dir) {
         return 0;
     }
+    navigation(out, register, home, inputs);
+
+    let groups = config(out, register, home, inputs);
+    // What sits under an anchor nested inside this home is that anchor's, as the heading
+    // shape reads it: the nesting is refused by `manifest::collides`, and reading the nested
+    // anchor's files as entries of this register would report the refusal's consequences
+    // against the wrong register and the wrong anchor, nine times over.
+    let owned = |rel: &Path| anchors.owning(rel).path == anchor.path;
+    directory_contents(out, register, home, &groups, inputs, &owned);
+
+    let mut judged = 0;
+    for doc in model.documents() {
+        if !is_entry(&doc.rel, home) || !owned(&doc.rel) {
+            continue;
+        }
+        judged += 1;
+        entry(out, register, doc);
+    }
+    judged
+}
+
+/// A Directory register: its two navigation files, and each entry's README as an entry.
+///
+/// Its entries are the milestone anchors directly under its home. What else the home holds,
+/// and which directories are milestones, is phase 2's, in `check::tree`; what is asserted here
+/// is the same shape a File home owes, over the README of each entry. Returns how many entries
+/// were judged.
+fn directory_home(
+    out: &mut Vec<Finding>,
+    register: &Register,
+    home: &Home,
+    model: &Model,
+    anchors: &Anchors,
+    inputs: &Inputs,
+) -> usize {
+    if !inputs.directories.contains(&home.dir) {
+        return 0;
+    }
+    navigation(out, register, home, inputs);
+    let mut judged = 0;
+    for entry in anchors.all() {
+        if !entry.is_milestone() || entry.path.parent() != Some(home.dir.as_path()) {
+            continue;
+        }
+        let readme = entry.path.join("README.md");
+        if let Some(doc) = model.documents().iter().find(|d| d.rel == readme) {
+            judged += 1;
+            self::entry(out, register, doc);
+        }
+    }
+    judged
+}
+
+/// A home's hand-written README and generated index are both there, as files.
+fn navigation(out: &mut Vec<Finding>, register: &Register, home: &Home, inputs: &Inputs) {
     for (path, what) in [
         (&home.readme, "README.md"),
         // That the index is THERE is a fact about the register's shape, and it is
@@ -201,24 +262,6 @@ fn file_home(
             ));
         }
     }
-
-    let groups = config(out, register, home, inputs);
-    // What sits under an anchor nested inside this home is that anchor's, as the heading
-    // shape reads it: the nesting is refused by `manifest::collides`, and reading the nested
-    // anchor's files as entries of this register would report the refusal's consequences
-    // against the wrong register and the wrong anchor, nine times over.
-    let owned = |rel: &Path| anchors.owning(rel).path == anchor.path;
-    directory_contents(out, register, home, &groups, inputs, &owned);
-
-    let mut judged = 0;
-    for doc in model.documents() {
-        if !is_entry(&doc.rel, home) || !owned(&doc.rel) {
-            continue;
-        }
-        judged += 1;
-        entry(out, register, doc);
-    }
-    judged
 }
 
 /// The declared groups of one instance, and the verdicts on the file that declares them.
@@ -610,7 +653,7 @@ mod tests {
         // that a stop keeps the later ones off a report is `foundation`'s test.
         let mut found: Vec<Finding> = manifest.complaints().to_vec();
         found.extend(crate::check::tree::check(&model, manifest, &inputs));
-        let anchors = Anchors::of(manifest);
+        let anchors = Anchors::of(manifest, inputs.present);
         found.extend(
             crate::entity::Entities::build(&model, &anchors)
                 .definition_findings()
@@ -640,6 +683,13 @@ mod tests {
         out.push(at("docs/open-issues"));
         out.push(at("docs/open-issues/README.md"));
         out.push(at("docs/open-issues/index.md"));
+        if dir.is_empty() {
+            out.extend(
+                crate::check::testing::PLANS_TREE
+                    .iter()
+                    .map(|p| p.to_string()),
+            );
+        }
         // The corpus the declaration below names, which is a declared path like any other.
         for name in ["r", "r/t", "r/v", "r/p", "r/m"] {
             out.push(name.to_string());
@@ -1138,17 +1188,17 @@ mod tests {
         // dot-spelled location is judged at the path it means.
         let manifest = declaring_full(
             "",
-            "[locations.papers]\npath = \"./docs/plans\"\nregisters = [\"issue\"]\n\n",
+            "[locations.papers]\npath = \"./docs/papers\"\nregisters = [\"issue\"]\n\n",
             "[\"/build\"]",
             "[]",
             "[\"vendor/../vendor\"]",
             "[]",
         );
         let mut present = all_of("");
-        present.push("docs/plans".to_string());
-        present.push("docs/plans/open-issues".to_string());
-        present.push("docs/plans/open-issues/README.md".to_string());
-        present.push("docs/plans/open-issues/index.md".to_string());
+        present.push("docs/papers".to_string());
+        present.push("docs/papers/open-issues".to_string());
+        present.push("docs/papers/open-issues/README.md".to_string());
+        present.push("docs/papers/open-issues/index.md".to_string());
         let found = findings(&manifest, &present);
         // Every complaint, not the first: two refused rows are two findings.
         assert_eq!(found.len(), 2, "{found:#?}");
@@ -1203,6 +1253,129 @@ mod tests {
                 .any(|f| f.contains("the reserved name `elsewhere`")),
             "{found:#?}"
         );
+    }
+
+    /// The claim: the plans anchor's name is reserved, and the two plan registers are the
+    /// tool's to place, so a declaration of either, or a location naming one, is a phase-1
+    /// complaint. Mutation checked: `plans` left out of `entity::is_reserved_anchor`.
+    #[test]
+    fn the_plans_name_and_the_plan_registers_are_refused_in_a_declaration() {
+        let manifest = declaring_full(
+            "",
+            "[locations.plans]\npath = \"x\"\nregisters = []\n\n\
+             [locations.notes]\npath = \"notes\"\nregisters = [\"spec\", \"issue\"]\n\n\
+             [registers.spec]\nscope = \"opt-in\"\n\n\
+             [registers.milestone]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let complaints: Vec<String> = manifest
+            .complaints()
+            .iter()
+            .map(|f| f.what.clone())
+            .collect();
+        let one = |needle: &str| {
+            let hits = complaints.iter().filter(|c| c.contains(needle)).count();
+            assert_eq!(hits, 1, "{needle:?} in {complaints:#?}");
+        };
+        one("gives the anchor the reserved name `plans`");
+        one("[locations.notes] carries `spec`, a plan register");
+        one("[registers.spec] declares a plan register");
+        one("[registers.milestone] declares a plan register");
+        assert_eq!(complaints.len(), 4, "{complaints:#?}");
+        // The refused row is no anchor, and the tool's own `plans` stands.
+        assert!(!manifest.locations().contains_key("plans"));
+        assert!(manifest.plans());
+        assert_eq!(manifest.locations()["notes"].registers, vec!["issue"]);
+    }
+
+    /// The findings of phase 2 alone, over a listing.
+    fn tree_findings(manifest: &Manifest, present: &[String]) -> Vec<String> {
+        let present: HashSet<PathBuf> = present.iter().map(PathBuf::from).collect();
+        let directories = crate::check::testing::implied_directories(&present);
+        let inputs = Inputs {
+            committed: &HashMap::new(),
+            configs: &HashMap::new(),
+            present: &present,
+            directories: &directories,
+            outside: &[],
+            ignored: &HashSet::new(),
+            tracked_and_ignored: &[],
+            refused: &[],
+            links: &[],
+            installed: &[],
+            shipped: &[],
+        };
+        crate::check::tree::check(&Model::from_documents(Vec::new()), manifest, &inputs)
+            .iter()
+            .map(|f| format!("{}  {}", f.location(), f.what))
+            .collect()
+    }
+
+    /// The claim: a missing plans directory, plans README or plans home is one phase-2
+    /// finding each, at the path it belongs at, and a missing plans directory is one finding
+    /// rather than one per part. Mutation checked: the README requirement skipped.
+    #[test]
+    fn each_missing_part_of_the_plans_layout_is_one_phase_two_finding() {
+        let manifest = declaring("");
+        for (gone, at, what) in [
+            (
+                "docs/plans",
+                "docs/plans",
+                "the plans directory `docs/plans` does not exist",
+            ),
+            (
+                "docs/plans/README.md",
+                "docs/plans/README.md",
+                "the plans directory has no README.md",
+            ),
+            (
+                "docs/plans/specs",
+                "docs/plans/specs",
+                "the anchor `plans` carries no spec directory",
+            ),
+            (
+                "docs/plans/milestones",
+                "docs/plans/milestones",
+                "the anchor `plans` carries no milestone directory",
+            ),
+        ] {
+            let mut present = all_of("");
+            present.retain(|p| p != gone && !p.starts_with(&format!("{gone}/")));
+            let found = tree_findings(&manifest, &present);
+            assert_eq!(found.len(), 1, "{gone}: {found:#?}");
+            assert!(
+                found[0].starts_with(at) && found[0].contains(what),
+                "{gone}: {found:#?}"
+            );
+            // Nothing later adds to it: the union over every phase holds that one finding.
+            assert_eq!(findings(&manifest, &present), found, "{gone}");
+        }
+    }
+
+    /// The claim: a plans home's README and index are owed as every File home's are, and
+    /// reported in phase 4, for the milestones home whose shape is new too. Mutation checked:
+    /// the Directory arm of `check_under` skipping `navigation`.
+    #[test]
+    fn a_plans_home_without_its_readme_or_index_is_a_phase_four_finding() {
+        let manifest = declaring("");
+        for gone in [
+            "docs/plans/milestones/index.md",
+            "docs/plans/milestones/README.md",
+            "docs/plans/specs/index.md",
+        ] {
+            let mut present = all_of("");
+            present.retain(|p| p != gone);
+            assert!(tree_findings(&manifest, &present).is_empty(), "{gone}");
+            let found = findings(&manifest, &present);
+            assert_eq!(found.len(), 1, "{gone}: {found:#?}");
+            assert!(
+                found[0].starts_with(gone) && found[0].contains("has no"),
+                "{found:#?}"
+            );
+        }
     }
 
     #[test]
@@ -1614,20 +1787,20 @@ mod tests {
         // component, away from every register home, carrying homes of its own.
         let manifest = declaring_full(
             "",
-            "[locations.plans]\npath = \"docs/plans\"\nregisters = [\"issue\"]\n\n\
-             [locations.inner]\npath = \"docs/plans/inner\"\nregisters = [\"tripwire\"]\n\n",
+            "[locations.papers]\npath = \"docs/papers\"\nregisters = [\"issue\"]\n\n\
+             [locations.inner]\npath = \"docs/papers/inner\"\nregisters = [\"tripwire\"]\n\n",
             "[]",
             "[]",
             "[]",
             "[]",
         );
         let mut present = all_of("");
-        present.push("docs/plans".to_string());
-        present.push("docs/plans/open-issues".to_string());
-        present.push("docs/plans/open-issues/README.md".to_string());
-        present.push("docs/plans/open-issues/index.md".to_string());
-        present.push("docs/plans/inner".to_string());
-        present.push("docs/plans/inner/tripwires.md".to_string());
+        present.push("docs/papers".to_string());
+        present.push("docs/papers/open-issues".to_string());
+        present.push("docs/papers/open-issues/README.md".to_string());
+        present.push("docs/papers/open-issues/index.md".to_string());
+        present.push("docs/papers/inner".to_string());
+        present.push("docs/papers/inner/tripwires.md".to_string());
         let found = findings(&manifest, &present);
         assert!(found.is_empty(), "{found:#?}");
     }

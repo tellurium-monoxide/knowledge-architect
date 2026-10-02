@@ -58,8 +58,7 @@ identifiers stay plain `#id` text until step 2.
 
    Each moves off docs/plans or is renamed.
 9. **This repository's tree**: docs/plans/ gains `specs/` and `milestones/` with their READMEs and
-   generated indexes, and this milestone moves from
-   `path@knowledge-architect@docs/plans/structured-plans/` to
+   generated indexes, and this milestone moves from docs/plans/structured-plans/ to
    docs/plans/milestones/structured-plans/. Its README keeps its navigation rows to the step
    specs, which still resolve after the move.
 10. **Nothing else directly under docs/plans/** (D17): a file or directory there other than
@@ -83,10 +82,9 @@ The owner may contest each; the audit applies them in place unless the code refu
 - **A subdirectory of milestones/ without `README.md`** (D10) is not an anchor and not an entry; it
   is one phase-2 finding.
 - **Phases** (D10, D11, D17): every finding about the shape of the plans directory, its homes and
-  its
-  milestone directories is phase 2, planted in `unsound`; a `path` citation refused by P1 is phase
-  4,
-  planted in `planted`.
+  its milestone directories is phase 2, planted in `unsound`, except a home's missing `README.md`
+  or `index.md`, which is phase 4 as in every File home (audit finding 1); a `path` citation
+  refused by P1 is phase 4, planted in `planted`.
 - **`register.toml`** (D10): one under milestones/ and one inside a milestone directory are each a
   phase-2 finding.
 - **Spec basenames** (D13): the files directly under specs/. A step spec's basename is scoped to its
@@ -94,6 +92,90 @@ The owner may contest each; the audit applies them in place unless the code refu
 - **How one register has two homes** (D9), and **which listing feeds the generated paths of
   milestone indexes** (D11): implementation choices, settled at the audit and written into this
   spec as applied in place.
+
+### The design audit's findings, applied as the step's binding shape
+
+Read against the core at the branch point, main's commit 6c20f2b. Each finding states the gap, the
+answer, and the decision it follows from. Where a finding corrects a claim or a reading above, the
+claim or reading is corrected in place too.
+
+1. **A plans home's README and index are phase 4, as every File home's are.** Gap: the reading
+   "Phases" puts every finding about the plans homes in phase 2, and claim 2 says each missing
+   README is one. In the code a File register's missing `README.md` or `index.md` is reported by
+   `file_home` of `path@core@src/check/registers.rs`, phase 4; `check::tree` asserts only the home
+   directory. Moving the two for `spec` alone would change the File shape's rules for the `spec`
+   register, which fires #milestone-fits-file-register. Answer: the plans directory, its
+   `README.md` and each home directory are phase 2; a home's `README.md` and `index.md`, for
+   `specs/`, `milestones/` and every milestone directory, are phase 4. Follows from D10 ("The File
+   shape already has a hand-written README, a generated index") and the criterion.
+2. **Milestone anchors are built from the tree's present paths, passed to every builder of the
+   anchors.** Gap: `Anchors::of` in `path@core@src/entity.rs` reads the manifest alone, and 20
+   call sites use it; `index::generated_paths` too, and `Model::build` calls it before the walk.
+   Answer: `Anchors::of(manifest, paths)` and `generated_paths(manifest, paths)` take the tree's
+   paths: `Inputs::present` in a check, `Model::listing` (git's listing, before any exclusion) in
+   `Model::build` and in a command, the commit's own listing in `commits`. A milestone anchor is
+   each directory `docs/plans/milestones/<id>/` that holds a `README.md`, whose `<id>` is in the
+   entity-id grammar and is the name of no Component, location or reserved anchor. One that fails
+   either test is no anchor, and its phase-2 finding stops the run. Follows from D11 ("from the
+   walk's present paths, by every caller that builds the anchors of a tree").
+3. **One `spec` register, and the anchor decides where its home is.** Gap: `Anchor::home_of` joins
+   the register's `dir` to the anchor's home base, so a `spec` home at a milestone's own
+   directory has no spelling. Answer: `Anchor` gains a marker, `constructed`, naming the two
+   anchors the tool builds, `Plans` and `Milestone`; `home_of` puts every home of a `Milestone`
+   anchor at the anchor's own path. The `spec` register keeps `dir = "specs"`. The marker changes
+   nothing a location owes or carries beyond D1 (the README of `plans`), D9 (the home) and P1 (no
+   `path` kind). Follows from D6, D9 and D11.
+4. **The `plans` anchor is held beside the declared locations, not among them.** Gap: putting it
+   in `Manifest::locations` makes `check::tree` name it as `[locations.plans]` and tell a reader to
+   stop declaring it. Answer: `resolve_anchors` judges a candidate for it after the declared rows,
+   and the manifest records whether it was accepted; `Anchors::of` constructs it. Its missing
+   directory and its missing `README.md` are phase-2 findings whose repair names the plans layout.
+   Follows from D6 ("never declared in the manifest") and D1.
+5. **A declared `[registers.spec]` or `[registers.milestone]` is one complaint, whatever it sets.**
+   Gap: `build_registers` accepts a table for a built-in and complains per key, accepting `kinds`
+   on `issue`. Answer: for the two plan registers the table is refused whole, before any key is
+   read. Follows from D1 ("the whole table is a phase-1 complaint").
+6. **Clause P2 covers every entry of `specs/`, grouped or not.** Gap: `specs/` has the File shape,
+   which accepts declared groups, and the reading "Spec basenames" says "the files directly under
+   specs/". Answer: every entry id of the `specs/` instance; each is cited `spec@plans@<id>`, and
+   the reading's purpose was to keep step specs out. Follows from D13.
+7. **`milestones/` holds its README, its index and milestone directories, and nothing else.** Gap:
+   D10 names a stray `.md` and a `register.toml`, and is silent on another file. Answer: every file
+   directly under `milestones/` other than `README.md` and `index.md` is a phase-2 finding.
+   Follows from D10 and D17.
+8. **The milestones index is rendered from the milestone anchors, and the File renderer is
+   unchanged.** Gap: claim 8 names an owning-anchor filter in `file_register_index` of
+   `path@core@src/index.rs`. No nested anchor can sit in a File home in this step:
+   `manifest::collides` refuses a declared one, and the milestone anchors sit in the Directory
+   home. Step 2 makes each spec file an anchor, and such a filter would then drop every spec from
+   the index of specs/. Answer: the Directory home's index has one row per milestone anchor, its
+   README's level-one title linking `<id>/README.md`, in the File index's byte format with no
+   metadata column; the File renderer gains no filter. Claim 8's mutation becomes: render the
+   milestones home with the File renderer. Follows from D10's row and its skip.
+9. **P1 is judged before the deepest-anchor rule.** Gap: a plan document cited from the root both
+   reaches inside `plans` and is a plan document. Answer: the P1 finding, whose repair is the form
+   that resolves; the table's last row covers targets that are not plan documents. Follows from P1.
+10. **The generic anchor `*` skips an anchor that carries no `path` kind.** Gap: the `*` arm of
+    `path()` in `path@core@src/check/references.rs` tries every anchor. Answer: a milestone anchor
+    is skipped. Follows from P1.
+11. **A `<dir>.md` sibling is reported once.** Gap: `check::tree`'s `file_home` reports
+    `<home base>/<dir>.md` as the File shape's retired single file; for `spec` under `plans` that
+    is docs/plans/specs.md, which D17 also refuses, and for a milestone anchor it is
+    `<id>.md` beside the milestone directory, which D10 also refuses. Answer: the File rule
+    reports it, and the D17 and D10 checks pass over that one path. Follows from the File rule
+    being unchanged (finding 1).
+12. **`show milestone@plans@<id>` prints the milestone document.** Gap: `records` in
+    `path@core@src/records.rs` dispatches on File and Heading. Answer: a Directory entry's record
+    is its README whole, with no group. Follows from D10 (the entry is the directory holding a
+    README).
+13. **The walk fixture is unaffected.** Gap: item 8 lists `a_skipped_file_is_named_by_its_path_and_not_by_its_basename`
+    in `path@core@src/walk.rs` for checking. It hands `walk::live_files` a path string and reads no
+    anchor. Answer: unchanged.
+
+**Acceptance criterion #milestone-fits-file-register, read at the audit.** The shape above adds
+the one `Shape` variant D10 allows, keeps the File shape's rules for `spec` (finding 1), and builds
+both new anchors as locations the tool constructs, marked by finding 3. It is judged again on the
+built code, and reported in the landing commit.
 
 ### Every `path` target under docs/plans/, after this step
 
@@ -118,8 +200,10 @@ step.
   `the_conformant_mocks_report_nothing_over_every_core_check` (`path@core@src/mock_projects.rs`)
   stays green. Mutation: drop the requirement of one home's `index.md`, and the test of the next
   claim fails.
-- **Each missing plans home or README is a phase-2 finding** (D1): new tests in the `unsound` module
-  of `path@core@src/mock_projects.rs`, one per missing file. Mutation: skip the requirement.
+- **A missing plans directory, plans `README.md` or plans home is a phase-2 finding** (D1): new
+  tests in the `unsound` module of `path@core@src/mock_projects.rs`, one per missing path. A
+  home's missing `README.md` or `index.md` is phase 4, as in every File home (audit finding 1),
+  and a new test asserts it for the milestones home. Mutation: skip the requirement.
 - **`spec@plans@<id>`, `milestone@plans@<id>` and `spec@<milestone>@<step>` resolve**, each to its
   file or directory, and each reports the existing "defines no {kind} `{id}`" finding for an absent
   id: new tests in `path@core@src/check/references.rs`, in the style of its `checked*` tests.
@@ -139,8 +223,9 @@ step.
   accept a directory without a README as an entry.
 - **A milestone's `index.md` and each home's `index.md` are generated and checked** like every
   File-shape index, by `file_register_index` (`path@core@src/index.rs`) and
-  `path@core@src/check/generated.rs`, and the milestones/ index lists no file of a nested
-  milestone anchor: a new test in `path@core@src/index.rs`. Mutation: drop the owning-anchor filter.
+  `path@core@src/check/generated.rs`, and the milestones/ index lists each milestone once and no
+  file inside one: a new test in `path@core@src/index.rs`. Mutation: render the milestones home
+  with the File renderer (audit finding 8).
 - **The anchors of a commit's tree include its milestone anchors**: a new `History` test in
   `path@core@tests/binary.rs` whose message cites `spec@<milestone>@<step>` added by its commit.
   Mutation: build the milestone anchors from the live tree instead of the commit's.
@@ -210,10 +295,12 @@ Every fixture is expressible with what exists: a file, a directory, a reference 
     anchor
     `plans`; `grep -rn 'path@knowledge-architect@docs/plans' docs crates` lists them, including
     the four citations repointed in the commit that added the milestone document;
-  - the owner's verbatim words in argument a42, which hold `milestone@knowledge-architect@…` and
-    `spec@...@...` in backticks: the backticks are removed, the words kept;
-  - every other backticked span that opens with `milestone@` or `spec@` and is not a whole
-    reference, such as the bare `milestone@` of argument a81 and of the losing alternatives;
-    `grep -n '`milestone@\|`spec@' docs/plans -r` lists them.
+  - the owner's verbatim words in argument a42, which hold a milestone citation anchored at the
+    root and the spec form with three dots, each in backticks: the backticks are removed, the
+    words kept;
+  - every other backticked span that opens with the word milestone or spec followed by an at
+    sign and is not a whole reference, such as the bare milestone@ of argument a81 and of the
+    losing alternatives; a grep under docs/plans for a backtick followed by either word and an
+    at sign lists them.
 
   The guard is `cargo klarch check` on the moved tree.
