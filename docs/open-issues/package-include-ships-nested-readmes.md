@@ -5,16 +5,16 @@ kind: defect
 
 ## Summary
 
-The `include` list of crates/core/Cargo.toml and crates/agent-skills/Cargo.toml names
-`"README.md"`. Cargo reads an `include` entry as a gitignore-style pattern, and a pattern with no
-`/` matches at any depth. So `cargo package --list` for each of the two crates lists
+The `include` list of crates/core/Cargo.toml, crates/agent-skills/Cargo.toml and
+crates/gates/Cargo.toml names `"README.md"`. Cargo reads an `include` entry as a gitignore-style pattern, and a pattern with no
+`/` matches at any depth. So `cargo package --list` for each of the three crates lists
 docs/open-issues/README.md beside the crate's own README.md.
 
 ## Details
 
 ### What
 
-Anchor the pattern to the package root, as `"/README.md"`, in both crates, and check that
+Anchor the pattern to the package root, as `"/README.md"`, in every crate, and check that
 `cargo package --list` lists one README.md per crate. The other entries are worth the same check:
 `"Cargo.toml"`, `"LICENSE-MIT"` and `"LICENSE-APACHE"` would match at any depth too, though no
 nested file of those names exists today.
@@ -29,5 +29,5 @@ list.
 
 ### What would close it
 
-Every entry of both lists matches only at the package root, and `cargo package --list` for each
+Every entry of every crate's list matches only at the package root, and `cargo package --list` for each
 crate shows exactly the whitelisted files.

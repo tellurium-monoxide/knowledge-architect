@@ -21,3 +21,22 @@ an adversarial review reproduced three losses the pipes do not have:
 
 No gate child did any of the three, so the losses are latent. They are what a reintroduction
 has to answer.
+
+## A `gates` command of the checker's binary, with the gate list declared in the manifest
+
+Lost to `design@gates@gates-crate`. `live`. It would have changed the manifest's format and the
+checker's command line, and needed no code in a project. It makes the document checker run cargo,
+the linter and the tests, and a gate list in TOML cannot carry a distiller.
+
+## A published gates binary configured by a file
+
+Lost to `design@gates@gates-crate`. `live`. It would have added a configuration file format. It has
+the first alternative's cost without its gain, and leaves a project no binary of its own for its
+other repeated tasks.
+
+## No gates code shipped: each project writes its own runner
+
+Lost to `design@gates@gates-crate`. `live`. Each project would keep the runner's logic, about 700
+lines with its tests, and refine it alone. It is kept because a doubt remains: the library's
+interface may still carry assumptions of the two projects it came from, and a project it does not
+fit falls back to writing its own.

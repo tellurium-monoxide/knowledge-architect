@@ -10,8 +10,8 @@ The library that runs a project's merge gates. What it does for a user is
 `cargo test --workspace`, run by the test gate, compiles and runs this crate's own tests. A test
 that runs the gates over this repository runs the suite that is running it. Test the pieces
 (distillers, the verdict, the list, the argument insertion) through their functions, and the
-spawn helper through short `sh -c` children. The whole binary is tested by this repository's xtask,
-`path@xtask@tests/gates_bin.rs`, over a fake project.
+spawn helper through short `sh -c` children. The runner is tested end to end through this
+repository's xtask binary, `path@xtask@tests/gates_bin.rs`, over a fake project.
 
 ## No gate child inherits `RUSTC_BOOTSTRAP`
 
@@ -24,4 +24,5 @@ compile on stable, so a verdict taken under it passes code CI rejects, per
 
 Every stdout and stderr write in the gates path ignores write errors, so a reader that closes
 the pipe truncates output instead of panicking the run into exit 101. A bare `println!` or
-`eprintln!` added here reintroduces that panic.
+`eprintln!` added here reintroduces that panic. This is a restatement; its home is
+`design@gates@verdict-from-exit-codes`.

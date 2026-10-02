@@ -26,14 +26,17 @@ repository's own package as the checker. Root
 request: `cargo --locked x gates --locked --fail-fast --require-rebased --full`. A list restated as
 workflow steps drifts from this one, and a gate added to one list and not the other makes a
 local run pass what CI fails, or the reverse. What the per-step layout gave, the failing gate's
-name in the job UI, comes back through `design@gates@annotations-under-actions`.
+name in the job UI, comes back through `design@gates@annotations-under-actions`, and the logs reach
+the reader as the workflow's `gate-logs` artifact, uploaded when the job fails.
 
 **Where CI and a local run differ, the difference is a flag.** `--locked`: locally a
 legitimately updated `Cargo.lock` must not fail a gate, while in CI lock drift is exactly what
 must fail. The tool's flag reaches its children alone: the `x` alias resolves the workspace
 before the tool starts and rewrites a drifted lock, so CI also passes cargo's own `--locked`
 ahead of the alias. `--fail-fast`: CI's deliverable is a verdict, a local run's is the complete work list,
-per `design@gates@gates-run-all`. `--require-rebased`, per `design@gates@rebased-gate-behind-a-flag`.
+per `design@gates@gates-run-all`. `--require-rebased`, per `design@gates@rebased-gate-behind-a-flag`: the merge predicate in root
+`CLAUDE.md` asks the same ancestry question with git before the fast-forward, and CI's full-depth
+checkout has fetched origin/main before the gate reads it.
 `--full`: under Actions nothing else streams, since the announce line is written to a terminal
 alone, and a hung gate must show which one it is.
 

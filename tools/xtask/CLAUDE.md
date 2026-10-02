@@ -6,6 +6,14 @@ this way is `path@xtask@docs/design.md`. The gates run through the published lib
 
 **This file holds what is true of the code as it stands.**
 
+## Prints go through `say` and `complain`
+
+The library's output helpers, `knowledge_architect_gates::process::{say, complain}`, ignore write
+errors, so a reader that closes the pipe truncates output instead of panicking the run into exit
+101. xtask prints through them too, as its `abort` does; a bare `println!` or `eprintln!` added
+here reintroduces that panic. This is a restatement; its home is
+`design@gates@verdict-from-exit-codes`.
+
 ## No test here may invoke the gates
 
 `cargo test --workspace`, run by the `gates` subcommand, compiles and runs this crate's own

@@ -99,7 +99,7 @@ its thread name becomes the entry's slug unless it collides (thread-slug-is-entr
 | two-crates | the skill text lives in a second crate, crates/agent-skills, package `knowledge-architect-agent-skills`. The core depends on it. | the owner wished for one package bundling both; it lost on argument, 3.2 |
 | binary-name | the binary is `klarch`. The crate stays `knowledge-architect`. | owner, 2026-10-01; replaces the full name for the binary, 3.2 |
 | xtask-gates | tools/xtask is reproduced with the gates subcommand only | 4.6 |
-| gates-convention | the setting-up skill recommends the xtask gates pattern. No code is shipped for it. | this repository follows it |
+| gates-convention | the setting-up skill recommends the xtask gates pattern. No code is shipped for it. | this repository follows it. Reversed in part by gates-crate (3.10): the gates runner is a published library |
 | version-lockstep | one version number for both crates, and so for the skill content | the owner called it "critical" |
 | binary-bundles-workflow | the crate embeds the skills, agents and primer, and a command writes them into a project. There is no plugin marketplace. | owner's proposal. Supersedes five threads, 3.3 |
 | installed-files-committed | the installed files are committed in the project, and verified by the checker | the gitignored variant is ruled out |
@@ -438,6 +438,7 @@ knowledge-architect/                 component "knowledge-architect" (the projec
 │  └─ agents/knowledge-architect-*   installed, committed (from step 5)
 ├─ crates/core/                      component "core"; package knowledge-architect (lib + bin klarch)
 │  └─ LICENSE-MIT  LICENSE-APACHE    copies, so the package ships them
+├─ crates/gates/                     component "gates"; package knowledge-architect-gates (lib), from step 5b
 ├─ crates/agent-skills/              component "agent-skills"; package knowledge-architect-agent-skills (lib)
 │  ├─ README.md  CLAUDE.md  docs/    the component's own documents, never installed
 │  ├─ LICENSE-MIT  LICENSE-APACHE    copies
@@ -446,7 +447,7 @@ knowledge-architect/                 component "knowledge-architect" (the projec
 │     ├─ skills/<skill>/SKILL.md     → .claude/skills/knowledge-architect-<skill>/SKILL.md
 │     ├─ agents/<agent>.md           → .claude/agents/knowledge-architect-<agent>.md
 │     └─ PRIMER.md                   → .claude/knowledge-architect/PRIMER.md
-└─ tools/xtask/                      component "xtask"; gates only; publish = false
+└─ tools/xtask/                      component "xtask"; this repository's gate list; publish = false
 ```
 
 **Approved default:** the manifest declares a location `agent-config` at .claude carrying the
@@ -1130,7 +1131,7 @@ owner's scheduling is a `todo`, not a `deferred`.
 | structured-plan-documents | core | todo | step 2 (done) | a structure for plan documents, with registers such as planned design items. Fully open. |
 | tooling-for-project-skills | core | todo | step 2 (done) | checks over the structure of a project's own skills. Long term. |
 | configuration-for-several-agent-providers | core | deferred | step 2 (done) | AGENTS.md as the generic file, with other providers' files as symlinks or imports |
-| xtask-abort-exits-one | xtask | observation | step 2 (done) | found by the review of step 2: no exit-code contract binds xtask |
+| xtask-abort-exits-one, now a-run-that-could-not-start-exits-one | gates, moved from xtask in step 5b | observation | step 2 (done) | found by the review of step 2: no exit-code contract binds the gates |
 | a home for developer contracts outside agent configuration | core | deferred | step 3 | with `harness = []`, the content routed to CLAUDE.md loses its home; the owner's long-term answer is a home independent of any harness |
 | shipped text is reference-free, mechanically | agent-skills | todo | step 5, PR 1 (done) | a check replacing the release grep and the walk exclusion of content/. A `todo`: no occasion was found whose own work includes building the check, so no trigger passes the trigger test |
 | skill patching | agent-skills | deferred | step 5, PR 4 (done) | patches stored as diffs per project. Answers watch point P1. |
@@ -1226,6 +1227,7 @@ its docs/design.md.
 | 5, PR 2 | agent-skills | done: the decisions of 3.6 and spec-and-milestone, spec-leaves-at-landing, designing-hands-off-to-planning (the planning side) |
 | 5, PR 4 | agent-skills, root | done: the decisions of 3.7 and overlay-by-separate-skills, routing-table, skill-name-prefix, goals-required, gates-convention, exact-pin, declared-command (the extension rule), the interim rule of cross-project-references; klarch-prefix in the root |
 | 5, PR 5 | agent-skills, root | done: the decisions of 3.8, goal-lifecycle, retrospective-destination, premortem-as-watch-points; retrospective-findings-stay-here in the root |
+| 5b, PR 1 | gates, agent-skills, root | done: gates-crate, a-project-holds-its-gate-list, the-library-owns-the-flags, one-spawn-helper; six entries moved from xtask; gates-convention, repo-layout and version-lockstep rewritten |
 | 6 | agent-skills | plugin-inventory (the design-discussion skill completes the set), designing-together-retirement, designing-skill-name, bounded-problem-branch, the design side of designing-hands-off-to-planning, the kept items of the intake |
 
 **Losing alternatives.** Section 3.2 and the absorbed shapes of 3.3 are judged against
@@ -1491,10 +1493,19 @@ skill and comes before the PR that needs it.
    gates run move from xtask's design home to the gates', with the rejected alternative of the
    spawn helper and the issue on the exit code of a run that could not start; gates-convention and
    repo-layout rewritten; the versioning policy and the changelog name the gates library as a
-   surface. The new Component's goal, gates-from-a-list, was drafted from the owner's statement and approved by
-   its slug.
-2. **setting-up's Rust section**, with xtask-pins-checker. It closes or narrows the issue on
-   setting-up leading to every quality tool.
+   surface. The new Component's goal, gates-from-a-list, was drafted from the owner's statement and
+   approved by its slug. From the review: the decision the-library-owns-the-flags; the three
+   alternatives that lost to gates-crate enter the gates' rejected alternatives, the last on its
+   fourth test; version-lockstep covers the gates library; the issue on setting-up leading to every
+   quality tool closes, since item 2 schedules its work; the issue on nested READMEs covers the
+   third crate. Of the criteria of section 2: ship-isolation holds for the new package, which ships
+   its sources, README and licenses, and the nested README already tracked; thaum-keeps-working is
+   not touched, thaum still runs its own xtask; nothing-compiled-in holds, the library taking the
+   checker and the base from the caller and setting-up naming no path of this repository;
+   self-hosted holds, `cargo x gates` running through the library; owner-intent and one-workflow
+   are not touched.
+2. **setting-up's Rust section**, with xtask-pins-checker. It does the work of the issue on setting-up
+   leading to every quality tool, which item 1 closes as scheduled here.
 
 Step 7 publishes three crates.
 

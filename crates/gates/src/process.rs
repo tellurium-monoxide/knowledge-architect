@@ -8,8 +8,11 @@ use std::sync::{Arc, Mutex};
 
 /// What to spawn. `envs` are added to the inherited environment, never replacing it.
 pub struct Spec<'a> {
+    /// The program to run.
     pub program: &'a str,
+    /// Its arguments.
     pub args: &'a [&'a str],
+    /// Variables added to the inherited environment.
     pub envs: &'a [(&'a str, &'a str)],
     /// The child's working directory. Gates pass the project root, so the child and the
     /// log paths agree on where `target/` is whatever directory the tool was invoked from.
@@ -19,7 +22,9 @@ pub struct Spec<'a> {
 /// A finished child. `output` is stdout and stderr combined; the two streams are read
 /// concurrently, so their interleaving is best-effort, and every byte of both is present.
 pub struct Completed {
+    /// Every byte of stdout and stderr, combined.
     pub output: Vec<u8>,
+    /// Whether the child exited with success.
     pub success: bool,
 }
 

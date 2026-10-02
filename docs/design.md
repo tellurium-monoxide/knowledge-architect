@@ -7,7 +7,8 @@ cited as `design@knowledge-architect@<slug>`. What lost to a decision here is
 `path@knowledge-architect@docs/goals.md`.
 
 **What belongs here:** a decision that survives deleting any one component. How the checker works
-is `path@core@docs/design.md`; how the gates run is `path@xtask@docs/design.md`; how the agent
+is `path@core@docs/design.md`; how the gates run is `path@gates@docs/design.md`, and this repository's own gates
+`path@xtask@docs/design.md`; how the agent
 skills are shaped is `path@agent-skills@docs/design.md`.
 
 ## 1. Layout and packaging
@@ -75,7 +76,9 @@ one command, and a later provider's layout is a target the same command writes, 
 skills of that exact version, and the core pins the agent-skills crate at it exactly. A project
 therefore never runs a checker whose installed skills describe another version's commands, which
 is what lets a project pin one version and move when it chooses, per
-`goal@knowledge-architect@any-project-can-adopt-it`.
+`goal@knowledge-architect@any-project-can-adopt-it`. The gates library is in the same lockstep: the
+setting-up skill that recommends it is the same version's, so a project pins one version for all of
+it. The cost accepted: a fix to the gates alone is released as a version of every crate.
 
 ### Versions follow the owner's scheme, mapped onto Cargo's two positions under 0.x `##versioning-policy`
 

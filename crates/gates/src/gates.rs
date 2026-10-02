@@ -216,18 +216,18 @@ impl Outcome<'_> {
 /// returns the run's exit code: success when every gate that ran passed and every gate could
 /// run. Refuses to write its report into a pipe, outside GitHub Actions.
 pub fn run(root: &Path, gates: &[Gate], args: &GatesArgs) -> ExitCode {
-    // Refused before any gate runs, and for this subcommand alone: the run's product is its
-    // exit code, and a pipe hands that to the reader at the far end (`| tail` exits with
-    // tail's status) while a filter drops lines of a report that is already distilled. A
-    // regular file passes, so `> log 2>&1` stays available, and every gate's full output is
-    // under `path@knowledge-architect@target/gates/` whatever stdout was.
+    // Refused before any gate runs: the run's product is its exit code, and a pipe hands that
+    // to the reader at the far end (`| tail` exits with tail's status) while a filter drops
+    // lines of a report that is already distilled. A regular file passes, so `> log 2>&1`
+    // stays available, and every gate's full output is under the root's target/gates/
+    // whatever stdout was.
     //
     // Under Actions the reader is the runner, which takes the step's verdict from the exit
     // code of the shell, so the refusal's reason does not hold there and the stream stays live.
     let actions = under_actions();
     if stdout_is_a_pipe() && !actions {
         return abort(
-            "gates does not write its report into a pipe: the reader would replace the exit \
+            "a gates run does not write its report into a pipe: the reader would replace the exit \
              code the run exists to deliver, and a filter hides lines. Read it in the terminal \
              or redirect to a file; each gate's full output is under target/gates/",
         );
@@ -337,10 +337,7 @@ pub fn run(root: &Path, gates: &[Gate], args: &GatesArgs) -> ExitCode {
 /// The error annotation a failed gate prints under Actions, which the job summary lists by the
 /// gate's name.
 fn error_annotation(name: &str) -> String {
-    format!(
-        "::error title={name}::{name} FAILED; its full log is target/gates/{name}.log, \
-         published as the gate-logs artifact\n"
-    )
+    format!("::error title={name}::{name} FAILED; its full log is target/gates/{name}.log\n")
 }
 
 /// Runs each gate in order and reports it as it completes. A gate whose child cannot be
@@ -408,9 +405,7 @@ fn extract(outcome: &Outcome) -> String {
         Distiller::WithoutProgress => without_progress(&text),
         Distiller::Tests => distill_test(&text),
         // `merge-base --is-ancestor` answers "no" by its exit code alone and prints nothing.
-        Distiller::Ancestry { base } if text.trim().is_empty() => {
-            format!("HEAD does not contain {base}: fetch it and rebase the branch on it\n")
-        }
+        Distiller::Ancestry { base } if text.trim().is_empty() => ancestry_hint(base),
         // A formatter's and the checker's reports are already meant to be read whole.
         _ => text.into_owned(),
     };
@@ -508,6 +503,18 @@ fn slow_tests(text: &str) -> Vec<&str> {
     text.lines()
         .filter_map(|line| line.strip_suffix(SLOW_MARKER)?.strip_prefix("test "))
         .collect()
+}
+
+/// What a silent ancestry failure tells the reader to run: `git fetch <remote> <branch>` when
+/// the base reads as a remote's branch, such as origin/main.
+fn ancestry_hint(base: &str) -> String {
+    match base.split_once('/') {
+        Some((remote, branch)) => format!(
+            "HEAD does not contain {base}: run `git fetch {remote} {branch}` and rebase the \
+             branch on it\n"
+        ),
+        None => format!("HEAD does not contain {base}: rebase the branch on it\n"),
+    }
 }
 
 fn abort(message: &str) -> ExitCode {
@@ -852,6 +859,7 @@ error: test failed, to rerun pass `-p thaum-engine --lib`
             shown.contains("HEAD does not contain upstream/trunk"),
             "{shown}"
         );
+        assert!(shown.contains("`git fetch upstream trunk`"), "{shown}");
     }
 
     // The claim: exactly the tests libtest warned about are extracted, by name, and
