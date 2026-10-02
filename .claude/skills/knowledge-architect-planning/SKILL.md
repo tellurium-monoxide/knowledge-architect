@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-planning
-description: MUST use when a design discussion has converged and its work needs a spec or a milestone, in the same session as the convergence; whenever a step of a milestone is about to be implemented or lands; and when the work of a spec lands. Covers the plan document vocabulary (spec, milestone, plans directory), choosing between a spec and a milestone, the file layout and the fixed sections, item identifiers, cutting the steps, acceptance criteria, the per-step design audit, the reviews before a plan document is committed, the harvest, and the deletion that ends a plan document's life.
+description: MUST use when a design discussion has converged and its work needs a spec or a milestone, in the same session as the convergence; whenever a step of a milestone is about to be implemented or lands; and when the work of a spec lands. Covers the plan document vocabulary (spec, milestone, plans directory), choosing between a spec and a milestone, the file layout and the fixed sections, item identifiers, cutting the steps, acceptance criteria, the per-step design audit, the reviews of a plan document, the harvest, and the deletion that ends a plan document's life.
 ---
 
 # Planning
@@ -107,7 +107,7 @@ so in one line rather than being omitted, so a reader can tell an empty section 
 | how a step is worked | in a milestone document: §7 of this skill, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
 | names | every project shorthand the document uses, expanded to the file, function or command it names |
 | what the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
-| what is already decided | the recorded decisions the design rests on and does not argue again, as references |
+| what is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every tripwire and issue that `cargo klarch show` lists as referencing it, and the step whose harvest judges each |
 | criteria | criterion, kind, source, satisfaction |
 | threads | every thread with its identifier, its final state and its resolution, a column naming the section that carries its shape, and a column naming the durable home that will harvest it |
 | new names, in one place | every new name the design uses (a type, a function, a field, an event, a bound, a counter) in one fenced block with the file it goes in; a name that exists in the code is listed as existing |
@@ -165,6 +165,9 @@ failure.** Every other test here serves that one.
 - **The last step consumes**: the measurements, the report, the harvest.
 - **One branch and one merge per step**, each merged before the next step begins, and reviewed
   before the merge.
+- **A plan document whose work changes what the project's gates check lands in a merge of its own,
+  before the first step.** On the first step's branch, the gates as that step changes them would
+  judge the commit that added the document, whose tree predates the change.
 
 A step's entry carries, in this order:
 
@@ -193,6 +196,11 @@ names:
 - the step that judges it;
 - the observable that fires it;
 - the response.
+
+**The result a scheduled review is expected to give is not a criterion.** Passing the reviews that
+every plan document and every step owes is the baseline. A criterion names an observable specific to
+the decision it guards; listing "the reviews pass" in every plan document would be noise, and would
+stand in for the specific criterion that is harder to find.
 
 A number in a criterion is a threshold the owner sets. Until the owner has, it is written as a
 default marked as the owner's to reset.
@@ -244,10 +252,11 @@ finds it there.
 7. **The step's spec leaves** in the commit that completes its harvest, as in §9. What crosses steps stays in the
    milestone document, amended in place where the landing changed it.
 
-## 8. Reviews before a plan document is committed
+## 8. Reviews of a plan document
 
-Before a plan document is committed, and again after a revision that changes a decided shape (an
-audit applied in place is not one), it is read by fresh reviewers that did not witness the
+A plan document is committed on its branch first, and that commit is what the reviewers read; each
+repair is a further commit. It is read again after a revision that changes a decided shape (an
+audit applied in place is not one). Its reviewers are fresh, and did not witness the
 discussion. **Fresh, never a fork**: a fork inherits the discussion and reads the document as its
 author. Dispatch them through `knowledge-architect-review`, with the invariants that
 skill lists, the blind brief included:
@@ -287,6 +296,8 @@ This list is their one home; the reviewer reads it here.
 - every acceptance criterion names the decision it guards, the step judging it, the observable that
   fires it and the response;
 - every thread maps to a section and to a harvest home;
+- every tripwire guarding a decision the work reverses or rewrites is named, with the step whose
+  harvest judges it;
 - every section of §4 is present, and an empty one says so.
 
 ## 9. When a plan document leaves

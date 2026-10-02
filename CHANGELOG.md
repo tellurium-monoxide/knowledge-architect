@@ -10,6 +10,15 @@ last release, which the release renames to its version. Each item is tagged with
 - `checks`: `commits` refuses a citation of a commit of its range by SHA, in a message or in a
   document of a commit's tree, where the manifest turns it on.
 - `manifest`: `[commits] refuse-branch-shas`, off when absent.
+- `agent-skills`: a plan document lists the tripwires and issues that reference each decision its
+  work reverses or rewrites, and the readiness checks ask for them.
+- `agent-skills`: a plan document is committed before its reviews, and each repair is a further
+  commit.
+- `agent-skills`: a plan document whose work changes what the gates check lands in a merge of its
+  own, before the first step.
+- `agent-skills`: the result a scheduled review is expected to give is not an acceptance criterion.
+- `agent-skills`: a design discussion's first round states which grounding commands ran, and a
+  measured fact carries the command that re-takes it.
 
 ## 0.1.0
 
