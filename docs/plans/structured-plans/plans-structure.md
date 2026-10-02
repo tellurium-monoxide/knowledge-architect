@@ -4,9 +4,8 @@ This is the spec of step 1 of the milestone in `README.md` beside it. It holds t
 design it implements, the threads it rests on and the procedure for working it are the milestone
 document's; read that document entire first, as its section "How a step is worked" says.
 
-**Defaults this step depends on**: D1, D4, D6, D8, D9, D10, D11, D13 and D14 as ruled by the owner,
-and D15, D17 and D18, which await the owner's word. The audit may run before they are ruled; the
-implementation of a point whose default is unruled does not start.
+**Defaults this step depends on**: D1, D4, D6, D8, D9, D10, D11, D13, D14,
+D15, D17 and D18, all ruled by the owner.
 
 **History.** This step's branch is cut from main after the milestone document merged (D18). Its
 checker refuses every tree without the plans homes, so its commits up to the one that adds them,

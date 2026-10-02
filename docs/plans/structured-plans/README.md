@@ -107,7 +107,7 @@ unruled; the implementation of a point whose default is unruled does not start, 
 | `resolve_anchors`, `collides` | the functions in `path@core@src/manifest.rs` that refuse a misnamed or misplaced anchor |
 | P1 to P11 | the causes of the premortem, in its section below |
 | T1 to T5 | the tripwires the premortem proposed; T2, T4 and T5 are recorded, in the premortem section below |
-| D1 to D18 | the defaults, in "Defaults awaiting the owner" below: D1 to D4 and D6 to D14 ruled, D5 decided by the owner earlier, D15 to D18 awaiting |
+| D1 to D18 | the defaults, in "Defaults awaiting the owner" below: all ruled, D5 decided by the owner earlier |
 | the presumed rows | the six threads closed by the checkpoint batch confirmation of round 7: #plans-dir-declared, #plans-per-anchor, #planned-name, #roadmap-register, #no-roadmap, #design-home-is-intent |
 | `Shape::Directory` | the third variant of `Shape` that step 1 adds for the milestone register's entries (D10) |
 | shape (a) of #plan-item-scope | an item cited with the root anchor and a compound id, `thread@knowledge-architect@<plan>/<id>`; it lost |
@@ -451,9 +451,9 @@ files
 
 ## Decided design
 
-Where a paragraph below says "default Dn", the shape is the author's, written to answer a review
-finding inside an approved thread, and waits for the owner's ruling in "Defaults awaiting the
-owner".
+Where a paragraph below says "default Dn", the shape was the author's, written to answer a review
+finding inside an approved thread, and the owner has ruled it; the list is in "Defaults awaiting
+the owner".
 
 **The plans anchor** (#plans-location, #plans-dir-fixed, #plans-at-root). The tool constructs one
 anchor, `plans`, at the plans directory of the root Component. Its name is reserved like `*` and
@@ -693,25 +693,25 @@ until its harvest.
 
 ## Defaults awaiting the owner
 
-| default | thread it bears on |
-| --- | --- |
-| D15: clause P2 also makes a plan name that is the name of a location a finding. The clause as approved names a Component and a reserved anchor; a location is an anchor whose name a reference carries in the same position, so the same ambiguity follows | #plans-location |
-| D16: #spec-records-the-exchange applies also to a step's spec when the step had a design session of its own, following §4 of the planning skill. The owner ruled on specs and milestone documents | #spec-records-the-exchange |
-| D17: the plans directory holds nothing but its README and its two homes: any other file or directory directly under docs/plans/ is a phase-2 finding. Without it, nothing enforces that plan documents sit in the homes | #plans-split-dirs |
-| D18: D14 revised. This document lands alone, in a pull request of its own merged under the current checker, rather than with step 1: under D14, step 1's checker would refuse the trees of this branch's earlier commits, which lack the plans homes, and the root `CLAUDE.md` requires every commit of a branch to pass under its tip's checker. Step 1's own commits that its checker refuses are squashed before review | #layout-kept |
+None. The owner ruled every default below.
 
 **A material finding on #ledger-from-transcript, unacknowledged.** Argument a72 stated three
 compactions; the re-measurement found one (see the notes under "Arguments"). The premise the
 closure rests on, that the transcript keeps the records from before a compaction, holds on that one
 compaction; "after any number of compactions" is not measured. Tripwire T1, which watched this
 premise, was declined in round 6. Default: #ledger-from-transcript stands as approved, and T1 stays
-declined.
+declined. The finding was presented to the owner with this default, and the owner proceeded.
 
-**Ruled.** The owner ruled D1 to D4 and D6 to D14: "D1 to D14 approved, proceed". D5 was decided
-earlier and is in "Decided design" under "Two registers under it". D14 is revised by D18 above.
+**Ruled.** The owner ruled D1 to D4 and D6 to D14 ("D1 to D14 approved, proceed"), then D15 to
+D18 ("Agreed on those new defaults. proceed"). D5 was decided earlier and is in "Decided design"
+under "Two registers under it". D18 revises D14.
 
 | ruled default | thread it bears on |
 | --- | --- |
+| D15: clause P2 also makes a plan name that is the name of a location a finding. The clause as approved names a Component and a reserved anchor; a location is an anchor whose name a reference carries in the same position, so the same ambiguity follows | #plans-location |
+| D16: #spec-records-the-exchange applies also to a step's spec when the step had a design session of its own, following §4 of the planning skill. The owner ruled on specs and milestone documents | #spec-records-the-exchange |
+| D17: the plans directory holds nothing but its README and its two homes: any other file or directory directly under docs/plans/ is a phase-2 finding. Without it, nothing enforces that plan documents sit in the homes | #plans-split-dirs |
+| D18: D14 revised. This document lands alone, in a pull request of its own merged under the current checker, rather than with step 1: under D14, step 1's checker would refuse the trees of this branch's earlier commits, which lack the plans homes, and the root `CLAUDE.md` requires every commit of a branch to pass under its tip's checker. Step 1's own commits that its checker refuses are squashed before review | #layout-kept |
 | D1: the plans homes are required in the root Component: the `plans` anchor owes docs/plans/README.md, and `specs/` and `milestones/` each owe a README and a generated index. `spec` and `milestone` are built-in registers carried by `plans` alone; a project's `[registers.spec]` or `[registers.milestone]`, and a location naming either, are refused as any declaration of a built-in's storage is | #plans-dir-fixed |
 | D2: enacted in the commit that adds this document, which the owner may reverse: that commit closes the core issue structured-plan-documents, per §2 of the planning skill, and repoints its four citations to this document | #plan-register |
 | D3: this repository writes no docs/roadmap.md in this milestone | #roadmap-home |
