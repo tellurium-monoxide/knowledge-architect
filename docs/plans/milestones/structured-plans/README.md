@@ -206,7 +206,7 @@ harvest that judges each:
 
 | entry | references | judged at |
 | --- | --- | --- |
-| `tripwire@core@reserved-anchors-generic-rule` | `design@core@reserved-anchors` | step 1 |
+| a tripwire on the generic rule of `design@core@reserved-anchors` | that head | step 1: fired at step 1's review, and left; `issue@core@the-generic-anchor-accepts-a-location-s-copy` carries its response |
 | `tripwire@core@issue-kind-list-grows` | `design@core@a-file-register-is-a-directory-of-entries` | step 1 |
 | `issue@core@a-planned-path-can-be-named` | `design@core@reserved-anchors`, `design@core@every-path-names-its-anchor` | step 1 |
 | `issue@core@cross-project-references` | `design@core@a-slug-belongs-to-a-component` | step 2 |
@@ -691,8 +691,8 @@ harvest of the decision it guards:
   of the owner missing from, or misstated in, a committed plan document, found after the commit.
 - **T4**, guarding #plan-item-scope, in the core tripwires home at step 2: a plan document's prose
   names an item of another plan document.
-- **T5**, guarding #plans-at-root, in the core tripwires home at step 1: a project asks to split
-  its plans directory.
+- **T5**, guarding #plans-at-root: written at step 1 as
+  `tripwire@core@plans-directory-split-asked`.
 
 ## Acceptance criteria
 
@@ -783,6 +783,5 @@ under "Two registers under it". D18 revises D14.
   documents won't need a rewrite today. This will only happen when I make a new release of
   knowledge-architect, then bump the version on thaum's side." What that rewrite holds is thaum's
   work, decided then.
-- **If T5 fires**, a split of the plans directory is proposed to the owner again; every citation
-  already names its anchor, so a split rewrites none.
+- **If `tripwire@core@plans-directory-split-asked` fires**, its response applies.
 - **If T4 fires**, #cross-plan-references is proposed to the owner again.

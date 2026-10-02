@@ -1337,7 +1337,7 @@ mod tests {
     /// The claims of the layout's odd shapes, each one finding in phase 2: a plans README that
     /// is a directory, a milestone whose README is a directory (no anchor, so no milestone), the
     /// retired single file of specs/ and of a milestone (named once, by the File rule), and a
-    /// milestone named like a location (D15). Mutations checked, each failing this test: the
+    /// milestone named like a location. Mutations checked, each failing this test: the
     /// directory test dropped from the plans README check; `|| *path == specs.file` deleted;
     /// `|| beside` deleted; the location arm of `milestone_refusal` deleted.
     #[test]

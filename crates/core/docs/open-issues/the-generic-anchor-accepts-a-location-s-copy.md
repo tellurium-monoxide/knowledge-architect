@@ -31,10 +31,11 @@ that change. Not established: whether a project relies on it.
 ### Why it matters
 
 `design@core@reserved-anchors` states the generic form is accepted "when at least one component
-carries the path with the claimed kind", and `tripwire@core@reserved-anchors-generic-rule` watches
-for a generic reference that passes while meaning something its writer did not intend. A pointer
-that names "every component's own copy" and resolves only in a location is that case. The code and
-the design disagree, and one of them is wrong.
+carries the path with the claimed kind". A pointer that names "every component's own copy" and
+resolves only in a location passes while meaning something its writer did not intend. That was the
+firing condition of a tripwire on the generic rule, which this case fired and which left the
+tripwires home when it did: this entry is its consequence, and its response was to reopen the
+generic anchor's checking rule. The code and the design disagree, and one of them is wrong.
 
 ### What would close it
 

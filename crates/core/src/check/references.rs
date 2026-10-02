@@ -317,9 +317,11 @@ fn path(
             // state, and a verdict may not depend on the checking machine's. Presence and
             // kind are asked apart, so a path some component carries under the other kind
             // gets the kind-claim repair rather than "repair the path".
-            // The generic form names a copy the project's own anchors carry. The anchors the
-            // tool constructs hold plan documents, which are cited by their kind (clause P1),
-            // so none of them holds a copy it names.
+            // The anchors the tool constructs hold plan documents, which are cited by their
+            // kind, per `design@core@plan-document-kinds`, so none of them holds a copy the
+            // generic form names. A declared location still counts, which
+            // `issue@core@the-generic-anchor-accepts-a-location-s-copy` reports against the
+            // head's "at least one component".
             let carried: Vec<PathBuf> = anchors
                 .all()
                 .iter()
@@ -403,7 +405,7 @@ fn path(
                 return;
             }
             let target = a.path.join(trimmed);
-            // Clause P1, before the deepest-anchor rule: a plan document cited by its path is
+            // Per `design@core@plan-document-kinds`, before the deepest-anchor rule: a plan document cited by its path is
             // refused from every anchor, and the repair names the one form that resolves.
             if let Some(form) = plan_document(anchors, &target) {
                 out.push(Finding::at(
@@ -444,7 +446,7 @@ fn path(
 /// The kind form of a plan document at `target`, or `None` when no plan document is there.
 ///
 /// A plan document is a spec file of `specs/`, a milestone directory, or a file inside a
-/// milestone directory (clause P1 of the plans layout). The README and the index of the plans
+/// milestone directory, per `design@core@plan-document-kinds`. The README and the index of the plans
 /// directory and of its two homes are not plan documents, and are cited by path. Judged by
 /// where the target sits, not by whether it exists: a path to a deleted step spec gets the same
 /// repair as one to a present one.
@@ -895,7 +897,7 @@ mod tests {
             .any(|f| f.contains("`m` defines no spec `none`")));
     }
 
-    /// The claim: the repair P1 names is the form that resolves for each position: a step for
+    /// The claim: the repair a refused plan citation names is the form that resolves for each position: a step for
     /// a step spec, the milestone for its README, its index or anything deeper, a spec for a
     /// spec, and nothing for a navigation file. Mutations checked: the README and index filter,
     /// and the one-segment test, each removed from `plan_document`.

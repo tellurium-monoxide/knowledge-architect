@@ -413,8 +413,8 @@ itself be edited, while the prefix makes ownership readable from a path alone wi
 no history.
 
 **A plans directory in every component** — lost to `design@core@plans-at-root`. `live`. It lets a
-large project keep each component's plans beside it. It loses because most work spans components,
-so its plans would sit at the root anyway: the milestone that built the plans layout touched two
-components; because every component would owe a plans home that holds nothing; and because, in the
-owner's judgement, a project should never hold so many open plans that splitting the directory
-helps. A split stays cheap: every citation names its anchor, so it would rewrite none.
+large project keep each component's plans beside it. It loses on the premises that head states:
+most work spans components, so its plans sit at the root anyway; no project should hold enough open
+plans for a split to help; and plans designed before another is built break each other, which
+separate directories hide from each other. A further cost, which the owner did not argue: every
+component would owe a plans home that holds nothing.

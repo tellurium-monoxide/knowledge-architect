@@ -393,11 +393,11 @@ restored.
 
 A plan document's layout and its section titles are fixed, and every thread, step and acceptance
 criterion carries an identifier in the entry grammar, written plain with a hash sign and never in
-backticks. Nothing outside the plans directory cites an item of such a plan document; a `path`
-reference to a whole plan document is allowed, and its dangling at deletion lists the texts that
-depended on it. This is the shape a structure for plan documents, with registers of their own, can
-read without rewriting them. That structure is scheduled in
-`milestone@plans@structured-plans`.
+backticks. Nothing outside the plans directory cites an item of such a plan document; a reference
+to a whole plan document is allowed, by its kind rather than its path, per
+`design@core@plan-document-kinds`, and its dangling at deletion lists the texts that depended on
+it. This is the shape a structure for plan documents, with registers of their own, can read
+without rewriting them. Its items are scheduled in `milestone@plans@structured-plans`.
 
 ## Reviews
 
@@ -466,7 +466,7 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
 ### A project states its plans directory in its own rows of the knowledge table `##plans-directory-declared`
 
 The setup skill proposes docs/plans/ and writes the path the owner accepts among the
-project's rows. The checker now fixes the plans directory at docs/plans/, per
+project's rows. The checker fixes the plans directory at docs/plans/, per
 `design@core@plans-dir-fixed`, so the row can name no other path; it stays while the installed
 skills read the plans directory from the row, which `milestone@plans@structured-plans` changes.
 Nothing checks that the row exists, so a project whose root `CLAUDE.md` lacks it leaves the

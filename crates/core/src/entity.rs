@@ -460,7 +460,7 @@ pub(crate) fn milestone_dirs<'a>(
 ///
 /// A milestone is cited `spec@<id>@<step>` and `milestone@plans@<id>`, so its name is an entity
 /// id, and it is no other anchor's name and no reserved word, or a reference would read as the
-/// other anchor (clause P2 of the plans layout). Judged against the anchors the manifest
+/// other anchor, per `design@core@a-plan-name-reads-as-nothing-else`. Judged against the anchors the manifest
 /// accepted.
 pub(crate) fn milestone_refusal(name: &str, manifest: &Manifest) -> Option<String> {
     if !is_entity_id(name) {
@@ -1536,7 +1536,7 @@ mod tests {
             e.resolve(&a, &Kind::new("design"), "a-project", "word"),
             Resolution::Resolved
         );
-        // Every anchor carries `path`, whatever its register list.
+        // Every anchor but a milestone carries `path`, whatever its register list.
         assert!(a.by_name("bare").unwrap().carries(&Kind::path()));
     }
 
