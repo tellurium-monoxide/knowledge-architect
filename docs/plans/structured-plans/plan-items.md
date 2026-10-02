@@ -1,8 +1,7 @@
 # Step 2, #plan-items: items defined by section, spec files as anchors, scoped citations
 
 This is the spec of step 2 of the milestone in `README.md` beside it. It holds the step's entry.
-It depends on defaults D4, D7 and D12 of the milestone document, which the owner rules on before
-the step starts.
+It depends on defaults D4, D7 and D12 of the milestone document, all ruled by the owner.
 The design it implements is the milestone document's "Decided design", under "Items", "Item
 citations" and "A spec file is an anchor too". Read that document entire first.
 

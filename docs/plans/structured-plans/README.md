@@ -156,30 +156,48 @@ assembled from the transcript; and the design homes are stated to hold built int
 
 The design rests on these and does not argue them again:
 
-- `design@core@anchors-are-components-and-locations`, `design@core@reserved-anchors`,
-  `design@core@every-path-names-its-anchor`: the anchor model this work extends.
-- `design@core@a-file-register-is-a-directory-of-entries`,
-  `design@core@a-file-register-index-is-rows`,
-  `design@core@generated-files-are-pure`: the File shape a spec register reuses.
-- `design@core@an-entry-is-a-heading-at-the-register-level`: the shape of an item's definition.
-- `design@core@a-slug-belongs-to-a-component`: the three-part reference and the refusal of a
-  reference with no anchor.
+- `design@core@generated-files-are-pure`: a generated index is a function of the walked tree.
 - `design@core@an-extension-plugs-in-through-phased-hooks`: an extension runs after the entity table
   is built, so items are core work (a83).
-- `design@agent-skills@spec-leaves-at-landing`, `design@agent-skills@milestone-is-a-directory`,
-  `design@agent-skills@standing-argument-in-head`: what a plan document is for and when it leaves.
+- `design@agent-skills@spec-leaves-at-landing`, `design@agent-skills@standing-argument-in-head`:
+  what a plan document is for and when it leaves.
 - `design@agent-skills@exact-pin`: why thaum is outside the work.
 
-These are reversed or rewritten by this work, each at the harvest named in the harvest section.
-While a step's branch is open, its code diverges from the heads it reverses; that is the reversal,
+These are rewritten or reversed by this work, each at the harvest named in the harvest section:
+
+- step 1, core: `design@core@anchors-are-components-and-locations`,
+  `design@core@reserved-anchors`, `design@core@every-path-names-its-anchor`,
+  `design@core@components-carry-the-same-documents`, `design@core@registers-are-declared` (it
+  states that four registers are compiled in, which D1 makes six),
+  `design@core@a-file-register-is-a-directory-of-entries` and
+  `design@core@a-file-register-index-is-rows` (the directory entry of D10, and the owning-anchor
+  filter of the index);
+- step 2, core: `design@core@an-entry-is-a-heading-at-the-register-level`,
+  `design@core@a-slug-belongs-to-a-component`;
+- step 3, agent-skills: `design@agent-skills@plans-directory-declared`,
+  `design@agent-skills@planned-work-is-an-issue`, `design@agent-skills@structure-ready`,
+  `design@agent-skills@thread-slug-is-entry-id`,
+  `design@agent-skills@harvest-after-implementation`, `design@agent-skills@primer-content`,
+  `design@agent-skills@design-hands-off-to-planning`, `design@agent-skills@document-vocabulary`,
+  `design@agent-skills@milestone-is-a-directory`.
+
+While a step's branch is open, its code diverges from the heads it rewrites; that is the change,
 not a defect, and the step's harvest on the same branch ends it. The exception is
 `design@agent-skills@plans-directory-declared`: step 1 falsifies its reason ("A manifest key would
 be a checker change that nothing reads yet"), while the skill text it governs changes in step 3. So
-step 1's harvest rewrites that reason, and step 3's reverses the decision. The heads:
-`design@agent-skills@plans-directory-declared`, `design@agent-skills@planned-work-is-an-issue`,
-`design@agent-skills@structure-ready`, `design@agent-skills@thread-slug-is-entry-id`,
-`design@agent-skills@harvest-after-implementation`, `design@agent-skills@primer-content`,
-`design@agent-skills@design-hands-off-to-planning`, `design@agent-skills@document-vocabulary`.
+step 1's harvest rewrites that reason, and step 3's reverses the decision.
+
+**A tripwire guards a head this work rewrites**, and its harvest judges it:
+`tripwire@agent-skills@ledger-lost-before-hand-off` guards
+`design@agent-skills@design-hands-off-to-planning`. It fires when a discussion's ledger is lost to
+compaction before the plan document is written, and its response reopens with the alternative
+"Writing the discussion's ledger to a file during the discussion". #ledger-from-transcript changes
+its premise: the ledger is assembled from the transcript on disk. It has not fired: this session's
+transcript holds no compaction marker. The discussion did not see it; the review before the merge
+found it. Step 3's harvest rewrites it to watch assembly from the transcript, absorbs T2 into it if
+both guard the same head, or deletes it, under `knowledge-architect-issue-tracking`. The tripwires
+guarding the core heads of steps 1 and 2, such as `tripwire@core@reserved-anchors-generic-rule`
+and `tripwire@core@issue-kind-list-grows`, are re-read at those steps' audits.
 
 ## Criteria
 
@@ -607,6 +625,10 @@ which is the roadmap's content (a16).
 
 ## Losing alternatives
 
+Every row is judged by the recording tests of `knowledge-architect-decision-recording` at the
+harvest of the step that builds the decision it lost to; the harvest rows name the thread-level
+ones.
+
 | alternative | lost to | the deciding fact |
 | --- | --- | --- |
 | #plans-dir-declared | #plans-dir-fixed | a built-in register's storage is fixed by the tool (a9) |
@@ -661,6 +683,11 @@ harvest of the decision it guards:
 
 ## Acceptance criteria
 
+A fourth criterion, #assembly-holds-the-rulings, was judged at the commit that added this document
+and fired: the transcript reviewers found rulings recorded wider than the owner made them. The
+repair commit after the review before the merge reports it, and it left this table. Its evidence
+goes to T2 at step 3's harvest.
+
 Each criterion names the thread it guards rather than a reference: the decision has no design entry
 until its harvest.
 
@@ -669,7 +696,6 @@ until its harvest.
 | #milestone-fits-file-register | #plans-split-dirs, #plan-anchor | step 1 | the plans anchor and the milestone anchors need more than defaults D6, D9, D10 and D11 state: a new kind of anchor rather than a location the tool constructs, a `Shape` variant beyond the directory entry of D10, or a change to the File shape's rules for the `spec` register | stop step 1; put the shape back to the owner |
 | #file-anchor-fits-path-model | #plan-anchor | step 2 | making a spec file an anchor needs a change to `Anchors::owning` or to the deepest-anchor rule beyond excluding plan anchors from the `path` kind | stop step 2; design session with the owner |
 | #roadmap-needs-no-code | #roadmap-home | step 3 | writing the roadmap's instructions needs a checker rule that ordinary reference checking does not give | stop step 3; put it to the owner |
-| #assembly-holds-the-rulings | #ledger-from-transcript | the commit that adds this document | the transcript reviewer finds a ruling of the owner missing from, or misstated in, this document | repair in place before commit, and report it in the commit message as evidence on T2 |
 
 ## Implementation sequence
 
@@ -695,7 +721,7 @@ until its harvest.
 
 None. The owner ruled every default below.
 
-**A material finding on #ledger-from-transcript, unacknowledged.** Argument a72 stated three
+**A material finding on #ledger-from-transcript, presented to the owner.** Argument a72 stated three
 compactions; the re-measurement found one (see the notes under "Arguments"). The premise the
 closure rests on, that the transcript keeps the records from before a compaction, holds on that one
 compaction; "after any number of compactions" is not measured. Tripwire T1, which watched this
@@ -730,9 +756,9 @@ under "Two registers under it". D18 revises D14.
 
 | when | what lands where |
 | --- | --- |
-| step 1 | agent-skills design home: the reason of `design@agent-skills@plans-directory-declared` rewritten (see "What is already decided"). Core design home: #plan-register (its first part), #plans-location (rewriting `design@core@reserved-anchors`), #plans-dir-fixed, #plans-at-root, #plans-split-dirs, #plan-document-kinds, #plan-anchor (rewriting `design@core@anchors-are-components-and-locations`), clauses P1 (rewriting `design@core@every-path-names-its-anchor`) and P2; `design@core@components-carry-the-same-documents` rewritten for the plans homes. Core tripwires home: T5. Core rejected alternatives: #plans-per-anchor if the recording tests pass it |
-| step 2 | core design home: #plan-register (its second part), #plan-item-scope, #plan-items-by-section, the spec file as anchor. Core tripwires home: T4. Core rejected alternatives: shapes (a) and (b), #cross-plan-references, if the recording tests pass them |
-| step 3 | agent-skills design home: #design-home-is-built-intent (rewriting `design@agent-skills@harvest-after-implementation` and `design@agent-skills@primer-content`), #roadmap-orders-issues and #roadmap-home (reversing `design@agent-skills@planned-work-is-an-issue`), #spec-records-the-exchange, #arguments-as-items, #argument-ids, #argument-segmentation, #ledger-from-transcript (rewriting `design@agent-skills@design-hands-off-to-planning`), #retiring-plan-opens-issue; `design@agent-skills@plans-directory-declared`, `design@agent-skills@structure-ready` and `design@agent-skills@thread-slug-is-entry-id` reversed or rewritten; `design@agent-skills@document-vocabulary` and `design@agent-skills@milestone-is-a-directory` rewritten. Agent-skills tripwires home: T2. Agent-skills rejected alternatives: #roadmap-register, #design-home-is-intent, #draft-ledger, #planned-name, #spec-written-during-discussion, if the recording tests pass them |
+| step 1 | agent-skills design home: the reason of `design@agent-skills@plans-directory-declared` rewritten (see "What is already decided"). Core design home: the step 1 heads listed under "What is already decided"; #plan-register (its first part), #plans-location (rewriting `design@core@reserved-anchors`), #plans-dir-fixed, #plans-at-root, #plans-split-dirs, #plan-document-kinds, #plan-anchor (rewriting `design@core@anchors-are-components-and-locations`), clauses P1 (rewriting `design@core@every-path-names-its-anchor`) and P2; `design@core@components-carry-the-same-documents` rewritten for the plans homes. Core tripwires home: T5. Core rejected alternatives: #plans-per-anchor if the recording tests pass it |
+| step 2 | core design home: the step 2 heads listed under "What is already decided"; #plan-register (its second part), #plan-item-scope, #plan-items-by-section, the spec file as anchor. Core tripwires home: T4. Core rejected alternatives: shapes (a) and (b), #cross-plan-references, if the recording tests pass them |
+| step 3 | agent-skills design home: #design-home-is-built-intent (rewriting `design@agent-skills@harvest-after-implementation` and `design@agent-skills@primer-content`), #roadmap-orders-issues and #roadmap-home (reversing `design@agent-skills@planned-work-is-an-issue`), #spec-records-the-exchange, #arguments-as-items, #argument-ids, #argument-segmentation, #ledger-from-transcript (rewriting `design@agent-skills@design-hands-off-to-planning`), #retiring-plan-opens-issue; `design@agent-skills@plans-directory-declared`, `design@agent-skills@structure-ready` and `design@agent-skills@thread-slug-is-entry-id` reversed or rewritten; `design@agent-skills@document-vocabulary` and `design@agent-skills@milestone-is-a-directory` rewritten. Agent-skills tripwires home: T2, carrying the evidence of #assembly-holds-the-rulings (fired at the commit that added this document: three rulings recorded wider than the owner made them, clause P9, an item citation from a commit message and clause P2, each written by the author and none by the extraction, each repaired in place before the commit); `tripwire@agent-skills@ledger-lost-before-hand-off` judged, per "What is already decided". Agent-skills rejected alternatives: #roadmap-register, #design-home-is-intent, #draft-ledger, #planned-name, #spec-written-during-discussion, and the incumbents of the reversals, #plans-dir-declared, #no-roadmap and `design@agent-skills@structure-ready`, if the recording tests pass them |
 | this document | leaves with step 3, in the commit that completes its harvest, whose message cites it as `milestone@plans@structured-plans` |
 
 ## Later consequences
