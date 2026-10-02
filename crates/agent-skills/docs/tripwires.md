@@ -3,7 +3,7 @@
 Evidence that would reopen a decision of `path@agent-skills@docs/design.md`. A tripwire leaves this
 file when it fires. What is outstanding is `path@agent-skills@docs/open-issues/`.
 
-## Guarding `design@agent-skills@designing-hands-off-to-planning` `##ledger-lost-before-hand-off`
+## Guarding `design@agent-skills@design-hands-off-to-planning` `##ledger-lost-before-hand-off`
 
 **Fires when:** a design discussion's ledger is lost to compaction before the planning skill wrote
 the plan document, and the agent cannot reconstruct the threads, their states and the conditions

@@ -33,7 +33,7 @@ needs it stops there.
 | material finding | information that arrived after a thread closed and defeats a named part of that closure |
 | watch point | one of the three questions the retrospective skill asks every time it runs (3.8) |
 | thread | one question of the discussion, named by a slug |
-| arm | one of the numbered tests in recording-a-decision that decide whether a decision or an alternative earns an entry |
+| arm | one of the numbered tests in decision-recording that decide whether a decision or an alternative earns an entry |
 | history line | a line that records a past state on purpose, such as a line of a progress log, and is not rewritten by a rename |
 
 **Repositories.** This one is https://github.com/tellurium-monoxide/knowledge-architect, public.
@@ -488,19 +488,25 @@ one skill reads). No tripwire, on the owner's word.
 
 ### 3.12 Before step 7, the skill names
 
-The owner reopened designing-skill-name: "naming an "action" makes the skill names into full
-sentences, which is weird and often too long". A design discussion under the design skill:
+The owner reopened the naming rule ("I used to think the -ing verb forms read better and promoted
+better names, but I no longer think this is necessarily the case"; "we already diverged from this
+practice with the published retrospective skill"; "naming an "action" makes the skill names into
+full sentences, which is weird and often too long"), and with it designing-skill-name ("I'd like to
+rename the design skill to a shorter form, and without the "discussion" term"). A design discussion
+under the design skill:
 
 | thread | state | decision |
 | --- | --- | --- |
-| naming-rule | approved | R3: an activity noun in common usage, one or two words, never an artifact the activity writes. R2, a noun of the subject, lost: "decision-record" is the design skill's term for the record, and "open-issues" the issue directory |
+| naming-rule | approved | R3: an activity noun in common usage, one or two words, never an artifact the activity writes. R2, a noun of the subject, lost: "decision-record" is the design skill's term for the record, and "open-issues" the issue directory. R1, keeping the -ing form, lost to the owner's reasons above; dropping the rule, which the owner raised ("or maybe even dropping them"), was not argued and is superseded by R3 |
 | skill-names | approved | discussing-design-decisions to design, recording-a-decision to decision-recording, tracking-open-issues to issue-tracking, dispatching-a-review to review, maintaining-agent-config to agent-configuration (owner: "I agree with knowledge-architect-agent-configuration"), setting-up to setup, setting-goals to goal-setting; planning and retrospective unchanged |
-| issue-tracking-name | approved | T1, issue-tracking. The owner: "it forgets that it also handles tripwires"; splitting the skill lost to the movement coupling of its two kinds. T2, open-state-tracking, lost on R3's length and common usage |
-| design-skill-name | approved | design. The owner: "Since the skill is always present in the context of knowledge-architect, I don't think there is that much of a need to disambiguate with visual design at all"; the not-visual criterion of session A is withdrawn. project-design lost to the collision with planning in project-management usage. Supersedes designing-skill-name |
-| design-discussion-phrase | approved at the checkpoint | in prose, "the design skill" |
+| issue-tracking-name | approved | T1, issue-tracking. The owner: "it forgets that it also handles tripwires"; splitting the skill lost to the movement coupling of its two kinds. T2, open-state-tracking, lost on R3's length and common usage. Kept despite the owner's remark because matching reads the description, which covers tripwires, and the name serves human readers |
+| design-skill-name | approved | design. The owner: "Since the skill is always present in the context of knowledge-architect, I don't think there is that much of a need to disambiguate with visual design at all"; the not-visual criterion of session A is withdrawn. project-design lost to the collision with planning in project-management usage; decision-design, the owner's first proposal, was withdrawn by the owner ("We are not "desiging decisions""); discussing-design-decisions lost to short. Supersedes designing-skill-name |
+| design-discussion-phrase | approved at convergence | in prose, "the design skill" |
 
-No tripwire, on the owner's word. Harvest: naming-rule and design-skill-name in agent-skills;
-designing-skill-name rewritten in place under the new slug.
+The six reviewer agents and this repository's `klarch-` names keep their names: they are nouns
+already. No tripwire, on the owner's word. Harvest: naming-rule and design-skill-name in
+agent-skills; designing-skill-name rewritten in place under the new slug; issue-tracking-name needs
+no entry, in the agent's reading, its arguments failing the recording tests.
 
 ## 4. The decided design
 
@@ -601,7 +607,7 @@ thaum's alias. The installed skills and the primer name the command too.
   reads").
 - **An extension project** declares a command that runs its own binary, preferably a cargo alias
   such as `cargo klarch`, and does not install its binary under the plain name `klarch`. If both
-  were on PATH, `klarch` would run whichever comes first. (Owner, 2026-10-01; the setting-up skill
+  were on PATH, `klarch` would run whichever comes first. (Owner, 2026-10-01; the setup skill
   states it.)
 - **The skill text is a template.** content/ writes the command as a placeholder, and
   `install-agent-skills` fills it with the declared command. The placeholder syntax must differ
@@ -624,7 +630,7 @@ harness = ["claude"]   # the default when the table is absent
   multi-provider issue extends this list and needs no new mechanism.
 
 **This reverses parts of three recorded core decisions.** The harvest of step 3 owes, for each,
-what a reversal owes under recording-a-decision: the head rewritten in place, a judgement of
+what a reversal owes under decision-recording: the head rewritten in place, a judgement of
 whether its argument earns a rejected-alternatives entry, stated as strongly as it was made, every
 pointer and restatement of the old argument repaired, and a commit message that names the
 reversal and states what was searched for the incumbent and what the search returned.
@@ -967,7 +973,7 @@ In step 4's landing commit:
 | the core's design home | a new entry for the facade by consumer role, carrying surface-rule and facade-membership (the role modules, the closure rule, the four items beyond current use); a new entry for ne-minimal, with its re-entry before 1.0; a new entry for the hook rule of trait-defaults; Gathered written into `design@core@the-core-cli-is-a-library-module`, whose head already names "assembling a complete working tree" |
 | the core's tripwires home | private-item-needed and inputs-builder-needed |
 | the root's design home | `design@knowledge-architect@versioning-policy`: that refinement 2 changes no version number under 0.x; `design@knowledge-architect@stays-at-zero-x`: that leaving 0.x re-examines ne-minimal |
-| the core's rejected alternatives | each row of 4.4.6 that passes recording-a-decision's tests. The likeliest: shape (A), and the round-1 `#[non_exhaustive]` table, whose defeat cost a compiled experiment |
+| the core's rejected alternatives | each row of 4.4.6 that passes decision-recording's tests. The likeliest: shape (A), and the round-1 `#[non_exhaustive]` table, whose defeat cost a compiled experiment |
 | the core's CLAUDE.md | the contract a developer needs: a new public item goes in a role module of lib.rs, and its signature's types follow it |
 | lib.rs | the description |
 
@@ -1006,7 +1012,7 @@ it, a patch changed no check, so it could bring no finding.
 issues of this discussion are implemented, or at least argued thoroughly (owner). Harvested into
 the root design home.
 
-**Cargo facts the setting-up skill states:**
+**Cargo facts the setup skill states:**
 
 - `knowledge-architect = "=0.1.3"` pins exactly. The default "0.1.3" means at least 0.1.3 and
   below 0.2.0.
@@ -1028,7 +1034,7 @@ project without an extension has two ways to run a pinned binary:
   This also serves projects not written in Rust.
 
 A plain `cargo install` is machine-wide, which is the single-version problem binary-bundles-workflow
-removed for the skills. **Default:** the setting-up skill presents both, the first for Rust projects
+removed for the skills. **Default:** the setup skill presents both, the first for Rust projects
 and the second for the others, and its wording is settled in step 5. Nothing in v0.1's code depends
 on it, because the command is declared.
 
@@ -1089,11 +1095,11 @@ A merge to main publishes nothing. Any number of merges land between two release
   grep and the reviews judge it until the mechanical check of shipped text exists.
 - **CI:** thaum's ci.yml at e98e296, with its comments adapted.
 - **Skills and reviews before step 5.** From step 5's PR 3 on, the reviews use the installed
-  dispatching-a-review and its agents (4.7). Before it: this repository had no skills of its own.
+  review and its agents (4.7). Before it: this repository had no skills of its own.
   **Default:** steps 2 to 4 follow thaum's skills, read from thaum's checkout at e98e296: developing
   for the Rust work (without `cargo mutate run`, which is not ported; a test is shown to
-  discriminate by reverting the change in a scratch worktree), tracking-open-issues for section 5,
-  recording-a-decision for the harvests, and dispatching-a-review for the reviews. thaum's reviewer
+  discriminate by reverting the change in a scratch worktree), issue-tracking for section 5,
+  decision-recording for the harvests, and review for the reviews. thaum's reviewer
   agents are not loaded in this repository: each review is a general-purpose subagent briefed with
   the path of thaum's agent file, told that its thaum-specific parts (the rules, slices.md,
   `cargo knowledge`, thaum's anchors) do not apply. The axes of each step are named in section 9,
@@ -1109,20 +1115,20 @@ name and in its frontmatter name. The tables give the base names.
 
 | skill | source | what changes in the fork |
 | --- | --- | --- |
-| setting-up | new | the manifest and the homes, the `[agents]` table, the declared command and the extension rule of 4.3 point 2, the install, the primer import line, the routing table, the xtask gates convention, the exact pin and how a pinned binary is run (4.5), the requirement of at least one goal per component |
-| setting-goals | new | eliciting goals from the owner; how a goal binds design in the long term; brevity; goals are the owner's intent and never the agent's; goal-lifecycle: a goal leaves only when the owner abandons it |
-| discussing-design-decisions | designing-together 0.6.0 | unified per 4.8 (step 6); its spec step moves to planning, and its bounded-problem branch names no outside skill (3.5) |
+| setup | new | the manifest and the homes, the `[agents]` table, the declared command and the extension rule of 4.3 point 2, the install, the primer import line, the routing table, the xtask gates convention, the exact pin and how a pinned binary is run (4.5), the requirement of at least one goal per component |
+| goal-setting | new | eliciting goals from the owner; how a goal binds design in the long term; brevity; goals are the owner's intent and never the agent's; goal-lifecycle: a goal leaves only when the owner abandons it |
+| design | designing-together 0.6.0 | unified per 4.8 (step 6); its spec step moves to planning, and its bounded-problem branch names no outside skill (3.5) |
 | planning | thaum's planning-a-slice | the spec path and the milestone path; the vocabulary; the transcript-conformity review; the owner's content rule; no list of milestones, and acceptance criteria in the plan document (3.6) |
-| recording-a-decision | thaum's | thaum's examples and its rules-specific arms removed. Arms that name a crate boundary are made language-neutral. |
-| tracking-open-issues | thaum's | thaum's locations, worked examples and rule quotes removed |
-| dispatching-a-review | thaum's | the Rust worktree paragraph made generic, with a note for Rust projects; slice axes renamed for milestones. **Default:** the cold-implementer exclusion "never for a spec" is removed, because its premise is gone: a later session can continue a spec. |
-| maintaining-agent-config | thaum's | thaum's examples removed; the routing table and the prefix rule added |
+| decision-recording | thaum's | thaum's examples and its rules-specific arms removed. Arms that name a crate boundary are made language-neutral. |
+| issue-tracking | thaum's | thaum's locations, worked examples and rule quotes removed |
+| review | thaum's | the Rust worktree paragraph made generic, with a note for Rust projects; slice axes renamed for milestones. **Default:** the cold-implementer exclusion "never for a spec" is removed, because its premise is gone: a later session can continue a spec. |
+| agent-configuration | thaum's | thaum's examples removed; the routing table and the prefix rule added |
 | retrospective | new | offered once per session at a merge, a plan document leaving, or the session's end, and run only if the owner accepts; its four subjects, its three standing questions, its two files outside the project, and where each goes on the owner's word (3.8) |
 
 | agent | source | what changes |
 | --- | --- | --- |
 | standing-state-reviewer | thaum's | thaum's locations and the slices.md section removed; it reads the acceptance criteria of plan documents (3.6) and reports work listed in two places |
-| decision-record-reviewer | thaum's | the restated thaum arms replaced by a pointer to the installed recording-a-decision; predicates added for the standing argument, a head written before its work lands, a tripwire without the owner's word, and a commit message's claims |
+| decision-record-reviewer | thaum's | the restated thaum arms replaced by a pointer to the installed decision-recording; predicates added for the standing argument, a head written before its work lands, a tripwire without the owner's word, and a commit message's claims |
 | routing-reviewer | thaum's | the section names of thaum's root CLAUDE.md replaced by the knowledge table: the primer's rows and the project's rows in its root CLAUDE.md; thaum's predicate on consumer-facing statements dropped, as a convention of a project; a reference from outside the plans directory into a plan document, and the file kinds the checker does not read, added |
 | code-claims-reviewer | thaum's | "slice document" becomes "spec or milestone document" |
 | cold-implementer-reviewer | thaum's | the same |
@@ -1136,9 +1142,9 @@ installed skill delivers at the moment it is needed (3.7). It carries the goals 
 claims, the check before diagnosing, the four cases for what is met outside the task, the
 workflow's rows of the knowledge table, and one line per installed skill.
 
-**Order inside step 5.** The forked skills name the design skill, which step 6
+**Order inside step 5.** The forked skills name the design-discussion skill, which step 6
 creates. Until step 6 they name it by its final installed name,
-knowledge-architect-design. The same holds for every skill or agent a fork
+knowledge-architect-discussing-design-decisions. The same holds for every skill or agent a fork
 names before its own PR lands. The check does not see
 a one-segment name, so nothing fails in between.
 
@@ -1155,7 +1161,7 @@ settled.
   written. A design head is a claim about the code as it stands, and a head written before the code
   is a hypothesis. While the work is open, the spec on its branch is the only place the decision
   exists.
-- **Losing alternatives.** recording-a-decision's tests decide which earn an entry. The rest stay
+- **Losing alternatives.** decision-recording's tests decide which earn an entry. The rest stay
   in the spec and the commit message. A thread is a candidate when a shape lost to an argument,
   whatever its state (losing-shape-test).
 - **Where the argument lives.** The head carries the standing argument; the spec, then history,
@@ -1184,7 +1190,7 @@ settled in its session A (3.5). The fourth was settled in step 6:
 ### 4.9 The designing-together intake (step 6)
 
 - The skill is forked from designing-together 0.6.0, on its branch `next`, and installed as
-  knowledge-architect-design (3.5).
+  knowledge-architect-discussing-design-decisions (3.5).
 - Its decision record, docs/decisions.md on `next`, has 18 level-two sections
   (`git show next:docs/decisions.md | grep -c "^## "`). One of them, "How the decision record is
   kept", is about the file itself. The owner asked for each item to be listed. **Approved** at the
@@ -1192,12 +1198,12 @@ settled in its session A (3.5). The fourth was settled in step 6:
   is one dated entry or one rejected bullet, shown grouped under its section with the section's
   head. For each item the agent proposes a wording. The owner rules on keeping it and on the
   wording. A kept item becomes a slugged entry in the agent-skills design home, or a rejected
-  alternative, by recording-a-decision's rules. A dropped item is listed in the commit message.
+  alternative, by decision-recording's rules. A dropped item is listed in the commit message.
 - **The test for keeping an item (F2), approved by the owner with this document as its only home:**
   an item becomes a design entry only if (1) it fixes a behaviour an agent follows, which a rewording
   could undo unnoticed, and (2) its argument rests on evidence that cost work, or it binds the skill
   to another installed skill or a goal. A rejected bullet is kept only if it passes
-  recording-a-decision's alternative tests. Everything else is dropped.
+  decision-recording's alternative tests. Everything else is dropped.
 - The dated history is not carried. It stays in the archived repository.
 - The README's content is kept: what the skill does, what it expects of the user, and its grounding
   in the literature. **Default:** it goes into the agent-skills component's README, adapted.
@@ -1264,8 +1270,8 @@ The core's issue the-core-leaves-this-repository is closed by step 2.
 ### 6.3 The state of the skills at the start (one subagent, 2026-09-30)
 
 - Thaum-only: developing, recording-an-interpretation, bumping-rules, rules-reviewer.
-- Mostly generic, with thaum lines: tracking-open-issues, dispatching-a-review, planning-a-slice,
-  recording-a-decision, maintaining-agent-config, and the five other agents.
+- Mostly generic, with thaum lines: issue-tracking, review, planning-a-slice,
+  decision-recording, agent-configuration, and the five other agents.
 - Seven conflicts between designing-together and thaum's skills, all settled in 4.8: numbers 1, 2,
   3 and 5 in the discussion, 4, 6 and 7 in step 5's session A:
   1. thread names against slugs;
@@ -1326,7 +1332,7 @@ its docs/design.md.
 | 6, PR 2 | agent-skills | done: instruction-record-is-minimal, frontier-tier-only, additions-need-real-use, expectation-set-bounds-scope, structure-the-flow, outcome-over-display, capability-over-conformance; three rejected alternatives; tripwires ledger-lost-before-hand-off and expectation-set-closes-a-contradiction. designing-together-retirement needs no entry in the agent's reading: a migration done once, whose outcome is these entries |
 
 **Losing alternatives.** Section 3.2 and the absorbed shapes of 3.3 are judged against
-recording-a-decision's tests at the harvest of the decision they lost to. The likeliest to pass:
+decision-recording's tests at the harvest of the decision they lost to. The likeliest to pass:
 the crate directory named after its package, which a run refuted (an argument that cost work), and
 the SessionStart hook, whose loss rests on primer-by-import reaching every context, which premortem
 P2 doubts.
@@ -1612,11 +1618,11 @@ Step 7 publishes three crates.
 
 **Step 6. The designing-together intake.** Reads 4.8 and 4.9.
 
-- The fork of the design skill, unified per 4.8, installed as
-  knowledge-architect-design. Then the record, item by item with the owner.
+- The fork of the design-discussion skill, unified per 4.8, installed as
+  knowledge-architect-discussing-design-decisions. Then the record, item by item with the owner.
 - The issue on a skill for bounded problems is opened, with the bounded branch (3.5).
 - Order, approved by the owner: the fork lands first, in its own PR, then the intake. The full
-  material-findings test lives in the design skill; the planning skill's Terms keep their
+  material-findings test lives in the design-discussion skill; the planning skill's Terms keep their
   one-line summary, with a pointer to it (approved).
 - **The fork landed on the branch step-6a-discussing-design-decisions:** the skill, forked from
   designing-together 0.6.0; its steps 8 and 9 replaced by a hand-off to the planning skill; thread

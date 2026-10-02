@@ -61,8 +61,8 @@ Decided in order; the first match wins.
    list across every file it touches is still an activity, while a property that must hold in
    every file produces no artifact and is baseline.
 3. **Is it shared by two or more activities but not all?** Then it is a **sub-activity**: its own
-   skill, named as a prerequisite by each activity that needs it. The installed recording, tracking
-   and dispatching skills are this.
+   skill, named as a prerequisite by each activity that needs it. The installed decision-recording,
+   issue-tracking and review skills are this.
 4. **Is it read only by a fresh subagent?** Then it is a subagent definition. A definition sets a
    **standard**, not a one-off task, because it must be reusable. A review axis whose content
    depends too much on the task to be standardized stays as a line in the activity's skill.

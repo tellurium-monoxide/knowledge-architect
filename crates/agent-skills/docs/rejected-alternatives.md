@@ -40,7 +40,7 @@ findings fell on it: inside a grant, a correction whose own action could not be 
 word from the owner.
 
 **Writing the discussion's ledger to a file during the discussion, so it survives compaction or a
-new session** — lost to `design@agent-skills@designing-hands-off-to-planning`. `live`. An artifact an
+new session** — lost to `design@agent-skills@design-hands-off-to-planning`. `live`. An artifact an
 agent must update every round is one it forgets to update, and a stale ledger stated with
 confidence is worse than none. A survey of agent systems that keep state files found two
 properties a thread ledger lacks: the state is corroborated against something outside the model,

@@ -58,20 +58,25 @@ does not hold.
 
 An installed skill is named by the activity it covers, as an activity noun in common usage, in one
 or two words after the installer's prefix: planning, review, issue-tracking, decision-recording.
+The unit is the activity because `goal@agent-skills@one-skill-per-activity` gives each activity of
+the workflow one skill.
 It is never named as an artifact the activity writes, because the text names both: a skill called
 "decision-record" would share its name with the design homes and rejected alternatives the
-design skill calls the decision record, and one called "open-issues" with the issue directory. A
-name built on a verb form reads as a sentence and grows long, as
-`knowledge-architect-discussing-design-decisions` did. The rule binds a project's own skills too,
-through the agent-configuration skill.
+design skill calls the decision record, and one called "open-issues" with the issue directory. One
+exception is accepted: agent-configuration is named like the configuration it edits, because the
+owner judged it the clearest name for that activity. A name built on a verb form, such as
+discussing-design-decisions, reads as a sentence and grows long. The rule binds a project's own
+skills too, through the agent-configuration skill.
 
 ### The design skill is named design `##design-skill-name`
 
-The skill is installed as `knowledge-architect-design`. The installer's prefix places it inside
-knowledge-architect, so the name is never read alone, and the reading of "design" as visual design
-does not arise. It names no domain: the owner uses the skill for programming, for game design, and
-for designing names and rules, always to advance a project. The name "project-design" lost: in
-project-management usage it means shaping a project's plan, which the planning skill does.
+The skill is installed as `knowledge-architect-design`, under
+`design@agent-skills@naming-rule`. The installer's prefix places it inside knowledge-architect, so
+the name is never read alone, and there is not much need to tell it apart from visual design. It names no domain: the owner uses the skill for programming, for game design, and
+for designing names and rules, always to advance a project. Three names lost: "project-design",
+because in project-management usage it often means shaping a project's plan, which the planning
+skill does; "decision-design", withdrawn by the owner, since the skill does not design decisions;
+and "discussing-design-decisions", which read as a sentence.
 "design" also names the design register, which the design skill does not write: in prose, the noun
 that follows, "the design skill" or "the design home", tells them apart.
 
@@ -307,7 +312,7 @@ it is unchecked text that a grep finds with no marker that it is stale. Either b
 too: the installed planning skill would have nothing to say where a document's work ends, against
 `goal@knowledge-architect@agents-get-a-complete-workflow`.
 
-### The planning skill writes the plan document, in the session that converged `##designing-hands-off-to-planning`
+### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
 The planning skill starts where a design discussion has converged, and writes the spec or the
 milestone in the same session. The design skill ends at convergence, the premortem and
@@ -351,7 +356,7 @@ the one place for what is open of `goal@knowledge-architect@structure-and-workfl
 The installed agent `knowledge-architect-transcript-conformity-reviewer` reads the transcript of a
 discussion and checks that a document records the owner's decisions as made: each state, the scope
 of each decision, the verbatim quotations, and nothing the owner said left out. The planning skill dispatches it on every plan document written from a
-discussion whose transcript is available, and the installed review lists it as the
+discussion whose transcript is available, and the installed review skill lists it as the
 axis for any document that records the decisions of such a discussion. It
 is an agent, not a line in a skill, because its standard and its extraction rule are fixed, and the
 rule is learned from a failure: a filter on text substrings once dropped one of the owner's
@@ -378,9 +383,9 @@ documents cite its sections and steps until it leaves.
 
 ### The standing-state review runs before every merge `##conformance-before-every-merge`
 
-The installed review sends the standing-state reviewer before every merge to the
+The installed review skill sends the standing-state reviewer before every merge to the
 main branch, whatever the change. That reviewer is the standing re-entry point of every tripwire
-home, as the installed issue-tracking states, and a tripwire is read again only when some
+home, as the installed issue-tracking skill states, and a tripwire is read again only when some
 review reads it. A re-entry point that depends on whether a change looked related to a tripwire is
 one that a change touching the guarded decision indirectly skips: the reviewer reads every entry of
 every home, not the subset the diff seems to concern. This serves
@@ -407,8 +412,8 @@ The primer reaches every session of every installing project, so its content tes
 not a count of lines: it holds what every session needs and no installed skill delivers at the
 moment it is needed. A convention of one project does not go in it, and neither does a procedure a
 skill delivers when it loads. The workflow targets frontier-tier models, which the
-design work requires, per `design@agent-skills@frontier-tier-only`, so a size limit would protect a
-reader the workflow does not serve.
+design skill's work requires, per `design@agent-skills@frontier-tier-only`, so a size limit
+would protect a reader the workflow does not serve.
 
 ### The primer carries the goals rule, the intent-and-claims rule, the check before diagnosing, and the rule for what is met outside the task `##primer-content`
 
@@ -514,7 +519,7 @@ and gives the project's other repeated tasks a place, per
 `goal@knowledge-architect@setup-brings-quality-tools`. The cost accepted: building the gates builds
 the checker, which the check gate needs anyway.
 
-### setup shows a Rust project its maintenance crate `##setup-rust-section`
+### The setup skill shows a Rust project its maintenance crate `##setup-rust-section`
 
 The setup skill ends with a section for a Rust project: the maintenance crate's manifest, its
 aliases, its main, the recommended gates and a continuous integration workflow that runs them on
@@ -596,7 +601,7 @@ and design from the moment it is written, met or not. When nothing fulfils it ye
 document schedules the work, a `todo` issue holds that work and references the goal, so the gap
 between the goal and the tree is listed as outstanding work.
 
-### Goals change only through the goal-setting skill `##when-setting-goals-runs`
+### Goals change only through the goal-setting skill `##when-goal-setting-runs`
 
 The goal-setting skill runs at setup for every Component, when the owner states, rewords or
 abandons a purpose, and when a decision conflicts with a goal and the primer's rule sends the
