@@ -44,8 +44,13 @@ On a branch of its own, like any other work:
    agent-skills before the core, which depends on it.
 8. **The gates.** Commit the release, then run `cargo x gates --require-rebased`, and the dry run
    again on that commit.
-9. **The owner's word, given at that moment.** Publishing is irreversible: a version can be
-   yanked, never deleted. Without the word, nothing is published.
-10. **Publish and tag.** The owner logs in with `cargo login`; the token never passes through the
-    agent. Then `cargo publish --workspace` from the release commit, and the tag `v<version>` on
-    that commit, pushed. The branch then merges like any other, after its review.
+9. **Review and merge, before publishing.** The branch is reviewed, repaired, and merged to main
+   like any other, after CI passes on its head. Publishing comes after, so what is published is
+   what review and CI judged, and the tag names a commit on main. Until the publish runs, main's
+   status lines say a version that is not yet on crates.io; if the publish fails, a commit on main
+   repairs them.
+10. **The owner's word, given at that moment.** Publishing is irreversible: a version can be
+    yanked, never deleted. Without the word, nothing is published.
+11. **Tag and publish.** The owner logs in with `cargo login`; the token never passes through the
+    agent. On main's head, with a clean tree: the tag `v<version>`, then `cargo publish
+    --workspace`, then, once the publish succeeded, `git push origin v<version>`.
