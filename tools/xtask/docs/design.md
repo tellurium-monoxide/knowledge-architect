@@ -35,7 +35,7 @@ must fail. The tool's flag reaches its children alone: the `x` alias resolves th
 before the tool starts and rewrites a drifted lock, so CI also passes cargo's own `--locked`
 ahead of the alias. `--fail-fast`: CI's deliverable is a verdict, a local run's is the complete work list,
 per `design@gates@gates-run-all`. `--require-rebased`, per `design@gates@rebased-gate-behind-a-flag`: the merge predicate in root
-`CLAUDE.md` asks the same ancestry question with git before the fast-forward, and CI's full-depth
+`CLAUDE.md` asks the same ancestry question with git before the merge, and CI's full-depth
 checkout has fetched origin/main before the gate reads it.
 `--full`: under Actions nothing else streams, since the announce line is written to a terminal
 alone, and a hung gate must show which one it is.

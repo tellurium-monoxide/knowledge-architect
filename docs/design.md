@@ -144,7 +144,7 @@ statement false until a repair lands. The procedure is
 
 ## 3. How work reaches main
 
-### All work goes through a branch, a review and a fast-forward merge `##git-flow`
+### All work goes through a branch, a review and a pull request merged up to date with main `##git-flow`
 
 - All work happens on a branch. Once it holds a first commit, it is pushed and a draft pull
   request is opened. CI does not run on a draft.
@@ -155,8 +155,15 @@ statement false until a repair lands. The procedure is
 - **Every commit of a branch passes the check under the branch tip's checker**, as
   `design@core@a-commit-message-is-a-document` decides. So work whose intermediate trees cannot
   pass lands as one commit, squashed before review.
-- When CI passed on the current head, the branch is merged into main by a local fast-forward, so
-  main receives the commit CI tested. main's history is never rewritten.
+- main accepts no direct push. A GitHub ruleset on main, with no bypass, the owner included,
+  requires a pull request, the status check of CI on a branch up to date with main, and a linear
+  history, and blocks force pushes and deletion. The pull request is merged with GitHub's rebase
+  merge, the only method enabled. The strict check makes the tree CI judged the tree main
+  receives, which is what matters. The commits keep their trees and messages, and get new
+  committer data and SHAs: GitHub's rebase merge "always updates the committer information and
+  creates new commit SHAs". A local fast-forward pushed to main kept the SHAs, and lost to
+  enforcement: the rules are now checked by GitHub, not by the session's discipline. main's
+  history is never rewritten.
 
 ### Every component builds under one pinned toolchain `##toolchain-is-pinned`
 

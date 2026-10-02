@@ -463,7 +463,7 @@ description.
 
 ## Git
 
-Linear history, fast-forward only, no merge commits. This section is a restatement. Its home is
+Linear history, no merge commits, and no direct push to main. This section is a restatement. Its home is
 `design@knowledge-architect@git-flow`.
 
 1. **All work happens on a branch.**
@@ -526,21 +526,26 @@ git merge-base --is-ancestor origin/main HEAD    # if false, rebase
   request marked ready before that runs CI on its previous head, and a push that landed while it
   was a draft is skipped, so no run covers the current head.
 
-5. **When CI passed on the current head, merge, fast-forward only.** The merge predicate:
+5. **When CI passed on the current head, merge the pull request through GitHub.** main accepts
+   no direct push: a ruleset requires a pull request whose branch is up to date with main and
+   whose CI check passed, and a linear history. The merge predicate:
 
 ```sh
 git fetch origin main
 git merge-base --is-ancestor origin/main HEAD    # still true, or go back to point 3
 gh pr view <branch> --json isDraft,headRefOid    # isDraft false, headRefOid equal to `git rev-parse HEAD`
 gh pr checks <branch>                            # exit 0: every check passed on that head
-git checkout main && git merge --ff-only <branch> && git push
+gh pr merge <branch> --rebase --delete-branch
+git checkout main && git pull --ff-only && git branch -D <branch>
 ```
 
 - The draft flag is read here because a job skipped on a draft reports `skipped`, which GitHub
   counts as passing.
-- The local fast-forward keeps every commit's SHA, so the commit CI tested is the commit main
-  receives, and GitHub marks the pull request merged. Never merge with GitHub's own buttons: a
-  rebase merge there rewrites every SHA.
+- GitHub's rebase merge gives main the branch's commits with the same trees and messages, and new
+  SHAs. So **a commit message never cites the SHA of a commit of its own branch**: it names that
+  commit by its subject. A SHA already on main may be cited.
+- The local branch is deleted with `-D`: its commits are not ancestors of main, since their SHAs
+  differ.
 - A merge to main publishes nothing. A release is a separate procedure, per
   `design@knowledge-architect@publish-after-merge`.
 
