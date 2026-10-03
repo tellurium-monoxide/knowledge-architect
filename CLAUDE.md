@@ -249,8 +249,8 @@ list of what references an entry: `show` computes it.
 
 ### Plan documents
 
-`path@knowledge-architect@docs/plans/` is the plans directory, whose path the checker fixes. It
-holds a README and two homes: specs/, one file per spec for the work of one PR, and milestones/, one directory per
+`path@knowledge-architect@docs/plans/` is the plans directory, whose path the checker fixes, per
+`design@core@plans-dir-fixed`. It holds a README and two homes: specs/, one file per spec for the work of one PR, and milestones/, one directory per
 milestone for work across several PRs. Plan documents are committed on the work's branch, except a
 milestone document whose first step changes what the gates check: it is merged in a pull request of its own before that step, because
 the gates as the step changes them would judge the commit that added the document, per the
@@ -275,7 +275,8 @@ anyone has checked it.
   as built and its reasons, and the decisions that no work implements, recorded when made. Design
   that is decided and not built is in a plan document until it lands. This is authority. Do not
   verify it against the code. Verify the code against it. A divergence is a defect in one of them.
-  Say which, open an entry, and stop. A divergence is never licence to follow the code.
+  Say which, open an entry, and stop. A divergence is never licence to follow the code. This is a
+  restatement; its home is `design@agent-skills@primer-content`.
 - **A claim about the code as it stands**: an invariant in a scoped `CLAUDE.md`, a doc comment, a
   name, a return value, an open issue's diagnosis. This goes stale. Check it before relying on it.
 
