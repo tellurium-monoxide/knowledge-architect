@@ -515,12 +515,10 @@ fn generated_list(
 /// manifest declaring one the tree does not have; creating it would paper over that, and the
 /// registers check is what reports it.
 ///
-/// **The missing-directory arm is unreachable as the destinations stand**, and is kept for
-/// the next generator rather than for this one: a file-register index is generated only for
-/// an instance whose directory the survey found, and the directory of thaum's rule index
-/// holds the corpus text its rules extension already failed to read. A generator whose
-/// destination sits outside both makes it reachable again, and there is nothing to construct
-/// for a test until one does.
+/// **The missing-directory arm is reached by an extension's generated file** whose directory
+/// the tree does not hold: the extension names the path before the walk, and nothing creates its
+/// directory. A file-register index cannot reach it, since one is generated only for an instance
+/// whose directory the survey found.
 fn check_destinations(
     manifest: &Manifest,
     generated: &[(std::path::PathBuf, String)],
