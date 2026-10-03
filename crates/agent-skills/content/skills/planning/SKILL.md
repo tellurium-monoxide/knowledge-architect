@@ -305,7 +305,11 @@ finds it there.
 2. **The design audit.** Read the step's entry and every decided shape it depends on against the
    code as it stands and against the design homes. List every gap: a shape the code refutes, a
    passage of a specification the entry did not read, a name the entry uses that the code does not
-   have, a consequence the entry did not see. Sort each gap:
+   have, a consequence the entry did not see, and **a standing entry the step's planned code would
+   fire**: a tripwire whose firing condition, or a `deferred` issue whose trigger, the planned code
+   meets. `{{command}} tripwires` and `{{command}} issues --kind deferred` list them; read each
+   against the step. A firing found at the audit is ruled before the code is written, where one
+   found by the review before the merge reopens the harvest. Sort each gap:
    - **Applied in place.** The gap has one answer the document's decisions already imply, or is a
      choice among shapes the document rules out all but one of. Apply the answer in place, in the
      milestone document or the step's spec, wherever the shape it changes is written. Commit the
@@ -327,7 +331,11 @@ finds it there.
      step's spec as open at the audit, with the discriminating fact, stop the step, and open a
      design session with the owner under `knowledge-architect-design`. Its
      converged design goes into the milestone's documents by the rule of §4, and owes §8's
-     reviews. The step resumes from it.
+     reviews. The step resumes from it. **The session's depth follows the gap.** A choice among
+     shapes that can be stated in full, each with its consequence, takes the design skill's
+     one-round path where its conditions hold: the shapes and a default in one question, and the
+     ruling recorded in the audit's commit. Several such gaps go in one round. A gap that defeats a
+     reason, a premise or a criterion an approved thread rests on needs the full session.
 3. **Claims, tests, implementation, gates, commit**, per the project's development procedure. The
    commit names how each claim's test was shown to fail against a wrong implementation, and says
    of any claim whose test cannot yet do so why not.
@@ -337,7 +345,11 @@ finds it there.
    by its identifier in plain text (§6).
 6. **The harvest**, per the harvest row of the step's spec: the decisions and the losing
    alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
-   under `knowledge-architect-issue-tracking`. A tripwire names the head that harvested its
+   under `knowledge-architect-issue-tracking`. The row names what is judged; the tests of
+   `knowledge-architect-decision-recording` decide whether each decision and each alternative
+   earns an entry, and they govern where the two disagree: an item of the row the tests exclude is
+   named in the harvest's commit, with the test it fails. A decision harvested from a thread takes
+   the thread's slug. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
    linked from its README. **The harvest is reviewed before the merge**, per
    `knowledge-architect-review`, on the decision-record, routing and standing-state axes, and by
