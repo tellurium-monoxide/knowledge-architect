@@ -147,8 +147,7 @@ Breaking changes are allowed, and expected, while the shape of the tool and of i
 converges. The project leaves 0.x only on the owner's word, and not before the open issues recorded
 from the discussion that designed it are implemented, or at least argued thoroughly: both are
 required. Whether the tool and its workflow have converged is a weighing, and the weighing is the
-owner's, per `goal@knowledge-architect@the-owner-decides`. The first of them, a structure for plan
-documents, is built, per `design@core@plan-register`. The others are
+owner's, per `goal@knowledge-architect@the-owner-decides`. The open issues are
 `issue@core@tooling-for-project-skills`, `issue@core@configuration-for-several-agent-providers`,
 `issue@core@a-component-states-at-least-one-goal`, `issue@core@cross-project-references`,
 `issue@core@a-home-for-developer-contracts-outside-agent-configuration`,
