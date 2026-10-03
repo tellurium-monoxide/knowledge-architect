@@ -12,6 +12,7 @@ use clap::Parser;
 #[derive(Parser)]
 #[command(
     name = "klarch",
+    version,
     about = "What a project's documents hold, and whether it still holds.",
     arg_required_else_help = true
 )]
