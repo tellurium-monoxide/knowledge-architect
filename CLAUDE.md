@@ -72,19 +72,22 @@ win.
   Components, the locations and the registers. Nothing about this repository is compiled into the
   checker, per `design@core@nothing-of-a-project-is-compiled-in`.
 
-- A **register** is one kind of recorded thing together with its storage. Six are built in.
+- A **register** is one kind of recorded thing together with its storage. Ten are built in.
   Every Component carries four of them: `design`, `goal` and `tripwire` are **heading
   registers**: their entries are headings carrying a slug. `issue` is a **file register**: its
-  entries are one file each. The other two, `spec` and `milestone`, hold plan documents and are
-  carried by the anchor `plans`, per `design@core@plan-register`. A project may declare more, per
+  entries are one file each. Two more, `spec` and `milestone`, hold plan documents and are
+  carried by the anchor `plans`, per `design@core@plan-register`. The last four, `thread`,
+  `argument`, `criterion` and `acceptance`, hold a plan's items and are carried by each plan
+  document, per `design@core@plan-items-by-section`. A project may declare more, per
   `design@core@registers-are-declared`. This one declares none.
 
-- An **anchor** is a named directory that carries registers. A **Component** is an anchor that
-  carries the required documents and every built-in component register. Its name is the basename
-  of its directory, and the project root is the Component named `knowledge-architect`. A **location** is
-  an anchor that carries only the registers it declares, with their homes directly under its path.
-  One location is declared: `agent-config`, at .claude, carrying `issue`. The tool constructs two
-  more kinds: `plans`, at docs/plans/, and one anchor per milestone directory. The decision is
+- An **anchor** is a named directory, or a spec file, that carries registers. A **Component** is
+  an anchor that carries the required documents and every built-in component register. Its name
+  is the basename of its directory, and the project root is the Component named
+  `knowledge-architect`. A **location** is an anchor that carries only the registers it declares,
+  with their homes directly under its path. One location is declared: `agent-config`, at
+  .claude, carrying `issue`. The tool constructs three more kinds: `plans`, at docs/plans/, one
+  anchor per milestone directory, and one anchor per spec file. The decision is
   `design@core@anchors-are-components-and-locations`.
 
 - **Each Component carries the same required documents**, per
@@ -105,7 +108,9 @@ win.
   per `design@core@an-entry-is-a-heading-at-the-register-level`.
   - The shape is ``### The statement `##<slug>` ``: the statement first and the slug last, with no
     bold and no em dash between them, so that a document outline reads as a list of decisions.
-  - Design entries sit at level three. Goal and tripwire entries sit at level two.
+  - Design entries sit at level three. Goal and tripwire entries sit at level two. A plan's item
+    sits at level three, and the level-two section above it gives its kind, per
+    `design@core@plan-items-by-section`.
   - A slug is defined in its register's home, never in the `README.md` of a directory-shaped home.
   - Every heading at the register's level in its home carries a slug. One without is a finding. A
     heading at another level is section text.
@@ -117,8 +122,9 @@ win.
 
 - **Every reference is one backticked span, `<kind>@<anchor>@<id>`**, per
   `design@core@a-slug-belongs-to-a-component`. The kind is a register's name or `path`. The anchor
-  is a Component or a location. The id is the entry's. Examples: `design@core@reserved-anchors`,
-  `design@gates@gates-run-all`, `path@core@docs/tripwires.md`. A reference that resolves to nothing
+  is a Component, a location or a plan. The id is the entry's. A plan's item is cited from
+  inside that plan only, per `design@core@plan-item-scope`. Examples:
+  `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/tripwires.md`. A reference that resolves to nothing
   is reported with the repair it needs: the kind is unknown, the anchor is unknown, the anchor
   carries no register of that kind, or the id is not defined there. A reference that names no
   anchor is refused, including inside the file that defines the id.
@@ -192,7 +198,7 @@ the primer's:
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
-| descriptions of unbuilt work and the plans to build it: specs and milestones. Provisional, carries no slug | the plans directory, `path@knowledge-architect@docs/plans/` | the planned work lands |
+| descriptions of unbuilt work and the plans to build it: specs and milestones. Provisional: it defines no design entry, and its items are cited from inside it only | the plans directory, `path@knowledge-architect@docs/plans/` | the planned work lands |
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md` is also its crates.io page, and points to docs.rs for the library API | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
