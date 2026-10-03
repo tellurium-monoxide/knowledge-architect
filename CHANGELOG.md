@@ -80,7 +80,7 @@ subsection is omitted.
 - `agent-skills`, patch: a milestone's design is written into one spec per step from the start,
   the milestone document keeping what crosses steps. A step's design audit edits those documents in
   place, listing its findings in the commit message, and a new step found at an audit gets a spec
-  of its own once the owner rules on it.
+  of its own, listed as a scope change the owner rules on before it is implemented.
 - `agent-skills`, patch: the transcript reviewer checks that everything a work's sessions
   established has a durable outcome, a reviewer's finding acted on included, and that no ruling of
   the owner is misstated. It no longer reports detail added inside a ruling. It runs once more,

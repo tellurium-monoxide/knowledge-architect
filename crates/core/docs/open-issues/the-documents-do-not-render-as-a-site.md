@@ -18,7 +18,8 @@ nothing about the shape is decided.
 
 ### Why it matters
 
-It is the work that fulfils `goal@core@documents-render-as-a-linked-site`. Until it exists, a
+It is the work that fulfils `goal@core@documents-render-as-a-linked-site`, and the rendered site
+is one of the places `goal@knowledge-architect@adoption-is-easy` names. Until it exists, a
 reader follows a reference by searching for its entry, not by a link.
 
 ### What would close it

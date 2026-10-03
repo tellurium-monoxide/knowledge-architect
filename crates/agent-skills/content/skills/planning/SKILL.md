@@ -184,9 +184,9 @@ with every step the milestone has.
   document cites, the premortem, the implementation sequence with each step linked to its spec,
   the order rationale, the defaults awaiting the owner, the harvest row of the document itself and
   the later consequences. A section whose content lives in the step specs says so in one line.
-- **An item cited from more than one step's document lives in the milestone document.** A step's
-  spec that held it would dangle those citations when it leaves; the check reports any that remain
-  at that deletion.
+- **An item cited from the milestone document, or from more than one step's spec, lives in the
+  milestone document.** A step's spec that held it would dangle those citations when it leaves; the
+  check reports any that remain at that deletion.
 - A design session held at a step's audit writes its design into that step's spec, and what it
   decides for later steps into theirs.
 
@@ -365,7 +365,8 @@ skill lists, the blind brief included:
   everything the discussion established that must outlive it is in the document or has another
   durable outcome, and that no ruling of the owner is recorded wider, narrower or in another state
   than the owner gave it. Dispatch it on every assembled document, with the commit that adds the
-  document as its range, and name in its brief the transcript files the assembly read. When no
+  document as its range, and name in its brief the transcript files the assembly read, with the
+  message where the discussion begins in each. When no
   transcript exists, say so, and why, in the commit that adds the document.
 
 **What their findings become.** Check each finding against the tree, or against the transcript,

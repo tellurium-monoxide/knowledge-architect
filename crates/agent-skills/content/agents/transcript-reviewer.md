@@ -58,7 +58,7 @@ Read the extraction in full, and list each of these with its quotation:
   change, a direction about how to work;
 - **what the owner attached to a decision**: a reason, a condition, a cost accepted, a preference
   stated without a ruling;
-- **an argument** that decided something, whoever gave it;
+- **an argument** given in a discussion of the work, whoever gave it;
 - **a finding** of a reviewer or of another agent, as it arrived in the session;
 - **something the session met** outside its task, and a defect, a question or missing work it
   noticed while doing the task;

@@ -729,8 +729,8 @@ Names, What the work is, What is already decided, Criteria, Threads, Arguments, 
 place", Decided design, Mapping tables, Losing alternatives, Readings, Premortem, Acceptance
 criteria, Implementation sequence, Order rationale, Defaults awaiting the owner, Harvest, Later
 consequences. A step spec owes Builds, Claims, Audit subjects, Fails alone on and Premises that
-expire, in order; the plan sections a step spec with a design session of its own holds are not
-ordered against them. Fixtures is owed only where a Component drives its tests with authored
+expire, in order; the plan sections a step spec holds, for the design only its step builds, are
+not ordered against them. Fixtures is owed only where a Component drives its tests with authored
 content, a condition no check can read, so it is not checked. One `spec` register owes two lists,
 and `Anchor::sections_of` gives the list at each anchor, as `Anchor::home_of` gives the home.
 The two lists are the planning skill's, which owns the shape of a plan document, per

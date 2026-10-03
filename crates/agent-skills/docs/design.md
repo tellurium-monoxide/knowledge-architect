@@ -293,8 +293,9 @@ register.
 
 ### One document per layer, and no snippet is authority `##spec-and-milestone`
 
-The work of one PR has one plan document, its spec. A milestone's document extends the spec's
-sections over several steps, and each step has its own spec. A plan document is detailed about the
+The work of one PR has one plan document, its spec. A milestone has a milestone document and one
+spec per step, which hold the spec's sections between them, split as
+`design@agent-skills@milestone-is-a-directory` says. A plan document is detailed about the
 design and concise about the implementation sequence. No untested code snippet in it is presented
 as authority: a snippet is labelled as an illustration of a shape. A spec plus a separate detailed
 implementation plan lost: both carry the same decisions and the second drifts from the first,
@@ -466,14 +467,17 @@ It is an agent, not a line in a skill, because its standard and its extraction r
 the rule is learned from a failure: a filter on text substrings once dropped one of the owner's
 messages. It serves `goal@knowledge-architect@the-owner-decides`. The dispatcher acts on a finding
 that something has no durable outcome without waiting for the owner, and reports what it did; a
-misstated ruling goes to the owner.
+misstated ruling goes to the owner. The durability check serves
+`goal@knowledge-architect@design-is-recorded-with-its-arguments`. The check of rulings has shown
+its worth: in the review of the change that installed the first skills, a reviewer briefed with it
+was the one of six to find a decision recorded narrower than the owner's approval.
 
 ### A plan document records the whole discussion `##spec-records-the-exchange`
 
 A plan document assembled from a discussion records every thread with its proposer and round, its
 final state, the arguments on each side, the owner's rulings verbatim with their round, and its
-relations. It applies to a spec, to a milestone document, and to a step's spec when the step had a
-design session of its own. `design@agent-skills@standing-argument-in-head` names the plan document
+relations. It applies to a spec, and to a milestone document with its step specs, which share the
+record by the rule of `design@agent-skills@milestone-is-a-directory`. `design@agent-skills@standing-argument-in-head` names the plan document
 as the home of the deliberation while it exists, and `goal@knowledge-architect@the-owner-decides`
 is served only where the rulings are recorded as the owner made them. The rival, a plan document
 recording each thread's final state and resolution, left the rulings and the arguments to memory.
@@ -533,8 +537,8 @@ The installed review skill sends the transcript reviewer a last time before ever
 branch, after every other axis has run and its repairs are committed, over the whole branch and the
 transcripts of every session that worked on it. The findings of the other axes reach the session as
 messages of its transcript, so only a reviewer reading it after their repairs can tell whether each
-was acted on durably. Its own repairs land as a last commit that no axis reviews again, so the
-review ends.
+was acted on durably, per `goal@knowledge-architect@design-is-recorded-with-its-arguments`. Its own
+repairs land as a last commit that no axis reviews again, so the review ends.
 
 ## The configuration a project holds
 
