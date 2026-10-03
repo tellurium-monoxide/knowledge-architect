@@ -65,6 +65,71 @@ The installed text lives under crates/agent-skills/content/ and names no project
    the two homes; CHANGELOG.md's `Next release` section gains this step's entries, under the tests of
    `design@knowledge-architect@changelog-entries`.
 
+### The design audit's findings, applied as the step's binding shape
+
+The audit read every site above again at main's commit 536f0b2, which holds steps 1 and 2. Eight
+gaps have one answer this document's decisions imply, and are applied in place. Two answers add an
+obligation to a ruling of the owner, so they are defaults awaiting the owner, listed after them.
+
+1. **§3 of the planning skill says "A plan document carries no slug anchor".** Step 2 made a
+   plan's items slugs. Answer: §3 says a plan document defines items, cited from inside the plan
+   only, and defines no design entry. It follows from `design@core@plan-items-by-section` and
+   `design@core@plan-item-scope`.
+2. **§4's table describes threads, criteria and acceptance criteria as table rows with columns,
+   and has no row for arguments.** Answer: each of the three rows describes an item,
+   `### <statement> ##<id>`, with its fields, and an Arguments row follows the threads row. The
+   fields are those this milestone document carries:
+   - a thread: first appears, proposer, final state, arguments, shape in, harvest home, and closed
+     by, with the owner's ruling verbatim and its round;
+   - an argument, `##a<n>`: round, who, threads it bears on, and key words verbatim;
+   - a criterion: kind, source, satisfaction;
+   - an acceptance criterion: guards, judged at, fires when, response.
+
+   It follows from `thread@structured-plans@spec-records-the-exchange`,
+   `thread@structured-plans@arguments-as-items` and `thread@structured-plans@argument-ids`.
+3. **§6 and §7 point 5 have a landing commit report on each acceptance criterion, and a commit
+   message cannot cite an item.** Answer: the report names each criterion by its identifier in
+   plain text, with a hash sign, and cites the plan whole. It follows from default D12 and
+   `design@core@plan-item-scope`.
+4. **§4 of `knowledge-architect-decision-recording` says the commit that deletes a spec "names its
+   path".** A `path` citation of a plan document is refused since step 1. Answer: that commit cites
+   the plan document by its kind, as Builds item 2 already says of the planning skill's §9. It
+   follows from `design@core@every-path-names-its-anchor`.
+5. **The routing reviewer says "A `path` reference to a whole plan document is allowed."** Answer
+   as finding 4: a whole plan document is cited by its kind, from anywhere.
+6. **§5 of the retrospective skill, and `path@agent-skills@README.md` which restates it for the
+   owner, say the ledger "lives in the conversation".** Answer: the ledger lives in the
+   conversation and in the harness's transcript of it, which assembly reads. It follows from
+   `thread@structured-plans@ledger-from-transcript`.
+7. **§2 must say how a roadmap row changes when its entry changes.** The commit that adds a plan
+   document closes the issue it schedules (§2), so that issue's row dangles
+   (`argument@structured-plans@a21`). Answer: that commit rewrites the row to cite the plan
+   document. The commit that deletes a plan document removes its row, since the work landed. It
+   follows from `thread@structured-plans@roadmap-orders-issues`.
+8. **The planning skill's description lists what it covers, and lacks the roadmap and assembly
+   from the transcript.** Answer: the description names both, so that a session about to edit the
+   roadmap finds the skill. It follows from `thread@structured-plans@roadmap-home` and
+   `thread@structured-plans@ledger-from-transcript`.
+
+Read and found to hold, with no change:
+
+- `path@plans@README.md` already describes the two homes, since step 1.
+- The root `CLAUDE.md`'s restatement of the four cases, under "Precedent is not authority",
+  restates the primer's four cases, which this step does not change.
+
+**Default D20, awaiting the owner: the issue a leaving plan's session opens on a citing plan is a
+`question`.** Clause P8 does not name its kind. The question is whether the citing plan still
+holds now that the leaving plan is built. A reading of the citing plan against the leaving plan's
+harvested design entries answers it. The rival is a `todo`, whose closing condition is doing work.
+The discriminating fact: the reading may find nothing to change, and a `todo` would then close with
+no work done.
+
+**Default D21, awaiting the owner: the roadmap's order is the owner's.** A row is added or moved
+on the owner's word. The two edits of finding 7 are mechanical and need no word: they keep a row
+pointing at the same work. The rival is that any session orders the work. Ordering work is a
+weighing, and the weighing is the owner's, per `goal@knowledge-architect@the-owner-decides`. This
+adds an obligation to the ruling of `thread@structured-plans@roadmap-orders-issues`.
+
 ## Claims
 
 The installed text has no unit tests; its claims are checked by the checker and by review.
