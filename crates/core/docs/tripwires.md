@@ -184,3 +184,16 @@ in every component, in `path@core@docs/rejected-alternatives.md`. Every citation
 anchor, so a split adds anchors and rewrites none.
 **Re-entry:** the standing-state review on every dispatched review, and each design discussion
 about plan documents.
+
+## Guarding `design@core@plan-item-scope`: a plan's prose names another plan's item `##item-of-another-plan-named`
+
+An item is cited from inside its own plan only, on the premise that a whole-document citation
+carries every dependency between plans that matters while few plans are open at once.
+
+**Fires when:** a plan document's prose names an item of another plan document, by its id or by
+its statement, because no citation of it can be written.
+**Response:** reopen `design@core@plan-item-scope` with the alternative it set aside, citations of
+items across plans, in `path@core@docs/rejected-alternatives.md`.
+**Re-entry:** the standing-state review on every dispatched review, and each design discussion
+about plan documents.
+

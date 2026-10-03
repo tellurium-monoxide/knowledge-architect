@@ -27,8 +27,8 @@ The installed text lives under crates/agent-skills/content/ and names no project
    - §2: the roadmap replaces *"There is no roadmap file"*;
    - §3: the layout with `specs/` and `milestones/`, and the generated indexes;
    - §4: the Arguments section, right after Threads, and the section titles written in sentence
-     case as the documents write them, as step 2's design session ruled (`thread@structured-plans@arguments-after-threads`,
-     `thread@structured-plans@section-titles-sentence-case`); items as `### <statement> ##<id>`; the full record of the
+     case as the documents write them, as the owner ruled in step 2's design session, so that §4
+     lists the sections `design@core@step-spec-sections` checks; items as `### <statement> ##<id>`; the full record of the
      exchange (`thread@structured-plans@spec-records-the-exchange`); assembly from the transcript by a subagent, from every
      transcript the discussion spans (`thread@structured-plans@ledger-from-transcript`, clause P3), with boundaries of
      arguments decided at assembly (`thread@structured-plans@argument-segmentation`); the identifiers paragraph;

@@ -30,7 +30,7 @@ did not witness that discussion.
 The step specs, in implementation order:
 
 - Step 1, #plans-structure: landed; its spec left in the commit that completed its harvest.
-- [Step 2, #plan-items](plan-items.md)
+- Step 2, #plan-items: landed; its spec left in the commit that completed its harvest.
 - [Step 3, #workflow-text](workflow-text.md)
 
 ## How a step is worked
@@ -122,7 +122,10 @@ unruled; the implementation of a point whose default is unruled does not start, 
 
 **Step 1 has landed.** The checker builds the plans anchor, its `spec` and `milestone` registers
 and one anchor per milestone, and `design@core@plan-register` and the heads beside it record the
-design. The list below describes the tree before step 1, and holds for what steps 2 and 3 change.
+design. **Step 2 has landed.** The checker reads a plan's items by section, makes each spec file
+an anchor, and refuses a citation of an item from outside its plan;
+`design@core@plan-items-by-section` and the heads beside it record the design. The list below
+describes the tree before step 1, and holds for what step 3 changes.
 
 **Before step 1**, measured at main's commit 90a4b56:
 
@@ -1549,7 +1552,7 @@ commit reports the evidence. It is reported once more when this document leaves.
 1. #plans-structure, landed: the plans anchor, the `spec` and `milestone` registers,
    the milestone anchors, clauses P1 and P2; this repository's plans directory takes the new
    layout. Fails alone on: a tree whose plans homes hold nothing reports a finding.
-2. [#plan-items](plan-items.md): items by section, spec files as anchors, citations scoped to their
+2. #plan-items, landed: items by section, spec files as anchors, citations scoped to their
    plan anchor; this document's identifiers become definitions. Fails alone on: an item is not
    defined, or a citation from outside its plan is accepted. Expected to open a design session at
    its audit, on the spec file as an anchor.
@@ -1593,7 +1596,7 @@ under "Two registers under it". D18 revises D14.
 | D7: this document's record of arguments uses plain `a<n>` identifiers in a table under Threads until step 2, which moves them into a level-two Arguments section as definitions | `thread@structured-plans@arguments-as-items` |
 | D8: the reading of clause P1. A plan document is a spec file, a milestone directory, or a file inside a milestone directory; a `path` citation of one is refused. The README and index files of the plans directory and of its two homes are cited `path@plans@<file>` | `thread@structured-plans@plan-document-kinds` |
 | D9: the `spec` register's home depends on the anchor: `specs/` under `plans`, and the anchor's own directory under a milestone anchor | `thread@structured-plans@plans-split-dirs` |
-| D10: the milestone entry. A third `Shape` variant, the only one step 1 adds; step 2's `thread@structured-plans@items-as-section-registers` adds a fourth, `Section`, on the owner's word. Its id is the directory's basename, in the entity-id grammar. A subdirectory of milestones/ without a README.md is a finding; a `.md` file directly under milestones/ other than README.md and index.md is a finding; a `register.toml` there is a finding. The entry checks (level-one title; the sections from step 2) apply to `<id>/README.md`. Its index row is the id and the README's level-one title, linking `<id>/README.md`. The index generator skips files owned by a nested anchor, as `file_definitions` does; step 1's audit realised it with the Directory renderer, which reads only each milestone's README, and left the File renderer unfiltered | `thread@structured-plans@plan-document-kinds` |
+| D10: the milestone entry. A third `Shape` variant, the only one step 1 adds; step 2 adds a fourth, `Section`, on the owner's word, per `design@core@items-as-section-registers`. Its id is the directory's basename, in the entity-id grammar. A subdirectory of milestones/ without a README.md is a finding; a `.md` file directly under milestones/ other than README.md and index.md is a finding; a `register.toml` there is a finding. The entry checks (level-one title; the sections from step 2) apply to `<id>/README.md`. Its index row is the id and the README's level-one title, linking `<id>/README.md`. The index generator skips files owned by a nested anchor, as `file_definitions` does; step 1's audit realised it with the Directory renderer, which reads only each milestone's README, and left the File renderer unfiltered | `thread@structured-plans@plan-document-kinds` |
 | D11: plan anchors are built from the tree in phase 2, from the walk's present paths, by every caller that builds the anchors of a tree, the per-commit trees of `commits` included. `collides` does not apply to them, because the plans layout places them; clause P2 is their collision check, a phase-2 finding planted in `unsound`. The generated paths kept out of the walk include each milestone's index.md, computed from the tree | `thread@structured-plans@plan-anchor` |
 | D12: a commit message cites a plan document whole, never an item; an item citation in a message is refused like any citation from outside its plan | `thread@structured-plans@plan-item-scope` |
 | D13: clause P2 applies in step 1 to milestone names and spec basenames alike | `thread@structured-plans@plans-location` |
