@@ -349,3 +349,11 @@ out rather than a merge commit, so the range the commits gate judges is the bran
 is skipped, and GitHub counts a skipped job as passing: whoever merges reads the draft flag, and
 checks that the job ran on the pull request's current head. A hung job stops at its time limit
 rather than the default of six hours.
+
+**A crate the project publishes** keeps its `README.md` for the project's own readers, with the
+references the checker resolves, and gets a separate, short `CRATES-IO.md` as its crates.io page,
+named by `readme = "CRATES-IO.md"` in its `Cargo.toml`; cargo packages that file even when
+`include` does not name it. Propose this to the owner. The page says what the crate is and how to
+install or use it, and links, as absolute URLs, to the README in the repository and to docs.rs. It
+restates no contract, so the two texts cannot drift, and it holds no backticked reference: a
+reference that resolves passes `cargo klarch check`, and crates.io renders it as dead code.

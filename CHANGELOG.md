@@ -103,6 +103,9 @@ subsection is omitted.
   a default, several gaps in one question, and written into the step's documents; a gap that defeats
   what an approved thread rests on still opens a full design session. A harvest names in its commit
   each item of its row that the recording tests exclude.
+- `agent-skills`, patch: the setup skill proposes, for a crate the project publishes, a short
+  `CRATES-IO.md` as its crates.io page, named by `readme`, while its `README.md` stays
+  repository-facing.
 - `agent-skills`, patch: the commit that deletes a plan document cites it by its kind. A citation of
   it left in another plan is removed, and a `question` issue is opened on the citing plan.
 
