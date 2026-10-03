@@ -1,5 +1,6 @@
 [package]
 name = "knowledge-architect-gates"
+readme = "CRATES-IO.md"
 description = "Runs a project's merge gates as one command: complete logs, distilled failures, one verdict from exit codes."
 version.workspace = true
 edition.workspace = true

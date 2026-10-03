@@ -1,5 +1,6 @@
 [package]
 name = "knowledge-architect-agent-skills"
+readme = "CRATES-IO.md"
 description = "The agent skills, subagent definitions and primer that knowledge-architect installs into a project."
 version.workspace = true
 edition.workspace = true

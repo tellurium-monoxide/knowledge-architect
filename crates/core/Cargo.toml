@@ -1,5 +1,6 @@
 [package]
 name = "knowledge-architect"
+readme = "CRATES-IO.md"
 description = "Keeps the design record of a project's documentation consistent with its code: the walk, the entity table, references, registers and generated indexes."
 version.workspace = true
 edition.workspace = true
