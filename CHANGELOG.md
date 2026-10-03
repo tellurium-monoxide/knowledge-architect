@@ -85,6 +85,12 @@ subsection is omitted.
   established has a durable outcome, a reviewer's finding acted on included, and that no ruling of
   the owner is misstated. It no longer reports detail added inside a ruling. It runs once more,
   alone and last, before every merge to the main branch.
+- `agent-skills`, patch: a step's design audit lists the tripwires and the `deferred` issues the
+  step's planned code would fire, with `tripwires` and `issues --kind deferred`, so the owner rules
+  on them before the code is written.
+- `agent-skills`, patch: a load-bearing gap at an audit that is a choice among shapes stated in full
+  is ruled in one round with a default, several gaps in one question; a harvest names in its commit
+  each item of its row that the recording tests exclude.
 - `agent-skills`, patch: the commit that deletes a plan document cites it by its kind. A citation of
   it left in another plan is removed, and a `question` issue is opened on the citing plan.
 
