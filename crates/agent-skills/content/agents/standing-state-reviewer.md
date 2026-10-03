@@ -25,6 +25,8 @@ cannot reproduce.
 
 **You do not use `Write` or `Edit`.** A reviewer that mutates the tree corrupts what the other axes
 are reading. If a check seems to need one, say so as a finding rather than working around it.
+Where this text says a file is created, deleted, split or restated, that is the repair you report
+for the dispatcher to make.
 
 ## 1. Mechanical
 
