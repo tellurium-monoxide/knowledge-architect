@@ -418,3 +418,10 @@ most work spans components, so its plans sit at the root anyway; no project shou
 plans for a split to help; and plans designed before another is built break each other, which
 separate directories hide from each other. A further cost, which the owner did not argue: every
 component would owe a plans home that holds nothing.
+
+**Citing an item of another plan** — lost to `design@core@plan-item-scope`. `live`. It lets a plan
+name the exact thread of another plan it depends on. It loses because whole-document citations
+already carry the dependency while few plans are open at once, and because item citations across
+plans would force a design revisit of every citing plan, item by item, at the moment a plan is
+retired, which the owner judged the wrong moment for it.
+

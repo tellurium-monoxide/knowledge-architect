@@ -488,7 +488,7 @@ list and no severity: a rule either holds over a document or the run fails.
 
 **A declared register adds obligations and removes none**, which is what keeps
 `design@core@registers-are-declared` inside this head rather than an exception to it. Declaring one
-gives a project a kind, a shape and a home to be checked against; it cannot loosen the six built
+gives a project a kind, a shape and a home to be checked against; it cannot loosen the ten built
 in, and it cannot exempt a document from anything. A manifest that declares no register is checked
 exactly as it was.
 
@@ -579,7 +579,7 @@ shapes above.
 that wants one declares a location under its own directory. One mechanism, and the register list
 of a component stays a fact about the word _component_ rather than a per-component declaration.
 
-**Two kinds of location are constructed by the tool rather than declared**, and each is a location
+**Three kinds of location are constructed by the tool rather than declared**, and each is a location
 in every respect but the one its layout fixes:
 
 - **`plans`**, at docs/plans/ of the root, carrying `spec` and `milestone`, per
@@ -592,10 +592,14 @@ in every respect but the one its layout fixes:
   `spec`, has its home at the anchor's own path, so its step specs sit beside the milestone
   document and are cited `spec@<milestone>@<step>`, unique only inside the milestone. It carries
   no `path` kind. A directory whose name `design@core@a-plan-name-reads-as-nothing-else` refuses
-  is no anchor.
+  is no anchor. It carries the four item registers, per `design@core@plan-items-by-section`.
+- **One anchor per spec**: each spec file of specs/, grouped or not, named by its id, per
+  `design@core@spec-file-owns-its-items`. It owns its own file, carries the four item registers,
+  and carries no `path` kind. A spec whose name is refused, or that a milestone holds, is no
+  anchor, and a directory is never a spec.
 
-**The milestone anchors are read off the tree, so every builder of the anchors is handed the
-tree's paths**: a check the survey's listing, a command git's listing, `commits` each commit's own
+**The plan anchors are read off the tree, so every builder of the anchors is handed the tree's
+paths**: a check the survey's listing, a command git's listing, `commits` each commit's own
 listing. A milestone is a directory a session creates, not a declaration, so asking the manifest
 alone would give a commit the working tree's milestones and judge its message against anchors it
 never held. `manifest::collides` does not judge them, because the layout places them; the name
@@ -609,8 +613,11 @@ as anchors and registers, so a citation of a plan is checked like any other, per
 `goal@knowledge-architect@documentation-stays-consistent`: the tool constructs the anchor `plans`,
 carrying two built-in registers, `spec` and `milestone`, that no project declares. `spec` is
 also carried by each milestone anchor, for its step specs, per
-`design@core@anchors-are-components-and-locations`; no other anchor carries either. Plan documents read as free prose was the alternative, and it leaves every
-citation of a plan unchecked and every plan document unlisted.
+`design@core@anchors-are-components-and-locations`; no other anchor carries either. Inside each
+plan, its threads, arguments, criteria and acceptance criteria are items, cited and checked like
+any entry, per `design@core@plan-items-by-section`, so the record of a discussion is checked
+before it is harvested. Plan documents read as free prose was the alternative, and it leaves
+every citation of a plan unchecked and every plan document unlisted.
 
 ### The plans directory is docs/plans/ of the root, fixed by the tool `##plans-dir-fixed`
 
@@ -651,23 +658,90 @@ anywhere; when it leaves, each citation dangles, and that is the revisit it asks
 
 ### A plan's name reads as no other anchor's name and no other plan's `##a-plan-name-reads-as-nothing-else`
 
-A milestone's name sits in the anchor position of a reference, and a spec's id becomes one when a
-spec file is an anchor, which `milestone@plans@structured-plans` schedules. So a milestone name or a spec id that is a component's name, a location's
-name, a reserved word, or the other home's name for another plan, is a phase-2 finding, and a
-milestone so named is no anchor. Otherwise a reference reads as the other anchor, and which one
+A plan's name sits in the anchor position of a reference: a milestone's, and a spec's id, since
+each spec file is an anchor. So a milestone name or a spec id that is a component's name, a
+location's name, a reserved word, or the other home's name for another plan, is a phase-2 finding,
+and a plan so named is no anchor; of a spec and a milestone of one name, the milestone keeps it. Otherwise a reference reads as the other anchor, and which one
 wins depends on the order the anchors were built in. A milestone's name is also an entity id,
 since it is the id of a `milestone` entry, and is not `index`: the File shape's retired single
 file beside a milestone is `<id>.md`, which for `index` is the milestones home's own listing.
+
+### A plan's items are the level-three headings of four of its sections, and the section gives the kind `##plan-items-by-section`
+
+A plan document's threads, arguments, criteria and acceptance criteria are items: a level-three
+heading ending with its slug, `### <statement> ##<id>`, under the level-two section Threads,
+Arguments, Criteria or Acceptance criteria, defines an item of the kind `thread`, `argument`,
+`criterion` or `acceptance`, in the plan anchor that owns the document. A milestone's README and
+its step specs share one namespace, so an id defined in two of them is the duplicate finding.
+Every level-three heading of those four sections owes a slug; any other level-three heading of a
+plan document is section text, and a slug anywhere else in it defines nothing. Items need a model
+of their own because a heading register has one home file per anchor and one level, where a plan
+has one home and four kinds; an extension runs after the entity table is built, so items are the
+core's, per `design@core@an-extension-plugs-in-through-phased-hooks`.
+
+### An item is cited `<kind>@<plan>@<id>`, from inside its own plan only `##plan-item-scope`
+
+The plan anchor stands in the anchor position, so an item citation keeps the three-part grammar,
+at about 45 characters where the root anchor and a compound id would need 66. It resolves only
+from a file inside the plan: the spec file, or a file of the milestone's directory. From anywhere
+else, a commit message included, it is refused before its id is looked up, and the repair names
+the document to cite whole: the spec, the milestone, or the step spec that defines the item. A
+whole plan may be cited from anywhere, so a dependency between plans is carried by the document,
+and retiring a plan asks no other plan to be redesigned item by item.
+`tripwire@core@item-of-another-plan-named` watches the premise that plans need no more.
+
+### Item registers are the plan's own register shape, `Section`, whose home is the plan's documents `##items-as-section-registers`
+
+The four item registers have the shape `Section`: each names its level-two section, its entries
+sit at level three, and its home is the plan anchor's own documents, which the File and Directory
+homes that hold them already judge, so a `Section` register owes no home of its own in phase 2,
+no index and no walk check. The kind is read from the level-two heading in force above an item,
+out of the heading records the scanner makes. Four ordinary heading registers at one home would
+each claim the same file, and only the first would define anything.
+
+### The four item registers are built in, and carried by the plan anchors alone `##item-registers-built-in`
+
+Like `spec` and `milestone`, the item registers are the tool's: a project's declaration of one, or
+a location naming one, is refused, because their storage is the plan documents, which the plans
+layout fixes. A project that already declared a register under one of the four names renames it on
+upgrade.
+
+### A spec file is an anchor that owns its own file, which stays an entry of the `spec` register `##spec-file-owns-its-items`
+
+Each spec file of specs/ is an anchor, so its items are cited `<kind>@<spec>@<id>`. The deepest
+anchor owns a document, per `design@core@a-slug-belongs-to-a-component`, and a spec anchor holds
+its own file, so the spec anchor owns it. The File register's entry rule gains one case: a file
+that a spec anchor at exactly its own path owns stays an entry of the register whose home holds
+it, decided in `Anchors::owns_entry`, which every entry filter calls. Ownership is unchanged, so
+a spec and a milestone behave alike: the plan anchor owns the plan's documents, and items take one
+path. An anchor that owns nothing, with an item scope found apart from ownership, was the rival;
+it gives a document two notions of its anchor and items two code paths. Making every spec a
+directory was the other; it reopens the decision that a spec is one file.
+
+### A plan document owes the sections of its kind, and a step spec owes its own `##step-spec-sections`
+
+A spec of specs/ and a milestone's README owe the plan sections, in order, with Arguments right
+after Threads, matched as the documents write them: Status and audience, How a step is worked,
+Names, What the work is, What is already decided, Criteria, Threads, Arguments, "New names, in one
+place", Decided design, Mapping tables, Losing alternatives, Readings, Premortem, Acceptance
+criteria, Implementation sequence, Order rationale, Defaults awaiting the owner, Harvest, Later
+consequences. A step spec owes Builds, Claims, Audit subjects, Fails alone on and Premises that
+expire, in order; the plan sections a step spec with a design session of its own holds are not
+ordered against them. Fixtures is owed only where a Component drives its tests with authored
+content, a condition no check can read, so it is not checked. One `spec` register owes two lists,
+and `Anchor::sections_of` gives the list at each anchor, as `Anchor::home_of` gives the home.
 
 ### Which registers exist is the manifest's, and a register instance's own options sit beside it `##registers-are-declared`
 
 `[registers.<name>]` declares a register's `scope`, `shape`, `dir`, `level`, `sections` and
 `metadata.<key>.values`; `[locations.<name>]` declares a directory and the registers it carries.
-Six registers are compiled in — `design`, `goal`, `tripwire`, `issue`, carried by every
-component, and `spec` and `milestone`, carried by the anchor `plans`, `spec` also by each
-milestone anchor, per `design@core@plan-register`. A declaration for one of the first four accepts `kinds` on `issue`
-and nothing else, because their storage is what the word component means. A table for `spec` or
-`milestone` is refused whole, and so is either name in a location's `registers` list, and a
+Ten registers are compiled in — `design`, `goal`, `tripwire`, `issue`, carried by every
+component; `spec` and `milestone`, carried by the anchor `plans`, `spec` also by each milestone
+anchor, per `design@core@plan-register`; and the four item registers, carried by the plan
+anchors, per `design@core@item-registers-built-in`. A declaration for one of the first four accepts `kinds` on `issue`
+and nothing else, because their storage is what the word component means. A table for a plan
+register or an item register is refused whole, and so is any of their names in a location's
+`registers` list, and a
 component register whose home at the root would be the plans directory: the plans layout is the
 tool's, and a declaration that changes it changes nothing a project can rely on. Setting `scope`, `shape`, `dir`, `level`, `sections` or `metadata` on a
 built-in is a finding, and the compiled value stands.
@@ -884,8 +958,9 @@ check would report a file stale that nobody had changed, and `index` would rewri
 
 ### Every citeable thing is an entity with a kind, an anchor, an id and a definition site, held in one table built from the walk, and every check that resolves a name reads that table `##one-entity-table`
 
-**A kind is a register's name, or `path`.** The six built-in registers give the kinds `design`,
-`goal`, `tripwire`, `issue`, `spec` and `milestone`, and a project's own declarations give the rest, so the kind set is
+**A kind is a register's name, or `path`.** The ten built-in registers give the kinds `design`,
+`goal`, `tripwire`, `issue`, `spec`, `milestone`, `thread`, `argument`, `criterion` and
+`acceptance`, and a project's own declarations give the rest, so the kind set is
 data rather than a compiled enumeration. A heading register's entities are slugs defined in the
 register's home under an anchor, per `design@core@an-entry-is-a-heading-at-the-register-level`; a file register's are the
 files under its instance directory, one per entry, per
@@ -926,7 +1001,9 @@ level-two subjects.
 any heading register the project declares, each in either shape of
 `design@core@heading-register-two-shapes`: the single file, or a subdocument of the directory.
 The directory's `README.md` is the head: it defines nothing and owes no slug, for every register
-and not only design. Which anchor owns a definition is where its document sits, per
+and not only design. A plan's items are the one register family read otherwise: their home is the
+plan's own documents, a milestone's README included, and the section a heading sits under gives
+its kind, per `design@core@items-as-section-registers`. Which anchor owns a definition is where its document sits, per
 `design@core@a-slug-belongs-to-a-component`.
 
 **Two findings, both about the definition site.** A heading at the register's level with no slug
@@ -971,14 +1048,15 @@ moves the entities in it. Two anchors may therefore each record an entity they c
 word, and two registers of one anchor may too, which is what naming the kind and the anchor in a
 reference buys. The id of a heading-register entity is still called a slug.
 
-**A reference resolves to nothing in four ways, and each is reported as the repair it needs.**
+**A reference resolves to nothing in five ways, and each is reported as the repair it needs.**
 The kind position holds an anchor, the old form, and the repair names the kinds; the anchor is
 not declared, and the repair lists the anchors; the anchor is declared and carries no register of
-that kind, and the repair lists the anchors that do; the anchor carries the register and does not
-define that id, and the reference is dangling. One finding for all four would send a reader to
-check the wrong segment of the pointer three times out of four. Every anchor but a milestone carries
-`path`, and a component carries every component register, so the third way is reachable only by
-a location, declared or constructed by the tool.
+that kind, and the repair lists the anchors that do; an item of a plan is cited from outside that
+plan, and the repair names the whole document, per `design@core@plan-item-scope`; the anchor
+carries the register and does not define that id, and the reference is dangling. One finding for
+all five would send a reader to check the wrong segment of the pointer most of the time. Every
+anchor but a plan anchor carries `path`, and a component carries every component register, so the
+third way is reachable only by a location, declared or constructed by the tool.
 
 **A reference that resolves to nothing is recorded and reported, never dropped.** The scanner
 could require a resolvable shape and see nothing without one, which needs no finding and no
@@ -1086,8 +1164,8 @@ reference that names a location, which a move is expected to break.
 anchor, and the finding names the form that resolves: `spec@plans@<id>`, `milestone@plans@<id>`
 or `spec@<milestone>@<step>`. It is judged by where the target sits, before the deepest-anchor
 rule and whether or not it exists, so a citation of a deleted plan gets the same repair. This
-overrides the ancestor's spelling of an anchor's own directory for a milestone, which carries no
-`path` kind. One name per document is what keeps `show` complete: a citation written as a path
+overrides the ancestor's spelling of an anchor's own directory for a milestone. A plan anchor, a
+milestone or a spec, carries no `path` kind. One name per document is what keeps `show` complete: a citation written as a path
 is one `show spec@…` would not list. The README of the plans directory, and the README and index
 of each of its two homes, are not plan documents, and are cited `path@plans@<file>`.
 
