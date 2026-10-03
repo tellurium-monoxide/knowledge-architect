@@ -195,12 +195,23 @@ same reasoning. Only the design skill states a set so far:
 ### A decision is recorded when the work that implements it lands `##harvest-after-implementation`
 
 A decision is written into the design homes in the change that lands the work implementing it, not
-when the spec is written. A design head is a claim about the code as it stands, so a head written
-before the code is a hypothesis presented as a fact, and
-`goal@knowledge-architect@documentation-stays-consistent` asks that the documentation stay
-consistent with the code. While the work is open, the spec or the
+when the spec is written. A design home holds built intent, per
+`design@agent-skills@design-home-is-built-intent`, so a head written before the code would report a
+defect in code nobody has written, and `goal@knowledge-architect@documentation-stays-consistent`
+asks that the documentation stay consistent with the code. While the work is open, the spec or the
 milestone document on its branch is the only place the decision exists. A decision with no
 implementing work, one that constrains work nobody has started, is recorded when it is made.
+
+### A design home holds built intent, and a plan document holds unbuilt intent `##design-home-is-built-intent`
+
+A design home holds the design as built and its reasons, and the code is checked against it. A plan
+document holds decided design that is not built yet, and each decision moves into the design home
+at the landing of the work that builds it. A decision that no work implements is recorded when it
+is made, and counts as built intent: nothing waits to be built. The rival, a design home holding
+intent built or not, needs a marker on every entry to tell the two apart, and checking the code
+against an unbuilt entry reports a defect in code nobody has written. Unbuilt intent has a checked
+home because plan documents are a structure the checker reads, per `design@core@plan-register`.
+This serves `goal@knowledge-architect@documentation-stays-consistent`.
 
 ### A design head carries the standing argument, and history carries the deliberation `##standing-argument-in-head`
 
@@ -263,15 +274,17 @@ plain, with a hash sign before it, never as a backticked span, which the checker
 reference candidate. When
 the thread is approved and its decision earns an entry, the entry's heading ends with the same
 slug, so the spec, the commit messages and the design home name the decision with one identifier.
-This holds until plan documents have a structure the checker reads, scheduled in
-`milestone@plans@structured-plans`.
+In the plan document the thread is an item, a level-three heading ending with the same slug under
+the Threads section, cited from inside that document only, per `design@core@plan-items-by-section`.
 
 ## Plan documents
 
 ### The words: plan document, spec, milestone, plans directory `##document-vocabulary`
 
-A plan document is any document in the plans directory, the one directory where a project keeps
-them. A spec is the plan document of work done in one branch and one PR. A milestone is work across
+A plan document is a spec, a milestone document or the spec of a step, kept in the plans
+directory, docs/plans/ at the project's root, whose path the checker fixes, per
+`design@core@plans-dir-fixed`. The directory is named plans rather than planned: in common English,
+planned work is intended or scheduled work, designed or not, which is the roadmap's content. A spec is the plan document of work done in one branch and one PR. A milestone is work across
 several PRs with design sessions between them; its plan documents are its milestone document and
 one spec per step. The word "plan" alone never names a document: it would name the directory, a
 document and a kind of document at once. The words follow common usage among developers, which the
@@ -294,8 +307,10 @@ amount of work and opens by saying it rests on assumptions.
 
 ### A milestone is a directory, its head a README, each step a spec `##milestone-is-a-directory`
 
-A milestone's plan documents are one directory in the plans directory: the milestone document is
-its `README.md`, and each step's spec is a file beside it. The head is a README because the checker
+A milestone's plan documents are one directory under milestones/ in the plans directory, which the
+checker makes an anchor named by its basename, per `design@core@plan-document-kinds`: the milestone
+document is its `README.md`, a generated `index.md` lists the steps, and each step's spec is a file
+beside it, cited `spec@<milestone>@<step>`. The head is a README because the checker
 resolves a relative link only in a `README.md` or an `index.md`, per
 `design@core@links-are-navigation-rows`, so the head can link each step's spec as a navigation row.
 A step's spec is a spec, so it leaves when its step lands, per
@@ -305,7 +320,7 @@ README leaves with the last step and keeps what crosses steps.
 ### A plan document leaves when its work lands `##spec-leaves-at-landing`
 
 A plan document is deleted in the commit that completes its last harvest, and that commit's message
-names its path. A plan document kept after its harvest is a second home for every decision it
+cites it by its kind, which resolves against the commit's parent. A plan document kept after its harvest is a second home for every decision it
 carried, and it starts drifting at the first later reversal. Walked by the checker, its references
 break at every reversal, and someone repairs a document about finished work; left out of the walk,
 it is unchecked text that a grep finds with no marker that it is stale. Either breaks
@@ -319,9 +334,20 @@ The planning skill starts where a design discussion has converged, and writes th
 milestone in the same session. The design skill ends at convergence, the premortem and
 the owner's rulings on tripwires, and writes no plan document of its own. Its decisions are
 recorded when their work lands, per `design@agent-skills@harvest-after-implementation`. One skill owns the document's shape: two skills describing the sections of one document
-would drift apart, against `goal@knowledge-architect@agents-get-a-complete-workflow`. The session
-matters because the discussion's ledger lives only in the conversation, and a document written from
-memory in a later session loses the losing arguments and the conditions of each closure.
+would drift apart, against `goal@knowledge-architect@agents-get-a-complete-workflow`.
+
+The planning skill assembles the document from the discussion's transcript, the harness's log of
+the session on disk, through a subagent that reads every transcript file the discussion spans. The
+design skill's per-round delta is the draft it reads, and the deltas are corroborated as written,
+since the owner read and answered each. Where the harness keeps no transcript, it assembles from
+the conversation. The premise is that the transcript keeps the records from before a compaction,
+which a summary of the conversation loses, with the losing arguments and the conditions of each
+closure. It holds on one observed compaction of one session log, where every user and assistant
+record before the compaction boundary was still in the file; counting the records by their fields,
+a `system` record of subtype `compact_boundary` for the boundary, re-takes it on any log. The
+extraction can be wrong, so the transcript reviewer checks every assembled document against the
+same files. The rival, a ledger the agent writes to a file every round, costs a write per round and
+corroborates nothing the transcript does not.
 
 ### Acceptance criteria live in the plan document of the work that judges them `##acceptance-criteria-in-the-document`
 
@@ -366,14 +392,38 @@ merged on its own before that step begins. On the step's branch, the gates as th
 them would judge the commit that added the document, whose tree predates the change. A spec has no
 such split: its document and its work are one branch.
 
-### Undesigned work is an issue, and no list of milestones is kept `##planned-work-is-an-issue`
+### Undesigned work is an issue `##planned-work-is-an-issue`
 
 Work that is known but not designed is a `todo` or `deferred` issue in the owning anchor, with its
 leads in the entry. The plan document that schedules it closes the issue in the commit that adds
 the document. `goal@knowledge-architect@structure-and-workflow-work-together` asks for one place for
-what is open, and a roadmap file would be a second one beside the issue register: two schedules
-drift. The cost: the order of future work has no home. The owner accepted it in the checkpoint that
-closed the discussion, without answering the question put to it earlier.
+what is open: the issue register holds the work, and the roadmap only orders it, per
+`design@agent-skills@roadmap-orders-issues`.
+
+### The roadmap holds only the order of known work, and every row is a checked reference `##roadmap-orders-issues`
+
+A row of the roadmap cites an issue entry or a whole plan document, in the order the owner wants the
+work done, and an unordered section may follow. The work stays in the issue register and the plans
+directory, so what is open is still listed in one place, per
+`goal@knowledge-architect@structure-and-workflow-work-together`; the roadmap adds only the order. A
+row dangles when its issue closes or its plan document leaves, and the check reports it, so the
+order cannot drift from the work unnoticed. The commit that adds a plan document rewrites the row
+of the issue it closes, and the commit that deletes one removes its row. Any other change to the
+order is made on the owner's word, since ordering work is a weighing, per
+`goal@knowledge-architect@the-owner-decides`. The need is observed in real use: thaum kept a file
+of its next milestones as an exception to the installed skill. A roadmap register of its own,
+holding undesigned work, lost: two registers would each hold known, undesigned work, which needs a
+routing rule and hides one of them from the issue listing.
+
+### The roadmap is docs/roadmap.md at the root, optional, and needs no checker rule `##roadmap-home`
+
+The path is fixed, as the plans directory's is, so the installed skills can name it, per
+`design@core@plans-dir-fixed`. It is optional: a project with no order to state writes none. It is
+not in the plans directory, which holds plan documents only, because a roadmap outlives every plan
+it lists. Its rows are ordinary references, so ordinary reference checking is all it needs: a
+roadmap citing a milestone, a step spec and issues passes the check, and a row citing an absent
+issue is reported. Writing such a file and running the check re-takes it; a row the check cannot
+judge would reopen this.
 
 ### No record of landed work is kept `##no-progress-record`
 
@@ -386,8 +436,8 @@ the one place for what is open of `goal@knowledge-architect@structure-and-workfl
 
 The installed agent `knowledge-architect-transcript-conformity-reviewer` reads the transcript of a
 discussion and checks that a document records the owner's decisions as made: each state, the scope
-of each decision, the verbatim quotations, and nothing the owner said left out. The planning skill dispatches it on every plan document written from a
-discussion whose transcript is available, and the installed review skill lists it as the
+of each decision, the verbatim quotations, and nothing the owner said left out. The planning skill dispatches it on every plan document it assembles
+from a discussion's transcript, and the installed review skill lists it as the
 axis for any document that records the decisions of such a discussion. It
 is an agent, not a line in a skill, because its standard and its extraction rule are fixed, and the
 rule is learned from a failure: a filter on text substrings once dropped one of the owner's
@@ -399,15 +449,50 @@ an agent's addition, detail inside a ruling, which is kept and listed as the age
 rules. Reported alike, both read as defects, and the author undid a detail, which the owner then ruled
 restored.
 
-### Plan documents written under the planning skill keep a shape a later structure can read `##structure-ready`
+### A plan document records the whole discussion `##spec-records-the-exchange`
 
-A plan document's layout and its section titles are fixed, and every thread, step and acceptance
-criterion carries an identifier in the entry grammar, written plain with a hash sign and never in
-backticks. Nothing outside the plans directory cites an item of such a plan document; a reference
-to a whole plan document is allowed, by its kind rather than its path, per
-`design@core@plan-document-kinds`, and its dangling at deletion lists the texts that depended on
-it. This is the shape a structure for plan documents, with registers of their own, can read
-without rewriting them. Its items are scheduled in `milestone@plans@structured-plans`.
+A plan document assembled from a discussion records every thread with its proposer and round, its
+final state, the arguments on each side, the owner's rulings verbatim with their round, and its
+relations. It applies to a spec, to a milestone document, and to a step's spec when the step had a
+design session of its own. `design@agent-skills@standing-argument-in-head` names the plan document
+as the home of the deliberation while it exists, and `goal@knowledge-architect@the-owner-decides`
+is served only where the rulings are recorded as the owner made them. The rival, a plan document
+recording each thread's final state and resolution, left the rulings and the arguments to memory.
+The cost, which the owner accepted by name, is a longer plan document to write and to read.
+
+### An argument is an item, without a state `##arguments-as-items`
+
+Each argument of the discussion is an item of the plan document, under its Arguments section, so a
+ruling, a closure or a premortem cause can cite what decided it, and the standing argument a
+harvest writes is a selection of named arguments rather than a rewrite. It carries no state: a
+state would need a relation between many arguments and many threads, which the design skill
+declines to track, and an identifier needs none.
+
+### Arguments are numbered in one sequence per plan `##argument-ids`
+
+An argument's id is `a<n>`, in order of appearance and never reused, in one sequence across a
+milestone's README and its step specs, which share one namespace, per
+`design@core@plan-items-by-section`. Arguments are never harvested as entries, so a content slug
+would cost a name for each of dozens of statements, for nothing. The numbers are assigned at
+assembly, and the discussion mints none.
+
+### Where one argument ends is decided at assembly, and the transcript reviewer checks it `##argument-segmentation`
+
+The boundaries of the arguments are a judgement, made once by the subagent that assembles the plan
+document, and checked by the transcript reviewer against the same transcript. The rival, arguments
+marked in each round, makes the extraction exact at a cost paid every round.
+
+### A leaving plan's citations are removed, and each citing plan gets a question `##retiring-plan-opens-issue`
+
+A whole plan document may be cited from another plan, per `design@core@plan-item-scope`. When it
+leaves, the session that meets the dangling citation, the one deleting it or the one rebasing the
+citing plan onto the deletion, removes the citation and opens a `question` issue on the citing
+plan: does it still hold now that the leaving plan is built, deviations included? The issue cites
+the citing plan, so it cannot outlive it, and its `Why it matters` cites what the leaving plan
+harvested, since that plan no longer exists. It is a `question` rather than a `todo` because the
+reading may find nothing to change. For a milestone, its next step's audit reads it. The retiring
+session revisits nothing itself: a revisit at that moment would redesign the citing plan at a time
+chosen by another plan's landing.
 
 ## Reviews
 
@@ -428,12 +513,12 @@ every home, not the subset the diff seems to concern. This serves
 The knowledge table maps each kind of statement to its one home. Its rows for the workflow's own
 records (a goal, a decision, a losing alternative, an issue, a tripwire, a contract, a plan
 document) ship in the installed primer, and move with the version. A project's own rows, such as
-its plans directory or a register it declares, sit in its root `CLAUDE.md`, which the project
+its changelog or a register it declares, sit in its root `CLAUDE.md`, which the project
 owns. A table written whole into each project at setup would keep the old routing after an upgrade
 that changes it, against `goal@knowledge-architect@agents-get-a-complete-workflow`. A table shipped
 whole would leave a project no place for its own rows, against
 `design@agent-skills@overlay-by-separate-skills`. A project row may refine a primer row with what is
-the project's own, such as the path of its plans directory; it never contradicts one, and a row
+the project's own, such as a README that is also its package's page; it never contradicts one, and a row
 that only repeats one is removed.
 
 ### The primer holds only what every session needs and no installed skill delivers `##primer-limit`
@@ -460,7 +545,7 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   work grows. When a decision conflicts with a goal, the likely cause is that the owner missed the
   conflict: the goal prevails, and the conflict goes to the owner, per
   `goal@knowledge-architect@the-owner-decides`.
-- **A design home is intent, and a claim about the code goes stale**: the code is checked against
+- **A design home is built intent, and a claim about the code goes stale**: the code is checked against
   the first, and the second is verified before it is relied on.
 - **Before diagnosing anything as a problem, a session checks whether it is already recorded**,
   with the listing commands of the checker.
@@ -473,14 +558,13 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   is easy to miss, as the owner observed in real sessions, so every outcome leaves a record or a
   listed line. The owner rules that a fix under the second outcome needs no word of theirs.
 
-### A project states its plans directory in its own rows of the knowledge table `##plans-directory-declared`
+### The primer names the plans directory the checker fixes `##plans-directory-in-primer`
 
-The setup skill proposes docs/plans/ and writes the path the owner accepts among the
-project's rows. The checker fixes the plans directory at docs/plans/, per
-`design@core@plans-dir-fixed`, so the row can name no other path; it stays while the installed
-skills read the plans directory from the row, which `milestone@plans@structured-plans` changes.
-Nothing checks that the row exists, so a project whose root `CLAUDE.md` lacks it leaves the
-planning skill without a plans directory: a known limit until the skills read the fixed path.
+The plans directory is docs/plans/ in every project, per `design@core@plans-dir-fixed`, so the
+primer's row for unbuilt work names it, and the installed skills name it in plain text. A project's
+own row for it would only repeat the primer's, and is removed, per
+`design@agent-skills@knowledge-table-home`. A row each project declared lost: once the checker
+fixes the path, a declared one could name no other.
 
 ### The routing table lists only what a project adds to an installed skill `##routing-table-shape`
 
