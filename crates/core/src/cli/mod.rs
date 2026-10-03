@@ -293,7 +293,7 @@ fn check(
 /// `design@core@safe-fix-definition` and `design@core@fix-before-the-checks`.
 ///
 /// **A fix is safe when its bytes are determined by the tree and the pinned version, and it
-/// writes or removes only files the tool generates or installs.** Two pass that test: the install
+/// writes or removes only files of the installer's namespace or of the generated list.** Two pass that test: the install
 /// of the agent files, and the generated files. Every other finding's repair is a choice, or
 /// touches git or a hand-written file, and stays the reader's.
 ///

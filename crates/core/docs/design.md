@@ -973,9 +973,11 @@ option takes a generic name because a later safe fix needs no new option. The ri
 command rather than two that end in one report. `commits` judges history and takes no `--fix`,
 and the gates run `check` without it, so continuous integration judges the tree as committed.
 
-### A fix is safe when its bytes are determined by the tree and the pinned version, and it writes or removes only files the tool generates or installs `##safe-fix-definition`
+### A fix is safe when its bytes are determined by the tree and the pinned version, and it writes or removes only files of the installer's namespace or of the generated list `##safe-fix-definition`
 
-This is the test every fix must pass before `--fix` applies it. A fix that makes a choice, or
+This is the test every fix must pass before `--fix` applies it. The installer's namespace counts
+whole, per `design@core@owned-namespace-check`: an unshipped file the check reports there is
+removed, as the install removes it, whoever put it there; the owner ruled this. A fix that makes a choice, or
 touches git or a hand-written file, would rewrite what a writer meant, so its repair stays the
 reader's. The test is what keeps `--fix` safe to run after every edit, which serves
 `goal@knowledge-architect@agents-work-without-drift`. `tripwire@core@fix-makes-a-choice` watches
