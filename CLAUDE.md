@@ -198,7 +198,6 @@ the primer's:
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
-| descriptions of unbuilt work and the plans to build it: specs and milestones. Provisional: it defines no design entry, and its items are cited from inside it only | the plans directory, `path@knowledge-architect@docs/plans/` | the planned work lands |
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md` is also its crates.io page, and points to docs.rs for the library API | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
@@ -250,8 +249,8 @@ list of what references an entry: `show` computes it.
 
 ### Plan documents
 
-`path@knowledge-architect@docs/plans/` is this repository's plans directory. It holds a README and
-two homes: specs/, one file per spec for the work of one PR, and milestones/, one directory per
+`path@knowledge-architect@docs/plans/` is the plans directory, whose path the checker fixes. It
+holds a README and two homes: specs/, one file per spec for the work of one PR, and milestones/, one directory per
 milestone for work across several PRs. Plan documents are committed on the work's branch, except a
 milestone document whose first step changes what the gates check: it is merged in a pull request of its own before that step, because
 the gates as the step changes them would judge the commit that added the document, per the
@@ -272,7 +271,9 @@ anyone has checked it.
 
 **Two classes of statement, and the instruction differs.**
 
-- **Intent**: the root's design home, and a Component's design home. This is authority. Do not
+- **Built intent**: the root's design home, and a Component's design home. They hold the design
+  as built and its reasons, and the decisions that no work implements, recorded when made. Design
+  that is decided and not built is in a plan document until it lands. This is authority. Do not
   verify it against the code. Verify the code against it. A divergence is a defect in one of them.
   Say which, open an entry, and stop. A divergence is never licence to follow the code.
 - **A claim about the code as it stands**: an invariant in a scoped `CLAUDE.md`, a doc comment, a
