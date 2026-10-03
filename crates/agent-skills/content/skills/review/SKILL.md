@@ -46,7 +46,7 @@ with the reason, in the commit that records the review.**
 **Last, before every merge to the main branch, the transcript reviewer runs once more, alone**:
 after every other axis has run and its repairs are committed. Its range is the whole branch,
 `<main branch>..<head>`, and its brief names the transcripts of every session that worked on the
-branch. It is the one axis that can see whether the findings of the others were acted on, since
+branch, with the message where the branch's work begins in each. It is the one axis that can see whether the findings of the others were acted on, since
 their reports reach the session as messages of its transcript. Its repairs land as a last commit,
 which no axis reviews again.
 
@@ -56,7 +56,9 @@ These hold whatever the axes are. They are what makes a finding worth acting on 
 re-checking.
 
 - **Each axis is a separate subagent, and none sees another's findings.** Reviewers given a shared
-  findings list converge on it.
+  findings list converge on it. The transcript reviewer is the one exception: its subject is the
+  session, and the session received the other axes' reports, so it reads them as items to find
+  an outcome for, never as a list to agree with.
 - **Each reviewer is fresh, never a fork.** A fork inherits the session's discussion and reads the
   work as its author.
 - **At least one reviewer is briefed blind**: given the task and no list of what anyone else found,

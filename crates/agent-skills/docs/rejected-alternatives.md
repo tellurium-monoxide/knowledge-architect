@@ -69,3 +69,9 @@ protected the owner's rulings down to their wording, at the cost of a list of ad
 review. The owner observed over real sessions that the list buried what mattered, a decision or a
 finding that no document or issue had kept, and ruled that a detail or a better wording inside a
 ruling needs no report.
+
+**A milestone document holding the design of every step, with step specs holding only their entry**
+— lost to `design@agent-skills@milestone-is-a-directory`. `live`. It kept the whole design in one
+place to read. It lost to a measurement: the first milestone written that way, structured-plans,
+had a README of 1,624 lines when it left, read whole at the grounding of every step. That cannot be
+derived again in one discussion round.

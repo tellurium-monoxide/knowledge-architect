@@ -27,7 +27,8 @@ to the repository-facing text or become links.
 
 `goal@knowledge-architect@any-project-can-adopt-it` makes the crates.io page the first text a
 new project reads. The knowledge table routes "how a user can use a Component" to the README,
-and for a published crate that is this page.
+and for a published crate that is this page. A page written for a reader of this repository
+fails `goal@knowledge-architect@adoption-is-easy`.
 
 ### What would close it
 
