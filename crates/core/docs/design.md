@@ -986,11 +986,9 @@ it.
 Two kinds of finding pass `design@core@safe-fix-definition`: an installed file missing, differing or
 no longer shipped, and a stale or missing generated file. Every other repair touches git, such as
 staging a deletion, or a hand-written file, such as the root CLAUDE.md's primer import, or is a
-choice. The installed set is repaired from git's listing, judged as the installed-file check judges
-it, after normalising line endings: `agents::repairs` and `agents::apply` in
-`path@core@src/agents.rs`. The general install would also delete an ignored file in the namespace,
-which git holds no copy of, and rewrite every copy that differs only by its line endings. The
-generated files alone, the rival, lost: repairing the installed set costs little, and it removes the
+choice. The installed set is repaired exactly where the installed-file check reports it, judged from
+git's listing after normalising line endings: a file git does not list, such as an ignored file in
+the namespace, is never touched. The generated files alone, the rival, lost: repairing the installed set costs little, and it removes the
 install-then-index sequence from an upgrade.
 
 ### A fix run repairs the installed files, gates the model, writes the generated files, then checks `##fix-before-the-checks`
@@ -1003,7 +1001,10 @@ installed files' bytes do not depend on the model, so they are repaired before t
 generated file is never written over an incomplete model, per `design@core@phases-gate-the-report`.
 An upgrade that removes a shipped file takes two runs: the deletion is unstaged, phase 2 reports
 it, and staging it touches git. A failed write exits 2 with nothing written, and 1 after any write,
-since 2 promises an untouched tree.
+since 2 promises an untouched tree. The check stays the only verifier: `--fix` only writes
+before it verifies, so the rejected alternative of an `index` that prints a diff and a `--write`
+that applies it, a second command answering whether a file is current in its own format, is not
+reopened.
 
 ## 3. Names and references
 

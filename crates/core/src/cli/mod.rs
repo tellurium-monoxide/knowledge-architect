@@ -289,7 +289,8 @@ fn check(
     })
 }
 
-/// Apply every safe fix, then run the full check: `check --fix`.
+/// Apply every safe fix, then run the full check: `check --fix`, per `design@core@check-fix-flag`,
+/// `design@core@safe-fix-definition` and `design@core@fix-before-the-checks`.
 ///
 /// **A fix is safe when its bytes are determined by the tree and the pinned version, and it
 /// writes or removes only files the tool generates or installs.** Two pass that test: the install

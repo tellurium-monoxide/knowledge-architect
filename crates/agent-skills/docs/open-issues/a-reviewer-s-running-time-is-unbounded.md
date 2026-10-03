@@ -16,10 +16,11 @@ or when it reports.
 
 The installed review skill states the invariants of a dispatched review: fresh reviewers, a blind
 brief, reproduction, a worktree each. None bounds a reviewer's running time, or says that a
-reviewer reports what it has reproduced before it queues more work. The observation is from the
-retrospective of one thaum session, written on 2026-10-02 outside this repository; it was seen
-once, with two reviewers of one review round. Whether it recurs, and whether the default
-behaviour is systematically wrong, is not established.
+reviewer reports what it has reproduced before it queues more work. The first observation is
+from the retrospective of one thaum session, written on 2026-10-02 outside this repository, with
+two reviewers of one review round. The second is below. It recurs in two real sessions; whether the
+default behaviour is systematically wrong is the owner's judgement, which the closing condition
+now asks for.
 
 A second instance, in this repository: the adversarial reviewer of the pre-release branch, which
 added `check --fix`, queued a batch of mutation runs and stopped with its background work still
@@ -32,8 +33,8 @@ The dispatcher had committed the other reviews' repairs in the meantime.
 
 A reviewer that holds its findings for many minutes delays every repair, and a dispatcher that does
 not ask may wait on a reviewer that has stopped producing. An instruction is worth text only where
-the default is systematically wrong, per `design@agent-skills@capability-over-conformance`, and one
-observation does not show that.
+the default is systematically wrong, per `design@agent-skills@capability-over-conformance`. Two
+sessions show it recurs; they do not show how often.
 
 ### What would close it
 
