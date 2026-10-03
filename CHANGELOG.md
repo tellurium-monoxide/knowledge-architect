@@ -49,6 +49,7 @@ subsection is omitted.
   or a milestone document, and every reference to it.
 - `checks`, minor: `commits` refuses a citation of a commit of its range by SHA, in a message or in
   a document of a commit's tree, where the manifest turns it on.
+- `cli`, minor: `--version` prints the version of the checker that runs, from any directory.
 - `manifest`, minor: `[commits] refuse-branch-shas`, off when absent.
 
 ### Workflow

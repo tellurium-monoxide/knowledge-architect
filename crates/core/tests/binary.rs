@@ -2280,3 +2280,17 @@ fn index_over_an_incomplete_model_refuses_and_writes_nothing() {
     assert!(err.contains("Nothing was written."), "{err}");
     assert!(tree_bytes(&sandbox.dir) == before, "index changed the tree");
 }
+
+/// The claim: `--version` answers from any directory, project or not, with the version of the
+/// package the binary was built from, so a session can ask which checker ran rather than read the
+/// project's pin. Shown to fail before the flag existed: clap refused the argument and exited 2.
+#[test]
+fn the_binary_reports_its_version_from_anywhere() {
+    let (out, err, code) = run_in(&std::env::temp_dir(), &["--version"]);
+    assert_eq!(code, 0, "{err}");
+    assert_eq!(
+        out.trim(),
+        format!("klarch {}", env!("CARGO_PKG_VERSION")),
+        "{out}"
+    );
+}
