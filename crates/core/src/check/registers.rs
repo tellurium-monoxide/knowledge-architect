@@ -196,7 +196,8 @@ fn file_home(
     // What sits under an anchor nested inside this home is that anchor's, as the heading
     // shape reads it: the nesting is refused by `manifest::collides`, and reading the nested
     // anchor's files as entries of this register would report the refusal's consequences
-    // against the wrong register and the wrong anchor, nine times over.
+    // against the wrong register and the wrong anchor, nine times over. The one exception is a
+    // spec file, which its own anchor owns and which stays an entry, per `Anchors::owns_entry`.
     let owned = |rel: &Path| anchors.owns_entry(anchor, rel);
     directory_contents(out, register, home, &groups, inputs, &owned);
 
@@ -1516,6 +1517,27 @@ mod tests {
         assert!(found
             .iter()
             .all(|f| f.starts_with("docs/plans/milestones/m/a-step.md")));
+    }
+
+    /// The claim: a walk row that takes a milestone out of the walk is one finding, against its
+    /// `spec` register, and none against the item registers, whose home is the same documents.
+    /// Mutation checked: the guard of `outside_the_walk` on the Section shape removed.
+    #[test]
+    fn a_milestone_outside_the_walk_is_one_finding() {
+        let manifest = declaring_full("", "", "[\"docs/plans/milestones/m\"]", "[]", "[]", "[]");
+        let mut present = all_of("");
+        for p in [
+            "docs/plans/milestones/m",
+            "docs/plans/milestones/m/README.md",
+        ] {
+            present.push(p.to_string());
+        }
+        let found: Vec<String> = tree_findings(&manifest, &present)
+            .into_iter()
+            .filter(|f| f.contains("out of the walk"))
+            .collect();
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("the spec register of `m`"), "{found:#?}");
     }
 
     /// The claim: the item registers are the tool's, so a declaration of one, or a location

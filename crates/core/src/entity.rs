@@ -5,7 +5,7 @@
 //! it. Before this table five checks held five notions of a name; the argument is
 //! `design@core@one-entity-table`.
 //!
-//! **A kind is a register's name, or `path`.** Six registers are compiled in and a project
+//! **A kind is a register's name, or `path`.** Ten registers are compiled in and a project
 //! declares the rest, so the kind set is data rather than an enum — `path@core@src/manifest.rs`
 //! owns what a register is, and this module owns what naming one means.
 //!
@@ -520,16 +520,35 @@ pub(crate) fn milestone_dirs<'a>(
     out
 }
 
+/// Whether a path holds a plan document by its position: an entry of specs/, or a file inside
+/// a directory of milestones/.
+fn is_plan_position(rel: &Path) -> bool {
+    let plans = Path::new(PLANS_DIR);
+    if entry_id(rel, &plans.join(SPECS_HOME)).is_some() {
+        return true;
+    }
+    rel.extension().is_some_and(|e| e == "md")
+        && rel
+            .strip_prefix(plans.join(MILESTONES_HOME))
+            .is_ok_and(|inside| inside.components().count() >= 2)
+}
+
 /// Each spec file of specs/, grouped or not, by id: the spec anchors a tree places, before
 /// their names are judged. A second file of one id is the duplicate entry finding, and the
-/// first by path is the anchor.
+/// first in path order, which compares components, is the anchor.
 pub(crate) fn spec_files<'a>(
     paths: impl IntoIterator<Item = &'a PathBuf>,
 ) -> BTreeMap<String, PathBuf> {
     let home = Path::new(PLANS_DIR).join(SPECS_HOME);
-    let mut found: Vec<&PathBuf> = paths
-        .into_iter()
+    // A listing of files and directories holds a group directory named like an entry, and a
+    // listing of files alone does not, so a path under which another sits is no spec: every
+    // caller then builds the same anchors.
+    let all: Vec<&PathBuf> = paths.into_iter().collect();
+    let mut found: Vec<&PathBuf> = all
+        .iter()
+        .copied()
         .filter(|p| entry_id(p, &home).is_some())
+        .filter(|p| !all.iter().any(|q| q != p && q.starts_with(p)))
         .collect();
     found.sort();
     let mut out = BTreeMap::new();
@@ -700,6 +719,10 @@ impl Entities {
             // bottom, so they are put in line order once both are done.
             let first = self.findings.len();
             let owner = anchors.owning(&doc.rel);
+            if owner.constructed == Some(Constructed::Plans) && is_plan_position(&doc.rel) {
+                self.unanchored_plan(doc, owner);
+                continue;
+            }
             if owner.is_plan() && doc.is_markdown() {
                 self.item_definitions(doc, owner, anchors);
                 self.findings[first..].sort_by_key(|f| f.line);
@@ -849,6 +872,24 @@ impl Entities {
                 SlugSite::Heading(3) => section_at(l.line),
                 _ => None,
             };
+            // A slug at another level inside an item section is misplaced for its level, not
+            // for its section.
+            if let (None, SlugSite::Heading(level), Some(section)) =
+                (register, site, section_at(l.line))
+            {
+                self.findings.push(Finding::at(
+                    &doc.rel,
+                    l.line,
+                    format!(
+                        "`##{id}` is written at a level-{level} heading of the {} section, and \
+                         defines nothing",
+                        section.section.as_deref().unwrap_or_default()
+                    ),
+                    "an item is defined at the end of a level-3 heading under its section; move \
+                     it to one, or delete it",
+                ));
+                continue;
+            }
             match register {
                 Some(register) => self
                     .defined
@@ -873,6 +914,31 @@ impl Entities {
                     ),
                 )),
             }
+        }
+    }
+
+    /// The slugs of a plan document whose plan is no anchor: a spec or a milestone whose name
+    /// the plans layout refuses, or that another plan holds. One finding per slug, naming the
+    /// cause, which phase 2 or phase 3 reports on the name itself, rather than a repair that
+    /// sends the reader to move each slug.
+    fn unanchored_plan(&mut self, doc: &crate::model::Document, owner: &Anchor) {
+        for l in &doc.observations {
+            let Observation::SlugDef { id, .. } = &l.what else {
+                continue;
+            };
+            self.findings.push(Finding::at(
+                &doc.rel,
+                l.line,
+                format!(
+                    "`##{id}` is written in a plan that is no anchor of its own, and defines \
+                     nothing"
+                ),
+                format!(
+                    "repair the plan's name, which a finding of its own names; its items are \
+                     read once it is an anchor under `{}`",
+                    owner.name
+                ),
+            ));
         }
     }
 
@@ -939,6 +1005,7 @@ impl Entities {
                 // A document an anchor nested inside this home owns is that anchor's, not
                 // an entry here: the nesting is `manifest::collides`' finding, and reading the
                 // nested anchor's files as entries would report it against the wrong register.
+                // The one exception is a spec file, per `Anchors::owns_entry`.
                 if !anchors.owns_entry(anchor, &doc.rel) {
                     continue;
                 }
@@ -1083,7 +1150,18 @@ impl Entities {
             .is_some_and(|r| r.shape == Shape::Section);
         if let (true, true, Some(citing)) = (item, a.is_plan(), citing) {
             if anchors.owning(citing).path != a.path {
-                let form = if a.is_milestone() {
+                // The whole document that defines the item: a step spec, when one does, and the
+                // milestone otherwise; an undefined item names the milestone.
+                let step = self
+                    .defined
+                    .get(&(kind.clone(), anchor.to_string(), id.to_string()))
+                    .and_then(|sites| sites.first())
+                    .filter(|site| site.file.file_name().is_some_and(|n| n != "README.md"))
+                    .and_then(|site| site.file.file_stem())
+                    .map(|stem| stem.to_string_lossy().into_owned());
+                let form = if let (true, Some(step)) = (a.is_milestone(), step) {
+                    format!("{SPEC_REGISTER}@{}@{step}", a.name)
+                } else if a.is_milestone() {
                     format!("{MILESTONE_REGISTER}@{PLANS_ANCHOR}@{}", a.name)
                 } else {
                     format!("{SPEC_REGISTER}@{PLANS_ANCHOR}@{}", a.name)
@@ -1266,6 +1344,117 @@ mod tests {
         assert!(a("acceptance", "m", "holds"));
         // The spec file is still an entry of the `spec` register of `plans`.
         assert!(a("spec", "plans", "s"));
+    }
+
+    /// The claims at the edges of an item section: a level-one heading closes it, a heading
+    /// deeper than three owes nothing there, and a source file inside a plan is not read for
+    /// items. Mutations checked: the section closed by a level-two heading alone; every level
+    /// from three down owing a slug; every document of a plan read for items.
+    #[test]
+    fn an_item_section_ends_at_a_shallower_heading_and_owes_level_three_alone() {
+        let spec = "# A spec\n\n## Threads\n\n### A thread `##one`\n\n#### A detail, no slug\n\n\
+                    # Appendix\n\n### After the appendix `##stray`\n";
+        let (e, found) = plan_table(vec![
+            ("docs/plans/specs/s.md", spec),
+            ("docs/plans/milestones/m/README.md", "# A milestone\n"),
+            (
+                "docs/plans/milestones/m/tool.rs",
+                "//! ## Threads\n//!\n//! ### A comment heading `##in-source`\n",
+            ),
+        ]);
+        assert!(e
+            .defined
+            .contains_key(&(Kind::new("thread"), "s".to_string(), "one".to_string())));
+        assert!(!e.defined.contains_key(&(
+            Kind::new("thread"),
+            "s".to_string(),
+            "stray".to_string()
+        )));
+        assert!(!e.defined.contains_key(&(
+            Kind::new("thread"),
+            "m".to_string(),
+            "in-source".to_string()
+        )));
+        assert!(
+            found
+                .iter()
+                .any(|f| f.contains("`##stray` is written outside")),
+            "{found:#?}"
+        );
+        assert!(!found.iter().any(|f| f.contains("A detail")), "{found:#?}");
+    }
+
+    /// The claims found at the review: a group directory named like a spec is no spec, so a
+    /// listing of files and directories gives the anchors a listing of files gives; the slugs of
+    /// a plan that is no anchor name that cause; and a slug at another level inside an item
+    /// section is reported for its level. Mutations checked: the prefix test dropped from
+    /// `spec_files`; the cause-naming branch dropped; the level branch dropped.
+    #[test]
+    fn a_spec_anchor_is_a_file_and_an_unanchored_plan_says_so() {
+        let files: Vec<PathBuf> = ["docs/plans/specs/x.md/z.md", "docs/plans/specs/y/x.md"]
+            .iter()
+            .map(PathBuf::from)
+            .collect();
+        let mut with_dirs = files.clone();
+        for d in ["docs/plans/specs/x.md", "docs/plans/specs/y"] {
+            with_dirs.push(PathBuf::from(d));
+        }
+        assert_eq!(spec_files(&files), spec_files(&with_dirs));
+        assert_eq!(
+            spec_files(&with_dirs).get("x"),
+            Some(&PathBuf::from("docs/plans/specs/y/x.md"))
+        );
+        let (_, found) = plan_table(vec![
+            (
+                "docs/plans/specs/Bad_Name.md",
+                "# A spec\n\n## Threads\n\n### A thread `##one`\n",
+            ),
+            (
+                "docs/plans/specs/s.md",
+                "# A spec\n\n## Threads\n\n#### Too deep `##deep`\n",
+            ),
+        ]);
+        assert!(
+            found
+                .iter()
+                .any(|f| f.contains("`##one` is written in a plan that is no anchor")),
+            "{found:#?}"
+        );
+        assert!(
+            found
+                .iter()
+                .any(|f| f
+                    .contains("`##deep` is written at a level-4 heading of the Threads section")),
+            "{found:#?}"
+        );
+    }
+
+    /// The claims on which spec files are anchors: a spec named like a milestone leaves the
+    /// name to the milestone, and one named like a component is no anchor; a plan's name is no
+    /// anchor word. Mutations checked: each name test dropped from `Anchors::of`; plan names
+    /// counted as anchor words.
+    #[test]
+    fn a_spec_anchor_takes_no_name_another_anchor_holds() {
+        let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/widget\"]\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n";
+        let manifest = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        let tree: Vec<PathBuf> = [
+            "docs/plans/specs/m.md",
+            "docs/plans/specs/widget.md",
+            "docs/plans/specs/s.md",
+            "docs/plans/milestones/m/README.md",
+        ]
+        .iter()
+        .map(PathBuf::from)
+        .collect();
+        let a = Anchors::of(&manifest, &tree);
+        assert!(a.by_name("m").is_some_and(|m| m.is_milestone()));
+        assert_eq!(a.all().iter().filter(|x| x.name == "m").count(), 1);
+        assert!(a.by_name("widget").is_some_and(|w| w.is_component));
+        assert_eq!(a.all().iter().filter(|x| x.name == "widget").count(), 1);
+        assert!(a.by_name("s").is_some_and(|s| s.is_plan()));
+        assert!(!a.is_anchor_word("s"));
+        assert!(!a.is_anchor_word("m"));
     }
 
     /// The claim: only the four item sections owe a slug, and a slug anywhere else in a plan
@@ -1704,7 +1893,7 @@ mod tests {
 
     #[test]
     fn a_declared_register_becomes_a_kind_the_candidate_rule_admits() {
-        // Nothing about a kind is compiled in beyond `path` and the built-in six: a project
+        // Nothing about a kind is compiled in beyond `path` and the built-in registers: a project
         // that declares a register makes its name spellable in kind position.
         let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
              [locations.notes]\npath = \"notes\"\nregisters = [\"reading\", \"tripwire\"]\n\n\

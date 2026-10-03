@@ -217,9 +217,9 @@ stdout gives a file that is only observations.
 
 ## Registers
 
-**Six registers are compiled in.** `design`, `goal`, `tripwire` and `issue` are what the word
-component means to this tool. `spec` and `milestone` are the plan documents, described under
-"Plan documents" below. A project declares further ones in its
+**Ten registers are compiled in.** `design`, `goal`, `tripwire` and `issue` are what the word
+component means to this tool. `spec` and `milestone` are the plan documents, and `thread`,
+`argument`, `criterion` and `acceptance` their items, described under "Plan documents" below. A project declares further ones in its
 `knowledge-architect.toml`. The first two tables are from thaum, whose `rules` location carries
 an `interpretation` register:
 
@@ -256,7 +256,8 @@ group subdirectories. An entry opens with frontmatter carrying each declared met
 level-one title, then the declared sections.
 
 `[registers.issue]` accepts `kinds` and nothing else; the design, goal and tripwire registers
-accept nothing, `level` included, and a table for `spec` or `milestone` is refused whole. The
+accept nothing, `level` included, and a table for a plan register or an item register is refused
+whole. The
 arguments are `design@core@registers-are-declared` and
 `design@core@a-file-register-is-a-directory-of-entries`.
 

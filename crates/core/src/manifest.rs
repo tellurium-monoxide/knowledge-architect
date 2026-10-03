@@ -9,7 +9,7 @@
 //! rather than two: a directory either declares itself a project or it does not, and the tool
 //! refuses to run outside one instead of guessing a root from its own location.
 //!
-//! **Six registers are compiled in and the rest are declared.** `design`, `goal`, `tripwire`
+//! **Ten registers are compiled in and the rest are declared.** `design`, `goal`, `tripwire`
 //! and `issue` are what the word component means here, so a project neither adds nor removes
 //! them; `spec` and `milestone` are the plan documents, carried by the plan anchors,
 //! which the tool constructs at [`PLANS_DIR`]. `[registers.<name>]` declares further ones, and
@@ -192,7 +192,8 @@ pub(crate) struct Register {
     pub shape: Shape,
     /// The basename of the home under the anchor's home base.
     pub dir: String,
-    /// Heading shape: the one heading level every entry sits at. `None` for the file shape.
+    /// Heading and Section shapes: the one heading level every entry sits at. `None` for the
+    /// file and directory shapes.
     pub level: Option<u8>,
     /// File shape: the level-two headings every entry carries, in order.
     pub sections: Vec<String>,
@@ -220,7 +221,7 @@ impl Register {
     }
 }
 
-/// Every register of a project: the six built in, then the declared ones by name.
+/// Every register of a project: the built-in ones, then the declared ones by name.
 #[derive(Debug, Clone)]
 pub(crate) struct Registers(Vec<Register>);
 
@@ -234,7 +235,7 @@ impl Registers {
     }
 
     /// Every register a declaration may name, comma-separated, as a finding lists them: all
-    /// but the two plan registers, which are the anchor `plans`' alone.
+    /// but the plan registers, which the plan anchors alone carry.
     pub(crate) fn listed(&self) -> String {
         self.0
             .iter()
@@ -249,7 +250,7 @@ impl Registers {
         self.0.iter().filter(|r| r.scope == Scope::Component)
     }
 
-    /// The six compiled-in registers, before any declaration is read.
+    /// The compiled-in registers, before any declaration is read.
     fn built_in() -> Vec<Register> {
         let heading = |name: &str, dir: &str, level: u8| Register {
             name: name.to_string(),
@@ -667,7 +668,7 @@ impl Manifest {
         self.extension_generated.extend(generated);
     }
 
-    /// Every register this project has, the six built in first.
+    /// Every register this project has, the built-in ones first.
     pub(crate) fn registers(&self) -> &Registers {
         &self.registers
     }
@@ -776,7 +777,7 @@ pub fn normalise_one(list: &str, path: &mut PathBuf, complaints: &mut Vec<Findin
 /// before it ever reaches the register list. Its home is `<home base>/<dir>`, so a `dir` that
 /// is not one plain segment puts the home somewhere the anchor does not reach, and a `dir`
 /// spelling a compiled document makes one file both the document and the home. Each is a
-/// complaint, and the register is not declared. The built-in six are named and placed by
+/// complaint, and the register is not declared. The built-in ones are named and placed by
 /// this tool and are never refused here.
 fn resolve_registers(registers: &mut Registers, complaints: &mut Vec<Finding>) {
     registers.0.retain(|register| {
@@ -850,7 +851,7 @@ fn resolve_registers(registers: &mut Registers, complaints: &mut Vec<Finding>) {
     });
     // Two component registers at one directory: the first one asked would answer for every
     // entry in the shared home, and every reference of the other kind would dangle for ever
-    // with nothing said. The later-declared one is refused; the built-in six come first.
+    // with nothing said. The later-declared one is refused; the built-in ones come first.
     let mut taken: Vec<(String, String)> = Vec::new();
     registers.0.retain(|register| {
         if register.scope != Scope::Component {
@@ -1885,7 +1886,7 @@ pub(crate) mod tests {
         assert!(whats(&m).is_empty());
     }
 
-    /// A register declaration, folded into the built-in six.
+    /// A register declaration, folded into the built-in registers.
     fn with_registers(body: &str) -> Manifest {
         let text = format!(
             "[project]\nname = \"a-project\"\ncomponents = []\n\n\

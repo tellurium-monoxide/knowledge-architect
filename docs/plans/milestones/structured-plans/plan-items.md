@@ -20,7 +20,7 @@ Everything below is in crates/core, except items 6 and 7.
    Arguments, Criteria, Acceptance criteria. The slug grammar is the entry-id grammar that exists.
 2. **A spec file under docs/plans/specs/ is an anchor** named by its id, carrying the four
    item registers and nothing else: no `path` kind, per clause P1. It owns its file, and the file
-   stays an entry of the `spec` register of `plans` (#spec-file-owns-its-items). A milestone directory's anchor,
+   stays an entry of the `spec` register of `plans` (`thread@structured-plans@spec-file-owns-its-items`). A milestone directory's anchor,
    from step 1, gains the four item registers; its README and its step specs share one item
    namespace, so an id defined in both is the duplicate finding that exists
    (`Entities::report_duplicates` in `path@core@src/entity.rs`).
@@ -34,7 +34,7 @@ Everything below is in crates/core, except items 6 and 7.
 5. **The fixed section titles of a plan document are checked** (default D4 of the milestone
    document): the §4 list, with Arguments right after Threads, in sentence case, owed by a spec
    of specs/ and by a milestone's README; the §5 list owed by a step spec
-   (#step-spec-sections, #arguments-after-threads, #section-titles-sentence-case, and audit
+   (`thread@structured-plans@step-spec-sections`, `thread@structured-plans@arguments-after-threads`, `thread@structured-plans@section-titles-sentence-case`, and audit
    finding 1).
 6. **This milestone document's identifiers become definitions**: each plain `#<id>` that names a
    thread, criterion or acceptance criterion, and each plain `a<n>` that names an argument, becomes
@@ -51,7 +51,7 @@ Everything below is in crates/core, except items 6 and 7.
    - Migration, `checks`, major: an item citation from outside its plan is refused, and a span
      that opens with one of the four kind words and was silent becomes a reference candidate;
    - Migration, `manifest`, major: a declared register named like an item kind is refused
-     (#item-registers-built-in).
+     (`thread@structured-plans@item-registers-built-in`).
 
 ### Sites the step joins, found at the plan's review
 
@@ -63,7 +63,7 @@ each site that compares shapes:
   word), in `path@core@src/entity.rs`;
 - `Anchor::home_of`, which joins a register's directory to the home base and assumes a directory;
 - `Registers::is_plan_register` and `Registers::listed` in `path@core@src/manifest.rs`, which the
-  item registers join for #item-registers-built-in;
+  item registers join for `thread@structured-plans@item-registers-built-in`;
 - a spec whose id `milestone_refusal` would refuse, or that a milestone also holds, makes no spec
   anchor (Decided design);
 - the shape comparisons that are not exhaustive matches: `generated_index_paths` in
@@ -71,7 +71,7 @@ each site that compares shapes:
   the `_` arm of `records` in `path@core@src/records.rs`, and the `Shape::Heading` filters of
   `register_of` and `heading_homes` in `path@core@src/entity.rs`;
 - the `owned` closure of `check::registers::file_home` also filters `directory_contents`, so the
-  one function of #spec-file-owns-its-items reaches both.
+  one function of `thread@structured-plans@spec-file-owns-its-items` reaches both.
 
 ### The design audit's findings
 
@@ -93,8 +93,8 @@ Read against main after step 1 and the repairs of its retrospective.
    text). No scanner change. Follows from `thread@structured-plans@plan-items-by-section`.
 
 **For the owner's ruling, each with the default the step would carry; the owner approved each
-default in the design session (#item-registers-built-in, #arguments-after-threads,
-#section-titles-sentence-case, #step-spec-sections):**
+default in the design session (`thread@structured-plans@item-registers-built-in`, `thread@structured-plans@arguments-after-threads`,
+`thread@structured-plans@section-titles-sentence-case`, `thread@structured-plans@step-spec-sections`):**
 
 4. **The four item registers are built in, carried by plan anchors alone, and a project's
    declaration of one is refused**, as D1 rules for `spec` and `milestone`. No ruling names the
@@ -110,7 +110,7 @@ default in the design session (#item-registers-built-in, #arguments-after-thread
    list in order, and the §4 sections it holds are not ordered against it.
 
 **Open at the audit, load-bearing; it stopped the step, and the design session resolved it as
-#spec-file-owns-its-items, below.**
+`thread@structured-plans@spec-file-owns-its-items`, below.**
 
 8. **A spec file cannot be an anchor and an entry of the `spec` register of `plans` under the deepest-anchor
    rule, unless one of the two changes.** A document is owned by the deepest anchor whose path holds it
@@ -122,7 +122,7 @@ default in the design session (#item-registers-built-in, #arguments-after-thread
    criterion `acceptance@structured-plans@file-anchor-fits-path-model`, or a change to the File register's entry filter, which
    does not. The choice between these shapes was one the document does not rule, so the gap was
    load-bearing and the step stopped. The session chose the second shape
-   (#spec-file-owns-its-items), so the criterion did not fire, and the landing commit reports it as
+   (`thread@structured-plans@spec-file-owns-its-items`), so the criterion did not fire, and the landing commit reports it as
    not fired.
 
 ## Claims
@@ -144,7 +144,7 @@ Each claim names its test and the mutation that shows it discriminates.
 - **A level-three heading of a plan document outside the four item sections owes no slug**: a
   subsection under "Decided design" is section text. Mutation: require a slug at every level-three
   heading of a plan document.
-- **A project's declaration of an item register is refused** (#item-registers-built-in), as
+- **A project's declaration of an item register is refused** (`thread@structured-plans@item-registers-built-in`), as
   `spec` and `milestone` are. Mutation: let the declaration through.
 
 - **An item is defined by its section**: a `##<id>` heading under Threads defines
@@ -251,36 +251,49 @@ first two:
 
 | text | references | updated or judged at |
 | --- | --- | --- |
-| the root `CLAUDE.md`, "Mechanical validation of documents": the register bullet, the anchor bullet ("a named directory", false once a spec file is an anchor) and the issue-register sub-bullet | `registers-are-declared`, `anchors-are-components-and-locations`, `a-file-register-is-a-directory-of-entries` | this step's harvest, on the owner's word, since the file is the owner's configuration |
+| the root `CLAUDE.md`, "Mechanical validation of documents": the register bullet, the anchor bullet ("a named directory", false once a spec file is an anchor) and the issue-register sub-bullet; and its knowledge-table row for plans, "carries no slug", false once a plan holds items | `registers-are-declared`, `anchors-are-components-and-locations`, `a-file-register-is-a-directory-of-entries` | this step's harvest, on the owner's word, since the file is the owner's configuration |
 | the core README, "Registers" and "Plan documents" | `registers-are-declared`, `a-file-register-is-a-directory-of-entries`, `plan-document-kinds` | this step's implementing commit |
 | `design@agent-skills@structure-ready` | `plan-document-kinds` | this step's harvest judges it; step 3 reverses it |
 | the comments of `path@core@src/check/references.rs`, `path@core@src/check/registers.rs`, `path@core@src/manifest.rs` and `path@core@src/mock_projects.rs` that cite the four heads | the four heads | this step's implementing commit |
 | the core rejected alternatives that lost to `registers-are-declared`, `anchors-are-components-and-locations`, `a-file-register-is-a-directory-of-entries`, `a-slug-belongs-to-a-component` or `an-entry-is-a-heading-at-the-register-level` | those heads | this step's harvest judges each for a reason the rewrite voids |
 | `tripwire@core@issue-kind-list-grows` | `a-file-register-is-a-directory-of-entries` | this step's harvest; the issue kinds are unchanged |
+| `design@core@the-regime-has-no-opt-out`, `design@core@one-entity-table` and `design@core@a-plan-name-reads-as-nothing-else`, which count six built-in registers or describe the spec anchor as unbuilt | the built-in registers, the spec anchor | this step's harvest, found at the review |
 
 ## Criteria
 
-| criterion | kind | source | satisfaction |
-| --- | --- | --- | --- |
-| #item-citations-checked | binding | `goal@knowledge-architect@documentation-stays-consistent` | met: #spec-file-owns-its-items, #items-as-section-registers |
-| #one-owner | binding, as a presumption | `design@core@a-slug-belongs-to-a-component` | met: #spec-file-owns-its-items |
-| #scope-as-ruled | binding, as a presumption | `thread@structured-plans@plan-item-scope` | met: unchanged |
-| #layout-as-ruled | binding, as a presumption | `thread@structured-plans@layout-kept` | met: a spec stays one file |
-| #few-special-cases | weighed | the cost of keeping special cases right | met: one exception, in one function |
+### Every item citation is checked, and a spec stays a checked entry `##item-citations-checked`
+
+- **Kind:** binding
+- **Source:** `goal@knowledge-architect@documentation-stays-consistent`
+- **Satisfaction:** met: `thread@structured-plans@spec-file-owns-its-items`, `thread@structured-plans@items-as-section-registers`
+
+### A document has one owner, the deepest anchor holding it `##one-owner`
+
+- **Kind:** binding, as a presumption
+- **Source:** `design@core@a-slug-belongs-to-a-component`
+- **Satisfaction:** met: `thread@structured-plans@spec-file-owns-its-items`
+
+### An item is cited only from inside its plan, as ruled `##scope-as-ruled`
+
+- **Kind:** binding, as a presumption
+- **Source:** `thread@structured-plans@plan-item-scope`
+- **Satisfaction:** met: unchanged
+
+### A spec stays one file, as ruled `##layout-as-ruled`
+
+- **Kind:** binding, as a presumption
+- **Source:** `thread@structured-plans@layout-kept`
+- **Satisfaction:** met: a spec stays one file
+
+### Plan anchors need few special cases `##few-special-cases`
+
+- **Kind:** weighed
+- **Source:** the cost of keeping special cases right
+- **Satisfaction:** met: one exception, in one function
 
 ## Threads
 
-| thread | proposer | final state | resolution | arguments | harvest home |
-| --- | --- | --- | --- | --- | --- |
-| (the section carrying each approved thread's shape is "Decided design"; a ruled-out thread's is "Losing alternatives") | | | | | |
-| #spec-file-owns-its-items | agent | approved | the spec anchor owns its file; the File entry filter keeps a spec file a spec anchor at its own path owns, through one function | a99, a100 | core design home |
-| #items-as-section-registers | agent | approved, at the checkpoint | item registers of shape `Section`: home the plan's documents, kind by the level-two section | a103, a104 | core design home |
-| #item-registers-built-in | agent | approved | built in, plan anchors only, declarations refused | a105 | core `design@core@registers-are-declared` |
-| #arguments-after-threads | agent | approved | Arguments right after Threads | none beyond the default | agent-skills, at step 3 |
-| #section-titles-sentence-case | agent | approved | titles matched as the documents write them | a106 | agent-skills, at step 3 |
-| #step-spec-sections | agent | approved | §4 list under `plans`; §5 list in a milestone; a step spec's §4 sections unordered against it | none beyond the default | core design home |
-| #spec-anchor-owns-nothing | agent | ruled-out | lost to #spec-file-owns-its-items | a101 | judged at this step's harvest |
-| #spec-is-a-directory | agent | ruled-out | lost to #spec-file-owns-its-items | a102 | judged at this step's harvest |
+The section carrying each approved thread's shape is "Decided design"; a ruled-out thread's is "Losing alternatives".
 
 The owner's words that closed them, verbatim, rounds counted from the round that opened the
 discussion:
@@ -288,23 +301,126 @@ discussion:
 | round | the owner's words |
 | --- | --- |
 | 1 | "spec-file-owns-its-items approved, defaults approved for the rest." |
-| 1 | the two rivals, #spec-anchor-owns-nothing and #spec-is-a-directory, fell with the named approval of the thread that won the fork, as the agent's reply stated |
-| 2 | "Table approved, proceed" (against the checkpoint table, which closed #items-as-section-registers and the premortem's clauses) |
+| 1 | the two rivals, `thread@structured-plans@spec-anchor-owns-nothing` and `thread@structured-plans@spec-is-a-directory`, fell with the named approval of the thread that won the fork, as the agent's reply stated |
+| 2 | "Table approved, proceed" (against the checkpoint table, which closed `thread@structured-plans@items-as-section-registers` and the premortem's clauses) |
+
+### The spec anchor owns its file; the File entry filter keeps a spec file a spec anchor at its own path owns, through one function `##spec-file-owns-its-items`
+
+- **Proposer:** agent
+- **Final state:** approved
+- **Arguments:** `argument@structured-plans@a99`, `argument@structured-plans@a100`
+- **Harvest home:** core design home
+
+### Item registers of shape `Section`: home the plan's documents, kind by the level-two section `##items-as-section-registers`
+
+- **Proposer:** agent
+- **Final state:** approved, at the checkpoint
+- **Arguments:** `argument@structured-plans@a103`, `argument@structured-plans@a104`
+- **Harvest home:** core design home
+
+### Built in, plan anchors only, declarations refused `##item-registers-built-in`
+
+- **Proposer:** agent
+- **Final state:** approved
+- **Arguments:** `argument@structured-plans@a105`
+- **Harvest home:** core `design@core@registers-are-declared`
+
+### Arguments right after Threads `##arguments-after-threads`
+
+- **Proposer:** agent
+- **Final state:** approved
+- **Arguments:** none beyond the default
+- **Harvest home:** agent-skills, at step 3
+
+### Titles matched as the documents write them `##section-titles-sentence-case`
+
+- **Proposer:** agent
+- **Final state:** approved
+- **Arguments:** `argument@structured-plans@a106`
+- **Harvest home:** agent-skills, at step 3
+
+### §4 list under `plans`; §5 list in a milestone; a step spec's §4 sections unordered against it `##step-spec-sections`
+
+- **Proposer:** agent
+- **Final state:** approved
+- **Arguments:** none beyond the default
+- **Harvest home:** core design home
+
+### A spec anchor owns nothing, and an item's plan is found apart from ownership `##spec-anchor-owns-nothing`
+
+- **Proposer:** agent
+- **Final state:** ruled-out
+- **Resolution:** lost to `thread@structured-plans@spec-file-owns-its-items`
+- **Arguments:** `argument@structured-plans@a101`
+- **Harvest home:** judged at this step's harvest
+
+### Every spec is a directory holding its README `##spec-is-a-directory`
+
+- **Proposer:** agent
+- **Final state:** ruled-out
+- **Resolution:** lost to `thread@structured-plans@spec-file-owns-its-items`
+- **Arguments:** `argument@structured-plans@a102`
+- **Harvest home:** judged at this step's harvest
 
 ## Arguments
 
 One sequence across the milestone, continuing from `argument@structured-plans@a98`.
 
-| id | round | who | threads | argument |
-| --- | --- | --- | --- | --- |
-| a99 | 1 | agent | #spec-file-owns-its-items | The deepest-anchor rule is kept, so a spec and a milestone behave alike: the plan anchor owns the plan's documents, and items resolve through one path, owner equal to scope. |
-| a100 | 1 | agent | #spec-file-owns-its-items | Its cost is one exception at the two sites that filter entries by owner; the index renderer has no such filter (audit finding 8 of step 1's spec, found with `git log --grep='design audit'`). Neither `Anchors::owning` nor the deepest-anchor rule changes, so `acceptance@structured-plans@file-anchor-fits-path-model` does not fire for this shape. |
-| a101 | 1 | agent | #spec-anchor-owns-nothing | Two notions of a document's anchor, owner and scope, equal for a milestone and different for a spec, put items on two code paths, and changing `owning` fires the criterion. It bends the rule `design@core@a-slug-belongs-to-a-component` states, where #spec-file-owns-its-items bends only a File-shape filter. |
-| a102 | 1 | agent | #spec-is-a-directory | It reopens `thread@structured-plans@layout-kept` and moves every spec, here and later in thaum; and making `spec` a second Directory register beside `milestone` brings back the question of two kinds of one shape, which the owner ruled out in round 3 of the milestone's discussion. |
-| a103 | 1 | agent | #items-as-section-registers | A heading register has one home file per anchor and one level; items have one home and four kinds decided by section, which `argument@structured-plans@a82` said needs a model of its own. The section in force is read from the heading records the scanner already makes. |
-| a104 | 1 | agent | #items-as-section-registers | Four ordinary heading registers at one home would each claim the same file: `register_of` in `path@core@src/entity.rs` gives a file the first heading register whose home holds it, so three of the four would define nothing. The tool refuses one home for two registers elsewhere for the same reason: `resolve_registers` for component registers, and anchor resolution for the registers of one location. (Corrected at the plan's review: the round named `resolve_registers` alone, which judges component registers only.) |
-| a105 | 1 | agent | #item-registers-built-in | The item registers are treated as D1 treats `spec` and `milestone`. (Added at assembly, the author's: the item registers' storage is the plan documents, which the tool fixes, as it fixes the plan registers'.) |
-| a106 | 1 | agent | #section-titles-sentence-case | The titles are matched as the documents write them, as in "Status and audience"; step 3 aligns the skill's lowercase table. |
+### Keeping the deepest-anchor rule gives the items of every plan one path `##a99`
+
+- **Round:** 1
+- **Who:** agent
+- **Threads:** `thread@structured-plans@spec-file-owns-its-items`
+- **Argument:** The deepest-anchor rule is kept, so a spec and a milestone behave alike: the plan anchor owns the plan's documents, and items resolve through one path, owner equal to scope.
+
+### The cost is one exception, at the two entry filters `##a100`
+
+- **Round:** 1
+- **Who:** agent
+- **Threads:** `thread@structured-plans@spec-file-owns-its-items`
+- **Argument:** Its cost is one exception at the two sites that filter entries by owner; the index renderer has no such filter (audit finding 8 of step 1's spec, found with `git log --grep='design audit'`). Neither `Anchors::owning` nor the deepest-anchor rule changes, so `acceptance@structured-plans@file-anchor-fits-path-model` does not fire for this shape.
+
+### Two notions of a document's anchor would put items on two code paths `##a101`
+
+- **Round:** 1
+- **Who:** agent
+- **Threads:** `thread@structured-plans@spec-anchor-owns-nothing`
+- **Argument:** Two notions of a document's anchor, owner and scope, equal for a milestone and different for a spec, put items on two code paths, and changing `owning` fires the criterion. It bends the rule `design@core@a-slug-belongs-to-a-component` states, where `thread@structured-plans@spec-file-owns-its-items` bends only a File-shape filter.
+
+### A spec as a directory reopens the ruled layout and moves every spec `##a102`
+
+- **Round:** 1
+- **Who:** agent
+- **Threads:** `thread@structured-plans@spec-is-a-directory`
+- **Argument:** It reopens `thread@structured-plans@layout-kept` and moves every spec, here and later in thaum; and making `spec` a second Directory register beside `milestone` brings back the question of two kinds of one shape, which the owner ruled out in round 3 of the milestone's discussion.
+
+### Items have one home and four kinds, decided by section `##a103`
+
+- **Round:** 1
+- **Who:** agent
+- **Threads:** `thread@structured-plans@items-as-section-registers`
+- **Argument:** A heading register has one home file per anchor and one level; items have one home and four kinds decided by section, which `argument@structured-plans@a82` said needs a model of its own. The section in force is read from the heading records the scanner already makes.
+
+### Four heading registers at one home would each claim the same file `##a104`
+
+- **Round:** 1
+- **Who:** agent
+- **Threads:** `thread@structured-plans@items-as-section-registers`
+- **Argument:** Four ordinary heading registers at one home would each claim the same file: `register_of` in `path@core@src/entity.rs` gives a file the first heading register whose home holds it, so three of the four would define nothing. The tool refuses one home for two registers elsewhere for the same reason: `resolve_registers` for component registers, and anchor resolution for the registers of one location. (Corrected at the plan's review: the round named `resolve_registers` alone, which judges component registers only.)
+
+### The item registers are treated as D1 treats the plan registers `##a105`
+
+- **Round:** 1
+- **Who:** agent
+- **Threads:** `thread@structured-plans@item-registers-built-in`
+- **Argument:** The item registers are treated as D1 treats `spec` and `milestone`. (Added at assembly, the author's: the item registers' storage is the plan documents, which the tool fixes, as it fixes the plan registers'.)
+
+### Section titles are matched as the documents write them `##a106`
+
+- **Round:** 1
+- **Who:** agent
+- **Threads:** `thread@structured-plans@section-titles-sentence-case`
+- **Argument:** The titles are matched as the documents write them, as in "Status and audience"; step 3 aligns the skill's lowercase table.
 
 ## New names, in one place
 
@@ -324,35 +440,35 @@ crates/core/src/entity.rs
   Constructed::Spec                  new: the anchor of one spec file
   Anchor::is_plan                    new: a milestone or a spec anchor
   Anchors::owns_entry                new: whether a file is an entry of an anchor's File register,
-                                     the one function of #spec-file-owns-its-items
+                                     the one function of `thread@structured-plans@spec-file-owns-its-items`
   Anchor::sections_of                new: a register's owed sections at this anchor
   Resolution::OutsidePlan            new: an item cited from outside its plan
 ```
 
 ## Decided design
 
-**The spec anchor owns its file** (#spec-file-owns-its-items). A spec file under specs/ is the
+**The spec anchor owns its file** (`thread@structured-plans@spec-file-owns-its-items`). A spec file under specs/ is the
 anchor named by its id, and the deepest-anchor rule gives it its own file. The File register's
 entry rule gains one case: a file that a spec anchor at exactly its own path owns stays an entry
 of the register whose home holds it. The case is written once, in one function both entry filters
 call, and names spec anchors only, so a later kind of file anchor does not inherit it (premortem
-P12). Nearest rival: #spec-anchor-owns-nothing, defeated by its two code paths (a101).
+P12). Nearest rival: `thread@structured-plans@spec-anchor-owns-nothing`, defeated by its two code paths (`argument@structured-plans@a101`).
 
-**Items are a register shape of their own** (#items-as-section-registers). The four item registers
+**Items are a register shape of their own** (`thread@structured-plans@items-as-section-registers`). The four item registers
 have the shape `Section`. Their home is the plan anchor's own documents: a spec file, or a
 milestone's README and its step specs. An entry is a level-three heading ending with its slug,
 under the level-two section whose title the register carries. Only the four item sections owe a
 slug at level three; every other level-three heading of a plan document is section text
 (premortem P13). Nearest rival: four ordinary heading registers, defeated by the one-home rule
-(a104).
+(`argument@structured-plans@a104`).
 
-**The item registers are built in** (#item-registers-built-in), carried by plan anchors alone; a
+**The item registers are built in** (`thread@structured-plans@item-registers-built-in`), carried by plan anchors alone; a
 project's declaration of one is refused, and so is a location naming one, as D1 does for `spec`
 and `milestone`. The cost the owner accepted: a project that already
 declares a register named `thread`, `argument`, `criterion` or `acceptance` is refused on upgrade,
 and a CHANGELOG migration entry names it (premortem P14).
 
-**The spec anchor follows the milestone anchor** (#spec-file-owns-its-items). It is built from the
+**The spec anchor follows the milestone anchor** (`thread@structured-plans@spec-file-owns-its-items`). It is built from the
 same listing as the milestone anchors, by every caller that builds the anchors of a tree (D11):
 one per entry of specs/, grouped or not, named by its id. An id that `milestone_refusal` would
 refuse for a milestone, or that a milestone also holds, makes no spec anchor, and its clause P2
@@ -361,7 +477,7 @@ name is no anchor word, carries no `path` kind, and its `path` refusal names the
 whole-document forms. A predicate for both plan anchors replaces the milestone-only tests at each
 of these sites.
 
-**One `spec` register, two section lists** (#step-spec-sections). The list depends on the anchor,
+**One `spec` register, two section lists** (`thread@structured-plans@step-spec-sections`). The list depends on the anchor,
 as the home does (D9): the `spec` register declares the §4 list, and `Anchor::sections_of` gives a
 register's owed sections at that anchor, the §5 list for `spec` at a milestone anchor and the
 register's own list everywhere else. `check::registers::entry` takes the list from it rather than
@@ -372,8 +488,8 @@ from the register.
 file is not inside it. It is judged before the id is looked up, so an undefined item cited from
 outside gets the repair that applies.
 
-**The section lists** (#step-spec-sections, #arguments-after-threads,
-#section-titles-sentence-case). A spec of specs/ and a milestone's README owe the §4 list, with
+**The section lists** (`thread@structured-plans@step-spec-sections`, `thread@structured-plans@arguments-after-threads`,
+`thread@structured-plans@section-titles-sentence-case`). A spec of specs/ and a milestone's README owe the §4 list, with
 Arguments right after Threads, matched in sentence case. A step spec owes the §5 list without Fixtures,
 which §5 owes only where a Component drives its tests with authored content, a condition no check
 can read (D19, ruled); the §4
@@ -407,7 +523,7 @@ sections a step spec with its own design session holds are not ordered against i
 
 | row | the heading's statement | the item's body |
 | --- | --- | --- |
-| a thread | its resolution, or for a closed losing thread what it proposed, from the Decided design and the Losing alternatives sections | proposer, final state, arguments as citations, the section carrying its shape, harvest home, and the owner's closing words from the Rulings table |
+| a thread | its resolution, or for a closed losing thread what it proposed, from the Decided design and the Losing alternatives sections | where it first appears, which names its proposer, final state, arguments as citations, the section carrying its shape, harvest home, and the owner's closing words from the Rulings table |
 | an argument, `a<n>` | its paraphrase | round, who, threads as citations, and the key verbatim |
 | a criterion | what it requires, written from its source and its satisfaction line | kind, source, satisfaction |
 | an acceptance criterion | the decision it guards and what fires it | judged at, response |
@@ -421,9 +537,9 @@ Threads, under no level-three heading.
 
 | alternative | lost to | the deciding fact |
 | --- | --- | --- |
-| #spec-anchor-owns-nothing | #spec-file-owns-its-items | two notions of a document's anchor (a101) |
-| #spec-is-a-directory | #spec-file-owns-its-items | reopens `thread@structured-plans@layout-kept` (a102) |
-| four ordinary heading registers for items | #items-as-section-registers | one home answers for one register (a104) |
+| `thread@structured-plans@spec-anchor-owns-nothing` | `thread@structured-plans@spec-file-owns-its-items` | two notions of a document's anchor (`argument@structured-plans@a101`) |
+| `thread@structured-plans@spec-is-a-directory` | `thread@structured-plans@spec-file-owns-its-items` | reopens `thread@structured-plans@layout-kept` (`argument@structured-plans@a102`) |
+| four ordinary heading registers for items | `thread@structured-plans@items-as-section-registers` | one home answers for one register (`argument@structured-plans@a104`) |
 
 ## Readings
 
@@ -433,18 +549,21 @@ None.
 
 | cause | thread it stresses | verdict |
 | --- | --- | --- |
-| P12: the File-entry case admits a later kind of file anchor silently | #spec-file-owns-its-items | converted into a clause: the case names spec anchors only |
-| P13: a level-three heading outside the item sections is read as an item and reported | #items-as-section-registers | converted into a clause: only the four sections owe slugs |
-| P14: a project already declaring a register named like an item kind is refused on upgrade | #item-registers-built-in | survives as a cost: a CHANGELOG migration entry names it |
-| P15: a third site filtering entries by owner forgets the case | #spec-file-owns-its-items | an acceptance criterion, #exception-in-one-function |
+| P12: the File-entry case admits a later kind of file anchor silently | `thread@structured-plans@spec-file-owns-its-items` | converted into a clause: the case names spec anchors only |
+| P13: a level-three heading outside the item sections is read as an item and reported | `thread@structured-plans@items-as-section-registers` | converted into a clause: only the four sections owe slugs |
+| P14: a project already declaring a register named like an item kind is refused on upgrade | `thread@structured-plans@item-registers-built-in` | survives as a cost: a CHANGELOG migration entry names it |
+| P15: a third site filtering entries by owner forgets the case | `thread@structured-plans@spec-file-owns-its-items` | an acceptance criterion, `acceptance@structured-plans@exception-in-one-function` |
 
 No tripwire was proposed.
 
 ## Acceptance criteria
 
-| criterion | decision guarded | judged at | fires when | response |
-| --- | --- | --- | --- | --- |
-| #exception-in-one-function | #spec-file-owns-its-items | step 2's landing | the spec-file case is spelled anywhere but `Anchors::owns_entry`, which `Entities::file_definitions` and `check::registers::file_home` (and through it `directory_contents`) call | put #spec-file-owns-its-items back to the owner |
+### The spec-file case sits in one function `##exception-in-one-function`
+
+- **Guards:** `thread@structured-plans@spec-file-owns-its-items`
+- **Judged at:** step 2's landing
+- **Fires when:** the spec-file case is spelled anywhere but `Anchors::owns_entry`, which `Entities::file_definitions` and `check::registers::file_home` (and through it `directory_contents`) call
+- **Response:** put `thread@structured-plans@spec-file-owns-its-items` back to the owner
 
 ## Implementation sequence
 
@@ -460,17 +579,17 @@ None. The owner ruled D19 at the plan's review: "Agreed on D19."
 
 | ruled default | thread it bears on |
 | --- | --- |
-| D19: a step spec's checked §5 list leaves out Fixtures. §5 owes Fixtures only "where the Component drives its tests with authored content", a condition no check can read, so a fixed list would make it owed by every step spec. This narrows the ruled #step-spec-sections, whose list named Fixtures, so it waits for the owner; found by the code-claims review of this spec | #step-spec-sections |
+| D19: a step spec's checked §5 list leaves out Fixtures. §5 owes Fixtures only "where the Component drives its tests with authored content", a condition no check can read, so a fixed list would make it owed by every step spec. This narrows the ruled `thread@structured-plans@step-spec-sections`, whose list named Fixtures, so it waits for the owner; found by the code-claims review of this spec | `thread@structured-plans@step-spec-sections` |
 
 ## Harvest
 
 | when | what lands where |
 | --- | --- |
-| step 2 | step 3's spec already holds #arguments-after-threads and #section-titles-sentence-case. Core design home: #spec-file-owns-its-items, #items-as-section-registers, #item-registers-built-in, #step-spec-sections, with everything the milestone's step 2 harvest row lists, T4 and its rejected alternatives included. Core rejected alternatives: #spec-anchor-owns-nothing and #spec-is-a-directory, if the recording tests pass them. The root `CLAUDE.md` edits of "What is already decided", on the owner's word |
+| step 2 | step 3's spec already holds `thread@structured-plans@arguments-after-threads` and `thread@structured-plans@section-titles-sentence-case`. Core design home: `thread@structured-plans@spec-file-owns-its-items`, `thread@structured-plans@items-as-section-registers`, `thread@structured-plans@item-registers-built-in`, `thread@structured-plans@step-spec-sections`, with everything the milestone's step 2 harvest row lists, T4 and its rejected alternatives included. Core rejected alternatives: `thread@structured-plans@spec-anchor-owns-nothing` and `thread@structured-plans@spec-is-a-directory`, if the recording tests pass them. The root `CLAUDE.md` edits of "What is already decided", on the owner's word |
 | this spec | leaves in the commit that completes step 2's harvest |
 
 ## Later consequences
 
-Step 3 aligns the installed planning skill with #arguments-after-threads and
-#section-titles-sentence-case.
+Step 3 aligns the installed planning skill with `thread@structured-plans@arguments-after-threads` and
+`thread@structured-plans@section-titles-sentence-case`.
 
