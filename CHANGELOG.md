@@ -73,6 +73,10 @@ subsection is omitted.
 - `agent-skills`, patch: an optional roadmap, docs/roadmap.md, orders known work on the owner's
   word. The commit that adds a plan document rewrites the row of the issue it closes, and the commit
   that deletes a plan document removes its row.
+- `agent-skills`, patch: a milestone's design is written into one spec per step from the start,
+  the milestone document keeping what crosses steps. A step's design audit edits those documents in
+  place, listing its findings in the commit message, and a new step found at an audit gets a spec
+  of its own once the owner rules on it.
 - `agent-skills`, patch: the commit that deletes a plan document cites it by its kind. A citation of
   it left in another plan is removed, and a `question` issue is opened on the citing plan.
 

@@ -313,7 +313,16 @@ resolves a relative link only in a `README.md` or an `index.md`, per
 `design@core@links-are-navigation-rows`, so the head can link each step's spec as a navigation row.
 A step's spec is a spec, so it leaves when its step lands, per
 `design@agent-skills@spec-leaves-at-landing`: its decisions are then in the design homes. The
-README leaves with the last step and keeps what crosses steps.
+README leaves with the last step.
+
+The design is split across the documents from the start, by lifetime: a step's spec holds what
+only that step builds, and the README holds what crosses steps or outlives one, every item cited
+from more than one step's document included. A README holding every step's design is read whole
+at every step's grounding and grows with every step: the README of the structured-plans milestone
+held 1,624 lines when it left, counted with `wc -l` on `git show` of its deleting commit's parent. The step specs exist from the session that
+converged, so the audit of a step applies its findings in place, in whichever document holds the
+shape, and a new step found at an audit gets a spec of its own, as a scope change the owner rules
+on.
 
 ### A plan document leaves when its work lands `##spec-leaves-at-landing`
 
