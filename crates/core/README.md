@@ -94,8 +94,9 @@ with exit 2; `check --fix` prints the stopped report and exits 1, having install
 before that gate when they needed it, since their bytes do not depend on the model: an index generated over an incomplete model lists rows nobody asked for.
 
 **`check --fix` applies every fix the checker can make safely, then runs the check**, per
-`design@core@check-fix-flag`. A fix is safe, per `design@core@safe-fix-definition`, when its bytes are determined by the tree and the pinned version, and it writes or removes
-only files the tool generates or installs. Two pass: the agent files the check reports missing,
+`design@core@check-fix-flag`. A fix is safe, per `design@core@safe-fix-definition`, when its
+bytes are determined by the tree and the pinned version, and it writes or removes only files of
+the installer's namespace or of the generated list. Two pass: the agent files the check reports missing,
 differing or no longer shipped, judged from git's listing as the check judges them, so a file git
 does not list, such as an ignored swap file, is never removed; and every stale or missing generated
 file. Each file written or removed is listed on a line `fixed: wrote <path> (<kind>)` or
