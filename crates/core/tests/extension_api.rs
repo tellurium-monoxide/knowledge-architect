@@ -155,3 +155,128 @@ fn an_extension_written_against_the_public_api_runs_over_a_mock_project() {
         report.summaries
     );
 }
+
+/// An extension that generates one file, `listing.md`: the number of walked documents.
+#[derive(Default)]
+struct Listing;
+
+impl Extension for Listing {
+    fn tables(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn resolve(&mut self, _: &Manifest) -> Resolution {
+        let mut resolution = Resolution::default();
+        resolution.generated.push(PathBuf::from("listing.md"));
+        resolution
+    }
+
+    fn checks(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn dump(&self, _: &Model) -> Vec<DumpRow> {
+        Vec::new()
+    }
+
+    fn prepare(
+        &mut self,
+        _: &Manifest,
+        _: &Model,
+        _: Tree<'_>,
+        _: Purpose,
+    ) -> Result<Box<dyn Prepared>, String> {
+        Ok(Box::new(ListingPrepared))
+    }
+}
+
+struct ListingPrepared;
+
+impl Prepared for ListingPrepared {
+    fn check(&self, _: &Model, _: &Manifest, _: &Inputs) -> ExtensionReport {
+        ExtensionReport::default()
+    }
+
+    fn check_message(&self, _: &Document) -> Vec<Finding> {
+        Vec::new()
+    }
+
+    fn generated(
+        &self,
+        model: &Model,
+        _: &Manifest,
+    ) -> Vec<knowledge_architect::extension::Generated> {
+        vec![knowledge_architect::extension::Generated {
+            rel: PathBuf::from("listing.md"),
+            text: format!("{} documents\n", model.documents().len()),
+            action: "regenerate it",
+        }]
+    }
+}
+
+/// Copy `from` into `to`, recursively.
+fn copy_tree(from: &std::path::Path, to: &std::path::Path) {
+    std::fs::create_dir_all(to).expect("the destination");
+    for entry in std::fs::read_dir(from).expect("a readable directory") {
+        let entry = entry.expect("an entry");
+        let target = to.join(entry.file_name());
+        if entry.path().is_dir() {
+            copy_tree(&entry.path(), &target);
+        } else {
+            std::fs::copy(entry.path(), &target).expect("a copy");
+        }
+    }
+}
+
+/// Run git in `dir`, with the per-user ignore file pinned away, as the binary tests do.
+fn git(dir: &std::path::Path, args: &[&str]) {
+    let status = std::process::Command::new("git")
+        .args(["-c", "core.excludesFile=/dev/null"])
+        .args(args)
+        .current_dir(dir)
+        .status()
+        .expect("git runs");
+    assert!(status.success(), "git {args:?}");
+}
+
+/// The claim (P2 of the pre-release spec): `check --fix` writes an extension's generated file,
+/// prepared for the index, and the check that follows, prepared for the check, finds it current.
+/// Mutation checked: leaving the extensions out of the generated list leaves the file missing,
+/// and the run fails.
+#[test]
+fn check_fix_writes_an_extensions_generated_file_and_the_run_passes() {
+    let root = std::env::temp_dir().join(format!("ka-fix-extension-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&root);
+    copy_tree(
+        &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/projects/dirhome"),
+        &root,
+    );
+    git(&root, &["init", "-q"]);
+    git(&root, &["add", "-A"]);
+    let manifest = Manifest::load(&root).expect("the copy's manifest");
+    let mut extensions: Vec<Box<dyn Extension>> = vec![Box::new(Listing)];
+    let check = |fix: bool, extensions: &mut Vec<Box<dyn Extension>>| {
+        cli::run(
+            cli::Command::Check(cli::CheckArgs { fix }),
+            &manifest,
+            &[],
+            extensions,
+        )
+        .expect("the check runs")
+    };
+    assert_eq!(
+        check(false, &mut extensions),
+        std::process::ExitCode::FAILURE
+    );
+    assert_eq!(
+        check(true, &mut extensions),
+        std::process::ExitCode::SUCCESS
+    );
+    let listing = std::fs::read_to_string(root.join("listing.md")).expect("the generated file");
+    assert!(listing.ends_with(" documents\n"), "{listing}");
+    assert_eq!(
+        check(false, &mut extensions),
+        std::process::ExitCode::SUCCESS
+    );
+    let _ = std::fs::remove_dir_all(&root);
+}
