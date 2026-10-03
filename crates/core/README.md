@@ -52,7 +52,7 @@ Three, per `design@core@exit-code-ladder`, and the third is what makes the other
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
 | `0` | the command ran and its subject is in order | `--version`, from any directory; `check` with no findings; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commits` with no finding, an empty range included; `install-agent-skills` having written and removed what it had to, or found nothing to do |
-| `1` | the command ran and reports a negative answer | `check` with findings, `--fix` included; `check --fix` when a write failed after another file was already written; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree |
+| `1` | the command ran and reports a negative answer | `check` with findings, `--fix` included; `check --fix` when a write failed, a destination was refused, or the final check could not run, after another file was already written; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree |
 | `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, `index` or `check --fix` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, `install-agent-skills` over a manifest holding a refused declaration, over a symbolic link on an owned path, or when a write or a removal failed, naming the path, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
@@ -88,8 +88,10 @@ gives no input to is printed as not run rather than counted. There is no way to 
 the checks cross the phases, and a run over a passing tree costs under a second. The argument is
 `design@core@phases-gate-the-report`.
 
-`index`, and a writing command of an extension, run the first three phases too, and refuse with
-exit 2 while one of them holds anything: an index generated over an incomplete model lists rows nobody asked for.
+`index`, `check --fix` and a writing command of an extension run the first three phases too, and
+write no generated file while one of them holds anything. `index` and an extension's command refuse
+with exit 2; `check --fix` prints the stopped report and exits 1, having installed agent files
+before that gate when they needed it, since their bytes do not depend on the model: an index generated over an incomplete model lists rows nobody asked for.
 
 **`check --fix` applies every fix the checker can make safely, then runs the check.** A fix is
 safe when its bytes are determined by the tree and the pinned version, and it writes or removes

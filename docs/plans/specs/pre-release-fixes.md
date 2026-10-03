@@ -145,10 +145,10 @@ component carries the path with the claimed kind". The comment above the filter 
 the issue the-generic-anchor-accepts-a-location-s-copy. `Anchor` in `path@core@src/entity.rs`
 carries `is_component`.
 
-**The work, option (a).** The filter keeps Components only, with a test over the issue's
-reproduction: a copy of `path@core@tests/projects/minimal/`, whose location `notes` holds
-notes/a.md and whose root Component holds no a.md. There, a generic reference to a.md, written
-path@*@a.md in backticks, is reported as resolving in no component.
+**The work, option (a).** The filter keeps Components only, with a unit test of the issue's
+reproduction in `path@core@src/check/references.rs`: a manifest declaring a location `notes` that
+holds held.md and a Component that does not. There, a generic reference to held.md is reported as
+resolving in no component, and it passes once the Component holds it.
 
 ### Outside the work
 
@@ -790,12 +790,11 @@ path@core@src/cli/mod.rs
   install_agent_skills(...)        existing
   check_destinations(...)          new: the refusals of a missing directory and of a symlink,
                                    moved out of `index`, over every destination before any write
-path@core@src/index.rs
   generated_list(...)              new: the generated list, destination and bytes: each prepared
                                    extension's `generated`, then file_register_indexes. Used by
-                                   `index`, by --fix, and by crate::check::run_with, the caller
-                                   of the `generated` check
-  file_register_indexes(...)       existing
+                                   `index` and by --fix
+path@core@src/index.rs
+  file_register_indexes(...)       existing: also read by the `generated` check
 path@core@src/check/mod.rs
   foundation(...), run_with(...)   existing
 path@core@src/agents.rs
@@ -873,10 +872,12 @@ rebuild the model; full check    → the report and the exit code, as without --
   over the rebuilt model. On a stop it prints what it wrote, then the stopped report, and exits 1.
   It does not call `complete_working_tree`, whose error says "Nothing was written" and exits 2, and
   it never passes that error through.
-- **The generated files** are written only once that gate passes. The list comes from the one
-  function that `index`, `--fix` and `crate::check::run_with`, the caller of the `generated`
-  check, share (`generated_list` in New names). Sharing it is what keeps
-  #one-list-of-generated-files met. The refusals of `index`, a missing directory and a symlink,
+- **The generated files** are written only once that gate passes. `index` and `--fix` take the
+  list from one function, `generated_list` in New names. The `generated` check, through
+  `crate::check::run_with`, assembles its list from the same two sources,
+  `file_register_indexes` and each prepared extension's `generated`, which is what
+  `design@core@generated-files-are-pure` asks and what keeps #one-list-of-generated-files met.
+  Moving the gate onto `generated_list` would change the check's inputs and no behaviour. The refusals of `index`, a missing directory and a symlink,
   are checked over every destination before any is written, through the same function
   (`check_destinations`). Each caller keeps its own write loop and prints its own lines: `index`
   prints each path from inside its loop, as today.

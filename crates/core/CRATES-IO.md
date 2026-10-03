@@ -13,7 +13,7 @@ projects developed mostly by AI agents.
 
 ## Install and run
 
-A project pins one exact version, written below as <version>. In a Rust project, a maintenance crate depends on this one and
+A project pins one exact version, written below as `<version>`. In a Rust project, a maintenance crate depends on this one and
 runs the checker; any other project installs the binary into a directory of its own:
 
 ```sh

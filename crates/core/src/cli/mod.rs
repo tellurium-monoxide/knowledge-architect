@@ -388,7 +388,12 @@ fn fix_then_check(
     if written > 0 {
         outln!();
     }
-    check(manifest, checker, extensions)
+    // The final check can still fail to run: a file it reads, or an extension's preparation. With
+    // files already written, that is no could-not-run, which promises an untouched tree.
+    match check(manifest, checker, extensions) {
+        Err(e) => failed(written, e),
+        outcome => outcome,
+    }
 }
 
 /// The summary first, the findings under it, the verdict on the last line.
