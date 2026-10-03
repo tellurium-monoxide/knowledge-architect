@@ -276,7 +276,7 @@ anyone has checked it.
   that is decided and not built is in a plan document until it lands. This is authority. Do not
   verify it against the code. Verify the code against it. A divergence is a defect in one of them.
   Say which, open an entry, and stop. A divergence is never licence to follow the code. This is a
-  restatement; its home is `design@agent-skills@primer-content`.
+  restatement; its home is `design@agent-skills@design-home-is-built-intent`.
 - **A claim about the code as it stands**: an invariant in a scoped `CLAUDE.md`, a doc comment, a
   name, a return value, an open issue's diagnosis. This goes stale. Check it before relying on it.
 
