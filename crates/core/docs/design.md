@@ -966,7 +966,10 @@ check would report a file stale that nobody had changed, and `index` would rewri
 ### `check --fix` applies every safe fix, then runs the full check `##check-fix-flag`
 
 `cargo klarch check --fix` applies every fix the checker can make safely, lists each file it wrote
-or removed, then runs the check, whose report and exit code are the run's. Without `--fix`, `check`
+or removed, then runs the check, whose report and exit code are the run's. It makes an edit cycle
+one command: updating the generated files is needed after nearly every edit of a register, and
+`index` then `check` were two. Tools of this kind offer such a quick fix for what they can repair
+safely, as `cargo clippy --fix` and `eslint --fix` do, which was the owner's argument for it. Without `--fix`, `check`
 is unchanged, and `index` and `install-agent-skills` stay as commands, each for one fix alone. The
 option takes a generic name because a later safe fix needs no new option. The rival, a separate
 `fix` command that writes and then runs the check, lost: with the option, the check stays one
@@ -1002,7 +1005,7 @@ written, from the list `index` reads, after every destination is checked; the fu
 installed files' bytes do not depend on the model, so they are repaired before the gate, while a
 generated file is never written over an incomplete model, per `design@core@phases-gate-the-report`.
 An upgrade that removes a shipped file takes two runs: the deletion is unstaged, phase 2 reports
-it, and staging it touches git. A failed write exits 2 with nothing written, and 1 after any write,
+it, and staging it touches git. The owner accepted that cost because such an upgrade is rare. A failed write exits 2 with nothing written, and 1 after any write,
 since 2 promises an untouched tree. The check stays the only verifier: `--fix` only writes
 before it verifies, so the rejected alternative of an `index` that prints a diff and a `--write`
 that applies it, a second command answering whether a file is current in its own format, is not

@@ -1,5 +1,5 @@
 ---
-kind: observation
+kind: todo
 ---
 # A reviewer that queues long work reports nothing until it is asked
 
@@ -18,9 +18,8 @@ The installed review skill states the invariants of a dispatched review: fresh r
 brief, reproduction, a worktree each. None bounds a reviewer's running time, or says that a
 reviewer reports what it has reproduced before it queues more work. The first observation is
 from the retrospective of one thaum session, written on 2026-10-02 outside this repository, with
-two reviewers of one review round. The second is below. It recurs in two real sessions; whether the
-default behaviour is systematically wrong is the owner's judgement, which the closing condition
-now asks for.
+two reviewers of one review round. The second is below. It recurs in two real sessions; the owner ruled
+that it is worth an addition.
 
 A second instance, in this repository: the adversarial reviewer of the pre-release branch, which
 added `check --fix`, queued a batch of mutation runs and stopped with its background work still
@@ -38,7 +37,7 @@ sessions show it recurs; they do not show how often.
 
 ### What would close it
 
-A second real session where a reviewer withholds its findings while queueing work: it then becomes
-an addition to the review skill, such as "report what is reproduced before queueing more", under
-`design@agent-skills@additions-need-real-use`. Or a year of reviews in which it does not recur,
-which closes it as noise.
+The addition to the review skill, such as "report what is reproduced before queueing more", under
+`design@agent-skills@additions-need-real-use`. The second session met the earlier closing condition,
+and the owner ruled that the addition is made, in a pull request after the one that recorded the
+second observation.
