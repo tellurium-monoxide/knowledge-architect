@@ -21,6 +21,8 @@ subsection is omitted.
   refused as reaching inside the anchor `plans`.
 - `checks`, major: a plan document owes its sections: a spec of docs/plans/specs/ and a milestone's
   README the plan sections, in order, and a step spec the step sections. Add the missing ones.
+- `checks`, minor: a `path@*@<path>` reference that only a declared location carries is reported,
+  as the design of the generic form always said; anchor it at the location instead.
 - `checks`, major: an item of a plan cited from outside it is refused; cite the plan whole. A
   backticked span whose head, before its first at sign, is thread, argument, criterion or
   acceptance is now a reference candidate.

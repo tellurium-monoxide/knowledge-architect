@@ -338,15 +338,15 @@ fn path(
             // state, and a verdict may not depend on the checking machine's. Presence and
             // kind are asked apart, so a path some component carries under the other kind
             // gets the kind-claim repair rather than "repair the path".
-            // The anchors the tool constructs hold plan documents, which are cited by their
-            // kind, per `design@core@plan-document-kinds`, so none of them holds a copy the
-            // generic form names. A declared location still counts, which
-            // `issue@core@the-generic-anchor-accepts-a-location-s-copy` reports against the
-            // head's "at least one component".
+            // Components only, per `design@core@reserved-anchors`: the generic form claims
+            // every component's own copy, so a copy a declared location alone holds makes the
+            // claim false for every component. The anchors the tool constructs are no
+            // components either: they hold plan documents, which are cited by their kind, per
+            // `design@core@plan-document-kinds`.
             let carried: Vec<PathBuf> = anchors
                 .all()
                 .iter()
-                .filter(|a| a.constructed.is_none())
+                .filter(|a| a.is_component)
                 .map(|a| (a, a.path.join(trimmed)))
                 .filter(|(a, t)| {
                     anchors.owning(t).path == a.path
@@ -1468,6 +1468,27 @@ mod tests {
         let (found, _) = checked(&m, "See `path@*@notes/nowhere.md`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("resolves in no component"), "{found:#?}");
+    }
+
+    #[test]
+    fn a_path_only_a_location_carries_resolves_in_no_component() {
+        // The generic form claims every component's own copy, per
+        // `design@core@reserved-anchors`, so a copy a declared location alone holds does not
+        // satisfy it. Mutation checked: with the filter back to `constructed.is_none()`, the
+        // location's copy satisfies the reference and nothing is reported.
+        let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
+             [locations.notes]\npath = \"notes\"\nregisters = [\"issue\"]\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n";
+        let m = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration");
+        let mut present = tree();
+        present.extend(["notes/held.md".to_string(), "notes".to_string()]);
+        let (found, _) = checked(&m, "See `path@*@held.md`.\n", &present);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("resolves in no component"), "{found:#?}");
+        // The same path in a component passes, so the refusal is about the location alone.
+        present.push("parts/a-part/held.md".to_string());
+        let (found, _) = checked(&m, "See `path@*@held.md`.\n", &present);
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
     }
 
     #[test]
