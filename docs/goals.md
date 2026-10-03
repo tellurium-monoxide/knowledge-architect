@@ -3,7 +3,9 @@
 knowledge-architect is a tool that projects use to keep the quality of their documentation, with a
 focus on the record of design: what was decided, and the intent and the arguments behind it. It is
 built for agentic work. It gives AI agents a complete workflow, which aims to raise the quality and
-the efficiency of their work, in particular in projects developed mostly by agents. The
+the efficiency of their work, in particular in projects developed mostly by agents. Its main
+purpose is to let agents work autonomously without drifting from the design intent their owners
+recorded. The
 documentation structure and the workflow are designed to work together.
 
 A goal is met or unmet. A decision about how the project is built is won or lost, and lives in the
@@ -11,6 +13,16 @@ design home. **A goal stays in this document while it is met.** A goal removed w
 stops being checked, and can stop being met without anyone noticing. A goal leaves only when it is
 abandoned, on the owner's word, per `design@agent-skills@goal-lifecycle`. The goals are the
 owner's intent: an agent may propose wording, and the owner decides it.
+
+## Agents work productively and autonomously without drifting from the owners' design intent `##agents-work-without-drift`
+
+The project as a whole, the workflow and the checker, lets AI agents carry more of a project's
+work with less supervision, while what they build stays within the design the owners recorded. The
+checker exists mostly for this: it reports where the documents and the code drift from the recorded
+design, and it makes keeping that design current cheap. The other goals of the project serve this
+one. It is met while agents carry work from design to merge with the owner ruling on decisions
+rather than correcting drift, and a departure from the recorded design is caught by a check or a
+review before it merges.
 
 ## The documentation records the design, with the intent and the arguments behind it `##design-is-recorded-with-its-arguments`
 
@@ -55,6 +67,14 @@ installed skills name no project's paths. Every record is cited in one readable 
 every project, so what an agent learns in one project applies in the next. A project pins the
 version it uses, and moves to a new one when it chooses. The target is projects developed mostly by
 AI agents. A project without agents can still use the checker alone.
+
+## Adopting the project is easy, with documentation that is clear and reaches its reader `##adoption-is-easy`
+
+A person or an agent adopting knowledge-architect finds what to do in its documentation, where they
+already look for it: the README of each package, the API documentation of each library, the
+installed skills, and the rendered site of the documents. The documentation says what to do in
+plain words, with examples. It is met while a project adopts the checker and the workflow by
+following that documentation alone, without reading the source or asking the authors.
 
 ## The workflow improves through real use `##the-workflow-improves-through-real-use`
 

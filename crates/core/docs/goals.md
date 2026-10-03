@@ -38,3 +38,12 @@ the tree, never kept by hand. It refines
 A preprocessing pass rewrites every reference into a link and an mdbook build renders the result,
 hosted with the project once it is released. Dense cross-referencing is what makes the rendered
 site worth reading, so every citeable thing having one reference form serves this goal directly.
+
+## A project adds checks of its own through a documented extension API `##projects-add-their-own-checks`
+
+A project whose conventions the built-in checks do not cover writes its own checks as an extension,
+against a library API documented with its contract and its examples, and runs them in the same
+command, with the same report, as the built-in ones. It is met while an extension needs no change to
+the core and uses only its public, documented API. It refines
+`goal@knowledge-architect@agents-work-without-drift`: a project's own checks guard its own design
+intent.
