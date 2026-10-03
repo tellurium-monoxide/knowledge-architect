@@ -334,14 +334,14 @@ Rulings on items that are not threads:
 - **Harvest home:** agent-skills design home, reversing `design@agent-skills@planned-work-is-an-issue` (step 3)
 - **Closed by:** R2: "roadmap-orders-issues: approved. I like that shape. It brings together multiple register shapes to form the roadmap using only references, this is the right solution."
 
-### Docs/roadmap.md at the root; fixed name, optional; no checker code `##roadmap-home`
+### The roadmap is docs/roadmap.md at the root; fixed name, optional; no checker code `##roadmap-home`
 
 - **First appears:** R4 (agent)
 - **Final state:** approved
 - **Arguments:** `argument@structured-plans@a1`, `argument@structured-plans@a90`, `argument@structured-plans@a91`
 - **Shape in:** decided design
 - **Harvest home:** agent-skills design home (step 3)
-- **Closed by:** R5: same sentence as row 27
+- **Closed by:** R5: "retiring-plan-opens-issue and roadmap-home approved, argument-segmentation at assembly"
 
 ### A spec is one file; a milestone is a directory of a README and one spec per step `##layout-kept`
 
@@ -370,7 +370,7 @@ Rulings on items that are not threads:
 - **Harvest home:** core design home (step 1)
 - **Closed by:** R4: "plan-document-kinds: shape approved, including plans-location and plan-items-by-section." Points 2-4, R3: "Agreed on points 2,3 and 4 though."
 
-### Docs/plans/specs/ and docs/plans/milestones/ `##plans-split-dirs`
+### The plans directory splits into docs/plans/specs/ and docs/plans/milestones/ `##plans-split-dirs`
 
 - **First appears:** R3 (delta only; the owner's R3 proposal)
 - **Final state:** approved
@@ -413,7 +413,7 @@ Rulings on items that are not threads:
 - **Arguments:** `argument@structured-plans@a67`, `argument@structured-plans@a82`, `argument@structured-plans@a83`
 - **Shape in:** decided design
 - **Harvest home:** core design home (step 2)
-- **Closed by:** R4: same sentence as row 25
+- **Closed by:** R4: "plan-document-kinds: shape approved, including plans-location and plan-items-by-section."
 
 ### The plan document records the whole discussion: proposer, final state, arguments, rulings verbatim with their round, relations `##spec-records-the-exchange`
 
@@ -449,7 +449,7 @@ Rulings on items that are not threads:
 - **Arguments:** `argument@structured-plans@a92`, `argument@structured-plans@a93`
 - **Shape in:** decided design
 - **Harvest home:** agent-skills design home (step 3)
-- **Closed by:** R5: same sentence as row 27
+- **Closed by:** R5: "retiring-plan-opens-issue and roadmap-home approved, argument-segmentation at assembly"
 
 ### The planning skill assembles from the transcript through a subagent; without a transcript, from the conversation `##ledger-from-transcript`
 
@@ -530,7 +530,7 @@ Rulings on items that are not threads:
 - **Reason:** most work spans Components; the reference grammar makes a later split free
 - **Arguments:** `argument@structured-plans@a3`, `argument@structured-plans@a13`, `argument@structured-plans@a14`, `argument@structured-plans@a15`, `argument@structured-plans@a39`
 - **Harvest home:** judged at step 1; tripwire T5
-- **Closed by:** no explicit word; closed by the checkpoint batch confirmation, R7 (same sentence as row 2)
+- **Closed by:** no explicit word; closed by the checkpoint batch confirmation, R7: "The presumed rows, writing-cost and the five clauses are all approved."
 
 ### The roadmap is a register of its own, holding undesigned work `##roadmap-register`
 
@@ -565,7 +565,7 @@ Every argument of the discussion, numbered in order of appearance, per `thread@s
 `thread@structured-plans@argument-segmentation`. The boundaries were decided at assembly. Row `argument@structured-plans@a85` is the owner's second
 argument on `thread@structured-plans@cross-plan-references`, given in round 4.
 
-Notes on the table, from the review of this document:
+Notes on the arguments, from the review of this document:
 
 - **`argument@structured-plans@a25` was replaced by `argument@structured-plans@a82`** in round 3: items need a model of their own, and the existing
   heading-entry code does not read them as it stands.
@@ -1514,11 +1514,11 @@ harvest of the decision it guards:
 
 A fourth criterion, #assembly-holds-the-rulings, was judged at the commit that added this document
 and fired: the transcript reviewers found rulings recorded wider than the owner made them. The
-repair commit after the review before the merge reports it, and it left this table. Its evidence
+repair commit after the review before the merge reports it, and it left this section. Its evidence
 goes to T2 at step 3's harvest.
 
-Each criterion names the thread it guards rather than a reference: the decision has no design entry
-until its harvest.
+Each criterion names the thread it guards, as an item of this document: the decision has no design
+entry until its harvest.
 
 `acceptance@structured-plans@milestone-fits-file-register` was judged at step 1's landing and did not fire; the landing
 commit reports the evidence. It is reported once more when this document leaves.
@@ -1593,7 +1593,7 @@ under "Two registers under it". D18 revises D14.
 | D7: this document's record of arguments uses plain `a<n>` identifiers in a table under Threads until step 2, which moves them into a level-two Arguments section as definitions | `thread@structured-plans@arguments-as-items` |
 | D8: the reading of clause P1. A plan document is a spec file, a milestone directory, or a file inside a milestone directory; a `path` citation of one is refused. The README and index files of the plans directory and of its two homes are cited `path@plans@<file>` | `thread@structured-plans@plan-document-kinds` |
 | D9: the `spec` register's home depends on the anchor: `specs/` under `plans`, and the anchor's own directory under a milestone anchor | `thread@structured-plans@plans-split-dirs` |
-| D10: the milestone entry. A third `Shape` variant, the only one step 1 adds; step 2's #items-as-section-registers adds a fourth, `Section`, on the owner's word. Its id is the directory's basename, in the entity-id grammar. A subdirectory of milestones/ without a README.md is a finding; a `.md` file directly under milestones/ other than README.md and index.md is a finding; a `register.toml` there is a finding. The entry checks (level-one title; the sections from step 2) apply to `<id>/README.md`. Its index row is the id and the README's level-one title, linking `<id>/README.md`. The index generator skips files owned by a nested anchor, as `file_definitions` does; step 1's audit realised it with the Directory renderer, which reads only each milestone's README, and left the File renderer unfiltered | `thread@structured-plans@plan-document-kinds` |
+| D10: the milestone entry. A third `Shape` variant, the only one step 1 adds; step 2's `thread@structured-plans@items-as-section-registers` adds a fourth, `Section`, on the owner's word. Its id is the directory's basename, in the entity-id grammar. A subdirectory of milestones/ without a README.md is a finding; a `.md` file directly under milestones/ other than README.md and index.md is a finding; a `register.toml` there is a finding. The entry checks (level-one title; the sections from step 2) apply to `<id>/README.md`. Its index row is the id and the README's level-one title, linking `<id>/README.md`. The index generator skips files owned by a nested anchor, as `file_definitions` does; step 1's audit realised it with the Directory renderer, which reads only each milestone's README, and left the File renderer unfiltered | `thread@structured-plans@plan-document-kinds` |
 | D11: plan anchors are built from the tree in phase 2, from the walk's present paths, by every caller that builds the anchors of a tree, the per-commit trees of `commits` included. `collides` does not apply to them, because the plans layout places them; clause P2 is their collision check, a phase-2 finding planted in `unsound`. The generated paths kept out of the walk include each milestone's index.md, computed from the tree | `thread@structured-plans@plan-anchor` |
 | D12: a commit message cites a plan document whole, never an item; an item citation in a message is refused like any citation from outside its plan | `thread@structured-plans@plan-item-scope` |
 | D13: clause P2 applies in step 1 to milestone names and spec basenames alike | `thread@structured-plans@plans-location` |

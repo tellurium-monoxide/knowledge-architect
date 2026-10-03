@@ -227,14 +227,25 @@ fn table(
             rel,
             line,
             format!("`{span}` is referenced and `{anchor}` defines no {kind} `{id}`"),
-            format!(
-                "define it in the {} home of `{anchor}`, or repair the reference",
-                anchors
-                    .registers()
-                    .by_name(kind.name())
-                    .map(|r| r.dir.as_str())
-                    .unwrap_or("register")
-            ),
+            match anchors
+                .registers()
+                .by_name(kind.name())
+                .and_then(|r| r.section.as_deref())
+            {
+                // An item is defined under its section of the plan, which has no home of its own.
+                Some(section) => format!(
+                    "define it under the {section} section of the plan `{anchor}`, or repair the \
+                     reference"
+                ),
+                None => format!(
+                    "define it in the {} home of `{anchor}`, or repair the reference",
+                    anchors
+                        .registers()
+                        .by_name(kind.name())
+                        .map(|r| r.dir.as_str())
+                        .unwrap_or("register")
+                ),
+            },
         )),
     }
 }
@@ -396,9 +407,10 @@ fn path(
                     line,
                     format!("`{span}` names the milestone `{name}`, which carries no path kind"),
                     format!(
-                        "cite a step spec as `spec@{name}@<step>` and the milestone document as \
-                         `milestone@{PLANS_ANCHOR}@{name}`; a plan document has one name, so \
-                         `show` finds every citation of it"
+                        "cite a step spec as `spec@{name}@<step>`, the milestone document as \
+                         `milestone@{PLANS_ANCHOR}@{name}`, and from inside it its items as \
+                         `<kind>@{name}@<id>`; a plan document has one name, so `show` finds \
+                         every citation of it"
                     ),
                 ));
                 return;
@@ -1031,7 +1043,8 @@ mod tests {
         let docs = vec![
             (
                 "docs/plans/specs/s.md",
-                "# A spec\n\n## Threads\n\n### A thread `##one`\n\nIt cites `thread@s@one`.\n",
+                "# A spec\n\n## Threads\n\n### A thread `##one`\n\nIt cites `thread@s@one` and \
+                 `thread@s@nope`.\n",
             ),
             (
                 "notes/prose.md",
@@ -1050,7 +1063,67 @@ mod tests {
         assert!(found
             .iter()
             .any(|f| f.contains("`path@s@x.md` names the spec `s`, which carries no path kind")));
-        assert_eq!(found.len(), 3, "{found:#?}");
+        // An undefined item cited from inside its plan is the ordinary dangling finding.
+        assert!(found
+            .iter()
+            .any(|f| f.contains("`s` defines no thread `nope`")));
+        assert_eq!(found.len(), 4, "{found:#?}");
+    }
+
+    /// The claim: an item a step spec defines, cited from outside its milestone, gets the step
+    /// spec as the whole-document form; one the README defines gets the milestone. Mutation
+    /// checked: the milestone form for every item of a milestone.
+    #[test]
+    fn an_item_cited_from_outside_names_the_document_that_defines_it() {
+        let m = manifest();
+        let docs = [
+            (
+                "docs/plans/milestones/m/README.md",
+                "# A milestone\n\n## Threads\n\n### In the README `##in-readme`\n",
+            ),
+            (
+                "docs/plans/milestones/m/a-step.md",
+                "# A step\n\n## Threads\n\n### In the step `##in-step`\n",
+            ),
+            (
+                "notes/prose.md",
+                "`thread@m@in-readme` and `thread@m@in-step`.\n",
+            ),
+        ];
+        let tree: Vec<PathBuf> = docs.iter().map(|(p, _)| PathBuf::from(p)).collect();
+        let anchors = Anchors::of(&m, &tree);
+        let model = Model::from_documents(
+            docs.iter()
+                .map(|(p, t)| (PathBuf::from(p), t.to_string()))
+                .collect(),
+        );
+        let entities = Entities::build(&model, &anchors);
+        let notes = Path::new("notes/prose.md");
+        let form = |id: &str| match entities.resolve_from(
+            &anchors,
+            &Kind::new("thread"),
+            "m",
+            id,
+            Some(notes),
+        ) {
+            Resolution::OutsidePlan { form } => form,
+            other => panic!("{other:?}"),
+        };
+        assert_eq!(form("in-readme"), "milestone@plans@m");
+        assert_eq!(form("in-step"), "spec@m@a-step");
+        // And the Undefined repair of an item names its section, not a home.
+        let (found, _) = checked_under(
+            vec![(
+                "docs/plans/milestones/m/README.md",
+                "# A milestone\n\nIt cites `thread@m@nope`.\n",
+            )],
+            &[],
+            &anchors,
+        );
+        assert!(
+            found.iter().any(|f| f.contains("defines no thread `nope`")),
+            "{found:#?}"
+        );
     }
 
     /// The claim: a plan document is judged by where it sits, not by whether it exists, so a
