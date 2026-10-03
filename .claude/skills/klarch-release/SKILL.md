@@ -65,8 +65,8 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    curl -s -A 'knowledge-architect release check' https://crates.io/api/v1/crates/<crate>/<version>
    ```
 7. **The package lists.** `cargo package --list -p <crate>` for each crate. Each lists its sources,
-   its Cargo.toml, its README and its licence files, and agent-skills also its build script and
-   content/, per `design@knowledge-architect@package-include-whitelist`. The owner reads the lists.
+   its Cargo.toml, its README, its CRATES-IO.md and its licence files, and agent-skills also its
+   build script and content/, per `design@knowledge-architect@package-include-whitelist`. The owner reads the lists.
 8. **The dry run.** `cargo publish --workspace --dry-run` passes, skips xtask, and orders
    agent-skills before the core, which depends on it. Its warnings "ignoring test `binary`" and
    "ignoring test `extension_api`" are expected: the whitelist keeps the tests out.

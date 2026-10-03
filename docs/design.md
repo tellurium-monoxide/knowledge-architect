@@ -48,13 +48,27 @@ together, at one version.
 ### Each published crate ships a whitelist of files `##package-include-whitelist`
 
 Each crate under crates/ declares `include` in its Cargo.toml, listing its sources, its Cargo.toml, its README and its
-license files, and nothing else. A new directory is shipped only once it is listed, so the test
+license files, and nothing else. Cargo adds the file `readme` names, its CRATES-IO.md, whatever
+`include` says, per `design@knowledge-architect@crates-io-page-file`. A new directory is shipped only once it is listed, so the test
 fixtures and the design documents never reach a package, and their growth cannot push a package
 past the crates.io size limit. The cost is accepted: `cargo test` cannot run from a downloaded
 package. The license files sit at the root and as copies in each directory under crates/, because an
 `include` path cannot reach outside the package directory. tools/xtask is never published, so it
 carries neither. This keeps what a project receives to what it uses, per
 `goal@knowledge-architect@any-project-can-adopt-it`.
+
+### A published crate's crates.io page is a short CRATES-IO.md, and its README stays repository-facing `##crates-io-page-file`
+
+Each crate under crates/ names a CRATES-IO.md beside its README as its crates.io page, with
+`readme = "CRATES-IO.md"` in its Cargo.toml. The page says what the crate is, how to install or use
+it, and links, as absolute URLs on the main branch, to the crate's README in the repository and to
+docs.rs. It restates no contract, so it cannot drift from the README, and it holds no backticked
+reference: a reference that resolves passes the check, and crates.io renders it as dead code. The
+README stays the crate's home for how a user uses it, per the knowledge table, with the references
+the checker resolves. The rival, a README rewritten for crates.io with its repository-facing text
+moved elsewhere, lost: it moves the most text, and it changes what a Component's required README
+holds. Every published crate gets the page, so the rule has no exception. This serves
+`goal@knowledge-architect@adoption-is-easy`.
 
 ### The checker carries the agent workflow and writes it into a project `##binary-bundles-workflow`
 
