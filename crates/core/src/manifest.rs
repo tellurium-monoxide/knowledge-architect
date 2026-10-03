@@ -11,7 +11,7 @@
 //!
 //! **Six registers are compiled in and the rest are declared.** `design`, `goal`, `tripwire`
 //! and `issue` are what the word component means here, so a project neither adds nor removes
-//! them; `spec` and `milestone` are the plan documents, carried by the anchor `plans` alone,
+//! them; `spec` and `milestone` are the plan documents, carried by the plan anchors,
 //! which the tool constructs at [`PLANS_DIR`]. `[registers.<name>]` declares further ones, and
 //! `[locations.<name>]` names a directory that carries a subset of them. The argument is
 //! `design@core@registers-are-declared`.
@@ -80,6 +80,68 @@ pub(crate) const SPECS_HOME: &str = "specs";
 /// The home of the `milestone` register under [`PLANS_DIR`].
 pub(crate) const MILESTONES_HOME: &str = "milestones";
 
+/// The item register of a plan's threads.
+pub(crate) const THREAD_REGISTER: &str = "thread";
+
+/// The item register of a plan's arguments.
+pub(crate) const ARGUMENT_REGISTER: &str = "argument";
+
+/// The item register of a plan's criteria.
+pub(crate) const CRITERION_REGISTER: &str = "criterion";
+
+/// The item register of a plan's acceptance criteria.
+pub(crate) const ACCEPTANCE_REGISTER: &str = "acceptance";
+
+/// The four item registers: the name a reference spells, the word the Undefined repair names
+/// as the home, and the level-two section of a plan document whose level-three headings are
+/// its entries.
+pub(crate) const ITEM_REGISTERS: [(&str, &str, &str); 4] = [
+    (THREAD_REGISTER, "threads", "Threads"),
+    (ARGUMENT_REGISTER, "arguments", "Arguments"),
+    (CRITERION_REGISTER, "criteria", "Criteria"),
+    (
+        ACCEPTANCE_REGISTER,
+        "acceptance-criteria",
+        "Acceptance criteria",
+    ),
+];
+
+/// The level-two sections a spec of specs/ and a milestone's README owe, in order: the plan
+/// document's sections, as the plans layout fixes them.
+pub(crate) const PLAN_SECTIONS: [&str; 20] = [
+    "Status and audience",
+    "How a step is worked",
+    "Names",
+    "What the work is",
+    "What is already decided",
+    "Criteria",
+    "Threads",
+    "Arguments",
+    "New names, in one place",
+    "Decided design",
+    "Mapping tables",
+    "Losing alternatives",
+    "Readings",
+    "Premortem",
+    "Acceptance criteria",
+    "Implementation sequence",
+    "Order rationale",
+    "Defaults awaiting the owner",
+    "Harvest",
+    "Later consequences",
+];
+
+/// The level-two sections a step spec owes, in order. A step's fixtures are owed only where the
+/// Component drives its tests with authored content, which no check can read, so they are not
+/// checked.
+pub(crate) const STEP_SECTIONS: [&str; 5] = [
+    "Builds",
+    "Claims",
+    "Audit subjects",
+    "Fails alone on",
+    "Premises that expire",
+];
+
 /// The issue register's compiled kind list. Closed: an unknown kind is a finding naming it.
 pub(crate) const ISSUE_KINDS: [&str; 6] = [
     "defect",
@@ -107,6 +169,9 @@ pub(crate) enum Shape {
     /// Entries are directories `<id>/` under `<dir>/`, each holding a `README.md`, beside a
     /// README and a generated index. Only `milestone` has it: each entry is an anchor of its own.
     Directory,
+    /// Entries are level-three headings carrying a slug, under the level-two section the register
+    /// names, in the documents of a plan anchor. Only the four item registers have it.
+    Section,
 }
 
 /// Which anchors carry a register.
@@ -135,7 +200,9 @@ pub(crate) struct Register {
     pub metadata: Vec<(String, Vec<String>)>,
     /// The issue register alone: the kinds an entry may declare.
     pub kinds: Vec<String>,
-    /// Whether this register is one of the six the tool compiles in.
+    /// Section shape: the level-two section whose level-three headings are its entries.
+    pub section: Option<String>,
+    /// Whether this register is one of those the tool compiles in.
     pub built_in: bool,
 }
 
@@ -193,9 +260,10 @@ impl Registers {
             sections: Vec::new(),
             metadata: Vec::new(),
             kinds: Vec::new(),
+            section: None,
             built_in: true,
         };
-        vec![
+        let mut out = vec![
             heading("design", "design", 3),
             heading("goal", "goals", 2),
             heading(TRIPWIRE_REGISTER, "tripwires", 2),
@@ -211,33 +279,52 @@ impl Registers {
                     ISSUE_KINDS.iter().map(|k| k.to_string()).collect(),
                 )],
                 kinds: ISSUE_KINDS.iter().map(|k| k.to_string()).collect(),
+                section: None,
                 built_in: true,
             },
-            // The two plan registers are opt-in: the anchor `plans`, which the tool constructs,
-            // names both, and no declared anchor may. Their sections are checked from the step
-            // that reads plan items, so an entry owes a title and nothing else here.
-            plan(SPEC_REGISTER, Shape::File, SPECS_HOME),
-            plan(MILESTONE_REGISTER, Shape::Directory, MILESTONES_HOME),
-        ]
+        ];
+        // The plan registers are opt-in: the anchors the tool constructs name them, and no
+        // declared anchor may. A plan document owes the plan sections; a step spec owes its own
+        // list, which `Anchor::sections_of` gives at a milestone anchor.
+        out.push(plan(SPEC_REGISTER, Shape::File, SPECS_HOME, None));
+        out.push(plan(
+            MILESTONE_REGISTER,
+            Shape::Directory,
+            MILESTONES_HOME,
+            None,
+        ));
+        for (name, dir, section) in ITEM_REGISTERS {
+            out.push(plan(name, Shape::Section, dir, Some(section)));
+        }
+        out
     }
 
-    /// Whether `name` is one of the two registers only the anchor `plans` carries.
+    /// Whether `name` is a register only the anchors the tool constructs carry: `spec`,
+    /// `milestone` and the four item registers.
     pub(crate) fn is_plan_register(name: &str) -> bool {
-        name == SPEC_REGISTER || name == MILESTONE_REGISTER
+        name == SPEC_REGISTER
+            || name == MILESTONE_REGISTER
+            || ITEM_REGISTERS.iter().any(|(n, _, _)| *n == name)
     }
 }
 
-/// One of the two plan registers, which no declaration can change.
-fn plan(name: &str, shape: Shape, dir: &str) -> Register {
+/// One of the plan registers, which no declaration can change. `section` is an item register's
+/// section, and makes its entries level-three headings.
+fn plan(name: &str, shape: Shape, dir: &str, section: Option<&str>) -> Register {
     Register {
         name: name.to_string(),
         scope: Scope::OptIn,
         shape,
         dir: dir.to_string(),
-        level: None,
-        sections: Vec::new(),
+        level: section.map(|_| 3),
+        sections: if section.is_some() {
+            Vec::new()
+        } else {
+            PLAN_SECTIONS.iter().map(|s| s.to_string()).collect()
+        },
         metadata: Vec::new(),
         kinds: Vec::new(),
+        section: section.map(str::to_string),
         built_in: true,
     }
 }
@@ -914,8 +1001,8 @@ fn resolve_anchors(
                     MANIFEST_NAME,
                     format!("[locations.{name}] carries `{register}`, a plan register"),
                     format!(
-                        "remove it from the row; the anchor `plans`, which the tool constructs at \
-                         {PLANS_DIR}/, carries it alone"
+                        "remove it from the row; the plan anchors, which the tool constructs under \
+                         {PLANS_DIR}/, carry it alone"
                     ),
                 ));
                 return false;
@@ -1128,8 +1215,8 @@ fn build_registers(
                 MANIFEST_NAME,
                 format!("[registers.{name}] declares a plan register"),
                 format!(
-                    "delete the table; `{name}` is carried by the anchor `plans` alone, which the \
-                     tool constructs at {PLANS_DIR}/ with a fixed layout"
+                    "delete the table; `{name}` is carried by the plan anchors alone, which the \
+                     tool constructs under {PLANS_DIR}/ with a fixed layout"
                 ),
             ));
             continue;
@@ -1228,15 +1315,15 @@ fn build_registers(
                 ));
                 None
             }
-            // A declared shape is `heading` or `file`; `Directory` is the milestone register's.
-            (Shape::File | Shape::Directory, Some(_)) => {
+            // A declared shape is `heading` or `file`; the others are the plan registers'.
+            (Shape::File | Shape::Directory | Shape::Section, Some(_)) => {
                 complaints.push(format!(
                     "[registers.{name}] declares a level on a file register, whose entries \
                      are files"
                 ));
                 None
             }
-            (Shape::File | Shape::Directory, None) => None,
+            (Shape::File | Shape::Directory | Shape::Section, None) => None,
         };
         out.push(Register {
             name: name.clone(),
@@ -1251,6 +1338,7 @@ fn build_registers(
                 .map(|(k, v)| (k.clone(), v.values.clone()))
                 .collect(),
             kinds: Vec::new(),
+            section: None,
             built_in: false,
         });
     }
@@ -1735,7 +1823,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn the_six_built_in_registers_exist_before_anything_is_declared() {
+    fn the_built_in_registers_exist_before_anything_is_declared() {
         let m = declaring("");
         let names: Vec<&str> = m
             .registers()
@@ -1745,9 +1833,30 @@ pub(crate) mod tests {
             .collect();
         assert_eq!(
             names,
-            vec!["design", "goal", "tripwire", "issue", "spec", "milestone"]
+            vec![
+                "design",
+                "goal",
+                "tripwire",
+                "issue",
+                "spec",
+                "milestone",
+                "thread",
+                "argument",
+                "criterion",
+                "acceptance"
+            ]
         );
-        // The two plan registers are carried by `plans` alone, so no component owes them.
+        // The item registers read the level-three headings of one section each.
+        let thread = m
+            .registers()
+            .by_name("thread")
+            .expect("the thread register");
+        assert_eq!(
+            (thread.shape, thread.scope, thread.level),
+            (Shape::Section, Scope::OptIn, Some(3))
+        );
+        assert_eq!(thread.section.as_deref(), Some("Threads"));
+        // The plan registers are carried by the plan anchors alone, so no component owes them.
         let spec = m.registers().by_name("spec").expect("the spec register");
         assert_eq!((spec.shape, spec.scope), (Shape::File, Scope::OptIn));
         assert_eq!(spec.dir, "specs");

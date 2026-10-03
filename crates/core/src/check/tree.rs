@@ -118,11 +118,18 @@ pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<
                 continue;
             };
             let home = anchor.home_of(register);
-            outside_the_walk(&mut out, manifest, anchor, register, &home);
+            // The plan documents are judged by the File and Directory homes that hold them, so
+            // an item register's home is not judged twice.
+            if register.shape != Shape::Section {
+                outside_the_walk(&mut out, manifest, anchor, register, &home);
+            }
             match register.shape {
                 Shape::Heading => heading_home(&mut out, anchor, register, &home, inputs),
                 Shape::File => file_home(&mut out, anchor, register, &home, inputs),
                 Shape::Directory => directory_home(&mut out, anchor, register, &home, inputs),
+                // An item register's home is the plan's own documents, which exist when the
+                // plan anchor does.
+                Shape::Section => {}
             }
         }
     }

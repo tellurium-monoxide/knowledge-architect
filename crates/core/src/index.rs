@@ -256,7 +256,8 @@ pub(crate) fn file_register_indexes(
             continue;
         }
         let text = match register.shape {
-            Shape::Heading => continue,
+            // An index lists files or directories; a heading entry is listed by nothing.
+            Shape::Heading | Shape::Section => continue,
             Shape::File => file_register_index(model, register, &home, manifest.command()),
             Shape::Directory => {
                 directory_register_index(model, &anchors, &home, manifest.command())
@@ -302,7 +303,7 @@ pub(crate) fn generated_index_paths<'a>(
     Anchors::of(manifest, paths)
         .instances()
         .into_iter()
-        .filter(|(_, register, _)| register.shape != Shape::Heading)
+        .filter(|(_, register, _)| matches!(register.shape, Shape::File | Shape::Directory))
         .map(|(_, _, home)| home.index)
         .collect()
 }
@@ -566,6 +567,34 @@ mod tests {
             all[&PathBuf::from("docs/plans/milestones/a-first/index.md")],
             "**Generated — do not edit.** `klarch index`\n\n1 entries\n\n| title |\n| --- |\n\
              | [A step of it](a-step.md) |\n"
+        );
+    }
+
+    /// The claim: an item register gets no generated index, since an index lists files or
+    /// directories and an item is a heading; only the plan homes and each milestone do. Mutation
+    /// checked: `generated_index_paths` filtering only the Heading shape out.
+    #[test]
+    fn an_item_register_has_no_generated_index() {
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n";
+        let manifest = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("declared");
+        let tree: Vec<PathBuf> = ["docs/plans/specs/s.md", "docs/plans/milestones/m/README.md"]
+            .iter()
+            .map(PathBuf::from)
+            .collect();
+        let mut paths: Vec<String> = generated_index_paths(&manifest, &tree)
+            .into_iter()
+            .filter(|p| p.starts_with("docs/plans"))
+            .map(|p| p.display().to_string())
+            .collect();
+        paths.sort();
+        assert_eq!(
+            paths,
+            vec![
+                "docs/plans/milestones/index.md",
+                "docs/plans/milestones/m/index.md",
+                "docs/plans/specs/index.md",
+            ]
         );
     }
 

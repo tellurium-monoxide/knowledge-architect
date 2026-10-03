@@ -96,6 +96,10 @@ pub(crate) fn check_under(
                     counts.entries +=
                         directory_home(&mut out, register, &home, model, anchors, inputs);
                 }
+                // An item is a heading of a plan document, judged where it is defined, in the
+                // entity table; its home is the plan's documents, which the File and Directory
+                // homes that hold them judge.
+                Shape::Section => {}
             }
         }
     }
@@ -193,7 +197,7 @@ fn file_home(
     // shape reads it: the nesting is refused by `manifest::collides`, and reading the nested
     // anchor's files as entries of this register would report the refusal's consequences
     // against the wrong register and the wrong anchor, nine times over.
-    let owned = |rel: &Path| anchors.owning(rel).path == anchor.path;
+    let owned = |rel: &Path| anchors.owns_entry(anchor, rel);
     directory_contents(out, register, home, &groups, inputs, &owned);
 
     let mut judged = 0;
@@ -202,7 +206,7 @@ fn file_home(
             continue;
         }
         judged += 1;
-        entry(out, register, doc);
+        entry(out, register, &anchor.sections_of(register), doc);
     }
     judged
 }
@@ -233,7 +237,7 @@ fn directory_home(
         let readme = entry.path.join("README.md");
         if let Some(doc) = model.documents().iter().find(|d| d.rel == readme) {
             judged += 1;
-            self::entry(out, register, doc);
+            self::entry(out, register, &register.sections, doc);
         }
     }
     judged
@@ -377,7 +381,10 @@ fn is_entry(rel: &Path, home: &Home) -> bool {
 }
 
 /// One entry: its frontmatter, its title, its sections and the subsections its kind owes.
-fn entry(out: &mut Vec<Finding>, register: &Register, doc: &Document) {
+///
+/// `sections` are the level-two sections the entry owes at its anchor, per
+/// `Anchor::sections_of`: a register's own, or a step spec's.
+fn entry(out: &mut Vec<Finding>, register: &Register, sections: &[String], doc: &Document) {
     let declared: Vec<&str> = register.metadata.iter().map(|(k, _)| k.as_str()).collect();
     let mut values: BTreeMap<&str, &str> = BTreeMap::new();
     match (&doc.parsed.frontmatter, declared.is_empty()) {
@@ -467,11 +474,7 @@ fn entry(out: &mut Vec<Finding>, register: &Register, doc: &Document) {
         doc,
         register,
         2,
-        &register
-            .sections
-            .iter()
-            .map(String::as_str)
-            .collect::<Vec<_>>(),
+        &sections.iter().map(String::as_str).collect::<Vec<_>>(),
         &headings,
         "level-two section",
     );
@@ -1439,6 +1442,108 @@ mod tests {
             .map(PathBuf::from)
             .collect();
         assert!(Anchors::of(&manifest, &present).by_name("m").is_none());
+    }
+
+    /// A plan document with the given level-two sections, each holding one line.
+    fn with_sections(title: &str, sections: &[&str]) -> String {
+        let mut out = format!("# {title}\n");
+        for section in sections {
+            out.push_str(&format!("\n## {section}\n\nNone.\n"));
+        }
+        out
+    }
+
+    /// The claim: a spec of specs/ and a milestone's README owe the plan sections in order, and
+    /// a step spec owes the step sections, each missing one a finding naming the list.
+    /// Mutation checked: a step spec checked against the plan sections.
+    #[test]
+    fn a_plan_document_owes_the_sections_of_its_kind() {
+        use crate::manifest::{PLAN_SECTIONS, STEP_SECTIONS};
+        let manifest = declaring("");
+        let docs = |spec_sections: &[&str], step_sections: &[&str]| {
+            vec![
+                (
+                    "docs/plans/specs/s.md".to_string(),
+                    with_sections("A spec", spec_sections),
+                ),
+                (
+                    "docs/plans/milestones/m/README.md".to_string(),
+                    with_sections("A milestone", &PLAN_SECTIONS),
+                ),
+                (
+                    "docs/plans/milestones/m/a-step.md".to_string(),
+                    with_sections("A step", step_sections),
+                ),
+            ]
+        };
+        let run = |docs: Vec<(String, String)>| {
+            let mut present = all_of("");
+            for (p, _) in &docs {
+                present.push(p.clone());
+            }
+            for p in [
+                "docs/plans/milestones/m",
+                "docs/plans/milestones/m/index.md",
+            ] {
+                present.push(p.to_string());
+            }
+            let model = Model::from_documents(
+                docs.into_iter()
+                    .map(|(p, t)| (PathBuf::from(p), t))
+                    .collect(),
+            );
+            findings_over(&manifest, &present, model, &[])
+                .into_iter()
+                .filter(|f| !f.contains("generated"))
+                .collect::<Vec<String>>()
+        };
+        assert!(run(docs(&PLAN_SECTIONS, &STEP_SECTIONS)).is_empty());
+        let without_names: Vec<&str> = PLAN_SECTIONS
+            .iter()
+            .copied()
+            .filter(|s| *s != "Names")
+            .collect();
+        let found = run(docs(&without_names, &STEP_SECTIONS));
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].starts_with("docs/plans/specs/s.md")
+                && found[0].contains("level-two section `Names`"),
+            "{found:#?}"
+        );
+        // A step spec holding the plan sections but none of its own owes each of its own.
+        let found = run(docs(&PLAN_SECTIONS, &PLAN_SECTIONS));
+        assert_eq!(found.len(), STEP_SECTIONS.len(), "{found:#?}");
+        assert!(found
+            .iter()
+            .all(|f| f.starts_with("docs/plans/milestones/m/a-step.md")));
+    }
+
+    /// The claim: the item registers are the tool's, so a declaration of one, or a location
+    /// naming one, is refused as the plan registers are. Mutation checked: `thread` left out of
+    /// `Registers::is_plan_register`.
+    #[test]
+    fn an_item_register_is_refused_in_a_declaration() {
+        let manifest = declaring_full(
+            "",
+            "[locations.notes]\npath = \"notes\"\nregisters = [\"criterion\", \"issue\"]\n\n\
+             [registers.thread]\nscope = \"opt-in\"\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let complaints: Vec<String> = manifest
+            .complaints()
+            .iter()
+            .map(|f| f.what.clone())
+            .collect();
+        assert_eq!(complaints.len(), 2, "{complaints:#?}");
+        assert!(complaints
+            .iter()
+            .any(|c| c.contains("[registers.thread] declares a plan register")));
+        assert!(complaints
+            .iter()
+            .any(|c| c.contains("[locations.notes] carries `criterion`, a plan register")));
     }
 
     /// The claim: a component register whose home at the root would be the plans directory is

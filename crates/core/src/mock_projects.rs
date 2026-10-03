@@ -425,7 +425,8 @@ mod planted {
         // five refusals of the plans layout, in notes/plans.md: a spec, a milestone directory,
         // a step spec cited by path, a milestone named as a path's anchor, and a pointer from
         // the root reaching inside `plans`.
-        ("references", 22, "is referenced"),
+        // And an item of a plan cited from outside it, which the scoped resolution refuses.
+        ("references", 23, "is referenced"),
         // One defect per shape assertion over what is there: a missing index, an undeclared
         // kind, a missing owed subsection, an undeclared group, a file of another suffix, and
         // frontmatter that does not parse.
@@ -519,7 +520,14 @@ mod planted {
         assert!(action.contains("`spec@m-one@<step>`"), "{action}");
         let (what, _) = at(10);
         assert!(what.contains("reaches inside the anchor `plans`"), "{what}");
-        assert_eq!(here.len(), 5, "{here:#?}");
+        // An item of a plan cited from outside it is refused, and the repair cites the plan whole.
+        let (what, action) = at(12);
+        assert!(
+            what.contains("cites an item of the plan `m-one` from outside it"),
+            "{what}"
+        );
+        assert!(action.contains("`milestone@plans@m-one`"), "{action}");
+        assert_eq!(here.len(), 6, "{here:#?}");
     }
 
     fn one(needle: &str) -> String {
@@ -848,7 +856,18 @@ mod unsound {
         let inline = one_of(&all, "`##twice-defined` is written in the middle of a line");
         assert!(inline.starts_with("notes/structure.md:5"), "{inline}");
         assert!(one_of(&all, "cannot be an entry id").starts_with("docs/open-issues/Not_An_Id.md"));
-        assert_eq!(all.len(), 9, "{all:#?}");
+        // A plan's items: a slug outside its item sections, and one id defined in a milestone's
+        // README and in its step spec, which share one namespace.
+        assert!(
+            one_of(&all, "`##not-an-item` is written outside the item sections")
+                .starts_with("docs/plans/milestones/defective/README.md")
+        );
+        let twice: Vec<&String> = all
+            .iter()
+            .filter(|f| f.contains("`thread@defective@defined-twice` is also defined at"))
+            .collect();
+        assert_eq!(twice.len(), 2, "{all:#?}");
+        assert_eq!(all.len(), 12, "{all:#?}");
     }
 
     #[test]

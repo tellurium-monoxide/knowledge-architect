@@ -463,6 +463,58 @@ impl Drop for History {
     }
 }
 
+/// A plan document holding every section a spec or a milestone's README owes, each empty but
+/// those `sections` fills, as `(title, body)` pairs.
+fn plan_document(title: &str, intro: &str, sections: &[(&str, &str)]) -> String {
+    const OWED: [&str; 20] = [
+        "Status and audience",
+        "How a step is worked",
+        "Names",
+        "What the work is",
+        "What is already decided",
+        "Criteria",
+        "Threads",
+        "Arguments",
+        "New names, in one place",
+        "Decided design",
+        "Mapping tables",
+        "Losing alternatives",
+        "Readings",
+        "Premortem",
+        "Acceptance criteria",
+        "Implementation sequence",
+        "Order rationale",
+        "Defaults awaiting the owner",
+        "Harvest",
+        "Later consequences",
+    ];
+    let mut out = format!("# {title}\n\n{intro}\n");
+    for owed in OWED {
+        let body = sections
+            .iter()
+            .find(|(t, _)| *t == owed)
+            .map(|(_, b)| *b)
+            .unwrap_or("None.");
+        out.push_str(&format!("\n## {owed}\n\n{body}\n"));
+    }
+    out
+}
+
+/// A step spec holding every section a step owes, each empty.
+fn step_document(title: &str) -> String {
+    let mut out = format!("# {title}\n");
+    for owed in [
+        "Builds",
+        "Claims",
+        "Audit subjects",
+        "Fails alone on",
+        "Premises that expire",
+    ] {
+        out.push_str(&format!("\n## {owed}\n\nNone.\n"));
+    }
+    out
+}
+
 /// Everything a project owes, written out, with one design slug and one issue entry.
 ///
 /// `unloadable` writes a `[project]` key the grammar does not know, so the manifest does not
@@ -1464,26 +1516,40 @@ fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
 fn a_message_naming_the_plan_document_its_commit_deletes_resolves_against_the_parent() {
     let history = History::new("commit-plan-parent");
     tiny_project(&history, false);
-    history.write("docs/plans/specs/a-spec.md", "# A spec that lands\n");
+    history.write(
+        "docs/plans/specs/a-spec.md",
+        &plan_document(
+            "A spec that lands",
+            "It is the plan of one pull request.",
+            &[],
+        ),
+    );
     history.write(
         "docs/plans/milestones/a-milestone/README.md",
-        "# A milestone that lands\n\nIts steps: [the first](first.md), [the last](last.md); \
-         [the index](index.md).\n",
+        &plan_document(
+            "A milestone that lands",
+            "Its steps: [the first](first.md), [the last](last.md); [the index](index.md).",
+            &[],
+        ),
     );
     history.write(
         "docs/plans/milestones/a-milestone/first.md",
-        "# Its first step\n",
+        &step_document("Its first step"),
     );
     history.write(
         "docs/plans/milestones/a-milestone/last.md",
-        "# Its last step\n",
+        &step_document("Its last step"),
     );
     let base = history.commit("The plans are written\n");
     history.remove("docs/plans/specs/a-spec.md");
     history.remove("docs/plans/milestones/a-milestone/first.md");
     history.write(
         "docs/plans/milestones/a-milestone/README.md",
-        "# A milestone that lands\n\nIts step: [the last](last.md); [the index](index.md).\n",
+        &plan_document(
+            "A milestone that lands",
+            "Its step: [the last](last.md); [the index](index.md).",
+            &[],
+        ),
     );
     let spec = history.commit(
         "The spec and the first step land\n\nThey leave: `spec@plans@a-spec` and \
@@ -1505,6 +1571,38 @@ fn a_message_naming_the_plan_document_its_commit_deletes_resolves_against_the_pa
     assert!(stdout.contains(&format!("{milestone} judged")), "{stdout}");
 }
 
+/// The claim: a commit message cites a plan document whole, never an item. It is one document
+/// at the root, inside no plan, so an item citation in it is the out-of-plan refusal, while the
+/// whole document resolves. Mutation checked: `judge_message` resolving with no citing file,
+/// which treats the message as inside every plan.
+#[test]
+fn a_message_cites_a_plan_whole_and_never_an_item() {
+    let history = History::new("commit-plan-item");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    history.write(
+        "docs/plans/specs/a-spec.md",
+        &plan_document(
+            "A spec with one thread",
+            "It is the plan of one pull request.",
+            &[(
+                "Threads",
+                "### It holds one thread `##one-thread`\n\nApproved.",
+            )],
+        ),
+    );
+    let whole = history.commit("A spec is planned\n\nIt is `spec@plans@a-spec`.\n");
+    let item = history.commit("Its thread is named\n\nIt is `thread@a-spec@one-thread`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(stdout.contains(&format!("{whole} judged")), "{stdout}");
+    assert!(
+        stdout.contains(&format!("commit {item}:3"))
+            && stdout.contains("cites an item of the plan `a-spec` from outside it"),
+        "{stdout}"
+    );
+}
+
 /// The claim: the anchors a message is judged against are its commit's, milestone anchors
 /// included, and not the working tree's. The milestone's deletion is staged and not committed
 /// before the range is judged, so git's listing of the working tree holds no anchor
@@ -1516,11 +1614,15 @@ fn a_commit_s_milestone_anchors_are_read_off_its_own_tree() {
     let base = history.commit("The project is created\n");
     history.write(
         "docs/plans/milestones/a-milestone/README.md",
-        "# A milestone\n\nIts step: [the step](a-step.md); [the index](index.md).\n",
+        &plan_document(
+            "A milestone",
+            "Its step: [the step](a-step.md); [the index](index.md).",
+            &[],
+        ),
     );
     history.write(
         "docs/plans/milestones/a-milestone/a-step.md",
-        "# Its step\n",
+        &step_document("Its step"),
     );
     let sha = history.commit("A milestone is planned\n\nIts step is `spec@a-milestone@a-step`.\n");
     for rel in ["README.md", "a-step.md", "index.md"] {

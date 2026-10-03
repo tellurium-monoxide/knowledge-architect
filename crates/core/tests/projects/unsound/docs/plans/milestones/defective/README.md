@@ -1,9 +1,4 @@
-# A milestone the mock plans
-
-Its one step is [the step](a-step.md), cited `spec@a-milestone@a-step`; the listing is
-[the index](index.md). A spec beside it is `spec@plans@a-spec`, and the plans directory's own
-head is `path@plans@README.md`, its specs home `path@plans@specs/` and that home's
-listing `path@plans@specs/index.md`.
+# A milestone whose items are defective
 
 ## Status and audience
 
@@ -31,15 +26,13 @@ None.
 
 ## Threads
 
-### The milestone has one step `##one-step`
+### A thread its step defines again `##defined-twice`
 
-Approved, argued by `argument@a-milestone@a1`.
+The step spec defines the same id.
 
 ## Arguments
 
-### One step is enough for a mock `##a1`
-
-Bears on `thread@a-milestone@one-step`.
+None.
 
 ## New names, in one place
 
@@ -47,7 +40,9 @@ None.
 
 ## Decided design
 
-None.
+### A subsection of the design, wearing a slug `##not-an-item`
+
+Outside every item section, so the slug defines nothing.
 
 ## Mapping tables
 
