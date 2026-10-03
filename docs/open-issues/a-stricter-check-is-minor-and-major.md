@@ -51,5 +51,6 @@ The owner's ruling on one reading, written into the table of the decision. Two r
 - **minor wins**: a stricter check is minor even when it requires a content change, and the major
   row covers changes to the required layout and to what the manifest accepts.
 
-A released section's content never changes, per `design@knowledge-architect@changelog-entries`, so
-the ruling applies from the next release.
+A released section's content never changes, per `design@knowledge-architect@changelog-entries`. A
+ruling given before the 0.2.0 release is tagged may re-class that section's entries on the release
+branch. A ruling given after applies from the next release.
