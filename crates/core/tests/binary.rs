@@ -2397,3 +2397,137 @@ fn commits_takes_no_fix() {
     let (_, err, code) = run("minimal", &["commits", "--fix", "HEAD"]);
     assert_eq!(code, 2, "{err}");
 }
+
+/// A copy of `minimal` serving the `claude` harness, its shipped set installed and staged: a tree
+/// the check passes.
+fn harnessed(tag: &str) -> Sandbox {
+    let sandbox = Sandbox::new(tag, "minimal");
+    sandbox.serve_claude();
+    let (out, err, code) = sandbox.run(&["install-agent-skills"]);
+    assert_eq!(code, 0, "{out}{err}");
+    sandbox.stage();
+    sandbox
+}
+
+/// The claim: on a harnessed tree the check passes, `check --fix` touches nothing and prints what
+/// `check` prints. Mutation checked: putting every listed shipped file in the repairs, whatever
+/// its bytes, prints `fixed:` lines and fails the comparison.
+#[test]
+fn check_fix_on_a_clean_harnessed_tree_is_a_plain_check() {
+    let sandbox = harnessed("fix-harnessed");
+    let before = tree_bytes(&sandbox.path(".claude"));
+    let plain = sandbox.run(&["check"]);
+    assert_eq!(plain.2, 0, "{}{}", plain.0, plain.1);
+    assert_eq!(sandbox.run(&["check", "--fix"]), plain);
+    assert_eq!(tree_bytes(&sandbox.path(".claude")), before);
+}
+
+/// The claim: `check --fix` never deletes a file of the installer's namespace that git does not
+/// list, such as an ignored editor swap file the check never reports. Mutation checked: judging
+/// the namespace from the filesystem, as the install does, deletes it.
+#[test]
+fn check_fix_never_deletes_an_ignored_file_in_the_namespace() {
+    let sandbox = harnessed("fix-ignored");
+    sandbox.write(".gitignore", "*.swp\n");
+    let swap = ".claude/skills/knowledge-architect-design/.SKILL.md.swp";
+    sandbox.write(swap, "my unsaved edits\n");
+    sandbox.stage();
+    let (out, err, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 0, "{out}{err}");
+    assert!(!out.contains("fixed:"), "{out}");
+    assert!(sandbox.path(swap).exists());
+}
+
+/// The claim: `check --fix` deletes an unshipped file git lists in the namespace and lists the
+/// removal; the deletion is unstaged, so the run stops at phase 2, and after `git add` a second
+/// run passes. This is the two-run upgrade the owner ruled. Mutation checked: dropping the
+/// removal line fails it. Not counting a removal as a write survives here: it changes the exit
+/// code only when a later write fails, which this case does not reach.
+#[test]
+fn check_fix_removes_an_unshipped_file_and_an_upgrade_takes_two_runs() {
+    let sandbox = harnessed("fix-removed");
+    let stray = ".claude/agents/knowledge-architect-retired.md";
+    sandbox.write(stray, "a file an older version shipped\n");
+    sandbox.stage();
+    let (out, err, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 1, "{out}{err}");
+    assert!(
+        out.contains(&format!("fixed: removed {stray} (installed)")),
+        "{out}"
+    );
+    assert!(out.contains("the deletion is not staged"), "{out}");
+    assert!(!sandbox.path(stray).exists());
+    sandbox.stage();
+    let (out, err, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 0, "{out}{err}");
+}
+
+/// The claim: when a write fails after another file was written, `check --fix` lists what it
+/// wrote and exits 1, since 2 would promise an untouched tree. Mutations checked: exiting 2
+/// whatever was written, or dropping the error, each fail it.
+#[test]
+fn check_fix_exits_one_when_a_write_fails_after_a_write() {
+    let sandbox = Sandbox::new("fix-partway", "minimal");
+    sandbox.serve_claude();
+    let (last, _) = knowledge_architect_agent_skills::FILES
+        .last()
+        .expect("this version ships a file");
+    std::fs::create_dir_all(sandbox.path(last)).expect("a directory where the last file goes");
+    sandbox.stage();
+    let (out, err, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 1, "{out}{err}");
+    assert!(out.contains("fixed: wrote"), "{out}");
+    assert!(err.contains(last), "{err}");
+}
+
+/// The claim: a generated destination that is a symlink is refused before anything is written,
+/// and with nothing written the run exits 2. Mutations checked: dropping the symlink refusal
+/// writes through the link, outside the project; exiting 1 whatever was written fails the code.
+#[test]
+fn check_fix_refuses_a_symlinked_destination_and_writes_nothing() {
+    let sandbox = stale_index("fix-symlink");
+    let outside = std::env::temp_dir().join(format!("ka-fix-outside-{}", std::process::id()));
+    std::fs::write(&outside, "outside the project\n").expect("a file outside the project");
+    std::fs::remove_file(sandbox.path(FIX_INDEX)).expect("the index is removed");
+    std::os::unix::fs::symlink(&outside, sandbox.path(FIX_INDEX)).expect("a symlinked index");
+    let manifest =
+        std::fs::read_to_string(sandbox.path("knowledge-architect.toml")).expect("the manifest");
+    sandbox.write(
+        "knowledge-architect.toml",
+        &manifest.replace(
+            "skip-files = [\"notes/generated.md\"]",
+            &format!("skip-files = [\"notes/generated.md\", \"{FIX_INDEX}\"]"),
+        ),
+    );
+    sandbox.stage();
+    let (out, err, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 2, "{out}{err}");
+    assert!(err.contains("symlink"), "{err}");
+    assert_eq!(
+        std::fs::read_to_string(&outside).expect("the outside file"),
+        "outside the project\n"
+    );
+    let _ = std::fs::remove_file(&outside);
+}
+
+/// The claim: a manifest holding a refused declaration makes `check --fix` write nothing, not even
+/// the agent files, since the shipped text is rendered with the declared command. Mutation
+/// checked: removing the early return installs the files.
+#[test]
+fn check_fix_over_a_refused_manifest_writes_nothing() {
+    let sandbox = Sandbox::new("fix-refused", "minimal");
+    sandbox.serve_claude();
+    let manifest =
+        std::fs::read_to_string(sandbox.path("knowledge-architect.toml")).expect("the manifest");
+    sandbox.write(
+        "knowledge-architect.toml",
+        &format!("{manifest}\n[bogus]\nkey = 1\n"),
+    );
+    sandbox.stage();
+    let (out, err, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 1, "{out}{err}");
+    assert!(!out.contains("fixed:"), "{out}");
+    assert!(!sandbox
+        .path(".claude/knowledge-architect/PRIMER.md")
+        .exists());
+}

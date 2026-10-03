@@ -858,13 +858,16 @@ write the stale generated files  → the same list `index` and the gate read
 rebuild the model; full check    → the report and the exit code, as without --fix
 ```
 
-- **The install runs only when it has something to fix**: the manifest serves an agent harness,
-  as `install_agent_skills` decides today, and the installed-file check of
-  `path@core@src/check/agents.rs` reports a shipped file missing or differing, or an unshipped
-  file in the namespace. The reason is line endings. That check compares after normalising them,
-  through `crate::agents::lf`, while `crate::agents::install` in `path@core@src/agents.rs`
-  compares raw bytes. An install run on every `--fix` would rewrite every installed file of a
-  checkout that converts line endings, on every run.
+- **The installed set is repaired exactly where the check reports it**: the manifest serves an
+  agent harness, as `install_agent_skills` decides today, and `crate::agents::repairs` judges the
+  namespace from git's listing, after normalising line endings, as the installed-file check of
+  `path@core@src/check/agents.rs` does. `crate::agents::apply` writes the shipped files the check
+  reports missing or differing, and deletes the unshipped files git lists. It does not run the
+  general install: `crate::agents::install` walks the filesystem and compares raw bytes, so it
+  would delete an ignored file in the namespace, such as an editor's swap file, which the check
+  never reports and git holds no copy of, and it would rewrite every copy that differs only by its
+  line endings. The adversarial review of the implementation found both, and this shape answers
+  them; the decided order is unchanged.
 - **An ignored shipped file stays reported.** When an ignore rule covers a shipped file, the
   install writes it, git still lists no copy, and the final check reports it, as it does without
   `--fix`.

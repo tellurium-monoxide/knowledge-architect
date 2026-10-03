@@ -5,6 +5,7 @@
 //! of an installed set is `check::agents`. The decisions are `design@core@agents-table`,
 //! `design@core@owned-namespace-check` and `design@core@declared-command`.
 
+use crate::survey::Outside;
 use std::path::{Path, PathBuf};
 
 use crate::manifest::{owned_path, Manifest};
@@ -157,25 +158,109 @@ pub(crate) fn install_into(
     Ok(())
 }
 
-/// Whether the install has anything to fix: a shipped file missing or differing, or a file of the
-/// owned namespace the shipped set does not hold.
+/// What `check --fix` repairs in the installed set: exactly what the installed-file check
+/// reports and the install would repair, and nothing else.
+#[derive(Debug, Default, PartialEq, Eq)]
+pub(crate) struct Repairs {
+    /// Shipped files missing from git's listing, or listed and differing from the shipped text
+    /// once line endings are normalised.
+    pub write: Vec<PathBuf>,
+    /// Files of the namespace that git lists, the working tree holds, and this version does not
+    /// ship.
+    pub delete: Vec<PathBuf>,
+}
+
+impl Repairs {
+    pub(crate) fn is_empty(&self) -> bool {
+        self.write.is_empty() && self.delete.is_empty()
+    }
+}
+
+/// The repairs of the installed set, judged from git's listing of the namespace and compared
+/// after normalising line endings, exactly as `check::agents` judges it.
 ///
-/// **Line endings are normalised, as the installed-file check normalises them.** `install`
-/// compares raw bytes, so on a checkout that converts line endings it would rewrite every
-/// installed file each time it runs, while the check passes. `check --fix` asks this first, so a
-/// run with nothing to fix stays a plain check.
-pub(crate) fn install_needed(root: &Path, shipped: &[(PathBuf, String)]) -> bool {
-    let differs = shipped.iter().any(|(rel, text)| {
-        std::fs::read_to_string(root.join(rel)).map_or(true, |on_disk| lf(&on_disk) != lf(text))
-    });
-    differs
-        || owned_on_disk(root)
-            .map(|owned| {
-                owned
-                    .iter()
-                    .any(|rel| !shipped.iter().any(|(s, _)| s == rel))
-            })
-            .unwrap_or(true)
+/// **A file git does not list is never deleted.** The install walks the filesystem, so it would
+/// remove an ignored file in the namespace, such as an editor's swap file, which the check never
+/// reports and git holds no copy of. **A file differing only by its line endings is never
+/// rewritten**: the check accepts it. So a `--fix` run touches only what the check reported.
+pub(crate) fn repairs(
+    root: &Path,
+    shipped: &[(PathBuf, String)],
+    installed: &[(PathBuf, Outside)],
+) -> Repairs {
+    let mut out = Repairs::default();
+    for (rel, expected) in shipped {
+        match installed
+            .iter()
+            .find(|(p, _)| p == rel)
+            .map(|(_, state)| state)
+        {
+            Some(Outside::Text(text)) if lf(text) == lf(expected) => {}
+            // A directory in the file's place is reported, and replacing it is no safe fix.
+            Some(Outside::Directory) => {}
+            // Not listed: missing, or an ignore rule covers it. An ignored copy that already holds
+            // the shipped text gains nothing from a write; the check keeps reporting it.
+            None => {
+                let current = std::fs::read_to_string(root.join(rel))
+                    .is_ok_and(|on_disk| lf(&on_disk) == lf(expected));
+                if !current {
+                    out.write.push(rel.clone());
+                }
+            }
+            Some(_) => out.write.push(rel.clone()),
+        }
+    }
+    for (rel, state) in installed {
+        if shipped.iter().any(|(s, _)| s == rel) {
+            continue;
+        }
+        if matches!(state, Outside::Text(_) | Outside::Binary) {
+            out.delete.push(rel.clone());
+        }
+    }
+    out
+}
+
+/// Apply `repairs`, recording into `out` as it goes, so a caller still knows what was written or
+/// deleted when a later step fails part-way. A symbolic link on an owned path is refused before
+/// anything is touched, as `install` refuses one.
+pub(crate) fn apply(
+    root: &Path,
+    shipped: &[(PathBuf, String)],
+    repairs: &Repairs,
+    out: &mut Installed,
+) -> Result<(), String> {
+    for rel in [
+        ".claude",
+        ".claude/skills",
+        ".claude/agents",
+        ".claude/knowledge-architect",
+    ] {
+        refuse_link(root, Path::new(rel))?;
+    }
+    for rel in repairs.write.iter().chain(&repairs.delete) {
+        for ancestor in rel.ancestors() {
+            refuse_link(root, ancestor)?;
+        }
+    }
+    let at = |rel: &Path, e: std::io::Error| format!("{}: {e}", rel.display());
+    for rel in &repairs.write {
+        let Some((_, text)) = shipped.iter().find(|(s, _)| s == rel) else {
+            continue;
+        };
+        let path = root.join(rel);
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent).map_err(|e| at(rel, e))?;
+        }
+        std::fs::write(&path, text).map_err(|e| at(rel, e))?;
+        out.written.push(rel.clone());
+    }
+    for rel in &repairs.delete {
+        std::fs::remove_file(root.join(rel)).map_err(|e| at(rel, e))?;
+        out.deleted.push(rel.clone());
+    }
+    remove_empty_owned_dirs(root).map_err(|e| at(Path::new(".claude/skills"), e))?;
+    Ok(())
 }
 
 /// An error naming the path when it is a symbolic link.
@@ -325,29 +410,56 @@ mod tests {
         ));
     }
 
-    /// The claim: the install is needed for a missing, differing or unshipped file, and not for
-    /// one that differs from the shipped text by its line endings alone, which the check accepts,
-    /// so `check --fix` leaves such a checkout untouched. Mutation checked: comparing raw bytes,
-    /// as `install` does, reports the CRLF copy as needed.
+    /// The claim: the repairs are what the installed-file check reports and nothing else: a
+    /// missing or differing shipped file, and an unshipped file git lists. A copy differing only by
+    /// line endings, and a file git does not list, such as an ignored swap file, are left alone.
+    /// Mutations checked: comparing raw bytes puts the CRLF copy in `write`; deleting from the
+    /// filesystem rather than from the listing puts the swap file in `delete`.
     #[test]
-    fn the_install_is_needed_for_a_real_difference_and_not_for_line_endings() {
-        let root = std::env::temp_dir().join(format!("ka-needed-{}", std::process::id()));
+    fn the_repairs_are_what_the_check_reports_and_nothing_else() {
+        let root = std::env::temp_dir().join(format!("ka-repairs-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&root);
-        let write = |rel: &str, text: &str| {
-            let p = root.join(rel);
-            std::fs::create_dir_all(p.parent().unwrap()).unwrap();
-            std::fs::write(p, text).unwrap();
-        };
-        let rel = ".claude/agents/knowledge-architect-a.md";
-        let shipped = vec![(PathBuf::from(rel), "one\ntwo\n".to_string())];
-        assert!(install_needed(&root, &shipped), "a missing file");
-        write(rel, "one\r\ntwo\r\n");
-        assert!(!install_needed(&root, &shipped), "line endings alone");
-        write(rel, "one\nthree\n");
-        assert!(install_needed(&root, &shipped), "a differing file");
-        write(rel, "one\ntwo\n");
-        write(".claude/agents/knowledge-architect-old.md", "unshipped");
-        assert!(install_needed(&root, &shipped), "an unshipped file");
+        std::fs::create_dir_all(root.join(".claude/agents")).unwrap();
+        std::fs::write(root.join(".claude/agents/.swap.swp"), "unsaved").unwrap();
+        let shipped = vec![
+            (
+                PathBuf::from(".claude/agents/knowledge-architect-a.md"),
+                "one\ntwo\n".to_string(),
+            ),
+            (
+                PathBuf::from(".claude/agents/knowledge-architect-b.md"),
+                "b\n".to_string(),
+            ),
+            (
+                PathBuf::from(".claude/agents/knowledge-architect-c.md"),
+                "c\n".to_string(),
+            ),
+        ];
+        let installed = vec![
+            (
+                PathBuf::from(".claude/agents/knowledge-architect-a.md"),
+                Outside::Text("one\r\ntwo\r\n".to_string()),
+            ),
+            (
+                PathBuf::from(".claude/agents/knowledge-architect-b.md"),
+                Outside::Text("edited\n".to_string()),
+            ),
+            (
+                PathBuf::from(".claude/agents/knowledge-architect-old.md"),
+                Outside::Text("unshipped".to_string()),
+            ),
+        ];
+        let found = repairs(&root, &shipped, &installed);
+        assert_eq!(
+            found,
+            Repairs {
+                write: vec![
+                    PathBuf::from(".claude/agents/knowledge-architect-b.md"),
+                    PathBuf::from(".claude/agents/knowledge-architect-c.md"),
+                ],
+                delete: vec![PathBuf::from(".claude/agents/knowledge-architect-old.md")],
+            }
+        );
         let _ = std::fs::remove_dir_all(&root);
     }
 

@@ -298,10 +298,11 @@ fn check(
 ///
 /// **No check writes; every write happens before the model the checks read is built.** The order:
 /// a manifest that holds refused declarations writes nothing, and the check reports them; the
-/// install, when it has something to fix; the writer gate of phases 1 to 3 over a model rebuilt
+/// repairs of the installed set, exactly what the installed-file check reports, judged from git's
+/// listing; the writer gate of phases 1 to 3 over a model rebuilt
 /// from the tree as the install left it, which stops the run and writes nothing more; the
-/// generated files; then the full check, whose report and exit code are the run's. The install's
-/// bytes do not depend on the model, which is why it runs before that gate: a writer whose output
+/// generated files; then the full check, whose report and exit code are the run's. The installed
+/// files' bytes do not depend on the model, which is why they are repaired before that gate: a writer whose output
 /// is read off the model never writes over an incomplete one.
 ///
 /// Each file written or removed is listed before the report, so a session sees what to commit.
@@ -325,14 +326,19 @@ fn fix_then_check(
         })
     };
 
-    // The install runs only when it has something to fix: it compares raw bytes, and the check
-    // normalises line endings, so an unconditional install would rewrite every installed file of
-    // a checkout that converts them, on every run.
+    // The installed set is repaired from git's listing of the namespace, judged as the check
+    // judges it, so `--fix` writes or deletes only what the check reports: never an ignored file
+    // in the namespace, which the install's filesystem walk would delete, and never a copy that
+    // differs only by its line endings.
     if manifest.serves_claude() {
-        let shipped = crate::agents::shipped(manifest);
-        if crate::agents::install_needed(manifest.root(), &shipped) {
+        let model = crate::Model::build(manifest, checker).map_err(|e| e.to_string())?;
+        let gathered = Gathered::over(manifest, &model)?;
+        let inputs = gathered.inputs();
+        let repairs = crate::agents::repairs(manifest.root(), inputs.shipped, inputs.installed);
+        if !repairs.is_empty() {
             let mut done = crate::agents::Installed::default();
-            let outcome = crate::agents::install_into(manifest.root(), &shipped, &mut done);
+            let outcome =
+                crate::agents::apply(manifest.root(), inputs.shipped, &repairs, &mut done);
             for rel in &done.written {
                 outln!("fixed: wrote {} (installed)", rel.display());
             }
