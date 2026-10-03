@@ -28,8 +28,9 @@ are reading. If a check seems to need one, say so as a finding rather than worki
 ```
 
 Your checks are `references` and `registers`; a run that stops before its last phase ran
-neither, and says so. The last three rows of the table below are found in an earlier phase, so when
-they appear, references and registers were not judged. **Run the checker in a worktree of your own,
+neither, and says so. Three rows of the table below are findings of phase 3, which builds the
+definitions: `is written` … `and defines nothing`, `heading` … `home carries no slug`, and
+`is also defined at`. When any of them appears, references and registers were not judged. **Run the checker in a worktree of your own,
 never in the live tree**, as the dispatcher's brief says, with any build output inside it.
 
 The command prints `checked:` naming what it ran, a `references:` line counting the entities
