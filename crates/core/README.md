@@ -95,14 +95,15 @@ before that gate when they needed it, since their bytes do not depend on the mod
 
 **`check --fix` applies every fix the checker can make safely, then runs the check.** A fix is
 safe when its bytes are determined by the tree and the pinned version, and it writes or removes
-only files the tool generates or installs. Two pass: the install of the agent files, run only when
-an installed file is missing, differs or is no longer shipped, and every stale or missing generated
+only files the tool generates or installs. Two pass: the agent files the check reports missing,
+differing or no longer shipped, judged from git's listing as the check judges them, so a file git
+does not list, such as an ignored swap file, is never removed; and every stale or missing generated
 file. Each file written or removed is listed on a line `fixed: wrote <path> (<kind>)` or
 `fixed: removed <path> (installed)`, before the report. Every other finding's repair is a choice,
 or touches git or a hand-written file, and stays the reader's.
 
-- The order: a manifest holding a refused declaration writes nothing; then the install; then the
-  first three phases, over the tree as the install left it, which stop the run and write nothing
+- The order: a manifest holding a refused declaration writes nothing; then the agent files; then
+  the first three phases, over the tree as the install left it, which stop the run and write nothing
   more; then the generated files; then the full check, whose report and exit code are the run's.
   With nothing to fix, the output is a plain `check`'s.
 - **An upgrade that removes a shipped file takes two runs.** The install deletes the file, git

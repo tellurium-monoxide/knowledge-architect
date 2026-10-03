@@ -21,6 +21,13 @@ retrospective of one thaum session, written on 2026-10-02 outside this repositor
 once, with two reviewers of one review round. Whether it recurs, and whether the default
 behaviour is systematically wrong, is not established.
 
+A second instance, in this repository: the adversarial reviewer of the pre-release branch, which
+added `check --fix`, queued a batch of mutation runs and stopped with its background work still
+running. The harness reported it as "waiting on its own background work" twice, and its findings,
+one of them critical, arrived about three minutes after the last of the other three reviewers had
+reported, by the run durations the harness gave: 178 to 242 seconds for those three, 408 for it.
+The dispatcher had committed the other reviews' repairs in the meantime.
+
 ### Why it matters
 
 A reviewer that holds its findings for many minutes delays every repair, and a dispatcher that does
