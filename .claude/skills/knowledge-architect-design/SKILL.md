@@ -544,8 +544,9 @@ choices whose option space genuinely is closed and consequence-free.
    depended on, the designs as they were presented to the owner, the
    premortem and the owner's rulings on its tripwires live in this
    conversation and in the harness's transcript of it. The planning
-   skill assembles them from the transcript into a spec or a milestone
-   document before the session ends, and owns that document's shape.
+   skill assembles them from the transcript into a spec, or a milestone
+   document and one spec per step, before the session ends, and owns
+   their shape.
    Each round's delta is the draft that assembly reads, so a delta is
    written whenever a round changes a state or a note. A plan document
    written from memory in a later session is written from a summary,

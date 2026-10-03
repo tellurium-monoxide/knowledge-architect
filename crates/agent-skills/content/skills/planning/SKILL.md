@@ -65,8 +65,8 @@ converged discussion to plan from. This skill does not apply to it.
 | several PRs, with design sessions between them | a milestone |
 
 Propose which one, with the reason, and let the owner rule. A spec whose work turns out to need
-several PRs becomes a milestone: the spec becomes the milestone document, and the step specs are
-cut from its implementation sequence.
+several PRs becomes a milestone: at that moment the spec is split into the milestone document and
+one spec per step, by the rule of §4.
 
 **Work that is known but not designed is not a plan document.** It is a `todo` issue, or a
 `deferred` one if an event gates it (the default kinds; a project that declares its own kinds uses
@@ -167,13 +167,28 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 | Implementation sequence | the steps, §5. Concise: what each step builds and what it fails alone on |
 | Order rationale | one sentence per pair of adjacent steps |
 | Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, with the thread it bears on, until the owner rules |
-| Harvest | what lands where and when: one row per step, and one for the document itself |
+| Harvest | what lands where and when. In a spec, its rows; in a milestone, each step's row in that step's spec, and the row of the milestone document itself in it |
 | Later consequences | what each later piece of work adds or replaces, so a later reader knows what was deliberately left |
 
-**The milestone document holds the same sections** for the whole milestone, and its implementation
-sequence lists the steps, each linked to its spec. **A step's spec holds** the step's entry (§5),
-and, when the step had a design session of its own, that session's design in the sections above,
-which are not ordered against the entry's.
+**A milestone's design is split across its documents from the start, by lifetime.** The milestone
+document and one spec per step are written together, in the session that converged. A milestone
+document that held every step's design would be read whole at every step's grounding, and grows
+with every step the milestone has.
+
+- **A step's spec leaves when its step lands, so it holds what only that step builds**: the step's
+  entry (§5), then, in the sections above, the items of its own threads and the arguments only
+  they use, its decided design, its mapping tables, its losing alternatives, the acceptance
+  criteria it judges and its harvest row. These sections are not ordered against the entry's.
+- **The milestone document holds what crosses steps or outlives one**: the status, how a step is
+  worked, the names, what the work is, the criteria, every item that more than one step's
+  document cites, the premortem, the implementation sequence with each step linked to its spec,
+  the order rationale, the defaults awaiting the owner, the harvest row of the document itself and
+  the later consequences. A section whose content lives in the step specs says so in one line.
+- **An item cited from more than one step's document lives in the milestone document.** A step's
+  spec that held it would dangle those citations when it leaves; the check reports any that remain
+  at that deletion.
+- A design session held at a step's audit writes its design into that step's spec, and what it
+  decides for later steps into theirs.
 
 **Content rules.**
 
@@ -292,21 +307,27 @@ finds it there.
    passage of a specification the entry did not read, a name the entry uses that the code does not
    have, a consequence the entry did not see. Sort each gap:
    - **Applied in place.** The gap has one answer the document's decisions already imply, or is a
-     choice among shapes the document rules out all but one of. Write the answer into the step's
-     spec under a heading saying the audit's findings are applied as the step's binding shape, each
-     finding stating the gap, the answer and the decision it follows from. Commit the amended spec
-     alone, with a subject of the shape `The <step> design audit, applied in place: <n> gaps, none
-     reopening a discussion`. Earlier audits are found with `git log --grep='design audit'`.
+     choice among shapes the document rules out all but one of. Apply the answer in place, in the
+     milestone document or the step's spec, wherever the shape it changes is written. Commit the
+     amended documents alone, with a subject of the shape `The <step> design audit, applied in
+     place: <n> gaps, none reopening a discussion`, and a message listing each finding: the gap, the
+     answer and the decision it follows from. Earlier audits are found with
+     `git log --grep='design audit'`.
      **An answer that widens or narrows a ruling of the owner, or adds an obligation to one, is a
-     scope change even when it is the one answer the document implies.** It is written into the
-     step's spec with the others, and also listed there as a default awaiting the owner, who rules
+     scope change even when it is the one answer the document implies.** It is applied with the
+     others, and also listed in the milestone document as a default awaiting the owner, who rules
      on it at the audit; the implementation of that point does not start before the ruling.
+   - **A change to the steps.** An audit that finds the work needs another step, or a step split
+     or reordered, writes each new step's spec with its harvest row, adds the step to the
+     implementation sequence and the order rationale, and moves into its spec the design it takes
+     from other steps, so that each shape keeps one home. It changes a sequence the owner ruled on, so it is a scope
+     change, listed and ruled as above.
    - **Load-bearing.** The gap is material, or is a choice between two shapes neither of which the
      document rules out, or needs a ruling the document marks as the owner's. Record it in the
      step's spec as open at the audit, with the discriminating fact, stop the step, and open a
      design session with the owner under `knowledge-architect-design`. Its
-     converged design goes into the step's spec, in the sections of §4, and owes §8's reviews. The
-     step resumes from it.
+     converged design goes into the milestone's documents by the rule of §4, and owes §8's
+     reviews. The step resumes from it.
 3. **Claims, tests, implementation, gates, commit**, per the project's development procedure. The
    commit names how each claim's test was shown to fail against a wrong implementation, and says
    of any claim whose test cannot yet do so why not.
@@ -314,7 +335,7 @@ finds it there.
    or folded where that skill says. A finding not repaired becomes an issue entry.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this step,
    by its identifier in plain text (§6).
-6. **The harvest**, per the step's rows in the harvest section: the decisions and the losing
+6. **The harvest**, per the harvest row of the step's spec: the decisions and the losing
    alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
    under `knowledge-architect-issue-tracking`. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
@@ -381,7 +402,7 @@ it by its kind**, `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>
 resolves against the commit's parent. A milestone's step spec leaves when its step lands; the
 milestone document leaves with the last step. Before deleting:
 
-- every row of the harvest section is done;
+- every harvest row of the document is done;
 - every acceptance criterion has been reported on, and has become a tripwire or left (§6);
 - what the document established is in the design homes and the registers; what stayed a guess
   leaves with it;
