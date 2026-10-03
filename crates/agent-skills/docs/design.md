@@ -449,22 +449,24 @@ that left, and each landing commit says where its results live; releases are in 
 progress file would be a third document about the same work, with a lifetime of its own, against
 the one place for what is open of `goal@knowledge-architect@structure-and-workflow-work-together`.
 
-### A transcript reviewer checks a record of a discussion against the owner's words `##transcript-reviewer-agent`
+### A transcript reviewer checks that what a work's sessions established has a durable outcome `##transcript-reviewer-agent`
 
-The installed agent `knowledge-architect-transcript-conformity-reviewer` reads the transcript of a
-discussion and checks that a document records the owner's decisions as made: each state, the scope
-of each decision, the verbatim quotations, and nothing the owner said left out. The planning skill dispatches it on every plan document it assembles
-from a discussion's transcript, and the installed review skill lists it as the
-axis for any document that records the decisions of such a discussion. It
-is an agent, not a line in a skill, because its standard and its extraction rule are fixed, and the
-rule is learned from a failure: a filter on text substrings once dropped one of the owner's
-messages. It serves `goal@knowledge-architect@the-owner-decides`: in the review of the change that
-installed the first skills, a reviewer briefed with this standard was the one of six to find a
-decision recorded narrower than the owner's approval; two others found the same head contradicting
-the shipped text. It sorts what a document added into a scope change, which goes to the owner, and
-an agent's addition, detail inside a ruling, which is kept and listed as the agent's until the owner
-rules. Reported alike, both read as defects, and the author undid a detail, which the owner then ruled
-restored.
+The installed agent `knowledge-architect-transcript-reviewer` reads the transcripts of the sessions
+that produced a piece of work, named as a commit range, and checks two things. First, that each
+decision of the owner, each argument that decided something, each finding of a reviewer and each
+thing met outside the task has a durable outcome: recorded in its home, acted on by a repair or an
+issue, or judged to need nothing with the reason written where the owner reads it. What lives only
+in a conversation is lost when the session ends or is compacted. Second, that no ruling of the
+owner is recorded in a state or a scope the owner did not give. Detail added inside a ruling, and a
+wording better than the one the owner was shown, are not findings: the owner observed over real
+sessions that reporting them buried the findings that mattered. The reviewer assumes no shape of
+the work: a plan document is one home among the others.
+
+It is an agent, not a line in a skill, because its standard and its extraction rule are fixed, and
+the rule is learned from a failure: a filter on text substrings once dropped one of the owner's
+messages. It serves `goal@knowledge-architect@the-owner-decides`. The dispatcher acts on a finding
+that something has no durable outcome without waiting for the owner, and reports what it did; a
+misstated ruling goes to the owner.
 
 ### A plan document records the whole discussion `##spec-records-the-exchange`
 
@@ -493,11 +495,12 @@ milestone's README and its step specs, which share one namespace, per
 would cost a name for each of dozens of statements, for nothing. The numbers are assigned at
 assembly, and the discussion mints none.
 
-### Where one argument ends is decided at assembly, and the transcript reviewer checks it `##argument-segmentation`
+### Where one argument ends is decided at assembly `##argument-segmentation`
 
-The boundaries of the arguments are a judgement, made once, at assembly, and checked by the
-transcript reviewer against the same transcript. The rival, arguments
-marked in each round, makes the extraction exact at a cost paid every round.
+The boundaries of the arguments are a judgement, made once, at assembly. The transcript reviewer
+checks that no argument of the transcript was lost, and judges no boundary: a boundary drawn
+differently loses nothing. The rival, arguments marked in each round, makes the extraction exact at
+a cost paid every round.
 
 ### A leaving plan's citations are removed, and each citing plan gets a question `##retiring-plan-opens-issue`
 
@@ -523,6 +526,15 @@ review reads it. A re-entry point that depends on whether a change looked relate
 one that a change touching the guarded decision indirectly skips: the reviewer reads every entry of
 every home, not the subset the diff seems to concern. This serves
 `goal@knowledge-architect@documentation-stays-consistent`.
+
+### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
+
+The installed review skill sends the transcript reviewer a last time before every merge to the main
+branch, after every other axis has run and its repairs are committed, over the whole branch and the
+transcripts of every session that worked on it. The findings of the other axes reach the session as
+messages of its transcript, so only a reviewer reading it after their repairs can tell whether each
+was acted on durably. Its own repairs land as a last commit that no axis reviews again, so the
+review ends.
 
 ## The configuration a project holds
 

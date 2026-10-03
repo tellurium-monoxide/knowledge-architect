@@ -33,6 +33,9 @@ subsection is omitted.
 - `agent-skills`, major: the primer names the plans directory, docs/plans/, and the roadmap. Remove
   the row naming the plans directory from the project's own rows of the knowledge table, in its root
   `CLAUDE.md`.
+- `agent-skills`, major: the agent `knowledge-architect-transcript-conformity-reviewer` is renamed
+  `knowledge-architect-transcript-reviewer`. Rename it wherever the project's own skills, agents
+  or `CLAUDE.md` files name it.
 
 ### New features
 
@@ -62,7 +65,8 @@ subsection is omitted.
 - `agent-skills`, patch: a design audit lists an answer that widens or narrows a ruling of the owner
   as a default awaiting the owner, ruled at the audit before its point is implemented.
 - `agent-skills`, patch: a step's harvest is reviewed before the merge, on the decision-record,
-  routing and standing-state axes, and on transcript conformity where the transcript is available.
+  routing and standing-state axes, and by the transcript reviewer where the transcript is
+  available.
 - `agent-skills`, patch: a review repair that would leave an earlier commit of the branch failing
   the project's checks is folded into that commit by a history edit, and the review's record says
   so.
@@ -77,6 +81,10 @@ subsection is omitted.
   the milestone document keeping what crosses steps. A step's design audit edits those documents in
   place, listing its findings in the commit message, and a new step found at an audit gets a spec
   of its own once the owner rules on it.
+- `agent-skills`, patch: the transcript reviewer checks that everything a work's sessions
+  established has a durable outcome, a reviewer's finding acted on included, and that no ruling of
+  the owner is misstated. It no longer reports detail added inside a ruling. It runs once more,
+  alone and last, before every merge to the main branch.
 - `agent-skills`, patch: the commit that deletes a plan document cites it by its kind. A citation of
   it left in another plan is removed, and a `question` issue is opened on the citing plan.
 

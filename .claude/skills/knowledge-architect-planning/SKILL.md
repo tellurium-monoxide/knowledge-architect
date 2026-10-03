@@ -224,7 +224,7 @@ round, and its relations. It is assembled from the transcript, not from memory. 
 subagent that reads every transcript file the discussion spans, a resumed session included, and
 extracts the delta tables, the owner's messages verbatim and the arguments; the design skill's
 per-round delta is the draft it reads. Where one argument ends and the next begins is decided at
-assembly, and the transcript reviewer of §8 checks it with the rest. The status section names the
+assembly, and the transcript reviewer of §8 checks that no argument was lost. The status section names the
 transcript files read, so that a reviewer reads the same ones. Where the harness keeps no
 transcript, assemble from the conversation, and say so in the commit that adds the document.
 
@@ -340,9 +340,9 @@ finds it there.
    under `knowledge-architect-issue-tracking`. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
    linked from its README. **The harvest is reviewed before the merge**, per
-   `knowledge-architect-review`, on the decision-record, routing and standing-state axes, and on
-   transcript conformity where the discussion's transcript is available: it writes the record those
-   axes judge, so the review of point 4 cannot see it.
+   `knowledge-architect-review`, on the decision-record, routing and standing-state axes, and by
+   the transcript reviewer where the transcripts are available: it writes the record those axes
+   judge, so the review of point 4 cannot see it.
 7. **The step's spec leaves** in the commit that completes its harvest, as in §9. What crosses steps stays in the
    milestone document, amended in place where the landing changed it.
 
@@ -361,9 +361,11 @@ skill lists, the blind brief included:
   it did not see. It also applies the readiness checks below.
 - `knowledge-architect-code-claims-reviewer` verifies every statement the document makes about the
   code as it stands, and reports each as confirmed, wrong or imprecise, with the evidence.
-- `knowledge-architect-transcript-conformity-reviewer` reads the discussion's transcript and checks
-  that the document records what was decided, no wider and no narrower. Dispatch it on every
-  assembled document, and name in its brief the transcript files the assembly read. When no
+- `knowledge-architect-transcript-reviewer` reads the discussion's transcripts and checks that
+  everything the discussion established that must outlive it is in the document or has another
+  durable outcome, and that no ruling of the owner is recorded wider, narrower or in another state
+  than the owner gave it. Dispatch it on every assembled document, with the commit that adds the
+  document as its range, and name in its brief the transcript files the assembly read. When no
   transcript exists, say so, and why, in the commit that adds the document.
 
 **What their findings become.** Check each finding against the tree, or against the transcript,
@@ -373,9 +375,8 @@ rules on each at the first audit, or at once if present, and a ruled default lea
 that is a gap with one answer is applied in place. A finding that is wrong is dropped, with the
 reproduction that showed it wrong kept in the commit message. A scope change, a clause that widens or narrows
 a ruling or adds an obligation to it, is put to the owner, listed under the defaults awaiting the
-owner. An agent's addition, detail the author added inside the scope of an owner's ruling, is kept
-and listed in the commit message as the agent's, so the owner can contest it; it is removed only on
-the owner's word.
+owner. Detail the author added inside the scope of a ruling, and a wording better than the one the
+owner was shown, are no findings.
 
 **The readiness checks**, applied by the author before dispatch and by the cold implementer after.
 This list is their one home; the reviewer reads it here.
