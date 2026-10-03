@@ -6,7 +6,7 @@ class is `design@knowledge-architect@changelog-entries`. Inside a subsection, en
 surface, in the order `checks`, `cli`, `manifest`, `library`, `agent-skills`, `gates`; an empty
 subsection is omitted.
 
-## Next release
+## 0.2.0
 
 ### Migration
 
