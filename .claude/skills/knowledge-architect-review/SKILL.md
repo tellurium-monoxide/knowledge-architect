@@ -19,7 +19,7 @@ Not covered here: **being** any of the reviewers (the record reviewers
 `knowledge-architect-routing-reviewer`, `knowledge-architect-decision-record-reviewer` and
 `knowledge-architect-standing-state-reviewer`; the plan-document reviewers
 `knowledge-architect-cold-implementer-reviewer` and `knowledge-architect-code-claims-reviewer`;
-and `knowledge-architect-transcript-conformity-reviewer`, all dispatched rather than read), and
+and `knowledge-architect-transcript-reviewer`, all dispatched rather than read), and
 **recording** what a review changes (`knowledge-architect-decision-recording`,
 `knowledge-architect-issue-tracking`).
 
@@ -35,13 +35,20 @@ and `knowledge-architect-transcript-conformity-reviewer`, all dispatched rather 
 | conformance | `knowledge-architect-standing-state-reviewer` | before every merge to the main branch, since it is the standing re-entry point of every tripwire |
 | cold implementer | `knowledge-architect-cold-implementer-reviewer`: can a session that did not see the discussion act on the plan document | a spec or a milestone was written under `knowledge-architect-planning`, or a decided shape in one revised; that skill names the moment |
 | code claims | `knowledge-architect-code-claims-reviewer`: is every statement the plan document makes about existing code true of the tree | the same moment |
-| transcript conformity | `knowledge-architect-transcript-conformity-reviewer`: does a document record the owner's decisions as the owner made them | a document records the decisions of a discussion whose transcript is available: a plan document, a harvest, a record of a design session |
+| transcript | `knowledge-architect-transcript-reviewer`: has everything the work's sessions established that must outlive them a durable outcome, and is no ruling of the owner misstated | the transcripts of the sessions that produced the work are available; and once more before every merge to the main branch, alone and last (below) |
 
 Each of these is conditional on the work. In other skills, more axes are added to this list, when
 the work has properties these axes do not reach. **An axis named by an agent is dispatched as that
 agent. An axis with no agent is dispatched as a fresh general-purpose subagent**, briefed with the
 axis's question as this table states it, the commit range, and the files that carry the standard. **An axis that applies and was not run is said,
 with the reason, in the commit that records the review.**
+
+**Last, before every merge to the main branch, the transcript reviewer runs once more, alone**:
+after every other axis has run and its repairs are committed. Its range is the whole branch,
+`<main branch>..<head>`, and its brief names the transcripts of every session that worked on the
+branch. It is the one axis that can see whether the findings of the others were acted on, since
+their reports reach the session as messages of its transcript. Its repairs land as a last commit,
+which no axis reviews again.
 
 ## 2. The invariants
 
@@ -91,9 +98,11 @@ and `git worktree remove <path>` once the review and the repairs are done. **The
 - issues, one file each in the affected anchor's issue directory
   (`knowledge-architect-issue-tracking`).
 
-A transcript reviewer's **agent's addition**, detail the author added inside the scope of an
-owner's ruling, is neither: it is kept, and the record of the review lists it as the agent's, so the
-owner can contest it. It is removed only on the owner's word.
+A transcript reviewer's finding that something **has no durable outcome** is acted on by the
+dispatcher without waiting for the owner: it is recorded in its home, repaired, opened as an issue,
+or judged to need nothing, with the reason. Each outcome is reported to the owner, in the record of
+the review and at the end of the turn. A ruling the reviewer finds misstated is the owner's, and is
+put to the owner.
 
 **Where the branch's commits reach the main branch as they are** (a fast-forward, or a rebase merge,
 which keeps their trees and messages and may give them new SHAs):

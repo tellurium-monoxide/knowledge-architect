@@ -62,3 +62,10 @@ lost to `design@agent-skills@expectation-set-bounds-scope`. `live`. It would kee
 every skill's text and out of the retrospective, at the cost of a change to the install layout for
 a file one skill reads. It wins if a second installed activity ever needs the sets, which
 `issue@agent-skills@expectation-sets-for-the-installed-skills` may bring about.
+
+**A transcript reviewer that reports every clause added inside a ruling, as the agent's addition
+for the owner to contest** — lost to `design@agent-skills@transcript-reviewer-agent`. `live`. It
+protected the owner's rulings down to their wording, at the cost of a list of additions in every
+review. The owner observed over real sessions that the list buried what mattered, a decision or a
+finding that no document or issue had kept, and ruled that a detail or a better wording inside a
+ruling needs no report.
