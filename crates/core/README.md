@@ -313,8 +313,10 @@ are findings. So is a milestone name outside the id grammar, `[a-z0-9]+(-[a-z0-9
 A tree that breaks this layout stops the run at phase 2, except a home's missing `README.md` or
 `index.md`, which is a finding of the last phase as in every file register. A misplaced or
 duplicated item stops it at phase 3, and a missing section is a finding of the last phase. The arguments are
-`design@core@plan-register`, `design@core@plans-split-dirs`, `design@core@plan-document-kinds`
-and `design@core@a-plan-name-reads-as-nothing-else`.
+`design@core@plan-register`, `design@core@plans-split-dirs`, `design@core@plan-document-kinds`,
+`design@core@a-plan-name-reads-as-nothing-else`, `design@core@spec-file-owns-its-items`,
+`design@core@step-spec-sections`, `design@core@plan-items-by-section` and
+`design@core@plan-item-scope`.
 
 ## Commit messages
 

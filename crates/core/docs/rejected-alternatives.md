@@ -423,5 +423,5 @@ component would owe a plans home that holds nothing.
 name the exact thread of another plan it depends on. It loses because whole-document citations
 already carry the dependency while few plans are open at once, and because item citations across
 plans would force a design revisit of every citing plan, item by item, at the moment a plan is
-retired, which the owner judged the wrong moment for it.
+retired, a moment the owner judged might not be the best for it.
 

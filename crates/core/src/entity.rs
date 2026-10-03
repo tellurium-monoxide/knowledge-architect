@@ -9,15 +9,15 @@
 //! declares the rest, so the kind set is data rather than an enum — `path@core@src/manifest.rs`
 //! owns what a register is, and this module owns what naming one means.
 //!
-//! **An anchor is a named directory that carries registers.** A component carries every
+//! **An anchor is a named directory, or a spec file, that carries registers.** A component carries every
 //! component-scoped register with its homes under `docs/`; a location carries the subset it
 //! declares, with its homes directly under its own path. Both are the same shape, which is why
-//! `Anchor` holds its register list and its home base as data. Two kinds of location are
-//! constructed by the tool rather than declared: `plans`, at the plans directory, and one anchor
-//! per milestone directory, read off the tree.
+//! `Anchor` holds its register list and its home base as data. Three kinds of location are
+//! constructed by the tool rather than declared: `plans`, at the plans directory, one anchor per
+//! milestone directory and one per spec file, both read off the tree.
 //!
 //! **The `path` kind is resolved against the tree, not the table.** Its ids are paths, its
-//! anchors are the same anchors but the milestones, plus two reserved words, and the check that
+//! anchors are the same anchors but the plan anchors, plus two reserved words, and the check that
 //! resolves it needs the survey. What this module gives it is the candidate rule, the
 //! segmentation and the anchor lookup, so one grammar has one reader.
 

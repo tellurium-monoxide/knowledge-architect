@@ -187,8 +187,8 @@ about plan documents.
 
 ## Guarding `design@core@plan-item-scope`: a plan's prose names another plan's item `##item-of-another-plan-named`
 
-An item is cited from inside its own plan only, on the premise that a whole-document citation
-carries every dependency between plans that matters while few plans are open at once.
+An item is cited from inside its own plan only. The decision rests on the premise its head
+states: a whole-document citation carries every dependency between plans that matters.
 
 **Fires when:** a plan document's prose names an item of another plan document, by its id or by
 its statement, because no citation of it can be written.
