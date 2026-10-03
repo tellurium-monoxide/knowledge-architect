@@ -18,7 +18,7 @@ CHANGELOG.md has a structure a parser can read: one section per released version
 `Next release` section; inside each, the subsections Migration, New features and Workflow; each
 entry of the shape ``- `<surface>`, <class>: <what>``, with a surface from a closed list, a class
 from patch, minor and major, and entries sorted by surface as the preamble states. Nothing parses
-it. The one released section, `0.1.0`, predates this shape: it has no subsections and no classes,
+it. The first released section, `0.1.0`, predates this shape, and is the only one that does: it has no subsections and no classes,
 and adding a class to a released entry would change its content, which the decision forbids. A mechanical check
 could assert, on every commit rather than at the release:
 
