@@ -29,7 +29,11 @@ Each edit to a register costs a second command and a second run of the check, an
 forgets `index` reads a failed check before it reads its own work. The flag must not let a writer
 write over an incomplete model: `index` refuses when an earlier phase holds findings, and a flag
 that wrote anyway would fire `tripwire@core@phases-gate-the-report-two` against
-`design@core@phases-gate-the-report`.
+`design@core@phases-gate-the-report`. The flag also reverses a clause of
+`design@core@model-then-checks`: "Nothing writes to the tree while checking". And it meets the
+live rejected alternative "`cargo klarch index` prints the diff it would apply, and `--write`
+applies it", which lost to `design@core@generated-files-are-pure` on a survey of fmt, gofmt and
+prettier.
 
 ### What would close it
 
@@ -37,5 +41,7 @@ An optional flag of `check`, whose name is a decision of its own, that writes ev
 when phases 1 to 3 hold no finding, as `index` does, and then judges the last phase against the
 written tree. A run with earlier findings writes nothing, as `index` does today. Tests that the
 flag writes a stale index and passes, that it writes nothing over a phase-2 finding, and that an
-extension's generated file is written too. The CLI section of `path@core@README.md` names it, and a
-design head records it.
+extension's generated file is written too. The CLI section of `path@core@README.md` names it. The
+closing change rewrites in place the "Nothing writes to the tree while checking" paragraph of
+`design@core@model-then-checks`, and its argument says whether the reason the `--write`
+alternative lost covers a writer folded into the check, or only a check folded into the writer.

@@ -88,8 +88,10 @@ subsection is omitted.
 - `agent-skills`, patch: a step's design audit lists the tripwires and the `deferred` issues the
   step's planned code would fire, with `tripwires` and `issues --kind deferred`, so the owner rules
   on them before the code is written.
-- `agent-skills`, patch: a load-bearing gap at an audit that is a choice among shapes stated in full
-  is ruled in one round with a default, several gaps in one question; a harvest names in its commit
+- `agent-skills`, patch: a load-bearing gap at an audit that is a choice among shapes stated in
+  full, where the design skill's conditions for its one-round path hold, is ruled in one round with
+  a default, several gaps in one question, and written into the step's documents; a gap that defeats
+  what an approved thread rests on still opens a full design session. A harvest names in its commit
   each item of its row that the recording tests exclude.
 - `agent-skills`, patch: the commit that deletes a plan document cites it by its kind. A citation of
   it left in another plan is removed, and a `question` issue is opened on the citing plan.
