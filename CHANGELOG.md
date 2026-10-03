@@ -24,14 +24,18 @@ subsection is omitted.
 - `checks`, minor: a `path@*@<path>` reference that only a declared location carries is reported,
   as the design of the generic form always said; anchor it at the location instead.
 - `checks`, major: an item of a plan cited from outside it is refused; cite the plan whole. A
-  backticked span whose head, before its first at sign, is thread, argument, criterion or
-  acceptance is now a reference candidate.
+  backticked span whose head, before its first at sign, is `spec`, `milestone`, `thread`,
+  `argument`, `criterion`, `acceptance`, `plans`, or the id of a spec or a milestone, is now a
+  reference candidate.
 - `manifest`, major: a declared anchor named `plans` and a `[registers.spec]` or
   `[registers.milestone]` table are refused, and so is `spec` or `milestone` in a location's
   `registers` list.
 - `manifest`, major: a `[registers.thread]`, `[registers.argument]`, `[registers.criterion]` or
   `[registers.acceptance]` table is refused, and so is any of those names in a location's
   `registers` list. Rename a register of the project that carries one of them.
+- `manifest`, major: a location declared at docs/plans/, and a component register whose `dir` is
+  `plans`, are refused, because the tool constructs the anchor `plans` there. Move the location
+  elsewhere, or give the register another `dir`.
 - `library`, major: `cli::Command::Check` takes its arguments, `Command::Check(CheckArgs)`. Code
   that builds or matches the variant by name writes `Command::Check(CheckArgs { fix: false })`, or
   matches `Command::Check(_)`.
@@ -103,6 +107,9 @@ subsection is omitted.
   a default, several gaps in one question, and written into the step's documents; a gap that defeats
   what an approved thread rests on still opens a full design session. A harvest names in its commit
   each item of its row that the recording tests exclude.
+- `agent-skills`, patch: the setup skill creates docs/plans/, with its `README.md`, specs/ and
+  milestones/, when a project adopts the workflow, and no longer asks the owner for the plans
+  directory's path.
 - `agent-skills`, patch: the setup skill proposes, for a crate the project publishes, a short
   `CRATES-IO.md` as its crates.io page, named by `readme`, while its `README.md` stays
   repository-facing.
