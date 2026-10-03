@@ -325,11 +325,10 @@ mod tests {
         ));
     }
 
-    /// The claim: an install writes what is missing or differs, removes an unshipped file of the
-    /// namespace with its emptied skill directory, and touches nothing outside the namespace.
     /// The claim: the install is needed for a missing, differing or unshipped file, and not for
-    /// one that differs from the shipped text by its line endings alone, which the check accepts.
-    /// Mutation checked: comparing raw bytes, as `install` does, reports the CRLF copy as needed.
+    /// one that differs from the shipped text by its line endings alone, which the check accepts,
+    /// so `check --fix` leaves such a checkout untouched. Mutation checked: comparing raw bytes,
+    /// as `install` does, reports the CRLF copy as needed.
     #[test]
     fn the_install_is_needed_for_a_real_difference_and_not_for_line_endings() {
         let root = std::env::temp_dir().join(format!("ka-needed-{}", std::process::id()));
@@ -352,6 +351,8 @@ mod tests {
         let _ = std::fs::remove_dir_all(&root);
     }
 
+    /// The claim: an install writes what is missing or differs, removes an unshipped file of the
+    /// namespace with its emptied skill directory, and touches nothing outside the namespace.
     #[test]
     fn an_install_writes_the_shipped_set_and_removes_the_rest_of_the_namespace() {
         let root = std::env::temp_dir().join(format!("ka-install-{}", std::process::id()));

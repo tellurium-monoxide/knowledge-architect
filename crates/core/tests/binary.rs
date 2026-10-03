@@ -2334,7 +2334,7 @@ fn check_fix_rewrites_a_stale_index_and_the_run_passes() {
     assert!(index.contains("A retitled issue"), "{index}");
 }
 
-/// The claim (P1): a finding of phases 1 to 3 stops a `--fix` run before any generated file is
+/// The claim: a finding of phases 1 to 3 stops a `--fix` run before any generated file is
 /// written, so no writer writes over an incomplete model. Mutation checked: removing the gate's
 /// stop writes the index over the incomplete model.
 #[test]

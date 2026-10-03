@@ -214,6 +214,41 @@ impl Prepared for ListingPrepared {
     }
 }
 
+/// The same generated file, from an extension that cannot prepare for the check.
+#[derive(Default)]
+struct ListingThenFails;
+
+impl Extension for ListingThenFails {
+    fn tables(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn resolve(&mut self, manifest: &Manifest) -> Resolution {
+        Listing.resolve(manifest)
+    }
+
+    fn checks(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn dump(&self, _: &Model) -> Vec<DumpRow> {
+        Vec::new()
+    }
+
+    fn prepare(
+        &mut self,
+        _: &Manifest,
+        _: &Model,
+        _: Tree<'_>,
+        purpose: Purpose,
+    ) -> Result<Box<dyn Prepared>, String> {
+        match purpose {
+            Purpose::Check => Err("this extension cannot prepare for the check".into()),
+            _ => Ok(Box::new(ListingPrepared)),
+        }
+    }
+}
+
 /// Copy `from` into `to`, recursively.
 fn copy_tree(from: &std::path::Path, to: &std::path::Path) {
     std::fs::create_dir_all(to).expect("the destination");
@@ -239,7 +274,7 @@ fn git(dir: &std::path::Path, args: &[&str]) {
     assert!(status.success(), "git {args:?}");
 }
 
-/// The claim (P2 of the pre-release spec): `check --fix` writes an extension's generated file,
+/// The claim: `check --fix` writes an extension's generated file,
 /// prepared for the index, and the check that follows, prepared for the check, finds it current.
 /// Mutation checked: leaving the extensions out of the generated list leaves the file missing,
 /// and the run fails.
@@ -277,6 +312,35 @@ fn check_fix_writes_an_extensions_generated_file_and_the_run_passes() {
     assert_eq!(
         check(false, &mut extensions),
         std::process::ExitCode::SUCCESS
+    );
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+/// The claim: once `check --fix` has written a file, a final check that cannot run exits 1, not
+/// 2, since 2 promises a caller an untouched tree. Mutation checked: passing the final check's
+/// error through makes `cli::run` return it, which a binary exits 2 on.
+#[test]
+fn check_fix_after_a_write_never_reports_could_not_run() {
+    let root = std::env::temp_dir().join(format!("ka-fix-unpreparable-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&root);
+    copy_tree(
+        &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/projects/dirhome"),
+        &root,
+    );
+    git(&root, &["init", "-q"]);
+    git(&root, &["add", "-A"]);
+    let manifest = Manifest::load(&root).expect("the copy's manifest");
+    let mut extensions: Vec<Box<dyn Extension>> = vec![Box::new(ListingThenFails)];
+    let outcome = cli::run(
+        cli::Command::Check(cli::CheckArgs { fix: true }),
+        &manifest,
+        &[],
+        &mut extensions,
+    );
+    assert_eq!(outcome, Ok(std::process::ExitCode::FAILURE));
+    assert!(
+        root.join("listing.md").exists(),
+        "the file was written first"
     );
     let _ = std::fs::remove_dir_all(&root);
 }

@@ -667,13 +667,7 @@ mod tests {
         assert_eq!(reported, ["a"]);
     }
 
-    /// The claim: the recommended list is in cost order, keeps the rebase check behind its
-    /// flag, holds the range check over the branch's own commits, and runs the checker through
-    /// the package and prefix it is given.
-    ///
-    /// A project's CI runs the list it builds from this one, so a silent reorder or a dropped
-    /// gate is caught here rather than by a reader.
-    /// The claim (P4 of the pre-release spec): the `check` gate judges the tree as committed, and
+    /// The claim: the `check` gate judges the tree as committed, and
     /// never runs `check --fix`, which would rewrite a stale generated file and pass in CI a
     /// tree nobody committed. Mutation checked: adding `--fix` to the gate's arguments fails it.
     #[test]
@@ -693,6 +687,12 @@ mod tests {
         assert!(!check.args.iter().any(|arg| arg == "--fix"));
     }
 
+    /// The claim: the recommended list is in cost order, keeps the rebase check behind its
+    /// flag, holds the range check over the branch's own commits, and runs the checker through
+    /// the package and prefix it is given.
+    ///
+    /// A project's CI runs the list it builds from this one, so a silent reorder or a dropped
+    /// gate is caught here rather than by a reader.
     #[test]
     fn the_rust_list_is_in_cost_order_and_holds_the_range_check() {
         let gates = rust_project(
