@@ -48,6 +48,12 @@ such as git, and every system that lets a model overwrite its state caps it hard
 only corroborant is the conversation, which is what compaction removes. In the runs of the
 designing-together skill, thread states were correct without a file.
 
+**No roadmap, with known undesigned work listed only as issues** — lost to
+`design@agent-skills@roadmap-orders-issues`. `live`. The issue register holds the work but no order
+among it. thaum, the first project to use the workflow, kept a file of its next milestones as an
+exception to the installed skill: a need for order observed in real use, which cannot be derived
+again in one discussion round.
+
 **A separate installed file holding the expectation sets, read only by those who judge findings** —
 lost to `design@agent-skills@expectation-set-bounds-scope`. `live`. It would keep the sets out of
 every skill's text and out of the retrospective, at the cost of a change to the install layout for
