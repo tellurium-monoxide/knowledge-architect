@@ -320,10 +320,12 @@ The design is split across the documents from the start, by lifetime: a step's s
 only that step builds, and the README holds what crosses steps or outlives one, every item cited
 from more than one step's document included. A README holding every step's design is read whole
 at every step's grounding and grows with every step: the README of the structured-plans milestone
-held 1,624 lines when it left, counted with `wc -l` on `git show` of its deleting commit's parent. The step specs exist from the session that
-converged, so the audit of a step applies its findings in place, in whichever document holds the
-shape, and a new step found at an audit gets a spec of its own, as a scope change the owner rules
-on.
+held 1,624 lines when it left, counted with `wc -l` on `git show` of its deleting commit's parent.
+The step specs exist from the session that converged, so the audit of a step applies its findings
+in place, in whichever document holds the shape, and a new step found at an audit gets a spec of its
+own, as a scope change the owner rules on. The audit's commit message lists each finding with its
+gap, its answer and the decision it follows from, so an edit in place loses no record of what the
+audit found.
 
 ### A plan document leaves when its work lands `##spec-leaves-at-landing`
 
@@ -459,8 +461,10 @@ thing met outside the task has a durable outcome: recorded in its home, acted on
 issue, or judged to need nothing with the reason written where the owner reads it. What lives only
 in a conversation is lost when the session ends or is compacted. Second, that no ruling of the
 owner is recorded in a state or a scope the owner did not give. Detail added inside a ruling, and a
-wording better than the one the owner was shown, are not findings: the owner observed over real
-sessions that reporting them buried the findings that mattered. The reviewer assumes no shape of
+wording better than the one the owner was shown, are not findings. The owner's words: "It bothers
+me that it flags every small addition you make as a finding, even when they are clearly sane
+deviations. I would like it to focus more in the other direction: whether something from the
+transcript has been forgotten or not handled *durably*." The reviewer assumes no shape of
 the work: a plan document is one home among the others.
 
 It is an agent, not a line in a skill, because its standard and its extraction rule are fixed, and

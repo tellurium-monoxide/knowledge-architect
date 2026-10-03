@@ -66,9 +66,9 @@ a file one skill reads. It wins if a second installed activity ever needs the se
 **A transcript reviewer that reports every clause added inside a ruling, as the agent's addition
 for the owner to contest** — lost to `design@agent-skills@transcript-reviewer-agent`. `live`. It
 protected the owner's rulings down to their wording, at the cost of a list of additions in every
-review. The owner observed over real sessions that the list buried what mattered, a decision or a
-finding that no document or issue had kept, and ruled that a detail or a better wording inside a
-ruling needs no report.
+review. The owner, who had meant the reviewer to check durability from the start, judged from its
+reports in real sessions that it was "focusing more on the wrong side, the small deviations from
+what I approved", and ruled that a detail or a better wording inside a ruling needs no report.
 
 **A milestone document holding the design of every step, with step specs holding only their entry**
 — lost to `design@agent-skills@milestone-is-a-directory`. `live`. It kept the whole design in one
