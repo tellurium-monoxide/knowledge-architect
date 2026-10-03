@@ -686,10 +686,9 @@ of its own when a project needs one. No check compiles its snippet:
 ### The setup skill proposes a short CRATES-IO.md for a crate the project publishes `##setup-default-crates-io-page`
 
 For a crate the project publishes, the setup skill proposes to the owner a repository-facing
-README.md and a separate, short CRATES-IO.md as its crates.io page, named by `readme`. The owner
-made it the default after the same split was made for this repository's crates, where a README
-written for the repository rendered its references on crates.io as dead code. It serves
-`goal@knowledge-architect@adoption-is-easy`.
+README.md and a separate, short CRATES-IO.md as its crates.io page, named by `readme`: the split
+`design@knowledge-architect@crates-io-page-file` makes for this repository's own crates, for the
+same reason. It serves `goal@knowledge-architect@adoption-is-easy`.
 
 ### Every Component states at least one goal `##goals-required`
 

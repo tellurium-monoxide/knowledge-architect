@@ -49,7 +49,8 @@ together, at one version.
 
 Each crate under crates/ declares `include` in its Cargo.toml, listing its sources, its Cargo.toml, its README and its
 license files, and nothing else. Cargo adds the file `readme` names, its CRATES-IO.md, whatever
-`include` says, per `design@knowledge-architect@crates-io-page-file`. A new directory is shipped only once it is listed, so the test
+`include` says, per `design@knowledge-architect@crates-io-page-file`; `cargo package --list -p
+<crate>` re-takes it, and the release procedure runs it. A new directory is shipped only once it is listed, so the test
 fixtures and the design documents never reach a package, and their growth cannot push a package
 past the crates.io size limit. The cost is accepted: `cargo test` cannot run from a downloaded
 package. The license files sit at the root and as copies in each directory under crates/, because an
