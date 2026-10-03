@@ -30,6 +30,9 @@ subsection is omitted.
 - `manifest`, major: a `[registers.thread]`, `[registers.argument]`, `[registers.criterion]` or
   `[registers.acceptance]` table is refused, and so is any of those names in a location's
   `registers` list. Rename a register of the project that carries one of them.
+- `agent-skills`, patch: the primer names the plans directory, docs/plans/, and the roadmap. Remove
+  the row naming the plans directory from the project's own rows of the knowledge table, in its root
+  `CLAUDE.md`.
 
 ### New features
 
@@ -63,6 +66,17 @@ subsection is omitted.
 - `agent-skills`, patch: a review repair that would leave an earlier commit of the branch failing
   the project's checks is folded into that commit by a history edit, and the review's record says
   so.
+- `agent-skills`, patch: the planning skill writes a plan document's threads, arguments, criteria
+  and acceptance criteria as items, `### <statement> ##<id>`, under the section titles the checker
+  matches, with Arguments right after Threads. It assembles the document from the discussion's
+  transcript through a subagent, and the transcript reviewer reads every assembled document.
+- `agent-skills`, patch: an optional roadmap, docs/roadmap.md, orders known work on the owner's
+  word. The commit that adds a plan document rewrites the row of the issue it closes, and the commit
+  that deletes a plan document removes its row.
+- `agent-skills`, patch: the commit that deletes a plan document cites it by its kind. A citation of
+  it left in another plan is removed, and a `question` issue is opened on the citing plan.
+- `agent-skills`, patch: a design home holds built intent. Design that is decided and not built
+  stays in a plan document until it lands.
 
 ## 0.1.0
 

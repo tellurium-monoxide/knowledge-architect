@@ -99,14 +99,13 @@ there are, the less likely all are followed.
 **The project's rows of the knowledge table.** The installed primer carries the workflow's own rows:
 where a goal, a decision, a losing alternative, an issue, a tripwire, a contract or a plan document
 goes. The project's root `CLAUDE.md` carries the rows that are the project's alone, under a heading
-of its own: its plans directory, its changelog, a register it declares, a directory with a
-convention of its own. The last row of the combined table is **ask the owner before writing it
+of its own: its changelog, a register it declares, a directory with a convention of its own. The last row of the combined table is **ask the owner before writing it
 anywhere**. It is for a statement with no home, not for a choice between two: when two rows could
 fit, pick one, say which, and carry on. A genuine gap means the table is incomplete, and what the
 table holds is a decision about the shape of the configuration, which is the owner's. **Each answer
 ends as a new project row**, so the fallback limits itself: if it fires often, the table is what
 needs changing, rather than the entry. A project row may refine a row of the primer with what is
-the project's own, such as the path of its plans directory; it never contradicts one, and a row
+the project's own, such as a subdirectory with a convention of its own; it never contradicts one, and a row
 that only repeats one is removed.
 
 **The routing table.** One row per installed skill or agent that a project skill or agent adds to:

@@ -98,10 +98,10 @@ The failure this catches is one-directional in practice: a decision about one Co
 project level reads as binding on all of them. Check that direction first.
 
 **Is something recorded as a decision that is not one yet?** A shape for work nobody has built
-belongs in a plan document, in the plans directory, carrying no slug so that nothing can cite it as
-settled. A slug on unbuilt work is a finding. So is a reference from outside the plans directory to
-an item inside a plan document: it dangles when the plan document leaves. A `path` reference to a
-whole plan document is allowed.
+belongs in a plan document, in the plans directory, as an item of that plan: a slug cited only from
+inside the plan, so that nothing outside it can cite the shape as settled. A design-register slug
+on unbuilt work is a finding. A reference from outside a plan to one of its items is refused by the
+checker, and a whole plan document is cited by its kind, from anywhere.
 
 **Is the head still present tense?** No dates, no "formerly", no account of the change. A sentence
 saying what something *used to* be belongs in the commit, including an opening that motivates a

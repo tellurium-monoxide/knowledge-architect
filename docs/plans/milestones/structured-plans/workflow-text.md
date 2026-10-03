@@ -69,7 +69,8 @@ The installed text lives under crates/agent-skills/content/ and names no project
 
 The audit read every site above again at main's commit 536f0b2, which holds steps 1 and 2. Eight
 gaps have one answer this document's decisions imply, and are applied in place. Two answers add an
-obligation to a ruling of the owner, so they are defaults awaiting the owner, listed after them.
+obligation to a ruling of the owner, so they were defaults awaiting the owner, listed after them.
+The owner ruled both: "D20 and D21 approved, go ahead with the implementation".
 
 1. **§3 of the planning skill says "A plan document carries no slug anchor".** Step 2 made a
    plan's items slugs. Answer: §3 says a plan document defines items, cited from inside the plan
@@ -117,14 +118,14 @@ Read and found to hold, with no change:
 - The root `CLAUDE.md`'s restatement of the four cases, under "Precedent is not authority",
   restates the primer's four cases, which this step does not change.
 
-**Default D20, awaiting the owner: the issue a leaving plan's session opens on a citing plan is a
+**Default D20, ruled: the issue a leaving plan's session opens on a citing plan is a
 `question`.** Clause P8 does not name its kind. The question is whether the citing plan still
 holds now that the leaving plan is built. A reading of the citing plan against the leaving plan's
 harvested design entries answers it. The rival is a `todo`, whose closing condition is doing work.
 The discriminating fact: the reading may find nothing to change, and a `todo` would then close with
 no work done.
 
-**Default D21, awaiting the owner: the roadmap's order is the owner's.** A row is added or moved
+**Default D21, ruled: the roadmap's order is the owner's.** A row is added or moved
 on the owner's word. The two edits of finding 7 are mechanical and need no word: they keep a row
 pointing at the same work. The rival is that any session orders the work. Ordering work is a
 weighing, and the weighing is the owner's, per `goal@knowledge-architect@the-owner-decides`. This
