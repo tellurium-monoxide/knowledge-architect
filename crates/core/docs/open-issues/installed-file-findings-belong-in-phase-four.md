@@ -21,8 +21,11 @@ Move the installed-file check to the last phase, as a check family of its own be
 ### Why it matters
 
 In phase 2 the findings stop the run before any reference finding is listed, and every command
-that writes a generated file refuses while one stands: after a version renames a skill, `index`
-refuses until the install runs. The owner judged the move correct and not worth doing now.
+that writes a generated file refuses while one stands. `check --fix` repairs the installed files
+before that gate, per `design@core@fix-before-the-checks`, so an ordinary upgrade no longer needs the
+install first. What remains is an upgrade that removes a shipped file: the deletion is unstaged,
+which no fix stages, so phase 2 stops the run before the generated files, and it takes a second run.
+The owner judged the move correct and not worth doing now.
 
 ### What would close it
 

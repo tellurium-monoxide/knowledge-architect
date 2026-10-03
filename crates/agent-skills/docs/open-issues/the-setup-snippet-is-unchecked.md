@@ -25,6 +25,11 @@ content/ is outside the walk, so no check reads it. The interfaces it uses are
 `design@core@the-core-cli-is-a-library-module` and `design@gates@the-library-owns-the-flags`, both
 open to change under 0.x.
 
+A measurement before the release that changed `cli::Command::Check` into a tuple variant: the
+section's Rust block, copied into a scratch crate that depends on the workspace's crates by path,
+passed `cargo check`, exit 0, before and after the change. The block names `cli::Command` only as a
+nested subcommand, never its variants. Re-taken by the same copy and `cargo check`.
+
 ### What would close it
 
 A gate that fails when the section's Rust block no longer compiles against the workspace, shown to

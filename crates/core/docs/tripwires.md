@@ -197,3 +197,12 @@ items across plans, in `path@core@docs/rejected-alternatives.md`.
 **Re-entry:** the standing-state review on every dispatched review, and each design discussion
 about plan documents.
 
+## Guarding `design@core@safe-fix-definition`: a fix that makes a choice `##fix-makes-a-choice`
+
+**Fires when:** a fix is proposed for, or added to, `check --fix` whose bytes are not fully
+determined by the tree and the pinned version, or that writes or removes a file the tool neither
+generates nor installs.
+**Response:** reopen `design@core@safe-fix-definition` before the fix is added, rather than widen
+what `--fix` does under its present argument.
+**Re-entry:** the standing-state review before every merge, and any change that adds a fix.
+

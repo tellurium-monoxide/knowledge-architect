@@ -28,6 +28,11 @@ the installer's and the check compares its bytes. The walk
 exclusion of content/ in `path@knowledge-architect@knowledge-architect.toml` exists only because
 no such check exists.
 
+The same mechanism is needed by the crates.io pages, each crate's CRATES-IO.md, per
+`design@knowledge-architect@crates-io-page-file`: the walk reads them, and a reference that resolves
+passes the check while crates.io renders it as dead code. Today a convention and review keep them
+free of references.
+
 ### What would close it
 
 The check, run by `cargo x gates`, failing on a live reference or a path of this repository planted
