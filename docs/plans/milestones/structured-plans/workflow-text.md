@@ -26,13 +26,15 @@ The installed text lives under crates/agent-skills/content/ and names no project
    - §1: the ledger lives in the transcript as well as the conversation;
    - §2: the roadmap replaces *"There is no roadmap file"*;
    - §3: the layout with `specs/` and `milestones/`, and the generated indexes;
-   - §4: the Arguments section; items as `### <statement> ##<id>`; the full record of the
-     exchange (#spec-records-the-exchange); assembly from the transcript by a subagent, from every
-     transcript the discussion spans (#ledger-from-transcript, clause P3), with boundaries of
-     arguments decided at assembly (#argument-segmentation); the identifiers paragraph;
+   - §4: the Arguments section, right after Threads, and the section titles written in sentence
+     case as the documents write them, as step 2's design session ruled (#arguments-after-threads,
+     #section-titles-sentence-case); items as `### <statement> ##<id>`; the full record of the
+     exchange (`thread@structured-plans@spec-records-the-exchange`); assembly from the transcript by a subagent, from every
+     transcript the discussion spans (`thread@structured-plans@ledger-from-transcript`, clause P3), with boundaries of
+     arguments decided at assembly (`thread@structured-plans@argument-segmentation`); the identifiers paragraph;
    - §8: the transcript reviewer dispatched on every assembled document;
    - §9: the deleting commit cites the plan by its kind, `spec@plans@<id>` or
-     `milestone@plans@<id>`; the procedure of #retiring-plan-opens-issue and clause P8.
+     `milestone@plans@<id>`; the procedure of `thread@structured-plans@retiring-plan-opens-issue` and clause P8.
 3. **The design skill**, `path@agent-skills@content/skills/design/SKILL.md`: step 8 and the hand-off
    say the ledger is
    assembled from the transcript; the per-round delta is the draft.
@@ -41,7 +43,7 @@ The installed text lives under crates/agent-skills/content/ and names no project
    built intent; the `git log --diff-filter=D` line names the plans homes.
 5. **The issue-tracking skill**, `path@agent-skills@content/skills/issue-tracking/SKILL.md`: a
    `todo` issue may carry
-   a roadmap row; the issue #retiring-plan-opens-issue opens.
+   a roadmap row; the issue `thread@structured-plans@retiring-plan-opens-issue` opens.
 6. **The setup skill**, `path@agent-skills@content/skills/setup/SKILL.md`: §4's table gains the
    plans homes for the
    root; §5 no longer proposes a plans-directory row; the roadmap is mentioned as optional.
@@ -73,7 +75,7 @@ The installed text has no unit tests; its claims are checked by the checker and 
   `@` span whose head is a kind finds only placeholders in angle brackets.
 - **No two installed texts contradict** on the plans directory, the roadmap, assembly or built
   intent: the self-consistency axis of `knowledge-architect-review`.
-- **#roadmap-needs-no-code** of the milestone document does not fire.
+- **`acceptance@structured-plans@roadmap-needs-no-code`** of the milestone document does not fire.
 
 ## Fixtures
 

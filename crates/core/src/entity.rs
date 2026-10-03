@@ -30,8 +30,8 @@ use regex::Regex;
 
 use crate::finding::Finding;
 use crate::manifest::{
-    Manifest, Register, Registers, Shape, COMPONENT_DOCUMENTS, MILESTONES_HOME, MILESTONE_REGISTER,
-    PLANS_DIR, SPEC_REGISTER,
+    Manifest, Register, Registers, Shape, COMPONENT_DOCUMENTS, ITEM_REGISTERS, MILESTONES_HOME,
+    MILESTONE_REGISTER, PLANS_DIR, SPECS_HOME, SPEC_REGISTER, STEP_SECTIONS,
 };
 use crate::model::Model;
 use crate::scan::{Observation, SlugSite};
@@ -140,17 +140,26 @@ pub(crate) struct Anchor {
     pub constructed: Option<Constructed>,
 }
 
-/// The two locations the tool constructs rather than a manifest row declares.
+/// The locations the tool constructs rather than a manifest row declares.
 ///
-/// Each is a location in every respect but the three this names, each a decision of the plans
-/// layout: what `plans` owes, where a milestone keeps its register, and which kinds it carries.
+/// Each is a location in every respect but those this names, each a decision of the plans
+/// layout: what `plans` owes, where a plan keeps its registers, and which kinds it carries.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Constructed {
     /// The anchor `plans` at the plans directory. It owes a `README.md` beside its two homes.
     Plans,
-    /// One milestone directory. Its one register, `spec`, has its home at the anchor's own
-    /// path, and it carries no `path` kind: a plan document is cited by its kind.
+    /// One milestone directory. Its `spec` register has its home at the anchor's own path, it
+    /// carries the four item registers, and it carries no `path` kind: a plan document is cited
+    /// by its kind.
     Milestone,
+    /// One spec file of specs/. It owns its own file, which stays an entry of the `spec` register
+    /// of `plans` (`Anchors::owns_entry`), and carries the four item registers and no `path` kind.
+    Spec,
+}
+
+/// The names of the four item registers, as an anchor lists them.
+fn item_registers() -> impl Iterator<Item = String> {
+    ITEM_REGISTERS.iter().map(|(name, _, _)| name.to_string())
 }
 
 impl Anchor {
@@ -193,17 +202,46 @@ impl Anchor {
         }
     }
 
-    /// The anchor of one milestone directory, carrying `spec` at its own path.
+    /// The anchor of one milestone directory, carrying `spec` at its own path and the items.
     pub(crate) fn milestone(name: &str, path: &Path) -> Self {
+        let registers = std::iter::once(SPEC_REGISTER.to_string())
+            .chain(item_registers())
+            .collect();
         Self {
             constructed: Some(Constructed::Milestone),
-            ..Self::location(name, path, vec![SPEC_REGISTER.to_string()])
+            ..Self::location(name, path, registers)
         }
     }
 
-    /// Whether this is a milestone anchor, which carries no `path` kind.
+    /// The anchor of one spec file, carrying the items.
+    pub(crate) fn spec(name: &str, path: &Path) -> Self {
+        Self {
+            constructed: Some(Constructed::Spec),
+            ..Self::location(name, path, item_registers().collect())
+        }
+    }
+
+    /// Whether this is a milestone anchor.
     pub(crate) fn is_milestone(&self) -> bool {
         self.constructed == Some(Constructed::Milestone)
+    }
+
+    /// Whether this is a plan anchor, a milestone or a spec: it carries the item registers and
+    /// no `path` kind, and its name is no anchor word.
+    pub(crate) fn is_plan(&self) -> bool {
+        matches!(
+            self.constructed,
+            Some(Constructed::Milestone | Constructed::Spec)
+        )
+    }
+
+    /// The level-two sections an entry of `register` owes at this anchor: a step spec, a `spec`
+    /// entry of a milestone, owes the step sections, and every other entry its register's own.
+    pub(crate) fn sections_of(&self, register: &Register) -> Vec<String> {
+        if self.is_milestone() && register.name == SPEC_REGISTER {
+            return STEP_SECTIONS.iter().map(|s| s.to_string()).collect();
+        }
+        register.sections.clone()
     }
 
     /// Whether this is the component at the project root.
@@ -212,10 +250,10 @@ impl Anchor {
     }
 
     /// Whether a reference of this kind may anchor here. Every anchor carries `path` but a
-    /// milestone, whose documents are cited by their kind.
+    /// plan anchor, whose documents are cited by their kind.
     pub(crate) fn carries(&self, kind: &Kind) -> bool {
         if kind.is_path() {
-            return !self.is_milestone();
+            return !self.is_plan();
         }
         self.registers.iter().any(|r| r == kind.name())
     }
@@ -223,9 +261,13 @@ impl Anchor {
     /// The home of one register here, given that register's declaration.
     ///
     /// A milestone keeps its `spec` register at its own path, so the File shape's retired
-    /// single file is the `<id>.md` beside the milestone directory.
+    /// single file is the `<id>.md` beside the milestone directory. An item register's home is
+    /// the plan's own documents, which no check asserts: a spec anchor's is its file, and a
+    /// milestone's its directory.
     pub(crate) fn home_of(&self, register: &Register) -> Home {
-        let (dir, file) = if self.is_milestone() {
+        let (dir, file) = if self.constructed == Some(Constructed::Spec) {
+            (self.path.clone(), self.path.clone())
+        } else if self.is_milestone() {
             (self.path.clone(), self.path.with_extension("md"))
         } else {
             (
@@ -275,9 +317,19 @@ impl Anchors {
         }
         if manifest.plans() {
             list.push(Anchor::plans());
-            for (name, path) in milestone_dirs(paths) {
-                if milestone_refusal(&name, manifest).is_none() {
-                    list.push(Anchor::milestone(&name, &path));
+            let paths: Vec<&PathBuf> = paths.into_iter().collect();
+            let milestones = milestone_dirs(paths.iter().copied());
+            for (name, path) in &milestones {
+                if milestone_refusal(name, manifest).is_none() {
+                    list.push(Anchor::milestone(name, path));
+                }
+            }
+            // A spec whose name a milestone refusal would refuse, or that a milestone also
+            // holds, is no anchor: one name gives one anchor, and the milestone keeps it. The
+            // collision is clause P2's finding, in phase 2.
+            for (name, path) in spec_files(paths.iter().copied()) {
+                if milestone_refusal(&name, manifest).is_none() && !milestones.contains_key(&name) {
+                    list.push(Anchor::spec(&name, &path));
                 }
             }
         }
@@ -366,7 +418,19 @@ impl Anchors {
     /// comes from the tree, so counting it would turn an email address or a git remote in an
     /// unrelated document into a finding the moment a milestone of that name is created.
     pub(crate) fn is_anchor_word(&self, word: &str) -> bool {
-        is_reserved_anchor(word) || self.by_name(word).is_some_and(|a| !a.is_milestone())
+        is_reserved_anchor(word) || self.by_name(word).is_some_and(|a| !a.is_plan())
+    }
+
+    /// Whether `rel` is an entry of `anchor`'s file register: a file the anchor owns, or a spec
+    /// file, which a spec anchor at exactly its own path owns and which stays an entry of the
+    /// `spec` register that holds it.
+    ///
+    /// The one place that case is written: every filter that decides whether a file is an
+    /// entry of a File register asks this, so no later filter forgets a spec.
+    pub(crate) fn owns_entry(&self, anchor: &Anchor, rel: &Path) -> bool {
+        let owner = self.owning(rel);
+        owner.path == anchor.path
+            || (owner.constructed == Some(Constructed::Spec) && owner.path == rel)
     }
 
     /// The register home an anchor keeps one register in, or `None` where it carries none.
@@ -452,6 +516,27 @@ pub(crate) fn milestone_dirs<'a>(
     }
     for name in not_files {
         out.remove(&name);
+    }
+    out
+}
+
+/// Each spec file of specs/, grouped or not, by id: the spec anchors a tree places, before
+/// their names are judged. A second file of one id is the duplicate entry finding, and the
+/// first by path is the anchor.
+pub(crate) fn spec_files<'a>(
+    paths: impl IntoIterator<Item = &'a PathBuf>,
+) -> BTreeMap<String, PathBuf> {
+    let home = Path::new(PLANS_DIR).join(SPECS_HOME);
+    let mut found: Vec<&PathBuf> = paths
+        .into_iter()
+        .filter(|p| entry_id(p, &home).is_some())
+        .collect();
+    found.sort();
+    let mut out = BTreeMap::new();
+    for path in found {
+        if let Some(id) = entry_id(path, &home) {
+            out.entry(id).or_insert_with(|| path.clone());
+        }
     }
     out
 }
@@ -576,6 +661,11 @@ pub(crate) enum Resolution {
     },
     /// The anchor carries the register and defines no such id.
     Undefined,
+    /// An item of a plan cited from a file outside that plan; the whole-document form that
+    /// may be cited instead.
+    OutsidePlan {
+        form: String,
+    },
 }
 
 /// The table: every entity defined in the walk, keyed by kind, anchor and id.
@@ -610,6 +700,11 @@ impl Entities {
             // bottom, so they are put in line order once both are done.
             let first = self.findings.len();
             let owner = anchors.owning(&doc.rel);
+            if owner.is_plan() && doc.is_markdown() {
+                self.item_definitions(doc, owner, anchors);
+                self.findings[first..].sort_by_key(|f| f.line);
+                continue;
+            }
             let home = register_of(anchors, owner, &doc.rel);
             if let Some(Ok(register)) = home {
                 self.unslugged_headings(doc, register);
@@ -672,6 +767,112 @@ impl Entities {
                 }
             }
             self.findings[first..].sort_by_key(|f| f.line);
+        }
+    }
+
+    /// The items of one plan document: a slug ending a level-three heading under one of the
+    /// four item sections defines an entry of that section's register, in the plan anchor
+    /// that owns the document.
+    ///
+    /// The section is the level-two heading in force above the slug's line, read from the
+    /// heading observations the scanner records, so a fenced heading neither opens a section
+    /// nor defines anything. Only the item sections owe slugs: a level-three heading anywhere
+    /// else in a plan document is section text, and a slug anywhere else defines nothing.
+    fn item_definitions(
+        &mut self,
+        doc: &crate::model::Document,
+        owner: &Anchor,
+        anchors: &Anchors,
+    ) {
+        let items: Vec<&Register> = owner
+            .registers
+            .iter()
+            .filter_map(|n| anchors.registers().by_name(n))
+            .filter(|r| r.shape == Shape::Section)
+            .collect();
+        let headings: Vec<(u32, u8, &str)> = doc
+            .observations
+            .iter()
+            .filter_map(|l| match &l.what {
+                Observation::Heading { level, text } => Some((l.line, *level, text.as_str())),
+                _ => None,
+            })
+            .collect();
+        // The register whose section is in force at a line: the last heading of level one or
+        // two above it, when that heading is an item section.
+        let section_at = |line: u32| -> Option<&Register> {
+            let (_, level, text) = headings
+                .iter()
+                .rev()
+                .find(|(l, level, _)| *l < line && *level <= 2)?;
+            if *level != 2 {
+                return None;
+            }
+            items
+                .iter()
+                .copied()
+                .find(|r| r.section.as_deref() == Some(*text))
+        };
+        let slugged: std::collections::HashSet<u32> = doc
+            .observations
+            .iter()
+            .filter(|l| matches!(l.what, Observation::SlugDef { .. }))
+            .map(|l| l.line)
+            .collect();
+        for (line, level, text) in &headings {
+            if *level != 3 || slugged.contains(line) {
+                continue;
+            }
+            if let Some(register) = section_at(*line) {
+                self.findings.push(Finding::at(
+                    &doc.rel,
+                    *line,
+                    format!(
+                        "the level-3 heading \"{text}\" under {} carries no slug",
+                        register.section.as_deref().unwrap_or_default()
+                    ),
+                    format!(
+                        "every level-3 heading under an item section is a {} entry: end it with \
+                         its slug, written as two hashes and the id in backticks, or move it out \
+                         of the section if it is no item",
+                        register.name
+                    ),
+                ));
+            }
+        }
+        let sections: Vec<&str> = items.iter().filter_map(|r| r.section.as_deref()).collect();
+        for l in &doc.observations {
+            let Observation::SlugDef { id, site } = &l.what else {
+                continue;
+            };
+            let register = match site {
+                SlugSite::Heading(3) => section_at(l.line),
+                _ => None,
+            };
+            match register {
+                Some(register) => self
+                    .defined
+                    .entry((Kind::new(&register.name), owner.name.clone(), id.clone()))
+                    .or_default()
+                    .push(Site {
+                        file: doc.rel.clone(),
+                        line: l.line,
+                    }),
+                None => self.findings.push(Finding::at(
+                    &doc.rel,
+                    l.line,
+                    format!(
+                        "`##{id}` is written outside the item sections of the plan `{}` and \
+                         defines nothing",
+                        owner.name
+                    ),
+                    format!(
+                        "an item of a plan is defined at the end of a level-3 heading under one \
+                         of its sections {}; move it there, or delete it",
+                        sections.join(", ")
+                    ),
+                )),
+            }
         }
     }
 
@@ -738,7 +939,7 @@ impl Entities {
                 // A document an anchor nested inside this home owns is that anchor's, not
                 // an entry here: the nesting is `manifest::collides`' finding, and reading the
                 // nested anchor's files as entries would report it against the wrong register.
-                if anchors.owning(&doc.rel).path != anchor.path {
+                if !anchors.owns_entry(anchor, &doc.rel) {
                     continue;
                 }
                 let at = Site {
@@ -839,13 +1040,29 @@ impl Entities {
         self.findings.extend(found);
     }
 
-    /// Resolve a reference to a table kind. `path` is not this table's to resolve.
+    /// Resolve a reference to a table kind, with no citing file. `path` is not this table's to
+    /// resolve.
+    #[cfg(test)]
     pub(crate) fn resolve(
         &self,
         anchors: &Anchors,
         kind: &Kind,
         anchor: &str,
         id: &str,
+    ) -> Resolution {
+        self.resolve_from(anchors, kind, anchor, id, None)
+    }
+
+    /// The same, from a citing file: an item of a plan resolves only from inside that plan,
+    /// and that is judged before the id, so an item cited from outside gets the repair that
+    /// applies whether or not it exists. A citing file of `None` is inside every plan.
+    pub(crate) fn resolve_from(
+        &self,
+        anchors: &Anchors,
+        kind: &Kind,
+        anchor: &str,
+        id: &str,
+        citing: Option<&Path>,
     ) -> Resolution {
         let Some(a) = anchors.by_name(anchor) else {
             return Resolution::UnknownAnchor;
@@ -859,6 +1076,20 @@ impl Entities {
                     .map(|a| a.name.clone())
                     .collect(),
             };
+        }
+        let item = anchors
+            .registers()
+            .by_name(kind.name())
+            .is_some_and(|r| r.shape == Shape::Section);
+        if let (true, true, Some(citing)) = (item, a.is_plan(), citing) {
+            if anchors.owning(citing).path != a.path {
+                let form = if a.is_milestone() {
+                    format!("{MILESTONE_REGISTER}@{PLANS_ANCHOR}@{}", a.name)
+                } else {
+                    format!("{SPEC_REGISTER}@{PLANS_ANCHOR}@{}", a.name)
+                };
+                return Resolution::OutsidePlan { form };
+            }
         }
         if self
             .defined
@@ -989,6 +1220,71 @@ mod tests {
                 .collect(),
         );
         Entities::build(&model, anchors)
+    }
+
+    /// The table of a tree of plan documents, its anchors read off the documents' own paths, as
+    /// every caller reads the plan anchors off its tree.
+    fn plan_table(docs: Vec<(&str, &str)>) -> (Entities, Vec<String>) {
+        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n\n";
+        let manifest = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        let paths: Vec<PathBuf> = docs.iter().map(|(p, _)| PathBuf::from(p)).collect();
+        let anchors = Anchors::of(&manifest, &paths);
+        let e = table_under(docs, &anchors);
+        let found = e
+            .definition_findings()
+            .iter()
+            .map(|f| format!("{}  {}", f.location(), f.what))
+            .collect();
+        (e, found)
+    }
+
+    /// The claim: an item is defined by the level-two section in force above it, in the plan
+    /// anchor that owns the document, and a milestone's README and its step specs share one
+    /// namespace. Mutation checked: the kind read from the first level-two section of the
+    /// document rather than the one in force.
+    #[test]
+    fn an_item_is_defined_by_the_section_in_force_in_its_plan() {
+        let spec = "# A spec\n\n## Threads\n\n### A thread `##one`\n\n\
+                    ## Arguments\n\n### An argument `##a1`\n";
+        let readme = "# A milestone\n\n## Criteria\n\n### A criterion `##crit`\n";
+        let step = "# A step\n\n## Acceptance criteria\n\n### It holds `##holds`\n";
+        let (e, found) = plan_table(vec![
+            ("docs/plans/specs/s.md", spec),
+            ("docs/plans/milestones/m/README.md", readme),
+            ("docs/plans/milestones/m/a-step.md", step),
+        ]);
+        assert!(found.is_empty(), "{found:#?}");
+        let a = |kind: &str, anchor: &str, id: &str| {
+            e.defined
+                .contains_key(&(Kind::new(kind), anchor.to_string(), id.to_string()))
+        };
+        assert!(a("thread", "s", "one"));
+        assert!(a("argument", "s", "a1"));
+        assert!(!a("thread", "s", "a1"));
+        assert!(a("criterion", "m", "crit"));
+        assert!(a("acceptance", "m", "holds"));
+        // The spec file is still an entry of the `spec` register of `plans`.
+        assert!(a("spec", "plans", "s"));
+    }
+
+    /// The claim: only the four item sections owe a slug, and a slug anywhere else in a plan
+    /// document defines nothing and is reported with a reason naming those sections. Mutations
+    /// checked: a slug required at every level-three heading of a plan document; the generic
+    /// misplaced reason for a slug of a plan document.
+    #[test]
+    fn a_plan_document_owes_slugs_in_its_item_sections_alone() {
+        let spec = "# A spec\n\n## Decided design\n\n### A subsection, no slug\n\n\
+                    ### A subsection with one `##stray`\n\n\
+                    ## Threads\n\n### A thread with none\n";
+        let (_, found) = plan_table(vec![("docs/plans/specs/s.md", spec)]);
+        assert_eq!(found.len(), 2, "{found:#?}");
+        assert!(found
+            .iter()
+            .any(|f| f.contains("`##stray` is written outside the item sections")));
+        assert!(found
+            .iter()
+            .any(|f| f.contains("the level-3 heading \"A thread with none\" under Threads")));
     }
 
     fn findings(docs: Vec<(&str, &str)>) -> Vec<String> {

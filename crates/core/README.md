@@ -274,7 +274,24 @@ refused. It holds three things and nothing else:
 
 **Each milestone directory is an anchor of its own**, named by its basename. Its `README.md` is the
 milestone document, its `index.md` is generated and lists its steps, and every other `.md` file in
-it is the spec of one step. A directory under milestones/ with no `README.md` is a finding.
+it is the spec of one step. A directory under milestones/ with no `README.md` is a finding. **Each
+spec file is an anchor too**, named by its id, and stays an entry of the `spec` register of
+`plans`.
+
+**A plan document holds fixed sections.** A spec of specs/ and a milestone's README owe, in order:
+Status and audience, How a step is worked, Names, What the work is, What is already decided,
+Criteria, Threads, Arguments, "New names, in one place", Decided design, Mapping tables, Losing
+alternatives, Readings, Premortem, Acceptance criteria, Implementation sequence, Order rationale,
+Defaults awaiting the owner, Harvest, Later consequences. A step spec owes Builds, Claims, Audit
+subjects, Fails alone on, Premises that expire.
+
+**A plan's items are headings of four of those sections.** A level-three heading ending with its
+slug, `### <statement> ##<id>`, under Threads, Arguments, Criteria or Acceptance criteria, defines
+an item of the kind `thread`, `argument`, `criterion` or `acceptance`, in the plan's anchor: the
+spec, or the milestone, whose README and step specs share one namespace. Every level-three heading
+of those sections carries a slug; a slug anywhere else in a plan defines nothing. An item is cited
+`<kind>@<plan>@<id>`, from inside its own plan only: a citation from outside it, a commit message
+included, is refused, and the finding names the whole-document form.
 
 **A plan document is cited by its kind, never by its path**:
 
@@ -293,7 +310,8 @@ component, of a location or of `plans`, `elsewhere` or `*`, and one name used un
 are findings. So is a milestone name outside the id grammar, `[a-z0-9]+(-[a-z0-9]+)*`.
 
 A tree that breaks this layout stops the run at phase 2, except a home's missing `README.md` or
-`index.md`, which is a finding of the last phase as in every file register. The arguments are
+`index.md`, which is a finding of the last phase as in every file register. A misplaced or
+duplicated item stops it at phase 3, and a missing section is a finding of the last phase. The arguments are
 `design@core@plan-register`, `design@core@plans-split-dirs`, `design@core@plan-document-kinds`
 and `design@core@a-plan-name-reads-as-nothing-else`.
 

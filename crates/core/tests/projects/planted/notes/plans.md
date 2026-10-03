@@ -8,3 +8,5 @@ refuses, or reaches inside the anchor `plans` from the root:
 - a step spec: `path@plans@milestones/m-one/a-step.md`;
 - a milestone named as the anchor of a path: `path@m-one@a-step.md`;
 - the plans directory's README, from the root: `path@planted@docs/plans/README.md`.
+
+An item of a plan cited from outside it: `thread@m-one@planted-thread`.

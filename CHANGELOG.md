@@ -19,12 +19,23 @@ subsection is omitted.
   `spec@plans@<id>`, a milestone as `milestone@plans@<id>` and a step of a milestone as
   `spec@<milestone>@<step>`. A citation from outside the plans directory of a file inside it is
   refused as reaching inside the anchor `plans`.
+- `checks`, major: a plan document owes its sections: a spec of docs/plans/specs/ and a milestone's
+  README the plan sections, in order, and a step spec the step sections. Add the missing ones.
+- `checks`, major: an item of a plan cited from outside it is refused; cite the plan whole. A
+  backticked span whose head, before its first at sign, is thread, argument, criterion or
+  acceptance is now a reference candidate.
 - `manifest`, major: a declared anchor named `plans` and a `[registers.spec]` or
   `[registers.milestone]` table are refused, and so is `spec` or `milestone` in a location's
   `registers` list.
+- `manifest`, major: a `[registers.thread]`, `[registers.argument]`, `[registers.criterion]` or
+  `[registers.acceptance]` table is refused, and so is any of those names in a location's
+  `registers` list. Rename a register of the project that carries one of them.
 
 ### New features
 
+- `checks`, minor: the plan items, `thread`, `argument`, `criterion` and `acceptance`: a
+  level-three heading with its slug under the section of its kind, cited
+  `<kind>@<plan>@<id>` from inside its plan, where each spec file and each milestone is an anchor.
 - `checks`, minor: the reference kinds `spec` and `milestone`, carried by the anchor `plans`, and
   one anchor per milestone directory, carrying `spec` for its step specs. `show` prints a spec
   or a milestone document, and every reference to it.

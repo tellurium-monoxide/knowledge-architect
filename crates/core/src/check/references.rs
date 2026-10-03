@@ -4,9 +4,10 @@
 //! One grammar, `` `<kind>@<anchor>@<id>` ``, and one resolver. A reference to a table kind —
 //! `design`, `goal`, `tripwire` — is looked up in the table `entity::Entities` builds from the
 //! walk; a `path` reference is resolved against the survey under the same anchors. A reference
-//! that resolves to nothing is reported as the repair it needs, four ways: the kind position
-//! holds an anchor, the anchor is unknown, the anchor does not carry that register, or the id
-//! is not defined there. The argument is `design@core@a-slug-belongs-to-a-component`.
+//! that resolves to nothing is reported as the repair it needs, five ways: the kind position
+//! holds an anchor, the anchor is unknown, the anchor does not carry that register, an item of a
+//! plan is cited from outside it, or the id is not defined there. The argument is
+//! `design@core@a-slug-belongs-to-a-component`.
 //!
 //! **Nothing pointer-shaped passes unregistered.** A span with no `@` that is shaped like a
 //! path is reported as unanchored, and the slug reference the grammar retired,
@@ -196,7 +197,7 @@ fn table(
     anchors: &Anchors,
     entities: &Entities,
 ) {
-    match entities.resolve(anchors, kind, anchor, id) {
+    match entities.resolve_from(anchors, kind, anchor, id, Some(rel)) {
         Resolution::Resolved => {}
         Resolution::UnknownAnchor => out.push(Finding::at(
             rel,
@@ -212,6 +213,15 @@ fn table(
             line,
             format!("`{span}` names `{anchor}`, which carries no {kind} register"),
             format!("the anchors that carry one: {}", carriers.join(", ")),
+        )),
+        Resolution::OutsidePlan { form } => out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` cites an item of the plan `{anchor}` from outside it"),
+            format!(
+                "cite the plan whole, as `{form}`; an item is cited only from inside its own plan, \
+                 so retiring the plan asks no other document to be redesigned"
+            ),
         )),
         Resolution::Undefined => out.push(Finding::at(
             rel,
@@ -389,6 +399,19 @@ fn path(
                         "cite a step spec as `spec@{name}@<step>` and the milestone document as \
                          `milestone@{PLANS_ANCHOR}@{name}`; a plan document has one name, so \
                          `show` finds every citation of it"
+                    ),
+                ));
+                return;
+            }
+            if a.is_plan() {
+                out.push(Finding::at(
+                    rel,
+                    line,
+                    format!("`{span}` names the spec `{name}`, which carries no path kind"),
+                    format!(
+                        "cite the spec as `spec@{PLANS_ANCHOR}@{name}`, and from inside it its \
+                         items as `<kind>@{name}@<id>`; a plan document has one name, so `show` \
+                         finds every citation of it"
                     ),
                 ));
                 return;
@@ -995,6 +1018,39 @@ mod tests {
         assert!(found
             .iter()
             .any(|f| f.contains("`plans` defines no milestone `m`")));
+    }
+
+    /// The claim: an item of a plan resolves from inside its plan and is refused from outside
+    /// it, with the whole-document repair, and the scope is judged before the id, so an
+    /// undefined item cited from outside gets the same repair; and a spec anchor carries no
+    /// `path` kind. Mutations checked: the scope judged after the id lookup; a spec anchor
+    /// carrying `path`.
+    #[test]
+    fn an_item_resolves_from_inside_its_plan_and_is_refused_from_outside() {
+        let m = manifest();
+        let docs = vec![
+            (
+                "docs/plans/specs/s.md",
+                "# A spec\n\n## Threads\n\n### A thread `##one`\n\nIt cites `thread@s@one`.\n",
+            ),
+            (
+                "notes/prose.md",
+                "`thread@s@one`, `thread@s@none`, `spec@plans@s` and `path@s@x.md`.\n",
+            ),
+        ];
+        let tree: Vec<PathBuf> = docs.iter().map(|(p, _)| PathBuf::from(p)).collect();
+        let anchors = Anchors::of(&m, &tree);
+        let present: Vec<String> = docs.iter().map(|(p, _)| p.to_string()).collect();
+        let (found, _) = checked_under(docs, &present, &anchors);
+        let outside: Vec<&String> = found
+            .iter()
+            .filter(|f| f.contains("cites an item of the plan `s` from outside it"))
+            .collect();
+        assert_eq!(outside.len(), 2, "{found:#?}");
+        assert!(found
+            .iter()
+            .any(|f| f.contains("`path@s@x.md` names the spec `s`, which carries no path kind")));
+        assert_eq!(found.len(), 3, "{found:#?}");
     }
 
     /// The claim: a plan document is judged by where it sits, not by whether it exists, so a
