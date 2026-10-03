@@ -34,6 +34,6 @@ satisfy once it exists.
 ### What would close it
 
 A design for the planned-path form, under `knowledge-architect-design`: its spelling, the anchor it
-names, the finding when the target appears, and how it relates to the plan structure the
-structured-plans milestone builds. Then its implementation, with a test that a planned path outside
+names, the finding when the target appears, and how it relates to the structure of plan
+documents, `design@core@plan-register`. Then its implementation, with a test that a planned path outside
 the plans directory is refused and one that a planned path whose target exists is reported.

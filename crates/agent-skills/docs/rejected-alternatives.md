@@ -40,19 +40,22 @@ findings fell on it: inside a grant, a correction whose own action could not be 
 word from the owner.
 
 **Writing the discussion's ledger to a file during the discussion, so it survives compaction or a
-new session** — lost to `design@agent-skills@design-hands-off-to-planning`. `live`. An artifact an
-agent must update every round is one it forgets to update, and a stale ledger stated with
-confidence is worse than none. A survey of agent systems that keep state files found two
+new session** — lost to `design@agent-skills@ledger-from-transcript`. `live`. An artifact an agent
+must update every round is one it forgets to update, and a stale ledger stated with confidence is
+worse than none. Written with the least effort, as a draft, it answers the first reason only. A survey of agent systems that keep state files found two
 properties a thread ledger lacks: the state is corroborated against something outside the model,
 such as git, and every system that lets a model overwrite its state caps it hard. A thread ledger's
 only corroborant is the conversation, which is what compaction removes. In the runs of the
 designing-together skill, thread states were correct without a file.
 
 **No roadmap, with known undesigned work listed only as issues** — lost to
-`design@agent-skills@roadmap-orders-issues`. `live`. The issue register holds the work but no order
-among it. thaum, the first project to use the workflow, kept a file of its next milestones as an
-exception to the installed skill: a need for order observed in real use, which cannot be derived
-again in one discussion round.
+`design@agent-skills@roadmap-orders-issues`. `live`. It held that a roadmap file would be a second
+schedule beside the issue register, and two schedules drift; it accepted as its cost that the order
+of future work had no home. Two facts defeated it. thaum, the first project to use the workflow,
+kept a file of its next milestones as an exception to the installed skill: a need for order
+observed in real use, which cannot be derived again in one discussion round. And a roadmap whose
+rows are only checked references is no second schedule: the work stays in the issue register, and
+a row dangles, reported by the check, when its work closes.
 
 **A separate installed file holding the expectation sets, read only by those who judge findings** —
 lost to `design@agent-skills@expectation-set-bounds-scope`. `live`. It would keep the sets out of

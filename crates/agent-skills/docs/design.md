@@ -195,10 +195,8 @@ same reasoning. Only the design skill states a set so far:
 ### A decision is recorded when the work that implements it lands `##harvest-after-implementation`
 
 A decision is written into the design homes in the change that lands the work implementing it, not
-when the spec is written. A design home holds built intent, per
-`design@agent-skills@design-home-is-built-intent`, so a head written before the code would report a
-defect in code nobody has written, and `goal@knowledge-architect@documentation-stays-consistent`
-asks that the documentation stay consistent with the code. While the work is open, the spec or the
+when the spec is written, because a design home holds built intent, per
+`design@agent-skills@design-home-is-built-intent`. While the work is open, the spec or the
 milestone document on its branch is the only place the decision exists. A decision with no
 implementing work, one that constrains work nobody has started, is recorded when it is made.
 
@@ -206,8 +204,8 @@ implementing work, one that constrains work nobody has started, is recorded when
 
 A design home holds the design as built and its reasons, and the code is checked against it. A plan
 document holds decided design that is not built yet, and each decision moves into the design home
-at the landing of the work that builds it. A decision that no work implements is recorded when it
-is made, and counts as built intent: nothing waits to be built. The rival, a design home holding
+at the landing of the work that builds it. A decision that no work implements counts as built
+intent, since nothing waits to be built. The rival, a design home holding
 intent built or not, needs a marker on every entry to tell the two apart, and checking the code
 against an unbuilt entry reports a defect in code nobody has written. Unbuilt intent has a checked
 home because plan documents are a structure the checker reads, per `design@core@plan-register`.
@@ -334,20 +332,29 @@ The planning skill starts where a design discussion has converged, and writes th
 milestone in the same session. The design skill ends at convergence, the premortem and
 the owner's rulings on tripwires, and writes no plan document of its own. Its decisions are
 recorded when their work lands, per `design@agent-skills@harvest-after-implementation`. One skill owns the document's shape: two skills describing the sections of one document
-would drift apart, against `goal@knowledge-architect@agents-get-a-complete-workflow`.
+would drift apart, against `goal@knowledge-architect@agents-get-a-complete-workflow`. The session
+matters because the discussion's records are that session's: its conversation, and the transcript
+the harness keeps of it, which that session names exactly. A document written from memory in a
+later session is written from a summary, and a summary loses the losing arguments and the
+conditions of each closure. Where the harness keeps no transcript, the conversation is the only
+record, and compaction can remove it.
 
-The planning skill assembles the document from the discussion's transcript, the harness's log of
-the session on disk, through a subagent that reads every transcript file the discussion spans. The
-design skill's per-round delta is the draft it reads, and the deltas are corroborated as written,
-since the owner read and answered each. Where the harness keeps no transcript, it assembles from
-the conversation. The premise is that the transcript keeps the records from before a compaction,
-which a summary of the conversation loses, with the losing arguments and the conditions of each
-closure. It holds on one observed compaction of one session log, where every user and assistant
-record before the compaction boundary was still in the file; counting the records by their fields,
-a `system` record of subtype `compact_boundary` for the boundary, re-takes it on any log. The
-extraction can be wrong, so the transcript reviewer checks every assembled document against the
-same files. The rival, a ledger the agent writes to a file every round, costs a write per round and
-corroborates nothing the transcript does not.
+### The planning skill assembles the plan document from the discussion's transcript `##ledger-from-transcript`
+
+The planning skill assembles the document through a subagent that reads every transcript file the
+discussion spans, the harness's log of the session on disk. The design skill's per-round delta is
+the draft it reads, and the deltas are corroborated as written, since the owner read and answered
+each. Where the harness keeps no transcript, it assembles from the conversation. The premise is
+that the transcript keeps the records from before a compaction, which a summary of the
+conversation loses. It holds on one observed compaction of one session log, where every user and
+assistant record before the compaction boundary was still in the file;
+`jq -c 'select(.type=="system" and .subtype=="compact_boundary") | input_line_number' <log>` finds
+the boundaries of any log, and a count of the records before each re-takes it. The extraction can be
+wrong, so the transcript reviewer checks every assembled document against the same files. The
+rival, a draft ledger the agent writes to a file every round with the least effort, answers the
+cost of a write per round and not the other two reasons of the rejected alternative it repeats: a
+stale ledger stated with confidence is worse than none, and a file the agent writes is corroborated
+only by the conversation, which compaction removes.
 
 ### Acceptance criteria live in the plan document of the work that judges them `##acceptance-criteria-in-the-document`
 
@@ -408,9 +415,10 @@ directory, so what is open is still listed in one place, per
 `goal@knowledge-architect@structure-and-workflow-work-together`; the roadmap adds only the order. A
 row dangles when its issue closes or its plan document leaves, and the check reports it, so the
 order cannot drift from the work unnoticed. The commit that adds a plan document rewrites the row
-of the issue it closes, and the commit that deletes one removes its row. Any other change to the
-order is made on the owner's word, since ordering work is a weighing, per
-`goal@knowledge-architect@the-owner-decides`. The need is observed in real use: thaum kept a file
+of the issue it closes, and the commit that deletes one removes its row. A row is added or moved
+on the owner's word, since ordering work is a weighing, per
+`goal@knowledge-architect@the-owner-decides`. The owner's reason for the shape: it builds the
+roadmap from several register shapes using only references. The need is observed in real use: thaum kept a file
 of its next milestones as an exception to the installed skill. A roadmap register of its own,
 holding undesigned work, lost: two registers would each hold known, undesigned work, which needs a
 routing rule and hides one of them from the issue listing.
@@ -478,8 +486,8 @@ assembly, and the discussion mints none.
 
 ### Where one argument ends is decided at assembly, and the transcript reviewer checks it `##argument-segmentation`
 
-The boundaries of the arguments are a judgement, made once by the subagent that assembles the plan
-document, and checked by the transcript reviewer against the same transcript. The rival, arguments
+The boundaries of the arguments are a judgement, made once, at assembly, and checked by the
+transcript reviewer against the same transcript. The rival, arguments
 marked in each round, makes the extraction exact at a cost paid every round.
 
 ### A leaving plan's citations are removed, and each citing plan gets a question `##retiring-plan-opens-issue`
@@ -487,7 +495,8 @@ marked in each round, makes the extraction exact at a cost paid every round.
 A whole plan document may be cited from another plan, per `design@core@plan-item-scope`. When it
 leaves, the session that meets the dangling citation, the one deleting it or the one rebasing the
 citing plan onto the deletion, removes the citation and opens a `question` issue on the citing
-plan: does it still hold now that the leaving plan is built, deviations included? The issue cites
+plan: does it still hold now that the leaving plan is built, accounting for deviations or other
+unplanned happenings? The issue cites
 the citing plan, so it cannot outlive it, and its `Why it matters` cites what the leaving plan
 harvested, since that plan no longer exists. It is a `question` rather than a `todo` because the
 reading may find nothing to change. For a milestone, its next step's audit reads it. The retiring
@@ -545,7 +554,8 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   work grows. When a decision conflicts with a goal, the likely cause is that the owner missed the
   conflict: the goal prevails, and the conflict goes to the owner, per
   `goal@knowledge-architect@the-owner-decides`.
-- **A design home is built intent, and a claim about the code goes stale**: the code is checked against
+- **A design home is built intent, per `design@agent-skills@design-home-is-built-intent`, and a
+  claim about the code goes stale**: the code is checked against
   the first, and the second is verified before it is relied on.
 - **Before diagnosing anything as a problem, a session checks whether it is already recorded**,
   with the listing commands of the checker.
