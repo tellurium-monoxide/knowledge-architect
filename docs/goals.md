@@ -5,7 +5,7 @@ focus on the record of design: what was decided, and the intent and the argument
 built for agentic work. It gives AI agents a complete workflow, which aims to raise the quality and
 the efficiency of their work, in particular in projects developed mostly by agents. Its main
 purpose is to let agents work autonomously without drifting from the design intent their owners
-recorded. The
+recorded, per `goal@knowledge-architect@agents-work-without-drift`. The
 documentation structure and the workflow are designed to work together.
 
 A goal is met or unmet. A decision about how the project is built is won or lost, and lives in the
@@ -19,8 +19,8 @@ owner's intent: an agent may propose wording, and the owner decides it.
 The project as a whole, the workflow and the checker, lets AI agents carry more of a project's
 work with less supervision, while what they build stays within the design the owners recorded. The
 checker exists mostly for this: it reports where the documents and the code drift from the recorded
-design, and it makes keeping that design current cheap. The other goals of the project serve this
-one. It is met while agents carry work from design to merge with the owner ruling on decisions
+design, and it makes keeping that design current cheap. Nearly every other goal of the project
+serves this one. It is met while agents carry work from design to merge with the owner ruling on decisions
 rather than correcting drift, and a departure from the recorded design is caught by a check or a
 review before it merges.
 
