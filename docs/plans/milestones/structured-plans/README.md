@@ -82,7 +82,8 @@ unruled; the implementation of a point whose default is unruled does not start, 
    test cannot yet do so why not.
 4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
    or folded where that skill says. A finding not repaired becomes an issue entry.
-5. **The report**: the landing commit reports on each acceptance criterion judged at this step.
+5. **The report**: the landing commit reports on each acceptance criterion judged at this step, by
+   its identifier in plain text.
 6. **The harvest**, per the step's rows in the harvest section: the decisions and the losing
    alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
    under `knowledge-architect-issue-tracking`. A tripwire names the head that harvested its
@@ -1570,8 +1571,8 @@ did not fire; the landing commit reports the evidence. Each is reported once mor
 
 ## Defaults awaiting the owner
 
-Two, D20 and D21, found at step 3's audit, are in its spec. The owner ruled every default below, and
-D19, in the spec of step 2.
+None. The owner ruled every default below, D19 in the spec of step 2, and D20 and D21 in the spec
+of step 3.
 
 **A material finding on `thread@structured-plans@ledger-from-transcript`, presented to the owner.** Argument `argument@structured-plans@a72` stated three
 compactions; the re-measurement found one (see the notes under "Arguments"). The premise the

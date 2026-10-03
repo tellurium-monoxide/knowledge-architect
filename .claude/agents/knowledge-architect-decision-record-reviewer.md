@@ -39,7 +39,7 @@ of a `docs/design/` directory whose `README.md` is the head), which holds the cu
 its `docs/rejected-alternatives.md`, which holds what lost. The project's root is a Component too.
 Nothing else in the repository is the home of a decision: not a `README.md`, not an issue entry, and
 not the plans directory, whose plan documents hold shapes for unbuilt work that are deliberately not
-decisions and carry no slugs. A scoped `CLAUDE.md` or a skill may restate a decision as a directive;
+decisions yet: their items are slugs scoped to their plan, and no design entry is defined there. A scoped `CLAUDE.md` or a skill may restate a decision as a directive;
 it is searched on a reversal, and it is never the decision's home.
 
 `git log` over the branch is read for what its messages cite and claim: the names they cite and

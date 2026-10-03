@@ -19,9 +19,10 @@ configuration, this one owns where the argument lands.
 ## 0. When recording happens
 
 **A decision is recorded when the work that implements it lands, not when it is decided.** A
-design head is a claim about the code as it stands, so a head written before the code exists is a
-hypothesis presented as a fact. While the work is open, the spec or the milestone document on the
-work's branch is the only place the decision exists. Writing it into the design homes from there is
+design home holds built intent: the design as built and its reasons, against which the code is
+checked. A head written before the code exists would report a defect in code nobody has written.
+While the work is open, the decision is unbuilt intent, and the spec or the milestone document on
+the work's branch is the only place it exists. Writing it into the design homes from there is
 the **harvest**, and it happens in the change that lands the work.
 
 A decision that constrains work nobody has started, and that is not part of any spec, is recorded
@@ -122,13 +123,13 @@ its nearest rival. **The test: if this premise turned false, would the decision 
 again? If yes, it is in the head.** If no, it is deliberation.
 
 **The deliberation is not copied into the head**, and not into the harvest's commit message either.
-A spec is deleted when its work lands, per `knowledge-architect-planning`, and the commit that
-deletes it names its path. A reader who needs the deliberation finds it there:
+A plan document is deleted when its work lands, per `knowledge-architect-planning`, and the commit
+that deletes it cites it by its kind. A reader who needs the deliberation finds it there:
 
 ```sh
-git log --diff-filter=D --name-only -- <plans directory>   # every deleted spec, with its commit
+git log --diff-filter=D --name-only -- docs/plans/         # every deleted plan document, with its commit
 git log -G'<slug>'                                         # every commit whose diff touches the slug
-git show <commit>^:<path of the spec>                      # the spec as it stood before deletion
+git show <commit>^:<path of the document>                  # the document as it stood before deletion
 ```
 
 **`-G` matches any commit whose diff touches the slug. `-S` matches only a change in how many times

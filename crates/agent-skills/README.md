@@ -139,9 +139,10 @@ If the real authority is someone not in the conversation, the
 discussion converges on a verdict nobody present can act on.
 
 **A discussion runs in one session, and memory does not outlive it.**
-The thread ledger lives in the conversation, not in a file, so what
-survives is what the planning skill wrote into the plan document, and
-then the records harvested from it. Picking up a
+The thread ledger lives in the conversation and in your harness's
+transcript of it, not in a file the assistant keeps, so what survives is
+what the planning skill assembled from that transcript into the plan
+document, and then the records harvested from it. Picking up a
 previous design discussion in a *new* session is not supported: a new
 session starts a new discussion, grounded on the record like any
 other. Resuming a *session* is a different thing and works — if your

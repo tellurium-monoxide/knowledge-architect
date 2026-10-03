@@ -540,17 +540,22 @@ choices whose option space genuinely is closed and consequence-free.
 8. **Hand off to `knowledge-architect-planning`, in this session.**
    The ledger, the criteria table, the arguments and the facts they
    depended on, the designs as they were presented to the owner, the
-   premortem and the owner's rulings on its tripwires live only in this
-   conversation. The planning skill writes them into a spec or a
-   milestone document before the session ends, and owns that document's
-   shape. A plan document written from memory in a later session is
-   written from a summary, and a summary loses the losing arguments and
-   the conditions of each closure.
+   premortem and the owner's rulings on its tripwires live in this
+   conversation and in the harness's transcript of it. The planning
+   skill assembles them from the transcript into a spec or a milestone
+   document before the session ends, and owns that document's shape.
+   Each round's delta is the draft that assembly reads, so a delta is
+   written whenever a round changes a state or a note. A plan document
+   written from memory in a later session is written from a summary,
+   and a summary loses the losing arguments and the conditions of each
+   closure.
 
 The plan document and the decision record are not duplicates, and their
 relationship is fixed. The plan document is the full account of the
-converged design: every thread with its final state, the losing
-alternatives with their reasons, and the tripwires the premortem produced.
+discussion, assembled from its transcript: every thread with its proposer
+and final state, the arguments on each side as items, the owner's
+rulings verbatim, the losing alternatives with their reasons, and the
+tripwires the premortem produced.
 The decision record is the durable harvest of that account, written when
 the work that implements each decision lands, under
 `knowledge-architect-decision-recording`: an approved thread becomes a

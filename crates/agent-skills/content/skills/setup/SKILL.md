@@ -106,6 +106,17 @@ Every Component carries the same documents. `{{command}} check` names each one m
 | `docs/tripwires.md`, or `docs/tripwires/` with a `README.md` | evidence that would flip a decision; it may hold no entry yet |
 | `docs/open-issues/` | one file per outstanding item, a hand-written `README.md` and an `index.md` that `{{command}} index` generates |
 
+**The root Component also carries the plans directory**, docs/plans/, whose path the checker fixes:
+
+| document | holds |
+| --- | --- |
+| `docs/plans/README.md` | what the plans directory holds |
+| `docs/plans/specs/`, with a `README.md` and an `index.md` | one file per spec; none until work is planned |
+| `docs/plans/milestones/`, with a `README.md` and an `index.md` | one directory per milestone; none until work is planned |
+
+`{{command}} index` writes each `index.md`. A roadmap, docs/roadmap.md at the root, is optional:
+it is written when the owner wants known work ordered, under `knowledge-architect-planning`.
+
 Each document opens with a short introduction saying what it holds and what it does not. An empty
 register home says it holds no entry yet. **Every Component states at least one goal**: run
 `knowledge-architect-goal-setting` with the owner for each one.
@@ -117,10 +128,10 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
 - **the primer's import line**, alone on its own line of prose, outside any code block:
   `@.claude/knowledge-architect/PRIMER.md`. The install never writes it, because the root
   `CLAUDE.md` belongs to the project; the check reports it missing until it is there;
-- **the project's rows of the knowledge table**, under a heading of their own. The first is the
-  plans directory: propose `docs/plans/`, and write the path the owner accepts. Then each kind of
-  statement the project keeps somewhere the primer's table does not name: its changelog, a register
-  it declares, a directory with a convention of its own;
+- **the project's rows of the knowledge table**, under a heading of their own: each kind of
+  statement the project keeps somewhere the primer's table does not name, such as its changelog, a
+  register it declares, a directory with a convention of its own. The plans directory and the
+  roadmap are the primer's rows, not the project's;
 - **the routing table**: one row per installed skill or agent that a project skill adds to. It is
   empty until the project writes a skill of its own;
 - **the project's skill prefix**: its name and a hyphen, which names every project skill and agent.

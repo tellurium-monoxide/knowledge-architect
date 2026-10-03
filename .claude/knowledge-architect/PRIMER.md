@@ -18,8 +18,10 @@ the owner.** It is not resolved by following the decision.
 
 ## Intent and claims
 
-- **A design home is intent.** Check the code against it, never the other way. A divergence is a
-  defect in one of them: say which, open an issue, and stop.
+- **A design home is built intent**: the design as built and its reasons, and the decisions that
+  no work implements, recorded when made. Design that is decided and not built is in a plan
+  document until it lands. Check the code against a design home, never the other way. A divergence
+  is a defect in one of them: say which, open an issue, and stop.
 - **A claim about the code as it stands** (a scoped `CLAUDE.md` invariant, a doc comment, a name, an
   issue's diagnosis) goes stale. Verify it against the code, or against a run you observe, before
   relying on it.
@@ -63,7 +65,8 @@ decision.
 | directions about what to find where in a directory | a `README.md` in that directory | the directory's content changes |
 | what a caller must respect to use a type or a function | that item's doc comment | its contract changes |
 | why a piece of code is shaped the way it is, and where that holds | an inline comment at that code | that code changes |
-| work that is designed and not built: a spec or a milestone | the project's plans directory, named in its root `CLAUDE.md` | the work lands |
+| work that is designed and not built: a spec or a milestone | the plans directory, docs/plans/ at the project's root: a spec in docs/plans/specs/, a milestone in docs/plans/milestones/ | the work lands |
+| the order in which the owner wants known work done | docs/roadmap.md at the project's root, optional: each row cites an issue entry or a plan document | a row leaves when its issue closes or its plan document leaves |
 | how to perform an activity | the owning skill | the procedure changes |
 | **none of these, nor a row of the project's own** | **ask the owner before writing it anywhere** | the table gains the row |
 

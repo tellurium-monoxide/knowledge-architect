@@ -142,9 +142,9 @@ defect of the skill (§2). A skill not listed here states none yet.
   authority is not in the conversation, the discussion converges on a verdict nobody present can
   act on.
 - **A discussion runs in one session, and its memory does not outlive it.** The ledger lives in the
-  conversation, and what survives is what `knowledge-architect-planning` wrote into the plan
-  document, and then the records harvested from it. A
-  previous discussion is not resumed in a new session: a new session starts a new discussion,
+  conversation and in the harness's transcript of it, and what survives is what
+  `knowledge-architect-planning` assembled from it into the plan document, and then the records
+  harvested from it. A previous discussion is not resumed in a new session: a new session starts a new discussion,
   grounded on the record. A resumed session with its full transcript restored is the same session.
 - **The owner is trying to converge**: arguing, ruling, or saying stop. Several rules are released
   only by the owner's word, and withholding it leaves the discussion parked rather than producing a

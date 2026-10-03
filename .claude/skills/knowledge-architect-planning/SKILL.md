@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-planning
-description: MUST use when a design discussion has converged and its work needs a spec or a milestone, in the same session as the convergence; whenever a step of a milestone is about to be implemented or lands; and when the work of a spec lands. Covers the plan document vocabulary (spec, milestone, plans directory), choosing between a spec and a milestone, the file layout and the fixed sections, item identifiers, cutting the steps, acceptance criteria, the per-step design audit, the reviews of a plan document, the harvest, and the deletion that ends a plan document's life.
+description: MUST use when a design discussion has converged and its work needs a spec or a milestone, in the same session as the convergence; whenever a step of a milestone is about to be implemented or lands; when the work of a spec lands; and before editing the roadmap. Covers the plan document vocabulary (spec, milestone, plans directory, roadmap), choosing between a spec and a milestone, the roadmap, the file layout and the fixed sections, plan items and their citations, assembly from the discussion's transcript, cutting the steps, acceptance criteria, the per-step design audit, the reviews of a plan document, the harvest, and the deletion that ends a plan document's life.
 ---
 
 # Planning
@@ -27,10 +27,14 @@ audit and at each landing.
 
 | word | meaning |
 | --- | --- |
-| **plan document** | any document in the plans directory except its `README.md`. Temporary: it leaves when its work lands |
-| **plans directory** | the one directory where a project keeps its plan documents. Its path is the project's choice, stated in its root `CLAUDE.md` |
-| **spec** | the plan document of work done in one branch and one PR: the converged design and a concise implementation sequence |
-| **milestone** | work across several PRs, with design sessions between them. Its plan documents are one directory: the **milestone document**, its `README.md`, and one spec per step |
+| **plan document** | a spec, a milestone document, or the spec of a step. Temporary: it leaves when its work lands |
+| **plans directory** | docs/plans/ at the project's root, the one directory where a project keeps its plan documents. The checker fixes the path and constructs the anchor `plans` there (§3) |
+| **spec** | the plan document of work done in one branch and one PR: the converged design and a concise implementation sequence. Cited `spec@plans@<id>` |
+| **milestone** | work across several PRs, with design sessions between them. Its plan documents are one directory: the **milestone document**, its `README.md`, and one spec per step. Cited `milestone@plans@<id>`, and a step's spec `spec@<milestone>@<step>` |
+| **item** | a thread, an argument, a criterion or an acceptance criterion, defined in a plan document as a level-three heading ending with its slug, under the section of its kind (§4) |
+| **roadmap** | docs/roadmap.md at the project's root, optional: the order in which the owner wants known work done (§2) |
+| **transcript** | the harness's log of a session, on disk. It keeps the records from before a compaction |
+| **assembly** | writing a plan document from the discussion's transcript (§4) |
 | **converged** | every proposal of the discussion is closed, and no binding criterion is unmet |
 | **thread** | one proposal of the discussion, carrying a state; an approved thread is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
@@ -45,9 +49,10 @@ The word "plan" alone never names a document: say spec, milestone document, or p
 ## 1. When this skill starts
 
 **In the session where the discussion converged, before that session ends.** The discussion's
-ledger, every thread with its state and its argument, lives only in that conversation. A plan
-document written from memory in a later session is written from a summary, and a summary loses
-exactly the losing arguments and the conditions of each closure.
+ledger, every thread with its state and its argument, lives in that conversation and in the
+harness's transcript of it, which §4's assembly reads. A plan document written from memory in a
+later session is written from a summary, and a summary loses exactly the losing arguments and the
+conditions of each closure.
 
 A problem that arrived bounded, with a clear requirement and no open design question, has no
 converged discussion to plan from. This skill does not apply to it.
@@ -67,65 +72,108 @@ cut from its implementation sequence.
 `deferred` one if an event gates it (the default kinds; a project that declares its own kinds uses
 the nearest), in the owning anchor's issue register, with its leads in the
 entry. The plan document that schedules it closes that issue in the commit that adds the plan
-document, so the work is listed in one place at a time. There is no roadmap file and no record of
-landed work: `cargo klarch issues --kind todo` lists what is planned and undesigned, and history
-lists what landed.
+document, so the work is listed in one place at a time. `cargo klarch issues --kind todo` lists
+what is known and undesigned. There is no record of landed work: history lists what landed.
+
+**The roadmap orders known work, and holds nothing else.** docs/roadmap.md at the project's root
+is optional. Each row cites an issue entry, `issue@<anchor>@<id>`, or a whole plan document,
+`spec@plans@<id>` or `milestone@plans@<id>`, in the order the owner wants the work done. An
+unordered section may follow. The work stays in the issue register and the plans directory; the
+roadmap holds only its order. **The order is the owner's**: a row is added or moved on the owner's
+word. Two edits need no word, because the row keeps pointing at the same work:
+
+- the commit that adds a plan document closes the issue it schedules, and rewrites that issue's row
+  to cite the plan document;
+- the commit that deletes a plan document removes its row: the work landed.
+
+A row whose entry left without either edit dangles, and `cargo klarch check` reports it, so the order
+cannot go stale unnoticed. An illustration of the shape:
+
+```markdown
+# Roadmap
+
+## In order
+
+1. `milestone@plans@<id>`
+2. `issue@<anchor>@<id>`
+
+## Unordered
+
+- `issue@<anchor>@<id>`
+```
 
 ## 3. Layout
 
 ```
-<plans directory>/
-├─ <subject>.md            a spec
-└─ <subject>/              a milestone
-   ├─ README.md            the milestone document
-   └─ <step>.md            the spec of one step
+docs/plans/
+├─ README.md               what the directory holds
+├─ specs/
+│  ├─ README.md
+│  ├─ index.md             generated
+│  └─ <id>.md              a spec
+└─ milestones/
+   ├─ README.md
+   ├─ index.md             generated
+   └─ <id>/                a milestone
+      ├─ README.md         the milestone document
+      ├─ index.md          generated: the step specs
+      └─ <step>.md         the spec of one step
 ```
 
+- The checker constructs the anchor `plans` at docs/plans/, one anchor per milestone directory and
+  one per spec file. A file or a directory directly under docs/plans/ outside this layout is a
+  finding, and so is a directory under milestones/ with no `README.md`. `cargo klarch index` writes
+  every `index.md`.
 - The milestone document links each step's spec as a navigation row, `[<step title>](<step>.md)`.
   The checker resolves a relative link only in a `README.md` or an `index.md`, which is why the head
   is a README.
-- **The plans directory holds plan documents and nothing else**, except one `README.md` that says
-  what the directory holds. It keeps the directory, and the path the root `CLAUDE.md` names for it,
-  in the tree while no plan is open. A document with another lifetime,
-  such as a record of how far a subject is implemented or a survey that outlives its work, has its
-  own home. If none fits, ask the owner before writing it anywhere.
-- A plan document carries **no slug anchor**: a slug is a definition other documents may cite, and
-  a plan document's items must not be cited from outside the plans directory (§4).
+- **The plans directory holds plan documents and nothing else**, except its `README.md` files and
+  generated indexes, which keep its homes in the tree while no plan is open. A document with
+  another lifetime, such as a record of how far a subject is implemented or a survey that outlives
+  its work, has its own home. If none fits, ask the owner before writing it anywhere.
+- **A plan document is cited by its kind**, never by its path: `spec@plans@<id>`,
+  `milestone@plans@<id>`, `spec@<milestone>@<step>`. A `path` citation of one is refused. A whole
+  plan document may be cited from anywhere, and its citations dangle when it leaves (§9).
+- **A plan document defines items, and no design entry** (§4). A plan's name is the anchor of its
+  items, so it is not the name of a Component, of a location or of `plans`, and one name is not
+  used under both homes.
 
 ## 4. What a spec holds
 
 **Written for a session that did not witness the discussion.** That is the standard every section
 is held to, and §8's reviews check it.
 
-**The sections are fixed, with these titles, in this order.** The titles are what a later structure
-for plan documents reads. A section with nothing to hold says
-so in one line rather than being omitted, so a reader can tell an empty section from a missing one.
+**The sections are fixed: level-two headings with these titles, in this order.** `cargo klarch check`
+reports a section missing or out of order. A section with nothing to hold says so in one line
+rather than being omitted, so a reader can tell an empty section from a missing one.
 
 | section | holds |
 | --- | --- |
-| status and audience | what the document is for; that it leaves when its work lands; that where it and a design home disagree, the design home wins; that every name it uses is defined in it or exists in the code; that where the owner's word is needed and the owner is absent, the work does not proceed on that point |
-| how a step is worked | in a milestone document: §7 of this skill, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
-| names | every project shorthand the document uses, expanded to the file, function or command it names |
-| what the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
-| what is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `cargo klarch show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step or harvest that judges or updates each |
-| criteria | criterion, kind, source, satisfaction |
-| threads | every thread with its identifier, its final state and its resolution, a column naming the section that carries its shape, and a column naming the durable home that will harvest it |
-| new names, in one place | every new name the design uses (a type, a function, a field, an event, a bound, a counter) in one fenced block with the file it goes in; a name that exists in the code is listed as existing |
-| decided design | one subsection per approved thread: the shape, the argument, the nearest rival and the fact that defeated it |
-| mapping tables | one table per total function the code will need, over its whole domain: which existing thing becomes which new thing. Empty when the work needs none |
-| losing alternatives | every ruled-out thread, every thread withdrawn with its defeating reason, and every superseded thread under the thread that absorbed it, each with the thread it lost to and the fact that decided it |
-| readings | where the work reads an external specification the project implements: each reading it makes, and where it is recorded. Empty for work that reads none |
-| premortem | each cause, the thread it stresses, and its verdict: survives into a named claim, criterion or guard; converted into a named clause of the design; becomes a tripwire, on the owner's word; or fired and the thread reopened |
-| acceptance criteria | §6 |
-| implementation sequence | the steps, §5. Concise: what each step builds and what it fails alone on |
-| order rationale | one sentence per pair of adjacent steps |
-| defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, with the thread it bears on, until the owner rules |
-| harvest | what lands where and when: one row per step, and one for the document itself |
-| later consequences | what each later piece of work adds or replaces, so a later reader knows what was deliberately left |
+| Status and audience | what the document is for; that it leaves when its work lands; that where it and a design home disagree, the design home wins; that every name it uses is defined in it or exists in the code; that where the owner's word is needed and the owner is absent, the work does not proceed on that point |
+| How a step is worked | in a milestone document: §7 of this skill, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
+| Names | every project shorthand the document uses, expanded to the file, function or command it names |
+| What the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
+| What is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `cargo klarch show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step or harvest that judges or updates each |
+| Criteria | one item per criterion, `### <criterion> ##<id>`: its kind, its source and its satisfaction |
+| Threads | one item per thread, `### <resolution> ##<id>`: who proposed it and in which round, its final state, the arguments that moved it, the section that carries its shape, the durable home that will harvest it, and the owner's words that closed it, verbatim, with their round |
+| Arguments | one item per argument of the discussion, `### <argument> ##a<n>`: its round, who gave it, the threads it bears on, and its key words verbatim |
+| New names, in one place | every new name the design uses (a type, a function, a field, an event, a bound, a counter) in one fenced block with the file it goes in; a name that exists in the code is listed as existing |
+| Decided design | one subsection per approved thread: the shape, the argument, the nearest rival and the fact that defeated it |
+| Mapping tables | one table per total function the code will need, over its whole domain: which existing thing becomes which new thing. Empty when the work needs none |
+| Losing alternatives | every ruled-out thread, every thread withdrawn with its defeating reason, and every superseded thread under the thread that absorbed it, each with the thread it lost to and the fact that decided it |
+| Readings | where the work reads an external specification the project implements: each reading it makes, and where it is recorded. Empty for work that reads none |
+| Premortem | each cause, the thread it stresses, and its verdict: survives into a named claim, criterion or guard; converted into a named clause of the design; becomes a tripwire, on the owner's word; or fired and the thread reopened |
+| Acceptance criteria | one item per criterion, `### <criterion> ##<id>`, as §6 says |
+| Implementation sequence | the steps, §5. Concise: what each step builds and what it fails alone on |
+| Order rationale | one sentence per pair of adjacent steps |
+| Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, with the thread it bears on, until the owner rules |
+| Harvest | what lands where and when: one row per step, and one for the document itself |
+| Later consequences | what each later piece of work adds or replaces, so a later reader knows what was deliberately left |
 
 **The milestone document holds the same sections** for the whole milestone, and its implementation
 sequence lists the steps, each linked to its spec. **A step's spec holds** the step's entry (§5),
-and, when the step had a design session of its own, that session's design in the sections above.
+and, when the step had a design session of its own, that session's design in the sections above,
+which are not ordered against the entry's.
 
 **Content rules.**
 
@@ -141,15 +189,29 @@ and, when the step had a design session of its own, that session's design in the
   when its work lands, so a log would be history in a file that keeps none. The commit says what
   was corrected.
 
-**Identifiers.** Every thread, step and acceptance criterion carries an identifier in the grammar
-`[a-z0-9]+(-[a-z0-9]+)*`. A thread keeps the slug the discussion minted. An identifier is written in
-plain text with a hash sign before it, never in backticks: the checker reports a backticked hash
-and identifier as a retired reference form. Nothing outside the plans directory cites an item of a plan document: a
-design head that cited one would dangle when the document leaves. A `path` reference to a whole
-plan document is allowed, and its dangling at deletion lists the texts that depended on it.
+**Items.** A thread, an argument, a criterion and an acceptance criterion are items: a
+level-three heading under the section of its kind, the statement first and the slug last,
+`### <statement> ##<id>`. The section gives the kind: Threads `thread`, Arguments `argument`,
+Criteria `criterion`, Acceptance criteria `acceptance`. Every level-three heading of those four
+sections is an item, and a slug anywhere else in a plan document defines nothing.
 
-The fixed layout, the fixed titles and the identifiers are the shape a later structure for plan
-documents can read without rewriting them.
+- An id is in the grammar `[a-z0-9]+(-[a-z0-9]+)*`. A thread keeps the slug the discussion minted.
+  An argument is numbered `a1`, `a2`, …, in order of appearance and never reused, in one sequence
+  across a milestone's README and its step specs, which share one namespace.
+- An item is cited `<kind>@<plan>@<id>`, where the plan is the spec's id or the milestone's name,
+  and only from inside its own plan: the spec file, or the milestone's directory. From anywhere
+  else, a commit message and a design head included, the plan is cited whole, and an item is named
+  in plain text with a hash sign, as #<id>. A step is named the same way.
+
+**Assembly from the transcript.** A plan document records the whole discussion: every thread with
+its proposer, its final state, the arguments on each side, the owner's rulings verbatim with their
+round, and its relations. It is assembled from the transcript, not from memory. Dispatch a
+subagent that reads every transcript file the discussion spans, a resumed session included, and
+extracts the delta tables, the owner's messages verbatim and the arguments; the design skill's
+per-round delta is the draft it reads. Where one argument ends and the next begins is decided at
+assembly, and the transcript reviewer of §8 checks it with the rest. The status section names the
+transcript files read, so that a reviewer reads the same ones. Where the harness keeps no
+transcript, assemble from the conversation, and say so in the commit that adds the document.
 
 ## 5. Cutting the steps
 
@@ -192,7 +254,7 @@ the work itself: firing a criterion reopens the decision, not the step. It lives
 document of the work that can judge it, in its acceptance criteria section, and nowhere else. Each
 names:
 
-- the decision it guards, as a reference;
+- the decision it guards, as a reference to its thread;
 - the step that judges it;
 - the observable that fires it;
 - the response.
@@ -205,8 +267,9 @@ stand in for the specific criterion that is harder to find.
 A number in a criterion is a threshold the owner sets. Until the owner has, it is written as a
 default marked as the owner's to reset.
 
-- **At each landing**, the landing commit reports on every criterion judged there, one line each:
-  the decision guarded, fired or not, the evidence, the response taken.
+- **At each landing**, the landing commit reports on every criterion judged there, one line each,
+  naming it as #<id>, since a commit message cites a plan only whole: the decision guarded, fired
+  or not, the evidence, the response taken.
 - **A criterion that fires** leaves the document at once, as an issue entry or a reopened decision,
   under `knowledge-architect-issue-tracking`.
 - **When the document leaves**, its last landing commit reports on every criterion once more. One
@@ -247,7 +310,8 @@ finds it there.
    of any claim whose test cannot yet do so why not.
 4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
    or folded where that skill says. A finding not repaired becomes an issue entry.
-5. **The report**: the landing commit reports on each acceptance criterion judged at this step (§6).
+5. **The report**: the landing commit reports on each acceptance criterion judged at this step,
+   by its identifier in plain text (§6).
 6. **The harvest**, per the step's rows in the harvest section: the decisions and the losing
    alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
    under `knowledge-architect-issue-tracking`. A tripwire names the head that harvested its
@@ -275,8 +339,9 @@ skill lists, the blind brief included:
 - `knowledge-architect-code-claims-reviewer` verifies every statement the document makes about the
   code as it stands, and reports each as confirmed, wrong or imprecise, with the evidence.
 - `knowledge-architect-transcript-conformity-reviewer` reads the discussion's transcript and checks
-  that the document records what was decided, no wider and no narrower. Dispatch it whenever the transcript is
-  available. When it is not, say so, and why, in the commit that adds the document.
+  that the document records what was decided, no wider and no narrower. Dispatch it on every
+  assembled document, and name in its brief the transcript files the assembly read. When no
+  transcript exists, say so, and why, in the commit that adds the document.
 
 **What their findings become.** Check each finding against the tree, or against the transcript,
 before acting on it. A material finding is answered with a default, written into the sections it
@@ -309,18 +374,34 @@ This list is their one home; the reviewer reads it here.
 
 ## 9. When a plan document leaves
 
-**A spec is deleted in the commit that completes its last harvest, and that commit's message names
-its path** as a `path` reference, which resolves against the commit's parent. A milestone's step
-spec leaves when its step lands; the milestone document leaves with the last step. Before deleting:
+**A spec is deleted in the commit that completes its last harvest, and that commit's message cites
+it by its kind**, `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<step>`, which
+resolves against the commit's parent. A milestone's step spec leaves when its step lands; the
+milestone document leaves with the last step. Before deleting:
 
 - every row of the harvest section is done;
 - every acceptance criterion has been reported on, and has become a tripwire or left (§6);
 - what the document established is in the design homes and the registers; what stayed a guess
-  leaves with it.
+  leaves with it;
+- its row of the roadmap, if it has one, is removed (§2).
+
+**A citation of the leaving document from another plan dangles.** The session that meets it, the
+one deleting the document or the one rebasing the citing plan's branch onto that deletion, does two
+things in one commit:
+
+- it removes the citation from the citing plan;
+- it opens a `question` issue in the root's issue register, under
+  `knowledge-architect-issue-tracking`: does the citing plan still hold now that the leaving plan is
+  built? It is answered by reading the citing plan against what the leaving plan harvested. The
+  issue cites the citing plan, so it cannot outlive it, and its `Why it matters` cites the leaving
+  plan's harvested design entries, since the leaving plan no longer exists. For a milestone, its
+  next step's audit reads the issue.
+
+An item of another plan is never cited, so no other dangling citation can follow.
 
 A reader who needs the deliberation later finds it in history:
 
 ```sh
-git log --diff-filter=D --name-only -- <plans directory>   # every deleted plan document, with its commit
+git log --diff-filter=D --name-only -- docs/plans/         # every deleted plan document, with its commit
 git show <commit>^:<path of the document>                   # the document as it stood before deletion
 ```
