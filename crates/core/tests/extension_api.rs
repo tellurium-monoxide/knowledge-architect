@@ -344,3 +344,87 @@ fn check_fix_after_a_write_never_reports_could_not_run() {
     );
     let _ = std::fs::remove_dir_all(&root);
 }
+
+/// An extension whose generated file sits in a directory the tree does not hold.
+#[derive(Default)]
+struct ListingNowhere;
+
+impl Extension for ListingNowhere {
+    fn tables(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn resolve(&mut self, _: &Manifest) -> Resolution {
+        let mut resolution = Resolution::default();
+        resolution
+            .generated
+            .push(PathBuf::from("nowhere/listing.md"));
+        resolution
+    }
+
+    fn checks(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn dump(&self, _: &Model) -> Vec<DumpRow> {
+        Vec::new()
+    }
+
+    fn prepare(
+        &mut self,
+        _: &Manifest,
+        _: &Model,
+        _: Tree<'_>,
+        _: Purpose,
+    ) -> Result<Box<dyn Prepared>, String> {
+        Ok(Box::new(NowherePrepared))
+    }
+}
+
+struct NowherePrepared;
+
+impl Prepared for NowherePrepared {
+    fn check(&self, _: &Model, _: &Manifest, _: &Inputs) -> ExtensionReport {
+        ExtensionReport::default()
+    }
+
+    fn check_message(&self, _: &Document) -> Vec<Finding> {
+        Vec::new()
+    }
+
+    fn generated(&self, _: &Model, _: &Manifest) -> Vec<knowledge_architect::extension::Generated> {
+        vec![knowledge_architect::extension::Generated {
+            rel: PathBuf::from("nowhere/listing.md"),
+            text: "listing\n".to_string(),
+            action: "regenerate it",
+        }]
+    }
+}
+
+/// The claim: a generated destination in a directory the tree does not hold makes the run exit 2
+/// with nothing written, and no directory is created for it: the registers check, not a writer,
+/// reports a missing home. Mutation checked: creating the missing directory before the write
+/// fails it. Dropping the refusal alone survives, since the write then fails with the same code;
+/// the refusal's own contribution is a message naming the directory.
+#[test]
+fn check_fix_refuses_a_destination_whose_directory_is_missing() {
+    let root = std::env::temp_dir().join(format!("ka-fix-nowhere-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&root);
+    copy_tree(
+        &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/projects/dirhome"),
+        &root,
+    );
+    git(&root, &["init", "-q"]);
+    git(&root, &["add", "-A"]);
+    let manifest = Manifest::load(&root).expect("the copy's manifest");
+    let mut extensions: Vec<Box<dyn Extension>> = vec![Box::new(ListingNowhere)];
+    let outcome = cli::run(
+        cli::Command::Check(cli::CheckArgs { fix: true }),
+        &manifest,
+        &[],
+        &mut extensions,
+    );
+    assert_eq!(outcome, Ok(std::process::ExitCode::from(2)));
+    assert!(!root.join("nowhere").exists());
+    let _ = std::fs::remove_dir_all(&root);
+}
