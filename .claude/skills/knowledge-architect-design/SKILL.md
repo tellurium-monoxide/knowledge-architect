@@ -196,7 +196,9 @@ with one identifier. Before using a slug, check that no entry of the
 Component that will own the decision already holds it, with
 `cargo klarch show design@<anchor>@<slug>`. In prose, write it plain with a
 `#` before it, as in #retention-window, never in backticks: a backticked
-span may be read by the checker as a reference. When the natural name is a
+span may be read by the checker as a reference. In the plan document the
+thread becomes an item, cited from inside that document only, per
+`knowledge-architect-planning`. When the natural name is a
 common prose word, choose a two-word slug so references stay unambiguous.
 
 **Granularity.** Every proposal either party made is a thread. A

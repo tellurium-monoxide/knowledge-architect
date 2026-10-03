@@ -135,8 +135,8 @@ docs/plans/
   `milestone@plans@<id>`, `spec@<milestone>@<step>`. A `path` citation of one is refused. A whole
   plan document may be cited from anywhere, and its citations dangle when it leaves (§9).
 - **A plan document defines items, and no design entry** (§4). A plan's name is the anchor of its
-  items, so it is not the name of a Component, of a location or of `plans`, and one name is not
-  used under both homes.
+  items, so it is not the name of a Component, of a location or of a reserved anchor, `plans`,
+  `elsewhere` or `*`, and one name is not used under both homes.
 
 ## 4. What a spec holds
 
@@ -154,16 +154,16 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 | Names | every project shorthand the document uses, expanded to the file, function or command it names |
 | What the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
 | What is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `{{command}} show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step or harvest that judges or updates each |
-| Criteria | one item per criterion, `### <criterion> ##<id>`: its kind, its source and its satisfaction |
-| Threads | one item per thread, `### <resolution> ##<id>`: who proposed it and in which round, its final state, the arguments that moved it, the section that carries its shape, the durable home that will harvest it, and the owner's words that closed it, verbatim, with their round |
-| Arguments | one item per argument of the discussion, `### <argument> ##a<n>`: its round, who gave it, the threads it bears on, and its key words verbatim |
+| Criteria | one item per criterion, ``### <criterion> `##<id>` ``: its kind, its source and its satisfaction |
+| Threads | one item per thread, ``### <resolution> `##<id>` ``: who proposed it and in which round, its final state, the arguments that moved it, the section that carries its shape, the durable home that will harvest it, and the owner's words that closed it, verbatim, with their round |
+| Arguments | one item per argument of the discussion, ``### <argument> `##a<n>` ``: its round, who gave it, the threads it bears on, and its key words verbatim |
 | New names, in one place | every new name the design uses (a type, a function, a field, an event, a bound, a counter) in one fenced block with the file it goes in; a name that exists in the code is listed as existing |
 | Decided design | one subsection per approved thread: the shape, the argument, the nearest rival and the fact that defeated it |
 | Mapping tables | one table per total function the code will need, over its whole domain: which existing thing becomes which new thing. Empty when the work needs none |
 | Losing alternatives | every ruled-out thread, every thread withdrawn with its defeating reason, and every superseded thread under the thread that absorbed it, each with the thread it lost to and the fact that decided it |
 | Readings | where the work reads an external specification the project implements: each reading it makes, and where it is recorded. Empty for work that reads none |
 | Premortem | each cause, the thread it stresses, and its verdict: survives into a named claim, criterion or guard; converted into a named clause of the design; becomes a tripwire, on the owner's word; or fired and the thread reopened |
-| Acceptance criteria | one item per criterion, `### <criterion> ##<id>`, as §6 says |
+| Acceptance criteria | one item per criterion, ``### <criterion> `##<id>` ``, as §6 says |
 | Implementation sequence | the steps, §5. Concise: what each step builds and what it fails alone on |
 | Order rationale | one sentence per pair of adjacent steps |
 | Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, with the thread it bears on, until the owner rules |
@@ -191,7 +191,7 @@ which are not ordered against the entry's.
 
 **Items.** A thread, an argument, a criterion and an acceptance criterion are items: a
 level-three heading under the section of its kind, the statement first and the slug last,
-`### <statement> ##<id>`. The section gives the kind: Threads `thread`, Arguments `argument`,
+``### <statement> `##<id>` ``. The section gives the kind: Threads `thread`, Arguments `argument`,
 Criteria `criterion`, Acceptance criteria `acceptance`. Every level-three heading of those four
 sections is an item, and a slug anywhere else in a plan document defines nothing.
 
@@ -231,7 +231,9 @@ failure.** Every other test here serves that one.
   of its own, before that step.** On the step's branch, the gates as that step changes them would
   judge the commit that added the document, whose tree predates the change.
 
-A step's entry carries, in this order:
+A step's entry is five level-two sections, with these titles, in this order, and
+`{{command}} check` reports one missing or out of order. Fixtures, where it applies, sits between
+Claims and Audit subjects, and is not checked:
 
 - **Builds**: what the step lands, by name.
 - **Claims**: each with the test that could refute it, and how the test is shown to fail against a
@@ -397,7 +399,9 @@ things in one commit:
   plan's harvested design entries, since the leaving plan no longer exists. For a milestone, its
   next step's audit reads the issue.
 
-An item of another plan is never cited, so no other dangling citation can follow.
+Any other citation of the leaving document, from an issue, a design head or a `CLAUDE.md`, dangles
+too, and `{{command}} check` reports it: the deleting commit repairs each, and an issue whose
+subject was the leaving document closes with it.
 
 A reader who needs the deliberation later finds it in history:
 
