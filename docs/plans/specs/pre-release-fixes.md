@@ -142,7 +142,7 @@ is present and not ignored, over `anchors.all()` filtered by `a.constructed.is_n
 filter keeps the Components and the declared locations. So `path@*@<path>` passes when only a
 location holds the path. `design@core@reserved-anchors` accepts the generic form "when at least one
 component carries the path with the claimed kind". The comment above the filter cites
-`issue@core@the-generic-anchor-accepts-a-location-s-copy`. `Anchor` in `path@core@src/entity.rs`
+the issue the-generic-anchor-accepts-a-location-s-copy. `Anchor` in `path@core@src/entity.rs`
 carries `is_component`.
 
 **The work, option (a).** The filter keeps Components only, with a test over the issue's
@@ -236,7 +236,7 @@ reading.
 | the-binary-reports-no-version | scheduled here: closes in the commit that adds this spec. Part 2 is its closing condition |
 | the-readme-is-the-crates-io-page | scheduled here: closes in the commit that adds this spec. Its closing condition asks for "A README whose every pointer resolves for a reader on crates.io, and the repository-facing text in a home the knowledge table names". Under shape B the crates.io page is CRATES-IO.md, and the repository-facing text stays in `README.md`, the home the knowledge table names |
 | check-cannot-regenerate-what-it-reports | scheduled here: closes in the commit that adds this spec. Part 1 meets each point of its closing condition: a flag of `check` (named `--fix`), its three tests, the README's CLI section, and the rewrite of the clause with the argument about `--write`. One point differs, on the owner's word in R4: the issue says "A run with earlier findings writes nothing"; #fix-before-the-checks runs the install whenever phase 1 is clean |
-| `issue@core@the-generic-anchor-accepts-a-location-s-copy` | a defect, not scheduled work: closes at the landing, in the commit that lands part 4. The same commit removes the citation of it from the comment in `path@core@src/check/references.rs` |
+| the issue the-generic-anchor-accepts-a-location-s-copy | a defect, not scheduled work: closes at the landing, in the commit that lands part 4. The same commit removes the citation of it from the comment in `path@core@src/check/references.rs` |
 | `issue@core@installed-file-findings-belong-in-phase-four` | stays open. Its "Why it matters" says "after a version renames a skill, `index` refuses until the install runs". `check --fix` installs before the gate, so that refusal no longer costs an extra command, except for the unstaged deletion of D1. Its closing condition, the move of the check to phase 4, is not this work. The harvest rewrites its "Why it matters" to say what remains |
 
 ## Criteria
@@ -1120,7 +1120,7 @@ by its identifier in plain text.
 1. **The generic anchor.** The filter, the test over the reproduction, the comment, a CHANGELOG
    entry under Migration: `checks`, minor: a `path@*@<path>` reference that only a location
    carries is reported; anchor it at the location. The issue
-   `issue@core@the-generic-anchor-accepts-a-location-s-copy` closes in this commit. It judges
+   the issue the-generic-anchor-accepts-a-location-s-copy closes in this commit. It judges
    no-text-relies-on-location-copy. Fails alone on: the new test, or a new finding in this
    repository's check. **The per-commit rule holds.** This step makes a check stricter, so it lands
    as a commit whose tree passes under its own checker. No later commit's change fails it: the
@@ -1243,7 +1243,7 @@ commit with the test it fails.
 | the measurement taken before the work: the setup skill's Rust snippet compiled against the workspace with `cargo check`, exit 0 | `issue@agent-skills@the-setup-snippet-is-unchecked` | the harvest |
 | #generic-anchor-components-only | no design entry: `design@core@reserved-anchors` already states the winner | step 1 |
 | #generic-anchor-any-anchor | none expected; `path@core@docs/rejected-alternatives.md` if the recording tests say so | the harvest |
-| `issue@core@the-generic-anchor-accepts-a-location-s-copy` | closes | step 1 |
+| the issue the-generic-anchor-accepts-a-location-s-copy | closes | step 1 |
 | `issue@core@installed-file-findings-belong-in-phase-four` | its "Why it matters" rewritten to what remains | the harvest |
 | the acceptance criteria | each reported on in the landing commit by its identifier in plain text; each one that recurs is proposed to the owner as a tripwire | the harvest |
 | this spec | deleted in the commit that completes the harvest, cited as `spec@plans@pre-release-fixes` | the harvest |
