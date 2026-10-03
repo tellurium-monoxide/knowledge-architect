@@ -535,8 +535,9 @@ manifest.
 
 ### An anchor is a component or a location, and a location carries the registers it declares or the tool gives it `##anchors-are-components-and-locations`
 
-Both are named directories that carry registers, and both are path anchors under
-`design@core@every-path-names-its-anchor`. What separates them is what they owe. A **component**
+Both carry registers. Every anchor is a named directory and a path anchor under
+`design@core@every-path-names-its-anchor`, except the plan anchors the tool constructs, below: a
+spec anchor is a file, and no plan anchor carries the `path` kind. What separates them is what they owe. A **component**
 owes the compiled documents and every `component`-scoped register, with its homes under
 `<component>/docs/`. A **location** owes the homes of the registers its `[locations.<name>]`
 row declares and nothing else, with its homes directly under its own path — a location's
@@ -588,8 +589,8 @@ in every respect but the one its layout fixes:
   its complaint names a declaration the project can change. It owes a `README.md` beside its two
   homes.
 - **One anchor per milestone**: each directory of `path@plans@milestones/` holding a file
-  `README.md`, named by its basename, per `design@core@plan-document-kinds`. Its one register,
-  `spec`, has its home at the anchor's own path, so its step specs sit beside the milestone
+  `README.md`, named by its basename, per `design@core@plan-document-kinds`. Its `spec` register
+  has its home at the anchor's own path, so its step specs sit beside the milestone
   document and are cited `spec@<milestone>@<step>`, unique only inside the milestone. It carries
   no `path` kind. A directory whose name `design@core@a-plan-name-reads-as-nothing-else` refuses
   is no anchor. It carries the four item registers, per `design@core@plan-items-by-section`.
@@ -682,13 +683,15 @@ core's, per `design@core@an-extension-plugs-in-through-phased-hooks`.
 ### An item is cited `<kind>@<plan>@<id>`, from inside its own plan only `##plan-item-scope`
 
 The plan anchor stands in the anchor position, so an item citation keeps the three-part grammar,
-at about 45 characters where the root anchor and a compound id would need 66. It resolves only
+shorter than the root anchor and a compound id by the root anchor's name and one separator. It
+resolves only
 from a file inside the plan: the spec file, or a file of the milestone's directory. From anywhere
 else, a commit message included, it is refused before its id is looked up, and the repair names
 the document to cite whole: the spec, the milestone, or the step spec that defines the item. A
 whole plan may be cited from anywhere, so a dependency between plans is carried by the document,
-and retiring a plan asks no other plan to be redesigned item by item.
-`tripwire@core@item-of-another-plan-named` watches the premise that plans need no more.
+and retiring a plan asks no other plan to be redesigned item by item. The premise is that a
+whole-document citation carries every dependency between plans that matters while few plans are
+open at once. `tripwire@core@item-of-another-plan-named` watches it.
 
 ### Item registers are the plan's own register shape, `Section`, whose home is the plan's documents `##items-as-section-registers`
 
@@ -701,9 +704,9 @@ each claim the same file, and only the first would define anything.
 
 ### The four item registers are built in, and carried by the plan anchors alone `##item-registers-built-in`
 
-Like `spec` and `milestone`, the item registers are the tool's: a project's declaration of one, or
-a location naming one, is refused, because their storage is the plan documents, which the plans
-layout fixes. A project that already declared a register under one of the four names renames it on
+Like `spec` and `milestone`, the item registers are the tool's, because their storage is the plan
+documents, which the plans layout fixes. A declaration of one is refused, per
+`design@core@registers-are-declared`. A project that already declared a register under one of the four names renames it on
 upgrade.
 
 ### A spec file is an anchor that owns its own file, which stays an entry of the `spec` register `##spec-file-owns-its-items`
@@ -730,6 +733,8 @@ expire, in order; the plan sections a step spec with a design session of its own
 ordered against them. Fixtures is owed only where a Component drives its tests with authored
 content, a condition no check can read, so it is not checked. One `spec` register owes two lists,
 and `Anchor::sections_of` gives the list at each anchor, as `Anchor::home_of` gives the home.
+The two lists are the planning skill's, which owns the shape of a plan document, per
+`design@agent-skills@design-hands-off-to-planning`; a change to them changes this head.
 
 ### Which registers exist is the manifest's, and a register instance's own options sit beside it `##registers-are-declared`
 

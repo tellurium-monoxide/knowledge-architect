@@ -1508,8 +1508,8 @@ harvest of the decision it guards:
 
 - **T2**, guarding `thread@structured-plans@ledger-from-transcript`, in the agent-skills tripwires home at step 3: a ruling
   of the owner missing from, or misstated in, a committed plan document, found after the commit.
-- **T4**, guarding `thread@structured-plans@plan-item-scope`, in the core tripwires home at step 2: a plan document's prose
-  names an item of another plan document.
+- **T4**, guarding `thread@structured-plans@plan-item-scope`: written at step 2 as
+  `tripwire@core@item-of-another-plan-named`.
 - **T5**, guarding `thread@structured-plans@plans-at-root`: written at step 1 as
   `tripwire@core@plans-directory-split-asked`.
 
@@ -1524,7 +1524,8 @@ Each criterion names the thread it guards, as an item of this document: the deci
 entry until its harvest.
 
 `acceptance@structured-plans@milestone-fits-file-register` was judged at step 1's landing and did not fire; the landing
-commit reports the evidence. It is reported once more when this document leaves.
+commit reports the evidence. `acceptance@structured-plans@file-anchor-fits-path-model` was judged at step 2's landing and
+did not fire; the landing commit reports the evidence. Each is reported once more when this document leaves.
 
 ### The plans anchor and the milestone anchors fit the defaults D6, D9, D10 and D11 `##milestone-fits-file-register`
 
