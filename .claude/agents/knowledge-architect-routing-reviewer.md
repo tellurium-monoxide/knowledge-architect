@@ -100,7 +100,8 @@ project level reads as binding on all of them. Check that direction first.
 **Is something recorded as a decision that is not one yet?** A shape for work nobody has built
 belongs in a plan document, in the plans directory, as an item of that plan: a slug cited only from
 inside the plan, so that nothing outside it can cite the shape as settled. A design-register slug
-on unbuilt work is a finding. A reference from outside a plan to one of its items is refused by the
+on unbuilt work is a finding, except a decision that no work implements, which is recorded when
+made. A reference from outside a plan to one of its items is refused by the
 checker, and a whole plan document is cited by its kind, from anywhere.
 
 **Is the head still present tense?** No dates, no "formerly", no account of the change. A sentence

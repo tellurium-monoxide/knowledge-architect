@@ -28,7 +28,8 @@ scratch directory the brief names, through the shell, and nowhere else.
 
 ## 1. Extract the transcript
 
-The brief names the session log, and the first and last message of the discussion inside it. The
+The brief names the session log, or several when the discussion spans several sessions, and the
+first and last message of the discussion inside them. Extract each, in the order the brief gives. The
 log of the `claude` harness is a JSONL file, one JSON object per line. Keep the lines whose `type`
 is `user` or `assistant`. From each, keep the text: a message's `message.content` may be a plain
 string, or a list of items; keep the items whose `type` is `text`. Drop tool calls, tool results,
@@ -76,7 +77,10 @@ For each thread and each losing alternative the document records:
 - **nothing the owner said that bears on a decision is missing**: a reason, a condition, a cost the
   owner accepted, a preference stated without a ruling;
 - **every rival the discussion argued** appears among the losing alternatives, or is recorded as
-  not ruled on.
+  not ruled on;
+- **every argument the document records as an item** is one argument of the transcript: its
+  boundaries neither join two arguments nor split one, since they are decided at assembly and this
+  is the check they get, and its key words are verbatim.
 
 ## 4. Report
 
