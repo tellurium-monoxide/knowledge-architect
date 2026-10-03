@@ -309,7 +309,7 @@ finds it there.
    fire**: a tripwire whose firing condition, or a `deferred` issue whose trigger, the planned code
    meets. `cargo klarch tripwires` and `cargo klarch issues --kind deferred` list them; read each
    against the step. A firing found at the audit is ruled before the code is written, where one
-   found by the review before the merge reopens the harvest. Sort each gap:
+   found only by the review of the harvest reopens the harvest. Sort each gap:
    - **Applied in place.** The gap has one answer the document's decisions already imply, or is a
      choice among shapes the document rules out all but one of. Apply the answer in place, in the
      milestone document or the step's spec, wherever the shape it changes is written. Commit the
@@ -329,13 +329,20 @@ finds it there.
    - **Load-bearing.** The gap is material, or is a choice between two shapes neither of which the
      document rules out, or needs a ruling the document marks as the owner's. Record it in the
      step's spec as open at the audit, with the discriminating fact, stop the step, and open a
-     design session with the owner under `knowledge-architect-design`. Its
-     converged design goes into the milestone's documents by the rule of §4, and owes §8's
-     reviews. The step resumes from it. **The session's depth follows the gap.** A choice among
-     shapes that can be stated in full, each with its consequence, takes the design skill's
-     one-round path where its conditions hold: the shapes and a default in one question, and the
-     ruling recorded in the audit's commit. Several such gaps go in one round. A gap that defeats a
-     reason, a premise or a criterion an approved thread rests on needs the full session.
+     design session with the owner under `knowledge-architect-design`. **The session's depth
+     follows the gap.**
+     - A choice among shapes that can be stated in full, each with its consequence, is put to the
+       owner in one round, with a default, where the design skill's conditions for its one-round
+       path hold; several such gaps go in one question. The step's documents exist, so the ruling
+       is not left to a commit message as that path would leave it: it is written in place in the
+       milestone's documents by the rule of §4, as a thread with the owner's words verbatim, like
+       the audit's other answers, and the audit's commit lists it among its gaps. It owes no new
+       §8 review, since it changes no decided shape.
+     - A gap that defeats a reason, a premise or a criterion an approved thread rests on needs the
+       full session. Its converged design goes into the milestone's documents by the rule of §4,
+       and owes §8's reviews.
+
+     The step resumes from the ruling or the converged design.
 3. **Claims, tests, implementation, gates, commit**, per the project's development procedure. The
    commit names how each claim's test was shown to fail against a wrong implementation, and says
    of any claim whose test cannot yet do so why not.
