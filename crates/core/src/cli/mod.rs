@@ -43,7 +43,7 @@ pub use crate::build_origin::{refuse_a_foreign_build, this_library, Library};
 #[non_exhaustive]
 pub enum Command {
     /// Every check, over one walk, in four phases.
-    Check,
+    Check(CheckArgs),
     /// One recorded entry, whole, and every reference to it.
     Show(ShowArgs),
     /// Every issue entry, one row each.
@@ -59,6 +59,14 @@ pub enum Command {
     /// Write the agent files this version ships into the project, and remove the ones it no
     /// longer ships.
     InstallAgentSkills,
+}
+
+#[derive(Args)]
+pub struct CheckArgs {
+    /// Apply every fix the checker can make safely before checking: write the generated files and
+    /// the installed agent files whose bytes the tree and this version determine, and list each.
+    #[arg(long)]
+    pub fix: bool,
 }
 
 #[derive(Args)]
@@ -119,7 +127,8 @@ pub fn run(
     crate::extension::configure(&mut configured, extensions);
     let manifest = &configured;
     match command {
-        Command::Check => check(manifest, checker, extensions),
+        Command::Check(args) if args.fix => fix_then_check(manifest, checker, extensions),
+        Command::Check(_) => check(manifest, checker, extensions),
         Command::Show(args) => show(manifest, &args, checker),
         Command::Issues(args) => issues(manifest, &args, checker),
         Command::Tripwires(args) => tripwires(manifest, &args, checker),
@@ -280,6 +289,108 @@ fn check(
     })
 }
 
+/// Apply every safe fix, then run the full check: `check --fix`.
+///
+/// **A fix is safe when its bytes are determined by the tree and the pinned version, and it
+/// writes or removes only files the tool generates or installs.** Two pass that test: the install
+/// of the agent files, and the generated files. Every other finding's repair is a choice, or
+/// touches git or a hand-written file, and stays the reader's.
+///
+/// **No check writes; every write happens before the model the checks read is built.** The order:
+/// a manifest that holds refused declarations writes nothing, and the check reports them; the
+/// install, when it has something to fix; the writer gate of phases 1 to 3 over a model rebuilt
+/// from the tree as the install left it, which stops the run and writes nothing more; the
+/// generated files; then the full check, whose report and exit code are the run's. The install's
+/// bytes do not depend on the model, which is why it runs before that gate: a writer whose output
+/// is read off the model never writes over an incomplete one.
+///
+/// Each file written or removed is listed before the report, so a session sees what to commit.
+/// A failed write exits 2 when nothing was written yet and 1 after any write, as `index` does:
+/// 2 promises a caller that the tree is as they left it.
+fn fix_then_check(
+    manifest: &Manifest,
+    checker: &[&Path],
+    extensions: &mut [Box<dyn Extension>],
+) -> Result<ExitCode, String> {
+    if !manifest.complaints().is_empty() {
+        return check(manifest, checker, extensions);
+    }
+    let mut written = 0usize;
+    let failed = |written: usize, e: String| {
+        eprintln!("error: {e}");
+        Ok(if written == 0 {
+            ExitCode::from(2)
+        } else {
+            ExitCode::FAILURE
+        })
+    };
+
+    // The install runs only when it has something to fix: it compares raw bytes, and the check
+    // normalises line endings, so an unconditional install would rewrite every installed file of
+    // a checkout that converts them, on every run.
+    if manifest.serves_claude() {
+        let shipped = crate::agents::shipped(manifest);
+        if crate::agents::install_needed(manifest.root(), &shipped) {
+            let mut done = crate::agents::Installed::default();
+            let outcome = crate::agents::install_into(manifest.root(), &shipped, &mut done);
+            for rel in &done.written {
+                outln!("fixed: wrote {} (installed)", rel.display());
+            }
+            for rel in &done.deleted {
+                outln!("fixed: removed {} (installed)", rel.display());
+            }
+            written += done.written.len() + done.deleted.len();
+            if let Err(e) = outcome {
+                return failed(written, e);
+            }
+        }
+    }
+
+    // The writer gate, over the tree as the install left it. A stop is reported as `check`
+    // reports it; what was installed is already listed above. A deletion the install made is
+    // unstaged, and the installed-file check reports it here: staging touches git, which no fix
+    // does, so an upgrade that removes a shipped file takes `git add` and a second run.
+    let model = match crate::Model::build(manifest, checker) {
+        Ok(model) => model,
+        Err(e) => return failed(written, e.to_string()),
+    };
+    let gathered = match Gathered::over(manifest, &model) {
+        Ok(gathered) => gathered,
+        Err(e) => return failed(written, e),
+    };
+    if let Err(stop) = crate::check::foundation(&model, manifest, &gathered.inputs()) {
+        let report = Report::stopped(stop, &model);
+        if written > 0 {
+            outln!();
+        }
+        print_report(&report);
+        return Ok(ExitCode::FAILURE);
+    }
+
+    let generated = match generated_list(manifest, &model, &gathered, extensions) {
+        Ok(generated) => generated,
+        Err(e) => return failed(written, e),
+    };
+    if let Err(e) = check_destinations(manifest, &generated) {
+        return failed(written, e);
+    }
+    for (rel, text) in generated {
+        let path = manifest.root().join(&rel);
+        if std::fs::read_to_string(&path).ok().as_deref() == Some(text.as_str()) {
+            continue;
+        }
+        if let Err(e) = std::fs::write(&path, &text) {
+            return failed(written, format!("{}: {e}", path.display()));
+        }
+        written += 1;
+        outln!("fixed: wrote {} (regenerated)", rel.display());
+    }
+    if written > 0 {
+        outln!();
+    }
+    check(manifest, checker, extensions)
+}
+
 /// The summary first, the findings under it, the verdict on the last line.
 ///
 /// The order is the whole point: a caller reading the tail of the output has to reach the
@@ -316,68 +427,8 @@ fn index(
     // The gate first: a file an extension reads that is not there is phase 2's finding, named
     // by path, and reading it before the gate would turn that into an error naming nothing.
     let gathered = complete_working_tree(manifest, &model)?;
-
-    // Every generated file in one invocation, so a flag choosing between them buys nothing and
-    // cannot be given an invalid combination: each extension's, then one index per
-    // file-register instance. The survey answers which instance directories are there, and an
-    // instance without one contributes no index rather than having its home created here.
-    let mut generated = Vec::new();
-    for extension in extensions.iter_mut() {
-        let prepared = extension.prepare(
-            manifest,
-            &model,
-            Tree::Checkout(manifest.root()),
-            Purpose::Index,
-        )?;
-        generated.extend(
-            prepared
-                .generated(&model, manifest)
-                .into_iter()
-                .map(|g| (g.rel, g.text)),
-        );
-    }
-    generated.extend(crate::index::file_register_indexes(
-        &model,
-        manifest,
-        gathered.inputs().present,
-        gathered.inputs().directories,
-    ));
-
-    // Every destination is checked before any is written. A run that wrote one index and then
-    // failed on the next exited 2 — could not run — having already changed the tree, which is
-    // the one place `design@core@exit-code-ladder`'s line blurs. A missing directory here is the
-    // manifest declaring one the tree does not have; creating it would paper over that, and the
-    // registers check is what reports it.
-    //
-    // **The missing-directory arm is unreachable as the destinations stand**, and is kept for
-    // the next generator rather than for this one: a file-register index is generated only for
-    // an instance whose directory the survey found, and the directory of thaum's rule index
-    // holds the corpus text its rules extension already failed to read. A generator whose
-    // destination sits outside both makes it reachable again, and there is nothing to construct
-    // for a test until one does.
-    for (rel, _) in &generated {
-        let path = manifest.root().join(rel);
-        let dir = path
-            .parent()
-            .ok_or_else(|| format!("{} has no parent directory", path.display()))?;
-        if !dir.is_dir() {
-            return Err(format!(
-                "{}: the directory this index is generated into is not there. Nothing was written.",
-                dir.display()
-            ));
-        }
-        // `fs::write` follows a symlink and writes through it, so a generated path that is one
-        // would replace whatever sits at the far end — which is the one way this command could
-        // destroy something it did not generate, and what `design@core@generated-files-are-pure`
-        // needs to be false for its claim to hold. The sibling tool refuses one for the same
-        // reason, in `target_is_mutable`.
-        if std::fs::symlink_metadata(&path).is_ok_and(|m| m.file_type().is_symlink()) {
-            return Err(format!(
-                "{}: this index is a symlink, and writing would follow it. Nothing was written.",
-                path.display()
-            ));
-        }
-    }
+    let generated = generated_list(manifest, &model, &gathered, extensions)?;
+    check_destinations(manifest, &generated).map_err(|e| format!("{e} Nothing was written."))?;
 
     let mut written = 0usize;
     for (rel, text) in generated {
@@ -402,6 +453,91 @@ fn index(
         outln!("{:<40} rewritten", rel.display());
     }
     Ok(ExitCode::SUCCESS)
+}
+
+/// Every generated file, destination and bytes, over a model the writer gate has passed: each
+/// extension's, then one index per file-register instance.
+///
+/// One function for `index` and `check --fix`, so the two write the same files, per
+/// `design@core@generated-files-are-pure`. Every generated file comes in one call, so a flag
+/// choosing between them buys nothing and cannot be given an invalid combination. The survey
+/// answers which instance directories are there, and an instance without one contributes no index
+/// rather than having its home created here.
+fn generated_list(
+    manifest: &Manifest,
+    model: &crate::Model,
+    gathered: &Gathered,
+    extensions: &mut [Box<dyn Extension>],
+) -> Result<Vec<(std::path::PathBuf, String)>, String> {
+    let mut generated = Vec::new();
+    for extension in extensions.iter_mut() {
+        let prepared = extension.prepare(
+            manifest,
+            model,
+            Tree::Checkout(manifest.root()),
+            Purpose::Index,
+        )?;
+        generated.extend(
+            prepared
+                .generated(model, manifest)
+                .into_iter()
+                .map(|g| (g.rel, g.text)),
+        );
+    }
+    generated.extend(crate::index::file_register_indexes(
+        model,
+        manifest,
+        gathered.inputs().present,
+        gathered.inputs().directories,
+    ));
+    Ok(generated)
+}
+
+/// Refuse every destination that cannot be written safely, before any is written.
+///
+/// The error names the path and says nothing of what was written: the caller knows that, and
+/// `check --fix` may already have installed files when it calls this.
+///
+/// Every destination is checked before any is written. A run that wrote one index and then
+/// failed on the next exited 2 — could not run — having already changed the tree, which is
+/// the one place `design@core@exit-code-ladder`'s line blurs. A missing directory here is the
+/// manifest declaring one the tree does not have; creating it would paper over that, and the
+/// registers check is what reports it.
+///
+/// **The missing-directory arm is unreachable as the destinations stand**, and is kept for
+/// the next generator rather than for this one: a file-register index is generated only for
+/// an instance whose directory the survey found, and the directory of thaum's rule index
+/// holds the corpus text its rules extension already failed to read. A generator whose
+/// destination sits outside both makes it reachable again, and there is nothing to construct
+/// for a test until one does.
+fn check_destinations(
+    manifest: &Manifest,
+    generated: &[(std::path::PathBuf, String)],
+) -> Result<(), String> {
+    for (rel, _) in generated {
+        let path = manifest.root().join(rel);
+        let dir = path
+            .parent()
+            .ok_or_else(|| format!("{} has no parent directory", path.display()))?;
+        if !dir.is_dir() {
+            return Err(format!(
+                "{}: the directory this index is generated into is not there.",
+                dir.display()
+            ));
+        }
+        // `fs::write` follows a symlink and writes through it, so a generated path that is one
+        // would replace whatever sits at the far end — which is the one way this command could
+        // destroy something it did not generate, and what `design@core@generated-files-are-pure`
+        // needs to be false for its claim to hold. The sibling tool refuses one for the same
+        // reason, in `target_is_mutable`.
+        if std::fs::symlink_metadata(&path).is_ok_and(|m| m.file_type().is_symlink()) {
+            return Err(format!(
+                "{}: this index is a symlink, and writing would follow it.",
+                path.display()
+            ));
+        }
+    }
+    Ok(())
 }
 
 /// One recorded entry, whole, and every reference to it.

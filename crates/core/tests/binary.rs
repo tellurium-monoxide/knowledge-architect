@@ -2294,3 +2294,106 @@ fn the_binary_reports_its_version_from_anywhere() {
         "{out}"
     );
 }
+
+/// The issue the `--fix` tests retitle, and the index that lists it.
+const FIX_ISSUE: &str = "docs/open-issues/the-mock-has-one-issue.md";
+const FIX_INDEX: &str = "docs/open-issues/index.md";
+
+/// A copy of `minimal` whose issue is retitled, so its index is stale.
+fn stale_index(tag: &str) -> Sandbox {
+    let sandbox = Sandbox::new(tag, "minimal");
+    let issue = std::fs::read_to_string(sandbox.path(FIX_ISSUE)).expect("the mock's issue");
+    sandbox.write(
+        FIX_ISSUE,
+        &issue.replace(
+            "# The mock has one issue so the register is not empty",
+            "# A retitled issue",
+        ),
+    );
+    sandbox.stage();
+    sandbox
+}
+
+/// The claim: `check --fix` rewrites a stale generated index, lists it, and the run then passes,
+/// so an edit cycle is one command. Mutation checked: skipping the write of the generated list
+/// leaves the index stale, and the run exits 1.
+#[test]
+fn check_fix_rewrites_a_stale_index_and_the_run_passes() {
+    let sandbox = stale_index("fix-stale");
+    let (out, _, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}");
+    assert!(out.contains("the generated file is out of date"), "{out}");
+    let (out, err, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 0, "{out}{err}");
+    assert!(
+        out.contains(&format!("fixed: wrote {FIX_INDEX} (regenerated)")),
+        "{out}"
+    );
+    assert!(out.trim_end().ends_with("PASSED: no findings"), "{out}");
+    let index = std::fs::read_to_string(sandbox.path(FIX_INDEX)).expect("the index");
+    assert!(index.contains("A retitled issue"), "{index}");
+}
+
+/// The claim (P1): a finding of phases 1 to 3 stops a `--fix` run before any generated file is
+/// written, so no writer writes over an incomplete model. Mutation checked: removing the gate's
+/// stop writes the index over the incomplete model.
+#[test]
+fn check_fix_writes_no_generated_file_over_an_incomplete_model() {
+    let sandbox = stale_index("fix-incomplete");
+    std::fs::remove_file(sandbox.path("docs/rejected-alternatives.md"))
+        .expect("a required document is removed");
+    sandbox.stage();
+    let before = std::fs::read(sandbox.path(FIX_INDEX)).expect("the index");
+    let (out, err, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 1, "{out}{err}");
+    assert!(out.contains("phase 2:"), "{out}");
+    assert!(!out.contains("fixed:"), "{out}");
+    assert_eq!(
+        std::fs::read(sandbox.path(FIX_INDEX)).expect("the index"),
+        before
+    );
+}
+
+/// The claim: with nothing to fix, `check --fix` prints exactly what `check` prints and exits as
+/// it does. Mutation checked: an install run whenever the project serves a harness is still
+/// silent here, but printing a header before the report fails the comparison.
+#[test]
+fn check_fix_with_nothing_to_fix_is_a_plain_check() {
+    let sandbox = Sandbox::new("fix-nothing", "minimal");
+    let plain = sandbox.run(&["check"]);
+    let fixed = sandbox.run(&["check", "--fix"]);
+    assert_eq!(plain.2, 0, "{}{}", plain.0, plain.1);
+    assert_eq!(fixed, plain);
+}
+
+/// The claim: `check --fix` installs an installed file that differs from the shipped text, lists
+/// it, and the run passes. Mutation checked: skipping the install when it is needed leaves the
+/// phase-2 finding, and the run exits 1.
+#[test]
+fn check_fix_installs_a_differing_installed_file() {
+    let sandbox = Sandbox::new("fix-installed", "minimal");
+    sandbox.serve_claude();
+    let (out, err, code) = sandbox.run(&["install-agent-skills"]);
+    assert_eq!(code, 0, "{out}{err}");
+    let (rel, _) = knowledge_architect_agent_skills::FILES
+        .first()
+        .expect("this version ships a file");
+    sandbox.write(rel, "an edit the install overwrites\n");
+    sandbox.stage();
+    let (out, _, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}");
+    let (out, err, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 0, "{out}{err}");
+    assert!(
+        out.contains(&format!("fixed: wrote {rel} (installed)")),
+        "{out}"
+    );
+}
+
+/// The claim: `--fix` belongs to `check` alone; `commits` judges history and refuses it, which
+/// clap answers with exit 2.
+#[test]
+fn commits_takes_no_fix() {
+    let (_, err, code) = run("minimal", &["commits", "--fix", "HEAD"]);
+    assert_eq!(code, 2, "{err}");
+}

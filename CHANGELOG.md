@@ -32,6 +32,9 @@ subsection is omitted.
 - `manifest`, major: a `[registers.thread]`, `[registers.argument]`, `[registers.criterion]` or
   `[registers.acceptance]` table is refused, and so is any of those names in a location's
   `registers` list. Rename a register of the project that carries one of them.
+- `library`, major: `cli::Command::Check` takes its arguments, `Command::Check(CheckArgs)`. Code
+  that builds or matches the variant by name writes `Command::Check(CheckArgs { fix: false })`, or
+  matches `Command::Check(_)`.
 - `agent-skills`, major: the primer names the plans directory, docs/plans/, and the roadmap. Remove
   the row naming the plans directory from the project's own rows of the knowledge table, in its root
   `CLAUDE.md`.
@@ -49,6 +52,10 @@ subsection is omitted.
   or a milestone document, and every reference to it.
 - `checks`, minor: `commits` refuses a citation of a commit of its range by SHA, in a message or in
   a document of a commit's tree, where the manifest turns it on.
+- `cli`, minor: `check --fix` applies every safe fix before checking: it installs the agent files
+  when one is missing, differs or is no longer shipped, writes every stale or missing generated
+  file, lists each, then runs the check. An upgrade that removes a shipped file takes a
+  `git add` and a second run.
 - `cli`, minor: `--version` prints the version of the checker that runs, from any directory.
 - `manifest`, minor: `[commits] refuse-branch-shas`, off when absent.
 

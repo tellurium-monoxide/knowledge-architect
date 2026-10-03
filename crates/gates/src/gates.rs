@@ -673,6 +673,26 @@ mod tests {
     ///
     /// A project's CI runs the list it builds from this one, so a silent reorder or a dropped
     /// gate is caught here rather than by a reader.
+    /// The claim (P4 of the pre-release spec): the `check` gate judges the tree as committed, and
+    /// never runs `check --fix`, which would rewrite a stale generated file and pass in CI a
+    /// tree nobody committed. Mutation checked: adding `--fix` to the gate's arguments fails it.
+    #[test]
+    fn the_check_gate_runs_check_without_fix() {
+        let gates = rust_project(
+            Checker {
+                package: "xtask",
+                prefix: &["klarch"],
+            },
+            "origin/main",
+        );
+        let check = gates
+            .iter()
+            .find(|gate| gate.name == "check")
+            .expect("a check gate");
+        assert_eq!(check.args.last().map(String::as_str), Some("check"));
+        assert!(!check.args.iter().any(|arg| arg == "--fix"));
+    }
+
     #[test]
     fn the_rust_list_is_in_cost_order_and_holds_the_range_check() {
         let gates = rust_project(

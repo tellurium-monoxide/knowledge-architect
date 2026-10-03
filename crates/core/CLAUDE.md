@@ -56,9 +56,9 @@ the tests of the core binary's refusal of a table it does not own. **Plant a pha
 `dirhome`, `minimal` or `core` reports no finding; anything else it reports there is a defect in
 the tool or in the fixture.
 
-**`cargo klarch index` is never run inside `planted`.** Its stale and missing generated files are
-planted defects, and `index` rewrites them to the current listing. A generated file of `planted`
-is written by hand.
+**Neither `cargo klarch index` nor `cargo klarch check --fix` is run inside `planted`.** Its stale
+and missing generated files are planted defects, and both commands rewrite them to the current
+listing. A generated file of `planted` is written by hand.
 
 **Every mock but `unsound` declares `harness = []`.** The shipped set changes with every version
 of the skills, so a mock serving the `claude` harness would need the installed copy of that set,

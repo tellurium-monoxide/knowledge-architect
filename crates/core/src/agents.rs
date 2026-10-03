@@ -107,6 +107,19 @@ pub(crate) struct Installed {
 /// would write or delete in another directory, possibly another project's. The error names the
 /// path, and so does every filesystem error.
 pub(crate) fn install(root: &Path, shipped: &[(PathBuf, String)]) -> Result<Installed, String> {
+    let mut out = Installed::default();
+    install_into(root, shipped, &mut out)?;
+    Ok(out)
+}
+
+/// The same, recording into `out` as it goes, so a caller still knows what was written or
+/// deleted when a later write fails part-way. `check --fix` prints that record either way, and
+/// its exit code depends on whether anything was written.
+pub(crate) fn install_into(
+    root: &Path,
+    shipped: &[(PathBuf, String)],
+    out: &mut Installed,
+) -> Result<(), String> {
     for rel in [
         ".claude",
         ".claude/skills",
@@ -121,7 +134,6 @@ pub(crate) fn install(root: &Path, shipped: &[(PathBuf, String)]) -> Result<Inst
         }
     }
     let at = |rel: &Path, e: std::io::Error| format!("{}: {e}", rel.display());
-    let mut out = Installed::default();
     for (rel, text) in shipped {
         let path = root.join(rel);
         if std::fs::read(&path).ok().as_deref() == Some(text.as_bytes()) {
@@ -142,7 +154,28 @@ pub(crate) fn install(root: &Path, shipped: &[(PathBuf, String)]) -> Result<Inst
     remove_empty_owned_dirs(root).map_err(|e| at(Path::new(".claude/skills"), e))?;
     out.written.sort();
     out.deleted.sort();
-    Ok(out)
+    Ok(())
+}
+
+/// Whether the install has anything to fix: a shipped file missing or differing, or a file of the
+/// owned namespace the shipped set does not hold.
+///
+/// **Line endings are normalised, as the installed-file check normalises them.** `install`
+/// compares raw bytes, so on a checkout that converts line endings it would rewrite every
+/// installed file each time it runs, while the check passes. `check --fix` asks this first, so a
+/// run with nothing to fix stays a plain check.
+pub(crate) fn install_needed(root: &Path, shipped: &[(PathBuf, String)]) -> bool {
+    let differs = shipped.iter().any(|(rel, text)| {
+        std::fs::read_to_string(root.join(rel)).map_or(true, |on_disk| lf(&on_disk) != lf(text))
+    });
+    differs
+        || owned_on_disk(root)
+            .map(|owned| {
+                owned
+                    .iter()
+                    .any(|rel| !shipped.iter().any(|(s, _)| s == rel))
+            })
+            .unwrap_or(true)
 }
 
 /// An error naming the path when it is a symbolic link.
@@ -294,6 +327,31 @@ mod tests {
 
     /// The claim: an install writes what is missing or differs, removes an unshipped file of the
     /// namespace with its emptied skill directory, and touches nothing outside the namespace.
+    /// The claim: the install is needed for a missing, differing or unshipped file, and not for
+    /// one that differs from the shipped text by its line endings alone, which the check accepts.
+    /// Mutation checked: comparing raw bytes, as `install` does, reports the CRLF copy as needed.
+    #[test]
+    fn the_install_is_needed_for_a_real_difference_and_not_for_line_endings() {
+        let root = std::env::temp_dir().join(format!("ka-needed-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        let write = |rel: &str, text: &str| {
+            let p = root.join(rel);
+            std::fs::create_dir_all(p.parent().unwrap()).unwrap();
+            std::fs::write(p, text).unwrap();
+        };
+        let rel = ".claude/agents/knowledge-architect-a.md";
+        let shipped = vec![(PathBuf::from(rel), "one\ntwo\n".to_string())];
+        assert!(install_needed(&root, &shipped), "a missing file");
+        write(rel, "one\r\ntwo\r\n");
+        assert!(!install_needed(&root, &shipped), "line endings alone");
+        write(rel, "one\nthree\n");
+        assert!(install_needed(&root, &shipped), "a differing file");
+        write(rel, "one\ntwo\n");
+        write(".claude/agents/knowledge-architect-old.md", "unshipped");
+        assert!(install_needed(&root, &shipped), "an unshipped file");
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
     #[test]
     fn an_install_writes_the_shipped_set_and_removes_the_rest_of_the_namespace() {
         let root = std::env::temp_dir().join(format!("ka-install-{}", std::process::id()));

@@ -32,6 +32,7 @@ version floor comes from. The decision is `design@core@git-supplies-the-walk`.
 
 ```sh
 cargo klarch check                     every check, over one walk, in four phases
+cargo klarch check --fix               apply every safe fix, list each, then every check
 cargo klarch show <kind>@<anchor>@<id> one recorded entry, and every reference to it
 cargo klarch issues [anchor] [--kind k] [--group g] [text …]
                                        every issue entry, one row each
@@ -51,8 +52,8 @@ Three, per `design@core@exit-code-ladder`, and the third is what makes the other
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
 | `0` | the command ran and its subject is in order | `--version`, from any directory; `check` with no findings; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commits` with no finding, an empty range included; `install-agent-skills` having written and removed what it had to, or found nothing to do |
-| `1` | the command ran and reports a negative answer | `check` with findings; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, `index` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, `install-agent-skills` over a manifest holding a refused declaration, over a symbolic link on an owned path, or when a write or a removal failed, naming the path, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
+| `1` | the command ran and reports a negative answer | `check` with findings, `--fix` included; `check --fix` when a write failed after another file was already written; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, `index` or `check --fix` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, `install-agent-skills` over a manifest holding a refused declaration, over a symbolic link on an owned path, or when a write or a removal failed, naming the path, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -89,6 +90,26 @@ the checks cross the phases, and a run over a passing tree costs under a second.
 
 `index`, and a writing command of an extension, run the first three phases too, and refuse with
 exit 2 while one of them holds anything: an index generated over an incomplete model lists rows nobody asked for.
+
+**`check --fix` applies every fix the checker can make safely, then runs the check.** A fix is
+safe when its bytes are determined by the tree and the pinned version, and it writes or removes
+only files the tool generates or installs. Two pass: the install of the agent files, run only when
+an installed file is missing, differs or is no longer shipped, and every stale or missing generated
+file. Each file written or removed is listed on a line `fixed: wrote <path> (<kind>)` or
+`fixed: removed <path> (installed)`, before the report. Every other finding's repair is a choice,
+or touches git or a hand-written file, and stays the reader's.
+
+- The order: a manifest holding a refused declaration writes nothing; then the install; then the
+  first three phases, over the tree as the install left it, which stop the run and write nothing
+  more; then the generated files; then the full check, whose report and exit code are the run's.
+  With nothing to fix, the output is a plain `check`'s.
+- **An upgrade that removes a shipped file takes two runs.** The install deletes the file, git
+  still lists it, and phase 2 reports the deletion as not staged, so the generated files wait. Run
+  `check --fix`, stage the deletion with `git add`, then run `check --fix` again: no fix touches
+  git.
+- A write that fails exits 2 when nothing was written yet, and 1 after any write, as `index` does.
+- `--fix` belongs to `check` alone. `commits` judges history and takes no `--fix`, and the gates
+  run `check` without it, so continuous integration judges the tree as committed.
 
 ## `show`, `issues` and `tripwires`
 
