@@ -1570,7 +1570,8 @@ did not fire; the landing commit reports the evidence. Each is reported once mor
 
 ## Defaults awaiting the owner
 
-None. The owner ruled every default below, and D19, in the spec of step 2.
+Two, D20 and D21, found at step 3's audit, are in its spec. The owner ruled every default below, and
+D19, in the spec of step 2.
 
 **A material finding on `thread@structured-plans@ledger-from-transcript`, presented to the owner.** Argument `argument@structured-plans@a72` stated three
 compactions; the re-measurement found one (see the notes under "Arguments"). The premise the
