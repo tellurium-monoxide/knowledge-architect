@@ -156,11 +156,14 @@ re-check `design@core@an-extension-builds-its-own-model` against it.
 ## Guarding `design@core@api-facade`'s membership `##private-item-needed`
 
 **Fires when:** a consumer of the library, thaum's rules extension first, needs an item that is
-private behind the facade, and no public item replaces it. Examples: the records listing, for an
-extension command that lists its own entries; the entity table, to resolve references inside an
-extension's subject.
-**Response:** re-expose the item under the role module its use belongs to, as a 0.MINOR change,
-and add it to the facade's entry if it changes the rule rather than the list.
+private behind the facade, and no public item replaces it. An example still unmet: the records
+listing, for an extension command that lists its own entries. The entity table and the anchors
+fired it once, recorded as `issue@core@an-extension-cannot-see-which-register-a-document-belongs-to`.
+**Response:** open an issue for the instance. Its fix gives the consumer what it needs under the
+role module its use belongs to, as a 0.MINOR change: the item itself where its shape is fit to
+publish, or a narrow read-only view of it where publishing it would expose the core's internals,
+the direction the owner chose for the entity table. Add it to the facade's entry if it changes the
+rule rather than the list.
 **Re-entry:** thaum's migration onto the published crate, and each extension written after it.
 
 ## Guarding `Gathered`, per `design@core@the-core-cli-is-a-library-module` `##inputs-builder-needed`

@@ -47,14 +47,15 @@ Three smaller gaps came out of the same trial:
 - the rustdoc holds no complete `impl Extension`; the only one is in
   `path@core@tests/extension_api.rs`, which a reader of the published crate does not see.
 
-`tripwire@core@private-item-needed` names the entity table among its examples, and this is that
-need. The tripwire guards the facade's membership for every later item too, so it stays, and this
-entry records the instance.
+This is the need `tripwire@core@private-item-needed` watches for. The tripwire guards the facade's
+membership for every later item too, so it stays, restated to name the class, and this entry
+records the instance.
 
 ### Why it matters
 
-`goal@core@projects-add-their-own-checks` is met "while an extension needs no change to the core
-and uses only its public, documented API". An extension that has to guess membership from paths
+It strains `design@core@api-facade`, whose membership leaves an extension nothing to ask these
+questions with. `goal@core@projects-add-their-own-checks` is met "while an extension needs no
+change to the core and uses only its public, documented API". An extension that has to guess membership from paths
 quietly breaks where the manifest says something else, and with it
 `goal@core@relocation-is-one-manifest-edit` for any project that runs one.
 
@@ -63,7 +64,8 @@ quietly breaks where the manifest says something else, and with it
 The direction the owner chose: a narrow read-only view in the `extension` module, borrowing the
 entity table and the anchors, with an owner of a path, the entry at a site, the entries of a
 register, and the resolution of a span; rather than making `Entities` and `Anchors` public as
-they are. Its design settles how the view reaches `check` (a new parameter breaks every
+they are. It widens what `design@core@an-extension-builds-its-own-model` lists an extension as
+reading. Its design settles how the view reaches `check` (a new parameter breaks every
 extension; a field of `Inputs` meets `tripwire@core@inputs-builder-needed`), and whether a
 `Finding` gains a check name. Then the implementation, a worked `impl Extension` in the crate
 docs, and a sentence on what `Inputs.present` describes under `commits`.
