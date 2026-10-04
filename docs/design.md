@@ -55,15 +55,28 @@ the release procedure runs it. A new directory is shipped only once it is listed
 fixtures and the design documents never reach a package, and their growth cannot push a package past
 the crates.io size limit. The cost is accepted: `cargo test` cannot run from a downloaded package.
 The license files sit at the root and as copies in each directory under crates/, because an
-`include` path cannot reach outside the package directory. **The changelog ships the same way.** A
-project moving its pin reads the changelog of every version crossed, and finds it in the source
-cargo downloaded, with no network and at the version it pinned. Each crate carries a copy of the
-root CHANGELOG.md, written by `cargo x changelog`, and a test of tools/xtask fails while a copy
-differs, so a branch that writes an entry copies it before it can pass the gates. Cargo refuses a
-listed file the tree does not commit, and packages a crate without a listed file that is absent, so
-the copies are committed. The walk skips them, since the root file is checked and they are identical
-to it. tools/xtask is never published, so it carries none of these copies. This keeps what a project
-receives to what it uses, per `goal@knowledge-architect@any-project-can-adopt-it`.
+`include` path cannot reach outside the package directory, and the changelog ships the same way, per
+`design@knowledge-architect@the-changelog-ships-in-every-crate`. tools/xtask is never published, so
+it carries none of these copies. This keeps what a project receives to what it uses, per
+`goal@knowledge-architect@any-project-can-adopt-it`.
+
+### Each published crate ships the root changelog, written by `cargo x changelog` `##the-changelog-ships-in-every-crate`
+
+A project moving its pin reads the changelog of every version crossed. Each crate under crates/
+carries a copy of the root CHANGELOG.md, listed in its `include`, so the changelog of a version is
+in the source cargo fetches for that version, and a project reads it there, at the version it pins,
+with no address outside the crate. `cargo x changelog` writes the copies, and
+`every_published_crate_carries_the_root_changelog` in `path@xtask@src/changelog.rs` fails while one
+differs or a crate's `include` stops listing it, so a branch that writes an entry copies it before
+it can pass the gates. The walk skips the copies, by three `skip-files` rows of the manifest: the
+root file is checked, and they are identical to it. One changelog for every crate, rather than one
+per crate, keeps one file to write and gives each crate the whole history; the owner chose it.
+
+**The copies are committed, because cargo packages nothing else.** Measured on cargo 1.98.0: a copy
+that `include` lists and git ignores makes `cargo package --list -p <crate>` exit 101, "files in the
+working directory contain changes that were not yet committed into git"; with the copy absent, the
+crate is packaged without it, and with no error. Re-taken by listing a crate after writing a
+git-ignored copy into it, then after deleting the copy.
 
 ### A published crate's crates.io page is a short CRATES-IO.md, and its README stays repository-facing `##crates-io-page-file`
 

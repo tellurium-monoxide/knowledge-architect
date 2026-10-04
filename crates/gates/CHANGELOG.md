@@ -10,11 +10,13 @@ subsection is omitted.
 
 ### New features
 
-- `library`, patch: each published crate ships CHANGELOG.md, so the changelog of a version is in
+- `library`, minor: each published crate ships CHANGELOG.md, so the changelog of a version is in
   the source cargo downloads for it.
 
 ### Workflow
 
+- `agent-skills`, patch: when a project moves its pin, the setup skill fetches the new version and
+  reads the changelog of each version crossed in the crate source cargo downloaded.
 - `agent-skills`, patch: the setup skill's section for a Rust project ties every build to its
   checkout: a cargo `[env]` variable valued at the checkout's root, read by every library root and
   every target of a package with no library, and named by every build script. A target directory

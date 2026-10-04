@@ -26,7 +26,7 @@ The repository is a virtual workspace with five Components, per
 | `core` | crates/core | package `knowledge-architect`: the checker library and the binary `klarch` |
 | `agent-skills` | crates/agent-skills | package `knowledge-architect-agent-skills`: the text the checker installs into a project |
 | `gates` | crates/gates | package `knowledge-architect-gates`: the library that runs a project's merge gates |
-| `xtask` | tools/xtask | the maintenance tool, `cargo x gates`; never published |
+| `xtask` | tools/xtask | the maintenance tool, `cargo x gates` and `cargo x changelog`; never published |
 
 ## Language, tone and style
 
@@ -500,7 +500,7 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   that passes one of three tests, under the subsection of that test. A branch that finds no
   `Next release` section creates it above the newest released section. After editing it, run
   `cargo x changelog`, which writes the copy each published crate ships; a test fails while a copy
-  differs. The three tests:
+  differs, per `design@knowledge-architect@the-changelog-ships-in-every-crate`. The three tests:
   - **Migration**: a consumer must change something in its own files; one entry per thing, saying
     what. Running the install of the agent skills again is never an entry. An entry that adds a
     required document or home says it holds for mock projects too.

@@ -30,10 +30,11 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    `git grep -n '<previous version>'` finds every site that still names the previous one. An
    example inside a skill, such as an xtask manifest's own version, is not a site.
 2. **The changelog.** Rename CHANGELOG.md's `## Next release` to `## <version>`, then run
-   `cargo x changelog` to write the crates' copies. Each branch wrote
-   its own entries there, per `design@knowledge-architect@changelog-entries`, and step 9's review
-   checks them. The version chosen at step 1 follows the highest bump class among its entries,
-   a patch at least.
+   `cargo x changelog` to write the crates' copies, per
+   `design@knowledge-architect@the-changelog-ships-in-every-crate`. Each branch wrote its own
+   entries there, per `design@knowledge-architect@changelog-entries`, and step 9's review checks
+   them. The version chosen at step 1 follows the highest bump class among its entries, a patch at
+   least.
 3. **Commit**, with `cargo klarch check` before and `cargo klarch commits origin/main..HEAD` after:
    the whole branch, per root `CLAUDE.md`, section Verify mechanically, and
    `issue@core@branch-sha-citations-are-judged-within-the-range-only`.

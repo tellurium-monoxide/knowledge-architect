@@ -31,3 +31,8 @@ gave no discoverability in exchange.
 1.98.0: in two copies of a one-crate workspace sharing one `CARGO_TARGET_DIR`, a binary printing
 `env!("CARGO_MANIFEST_DIR")` was not rebuilt in the second copy and printed the first copy's
 directory. Cargo does not track a variable it sets itself.
+
+**The crates' changelog copies written at packaging time and kept out of the tree** — lost to
+`design@knowledge-architect@the-changelog-ships-in-every-crate`. `live`. Refuted by a run on cargo
+1.98.0: a git-ignored copy that `include` lists makes `cargo package --list` exit 101 as an
+uncommitted change, and an absent one is left out of the package with no error.
