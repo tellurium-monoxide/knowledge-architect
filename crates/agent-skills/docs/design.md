@@ -197,7 +197,7 @@ same reasoning. Only the design skill states a set so far:
 A decision is written into the design homes in the change that lands the work implementing it, not
 when the spec is written, because a design home holds built intent, per
 `design@agent-skills@design-home-is-built-intent`. While the work is open, the spec or the
-milestone document on its branch is the only place the decision exists. A decision with no
+milestone document, on the main branch or on the work's, is the only place the decision exists. A decision with no
 implementing work, one that constrains work nobody has started, is recorded when it is made.
 
 ### A design home holds built intent, and a plan document holds unbuilt intent `##design-home-is-built-intent`
@@ -409,20 +409,23 @@ confirmed to have lost no content. The record of the review says what was folded
 history still says what the review found. The rule exists to avoid history edits, not to keep a
 repair apart from what it repairs.
 
-### A plan document lands when it is written, apart from its work `##plan-lands-apart-from-its-work`
+### A plan document's landing is not tied to its work's `##plan-landing-is-not-tied-to-its-work`
 
 A plan document, a spec or a milestone document, is merged to the main branch in a pull request of
-its own or with its work, whichever the owner chooses; nothing ties its landing to when its work is
-done. An owner plans a feature that will not be built yet so that the work done meanwhile does not
-drift from it, which needs the document where every session reads it, on the main branch; that
-serves `goal@knowledge-architect@agents-work-without-drift`. What "spec" and "milestone" measure is
-the work, one pull request or several, not where the document lands.
+its own or with its work, whichever the owner chooses, whatever the time of its work. An owner
+plans a feature that will not be built yet so that the work done meanwhile does not drift from it,
+which needs the document where every session reads it, on the main branch; that serves
+`goal@knowledge-architect@agents-work-without-drift`. What "spec" and "milestone" measure is the
+work, one pull request or several, not where the document lands. The document leaves when its work
+lands, per `design@agent-skills@spec-leaves-at-landing`.
 
-**A plan document lands before any work that changes what the project's gates check.** On one
-branch, the gates as the work's first commit changes them would judge the commit that added the
-document, whose tree predates the change, so that work begins on a branch of its own, after the
-document is merged. The document leaves when its work lands, per
-`design@agent-skills@spec-leaves-at-landing`.
+### A plan document lands before any work that changes what the project's gates check `##plan-lands-before-gate-change`
+
+On one branch, the gates as the work's first commit changes them would judge the commit that added
+the document, whose tree predates the change, and refuse it. So that work begins on a branch of its
+own, after the document is merged. This holds for a spec as for a milestone document, whose step
+that changes the gates is the one this rule meets, per
+`design@agent-skills@plan-landing-is-not-tied-to-its-work`.
 
 ### Undesigned work is an issue `##planned-work-is-an-issue`
 
