@@ -47,6 +47,9 @@ Three smaller gaps came out of the same trial:
 - the rustdoc holds no complete `impl Extension`; the only one is in
   `path@core@tests/extension_api.rs`, which a reader of the published crate does not see.
 
+Thaum's extension, the consumer the tripwire names first, was not examined: whether it meets the
+same need, and how it works around it, is `not established`.
+
 This is the need `tripwire@core@private-item-needed` watches for. The tripwire guards the facade's
 membership for every later item too, so it stays, restated to name the class, and this entry
 records the instance.
