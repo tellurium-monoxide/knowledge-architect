@@ -664,9 +664,9 @@ installed skills move with it. A dependency builds no executable for the project
 runs the pinned version through its maintenance crate, per
 `design@agent-skills@xtask-pins-checker`, and any other project installs it into a directory of its
 own with `cargo install --locked --root`. A Rust project that is one package with no workspace
-either gains a workspace for that crate or installs the binary as any other project does, on its
-owner's ruling, since the first changes the project's build and the second leaves it with no
-maintenance crate. A machine-wide install would give two projects on one machine one
+gains a workspace for that crate, which keeps the gates `goal@knowledge-architect@setup-brings-quality-tools`
+asks for, or installs the binary as any other project does and builds its own gates, on its
+owner's ruling, since the first changes the project's build. A machine-wide install would give two projects on one machine one
 version, which is what bundling the workflow into the checker avoids, per
 `design@knowledge-architect@binary-bundles-workflow`. A project with an extension runs its own
 binary under a name of its own, per `design@core@declared-command`. **The manifest declares the
