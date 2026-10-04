@@ -183,11 +183,12 @@ mechanically. Do not filter its output through pipes. Before a merge, run
 
 **Every commit of a branch must pass `commits` under the checker built from the working tree**, not
 only the branch's tip: its message and its tree. Run `cargo klarch check` before each commit, and
-`cargo klarch commits HEAD~1..HEAD` after it. Amend the commit if either fails, with a clean tree;
-once later commits sit on top, the repair is a history edit. **A change to the core that makes a
-check stricter, or changes the manifest format, makes every earlier commit of its branch fail.**
-Put that change in the branch's first commit, with every fix the tree needs to pass it, or squash
-the branch to one commit before its review. The decision is
+`cargo klarch commits origin/main..HEAD` after it: the whole branch, since a citation of an earlier
+commit of the branch by SHA is refused only when that commit is in the range judged. Amend the
+commit if either fails, with a clean tree; once later commits sit on top, the repair is a history
+edit. **A change to the core that makes a check stricter, or changes the manifest format, makes
+every earlier commit of its branch fail.** Put that change in the branch's first commit, with every
+fix the tree needs to pass it, or squash the branch to one commit before its review. The decision is
 `design@core@a-commit-message-is-a-document`. Run both checks bare, and never chain a command on a
 verdict that went through a pipe.
 

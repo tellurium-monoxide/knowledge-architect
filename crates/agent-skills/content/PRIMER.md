@@ -21,7 +21,10 @@ the owner.** It is not resolved by following the decision.
 - **A design home is built intent**: the design as built and its reasons, and the decisions that
   no work implements, recorded when made. Design that is decided and not built is in a plan
   document until it lands. Check the code against a design home, never the other way. A divergence
-  is a defect in one of them: say which, open an issue, and stop.
+  is a defect in one of them: say which, open an issue, and stop. A design home can be wrong, and
+  it still prevails over the code until the issue closes. It closes when the code changes to meet
+  the head, or when the head is reversed under `knowledge-architect-decision-recording`; it never
+  closes by following the code.
 - **A claim about the code as it stands** (a scoped `CLAUDE.md` invariant, a doc comment, a name, an
   issue's diagnosis) goes stale. Verify it against the code, or against a run you observe, before
   relying on it.

@@ -374,10 +374,12 @@ the range is run after each commit, and a finding in the newest commit is repair
 
 **A project whose merges rewrite SHAs refuses citations of its branch's own commits.** Under
 `[commits] refuse-branch-shas = true`, `commits` reports every run of 7 to 64 lowercase hex digits
-that prefixes the SHA of a commit of the range, in a message or in a document of a commit's tree:
-a rebase merge gives those commits new SHAs, and the citation would then name nothing. Name such
-a commit by its subject. A SHA already on the main branch may be cited. The option is off when
-absent, and is read from each commit's own manifest. The argument is
+that prefixes the SHA of a commit of the range, in a message or in a document of a commit's tree: a
+rebase merge gives those commits new SHAs, and the citation would then name nothing. Name such a
+commit by its subject. A SHA already on the main branch may be cited. The option is off when absent,
+and is read from each commit's own manifest. A citation is seen only when the cited commit is in the
+range judged, so with the option on, run the check after a commit over the branch, `<base>..HEAD`:
+over `HEAD~1..HEAD`, a citation of an earlier commit of the branch passes. The argument is
 `design@core@branch-shas-are-refused`.
 
 `check` reads no history, and the range is always explicit. `cargo x gates` runs
@@ -388,7 +390,7 @@ commit, and where HEAD sits changes nothing. The uses a range serves:
 
 | use | range |
 | --- | --- |
-| the commit just made, before it is amended or built on | `HEAD~1..HEAD` |
+| the commit just made, before it is amended or built on | `HEAD~1..HEAD`, or `<base>..HEAD` under `refuse-branch-shas` |
 | a branch's own commits, before review and merge | `<base>..HEAD` |
 | CI over a pull request, which checks out the branch's head | `<base>..HEAD` |
 | a pre-push hook: git gives it, per pushed ref, the local and the remote sha, and with `git push origin other-branch` the local sha is not HEAD | `<remote sha>..<local sha>` |

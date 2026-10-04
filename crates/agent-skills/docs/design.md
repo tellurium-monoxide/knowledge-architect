@@ -209,6 +209,11 @@ intent, since nothing waits to be built. The rival, a design home holding
 intent built or not, needs a marker on every entry to tell the two apart, and checking the code
 against an unbuilt entry reports a defect in code nobody has written. Unbuilt intent has a checked
 home because plan documents are a structure the checker reads, per `design@core@plan-register`.
+A head can be wrong, and while it diverges from the code it still prevails: the divergence closes
+when the code meets the head or when the head is reversed, never by following the code. Without
+that, a session that must keep working would build on whichever side it met first, and a
+divergence would close silently in the code's favour, against
+`goal@knowledge-architect@agents-work-without-drift`.
 This serves `goal@knowledge-architect@documentation-stays-consistent`.
 
 ### A design head carries the standing argument, and history carries the deliberation `##standing-argument-in-head`

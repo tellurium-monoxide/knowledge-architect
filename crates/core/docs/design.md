@@ -1459,16 +1459,16 @@ with `%B` and cleans nothing: git applied its own cleanup before the commit exis
 second pass would take bytes of a commit out of the regime — under `-m` a `#` line is committed
 verbatim.
 
-**One command judges messages, after the commit exists.** `commits <range>` judges every commit
-of the range against its own tree, with its first parent. It is run over `HEAD~1..HEAD` after
-each commit, so a finding in the newest commit's message is repaired by `git commit --amend`, and over the
-branch by the gates and by CI before any merge, which is where the guarantee lies: `main` is
-never rewritten, so what must not happen is a message with a finding reaching it, and the range
-check before the merge excludes that. No hook judges a draft before the commit exists. A hook
-repeats the range check's message half, not its tree half, at every commit; it is per-clone
-state a session has to install and check; and it resolves a message against HEAD, which under
-an amend, a reword or a squash is the commit being replaced, so it refuses history edits the
-range check accepts.
+**One command judges messages, after the commit exists.** `commits <range>` judges every commit of
+the range against its own tree, with its first parent. It is run over `HEAD~1..HEAD` after each
+commit, or over the branch where `design@core@branch-shas-are-refused` is turned on, so a finding in
+the newest commit's message is repaired by `git commit --amend`, and over the branch by the gates
+and by CI before any merge, which is where the guarantee lies: `main` is never rewritten, so what
+must not happen is a message with a finding reaching it, and the range check before the merge
+excludes that. No hook judges a draft before the commit exists. A hook repeats the range check's
+message half, not its tree half, at every commit; it is per-clone state a session has to install and
+check; and it resolves a message against HEAD, which under an amend, a reword or a squash is the
+commit being replaced, so it refuses history edits the range check accepts.
 
 **Everything a commit is judged against is read from that commit's tree.** The manifest, the
 `[walk]` rules, the documents, the generated indexes, the per-instance options and every file an
@@ -1532,16 +1532,19 @@ as a branch that makes the checker stricter does: the change first, or a squash.
 
 Under `[commits] refuse-branch-shas = true`, `commits` reports every run of 7 to 64 lowercase hex
 digits, bounded by bytes that are not ASCII letters, digits or `_`, that prefixes the SHA of a
-commit of the range it judges: in each commit's message, and in the whole text of each document
-of that commit's tree, a Rust file's code and literals included. The range a branch is judged
-over is its own commits, so these are exactly the commits a merge that rebases gives new SHAs; a
-citation of one would name nothing once the branch merges. A SHA on the main branch, or of
-another project, is not in the range and passes, unless its first 7 digits collide with a SHA of
-the range. Only lowercase counts, since git prints a SHA in lowercase, and `_` bounds a word as a
-letter or a digit does, since it joins the parts of an identifier. A project whose merges keep
-the SHAs, such as fast-forwards, has nothing to refuse, so the check is off unless the manifest
-turns it on. It serves `goal@core@declared-instructions-are-checked`: a rule against such
-citations is kept by running `commits`, not by a reviewer remembering it.
+commit of the range it judges: in each commit's message, and in the whole text of each document of
+that commit's tree, a Rust file's code and literals included. The range a branch is judged over is
+its own commits, so these are exactly the commits a merge that rebases gives new SHAs; a citation of
+one would name nothing once the branch merges. A SHA on the main branch, or of another project, is
+not in the range and passes, unless its first 7 digits collide with a SHA of the range. **A citation
+is seen only when the cited commit is in the range judged**, so where the option is on, the check
+after a commit is run over the branch, `<main>..HEAD`: over `HEAD~1..HEAD`, a citation of an earlier
+commit of the branch passes, and fails first at the merge gate, after the push. Only lowercase
+counts, since git prints a SHA in lowercase, and `_` bounds a word as a letter or a digit does,
+since it joins the parts of an identifier. A project whose merges keep the SHAs, such as
+fast-forwards, has nothing to refuse, so the check is off unless the manifest turns it on. It serves
+`goal@core@declared-instructions-are-checked`: a rule against such citations is kept by running
+`commits`, not by a reviewer remembering it.
 
 The check lives in `commits` because it already holds every input: the range's commits, each
 message byte for byte, and each commit's tree assembled into a model. A gate of its own would
