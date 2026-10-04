@@ -255,14 +255,15 @@ list of what references an entry: `show` computes it.
 
 `path@knowledge-architect@docs/plans/` is the plans directory, whose path the checker fixes, per
 `design@core@plans-dir-fixed`. It holds a README and two homes: specs/, one file per spec for the work of one PR, and milestones/, one directory per
-milestone for work across several PRs. Plan documents are committed on the work's branch, except a
-milestone document whose first step changes what the gates check: it is merged in a pull request of its own before that step, because
-the gates as the step changes them would judge the commit that added the document, per the
-per-commit rule of `design@knowledge-architect@git-flow`. A correction is applied in place, so a
+milestone for work across several PRs. A plan document lands when it is written, in a pull request
+of its own or with its work, whatever the time of its work. One whose work's first commit changes
+what the gates check is merged before that work, because the gates as that commit changes them
+would judge the commit that added the document, per the per-commit rule of
+`design@knowledge-architect@git-flow`. A correction is applied in place, so a
 partial reading cannot mislead. A plan document is deleted in the commit that completes its last
 harvest, and that commit's message cites it by its kind. This is a restatement; its homes are
 `design@agent-skills@document-vocabulary`, `design@agent-skills@spec-leaves-at-landing` and
-`design@agent-skills@milestone-lands-before-gate-change`, and
+`design@agent-skills@plan-lands-apart-from-its-work`, and
 the procedure is the installed `knowledge-architect-planning`.
 
 ## Verify before relying on anything
