@@ -498,7 +498,9 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   folded into the earliest commit it repairs instead, per point 2.
 - **The branch writes its CHANGELOG.md entries**, in the `Next release` section, for each change
   that passes one of three tests, under the subsection of that test. A branch that finds no
-  `Next release` section creates it above the newest released section. The three tests:
+  `Next release` section creates it above the newest released section. After editing it, run
+  `cargo x changelog`, which writes the copy each published crate ships; a test fails while a copy
+  differs. The three tests:
   - **Migration**: a consumer must change something in its own files; one entry per thing, saying
     what. Running the install of the agent skills again is never an entry. An entry that adds a
     required document or home says it holds for mock projects too.

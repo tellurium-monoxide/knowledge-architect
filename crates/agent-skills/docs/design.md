@@ -29,12 +29,11 @@ namespace, since an install path outside it would write a file the project owns.
 
 The text under content/ is read in every project that installs it, so it names no path, no Component
 and no convention of this repository, per `goal@knowledge-architect@any-project-can-adopt-it`. The
-one name it holds on purpose is the workflow's own upstream repository: where a retrospective's
-findings on the workflow go, per `design@agent-skills@retrospective-destination`, and where the
-changelog is read when a project moves its pin, since the published crates do not carry it. It holds
-no live reference: a reference resolves only against the tree it stands in, and no tree but this one
-holds this repository's entries. An illustration writes a placeholder in angle brackets. The command
-a project runs is written as the placeholder that the install fills with the project's declared
+one name it holds on purpose is the workflow's own upstream repository, where a retrospective's
+findings on the workflow go, per `design@agent-skills@retrospective-destination`. It holds no live
+reference: a reference resolves only against the tree it stands in, and no tree but this one holds
+this repository's entries. An illustration writes a placeholder in angle brackets. The command a
+project runs is written as the placeholder that the install fills with the project's declared
 command, per `design@core@declared-command`.
 
 This repository's manifest takes content/ out of the walk, because its illustration paths would be

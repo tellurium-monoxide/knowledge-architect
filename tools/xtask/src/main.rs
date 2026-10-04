@@ -4,6 +4,7 @@
 //! shaped this way is `path@xtask@docs/design.md`. Adding a subcommand is one module plus one
 //! variant below, per `design@xtask@one-module-per-subcommand`.
 
+mod changelog;
 mod gates;
 
 use clap::{Parser, Subcommand};
@@ -26,11 +27,14 @@ struct Cli {
 enum Command {
     /// Run the CI gates, keep full logs, print what needs acting.
     Gates(GatesArgs),
+    /// Write the root CHANGELOG.md into every published crate.
+    Changelog,
 }
 
 fn main() -> ExitCode {
     match Cli::parse().command {
         Command::Gates(args) => gates::run(&args),
+        Command::Changelog => changelog::run(),
     }
 }
 
@@ -51,12 +55,17 @@ mod tests {
     // refusal rather than a silent acceptance — the failure the hand-rolled parsers had.
     #[test]
     fn gates_flags_parse_and_default_off() {
-        let Command::Gates(defaults) = Cli::parse_from(["xtask", "gates"]).command;
+        let Command::Gates(defaults) = Cli::parse_from(["xtask", "gates"]).command else {
+            panic!("`gates` parses as the gates command");
+        };
         assert!(!defaults.fail_fast);
         assert!(!defaults.full);
 
         let Command::Gates(both) =
-            Cli::parse_from(["xtask", "gates", "--fail-fast", "--full"]).command;
+            Cli::parse_from(["xtask", "gates", "--fail-fast", "--full"]).command
+        else {
+            panic!("`gates` parses as the gates command");
+        };
         assert!(both.fail_fast);
         assert!(both.full);
 
