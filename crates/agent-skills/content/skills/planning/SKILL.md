@@ -242,9 +242,9 @@ failure.** Every other test here serves that one.
 - **The last step consumes**: the measurements, the report, the harvest.
 - **One branch and one merge per step**, each merged before the next step begins, and reviewed
   before the merge.
-- **A milestone document whose first step changes what the project's gates check lands in a merge
-  of its own, before that step.** On the step's branch, the gates as that step changes them would
-  judge the commit that added the document, whose tree predates the change.
+- **A plan document whose work's first step changes what the project's gates check lands in a
+  merge of its own, before that step.** On the step's branch, the gates as that step changes them
+  would judge the commit that added the document, whose tree predates the change.
 
 A step's entry is five level-two sections, with these titles, in this order, and
 `{{command}} check` reports one missing or out of order. Fixtures, where it applies, sits between
@@ -373,8 +373,10 @@ finds it there.
 
 ## 8. Reviews of a plan document
 
-A plan document is committed on its branch first, and that commit is what the reviewers read; a
-repair lands after it, as a further commit or folded where `knowledge-architect-review` says. It is read again after a revision that changes a decided shape (an
+A plan document is committed first, on a branch of its own or on its work's branch, and that
+commit is what the reviewers read; a repair lands after it, as a further commit or folded where
+`knowledge-architect-review` says. **It may be merged on its own, whenever its work is done**: a
+plan document on the main branch keeps the work done meanwhile from drifting from it. It is read again after a revision that changes a decided shape (an
 audit applied in place is not one). Its reviewers are fresh, and did not witness the
 discussion. **Fresh, never a fork**: a fork inherits the discussion and reads the document as its
 author. Dispatch them through `knowledge-architect-review`, with the invariants that

@@ -409,12 +409,20 @@ confirmed to have lost no content. The record of the review says what was folded
 history still says what the review found. The rule exists to avoid history edits, not to keep a
 repair apart from what it repairs.
 
-### A milestone document whose first step changes the gates lands in a merge of its own `##milestone-lands-before-gate-change`
+### A plan document lands when it is written, apart from its work `##plan-lands-apart-from-its-work`
 
-When the first step of a milestone changes what the project's gates check, the milestone document is
-merged on its own before that step begins. On the step's branch, the gates as that step changes
-them would judge the commit that added the document, whose tree predates the change. A spec has no
-such split: its document and its work are one branch.
+A plan document, a spec or a milestone document, is merged to the main branch in a pull request of
+its own or with its work, whichever the owner chooses; nothing ties its landing to when its work is
+done. An owner plans a feature that will not be built yet so that the work done meanwhile does not
+drift from it, which needs the document where every session reads it, on the main branch; that
+serves `goal@knowledge-architect@agents-work-without-drift`. What "spec" and "milestone" measure is
+the work, one pull request or several, not where the document lands.
+
+**A plan document lands before any work that changes what the project's gates check.** On one
+branch, the gates as the work's first commit changes them would judge the commit that added the
+document, whose tree predates the change, so that work begins on a branch of its own, after the
+document is merged. The document leaves when its work lands, per
+`design@agent-skills@spec-leaves-at-landing`.
 
 ### Undesigned work is an issue `##planned-work-is-an-issue`
 

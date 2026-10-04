@@ -21,8 +21,8 @@ configuration, this one owns where the argument lands.
 **A decision is recorded when the work that implements it lands, not when it is decided.** A
 design home holds built intent: the design as built and its reasons, against which the code is
 checked. A head written before the code exists would report a defect in code nobody has written.
-While the work is open, the decision is unbuilt intent, and the spec or the milestone document on
-the work's branch is the only place it exists. Writing it into the design homes from there is
+While the work is open, the decision is unbuilt intent, and the spec or the milestone document is
+the only place it exists, on the main branch or on the work's. Writing it into the design homes from there is
 the **harvest**, and it happens in the change that lands the work.
 
 A decision that constrains work nobody has started, and that is not part of any spec, is recorded
