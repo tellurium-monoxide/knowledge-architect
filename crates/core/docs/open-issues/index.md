@@ -1,9 +1,11 @@
 **Generated — do not edit.** `cargo klarch index`
 
-17 entries
+19 entries
 
 | kind | title |
 | --- | --- |
+| defect | [A generated index with one row says "1 entries"](a-generated-index-says-1-entries.md) |
+| defect | [An older binary run over newer installed skills tells the user to downgrade them](an-older-binary-asks-to-downgrade-the-installed-skills.md) |
 | defect | [The scanner reads a slug on an indented line as a heading's, and does not see a setext heading](headings-are-read-unlike-markdown.md) |
 | deferred | [Nothing checks that a component states a goal](a-component-states-at-least-one-goal.md) |
 | deferred | [Developer contracts have no home when a project declares no agent harness](a-home-for-developer-contracts-outside-agent-configuration.md) |
