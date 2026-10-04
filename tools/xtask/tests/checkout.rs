@@ -32,6 +32,26 @@ fn the_compiled_value_is_this_checkouts_root() {
 }
 
 #[test]
+fn the_entry_is_relative_and_forced() {
+    // `force` decides only when a value is inherited, which no run of the suite has, so the
+    // entry's shape is what is asserted.
+    let path = workspace_root().join(".cargo/config.toml");
+    let text = std::fs::read_to_string(&path).expect("the cargo configuration is readable");
+    let config: toml::Table = text.parse().expect("the cargo configuration is TOML");
+    let entry = &config["env"]["KNOWLEDGE_ARCHITECT_CHECKOUT"];
+    assert_eq!(entry.get("value").and_then(|v| v.as_str()), Some("."));
+    assert_eq!(entry.get("relative").and_then(|v| v.as_bool()), Some(true));
+    assert_eq!(entry.get("force").and_then(|v| v.as_bool()), Some(true));
+}
+
+/// Whether some line of `text` that is not a line comment holds `needle`. A line disabled by
+/// `cfg` still counts: this reads text, not the compiled crate.
+fn holds(text: &str, needle: &str) -> bool {
+    text.lines()
+        .any(|line| !line.trim_start().starts_with("//") && line.contains(needle))
+}
+
+#[test]
 fn every_workspace_target_reads_the_variable_or_links_a_library_that_does() {
     let root = workspace_root();
     let cargo = std::env::var("CARGO").unwrap_or_else(|_| "cargo".to_owned());
@@ -80,9 +100,9 @@ fn every_workspace_target_reads_the_variable_or_links_a_library_that_does() {
             let source = target["src_path"].as_str().expect("a source path");
             let text = std::fs::read_to_string(source).expect("a target's root is readable");
             let tied = if kinds.iter().any(|k| k == "custom-build") {
-                text.contains(RERUN)
+                holds(&text, RERUN)
             } else if is_lib(&kinds) || !has_lib {
-                text.contains(READ)
+                holds(&text, READ)
             } else {
                 true
             };

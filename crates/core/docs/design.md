@@ -1374,8 +1374,8 @@ tests sit inside it. An extension whose library crate sits below its Component's
 that Component's directory instead, or the binary and tests beside the library would sit outside
 it: a binary sees only the libraries it depends on. A binary run
 through a cargo alias over `cargo run` is built from the checkout on every invocation, so each
-compiled path is the tree being checked, unless another checkout shares the target directory,
-which `design@core@a-foreign-build-is-refused` refuses. Once the core is consumed as a published crate, its
+compiled path is the tree being checked, unless another checkout shares the target directory and
+the build is not tied to its checkout, which `design@core@a-foreign-build-is-refused` refuses. Once the core is consumed as a published crate, its
 directory is outside the tree and exempts nothing, which is correct: its source is then not part
 of the tree. The root and the compiled path are canonicalised before
 the prefix test, so a symlinked checkout does not defeat it; a symlink inside the tree is not
@@ -1414,10 +1414,11 @@ consuming a library as a published crate.
 is tied to a variable valued at its checkout's root never runs another checkout's build, as
 `design@knowledge-architect@a-build-is-tied-to-its-checkout` argues for this repository. The
 refusal stays, for a binary built before the tie or outside the configuration that sets it, and
-its message names the tie beside the `cargo clean` that recovers.
+for a project that does not tie its builds. Its message names the tie beside the `cargo clean` that
+recovers.
 
 **Three limits.** Two come from reading only names and places. A second checkout that moved the
-crate to another relative path is not seen, and runs; the loud failure of
+crate to another relative path is not seen, and runs, unless the build is tied to its checkout; the loud failure of
 `design@core@checker-source-literals-are-data`, printed by `check`, still names it. A tree
 holding an unrelated crate of the same name at the same relative path, one component long or
 more, is taken for a copy, and refused; a binary run through an alias that builds it from the

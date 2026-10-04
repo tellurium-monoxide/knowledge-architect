@@ -17,3 +17,5 @@ knowledge-architect-gates = { path = "../../crates/gates" }
 [dev-dependencies]
 # `cargo metadata`'s output, which the checkout test reads for the workspace's targets.
 serde_json = "1"
+# The cargo configuration, whose `[env]` entry the checkout test reads.
+toml = "1"

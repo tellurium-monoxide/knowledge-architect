@@ -25,3 +25,9 @@ step, and a release had to edit the marketplace after tagging. The harness's plu
 user, so two projects on one machine needing two versions was never shown to work. And a version
 mismatch could only be warned about, where an installed file can be checked. A custom marketplace
 gave no discoverability in exchange.
+
+**Tying the build to `CARGO_MANIFEST_DIR`, which every crate already reads** — lost to
+`design@knowledge-architect@a-build-is-tied-to-its-checkout`. `live`. Refuted by a run on cargo
+1.98.0: in two copies of a one-crate workspace sharing one `CARGO_TARGET_DIR`, a binary printing
+`env!("CARGO_MANIFEST_DIR")` was not rebuilt in the second copy and printed the first copy's
+directory. Cargo does not track a variable it sets itself.

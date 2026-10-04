@@ -89,10 +89,11 @@ git diff HEAD --binary | git -C .claude/worktrees/<name> apply
 git -C .claude/worktrees/<name> commit -qam "scratch: the work under check"
 ```
 
-Then, inside the worktree, with `export CARGO_TARGET_DIR="$PWD/target"`. Every build here is tied
-to its checkout (`design@knowledge-architect@a-build-is-tied-to-its-checkout`), so a build
-directory shared with the main tree would not run the other's build, but each checkout would
-rebuild at every switch. `<package>` is the package name, such as
+Then, inside the worktree, run the commands below with `export CARGO_TARGET_DIR="$PWD/target"`.
+Every build here is tied to its checkout
+(`design@knowledge-architect@a-build-is-tied-to-its-checkout`), so a build directory shared with
+the main tree would not run the other's build, but each checkout would rebuild at every switch.
+`<package>` is the package name, such as
 `knowledge-architect-gates`, not the Component's:
 
 ```sh
