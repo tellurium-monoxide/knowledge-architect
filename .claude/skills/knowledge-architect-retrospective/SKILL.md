@@ -157,3 +157,11 @@ defect of the skill (§2). A skill not listed here states none yet.
   tripwires, or failing
   those in the code and its history. Intent that exists only in someone's memory is not reachable,
   and proposals will contradict decisions already made without either party noticing.
+
+### `knowledge-architect-setup`
+
+- **The owner is present to rule.** The setup proposes and the owner rules: the Components, the
+  goals, the place of each existing document, and each choice that changes the project's build or
+  a file it already has. With no owner, the setup stops at the first such step. A run that goes on
+  without one makes those choices in the owner's place, and a gap it reports in a choice it had to
+  make alone is not a defect of the skill.
