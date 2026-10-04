@@ -56,6 +56,9 @@ subsection is omitted.
   its SHA.
 - `agent-skills`, patch: after editing a register, the issue-tracking, planning and setup skills
   run `check --fix`, which regenerates the indexes and checks, in place of `index` then `check`.
+- `agent-skills`, patch: the setup skill asks the owner whether a Rust project with no workspace
+  gains one or runs a local install, and how to treat each finding the check reports in a file the
+  project already has; with no owner to rule, the setup stops at the first such question.
 
 ## 0.2.0
 

@@ -24,6 +24,9 @@ cargo install --locked --root .tools --version =<version> knowledge-architect
 .tools/bin/klarch check
 ```
 
+Add `.tools/` to the project's `.gitignore` before the first check: the checker walks every file git
+does not ignore, and the install directory holds the binary and cargo's records of the install.
+
 The installed setup skill then leads the setup of the project.
 
 ## Documentation
