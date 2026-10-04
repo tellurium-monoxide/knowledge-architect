@@ -13,8 +13,7 @@ produced it. It leaves the repository in the commit that completes its harvest.
   defect of this spec.
 - Every name it uses is defined in it, under Names or New names, or exists in the code.
 - Where it marks a point as the owner's and the owner is absent, the work does not proceed on that
-  point. **Step 1 does not start before the owner rules on the default under Defaults awaiting
-  the owner**, since it governs its code.
+  point.
 - **This spec lands on main before its work.** The owner ruled at transcript line 2005 that
   "writing plan document should not be constrained with when its implementation work happens".
   The work is then one branch and one pull request, whose first commit carries the change of the
@@ -52,8 +51,7 @@ Per `knowledge-architect-planning`, §7.
 - **the maintenance crate**: the setup skill's term for the crate through which a Rust project
   pins and runs the checker, per `design@agent-skills@xtask-pins-checker`.
 - **the pin key**: the new `[project]` key that declares the pin in the manifest,
-  `checker-version` by default (see Defaults awaiting the owner). In this spec "the key" always
-  means it.
+  `checker-version`, as the owner ruled. In this spec "the key" always means it.
 - **a sentinel**: one of the two values of the key that are not versions, `"fixture"` and
   `"self"`.
 - **the binary's version**: the version of the core library the running binary links,
@@ -750,11 +748,10 @@ step 1 first on its branch, so that no commit of the branch holds a manifest wit
 
 ## Defaults awaiting the owner
 
-- **The key's name, `checker-version`**: the session used `checker` as an example at lines 1125 and
-  1731; the owner then proposed at line 1923, a queued message: "maybe checker-version for the key
-  ? It is a bit more explicit IMO. Or just version." The session took `checker-version`, since
-  `version` under `[project]` reads as the project's own version. Default: `checker-version`. Step
-  1 does not start before the owner confirms it or names `version`.
+None. The key's name was the last: the session used `checker` as an example at lines 1125 and
+1731, the owner proposed at line 1923 "maybe checker-version for the key ? It is a bit more
+explicit IMO. Or just version.", and ruled "keep both defaults, checker-version, go ahead and
+merge".
 
 ## Harvest
 
