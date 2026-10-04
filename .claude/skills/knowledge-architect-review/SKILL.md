@@ -129,7 +129,7 @@ request. Follow the project's own rules on that.
 
 The record tells what was reviewed, on which axes, how consequential the
 findings were, which were repaired, which were left and why, and which axis was not run and why.
-Where the branch's commits are rewritten before they reach the main branch, by a rebase before the
-merge or at it, the record names each reviewed commit by its subject, not by its SHA: a SHA of the
-branch then names nothing on the main branch.
+It names each reviewed commit by its subject, not by its SHA: a SHA of the branch may name nothing
+once the branch reaches the main branch, since a rebase before the merge or at it gives the
+branch's commits new SHAs.
 Every claim that paragraph makes about the tree is checked before it is written, like any other.
