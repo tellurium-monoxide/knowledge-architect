@@ -197,7 +197,9 @@ To move to another version:
 1. Edit the pin: both versions in the maintenance crate's `Cargo.toml`, the checker's and the
    gates library's, which move together, or the version of the local install.
 2. Read the changelog of every version crossed. A minor version under `0.x`, or any major version,
-   may make a check stricter or ask for a change to the project's layout.
+   may make a check stricter or ask for a change to the project's layout. The changelog is not in
+   the published crate; read it at
+   <https://github.com/tellurium-monoxide/knowledge-architect/blob/main/CHANGELOG.md>.
 3. Run `cargo klarch install-agent-skills`, then follow `knowledge-architect-agent-configuration`
    for what an upgrade owes the project's own configuration.
 4. `cargo klarch check`, and commit the pin, the installed files and the repairs together.

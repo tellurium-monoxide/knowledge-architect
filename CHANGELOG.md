@@ -16,6 +16,14 @@ subsection is omitted.
   shared by two checkouts then rebuilds instead of running the other checkout's build.
 - `agent-skills`, patch: the review skill has the dispatcher name each reviewer's worktree path in
   its brief, distinct for each reviewer.
+- `agent-skills`, patch: the primer says that a design home prevails over diverging code until the
+  issue closes, by the code meeting the head or by the head's reversal, never by following the code.
+- `agent-skills`, patch: the planning skill keeps a check proposed before a plan document exists as
+  a lead in its issue entry, which the design session judges.
+- `agent-skills`, patch: after installing a new version, each open milestone document's procedure
+  for working a step is restated from the new planning skill.
+- `agent-skills`, patch: the record of a review names each reviewed commit by its subject, not by
+  its SHA.
 
 ## 0.2.0
 

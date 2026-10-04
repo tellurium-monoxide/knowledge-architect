@@ -134,7 +134,10 @@ the change passes one of three tests, and sits under the subsection of that test
 
 - **Migration**: one entry per thing a consumer must change in its own files, saying what.
   Running the install of the agent skills again is never an entry; a change the consumer must make
-  to its own files because of the new skills is one.
+  to its own files because of the new skills is one. An entry that adds a required document or
+  home says it holds for every project the consumer's tests build, mock projects included: a
+  consumer whose extension tests the checker over its own fixture projects otherwise meets the
+  change as failing tests.
 - **New features**: something a consumer can start using, in one line; the documentation carries
   the detail.
 - **Workflow**: a change to the installed skills that a person watching agent sessions would

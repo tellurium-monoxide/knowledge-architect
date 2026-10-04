@@ -137,6 +137,8 @@ longer ships. In the same commit:
 - update the routing table: a row whose installed skill was renamed or removed changes or goes;
 - read each project skill against the installed skill it adds to, for an instruction that now
   contradicts it;
+- restate afresh, from the new `knowledge-architect-planning`, the procedure for working a step
+  that each open milestone document restates;
 - run `{{command}} check`.
 
 ## 7. Reviewing a configuration change

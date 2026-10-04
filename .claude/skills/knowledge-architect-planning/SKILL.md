@@ -276,6 +276,12 @@ names:
 - the observable that fires it;
 - the response.
 
+**A check proposed before the work has a plan document is a lead, not a criterion.** It stays in
+the work's `todo` or `deferred` issue, among its leads, and the design session judges it: it
+becomes a criterion of the plan document, or it is dropped. It fires nothing while it is a lead.
+Evidence that bears on it before the design session is an `observation` entry of its own, which
+the issue names.
+
 **The result a scheduled review is expected to give is not a criterion.** Passing the reviews that
 every plan document and every step owes is the baseline. A criterion names an observable specific to
 the decision it guards; listing "the reviews pass" in every plan document would be noise, and would

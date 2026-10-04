@@ -275,8 +275,9 @@ anyone has checked it.
   as built and its reasons, and the decisions that no work implements, recorded when made. Design
   that is decided and not built is in a plan document until it lands. This is authority. Do not
   verify it against the code. Verify the code against it. A divergence is a defect in one of them.
-  Say which, open an entry, and stop. A divergence is never licence to follow the code. This is a
-  restatement; its home is `design@agent-skills@design-home-is-built-intent`.
+  Say which, open an entry, and stop. The design home prevails until the entry closes: when the
+  code meets the head, or when the head is reversed. A divergence is never licence to follow the
+  code. This is a restatement; its home is `design@agent-skills@design-home-is-built-intent`.
 - **A claim about the code as it stands**: an invariant in a scoped `CLAUDE.md`, a doc comment, a
   name, a return value, an open issue's diagnosis. This goes stale. Check it before relying on it.
 
@@ -437,12 +438,14 @@ What this project declares conformant, and what it exempts, is the manifest at t
 
 **Which gates you owe depends on what you touched.** Anything that writes a reference or touches a
 register entry owes `cargo klarch check`. Any change to the Rust source owes fmt, clippy and the
-test suite. Every commit owes `commits`: its message and its tree. **Run `cargo klarch check`
-before each commit, which judges the tree, and `cargo klarch commits HEAD~1..HEAD` after it, which
-judges the message.** A commit that fails either is repaired by an amend while it is the newest,
-and by a history edit after, both with a clean tree per `## Git` point 2. A branch about to merge
-owes all of them: one `cargo x gates --require-rebased`. CI runs them on every push to a ready pull
-request.
+test suite. Every commit owes `commits`: its message and its tree. **Run `cargo klarch check` before
+each commit, which judges the tree, and `cargo klarch commits origin/main..HEAD` after it, which
+judges the message.** The range is the whole branch because this repository refuses citations of its
+branch's own commits by SHA, and `commits` sees a citation only of a commit in the range it judges,
+per `design@core@branch-shas-are-refused`. A commit that fails either is repaired by an amend while
+it is the newest, and by a history edit after, both with a clean tree per `## Git` point 2. A branch
+about to merge owes all of them: one `cargo x gates --require-rebased`. CI runs them on every push
+to a ready pull request.
 
 ## Skills
 
@@ -494,7 +497,8 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   that passes one of three tests, under the subsection of that test. A branch that finds no
   `Next release` section creates it above the newest released section. The three tests:
   - **Migration**: a consumer must change something in its own files; one entry per thing, saying
-    what. Running the install of the agent skills again is never an entry.
+    what. Running the install of the agent skills again is never an entry. An entry that adds a
+    required document or home says it holds for mock projects too.
   - **New features**: a consumer can start using something new.
   - **Workflow**: a change to the installed skills that a person watching agent sessions would see:
     a new or removed action, file, commit, pull-request shape or question. A rewording is not one.
