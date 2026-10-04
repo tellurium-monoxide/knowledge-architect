@@ -147,11 +147,13 @@ id, so regrouping is a `git mv` that breaks no reference. An entry may stay ungr
 
 **The index.** `index.md` beside the README is generated, one row per entry, and
 `{{command}} check` fails when it is stale. After creating, deleting, retitling, regrouping or
-changing the kind of an entry:
+changing the kind of an entry, regenerate it and check in one command:
 
 ```sh
-{{command}} index
+{{command}} check --fix
 ```
+
+`{{command}} index` writes the generated files alone, with no check.
 
 **One home does not bind an issue entry.**
 

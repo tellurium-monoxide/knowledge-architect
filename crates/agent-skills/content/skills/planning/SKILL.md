@@ -123,7 +123,7 @@ docs/plans/
 - The checker constructs the anchor `plans` at docs/plans/, one anchor per milestone directory and
   one per spec file. A file or a directory directly under docs/plans/ outside this layout is a
   finding, and so is a directory under milestones/ with no `README.md`. `{{command}} index` writes
-  every `index.md`.
+  every `index.md`, and `{{command}} check --fix` writes them and then checks.
 - The milestone document links each step's spec as a navigation row, `[<step title>](<step>.md)`.
   The checker resolves a relative link only in a `README.md` or an `index.md`, which is why the head
   is a README.
