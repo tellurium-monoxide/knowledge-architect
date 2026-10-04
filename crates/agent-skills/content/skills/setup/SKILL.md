@@ -36,8 +36,11 @@ its repair. That list is this skill's work list.
 The checker needs `git` 2.36 or newer, and a project inside a git repository. Building it needs a
 Rust toolchain, whatever the project's own language.
 
-**Every step that writes a durable statement on the owner's behalf is shown to the owner first**:
-the Components, the goals, the place of each existing document. The owner rules; the agent proposes.
+**Setting up is done with the owner.** Every step that writes a durable statement on the owner's
+behalf is shown to the owner first: the Components, the goals, the place of each existing document,
+and each choice below that changes the project's build or a file it already has. The owner rules;
+the agent proposes. With no owner to rule, the setup stops at the first such step rather than
+choosing in the owner's place.
 
 ## 1. Pin the checker, and decide how it runs
 
@@ -51,7 +54,10 @@ them.
   `"<version>"` accepts every later version below the next breaking one. `Cargo.lock` records the
   exact version, and `--locked` turns any change to it into a failure. A dependency alone builds
   no executable for the project: `cargo run -p` runs only the project's own packages, which is why
-  the crate serves the checker's commands itself.
+  the crate serves the checker's commands itself. A Rust project that is one package with no
+  workspace either gains one, through a `[workspace]` table in its `Cargo.toml` whose `members`
+  names the maintenance crate, or runs the checker from a local install, as the next point says.
+  The first changes the project's build, so propose both and let the owner rule.
 - **Any other project** installs the binary into a directory of its own, ignored by git:
   `cargo install --locked --root <dir> knowledge-architect --version =<version>`. The binary is
   `<dir>/bin/klarch`. A plain `cargo install` is machine-wide, and two projects on one machine
@@ -142,9 +148,12 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
   statement the project keeps somewhere the primer's table does not name, such as its changelog, a
   register it declares, a directory with a convention of its own. The plans directory and the
   roadmap are the primer's rows, not the project's;
-- **the routing table**: one row per installed skill or agent that a project skill adds to. It is
-  empty until the project writes a skill of its own;
+- **the routing table**: one row per installed skill or agent that a project skill adds to, as
+  `| installed | project additions |`. It is empty until the project writes a skill of its own;
 - **the project's skill prefix**: its name and a hyphen, which names every project skill and agent.
+
+How the two tables, the prefix and a project skill are written is
+`knowledge-architect-agent-configuration`, its section on the two tables of the root `CLAUDE.md`.
 
 ## 6. The gates
 
@@ -197,6 +206,12 @@ A project that already has documentation keeps it until its move is planned:
    rulings. The move is then planned work, under `knowledge-architect-planning`, and runs as a
    milestone when the owner schedules it. Until then, the old documents and the new homes both
    exist, and the issue is what records that.
+
+**A finding the check reports in an existing file is the owner's to rule**, since the setup does
+not move or rewrite that file. Show the owner the finding and its repair, such as a bare path
+rewritten as a reference or as plain text. The owner rules between that repair and a
+`[walk] skip-files` row, with its reason beside it, that keeps the file out of the walk until its
+move.
 
 Setting up stops at a conformant structure, the goals, and that issue.
 

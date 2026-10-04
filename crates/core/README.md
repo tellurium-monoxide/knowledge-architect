@@ -69,6 +69,15 @@ the tail of the output has to reach the verdict rather than the counts. When a f
 file git does not track, one note naming each such file follows the findings, above the verdict:
 the walk reads untracked files, and a scratch file left in the tree fails the run like any other.
 
+**The `checker source:` line names the binary's own source directories**, compiled into it, and
+counts the walked files under them whose string literals are read as data rather than prose, per
+`design@core@checker-source-literals-are-data`. A directory inside the tree is printed relative to
+the root, and one outside it as an absolute path. A binary installed with `cargo install` names its
+source in cargo's registry, outside the tree, so its count is 0 and nothing of the project is read
+differently. A maintenance crate that runs the checker names its own directory, as the setup
+skill's `main` does, so the literals of that crate's Rust files are data, and its comments stay
+prose.
+
 **A run is four phases, and it stops at the first that finds anything.** Phase 1 resolves the
 manifest: a declaration the tool refuses is reported and acted on by nothing. Phase 2 reads the
 tree against what the manifest declares: a file the walk could not read, a name it refuses, an

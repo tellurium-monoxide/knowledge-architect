@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-10 entries
+9 entries
 
 | kind | title |
 | --- | --- |
@@ -10,7 +10,6 @@
 | todo | [No installed skill covers a bounded problem](a-skill-for-bounded-problems.md) |
 | todo | [No installed skill says how a new Component is created](a-skill-for-creating-a-component.md) |
 | todo | [Only the design skill states what it expects of the owner](expectation-sets-for-the-installed-skills.md) |
-| todo | [A fresh adoption found five places where the setup documentation left it guessing](gaps-a-fresh-adoption-found-in-the-setup-documentation.md) |
 | todo | [Nothing checks mechanically that the shipped text holds no live reference and names no project path](shipped-text-is-reference-free-mechanically.md) |
 | todo | [The retrospective records no count of what a merged branch cost in review](the-retrospective-counts-no-review-cost.md) |
 | todo | [No check compiles the maintenance crate the setup skill shows](the-setup-snippet-is-unchecked.md) |
