@@ -53,7 +53,7 @@ Three, per `design@core@exit-code-ladder`, and the third is what makes the other
 | ---- | ------- | ------------------- |
 | `0` | the command ran and its subject is in order | `--version`, from any directory; `check` with no findings; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commits` with no finding, an empty range included; `install-agent-skills` having written and removed what it had to, or found nothing to do |
 | `1` | the command ran and reports a negative answer | `check` with findings, `--fix` included; `check --fix` when a write failed, a destination was refused, or the final check could not run, after another file was already written; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, `index` or `check --fix` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, `install-agent-skills` over a manifest holding a refused declaration, over a symbolic link on an owned path, or when a write or a removal failed, naming the path, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, a binary of another version than `[project] checker-version` pins, or a pin it does not confirm, or a manifest with no pin, `index` or `check --fix` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, `install-agent-skills` over a manifest holding a refused declaration, over a symbolic link on an owned path, or when a write or a removal failed, naming the path, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -222,11 +222,13 @@ With `harness = []` no component owes a CLAUDE.md, and nothing is installed or c
 
 **Adopting the workflow starts with the install.** The skill that sets a project up,
 knowledge-architect-setup, is one of the files it writes, so a project first holds the
-smallest manifest the install accepts, at its root:
+smallest manifest the install accepts, at its root, `<version>` being the version of the checker
+the project runs:
 
 ```toml
 [project]
 name = "<project name>"
+checker-version = "<version>"
 components = []
 
 [walk]

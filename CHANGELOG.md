@@ -8,6 +8,17 @@ subsection is omitted.
 
 ## Next release
 
+### Migration
+
+- `manifest`, major: every manifest carries `[project] checker-version`: the exact version of the
+  checker the project runs, `"fixture"` in a mock project inside the directory of a library the
+  binary links, and in a manifest a test only parses, or `"self"` where the checker is built from
+  the project's own tree; it holds for mock projects too, an extension's included. A manifest
+  without it, or a binary of another version, refuses every command with exit 2. A binary
+  released before this one refuses a manifest carrying the key, as an unknown field. An extension
+  binary's `main` calls `cli::refuse_another_version` after `cli::refuse_a_foreign_build`, before
+  its match on the command, as the crate's template shows.
+
 ### New features
 
 - `checks`, minor: a backticked path-shaped span is reported only when its first segment names a
@@ -20,6 +31,8 @@ subsection is omitted.
 
 ### Workflow
 
+- `agent-skills`, patch: the setup skill writes `[project] checker-version` into the smallest
+  manifest, moves it with the pin, and its maintenance crate's `main` calls the version refusal.
 - `agent-skills`, patch: a plan document may be merged to the main branch in a pull request of its
   own, whatever the time of its work; one whose work changes what the gates check is merged before
   that work, a spec as well as a milestone document.

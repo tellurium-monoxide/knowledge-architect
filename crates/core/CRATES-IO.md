@@ -13,8 +13,10 @@ projects developed mostly by AI agents.
 
 ## Install and run
 
-A project pins one exact version, written below as `<version>`. In a Rust project, a maintenance crate depends on this one and
-runs the checker; any other project installs the binary into a directory of its own:
+A project pins one exact version, written below as `<version>`, and declares it in its manifest as
+`[project] checker-version = "<version>"`; a binary of another version refuses to run. In a Rust
+project, a maintenance crate depends on this one and runs the checker; any other project installs
+the binary into a directory of its own:
 
 ```sh
 cargo install --locked --root .tools --version =<version> knowledge-architect
