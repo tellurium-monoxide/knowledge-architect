@@ -10,6 +10,8 @@ subsection is omitted.
 
 ### Migration
 
+- `checks`, minor: a generated index with one row says `1 entry`, not `1 entries`. A project with
+  such an index runs `index`, or `check --fix`, once after moving to this version.
 - `manifest`, major: every manifest carries `[project] checker-version`: the exact version of the
   checker the project runs, `"fixture"` in a mock project inside the directory of a library the
   binary links, and in a manifest a test only parses, or `"self"` where the checker is built from
@@ -18,8 +20,6 @@ subsection is omitted.
   released before this one refuses a manifest carrying the key, as an unknown field. An extension
   binary's `main` calls `cli::refuse_another_version` after `cli::refuse_a_foreign_build`, before
   its match on the command, as the crate's template shows.
-- `checks`, minor: a generated index with one row says `1 entry`, not `1 entries`. A project with
-  such an index runs `index`, or `check --fix`, once after moving to this version.
 
 ### New features
 
@@ -55,10 +55,12 @@ subsection is omitted.
 - `agent-skills`, patch: the record of a review names each reviewed commit by its subject, not by
   its SHA.
 - `agent-skills`, patch: after editing a register, the issue-tracking, planning and setup skills
-  run `check --fix`, which regenerates the indexes and checks, in place of `index` then `check`.
-- `agent-skills`, patch: the setup skill asks the owner whether a Rust project with no workspace
+  run `check --fix`, which writes the stale generated files and checks, in place of `index` then
+  `check`.
+- `agent-skills`, patch: the setup skill runs with the owner, and with no owner to rule it stops
+  at the first step that needs a ruling. It asks the owner whether a Rust project with no workspace
   gains one or runs a local install, and how to treat each finding the check reports in a file the
-  project already has; with no owner to rule, the setup stops at the first such question.
+  project already has.
 
 ## 0.2.0
 

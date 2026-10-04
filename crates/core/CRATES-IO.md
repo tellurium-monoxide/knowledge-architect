@@ -16,16 +16,13 @@ projects developed mostly by AI agents.
 A project pins one exact version, written below as `<version>`, and declares it in its manifest as
 `[project] checker-version = "<version>"`; a binary of another version refuses to run. In a Rust
 project, a maintenance crate depends on this one and runs the checker; any other project installs
-the binary into a directory of its own:
+the binary into a directory of its own, added to the project's `.gitignore` before the first check:
 
 ```sh
 cargo install --locked --root .tools --version =<version> knowledge-architect
 .tools/bin/klarch install-agent-skills
 .tools/bin/klarch check
 ```
-
-Add `.tools/` to the project's `.gitignore` before the first check: the checker walks every file git
-does not ignore, and the install directory holds the binary and cargo's records of the install.
 
 The installed setup skill then leads the setup of the project.
 

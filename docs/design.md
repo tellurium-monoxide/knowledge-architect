@@ -129,7 +129,7 @@ for reading alone, such as its changelog: each is at most a patch.
 | --- | --- |
 | patch | skill changes; code changes that change no check and no command |
 | minor | a check becomes stricter, or a check is added, even when a project must change its content to pass it; additions that change nothing existing; command and manifest changes that only add |
-| major | a command change that breaks existing usage; a change to the documents and homes a project must carry, or to what its manifest accepts; a breaking change to the library API |
+| major | a command change that breaks existing usage; a change to the documents and homes a project must carry; a manifest that was valid and stops being accepted; a breaking change to the library API |
 
 - **A stricter check is minor even when it requires a content change.** Every stricter check may
   require a content change in some project, so a major row that took every content change would
