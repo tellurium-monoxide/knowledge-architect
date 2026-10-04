@@ -42,12 +42,16 @@
 //! use knowledge_architect::cli;
 //! use knowledge_architect::extension::Extension;
 //!
+//! /// What the binary is for: `--help` opens with this.
 //! #[derive(Parser)]
+//! #[command(version)]
 //! struct Cli {
 //!     #[command(subcommand)]
 //!     command: Commands,
 //! }
 //!
+//! // No doc comment here: clap prints a subcommand enum's doc comment as the binary's own
+//! // description, over the one `Cli` gives.
 //! #[derive(Subcommand)]
 //! enum Commands {
 //!     #[command(flatten)]

@@ -428,3 +428,20 @@ fn check_fix_refuses_a_destination_whose_directory_is_missing() {
     assert!(!root.join("nowhere").exists());
     let _ = std::fs::remove_dir_all(&root);
 }
+
+/// The claim: a binary that flattens the core's commands and describes nothing of itself shows no
+/// description, rather than the doc comment the core writes for a binary's author.
+#[test]
+fn a_binary_that_describes_nothing_shows_no_description() {
+    use clap::{CommandFactory, Parser};
+
+    #[derive(Parser)]
+    struct Bare {
+        #[command(subcommand)]
+        command: cli::Command,
+    }
+
+    let command = Bare::command();
+    assert_eq!(command.get_about(), None);
+    assert_eq!(command.get_long_about(), None);
+}
