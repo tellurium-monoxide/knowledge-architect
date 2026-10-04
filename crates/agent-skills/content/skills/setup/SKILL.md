@@ -178,7 +178,7 @@ left to be done by hand.
 
 ## 7. Finish
 
-- `{{command}} index`, then `{{command}} check` until it passes.
+- `{{command}} check --fix` until it passes: it writes every generated `index.md`, then checks.
 - Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together.
 
 ## 8. Existing documentation

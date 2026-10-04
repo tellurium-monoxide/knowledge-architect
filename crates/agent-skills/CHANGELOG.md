@@ -54,6 +54,8 @@ subsection is omitted.
   for working a step is restated from the new planning skill.
 - `agent-skills`, patch: the record of a review names each reviewed commit by its subject, not by
   its SHA.
+- `agent-skills`, patch: after editing a register, the issue-tracking, planning and setup skills
+  run `check --fix`, which regenerates the indexes and checks, in place of `index` then `check`.
 
 ## 0.2.0
 

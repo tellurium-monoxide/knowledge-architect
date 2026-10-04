@@ -178,7 +178,7 @@ left to be done by hand.
 
 ## 7. Finish
 
-- `cargo klarch index`, then `cargo klarch check` until it passes.
+- `cargo klarch check --fix` until it passes: it writes every generated `index.md`, then checks.
 - Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together.
 
 ## 8. Existing documentation

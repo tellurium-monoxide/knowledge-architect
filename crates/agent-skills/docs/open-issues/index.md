@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-11 entries
+10 entries
 
 | kind | title |
 | --- | --- |
@@ -14,4 +14,3 @@
 | todo | [Nothing checks mechanically that the shipped text holds no live reference and names no project path](shipped-text-is-reference-free-mechanically.md) |
 | todo | [The retrospective records no count of what a merged branch cost in review](the-retrospective-counts-no-review-cost.md) |
 | todo | [No check compiles the maintenance crate the setup skill shows](the-setup-snippet-is-unchecked.md) |
-| todo | [The installed skills teach `index` then `check` where `check --fix` is one command](the-skills-teach-index-then-check.md) |
