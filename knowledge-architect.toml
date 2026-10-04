@@ -34,7 +34,15 @@ registers = ["issue"]
 
 # Directories and files skipped by project-relative path. Every row is checked to exist.
 skip-dirs = []
-skip-files = []
+#
+# The copies of the root changelog that each published crate ships, per
+# `design@knowledge-architect@package-include-whitelist`. Each is byte-identical to the root
+# CHANGELOG.md, which is checked, and a test in tools/xtask fails while one differs.
+skip-files = [
+    "crates/agent-skills/CHANGELOG.md",
+    "crates/core/CHANGELOG.md",
+    "crates/gates/CHANGELOG.md",
+]
 
 # Paths skipped by location, each one another project rather than a part of this one.
 #

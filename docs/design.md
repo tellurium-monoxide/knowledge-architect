@@ -47,16 +47,23 @@ together, at one version.
 
 ### Each published crate ships a whitelist of files `##package-include-whitelist`
 
-Each crate under crates/ declares `include` in its Cargo.toml, listing its sources, its Cargo.toml, its README and its
-license files, and nothing else. Cargo adds the file `readme` names, its CRATES-IO.md, whatever
-`include` says, per `design@knowledge-architect@crates-io-page-file`; `cargo package --list -p
-<crate>` re-takes it, and the release procedure runs it. A new directory is shipped only once it is listed, so the test
-fixtures and the design documents never reach a package, and their growth cannot push a package
-past the crates.io size limit. The cost is accepted: `cargo test` cannot run from a downloaded
-package. The license files sit at the root and as copies in each directory under crates/, because an
-`include` path cannot reach outside the package directory. tools/xtask is never published, so it
-carries neither. This keeps what a project receives to what it uses, per
-`goal@knowledge-architect@any-project-can-adopt-it`.
+Each crate under crates/ declares `include` in its Cargo.toml, listing its sources, its Cargo.toml,
+its README, its license files and its CHANGELOG.md, and nothing else. Cargo adds the file `readme`
+names, its CRATES-IO.md, whatever `include` says, per
+`design@knowledge-architect@crates-io-page-file`; `cargo package --list -p <crate>` re-takes it, and
+the release procedure runs it. A new directory is shipped only once it is listed, so the test
+fixtures and the design documents never reach a package, and their growth cannot push a package past
+the crates.io size limit. The cost is accepted: `cargo test` cannot run from a downloaded package.
+The license files sit at the root and as copies in each directory under crates/, because an
+`include` path cannot reach outside the package directory. **The changelog ships the same way.** A
+project moving its pin reads the changelog of every version crossed, and finds it in the source
+cargo downloaded, with no network and at the version it pinned. Each crate carries a copy of the
+root CHANGELOG.md, written by `cargo x changelog`, and a test of tools/xtask fails while a copy
+differs, so a branch that writes an entry copies it before it can pass the gates. Cargo refuses a
+listed file the tree does not commit, and packages a crate without a listed file that is absent, so
+the copies are committed. The walk skips them, since the root file is checked and they are identical
+to it. tools/xtask is never published, so it carries none of these copies. This keeps what a project
+receives to what it uses, per `goal@knowledge-architect@any-project-can-adopt-it`.
 
 ### A published crate's crates.io page is a short CRATES-IO.md, and its README stays repository-facing `##crates-io-page-file`
 

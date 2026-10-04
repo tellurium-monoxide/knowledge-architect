@@ -29,7 +29,8 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
 
    `git grep -n '<previous version>'` finds every site that still names the previous one. An
    example inside a skill, such as an xtask manifest's own version, is not a site.
-2. **The changelog.** Rename CHANGELOG.md's `## Next release` to `## <version>`. Each branch wrote
+2. **The changelog.** Rename CHANGELOG.md's `## Next release` to `## <version>`, then run
+   `cargo x changelog` to write the crates' copies. Each branch wrote
    its own entries there, per `design@knowledge-architect@changelog-entries`, and step 9's review
    checks them. The version chosen at step 1 follows the highest bump class among its entries,
    a patch at least.
@@ -67,7 +68,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    curl -s -A 'knowledge-architect release check' https://crates.io/api/v1/crates/<crate>/<version>
    ```
 7. **The package lists.** `cargo package --list -p <crate>` for each crate. Each lists its sources,
-   its Cargo.toml, its README, its CRATES-IO.md and its licence files, and agent-skills also its
+   its Cargo.toml, its README, its CRATES-IO.md, its licence files and its CHANGELOG.md, and agent-skills also its
    build script and content/, per `design@knowledge-architect@package-include-whitelist`. The owner reads the lists.
 8. **The dry run.** `cargo publish --workspace --dry-run` passes, skips xtask, and orders
    agent-skills before the core, which depends on it. Its warnings "ignoring test `binary`" and

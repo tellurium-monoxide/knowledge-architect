@@ -1,10 +1,10 @@
 # xtask
 
-Workflow automation for this repository. Each subcommand is one workflow; the first is
-`gates`, which runs the project's gates (what CI runs) through the published gates library,
-`path@gates@README.md`, keeps every byte they emit, and prints only what needs acting on. The gate
-list in `path@xtask@src/gates.rs` is the primary home of what the gates are, per
-`design@xtask@gates-list-primary-home`.
+Workflow automation for this repository. Each subcommand is one workflow: `changelog` writes the
+copies of the root changelog that the published crates ship, and `gates` runs the project's gates
+(what CI runs) through the published gates library, `path@gates@README.md`, keeps every byte they
+emit, and prints only what needs acting on. The gate list in `path@xtask@src/gates.rs` is the
+primary home of what the gates are, per `design@xtask@gates-list-primary-home`.
 
 ## Usage
 
@@ -14,6 +14,7 @@ cargo x gates --fail-fast         # stop at the first failing gate
 cargo x gates --full              # additionally stream raw output live
 cargo x gates --locked            # pass --locked to every gate that resolves dependencies
 cargo x gates --require-rebased   # add the rebased gate: HEAD must contain origin/main
+cargo x changelog                 # write the root CHANGELOG.md into every published crate
 ```
 
 The gates, in cost order:
