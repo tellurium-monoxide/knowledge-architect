@@ -163,11 +163,12 @@ win.
     yields no reference. In the checker's own source every literal is data, bound or not, per
     `design@core@checker-source-literals-are-data`.
   - Two retired forms are reported, not ignored: `<anchor>@<path>` with no kind, and a backticked
-    `<word>#<word>` whose word is an anchor or a kind, or a bare `#<word>` whose word is an entry's
-    id. Any other `#` shape, such as an issue number, is silent.
+    `<word>#<id>` or `#<id>` whose id is an entry here, or whose word is an anchor or a kind. Any
+    other `#` shape, such as an issue number, is silent, per
+    `design@core@candidate-rule-and-retired-forms`.
   - A backticked span of path characters with two or more segments and no `@` is reported as a
-    path to anchor when its first segment names a file or a directory of this tree, per
-    `design@core@every-path-names-its-anchor`. Write it as a `path` reference, or in plain text. A
+    path to anchor when its first segment names a file or a directory that the tree's listing
+    holds, per `design@core@every-path-names-its-anchor`. Write it as a `path` reference, or in plain text. A
     span naming nothing here, such as `origin/main` or `application/json`, is silent, and so is a
     one-segment span, which is a name rather than a pointer.
 

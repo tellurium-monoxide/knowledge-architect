@@ -329,18 +329,28 @@ for no check that reads the difference.
 **Every path-shaped span reported as an unanchored pointer, whatever its first segment names** —
 lost to `design@core@every-path-names-its-anchor`. `live`. It let no backticked pointer pass
 unregistered, a pointer written after its target's directory left the tree included, and it needed
-no read of the tree. It loses on a census of a project new to the tool: on sharkdp/fd at commit
-3460b1e9, with the required structure added, 14 of its 15 path findings were another tool's
-notation (fixture paths of tests, paths on the user's machine, example paths in a changelog), and
-each would have to be rewritten or anchored at `elsewhere` before the project passed. The one real
-pointer, a stale one, is reported under the winner too.
+no read of the tree. It loses on a census of a project new to the tool, in the commit that
+rewrote the winner's head: nearly all its findings there were another tool's notation (fixture
+paths of tests, paths on the user's machine, example paths in a changelog), each to be rewritten
+or anchored at `elsewhere` before the project passed, and the one real pointer, a stale one, is
+reported under the winner too.
 
-**The retired slug reference reported whatever its word names** — lost to
-`design@core@candidate-rule-and-retired-forms`. `live`. It reported a copied bare form whose entry
-has left the tree, which the winner leaves silent. It loses because the form was this grammar's
-alone: in a project that never used it, every match is that project's own notation, such as an
-issue number `#123` or a preprocessor directive `#include`, and on sharkdp/fd at commit 3460b1e9 its
-one finding was an issue number.
+**The ignore rules asked whether an unanchored path's first segment is ignored, and an ignored one
+reported** — lost to `design@core@every-path-names-its-anchor`. `live`. It kept a pointer into a
+build output a finding. It loses on three reproductions made by the review of the change that
+proposed it: `git check-ignore` refuses a spelling through a tracked symlink, so one backticked
+span through a symlink made `check` and `commits` exit 2 instead of giving a verdict; a whitelist
+`.gitignore`, `/*` then its exceptions, covers every root name, so `application/json` and
+`origin/main` were findings again; and the batch grows with the spans times the places each is
+read from, which on a synthetic tree of 60 components and 20 000 distinct spans made the run take
+about nine seconds, against half a second when the listing alone answers.
+
+**The retired slug reference reported whatever it names** — lost to
+`design@core@candidate-rule-and-retired-forms`. `live`. It reported a copied form whose entry has
+left the tree and whose word is no anchor, which the winner leaves silent. It loses because the
+form was this grammar's alone: in a project that never used it, every match is that project's own
+notation, such as an issue number `#123` or a preprocessor directive `#include`, and in the census
+of the commit that rewrote the winner's head its one finding was an issue number.
 
 **The interpretation entry number kept as a retired form permanently**, a bare `R` followed by
 digits reported wherever prose holds it — lost to
@@ -350,7 +360,8 @@ comments included. It loses because the migration is finished, the tree holds no
 the number is thaum's own register's: kept, the lint would have had to move into thaum's extension
 when the core was split from the rules half. The commit history holds the form in 65 of the 500
 messages before that split, counted with the lint's own pattern; the slug reference, which stays
-a finding, is in 64 of them, so exposure in history does not separate the two.
+a finding wherever its id is still an entry, is in 64 of them, so exposure in history does not
+separate the two.
 
 **A slug defined at the end of any level-two or level-three heading, or in a table cell, with no
 level declared by the register** — lost to

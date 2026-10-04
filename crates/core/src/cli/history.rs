@@ -84,24 +84,20 @@ impl Assembly {
     }
 }
 
-/// Judge one message against a tree, and optionally against a second one for its references.
+/// Judge one message against a tree, and optionally against a second one.
 ///
-/// **References resolve against either tree, every other rule against the first.** A commit
-/// that closes an issue deletes the entry file and names it in the message; against its own
-/// tree alone every such message would dangle. An extension's rules have no such asymmetry:
-/// what a message says about its subject is judged against what the commit's own tree holds,
-/// and nothing about the parent bears on it.
-///
-/// **A lint stands where either tree holds what its span names**, so its findings are the union
-/// of both judgements, per `check::references::Part`. `ignored` answers the message's own
-/// spellings, which neither tree's batch asked about: the ignore rules are the working tree's
-/// for both, so one batch serves the two.
+/// **A reference resolves against either tree, a lint stands where either tree holds what it
+/// names, and every other rule is judged against the first**, per
+/// `design@core@a-commit-message-is-a-document`. A commit that closes an issue deletes the entry
+/// file and names it in the message; against its own tree alone every such message would
+/// dangle, and the same message naming the file by a bare path points at what its commit
+/// deletes. An extension's rules have no such asymmetry: what a message says about its subject is
+/// judged against what the commit's own tree holds, and nothing about the parent bears on it.
 fn judge_message(
     text: &str,
     primary: &Assembly,
     primary_entities: &Entities,
     parent: Option<(&Assembly, &Entities)>,
-    ignored: &HashSet<String>,
 ) -> Vec<Finding> {
     use check::references::{judge_part, Part};
     let model = Model::from_documents(vec![(message_rel(), text.to_string())]);
@@ -112,50 +108,37 @@ fn judge_message(
         out.extend(prepared.check_message(doc));
     }
 
-    let with_message = |assembly: &Assembly| -> HashSet<String> {
-        assembly.ignored.union(ignored).cloned().collect()
-    };
-    let primary_ignored = with_message(primary);
-    let primary_inputs = Inputs {
-        ignored: &primary_ignored,
-        ..primary.inputs()
-    };
     let anchors = primary.anchors();
     let (mine, _) = judge_part(
         model.documents(),
         primary_entities,
         &anchors,
-        &primary_inputs,
+        &primary.inputs(),
         Part::References,
     );
     let (mut lints, _) = judge_part(
         model.documents(),
         primary_entities,
         &anchors,
-        &primary_inputs,
+        &primary.inputs(),
         Part::Lints,
     );
     let references = match parent {
         None => mine,
         Some((other, other_entities)) => {
             let other_anchors = other.anchors();
-            let other_ignored = with_message(other);
-            let other_inputs = Inputs {
-                ignored: &other_ignored,
-                ..other.inputs()
-            };
             let (theirs, _) = judge_part(
                 model.documents(),
                 other_entities,
                 &other_anchors,
-                &other_inputs,
+                &other.inputs(),
                 Part::References,
             );
             let (their_lints, _) = judge_part(
                 model.documents(),
                 other_entities,
                 &other_anchors,
-                &other_inputs,
+                &other.inputs(),
                 Part::Lints,
             );
             for f in their_lints {
@@ -666,13 +649,7 @@ pub(super) fn commits(
         // a second pass over it would take bytes of a commit out of the regime.
         let message = crate::git::commit_message(root, sha).map_err(|e| e.to_string())?;
         let entities = Entities::build(&tree.model, &tree.anchors());
-        let queries = check::references::ignore_queries(
-            &Model::from_documents(vec![(message_rel(), message.clone())]),
-            &tree.anchors(),
-        );
-        let ignored = crate::git::ignored(root, &queries)
-            .map_err(|e| format!("the ignore rules could not be asked: {e}"))?;
-        let found = judge_message(&message, &tree, &entities, parent, &ignored);
+        let found = judge_message(&message, &tree, &entities, parent);
         findings.extend(relabelled(found, &format!("commit {short}")));
         // **Read from this commit's own manifest**, as everything a commit is judged against
         // is, per `design@core@a-commit-message-is-a-document`.

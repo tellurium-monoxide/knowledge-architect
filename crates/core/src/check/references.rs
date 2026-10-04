@@ -12,9 +12,9 @@
 //! **Nothing that points into this project passes unregistered.** A span with no `@` that is
 //! shaped like a path, and whose first segment names a file or a directory of this tree, is
 //! reported as unanchored, per `design@core@every-path-names-its-anchor`. The slug reference
-//! the grammar retired, `` `<word>#<word>` ``, is reported as what it was when its word is an
-//! anchor or a kind, or, with no word, when its id is an entry of this project, so a pointer
-//! the migration missed or copied out of the commit history is a finding rather than silence.
+//! the grammar retired, `` `<word>#<word>` ``, is reported as what it was when its id is an entry
+//! of this project or its word is an anchor or a kind, so a pointer the migration missed or
+//! copied out of the commit history is a finding rather than silence.
 //! The candidate rule and the retired-form lint are
 //! `design@core@candidate-rule-and-retired-forms`. A span that names nothing here is another
 //! tool's notation, and is silent.
@@ -82,11 +82,10 @@ pub(crate) fn judge(
 
 /// Which findings a judgement writes.
 ///
-/// **A commit message is judged against two trees, and the two families combine differently.**
-/// A reference resolves against either tree, so its finding survives where both refuse it. A
-/// lint fires where the span names something of this project, so its finding stands where
-/// either tree holds what it names: a message naming the file its commit deletes still points
-/// at it. `cli::history` asks for each family apart.
+/// A commit message is judged against two trees, and the two families combine differently
+/// there, per `design@core@a-commit-message-is-a-document`: a reference finding survives where
+/// both trees refuse it, a lint finding where either tree holds what its span names.
+/// `cli::history` asks for each family apart.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Part {
     All,
@@ -206,72 +205,67 @@ pub(crate) fn judge_part(
 /// Whether an unanchored path-shaped span names a file or a directory of this tree.
 ///
 /// Only its first segment is asked: a pointer whose first segment is here and whose rest is
-/// not is a dangling pointer, which the anchored form would report, so it is a finding. Read
-/// against the listing and the ignore answers, per [`first_segments`].
+/// not is a dangling pointer, which the anchored form would report, so it is a finding.
+///
+/// **The places it is read from are the root, every anchor that is a directory, and the
+/// document's own directory**: a path written in a component's README is often relative to that
+/// component, and one written beside a file relative to it. A spec is an anchor and a file, so
+/// it is no place. A `.` segment is passed over and a `..` climbs from the place; one that climbs
+/// past the root names nothing from there. A leading slash is read from the root alone. The
+/// suffix, a line number or a fragment, is no part of the path.
+///
+/// **The listing alone answers, and the ignore rules are not asked.** A pointer into an ignored
+/// directory is silent: asking git would cost one spelling per span and place, would make every
+/// root name a pointer under a whitelist `.gitignore`, and fails outright on a spelling through
+/// a symlink.
 fn names_this_tree(span: &str, rel: &Path, anchors: &Anchors, inputs: &Inputs) -> bool {
-    first_segments(span, rel, anchors)
-        .into_iter()
-        .any(|(target, dir)| {
-            inputs.present.contains(&target)
-                || inputs
-                    .ignored
-                    .contains(&crate::git::ignore_query(&target, dir))
-        })
-}
-
-/// Where an unanchored path-shaped span's first segment would sit, from every place the span
-/// could be read from, with whether more segments follow it, which claims a directory.
-///
-/// **The places are the root, every anchor's directory, and the document's own directory**: a
-/// path written in a component's README is often relative to that component, and one written
-/// beside a file relative to it. A `.` segment is passed over and a `..` climbs from the place;
-/// one that climbs past the root names nothing from there. A leading slash is read from the
-/// root alone. The suffix, a line number or a fragment, is no part of the path.
-///
-/// **This is also the ignore collector's list for the lint**, so a spelling it gives is one
-/// `git check-ignore` answered. A spelling the collector missed reads as not ignored, which for
-/// this lint is silence rather than a finding, so the two must stay one function.
-fn first_segments(span: &str, rel: &Path, anchors: &Anchors) -> Vec<(PathBuf, bool)> {
     let path = span.split([':', '#']).next().unwrap_or(span);
     let segments: Vec<&str> = path.split('/').filter(|s| !s.is_empty()).collect();
     let mut bases: Vec<&Path> = vec![Path::new("")];
     if !path.starts_with('/') {
-        bases.extend(anchors.all().iter().map(|a| a.path.as_path()));
+        bases.extend(
+            anchors
+                .all()
+                .iter()
+                .map(|a| a.path.as_path())
+                .filter(|p| inputs.directories.contains(*p)),
+        );
         bases.push(rel.parent().unwrap_or(Path::new("")));
     }
-    let mut out = Vec::new();
-    for base in bases {
+    bases.into_iter().any(|base| {
         let mut at = base.to_path_buf();
-        for (i, segment) in segments.iter().enumerate() {
+        for segment in &segments {
             match *segment {
                 "." => {}
                 ".." => {
                     if !at.pop() {
-                        break;
+                        return false;
                     }
                 }
                 name => {
                     at.push(name);
-                    out.push((at, i + 1 < segments.len()));
-                    break;
+                    return inputs.present.contains(&at);
                 }
             }
         }
-    }
-    out.sort();
-    out.dedup();
-    out
+        false
+    })
 }
 
-/// Whether a retired slug reference names something of this project: its word an anchor or a
-/// kind, or, with no word, its id an entry some register defines.
+/// Whether a retired slug reference names something of this project: its id an entry some
+/// register defines, or its word an anchor or a kind.
 ///
-/// The form was this grammar's alone, so a span that names nothing here is another tool's
-/// notation: an issue number, a preprocessor directive, a crate's item.
+/// The id is asked whatever the word, because a form copied out of the history may carry the
+/// name an anchor had before it was renamed. The form was this grammar's alone, so a span that
+/// names nothing here is another tool's notation: an issue number, a preprocessor directive, a
+/// crate's item.
 fn names_this_project(span: &str, anchors: &Anchors, entities: &Entities) -> bool {
     match span.split_once('#') {
-        Some(("", id)) => entities.defines_id(id),
-        Some((word, _)) => anchors.kind(word).is_some() || anchors.is_anchor_word(word),
+        Some((word, id)) => {
+            entities.defines_id(id)
+                || (!word.is_empty()
+                    && (anchors.kind(word).is_some() || anchors.is_anchor_word(word)))
+        }
         None => false,
     }
 }
@@ -739,8 +733,7 @@ fn link(
 /// `assert_target` is here**, and there are three: an anchored reference resolves under the
 /// anchor it names, the generic form resolves under every anchor at once, and a relative
 /// markdown link resolves beside its own file. The escape anchor resolves under none, so it
-/// contributes nothing. **The unanchored lint is the fourth arm**: it asks whether a span's
-/// first segment is ignored, from every place [`first_segments`] reads it from.
+/// contributes nothing.
 ///
 /// **A spelling this misses is a target the check reads as not ignored**, which is a finding
 /// rather than a silence: the reference is asserted to exist. `an_ignored_target_is_exempt_in_
@@ -780,11 +773,6 @@ pub(crate) fn ignore_queries(model: &Model, anchors: &Anchors) -> Vec<String> {
                                 ));
                             }
                         }
-                    }
-                }
-                Observation::UnanchoredPath(span) => {
-                    for (target, dir) in first_segments(span, &doc.rel, anchors) {
-                        out.push(crate::git::ignore_query(&target, dir));
                     }
                 }
                 // The arms `link` returns on before resolving are the arms that ask git
@@ -1403,6 +1391,25 @@ mod tests {
     }
 
     #[test]
+    fn a_retired_form_whose_id_is_an_entry_is_a_finding_whatever_its_word() {
+        // A form copied out of the history may carry an anchor's former name; its entry is
+        // still here, so the copy is still a pointer the migration missed.
+        let (found, _) = checked_docs(
+            &manifest(),
+            vec![
+                ("docs/design.md", head()),
+                ("notes/prose.md", "`knowledge#a-decision`\n"),
+            ],
+            &[],
+        );
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("retired slug reference form"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
     fn a_retired_shape_that_names_nothing_of_this_project_is_silent() {
         // A head that is no anchor and no kind, and a bare id no register defines: an issue
         // number, a preprocessor directive, another tool's notation. None was ever this
@@ -1813,28 +1820,58 @@ mod tests {
     }
 
     #[test]
-    fn an_ignored_first_segment_is_a_finding_and_the_collector_asks_for_it() {
-        // An ignored directory is in no listing, and a pointer into it is still a pointer
-        // into this tree. The collector must ask git for its spelling, or the check reads it
-        // as absent and stays silent.
+    fn an_ignored_first_segment_is_silent_and_asks_git_nothing() {
+        // An ignored directory is in no listing. Asking the ignore rules would cost a spelling
+        // per span and place, and fails outright on a spelling through a symlink, so the lint
+        // answers from the listing alone.
         let m = manifest();
         let anchors = Anchors::declared(&m);
         let text = "It writes `build/out.bin`.\n";
         let model = Model::from_documents(vec![(PathBuf::from("notes/prose.md"), text.into())]);
-        let queries = super::ignore_queries(&model, &anchors);
-        assert!(queries.contains(&"build/".to_string()), "{queries:#?}");
-        let borrowed: Vec<&str> = queries.iter().map(String::as_str).collect();
-        let (found, _) =
-            checked_ignoring_under(vec![("notes/prose.md", text)], &tree(), &[], &anchors);
         assert_eq!(
-            found,
-            Vec::<String>::new(),
-            "no spelling is ignored: {found:#?}"
+            super::ignore_queries(&model, &anchors),
+            Vec::<String>::new()
         );
-        let (found, _) =
-            checked_ignoring_under(vec![("notes/prose.md", text)], &tree(), &borrowed, &anchors);
-        assert_eq!(found.len(), 1, "{found:#?}");
-        assert!(found[0].contains("names no anchor"), "{found:#?}");
+        let (found, _) = checked_ignoring_under(
+            vec![("notes/prose.md", text)],
+            &tree(),
+            &["build/", "build"],
+            &anchors,
+        );
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+    }
+
+    #[test]
+    fn a_spec_anchor_is_no_place_a_path_is_read_from() {
+        // A spec is an anchor and a file. Read as a directory, `..` from it would land in the
+        // specs directory, and a span would be a finding only while some spec is open.
+        let m = manifest();
+        let mut present = tree();
+        for p in [
+            "docs",
+            "docs/plans",
+            "docs/plans/specs",
+            "docs/plans/specs/s.md",
+            "docs/plans/specs/README.md",
+        ] {
+            present.push(p.to_string());
+        }
+        let set: HashSet<PathBuf> = present.iter().map(PathBuf::from).collect();
+        let anchors = Anchors::of(&m, &set);
+        assert!(
+            anchors
+                .all()
+                .iter()
+                .any(|a| a.path == Path::new("docs/plans/specs/s.md")),
+            "the spec is an anchor: {}",
+            anchors.listed()
+        );
+        let (found, _) = checked_under(
+            vec![("README.md", "The outer repository is in `../README.md`.\n")],
+            &present,
+            &anchors,
+        );
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
     }
 
     #[test]

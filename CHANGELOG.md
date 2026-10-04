@@ -11,15 +11,12 @@ subsection is omitted.
 ### New features
 
 - `checks`, minor: a backticked path-shaped span is reported only when its first segment names a
-  file or a directory of the tree, read from the root, from every anchor and from the document's
-  own directory, or one the ignore rules cover. A media type, a unit, a git ref or another
+  file or a directory the tree's listing holds, read from the root, from every anchor that is a
+  directory and from the document's own directory. A media type, a unit, a git ref or another
   machine's path, such as `application/json` or `origin/main`, can be written in backticks.
-- `checks`, minor: the retired slug reference is reported only when its word is an anchor or a
-  kind, or, in the bare `#<word>` shape, an entry's id. An issue number `#123` or a directive
-  `#include` can be written in backticks.
-- `checks`, minor: in a commit message, a `path` reference whose target the ignore rules cover is
-  exempt from existence, as it is in a document, also when no document of the tree spells the same
-  path.
+- `checks`, minor: the retired slug reference is reported only when its id is an entry of the
+  project, or its word an anchor or a kind. An issue number `#123` or a directive `#include` can be
+  written in backticks.
 
 ### Workflow
 

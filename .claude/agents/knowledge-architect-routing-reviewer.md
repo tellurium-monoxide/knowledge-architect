@@ -54,7 +54,10 @@ reverse is a family of pointers about to dangle.
 
 **What the checks cannot see.** A backticked span with no `@` and fewer than two path segments
 is silent, and so is a typo inside the kind segment: a bare filename named in prose, a heading or
-a section title quoted from another document, a misspelt kind. The checker reads Markdown and Rust
+a section title quoted from another document, a misspelt kind. A path-shaped span whose first
+segment the tree does not hold is silent too: a typo in that segment, a pointer into an ignored
+directory, a pointer written after its directory left. So is a `<word>#<id>` form whose id is no
+entry and whose word is no anchor, such as a copied slug whose entry has left. The checker reads Markdown and Rust
 source only, so a reference in a comment of another language is read by nobody but you. Those are
 yours to resolve by reading, and they are where this axis's real failures survive.
 

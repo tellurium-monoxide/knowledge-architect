@@ -1552,35 +1552,103 @@ fn a_message_holding_the_retired_slug_form_is_judged_by_what_it_names() {
     assert!(!stdout.contains(&format!("commit {silent}:")), "{stdout}");
 }
 
-/// The claim: in a message, an unanchored path whose first segment the ignore rules cover is a
-/// finding, though no tree holds it: the message's own spellings are asked of git.
+/// The claim: in a message, an unanchored path whose first segment only the commit's own tree
+/// holds is a finding, as one only the parent holds is.
 #[test]
-fn a_message_naming_an_ignored_path_by_a_bare_path_is_a_finding() {
-    let history = History::new("commit-ignored-path");
+fn a_message_naming_the_file_its_commit_adds_by_a_bare_path_is_a_finding() {
+    let history = History::new("commit-bare-added");
     tiny_project(&history, false);
-    history.write(".gitignore", "build/\n");
     let base = history.commit("The project is created\n");
-    let sha = history.commit("A subject line\n\nIt writes `build/out.bin`.\n");
+    history.write("scratch/notes.md", "# Notes\n\nA file this commit adds.\n");
+    let sha = history.commit("The notes arrive\n\nIt adds `scratch/notes.md`.\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(
         stdout.contains(&format!("commit {sha}:3"))
-            && stdout.contains("`build/out.bin` is shaped like a path"),
+            && stdout.contains("`scratch/notes.md` is shaped like a path"),
         "{stdout}"
     );
 }
 
-/// The claim: in a message, a `path` reference whose target the ignore rules cover is exempt
-/// from existence, as it is in a document, though no document of the tree spells that path.
+/// The claim: in a message, a bare path is read from the parent's anchors in the parent's tree, so
+/// a path relative to a Component the commit removes is still a finding.
 #[test]
-fn a_message_citing_an_ignored_target_no_document_spells_is_not_asserted() {
-    let history = History::new("commit-ignored-reference");
+fn a_message_naming_a_path_of_a_component_its_commit_removes_is_a_finding() {
+    let history = History::new("commit-bare-component");
     tiny_project(&history, false);
-    history.write(".gitignore", "build/\n");
+    let manifest = history.dir.join("knowledge-architect.toml");
+    let text = std::fs::read_to_string(&manifest).expect("the manifest");
+    std::fs::write(
+        &manifest,
+        text.replace("components = []", "components = [\"part\"]"),
+    )
+    .expect("the manifest is rewritten");
+    let part = [
+        (
+            "part/README.md",
+            "# part\n\nA Component a later commit removes.\n",
+        ),
+        ("part/docs/design.md", "# part — design\n\nNo entry.\n"),
+        ("part/docs/goals.md", "# Goals — part\n\nNo entry.\n"),
+        (
+            "part/docs/tripwires.md",
+            "# Tripwires — part\n\nNo entry.\n",
+        ),
+        (
+            "part/docs/rejected-alternatives.md",
+            "# part — rejected\n\nNothing.\n",
+        ),
+        (
+            "part/docs/open-issues/README.md",
+            "# Open issues — part\n\nOne file per entry.\n",
+        ),
+        ("part/src/lib.rs", "pub fn f() {}\n"),
+    ];
+    for (rel, body) in part {
+        history.write(rel, body);
+    }
     let base = history.commit("The project is created\n");
-    history.commit("A subject line\n\nIt writes `path@tiny@build/out.bin`.\n");
+    std::fs::write(&manifest, text).expect("the manifest is restored");
+    std::fs::remove_dir_all(history.dir.join("part")).expect("the Component is removed");
+    let sha = history.commit("The part leaves\n\nIt drops `src/lib.rs`.\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
-    assert_eq!(code, 0, "{stdout}{stderr}");
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("commit {sha}:3"))
+            && stdout.contains("`src/lib.rs` is shaped like a path"),
+        "{stdout}"
+    );
+}
+
+/// The claim: an unanchored path through a tracked symlink is judged like any other, in a
+/// document and in a message, and asks git nothing that a symlink makes it refuse.
+#[test]
+fn a_bare_path_through_a_tracked_symlink_is_a_finding_and_not_an_error() {
+    let history = History::new("bare-symlink");
+    tiny_project(&history, false);
+    let manifest = history.dir.join("knowledge-architect.toml");
+    let text = std::fs::read_to_string(&manifest).expect("the manifest");
+    std::fs::write(
+        &manifest,
+        text.replace("skip-files = []", "skip-files = [\"lnk\"]"),
+    )
+    .expect("the manifest is rewritten");
+    std::os::unix::fs::symlink("docs", history.dir.join("lnk")).expect("a symlink");
+    let base = history.commit("The project is created\n");
+    history.commit("A subject line\n\nIt reads `lnk/design.md`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains("`lnk/design.md` is shaped like a path"),
+        "{stdout}"
+    );
+    history.write("notes.md", "# Notes\n\nSee `lnk/design.md`.\n");
+    let (stdout, stderr, code) = history.run(&["check"]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains("`lnk/design.md` is shaped like a path"),
+        "{stdout}"
+    );
 }
 
 /// The claim: a commit message citing a plan document in the commit that deletes it resolves
