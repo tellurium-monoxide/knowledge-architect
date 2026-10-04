@@ -91,12 +91,19 @@ impl Assembly {
 /// tree alone every such message would dangle. An extension's rules have no such asymmetry:
 /// what a message says about its subject is judged against what the commit's own tree holds,
 /// and nothing about the parent bears on it.
+///
+/// **A lint stands where either tree holds what its span names**, so its findings are the union
+/// of both judgements, per `check::references::Part`. `ignored` answers the message's own
+/// spellings, which neither tree's batch asked about: the ignore rules are the working tree's
+/// for both, so one batch serves the two.
 fn judge_message(
     text: &str,
     primary: &Assembly,
     primary_entities: &Entities,
     parent: Option<(&Assembly, &Entities)>,
+    ignored: &HashSet<String>,
 ) -> Vec<Finding> {
+    use check::references::{judge_part, Part};
     let model = Model::from_documents(vec![(message_rel(), text.to_string())]);
     let doc = &model.documents()[0];
     let mut out = Vec::new();
@@ -105,23 +112,57 @@ fn judge_message(
         out.extend(prepared.check_message(doc));
     }
 
+    let with_message = |assembly: &Assembly| -> HashSet<String> {
+        assembly.ignored.union(ignored).cloned().collect()
+    };
+    let primary_ignored = with_message(primary);
+    let primary_inputs = Inputs {
+        ignored: &primary_ignored,
+        ..primary.inputs()
+    };
     let anchors = primary.anchors();
-    let (mine, _) = check::references::judge(
+    let (mine, _) = judge_part(
         model.documents(),
         primary_entities,
         &anchors,
-        &primary.inputs(),
+        &primary_inputs,
+        Part::References,
+    );
+    let (mut lints, _) = judge_part(
+        model.documents(),
+        primary_entities,
+        &anchors,
+        &primary_inputs,
+        Part::Lints,
     );
     let references = match parent {
         None => mine,
         Some((other, other_entities)) => {
             let other_anchors = other.anchors();
-            let (theirs, _) = check::references::judge(
+            let other_ignored = with_message(other);
+            let other_inputs = Inputs {
+                ignored: &other_ignored,
+                ..other.inputs()
+            };
+            let (theirs, _) = judge_part(
                 model.documents(),
                 other_entities,
                 &other_anchors,
-                &other.inputs(),
+                &other_inputs,
+                Part::References,
             );
+            let (their_lints, _) = judge_part(
+                model.documents(),
+                other_entities,
+                &other_anchors,
+                &other_inputs,
+                Part::Lints,
+            );
+            for f in their_lints {
+                if !lints.contains(&f) {
+                    lints.push(f);
+                }
+            }
             // **A finding survives where both trees refuse the same span on the same line,
             // whatever each says about it.** Two trees can refuse one reference for different
             // reasons — one because the anchor is unknown, the other because the id is not
@@ -135,6 +176,7 @@ fn judge_message(
         }
     };
     out.extend(references);
+    out.extend(lints);
     out.sort_by_key(|f| f.line);
     out
 }
@@ -624,7 +666,13 @@ pub(super) fn commits(
         // a second pass over it would take bytes of a commit out of the regime.
         let message = crate::git::commit_message(root, sha).map_err(|e| e.to_string())?;
         let entities = Entities::build(&tree.model, &tree.anchors());
-        let found = judge_message(&message, &tree, &entities, parent);
+        let queries = check::references::ignore_queries(
+            &Model::from_documents(vec![(message_rel(), message.clone())]),
+            &tree.anchors(),
+        );
+        let ignored = crate::git::ignored(root, &queries)
+            .map_err(|e| format!("the ignore rules could not be asked: {e}"))?;
+        let found = judge_message(&message, &tree, &entities, parent, &ignored);
         findings.extend(relabelled(found, &format!("commit {short}")));
         // **Read from this commit's own manifest**, as everything a commit is judged against
         // is, per `design@core@a-commit-message-is-a-document`.

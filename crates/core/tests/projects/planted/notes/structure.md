@@ -16,7 +16,7 @@ A reserved anchor where the kind goes: `*@notes/p.md`.
 
 The retired slug form, qualified: `planted#twice-defined`.
 
-The retired slug form, unqualified: `#unqualified-anchor`.
+The retired slug form, unqualified, naming an entry this project defines: `#twice-defined`.
 
 A bare entry number, which nothing reads any more: R99.
 

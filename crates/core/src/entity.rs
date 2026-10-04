@@ -1191,6 +1191,11 @@ impl Entities {
             .collect()
     }
 
+    /// Whether any register of any anchor defines an entry with this id.
+    pub(crate) fn defines_id(&self, id: &str) -> bool {
+        self.defined.keys().any(|(_, _, defined)| defined == id)
+    }
+
     /// How many distinct entities the table holds.
     pub(crate) fn len(&self) -> usize {
         self.defined.len()

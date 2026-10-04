@@ -1508,6 +1508,81 @@ fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
     assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
 }
 
+/// The claim: in a message, an unanchored path whose first segment only the parent tree holds
+/// is still a finding, since the message points at what its commit deletes; a path-shaped span
+/// that names nothing in either tree is silent.
+#[test]
+fn a_message_naming_the_file_its_commit_deletes_by_a_bare_path_is_a_finding() {
+    let history = History::new("commit-bare-path");
+    tiny_project(&history, false);
+    history.write(
+        "scratch/notes.md",
+        "# Notes\n\nA file a later commit deletes.\n",
+    );
+    let base = history.commit("The project is created\n");
+    let silent = history.commit("A subject line\n\nIt answers in `application/json`.\n");
+    history.remove("scratch/notes.md");
+    let sha = history.commit("The notes leave\n\nIt deletes `scratch/notes.md`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("commit {sha}:3"))
+            && stdout.contains("`scratch/notes.md` is shaped like a path"),
+        "{stdout}"
+    );
+    assert!(!stdout.contains(&format!("commit {silent}:")), "{stdout}");
+}
+
+/// The claim: in a message, a retired slug reference is a finding when its id is an entry of
+/// the project, and silent when it names nothing here.
+#[test]
+fn a_message_holding_the_retired_slug_form_is_judged_by_what_it_names() {
+    let history = History::new("commit-retired");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    let silent = history.commit("A subject line\n\nIt closes `#123` and keeps `#include`.\n");
+    let sha = history.commit("A subject line\n\nIt argues from `#tiny-anchor`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("commit {sha}:3"))
+            && stdout.contains("`#tiny-anchor` is the retired slug reference form"),
+        "{stdout}"
+    );
+    assert!(!stdout.contains(&format!("commit {silent}:")), "{stdout}");
+}
+
+/// The claim: in a message, an unanchored path whose first segment the ignore rules cover is a
+/// finding, though no tree holds it: the message's own spellings are asked of git.
+#[test]
+fn a_message_naming_an_ignored_path_by_a_bare_path_is_a_finding() {
+    let history = History::new("commit-ignored-path");
+    tiny_project(&history, false);
+    history.write(".gitignore", "build/\n");
+    let base = history.commit("The project is created\n");
+    let sha = history.commit("A subject line\n\nIt writes `build/out.bin`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("commit {sha}:3"))
+            && stdout.contains("`build/out.bin` is shaped like a path"),
+        "{stdout}"
+    );
+}
+
+/// The claim: in a message, a `path` reference whose target the ignore rules cover is exempt
+/// from existence, as it is in a document, though no document of the tree spells that path.
+#[test]
+fn a_message_citing_an_ignored_target_no_document_spells_is_not_asserted() {
+    let history = History::new("commit-ignored-reference");
+    tiny_project(&history, false);
+    history.write(".gitignore", "build/\n");
+    let base = history.commit("The project is created\n");
+    history.commit("A subject line\n\nIt writes `path@tiny@build/out.bin`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+}
+
 /// The claim: a commit message citing a plan document in the commit that deletes it resolves
 /// against the parent, for a spec of `specs/` and for a step spec, and also when the whole
 /// milestone leaves, so its anchor is gone from the commit's tree. The deletion that ends a plan
@@ -2536,14 +2611,15 @@ fn check_fix_over_a_refused_manifest_writes_nothing() {
 /// as untracked, above the verdict; a finding in a tracked file brings no note.
 #[test]
 fn a_finding_in_an_untracked_file_is_followed_by_a_note_naming_it() {
-    let sandbox = Sandbox::seeded("untracked-note", "core", &[("tracked.md", "`a/b`\n")]);
+    // Each finding is an unanchored path into `docs/`, a directory the mock holds.
+    let sandbox = Sandbox::seeded("untracked-note", "core", &[("tracked.md", "`docs/a`\n")]);
     let (out, stderr, code) = sandbox.run(&["check"]);
     assert_eq!(code, 1, "{out}{stderr}");
     assert!(out.contains("tracked.md:1"), "{out}");
     assert!(!out.contains("untracked:"), "{out}");
 
     // Written after the copy was staged, so git does not track it.
-    sandbox.write("scratch.md", "`c/d`\n");
+    sandbox.write("scratch.md", "`docs/c`\n");
     let (out, stderr, code) = sandbox.run(&["check"]);
     assert_eq!(code, 1, "{out}{stderr}");
     assert!(out.contains("scratch.md:1"), "{out}");
@@ -2566,8 +2642,8 @@ fn a_finding_in_an_untracked_file_is_followed_by_a_note_naming_it() {
     );
 
     // Two findings in one file name it once, and a second file makes the count plural.
-    sandbox.write("scratch.md", "`c/d`\n`e/f`\n");
-    sandbox.write("other.md", "`g/h`\n");
+    sandbox.write("scratch.md", "`docs/c`\n`docs/e`\n");
+    sandbox.write("other.md", "`docs/g`\n");
     let (out, stderr, code) = sandbox.run(&["check"]);
     assert_eq!(code, 1, "{out}{stderr}");
     assert!(

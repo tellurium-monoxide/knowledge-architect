@@ -1121,7 +1121,7 @@ migration. It would also mean every pointer written in an older form stops being
 nothing saying so, and a silent false negative is the failure this tool exists to prevent. The
 candidate rule that bounds this is `design@core@candidate-rule-and-retired-forms`.
 
-### A backticked `@` span is a reference candidate when its head is a kind or an anchor, the retired slug reference stays a finding, and every other span is silent `##candidate-rule-and-retired-forms`
+### A backticked `@` span is a reference candidate when its head is a kind or an anchor, the retired slug reference stays a finding where it names something of this project, and every other span is silent `##candidate-rule-and-retired-forms`
 
 The scanner records every backticked span that holds an `@` and no whitespace, backtick or
 angle bracket, as written; it has no manifest, so it cannot tell a kind from an email address.
@@ -1152,11 +1152,21 @@ reference or a path it held.
 reports it. Reading lookalike characters as the grammar's would put every script's
 punctuation inside the tokenizer, and a census of walked markdown finds no such span.
 
-**The retired slug reference is a finding, permanently.** A backticked `<word>#<word>` names the
-form it was. It has no `@` and no two path segments, so without this clause a slug reference the
-migration missed would be silent, which is the founding failure class. The clause does not expire
-with the migration: the commit history is read by every session that runs `git log`, it holds
-the form, and a reference copied out of it would be checked by nothing.
+**The retired slug reference is a finding wherever it names something of this project.** A
+backticked `<word>#<word>` names the form it was when its word is an anchor or a kind, and a bare
+`#<word>` when its word is the id of an entry some register defines. It has no `@` and no two path
+segments, so without this clause a slug reference the migration missed would be silent, which is
+the founding failure class. The clause does not expire with the migration: the commit history is
+read by every session that runs `git log`, it holds the form, and a reference copied out of it
+would be checked by nothing.
+
+**A shape that names nothing here is another tool's notation, and is silent**: an issue number
+`#123`, a preprocessor directive `#include`, a crate's item `serde#derive`. None was ever this
+grammar's, so none is a reference a migration missed, and a project that never used the form would
+otherwise have to rewrite its own notation to pass: on sharkdp/fd at commit 3460b1e9, the one
+retired-form finding was a GitHub issue number. What the silence costs is a copied bare form whose
+entry has since left the tree; its word is no longer an id here, so it is not reported. Reporting
+every such shape is in `path@core@docs/rejected-alternatives.md`. This serves `goal@knowledge-architect@any-project-can-adopt-it`.
 
 **The interpretation register's old entry numbers are not read.** They were thaum's own, and a
 lint naming them would belong to thaum's extension rather than to the core, and the migration they
@@ -1176,11 +1186,31 @@ anchor's directory as its id. The root is a component like any other, named by `
 The kind prefix costs five characters at every path reference and buys one grammar: the scanner
 has one tokenizer, the old two-segment form `<anchor>@<path>` is reported as an anchor in kind
 position by `design@core@candidate-rule-and-retired-forms`, and the unanchored lint is left with
-one job. There is no unanchored form: a backticked span of path characters with two or more
-segments and no `@` is a finding naming the grammar, so no pointer class passes unregistered.
-One segment is a name rather than a pointer, and a span holding a space, an angle bracket, or a
-colon anywhere but in a line suffix is not path-shaped, which is what lets documentation of
-the syntax show a placeholder with no carve-out.
+one job. There is no unanchored form for a path of this tree: a backticked span of path characters
+with two or more segments and no `@` is a finding naming the grammar when its first segment names a
+file or a directory this tree holds, or one its ignore rules cover. One segment is a name rather
+than a pointer, and a span holding a space, an angle bracket, or a colon anywhere but in a line
+suffix is not path-shaped, which is what lets documentation of the syntax show a placeholder with no
+carve-out.
+
+**A span whose first segment names nothing here is another tool's notation, and is silent**: a
+media type `application/json`, a unit `km/h`, a git ref `origin/main`, the fixture path of a test,
+a path on another machine. The first segment is read from the root, from every anchor's directory,
+and from the document's own directory, a `..` climbing from each; a leading slash is read from the
+root alone. Only the first segment is asked, so a pointer whose first segment is here and whose
+rest is not is still a finding, and the anchored form it is rewritten in reports it dangling. In a
+commit message the finding stands where either the commit's tree or its parent's holds the
+segment, because a message points at what its commit deletes.
+
+**What it costs**: a pointer written after its first segment left the tree is silent; one written
+while it stood was reported then. **What it buys** is measured on a project new to the tool: on
+sharkdp/fd at commit 3460b1e9, with the required structure added, the rule that reported every
+path-shaped span gave 15 path findings, 14 of them another tool's notation. This rule keeps the one
+stale pointer and silences the 14. Re-take it with `cargo klarch check` over a
+foreign project carrying the structure; a census in which the silence hides a real pointer of this
+tree reopens it. Reporting every path-shaped span is in
+`path@core@docs/rejected-alternatives.md`. This serves `goal@knowledge-architect@any-project-can-adopt-it`
+and `goal@knowledge-architect@adoption-is-easy`.
 
 **A line suffix or a fragment keeps a span path-shaped, after a file with an extension.** A
 path followed by `:12`, the location an editor prints, and a path followed by a `#` and a
