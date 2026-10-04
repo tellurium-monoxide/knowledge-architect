@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-19 entries
+20 entries
 
 | kind | title |
 | --- | --- |
@@ -18,6 +18,7 @@
 | question | [An extension reads its manifest table as a `toml::Value`, so the core's toml version is part of the public API](manifest-table-exposes-the-toml-crate.md) |
 | todo | [A change to a generated file's contract fails every earlier commit with no word on the cause](a-contract-change-fails-every-earlier-commit-unexplained.md) |
 | todo | [A plan document has no way to name a file its own work will create](a-planned-path-can-be-named.md) |
+| todo | [An extension cannot see which register, anchor or entry a document belongs to](an-extension-cannot-see-which-register-a-document-belongs-to.md) |
 | todo | [`commits` sees a citation of a branch commit by SHA only when the cited commit is in the range it judges](branch-sha-citations-are-judged-within-the-range-only.md) |
 | todo | [The installed-file findings sit in phase 2, where the core's placement rule puts them in phase 4](installed-file-findings-belong-in-phase-four.md) |
 | todo | [References are read in Markdown and Rust files only](references-are-read-in-markdown-and-rust-only.md) |
