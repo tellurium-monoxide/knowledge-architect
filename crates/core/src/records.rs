@@ -325,7 +325,8 @@ mod tests {
     /// A project whose root component is `a-project`, with one location carrying the issue
     /// register and a declared `reading` register.
     fn anchors() -> Anchors {
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [locations.notes]\npath = \"notes\"\nregisters = [\"issue\", \"reading\"]\n\n\
              [registers.reading]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"readings\"\n\
              sections = [\"Reading\"]\n\n\
@@ -355,7 +356,7 @@ mod tests {
         let tree: Vec<PathBuf> = docs.iter().map(|(p, _)| PathBuf::from(p)).collect();
         let manifest = Manifest::parse(
             Path::new("/nowhere"),
-            "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n",
         )
         .expect("a declaration");

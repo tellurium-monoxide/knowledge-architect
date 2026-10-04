@@ -607,7 +607,7 @@ mod tests {
         ext_files: &str,
     ) -> Manifest {
         let text = format!(
-            "[project]\nname = \"a-project\"\ncomponents = [{components}]\n\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = [{components}]\n\n\
              {extra}\n\
              [walk]\nskip-dirs = {skip_dirs}\nskip-files = {skip_files}\n\
              exclude = {exclude}\n\n\

@@ -220,6 +220,113 @@ pub fn locate() -> Result<Manifest, String> {
     Manifest::find(&cwd).map_err(|e| e.to_string())
 }
 
+/// Refuse to run over a project whose `[project] checker-version` this binary does not satisfy,
+/// per `spec@plans@checker-version-pin`.
+///
+/// **Each binary's `main` calls it** right after [`refuse_a_foreign_build`] and before it
+/// dispatches any command, its own included, with the directories of its own source: the same
+/// list it hands [`run`] as `checker`. [`run`] does not call it, so a test driving a command
+/// in-process over a mock project needs no pin.
+///
+/// A version is accepted when it equals the version of this library, the checker every binary
+/// links; `"fixture"` when the project lies inside, or is, this library's directory or one of
+/// `checker_dirs`, a mock project of a library the binary links; `"self"` when this library's
+/// directory lies inside, or is, the project, a tree the checker is built from. While the key's
+/// own complaint stands, that complaint is the refusal, so no command runs without a key. Every
+/// refusal is could-not-run, exit 2, per `design@core@exit-code-ladder`.
+pub fn refuse_another_version(manifest: &Manifest, checker_dirs: &[&Path]) -> Result<(), String> {
+    refuse_another_version_built_at(
+        manifest,
+        &crate::component_dir(),
+        env!("CARGO_PKG_VERSION"),
+        checker_dirs,
+    )
+}
+
+/// The same, with the library's directory and version as parameters, so a test can place them.
+fn refuse_another_version_built_at(
+    manifest: &Manifest,
+    core: &Path,
+    version: &str,
+    checker_dirs: &[&Path],
+) -> Result<(), String> {
+    use crate::manifest::Pin;
+    let repair = "set [project] checker-version to the version of the checker the project runs";
+    let Some(pin) = manifest.pin() else {
+        let complaint = manifest
+            .pin_complaint()
+            .map(|f| (f.what.clone(), f.action.clone()));
+        let (what, action) = complaint.unwrap_or_else(|| {
+            (
+                "[project] checker-version is absent".to_string(),
+                repair.to_string(),
+            )
+        });
+        return Err(format!("{what}\n       {action}"));
+    };
+    let root = manifest.root();
+    match pin {
+        Pin::Version(pinned) if pinned == version => Ok(()),
+        Pin::Version(pinned) => {
+            let side = match (triple(version), triple(pinned)) {
+                (Some(binary), Some(pin)) if binary < pin => "older than",
+                (Some(_), Some(_)) => "newer than",
+                _ => "another version than",
+            };
+            let fix = if side == "older than" {
+                format!("run or build knowledge-architect {pinned}, the version the manifest pins")
+            } else {
+                format!(
+                    "run knowledge-architect {pinned}, the version the manifest pins, or move the \
+                     pin: read the changelog of each version from {pinned} to {version}, then set \
+                     [project] checker-version = \"{version}\""
+                )
+            };
+            Err(format!(
+                "this binary runs knowledge-architect {version}, {side} the {pinned} the manifest \
+                 pins\n       {fix}"
+            ))
+        }
+        Pin::Fixture if is_a_library_fixture(root, core, checker_dirs) => Ok(()),
+        Pin::Fixture => Err(format!(
+            "\"fixture\" is only valid for a mock project inside a library this binary links\n       \
+             {repair}"
+        )),
+        Pin::OwnBuild if is_its_own_build(root, core) => Ok(()),
+        Pin::OwnBuild => Err(format!(
+            "\"self\" is only valid where the checker is built from this tree\n       {repair}"
+        )),
+    }
+}
+
+/// A version's three integers, or `None` for a version that is not three integers, which only
+/// a binary's own version can be: the manifest's is refused at parse.
+fn triple(version: &str) -> Option<(u64, u64, u64)> {
+    let mut parts = version.split('.').map(|p| p.parse::<u64>().ok());
+    let triple = (parts.next()??, parts.next()??, parts.next()??);
+    parts.next().is_none().then_some(triple)
+}
+
+/// A path as the filesystem resolves it, or as written where it cannot, as `foreign_copy` in
+/// `build_origin` reads it.
+fn canonical(path: &Path) -> std::path::PathBuf {
+    path.canonicalize().unwrap_or_else(|_| path.to_path_buf())
+}
+
+/// Whether the project lies inside, or is, the core directory or one of `checker_dirs`: a mock
+/// project of a library the running binary links.
+fn is_a_library_fixture(root: &Path, core: &Path, checker_dirs: &[&Path]) -> bool {
+    let root = canonical(root);
+    std::iter::once(core)
+        .chain(checker_dirs.iter().copied())
+        .any(|dir| root.starts_with(canonical(dir)))
+}
+
+/// Whether the core directory lies inside, or is, the project: a tree the checker is built from.
+fn is_its_own_build(root: &Path, core: &Path) -> bool {
+    canonical(core).starts_with(canonical(root))
+}
+
 /// Every observation the walk and the scanner produced, one per line.
 ///
 /// This is what the model was compared against the implementation it replaces with, and it is
@@ -946,6 +1053,144 @@ fn counts(report: &Report) -> String {
 
 #[cfg(test)]
 mod tests {
+    use super::{is_a_library_fixture, is_its_own_build, refuse_another_version_built_at};
+    use crate::Manifest;
+    use std::path::{Path, PathBuf};
+
+    /// A fresh directory under the system's temporary directory, removed when dropped.
+    struct Scratch(PathBuf);
+
+    impl Scratch {
+        fn new(tag: &str) -> Self {
+            let dir =
+                std::env::temp_dir().join(format!("knowledge-pin-{tag}-{}", std::process::id()));
+            let _ = std::fs::remove_dir_all(&dir);
+            std::fs::create_dir_all(&dir).expect("a scratch directory");
+            Scratch(dir)
+        }
+
+        fn dir(&self, rel: &str) -> PathBuf {
+            let dir = self.0.join(rel);
+            std::fs::create_dir_all(&dir).expect("a directory");
+            dir
+        }
+    }
+
+    impl Drop for Scratch {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
+    }
+
+    /// A manifest rooted at `root` whose key holds `value`.
+    fn pinned_at(root: &Path, value: &str) -> Manifest {
+        let text = format!(
+            "[project]\nchecker-version = \"{value}\"\nname = \"p\"\ncomponents = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n"
+        );
+        Manifest::parse(root, &text).expect("a declaration")
+    }
+
+    /// The claim: `"fixture"` holds where the project lies inside, or is, the core directory or a
+    /// checker directory, and `"self"` where the core directory lies inside, or is, the project;
+    /// a core directory outside the project, standing for the registry, confirms neither.
+    #[test]
+    fn the_sentinels_hold_by_where_the_core_and_the_project_lie() {
+        let scratch = Scratch::new("predicates");
+        let tree = scratch.dir("tree");
+        let core_inside = scratch.dir("tree/crates/core");
+        let mock = scratch.dir("tree/crates/core/tests/projects/m");
+        let registry = scratch.dir("registry/knowledge-architect-0.2.0");
+        let extension = scratch.dir("ext/crates/rules");
+        let ext_mock = scratch.dir("ext/crates/rules/tests/projects/m");
+
+        assert!(is_a_library_fixture(&mock, &core_inside, &[]));
+        assert!(
+            is_a_library_fixture(&core_inside, &core_inside, &[]),
+            "equal is inside"
+        );
+        assert!(is_a_library_fixture(
+            &ext_mock,
+            &registry,
+            &[extension.as_path()]
+        ));
+        assert!(!is_a_library_fixture(&tree, &core_inside, &[]));
+        assert!(!is_a_library_fixture(&tree, &registry, &[]));
+        assert!(!is_a_library_fixture(&ext_mock, &registry, &[]));
+
+        assert!(is_its_own_build(&tree, &core_inside));
+        assert!(
+            is_its_own_build(&core_inside, &core_inside),
+            "equal is inside"
+        );
+        assert!(!is_its_own_build(&tree, &registry));
+        assert!(!is_its_own_build(&mock, &core_inside));
+    }
+
+    /// The claim: each row of the spec's mapping table, over a project the build confirms or
+    /// does not, gives the result and the message opening the table names.
+    #[test]
+    fn the_refusal_follows_the_mapping_table() {
+        let scratch = Scratch::new("refusal");
+        let tree = scratch.dir("tree");
+        let core_inside = scratch.dir("tree/crates/core");
+        let mock = scratch.dir("tree/crates/core/tests/projects/m");
+        let registry = scratch.dir("registry/knowledge-architect-0.2.0");
+        let refuse = |root: &Path, value: &str, core: &Path| {
+            refuse_another_version_built_at(&pinned_at(root, value), core, "0.2.0", &[])
+        };
+        let err = |r: Result<(), String>| r.expect_err("a refusal");
+
+        assert_eq!(refuse(&tree, "0.2.0", &registry), Ok(()));
+        assert!(err(refuse(&tree, "0.3.0", &registry)).starts_with(
+            "this binary runs knowledge-architect 0.2.0, older than the 0.3.0 the manifest pins"
+        ));
+        assert!(err(refuse(&tree, "0.1.9", &registry)).starts_with(
+            "this binary runs knowledge-architect 0.2.0, newer than the 0.1.9 the manifest pins"
+        ));
+        assert!(
+            err(refuse(&tree, "0.10.0", &registry)).contains("older than"),
+            "compared as integers"
+        );
+        assert_eq!(refuse(&mock, "fixture", &core_inside), Ok(()));
+        assert!(err(refuse(&tree, "fixture", &registry)).starts_with(
+            "\"fixture\" is only valid for a mock project inside a library this binary links"
+        ));
+        assert_eq!(refuse(&tree, "self", &core_inside), Ok(()));
+        assert!(err(refuse(&tree, "self", &registry))
+            .starts_with("\"self\" is only valid where the checker is built from this tree"));
+
+        // An absent key refuses with its complaint's text, whatever the build.
+        let text =
+            "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\nskip-files = []\n";
+        let absent = Manifest::parse(&tree, text).expect("a declaration");
+        assert!(err(refuse_another_version_built_at(
+            &absent,
+            &core_inside,
+            "0.2.0",
+            &[]
+        ))
+        .starts_with("[project] checker-version is absent"));
+    }
+
+    /// The claim: a binary whose own version is not three integers still refuses another pin,
+    /// with the neutral wording.
+    #[test]
+    fn a_binary_version_that_is_not_three_integers_refuses_with_the_neutral_wording() {
+        let scratch = Scratch::new("neutral");
+        let tree = scratch.dir("tree");
+        let registry = scratch.dir("registry");
+        let r = refuse_another_version_built_at(
+            &pinned_at(&tree, "0.2.0"),
+            &registry,
+            "0.3.0-dev",
+            &[],
+        );
+        assert!(r
+            .expect_err("a refusal")
+            .contains("another version than the 0.2.0"));
+    }
+
     use super::{counts, Report};
     use crate::check::{Phase, CHECKS};
 

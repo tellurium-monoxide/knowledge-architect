@@ -813,7 +813,7 @@ mod tests {
 
     /// A manifest declaring one component beside the root, against a root nothing reads.
     fn manifest() -> Manifest {
-        let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
+        let text = "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
         Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration")
@@ -1629,7 +1629,7 @@ mod tests {
         // `design@core@reserved-anchors`, so a copy a declared location alone holds does not
         // satisfy it. Mutation checked: with the filter back to `constructed.is_none()`, the
         // location's copy satisfies the reference and nothing is reported.
-        let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
+        let text = "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
              [locations.notes]\npath = \"notes\"\nregisters = [\"issue\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n";
         let m = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration");

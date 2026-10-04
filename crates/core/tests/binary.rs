@@ -128,9 +128,15 @@ impl Sandbox {
         self.dir.join(rel)
     }
 
+    /// Write a file into the copy; a manifest is written pinned to this binary's version.
     fn write(&self, rel: &str, text: &str) {
         let path = self.path(rel);
         std::fs::create_dir_all(path.parent().expect("a parent")).expect("the parent directory");
+        let text = if rel == "knowledge-architect.toml" {
+            pinned(text)
+        } else {
+            text.to_string()
+        };
         std::fs::write(&path, text).expect("a written fixture file");
     }
 
@@ -166,6 +172,11 @@ impl Drop for Sandbox {
     }
 }
 
+/// Copy a mock project, with its manifest pinned to this binary's version.
+///
+/// A mock says `checker-version = "fixture"`, which the binary confirms only where the mock lies
+/// inside the core's directory, per `spec@plans@checker-version-pin`; a copy elsewhere is a project
+/// like any other, so it carries the version.
 fn copy_dir(from: &Path, to: &Path) {
     std::fs::create_dir_all(to).expect("the sandbox directory");
     for entry in std::fs::read_dir(from).expect("a readable fixture") {
@@ -173,10 +184,48 @@ fn copy_dir(from: &Path, to: &Path) {
         let target = to.join(entry.file_name());
         if entry.file_type().expect("a file type").is_dir() {
             copy_dir(&entry.path(), &target);
+        } else if entry.file_name() == "knowledge-architect.toml" {
+            let text = std::fs::read_to_string(entry.path()).expect("a mock manifest");
+            std::fs::write(&target, pinned(&text)).expect("a copied manifest");
         } else {
             std::fs::copy(entry.path(), &target).expect("a copied file");
         }
     }
+}
+
+/// A manifest's text with `[project] checker-version` set to this binary's version: the key's
+/// line replaced where `[project]` holds one, and inserted after the `[project]` line where it
+/// does not. A text with no `[project]` table is returned as it is.
+fn pinned(text: &str) -> String {
+    let key = format!("checker-version = \"{}\"", env!("CARGO_PKG_VERSION"));
+    let mut out = Vec::new();
+    let mut in_project = false;
+    let mut done = false;
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if trimmed.starts_with('[') {
+            if in_project && !done {
+                out.push(key.clone());
+                done = true;
+            }
+            in_project = trimmed == "[project]";
+            out.push(line.to_string());
+            if in_project && !done {
+                out.push(key.clone());
+                done = true;
+            }
+            continue;
+        }
+        if in_project && trimmed.starts_with("checker-version") {
+            continue;
+        }
+        out.push(line.to_string());
+    }
+    let mut joined = out.join("\n");
+    if text.ends_with('\n') {
+        joined.push('\n');
+    }
+    joined
 }
 
 /// The smallest conformant mock, which declares no table the core does not own.
@@ -398,8 +447,13 @@ impl History {
         );
     }
 
+    /// Write a file into the project; a manifest is written pinned to this binary's version.
     fn write(&self, rel: &str, text: &str) {
-        self.write_bytes(rel, text.as_bytes());
+        if rel == "knowledge-architect.toml" {
+            self.write_bytes(rel, pinned(text).as_bytes());
+        } else {
+            self.write_bytes(rel, text.as_bytes());
+        }
     }
 
     /// The same, for bytes that are not text: a blob the walk reads as a document.
@@ -2771,4 +2825,121 @@ fn an_untracked_manifest_brings_no_untracked_note() {
     assert_eq!(code, 1, "{out}{stderr}");
     assert!(out.contains("knowledge-architect.toml"), "{out}");
     assert!(!out.contains("untracked:"), "{out}");
+}
+
+/// Write a copy's manifest with `[project] checker-version` set to `value` exactly, bypassing
+/// the pinning every other write of a manifest goes through.
+fn pin_copy_to(sandbox: &Sandbox, value: &str) {
+    let path = sandbox.path("knowledge-architect.toml");
+    let text = std::fs::read_to_string(&path).expect("the manifest");
+    let line = format!("checker-version = \"{}\"", env!("CARGO_PKG_VERSION"));
+    assert_eq!(text.matches(&line).count(), 1, "{text}");
+    let replaced = if value.is_empty() {
+        text.replace(&format!("{line}\n"), "")
+    } else {
+        text.replace(&line, &format!("checker-version = \"{value}\""))
+    };
+    std::fs::write(&path, replaced).expect("the manifest is rewritten");
+}
+
+/// The claim: over a copy of a mock, a pin the binary does not satisfy refuses the run with exit
+/// 2 and the message the spec gives each case, per `spec@plans@checker-version-pin`; the pin
+/// equal to the binary's version passes.
+#[test]
+fn a_copy_whose_pin_this_binary_does_not_satisfy_refuses_the_run() {
+    let version = env!("CARGO_PKG_VERSION");
+    let sandbox = Sandbox::new("pin-refusal", "minimal");
+    let (out, err, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 0, "the pinned copy passes: {out}{err}");
+    for (value, opening) in [
+        (
+            "99.0.0".to_string(),
+            format!("this binary runs knowledge-architect {version}, older than the 99.0.0 the manifest pins"),
+        ),
+        (
+            "0.0.1".to_string(),
+            format!("this binary runs knowledge-architect {version}, newer than the 0.0.1 the manifest pins"),
+        ),
+        (
+            "fixture".to_string(),
+            "\"fixture\" is only valid for a mock project inside a library this binary links".to_string(),
+        ),
+        (
+            "self".to_string(),
+            "\"self\" is only valid where the checker is built from this tree".to_string(),
+        ),
+    ] {
+        let copy = Sandbox::new(&format!("pin-refusal-{value}"), "minimal");
+        pin_copy_to(&copy, &value);
+        let (out, err, code) = copy.run(&["check"]);
+        assert_eq!(code, 2, "{value}: {out}{err}");
+        assert!(err.contains(&opening), "{value}: {err}");
+    }
+}
+
+/// The claim: with no key, every command refuses with the key's complaint, a command that reads
+/// nothing included.
+#[test]
+fn a_manifest_without_the_key_refuses_every_command() {
+    let sandbox = Sandbox::new("pin-absent", "minimal");
+    pin_copy_to(&sandbox, "");
+    for args in [
+        &["check"][..],
+        &["show", "design@minimal@nothing"],
+        &["model"],
+    ] {
+        let (out, err, code) = sandbox.run(args);
+        assert_eq!(code, 2, "{args:?}: {out}{err}");
+        assert!(
+            err.contains("[project] checker-version is absent"),
+            "{args:?}: {err}"
+        );
+    }
+}
+
+/// The claim: a mock project in place, inside the core's directory, passes with `"fixture"`.
+#[test]
+fn a_mock_in_place_passes_with_fixture() {
+    let (out, err, code) = run("dirhome", &["check"]);
+    assert_eq!(code, 0, "{out}{err}");
+}
+
+/// The claim: the install over a project pinning another version refuses, and writes nothing.
+#[test]
+fn the_install_refuses_another_version_and_writes_nothing() {
+    let sandbox = Sandbox::new("pin-install", "minimal");
+    sandbox.serve_claude();
+    pin_copy_to(&sandbox, "0.0.1");
+    let (out, err, code) = sandbox.run(&["install-agent-skills"]);
+    assert_eq!(code, 2, "{out}{err}");
+    assert!(
+        err.contains("newer than the 0.0.1 the manifest pins"),
+        "{err}"
+    );
+    assert!(!sandbox.path(".claude").exists(), "nothing was installed");
+}
+
+/// The claim: `commits` judges a range whose earlier commit pins another version without
+/// comparing that historical pin, so moving the pin fails no earlier commit.
+#[test]
+fn commits_compares_no_historical_pin() {
+    let history = History::new("pin-history");
+    tiny_project(&history, false);
+    // The base is pinned to this binary, so `commit` regenerates its indexes; the next commit
+    // changes the pin alone, which `commit` cannot regenerate over, and needs not.
+    let base = history.commit("The project is created\n");
+    let manifest = history.dir.join("knowledge-architect.toml");
+    let pinned_text = std::fs::read_to_string(&manifest).expect("the manifest");
+    let line = format!("checker-version = \"{}\"", env!("CARGO_PKG_VERSION"));
+    std::fs::write(
+        &manifest,
+        pinned_text.replace(&line, "checker-version = \"0.0.1\""),
+    )
+    .expect("an older pin");
+    history.commit("A subject line\n\nThe project pins an older checker.\n");
+    std::fs::write(&manifest, &pinned_text).expect("the pin moved");
+    history.commit("The pin moves\n\nThe project now pins this checker.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "{stdout}{stderr}");
+    assert!(stdout.contains("2 judged"), "{stdout}");
 }

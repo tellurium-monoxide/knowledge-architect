@@ -12,6 +12,8 @@
 # clean through phase 3 for exactly that reason.
 
 [project]
+# A mock project inside the core's directory, which the binary built here confirms.
+checker-version = "fixture"
 name = "unsound"
 components = ["parts/widget"]
 

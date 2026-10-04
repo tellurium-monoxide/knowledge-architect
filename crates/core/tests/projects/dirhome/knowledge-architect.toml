@@ -6,6 +6,8 @@
 # checks do not report over a tree that is right.
 
 [project]
+# A mock project inside the core's directory, which the binary built here confirms.
+checker-version = "fixture"
 name = "dirhome"
 components = []
 

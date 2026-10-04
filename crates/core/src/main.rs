@@ -50,6 +50,9 @@ fn main() -> ExitCode {
                 knowledge_architect_agent_skills::PACKAGE,
             ],
         )?;
+        // A binary of another version than the project pins would judge it by other rules, or
+        // install other skills over it, per `spec@plans@checker-version-pin`.
+        knowledge_architect::cli::refuse_another_version(&manifest, &dirs)?;
         knowledge_architect::cli::run(cli.command, &manifest, &dirs, &mut [])
     });
     match outcome {

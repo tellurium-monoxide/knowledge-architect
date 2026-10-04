@@ -5,6 +5,8 @@
 # goes there.
 
 [project]
+# A mock project inside the core's directory, which the binary built here confirms.
+checker-version = "fixture"
 name = "planted"
 # One component below the root, carrying every document but one.
 components = ["parts/widget"]

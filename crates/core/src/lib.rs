@@ -60,10 +60,7 @@
 //! }
 //!
 //! fn main() -> ExitCode {
-//!     let command = match Cli::parse().command {
-//!         Commands::Core(command) => command,
-//!         // Each command of the extension is one more arm here.
-//!     };
+//!     let parsed = Cli::parse();
 //!     // The directory of the binary's own crate: its string literals are read as data.
 //!     let own = Path::new(env!("CARGO_MANIFEST_DIR"));
 //!     let mut extensions: Vec<Box<dyn Extension>> = Vec::new(); // Box::new(TheExtension), …
@@ -79,7 +76,12 @@
 //!             // The packages of the project's own workspace that the binary links.
 //!             &[env!("CARGO_PKG_NAME")],
 //!         )?;
-//!         cli::run(command, &manifest, &[own], &mut extensions)
+//!         // Before any command, the extension's own included.
+//!         cli::refuse_another_version(&manifest, &[own])?;
+//!         match parsed.command {
+//!             Commands::Core(command) => cli::run(command, &manifest, &[own], &mut extensions),
+//!             // Each command of the extension is one more arm here.
+//!         }
 //!     });
 //!     outcome.unwrap_or_else(|e| {
 //!         eprintln!("error: {e}");
@@ -95,6 +97,11 @@
 //! [`cli::refuse_a_foreign_build`] refuses a binary built from another checkout of the project,
 //! because that binary would judge this tree with the other checkout's code. A binary tests the
 //! refusal in its own suite, over its own crates.
+//!
+//! [`cli::refuse_another_version`] refuses to run over a project whose manifest pins another
+//! version of the checker in `[project] checker-version`. A mock project inside the extension's
+//! crate may say `checker-version = "fixture"`, which this call accepts because the crate's
+//! directory is among the directories it is given.
 //!
 //! # Writing an extension
 //!

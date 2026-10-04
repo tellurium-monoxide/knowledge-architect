@@ -325,7 +325,7 @@ mod tests {
             ""
         };
         let text = format!(
-            "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [registers.note]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"notes\"\n{metadata}\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              "
@@ -519,7 +519,8 @@ mod tests {
     /// Mutation checked: the Directory home rendered by `file_register_index`.
     #[test]
     fn the_milestones_index_lists_each_milestone_once_and_no_file_inside_one() {
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n";
         let manifest = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("declared");
         let docs = [
@@ -575,7 +576,8 @@ mod tests {
     /// checked: `generated_index_paths` filtering only the Heading shape out.
     #[test]
     fn an_item_register_has_no_generated_index() {
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n";
         let manifest = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("declared");
         let tree: Vec<PathBuf> = ["docs/plans/specs/s.md", "docs/plans/milestones/m/README.md"]
@@ -602,7 +604,7 @@ mod tests {
     fn the_generated_list_is_sorted_by_destination_and_names_each_once() {
         // The dedup below removes CONSECUTIVE duplicates, so it does nothing unless the list is
         // sorted first: dropping the sort silently disarms it.
-        let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/b\", \"parts/a\"]\n\n\
+        let text = "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = [\"parts/b\", \"parts/a\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
         let manifest = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("declared");
@@ -641,7 +643,8 @@ mod tests {
     fn one_home_shared_by_two_registers_is_one_destination_and_not_two() {
         // Two registers declaring one directory is a `registers` finding. Until it is repaired,
         // this command must not write the same destination twice in one run.
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [locations.notes]\npath = \"notes\"\nregisters = [\"one\", \"two\"]\n\n\
              [registers.one]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"shared\"\n\n\
              [registers.two]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"shared\"\n\n\
