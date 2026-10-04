@@ -18,6 +18,8 @@ subsection is omitted.
   released before this one refuses a manifest carrying the key, as an unknown field. An extension
   binary's `main` calls `cli::refuse_another_version` after `cli::refuse_a_foreign_build`, before
   its match on the command, as the crate's template shows.
+- `checks`, minor: a generated index with one row says `1 entry`, not `1 entries`. A project with
+  such an index runs `index`, or `check --fix`, once after moving to this version.
 
 ### New features
 

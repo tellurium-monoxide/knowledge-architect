@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-1 entries
+1 entry
 
 | kind | title |
 | --- | --- |

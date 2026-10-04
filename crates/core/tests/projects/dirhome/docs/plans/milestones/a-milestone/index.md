@@ -1,6 +1,6 @@
 **Generated — do not edit.** `klarch index`
 
-1 entries
+1 entry
 
 | title |
 | --- |

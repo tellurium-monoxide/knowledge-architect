@@ -889,7 +889,7 @@ The generated `index.md` of a file-register instance, in order:
 | --- | --- |
 | 1 | `**Generated — do not edit.** \`<command> index\``, with the project's declared command, per `design@core@declared-command` |
 | 2 | blank |
-| 3 | `<n> entries`, over every entry of the instance, grouped or not |
+| 3 | `<n> entries`, over every entry of the instance, grouped or not, and `1 entry` where the instance holds one |
 | then | the ungrouped entries' table, under no heading |
 | then | per group, a blank line, `## <group>`, and that group's table |
 

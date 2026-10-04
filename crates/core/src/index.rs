@@ -144,7 +144,8 @@ fn render(mut rows: Vec<Row>, keys: &[&str], command: &str) -> String {
     });
 
     let mut out = format!("**Generated — do not edit.** `{command} index`\n\n");
-    out.push_str(&format!("{} entries\n", rows.len()));
+    let noun = if rows.len() == 1 { "entry" } else { "entries" };
+    out.push_str(&format!("{} {noun}\n", rows.len()));
     let mut open: Option<&Option<String>> = None;
     for row in &rows {
         if open != Some(&row.group) {
@@ -380,7 +381,7 @@ mod tests {
         );
         assert_eq!(
             out,
-            "**Generated — do not edit.** `cargo klarch index`\n\n1 entries\n\n\
+            "**Generated — do not edit.** `cargo klarch index`\n\n1 entry\n\n\
              | status | title |\n| --- | --- |\n\
              | open | [The only entry](one-entry.md) |\n"
         );
@@ -566,7 +567,7 @@ mod tests {
         );
         assert_eq!(
             all[&PathBuf::from("docs/plans/milestones/a-first/index.md")],
-            "**Generated — do not edit.** `klarch index`\n\n1 entries\n\n| title |\n| --- |\n\
+            "**Generated — do not edit.** `klarch index`\n\n1 entry\n\n| title |\n| --- |\n\
              | [A step of it](a-step.md) |\n"
         );
     }
