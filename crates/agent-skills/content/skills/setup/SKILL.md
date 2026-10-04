@@ -39,8 +39,8 @@ Rust toolchain, whatever the project's own language.
 **Setting up is done with the owner.** Every step that writes a durable statement on the owner's
 behalf is shown to the owner first: the Components, the goals, the place of each existing document,
 and each choice below that changes the project's build or a file it already has. The owner rules;
-the agent proposes. With no owner to rule, the setup stops at the first such step rather than
-choosing in the owner's place.
+the agent proposes. The skill is built on an owner present to rule: a run without one, such as a
+trial, makes those choices itself.
 
 ## 1. Pin the checker, and decide how it runs
 
@@ -55,12 +55,13 @@ them.
   exact version, and `--locked` turns any change to it into a failure. A dependency alone builds
   no executable for the project: `cargo run -p` runs only the project's own packages, which is why
   the crate serves the checker's commands itself. A Rust project that is one package with no
-  workspace either gains one, through a `[workspace]` table in its `Cargo.toml` whose `members`
-  names the maintenance crate, or runs the checker from a local install, as the next point says.
-  The first changes the project's build. The second leaves the project with no maintenance crate,
-  so it has no `cargo x gates` either, and its gates command is the project's own, per §6. Propose
-  both and let the owner rule.
-- **Any other project**, and a Rust project that runs a local install, installs the binary into a directory of its own, ignored by git:
+  workspace gains one, through a `[workspace]` table in its `Cargo.toml` whose `members` names the
+  maintenance crate: this is the shape to recommend, since it keeps the gates of "In a Rust
+  project". The alternative is a local install, as the next point says, which leaves the project
+  with no maintenance crate and no `cargo x gates`, so the project builds its own gates command,
+  per §6. The first changes the project's build, so the owner rules between the two.
+- **Any other project**, and a Rust project that runs a local install, installs the binary into a
+  directory of its own, ignored by git:
   `cargo install --locked --root <dir> knowledge-architect --version =<version>`. The binary is
   `<dir>/bin/klarch`. A plain `cargo install` is machine-wide, and two projects on one machine
   would then share one version.

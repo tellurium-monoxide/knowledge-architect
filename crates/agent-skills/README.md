@@ -183,10 +183,9 @@ design skill.
 **You are present to rule.** The setup proposes and you rule: the
 Components, the goals, the place of each existing document, and each
 choice that changes your project's build or a file it already has.
-With no owner present, the setup stops at the first such step. A run
-that goes on without you makes those choices in your place, and a gap
-it reports in a choice it had to make alone is not a defect of the
-skill.
+A run without an owner, such as a trial, makes those choices itself,
+and a gap it reports in a choice it had to make alone is not a defect
+of the skill.
 
 ## Model requirements
 

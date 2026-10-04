@@ -57,10 +57,9 @@ subsection is omitted.
 - `agent-skills`, patch: after editing a register, the issue-tracking, planning and setup skills
   run `check --fix`, which writes the stale generated files and checks, in place of `index` then
   `check`.
-- `agent-skills`, patch: the setup skill runs with the owner, and with no owner to rule it stops
-  at the first step that needs a ruling. It asks the owner whether a Rust project with no workspace
-  gains one or runs a local install, and how to treat each finding the check reports in a file the
-  project already has.
+- `agent-skills`, patch: the setup skill asks the owner whether a Rust project with no workspace
+  gains one, which it recommends, or runs a local install, and how to treat each finding the check
+  reports in a file the project already has.
 
 ## 0.2.0
 
