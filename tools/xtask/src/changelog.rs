@@ -127,7 +127,8 @@ mod tests {
 
     // The claim: a missing or differing copy is written, a current one is left alone, and a
     // directory under crates/ with no Cargo.toml gets none. The current copy is read-only, so a
-    // write to it fails the run.
+    // write to it fails the run. That holds for a run that is not root's alone: root writes a
+    // read-only file without error, and a needless write would then pass unseen.
     #[test]
     fn sync_writes_what_differs_and_only_that() {
         let dir = std::env::temp_dir().join(format!("xtask-changelog-{}", std::process::id()));
