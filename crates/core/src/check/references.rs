@@ -9,11 +9,15 @@
 //! plan is cited from outside it, or the id is not defined there. The argument is
 //! `design@core@a-slug-belongs-to-a-component`.
 //!
-//! **Nothing pointer-shaped passes unregistered.** A span with no `@` that is shaped like a
-//! path is reported as unanchored, and the slug reference the grammar retired,
-//! `` `<word>#<word>` ``, is reported as what it was, so a pointer the migration missed or
-//! copied out of the commit history is a finding rather than silence. The candidate rule and the retired-form lint are
-//! `design@core@candidate-rule-and-retired-forms`.
+//! **Nothing that points into this project passes unregistered.** A span with no `@` that is
+//! shaped like a path, and whose first segment names a file or a directory of this tree, is
+//! reported as unanchored, per `design@core@every-path-names-its-anchor`. The slug reference
+//! the grammar retired, `` `<word>#<word>` ``, is reported as what it was when its word is an
+//! anchor or a kind, or, with no word, when its id is an entry of this project, so a pointer
+//! the migration missed or copied out of the commit history is a finding rather than silence.
+//! The candidate rule and the retired-form lint are
+//! `design@core@candidate-rule-and-retired-forms`. A span that names nothing here is another
+//! tool's notation, and is silent.
 //!
 //! **The definition-site findings are not this family's.** Misplaced, malformed and duplicate
 //! definitions are found while the table is built, and `check::foundation` reports them: where a
@@ -73,6 +77,35 @@ pub(crate) fn judge(
     anchors: &Anchors,
     inputs: &Inputs,
 ) -> (Vec<Finding>, Counts) {
+    judge_part(docs, entities, anchors, inputs, Part::All)
+}
+
+/// Which findings a judgement writes.
+///
+/// **A commit message is judged against two trees, and the two families combine differently.**
+/// A reference resolves against either tree, so its finding survives where both refuse it. A
+/// lint fires where the span names something of this project, so its finding stands where
+/// either tree holds what it names: a message naming the file its commit deletes still points
+/// at it. `cli::history` asks for each family apart.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum Part {
+    All,
+    /// The references, the links and the wrapped spans.
+    References,
+    /// The unanchored path and the retired slug reference.
+    Lints,
+}
+
+/// The same, writing only the findings of one part.
+pub(crate) fn judge_part(
+    docs: &[crate::model::Document],
+    entities: &Entities,
+    anchors: &Anchors,
+    inputs: &Inputs,
+    part: Part,
+) -> (Vec<Finding>, Counts) {
+    let references = part != Part::Lints;
+    let lints = part != Part::References;
     let mut out: Vec<Finding> = Vec::new();
     let mut counts = Counts {
         entities: entities.len(),
@@ -82,7 +115,7 @@ pub(crate) fn judge(
         let nav = is_navigation(&doc.rel);
         for l in &doc.observations {
             match &l.what {
-                Observation::Span(span) => match entity::candidate(span, anchors) {
+                Observation::Span(span) if references => match entity::candidate(span, anchors) {
                     Candidate::Reference { kind, anchor, id } => {
                         counts.references += 1;
                         if kind.is_path() {
@@ -113,7 +146,10 @@ pub(crate) fn judge(
                     )),
                     Candidate::NotOne => {}
                 },
-                Observation::UnanchoredPath(span) => {
+                Observation::UnanchoredPath(span) if lints => {
+                    if !names_this_tree(span, &doc.rel, anchors, inputs) {
+                        continue;
+                    }
                     // A line suffix or a fragment is part of the span but no part of a path
                     // reference, whose id is the file: the repair says to drop it.
                     let located = span.contains([':', '#']);
@@ -134,7 +170,7 @@ pub(crate) fn judge(
                         ),
                     ))
                 }
-                Observation::WrappedSpan(span) => out.push(Finding::at(
+                Observation::WrappedSpan(span) if references => out.push(Finding::at(
                     &doc.rel,
                     l.line,
                     format!(
@@ -143,17 +179,21 @@ pub(crate) fn judge(
                     "keep the span on one line: a line break inside backticks is read as two \
                      halves, and a renderer shows it as a space",
                 )),
-                Observation::Retired(RetiredForm::SlugRef(span)) => out.push(Finding::at(
-                    &doc.rel,
-                    l.line,
-                    format!("`{span}` is the retired slug reference form"),
-                    "write `design@<component>@<slug>`; the form with a `#` is no longer read \
+                Observation::Retired(RetiredForm::SlugRef(span))
+                    if lints && names_this_project(span, anchors, entities) =>
+                {
+                    out.push(Finding::at(
+                        &doc.rel,
+                        l.line,
+                        format!("`{span}` is the retired slug reference form"),
+                        "write `design@<component>@<slug>`; the form with a `#` is no longer read \
                      as a reference",
-                )),
+                    ))
+                }
                 // Markdown documents only: in Rust prose a markdown link is rustdoc's
                 // mechanism, resolved by rustdoc against the crate namespace, and this
                 // check reading those as index rows would report every intra-doc link.
-                Observation::Link(target) if doc.is_markdown() => {
+                Observation::Link(target) if references && doc.is_markdown() => {
                     link(&mut out, &mut counts, doc, l.line, target, nav, inputs);
                 }
                 _ => {}
@@ -161,6 +201,79 @@ pub(crate) fn judge(
         }
     }
     (out, counts)
+}
+
+/// Whether an unanchored path-shaped span names a file or a directory of this tree.
+///
+/// Only its first segment is asked: a pointer whose first segment is here and whose rest is
+/// not is a dangling pointer, which the anchored form would report, so it is a finding. Read
+/// against the listing and the ignore answers, per [`first_segments`].
+fn names_this_tree(span: &str, rel: &Path, anchors: &Anchors, inputs: &Inputs) -> bool {
+    first_segments(span, rel, anchors)
+        .into_iter()
+        .any(|(target, dir)| {
+            inputs.present.contains(&target)
+                || inputs
+                    .ignored
+                    .contains(&crate::git::ignore_query(&target, dir))
+        })
+}
+
+/// Where an unanchored path-shaped span's first segment would sit, from every place the span
+/// could be read from, with whether more segments follow it, which claims a directory.
+///
+/// **The places are the root, every anchor's directory, and the document's own directory**: a
+/// path written in a component's README is often relative to that component, and one written
+/// beside a file relative to it. A `.` segment is passed over and a `..` climbs from the place;
+/// one that climbs past the root names nothing from there. A leading slash is read from the
+/// root alone. The suffix, a line number or a fragment, is no part of the path.
+///
+/// **This is also the ignore collector's list for the lint**, so a spelling it gives is one
+/// `git check-ignore` answered. A spelling the collector missed reads as not ignored, which for
+/// this lint is silence rather than a finding, so the two must stay one function.
+fn first_segments(span: &str, rel: &Path, anchors: &Anchors) -> Vec<(PathBuf, bool)> {
+    let path = span.split([':', '#']).next().unwrap_or(span);
+    let segments: Vec<&str> = path.split('/').filter(|s| !s.is_empty()).collect();
+    let mut bases: Vec<&Path> = vec![Path::new("")];
+    if !path.starts_with('/') {
+        bases.extend(anchors.all().iter().map(|a| a.path.as_path()));
+        bases.push(rel.parent().unwrap_or(Path::new("")));
+    }
+    let mut out = Vec::new();
+    for base in bases {
+        let mut at = base.to_path_buf();
+        for (i, segment) in segments.iter().enumerate() {
+            match *segment {
+                "." => {}
+                ".." => {
+                    if !at.pop() {
+                        break;
+                    }
+                }
+                name => {
+                    at.push(name);
+                    out.push((at, i + 1 < segments.len()));
+                    break;
+                }
+            }
+        }
+    }
+    out.sort();
+    out.dedup();
+    out
+}
+
+/// Whether a retired slug reference names something of this project: its word an anchor or a
+/// kind, or, with no word, its id an entry some register defines.
+///
+/// The form was this grammar's alone, so a span that names nothing here is another tool's
+/// notation: an issue number, a preprocessor directive, a crate's item.
+fn names_this_project(span: &str, anchors: &Anchors, entities: &Entities) -> bool {
+    match span.split_once('#') {
+        Some(("", id)) => entities.defines_id(id),
+        Some((word, _)) => anchors.kind(word).is_some() || anchors.is_anchor_word(word),
+        None => false,
+    }
 }
 
 /// Whether relative markdown links are legal in this file.
@@ -626,7 +739,8 @@ fn link(
 /// `assert_target` is here**, and there are three: an anchored reference resolves under the
 /// anchor it names, the generic form resolves under every anchor at once, and a relative
 /// markdown link resolves beside its own file. The escape anchor resolves under none, so it
-/// contributes nothing.
+/// contributes nothing. **The unanchored lint is the fourth arm**: it asks whether a span's
+/// first segment is ignored, from every place [`first_segments`] reads it from.
 ///
 /// **A spelling this misses is a target the check reads as not ignored**, which is a finding
 /// rather than a silence: the reference is asserted to exist. `an_ignored_target_is_exempt_in_
@@ -666,6 +780,11 @@ pub(crate) fn ignore_queries(model: &Model, anchors: &Anchors) -> Vec<String> {
                                 ));
                             }
                         }
+                    }
+                }
+                Observation::UnanchoredPath(span) => {
+                    for (target, dir) in first_segments(span, &doc.rel, anchors) {
+                        out.push(crate::git::ignore_query(&target, dir));
                     }
                 }
                 // The arms `link` returns on before resolving are the arms that ask git
@@ -1258,21 +1377,48 @@ mod tests {
 
     #[test]
     fn the_retired_slug_form_is_a_finding_naming_what_it_was() {
-        let (found, counts) = checked(
+        // Each shape names something of this project: an anchor, a kind, or an entry the
+        // table defines.
+        let (found, counts) = checked_docs(
             &manifest(),
-            "`a-project#a-decision`, `#a-decision` and R15\n",
+            vec![
+                ("docs/design.md", head()),
+                (
+                    "notes/prose.md",
+                    "`a-project#a-decision`, `design#a-decision`, `#a-decision` and R15\n",
+                ),
+            ],
             &[],
         );
-        assert_eq!(found.len(), 2, "a bare R and digits is not one: {found:#?}");
+        assert_eq!(found.len(), 3, "a bare R and digits is not one: {found:#?}");
         assert_eq!(
             found
                 .iter()
                 .filter(|f| f.contains("retired slug reference form"))
                 .count(),
-            2,
+            3,
             "{found:#?}"
         );
         assert_eq!(counts.references, 0, "a retired form is not a reference");
+    }
+
+    #[test]
+    fn a_retired_shape_that_names_nothing_of_this_project_is_silent() {
+        // A head that is no anchor and no kind, and a bare id no register defines: an issue
+        // number, a preprocessor directive, another tool's notation. None was ever this
+        // grammar's, so none is a reference a migration missed.
+        let (found, _) = checked_docs(
+            &manifest(),
+            vec![
+                ("docs/design.md", head()),
+                (
+                    "notes/prose.md",
+                    "`serde#derive`, `rust#123`, `#include`, `#123` and `#a-decisions`\n",
+                ),
+            ],
+            &[],
+        );
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
     }
 
     #[test]
@@ -1622,6 +1768,73 @@ mod tests {
             found[0].contains("names no anchor") && found[0].contains("path@<anchor>@<path>"),
             "{found:#?}"
         );
+    }
+
+    #[test]
+    fn a_path_shape_whose_first_segment_names_nothing_here_is_silent() {
+        // A media type, a unit, a git ref, a notation: none names a file or a directory of
+        // this tree from any place it could be read from, so none is a pointer here.
+        let m = manifest();
+        let text = "See `application/json`, `km/h`, `origin/main`, `a/b`, `**/*.rs` and \
+                    `/usr/bin/env`.\n";
+        let (found, _) = checked(&m, text, &tree());
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+    }
+
+    #[test]
+    fn a_path_shape_is_read_from_the_root_from_every_anchor_and_beside_its_file() {
+        // One span per place a first segment may sit: the root, a component's directory, the
+        // document's own directory, and above it through an upward segment. A suffix is no
+        // part of the path.
+        let m = manifest();
+        let mut present = tree();
+        for p in ["src", "src/main.rs", "notes", "notes/sub", "notes/sub/x.md"] {
+            present.push(p.to_string());
+        }
+        for span in [
+            "src/main.rs",
+            "notes/real/a.md",
+            "sub/x.md",
+            "../parts/a-part",
+            "./sub/x.md",
+            "src/main.rs:12",
+            "/src/main.rs",
+        ] {
+            let (found, _) = checked(&m, &format!("See `{span}`.\n"), &present);
+            assert_eq!(found.len(), 1, "{span}: {found:#?}");
+            assert!(found[0].contains("names no anchor"), "{span}: {found:#?}");
+        }
+        // An upward segment past the root names nothing, from the deepest place either, and
+        // an absolute path is read from the root alone.
+        for span in ["../../../src/main.rs", "/sub/x.md"] {
+            let (found, _) = checked(&m, &format!("See `{span}`.\n"), &present);
+            assert_eq!(found, Vec::<String>::new(), "{span}: {found:#?}");
+        }
+    }
+
+    #[test]
+    fn an_ignored_first_segment_is_a_finding_and_the_collector_asks_for_it() {
+        // An ignored directory is in no listing, and a pointer into it is still a pointer
+        // into this tree. The collector must ask git for its spelling, or the check reads it
+        // as absent and stays silent.
+        let m = manifest();
+        let anchors = Anchors::declared(&m);
+        let text = "It writes `build/out.bin`.\n";
+        let model = Model::from_documents(vec![(PathBuf::from("notes/prose.md"), text.into())]);
+        let queries = super::ignore_queries(&model, &anchors);
+        assert!(queries.contains(&"build/".to_string()), "{queries:#?}");
+        let borrowed: Vec<&str> = queries.iter().map(String::as_str).collect();
+        let (found, _) =
+            checked_ignoring_under(vec![("notes/prose.md", text)], &tree(), &[], &anchors);
+        assert_eq!(
+            found,
+            Vec::<String>::new(),
+            "no spelling is ignored: {found:#?}"
+        );
+        let (found, _) =
+            checked_ignoring_under(vec![("notes/prose.md", text)], &tree(), &borrowed, &anchors);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("names no anchor"), "{found:#?}");
     }
 
     #[test]

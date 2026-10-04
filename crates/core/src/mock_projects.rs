@@ -602,7 +602,7 @@ mod planted {
             qualified.starts_with("notes/structure.md:17"),
             "{qualified}"
         );
-        let bare = one("`#unqualified-anchor` is the retired slug reference form");
+        let bare = one("`#twice-defined` is the retired slug reference form");
         assert!(bare.starts_with("notes/structure.md:19"), "{bare}");
         let all = findings();
         assert!(

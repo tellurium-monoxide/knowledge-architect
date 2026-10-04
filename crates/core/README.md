@@ -84,7 +84,8 @@ core's `generated`, `registers` and `references`, each a module under
 `design@core@an-extension-plugs-in-through-phased-hooks`. `references` judges
 every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a register kind against the
 entries its home defines, the `path` kind against the tree — and reports the retired slug
-reference form and the unanchored path shape. `registers` judges the shape of what each anchor carries: a file
+reference form and the unanchored path shape where either names something of this project.
+`registers` judges the shape of what each anchor carries: a file
 register's README, index, groups and entry shapes, and a directory home's links. A check the tree
 gives no input to is printed as not run rather than counted. There is no way to select a subset:
 the checks cross the phases, and a run over a passing tree costs under a second. The argument is

@@ -326,6 +326,22 @@ which tables are an extension's. It loses because the refusal of an unclaimed ta
 table nobody owns, and because it changes the manifest format of every project and every mock
 for no check that reads the difference.
 
+**Every path-shaped span reported as an unanchored pointer, whatever its first segment names** —
+lost to `design@core@every-path-names-its-anchor`. `live`. It let no backticked pointer pass
+unregistered, a pointer written after its target's directory left the tree included, and it needed
+no read of the tree. It loses on a census of a project new to the tool: on sharkdp/fd at commit
+3460b1e9, with the required structure added, 14 of its 15 path findings were another tool's
+notation (fixture paths of tests, paths on the user's machine, example paths in a changelog), and
+each would have to be rewritten or anchored at `elsewhere` before the project passed. The one real
+pointer, a stale one, is reported under the winner too.
+
+**The retired slug reference reported whatever its word names** — lost to
+`design@core@candidate-rule-and-retired-forms`. `live`. It reported a copied bare form whose entry
+has left the tree, which the winner leaves silent. It loses because the form was this grammar's
+alone: in a project that never used it, every match is that project's own notation, such as an
+issue number `#123` or a preprocessor directive `#include`, and on sharkdp/fd at commit 3460b1e9 its
+one finding was an issue number.
+
 **The interpretation entry number kept as a retired form permanently**, a bare `R` followed by
 digits reported wherever prose holds it — lost to
 `design@core@candidate-rule-and-retired-forms`. `live`. It was kept because a retired form
