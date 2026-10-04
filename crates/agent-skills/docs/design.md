@@ -273,8 +273,8 @@ risk is worth watching is a weighing, and the weighing is the owner's, per
 
 A thread of a design discussion is named by a slug minted in the entry-id grammar and checked for
 a collision with the entries of the Component before it is used. In discussion prose it is written
-plain, with a hash sign before it, never as a backticked span, which the checker would read as a
-reference candidate. When
+plain, with a hash sign before it, never as a backticked span, which the checker reports as the
+retired slug form once an entry carries that slug. When
 the thread is approved and its decision earns an entry, the entry's heading ends with the same
 slug, so the spec, the commit messages and the design home name the decision with one identifier.
 In the plan document the thread is an item, a level-three heading ending with the same slug under

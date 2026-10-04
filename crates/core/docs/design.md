@@ -1153,8 +1153,10 @@ reports it. Reading lookalike characters as the grammar's would put every script
 punctuation inside the tokenizer, and a census of walked markdown finds no such span.
 
 **The retired slug reference is a finding wherever it names something of this project.** A
-backticked `<word>#<word>` names the form it was when its word is an anchor or a kind, and a bare
-`#<word>` when its word is the id of an entry some register defines. It has no `@` and no two path
+backticked `<word>#<id>` or a bare `#<id>` names the form it was when its id is an entry some
+register defines, and a qualified one also when its word is an anchor or a kind. The id is asked
+whatever the word, because a form copied out of the history may carry the name an anchor had
+before a rename, such as the core's former name `knowledge`. It has no `@` and no two path
 segments, so without this clause a slug reference the migration missed would be silent, which is
 the founding failure class. The clause does not expire with the migration: the commit history is
 read by every session that runs `git log`, it holds the form, and a reference copied out of it
@@ -1163,10 +1165,11 @@ would be checked by nothing.
 **A shape that names nothing here is another tool's notation, and is silent**: an issue number
 `#123`, a preprocessor directive `#include`, a crate's item `serde#derive`. None was ever this
 grammar's, so none is a reference a migration missed, and a project that never used the form would
-otherwise have to rewrite its own notation to pass: on sharkdp/fd at commit 3460b1e9, the one
-retired-form finding was a GitHub issue number. What the silence costs is a copied bare form whose
-entry has since left the tree; its word is no longer an id here, so it is not reported. Reporting
-every such shape is in `path@core@docs/rejected-alternatives.md`. This serves `goal@knowledge-architect@any-project-can-adopt-it`.
+otherwise have to rewrite its own notation to pass. What the silence costs is a copied form whose
+entry has since left the tree and whose word is no anchor: it names nothing here, so it is not
+reported. Re-take it as the path lint's census is re-taken, counting this lint's findings; a
+census in which the silence hides a pointer the migration missed reopens it. Reporting every such
+shape is in `path@core@docs/rejected-alternatives.md`. This serves `goal@knowledge-architect@any-project-can-adopt-it`.
 
 **The interpretation register's old entry numbers are not read.** They were thaum's own, and a
 lint naming them would belong to thaum's extension rather than to the core, and the migration they
@@ -1188,28 +1191,34 @@ has one tokenizer, the old two-segment form `<anchor>@<path>` is reported as an 
 position by `design@core@candidate-rule-and-retired-forms`, and the unanchored lint is left with
 one job. There is no unanchored form for a path of this tree: a backticked span of path characters
 with two or more segments and no `@` is a finding naming the grammar when its first segment names a
-file or a directory this tree holds, or one its ignore rules cover. One segment is a name rather
+file or a directory this tree's listing holds. One segment is a name rather
 than a pointer, and a span holding a space, an angle bracket, or a colon anywhere but in a line
 suffix is not path-shaped, which is what lets documentation of the syntax show a placeholder with no
 carve-out.
 
 **A span whose first segment names nothing here is another tool's notation, and is silent**: a
 media type `application/json`, a unit `km/h`, a git ref `origin/main`, the fixture path of a test,
-a path on another machine. The first segment is read from the root, from every anchor's directory,
-and from the document's own directory, a `..` climbing from each; a leading slash is read from the
-root alone. Only the first segment is asked, so a pointer whose first segment is here and whose
-rest is not is still a finding, and the anchored form it is rewritten in reports it dangling. In a
-commit message the finding stands where either the commit's tree or its parent's holds the
-segment, because a message points at what its commit deletes.
+a path on another machine. The first segment is read from the root, from every anchor that is a
+directory, and from the document's own directory, a `..` climbing from each; a leading slash is
+read from the root alone. A spec is an anchor and a file, so it is no place a path is read from.
+Only the first segment is asked, so a pointer whose first segment is here and whose rest is not is
+still a finding, and the anchored form it is rewritten in reports it dangling. A commit message is
+judged against two trees, per `design@core@a-commit-message-is-a-document`.
 
-**What it costs**: a pointer written after its first segment left the tree is silent; one written
-while it stood was reported then. **What it buys** is measured on a project new to the tool: on
-sharkdp/fd at commit 3460b1e9, with the required structure added, the rule that reported every
-path-shaped span gave 15 path findings, 14 of them another tool's notation. This rule keeps the one
-stale pointer and silences the 14. Re-take it with `cargo klarch check` over a
-foreign project carrying the structure; a census in which the silence hides a real pointer of this
-tree reopens it. Reporting every path-shaped span is in
-`path@core@docs/rejected-alternatives.md`. This serves `goal@knowledge-architect@any-project-can-adopt-it`
+**The listing alone answers; the ignore rules are not asked.** A pointer into an ignored directory,
+such as a build output, is silent. Asking git costs one spelling per span and per place it is read
+from, makes every root name a pointer under a whitelist `.gitignore`, and fails the run outright
+for a spelling through a symlink, which git refuses.
+
+**What it costs**: a pointer written after its first segment left the tree is silent, and so is
+one whose first segment carries a typo or names an ignored directory; one written while its first
+segment stood was reported then. **What it buys** is the silence of another tool's notation, which
+is nearly every path-shaped span of a project new to the tool. Re-take it with `cargo klarch check`
+over a foreign project carrying the required structure, counting the findings under each rule; a
+census in which the silence hides a real pointer of this tree reopens it. The census that decided
+it is in the commit that rewrote this head, found with
+`git log --grep='only where it names something of this project'`. Reporting every path-shaped span
+is in `path@core@docs/rejected-alternatives.md`. This serves `goal@knowledge-architect@any-project-can-adopt-it`
 and `goal@knowledge-architect@adoption-is-easy`.
 
 **A line suffix or a fragment keeps a span path-shaped, after a file with an extension.** A
@@ -1526,9 +1535,14 @@ is squashed to one commit before its review. Checker changes are rare and land o
 their own, so this costs a history edit on those branches alone; the alternative that avoids it,
 building each commit's own checker, costs one release build per commit on every branch.
 
-**A message's references resolve against its commit's tree or its first parent's.** A commit
-that closes an issue deletes the entry and names it in the message, and against its own tree
-alone every such message would dangle. The parent's model is the previous commit's wherever
+**A message's references resolve against its commit's tree or its first parent's, and its lints
+stand where either tree holds what they name.** A commit that closes an issue deletes the entry
+and names it in the message, and against its own tree alone every such message would dangle. A
+reference finding therefore survives where both trees refuse the reference. The unanchored path
+and the retired slug reference, per `design@core@every-path-names-its-anchor` and
+`design@core@candidate-rule-and-retired-forms`, fire where their span names something of the
+project, so a finding of either stands where either tree holds what it names: a message naming,
+by a bare path, the file its commit deletes still points at it. The parent's model is the previous commit's wherever
 the walk followed the parent chain — a failed commit's tree still serves as the next commit's
 parent, since its entities are read and not its verdict — so an extra model is built only at
 the range's start and where the chain was not followed. **A tree whose manifest fails phase 1 is
@@ -1536,7 +1550,7 @@ the exception**: nothing of it is read past its manifest, it is judged no furthe
 as no parent, so the next commit's message resolves against its own tree alone. Such a commit
 has already failed the range, and reading its whole tree for its successor's sake dominates the
 time `commits` takes over a range of them. A parent tree is assembled for its
-entity table and the facts a path reference asks about, and nothing else: no extension is
+entity table and the facts a path reference and the two lints ask about, and nothing else: no extension is
 prepared for it and no check runs over it, because nobody reads its verdict. The two arms are compared by the site each names — the line and the span — rather than by the words each writes,
 because two trees can refuse one reference for different reasons and comparing the words whole
 would let a reference that resolves in neither pass.
