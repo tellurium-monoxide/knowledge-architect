@@ -198,7 +198,9 @@ To move to another version:
    gates library's, which move together, or the version of the local install.
 2. Read the changelog of every version crossed. A minor version under `0.x`, or any major version,
    may make a check stricter or ask for a change to the project's layout. Each published crate ships its
-   CHANGELOG.md: read it in the source cargo downloaded for the new version.
+   CHANGELOG.md. Fetch the new version first, with `cargo fetch` after editing the pin in a Rust
+   project, or by the install; then read the file in the source cargo downloaded, under its
+   registry directory: `$CARGO_HOME/registry/src/<index>/knowledge-architect-<version>/CHANGELOG.md`.
 3. Run `cargo klarch install-agent-skills`, then follow `knowledge-architect-agent-configuration`
    for what an upgrade owes the project's own configuration.
 4. `cargo klarch check`, and commit the pin, the installed files and the repairs together.

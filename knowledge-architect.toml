@@ -36,7 +36,7 @@ registers = ["issue"]
 skip-dirs = []
 #
 # The copies of the root changelog that each published crate ships, per
-# `design@knowledge-architect@package-include-whitelist`. Each is byte-identical to the root
+# `design@knowledge-architect@the-changelog-ships-in-every-crate`. Each is byte-identical to the root
 # CHANGELOG.md, which is checked, and a test in tools/xtask fails while one differs.
 skip-files = [
     "crates/agent-skills/CHANGELOG.md",

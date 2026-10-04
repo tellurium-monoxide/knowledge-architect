@@ -2,7 +2,7 @@
 //!
 //! A crate's `include` cannot reach outside its directory, so each published crate carries a copy
 //! of the root changelog, byte for byte, per
-//! `design@knowledge-architect@package-include-whitelist`. This writes the copies, and the test
+//! `design@knowledge-architect@the-changelog-ships-in-every-crate`. This writes the copies, and the test
 //! below fails while any copy differs.
 
 use knowledge_architect::MANIFEST_NAME;
@@ -15,7 +15,8 @@ use std::process::ExitCode;
 const CHANGELOG: &str = "CHANGELOG.md";
 
 /// Where each copy goes: one per directory under `crates/` holding a `Cargo.toml`, since every
-/// crate there is published and nothing else is, per `design@knowledge-architect@repo-layout`.
+/// crate there is published and nothing else is, per
+/// `design@knowledge-architect@package-include-whitelist`.
 fn copies(root: &Path) -> std::io::Result<Vec<PathBuf>> {
     let mut out = Vec::new();
     for entry in std::fs::read_dir(root.join("crates"))? {
@@ -38,7 +39,9 @@ fn sync(root: &Path) -> std::io::Result<Vec<(PathBuf, bool)>> {
     for copy in copies(root)? {
         let current = std::fs::read(&copy).ok().as_deref() == Some(text.as_slice());
         if !current {
-            std::fs::write(&copy, &text)?;
+            std::fs::write(&copy, &text).map_err(|error| {
+                std::io::Error::new(error.kind(), format!("{}: {error}", copy.display()))
+            })?;
         }
         out.push((copy, !current));
     }
@@ -91,8 +94,9 @@ mod tests {
             .expect("the workspace root exists")
     }
 
-    // The claim: every published crate carries the root changelog byte for byte. This is the
-    // check that fails a branch whose changelog entry was not copied.
+    // The claim: every published crate lists the changelog in its `include` and carries the root
+    // changelog byte for byte. This is the check that fails a branch whose changelog entry was not
+    // copied, or whose crate stopped shipping the file.
     #[test]
     fn every_published_crate_carries_the_root_changelog() {
         let root = workspace_root();
@@ -100,6 +104,19 @@ mod tests {
         let copies = copies(&root).expect("crates/ is readable");
         assert_eq!(copies.len(), 3, "{copies:?}");
         for copy in copies {
+            let manifest = copy.with_file_name("Cargo.toml");
+            let manifest: toml::Table = std::fs::read_to_string(&manifest)
+                .expect("the crate's Cargo.toml")
+                .parse()
+                .expect("the crate's Cargo.toml is TOML");
+            let include = manifest["package"]["include"]
+                .as_array()
+                .expect("the crate declares `include`");
+            assert!(
+                include.iter().any(|i| i.as_str() == Some("/CHANGELOG.md")),
+                "{} does not list /CHANGELOG.md in `include`",
+                copy.with_file_name("Cargo.toml").display()
+            );
             assert!(
                 std::fs::read(&copy).ok().as_deref() == Some(text.as_slice()),
                 "{} differs from the root CHANGELOG.md; run `cargo x changelog`",
@@ -109,7 +126,8 @@ mod tests {
     }
 
     // The claim: a missing or differing copy is written, a current one is left alone, and a
-    // directory under crates/ with no Cargo.toml gets none.
+    // directory under crates/ with no Cargo.toml gets none. The current copy is read-only, so a
+    // write to it fails the run.
     #[test]
     fn sync_writes_what_differs_and_only_that() {
         let dir = std::env::temp_dir().join(format!("xtask-changelog-{}", std::process::id()));
@@ -124,7 +142,11 @@ mod tests {
         }
         std::fs::write(dir.join(CHANGELOG), "new\n").expect("the root changelog");
         std::fs::write(dir.join("crates/b").join(CHANGELOG), "old\n").expect("a stale copy");
-        std::fs::write(dir.join("crates/c").join(CHANGELOG), "new\n").expect("a current copy");
+        let current = dir.join("crates/c").join(CHANGELOG);
+        std::fs::write(&current, "new\n").expect("a current copy");
+        let mut permissions = std::fs::metadata(&current).expect("the copy").permissions();
+        permissions.set_readonly(true);
+        std::fs::set_permissions(&current, permissions).expect("a read-only copy");
 
         let written = sync(&dir).expect("the copies are written");
         let flags: Vec<(String, bool)> = written
