@@ -2943,3 +2943,22 @@ fn commits_compares_no_historical_pin() {
     assert_eq!(code, 0, "{stdout}{stderr}");
     assert!(stdout.contains("2 judged"), "{stdout}");
 }
+
+/// The claim: the foreign-build refusal comes before the pin's, so over a second checkout whose
+/// manifest pins another version, the message names the checkout, not the version.
+#[test]
+fn a_foreign_build_is_refused_before_its_pin_is_read() {
+    let sandbox = Sandbox::seeded(
+        "foreign-before-pin",
+        "minimal",
+        &[(
+            "crates/core/Cargo.toml",
+            "[package]\nname = \"knowledge-architect\"\n",
+        )],
+    );
+    pin_copy_to(&sandbox, "0.0.1");
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 2, "{out}{stderr}");
+    assert!(stderr.contains("built from another checkout"), "{stderr}");
+    assert!(!stderr.contains("the manifest pins"), "{stderr}");
+}

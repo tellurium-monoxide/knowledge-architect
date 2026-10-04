@@ -460,11 +460,11 @@ path@core@src/cli/mod.rs, defined there with the two predicates and their unit t
                                             knowledge_architect::component_dir() as the core
                                             directory to the two predicates below
   fn is_a_library_fixture(root: &Path, core: &Path, checker_dirs: &[&Path]) -> bool
-                                            private; the root lies inside, or is, the core
+                                            private; the root lies strictly inside the core
                                             directory or one of the checker directories
-  fn is_its_own_build(root: &Path, core: &Path) -> bool
+  fn is_its_own_build(root: &Path, core: &Path, tracked: &dyn Fn(&Path) -> bool) -> bool
                                             private; the core directory lies inside, or is, the
-                                            root
+                                            root, and the project's git tracks its Cargo.toml
                                             Both canonicalise each path and keep the path as
                                             written when canonicalisation fails, as foreign_copy
                                             in build_origin.rs does; the core directory is a
@@ -535,14 +535,18 @@ records its version and the check compares it; defeated by #a8, since it covers 
 
 ### The values and their confirmation
 
-- `"fixture"` is accepted when `is_a_library_fixture` holds: the root lies inside, or is, the core
-  directory or one of the checker directories. That is a mock project of a library the running
-  binary links, run by that library's binary. The 5 mock projects under
+- `"fixture"` is accepted when `is_a_library_fixture` holds: the root lies strictly inside the
+  core directory or one of the checker directories. That is a mock project of a library the
+  running binary links, run by that library's binary. Strictly, because a library's own directory
+  is no mock of it: an extension whose crate is the project's root names the root among its
+  directories, and an equal path would let the project's real manifest say `"fixture"`. The 5 mock projects under
   `path@core@tests/projects/` and the 33 inline manifests say `"fixture"`. An inline manifest is
   only parsed, never confirmed, so the value needs no confirming there.
 - `"self"` is accepted when `is_its_own_build` holds: the core directory lies inside, or is, the
-  root. That is this repository, or a project that vendors the core. The root manifest of this
-  repository says `"self"`.
+  root, and the project's git tracks the core's `Cargo.toml`, asked with one `git ls-files`. That
+  is this repository, or a project that vendors the core. The tracking tells it from a project
+  whose `CARGO_HOME` is one of its own directories, where a registry build's directory also lies
+  inside the root. The root manifest of this repository says `"self"`.
 - A version is accepted when it equals the binary's version.
 
 A copy of a mock project in the system's temporary directory is not inside a library directory, so
@@ -601,6 +605,8 @@ Which manifest says what, and whether the build confirms it:
 | a consumer's root, the core from crates.io | the registry | the version | yes, when it equals |
 | a consumer's root that writes `"fixture"` | the registry | `"fixture"` | no: refused |
 | a mock project under an extension's crate, run by the extension's binary | the registry; the extension's crate directory holds the mock | `"fixture"` | yes |
+| a project whose root is its extension's crate, writing `"fixture"` | the registry; the root is the crate's directory | `"fixture"` | no: a library is no mock of itself |
+| a project whose `CARGO_HOME` lies inside it, writing `"self"` | its own registry, inside the tree but untracked | `"self"` | no: git does not track that `Cargo.toml` |
 | any project carrying the key, run with a binary released before this work | n/a | any | refused at parse: unknown field |
 | a mock project an extension keeps outside its crate | the registry | the version | yes, when it equals |
 | a consumer vendoring the core inside its tree | inside it | `"self"` | yes |
@@ -645,8 +651,10 @@ synthesis at line 1731 and from this revision.
 3. **An extension links the core through a path dependency inside its own tree.** Stresses
    #checked-sentinel-values. Verdict: survives; it writes `"self"`, which its build confirms.
 4. **A binary installed with `cargo install` has its compiled directories in the registry.**
-   Stresses #checked-sentinel-values. Verdict: survives; a tree never lies inside the registry, so
-   the binary confirms no sentinel. Becomes #registry-core-confirms-no-sentinel.
+   Stresses #checked-sentinel-values. Verdict: converted. A registry can lie inside a tree, as
+   with a `CARGO_HOME` inside the project, which the code review of step 1 reproduced, so
+   `"self"` also asks that the project's git track the core's `Cargo.toml`. Becomes
+   #registry-core-confirms-no-sentinel.
 5. **An agent stuck on a refusal writes `"fixture"` in a real project's manifest.** Stresses
    #checked-sentinel-values. Verdict: survives; the value is refused outside a library directory,
    with the repair "set the key to the version the project runs".
