@@ -187,7 +187,7 @@ describes. It works with `design@agent-skills@additions-need-real-use`: that ent
 admits an addition, and this one says which gaps are worth admitting. In the designing-together
 repository, a rule for an abandoned discussion was argued, approved, written and reverted in one
 session, and four further review findings about the user's behaviour were queued behind it on the
-same reasoning. Only the design skill states a set so far:
+same reasoning. Only the design skill and the setup skill state a set so far:
 `issue@agent-skills@expectation-sets-for-the-installed-skills`.
 
 ## The workflow the skills carry

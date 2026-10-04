@@ -174,6 +174,20 @@ greenfield project is handled explicitly. Intent that exists only in
 someone's memory is not reachable, and proposals will contradict
 decisions already made without either party noticing.
 
+## What the setup skill expects of you
+
+This section restates the setup skill's expectation set, which §5 of
+the retrospective skill carries, as the section above does for the
+design skill.
+
+**You are present to rule.** The setup proposes and you rule: the
+Components, the goals, the place of each existing document, and each
+choice that changes your project's build or a file it already has.
+With no owner present, the setup stops at the first such step. A run
+that goes on without you makes those choices in your place, and a gap
+it reports in a choice it had to make alone is not a defect of the
+skill.
+
 ## Model requirements
 
 The decision this section is the evidence for is
