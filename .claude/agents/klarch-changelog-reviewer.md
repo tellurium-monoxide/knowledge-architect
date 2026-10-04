@@ -26,7 +26,8 @@ it passes one of three tests, under the subsection of that test:
 
 - **Migration**: a consumer must change something in its own files. One entry per thing, saying
   what. Running the install of the agent skills again is never an entry; a change the consumer
-  must make to its own files because of the new skills is one.
+  must make to its own files because of the new skills is one. An entry that adds a required
+  document or home says it holds for mock projects too.
 - **New features**: a consumer can start using something new.
 - **Workflow**: a change to the installed skills that a person watching agent sessions would observe a new or removed action, file,
   commit, pull-request shape, or question put to the owner. A rewording is not one.
