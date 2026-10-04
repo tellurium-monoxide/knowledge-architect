@@ -17,7 +17,7 @@ A project pins one exact version, written below as `<version>`. In a Rust projec
 runs the checker; any other project installs the binary into a directory of its own:
 
 ```sh
-cargo install --locked --root .tools --version <version> knowledge-architect
+cargo install --locked --root .tools --version =<version> knowledge-architect
 .tools/bin/klarch install-agent-skills
 .tools/bin/klarch check
 ```

@@ -38,8 +38,11 @@ pub use crate::build_origin::{refuse_a_foreign_build, this_library, Library};
 ///
 /// Non-exhaustive: a binary hands a parsed command to [`run`] without matching it, so a new
 /// command is not a breaking change for any binary.
-// Non-exhaustive per `design@core@ne-minimal`.
+// Non-exhaustive per `design@core@ne-minimal`. clap reads the doc comment above as the about
+// text of the binary that flattens this enum, over the binary's own; the attribute clears it, so
+// `--help` opens with what the binary says of itself.
 #[derive(Subcommand)]
+#[command(about = None, long_about = None)]
 #[non_exhaustive]
 pub enum Command {
     /// Every check, over one walk, in four phases.
