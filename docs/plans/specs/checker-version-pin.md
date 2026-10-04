@@ -14,20 +14,17 @@ produced it. It leaves the repository in the commit that completes its harvest.
 - Every name it uses is defined in it, under Names or New names, or exists in the code.
 - Where it marks a point as the owner's and the owner is absent, the work does not proceed on that
   point.
-- **The spec and its work are one branch and one pull request**, per
-  `design@agent-skills@milestone-lands-before-gate-change`, which gives a spec no split. The work
-  changes the manifest format: under the tip checker, a tree whose manifest lacks the key is
-  refused. So step 1's commit carries the format change with every manifest it needs, and once it
-  is built and committed it is moved to the front of the branch by a history edit with a clean
-  tree, as `design@core@a-commit-message-is-a-document` and `klarch-development` §4 ask of a change
-  to the manifest format. It is not pushed before the move, since `cargo klarch commits` fails on
-  every earlier commit until then. Every later commit of the branch, this spec's included, then
-  holds a manifest with the key. The moved commit's tree does not hold this spec, so its message
-  names the spec in plain words, not by a reference.
+- **This spec lands on main before its work.** The owner ruled at transcript line 2005 that
+  "writing plan document should not be constrained with when its implementation work happens".
+  The work is then one branch and one pull request, whose first commit carries the change of the
+  manifest format with every manifest it needs, as `design@core@a-commit-message-is-a-document` and
+  `klarch-development` §4 ask: under the tip checker, a tree whose manifest lacks the key is
+  refused, and the first commit's parent, main's tip, then holds this spec.
 - **The audits and reviews.** One design audit runs before step 1 and reads the entries of all
   three steps; its commit is named "The checker-version-pin design audit, applied in place: …",
   and a load-bearing gap it finds is recorded in this spec's Threads and stops the work. The code
-  review of `klarch-development` §3 runs after step 1; the harvest review of
+  review of `klarch-development` §3 runs after step 1; the audit's commit and every later one sit
+  after step 1's on the work's branch, so each holds the key; the harvest review of
   `knowledge-architect-planning` §7, point 6, runs after step 3; the transcript reviewer runs
   last, alone.
 - It is a spec, so the places `knowledge-architect-planning` §7 gives a milestone document, such as
@@ -181,7 +178,6 @@ The design rests on these, and does not argue them again:
 - `design@core@a-commit-message-is-a-document`: `commits` judges every commit with the tip
   checker, which is why a historical tree's value is never compared, and why the change of the
   manifest format comes first in its branch.
-- `design@agent-skills@milestone-lands-before-gate-change`: a spec and its work are one branch.
 - `goal@knowledge-architect@any-project-can-adopt-it`: "A project pins the version it uses, and
   moves to a new one when it chooses", and an existing project's adoption cost is never an
   argument against a check the workflow needs.
@@ -570,10 +566,10 @@ tree's value, so moving the pin fails no earlier commit (#a15); the working tree
 still confirmed when `commits` itself runs, like any command.
 
 Since a tree without the key stops in phase 1 under the tip checker, step 1's commit, which adds
-the key to the workspace's manifests, is moved to the front of its branch (Status and audience).
-Its first parent is main's tip, which stops in phase 1 under it and so serves as no parent: the
-first commit's message is judged against its own tree alone, so it names no entry that only
-main's tip defines.
+the key to the workspace's manifests, is the first of the work's branch (Status and audience). Its
+first parent is main's tip, which stops in phase 1 under it and so serves as no parent: the first
+commit's message is judged against its own tree alone, so it names no entry that only main's tip
+defines, this spec included, which it names in plain words.
 
 ## Mapping tables
 
@@ -655,8 +651,8 @@ synthesis at line 1731 and from this revision.
    #checked-sentinel-values. Verdict: survives; the value is refused outside a library directory,
    with the repair "set the key to the version the project runs".
 6. **The branch that adds the key fails its own `commits` gate.** Stresses
-   #installed-binary-version-check. Verdict: converted into the order of work; step 1's commit is
-   moved to the front of the branch.
+   #installed-binary-version-check. Verdict: converted into the order of work; this spec lands
+   first, and step 1's commit is the first of the work's branch.
 
 The session judged that none of causes 1 to 4 needs a tripwire, and the owner recorded none.
 Causes 5 and 6 are handled by the design and the order; no tripwire is proposed.
@@ -691,7 +687,7 @@ Causes 5 and 6 are handled by the design and the order; no tripwire is proposed.
 ## Implementation sequence
 
 1. **The key, the values and the refusal, with every manifest of the workspace**, in one commit,
-   moved to the front of the branch once built. `Pin`, `Project::checker_version`, `resolve_checker`,
+   the first of the work's branch, pushed only once `cargo klarch commits` passes on it. `Pin`, `Project::checker_version`, `resolve_checker`,
    `Manifest::pin`, `cli::refuse_another_version`, `is_a_library_fixture` and `is_its_own_build`;
    the call in `path@core@src/main.rs` after `refuse_a_foreign_build`, and the crate-level template
    of `path@core@src/lib.rs` restructured to call `cli::locate`, `refuse_a_foreign_build` and
@@ -747,9 +743,8 @@ Causes 5 and 6 are handled by the design and the order; no tripwire is proposed.
 Step 1 before step 2: the documentation describes a key the code reads, and a skill naming a key
 the binary refuses would mislead every session between the two. Step 2 before step 3: the harvest
 rewrites `design@agent-skills@exact-pin` and `design@agent-skills@xtask-pins-checker`, which the
-setup skill restates, so both change against the same built text. Step 1's commit is then the first
-of the branch, by the history edit Status and audience describes, so that no commit of the branch
-holds a manifest without the key.
+setup skill restates, so both change against the same built text. This spec before step 1, and
+step 1 first on its branch, so that no commit of the branch holds a manifest without the key.
 
 ## Defaults awaiting the owner
 
