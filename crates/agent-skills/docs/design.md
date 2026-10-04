@@ -412,7 +412,7 @@ repair apart from what it repairs.
 ### A plan document's landing is not tied to its work's `##plan-landing-is-not-tied-to-its-work`
 
 A plan document, a spec or a milestone document, is merged to the main branch in a pull request of
-its own or with its work, whichever the owner chooses, whatever the time of its work. An owner
+its own or with its work, whatever the time of its work. An owner
 plans a feature that will not be built yet so that the work done meanwhile does not drift from it,
 which needs the document where every session reads it, on the main branch; that serves
 `goal@knowledge-architect@agents-work-without-drift`. What "spec" and "milestone" measure is the
@@ -422,8 +422,9 @@ lands, per `design@agent-skills@spec-leaves-at-landing`.
 ### A plan document lands before any work that changes what the project's gates check `##plan-lands-before-gate-change`
 
 On one branch, the gates as the work's first commit changes them would judge the commit that added
-the document, whose tree predates the change, and refuse it. So that work begins on a branch of its
-own, after the document is merged. This holds for a spec as for a milestone document, whose step
+the document, whose tree predates the change, and refuse it. Keeping both on one branch would force
+the fix the owner called absurd: the plan document committed after the work it plans. So that work
+begins on a branch of its own, after the document is merged. This holds for a spec as for a milestone document, whose step
 that changes the gates is the one this rule meets, per
 `design@agent-skills@plan-landing-is-not-tied-to-its-work`.
 
