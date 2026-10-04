@@ -243,7 +243,7 @@ pub struct Entry {
 /// dropped. Every remaining exclusion is the manifest's, and `walk::live_files` applies it.
 ///
 /// The second list is the untracked part, `--others`, so a report can say which of its files
-/// no commit holds.
+/// git does not track. A file staged and never committed is tracked, and is not in it.
 pub(crate) fn entries(root: &Path) -> io::Result<(Vec<Entry>, Vec<PathBuf>)> {
     let staged = git(root)
         .args(["ls-files", "-z", "-s", "--cached"])
