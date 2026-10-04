@@ -25,10 +25,12 @@ nothing: mark the threads your reading would close as `presumed-settled`, state 
 let their next word ... promote or correct" it. No installed skill carries an equivalent outside a
 design discussion.
 
-The suspected mechanism, the owner's: the workflow does not anticipate that a design decision is
-made outside the use of the design skill. This is not counted as an instance of
-`issue@agent-skills@a-hedged-ruling-recorded-as-approved`, on the owner's ruling: that entry is
-about assembling a plan document from a discussion.
+The suspected mechanism, the owner's, given with an "I think": the workflow does not anticipate
+that a design decision is made outside the use of the design skill.
+
+On the owner's ruling, this is not counted as an instance of
+`issue@agent-skills@a-hedged-ruling-recorded-as-approved`: the owner believes it is separate. The
+agent's note beside it: that entry is about assembling a plan document from a discussion.
 
 ### Why it matters
 
