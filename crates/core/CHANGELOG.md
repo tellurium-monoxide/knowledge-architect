@@ -8,11 +8,6 @@ subsection is omitted.
 
 ## Next release
 
-### New features
-
-- `library`, minor: each published crate ships CHANGELOG.md, so the changelog of a version is in
-  the source cargo downloads for it.
-
 ### Workflow
 
 - `agent-skills`, patch: when a project moves its pin, the setup skill fetches the new version and
