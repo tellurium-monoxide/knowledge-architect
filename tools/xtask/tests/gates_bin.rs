@@ -3,6 +3,10 @@
 //! invoke the real `cargo x gates`, per `path@xtask@CLAUDE.md`, or the suite would run itself.
 #![cfg(unix)]
 
+// This target links no library of its package, so it reads the variable itself, per
+// `design@knowledge-architect@a-build-is-tied-to-its-checkout`.
+const _: Option<&str> = option_env!("KNOWLEDGE_ARCHITECT_CHECKOUT");
+
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 

@@ -1,8 +1,13 @@
 # `cargo klarch <subcommand>` runs the checker built from this checkout, in release mode: it runs
 # many times per session, after each commit and in the gates, and a release build is paid once per
-# source change. It builds from the checkout, so a target directory shared with another checkout
-# makes the binary refuse to run, per `design@core@a-foreign-build-is-refused`. `-q` keeps cargo's
-# progress out of a checker's output, which is read as a report.
+# source change. `-q` keeps cargo's progress out of a checker's output, which is read as a report.
 [alias]
 klarch = "run -q --release -p knowledge-architect --"
 x = "run -q -p xtask --"
+
+# Every build is tied to its checkout, per `design@knowledge-architect@a-build-is-tied-to-its-checkout`.
+# Each checkout's value is its own root, so a target directory shared with another checkout rebuilds
+# every crate that reads it rather than running the other checkout's build. `force` keeps a cargo
+# started from a `cargo run` from inheriting the outer checkout's value.
+[env]
+KNOWLEDGE_ARCHITECT_CHECKOUT = { value = ".", relative = true, force = true }

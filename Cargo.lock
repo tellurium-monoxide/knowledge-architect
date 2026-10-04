@@ -461,6 +461,7 @@ dependencies = [
  "clap",
  "knowledge-architect",
  "knowledge-architect-gates",
+ "serde_json",
 ]
 
 [[package]]

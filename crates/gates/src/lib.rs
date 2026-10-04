@@ -35,6 +35,11 @@
 //!
 //! [`process`] is the spawn helper the gates use, for a project's other commands.
 
+// Read so that cargo rebuilds this crate when the checkout building it changes, per
+// `design@knowledge-architect@a-build-is-tied-to-its-checkout`. A build outside this repository's
+// cargo configuration, such as one from crates.io, sees it unset, and nothing changes.
+const _: Option<&str> = option_env!("KNOWLEDGE_ARCHITECT_CHECKOUT");
+
 mod gates;
 pub mod process;
 

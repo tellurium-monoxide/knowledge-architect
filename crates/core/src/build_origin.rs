@@ -78,7 +78,8 @@ pub(crate) fn foreign_copy(root: &Path, libraries: &[Library]) -> Option<(Librar
 /// Refuse to run when the tree holds another copy of a library the binary links.
 ///
 /// `packages` is what the refusal tells the user to clean: the binary's own package and every
-/// library's, so that the next run rebuilds all of them from this checkout.
+/// library's, so that the next run rebuilds all of them from this checkout. The refusal also
+/// names the prevention: a build tied to its checkout.
 pub fn refuse_a_foreign_build(
     root: &Path,
     libraries: &[Library],
@@ -97,7 +98,9 @@ pub fn refuse_a_foreign_build(
     Err(format!(
         "this binary was built from another checkout: its `{}` was compiled at {}, and the tree \
          being checked holds that package at {}\n       a target directory shared between two \
-         checkouts does this; rebuild from this one with `cargo clean{profile}{clean}`",
+         checkouts does this; rebuild from this one with `cargo clean{profile}{clean}`\n       \
+         to prevent it, tie each build to its checkout: a cargo `[env]` variable valued at the \
+         checkout's root, read by every crate, as the knowledge-architect setup skill shows",
         library.package,
         library.crate_dir.display(),
         copy.display(),
@@ -259,7 +262,7 @@ mod tests {
     }
 
     #[test]
-    fn the_refusal_names_both_directories_and_every_package_to_clean() {
+    fn the_refusal_names_both_directories_every_package_to_clean_and_the_prevention() {
         let scratch = Scratch::new("refusal");
         let built = scratch.crate_at("one/tools/tool/lib", "a-tool");
         scratch.crate_at("two/tools/tool/lib", "a-tool");
@@ -280,6 +283,7 @@ mod tests {
             why.contains(&format!("cargo clean{profile} -p a-binary -p a-tool")),
             "{why}"
         );
+        assert!(why.contains("tie each build to its checkout"), "{why}");
         assert_eq!(
             refuse_a_foreign_build(&scratch.0.join("one"), &[library(built)], &["a-tool"]),
             Ok(())

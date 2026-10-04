@@ -1410,6 +1410,12 @@ build's; a worktree nested in the tree is a second checkout like any other. A tr
 copy is left alone, which covers a mock project under the tool's directory and a project
 consuming a library as a published crate.
 
+**The refusal detects, and a build tied to its checkout prevents.** A project whose every target
+is tied to a variable valued at its checkout's root never runs another checkout's build, as
+`design@knowledge-architect@a-build-is-tied-to-its-checkout` argues for this repository. The
+refusal stays, for a binary built before the tie or outside the configuration that sets it, and
+its message names the tie beside the `cargo clean` that recovers.
+
 **Three limits.** Two come from reading only names and places. A second checkout that moved the
 crate to another relative path is not seen, and runs; the loud failure of
 `design@core@checker-source-literals-are-data`, printed by `check`, still names it. A tree

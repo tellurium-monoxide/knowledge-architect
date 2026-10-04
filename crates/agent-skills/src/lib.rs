@@ -4,6 +4,11 @@
 //! Each entry is the path the file is installed at, relative to the project root, and its text.
 //! The list is generated from this crate's content/ directory by its build script.
 
+// Read so that cargo rebuilds this crate when the checkout building it changes, per
+// `design@knowledge-architect@a-build-is-tied-to-its-checkout`. A build outside this repository's
+// cargo configuration, such as one from crates.io, sees it unset, and nothing changes.
+const _: Option<&str> = option_env!("KNOWLEDGE_ARCHITECT_CHECKOUT");
+
 /// Every file the installer writes, as its install path and its text, in path order.
 pub static FILES: &[(&str, &str)] = include!(concat!(env!("OUT_DIR"), "/files.rs"));
 

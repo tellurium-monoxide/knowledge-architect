@@ -10,6 +10,11 @@ use clap::{Parser, Subcommand};
 use knowledge_architect_gates::GatesArgs;
 use std::process::ExitCode;
 
+// Read so that cargo rebuilds this crate when the checkout building it changes, per
+// `design@knowledge-architect@a-build-is-tied-to-its-checkout`. A build outside this repository's
+// cargo configuration sees it unset, and still compiles.
+const _: Option<&str> = option_env!("KNOWLEDGE_ARCHITECT_CHECKOUT");
+
 #[derive(Parser)]
 #[command(name = "xtask", about = "Workflow automation for this repository.")]
 struct Cli {
