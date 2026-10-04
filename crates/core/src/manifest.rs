@@ -378,6 +378,39 @@ pub(crate) struct Project {
     /// headers and in the installed skills. [`DEFAULT_COMMAND`] when absent.
     #[serde(default)]
     pub command: Option<String>,
+    /// The version of the checker the project pins, as written; [`resolve_checker`] reads it
+    /// into a [`Pin`]. Optional here so that an absent key is a complaint with a repair rather
+    /// than a deserialisation error.
+    #[serde(default)]
+    pub checker_version: Option<String>,
+}
+
+/// What `[project] checker-version` says, per `spec@plans@checker-version-pin` until its harvest.
+///
+/// A version is the core library's version the project runs. The two sentinels are claims
+/// about the tree that the running binary's build confirms or refuses: a mock project inside a
+/// library directory, and the tree the checker is built from. Which build confirms which claim
+/// is `cli::refuse_another_version`'s; a manifest only parsed is never confirmed.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum Pin {
+    /// `"<MAJOR.MINOR.PATCH>"`, compared as text with the binary's version.
+    Version(String),
+    /// `"fixture"`.
+    Fixture,
+    /// `"self"`; `Self` is a Rust keyword.
+    OwnBuild,
+}
+
+/// Whether a value is a version as the key takes one: three decimal integers, dot-separated,
+/// with no leading zero except a lone `0`, and no pre-release or build suffix.
+pub(crate) fn is_plain_version(value: &str) -> bool {
+    let parts: Vec<&str> = value.split('.').collect();
+    parts.len() == 3
+        && parts.iter().all(|p| {
+            !p.is_empty()
+                && p.bytes().all(|b| b.is_ascii_digit())
+                && (p.len() == 1 || !p.starts_with('0'))
+        })
 }
 
 /// The `[agents]` table: which agent harnesses the project serves.
@@ -527,6 +560,9 @@ pub struct Manifest {
     /// The files each extension generates, which the walk leaves out and the `generated` check
     /// reads as committed.
     extension_generated: Vec<PathBuf>,
+    /// What `[project] checker-version` says; `None` only when the key is absent or holds none
+    /// of the three forms, which is then a complaint.
+    pin: Option<Pin>,
 }
 
 impl Manifest {
@@ -573,6 +609,7 @@ impl Manifest {
         let plans = resolve_anchors(&mut declared, &registers, &mut complaints);
         resolve_agents(&mut declared, &mut complaints);
         resolve_command(&mut declared, &mut complaints);
+        let pin = resolve_checker(&declared, &mut complaints);
         Ok(Self {
             root: root.to_path_buf(),
             declared,
@@ -581,6 +618,7 @@ impl Manifest {
             complaints,
             extension_paths: Vec::new(),
             extension_generated: Vec::new(),
+            pin,
         })
     }
 
@@ -590,6 +628,18 @@ impl Manifest {
 
     pub(crate) fn walk(&self) -> &Walk {
         &self.declared.walk
+    }
+
+    /// What `[project] checker-version` says, or `None` while its complaint stands.
+    pub(crate) fn pin(&self) -> Option<&Pin> {
+        self.pin.as_ref()
+    }
+
+    /// Whether the complaint about `[project] checker-version` stands, and its text.
+    pub(crate) fn pin_complaint(&self) -> Option<&Finding> {
+        self.complaints
+            .iter()
+            .find(|f| f.what.starts_with("[project] checker-version"))
     }
 
     /// The command this project runs the checker by, per `design@core@declared-command`.
@@ -1398,6 +1448,42 @@ fn resolve_command(declared: &mut Declared, complaints: &mut Vec<Finding>) {
     }
 }
 
+/// Read `[project] checker-version` into a [`Pin`], or refuse it as a complaint.
+///
+/// A complaint rather than a parse error, as [`resolve_command`] does, so the finding carries a
+/// repair and a historical tree that predates the key stops in phase 1 with a line naming it.
+/// The text opens with `[project] checker-version`, which `cli::refuse_another_version` repeats
+/// when it refuses a run over such a manifest.
+fn resolve_checker(declared: &Declared, complaints: &mut Vec<Finding>) -> Option<Pin> {
+    let action =
+        "write the version of the checker the project runs, \"fixture\" in a mock project \
+                  inside a library's directory, or \"self\" where the checker is built from \
+                  this tree";
+    let Some(value) = declared.project.checker_version.as_deref() else {
+        complaints.push(Finding::in_file(
+            MANIFEST_NAME,
+            "[project] checker-version is absent".to_string(),
+            action,
+        ));
+        return None;
+    };
+    match value {
+        "fixture" => Some(Pin::Fixture),
+        "self" => Some(Pin::OwnBuild),
+        v if is_plain_version(v) => Some(Pin::Version(v.to_string())),
+        v => {
+            complaints.push(Finding::in_file(
+                MANIFEST_NAME,
+                format!(
+                    "[project] checker-version {v:?} is not a version, \"fixture\" or \"self\""
+                ),
+                action,
+            ));
+            None
+        }
+    }
+}
+
 /// Refuse a harness this tool does not know, and keep the rest, per `design@core@agents-table`.
 /// A refused value leaves the list, so nothing acts on it.
 fn resolve_agents(declared: &mut Declared, complaints: &mut Vec<Finding>) {
@@ -1471,7 +1557,7 @@ pub(crate) mod tests {
         ext_files: &str,
     ) -> Manifest {
         let text = format!(
-            "[project]\nname = \"a-project\"\ncomponents = [{components}]\n\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = [{components}]\n\n\
              {extra}\
              [walk]\nskip-dirs = {skip_dirs}\nskip-files = {skip_files}\n\
              exclude = {exclude}\n\n\
@@ -1483,7 +1569,7 @@ pub(crate) mod tests {
     /// A declaration with one table added after the project and before the walk.
     fn with_agents(extra: &str) -> Manifest {
         let text = format!(
-            "[project]\nname = \"p\"\ncomponents = []\n\n{extra}\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\n\n{extra}\n\
              [walk]\nskip-dirs = []\nskip-files = []\n"
         );
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
@@ -1498,7 +1584,7 @@ pub(crate) mod tests {
         assert!(!with_agents("[commits]\n").refuses_branch_shas());
         assert!(!with_agents("[commits]\nrefuse-branch-shas = false\n").refuses_branch_shas());
         assert!(with_agents("[commits]\nrefuse-branch-shas = true\n").refuses_branch_shas());
-        let text = "[project]\nname = \"p\"\ncomponents = []\n\n[commits]\nno-such-key = true\n\n\
+        let text = "[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\n\n[commits]\nno-such-key = true\n\n\
                     [walk]\nskip-dirs = []\nskip-files = []\n";
         assert!(Manifest::parse(Path::new("/nowhere"), text).is_err());
     }
@@ -1576,7 +1662,7 @@ pub(crate) mod tests {
     fn an_unprintable_command_is_refused() {
         for bad in ["\"\"", "\"a\\nb\"", "\"a`b\""] {
             let text = format!(
-                "[project]\nname = \"p\"\ncomponents = []\ncommand = {bad}\n\n\
+                "[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\ncommand = {bad}\n\n\
                  [walk]\nskip-dirs = []\nskip-files = []\n"
             );
             let m = Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration");
@@ -1589,10 +1675,86 @@ pub(crate) mod tests {
     #[test]
     fn the_command_is_declared_or_the_binary_name() {
         assert_eq!(with_agents("").command(), "klarch");
-        let text = "[project]\nname = \"p\"\ncomponents = []\ncommand = \"cargo klarch\"\n\n\
+        let text = "[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\ncommand = \"cargo klarch\"\n\n\
                     [walk]\nskip-dirs = []\nskip-files = []\n";
         let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         assert_eq!(m.command(), "cargo klarch");
+    }
+
+    /// A manifest whose `[project]` holds the given `checker-version` line, or none.
+    fn with_pin(line: &str) -> Result<Manifest, String> {
+        let text = format!(
+            "[project]\n{line}\nname = \"p\"\ncomponents = []\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n"
+        );
+        Manifest::parse(Path::new("/nowhere"), &text)
+    }
+
+    /// The claim: `[project] checker-version` reads a version and the two sentinels, and refuses
+    /// an absent key and a string of none of the three forms as a complaint whose text opens with
+    /// the key, per `spec@plans@checker-version-pin`.
+    #[test]
+    fn the_checker_version_reads_three_forms_and_refuses_the_rest() {
+        let read = |line: &str| with_pin(line).expect("a declaration");
+        assert_eq!(
+            read("checker-version = \"0.2.0\"").pin(),
+            Some(&Pin::Version("0.2.0".to_string()))
+        );
+        assert_eq!(
+            read("checker-version = \"10.0.1\"").pin(),
+            Some(&Pin::Version("10.0.1".to_string()))
+        );
+        assert_eq!(
+            read("checker-version = \"fixture\"").pin(),
+            Some(&Pin::Fixture)
+        );
+        assert_eq!(
+            read("checker-version = \"self\"").pin(),
+            Some(&Pin::OwnBuild)
+        );
+        for good in ["\"fixture\"", "\"self\"", "\"0.0.0\""] {
+            let m = read(&format!("checker-version = {good}"));
+            assert!(m.complaints().is_empty(), "{good}: {:?}", m.complaints());
+            assert!(m.pin_complaint().is_none(), "{good}");
+        }
+        let absent = read("");
+        assert_eq!(absent.pin(), None);
+        let complaint = absent.pin_complaint().expect("the key's complaint");
+        assert_eq!(complaint.what, "[project] checker-version is absent");
+        for bad in [
+            "01.2.3",
+            "0.2",
+            "0.2.0-rc.1",
+            "0.2.0+b",
+            "v0.2.0",
+            "latest",
+            "",
+            "1.2.3.4",
+        ] {
+            let m = read(&format!("checker-version = \"{bad}\""));
+            assert_eq!(m.pin(), None, "{bad}");
+            let complaint = m.pin_complaint().expect("the key's complaint");
+            assert!(
+                complaint.what.starts_with("[project] checker-version")
+                    && complaint
+                        .what
+                        .contains("is not a version, \"fixture\" or \"self\""),
+                "{bad}: {complaint:?}"
+            );
+        }
+    }
+
+    /// The claim: a value of the key that is not a string fails the parse, as any mistyped key
+    /// does.
+    #[test]
+    fn a_checker_version_that_is_not_a_string_fails_the_parse() {
+        for bad in [
+            "checker-version = 1",
+            "checker-version = true",
+            "checker-version = [\"0.2.0\"]",
+        ] {
+            assert!(with_pin(bad).is_err(), "{bad}");
+        }
     }
 
     #[test]
@@ -1889,7 +2051,7 @@ pub(crate) mod tests {
     /// A register declaration, folded into the built-in registers.
     fn with_registers(body: &str) -> Manifest {
         let text = format!(
-            "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              {body}\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              "
@@ -2011,7 +2173,7 @@ pub(crate) mod tests {
         }
         // Not an integer: refused when the manifest is read, naming the key.
         let text = format!(
-            "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              {heading}level = \"3\"\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              "

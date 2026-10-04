@@ -272,7 +272,7 @@ mod tests {
 
     fn manifest_with(tables: &str) -> Manifest {
         let text = format!(
-            "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
              skip-files = []\n\n{tables}"
         );
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")
@@ -303,7 +303,7 @@ mod tests {
         // or TOML reads it as a key of that table.
         let mut manifest = Manifest::parse(
             Path::new("/nowhere"),
-            "stray = 1\n[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
+            "stray = 1\n[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
              skip-files = []\n",
         )
         .expect("a declaration");

@@ -220,7 +220,7 @@ mod tests {
         // one finding, and it still exists for every question about what is there.
         let manifest = Manifest::parse(
             Path::new("/nowhere"),
-            "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\n\
              skip-files = []\nexclude = []\n",
         )
         .expect("a declaration");
@@ -259,7 +259,7 @@ mod tests {
         // keeping it out of the listing altogether.
         let manifest = Manifest::parse(
             Path::new("/nowhere"),
-            "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = [\"old\"]\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = [\"old\"]\n\
              skip-files = [\"notes/a\\nb.md\"]\nexclude = []\n",
         )
         .expect("a declaration");

@@ -6,6 +6,8 @@
 # does not own.
 
 [project]
+# A mock project inside the core's directory, which the binary built here confirms.
+checker-version = "fixture"
 name = "minimal"
 components = []
 

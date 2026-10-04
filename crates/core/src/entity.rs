@@ -1286,7 +1286,7 @@ mod tests {
 
     /// A project whose root component is `a-project` with one component under `parts/`.
     fn anchors() -> Anchors {
-        let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
+        let text = "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
         Anchors::declared(&Manifest::parse(Path::new("/nowhere"), text).expect("a declaration"))
@@ -1308,7 +1308,8 @@ mod tests {
     /// The table of a tree of plan documents, its anchors read off the documents' own paths, as
     /// every caller reads the plan anchors off its tree.
     fn plan_table(docs: Vec<(&str, &str)>) -> (Entities, Vec<String>) {
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n";
         let manifest = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         let paths: Vec<PathBuf> = docs.iter().map(|(p, _)| PathBuf::from(p)).collect();
@@ -1440,7 +1441,7 @@ mod tests {
     /// counted as anchor words.
     #[test]
     fn a_spec_anchor_takes_no_name_another_anchor_holds() {
-        let text = "[project]\nname = \"a-project\"\ncomponents = [\"parts/widget\"]\n\n\
+        let text = "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = [\"parts/widget\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n";
         let manifest = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
         let tree: Vec<PathBuf> = [
@@ -1744,7 +1745,8 @@ mod tests {
     fn a_declared_register_is_judged_at_the_level_it_declares() {
         // Level five, which no built-in register uses, so the level is read from the
         // declaration and not compiled in, and a heading that deep is seen at all.
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [registers.note]\nscope = \"component\"\nshape = \"heading\"\ndir = \"notes\"\n\
              level = 5\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
@@ -1788,7 +1790,8 @@ mod tests {
     fn a_register_declared_at_level_six_sees_its_headings() {
         // The deepest level markdown has: a heading there is observed, so an unslugged one
         // is reported and a slugged one defines.
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [registers.note]\nscope = \"component\"\nshape = \"heading\"\ndir = \"notes\"\n\
              level = 6\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
@@ -1900,7 +1903,8 @@ mod tests {
     fn a_declared_register_becomes_a_kind_the_candidate_rule_admits() {
         // Nothing about a kind is compiled in beyond `path` and the built-in registers: a project
         // that declares a register makes its name spellable in kind position.
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [locations.notes]\npath = \"notes\"\nregisters = [\"reading\", \"tripwire\"]\n\n\
              [registers.reading]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"readings\"\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
@@ -1940,7 +1944,8 @@ mod tests {
         // reported as misplaced.
         // Mutation checked: filtering `owning` to components alone leaves this file with no
         // home and the entity count at zero.
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [locations.notes]\npath = \"notes\"\nregisters = [\"tripwire\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
@@ -2074,7 +2079,8 @@ mod tests {
 
     #[test]
     fn a_register_whose_name_merely_ends_in_the_path_word_is_not_the_path_kind() {
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [registers.subpath]\nscope = \"opt-in\"\nshape = \"file\"\ndir = \"subpaths\"\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";

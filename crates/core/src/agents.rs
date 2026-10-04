@@ -352,7 +352,7 @@ mod tests {
 
     fn manifest(extra: &str) -> Manifest {
         let text = format!(
-            "[project]\nname = \"p\"\ncomponents = []\n{extra}\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\n{extra}\n\
              [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n"
         );
         Manifest::parse(Path::new("/nowhere"), &text).expect("a declaration")

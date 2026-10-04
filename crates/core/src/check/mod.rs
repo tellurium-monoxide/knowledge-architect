@@ -305,7 +305,7 @@ mod phase_tests {
 
     fn manifest(extra: &str) -> Manifest {
         let text = format!(
-            "[project]\nname = \"p\"\ncomponents = []\n\n{extra}\n\
+            "[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\n\n{extra}\n\
              [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n\n\
              "
         );

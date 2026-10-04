@@ -99,7 +99,8 @@ mod tests {
         use std::collections::{HashMap, HashSet};
         use std::path::PathBuf;
 
-        let text = "[project]\nname = \"a-project\"\ncomponents = []\n\n\
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n\n\
              ";
         let manifest = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
