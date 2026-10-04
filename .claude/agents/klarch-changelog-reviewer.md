@@ -34,12 +34,14 @@ it passes one of three tests, under the subsection of that test:
 
 ## The predicates
 
-**Is an entry missing?** Walk the range commit by commit: `git log --format='%h %s' v<previous>..HEAD`
-and each commit's diff. For every change to a published crate (its source, its manifest, the
-shipped text under crates/agent-skills/content/), decide which tests it passes. A change that
-passes one and has no entry is a finding. **A minor or major change under the bump table always
-passes the migration or the new-feature test**, so one with no entry is a finding whatever else
-you conclude.
+**Is an entry missing?** Walk the range commit by commit: `git log --format='%h %s'
+v<previous>..HEAD` and each commit's diff. For every change to a published crate (its source, its
+manifest, the shipped text under crates/agent-skills/content/), decide which tests it passes. A
+change that passes one and has no entry is a finding. **A minor or major change under the bump table
+always passes the migration or the new-feature test**, so one with no entry is a finding whatever
+else you conclude. The table classes only what the published crates do in a consuming project: a
+test, a gate or an xtask subcommand of this repository, and a file a crate ships for reading alone,
+such as its changelog, are at most a patch.
 
 **Is an entry wrong?** For each entry: the subsection matches the test it passes; its surface is
 the one the change touches; its class is the one the bump table gives; a migration entry says what

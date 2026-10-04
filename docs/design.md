@@ -117,6 +117,12 @@ it. The cost accepted: a fix to the gates alone is released as a version of ever
 
 ### Versions follow the owner's scheme, mapped onto Cargo's two positions under 0.x `##versioning-policy`
 
+The table classes what the published crates do in a consuming project: the checks the checker runs
+over its tree, its commands, its manifest, the library APIs and the installed skills. A check, a
+command or an addition in the table is one of those. A change internal to this repository, such as
+a test, a gate or a subcommand of tools/xtask, is outside the table, and so is a file a crate ships
+for reading alone, such as its changelog: each is at most a patch.
+
 | bump | when |
 | --- | --- |
 | patch | skill changes; code changes that change no check and no command |
