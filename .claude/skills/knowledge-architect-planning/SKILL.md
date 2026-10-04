@@ -375,8 +375,11 @@ finds it there.
 
 A plan document is committed first, on a branch of its own or on its work's branch, and that
 commit is what the reviewers read; a repair lands after it, as a further commit or folded where
-`knowledge-architect-review` says. **It may be merged on its own, whenever its work is done**: a
-plan document on the main branch keeps the work done meanwhile from drifting from it. It is read again after a revision that changes a decided shape (an
+`knowledge-architect-review` says. **It may be merged on its own, whatever the time of its
+work**: a plan document on the main branch keeps the work done meanwhile from drifting from it.
+**One whose work's first commit changes what the project's gates check is merged before that
+work**, a spec as well as a milestone document: on one branch, the gates as that commit changes
+them would judge the commit that added the document, whose tree predates the change. It is read again after a revision that changes a decided shape (an
 audit applied in place is not one). Its reviewers are fresh, and did not witness the
 discussion. **Fresh, never a fork**: a fork inherits the discussion and reads the document as its
 author. Dispatch them through `knowledge-architect-review`, with the invariants that

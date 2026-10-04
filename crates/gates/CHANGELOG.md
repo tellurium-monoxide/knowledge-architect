@@ -21,8 +21,8 @@ subsection is omitted.
 ### Workflow
 
 - `agent-skills`, patch: a plan document may be merged to the main branch in a pull request of its
-  own, whenever its work is done; one whose work changes what the gates check is merged before
-  that work.
+  own, whatever the time of its work; one whose work changes what the gates check is merged before
+  that work, a spec as well as a milestone document.
 - `agent-skills`, patch: when a project moves its pin, the setup skill fetches the new version and
   reads the changelog of each version crossed in the crate source cargo downloaded.
 - `agent-skills`, patch: the setup skill's section for a Rust project ties every build to its

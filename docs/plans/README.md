@@ -11,6 +11,6 @@ else:
   `index.md` is the generated listing of its steps, and each other file in it is the spec of one
   step, cited `spec@<milestone>@<step>`.
 
-A plan document leaves in the commit that completes its last harvest, so between pieces of planned
-work the two homes hold only their README and their generated index. The procedure is the
+A plan document may land before its work starts, and leaves in the commit that completes its last
+harvest. The procedure is the
 installed `knowledge-architect-planning`.
