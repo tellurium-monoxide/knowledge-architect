@@ -1508,6 +1508,24 @@ fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
     assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
 }
 
+/// The claim: `--help` opens with the binary's own description, not with the doc comment the
+/// library writes for a binary's author about the command enum.
+#[test]
+fn help_opens_with_the_binarys_description() {
+    let out = Command::new(env!("CARGO_BIN_EXE_klarch"))
+        .arg("--help")
+        .output()
+        .expect("the binary runs");
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(out.status.success(), "{stdout}");
+    assert_eq!(
+        stdout.lines().next(),
+        Some("What a project's documents hold, and whether it still holds."),
+        "{stdout}"
+    );
+    assert!(!stdout.contains("flattens this enum"), "{stdout}");
+}
+
 /// The claim: in a message, an unanchored path whose first segment only the parent tree holds
 /// is still a finding, since the message points at what its commit deletes; a path-shaped span
 /// that names nothing in either tree is silent.
