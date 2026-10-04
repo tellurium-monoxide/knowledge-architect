@@ -60,13 +60,16 @@ Goals and decisions belong to the project's owner. The workflow makes an agent a
 proposals, state their consequences, and record the owner's rulings. An agent never substitutes
 its own judgement for a ruling.
 
-## Any project can adopt it `##any-project-can-adopt-it`
+## Any project can adopt it, and a new project is the primary target `##any-project-can-adopt-it`
 
 Nothing about one project is compiled in. A project declares its structure in its manifest, and the
 installed skills name no project's paths. Every record is cited in one readable grammar, the same in
 every project, so what an agent learns in one project applies in the next. A project pins the
 version it uses, and moves to a new one when it chooses. The target is projects developed mostly by
-AI agents. A project without agents can still use the checker alone.
+AI agents, and a new project, which adopts the checker and the workflow from its first commit, comes
+first. An existing project can adopt them too, by bringing its documents into conformance; what that
+costs it is never an argument against a check the workflow needs to work well. A project without
+agents can still use the checker alone.
 
 ## Adopting the project is easy, with documentation that is clear and reaches its reader `##adoption-is-easy`
 
