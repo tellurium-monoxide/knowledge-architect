@@ -109,7 +109,9 @@ one command, and a later provider's layout is a target the same command writes, 
 
 `[workspace.package] version` is the version of every crate. The skills a checker installs are the
 skills of that exact version, and the core pins the agent-skills crate at it exactly. A project
-therefore never runs a checker whose installed skills describe another version's commands, which
+therefore never runs a checker whose installed skills describe another version's commands, since a
+binary of another version than its manifest pins refuses to run, per
+`design@core@installed-binary-version-check`, which
 is what lets a project pin one version and move when it chooses, per
 `goal@knowledge-architect@any-project-can-adopt-it`. The gates library is in the same lockstep: the
 setup skill that recommends it is the same version's, so a project pins one version for all of

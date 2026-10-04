@@ -175,7 +175,7 @@ impl Drop for Sandbox {
 /// Copy a mock project, with its manifest pinned to this binary's version.
 ///
 /// A mock says `checker-version = "fixture"`, which the binary confirms only where the mock lies
-/// inside the core's directory, per `spec@plans@checker-version-pin`; a copy elsewhere is a project
+/// inside the core's directory, per `design@core@checked-sentinel-values`; a copy elsewhere is a project
 /// like any other, so it carries the version.
 fn copy_dir(from: &Path, to: &Path) {
     std::fs::create_dir_all(to).expect("the sandbox directory");
@@ -2843,7 +2843,7 @@ fn pin_copy_to(sandbox: &Sandbox, value: &str) {
 }
 
 /// The claim: over a copy of a mock, a pin the binary does not satisfy refuses the run with exit
-/// 2 and the message the spec gives each case, per `spec@plans@checker-version-pin`; the pin
+/// 2 and the message the spec gives each case, per `design@core@installed-binary-version-check`; the pin
 /// equal to the binary's version passes.
 #[test]
 fn a_copy_whose_pin_this_binary_does_not_satisfy_refuses_the_run() {

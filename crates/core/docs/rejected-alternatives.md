@@ -326,6 +326,15 @@ which tables are an extension's. It loses because the refusal of an unclaimed ta
 table nobody owns, and because it changes the manifest format of every project and every mock
 for no check that reads the difference.
 
+**The sentinels `"fixture"` and `"self"` accepted wherever a manifest writes them** — lost to
+`design@core@checked-sentinel-values`. `live`. It made a fixture manifest and this repository's
+own pin read the same in every copy, needed no build to confirm anything, and worked wherever an
+extension keeps its mock projects. It loses because a value open to every project is an opt-out:
+an agent stuck on the refusal could write `"fixture"` in a real manifest, and the pin the key
+exists for would be silently off. Recorded because doubt remains on the winner: its review found
+two layouts that confirmed a sentinel on a real project, a root that is an extension's crate and a
+registry inside the tree, and closed each by its own rule; a third would argue for this one again.
+
 **Every path-shaped span reported as an unanchored pointer, whatever its first segment names** —
 lost to `design@core@every-path-names-its-anchor`. `live`. It let no backticked pointer pass
 unregistered, a pointer written after its target's directory left the tree included, and it needed

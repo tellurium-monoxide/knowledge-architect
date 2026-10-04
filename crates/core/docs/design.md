@@ -1481,6 +1481,59 @@ links its extension's library.
 
 ## 5. Commit messages
 
+### The manifest pins the checker's version, and every binary refuses to run over a project it does not satisfy `##installed-binary-version-check`
+
+Every manifest declares `[project] checker-version`: the exact version of the checker the project
+runs, which is the version of the core library whatever binary links it, or one of the two values
+of `design@core@checked-sentinel-values`. `Manifest::parse` reads it; an absent key, or a string
+of none of the three forms, is a complaint opening with the key's name, and a value that is not a
+string fails the parse. Each binary's `main` calls `cli::refuse_another_version` right after the
+build-origin refusal of `design@core@a-foreign-build-is-refused`, before it dispatches any
+command, an extension's own included: a version is accepted when it equals the core library's,
+and any refusal, the key's own complaint included, is exit 2, per `design@core@exit-code-ladder`,
+naming the two versions and which side is older. `cli::run` does not refuse, so a command driven
+in-process needs a key but no confirmed one.
+
+**Why the manifest, and why required.** A binary older than the skills a project installed reported
+each installed file as differing, with the repair "run install-agent-skills", which wrote the older
+text over the newer; under `harness = []` nothing compared anything, and two versions whose skill
+text is identical were not told apart. A pin in the manifest covers all three; one more place to
+edit when the pin moves cannot drift silently, since a binary differing from it refuses at its
+first command. Optional, the key would leave unprotected the project that never wrote it, which is
+the forgotten pin it exists for. This serves `goal@knowledge-architect@any-project-can-adopt-it`:
+a project pins the version it uses, and moves when it chooses.
+
+**The working tree only.** `commits` reads a historical tree's key, so a tree without it stops in
+phase 1, and compares no historical value, so moving the pin fails no earlier commit. A branch that
+introduces the key therefore opens with the commit that gives every manifest the key, per
+`design@core@a-commit-message-is-a-document`.
+
+**A binary released before the key** refuses a manifest carrying it at parse, as an unknown field,
+since `[project]` denies unknown keys: it runs no command, so it cannot suggest a downgrade, but
+its message does not name the pin.
+
+### `"fixture"` and `"self"` are accepted only where the running binary's build confirms them `##checked-sentinel-values`
+
+Two values of `[project] checker-version` are not versions, for a project's own tests and for a
+tree the checker is built from:
+
+- `"fixture"` is accepted when the project lies strictly inside the core's compiled directory or
+  one of the directories the binary passes as its own source: a mock project of a library the
+  binary links. Strictly, because an extension whose crate is the project's root passes the root
+  among its directories, and a library is no mock of itself.
+- `"self"` is accepted when the core's compiled directory lies inside, or is, the project, and the
+  project's git tracks that directory's `Cargo.toml`: a tree the checker is built from. The
+  tracking tells it from a project whose `CARGO_HOME` is one of its own directories, where a
+  registry build's directory also lies inside the root.
+
+Both read the paths canonicalised, as `design@core@a-foreign-build-is-refused` does, and decide
+from where the running binary was built, which names no project, per
+`design@core@nothing-of-a-project-is-compiled-in`. Anywhere else each is refused, so no value of
+the key switches a real project's pin off, the stance `design@core@the-regime-has-no-opt-out`
+takes for rules over documents. A copy of a mock project outside its library carries the version.
+The same values accepted wherever they are written lost to this, in
+`path@core@docs/rejected-alternatives.md`.
+
 ### A commit message is a document under the regime, judged against the tree its commit carries `##a-commit-message-is-a-document`
 
 A commit message is parsed as one markdown document — its subject line, its blank line and its
@@ -1554,6 +1607,10 @@ entity table and the facts a path reference and the two lints ask about, and not
 prepared for it and no check runs over it, because nobody reads its verdict. The two arms are compared by the site each names — the line and the span — rather than by the words each writes,
 because two trees can refuse one reference for different reasons and comparing the words whole
 would let a reference that resolves in neither pass.
+
+**A historical tree's `[project] checker-version` is read, not compared.** Its absence stops the
+tree in phase 1; its value is never compared with the tip checker's version, so moving the pin
+fails no earlier commit, per `design@core@installed-binary-version-check`.
 
 **`check` reads no history.** A message is not a file of the tree, and a check whose verdict
 moved with the branch's history would be a check nobody could reproduce from a checkout: `git
