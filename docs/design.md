@@ -150,12 +150,13 @@ release can tell a missing entry from a change that owes none.
 
 The branch that makes a change writes its entries, in the `Next release` section, and creates the
 section above the newest released one when it is absent, as it is after a release renames it. It
-writes them because its author knows what changed and in which class at that moment; rebuilt at the release from commit messages, an entry is lost when
-nothing asks for it, as one change to a shipped skill after 0.1.0 was. The release is reviewed
-once against these tests, rather than every merge, because a release branch can repair any gap
-before anything is published. The working section may be reworded, restructured or pruned at any
-time, and a change reversed before the release leaves it, since the section describes the
-release's net effect. A released section's content never changes; its structure may.
+writes them because its author knows what changed and in which class at that moment; rebuilt at the
+release from commit messages, an entry is lost when nothing asks for it, as one change to a shipped
+skill after 0.1.0 was. The release is reviewed once against these tests, rather than every merge,
+because a release branch can repair any gap before anything is published. The working section may be
+reworded, restructured or pruned at any time, and a change reversed before the release leaves it,
+since the section describes the release's net effect. A released section's content never changes;
+its structure may.
 
 ### The project stays at 0.x until the owner's word, given once its first design discussion's open issues are settled `##stays-at-zero-x`
 
