@@ -385,7 +385,7 @@ pub(crate) struct Project {
     pub checker_version: Option<String>,
 }
 
-/// What `[project] checker-version` says, per `spec@plans@checker-version-pin` until its harvest.
+/// What `[project] checker-version` says, per `design@core@installed-binary-version-check`.
 ///
 /// A version is the core library's version the project runs. The two sentinels are claims
 /// about the tree that the running binary's build confirms or refuses: a mock project inside a
@@ -1694,7 +1694,7 @@ pub(crate) mod tests {
 
     /// The claim: `[project] checker-version` reads a version and the two sentinels, and refuses
     /// an absent key and a string of none of the three forms as a complaint whose text opens with
-    /// the key, per `spec@plans@checker-version-pin`.
+    /// the key, per `design@core@installed-binary-version-check`.
     #[test]
     fn the_checker_version_reads_three_forms_and_refuses_the_rest() {
         let read = |line: &str| with_pin(line).expect("a declaration");
