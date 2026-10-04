@@ -401,8 +401,9 @@ pub(crate) enum Pin {
     OwnBuild,
 }
 
-/// Whether a value is a version as the key takes one: three decimal integers, dot-separated,
-/// with no leading zero except a lone `0`, and no pre-release or build suffix.
+/// Whether a value is a version as the key takes one: three decimal integers that each fit in a
+/// `u64`, dot-separated, with no leading zero except a lone `0`, and no pre-release or build
+/// suffix. A part too large for a `u64` is refused, so every pin compares as three integers.
 pub(crate) fn is_plain_version(value: &str) -> bool {
     let parts: Vec<&str> = value.split('.').collect();
     parts.len() == 3
@@ -410,6 +411,7 @@ pub(crate) fn is_plain_version(value: &str) -> bool {
             !p.is_empty()
                 && p.bytes().all(|b| b.is_ascii_digit())
                 && (p.len() == 1 || !p.starts_with('0'))
+                && p.parse::<u64>().is_ok()
         })
 }
 
@@ -1730,6 +1732,7 @@ pub(crate) mod tests {
             "latest",
             "",
             "1.2.3.4",
+            "99999999999999999999.0.0",
         ] {
             let m = read(&format!("checker-version = \"{bad}\""));
             assert_eq!(m.pin(), None, "{bad}");

@@ -226,29 +226,41 @@ pub fn locate() -> Result<Manifest, String> {
 /// **Each binary's `main` calls it** right after [`refuse_a_foreign_build`] and before it
 /// dispatches any command, its own included, with the directories of its own source: the same
 /// list it hands [`run`] as `checker`. [`run`] does not call it, so a test driving a command
-/// in-process over a mock project needs no pin.
+/// in-process over a mock project needs no confirmed pin; the parse still requires the key.
 ///
 /// A version is accepted when it equals the version of this library, the checker every binary
-/// links; `"fixture"` when the project lies inside, or is, this library's directory or one of
+/// links; `"fixture"` when the project lies strictly inside this library's directory or one of
 /// `checker_dirs`, a mock project of a library the binary links; `"self"` when this library's
-/// directory lies inside, or is, the project, a tree the checker is built from. While the key's
+/// directory lies inside, or is, the project, and the project's git tracks its `Cargo.toml`, a
+/// tree the checker is built from rather than one a registry sits in. While the key's
 /// own complaint stands, that complaint is the refusal, so no command runs without a key. Every
 /// refusal is could-not-run, exit 2, per `design@core@exit-code-ladder`.
 pub fn refuse_another_version(manifest: &Manifest, checker_dirs: &[&Path]) -> Result<(), String> {
+    let root = manifest.root().to_path_buf();
+    let tracked = move |rel: &Path| {
+        crate::git::git(&root)
+            .args(["ls-files", "--"])
+            .args([rel])
+            .output()
+            .is_ok_and(|out| !out.is_empty())
+    };
     refuse_another_version_built_at(
         manifest,
         &crate::component_dir(),
         env!("CARGO_PKG_VERSION"),
         checker_dirs,
+        &tracked,
     )
 }
 
-/// The same, with the library's directory and version as parameters, so a test can place them.
+/// The same, with the library's directory, its version, and the question "does the project's
+/// git track this path" as parameters, so a test can place them.
 fn refuse_another_version_built_at(
     manifest: &Manifest,
     core: &Path,
     version: &str,
     checker_dirs: &[&Path],
+    tracked: &dyn Fn(&Path) -> bool,
 ) -> Result<(), String> {
     use crate::manifest::Pin;
     let repair = "set [project] checker-version to the version of the checker the project runs";
@@ -292,15 +304,15 @@ fn refuse_another_version_built_at(
             "\"fixture\" is only valid for a mock project inside a library this binary links\n       \
              {repair}"
         )),
-        Pin::OwnBuild if is_its_own_build(root, core) => Ok(()),
+        Pin::OwnBuild if is_its_own_build(root, core, tracked) => Ok(()),
         Pin::OwnBuild => Err(format!(
             "\"self\" is only valid where the checker is built from this tree\n       {repair}"
         )),
     }
 }
 
-/// A version's three integers, or `None` for a version that is not three integers, which only
-/// a binary's own version can be: the manifest's is refused at parse.
+/// A version's three integers, or `None` for a version that is not three integers that fit in
+/// a `u64`, which only a binary's own version can be: the manifest's is refused at parse.
 fn triple(version: &str) -> Option<(u64, u64, u64)> {
     let mut parts = version.split('.').map(|p| p.parse::<u64>().ok());
     let triple = (parts.next()??, parts.next()??, parts.next()??);
@@ -313,18 +325,32 @@ fn canonical(path: &Path) -> std::path::PathBuf {
     path.canonicalize().unwrap_or_else(|_| path.to_path_buf())
 }
 
-/// Whether the project lies inside, or is, the core directory or one of `checker_dirs`: a mock
+/// Whether the project lies strictly inside the core directory or one of `checker_dirs`: a mock
 /// project of a library the running binary links.
+///
+/// Strictly: a library's own directory is no mock of it. Where an extension's crate is the
+/// project's root, the binary names the root among its directories, and an equal path would let
+/// the project's real manifest say `"fixture"`.
 fn is_a_library_fixture(root: &Path, core: &Path, checker_dirs: &[&Path]) -> bool {
     let root = canonical(root);
     std::iter::once(core)
         .chain(checker_dirs.iter().copied())
-        .any(|dir| root.starts_with(canonical(dir)))
+        .map(canonical)
+        .any(|dir| root != dir && root.starts_with(&dir))
 }
 
-/// Whether the core directory lies inside, or is, the project: a tree the checker is built from.
-fn is_its_own_build(root: &Path, core: &Path) -> bool {
-    canonical(core).starts_with(canonical(root))
+/// Whether the core directory lies inside, or is, the project, and the project's git tracks its
+/// `Cargo.toml`: a tree the checker is built from.
+///
+/// The tracking is what tells a checkout of the checker from a tree that a registry sits in, such
+/// as a project whose `CARGO_HOME` is one of its own directories, where a registry build's
+/// directory also lies inside the root.
+fn is_its_own_build(root: &Path, core: &Path, tracked: &dyn Fn(&Path) -> bool) -> bool {
+    let (root, core) = (canonical(root), canonical(core));
+    match core.strip_prefix(&root) {
+        Ok(rel) => tracked(&rel.join("Cargo.toml")),
+        Err(_) => false,
+    }
 }
 
 /// Every observation the walk and the scanner produced, one per line.
@@ -1091,9 +1117,19 @@ mod tests {
         Manifest::parse(root, &text).expect("a declaration")
     }
 
-    /// The claim: `"fixture"` holds where the project lies inside, or is, the core directory or a
-    /// checker directory, and `"self"` where the core directory lies inside, or is, the project;
-    /// a core directory outside the project, standing for the registry, confirms neither.
+    /// A `tracked` answer that holds for every path, and one that holds for none.
+    fn always(_: &Path) -> bool {
+        true
+    }
+    fn never(_: &Path) -> bool {
+        false
+    }
+
+    /// The claim: `"fixture"` holds where the project lies strictly inside the core directory or
+    /// a checker directory, and `"self"` where the core directory lies inside, or is, the project
+    /// and the project tracks its `Cargo.toml`; a core directory outside the project, standing
+    /// for the registry, confirms neither, nor does a registry inside the project that git does
+    /// not track.
     #[test]
     fn the_sentinels_hold_by_where_the_core_and_the_project_lie() {
         let scratch = Scratch::new("predicates");
@@ -1105,30 +1141,60 @@ mod tests {
         let ext_mock = scratch.dir("ext/crates/rules/tests/projects/m");
 
         assert!(is_a_library_fixture(&mock, &core_inside, &[]));
-        assert!(
-            is_a_library_fixture(&core_inside, &core_inside, &[]),
-            "equal is inside"
-        );
         assert!(is_a_library_fixture(
             &ext_mock,
             &registry,
             &[extension.as_path()]
         ));
+        assert!(
+            !is_a_library_fixture(&core_inside, &core_inside, &[]),
+            "a library is no mock of itself"
+        );
+        assert!(
+            !is_a_library_fixture(&extension, &registry, &[extension.as_path()]),
+            "an extension crate at the root"
+        );
         assert!(!is_a_library_fixture(&tree, &core_inside, &[]));
         assert!(!is_a_library_fixture(&tree, &registry, &[]));
         assert!(!is_a_library_fixture(&ext_mock, &registry, &[]));
 
-        assert!(is_its_own_build(&tree, &core_inside));
+        assert!(is_its_own_build(&tree, &core_inside, &always));
         assert!(
-            is_its_own_build(&core_inside, &core_inside),
+            is_its_own_build(&core_inside, &core_inside, &always),
             "equal is inside"
         );
-        assert!(!is_its_own_build(&tree, &registry));
-        assert!(!is_its_own_build(&mock, &core_inside));
+        assert!(
+            !is_its_own_build(&tree, &core_inside, &never),
+            "an untracked core is a registry's"
+        );
+        assert!(!is_its_own_build(&tree, &registry, &always));
+        assert!(!is_its_own_build(&mock, &core_inside, &always));
+        let asked = std::cell::RefCell::new(Vec::new());
+        let recording = |rel: &Path| {
+            asked.borrow_mut().push(rel.to_path_buf());
+            true
+        };
+        assert!(is_its_own_build(&tree, &core_inside, &recording));
+        assert_eq!(
+            *asked.borrow(),
+            vec![PathBuf::from("crates/core/Cargo.toml")]
+        );
+    }
+
+    /// The claim: a project reached through a symlink is read where the symlink resolves, so a
+    /// mock reached through a link into the core directory is a fixture.
+    #[test]
+    fn the_sentinels_read_paths_as_they_resolve() {
+        let scratch = Scratch::new("symlink");
+        let core = scratch.dir("tree/crates/core");
+        let mock = scratch.dir("tree/crates/core/tests/projects/m");
+        let link = scratch.0.join("link-to-mock");
+        std::os::unix::fs::symlink(&mock, &link).expect("a symlink");
+        assert!(is_a_library_fixture(&link, &core, &[]));
     }
 
     /// The claim: each row of the spec's mapping table, over a project the build confirms or
-    /// does not, gives the result and the message opening the table names.
+    /// does not, gives the result, the message opening and the repair the spec names.
     #[test]
     fn the_refusal_follows_the_mapping_table() {
         let scratch = Scratch::new("refusal");
@@ -1137,17 +1203,27 @@ mod tests {
         let mock = scratch.dir("tree/crates/core/tests/projects/m");
         let registry = scratch.dir("registry/knowledge-architect-0.2.0");
         let refuse = |root: &Path, value: &str, core: &Path| {
-            refuse_another_version_built_at(&pinned_at(root, value), core, "0.2.0", &[])
+            refuse_another_version_built_at(&pinned_at(root, value), core, "0.2.0", &[], &always)
         };
         let err = |r: Result<(), String>| r.expect_err("a refusal");
 
         assert_eq!(refuse(&tree, "0.2.0", &registry), Ok(()));
-        assert!(err(refuse(&tree, "0.3.0", &registry)).starts_with(
+        let older = err(refuse(&tree, "0.3.0", &registry));
+        assert!(older.starts_with(
             "this binary runs knowledge-architect 0.2.0, older than the 0.3.0 the manifest pins"
         ));
-        assert!(err(refuse(&tree, "0.1.9", &registry)).starts_with(
+        assert!(
+            older.contains("run or build knowledge-architect 0.3.0"),
+            "{older}"
+        );
+        let newer = err(refuse(&tree, "0.1.9", &registry));
+        assert!(newer.starts_with(
             "this binary runs knowledge-architect 0.2.0, newer than the 0.1.9 the manifest pins"
         ));
+        assert!(
+            newer.contains("move the pin") && newer.contains("from 0.1.9 to 0.2.0"),
+            "{newer}"
+        );
         assert!(
             err(refuse(&tree, "0.10.0", &registry)).contains("older than"),
             "compared as integers"
@@ -1159,8 +1235,23 @@ mod tests {
         assert_eq!(refuse(&tree, "self", &core_inside), Ok(()));
         assert!(err(refuse(&tree, "self", &registry))
             .starts_with("\"self\" is only valid where the checker is built from this tree"));
+        assert!(
+            err(refuse(&mock, "self", &core_inside)).starts_with("\"self\""),
+            "a mock is no own build"
+        );
 
-        // An absent key refuses with its complaint's text, whatever the build.
+        // A key in none of the three forms, or none at all, refuses with its complaint's text.
+        let bad = "[project]\nchecker-version = \"latest\"\nname = \"p\"\ncomponents = []\n\n\
+                   [walk]\nskip-dirs = []\nskip-files = []\n";
+        let malformed = Manifest::parse(&tree, bad).expect("a declaration");
+        assert!(err(refuse_another_version_built_at(
+            &malformed,
+            &core_inside,
+            "0.2.0",
+            &[],
+            &always
+        ))
+        .starts_with("[project] checker-version \"latest\" is not a version"));
         let text =
             "[project]\nname = \"p\"\ncomponents = []\n\n[walk]\nskip-dirs = []\nskip-files = []\n";
         let absent = Manifest::parse(&tree, text).expect("a declaration");
@@ -1168,7 +1259,8 @@ mod tests {
             &absent,
             &core_inside,
             "0.2.0",
-            &[]
+            &[],
+            &always
         ))
         .starts_with("[project] checker-version is absent"));
     }
@@ -1185,6 +1277,7 @@ mod tests {
             &registry,
             "0.3.0-dev",
             &[],
+            &always,
         );
         assert!(r
             .expect_err("a refusal")
