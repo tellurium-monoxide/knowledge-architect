@@ -591,7 +591,8 @@ git checkout main && git pull --ff-only && git branch -D <branch>
 - The draft flag is read here because a job skipped on a draft reports `skipped`, which GitHub
   counts as passing.
 - GitHub's rebase merge gives main the branch's commits with the same trees and messages, and new
-  SHAs, as a probe repository measured. So **neither a commit message nor a document cites the
+  SHAs, as a probe repository measured, **except a commit that changes no file, which it drops**:
+  a record carried by a message alone rides on a commit that changes a file. So **neither a commit message nor a document cites the
   SHA of a commit of its own branch**: name that commit by its subject. A SHA already on main may
   be cited. `cargo klarch commits` refuses such a citation, per
   `design@core@branch-shas-are-refused`.

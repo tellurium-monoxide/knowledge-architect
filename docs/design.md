@@ -266,6 +266,12 @@ statement false until a repair lands. The procedure is
   `gh api repos/tellurium-monoxide/rebase-merge-probe/commits` re-read both sides. So neither a commit message nor a document cites the SHA
   of a commit of its own branch: it names that commit by its subject. `commits` refuses such a
   citation, under this repository's manifest.
+- **A commit that changes no file does not reach main.** The rebase merge drops it: pull request
+  #42 of this repository held eight commits, two of them made with `--allow-empty` to record the
+  owner's rulings, and main received the other six. `gh api
+  repos/tellurium-monoxide/knowledge-architect/pulls/42/commits --jq length` against the commits
+  main received re-takes it. So a record carried by a message alone rides on a commit that changes
+  a file.
 
 ### Every component builds under one pinned toolchain `##toolchain-is-pinned`
 
