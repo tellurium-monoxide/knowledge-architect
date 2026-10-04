@@ -294,7 +294,9 @@ test mechanism, an open issue's diagnosis; the list is illustrative, not a bound
 - **Re-verify a conclusion before acting on it**, and correct it in place the moment evidence
   contradicts it.
 - **A transfer from another project names the property it depends on, and checks that the property
-  holds here.** Naming the pattern is not enough.
+  holds here.** Naming the pattern is not enough. A claim taken from another project's record, such
+  as a count of occurrences, is checked against that project's registers as well as its history:
+  its rejected alternatives and its issues often hold what its commit log does not.
 
 **Evidence here is textual and cheap**: a verbatim reading of a file, a measurement over a tree, a
 failing test. Build it rather than trading intuitions.
@@ -479,6 +481,8 @@ Linear history, no merge commits, and no direct push to main. This section is a 
 - The branch covers the full work: design, implementation, review and fixes, cleanup.
 - Once it holds a first commit, the branch is pushed and a **draft** pull request is opened for
   it: `git push -u origin <branch>`, then `gh pr create --draft`. CI does not run on a draft.
+- **A commit is pushed only after `cargo klarch commits` has passed on it**, in a command of its
+  own. A push sequenced after the check in one command runs whatever the check found.
 - **Every commit of the branch must pass the check under the branch tip's checker.** The
   `commits` gate judges each commit's tree with the tip's binary, and refuses a tree with no
   manifest or with findings. So a step whose intermediate trees cannot pass lands as one commit,
@@ -486,7 +490,8 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   that would leave an earlier commit failing, such as one that changes what the checker judges, is
   folded into the earliest commit it repairs instead, per point 2.
 - **The branch writes its CHANGELOG.md entries**, in the `Next release` section, for each change
-  that passes one of three tests, under the subsection of that test:
+  that passes one of three tests, under the subsection of that test. A branch that finds no
+  `Next release` section creates it above the newest released section. The three tests:
   - **Migration**: a consumer must change something in its own files; one entry per thing, saying
     what. Running the install of the agent skills again is never an entry.
   - **New features**: a consumer can start using something new.

@@ -32,14 +32,19 @@ scratch directory the brief names, through the shell, and nowhere else.
 
 The log of the `claude` harness is a JSONL file, one JSON object per line. Keep the lines whose
 `type` is `user` or `assistant`. From each, keep the text: a message's `message.content` may be a
-plain string, or a list of items; keep the items whose `type` is `text`. Drop tool calls, tool
-results, and every other line. Extract each transcript the brief names, in the order it gives, from
-the message where the work begins to the end.
+plain string, or a list of items; keep the items whose `type` is `text`. Keep as well the lines
+whose `type` is `attachment` and whose `attachment.type` is `queued_command`: a message delivered
+while the session was mid-turn, such as a peer agent's report, and its text is `attachment.prompt`.
+Drop tool calls, tool results, and every other line. Extract each transcript the brief names, in
+the order it gives, from the message where the work begins to the end.
 
 **Not every `user` line is the owner's.** The harness also writes, as `user` lines, text it
 injects: a line whose `isMeta` is true (a loaded skill, a message from another agent), and a line
 whose `origin.kind` is not `human` (a background task's notification, a message from a peer
-agent). Label each `user` line as the owner's or as injected, by those fields, and keep both:
+agent). A `queued_command` line carries the same two fields inside `attachment`, as
+`attachment.isMeta` and `attachment.origin.kind`. Whether an owner's message typed mid-turn
+arrives that way is not known, so such a line is labelled, never assumed injected. Label each `user` line and each `queued_command` line as the owner's or as injected, by
+those fields, and keep both:
 an injected line carries the report of another reviewer or agent, which is part of what the session
 established. Only a line labelled the owner's carries the owner's word. Where a log carries neither
 field, say so, and treat a line whose text opens with a harness tag, such as `<task-notification>`

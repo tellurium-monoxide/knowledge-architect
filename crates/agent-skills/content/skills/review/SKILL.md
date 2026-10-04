@@ -83,8 +83,10 @@ re-checking.
 - **Every reviewer that runs tests, a mutation, the checker or any binary gets its own worktree,
   detached at the commit under review, never the live tree.** A run in the live tree races the
   dispatcher's own edits, and a worktree that shares the branch ref moves under the reviewer at the
-  dispatcher's next commit. The shape is `git worktree add --detach <path> <commit>`, at a path where it pollutes no search,
-and `git worktree remove <path>` once the review and the repairs are done. **The reviewer's build output
+  dispatcher's next commit. The shape is `git worktree add --detach <path> <commit>`, at a path
+  where it pollutes no search, and `git worktree remove <path>` once the review and the repairs are
+  done. **The dispatcher names each reviewer's path in its brief, distinct for each reviewer**, so
+  reviewers dispatched together never build inside one another's worktree. **The reviewer's build output
   stays inside its worktree.** Unless every target is tied to its checkout, as the setup skill
   shows, a build directory two checkouts share lets the live checkout run the reviewer's build,
   which judges the live tree with the reviewer's code. Where every target is tied, a shared

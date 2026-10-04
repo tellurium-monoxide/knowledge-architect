@@ -262,7 +262,7 @@ fn check(
     let inputs = gathered.inputs();
     if let Err(stop) = crate::check::foundation(&model, manifest, &inputs) {
         let report = Report::stopped(stop, &model);
-        print_report(&report);
+        print_report(&report, &model);
         return Ok(ExitCode::FAILURE);
     }
 
@@ -281,7 +281,7 @@ fn check(
     let with: Vec<(&[&'static str], &dyn Prepared)> =
         prepared.iter().map(|(c, p)| (*c, p.as_ref())).collect();
     let report = crate::check::run_with(&model, manifest, &inputs, &with);
-    print_report(&report);
+    print_report(&report, &model);
     Ok(if report.failed() {
         ExitCode::FAILURE
     } else {
@@ -370,7 +370,7 @@ fn fix_then_check(
         if written > 0 {
             outln!();
         }
-        print_report(&report);
+        print_report(&report, &model);
         return Ok(ExitCode::FAILURE);
     }
 
@@ -408,15 +408,51 @@ fn fix_then_check(
 /// The order is the whole point: a caller reading the tail of the output has to reach the
 /// answer, and when the findings came first every `| tail` and every `| grep` for a count
 /// printed a success-shaped report over a failing run.
-fn print_report(report: &Report) {
+fn print_report(report: &Report, model: &crate::Model) {
     out!("{}", counts(report));
     if !report.findings.is_empty() {
         outln!();
         for finding in &report.findings {
             outln!("{finding}");
         }
+        if let Some(note) = untracked_note(&report.findings, model.untracked()) {
+            outln!("{note}");
+        }
     }
     outln!("{}", verdict(report));
+}
+
+/// The files of `findings` that git does not track, named in one note, or `None`.
+///
+/// The walk reads an untracked file like a committed one, so a scratch file left in the tree
+/// fails the run with findings that say nothing of where the file came from. The note says it,
+/// and names the two ways out besides fixing the file. It sits above the verdict, which stays
+/// the last line.
+fn untracked_note(
+    findings: &[crate::Finding],
+    untracked: &std::collections::HashSet<std::path::PathBuf>,
+) -> Option<String> {
+    let files: std::collections::BTreeSet<&std::path::PathBuf> = findings
+        .iter()
+        .map(|f| &f.file)
+        .filter(|file| untracked.contains(*file))
+        .collect();
+    if files.is_empty() {
+        return None;
+    }
+    let names: Vec<String> = files
+        .iter()
+        .map(|file| crate::finding::escaped(&file.display().to_string()))
+        .collect();
+    let (count, verb) = match names.len() {
+        1 => ("1 file".to_string(), "is"),
+        n => (format!("{n} files"), "are"),
+    };
+    Some(format!(
+        "{count} above {verb} untracked: {}\n    → the walk reads every file git does not ignore, \
+         tracked or not; a file that is no part of the project is moved out of it or ignored",
+        names.join(", ")
+    ))
 }
 
 /// Regenerate every generated index in place.
