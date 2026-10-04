@@ -517,10 +517,11 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   An entry reads ``- `<surface>`, <class>: <what>``. The surface is one of `checks`, `cli`,
   `manifest`, `library`, `agent-skills`, `gates`, and entries are sorted in that order. The class is
   patch for a skill change or a code change that changes no check and no command, minor for a check
-  added or made stricter or an addition that changes nothing existing, major for a change that may
-  require a change in a project or breaks a command or the library API. A check, a command or an
-  addition is one the published crates bring to a consuming project; a test, a gate or an xtask
-  subcommand of this repository, and a file shipped for reading alone, are none. A change with no
+  added or made stricter, even one a project must change its content to pass, or an addition that
+  changes nothing existing, major for a change to the documents and homes a project must carry or
+  to what its manifest accepts, or one that breaks a command or the library API. A check, a command
+  or an addition is one the published crates bring to a consuming project; a test, a gate or an
+  xtask subcommand of this repository, and a file shipped for reading alone, are none. A change with no
   entry is at most a patch. This is a restatement; its homes are
   `design@knowledge-architect@changelog-entries` and `design@knowledge-architect@versioning-policy`.
 

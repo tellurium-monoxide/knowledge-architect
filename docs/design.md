@@ -128,8 +128,14 @@ for reading alone, such as its changelog: each is at most a patch.
 | bump | when |
 | --- | --- |
 | patch | skill changes; code changes that change no check and no command |
-| minor | a check becomes stricter, or a check is added; additions that change nothing existing; command and manifest changes that only add |
-| major | a command change that breaks existing usage; a change that may require a layout or content change in a project; a breaking change to the library API |
+| minor | a check becomes stricter, or a check is added, even when a project must change its content to pass it; additions that change nothing existing; command and manifest changes that only add |
+| major | a command change that breaks existing usage; a change to the documents and homes a project must carry, or to what its manifest accepts; a breaking change to the library API |
+
+- **A stricter check is minor even when it requires a content change.** Every stricter check may
+  require a content change in some project, so a major row that took every content change would
+  leave the minor row with no check in it, and two rows that overlap give a changelog entry no
+  single class. The major row keeps the changes a project meets as a refusal of its shape: a
+  required document or home, and a manifest that stops being accepted.
 
 - **Under 0.x, Cargo has two positions.** A requirement "0.3" accepts 0.3.2 and refuses 0.4. So
   while at 0.x, major and minor both bump 0.MINOR, and patch bumps 0.x.PATCH.
