@@ -13,7 +13,8 @@ produced it. It leaves the repository in the commit that completes its harvest.
   defect of this spec.
 - Every name it uses is defined in it, under Names or New names, or exists in the code.
 - Where it marks a point as the owner's and the owner is absent, the work does not proceed on that
-  point.
+  point. **Step 1 does not start before the owner rules on the default under Defaults awaiting
+  the owner**, since it governs its code.
 - **This spec lands on main before its work.** The owner ruled at transcript line 2005 that
   "writing plan document should not be constrained with when its implementation work happens".
   The work is then one branch and one pull request, whose first commit carries the change of the
@@ -33,9 +34,9 @@ produced it. It leaves the repository in the commit that completes its harvest.
   criterion judged at it, and the pull request is marked ready only after step 3.
 - It was assembled from one transcript,
   `path@elsewhere@~/.claude/projects/-home-catA-tb266682-Documents-code-knowledge-architect/19fd993c-9ae8-43cf-8609-41d92e79b77a.jsonl`.
-  The discussion spans its lines 171 to 1923; the owner's messages that bear on it are at lines
-  171, 220, 988, 1270, 1366, 1378, 1712, 1738 and 1923. Lines 1270, 1366, 1712 and 1923 are queued
-  messages,
+  The discussion spans its lines 171 to 2005; the owner's messages that bear on it are at lines
+  171, 220, 988, 1270, 1366, 1378, 1712, 1738, 1923, 1976 and 2005. Lines 1270, 1366, 1712 and
+  1923 are queued messages,
   recorded with `attachment.type: queued_command` and `origin.kind: human`.
 
 ## How a step is worked
@@ -51,7 +52,8 @@ Per `knowledge-architect-planning`, §7.
 - **the maintenance crate**: the setup skill's term for the crate through which a Rust project
   pins and runs the checker, per `design@agent-skills@xtask-pins-checker`.
 - **the pin key**: the new `[project]` key that declares the pin in the manifest,
-  `checker-version`, the name the owner chose. In this spec "the key" always means it.
+  `checker-version` by default (see Defaults awaiting the owner). In this spec "the key" always
+  means it.
 - **a sentinel**: one of the two values of the key that are not versions, `"fixture"` and
   `"self"`.
 - **the binary's version**: the version of the core library the running binary links,
@@ -569,7 +571,7 @@ Since a tree without the key stops in phase 1 under the tip checker, step 1's co
 the key to the workspace's manifests, is the first of the work's branch (Status and audience). Its
 first parent is main's tip, which stops in phase 1 under it and so serves as no parent: the first
 commit's message is judged against its own tree alone, so it names no entry that only main's tip
-defines, this spec included, which it names in plain words.
+defines; it may cite this spec, which its tree holds.
 
 ## Mapping tables
 
@@ -748,11 +750,11 @@ step 1 first on its branch, so that no commit of the branch holds a manifest wit
 
 ## Defaults awaiting the owner
 
-None. The key's name was the one default: the session used `checker` as an example at lines 1125
-and 1731, and the owner then named it at line 1923, a queued message: "maybe checker-version for
-the key ? It is a bit more explicit IMO. Or just version."; the session took `checker-version`,
-since `version` under `[project]` reads as the project's own version, and the owner may still
-correct it.
+- **The key's name, `checker-version`**: the session used `checker` as an example at lines 1125 and
+  1731; the owner then proposed at line 1923, a queued message: "maybe checker-version for the key
+  ? It is a bit more explicit IMO. Or just version." The session took `checker-version`, since
+  `version` under `[project]` reads as the project's own version. Default: `checker-version`. Step
+  1 does not start before the owner confirms it or names `version`.
 
 ## Harvest
 
