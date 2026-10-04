@@ -403,7 +403,8 @@ fn fix_then_check(
     }
 }
 
-/// The summary first, the findings under it, the verdict on the last line.
+/// The summary first, the findings under it, then the note on untracked files when one is owed,
+/// and the verdict on the last line.
 ///
 /// The order is the whole point: a caller reading the tail of the output has to reach the
 /// answer, and when the findings came first every `| tail` and every `| grep` for a count
@@ -426,8 +427,11 @@ fn print_report(report: &Report, model: &crate::Model) {
 ///
 /// The walk reads an untracked file like a committed one, so a scratch file left in the tree
 /// fails the run with findings that say nothing of where the file came from. The note says it,
-/// and names the two ways out besides fixing the file. It sits above the verdict, which stays
-/// the last line.
+/// and what to do with a file that belongs to the project and with one that does not. It sits
+/// above the verdict, which stays the last line.
+///
+/// The manifest is left out: it is read because it is the manifest, not because the walk lists
+/// it, so neither moving it out nor ignoring it is a way out, and the note would say both.
 fn untracked_note(
     findings: &[crate::Finding],
     untracked: &std::collections::HashSet<std::path::PathBuf>,
@@ -436,6 +440,7 @@ fn untracked_note(
         .iter()
         .map(|f| &f.file)
         .filter(|file| untracked.contains(*file))
+        .filter(|file| file.as_path() != std::path::Path::new(crate::MANIFEST_NAME))
         .collect();
     if files.is_empty() {
         return None;
@@ -450,7 +455,8 @@ fn untracked_note(
     };
     Some(format!(
         "{count} above {verb} untracked: {}\n    → the walk reads every file git does not ignore, \
-         tracked or not; a file that is no part of the project is moved out of it or ignored",
+         tracked or not: commit a file that belongs to the project, and move out or ignore one \
+         that does not",
         names.join(", ")
     ))
 }

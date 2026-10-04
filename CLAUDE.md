@@ -481,8 +481,9 @@ Linear history, no merge commits, and no direct push to main. This section is a 
 - The branch covers the full work: design, implementation, review and fixes, cleanup.
 - Once it holds a first commit, the branch is pushed and a **draft** pull request is opened for
   it: `git push -u origin <branch>`, then `gh pr create --draft`. CI does not run on a draft.
-- **A commit is pushed only after `cargo klarch commits` has passed on it**, in a command of its
-  own. A push sequenced after the check in one command runs whatever the check found.
+- **A commit is pushed only after `cargo klarch commits` has passed on it**: in a command of its
+  own, or behind `&&` on the bare check. A push after `;`, or after a check whose output went
+  through a pipe, runs whatever the check found.
 - **Every commit of the branch must pass the check under the branch tip's checker.** The
   `commits` gate judges each commit's tree with the tip's binary, and refuses a tree with no
   manifest or with findings. So a step whose intermediate trees cannot pass lands as one commit,

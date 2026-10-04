@@ -65,7 +65,9 @@ invocation costs no walk.
 `PASSED: no findings`, or `FAILED: n findings above`. The verdict is derived from the finding list
 rather than tracked beside it, so it cannot disagree with the exit code. **The order is a
 contract**: the summary block prints on a failing run as well as a passing one, so a reader taking
-the tail of the output has to reach the verdict rather than the counts.
+the tail of the output has to reach the verdict rather than the counts. When a finding sits in a
+file git does not track, one note naming each such file follows the findings, above the verdict:
+the walk reads untracked files, and a scratch file left in the tree fails the run like any other.
 
 **A run is four phases, and it stops at the first that finds anything.** Phase 1 resolves the
 manifest: a declaration the tool refuses is reported and acted on by nothing. Phase 2 reads the

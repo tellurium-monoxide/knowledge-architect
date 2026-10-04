@@ -2557,11 +2557,56 @@ fn a_finding_in_an_untracked_file_is_followed_by_a_note_naming_it() {
         "{out}"
     );
     assert!(
-        lines[note + 1].contains("moved out of it or ignored"),
+        lines[note + 1].contains("commit a file that belongs to the project"),
         "{out}"
     );
     assert!(
         lines.last().expect("a verdict").starts_with("FAILED:"),
         "{out}"
     );
+
+    // Two findings in one file name it once, and a second file makes the count plural.
+    sandbox.write("scratch.md", "`c/d`\n`e/f`\n");
+    sandbox.write("other.md", "`g/h`\n");
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    assert!(
+        out.lines()
+            .any(|l| l == "2 files above are untracked: other.md, scratch.md"),
+        "{out}"
+    );
+}
+
+/// The claim: a finding with no line, from a run stopped at phase 2, is noted like any other,
+/// and a line break in the untracked name is escaped, so the note stays one line.
+#[test]
+fn the_untracked_note_covers_a_phase_two_stop_and_escapes_the_name() {
+    let sandbox = Sandbox::new("untracked-note-phase-two", "core");
+    sandbox.write("nl\nname.md", "text\n");
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    assert!(out.contains("phase 2:"), "{out}");
+    assert!(
+        out.lines()
+            .any(|l| l == "1 file above is untracked: nl\\nname.md"),
+        "{out}"
+    );
+}
+
+/// The claim: an untracked manifest brings no note, since it is read whatever git says of it
+/// and neither moving it out nor ignoring it is a way out.
+#[test]
+fn an_untracked_manifest_brings_no_untracked_note() {
+    let sandbox = Sandbox::new("untracked-note-manifest", "core");
+    sandbox.git(&["rm", "-q", "--cached", "knowledge-architect.toml"]);
+    let manifest =
+        std::fs::read_to_string(sandbox.path("knowledge-architect.toml")).expect("the manifest");
+    sandbox.write(
+        "knowledge-architect.toml",
+        &format!("{manifest}\n[bogus]\n"),
+    );
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    assert!(out.contains("knowledge-architect.toml"), "{out}");
+    assert!(!out.contains("untracked:"), "{out}");
 }
