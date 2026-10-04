@@ -275,7 +275,7 @@ checks that a session followed it: thaum's rejected alternatives list three runs
 checkout's build, from two review checkouts and one probe, and thaum's own issue on the second
 says whether that reviewer set the directory is not established. The tie is the prevention, and it
 holds whatever target directory the session sets. The separate directory stays an instruction of the review skill,
-for the rebuilds it saves. `design@core@a-foreign-build-is-refused` stays the detector. The cost is
+for the rebuilds it saves and for the build lock two checkouts would otherwise wait on. `design@core@a-foreign-build-is-refused` stays the detector. The cost is
 a rebuild at each switch between checkouts that share a target directory. A single checkout pays
 nothing.
 
