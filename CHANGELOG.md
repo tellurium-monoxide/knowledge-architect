@@ -17,9 +17,12 @@ subsection is omitted.
   binary links, and in a manifest a test only parses, or `"self"` where the checker is built from
   the project's own tree; it holds for mock projects too, an extension's included. A manifest
   without it, or a binary of another version, refuses every command with exit 2. A binary
-  released before this one refuses a manifest carrying the key, as an unknown field. An extension
-  binary's `main` calls `cli::refuse_another_version` after `cli::refuse_a_foreign_build`, before
-  its match on the command, as the crate's template shows.
+  released before this one refuses a manifest carrying the key, as an unknown field.
+- `library`, minor: `cli::refuse_another_version` refuses a run over a project whose
+  `[project] checker-version` the binary does not satisfy. A project's maintenance crate or
+  extension binary calls it in its `main`, after `cli::refuse_a_foreign_build` and before its
+  match on the command, as the crate's template shows; without the call, that binary enforces no
+  pin.
 
 ### New features
 
@@ -30,6 +33,8 @@ subsection is omitted.
 - `checks`, minor: the retired slug reference is reported only when its id is an entry of the
   project, or its word an anchor or a kind. An issue number `#123` or a directive `#include` can be
   written in backticks.
+- `cli`, minor: `check` names, above its verdict, each file holding a finding that git does not
+  track, and says to commit it, or to move it out or ignore it.
 
 ### Workflow
 
