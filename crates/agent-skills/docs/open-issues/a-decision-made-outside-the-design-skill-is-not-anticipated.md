@@ -20,9 +20,10 @@ the setup stops when no owner is present, and dropped the hedge from the second 
 message. It then showed both to the owner inside a long report, and the owner's "agreed" answered
 another question. The transcript reviewer found both, and the owner then ruled on each.
 
-The design skill's rule that would have caught it: "A message that could close a thread but does
-not clearly leaves it `presumed-settled`, with the agent's reading stated." No installed skill
-carries an equivalent outside a design discussion.
+The design skill's rule that would have caught it: a word that requires interpretation "closes
+nothing: mark the threads your reading would close as `presumed-settled`, state the reading, and
+let their next word ... promote or correct" it. No installed skill carries an equivalent outside a
+design discussion.
 
 The suspected mechanism, the owner's: the workflow does not anticipate that a design decision is
 made outside the use of the design skill. This is not counted as an instance of

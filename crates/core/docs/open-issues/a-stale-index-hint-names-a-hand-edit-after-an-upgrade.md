@@ -1,7 +1,7 @@
 ---
 kind: todo
 ---
-# After an upgrade, a stale generated file's finding names a hand edit as the cause
+# After an upgrade, a stale index's finding names a hand edit as the cause
 
 ## Summary
 
@@ -13,14 +13,19 @@ retrospective of 2026-10-04.
 
 ### What
 
-The finding's text is in `path@core@src/check/generated.rs`: "the generated file is out of date →
-run `klarch index`; the listing is a function of the entries beside it, and a hand edit is what
-this reports". The adversarial reviewer of the branch that changed a one-row index's count line to
-`1 entry` reproduced it, as reported: a copy of the `minimal` mock, git-initialised, the pin set to
-the binary's version, and its issue index set back to `1 entries`; `klarch check` exits 1 with that
-finding, and `check --fix` repairs it. Not reproduced by the session that writes this entry.
+The finding's text is in `path@core@src/check/generated.rs`, for the index of a file register:
+"the generated file is out of date → run `klarch index`; the listing is a function of the entries
+beside it, and a hand edit is what this reports". An extension's generated file carries its own
+text. Reproduced with the checker built from main after the change of a one-row index's count line
+to `1 entry`: a copy of `path@core@tests/projects/minimal/`, git-initialised, its pin set to the
+binary's version, and its docs/open-issues/index.md set back to `1 entries`. `klarch check` exits
+1 with that finding, and `check --fix` repairs it, as the adversarial reviewer of that branch
+reported.
 
-After an upgrade nobody edited the file. The repair named is right; the cause is wrong.
+After an upgrade nobody edited the file. The repair named is right; the cause is wrong. The same
+finding text misleads on a branch that changes the generator, where `commits` reports every earlier
+commit: `issue@core@a-contract-change-fails-every-earlier-commit-unexplained`. The two close by
+different work at the same site, so closing either revisits the other.
 
 ### Why it matters
 

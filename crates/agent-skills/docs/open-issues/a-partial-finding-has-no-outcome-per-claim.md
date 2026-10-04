@@ -13,7 +13,9 @@ issues, and says nothing of a finding acted on in part. Finding W4 of the retros
 
 ### What
 
-In the session of that retrospective, two findings were acted on in part. The decision-record
+In the session of that retrospective, two findings were acted on in part, in the commit "[review]
+Five reviewers read the pre-release fixes: the setup skill's local-install branch and the bump
+table's manifest row are repaired". The decision-record
 reviewer's finding on a narrowed head also said that the reversal owed a report of the search for
 the incumbent; the self-consistency reviewer's finding on the same edit also said that it weakened
 a goal. The heads were repaired, and the other two claims had no outcome until the transcript

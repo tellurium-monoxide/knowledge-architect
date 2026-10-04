@@ -31,10 +31,15 @@ could assert, on every commit rather than at the release:
 What it cannot assert is whether a change owes an entry, or which class it has: those stay with
 the reviewer.
 
+An instance, from the branch that fixed four issues before the 0.3.0 release: a `checks` entry was
+appended after a `manifest` entry in the Migration subsection. Every gate passed it; two reviewers
+of the branch found it, before the release. Findings P2 and C2 of the retrospective of
+2026-10-04.
+
 ### Why it matters
 
 A shape defect, a misspelt surface, a class outside the list or an entry out of order, is found
-today only at the release, by a subagent reading the file, and a released section's content can
+today only by a subagent reading the file, at the release or when a branch's reviewers happen to, and a released section's content can
 change with nothing reporting it. It strains `design@knowledge-architect@changelog-entries`, whose
 rule on released sections has no mechanical guard, nor has the preamble's order of entries, against
 `goal@knowledge-architect@documentation-stays-consistent`.
