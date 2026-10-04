@@ -83,7 +83,7 @@ impl fmt::Display for Finding {
 }
 
 /// The text with each line break written as `\n` or `\r`.
-fn escaped(text: &str) -> String {
+pub(crate) fn escaped(text: &str) -> String {
     text.replace('\n', "\\n").replace('\r', "\\r")
 }
 

@@ -148,7 +148,8 @@ patch**: every minor or major change passes the migration or the new-feature tes
 release's bump is the highest class among its entries, a patch at least, and a review of the
 release can tell a missing entry from a change that owes none.
 
-The branch that makes a change writes its entries, because its author knows what changed and in
+The branch that makes a change writes its entries, in the `Next release` section, and creates the
+section above the newest released one when a release has just renamed it. It writes them because its author knows what changed and in
 which class at that moment; rebuilt at the release from commit messages, an entry is lost when
 nothing asks for it, as one change to a shipped skill after 0.1.0 was. The release is reviewed
 once against these tests, rather than every merge, because a release branch can repair any gap
@@ -200,7 +201,8 @@ statement false until a repair lands. The procedure is
 ### All work goes through a branch, a review and a pull request merged up to date with main `##git-flow`
 
 - All work happens on a branch. Once it holds a first commit, it is pushed and a draft pull
-  request is opened. CI does not run on a draft.
+  request is opened. CI does not run on a draft. A commit is pushed only after `commits` has
+  passed on it, since a failing message on the remote branch is what a later fetch or review reads.
 - No operation that can lose content, committed or not. With a clean tree, editing the branch's
   own history is an ordinary move, bounded by verifying that nothing was lost.
 - The branch is rebased on main before review and merge, and reviewed before any merge. A repair

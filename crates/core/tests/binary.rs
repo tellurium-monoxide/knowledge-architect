@@ -2531,3 +2531,37 @@ fn check_fix_over_a_refused_manifest_writes_nothing() {
         .path(".claude/knowledge-architect/PRIMER.md")
         .exists());
 }
+
+/// The claim: a finding in a file git does not track is followed by one note naming the file
+/// as untracked, above the verdict; a finding in a tracked file brings no note.
+#[test]
+fn a_finding_in_an_untracked_file_is_followed_by_a_note_naming_it() {
+    let sandbox = Sandbox::seeded("untracked-note", "core", &[("tracked.md", "`a/b`\n")]);
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    assert!(out.contains("tracked.md:1"), "{out}");
+    assert!(!out.contains("untracked:"), "{out}");
+
+    // Written after the copy was staged, so git does not track it.
+    sandbox.write("scratch.md", "`c/d`\n");
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    assert!(out.contains("scratch.md:1"), "{out}");
+    let lines: Vec<&str> = out.lines().collect();
+    let note = lines
+        .iter()
+        .position(|l| l.contains("untracked:"))
+        .expect("a note naming the untracked file");
+    assert_eq!(
+        lines[note], "1 file above is untracked: scratch.md",
+        "{out}"
+    );
+    assert!(
+        lines[note + 1].contains("moved out of it or ignored"),
+        "{out}"
+    );
+    assert!(
+        lines.last().expect("a verdict").starts_with("FAILED:"),
+        "{out}"
+    );
+}

@@ -14,6 +14,8 @@ subsection is omitted.
   checkout: a cargo `[env]` variable valued at the checkout's root, read by every library root and
   every target of a package with no library, and named by every build script. A target directory
   shared by two checkouts then rebuilds instead of running the other checkout's build.
+- `agent-skills`, patch: the review skill has the dispatcher name each reviewer's worktree path in
+  its brief, distinct for each reviewer.
 
 ## 0.2.0
 

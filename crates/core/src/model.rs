@@ -1,5 +1,6 @@
 //! The model: every live document, read once, scanned once.
 
+use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
 use crate::manifest::Manifest;
@@ -81,6 +82,8 @@ pub struct Model {
     listing: Vec<PathBuf>,
     /// The listing's symlink and gitlink entries, which the walk reads through neither.
     links: Vec<crate::git::Entry>,
+    /// The part of the listing git does not track. A model assembled in memory carries none.
+    untracked: HashSet<PathBuf>,
     /// The checker's own directories as the summary names them: each relative to the root when
     /// it sits under it, absolute otherwise, empty when the caller passed none.
     checker_sources: Vec<PathBuf>,
@@ -118,7 +121,8 @@ impl Model {
         // Git is the walk. No `git` on the path and a directory outside a worktree are both
         // errors naming the reason, never an empty listing: a project reported as holding no
         // document is a run that checked nothing and said it was clean.
-        let entries = crate::git::entries(root)?;
+        let (entries, untracked) = crate::git::entries(root)?;
+        let untracked: HashSet<PathBuf> = untracked.into_iter().collect();
         let listing: Vec<PathBuf> = entries.iter().map(|e| e.rel.clone()).collect();
         // A symlink or a gitlink is not a document: the walk reads through neither, and
         // `check::tree` names each as what it is.
@@ -205,6 +209,7 @@ impl Model {
             docs,
             listing,
             links,
+            untracked,
             checker_sources,
         })
     }
@@ -215,6 +220,11 @@ impl Model {
     /// memory, which has no tree behind it.
     pub(crate) fn listing(&self) -> &[PathBuf] {
         &self.listing
+    }
+
+    /// The files of the listing git does not track, project-relative.
+    pub(crate) fn untracked(&self) -> &HashSet<PathBuf> {
+        &self.untracked
     }
 
     /// The listing's symlink and gitlink entries, each a phase-2 finding.
@@ -282,6 +292,7 @@ impl Model {
             docs,
             listing: Vec::new(),
             links: Vec::new(),
+            untracked: HashSet::new(),
             checker_sources: checker.iter().map(|p| p.to_path_buf()).collect(),
         }
     }

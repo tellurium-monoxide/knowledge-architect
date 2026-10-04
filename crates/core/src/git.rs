@@ -241,7 +241,10 @@ pub struct Entry {
 /// tracked file cannot leave the walk however the ignore rules are written; `--exclude-standard`
 /// applies them to `--others` alone, which is where build output and on-demand directories are
 /// dropped. Every remaining exclusion is the manifest's, and `walk::live_files` applies it.
-pub(crate) fn entries(root: &Path) -> io::Result<Vec<Entry>> {
+///
+/// The second list is the untracked part, `--others`, so a report can say which of its files
+/// no commit holds.
+pub(crate) fn entries(root: &Path) -> io::Result<(Vec<Entry>, Vec<PathBuf>)> {
     let staged = git(root)
         .args(["ls-files", "-z", "-s", "--cached"])
         .output()?;
@@ -252,15 +255,18 @@ pub(crate) fn entries(root: &Path) -> io::Result<Vec<Entry>> {
     let others = git(root)
         .args(["ls-files", "-z", "--others", "--exclude-standard"])
         .paths()?;
-    for rel in others {
-        let kind = match std::fs::symlink_metadata(root.join(&rel)) {
+    for rel in &others {
+        let kind = match std::fs::symlink_metadata(root.join(rel)) {
             Ok(meta) if meta.file_type().is_symlink() => EntryKind::Symlink,
             _ => EntryKind::File,
         };
-        out.push(Entry { rel, kind });
+        out.push(Entry {
+            rel: rel.clone(),
+            kind,
+        });
     }
     out.sort_by(|a, b| a.rel.cmp(&b.rel));
-    Ok(out)
+    Ok((out, others))
 }
 
 /// One line of `ls-files -s` or `ls-tree -r`: the mode is the first field, the path follows
