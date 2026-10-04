@@ -22,8 +22,8 @@ subsection is omitted.
   a lead in its issue entry, which the design session judges.
 - `agent-skills`, patch: after installing a new version, each open milestone document's procedure
   for working a step is restated from the new planning skill.
-- `agent-skills`, patch: the record of a review names each reviewed commit by its subject, not by
-  its SHA.
+- `agent-skills`, patch: where a rebase rewrites the branch's commits before they reach the main
+  branch, the record of a review names each reviewed commit by its subject, not by its SHA.
 
 ## 0.2.0
 

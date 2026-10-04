@@ -27,13 +27,14 @@ namespace, since an install path outside it would write a file the project owns.
 
 ### The shipped text names no project and holds no live reference `##shipped-text-is-reference-free`
 
-The text under content/ is read in every project that installs it, so it names no path, no
-Component and no convention of this repository, per `goal@knowledge-architect@any-project-can-adopt-it`.
-The one name it holds on purpose is the workflow's own upstream repository, where a retrospective's
-findings on the workflow go, per `design@agent-skills@retrospective-destination`. It holds no live
-reference: a reference resolves only against the tree it stands in, and no tree but this one holds
-this repository's entries. An illustration writes a placeholder in angle brackets. The command a
-project runs is written as the placeholder that the install fills with the project's declared
+The text under content/ is read in every project that installs it, so it names no path, no Component
+and no convention of this repository, per `goal@knowledge-architect@any-project-can-adopt-it`. The
+one name it holds on purpose is the workflow's own upstream repository: where a retrospective's
+findings on the workflow go, per `design@agent-skills@retrospective-destination`, and where the
+changelog is read when a project moves its pin, since the published crates do not carry it. It holds
+no live reference: a reference resolves only against the tree it stands in, and no tree but this one
+holds this repository's entries. An illustration writes a placeholder in angle brackets. The command
+a project runs is written as the placeholder that the install fills with the project's declared
 command, per `design@core@declared-command`.
 
 This repository's manifest takes content/ out of the walk, because its illustration paths would be
@@ -203,18 +204,18 @@ implementing work, one that constrains work nobody has started, is recorded when
 ### A design home holds built intent, and a plan document holds unbuilt intent `##design-home-is-built-intent`
 
 A design home holds the design as built and its reasons, and the code is checked against it. A plan
-document holds decided design that is not built yet, and each decision moves into the design home
-at the landing of the work that builds it. A decision that no work implements counts as built
-intent, since nothing waits to be built. The rival, a design home holding
-intent built or not, needs a marker on every entry to tell the two apart, and checking the code
-against an unbuilt entry reports a defect in code nobody has written. Unbuilt intent has a checked
-home because plan documents are a structure the checker reads, per `design@core@plan-register`.
-A head can be wrong, and while it diverges from the code it still prevails: the divergence closes
-when the code meets the head or when the head is reversed, never by following the code. Without
-that, a session that must keep working would build on whichever side it met first, and a
-divergence would close silently in the code's favour, against
-`goal@knowledge-architect@agents-work-without-drift`.
-This serves `goal@knowledge-architect@documentation-stays-consistent`.
+document holds decided design that is not built yet, and each decision moves into the design home at
+the landing of the work that builds it. A decision that no work implements counts as built intent,
+since nothing waits to be built. The rival, a design home holding intent built or not, needs a
+marker on every entry to tell the two apart, and checking the code against an unbuilt entry reports
+a defect in code nobody has written. Unbuilt intent has a checked home because plan documents are a
+structure the checker reads, per `design@core@plan-register`. A head can be wrong, and while it
+diverges from the code it still prevails: the divergence closes when the code meets the head or when
+the head is reversed, never by following the code, and work that goes on meanwhile, on the owner's
+word, builds on the head. Without that, a session that must keep working would build on whichever
+side it met first, and a divergence would close silently in the code's favour, against
+`goal@knowledge-architect@agents-work-without-drift`. This serves
+`goal@knowledge-architect@documentation-stays-consistent`.
 
 ### A design head carries the standing argument, and history carries the deliberation `##standing-argument-in-head`
 

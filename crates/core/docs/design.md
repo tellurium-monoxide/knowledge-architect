@@ -1461,14 +1461,15 @@ verbatim.
 
 **One command judges messages, after the commit exists.** `commits <range>` judges every commit of
 the range against its own tree, with its first parent. It is run over `HEAD~1..HEAD` after each
-commit, or over the branch where `design@core@branch-shas-are-refused` is turned on, so a finding in
-the newest commit's message is repaired by `git commit --amend`, and over the branch by the gates
-and by CI before any merge, which is where the guarantee lies: `main` is never rewritten, so what
-must not happen is a message with a finding reaching it, and the range check before the merge
-excludes that. No hook judges a draft before the commit exists. A hook repeats the range check's
-message half, not its tree half, at every commit; it is per-clone state a session has to install and
-check; and it resolves a message against HEAD, which under an amend, a reword or a squash is the
-commit being replaced, so it refuses history edits the range check accepts.
+commit, or over the branch where `design@core@branch-shas-are-refused` is turned on, per
+`issue@core@branch-sha-citations-are-judged-within-the-range-only`, so a finding in the newest
+commit's message is repaired by `git commit --amend`, and over the branch by the gates and by CI
+before any merge, which is where the guarantee lies: `main` is never rewritten, so what must not
+happen is a message with a finding reaching it, and the range check before the merge excludes that.
+No hook judges a draft before the commit exists. A hook repeats the range check's message half, not
+its tree half, at every commit; it is per-clone state a session has to install and check; and it
+resolves a message against HEAD, which under an amend, a reword or a squash is the commit being
+replaced, so it refuses history edits the range check accepts.
 
 **Everything a commit is judged against is read from that commit's tree.** The manifest, the
 `[walk]` rules, the documents, the generated indexes, the per-instance options and every file an
@@ -1539,10 +1540,12 @@ one would name nothing once the branch merges. A SHA on the main branch, or of a
 not in the range and passes, unless its first 7 digits collide with a SHA of the range. **A citation
 is seen only when the cited commit is in the range judged**, so where the option is on, the check
 after a commit is run over the branch, `<main>..HEAD`: over `HEAD~1..HEAD`, a citation of an earlier
-commit of the branch passes, and fails first at the merge gate, after the push. Only lowercase
-counts, since git prints a SHA in lowercase, and `_` bounds a word as a letter or a digit does,
-since it joins the parts of an identifier. A project whose merges keep the SHAs, such as
-fast-forwards, has nothing to refuse, so the check is off unless the manifest turns it on. It serves
+commit of the branch passes, and fails first at the merge gate, after the push, per
+`issue@core@branch-sha-citations-are-judged-within-the-range-only`. Only lowercase counts, since git
+prints a SHA in lowercase, and `_` bounds a word as a letter or a digit does, since it joins the
+parts of an identifier. A project whose branch commits keep their SHAs until they reach the main
+branch has nothing to refuse; a rebase onto main before a fast-forward rewrites them as surely as a
+rebase merge does, so the check is off unless the manifest turns it on. It serves
 `goal@core@declared-instructions-are-checked`: a rule against such citations is kept by running
 `commits`, not by a reviewer remembering it.
 

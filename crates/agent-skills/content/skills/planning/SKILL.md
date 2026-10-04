@@ -279,8 +279,8 @@ names:
 **A check proposed before the work has a plan document is a lead, not a criterion.** It stays in
 the work's `todo` or `deferred` issue, among its leads, and the design session judges it: it
 becomes a criterion of the plan document, or it is dropped. It fires nothing while it is a lead.
-Evidence that bears on it before the design session is an `observation` entry of its own, which
-the issue names.
+Evidence that bears on it before the design session is an issue entry of its own, an
+`observation` or a `defect` by what it establishes, which the work's issue names.
 
 **The result a scheduled review is expected to give is not a criterion.** Passing the reviews that
 every plan document and every step owes is the baseline. A criterion names an observable specific to

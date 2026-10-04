@@ -33,7 +33,9 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    its own entries there, per `design@knowledge-architect@changelog-entries`, and step 9's review
    checks them. The version chosen at step 1 follows the highest bump class among its entries,
    a patch at least.
-3. **Commit**, with `cargo klarch check` before and `cargo klarch commits origin/main..HEAD` after.
+3. **Commit**, with `cargo klarch check` before and `cargo klarch commits origin/main..HEAD` after:
+   the whole branch, per root `CLAUDE.md`, section Verify mechanically, and
+   `issue@core@branch-sha-citations-are-judged-within-the-range-only`.
    Cargo refuses to package an uncommitted tree, so the commit comes before the next steps.
 4. **The shipped text holds no live reference.** List every backticked span with an `@` under
    crates/agent-skills/content/, and read each one:

@@ -271,13 +271,15 @@ anyone has checked it.
 
 **Two classes of statement, and the instruction differs.**
 
-- **Built intent**: the root's design home, and a Component's design home. They hold the design
-  as built and its reasons, and the decisions that no work implements, recorded when made. Design
-  that is decided and not built is in a plan document until it lands. This is authority. Do not
-  verify it against the code. Verify the code against it. A divergence is a defect in one of them.
-  Say which, open an entry, and stop. The design home prevails until the entry closes: when the
-  code meets the head, or when the head is reversed. A divergence is never licence to follow the
-  code. This is a restatement; its home is `design@agent-skills@design-home-is-built-intent`.
+- **Built intent**: the root's design home, and a Component's design home. They hold the design as
+  built and its reasons, and the decisions that no work implements, recorded when made. Design that
+  is decided and not built is in a plan document until it lands. This is authority. Do not verify it
+  against the code. Verify the code against it. A divergence is a defect in one of them. Say which,
+  open an entry, and stop. A design home can be wrong, and it still prevails until the entry closes:
+  when the code meets the head, or when the head is reversed under
+  `knowledge-architect-decision-recording`. Work that goes on meanwhile builds on the head. A
+  divergence is never licence to follow the code. This is a restatement; its home is
+  `design@agent-skills@design-home-is-built-intent`.
 - **A claim about the code as it stands**: an invariant in a scoped `CLAUDE.md`, a doc comment, a
   name, a return value, an open issue's diagnosis. This goes stale. Check it before relying on it.
 
@@ -442,10 +444,11 @@ test suite. Every commit owes `commits`: its message and its tree. **Run `cargo 
 each commit, which judges the tree, and `cargo klarch commits origin/main..HEAD` after it, which
 judges the message.** The range is the whole branch because this repository refuses citations of its
 branch's own commits by SHA, and `commits` sees a citation only of a commit in the range it judges,
-per `design@core@branch-shas-are-refused`. A commit that fails either is repaired by an amend while
-it is the newest, and by a history edit after, both with a clean tree per `## Git` point 2. A branch
-about to merge owes all of them: one `cargo x gates --require-rebased`. CI runs them on every push
-to a ready pull request.
+per `design@core@branch-shas-are-refused`; the checker-side fix is
+`issue@core@branch-sha-citations-are-judged-within-the-range-only`. A commit that fails either is
+repaired by an amend while it is the newest, and by a history edit after, both with a clean tree per
+`## Git` point 2. A branch about to merge owes all of them: one `cargo x gates --require-rebased`.
+CI runs them on every push to a ready pull request.
 
 ## Skills
 

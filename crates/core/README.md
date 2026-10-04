@@ -356,7 +356,7 @@ its commit's tree. The argument is
 `design@core@a-commit-message-is-a-document`.
 
 ```sh
-cargo klarch commits HEAD~1..HEAD        # the commit just made
+cargo klarch commits HEAD~1..HEAD        # the commit just made, where branch SHAs are not refused
 cargo klarch commits origin/main..HEAD   # the branch's own commits
 ```
 
@@ -379,7 +379,8 @@ rebase merge gives those commits new SHAs, and the citation would then name noth
 commit by its subject. A SHA already on the main branch may be cited. The option is off when absent,
 and is read from each commit's own manifest. A citation is seen only when the cited commit is in the
 range judged, so with the option on, run the check after a commit over the branch, `<base>..HEAD`:
-over `HEAD~1..HEAD`, a citation of an earlier commit of the branch passes. The argument is
+over `HEAD~1..HEAD`, a citation of an earlier commit of the branch passes, per
+`issue@core@branch-sha-citations-are-judged-within-the-range-only`. The argument is
 `design@core@branch-shas-are-refused`.
 
 `check` reads no history, and the range is always explicit. `cargo x gates` runs
