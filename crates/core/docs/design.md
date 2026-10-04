@@ -1479,8 +1479,6 @@ another relative path is refused. The core's binary does this in
 `path@core@tests/binary.rs`; an extension binary does it in its own suite, because only it
 links its extension's library.
 
-## 5. Commit messages
-
 ### The manifest pins the checker's version, and every binary refuses to run over a project it does not satisfy `##installed-binary-version-check`
 
 Every manifest declares `[project] checker-version`: the exact version of the checker the project
@@ -1494,10 +1492,11 @@ and any refusal, the key's own complaint included, is exit 2, per `design@core@e
 naming the two versions and which side is older. `cli::run` does not refuse, so a command driven
 in-process needs a key but no confirmed one.
 
-**Why the manifest, and why required.** A binary older than the skills a project installed reported
-each installed file as differing, with the repair "run install-agent-skills", which wrote the older
-text over the newer; under `harness = []` nothing compared anything, and two versions whose skill
-text is identical were not told apart. A pin in the manifest covers all three; one more place to
+**Why the manifest, and why required.** Without a pin the binary reads, a binary older than the
+skills a project installed reports each installed file as differing, with the repair "run
+install-agent-skills", which writes the older text over the newer; under `harness = []` nothing is
+compared at all; and two versions whose skill text is identical are not told apart. A pin in the
+manifest covers all three; one more place to
 edit when the pin moves cannot drift silently, since a binary differing from it refuses at its
 first command. Optional, the key would leave unprotected the project that never wrote it, which is
 the forgotten pin it exists for. This serves `goal@knowledge-architect@any-project-can-adopt-it`:
@@ -1533,6 +1532,8 @@ the key switches a real project's pin off, the stance `design@core@the-regime-ha
 takes for rules over documents. A copy of a mock project outside its library carries the version.
 The same values accepted wherever they are written lost to this, in
 `path@core@docs/rejected-alternatives.md`.
+
+## 5. Commit messages
 
 ### A commit message is a document under the regime, judged against the tree its commit carries `##a-commit-message-is-a-document`
 
