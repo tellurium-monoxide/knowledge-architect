@@ -683,6 +683,13 @@ is focused on Rust, the language whose comments the checker reads; another langu
 of its own when a project needs one. No check compiles its snippet:
 `issue@agent-skills@the-setup-snippet-is-unchecked`.
 
+The section ties every build of the project to its checkout, with a cargo `[env]` variable valued
+at the checkout's root that every library root, every target of a package with no library and every
+build script reads. Two checkouts sharing a target directory otherwise run each other's build, which
+judges one tree with the other's code, and the review skill's separate target directory per
+reviewer is an instruction nothing checks. The argument and the observations of cargo are this
+repository's own adoption, `design@knowledge-architect@a-build-is-tied-to-its-checkout`.
+
 ### The setup skill proposes a short CRATES-IO.md for a crate the project publishes `##setup-default-crates-io-page`
 
 For a crate the project publishes, the setup skill proposes to the owner a repository-facing

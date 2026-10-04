@@ -232,7 +232,30 @@ command (§2).
 [alias]
 x = "run -q -p xtask --"
 klarch = "run -q --release -p xtask -- klarch"
+
+[env]
+<PROJECT>_CHECKOUT = { value = ".", relative = true, force = true }
 ```
+
+**Tie every build to its checkout**, with the `[env]` entry above. Two checkouts of the project
+that build into one target directory otherwise run each other's build: cargo keys a workspace
+member's build by its path relative to the workspace root, judges it fresh by modification times,
+and does not track `CARGO_MANIFEST_DIR`. It does track the value of a variable a crate reads, and
+`relative = true` gives each checkout its own root as the value. So:
+
+- every library root of the workspace reads it, `const _: Option<&str> = option_env!("<PROJECT>_CHECKOUT");`;
+- a target of a package with no library, such as the crate's main and its integration tests,
+  reads it itself;
+- every build script prints `cargo:rerun-if-env-changed=<PROJECT>_CHECKOUT`, since its run is
+  cached apart from the crate it builds, and a tied crate otherwise compiles over the output of a
+  run made in the other checkout.
+
+`force = true` is required: `cargo run` exports the entry to the program it starts, and a cargo
+that program starts in another tree, such as a mutation tool's copy, otherwise inherits the outer
+checkout's value.
+`option_env!` rather than `env!` keeps a build started outside the checkout compiling. The cost is
+a rebuild at each switch between checkouts that share a target directory, and nothing in a single
+checkout. The refusal in the main below stays, and detects a binary built before the tie.
 
 **Its main**: a `gates` command over the recommended list of the gates library, and a `klarch`
 command carrying the checker's own commands.
@@ -244,6 +267,9 @@ use std::process::ExitCode;
 use clap::{Parser, Subcommand};
 use knowledge_architect::cli;
 use knowledge_architect_gates::{project_root, rust_project, Checker, GatesArgs};
+
+// Ties this crate's build to its checkout.
+const _: Option<&str> = option_env!("<PROJECT>_CHECKOUT");
 
 #[derive(Parser)]
 struct Cli {

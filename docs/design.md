@@ -239,6 +239,36 @@ their verdict is a property of the toolchain as much as of the tree: on floating
 adding a clippy lint fails CI on a tree that passes locally, or the reverse, with no change in the
 diff. An upgrade is a one-line commit of that file, and the gates judge it like any other change.
 
+### Every build is tied to the checkout that builds it `##a-build-is-tied-to-its-checkout`
+
+The `[env]` table of the cargo configuration sets `KNOWLEDGE_ARCHITECT_CHECKOUT` to the checkout's
+root, with `relative` and `force`. Every library root reads it with `option_env!`. A target of a
+package with no library reads it itself. Every build script names it in `rerun-if-env-changed`.
+`path@xtask@tests/checkout.rs` asserts both halves: the compiled value is the checkout's root, and
+every target `cargo metadata` lists is tied.
+
+The standing argument, each point observed on cargo 1.98.0:
+
+- **Cargo reuses another checkout's build.** A workspace member's artifacts are keyed by its path
+  relative to the workspace root, and freshness compares the current checkout's source times with
+  the build's. In two copies of a one-crate workspace sharing one `CARGO_TARGET_DIR`, the second
+  compiled nothing and ran the first's binary. `CARGO_MANIFEST_DIR` does not help: cargo does not
+  track a variable it sets itself. It tracks the value of one a crate reads, so with the tie each
+  switch between the copies rebuilds.
+- **A build script's run is a unit of its own.** A library that reads the variable recompiles over
+  the output of a build script run from the other checkout. The build script of the agent-skills
+  crate names each content file by its absolute path, so without its own line a tied library
+  includes the other checkout's text.
+- **`force` is required.** `cargo run` exports the `[env]` table to the program it starts, and
+  without `force` a cargo that program starts keeps the inherited value over its own.
+
+The nearest rival is a separate `CARGO_TARGET_DIR` per checkout. It is an instruction, and nothing
+checks that a session followed it: thaum's history records two runs of a stale build from a review
+checkout. The tie is the prevention, and it holds whatever the session sets.
+`design@core@a-foreign-build-is-refused` stays the detector, for a binary built before the tie or
+outside this configuration. The cost is a rebuild at each switch between checkouts that share a
+target directory. A single checkout pays nothing.
+
 ## 4. How documents point at each other
 
 ### A reference is written where the text would have to be revisited if the entry it names changed `##a-reference-claims-a-revisit`

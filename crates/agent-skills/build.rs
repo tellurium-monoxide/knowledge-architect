@@ -16,6 +16,10 @@ fn main() {
     let content = root.join("content");
     // A directory makes cargo scan everything under it for a change.
     println!("cargo:rerun-if-changed=content");
+    // The list names each file by its absolute path, so a run from another checkout is stale
+    // even when no file here changed: the run follows the checkout, per
+    // `design@knowledge-architect@a-build-is-tied-to-its-checkout`.
+    println!("cargo:rerun-if-env-changed=KNOWLEDGE_ARCHITECT_CHECKOUT");
 
     let mut files = Vec::new();
     if content.is_dir() {

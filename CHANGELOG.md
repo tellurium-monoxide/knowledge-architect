@@ -6,6 +6,15 @@ class is `design@knowledge-architect@changelog-entries`. Inside a subsection, en
 surface, in the order `checks`, `cli`, `manifest`, `library`, `agent-skills`, `gates`; an empty
 subsection is omitted.
 
+## Next release
+
+### Workflow
+
+- `agent-skills`, patch: the setup skill's section for a Rust project ties every build to its
+  checkout: a cargo `[env]` variable valued at the checkout's root, read by every library root and
+  every target of a package with no library, and named by every build script. A target directory
+  shared by two checkouts then rebuilds instead of running the other checkout's build.
+
 ## 0.2.0
 
 ### Migration
