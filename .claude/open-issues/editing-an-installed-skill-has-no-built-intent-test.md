@@ -8,7 +8,8 @@ kind: todo
 The section of crates/agent-skills/CLAUDE.md on editing an installed skill gives three tests:
 scope, necessity and kind. None asks whether the edit narrows or contradicts a design head or
 strains a goal. In the session of the retrospective of 2026-10-04 (finding P1), an edit of the
-setup skill passed all three and still diverged from two heads and strained a goal.
+setup skill, in the commit "Answer the five places where a fresh adoption of 0.2.0 was left
+guessing", passed all three and still diverged from two heads and strained a goal.
 
 ## Details
 
@@ -34,5 +35,4 @@ review catches only when a reviewer reads the head, against
 
 A fourth test in that section of crates/agent-skills/CLAUDE.md, such as: grep the agent-skills
 design home and the goals for the behaviour the edited passage describes; an edit that narrows or
-contradicts a head is a decision, under `knowledge-architect-decision-recording`. Or the owner's
-ruling that the workflow's side, once built, makes it redundant.
+contradicts a head is a decision, under `knowledge-architect-decision-recording`.

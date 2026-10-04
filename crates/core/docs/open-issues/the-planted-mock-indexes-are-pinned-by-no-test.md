@@ -22,9 +22,9 @@ ones among them on purpose, so they cannot all be regenerated and compared.
 
 ### Why it matters
 
-`planted` is the mock for detection in the last phase. A generated file of it that is meant to be
-current, and drifts, plants a defect nobody asked for, and a test then counts it among the planted
-ones. `design@core@a-file-register-index-is-rows` makes the bytes a contract, and that contract is
+`planted` is the mock for detection in the last phase, with one defect per core check. A generated
+file of it that is meant to be current, and drifts, adds a finding nobody planted to a run over it,
+and no test notices. `design@core@a-file-register-index-is-rows` makes the bytes a contract, and that contract is
 not held for these files.
 
 ### What would close it

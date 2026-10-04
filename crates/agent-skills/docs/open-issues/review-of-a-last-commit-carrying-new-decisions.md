@@ -14,8 +14,9 @@ than corrections. Finding W3 of the retrospective of 2026-10-04.
 ### What
 
 In the session of that retrospective, the transcript review led to three rulings of the owner, and
-the last commit then reversed a recommendation of the setup skill and resolved a goal conflict in
-a skill and in a design head. The session committed it with no further axis, unable to tell
+the last commit, "[review] The transcript review: two rulings recorded wider than given are
+narrowed, and a goal conflict is resolved on the owner's word", dropped a rule of the setup skill,
+added a recommendation to it, and resolved a goal conflict in the skill and in a design head. The session committed it with no further axis, unable to tell
 whether "repairs" covers a change of that size.
 
 ### Why it matters
