@@ -150,7 +150,7 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
   statement the project keeps somewhere the primer's table does not name, such as its changelog, a
   register it declares, a directory with a convention of its own. The plans directory and the
   roadmap are the primer's rows, not the project's;
-- **the routing table**: one row per installed skill or agent that a project skill adds to, as
+- **the routing table**: one row per installed skill or agent that a project skill or agent adds to, as
   `| installed | project additions |`. It is empty until the project writes a skill of its own;
 - **the project's skill prefix**: its name and a hyphen, which names every project skill and agent.
 
