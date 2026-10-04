@@ -15,11 +15,13 @@ own skills**, `knowledge-architect-agent-configuration`.
 
 **Reaching this skill.** The skill is one of the files the install writes, so a session reads it
 once the project holds a manifest the install accepts and the install has run. The smallest such
-manifest is the file `knowledge-architect.toml` at the project's root:
+manifest is the file `knowledge-architect.toml` at the project's root, where `<version>` is the
+version of the checker the project runs, as section 1 says:
 
 ```toml
 [project]
 name = "<project name>"
+checker-version = "<version>"
 components = []
 
 [walk]
@@ -57,6 +59,14 @@ them.
 - **A project with an extension** runs its own binary, which registers the extension, through a
   cargo alias. It does not install that binary under the plain name `klarch`: with two binaries of
   that name on the path, the first one found runs.
+
+**The manifest declares the pin**, in `[project] checker-version = "<version>"`, the version of the
+checker the project runs, exactly. Every command refuses to run when the binary is another version,
+and says which side is older, so an install or a build left behind is caught at its first run. Two
+values that are not versions serve a project's own tests: `"fixture"` in a mock project that lies
+inside the directory of a library the binary links, such as the project's extension crate, and
+`"self"` in a project that builds the checker from its own tree. Each is accepted only where the
+binary's build confirms it; anywhere else it is refused.
 
 ## 2. Declare the command
 
@@ -195,7 +205,9 @@ Setting up stops at a conformant structure, the goals, and that issue.
 To move to another version:
 
 1. Edit the pin: both versions in the maintenance crate's `Cargo.toml`, the checker's and the
-   gates library's, which move together, or the version of the local install.
+   gates library's, which move together, or the version of the local install; and
+   `[project] checker-version` in the manifest, which moves with them. Until all agree, every
+   command refuses, naming the two versions.
 2. Read the changelog of every version crossed. A minor version under `0.x`, or any major version,
    may make a check stricter or ask for a change to the project's layout. Each published crate ships its
    CHANGELOG.md. Fetch the new version first, with `cargo fetch` after editing the pin in a Rust
@@ -322,6 +334,7 @@ fn main() -> ExitCode {
                     ],
                     &[env!("CARGO_PKG_NAME")],
                 )?;
+                cli::refuse_another_version(&manifest, &[own])?;
                 cli::run(command, &manifest, &[own], &mut [])
             });
             outcome.unwrap_or_else(|e| {
