@@ -244,30 +244,40 @@ diff. An upgrade is a one-line commit of that file, and the gates judge it like 
 The `[env]` table of the cargo configuration sets `KNOWLEDGE_ARCHITECT_CHECKOUT` to the checkout's
 root, with `relative` and `force`. Every library root reads it with `option_env!`. A target of a
 package with no library reads it itself. Every build script names it in `rerun-if-env-changed`.
-`path@xtask@tests/checkout.rs` asserts both halves: the compiled value is the checkout's root, and
-every target `cargo metadata` lists is tied.
+`path@xtask@tests/checkout.rs` asserts that the compiled value is the checkout's root, that the
+entry is relative and forced, and that every target `cargo metadata` lists is tied.
 
-The standing argument, each point observed on cargo 1.98.0:
+The standing argument, each point observed on cargo 1.98.0. Each is re-taken by copying a one-crate
+workspace twice, building both copies into one `CARGO_TARGET_DIR`, and reading what the second
+build compiles and what its binary prints:
 
-- **Cargo reuses another checkout's build.** A workspace member's artifacts are keyed by its path
-  relative to the workspace root, and freshness compares the current checkout's source times with
-  the build's. In two copies of a one-crate workspace sharing one `CARGO_TARGET_DIR`, the second
-  compiled nothing and ran the first's binary. `CARGO_MANIFEST_DIR` does not help: cargo does not
-  track a variable it sets itself. It tracks the value of one a crate reads, so with the tie each
-  switch between the copies rebuilds.
+- **Cargo reuses another checkout's build.** In the two copies, the second compiled nothing and ran
+  the first's binary. `CARGO_MANIFEST_DIR` does not help: cargo does not track a variable it sets
+  itself. It tracks the value of one a crate reads, so with the tie each switch between the copies
+  rebuilds. The cause, from thaum's inspection of its target directory and not re-taken here: a
+  workspace member's fingerprint records paths relative to its package, its path hash leaves out
+  where the checkout sits, and freshness compares the current checkout's source times with the
+  build's.
 - **A build script's run is a unit of its own.** A library that reads the variable recompiles over
   the output of a build script run from the other checkout. The build script of the agent-skills
   crate names each content file by its absolute path, so without its own line a tied library
   includes the other checkout's text.
+- **The value follows cargo's working directory, not the manifest it builds.** Cargo finds its
+  configuration from where it is started, as it finds the aliases. Started in one checkout with
+  `--manifest-path` naming another, it builds the other with the first one's value; started
+  outside every checkout, it sets none. So the tie holds for a cargo started inside the checkout it
+  builds, which is how the aliases run.
 - **`force` is required.** `cargo run` exports the `[env]` table to the program it starts, and
   without `force` a cargo that program starts keeps the inherited value over its own.
 
 The nearest rival is a separate `CARGO_TARGET_DIR` per checkout. It is an instruction, and nothing
-checks that a session followed it: thaum's history records two runs of a stale build from a review
-checkout. The tie is the prevention, and it holds whatever the session sets.
-`design@core@a-foreign-build-is-refused` stays the detector, for a binary built before the tie or
-outside this configuration. The cost is a rebuild at each switch between checkouts that share a
-target directory. A single checkout pays nothing.
+checks that a session followed it: thaum's rejected alternatives list three runs of another
+checkout's build, from two review checkouts and one probe, and thaum's own issue on the second
+says whether that reviewer set the directory is not established. The tie is the prevention, and it
+holds whatever target directory the session sets. The separate directory stays an instruction of the review skill,
+for the rebuilds it saves. `design@core@a-foreign-build-is-refused` stays the detector. The cost is
+a rebuild at each switch between checkouts that share a target directory. A single checkout pays
+nothing.
 
 ## 4. How documents point at each other
 

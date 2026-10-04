@@ -2,8 +2,9 @@
 //!
 //! Every command judges a tree with the binary the cargo alias builds from the checkout, and
 //! one built from another checkout is refused, per `design@core@a-foreign-build-is-refused`. Two checkouts that share one target
-//! directory break that: the last build writes the one binary both run, and cargo does not
-//! rebuild it for the other checkout, whose own package is still fresh. That checkout then runs
+//! directory break that, unless every build is tied to its checkout: the last build writes the
+//! one binary both run, and cargo does not rebuild it for the other checkout, whose own package is
+//! still fresh. That checkout then runs
 //! another checkout's code, and its tool fixtures, exempted under the other checkout's paths, are
 //! read as citations.
 //!
@@ -100,7 +101,8 @@ pub fn refuse_a_foreign_build(
          being checked holds that package at {}\n       a target directory shared between two \
          checkouts does this; rebuild from this one with `cargo clean{profile}{clean}`\n       \
          to prevent it, tie each build to its checkout: a cargo `[env]` variable valued at the \
-         checkout's root, read by every crate, as the knowledge-architect setup skill shows",
+         checkout's root, read by every crate and named by every build script, as the \
+         knowledge-architect setup skill shows",
         library.package,
         library.crate_dir.display(),
         copy.display(),

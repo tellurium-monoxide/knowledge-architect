@@ -66,8 +66,9 @@ cannot see it. An extension binary's own pair is owed by
 second checkout that moved the tool's crates to another relative path, a canonicalisation gap, a
 symlink inside the tree the prefix test does not follow.
 Open a `defect` carrying the path the line names and the checkout's. Reopen the decision only if
-the mismatch is one neither an alias that builds from the checkout nor the refusal can prevent, since the two together
-are what the decision rests on.
+the mismatch is one that neither an alias that builds from the checkout, nor the refusal, nor a
+build tied to its checkout per `design@knowledge-architect@a-build-is-tied-to-its-checkout` can
+prevent, since the three together are what the decision rests on.
 **Re-entry:** standing.
 
 ## Guarding `design@core@checker-source-literals-are-data`' whole-source scope `##checker-source-literals-are-data-whole-source-scope`

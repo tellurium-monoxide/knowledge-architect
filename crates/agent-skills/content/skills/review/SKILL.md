@@ -85,11 +85,11 @@ re-checking.
   dispatcher's own edits, and a worktree that shares the branch ref moves under the reviewer at the
   dispatcher's next commit. The shape is `git worktree add --detach <path> <commit>`, at a path where it pollutes no search,
 and `git worktree remove <path>` once the review and the repairs are done. **The reviewer's build output
-  stays inside its worktree.** A build directory two checkouts share lets the live checkout run the
-  reviewer's build, which judges the live tree with the reviewer's code. In a Rust project, the
-  reviewer sets `CARGO_TARGET_DIR` to a directory inside its worktree. Where every target is tied
-  to its checkout, as the setup skill shows, a shared directory runs no foreign build, and costs a
-  rebuild at each switch between the two checkouts instead.
+  stays inside its worktree.** Unless every target is tied to its checkout, as the setup skill
+  shows, a build directory two checkouts share lets the live checkout run the reviewer's build,
+  which judges the live tree with the reviewer's code. Where every target is tied, a shared
+  directory costs a rebuild at each switch between the two checkouts instead. In a Rust project,
+  the reviewer sets `CARGO_TARGET_DIR` to a directory inside its worktree.
 - **No reviewer edits the tree, and none runs an operation that can lose content**: no stash, no
   reset, no checkout of a path.
 
