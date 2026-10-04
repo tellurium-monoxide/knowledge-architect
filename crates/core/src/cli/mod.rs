@@ -1193,8 +1193,10 @@ mod tests {
         assert!(is_a_library_fixture(&link, &core, &[]));
     }
 
-    /// The claim: each row of the spec's mapping table, over a project the build confirms or
-    /// does not, gives the result, the message opening and the repair the spec names.
+    /// The claim: a pin equal to the binary's version passes; a version older or newer than the
+    /// binary's refuses, naming which side is older and the repair that moves toward the pin;
+    /// `"fixture"` and `"self"` pass where their predicate holds and refuse elsewhere; and a key
+    /// absent or in none of the three forms refuses with its complaint's own text.
     #[test]
     fn the_refusal_follows_the_mapping_table() {
         let scratch = Scratch::new("refusal");

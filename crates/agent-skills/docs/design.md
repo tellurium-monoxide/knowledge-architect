@@ -668,9 +668,9 @@ version, which is what bundling the workflow into the checker avoids, per
 `design@knowledge-architect@binary-bundles-workflow`. A project with an extension runs its own
 binary under a name of its own, per `design@core@declared-command`. **The manifest declares the
 same pin**, in `[project] checker-version`, and every binary refuses to run over a project whose
-pin it does not satisfy, so an install or a build left behind by a move of the pin is refused at
-its first command rather than run. The setup skill writes the key and moves it with the pin. This
-relies on the checker working as intended.
+pin it does not satisfy, per `design@core@installed-binary-version-check`, so an install or a build
+left behind by a move of the pin is refused at its first command rather than run. The setup skill
+writes the key and moves it with the pin.
 
 ### The setup skill recommends one gates command, run by the published gates library `##gates-convention`
 
@@ -685,8 +685,8 @@ command of the tool.
 ### In a Rust project, one maintenance crate pins the checker and runs the gates `##xtask-pins-checker`
 
 The maintenance crate of a Rust project depends on the checker and on the gates library, both
-pinned exactly, at the version `[project] checker-version` declares, and serves two cargo
-aliases: `cargo x` for its own commands, the gates among them,
+pinned exactly, at the version `[project] checker-version` declares, per
+`design@core@installed-binary-version-check`, and serves two cargo aliases: `cargo x` for its own commands, the gates among them,
 and `cargo klarch` for the checker's commands, which it carries under a command of its own through
 the core's library, per `design@core@the-core-cli-is-a-library-module`. The gates run through the
 published library, per `design@gates@gates-crate`, and the checker they run is the one this crate

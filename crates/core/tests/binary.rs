@@ -2843,8 +2843,9 @@ fn pin_copy_to(sandbox: &Sandbox, value: &str) {
 }
 
 /// The claim: over a copy of a mock, a pin the binary does not satisfy refuses the run with exit
-/// 2 and the message the spec gives each case, per `design@core@installed-binary-version-check`; the pin
-/// equal to the binary's version passes.
+/// 2 and a message opening with the case: the binary older or newer than the pin, `"fixture"`
+/// outside a library, `"self"` where the checker is not built; the pin equal to the binary's
+/// version passes. Per `design@core@installed-binary-version-check`.
 #[test]
 fn a_copy_whose_pin_this_binary_does_not_satisfy_refuses_the_run() {
     let version = env!("CARGO_PKG_VERSION");
