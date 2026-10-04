@@ -13,24 +13,32 @@ produced it. It leaves the repository in the commit that completes its harvest.
   defect of this spec.
 - Every name it uses is defined in it, under Names or New names, or exists in the code.
 - Where it marks a point as the owner's and the owner is absent, the work does not proceed on that
-  point. **Step 1 does not start before the owner rules on the default under Defaults awaiting
-  the owner**, since it governs its code.
+  point.
 - **The spec and its work are one branch and one pull request**, per
   `design@agent-skills@milestone-lands-before-gate-change`, which gives a spec no split. The work
-  changes the manifest format: under the tip checker, a tree whose manifest lacks the key fails
-  phase 1. So step 1's commit carries the format change with every manifest it needs, and once it
-  is built it is moved to the front of the branch by a history edit with a clean tree, before the
-  review, as the root `CLAUDE.md` asks of a change to the manifest format. Every later commit of
-  the branch, this spec's included, then holds a manifest with the key.
+  changes the manifest format: under the tip checker, a tree whose manifest lacks the key is
+  refused. So step 1's commit carries the format change with every manifest it needs, and once it
+  is built and committed it is moved to the front of the branch by a history edit with a clean
+  tree, as `design@core@a-commit-message-is-a-document` and `klarch-development` §4 ask of a change
+  to the manifest format. It is not pushed before the move, since `cargo klarch commits` fails on
+  every earlier commit until then. Every later commit of the branch, this spec's included, then
+  holds a manifest with the key. The moved commit's tree does not hold this spec, so its message
+  names the spec in plain words, not by a reference.
+- **The audits and reviews.** One design audit runs before step 1 and reads the entries of all
+  three steps; its commit is named "The checker-version-pin design audit, applied in place: …",
+  and a load-bearing gap it finds is recorded in this spec's Threads and stops the work. The code
+  review of `klarch-development` §3 runs after step 1; the harvest review of
+  `knowledge-architect-planning` §7, point 6, runs after step 3; the transcript reviewer runs
+  last, alone.
 - It is a spec, so the places `knowledge-architect-planning` §7 gives a milestone document, such as
-  the list of defaults an audit adds to, are this spec's own sections, and an audit's commit is
-  named "The checker-version-pin design audit, applied in place: …".
+  the list of defaults an audit adds to, are this spec's own sections.
 - A step "lands" in its commit: the commit that completes a step reports on each acceptance
   criterion judged at it, and the pull request is marked ready only after step 3.
 - It was assembled from one transcript,
   `path@elsewhere@~/.claude/projects/-home-catA-tb266682-Documents-code-knowledge-architect/19fd993c-9ae8-43cf-8609-41d92e79b77a.jsonl`.
-  The discussion spans its lines 171 to 1738; the owner's messages that bear on it are at lines
-  171, 220, 988, 1270, 1366, 1378, 1712 and 1738. Lines 1270, 1366 and 1712 are queued messages,
+  The discussion spans its lines 171 to 1923; the owner's messages that bear on it are at lines
+  171, 220, 988, 1270, 1366, 1378, 1712, 1738 and 1923. Lines 1270, 1366, 1712 and 1923 are queued
+  messages,
   recorded with `attachment.type: queued_command` and `origin.kind: human`.
 
 ## How a step is worked
@@ -45,8 +53,8 @@ Per `knowledge-architect-planning`, §7.
   `cargo install`.
 - **the maintenance crate**: the setup skill's term for the crate through which a Rust project
   pins and runs the checker, per `design@agent-skills@xtask-pins-checker`.
-- **the pin key**: the new `[project]` key that declares the pin in the manifest, named `checker`
-  by default (see Defaults awaiting the owner). In this spec "the key" always means it.
+- **the pin key**: the new `[project]` key that declares the pin in the manifest,
+  `checker-version`, the name the owner chose. In this spec "the key" always means it.
 - **a sentinel**: one of the two values of the key that are not versions, `"fixture"` and
   `"self"`.
 - **the binary's version**: the version of the core library the running binary links,
@@ -92,15 +100,23 @@ Two further cases, established by reading the code and not run:
   and holds `name`, `components` and `command`. A `version` key was refused in the trial, so no
   key exists to hold the pin. `resolve_command` in the same file validates `command` after the
   deserialisation, records a complaint for a value it refuses, and keeps the default.
-- Each binary's `main`, `path@core@src/main.rs` for `klarch` and the template in the crate-level
-  documentation of `path@core@src/lib.rs` for an extension, calls `cli::locate`, which parses the
-  manifest, then `refuse_a_foreign_build`, then dispatches: the core's commands through `cli::run`
-  in `path@core@src/cli/mod.rs`, and an extension's own commands in the binary itself, through the
-  public `cli::complete_working_tree` and `cli::Gathered`. An `Err(String)` from any of them is
-  printed and exits 2, per `design@core@exit-code-ladder`. The setup skill's maintenance crate
-  `main` follows the same template.
+- `path@core@src/main.rs`, the `main` of `klarch`, calls `cli::locate`, which parses the
+  manifest, then `refuse_a_foreign_build`, then `cli::run` in `path@core@src/cli/mod.rs`. The
+  template in the crate-level documentation of `path@core@src/lib.rs`, a compiled `no_run`
+  doctest, matches the parsed command first: an extension's own commands are arms of that match,
+  dispatched before `cli::locate` and `refuse_a_foreign_build`, through the public
+  `cli::complete_working_tree` and `cli::Gathered`. An `Err(String)` from any of them is printed
+  and exits 2, per `design@core@exit-code-ladder`. The setup skill's maintenance crate `main` runs
+  the same calls in its `Klarch` arm; it is compiled by nothing, per
+  `issue@agent-skills@the-setup-snippet-is-unchecked`, and its `Gates` arm runs `cargo klarch`,
+  which refuses on its own.
+- `Manifest::parse` returns `Err` for a manifest that does not deserialise, an unknown key of
+  `[project]` included, since `Project` denies unknown fields: every released binary, 0.1.0 and
+  0.2.0, stops in `cli::locate` with exit 2 over a manifest that carries the key.
 - `install_agent_skills` in `path@core@src/cli/mod.rs` writes the shipped set of the running
-  binary's version, and refuses while the manifest holds a complaint.
+  binary's version, and refuses while the manifest holds a complaint. `show`, `issues`,
+  `tripwires` and `model` run with a complaint standing; `check --fix` runs `check` when one
+  stands.
 - `history::commits` reads each commit's manifest through `commit_tree` and `read_tree`; a tree
   that stops in phase 1 fails the range and serves as no parent, per
   `design@core@a-commit-message-is-a-document`.
@@ -140,8 +156,9 @@ Two further cases, established by reading the code and not run:
 
 **Outside the work:**
 
-- The build-origin refusal is unchanged. The sentinels read the core directory, which it reads
-  too, and the checker directories, which it does not; nothing about what it refuses changes.
+- The build-origin refusal is unchanged. It reads the same directories the sentinels read, the
+  core directory and the binary's own crate directory, through its `Library` list rather than the
+  `checker` argument; nothing about what it refuses changes.
 - An extension's access to the entity table,
   `issue@core@an-extension-cannot-see-which-register-a-document-belongs-to`, is separate work.
 - thaum's own manifests: thaum adds the key when it next moves its pin, as the changelog's
@@ -176,6 +193,13 @@ The work rewrites two recorded decisions, and adds one sentence to a third:
 | `design@agent-skills@exact-pin` | rewritten: the manifest declares the pin, and the binary refuses another version | `design@agent-skills@version-in-report`, which cites it: re-read at the harvest. The setup skill and `path@core@CRATES-IO.md` restate it without citing it: rewritten in step 2 |
 | `design@agent-skills@xtask-pins-checker` | rewritten: the maintenance crate's pin and the key move together | `design@agent-skills@gates-convention`, which cites it: re-read at the harvest. The setup skill's section "In a Rust project" restates it: rewritten in step 2 |
 | `design@core@a-commit-message-is-a-document` | one sentence: a historical tree's value is not compared | its referrers are unaffected, since no existing sentence changes |
+
+Three more texts state what the pin guarantees, and are re-read at the harvest:
+`design@knowledge-architect@version-lockstep` ("A project therefore never runs a checker whose
+installed skills describe another version's commands"), which the pin makes true where the trial
+showed it false; `design@knowledge-architect@binary-bundles-workflow`; and the retrospective
+skill, `path@agent-skills@content/skills/retrospective/SKILL.md`, which records "the exact version
+of the pin".
 
 ## Criteria
 
@@ -247,6 +271,7 @@ Binding as a presumption, from `design@core@a-commit-message-is-a-document`. Met
 - **Superseded** by #checked-sentinel-values at line 1738: the key is required in every manifest,
   so its presence and its form are checked by `Manifest::parse`; its value is still compared on
   the working tree only, which #history-compares-no-pin keeps.
+- **Harvest**: none of its own; judged with the losing alternatives.
 
 ### `commits` never compares a historical tree's value `##history-compares-no-pin`
 
@@ -263,6 +288,7 @@ Binding as a presumption, from `design@core@a-commit-message-is-a-document`. Met
 - **Proposed** at assembly by the author (#a16), as a default awaiting the owner.
 - **Superseded** by #checked-sentinel-values at line 1738: every manifest carries the key, and a
   fixture or this repository says so with a sentinel.
+- **Harvest**: none of its own; judged with the losing alternatives.
 
 ### The key is required everywhere, and takes a version or one of two sentinels, `"fixture"` and `"self"` `##pin-sentinel-values`
 
@@ -271,6 +297,7 @@ Binding as a presumption, from `design@core@a-commit-message-is-a-document`. Met
   value that this project would use for itself."
 - **Superseded** by #checked-sentinel-values at line 1738, which takes its values and its required
   key whole, and adds the confirmation by the build.
+- **Harvest**: none of its own; judged with the losing alternatives.
 
 ### Each sentinel is accepted only where the running binary's build confirms it `##checked-sentinel-values`
 
@@ -420,15 +447,17 @@ use `"fixture"` and must carry the version."
 
 ```text
 path@core@src/manifest.rs
-  Project::checker: Option<String>          the pin key as written, kebab-case "checker"
+  Project::checker_version: Option<String>  the pin key as written, kebab-case "checker-version"
   enum Pin { Version(String), Fixture, OwnBuild }
                                             pub(crate); "<MAJOR.MINOR.PATCH>", "fixture", "self"
   fn resolve_checker(declared: &Declared, complaints: &mut Vec<Finding>) -> Option<Pin>
                                             private, beside resolve_command; an absent key or a
                                             value of none of the three forms is a complaint
-  Manifest::pin(&self) -> Option<&Pin>      pub(crate); None only while a complaint stands
+  Manifest::pin: Option<Pin>                the field resolve_checker fills; None only when the
+                                            key is absent or of none of the three forms
+  Manifest::pin(&self) -> Option<&Pin>      pub(crate)
 
-path@core@src/cli/mod.rs, re-exported in the cli module like refuse_a_foreign_build
+path@core@src/cli/mod.rs, defined there with the two predicates and their unit tests
   pub fn refuse_another_version(manifest: &Manifest, checker_dirs: &[&Path]) -> Result<(), String>
                                             called by each binary's main right after
                                             refuse_a_foreign_build; passes
@@ -449,15 +478,10 @@ path@core@tests/binary.rs
   fn pinned(manifest_text: &str) -> String  test helper: sets the key to env!("CARGO_PKG_VERSION"),
                                             replacing a checker line under [project], or inserting
                                             one after the [project] line when there is none
-
-path@core@tests/extension_api.rs
-  fn pin(dir: &Path)                        test helper: the same rewrite on the manifest file of a
-                                            copied mock project; a separate test crate cannot
-                                            reach binary.rs
 ```
 
 `OwnBuild` is the variant's name in the code; the value in the manifest is `"self"`, since `Self`
-is a Rust keyword. Existing names the work uses: `cli::run`, `cli::locate`,
+is a Rust keyword. `path@core@tests/extension_api.rs` needs no helper: no test there runs a binary. Existing names the work uses: `cli::run`, `cli::locate`,
 `cli::complete_working_tree`, `install_agent_skills`, `history::commits`, `commit_tree`,
 `read_tree`, `Manifest::parse`, `Manifest::complaints`, `resolve_command`, `Declared`,
 `knowledge_architect::component_dir`, `refuse_a_foreign_build`, `foreign_copy`, `Sandbox`,
@@ -468,24 +492,28 @@ is a Rust keyword. Existing names the work uses: `cli::run`, `cli::locate`,
 
 ### The key and the refusal
 
-`[project] checker` is required in every manifest. It takes `"<MAJOR.MINOR.PATCH>"`, the version
+`[project] checker-version` is required in every manifest. It takes `"<MAJOR.MINOR.PATCH>"`, the version
 of the checker the project runs, which is the version of the core library whatever binary links
 it, exact as `design@agent-skills@exact-pin` makes the install's pin; or one of the two sentinels
 of the next section. A version is three non-negative integers in decimal with no leading zero
 except a lone `0`, separated by dots, with no pre-release and no build metadata.
 
 `Manifest::parse` validates the key in `resolve_checker`, as `resolve_command` validates `command`:
-an absent key, or a value of none of the three forms, is a complaint, so `check` reports it in
-phase 1, the commands that write refuse, and `commits` fails a historical tree that lacks it. The
-complaint's text opens with `[project] checker`, which the tests match: `[project] checker is
-absent` or `[project] checker "<value>" is not a version, "fixture" or "self"`, with the repair
-"write the version of the checker the project runs".
+an absent key, or a string of none of the three forms, is a complaint, whose text opens with
+`[project] checker-version`, which the tests match: `[project] checker-version is absent` or
+`[project] checker-version "<value>" is not a version, "fixture" or "self"`, with the repair "write the version of the
+checker the project runs". A value that is not a string fails the deserialisation, as any
+mistyped key does: `Manifest::parse` returns `Err`. In a historical tree the complaint stops the
+tree in phase 1, so `commits` fails a commit that lacks the key.
 
-Each binary's `main` calls `cli::refuse_another_version` right after `refuse_a_foreign_build`, so
-every command refuses, the core's and an extension's own, the install included. While a complaint
-stands, it returns `Ok` and leaves the complaint to the command. Otherwise a refusal is `Err`,
-exit 2, and each message opens with the fixed text below, which the tests match, and goes on to
-the repair:
+Each binary's `main` calls `cli::locate`, then `refuse_a_foreign_build`, then
+`cli::refuse_another_version`, before it dispatches any command: `klarch`'s `main`, the crate-level
+template, which is restructured to make the three calls before its match on the command, and the
+setup skill's maintenance crate `main`. So every command refuses, the core's and an extension's
+own, the install included. Where the key's complaint stands, `refuse_another_version` returns
+`Err` with that complaint's text, so no command runs without a key, `show` and `model` included;
+other complaints are left to the command. Otherwise a refusal is `Err`, exit 2, and each message
+opens with the fixed text below, which the tests match, and goes on to the repair:
 
 | case | the message opens with | repair it names |
 | --- | --- | --- |
@@ -497,9 +525,13 @@ the repair:
 A version is accepted when it equals the binary's version as text. Where it differs, the two are
 compared as three integers to choose between the older and the newer message; a binary's version
 that is not three integers, which no release has, gets the newer message's wording with "another
-version than" in place of "newer than". In `klarch`, a build from another checkout is refused by
-`refuse_a_foreign_build` before this runs, and an absent key is reported by the parse before
-either.
+version than" in place of "newer than". A build from another checkout is refused by
+`refuse_a_foreign_build` before this runs, so its message comes first even when the key is absent.
+
+A binary released before this work refuses a manifest carrying the key at parse, with an
+unknown-field error, since `Project` denies unknown fields: it runs no command, so it cannot
+suggest a downgrade, but its message does not name the pin. The messages above are given from the
+first release that carries this work.
 
 **Argument**: #a3, #a7, #a8, #a9, with #a10 through the goal. **Nearest rival**: the installed set
 records its version and the check compares it; defeated by #a8, since it covers neither
@@ -519,7 +551,7 @@ records its version and the check compares it; defeated by #a8, since it covers 
 
 A copy of a mock project in the system's temporary directory is not inside a library directory, so
 every test that makes one and runs a binary over it rewrites the key to the binary's version,
-through `pinned` or `pin`. A mock project an extension keeps outside its crate's directory carries
+through `pinned`. A mock project an extension keeps outside its crate's directory carries
 the version. An extension's test that calls `cli::run` in-process over one of its own mocks
 confirms nothing, since `cli::run` does not refuse; the refusal is the binary's `main`'s.
 
@@ -531,7 +563,8 @@ argument #a17.
 ### Where it is checked
 
 The key's presence and its form are checked by `Manifest::parse`, so every tree, historical ones
-included, needs it, and a tree without it stops in phase 1. Its value is confirmed by
+included, needs it: a working tree without it refuses every command, and a historical tree without
+it stops in phase 1. Its value is confirmed by
 `refuse_another_version`, over the working tree's manifest only. `commits` confirms no historical
 tree's value, so moving the pin fails no earlier commit (#a15); the working tree's manifest is
 still confirmed when `commits` itself runs, like any command.
@@ -549,8 +582,9 @@ is `is_a_library_fixture`; "own build holds" is `is_its_own_build`.
 
 | key | condition | result |
 | --- | --- | --- |
-| absent | n/a | a complaint; `check` exits 1 in phase 1, a writing command exits 2 |
-| a value of none of the three forms | n/a | the same |
+| absent | n/a | the key's complaint; every command exits 2 with its text; a historical tree stops in phase 1 |
+| a string of none of the three forms | n/a | the same |
+| a value that is not a string | n/a | `Manifest::parse` returns `Err`; exit 2; `commits` reports the tree as not loading |
 | `"<MAJOR.MINOR.PATCH>"` | equal to the binary's version | Ok |
 | `"<MAJOR.MINOR.PATCH>"` | the binary is older | Err, exit 2: older than the pin |
 | `"<MAJOR.MINOR.PATCH>"` | the binary is newer | Err, exit 2: newer than the pin |
@@ -571,6 +605,7 @@ Which manifest says what, and whether the build confirms it:
 | a consumer's root, the core from crates.io | the registry | the version | yes, when it equals |
 | a consumer's root that writes `"fixture"` | the registry | `"fixture"` | no: refused |
 | a mock project under an extension's crate, run by the extension's binary | the registry; the extension's crate directory holds the mock | `"fixture"` | yes |
+| any project carrying the key, run with a binary released before this work | n/a | any | refused at parse: unknown field |
 | a mock project an extension keeps outside its crate | the registry | the version | yes, when it equals |
 | a consumer vendoring the core inside its tree | inside it | `"self"` | yes |
 
@@ -637,7 +672,9 @@ Causes 5 and 6 are handled by the design and the order; no tripwire is proposed.
   crate unpacked into a scratch directory outside the tree, `cargo install --locked --path` from
   there into another scratch directory, and that binary's `check` in this checkout. Its compiled
   directory lies outside the tree and ends in `knowledge-architect-<version>`, as a registry
-  build's does.
+  build's does. It is a manual run, which needs the network for the packaged dependencies, with
+  `--locked` where the package holds a `Cargo.lock` and without it otherwise; its result goes in
+  step 1's landing message.
 - **Fires when**: either predicate returns true for that root, or the installed binary does not
   exit 2 with `"self" is only valid where the checker is built from this tree`.
 - **Response**: reopen #checked-sentinel-values.
@@ -646,7 +683,7 @@ Causes 5 and 6 are handled by the design and the order; no tripwire is proposed.
 
 - **Guards**: #checked-sentinel-values.
 - **Judged at**: step 1.
-- **Fires when**: `cargo klarch check` at step 1's commit, with `checker = "self"` in the root
+- **Fires when**: `cargo klarch check` at step 1's commit, with `checker-version = "self"` in the root
   manifest, exits anything but 0, or
   `the_core_binary_names_its_own_directory_and_counts_the_files_under_it` fails.
 - **Response**: reopen #checked-sentinel-values.
@@ -654,14 +691,17 @@ Causes 5 and 6 are handled by the design and the order; no tripwire is proposed.
 ## Implementation sequence
 
 1. **The key, the values and the refusal, with every manifest of the workspace**, in one commit,
-   moved to the front of the branch once built. `Pin`, `Project::checker`, `resolve_checker`,
+   moved to the front of the branch once built. `Pin`, `Project::checker_version`, `resolve_checker`,
    `Manifest::pin`, `cli::refuse_another_version`, `is_a_library_fixture` and `is_its_own_build`;
-   the call in `path@core@src/main.rs`, in the crate-level template of `path@core@src/lib.rs`, and
-   in the setup skill's maintenance crate `main`, each after `refuse_a_foreign_build`. The root
+   the call in `path@core@src/main.rs` after `refuse_a_foreign_build`, and the crate-level template
+   of `path@core@src/lib.rs` restructured to call `cli::locate`, `refuse_a_foreign_build` and
+   `cli::refuse_another_version` before its match on the command. Installed text is step 2's. The
+   root
    manifest says `"self"`; the 5 committed mock manifests and the 33 inline manifests say
    `"fixture"`. Tests:
-   - the parse records the complaint for an absent key and for a value of none of the three forms,
-     each matching its opening text;
+   - the parse records the complaint for an absent key and for a string of none of the three forms,
+     each matching its opening text, and returns `Err` for a value that is not a string;
+   - by the binary over a copy whose key is absent, `show` exits 2 with the complaint's text;
    - by the binary over copies of a mock, one per row of the first mapping table that ends in
      `Err`, each matching the message's opening text: a version older, a version newer, a copy that
      keeps `"fixture"`, a copy that says `"self"`; and one with the version equal, which passes;
@@ -680,8 +720,7 @@ Causes 5 and 6 are handled by the design and the order; no tripwire is proposed.
    `the_core_binary_refuses_a_table_no_extension_of_it_claims` through `pinned`, and every other
    test of `path@core@tests/binary.rs` that writes a manifest of its own. The three tests of
    `path@core@tests/extension_api.rs` that copy `dirhome` call `cli::run` in-process, which does
-   not refuse; their copies keep `"fixture"`, which the parse accepts, and need no `pin` unless a
-   test there runs a binary. Fails alone on: a test of the refusal; or a test unrelated to the pin
+   not refuse; their copies keep `"fixture"`, which the parse accepts. Fails alone on: a test of the refusal; or a test unrelated to the pin
    that now exits 2 or stops in phase 1, which names a manifest the list above missed.
 2. **The documentation**, under the procedure for installed text: the section "Editing an
    installed skill or agent" of `path@agent-skills@CLAUDE.md` and
@@ -689,11 +728,14 @@ Causes 5 and 6 are handled by the design and the order; no tripwire is proposed.
    its section 1 says that the manifest declares the pin, that the binary refuses another version,
    and that a mock project inside the project's own library may say `"fixture"`; the first item of
    its section "Moving the pin" edits the key with the other pins; its section "In a Rust project"
-   says the maintenance crate's pin and the key move together, and its `main` calls the refusal.
+   says the maintenance crate's pin and the key move together, and its `main` calls
+   `cli::refuse_another_version` after `refuse_a_foreign_build`, before its match, as the crate
+   template does.
    The installed copy is re-installed with `cargo klarch install-agent-skills`. The core README's
    smallest manifest carries the key, and its exit-code table lists the refusal among the exit-2
    causes. `path@core@CRATES-IO.md` says that the manifest's key names the pinned version. The
-   changelog carries a Migration entry, `manifest`, major: every manifest carries the key, the
+   changelog carries a Migration entry, in a Migration subsection the `Next release` section does
+   not hold yet, `manifest`, major: every manifest carries the key, the
    version a project runs, `"fixture"` for a mock project inside a library's directory and for a
    manifest a test only parses, an extension's included; and a Workflow entry, `agent-skills`,
    patch: the setup skill writes the key and moves it with the pin. `cargo x changelog` writes the
@@ -711,9 +753,11 @@ holds a manifest without the key.
 
 ## Defaults awaiting the owner
 
-- **The key's name, `checker`**: the session used it as an example at lines 1125 and 1731, and the
-  owner approved the pin and the synthesis without naming the key. Default: `checker`. Step 1 does
-  not start before the ruling.
+None. The key's name was the one default: the session used `checker` as an example at lines 1125
+and 1731, and the owner then named it at line 1923, a queued message: "maybe checker-version for
+the key ? It is a bit more explicit IMO. Or just version."; the session took `checker-version`,
+since `version` under `[project]` reads as the project's own version, and the owner may still
+correct it.
 
 ## Harvest
 
@@ -725,6 +769,9 @@ holds a manifest without the key.
 - `path@agent-skills@docs/design.md`: `design@agent-skills@exact-pin` and
   `design@agent-skills@xtask-pins-checker` rewritten in place;
   `design@agent-skills@version-in-report` and `design@agent-skills@gates-convention` re-read.
+- `path@knowledge-architect@docs/design.md`: `design@knowledge-architect@version-lockstep` and
+  `design@knowledge-architect@binary-bundles-workflow` re-read against the pin; the retrospective
+  skill's line on the pin re-read.
 - `path@core@docs/rejected-alternatives.md` and `path@agent-skills@docs/rejected-alternatives.md`:
   each losing alternative above judged by the recording tests of
   `knowledge-architect-decision-recording`; the installed version marker, the unchecked sentinels
