@@ -567,7 +567,8 @@ git merge-base --is-ancestor origin/main HEAD    # if false, rebase
 - The axes come from the dispatching activity's own skill.
 - Critical findings are repaired before the merge.
 - The commit that lands the repairs says what was reviewed and what was decided. Where every
-  repair was folded, a commit of its own after them says it.
+  repair was folded, the message of the branch's last commit says it, reworded with a clean tree:
+  a commit of its own would change no file, and the rebase merge drops it.
 - Any finding not repaired becomes an issue entry, per `knowledge-architect-issue-tracking`.
 - Once the branch is rebased and the repairs are pushed, mark the pull request ready:
   `gh pr ready`. That starts CI, and every later push re-runs it. First check that GitHub has

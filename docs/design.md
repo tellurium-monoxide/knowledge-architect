@@ -242,7 +242,10 @@ statement false until a repair lands. The procedure is
 - The branch is rebased on main before review and merge, and reviewed before any merge. A repair
   from a review is a new commit, so that no history is edited for it; a repair that would leave an
   earlier commit failing the per-commit rule below is folded into the earliest commit it repairs,
-  and the commit recording the review says what was folded. The rule exists to avoid history
+  and the commit recording the review says what was folded. Where every repair was folded, no
+  repair commit is left to carry that record, and a commit of its own would change no file, which
+  the rebase merge drops; the record goes into the message of the branch's last commit, by a
+  reword with a clean tree. The rule exists to avoid history
   edits, not to keep repairs apart, and the owner's reason for the exception is that this
   repository keeps rewriting its checker, so a repair that changes what it judges is no rare case.
 - **Every commit of a branch passes the check under the branch tip's checker**, as
