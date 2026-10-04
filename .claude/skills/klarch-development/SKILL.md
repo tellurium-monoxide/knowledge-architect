@@ -104,6 +104,11 @@ cargo test -p <package> --no-run       # it compiles, or it proves nothing
 cargo test -p <package>                # nonzero: caught; zero: SURVIVED
 ```
 
+**A mutation of the cargo configuration runs in a worktree outside the main tree**, such as one
+under the session's scratchpad directory. Cargo merges the configuration of every parent directory
+field by field, so in a nested worktree the main tree's `path@knowledge-architect@.cargo/config.toml` restores a field the
+mutation removed, and the mutant survives a test that would catch it.
+
 Finally, from the main tree's root, `git worktree remove --force .claude/worktrees/<name>`. The
 force is needed because the worktree holds the mutation, and it removes that worktree alone.
 

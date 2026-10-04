@@ -251,8 +251,8 @@ and does not track `CARGO_MANIFEST_DIR`. It does track the value of a variable a
   run made in the other checkout.
 
 `force = true` is required: `cargo run` exports the entry to the program it starts, and a cargo
-that program starts in another tree, such as a mutation tool's copy, otherwise inherits the outer
-checkout's value.
+that program starts from inside another checkout, such as a copy of the tree, otherwise inherits
+the outer checkout's value.
 Cargo reads the entry from the directory it is started in, not from the manifest it builds, so
 the tie holds for a cargo started inside the checkout it builds: one started elsewhere with
 `--manifest-path` takes the other checkout's value, or none. `option_env!` rather than `env!` keeps
