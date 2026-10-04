@@ -663,7 +663,10 @@ A project depends on one exact version of the checker, so moving it is an explic
 installed skills move with it. A dependency builds no executable for the project, so a Rust project
 runs the pinned version through its maintenance crate, per
 `design@agent-skills@xtask-pins-checker`, and any other project installs it into a directory of its
-own with `cargo install --locked --root`. A machine-wide install would give two projects on one machine one
+own with `cargo install --locked --root`. A Rust project that is one package with no workspace
+either gains a workspace for that crate or installs the binary as any other project does, on its
+owner's ruling, since the first changes the project's build and the second leaves it with no
+maintenance crate. A machine-wide install would give two projects on one machine one
 version, which is what bundling the workflow into the checker avoids, per
 `design@knowledge-architect@binary-bundles-workflow`. A project with an extension runs its own
 binary under a name of its own, per `design@core@declared-command`. **The manifest declares the
@@ -676,7 +679,7 @@ writes the key and moves it with the pin.
 
 One command runs every check a project owes before a merge, runs them all when one fails, and exits
 non-zero when any fails, so a verdict is one exit code and nothing is read through a pipe. In a Rust
-project it is a command of the maintenance crate, per `design@agent-skills@xtask-pins-checker`, so
+project with a maintenance crate it is a command of that crate, per `design@agent-skills@xtask-pins-checker`, so
 every adopting project runs the gates refined in this repository and in thaum. The gates a project
 owes are its own list. The setup skill proposes two goals for such a tool, for the owner's
 ruling: one command runs every check owed before a merge, and a task performed repeatedly becomes a

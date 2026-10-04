@@ -57,8 +57,10 @@ them.
   the crate serves the checker's commands itself. A Rust project that is one package with no
   workspace either gains one, through a `[workspace]` table in its `Cargo.toml` whose `members`
   names the maintenance crate, or runs the checker from a local install, as the next point says.
-  The first changes the project's build, so propose both and let the owner rule.
-- **Any other project** installs the binary into a directory of its own, ignored by git:
+  The first changes the project's build. The second leaves the project with no maintenance crate,
+  so it has no `cargo x gates` either, and its gates command is the project's own, per §6. Propose
+  both and let the owner rule.
+- **Any other project**, and a Rust project that runs a local install, installs the binary into a directory of its own, ignored by git:
   `cargo install --locked --root <dir> knowledge-architect --version =<version>`. The binary is
   `<dir>/bin/klarch`. A plain `cargo install` is machine-wide, and two projects on one machine
   would then share one version.
@@ -152,8 +154,9 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
   `| installed | project additions |`. It is empty until the project writes a skill of its own;
 - **the project's skill prefix**: its name and a hyphen, which names every project skill and agent.
 
-How the two tables, the prefix and a project skill are written is
-`knowledge-architect-agent-configuration`, its section on the two tables of the root `CLAUDE.md`.
+How the two tables are written is `knowledge-architect-agent-configuration`, its section on the
+two tables of the root `CLAUDE.md`; the prefix and a project skill are its section on shaping a
+skill.
 
 ## 6. The gates
 
@@ -187,7 +190,8 @@ left to be done by hand.
 
 ## 7. Finish
 
-- `{{command}} check --fix` until it passes: it writes every generated `index.md`, then checks.
+- `{{command}} check --fix` until it passes: it writes the installed files and the generated
+  `index.md` files the check would report, then checks.
 - Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together.
 
 ## 8. Existing documentation
@@ -223,8 +227,8 @@ To move to another version:
    gates library's, which move together, or the version of the local install; and
    `[project] checker-version` in the manifest, which moves with them. Until all agree, every
    command refuses, naming the two versions.
-2. Read the changelog of every version crossed. A minor version under `0.x`, or any major version,
-   may make a check stricter or ask for a change to the project's layout. Each published crate ships its
+2. Read the changelog of every version crossed. Any version but a patch may make a check stricter,
+   and a major version may ask for a change to the project's layout. Each published crate ships its
    CHANGELOG.md. Fetch the new version first, with `cargo fetch` after editing the pin in a Rust
    project, or by the install; then read the file in the source cargo downloaded, under its
    registry directory: `$CARGO_HOME/registry/src/<index>/knowledge-architect-<version>/CHANGELOG.md`.
