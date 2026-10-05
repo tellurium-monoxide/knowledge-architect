@@ -559,7 +559,11 @@ branch, after every other axis has run and its repairs are committed, over the w
 transcripts of every session that worked on it. The findings of the other axes reach the session as
 messages of its transcript, so only a reviewer reading it after their repairs can tell whether each
 was acted on durably, per `goal@knowledge-architect@design-is-recorded-with-its-arguments`. Its own
-repairs land as a last commit that no axis reviews again, so the review ends.
+repairs land as a last commit. A last commit that only corrects is reviewed by no axis again, so
+the review ends. A last commit that makes or reverses a decision is reviewed by the decision-record
+axis at least, and the review ends with that review's repairs: otherwise a decision taken in
+answer to the transcript review reaches the main branch with no review of its record, against the
+same goal.
 
 ## The configuration a project holds
 

@@ -1,13 +1,12 @@
 **Generated — do not edit.** `cargo klarch index`
 
-12 entries
+11 entries
 
 | kind | title |
 | --- | --- |
 | defect | [A hedged word of the owner was recorded as an approved thread in a committed plan document](a-hedged-ruling-recorded-as-approved.md) |
 | deferred | [A project cannot change one instruction of an installed skill](patching-an-installed-skill.md) |
 | design | [The workflow does not anticipate a design decision made outside the design skill](a-decision-made-outside-the-design-skill-is-not-anticipated.md) |
-| question | [Is a last commit that carries new decisions after the transcript review reviewed again?](review-of-a-last-commit-carrying-new-decisions.md) |
 | todo | [The review skill does not ask for an outcome for each claim of a finding](a-partial-finding-has-no-outcome-per-claim.md) |
 | todo | [A reviewer that queues long work reports nothing until it is asked](a-reviewer-s-running-time-is-unbounded.md) |
 | todo | [No installed skill covers a bounded problem](a-skill-for-bounded-problems.md) |

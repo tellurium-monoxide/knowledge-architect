@@ -47,8 +47,10 @@ with the reason, in the commit that records the review.**
 after every other axis has run and its repairs are committed. Its range is the whole branch,
 `<main branch>..<head>`, and its brief names the transcripts of every session that worked on the
 branch, with the message where the branch's work begins in each. It is the one axis that can see whether the findings of the others were acted on, since
-their reports reach the session as messages of its transcript. Its repairs land as a last commit,
-which no axis reviews again.
+their reports reach the session as messages of its transcript. Its repairs land as a last commit.
+**Where that commit makes or reverses a decision, the decision-record axis reviews it**, and any
+other axis whose condition the commit meets; the review ends with their repairs. A last commit that
+makes no decision is reviewed by no axis again.
 
 ## 2. The invariants
 
