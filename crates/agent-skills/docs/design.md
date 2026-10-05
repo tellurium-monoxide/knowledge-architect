@@ -290,7 +290,12 @@ A premortem's surviving causes become tripwires only where the owner rules that 
 each is written at the harvest of the decision it guards, in the tripwires home of the Component
 that owns that decision. A tripwire names its decision's head, so the head exists first. Whether a
 risk is worth watching is a weighing, and the weighing is the owner's, per
-`goal@knowledge-architect@the-owner-decides`.
+`goal@knowledge-architect@the-owner-decides`. The wording of the tripwire that watches it is not:
+its firing evidence, response and re-entry point are reworded when it is written, or on a review
+finding, on the agent's judgement, and each change is listed to the owner at the end of the turn.
+A ruling that bound the wording would make every repair of a tripwire a question to the owner,
+and a tripwire's wording is repaired often, since its re-entry point must name an occasion that
+holds the firing evidence.
 
 ### A design thread's slug becomes its entry's slug `##thread-slug-is-entry-id`
 
@@ -383,11 +388,13 @@ too: the installed planning skill would have nothing to say where a document's w
 The design skill has two paths, which differ only in where the deliberation is kept until the
 harvest. The in-change path is open when the decision lands in the change under way: its work, or
 its record, for a decision recorded when it is made, per
-`design@agent-skills@harvest-after-implementation`. It writes no plan document. The message of the commit that writes the decision's design entry, or that
-implements a decision that earns none, carries what a plan document would: every thread with its
-final state, the owner's words verbatim for each closure, the rivals that lost with their reasons,
-and the rulings on tripwires. The premortem runs when reversal touches any of the four things the
-skill names: stored data, a consumed interface, behaviour users have adapted to, and a decided
+`design@agent-skills@harvest-after-implementation`. It writes no plan document. The message of the
+commit that writes the decision's design entry, or that implements a decision that earns none,
+carries what a plan document would: every thread with its final state, the owner's words verbatim
+for each closure, the rivals that lost with their reasons, and the rulings on tripwires. Nothing of
+the decision is implemented or committed before the premortem, where it runs, and the owner's
+rulings on its tripwires, so that commit carries them. The premortem runs when reversal touches any
+of the four things the skill names: stored data, a consumed interface, behaviour users have adapted to, and a decided
 thread that would reopen. The four never open the in-change path: a decision that is cheap to
 reverse and whose work comes later takes the full path, per
 `design@agent-skills@design-hands-off-to-planning`, as does any discussion that converges on work
