@@ -2533,8 +2533,8 @@ fn stale_index(tag: &str) -> Sandbox {
 /// so an edit cycle is one command. Mutation checked: skipping the write of the generated list
 /// leaves the index stale, and the run exits 1.
 ///
-/// The claim: the stale index's finding names the repair and no cause, since several causes
-/// leave it and the repair is the same for each. The action line is asserted whole, its line
+/// The claim: the stale index's finding names the repair and no cause, per
+/// `design@core@finding-names-the-repair`. The action line is asserted whole, its line
 /// break included, so a cause appended to it fails the test.
 #[test]
 fn check_fix_rewrites_a_stale_index_and_the_run_passes() {

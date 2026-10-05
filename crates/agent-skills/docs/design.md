@@ -120,8 +120,7 @@ rounds. On the owner's argument, what a discussion needs depends on what its gro
 investigation and experiments bring, and nobody knows that in advance; a bound fixed before the
 discussion decides its size before its content, against the open discussion the skill exists to
 run. A path chosen by the cost of reversal, or by where the work lands, changes where the
-deliberation is kept, never how large the discussion may grow. The owner ruled that such a bound
-must not be added.
+deliberation is kept, never how large the discussion may grow.
 
 ### A decision that earns a record is argued under the design skill, wherever it arises `##every-decision-through-design`
 
@@ -129,9 +128,7 @@ A decision that earns durable text, a reversal of a recorded one or one that pas
 test of the decision-recording skill, goes through the design skill, whatever activity met it. The
 decision-recording skill triggers once a decision has been made, so a decision met during an issue
 fix or a review repair otherwise reaches the record with no argument, no rival weighed, and none of
-the design skill's rules for reading the owner's word. In the instance that showed it, two remarks
-of the owner given during an issue fix were recorded as a hard rule and as a ruling with its hedge
-dropped. This serves `goal@knowledge-architect@the-owner-decides` and
+the design skill's rules for reading the owner's word. This serves `goal@knowledge-architect@the-owner-decides` and
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`. A choice that earns no durable
 text stays out of it, in a code comment and a commit message.
 
@@ -139,9 +136,7 @@ Two texts deliver it. The design skill's description names the symptom: a choice
 something is built, or an owner's word that settles one, met during another task. The
 decision-recording skill sends a decision that earns text and was not argued back to the design
 skill before its text is written. A line in the primer lost to `design@agent-skills@primer-limit`:
-once the design skill's description carries the symptom, a skill delivers the rule. A rule in the
-decision-recording skill alone, quoting the owner's words and asking about each hedge, was
-superseded: it covered the owner's words and not the argument and the rivals.
+once the design skill's description carries the symptom, a skill delivers the rule.
 
 ### The design skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
 
@@ -304,7 +299,7 @@ a collision with the entries of the Component before it is used. In discussion p
 plain, with a hash sign before it, never as a backticked span, which the checker reports as the
 retired slug form once an entry carries that slug. When
 the thread is approved and its decision earns an entry, the entry's heading ends with the same
-slug, so the spec, the commit messages and the design home name the decision with one identifier.
+slug, except in the case below, so the spec, the commit messages and the design home name the decision with one identifier.
 In the plan document the thread is an item, a level-three heading ending with the same slug under
 the Threads section, cited from inside that document only, per `design@core@plan-items-by-section`.
 
@@ -314,7 +309,7 @@ so the rule has one exception: when the thread's slug misdescribes the decision 
 entry takes a slug that names the decision, and the plan document's harvest row, or the commit
 message on the in-change path, states the pair. A slug that misdescribes its decision misinforms
 every reader of every citation, and the decision-recording skill's alignment rule orders a rename
-in that case; without the exception, the two rules gave opposite orders, against
+in that case; without the exception, the two rules would give opposite orders, against
 `goal@agent-skills@one-skill-per-activity`. The rival, renaming the thread during the discussion
 once it drifts, lost: every earlier delta carries the old slug, and the assembly that reads them
 from the transcript, per `design@agent-skills@ledger-from-transcript`, would read one thread as

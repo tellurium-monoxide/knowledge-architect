@@ -41,9 +41,9 @@ pub(crate) fn check(
             &rel,
             &expected,
             inputs,
-            // The action names the repair and no cause: a hand edit, an upgrade of the
-            // checker and a branch that changes the generator all leave this finding, and the
-            // repair is the same for each.
+            // The action names the repair and no cause, per `design@core@finding-names-the-repair`:
+            // a hand edit, an upgrade of the checker and a branch that changes the generator all
+            // leave this finding, and the repair is the same for each.
             &format!("run `{} index`", manifest.command()),
             &mut findings,
         );

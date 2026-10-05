@@ -132,14 +132,14 @@ A finding's action names the repair. It names a cause only when several causes c
 finding and each needs a different repair; the finding then tells them apart by naming each case
 with its repair, as a dangling reference does for an unknown kind, an unknown anchor and an
 undefined id. Where one repair is correct for every cause, the finding names that repair and no
-cause. A cause adds nothing the reader needs to act, and it can be wrong: the finding for a stale
-generated index named a hand edit, and after an upgrade of the checker that changed the
-generator's bytes, nobody had edited the file. The test is checkable per finding: list the causes
-that can produce it, and ask whether one repair is correct for all of them. The owner set the
-principle; this wording is the agent's, and the owner approved it. The rival condition, that a
-finding names no cause where its repair is a safe fix under `design@core@safe-fix-definition`, lost:
-the repair of a generated file that fails in every earlier commit of a branch is a history edit,
-which is no safe fix, and the owner ruled that its finding names no cause either. How a repair is
+cause. A cause adds nothing the reader needs to act, and it can be wrong: a stale generated index
+is left by a hand edit, by an upgrade of the checker that changes the generator's bytes, and by a
+branch that changes the generator, and a finding that names one of them misleads the reader in the
+other two cases. The test is checkable per finding: list the causes that can produce it, and ask
+whether one repair is correct for all of them. The rival condition, that a finding names no cause
+where its repair is a safe fix under `design@core@safe-fix-definition`, lost: the repair of a
+generated file that fails in every earlier commit of a branch is a history edit, which is no safe
+fix, and it is the same repair whatever left the file out of date. How a repair is
 carried out safely is the project's rule for that operation, not the finding's text. This serves
 `goal@knowledge-architect@adoption-is-easy`: the finding is what a consumer reads first.
 

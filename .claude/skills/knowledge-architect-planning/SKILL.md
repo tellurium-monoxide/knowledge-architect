@@ -13,8 +13,9 @@ audit and at each landing.
 **Not covered here**, each named where it lives:
 
 - **The design discussion** that produces the converged design:
-  `knowledge-architect-design`. It ends at convergence, the premortem and the
-  owner's rulings on tripwires, and hands off to this skill.
+  `knowledge-architect-design`. On its full path, it ends at convergence, the premortem and the
+  owner's rulings on tripwires, and hands off to this skill; its in-change path writes no plan
+  document.
 - **Writing the code** of a step, its claims and its tests: the project's own development
   procedure. This workflow installs none.
 - **Dispatching the reviewers**: `knowledge-architect-review`.
@@ -338,8 +339,8 @@ finds it there.
      design session with the owner under `knowledge-architect-design`. **The session's depth
      follows the gap.**
      - A choice among shapes that can be stated in full, each with its consequence, is put to the
-       owner in one round, with a default, where reversing it touches none of the four things the
-       design skill's in-change path tests; several such gaps go in one question. The step's documents exist, so the ruling
+       owner in one message, with a default, where reversing it touches none of the four things the
+       design skill names for the cost of reversal; several such gaps go in one question. The step's documents exist, so the ruling
        is not left to a commit message as that path would leave it: it is written in place in the
        milestone's documents by the rule of §4, as a thread with the owner's words verbatim, like
        the audit's other answers, and the audit's commit lists it among its gaps. It owes no new
@@ -363,7 +364,7 @@ finds it there.
    earns an entry, and they govern where the two disagree: an item of the row the tests exclude is
    named in the harvest's commit, with the test it fails. A decision harvested from a thread takes
    the thread's slug, unless the slug misdescribes the approved decision: the entry then takes a
-   slug that names it, and the harvest's commit states the pair, per
+   slug that names it, and the step's harvest row states the pair, per
    `knowledge-architect-decision-recording`. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
    linked from its README. **The harvest is reviewed before the merge**, per

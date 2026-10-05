@@ -128,7 +128,8 @@ the decision it derives from, as references; the measurement it rests on; the fa
 its nearest rival. **The test: if this premise turned false, would the decision have to be argued
 again? If yes, it is in the head.** If no, it is deliberation.
 
-**The deliberation is not copied into the head**, and not into the harvest's commit message either.
+**The deliberation is not copied into the head**, and, where a plan document carries it, not into
+the harvest's commit message either.
 A plan document is deleted when its work lands, per `knowledge-architect-planning`, and the commit
 that deletes it cites it by its kind. A reader who needs the deliberation finds it there:
 
@@ -176,7 +177,8 @@ discussion minted it in the same grammar and checked it for a collision with the
 entries before using it, for that reason. When the name misdescribes the decision, the entry takes
 a slug that names the decision, by the alignment rule of §1, and the text that keeps the
 deliberation states the pair, `#<thread> → <entry slug>`: the plan document's harvest row, or the
-commit message on the in-change path. `git log -G` on either name then finds the other.
+commit message on the in-change path. `git log --grep` on either name then finds a commit message
+that states the pair, and `git log -G` a plan document's diff that does.
 
 **A list item is not a definition site either**, so a decision written as one bullet among several
 carries no anchor and cannot be cited or found by `git log -G`. This is a constraint on the
@@ -295,7 +297,7 @@ must not describe as rejected a design the project now has.
 
 ## 7. Tripwires from a premortem
 
-A design discussion ends with a premortem, and the owner rules on which of its surviving causes
+A design discussion that runs a premortem ends with it, and the owner rules on which of its surviving causes
 become tripwires. **A tripwire is written at harvest, with the decision it guards, and only on the
 owner's word.** It goes in the tripwires home of the Component that owns the guarded decision, so
 the decision's head exists before the tripwire that names it. Its shape and its lifecycle are

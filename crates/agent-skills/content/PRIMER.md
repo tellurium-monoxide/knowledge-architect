@@ -95,8 +95,8 @@ brackets. The checker reads Markdown and Rust source; a reference anywhere else 
   tripwire fires; work closes an entry.
 - `knowledge-architect-design`: a design question has an open solution space;
   keep-or-change about an existing design; a bug trend suggests the design is the problem.
-- `knowledge-architect-planning`: a design discussion converged; a step of a milestone starts or
-  lands.
+- `knowledge-architect-planning`: a design discussion converged on its full path; a step of a
+  milestone starts or lands.
 - `knowledge-architect-review`: before merging to the main branch, or when an
   activity's skill says its work is ready.
 - `knowledge-architect-agent-configuration`: before editing a `CLAUDE.md`, a skill or an agent.

@@ -42,8 +42,8 @@ a requirement waiting to be extracted from the owner, because neither party
 knows it yet. It is discovered by proposing, arguing, and following
 the open threads.
 
-**This skill ends at convergence**, the premortem, and the owner's rulings
-on its tripwires. It writes no plan document and no record. On the full
+**This skill ends at convergence**, and, where the premortem runs, the
+premortem and the owner's rulings on its tripwires. It writes no plan document and no record. On the full
 path, the spec or the milestone is written by `knowledge-architect-planning`,
 in the same session (step 8); on the in-change path, a commit message
 carries the deliberation (Decision authority). Either way, the decisions
@@ -528,14 +528,16 @@ choices whose option space genuinely is closed and consequence-free.
    what it produced.
 
    Convergence is PROPOSED, never requested: show the checkpoint
-   table with the `presumed-settled` bucket in view — the batch word
+   table, unless the in-change path skips it for a ledger of one thread,
+   with the `presumed-settled` bucket in view — the batch word
    promotes that bucket, and convergence holds when it
    lands in a round that introduces no new thread, reopening, or
    argument. Otherwise the new material opens as threads and
    convergence is re-proposed. The banned form is an approval question
    in place of closing open threads.
 
-   When convergence can be proposed, prepare a premortem. See below.
+   When convergence can be proposed, prepare a premortem, unless the
+   in-change path skips it (Decision authority). See below.
 
 7. **Premortem before convergence**: assume the design shipped and failed.
    Name the most plausible causes, each naming the approved thread it stresses.
