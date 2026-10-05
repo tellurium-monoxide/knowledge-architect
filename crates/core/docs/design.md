@@ -126,6 +126,23 @@ another check reads would be a second chain, and nothing prevents one: such a ch
 not a check of the last one, and it goes before its consumers. `path@core@CLAUDE.md`
 restates that at the point of adding a check, and a tripwire names the event.
 
+### A finding names a cause only where the repair depends on which cause holds `##finding-names-the-repair`
+
+A finding's action names the repair. It names a cause only when several causes can produce the
+finding and each needs a different repair; the finding then tells them apart by naming each case
+with its repair, as a dangling reference does for an unknown kind, an unknown anchor and an
+undefined id. Where one repair is correct for every cause, the finding names that repair and no
+cause. A cause adds nothing the reader needs to act, and it can be wrong: the finding for a stale
+generated index named a hand edit, and after an upgrade of the checker that changed the
+generator's bytes, nobody had edited the file. The test is checkable per finding: list the causes
+that can produce it, and ask whether one repair is correct for all of them. The owner set the
+principle; this wording is the agent's, and the owner approved it. The rival condition, that a
+finding names no cause where its repair is a safe fix under `design@core@safe-fix-definition`, lost:
+the repair of a generated file that fails in every earlier commit of a branch is a history edit,
+which is no safe fix, and the owner ruled that its finding names no cause either. How a repair is
+carried out safely is the project's rule for that operation, not the finding's text. This serves
+`goal@knowledge-architect@adoption-is-easy`: the finding is what a consumer reads first.
+
 ### A domain's checks plug in as an extension compiled into the binary, and the core binary registers none `##an-extension-plugs-in-through-phased-hooks`
 
 The core checks what every project carries: the walk, the parse, the entity table, references,
