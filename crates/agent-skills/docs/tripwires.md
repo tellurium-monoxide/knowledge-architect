@@ -13,8 +13,8 @@ document, after the plan document's own reviews.
 **Response:** open a `defect` naming the ruling and the document, and reopen
 `design@agent-skills@ledger-from-transcript`, with the rejected alternative "Writing the
 discussion's ledger to a file during the discussion" among the candidates.
-**Re-entry:** the standing-state review before every merge, and the retrospective of the session
-that finds it.
+**Re-entry:** the retrospective of the session that assembled the plan document: it reads that
+session's own record against the committed document.
 **Evidence when written:** in the commit that added the structured-plans milestone document, its
 transcript reviewers found three rulings recorded wider than the owner made them. The author wrote
 each of the three, and the extraction none, and each was repaired before that commit. That is
