@@ -40,6 +40,6 @@ would build work on a decision nobody made, if no review catches it.
 
 A second instance closes it as a pattern to act on: the planning skill's assembly would then state
 that a thread whose closing word is the agent's, or a word that requires interpretation, is
-recorded as presumed-settled, never approved. The tripwire's re-entry, the standing-state review
-before every merge, is where a second instance is found. A year of plan documents without one
+recorded as presumed-settled, never approved. The tripwire's re-entry, the retrospective of
+the session that assembled the plan document, is where a second instance is found. A year of plan documents without one
 closes it as an isolated slip.
