@@ -23,9 +23,11 @@ subsection is omitted.
   an issue fix, goes through the design skill. Its description names that symptom, and the
   decision-recording skill sends such a decision back to it before its text is written.
 - `agent-skills`, patch: the design skill's one-round path for a cheap decision becomes the
-  in-change path. It is also open when the decision's work lands in the change under way, and it
-  sets no bound on threads or rounds. It writes no plan document: the commit message carries every
-  thread with its final state, the owner's words verbatim and the rivals that lost.
+  in-change path. It is open when the decision's work, or its record, lands in the change under
+  way, whatever the cost of reversal, and it sets no bound on threads or rounds. It writes no plan
+  document: the commit message carries every thread with its final state, the owner's words
+  verbatim and the rivals that lost. A cheap decision whose work comes later takes the full path,
+  with a plan document.
 - `agent-skills`, patch: a design thread is named by the decision it would record, not by the change
   it proposes. When a thread's slug misdescribes the approved decision, its design entry takes a
   slug that names the decision, and the plan document's harvest row, or the commit message on the

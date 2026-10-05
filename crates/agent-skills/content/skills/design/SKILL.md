@@ -119,13 +119,13 @@ bounds what is proposed, how many threads are opened, or how many rounds
 the discussion takes: that depends on what grounding, investigation and
 evidence bring, which nobody knows in advance.
 
-- **The in-change path.** It is open when the decision's work lands in
-  the change under way, as when the decision was met during an issue
-  fix or a review repair, or when reversing the decision touches none
-  of the four things below. No plan document is written. The
-  deliberation goes in the message of the commit that writes the
-  decision's design entry, or, for a decision that earns none, of the
-  commit that implements it: every thread with its final state, the
+- **The in-change path.** It is open when the decision lands in the
+  change under way: its work, as when the decision was met during an
+  issue fix or a review repair, or its record, for a decision that
+  `knowledge-architect-decision-recording` records when it is made. No
+  plan document is written. The deliberation goes in the message of the
+  commit that writes the decision's design entry, or, for a decision
+  that earns none, of the commit that implements it: every thread with its final state, the
   owner's words verbatim for each closure, the rivals that lost with
   their reasons, and the owner's rulings on tripwires. The decision is
   recorded at that landing like any other, under
@@ -135,8 +135,10 @@ evidence bring, which nobody knows in advance.
 - **The full path.** Otherwise, and whenever a discussion converges on
   work that no longer lands in the change under way (it needs a branch
   of its own, several pull requests, or nobody has started it): the
-  hand-off to planning of loop step 8.
+  hand-off to planning of loop step 8. A decision that is cheap to
+  reverse and whose work comes later takes it too.
 
+The four decide whether the premortem runs, never which path is taken.
 To decide, state what reversal touches, in nouns. The four: stored
 data that would have to be migrated; an interface other code or other
 people already consume; behavior users have adapted to, in the sense
