@@ -93,7 +93,9 @@ re-checking.
   shows, a build directory two checkouts share lets the live checkout run the reviewer's build,
   which judges the live tree with the reviewer's code. Where every target is tied, a shared
   directory costs a rebuild at each switch between the two checkouts instead. In a Rust project,
-  the reviewer sets `CARGO_TARGET_DIR` to a directory inside its worktree.
+  the reviewer sets `CARGO_TARGET_DIR` to a directory inside its worktree that the project's
+  ignore rules cover, such as its `target/`: a build directory git does not ignore is reported by
+  the checker as untracked files.
 - **No reviewer edits the tree, and none runs an operation that can lose content**: no stash, no
   reset, no checkout of a path.
 
