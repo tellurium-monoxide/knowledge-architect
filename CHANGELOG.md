@@ -32,6 +32,11 @@ subsection is omitted.
   it proposes. When a thread's slug misdescribes the approved decision, its design entry takes a
   slug that names the decision, and the plan document's harvest row, or the commit message on the
   in-change path, states the pair.
+- `agent-skills`, patch: the design skill rewords a tripwire the owner ruled to record, when it is
+  written or on a review finding, on the agent's judgement, and lists each change to the owner at
+  the end of the turn.
+- `agent-skills`, patch: on the design skill's in-change path, nothing of a decision is implemented
+  or committed before the premortem has run and the owner has ruled on its tripwires.
 
 ## 0.3.0
 

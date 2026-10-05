@@ -131,7 +131,10 @@ evidence bring, which nobody knows in advance.
   recorded at that landing like any other, under
   `knowledge-architect-decision-recording`. The checkpoint table is
   shown at convergence when the ledger holds more than one thread. The
-  premortem runs when reversal touches any of the four.
+  premortem runs when reversal touches any of the four. Nothing of the
+  decision is implemented or committed before the premortem has run and
+  the owner has ruled on its tripwires, so the commit that writes the
+  decision's entry carries those rulings.
 - **The full path.** Otherwise, and whenever a discussion converges on
   work that no longer lands in the change under way (it needs a branch
   of its own, several pull requests, or nobody has started it): the
@@ -564,6 +567,14 @@ choices whose option space genuinely is closed and consequence-free.
    owner's word, and meets the
    falsifiability bar: evidence specific enough that both parties
    would agree it fired — an event, a count crossing a bound.
+
+   The owner's word rules on whether a cause is watched, not on the
+   wording of the tripwire that watches it. Its firing evidence, its
+   response and its re-entry point may be reworded when it is written,
+   or on a review finding, on your judgement, and each change is listed
+   to the owner at the end of the turn, as an item met outside the task
+   is. A tripwire that watches another cause is a new one, and needs the
+   owner's word.
 
 8. **On the full path, hand off to `knowledge-architect-planning`, in this
    session.** On the in-change path there is no hand-off: the work
