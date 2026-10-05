@@ -106,6 +106,10 @@ re-checking.
 - issues, one file each in the affected anchor's issue directory
   (`knowledge-architect-issue-tracking`).
 
+**A finding that makes several claims gets an outcome for each claim**: repaired, opened as an
+issue, or judged to need nothing, with the reason. A claim left without an outcome of its own is
+lost unless a later review finds it.
+
 A transcript reviewer's finding that something **has no durable outcome** is acted on by the
 dispatcher without waiting for the owner: it is recorded in its home, repaired, opened as an issue,
 or judged to need nothing, with the reason. Each outcome is reported to the owner, in the record of
