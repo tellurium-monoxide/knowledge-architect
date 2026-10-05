@@ -41,11 +41,10 @@ pub(crate) fn check(
             &rel,
             &expected,
             inputs,
-            &format!(
-                "run `{} index`; the listing is a function of the entries beside it, \
-                 and a hand edit is what this reports",
-                manifest.command()
-            ),
+            // The action names the repair and no cause: a hand edit, an upgrade of the
+            // checker and a branch that changes the generator all leave this finding, and the
+            // repair is the same for each.
+            &format!("run `{} index`", manifest.command()),
             &mut findings,
         );
     }

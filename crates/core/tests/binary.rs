@@ -2532,12 +2532,19 @@ fn stale_index(tag: &str) -> Sandbox {
 /// The claim: `check --fix` rewrites a stale generated index, lists it, and the run then passes,
 /// so an edit cycle is one command. Mutation checked: skipping the write of the generated list
 /// leaves the index stale, and the run exits 1.
+///
+/// The claim: the stale index's finding names the repair and no cause, since several causes
+/// leave it and the repair is the same for each. The action line is asserted whole, its line
+/// break included, so a cause appended to it fails the test.
 #[test]
 fn check_fix_rewrites_a_stale_index_and_the_run_passes() {
     let sandbox = stale_index("fix-stale");
     let (out, _, code) = sandbox.run(&["check"]);
     assert_eq!(code, 1, "{out}");
-    assert!(out.contains("the generated file is out of date"), "{out}");
+    assert!(
+        out.contains("the generated file is out of date\n    → run `klarch index`\n"),
+        "{out}"
+    );
     let (out, err, code) = sandbox.run(&["check", "--fix"]);
     assert_eq!(code, 0, "{out}{err}");
     assert!(
