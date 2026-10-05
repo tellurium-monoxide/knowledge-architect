@@ -103,7 +103,7 @@ scripted four-turn discussion run on three models, described in `path@agent-skil
 smaller one reproduced the ledger's format, and it endorsed a weak proposal, invented states outside
 the closed set, and dropped open threads between rounds.
 
-### The design skill structures how a discussion is conducted, never what is proposed `##structure-the-flow`
+### The design skill structures how a discussion is conducted, never what or how much is proposed `##structure-the-flow`
 
 The skill fixes the flow: proposals are argued, threads carry states, and closure waits for the
 owner's word. It never fixes what may be proposed. The failure it was written against is the
@@ -114,6 +114,34 @@ tested it. The instructions that implement this are "never pad with alternatives
 and the nearest-rival test, under which "no rival worth naming" is a claim to test. An edit that
 specifies what must be proposed, rather than how a proposal is argued and tracked, works against
 this entry.
+
+No bound is set on how much is proposed either: on the number of threads, of proposals, or of
+rounds. On the owner's argument, what a discussion needs depends on what its grounding,
+investigation and experiments bring, and nobody knows that in advance; a bound fixed before the
+discussion decides its size before its content, against the open discussion the skill exists to
+run. A path chosen by the cost of reversal, or by where the work lands, changes where the
+deliberation is kept, never how large the discussion may grow. The owner ruled that such a bound
+must not be added.
+
+### A decision that earns a record is argued under the design skill, wherever it arises `##every-decision-through-design`
+
+A decision that earns durable text, a reversal of a recorded one or one that passes a recording
+test of the decision-recording skill, goes through the design skill, whatever activity met it. The
+decision-recording skill triggers once a decision has been made, so a decision met during an issue
+fix or a review repair otherwise reaches the record with no argument, no rival weighed, and none of
+the design skill's rules for reading the owner's word. In the instance that showed it, two remarks
+of the owner given during an issue fix were recorded as a hard rule and as a ruling with its hedge
+dropped. This serves `goal@knowledge-architect@the-owner-decides` and
+`goal@knowledge-architect@design-is-recorded-with-its-arguments`. A choice that earns no durable
+text stays out of it, in a code comment and a commit message.
+
+Two texts deliver it. The design skill's description names the symptom: a choice about how
+something is built, or an owner's word that settles one, met during another task. The
+decision-recording skill sends a decision that earns text and was not argued back to the design
+skill before its text is written. A line in the primer lost to `design@agent-skills@primer-limit`:
+once the design skill's description carries the symptom, a skill delivers the rule. A rule in the
+decision-recording skill alone, quoting the owner's words and asking about each hedge, was
+superseded: it covered the owner's words and not the argument and the rivals.
 
 ### The design skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
 
@@ -343,10 +371,31 @@ it is unchecked text that a grep finds with no marker that it is stale. Either b
 too: the installed planning skill would have nothing to say where a document's work ends, against
 `goal@knowledge-architect@agents-get-a-complete-workflow`.
 
+### A discussion whose work lands in the change under way keeps its deliberation in that change's commit message `##in-change-path`
+
+The design skill has two paths, which differ only in where the deliberation is kept until the
+harvest. The in-change path is open when the decision's work lands in the change under way, or
+when reversing it touches none of the four things the skill names: stored data, a consumed
+interface, behaviour users have adapted to, and a decided thread that would reopen. It writes no
+plan document. The message of the commit that writes the decision's design entry, or that
+implements a decision that earns none, carries what a plan document would: every thread with its
+final state, the owner's words verbatim for each closure, the rivals that lost with their reasons,
+and the rulings on tripwires. The premortem runs when reversal touches any of the four. A
+discussion that converges on work that no longer lands in the change under way takes the full
+path, per `design@agent-skills@design-hands-off-to-planning`.
+
+A plan document exists to carry a decision from convergence to a landing that comes later, and to
+be reviewed before another session implements it. When the work lands in the change under way,
+neither applies, and requiring a spec would make every decision met during a task cost a plan
+document, which is what `design@agent-skills@every-decision-through-design` must not cost to be
+followed. The rival, a separate path for one decision met during a task, lost: it bounded the
+discussion to one thread, against `design@agent-skills@structure-the-flow`.
+
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
-The planning skill starts where a design discussion has converged, and writes the spec or the
-milestone in the same session. The design skill ends at convergence, the premortem and
+The planning skill starts where a design discussion has converged on the full path, and writes the
+spec or the milestone in the same session. A discussion on the in-change path has no plan document,
+per `design@agent-skills@in-change-path`. The design skill ends at convergence, the premortem and
 the owner's rulings on tripwires, and writes no plan document of its own. Its decisions are
 recorded when their work lands, per `design@agent-skills@harvest-after-implementation`. One skill owns the document's shape: two skills describing the sections of one document
 would drift apart, against `goal@knowledge-architect@agents-get-a-complete-workflow`. The session
@@ -500,7 +549,9 @@ final state, the arguments on each side, the owner's rulings verbatim with their
 relations. It applies to a spec, and to a milestone document with its step specs, which share the
 record by the rule of `design@agent-skills@milestone-is-a-directory`. `design@agent-skills@standing-argument-in-head` names the plan document
 as the home of the deliberation while it exists, and `goal@knowledge-architect@the-owner-decides`
-is served only where the rulings are recorded as the owner made them. The rival, a plan document
+is served only where the rulings are recorded as the owner made them. On the in-change path, the
+commit message carries the same record, for the same reason, per `design@agent-skills@in-change-path`.
+The rival, a plan document
 recording each thread's final state and resolution, left the rulings and the arguments to memory.
 The cost, which the owner accepted by name, is a longer plan document to write and to read.
 

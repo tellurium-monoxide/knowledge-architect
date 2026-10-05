@@ -90,6 +90,12 @@ Otherwise it belongs in an **inline comment at the code it explains, plus the co
 That is not a lesser home: the comment is read by everyone who touches the code, and the commit
 carries the argument.
 
+**A decision that earns durable text under §1 or this section, and was not argued under
+`knowledge-architect-design`, goes back to that skill before its text is written.** This is the
+case of a decision met during another task and settled there, by the owner's word or by the
+session's own choice. The design skill's in-change path keeps the deliberation in the commit
+message, so the task needs no plan document and no new session.
+
 ## 3. Which Component owns it
 
 The project is partitioned into Components, which its manifest declares. The project's root is a
@@ -135,8 +141,8 @@ git show <commit>^:<path of the document>                  # the document as it 
 **`-G` matches any commit whose diff touches the slug. `-S` matches only a change in how many times
 it occurs, so it misses every revision.**
 
-When a decision was taken with no spec, for instance a cheap decision closed in one round of a
-discussion, its commit message carries the deliberation.
+When a decision was taken with no spec, on the in-change path of `knowledge-architect-design`, its
+commit message carries the deliberation.
 
 ## 5. The current design
 

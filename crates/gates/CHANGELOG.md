@@ -19,6 +19,13 @@ subsection is omitted.
   decision.
 - `agent-skills`, patch: the review skill gives each claim of a reviewer's finding its own outcome:
   repaired, opened as an issue, or judged to need nothing, with the reason.
+- `agent-skills`, patch: a decision that earns a record and is met during another task, such as
+  an issue fix, goes through the design skill. Its description names that symptom, and the
+  decision-recording skill sends such a decision back to it before its text is written.
+- `agent-skills`, patch: the design skill's one-round path for a cheap decision becomes the
+  in-change path. It is also open when the decision's work lands in the change under way, and it
+  sets no bound on threads or rounds. It writes no plan document: the commit message carries every
+  thread with its final state, the owner's words verbatim and the rivals that lost.
 
 ## 0.3.0
 
