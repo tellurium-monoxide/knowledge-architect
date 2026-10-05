@@ -14,6 +14,9 @@ subsection is omitted.
   is told to do as a decision. Before writing it, the session searches the design homes and the
   goals for the behaviour the edited text describes, and an edit that narrows or contradicts a
   head, or strains a goal, follows the decision-recording skill.
+- `agent-skills`, patch: the review skill sends the decision-record axis at the last commit of a
+  review, the one that lands the transcript reviewer's repairs, when that commit makes or reverses a
+  decision.
 
 ## 0.3.0
 
