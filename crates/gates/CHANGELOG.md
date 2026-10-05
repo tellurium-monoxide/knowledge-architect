@@ -12,16 +12,21 @@ subsection is omitted.
 
 - `agent-skills`, patch: the agent-configuration skill treats an edit that changes what an agent
   is told to do as a decision. Before writing it, the session searches the design homes and the
-  goals for the behaviour the edited text describes, and an edit that narrows or contradicts a
-  head, or strains a goal, follows the decision-recording skill.
+  goals for the behaviour the edited text describes. An edit that narrows or contradicts a head
+  follows the decision-recording skill, and one that strains a goal goes to the owner.
 - `agent-skills`, patch: the review skill sends the decision-record axis at the last commit of a
   review, the one that lands the transcript reviewer's repairs, when that commit makes or reverses a
   decision.
 - `agent-skills`, patch: the review skill gives each claim of a reviewer's finding its own outcome:
   repaired, opened as an issue, or judged to need nothing, with the reason.
-- `agent-skills`, patch: a decision that earns a record and is met during another task, such as
-  an issue fix, goes through the design skill. Its description names that symptom, and the
-  decision-recording skill sends such a decision back to it before its text is written.
+- `agent-skills`, patch: a decision met during another task, such as an issue fix, goes through
+  the design skill when it creates a design head, contradicts one, or takes one beyond what its
+  title states. Its description names that symptom, and the decision-recording skill sends such a
+  decision back to it before its text is written. An addition within what a head's title states
+  is recorded directly.
+- `agent-skills`, patch: the decision-recording skill keeps a head's title, as well as its slug,
+  aligned with the full scope of its decision, and a title states a decision only while it is
+  false of the nearest rival it beat.
 - `agent-skills`, patch: the design skill's one-round path for a cheap decision becomes the
   in-change path. It is open when the decision's work, or its record, lands in the change under
   way, whatever the cost of reversal, and it sets no bound on threads or rounds. It writes no plan

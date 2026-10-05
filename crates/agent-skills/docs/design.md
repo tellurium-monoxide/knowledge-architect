@@ -122,21 +122,32 @@ discussion decides its size before its content, against the open discussion the 
 run. A path chosen by the cost of reversal, or by where the work lands, changes where the
 deliberation is kept, never how large the discussion may grow.
 
-### A decision that earns a record is argued under the design skill, wherever it arises `##every-decision-through-design`
+### A decision that creates a head, contradicts one, or takes one beyond what its title states is argued under the design skill `##new-or-reshaped-head-needs-design`
 
-A decision that earns durable text, a reversal of a recorded one or one that passes a recording
-test of the decision-recording skill, goes through the design skill, whatever activity met it. The
-decision-recording skill triggers once a decision has been made, so a decision met during an issue
-fix or a review repair otherwise reaches the record with no argument, no rival weighed, and none of
-the design skill's rules for reading the owner's word. This serves `goal@knowledge-architect@the-owner-decides` and
-`goal@knowledge-architect@design-is-recorded-with-its-arguments`. A choice that earns no durable
-text stays out of it, in a code comment and a commit message.
+A decision goes through the design skill, whatever activity met it, when it creates a design head,
+contradicts a statement of one, its argument included, or extends one beyond what its title
+states. In the third case the title is reworded to state both decisions, or, where no title can,
+the addition gets a head of its own. A title states a decision only while it is false of the
+nearest rival it beat, so a reworded title passes that test for each decision under it, and a
+title made generic enough to cover both fails it. An addition within what the title states, which
+contradicts nothing, is recorded directly, with the owner's words quoted where they gave a ruling.
+A choice that earns no durable text stays in a code comment and a commit message.
 
-Two texts deliver it. The design skill's description names the symptom: a choice about how
-something is built, or an owner's word that settles one, met during another task. The
-decision-recording skill sends a decision that earns text and was not argued back to the design
-skill before its text is written. A line in the primer lost to `design@agent-skills@primer-limit`:
-once the design skill's description carries the symptom, a skill delivers the rule.
+The decision-recording skill triggers once a decision has been made, so a new decision met during
+an issue fix or a review repair otherwise reaches the record with no argument, no rival weighed,
+and none of the design skill's rules for reading the owner's word. This serves
+`goal@knowledge-architect@the-owner-decides` and
+`goal@knowledge-architect@design-is-recorded-with-its-arguments`. An addition inside a head's stated
+scope carries less risk: the decision the head records, and its argument, stand, and the title
+still tells a reader of the outline what is decided. The rival, every decision that earns durable
+text, sent such additions to the design skill too; the owner ruled that a small rewrite that
+neither reverses nor overrules a head does not need it. A test on the size of a change lost: a
+one-sentence reversal is the change that most needs the discussion.
+
+Two texts deliver it. The design skill's description names the symptom. The decision-recording
+skill sends a decision in one of the three cases, not argued, back to the design skill before its
+text is written. A line in the primer lost to `design@agent-skills@primer-limit`: once the design
+skill's description carries the symptom, a skill delivers the rule.
 
 ### The design skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
 
@@ -404,8 +415,8 @@ document, per `design@agent-skills@design-home-is-built-intent`.
 A plan document exists to carry a decision from convergence to a landing that comes later, and to
 be reviewed before another session implements it. When the work lands in the change under way,
 neither applies, and requiring a spec would make every decision met during a task cost a plan
-document, which is what `design@agent-skills@every-decision-through-design` must not cost to be
-followed. The rival, a separate path for one decision met during a task, lost: it bounded the
+document, which is what `design@agent-skills@new-or-reshaped-head-needs-design` must not cost to
+be followed. The rival, a separate path for one decision met during a task, lost: it bounded the
 discussion to one thread, against `design@agent-skills@structure-the-flow`. The cost, which the
 owner accepted, is a long commit message when a discussion inside a task grows to several threads;
 its length is not bounded, since a bound on it would bound the discussion.

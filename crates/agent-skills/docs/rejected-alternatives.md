@@ -77,9 +77,9 @@ had a README of 1,624 lines when it left, read whole at the grounding of every s
 derived again in one discussion round.
 
 **A line in the primer that sends a decision met during another task to the design skill** — lost
-to `design@agent-skills@every-decision-through-design`. `live`. The primer holds only what every
+to `design@agent-skills@new-or-reshaped-head-needs-design`. `live`. The primer holds only what every
 session needs and no installed skill delivers, per `design@agent-skills@primer-limit`, and the
 design skill's description carries the symptom. It is kept here because a doubt remains:
-`issue@agent-skills@a-retrospective-ruling-reached-design-heads-without-the-design-skill` records
-a session the description and the decision-recording skill's backstop did not reach in time, and
-reopening the decision names this line among the candidates.
+the decision is watched by `tripwire@agent-skills@decision-trigger-fires-too-often` and
+`tripwire@agent-skills@title-stops-stating-scope`, and a session that the description and the
+backstop do not reach in time would bring this line back among the candidates.

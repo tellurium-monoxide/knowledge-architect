@@ -52,10 +52,11 @@ change:
   the minimum is rewriting it. §2's tests decide whether a _new_ decision earns an entry, not
   whether a false one may stand.
 - **Rewrite the head in place** (§5), and give the new statement its own slug when it is a new
-  statement. Keep the old slug only where it still names the same decision. The slug must stay
-  aligned with the full scope of the decision: it is often the only part a reader sees, in a
-  citing document or in code. A slug that misdescribes its decision misinforms every reader of
-  every citation, or undermines the decision it names, so rename it even when that means rewriting every reference in the project. A
+  statement. Keep the old slug only where it still names the same decision. The slug and the
+  title must stay aligned with the full scope of the decision: the slug is often the only part a
+  reader sees, in a citing document or in code, and the title is what a document outline shows. A
+  slug or a title that misdescribes its decision misinforms every reader, or undermines the
+  decision it names, so rename it even when that means rewriting every reference in the project. A
   rename is cheap, and the checker lists every reference it leaves dangling in the files it reads:
   Markdown and Rust source. A reference in a comment of another language is not read, so grep for
   the slug as well.
@@ -90,11 +91,15 @@ Otherwise it belongs in an **inline comment at the code it explains, plus the co
 That is not a lesser home: the comment is read by everyone who touches the code, and the commit
 carries the argument.
 
-**A decision that earns durable text under §1 or this section, and was not argued under
-`knowledge-architect-design`, goes back to that skill before its text is written.** This is the
-case of a decision met during another task and settled there, by the owner's word or by the
-session's own choice. The design skill's in-change path keeps the deliberation in the commit
-message, so the task needs no plan document and no new session.
+**A decision that creates a design head, contradicts a statement of one, its argument included,
+or extends one beyond what its title states, and was not argued under `knowledge-architect-design`,
+goes back to that skill before its text is written.** This is the case of a decision met during
+another task and settled there, by the owner's word or by the session's own choice. The design
+skill's in-change path keeps the deliberation in the commit message, so the task needs no plan
+document and no new session. For the third case, rewrite the head's title to state the addition as
+well, and apply §5's test to it: if no title passes, the addition gets a head of its own. An
+addition within what the title states, which contradicts nothing, is recorded directly, with the
+owner's words quoted in the commit where they gave a ruling.
 
 ## 3. Which Component owns it
 
@@ -188,6 +193,12 @@ heading**. When a section of bulleted arguments produces one, break it out of th
 The statement comes first and the slug last, with no bold and no em dash between them, so that a
 document outline reads as a list of decisions rather than a list of identifiers. The body follows as
 ordinary prose.
+
+**A title states a decision only while it is false of the nearest rival it beat.** A title that the
+losing alternative would make true names a subject, not a decision: "A tripwire is written on the
+owner's word" is false of a tripwire written at the agent's discretion, and "Tripwires are handled
+with the owner" is true of nearly any rival. A head that carries several decisions passes the test
+for each one, or is split.
 
 ```markdown
 ### <The decision, stated as a sentence> `##<slug>`

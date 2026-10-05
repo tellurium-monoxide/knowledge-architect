@@ -28,17 +28,29 @@ by citing an expectation set.
 `design@agent-skills@expectation-set-bounds-scope` if its boundary sentence admits the reading.
 **Re-entry:** the standing-state review of the change that closed the finding.
 
-## Guarding `design@agent-skills@every-decision-through-design`: the trigger sends the owner decisions that earn no record `##decision-trigger-fires-too-often`
+## Guarding `design@agent-skills@new-or-reshaped-head-needs-design`: the trigger sends the owner decisions it does not cover `##decision-trigger-fires-too-often`
 
-The decision rests on the premise that a session judges correctly which decisions earn a record,
-so that only those reach the owner as a design discussion.
+The decision rests on the premise that a session judges correctly which decisions create,
+contradict or reshape a head, so that only those reach the owner as a design discussion.
 
 **Fires when:** in two sessions, found by a retrospective or a transcript review, the owner says a
-design discussion was not needed for a decision that earned no durable text.
+design discussion was not needed for a decision that created, contradicted and reshaped no head.
 **Response:** open a `defect` naming both sessions and the decisions, and reopen
-`design@agent-skills@every-decision-through-design` on the wording of its scope and of the design
-skill's description.
+`design@agent-skills@new-or-reshaped-head-needs-design` on the wording of its cases and of the
+design skill's description.
 **Re-entry:** the retrospective of each session, which reads back what the owner corrected.
+
+## Guarding `design@agent-skills@new-or-reshaped-head-needs-design`: an addition recorded directly outgrows its head's title `##title-stops-stating-scope`
+
+The decision rests on the premise that a session reads a head's title strictly, and sends an
+addition outside it to the design skill rather than recording it directly.
+
+**Fires when:** a review finds a design head whose title no longer states a decision added to its
+body by the direct route.
+**Response:** open a `defect` naming the head and the commit, and reopen
+`design@agent-skills@new-or-reshaped-head-needs-design` on its third case.
+**Re-entry:** the standing-state review before every merge: the head and its title are in the
+tree.
 
 ## Guarding `design@agent-skills@in-change-path`: a ruling lost or misstated in an in-change commit message `##ruling-lost-in-change`
 
