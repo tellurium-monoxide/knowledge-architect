@@ -40,19 +40,6 @@ design discussion was not needed for a decision that earned no durable text.
 skill's description.
 **Re-entry:** the retrospective of each session, which reads back what the owner corrected.
 
-## Guarding `design@agent-skills@every-decision-through-design`: a decision reaches a design head with no discussion `##decision-trigger-does-not-fire`
-
-The decision rests on the premise that the design skill's description and the decision-recording
-skill's backstop reach a session before it writes a decision met during another task.
-
-**Fires when:** a design head is found written or rewritten, after this head was recorded, by a
-session whose transcript holds no thread for that decision.
-**Response:** open a `defect` naming the head and the branch, and reopen
-`design@agent-skills@every-decision-through-design` on where the trigger is delivered, with the
-primer line it rejected among the candidates.
-**Re-entry:** the retrospective of each session that wrote or rewrote a design head: it reads the
-session's own record, and checks each such head for a thread.
-
 ## Guarding `design@agent-skills@in-change-path`: a ruling lost or misstated in an in-change commit message `##ruling-lost-in-change`
 
 The decision rests on the premise that a commit message records the owner's rulings as the owner
