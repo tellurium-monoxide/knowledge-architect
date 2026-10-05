@@ -20,10 +20,11 @@ subsection is omitted.
 - `agent-skills`, patch: the review skill gives each claim of a reviewer's finding its own outcome:
   repaired, opened as an issue, or judged to need nothing, with the reason.
 - `agent-skills`, patch: a decision met during another task, such as an issue fix, goes through
-  the design skill when it creates a design head, contradicts one, or takes one beyond what its
-  title states. Its description names that symptom, and the decision-recording skill sends such a
-  decision back to it before its text is written. An addition within what a head's title states
-  is recorded directly.
+  the design skill when it creates a design head, contradicts a statement of one, or takes one
+  beyond what its title states. Its description names that symptom, and the decision-recording
+  skill sends such a decision back to it before its text is written. An addition within what a
+  head's title states, and a relocation or rewording that adds or removes no decision, are recorded
+  directly.
 - `agent-skills`, patch: the decision-recording skill keeps a head's title, as well as its slug,
   aligned with the full scope of its decision, and a title states a decision only while it is
   false of the nearest rival it beat.

@@ -40,9 +40,9 @@ owner and has no expectation set. This is a restatement; its homes are the entri
 3. **Kind.** A missing capability is worth text; a conformance rule only where the default is
    systematically wrong (`design@agent-skills@capability-over-conformance`).
 4. **Built intent.** Grep the design homes and the goals for the behaviour the edited passage
-   describes. An edit that narrows or contradicts a head is a decision, under
-   `knowledge-architect-decision-recording`; one that strains a goal goes to the owner, under
-   `knowledge-architect-goal-setting`. Its home is the installed
+   describes. An edit that contradicts a statement of a head, or takes one beyond what its title
+   states, is a decision, under `knowledge-architect-decision-recording`; one that strains a goal
+   goes to the owner, under `knowledge-architect-goal-setting`. Its home is the installed
    `knowledge-architect-agent-configuration`, §1, and it holds because
    `design@agent-skills@design-home-is-built-intent` makes the design home authority over the
    shipped text.

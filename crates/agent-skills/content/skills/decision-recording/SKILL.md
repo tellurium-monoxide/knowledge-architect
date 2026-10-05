@@ -62,6 +62,8 @@ change:
   the slug as well.
 - **Move the incumbent into the Component's rejected alternatives** (§6) with its reason and a
   validity marker, stated as strongly as it was originally made, if it meets one of §6's tests.
+- **Argue it under `knowledge-architect-design` first**, if it was not: a reversal contradicts a
+  statement of the incumbent, the second case of §2's backstop.
 - **Delete the tripwires guarding the reversed decision.** A tripwire whose decision is reversed
   goes outright. `knowledge-architect-issue-tracking` owns that movement.
 - **Repair what pointed at the old behaviour**: skills, subagent definitions, scoped `CLAUDE.md`
@@ -99,7 +101,10 @@ skill's in-change path keeps the deliberation in the commit message, so the task
 document and no new session. For the third case, rewrite the head's title to state the addition as
 well, and apply §5's test to it: if no title passes, the addition gets a head of its own. An
 addition within what the title states, which contradicts nothing, is recorded directly, with the
-owner's words quoted in the commit where they gave a ruling.
+owner's words quoted in the commit where they gave a ruling. A change that relocates or rewords
+recorded decisions, a split of a head included, and adds or removes none, is not a decision: it
+needs no design skill, and the routing and fidelity-of-relocation review axes judge that it adds or
+removes none.
 
 ## 3. Which Component owns it
 
@@ -195,9 +200,9 @@ document outline reads as a list of decisions rather than a list of identifiers.
 ordinary prose.
 
 **A title states a decision only while it is false of the nearest rival it beat.** A title that the
-losing alternative would make true names a subject, not a decision: "A tripwire is written on the
-owner's word" is false of a tripwire written at the agent's discretion, and "Tripwires are handled
-with the owner" is true of nearly any rival. A head that carries several decisions passes the test
+losing alternative would make true names a subject, not a decision: "The configuration is read
+once, at start-up" is false of a configuration read again on every request, and "The configuration
+is read with care" is true of nearly any rival. A head that carries several decisions passes the test
 for each one, or is split.
 
 ```markdown
