@@ -27,3 +27,41 @@ by citing an expectation set.
 **Response:** open a `defect` naming the finding and the set cited, and reopen
 `design@agent-skills@expectation-set-bounds-scope` if its boundary sentence admits the reading.
 **Re-entry:** the standing-state review of the change that closed the finding.
+
+## Guarding `design@agent-skills@every-decision-through-design`: the trigger sends the owner decisions that earn no record `##decision-trigger-fires-too-often`
+
+The decision rests on the premise that a session judges correctly which decisions earn a record,
+so that only those reach the owner as a design discussion.
+
+**Fires when:** in two sessions, found by a retrospective or a transcript review, the owner says a
+design discussion was not needed for a decision that earned no durable text.
+**Response:** open a `defect` naming both sessions and the decisions, and reopen
+`design@agent-skills@every-decision-through-design` on the wording of its scope and of the design
+skill's description.
+**Re-entry:** the retrospective of each session, and the transcript review before every merge.
+
+## Guarding `design@agent-skills@every-decision-through-design`: a decision reaches a design head with no discussion `##decision-trigger-does-not-fire`
+
+The decision rests on the premise that the design skill's description and the decision-recording
+skill's backstop reach a session before it writes a decision met during another task.
+
+**Fires when:** a transcript review finds a design head written or rewritten on a branch whose
+transcripts hold no thread for that decision.
+**Response:** open a `defect` naming the head and the branch, and reopen
+`design@agent-skills@every-decision-through-design` on where the trigger is delivered, with the
+primer line it rejected among the candidates.
+**Re-entry:** the transcript review before every merge.
+
+## Guarding `design@agent-skills@in-change-path`: a ruling lost or misstated in an in-change commit message `##ruling-lost-in-change`
+
+The decision rests on the premise that a commit message records the owner's rulings as the owner
+made them, as a plan document does, with no review of a plan document before the work.
+
+**Fires when:** a ruling of the owner is found missing from, or misstated in, the commit message
+that carries the deliberation of a discussion on the in-change path, after the branch's transcript
+review.
+**Response:** open a `defect` naming the ruling and the commit, and reopen
+`design@agent-skills@in-change-path` on its entry condition: whether a discussion with more than
+one approved thread takes the full path.
+**Re-entry:** the standing-state review before every merge, and the retrospective of the session
+that finds it.
