@@ -80,6 +80,6 @@ derived again in one discussion round.
 to `design@agent-skills@every-decision-through-design`. `live`. The primer holds only what every
 session needs and no installed skill delivers, per `design@agent-skills@primer-limit`, and the
 design skill's description carries the symptom. It is kept here because a doubt remains:
-`tripwire@agent-skills@decision-trigger-does-not-fire` watches whether the description and the
-decision-recording skill's backstop reach a session in time, and names this line among the
-candidates if they do not.
+`issue@agent-skills@a-retrospective-ruling-reached-design-heads-without-the-design-skill` records
+a session the description and the decision-recording skill's backstop did not reach in time, and
+reopening the decision names this line among the candidates.

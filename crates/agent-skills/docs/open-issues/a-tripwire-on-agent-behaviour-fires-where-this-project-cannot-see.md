@@ -25,11 +25,13 @@ The instances, in `path@agent-skills@docs/tripwires.md`:
 - `tripwire@agent-skills@ruling-lost-in-assembly` had the same defect, repaired after that
   retrospective.
 
-After those repairs, each of the five tripwires of this Component re-enters at a retrospective or a
+After those repairs, each tripwire of this Component re-enters at a retrospective or a
 standing-state review of this repository. The repairs moved the gap rather than closing it: the
 installed retrospective skill opens no tripwires home, and runs only when the owner accepts it, so
-four of the five tripwires, whose evidence is in a session's transcript, are read by no step of any
-procedure. The standing-state reviewer reads them, and has no transcript.
+the tripwires whose evidence is in a session's transcript are read by no step of any procedure. The
+standing-state reviewer reads them, and has no transcript. One of them fired on the branch that
+opened this entry, and was judged only because that branch's transcript reviewer raised it as an
+item with no outcome: `issue@agent-skills@a-retrospective-ruling-reached-design-heads-without-the-design-skill`.
 
 A session of a consumer project that meets the firing evidence reaches this repository only if its
 owner runs the retrospective and sends the workflow's file as an issue.

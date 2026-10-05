@@ -1,10 +1,11 @@
 **Generated — do not edit.** `cargo klarch index`
 
-10 entries
+11 entries
 
 | kind | title |
 | --- | --- |
 | defect | [A hedged word of the owner was recorded as an approved thread in a committed plan document](a-hedged-ruling-recorded-as-approved.md) |
+| defect | [Design heads were rewritten from a retrospective's proposals without the design skill](a-retrospective-ruling-reached-design-heads-without-the-design-skill.md) |
 | deferred | [A project cannot change one instruction of an installed skill](patching-an-installed-skill.md) |
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | todo | [A reviewer that queues long work reports nothing until it is asked](a-reviewer-s-running-time-is-unbounded.md) |
