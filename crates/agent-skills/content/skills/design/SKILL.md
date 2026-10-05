@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-design
-description: MUST use when a design discussion has an open solution space — requirements still being discovered, several defensible shapes, a technical choice with real trade-offs — when evaluating whether to keep or change an existing design or architecture, when a recurring bug trend suggests the design itself is the problem, or when a discussion is reverting to multiple-choice menus, minimal-solution defaults, or approval-seeking closers. Covers threads and their states, criteria, decision authority and material findings, the loop from grounding to convergence and the premortem, the hand-off to planning, and keep-or-change verdicts. Requires a frontier-tier model (Opus-class or stronger).
+description: MUST use when a design discussion has an open solution space — requirements still being discovered, several defensible shapes, a technical choice with real trade-offs — when evaluating whether to keep or change an existing design or architecture, when a recurring bug trend suggests the design itself is the problem, when a choice about how something is built, or an owner's word that settles one, is met during another task and the decision earns a record, or when a discussion is reverting to multiple-choice menus, minimal-solution defaults, or approval-seeking closers. Covers threads and their states, criteria, decision authority and material findings, the loop from grounding to convergence and the premortem, the hand-off to planning, and keep-or-change verdicts. Requires a frontier-tier model (Opus-class or stronger).
 ---
 
 # Discussing design decisions
@@ -43,10 +43,11 @@ knows it yet. It is discovered by proposing, arguing, and following
 the open threads.
 
 **This skill ends at convergence**, the premortem, and the owner's rulings
-on its tripwires. It writes no plan document and no record. The spec or the
-milestone is written by `knowledge-architect-planning`, in the same session,
-and the decisions are recorded at the landing of the work that implements
-them (step 8).
+on its tripwires. It writes no plan document and no record. On the full
+path, the spec or the milestone is written by `knowledge-architect-planning`,
+in the same session (step 8); on the in-change path, a commit message
+carries the deliberation (Decision authority). Either way, the decisions
+are recorded at the landing of the work that implements them.
 
 ## Decision authority
 
@@ -97,8 +98,8 @@ It ends the argument, but it does not end your duties around it:
   first — the finding stays on the thread's ledger line, marked
   unacknowledged, and is carried into the plan document that
   `knowledge-architect-planning` writes from the ledger, among its
-  defaults awaiting the owner; on the cheap path below, into the message
-  of the commit that implements the decision. The ledger does not outlive
+  defaults awaiting the owner; on the in-change path below, into the
+  commit message that carries the deliberation. The ledger does not outlive
   the discussion, and those do. It is not a fired tripwire. This is not
   approval-seeking: you are surfacing information
   that arrived after the closure. If the check surfaces nothing
@@ -110,24 +111,39 @@ It ends the argument, but it does not end your duties around it:
   thread carrying both a tripwire and a re-entry point (a declared
   exception to owner-only closure — see Who moves what), and note the
   acknowledged consequence on the ledger, so that the plan document, or
-  the commit message on the cheap path, carries it and the next session
+  the commit message on the in-change path, carries it and the next session
   knows the decision was informed.
 
-**Depth is proportionate to the cost of being wrong.** A decision that is
-cheap to reverse deserves one round and a one-sentence argument — still
-a named thread and a ledger line; skip the full table, the premortem,
-and the plan document. The deliberation goes in the message of the commit
-that implements the decision, and the decision is recorded at that landing
-like any other, under `knowledge-architect-decision-recording`. To take that path, state what reversal touches, in
-nouns. Take the full path if reversal touches ANY of these four:
-stored data that would have to be migrated; an interface other code or
-other people already consume; behavior users have adapted to, in the
-sense Keep-or-change uses — a document that argues it, or observed
-use — which is not the same as any user-visible string; or a decided
-thread that would have to be REOPENED if this one changed, as opposed
-to one that merely reads it. Touch none of the four and the cheap path
-is available. The full machinery below is for decisions that are
-expensive to reverse or that constrain other decisions.
+**Two paths, which differ in where the deliberation is kept.** Neither
+bounds what is proposed, how many threads are opened, or how many rounds
+the discussion takes: that depends on what grounding, investigation and
+evidence bring, which nobody knows in advance.
+
+- **The in-change path.** It is open when the decision's work lands in
+  the change under way, as when the decision was met during an issue
+  fix or a review repair, or when reversing the decision touches none
+  of the four things below. No plan document is written. The
+  deliberation goes in the message of the commit that writes the
+  decision's design entry, or, for a decision that earns none, of the
+  commit that implements it: every thread with its final state, the
+  owner's words verbatim for each closure, the rivals that lost with
+  their reasons, and the owner's rulings on tripwires. The decision is
+  recorded at that landing like any other, under
+  `knowledge-architect-decision-recording`. The checkpoint table is
+  shown at convergence when the ledger holds more than one thread. The
+  premortem runs when reversal touches any of the four.
+- **The full path.** Otherwise, and whenever a discussion converges on
+  work that no longer lands in the change under way (it needs a branch
+  of its own, several pull requests, or nobody has started it): the
+  hand-off to planning of loop step 8.
+
+To decide, state what reversal touches, in nouns. The four: stored
+data that would have to be migrated; an interface other code or other
+people already consume; behavior users have adapted to, in the sense
+Keep-or-change uses — a document that argues it, or observed use —
+which is not the same as any user-visible string; or a decided thread
+that would have to be REOPENED if this one changed, as opposed to one
+that merely reads it.
 
 ## When NOT to use
 
@@ -241,8 +257,8 @@ carry no state: every criterion ever named, with its kind and its
 current satisfaction line. A thread slug you cannot place is a
 tracking failure to repair in that turn, not a row to drop. The checkpoint happens at two
 moments: when proposing convergence, and before
-the hand-off to planning (on the full path — the one-round path in Decision
-authority skips the table). The full
+the hand-off to planning on the full path. On the in-change path, a
+ledger that holds a single thread skips it. The full
 table is presented for contest ("contest any of these"), one batch
 confirmation over the whole ledger — never a per-item ratification
 questionnaire.
@@ -526,7 +542,8 @@ choices whose option space genuinely is closed and consequence-free.
 
    If the design holds against the premortem, what survives is proposed as tripwires,
    except a cause that only the built code can check: that is an acceptance
-   criterion, which `knowledge-architect-planning` writes into the plan document.
+   criterion, which `knowledge-architect-planning` writes into the plan document,
+   or, on the in-change path, a test of the change.
    Ask the owner, for each tripwire, whether it is recorded.
    Some may be out of scope of the project, and the owner is the only judge of that.
    A tripwire the owner rules to record is written at the harvest of the decision
@@ -539,7 +556,10 @@ choices whose option space genuinely is closed and consequence-free.
    falsifiability bar: evidence specific enough that both parties
    would agree it fired — an event, a count crossing a bound.
 
-8. **Hand off to `knowledge-architect-planning`, in this session.**
+8. **On the full path, hand off to `knowledge-architect-planning`, in this
+   session.** On the in-change path there is no hand-off: the work
+   continues in the change, and the deltas are the draft of the commit
+   message that carries the deliberation.
    The ledger, the criteria table, the arguments and the facts they
    depended on, the designs as they were presented to the owner, the
    premortem and the owner's rulings on its tripwires live in this

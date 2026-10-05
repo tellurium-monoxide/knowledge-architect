@@ -43,9 +43,10 @@ about an existing architecture — the assistant:
   shape cannot be built at all stops the work rather than proceeding,
   and work that cannot be undone (a migration run, a release shipped)
   is held for your word while the reversible part goes ahead;
-- scales the ceremony to reversal cost: a cheap-to-reverse decision
-  gets one round, and its argument goes in the commit that implements it; the full machinery is
-  reserved for expensive-to-reverse forks;
+- keeps the deliberation where the work lands: a decision met during a task, or one that is cheap
+  to reverse, takes the in-change path, with no plan document, and its argument goes in the commit
+  that implements it; other work goes to a plan document. Neither path bounds how many threads or
+  rounds the discussion takes;
 - builds discriminating evidence (a failing test, a prototype, a
   benchmark) when the discussion stalls on intuitions — with both
   parties stating beforehand which outcome would flip them;

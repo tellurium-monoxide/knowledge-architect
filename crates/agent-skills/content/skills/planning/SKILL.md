@@ -338,8 +338,8 @@ finds it there.
      design session with the owner under `knowledge-architect-design`. **The session's depth
      follows the gap.**
      - A choice among shapes that can be stated in full, each with its consequence, is put to the
-       owner in one round, with a default, where the design skill's conditions for its one-round
-       path hold; several such gaps go in one question. The step's documents exist, so the ruling
+       owner in one round, with a default, where reversing it touches none of the four things the
+       design skill's in-change path tests; several such gaps go in one question. The step's documents exist, so the ruling
        is not left to a commit message as that path would leave it: it is written in place in the
        milestone's documents by the rule of §4, as a thread with the owner's words verbatim, like
        the audit's other answers, and the audit's commit lists it among its gaps. It owes no new
