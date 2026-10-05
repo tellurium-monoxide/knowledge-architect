@@ -381,15 +381,18 @@ too: the installed planning skill would have nothing to say where a document's w
 ### A discussion whose work lands in the change under way keeps its deliberation in that change's commit message `##in-change-path`
 
 The design skill has two paths, which differ only in where the deliberation is kept until the
-harvest. The in-change path is open when the decision's work lands in the change under way, or
-when reversing it touches none of the four things the skill names: stored data, a consumed
-interface, behaviour users have adapted to, and a decided thread that would reopen. It writes no
-plan document. The message of the commit that writes the decision's design entry, or that
+harvest. The in-change path is open when the decision lands in the change under way: its work, or
+its record, for a decision recorded when it is made, per
+`design@agent-skills@harvest-after-implementation`. It writes no plan document. The message of the commit that writes the decision's design entry, or that
 implements a decision that earns none, carries what a plan document would: every thread with its
 final state, the owner's words verbatim for each closure, the rivals that lost with their reasons,
-and the rulings on tripwires. The premortem runs when reversal touches any of the four. A
-discussion that converges on work that no longer lands in the change under way takes the full
-path, per `design@agent-skills@design-hands-off-to-planning`.
+and the rulings on tripwires. The premortem runs when reversal touches any of the four things the
+skill names: stored data, a consumed interface, behaviour users have adapted to, and a decided
+thread that would reopen. The four never open the in-change path: a decision that is cheap to
+reverse and whose work comes later takes the full path, per
+`design@agent-skills@design-hands-off-to-planning`, as does any discussion that converges on work
+that does not land in the change under way. Decided and unbuilt intent then has one home, the plan
+document, per `design@agent-skills@design-home-is-built-intent`.
 
 A plan document exists to carry a decision from convergence to a landing that comes later, and to
 be reviewed before another session implements it. When the work lands in the change under way,
