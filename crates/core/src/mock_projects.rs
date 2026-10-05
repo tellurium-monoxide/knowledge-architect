@@ -459,6 +459,31 @@ mod planted {
         }
     }
 
+    /// The committed indexes of this project that are meant to be current: each is what the
+    /// generator writes. The project's generated files are written by hand, so this list is
+    /// the one place that tells a planted stale file from a drifted one. The other two
+    /// register indexes are left out on purpose: docs/open-issues/index.md is absent, the
+    /// registers check's planted missing index, and parts/widget/docs/open-issues/index.md
+    /// lists no entry, beside the entry whose title says it was never regenerated.
+    const CURRENT: [&str; 4] = [
+        "agent-config/open-issues/index.md",
+        "docs/plans/milestones/index.md",
+        "docs/plans/milestones/m-one/index.md",
+        "docs/plans/specs/index.md",
+    ];
+
+    #[test]
+    fn every_committed_index_meant_to_be_current_is_what_the_generator_writes() {
+        let manifest = mock("planted");
+        let model = Model::build(&manifest, &[]).expect("a model");
+        let want = current_indexes(&manifest, &model);
+        for rel in CURRENT {
+            let have =
+                std::fs::read_to_string(manifest.root().join(rel)).expect("a committed index");
+            assert_eq!(Some(&have), want.get(&PathBuf::from(rel)), "{rel}");
+        }
+    }
+
     #[test]
     fn a_generated_file_that_is_absent_is_reported_as_missing() {
         let gone = findings_with(|_, _| HashMap::new());
