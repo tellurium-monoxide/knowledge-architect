@@ -73,7 +73,9 @@ has not landed is a hypothesis presented as a fact. A head must be true of the t
 been so, no account of the change; a slug at the end of a level-three heading, never on another
 level, in a table cell, on a plain line or in a list item; the statement first and the slug last.
 A decision written as one bullet among several carries no anchor and cannot be cited. When the
-decision was a thread of a design discussion, the slug is the thread's name.
+decision was a thread of a design discussion, the slug is the thread's name, unless that name
+misdescribes the approved decision: then the slug names the decision, and the plan document's
+harvest row or the commit message carrying the deliberation states the pair of thread and slug.
 
 **Does the head carry its standing argument?** Every premise whose failure would reopen the
 decision: the goal it derives a constraint from, as a `goal@<anchor>@<id>` reference; a decision of

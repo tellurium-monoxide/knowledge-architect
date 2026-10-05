@@ -26,6 +26,10 @@ subsection is omitted.
   in-change path. It is also open when the decision's work lands in the change under way, and it
   sets no bound on threads or rounds. It writes no plan document: the commit message carries every
   thread with its final state, the owner's words verbatim and the rivals that lost.
+- `agent-skills`, patch: a design thread is named by the decision it would record, not by the change
+  it proposes. When a thread's slug misdescribes the approved decision, its design entry takes a
+  slug that names the decision, and the plan document's harvest row, or the commit message on the
+  in-change path, states the pair.
 
 ## 0.3.0
 

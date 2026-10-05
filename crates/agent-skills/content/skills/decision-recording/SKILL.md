@@ -170,9 +170,13 @@ of a plain line, in the middle of a line or in a file that is not the design hom
 `{{command}} check` reports it as a misplaced definition, and every reference to it as dangling.
 The slug is an id in the grammar `[a-z0-9]+(-[a-z0-9]+)*`, unique in the design home.
 
-**When the decision was a thread of a design discussion, its slug is the thread's name.** The
+**When the decision was a thread of a design discussion, its slug is the thread's name**, unless
+that name misdescribes the decision as approved, as a name for the change it proposed does. The
 discussion minted it in the same grammar and checked it for a collision with the Component's
-entries before using it, for that reason.
+entries before using it, for that reason. When the name misdescribes the decision, the entry takes
+a slug that names the decision, by the alignment rule of §1, and the text that keeps the
+deliberation states the pair, `#<thread> → <entry slug>`: the plan document's harvest row, or the
+commit message on the in-change path. `git log -G` on either name then finds the other.
 
 **A list item is not a definition site either**, so a decision written as one bullet among several
 carries no anchor and cannot be cited or found by `git log -G`. This is a constraint on the

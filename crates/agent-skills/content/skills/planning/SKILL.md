@@ -362,7 +362,9 @@ finds it there.
    `knowledge-architect-decision-recording` decide whether each decision and each alternative
    earns an entry, and they govern where the two disagree: an item of the row the tests exclude is
    named in the harvest's commit, with the test it fails. A decision harvested from a thread takes
-   the thread's slug. A tripwire names the head that harvested its
+   the thread's slug, unless the slug misdescribes the approved decision: the entry then takes a
+   slug that names it, and the harvest's commit states the pair, per
+   `knowledge-architect-decision-recording`. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
    linked from its README. **The harvest is reviewed before the merge**, per
    `knowledge-architect-review`, on the decision-record, routing and standing-state axes, and by

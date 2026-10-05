@@ -308,6 +308,18 @@ slug, so the spec, the commit messages and the design home name the decision wit
 In the plan document the thread is an item, a level-three heading ending with the same slug under
 the Threads section, cited from inside that document only, per `design@core@plan-items-by-section`.
 
+A thread is named by the decision it would record if approved, not by the change it proposes. A
+thread's slug is minted in the round it opens, and the approved shape can drift from the proposal,
+so the rule has one exception: when the thread's slug misdescribes the decision as approved, the
+entry takes a slug that names the decision, and the plan document's harvest row, or the commit
+message on the in-change path, states the pair. A slug that misdescribes its decision misinforms
+every reader of every citation, and the decision-recording skill's alignment rule orders a rename
+in that case; without the exception, the two rules gave opposite orders, against
+`goal@agent-skills@one-skill-per-activity`. The rival, renaming the thread during the discussion
+once it drifts, lost: every earlier delta carries the old slug, and the assembly that reads them
+from the transcript, per `design@agent-skills@ledger-from-transcript`, would read one thread as
+two.
+
 ## Plan documents
 
 ### The words: plan document, spec, milestone, plans directory `##document-vocabulary`
