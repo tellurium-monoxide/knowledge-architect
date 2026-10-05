@@ -208,7 +208,12 @@ enter freely at any time.
 entry id, `[a-z0-9]+(-[a-z0-9]+)*`, because an approved thread whose
 decision earns a design entry gives that entry its slug: the plan
 document, the commit messages and the design home then name the decision
-with one identifier. Before using a slug, check that no entry of the
+with one identifier. Name the thread by the decision it would record if
+approved, not by the change it proposes: #retention-window, not
+#shorten-retention. A slug is never changed during the discussion, since
+every earlier delta carries it. When the approved decision has drifted
+from what the slug says, its entry takes a slug that names the decision,
+under `knowledge-architect-decision-recording`. Before using a slug, check that no entry of the
 Component that will own the decision already holds it, with
 `{{command}} show design@<anchor>@<slug>`. In prose, write it plain with a
 `#` before it, as in #retention-window, never in backticks: a backticked
