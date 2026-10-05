@@ -25,9 +25,9 @@ restates a skill, or a convention of one project, does not go in it.
 
 ## Editing an installed skill or agent
 
-An edit of an installed skill under `path@agent-skills@content/` passes the three tests below, in
-order; an edit of an installed agent passes the second and the third, since an agent never works
-with the owner and has no expectation set. This is a restatement; its homes are the entries named.
+An edit of an installed skill under `path@agent-skills@content/` passes the four tests below, in
+order; an edit of an installed agent passes the last three, since an agent never works with the
+owner and has no expectation set. This is a restatement; its homes are the entries named.
 
 1. **Scope.** A finding about the owner's behaviour outside the skill's expectation set is not a
    gap, and no instruction is written for it. The sets are in §5 of
@@ -39,6 +39,10 @@ with the owner and has no expectation set. This is a restatement; its homes are 
    mechanism; a predicted behaviour is parked as an issue (`design@agent-skills@additions-need-real-use`).
 3. **Kind.** A missing capability is worth text; a conformance rule only where the default is
    systematically wrong (`design@agent-skills@capability-over-conformance`).
+4. **Built intent.** Grep this Component's design home, and the goals of the root and of this
+   Component, for the behaviour the edited passage describes. An edit that narrows or contradicts
+   a head, or strains a goal, is a decision, under `knowledge-architect-decision-recording`
+   (`design@agent-skills@design-home-is-built-intent`).
 
 For the design skill, a finding about an intermediate table rather than the outcome is
 not worth text (`design@agent-skills@outcome-over-display`). A rewording needs no design entry
