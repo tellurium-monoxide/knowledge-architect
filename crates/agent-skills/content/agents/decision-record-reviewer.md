@@ -71,7 +71,9 @@ has not landed is a hypothesis presented as a fact. A head must be true of the t
 
 **Is the head in the shape a head owes?** Present tense, the current design as if it had always
 been so, no account of the change; a slug at the end of a level-three heading, never on another
-level, in a table cell, on a plain line or in a list item; the statement first and the slug last.
+level, in a table cell, on a plain line or in a list item; the statement first and the slug last;
+a title and a slug that state the head's full scope, the title false of the nearest rival each
+decision under it beat.
 A decision written as one bullet among several carries no anchor and cannot be cited. When the
 decision was a thread of a design discussion, the slug is the thread's name, unless that name
 misdescribes the approved decision: then the slug names the decision, and the plan document's

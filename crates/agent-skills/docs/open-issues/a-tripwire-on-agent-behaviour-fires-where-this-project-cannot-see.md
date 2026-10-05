@@ -16,7 +16,7 @@ reach it. Finding W2 of the retrospective of 2026-10-05.
 
 The instances, in `path@agent-skills@docs/tripwires.md`:
 
-- The three tripwires recorded from the premortem of `design@agent-skills@every-decision-through-design`
+- The three tripwires recorded from the premortem of `design@agent-skills@new-or-reshaped-head-needs-design`
   and `design@agent-skills@in-change-path` first named the transcript review and the standing-state
   review as re-entry points. Neither reviewer does the check: the transcript reviewer does not read
   the tripwires homes, and the standing-state reviewer is given no transcript. The standing-state
@@ -31,7 +31,7 @@ installed retrospective skill opens no tripwires home, and runs only when the ow
 the tripwires whose evidence is in a session's transcript are read by no step of any procedure. The
 standing-state reviewer reads them, and has no transcript. One of them fired on the branch that
 opened this entry, and was judged only because that branch's transcript reviewer raised it as an
-item with no outcome: `issue@agent-skills@a-retrospective-ruling-reached-design-heads-without-the-design-skill`.
+item with no outcome; the firing led to the narrowing of the decision it guarded.
 
 A session of a consumer project that meets the firing evidence reaches this repository only if its
 owner runs the retrospective and sends the workflow's file as an issue.

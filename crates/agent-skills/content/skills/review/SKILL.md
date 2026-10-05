@@ -115,9 +115,9 @@ lost unless a later review finds it.
 
 A transcript reviewer's finding that something **has no durable outcome** is acted on by the
 dispatcher without waiting for the owner: it is recorded in its home, repaired, opened as an issue,
-or judged to need nothing, with the reason. The exception is a decision that earns durable text and
-was not argued: it goes to `knowledge-architect-design` first, per
-`knowledge-architect-decision-recording`. Each outcome is reported to the owner, in the record of
+or judged to need nothing, with the reason. The exception is a decision that creates a design head,
+contradicts one, or takes one beyond what its title states, and was not argued: it goes to
+`knowledge-architect-design` first, per `knowledge-architect-decision-recording`. Each outcome is reported to the owner, in the record of
 the review and at the end of the turn. A ruling the reviewer finds misstated is the owner's, and is
 put to the owner.
 
