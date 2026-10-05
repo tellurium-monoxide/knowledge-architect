@@ -6,6 +6,15 @@ class is `design@knowledge-architect@changelog-entries`. Inside a subsection, en
 surface, in the order `checks`, `cli`, `manifest`, `library`, `agent-skills`, `gates`; an empty
 subsection is omitted.
 
+## Next release
+
+### Workflow
+
+- `agent-skills`, patch: the agent-configuration skill treats an edit that changes what an agent
+  is told to do as a decision. Before writing it, the session searches the design homes and the
+  goals for the behaviour the edited text describes, and an edit that narrows or contradicts a
+  head, or strains a goal, follows the decision-recording skill.
+
 ## 0.3.0
 
 ### Migration

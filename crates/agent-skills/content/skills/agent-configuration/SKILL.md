@@ -24,6 +24,11 @@ Everything written in a `SKILL.md`, a subagent definition or a `CLAUDE.md` follo
   strength than they cost.
 - **References are checked like anywhere else.** A project's skills and agents are walked by
   `{{command}} check`, and a live reference in them must resolve. Run it after editing one.
+- **An edit that changes what an agent is told to do is a decision.** Before writing it, search
+  the design homes and the goals for the behaviour the edited text describes, as §1 of
+  `knowledge-architect-decision-recording` searches for a recorded statement a decision would
+  reverse. An edit that narrows or contradicts a head, or strains a goal, follows that skill. A
+  rewording that changes no instruction is not a decision.
 
 ## 2. Where a piece of agent-facing text goes
 

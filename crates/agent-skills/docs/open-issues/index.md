@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-13 entries
+12 entries
 
 | kind | title |
 | --- | --- |
@@ -10,7 +10,6 @@
 | question | [Is a last commit that carries new decisions after the transcript review reviewed again?](review-of-a-last-commit-carrying-new-decisions.md) |
 | todo | [The review skill does not ask for an outcome for each claim of a finding](a-partial-finding-has-no-outcome-per-claim.md) |
 | todo | [A reviewer that queues long work reports nothing until it is asked](a-reviewer-s-running-time-is-unbounded.md) |
-| todo | [An edit of instruction text is not framed as a decision that may reverse a recorded one](a-skill-edit-is-not-checked-as-a-reversal.md) |
 | todo | [No installed skill covers a bounded problem](a-skill-for-bounded-problems.md) |
 | todo | [No installed skill says how a new Component is created](a-skill-for-creating-a-component.md) |
 | todo | [Only the design and setup skills state what they expect of the owner](expectation-sets-for-the-installed-skills.md) |
