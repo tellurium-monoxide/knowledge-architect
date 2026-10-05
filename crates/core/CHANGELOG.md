@@ -17,6 +17,8 @@ subsection is omitted.
 - `agent-skills`, patch: the review skill sends the decision-record axis at the last commit of a
   review, the one that lands the transcript reviewer's repairs, when that commit makes or reverses a
   decision.
+- `agent-skills`, patch: the review skill gives each claim of a reviewer's finding its own outcome:
+  repaired, opened as an issue, or judged to need nothing, with the reason.
 
 ## 0.3.0
 
