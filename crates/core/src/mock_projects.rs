@@ -462,9 +462,9 @@ mod planted {
     /// The committed indexes of this project that are meant to be current: each is what the
     /// generator writes. The project's generated files are written by hand, so this list is
     /// the one place that tells a planted stale file from a drifted one. The other two
-    /// register indexes are left out on purpose: docs/open-issues/index.md is absent, the
-    /// registers check's planted missing index, and parts/widget/docs/open-issues/index.md
-    /// lists no entry, beside the entry whose title says it was never regenerated.
+    /// register indexes are `ABSENT`, the registers check's planted missing index, and
+    /// `STALE`, which lists no entry, beside the entry whose title says it was never
+    /// regenerated.
     const CURRENT: [&str; 4] = [
         "agent-config/open-issues/index.md",
         "docs/plans/milestones/index.md",
@@ -472,16 +472,52 @@ mod planted {
         "docs/plans/specs/index.md",
     ];
 
+    /// The register index whose absence is planted, and the one whose staleness is.
+    const ABSENT: &str = "docs/open-issues/index.md";
+    const STALE: &str = "parts/widget/docs/open-issues/index.md";
+
+    /// Every register index of the project is current, absent or stale as the lists above
+    /// say, so a planted defect that drifts to current, or an index dropped from `CURRENT`,
+    /// fails here.
     #[test]
     fn every_committed_index_meant_to_be_current_is_what_the_generator_writes() {
         let manifest = mock("planted");
         let model = Model::build(&manifest, &[]).expect("a model");
         let want = current_indexes(&manifest, &model);
+        let mut listed: Vec<PathBuf> = CURRENT.iter().map(PathBuf::from).collect();
+        listed.push(PathBuf::from(ABSENT));
+        listed.push(PathBuf::from(STALE));
+        listed.sort();
+        let mut generated: Vec<PathBuf> = want.keys().cloned().collect();
+        generated.sort();
+        assert_eq!(listed, generated);
         for rel in CURRENT {
             let have =
                 std::fs::read_to_string(manifest.root().join(rel)).expect("a committed index");
             assert_eq!(Some(&have), want.get(&PathBuf::from(rel)), "{rel}");
         }
+        assert!(!manifest.root().join(ABSENT).exists(), "{ABSENT}");
+        let stale = std::fs::read_to_string(manifest.root().join(STALE)).expect("committed");
+        assert_ne!(Some(&stale), want.get(&PathBuf::from(STALE)), "{STALE}");
+    }
+
+    /// The comparison is exact to the byte: an index that differs from its regeneration by
+    /// one trailing line break alone is out of date.
+    #[test]
+    fn an_index_that_differs_by_a_trailing_line_break_is_out_of_date() {
+        let path = PathBuf::from(CURRENT[0]);
+        let edited = findings_with(|m, model| {
+            let mut c = current_indexes(m, model);
+            let text = format!("{}\n", c[&path]);
+            c.insert(path.clone(), text);
+            c
+        });
+        let hits: Vec<&String> = edited
+            .iter()
+            .filter(|f| f.contains("out of date"))
+            .collect();
+        assert_eq!(hits.len(), 1, "{edited:#?}");
+        assert!(hits[0].starts_with(CURRENT[0]), "{hits:#?}");
     }
 
     #[test]
