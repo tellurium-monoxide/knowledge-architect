@@ -2556,6 +2556,29 @@ fn check_fix_rewrites_a_stale_index_and_the_run_passes() {
     assert!(index.contains("A retitled issue"), "{index}");
 }
 
+/// The claim: the stale index's action names the command the project declares, not the
+/// default one, so a project that runs the checker through its own command is told that one.
+#[test]
+fn the_stale_index_action_names_the_declared_command() {
+    let sandbox = stale_index("stale-command");
+    let manifest =
+        std::fs::read_to_string(sandbox.path("knowledge-architect.toml")).expect("the manifest");
+    sandbox.write(
+        "knowledge-architect.toml",
+        &manifest.replace(
+            "name = \"minimal\"\n",
+            "name = \"minimal\"\ncommand = \"probe klarch\"\n",
+        ),
+    );
+    sandbox.stage();
+    let (out, err, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{err}");
+    assert!(
+        out.contains("the generated file is out of date\n    → run `probe klarch index`\n"),
+        "{out}"
+    );
+}
+
 /// The claim: a finding of phases 1 to 3 stops a `--fix` run before any generated file is
 /// written, so no writer writes over an incomplete model. Mutation checked: removing the gate's
 /// stop writes the index over the incomplete model.
