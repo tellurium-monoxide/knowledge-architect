@@ -99,12 +99,13 @@ re-checking.
 
 ## 3. What a review leaves behind
 
-**Findings** become either of:
+**Findings** become one of:
 
 - repairs, done on the branch before merge, if the defect is too large to consider the task
   achieved;
 - issues, one file each in the affected anchor's issue directory
-  (`knowledge-architect-issue-tracking`).
+  (`knowledge-architect-issue-tracking`);
+- nothing, where the finding is judged to need nothing, with the reason.
 
 **A finding that makes several claims gets an outcome for each claim**: repaired, opened as an
 issue, or judged to need nothing, with the reason. A claim left without an outcome of its own is
@@ -112,7 +113,9 @@ lost unless a later review finds it.
 
 A transcript reviewer's finding that something **has no durable outcome** is acted on by the
 dispatcher without waiting for the owner: it is recorded in its home, repaired, opened as an issue,
-or judged to need nothing, with the reason. Each outcome is reported to the owner, in the record of
+or judged to need nothing, with the reason. The exception is a decision that earns durable text and
+was not argued: it goes to `knowledge-architect-design` first, per
+`knowledge-architect-decision-recording`. Each outcome is reported to the owner, in the record of
 the review and at the end of the turn. A ruling the reviewer finds misstated is the owner's, and is
 put to the owner.
 

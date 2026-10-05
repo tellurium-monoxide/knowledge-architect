@@ -6,9 +6,9 @@ kind: todo
 ## Summary
 
 `design@core@finding-names-the-repair` says a finding names a cause only where the repair depends
-on which cause holds. Two findings were changed to meet it: the stale generated index, and the
-summary line that `issue@core@a-contract-change-fails-every-earlier-commit-unexplained` asks for.
-No other finding's text has been read against it.
+on which cause holds. One finding was changed to meet it, the stale generated index, and the
+summary line that `issue@core@a-contract-change-fails-every-earlier-commit-unexplained` asks for
+is specified to meet it. No other finding's text has been read against it.
 
 ## Details
 

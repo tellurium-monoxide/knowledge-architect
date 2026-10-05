@@ -33,6 +33,6 @@ change the earlier commits; the repair that works is found only by reasoning fro
 
 When two or more commits of a range fail on the same generated path, `commits` prints one summary
 line naming the path and the repair: fold the regenerated file into the earliest failing commit.
-On the owner's ruling, the line names no cause: the repair is the same whatever left the file out
-of date. A test plants a range of three commits whose generator changes in the last, and asserts
+The line names no cause, per `design@core@finding-names-the-repair`: the repair is the same
+whatever left the file out of date. A test plants a range of three commits whose generator changes in the last, and asserts
 the summary line.
