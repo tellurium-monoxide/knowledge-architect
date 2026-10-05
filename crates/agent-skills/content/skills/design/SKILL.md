@@ -131,10 +131,10 @@ evidence bring, which nobody knows in advance.
   recorded at that landing like any other, under
   `knowledge-architect-decision-recording`. The checkpoint table is
   shown at convergence when the ledger holds more than one thread. The
-  premortem runs when reversal touches any of the four. Nothing of the
-  decision is implemented or committed before the premortem has run and
-  the owner has ruled on its tripwires, so the commit that writes the
-  decision's entry carries those rulings.
+  premortem runs when reversal touches any of the four. Where it runs,
+  nothing of the decision is implemented or committed before it has run
+  and the owner has ruled on its tripwires, so the commit that carries
+  the deliberation carries those rulings.
 - **The full path.** Otherwise, and whenever a discussion converges on
   work that no longer lands in the change under way (it needs a branch
   of its own, several pull requests, or nobody has started it): the

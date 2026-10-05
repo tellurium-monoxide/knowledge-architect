@@ -35,8 +35,9 @@ subsection is omitted.
 - `agent-skills`, patch: the design skill rewords a tripwire the owner ruled to record, when it is
   written or on a review finding, on the agent's judgement, and lists each change to the owner at
   the end of the turn.
-- `agent-skills`, patch: on the design skill's in-change path, nothing of a decision is implemented
-  or committed before the premortem has run and the owner has ruled on its tripwires.
+- `agent-skills`, patch: on the design skill's in-change path, where the premortem runs, nothing of
+  a decision is implemented or committed before it has run and the owner has ruled on its
+  tripwires.
 
 ## 0.3.0
 

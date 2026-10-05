@@ -294,8 +294,8 @@ risk is worth watching is a weighing, and the weighing is the owner's, per
 its firing evidence, response and re-entry point are reworded when it is written, or on a review
 finding, on the agent's judgement, and each change is listed to the owner at the end of the turn.
 A ruling that bound the wording would make every repair of a tripwire a question to the owner,
-and a tripwire's wording is repaired often, since its re-entry point must name an occasion that
-holds the firing evidence.
+against `goal@knowledge-architect@agents-work-without-drift`, which asks for the owner to rule on
+decisions rather than to supervise their wording.
 
 ### A design thread's slug becomes its entry's slug `##thread-slug-is-entry-id`
 
