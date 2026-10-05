@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-19 entries
+18 entries
 
 | kind | title |
 | --- | --- |
@@ -21,5 +21,4 @@
 | todo | [The installed-file findings sit in phase 2, where the core's placement rule puts them in phase 4](installed-file-findings-belong-in-phase-four.md) |
 | todo | [References are read in Markdown and Rust files only](references-are-read-in-markdown-and-rust-only.md) |
 | todo | [The documents do not yet render as one linked site](the-documents-do-not-render-as-a-site.md) |
-| todo | [The committed indexes of the `planted` mock are compared with the generator by no test](the-planted-mock-indexes-are-pinned-by-no-test.md) |
 | todo | [The checker does not read the structure of a project's own skills](tooling-for-project-skills.md) |
