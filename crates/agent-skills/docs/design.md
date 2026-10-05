@@ -122,7 +122,7 @@ discussion decides its size before its content, against the open discussion the 
 run. A path chosen by the cost of reversal, or by where the work lands, changes where the
 deliberation is kept, never how large the discussion may grow.
 
-### A decision that creates a head, contradicts one, or takes one beyond what its title states is argued under the design skill `##new-or-reshaped-head-needs-design`
+### Only a decision that creates a head, contradicts one, or outgrows its title is argued under the design skill `##new-or-reshaped-head-needs-design`
 
 A decision goes through the design skill, whatever activity met it, when it creates a design head,
 contradicts a statement of one, its argument included, or extends one beyond what its title
@@ -131,7 +131,10 @@ the addition gets a head of its own. A title states a decision only while it is 
 nearest rival it beat, so a reworded title passes that test for each decision under it, and a
 title made generic enough to cover both fails it. An addition within what the title states, which
 contradicts nothing, is recorded directly, with the owner's words quoted where they gave a ruling.
-A choice that earns no durable text stays in a code comment and a commit message.
+A change that relocates or rewords recorded decisions, a split of a head included, and adds or
+removes none, is not a decision and needs no design skill; the routing and fidelity-of-relocation
+review axes judge that it adds or removes none. A choice that earns no durable text stays in a code
+comment and a commit message.
 
 The decision-recording skill triggers once a decision has been made, so a new decision met during
 an issue fix or a review repair otherwise reaches the record with no argument, no rival weighed,
@@ -140,13 +143,14 @@ and none of the design skill's rules for reading the owner's word. This serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`. An addition inside a head's stated
 scope carries less risk: the decision the head records, and its argument, stand, and the title
 still tells a reader of the outline what is decided. The rival, every decision that earns durable
-text, sent such additions to the design skill too; the owner ruled that a small rewrite that
-neither reverses nor overrules a head does not need it. A test on the size of a change lost: a
-one-sentence reversal is the change that most needs the discussion.
+text through the design skill, puts such an addition, and every relocation, to a full discussion
+whose outcome the head already records. A test on the size of a change lost: a one-sentence
+reversal is the change that most needs the discussion.
 
 Two texts deliver it. The design skill's description names the symptom. The decision-recording
 skill sends a decision in one of the three cases, not argued, back to the design skill before its
-text is written. A line in the primer lost to `design@agent-skills@primer-limit`: once the design
+text is written. `tripwire@agent-skills@head-created-without-deliberation` watches whether they
+reach a session in time. A line in the primer lost to `design@agent-skills@primer-limit`: once the design
 skill's description carries the symptom, a skill delivers the rule.
 
 ### The design skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
@@ -301,12 +305,18 @@ A premortem's surviving causes become tripwires only where the owner rules that 
 each is written at the harvest of the decision it guards, in the tripwires home of the Component
 that owns that decision. A tripwire names its decision's head, so the head exists first. Whether a
 risk is worth watching is a weighing, and the weighing is the owner's, per
-`goal@knowledge-architect@the-owner-decides`. The wording of the tripwire that watches it is not:
-its firing evidence, response and re-entry point are reworded when it is written, or on a review
-finding, on the agent's judgement, and each change is listed to the owner at the end of the turn.
-A ruling that bound the wording would make every repair of a tripwire a question to the owner,
-against `goal@knowledge-architect@agents-work-without-drift`, which asks for the owner to rule on
-decisions rather than to supervise their wording.
+`goal@knowledge-architect@the-owner-decides`.
+
+### A tripwire's wording is the agent's, and the owner rules only on whether its cause is watched `##tripwire-wording-is-the-agents`
+
+The owner's word on a premortem's cause, per `design@agent-skills@premortem-tripwires-on-the-owners-word`,
+records that the cause is watched. The tripwire's firing evidence, response and re-entry point are
+reworded when it is written, or on a review finding, on the agent's judgement, and each change is
+listed to the owner at the end of the turn. A tripwire that watches another cause is a new one, and
+needs the owner's word. A ruling that bound the wording would make every repair of a tripwire a
+question to the owner, against `goal@knowledge-architect@agents-work-without-drift`, which asks for
+the owner to rule on decisions rather than to supervise their wording. The rival, a change to a
+tripwire's firing evidence treated as a material finding, puts each such repair back to the owner.
 
 ### A design thread's slug becomes its entry's slug `##thread-slug-is-entry-id`
 
@@ -402,11 +412,9 @@ its record, for a decision recorded when it is made, per
 `design@agent-skills@harvest-after-implementation`. It writes no plan document. The message of the
 commit that writes the decision's design entry, or that implements a decision that earns none,
 carries what a plan document would: every thread with its final state, the owner's words verbatim
-for each closure, the rivals that lost with their reasons, and the rulings on tripwires. Nothing of
-the decision is implemented or committed before the premortem, where it runs, and the owner's
-rulings on its tripwires, so that commit carries them. The premortem runs when reversal touches any
-of the four things the skill names: stored data, a consumed interface, behaviour users have adapted to, and a decided
-thread that would reopen. The four never open the in-change path: a decision that is cheap to
+for each closure, the rivals that lost with their reasons, and the rulings on tripwires. The
+premortem runs when reversal touches any of the four things the skill names: stored data, a
+consumed interface, behaviour users have adapted to, and a decided thread that would reopen. The four never open the in-change path: a decision that is cheap to
 reverse and whose work comes later takes the full path, per
 `design@agent-skills@design-hands-off-to-planning`, as does any discussion that converges on work
 that does not land in the change under way. Decided and unbuilt intent then has one home, the plan
@@ -420,6 +428,15 @@ be followed. The rival, a separate path for one decision met during a task, lost
 discussion to one thread, against `design@agent-skills@structure-the-flow`. The cost, which the
 owner accepted, is a long commit message when a discussion inside a task grows to several threads;
 its length is not bounded, since a bound on it would bound the discussion.
+
+### On the in-change path, nothing is implemented or committed before the premortem and its rulings `##in-change-waits-for-premortem`
+
+Where the premortem runs on the in-change path, per `design@agent-skills@in-change-path`, nothing of
+the decision is implemented or committed before it has run and the owner has ruled on its
+tripwires, so the commit that carries the deliberation carries those rulings, as a plan document
+would. A premortem can surface a material finding that reopens a thread, and work committed before
+it would then be undone. The rival, the rulings landing in the later commit that writes the
+tripwires, leaves the deliberation split over two commits.
 
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 

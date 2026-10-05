@@ -80,6 +80,13 @@ derived again in one discussion round.
 to `design@agent-skills@new-or-reshaped-head-needs-design`. `live`. The primer holds only what every
 session needs and no installed skill delivers, per `design@agent-skills@primer-limit`, and the
 design skill's description carries the symptom. It is kept here because a doubt remains:
-the decision is watched by `tripwire@agent-skills@decision-trigger-fires-too-often` and
-`tripwire@agent-skills@title-stops-stating-scope`, and a session that the description and the
-backstop do not reach in time would bring this line back among the candidates.
+`tripwire@agent-skills@head-created-without-deliberation` watches whether the description and the
+backstop reach a session in time, and names this line among the candidates if they do not.
+
+**Every decision that earns durable text goes through the design skill** — lost to
+`design@agent-skills@new-or-reshaped-head-needs-design`. `live`. It sends an addition within what a
+head's title states, and a relocation that adds or removes no decision, to a full discussion whose
+outcome the head already records; the owner ruled such a change does not need one. It is kept here
+because a doubt remains: `tripwire@agent-skills@title-stops-stating-scope` watches whether sessions
+read a title generously and record outside its scope by the direct route, and this alternative is
+the first candidate if they do.
