@@ -399,7 +399,9 @@ be reviewed before another session implements it. When the work lands in the cha
 neither applies, and requiring a spec would make every decision met during a task cost a plan
 document, which is what `design@agent-skills@every-decision-through-design` must not cost to be
 followed. The rival, a separate path for one decision met during a task, lost: it bounded the
-discussion to one thread, against `design@agent-skills@structure-the-flow`.
+discussion to one thread, against `design@agent-skills@structure-the-flow`. The cost, which the
+owner accepted, is a long commit message when a discussion inside a task grows to several threads;
+its length is not bounded, since a bound on it would bound the discussion.
 
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
