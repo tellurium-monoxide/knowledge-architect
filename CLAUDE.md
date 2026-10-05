@@ -332,6 +332,14 @@ down.** Check each of these against the tree at the moment you write the sentenc
 reads only its references. A measurement, a count or a claim about the tree in a message is checked
 by nobody but you.
 
+**Before each commit, list every factual claim its message makes, and check each one.** A claim is
+a count, a search and its result, a section or line number, the name of a file, a slug or a commit,
+a quotation of the owner, or a statement that something exists, was searched, was found or
+changed. Beside each, write the command or the file that checks it, then run it or open it against
+the tree the commit holds, and a quotation against the transcript. A claim that no check supports
+is removed, or labelled as an assumption. Writing the message from memory of the work is where the
+false claims come from.
+
 **This also applies to answers given to the owner in the conversation.**
 
 ### Check whether it is already known
@@ -540,6 +548,11 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   keeps the base, `git diff <old-head> HEAD` is empty. For a rebase onto a moved base, compare the
   branch's own delta instead: `git range-diff <old-base>..<old-head> <new-base>..HEAD` reports
   every commit carried over.
+- **To reword the message of a commit that is not the newest**, without an interactive rebase,
+  which the harness refuses: write a script that reads a message on stdin and writes the reworded
+  one, then run `git filter-branch -f --msg-filter '<script>' origin/main..HEAD` with a clean tree.
+  Check that `git diff <old-head> HEAD` is empty, then remove the backup refs under
+  `.git/refs/original`.
 - **main's history is never rewritten.** It is the shared trunk. A pushed branch of your own may
   be rewritten and force-pushed, since origin holds the old head until then. A branch that a live
   worktree has checked out is rewritten only after that worktree is removed.
