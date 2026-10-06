@@ -25,9 +25,9 @@ What the commands print today:
 - `issues` filters by anchor, by kind, by group and by text in the id or the title. It has no
   filter on what an entry cites.
 
-A design discussion of the owner wants a search agent to run `show` on every decision and goal the
-work names, then keep the issue and tripwire entries among the citing sites, before reading the
-other entries by meaning. The owner's words: "I think this is worth an issue, it would make the
+The installed search agent, per `design@agent-skills@standing-entry-search-agent`, runs `show` on
+every decision and goal the work names, and maps each citing site to an entry of its group by
+hand, before judging every entry of its group. The owner's words: "I think this is worth an issue, it would make the
 task much easier. Left for later design." Nothing about the command's shape is decided: a new
 command, a `--citing <ref>` filter repeated on `issues` and `tripwires`, or several references
 accepted by `--guarding`.
@@ -44,8 +44,7 @@ per entry and a hand mapping, and a mapping done by hand can drop an entry.
 
 A command, or a filter of an existing one, that takes several references and prints every issue
 entry and every tripwire entry whose text cites any of them, one row per entry naming it as a
-reference. The installed search agent, `knowledge-architect-standing-entry-searcher` once it is
-built, maps citing sites to entries by hand; its body changes to use the command in the same
-work. It is tested over a mock project in which two tripwires of one home and one issue cite
+reference. The installed search agent, `knowledge-architect-standing-entry-searcher`, changes
+to use the command in the same work. It is tested over a mock project in which two tripwires of one home and one issue cite
 two different decisions. Or the owner rules that the search keeps using `show`, and this entry is
 deleted with that reason in the commit.

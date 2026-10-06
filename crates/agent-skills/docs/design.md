@@ -341,7 +341,7 @@ once it drifts, lost: every earlier delta carries the old slug, and the assembly
 from the transcript, per `design@agent-skills@ledger-from-transcript`, would read one thread as
 two.
 
-### The issues and tripwires a piece of work bears on are searched by an installed agent, in groups of at most 60 entries each read whole `##standing-entry-search-agent`
+### The issues and tripwires a piece of work bears on are searched by an installed agent of its own, apart from the standing-state reviewer, in groups of at most 60 entries each read whole `##standing-entry-search-agent`
 
 The installed agent `knowledge-architect-standing-entry-searcher` searches one group of a
 project's issue and tripwire entries for those a piece of work bears on. Its description carries
@@ -362,12 +362,15 @@ reads each of those whole, as the owner asked, since the session acts on the ent
 summary of it, per `goal@knowledge-architect@the-owner-decides`. It is an agent of its own rather
 than the standing-state reviewer in a second mode: that reviewer reads every entry by rule, the
 search filters by relevance on purpose, and one text holding both standards lets a session apply
-the wrong one. Every entry is read whole, by several agents, rather than by one: one agent's load
+the wrong one. Every entry is read whole rather than by its title, since a title shows neither a tripwire's firing
+clause nor a deferred trigger. It is read by several agents rather than by one: one agent's load
 grows with the project, and one agent cannot judge so many entries reliably, in the owner's
 judgement. The unit of a group is the entry rather than the anchor: in thaum at its commit
 ef21314, one Component holds 51.9% of the bytes of the standing entries, so a group per anchor
 bounds nothing. The bound of 60 rests on the mean size of an entry there, 1.6 KB, and on no
-measurement of recall; real sessions measure it, per
+measurement of recall. Both figures are re-taken with `git ls-files` over the issue entry files
+and the tripwires homes, then `wc -c`: summed by the anchor that holds each file for the first,
+divided by the rows of the issue and tripwire listings for the second; real sessions measure it, per
 `goal@knowledge-architect@the-workflow-improves-through-real-use`.
 
 ### The search runs at the grounding of a design discussion and at the design audit of a milestone step, over every issue kind and every tripwire `##standing-entries-searched-before-the-work`
@@ -392,9 +395,10 @@ the work, issues the changes bore on and tripwires that had fired, especially in
 milestones, and the repairs and decisions this forced could have been taken before the design and
 the implementation, in the owner's account. The audit reads every issue kind because those late
 findings included issues the changes touched, not only fired tripwires. A search at the reviews of
-a plan document lost to these occasions: those reviews run only where a discussion wrote a plan
-document, so a decision taken in the change under way would get no search between its grounding and
-its review.
+a plan document lost to a second search when convergence is proposed, before the premortem: those
+reviews run only where a discussion wrote a plan document, and a search at convergence covers a
+decision taken in the change under way too. The search at convergence is parked, with a tripwire,
+since grounding and the audit are where the owner wants the search.
 
 ## Plan documents
 
@@ -699,8 +703,9 @@ chosen by another plan's landing.
 
 The installed review skill sends the standing-state reviewer before every merge to the
 main branch, whatever the change. That reviewer is the standing re-entry point of every tripwire
-home and of every deferred trigger, as the installed issue-tracking skill states, and a tripwire is
-read again only when some review reads it. A re-entry point that depends on whether a change looked
+home and of every deferred trigger, as the installed issue-tracking skill states: it runs for every
+change, where the search before the work runs only for designed or planned work, per
+`design@agent-skills@standing-entries-searched-before-the-work`. A re-entry point that depends on whether a change looked
 related to a tripwire is one that a change touching the guarded decision indirectly skips: the
 reviewer reads every entry of every home, not the subset the diff seems to concern. This serves
 `goal@knowledge-architect@documentation-stays-consistent`.
@@ -710,7 +715,9 @@ someone do this, and the issue-tracking skill holds both to one test. So the rev
 deferred trigger against the change, as it reads every tripwire, and reports a trigger the change
 meets as a finding, whose repair is the work the issue names or the owner's ruling. Without it, a
 trigger met by work that is neither designed nor planned has no reader at all: no skill runs at the
-start of such work. In thaum, a move of the pinned checker met the trigger of a deferred issue that
+start of such work. A search before such work lost: its one host would be the primer, which holds
+only what every session needs, per `design@agent-skills@primer-limit`, the evidence for it is one
+instance, and a line sending every session to search before any work is a conformance rule. In thaum, a move of the pinned checker met the trigger of a deferred issue that
 named that move, and the session read it at no step.
 
 ### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
