@@ -1,11 +1,10 @@
 **Generated — do not edit.** `cargo klarch index`
 
-21 entries
+20 entries
 
 | kind | title |
 | --- | --- |
 | defect | [A commit whose tree stops before the last phase is not scanned for citations of the range by SHA](a-stopped-tree-commit-is-not-scanned-for-branch-shas.md) |
-| defect | [The scanner reads a slug on an indented line as a heading's, and does not see a setext heading](headings-are-read-unlike-markdown.md) |
 | deferred | [Nothing checks that a component states a goal](a-component-states-at-least-one-goal.md) |
 | deferred | [Developer contracts have no home when a project declares no agent harness](a-home-for-developer-contracts-outside-agent-configuration.md) |
 | deferred | [A submodule is a project of its own, or nothing, and the tool has no model for either](a-submodule-is-a-project-of-its-own.md) |

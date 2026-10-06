@@ -871,7 +871,10 @@ mod unsound {
             "`docs/plans/milestones/widget.md` sits in milestones/"
         )
         .starts_with("docs/plans/milestones/widget.md"));
-        assert_eq!(found.len(), 16, "{found:#?}");
+        // A setext heading, which markdown reads and the scanner does not, per
+        // `design@core@headings-open-with-hash-marks`.
+        assert!(one_of(&found, "markdown reads a heading here").starts_with("notes/structure.md:7"));
+        assert_eq!(found.len(), 17, "{found:#?}");
     }
 
     #[test]
