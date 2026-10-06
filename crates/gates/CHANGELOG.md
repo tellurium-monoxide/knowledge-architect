@@ -14,6 +14,21 @@ subsection is omitted.
   `How the work is done`, where it was `How a step is worked`. A project renames that heading in
   each of its plan documents; this holds for mock projects too.
 
+### Workflow
+
+- `agent-skills`, patch: a milestone's part, one branch and one PR with its own spec, is called a
+  slice, and "step" names any item of an implementation sequence. The planning skill says how a
+  spec's work takes the procedure once, and how many commits a step takes is the session's to judge.
+- `agent-skills`, patch: a spec's design audit runs only when the work does not start in the session
+  that wrote the spec, or when commits have landed on the main branch since.
+- `agent-skills`, patch: a plan document lands before its work only when the work changes what the
+  per-commit gate checks; a change only the working-tree check sees, such as installed text, does
+  not count.
+- `agent-skills`, patch: the primer says the installed text leaves room to judge where it is
+  silent, and the retrospective counts an instruction as missing only where the workflow needed it.
+- `agent-skills`, patch: the rule on writing a pointer without backticks covers only a reference or
+  a path in the checker's syntax; the retrospective's standing question asks about those alone.
+
 ## 0.4.0
 
 ### Migration
