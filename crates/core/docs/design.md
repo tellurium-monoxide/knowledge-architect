@@ -1496,7 +1496,7 @@ another relative path is refused. The core's binary does this in
 `path@core@tests/binary.rs`; an extension binary does it in its own suite, because only it
 links its extension's library.
 
-### The manifest pins the checker's version, and every binary that dispatches a command of the checker refuses to run over a project it does not satisfy `##installed-binary-version-check`
+### The manifest pins the checker's version, every binary that dispatches a command of the checker refuses to run over a project it does not satisfy, and a binary that dispatches none makes no call `##installed-binary-version-check`
 
 Every manifest declares `[project] checker-version`: the exact version of the checker the project
 runs, which is the version of the core library whatever binary links it, or one of the two values
@@ -1511,7 +1511,8 @@ which side is older. `cli::run` does not refuse, so a command driven in-process 
 confirmed one. A binary that links the library and dispatches no command of the checker, such as a
 maintenance crate that uses it only to find the project's root through `MANIFEST_NAME`, does not
 call it: nothing it runs reads the documents by the checker's rules, and where it runs the checker,
-as a gate does, it starts a binary that makes the call.
+as a gate does, it starts a binary that makes the call, since the gates library depends on nothing
+of the checker, per `design@gates@a-project-holds-its-gate-list`.
 
 **Why the manifest, and why required.** Without a pin the binary reads, a binary older than the
 skills a project installed reports each installed file as differing, with the repair "run
