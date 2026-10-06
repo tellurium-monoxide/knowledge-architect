@@ -40,8 +40,9 @@ answer arrives as a `tool_result` item in a `user` line, and that line is select
 `toolUseResult` object holding `questions` and `answers`: the questions asked, each with its
 options, and the answers given, keyed by question text, a choice typed in by the owner included,
 with any notes in `annotations`. Keep the questions with
-their options and the answers, labelled as the owner's answer, at the place of that line. Drop
-every other tool call and tool result, and every other line. Extract each transcript the brief names, in
+their options and the answers, labelled as the owner's answer, at the place of that line. Such a
+line carries neither `isMeta` nor `origin`, and this label holds for it in place of the labelling
+by fields below. Drop every other tool call and tool result, and every other line. Extract each transcript the brief names, in
 the order it gives, from the message where the work begins to the end.
 
 **Not every `user` line is the owner's.** The harness also writes, as `user` lines, text it injects:
