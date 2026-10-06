@@ -184,7 +184,8 @@
 //! something changed and not what. Compare the set of `(file, line)` pairs of
 //! `report.findings` with an expected set written in the test, or in a reference file the test
 //! reads: a failure then names each finding gained or lost. The wording of a finding is left out
-//! of the set, since a rewording is no change to what the check reports.//!
+//! of the set, since a rewording is no change to what the check reports.
+//!
 //! # Compatibility
 //!
 //! Under the crate's versioning policy, a breaking change to this API is major. While the
@@ -200,7 +201,10 @@
 //!   would make a verdict wrong has none, and adding it is a breaking change.
 
 // The compatibility rules above restate `design@core@ne-minimal` and
-// `design@core@trait-defaults`.
+// `design@core@trait-defaults`. The paragraph on `cli::refuse_another_version` restates
+// `design@core@installed-binary-version-check` and `design@core@checked-sentinel-values`; its
+// copied mock reads the pin from the root manifest because of
+// `issue@core@the-checker-version-is-not-exported`.
 
 // A `pub` item no consumer can reach is refused, so an item is public only through the
 // re-exports below and the role modules, per `design@core@api-facade`.
