@@ -225,7 +225,8 @@ there with no slug is reported. A slug at another level, at the head of a plain 
 it guards, per `knowledge-architect-decision-recording`.
 
 One standing re-entry point: `knowledge-architect-standing-state-reviewer` reads every tripwire
-home again, on the review axis whose whole subject they are. An entry may name a narrower one.
+home and every deferred trigger again, on the review axis whose whole subject they are. An entry
+may name a narrower one.
 **A tripwire nobody reads again is a parked item with no re-entry point**, which is the thing this
 register exists to avoid, not to become.
 
