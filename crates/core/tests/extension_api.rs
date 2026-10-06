@@ -445,3 +445,36 @@ fn a_binary_that_describes_nothing_shows_no_description() {
     assert_eq!(command.get_about(), None);
     assert_eq!(command.get_long_about(), None);
 }
+
+/// The claim: a copy of a mock project outside its library's directory, where `"fixture"` is
+/// refused, is accepted when its manifest pins `CHECKER_VERSION`, so a test names the version
+/// from the library it links rather than from a manifest of its repository.
+#[test]
+fn a_copied_mock_pinned_to_the_exported_version_is_accepted() {
+    // This test crate is the core's own, so its package version is the library's. The refusal
+    // reads the constant as well, so without this line a wrong constant would pass.
+    assert_eq!(
+        knowledge_architect::CHECKER_VERSION,
+        env!("CARGO_PKG_VERSION")
+    );
+    let mock = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/projects/core");
+    let text = std::fs::read_to_string(mock.join(knowledge_architect::MANIFEST_NAME))
+        .expect("the mock's manifest");
+    let root = std::env::temp_dir().join(format!("knowledge-api-version-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&root);
+    std::fs::create_dir_all(&root).expect("a temporary project");
+    assert!(text.contains("checker-version = \"fixture\""), "{text}");
+    let write = |version: &str| {
+        let pinned = text.replace(
+            "checker-version = \"fixture\"",
+            &format!("checker-version = \"{version}\""),
+        );
+        std::fs::write(root.join(knowledge_architect::MANIFEST_NAME), pinned)
+            .expect("the copied manifest");
+        Manifest::find(&root).expect("the copied manifest parses")
+    };
+    assert!(cli::refuse_another_version(&write("fixture"), &[]).is_err());
+    let accepted = cli::refuse_another_version(&write(knowledge_architect::CHECKER_VERSION), &[]);
+    assert_eq!(accepted, Ok(()));
+    let _ = std::fs::remove_dir_all(&root);
+}

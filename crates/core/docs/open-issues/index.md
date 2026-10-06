@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-18 entries
+17 entries
 
 | kind | title |
 | --- | --- |
@@ -19,6 +19,5 @@
 | todo | [The findings' texts are not audited against the rule that a cause is named only where the repair depends on it](finding-texts-are-not-audited-for-a-needless-cause.md) |
 | todo | [The installed-file findings sit in phase 2, where the core's placement rule puts them in phase 4](installed-file-findings-belong-in-phase-four.md) |
 | todo | [References are read in Markdown and Rust files only](references-are-read-in-markdown-and-rust-only.md) |
-| todo | [The library does not export the checker's version, so a test reads its pin from a manifest](the-checker-version-is-not-exported.md) |
 | todo | [The documents do not yet render as one linked site](the-documents-do-not-render-as-a-site.md) |
 | todo | [The checker does not read the structure of a project's own skills](tooling-for-project-skills.md) |

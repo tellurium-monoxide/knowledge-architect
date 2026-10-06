@@ -31,9 +31,14 @@ subsection is omitted.
   target must not exist; once it does, the finding asks for the `path` form. The form is legal in
   the plans directory only, and the repair of an unanchored path in a plan document names it.
 - `library`, minor: `Finding` implements `Hash`, so findings can be collected in a set.
+- `library`, minor: `CHECKER_VERSION` is the version of the core library, the value a project's
+  `[project] checker-version` must hold. A test that copies a mock project out of its library's
+  directory writes it into the copy's manifest, where it read the pin from the root manifest.
 
 ### Workflow
 
+- `agent-skills`, patch: the setup skill tells a test that copies a mock project to write the
+  library's `CHECKER_VERSION` into the copy's manifest, where it told it to read the root manifest.
 - `agent-skills`, patch: the agent-configuration skill treats an edit that changes what an agent
   is told to do as a decision. Before writing it, the session searches the design homes and the
   goals for the behaviour the edited text describes. An edit that narrows or contradicts a head
