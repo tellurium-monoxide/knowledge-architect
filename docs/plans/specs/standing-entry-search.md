@@ -33,7 +33,7 @@ commit that completes its harvest.
     claims in the project's development procedure, so each entry states its own claim and check;
   - point 4, the review before the merge, runs once, after step 5, per
     `knowledge-architect-review`, with the axes that skill gives for the work;
-  - point 5, the report on the acceptance criterion, goes in the message of step 6's commit;
+  - point 5 has nothing to report: this spec holds no acceptance criterion;
   - points 6 and 7, the harvest, its review and the deletion of this spec, are step 6.
 - It was assembled from one transcript,
   `path@elsewhere@~/.claude/projects/-home-catA-tb266682-Documents-code-knowledge-architect/5be6d68e-c5d9-4cd9-83d4-50f27935c356.jsonl`.
@@ -575,8 +575,10 @@ entry, I withdraw B"; "If A misses entries that B finds, B stands, and the miss 
 size."; "If an entry was missed because §7 does not read its kind, that confirms
 #search-covers-every-kind."; "If both shapes miss an entry, the search alone does not fix the late
 findings, and the discussion has to look at the reading procedure, not only the occasions." It was
-not run. The owner approved shape B in round 3, and the replay became
-`acceptance@standing-entry-search@replay-returns-late-entries`.
+not run. The owner approved shape B in round 3, and the replay became an acceptance criterion of
+this spec. At step 4, the owner ruled it out: "I believe there is a design head that argues against using this kind of testing methods for the workflow. From experience, they are not very reliable, and drive the workflow toward wrong directions more often than good ones." The head is
+`design@agent-skills@additions-need-real-use`, from
+`goal@knowledge-architect@the-workflow-improves-through-real-use`.
 
 ### One anchor holds half of thaum's standing entries, so the unit of the split is the entry `##a28`
 
@@ -689,7 +691,7 @@ Thread: #standing-entry-search-agent.
 
   The two skills that send it say "dispatch the search as the description of
   `knowledge-architect-standing-entry-searcher` says", and do not restate N or the cut. N then has
-  one home in the shipped text, and step 4 changes it there.
+  one home in the shipped text.
 - **Its body** states the order of the rows, the reading, the standard and the return, below. It
   is written in the vocabulary of the installed skills, and names no project's path.
 - **It runs in the live tree, and writes nothing.** It judges the tree the dispatcher has, at a
@@ -719,8 +721,8 @@ Thread: #search-partition-unit.
   slice: the issue rows sorted by anchor, then by id; then the tripwire rows sorted by anchor, then
   by id. `{{command}} issues` prints its rows by kind first, so the agent always sorts them.
 - **N = 60**, as the owner ruled at the audit, "Agreed on the 4 defaults, you can proceed." It rests on the mean entry size in thaum, 1.6 KB,
-  and on no measurement of recall. `acceptance@standing-entry-search@replay-returns-late-entries`
-  measures it.
+  and on no measurement of recall. Real sessions measure it, per
+  `goal@knowledge-architect@the-workflow-improves-through-real-use`.
 - Today that is 1 search agent in this repository, with 58 entries, and 4 in thaum, with 197.
 - Nearest rival: one group per anchor. It lost to the measurement that one Component of thaum holds
   51.9% of its standing entries' bytes, so an anchor bounds nothing
@@ -856,50 +858,20 @@ Assume the work shipped and thaum's reviews keep finding entries after the work.
 | --- | --- | --- |
 | 1. An entry is added after the grounding search, and a spec's work meets no search before the review, since a spec has no audit | #search-at-convergence | becomes a tripwire, on the owner's word, widened: "a standing entry the work bears on, which no search before the work returned" (`argument@standing-entry-search@a31`, `argument@standing-entry-search@a32`) |
 | 2. The session works from the reason lines and never runs `show` | #search-return-shape | a tripwire was proposed; the owner declined it: "I don't think the tripwires from the premortem are worth watching." |
-| 3. A search agent misses an entry of its group | #search-reading-depth, #search-partition-unit | survives into `acceptance@standing-entry-search@replay-returns-late-entries`; the tripwire proposed for after the landing was declined by the owner |
+| 3. A search agent misses an entry of its group | #search-reading-depth, #search-partition-unit | an acceptance criterion, a replay over thaum's history, was written and then ruled out by the owner at step 4, since a synthetic scenario originates no edit (`argument@standing-entry-search@a27`); the tripwire proposed for after the landing was declined by the owner; the cause is unguarded |
 | 4. The seed is empty at the grounding of a new question | #search-seeds-from-references | converted into a clause of the design: the brief names the seeds when they are known |
 | 5. Grounding dispatches between 1 and 4 agents in thaum, and sessions skip it on small decisions | #search-at-design-grounding | a tripwire was proposed; the owner declined it |
 | 6. A deferred trigger names an event no diff shows | #deferred-triggers-at-review | survives: such a trigger fails the trigger test, and the reviewer already reports it under its predicate (`argument@standing-entry-search@a8`) |
 
 ## Acceptance criteria
 
-### A replay over thaum's history returns every entry its reviews found after the work `##replay-returns-late-entries`
-
-- **Guards**: `thread@standing-entry-search@search-reading-depth` and
-  `thread@standing-entry-search@search-partition-unit`.
-- **Judged at**: step 4, before the harvest.
-- **The replay**:
-  1. In a worktree of thaum outside this repository, find the commits whose message records a
-     finding of the standing-state reviewer about an issue or a tripwire that the work bore on,
-     and that was found after the work: in a review commit of a milestone step, or the W3 case.
-     The commit messages are the record; `git log --grep` over "standing-state" finds the
-     candidates, and each is read before it is counted.
-  2. For each case, create a detached worktree of thaum at the commit before the work began: the
-     commit of the step's design audit, or for W3 the parent of thaum's commit 6e0da6e. The new
-     agent exists only in this repository's branch, and the harness may not list an agent added
-     during a session. So each search agent is dispatched as a general-purpose subagent, told to
-     follow the body of `path@agent-skills@content/agents/standing-entry-searcher.md` as it
-     stands on this branch, with `{{command}}` read as thaum's command, `cargo klarch`, run in the
-     worktree with the build directory inside it. The dispatcher follows the agent's description,
-     with the work stated as the step's spec or, for W3, as "move the pinned version of
-     knowledge-architect to 0.3.0", and N = 60. The W3 case is a test of recall only: work that is
-     neither designed nor planned sends no search under this design.
-  3. Record, for each case, whether the entry the reviewer found is returned under "Bears on the
-     work". A case whose pinned checker lacks a command the agent runs, such as `issues` or
-     `tripwires`, is not replayed, and the report names it with that reason.
-- **Fires when**: an entry of step 3 is not returned.
-- **Response**: replay the cases that missed with N = 30. If they are then returned, the default
-  of N becomes 30, put to the owner. If an entry is still missed, the criterion fires: the reading
-  of #search-reading-depth reopens, under `knowledge-architect-design`, before the harvest.
-- N = 60 and N = 30 are as the owner ruled at the audit. If thaum is not on the machine, or holds
-  no such case, step 6's commit says so, and the owner rules whether the work lands without the
-  replay.
-- **Reported** in the message of step 6's commit, which lands the work and deletes this spec: each
-  case, its commit, whether the entry was returned, and the N used.
+None. The one this spec held, a replay over thaum's history checking that the search returns every
+entry thaum's reviews found after the work, was ruled out by the owner at step 4: "I believe there is a design head that argues against using this kind of testing methods for the workflow. From experience, they are not very reliable, and drive the workflow toward wrong directions more often than good ones." A
+synthetic scenario originates no edit, per `design@agent-skills@additions-need-real-use`.
 
 ## Implementation sequence
 
-Steps 1, 2, 3, 5 and 6 are commits; step 4 is a run, which makes a commit only when it changes N.
+Steps 1, 2, 3, 5 and 6 are commits; step 4 was removed.
 The commits sit on this spec's branch, after the commits of its reviews and of its audit, as the
 owner ruled at the audit. Each commit that changes `path@agent-skills@content/` runs
 `cargo klarch install-agent-skills` and holds the installed copies, per
@@ -921,8 +893,10 @@ and step 6 records them.
      `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`, which
      cites the seed, is under "Bears on the work" with the seed as its reason. The same trial with
      a group that excludes that issue's row must not return it, which shows that the check can
-     fail. The search agent is dispatched as the replay of step 4 says, since the harness may not
-     list the new agent.
+     fail. The search agent is dispatched as a general-purpose subagent told to follow the agent's
+     body, since the harness may not list an agent added during the session. The trials check
+     that the text's mechanics run as written, a complete partition and the path from a seed; they
+     measure no recall, and originate no edit.
 
    Fails alone on: the build, `cargo klarch check`, or the trial.
 2. **The occasions.** The design skill's loop step 1 and the planning skill's §7 points 1 and 2, per "Where the search runs". Claim and check: no
@@ -934,8 +908,9 @@ and step 6 records them.
    restatement in the table of "What is already decided" names the deferred triggers beside the
    tripwires; a reading of each. Fails alone on: a text that still names the standing-state
    reviewer as the re-entry point of the tripwires alone.
-4. **The replay**, per `acceptance@standing-entry-search@replay-returns-late-entries`. When it
-   changes N, it changes the agent's description in a commit of its own, installed.
+4. **Removed.** It was the replay of an acceptance criterion over thaum's history. The owner ruled
+   it out at this step: a synthetic scenario originates no edit, per
+   `design@agent-skills@additions-need-real-use` (`argument@standing-entry-search@a27`).
 5. **The changelog.** Three entries in the `Next release` section of CHANGELOG.md, under Workflow,
    each `agent-skills`, patch: a new agent searches the issues and tripwires a piece of work bears
    on, dispatched at the grounding of a design discussion and at the design audit of a milestone
@@ -943,22 +918,21 @@ and step 6 records them.
    not only the deferred ones; the standing-state reviewer reads every deferred issue's trigger
    before every merge. Then `cargo x changelog`. Fails alone on: a changelog copy that differs.
    The review of §7 point 4 runs after this step.
-6. **The harvest**, below, its review, and the deletion of this spec, in one commit whose message
-   reports on the acceptance criterion.
+6. **The harvest**, below, its review, and the deletion of this spec, in one commit.
 
 ## Order rationale
 
 The audit before step 1: the owner's rulings on the defaults set N and the scope of step 2. Step 1
 before step 2: the skills send the session to an agent that must exist. Step 2 before step 3:
 step 3 changes only the review side, and either order passes; the order keeps the before-the-work
-changes together. Step 3 before step 4: the replay runs the installed text whole. Step 4 before
-step 5: the replay can change N, which the changelog does not name, and can reopen a decision,
-which would change the entries. Step 5 before step 6: the harvest writes the heads the changelog's
+changes together. Step 3 before step 5: the changelog describes the
+three changes once all are built. Step 5 before step 6: the harvest writes the heads the changelog's
 work implements.
 
 ## Defaults awaiting the owner
 
-None. Four defaults stood after the reviews of this spec: N = 60 and N = 30; the count 2 in the
+None. Four defaults stood after the reviews of this spec: N = 60, and N = 30 for a replay since
+ruled out; the count 2 in the
 tripwire of #search-at-convergence; the drop of "its open issues, its tripwires" from §7 point 1;
 and the work on this spec's branch. The owner ruled at the audit, "Agreed on the 4 defaults, you can proceed."
 
@@ -976,7 +950,6 @@ this row they exclude is named in the harvest's commit, with the test it fails.
 | every item of "Losing alternatives": #standing-state-second-mode, #search-at-plan-review, shapes A and C, one group per anchor, a cap in bytes, the retrospective standing question, the audit kept at two kinds | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit |
 | the tripwire of #search-at-convergence | `path@agent-skills@docs/tripwires.md`, guarding the head `standing-entries-searched-before-the-work`; fires when, across sessions, 2 standing-state reviews report a standing entry the work bears on which no search before the work returned, the count as the owner rules it; re-entry: the design discussion of `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` |
 | the tripwire of #search-before-undesigned-work | `path@agent-skills@docs/tripwires.md`, guarding `design@agent-skills@conformance-before-every-merge`; fires when a second instance of a deferred trigger is met by undesigned work and found only at the review; re-entry: the design of `issue@agent-skills@a-skill-for-bounded-problems` |
-| the acceptance criterion | reported on in the message of step 6's commit; it does not recur at later work, so it leaves with this spec |
 | this spec | deleted in the harvest's commit, cited as `spec@plans@standing-entry-search` |
 
 ## Later consequences
