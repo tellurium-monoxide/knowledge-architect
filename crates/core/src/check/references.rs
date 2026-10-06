@@ -159,7 +159,7 @@ pub(crate) fn judge_part(
                         format!(
                             "write `path@<anchor>@<path>`, `path@elsewhere@<path>` for a path \
                              outside this tree, or `path@*@<path>` for every component's own \
-                             copy; or rephrase so the span is not path-shaped{}",
+                             copy{}",
                             if located {
                                 ". A reference names a file: drop the line number or the \
                                  fragment, and name the function or the heading in prose"
@@ -1775,6 +1775,18 @@ mod tests {
             found[0].contains("names no anchor") && found[0].contains("path@<anchor>@<path>"),
             "{found:#?}"
         );
+    }
+
+    #[test]
+    fn an_unanchored_path_shape_s_repair_offers_no_unchecked_form() {
+        // The claim, per `design@knowledge-architect@plain-text-is-no-repair`: the repair names
+        // checked forms only, so no reading of it clears the finding by unbackticking the path.
+        let m = manifest();
+        let (found, _) = checked(&m, "See `notes/real/a.md`.\n", &tree());
+        assert_eq!(found.len(), 1, "{found:#?}");
+        for unchecked in ["rephrase", "plain text", "not path-shaped"] {
+            assert!(!found[0].contains(unchecked), "{unchecked}: {found:#?}");
+        }
     }
 
     #[test]

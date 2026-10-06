@@ -14,9 +14,18 @@ subsection is omitted.
   is told to do as a decision. Before writing it, the session searches the design homes and the
   goals for the behaviour the edited text describes. An edit that narrows or contradicts a head
   follows the decision-recording skill, and one that strains a goal goes to the owner.
-- `agent-skills`, patch: the review skill sends the decision-record axis at the last commit of a
-  review, the one that lands the transcript reviewer's repairs, when that commit makes or reverses a
-  decision.
+- `agent-skills`, patch: the transcript reviewer's repairs land as additional commits, as many as
+  their kinds need, and the review skill sends the decision-record axis at each of them that makes
+  or reverses a decision.
+- `agent-skills`, patch: a session that dispatches a transcript reviewer finds each transcript
+  file by the message where the work begins, never by a session identifier, and the reviewer
+  reports at once a named file that does not hold that message.
+- `agent-skills`, patch: a finding is never repaired by writing its pointer in plain text. A pointer
+  that no checked form expresses is written beside a reference to an issue entry of the project that
+  records the missing form, and a gap of the checker gets such an entry in the project's own
+  register.
+- `agent-skills`, patch: the retrospective asks one more standing question: whether the session
+  needed a pointer that no checked form expresses, and how it wrote it.
 - `agent-skills`, patch: the review skill gives each claim of a reviewer's finding its own outcome:
   repaired, opened as an issue, or judged to need nothing, with the reason.
 - `agent-skills`, patch: a decision met during another task, such as an issue fix, goes through

@@ -365,6 +365,46 @@ included; a string literal bound to a name yields none. So a comment in code nam
 as live as a sentence in a document, and closing the issue reaches the code. This serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
 
+### A pointer is written in a form the checker judges, and plain text is never the repair of a finding `##plain-text-is-no-repair`
+
+A form a writer can use is either one the checker judges, and the workflow recommends it, or one
+the checker does not read, and the workflow never directs a pointer into it. So no finding's
+repair, and no installed or project instruction, offers an unchecked form as the way to clear a
+finding. A repair names a checked form: the right anchor, `path@elsewhere@<path>` for a path this
+tree does not hold, an angle-bracket placeholder for an illustration, or a rewrite of the sentence.
+
+A sentence about the past whose reference dangles after a deletion or a rename is rewritten to
+state the present, or removed, and its history stays in the commit messages. Retargeting it would
+make it false, and plain text would take it out of the check. A verbatim quotation of the owner
+that names a renamed entry is left as it is, with a reference to the current entry beside it.
+
+The argument: an unchecked form that clears a finding clears it for good, so a habit of writing one
+empties the check while every run still passes, against
+`goal@knowledge-architect@documentation-stays-consistent`. Two narrower stances of the checker
+make the same argument: `design@core@the-regime-has-no-opt-out`, where no declaration exempts a
+document from a rule, and `design@core@reserved-anchors`, where the escape anchor is refused on a
+path this tree holds, since it would otherwise silence the finding on a real path.
+
+A label beside a checked pointer is not such a form. A plan item named outside its plan as #<id>
+stands beside a citation of the whole plan, because an item reference is refused there, per
+`design@core@plan-item-scope`.
+
+### A pointer no checked form expresses is written beside a reference to an issue entry of its own project that records the missing form `##a-needed-unchecked-pointer-names-its-gap`
+
+The checker cannot express every pointer a project needs. Where no checked form exists, the
+pointer may be written in plain text, and only beside a reference to an issue entry of the writing
+project that records the missing form. A project that meets a gap of the checker itself opens that
+entry in its own register, since a reference resolves only inside its own project, per
+`issue@core@cross-project-references`. A need that a checked form already serves is not a gap.
+
+The entry owes its `Why it matters` and its `What would close it`, so the escape is available and
+never free. `cargo klarch show` on the entry lists every site, and closing it, once a checked form
+ships and the sites are converted, dangles each one, so the conversion list is computed. Plain text
+justified in a commit message alone lost: nothing finds the site again, and nothing revisits it
+when the form ships. A generic checked opt-out marker lost too: one marker fits every finding, so
+it becomes the cheap silence `design@core@reserved-anchors` refuses, while a gap concrete enough to
+name is closed by shipping its own form.
+
 ## 5. This repository's agent configuration
 
 ### This repository's own skills and agents take the prefix klarch- `##klarch-prefix`

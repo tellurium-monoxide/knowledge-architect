@@ -275,6 +275,19 @@ produces. A reference in a file the checker does not read is found by grep. A co
 so the closing commit may still name it. `{{command}} show <ref>` prints the inbound references
 before you delete.
 
+**A sentence about the past whose reference dangles is rewritten to state the present, or
+removed**: what an earlier step wrote, what an entry once said. Its history stays in the commit
+messages. It is never retargeted to the new name, which would make it false, and never turned into
+plain text, which takes it out of the check. A verbatim quotation of the owner that names a renamed
+entry is left as it is, with a reference to the current entry beside it.
+
+**An entry that records a missing checked form** is what a pointer the checker cannot express is
+written beside, in plain text, as the primer says. Its `What` names the pointer's class and the
+form that would express it; its `What would close it` is that form shipping and every site that
+cites the entry converted to it. `{{command}} show` on the entry lists those sites. A gap of the
+checker itself is recorded this way in the project that meets it, and is reported to the
+workflow's maintainers by the retrospective.
+
 ## The cold-reader standard
 
 Anyone who did not witness the work must be able to reproduce what the entry describes and start
