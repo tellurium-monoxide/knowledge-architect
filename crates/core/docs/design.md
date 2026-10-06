@@ -1710,7 +1710,10 @@ as a branch that makes the checker stricter does: the change first, or a squash.
 Under `[commits] refuse-branch-shas = true`, `commits` reports every run of 7 to 64 lowercase hex
 digits, bounded by bytes that are not ASCII letters, digits or `_`, that prefixes the SHA of a
 commit of the range it judges: in each commit's message, and in the whole text of each document of
-that commit's tree, a Rust file's code and literals included. The range a branch is judged over is
+that commit's tree, a Rust file's code and literals included. A commit whose tree stops at phase 2
+or 3 is scanned too, since the scan needs no entity table and no verdict. One whose tree stops at
+phase 1 is not: its manifest did not resolve, so the option is not read from it, and no document of
+it was read. The range a branch is judged over is
 its own commits, so these are exactly the commits a merge that rebases gives new SHAs; a citation of
 one would name nothing once the branch merges. A SHA on the main branch, or of another project, is
 not in the range and passes, unless its first 7 digits collide with a SHA of the range. **A citation
