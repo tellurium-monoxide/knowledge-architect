@@ -69,7 +69,14 @@ word. No procedure handles an incoming retrospective file, so its arrival reache
 through the owner's attention. The shape the owner is considering, in their words: "add re-entry points 'when receiving retrospectives' to
 tripwires that look at agent behaviors under the workflow, and to record the watched behaviors in
 the shipped retrospective skill itself (or bundled in the agent skill crate under a command, to
-avoid polluting what gets committed in other projects)." The owner calls it larger design work.
+avoid polluting what gets committed in other projects)." The owner calls it larger design work. In a later discussion, about where
+the search for the issues and tripwires a piece of work bears on runs, the owner stated the aim of
+that work: "My later goal is to automate the retrospective skill to look at the tripwires of
+this project, without requiring a manual edit of the questions the retrospective skill asks." A
+tripwire whose evidence arises in a consumer's sessions re-enters at this discussion, in the
+owner's words: "This waits for the session that discusses solving the issue
+a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see, whose plan is to make use of
+the retrospective skill to analyze other projects."
 
 ### What would close it
 
