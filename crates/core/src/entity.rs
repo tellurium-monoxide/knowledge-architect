@@ -32,7 +32,7 @@ use regex::Regex;
 use crate::finding::Finding;
 use crate::manifest::{
     Manifest, Register, Registers, Shape, COMPONENT_DOCUMENTS, ITEM_REGISTERS, MILESTONES_HOME,
-    MILESTONE_REGISTER, PLANS_DIR, SPECS_HOME, SPEC_REGISTER, STEP_SECTIONS,
+    MILESTONE_REGISTER, PLANS_DIR, SLICE_SECTIONS, SPECS_HOME, SPEC_REGISTER,
 };
 use crate::model::Model;
 use crate::scan::{Observation, SlugSite};
@@ -255,11 +255,11 @@ impl Anchor {
         )
     }
 
-    /// The level-two sections an entry of `register` owes at this anchor: a step spec, a `spec`
-    /// entry of a milestone, owes the step sections, and every other entry its register's own.
+    /// The level-two sections an entry of `register` owes at this anchor: a slice spec, a `spec`
+    /// entry of a milestone, owes the slice sections, and every other entry its register's own.
     pub(crate) fn sections_of(&self, register: &Register) -> Vec<String> {
         if self.is_milestone() && register.name == SPEC_REGISTER {
-            return STEP_SECTIONS.iter().map(|s| s.to_string()).collect();
+            return SLICE_SECTIONS.iter().map(|s| s.to_string()).collect();
         }
         register.sections.clone()
     }
@@ -586,7 +586,7 @@ pub(crate) fn spec_files<'a>(
 
 /// Why a milestone directory's name makes it no anchor, or `None` when it is one.
 ///
-/// A milestone is cited `spec@<id>@<step>` and `milestone@plans@<id>`, so its name is an entity
+/// A milestone is cited `spec@<id>@<slice>` and `milestone@plans@<id>`, so its name is an entity
 /// id, and it is no other anchor's name and no reserved word, or a reference would read as the
 /// other anchor, per `design@core@a-plan-name-reads-as-nothing-else`. Judged against the anchors the manifest
 /// accepted.
@@ -1174,17 +1174,17 @@ impl Entities {
             .is_some_and(|r| r.shape == Shape::Section);
         if let (true, true, Some(citing)) = (item, a.is_plan(), citing) {
             if anchors.owning(citing).path != a.path {
-                // The whole document that defines the item: a step spec, when one does, and the
+                // The whole document that defines the item: a slice spec, when one does, and the
                 // milestone otherwise; an undefined item names the milestone.
-                let step = self
+                let slice = self
                     .defined
                     .get(&(kind.clone(), anchor.to_string(), id.to_string()))
                     .and_then(|sites| sites.first())
                     .filter(|site| site.file.file_name().is_some_and(|n| n != "README.md"))
                     .and_then(|site| site.file.file_stem())
                     .map(|stem| stem.to_string_lossy().into_owned());
-                let form = if let (true, Some(step)) = (a.is_milestone(), step) {
-                    format!("{SPEC_REGISTER}@{}@{step}", a.name)
+                let form = if let (true, Some(slice)) = (a.is_milestone(), slice) {
+                    format!("{SPEC_REGISTER}@{}@{slice}", a.name)
                 } else if a.is_milestone() {
                     format!("{MILESTONE_REGISTER}@{PLANS_ANCHOR}@{}", a.name)
                 } else {
@@ -1348,7 +1348,7 @@ mod tests {
     }
 
     /// The claim: an item is defined by the level-two section in force above it, in the plan
-    /// anchor that owns the document, and a milestone's README and its step specs share one
+    /// anchor that owns the document, and a milestone's README and its slice specs share one
     /// namespace. Mutation checked: the kind read from the first level-two section of the
     /// document rather than the one in force.
     #[test]

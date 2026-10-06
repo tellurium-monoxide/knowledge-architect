@@ -554,8 +554,8 @@ fn plan_document(title: &str, intro: &str, sections: &[(&str, &str)]) -> String 
     out
 }
 
-/// A step spec holding every section a step owes, each empty.
-fn step_document(title: &str) -> String {
+/// A slice spec holding every section a slice owes, each empty.
+fn slice_document(title: &str) -> String {
     let mut out = format!("# {title}\n");
     for owed in [
         "Builds",
@@ -1889,7 +1889,7 @@ fn a_bare_path_through_a_tracked_symlink_is_a_finding_and_not_an_error() {
 }
 
 /// The claim: a commit message citing a plan document in the commit that deletes it resolves
-/// against the parent, for a spec of `specs/` and for a step spec, and also when the whole
+/// against the parent, for a spec of `specs/` and for a slice spec, and also when the whole
 /// milestone leaves, so its anchor is gone from the commit's tree. The deletion that ends a plan
 /// document's life is written this way, since a `path` citation of one is refused.
 #[test]
@@ -1914,11 +1914,11 @@ fn a_message_naming_the_plan_document_its_commit_deletes_resolves_against_the_pa
     );
     history.write(
         "docs/plans/milestones/a-milestone/first.md",
-        &step_document("Its first step"),
+        &slice_document("Its first step"),
     );
     history.write(
         "docs/plans/milestones/a-milestone/last.md",
-        &step_document("Its last step"),
+        &slice_document("Its last step"),
     );
     let base = history.commit("The plans are written\n");
     history.remove("docs/plans/specs/a-spec.md");
@@ -2002,7 +2002,7 @@ fn a_commit_s_milestone_anchors_are_read_off_its_own_tree() {
     );
     history.write(
         "docs/plans/milestones/a-milestone/a-step.md",
-        &step_document("Its step"),
+        &slice_document("Its step"),
     );
     let sha = history.commit("A milestone is planned\n\nIts step is `spec@a-milestone@a-step`.\n");
     for rel in ["README.md", "a-step.md", "index.md"] {

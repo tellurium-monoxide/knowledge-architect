@@ -261,11 +261,11 @@ fn plans_layout(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
                         path,
                         format!("the milestone `{name}` is no anchor: its name {why}"),
                         "rename the directory; a milestone is cited `milestone@plans@<id>` and \
-                         its steps `spec@<id>@<step>`, so its name must not read as anything \
+                         its slices `spec@<id>@<slice>`, so its name must not read as anything \
                          else",
                     ));
                 } else {
-                    // A milestone's step specs sit beside its README, so a subdirectory is no
+                    // A milestone's slice specs sit beside its README, so a subdirectory is no
                     // group there: the File shape would ask for a register.toml, which is
                     // refused below.
                     for inner in children(path) {
@@ -273,8 +273,8 @@ fn plans_layout(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
                             out.push(Finding::in_file(
                                 inner,
                                 format!("`{}` is a subdirectory of a milestone", inner.display()),
-                                "move its step specs up beside the milestone's README; a milestone \
-                                 holds its README, its index and one file per step",
+                                "move its slice specs up beside the milestone's README; a milestone \
+                                 holds its README, its index and one file per slice",
                             ));
                         }
                     }
@@ -284,7 +284,7 @@ fn plans_layout(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
                     out.push(Finding::in_file(
                         &config,
                         "a milestone directory holds no register.toml".to_string(),
-                        "delete it; a milestone's step specs sit beside its README, ungrouped",
+                        "delete it; a milestone's slice specs sit beside its README, ungrouped",
                     ));
                 }
                 continue;
