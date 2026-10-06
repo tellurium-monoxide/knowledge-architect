@@ -534,8 +534,8 @@ mod tests {
                 "# The first one\n",
             ),
             (
-                "docs/plans/milestones/a-first/a-step.md",
-                "# A step of it\n",
+                "docs/plans/milestones/a-first/a-slice.md",
+                "# A slice of it\n",
             ),
         ];
         let model = Model::from_documents(
@@ -568,7 +568,7 @@ mod tests {
         assert_eq!(
             all[&PathBuf::from("docs/plans/milestones/a-first/index.md")],
             "**Generated — do not edit.** `klarch index`\n\n1 entry\n\n| title |\n| --- |\n\
-             | [A step of it](a-step.md) |\n"
+             | [A slice of it](a-slice.md) |\n"
         );
     }
 

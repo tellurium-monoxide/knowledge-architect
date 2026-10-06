@@ -1412,7 +1412,7 @@ mod tests {
             (
                 vec![
                     "docs/plans/milestones/m/README.md",
-                    "docs/plans/milestones/m/sub/a-step.md",
+                    "docs/plans/milestones/m/sub/a-slice.md",
                 ],
                 vec![],
                 "docs/plans/milestones/m/sub",
@@ -1472,7 +1472,7 @@ mod tests {
                     with_sections("A milestone", &PLAN_SECTIONS),
                 ),
                 (
-                    "docs/plans/milestones/m/a-step.md".to_string(),
+                    "docs/plans/milestones/m/a-slice.md".to_string(),
                     with_sections("A slice", slice_sections),
                 ),
             ]
@@ -1538,7 +1538,7 @@ mod tests {
         assert_eq!(found.len(), SLICE_SECTIONS.len(), "{found:#?}");
         assert!(found
             .iter()
-            .all(|f| f.starts_with("docs/plans/milestones/m/a-step.md")));
+            .all(|f| f.starts_with("docs/plans/milestones/m/a-slice.md")));
     }
 
     /// The claim: a walk row that takes a milestone out of the walk is one finding, against its

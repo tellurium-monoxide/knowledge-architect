@@ -1356,11 +1356,11 @@ mod tests {
         let spec = "# A spec\n\n## Threads\n\n### A thread `##one`\n\n\
                     ## Arguments\n\n### An argument `##a1`\n";
         let readme = "# A milestone\n\n## Criteria\n\n### A criterion `##crit`\n";
-        let step = "# A step\n\n## Acceptance criteria\n\n### It holds `##holds`\n";
+        let step = "# A slice\n\n## Acceptance criteria\n\n### It holds `##holds`\n";
         let (e, found) = plan_table(vec![
             ("docs/plans/specs/s.md", spec),
             ("docs/plans/milestones/m/README.md", readme),
-            ("docs/plans/milestones/m/a-step.md", step),
+            ("docs/plans/milestones/m/a-slice.md", step),
         ]);
         assert!(found.is_empty(), "{found:#?}");
         let a = |kind: &str, anchor: &str, id: &str| {

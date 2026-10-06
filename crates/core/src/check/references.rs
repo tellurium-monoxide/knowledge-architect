@@ -1189,10 +1189,10 @@ mod tests {
         let docs = vec![
             ("docs/plans/specs/a-spec.md", "# A spec\n"),
             ("docs/plans/milestones/m/README.md", "# A milestone\n"),
-            ("docs/plans/milestones/m/a-step.md", "# A step\n"),
+            ("docs/plans/milestones/m/a-slice.md", "# A slice\n"),
             (
                 "notes/prose.md",
-                "`spec@plans@a-spec`, `milestone@plans@m` and `spec@m@a-step` resolve;\n\
+                "`spec@plans@a-spec`, `milestone@plans@m` and `spec@m@a-slice` resolve;\n\
                  `spec@plans@none`, `milestone@plans@none` and `spec@m@none` do not.\n",
             ),
         ];
@@ -1222,7 +1222,7 @@ mod tests {
         let m = manifest();
         let anchors = Anchors::of(&m, &[] as &[PathBuf]);
         for (target, form) in [
-            ("docs/plans/milestones/m/a-step.md", Some("spec@m@a-step")),
+            ("docs/plans/milestones/m/a-slice.md", Some("spec@m@a-slice")),
             (
                 "docs/plans/milestones/m/README.md",
                 Some("milestone@plans@m"),
@@ -1282,7 +1282,7 @@ mod tests {
         let tree: Vec<PathBuf> = [
             "docs/plans/specs/a-spec.md",
             "docs/plans/milestones/m/README.md",
-            "docs/plans/milestones/m/a-step.md",
+            "docs/plans/milestones/m/a-slice.md",
         ]
         .iter()
         .map(PathBuf::from)
@@ -1292,10 +1292,10 @@ mod tests {
         // The milestone's README is in the tree and not in the walk.
         let docs = vec![
             ("docs/plans/specs/a-spec.md", "# A spec\n"),
-            ("docs/plans/milestones/m/a-step.md", "# A step\n"),
+            ("docs/plans/milestones/m/a-slice.md", "# A slice\n"),
             (
                 "notes/prose.md",
-                "`path@*@specs/a-spec.md`, `path@*@a-step.md` and `milestone@plans@m`.\n",
+                "`path@*@specs/a-spec.md`, `path@*@a-slice.md` and `milestone@plans@m`.\n",
             ),
         ];
         let (found, _) = checked_under(docs, &present, &anchors);
@@ -1363,12 +1363,12 @@ mod tests {
                 "# A milestone\n\n## Threads\n\n### In the README `##in-readme`\n",
             ),
             (
-                "docs/plans/milestones/m/a-step.md",
-                "# A step\n\n## Threads\n\n### In the step `##in-step`\n",
+                "docs/plans/milestones/m/a-slice.md",
+                "# A slice\n\n## Threads\n\n### In the slice `##in-slice`\n",
             ),
             (
                 "notes/prose.md",
-                "`thread@m@in-readme` and `thread@m@in-step`.\n",
+                "`thread@m@in-readme` and `thread@m@in-slice`.\n",
             ),
         ];
         let tree: Vec<PathBuf> = docs.iter().map(|(p, _)| PathBuf::from(p)).collect();
@@ -1391,7 +1391,7 @@ mod tests {
             other => panic!("{other:?}"),
         };
         assert_eq!(form("in-readme"), "milestone@plans@m");
-        assert_eq!(form("in-step"), "spec@m@a-step");
+        assert_eq!(form("in-slice"), "spec@m@a-slice");
         // And the Undefined repair of an item names its section, not a home.
         let (found, _) = checked_under(
             vec![(
@@ -1418,7 +1418,7 @@ mod tests {
             .map(PathBuf::from)
             .collect();
         let anchors = Anchors::of(&m, &present);
-        let text = "`path@plans@milestones/gone/` and `path@plans@milestones/gone/a-step.md` and \
+        let text = "`path@plans@milestones/gone/` and `path@plans@milestones/gone/a-slice.md` and \
                     `path@plans@specs/gone.md` are gone.\n";
         let present: Vec<String> = present.iter().map(|p| p.display().to_string()).collect();
         let (found, _) = checked_under(vec![("notes/prose.md", text)], &present, &anchors);
