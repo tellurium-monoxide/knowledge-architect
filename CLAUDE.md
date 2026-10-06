@@ -605,13 +605,16 @@ git merge-base --is-ancestor origin/main HEAD    # if false, rebase
 git fetch origin main
 git merge-base --is-ancestor origin/main HEAD    # still true, or go back to point 3
 gh pr view <branch> --json isDraft,headRefOid    # isDraft false, headRefOid equal to `git rev-parse HEAD`
-gh pr checks <branch>                            # exit 0: every check passed on that head
+gh run list --commit $(git rev-parse HEAD) --json conclusion -q 'any(.[]; .conclusion == "success")'
+                                                 # true: a run on that head succeeded
 gh pr merge <branch> --rebase --delete-branch
 git checkout main && git pull --ff-only && git branch -D <branch>
 ```
 
 - The draft flag is read here because a job skipped on a draft reports `skipped`, which GitHub
-  counts as passing.
+  counts as passing. For the same reason the predicate asks for a successful run on the head
+  rather than the exit code of `gh pr checks`: right after `gh pr ready`, the only run on the head
+  can be the one skipped while it was a draft, and `gh pr checks` then exits 0.
 - GitHub's rebase merge gives main the branch's commits with the same trees and messages, and new
   SHAs, as a probe repository measured, **except a commit that changes no file, which it drops**:
   a record carried by a message alone rides on a commit that changes a file. So **neither a commit message nor a document cites the

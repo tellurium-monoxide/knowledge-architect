@@ -208,6 +208,12 @@ once, at start-up" is false of a configuration read again on every request, and 
 is read with care" is true of nearly any rival. A head that carries several decisions passes the test
 for each one, or is split.
 
+**A head written from a decision the owner approved is read against that approval before it is
+written.** The title and the body state the position as the owner saw it, in a plan document's
+thread or in the discussion of the in-change path. A clause that widens it, narrows it, or drops
+part of it passes the rival test and is still not what was approved: it goes to the owner, as a
+change of the decision.
+
 ```markdown
 ### <The decision, stated as a sentence> `##<slug>`
 

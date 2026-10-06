@@ -411,7 +411,11 @@ The entry owes its `Why it matters` and its `What would close it`, so the escape
 never free. `cargo klarch show` on the entry lists every site, and closing it, once a checked form
 ships and the sites are converted, dangles each one, so the conversion list is computed. Plain text
 justified in a commit message alone lost: nothing finds the site again, and nothing revisits it
-when the form ships. A generic checked opt-out marker lost too: one marker fits every finding, so
+when the form ships.
+
+A commit named by its subject, as `design@knowledge-architect@git-flow` directs for a commit of the
+branch, is outside this head. It names history as git names it, not a part of the tree or an entry
+of a register, which is the domain of the checker. A generic checked opt-out marker lost too: one marker fits every finding, so
 it becomes the cheap silence `design@core@reserved-anchors` refuses, while a gap concrete enough to
 name is closed by shipping its own form.
 
