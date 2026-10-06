@@ -1364,7 +1364,7 @@ describes unbuilt work, per `design@core@plan-register`. Elsewhere it is a findi
 the plan that creates the file. An issue entry states what is missing rather than the shape of its
 fix, and a hypothetical file there is `path@elsewhere@<path>`.
 
-It is the checked form for a pointer that `design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`
+It is the checked form for a pointer that `design@knowledge-architect@checker-syntax-without-backticks-names-its-gap`
 would otherwise send to plain text: the escape anchor is refused once the work creates the file.
 The escape anchor as the planned form lost on the anchor: it names none, so the deepest-anchor rule goes unchecked until the file
 exists and the conversion cannot be done by the kind word alone. `planned` is a reserved kind, and

@@ -63,11 +63,12 @@ naming the other, since the two files may be read apart. The standing questions 
 - Did this session need to change an installed skill or agent, and what for?
 - Was the primer present in this session, and in its subagents?
 - Did this session miss something a project skill adds to an installed skill?
-- Did this session need to write a pointer that no checked form expresses, a commit named by its
-  subject aside? For each: what it pointed at, the checked form that was missing, and whether it
-  was written beside a reference to an issue entry of the project or as bare plain text. A missing form is also a finding on the
-  checker, in the workflow's file. A pointer written as bare plain text is also a finding on the
-  project, in the project's file.
+- Did this session need to write a reference or a path without backticks, because no checked form
+  expresses what it points at? For each: what it pointed at, the checked form that was missing, and
+  whether it was written beside a reference to an issue entry of the project or bare. A missing
+  form is also a finding on the checker, in the workflow's file. One written bare is also a finding
+  on the project, in the project's file. Text outside the checker's syntax, such as a commit of
+  another project, is no answer to this question.
 
 **A finding about how the owner works is judged against the skill's expectation set** (§5). A
 finding that describes the owner's behaviour where §5 states the skill assumes otherwise is
