@@ -15,14 +15,26 @@ commit that completes its harvest.
 - Every name it uses is defined in it, under Names or New names, or exists in the tree.
 - Where it marks a point as the owner's and the owner is absent, the work does not proceed on that
   point.
-- **This spec lands on the main branch before its work**, in a pull request of its own. Every
-  commit of the work changes installed text, and the check compares the installed copies with the
-  shipped text byte for byte, per `design@core@owned-namespace-check`. On one branch, the tip's
-  checker would judge the commit that adds this spec against text that commit does not hold, per
-  `design@agent-skills@plan-lands-before-gate-change`.
-- It is a spec, so the places `knowledge-architect-planning` §7 gives a milestone document, such as
-  the list of defaults an audit adds to, are this spec's own sections. One design audit runs before
-  step 1, and reads every step's entry.
+- **No gate fixes when this spec lands against its work.** The work changes installed text, and
+  only `check` on the working tree compares the installed copies with the shipped text: `commits`
+  does not, per `design@core@owned-namespace-check`. So the commit that adds this spec passes under
+  the work's tip checker, and `design@agent-skills@plan-lands-before-gate-change` does not apply.
+  The default is that the work continues on this spec's branch, in one pull request, after the
+  reviews of this spec; a default awaiting the owner.
+- It is a spec, so the places `knowledge-architect-planning` §7 gives a milestone document are this
+  spec's own sections: the defaults an audit adds go under "Defaults awaiting the owner", and a
+  load-bearing gap the audit leaves open is recorded under "Threads", as a thread in state `open
+  at the audit`, with the discriminating fact.
+- **How §7 applies to this spec**, whose steps are commits of one branch:
+  - point 1 and point 2, the grounding and the design audit, run once, before step 1, and read
+    every step's entry. The owner rules on every default of "Defaults awaiting the owner" at the
+    audit, and no step that depends on a default starts before its ruling;
+  - point 3 applies to each step that changes files, as its entry says. Installed text has no
+    claims in the project's development procedure, so each entry states its own claim and check;
+  - point 4, the review before the merge, runs once, after step 5, per
+    `knowledge-architect-review`, with the axes that skill gives for the work;
+  - point 5, the report on the acceptance criterion, goes in the message of step 6's commit;
+  - points 6 and 7, the harvest, its review and the deletion of this spec, are step 6.
 - It was assembled from one transcript,
   `path@elsewhere@~/.claude/projects/-home-catA-tb266682-Documents-code-knowledge-architect/5be6d68e-c5d9-4cd9-83d4-50f27935c356.jsonl`.
   The discussion begins at the owner's message that opens "I'd like to discuss the", and ends at
@@ -56,7 +68,10 @@ Per `knowledge-architect-planning`, §7.
 - **thaum**: a project that uses knowledge-architect, on the owner's machine at
   `path@elsewhere@~/Documents/code/thaum`. The evidence for this work came from its sessions.
 - **W3**: finding W3 of thaum's retrospective of its move to knowledge-architect 0.3.0, which
-  raised the question this spec answers.
+  raised the question this spec answers. It is the section "W3. Missing: a pin move does not list
+  the deferred issues and tripwires whose occasion is the pin move" of
+  `path@elsewhere@~/Documents/retrospectives/2026-10-04-thaum-workflow.md`. The move is thaum's
+  commit 6e0da6e, "Move the checker's pin to 0.3.0".
 
 ## What the work is
 
@@ -92,11 +107,13 @@ the full reported issues and tripwires, rather than relying on the subagent summ
   the main session. An issue of another kind that the step's code touches is outside point 2's
   read.
 - **The reviews of a plan document**, §8 of the same skill, send three fresh reviewers. The cold implementer grounds
-  in "the open issues and the tripwires of that Component", the one the document's first step
-  touches. None of them reads the standing entries of every anchor against the document.
+  in "the open issues and the tripwires of that Component", the Component the document is about.
+  None of them reads the standing entries of every anchor against the document.
 - **The standing-state reviewer** reads every tripwire of every tripwires home, in its section
-  "2. Re-read every tripwire". Of the issue entries, it reads only those the change opens or
-  closes, in its section "4. The predicate". Its description, in its frontmatter, says the same.
+  "2. Re-read every tripwire". Its description, in its frontmatter, says it re-reads "every issue
+  entry the change opens or closes". Its section 1 runs `{{command}} issues` as a mechanical
+  check, and its section "4. The predicate" also reads an issue left open beside a plan document
+  the diff adds. No section reads the deferred triggers against the change.
 - **The review skill**, `path@agent-skills@content/skills/review/SKILL.md`, §1, sends the
   conformance axis, the standing-state reviewer, "before every merge to the main branch, since it
   is the standing re-entry point of every tripwire".
@@ -104,26 +121,34 @@ the full reported issues and tripwires, rather than relying on the subagent summ
   `knowledge-architect-standing-state-reviewer` reads every tripwire home again".
 - **The installed agents** are the files under `path@agent-skills@content/agents/`. The build
   lists every file there, and the install writes each to `path@agent-config@agents/` with the prefix
-  `knowledge-architect-`, per `design@agent-skills@content-mirrors-the-install-layout`. Nothing
-  else lists the agents.
+  `knowledge-architect-`, per `design@agent-skills@content-mirrors-the-install-layout`. The
+  opening of the review skill names the six installed agents, as reviewers.
 
-**Measured** (round 1 and the reply to round 2; re-take with the commands given):
+**Measured.** The discussion measured this repository on a main branch that has moved since. The
+figures below were re-taken on this spec's branch, and in thaum at its commit ef21314:
 
 | what | figure | command |
 | --- | --- | --- |
-| entries in this repository | 33 issues, 22 tripwires, of which 7 issues are `deferred` | the rows of `cargo klarch issues`, `cargo klarch tripwires` and `cargo klarch issues --kind deferred`, header excluded |
-| bytes in this repository | 66,934 in the issue entry files, 21,169 in the tripwires homes | `git ls-files` over the issue directories and the tripwires homes, `README.md`, `index.md` and the mock projects under the tests excluded, then `wc -c` |
-| entries in thaum | 91 issues and 108 tripwires | the owner's count, round 2, not re-taken |
-| bytes in thaum | 209,294 in the issue entry files, 109,653 in the tripwires homes | the same command, run in thaum |
-| thaum, per directory | crates/thaum-engine holds 165,575 bytes in 46 files, 51.9% of the total; the next largest directory holds 30,807 bytes; the other 13 hold 55 files of 3,682 to 23,063 bytes each | the per-directory sum of the same files, grouped by the directory part before `/docs/` |
+| entries in this repository | 36 issues and 22 tripwires; 7 of the issues are `deferred` | the rows of `cargo klarch issues`, `cargo klarch tripwires` and `cargo klarch issues --kind deferred`, the header row excluded |
+| bytes in this repository | 75,280 in the issue entry files, 21,169 in the tripwires homes | the two commands below |
+| entries in thaum | 90 issue entry files and 107 tripwire headings; the owner counted 91 and 108 in round 2 | the first command below with `wc -l` in place of `xargs cat \| wc -c`; the second with `xargs grep -hE` on the pattern of a level-two heading ending with a slug, then `wc -l` |
+| bytes in thaum | 209,294 in the issue entry files, 109,653 in the tripwires homes, 318,947 in total | the two commands below, run in thaum |
+| thaum, per anchor | the Component crates/thaum-engine holds 165,575 bytes in 46 files, 51.9% of the total; the location `rules`, at docs/rules, holds 50,044 bytes in 9 files; every other anchor holds less | the bytes of each file of the two commands, summed by the anchor that holds the file |
 
-The token figures of the discussion assume 4 bytes per token. That ratio is an assumption, not a
-measurement: about 22k tokens for this repository, about 80k for thaum.
+```sh
+git ls-files '*open-issues/*.md' '.claude/open-issues/*.md' | grep -v -e README.md -e index.md -e tests/ | xargs cat | wc -c
+git ls-files '*tripwires.md' '*docs/tripwires/*.md' | grep -v tests/ | xargs cat | wc -c
+```
+
+The token figures assume 4 bytes per token. That ratio is an assumption, not a measurement: about
+24k tokens for this repository, about 80k for thaum.
 
 **Outside the work:**
 
-- **A search before undesigned work.** No installed skill runs at the start of work that is
-  neither designed nor planned. The owner parked it, with its re-entry at the design of
+- **A search before undesigned work.** No installed skill runs at the start of every piece of
+  work that is neither designed nor planned; two run at the start of some of it, the
+  agent-configuration skill before an edit of the configuration and the issue-tracking skill
+  before a diagnosis. The owner parked it, with its re-entry at the design of
   `issue@agent-skills@a-skill-for-bounded-problems`; see #search-before-undesigned-work.
 - **A search at convergence or at the reviews of a plan document.** Parked and ruled out; see
   #search-at-convergence and #search-at-plan-review.
@@ -150,17 +175,20 @@ The design rests on these decisions, and does not argue them again:
   repository, holds no live reference, and writes the command as `{{command}}`.
 - `design@agent-skills@content-mirrors-the-install-layout`: the new agent file is listed by the
   build.
-- `design@core@owned-namespace-check`: every commit that changes installed text installs it.
+- `design@core@owned-namespace-check`: `check` on the working tree compares the installed copies
+  with the shipped text, and `commits` does not. The rule that each commit changing installed text
+  installs it in the same commit is `path@agent-skills@CLAUDE.md`'s.
 
 The work rewrites one decision, `design@agent-skills@conformance-before-every-merge`, to say that
-the standing-state reviewer reads every deferred trigger as well as every tripwire. `{{command}}
-show` lists two texts referencing it, and the texts that restate it are found by reading:
+the standing-state reviewer reads every deferred trigger as well as every tripwire. On the main branch
+before this spec, `{{command}} show` listed two texts referencing it; the texts that restate it
+are found by reading:
 
 | text | what it says | judged or updated at |
 | --- | --- | --- |
 | `path@agent-skills@docs/open-issues/a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md` | cites the head as making the standing-state review the re-entry point of every tripwires home | the harvest, step 6: it stays true, and is read again |
 | the issue this spec closed | cited the head under `Why it matters` | deleted in the commit that adds this spec |
-| the standing-state reviewer, its description and its sections 2 and "Reporting" | restates the head for tripwires | step 3 |
+| the standing-state reviewer: its description, its opening scope text ("This axis is the standing re-entry point for every tripwire home."), its section 2 and its section "Reporting" | restates the head for tripwires | step 3 |
 | the review skill, §1, the conformance row | "the standing re-entry point of every tripwire" | step 3 |
 | the issue-tracking skill, its tripwire entry section | "reads every tripwire home again" | step 3 |
 
@@ -291,7 +319,9 @@ Proposed by the agent, round 1. Parked. Arguments: `argument@standing-entry-sear
 `argument@standing-entry-search@a21`, `argument@standing-entry-search@a29`,
 `argument@standing-entry-search@a30`, `argument@standing-entry-search@a32`. Tripwire, as widened at
 the premortem: across sessions, 2 standing-state reviews report a standing entry the work bears on,
-which no search before the work returned. Re-entry: the design discussion of
+which no search before the work returned. The count 2 is the agent's default, which it named the
+owner's weighing (`argument@standing-entry-search@a29`), and the owner has not ruled on it: a
+default awaiting the owner. Re-entry: the design discussion of
 `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`. Harvest: a
 tripwire in `path@agent-skills@docs/tripwires.md`, guarding
 the head standing-entries-searched-before-the-work. The owner's words: round 2,
@@ -414,7 +444,8 @@ Round 1, the agent. Bears on #standing-state-second-mode. For it: "one agent tex
 knowledge of where the homes live stays in one place." Against it: "that knowledge is two
 commands, `issues` and `tripwires`. Mixing a relevance filter into the agent whose whole rule is
 'do not decide in advance which entries were worth reading' puts the two standards side by side in
-one text. A session could then apply the wrong one."
+one text. A session could then apply the wrong one." The reviewer's own words are "What is not
+available is deciding in advance which entries were worth reading."
 
 ### The owner judges one agent for both tasks a poor fit `##a11`
 
@@ -471,7 +502,9 @@ entries next to new causes." "What decides between the two: the in-change path."
 ### The step audit reads the same bytes in the main session at every step `##a19`
 
 Round 1, the agent. Bears on #search-at-step-audit. "§7 does this read in the main session today,
-once per milestone step, on the same 88 KB."
+once per milestone step, on the same 88 KB." The figure is
+imprecise: point 2 reads the tripwires and the deferred issues, and point 1 one Component's issues
+and tripwires, so no read of §7 covers every entry.
 
 ### Two of the occasions had no real-use origin in round 1 `##a20`
 
@@ -502,6 +535,8 @@ The reply to round 2, the agent. Bears on #real-use-origin. "Your account meets
 work, the only reads of standing entries happen in the main session, and at the audit they cover
 only two of the issue kinds, so the full read happens only at the review, after the code exists."
 "The second half of that sentence is an inference. I have not checked it against thaum's history."
+The audit's point 2 covers two kinds; its point 1 reads every issue of the step's Component, of
+every kind, but of that Component only.
 
 ### The owner's late findings include issue kinds the audit does not read `##a23`
 
@@ -509,13 +544,14 @@ The reply to round 2, the agent. Bears on #search-covers-every-kind. "You say th
 thaum include 'issues that are impacted by the changes', not only fired tripwires. §7 today reads
 only tripwires and `deferred` issues." "A defect, a todo or a question that the step's code
 touches is outside that read." "Moving §7's read to the agent keeps that gap." The rival, keeping
-§7 at its two kinds, "leaves the late findings you describe in place."
+§7 at its two kinds, "leaves the late findings you describe in place." "§7 today reads only tripwires and `deferred`
+issues" holds for point 2; point 1 reads the step's own Component's issues of every kind.
 
 ### The owner judges the wider read better `##a24`
 
 Round 3, the owner. Bears on #search-covers-every-kind. "approved, this would probably be better."
 
-### Three reading depths, and the owner's "nothing should be missed" rules out reading by title `##a25`
+### Three reading depths, and the agent reads the owner's "nothing should be missed" as ruling out reading by title `##a25`
 
 The reply to round 2, the agent. Bears on #search-reading-depth. Shape A, one agent reading every
 entry whole: "maximal, while the context holds", "about 80k tokens in thaum today, and it grows
@@ -553,8 +589,9 @@ entries". "Default N = 60": the mean size of an entry in thaum is 1.6 KB, 319 KB
 199 entries, so 60 entries are about 96 KB, about 24k tokens. "N has no measurement behind it. It
 is a default awaiting your word." The rival, "a cap in bytes instead of entries", lost: "The
 listing gives no sizes, so the dispatcher would need one more command per entry." The transcript
-says "199 files" and "51" files for the 13 smaller directories; the measurement says 199 entries
-and 55 files, and this item states the measurement.
+says "199 files", and "51" files for the 13 smaller directories, grouped by directory rather than
+by anchor. The measurement in thaum at ef21314 gives 197 entries in 102 files, and 55 files in
+those 13 directories; 318,947 bytes over 197 entries is still 1.6 KB, and 4 agents at N = 60.
 
 ### "Too often" is converted to a count, and the parked thread's tripwire fires where this repository cannot see it `##a29`
 
@@ -638,38 +675,55 @@ Thread: #standing-entry-search-agent.
 
 - A new installed agent, `knowledge-architect-standing-entry-searcher`, with the tools `Read`,
   `Grep`, `Glob` and `Bash`, and no `Write` or `Edit`.
-- Its description says what it is and who sends it: it searches a group of the issues and
-  tripwires for the entries a piece of work bears on, for the grounding of a design discussion and
-  the design audit of a milestone step, and returns them as references. It ends "Dispatch it; do
-  not read it.", as the installed reviewers' descriptions do.
-- Its text states the input it expects, the reading, the standard and the return, below. It is
-  written in the vocabulary of the installed skills, and names no project's path.
+- **Its description carries the dispatch rule**, because a dispatcher reads an agent's
+  description and never its body ("Dispatch it; do not read it."). The description says what the
+  agent does, who sends it, how many to send and what each brief holds:
+  - it searches a group of the issues and the tripwires for the entries a piece of work bears on,
+    for the grounding of a design discussion and the design audit of a milestone step, and returns
+    them as references;
+  - the dispatcher counts the rows of `{{command}} issues` and of `{{command}} tripwires`, the
+    header row excluded, and a listing that prints only `(no entry)` counts 0. It sends one agent
+    per group of at most N consecutive rows of the combined count, all in parallel. The groups are
+    positions 1 to N, N + 1 to 2N, and so on; the last may be smaller;
+  - each brief names the work, the seeds and the group's first and last positions;
+  - it ends "Dispatch it; do not read it.", as the installed reviewers' descriptions do.
+
+  The two skills that send it say "dispatch the search as the description of
+  `knowledge-architect-standing-entry-searcher` says", and do not restate N or the cut. N then has
+  one home in the shipped text, and step 4 changes it there.
+- **Its body** states the order of the rows, the reading, the standard and the return, below. It
+  is written in the vocabulary of the installed skills, and names no project's path.
+- **It runs in the live tree, and writes nothing.** It judges the tree the dispatcher has, at a
+  moment when the dispatcher edits nothing: the grounding of a discussion, or an audit before a
+  step's code. The commands it runs only read. Where the project's command builds the checker,
+  the agents of one search share the project's build directory, as the dispatcher's own runs do.
 - Nearest rival: #standing-state-second-mode. It lost because the reviewer reads every entry by
   rule and the search filters by relevance, and one text holding both standards lets a session
   apply the wrong one (`argument@standing-entry-search@a10`).
 
-**The brief a search agent receives**, from the dispatcher:
+**The brief a search agent receives**, from the dispatcher. A seed is always a decision or a goal,
+never an issue or a tripwire:
 
 | field | at design grounding | at a step's design audit |
 | --- | --- | --- |
 | the work | the question under discussion, stated as the session would state it to the owner | the step's spec, by its citation, and the milestone document |
-| the seeds | the decisions and goals the grounding has already read and found bearing on the question; none, when it has found none yet | the decisions listed in the step's spec under "What is already decided", and the decisions its threads cite |
-| the group | a range of rows, as cut below | the same |
+| the seeds | the decisions and goals the grounding has already read and found bearing on the question; none, when it has found none yet | the decisions the milestone document lists under "What is already decided", and the decisions and goals the step's spec and its threads cite |
+| the group | its first and last positions, as cut below | the same |
 
 ### How the dispatcher cuts the groups
 
 Thread: #search-partition-unit.
 
-- The dispatcher counts the rows of the two listings, without reading them into its context, and
-  cuts them into consecutive groups of at most N rows.
-- The order of the rows is fixed in the agent's text, so that every search agent computes the same
+- The dispatcher counts the rows and cuts the groups as the agent's description says, above,
+  without reading the rows into its context.
+- The order of the rows is fixed in the agent's body, so that every search agent computes the same
   slice: the issue rows sorted by anchor, then by id; then the tripwire rows sorted by anchor, then
-  by id. A group is a range of positions in that order, first and last, counted from 1.
+  by id. `{{command}} issues` prints its rows by kind first, so the agent always sorts them.
 - **N = 60 is a default awaiting the owner.** It rests on the mean entry size in thaum, 1.6 KB,
   and on no measurement of recall. `acceptance@standing-entry-search@replay-returns-late-entries`
   measures it.
-- Today that is 1 search agent in this repository, with 55 entries, and 4 in thaum, with 199.
-- Nearest rival: one group per anchor. It lost to the measurement that one directory of thaum holds
+- Today that is 1 search agent in this repository, with 58 entries, and 4 in thaum, with 197.
+- Nearest rival: one group per anchor. It lost to the measurement that one Component of thaum holds
   51.9% of its standing entries' bytes, so an anchor bounds nothing
   (`argument@standing-entry-search@a28`). A cap in bytes lost because the listings give no sizes.
 
@@ -678,20 +732,22 @@ Thread: #search-partition-unit.
 Threads: #search-seeds-from-references, #search-reading-depth.
 
 1. It runs the two listings, sorts them as above, and takes the rows of its group.
-2. **Seeds first.** For each seed, it runs `{{command}} show <seed>`, and keeps every citing site
-   that falls in an entry of its group. A citing site is a file and a line; the entry is the
-   issue file, or the tripwire heading above that line. Each kept entry bears on the work by
-   construction, and is returned with the seed it cites as its reason.
-3. **Every entry of its group, whole.** It reads every entry of its group in full, those kept at
-   step 2 included, with `{{command}} show <ref>`, and judges whether the work bears on it: the
-   work would fire a tripwire, meet a deferred trigger, touch the subject of an issue, close it,
-   make it worse, or depend on its answer.
-4. It leans to recall. An entry it cannot rule out is returned, with the doubt as its reason.
+2. **It locates each entry of its group.** It runs `{{command}} show <ref>` on each, which prints
+   the reference, then the file and the line of the entry's definition, then the entry whole. The
+   agent keeps the file and the line of each, and reads the entry at the same time.
+3. **Seeds.** For each seed, it runs `{{command}} show <seed>`, and maps each citing site of its
+   output to an entry of its group by the mapping table "From a citing site to an entry", below.
+   Each entry so found is returned, with the seed it cites as its reason, whatever step 4 judges.
+4. **Every entry of its group, judged.** For every entry of its group, read at step 2, it judges
+   whether the work bears on it: the work would fire a tripwire, meet a deferred trigger, touch
+   the subject of an issue, close it, make it worse, or depend on its answer.
+5. It leans to recall. An entry it cannot rule out is returned, with the doubt as its reason.
 
 Nearest rivals: shape A, one agent for every entry, lost because its load grows with the project
 and one agent cannot judge so many entries reliably (`argument@standing-entry-search@a25`,
-`argument@standing-entry-search@a26`). Shape C, reading most entries by title, lost to the owner's
-"nothing should be missed".
+`argument@standing-entry-search@a26`). Shape C, reading most entries by title, lost to the agent's
+argument that the owner's "nothing should be missed", said of where the search runs, rules out a
+reading that can miss (`argument@standing-entry-search@a25`).
 
 ### What a search agent returns
 
@@ -719,15 +775,16 @@ Commands run: <each command, with its arguments>
 Threads: #search-at-design-grounding, #search-at-step-audit, #search-covers-every-kind.
 
 - **The design skill**, loop step 1. In place of reading "the open issues and the tripwires" in
-  the session, the session cuts the groups and dispatches one search agent per group, in parallel,
-  with the brief above. It then runs `{{command}} show` on every entry they return, and reads each
+  the session, the session dispatches the search as the agent's description says, with the brief
+  above. It then runs `{{command}} show` on every entry they return, and reads each
   whole before proposing. The first round states which entries the search returned, and which the
   session judged bearing on the question after reading them. The rest of step 1 is unchanged: the
   goals homes, the design homes, the rejected alternatives and the `README.md` files are still
   read by the session, and `show` is still run on each entry the question bears on.
 - **The planning skill**, §7 point 2. In place of "`{{command}} tripwires` and `{{command}} issues
   --kind deferred` list them; read each against the step", the session dispatches the search for
-  the step, with the brief above, and reads whole every entry returned. The gap the audit lists
+  the step as the agent's description says, with the brief above, and reads whole every entry
+  returned. The gap the audit lists
   becomes "a standing entry the step's planned code bears on": a tripwire whose firing condition,
   or a deferred trigger, the planned code meets, and any issue of any kind the step's code touches,
   closes, makes worse or depends on. The sorting of each gap is unchanged.
@@ -740,14 +797,24 @@ Threads: #search-at-design-grounding, #search-at-step-audit, #search-covers-ever
 
 ## Mapping tables
 
-Each site of the installed text, and what it becomes:
+**From a citing site to an entry**, used by step 3 of "How a search agent reads". A citing site is
+one line of the `referenced at:` part of `{{command}} show`, a file and a line. The locations come
+from step 2.
+
+| the citing site's file | the entry it belongs to |
+| --- | --- |
+| the file of an issue entry of the group | that issue entry |
+| a tripwires home holding entries of the group | the entry of the group, in that file, whose definition line is the greatest one not after the site's line; none if every definition line of the group in that file comes after it |
+| any other file | no entry of the group: a design head, a rejected alternative, a plan document, a skill or code |
+
+**Each site of the installed text, and what it becomes:**
 
 | site | today | after the work |
 | --- | --- | --- |
-| design skill, loop step 1 | the session reads the issues and the tripwires | the session dispatches the search, and reads whole each entry returned |
+| design skill, loop step 1 | the session reads the issues and the tripwires | the session dispatches the search as the agent's description says, and reads whole each entry returned |
 | planning skill, §7 point 1 | grounds in the Component's issues and tripwires | drops them, a default awaiting the owner |
 | planning skill, §7 point 2 | the session reads every tripwire and every deferred issue | the session dispatches the search over every issue kind and every tripwire, and reads whole each entry returned |
-| standing-state reviewer, description and section 2 | every tripwire | every tripwire and every deferred trigger |
+| standing-state reviewer, description, opening scope text and section 2 | every tripwire | every tripwire and every deferred trigger |
 | standing-state reviewer, "Reporting" | names the tripwires re-read | names the tripwires and the deferred triggers re-read |
 | review skill, §1, conformance row | "the standing re-entry point of every tripwire" | of every tripwire and every deferred trigger |
 | issue-tracking skill, tripwire entry section | "reads every tripwire home again" | also every deferred trigger |
@@ -764,9 +831,10 @@ Each site of the installed text, and what it becomes:
 - **Shape A of #search-reading-depth**, one agent reading every entry whole: lost because its load
   grows linearly with the project, about 80k tokens in thaum today, and one agent cannot judge so
   many entries reliably (`argument@standing-entry-search@a25`, `argument@standing-entry-search@a26`).
-- **Shape C of #search-reading-depth**, most entries read by title: lost to "nothing should be
-  missed" (`argument@standing-entry-search@a25`).
-- **One group per anchor**, in #search-partition-unit: lost to the measurement that one directory
+- **Shape C of #search-reading-depth**, most entries read by title: lost to the agent's argument
+  that the owner's "nothing should be missed" rules out a reading that can miss
+  (`argument@standing-entry-search@a25`).
+- **One group per anchor**, in #search-partition-unit: lost to the measurement that one Component
   of thaum holds 51.9% of the bytes (`argument@standing-entry-search@a28`).
 - **A cap in bytes per group**: lost because the listings give no sizes
   (`argument@standing-entry-search@a28`).
@@ -807,65 +875,103 @@ Assume the work shipped and thaum's reviews keep finding entries after the work.
      and that was found after the work: in a review commit of a milestone step, or the W3 case.
      The commit messages are the record; `git log --grep` over "standing-state" finds the
      candidates, and each is read before it is counted.
-  2. For each case, check out the commit before the work began: the commit of the step's design
-     audit, or for W3 the commit before the pin move. Dispatch the search as the installed text
-     says, with the work stated as the step's spec or, for W3, as "move the pinned version of
-     knowledge-architect to 0.3.0", and N = 60.
+  2. For each case, create a detached worktree of thaum at the commit before the work began: the
+     commit of the step's design audit, or for W3 the parent of thaum's commit 6e0da6e. The new
+     agent exists only in this repository's branch, and the harness may not list an agent added
+     during a session. So each search agent is dispatched as a general-purpose subagent, told to
+     follow the body of `planned@agent-skills@content/agents/standing-entry-searcher.md` as it
+     stands on this branch, with `{{command}}` read as thaum's command, `cargo klarch`, run in the
+     worktree with the build directory inside it. The dispatcher follows the agent's description,
+     with the work stated as the step's spec or, for W3, as "move the pinned version of
+     knowledge-architect to 0.3.0", and N = 60. The W3 case is a test of recall only: work that is
+     neither designed nor planned sends no search under this design.
   3. Record, for each case, whether the entry the reviewer found is returned under "Bears on the
-     work".
+     work". A case whose pinned checker lacks a command the agent runs, such as `issues` or
+     `tripwires`, is not replayed, and the report names it with that reason.
 - **Fires when**: an entry of step 3 is not returned.
 - **Response**: replay the cases that missed with N = 30. If they are then returned, the default
   of N becomes 30, put to the owner. If an entry is still missed, the criterion fires: the reading
   of #search-reading-depth reopens, under `knowledge-architect-design`, before the harvest.
 - N = 60 and N = 30 are defaults, the owner's to reset. If thaum is not on the machine, or holds
-  no such case, the landing commit says so and the owner rules whether the work lands without the
+  no such case, step 6's commit says so, and the owner rules whether the work lands without the
   replay.
+- **Reported** in the message of step 6's commit, which lands the work and deletes this spec: each
+  case, its commit, whether the entry was returned, and the N used.
 
 ## Implementation sequence
 
-Each step is one commit on the work's branch, which starts after this spec is on the main branch.
-Each commit that changes `path@agent-skills@content/` runs `cargo klarch install-agent-skills` and
-holds the installed copies, per `path@agent-skills@CLAUDE.md`, and passes the edit tests of that
-file's section "Editing an installed skill or agent".
+Steps 1, 2, 3, 5 and 6 are commits; step 4 is a run, which makes a commit only when it changes N.
+The commits sit on this spec's branch, after the commits of its reviews, by the default of
+"Defaults awaiting the owner", or on a branch of their own after this spec merges, if the owner
+rules so. Each commit that changes `path@agent-skills@content/` runs
+`cargo klarch install-agent-skills` and holds the installed copies, per
+`path@agent-skills@CLAUDE.md`. Each passes the tests of that file's section "Editing an installed
+skill or agent". Each changes what an agent is told to do, so it is a decision under
+`knowledge-architect-agent-configuration` §1: the decisions are the approved threads of this spec,
+and step 6 records them.
 
 1. **The search agent.** `planned@agent-skills@content/agents/standing-entry-searcher.md`, per
-   "The search agent", "How the dispatcher cuts the groups", "How a search agent reads" and "What
-   a search agent returns", and its installed copy. Fails alone on: the build, if the layout does
-   not map the file; `cargo klarch check`, if the installed copy differs.
-2. **The occasions.** The design skill's loop step 1 and the planning skill's §7 points 1 and 2,
-   per "Where the search runs". Point 1 waits for the owner's ruling on its default. Fails alone
-   on: a sentence of either skill that still sends the session to read the issues and the
-   tripwires itself.
+   "The search agent", "How the dispatcher cuts the groups", "How a search agent reads", the
+   mapping table "From a citing site to an entry" and "What a search agent returns", and its
+   installed copy, with N as the owner ruled at the audit. Claims and checks:
+   - the build maps the file and the install writes its copy: `cargo build` passes, and
+     `cargo klarch check` passes with the copy committed;
+   - the agent returns every entry of its group, under one of its two lists. Check: a trial
+     search over this repository, the work stated as "the standing-state reviewer reads every
+     deferred trigger", the seed `design@agent-skills@conformance-before-every-merge`. Every
+     reference of the group appears in exactly one list, and
+     `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`, which
+     cites the seed, is under "Bears on the work" with the seed as its reason. The same trial with
+     a group that excludes that issue's row must not return it, which shows that the check can
+     fail. The search agent is dispatched as the replay of step 4 says, since the harness may not
+     list the new agent.
+
+   Fails alone on: the build, `cargo klarch check`, or the trial.
+2. **The occasions.** The design skill's loop step 1 and the planning skill's §7 point 2, and
+   point 1 as the owner ruled at the audit, per "Where the search runs". Claim and check: no
+   sentence of either skill still sends the session to read every issue and every tripwire itself;
+   a reading of loop step 1 and of §7 points 1 and 2 after the edit. Fails alone on: such a
+   sentence.
 3. **The review side.** The standing-state reviewer, the review skill's conformance row and the
-   issue-tracking skill's line, per "The standing-state reviewer". Fails alone on: a text that
-   still names the standing-state reviewer as the re-entry point of the tripwires alone.
-4. **The replay**, per `acceptance@standing-entry-search@replay-returns-late-entries`. It changes
-   no file unless N changes, in which case it amends step 1's agent text in a commit of its own.
-   The report goes in that commit, or in step 5's.
+   issue-tracking skill's line, per "The standing-state reviewer". Claim and check: every
+   restatement in the table of "What is already decided" names the deferred triggers beside the
+   tripwires; a reading of each. Fails alone on: a text that still names the standing-state
+   reviewer as the re-entry point of the tripwires alone.
+4. **The replay**, per `acceptance@standing-entry-search@replay-returns-late-entries`. When it
+   changes N, it changes the agent's description in a commit of its own, installed.
 5. **The changelog.** Three entries in the `Next release` section of CHANGELOG.md, under Workflow,
    each `agent-skills`, patch: a new agent searches the issues and tripwires a piece of work bears
    on, dispatched at the grounding of a design discussion and at the design audit of a milestone
    step, and the session reads each entry it returns whole; the step audit reads every issue kind,
    not only the deferred ones; the standing-state reviewer reads every deferred issue's trigger
    before every merge. Then `cargo x changelog`. Fails alone on: a changelog copy that differs.
-6. **The harvest**, below, the review of the harvest, and the deletion of this spec.
+   The review of §7 point 4 runs after this step.
+6. **The harvest**, below, its review, and the deletion of this spec, in one commit whose message
+   reports on the acceptance criterion.
 
 ## Order rationale
 
-This spec before step 1: every step changes installed text. Step 1 before step 2: the skills send
-the session to an agent that must exist. Step 2 before step 3: step 3 changes only the review side,
-and either order passes; the order keeps the before-the-work changes together. Step 3 before step
-4: the replay runs the installed text whole. Step 4 before step 5: the replay can change N, which
-the changelog does not name, and can reopen a decision, which would change the entries. Step 5
-before step 6: the harvest writes the heads the changelog's work implements.
+The audit before step 1: the owner's rulings on the defaults set N and the scope of step 2. Step 1
+before step 2: the skills send the session to an agent that must exist. Step 2 before step 3:
+step 3 changes only the review side, and either order passes; the order keeps the before-the-work
+changes together. Step 3 before step 4: the replay runs the installed text whole. Step 4 before
+step 5: the replay can change N, which the changelog does not name, and can reopen a decision,
+which would change the entries. Step 5 before step 6: the harvest writes the heads the changelog's
+work implements.
 
 ## Defaults awaiting the owner
 
+The owner rules on each at the audit, before step 1.
+
 - **N = 60**, bearing on #search-partition-unit, and **N = 30** for the replay's second run,
   bearing on `acceptance@standing-entry-search@replay-returns-late-entries`.
+- **The count 2 in the tripwire of #search-at-convergence**: the agent named it the owner's
+  weighing, and the owner has not ruled on it.
 - **The planning skill's §7 point 1 drops "its open issues, its tripwires"**, bearing on
   #search-at-step-audit. The approved thread moves the audit's read; dropping point 1's read widens
   it.
+- **The work continues on this spec's branch**, in one pull request, since no gate requires the
+  spec to land first (Status and audience).
 
 ## Harvest
 
@@ -878,16 +984,18 @@ this row they exclude is named in the harvest's commit, with the test it fails.
 | #deferred-triggers-at-review | `design@agent-skills@conformance-before-every-merge`, rewritten in place; the slug stays, since the head already names the decision the thread widens |
 | #standing-entry-search-agent, with #search-return-shape, #search-seeds-from-references, #search-reading-depth and #search-partition-unit | a new head in `path@agent-skills@docs/design.md`, slug `standing-entry-search-agent`, under "Reviews" |
 | #search-at-design-grounding, with #search-at-step-audit and #search-covers-every-kind | a new head in `path@agent-skills@docs/design.md`, slug `standing-entries-searched-before-the-work`, under "Reviews"; the thread slug #search-at-design-grounding names one of its two occasions, so the head takes a slug that names both |
-| #standing-state-second-mode, #search-at-plan-review, shapes A and C, one group per anchor | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit |
-| the tripwire of #search-at-convergence | `path@agent-skills@docs/tripwires.md`, guarding the head `standing-entries-searched-before-the-work`; fires when, across sessions, 2 standing-state reviews report a standing entry the work bears on which no search before the work returned; re-entry: the design discussion of `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` |
+| every item of "Losing alternatives": #standing-state-second-mode, #search-at-plan-review, shapes A and C, one group per anchor, a cap in bytes, the retrospective standing question, the audit kept at two kinds | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit |
+| the tripwire of #search-at-convergence | `path@agent-skills@docs/tripwires.md`, guarding the head `standing-entries-searched-before-the-work`; fires when, across sessions, 2 standing-state reviews report a standing entry the work bears on which no search before the work returned, the count as the owner rules it; re-entry: the design discussion of `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` |
 | the tripwire of #search-before-undesigned-work | `path@agent-skills@docs/tripwires.md`, guarding `design@agent-skills@conformance-before-every-merge`; fires when a second instance of a deferred trigger is met by undesigned work and found only at the review; re-entry: the design of `issue@agent-skills@a-skill-for-bounded-problems` |
-| the acceptance criterion | reported on in the landing commit; it does not recur at later work, so it leaves with this spec |
+| the acceptance criterion | reported on in the message of step 6's commit; it does not recur at later work, so it leaves with this spec |
 | this spec | deleted in the harvest's commit, cited as `spec@plans@standing-entry-search` |
 
 ## Later consequences
 
 - `issue@core@no-command-lists-the-standing-entries-citing-a-set-of-entries`, once built, replaces
-  step 2 of "How a search agent reads": one command gives the seeded entries, already named.
+  steps 2 and 3 of "How a search agent reads" and the mapping table "From a citing site to an
+  entry": one command gives the seeded entries, already named. That issue's closing condition
+  includes the change of the agent's body, since the shipped text cannot reference the issue.
 - The design of `issue@agent-skills@a-skill-for-bounded-problems` is the re-entry of
   #search-before-undesigned-work, and may send the search before undesigned work.
 - The design discussion of
