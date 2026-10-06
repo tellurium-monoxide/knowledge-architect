@@ -18,3 +18,12 @@ cannot both obey. It refines `goal@knowledge-architect@agents-get-a-complete-wor
 The installed skills, agents and primer name no project's paths or conventions, and write the
 project's command as the project declares it. It is met while a project of any language and layout
 can follow them without editing them. It refines `goal@knowledge-architect@any-project-can-adopt-it`.
+
+## The installed text leaves agents room to judge `##installed-text-leaves-room-to-judge`
+
+The installed skills and agents give agents capabilities and the reasons for each instruction, and
+impose no structure the work does not need: no fixed sequence, count or mapping between a unit of
+the work and a unit of its record where judgement would serve. It is met while no installed
+instruction fixes such a mapping that another instruction needs to vary, and a review that finds
+one is answered by removing structure rather than by adding a rule. It refines
+`goal@knowledge-architect@agents-work-without-drift`.
