@@ -21,8 +21,6 @@ subsection is omitted.
   target must not exist; once it does, the finding asks for the `path` form. The form is legal in
   the plans directory only, and the repair of an unanchored path in a plan document names it.
 - `library`, minor: `Finding` implements `Hash`, so findings can be collected in a set.
-  `document::Prose::code` is stated to be sorted by start and disjoint, as the parsers produce it,
-  and `Prose::is_code` relies on that order: a caller that edits the list keeps it so.
 
 ### Workflow
 

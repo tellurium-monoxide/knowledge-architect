@@ -233,9 +233,12 @@ pub(crate) fn analyse(text: &str, prose: &Prose) -> Analysis {
         }
     }
 
-    // The parser hands spans over in document order, so this only makes the order that
-    // `Prose::is_code` relies on hold by construction rather than by the parser's habit.
+    // `Prose::in_code_span` needs the spans sorted by start and disjoint. The parser hands
+    // them over in document order, and spans never nest, but a wikilink it gives up on,
+    // `[[x|]] `a` ]`, hands the same span over twice. Sorting and removing the copies makes
+    // the order hold by construction rather than by the parser's habit.
     code.sort_unstable();
+    code.dedup();
 
     let last_line = prose.lines.last().copied().unwrap_or(1);
     let mut scopes = Vec::new();
@@ -437,18 +440,30 @@ mod tests {
         assert!(p.prose[0].is_code(a) && !p.prose[0].is_code(a - 1));
     }
 
-    /// The claim: an offset is code exactly when one of the spans holds it, at every offset of
-    /// a text with spans on several lines, in a table and in a heading. Mutations checked: the
-    /// lookup's `<=` made `<`, and its end test dropped.
+    /// The claim: the binary search answers as the scan does, at every offset of a text with
+    /// spans on several lines, in a table and in a heading. Mutations checked: the search's
+    /// `<=` made `<`, and its end test dropped.
     #[test]
-    fn an_offset_is_code_exactly_when_a_span_holds_it() {
+    fn the_search_for_a_code_span_answers_as_the_scan_does() {
         let text = "# A `head`\n\n`a` b `cc` d\n\n| `e` | f |\n| --- | --- |\n| g | `hh` |\n\n\
                     x `` ` `` y `z`\n";
         let p = &parse(text).prose[0];
         assert_eq!(p.code.len(), 7, "{:?}", p.code);
         for offset in 0..=text.len() {
-            let holds = p.code.iter().any(|&(a, b)| a <= offset && offset < b);
-            assert_eq!(p.is_code(offset), holds, "offset {offset}");
+            assert_eq!(p.in_code_span(offset), p.is_code(offset), "offset {offset}");
+        }
+    }
+
+    /// The claim: the spans come out sorted by start and disjoint, which the search relies on,
+    /// even where the parser hands one span over twice. Mutation checked: the dedup removed.
+    #[test]
+    fn the_code_spans_are_sorted_and_disjoint() {
+        for text in ["[[x|]] `a` ]\n", "[[x\n|]] `a`]\n", "`a` [[x|]] `b` ]\n"] {
+            let code = &parse(text).prose[0].code;
+            assert!(
+                code.windows(2).all(|w| w[0].1 <= w[1].0),
+                "{text:?}: {code:?}"
+            );
         }
     }
 
