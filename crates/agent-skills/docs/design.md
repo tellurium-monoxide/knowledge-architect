@@ -580,10 +580,13 @@ which needs the document where every session reads it, on the main branch; that 
 work, one pull request or several, not where the document lands. The document leaves when its work
 lands, per `design@agent-skills@spec-leaves-at-landing`.
 
-### A plan document lands before any work that changes what the project's gates check `##plan-lands-before-gate-change`
+### A plan document lands before any work that changes what the project's per-commit gate checks `##plan-lands-before-gate-change`
 
-On one branch, the gates as the work's first commit changes them would judge the commit that added
-the document, whose tree predates the change, and refuse it. Keeping both on one branch would force
+The per-commit gate judges each commit of a branch, its tree and its message, with the checker at
+the branch's tip. On one branch, that gate as the work's first commit changes it would judge the
+commit that added the document, whose tree predates the change, and refuse it. A change that only a
+check of the working tree sees, such as installed text that the checker compares on the working
+tree alone, leaves the per-commit gate unchanged and is outside this rule. Keeping both on one branch would force
 the fix the owner called absurd: the plan document committed after the work it plans. So that work
 begins on a branch of its own, after the document is merged. This holds for a spec as for a milestone document, whose step
 that changes the gates is the one this rule meets, per
