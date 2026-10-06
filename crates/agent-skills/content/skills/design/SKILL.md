@@ -405,13 +405,17 @@ choices whose option space genuinely is closed and consequence-free.
 1. **Ground first**: read the project's record before proposing. The
    goals homes of the project's root and of every Component the question
    touches; their design homes; their rejected alternatives; their
-   `README.md` files, which state their contracts; the open
-   issues and the tripwires, with `{{command}} issues` and
-   `{{command}} tripwires`; and, for each entry the question bears on,
+   `README.md` files, which state their contracts. The open issues and
+   the tripwires are searched by subagents: dispatch the search as the
+   description of `knowledge-architect-standing-entry-searcher` says,
+   with the question as the work and, as seeds, the decisions and goals
+   read so far that bear on it. Then run
    `{{command}} show <kind>@<anchor>@<id>`, which prints the entry and
-   every reference to it. The first round states which of these were
-   read and run, and which entries they found that the question bears
-   on. Where the record is silent, read the code and its history; where it is empty, state that the record starts with this
+   every reference to it, on every entry the search returns and on each
+   entry the question bears on, and read each whole: never act on an
+   entry from the reason the search gave. The first round states which
+   of these were read and run, which entries the search returned, and
+   which of them the question bears on. Where the record is silent, read the code and its history; where it is empty, state that the record starts with this
    discussion. A record that
    carries a verdict but no decision — a review, an audit, an
    automated report, a prescribed change nobody ruled on — grounds

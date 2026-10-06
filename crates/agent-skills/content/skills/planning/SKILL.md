@@ -314,15 +314,20 @@ default marked as the owner's to reset.
 The milestone document restates this procedure with a pointer to this skill, so a cold session
 finds it there.
 
-1. **Ground**: the Component's `CLAUDE.md`, its design home, its rejected alternatives, its open
-   issues, its tripwires; then the milestone document entire, then the step's spec.
+1. **Ground**: the Component's `CLAUDE.md`, its design home, its rejected alternatives; then the
+   milestone document entire, then the step's spec. The issues and the tripwires, of every anchor,
+   are read at the audit.
 2. **The design audit.** Read the step's entry and every decided shape it depends on against the
    code as it stands and against the design homes. List every gap: a shape the code refutes, a
    passage of a specification the entry did not read, a name the entry uses that the code does not
-   have, a consequence the entry did not see, and **a standing entry the step's planned code would
-   fire**: a tripwire whose firing condition, or a `deferred` issue whose trigger, the planned code
-   meets. `{{command}} tripwires` and `{{command}} issues --kind deferred` list them; read each
-   against the step. A firing found at the audit is ruled before the code is written, where one
+   have, a consequence the entry did not see, and **a standing entry the step's planned code bears on**:
+   a tripwire whose firing condition, or a `deferred` issue whose trigger, the planned code meets,
+   and an issue of any kind the step's code touches, closes, makes worse or depends on. Dispatch the
+   search as the description of `knowledge-architect-standing-entry-searcher` says, with the step's
+   spec and the milestone document as the work and, as seeds, the decisions the milestone document
+   lists under "What is already decided" and the decisions and goals the step's spec cites. Read
+   whole, with `{{command}} show`, every entry the search returns, and judge it against the step;
+   never act on an entry from the reason the search gave. A firing found at the audit is ruled before the code is written, where one
    found only by the review of the harvest reopens the harvest. Sort each gap:
    - **Applied in place.** The gap has one answer the document's decisions already imply, or is a
      choice among shapes the document rules out all but one of. Apply the answer in place, in the
