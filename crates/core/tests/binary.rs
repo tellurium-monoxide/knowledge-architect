@@ -522,7 +522,7 @@ impl Drop for History {
 fn plan_document(title: &str, intro: &str, sections: &[(&str, &str)]) -> String {
     const OWED: [&str; 20] = [
         "Status and audience",
-        "How a step is worked",
+        "How the work is done",
         "Names",
         "What the work is",
         "What is already decided",

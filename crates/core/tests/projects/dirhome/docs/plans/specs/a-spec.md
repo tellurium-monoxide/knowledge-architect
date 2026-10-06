@@ -7,7 +7,7 @@ It names its sibling milestone whole, `milestone@plans@a-milestone`, and that mi
 
 None.
 
-## How a step is worked
+## How the work is done
 
 None.
 

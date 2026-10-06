@@ -6,6 +6,14 @@ class is `design@knowledge-architect@changelog-entries`. Inside a subsection, en
 surface, in the order `checks`, `cli`, `manifest`, `library`, `agent-skills`, `gates`; an empty
 subsection is omitted.
 
+## Next release
+
+### Migration
+
+- `checks`, major: the second section every spec and every milestone document owes is titled
+  `How the work is done`, where it was `How a step is worked`. A project renames that heading in
+  each of its plan documents; this holds for mock projects too.
+
 ## 0.4.0
 
 ### Migration

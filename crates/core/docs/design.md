@@ -747,7 +747,7 @@ directory was the other; it reopens the decision that a spec is one file.
 ### A plan document owes the sections of its kind, and a step spec owes its own `##step-spec-sections`
 
 A spec of specs/ and a milestone's README owe the plan sections, in order, with Arguments right
-after Threads, matched as the documents write them: Status and audience, How a step is worked,
+after Threads, matched as the documents write them: Status and audience, How the work is done,
 Names, What the work is, What is already decided, Criteria, Threads, Arguments, "New names, in one
 place", Decided design, Mapping tables, Losing alternatives, Readings, Premortem, Acceptance
 criteria, Implementation sequence, Order rationale, Defaults awaiting the owner, Harvest, Later

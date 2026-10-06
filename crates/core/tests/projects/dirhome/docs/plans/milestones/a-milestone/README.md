@@ -9,7 +9,7 @@ listing `path@plans@specs/index.md`.
 
 None.
 
-## How a step is worked
+## How the work is done
 
 None.
 
