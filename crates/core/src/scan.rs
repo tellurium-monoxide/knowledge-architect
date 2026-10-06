@@ -107,13 +107,11 @@ pub struct Located {
 /// one: the slug pattern below takes an indented heading too, and a heading the two patterns
 /// disagreed on defined an entry that the unslugged-heading check could not see. A closing
 /// sequence of `#` after a space is no part of the text, as markdown reads it: a section title
-/// written `## Arguments ##` is the section "Arguments".
+/// written `## Arguments ##` is the section "Arguments". The marks are followed by a space or
+/// a tab, as markdown asks: `\s` would take a no-break space too, where markdown reads no
+/// heading. A trailing carriage return is no part of the text, so a CRLF file reads the same.
 static HEADING: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^ {0,3}(#{1,6})\s+(.+?)(?:\s+#+)?\s*$").unwrap());
-/// The opening of a heading as `HEADING` reads one, its text left out, so that a heading
-/// with no text counts as read.
-static HEADING_OPENS: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^ {0,3}#{1,6}(?:\s|$)").unwrap());
+    LazyLock::new(|| Regex::new(r"^ {0,3}(#{1,6})[ \t]+(.+?)(?:[ \t]+#+)?[ \t\r]*$").unwrap());
 /// The retired slug reference, `` `<word>#<word>` ``: the word before the `#` is optional so
 /// that the older unqualified form is seen too. The first class cannot match a `#`, so a
 /// definition — which opens with `##` — is not read as a retired reference to itself.
@@ -130,7 +128,7 @@ static RETIRED_SLUG_REF: LazyLock<Regex> = LazyLock::new(|| {
 /// see nothing; which levels define is its decision, not this pattern's.
 static SLUG_SITE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(
-        r"^(?:(#{1,6})\s+.*?(`##([a-z0-9]+(?:-[a-z0-9]+)*)`)|(`##([a-z0-9]+(?:-[a-z0-9]+)*)`))",
+        r"^(?:(#{1,6})[ \t]+.*?(`##([a-z0-9]+(?:-[a-z0-9]+)*)`)|(`##([a-z0-9]+(?:-[a-z0-9]+)*)`))",
     )
     .unwrap()
 });
@@ -274,9 +272,9 @@ fn joined(head: &str, tail: &str) -> Option<String> {
 }
 
 /// The lines of the headings markdown reads in a document and [`scan`] does not: each section
-/// the parser opened whose first line is no line opening with `#` marks at most three spaces
-/// in. That is a setext heading, a line underlined with `=` or `-`, and a heading inside a
-/// list item or a block quote.
+/// the parser opened whose first line `HEADING` does not read. That is a setext heading, a
+/// line underlined with `=` or `-`; a heading that follows a list marker or a block-quote
+/// marker on its line; and a heading with no text.
 ///
 /// Only a markdown parse holds sections, so a Rust file yields none.
 pub(crate) fn unread_headings(parsed: &Parsed) -> Vec<u32> {
@@ -293,7 +291,7 @@ pub(crate) fn unread_headings(parsed: &Parsed) -> Vec<u32> {
         .iter()
         .filter(|s| matches!(s.kind, ScopeKind::Section(_)))
         .map(|s| s.first)
-        .filter(|n| !lines.get(n).is_some_and(|l| HEADING_OPENS.is_match(l)))
+        .filter(|n| !lines.get(n).is_some_and(|l| HEADING.is_match(l)))
         .collect()
 }
 
@@ -360,8 +358,8 @@ pub(crate) fn scan(parsed: &Parsed) -> Vec<Located> {
                 let trimmed = line.trim_start();
                 // A line indented four spaces or more, or by a tab, opens no heading, as
                 // markdown reads it: `HEADING` takes at most three spaces, and a slug site
-                // taking more defined an entry on a line markdown shows as paragraph text.
-                // So on such a line every slug is a mention, per
+                // taking more would define an entry on a line markdown shows as paragraph
+                // text. So on such a line every slug is a mention, per
                 // `design@core@headings-open-with-hash-marks`.
                 let indent = &line[..line.len() - trimmed.len()];
                 let at_head = indent.len() <= 3 && indent.bytes().all(|b| b == b' ');
@@ -518,6 +516,11 @@ mod tests {
             defs("A paragraph line,\n\t## a tab `##tabbed`\n"),
             vec![("tabbed".to_string(), SlugSite::Inline)]
         );
+        // A no-break space after the marks opens no heading, so its slug is a mention.
+        assert_eq!(
+            defs("##\u{a0}Not a heading `##nbsp`\n"),
+            vec![("nbsp".to_string(), SlugSite::Inline)]
+        );
         // The line-head form is a definition site too, and the same rule holds for it.
         assert_eq!(
             defs("A paragraph line,\n    `##line-head` text\n"),
@@ -536,9 +539,16 @@ mod tests {
         assert_eq!(unread("- ## In a list item\n"), vec![1]);
         // A multi-line setext heading opens at its first line.
         assert_eq!(unread("First line\nsecond line\n---\n"), vec![1]);
-        // The headings the scanner reads, an empty one and an indented one included.
+        // A heading with no text, which `HEADING` does not read.
+        assert_eq!(unread("Text.\n\n###\n"), vec![3]);
+        // A setext heading whose text opens with a `#` that opens no ATX heading.
+        assert_eq!(unread("#5 is a number\n---\n"), vec![1]);
+        // A no-break space after the marks opens no ATX heading, so the underline makes it a
+        // setext heading.
+        assert_eq!(unread("#\u{a0}An entry\n---\n"), vec![1]);
+        // The headings the scanner reads, an indented one and a CRLF one included.
         assert_eq!(
-            unread("# Title\n\n   ## Indented\n\n###\n\nText.\n"),
+            unread("# Title\n\n   ## Indented\n\n## Crlf\r\n\nText.\n"),
             Vec::<u32>::new()
         );
         // A thematic break after a blank line opens no heading, and neither does the

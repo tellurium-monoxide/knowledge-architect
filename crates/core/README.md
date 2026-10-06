@@ -82,7 +82,8 @@ prose.
 manifest: a declaration the tool refuses is reported and acted on by nothing. Phase 2 reads the
 tree against what the manifest declares: a file the walk could not read, a name it refuses, an
 anchor or a register home that is not there, a home a walk row keeps out, a declared path that
-does not exist, a file git both tracks and ignores, a symlink or a submodule, and, under the `claude` agent
+does not exist, a file git both tracks and ignores, a symlink or a submodule, a heading markdown
+reads and the checker does not, and, under the `claude` agent
 harness, an installed agent file missing, differing or unshipped, a deletion of one not staged, or
 a root CLAUDE.md that does not import a shipped primer. Phase 3 builds the entity table: a slug or an entry id where none may sit, or
 defined twice. Each of these says the model is incomplete, and a finding computed from the model
@@ -293,7 +294,10 @@ A **heading register** keeps its entries as slugged headings, in `<dir>.md` or i
 a `README.md` that links every subdocument. It declares `level`, from 2 to 6: every heading at that
 level in its home is an entry and carries a slug, and a slug at any other level defines nothing,
 per `design@core@an-entry-is-a-heading-at-the-register-level`. The built-in levels are 3 for
-`design` and 2 for `goal` and `tripwire`.
+`design` and 2 for `goal` and `tripwire`. A heading is a line that opens with `#` marks, at most
+three spaces in, followed by a space or a tab and text. A setext heading, a heading after a list or
+block-quote marker on its line, and a heading with no text are reported in any markdown document,
+per `design@core@headings-open-with-hash-marks`.
 
 A **file register** takes no `level`. It keeps one file per entry under `<dir>/`, beside a
 hand-written `README.md`, a generated `index.md` and an optional `register.toml` declaring the

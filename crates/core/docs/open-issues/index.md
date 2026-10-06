@@ -1,9 +1,10 @@
 **Generated — do not edit.** `cargo klarch index`
 
-17 entries
+18 entries
 
 | kind | title |
 | --- | --- |
+| defect | [A heading-shaped line that markdown reads as no heading still defines an entry](a-heading-line-markdown-renders-as-no-heading-defines-an-entry.md) |
 | deferred | [Nothing checks that a component states a goal](a-component-states-at-least-one-goal.md) |
 | deferred | [Developer contracts have no home when a project declares no agent harness](a-home-for-developer-contracts-outside-agent-configuration.md) |
 | deferred | [A submodule is a project of its own, or nothing, and the tool has no model for either](a-submodule-is-a-project-of-its-own.md) |
