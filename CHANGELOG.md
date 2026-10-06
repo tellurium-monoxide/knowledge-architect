@@ -31,15 +31,18 @@ subsection is omitted.
   `planned@<anchor>@<path>`. The anchor and path follow the rules of a `path` reference, and the
   target must not exist; once it does, the finding asks for the `path` form. The form is legal in
   the plans directory only, and the repair of an unanchored path in a plan document names it.
+- `cli`, minor: `show` resolves a `planned@<anchor>@<path>` reference, says whether its target now
+  exists, and lists the plans that cite it. `show` on a path also lists its planned citations, and
+  its citations written with or without a trailing slash.
 - `library`, minor: `Finding` implements `Hash`, so findings can be collected in a set.
 - `library`, minor: `CHECKER_VERSION` is the version of the core library, the value a project's
   `[project] checker-version` must hold. A test that copies a mock project out of its library's
-  directory writes it into the copy's manifest, where it read the pin from the root manifest.
+  directory writes it into the copy's manifest.
 
 ### Workflow
 
-- `agent-skills`, patch: the setup skill tells a test that copies a mock project to write the
-  library's `CHECKER_VERSION` into the copy's manifest, where it told it to read the root manifest.
+- `agent-skills`, patch: the setup skill tells a test that copies a mock project out of its
+  library's directory to write the library's `CHECKER_VERSION` into the copy's manifest.
 - `agent-skills`, patch: the agent-configuration skill treats an edit that changes what an agent
   is told to do as a decision. Before writing it, the session searches the design homes and the
   goals for the behaviour the edited text describes. An edit that narrows or contradicts a head
@@ -91,7 +94,6 @@ subsection is omitted.
 - `agent-skills`, patch: on the design skill's in-change path, where the premortem runs, nothing of
   a decision is implemented or committed before it has run and the owner has ruled on its
   tripwires.
-
 - `agent-skills`, patch: a new installed agent, `knowledge-architect-standing-entry-searcher`,
   searches the issues and tripwires a piece of work bears on. The design skill dispatches it at the
   grounding of a discussion, and the planning skill at the design audit of a milestone step, one
@@ -103,6 +105,11 @@ subsection is omitted.
 - `agent-skills`, patch: the standing-state reviewer reads every deferred issue's trigger against
   the change before every merge, as it reads every tripwire, and reports a trigger the change
   meets as a finding.
+- `agent-skills`, patch: the review skill repairs a commit message carrying a mistake by amending it,
+  or by a history edit of the branch, never by a correction written into a later commit's message.
+- `agent-skills`, patch: the issue-tracking and decision-recording skills rewrite a sentence about
+  the past whose reference dangles to state the present, or remove it, and never retarget it to the
+  new name.
 
 ## 0.3.0
 
