@@ -3,8 +3,7 @@
 **A planned path legal in every document** — lost to `design@core@planned-path-form`. `live`. An
 issue entry could then name the file its fix would create. It lost because an issue states what is
 missing rather than the shape of its fix, and a hypothetical file there is served by the escape
-anchor; and the narrow scope can widen later with nothing to migrate, where a wide one could not
-narrow without refusing documents already written. It is recorded because a doubt remains: `tripwire@core@planned-path-outside-plans` watches
+anchor. It is recorded because a doubt remains: `tripwire@core@planned-path-outside-plans` watches
 for a file named as to be created outside the plans directory, and reopens the scope with this
 alternative as the candidate.
 
