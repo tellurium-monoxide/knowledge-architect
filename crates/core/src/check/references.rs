@@ -156,6 +156,13 @@ pub(crate) fn judge_part(
                     // A line suffix or a fragment is part of the span but no part of a path
                     // reference, whose id is the file: the repair says to drop it.
                     let located = span.contains([':', '#']);
+                    // In a plan document a path that does not exist yet is usually one the
+                    // plan's work will create, so the repair names the form for it there.
+                    let planned = if in_plans_directory(&doc.rel, anchors) {
+                        ", or `planned@<anchor>@<path>` for a path the plan's work will create"
+                    } else {
+                        ""
+                    };
                     out.push(Finding::at(
                         &doc.rel,
                         l.line,
@@ -163,7 +170,7 @@ pub(crate) fn judge_part(
                         format!(
                             "write `path@<anchor>@<path>`, `path@elsewhere@<path>` for a path \
                              outside this tree, or `path@*@<path>` for every component's own \
-                             copy{}",
+                             copy{planned}{}",
                             if located {
                                 ". A reference names a file: drop the line number or the \
                                  fragment, and name the function or the heading in prose"
@@ -499,7 +506,8 @@ fn path(
             }
         }
         name => {
-            if let Some(target) = anchored_target(out, rel, line, span, name, path, anchors) {
+            if let Some(target) = anchored_target(out, rel, line, span, name, path, anchors, false)
+            {
                 assert_target(out, rel, line, span, &target, claims_dir, inputs);
             }
         }
@@ -519,18 +527,29 @@ fn anchored_target(
     name: &str,
     path: &str,
     anchors: &Anchors,
+    planned: bool,
 ) -> Option<PathBuf> {
     let trimmed = path.trim_end_matches('/');
     let Some(a) = anchors.by_name(name) else {
+        // The two reserved words serve `path` alone, so a planned path's repair names the
+        // declared anchors only.
+        let action = if planned {
+            format!(
+                "anchor at the one of {} that will hold the target",
+                anchors.listed()
+            )
+        } else {
+            format!(
+                "anchor at one of {}, at `{ESCAPE_ANCHOR}` for a path outside this \
+                 tree, or at `*` for every component's own copy",
+                anchors.listed()
+            )
+        };
         out.push(Finding::at(
             rel,
             line,
             format!("`{span}` names `{name}`, which is no anchor of this project"),
-            format!(
-                "anchor at one of {}, at `{ESCAPE_ANCHOR}` for a path outside this \
-                     tree, or at `*` for every component's own copy",
-                anchors.listed()
-            ),
+            action,
         ));
         return None;
     };
@@ -627,11 +646,7 @@ fn planned(
     anchors: &Anchors,
     inputs: &Inputs,
 ) {
-    let in_plans = anchors
-        .all()
-        .iter()
-        .any(|a| a.constructed == Some(Constructed::Plans) && rel.starts_with(&a.path));
-    if !in_plans {
+    if !in_plans_directory(rel, anchors) {
         out.push(Finding::at(
             rel,
             line,
@@ -646,13 +661,14 @@ fn planned(
             line,
             format!("`{span}` gives a planned path the anchor `{anchor}`"),
             format!(
-                "anchor at the anchor that will hold the target; `*` and `{ESCAPE_ANCHOR}` serve                  the path kind alone"
+                "anchor at the anchor that will hold the target; `*` and `{ESCAPE_ANCHOR}` serve \
+                 the path kind alone"
             ),
         ));
         return;
     }
     let claims_dir = path.ends_with('/');
-    let Some(target) = anchored_target(out, rel, line, span, anchor, path, anchors) else {
+    let Some(target) = anchored_target(out, rel, line, span, anchor, path, anchors, true) else {
         return;
     };
     if inputs
@@ -662,13 +678,31 @@ fn planned(
         return;
     }
     if inputs.present.contains(&target) {
+        // The repair carries the kind the target has, so applying it raises no slash finding.
+        let slash = if inputs.directories.contains(&target) {
+            "/"
+        } else {
+            ""
+        };
+        let trimmed = path.trim_end_matches('/');
         out.push(Finding::at(
             rel,
             line,
             format!("`{span}` now exists, at `{}`", target.display()),
-            format!("write `path@{anchor}@{path}`; the planned form names a path that does not exist yet"),
+            format!(
+                "write `path@{anchor}@{trimmed}{slash}`; the planned form names a path that does \
+                 not exist yet"
+            ),
         ));
     }
+}
+
+/// Whether a document lies in the plans directory, where a planned path is legal.
+fn in_plans_directory(rel: &Path, anchors: &Anchors) -> bool {
+    anchors
+        .all()
+        .iter()
+        .any(|a| a.constructed == Some(Constructed::Plans) && rel.starts_with(&a.path))
 }
 
 /// The kind form of a plan document at `target`, or `None` when no plan document is there.
@@ -1961,6 +1995,67 @@ mod tests {
         {
             assert!(found[i].contains(expected), "{expected}: {found:#?}");
         }
+        // The repairs of the three anchor findings name only what a planned path accepts.
+        let action = |f: &String| f.split_once("\n    → ").map(|(_, a)| a.to_string());
+        let reserved = "anchor at the anchor that will hold the target; `*` and `elsewhere` serve \
+                        the path kind alone";
+        assert_eq!(action(&found[0]).as_deref(), Some(reserved));
+        assert_eq!(action(&found[1]).as_deref(), Some(reserved));
+        assert_eq!(
+            action(&found[2]).as_deref(),
+            Some("anchor at the one of a-project, a-part, plans that will hold the target")
+        );
+    }
+
+    #[test]
+    fn an_existing_planned_target_s_repair_carries_the_target_s_kind() {
+        // Applying the repair must raise no slash finding: a directory gets the slash whatever
+        // the planned reference claimed, and a file loses it.
+        let m = manifest();
+        let text =
+            "Directory `planned@a-part@notes/real`, file `planned@a-part@notes/real/a.md/`.\n";
+        let (found, _) = checked_in(&m, IN_PLANS, text, &tree());
+        assert_eq!(found.len(), 2, "{found:#?}");
+        assert!(
+            found[0].contains("write `path@a-part@notes/real/`;"),
+            "{found:#?}"
+        );
+        assert!(
+            found[1].contains("write `path@a-part@notes/real/a.md`;"),
+            "{found:#?}"
+        );
+    }
+
+    #[test]
+    fn a_planned_id_may_hold_an_at_sign_and_the_kind_is_listed() {
+        let m = manifest();
+        let (found, counts) = checked_in(
+            &m,
+            IN_PLANS,
+            "It writes `planned@a-part@notes/a@b.md`.\n",
+            &tree(),
+        );
+        assert_eq!(counts.references, 1);
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+        assert!(Anchors::declared(&m)
+            .kinds_listed()
+            .ends_with("path, planned"));
+    }
+
+    #[test]
+    fn an_unanchored_path_in_a_plan_document_is_offered_the_planned_form() {
+        let m = manifest();
+        let (found, _) = checked_in(&m, IN_PLANS, "It writes `notes/real/b.md`.\n", &tree());
+        assert_eq!(found.len(), 1, "{found:#?}");
+        let action = found[0].split_once("\n    → ").map(|(_, a)| a);
+        assert_eq!(
+            action,
+            Some(
+                "write `path@<anchor>@<path>`, `path@elsewhere@<path>` for a path outside this \
+                 tree, or `path@*@<path>` for every component's own copy, or \
+                 `planned@<anchor>@<path>` for a path the plan's work will create"
+            )
+        );
     }
 
     #[test]

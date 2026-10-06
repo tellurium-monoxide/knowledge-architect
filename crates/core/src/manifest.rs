@@ -825,8 +825,8 @@ pub fn normalise_one(list: &str, path: &mut PathBuf, complaints: &mut Vec<Findin
 /// A declared register is one a reference can name, at a home inside its anchor.
 ///
 /// A register's name is what a reference spells in kind position, so a name outside the id
-/// grammar is a register nothing can point at, and `path` is a name the resolver answers
-/// before it ever reaches the register list. Its home is `<home base>/<dir>`, so a `dir` that
+/// grammar is a register nothing can point at, and `path` and `planned` are names the resolver
+/// answers before it ever reaches the register list. Its home is `<home base>/<dir>`, so a `dir` that
 /// is not one plain segment puts the home somewhere the anchor does not reach, and a `dir`
 /// spelling a compiled document makes one file both the document and the home. Each is a
 /// complaint, and the register is not declared. The built-in ones are named and placed by

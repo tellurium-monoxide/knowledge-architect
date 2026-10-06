@@ -29,7 +29,8 @@ prints for the same commit. Both are the `walk: n file(s)` line of the summary b
 whose target now resolves, in a sentence that said the file was to be created.
 **Response:** reopen the scope of `design@core@planned-path-form`, with every document as the
 candidate.
-**Re-entry:** the commit that creates the file, which fails `check` on that reference.
+**Re-entry:** the standing-state review of every dispatched review, and the commit that creates
+the file, which fails `check` on that reference.
 
 ## Guarding `design@core@grammars-not-prefixes` `##grammars-not-prefixes`
 

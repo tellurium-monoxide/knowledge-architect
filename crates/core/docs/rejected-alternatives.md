@@ -1,5 +1,12 @@
 # Rejected Alternatives
 
+**A planned path legal in every document** — lost to `design@core@planned-path-form`. `live`. An
+issue entry could then name the file its fix would create. It lost because an issue states what is
+missing rather than the shape of its fix, and a hypothetical file there is served by the escape
+anchor. It is recorded because a doubt remains: `tripwire@core@planned-path-outside-plans` watches
+for a file named as to be created outside the plans directory, and reopens the scope with this
+alternative as the candidate.
+
 **A hand-rolled gitignore matcher reading the root file alone**, with the walk pruning what it
 covered — lost to `design@core@git-supplies-the-walk`. `live`. It needed no `git` on the path and no
 process per run, and its supported subset was chosen against thaum's own file. It loses

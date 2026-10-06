@@ -1147,8 +1147,8 @@ The resolver reads the head — the text before the first `@` — and decides: a
 segmented and resolved; a declared anchor or a reserved anchor in that position is the old form
 and is reported with the repair "prefix the kind"; anything else is not a reference and reports
 nothing, so an email address or a git remote in backticks is silent unless the project declares
-an anchor by that word. Every kind but `path` takes exactly three non-empty segments; `path`
-takes an anchor and then everything after the second `@`.
+an anchor by that word. Every kind but `path` and `planned` takes exactly three non-empty
+segments; `path` and `planned` take an anchor and then everything after the second `@`.
 
 **The silence is bounded and named.** A typo inside the kind, `desing@<anchor>@<id>`, is silent under this
 rule, because widening it to "any span with two `@`" would report every email address with a
@@ -1313,7 +1313,8 @@ no copy the generic form names: what they hold is cited by its kind.
 the root anchor in every such citation would carry no information.
 
 **Under any other kind the two words of `path` name nothing.** A `design@*@<id>` is reported as an
-unknown anchor, and the finding says the words serve `path` alone. The manifest's resolution
+unknown anchor, and the finding says the words serve `path` alone. The `planned` kind refuses them
+with a finding of its own, per `design@core@planned-path-form`. The manifest's resolution
 refuses a declared anchor wearing any of the three words, and it is no anchor: every pointer at it
 would read as the reserved meaning.
 
@@ -1326,17 +1327,18 @@ anchor, the refused shapes and the trailing-slash claim, and its one assertion i
 nothing else, so the commit that creates the file converts the reference by its kind word, and
 whether the plan still holds is that session's report to make. A target the ignore rules cover is
 not asserted, per `design@core@ignored-targets-are-not-asserted`. `*` and the escape anchor are
-refused: a planned path is in this tree, at one anchor.
+refused: a planned path is in this tree, at one anchor. `show` on a planned reference resolves
+whether or not the target exists, says which, and lists the plans that cite it: the sites a
+conversion edits.
 
 **It is legal in the plans directory alone**, since a plan document is the one place that
 describes unbuilt work, per `design@core@plan-register`. Elsewhere it is a finding that asks for
 the plan that creates the file. An issue entry states what is missing rather than the shape of its
 fix, and a hypothetical file there is `path@elsewhere@<path>`.
 
-It closes a gap of the kind `design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`
-describes: before it, a planned path was written as plain text, which nothing checks, or with the
-escape anchor, which is refused once the work creates the file. The escape anchor as the planned
-form lost on the anchor: it names none, so the deepest-anchor rule goes unchecked until the file
+It is the checked form for a pointer that `design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`
+would otherwise send to plain text: the escape anchor is refused once the work creates the file.
+The escape anchor as the planned form lost on the anchor: it names none, so the deepest-anchor rule goes unchecked until the file
 exists and the conversion cannot be done by the kind word alone. `planned` is a reserved kind, and
 the manifest refuses a register of that name, as it refuses `path`.
 

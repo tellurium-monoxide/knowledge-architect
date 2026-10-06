@@ -8,12 +8,18 @@ subsection is omitted.
 
 ## Next release
 
+### Migration
+
+- `manifest`, major: a register named `planned` is refused, as one named `path` is, since
+  `planned` is now a kind of the reference grammar. A project that declares `[registers.planned]`
+  renames it.
+
 ### New features
 
 - `checks`, minor: a plan document cites a path its work will create as
   `planned@<anchor>@<path>`. The anchor and path follow the rules of a `path` reference, and the
   target must not exist; once it does, the finding asks for the `path` form. The form is legal in
-  the plans directory only, and a register named `planned` is refused.
+  the plans directory only, and the repair of an unanchored path in a plan document names it.
 
 ### Workflow
 

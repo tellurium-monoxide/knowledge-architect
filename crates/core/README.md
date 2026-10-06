@@ -140,6 +140,7 @@ entity table, so what they print is what `check` resolves against.
 - a heading register's entry is printed as **its section** — the heading through to the next
   heading at the same level or shallower;
 - `path@<anchor>@<path>` prints the walked document's text, or says the path is outside the walk.
+- `planned@<anchor>@<path>` says whether the target exists yet, and lists the plans that cite it.
 
 **The two failures are different questions**: an argument that is not reference-shaped is exit 2
 with the grammar named, and a reference the grammar accepts that names nothing is exit 1.

@@ -5,9 +5,10 @@
 //! it. Before this table five checks held five notions of a name; the argument is
 //! `design@core@one-entity-table`.
 //!
-//! **A kind is a register's name, or `path`.** Ten registers are compiled in and a project
-//! declares the rest, so the kind set is data rather than an enum — `path@core@src/manifest.rs`
-//! owns what a register is, and this module owns what naming one means.
+//! **A kind is a register's name, or `path`, or `planned`.** Ten registers are compiled in and a
+//! project declares the rest, so the kind set is data rather than an enum —
+//! `path@core@src/manifest.rs` owns what a register is, and this module owns what naming one
+//! means.
 //!
 //! **An anchor is a named directory, or a spec file, that carries registers.** A component carries every
 //! component-scoped register with its homes under `docs/`; a location carries the subset it
@@ -36,14 +37,14 @@ use crate::manifest::{
 use crate::model::Model;
 use crate::scan::{Observation, SlugSite};
 
-/// The one kind that is not a register: a file or directory, defined by the tree itself.
+/// A kind that is not a register: a file or directory, defined by the tree itself.
 pub(crate) const PATH_KIND: &str = "path";
 
 /// The kind of a path a plan's work will create: anchored like `path`, and asserted absent, per
 /// `design@core@planned-path-form`.
 pub(crate) const PLANNED_KIND: &str = "planned";
 
-/// What a reference names, in its first segment: a register's name, or `path`.
+/// What a reference names, in its first segment: a register's name, `path`, or `planned`.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct Kind(Arc<str>);
 
@@ -112,7 +113,7 @@ pub(crate) fn is_reserved_anchor(word: &str) -> bool {
 static ANCHOR_NAME: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^\.?[A-Za-z0-9][A-Za-z0-9._-]*$").unwrap());
 
-/// The shape an entity's id must have, for every kind but `path`.
+/// The shape an entity's id must have, for every kind but `path` and `planned`.
 static ENTITY_ID: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^[a-z0-9]+(?:-[a-z0-9]+)*$").unwrap());
 
@@ -376,7 +377,7 @@ impl Anchors {
         &self.registers
     }
 
-    /// The kind a word names: a declared register, or `path`.
+    /// The kind a word names: a declared register, `path`, or `planned`.
     pub(crate) fn kind(&self, word: &str) -> Option<Kind> {
         if word == PATH_KIND {
             return Some(Kind::path());
@@ -647,9 +648,9 @@ pub(crate) enum Candidate<'a> {
 /// an email address or a git remote in backticks reports nothing. A typo inside the kind is
 /// silent for the same reason, which `path@core@docs/tripwires.md` guards.
 ///
-/// **Segmentation.** Every kind but `path` takes exactly three segments; `path` takes an anchor
-/// and then everything after the second `@` as its id, so a path may hold an `@`. An empty
-/// segment is malformed in either shape.
+/// **Segmentation.** Every kind but `path` and `planned` takes exactly three segments; those two
+/// take an anchor and then everything after the second `@` as its id, so a path may hold an `@`.
+/// An empty segment is malformed in either shape.
 pub(crate) fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
     let Some((head, rest)) = span.split_once('@') else {
         return Candidate::NotOne;
@@ -1924,8 +1925,8 @@ mod tests {
 
     #[test]
     fn a_declared_register_becomes_a_kind_the_candidate_rule_admits() {
-        // Nothing about a kind is compiled in beyond `path` and the built-in registers: a project
-        // that declares a register makes its name spellable in kind position.
+        // Nothing about a kind is compiled in beyond `path`, `planned` and the built-in registers:
+        // a project that declares a register makes its name spellable in kind position.
         let text =
             "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
              [locations.notes]\npath = \"notes\"\nregisters = [\"reading\", \"tripwire\"]\n\n\

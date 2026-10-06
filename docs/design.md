@@ -371,7 +371,9 @@ A form a writer can use is either one the checker judges, and the workflow recom
 the checker does not read, and the workflow never directs a pointer into it to clear a finding. So
 no finding's repair, and no installed or project instruction, offers an unchecked form as the way
 to clear a finding. A repair names a checked form: the right anchor, `path@elsewhere@<path>` for a path this
-tree does not hold, an angle-bracket placeholder for an illustration, or a rewrite of the sentence.
+tree does not hold, `planned@<anchor>@<path>` in a plan document for a path its work will create,
+per `design@core@planned-path-form`, an angle-bracket placeholder for an illustration, or a
+rewrite of the sentence.
 The one exception is a pointer that no checked form expresses, written beside a reference to the
 issue entry that records the missing form, per
 `design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`. Prose that mentions a
