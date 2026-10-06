@@ -99,9 +99,13 @@
 //! refusal in its own suite, over its own crates.
 //!
 //! [`cli::refuse_another_version`] refuses to run over a project whose manifest pins another
-//! version of the checker in `[project] checker-version`. A mock project inside the extension's
-//! crate may say `checker-version = "fixture"`, which this call accepts because the crate's
-//! directory is among the directories it is given.
+//! version of the checker in `[project] checker-version`. Every binary that dispatches a command
+//! of the checker calls it before dispatching; without the call, that binary enforces no pin. A
+//! crate that uses the library only for [`MANIFEST_NAME`] dispatches no command, and does not. A
+//! mock project inside the extension's crate may say `checker-version = "fixture"`, which this
+//! call accepts because the crate's directory is among the directories it is given. A copy of a
+//! mock outside that directory, such as one a test makes in a temporary directory, writes the
+//! project's own pin instead, read from the root manifest.
 //!
 //! # Writing an extension
 //!
@@ -172,6 +176,15 @@
 //! an ignore rule must not cover them. The project's own manifest excludes the mock's directory
 //! with a `[walk] exclude` row, or the mock's planted defects are reported as the project's own.
 //!
+//! **A mock plants only the defects whose findings the extension emits.** A defect the core
+//! reports pins the core's behaviour in the extension's suite, and a release of the core that
+//! narrows or widens that check fails the suite with nothing to repair in the extension.
+//!
+//! **A test pins the set of findings it expects, not their count.** A count that moves says that
+//! something changed and not what. Compare the set of `(file, line)` pairs of
+//! `report.findings` with an expected set written in the test, or in a reference file the test
+//! reads: a failure then names each finding gained or lost. The wording of a finding is left out
+//! of the set, since a rewording is no change to what the check reports.//!
 //! # Compatibility
 //!
 //! Under the crate's versioning policy, a breaking change to this API is major. While the
