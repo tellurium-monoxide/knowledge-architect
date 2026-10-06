@@ -394,7 +394,13 @@ ruling before the work rather than rework after it, per
 the work, issues the changes bore on and tripwires that had fired, especially in the steps of large
 milestones, and the repairs and decisions this forced could have been taken before the design and
 the implementation, in the owner's account. The audit reads every issue kind because those late
-findings included issues the changes touched, not only fired tripwires. A search at the reviews of
+findings included issues the changes touched, not only fired tripwires. The steps of thaum whose
+reviews found such entries had their audits before the installed planning skill told an audit to
+read the tripwires and the deferred issues, and the reviews of the two steps audited after it
+found no entry missed. The
+owner judged that the work before that change did not differ from the work just before this
+search, so the evidence stands; a stream of audits that read the standing entries in the session
+and miss none would weaken it. A search at the reviews of
 a plan document lost to a second search when convergence is proposed, before the premortem: those
 reviews run only where a discussion wrote a plan document, and a search at convergence covers a
 decision taken in the change under way too. The search at convergence is parked, with a tripwire,
@@ -715,9 +721,12 @@ someone do this, and the issue-tracking skill holds both to one test. So the rev
 deferred trigger against the change, as it reads every tripwire, and reports a trigger the change
 meets as a finding, whose repair is the work the issue names or the owner's ruling. Without it, a
 trigger met by work that is neither designed nor planned has no reader at all: no skill runs at the
-start of such work. A search before such work lost: its one host would be the primer, which holds
-only what every session needs, per `design@agent-skills@primer-limit`, the evidence for it is one
-instance, and a line sending every session to search before any work is a conformance rule. In thaum, a move of the pinned checker met the trigger of a deferred issue that
+start of such work. A search before such work is parked, on the owner's word: its one host today
+would be the primer, which holds only what every session needs, per
+`design@agent-skills@primer-limit`, the evidence for it is one instance, and a line sending every
+session to search before any work is a conformance rule. It is proposed again at the design of a
+skill for bounded problems, `issue@agent-skills@a-skill-for-bounded-problems`, which would host
+it. In thaum, a move of the pinned checker met the trigger of a deferred issue that
 named that move, and the session read it at no step.
 
 ### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
