@@ -589,7 +589,7 @@ choices whose option space genuinely is closed and consequence-free.
    premortem and the owner's rulings on its tripwires live in this
    conversation and in the harness's transcript of it. The planning
    skill assembles them from the transcript into a spec, or a milestone
-   document and one spec per step, before the session ends, and owns
+   document and one spec per slice, before the session ends, and owns
    their shape.
    Each round's delta is the draft that assembly reads, so a delta is
    written whenever a round changes a state or a note. A plan document
@@ -613,7 +613,7 @@ homes, under `knowledge-architect-issue-tracking`. A decision that no
 work implements is recorded when it is made. Findings made during
 planning or implementation surface through the material-findings
 protocol (Decision authority), except a load-bearing gap found at a
-step's audit, which stops that step under `knowledge-architect-planning`.
+design audit, which stops that work under `knowledge-architect-planning`.
 
 ## Keep-or-change (evaluating an incumbent design)
 
