@@ -193,7 +193,7 @@ the same way, one predicted check at a time. The evidence behind it came from on
 skills and agents forked from thaum were never edited under it: one that needs a different
 standard argues its exception.
 
-### A gap in an installed skill or agent is worth text when it is a missing capability `##capability-over-conformance`
+### An installed instruction adds a capability and the judgement to use it, not a rule or a structure for one interaction `##capabilities-not-structure`
 
 No wording makes a methodology self-enforcing: a rule set edited toward leaving no gap grows one
 rule per observed interaction, and each new rule creates surface against the rules already there.
@@ -205,6 +205,16 @@ might not make; filling it is worth text only where the default behaviour is sys
 not occasionally absent, as the design skill's rules against agreeing without testing
 are. When both readings fit, the capability form is written: a tool and the judgement to use it,
 not a script for one interaction.
+
+A structure an instruction imposes on the work has the same cost as a rule added for one gap: a
+fixed sequence, count or mapping between a unit of the work and a unit of its record meets another
+instruction that needs that unit to vary, and the session is left with two instructions it cannot
+both obey, and less room to work on its own. So the installed text imposes no structure the work
+does not need, per `goal@agent-skills@installed-text-leaves-room-to-judge`, which gives this
+argument a goal's weight, and a contradiction a structure causes is answered by removing structure
+rather than by adding a rule. In the discussion that named a milestone's part a slice, naming a
+spec's items as commits, one step to one commit, lost on this argument: the primer asks a fix met
+outside the task to take a commit of its own, which a plan's fixed list of commits would contradict.
 
 ### An installed skill's scope is bounded by a stated expectation set, which the retrospective carries `##expectation-set-bounds-scope`
 
@@ -373,15 +383,16 @@ and the tripwires homes, then `wc -c`: summed by the anchor that holds each file
 divided by the rows of the issue and tripwire listings for the second; real sessions measure it, per
 `goal@knowledge-architect@the-workflow-improves-through-real-use`.
 
-### The search runs at the grounding of a design discussion and at the design audit of a milestone step, over every issue kind and every tripwire `##standing-entries-searched-before-the-work`
+### The search runs at the grounding of a design discussion and at the design audit of a milestone slice or of a spec, over every issue kind and every tripwire `##standing-entries-searched-before-the-work`
 
 The installed design skill dispatches the search at its loop step 1, with the question as the work
 and the decisions and goals read so far as seeds. The installed planning skill dispatches it at
-the design audit of a milestone step, §7 point 2, with the step's spec and the milestone document
-as the work and their decided entries and citations as seeds. The audit lists as a gap every
-standing entry the step's code bears on: a tripwire whose firing condition, or a deferred trigger,
-the planned code meets, and an issue of any kind the step's code touches, closes, makes worse or
-depends on. The step's grounding, §7 point 1, reads no issues and no tripwires, since the audit's
+the design audit of a milestone slice, §7 point 2, with the slice's spec and the milestone document
+as the work and their decided entries and citations as seeds, and at the design audit of a spec
+where one runs, with the spec as the work. The audit lists as a gap every
+standing entry the slice's code bears on: a tripwire whose firing condition, or a deferred trigger,
+the planned code meets, and an issue of any kind the slice's code touches, closes, makes worse or
+depends on. The slice's grounding, §7 point 1, reads no issues and no tripwires, since the audit's
 search covers every anchor. Work that is neither designed nor planned sends no search: the
 standing-state review reads its deferred triggers, per
 `design@agent-skills@conformance-before-every-merge`, which this search adds to and never
@@ -391,12 +402,12 @@ The occasions are those where design is discussed, so that an entry the work bea
 ruling before the work rather than rework after it, per
 `goal@knowledge-architect@agents-work-without-drift`. The evidence is real use, per
 `design@agent-skills@additions-need-real-use`: in thaum, the standing-state reviewer found, after
-the work, issues the changes bore on and tripwires that had fired, especially in the steps of large
+the work, issues the changes bore on and tripwires that had fired, especially in the slices of large
 milestones, and the repairs and decisions this forced could have been taken before the design and
 the implementation, in the owner's account. The audit reads every issue kind because those late
-findings included issues the changes touched, not only fired tripwires. The steps of thaum whose
+findings included issues the changes touched, not only fired tripwires. The slices of thaum whose
 reviews found such entries had their audits before the installed planning skill told an audit to
-read the tripwires and the deferred issues, and the reviews of the two steps audited after it
+read the tripwires and the deferred issues, and the reviews of the two slices audited after it
 found no entry missed. The
 owner judged that the work before that change did not differ from the work just before this
 search, so the evidence stands; a stream of audits that read the standing entries in the session
@@ -408,24 +419,32 @@ since grounding and the audit are where the owner wants the search.
 
 ## Plan documents
 
-### The words: plan document, spec, milestone, plans directory `##document-vocabulary`
+### The words: plan document, spec, milestone, slice, step, plans directory `##document-vocabulary`
 
-A plan document is a spec, a milestone document or the spec of a step, kept in the plans
+A plan document is a spec, a milestone document or the spec of a slice, kept in the plans
 directory, docs/plans/ at the project's root, whose path the checker fixes, per
 `design@core@plans-dir-fixed`. The directory is named plans rather than planned: in common English,
 planned work is intended or scheduled work, designed or not, which is the roadmap's content. A spec is the plan document of work done in one branch and one PR. A milestone is work across
 several PRs with design sessions between them; its plan documents are its milestone document and
-one spec per step. The word "plan" alone never names a document: it would name the directory, a
+one spec per slice. A slice is a part of a milestone that is one branch and one PR, with its own
+spec. A step is one item of an implementation sequence, in a spec or in a slice, and how many
+commits it takes is the implementing session's to judge. The word "plan" alone never names a document: it would name the directory, a
 document and a kind of document at once. The words follow common usage among developers, which the
 owner made binding: a milestone groups the work toward one goal, as GitLab's milestones do, and a
 spec says what will be built and how before the code exists, in the sense engineering teams give
 the word. "Design doc", the closest common term, lost because "design" already names the durable
-register.
+register. "Step" once named both a milestone's part and an item of a spec's sequence, so a rule for
+the one, one branch and one merge per step, contradicted the other, a spec of several steps on one
+branch. The milestone's part takes its own word, slice, a part of the larger whole, and "step"
+keeps the general sense it has in common usage and in the design skill's loop. Naming a spec's
+items by a unit of the history instead, one step to one commit, lost: it fixes the plan onto the
+history, against `goal@agent-skills@installed-text-leaves-room-to-judge`, and a commit the work
+needs for another reason, such as a fix met outside the task, would then contradict the plan.
 
 ### One document per layer, and no snippet is authority `##spec-and-milestone`
 
 The work of one PR has one plan document, its spec. A milestone has a milestone document and one
-spec per step, which hold the spec's sections between them, split as
+spec per slice, which hold the spec's sections between them, split as
 `design@agent-skills@milestone-is-a-directory` says. A plan document is detailed about the
 design and concise about the implementation sequence. No untested code snippet in it is presented
 as authority: a snippet is labelled as an illustration of a shape. A spec plus a separate detailed
@@ -435,29 +454,44 @@ implementers force such plans' untested snippets into the code at any cost, copy
 verbatim. A detailed plan, if one is ever written for a less capable implementer, covers a bounded
 amount of work and opens by saying it rests on assumptions.
 
-### A milestone is a directory, its head a README, each step a spec `##milestone-is-a-directory`
+### A milestone is a directory, its head a README, each slice a spec `##milestone-is-a-directory`
 
 A milestone's plan documents are one directory under milestones/ in the plans directory, which the
 checker makes an anchor named by its basename, per `design@core@plan-document-kinds`: the milestone
-document is its `README.md`, a generated `index.md` lists the steps, and each step's spec is a file
-beside it, cited `spec@<milestone>@<step>`. The head is a README because the checker
+document is its `README.md`, a generated `index.md` lists the slices, and each slice's spec is a file
+beside it, cited `spec@<milestone>@<slice>`. The head is a README because the checker
 resolves a relative link only in a `README.md` or an `index.md`, per
-`design@core@links-are-navigation-rows`, so the head can link each step's spec as a navigation row.
-A step's spec is a spec, so it leaves when its step lands, per
+`design@core@links-are-navigation-rows`, so the head can link each slice's spec as a navigation row.
+A slice's spec is a spec, so it leaves when its slice lands, per
 `design@agent-skills@spec-leaves-at-landing`: its decisions are then in the design homes. The
-README leaves with the last step.
+README leaves with the last slice.
 
-The design is split across the documents from the start, by lifetime: a step's spec holds what
-only that step builds, and the README holds what crosses steps or outlives one, every item cited
-from more than one step's document included. A README holding every step's design is read whole
-at every step's grounding and grows with every step: the README of the structured-plans milestone
+The design is split across the documents from the start, by lifetime: a slice's spec holds what
+only that slice builds, and the README holds what crosses slices or outlives one, every item cited
+from more than one slice's document included. A README holding every slice's design is read whole
+at every slice's grounding and grows with every slice: the README of the structured-plans milestone
 held 1,624 lines when it left, counted with `wc -l` on `git show` of its deleting commit's parent.
-The step specs exist from the session that converged, so the audit of a step applies its findings
-in place, in whichever document holds the shape, and a new step found at an audit gets a spec of its
+The slice specs exist from the session that converged, so the audit of a slice applies its findings
+in place, in whichever document holds the shape, and a new slice found at an audit gets a spec of its
 own, as a scope change the owner rules on. The audit's commit message lists each finding with its
 gap, its answer and the decision it follows from, so an edit in place loses no record of what the
 audit found.
 
+
+### The work of a spec takes a slice's procedure once, and its design audit only when a fresh session starts it or the main branch has moved `##spec-work-procedure`
+
+The work of a spec, on its one branch, takes the points of the installed planning skill's procedure
+for a slice once: the grounding, the claims and checks of each step, one review before the merge,
+the report and the harvest in the commits that land the work, and the deletion of the spec in the
+commit that completes its harvest. Its design audit runs only when the work does not start in the
+session where the discussion converged, or when commits have landed on the main branch since the
+spec was written. An audit reads the design against the tree as it stands and recovers what a
+session that did not witness the discussion lacks; a spec implemented by the session that wrote it,
+on an unmoved main branch, gives it nothing to find, in the owner's judgement. Before this rule, the
+skill said a spec's step is worked "per §7", a procedure written for one branch and one review per
+step, and a spec of several steps on one branch could not tell which points applied to which
+commit; the rival, an audit for every spec as for every slice, costs a reading with nothing to
+find.
 ### A plan document leaves when its work lands `##spec-leaves-at-landing`
 
 A plan document is deleted in the commit that completes its last harvest, and that commit's message
@@ -538,7 +572,7 @@ only by the conversation, which compaction removes.
 
 An acceptance criterion, a check on a recorded decision that only the work's built code can apply,
 is written in its own section of the plan document of that work. Each names the decision it guards,
-the step that judges it, the observable that fires it and the response. Every landing reports on
+the step or slice that judges it, the observable that fires it and the response. Every landing reports on
 the criteria it judges. When the document leaves, a criterion that recurs is proposed to the owner
 as a tripwire and written on the owner's word, per
 `design@agent-skills@premortem-tripwires-on-the-owners-word`; any other is deleted. A separate file
@@ -548,7 +582,7 @@ the document leaves. The plan document is written in the session that converged,
 and the document are born together.
 
 The result a scheduled review is expected to give is not a criterion: passing the reviews every plan
-document and step owes is the baseline, and writing it as a criterion in
+document and slice owes is the baseline, and writing it as a criterion in
 every plan document would be noise, and would become the habitual criterion in place of a specific
 one that is harder to find.
 
@@ -588,7 +622,7 @@ commit that added the document, whose tree predates the change, and refuse it. A
 check of the working tree sees, such as installed text that the checker compares on the working
 tree alone, leaves the per-commit gate unchanged and is outside this rule. Keeping both on one branch would force
 the fix the owner called absurd: the plan document committed after the work it plans. So that work
-begins on a branch of its own, after the document is merged. This holds for a spec as for a milestone document, whose step
+begins on a branch of its own, after the document is merged. This holds for a spec as for a milestone document, whose slice
 that changes the gates is the one this rule meets, per
 `design@agent-skills@plan-landing-is-not-tied-to-its-work`.
 
@@ -622,7 +656,7 @@ The path is fixed, as the plans directory's is, so the installed skills can name
 `design@core@plans-dir-fixed`. It is optional: a project with no order to state writes none. It is
 not in the plans directory, which holds plan documents only, because a roadmap outlives every plan
 it lists. Its rows are ordinary references, so ordinary reference checking is all it needs: a
-roadmap citing a milestone, a step spec and issues passes the check, and a row citing an absent
+roadmap citing a milestone, a slice spec and issues passes the check, and a row citing an absent
 issue is reported. Writing such a file and running the check re-takes it; a row the check cannot
 judge would reopen this.
 
@@ -661,7 +695,7 @@ was the one of six to find a decision recorded narrower than the owner's approva
 
 A plan document assembled from a discussion records every thread with its proposer and round, its
 final state, the arguments on each side, the owner's rulings verbatim with their round, and its
-relations. It applies to a spec, and to a milestone document with its step specs, which share the
+relations. It applies to a spec, and to a milestone document with its slice specs, which share the
 record by the rule of `design@agent-skills@milestone-is-a-directory`. `design@agent-skills@standing-argument-in-head` names the plan document
 as the home of the deliberation while it exists, and `goal@knowledge-architect@the-owner-decides`
 is served only where the rulings are recorded as the owner made them. On the in-change path, the
@@ -681,7 +715,7 @@ declines to track, and an identifier needs none.
 ### Arguments are numbered in one sequence per plan `##argument-ids`
 
 An argument's id is `a<n>`, in order of appearance and never reused, in one sequence across a
-milestone's README and its step specs, which share one namespace, per
+milestone's README and its slice specs, which share one namespace, per
 `design@core@plan-items-by-section`. Arguments are never harvested as entries, so a content slug
 would cost a name for each of dozens of statements, for nothing. The numbers are assigned at
 assembly, and the discussion mints none.
@@ -702,7 +736,7 @@ plan: does it still hold now that the leaving plan is built, accounting for devi
 unplanned happenings? The issue cites
 the citing plan, so it cannot outlive it, and its `Why it matters` cites what the leaving plan
 harvested, since that plan no longer exists. It is a `question` rather than a `todo` because the
-reading may find nothing to change. For a milestone, its next step's audit reads it. The retiring
+reading may find nothing to change. For a milestone, its next slice's audit reads it. The retiring
 session revisits nothing itself: a revisit at that moment would redesign the citing plan at a time
 chosen by another plan's landing.
 
@@ -772,10 +806,10 @@ skill delivers when it loads. The workflow targets frontier-tier models, which t
 design skill's work requires, per `design@agent-skills@frontier-tier-only`, so a size limit
 would protect a reader the workflow does not serve.
 
-### The primer carries the goals rule, the intent-and-claims rule, the check before diagnosing, and the rule for what is met outside the task `##primer-content`
+### The primer carries the goals rule, the room to judge, the intent-and-claims rule, the check before diagnosing, and the rule for what is met outside the task `##primer-content`
 
 Besides the knowledge table and the list of installed skills, the primer carries the rule on when
-to write a reference, and four directives the skills rely on and no skill delivers at the moment
+to write a reference, and five directives the skills rely on and no skill delivers at the moment
 they apply. **A reference is written wherever the text would have to be revisited if the entry it
 names changed.** That rule is the premise the workflow relies on to be useful: an entry of a
 register is referenced wherever it is load-bearing, so the checker can list what a reversal, a
@@ -787,6 +821,10 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   work grows. When a decision conflicts with a goal, the likely cause is that the owner missed the
   conflict: the goal prevails, and the conflict goes to the owner, per
   `goal@knowledge-architect@the-owner-decides`.
+- **Where the installed text is silent, a session judges**, since the installed text leaves that
+  room on purpose, per `goal@agent-skills@installed-text-leaves-room-to-judge`; room to judge is
+  never room to act against an instruction. Every session meets a situation no instruction covers,
+  and no skill reaches every session.
 - **A design home is built intent, per `design@agent-skills@design-home-is-built-intent`, and a
   claim about the code goes stale**: the code is checked against
   the first, and the second is verified before it is relied on.
@@ -995,12 +1033,16 @@ session worked on has merged, a plan document has left, or the owner says the se
 It runs only if the owner accepts. A moment named by an event can be followed by any agent where
 "a moment it judges right" could not, and offering it once keeps it from interrupting work.
 
-### A retrospective examines four subjects `##retro-content`
+### A retrospective examines four subjects, and counts an instruction missing only where the workflow needed one `##retro-content`
 
 It opens with what the session did, at the level of the workflow, and examines the installed skills
 and agents, the project's own instructions, how the two interact, and the checker: its defects, its
 blind spots, its false findings, and what would make it easier to use. For each it lists what was
-unclear, missing or wrong, quoting the instruction. Its scope is wider than the installed text so
+unclear, missing or wrong, quoting the instruction. An instruction is missing only where the
+session could not follow the workflow, or could not produce a document the checker accepts,
+without it; a decision made by judgement where no instruction covers it is no finding. A wider
+"missing" turns every judgement into a request for a rule, which narrows the instructions against
+`goal@agent-skills@installed-text-leaves-room-to-judge`. Its scope is wider than the installed text so
 that it is useful to a project adopting the workflow, whose problems may come from its own
 instructions and from their interaction with the installed ones as well, per
 `goal@knowledge-architect@the-workflow-improves-through-real-use`.

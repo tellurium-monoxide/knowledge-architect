@@ -99,3 +99,28 @@ with its host.
 **Re-entry:** the design discussion of `issue@agent-skills@a-skill-for-bounded-problems`, the
 skill that would host a search before undesigned work.
 
+## Guarding `design@agent-skills@spec-work-procedure`: a spec's work skipped its audit while what it relied on had changed `##spec-audit-skipped-on-a-moved-base`
+
+The decision rests on the premise that a spec implemented by the session that wrote it, on a main
+branch with no commit since the spec, has nothing for an audit to find.
+
+**Fires when:** a review finds that a spec's work skipped its design audit, and an entry or a
+decided shape the spec relied on had changed on the main branch since the spec was written.
+**Response:** open a `defect` naming the spec and the change, and reopen
+`design@agent-skills@spec-work-procedure` on the condition for the audit.
+**Re-entry:** the standing-state review before every merge: the spec, its commit and the main
+branch's history since are in the branch's range and its base.
+
+## Guarding `design@agent-skills@capabilities-not-structure`: a rejection that cites it is overruled `##structure-rejection-overruled`
+
+The decision rests on the premise that the principle against imposed structure is cited to remove
+structure the work does not need, and not to refuse structure it does.
+
+**Fires when:** a review or a design discussion rejects an instruction by citing
+`design@agent-skills@capabilities-not-structure` or
+`goal@agent-skills@installed-text-leaves-room-to-judge`, and the owner overrules that rejection.
+**Response:** open a `design` issue naming the instruction and the owner's reason, and reopen
+`design@agent-skills@capabilities-not-structure` on where structure is needed.
+**Re-entry:** the retrospective of the session where the owner overruled it, which reads that
+session's record.
+

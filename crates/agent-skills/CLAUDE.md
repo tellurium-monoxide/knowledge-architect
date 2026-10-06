@@ -38,7 +38,9 @@ owner and has no expectation set. This is a restatement; its homes are the entri
    addition needs an observation from a real session, the owner's named lack, and a one-sentence
    mechanism; a predicted behaviour is parked as an issue (`design@agent-skills@additions-need-real-use`).
 3. **Kind.** A missing capability is worth text; a conformance rule only where the default is
-   systematically wrong (`design@agent-skills@capability-over-conformance`).
+   systematically wrong; a structure imposed on the work, such as a fixed mapping between a unit of
+   the work and a unit of its record, only where the work needs it
+   (`design@agent-skills@capabilities-not-structure`).
 4. **Built intent.** Grep the design homes and the goals for the behaviour the edited passage
    describes. An edit that contradicts a statement of a head, or takes one beyond what its title
    states, is a decision, under `knowledge-architect-decision-recording`; one that strains a goal
