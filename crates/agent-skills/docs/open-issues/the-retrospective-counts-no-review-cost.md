@@ -38,7 +38,7 @@ for. Re-take them with `git log --format=%s` over the range, counting subjects t
 
 Without the counts, `goal@knowledge-architect@agents-get-a-complete-workflow` cannot be shown met
 or unmet, and a proposal to add or cut workflow text, which
-`design@agent-skills@capability-over-conformance` weighs, is argued from intuition. The counts are
+`design@agent-skills@capabilities-not-structure` weighs, is argued from intuition. The counts are
 also the evidence `goal@knowledge-architect@the-workflow-improves-through-real-use` names: real
 sessions as the test of the workflow.
 

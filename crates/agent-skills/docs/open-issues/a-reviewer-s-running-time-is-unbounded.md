@@ -32,7 +32,7 @@ The dispatcher had committed the other reviews' repairs in the meantime.
 
 A reviewer that holds its findings for many minutes delays every repair, and a dispatcher that does
 not ask may wait on a reviewer that has stopped producing. An instruction is worth text only where
-the default is systematically wrong, per `design@agent-skills@capability-over-conformance`. Two
+the default is systematically wrong, per `design@agent-skills@capabilities-not-structure`. Two
 sessions show it recurs; they do not show how often.
 
 ### What would close it
