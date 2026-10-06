@@ -48,7 +48,7 @@ after every other axis has run and its repairs are committed. Its range is the w
 `<main branch>..<head>`, and its brief names the transcripts of every session that worked on the
 branch, with the message where the branch's work begins in each. It is the one axis that can see whether the findings of the others were acted on, since
 their reports reach the session as messages of its transcript. Its repairs land as additional
-commits. **Where one of them makes or reverses a decision, the decision-record axis reviews it**,
+commits, or are folded where §3 says. **Where one of them makes or reverses a decision, the decision-record axis reviews it**,
 and any other axis whose condition it meets; the review ends with their repairs. An additional
 commit that makes no decision is reviewed by no axis again.
 

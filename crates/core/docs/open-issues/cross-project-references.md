@@ -8,7 +8,9 @@ kind: deferred
 A reference names an entry of the project that holds it, and nothing else. A project that uses
 this checker, or builds an extension on it, cannot point at one of the checker's own decisions:
 the reference grammar has no form for another project's entry. Such a pointer is written as prose,
-and nothing checks it.
+beside a reference to an entry of the writing project that records this gap, per
+`design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`, and nothing checks the
+pointer itself.
 
 ## Details
 

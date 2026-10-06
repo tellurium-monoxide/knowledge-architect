@@ -1781,11 +1781,22 @@ mod tests {
     fn an_unanchored_path_shape_s_repair_offers_no_unchecked_form() {
         // The claim, per `design@knowledge-architect@plain-text-is-no-repair`: the repair names
         // checked forms only, so no reading of it clears the finding by unbackticking the path.
+        // The whole repair line is pinned, so an unchecked form offered in any words fails,
+        // on the plain span and on both located ones.
+        let forms = "write `path@<anchor>@<path>`, `path@elsewhere@<path>` for a path outside \
+                     this tree, or `path@*@<path>` for every component's own copy";
+        let located = ". A reference names a file: drop the line number or the fragment, and \
+                       name the function or the heading in prose";
         let m = manifest();
-        let (found, _) = checked(&m, "See `notes/real/a.md`.\n", &tree());
-        assert_eq!(found.len(), 1, "{found:#?}");
-        for unchecked in ["rephrase", "plain text", "not path-shaped"] {
-            assert!(!found[0].contains(unchecked), "{unchecked}: {found:#?}");
+        for (span, suffix) in [
+            ("notes/real/a.md", ""),
+            ("notes/real/a.md:12", located),
+            ("notes/real/a.md#a-head", located),
+        ] {
+            let (found, _) = checked(&m, &format!("See `{span}`.\n"), &tree());
+            assert_eq!(found.len(), 1, "{span}: {found:#?}");
+            let action = found[0].split_once("\n    → ").map(|(_, a)| a);
+            assert_eq!(action, Some(format!("{forms}{suffix}").as_str()), "{span}");
         }
     }
 

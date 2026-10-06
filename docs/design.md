@@ -365,18 +365,17 @@ included; a string literal bound to a name yields none. So a comment in code nam
 as live as a sentence in a document, and closing the issue reaches the code. This serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
 
-### A pointer is written in a form the checker judges, and plain text is never the repair of a finding `##plain-text-is-no-repair`
+### Plain text is never the repair of a finding, and no instruction directs a pointer into a form the checker does not judge `##plain-text-is-no-repair`
 
 A form a writer can use is either one the checker judges, and the workflow recommends it, or one
 the checker does not read, and the workflow never directs a pointer into it. So no finding's
 repair, and no installed or project instruction, offers an unchecked form as the way to clear a
 finding. A repair names a checked form: the right anchor, `path@elsewhere@<path>` for a path this
 tree does not hold, an angle-bracket placeholder for an illustration, or a rewrite of the sentence.
-
-A sentence about the past whose reference dangles after a deletion or a rename is rewritten to
-state the present, or removed, and its history stays in the commit messages. Retargeting it would
-make it false, and plain text would take it out of the check. A verbatim quotation of the owner
-that names a renamed entry is left as it is, with a reference to the current entry beside it.
+The one exception is a pointer that no checked form expresses, written beside a reference to the
+issue entry that records the missing form, per
+`design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`. Prose that mentions a
+directory without asking the reader to follow it is not a repair and is outside this head.
 
 The argument: an unchecked form that clears a finding clears it for good, so a habit of writing one
 empties the check while every run still passes, against
@@ -388,6 +387,15 @@ path this tree holds, since it would otherwise silence the finding on a real pat
 A label beside a checked pointer is not such a form. A plan item named outside its plan as #<id>
 stands beside a citation of the whole plan, because an item reference is refused there, per
 `design@core@plan-item-scope`.
+
+### A sentence about the past whose reference dangles is rewritten to the present or removed, never retargeted and never turned into plain text `##a-past-sentence-is-rewritten`
+
+When an entry is deleted or renamed, a sentence that recorded its past, such as what an earlier
+step wrote, is rewritten to state the present, or removed, and its history stays in the commit
+messages. Retargeting it to the new name would make it false, and plain text would take it out of
+the check, per `design@knowledge-architect@plain-text-is-no-repair`. A verbatim quotation of the
+owner that names a renamed entry is left as it is, with a reference to the current entry beside
+it, since rewriting it would misstate the owner, against `goal@knowledge-architect@the-owner-decides`.
 
 ### A pointer no checked form expresses is written beside a reference to an issue entry of its own project that records the missing form `##a-needed-unchecked-pointer-names-its-gap`
 
