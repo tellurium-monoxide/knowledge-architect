@@ -303,7 +303,7 @@ pub(crate) fn scan(parsed: &Parsed) -> Vec<Located> {
             // typography.
             //
             // Slugs and paths are backticked BY CONVENTION and are never tested either.
-            let data = |m: regex::Match| region.is_code(at + m.start());
+            let data = |m: regex::Match| region.in_code_span(at + m.start());
 
             // A heading-shaped line inside a fence is an ILLUSTRATION. The generated index
             // labels each citation by the last heading seen, so one in a fenced example

@@ -76,9 +76,6 @@ pub struct Prose {
     /// parser input, a citation being reported as wrong — rather than a claim. It is the same
     /// judgement a fenced block and a Rust string literal get, and it is what leaves the
     /// quote-free class needing no marker of its own.
-    ///
-    /// Sorted by start and disjoint, as the parsers produce them. [`Prose::is_code`] relies on
-    /// it, so a caller that edits the list keeps it so.
     pub code: Vec<(usize, usize)>,
     /// Byte offset of each line of `text`, built once on first use.
     pub(crate) line_starts: std::sync::OnceLock<Vec<usize>>,
@@ -98,12 +95,18 @@ impl Prose {
     }
 
     /// Whether a byte offset in `text` falls inside an inline code span.
-    ///
-    /// Expects [`Prose::code`] sorted by start and disjoint: the answer is then the last span
-    /// starting at or before the offset, found by binary search. A scan over every span made
-    /// the scanner quadratic in a text holding many spans and many links, since it asks once
-    /// per link.
     pub fn is_code(&self, offset: usize) -> bool {
+        self.code.iter().any(|&(a, b)| a <= offset && offset < b)
+    }
+
+    /// The same answer as [`Prose::is_code`], by binary search.
+    ///
+    /// Valid only while `code` is sorted by start and disjoint, which `md::analyse` makes it
+    /// for every region the parsers build. `is_code` keeps the scan because `code` is public
+    /// and a consumer may hold it in any order. The scanner asks once per markdown link and
+    /// link definition, and a scan per ask made it quadratic in a text holding many spans and
+    /// many links.
+    pub(crate) fn in_code_span(&self, offset: usize) -> bool {
         let i = self.code.partition_point(|&(a, _)| a <= offset);
         i > 0 && offset < self.code[i - 1].1
     }
