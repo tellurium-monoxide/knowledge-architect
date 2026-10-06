@@ -10,6 +10,11 @@ subsection is omitted.
 
 ### Migration
 
+- `cli`, patch: the summary of `commits` reads `<n> commits, <p> passed, <f> failed`, where it read
+  `<j> judged, <f> failed`, and each commit's line reads `passed` where it read `judged`. A commit
+  whose message alone carries findings now counts as failed, and its line names each source of its
+  findings with its count. The verdict line and the exit code are unchanged. A script that reads
+  the summary changes the words it matches.
 - `manifest`, major: a register named `planned` is refused, as one named `path` is, since
   `planned` is now a kind of the reference grammar. A project that declares `[registers.planned]`
   renames it.

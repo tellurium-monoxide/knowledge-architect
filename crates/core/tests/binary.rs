@@ -1433,7 +1433,10 @@ fn a_message_naming_nothing_that_exists_fails_and_names_the_commit_and_the_line(
     );
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{stdout}{stderr}");
-    assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
+    assert!(
+        stdout.contains(&format!("{sha} failed: its message carries 1 finding(s)")),
+        "{stdout}"
+    );
     // The commit, then the line inside the message: the body sits on line three.
     assert!(
         stdout.contains(&format!("commit {sha}:3")),
@@ -1474,7 +1477,7 @@ fn a_message_citing_a_commit_of_the_range_by_sha_fails_under_refuse_branch_shas(
         "{stdout}"
     );
     assert!(stdout.contains(&format!("{second} failed")), "{stdout}");
-    assert!(stdout.contains(&format!("{first} judged")), "{stdout}");
+    assert!(stdout.contains(&format!("{first} passed")), "{stdout}");
 }
 
 /// The claim: whether a commit is judged for branch SHAs is read from that commit's own
@@ -1498,7 +1501,7 @@ fn a_commit_is_judged_for_branch_shas_under_its_own_manifest() {
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(stdout.contains(&format!("{second} failed")), "{stdout}");
-    assert!(stdout.contains(&format!("{third} judged")), "{stdout}");
+    assert!(stdout.contains(&format!("{third} passed")), "{stdout}");
 }
 
 /// The claim: a commit whose tree carries a finding of its own is still judged for branch SHAs,
@@ -1598,7 +1601,7 @@ fn a_message_naming_the_entry_its_commit_deletes_resolves_against_the_parent() {
         code, 0,
         "the parent tree still defines it: {stdout}{stderr}"
     );
-    assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
+    assert!(stdout.contains(&format!("{sha} passed")), "{stdout}");
 }
 
 /// The claim: `--help` opens with the binary's own description, not with the doc comment the
@@ -1642,6 +1645,32 @@ fn a_message_naming_the_file_its_commit_deletes_by_a_bare_path_is_a_finding() {
         "{stdout}"
     );
     assert!(!stdout.contains(&format!("commit {silent}:")), "{stdout}");
+}
+
+/// The claim: a commit whose message alone carries findings is counted failed, and its line
+/// says so, while the commit before it passes. Mutation checked: the message's findings left
+/// out of the causes.
+#[test]
+fn a_commit_failing_on_its_message_alone_is_counted_failed() {
+    let history = History::new("commit-message-fails");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    let clean = history.commit("A subject line\n\nIt argues from `design@tiny@tiny-anchor`.\n");
+    let sha = history
+        .commit("A subject line\n\nIt names `design@tiny@nothing` and `design@tiny@none`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(stdout.contains(&format!("{clean} passed")), "{stdout}");
+    assert!(
+        stdout.contains(&format!("{sha} failed: its message carries 2 finding(s)")),
+        "{stdout}"
+    );
+    assert!(stdout.contains("2 commits, 1 passed, 1 failed"), "{stdout}");
+    let (stdout, stderr, _) = history.run(&["commits", &format!("{clean}..HEAD")]);
+    assert!(
+        stdout.contains("1 commit, 0 passed, 1 failed"),
+        "{stdout}{stderr}"
+    );
 }
 
 /// The claim: a lint both trees raise on one line is reported once, and a lint on another line
@@ -1842,8 +1871,8 @@ fn a_message_naming_the_plan_document_its_commit_deletes_resolves_against_the_pa
         code, 0,
         "the parent tree still defines each: {stdout}{stderr}"
     );
-    assert!(stdout.contains(&format!("{spec} judged")), "{stdout}");
-    assert!(stdout.contains(&format!("{milestone} judged")), "{stdout}");
+    assert!(stdout.contains(&format!("{spec} passed")), "{stdout}");
+    assert!(stdout.contains(&format!("{milestone} passed")), "{stdout}");
 }
 
 /// The claim: a commit message cites a plan document whole, never an item. It is one document
@@ -1870,7 +1899,7 @@ fn a_message_cites_a_plan_whole_and_never_an_item() {
     let item = history.commit("Its thread is named\n\nIt is `thread@a-spec@one-thread`.\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{stdout}{stderr}");
-    assert!(stdout.contains(&format!("{whole} judged")), "{stdout}");
+    assert!(stdout.contains(&format!("{whole} passed")), "{stdout}");
     assert!(
         stdout.contains(&format!("commit {item}:3"))
             && stdout.contains("cites an item of the plan `a-spec` from outside it"),
@@ -1909,7 +1938,7 @@ fn a_commit_s_milestone_anchors_are_read_off_its_own_tree() {
         code, 0,
         "the commit's own tree defines it: {stdout}{stderr}"
     );
-    assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
+    assert!(stdout.contains(&format!("{sha} passed")), "{stdout}");
 }
 
 /// The claim: a reference that resolves in NEITHER tree is reported, however differently the
@@ -1987,8 +2016,8 @@ fn a_commit_whose_manifest_does_not_load_fails_the_run_and_the_next_one_is_judge
         stdout.contains(&format!("{old} failed: its tree does not load")),
         "{stdout}"
     );
-    assert!(stdout.contains(&format!("{new} judged")), "{stdout}");
-    assert!(stdout.contains("1 judged, 1 failed"), "{stdout}");
+    assert!(stdout.contains(&format!("{new} passed")), "{stdout}");
+    assert!(stdout.contains("2 commits, 1 passed, 1 failed"), "{stdout}");
     assert!(
         stdout.contains(&format!("commit {old}  this commit's tree does not load")),
         "the finding names the commit: {stdout}"
@@ -2018,11 +2047,13 @@ fn a_failing_tree_is_a_finding_and_its_message_is_still_judged() {
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(
-        stdout.contains(&format!("{mid} failed: its tree fails 1 finding(s)")),
+        stdout.contains(&format!(
+            "{mid} failed: its tree fails 1 finding(s); its message carries 1 finding(s)"
+        )),
         "{stdout}"
     );
-    assert!(stdout.contains(&format!("{fixed} judged")), "{stdout}");
-    assert!(stdout.contains("1 judged, 1 failed"), "{stdout}");
+    assert!(stdout.contains(&format!("{fixed} passed")), "{stdout}");
+    assert!(stdout.contains("2 commits, 1 passed, 1 failed"), "{stdout}");
     // The tree's finding, named by the commit and by the file inside it.
     assert!(
         stdout.contains(&format!("commit {mid}: docs/note.md:3")),
@@ -2249,7 +2280,7 @@ fn a_head_inside_the_range_is_judged_like_any_other_commit() {
             .any(|l| l.starts_with(&format!("commit {planted}: docs/note.md"))),
         "{stdout}"
     );
-    assert!(stdout.contains(&format!("{last} judged")), "{stdout}");
+    assert!(stdout.contains(&format!("{last} passed")), "{stdout}");
     let verdict = stdout.trim_end().lines().last().expect("a verdict line");
     assert!(verdict.starts_with("FAILED"), "{verdict}");
 }
@@ -2271,7 +2302,7 @@ fn a_last_commit_whose_manifest_does_not_load_is_a_finding_of_the_run() {
 
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{stdout}{stderr}");
-    assert!(stdout.contains(&format!("{good} judged")), "{stdout}");
+    assert!(stdout.contains(&format!("{good} passed")), "{stdout}");
     assert!(
         stdout.contains(&format!("{bad} failed: its tree does not load")),
         "{stdout}"
@@ -2317,7 +2348,7 @@ fn a_project_vendored_under_its_repository_is_judged_from_its_own_paths() {
     assert_eq!(code, 0, "the working tree is clean: {clean}{stderr}");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 0, "and so is the commit's tree: {stdout}{stderr}");
-    assert!(stdout.contains(&format!("{sha} judged")), "{stdout}");
+    assert!(stdout.contains(&format!("{sha} passed")), "{stdout}");
     assert!(
         !stdout.contains("its own tree fails"),
         "the listing carried no repository prefix: {stdout}"
@@ -3032,7 +3063,7 @@ fn commits_compares_no_historical_pin() {
     history.commit("The pin moves\n\nThe project now pins this checker.\n");
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 0, "{stdout}{stderr}");
-    assert!(stdout.contains("2 judged"), "{stdout}");
+    assert!(stdout.contains("2 commits, 2 passed, 0 failed"), "{stdout}");
 }
 
 /// The claim: the foreign-build refusal comes before the pin's, so over a second checkout whose

@@ -1626,7 +1626,12 @@ then complete. Where the tree stopped earlier, the message is judged against not
 says so. No commit is set apart as the range's tip: a range that does not end at the checkout,
 such as a pre-push hook's or an audit of old history, holds no commit that `check` has judged,
 and treating its last commit specially would leave that commit's failure unreported as a finding.
-The summary counts judged and failed commits.
+The summary counts the range's commits, how many passed and how many failed. A commit fails when
+any finding of the run belongs to it: its tree's, its message's, or a citation of the range by
+SHA. Its line names each of those sources with its count, so the header always agrees with the
+verdict line and passed plus failed is the number of commits. Separate counts of failed trees and
+failed messages in the header lose to this: one commit can fail on both, so either such a count
+overlaps the other, or one source is left out.
 
 **A branch that makes the checker stricter orders its commits for it.** A new check, or a change
 to the manifest format, makes every earlier commit of the same branch fail under the tip checker.

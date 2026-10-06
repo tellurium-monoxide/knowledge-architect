@@ -387,7 +387,16 @@ documents, the generated indexes, every file an extension reads — so a message
 was written against, byte for byte and cleaned of nothing. **A commit whose tree does not load or
 carries findings fails the run**, the range's last commit included, with its tree's findings
 named by the commit and the file, and its message is still judged where its tree reached the last
-phase; the summary block counts judged and failed commits. The checker that judges every commit is the one built from the working tree, so a branch
+phase. The summary block counts the commits, how many passed and how many failed, and a commit
+fails on any finding of its tree, of its message or of a citation by SHA:
+
+```
+commits in origin/main..HEAD: 2 commits, 1 passed, 1 failed
+  <sha> passed
+  <sha> failed: its tree fails 1 finding(s); its message carries 2 finding(s)
+```
+
+The checker that judges every commit is the one built from the working tree, so a branch
 that makes it stricter puts that change in its first commit or is squashed before review. A
 message's references resolve against its commit's tree **or its first parent's**, which is what
 lets a commit that closes an issue name it; a parent whose manifest fails phase 1 is not read, and
