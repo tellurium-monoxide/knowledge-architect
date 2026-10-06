@@ -170,7 +170,9 @@ win.
     path to anchor when its first segment names a file or a directory that the tree's listing
     holds, per `design@core@every-path-names-its-anchor`. Write it as a `path` reference, or as
     `path@elsewhere@<path>` for a path this tree does not hold, never in plain text, per
-    `design@knowledge-architect@plain-text-is-no-repair`. A span naming nothing here, such as
+    `design@knowledge-architect@plain-text-is-no-repair`, except beside a reference to an issue
+    entry that records the missing form, per
+    `design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`. A span naming nothing here, such as
     `origin/main` or `application/json`, is silent, and so is a one-segment span, which is a name
     rather than a pointer.
 

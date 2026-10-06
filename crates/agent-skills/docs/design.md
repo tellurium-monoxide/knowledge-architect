@@ -659,6 +659,8 @@ messages of its transcript, so only a reviewer reading it after their repairs ca
 was acted on durably, per `goal@knowledge-architect@design-is-recorded-with-its-arguments`. Its own
 repairs land as additional commits, as many as their kinds need: a repair that the primer routes to
 a commit of its own stays one, and nothing asks the dispatcher to merge them into a single commit.
+A repair that would leave an earlier commit failing is folded, per
+`design@agent-skills@review-repair-appended-or-folded`.
 An additional commit that only corrects is reviewed by no axis again, so the review ends. One that
 makes or reverses a decision is reviewed by the decision-record axis at least, and the review ends
 with that review's repairs: otherwise a decision taken in answer to the transcript review reaches

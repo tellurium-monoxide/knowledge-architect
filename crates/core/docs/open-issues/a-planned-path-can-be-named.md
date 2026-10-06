@@ -36,4 +36,7 @@ satisfy once it exists.
 A design for the planned-path form, under `knowledge-architect-design`: its spelling, the anchor it
 names, the finding when the target appears, and how it relates to the structure of plan
 documents, `design@core@plan-register`. Then its implementation, with a test that a planned path outside
-the plans directory is refused and one that a planned path whose target exists is reported.
+the plans directory is refused and one that a planned path whose target exists is reported. Every
+site that cites this entry beside a plain-text path, per
+`design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`, is converted to the new form
+in the change that closes it.
