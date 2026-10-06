@@ -19,8 +19,8 @@ commit that completes its harvest.
   only `check` on the working tree compares the installed copies with the shipped text: `commits`
   does not, per `design@core@owned-namespace-check`. So the commit that adds this spec passes under
   the work's tip checker, and `design@agent-skills@plan-lands-before-gate-change` does not apply.
-  The default is that the work continues on this spec's branch, in one pull request, after the
-  reviews of this spec; a default awaiting the owner.
+  The work continues on this spec's branch, in one pull request, after the reviews of this spec,
+  as the owner ruled at the audit, "Agreed on the 4 defaults, you can proceed."
 - It is a spec, so the places `knowledge-architect-planning` §7 gives a milestone document are this
   spec's own sections: the defaults an audit adds go under "Defaults awaiting the owner", and a
   load-bearing gap the audit leaves open is recorded under "Threads", as a thread in state `open
@@ -319,9 +319,8 @@ Proposed by the agent, round 1. Parked. Arguments: `argument@standing-entry-sear
 `argument@standing-entry-search@a21`, `argument@standing-entry-search@a29`,
 `argument@standing-entry-search@a30`, `argument@standing-entry-search@a32`. Tripwire, as widened at
 the premortem: across sessions, 2 standing-state reviews report a standing entry the work bears on,
-which no search before the work returned. The count 2 is the agent's default, which it named the
-owner's weighing (`argument@standing-entry-search@a29`), and the owner has not ruled on it: a
-default awaiting the owner. Re-entry: the design discussion of
+which no search before the work returned. The count 2 was the agent's default, which it named the
+owner's weighing (`argument@standing-entry-search@a29`); the owner ruled at the audit, "Agreed on the 4 defaults, you can proceed." Re-entry: the design discussion of
 `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`. Harvest: a
 tripwire in `path@agent-skills@docs/tripwires.md`, guarding
 the head standing-entries-searched-before-the-work. The owner's words: round 2,
@@ -360,7 +359,7 @@ for a single one to judge reliably."
 
 ### The listings' rows are cut into groups of at most N entries, ordered by anchor `##search-partition-unit`
 
-Proposed by the agent, in the reply to round 3. Approved, with N a default awaiting the owner.
+Proposed by the agent, in the reply to round 3. Approved; N = 60, a default until the owner ruled at the audit, "Agreed on the 4 defaults, you can proceed."
 Argument: `argument@standing-entry-search@a28`. Shape: Decided design, "How the dispatcher cuts
 the groups". Harvest: inside the head standing-entry-search-agent. The owner's word
 against the checkpoint table of the reply to round 3, which showed the thread as "groups of at
@@ -719,7 +718,7 @@ Thread: #search-partition-unit.
 - The order of the rows is fixed in the agent's body, so that every search agent computes the same
   slice: the issue rows sorted by anchor, then by id; then the tripwire rows sorted by anchor, then
   by id. `{{command}} issues` prints its rows by kind first, so the agent always sorts them.
-- **N = 60 is a default awaiting the owner.** It rests on the mean entry size in thaum, 1.6 KB,
+- **N = 60**, as the owner ruled at the audit, "Agreed on the 4 defaults, you can proceed." It rests on the mean entry size in thaum, 1.6 KB,
   and on no measurement of recall. `acceptance@standing-entry-search@replay-returns-late-entries`
   measures it.
 - Today that is 1 search agent in this repository, with 58 entries, and 4 in thaum, with 197.
@@ -789,8 +788,8 @@ Threads: #search-at-design-grounding, #search-at-step-audit, #search-covers-ever
   or a deferred trigger, the planned code meets, and any issue of any kind the step's code touches,
   closes, makes worse or depends on. The sorting of each gap is unchanged.
 - **The planning skill**, §7 point 1, drops "its open issues, its tripwires" from the grounding,
-  since the audit's search covers every anchor. **This is a default awaiting the owner**: the
-  approved thread moves the audit's read, and point 1's read is a separate one.
+  since the audit's search covers every anchor. The approved thread moved the audit's read, and point
+  1's read is a separate one, so this was a default, until the owner ruled at the audit, "Agreed on the 4 defaults, you can proceed."
 - Nearest rivals: #search-at-plan-review lost to #search-at-convergence, because §8 runs on the
   full path only (`argument@standing-entry-search@a17`); #search-at-convergence is parked with its
   tripwire.
@@ -812,7 +811,7 @@ from step 2.
 | site | today | after the work |
 | --- | --- | --- |
 | design skill, loop step 1 | the session reads the issues and the tripwires | the session dispatches the search as the agent's description says, and reads whole each entry returned |
-| planning skill, §7 point 1 | grounds in the Component's issues and tripwires | drops them, a default awaiting the owner |
+| planning skill, §7 point 1 | grounds in the Component's issues and tripwires | drops them, as the owner ruled at the audit |
 | planning skill, §7 point 2 | the session reads every tripwire and every deferred issue | the session dispatches the search over every issue kind and every tripwire, and reads whole each entry returned |
 | standing-state reviewer, description, opening scope text and section 2 | every tripwire | every tripwire and every deferred trigger |
 | standing-state reviewer, "Reporting" | names the tripwires re-read | names the tripwires and the deferred triggers re-read |
@@ -892,7 +891,7 @@ Assume the work shipped and thaum's reviews keep finding entries after the work.
 - **Response**: replay the cases that missed with N = 30. If they are then returned, the default
   of N becomes 30, put to the owner. If an entry is still missed, the criterion fires: the reading
   of #search-reading-depth reopens, under `knowledge-architect-design`, before the harvest.
-- N = 60 and N = 30 are defaults, the owner's to reset. If thaum is not on the machine, or holds
+- N = 60 and N = 30 are as the owner ruled at the audit. If thaum is not on the machine, or holds
   no such case, step 6's commit says so, and the owner rules whether the work lands without the
   replay.
 - **Reported** in the message of step 6's commit, which lands the work and deletes this spec: each
@@ -901,9 +900,8 @@ Assume the work shipped and thaum's reviews keep finding entries after the work.
 ## Implementation sequence
 
 Steps 1, 2, 3, 5 and 6 are commits; step 4 is a run, which makes a commit only when it changes N.
-The commits sit on this spec's branch, after the commits of its reviews, by the default of
-"Defaults awaiting the owner", or on a branch of their own after this spec merges, if the owner
-rules so. Each commit that changes `path@agent-skills@content/` runs
+The commits sit on this spec's branch, after the commits of its reviews and of its audit, as the
+owner ruled at the audit. Each commit that changes `path@agent-skills@content/` runs
 `cargo klarch install-agent-skills` and holds the installed copies, per
 `path@agent-skills@CLAUDE.md`. Each passes the tests of that file's section "Editing an installed
 skill or agent". Each changes what an agent is told to do, so it is a decision under
@@ -913,7 +911,7 @@ and step 6 records them.
 1. **The search agent.** `planned@agent-skills@content/agents/standing-entry-searcher.md`, per
    "The search agent", "How the dispatcher cuts the groups", "How a search agent reads", the
    mapping table "From a citing site to an entry" and "What a search agent returns", and its
-   installed copy, with N as the owner ruled at the audit. Claims and checks:
+   installed copy, with N = 60. Claims and checks:
    - the build maps the file and the install writes its copy: `cargo build` passes, and
      `cargo klarch check` passes with the copy committed;
    - the agent returns every entry of its group, under one of its two lists. Check: a trial
@@ -927,8 +925,7 @@ and step 6 records them.
      list the new agent.
 
    Fails alone on: the build, `cargo klarch check`, or the trial.
-2. **The occasions.** The design skill's loop step 1 and the planning skill's §7 point 2, and
-   point 1 as the owner ruled at the audit, per "Where the search runs". Claim and check: no
+2. **The occasions.** The design skill's loop step 1 and the planning skill's §7 points 1 and 2, per "Where the search runs". Claim and check: no
    sentence of either skill still sends the session to read every issue and every tripwire itself;
    a reading of loop step 1 and of §7 points 1 and 2 after the edit. Fails alone on: such a
    sentence.
@@ -961,17 +958,9 @@ work implements.
 
 ## Defaults awaiting the owner
 
-The owner rules on each at the audit, before step 1.
-
-- **N = 60**, bearing on #search-partition-unit, and **N = 30** for the replay's second run,
-  bearing on `acceptance@standing-entry-search@replay-returns-late-entries`.
-- **The count 2 in the tripwire of #search-at-convergence**: the agent named it the owner's
-  weighing, and the owner has not ruled on it.
-- **The planning skill's §7 point 1 drops "its open issues, its tripwires"**, bearing on
-  #search-at-step-audit. The approved thread moves the audit's read; dropping point 1's read widens
-  it.
-- **The work continues on this spec's branch**, in one pull request, since no gate requires the
-  spec to land first (Status and audience).
+None. Four defaults stood after the reviews of this spec: N = 60 and N = 30; the count 2 in the
+tripwire of #search-at-convergence; the drop of "its open issues, its tripwires" from §7 point 1;
+and the work on this spec's branch. The owner ruled at the audit, "Agreed on the 4 defaults, you can proceed."
 
 ## Harvest
 
@@ -981,9 +970,9 @@ this row they exclude is named in the harvest's commit, with the test it fails.
 
 | item | home |
 | --- | --- |
-| #deferred-triggers-at-review | `design@agent-skills@conformance-before-every-merge`, rewritten in place; the slug stays, since the head already names the decision the thread widens |
-| #standing-entry-search-agent, with #search-return-shape, #search-seeds-from-references, #search-reading-depth and #search-partition-unit | a new head in `path@agent-skills@docs/design.md`, slug `standing-entry-search-agent`, under "Reviews" |
-| #search-at-design-grounding, with #search-at-step-audit and #search-covers-every-kind | a new head in `path@agent-skills@docs/design.md`, slug `standing-entries-searched-before-the-work`, under "Reviews"; the thread slug #search-at-design-grounding names one of its two occasions, so the head takes a slug that names both |
+| #deferred-triggers-at-review | `design@agent-skills@conformance-before-every-merge`, rewritten in place; the slug stays, since the head already names the decision the thread widens; its title is reworded to name the deferred triggers beside the tripwires if it no longer states the widened decision |
+| #standing-entry-search-agent, with #search-return-shape, #search-seeds-from-references, #search-reading-depth and #search-partition-unit | a new head in `path@agent-skills@docs/design.md`, slug `standing-entry-search-agent`, under "The workflow the skills carry" |
+| #search-at-design-grounding, with #search-at-step-audit and #search-covers-every-kind | a new head in `path@agent-skills@docs/design.md`, slug `standing-entries-searched-before-the-work`, under "The workflow the skills carry"; the thread slug #search-at-design-grounding names one of its two occasions, so the head takes a slug that names both |
 | every item of "Losing alternatives": #standing-state-second-mode, #search-at-plan-review, shapes A and C, one group per anchor, a cap in bytes, the retrospective standing question, the audit kept at two kinds | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit |
 | the tripwire of #search-at-convergence | `path@agent-skills@docs/tripwires.md`, guarding the head `standing-entries-searched-before-the-work`; fires when, across sessions, 2 standing-state reviews report a standing entry the work bears on which no search before the work returned, the count as the owner rules it; re-entry: the design discussion of `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` |
 | the tripwire of #search-before-undesigned-work | `path@agent-skills@docs/tripwires.md`, guarding `design@agent-skills@conformance-before-every-merge`; fires when a second instance of a deferred trigger is met by undesigned work and found only at the review; re-entry: the design of `issue@agent-skills@a-skill-for-bounded-problems` |
