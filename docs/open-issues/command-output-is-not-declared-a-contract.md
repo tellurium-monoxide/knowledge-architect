@@ -27,9 +27,10 @@ Instances seen:
 - The two output additions that `issue@knowledge-architect@the-bump-table-has-no-row-for-a-looser-check`
   records, classed minor and patch within one release.
 
-The README of the core states one output contract, for `check`: the order of the summary, the
-findings and the verdict line, in `path@core@README.md`. Nothing states whether the words of a
-summary are one.
+The README of the core, `path@core@README.md`, states two output contracts: for `check`, the order
+of the summary, the findings and the verdict line; and for a generated file-register index, written
+by `index` and `check --fix`, its bytes, per `design@core@a-file-register-index-is-rows`. Nothing
+states whether the words of a printed summary are one.
 
 Suspected mechanism: the policy names commands as a surface, and a command has several parts (its
 arguments, its exit code, its verdict line, its report text) with no statement of which are
@@ -57,9 +58,9 @@ no statement telling it not to.
 
 A design discussion under `knowledge-architect-design` whose outcome is recorded: which parts of a
 command's output are stable, where users are told so, which data gets a machine-readable form or a
-library function, and the row of the versioning table each kind of change takes. The output half of
-`issue@knowledge-architect@the-bump-table-has-no-row-for-a-looser-check` is answered by the same
-discussion.
+library function, and the row of the versioning table each kind of change takes. That includes a line added to a command's
+output, which `issue@knowledge-architect@the-bump-table-has-no-row-for-a-looser-check` records
+and leaves to this entry.
 
 ### Re-entry point
 

@@ -1,14 +1,15 @@
 ---
 kind: question
 ---
-# The bump table has no row for a looser check, nor for a line a command adds to its output
+# The bump table has no row for a looser check
 
 ## Summary
 
 The table of `design@knowledge-architect@versioning-policy` classes a stricter or added check as
 minor, and leaves a patch to "code changes that change no check and no command". A check made
-looser, and a command that prints one more line, fit no row. The changelog of 0.3.0 classes both
-kinds by the nearest reading.
+looser fits no row. The changelog of 0.3.0 classes it by the nearest reading. A change to a
+command's printed output, met in the same release, is the question of
+`issue@knowledge-architect@command-output-is-not-declared-a-contract`.
 
 ## Details
 
@@ -24,7 +25,9 @@ Two cases met in the review of the 0.3.0 release:
   finding and that git does not track; it is classed `cli`, minor, as an addition that changes
   nothing existing. The refusal of a foreign build, in `path@core@src/build_origin.rs`, gained a
   line naming how to prevent it, and was left without an entry, as a patch. The two readings
-  differ for changes of one kind.
+  differ for changes of one kind. This case is carried by
+  `issue@knowledge-architect@command-output-is-not-declared-a-contract`, whose design discussion
+  decides which part of a command's output is a contract, and so which row such a change takes.
 
 Neither changes the version of 0.3.0, whose highest class is a major entry.
 
@@ -38,5 +41,5 @@ relies on.
 
 ### What would close it
 
-The owner's ruling on a row for each case, written into the table of the decision: a looser check
-as a patch or a minor, and a line a command adds to its output as a patch or a minor.
+The owner's ruling on a row for a looser check, as a patch or a minor, written into the table of
+the decision.

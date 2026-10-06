@@ -6,7 +6,7 @@ kind: observation
 ## Summary
 
 The markdown parser runs with every extension enabled, wikilinks among them. On a heading such as
-`# A [[x|]] `a` ]` it hands over text events out of order and a code span twice, so the scope the
+``# A [[x|]] `a` ]`` it hands over text events out of order and a code span twice, so the scope the
 heading opens is named `A ]] a ]  ]` instead of `A [[x|]] a ]`.
 
 ## Details
@@ -22,8 +22,8 @@ spans of `parse(t).prose[0].code`:
 "# A [[x|]] `a` ]\n"  scope names ["A ]] a ]  ]"]
 "[[x|]] `a` ]\n"      code spans  [(7, 10), (7, 10)]
 ```
- `analyse` now sorts and
-dedups the code spans, so the doubled span no longer reaches any lookup. The heading's title is
+
+`analyse` now sorts and dedups the code spans, so the doubled span no longer reaches any lookup. The heading's title is
 still built from the out-of-order events.
 
 The scanner reads headings with its own pattern, `HEADING` in `path@core@src/scan.rs`, not from the

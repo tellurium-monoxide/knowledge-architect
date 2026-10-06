@@ -1628,8 +1628,9 @@ such as a pre-push hook's or an audit of old history, holds no commit that `chec
 and treating its last commit specially would leave that commit's failure unreported as a finding.
 The summary counts the range's commits, how many passed and how many failed. A commit fails when
 any finding of the run belongs to it: its tree's, its message's, or a citation of the range by
-SHA. Its line names each of those sources with its count, so the header always agrees with the
-verdict line and passed plus failed is the number of commits. Separate counts of failed trees and
+SHA. Its line names each of those sources, with its count of findings, except a tree that does not
+load, which is one finding. So the header agrees with the verdict line, and passed plus failed is
+the number of commits. Separate counts of failed trees and
 failed messages in the header lose to this: one commit can fail on both, so either such a count
 overlaps the other, or one source is left out.
 
