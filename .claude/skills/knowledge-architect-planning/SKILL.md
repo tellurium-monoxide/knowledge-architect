@@ -250,9 +250,11 @@ failure.** Every other test here serves that one.
 - **The last step consumes**: the measurements, the report, the harvest.
 - **One branch and one merge per step**, each merged before the next step begins, and reviewed
   before the merge.
-- **A plan document whose work's first step changes what the project's gates check lands in a
-  merge of its own, before that step.** On the step's branch, the gates as that step changes them
-  would judge the commit that added the document, whose tree predates the change.
+- **A plan document whose work's first commit changes what the project's per-commit gate checks
+  lands in a merge of its own, before that work.** The per-commit gate is the one that judges each
+  commit of a branch, its tree and its message. On one branch, that gate as the work changes it would
+  judge the commit that added the document, whose tree predates the change. A change that only a
+  check of the working tree sees, and not the per-commit gate, does not count.
 
 A step's entry is five level-two sections, with these titles, in this order, and
 `cargo klarch check` reports one missing or out of order. Fixtures, where it applies, sits between
@@ -392,9 +394,10 @@ A plan document is committed first, on a branch of its own or on its work's bran
 commit is what the reviewers read; a repair lands after it, as a further commit or folded where
 `knowledge-architect-review` says. **It may be merged on its own, whatever the time of its
 work**: a plan document on the main branch keeps the work done meanwhile from drifting from it.
-**One whose work's first commit changes what the project's gates check is merged before that
-work**, a spec as well as a milestone document: on one branch, the gates as that commit changes
-them would judge the commit that added the document, whose tree predates the change. It is read again after a revision that changes a decided shape (an
+**One whose work's first commit changes what the project's per-commit gate checks is merged
+before that work**, a spec as well as a milestone document: on one branch, that gate as the work
+changes it would judge the commit that added the document, whose tree predates the change. A
+change that only a check of the working tree sees does not count. It is read again after a revision that changes a decided shape (an
 audit applied in place is not one). Its reviewers are fresh, and did not witness the
 discussion. **Fresh, never a fork**: a fork inherits the discussion and reads the document as its
 author. Dispatch them through `knowledge-architect-review`, with the invariants that
