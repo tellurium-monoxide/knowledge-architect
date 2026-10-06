@@ -523,12 +523,27 @@ fn extra_generated(generated: &HashSet<PathBuf>) -> Vec<PathBuf> {
 
 /// One commit's place in the run, as the summary block names it.
 enum Outcome {
-    /// Its tree passed, and its message was judged.
-    Judged,
-    /// Its tree does not load, or carries findings under the tip checker. Each is a finding of
-    /// the run. Its message is still judged wherever the tree reached the last phase, and
-    /// `why` says when it was not.
+    /// Nothing of the run's findings belongs to it: its tree, its message and its citations
+    /// all passed.
+    Passed,
+    /// At least one finding of the run belongs to it. `why` names every source, joined by
+    /// `; `: its tree does not load, its tree carries findings, its message carries findings,
+    /// or it cites the range by SHA. Where its tree stopped before the last phase, `why` says
+    /// its message was judged against nothing.
     Failed { why: String },
+}
+
+impl Outcome {
+    /// Passed when nothing failed, and failed with every cause otherwise.
+    fn of(causes: Vec<String>) -> Self {
+        if causes.is_empty() {
+            Outcome::Passed
+        } else {
+            Outcome::Failed {
+                why: causes.join("; "),
+            }
+        }
+    }
 }
 
 /// Judge every commit of a range, its tree and its message, alike.
@@ -589,6 +604,7 @@ pub(super) fn commits(
             }
         };
         let trouble = tree.trouble.len();
+        let mut causes = Vec::new();
         if trouble > 0 {
             // **Every commit of the range must pass under the tip checker**, so the tree's own
             // findings are the run's, each named by the commit and by the file inside it.
@@ -596,31 +612,36 @@ pub(super) fn commits(
                 f.file = PathBuf::from(format!("commit {short}: {}", f.file.display()));
                 f
             }));
-            let why = match tree.stopped {
-                Some(phase) => format!(
-                    "its tree stops at phase {} with {trouble} finding(s); its message was \
-                     judged against nothing",
-                    phase.number()
-                ),
-                None => format!("its tree fails {trouble} finding(s)"),
-            };
-            summary.push((short.to_string(), Outcome::Failed { why }));
-            if tree.stopped == Some(check::Phase::Resolution) {
-                // Phase 1 failed and nothing of the tree was read, so it serves as no parent.
-                // An empty tree kept as a parent would not be the same: a finding is kept only
-                // when the parent refuses the reference too, and an empty tree accepts some a
-                // real one refuses, such as an escape naming a path the tree holds.
-                previous = None;
+            if let Some(phase) = tree.stopped {
+                summary.push((
+                    short.to_string(),
+                    Outcome::Failed {
+                        why: format!(
+                            "its tree stops at phase {} with {trouble} finding(s); its message \
+                             was judged against nothing",
+                            phase.number()
+                        ),
+                    },
+                ));
+                if phase == check::Phase::Resolution {
+                    // Phase 1 failed and nothing of the tree was read, so it serves as no
+                    // parent. An empty tree kept as a parent would not be the same: a finding
+                    // is kept only when the parent refuses the reference too, and an empty
+                    // tree accepts some a real one refuses, such as an escape naming a path
+                    // the tree holds.
+                    previous = None;
+                } else {
+                    // An incomplete table would refuse a reference into what the walk could
+                    // not read, so the message is judged by nothing. The tree still serves as
+                    // the next commit's parent: its entities are read, not its verdict.
+                    let entities = Entities::build(&tree.model, &tree.anchors());
+                    previous = Some((sha.clone(), tree, entities));
+                }
                 continue;
             }
-            if tree.stopped.is_some() {
-                // An incomplete table would refuse a reference into what the walk could not
-                // read, so the message is judged by nothing. The tree still serves as the next
-                // commit's parent: its entities are read, not its verdict.
-                let entities = Entities::build(&tree.model, &tree.anchors());
-                previous = Some((sha.clone(), tree, entities));
-                continue;
-            }
+            // The tree reached the last phase, so its message is judged below and its own
+            // findings join this cause.
+            causes.push(format!("its tree fails {trouble} finding(s)"));
         }
 
         // The parent model is the previous commit's where the walk followed the parent chain,
@@ -653,6 +674,9 @@ pub(super) fn commits(
         let message = crate::git::commit_message(root, sha).map_err(|e| e.to_string())?;
         let entities = Entities::build(&tree.model, &tree.anchors());
         let found = judge_message(&message, &tree, &entities, parent);
+        if !found.is_empty() {
+            causes.push(format!("its message carries {} finding(s)", found.len()));
+        }
         findings.extend(relabelled(found, &format!("commit {short}")));
         // **Read from this commit's own manifest**, as everything a commit is judged against
         // is, per `design@core@a-commit-message-is-a-document`.
@@ -661,32 +685,27 @@ pub(super) fn commits(
         } else {
             Vec::new()
         };
-        let citations = cited.len();
-        findings.extend(cited);
-        if trouble == 0 {
-            summary.push((
-                short.to_string(),
-                if citations == 0 {
-                    Outcome::Judged
-                } else {
-                    Outcome::Failed {
-                        why: format!("it cites the range by SHA {citations} time(s)"),
-                    }
-                },
-            ));
+        if !cited.is_empty() {
+            causes.push(format!("it cites the range by SHA {} time(s)", cited.len()));
         }
+        findings.extend(cited);
+        summary.push((short.to_string(), Outcome::of(causes)));
         previous = Some((sha.clone(), tree, entities));
     }
 
-    let judged = summary
+    let passed = summary
         .iter()
-        .filter(|(_, o)| matches!(o, Outcome::Judged))
+        .filter(|(_, o)| matches!(o, Outcome::Passed))
         .count();
-    let failed = summary.len() - judged;
-    outln!("\ncommits in {range}: {judged} judged, {failed} failed");
+    let failed = summary.len() - passed;
+    let total = match summary.len() {
+        1 => "1 commit".to_string(),
+        n => format!("{n} commits"),
+    };
+    outln!("\ncommits in {range}: {total}, {passed} passed, {failed} failed");
     for (short, outcome) in &summary {
         match outcome {
-            Outcome::Judged => outln!("  {short} judged"),
+            Outcome::Passed => outln!("  {short} passed"),
             Outcome::Failed { why } => outln!("  {short} failed: {why}"),
         }
     }
