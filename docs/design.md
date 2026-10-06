@@ -260,7 +260,10 @@ statement false until a repair lands. The procedure is
 - main accepts no direct push. A GitHub ruleset on main, with no bypass, the owner included,
   requires a pull request, the status check of CI on a branch up to date with main, and a linear
   history, and blocks force pushes and deletion. The pull request is merged with GitHub's rebase
-  merge, the only method enabled. The rules are checked by GitHub, not by a session's discipline.
+  merge, the only method enabled. The rules are checked by GitHub, not by a session's discipline,
+  with one gap: a job skipped while the pull request was a draft counts as passing, so right after
+  it is marked ready the skipped run can be the only one on its head. The merge waits for a run on
+  the head whose conclusion is success.
   A fast-forward pushed from a checkout is a direct push, which the ruleset refuses, and GitHub
   offers no fast-forward merge method. main's history is never rewritten.
 - The strict check makes the tree CI judged the tree main receives, which is what matters. Without
@@ -374,8 +377,8 @@ to clear a finding. A repair names a checked form: the right anchor, `path@elsew
 tree does not hold, `planned@<anchor>@<path>` in a plan document for a path its work will create,
 per `design@core@planned-path-form`, an angle-bracket placeholder for an illustration, or a
 rewrite of the sentence.
-The one exception is a pointer that no checked form expresses, written beside a reference to the
-issue entry that records the missing form, per
+The one exception is a pointer that no checked form expresses, other than a commit named by its
+subject, written beside a reference to the issue entry that records the missing form, per
 `design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`. Prose that mentions a
 directory without asking the reader to follow it is not a repair and is outside this head.
 
@@ -399,7 +402,7 @@ the check, per `design@knowledge-architect@plain-text-is-no-repair`. A verbatim 
 owner that names a renamed entry is left as it is, with a reference to the current entry beside
 it, since rewriting it would misstate the owner, against `goal@knowledge-architect@the-owner-decides`.
 
-### A pointer no checked form expresses is written beside a reference to an issue entry of its own project that records the missing form `##a-needed-unchecked-pointer-names-its-gap`
+### A pointer no checked form expresses, a commit named by its subject aside, is written beside a reference to an issue entry of its own project that records the missing form `##a-needed-unchecked-pointer-names-its-gap`
 
 The checker cannot express every pointer a project needs. Where no checked form exists, the
 pointer may be written in plain text, and only beside a reference to an issue entry of the writing
@@ -411,13 +414,15 @@ The entry owes its `Why it matters` and its `What would close it`, so the escape
 never free. `cargo klarch show` on the entry lists every site, and closing it, once a checked form
 ships and the sites are converted, dangles each one, so the conversion list is computed. Plain text
 justified in a commit message alone lost: nothing finds the site again, and nothing revisits it
-when the form ships.
-
-A commit named by its subject, as `design@knowledge-architect@git-flow` directs for a commit of the
-branch, is outside this head. It names history as git names it, not a part of the tree or an entry
-of a register, which is the domain of the checker. A generic checked opt-out marker lost too: one marker fits every finding, so
+when the form ships. A generic checked opt-out marker lost too: one marker fits every finding, so
 it becomes the cheap silence `design@core@reserved-anchors` refuses, while a gap concrete enough to
 name is closed by shipping its own form.
+
+A commit named by its subject, as `design@knowledge-architect@git-flow` directs for a commit of the
+branch, is outside this head. It names history as git names it. A reference resolves against the
+entities of a tree, per `design@core@one-entity-table`, and a commit is none of them; the one
+citation of a commit the checker judges is a branch commit's SHA, which
+`design@core@branch-shas-are-refused` refuses.
 
 ## 5. This repository's agent configuration
 

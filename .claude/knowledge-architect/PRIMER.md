@@ -93,7 +93,7 @@ text**: the right anchor, `path@elsewhere@<path>` for a path the tree does not h
 or a rewritten sentence. A pointer that no checked form expresses is written in plain text only
 beside a reference to an issue entry of this project that records the missing form. A gap of the
 checker itself gets that entry in this project's own register, since a reference cannot reach
-another project.
+another project. A commit named by its subject names history, not the tree, and needs no entry.
 
 ## The installed skills
 

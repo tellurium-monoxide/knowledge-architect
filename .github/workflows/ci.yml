@@ -21,8 +21,8 @@ permissions:
   contents: read
 
 # A later push to one pull request cancels the run on the earlier head. A cancelled run
-# reports `cancelled`, not `success`, so the merge predicate, which reads the checks of the
-# current head, never counts it.
+# reports `cancelled`, not `success`, so the merge predicate, which asks for a successful run on
+# the current head, never counts it.
 concurrency:
   group: ci-${{ github.event.pull_request.number }}
   cancel-in-progress: true
@@ -30,7 +30,7 @@ concurrency:
 jobs:
   check:
     # A draft is not checked. A job skipped by `if:` reports `skipped`, which GitHub counts as
-    # passing, so the merge predicate reads the draft flag itself.
+    # passing, so the merge predicate reads the draft flag itself and asks for a successful run.
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     # A hung job runs up to the default 360 minutes, so the limit stays explicit.
