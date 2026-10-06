@@ -6,9 +6,10 @@ kind: design
 ## Summary
 
 The versioning policy classes changes to "a command" without saying which part of a command's
-behaviour is its usage. The owner's direction is that printed output is not a stable interface,
-apart from documented exceptions such as the verdict line, and that data a user needs is offered in
-a stable, documented machine-readable form instead. That policy is not designed or recorded yet.
+behaviour is its usage. The owner's take, not yet a ruling, is that printed output is not a stable
+interface, apart from documented exceptions such as the verdict line, and that data a user needs is
+offered in a stable, documented machine-readable form, or by a function of the library. That policy
+is not designed or recorded yet.
 
 ## Details
 
