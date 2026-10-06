@@ -29,7 +29,7 @@ The instances, in `path@agent-skills@docs/tripwires.md`:
   cause it could not guard: a consumer's own entry for a gap of the checker stays open, with its
   plain-text sites, after a release ships the checked form, because nothing tells the consumer.
   The evidence is in the consumer's sessions, so the owner ruled that it gets no tripwire and is
-  recorded here as one more instance. The retrospective's standing question on unchecked pointers,
+  recorded here as one more instance. The retrospective's standing question on references written without backticks,
   per `design@agent-skills@premortem-as-watch-points`, is the one channel that carries such a gap
   to this repository.
 

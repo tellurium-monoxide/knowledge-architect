@@ -140,7 +140,7 @@ win.
     is `path@agent-config@<file>`.
   - Two anchors are reserved under `path` alone, and the word `plans` names the anchor the tool
     constructs, per `design@core@reserved-anchors`. A plan document is cited by its kind,
-    `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<step>`, never by its path.
+    `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<slice>`, never by its path.
     `path@*@<path>` names every Component's own copy of a path, as in `path@*@docs/tripwires.md`.
     `path@elsewhere@<path>` names a path that is deliberately not resolvable in this tree: another
     project's layout, a deleted or hypothetical file. It is never checked for existence, and it is

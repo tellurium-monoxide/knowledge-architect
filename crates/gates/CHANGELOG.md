@@ -10,9 +10,9 @@ subsection is omitted.
 
 ### Migration
 
-- `checks`, major: the second section every spec and every milestone document owes is titled
-  `How the work is done`, where it was `How a step is worked`. A project renames that heading in
-  each of its plan documents; this holds for mock projects too.
+- `checks`, major: the second section every spec of specs/ and every milestone document owes is
+  titled `How the work is done`, where it was `How a step is worked`. A project renames that
+  heading in each of its plan documents; this holds for mock projects too.
 
 ### Workflow
 

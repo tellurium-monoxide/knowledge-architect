@@ -781,12 +781,12 @@ mod unsound {
         tree_and_agents.extend(crate::check::agents::check(&model, &manifest, &inputs));
         let found: Vec<String> = tree_and_agents
             .iter()
-            .map(|f| format!("{}  {}", f.location(), f.what))
+            .map(|f| format!("{}  {}  → {}", f.location(), f.what, f.action))
             .collect();
         let printed: Vec<String> = stopped
             .findings
             .iter()
-            .map(|f| format!("{}  {}", f.location(), f.what))
+            .map(|f| format!("{}  {}  → {}", f.location(), f.what, f.action))
             .collect();
         assert_eq!(
             printed, found,
@@ -857,9 +857,13 @@ mod unsound {
         assert!(
             one_of(&found, "a milestone directory holds no register.toml")
                 .starts_with("docs/plans/milestones/twice/register.toml")
+                && one_of(&found, "a milestone directory holds no register.toml")
+                    .contains("a milestone's slice specs sit beside its README, ungrouped")
         );
         assert!(one_of(&found, "the milestone `widget` is no anchor")
             .contains("is the name of a component"));
+        assert!(one_of(&found, "the milestone `Not_An_Id` is no anchor")
+            .contains("its slices `spec@<id>@<slice>`"));
         assert!(one_of(&found, "the milestone `Not_An_Id` is no anchor")
             .contains("is not lower-case words"));
         assert!(one_of(&found, "the spec `agent-config`").contains("is the name of a location"));

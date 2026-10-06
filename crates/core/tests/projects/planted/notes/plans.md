@@ -5,7 +5,7 @@ refuses, or reaches inside the anchor `plans` from the root:
 
 - a spec: `path@plans@specs/a-spec.md`;
 - a milestone directory, from the root: `path@planted@docs/plans/milestones/m-one/`;
-- a step spec: `path@plans@milestones/m-one/a-step.md`;
+- a slice spec: `path@plans@milestones/m-one/a-step.md`;
 - a milestone named as the anchor of a path: `path@m-one@a-step.md`;
 - the plans directory's README, from the root: `path@planted@docs/plans/README.md`.
 

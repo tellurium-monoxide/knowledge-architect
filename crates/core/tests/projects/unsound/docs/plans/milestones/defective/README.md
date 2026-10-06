@@ -26,9 +26,9 @@ None.
 
 ## Threads
 
-### A thread its step defines again `##defined-twice`
+### A thread its slice defines again `##defined-twice`
 
-The step spec defines the same id.
+The slice spec defines the same id.
 
 ## Arguments
 
