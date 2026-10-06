@@ -5,7 +5,7 @@ not something to do: it is a hypothesis about a future failure plus the response
 this file when it fires. What is outstanding about the project is
 `path@knowledge-architect@docs/open-issues/`.
 
-## Guarding `design@knowledge-architect@plain-text-is-no-repair`: pointers written as plain text where a checked form exists `##plain-text-pointer-found`
+## Guarding `design@knowledge-architect@plain-text-is-no-repair`: a checked pointer turned into plain text `##plain-text-pointer-found`
 
 **Fires when:** a review finds a diff that turns a checked reference or a backticked path into
 plain text naming the same target, with no reference beside it to an issue entry that records a

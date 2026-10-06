@@ -33,9 +33,12 @@ satisfy once it exists.
 
 ### What would close it
 
-A design for the planned-path form, under `knowledge-architect-design`: its spelling, the anchor it
-names, the finding when the target appears, and how it relates to the structure of plan
-documents, `design@core@plan-register`. Then its implementation, with a test that a planned path outside
+The design is approved, and recorded in the message of the commit whose subject is "A pointer is
+written in a form the checker judges, and the repairs from thaum's retrospective of step 4f": a
+kind `planned@<anchor>@<path>`, legal in the plans directory only, whose target must not exist,
+reported with the `path` repair once it does, landing in a pull request of its own. That message
+also holds the tripwire on its scope and the test to write with it. What closes the entry is its
+implementation, against `design@core@plan-register`, with a test that a planned path outside
 the plans directory is refused and one that a planned path whose target exists is reported. Every
 site that cites this entry beside a plain-text path, per
 `design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`, is converted to the new form

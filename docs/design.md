@@ -365,12 +365,12 @@ included; a string literal bound to a name yields none. So a comment in code nam
 as live as a sentence in a document, and closing the issue reaches the code. This serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
 
-### Plain text is never the repair of a finding, and no instruction directs a pointer into a form the checker does not judge `##plain-text-is-no-repair`
+### Plain text is never the repair of a finding, and no instruction offers an unchecked form as the way to clear one `##plain-text-is-no-repair`
 
 A form a writer can use is either one the checker judges, and the workflow recommends it, or one
-the checker does not read, and the workflow never directs a pointer into it. So no finding's
-repair, and no installed or project instruction, offers an unchecked form as the way to clear a
-finding. A repair names a checked form: the right anchor, `path@elsewhere@<path>` for a path this
+the checker does not read, and the workflow never directs a pointer into it to clear a finding. So
+no finding's repair, and no installed or project instruction, offers an unchecked form as the way
+to clear a finding. A repair names a checked form: the right anchor, `path@elsewhere@<path>` for a path this
 tree does not hold, an angle-bracket placeholder for an illustration, or a rewrite of the sentence.
 The one exception is a pointer that no checked form expresses, written beside a reference to the
 issue entry that records the missing form, per
@@ -388,7 +388,7 @@ A label beside a checked pointer is not such a form. A plan item named outside i
 stands beside a citation of the whole plan, because an item reference is refused there, per
 `design@core@plan-item-scope`.
 
-### A sentence about the past whose reference dangles is rewritten to the present or removed, never retargeted and never turned into plain text `##a-past-sentence-is-rewritten`
+### A sentence about the past whose reference dangles is rewritten to the present or removed, and a quotation of the owner is kept with a reference beside it `##a-past-sentence-is-rewritten`
 
 When an entry is deleted or renamed, a sentence that recorded its past, such as what an earlier
 step wrote, is rewritten to state the present, or removed, and its history stays in the commit
