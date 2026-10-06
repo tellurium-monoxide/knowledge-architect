@@ -203,7 +203,10 @@ pub(crate) fn inbound(
                 } else {
                     i == id
                 };
-                if &k == kind && a == anchor && same {
+                // A planned citation of a path is one a conversion edits once the file exists,
+                // so `show` on the path lists it too, per `design@core@planned-path-form`.
+                let kind_matches = &k == kind || (kind.is_path() && k.is_planned());
+                if kind_matches && a == anchor && same {
                     out.push(Site {
                         file: doc.rel.clone(),
                         line: l.line,

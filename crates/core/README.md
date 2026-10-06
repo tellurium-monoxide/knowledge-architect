@@ -139,7 +139,8 @@ entity table, so what they print is what `check` resolves against.
 - a file register's entry is printed **whole**, frontmatter included;
 - a heading register's entry is printed as **its section** — the heading through to the next
   heading at the same level or shallower;
-- `path@<anchor>@<path>` prints the walked document's text, or says the path is outside the walk.
+- `path@<anchor>@<path>` prints the walked document's text, or says the path is outside the walk;
+  its inbound list includes the `planned` citations of the same path.
 - `planned@<anchor>@<path>` says whether the tree's listing holds the target yet, and lists the
   plans that cite it, with or without the trailing slash; one the check refuses resolves to nothing.
 

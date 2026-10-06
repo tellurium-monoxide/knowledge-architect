@@ -1006,6 +1006,11 @@ fn show_of_a_planned_path_lists_its_citations_and_says_whether_it_exists() {
     // The slash is a kind claim, not another target: both citations are listed.
     assert!(absent.contains("docs/plans/README.md:7"), "{absent}");
 
+    // The path the planned form converts to lists the planned citations: the sites to edit.
+    let (path, _, code) = sandbox.run(&["show", "path@minimal@code/lib.rs"]);
+    assert_eq!(code, 0, "{path}");
+    assert!(path.contains("docs/plans/README.md:5"), "{path}");
+
     // A reference the check refuses resolves to nothing here too.
     let (refused, _, code) = sandbox.run(&["show", "planned@minimal@../x.rs"]);
     assert_eq!(code, 1, "{refused}");
