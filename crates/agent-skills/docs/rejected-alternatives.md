@@ -90,3 +90,15 @@ outcome the head already records; the owner ruled such a change does not need on
 because a doubt remains: `tripwire@agent-skills@title-stops-stating-scope` watches whether sessions
 read a title generously and record outside its scope by the direct route, and this alternative is
 the first candidate if they do.
+
+**One agent reading every issue and tripwire of the project for a piece of work** — lost to
+`design@agent-skills@standing-entry-search-agent`. `live`. One agent's load grows with the
+project: the standing entries of thaum at its commit ef21314 hold 318,947 bytes. The owner judged
+that a single agent cannot judge so many entries reliably. It is kept here because a doubt
+remains: no measurement shows that agents given groups of 60 entries judge better, and one agent
+sees every entry beside every other, where a group sees only its own.
+
+**One search agent per anchor** — lost to `design@agent-skills@standing-entry-search-agent`.
+`live`. An anchor bounds nothing: in thaum at its commit ef21314, one Component holds 51.9% of the
+bytes of the standing entries, measured with `git ls-files` over the issue entry files and the
+tripwires homes and `wc -c`, summed by the anchor that holds each file.

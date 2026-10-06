@@ -341,6 +341,61 @@ once it drifts, lost: every earlier delta carries the old slug, and the assembly
 from the transcript, per `design@agent-skills@ledger-from-transcript`, would read one thread as
 two.
 
+### The issues and tripwires a piece of work bears on are searched by an installed agent, in groups of at most 60 entries each read whole `##standing-entry-search-agent`
+
+The installed agent `knowledge-architect-standing-entry-searcher` searches one group of a
+project's issue and tripwire entries for those a piece of work bears on. Its description carries
+the dispatch rule, since a dispatcher reads an agent's description and never its body: count the
+rows of the issue and tripwire listings, send one agent per group of at most 60 consecutive
+positions, all in parallel, and brief each with the work, the seeds and its group. A seed is a
+decision or a goal the work names. Its body fixes the order of the rows, reads every entry of its
+group whole, follows each seed through `show` to the entries that cite it, which it always
+returns, and judges every entry of its group against the work, leaning to recall. It returns every
+entry of its group in one of two lists, the entries that bear on the work, each with a reason, and
+the entries judged unrelated, so that a silent report cannot be mistaken for a skipped one. The
+session reads whole every entry returned, never from its reason line. It relies on the checker
+working as intended: `show` prints an entry's file and definition line, and the references to it.
+
+The search runs in a subagent so that the main session spends its context on the entries the work
+bears on, per `goal@knowledge-architect@agents-get-a-complete-workflow`, and the session still
+reads each of those whole, as the owner asked, since the session acts on the entry and not on a
+summary of it, per `goal@knowledge-architect@the-owner-decides`. It is an agent of its own rather
+than the standing-state reviewer in a second mode: that reviewer reads every entry by rule, the
+search filters by relevance on purpose, and one text holding both standards lets a session apply
+the wrong one. Every entry is read whole, by several agents, rather than by one: one agent's load
+grows with the project, and one agent cannot judge so many entries reliably, in the owner's
+judgement. The unit of a group is the entry rather than the anchor: in thaum at its commit
+ef21314, one Component holds 51.9% of the bytes of the standing entries, so a group per anchor
+bounds nothing. The bound of 60 rests on the mean size of an entry there, 1.6 KB, and on no
+measurement of recall; real sessions measure it, per
+`goal@knowledge-architect@the-workflow-improves-through-real-use`.
+
+### The search runs at the grounding of a design discussion and at the design audit of a milestone step, over every issue kind and every tripwire `##standing-entries-searched-before-the-work`
+
+The installed design skill dispatches the search at its loop step 1, with the question as the work
+and the decisions and goals read so far as seeds. The installed planning skill dispatches it at
+the design audit of a milestone step, §7 point 2, with the step's spec and the milestone document
+as the work and their decided entries and citations as seeds. The audit lists as a gap every
+standing entry the step's code bears on: a tripwire whose firing condition, or a deferred trigger,
+the planned code meets, and an issue of any kind the step's code touches, closes, makes worse or
+depends on. The step's grounding, §7 point 1, reads no issues and no tripwires, since the audit's
+search covers every anchor. Work that is neither designed nor planned sends no search: the
+standing-state review reads its deferred triggers, per
+`design@agent-skills@conformance-before-every-merge`, which this search adds to and never
+replaces.
+
+The occasions are those where design is discussed, so that an entry the work bears on costs a
+ruling before the work rather than rework after it, per
+`goal@knowledge-architect@agents-work-without-drift`. The evidence is real use, per
+`design@agent-skills@additions-need-real-use`: in thaum, the standing-state reviewer found, after
+the work, issues the changes bore on and tripwires that had fired, especially in the steps of large
+milestones, and the repairs and decisions this forced could have been taken before the design and
+the implementation, in the owner's account. The audit reads every issue kind because those late
+findings included issues the changes touched, not only fired tripwires. A search at the reviews of
+a plan document lost to these occasions: those reviews run only where a discussion wrote a plan
+document, so a decision taken in the change under way would get no search between its grounding and
+its review.
+
 ## Plan documents
 
 ### The words: plan document, spec, milestone, plans directory `##document-vocabulary`
@@ -640,15 +695,23 @@ chosen by another plan's landing.
 
 ## Reviews
 
-### The standing-state review runs before every merge `##conformance-before-every-merge`
+### The standing-state review runs before every merge, and reads every tripwire and every deferred trigger `##conformance-before-every-merge`
 
 The installed review skill sends the standing-state reviewer before every merge to the
 main branch, whatever the change. That reviewer is the standing re-entry point of every tripwire
-home, as the installed issue-tracking skill states, and a tripwire is read again only when some
-review reads it. A re-entry point that depends on whether a change looked related to a tripwire is
-one that a change touching the guarded decision indirectly skips: the reviewer reads every entry of
-every home, not the subset the diff seems to concern. This serves
+home and of every deferred trigger, as the installed issue-tracking skill states, and a tripwire is
+read again only when some review reads it. A re-entry point that depends on whether a change looked
+related to a tripwire is one that a change touching the guarded decision indirectly skips: the
+reviewer reads every entry of every home, not the subset the diff seems to concern. This serves
 `goal@knowledge-architect@documentation-stays-consistent`.
+
+A deferred issue's trigger answers the question a tripwire's firing clause answers, what will make
+someone do this, and the issue-tracking skill holds both to one test. So the reviewer reads every
+deferred trigger against the change, as it reads every tripwire, and reports a trigger the change
+meets as a finding, whose repair is the work the issue names or the owner's ruling. Without it, a
+trigger met by work that is neither designed nor planned has no reader at all: no skill runs at the
+start of such work. In thaum, a move of the pinned checker met the trigger of a deferred issue that
+named that move, and the session read it at no step.
 
 ### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
 

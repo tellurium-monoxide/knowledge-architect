@@ -73,9 +73,8 @@ avoid polluting what gets committed in other projects)." The owner calls it larg
 the search for the issues and tripwires a piece of work bears on runs, the owner stated the aim of
 that work: "My later goal is to automate the retrospective skill to look at the tripwires of
 this project, without requiring a manual edit of the questions the retrospective skill asks." One
-tripwire waits for this discussion on the owner's word: the one the plan of that work,
-`spec@plans@standing-entry-search`, parks with its thread #search-at-convergence. The owner's
-words, about that tripwire: "This waits for the session that discusses solving the issue
+tripwire waits for this discussion on the owner's word,
+`tripwire@agent-skills@search-missed-before-the-work`. The owner's words, about that tripwire: "This waits for the session that discusses solving the issue
 a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see, whose plan is to make use of
 the retrospective skill to analyze other projects."
 
