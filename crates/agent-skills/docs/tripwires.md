@@ -100,7 +100,7 @@ with its host.
 **Re-entry:** the design discussion of `issue@agent-skills@a-skill-for-bounded-problems`, the
 skill that would host a search before undesigned work.
 
-## Guarding `design@agent-skills@spec-work-procedure`: a spec's work skipped its audit while what it relied on had changed `##spec-audit-skipped-on-a-moved-base`
+## Guarding `design@agent-skills@spec-work-procedure`: a gap an audit would have found, in a spec's work that skipped it as the rule allows `##skipped-spec-audit-would-have-found-a-gap`
 
 The decision rests on the premise that a spec implemented by the session that wrote it, on a main
 branch with no commit since the spec other than its own, has nothing for an audit to find.
