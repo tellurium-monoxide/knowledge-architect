@@ -3,6 +3,13 @@
 The alternatives that lost to a decision of `path@knowledge-architect@docs/design.md`, each with
 what it lost to and why. An entry stays while the argument that defeated it holds.
 
+**A checked form for a commit, resolved by its subject** — lost to
+`design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`. `live`. A commit of the
+branch is named by its subject, and nothing checks that a commit with that subject exists. A
+checked form would read the history on every run, a cost that grows with the age of the project,
+to check names that git itself does not make permanent. Its value is low, and a subject written in
+prose escapes no check: it names history, not the tree.
+
 **The checker's crate in crates/knowledge-architect** — lost to
 `design@knowledge-architect@repo-layout`. `live`. Refuted by a run, not by argument: in a scratch project
 named knowledge-architect with a component at that path, the check stopped in phase 1, because the

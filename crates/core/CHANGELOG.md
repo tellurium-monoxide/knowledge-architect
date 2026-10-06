@@ -41,6 +41,12 @@ subsection is omitted.
   needed a pointer that no checked form expresses, and how it wrote it.
 - `agent-skills`, patch: the planning skill cites a path a plan's work will create in the planned
   form, and the commit that creates the file converts it.
+- `agent-skills`, patch: the review skill gives every item of a reviewer's report an outcome, a
+  note outside its axis or an observation included, and the commit that records the review lists
+  each one.
+- `agent-skills`, patch: the decision-recording skill reads a head against the decision the owner
+  approved before writing it, and puts to the owner a title or a body that widens, narrows or drops
+  part of it.
 - `agent-skills`, patch: the review skill gives each claim of a reviewer's finding its own outcome:
   repaired, opened as an issue, or judged to need nothing, with the reason.
 - `agent-skills`, patch: a decision met during another task, such as an issue fix, goes through

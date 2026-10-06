@@ -118,6 +118,12 @@ re-checking.
 issue, or judged to need nothing, with the reason. A claim left without an outcome of its own is
 lost unless a later review finds it.
 
+**Every item of a report gets an outcome, not only its numbered findings**: a note outside the
+reviewer's axis, an observation it declined to call a finding, a remark that a defect predates the
+change. Each is a claim about the work like any finding. So is a repair the dispatcher promised the
+owner while answering a review. The commit that records the review lists each item with its
+outcome.
+
 A transcript reviewer's finding that something **has no durable outcome** is acted on by the
 dispatcher without waiting for the owner: it is recorded in its home, repaired, opened as an issue,
 or judged to need nothing, with the reason. The exception is a decision that creates a design head,
