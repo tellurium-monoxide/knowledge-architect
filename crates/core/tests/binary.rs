@@ -1532,6 +1532,55 @@ fn a_citation_in_a_commit_whose_tree_fails_is_reported_beside_the_tree_finding()
     assert!(stdout.contains(&format!("commit {second}:3")), "{stdout}");
 }
 
+/// The claim: a commit whose tree stops at phase 2 is still scanned for citations of the range,
+/// and its line names both causes, per `design@core@branch-shas-are-refused`.
+#[test]
+fn a_citation_in_a_commit_whose_tree_stops_at_phase_two_is_reported() {
+    let history = History::new("commit-branch-sha-stopped-tree");
+    tiny_project_refusing_branch_shas(&history);
+    let base = history.commit("The project is created\n");
+    let first = history.commit("A first change\n");
+    history.write_bytes(
+        "docs/latin1.md",
+        b"# A note\n\nOne byte of Windows-1252: caf\xe9.\n",
+    );
+    let second = history.commit(&format!("A second change\n\nIt follows {first}.\n"));
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(stdout.contains(&format!("commit {second}:3")), "{stdout}");
+    assert!(
+        stdout.contains(&format!(
+            "{second} failed: its tree stops at phase 2 with 1 finding(s); its message was \
+             judged against nothing; it cites the range by SHA 1 time(s)\n"
+        )),
+        "{stdout}"
+    );
+}
+
+/// The claim: a commit whose tree stops at phase 1 is not scanned for citations, since its
+/// manifest did not resolve, per `design@core@branch-shas-are-refused`.
+#[test]
+fn a_commit_whose_tree_stops_at_phase_one_is_not_scanned_for_citations() {
+    let history = History::new("commit-branch-sha-phase-one");
+    tiny_project_refusing_branch_shas(&history);
+    let base = history.commit("The project is created\n");
+    let first = history.commit("A first change\n");
+    let manifest =
+        std::fs::read_to_string(history.dir.join("knowledge-architect.toml")).expect("manifest");
+    history.write("knowledge-architect.toml", &format!("{manifest}\n[lint]\n"));
+    let second = history.commit(&format!(
+        "A table no extension claims\n\nIt follows {first}.\n"
+    ));
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(
+        stdout.contains(&format!("{second} failed: its tree stops at phase 1")),
+        "{stdout}"
+    );
+    assert!(!stdout.contains("cites the range"), "{stdout}");
+    assert!(!stdout.contains(&format!("commit {second}:3")), "{stdout}");
+}
+
 /// The claim: a Rust document is read whole, its code included. Mutation: reading Markdown
 /// documents alone misses it.
 #[test]

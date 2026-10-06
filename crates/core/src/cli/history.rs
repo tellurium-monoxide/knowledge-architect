@@ -613,16 +613,30 @@ pub(super) fn commits(
                 f
             }));
             if let Some(phase) = tree.stopped {
-                summary.push((
-                    short.to_string(),
-                    Outcome::Failed {
-                        why: format!(
-                            "its tree stops at phase {} with {trouble} finding(s); its message \
-                             was judged against nothing",
-                            phase.number()
-                        ),
-                    },
-                ));
+                let mut why = format!(
+                    "its tree stops at phase {} with {trouble} finding(s); its message was \
+                     judged against nothing",
+                    phase.number()
+                );
+                // The citation scan needs no entity table and no verdict: the manifest, the
+                // message, the documents and the range's SHAs. A tree stopped at phase 2 or 3
+                // has all four, so its citations are reported in this run rather than in the
+                // one after its tree is repaired. A tree stopped at phase 1 read no document,
+                // and its manifest did not resolve, so the option is not read from it, per
+                // `design@core@branch-shas-are-refused`.
+                if phase != check::Phase::Resolution && tree.manifest.refuses_branch_shas() {
+                    let message =
+                        crate::git::commit_message(root, sha).map_err(|e| e.to_string())?;
+                    let cited = branch_sha_findings(short, &message, &tree, &shas, range);
+                    if !cited.is_empty() {
+                        why.push_str(&format!(
+                            "; it cites the range by SHA {} time(s)",
+                            cited.len()
+                        ));
+                    }
+                    findings.extend(cited);
+                }
+                summary.push((short.to_string(), Outcome::Failed { why }));
                 if phase == check::Phase::Resolution {
                     // Phase 1 failed and nothing of the tree was read, so it serves as no
                     // parent. An empty tree kept as a parent would not be the same: a finding
