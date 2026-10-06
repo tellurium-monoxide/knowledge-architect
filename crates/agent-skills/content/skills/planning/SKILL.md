@@ -219,6 +219,11 @@ sections is an item, and a slug anywhere else in a plan document defines nothing
   else, a commit message and a design head included, the plan is cited whole, and an item is named
   in plain text with a hash sign, as #<id>. A step is named the same way.
 
+**A path the plan's work will create** is cited `planned@<anchor>@<path>`, under the rules of a
+`path` reference: the anchor that will hold it, a trailing `/` for a directory. The form is legal
+in the plans directory only. `{{command}} check` reports it once the target exists, and the commit
+that creates the file converts it to `path@<anchor>@<path>` in the same change.
+
 **Assembly from the transcript.** A plan document records the whole discussion: every thread with
 its proposer, its final state, the arguments on each side, the owner's rulings verbatim with their
 round, and its relations. It is assembled from the transcript, not from memory. Dispatch a

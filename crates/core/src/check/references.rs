@@ -121,6 +121,10 @@ pub(crate) fn judge_part(
                             path(
                                 &mut out, &doc.rel, l.line, span, anchor, id, anchors, inputs,
                             );
+                        } else if kind.is_planned() {
+                            planned(
+                                &mut out, &doc.rel, l.line, span, anchor, id, anchors, inputs,
+                            );
                         } else {
                             table(
                                 &mut out, &doc.rel, l.line, span, &kind, anchor, id, anchors,
@@ -495,93 +499,175 @@ fn path(
             }
         }
         name => {
-            let Some(a) = anchors.by_name(name) else {
-                out.push(Finding::at(
-                    rel,
-                    line,
-                    format!("`{span}` names `{name}`, which is no anchor of this project"),
-                    format!(
-                        "anchor at one of {}, at `{ESCAPE_ANCHOR}` for a path outside this \
-                         tree, or at `*` for every component's own copy",
-                        anchors.listed()
-                    ),
-                ));
-                return;
-            };
-            if a.is_milestone() {
-                out.push(Finding::at(
-                    rel,
-                    line,
-                    format!("`{span}` names the milestone `{name}`, which carries no path kind"),
-                    format!(
-                        "cite a step spec as `spec@{name}@<step>`, the milestone document as \
-                         `milestone@{PLANS_ANCHOR}@{name}`, and from inside it its items as \
-                         `<kind>@{name}@<id>`; a plan document has one name, so `show` finds \
-                         every citation of it"
-                    ),
-                ));
-                return;
+            if let Some(target) = anchored_target(out, rel, line, span, name, path, anchors) {
+                assert_target(out, rel, line, span, &target, claims_dir, inputs);
             }
-            if a.is_plan() {
-                out.push(Finding::at(
-                    rel,
-                    line,
-                    format!("`{span}` names the spec `{name}`, which carries no path kind"),
-                    format!(
-                        "cite the spec as `spec@{PLANS_ANCHOR}@{name}`, and from inside it its \
-                         items as `<kind>@{name}@<id>`; a plan document has one name, so `show` \
-                         finds every citation of it"
-                    ),
-                ));
-                return;
-            }
-            // Judged on the path as written: a lone `/` trims to nothing and would resolve
-            // to the anchor's own directory, which has no spelling under its own name.
-            if let Some(why) = refused(path) {
-                out.push(Finding::at(
-                    rel,
-                    line,
-                    format!("`{span}` is refused: {why}"),
-                    "anchor at the anchor that holds the target, with a plain relative path",
-                ));
-                return;
-            }
-            let target = a.path.join(trimmed);
-            // Per `design@core@plan-document-kinds`, before the deepest-anchor rule: a plan document cited by its path is
-            // refused from every anchor, and the repair names the one form that resolves.
-            if let Some(form) = plan_document(anchors, &target) {
-                out.push(Finding::at(
-                    rel,
-                    line,
-                    format!("`{span}` cites a plan document by its path"),
-                    format!(
-                        "cite it as `{form}`; a plan document has one name, so `show` finds \
-                         every citation of it"
-                    ),
-                ));
-                return;
-            }
-            // The deepest anchor wins: a reference reaching inside another anchor breaks
-            // when that anchor moves, and the anchor is what a move must not break. Inside
-            // means a PROPER descendant: an anchor's own directory has no spelling under
-            // its own name, so pointing at it from an ancestor is the one legal way to name
-            // where it lives — and that reference names a location, which is exactly what
-            // a move is expected to break.
-            let owner = anchors.owning(&target);
-            if owner.path != a.path && target != owner.path {
-                out.push(Finding::at(
-                    rel,
-                    line,
-                    format!("`{span}` reaches inside the anchor `{}`", owner.name),
-                    format!(
-                        "anchor at the deepest anchor holding the target, so a move edits \
-                         {MANIFEST_NAME} and no document"
-                    ),
-                ));
-                return;
-            }
-            assert_target(out, rel, line, span, &target, claims_dir, inputs);
         }
+    }
+}
+
+/// The target of a `path` or `planned` reference at a named anchor, or `None` with the finding
+/// that refuses it: an unknown anchor, a plan anchor, a refused shape, a plan document cited by
+/// its path, or a target inside a deeper anchor. Both kinds share these rules, so a planned
+/// path converts to a `path` reference by its kind word alone.
+#[allow(clippy::too_many_arguments)]
+fn anchored_target(
+    out: &mut Vec<Finding>,
+    rel: &Path,
+    line: u32,
+    span: &str,
+    name: &str,
+    path: &str,
+    anchors: &Anchors,
+) -> Option<PathBuf> {
+    let trimmed = path.trim_end_matches('/');
+    let Some(a) = anchors.by_name(name) else {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` names `{name}`, which is no anchor of this project"),
+            format!(
+                "anchor at one of {}, at `{ESCAPE_ANCHOR}` for a path outside this \
+                     tree, or at `*` for every component's own copy",
+                anchors.listed()
+            ),
+        ));
+        return None;
+    };
+    if a.is_milestone() {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` names the milestone `{name}`, which carries no path kind"),
+            format!(
+                "cite a step spec as `spec@{name}@<step>`, the milestone document as \
+                     `milestone@{PLANS_ANCHOR}@{name}`, and from inside it its items as \
+                     `<kind>@{name}@<id>`; a plan document has one name, so `show` finds \
+                     every citation of it"
+            ),
+        ));
+        return None;
+    }
+    if a.is_plan() {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` names the spec `{name}`, which carries no path kind"),
+            format!(
+                "cite the spec as `spec@{PLANS_ANCHOR}@{name}`, and from inside it its \
+                     items as `<kind>@{name}@<id>`; a plan document has one name, so `show` \
+                     finds every citation of it"
+            ),
+        ));
+        return None;
+    }
+    // Judged on the path as written: a lone `/` trims to nothing and would resolve
+    // to the anchor's own directory, which has no spelling under its own name.
+    if let Some(why) = refused(path) {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` is refused: {why}"),
+            "anchor at the anchor that holds the target, with a plain relative path",
+        ));
+        return None;
+    }
+    let target = a.path.join(trimmed);
+    // Per `design@core@plan-document-kinds`, before the deepest-anchor rule: a plan document cited by its path is
+    // refused from every anchor, and the repair names the one form that resolves.
+    if let Some(form) = plan_document(anchors, &target) {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` cites a plan document by its path"),
+            format!(
+                "cite it as `{form}`; a plan document has one name, so `show` finds \
+                     every citation of it"
+            ),
+        ));
+        return None;
+    }
+    // The deepest anchor wins: a reference reaching inside another anchor breaks
+    // when that anchor moves, and the anchor is what a move must not break. Inside
+    // means a PROPER descendant: an anchor's own directory has no spelling under
+    // its own name, so pointing at it from an ancestor is the one legal way to name
+    // where it lives — and that reference names a location, which is exactly what
+    // a move is expected to break.
+    let owner = anchors.owning(&target);
+    if owner.path != a.path && target != owner.path {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` reaches inside the anchor `{}`", owner.name),
+            format!(
+                "anchor at the deepest anchor holding the target, so a move edits \
+                     {MANIFEST_NAME} and no document"
+            ),
+        ));
+        return None;
+    }
+    Some(target)
+}
+
+/// A `planned` reference: a path a plan's work will create, per `design@core@planned-path-form`.
+///
+/// It is legal in the plans directory alone, takes a named anchor under the rules of a `path`
+/// reference, and asserts that its target does not exist. Once the target exists the finding
+/// names the `path` form and nothing else: the session that created the file converts the
+/// reference, and whether the plan still holds is that session's report to make, not the
+/// check's.
+#[allow(clippy::too_many_arguments)]
+fn planned(
+    out: &mut Vec<Finding>,
+    rel: &Path,
+    line: u32,
+    span: &str,
+    anchor: &str,
+    path: &str,
+    anchors: &Anchors,
+    inputs: &Inputs,
+) {
+    let in_plans = anchors
+        .all()
+        .iter()
+        .any(|a| a.constructed == Some(Constructed::Plans) && rel.starts_with(&a.path));
+    if !in_plans {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` is a planned path outside the plans directory"),
+            "a planned path is cited from a plan document only; name the plan that creates it",
+        ));
+        return;
+    }
+    if anchor == ESCAPE_ANCHOR || anchor == entity::EVERY_ANCHOR {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` gives a planned path the anchor `{anchor}`"),
+            format!(
+                "anchor at the anchor that will hold the target; `*` and `{ESCAPE_ANCHOR}` serve                  the path kind alone"
+            ),
+        ));
+        return;
+    }
+    let claims_dir = path.ends_with('/');
+    let Some(target) = anchored_target(out, rel, line, span, anchor, path, anchors) else {
+        return;
+    };
+    if inputs
+        .ignored
+        .contains(&crate::git::ignore_query(&target, claims_dir))
+    {
+        return;
+    }
+    if inputs.present.contains(&target) {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` now exists, at `{}`", target.display()),
+            format!("write `path@{anchor}@{path}`; the planned form names a path that does not exist yet"),
+        ));
     }
 }
 
@@ -750,7 +836,7 @@ pub(crate) fn ignore_queries(model: &Model, anchors: &Anchors) -> Vec<String> {
                     else {
                         continue;
                     };
-                    if !kind.is_path() {
+                    if !kind.takes_a_path() {
                         continue;
                     }
                     let claims_dir = id.ends_with('/');
@@ -1798,6 +1884,98 @@ mod tests {
             let action = found[0].split_once("\n    → ").map(|(_, a)| a);
             assert_eq!(action, Some(format!("{forms}{suffix}").as_str()), "{span}");
         }
+    }
+
+    // --- the planned kind, per `design@core@planned-path-form` ----------------------------
+
+    /// A spec file of the plans directory, where a planned path is legal.
+    const IN_PLANS: &str = "docs/plans/specs/a-spec.md";
+
+    #[test]
+    fn a_planned_path_whose_target_is_absent_is_silent() {
+        let m = manifest();
+        let (found, counts) = checked_in(
+            &m,
+            IN_PLANS,
+            "It writes `planned@a-part@notes/new.md` and `planned@a-part@notes/fresh/`.\n",
+            &tree(),
+        );
+        assert_eq!(counts.references, 2);
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+    }
+
+    #[test]
+    fn a_planned_path_whose_target_exists_names_the_path_form_and_nothing_else() {
+        // The premortem's cause: a file created by unrelated work. The repair asks for the
+        // conversion alone; whether the plan still holds is the creating session's to say.
+        let m = manifest();
+        let (found, _) = checked_in(
+            &m,
+            IN_PLANS,
+            "It writes `planned@a-part@notes/real/a.md`.\n",
+            &tree(),
+        );
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("now exists"), "{found:#?}");
+        let action = found[0].split_once("\n    → ").map(|(_, a)| a);
+        assert_eq!(
+            action,
+            Some(
+                "write `path@a-part@notes/real/a.md`; the planned form names a path that does \
+                 not exist yet"
+            )
+        );
+    }
+
+    #[test]
+    fn a_planned_path_outside_the_plans_directory_is_refused() {
+        let m = manifest();
+        let (found, _) = checked(&m, "It writes `planned@a-part@notes/new.md`.\n", &tree());
+        assert_eq!(found.len(), 1, "{found:#?}");
+        let action = found[0].split_once("\n    → ").map(|(_, a)| a);
+        assert_eq!(
+            action,
+            Some(
+                "a planned path is cited from a plan document only; name the plan that creates it"
+            )
+        );
+    }
+
+    #[test]
+    fn a_planned_path_takes_a_named_anchor_under_the_rules_of_a_path() {
+        let m = manifest();
+        let text = "Escape `planned@elsewhere@x.md`, generic `planned@*@x.md`, unknown \
+                    `planned@nowhere@x.md`, upward `planned@a-part@../x.md`, and reaching inside \
+                    `planned@a-project@parts/a-part/x.md`.\n";
+        let (found, _) = checked_in(&m, IN_PLANS, text, &tree());
+        assert_eq!(found.len(), 5, "{found:#?}");
+        for (i, expected) in [
+            "the anchor `elsewhere`",
+            "the anchor `*`",
+            "which is no anchor of this project",
+            "is refused: an upward segment",
+            "reaches inside the anchor `a-part`",
+        ]
+        .iter()
+        .enumerate()
+        {
+            assert!(found[i].contains(expected), "{expected}: {found:#?}");
+        }
+    }
+
+    #[test]
+    fn an_ignored_planned_target_is_exempt_through_the_collector() {
+        // The batch is exactly what the collector gathered: drop the planned kind from it and
+        // the ignored target that exists reads as "now exists".
+        let m = manifest();
+        let text = "It writes `planned@a-part@notes/real/a.md`.\n";
+        let anchors = Anchors::declared(&m);
+        let model = Model::from_documents(vec![(PathBuf::from(IN_PLANS), text.to_string())]);
+        let queries = super::ignore_queries(&model, &anchors);
+        let borrowed: Vec<&str> = queries.iter().map(String::as_str).collect();
+        let (found, _) =
+            checked_ignoring_under(vec![(IN_PLANS, text)], &tree(), &borrowed, &anchors);
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
     }
 
     #[test]

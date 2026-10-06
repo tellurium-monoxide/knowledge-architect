@@ -8,6 +8,13 @@ subsection is omitted.
 
 ## Next release
 
+### New features
+
+- `checks`, minor: a plan document cites a path its work will create as
+  `planned@<anchor>@<path>`. The anchor and path follow the rules of a `path` reference, and the
+  target must not exist; once it does, the finding asks for the `path` form. The form is legal in
+  the plans directory only, and a register named `planned` is refused.
+
 ### Workflow
 
 - `agent-skills`, patch: the agent-configuration skill treats an edit that changes what an agent
@@ -26,6 +33,8 @@ subsection is omitted.
   register.
 - `agent-skills`, patch: the retrospective asks one more standing question: whether the session
   needed a pointer that no checked form expresses, and how it wrote it.
+- `agent-skills`, patch: the planning skill cites a path a plan's work will create in the planned
+  form, and the commit that creates the file converts it.
 - `agent-skills`, patch: the review skill gives each claim of a reviewer's finding its own outcome:
   repaired, opened as an issue, or judged to need nothing, with the reason.
 - `agent-skills`, patch: a decision met during another task, such as an issue fix, goes through

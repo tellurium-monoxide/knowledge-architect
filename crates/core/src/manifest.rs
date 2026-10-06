@@ -836,7 +836,9 @@ fn resolve_registers(registers: &mut Registers, complaints: &mut Vec<Finding>) {
         if register.built_in {
             return true;
         }
-        let refusal = if register.name == crate::entity::PATH_KIND {
+        let refusal = if register.name == crate::entity::PATH_KIND
+            || register.name == crate::entity::PLANNED_KIND
+        {
             Some((
                 format!(
                     "`{}` is the reserved kind of a file or directory",
@@ -1864,6 +1866,28 @@ pub(crate) mod tests {
         assert!(m.registers().by_name("path").is_none());
         assert!(m.registers().by_name("Notes").is_none());
         assert_eq!(m.locations()["papers"].registers, vec!["issue".to_string()]);
+    }
+
+    #[test]
+    fn a_register_named_planned_is_refused_as_a_reserved_kind() {
+        // The claim, per `design@core@planned-path-form`: `planned` is a kind of the tree, so a
+        // register of that name would never be reached by a reference.
+        let m = declaring_full(
+            "",
+            "[registers.planned]\nscope = \"opt-in\"\nshape = \"file\"\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let whats = whats(&m);
+        assert!(
+            whats
+                .iter()
+                .any(|w| w.contains("`planned` is the reserved kind")),
+            "{whats:?}"
+        );
+        assert!(m.registers().by_name("planned").is_none());
     }
 
     #[test]

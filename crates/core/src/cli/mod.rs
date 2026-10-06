@@ -762,7 +762,7 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
     // The body first, then what points at it. A reader asking for an entry wants the entry; the
     // inbound list is what tells them what closing it would break.
     let mut found = false;
-    if kind.is_path() {
+    if kind.takes_a_path() {
         // A path's entity is the tree's, so it is shown from the walked document where there is
         // one and from the survey where there is not: a directory and an unwalked file both
         // exist and are both worth resolving, and neither has a body to print.
