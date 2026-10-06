@@ -487,7 +487,8 @@ commit that completes its harvest. Its design audit runs only when the work does
 session where the discussion converged, or when commits other than the spec's own have landed on
 the main branch since the spec was written. An audit reads the design against the tree as it stands and recovers what a
 session that did not witness the discussion lacks; a spec implemented by the session that wrote it,
-on an unmoved main branch, gives it nothing to find, in the owner's judgement. Without a stated
+on an unmoved main branch, likely gives it nothing to find: the owner doubts that an audit makes
+sense there. Without a stated
 procedure, a spec of several steps on one branch cannot tell which points of a slice's procedure
 apply to which part of its work. The rival, an audit for every spec as for every slice, costs a
 reading with nothing to find.

@@ -105,8 +105,8 @@ tripwires homes and `wc -c`, summed by the anchor that holds each file.
 
 **A design audit for the work of every spec, as for every slice** — lost to
 `design@agent-skills@spec-work-procedure`. `live`. A spec implemented by the session that wrote
-it, on a main branch with no other commit since, gives an audit nothing to find, in the owner's
-judgement. It is kept here because a doubt remains: the owner chose to watch that premise with
+it, on a main branch with no other commit since, likely gives an audit nothing to find: the owner
+doubts that an audit makes sense there. It is kept here because a doubt remains: the owner chose to watch that premise with
 `tripwire@agent-skills@spec-audit-skipped-on-a-moved-base`, and this alternative is the first
 candidate if it fires.
 
