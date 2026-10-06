@@ -107,7 +107,7 @@ a reversal voids only half of.
 unbuilt work is built is not a tripwire, so it lives in the plan document of the work that builds
 it, in its acceptance criteria section, per `knowledge-architect-planning`.
 
-When the diff lands a spec or a step of a milestone, read the criteria that the plan document says
+When the diff lands a spec or a slice of a milestone, read the criteria that the plan document says
 that landing judges, and confirm the landing commit reports on **every one, including the ones that
 did not fire**. A landing that does not report on them means they are being read as narrative.
 

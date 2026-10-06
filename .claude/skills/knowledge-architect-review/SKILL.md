@@ -27,7 +27,7 @@ and `knowledge-architect-transcript-reviewer`, all dispatched rather than read),
 
 | axis | what it does | applicable when |
 | --- | --- | --- |
-| spec conformity | does the work implement what was decided, item by item. If deviations happened during implementation, are they justified? | a spec or a milestone step's spec was written before the work |
+| spec conformity | does the work implement what was decided, item by item. If deviations happened during implementation, are they justified? | a spec or a milestone slice's spec was written before the work |
 | self-consistency | does the result contradict itself. Two instructions a reader cannot both obey, a pointer into content that is not there, a statement no longer true | nearly all the time |
 | fidelity of relocation | where content moved, was anything lost? A reason dropped, a number changed, an argument compressed to an assertion | content was relocated, or forked from another source |
 | routing of knowledge | `knowledge-architect-routing-reviewer` | a durable statement was added or moved |

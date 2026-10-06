@@ -145,7 +145,7 @@ longer ships. In the same commit:
 - read each project skill against the installed skill it adds to, for an instruction that now
   contradicts it;
 - write into each open milestone document, afresh from the new `knowledge-architect-planning`,
-  its restatement of the procedure for working a step, whether it held one before or not;
+  its restatement of the procedure for working a slice, whether it held one before or not;
 - run `cargo klarch check`.
 
 ## 7. Reviewing a configuration change

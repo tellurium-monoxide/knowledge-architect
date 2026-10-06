@@ -1,13 +1,13 @@
 ---
 name: knowledge-architect-planning
-description: MUST use when a design discussion has converged and its work needs a spec or a milestone, in the same session as the convergence; whenever a step of a milestone is about to be implemented or lands; when the work of a spec lands; and before editing the roadmap. Covers the plan document vocabulary (spec, milestone, plans directory, roadmap), choosing between a spec and a milestone, the roadmap, the file layout and the fixed sections, plan items and their citations, assembly from the discussion's transcript, cutting the steps, acceptance criteria, the per-step design audit, the reviews of a plan document, the harvest, and the deletion that ends a plan document's life.
+description: MUST use when a design discussion has converged and its work needs a spec or a milestone, in the same session as the convergence; whenever a slice of a milestone is about to be implemented or lands; when the work of a spec lands; and before editing the roadmap. Covers the plan document vocabulary (spec, milestone, plans directory, roadmap), choosing between a spec and a milestone, the roadmap, the file layout and the fixed sections, plan items and their citations, assembly from the discussion's transcript, cutting the work into steps and slices, acceptance criteria, the design audit, the reviews of a plan document, the harvest, and the deletion that ends a plan document's life.
 ---
 
 # Planning
 
 Scope: turning the converged design of a discussion into a plan document that a later session
 implements, then carrying that document through each landing until it leaves the repository. One
-activity. It begins in the session where the discussion converged, and it re-enters at each step's
+activity. It begins in the session where the discussion converged, and it re-enters at each slice's
 audit and at each landing.
 
 **Not covered here**, each named where it lives:
@@ -28,10 +28,12 @@ audit and at each landing.
 
 | word | meaning |
 | --- | --- |
-| **plan document** | a spec, a milestone document, or the spec of a step. Temporary: it leaves when its work lands |
+| **plan document** | a spec, a milestone document, or the spec of a slice. Temporary: it leaves when its work lands |
 | **plans directory** | docs/plans/ at the project's root, the one directory where a project keeps its plan documents. The checker fixes the path and constructs the anchor `plans` there (§3) |
 | **spec** | the plan document of work done in one branch and one PR: the converged design and a concise implementation sequence. Cited `spec@plans@<id>` |
-| **milestone** | work across several PRs, with design sessions between them. Its plan documents are one directory: the **milestone document**, its `README.md`, and one spec per step. Cited `milestone@plans@<id>`, and a step's spec `spec@<milestone>@<step>` |
+| **step** | one item of an implementation sequence, in a spec or in a slice. How many commits a step takes is the implementing session's to judge |
+| **slice** | a part of a milestone that is one branch and one PR, with its own spec, cited `spec@<milestone>@<slice>` |
+| **milestone** | work across several PRs, with design sessions between them. Its plan documents are one directory: the **milestone document**, its `README.md`, and one spec per slice. Cited `milestone@plans@<id>`, and a slice's spec `spec@<milestone>@<slice>` |
 | **item** | a thread, an argument, a criterion or an acceptance criterion, defined in a plan document as a level-three heading ending with its slug, under the section of its kind (§4) |
 | **roadmap** | docs/roadmap.md at the project's root, optional: the order in which the owner wants known work done (§2) |
 | **transcript** | the harness's log of a session, on disk. It keeps the records from before a compaction |
@@ -41,7 +43,7 @@ audit and at each landing.
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
 | **acceptance criterion** | a check on a recorded decision that only the work's built code can apply |
 | **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named, and the thread stays closed until the owner's word. The full protocol is `knowledge-architect-design`, under Decision authority |
-| **audit** | the reading of a step's entry against the tree and the design homes before the step is implemented |
+| **audit** | the reading of a slice's entry, or of a spec, against the tree and the design homes before its work is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
 
 **The owner** is the person whose word closes a thread. Every ruling in this activity is theirs.
@@ -67,7 +69,7 @@ converged discussion to plan from. This skill does not apply to it.
 
 Propose which one, with the reason, and let the owner rule. A spec whose work turns out to need
 several PRs becomes a milestone: at that moment the spec is split into the milestone document and
-one spec per step, by the rule of §4.
+one spec per slice, by the rule of §4.
 
 **Work that is known but not designed is not a plan document.** It is a `todo` issue, or a
 `deferred` one if an event gates it (the default kinds; a project that declares its own kinds uses
@@ -117,15 +119,15 @@ docs/plans/
    ├─ index.md             generated
    └─ <id>/                a milestone
       ├─ README.md         the milestone document
-      ├─ index.md          generated: the step specs
-      └─ <step>.md         the spec of one step
+      ├─ index.md          generated: the slice specs
+      └─ <slice>.md        the spec of one slice
 ```
 
 - The checker constructs the anchor `plans` at docs/plans/, one anchor per milestone directory and
   one per spec file. A file or a directory directly under docs/plans/ outside this layout is a
   finding, and so is a directory under milestones/ with no `README.md`. `{{command}} index` writes
   every `index.md`, and `{{command}} check --fix` writes them and then checks.
-- The milestone document links each step's spec as a navigation row, `[<step title>](<step>.md)`.
+- The milestone document links each slice's spec as a navigation row, `[<slice title>](<slice>.md)`.
   The checker resolves a relative link only in a `README.md` or an `index.md`, which is why the head
   is a README.
 - **The plans directory holds plan documents and nothing else**, except its `README.md` files and
@@ -133,7 +135,7 @@ docs/plans/
   another lifetime, such as a record of how far a subject is implemented or a survey that outlives
   its work, has its own home. If none fits, ask the owner before writing it anywhere.
 - **A plan document is cited by its kind**, never by its path: `spec@plans@<id>`,
-  `milestone@plans@<id>`, `spec@<milestone>@<step>`. A `path` citation of one is refused. A whole
+  `milestone@plans@<id>`, `spec@<milestone>@<slice>`. A `path` citation of one is refused. A whole
   plan document may be cited from anywhere, and its citations dangle when it leaves (§9).
 - **A plan document defines items, and no design entry** (§4). A plan's name is the anchor of its
   items, so it is not the name of a Component, of a location or of a reserved anchor, `plans`,
@@ -165,31 +167,31 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 | Readings | where the work reads an external specification the project implements: each reading it makes, and where it is recorded. Empty for work that reads none |
 | Premortem | each cause, the thread it stresses, and its verdict: survives into a named claim, criterion or guard; converted into a named clause of the design; becomes a tripwire, on the owner's word; or fired and the thread reopened |
 | Acceptance criteria | one item per criterion, ``### <criterion> `##<id>` ``, as §6 says |
-| Implementation sequence | the steps, §5. Concise: what each step builds and what it fails alone on |
-| Order rationale | one sentence per pair of adjacent steps |
+| Implementation sequence | in a spec, its steps; in a milestone document, its slices, each linked to its spec (§5). Concise: what each builds and what it fails alone on |
+| Order rationale | one sentence per pair of adjacent steps or slices |
 | Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, with the thread it bears on, until the owner rules |
-| Harvest | what lands where and when. In a spec, its rows; in a milestone, each step's row in that step's spec, and the row of the milestone document itself in it |
+| Harvest | what lands where and when. In a spec, its rows; in a milestone, each slice's row in that slice's spec, and the row of the milestone document itself in it |
 | Later consequences | what each later piece of work adds or replaces, so a later reader knows what was deliberately left |
 
 **A milestone's design is split across its documents from the start, by lifetime.** The milestone
-document and one spec per step are written together, in the session that converged. A milestone
-document that held every step's design would be read whole at every step's grounding, and grows
-with every step the milestone has.
+document and one spec per slice are written together, in the session that converged. A milestone
+document that held every slice's design would be read whole at every slice's grounding, and grows
+with every slice the milestone has.
 
-- **A step's spec leaves when its step lands, so it holds what only that step builds**: the step's
+- **A slice's spec leaves when its slice lands, so it holds what only that slice builds**: the slice's
   entry (§5), then, in the sections above, the items of its own threads and the arguments only
   they use, its decided design, its mapping tables, its losing alternatives, the acceptance
   criteria it judges and its harvest row. These sections are not ordered against the entry's.
-- **The milestone document holds what crosses steps or outlives one**: the status, how a step is
-  worked, the names, what the work is, the criteria, every item that more than one step's
-  document cites, the premortem, the implementation sequence with each step linked to its spec,
+- **The milestone document holds what crosses slices or outlives one**: the status, how the work is
+  done, the names, what the work is, the criteria, every item that more than one slice's
+  document cites, the premortem, the implementation sequence with each slice linked to its spec,
   the order rationale, the defaults awaiting the owner, the harvest row of the document itself and
-  the later consequences. A section whose content lives in the step specs says so in one line.
-- **An item cited from the milestone document, or from more than one step's spec, lives in the
-  milestone document.** A step's spec that held it would dangle those citations when it leaves; the
+  the later consequences. A section whose content lives in the slice specs says so in one line.
+- **An item cited from the milestone document, or from more than one slice's spec, lives in the
+  milestone document.** A slice's spec that held it would dangle those citations when it leaves; the
   check reports any that remain at that deletion.
-- A design session held at a step's audit writes its design into that step's spec, and what it
-  decides for later steps into theirs.
+- A design session held at a slice's audit writes its design into that slice's spec, and what it
+  decides for later slices into theirs.
 
 **Content rules.**
 
@@ -213,11 +215,11 @@ sections is an item, and a slug anywhere else in a plan document defines nothing
 
 - An id is in the grammar `[a-z0-9]+(-[a-z0-9]+)*`. A thread keeps the slug the discussion minted.
   An argument is numbered `a1`, `a2`, …, in order of appearance and never reused, in one sequence
-  across a milestone's README and its step specs, which share one namespace.
+  across a milestone's README and its slice specs, which share one namespace.
 - An item is cited `<kind>@<plan>@<id>`, where the plan is the spec's id or the milestone's name,
   and only from inside its own plan: the spec file, or the milestone's directory. From anywhere
   else, a commit message and a design head included, the plan is cited whole, and an item is named
-  in plain text with a hash sign, as #<id>. A step is named the same way.
+  in plain text with a hash sign, as #<id>. A slice is named the same way.
 
 **A path the plan's work will create** is cited `planned@<anchor>@<path>`, under the rules of a
 `path` reference: the anchor that will hold it, a trailing `/` for a directory. The form is legal
@@ -236,7 +238,11 @@ discussion's opening message, never by a session identifier, as `knowledge-archi
 Where the harness keeps no
 transcript, assemble from the conversation, and say so in the commit that adds the document.
 
-## 5. Cutting the steps
+## 5. Cutting the steps and the slices
+
+A step is one item of an implementation sequence. A spec's work is a sequence of steps on one
+branch. A milestone's work is a sequence of slices, each one branch and one PR with its own spec,
+and each slice a sequence of steps. The tests below hold for both, unless one names the slice.
 
 **Each step must be able to fail without another step's new machinery entangled in the
 failure.** Every other test here serves that one.
@@ -248,30 +254,31 @@ failure.** Every other test here serves that one.
 - **A step touches at most one subsystem it did not build.** Two subsystems in one step are two
   failure surfaces with one name.
 - **The last step consumes**: the measurements, the report, the harvest.
-- **One branch and one merge per step**, each merged before the next step begins, and reviewed
-  before the merge.
+- **One branch and one merge per slice**, each merged before the next slice begins, and reviewed
+  before the merge. A step is no unit of the history: how many commits it takes, and what else a
+  commit of the branch carries, such as a fix met outside the task, is the implementing session's
+  to judge.
 - **A plan document whose work's first commit changes what the project's per-commit gate checks
   lands in a merge of its own, before that work.** The per-commit gate is the one that judges each
   commit of a branch, its tree and its message. On one branch, that gate as the work changes it would
   judge the commit that added the document, whose tree predates the change. A change that only a
   check of the working tree sees, and not the per-commit gate, does not count.
-
-A step's entry is five level-two sections, with these titles, in this order, and
+A slice's entry is five level-two sections, with these titles, in this order, and
 `{{command}} check` reports one missing or out of order. Fixtures, where it applies, sits between
 Claims and Audit subjects, and is not checked:
 
-- **Builds**: what the step lands, by name.
+- **Builds**: what the slice lands, by name.
 - **Claims**: each with the test that could refute it, and how the test is shown to fail against a
-  wrong implementation. A claim whose instrument does not exist names the instrument the step
+  wrong implementation. A claim whose instrument does not exist names the instrument the slice
   lands first.
 - **Fixtures**, where the Component drives its tests with authored content: each written in the
   vocabulary that exists, or naming the addition it makes. A fixture that needs something the
   vocabulary cannot express is a finding against the design, not a note for the implementer.
-- **Audit subjects**: the files, decisions and specification passages the step's audit is already
+- **Audit subjects**: the files, decisions and specification passages the slice's audit is already
   known to have to read.
-- **Fails alone on**: the one or two observations that tell this step's failure from every other
-  step's.
-- **Premises that expire**: where the step relies on something a later step or change ends, what
+- **Fails alone on**: the one or two observations that tell this slice's failure from every other
+  slice's.
+- **Premises that expire**: where the slice relies on something a later slice or change ends, what
   ends it, and the criterion or guard that watches it.
 
 ## 6. Acceptance criteria
@@ -282,7 +289,7 @@ document of the work that can judge it, in its acceptance criteria section, and 
 names:
 
 - the decision it guards, as a reference to its thread;
-- the step that judges it;
+- the step or the slice that judges it;
 - the observable that fires it;
 - the response.
 
@@ -293,7 +300,7 @@ Evidence that bears on it before the design session is an issue entry of its own
 `observation` or a `defect` by what it establishes, which the work's issue names.
 
 **The result a scheduled review is expected to give is not a criterion.** Passing the reviews that
-every plan document and every step owes is the baseline. A criterion names an observable specific to
+every plan document and every slice owes is the baseline. A criterion names an observable specific to
 the decision it guards; listing "the reviews pass" in every plan document would be noise, and would
 stand in for the specific criterion that is harder to find.
 
@@ -311,30 +318,31 @@ default marked as the owner's to reset.
   the harvested head, in the shape `knowledge-architect-issue-tracking` gives. One that is
   spent, or that the owner declines, is deleted with the document.
 
-## 7. Working a step
+## 7. Working a slice, and the work of a spec
 
 The milestone document restates this procedure with a pointer to this skill, so a cold session
-finds it there.
+finds it there. The work of a spec follows it too, as its last paragraph says.
 
 1. **Ground**: the Component's `CLAUDE.md`, its design home, its rejected alternatives; then the
-   milestone document entire, then the step's spec. The issues and the tripwires, of every anchor,
+   milestone document entire, then the slice's spec. The issues and the tripwires, of every anchor,
    are read at the audit.
-2. **The design audit.** Read the step's entry and every decided shape it depends on against the
+2. **The design audit.** Read the slice's entry and every decided shape it depends on against the
    code as it stands and against the design homes. List every gap: a shape the code refutes, a
    passage of a specification the entry did not read, a name the entry uses that the code does not
-   have, a consequence the entry did not see, and **a standing entry the step's planned code bears on**:
+   have, a consequence the entry did not see, and **a standing entry the slice's planned code bears on**:
    a tripwire whose firing condition, or a `deferred` issue whose trigger, the planned code meets,
-   and an issue of any kind the step's code touches, closes, makes worse or depends on. Dispatch the
-   search as the description of `knowledge-architect-standing-entry-searcher` says, with the step's
+   and an issue of any kind the slice's code touches, closes, makes worse or depends on. Dispatch the
+   search as the description of `knowledge-architect-standing-entry-searcher` says, with the slice's
    spec and the milestone document as the work and, as seeds, the decisions the milestone document
-   lists under "What is already decided" and the decisions and goals the step's spec cites. Read
-   whole, with `{{command}} show`, every entry the search returns, and judge it against the step;
+   lists under "What is already decided" and the decisions and goals the slice's spec cites; for a
+   spec, the spec is the work and its own "What is already decided" gives the seeds. Read
+   whole, with `{{command}} show`, every entry the search returns, and judge it against the slice;
    never act on an entry from the reason the search gave. A firing found at the audit is ruled before the code is written, where one
    found only by the review of the harvest reopens the harvest. Sort each gap:
    - **Applied in place.** The gap has one answer the document's decisions already imply, or is a
      choice among shapes the document rules out all but one of. Apply the answer in place, in the
-     milestone document or the step's spec, wherever the shape it changes is written. Commit the
-     amended documents alone, with a subject of the shape `The <step> design audit, applied in
+     milestone document or the slice's spec, wherever the shape it changes is written. Commit the
+     amended documents alone, with a subject of the shape `The <slice> design audit, applied in
      place: <n> gaps, none reopening a discussion`, and a message listing each finding: the gap, the
      answer and the decision it follows from. Earlier audits are found with
      `git log --grep='design audit'`.
@@ -342,19 +350,19 @@ finds it there.
      scope change even when it is the one answer the document implies.** It is applied with the
      others, and also listed in the milestone document as a default awaiting the owner, who rules
      on it at the audit; the implementation of that point does not start before the ruling.
-   - **A change to the steps.** An audit that finds the work needs another step, or a step split
-     or reordered, writes each new step's spec with its harvest row, adds the step to the
+   - **A change to the slices.** An audit that finds the work needs another slice, or a slice split
+     or reordered, writes each new slice's spec with its harvest row, adds the slice to the
      implementation sequence and the order rationale, and moves into its spec the design it takes
-     from other steps, so that each shape keeps one home. It changes a sequence the owner ruled on, so it is a scope
+     from other slices, so that each shape keeps one home. It changes a sequence the owner ruled on, so it is a scope
      change, listed and ruled as above.
    - **Load-bearing.** The gap is material, or is a choice between two shapes neither of which the
      document rules out, or needs a ruling the document marks as the owner's. Record it in the
-     step's spec as open at the audit, with the discriminating fact, stop the step, and open a
+     slice's spec as open at the audit, with the discriminating fact, stop the slice, and open a
      design session with the owner under `knowledge-architect-design`. **The session's depth
      follows the gap.**
      - A choice among shapes that can be stated in full, each with its consequence, is put to the
        owner in one message, with a default, where reversing it touches none of the four things the
-       design skill names for the cost of reversal; several such gaps go in one question. The step's documents exist, so the ruling
+       design skill names for the cost of reversal; several such gaps go in one question. The slice's documents exist, so the ruling
        is not left to a commit message as that path would leave it: it is written in place in the
        milestone's documents by the rule of §4, as a thread with the owner's words verbatim, like
        the audit's other answers, and the audit's commit lists it among its gaps. It owes no new
@@ -363,30 +371,42 @@ finds it there.
        full session. Its converged design goes into the milestone's documents by the rule of §4,
        and owes §8's reviews.
 
-     The step resumes from the ruling or the converged design.
+     The slice resumes from the ruling or the converged design.
 3. **Claims, tests, implementation, gates, commit**, per the project's development procedure. The
    commit names how each claim's test was shown to fail against a wrong implementation, and says
    of any claim whose test cannot yet do so why not.
 4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
    or folded where that skill says. A finding not repaired becomes an issue entry.
-5. **The report**: the landing commit reports on each acceptance criterion judged at this step,
+5. **The report**: the landing commit reports on each acceptance criterion judged at this slice,
    by its identifier in plain text, beside a citation of the milestone document (§6).
-6. **The harvest**, per the harvest row of the step's spec: the decisions and the losing
+6. **The harvest**, per the harvest row of the slice's spec: the decisions and the losing
    alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
    under `knowledge-architect-issue-tracking`. The row names what is judged; the tests of
    `knowledge-architect-decision-recording` decide whether each decision and each alternative
    earns an entry, and they govern where the two disagree: an item of the row the tests exclude is
    named in the harvest's commit, with the test it fails. A decision harvested from a thread takes
    the thread's slug, unless the slug misdescribes the approved decision: the entry then takes a
-   slug that names it, and the step's harvest row states the pair, per
+   slug that names it, and the slice's harvest row states the pair, per
    `knowledge-architect-decision-recording`. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
    linked from its README. **The harvest is reviewed before the merge**, per
    `knowledge-architect-review`, on the decision-record, routing and standing-state axes, and by
    the transcript reviewer where the transcripts are available: it writes the record those axes
    judge, so the review of point 4 cannot see it.
-7. **The step's spec leaves** in the commit that completes its harvest, as in §9. What crosses steps stays in the
+7. **The slice's spec leaves** in the commit that completes its harvest, as in §9. What crosses slices stays in the
    milestone document, amended in place where the landing changed it.
+
+**The work of a spec** takes the same points once, for the whole spec, on its one branch:
+
+- point 1, the grounding;
+- point 2, the design audit, only when the work does not start in the session where the discussion
+  converged, or when commits have landed on the main branch since the spec was written. Otherwise
+  the session goes straight to the work, since the design was read against the tree as it stands;
+- point 3, for each step;
+- point 4, the review, once, before the merge;
+- points 5 and 6, the report and the harvest, in the commits that land the work, the harvest
+  reviewed before the merge;
+- point 7, the deletion of the spec, in the commit that completes its harvest, as in §9.
 
 ## 8. Reviews of a plan document
 
@@ -439,19 +459,19 @@ This list is their one home; the reviewer reads it here.
 - every premise a later step or change ends is stated with its guard;
 - every statement about the code names the file and the function, and its truth is the code-claims
   reviewer's to establish;
-- every acceptance criterion names the decision it guards, the step judging it, the observable that
+- every acceptance criterion names the decision it guards, the step or slice judging it, the observable that
   fires it and the response;
 - every thread maps to a section and to a harvest home;
-- every text referencing a decision the work reverses or rewrites is named, with the step or
+- every text referencing a decision the work reverses or rewrites is named, with the step, slice or
   harvest that judges or updates it;
 - every section of §4 is present, and an empty one says so.
 
 ## 9. When a plan document leaves
 
 **A spec is deleted in the commit that completes its last harvest, and that commit's message cites
-it by its kind**, `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<step>`, which
-resolves against the commit's parent. A milestone's step spec leaves when its step lands; the
-milestone document leaves with the last step. Before deleting:
+it by its kind**, `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<slice>`, which
+resolves against the commit's parent. A milestone's slice spec leaves when its slice lands; the
+milestone document leaves with the last slice. Before deleting:
 
 - every harvest row of the document is done;
 - every acceptance criterion has been reported on, and has become a tripwire or left (§6);
@@ -469,7 +489,7 @@ things in one commit:
   built? It is answered by reading the citing plan against what the leaving plan harvested. The
   issue cites the citing plan, so it cannot outlive it, and its `Why it matters` cites the leaving
   plan's harvested design entries, since the leaving plan no longer exists. For a milestone, its
-  next step's audit reads the issue.
+  next slice's audit reads the issue.
 
 Any other citation of the leaving document, from an issue, a design head or a `CLAUDE.md`, dangles
 too, and `{{command}} check` reports it: the deleting commit repairs each, and an issue whose
