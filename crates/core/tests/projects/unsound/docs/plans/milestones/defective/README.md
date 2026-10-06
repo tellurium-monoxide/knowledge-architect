@@ -4,7 +4,7 @@
 
 None.
 
-## How a step is worked
+## How the work is done
 
 None.
 

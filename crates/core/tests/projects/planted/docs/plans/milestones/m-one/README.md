@@ -6,7 +6,7 @@ Its one step is [the step](a-step.md); the listing is [the index](index.md).
 
 None.
 
-## How a step is worked
+## How the work is done
 
 None.
 

@@ -329,7 +329,7 @@ spec file is an anchor too**, named by its id, and stays an entry of the `spec` 
 `plans`.
 
 **A plan document holds fixed sections.** A spec of specs/ and a milestone's README owe, in order:
-Status and audience, How a step is worked, Names, What the work is, What is already decided,
+Status and audience, How the work is done, Names, What the work is, What is already decided,
 Criteria, Threads, Arguments, "New names, in one place", Decided design, Mapping tables, Losing
 alternatives, Readings, Premortem, Acceptance criteria, Implementation sequence, Order rationale,
 Defaults awaiting the owner, Harvest, Later consequences. A step spec owes Builds, Claims, Audit

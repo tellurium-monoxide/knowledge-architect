@@ -110,7 +110,7 @@ pub(crate) const ITEM_REGISTERS: [(&str, &str, &str); 4] = [
 /// document's sections, as the plans layout fixes them.
 pub(crate) const PLAN_SECTIONS: [&str; 20] = [
     "Status and audience",
-    "How a step is worked",
+    "How the work is done",
     "Names",
     "What the work is",
     "What is already decided",
