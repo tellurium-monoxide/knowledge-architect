@@ -69,3 +69,32 @@ review.
 one approved thread takes the full path.
 **Re-entry:** the retrospective of each session that wrote such a commit message: it reads the
 session's own record against the message.
+
+## Guarding `design@agent-skills@standing-entries-searched-before-the-work`: an entry the work bears on that no search before the work returned `##search-missed-before-the-work`
+
+The decision rests on the premise that a search at the grounding of a design discussion and at the
+design audit of a milestone step meets the standing entries a piece of work bears on before the
+work. A spec has no audit, and an entry can be added after the grounding's search.
+
+**Fires when:** across sessions, 2 standing-state reviews report a standing entry the work bears
+on, which no search before the work returned.
+**Response:** open a `design` issue naming the entries and the works, and reopen
+`design@agent-skills@standing-entries-searched-before-the-work` on its occasions, with a search
+when convergence is proposed, before the premortem, among the candidates.
+**Re-entry:** the design discussion of
+`issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`, on the
+owner's word: the evidence arises in the sessions of the projects that use the workflow.
+
+## Guarding `design@agent-skills@conformance-before-every-merge`: a deferred trigger met by undesigned work and found only at the review `##deferred-trigger-met-by-undesigned-work`
+
+The decision rests on the premise that a deferred trigger met by work that is neither designed nor
+planned costs little when the review is the first to read it.
+
+**Fires when:** a second instance is recorded of a deferred trigger met by work that is neither
+designed nor planned, and found only at the standing-state review. The first was in thaum: a move
+of the pinned checker met the trigger of a deferred issue that named that move.
+**Response:** open a `design` issue naming both instances, and propose a search before such work,
+with its host.
+**Re-entry:** the design discussion of `issue@agent-skills@a-skill-for-bounded-problems`, the
+skill that would host a search before undesigned work.
+
