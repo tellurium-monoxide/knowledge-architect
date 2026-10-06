@@ -772,8 +772,8 @@ owner's ruling, since the first changes the project's build. A machine-wide inst
 version, which is what bundling the workflow into the checker avoids, per
 `design@knowledge-architect@binary-bundles-workflow`. A project with an extension runs its own
 binary under a name of its own, per `design@core@declared-command`. **The manifest declares the
-same pin**, in `[project] checker-version`, and every binary refuses to run over a project whose
-pin it does not satisfy, per `design@core@installed-binary-version-check`, so an install or a build
+same pin**, in `[project] checker-version`, and every binary that dispatches a command of the
+checker refuses to run over a project whose pin it does not satisfy, per `design@core@installed-binary-version-check`, so an install or a build
 left behind by a move of the pin is refused at its first command rather than run. The setup skill
 writes the key and moves it with the pin.
 

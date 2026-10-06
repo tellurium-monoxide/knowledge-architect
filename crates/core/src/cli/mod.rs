@@ -223,8 +223,8 @@ pub fn locate() -> Result<Manifest, String> {
 /// Refuse to run over a project whose `[project] checker-version` this binary does not satisfy,
 /// per `design@core@installed-binary-version-check` and `design@core@checked-sentinel-values`.
 ///
-/// **Each binary's `main` calls it** right after [`refuse_a_foreign_build`] and before it
-/// dispatches any command, its own included, with the directories of its own source: the same
+/// **Each binary that dispatches a command of the checker calls it in its `main`**, right after
+/// [`refuse_a_foreign_build`] and before it dispatches any command, its own included, with the directories of its own source: the same
 /// list it hands [`run`] as `checker`. [`run`] does not call it, so a test driving a command
 /// in-process over a mock project needs no confirmed pin; the parse still requires the key.
 ///
