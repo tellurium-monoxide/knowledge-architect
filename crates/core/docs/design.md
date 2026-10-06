@@ -1115,6 +1115,28 @@ references are live in a fence for every kind, per `design@core@candidate-rule-a
 but the slug then matched nothing, and every reference to those anchors was reported as dangling
 while the definition sat in the file. The pattern takes the slug anywhere in the heading.
 
+### A heading is a line that opens with `#` marks, and a heading markdown reads in any other shape is reported `##headings-open-with-hash-marks`
+
+The checker reads a heading where markdown reads an ATX heading at the start of a line: one to six
+`#` marks, at most three spaces in. A line indented four spaces or more, or by a tab, opens no
+heading, so a slug on it is a mention and defines nothing. Every other heading markdown reads is
+reported in phase 2, at its first line, in every markdown document of the walk: a setext heading,
+a line underlined with `=` or `-`, and a heading inside a list item or a block quote. The repair
+is to write it as a line that opens with `#` marks.
+
+- **It serves `design@core@an-entry-is-a-heading-at-the-register-level`**, which rests on the
+  checker reading headings as markdown does: an entry is a heading. A heading markdown shows and
+  the checker does not read is a section no check sees. A slug on it defines nothing, and in a plan
+  document the items under it are read under the section before it, which changes their kind.
+- **Phase 2, because the model is incomplete**, per `design@core@phases-gate-the-report`. A
+  finding of the entity table computed while such a heading stands is unreliable in both
+  directions.
+- **Reported, not read.** The scanner reads one line at a time. A setext heading's level is known
+  only at its underline, which follows its last text line, and a heading inside a container starts
+  after the container's markers. One shape per heading keeps the scanner line by line, and keeps
+  every heading findable by a search for lines opening with `#`.
+- **A Rust comment holds no section**, so a comment line underlined with dashes is not reported.
+
 ### An entity belongs to its anchor and is unique inside one register instance, and a reference names all three: `` `<kind>@<anchor>@<id>` `` `##a-slug-belongs-to-a-component`
 
 A definition is owned by where its document sits — the deepest anchor whose path holds it, and

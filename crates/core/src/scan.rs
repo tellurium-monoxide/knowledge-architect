@@ -22,7 +22,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-use crate::source::Parsed;
+use crate::source::{Parsed, ScopeKind};
 
 /// Something a check might care about, found at a line.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -110,6 +110,10 @@ pub struct Located {
 /// written `## Arguments ##` is the section "Arguments".
 static HEADING: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^ {0,3}(#{1,6})\s+(.+?)(?:\s+#+)?\s*$").unwrap());
+/// The opening of a heading as `HEADING` reads one, its text left out, so that a heading
+/// with no text counts as read.
+static HEADING_OPENS: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^ {0,3}#{1,6}(?:\s|$)").unwrap());
 /// The retired slug reference, `` `<word>#<word>` ``: the word before the `#` is optional so
 /// that the older unqualified form is seen too. The first class cannot match a `#`, so a
 /// definition — which opens with `##` — is not read as a retired reference to itself.
@@ -269,6 +273,30 @@ fn joined(head: &str, tail: &str) -> Option<String> {
     pointer_shaped(&text).then_some(text)
 }
 
+/// The lines of the headings markdown reads in a document and [`scan`] does not: each section
+/// the parser opened whose first line is no line opening with `#` marks at most three spaces
+/// in. That is a setext heading, a line underlined with `=` or `-`, and a heading inside a
+/// list item or a block quote.
+///
+/// Only a markdown parse holds sections, so a Rust file yields none.
+pub(crate) fn unread_headings(parsed: &Parsed) -> Vec<u32> {
+    let mut lines: std::collections::HashMap<u32, &str> = std::collections::HashMap::new();
+    for region in &parsed.prose {
+        // The piece after a final newline is past the region's last line, and `file_line`
+        // maps it onto that line, so the first text a line is given is its own.
+        for (i, line) in region.text.split('\n').enumerate() {
+            lines.entry(region.file_line(i)).or_insert(line);
+        }
+    }
+    parsed
+        .scopes
+        .iter()
+        .filter(|s| matches!(s.kind, ScopeKind::Section(_)))
+        .map(|s| s.first)
+        .filter(|n| !lines.get(n).is_some_and(|l| HEADING_OPENS.is_match(l)))
+        .collect()
+}
+
 /// Scan one parsed document.
 pub(crate) fn scan(parsed: &Parsed) -> Vec<Located> {
     let fenced: std::collections::HashSet<u32> = parsed.fenced.iter().copied().collect();
@@ -330,11 +358,18 @@ pub(crate) fn scan(parsed: &Parsed) -> Vec<Located> {
                 // recorded with its site and the table reports it as misplaced — while a
                 // REFERENCE from a source comment is ordinary and is scanned below.
                 let trimmed = line.trim_start();
+                // A line indented four spaces or more, or by a tab, opens no heading, as
+                // markdown reads it: `HEADING` takes at most three spaces, and a slug site
+                // taking more defined an entry on a line markdown shows as paragraph text.
+                // So on such a line every slug is a mention, per
+                // `design@core@headings-open-with-hash-marks`.
+                let indent = &line[..line.len() - trimmed.len()];
+                let at_head = indent.len() <= 3 && indent.bytes().all(|b| b == b' ');
                 // The one span the heading or line-head form takes, by its range in the
                 // trimmed line, so every other slug-shaped span on the line is recorded as
                 // what it is: a second slug on a definition line is a mention, not a second
                 // definition. Dropped, it was neither defined nor misplaced.
-                let primary = SLUG_SITE.captures(trimmed).map(|c| {
+                let primary = SLUG_SITE.captures(trimmed).filter(|_| at_head).map(|c| {
                     if let Some(span) = c.get(2) {
                         (span.range(), SlugSite::Heading(c[1].len() as u8))
                     } else {
@@ -465,6 +500,57 @@ mod tests {
             ),
             "{found:?}"
         );
+    }
+
+    /// The claim: a slug on a line indented four spaces or more, or by a tab, defines nothing,
+    /// since markdown reads no heading there, per `design@core@headings-open-with-hash-marks`.
+    /// The first line is a lazy continuation of the paragraph above it.
+    #[test]
+    fn a_slug_on_a_line_indented_past_three_spaces_is_a_mention() {
+        let lazy = "A paragraph line,\n    ## into a continuation line `##lazy`\n";
+        assert_eq!(
+            defs(lazy),
+            vec![("lazy".to_string(), SlugSite::Inline)],
+            "{:?}",
+            scan_md(lazy)
+        );
+        assert_eq!(
+            defs("A paragraph line,\n\t## a tab `##tabbed`\n"),
+            vec![("tabbed".to_string(), SlugSite::Inline)]
+        );
+        // The line-head form is a definition site too, and the same rule holds for it.
+        assert_eq!(
+            defs("A paragraph line,\n    `##line-head` text\n"),
+            vec![("line-head".to_string(), SlugSite::Inline)]
+        );
+    }
+
+    /// The claim: every heading markdown reads and the scanner does not is listed by its line,
+    /// and a heading the scanner reads is not.
+    #[test]
+    fn a_heading_the_scanner_does_not_read_is_listed() {
+        let unread = |text: &str| unread_headings(&crate::source::md::parse(text));
+        assert_eq!(unread("Setext entry\n---\n\nText.\n"), vec![1]);
+        assert_eq!(unread("Text.\n\nSetext title\n===\n"), vec![3]);
+        assert_eq!(unread("> ## Quoted\n"), vec![1]);
+        assert_eq!(unread("- ## In a list item\n"), vec![1]);
+        // A multi-line setext heading opens at its first line.
+        assert_eq!(unread("First line\nsecond line\n---\n"), vec![1]);
+        // The headings the scanner reads, an empty one and an indented one included.
+        assert_eq!(
+            unread("# Title\n\n   ## Indented\n\n###\n\nText.\n"),
+            Vec::<u32>::new()
+        );
+        // A thematic break after a blank line opens no heading, and neither does the
+        // closing line of a frontmatter block.
+        assert_eq!(unread("Text.\n\n---\n"), Vec::<u32>::new());
+        assert_eq!(unread("---\nkind: todo\n---\n# Title\n"), Vec::<u32>::new());
+        // A Rust comment holds no section, whatever its lines look like.
+        let rs = crate::source::rs::parse(
+            "// A section\n// ---------\nfn f() {}\n",
+            crate::source::Literals::Prose,
+        );
+        assert_eq!(unread_headings(&rs), Vec::<u32>::new());
     }
 
     #[test]

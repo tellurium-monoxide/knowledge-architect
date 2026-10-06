@@ -35,6 +35,19 @@ pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<
                 "nothing here is verified; fix the source, or what it says is checked by nothing",
             ));
         }
+        // A heading markdown shows and the scanner does not read opens a section no check
+        // sees: a slug on it defines nothing, and in a plan document the items under it are
+        // read under the section before it. So the model is incomplete, which is this phase's,
+        // per `design@core@headings-open-with-hash-marks`.
+        for line in crate::scan::unread_headings(&doc.parsed) {
+            out.push(Finding::at(
+                &doc.rel,
+                line,
+                "markdown reads a heading here that the checker does not read",
+                "write it as a line that opens with `#` marks, outside any list item or block \
+                 quote",
+            ));
+        }
     }
 
     declarations(&mut out, manifest, inputs);
