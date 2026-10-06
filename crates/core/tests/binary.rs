@@ -987,6 +987,33 @@ fn show_prints_the_entry_and_what_points_at_it() {
     }
 }
 
+/// The claim, per `design@core@planned-path-form`: `show` on a planned reference resolves whether
+/// or not the target exists, says which, and lists the plans that cite it, which are the sites a
+/// conversion edits.
+#[test]
+fn show_of_a_planned_path_lists_its_citations_and_says_whether_it_exists() {
+    let sandbox = Sandbox::new("show-planned", "minimal");
+    sandbox.write(
+        "docs/plans/README.md",
+        "# Plan documents\n\nThe mock's plans directory: specs under specs/, milestones under \
+         milestones/.\n\nIt creates `planned@minimal@code/new.rs` beside \
+         `planned@minimal@code/lib.rs`.\n",
+    );
+    let (absent, stderr, code) = sandbox.run(&["show", "planned@minimal@code/new.rs"]);
+    assert_eq!(code, 0, "{stderr}");
+    assert!(absent.contains("does not exist yet"), "{absent}");
+    assert!(absent.contains("docs/plans/README.md:5"), "{absent}");
+
+    let (present, stderr, code) = sandbox.run(&["show", "planned@minimal@code/lib.rs"]);
+    assert_eq!(code, 0, "{stderr}");
+    assert!(present.contains("now exists"), "{present}");
+    assert!(
+        !present.contains("A doc comment pointing"),
+        "no body is printed: {present}"
+    );
+    assert!(present.contains("docs/plans/README.md:5"), "{present}");
+}
+
 /// The claim: a tracked document a `.gitignore` line covers is still walked, and the pair is a
 /// finding naming the file.
 ///

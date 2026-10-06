@@ -774,7 +774,26 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
             return Ok(ExitCode::FAILURE);
         };
         let rel = a.path.join(id.trim_end_matches('/'));
-        if let Some(doc) = model.documents().iter().find(|d| d.rel == rel) {
+        let present = || -> Result<bool, String> {
+            Ok(model.documents().iter().any(|d| d.rel == rel)
+                || crate::survey::survey(manifest, &model)
+                    .map_err(|e| e.to_string())?
+                    .present
+                    .contains(&rel))
+        };
+        if kind.is_planned() {
+            // A planned path is valid while it is absent, so it resolves either way, and what is
+            // worth printing is the plans that cite it: the sites a conversion will edit, per
+            // `design@core@planned-path-form`.
+            outln!("{reference}  {}", rel.display());
+            outln!();
+            if present()? {
+                outln!("(the target now exists; each citation converts to the path form)");
+            } else {
+                outln!("(planned; the target does not exist yet)");
+            }
+            found = true;
+        } else if let Some(doc) = model.documents().iter().find(|d| d.rel == rel) {
             outln!("{reference}  {}", doc.rel.display());
             outln!();
             outln!("{}", doc.text.trim_end());
