@@ -544,23 +544,20 @@ fn anchored_target(
     let Some(a) = anchors.by_name(name) else {
         // The two reserved words serve `path` alone, so a planned path's repair names the
         // declared anchors only.
+        // A plan anchor carries no path kind, so it is no candidate for either kind.
+        let names = anchors
+            .all()
+            .iter()
+            .filter(|a| !a.is_plan())
+            .map(|a| a.name.as_str())
+            .collect::<Vec<_>>()
+            .join(", ");
         let action = if planned {
-            // A plan anchor carries no path kind, so it is no candidate for a planned path.
-            let names: Vec<&str> = anchors
-                .all()
-                .iter()
-                .filter(|a| !a.is_plan())
-                .map(|a| a.name.as_str())
-                .collect();
-            format!(
-                "anchor at the one of {} that will hold the target",
-                names.join(", ")
-            )
+            format!("anchor at the one of {names} that will hold the target")
         } else {
             format!(
-                "anchor at one of {}, at `{ESCAPE_ANCHOR}` for a path outside this \
-                 tree, or at `*` for every component's own copy",
-                anchors.listed()
+                "anchor at one of {names}, at `{ESCAPE_ANCHOR}` for a path outside this \
+                 tree, or at `*` for every component's own copy"
             )
         };
         out.push(Finding::at(
@@ -2116,6 +2113,28 @@ mod tests {
         assert_eq!(
             action,
             Some("anchor at the one of a-project, a-part, plans that will hold the target")
+        );
+    }
+
+    #[test]
+    fn a_path_s_unknown_anchor_repair_lists_no_plan_anchor() {
+        let m = manifest();
+        let spec = PathBuf::from(IN_PLANS);
+        let anchors = Anchors::of(&m, [&spec]);
+        let (found, _) = checked_ignoring_under(
+            vec![("notes/prose.md", "See `path@nowhere@x.md`.\n")],
+            &tree(),
+            &[],
+            &anchors,
+        );
+        assert_eq!(found.len(), 1, "{found:#?}");
+        let action = found[0].split_once("\n    → ").map(|(_, a)| a);
+        assert_eq!(
+            action,
+            Some(
+                "anchor at one of a-project, a-part, plans, at `elsewhere` for a path outside \
+                 this tree, or at `*` for every component's own copy"
+            )
         );
     }
 
