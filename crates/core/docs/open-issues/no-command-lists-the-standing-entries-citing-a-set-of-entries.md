@@ -19,7 +19,7 @@ What the commands print today:
 
 - `show <ref>` prints the entry, then `referenced at:` and one `<file>:<line>` per reference. A
   tripwires home holds many entries in one file, so a line number has to be mapped by hand to the
-  heading above it. A reference from a design head, a rejected alternative or a commit message is
+  heading above it. A reference from a design head, a rejected alternative or a plan document is
   listed beside those from standing entries.
 - `tripwires --guarding <ref>` prints the tripwire rows guarding one entry. It takes one reference.
 - `issues` filters by anchor, by kind, by group and by text in the id or the title. It has no
@@ -44,6 +44,8 @@ per entry and a hand mapping, and a mapping done by hand can drop an entry.
 
 A command, or a filter of an existing one, that takes several references and prints every issue
 entry and every tripwire entry whose text cites any of them, one row per entry naming it as a
-reference. It is tested over a mock project in which two tripwires of one home and one issue cite
+reference. The installed search agent, `knowledge-architect-standing-entry-searcher` once it is
+built, maps citing sites to entries by hand; its body changes to use the command in the same
+work. It is tested over a mock project in which two tripwires of one home and one issue cite
 two different decisions. Or the owner rules that the search keeps using `show`, and this entry is
 deleted with that reason in the commit.
