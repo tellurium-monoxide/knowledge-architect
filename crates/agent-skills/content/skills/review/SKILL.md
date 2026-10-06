@@ -32,7 +32,7 @@ and `knowledge-architect-transcript-reviewer`, all dispatched rather than read),
 | fidelity of relocation | where content moved, was anything lost? A reason dropped, a number changed, an argument compressed to an assertion | content was relocated, or forked from another source |
 | routing of knowledge | `knowledge-architect-routing-reviewer` | a durable statement was added or moved |
 | decision recording | `knowledge-architect-decision-record-reviewer`. If a plan document was written, hand it to this reviewer too | a decision was made, reversed or harvested |
-| conformance | `knowledge-architect-standing-state-reviewer` | before every merge to the main branch, since it is the standing re-entry point of every tripwire |
+| conformance | `knowledge-architect-standing-state-reviewer` | before every merge to the main branch, since it is the standing re-entry point of every tripwire and every deferred trigger |
 | cold implementer | `knowledge-architect-cold-implementer-reviewer`: can a session that did not see the discussion act on the plan document | a spec or a milestone was written under `knowledge-architect-planning`, or a decided shape in one revised; that skill names the moment |
 | code claims | `knowledge-architect-code-claims-reviewer`: is every statement the plan document makes about existing code true of the tree | the same moment |
 | transcript | `knowledge-architect-transcript-reviewer`: has everything the work's sessions established that must outlive them a durable outcome, and is no ruling of the owner misstated | the transcripts of the sessions that produced the work are available; and once more before every merge to the main branch, alone and last (below) |
