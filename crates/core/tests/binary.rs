@@ -1458,17 +1458,21 @@ fn tiny_project_refusing_branch_shas(history: &History) {
 }
 
 /// The claim: under `refuse-branch-shas`, a message citing a commit of the range by its SHA
-/// fails, naming the commit and the line, and the citing commit is counted as failed.
+/// fails, naming the commit and the line, and the citing commit is counted as failed, its line
+/// naming the citations and how many. Mutation checked: the count off by one.
 #[test]
 fn a_message_citing_a_commit_of_the_range_by_sha_fails_under_refuse_branch_shas() {
     let history = History::new("commit-branch-sha");
     tiny_project_refusing_branch_shas(&history);
     let base = history.commit("The project is created\n");
     let first = history.commit("A first change\n");
-    let second = history.commit(&format!("A second change\n\nIt follows {first}.\n"));
+    let second = history.commit(&format!(
+        "A second change\n\nIt follows {first}.\nIt names {first} again.\n"
+    ));
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(stdout.contains(&format!("commit {second}:3")), "{stdout}");
+    assert!(stdout.contains(&format!("commit {second}:4")), "{stdout}");
     // The cited commit is named by its 7-digit abbreviation, followed by the rest of the sentence.
     assert!(
         stdout.contains(&format!(
@@ -1476,7 +1480,12 @@ fn a_message_citing_a_commit_of_the_range_by_sha_fails_under_refuse_branch_shas(
         )),
         "{stdout}"
     );
-    assert!(stdout.contains(&format!("{second} failed")), "{stdout}");
+    assert!(
+        stdout.contains(&format!(
+            "{second} failed: it cites the range by SHA 2 time(s)\n"
+        )),
+        "{stdout}"
+    );
     assert!(stdout.contains(&format!("{first} passed")), "{stdout}");
 }
 
