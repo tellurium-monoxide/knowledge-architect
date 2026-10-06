@@ -247,7 +247,7 @@ pub fn refuse_another_version(manifest: &Manifest, checker_dirs: &[&Path]) -> Re
     refuse_another_version_built_at(
         manifest,
         &crate::component_dir(),
-        env!("CARGO_PKG_VERSION"),
+        crate::CHECKER_VERSION,
         checker_dirs,
         &tracked,
     )

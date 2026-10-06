@@ -27,7 +27,7 @@ pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<
         return out;
     }
     let install = format!("run `{} install-agent-skills`", manifest.command());
-    let version = env!("CARGO_PKG_VERSION");
+    let version = crate::CHECKER_VERSION;
     let installed = |rel: &Path| inputs.installed.iter().find(|(p, _)| p == rel);
     for (rel, expected) in inputs.shipped {
         match installed(rel).map(|(_, state)| state) {

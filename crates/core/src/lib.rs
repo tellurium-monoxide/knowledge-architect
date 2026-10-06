@@ -22,7 +22,7 @@
 //!
 //! | module | for |
 //! | --- | --- |
-//! | the crate root | the nouns every consumer meets: [`Manifest`], [`Model`], [`Document`], [`Finding`], [`MANIFEST_NAME`], [`component_dir`] |
+//! | the crate root | the nouns every consumer meets: [`Manifest`], [`Model`], [`Document`], [`Finding`], [`MANIFEST_NAME`], [`CHECKER_VERSION`], [`component_dir`] |
 //! | [`cli`] | the `main` of a binary: the commands, running one, finding the project, refusing a build from another checkout, gathering a run's inputs |
 //! | [`extension`] | writing an extension: the two traits, what the core hands them, and what they return |
 //! | [`document`] | reading a document's parse: prose regions, scopes, code spans, observations |
@@ -104,8 +104,8 @@
 //! crate that uses the library only for [`MANIFEST_NAME`] dispatches no command, and does not. A
 //! mock project inside the extension's crate may say `checker-version = "fixture"`, which this
 //! call accepts because the crate's directory is among the directories it is given. A copy of a
-//! mock outside that directory, such as one a test makes in a temporary directory, writes the
-//! project's own pin instead, read from the root manifest.
+//! mock outside that directory, such as one a test makes in a temporary directory, writes
+//! [`CHECKER_VERSION`] instead: the version of the library the test links.
 //!
 //! # Writing an extension
 //!
@@ -202,9 +202,7 @@
 
 // The compatibility rules above restate `design@core@ne-minimal` and
 // `design@core@trait-defaults`. The paragraph on `cli::refuse_another_version` restates
-// `design@core@installed-binary-version-check` and `design@core@checked-sentinel-values`; its
-// copied mock reads the pin from the root manifest because of
-// `issue@core@the-checker-version-is-not-exported`.
+// `design@core@installed-binary-version-check` and `design@core@checked-sentinel-values`.
 
 // A `pub` item no consumer can reach is refused, so an item is public only through the
 // re-exports below and the role modules, per `design@core@api-facade`.
@@ -247,6 +245,14 @@ mod mock_projects;
 pub use finding::Finding;
 pub use manifest::{Manifest, MANIFEST_NAME};
 pub use model::{Document, Model};
+
+/// The version of this library, which is the checker's version whatever binary links it.
+///
+/// It is the value `[project] checker-version` must hold for [`cli::refuse_another_version`] to
+/// accept a project. A test that copies a mock project out of its library's directory, where
+/// `"fixture"` is refused, writes this value into the copy's manifest. In an extension's crate,
+/// `CARGO_PKG_VERSION` is the extension's version, not this one.
+pub const CHECKER_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// The directory of the Component this library belongs to: its own crate directory, evaluated at
 /// build time.

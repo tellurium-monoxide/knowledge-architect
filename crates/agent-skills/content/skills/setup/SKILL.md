@@ -77,8 +77,9 @@ inside the directory of a library the binary links, such as the project's extens
 `"self"` in a project that builds the checker from its own tree. Each is accepted only where the
 binary's build confirms it; anywhere else it is refused. **A test that copies a mock project out
 of its library's directory**, for instance into a temporary directory where it runs `git init`,
-writes the project's own pin into the copy's manifest: it reads the value from the root manifest,
-and never spells the version in the test, so the pin stays written in one place.
+writes the version of the checker it links into the copy's manifest: the library's constant
+`CHECKER_VERSION`. It never spells the version in the test, so the pin stays written in one place.
+In an extension's crate, `CARGO_PKG_VERSION` is the extension's version, not the checker's.
 
 ## 2. Declare the command
 
