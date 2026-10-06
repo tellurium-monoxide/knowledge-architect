@@ -402,7 +402,7 @@ the check, per `design@knowledge-architect@plain-text-is-no-repair`. A verbatim 
 owner that names a renamed entry is left as it is, with a reference to the current entry beside
 it, since rewriting it would misstate the owner, against `goal@knowledge-architect@the-owner-decides`.
 
-### Text in the checker's syntax that no checked form expresses is written without backticks only beside a reference to an issue entry that records the missing form `##checker-syntax-without-backticks-names-its-gap`
+### The plain-text escape covers only text in the checker's syntax, which is written without backticks only beside a reference to an issue entry that records the missing form `##checker-syntax-without-backticks-names-its-gap`
 
 The checker cannot express every reference a project needs. This head covers text in the checker's
 syntax, which would be read as a candidate if it were backticked: a reference,
@@ -425,8 +425,8 @@ name is closed by shipping its own form.
 
 The scope is the checker's syntax, so that a writer can tell from each span alone whether the head
 applies, per `goal@knowledge-architect@agents-get-a-complete-workflow`: every sentence names
-something, and a scope of "any pointer" asked for an issue entry beside every mention of a thing
-outside the project. The evasion the head exists to stop is a reference or a path with its
+something, and a scope of "any pointer" would ask for an issue entry beside every mention of a
+thing outside the project. The evasion the head exists to stop is a reference or a path with its
 backticks removed, which this scope covers. A scope by target, any text naming something the tree
 holds, lost: when such text needs a reference is already decided by the rule on references, and
 whether a phrase names something cannot be decided span by span.

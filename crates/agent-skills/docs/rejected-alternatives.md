@@ -70,10 +70,10 @@ review. The owner, who had meant the reviewer to check durability from the start
 reports in real sessions that it was "focusing more on the wrong side, the small deviations from
 what I approved", and ruled that a detail or a better wording inside a ruling needs no report.
 
-**A milestone document holding the design of every step, with step specs holding only their entry**
+**A milestone document holding the design of every slice, with slice specs holding only their entry**
 — lost to `design@agent-skills@milestone-is-a-directory`. `live`. It kept the whole design in one
 place to read. It lost to a measurement: the first milestone written that way, structured-plans,
-had a README of 1,624 lines when it left, read whole at the grounding of every step. That cannot be
+had a README of 1,624 lines when it left, read whole at the grounding of every slice. That cannot be
 derived again in one discussion round.
 
 **A line in the primer that sends a decision met during another task to the design skill** — lost
@@ -102,3 +102,11 @@ sees every entry beside every other, where a group sees only its own.
 `live`. An anchor bounds nothing: in thaum at its commit ef21314, one Component holds 51.9% of the
 bytes of the standing entries, measured with `git ls-files` over the issue entry files and the
 tripwires homes and `wc -c`, summed by the anchor that holds each file.
+
+**A design audit for the work of every spec, as for every slice** — lost to
+`design@agent-skills@spec-work-procedure`. `live`. A spec implemented by the session that wrote
+it, on a main branch with no other commit since, gives an audit nothing to find, in the owner's
+judgement. It is kept here because a doubt remains: the owner chose to watch that premise with
+`tripwire@agent-skills@spec-audit-skipped-on-a-moved-base`, and this alternative is the first
+candidate if it fires.
+

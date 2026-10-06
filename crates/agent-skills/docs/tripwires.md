@@ -73,8 +73,9 @@ session's own record against the message.
 ## Guarding `design@agent-skills@standing-entries-searched-before-the-work`: an entry the work bears on that no search before the work returned `##search-missed-before-the-work`
 
 The decision rests on the premise that a search at the grounding of a design discussion and at the
-design audit of a milestone step meets the standing entries a piece of work bears on before the
-work. A spec has no audit, and an entry can be added after the grounding's search.
+design audit of a milestone slice, or of a spec where its audit runs, meets the standing entries a
+piece of work bears on before the work. A spec implemented by the session that wrote it, on an
+unmoved main branch, has no audit, and an entry can be added after the grounding's search.
 
 **Fires when:** across sessions, 2 standing-state reviews report a standing entry the work bears
 on, which no search before the work returned.
@@ -102,10 +103,11 @@ skill that would host a search before undesigned work.
 ## Guarding `design@agent-skills@spec-work-procedure`: a spec's work skipped its audit while what it relied on had changed `##spec-audit-skipped-on-a-moved-base`
 
 The decision rests on the premise that a spec implemented by the session that wrote it, on a main
-branch with no commit since the spec, has nothing for an audit to find.
+branch with no commit since the spec other than its own, has nothing for an audit to find.
 
-**Fires when:** a review finds that a spec's work skipped its design audit, and an entry or a
-decided shape the spec relied on had changed on the main branch since the spec was written.
+**Fires when:** a review finds, in the work of a spec that skipped its design audit as the rule
+allows, a gap an audit would have listed: a shape the tree refutes, a name the code does not have,
+or a standing entry the work bears on that the grounding did not meet.
 **Response:** open a `defect` naming the spec and the change, and reopen
 `design@agent-skills@spec-work-procedure` on the condition for the audit.
 **Re-entry:** the standing-state review before every merge: the spec, its commit and the main

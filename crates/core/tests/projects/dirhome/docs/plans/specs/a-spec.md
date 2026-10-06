@@ -1,6 +1,6 @@
 # A spec the mock plans
 
-It names its sibling milestone whole, `milestone@plans@a-milestone`, and that milestone's step,
+It names its sibling milestone whole, `milestone@plans@a-milestone`, and that milestone's slice,
 `spec@a-milestone@a-step`.
 
 ## Status and audience

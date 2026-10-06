@@ -31,15 +31,15 @@ None.
 
 ## Threads
 
-### The milestone has one step `##one-step`
+### The milestone has one slice `##one-slice`
 
 Approved, argued by `argument@a-milestone@a1`.
 
 ## Arguments
 
-### One step is enough for a mock `##a1`
+### One slice is enough for a mock `##a1`
 
-Bears on `thread@a-milestone@one-step`.
+Bears on `thread@a-milestone@one-slice`.
 
 ## New names, in one place
 

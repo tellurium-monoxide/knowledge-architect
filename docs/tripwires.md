@@ -9,10 +9,10 @@ this file when it fires. What is outstanding about the project is
 
 **Fires when:** a review finds a diff that turns a checked reference or a backticked path into
 plain text naming the same target, with no reference beside it to an issue entry that records a
-missing form; or a retrospective's answer to its question on unchecked pointers reports a pointer
+missing form; or a retrospective's answer to its question on references written without backticks reports a pointer
 written as bare plain text to clear a finding.
 **Response:** open a `defect` for the instance. At the second instance, reopen
 `design@knowledge-architect@plain-text-is-no-repair`, with a mechanical check for plain-text
 pointers among the candidates.
 **Re-entry:** the standing-state review, which reads every tripwire before a merge, and the
-retrospective's question on unchecked pointers, which reads the session.
+retrospective's question on references written without backticks, which reads the session.

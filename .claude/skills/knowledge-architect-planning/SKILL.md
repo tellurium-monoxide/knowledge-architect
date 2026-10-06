@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-planning
-description: MUST use when a design discussion has converged and its work needs a spec or a milestone, in the same session as the convergence; whenever a slice of a milestone is about to be implemented or lands; when the work of a spec lands; and before editing the roadmap. Covers the plan document vocabulary (spec, milestone, plans directory, roadmap), choosing between a spec and a milestone, the roadmap, the file layout and the fixed sections, plan items and their citations, assembly from the discussion's transcript, cutting the work into steps and slices, acceptance criteria, the design audit, the reviews of a plan document, the harvest, and the deletion that ends a plan document's life.
+description: MUST use when a design discussion has converged and its work needs a spec or a milestone, in the same session as the convergence; whenever a slice of a milestone is about to be implemented or lands; when the work of a spec starts or lands; and before editing the roadmap. Covers the plan document vocabulary (spec, milestone, plans directory, roadmap), choosing between a spec and a milestone, the roadmap, the file layout and the fixed sections, plan items and their citations, assembly from the discussion's transcript, cutting the work into steps and slices, acceptance criteria, the design audit, the reviews of a plan document, the harvest, and the deletion that ends a plan document's life.
 ---
 
 # Planning
@@ -156,7 +156,7 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 | How the work is done | in a milestone document: §7 of this skill, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
 | Names | every project shorthand the document uses, expanded to the file, function or command it names |
 | What the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
-| What is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `cargo klarch show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step or harvest that judges or updates each |
+| What is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `cargo klarch show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step, slice or harvest that judges or updates each |
 | Criteria | one item per criterion, ``### <criterion> `##<id>` ``: its kind, its source and its satisfaction |
 | Threads | one item per thread, ``### <resolution> `##<id>` ``: who proposed it and in which round, its final state, the arguments that moved it, the section that carries its shape, the durable home that will harvest it, and the owner's words that closed it, verbatim, with their round |
 | Arguments | one item per argument of the discussion, ``### <argument> `##a<n>` ``: its round, who gave it, the threads it bears on, and its key words verbatim |
@@ -167,7 +167,7 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 | Readings | where the work reads an external specification the project implements: each reading it makes, and where it is recorded. Empty for work that reads none |
 | Premortem | each cause, the thread it stresses, and its verdict: survives into a named claim, criterion or guard; converted into a named clause of the design; becomes a tripwire, on the owner's word; or fired and the thread reopened |
 | Acceptance criteria | one item per criterion, ``### <criterion> `##<id>` ``, as §6 says |
-| Implementation sequence | in a spec, its steps; in a milestone document, its slices, each linked to its spec (§5). Concise: what each builds and what it fails alone on |
+| Implementation sequence | in a spec, its steps; in a milestone document, its slices, each linked to its spec, whose own steps it holds (§5). Concise: what each builds and what it fails alone on |
 | Order rationale | one sentence per pair of adjacent steps or slices |
 | Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, with the thread it bears on, until the owner rules |
 | Harvest | what lands where and when. In a spec, its rows; in a milestone, each slice's row in that slice's spec, and the row of the milestone document itself in it |
@@ -179,7 +179,7 @@ document that held every slice's design would be read whole at every slice's gro
 with every slice the milestone has.
 
 - **A slice's spec leaves when its slice lands, so it holds what only that slice builds**: the slice's
-  entry (§5), then, in the sections above, the items of its own threads and the arguments only
+  entry (§5) and its steps, then, in the sections above, the items of its own threads and the arguments only
   they use, its decided design, its mapping tables, its losing alternatives, the acceptance
   criteria it judges and its harvest row. These sections are not ordered against the entry's.
 - **The milestone document holds what crosses slices or outlives one**: the status, how the work is
@@ -242,7 +242,8 @@ transcript, assemble from the conversation, and say so in the commit that adds t
 
 A step is one item of an implementation sequence. A spec's work is a sequence of steps on one
 branch. A milestone's work is a sequence of slices, each one branch and one PR with its own spec,
-and each slice a sequence of steps. The tests below hold for both, unless one names the slice.
+and each slice a sequence of steps. The tests below hold for the steps of a spec and of a slice,
+and for the slices of a milestone, unless one names the slice alone.
 
 **Each step must be able to fail without another step's new machinery entangled in the
 failure.** Every other test here serves that one.
@@ -263,6 +264,7 @@ failure.** Every other test here serves that one.
   commit of a branch, its tree and its message. On one branch, that gate as the work changes it would
   judge the commit that added the document, whose tree predates the change. A change that only a
   check of the working tree sees, and not the per-commit gate, does not count.
+
 A slice's entry is five level-two sections, with these titles, in this order, and
 `cargo klarch check` reports one missing or out of order. Fixtures, where it applies, sits between
 Claims and Audit subjects, and is not checked:
@@ -372,9 +374,10 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
        and owes §8's reviews.
 
      The slice resumes from the ruling or the converged design.
-3. **Claims, tests, implementation, gates, commit**, per the project's development procedure. The
-   commit names how each claim's test was shown to fail against a wrong implementation, and says
-   of any claim whose test cannot yet do so why not.
+3. **Claims, tests, implementation, gates, commits**, per the project's development procedure, in
+   as many commits as the session judges the work needs. The commits name how each claim's test was
+   shown to fail against a wrong implementation, and say of any claim whose test cannot yet do so
+   why not.
 4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
    or folded where that skill says. A finding not repaired becomes an issue entry.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this slice,
@@ -400,13 +403,18 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
 
 - point 1, the grounding;
 - point 2, the design audit, only when the work does not start in the session where the discussion
-  converged, or when commits have landed on the main branch since the spec was written. Otherwise
-  the session goes straight to the work, since the design was read against the tree as it stands;
-- point 3, for each step;
+  converged, or when commits other than the spec's own have landed on the main branch since the
+  spec was written. Otherwise the session goes straight to the work, since the design was read
+  against the tree as it stands;
+- point 3, the claims and checks of each step, in the commits the session judges right;
 - point 4, the review, once, before the merge;
 - points 5 and 6, the report and the harvest, in the commits that land the work, the harvest
   reviewed before the merge;
 - point 7, the deletion of the spec, in the commit that completes its harvest, as in §9.
+
+Where a point names the milestone document or the slice's spec, the work of a spec reads the spec:
+its defaults, its threads, its harvest row, and an audit's commit subject of the shape `The <spec>
+design audit, applied in place: …`.
 
 ## 8. Reviews of a plan document
 
@@ -423,7 +431,7 @@ discussion. **Fresh, never a fork**: a fork inherits the discussion and reads th
 author. Dispatch them through `knowledge-architect-review`, with the invariants that
 skill lists, the blind brief included:
 
-- `knowledge-architect-cold-implementer-reviewer` reads the document as the implementer of its first
+- `knowledge-architect-cold-implementer-reviewer` reads the document as the implementer of its work, or of a milestone's first
   step and reports every place where it cannot act: undefined names, shapes without enough detail
   to write, procedure gaps, ambiguities, and what it would have to reconstruct from a conversation
   it did not see. It also applies the readiness checks below.

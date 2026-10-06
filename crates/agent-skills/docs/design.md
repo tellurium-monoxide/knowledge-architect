@@ -212,9 +212,9 @@ instruction that needs that unit to vary, and the session is left with two instr
 both obey, and less room to work on its own. So the installed text imposes no structure the work
 does not need, per `goal@agent-skills@installed-text-leaves-room-to-judge`, which gives this
 argument a goal's weight, and a contradiction a structure causes is answered by removing structure
-rather than by adding a rule. In the discussion that named a milestone's part a slice, naming a
-spec's items as commits, one step to one commit, lost on this argument: the primer asks a fix met
-outside the task to take a commit of its own, which a plan's fixed list of commits would contradict.
+rather than by adding a rule. An instance: a plan whose steps are its commits meets the primer's
+instruction that a fix met outside the task takes a commit of its own, which is why a spec's steps
+are no unit of the history, per `design@agent-skills@document-vocabulary`.
 
 ### An installed skill's scope is bounded by a stated expectation set, which the retrospective carries `##expectation-set-bounds-scope`
 
@@ -433,9 +433,9 @@ document and a kind of document at once. The words follow common usage among dev
 owner made binding: a milestone groups the work toward one goal, as GitLab's milestones do, and a
 spec says what will be built and how before the code exists, in the sense engineering teams give
 the word. "Design doc", the closest common term, lost because "design" already names the durable
-register. "Step" once named both a milestone's part and an item of a spec's sequence, so a rule for
-the one, one branch and one merge per step, contradicted the other, a spec of several steps on one
-branch. The milestone's part takes its own word, slice, a part of the larger whole, and "step"
+register. One word for both a milestone's part and an item of a spec's sequence lets a rule for
+the one, one branch and one merge per part, contradict the other, a spec of several steps on one
+branch. So the milestone's part takes its own word, slice, a part of the larger whole, and "step"
 keeps the general sense it has in common usage and in the design skill's loop. Naming a spec's
 items by a unit of the history instead, one step to one commit, lost: it fixes the plan onto the
 history, against `goal@agent-skills@installed-text-leaves-room-to-judge`, and a commit the work
@@ -484,14 +484,13 @@ The work of a spec, on its one branch, takes the points of the installed plannin
 for a slice once: the grounding, the claims and checks of each step, one review before the merge,
 the report and the harvest in the commits that land the work, and the deletion of the spec in the
 commit that completes its harvest. Its design audit runs only when the work does not start in the
-session where the discussion converged, or when commits have landed on the main branch since the
-spec was written. An audit reads the design against the tree as it stands and recovers what a
+session where the discussion converged, or when commits other than the spec's own have landed on
+the main branch since the spec was written. An audit reads the design against the tree as it stands and recovers what a
 session that did not witness the discussion lacks; a spec implemented by the session that wrote it,
-on an unmoved main branch, gives it nothing to find, in the owner's judgement. Before this rule, the
-skill said a spec's step is worked "per §7", a procedure written for one branch and one review per
-step, and a spec of several steps on one branch could not tell which points applied to which
-commit; the rival, an audit for every spec as for every slice, costs a reading with nothing to
-find.
+on an unmoved main branch, gives it nothing to find, in the owner's judgement. Without a stated
+procedure, a spec of several steps on one branch cannot tell which points of a slice's procedure
+apply to which part of its work. The rival, an audit for every spec as for every slice, costs a
+reading with nothing to find.
 ### A plan document leaves when its work lands `##spec-leaves-at-landing`
 
 A plan document is deleted in the commit that completes its last harvest, and that commit's message
@@ -623,7 +622,7 @@ check of the working tree sees, such as installed text that the checker compares
 tree alone, leaves the per-commit gate unchanged and is outside this rule. Keeping both on one branch would force
 the fix the owner called absurd: the plan document committed after the work it plans. So that work
 begins on a branch of its own, after the document is merged. This holds for a spec as for a milestone document, whose slice
-that changes the gates is the one this rule meets, per
+that changes what the per-commit gate checks is the one this rule meets, per
 `design@agent-skills@plan-landing-is-not-tied-to-its-work`.
 
 ### Undesigned work is an issue `##planned-work-is-an-issue`

@@ -28,7 +28,7 @@ the discussion at which it is raised again", with no fixed subsection name. In t
 above, and `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`,
 whose re-entry is a discussion raised on the owner's word.
 
-The search agent, at the grounding of a discussion and at a step's audit, reads every issue whole,
+The search agent, at the grounding of a discussion and at the audit of a slice or of a spec, reads every issue whole,
 so a design issue's re-entry point is read before designed or planned work. Work that is neither
 designed nor planned meets it at no step.
 

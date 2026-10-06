@@ -666,7 +666,7 @@ mod tests {
         found.extend(check(&model, manifest, &inputs).0);
         found
             .iter()
-            .map(|f| format!("{}  {}", f.location(), f.what))
+            .map(|f| format!("{}  {}  → {}", f.location(), f.what, f.action))
             .collect()
     }
 
@@ -1416,7 +1416,7 @@ mod tests {
                 ],
                 vec![],
                 "docs/plans/milestones/m/sub",
-                "is a subdirectory of a milestone",
+                "one file per slice",
             ),
         ] {
             let mut present = base();
@@ -1511,6 +1511,28 @@ mod tests {
                 && found[0].contains("level-two section `Names`"),
             "{found:#?}"
         );
+        // The second section is titled as written here, not as the constant says: a spec that
+        // keeps the title it had before the rename, or writes it in another case, owes it. The
+        // literal is what a document must hold, so deleting the title from the list fails here.
+        for written in ["How a step is worked", "How the Work is Done"] {
+            let renamed: Vec<&str> = PLAN_SECTIONS
+                .iter()
+                .map(|s| {
+                    if *s == "How the work is done" {
+                        written
+                    } else {
+                        *s
+                    }
+                })
+                .collect();
+            let found = run(docs(&renamed, &SLICE_SECTIONS));
+            assert_eq!(found.len(), 1, "{written}: {found:#?}");
+            assert!(
+                found[0].starts_with("docs/plans/specs/s.md")
+                    && found[0].contains("level-two section `How the work is done`"),
+                "{written}: {found:#?}"
+            );
+        }
         // A slice spec holding the plan sections but none of its own owes each of its own.
         let found = run(docs(&PLAN_SECTIONS, &PLAN_SECTIONS));
         assert_eq!(found.len(), SLICE_SECTIONS.len(), "{found:#?}");
@@ -1613,7 +1635,7 @@ mod tests {
         };
         crate::check::tree::check(&Model::from_documents(Vec::new()), manifest, &inputs)
             .iter()
-            .map(|f| format!("{}  {}", f.location(), f.what))
+            .map(|f| format!("{}  {}  → {}", f.location(), f.what, f.action))
             .collect()
     }
 
