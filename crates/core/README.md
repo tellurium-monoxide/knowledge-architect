@@ -323,8 +323,8 @@ refused. It holds three things and nothing else:
 | docs/plans/milestones/ | the `milestone` register: one directory `<id>/` per milestone, beside a hand-written `README.md` and a generated `index.md` |
 
 **Each milestone directory is an anchor of its own**, named by its basename. Its `README.md` is the
-milestone document, its `index.md` is generated and lists its steps, and every other `.md` file in
-it is the spec of one step. A directory under milestones/ with no `README.md` is a finding. **Each
+milestone document, its `index.md` is generated and lists its slices, and every other `.md` file in
+it is the spec of one slice. A directory under milestones/ with no `README.md` is a finding. **Each
 spec file is an anchor too**, named by its id, and stays an entry of the `spec` register of
 `plans`.
 
@@ -332,13 +332,13 @@ spec file is an anchor too**, named by its id, and stays an entry of the `spec` 
 Status and audience, How the work is done, Names, What the work is, What is already decided,
 Criteria, Threads, Arguments, "New names, in one place", Decided design, Mapping tables, Losing
 alternatives, Readings, Premortem, Acceptance criteria, Implementation sequence, Order rationale,
-Defaults awaiting the owner, Harvest, Later consequences. A step spec owes Builds, Claims, Audit
+Defaults awaiting the owner, Harvest, Later consequences. A slice spec owes Builds, Claims, Audit
 subjects, Fails alone on, Premises that expire.
 
 **A plan's items are headings of four of those sections.** A level-three heading ending with its
 slug, `### <statement> ##<id>`, under Threads, Arguments, Criteria or Acceptance criteria, defines
 an item of the kind `thread`, `argument`, `criterion` or `acceptance`, in the plan's anchor: the
-spec, or the milestone, whose README and step specs share one namespace. Every level-three heading
+spec, or the milestone, whose README and slice specs share one namespace. Every level-three heading
 of those sections carries a slug; a slug anywhere else in a plan defines nothing. An item is cited
 `<kind>@<plan>@<id>`, from inside its own plan only: a citation from outside it, a commit message
 included, is refused, and the finding names the whole-document form.
@@ -348,7 +348,7 @@ included, is refused, and the finding names the whole-document form.
 ```text
 spec@plans@<id>               a spec, docs/plans/specs/<id>.md
 milestone@plans@<id>          a milestone, docs/plans/milestones/<id>/
-spec@<milestone>@<step>       a step spec, docs/plans/milestones/<milestone>/<step>.md
+spec@<milestone>@<slice>      a slice spec, docs/plans/milestones/<milestone>/<slice>.md
 ```
 
 A `path` citation of a plan document is refused, and the finding names the form above. The
@@ -370,7 +370,7 @@ A tree that breaks this layout stops the run at phase 2, except a home's missing
 duplicated item stops it at phase 3, and a missing section is a finding of the last phase. The arguments are
 `design@core@plan-register`, `design@core@plans-split-dirs`, `design@core@plan-document-kinds`,
 `design@core@a-plan-name-reads-as-nothing-else`, `design@core@spec-file-owns-its-items`,
-`design@core@step-spec-sections`, `design@core@plan-items-by-section` and
+`design@core@slice-spec-sections`, `design@core@plan-items-by-section` and
 `design@core@plan-item-scope`.
 
 ## Commit messages

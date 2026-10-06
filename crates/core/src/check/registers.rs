@@ -384,7 +384,7 @@ fn is_entry(rel: &Path, home: &Home) -> bool {
 /// One entry: its frontmatter, its title, its sections and the subsections its kind owes.
 ///
 /// `sections` are the level-two sections the entry owes at its anchor, per
-/// `Anchor::sections_of`: a register's own, or a step spec's.
+/// `Anchor::sections_of`: a register's own, or a slice spec's.
 fn entry(out: &mut Vec<Finding>, register: &Register, sections: &[String], doc: &Document) {
     let declared: Vec<&str> = register.metadata.iter().map(|(k, _)| k.as_str()).collect();
     let mut values: BTreeMap<&str, &str> = BTreeMap::new();
@@ -1455,13 +1455,13 @@ mod tests {
     }
 
     /// The claim: a spec of specs/ and a milestone's README owe the plan sections in order, and
-    /// a step spec owes the step sections, each missing one a finding naming the list.
-    /// Mutation checked: a step spec checked against the plan sections.
+    /// a slice spec owes the slice sections, each missing one a finding naming the list.
+    /// Mutation checked: a slice spec checked against the plan sections.
     #[test]
     fn a_plan_document_owes_the_sections_of_its_kind() {
-        use crate::manifest::{PLAN_SECTIONS, STEP_SECTIONS};
+        use crate::manifest::{PLAN_SECTIONS, SLICE_SECTIONS};
         let manifest = declaring("");
-        let docs = |spec_sections: &[&str], step_sections: &[&str]| {
+        let docs = |spec_sections: &[&str], slice_sections: &[&str]| {
             vec![
                 (
                     "docs/plans/specs/s.md".to_string(),
@@ -1473,7 +1473,7 @@ mod tests {
                 ),
                 (
                     "docs/plans/milestones/m/a-step.md".to_string(),
-                    with_sections("A step", step_sections),
+                    with_sections("A slice", slice_sections),
                 ),
             ]
         };
@@ -1498,22 +1498,22 @@ mod tests {
                 .filter(|f| !f.contains("generated"))
                 .collect::<Vec<String>>()
         };
-        assert!(run(docs(&PLAN_SECTIONS, &STEP_SECTIONS)).is_empty());
+        assert!(run(docs(&PLAN_SECTIONS, &SLICE_SECTIONS)).is_empty());
         let without_names: Vec<&str> = PLAN_SECTIONS
             .iter()
             .copied()
             .filter(|s| *s != "Names")
             .collect();
-        let found = run(docs(&without_names, &STEP_SECTIONS));
+        let found = run(docs(&without_names, &SLICE_SECTIONS));
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
             found[0].starts_with("docs/plans/specs/s.md")
                 && found[0].contains("level-two section `Names`"),
             "{found:#?}"
         );
-        // A step spec holding the plan sections but none of its own owes each of its own.
+        // A slice spec holding the plan sections but none of its own owes each of its own.
         let found = run(docs(&PLAN_SECTIONS, &PLAN_SECTIONS));
-        assert_eq!(found.len(), STEP_SECTIONS.len(), "{found:#?}");
+        assert_eq!(found.len(), SLICE_SECTIONS.len(), "{found:#?}");
         assert!(found
             .iter()
             .all(|f| f.starts_with("docs/plans/milestones/m/a-step.md")));

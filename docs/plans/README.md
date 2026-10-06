@@ -8,8 +8,8 @@ else:
   cited `spec@plans@<id>`;
 - [milestones/](milestones/README.md): one directory per milestone, work across several pull
   requests, cited `milestone@plans@<id>`. Its `README.md` is the milestone document, its
-  `index.md` is the generated listing of its steps, and each other file in it is the spec of one
-  step, cited `spec@<milestone>@<step>`.
+  `index.md` is the generated listing of its slices, and each other file in it is the spec of one
+  slice, cited `spec@<milestone>@<slice>`.
 
 A plan document may land before its work starts, and leaves in the commit that completes its last
 harvest. The procedure is the

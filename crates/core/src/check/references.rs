@@ -574,7 +574,7 @@ fn anchored_target(
             line,
             format!("`{span}` names the milestone `{name}`, which carries no path kind"),
             format!(
-                "cite a step spec as `spec@{name}@<step>`, the milestone document as \
+                "cite a slice spec as `spec@{name}@<slice>`, the milestone document as \
                      `milestone@{PLANS_ANCHOR}@{name}`, and from inside it its items as \
                      `<kind>@{name}@<id>`; a plan document has one name, so `show` finds \
                      every citation of it"
@@ -764,7 +764,7 @@ fn in_plans_directory(rel: &Path, anchors: &Anchors) -> bool {
 /// A plan document is a spec file of `specs/`, a milestone directory, or a file inside a
 /// milestone directory, per `design@core@plan-document-kinds`. The README and the index of the plans
 /// directory and of its two homes are not plan documents, and are cited by path. Judged by
-/// where the target sits, not by whether it exists: a path to a deleted step spec gets the same
+/// where the target sits, not by whether it exists: a path to a deleted slice spec gets the same
 /// repair as one to a present one.
 fn plan_document(anchors: &Anchors, target: &Path) -> Option<String> {
     use crate::manifest::{MILESTONES_HOME, SPECS_HOME};
@@ -780,14 +780,14 @@ fn plan_document(anchors: &Anchors, target: &Path) -> Option<String> {
         // The first segment names a milestone only in the id grammar: a directory of another
         // name is no milestone, and its finding is phase 2's.
         let m = parts.first().filter(|m| entity::is_entity_id(m))?;
-        let step = match parts.as_slice() {
+        let slice = match parts.as_slice() {
             [_, file] => file
                 .strip_suffix(".md")
                 .filter(|s| *s != "README" && *s != "index"),
             _ => None,
         };
-        return Some(match step {
-            Some(step) => format!("spec@{m}@{step}"),
+        return Some(match slice {
+            Some(slice) => format!("spec@{m}@{slice}"),
             None => format!("milestone@{PLANS_ANCHOR}@{m}"),
         });
     }
@@ -1180,9 +1180,9 @@ mod tests {
         );
     }
 
-    /// The claim: a spec of `specs/`, a milestone and a step spec each resolve by their kind,
+    /// The claim: a spec of `specs/`, a milestone and a slice spec each resolve by their kind,
     /// each in its own anchor, and an absent id in each is the ordinary dangling finding.
-    /// Mutation checked: `file_definitions` filing a milestone's step specs under `plans`.
+    /// Mutation checked: `file_definitions` filing a milestone's slice specs under `plans`.
     #[test]
     fn the_plan_kinds_resolve_each_in_its_own_anchor() {
         let m = manifest();
@@ -1213,8 +1213,8 @@ mod tests {
             .any(|f| f.contains("`m` defines no spec `none`")));
     }
 
-    /// The claim: the repair a refused plan citation names is the form that resolves for each position: a step for
-    /// a step spec, the milestone for its README, its index or anything deeper, a spec for a
+    /// The claim: the repair a refused plan citation names is the form that resolves for each position: a slice for
+    /// a slice spec, the milestone for its README, its index or anything deeper, a spec for a
     /// spec, and nothing for a navigation file. Mutations checked: the README and index filter,
     /// and the one-segment test, each removed from `plan_document`.
     #[test]
@@ -1351,7 +1351,7 @@ mod tests {
         assert_eq!(found.len(), 4, "{found:#?}");
     }
 
-    /// The claim: an item a step spec defines, cited from outside its milestone, gets the step
+    /// The claim: an item a slice spec defines, cited from outside its milestone, gets the slice
     /// spec as the whole-document form; one the README defines gets the milestone. Mutation
     /// checked: the milestone form for every item of a milestone.
     #[test]
@@ -1408,7 +1408,7 @@ mod tests {
     }
 
     /// The claim: a plan document is judged by where it sits, not by whether it exists, so a
-    /// citation of a deleted milestone or of a deleted step gets the kind form too. Mutation
+    /// citation of a deleted milestone or of a deleted slice gets the kind form too. Mutation
     /// checked: `plan_document` asking the owning anchor, which a deleted milestone no longer is.
     #[test]
     fn a_deleted_plan_document_cited_by_its_path_gets_the_kind_form() {

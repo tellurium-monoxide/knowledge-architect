@@ -423,7 +423,7 @@ mod planted {
         // component, a generic pointer nothing carries, a dangling tripwire reference, a link
         // outside a navigation home, and the retired `@` escape with its empty head. Then the
         // five refusals of the plans layout, in notes/plans.md: a spec, a milestone directory,
-        // a step spec cited by path, a milestone named as a path's anchor, and a pointer from
+        // a slice spec cited by path, a milestone named as a path's anchor, and a pointer from
         // the root reaching inside `plans`.
         // And an item of a plan cited from outside it, which the scoped resolution refuses.
         ("references", 23, "is referenced"),
@@ -578,7 +578,7 @@ mod planted {
             what.contains("names the milestone `m-one`, which carries no path kind"),
             "{what}"
         );
-        assert!(action.contains("`spec@m-one@<step>`"), "{action}");
+        assert!(action.contains("`spec@m-one@<slice>`"), "{action}");
         let (what, _) = at(10);
         assert!(what.contains("reaches inside the anchor `plans`"), "{what}");
         // An item of a plan cited from outside it is refused, and the repair cites the plan whole.
@@ -921,7 +921,7 @@ mod unsound {
         assert!(inline.starts_with("notes/structure.md:5"), "{inline}");
         assert!(one_of(&all, "cannot be an entry id").starts_with("docs/open-issues/Not_An_Id.md"));
         // A plan's items: a slug outside its item sections, and one id defined in a milestone's
-        // README and in its step spec, which share one namespace.
+        // README and in its slice spec, which share one namespace.
         assert!(
             one_of(&all, "`##not-an-item` is written outside the item sections")
                 .starts_with("docs/plans/milestones/defective/README.md")

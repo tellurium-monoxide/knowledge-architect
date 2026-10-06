@@ -62,7 +62,7 @@ pub(crate) const ISSUE_REGISTER: &str = "issue";
 /// reference spells in kind position.
 pub(crate) const TRIPWIRE_REGISTER: &str = "tripwire";
 
-/// The built-in register of plan documents: a spec file, or a step spec inside a milestone.
+/// The built-in register of plan documents: a spec file, or a slice spec inside a milestone.
 pub(crate) const SPEC_REGISTER: &str = "spec";
 
 /// The built-in register of milestones, whose entries are directories.
@@ -131,10 +131,10 @@ pub(crate) const PLAN_SECTIONS: [&str; 20] = [
     "Later consequences",
 ];
 
-/// The level-two sections a step spec owes, in order. A step's fixtures are owed only where the
+/// The level-two sections a slice spec owes, in order. A slice's fixtures are owed only where the
 /// Component drives its tests with authored content, which no check can read, so they are not
 /// checked.
-pub(crate) const STEP_SECTIONS: [&str; 5] = [
+pub(crate) const SLICE_SECTIONS: [&str; 5] = [
     "Builds",
     "Claims",
     "Audit subjects",
@@ -285,7 +285,7 @@ impl Registers {
             },
         ];
         // The plan registers are opt-in: the anchors the tool constructs name them, and no
-        // declared anchor may. A plan document owes the plan sections; a step spec owes its own
+        // declared anchor may. A plan document owes the plan sections; a slice spec owes its own
         // list, which `Anchor::sections_of` gives at a milestone anchor.
         out.push(plan(SPEC_REGISTER, Shape::File, SPECS_HOME, None));
         out.push(plan(

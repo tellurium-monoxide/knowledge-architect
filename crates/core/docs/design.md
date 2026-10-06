@@ -613,8 +613,8 @@ in every respect but the one its layout fixes:
   homes.
 - **One anchor per milestone**: each directory of `path@plans@milestones/` holding a file
   `README.md`, named by its basename, per `design@core@plan-document-kinds`. Its `spec` register
-  has its home at the anchor's own path, so its step specs sit beside the milestone
-  document and are cited `spec@<milestone>@<step>`, unique only inside the milestone. It carries
+  has its home at the anchor's own path, so its slice specs sit beside the milestone
+  document and are cited `spec@<milestone>@<slice>`, unique only inside the milestone. It carries
   no `path` kind. A directory whose name `design@core@a-plan-name-reads-as-nothing-else` refuses
   is no anchor. It carries the four item registers, per `design@core@plan-items-by-section`.
 - **One anchor per spec**: each spec file of specs/, grouped or not, named by its id, per
@@ -636,7 +636,7 @@ holds, per `goal@knowledge-architect@design-is-recorded-with-its-arguments`. The
 as anchors and registers, so a citation of a plan is checked like any other, per
 `goal@knowledge-architect@documentation-stays-consistent`: the tool constructs the anchor `plans`,
 carrying two built-in registers, `spec` and `milestone`, that no project declares. `spec` is
-also carried by each milestone anchor, for its step specs, per
+also carried by each milestone anchor, for its slice specs, per
 `design@core@anchors-are-components-and-locations`; no other anchor carries either. Inside each
 plan, its threads, arguments, criteria and acceptance criteria are items, cited and checked like
 any entry, per `design@core@plan-items-by-section`, so the record of a discussion is checked
@@ -669,11 +669,11 @@ of register, where two registers reuse the File shape and add one entry shape. A
 directly under docs/plans/ is a phase-2 finding, so a plan document always sits in a home and is
 always listed.
 
-### A plan document is cited by its kind, `spec` or `milestone`, and a step spec in its milestone's anchor `##plan-document-kinds`
+### A plan document is cited by its kind, `spec` or `milestone`, and a slice spec in its milestone's anchor `##plan-document-kinds`
 
 A spec is `spec@plans@<id>` and a milestone `milestone@plans@<id>`. Each milestone directory is an
-anchor carrying `spec` for its step specs, `spec@<milestone>@<step>`, so a step's name need only
-be unique inside its milestone, and two milestones may each have a step called `harvest`. The
+anchor carrying `spec` for its slice specs, `spec@<milestone>@<slice>`, so a slice's name need only
+be unique inside its milestone, and two milestones may each have a slice called `harvest`. The
 `milestone` register's entries are directories because each is an anchor, per
 `design@core@a-file-register-is-a-directory-of-entries`. A `path` citation of a plan document is
 refused, per `design@core@every-path-names-its-anchor`: with two names for one document,
@@ -696,7 +696,7 @@ A plan document's threads, arguments, criteria and acceptance criteria are items
 heading ending with its slug, `### <statement> ##<id>`, under the level-two section Threads,
 Arguments, Criteria or Acceptance criteria, defines an item of the kind `thread`, `argument`,
 `criterion` or `acceptance`, in the plan anchor that owns the document. A milestone's README and
-its step specs share one namespace, so an id defined in two of them is the duplicate finding.
+its slice specs share one namespace, so an id defined in two of them is the duplicate finding.
 Every level-three heading of those four sections owes a slug; any other level-three heading of a
 plan document is section text, and a slug anywhere else in it defines nothing. Items need a model
 of their own because a heading register has one home file per anchor and one level, where a plan
@@ -710,7 +710,7 @@ shorter than the root anchor and a compound id by the root anchor's name and one
 resolves only
 from a file inside the plan: the spec file, or a file of the milestone's directory. From anywhere
 else, a commit message included, it is refused before its id is looked up, and the repair names
-the document to cite whole: the spec, the milestone, or the step spec that defines the item. A
+the document to cite whole: the spec, the milestone, or the slice spec that defines the item. A
 whole plan may be cited from anywhere, so a dependency between plans is carried by the document,
 and retiring a plan asks no other plan to be redesigned item by item. The premise is that a
 whole-document citation carries every dependency between plans that matters while few plans are
@@ -744,15 +744,15 @@ path. An anchor that owns nothing, with an item scope found apart from ownership
 it gives a document two notions of its anchor and items two code paths. Making every spec a
 directory was the other; it reopens the decision that a spec is one file.
 
-### A plan document owes the sections of its kind, and a step spec owes its own `##step-spec-sections`
+### A plan document owes the sections of its kind, and a slice spec owes its own `##slice-spec-sections`
 
 A spec of specs/ and a milestone's README owe the plan sections, in order, with Arguments right
 after Threads, matched as the documents write them: Status and audience, How the work is done,
 Names, What the work is, What is already decided, Criteria, Threads, Arguments, "New names, in one
 place", Decided design, Mapping tables, Losing alternatives, Readings, Premortem, Acceptance
 criteria, Implementation sequence, Order rationale, Defaults awaiting the owner, Harvest, Later
-consequences. A step spec owes Builds, Claims, Audit subjects, Fails alone on and Premises that
-expire, in order; the plan sections a step spec holds, for the design only its step builds, are
+consequences. A slice spec owes Builds, Claims, Audit subjects, Fails alone on and Premises that
+expire, in order; the plan sections a slice spec holds, for the design only its slice builds, are
 not ordered against them. Fixtures is owed only where a Component drives its tests with authored
 content, a condition no check can read, so it is not checked. One `spec` register owes two lists,
 and `Anchor::sections_of` gives the list at each anchor, as `Anchor::home_of` gives the home.
@@ -891,7 +891,7 @@ document and owes a level-one title. Nothing else sits in the home, and no entry
 anchors read off the tree. An entry is defined at its `README.md`, and only while the walk reads
 that file, as a File entry the walk leaves out defines nothing. The shape exists because the owner
 asked to cite a milestone as `milestone@plans@<id>`, and a milestone is a directory: a File entry
-is one file and could hold no step specs. Citing the milestone by a path to its README would have
+is one file and could hold no slice specs. Citing the milestone by a path to its README would have
 needed no new shape, and was set aside for that request.
 
 **The issue register's kind list is closed.** An unknown kind is a finding naming the list, and
@@ -1306,7 +1306,7 @@ reference that names a location, which a move is expected to break.
 `design@core@plan-document-kinds`. A
 `path` citation of a spec, of a milestone directory or of a file inside one is refused from every
 anchor, and the finding names the form that resolves: `spec@plans@<id>`, `milestone@plans@<id>`
-or `spec@<milestone>@<step>`. It is judged by where the target sits, before the deepest-anchor
+or `spec@<milestone>@<slice>`. It is judged by where the target sits, before the deepest-anchor
 rule and whether or not it exists, so a citation of a deleted plan gets the same repair. This
 overrides the ancestor's spelling of an anchor's own directory for a milestone. A plan anchor, a
 milestone or a spec, carries no `path` kind. One name per document is what keeps `show` complete: a citation written as a path
