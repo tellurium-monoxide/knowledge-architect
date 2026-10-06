@@ -35,8 +35,10 @@ costs, without re-deriving the argument or reversing a decision blind.
 The workflow covers setting up a project and its goals, design discussion, planning, recording
 decisions, tracking open issues, review, and a retrospective. It targets projects where agents do
 most of the development. It aims for fewer review rounds, less re-derivation of past arguments, and
-fewer decisions reversed by accident. Each part is an instruction an agent can follow without
-guessing, and no two parts contradict each other. Writing the code itself is left to each project.
+fewer decisions reversed by accident. Each instruction says what it asks plainly enough to
+follow without guessing what it means, and no two parts contradict each other. What no instruction
+covers is left to the agent's judgement on purpose, per
+`goal@agent-skills@installed-text-leaves-room-to-judge`. Writing the code itself is left to each project.
 
 ## The documentation structure and the workflow work together `##structure-and-workflow-work-together`
 
