@@ -400,7 +400,8 @@ skill lists, the blind brief included:
   everything the discussion established that must outlive it is in the document or has another
   durable outcome, and that no ruling of the owner is recorded wider, narrower or in another state
   than the owner gave it. Dispatch it on every assembled document, with the commit that adds the
-  document as its range, and name in its brief the transcript files the assembly read, with the
+  document as its range, and name in its brief the transcript files the assembly read, each found
+  by its opening message as the assembly says, with the
   message where the discussion begins in each. When no
   transcript exists, say so, and why, in the commit that adds the document.
 
