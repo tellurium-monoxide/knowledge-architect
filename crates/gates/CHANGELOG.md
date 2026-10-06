@@ -92,6 +92,18 @@ subsection is omitted.
   a decision is implemented or committed before it has run and the owner has ruled on its
   tripwires.
 
+- `agent-skills`, patch: a new installed agent, `knowledge-architect-standing-entry-searcher`,
+  searches the issues and tripwires a piece of work bears on. The design skill dispatches it at the
+  grounding of a discussion, and the planning skill at the design audit of a milestone step, one
+  agent per group of at most 60 entries, in parallel. The session reads whole each entry it
+  returns, where it read every issue and tripwire itself.
+- `agent-skills`, patch: the design audit of a milestone step reads issues of every kind the
+  step's code bears on, not only the deferred ones, and a step's grounding no longer reads the
+  Component's issues and tripwires.
+- `agent-skills`, patch: the standing-state reviewer reads every deferred issue's trigger against
+  the change before every merge, as it reads every tripwire, and reports a trigger the change
+  meets as a finding.
+
 ## 0.3.0
 
 ### Migration
