@@ -85,10 +85,11 @@ when convergence is proposed, before the premortem, among the candidates.
 `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`, on the
 owner's word: the evidence arises in the sessions of the projects that use the workflow.
 
-## Guarding `design@agent-skills@conformance-before-every-merge`: a deferred trigger met by undesigned work and found only at the review `##deferred-trigger-met-by-undesigned-work`
+## Guarding `design@agent-skills@standing-entries-searched-before-the-work`: a deferred trigger met by undesigned work and found only at the review `##deferred-trigger-met-by-undesigned-work`
 
-The decision rests on the premise that a deferred trigger met by work that is neither designed nor
-planned costs little when the review is the first to read it.
+The decision sends no search before work that is neither designed nor planned. It rests on the
+premise that a deferred trigger met by such work costs little when the review is the first to read
+it.
 
 **Fires when:** a second instance is recorded of a deferred trigger met by work that is neither
 designed nor planned, and found only at the standing-state review. The first was in thaum: a move

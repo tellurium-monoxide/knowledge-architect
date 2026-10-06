@@ -51,8 +51,8 @@ your last position in that order, both included.
 ## 2. Read every entry of your group
 
 For each entry of your group, run `{{command}} show <ref>`. Its first line is the reference, then
-the file and the line where the entry is defined; the entry follows, whole. Keep the file and the
-line of each entry, for step 3.
+the file and the line where the entry is defined; the entry follows, whole. Keep the file of each
+entry, for step 3.
 
 Read every entry of your group in full. Do not decide in advance, from a title, which entries are
 worth reading: a title does not show a tripwire's firing clause or a deferred issue's trigger.
@@ -65,7 +65,7 @@ line, a file and a line. Map each site to an entry of your group:
 | the site's file | the entry |
 | --- | --- |
 | the file of an issue entry of your group | that issue entry |
-| a tripwires home holding entries of your group | the entry of your group in that file whose definition line is the greatest one not after the site's line; none if every one comes after it |
+| a tripwires home holding entries of your group | read the file, and find the level-two heading nearest above the site's line: its slug names the entry. It counts only if that entry is in your group |
 | any other file | none of your group |
 
 **Every entry a seed reaches bears on the work**: it cites a decision or a goal the work names.

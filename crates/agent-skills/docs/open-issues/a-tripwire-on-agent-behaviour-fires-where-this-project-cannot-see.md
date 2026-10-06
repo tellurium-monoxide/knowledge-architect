@@ -76,7 +76,10 @@ this project, without requiring a manual edit of the questions the retrospective
 tripwire waits for this discussion on the owner's word,
 `tripwire@agent-skills@search-missed-before-the-work`. The owner's words, about that tripwire: "This waits for the session that discusses solving the issue
 a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see, whose plan is to make use of
-the retrospective skill to analyze other projects."
+the retrospective skill to analyze other projects." A second tripwire of the same class,
+`tripwire@agent-skills@deferred-trigger-met-by-undesigned-work`, waits for evidence that arises
+mostly in the sessions of projects that use the workflow; its re-entry is the design of a skill for
+bounded problems, which this repository holds.
 
 ### What would close it
 
