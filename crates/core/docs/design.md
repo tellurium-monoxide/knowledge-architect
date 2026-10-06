@@ -1327,9 +1327,7 @@ anchor, the refused shapes and the trailing-slash claim, and its one assertion i
 nothing else, so the commit that creates the file converts the reference by its kind word, and
 whether the plan still holds is that session's report to make. A target the ignore rules cover is
 not asserted, per `design@core@ignored-targets-are-not-asserted`. `*` and the escape anchor are
-refused: a planned path is in this tree, at one anchor. `show` on a planned reference resolves
-whether or not the target exists, says which, and lists the plans that cite it: the sites a
-conversion edits.
+refused: a planned path is in this tree, at one anchor.
 
 **It is legal in the plans directory alone**, since a plan document is the one place that
 describes unbuilt work, per `design@core@plan-register`. Elsewhere it is a finding that asks for

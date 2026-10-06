@@ -196,7 +196,14 @@ pub(crate) fn inbound(
                 id: i,
             } = candidate(span, anchors)
             {
-                if &k == kind && a == anchor && i == id {
+                // A path's id is compared without its trailing slash: `x` and `x/` name one
+                // target, and the slash is a kind claim the check judges.
+                let same = if kind.takes_a_path() {
+                    i.trim_end_matches('/') == id.trim_end_matches('/')
+                } else {
+                    i == id
+                };
+                if &k == kind && a == anchor && same {
                     out.push(Site {
                         file: doc.rel.clone(),
                         line: l.line,
