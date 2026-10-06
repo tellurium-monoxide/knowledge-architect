@@ -141,8 +141,11 @@ fn judge_message(
                 &other.inputs(),
                 Part::Lints,
             );
+            // A set, not a search of `lints`: a message holds as many lints as it has lines,
+            // and a search per lint made judging one quadratic in its length.
+            let mut seen: HashSet<Finding> = lints.iter().cloned().collect();
             for f in their_lints {
-                if !lints.contains(&f) {
+                if seen.insert(f.clone()) {
                     lints.push(f);
                 }
             }

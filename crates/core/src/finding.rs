@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 /// `what` states the defect and `action` states what to do about it. Both are required: a
 /// report that says only what is wrong makes every reader derive the same fix, and deriving
 /// it is where they disagree.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Finding {
     /// Repository-relative, so a finding reads the same from any working directory.
     pub file: PathBuf,

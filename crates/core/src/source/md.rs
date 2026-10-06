@@ -233,6 +233,10 @@ pub(crate) fn analyse(text: &str, prose: &Prose) -> Analysis {
         }
     }
 
+    // The parser hands spans over in document order, so this only makes the order that
+    // `Prose::is_code` relies on hold by construction rather than by the parser's habit.
+    code.sort_unstable();
+
     let last_line = prose.lines.last().copied().unwrap_or(1);
     let mut scopes = Vec::new();
     if heads.first().map(|h| h.2) != Some(1) {
@@ -431,6 +435,21 @@ mod tests {
         let (a, b) = p.prose[0].code[0];
         assert_eq!(&p.prose[0].text[a..b], "`path@a-project@docs/goals.md`");
         assert!(p.prose[0].is_code(a) && !p.prose[0].is_code(a - 1));
+    }
+
+    /// The claim: an offset is code exactly when one of the spans holds it, at every offset of
+    /// a text with spans on several lines, in a table and in a heading. Mutations checked: the
+    /// lookup's `<=` made `<`, and its end test dropped.
+    #[test]
+    fn an_offset_is_code_exactly_when_a_span_holds_it() {
+        let text = "# A `head`\n\n`a` b `cc` d\n\n| `e` | f |\n| --- | --- |\n| g | `hh` |\n\n\
+                    x `` ` `` y `z`\n";
+        let p = &parse(text).prose[0];
+        assert_eq!(p.code.len(), 7, "{:?}", p.code);
+        for offset in 0..=text.len() {
+            let holds = p.code.iter().any(|&(a, b)| a <= offset && offset < b);
+            assert_eq!(p.is_code(offset), holds, "offset {offset}");
+        }
     }
 
     #[test]

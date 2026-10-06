@@ -1644,6 +1644,27 @@ fn a_message_naming_the_file_its_commit_deletes_by_a_bare_path_is_a_finding() {
     assert!(!stdout.contains(&format!("commit {silent}:")), "{stdout}");
 }
 
+/// The claim: a lint both trees raise on one line is reported once, and a lint on another line
+/// is reported again. Mutation checked: the union of the two trees' lints made a plain extend.
+#[test]
+fn a_lint_both_trees_raise_is_reported_once() {
+    let history = History::new("commit-lint-once");
+    tiny_project(&history, false);
+    let base = history.commit("The project is created\n");
+    let sha =
+        history.commit("A subject line\n\nIt reads `docs/design.md`.\nAnd `docs/design.md`.\n");
+    let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    for line in [3, 4] {
+        let site = format!("commit {sha}:{line} ");
+        assert_eq!(
+            stdout.lines().filter(|l| l.contains(&site)).count(),
+            1,
+            "{stdout}"
+        );
+    }
+}
+
 /// The claim: in a message, a retired slug reference is a finding when its id is an entry of
 /// the project, and silent when it names nothing here.
 #[test]
