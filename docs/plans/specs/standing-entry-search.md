@@ -630,9 +630,9 @@ watching. I'd keep only the widened search one which we already discussed."
 ## New names, in one place
 
 ```text
-planned@agent-skills@content/agents/standing-entry-searcher.md
+path@agent-skills@content/agents/standing-entry-searcher.md
     the new installed agent; its frontmatter name is knowledge-architect-standing-entry-searcher
-planned@agent-config@agents/knowledge-architect-standing-entry-searcher.md
+path@agent-config@agents/knowledge-architect-standing-entry-searcher.md
     its installed copy in this repository, written by `cargo klarch install-agent-skills`
 ```
 
@@ -878,7 +878,7 @@ Assume the work shipped and thaum's reviews keep finding entries after the work.
      commit of the step's design audit, or for W3 the parent of thaum's commit 6e0da6e. The new
      agent exists only in this repository's branch, and the harness may not list an agent added
      during a session. So each search agent is dispatched as a general-purpose subagent, told to
-     follow the body of `planned@agent-skills@content/agents/standing-entry-searcher.md` as it
+     follow the body of `path@agent-skills@content/agents/standing-entry-searcher.md` as it
      stands on this branch, with `{{command}}` read as thaum's command, `cargo klarch`, run in the
      worktree with the build directory inside it. The dispatcher follows the agent's description,
      with the work stated as the step's spec or, for W3, as "move the pinned version of
@@ -908,7 +908,7 @@ skill or agent". Each changes what an agent is told to do, so it is a decision u
 `knowledge-architect-agent-configuration` §1: the decisions are the approved threads of this spec,
 and step 6 records them.
 
-1. **The search agent.** `planned@agent-skills@content/agents/standing-entry-searcher.md`, per
+1. **The search agent.** `path@agent-skills@content/agents/standing-entry-searcher.md`, per
    "The search agent", "How the dispatcher cuts the groups", "How a search agent reads", the
    mapping table "From a citing site to an entry" and "What a search agent returns", and its
    installed copy, with N = 60. Claims and checks:
