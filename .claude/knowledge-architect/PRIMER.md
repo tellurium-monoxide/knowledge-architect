@@ -88,6 +88,13 @@ leave the text unaffected is not written. A reference is one backticked span,
 `<kind>@<anchor>@<id>`; an illustration that must not resolve writes a placeholder in angle
 brackets. The checker reads Markdown and Rust source; a reference anywhere else is found by grep.
 
+**A finding is repaired in a form the checker judges, never by moving the pointer into plain
+text**: the right anchor, `path@elsewhere@<path>` for a path the tree does not hold, a placeholder,
+or a rewritten sentence. A pointer that no checked form expresses is written in plain text only
+beside a reference to an issue entry of this project that records the missing form. A gap of the
+checker itself gets that entry in this project's own register, since a reference cannot reach
+another project.
+
 ## The installed skills
 
 - `knowledge-architect-decision-recording`: a design decision has been made or reversed.

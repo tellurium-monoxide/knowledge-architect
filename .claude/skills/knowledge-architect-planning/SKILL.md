@@ -226,7 +226,9 @@ subagent that reads every transcript file the discussion spans, a resumed sessio
 extracts the delta tables, the owner's messages verbatim and the arguments; the design skill's
 per-round delta is the draft it reads. Where one argument ends and the next begins is decided at
 assembly, and the transcript reviewer of §8 checks that no argument was lost. The status section names the
-transcript files read, so that a reviewer reads the same ones. Where the harness keeps no
+transcript files read, so that a reviewer reads the same ones. Each file is found by the
+discussion's opening message, never by a session identifier, as `knowledge-architect-review` says.
+Where the harness keeps no
 transcript, assemble from the conversation, and say so in the commit that adds the document.
 
 ## 5. Cutting the steps
@@ -292,8 +294,8 @@ A number in a criterion is a threshold the owner sets. Until the owner has, it i
 default marked as the owner's to reset.
 
 - **At each landing**, the landing commit reports on every criterion judged there, one line each,
-  naming it as #<id>, since a commit message cites a plan only whole: the decision guarded, fired
-  or not, the evidence, the response taken.
+  naming it as #<id> beside a citation of the whole plan, since a commit message cites a plan only
+  whole: the decision guarded, fired or not, the evidence, the response taken.
 - **A criterion that fires** leaves the document at once, as an issue entry or a reopened decision,
   under `knowledge-architect-issue-tracking`.
 - **When the document leaves**, its last landing commit reports on every criterion once more. One
@@ -356,7 +358,7 @@ finds it there.
 4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
    or folded where that skill says. A finding not repaired becomes an issue entry.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this step,
-   by its identifier in plain text (§6).
+   by its identifier in plain text, beside a citation of the milestone document (§6).
 6. **The harvest**, per the harvest row of the step's spec: the decisions and the losing
    alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
    under `knowledge-architect-issue-tracking`. The row names what is judged; the tests of

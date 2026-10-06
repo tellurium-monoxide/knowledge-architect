@@ -657,11 +657,12 @@ branch, after every other axis has run and its repairs are committed, over the w
 transcripts of every session that worked on it. The findings of the other axes reach the session as
 messages of its transcript, so only a reviewer reading it after their repairs can tell whether each
 was acted on durably, per `goal@knowledge-architect@design-is-recorded-with-its-arguments`. Its own
-repairs land as a last commit. A last commit that only corrects is reviewed by no axis again, so
-the review ends. A last commit that makes or reverses a decision is reviewed by the decision-record
-axis at least, and the review ends with that review's repairs: otherwise a decision taken in
-answer to the transcript review reaches the main branch with no review of its record, against the
-same goal.
+repairs land as additional commits, as many as their kinds need: a repair that the primer routes to
+a commit of its own stays one, and nothing asks the dispatcher to merge them into a single commit.
+An additional commit that only corrects is reviewed by no axis again, so the review ends. One that
+makes or reverses a decision is reviewed by the decision-record axis at least, and the review ends
+with that review's repairs: otherwise a decision taken in answer to the transcript review reaches
+the main branch with no review of its record, against the same goal.
 
 ## The configuration a project holds
 
@@ -920,13 +921,19 @@ that it is useful to a project adopting the workflow, whose problems may come fr
 instructions and from their interaction with the installed ones as well, per
 `goal@knowledge-architect@the-workflow-improves-through-real-use`.
 
-### A retrospective asks three standing questions, on the decisions they watch `##premortem-as-watch-points`
+### A retrospective asks standing questions, each on the decisions it watches `##premortem-as-watch-points`
 
 Every retrospective asks whether the session needed to change an installed skill or agent, whether the
-primer reached the session and its subagents, and whether a project skill's addition was missed.
-Each watches a decision whose failure would be seen in real sessions before any check could see it:
+primer reached the session and its subagents, whether a project skill's addition was missed, and
+whether the session needed a pointer that no checked form expresses. Each watches a decision whose
+failure would be seen in real sessions before any check could see it:
 `design@agent-skills@overlay-by-separate-skills`, the primer's delivery by an import line in
-`design@core@owned-namespace-check`, and `design@agent-skills@routing-table-shape`.
+`design@core@owned-namespace-check`, `design@agent-skills@routing-table-shape`, and
+`design@knowledge-architect@plain-text-is-no-repair` with
+`design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`. The last question is the
+one channel by which a gap of the checker met in a consumer project reaches this repository, since
+the consumer's own entry for it is not citable here. The skill never states how many questions
+there are, so adding one changes no count.
 
 ### A retrospective writes one file per project whose text must change `##retro-two-files`
 

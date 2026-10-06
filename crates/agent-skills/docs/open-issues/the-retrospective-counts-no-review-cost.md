@@ -16,7 +16,7 @@ whether the workflow lowers the cost of a change has no measurement.
 `goal@knowledge-architect@agents-get-a-complete-workflow` promises "fewer review rounds, less
 re-derivation of past arguments, and fewer decisions reversed by accident". No instrument counts
 any of them. The retrospective, `path@agent-skills@content/skills/retrospective/SKILL.md`, asks
-three standing questions and writes two files, and none of its sections asks for a count.
+standing questions and writes two files, and none of its sections asks for a count.
 
 The three numbers, as the owner approved them in a keep-or-change evaluation of the project's
 direction:

@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-retrospective
-description: MUST use once per session, at the first of these moments, to offer a retrospective to the owner - a branch the session worked on has merged into the main branch, a plan document has left, or the owner says the session is ending - and run it only if the owner accepts. Covers what the retrospective examines (the installed skills and agents, the project's own instructions, how the two interact, and the checker), the three questions it always asks, the expectation sets that bound what counts as a defect of an installed skill, the two files it writes outside the project, and how each file reaches the project that must change.
+description: MUST use once per session, at the first of these moments, to offer a retrospective to the owner - a branch the session worked on has merged into the main branch, a plan document has left, or the owner says the session is ending - and run it only if the owner accepts. Covers what the retrospective examines (the installed skills and agents, the project's own instructions, how the two interact, and the checker), the standing questions it always asks, the expectation sets that bound what counts as a defect of an installed skill, the two files it writes outside the project, and how each file reaches the project that must change.
 ---
 
 # Retrospective
@@ -47,7 +47,7 @@ in a few characters, as "W3 of the retrospective of <date>": **W** for the insta
 agents, **C** for the checker, **P** for the project's own instructions. Numbers run from 1 within
 each letter, in order of appearance, so an id is unique within one retrospective. An interaction
 finding whose fix may fall on either side goes in both files (§3) and gets one id in each, each
-naming the other, since the two files may be read apart. The three questions below take no id: they are answers, not findings.
+naming the other, since the two files may be read apart. The standing questions below take no id: they are answers, not findings.
 
 1. **The installed skills and agents.**
 2. **The project's own instructions**: its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own
@@ -58,11 +58,16 @@ naming the other, since the two files may be read apart. The three questions bel
    finding; and what would make it easier to use, such as a missing command or option, or a message
    that did not say what to do.
 
-**Always ask these three questions**, and answer each with what the session shows:
+**Always ask these standing questions**, and answer each with what the session shows:
 
 - Did this session need to change an installed skill or agent, and what for?
 - Was the primer present in this session, and in its subagents?
 - Did this session miss something a project skill adds to an installed skill?
+- Did this session need to write a pointer that no checked form expresses? For each: what it
+  pointed at, the checked form that was missing, and whether it was written beside a reference to
+  an issue entry of the project or as bare plain text. A missing form is also a finding on the
+  checker, in the workflow's file. A pointer written as bare plain text is also a finding on the
+  project, in the project's file.
 
 **A finding about how the owner works is judged against the skill's expectation set** (§5). A
 finding that describes the owner's behaviour where §5 states the skill assumes otherwise is
@@ -79,7 +84,7 @@ Each finding goes to the file of the project whose text or code must change:
 | file | holds |
 | --- | --- |
 | `<YYYY-MM-DD>-<project>.md` | what the session did and the version it used, the findings on the project's own instructions, and the project's side of an interaction |
-| `<YYYY-MM-DD>-<project>-workflow.md` | what the session did and the version it used, the findings on the installed skills and agents and on the checker, the workflow's side of an interaction, and the three questions |
+| `<YYYY-MM-DD>-<project>-workflow.md` | what the session did and the version it used, the findings on the installed skills and agents and on the checker, the workflow's side of an interaction, and the answers to the standing questions |
 
 An interaction finding whose fix may fall on either side goes in both files, each written from its
 own side.

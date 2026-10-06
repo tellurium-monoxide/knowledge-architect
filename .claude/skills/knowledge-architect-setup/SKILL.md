@@ -217,7 +217,7 @@ A project that already has documentation keeps it until its move is planned:
 
 **A finding the check reports in an existing file is the owner's to rule**, since the setup does
 not move or rewrite that file. Show the owner the finding and its repair, such as a bare path
-rewritten as a reference or as plain text. The owner rules between that repair and a
+rewritten as a reference. The owner rules between that repair and a
 `[walk] skip-files` row, with its reason beside it, that keeps the file out of the walk until its
 move.
 

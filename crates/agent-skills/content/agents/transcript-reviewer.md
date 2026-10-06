@@ -60,7 +60,9 @@ injected.
 **Select and label by the fields of each line, never by a substring of its text.** A filter on text
 content drops messages whose wording happens to match it, and an owner's message dropped that way
 is a ruling the review never sees. The one use of the text is to locate the message where the work
-begins, which the brief names by its opening words. Keep the order of the lines.
+begins, which the brief names by its opening words. **A file named in the brief that does not hold
+that message is reported at once, and not read**: it is another session's. Keep the order of the
+lines.
 
 ## 2. List what must outlive the sessions
 

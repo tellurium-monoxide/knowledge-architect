@@ -47,10 +47,15 @@ with the reason, in the commit that records the review.**
 after every other axis has run and its repairs are committed. Its range is the whole branch,
 `<main branch>..<head>`, and its brief names the transcripts of every session that worked on the
 branch, with the message where the branch's work begins in each. It is the one axis that can see whether the findings of the others were acted on, since
-their reports reach the session as messages of its transcript. Its repairs land as a last commit.
-**Where that commit makes or reverses a decision, the decision-record axis reviews it**, and any
-other axis whose condition the commit meets; the review ends with their repairs. A last commit that
-makes no decision is reviewed by no axis again.
+their reports reach the session as messages of its transcript. Its repairs land as additional
+commits. **Where one of them makes or reverses a decision, the decision-record axis reviews it**,
+and any other axis whose condition it meets; the review ends with their repairs. An additional
+commit that makes no decision is reviewed by no axis again.
+
+**Find each transcript file by the message where the work begins, never by a session
+identifier.** Search the harness's transcript directory for the opening words of that message, and
+name a file only once it is seen to hold the message: a session that was cleared or compacted can
+leave an earlier session's identifier in the harness's paths.
 
 ## 2. The invariants
 
@@ -131,7 +136,9 @@ which keeps their trees and messages and may give them new SHAs):
   Either way, the paragraph recording the review says what was repaired, and what was folded.
 - **A commit message carrying a mistake is repaired by amending** while it is the newest commit, and
   by a history edit of the branch after that. Either only with no uncommitted work in the tree, and
-  each confirmed afterwards to have lost no content: for an amend, that it changed no file.
+  each confirmed afterwards to have lost no content: for an amend, that it changed no file. A
+  correction written into a later commit's message is not a repair: the mistaken message still
+  reads as it did.
 - **A paragraph in the commit message** records the review.
 
 **Where the project squashes a branch into one commit on merge**, the record of the review goes

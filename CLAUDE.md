@@ -168,9 +168,11 @@ win.
     `design@core@candidate-rule-and-retired-forms`.
   - A backticked span of path characters with two or more segments and no `@` is reported as a
     path to anchor when its first segment names a file or a directory that the tree's listing
-    holds, per `design@core@every-path-names-its-anchor`. Write it as a `path` reference, or in plain text. A
-    span naming nothing here, such as `origin/main` or `application/json`, is silent, and so is a
-    one-segment span, which is a name rather than a pointer.
+    holds, per `design@core@every-path-names-its-anchor`. Write it as a `path` reference, or as
+    `path@elsewhere@<path>` for a path this tree does not hold, never in plain text, per
+    `design@knowledge-architect@plain-text-is-no-repair`. A span naming nothing here, such as
+    `origin/main` or `application/json`, is silent, and so is a one-segment span, which is a name
+    rather than a pointer.
 
 - **A commit message is a document.** It is parsed as one markdown document, and every reference
   in it must resolve, against its own commit's tree or its first parent's, per

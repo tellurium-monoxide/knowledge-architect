@@ -68,7 +68,9 @@ change:
   goes outright. `knowledge-architect-issue-tracking` owns that movement.
 - **Repair what pointed at the old behaviour**: skills, subagent definitions, scoped `CLAUDE.md`
   files, generated headers. Grep the behaviour's wording as well as the slug, since a pointer that
-  describes the behaviour without naming it is the one a slug grep misses.
+  describes the behaviour without naming it is the one a slug grep misses. A sentence about the
+  past that named the old slug is rewritten to state the present, or removed, never retargeted and
+  never turned into plain text, as `knowledge-architect-issue-tracking` says of a deleted entry.
 - **Close the issue entry that asked the question**, in this commit rather than a later one, and
   rewrite whatever half of it survives rather than deleting the whole.
 
