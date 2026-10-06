@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-20 entries
+19 entries
 
 | kind | title |
 | --- | --- |
@@ -15,7 +15,6 @@
 | question | [A project that uses the checker without the workflow still carries every workflow home](a-checker-only-project-carries-the-workflow-skeleton.md) |
 | question | [An extension reads its manifest table as a `toml::Value`, so the core's toml version is part of the public API](manifest-table-exposes-the-toml-crate.md) |
 | todo | [A change to a generated file's contract fails every earlier commit with no word on the repair](a-contract-change-fails-every-earlier-commit-unexplained.md) |
-| todo | [A plan document has no way to name a file its own work will create](a-planned-path-can-be-named.md) |
 | todo | [An extension cannot see which register, anchor or entry a document belongs to](an-extension-cannot-see-which-register-a-document-belongs-to.md) |
 | todo | [`commits` sees a citation of a branch commit by SHA only when the cited commit is in the range it judges](branch-sha-citations-are-judged-within-the-range-only.md) |
 | todo | [The findings' texts are not audited against the rule that a cause is named only where the repair depends on it](finding-texts-are-not-audited-for-a-needless-cause.md) |

@@ -1032,7 +1032,7 @@ reopened.
 
 ### Every citeable thing is an entity with a kind, an anchor, an id and a definition site, held in one table built from the walk, and every check that resolves a name reads that table `##one-entity-table`
 
-**A kind is a register's name, or `path`.** The ten built-in registers give the kinds `design`,
+**A kind is a register's name, or `path`, or `planned`.** The ten built-in registers give the kinds `design`,
 `goal`, `tripwire`, `issue`, `spec`, `milestone`, `thread`, `argument`, `criterion` and
 `acceptance`, and a project's own declarations give the rest, so the kind set is
 data rather than a compiled enumeration. A heading register's entities are slugs defined in the
@@ -1040,7 +1040,8 @@ register's home under an anchor, per `design@core@an-entry-is-a-heading-at-the-r
 files under its instance directory, one per entry, per
 `design@core@a-file-register-is-a-directory-of-entries`. `path` is defined by the tree itself and is
 resolved against the survey, under the same anchors and with the candidate rule and segmentation
-the table's resolver applies to every kind. The table lives in
+the table's resolver applies to every kind, and `planned` with it, per
+`design@core@planned-path-form`. The table lives in
 `path@core@src/entity.rs`, is built once per run from the model, and is what
 `check::references` resolves against.
 
@@ -1315,6 +1316,29 @@ the root anchor in every such citation would carry no information.
 unknown anchor, and the finding says the words serve `path` alone. The manifest's resolution
 refuses a declared anchor wearing any of the three words, and it is no anchor: every pointer at it
 would read as the reserved meaning.
+
+### A path a plan's work will create is cited `planned@<anchor>@<path>`, from the plans directory only, and reported once it exists `##planned-path-form`
+
+A plan document names files and directories its work will create. The kind `planned` names one:
+its anchor and its path follow every rule of a `path` reference, the named anchor, the deepest
+anchor, the refused shapes and the trailing-slash claim, and its one assertion is the reverse of
+`path`'s: the target does not exist. Once it exists, the finding names the `path` form and
+nothing else, so the commit that creates the file converts the reference by its kind word, and
+whether the plan still holds is that session's report to make. A target the ignore rules cover is
+not asserted, per `design@core@ignored-targets-are-not-asserted`. `*` and the escape anchor are
+refused: a planned path is in this tree, at one anchor.
+
+**It is legal in the plans directory alone**, since a plan document is the one place that
+describes unbuilt work, per `design@core@plan-register`. Elsewhere it is a finding that asks for
+the plan that creates the file. An issue entry states what is missing rather than the shape of its
+fix, and a hypothetical file there is `path@elsewhere@<path>`.
+
+It closes a gap of the kind `design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`
+describes: before it, a planned path was written as plain text, which nothing checks, or with the
+escape anchor, which is refused once the work creates the file. The escape anchor as the planned
+form lost on the anchor: it names none, so the deepest-anchor rule goes unchecked until the file
+exists and the conversion cannot be done by the kind word alone. `planned` is a reserved kind, and
+the manifest refuses a register of that name, as it refuses `path`.
 
 ### A trailing slash claims a directory, and the survey records every path's kind `##trailing-slash-claims-directory`
 

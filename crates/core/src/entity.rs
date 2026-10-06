@@ -39,6 +39,10 @@ use crate::scan::{Observation, SlugSite};
 /// The one kind that is not a register: a file or directory, defined by the tree itself.
 pub(crate) const PATH_KIND: &str = "path";
 
+/// The kind of a path a plan's work will create: anchored like `path`, and asserted absent, per
+/// `design@core@planned-path-form`.
+pub(crate) const PLANNED_KIND: &str = "planned";
+
 /// What a reference names, in its first segment: a register's name, or `path`.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct Kind(Arc<str>);
@@ -55,6 +59,21 @@ impl Kind {
 
     pub(crate) fn is_path(&self) -> bool {
         &*self.0 == PATH_KIND
+    }
+
+    /// The kind of a path a plan's work will create.
+    pub(crate) fn planned() -> Kind {
+        Kind::new(PLANNED_KIND)
+    }
+
+    pub(crate) fn is_planned(&self) -> bool {
+        &*self.0 == PLANNED_KIND
+    }
+
+    /// Whether the id is a path under the anchor, rather than an entity's id: `path` and
+    /// `planned`, the two kinds the tree defines rather than a register.
+    pub(crate) fn takes_a_path(&self) -> bool {
+        self.is_path() || self.is_planned()
     }
 
     /// The word a reference spells.
@@ -252,7 +271,7 @@ impl Anchor {
     /// Whether a reference of this kind may anchor here. Every anchor carries `path` but a
     /// plan anchor, whose documents are cited by their kind.
     pub(crate) fn carries(&self, kind: &Kind) -> bool {
-        if kind.is_path() {
+        if kind.takes_a_path() {
             return !self.is_plan();
         }
         self.registers.iter().any(|r| r == kind.name())
@@ -362,6 +381,9 @@ impl Anchors {
         if word == PATH_KIND {
             return Some(Kind::path());
         }
+        if word == PLANNED_KIND {
+            return Some(Kind::planned());
+        }
         self.registers.by_name(word).map(|r| Kind::new(&r.name))
     }
 
@@ -374,6 +396,7 @@ impl Anchors {
             .map(|r| r.name.as_str())
             .collect();
         names.push(PATH_KIND);
+        names.push(PLANNED_KIND);
         names.join(", ")
     }
 
@@ -660,7 +683,7 @@ pub(crate) fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
             why: "the id segment is empty",
         };
     }
-    if !kind.is_path() && id.contains('@') {
+    if !kind.takes_a_path() && id.contains('@') {
         return Candidate::Malformed {
             why: "four or more segments; a reference has three",
         };

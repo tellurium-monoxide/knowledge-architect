@@ -92,7 +92,8 @@ core's `generated`, `registers` and `references`, each a module under
 `path@core@src/check/`, then each registered extension's, per
 `design@core@an-extension-plugs-in-through-phased-hooks`. `references` judges
 every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a register kind against the
-entries its home defines, the `path` kind against the tree — and reports the retired slug
+entries its home defines, the `path` kind against the tree, the `planned` kind against its absence
+from the tree — and reports the retired slug
 reference form and the unanchored path shape where either names something of this project.
 `registers` judges the shape of what each anchor carries: a file
 register's README, index, groups and entry shapes, and a directory home's links. A check the tree
@@ -346,6 +347,12 @@ spec@<milestone>@<step>       a step spec, docs/plans/milestones/<milestone>/<st
 A `path` citation of a plan document is refused, and the finding names the form above. The
 plans directory's README, and the README and index of each of its two homes, are cited by path,
 as in `path@plans@README.md`.
+
+**A path a plan's work will create is cited `planned@<anchor>@<path>`**, from a document of the
+plans directory only. Its anchor and path follow the rules of a `path` reference, and the target
+must not exist: once it does, the finding asks for `path@<anchor>@<path>`, which the change that
+creates the file writes. `*` and `elsewhere` are refused for it, and a register named `planned` is
+refused like one named `path`.
 
 **A plan's name reads as nothing else.** A milestone's name or a spec's id that is the name of a
 component, of a location or of `plans`, `elsewhere` or `*`, and one name used under both homes,

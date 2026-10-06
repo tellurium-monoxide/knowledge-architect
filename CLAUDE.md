@@ -121,7 +121,8 @@ win.
   - An id matches `[a-z0-9]+(-[a-z0-9]+)*`. A file register's entry id is the file's basename.
 
 - **Every reference is one backticked span, `<kind>@<anchor>@<id>`**, per
-  `design@core@a-slug-belongs-to-a-component`. The kind is a register's name or `path`. The anchor
+  `design@core@a-slug-belongs-to-a-component`. The kind is a register's name, `path`, or
+  `planned` for a path a plan's work will create, per `design@core@planned-path-form`. The anchor
   is a Component, a location or a plan. The id is the entry's. A plan's item is cited from
   inside that plan only, per `design@core@plan-item-scope`. Examples:
   `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/tripwires.md`. A reference that resolves to nothing

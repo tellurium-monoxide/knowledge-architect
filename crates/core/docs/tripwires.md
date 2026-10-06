@@ -23,6 +23,14 @@ prints for the same commit. Both are the `walk: n file(s)` line of the summary b
 
 **Re-entry:** each time CI's output is read against a local run, and at any change to the walk.
 
+## Guarding `design@core@planned-path-form`'s scope: a planned file named outside the plans directory `##planned-path-outside-plans`
+
+**Fires when:** `check` reports a `path@elsewhere@<path>` reference outside the plans directory
+whose target now resolves, in a sentence that said the file was to be created.
+**Response:** reopen the scope of `design@core@planned-path-form`, with every document as the
+candidate.
+**Re-entry:** the commit that creates the file, which fails `check` on that reference.
+
 ## Guarding `design@core@grammars-not-prefixes` `##grammars-not-prefixes`
 
 **Fires when:** a `.rs` file in the tree yields no prose region, or no item scope, while its text
