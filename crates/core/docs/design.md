@@ -1496,18 +1496,22 @@ another relative path is refused. The core's binary does this in
 `path@core@tests/binary.rs`; an extension binary does it in its own suite, because only it
 links its extension's library.
 
-### The manifest pins the checker's version, and every binary refuses to run over a project it does not satisfy `##installed-binary-version-check`
+### The manifest pins the checker's version, and every binary that dispatches a command of the checker refuses to run over a project it does not satisfy `##installed-binary-version-check`
 
 Every manifest declares `[project] checker-version`: the exact version of the checker the project
 runs, which is the version of the core library whatever binary links it, or one of the two values
 of `design@core@checked-sentinel-values`. `Manifest::parse` reads it; an absent key, or a string
 of none of the three forms, is a complaint opening with the key's name, and a value that is not a
-string fails the parse. Each binary's `main` calls `cli::refuse_another_version` right after the
-build-origin refusal of `design@core@a-foreign-build-is-refused`, before it dispatches any
-command, an extension's own included: a version is accepted when it equals the core library's,
-and any refusal, the key's own complaint included, is exit 2, per `design@core@exit-code-ladder`,
-naming the two versions and which side is older. `cli::run` does not refuse, so a command driven
-in-process needs a key but no confirmed one.
+string fails the parse. Each binary that dispatches a command of the checker calls
+`cli::refuse_another_version` in its `main`, right after the build-origin refusal of
+`design@core@a-foreign-build-is-refused`, before it dispatches any command, an extension's own
+included: a version is accepted when it equals the core library's, and any refusal, the key's own
+complaint included, is exit 2, per `design@core@exit-code-ladder`, naming the two versions and
+which side is older. `cli::run` does not refuse, so a command driven in-process needs a key but no
+confirmed one. A binary that links the library and dispatches no command of the checker, such as a
+maintenance crate that uses it only to find the project's root through `MANIFEST_NAME`, does not
+call it: nothing it runs reads the documents by the checker's rules, and where it runs the checker,
+as a gate does, it starts a binary that makes the call.
 
 **Why the manifest, and why required.** Without a pin the binary reads, a binary older than the
 skills a project installed reports each installed file as differing, with the repair "run
