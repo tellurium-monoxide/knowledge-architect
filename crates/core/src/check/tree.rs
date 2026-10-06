@@ -44,8 +44,8 @@ pub(crate) fn check(model: &Model, manifest: &Manifest, inputs: &Inputs) -> Vec<
                 &doc.rel,
                 line,
                 "markdown reads a heading here that the checker does not read",
-                "write it as a line that opens with `#` marks, outside any list item or block \
-                 quote",
+                "write it as a line that opens with `#` marks and holds text, with no list or \
+                 block-quote marker before them",
             ));
         }
     }

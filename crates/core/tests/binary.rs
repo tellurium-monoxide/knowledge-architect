@@ -1533,7 +1533,8 @@ fn a_citation_in_a_commit_whose_tree_fails_is_reported_beside_the_tree_finding()
 }
 
 /// The claim: a commit whose tree stops at phase 2 is still scanned for citations of the range,
-/// and its line names both causes, per `design@core@branch-shas-are-refused`.
+/// and its line names both causes with the count, per `design@core@branch-shas-are-refused`;
+/// without the option, the same commit is not scanned.
 #[test]
 fn a_citation_in_a_commit_whose_tree_stops_at_phase_two_is_reported() {
     let history = History::new("commit-branch-sha-stopped-tree");
@@ -1544,17 +1545,34 @@ fn a_citation_in_a_commit_whose_tree_stops_at_phase_two_is_reported() {
         "docs/latin1.md",
         b"# A note\n\nOne byte of Windows-1252: caf\xe9.\n",
     );
-    let second = history.commit(&format!("A second change\n\nIt follows {first}.\n"));
+    let second = history.commit(&format!(
+        "A second change\n\nIt follows {first}.\nIt names {first} again.\n"
+    ));
     let (stdout, stderr, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{stdout}{stderr}");
     assert!(stdout.contains(&format!("commit {second}:3")), "{stdout}");
+    assert!(stdout.contains(&format!("commit {second}:4")), "{stdout}");
     assert!(
         stdout.contains(&format!(
             "{second} failed: its tree stops at phase 2 with 1 finding(s); its message was \
-             judged against nothing; it cites the range by SHA 1 time(s)\n"
+             judged against nothing; it cites the range by SHA 2 time(s)\n"
         )),
         "{stdout}"
     );
+
+    let plain = History::new("commit-branch-sha-stopped-tree-off");
+    tiny_project(&plain, false);
+    let base = plain.commit("The project is created\n");
+    let first = plain.commit("A first change\n");
+    plain.write_bytes(
+        "docs/latin1.md",
+        b"# A note\n\nOne byte of Windows-1252: caf\xe9.\n",
+    );
+    plain.commit(&format!("A second change\n\nIt follows {first}.\n"));
+    let (stdout, stderr, code) = plain.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{stdout}{stderr}");
+    assert!(stdout.contains("its tree stops at phase 2"), "{stdout}");
+    assert!(!stdout.contains("cites the range"), "{stdout}");
 }
 
 /// The claim: a commit whose tree stops at phase 1 is not scanned for citations, since its

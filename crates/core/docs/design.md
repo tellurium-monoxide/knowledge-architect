@@ -91,7 +91,7 @@ phases, each of the first three building one input of the next:
 | phase | produced by | what it reports |
 | ----- | ----------- | --------------- |
 | 1 | `Manifest::parse`, and each extension's resolution of its tables | a declaration the tool refused, which is then absent from the configuration |
-| 2 | `check::tree`, over the core's declared paths and the paths each extension declares, and `check::agents`, over the installed agent configuration | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out, an installed agent file missing, differing or unshipped, a root CLAUDE.md that does not import a shipped primer |
+| 2 | `check::tree`, over the core's declared paths, the paths each extension declares and every document's parse, and `check::agents`, over the installed agent configuration | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out, an installed agent file missing, differing or unshipped, a root CLAUDE.md that does not import a shipped primer, a heading markdown reads and the checker does not, per `design@core@headings-open-with-hash-marks` |
 | 3 | `Entities::build` | a slug or an entry id where none may sit, or defined twice |
 | 4 | every check, the core's and each extension's | everything computed over a complete model |
 
@@ -112,8 +112,10 @@ phase, since an index generated over such a model lists rows nobody asked for. `
 no generated file over such a model either; it prints the stopped report and exits 1, having
 repaired before that gate only the installed files, whose bytes do not depend on the model, per
 `design@core@fix-before-the-checks`. `commits` judges
-no message against a commit whose tree stops early, and says so, since a message judged against
-an incomplete entity table is judged against nothing.
+no message's references against a commit whose tree stops early, and says so, since a message
+judged against an incomplete entity table is judged against nothing. The scan for citations of the
+range by SHA needs no entity table, so it still reads that message, per
+`design@core@branch-shas-are-refused`.
 
 **Nothing selects a subset of the checks.** The checks cross the phases — what `registers`
 asserts sits in phases 2 and 4, what `references` asserts in 3 and 4 — so a selection could be
@@ -1118,11 +1120,17 @@ while the definition sat in the file. The pattern takes the slug anywhere in the
 ### A heading is a line that opens with `#` marks, and a heading markdown reads in any other shape is reported `##headings-open-with-hash-marks`
 
 The checker reads a heading where markdown reads an ATX heading at the start of a line: one to six
-`#` marks, at most three spaces in. A line indented four spaces or more, or by a tab, opens no
-heading, so a slug on it is a mention and defines nothing. Every other heading markdown reads is
-reported in phase 2, at its first line, in every markdown document of the walk: a setext heading,
-a line underlined with `=` or `-`, and a heading inside a list item or a block quote. The repair
-is to write it as a line that opens with `#` marks.
+`#` marks, at most three spaces in, then a space or a tab, then text. A line indented four spaces
+or more, or by a tab, opens no heading, so a slug on it is a mention and defines nothing; so does
+a line whose marks are followed by any other character, a no-break space included. Every other
+heading markdown reads is reported in phase 2, at its first line, in every markdown document of
+the walk: a setext heading, a line underlined with `=` or `-`; a heading that follows a list
+marker or a block-quote marker on its line; and a heading with no text. The repair is to write it
+as a line that opens with `#` marks and holds text.
+
+The opposite direction does not hold yet: a heading-shaped line inside an HTML block or a metadata
+block that markdown does not render as a heading is still read as one, per
+`issue@core@a-heading-line-markdown-renders-as-no-heading-defines-an-entry`.
 
 - **It serves `design@core@an-entry-is-a-heading-at-the-register-level`**, which rests on the
   checker reading headings as markdown does: an entry is a heading. A heading markdown shows and

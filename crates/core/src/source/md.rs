@@ -178,8 +178,9 @@ pub(crate) fn analyse(text: &str, prose: &Prose) -> Analysis {
     let mut start_line = 0u32;
 
     // Every extension but wikilinks. On a wikilink it gives up on, such as `[[x|]] `a` ]`, the
-    // parser hands text events over out of order and a code span twice, so a heading holding
-    // one was named out of order. The checker reads no wikilink, so the extension buys nothing.
+    // wikilink extension hands text events over out of order and a code span twice, so a
+    // heading holding one would be named out of order. The checker reads no wikilink, so the
+    // extension buys nothing.
     let options = Options::all().difference(Options::ENABLE_WIKILINKS);
     for (event, range) in Parser::new_ext(text, options).into_offset_iter() {
         match event {
@@ -238,7 +239,7 @@ pub(crate) fn analyse(text: &str, prose: &Prose) -> Analysis {
     }
 
     // `Prose::in_code_span` needs the spans sorted by start and disjoint. The parser hands
-    // them over in document order, and spans never nest, but with wikilinks enabled it handed
+    // them over in document order, and spans never nest, but with wikilinks enabled it hands
     // one span over twice: the order is the parser's habit, not its contract. Sorting and
     // removing the copies makes the order hold by construction.
     code.sort_unstable();
@@ -483,7 +484,7 @@ mod tests {
     }
 
     /// The claim: a heading holding `[[` is named as written, which the wikilink extension
-    /// garbled.
+    /// does not do.
     #[test]
     fn a_heading_holding_double_brackets_is_named_as_written() {
         assert_eq!(

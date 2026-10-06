@@ -11,10 +11,11 @@ subsection is omitted.
 ### Migration
 
 - `checks`, minor: a heading that markdown reads and the checker does not is reported in phase 2:
-  a setext heading, a line underlined with `=` or `-`, and a heading inside a list item or a block
-  quote. A slug on a line indented four spaces or more, or by a tab, defines nothing and is
-  reported as written in the middle of a line. A project rewrites each such heading as a line that
-  opens with `#` marks.
+  a setext heading, a line underlined with `=` or `-`; a heading after a list or block-quote marker
+  on its line; and a heading with no text. A slug on a line indented four spaces or more, or by a
+  tab, or after `#` marks followed by a no-break space, defines nothing and is reported as written
+  in the middle of a line. A project rewrites each such heading as a line that opens with `#`
+  marks, a space and text.
 - `cli`, patch: the summary of `commits` reads `<n> commits, <p> passed, <f> failed`, where it read
   `<j> judged, <f> failed`, and each commit's line reads `passed` where it read `judged`. A commit
   whose message alone carries findings now counts as failed, and its line names each source of its
