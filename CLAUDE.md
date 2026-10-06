@@ -578,6 +578,10 @@ git fetch origin main
 git merge-base --is-ancestor origin/main HEAD    # if false, rebase
 ```
 
+A rebase that stops on a conflict in a generated `index.md` is resolved by regenerating it:
+`cargo klarch index`, then `git add` on the file and `git rebase --continue`. Its content is
+computed, so no hand merge is needed and none is lost.
+
 4. **Work is reviewed before any merge to main.**
 
 - Use `knowledge-architect-review` before the merge.
