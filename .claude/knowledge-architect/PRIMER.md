@@ -16,6 +16,12 @@ procedure (`knowledge-architect-decision-recording`). **When a decision conflict
 the likely cause is that the owner missed the conflict: the goal prevails, and the conflict goes to
 the owner.** It is not resolved by following the decision.
 
+## Room to judge
+
+**Where the installed text is silent, judge.** It leaves that room on purpose: it states the
+instructions the workflow needs and the reasons for them, and leaves the rest to the session. Room
+to judge is never room to act against an instruction.
+
 ## Intent and claims
 
 - **A design home is built intent**: the design as built and its reasons, and the decisions that
