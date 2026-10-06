@@ -75,7 +75,10 @@ and says which side is older, so an install or a build left behind is caught at 
 values that are not versions serve a project's own tests: `"fixture"` in a mock project that lies
 inside the directory of a library the binary links, such as the project's extension crate, and
 `"self"` in a project that builds the checker from its own tree. Each is accepted only where the
-binary's build confirms it; anywhere else it is refused.
+binary's build confirms it; anywhere else it is refused. **A test that copies a mock project out
+of its library's directory**, for instance into a temporary directory where it runs `git init`,
+writes the project's own pin into the copy's manifest: it reads the value from the root manifest,
+and never spells the version in the test, so the pin stays written in one place.
 
 ## 2. Declare the command
 
@@ -296,7 +299,11 @@ a rebuild at each switch between checkouts that share a target directory, and no
 checkout. The refusal in the main below stays, and detects a binary built before the tie.
 
 **Its main**: a `gates` command over the recommended list of the gates library, and a `klarch`
-command carrying the checker's own commands.
+command carrying the checker's own commands. **Every binary that dispatches a command of the
+checker calls `cli::refuse_another_version` before it dispatches**, as the `klarch` arm below does;
+without the call, that binary enforces no pin. Where the `cargo klarch` alias runs an extension's
+binary instead, that binary calls it, and a maintenance crate that dispatches no command of the
+checker, using the library only for `MANIFEST_NAME`, does not.
 
 ```rust
 use std::path::Path;

@@ -35,7 +35,13 @@ The log of the `claude` harness is a JSONL file, one JSON object per line. Keep 
 plain string, or a list of items; keep the items whose `type` is `text`. Keep as well the lines
 whose `type` is `attachment` and whose `attachment.type` is `queued_command`: a message delivered
 while the session was mid-turn, such as a peer agent's report, and its text is `attachment.prompt`.
-Drop tool calls, tool results, and every other line. Extract each transcript the brief names, in
+**Keep the owner's answers to a question tool** (`AskUserQuestion` in the `claude` harness): the
+answer arrives as a `tool_result` item in a `user` line, and that line is selected by its
+`toolUseResult` object holding `questions` and `answers`: the questions asked, each with its
+options, and the answers given, keyed by question text, a choice typed in by the owner included,
+with any notes in `annotations`. Keep the questions with
+their options and the answers, labelled as the owner's answer, at the place of that line. Drop
+every other tool call and tool result, and every other line. Extract each transcript the brief names, in
 the order it gives, from the message where the work begins to the end.
 
 **Not every `user` line is the owner's.** The harness also writes, as `user` lines, text it injects:
