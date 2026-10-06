@@ -37,9 +37,11 @@ Then **the version of knowledge-architect the session used**, in one line:
 
 Then read back over the session: the instructions that were followed, where they were followed with
 difficulty, where they were not followed, and what the owner corrected. Then, for each of the four
-subjects below, list what was **unclear** (it could be read two ways), **missing** (the session had
-to decide something no instruction covered), or **wrong** (following it produced a defect or a
-correction). Each item quotes the instruction, says what happened when it was followed, and what was
+subjects below, list what was **unclear** (it could be read two ways), **missing** (the session
+could not follow the workflow, or could not produce a document the checker accepts, without an
+instruction that does not exist), or **wrong** (following it produced a defect or a correction). A
+decision the session made by its own judgement where no instruction covers it is not missing: the
+installed text leaves that room on purpose. Each item quotes the instruction, says what happened when it was followed, and what was
 done instead.
 
 **Each finding is named by a letter and a number**, so that a fix, an issue or a commit can cite it
