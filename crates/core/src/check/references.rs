@@ -158,7 +158,18 @@ pub(crate) fn judge_part(
                     let located = span.contains([':', '#']);
                     // In a plan document a path that does not exist yet is usually one the
                     // plan's work will create, so the repair names the form for it there.
-                    let planned = if in_plans_directory(&doc.rel, anchors) {
+                    // A path that exists is cited as one, so the planned form is offered only
+                    // when nothing at the span's file exists, read as `names_this_tree` reads it.
+                    let file = span
+                        .split_once([':', '#'])
+                        .map_or(span.as_str(), |(f, _)| f);
+                    let exists = anchors
+                        .all()
+                        .iter()
+                        .map(|a| a.path.join(file))
+                        .chain(doc.rel.parent().map(|d| d.join(file)))
+                        .any(|t| inputs.present.contains(&t));
+                    let planned = if !exists && in_plans_directory(&doc.rel, anchors) {
                         ", or `planned@<anchor>@<path>` for a path the plan's work will create"
                     } else {
                         ""
@@ -534,9 +545,16 @@ fn anchored_target(
         // The two reserved words serve `path` alone, so a planned path's repair names the
         // declared anchors only.
         let action = if planned {
+            // A plan anchor carries no path kind, so it is no candidate for a planned path.
+            let names: Vec<&str> = anchors
+                .all()
+                .iter()
+                .filter(|a| !a.is_plan())
+                .map(|a| a.name.as_str())
+                .collect();
             format!(
                 "anchor at the one of {} that will hold the target",
-                anchors.listed()
+                names.join(", ")
             )
         } else {
             format!(
@@ -655,22 +673,32 @@ fn planned(
         ));
         return;
     }
-    if anchor == ESCAPE_ANCHOR || anchor == entity::EVERY_ANCHOR {
-        out.push(Finding::at(
-            rel,
-            line,
-            format!("`{span}` gives a planned path the anchor `{anchor}`"),
-            format!(
-                "anchor at the anchor that will hold the target; `*` and `{ESCAPE_ANCHOR}` serve \
-                 the path kind alone"
-            ),
-        ));
-        return;
-    }
     let claims_dir = path.ends_with('/');
-    let Some(target) = anchored_target(out, rel, line, span, anchor, path, anchors, true) else {
-        return;
+    let target = match planned_target(rel, line, span, anchor, path, anchors) {
+        Ok(target) => target,
+        Err(refusal) => {
+            out.push(refusal);
+            return;
+        }
     };
+    // A line or a fragment names no file: `x.rs:12` of an existing `x.rs` is a pointer into it,
+    // which the planned form cannot be.
+    if let Some((file, _)) = path.split_once([':', '#']) {
+        if let Some(a) = anchors.by_name(anchor) {
+            if inputs.present.contains(&a.path.join(file)) {
+                out.push(Finding::at(
+                    rel,
+                    line,
+                    format!("`{span}` points into `{file}`, which exists"),
+                    format!(
+                        "write `path@{anchor}@{file}`, and name the function or the heading in \
+                         prose"
+                    ),
+                ));
+                return;
+            }
+        }
+    }
     if inputs
         .ignored
         .contains(&crate::git::ignore_query(&target, claims_dir))
@@ -694,6 +722,35 @@ fn planned(
                  not exist yet"
             ),
         ));
+    }
+}
+
+/// The target of a planned reference, or the finding that refuses it: the two reserved words,
+/// and every rule of a named anchor that `anchored_target` applies. `show` asks the same, so it
+/// resolves exactly the planned references the check accepts.
+pub(crate) fn planned_target(
+    rel: &Path,
+    line: u32,
+    span: &str,
+    anchor: &str,
+    path: &str,
+    anchors: &Anchors,
+) -> Result<PathBuf, Finding> {
+    if anchor == ESCAPE_ANCHOR || anchor == entity::EVERY_ANCHOR {
+        return Err(Finding::at(
+            rel,
+            line,
+            format!("`{span}` gives a planned path the anchor `{anchor}`"),
+            format!(
+                "anchor at the anchor that will hold the target; `*` and `{ESCAPE_ANCHOR}` serve \
+                 the path kind alone"
+            ),
+        ));
+    }
+    let mut out = Vec::new();
+    match anchored_target(&mut out, rel, line, span, anchor, path, anchors, true) {
+        Some(target) => Ok(target),
+        None => Err(out.remove(0)),
     }
 }
 
@@ -2040,6 +2097,49 @@ mod tests {
         assert!(Anchors::declared(&m)
             .kinds_listed()
             .ends_with("path, planned"));
+    }
+
+    #[test]
+    fn a_planned_path_s_unknown_anchor_repair_lists_no_plan_anchor() {
+        let m = manifest();
+        let spec = PathBuf::from(IN_PLANS);
+        let anchors = Anchors::of(&m, [&spec]);
+        assert!(anchors.by_name("a-spec").is_some_and(|a| a.is_plan()));
+        let (found, _) = checked_ignoring_under(
+            vec![(IN_PLANS, "It writes `planned@nowhere@x.md`.\n")],
+            &tree(),
+            &[],
+            &anchors,
+        );
+        assert_eq!(found.len(), 1, "{found:#?}");
+        let action = found[0].split_once("\n    → ").map(|(_, a)| a);
+        assert_eq!(
+            action,
+            Some("anchor at the one of a-project, a-part, plans that will hold the target")
+        );
+    }
+
+    #[test]
+    fn a_planned_path_into_an_existing_file_is_refused() {
+        let m = manifest();
+        let text = "Line `planned@a-part@notes/real/a.md:12`, fragment \
+                    `planned@a-part@notes/real/a.md#a-head`.\n";
+        let (found, _) = checked_in(&m, IN_PLANS, text, &tree());
+        assert_eq!(found.len(), 2, "{found:#?}");
+        for f in &found {
+            assert!(
+                f.contains("points into `notes/real/a.md`, which exists"),
+                "{f}"
+            );
+        }
+    }
+
+    #[test]
+    fn an_existing_path_in_a_plan_document_is_not_offered_the_planned_form() {
+        let m = manifest();
+        let (found, _) = checked_in(&m, IN_PLANS, "It edits `notes/real/a.md:3`.\n", &tree());
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(!found[0].contains("planned@"), "{found:#?}");
     }
 
     #[test]

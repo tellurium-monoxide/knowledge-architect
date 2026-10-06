@@ -784,13 +784,27 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
         if kind.is_planned() {
             // A planned path is valid while it is absent, so it resolves either way, and what is
             // worth printing is the plans that cite it: the sites a conversion will edit, per
-            // `design@core@planned-path-form`.
+            // `design@core@planned-path-form`. A reference the check refuses resolves to nothing
+            // here either. The listing holds no ignored file, so an absent target and an
+            // ignored one read the same.
+            if let Err(refusal) = crate::check::references::planned_target(
+                Path::new(""),
+                0,
+                reference,
+                anchor,
+                id,
+                &anchors,
+            ) {
+                outln!("{reference} resolves to nothing: {}", refusal.what);
+                outln!("  → {}", refusal.action);
+                return Ok(ExitCode::FAILURE);
+            }
             outln!("{reference}  {}", rel.display());
             outln!();
             if present()? {
                 outln!("(the target now exists; each citation converts to the path form)");
             } else {
-                outln!("(planned; the target does not exist yet)");
+                outln!("(planned; the tree's listing does not hold the target)");
             }
             found = true;
         } else if let Some(doc) = model.documents().iter().find(|d| d.rel == rel) {

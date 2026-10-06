@@ -997,12 +997,19 @@ fn show_of_a_planned_path_lists_its_citations_and_says_whether_it_exists() {
         "docs/plans/README.md",
         "# Plan documents\n\nThe mock's plans directory: specs under specs/, milestones under \
          milestones/.\n\nIt creates `planned@minimal@code/new.rs` beside \
-         `planned@minimal@code/lib.rs`.\n",
+         `planned@minimal@code/lib.rs`.\n\nThe same target, slashed: `planned@minimal@code/new.rs/`.\n",
     );
     let (absent, stderr, code) = sandbox.run(&["show", "planned@minimal@code/new.rs"]);
     assert_eq!(code, 0, "{stderr}");
-    assert!(absent.contains("does not exist yet"), "{absent}");
+    assert!(absent.contains("does not hold the target"), "{absent}");
     assert!(absent.contains("docs/plans/README.md:5"), "{absent}");
+    // The slash is a kind claim, not another target: both citations are listed.
+    assert!(absent.contains("docs/plans/README.md:7"), "{absent}");
+
+    // A reference the check refuses resolves to nothing here too.
+    let (refused, _, code) = sandbox.run(&["show", "planned@minimal@../x.rs"]);
+    assert_eq!(code, 1, "{refused}");
+    assert!(refused.contains("resolves to nothing"), "{refused}");
 
     let (present, stderr, code) = sandbox.run(&["show", "planned@minimal@code/lib.rs"]);
     assert_eq!(code, 0, "{stderr}");
