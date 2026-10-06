@@ -337,7 +337,11 @@ Proposed by the agent, round 1. Approved. Arguments: `argument@standing-entry-se
 `argument@standing-entry-search@a21`, `argument@standing-entry-search@a22`. Shape: Decided design,
 "Where the search runs". Harvest: inside
 the head standing-entries-searched-before-the-work. The owner's words, round 2:
-"search-at-step-audit approved."
+"search-at-step-audit approved." A material finding came at step 4: in thaum, the milestone steps whose reviews found
+entries after the work all had their audits before knowledge-architect 0.2.0, which first made the
+audit read the tripwires and the deferred issues, and the two audits after it found none missed.
+The owner kept the decided shape: "Keep the decided shape. Pre 0.2.0 was not that different from
+right before our work."
 
 ### The search at the step audit reads every issue kind and every tripwire `##search-covers-every-kind`
 
