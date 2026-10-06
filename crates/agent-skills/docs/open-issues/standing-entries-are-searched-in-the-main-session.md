@@ -6,8 +6,9 @@ kind: question
 ## Summary
 
 Before work is designed or planned, the session itself reads every issue and tripwire against the
-work. Work that is neither designed nor planned meets them first at the standing-state review,
-before the merge. Should a subagent do the search earlier, after a plan document is written and
+work. Work that is neither designed nor planned meets its tripwires first at the standing-state
+review, before the merge, and a `deferred` issue whose trigger it meets at no step: that reviewer
+reads every tripwire, and only the issue entries the change opens or closes. Should a subagent do the search earlier, after a plan document is written and
 during the grounding of a design discussion, and report what the work bears on? Raised from finding
 W3 of thaum's retrospective of its move to knowledge-architect 0.3.0.
 
@@ -29,8 +30,8 @@ its scope is written for a diff: "every issue entry the change opens or closes".
 The instance: in thaum, the move of the pin to 0.3.0 was work that was neither designed nor
 planned. A `deferred` issue's trigger was "The next move of the pinned knowledge-architect
 version". The session did the whole move without reading it. The standing-state reviewer found it
-before the merge, and the owner ruled on it then. The retrospective proposed a step specific to the
-pin move. The owner dropped that, since it would mean anticipating every trigger condition for
+before the merge, though its procedure does not ask it to read such an issue, and the owner ruled
+on it then. The retrospective proposed a step specific to the pin move. The owner dropped that, since it would mean anticipating every trigger condition for
 every kind of action.
 
 The owner's position, in their words: the search "is supposed to be either done in grounding steps
@@ -61,6 +62,8 @@ A design discussion under `knowledge-architect-design` that settles:
   the grounding of a design discussion; others;
 - whether it is the standing-state reviewer in a second mode, whose input is a plan document or
   the statement of a question rather than a diff, or an agent of its own;
-- what it returns, so that the session reads each entry it names in full rather than its summary.
+- what it returns, so that the session reads each entry it names in full rather than its summary;
+- which step reads a `deferred` issue whose trigger the work meets, for work that is neither
+  designed nor planned.
 
 The converged design is recorded and built in the installed skills and agents.

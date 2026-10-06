@@ -26,18 +26,19 @@ to 0.3.0).
 
 Reading the root manifest ties the test to the repository's layout, and to the pin rather than to
 the version the binary links. The two are equal whenever the project's own check passes, since
-every binary refuses a project whose pin it does not satisfy, per
+the binary that runs the check refuses a project whose pin it does not satisfy, per
 `design@core@installed-binary-version-check`.
 
 ### Why it matters
 
 An extension's test suite writes a version it cannot name from the library it tests, against
 `goal@core@projects-add-their-own-checks`, whose extension API is meant to carry what an
-extension needs.
+extension needs. It is an instance of `tripwire@core@private-item-needed`: the version is used
+privately, in the refusal `cli::refuse_another_version` makes, and no public item gives it.
 
 ### What would close it
 
 A public constant in the facade of lib.rs holding the core library's version, per
 `design@core@api-facade`, documented as the value a copied mock writes. The setup skill and the
-`# Testing an extension` section of lib.rs then name it in place of the root manifest, with a
-`Next release` entry under New features.
+paragraph on `cli::refuse_another_version` in the crate documentation of lib.rs then name it in
+place of the root manifest, with a `Next release` entry under New features.

@@ -158,7 +158,8 @@ re-check `design@core@an-extension-builds-its-own-model` against it.
 **Fires when:** a consumer of the library, thaum's rules extension first, needs an item that is
 private behind the facade, and no public item replaces it. An example still unmet: the records
 listing, for an extension command that lists its own entries. The entity table and the anchors
-fired it once, recorded as `issue@core@an-extension-cannot-see-which-register-a-document-belongs-to`.
+fired it once, recorded as `issue@core@an-extension-cannot-see-which-register-a-document-belongs-to`,
+and the checker's version once, recorded as `issue@core@the-checker-version-is-not-exported`.
 **Response:** open an issue for the instance. Its fix gives the consumer what it needs under the
 role module its use belongs to, as a 0.MINOR change: the item itself where its shape is fit to
 publish, or a narrow read-only view of it where publishing it would expose the core's internals,
