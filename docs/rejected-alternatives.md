@@ -4,7 +4,7 @@ The alternatives that lost to a decision of `path@knowledge-architect@docs/desig
 what it lost to and why. An entry stays while the argument that defeated it holds.
 
 **A checked form for a commit, resolved by its subject** — lost to
-`design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`. `live`. A commit of the
+`design@knowledge-architect@checker-syntax-without-backticks-names-its-gap`. `live`. A commit of the
 branch is named by its subject, and nothing checks that a commit with that subject exists. A
 checked form would read the history on every run, a cost that grows with the age of the project,
 to check names that git itself does not make permanent. A check bounded to the range `commits`

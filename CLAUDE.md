@@ -174,7 +174,7 @@ win.
     `planned@<anchor>@<path>` for a path its work will create, never in plain text, per
     `design@knowledge-architect@plain-text-is-no-repair`, except beside a reference to an issue
     entry that records the missing form, per
-    `design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`. A span naming nothing here, such as
+    `design@knowledge-architect@checker-syntax-without-backticks-names-its-gap`. A span naming nothing here, such as
     `origin/main` or `application/json`, is silent, and so is a one-segment span, which is a name
     rather than a pointer.
 

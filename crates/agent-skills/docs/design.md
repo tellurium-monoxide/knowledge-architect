@@ -1009,12 +1009,13 @@ instructions and from their interaction with the installed ones as well, per
 
 Every retrospective asks whether the session needed to change an installed skill or agent, whether the
 primer reached the session and its subagents, whether a project skill's addition was missed, and
-whether the session needed a pointer that no checked form expresses. Each watches a decision whose
+whether the session needed to write a reference or a path without backticks because no checked form
+expresses it. Each watches a decision whose
 failure would be seen in real sessions before any check could see it:
 `design@agent-skills@overlay-by-separate-skills`, the primer's delivery by an import line in
 `design@core@owned-namespace-check`, `design@agent-skills@routing-table-shape`, and
 `design@knowledge-architect@plain-text-is-no-repair` with
-`design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`. The last question is the
+`design@knowledge-architect@checker-syntax-without-backticks-names-its-gap`. The last question is the
 one channel by which a gap of the checker met in a consumer project reaches this repository, since
 the consumer's own entry for it is not citable here. The skill never states how many questions
 there are, so adding one changes no count.

@@ -377,9 +377,9 @@ to clear a finding. A repair names a checked form: the right anchor, `path@elsew
 tree does not hold, `planned@<anchor>@<path>` in a plan document for a path its work will create,
 per `design@core@planned-path-form`, an angle-bracket placeholder for an illustration, or a
 rewrite of the sentence.
-The one exception is a pointer that no checked form expresses, other than a commit named by its
-subject, written beside a reference to the issue entry that records the missing form, per
-`design@knowledge-architect@a-needed-unchecked-pointer-names-its-gap`. Prose that mentions a
+The one exception is text in the checker's syntax that no checked form expresses, written without
+backticks beside a reference to the issue entry that records the missing form, per
+`design@knowledge-architect@checker-syntax-without-backticks-names-its-gap`. Prose that mentions a
 directory without asking the reader to follow it is not a repair and is outside this head.
 
 The argument: an unchecked form that clears a finding clears it for good, so a habit of writing one
@@ -402,11 +402,16 @@ the check, per `design@knowledge-architect@plain-text-is-no-repair`. A verbatim 
 owner that names a renamed entry is left as it is, with a reference to the current entry beside
 it, since rewriting it would misstate the owner, against `goal@knowledge-architect@the-owner-decides`.
 
-### A pointer no checked form expresses, a commit named by its subject aside, is written beside a reference to an issue entry of its own project that records the missing form `##a-needed-unchecked-pointer-names-its-gap`
+### Text in the checker's syntax that no checked form expresses is written without backticks only beside a reference to an issue entry that records the missing form `##checker-syntax-without-backticks-names-its-gap`
 
-The checker cannot express every pointer a project needs. Where no checked form exists, the
-pointer may be written in plain text, and only beside a reference to an issue entry of the writing
-project that records the missing form. A project that meets a gap of the checker itself opens that
+The checker cannot express every reference a project needs. This head covers text in the checker's
+syntax, which would be read as a candidate if it were backticked: a reference,
+`<kind>@<anchor>@<id>`, or a path of two or more segments. Where no checked form expresses what such
+text points at, it may be written without backticks, and only beside a reference to an issue entry
+of the writing project that records the missing form. Any other text that names something, in the
+tree or outside it, such as another project's commit, an address on the web or a description in
+words, is outside this head. Whether it needs a reference is decided by
+`design@knowledge-architect@a-reference-claims-a-revisit`. A project that meets a gap of the checker itself opens that
 entry in its own register, since a reference resolves only inside its own project, per
 `issue@core@cross-project-references`. A need that a checked form already serves is not a gap.
 
@@ -417,6 +422,14 @@ justified in a commit message alone lost: nothing finds the site again, and noth
 when the form ships. A generic checked opt-out marker lost too: one marker fits every finding, so
 it becomes the cheap silence `design@core@reserved-anchors` refuses, while a gap concrete enough to
 name is closed by shipping its own form.
+
+The scope is the checker's syntax, so that a writer can tell from each span alone whether the head
+applies, per `goal@knowledge-architect@agents-get-a-complete-workflow`: every sentence names
+something, and a scope of "any pointer" asked for an issue entry beside every mention of a thing
+outside the project. The evasion the head exists to stop is a reference or a path with its
+backticks removed, which this scope covers. A scope by target, any text naming something the tree
+holds, lost: when such text needs a reference is already decided by the rule on references, and
+whether a phrase names something cannot be decided span by span.
 
 A commit named by its subject, as `design@knowledge-architect@git-flow` directs for a commit of the
 branch, is outside this head. It names history as git names it. A reference resolves against the
