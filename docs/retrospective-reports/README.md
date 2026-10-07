@@ -7,6 +7,7 @@ owner's ruling on it. The decision is `design@knowledge-architect@committed-find
 and the procedure is the `klarch-retrospective-intake` skill.
 
 An analysis lands once the owner has ruled on every finding. The issues it rules are opened next,
-then the findings ruled to be handled now are handled. The commit that carries out its last outcome,
-or a later commit of the same branch, deletes it. So this directory holds only the analyses whose outcomes are not all carried out, and
+then the findings ruled to be handled now are handled. The commit that carries out its last
+outcome, or a later commit of the same branch, deletes it. So on the main branch this directory
+holds only the analyses whose outcomes are not all carried out, and
 `git log -- docs/retrospective-reports/` lists every analysis there has been.

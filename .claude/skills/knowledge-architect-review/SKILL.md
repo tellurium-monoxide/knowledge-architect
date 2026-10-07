@@ -128,8 +128,10 @@ change. Each is a claim about the work like any finding. So is a repair the disp
 owner while answering a review. The record of the review lists each item with its outcome.
 
 **A repair that makes or reverses a decision is reviewed by the decision-record axis**, whichever
-axis's finding it answers, before the last transcript review; the review ends with that review's
-repairs. A repair that only corrects is reviewed by no axis again.
+axis's finding it answers. A repair made before the last transcript review is reviewed before it,
+and that transcript review then runs as §1 says; a repair of the last transcript review is reviewed
+after it, and the review ends with that review's repairs. A repair that only corrects is reviewed
+by no axis but the last transcript review, which reads the whole branch.
 
 **An item whose outcome turns on a ruling the owner has not given is put to the owner** before its
 outcome is recorded, and its outcome is then one of the three above. **A defect that predates the
