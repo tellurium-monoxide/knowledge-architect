@@ -52,6 +52,20 @@ Four parts of the configuration let it through:
   needs no word of the owner, unlike a tripwire, so one the agent proposes at the premortem reaches
   a committed plan document without a ruling.
 
+A second instance, in this repository. The milestone load-bearing-records, which rewrites the entry
+tests of the decision-recording skill, gave its first slice an acceptance criterion: a fresh
+subagent, given the rewritten tests and three decisions written for the check, had to classify them
+as the owner had ruled, and a second failure would reopen the decision on the tests. The agent
+proposed it while writing the slice's spec, after the premortem; no word of the owner admitted it.
+It passed the milestone document's three reviews, whose cold implementer asked for its inputs to be
+written out, and the branch's standing-state and last transcript reviews. The slice's design audit
+found it, because the standing-entry search returned this entry. The owner dropped it before it
+ran: "Agreed, drop the criterion based on synthetic evidence. And record this happening in the
+existing issue too." The parts that let the first instance through let this one through: an
+acceptance criterion needs no word of the owner, and no review of a plan document reads it against
+the goals and this entry. The difference is where it stopped: at the audit, before the work,
+rather than at the step that ran it.
+
 ### Why it matters
 
 A synthetic result that changes a bound or reopens a decision drives the workflow by evidence the
