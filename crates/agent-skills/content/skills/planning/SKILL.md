@@ -366,8 +366,7 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
      design session with the owner under `knowledge-architect-design`. **The session's depth
      follows the gap.**
      - A choice among shapes that can be stated in full, each with its consequence, is put to the
-       owner in one message, with a default, where reversing it touches none of the four things the
-       design skill names for the cost of reversal; several such gaps go in one question. The slice's documents exist, so the ruling
+       owner in one message, with a default; several such gaps go in one question. The slice's documents exist, so the ruling
        is not left to a commit message as that path would leave it: it is written in place in the
        milestone's documents by the rule of §4, as a thread with the owner's words verbatim, like
        the audit's other answers, and the audit's commit lists it among its gaps. It owes no new
@@ -382,7 +381,7 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
    shown to fail against a wrong implementation, and say of any claim whose test cannot yet do so
    why not.
 4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
-   or folded where that skill says. A finding not repaired becomes an issue entry.
+   or folded where that skill says.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this slice,
    by its identifier in plain text, beside a citation of the milestone document (§6).
 6. **The harvest**, per the harvest row of the slice's spec: the decisions and the losing

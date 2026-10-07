@@ -286,8 +286,9 @@ entry is left as it is, with a reference to the current entry beside it.
 written beside, in plain text, as the primer says. Its `What` names the pointer's class and the
 form that would express it; its `What would close it` is that form shipping and every site that
 cites the entry converted to it. `{{command}} show` on the entry lists those sites. A gap of the
-checker itself is recorded this way in the project that meets it, and is reported to the
-workflow's maintainers by the retrospective.
+checker itself is recorded this way in the project that meets it, in the issue directory of any of
+its anchors, since `{{command}} show` lists the entry's sites wherever it sits, and is reported to
+the workflow's maintainers by the retrospective.
 
 ## The cold-reader standard
 

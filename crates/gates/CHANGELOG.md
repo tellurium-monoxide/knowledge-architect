@@ -46,6 +46,17 @@ subsection is omitted.
   `<date>-<project>-<subject>.md` and `<date>-<project>-<subject>-klarch-workflow.md`, never
   overwrites one, and cites a finding by its id and its file's stem, as "W3 of
   <date>-<project>-<subject>-klarch-workflow".
+- `agent-skills`, patch: a review item whose outcome turns on a ruling the owner has not given is
+  put to the owner before its outcome is recorded; a defect a reviewer finds predating the change
+  is fixed in a commit of its own, which the review's record names; and the last transcript review
+  waits until the owner has answered every ruling the repairs asked for.
+- `agent-skills`, patch: a dispatcher names a scratch directory of its own to each subagent sent
+  together with others, and the standing-entry searcher writes its working files there.
+- `agent-skills`, patch: moving the pin runs the project's gates command, or the check and the
+  tests, before committing; a project writing an extension's tests reads the checker crate's
+  section on testing an extension first.
+- `agent-skills`, patch: on the design skill's in-change path, where a decision lands is proposed
+  only after decision-recording decides its Component, for a reversal, and whether it earns a head.
 
 ## 0.4.0
 

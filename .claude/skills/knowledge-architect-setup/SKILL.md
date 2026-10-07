@@ -233,14 +233,16 @@ To move to another version:
    gates library's, which move together, or the version of the local install; and
    `[project] checker-version` in the manifest, which moves with them. Until all agree, every
    command refuses, naming the two versions.
-2. Read the changelog of every version crossed. Any version but a patch may make a check stricter,
-   and a major version may ask for a change to the project's layout. Each published crate ships its
+2. Read the changelog of every version crossed. Any version but a patch may make a check stricter
+   or looser, which changes what a test that pins findings sees, and a major version may ask for a change to the project's layout. Each published crate ships its
    CHANGELOG.md. Fetch the new version first, with `cargo fetch` after editing the pin in a Rust
    project, or by the install; then read the file in the source cargo downloaded, under its
    registry directory: `$CARGO_HOME/registry/src/<index>/knowledge-architect-<version>/CHANGELOG.md`.
 3. Run `cargo klarch install-agent-skills`, then follow `knowledge-architect-agent-configuration`
    for what an upgrade owes the project's own configuration.
-4. `cargo klarch check`, and commit the pin, the installed files and the repairs together.
+4. Run the project's gates command of §6, or, where it has none, `cargo klarch check` and the
+   project's tests, and commit the pin, the installed files and the repairs together. A new version
+   can change what a command prints, which only the tests see.
 
 ## In a Rust project
 
@@ -386,7 +388,9 @@ a file.
 
 **A project with an extension** depends on the crate that holds its extension instead of the
 checker alone, and its `klarch` command registers the extension, as that crate's documentation
-shows. Its gates' `Checker` names the same package and prefix.
+shows. Its gates' `Checker` names the same package and prefix. Before writing the extension's tests,
+read the section "Testing an extension" of the checker's crate documentation: it says which findings
+a mock plants, and what a test pins.
 
 **Continuous integration** runs the same command on every pull request that is ready, with a
 history deep enough for the range and the rebase check:

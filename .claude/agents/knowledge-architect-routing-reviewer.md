@@ -96,7 +96,9 @@ instruction. `knowledge-architect-agent-configuration` owns the test.
 deleting the Component?* No, and it belongs in that Component's own design home. Yes, and it
 belongs in the root Component's design home, which holds only what is true of the project as a
 whole: which Components exist and how they depend on each other, the principles every Component
-follows, and the order in which they are built.
+follows, and the order in which they are built. **The exception is a reversal**: a decision that
+reverses a recorded one stays in the Component of the decision it reverses, whatever this question
+answers, per §1 of `knowledge-architect-decision-recording`.
 
 The failure this catches is one-directional in practice: a decision about one Component filed at the
 project level reads as binding on all of them. Check that direction first.
