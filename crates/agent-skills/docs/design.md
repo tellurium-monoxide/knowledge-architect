@@ -381,7 +381,8 @@ the same reason must be respected at more than one site, or at none, a name or a
 consistency being no reason; its argument turns on the behaviour of something outside the project,
 an external specification or a tool's behaviour, documented or measured; or it records the owner's
 own intent, a ruling an agent could reverse as a small fix or an argument the owner wants kept,
-which an approval of the agent's proposal or a hedged proposal with no argument is not. Every other
+which the owner confirms when asked, since an approval of the agent's proposal or a hedged
+statement is not intent and only the owner can tell. Every other
 decision lives in a comment at its code, a `%%` line for the installed text, and in the commit that
 argued it, where it binds as intent at that scale, per `design@agent-skills@local-intent-binds`.
 For a decision about the installed text, `design@agent-skills@instruction-record-is-minimal` admits
@@ -399,7 +400,13 @@ documented: a measurement costs as much to take again as a documentation reading
 and a documented-only test 3 fails where the documentation is silent. Test 4 is the owner's: "Me
 answering "yes" or "approved" is not ground for recording a design decision, it is not "intent"
 from me, it is simply me answering your question "should I do that?" The key point is that my
-ruling has to carry **my** intent, not just acceptation/approval of your proposals." Its rival, any
+ruling has to carry **my** intent, not just acceptation/approval of your proposals." On a hedged
+word: "Under (b), anything I says in a discussion of the design skills comes out as "my intent", as
+I read it. This should not be the case." And on who judges it: "maybe the correct solution would be
+to ask the owner, rather than judge yourself. It would be more reliable IMO", ruled with "Agreed on
+this shape. The questions should be numbered (Q<N> or similar shape), so I can answer each one
+quickly without confusion." The agent's own judgement of the owner's intent, its rival, misread a
+hedged proposal as a ruling twice in the session that made the test. Its other rival, any
 recorded ruling of the owner, admits nearly every head harvested from a discussion, since the
 workflow asks the owner to confirm most decisions. The decision serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`: a later session can tell what it
@@ -763,6 +770,15 @@ discussion to one thread, against `design@agent-skills@structure-the-flow`. The 
 owner accepted, is a long commit message when a discussion inside a task grows to several threads;
 its length is not bounded, since a bound on it would bound the discussion.
 
+### On the in-change path, nothing is implemented or committed before the premortem and its rulings `##in-change-waits-for-premortem`
+
+Where the premortem runs on the in-change path, per `design@agent-skills@in-change-path`, nothing of
+the decision is implemented or committed before it has run and the owner has ruled on its
+tripwires, so the commit that carries the deliberation carries those rulings, as a plan document
+would. A premortem can surface a material finding that reopens a thread, and work committed before
+it would then be undone. The rival, the rulings landing in the later commit that writes the
+tripwires, leaves the deliberation split over two commits.
+
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
 The planning skill starts where a design discussion has converged on the full path, and writes the
@@ -840,13 +856,11 @@ which needs the document where every session reads it, on the main branch; that 
 work, one pull request or several, not where the document lands. The document leaves when its work
 lands, per `design@agent-skills@spec-leaves-at-landing`.
 
-The owner's ruling and argument: "I'd like for you to merge the spec first, and remove the
-instruction that a spec and its implementation are always a single PR. I see no valid reason for
-this constraint in the project, I have no idea where it came from. It regularly happens that I will
-prepare a spec/design for a feature that I won't be implementing right now, just to ensure that the
-intermediate tasks I will perform do not get misaligned too much with that planned feature.
-Anyway, what I mean is that writing plan document should not be constrained with when its
-implementation work happens."
+The owner's intent: "It regularly happens that I will prepare a spec/design for a feature that I
+won't be implementing right now, just to ensure that the intermediate tasks I will perform do not
+get misaligned too much with that planned feature. Anyway, what I mean is that writing plan
+document should not be constrained with when its implementation work happens." Asked whether it
+records the owner's intent, the owner answered: "Q1 yes".
 
 ### A plan document lands before any work that changes what the project's per-commit gate checks `##plan-lands-before-gate-change`
 
@@ -970,8 +984,8 @@ reading may find nothing to change. For a milestone, its next slice's audit read
 session revisits nothing itself: a revisit at that moment would redesign the citing plan at a time
 chosen by another plan's landing.
 
-The procedure is the owner's, with the owner's argument against citing a plan's items from
-another plan: it "forces design work at a moment that might not be the best".
+The procedure was the owner's proposal, with the owner's argument against citing a plan's items
+from another plan: it "forces design work at a moment that might not be the best".
 
 ## Reviews
 
@@ -1157,6 +1171,18 @@ and gives the project's other repeated tasks a place, per
 `goal@knowledge-architect@setup-brings-quality-tools`. The cost accepted: building the gates builds
 the checker, which the check gate needs anyway.
 
+### The setup skill proposes a short CRATES-IO.md for a crate the project publishes `##setup-default-crates-io-page`
+
+For a crate the project publishes, the setup skill proposes to the owner a repository-facing
+README.md and a separate, short CRATES-IO.md as its crates.io page, named by `readme`: the split
+`design@knowledge-architect@crates-io-page-file` makes for this repository's own crates, for the
+same reason. It serves `goal@knowledge-architect@adoption-is-easy`.
+
+The owner's intent, on the owner's own proposal: "Maybe I'd also make it the default in the set-up
+skill: for published Rust crates, keep the README.md as a repo facing document, and use a separate
+CRATES-IO.md for what crates.io readers see." Asked whether it records the owner's intent, the
+owner answered: "Q5: yes".
+
 ### Every Component states at least one goal `##goals-required`
 
 The setup skill does not finish a Component without at least one goal, stated with the owner.
@@ -1252,9 +1278,10 @@ that it is useful to a project adopting the workflow, whose problems may come fr
 instructions and from their interaction with the installed ones as well, per
 `goal@knowledge-architect@the-workflow-improves-through-real-use`.
 
-Both halves are the owner's. On the scope: "to be interesting for external projects to use, it
-should not only cover what the installed skills and agents did … (there might be problems coming
-from that too)". On what is missing: "Otherwise, the retrospective skill will keep producing
+The scope rests on the owner's argument: "to be interesting for external
+projects to use, it should not only cover what the installed skills and agents did … (there might be problems coming
+from that too)". The narrower "missing" was the owner's proposal, opened with "maybe" and approved
+with the discussion's table: "Otherwise, the retrospective skill will keep producing
 findings that ask to narrow the instructions, instead of findings about contradictions or errors in
 instructions. A missing instruction is only a finding if it is needed to follow the workflow and to
 produce documents that the checker allows."

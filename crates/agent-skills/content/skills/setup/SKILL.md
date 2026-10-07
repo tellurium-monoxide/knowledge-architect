@@ -368,9 +368,6 @@ is skipped, and GitHub counts a skipped job as passing: whoever merges reads the
 checks that the job ran on the pull request's current head. A hung job stops at its time limit
 rather than the default of six hours.
 
-%% The split this repository makes for its own crates, per
-%% `design@knowledge-architect@crates-io-page-file`, for the same reason; it serves
-%% `goal@knowledge-architect@adoption-is-easy`.
 **A crate the project publishes** keeps its `README.md` for the project's own readers, with the
 references the checker resolves, and gets a separate, short `CRATES-IO.md` as its crates.io page,
 named by `readme = "CRATES-IO.md"` in its `Cargo.toml`; cargo packages that file even when
