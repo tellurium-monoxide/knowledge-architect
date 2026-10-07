@@ -7,8 +7,8 @@
   analysed under klarch-retrospective-intake, the retrospective names its files by subject, and the
   searcher's groups are balanced".
 - **Standing entries that bear on it:** `tripwire@agent-skills@ruling-lost-in-change` (W1, W4: it
-  does not fire, since the transcript reviewer found the ruling before the merge, and the clause asks
-  for a ruling found lost after it), `tripwire@agent-skills@search-missed-before-the-work` (W3: it
+  does not fire, since the transcript review itself found the ruling, and the clause asks for a
+  ruling found lost after that review), `tripwire@agent-skills@search-missed-before-the-work` (W3: it
   does not fire; no entry was missed).
 
 ## W1, with W8 of 2026-10-07-knowledge-architect-workflow: the in-change path names decision-recording without saying what it decides
@@ -172,8 +172,8 @@
 
 - **`tripwire@agent-skills@ruling-lost-in-change`**, on W1 and W4. It fires on a ruling "found
   missing from, or misstated in, the commit message that carries the deliberation of a discussion
-  on the in-change path, after the branch's transcript review". Here the transcript reviewer found
-  the ruling before the merge. Judgement proposed: not fired.
+  on the in-change path, after the branch's transcript review". Here the transcript review itself
+  found the ruling. Judgement proposed: not fired.
 - **`tripwire@agent-skills@search-missed-before-the-work`**, on W3. It fires on an entry the work
   bears on that no search before the work returned. W3 is about the searchers' scratch files; the
   file reports no missed entry. Judgement proposed: not fired.

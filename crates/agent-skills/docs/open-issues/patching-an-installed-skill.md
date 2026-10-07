@@ -31,7 +31,7 @@ The retrospective asks about it at every session, per
 ### Trigger
 
 A retrospective's workflow file, filed as an issue on knowledge-architect's repository or, for a
-session in this repository, as an entry in its registers, per
+session in this repository, received and analysed under `klarch-retrospective-intake`, per
 `design@agent-skills@retrospective-destination`, names a session that needed to change or remove an
 instruction of an installed skill. The session that triages that report decides what the workflow
 changes, and this means is one of the answers it weighs.
