@@ -583,7 +583,12 @@ choices whose option space genuinely is closed and consequence-free.
    except a cause that only the built code can check: that is an acceptance
    criterion, which `knowledge-architect-planning` writes into the plan document,
    or, on the in-change path, a test of the change.
-   Ask the owner, for each tripwire, whether it is recorded.
+   Ask the owner, for each tripwire, whether it is recorded, and for each
+   acceptance criterion, whether it is applied, naming the decision its
+   firing reopens. Put each under a label, `T<n>` for a tripwire and
+   `AC<n>` for an acceptance criterion, numbered from 1 in order of
+   appearance across the whole discussion, a resumed session included,
+   and never reused, so that the owner rules on each by its label.
    Some may be out of scope of the project, and the owner is the only judge of that.
    A tripwire the owner rules to record is written at the harvest of the decision
    it guards, in the tripwires home of the Component that owns that decision,
@@ -596,7 +601,8 @@ choices whose option space genuinely is closed and consequence-free.
    would agree it fired — an event, a count crossing a bound.
 
    The owner's word rules on whether a cause is watched, not on the
-   wording of the tripwire that watches it. Its firing evidence, its
+   wording of the tripwire that watches it; the same holds for an
+   acceptance criterion's observable. Its firing evidence, its
    response and its re-entry point may be reworded when it is written,
    or on a review finding, on your judgement, and each change is listed
    to the owner at the end of the turn, as an item met outside the task

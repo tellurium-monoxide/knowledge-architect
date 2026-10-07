@@ -213,14 +213,16 @@ A project that already has documentation keeps it until its move is planned:
    for a decision that earns no design entry, or nothing, for history that records no current
    decision. Say what is uncertain: which recorded decisions still hold, and
    which describe a design the code has left.
-3. **The owner rules** on the proposal.
+3. **The owner rules** on the proposal, on each document by a label, `Q<n>`, given to it in the
+   proposal. The issue below names each document by its path, not by the label.
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the
    rulings. The move is then planned work, under `knowledge-architect-planning`, and runs as a
    milestone when the owner schedules it. Until then, the old documents and the new homes both
    exist, and the issue is what records that.
 
 **A finding the check reports in an existing file is the owner's to rule**, since the setup does
-not move or rewrite that file. Show the owner the finding and its repair, such as a bare path
+not move or rewrite that file. Show the owner the finding and its repair, each finding under a
+label, `Q<n>`, when there are several, such as a bare path
 rewritten as a reference. The owner rules between that repair and a
 `[walk] skip-files` row, with its reason beside it, that keeps the file out of the walk until its
 move.

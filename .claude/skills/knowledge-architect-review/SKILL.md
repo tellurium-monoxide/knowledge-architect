@@ -137,7 +137,9 @@ or an argument, a mention or a reference added inside an existing head included,
 axis again; one made before the last transcript review is still read by it.
 
 **An item whose outcome turns on a ruling the owner has not given is put to the owner** before its
-outcome is recorded, and its outcome is then one of the three above. **A defect that predates the
+outcome is recorded, and its outcome is then one of the three above. Several such items go in one
+message, each under a label, `Q<n>`, so the owner rules on each by its label; the record of the
+review names each item by its content, not by the label. **A defect that predates the
 change** is routed by the primer's table of what is met outside the task: a fix checkable from the
 diff alone lands in a commit of its own, and the record of the review names that commit by its
 subject.

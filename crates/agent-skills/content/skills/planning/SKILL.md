@@ -165,11 +165,11 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 | Mapping tables | one table per total function the code will need, over its whole domain: which existing thing becomes which new thing. Empty when the work needs none |
 | Losing alternatives | every ruled-out thread, every thread withdrawn with its defeating reason, and every superseded thread under the thread that absorbed it, each with the thread it lost to and the fact that decided it |
 | Readings | where the work reads an external specification the project implements: each reading it makes, and where it is recorded. Empty for work that reads none |
-| Premortem | each cause, the thread it stresses, and its verdict: survives into a named claim, criterion or guard; converted into a named clause of the design; becomes a tripwire, on the owner's word; or fired and the thread reopened |
+| Premortem | each cause, the thread it stresses, and its verdict: survives into a named claim, criterion or guard; converted into a named clause of the design; becomes a tripwire or an acceptance criterion, on the owner's word; or fired and the thread reopened. Each tripwire and criterion carries the label it was put to the owner under, `T<n>` or `AC<n>` |
 | Acceptance criteria | one item per criterion, ``### <criterion> `##<id>` ``, as §6 says |
 | Implementation sequence | in a spec, its steps; in a milestone document, its slices, each linked to its spec, whose own steps it holds (§5). Concise: what each builds and what it fails alone on |
 | Order rationale | one sentence per pair of adjacent steps or slices |
-| Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, with the thread it bears on, until the owner rules |
+| Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, labelled `D<n>`, with the thread it bears on, until the owner rules; and the label of each acceptance criterion awaiting the owner's word |
 | Harvest | what lands where and when. In a spec, its rows; in a milestone, each slice's row in that slice's spec, and the row of the milestone document itself in it |
 | Later consequences | what each later piece of work adds or replaces, so a later reader knows what was deliberately left |
 
@@ -309,6 +309,16 @@ every plan document and every slice owes is the baseline. A criterion names an o
 the decision it guards; listing "the reviews pass" in every plan document would be noise, and would
 stand in for the specific criterion that is harder to find.
 
+**An acceptance criterion stands on the owner's word**, as a tripwire does. The owner rules on
+whether it is applied and on the decision its firing reopens; its observable is worded by the
+agent, and a rewording is listed to the owner at the end of the turn. It is put to the owner under
+a label, `AC<n>`, and the label continues the sequence of the discussion that produced the plan
+document, so the owner's ruling in the transcript finds it. A criterion first proposed after the
+premortem, at the assembly, by a review or at an audit, is written as an item of the acceptance
+criteria section marked as awaiting the owner, and its label is listed under the defaults awaiting
+the owner. It is not judged before the ruling, and the work goes on without it. One the owner
+declines is deleted.
+
 A number in a criterion is a threshold the owner sets. Until the owner has, it is written as a
 default marked as the owner's to reset.
 
@@ -318,8 +328,8 @@ default marked as the owner's to reset.
 - **A criterion that fires** leaves the document at once, as an issue entry or a reopened decision,
   under `knowledge-architect-issue-tracking`.
 - **When the document leaves**, its last landing commit reports on every criterion once more. One
-  that did not fire and recurs at later work is proposed to the owner as a tripwire, and written on
-  the owner's word in the tripwires home of the Component that owns the guarded decision, naming
+  that did not fire and recurs at later work is proposed to the owner as a tripwire, under a label
+  `Q<n>` when several are proposed, and written on the owner's word in the tripwires home of the Component that owns the guarded decision, naming
   the harvested head, in the shape `knowledge-architect-issue-tracking` gives. One that is
   spent, or that the owner declines, is deleted with the document.
 
@@ -366,7 +376,8 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
      design session with the owner under `knowledge-architect-design`. **The session's depth
      follows the gap.**
      - A choice among shapes that can be stated in full, each with its consequence, is put to the
-       owner in one message, with a default; several such gaps go in one question. The slice's
+       owner in one message, with a default; several such gaps go in one question, each under a
+       label, `D<n>`, continuing the document's sequence of defaults. The slice's
        documents exist, so the ruling is not left to a commit message as that path would leave
        it: it is written in place in the
        milestone's documents by the rule of §4, as a thread with the owner's words verbatim, like
@@ -456,7 +467,8 @@ skill lists, the blind brief included:
 
 **What their findings become.** Check each finding against the tree, or against the transcript,
 before acting on it. A material finding is answered with a default, written into the sections it
-touches, and listed under the defaults awaiting the owner, with the thread it bears on. The owner
+touches, and listed under the defaults awaiting the owner, with the thread it bears on and a label,
+`D<n>`, numbered from 1 across the document's revisions and never reused. The owner
 rules on each at the first audit, or at once if present, and a ruled default leaves the list. A finding
 that is a gap with one answer is applied in place. A finding that is wrong is dropped, with the
 reproduction that showed it wrong kept in the commit message. A scope change, a clause that widens or narrows
