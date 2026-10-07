@@ -2,7 +2,12 @@
 
 The spec of the second slice of `milestone@plans@load-bearing-records`. It holds what only this
 slice builds; what crosses slices is in the milestone document. Every item it cites is defined
-there. It starts after slice 1 and the snippet branch have merged.
+there, except its own acceptance criterion. It starts after slice 1 and the snippet branch have
+merged.
+
+**The repairs of the first three classes in the mapping table, and the narrowed head's use of
+`path@*@<path>` for the directory shape, rest on the first default awaiting the owner in the
+milestone document.** Until the owner rules on it, they are that default, not a decided shape.
 
 ## Builds
 
@@ -11,7 +16,11 @@ there. It starts after slice 1 and the snippet branch have merged.
   inlined; a `%%` line inside a fenced block, or one with leading spaces, fails the build.
 - **Delivery substitutions** in the same build script: a table of rows, each a placeholder, the
   literal it expands to, and a comment giving the reason the checker must not read that literal.
-  The first row is `{{primer-import}}`, for the primer's import line.
+  The first row is `{{primer-import}}`, for the primer's import line. A substitution replaces its
+  placeholder wherever it stands in a line, unlike a snippet, which replaces a whole line: the
+  import line sits inside a sentence. It matches only the placeholders of its own table, so the
+  GitHub Actions expressions of the setup skill, written `${{ … }}`, and the install's `{{command}}`
+  are left as they are.
 - **content/ back in the walk**: the line `"crates/agent-skills/content",` and its comment leave
   the `exclude` list of `path@knowledge-architect@knowledge-architect.toml`.
 - **The 36 repairs** the walk probe reported, per the mapping table below.
@@ -27,6 +36,7 @@ there. It starts after slice 1 and the snippet branch have merged.
 | A `%%` line inside a fence, or indented, fails the build | the build itself, over a scratch copy of content/ holding each case | each case planted in a scratch worktree makes the build panic with a message naming the file and line; without the refusal the build passes |
 | Stripping leaves the surrounding text unchanged | the installed copies: `cargo klarch install-agent-skills` reports the installed set already the shipped one after the first `%%` line is added to a file whose installed copy is committed | adding the `%%` line changes no byte of the installed file |
 | A substitution row that no text uses fails the build | the build | a row whose placeholder is deleted from content/ makes the build panic |
+| The import line the setup skill ships is the one the check looks for | a test in the core over `knowledge_architect_agent_skills::FILES`: the installed setup skill holds `IMPORT_LINE` of `path@core@src/agents.rs`, the only other copy of that literal, which the agent-skills build script cannot read since the core depends on agent-skills | a row whose literal differs by one character fails it |
 | content/ in the walk passes the check | `cargo klarch check` | the probe's 36 findings are the baseline: each repair removes one |
 
 ## Audit subjects
@@ -50,8 +60,8 @@ there. It starts after slice 1 and the snippet branch have merged.
 
 ## Premises that expire
 
-- **The snippet branch has merged.** This slice extends its placeholder mechanism in
-  `path@agent-skills@build.rs`. If the snippet branch has not merged when this slice starts, the
+- **The snippet branch has merged.** This slice adds the comment strip and the substitutions
+  beside its placeholder mechanism in `path@agent-skills@build.rs`, and orders the three. If the snippet branch has not merged when this slice starts, the
   slice stops and the owner rules, since the owner fixed the order in R7.
 - **The checker accepts `path@*@<path>` for every shape of a required document**, per
   `design@core@reserved-anchors`. The repairs of the first two classes rely on it. A change to that
@@ -75,7 +85,7 @@ to reach a count.                               to reach a count.
 
 - **The marker** (a54): `%%` has no Markdown meaning, reads as a comment in Mermaid and Obsidian, and
   cannot collide with a Rust snippet, whose comments are `//`. In content/, no line began with
-  `%%` when the marker was chosen, R4.
+  `%%` when the marker was chosen, R4; `grep -rn '%%' crates/agent-skills/content` re-takes it.
 - **Line comments, not HTML comments** (a49, a53): the checker treats an HTML comment as parked
   text, and reads no reference in it, so citations would go unchecked.
 - **Order in the build**: comments are stripped first, then delivery substitutions, then snippets,
@@ -96,10 +106,11 @@ each Component's own copy, required by `design@core@components-carry-the-same-do
 true in every project that installs the text, and it shows the syntax the checker enforces there
 (a67). The checker accepts the generic anchor for every shape of a required document, so the
 directory shape is written as a reference too: `path@*@docs/goals/`. The head is rewritten in place
-under a slug that names the narrowed rule.
+under a slug that names the narrowed rule. This rests on the first default awaiting the owner.
 
 The plain-text paths of the shipped text are no longer hidden from the walk, so the walk also
-checks that each generic path names a document the workflow requires.
+checks that each generic path names a document the workflow requires, or a path that at least one
+Component of this repository carries, which is what `design@core@reserved-anchors` accepts.
 
 ### #delivery-substitutions: a table in the build script
 
@@ -121,7 +132,7 @@ re-listed by running the probe again at the slice's start: `cargo klarch check` 
 
 | class | count | example as written today | repair |
 | --- | --- | --- | --- |
-| a required document of every Component, file shape | 19 | the goals, design, tripwires and rejected-alternatives homes as plain backticked paths under docs/ | `path@*@docs/goals.md`, and so on |
+| a required document of every Component, file shape, or the issue directory | 19 | the goals, design, tripwires and rejected-alternatives homes (4 each), and the issue directory (3), as plain backticked paths under docs/ | `path@*@docs/goals.md`, `path@*@docs/open-issues/`, and so on |
 | a required document of every Component, directory shape | 11 | the goals (4), design (4) and tripwires (3) homes' directory shape, as plain backticked paths | `path@*@docs/goals/`, and so on |
 | a path of the plans directory | 3 | the plans directory's README, specs/ and milestones/, as plain backticked paths | `path@plans@README.md`, `path@plans@specs/`, `path@plans@milestones/` |
 | a path of the setup skill's Rust section | 2 | the maintenance crate's directory and cargo's configuration file, as plain backticked paths | `<xtask-dir>/`, `<workspace-root>/.cargo/config.toml` |
@@ -152,7 +163,7 @@ At this slice's landing, under `knowledge-architect-decision-recording` and
 | #shipped-text-entry-references-only | `design@agent-skills@shipped-text-is-reference-free` rewritten in place, slug `shipped-text-cites-no-entry`; its references in `path@agent-config@skills/klarch-release/SKILL.md`, `path@agent-skills@CLAUDE.md` and the issue below follow |
 | #delivery-substitutions | none: the comment of the table in `path@agent-skills@build.rs`, and the commit |
 | the walk | `issue@agent-skills@shipped-text-is-reference-free-mechanically` rewritten: the exclusion is gone; what remains is a check that the shipped text holds no reference to an entry, applied to the installed copies under .claude once a path can be declared reference-clean, per the owner in R5 |
-| the developer's contract | `path@agent-skills@CLAUDE.md`: "No check reads content/" becomes the `%%` convention and the delivery substitutions |
+| the developer's contract | `path@agent-skills@CLAUDE.md`: "No check reads content/" becomes the `%%` convention and the delivery substitutions; the paragraph the snippet branch adds, which says the snippets stay "reference-free as content/ does", follows the narrowed rule |
 | the release procedure | `path@agent-config@skills/klarch-release/SKILL.md`, its step on the shipped text |
 
 This slice's spec and the milestone document leave in the commit that completes this harvest.
