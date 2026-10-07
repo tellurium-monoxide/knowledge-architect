@@ -350,6 +350,21 @@ fn is_empty_tree(dir: &Path) -> std::io::Result<bool> {
 mod tests {
     use super::*;
 
+    /// The setup skill tells a project to write the import line this module checks for. The
+    /// agent-skills build script holds a copy of the line, which it cannot read from here, since
+    /// this crate depends on that one; this test holds the two equal.
+    #[test]
+    fn the_setup_skill_ships_the_import_line_the_check_looks_for() {
+        let (_, setup) = knowledge_architect_agent_skills::FILES
+            .iter()
+            .find(|(path, _)| *path == ".claude/skills/knowledge-architect-setup/SKILL.md")
+            .expect("the setup skill is shipped");
+        assert!(
+            setup.contains(&format!("`{IMPORT_LINE}`")),
+            "the setup skill does not show {IMPORT_LINE}"
+        );
+    }
+
     fn manifest(extra: &str) -> Manifest {
         let text = format!(
             "[project]\nchecker-version = \"fixture\"\nname = \"p\"\ncomponents = []\n{extra}\n\

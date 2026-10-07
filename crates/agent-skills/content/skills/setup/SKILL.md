@@ -149,7 +149,7 @@ register home says it holds no entry yet. **Every Component states at least one 
 The project's root `CLAUDE.md` holds, besides what the project already keeps there:
 
 - **the primer's import line**, alone on its own line of prose, outside any code block:
-  `@.claude/knowledge-architect/PRIMER.md`. The install never writes it, because the root
+  `{{primer-import}}`. The install never writes it, because the root
   `CLAUDE.md` belongs to the project; the check reports it missing until it is there;
 - **the project's rows of the knowledge table**, under a heading of their own: each kind of
   statement the project keeps somewhere the primer's table does not name, such as its changelog, a
