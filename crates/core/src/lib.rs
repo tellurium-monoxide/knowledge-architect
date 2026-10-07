@@ -186,9 +186,10 @@
 //! reads: a failure then names each finding gained or lost. The wording of a finding is left out
 //! of the set, since a rewording is no change to what the check reports.
 //!
-//! **A test reads the report's data, not the text the core prints.** `report.checks` lists the
-//! checks the last phase ran, in the order of the `checked:` line, `report.not_run` the checks the
-//! tree gave no input to, and `report.summaries` each extension's block of the summary.
+//! A test reads `report.checks`, `report.not_run` and `report.summaries` rather than the printed
+//! lines they produce. `report.checks` lists every check the last phase performed or was asked
+//! to, `report.not_run` those the tree gave no input to, so a check ran when it is in the first and
+//! not in the second, and `report.summaries` holds each extension's block of the summary.
 //!
 //! # Compatibility
 //!

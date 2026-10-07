@@ -1028,6 +1028,22 @@ makes or reverses a decision is reviewed by the decision-record axis at least, a
 with that review's repairs: otherwise a decision taken in answer to the transcript review reaches
 the main branch with no review of its record, against the same goal.
 
+### Subagents dispatched together each get a scratch directory of their own `##a-scratch-directory-per-subagent`
+
+A dispatcher that sends several subagents together names in each brief a scratch directory distinct
+from the others', as it names a distinct worktree for a reviewer that builds, and an agent that
+writes working files writes them there only. The installed review skill states it among the
+invariants of a dispatch, and the standing-entry searcher's description, which carries its dispatch
+rule, gives each searcher one. Subagents sharing one scratch directory overwrite one another's
+files: parallel searchers in one session did, and one repeated its work, and reviewers in another
+could not tell whether files of the same names had been overwritten. A searcher that does not notice
+reads another group's rows, which `goal@knowledge-architect@agents-get-a-complete-workflow` does not
+allow of a step every design discussion runs.
+
+The rival that keeps every agent from writing files lost: the searcher's own task sorts a listing
+and runs one command per entry, and searchers told to write nothing wrote files all the same, so
+the instruction could not be obeyed together with the task.
+
 ## The configuration a project holds
 
 ### The workflow's rows of the knowledge table ship in the primer; the project's own rows sit in its root CLAUDE.md `##knowledge-table-home`

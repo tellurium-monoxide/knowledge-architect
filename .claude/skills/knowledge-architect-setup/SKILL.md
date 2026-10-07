@@ -233,16 +233,17 @@ To move to another version:
    gates library's, which move together, or the version of the local install; and
    `[project] checker-version` in the manifest, which moves with them. Until all agree, every
    command refuses, naming the two versions.
-2. Read the changelog of every version crossed. Any version but a patch may make a check stricter
-   or looser, which changes what a test that pins findings sees, and a major version may ask for a change to the project's layout. Each published crate ships its
+2. Read the changelog of every version crossed. Any version but a patch may make a check
+   stricter, a version may make one looser, and either changes what a test that pins findings
+   sees; a major version may ask for a change to the project's layout. Each published crate ships its
    CHANGELOG.md. Fetch the new version first, with `cargo fetch` after editing the pin in a Rust
    project, or by the install; then read the file in the source cargo downloaded, under its
    registry directory: `$CARGO_HOME/registry/src/<index>/knowledge-architect-<version>/CHANGELOG.md`.
 3. Run `cargo klarch install-agent-skills`, then follow `knowledge-architect-agent-configuration`
    for what an upgrade owes the project's own configuration.
 4. Run the project's gates command of §6, or, where it has none, `cargo klarch check` and the
-   project's tests, and commit the pin, the installed files and the repairs together. A new version
-   can change what a command prints, which only the tests see.
+   project's tests, and commit the pin, the installed files and the repairs together. A new
+   version can change what a command prints, which only the tests see.
 
 ## In a Rust project
 

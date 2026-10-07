@@ -30,8 +30,9 @@ Instances seen:
 - A consumer's extension tests asserted text the core prints, and the consumer's owner ruled
   mid-review that they assert none: W5 of 2026-10-07-thaum-mock-reduction-workflow. The checker
   crate's section "Testing an extension" said nothing of printed output; it now sends a test to the
-  public fields `Report::checks`, `Report::not_run` and `Report::summaries`, which hold what the
-  printed lines show. It says nothing yet of which printed text is a contract.
+  public fields `Report::checks`, `Report::not_run` and `Report::summaries`, from which the
+  `checked:`, not-run and summary lines are printed. It says nothing yet of which printed text is a
+  contract.
 - Under that ruling, one property of the consumer's binary had no observation left: which
   checker-source directories it passes to the core, printed only as the `checker source:` line.
   `cli::run` returns an exit code and no `Report`: C1 of the same file. The workaround on the

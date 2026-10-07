@@ -96,9 +96,11 @@ every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a regi
 entries its home defines, the `path` kind against the tree, the `planned` kind against its absence
 from the tree — and reports the retired slug
 reference form and the unanchored path shape where either names something of this project.
-An anchor's own directory has no spelling under its own name, so a reference names it from the
-anchor above it, as `path@<parent-anchor>@<dir>/`, and an illustration of a form writes its id as a
-placeholder in angle brackets, as `path@*@<path>`: a span with an empty id is malformed.
+The directory of an anchor other than the root has no spelling under its own name, so a reference
+names it from the anchor above it, as `path@<parent-anchor>@<dir>/`, per
+`design@core@every-path-names-its-anchor`. An illustration of a form writes its id as a placeholder
+in angle brackets, as `path@*@<path>`, per `design@core@candidate-rule-and-retired-forms`: a span
+with an empty id is malformed.
 `registers` judges the shape of what each anchor carries: a file
 register's README, index, groups and entry shapes, and a directory home's links. A check the tree
 gives no input to is printed as not run rather than counted. There is no way to select a subset:
