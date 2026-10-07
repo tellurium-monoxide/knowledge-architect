@@ -551,7 +551,7 @@ Q<n>                                              existing; the common label of 
 W<n>, C<n>, P<n>                                  existing; the retrospective's findings
 ```
 
-The agent's source file is `planned@agent-skills@content/agents/design-conformance-reviewer.md`.
+The agent's source file is `path@agent-skills@content/agents/design-conformance-reviewer.md`.
 The build maps it to its installed copy under .claude/agents, with the installer's prefix.
 
 ## Decided design

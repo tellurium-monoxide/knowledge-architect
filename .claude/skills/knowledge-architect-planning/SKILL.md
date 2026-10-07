@@ -437,6 +437,11 @@ skill lists, the blind brief included:
   it did not see. It also applies the readiness checks below.
 - `knowledge-architect-code-claims-reviewer` verifies every statement the document makes about the
   code as it stands, and reports each as confirmed, wrong or imprecise, with the evidence.
+- `knowledge-architect-design-conformance-reviewer` reads the document against the project's
+  record: the goals, the design heads and the rejected alternatives of every Component it touches.
+  It reports a shape, an acceptance criterion, a default, a step or a harvest row that contradicts
+  a goal, that contradicts or widens a head the document does not list as reversed or rewritten,
+  or that brings back an alternative that lost. A conflict with a goal goes to the owner.
 - `knowledge-architect-transcript-reviewer` reads the discussion's transcripts and checks that
   everything the discussion established that must outlive it is in the document or has another
   durable outcome, and that no ruling of the owner is recorded wider, narrower or in another state
