@@ -629,6 +629,9 @@ impl fmt::Display for Site {
     }
 }
 
+/// The repair of a malformed span whose reason names no more specific one.
+const GENERIC_REPAIR: &str = "write `<kind>@<anchor>@<id>`, and for a path `path@<anchor>@<path>`";
+
 /// What a backticked `@` span is, under the candidate rule.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum Candidate<'a> {
@@ -639,7 +642,10 @@ pub(crate) enum Candidate<'a> {
         id: &'a str,
     },
     /// A known kind followed by the wrong number of segments, or an empty one.
-    Malformed { why: &'static str },
+    Malformed {
+        why: &'static str,
+        repair: &'static str,
+    },
     /// The head is an anchor, or a reserved anchor, where a kind goes: the old form.
     AnchorInKindPosition { head: &'a str },
     /// The head is neither a kind nor an anchor. Not a reference; silent.
@@ -666,6 +672,7 @@ pub(crate) fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
     if head.is_empty() && rest.contains('/') {
         return Candidate::Malformed {
             why: "the kind segment is empty",
+            repair: GENERIC_REPAIR,
         };
     }
     let Some(kind) = anchors.kind(head) else {
@@ -677,21 +684,29 @@ pub(crate) fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
     let Some((anchor, id)) = rest.split_once('@') else {
         return Candidate::Malformed {
             why: "two segments; a reference has three",
+            repair: GENERIC_REPAIR,
         };
     };
     if anchor.is_empty() {
         return Candidate::Malformed {
             why: "the anchor segment is empty",
+            repair: GENERIC_REPAIR,
         };
     }
     if id.is_empty() {
         return Candidate::Malformed {
             why: "the id segment is empty",
+            // An empty id is most often a form named in prose, or an anchor's own directory,
+            // which has no spelling under its own name; each has a checked form to name.
+            repair: "write the id: an illustration of a form writes it as a placeholder in angle \
+                     brackets, as `path@*@<path>`, and an anchor's own directory is named from the \
+                     anchor above it, as `path@<parent-anchor>@<dir>/`",
         };
     }
     if !kind.takes_a_path() && id.contains('@') {
         return Candidate::Malformed {
             why: "four or more segments; a reference has three",
+            repair: GENERIC_REPAIR,
         };
     }
     Candidate::Reference { kind, anchor, id }

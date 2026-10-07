@@ -132,11 +132,11 @@ pub(crate) fn judge_part(
                             );
                         }
                     }
-                    Candidate::Malformed { why } => out.push(Finding::at(
+                    Candidate::Malformed { why, repair } => out.push(Finding::at(
                         &doc.rel,
                         l.line,
                         format!("`{span}` is malformed: {why}"),
-                        "write `<kind>@<anchor>@<id>`, and for a path `path@<anchor>@<path>`",
+                        repair,
                     )),
                     Candidate::AnchorInKindPosition { head } => out.push(Finding::at(
                         &doc.rel,
@@ -428,8 +428,10 @@ fn path(
                     rel,
                     line,
                     format!("`{span}` resolves in this tree, beside `{}`", a.name),
-                    "the escape anchor is for a path this tree does not hold; anchor the \
-                     reference at the anchor that holds it",
+                    "the escape anchor is for a path this tree does not hold: anchor the \
+                     reference at the anchor that holds it, or, for a file of another project, \
+                     begin the path with that project's name, as \
+                     `path@elsewhere@<project>/<path>`",
                 ));
             }
         }
@@ -1778,6 +1780,30 @@ mod tests {
         let (found, _) = checked(&m, "See `path@elsewhere@notes/real/a.md`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("resolves in this tree"), "{found:#?}");
+        // The writer may have meant another project's file of the same spelling; the repair
+        // names the checked form for it.
+        assert!(found[0].contains("that project's name"), "{found:#?}");
+    }
+
+    #[test]
+    fn an_empty_id_names_the_placeholder_and_the_ancestor_spelling() {
+        // Two needs end in an empty id: naming a form in prose, and naming an anchor's own
+        // directory. Each has a checked form, and the repair names both.
+        let (found, _) = checked(&manifest(), "the form `path@a-project@` alone\n", &[]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("the id segment is empty"), "{found:#?}");
+        assert!(
+            found[0].contains("placeholder in angle brackets"),
+            "{found:#?}"
+        );
+        assert!(
+            found[0].contains("named from the anchor above it"),
+            "{found:#?}"
+        );
+        // Another malformed reason keeps the generic repair.
+        let (found, _) = checked(&manifest(), "`path@a-project`\n", &[]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("and for a path"), "{found:#?}");
     }
 
     #[test]
