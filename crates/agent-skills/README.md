@@ -8,7 +8,7 @@ that the installed files match it.
 A project depends on `knowledge-architect`, never on this crate directly: cargo fetches it.
 
 No installed skill covers a bounded problem yet: a clear requirement whose main risk is
-over-building. The skill is `issue@agent-skills@a-skill-for-bounded-problems`.
+over-building. `milestone@plans@load-bearing-records` gives it a path inside the design skill.
 
 The sections below describe one skill of the set, the design skill,
 `knowledge-architect-design`: it runs design discussions as open, argued
@@ -68,7 +68,7 @@ For a bounded problem (clear requirement, main risk is over-building)
 it says so, states the strongest open reading beside the bounded one so
 you rule on the classification knowing both, and leaves the next step
 to you: no installed skill covers a bounded problem yet
-(`issue@agent-skills@a-skill-for-bounded-problems`).
+(`milestone@plans@load-bearing-records` gives it a path inside the design skill).
 
 It also carries a keep-or-change discipline for questioning incumbent
 designs: fresh-discussion trend framing (a new session when the

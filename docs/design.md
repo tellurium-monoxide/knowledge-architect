@@ -208,7 +208,7 @@ owner's, per `goal@knowledge-architect@the-owner-decides`. The open issues are
 `issue@agent-skills@shipped-text-is-reference-free-mechanically`,
 `issue@agent-skills@patching-an-installed-skill`,
 `issue@agent-skills@a-skill-for-creating-a-component` and
-`issue@agent-skills@a-skill-for-bounded-problems`.
+`milestone@plans@load-bearing-records`.
 
 Leaving 0.x re-examines `design@core@ne-minimal`. After 1.0, a variant added to one of the
 library's exhaustive enums is a major, where under 0.x it bumps 0.MINOR.

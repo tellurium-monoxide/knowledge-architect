@@ -97,8 +97,8 @@ designed nor planned, and found only at the standing-state review. The first was
 of the pinned checker met the trigger of a deferred issue that named that move.
 **Response:** open a `design` issue naming both instances, and propose a search before such work,
 with its host.
-**Re-entry:** the design discussion of `issue@agent-skills@a-skill-for-bounded-problems`, the
-skill that would host a search before undesigned work.
+**Re-entry:** the landing of the first slice of `milestone@plans@load-bearing-records`, which hosts a search
+before bounded work in the design skill and restates this tripwire.
 
 ## Guarding `design@agent-skills@spec-work-procedure`: a gap an audit would have found, in a spec's work that skipped it as the rule allows `##skipped-spec-audit-would-have-found-a-gap`
 
