@@ -1,15 +1,19 @@
 **Generated — do not edit.** `cargo klarch index`
 
-13 entries
+17 entries
 
 | kind | title |
 | --- | --- |
 | deferred | [A project cannot change one instruction of an installed skill](patching-an-installed-skill.md) |
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
+| design | [The workflow assumes one owner, unnamed, which a project with several contributors does not have](the-workflow-assumes-one-unnamed-owner.md) |
 | question | [A design issue's re-entry point is read by no review](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |
+| question | [A word of the owner given on a premise that later proved false has no rule outside a design discussion](a-word-given-on-a-false-premise-outside-a-discussion.md) |
 | question | [Whether synthetic evidence about the workflow is built at all, and under which conditions, is undecided](synthetic-evidence-about-the-workflow-is-undecided.md) |
 | question | [Does test 3 admit a decision that only follows a practice its tool's documentation explains?](test-3-admits-a-practice-its-tool-documents.md) |
 | question | [Does the design skill's open-space test leave bounded work almost unreachable?](the-open-space-test-may-admit-every-problem.md) |
+| question | [The retrospective asks whether the primer reached the subagents, and no session can see it](the-primer-question-cannot-be-answered-for-subagents.md) |
+| question | [Test 2 of decision-recording does not say what a site is when the decision is about installed text](what-a-site-is-for-installed-text-is-undefined.md) |
 | todo | [A reviewer that queues long work reports nothing until it is asked](a-reviewer-s-running-time-is-unbounded.md) |
 | todo | [No installed skill says how a new Component is created](a-skill-for-creating-a-component.md) |
 | todo | [Only the design and setup skills state what they expect of the owner](expectation-sets-for-the-installed-skills.md) |
