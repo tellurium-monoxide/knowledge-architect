@@ -155,9 +155,9 @@ What exists today at each site the work touches:
   inline comment is a home in the primer's knowledge table ("why a piece of code is shaped the way
   it is"), and no class says whether it is intent or claim. The root `path@knowledge-architect@CLAUDE.md`
   restates the two classes under "Verify before relying on anything".
-- **The design skill**, `path@agent-skills@content/skills/design/SKILL.md`, has a section "When
-  NOT to use" that classifies a bounded problem and leaves the next step to the owner, per
-  `design@agent-skills@bounded-problem-branch`. Its keep-or-change section already says that
+- **The design skill**, `path@agent-skills@content/skills/design/SKILL.md`, had a section "When
+  NOT to use" that classified a bounded problem and left the next step to the owner. Slice 1
+  replaced it with the bounded path, and its head with `design@agent-skills@bounded-path-in-design`. Its keep-or-change section already says that
   behaviour argued by no document and no observed use is "an implementation coincidence" to raise
   with the owner, and that "a commit message that argues it counts".
 - **The decision-record reviewer**, `path@agent-skills@content/agents/decision-record-reviewer.md`,
@@ -213,7 +213,7 @@ The recorded decisions the work reverses or rewrites, each with every text that
 
 | decision | change | referencing texts | updated by |
 | --- | --- | --- | --- |
-| `design@agent-skills@bounded-problem-branch` | reversed by the bounded path | only the issue that asked for a skill for bounded problems, which this document's commit closes | slice 1, rewritten in place under a new slug |
+| the head now `design@agent-skills@bounded-path-in-design`, the bounded-problem branch before slice 1 | reversed by the bounded path | only the issue that asked for a skill for bounded problems, which this document's commit closes | slice 1, rewritten in place under a new slug |
 | `design@agent-skills@standing-entries-searched-before-the-work` | bounded work routed through the design skill is searched at its grounding | `design@agent-skills@conformance-before-every-merge`; `tripwire@agent-skills@search-missed-before-the-work`; `tripwire@agent-skills@deferred-trigger-met-by-undesigned-work` | slice 1 |
 | `design@agent-skills@conformance-before-every-merge` | its paragraph that parks a search before undesigned work is answered: the design skill hosts it for bounded work | `design@agent-skills@standing-entries-searched-before-the-work`; `issue@agent-skills@a-design-issue-s-re-entry-point-is-read-by-no-review`, whose sentence "Work that is neither designed nor planned meets it at no step" stops holding for bounded work; `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` | slice 1 |
 | `design@agent-skills@primer-content` | the intent-and-claims rule gains a class, within the head's title | `path@knowledge-architect@CLAUDE.md` (its restatement of the primer's content); `path@agent-skills@docs/rejected-alternatives.md` | slice 1 |
@@ -224,7 +224,7 @@ The recorded decisions the work reverses or rewrites, each with every text that
 The commit that adds this document closes the issue that asked for a skill for bounded problems, which
 this milestone schedules, and repairs the texts that cited it:
 - the two mentions in `path@agent-skills@README.md`;
-- `design@agent-skills@bounded-problem-branch`;
+- the head of the bounded-problem branch, now `design@agent-skills@bounded-path-in-design`;
 - `design@agent-skills@conformance-before-every-merge`;
 - the re-entry of `tripwire@agent-skills@deferred-trigger-met-by-undesigned-work`;
 - the list under `design@knowledge-architect@stays-at-zero-x`.
@@ -304,9 +304,9 @@ Weighed; stated by the owner in R1, from no goal. Met in part by #record-volume 
 - **Arguments:** a7, a12, a13, a20, a21, a22.
 - **Closed by:** R2: "bounded-path-in-design: I agree with that. The existing bounded skill issue
   would be closed by this. I'm gonna rewrite my global CLAUDE.md to fit too."
-- **Shape:** the decided design of slice 1. **Harvest:** `design@agent-skills@bounded-problem-branch`
-  rewritten in place under a new slug, slice 1.
-- **Relations:** reverses `design@agent-skills@bounded-problem-branch`. Supersedes the owner's
+- **Shape:** the decided design of slice 1. **Harvest:** the head of the bounded-problem
+  branch, rewritten in place as `design@agent-skills@bounded-path-in-design`, slice 1.
+- **Relations:** reverses the bounded-problem branch, whose head is now `design@agent-skills@bounded-path-in-design`. Supersedes the owner's
   earlier word in the closed issue, "Ultimately, I'd like to make my own skill for this use case."
   (a13). Hosts the search that `tripwire@agent-skills@deferred-trigger-met-by-undesigned-work`
   asks for (a12). Absorbs #record-test-at-classification. Guarded by P1.
@@ -927,10 +927,12 @@ crates/agent-skills/content/              placeholders in the setup skill's Rust
 
 ## Decided design
 
-In the slices' specs: [workflow-text](workflow-text.md) holds the design of #entry-test-locality,
-#local-intent-binds, #bounded-path-in-design, #record-volume, #t1-consumed-interface,
-#t3-external-behaviour and #record-audit; [shipped-text-comments](shipped-text-comments.md) holds
-the design of #shipped-text-line-comments, #shipped-text-entry-references-only and
+Slice 1, workflow-text, has landed: the design of #entry-test-locality, #local-intent-binds,
+#bounded-path-in-design, #record-volume, #t1-consumed-interface and #t3-external-behaviour is in
+`design@agent-skills@a-head-is-owed-by-an-entry-test`, `design@agent-skills@local-intent-binds` and
+`design@agent-skills@bounded-path-in-design`, and #record-audit is
+`issue@agent-skills@heads-no-entry-test-admits`. [shipped-text-comments](shipped-text-comments.md)
+holds the design of #shipped-text-line-comments, #shipped-text-entry-references-only and
 #delivery-substitutions.
 
 ## Mapping tables
@@ -965,7 +967,7 @@ In the slices' specs: each criterion is judged by one slice.
 
 ## Implementation sequence
 
-1. [Workflow text](workflow-text.md): the entry tests and their head, the local intent, the bounded
+1. Workflow text, landed: the entry tests and their head, the local intent, the bounded
    path, the decision-record reviewer's predicate, the cleanup issue. Text and records only.
 2. [Shipped text comments](shipped-text-comments.md): `%%` comments stripped at build, content/
    back in the walk with its 36 repairs, the delivery substitutions, the narrowed head of the

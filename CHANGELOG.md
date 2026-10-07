@@ -28,6 +28,18 @@ subsection is omitted.
   silent, and the retrospective counts an instruction as missing only where the workflow needed it.
 - `agent-skills`, patch: the rule on writing a pointer without backticks covers only a reference or
   a path in the checker's syntax; the retrospective's standing question asks about those alone.
+- `agent-skills`, patch: the design skill grounds a requested change whose design is not settled,
+  and for bounded work, which reverses nothing, earns no design head and has no second defensible
+  shape, sends one proposal with its default and waits for the owner's word, where it left the next
+  step to the owner.
+- `agent-skills`, patch: a decision earns a design head only when one of the rewritten entry tests
+  passes: an interface others consume, a reason several sites or no site must respect, or the
+  behaviour of something outside the project. The primer says a reason recorded at the code binds
+  as intent below the design home and is read before code is removed, and the decision-record
+  reviewer reports a diff that defeats one.
+- `agent-skills`, patch: the transcript reviewer rates a misstated ruling critical only when it is
+  reversed or changes what is built, and the retrospective counts a minor one caught before the
+  merge as no finding.
 
 ## 0.4.0
 

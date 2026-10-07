@@ -80,16 +80,27 @@ and "discussing-design-decisions", which read as a sentence.
 "design" also names the design register, which the design skill does not write: in prose, the noun
 that follows, "the design skill" or "the design home", tells them apart.
 
-### Until the design skill gains a path for bounded work, a bounded problem goes back to the owner `##bounded-problem-branch`
+### Bounded work takes a path inside the design skill, after its grounding `##bounded-path-in-design`
 
-A problem that arrives bounded, a clear requirement whose main risk is over-building, is not a
-design discussion. The design skill says so, states the strongest open reading of the
-problem beside the bounded one, and leaves the next step to the owner. It names no skill for the
-bounded case, because no installed skill covers it, per `design@agent-skills@no-external-handoff`.
-It does not send the problem to the planning skill either: the owner holds that a bounded problem
-still needs investigation and testing, and a spec records a design and its implementation sequence
-without running either. `milestone@plans@load-bearing-records` replaces this branch with a path inside the design
-skill.
+Whether a request is a design question or bounded work, a clear requirement whose main risk is
+over-building, is known only after the grounding of the design skill's loop step 1, its search for
+standing entries included. The work is bounded when it reverses no recorded decision, every
+decision it makes fails the entry tests, per `design@agent-skills@a-head-is-owed-by-an-entry-test`,
+and no second defensible shape survives the nearest-rival test. The skill then sends one message,
+the proposal with its nearest rival, the strongest open reading set aside, the consequences and the
+default, and waits for the owner's word; an argument in the reply returns the work to the loop. The
+commit that implements it carries the proposal and the owner's words verbatim. The skill's
+description reaches a session before it starts a requested change whose design is not settled.
+
+The owner's argument: "there is no way to determine whether a task is "bounded work that does not
+change the project's design" without going through the grounding steps of the design skill." The
+grounding gives bounded work the search for standing entries that no step gave it, and applying the
+entry tests at classification keeps a head from being written for a decision that earns none, as a
+session wrote one before this path existed. The nearest rival, a separate installed skill for
+bounded problems, would repeat the grounding to classify at all; it is in the rejected
+alternatives. A bounded path names no skill outside the installed set, per
+`design@agent-skills@no-external-handoff`, and serves `goal@knowledge-architect@the-owner-decides`:
+the owner rules on every proposal.
 
 ### The design skill is written for frontier-tier models only `##frontier-tier-only`
 
@@ -264,6 +275,29 @@ side it met first, and a divergence would close silently in the code's favour, a
 `goal@knowledge-architect@agents-work-without-drift`. This serves
 `goal@knowledge-architect@documentation-stays-consistent`.
 
+### A reason recorded at the code binds as intent at its scale, below the design home `##local-intent-binds`
+
+The primer's intent-and-claims rule has three classes. A design home is authority. A reason recorded
+at the code, an inline comment saying why the code is shaped so or the message of the commit that
+argued it, is intent at the scale of that code: it binds as a presumption, a change that defeats it
+argues against that reason in its own message, and where it conflicts with a design home, the design
+home prevails, as in any divergence, per `design@agent-skills@design-home-is-built-intent`. Between
+a comment and a commit message, the comment is the current statement. A claim about the code as it
+stands goes stale and is verified. Before code is removed or reshaped as unneeded, its comment and
+the message of the commit that introduced it are read: absence from the design home is not evidence
+that code is superfluous. The decision-record reviewer reports a diff that defeats such a reason
+without arguing against it.
+
+The owner's argument: "Since the workflow is instructing that "code follow design", anything that is
+not argumented in design records could end up judged "superfluous" and deleted autonomously." Fewer
+heads, per `design@agent-skills@a-head-is-owed-by-an-entry-test`, leaves more intent in comments, and
+the primer gave an inline comment a home but no class, so it could be read as a claim to verify and
+discard. Keep-or-change's rule on an implementation coincidence covered only the evaluation of an
+incumbent design. A comment is part of the code, so the head prevails over it. The order serves
+`goal@knowledge-architect@agents-work-without-drift`. In a project whose comments the checker does
+not read, a reference in a comment is not checked, which weakens this record there:
+`issue@core@references-are-read-in-markdown-and-rust-only`.
+
 ### A design head carries the standing argument, and history carries the deliberation `##standing-argument-in-head`
 
 A design head carries the decision and its standing argument: every premise whose failure would
@@ -284,6 +318,35 @@ away. That agents take that route is measured, not assumed: a scan of a project'
 a `git show` or `git log` command naming a deleted plan document re-takes it, and a scan that finds
 none in a project whose specs are deleted reopens this decision. The cost is accepted: a reader
 without a clone of the repository cannot reach a deliberation.
+
+### A decision earns a design head only when an entry test passes, and the heads stay few `##a-head-is-owed-by-an-entry-test`
+
+A decision earns a head in a design home only when one of the three entry tests of the installed
+decision-recording skill passes: reversing it would change an interface others consume, a type or
+a signature crossing a separately built unit, a file format, a document grammar or a command line;
+the same reason must be respected at more than one site, or at none, a name or a path repeated for
+consistency being no reason; or its argument turns on the behaviour of something outside the
+project, an external specification or a tool's behaviour, documented or measured. Every other
+decision lives in a comment at its code and in the commit that argued it, where it binds as
+intent at that scale, per `design@agent-skills@local-intent-binds`. For the installed text, which
+carries no comment, `design@agent-skills@instruction-record-is-minimal` is the test.
+
+Fewer heads is the principle, as long as no critical intent and arguments are lost, in the owner's
+words. Every grounding reads the design homes whole, and a human overseer reviews them; the session
+that changes local code reads the comment at that code, not a design home it would have to think to
+search. Test 2 is where the checker's reach ends: a reason that several sites must respect needs a
+home each site can cite, and a comment cannot be cited, while a policy or an absence has no site at
+all. The decision serves `goal@knowledge-architect@design-is-recorded-with-its-arguments`: a later
+session can tell what it may change and what a change costs from the head where one is owed, and
+from the comment where none is. An audit of the 178 heads of this repository, read against these
+tests, found over-recording below one head in five where the owner read it; for this Component its
+outcome is unconfirmed, and the cleanup of `issue@agent-skills@heads-no-entry-test-admits` can
+reopen this head. The nearest rival, a head for every decision discussed with the owner, is what a
+session did for a mechanism carried at one site by its comments, and the owner judged the head
+unneeded. A wider test 2, "constrains work that has not been built", admitted nearly every head
+under a wide reading and almost none under a narrow one, and the design homes hold built intent,
+per `design@agent-skills@design-home-is-built-intent`. Whether the heads cost a session more than
+they save is not measured: `issue@agent-skills@the-retrospective-counts-no-review-cost`.
 
 ### An alternative earns an entry by the recording tests, not by having lost `##losing-alternatives-filter`
 
@@ -386,14 +449,15 @@ divided by the rows of the issue and tripwire listings for the second; real sess
 ### The search runs at the grounding of a design discussion and at the design audit of a milestone slice or of a spec, over every issue kind and every tripwire `##standing-entries-searched-before-the-work`
 
 The installed design skill dispatches the search at its loop step 1, with the question as the work
-and the decisions and goals read so far as seeds. The installed planning skill dispatches it at
+and the decisions and goals read so far as seeds, for a design question and for bounded work alike,
+per `design@agent-skills@bounded-path-in-design`. The installed planning skill dispatches it at
 the design audit of a milestone slice, §7 point 2, with the slice's spec and the milestone document
 as the work and their decided entries and citations as seeds, and at the design audit of a spec
 where one runs, with the spec as the work. The audit lists as a gap every
 standing entry the slice's code bears on: a tripwire whose firing condition, or a deferred trigger,
 the planned code meets, and an issue of any kind the slice's code touches, closes, makes worse or
 depends on. The slice's grounding, §7 point 1, reads no issues and no tripwires, since the audit's
-search covers every anchor. Work that is neither designed nor planned sends no search: the
+search covers every anchor. Work that does not go through the design skill sends no search: the
 standing-state review reads its deferred triggers, per
 `design@agent-skills@conformance-before-every-merge`, which this search adds to and never
 replaces.
@@ -770,12 +834,12 @@ A deferred issue's trigger answers the question a tripwire's firing clause answe
 someone do this, and the issue-tracking skill holds both to one test. So the reviewer reads every
 deferred trigger against the change, as it reads every tripwire, and reports a trigger the change
 meets as a finding, whose repair is the work the issue names or the owner's ruling. Without it, a
-trigger met by work that is neither designed nor planned has no reader at all: no skill runs at the
-start of such work. A search before such work is parked, on the owner's word: its one host today
-would be the primer, which holds only what every session needs, per
-`design@agent-skills@primer-limit`, the evidence for it is one instance, and a line sending every
-session to search before any work is a conformance rule. The design skill hosts it for bounded work once
-`milestone@plans@load-bearing-records` lands. In thaum, a move of the pinned checker met the trigger of a deferred issue that
+trigger met by work that does not go through the design skill has no reader at all. The design skill
+hosts a search before bounded work, at its grounding, per `design@agent-skills@bounded-path-in-design`.
+A search before every other piece of work stays parked, on the owner's word: its one host would be
+the primer, which holds only what every session needs, per `design@agent-skills@primer-limit`, the
+evidence for it is one instance, and a line sending every session to search before any work is a
+conformance rule. In thaum, a move of the pinned checker met the trigger of a deferred issue that
 named that move, and the session read it at no step.
 
 ### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
@@ -837,9 +901,10 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   room on purpose, per `goal@agent-skills@installed-text-leaves-room-to-judge`; room to judge is
   never room to act against an instruction. Every session meets a situation no instruction covers,
   and no skill reaches every session.
-- **A design home is built intent, per `design@agent-skills@design-home-is-built-intent`, and a
-  claim about the code goes stale**: the code is checked against
-  the first, and the second is verified before it is relied on.
+- **A design home is built intent, per `design@agent-skills@design-home-is-built-intent`, a reason
+  recorded at the code binds below it, per `design@agent-skills@local-intent-binds`, and a claim
+  about the code goes stale**: the code is checked against the first, the second is read before the
+  code it explains is removed, and the third is verified before it is relied on.
 - **Before diagnosing anything as a problem, a session checks whether it is already recorded**,
   with the listing commands of the checker.
 - **Something met outside the task takes the first of four outcomes that applies.** If it bears on

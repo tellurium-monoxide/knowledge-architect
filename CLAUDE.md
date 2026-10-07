@@ -277,7 +277,7 @@ thaum as its source.
 Confidence is not correlated with correctness: the more obvious a behaviour looks, the less likely
 anyone has checked it.
 
-**Two classes of statement, and the instruction differs.**
+**Three classes of statement, and the instruction differs.**
 
 - **Built intent**: the root's design home, and a Component's design home. They hold the design as
   built and its reasons, and the decisions that no work implements, recorded when made. Design that
@@ -288,10 +288,17 @@ anyone has checked it.
   `knowledge-architect-decision-recording`. Work that goes on meanwhile builds on the head. A
   divergence is never licence to follow the code. This is a restatement; its home is
   `design@agent-skills@design-home-is-built-intent`.
+- **A reason recorded at the code**: an inline comment saying why the code is shaped so, or the
+  message of the commit that argued it. It is intent at the scale of that code, and binds as a
+  presumption below the design home: a change that defeats it argues against that reason in its
+  own message, and where it conflicts with a design home, the head prevails, as in any divergence.
+  Before removing or reshaping code as unneeded, read its comment and the message of the commit
+  that introduced it (`git log -L`, `git blame`): absence from the design home is not evidence that
+  code is superfluous. This is a restatement; its home is `design@agent-skills@local-intent-binds`.
 - **A claim about the code as it stands**: an invariant in a scoped `CLAUDE.md`, a doc comment, a
   name, a return value, an open issue's diagnosis. This goes stale. Check it before relying on it.
 
-For the second class, before relying on how anything behaves (an API, a script, a file format, a
+For the third class, before relying on how anything behaves (an API, a script, a file format, a
 test mechanism, an open issue's diagnosis; the list is illustrative, not a boundary):
 
 - **Establish it from the implementation, or from a run you observe.** Names, doc comments and
