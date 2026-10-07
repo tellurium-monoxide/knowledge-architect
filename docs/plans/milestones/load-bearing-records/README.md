@@ -20,7 +20,8 @@ found by its opening message, "I'd like to fix the the-setup-snippet-is-unchecke
 discussion itself begins at the owner's message that opens "First, I think we should fix the
 agentic instructions." and ends at the one that opens "Tables approved, keep all tripwires". This
 document was assembled from that transcript. Rounds are numbered R1 to R7 by the owner's
-messages: R3 holds two owner messages, because a reply was cut by a connection error and the owner
+messages; R8 is the owner's message after this document's first reviews, which ruled on its
+defaults: R3 holds two owner messages, because a reply was cut by a connection error and the owner
 wrote "resume"; R4 holds the owner's message, an interruption, and the owner's message typed
 after it.
 
@@ -181,7 +182,7 @@ Outside this work:
   `issue@agent-skills@shipped-text-is-reference-free-mechanically`, which slice 2 rewrites.
 - **Generic names for the homes whose shape may vary** ("the design home"), which the owner named
   in R7 as the better fix for a coupling raised in R6. That coupling does not exist: see the first
-  default awaiting the owner.
+  thread #shipped-text-entry-references-only.
 - **The owner's global CLAUDE.md**, which sends bounded problems to another plugin's skill. It is
   the owner's private configuration; the owner said in R2: "I'm gonna rewrite my global CLAUDE.md
   to fit too."
@@ -309,6 +310,16 @@ Weighed; stated by the owner in R1, from no goal. Met in part by #record-volume 
   earlier word in the closed issue, "Ultimately, I'd like to make my own skill for this use case."
   (a13). Hosts the search that `tripwire@agent-skills@deferred-trigger-met-by-undesigned-work`
   asks for (a12). Absorbs #record-test-at-classification. Guarded by P1.
+- **The lead of the closed issue:** The issue that asked for a skill for
+  bounded problems, closed by the commit that adds this document, carried a lead, from a review of
+  the project the design skill came from: "a second defensible shape is nameable for nearly any
+  request", which would make the design skill's open-space test classify almost every problem as
+  open, and leave the bounded case nearly unreachable. No session had shown it. Its last state is
+  `path@elsewhere@crates/agent-skills/docs/open-issues/a-skill-for-bounded-problems.md`, read with
+  `git show` at the parent of the commit that adds this document. It also said that the lead, untested by then, is carried to an issue of its own about
+  the design skill. Ruled: slice 1 opens `the-open-space-test-may-admit-every-problem`, a
+  `question`, with that lead. It is the opposite failure to P1, and the bounded path's third
+  condition is where it would show. R8: "Agreed on the three items awaiting my ruling."
 
 ### Fewer heads: a decision earns one only when an entry test passes, and one head records the tests `##record-volume`
 
@@ -325,8 +336,14 @@ Weighed; stated by the owner in R1, from no goal. Met in part by #record-volume 
 - **Relations:** the audit may reopen it, as the owner's condition in R3 and the checkpoint row of
   R6 say. Where the owner read the sample, it found over-recording below the threshold (a36). For
   agent-skills its outcome is unconfirmed (a65): the cleanup issue judges each head in full, and
-  its result can reopen this thread. `issue@agent-skills@the-retrospective-counts-no-review-cost`
+  its result could reopen this thread. `issue@agent-skills@the-retrospective-counts-no-review-cost`
   records the instrument that would measure what the design homes cost a session (a14).
+- **The condition discharged,** R8: "Anyway, the audit did not surface anything that would change
+  my mind on this. I still lean to think that lower design record volume is better, as long as no
+  critical intent and arguments are lost, and the audit did not suggest dropping anything I found
+  critical in the code components here (and we refined the tests once more after it). For the
+  agent-skills component, this was less clear, but that is to be expected given the wildly
+  different scope and structure of this component."
 
 ### No new wording in the design and planning skills: the entry tests move to classification `##record-test-at-classification`
 
@@ -358,6 +375,10 @@ Weighed; stated by the owner in R1, from no goal. Met in part by #record-volume 
 - **States:** R3 new; R4 approved; R7 the checkpoint table approved.
 - **Arguments:** a39, a40, a51.
 - **Closed by:** R4: "t1-consumed-interface and t3-external-behaviour approved."
+- **The alternatives' first test:** §6 of the decision-recording skill
+  states, for a losing alternative, "a signature crossing the boundary of a separately built unit,
+  or a serialized format". The ruling widened the decision's T1 only. Ruled: slice 1 leaves §6 as it
+  stands. R8: "Agreed on the three items awaiting my ruling."
 - **Shape:** the decided design of slice 1. **Harvest:** the head of #record-volume, slice 1.
 
 ### T3 counts an external tool's behaviour, documented or measured `##t3-external-behaviour`
@@ -397,8 +418,18 @@ Weighed; stated by the owner in R1, from no goal. Met in part by #record-volume 
   of one component here."
 - **Shape:** the decided design of slice 2. **Harvest:** `design@agent-skills@shipped-text-is-reference-free`
   rewritten in place under a new slug, slice 2.
-- **Relations:** the finding of R6 (a69, a70) was refuted after R7 by a run of the checker:
-  `path@*@<path>` accepts every shape of a required document. See the first default awaiting the owner.
+- **The finding of R6 was refuted** (a69, a70), after R7: R6 stated that
+  `path@*@docs/goals/` "would be a finding here", and that moving a Component to the directory
+  shape would dangle every `path@*@docs/design.md` of the shipped text. Both are false.
+  `design@core@reserved-anchors` accepts the generic anchor "when the path is one of the required
+  document names in any of its shapes", "so naming a shape no component uses yet is legitimate". A
+  run confirmed it after R7: a scratch file citing `path@*@docs/goals/`, `path@*@docs/design/`,
+  `path@*@docs/tripwires/`, `path@*@docs/goals.md`, `path@plans@README.md` and `path@plans@specs/`
+  gave `PASSED: no findings` under `cargo klarch check`. So 33 of the 36 repairs are mechanical: 30
+  as `path@*@<path>` in both shapes, 3 as `path@plans@<path>`. Ruled: slice 2 writes both shapes as
+  `path@*@<path>` references, no form "or its directory" is used, and no issue is opened for the
+  coupling. The owner's generic names ("the design home", defined once in the primer) remain
+  available as an improvement of wording; on the owner's word, they become an issue. R8: "Agreed on the three items awaiting my ruling."
 
 ### Literals the checker would misread are delivery substitutions, filled at build `##delivery-substitutions`
 
@@ -924,7 +955,7 @@ ruled in R7: "Tables approved, keep all tripwires".
 | P2 | Whether a rival is plausible stays subjective, and heads keep accumulating or keep being refused case by case | #entry-test-locality | tripwire `a-head-verdict-is-overruled`, on the owner's word: fires when the owner overrules a review's verdict on whether a head is owed, 2 times; response: reopen the head that records the entry tests; re-entry: the decision-record review |
 | P3 | Comments become untouchable: an agent escalates every refactor that meets a "why" comment, and the owner rules each time that the comment was no decision | #local-intent-binds | tripwire `a-comment-escalation-is-overruled`, on the owner's word: fires when the owner rules twice that such an escalation was unneeded; response: reopen the rung of comments in the order; re-entry: the retrospective, since this is behaviour in sessions, with the limit `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` names |
 | P4 | A `%%` line ships: it is indented, or inside a fence | #shipped-text-line-comments | survives into an acceptance criterion of slice 2, since code can check it |
-| P5 | A `path@*@<path>` reference in the shipped text is wrong in a conforming project that uses the directory shape | #shipped-text-entry-references-only | does not arise: the checker accepts `path@*@<path>` for every shape of a required document, per `design@core@reserved-anchors`, verified after R7 (see the first default awaiting the owner) |
+| P5 | A `path@*@<path>` reference in the shipped text is wrong in a conforming project that uses the directory shape | #shipped-text-entry-references-only | does not arise: the checker accepts `path@*@<path>` for every shape of a required document, per `design@core@reserved-anchors`, verified after R7 and ruled in R8 (see #shipped-text-entry-references-only) |
 
 ## Acceptance criteria
 
@@ -950,33 +981,8 @@ adds its comment strip and its substitutions beside that branch's placeholder me
 
 ## Defaults awaiting the owner
 
-- **The R6 finding was wrong, so the issue asked for in R7 has no defect to describe**
-  (#shipped-text-entry-references-only, #shipped-text-line-comments). R6 stated that
-  `path@*@docs/goals/` "would be a finding here", and that moving a Component to the directory
-  shape would dangle every `path@*@docs/design.md` of the shipped text. Both are false.
-  `design@core@reserved-anchors` accepts the generic anchor "when the path is one of the required
-  document names in any of its shapes", "so naming a shape no component uses yet is legitimate". A
-  run confirmed it after R7: a scratch file citing `path@*@docs/goals/`, `path@*@docs/design/`,
-  `path@*@docs/tripwires/`, `path@*@docs/goals.md`, `path@plans@README.md` and `path@plans@specs/`
-  gave `PASSED: no findings` under `cargo klarch check`. So 33 of the 36 repairs are mechanical: 30
-  as `path@*@<path>` in both shapes, 3 as `path@plans@<path>`. Default: slice 2 writes both shapes as
-  `path@*@<path>` references, no form "or its directory" is used, and no issue is opened for the
-  coupling. The owner's generic names ("the design home", defined once in the primer) remain
-  available as an improvement of wording; on the owner's word, they become an issue.
-- **The lead of the closed issue** (#bounded-path-in-design). The issue that asked for a skill for
-  bounded problems, closed by the commit that adds this document, carried a lead, from a review of
-  the project the design skill came from: "a second defensible shape is nameable for nearly any
-  request", which would make the design skill's open-space test classify almost every problem as
-  open, and leave the bounded case nearly unreachable. No session had shown it. Its last state is
-  `path@elsewhere@crates/agent-skills/docs/open-issues/a-skill-for-bounded-problems.md`, read with
-  `git show` at the parent of the commit that adds this document. It also said that the lead, untested by then, is carried to an issue of its own about
-  the design skill. Default: slice 1 opens `the-open-space-test-may-admit-every-problem`, a
-  `question`, with that lead. It is the opposite failure to P1, and the bounded path's third
-  condition is where it would show.
-- **The alternatives' first test** (#t1-consumed-interface). §6 of the decision-recording skill
-  states, for a losing alternative, "a signature crossing the boundary of a separately built unit,
-  or a serialized format". The ruling widened the decision's T1 only. Default: slice 1 leaves §6
-  as it stands; a widening there is a scope change the owner rules on.
+None. The three defaults this section held were ruled in R8, and each is written into the thread
+it bears on: #shipped-text-entry-references-only, #bounded-path-in-design, #t1-consumed-interface.
 
 ## Harvest
 
