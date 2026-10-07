@@ -269,3 +269,15 @@
 - **Proposal.** Open an issue: agent-skills, `question`.
 - **Default:** open an issue.
 - **Outcome:** approved.
+
+## Standing entry: whether `tripwire@agent-skills@plain-text-pointer-found` fired on C1
+
+- **Evidence.** C1's pointer was refused with the escape anchor, then written as a description in
+  words, with no reference to an issue entry beside it. The tripwire fires on "a pointer written as
+  bare plain text to clear a finding".
+- **Judgement proposed.** It does not fire. `design@agent-skills@plain-text-is-no-repair` lists "a
+  rewrite of the sentence" among the repairs, and since `9b0e47d` a description in words is outside
+  `design@agent-skills@checker-syntax-without-backticks-names-its-gap`. The cost was real all the
+  same, and C1's repair text addresses it: a checked form existed and the refusal did not lead to it.
+- **Default:** not fired; no response.
+- **Outcome:** pending.

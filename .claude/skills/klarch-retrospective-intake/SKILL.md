@@ -45,22 +45,24 @@ A finding is cited by its id and its file's stem, as "W3 of
 2. **Note the version the retrospective used**, from its Version section, and the main commit you
    analyse against: `git describe --tags origin/main`. A finding against an older version may
    already be repaired.
-3. **Search the standing entries with the received file as the work.** Dispatch
-   `knowledge-architect-standing-entry-searcher`:
+3. **Search the standing entries with the received files as the work.** One search covers every
+   file received together. Dispatch `knowledge-architect-standing-entry-searcher`:
    - count the rows of `cargo klarch issues` and of `cargo klarch tripwires`, the header rows
      excluded;
    - send ceil(count / 60) agents, all in parallel, on consecutive groups whose sizes differ by at
      most one;
-   - give each the work (the file's path and its subject), the seeds (the design heads and goals
-     its findings name, or none), and its group's first and last positions.
+   - give each the work (the files' paths and their subjects), the seeds (the design heads and
+     goals the findings name, or none), its group's first and last positions, and a scratch
+     directory of its own.
 
    Read every entry returned whole with `cargo klarch show <ref>`, never from its reason line. The
    search finds what a grep per finding does not: a finding already recorded, a deferred issue
    whose trigger the file meets, a tripwire whose firing evidence the file carries, a design
    issue whose re-entry it meets.
 4. **Cluster the findings.** One defect is often reported in several files, or as two findings of
-   one file. A cluster is analysed once, and cites every id in it. That a finding recurs across
-   sessions is evidence: say how many times.
+   one file. A cluster is analysed once, in the analysis of the first file that holds it, and cites
+   every id in it; the analysis of each other file holds a section that points there. That a
+   finding recurs across sessions is evidence: say how many times.
 
 ## 3. What to establish for each finding or cluster
 
@@ -71,8 +73,10 @@ Each item below is answered with its evidence. The order is a suggestion; the co
 - **b. Whether it still applies.** Read the blamed text on main as it stands, and quote it with
   its `file:line`. The report is a claim about the text at its version, so it is checked like any
   claim about the code. A finding may be already repaired: name the commit, found with
-  `git log -S '<phrase>'` or `git log --grep`. The report says "repaired in the session" sometimes;
-  verify it too.
+  `git log -S '<phrase>'` or `git log --grep`. A report's own "repaired in the session" is a claim
+  like any other, and is often wrong: find when the credited wording entered, with `git log -L` or
+  `git log -G` on it, and compare with the session's work. A phrase searched in a commit message
+  or in wrapped prose is matched across a line break.
 - **c. Whether it is already recorded.** An issue or a tripwire, from the search of §2. A
   rejected alternative: read the rejected alternatives of the Component that owns the blamed text.
   A proposed fix that already lost is not proposed again, unless the finding brings a fact the
@@ -124,7 +128,9 @@ output, a commit. A verdict without evidence is labelled an assumption.
 ## 4. Subagents
 
 The checks a to c read text, and fresh subagents may run them, one per file or per cluster. Brief
-each with the findings, the files to read, and a scratch directory of its own, never shared. Each
+each with the findings, the files to read, the entries the search of §2 returned, and a scratch
+directory of its own, never shared. The agent checks c against those entries and the rejected
+alternatives, and does not search the registers again. Each
 returns, per finding: the quotation, its `file:line`, and its verdict. The session itself
 establishes d to h, and re-checks every verdict a proposal rests on. No subagent replays the
 reported session or builds a scenario of agent behaviour, per
@@ -139,14 +145,25 @@ where `<stem>` is the received file's stem. The directory's README says what it 
   standing entries the search returned that bear on it.
 - **One section per finding or cluster**, headed by its ids and a short title, with a bullet per
   item of §3, in prose. No table: the content of each item is too long to read in a cell.
+- **Every section that proposes an action ends with a `Default` line and an `Outcome` line**, the
+  latter left pending: a finding, a standing answer, a noted item, and a judgement on a standing
+  entry. A standing entry the file may meet gets a section of its own: a tripwire that may have
+  fired, a deferred trigger, a design issue's re-entry. Whether it fired, and its response, are the
+  owner's to rule; the analysis proposes the judgement and its evidence.
+- **A span the checker would refuse is quoted in words.** A finding about a refused form tempts a
+  quotation of that form, and the analysis then fails the check it reports on.
 - **Name nothing of the other project in detail**: none of its paths, none of its design heads,
   none of its internals. Say it in words where the finding needs it, as "the project's design
   home". This repository's paths and entries are written in the checked forms, since the file is
   checked like any other.
 
-Then give the owner the file's full path, and in the conversation one line per finding or
-cluster: its ids, the proposal in a few words, and the default outcome. The owner rules in words,
-such as "now: W1, W5; issue: C3; no change as proposed for the rest". **Three outcomes**:
+Then give the owner the full path of each file, and in the conversation one line per section:
+its ids, the proposal in a few words, and the default outcome. **Propose that the owner rules by
+writing each `Outcome` line in the file**: with many findings, a ruling written beside its
+evidence is easier to give than one in the conversation, and it lands in the record as written. A
+ruling given in the conversation instead, such as "now: W1, W5; issue: C3; no change as proposed
+for the rest", is copied into the `Outcome` lines verbatim. Before committing, list every section
+whose `Outcome` line is still pending, and ask the owner for those. **Three outcomes**:
 
 - **handle now**: the finding is handled in this session, under the skill its route names. It
   needs no issue entry, and the proposal does not suggest one;
@@ -158,8 +175,8 @@ rival fix the ruling depends on.
 
 ## 6. After the ruling
 
-Each section ends with an **Outcome** line: the owner's choice and the owner's words, verbatim.
-The analysis is then committed on a branch, under the root `CLAUDE.md` `## Git` rules. Its life
+Each section's `Outcome` line holds the owner's choice and the owner's words, verbatim. The
+analysis is then committed on a branch, under the root `CLAUDE.md` `## Git` rules. Its life
 after that:
 
 1. a commit adds the analysis, with its Outcome lines;

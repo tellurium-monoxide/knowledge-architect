@@ -123,3 +123,17 @@ nothing.
   documentation, which the rule no longer covers since `9b0e47d`. The third, the core's own mock
   projects, is described in words too, as far as the file shows. The report gives no finding they
   cleared, so `tripwire@agent-skills@plain-text-pointer-found` does not fire. No change.
+
+- **Default:** no change.
+- **Outcome:** pending.
+
+## Standing entry: whether `tripwire@core@private-item-needed` fired on C1
+
+- **Evidence.** C1: the consumer cannot read which checker-source directories its binary passed,
+  except through printed text. The tripwire fires when a consumer "needs an item that is private
+  behind the facade, and no public item replaces it".
+- **Judgement proposed.** It does not fire. The directory list is a literal of the consumer's own
+  binary, so a function of the consumer's own can return it and be tested, with no core change.
+  What the core does with the list is the core's to test.
+- **Default:** not fired; no response.
+- **Outcome:** pending.
