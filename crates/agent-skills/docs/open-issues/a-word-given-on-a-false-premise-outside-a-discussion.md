@@ -30,8 +30,8 @@ The primer holds no rule on the owner's words. The retrospective proposed "the p
 rules" as a placement; no such section exists.
 
 A second instance, W1 of 2026-10-07-knowledge-architect-retrospective-intake-klarch-workflow: the
-owner answered the test-4 question of decision-recording, "do these words record your intent", on
-the agent's premise that the decision failed tests 1 to 3; the same change had written a second
+owner answered the test-4 question of decision-recording, whether the words "record the owner's
+intent", on the agent's premise that the decision failed tests 1 to 3; the same change had written a second
 site, so test 2 passed, and the answer had to be confirmed again on a true premise.
 
 ### Why it matters

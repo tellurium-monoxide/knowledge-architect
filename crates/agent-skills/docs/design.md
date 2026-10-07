@@ -1027,15 +1027,17 @@ An additional commit that only corrects is reviewed by no axis again, so the rev
 makes or reverses a decision is reviewed by the decision-record axis at least, and the review ends
 with that review's repairs, per `design@agent-skills@a-deciding-repair-gets-a-record-review`.
 
-### A review repair that makes or reverses a decision is reviewed by the decision-record axis, whichever axis asked for it `##a-deciding-repair-gets-a-record-review`
+### A review repair that makes or reverses a decision is reviewed by the decision-record axis, whichever axis asked for it, and one that only corrects by no axis but the last transcript review `##a-deciding-repair-gets-a-record-review`
 
 The installed review skill sends the decision-record axis at every repair commit that makes or
-reverses a decision, whether it answers the transcript reviewer or any other axis, before the last
-transcript review, and the review ends with that review's repairs. A repair that only corrects is
-reviewed by no axis again. Otherwise a decision taken in answer to a review reaches the main branch
-with no review of its record, against `goal@knowledge-architect@design-is-recorded-with-its-arguments`:
-a design head written in answer to a decision-record finding reached the main branch read only by
-the transcript reviewer, whose subject is fidelity to the owner's rulings and not the record.
+reverses a decision, whether it answers the transcript reviewer or any other axis. A repair made
+before the last transcript review is reviewed before it; a repair of the last transcript review is
+reviewed after it, and the review ends with that review's repairs. A repair that only corrects is
+reviewed by no axis but the last transcript review, which reads the whole branch. Without the
+record review, a decision taken in answer to a review reaches the main branch with no review of its
+record, against
+`goal@knowledge-architect@design-is-recorded-with-its-arguments`: the last transcript review, which
+reads every repair, judges fidelity to the owner's rulings and not the record.
 
 The rival that sends every axis again at every repair commit lost: it costs a review round for
 each repair that only corrects, while only a decision changes what the record axis judges.

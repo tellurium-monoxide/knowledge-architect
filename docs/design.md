@@ -360,10 +360,10 @@ and the analysis is a file of `path@knowledge-architect@docs/retrospective-repor
 received file's stem. Each finding gets one of three outcomes, ruled by the owner: handled now,
 opened as an issue, or no change with the reason, per `goal@knowledge-architect@the-owner-decides`.
 The analysis is committed with the owner's ruling on each finding, the issues it rules are opened
-next, the findings handled now are handled, and the commit that carries out its last outcome, or a
-later commit of the same branch, deletes it. A finding handled now that grows into a design discussion has its outcome rewritten,
-on the owner's word, to name the plan document or the issue that carries it, so the file still
-leaves. The repository is public and the workflow file is the one a retrospective writes to be
+next, the findings handled now are handled, and the commit that carries out its last outcome, or
+a later commit of the same branch, deletes it. A finding handled now that grows into a design
+discussion has its outcome rewritten, on the owner's word, to name the plan document or the issue
+that carries it, so the file still leaves. The repository is public and the workflow file is the one a retrospective writes to be
 publishable, so the analysis names nothing of another project beyond what its workflow file holds.
 It names no path or design head of that project either, which in the owner's words "is useless
 information here anyway": where a finding needs one, the analysis says it in words.
