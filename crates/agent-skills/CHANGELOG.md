@@ -48,7 +48,8 @@ subsection is omitted.
   <date>-<project>-<subject>-klarch-workflow".
 - `agent-skills`, patch: a review item whose outcome turns on a ruling the owner has not given is
   put to the owner before its outcome is recorded; a defect a reviewer finds predating the change
-  is fixed in a commit of its own, which the review's record names; and the last transcript review
+  is routed by the primer's table of what is met outside the task, a fix checkable from the diff
+  landing in a commit of its own that the review's record names; and the last transcript review
   waits until the owner has answered every ruling the repairs asked for.
 - `agent-skills`, patch: a dispatcher names a scratch directory of its own to each subagent sent
   together with others, and the standing-entry searcher writes its working files there.

@@ -133,7 +133,7 @@ evidence bring, which nobody knows in advance.
   recorded at that landing like any other, under
   `knowledge-architect-decision-recording`, whose §1 decides the Component
   of a decision that reverses a recorded one, and whose §2 decides whether
-  it earns a design head at all. Apply both before proposing to the owner
+  any other decision earns a design head at all. Apply both before proposing to the owner
   where a decision lands. The checkpoint table is
   shown at convergence when the ledger holds more than one thread. The
   premortem runs when reversal touches any of the four. Where it runs,

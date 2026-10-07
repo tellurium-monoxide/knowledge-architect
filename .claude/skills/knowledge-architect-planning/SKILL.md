@@ -363,8 +363,9 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
      design session with the owner under `knowledge-architect-design`. **The session's depth
      follows the gap.**
      - A choice among shapes that can be stated in full, each with its consequence, is put to the
-       owner in one message, with a default; several such gaps go in one question. The slice's documents exist, so the ruling
-       is not left to a commit message as that path would leave it: it is written in place in the
+       owner in one message, with a default; several such gaps go in one question. The slice's
+       documents exist, so the ruling is not left to a commit message as that path would leave
+       it: it is written in place in the
        milestone's documents by the rule of §4, as a thread with the owner's words verbatim, like
        the audit's other answers, and the audit's commit lists it among its gaps. It owes no new
        §8 review, since it changes no decided shape.

@@ -30,6 +30,7 @@ one you ran.
 - **The seeds**: the decisions and goals the work names, as references, or none. A seed is never
   an issue or a tripwire.
 - **Your group**: a first and a last position, counted from 1, in the order below.
+- **Your scratch directory**: the one place you may write working files.
 
 ## 1. Take your group
 

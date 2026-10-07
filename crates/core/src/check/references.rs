@@ -1782,28 +1782,40 @@ mod tests {
         assert!(found[0].contains("resolves in this tree"), "{found:#?}");
         // The writer may have meant another project's file of the same spelling; the repair
         // names the checked form for it.
-        assert!(found[0].contains("that project's name"), "{found:#?}");
+        assert!(
+            found[0].contains("as `path@elsewhere@<project>/<path>`"),
+            "{found:#?}"
+        );
     }
 
     #[test]
     fn an_empty_id_names_the_placeholder_and_the_ancestor_spelling() {
-        // Two needs end in an empty id: naming a form in prose, and naming an anchor's own
-        // directory. Each has a checked form, and the repair names both.
-        let (found, _) = checked(&manifest(), "the form `path@a-project@` alone\n", &[]);
-        assert_eq!(found.len(), 1, "{found:#?}");
-        assert!(found[0].contains("the id segment is empty"), "{found:#?}");
-        assert!(
-            found[0].contains("placeholder in angle brackets"),
-            "{found:#?}"
-        );
-        assert!(
-            found[0].contains("named from the anchor above it"),
-            "{found:#?}"
-        );
-        // Another malformed reason keeps the generic repair.
-        let (found, _) = checked(&manifest(), "`path@a-project`\n", &[]);
-        assert_eq!(found.len(), 1, "{found:#?}");
-        assert!(found[0].contains("and for a path"), "{found:#?}");
+        // Two needs end in an empty id under a path kind: naming a form in prose, and naming
+        // an anchor's own directory. Each has a checked form, and the repair spells both.
+        let repair = |text: &str| {
+            let (found, _) = checked(&manifest(), text, &[]);
+            assert_eq!(found.len(), 1, "{text}: {found:#?}");
+            found[0].clone()
+        };
+        let path = repair("the form `path@a-project@` alone\n");
+        assert!(path.contains("the id segment is empty"), "{path}");
+        assert!(path.contains("as `path@*@<path>`"), "{path}");
+        assert!(path.contains("as `path@<parent-anchor>@<dir>/`"), "{path}");
+        // A kind that takes no path has no directory to name: its repair names the entry form.
+        let entry = repair("`design@a-part@`\n");
+        assert!(entry.contains("as `<kind>@<anchor>@<id>`"), "{entry}");
+        assert!(!entry.contains("parent-anchor"), "{entry}");
+        // Every other malformed reason keeps the generic repair, and none takes the empty id's.
+        for span in [
+            "`path@a-project`",
+            "`@notes/p.md`",
+            "`design@@x`",
+            "`design@a-project@x@y`",
+        ] {
+            let other = repair(&format!("{span}\n"));
+            assert!(other.contains("and for a path"), "{other}");
+            assert!(!other.contains("placeholder"), "{other}");
+        }
     }
 
     #[test]

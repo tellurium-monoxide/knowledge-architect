@@ -694,13 +694,20 @@ pub(crate) fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
         };
     }
     if id.is_empty() {
+        // An empty id is most often a form named in prose, or, under a path kind, an anchor's
+        // own directory, which has no spelling under its own name; each has a checked form to
+        // name. The project root has no anchor above it, so the ancestor spelling excludes it.
+        let repair = if kind.takes_a_path() {
+            "write the path: an illustration of a form writes it as a placeholder in angle \
+             brackets, as `path@*@<path>`, and the directory of an anchor other than the root is \
+             named from the anchor above it, as `path@<parent-anchor>@<dir>/`"
+        } else {
+            "write the entry's id: an illustration of a form writes it as a placeholder in angle \
+             brackets, as `<kind>@<anchor>@<id>`"
+        };
         return Candidate::Malformed {
             why: "the id segment is empty",
-            // An empty id is most often a form named in prose, or an anchor's own directory,
-            // which has no spelling under its own name; each has a checked form to name.
-            repair: "write the id: an illustration of a form writes it as a placeholder in angle \
-                     brackets, as `path@*@<path>`, and an anchor's own directory is named from the \
-                     anchor above it, as `path@<parent-anchor>@<dir>/`",
+            repair,
         };
     }
     if !kind.takes_a_path() && id.contains('@') {
