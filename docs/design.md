@@ -363,8 +363,8 @@ The analysis is committed with the owner's ruling on each finding, the issues it
 next, the findings handled now are handled, and the commit that carries out its last outcome, or
 a later commit of the same branch, deletes it. A finding handled now that grows into a design
 discussion has its outcome rewritten, on the owner's word, to name the plan document or the issue
-that carries it, so the file still leaves. The repository is public and the workflow file is the one a retrospective writes to be
-publishable, so the analysis names nothing of another project beyond what its workflow file holds.
+that carries it, so the file still leaves. The repository is public and the workflow file is the
+one a retrospective writes to be publishable, so the analysis names nothing of another project beyond what its workflow file holds.
 It names no path or design head of that project either, which in the owner's words "is useless
 information here anyway": where a finding needs one, the analysis says it in words.
 

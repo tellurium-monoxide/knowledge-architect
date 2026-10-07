@@ -1023,24 +1023,31 @@ repairs land as additional commits, as many as their kinds need: a repair that t
 a commit of its own stays one, and nothing asks the dispatcher to merge them into a single commit.
 A repair that would leave an earlier commit failing is folded, per
 `design@agent-skills@review-repair-appended-or-folded`.
-An additional commit that only corrects is reviewed by no axis again, so the review ends. One that
-makes or reverses a decision is reviewed by the decision-record axis at least, and the review ends
-with that review's repairs, per `design@agent-skills@a-deciding-repair-gets-a-record-review`.
+An additional commit that adds, removes or reverses a design head is reviewed by the
+decision-record axis at least, and the review ends with that review's repairs; any other is reviewed
+by no axis again, so the review ends, per
+`design@agent-skills@only-a-head-changing-repair-is-reviewed-again`.
 
-### A review repair that makes or reverses a decision is reviewed by the decision-record axis, whichever axis asked for it, and one that only corrects by no axis but the last transcript review `##a-deciding-repair-gets-a-record-review`
+### A review repair that adds, removes or reverses a design head is reviewed again by the decision-record axis, and no other repair is `##only-a-head-changing-repair-is-reviewed-again`
 
-The installed review skill sends the decision-record axis at every repair commit that makes or
-reverses a decision, whether it answers the transcript reviewer or any other axis. A repair made
-before the last transcript review is reviewed before it; a repair of the last transcript review is
-reviewed after it, and the review ends with that review's repairs. A repair that only corrects is
-reviewed by no axis but the last transcript review, which reads the whole branch. Without the
-record review, a decision taken in answer to a review reaches the main branch with no review of its
-record, against
-`goal@knowledge-architect@design-is-recorded-with-its-arguments`: the last transcript review, which
-reads every repair, judges fidelity to the owner's rulings and not the record.
+The installed review skill sends the decision-record axis at every repair commit that adds, removes
+or reverses a design head, whether it answers the transcript reviewer or any other axis. A repair
+made before the last transcript review is reviewed before it; a repair of the last transcript review
+is reviewed after it, and the review ends with that review's repairs. Any other repair is reviewed
+by no axis again: a rewording, and an argument, a mention or a reference added inside an existing
+head, included. One made before the last transcript review is still read by it, as every commit of
+the branch is. Without the record review, a head added, removed or reversed in answer to a review
+reaches the main branch with no review of its record, against
+`goal@knowledge-architect@design-is-recorded-with-its-arguments`: the last transcript review judges
+fidelity to the owner's rulings and not the record.
 
-The rival that sends every axis again at every repair commit lost: it costs a review round for
-each repair that only corrects, while only a decision changes what the record axis judges.
+The trigger is a whole head, which the diff shows: a heading with a slug that appears or
+disappears, or a reversal under decision-recording §1. Each round of repairs then adds at most as
+many re-reviews as it adds, removes or reverses heads. A trigger on any repair that "makes a
+decision" lost: whether a rewording makes one is a judgement, and read wide it re-reviews repairs
+that only reword a head. The rival that sends every axis again at every repair lost on the same
+cost. A narrowing of an approved head that this trigger leaves out still goes to the owner, per
+decision-recording §5, and the last transcript review checks it against the owner's rulings.
 
 ### Subagents dispatched together each get a scratch directory of their own `##a-scratch-directory-per-subagent`
 
