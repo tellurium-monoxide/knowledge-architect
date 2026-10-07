@@ -1325,8 +1325,8 @@ cheap way to silence the unanchored finding on a real path.
 **A file of another project is written with that project's name as its first segment**, as
 `path@elsewhere@<project>/<path>`, and the refusal's repair names that form. A foreign file often
 shares its relative path with a file here, such as a dependency's src/lib.rs, and without the
-prefix the assertion above refuses it: a consuming project met that refusal, found no checked form
-in the finding, and wrote the pointer as prose. The prefix is no cheap silence: it is false of
+prefix the assertion above refuses it. A repair that names only the local anchor leaves the writer
+of a foreign pointer no checked form, and prose follows. The prefix is no cheap silence: it is false of
 every file in this tree, so writing it before a local path is a deliberate misstatement, which costs
 what removing the backticks costs, and that move is refused as a repair by
 `design@agent-skills@plain-text-is-no-repair`.
