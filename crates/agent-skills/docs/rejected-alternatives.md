@@ -129,8 +129,9 @@ to admit but a policy, which the test that replaced it admits as a decision with
 **A manifest declaration in the published checker that reads only the `%%` lines of a path** — lost
 to `design@agent-skills@shipped-text-line-comments`. `live`. It would have checked the comments
 while content/ stayed out of the walk, at the cost of a key in the manifest format that every
-consumer's checker reads, built for this repository's use of the workflow for its own text; the
-owner: "I don't want to cater too much to this use case in the installed files". Taking content/
+consumer's checker reads, built for this repository's use of the workflow for its own text. The
+owner said of the installed files: "I don't want to cater too much to this use case in the
+installed files"; applying it to the checker is the session's argument. Taking content/
 into the walk checks the comments with no new format. The reason is about a declaration serving this
 repository alone: a declaration of paths that must cite no entry, which
 `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked` considers, would serve any project
