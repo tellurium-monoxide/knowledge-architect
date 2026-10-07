@@ -1322,6 +1322,15 @@ assertions, because a foreign layout may spell anything. One assertion runs agai
 target that DOES resolve here, beside any anchor, is a finding — without it, the escape is the
 cheap way to silence the unanchored finding on a real path.
 
+**A file of another project is written with that project's name as its first segment**, as
+`path@elsewhere@<project>/<path>`, and the refusal's repair names that form. A foreign file often
+shares its relative path with a file here, such as a dependency's src/lib.rs, and without the
+prefix the assertion above refuses it: a consuming project met that refusal, found no checked form
+in the finding, and wrote the pointer as prose. The prefix is no cheap silence: it is false of
+every file in this tree, so writing it before a local path is a deliberate misstatement, which costs
+what removing the backticks costs, and that move is refused as a repair by
+`design@agent-skills@plain-text-is-no-repair`.
+
 **The generic anchor `*`**, `path@*@<path>`, marks each component's own copy of a path, as in
 `path@*@docs/tripwires.md` written with the kind in front. It is accepted when the path is one of the
 required document names in any of its shapes — the compiled documents, every heading register's
