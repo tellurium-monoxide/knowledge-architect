@@ -618,7 +618,7 @@ in every respect but the one its layout fixes:
   no `path` kind. A directory whose name `design@core@a-plan-name-reads-as-nothing-else` refuses
   is no anchor. It carries the four item registers, per `design@core@plan-items-by-section`.
 - **One anchor per spec**: each spec file of specs/, grouped or not, named by its id, per
-  `design@core@spec-file-owns-its-items`. It owns its own file, carries the four item registers,
+  `design@core@spec-file-is-an-anchor`. It owns its own file, carries the four item registers,
   and carries no `path` kind. A spec whose name is refused, or that a milestone holds, is no
   anchor, and a directory is never a spec.
 
@@ -732,17 +732,12 @@ documents, which the plans layout fixes. A declaration of one is refused, per
 `design@core@registers-are-declared`. A project that already declared a register under one of the four names renames it on
 upgrade.
 
-### A spec file is an anchor that owns its own file, which stays an entry of the `spec` register `##spec-file-owns-its-items`
+### A spec file is an anchor of its own, so a spec's items are cited by the spec's name `##spec-file-is-an-anchor`
 
-Each spec file of specs/ is an anchor, so its items are cited `<kind>@<spec>@<id>`. The deepest
-anchor owns a document, per `design@core@a-slug-belongs-to-a-component`, and a spec anchor holds
-its own file, so the spec anchor owns it. The File register's entry rule gains one case: a file
-that a spec anchor at exactly its own path owns stays an entry of the register whose home holds
-it, decided in `Anchors::owns_entry`, which every entry filter calls. Ownership is unchanged, so
-a spec and a milestone behave alike: the plan anchor owns the plan's documents, and items take one
-path. An anchor that owns nothing, with an item scope found apart from ownership, was the rival;
-it gives a document two notions of its anchor and items two code paths. Making every spec a
-directory was the other; it reopens the decision that a spec is one file.
+Each spec file of specs/ is an anchor, so its items are cited `<kind>@<spec>@<id>`, as a slice's
+are cited by its milestone's name, in every project that writes specs. The anchor holds its own
+file, which stays an entry of the `spec` register that holds it. Making every spec a directory was
+the rival; it reopens the decision that a spec is one file.
 
 ### A plan document owes the sections of its kind, and a slice spec owes its own `##slice-spec-sections`
 

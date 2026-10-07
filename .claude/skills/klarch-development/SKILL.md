@@ -225,7 +225,7 @@ Neither carries the history of a change: that lives in the commit message.
   the mechanism, not the fix. **A guard, a workaround, a
   stub or a test that exists because of an open issue names it**, `issue@<anchor>@<id>`, so that
   closing the entry dangles the comment, and `cargo klarch check` sends the closing session here to
-  remove what the entry justified, per `design@knowledge-architect@a-reference-claims-a-revisit`. A
+  remove what the entry justified, per `design@agent-skills@a-reference-claims-a-revisit`. A
   comment is prose, so the reference is checked. A string literal bound to a name is not; in the
   checker's own source, every string literal is data, bound or not, per
   `design@core@checker-source-literals-are-data`.

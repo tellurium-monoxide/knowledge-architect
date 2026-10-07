@@ -246,6 +246,10 @@ To move to another version:
 
 ## In a Rust project
 
+%% The section is for Rust because the project is focused on Rust, the language whose comments the
+%% checker reads; another language gets a section of its own when a project needs one. It serves
+%% `goal@knowledge-architect@setup-brings-quality-tools`. The tie of a build to its checkout is this
+%% repository's own adoption, `design@knowledge-architect@a-build-is-tied-to-its-checkout`.
 A Rust project gets its gates and its pinned checker from one maintenance crate, a package named
 `xtask` in a directory of its own, `<xtask-dir>/`, such as `xtask/` at the root, a member of its
 workspace that is never
@@ -363,6 +367,9 @@ is skipped, and GitHub counts a skipped job as passing: whoever merges reads the
 checks that the job ran on the pull request's current head. A hung job stops at its time limit
 rather than the default of six hours.
 
+%% The split this repository makes for its own crates, per
+%% `design@knowledge-architect@crates-io-page-file`, for the same reason; it serves
+%% `goal@knowledge-architect@adoption-is-easy`.
 **A crate the project publishes** keeps its `README.md` for the project's own readers, with the
 references the checker resolves, and gets a separate, short `CRATES-IO.md` as its crates.io page,
 named by `readme = "CRATES-IO.md"` in its `Cargo.toml`; cargo packages that file even when

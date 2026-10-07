@@ -14,7 +14,7 @@ then only confirms citations that are already correct. Its value is low, and a s
 prose escapes no check: it names history, not the tree.
 
 **The checker's crate in crates/knowledge-architect** — lost to
-`design@knowledge-architect@repo-layout`. `live`. Refuted by a run, not by argument: in a scratch project
+`design@knowledge-architect@crate-directory-named-by-role`. `live`. Refuted by a run, not by argument: in a scratch project
 named knowledge-architect with a component at that path, the check stopped in phase 1, because the
 directory's basename and the project's name are the same anchor. A crate directory is named by its
 role.

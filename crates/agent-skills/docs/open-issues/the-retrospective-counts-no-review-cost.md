@@ -46,5 +46,4 @@ sessions as the test of the workflow.
 
 The retrospective skill asks for the three numbers of each branch merged in its session, and says
 where they are recorded so that they can be compared across sessions. The home of the series is a
-choice for that change: the retrospective's files live outside the project, per
-`design@agent-skills@retro-file-location`.
+choice for that change: the retrospective skill writes its files outside the project.

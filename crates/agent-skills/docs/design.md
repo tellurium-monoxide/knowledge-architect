@@ -228,6 +228,15 @@ workflow consistent, as `goal@agent-skills@one-skill-per-activity` asks. A rewor
 is phrased, is not recorded. Such proposals can be made without bound, unlike a technical decision,
 which costs implementation work. The commit message carries a rewording's argument.
 
+The owner's intent is on record only where an explicit ruling of the owner stands behind the
+decision: the owner's words, or an approval recorded. An argument derived from a goal does not count,
+since nearly every head cites a goal and the test would then admit them all. Two parts of the
+workflow are installed texts, or an installed text and the checker it must agree with, as the
+planning skill's sections agree with what the core checks; a decision of this repository alone is
+not one, since the installed text names none of this repository's conventions. The owner ruled both
+readings: "1(a) and 2(b), go ahead". A reason that passes neither goes in a `%%` comment at the
+instruction it explains, per `design@agent-skills@shipped-text-line-comments`.
+
 ### An instruction is added to an installed skill or agent only on evidence from real use `##additions-need-real-use`
 
 Real use originates an addition: a behaviour seen in a real session, produced unprompted or asked
@@ -279,7 +288,7 @@ satisfying both is always in scope, because `goal@agent-skills@one-skill-per-act
 while no two installed instructions contradict.
 
 The sets live in the retrospective skill, the one installed activity that judges whether something
-is a defect of an installed skill, per `design@agent-skills@retro-content`. The retrospective runs in the installing project, which holds the
+is a defect of an installed skill. The retrospective runs in the installing project, which holds the
 installed files and not this component's README, so a set the retrospective applies has to ship. A
 set inside the skill it bounds would be read on every use of that skill, and an agent reading it
 would check the owner against a list. The README restates each set for the owner, who is the one it
@@ -385,9 +394,12 @@ and a documented-only test 3 fails where the documentation is silent. The decisi
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`: a later
 session can tell what it may change and what a change costs from the head where one is owed, and
 from the comment where none is. An audit of the 178 heads the design homes held when these tests were
-decided found over-recording below one head in five where the owner read it; for this Component its
-outcome is unconfirmed, and the cleanup of `issue@agent-skills@heads-no-entry-test-admits` can
-reopen this head. The nearest rival, a head for every decision discussed with the owner, is what a
+decided found over-recording below one head in five where the owner read it. For this Component,
+each head the audit flagged was then judged in full, under the owner's readings of
+`design@agent-skills@instruction-record-is-minimal`: a decision about the installed text keeps the
+owner's intent on record only where an explicit ruling of the owner stands behind it, and two parts
+of the workflow include the installed text and the checker; twelve heads left, their reasons moving
+to comments at the instructions they explain. The nearest rival, a head for every decision discussed with the owner, is what a
 session did for a mechanism carried at one site by its comments, and the owner judged the head
 unneeded. Within test 2, "the same statement at more than one site" admits a path repeated for
 consistency, which the owner judged no reason to keep a head. The wider test 2, "constrains work
@@ -529,6 +541,50 @@ reviews run only where a discussion wrote a plan document, and a search at conve
 decision taken in the change under way too. The search at convergence is parked, with a tripwire,
 since grounding and the audit are where the owner wants the search.
 
+## How documents point at each other
+
+### A reference is written where the text would have to be revisited if the entry it names changed `##a-reference-claims-a-revisit`
+
+Every citeable thing has one reference form, `<kind>@<anchor>@<id>`, and two mechanisms of the
+checker give a reference its value. `cargo klarch show <ref>` prints every reference to an entry,
+so what depends on an entry is computed from the tree and never written by hand. An entry that is
+deleted or renamed dangles every reference to it, and `cargo klarch check` reports each one, so the
+repair list a change produces is the list of texts that depended on what changed. A reference is
+therefore a claim of dependence: this text is to be revisited when that entry is reversed, closed,
+fired, abandoned or renamed.
+
+**The test for writing one is that claim.** Where a change to the entry would leave the text
+unaffected, the reference is decoration and costs a repair for nothing; where it would not, the
+reference is owed, or the change reaches nobody. What follows from the test, by the kind of text:
+
+| the text | names | so that |
+| --- | --- | --- |
+| a design head | the goal its argument derives a constraint from | `show` on the goal lists what abandoning it reopens |
+| a design head | a decision of another component it depends on | a reversal reaches it |
+| an issue entry | the decision it strains, and the goal it threatens when it does directly | `show` on a decision lists what is outstanding against it before it is reopened, and on a goal what stands between the project and it |
+| a guard, a workaround, a stub or a test that pins behaviour an open entry describes | the issue it exists because of, in the comment at the site | closing the entry dangles the comment, so the site is revisited and the workaround removed |
+| a tripwire | the decision it guards | a reversal dangles its tripwires |
+| a rejected alternative | the decision it lost to | a reversal finds what the old winner displaced |
+| a commit message | every entry it opens, closes, reverses or argues from | the commits gate judges it against the tree it was written against |
+| a restatement of a directive | its home | a drift between the two is found from either end |
+
+**An entry never lists what references it.** The inbound list is `show`'s to compute, and a
+hand-written one is stale at the next reference written elsewhere.
+
+**A reference in prose is checked wherever it stands**, a Rust comment and a fenced block
+included; a string literal bound to a name yields none. So a comment in code naming an issue is
+as live as a sentence in a document, and closing the issue reaches the code. This serves
+`goal@knowledge-architect@design-is-recorded-with-its-arguments`.
+
+### A sentence about the past whose reference dangles is rewritten to the present or removed, and a quotation of the owner is kept with a reference beside it `##a-past-sentence-is-rewritten`
+
+When an entry is deleted or renamed, a sentence that recorded its past, such as what an earlier
+step wrote, is rewritten to state the present, or removed, and its history stays in the commit
+messages. Retargeting it to the new name would make it false, and plain text would take it out of
+the check, per `design@knowledge-architect@plain-text-is-no-repair`. A verbatim quotation of the
+owner that names a renamed entry is left as it is, with a reference to the current entry beside
+it, since rewriting it would misstate the owner, against `goal@knowledge-architect@the-owner-decides`.
+
 ## Plan documents
 
 ### The words: plan document, spec, milestone, slice, step, plans directory `##document-vocabulary`
@@ -640,15 +696,6 @@ discussion to one thread, against `design@agent-skills@structure-the-flow`. The 
 owner accepted, is a long commit message when a discussion inside a task grows to several threads;
 its length is not bounded, since a bound on it would bound the discussion.
 
-### On the in-change path, nothing is implemented or committed before the premortem and its rulings `##in-change-waits-for-premortem`
-
-Where the premortem runs on the in-change path, per `design@agent-skills@in-change-path`, nothing of
-the decision is implemented or committed before it has run and the owner has ruled on its
-tripwires, so the commit that carries the deliberation carries those rulings, as a plan document
-would. A premortem can surface a material finding that reopens a thread, and work committed before
-it would then be undone. The rival, the rulings landing in the later commit that writes the
-tripwires, leaves the deliberation split over two commits.
-
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
 The planning skill starts where a design discussion has converged on the full path, and writes the
@@ -716,16 +763,6 @@ confirmed to have lost no content. The record of the review says what was folded
 history still says what the review found. The rule exists to avoid history edits, not to keep a
 repair apart from what it repairs.
 
-### A plan document's landing is not tied to its work's `##plan-landing-is-not-tied-to-its-work`
-
-A plan document, a spec or a milestone document, is merged to the main branch in a pull request of
-its own or with its work, whatever the time of its work. An owner
-plans a feature that will not be built yet so that the work done meanwhile does not drift from it,
-which needs the document where every session reads it, on the main branch; that serves
-`goal@knowledge-architect@agents-work-without-drift`. What "spec" and "milestone" measure is the
-work, one pull request or several, not where the document lands. The document leaves when its work
-lands, per `design@agent-skills@spec-leaves-at-landing`.
-
 ### A plan document lands before any work that changes what the project's per-commit gate checks `##plan-lands-before-gate-change`
 
 The per-commit gate judges each commit of a branch, its tree and its message, with the checker at
@@ -735,8 +772,8 @@ check of the working tree sees, such as installed text that the checker compares
 tree alone, leaves the per-commit gate unchanged and is outside this rule. Keeping both on one branch would force
 the fix the owner called absurd: the plan document committed after the work it plans. So that work
 begins on a branch of its own, after the document is merged. This holds for a spec as for a milestone document, whose slice
-that changes what the per-commit gate checks is the one this rule meets, per
-`design@agent-skills@plan-landing-is-not-tied-to-its-work`.
+that changes what the per-commit gate checks is the one this rule meets. It is the one exception to
+the planning skill's rule that a plan document lands whatever the time of its work.
 
 ### Undesigned work is an issue `##planned-work-is-an-issue`
 
@@ -761,16 +798,6 @@ roadmap from several register shapes using only references. The need is observed
 of its next milestones as an exception to the installed skill. A roadmap register of its own,
 holding undesigned work, lost: two registers would each hold known, undesigned work, which needs a
 routing rule and hides one of them from the issue listing.
-
-### The roadmap is docs/roadmap.md at the root, optional, and needs no checker rule `##roadmap-home`
-
-The path is fixed, as the plans directory's is, so the installed skills can name it, per
-`design@core@plans-dir-fixed`. It is optional: a project with no order to state writes none. It is
-not in the plans directory, which holds plan documents only, because a roadmap outlives every plan
-it lists. Its rows are ordinary references, so ordinary reference checking is all it needs: a
-roadmap citing a milestone, a slice spec and issues passes the check, and a row citing an absent
-issue is reported. Writing such a file and running the check re-takes it; a row the check cannot
-judge would reopen this.
 
 ### No record of landed work is kept `##no-progress-record`
 
@@ -837,33 +864,12 @@ harvest writes is a selection of named arguments rather than a rewrite. It carri
 state would need a relation between many arguments and many threads, which the design skill
 declines to track, and an identifier needs none.
 
-### Arguments are numbered in one sequence per plan `##argument-ids`
-
-An argument's id is `a<n>`, in order of appearance and never reused, in one sequence across a
-milestone's README and its slice specs, which share one namespace, per
-`design@core@plan-items-by-section`. Arguments are never harvested as entries, so a content slug
-would cost a name for each of dozens of statements, for nothing. The numbers are assigned at
-assembly, and the discussion mints none.
-
 ### Where one argument ends is decided at assembly `##argument-segmentation`
 
 The boundaries of the arguments are a judgement, made once, at assembly. The transcript reviewer
 checks that no argument of the transcript was lost, and judges no boundary: a boundary drawn
 differently loses nothing. The rival, arguments marked in each round, makes the extraction exact at
 a cost paid every round.
-
-### A leaving plan's citations are removed, and each citing plan gets a question `##retiring-plan-opens-issue`
-
-A whole plan document may be cited from another plan, per `design@core@plan-item-scope`. When it
-leaves, the session that meets the dangling citation, the one deleting it or the one rebasing the
-citing plan onto the deletion, removes the citation and opens a `question` issue on the citing
-plan: does it still hold now that the leaving plan is built, accounting for deviations or other
-unplanned happenings? The issue cites
-the citing plan, so it cannot outlive it, and its `Why it matters` cites what the leaving plan
-harvested, since that plan no longer exists. It is a `question` rather than a `todo` because the
-reading may find nothing to change. For a milestone, its next slice's audit reads it. The retiring
-session revisits nothing itself: a revisit at that moment would redesign the citing plan at a time
-chosen by another plan's landing.
 
 ## Reviews
 
@@ -1049,27 +1055,6 @@ and gives the project's other repeated tasks a place, per
 `goal@knowledge-architect@setup-brings-quality-tools`. The cost accepted: building the gates builds
 the checker, which the check gate needs anyway.
 
-### The setup skill shows a Rust project its maintenance crate `##setup-rust-section`
-
-The setup skill ends with a section for a Rust project: the maintenance crate's manifest, its
-aliases, its main, the recommended gates and a continuous integration workflow that runs them on
-every ready pull request, each labelled as an illustration to adapt. It serves
-`goal@knowledge-architect@setup-brings-quality-tools`. The section is for Rust because the project
-is focused on Rust, the language whose comments the checker reads; another language gets a section
-of its own when a project needs one.
-
-The section ties every build of the project to its checkout, with a cargo `[env]` variable valued
-at the checkout's root, read by every library root and every target of a package with no library,
-and named by every build script. The argument and the observations of cargo are this repository's
-own adoption, `design@knowledge-architect@a-build-is-tied-to-its-checkout`.
-
-### The setup skill proposes a short CRATES-IO.md for a crate the project publishes `##setup-default-crates-io-page`
-
-For a crate the project publishes, the setup skill proposes to the owner a repository-facing
-README.md and a separate, short CRATES-IO.md as its crates.io page, named by `readme`: the split
-`design@knowledge-architect@crates-io-page-file` makes for this repository's own crates, for the
-same reason. It serves `goal@knowledge-architect@adoption-is-easy`.
-
 ### Every Component states at least one goal `##goals-required`
 
 The setup skill does not finish a Component without at least one goal, stated with the owner.
@@ -1128,13 +1113,6 @@ its goals need not refine one. Placing a goal at the root because several Compon
 it would lead to an excessive promotion of goals into the root, and leave a goal with no Component
 responsible for it, against `goal@knowledge-architect@the-owner-decides`.
 
-### A Component's goal names the project goal it refines `##component-goal-refines-root`
-
-A Component's goal that refines a goal of the root carries a reference to it, so rewording or
-abandoning the root goal lists every Component goal derived from it, per
-`design@knowledge-architect@a-reference-claims-a-revisit`. Which goals refine a root goal is
-`design@agent-skills@goal-placement`.
-
 ### A goal need not be met yet `##an-unmet-goal-is-intent`
 
 A goal is the owner's intent about where the project should get to, and it constrains future work
@@ -1158,20 +1136,6 @@ session worked on has merged, a plan document has left, or the owner says the se
 It runs only if the owner accepts. A moment named by an event can be followed by any agent where
 "a moment it judges right" could not, and offering it once keeps it from interrupting work.
 
-### A retrospective examines four subjects, and counts an instruction missing only where the workflow needed one `##retro-content`
-
-It opens with what the session did, at the level of the workflow, and examines the installed skills
-and agents, the project's own instructions, how the two interact, and the checker: its defects, its
-blind spots, its false findings, and what would make it easier to use. For each it lists what was
-unclear, missing or wrong, quoting the instruction. An instruction is missing only where the
-session could not follow the workflow, or could not produce a document the checker accepts,
-without it; a decision made by judgement where no instruction covers it is no finding. A wider
-"missing" turns every judgement into a request for a rule, which narrows the instructions against
-`goal@agent-skills@installed-text-leaves-room-to-judge`. Its scope is wider than the installed text so
-that it is useful to a project adopting the workflow, whose problems may come from its own
-instructions and from their interaction with the installed ones as well, per
-`goal@knowledge-architect@the-workflow-improves-through-real-use`.
-
 ### A retrospective asks standing questions, each on the decisions it watches `##premortem-as-watch-points`
 
 Every retrospective asks whether the session needed to change an installed skill or agent, whether the
@@ -1186,36 +1150,6 @@ failure would be seen in real sessions before any check could see it:
 one channel by which a gap of the checker met in a consumer project reaches this repository, since
 the consumer's own entry for it is not citable here. The skill never states how many questions
 there are, so adding one changes no count.
-
-### A retrospective writes one file per project whose text must change `##retro-two-files`
-
-Each finding goes to the file of the project whose text or code must change: one file for the
-project, one for knowledge-architect. A finding on an interaction whose fix may fall on either side
-goes in both. The project's findings never leave the project, so only the workflow's file is held
-to the rule that it carries nothing of the project beyond what a finding needs.
-
-### A retrospective names each finding by a letter and a number `##finding-ids`
-
-Each finding carries an id: W for the installed skills and agents, C for the checker, P for the
-project's own instructions, and a number within each letter. The owner rules on findings one by
-one, and an id lets a ruling, a fix or a commit cite one without restating it. An interaction
-finding whose fix may fall on either side sits in both files, per
-`design@agent-skills@retro-two-files`, and has one id in each, each naming the other, because the
-workflow's file may be published without the project's.
-
-### A retrospective records the version of knowledge-architect the session used `##version-in-report`
-
-Both files state the version of knowledge-architect the session used, so a finding can be judged
-against the text that produced it. In a project that pins the checker, the pin is that version,
-since `design@agent-skills@exact-pin` makes it exact. In a project that builds the checker from its
-own source, the version is the main commit the session's tree contains, the branch and whether the
-tree was dirty: a commit of the branch would point at nothing once a merge rewrites it, and what the
-branch added is acted on before that matters.
-
-### The retrospective's files live outside the project, where the owner chose `##retro-file-location`
-
-The files go to a directory outside the project, which the owner chooses the first time. Inside
-the project they would enter its history if committed, and be lost to the next clean if ignored.
 
 ### Nothing of a retrospective leaves the machine without the owner's reading and word `##retrospective-destination`
 

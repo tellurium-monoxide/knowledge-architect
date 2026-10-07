@@ -31,7 +31,7 @@ covered the Rust block only. Each block is labelled in the skill as an illustrat
 
 ### Why it matters
 
-`design@agent-skills@setup-rust-section` recommends these blocks to every adopting Rust project,
+The setup skill recommends these blocks to every adopting Rust project,
 per `goal@knowledge-architect@setup-brings-quality-tools`. An alias that names a command the core
 no longer has, a dependency key the pin no longer matches, or a CI step that no longer runs the
 gates the way `design@gates@the-library-owns-the-flags` sets them, ships to every project that

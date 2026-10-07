@@ -452,6 +452,11 @@ impl Anchors {
     /// The one place that case is written: every filter that decides whether a file is an
     /// entry of a File register asks this, so no later filter forgets a spec.
     pub(crate) fn owns_entry(&self, anchor: &Anchor, rel: &Path) -> bool {
+        // A spec anchor owns its own file, by the rule that the deepest anchor owns a document, so
+        // ownership needs no exception and a spec and a milestone behave alike: the plan anchor
+        // owns the plan's documents, and items take one path. An anchor that owned nothing, with
+        // its item scope found apart from ownership, would give a document two notions of its
+        // anchor and items two code paths.
         let owner = self.owning(rel);
         owner.path == anchor.path
             || (owner.constructed == Some(Constructed::Spec) && owner.path == rel)

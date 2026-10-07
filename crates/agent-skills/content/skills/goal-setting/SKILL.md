@@ -48,6 +48,8 @@ project, such as a maintenance tool, serves every root goal at once, and its goa
 one. Every Component
 states at least one goal.
 
+%% The reference makes rewording or abandoning the root goal list every Component goal derived from
+%% it, per `design@agent-skills@a-reference-claims-a-revisit`.
 A Component's goal that refines a goal of the project's root names it, with a reference in its
 body: `goal@<root anchor>@<slug>`. Then `{{command}} show goal@<root anchor>@<slug>` lists every
 Component goal that refines it, and removing the root goal leaves each of those references dangling,
