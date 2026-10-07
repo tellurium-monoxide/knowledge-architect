@@ -338,7 +338,8 @@ Weighed; stated by the owner in R1, from no goal. Met in part by #record-volume 
   agent-skills its outcome is unconfirmed (a65): the cleanup issue judges each head in full, and
   its result could reopen this thread. `issue@agent-skills@the-retrospective-counts-no-review-cost`
   records the instrument that would measure what the design homes cost a session (a14).
-- **The condition discharged,** R8: "Anyway, the audit did not surface anything that would change
+- **The condition, presumed discharged for the code Components and open for agent-skills, awaiting
+  the owner's ruling.** The owner's R8 words, which open with a question and give a lean: "Anyway, the audit did not surface anything that would change
   my mind on this. I still lean to think that lower design record volume is better, as long as no
   critical intent and arguments are lost, and the audit did not suggest dropping anything I found
   critical in the code components here (and we refined the tests once more after it). For the
@@ -983,6 +984,11 @@ adds its comment strip and its substitutions beside that branch's placeholder me
 
 None. The three defaults this section held were ruled in R8, and each is written into the thread
 it bears on: #shipped-text-entry-references-only, #bounded-path-in-design, #t1-consumed-interface.
+
+- **The state of #record-volume's condition after R8** (#record-volume). R8 opened with a question
+  and gave a lean, with the clause "as long as no critical intent and arguments are lost". Default:
+  discharged for the code Components, open for agent-skills, where the cleanup issue's judgement of
+  each head can reopen the thread; the head carries the owner's clause.
 
 ## Harvest
 
