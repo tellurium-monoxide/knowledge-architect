@@ -288,7 +288,9 @@ on a whim, it needs design and testing itself." One run of an agent is a sample 
 evidence the rule gives up is supplied otherwise: retrospectives of real work reach this
 repository, and this repository installs its own skills, so its own sessions use each change
 before a release reaches a consumer. The cost accepted is that a defect in a new text is found at
-its first real use, not before its merge. Two instances in this repository grounded the rule. A
+its first real use, not before its merge. The owner accepted it: "If the loss you mentionned is the
+only one you could think of, indeed it is small. Most things we do here are already well proven to
+work." Two instances in this repository grounded the rule. A
 spec's acceptance criterion, a replay of a search agent over another project's history, was ruled
 out at the step that ran it: "From experience, they are not very reliable, and drive the workflow
 toward wrong directions more often than good ones." A slice's criterion, a subagent classifying
@@ -1126,7 +1128,9 @@ decisions yet, so it would carry two questions with two yardsticks. The cold imp
 other rival, asks whether the document can be acted on, and a document that contradicts a goal
 can. The reviewer depends on a record worded wide enough, which the owner acknowledged: "this is
 always dependent on the project being diligent in its goals and design records. Everything in the
-workflow is, after all." Its cost, one more dispatch at each of those moments, the owner accepted.
+workflow is, after all. Project owners still have to watch agent behavior and interrupt them if they
+find them acting differently than their intent. Whether this is a published workflow defect or an
+internal documentation defect is left to the retrospective skill to judge." Its cost, one more dispatch at each of those moments, the owner accepted.
 
 ### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
 
