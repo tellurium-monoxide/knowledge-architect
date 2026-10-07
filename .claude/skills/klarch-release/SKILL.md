@@ -39,23 +39,24 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    the whole branch, per root `CLAUDE.md`, section Verify mechanically, and
    `issue@core@branch-sha-citations-are-judged-within-the-range-only`.
    Cargo refuses to package an uncommitted tree, so the commit comes before the next steps.
-4. **The shipped text holds no live reference.** List every backticked span with an `@` under
-   crates/agent-skills/content/, and read each one:
+4. **The shipped text cites no entry.** List every backticked span with an `@` in the installed
+   copies, which hold the text as it ships, its `%%` comments removed and its placeholders filled,
+   and read each one:
 
    ```sh
-   grep -rnoE '`[^`]*@[^`]*`' crates/agent-skills/content crates/agent-skills/snippets
+   grep -rnoE '`[^`]*@[^`]*`' .claude/knowledge-architect .claude/skills/knowledge-architect-* .claude/agents/knowledge-architect-*
    ```
 
    A span is a reference candidate when its head before the first `@` is a kind or an anchor, per
-   `design@core@candidate-rule-and-retired-forms`. Every candidate must carry a placeholder in angle
-   brackets, as in `goal@<anchor>@<id>`. A span whose head is empty, such as the primer's import
-   line, is no candidate. This is done by hand until
+   `design@core@candidate-rule-and-retired-forms`. Every candidate either carries a placeholder in
+   angle brackets, as in `goal@<anchor>@<id>`, or is a path every conforming project holds,
+   `path@*@<path>` or `path@plans@<path>`. No candidate names an entry. This is done by hand until
    `issue@agent-skills@shipped-text-is-reference-free-mechanically` closes, per
-   `design@agent-skills@shipped-text-is-reference-free`.
+   `design@agent-skills@shipped-text-cites-no-entry`.
 5. **Every name the shipped text uses is shipped**, per `design@agent-skills@no-external-handoff`:
 
    ```sh
-   grep -rhoE 'knowledge-architect-[a-z-]+' crates/agent-skills/content crates/agent-skills/snippets | sort -u
+   grep -rhoE 'knowledge-architect-[a-z-]+' .claude/knowledge-architect .claude/skills/knowledge-architect-* .claude/agents/knowledge-architect-* | sort -u
    ```
 
    Each name must be a shipped skill (`content/skills/<name>/`) or a shipped agent

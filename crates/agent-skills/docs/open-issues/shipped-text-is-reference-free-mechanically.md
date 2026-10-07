@@ -1,35 +1,38 @@
 ---
 kind: todo
 ---
-# Nothing checks mechanically that the shipped text holds no live reference and names no project path
+# Nothing checks mechanically that the shipped text cites no entry of this repository
 
 ## Summary
 
-The text under content/ is installed in other projects, so it must hold no live reference and name
-no path of this repository. This repository's manifest takes content/ out of the walk, and the
-installed copies are out of it by construction, so no check reads that text. Only the reviews of
-each change to it judge it.
+The text this crate ships, content/ and the snippets the build inlines, is installed in other
+projects, so it must cite no entry of this repository. Both are in the walk, so every reference in
+them is checked against this repository: a reference to an entry that resolves here passes the
+check, and would dangle in every installing project. Only the reviews and the release's hand check
+judge it.
 
 ## Details
 
 ### What
 
-A mechanical check over the shipped text: every backticked span that the reference reader would
-take as a candidate is a placeholder, and no span names a path of this repository. The check could
-run over content/ in this repository's gates, or be a mode of the checker that reads a directory as
-shipped text rather than as documents. The shape is not decided. The shipped text includes the
-snippets under `path@agent-skills@snippets/`, which the build inlines into content/'s text: they are
-in the walk as Rust source, so a reference in them that resolves here passes the check today, and
-ships.
+A mechanical check that the shipped text, as it ships, holds no reference to an entry. A path every
+conforming project holds, `path@*@<path>` or `path@plans@<path>`, and a placeholder in angle
+brackets stay allowed, per `design@agent-skills@shipped-text-cites-no-entry`. The text as it ships
+is the installed copies under .claude: their `%%` comments are removed and their placeholders
+filled, so the comments, which cite entries on purpose, are not judged by it.
+
+The owner's direction, when content/ was taken back into the walk: open an issue "that when this
+"reference clean path" feature rolls out, it gets applied to the self installed workflow (in
+.claude, only on installed content, where the comments are already trimmed and thus no reference
+should be left)". So one shape is a declaration, in the manifest, of paths that must hold no
+reference to an entry, applied here to the installed copies. Its shape is not decided.
 
 ### Why it matters
 
-`design@agent-skills@shipped-text-is-reference-free` rests on the reviews alone. A live reference
-that a review misses ships, and in every installing project it is a dangling reference the project
-cannot repair, against `goal@knowledge-architect@any-project-can-adopt-it`, because the file is
-the installer's and the check compares its bytes. The walk
-exclusion of content/ in `path@knowledge-architect@knowledge-architect.toml` exists only because
-no such check exists.
+`design@agent-skills@shipped-text-cites-no-entry` rests on the reviews and the release's hand check.
+A reference to an entry that they miss ships, and in every installing project it dangles where the
+project cannot repair it, against `goal@knowledge-architect@any-project-can-adopt-it`, because the
+file is the installer's and the check compares its bytes.
 
 The same mechanism is needed by the crates.io pages, each crate's CRATES-IO.md, per
 `design@knowledge-architect@crates-io-page-file`: the walk reads them, and a reference that resolves
@@ -38,7 +41,7 @@ free of references.
 
 ### What would close it
 
-The check, run by `cargo x gates`, failing on a live reference or a path of this repository planted
-in a scratch copy of content/ or of snippets/, and the walk exclusion of content/ either removed or kept with the
-check as its stated reason. The release procedure, `path@agent-config@skills/klarch-release/SKILL.md`,
-checks the shipped text for references by hand; the check replaces that step.
+The check, run by `cargo x gates`, failing on a reference to an entry planted in a scratch copy of a
+file the installed copies hold, and passing on a `%%` comment that cites one in content/. The
+release procedure, `path@agent-config@skills/klarch-release/SKILL.md`, checks the shipped text for
+references by hand; the check replaces that step.

@@ -88,8 +88,7 @@ What the cleanup owes before it deletes anything:
   `design@agent-skills@design-hands-off-to-planning` "not critical, but they still carry useful
   informations".
 - **Content worth keeping from an agent-skills head goes into a `%%` line** beside the instruction
-  it explains, once the second slice of `milestone@plans@load-bearing-records` has landed; until
-  then, the agent-skills part waits.
+  it explains, per `design@agent-skills@shipped-text-line-comments`.
 
 ### Why it matters
 
