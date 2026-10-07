@@ -62,6 +62,20 @@ subsection is omitted.
   by the decision-record axis whichever axis asked for it, and no other repair is, where any
   transcript-review repair that made a decision was; decision-recording's finishing step applies
   the entry tests again once the change is written.
+- `agent-skills`, patch: a new reviewer, `knowledge-architect-design-conformance-reviewer`, reads a
+  plan document against the goals, the design heads and the rejected alternatives of every
+  Component it touches, as the fourth reviewer the planning skill sends when a plan document is
+  written or a decided shape in one is revised; the review skill's axis row of the standing-state
+  reviewer is named "standing state".
+- `agent-skills`, patch: the owner rules on each acceptance criterion, as on each tripwire, at the
+  premortem; a criterion first proposed later waits as a default awaiting the owner and is not
+  judged before the ruling.
+- `agent-skills`, patch: the items the owner rules on one by one carry labels: `T<n>` for
+  tripwires, `AC<n>` for acceptance criteria and `D<n>` for a plan document's defaults, and `Q<n>`
+  where the label stays in the conversation, as for review items, the setup's proposed
+  destinations, and criteria proposed as tripwires when a plan document leaves.
+- `agent-skills`, patch: the design skill builds no discriminating evidence that the project's
+  goals or design heads rule out, and sends the fork to the owner as a tie.
 
 ## 0.4.0
 
