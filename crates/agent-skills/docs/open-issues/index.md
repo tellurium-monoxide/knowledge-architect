@@ -1,10 +1,9 @@
 **Generated — do not edit.** `cargo klarch index`
 
-11 entries
+10 entries
 
 | kind | title |
 | --- | --- |
-| defect | [A hedged word of the owner was recorded as an approved thread in a committed plan document](a-hedged-ruling-recorded-as-approved.md) |
 | deferred | [A project cannot change one instruction of an installed skill](patching-an-installed-skill.md) |
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | question | [A design issue's re-entry point is read by no review](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |

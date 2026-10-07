@@ -72,6 +72,11 @@ naming the other, since the two files may be read apart. The standing questions 
   on the project, in the project's file. Text outside the checker's syntax, such as a commit of
   another project, is no answer to this question.
 
+**A ruling of the owner recorded a little wider, narrower or firmer than given, on a detail that is
+not load-bearing, and caught by the transcript reviewer before the merge, is no finding.** The
+reviewer exists to catch that expected rate, and it worked. A misstated ruling that changed what was
+built, or reached the main branch, is one.
+
 **A finding about how the owner works is judged against the skill's expectation set** (§5). A
 finding that describes the owner's behaviour where §5 states the skill assumes otherwise is
 reported as outside that skill's scope, with the assumption quoted, rather than as a defect of it.

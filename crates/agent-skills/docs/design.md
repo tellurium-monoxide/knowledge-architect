@@ -667,7 +667,7 @@ that left, and each landing commit says where its results live; releases are in 
 progress file would be a third document about the same work, with a lifetime of its own, against
 the one place for what is open of `goal@knowledge-architect@structure-and-workflow-work-together`.
 
-### A transcript reviewer checks that what a work's sessions established has a durable outcome `##transcript-reviewer-agent`
+### A transcript reviewer checks that what a work's sessions established has a durable outcome, and rates a misstated ruling by what it changes `##transcript-reviewer-agent`
 
 The installed agent `knowledge-architect-transcript-reviewer` reads the transcripts of the sessions
 that produced a piece of work, named as a commit range, and checks two things. First, that each
@@ -690,6 +690,19 @@ misstated ruling goes to the owner. The durability check serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`. The check of rulings has shown
 its worth: in the review of the change that installed the first skills, a reviewer briefed with it
 was the one of six to find a decision recorded narrower than the owner's approval.
+
+A misstated ruling is critical only when it is reversed, or when its state or scope changes what is
+built or a load-bearing decision. A ruling recorded a little wider, narrower or firmer on a detail
+that is not load-bearing is minor, still goes to the owner, and is no finding of the retrospective
+once caught before the merge. The owner's words: "everytime, it was on details that were small and
+not load bearing in my opinion", "the transcript reviewer is catching those issues reliably IMO. I
+do not believe any amount of instruction anywhere would help improve more than the current
+situation: LLM agents are trained to take the input they receive from humans seriously and follow
+them closely", and "This kind of findings being flagged by the transcript reviewer once in a while
+(for decisions that are not the most criticals, and with only a small deviation from my word, not a
+complete reversal) is not a critical defect and should not be considered as such." The rival, every
+misstated ruling rated critical, made a reviewer's report of a slip read as a defect of the work
+and of the workflow, which the owner ruled it is not.
 
 ### A plan document records the whole discussion `##spec-records-the-exchange`
 

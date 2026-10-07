@@ -10,6 +10,13 @@ Its work is the installed text, so the development procedure of point 3 of §7 i
 
 ## Builds
 
+- **First, before the rest:** the transcript reviewer rates a misstated ruling by what it changes,
+  and the retrospective counts a minor one caught before the merge as no finding, under a short
+  design pass, with `tripwire@agent-skills@ruling-lost-in-assembly` aligned. A scope change the
+  owner ruled after this document merged: "make the changes you proposed to both transcript reviewer
+  and retrospective, under a short design pass, but as part of the slice 1 PR, at the very
+  begining. This ensures following tasks will be done while aware of this change." Its record is
+  `design@agent-skills@transcript-reviewer-agent` and the commit that lands it.
 - **§2 of the decision-recording skill**, `path@agent-skills@content/skills/decision-recording/SKILL.md`:
   the entry tests reworded per #t1-consumed-interface, #entry-test-locality and
   #t3-external-behaviour; the paragraph after them, "Test 3 matters most in a project that
