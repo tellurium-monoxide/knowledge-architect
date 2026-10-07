@@ -14,9 +14,11 @@ installed files, is `design@core@owned-namespace-check`.
 ### content/ mirrors the install layout, and the build generates the list `##content-mirrors-the-install-layout`
 
 The directory `path@agent-skills@content/` holds what `install-agent-skills` writes, and nothing
-else. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, and the primer
-is `PRIMER.md`. The build script, `path@agent-skills@build.rs`, walks the directory and generates
-`FILES`, each entry the install path and the text. It adds the installer's prefix to each skill
+else, except that a line `{{snippet:<file>}}` stands for a file of `path@agent-skills@snippets/`,
+which the build inlines there. A skill is `skills/<skill>/` with its files, an agent is
+`agents/<agent>.md`, and the primer is `PRIMER.md`. The build script, `path@agent-skills@build.rs`,
+walks the directory, renders each file with its snippets, and generates `FILES`, each entry the
+install path and the text. It adds the installer's prefix to each skill
 directory and agent file on the way out, so the installed names are the namespace of
 `design@core@owned-namespace-check`. A file the layout does not map fails the build.
 
@@ -38,7 +40,9 @@ command, per `design@core@declared-command`.
 
 This repository's manifest takes content/ out of the walk, because its illustration paths would be
 reported as paths of this repository. The installed copies under .claude are out of the walk by
-construction. So no check reads this text: the reviews of each change to it judge it, until a
+construction. The snippets the build inlines, under `path@agent-skills@snippets/`, are in the walk
+as Rust source, so a reference in them that resolves here passes the check and ships. So no check
+reads this text for the rule above: the reviews of each change to it judge it, until a
 mechanical check exists, which `issue@agent-skills@shipped-text-is-reference-free-mechanically`
 tracks.
 

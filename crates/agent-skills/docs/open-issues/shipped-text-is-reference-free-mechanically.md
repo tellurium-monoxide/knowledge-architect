@@ -17,7 +17,10 @@ each change to it judge it.
 A mechanical check over the shipped text: every backticked span that the reference reader would
 take as a candidate is a placeholder, and no span names a path of this repository. The check could
 run over content/ in this repository's gates, or be a mode of the checker that reads a directory as
-shipped text rather than as documents. The shape is not decided.
+shipped text rather than as documents. The shape is not decided. The shipped text includes the
+snippets under `path@agent-skills@snippets/`, which the build inlines into content/'s text: they are
+in the walk as Rust source, so a reference in them that resolves here passes the check today, and
+ships.
 
 ### Why it matters
 
@@ -36,6 +39,6 @@ free of references.
 ### What would close it
 
 The check, run by `cargo x gates`, failing on a live reference or a path of this repository planted
-in a scratch copy of content/, and the walk exclusion of content/ either removed or kept with the
+in a scratch copy of content/ or of snippets/, and the walk exclusion of content/ either removed or kept with the
 check as its stated reason. The release procedure, `path@agent-config@skills/klarch-release/SKILL.md`,
 checks the shipped text for references by hand; the check replaces that step.

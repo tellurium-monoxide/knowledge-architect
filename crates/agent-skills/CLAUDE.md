@@ -6,9 +6,9 @@ This crate carries text, not behaviour; the core reads it to install and to chec
 entry the install path and the text, per `design@agent-skills@content-mirrors-the-install-layout`.
 A file under content/ that the layout does not map fails the build.
 
-**A change to content/ is installed in the same commit.** This repository installs its own skills,
-and its check compares each installed file with the shipped text byte for byte. After editing
-content/, run `cargo klarch install-agent-skills` and commit the installed copies under .claude
+**A change to content/ or snippets/ is installed in the same commit.** This repository installs its
+own skills, and its check compares each installed file with the shipped text byte for byte. After
+editing content/ or snippets/, run `cargo klarch install-agent-skills` and commit the installed copies under .claude
 with the change, or the check fails.
 
 **No check reads content/.** The manifest takes it out of the walk, and the installed copies are
@@ -24,7 +24,9 @@ installed skill by its installed name, which carries the installer's prefix.
 `{{snippet:<file>}}`, and the build script inlines. Edit the file, not the skill. The example
 `path@xtask@examples/setup_snippet.rs` compiles it. rustfmt does not reach an included file, so
 `rustfmt --edition 2021 --check` it by hand after an edit. The checker reads it as Rust source:
-its comments are prose, and the text it ships stays reference-free as content/ does.
+its comments are prose, a reference in them that resolves here passes the check and ships, and the
+text it ships stays reference-free as content/ does, per
+`design@agent-skills@shipped-text-is-reference-free`. The release's hand check reads snippets/ too.
 
 **The primer reaches every session of every installing project**, so it holds only what every
 session needs and no installed skill delivers, per `design@agent-skills@primer-limit`. A line that
