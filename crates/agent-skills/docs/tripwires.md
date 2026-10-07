@@ -88,19 +88,20 @@ when convergence is proposed, before the premortem, among the candidates.
 `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`, on the
 owner's word: the evidence arises in the sessions of the projects that use the workflow.
 
-## Guarding `design@agent-skills@standing-entries-searched-before-the-work`: a deferred trigger met by undesigned work and found only at the review `##deferred-trigger-met-by-undesigned-work`
+## Guarding `design@agent-skills@standing-entries-searched-before-the-work`: a deferred trigger met by work that bypasses the design skill and found only at the review `##deferred-trigger-met-by-undesigned-work`
 
-The decision sends no search before work that is neither designed nor planned. It rests on the
-premise that a deferred trigger met by such work costs little when the review is the first to read
-it.
+The decision sends no search before work that does not go through the design skill; bounded work
+that does is searched at the grounding, per `design@agent-skills@bounded-path-in-design`. It rests
+on the premise that a deferred trigger met by work that bypasses the skill costs little when the
+review is the first to read it.
 
-**Fires when:** a second instance is recorded of a deferred trigger met by work that is neither
-designed nor planned, and found only at the standing-state review. The first was in thaum: a move
+**Fires when:** a second instance is recorded of a deferred trigger met by work that did not go
+through the design skill, and found only at the standing-state review. The first was in thaum: a move
 of the pinned checker met the trigger of a deferred issue that named that move.
 **Response:** open a `design` issue naming both instances, and propose a search before such work,
 with its host.
-**Re-entry:** the landing of the first slice of `milestone@plans@load-bearing-records`, which hosts a search
-before bounded work in the design skill and restates this tripwire.
+**Re-entry:** the standing-state review before every merge, which reads every deferred trigger
+against the change.
 
 ## Guarding `design@agent-skills@spec-work-procedure`: a gap an audit would have found, in a spec's work that skipped it as the rule allows `##skipped-spec-audit-would-have-found-a-gap`
 
@@ -128,3 +129,37 @@ structure the work does not need, and not to refuse structure it does.
 **Re-entry:** the retrospective of the session where the owner overruled it, which reads that
 session's record.
 
+## Guarding `design@agent-skills@bounded-path-in-design`: a decision taken on the bounded path earns a head `##a-shortcut-decision-earns-a-head`
+
+The decision rests on the premise that a session classifies work as bounded only when every
+decision it makes fails the entry tests, and does not use the path to skip a discussion.
+
+**Fires when:** a decision-record review finds, in a commit made on the bounded path, a decision
+that passes an entry test of `design@agent-skills@a-head-is-owed-by-an-entry-test`, at the second
+instance.
+**Response:** reopen `design@agent-skills@bounded-path-in-design` on its three conditions.
+**Re-entry:** the decision-record review before every merge: the commit carries the proposal and
+the owner's words.
+
+## Guarding `design@agent-skills@a-head-is-owed-by-an-entry-test`: the owner overrules a review's verdict on a head `##a-head-verdict-is-overruled`
+
+The decision rests on the premise that the entry tests decide whether a head is owed in a way the
+owner agrees with, and that whether a rival is plausible is not left to case-by-case taste.
+
+**Fires when:** the owner overrules a review's verdict on whether a decision earns a head, the
+second time.
+**Response:** reopen `design@agent-skills@a-head-is-owed-by-an-entry-test` on the wording of the
+tests.
+**Re-entry:** the decision-record review, whose verdicts the owner rules on.
+
+## Guarding `design@agent-skills@local-intent-binds`: an escalation over a comment is ruled unneeded `##a-comment-escalation-is-overruled`
+
+The decision rests on the premise that a reason recorded at the code is weighed as a presumption,
+and does not make every change to commented code a question for the owner.
+
+**Fires when:** the owner rules, the second time, that a session's escalation of a change because a
+comment states a reason was unneeded, the comment holding no decision worth the question.
+**Response:** reopen `design@agent-skills@local-intent-binds` on the rung of comments.
+**Re-entry:** the retrospective of the session where the owner ruled it, which reads that session's
+record; this is behaviour in sessions, with the limit
+`issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` names.

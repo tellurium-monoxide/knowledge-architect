@@ -110,3 +110,10 @@ doubts that an audit makes sense there. It is kept here because a doubt remains:
 `tripwire@agent-skills@skipped-spec-audit-would-have-found-a-gap`, and this alternative is the first
 candidate if it fires.
 
+**A separate installed skill for bounded problems** — lost to
+`design@agent-skills@bounded-path-in-design`. `live`. Whether work is bounded is known only after
+the design skill's grounding, so a separate skill would repeat that grounding to classify at all.
+The owner had planned one and ruled for the path inside the design skill once that was argued. It
+is kept here because a doubt remains: `tripwire@agent-skills@a-shortcut-decision-earns-a-head`
+watches whether the path lets a decision that earns a head skip its discussion, and this
+alternative is a candidate if it fires.
