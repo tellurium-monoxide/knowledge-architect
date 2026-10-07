@@ -47,7 +47,7 @@ Its work is the installed text, so the development procedure of point 3 of §7 i
 
 | claim | test that could refute it | how the test is shown to discriminate |
 | --- | --- | --- |
-| The rewritten §2 admits a policy and refuses a local mechanism and a repeated path | the acceptance criterion `acceptance@load-bearing-records@a-cold-session-applies-the-tests` | run it once against the current §2 first: T2old admits none of the three decisions on a narrow reading, or all of them on a wide one, as the audit agents reported, so the run tells the two texts apart |
+| The rewritten §2 admits a policy and refuses a local mechanism and a repeated path | the decision-record review at the harvest, which judges each head the slice writes against the rewritten tests | not shown before the work: the synthetic run that would have shown it was dropped on the owner's word; the review reads real decisions, the heads of this slice's own harvest and the decisions its commit names as earning none |
 | Every reference the slice writes resolves, and no reference to a closed or renamed entry remains | `cargo klarch check` | the slug of `design@agent-skills@bounded-problem-branch` is renamed in the slice: a reference left to the old slug, in this milestone's documents included, fails the check |
 | The installed text equals the shipped text | `cargo klarch check`, which compares each installed file with the shipped text, line endings normalized to LF | an edit to content/ committed without `cargo klarch install-agent-skills` fails it |
 
@@ -82,8 +82,8 @@ Its work is the installed text, so the development procedure of point 3 of §7 i
 
 ## Fails alone on
 
-- A fresh session given the rewritten §2 classifies one of the three decisions of
-  `acceptance@load-bearing-records@a-cold-session-applies-the-tests` against the ruling.
+- The decision-record review of the harvest finds a head the rewritten tests should have refused,
+  or a decision they should have admitted.
 - `cargo klarch check` reports a reference to `design@agent-skills@bounded-problem-branch`, the one
   head this slice renames.
 
@@ -295,37 +295,12 @@ None: the slice rewrites text and records, and the code needs no function.
 
 ## Acceptance criteria
 
-**Open at the audit, and the slice stopped on it.** The criterion below is a synthetic test of an
-installed text: a fresh subagent classifies three decisions written for the test, and its result
-can reopen a decision. `issue@agent-skills@synthetic-evidence-about-the-workflow-is-undecided`
-records that the owner ruled out a criterion of that kind before it ran: "From experience, they
-are not very reliable, and drive the workflow toward wrong directions more often than good ones."
-The criterion was the author's proposal and no word of the owner admitted it. Put to the owner,
-with the default: drop it; the claim it served is judged by the decision-record review at the
-harvest, and in real use by the tripwire of P2.
-
-### A cold session applies the rewritten entry tests as the discussion ruled `##a-cold-session-applies-the-tests`
-
-- **Guards:** #entry-test-locality, with #t1-consumed-interface and #t3-external-behaviour.
-- **Judged by:** this slice, before its merge. A fresh general-purpose subagent, in a worktree of
-  its own, is given the rewritten §2 of the installed decision-recording skill as text in its brief,
-  is told to read nothing under the plans directory and no design home, and is asked, for each of
-  the three decisions below, whether it earns a design head and by which test. The three
-  decisions, given to it word for word:
-  1. "The setup skill shows adopting projects the main of a maintenance crate. That main is kept in
-     a separate Rust file, inserted into the skill by the skill crate's build script, and compiled
-     by an example target of this repository's own maintenance crate, so a change to an interface
-     it uses fails the build. The build script's comment says why the file is inserted at build
-     time; the example's comment says why it is compiled in the maintenance crate."
-  2. "The project stays at version 0.x, and breaking changes stay allowed, until the owner says
-     otherwise, which the owner does only once the open issues of the discussion that designed the
-     project are implemented or argued. No code implements this; it governs every release."
-  3. "Each project's optional roadmap file is at docs/roadmap.md at its root. The path is named in
-     the primer and in four installed skills."
-- **Fires when:** the subagent does not answer "no head", "a head, by T2: a policy", and "no head"
-  respectively.
-- **Response:** the wording of §2 is repaired in this slice and the run repeated; a second failure
-  reopens #entry-test-locality with the owner.
+None. The audit found that the one this spec held was a synthetic test of an installed text: a
+fresh subagent classifying three decisions written for the test, whose result could reopen a
+decision, the kind `issue@agent-skills@synthetic-evidence-about-the-workflow-is-undecided` records
+the owner ruling out. The owner dropped it: "Agreed, drop the criterion based on synthetic
+evidence. And record this happening in the existing issue too." The claim it served is judged by
+the decision-record review at the harvest, and in real use by the tripwire of P2.
 
 ## Harvest
 
