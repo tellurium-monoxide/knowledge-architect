@@ -107,14 +107,17 @@ with its host.
 **Re-entry:** the standing-state review before every merge, which reads every deferred trigger
 against the change.
 
-## Guarding `design@agent-skills@spec-work-procedure`: a gap an audit would have found, in a spec's work that skipped it as the rule allows `##skipped-spec-audit-would-have-found-a-gap`
+## Guarding `design@agent-skills@spec-work-procedure`: a critical gap an audit would have found, in a spec's work that skipped it as the rule allows `##skipped-spec-audit-would-have-found-a-gap`
 
 The decision rests on the premise that a spec implemented by the session that wrote it, on a main
-branch with no commit since the spec other than its own, has nothing for an audit to find.
+branch with no commit since the spec other than its own, has nothing load-bearing for an audit to
+find. The tripwire guards against a critical failure of the workflow, not a small mistake that is
+cheap to repair.
 
 **Fires when:** a review finds, in the work of a spec that skipped its design audit as the rule
-allows, a gap an audit would have listed: a shape the tree refutes, a name the code does not have,
-or a standing entry the work bears on that the grounding did not meet.
+allows, a critical gap an audit would have listed: a shape the tree refutes, a name the code does
+not have, or a standing entry the work bears on that the grounding did not meet. A gap is critical
+when the work's result, or a decision it rests on, is wrong without its repair.
 **Response:** open a `defect` naming the spec and the change, and reopen
 `design@agent-skills@spec-work-procedure` on the condition for the audit.
 **Re-entry:** the standing-state review before every merge: the spec, its commit and the main
