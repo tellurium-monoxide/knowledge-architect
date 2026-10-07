@@ -41,7 +41,11 @@ opening with the design kind, with no way to know whether it resolves.
 Three smaller gaps came out of the same trial:
 
 - a `Finding` carries no field naming the check that wrote it, so the extension prefixed its
-  check's name into the text;
+  check's name into the text. A consuming project met it again: its tests sorted planted findings
+  into the core's and the extension's by their wording, C3 of
+  2026-10-07-thaum-mock-reduction-workflow. For that split, `Prepared::check` already returns an
+  `ExtensionReport` holding the extension's findings alone; it does not name which of the
+  extension's own checks wrote each;
 - the documentation does not say which tree `Inputs.present` describes under `commits`; it is the
   commit's tree, read in the code of `path@core@src/cli/history.rs`;
 - the rustdoc holds no complete `impl Extension`; the only one is in
