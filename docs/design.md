@@ -348,23 +348,24 @@ A retrospective writes one file for the project and one for the workflow, and th
 becomes an issue on knowledge-architect's repository where the owner directs it there, per
 `design@agent-skills@retrospective-destination`. Here the project is that repository, so the owner
 directs the findings of both files to this repository: each is handled, opened as an entry in its
-own issue registers, or closed with no change and the reason. An issue on GitHub would be a second place for what is open,
-beside the registers, against `goal@knowledge-architect@structure-and-workflow-work-together`.
+own issue registers, or closed with no change and the reason. An issue on GitHub would be a second
+place for what is open, beside the registers, against
+`goal@knowledge-architect@structure-and-workflow-work-together`.
 
 ### Each finding of a received retrospective file gets an outcome the owner rules, in a committed analysis that leaves when its last outcome is carried out `##committed-findings-analysis`
 
 A retrospective's workflow file that this repository receives, from its own sessions or from a
 project that uses the workflow, and the project file of this repository's own retrospective, are
-each analysed finding by finding under `klarch-retrospective-intake`,
-and the analysis is a file of `path@knowledge-architect@docs/retrospective-reports/`, named by the
-received file's stem. Each finding gets one of three outcomes, ruled by the owner: handled now,
-opened as an issue, or no change with the reason, per `goal@knowledge-architect@the-owner-decides`.
-The analysis is committed with the owner's ruling on each finding, the issues it rules are opened
-next, the findings handled now are handled, and the commit that carries out its last outcome, or
-a later commit of the same branch, deletes it. A finding handled now that grows into a design
-discussion has its outcome rewritten, on the owner's word, to name the plan document or the issue
-that carries it, so the file still leaves. The repository is public and the workflow file is the
-one a retrospective writes to be publishable, so the analysis names nothing of another project beyond what its workflow file holds.
+each analysed finding by finding under `klarch-retrospective-intake`, and the analysis is a file of
+`path@knowledge-architect@docs/retrospective-reports/`, named by the received file's stem. Each
+finding gets one of three outcomes, ruled by the owner: handled now, opened as an issue, or no
+change with the reason, per `goal@knowledge-architect@the-owner-decides`. The analysis is committed
+with the owner's ruling on each finding, the issues it rules are opened next, the findings handled
+now are handled, and the commit that carries out its last outcome, or a later commit of the same
+branch, deletes it. A finding handled now that grows into a design discussion has its outcome
+rewritten, on the owner's word, to name the plan document or the issue that carries it, so the file
+still leaves. The repository is public and the workflow file is the one a retrospective writes to be
+publishable, so the analysis names nothing of another project beyond what its workflow file holds.
 It names no path or design head of that project either, which in the owner's words "is useless
 information here anyway": where a finding needs one, the analysis says it in words.
 
