@@ -19,6 +19,13 @@ illustration as a placeholder in angle brackets, and writes the project's comman
 placeholder, per `design@agent-skills@shipped-text-is-reference-free`. A skill names another
 installed skill by its installed name, which carries the installer's prefix.
 
+**The maintenance crate's main that the setup skill shows is a file under
+`path@agent-skills@snippets/`**, which the skill names by a placeholder line,
+`{{snippet:<file>}}`, and the build script inlines. Edit the file, not the skill. The example
+`path@xtask@examples/setup_snippet.rs` compiles it. rustfmt does not reach an included file, so
+`rustfmt --edition 2021 --check` it by hand after an edit. The checker reads it as Rust source:
+its comments are prose, and the text it ships stays reference-free as content/ does.
+
 **The primer reaches every session of every installing project**, so it holds only what every
 session needs and no installed skill delivers, per `design@agent-skills@primer-limit`. A line that
 restates a skill, or a convention of one project, does not go in it.

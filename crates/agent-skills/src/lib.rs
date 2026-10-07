@@ -18,3 +18,23 @@ pub const CRATE_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
 /// This crate's package name, for the same refusal.
 pub const PACKAGE: &str = env!("CARGO_PKG_NAME");
+
+#[cfg(test)]
+mod tests {
+    use super::FILES;
+
+    /// The setup skill ships the maintenance crate's main that xtask's example compiles.
+    #[test]
+    fn the_setup_skill_ships_the_compiled_snippet() {
+        let (_, setup) = FILES
+            .iter()
+            .find(|(path, _)| *path == ".claude/skills/knowledge-architect-setup/SKILL.md")
+            .expect("the setup skill is shipped");
+        let snippet = include_str!("../snippets/xtask-main.rs");
+        assert!(
+            setup.contains(&format!("```rust\n{snippet}```\n")),
+            "the setup skill does not hold snippets/xtask-main.rs as a fenced block"
+        );
+        assert!(!setup.contains("{{snippet:"), "a placeholder was shipped");
+    }
+}

@@ -1014,8 +1014,7 @@ aliases, its main, the recommended gates and a continuous integration workflow t
 every ready pull request, each labelled as an illustration to adapt. It serves
 `goal@knowledge-architect@setup-brings-quality-tools`. The section is for Rust because the project
 is focused on Rust, the language whose comments the checker reads; another language gets a section
-of its own when a project needs one. No check compiles its snippet:
-`issue@agent-skills@the-setup-snippet-is-unchecked`.
+of its own when a project needs one.
 
 The section ties every build of the project to its checkout, with a cargo `[env]` variable valued
 at the checkout's root, read by every library root and every target of a package with no library,

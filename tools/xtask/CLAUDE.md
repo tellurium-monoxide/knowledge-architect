@@ -22,3 +22,9 @@ the suite that is running it. `path@xtask@tests/gates_bin.rs` runs the built bin
 project, whose gates are stubbed, and asserts the library's contracts through it: the pipe
 refusal, the run-all default, the scrubbed `RUSTC_BOOTSTRAP`, `--locked`, the rebase check and
 the annotations under Actions.
+
+## The example is another project's main
+
+`path@xtask@examples/setup_snippet.rs` compiles the maintenance crate's main that the setup skill
+shows. That main is written for an adopting project, so the conventions of this file, `say` and
+`complain` among them, do not apply to it.
