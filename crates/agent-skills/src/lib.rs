@@ -2,7 +2,8 @@
 //! subagent definitions and the primer.
 //!
 //! Each entry is the path the file is installed at, relative to the project root, and its text.
-//! The list is generated from this crate's content/ directory by its build script.
+//! The list is generated from this crate's content/ directory by its build script, each file
+//! rendered with the snippets of snippets/ that its placeholder lines name.
 
 // Read so that cargo rebuilds this crate when the checkout building it changes, per
 // `design@knowledge-architect@a-build-is-tied-to-its-checkout`. A build outside this repository's
@@ -30,11 +31,23 @@ mod tests {
             .iter()
             .find(|(path, _)| *path == ".claude/skills/knowledge-architect-setup/SKILL.md")
             .expect("the setup skill is shipped");
-        let snippet = include_str!("../snippets/xtask-main.rs");
+        // The build drops the snippet's own final line break and keeps the placeholder line's.
+        let snippet = include_str!("../snippets/xtask-main.rs").trim_end_matches('\n');
         assert!(
-            setup.contains(&format!("```rust\n{snippet}```\n")),
+            setup.contains(&format!("```rust\n{snippet}\n```\n")),
             "the setup skill does not hold snippets/xtask-main.rs as a fenced block"
         );
-        assert!(!setup.contains("{{snippet:"), "a placeholder was shipped");
+    }
+
+    /// No shipped file holds a snippet placeholder: a line that is not exactly one, such as an
+    /// indented one, is left as it is by the build.
+    #[test]
+    fn no_shipped_file_holds_a_snippet_placeholder() {
+        for (path, text) in FILES {
+            assert!(
+                !text.contains("{{snippet:"),
+                "{path} ships a snippet placeholder"
+            );
+        }
     }
 }

@@ -43,7 +43,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    crates/agent-skills/content/, and read each one:
 
    ```sh
-   grep -rnoE '`[^`]*@[^`]*`' crates/agent-skills/content
+   grep -rnoE '`[^`]*@[^`]*`' crates/agent-skills/content crates/agent-skills/snippets
    ```
 
    A span is a reference candidate when its head before the first `@` is a kind or an anchor, per
@@ -55,7 +55,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
 5. **Every name the shipped text uses is shipped**, per `design@agent-skills@no-external-handoff`:
 
    ```sh
-   grep -rhoE 'knowledge-architect-[a-z-]+' crates/agent-skills/content | sort -u
+   grep -rhoE 'knowledge-architect-[a-z-]+' crates/agent-skills/content crates/agent-skills/snippets | sort -u
    ```
 
    Each name must be a shipped skill (`content/skills/<name>/`) or a shipped agent

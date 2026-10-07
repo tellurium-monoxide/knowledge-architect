@@ -315,8 +315,8 @@ build compiles and what its binary prints:
   build's.
 - **A build script's run is a unit of its own.** A library that reads the variable recompiles over
   the output of a build script run from the other checkout. The build script of the agent-skills
-  crate names each content file by its absolute path, so without its own line a tied library
-  includes the other checkout's text.
+  crate renders each content file from the checkout it runs in, so without its own line a tied
+  library includes the other checkout's text.
 - **The value follows cargo's working directory, not the manifest it builds.** Cargo finds its
   configuration from where it is started, as it finds the aliases. Started in one checkout with
   `--manifest-path` naming another, it builds the other with the first one's value; started

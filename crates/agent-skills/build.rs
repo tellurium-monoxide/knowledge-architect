@@ -75,12 +75,18 @@ fn main() {
 struct Snippets(Vec<(String, String, bool)>);
 
 impl Snippets {
-    /// Every file directly under `dir`; none when the directory is absent.
+    /// Every file directly under `dir`; none when the directory is absent. A directory under it
+    /// fails the build: a snippet is one file.
     fn read(dir: &Path) -> Self {
         let mut snippets = Vec::new();
         if dir.is_dir() {
             for entry in std::fs::read_dir(dir).expect("snippets/ is readable") {
                 let path = entry.expect("snippets/ is readable").path();
+                assert!(
+                    !path.is_dir(),
+                    "{} is a directory: snippets/ holds files only",
+                    path.display()
+                );
                 let name = path
                     .file_name()
                     .and_then(|n| n.to_str())

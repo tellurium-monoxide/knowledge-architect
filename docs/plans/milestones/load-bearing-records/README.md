@@ -139,7 +139,7 @@ design audit, applied in place: …`.
 | the walk | the set of files `cargo klarch check` reads, which the `exclude` list of `path@knowledge-architect@knowledge-architect.toml` narrows |
 | the walk probe | the run of `cargo klarch check` on a scratch worktree of origin/main with the line `"crates/agent-skills/content",` deleted from that `exclude` list, taken in R5 |
 | the audit | the classification of all 178 design heads against the entry tests by four read-only subagents, in R3 |
-| the snippet branch | the branch `setup-snippet-compiled`, pull request #58 on GitHub, which closes the issue on the unchecked setup snippet and adds the placeholder line `{{snippet:<file>}}` to `path@agent-skills@build.rs`; it merges between slice 1 and slice 2 |
+| the snippet branch | the branch `setup-snippet-compiled`, pull request #58 on GitHub, which closes the issue on the unchecked setup snippet puts a placeholder line `{{snippet:<file>}}` in the setup skill and has `path@agent-skills@build.rs` replace it; it merges between slice 1 and slice 2 |
 | the cleanup issue | the issue entry opened at slice 1's harvest for the heads the audit found unowed, per #record-audit |
 
 ## What the work is
