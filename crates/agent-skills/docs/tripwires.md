@@ -167,3 +167,15 @@ comment states a reason was unneeded, the comment holding no decision worth the 
 **Re-entry:** the retrospective of the session where the owner ruled it, which reads that session's
 record; this is behaviour in sessions, with the limit
 `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` names.
+
+## Guarding `design@agent-skills@plain-text-is-no-repair`: a checked pointer turned into plain text `##plain-text-pointer-found`
+
+**Fires when:** a review finds a diff that turns a checked reference or a backticked path into
+plain text naming the same target, with no reference beside it to an issue entry that records a
+missing form; or a retrospective's answer to its question on references written without backticks reports a pointer
+written as bare plain text to clear a finding.
+**Response:** open a `defect` for the instance. At the second instance, reopen
+`design@agent-skills@plain-text-is-no-repair`, with a mechanical check for plain-text
+pointers among the candidates.
+**Re-entry:** the standing-state review, which reads every tripwire before a merge, and the
+retrospective's question on references written without backticks, which reads the session.

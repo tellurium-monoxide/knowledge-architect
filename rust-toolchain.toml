@@ -1,7 +1,8 @@
 # The toolchain every gate runs under, locally and in CI, so fmt and clippy give one verdict
 # for one tree: on floating stable, a release adding a clippy lint fails CI on a tree that passes
 # locally, or the reverse, with no change in the diff. An upgrade is a one-line change here,
-# judged by the gates like any other.
+# judged by the gates like any other. The decision is
+# `design@knowledge-architect@toolchain-is-pinned`.
 [toolchain]
 channel = "1.98.0"
 components = ["rustfmt", "clippy"]

@@ -172,9 +172,9 @@ win.
     holds, per `design@core@every-path-names-its-anchor`. Write it as a `path` reference, or as
     `path@elsewhere@<path>` for a path this tree does not hold, or, in a plan document, as
     `planned@<anchor>@<path>` for a path its work will create, never in plain text, per
-    `design@knowledge-architect@plain-text-is-no-repair`, except beside a reference to an issue
+    `design@agent-skills@plain-text-is-no-repair`, except beside a reference to an issue
     entry that records the missing form, per
-    `design@knowledge-architect@checker-syntax-without-backticks-names-its-gap`. A span naming nothing here, such as
+    `design@agent-skills@checker-syntax-without-backticks-names-its-gap`. A span naming nothing here, such as
     `origin/main` or `application/json`, is silent, and so is a one-segment span, which is a name
     rather than a pointer.
 
@@ -208,6 +208,7 @@ the primer's:
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
+| a decision about the published workflow: what the installed skills, agents and primer tell every adopting project | the agent-skills design home, `path@agent-skills@docs/design.md`; this repository follows the workflow as any adopting project does, and this file restates what it needs with a pointer there | the decision changes |
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md`; its crates.io page is a short `CRATES-IO.md` in the crate, named by `readme` in its Cargo.toml, which points to the README and to docs.rs, per `design@knowledge-architect@crates-io-page-file` | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
@@ -265,9 +266,9 @@ milestone for work across several PRs. A plan document lands in a pull request o
 its work, whatever the time of its work. A correction is applied in place, so a
 partial reading cannot mislead. A plan document is deleted in the commit that completes its last
 harvest, and that commit's message cites it by its kind. This is a restatement; its homes are
-`design@agent-skills@document-vocabulary` and `design@agent-skills@spec-leaves-at-landing`, and the
-installed `knowledge-architect-planning`, which states where a plan document lands and when it
-must land before its work, and holds the procedure.
+`design@agent-skills@document-vocabulary`, `design@agent-skills@spec-leaves-at-landing`,
+and `design@agent-skills@plan-landing-is-not-tied-to-its-work`, and the procedure is the installed
+`knowledge-architect-planning`, which also says when a plan document must land before its work.
 
 ## Verify before relying on anything
 

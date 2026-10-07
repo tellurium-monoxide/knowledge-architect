@@ -27,8 +27,7 @@ again in that session.
 Open with **what the session did**: one paragraph, at the level of the workflow ("a design
 discussion and two merged branches"), not of the project's subject matter.
 
-%% The version lets a finding be judged against the text that produced it. A commit of the branch is
-%% not named: a merge that rewrites the branch leaves it pointing at nothing.
+%% The version lets a finding be judged against the text that produced it.
 Then **the version of knowledge-architect the session used**, in one line:
 
 - where the project pins the checker, the exact version of the pin;
@@ -37,10 +36,6 @@ Then **the version of knowledge-architect the session used**, in one line:
   the session worked on, and whether the tree held uncommitted changes. A commit of the branch
   itself is not named: a merge that rewrites the branch's commits leaves it pointing at nothing.
 
-%% A wider "missing" turns every judgement into a request for a rule, against
-%% `goal@agent-skills@installed-text-leaves-room-to-judge`. The scope is wider than the installed
-%% text because a project's problems may come from its own instructions and their interaction with
-%% the installed ones, per `goal@knowledge-architect@the-workflow-improves-through-real-use`.
 Then read back over the session: the instructions that were followed, where they were followed with
 difficulty, where they were not followed, and what the owner corrected. Then, for each of the four
 subjects below, list what was **unclear** (it could be read two ways), **missing** (the session
@@ -112,8 +107,6 @@ own side.
 to be understood: no code, no names of the project's internals, no content of its documents beyond
 the instruction quoted.
 
-%% Inside the project the files would enter its history if committed, and be lost to the next clean
-%% if ignored.
 **Where the files go**: a directory outside the project, chosen by the owner. If the owner's
 user-level agent configuration names one, use it. Otherwise ask, propose a directory under the
 owner's home, and offer to record the answer in that user-level configuration, on the owner's word,

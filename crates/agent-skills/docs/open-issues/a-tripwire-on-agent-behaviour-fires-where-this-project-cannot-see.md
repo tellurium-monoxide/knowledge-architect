@@ -25,7 +25,7 @@ The instances, in `path@agent-skills@docs/tripwires.md`:
   retrospective.
 - `tripwire@agent-skills@ruling-lost-in-assembly` had the same defect, repaired after that
   retrospective.
-- The premortem of `design@knowledge-architect@checker-syntax-without-backticks-names-its-gap` named a
+- The premortem of `design@agent-skills@checker-syntax-without-backticks-names-its-gap` named a
   cause it could not guard: a consumer's own entry for a gap of the checker stays open, with its
   plain-text sites, after a release ships the checked form, because nothing tells the consumer.
   The evidence is in the consumer's sessions, so the owner ruled that it gets no tripwire and is

@@ -94,7 +94,13 @@ records dozens per unit of work stops being readable and stops being ranked.
    its own; or
 3. **its argument turns on the behaviour of something outside the project**: an external
    specification the project implements (a standard, a protocol, a rule set), or an external tool's
-   behaviour, read in its documentation or measured.
+   behaviour, read in its documentation or measured; or
+4. **it records the owner's own intent**: a ruling the owner gave that an agent could judge
+   superfluous and reverse as a small fix, or an argument the owner made and wants kept so as not to
+   restate it. The owner's answer to a proposal of the agent, a "yes" or an approval, is not the
+   owner's intent; neither is a proposal the owner hedged ("I think", "maybe") and gave no argument
+   for, which is a position to argue under `knowledge-architect-design`. The head quotes the
+   owner's words.
 
 Test 3 matters most in a project that implements a specification or leans on a tool's behaviour. A
 choice that turns on what the specification means, or on how the tool behaves, is expensive to get

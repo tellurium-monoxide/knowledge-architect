@@ -1953,7 +1953,7 @@ mod tests {
 
     #[test]
     fn an_unanchored_path_shape_s_repair_offers_no_unchecked_form() {
-        // The claim, per `design@knowledge-architect@plain-text-is-no-repair`: the repair names
+        // The claim, per `design@agent-skills@plain-text-is-no-repair`: the repair names
         // checked forms only, so no reading of it clears the finding by unbackticking the path.
         // The whole repair line is pinned, so an unchecked form offered in any words fails,
         // on the plain span and on both located ones.

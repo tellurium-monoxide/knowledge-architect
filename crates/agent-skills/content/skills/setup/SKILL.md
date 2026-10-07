@@ -248,8 +248,7 @@ To move to another version:
 
 %% The section is for Rust because the project is focused on Rust, the language whose comments the
 %% checker reads; another language gets a section of its own when a project needs one. It serves
-%% `goal@knowledge-architect@setup-brings-quality-tools`. The tie of a build to its checkout is this
-%% repository's own adoption, `design@knowledge-architect@a-build-is-tied-to-its-checkout`.
+%% `goal@knowledge-architect@setup-brings-quality-tools`.
 A Rust project gets its gates and its pinned checker from one maintenance crate, a package named
 `xtask` in a directory of its own, `<xtask-dir>/`, such as `xtask/` at the root, a member of its
 workspace that is never
@@ -284,6 +283,8 @@ klarch = "run -q --release -p xtask -- klarch"
 <PROJECT>_CHECKOUT = { value = ".", relative = true, force = true }
 ```
 
+%% The argument for the tie, and the observations of cargo it rests on, are this repository's own
+%% adoption of it, `design@knowledge-architect@a-build-is-tied-to-its-checkout`.
 **Tie every build to its checkout**, with the `[env]` entry above. Two checkouts of the project
 that build into one target directory otherwise run each other's build: cargo keys a workspace
 member's build by its path relative to the workspace root, judges it fresh by modification times,
