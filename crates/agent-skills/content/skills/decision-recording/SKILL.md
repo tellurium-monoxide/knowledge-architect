@@ -95,12 +95,14 @@ records dozens per unit of work stops being readable and stops being ranked.
 3. **its argument turns on the behaviour of something outside the project**: an external
    specification the project implements (a standard, a protocol, a rule set), or an external tool's
    behaviour, read in its documentation or measured; or
-4. **it records the owner's own intent**: a ruling the owner gave that an agent could judge
-   superfluous and reverse as a small fix, or an argument the owner made and wants kept so as not to
-   restate it. The owner's answer to a proposal of the agent, a "yes" or an approval, is not the
-   owner's intent; neither is a proposal the owner hedged ("I think", "maybe") and gave no argument
-   for, which is a position to argue under `knowledge-architect-design`. The head quotes the
-   owner's words.
+4. **the owner confirms that it records the owner's own intent**: a ruling the owner gave that an
+   agent could judge superfluous and reverse as a small fix, or an argument the owner made and wants
+   kept so as not to restate it. The agent does not judge this. When a decision would earn a head
+   by this test alone, ask the owner, one numbered question per decision (Q1, Q2, …), several in
+   one message, each quoting the owner's words the decision rests on: do they record the owner's
+   intent, or were they an answer to the agent's proposal, or a hedged statement ("I think",
+   "maybe"), which is a position to argue under `knowledge-architect-design`? The head quotes the
+   owner's words and the owner's answer. With no answer, the decision earns no head by this test.
 
 Test 3 matters most in a project that implements a specification or leans on a tool's behaviour. A
 choice that turns on what the specification means, or on how the tool behaves, is expensive to get

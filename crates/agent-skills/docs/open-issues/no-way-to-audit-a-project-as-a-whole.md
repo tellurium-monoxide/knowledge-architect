@@ -9,8 +9,9 @@ Every review the workflow offers reads a diff: the work of one branch, or one pl
 reads a project's record as a whole: its design homes against each other, against the code and the
 goals, or the project's own agent configuration against the installed workflow. An audit of every
 design head of this repository, run during the discussion that rewrote the entry tests, was useful
-and was built by hand. The owner wants such audits offered to any large project, under a name that
-keeps them apart from reviews, to be designed in a later session under `knowledge-architect-design`.
+and was built by hand. The owner: "The audit we did is probably something that is useful to run once
+in a while in any large project." The owner proposes a name that keeps such audits apart from
+reviews, and a later session under `knowledge-architect-design` to design them.
 
 ## Details
 
