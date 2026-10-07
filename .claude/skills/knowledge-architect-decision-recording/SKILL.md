@@ -357,6 +357,11 @@ Every reference you wrote must resolve.
 Then, in the commit message, say what you searched for the incumbent and what it returned (§1),
 and re-read each head you wrote: present tense, as if the design had always been so (§5).
 
+Then apply the entry tests of §2 again to each decision of the change, now that every text of it is
+written: a site the change itself wrote counts, a skill or a restatement of the project's own
+included. A decision judged while its texts were still being written misses the second site the
+same change adds.
+
 Then re-read what you wrote against the head you replaced: **rewriting argued text is where
 fidelity gets lost.** If you cannot restate a losing alternative as strongly as it was written, you
 have not understood it well enough to move it.

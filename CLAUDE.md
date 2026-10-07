@@ -215,7 +215,7 @@ the primer's:
 | what a consumer must change, can start using, or will see agents do differently, per release | CHANGELOG.md at the root: one section per version, and the `Next release` section | a released section's content never changes; its structure may, and the `Next release` section may change at any time, per `design@knowledge-architect@changelog-entries` |
 | a finding established outside this project that a decision here leans on | `docs/grounding/<subject>.md` in the Component the decision belongs to | the source is superseded, or a better one lands |
 | a Component that maintains the repository rather than shipping in it | `tools/<name>/`, one directory per tool | the tool is retired |
-| the analysis of a retrospective's findings received by this repository, and the owner's ruling on each | one file per received file in `path@knowledge-architect@docs/retrospective-reports/`, per `design@knowledge-architect@committed-findings-analysis`, written under `klarch-retrospective-intake` | the commit that carries out its last outcome deletes it |
+| the analysis of a retrospective's findings received by this repository, and the owner's ruling on each | one file per received file in `path@knowledge-architect@docs/retrospective-reports/`, per `design@knowledge-architect@committed-findings-analysis`, written under `klarch-retrospective-intake` | the commit that carries out its last outcome, or a later commit of the same branch, deletes it |
 | **none of these, nor a row of the primer** | **ask, before writing it anywhere** | the table gains the row |
 
 **The last row is for a statement with no home, not for a choice between two.** When two rows

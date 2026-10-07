@@ -1025,8 +1025,20 @@ A repair that would leave an earlier commit failing is folded, per
 `design@agent-skills@review-repair-appended-or-folded`.
 An additional commit that only corrects is reviewed by no axis again, so the review ends. One that
 makes or reverses a decision is reviewed by the decision-record axis at least, and the review ends
-with that review's repairs: otherwise a decision taken in answer to the transcript review reaches
-the main branch with no review of its record, against the same goal.
+with that review's repairs, per `design@agent-skills@a-deciding-repair-gets-a-record-review`.
+
+### A review repair that makes or reverses a decision is reviewed by the decision-record axis, whichever axis asked for it `##a-deciding-repair-gets-a-record-review`
+
+The installed review skill sends the decision-record axis at every repair commit that makes or
+reverses a decision, whether it answers the transcript reviewer or any other axis, before the last
+transcript review, and the review ends with that review's repairs. A repair that only corrects is
+reviewed by no axis again. Otherwise a decision taken in answer to a review reaches the main branch
+with no review of its record, against `goal@knowledge-architect@design-is-recorded-with-its-arguments`:
+a design head written in answer to a decision-record finding reached the main branch read only by
+the transcript reviewer, whose subject is fidelity to the owner's rulings and not the record.
+
+The rival that sends every axis again at every repair commit lost: it costs a review round for
+each repair that only corrects, while only a decision changes what the record axis judges.
 
 ### Subagents dispatched together each get a scratch directory of their own `##a-scratch-directory-per-subagent`
 
