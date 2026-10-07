@@ -121,6 +121,13 @@ bounds what is proposed, how many threads are opened, or how many rounds
 the discussion takes: that depends on what grounding, investigation and
 evidence bring, which nobody knows in advance.
 
+%% Nothing is committed before the premortem's rulings: a premortem can surface a material finding
+%% that reopens a thread, and work committed before it would then be undone, against the fewer
+%% decisions reversed by accident that `goal@knowledge-architect@agents-get-a-complete-workflow`
+%% asks for; and the rulings that `goal@knowledge-architect@the-owner-decides` asks the record to
+%% show would land after the work they bear on. The commit that carries the deliberation carries
+%% the rulings, as a plan document would; the rival, the rulings landing in the later commit that
+%% writes the tripwires, splits the deliberation over two commits.
 - **The in-change path.** It is open when the decision lands in the
   change under way: its work, as when the decision was met during an
   issue fix or a review repair, or its record, for a decision that
