@@ -124,8 +124,7 @@ at that code, not the design home (a23); the tests are where the checker's reach
 comment cannot be cited (a29). Nearest rival: a head for every decision that was discussed with the
 owner. It is what this session did on the snippet branch, and the owner judged the result
 unneeded (a1, a2). The head names `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
-The audit's condition, as the owner's R8 words are presumed to give it, awaiting the owner's
-ruling: discharged for the code Components, where the audit changed nothing the owner found
+The audit's condition, as the owner ruled in R9 ("(b) is right"): discharged for the code Components, where the audit changed nothing the owner found
 critical; open for agent-skills, whose outcome stays unconfirmed (a65), so the cleanup issue's
 judgement of its heads can reopen this thread. The head carries the owner's condition: "as long
 as no critical intent and arguments are lost".

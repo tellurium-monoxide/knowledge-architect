@@ -21,7 +21,7 @@ discussion itself begins at the owner's message that opens "First, I think we sh
 agentic instructions." and ends at the one that opens "Tables approved, keep all tripwires". This
 document was assembled from that transcript. Rounds are numbered R1 to R7 by the owner's
 messages; R8 is the owner's message after this document's first reviews, which ruled on its
-defaults: R3 holds two owner messages, because a reply was cut by a connection error and the owner
+defaults, and R9 the one after the last review, which ruled on #record-volume's condition: R3 holds two owner messages, because a reply was cut by a connection error and the owner
 wrote "resume"; R4 holds the owner's message, an interruption, and the owner's message typed
 after it.
 
@@ -338,8 +338,9 @@ Weighed; stated by the owner in R1, from no goal. Met in part by #record-volume 
   agent-skills its outcome is unconfirmed (a65): the cleanup issue judges each head in full, and
   its result could reopen this thread. `issue@agent-skills@the-retrospective-counts-no-review-cost`
   records the instrument that would measure what the design homes cost a session (a14).
-- **The condition, presumed discharged for the code Components and open for agent-skills, awaiting
-  the owner's ruling.** The owner's R8 words, which open with a question and give a lean: "Anyway, the audit did not surface anything that would change
+- **The condition, discharged for the code Components and open for agent-skills,** where the
+  cleanup issue's judgement of each head can reopen the thread; ruled in R9: "(b) is right, generic names overtaken." and "Here, both a and b would be fine by me. I do not expect the cleanup to reopen this, especially because the agent-skills component is kind of an exception in the way it handles design decisions." The owner's R8
+  words, which open with a question and give a lean: "Anyway, the audit did not surface anything that would change
   my mind on this. I still lean to think that lower design record volume is better, as long as no
   critical intent and arguments are lost, and the audit did not suggest dropping anything I found
   critical in the code components here (and we refined the tests once more after it). For the
@@ -982,13 +983,10 @@ adds its comment strip and its substitutions beside that branch's placeholder me
 
 ## Defaults awaiting the owner
 
-None. The three defaults this section held were ruled in R8, and each is written into the thread
-it bears on: #shipped-text-entry-references-only, #bounded-path-in-design, #t1-consumed-interface.
-
-- **The state of #record-volume's condition after R8** (#record-volume). R8 opened with a question
-  and gave a lean, with the clause "as long as no critical intent and arguments are lost". Default:
-  discharged for the code Components, open for agent-skills, where the cleanup issue's judgement of
-  each head can reopen the thread; the head carries the owner's clause.
+None. The three defaults this section held were ruled in R8, and the state of #record-volume's
+condition in R9, and each is written into the thread
+it bears on: #shipped-text-entry-references-only, #bounded-path-in-design, #t1-consumed-interface,
+#record-volume.
 
 ## Harvest
 
