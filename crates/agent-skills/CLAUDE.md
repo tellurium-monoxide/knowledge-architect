@@ -11,13 +11,20 @@ own skills, and its check compares each installed file with the shipped text byt
 editing content/ or snippets/, run `cargo klarch install-agent-skills` and commit the installed copies under .claude
 with the change, or the check fails.
 
-**No check reads content/.** The manifest takes it out of the walk, and the installed copies are
-out of the walk by construction, so a live reference or a path of this repository in the shipped
-text passes every gate, per `issue@agent-skills@shipped-text-is-reference-free-mechanically`. The
-text names no path and no convention of this repository, holds no live reference, writes an
-illustration as a placeholder in angle brackets, and writes the project's command as the install
-placeholder, per `design@agent-skills@shipped-text-is-reference-free`. A skill names another
-installed skill by its installed name, which carries the installer's prefix.
+**content/ is in the walk, and every reference in it is checked against this repository.** So a
+reference to an entry of this repository passes here and would dangle in every installing project:
+the text cites no entry, per `design@agent-skills@shipped-text-cites-no-entry`, and nothing checks
+that yet, per `issue@agent-skills@shipped-text-is-reference-free-mechanically`. It names no
+Component and no convention of this repository; it writes a path every conforming project holds as
+`path@*@<path>` or `path@plans@<path>`, a path that varies by project and an illustration as a
+placeholder in angle brackets, and the project's command as the install placeholder. A skill names
+another installed skill by its installed name, which carries the installer's prefix.
+
+**A line whose first two characters are `%%` is a comment for this repository**, per
+`design@agent-skills@shipped-text-line-comments`: it may cite design heads and issues, and the build
+removes it. Indented, or inside a fenced block, it fails the build. **A literal the checker would
+misread** goes in `SUBSTITUTIONS` of `path@agent-skills@build.rs`, with the reason in its comment,
+and the text writes its placeholder; a row no text uses fails the build.
 
 **The maintenance crate's main that the setup skill shows is a file under
 `path@agent-skills@snippets/`**, which the skill names by a placeholder line,
@@ -25,8 +32,8 @@ installed skill by its installed name, which carries the installer's prefix.
 `path@xtask@examples/setup_snippet.rs` compiles it. rustfmt does not reach an included file, so
 `rustfmt --edition 2021 --check` it by hand after an edit. The checker reads it as Rust source:
 its comments are prose, a reference in them that resolves here passes the check and ships, and the
-text it ships stays reference-free as content/ does, per
-`design@agent-skills@shipped-text-is-reference-free`. The release's hand check reads snippets/ too.
+text it ships cites no entry, as content/ does, per
+`design@agent-skills@shipped-text-cites-no-entry`. The release's hand check reads snippets/ too.
 
 **The primer reaches every session of every installing project**, so it holds only what every
 session needs and no installed skill delivers, per `design@agent-skills@primer-limit`. A line that

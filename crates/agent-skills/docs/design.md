@@ -15,10 +15,12 @@ installed files, is `design@core@owned-namespace-check`.
 
 The directory `path@agent-skills@content/` holds what `install-agent-skills` writes, and nothing
 else, except that a line `{{snippet:<file>}}` stands for a file of `path@agent-skills@snippets/`,
-which the build inlines there. A skill is `skills/<skill>/` with its files, an agent is
-`agents/<agent>.md`, and the primer is `PRIMER.md`. The build script, `path@agent-skills@build.rs`,
-walks the directory, renders each file with its snippets, and generates `FILES`, each entry the
-install path and the text. It adds the installer's prefix to each skill
+which the build inlines there, a `%%` line is a comment the build removes, per
+`design@agent-skills@shipped-text-line-comments`, and a delivery placeholder is a literal the build
+fills. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, and the primer
+is `PRIMER.md`. The build script, `path@agent-skills@build.rs`, walks the directory, renders each
+file, removing its comments, filling its delivery substitutions and inlining its snippets, and
+generates `FILES`, each entry the install path and the text. It adds the installer's prefix to each skill
 directory and agent file on the way out, so the installed names are the namespace of
 `design@core@owned-namespace-check`. A file the layout does not map fails the build.
 
@@ -27,24 +29,52 @@ drift ships: a skill missing from the list is never installed, and nothing repor
 test `every_shipped_file_is_installed_in_the_owned_namespace` holds the build script to the
 namespace, since an install path outside it would write a file the project owns.
 
-### The shipped text names no project and holds no live reference `##shipped-text-is-reference-free`
+### The shipped text carries comments for this repository, `%%` lines that the build removes `##shipped-text-line-comments`
 
-The text under content/ is read in every project that installs it, so it names no path, no Component
-and no convention of this repository, per `goal@knowledge-architect@any-project-can-adopt-it`. The
-one name it holds on purpose is the workflow's own upstream repository, where a retrospective's
-findings on the workflow go, per `design@agent-skills@retrospective-destination`. It holds no live
-reference: a reference resolves only against the tree it stands in, and no tree but this one holds
-this repository's entries. An illustration writes a placeholder in angle brackets. The command a
-project runs is written as the placeholder that the install fills with the project's declared
-command, per `design@core@declared-command`.
+A line of a file of content/ whose first two characters are `%%` is a comment for this
+repository's maintainers. It sits beside the instruction it explains, and it may cite design heads
+and issues, which the walk checks, since content/ is in the walk. The build removes it whole, so no
+installed file holds it; a `%%` line inside a fenced block, or one with leading spaces, fails the
+build rather than ship. It gives the installed text what a comment gives code, the reason at the
+site it explains, per `design@agent-skills@local-intent-binds`, so a decision about one instruction
+need not take a head, per `design@agent-skills@a-head-is-owed-by-an-entry-test`. The owner's
+argument: it "would solve in good part the problem where the design heads of the workflow get
+bloated with details that, in a code project, would be served well by a local code comment. It
+would also allow to cite the design heads or other items without polluting installed skill
+results."
 
-This repository's manifest takes content/ out of the walk, because its illustration paths would be
-reported as paths of this repository. The installed copies under .claude are out of the walk by
-construction. The snippets the build inlines, under `path@agent-skills@snippets/`, are in the walk
-as Rust source, so a reference in them that resolves here passes the check and ships. So no check
-reads this text for the rule above: the reviews of each change to it judge it, until a
-mechanical check exists, which `issue@agent-skills@shipped-text-is-reference-free-mechanically`
-tracks.
+Line comments, not HTML comments: the checker treats an HTML comment as parked text and reads no
+reference in it, so a citation there would go unchecked, and the owner judged line comments "saner
+for the long term". The marker `%%` has no Markdown meaning, reads as a comment in Mermaid and
+Obsidian, and cannot collide with a Rust snippet, whose comments are `//`. The comments are checked
+by putting content/ back in the walk, rather than leaving them unchecked or adding a test in this
+repository that would repeat the checker's reference reading. A declaration in the published
+checker would cater to this repository's use in what consumers receive; the owner: "I don't want to
+cater too much to this use case in the installed files".
+
+### The shipped text names no project and cites no entry of this repository `##shipped-text-cites-no-entry`
+
+The text under content/, with the snippets the build inlines, is read in every project that installs
+it, so it names no Component and no convention of this repository, per
+`goal@knowledge-architect@any-project-can-adopt-it`. The one name it holds on purpose is the
+workflow's own upstream repository, where a retrospective's findings on the workflow go, per
+`design@agent-skills@retrospective-destination`. It cites no entry: a reference to an entry resolves
+only against the tree it stands in, and no tree but this one holds this repository's entries. A path
+that every conforming project holds is written as a reference, `path@*@docs/goals.md` or
+`path@plans@README.md`: it names each Component's own copy, required by
+`design@core@components-carry-the-same-documents`, so it is true in every installing project, and it
+shows the syntax the checker enforces there, in the owner's words "an upgrade over the current
+shape". The checker accepts every shape of a required document, per `design@core@reserved-anchors`,
+so both shapes are written. A path that varies by project, and an illustration, are placeholders in
+angle brackets. The command a project runs is written as the placeholder that the install fills
+with the project's declared command, per `design@core@declared-command`. A literal the checker
+would misread is a delivery substitution, which the build fills.
+
+content/ and the snippets are in the walk, so every reference they hold is checked against this
+repository. A reference to an entry that resolves here passes the check and would dangle in every
+installing project: the reviews of each change, and the release's hand check over the installed
+copies, judge that, until a mechanical check exists, which
+`issue@agent-skills@shipped-text-is-reference-free-mechanically` tracks.
 
 ### An installed skill names only installed skills and the project's own `##no-external-handoff`
 

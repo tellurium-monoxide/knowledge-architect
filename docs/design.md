@@ -201,15 +201,13 @@ Breaking changes are allowed, and expected, while the shape of the tool and of i
 converges. The project leaves 0.x only on the owner's word, and not before the open issues recorded
 from the discussion that designed it are implemented, or at least argued thoroughly: both are
 required. Whether the tool and its workflow have converged is a weighing, and the weighing is the
-owner's, per `goal@knowledge-architect@the-owner-decides`. The open issues, and the milestone that
-schedules one of them, are
+owner's, per `goal@knowledge-architect@the-owner-decides`. The open issues are
 `issue@core@tooling-for-project-skills`, `issue@core@configuration-for-several-agent-providers`,
 `issue@core@a-component-states-at-least-one-goal`, `issue@core@cross-project-references`,
 `issue@core@a-home-for-developer-contracts-outside-agent-configuration`,
 `issue@agent-skills@shipped-text-is-reference-free-mechanically`,
-`issue@agent-skills@patching-an-installed-skill`,
-`issue@agent-skills@a-skill-for-creating-a-component` and
-`milestone@plans@load-bearing-records`.
+`issue@agent-skills@patching-an-installed-skill` and
+`issue@agent-skills@a-skill-for-creating-a-component`.
 
 Leaving 0.x re-examines `design@core@ne-minimal`. After 1.0, a variant added to one of the
 library's exhaustive enums is a major, where under 0.x it bumps 0.MINOR.
