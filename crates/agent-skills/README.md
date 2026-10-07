@@ -7,8 +7,8 @@ that the installed files match it.
 
 A project depends on `knowledge-architect`, never on this crate directly: cargo fetches it.
 
-No installed skill covers a bounded problem yet: a clear requirement whose main risk is
-over-building. `milestone@plans@load-bearing-records` gives it a path inside the design skill.
+A bounded problem, a clear requirement whose main risk is over-building, has no skill of its own:
+the design skill grounds it, and then sends one proposal for the owner's word.
 
 The sections below describe one skill of the set, the design skill,
 `knowledge-architect-design`: it runs design discussions as open, argued
@@ -65,10 +65,12 @@ about an existing architecture — the assistant:
   over qualitative wording, no idioms, no aphorisms.
 
 For a bounded problem (clear requirement, main risk is over-building)
-it says so, states the strongest open reading beside the bounded one so
-you rule on the classification knowing both, and leaves the next step
-to you: no installed skill covers a bounded problem yet
-(`milestone@plans@load-bearing-records` gives it a path inside the design skill).
+it grounds the request first, since only the grounding shows whether the
+work is bounded. If it reverses no recorded decision, earns no design
+head, and has no second defensible shape, it sends you one message: the
+proposal, its nearest rival and why it loses, the strongest open reading
+it set aside, the consequences, and its default. It waits for your word;
+an argument in your reply turns it into a discussion.
 
 It also carries a keep-or-change discipline for questioning incumbent
 designs: fresh-discussion trend framing (a new session when the
@@ -96,7 +98,9 @@ skill, however the discussion was being conducted.
 **You bring a design question, not a task order.** The mode assumes
 the answer is not yet known by either party. Give it a decision you
 have already made and it will argue against it, because testing a
-proposal is what it is for.
+proposal is what it is for. Give it bounded work and it sends one
+proposal; you rule on it, or answer with an argument, which turns the
+work into a discussion.
 
 **You give the word that closes a thread.**
 The assistant can move threads between open states but cannot close

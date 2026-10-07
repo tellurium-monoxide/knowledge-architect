@@ -66,6 +66,13 @@ only in a doc comment, a scoped `CLAUDE.md` or a commit has no home a later read
 `git log -G'<slug>'` reaches nothing. The tell is a head elsewhere that leans on it by description
 rather than by slug.
 
+**Does the diff defeat a reason recorded at the code?** A decision that earned no entry lives in a
+comment at the code and in the message of the commit that introduced it. A diff that removes or
+reshapes that code against the reason its comment states, or the introducing commit argued, without
+arguing against that reason in its own message, is a finding. Read the comment, and run
+`git log -L` or `git blame` on the removed lines for the introducing commit. Absence from the design
+home is not evidence that code is superfluous.
+
 **Was it recorded when its work landed?** A head written for work a plan document schedules and that
 has not landed is a hypothesis presented as a fact. A head must be true of the tree as it stands.
 
