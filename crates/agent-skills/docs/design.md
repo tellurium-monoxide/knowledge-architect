@@ -296,8 +296,6 @@ decisions written for the check, was dropped at the slice's design audit. The bo
 of the verdict, not a list of subjects: the owner asked for "a wider category that matches my
 intent", since "narrow wordings … reduce the underlying intent to something lesser". The nearest
 rival, a list of exempt subjects naming harness mechanics, leaves out the installer and the checker.
-The installed design skill restates the rule in its step on discriminating evidence, for a project
-whose goals or heads rule a kind of evidence out.
 
 ### An installed instruction adds a capability and the judgement to use it, not a rule or a structure for one interaction `##capabilities-not-structure`
 
@@ -354,7 +352,7 @@ when the spec is written, because a design home holds built intent, per
 milestone document, on the main branch or on the work's, is the only place the decision exists. A decision that
 no work implements, such as a policy, is recorded when it is made.
 
-### Every item the owner rules on by name and that carries no slug is put to the owner under a label `##ruled-items-labelled`
+### Every item the owner rules on by name and that carries no slug gets a label, of a prefix of its own kind where the label reaches a committed document and of the common `Q` where it does not `##ruled-items-labelled`
 
 Every item the owner is asked to rule on by name, and which carries no slug when it is put to the
 owner, gets a label: a prefix of capital letters naming its kind, and a number. Numbers run from 1
@@ -905,9 +903,11 @@ work goes on without it, and one never ruled leaves with the document.
 
 A criterion's response reopens a decision, and choosing the observable that may reopen a decision
 is a weighing, which is the owner's, per `goal@knowledge-architect@the-owner-decides`. The owner
-already set a criterion's threshold, and a tripwire, the same check for built work, stands on the
-owner's word, per `design@agent-skills@premortem-tripwires-on-the-owners-word`; the agent's power to
-set what reopens a decision, with no ruling, was the remaining asymmetry. Both acceptance criteria
+sets a criterion's threshold, and a tripwire, the same check for built work, stands on the owner's
+word, per `design@agent-skills@premortem-tripwires-on-the-owners-word`, so a criterion's application
+stands on the same word as its threshold and as a tripwire. The wording stays the agent's, as a
+tripwire's does, per `design@agent-skills@tripwire-wording-is-the-agents`, and the label a criterion
+is put to the owner under is `design@agent-skills@ruled-items-labelled`'s. Both acceptance criteria
 that reached a plan document of this repository against a goal had no ruling: one was proposed at a
 premortem, one while a slice's spec was written. The rival, no ruling and the design-conformance
 reviewer alone, catches a conflict with the record, not a weighing.
@@ -1119,8 +1119,8 @@ departure from the recorded design is caught by a check or a review before it me
 reviewers read the document against itself, against the code, or against the discussion. The
 design audit reads design homes, but not goals, and it is run by the session that implements the
 work, which may be the document's author, and skipped for a spec worked in the session that
-converged. Two acceptance criteria that the workflow's goal on real use rules out each passed a
-plan document's three reviews in this repository. Its nearest rival, the decision-record reviewer
+converged. Two acceptance criteria that `goal@knowledge-architect@the-workflow-improves-through-real-use`
+rules out each passed a plan document's three reviews in this repository. Its nearest rival, the decision-record reviewer
 extended to plan documents, judges the record a diff writes and holds a plan's items as not
 decisions yet, so it would carry two questions with two yardsticks. The cold implementer, the
 other rival, asks whether the document can be acted on, and a document that contradicts a goal
