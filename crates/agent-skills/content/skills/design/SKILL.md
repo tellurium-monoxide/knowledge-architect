@@ -43,7 +43,8 @@ knows it yet. It is discovered by proposing, arguing, and following
 the open threads.
 
 **This skill ends at convergence**, and, where the premortem runs, the
-premortem and the owner's rulings on its tripwires. Bounded work ends
+premortem and the owner's rulings on its tripwires and acceptance
+criteria. Bounded work ends
 sooner, at the owner's word on its one proposal (Bounded work), and takes
 neither of the two paths below. It writes no plan document and no record. On the full
 path, the spec or the milestone is written by `knowledge-architect-planning`,
@@ -615,7 +616,8 @@ choices whose option space genuinely is closed and consequence-free.
    message that carries the deliberation.
    The ledger, the criteria table, the arguments and the facts they
    depended on, the designs as they were presented to the owner, the
-   premortem and the owner's rulings on its tripwires live in this
+   premortem and the owner's rulings on its tripwires and acceptance
+   criteria live in this
    conversation and in the harness's transcript of it. The planning
    skill assembles them from the transcript into a spec, or a milestone
    document and one spec per slice, before the session ends, and owns
