@@ -526,6 +526,7 @@ choices whose option space genuinely is closed and consequence-free.
    rest on intuitions, a further round restates them and adds nothing
    either party could check. Build the
    discriminating artifact the project affords — a failing test, a
+%% Evidence the record rules out: `design@agent-skills@synthetic-evidence-not-built`.
    throwaway prototype, a benchmark, a mockup. Evidence that the
    project's goals or design heads rule out is not built, whatever the
    stall; the fork goes to the owner as a tie. Before building, both
@@ -584,6 +585,8 @@ choices whose option space genuinely is closed and consequence-free.
    except a cause that only the built code can check: that is an acceptance
    criterion, which `knowledge-architect-planning` writes into the plan document,
    or, on the in-change path, a test of the change.
+%% A criterion on the owner's word: `design@agent-skills@acceptance-criteria-on-the-owners-word`.
+%% The labels: `design@agent-skills@ruled-items-labelled`.
    Ask the owner, for each tripwire, whether it is recorded, and for each
    acceptance criterion, whether it is applied, naming the decision its
    firing reopens. Put each under a label, `T<n>` for a tripwire and

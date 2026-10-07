@@ -213,6 +213,7 @@ A project that already has documentation keeps it until its move is planned:
    for a decision that earns no design entry, or nothing, for history that records no current
    decision. Say what is uncertain: which recorded decisions still hold, and
    which describe a design the code has left.
+%% The `Q` label, here and for the findings below: `design@agent-skills@ruled-items-labelled`.
 3. **The owner rules** on the proposal, on each document by a label, `Q<n>`, given to it in the
    proposal. The issue below names each document by its path, not by the label.
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the

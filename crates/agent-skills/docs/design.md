@@ -249,14 +249,55 @@ and a one-sentence statement of the mechanism that produced the need. An unpromp
 the gap, not the wording that fills it. A review finding originates an edit only where its defect
 is provable by reading: a contradiction, a broken trigger, a factual error. A finding that predicts
 a behaviour is parked as an issue, which states what a real session would have to show. Published
-literature and synthetic scenarios originate no edit. The skill text carries no size budget: an
-edit is judged on whether it changes behaviour, and two real sessions held the design
-skill's full ledger discipline at several hundred lines without drift. The rule derives from
+literature and synthetic scenarios originate no edit, and no run is built to observe how an agent
+follows the workflow's instructions, per `design@agent-skills@synthetic-evidence-not-built`. The
+skill text carries no size budget: an edit is judged on whether it changes behaviour, and two real
+sessions held the design skill's full ledger discipline at several hundred lines without drift. The rule derives from
 `goal@knowledge-architect@the-workflow-improves-through-real-use`, which is stated for the whole
 workflow, so it covers every installed skill and every installed agent: a reviewer agent grows
 the same way, one predicted check at a time. The evidence behind it came from one skill, and the
 skills and agents forked from thaum were never edited under it: one that needs a different
 standard argues its exception.
+
+### No run is built to observe how an agent follows the workflow's instructions, and a run is admitted only when its verdict reproduces `##synthetic-evidence-not-built`
+
+A run built to produce evidence about the workflow is admitted only when its verdict reproduces:
+the same run, repeated, gives the same verdict, at a cost low enough to repeat it. The verdict may
+read text an agent produced, as long as it reproduces. What an agent decides in following the
+workflow's instructions does not meet this test: its verdict varies between runs, and it would mean
+something only under a statistical design. So no run is built to observe it, for any of four
+purposes: to originate an edit, to choose between shapes, to accept a piece of work, or to check
+that a text runs as written. An agent's decision is presumed not to reproduce, since showing that
+one does would take the repeated runs this rule refuses.
+
+- **Admitted:** the harness's mechanics, such as a skill loading when invoked by name, a hook
+  firing, a tool being granted, or a hook's injected text reaching the context; one dispatch of a
+  new agent to see that its tools are granted is one. Also the installer's and the checker's
+  behaviour, tested over mock projects.
+- **Refused:** whether an agent invokes a skill from its description, whether a reviewer finds a
+  given entry, whether an agent follows a step, and the judgement of a new agent's report against
+  its instructions.
+- **Always admitted as evidence:** a finding from a retrospective, and a misbehaviour observed in
+  real use. A finding that comes from a synthetic run anyway is used only for the part a reading
+  confirms.
+
+The rule derives from `goal@knowledge-architect@the-workflow-improves-through-real-use`, which states
+it for the whole workflow. The owner's argument: "the synthetic evidence is too unreliable. It would
+need at least statistical analysis, which is too costly, and a proper mock task cannot be created
+on a whim, it needs design and testing itself." One run of an agent is a sample of one. The
+evidence the rule gives up is supplied otherwise: retrospectives of real work reach this
+repository, and this repository installs its own skills, so its own sessions use each change
+before a release reaches a consumer. The cost accepted is that a defect in a new text is found at
+its first real use, not before its merge. Two instances in this repository grounded the rule. A
+spec's acceptance criterion, a replay of a search agent over another project's history, was ruled
+out at the step that ran it: "From experience, they are not very reliable, and drive the workflow
+toward wrong directions more often than good ones." A slice's criterion, a subagent classifying
+decisions written for the check, was dropped at the slice's design audit. The boundary is a property
+of the verdict, not a list of subjects: the owner asked for "a wider category that matches my
+intent", since "narrow wordings … reduce the underlying intent to something lesser". The nearest
+rival, a list of exempt subjects naming harness mechanics, leaves out the installer and the checker.
+The installed design skill restates the rule in its step on discriminating evidence, for a project
+whose goals or heads rule a kind of evidence out.
 
 ### An installed instruction adds a capability and the judgement to use it, not a rule or a structure for one interaction `##capabilities-not-structure`
 
@@ -312,6 +353,36 @@ when the spec is written, because a design home holds built intent, per
 `design@agent-skills@design-home-is-built-intent`. While the work is open, the spec or the
 milestone document, on the main branch or on the work's, is the only place the decision exists. A decision that
 no work implements, such as a policy, is recorded when it is made.
+
+### Every item the owner rules on by name and that carries no slug is put to the owner under a label `##ruled-items-labelled`
+
+Every item the owner is asked to rule on by name, and which carries no slug when it is put to the
+owner, gets a label: a prefix of capital letters naming its kind, and a number. Numbers run from 1
+within each prefix, in order of appearance, and are never reused within the record that carries
+the ruling: a discussion, a resumed session included, a file, or a message. An item that gains a
+slug later keeps its label beside it. A label that reaches a committed document, even one that
+leaves later, such as a plan document, takes a prefix of its own kind, distinct across the
+installed workflow. A label used only in the conversation reuses the common prefix `Q`. Every
+distinct prefix is listed here, and an edit that adds one checks it against the list:
+
+| prefix | items | the committed document it reaches |
+| --- | --- | --- |
+| `T` | tripwires put to the owner | a plan document's Premortem section |
+| `AC` | acceptance criteria put to the owner | a plan document's Premortem section and its defaults |
+| `D` | a plan document's defaults awaiting the owner | its "Defaults awaiting the owner" |
+| `W`, `C`, `P` | a retrospective's findings | the retrospective's files |
+| `Q` | entry test 4's questions, and every label that stays in the conversation | none |
+
+The owner asked for it, from a premortem message that mixed causes, tripwires and findings: "it is
+often quite hard already to rule on tripwires, because I'm never certain how many there are and
+what they are about." A ruling given in words then matches items by guess. The owner asked before
+for entry test 4's questions to be numbered, per `design@agent-skills@a-head-is-owed-by-an-entry-test`,
+and judged the pattern recurring: "this should cover everything that I have to rule on by name". A
+label that reaches no document reuses `Q`, on the owner's argument against "searching for unique
+letters, which will necessarily end up needing more letters than available". The structure passes
+`design@agent-skills@capabilities-not-structure`, since the owner named the lack and the label's
+scope follows the record that carries it. Each installed skill that asks for such rulings restates
+its own prefix where it asks.
 
 ### A design home holds built intent, and a plan document holds unbuilt intent `##design-home-is-built-intent`
 
@@ -778,7 +849,8 @@ its length is not bounded, since a bound on it would bound the discussion.
 The planning skill starts where a design discussion has converged on the full path, and writes the
 spec or the milestone in the same session. A discussion on the in-change path has no plan document,
 per `design@agent-skills@in-change-path`. The design skill ends at convergence, the premortem and
-the owner's rulings on tripwires, and writes no plan document of its own. Its decisions are
+the owner's rulings on its tripwires and acceptance criteria, and writes no plan document of its
+own. Its decisions are
 recorded when their work lands, per `design@agent-skills@harvest-after-implementation`. One skill owns the document's shape: two skills describing the sections of one document
 would drift apart, against `goal@knowledge-architect@agents-get-a-complete-workflow`. The session
 matters because the discussion's records are that session's: its conversation, and the transcript
@@ -821,6 +893,24 @@ The result a scheduled review is expected to give is not a criterion: passing th
 document and slice owes is the baseline, and writing it as a criterion in
 every plan document would be noise, and would become the habitual criterion in place of a specific
 one that is harder to find.
+
+### An acceptance criterion stands on the owner's word, as a tripwire does `##acceptance-criteria-on-the-owners-word`
+
+The owner rules on whether an acceptance criterion is applied, and on the decision its firing
+reopens. The agent words its observable, and lists a rewording to the owner at the end of the turn.
+The design skill asks for the ruling at the premortem, beside the tripwires. A criterion first
+proposed later, at the assembly, by a review or at an audit, is written marked as awaiting the
+owner, with its label under the plan document's defaults, and is not judged before the ruling; the
+work goes on without it, and one never ruled leaves with the document.
+
+A criterion's response reopens a decision, and choosing the observable that may reopen a decision
+is a weighing, which is the owner's, per `goal@knowledge-architect@the-owner-decides`. The owner
+already set a criterion's threshold, and a tripwire, the same check for built work, stands on the
+owner's word, per `design@agent-skills@premortem-tripwires-on-the-owners-word`; the agent's power to
+set what reopens a decision, with no ruling, was the remaining asymmetry. Both acceptance criteria
+that reached a plan document of this repository against a goal had no ruling: one was proposed at a
+premortem, one while a slice's spec was written. The rival, no ruling and the design-conformance
+reviewer alone, catches a conflict with the record, not a weighing.
 
 ### A plan document is committed before its reviews, and a repair lands after them `##plan-reviewed-as-a-commit`
 
@@ -1011,6 +1101,32 @@ the primer, which holds only what every session needs, per `design@agent-skills@
 evidence for it is one instance, and a line sending every session to search before any work is a
 conformance rule. In thaum, a move of the pinned checker met the trigger of a deferred issue that
 named that move, and the session read it at no step.
+
+### A fresh reviewer reads every plan document against the goals, the design heads and the rejected alternatives of the Components it touches `##plan-read-against-the-record`
+
+At every moment the installed planning skill sends a plan document's reviewers, it sends the
+design-conformance reviewer beside the cold implementer, the code-claims reviewer and the
+transcript reviewer. It reads the document against the goals homes, the design homes and the
+rejected alternatives of the project's root and of every Component the document touches. It
+reports a contradiction of a goal always, for the owner; a contradiction or a widening of a head
+that the document's "What is already decided" does not list as reversed or rewritten; a rejected
+alternative brought back without a recorded reopening; and an acceptance criterion whose observable
+the record rules out. The second rule keeps it from reporting each widening the document makes on
+purpose. It runs only commands that read.
+
+The decision serves `goal@knowledge-architect@agents-work-without-drift`, which is met when "a
+departure from the recorded design is caught by a check or a review before it merges". The other
+reviewers read the document against itself, against the code, or against the discussion. The
+design audit reads design homes, but not goals, and it is run by the session that implements the
+work, which may be the document's author, and skipped for a spec worked in the session that
+converged. Two acceptance criteria that the workflow's goal on real use rules out each passed a
+plan document's three reviews in this repository. Its nearest rival, the decision-record reviewer
+extended to plan documents, judges the record a diff writes and holds a plan's items as not
+decisions yet, so it would carry two questions with two yardsticks. The cold implementer, the
+other rival, asks whether the document can be acted on, and a document that contradicts a goal
+can. The reviewer depends on a record worded wide enough, which the owner acknowledged: "this is
+always dependent on the project being diligent in its goals and design records. Everything in the
+workflow is, after all." Its cost, one more dispatch at each of those moments, the owner accepted.
 
 ### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
 

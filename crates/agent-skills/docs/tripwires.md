@@ -179,3 +179,17 @@ written as bare plain text to clear a finding.
 pointers among the candidates.
 **Re-entry:** the standing-state review, which reads every tripwire before a merge, and the
 retrospective's question on references written without backticks, which reads the session.
+
+## Guarding `design@agent-skills@plan-read-against-the-record`: the design-conformance reviewer's findings are mostly needless `##design-conformance-findings-needless`
+
+The decision rests on the premise that the reviewer reports departures from the record, and not the
+widenings a plan document makes on purpose, so that its findings are worth the owner's reading.
+
+**Fires when:** at two moments in a row at which the planning skill sends a plan document's
+reviewers, a re-review after a revision included, more than half of the design-conformance
+reviewer's findings end judged to need nothing, by the dispatching session or by the owner. The
+count, two moments, and the proportion, half, are defaults the owner may reset.
+**Response:** open a `design` issue naming the two reviews and their findings, and reopen
+`design@agent-skills@plan-read-against-the-record` on the reviewer's scope.
+**Re-entry:** the retrospective of the session where the second of those reviews ran, which reads
+that session's record.
