@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-11 entries
+12 entries
 
 | kind | title |
 | --- | --- |
@@ -15,3 +15,4 @@
 | todo | [Design heads that no entry test admits are still in the design homes](heads-no-entry-test-admits.md) |
 | todo | [Nothing checks mechanically that the shipped text holds no live reference and names no project path](shipped-text-is-reference-free-mechanically.md) |
 | todo | [The retrospective records no count of what a merged branch cost in review](the-retrospective-counts-no-review-cost.md) |
+| todo | [No check reads the setup skill's Cargo.toml, alias and CI blocks against the workspace](the-setup-section-s-toml-and-ci-blocks-are-unchecked.md) |
