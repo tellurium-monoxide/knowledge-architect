@@ -34,9 +34,10 @@ leaves the repository in the commit that completes its harvest.
 
 ## How the work is done
 
-Per `knowledge-architect-planning`, §7, the work of a spec. The work starts in the session where
-the discussion converged, so §7 point 2, the design audit, runs only if commits other than this
-spec's own land on the main branch before the work starts.
+Per `knowledge-architect-planning`, §7, the work of a spec. §7 point 2, the design audit, runs
+when the work does not start in the session where the discussion converged, or when commits other
+than this spec's own have landed on the main branch since it was written. A session that picks up
+the work cold runs it.
 
 ## Names
 
@@ -50,8 +51,12 @@ spec's own land on the main branch before the work starts.
   `AC2`. It is not a slug, and the checker does not read it.
 - **an item ruled by name**: an item the owner is asked to rule on one by one, such as a tripwire,
   an acceptance criterion, a question of entry test 4, or a retrospective finding.
-- **the installed text**: the files under `path@agent-skills@content/`, and their installed copies
-  under .claude, per `path@agent-skills@CLAUDE.md`. `{{command}}` is the install placeholder for
+- **the outward review**: a review that reads a plan document against the project's record, its
+  goals, its design heads and its rejected alternatives, rather than against itself, the code or
+  the discussion. The design-conformance reviewer, under New names, is its one instance.
+- **the installed text**: the files under `path@agent-skills@content/` and
+  `path@agent-skills@snippets/`, and their installed copies under .claude, per
+  `path@agent-skills@CLAUDE.md`. `{{command}}` is the install placeholder for
   the project's command; in this repository it is `cargo klarch`.
 - **instance 1, instance 2**: the two events the closed issue recorded. Instance 1: a spec's
   acceptance criterion, a replay of a search agent over thaum's history, written at the premortem,
@@ -73,11 +78,13 @@ What exists today at each site the work touches:
 | the same skill, loop step 7 | "what survives is proposed as tripwires, except a cause that only the built code can check: that is an acceptance criterion, which `knowledge-architect-planning` writes into the plan document". "Ask the owner, for each tripwire, whether it is recorded." No ruling is asked on an acceptance criterion, and no label is given to a tripwire |
 | the installed planning skill, `path@agent-skills@content/skills/planning/SKILL.md`, §6 | an acceptance criterion names the decision, the step, the observable and the response; "A number in a criterion is a threshold the owner sets." No word of the owner admits the criterion itself |
 | the same skill, §8 | three reviewers: `knowledge-architect-cold-implementer-reviewer`, `knowledge-architect-code-claims-reviewer`, `knowledge-architect-transcript-reviewer`. None reads the document against the goals, the design heads or the rejected alternatives |
-| the same skill, §7 point 2 | the design audit reads decided shapes "against the code as it stands and against the design homes", by the implementing session, and is skipped for a spec worked in the session that converged |
+| the same skill, §7 point 2 | the design audit reads decided shapes "against the code as it stands and against the design homes". §7 is the procedure of the session that implements the work. For a spec, the audit is skipped when the work starts in the session that converged and no commit other than the spec's own has landed on the main branch since it was written |
 | the installed review skill, `path@agent-skills@content/skills/review/SKILL.md`, §1 | its axis table names the standing-state reviewer's row "conformance", and holds a row "spec conformity" |
-| the installed agents, `path@agent-skills@content/agents/` | seven agents; none reads a plan document against the project's record |
-| the installed decision-recording skill, entry test 4 | "one numbered question per decision (Q1, Q2, …)" |
-| the installed retrospective skill | "**W** for the installed skills and agents, **C** for the checker, **P** for the project's own instructions", numbered within one file |
+| the same skill, "Not covered here" | names "the plan-document reviewers `knowledge-architect-cold-implementer-reviewer` and `knowledge-architect-code-claims-reviewer`" |
+| the same skill, §3 | "An item whose outcome turns on a ruling the owner has not given is put to the owner"; no label is given to such items |
+| the installed agents, `path@agent-skills@content/agents/` | seven agents, by `ls`; none reads a plan document against the project's record. The decision-record reviewer reads a plan document it is handed only "for what it said would land where" |
+| the installed decision-recording skill, `path@agent-skills@content/skills/decision-recording/SKILL.md`, entry test 4 | "one numbered question per decision (Q1, Q2, …)" |
+| the installed retrospective skill, `path@agent-skills@content/skills/retrospective/SKILL.md`, the paragraph on finding ids | "**W** for the installed skills and agents, **C** for the checker, **P** for the project's own instructions", numbered within one file |
 
 Outside the work:
 
@@ -89,8 +96,23 @@ Outside the work:
   trial run of the search agent, which the new rule would not build; the entry stands on its
   reading of the reviewer's text, which a reading confirms.
 - **The slug `conformance-before-every-merge`** keeps its old word. Its title already reads "The
-  standing-state review runs before every merge", and renaming it repairs three citations for no
-  reader's gain. Only the axis row is renamed.
+  standing-state review runs before every merge", and renaming it repairs the three citations
+  that `cargo klarch show design@agent-skills@conformance-before-every-merge` lists, for no reader's
+  gain. Only the axis row is renamed.
+
+**The standing entries the search returned at the discussion's grounding**, each with its outcome:
+
+| entry | outcome |
+| --- | --- |
+| `tripwire@agent-skills@ruling-lost-in-assembly` | needs nothing: its firing clause reads "after the plan document's own reviews", and the new reviewer is one more of them |
+| `tripwire@agent-skills@skipped-spec-audit-would-have-found-a-gap` | needs nothing now: if this spec's work skips its audit as the rule allows, the standing-state review before the merge reads the tripwire |
+| `tripwire@agent-skills@head-created-without-deliberation`, `tripwire@agent-skills@title-stops-stating-scope` | needs nothing: the heads are written at the harvest from this spec's deliberation |
+| `tripwire@agent-skills@ruling-lost-in-change`, `tripwire@agent-skills@search-missed-before-the-work`, `tripwire@agent-skills@expectation-set-closes-a-contradiction`, `tripwire@agent-skills@structure-rejection-overruled`, `tripwire@core@item-of-another-plan-named`, `tripwire@core@plans-directory-split-asked` | needs nothing: the discussion met no firing clause of any of them |
+| `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined` | read again at the harvest, when entry test 2 judges each decision |
+| `issue@agent-skills@a-word-given-on-a-false-premise-outside-a-discussion` | needs nothing: the work does not change where that rule is delivered |
+| `issue@core@no-command-lists-the-standing-entries-citing-a-set-of-entries` | needs nothing: its test over a mock project tests the checker's code, which #synthetic-evidence-boundary admits |
+| `issue@agent-skills@a-reviewer-s-running-time-is-unbounded`, `issue@agent-skills@expectation-sets-for-the-installed-skills`, the issues that cite the goal | listed in the table below |
+| `issue@agent-skills@no-way-to-audit-a-project-as-a-whole`, `issue@agent-skills@a-design-issue-s-re-entry-point-is-read-by-no-review` | outside the work, above |
 
 ## What is already decided
 
@@ -115,6 +137,7 @@ the closed issue:
 | text | references | judged or updated at |
 | --- | --- | --- |
 | `path@agent-skills@content/skills/retrospective/SKILL.md`, a `%%` comment | the goal, for the retrospective's scope | step 1: it stays true |
+| `path@agent-skills@content/skills/retrospective/SKILL.md`, its opening paragraph, "Real sessions are the test of the workflow", which carries no reference and is found by `grep -rn -i "real sessions are"` | restates the goal | step 1: it stays true |
 | `path@agent-skills@docs/design.md`, `design@agent-skills@additions-need-real-use` | the goal | the harvest, step 5: rewritten with a pointer to the new head |
 | `path@agent-skills@docs/design.md`, `design@agent-skills@standing-entry-search-agent` | the goal, "real sessions measure it" | step 1: it stays true |
 | `path@knowledge-architect@docs/design.md`, `design@knowledge-architect@committed-findings-analysis` | the goal | step 1: it stays true |
@@ -259,7 +282,8 @@ Approved. Arguments: `argument@synthetic-evidence-and-plan-reviews@a22`,
 reviewer". Harvest: none; a renamed label fails the entry tests, which the harvest's commit names.
 The owner's words: round 3, "I have no idea why this row is called conformance. Rename it."; round
 4, "standing-state-axis-name approved". The slug `conformance-before-every-merge` stays, as the
-agent's default in round 3, which the owner's round 4 word did not contest.
+agent's default in round 3, approved with the thread by the owner's round 4 word, given against a
+checkpoint whose row read "the row is renamed; the slug stays".
 
 ### An acceptance criterion stands on the owner's word, as a tripwire does `##acceptance-criteria-on-the-owners-word`
 
@@ -281,7 +305,8 @@ round 2: "acceptance-criteria-axis: I agree with you. I really was unsure about 
 Proposed by the owner, round 2. Approved in round 3, then widened by the owner in the same message,
 and superseded by `thread@synthetic-evidence-and-plan-reviews@ruled-items-labelled`. Arguments:
 `argument@synthetic-evidence-and-plan-reviews@a21`, `argument@synthetic-evidence-and-plan-reviews@a23`.
-Shape: Decided design, "Labels". The owner's words, round 3: "premortem-items-numbered: approved.
+Shape: Losing alternatives; its content is carried by "Labels" under Decided design. The owner's
+words, round 3: "premortem-items-numbered: approved.
 On second thought, this should cover everything that I have to rule on by name".
 
 ### Every item the owner rules on by name and that carries no slug gets a label `##ruled-items-labelled`
@@ -354,7 +379,9 @@ the first use of a new agent. A test of the checker's code is not, mock projects
 
 Round 1, the agent. Bears on #synthetic-evidence-head. The head's title is about additions to
 installed text; the decision covers evidence for any purpose. Widening it would make "its title
-would stop stating its scope", which `tripwire@agent-skills@title-stops-stating-scope` watches.
+would stop stating its scope". The agent cited `tripwire@agent-skills@title-stops-stating-scope`
+for this in round 1; that tripwire watches only an addition recorded directly, with no
+deliberation, so the argument stands on the title alone.
 
 ### Instance 1's replay was proposed before any plan document existed `##a9`
 
@@ -563,8 +590,13 @@ owner approved it in round 4:
 > - **Always admitted as evidence:** a finding from a retrospective, and a misbehaviour observed in
 >   real use.
 
-The head also states the three purposes it covers (evidence between shapes, an acceptance check, a
-check that a text runs as written), argues from `argument@synthetic-evidence-and-plan-reviews@a1`,
+The head also states the four purposes it covers, the three the goal names and the closed issue's
+check that a text runs: to originate an edit, to choose between shapes, to accept a piece of work, and to check that a text
+runs as written. Each is refused only where its run observes an agent's decision: a single dispatch
+of a new agent to see that its tools are granted is a harness mechanic, and admitted, which
+narrows the loss `argument@synthetic-evidence-and-plan-reviews@a6` named; judging its report
+against its instructions is refused. The head, per D1 below, also carries the agent's round 1
+default on a finding from a synthetic run that was run anyway. It argues from `argument@synthetic-evidence-and-plan-reviews@a1`,
 `argument@synthetic-evidence-and-plan-reviews@a2` and `argument@synthetic-evidence-and-plan-reviews@a5`,
 records the two instances as its evidence, and cites
 `goal@knowledge-architect@the-workflow-improves-through-real-use`. The sentence of
@@ -582,8 +614,8 @@ as the owner approved it in round 2:
 > Evidence that the project's goals or design heads rule out is not built, whatever the stall; the
 > fork goes to the owner as a tie.
 
-It names no project's rule, so it holds in any project. A `%%` comment above it may cite the new
-head. Nearest rival: no sentence, relying on the outward review. Defeated by
+It names no project's rule, so it holds in any project. A `%%` comment above it citing the new
+head is written at step 5, once the head exists, since every commit of the branch passes the check. Nearest rival: no sentence, relying on the outward review. Defeated by
 `argument@synthetic-evidence-and-plan-reviews@a9`.
 
 ### The design-conformance reviewer
@@ -592,7 +624,11 @@ A new installed agent, `knowledge-architect-design-conformance-reviewer`, shaped
 plan-document reviewers (`path@agent-skills@content/agents/code-claims-reviewer.md` is the nearest
 model): a frontmatter with `name`, `description` and `tools: Read, Grep, Glob, Bash`, a scope
 paragraph, the invariants that the tree is established by the reviewer, that every assertion is
-reproduced, and that the reviewer does not use `Write` or `Edit`, then its sections.
+reproduced, and that the reviewer does not use `Write` or `Edit`, then its sections. The model's
+fourth invariant, that it runs no binary, is not carried: this reviewer runs the project's read-only
+commands, `{{command}} show` and `{{command}} issues`, and `git`, and runs no test suite, no
+mutation and no `{{command}} check`. The agent text states each rule below alone, without the
+spec's labels such as "clause from the premortem".
 
 - **Its question**: does the plan document fit the project's record?
 - **What it reads**: every section of the plan document, against the goals homes of the project's
@@ -601,23 +637,27 @@ reproduced, and that the reviewer does not use `Write` or `Edit`, then its secti
   document's references name. It uses `{{command}} show` to read an entry and its references.
 - **What it reports**, each as a finding with the plan's passage and the record's passage quoted:
   - a shape that contradicts a goal;
-  - a shape that contradicts a head, or widens one, which the document's "What is already decided"
-    does not list as reversed or rewritten;
+  - a shape that contradicts a head, or widens one, unless the document's "What is already decided"
+    lists that head as reversed or rewritten; a head listed only as one the design rests on does not
+    suppress the report;
   - a shape that brings back a rejected alternative without a reopening that the document records;
   - an acceptance criterion whose observable a goal or a head rules out;
   - a default, a step of the implementation sequence, or a harvest row that does any of the above.
 - **What it does not judge**: whether the document is sufficient to act on (the cold implementer),
   whether its claims about the code are true (code claims), whether it records the discussion
-  (transcript), whether a criterion is well formed (the readiness checks).
-- **Clause from the premortem, cause 1**: a widening of a head is reported only where "What is
-  already decided" does not list the head; a contradiction of a goal is reported always.
+  (transcript), whether a criterion is well formed (the readiness checks), whether the record a
+  harvest writes carries what the document said would land (the decision-record reviewer).
+- **From the premortem, cause 1**: the rule of the second bullet above is what keeps the reviewer
+  from reporting every widening the document deliberately makes; a contradiction of a goal is
+  reported always.
 - **Where its findings go**: §8's existing route. A material finding is answered with a default,
   under the defaults awaiting the owner. A conflict with a goal goes to the owner, per the primer,
   and is not resolved by the reviewer.
 
 The installed planning skill's §8 gains a fourth bullet sending it, with the same brief invariants
 as the others. The installed review skill's §1 gains a row, `design conformance`, applicable "the
-same moment" as the code-claims row, and its row `conformance` is renamed `standing state`.
+same moment" as the code-claims row, and its row `conformance` is renamed `standing state`. Its
+"Not covered here" list of plan-document reviewers gains the new agent.
 
 Nearest rivals, each defeated: extending the decision-record reviewer
 (`argument@synthetic-evidence-and-plan-reviews@a11`); extending the design audit
@@ -634,10 +674,15 @@ The shape mirrors `design@agent-skills@premortem-tripwires-on-the-owners-word` a
   the observable, and a rewording of it is listed to the owner at the end of the turn, as a
   tripwire's is.
 - The design skill's loop step 7 asks the owner, for each acceptance criterion as for each
-  tripwire, whether it is kept.
-- A criterion proposed after the premortem, at assembly, by a review or at an audit, is written
-  under "Defaults awaiting the owner" with its label, and is not judged before the owner's ruling.
-- **Clause from the premortem, cause 4**: an unruled criterion is not judged, and the work goes on
+  tripwire, whether it is applied, and names the decision its firing reopens, for the owner to
+  confirm.
+- A criterion proposed after the premortem, at assembly, by a review or at an audit, is written as
+  an item of the Acceptance criteria section, marked as awaiting the owner, and its label is listed
+  under "Defaults awaiting the owner". It is not judged before the owner's ruling. §6's "and
+  nowhere else" stays true: the defaults list names the criterion by its label and holds no copy.
+- Its label continues the sequence of the discussion that produced the plan document, so `AC3` in
+  the plan is the third criterion put to the owner since that discussion began.
+- **From the premortem, cause 4**: an unruled criterion is not judged, and the work goes on
   without it.
 
 The installed planning skill's §6 states this; the installed design skill's step 7 asks for the
@@ -649,7 +694,8 @@ record, not a weighing.
 
 The new head `ruled-items-labelled`, as approved in round 4:
 
-> Every item the owner is asked to rule on by name, and which carries no slug, gets a label: a
+> Every item the owner is asked to rule on by name, and which carries no slug when it is put to the
+> owner, gets a label: a
 > prefix of capital letters naming its kind, and a number. Numbers run from 1 within each prefix,
 > in order of appearance, and are never reused within the record that carries the ruling: a
 > discussion (a resumed session included), a file, or a message. A label that reaches a committed
@@ -664,20 +710,36 @@ The new head `ruled-items-labelled`, as approved in round 4:
 | `W`, `C`, `P` | retrospective findings | yes: the retrospective files |
 | `Q` | entry test 4 questions, and any label that stays in the conversation | no |
 
-- **Clause from the premortem, cause 5**: the sequence continues across a resumed session.
-- **Clause from the premortem, cause 6**: the head lists every distinct prefix, and an edit that
-  adds one checks it against the list.
-- Each installed skill that asks for such rulings restates its own prefix where it asks, with a
-  `%%` comment citing the head.
+- **From the premortem, cause 5**: the sequence continues across a resumed session.
+- **From the premortem, cause 6**: the head lists every distinct prefix, and an edit that adds one
+  checks it against the list.
+- An item that gains a slug later keeps its label beside the slug, in the item's text, so the
+  owner's ruling in the transcript still finds it.
+- Each installed skill that asks for such rulings restates its own prefix where it asks. The `%%`
+  comment citing the head is written at step 5, once the head exists.
 - The plan document's Premortem section writes each label beside its verdict, so a reader goes from
   a ruling in the transcript to the plan.
 
-**The sweep.** The installed files that ask for the owner's word are swept at step 3, for the sites
-that ask about an item ruled by name and carry no label. `grep -rl -E "owner's word|owner rules|ask the owner"` over `path@agent-skills@content/` lists 12
-files, the primer included. Each site found gets a label:
-a prefix of the table above where one fits, `Q` where the label stays in the conversation, or a new
-distinct prefix added to the head's table. If the sweep finds more sites than step 3 can carry, the
-remainder is opened as a `todo` issue in the agent-skills register, as the owner allowed in round 4.
+**The sweep**, at step 3.
+
+- **Scope**: the installed skills under `path@agent-skills@content/skills/` and the primer. The
+  installed agents are outside it: an agent never works with the owner, per
+  `path@agent-skills@CLAUDE.md`, and its findings reach the owner through the skill that dispatched
+  it.
+- **Finding the sites**: `grep -rn -i -E "owner's word|owner rules|ask the owner|to the owner"`
+  over that scope, which lists lines, not files. The pattern holds "to the owner" because the
+  review skill's §3 puts findings "to the owner" and holds none of the other phrases.
+- **Judging a site**: it qualifies when it asks the owner to rule, in one message or one file, on
+  several items one by one, and those items carry no slug at that moment. A site that rules on one
+  item, or on items by their slug, such as goal-setting's ruling on each goal by its slug, does not
+  qualify.
+- **The label**: a prefix of the table above where one fits, or `Q` where the label stays in the
+  conversation. A site that needs a new distinct prefix is listed under "Defaults awaiting the
+  owner", since a prefix widens the table the owner approved, and that site waits for the ruling.
+- **The list**: the step 3 commit message lists every line the grep returned, with its verdict:
+  qualifies and labelled, does not qualify and why, or deferred. A site is deferred only on the
+  owner's word, and the deferred sites are opened as one `todo` issue in the agent-skills
+  register, as the owner allowed in round 4.
 
 Nearest rival: a distinct prefix for every label. Defeated by
 `argument@synthetic-evidence-and-plan-reviews@a31`.
@@ -714,8 +776,8 @@ None. The work needs no total function over existing things.
   Superseded by #ruled-items-labelled, on the owner's widening, `argument@synthetic-evidence-and-plan-reviews@a27`.
 - **Labels on the premortem's causes.** Lost on `argument@synthetic-evidence-and-plan-reviews@a23`.
 - **A distinct prefix for every label.** Lost on `argument@synthetic-evidence-and-plan-reviews@a31`.
-- **Renaming the slug `conformance-before-every-merge`.** Lost to the agent's default in round 3:
-  three citations repaired for no reader's gain.
+- **Renaming the slug `conformance-before-every-merge`.** Lost to #standing-state-axis-name,
+  approved in round 4 with the slug kept: three citations repaired for no reader's gain.
 
 ## Readings
 
@@ -735,9 +797,10 @@ revised in its reply to round 3:
 | 5. Labels collide when a resumed session restarts at 1 | #ruled-items-labelled | converted into a clause: the sequence continues across a resumed session |
 | 6. A later skill adds a prefix that collides with one in use | #ruled-items-labelled | converted into a clause: the head lists every distinct prefix |
 
-T1, as the harvest writes it: fires when, in two plan reviews in a row, the owner rules more than
-half of the design-conformance reviewer's findings needless. The count, two reviews, and the
-proportion, half, are defaults marked as the owner's to reset. Response: a `design` issue that
+T1, as the harvest writes it: fires when, at two §8 moments in a row, a re-review after a revision
+included, more than half of the design-conformance reviewer's findings end judged to need nothing,
+by the dispatching session or by the owner. The count, two moments, and the proportion, half, are
+defaults marked as the owner's to reset. Response: a `design` issue that
 reopens the reviewer's scope. Re-entry: the retrospective of the session where it fires.
 
 ## Acceptance criteria
@@ -756,8 +819,8 @@ spec, and step 5 records them. Installed text has no claims in the project's dev
 procedure, so each step states its own claim and check.
 
 1. **The goal and the evidence rule.** The goal reworded, per "The goal". The sentence of step 5,
-   per "Step 5 of the design skill". Claims and checks: the goal reads as the owner approved it, by
-   a reading; each text of the table under "What is already decided" judged at step 1 stays true,
+   per "Step 5 of the design skill". The commit's message quotes the owner's ruling on the goal, per goal-setting §4. Claims and
+   checks: the goal reads as the owner approved it, by a reading; each text of the table under "What is already decided" judged at step 1 stays true,
    by a reading of each; `cargo klarch check` passes. Fails alone on: a sentence that the widened
    goal makes false.
 2. **The design-conformance reviewer.** The agent file, its installed copy, the fourth bullet of the
@@ -766,14 +829,14 @@ procedure, so each step states its own claim and check.
    check` passes with the installed copy committed; the agent text cites no entry and writes the
    command as `{{command}}`, by a reading; no row of the review skill's table is named
    "conformance", by `grep -n '^| conformance' crates/agent-skills/content/skills/review/SKILL.md`
-   returning nothing. Fails alone on: the build, the check, or a row still named "conformance".
+   returning nothing; the review skill's "Not covered here" names the new agent, by a reading. Fails alone on: the build, the check, or a row still named "conformance".
 3. **Acceptance criteria on the owner's word, and labels.** The design skill's step 7 and the
    planning skill's §6, per "Acceptance criteria on the owner's word" and "Labels"; then the sweep
-   of "Labels", each site found given its label. Claims and checks: step 7 asks for a ruling on each
+   of "Labels", each site found given its label; no `%%` comment cites a head yet. Claims and checks: step 7 asks for a ruling on each
    acceptance criterion and labels each tripwire and criterion it puts to the owner, by a reading;
    §6 states that an unruled criterion is a default and is not judged, by a reading; every site the
-   sweep lists has a label or is named in the `todo` issue, by a reading of the sweep's list. Fails
-   alone on: a site the sweep lists with neither.
+   grep returned has a verdict in the commit message, by a reading. Fails alone on: a line of the
+   grep with no verdict.
 4. **The changelog.** Entries in the `Next release` section of CHANGELOG.md, then `cargo x
    changelog`. Under Workflow, each `agent-skills`, patch: a new reviewer reads a plan document
    against the goals, the design heads and the rejected alternatives at every §8 moment; the owner
@@ -781,7 +844,13 @@ procedure, so each step states its own claim and check.
    default; items put to the owner by name carry labels; the design skill builds no evidence the
    project's goals or heads rule out. Fails alone on: a changelog copy that differs. The review of
    §7 point 4 runs after this step.
-5. **The harvest**, below, its review, and the deletion of this spec, in one commit.
+5. **The harvest**, below: the heads, the rejected alternatives, T1, the `%%` comments that cite
+   the new heads (step 5 of the design skill, and each site of the sweep), and the repointing of
+   klarch-retrospective-intake §4 to the head `synthetic-evidence-not-built`. The harvest is
+   reviewed before the merge, per §7 point 6. Its repairs are further commits, or folded where
+   `knowledge-architect-review` says. The spec is deleted in the commit that completes the
+   harvest, which is the harvest commit if the review finds nothing to repair, and the last repair
+   commit otherwise.
 
 ## Order rationale
 
@@ -793,7 +862,21 @@ the decisions the changelog's work implements.
 
 ## Defaults awaiting the owner
 
-None at the writing of this spec.
+Each default carries a label, `D<n>`, provisionally: `D` is itself D3.
+
+- **D1**, #synthetic-evidence-boundary. In round 1 the agent proposed, inside the thread: "The
+  default: a finding that comes from a synthetic run anyway is used only for the part a reading
+  confirms." The owner approved the thread in round 2. The round 3 rewording, which the owner
+  approved in round 4, neither carries nor withdraws it. Default: the head carries it, as the last
+  sentence of its "Always admitted as evidence" item.
+- **D2**, #ruled-items-labelled. The owner's round 4 words gave a permission: "it would be fine to
+  reuse a common letter (such as Q, like in decision record questions)". The head's sentence "A
+  label used only in the conversation reuses the common prefix `Q`" was first written in the
+  agent's reply to round 4, and the owner's round 5 word was given against the checkpoint row that
+  showed it. Default: the sentence stays as written.
+- **D3**, #ruled-items-labelled. The defaults awaiting the owner in a plan document are items ruled
+  by name that reach a committed document, so they need a distinct prefix, and the head's table has
+  none. Default: `D`, added to the head's table, and used by the planning skill's §8 for the list.
 
 ## Harvest
 
