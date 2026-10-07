@@ -15,7 +15,7 @@ correctly. Those are other axes.
 
 **This axis is the standing re-entry point for every tripwire home and every deferred trigger.** A
 tripwire nobody re-reads is a parked item with no re-entry point, which is the thing those files exist to avoid rather than to
-become. If you skip a file here, nothing is sure to re-read it before merge: the search before the work runs only for work that was designed or planned.
+become. If you skip a file here, nothing is sure to re-read it before merge: the search before the work runs only for work that went through the design skill or a plan.
 
 **Establish the state of the tree yourself.** A brief that describes the change is a lead, and a
 disagreement between the brief and the tree is itself a finding.

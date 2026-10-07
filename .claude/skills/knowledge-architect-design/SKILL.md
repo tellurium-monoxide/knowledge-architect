@@ -43,7 +43,9 @@ knows it yet. It is discovered by proposing, arguing, and following
 the open threads.
 
 **This skill ends at convergence**, and, where the premortem runs, the
-premortem and the owner's rulings on its tripwires. It writes no plan document and no record. On the full
+premortem and the owner's rulings on its tripwires. Bounded work ends
+sooner, at the owner's word on its one proposal (Bounded work), and takes
+neither of the two paths below. It writes no plan document and no record. On the full
 path, the spec or the milestone is written by `knowledge-architect-planning`,
 in the same session (step 8); on the in-change path, a commit message
 carries the deliberation (Decision authority). Either way, the decisions
@@ -164,7 +166,8 @@ work is **bounded** when all three hold:
   suppress.
 
 Then send **one message**: what the grounding found, the proposal, its nearest rival and the fact
-that defeats it, the consequences the owner must know, and the default. Wait for the owner's word.
+that defeats it, the consequences the owner must know, and the default, which is what you build once
+the owner agrees. Wait for the owner's word: nothing is built before it.
 A reply that brings an argument, a new shape or a doubt returns the work to the loop, on the
 in-change path or the full path. The commit that implements bounded work carries the proposal and
 the owner's words verbatim.
@@ -663,7 +666,8 @@ the same exchange, plus:
 - **Incumbent behavior counts as a constraint only on evidence.** A
   behavior is established by a document that argues it — a commit
   message that argues it counts, and in most projects it is the only
-  home such an argument has — OR by observed use: consumers,
+  home such an argument has, and so does a comment at the code that
+  states its reason — OR by observed use: consumers,
   telemetry, bug reports about its absence. Behavior with neither is
   an implementation coincidence — question it, and raise it with the
   owner before deciding anything on its behalf. Do not treat

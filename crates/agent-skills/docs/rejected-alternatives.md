@@ -117,3 +117,11 @@ The owner had planned one and ruled for the path inside the design skill once th
 is kept here because a doubt remains: `tripwire@agent-skills@a-shortcut-decision-earns-a-head`
 watches whether the path lets a decision that earns a head skip its discussion, and this
 alternative is a candidate if it fires.
+
+**A second entry test that admits a decision because it constrains work not yet built** — lost to
+`design@agent-skills@a-head-is-owed-by-an-entry-test`. `live`. Read against the 178 heads the design
+homes held when it was replaced, by four subagents, it admitted nearly every head under a wide
+reading, "governs future work", and almost none under a narrow one, two of them reporting on their
+own that it does not discriminate. Designed work that is not built has its home in a plan document,
+per `design@agent-skills@design-home-is-built-intent`, so the test's narrow reading had nothing left
+to admit but a policy, which the test that replaced it admits as a decision with no site.

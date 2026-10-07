@@ -131,7 +131,7 @@ design audit, applied in place: …`.
 | name | what it names |
 | --- | --- |
 | the entry tests | the tests of §2 of the installed `knowledge-architect-decision-recording` that decide whether a decision earns a design head; the current text is in `path@agent-skills@content/skills/decision-recording/SKILL.md` |
-| T1, T2, T3 | the three entry tests, in their order in that §2; T2old and T2new are the current and the decided wording of the second |
+| T1, T2, T3 | the three entry tests, in their order in that §2; T2old and T2new are the second test's wording before and after slice 1 |
 | TM | the test of `design@agent-skills@instruction-record-is-minimal`, which agent-skills applies to a decision about the installed text |
 | the bounded path | the shortcut inside the design skill decided by #bounded-path-in-design |
 | a `%%` line | a line of a file under `path@agent-skills@content/` whose first two characters are `%%`: a comment for this repository's maintainers, stripped by the build |
@@ -144,17 +144,18 @@ design audit, applied in place: …`.
 
 ## What the work is
 
-What exists today at each site the work touches:
+What existed at each site the work touches when this document was written, and what slice 1 has
+changed since:
 
-- **The entry tests** are three numbered tests in §2 of the decision-recording skill. T2 reads "it
-  **constrains work that has not been built**". No design head records or argues the tests; only
-  the alternatives' tests have one, `design@agent-skills@losing-alternatives-filter`.
-- **The primer's "Intent and claims" section**, in `path@agent-skills@content/PRIMER.md`, knows two
-  classes: a design home, which is authority, and "a claim about the code as it stands (a scoped
+- **The entry tests** were three numbered tests in §2 of the decision-recording skill, T2 reading
+  "it **constrains work that has not been built**", and no design head recorded them. Slice 1
+  rewrote them and recorded them in `design@agent-skills@a-head-is-owed-by-an-entry-test`.
+- **The primer's "Intent and claims" section**, in `path@agent-skills@content/PRIMER.md`, knew two
+  classes until slice 1 added a third, per `design@agent-skills@local-intent-binds`: a design home, which is authority, and "a claim about the code as it stands (a scoped
   `CLAUDE.md` invariant, a doc comment, a name, an issue's diagnosis)", which is verified. An
   inline comment is a home in the primer's knowledge table ("why a piece of code is shaped the way
-  it is"), and no class says whether it is intent or claim. The root `path@knowledge-architect@CLAUDE.md`
-  restates the two classes under "Verify before relying on anything".
+  it is"), and no class said whether it was intent or claim. The root `path@knowledge-architect@CLAUDE.md`
+  restates the classes under "Verify before relying on anything", three since slice 1.
 - **The design skill**, `path@agent-skills@content/skills/design/SKILL.md`, had a section "When
   NOT to use" that classified a bounded problem and left the next step to the owner. Slice 1
   replaced it with the bounded path, and its head with `design@agent-skills@bounded-path-in-design`. Its keep-or-change section already says that
@@ -162,9 +163,9 @@ What exists today at each site the work touches:
   with the owner, and that "a commit message that argues it counts".
 - **The decision-record reviewer**, `path@agent-skills@content/agents/decision-record-reviewer.md`,
   judges in its §2 whether each decision earned its entry, in both directions.
-- **The search before the work** runs at the grounding of a design discussion and at a design
-  audit, per `design@agent-skills@standing-entries-searched-before-the-work`; work that is neither
-  designed nor planned sends none.
+- **The search before the work** ran at the grounding of a design discussion and at a design
+  audit, and work neither designed nor planned sent none. Since slice 1 it runs at the grounding of
+  bounded work too, per `design@agent-skills@standing-entries-searched-before-the-work`.
 - **content/ is out of the walk**: `path@knowledge-architect@knowledge-architect.toml` lists it
   under `exclude`. The walk probe found 36 findings with it back in the walk: 30 generic paths of
   documents every Component carries, 3 paths of the plans directory, 2 paths of the setup skill's
@@ -229,7 +230,8 @@ this milestone schedules, and repairs the texts that cited it:
 - the re-entry of `tripwire@agent-skills@deferred-trigger-met-by-undesigned-work`;
 - the list under `design@knowledge-architect@stays-at-zero-x`.
 
-Each now cites this milestone.
+Each cited this milestone until slice 1 rewrote it to the head or the text that slice built; the
+list under `design@knowledge-architect@stays-at-zero-x` cites it until this document leaves.
 
 ## Criteria
 

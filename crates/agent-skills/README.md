@@ -95,7 +95,8 @@ never the skill's internal consistency**. If two of the skill's own
 rules leave no move that satisfies both, that is a defect in the
 skill, however the discussion was being conducted.
 
-**You bring a design question, not a task order.** The mode assumes
+**You bring a design question, or a requested change for it to ground,
+not a task order to execute unexamined.** The mode assumes
 the answer is not yet known by either party. Give it a decision you
 have already made and it will argue against it, because testing a
 proposal is what it is for. Give it bounded work and it sends one

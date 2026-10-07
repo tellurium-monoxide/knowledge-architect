@@ -115,8 +115,9 @@ its subject, a commit of another project or a description in words, is outside t
 - `knowledge-architect-decision-recording`: a design decision has been made or reversed.
 - `knowledge-architect-issue-tracking`: before diagnosing a problem; parking anything; a
   tripwire fires; work closes an entry.
-- `knowledge-architect-design`: a design question has an open solution space;
-  keep-or-change about an existing design; a bug trend suggests the design is the problem.
+- `knowledge-architect-design`: a design question has an open solution space; a requested change
+  whose design is not settled, to ground it and find out whether it is bounded work; keep-or-change
+  about an existing design; a bug trend suggests the design is the problem.
 - `knowledge-architect-planning`: a design discussion converged on its full path; a slice of a
   milestone starts or lands; the work of a spec starts or lands.
 - `knowledge-architect-review`: before merging to the main branch, or when an

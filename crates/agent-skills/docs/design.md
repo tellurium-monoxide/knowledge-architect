@@ -95,8 +95,7 @@ description reaches a session before it starts a requested change whose design i
 The owner's argument: "there is no way to determine whether a task is "bounded work that does not
 change the project's design" without going through the grounding steps of the design skill." The
 grounding gives bounded work the search for standing entries that no step gave it, and applying the
-entry tests at classification keeps a head from being written for a decision that earns none, as a
-session wrote one before this path existed. The nearest rival, a separate installed skill for
+entry tests at classification keeps a head from being written for a decision that earns none. The nearest rival, a separate installed skill for
 bounded problems, would repeat the grounding to classify at all; it is in the rejected
 alternatives. A bounded path names no skill outside the installed set, per
 `design@agent-skills@no-external-handoff`, and serves `goal@knowledge-architect@the-owner-decides`:
@@ -256,8 +255,8 @@ same reasoning. Only the design skill and the setup skill state a set so far:
 A decision is written into the design homes in the change that lands the work implementing it, not
 when the spec is written, because a design home holds built intent, per
 `design@agent-skills@design-home-is-built-intent`. While the work is open, the spec or the
-milestone document, on the main branch or on the work's, is the only place the decision exists. A decision with no
-implementing work, one that constrains work nobody has started, is recorded when it is made.
+milestone document, on the main branch or on the work's, is the only place the decision exists. A decision that
+no work implements, such as a policy, is recorded when it is made.
 
 ### A design home holds built intent, and a plan document holds unbuilt intent `##design-home-is-built-intent`
 
@@ -290,10 +289,10 @@ without arguing against it.
 
 The owner's argument: "Since the workflow is instructing that "code follow design", anything that is
 not argumented in design records could end up judged "superfluous" and deleted autonomously." Fewer
-heads, per `design@agent-skills@a-head-is-owed-by-an-entry-test`, leaves more intent in comments, and
-the primer gave an inline comment a home but no class, so it could be read as a claim to verify and
-discard. Keep-or-change's rule on an implementation coincidence covered only the evaluation of an
-incumbent design. A comment is part of the code, so the head prevails over it. The order serves
+heads, per `design@agent-skills@a-head-is-owed-by-an-entry-test`, leaves more intent in comments.
+Without a class of its own, an inline comment reads as a claim about the code, to verify and
+discard; and keep-or-change's rule on an implementation coincidence applies only while an incumbent
+design is evaluated. A comment is part of the code, so the head prevails over it. The order serves
 `goal@knowledge-architect@agents-work-without-drift`. In a project whose comments the checker does
 not read, a reference in a comment is not checked, which weakens this record there:
 `issue@core@references-are-read-in-markdown-and-rust-only`.
@@ -336,15 +335,22 @@ words. Every grounding reads the design homes whole, and a human overseer review
 that changes local code reads the comment at that code, not a design home it would have to think to
 search. Test 2 is where the checker's reach ends: a reason that several sites must respect needs a
 home each site can cite, and a comment cannot be cited, while a policy or an absence has no site at
-all. The decision serves `goal@knowledge-architect@design-is-recorded-with-its-arguments`: a later
+all. Test 1 covers every interface others consume, not only a type or a signature: a head about a
+grammar, a file format or a command binds every adopting project, and under a strict test 1 such a
+head enforced in one module would pass no test. Test 3 counts a tool's behaviour measured as well as
+documented: a measurement costs as much to take again as a documentation reading to derive again,
+and a documented-only test 3 fails where the documentation is silent. The decision serves
+`goal@knowledge-architect@design-is-recorded-with-its-arguments`: a later
 session can tell what it may change and what a change costs from the head where one is owed, and
-from the comment where none is. An audit of the 178 heads of this repository, read against these
-tests, found over-recording below one head in five where the owner read it; for this Component its
+from the comment where none is. An audit of the 178 heads the design homes held when these tests were
+decided found over-recording below one head in five where the owner read it; for this Component its
 outcome is unconfirmed, and the cleanup of `issue@agent-skills@heads-no-entry-test-admits` can
 reopen this head. The nearest rival, a head for every decision discussed with the owner, is what a
 session did for a mechanism carried at one site by its comments, and the owner judged the head
-unneeded. A wider test 2, "constrains work that has not been built", admitted nearly every head
-under a wide reading and almost none under a narrow one, and the design homes hold built intent,
+unneeded. Within test 2, "the same statement at more than one site" admits a path repeated for
+consistency, which the owner judged no reason to keep a head. The wider test 2, "constrains work
+that has not been built", admitted nearly every head under a wide reading and almost none under a
+narrow one, and the design homes hold built intent,
 per `design@agent-skills@design-home-is-built-intent`. Whether the heads cost a session more than
 they save is not measured: `issue@agent-skills@the-retrospective-counts-no-review-cost`.
 
@@ -446,7 +452,7 @@ and the tripwires homes, then `wc -c`: summed by the anchor that holds each file
 divided by the rows of the issue and tripwire listings for the second; real sessions measure it, per
 `goal@knowledge-architect@the-workflow-improves-through-real-use`.
 
-### The search runs at the grounding of a design discussion and at the design audit of a milestone slice or of a spec, over every issue kind and every tripwire `##standing-entries-searched-before-the-work`
+### The search runs at the design skill's grounding, of a discussion or of bounded work, and at the design audit of a milestone slice or of a spec, over every issue kind and every tripwire `##standing-entries-searched-before-the-work`
 
 The installed design skill dispatches the search at its loop step 1, with the question as the work
 and the decisions and goals read so far as seeds, for a design question and for bounded work alike,
@@ -758,7 +764,7 @@ was the one of six to find a decision recorded narrower than the owner's approva
 A misstated ruling is critical only when it is reversed, or when its state or scope changes what is
 built or a load-bearing decision. A ruling recorded a little wider, narrower or firmer on a detail
 that is not load-bearing is minor, still goes to the owner, and is no finding of the retrospective
-once caught before the merge. The owner's words: "everytime, it was on details that were small and
+once caught before the merge. Any other misstated ruling is major. The owner's words: "everytime, it was on details that were small and
 not load bearing in my opinion", "the transcript reviewer is catching those issues reliably IMO. I
 do not believe any amount of instruction anywhere would help improve more than the current
 situation: LLM agents are trained to take the input they receive from humans seriously and follow
@@ -824,7 +830,8 @@ chosen by another plan's landing.
 The installed review skill sends the standing-state reviewer before every merge to the
 main branch, whatever the change. That reviewer is the standing re-entry point of every tripwire
 home and of every deferred trigger, as the installed issue-tracking skill states: it runs for every
-change, where the search before the work runs only for designed or planned work, per
+change, where the search before the work runs only for work that goes through the design skill or a
+plan, per
 `design@agent-skills@standing-entries-searched-before-the-work`. A re-entry point that depends on whether a change looked
 related to a tripwire is one that a change touching the guarded decision indirectly skips: the
 reviewer reads every entry of every home, not the subset the diff seems to concern. This serves
