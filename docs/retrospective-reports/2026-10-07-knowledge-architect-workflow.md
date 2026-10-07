@@ -232,3 +232,22 @@ Analysed with C1 of 2026-10-07-thaum-workflow, as one cluster, in
   show whether such spans are backticked.
 - **Default:** the first not fired; the second not established, carried by the issue.
 - **Outcome:** approved.
+
+## Standing entries: three tripwires read at the search and not judged in this analysis
+
+- **`tripwire@agent-skills@head-created-without-deliberation`**, on W8. It fires when a commit
+  creates a design head, or contradicts one, and neither its message nor a plan document carries the
+  deliberation. W8 reports a head written for an issue fix with no entry test applied, then removed
+  in that session. Whether the commit that wrote it carried a deliberation is not established from
+  the file, and was not checked against this repository's history. Judgement proposed: not
+  established.
+- **`tripwire@agent-skills@ruling-lost-in-assembly`**, on W2 and W7. It fires on a ruling found
+  missing from, or misstated in, a committed plan document after its reviews, where the misstatement
+  is critical. W2 is about classifying the owner's words when recording heads, not about assembling
+  a plan document; W7's widening was minor and caught by the transcript reviewer. Judgement proposed:
+  not fired.
+- **`tripwire@agent-skills@a-shortcut-decision-earns-a-head`**, on W8. It fires on a decision taken
+  on the bounded path that passes an entry test, at the second instance. W8's head was written on
+  the in-change path, not the bounded one. Judgement proposed: not fired.
+- **Default:** the first not established, with no response; the two others not fired.
+- **Outcome:** approved, in the owner's words "All defaults approved, go ahead".

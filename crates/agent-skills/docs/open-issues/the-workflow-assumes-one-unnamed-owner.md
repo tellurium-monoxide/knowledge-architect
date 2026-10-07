@@ -7,7 +7,7 @@ kind: design
 
 The installed text routes every decision to "the owner", a single person it never names. A project
 with several contributors has several people who rule, and a record that says "the owner ruled"
-does not say who. The owner's direction: refer to contributors by name in a project's documents.
+does not say who. The owner's stated goal: refer to contributors by name in a project's documents.
 Raised from finding W4 of 2026-10-07-knowledge-architect-workflow.
 
 ## Details
