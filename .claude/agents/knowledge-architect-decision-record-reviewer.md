@@ -36,9 +36,9 @@ are reading. If a check seems to need one, say so as a finding rather than worki
 Your instruments are the decision-carrying documents the diff touches, the diff itself, and, for a
 decision that earned no entry, the comment at its code and the message of the commit that introduced
 that code, which `git log -L` and `git blame` reach outside the branch. The
-homes of decisions are exactly two per Component: its design home (`docs/design.md`, or the subdocuments
-of a `docs/design/` directory whose `README.md` is the head), which holds the current design, and
-its `docs/rejected-alternatives.md`, which holds what lost. The project's root is a Component too.
+homes of decisions are exactly two per Component: its design home (`path@*@docs/design.md`, or the subdocuments
+of a `path@*@docs/design/` directory whose `README.md` is the head), which holds the current design, and
+its `path@*@docs/rejected-alternatives.md`, which holds what lost. The project's root is a Component too.
 Nothing else in the repository is the home of a decision that earned an entry: not a `README.md`, not an issue entry, and
 not the plans directory, whose plan documents hold shapes for unbuilt work that are deliberately not
 decisions yet: their items are slugs scoped to their plan, and no design entry is defined there. A

@@ -170,8 +170,8 @@ commit message carries the deliberation.
 
 ## 5. The current design
 
-In the Component's design home. That is its `docs/design.md`, or, for a Component whose design has
-outgrown one file, its `docs/design/` directory. In the directory shape the decision goes in the
+In the Component's design home. That is its `path@*@docs/design.md`, or, for a Component whose design has
+outgrown one file, its `path@*@docs/design/` directory. In the directory shape the decision goes in the
 subdocument owning its subject, never in the directory's `README.md`, which is the head and the
 index. A new subdocument is linked from that index, `[title](file.md)`, the target relative to the
 README, conventionally one bullet per subdocument. `cargo klarch check` refuses one that is not.
@@ -251,7 +251,7 @@ so **renaming one means rewriting every reference in the same change.** Grep bef
 
 ## 6. Losing alternatives
 
-In the Component's `docs/rejected-alternatives.md`.
+In the Component's `path@*@docs/rejected-alternatives.md`.
 
 **Most alternatives that lose earn no entry.** An entry is read by someone reasoning from first
 principles who was not there, and it is reached by grep from anywhere in the tree, so it is a

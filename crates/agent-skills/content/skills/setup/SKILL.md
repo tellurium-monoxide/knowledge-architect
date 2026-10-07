@@ -123,19 +123,19 @@ Every Component carries the same documents. `{{command}} check` names each one m
 | --- | --- |
 | `README.md` | how a user uses the Component |
 | `CLAUDE.md` | the contracts and traps a developer needs, true of the code as it stands |
-| `docs/goals.md`, or `docs/goals/` with a `README.md` | what the Component is for: at least one goal, under `knowledge-architect-goal-setting` |
-| `docs/design.md`, or `docs/design/` with a `README.md` | how it is built and why; it may hold no entry yet |
-| `docs/rejected-alternatives.md` | what lost, and why; it may hold no entry yet |
-| `docs/tripwires.md`, or `docs/tripwires/` with a `README.md` | evidence that would flip a decision; it may hold no entry yet |
-| `docs/open-issues/` | one file per outstanding item, a hand-written `README.md` and an `index.md` that `{{command}} index` generates |
+| `path@*@docs/goals.md`, or `path@*@docs/goals/` with a `README.md` | what the Component is for: at least one goal, under `knowledge-architect-goal-setting` |
+| `path@*@docs/design.md`, or `path@*@docs/design/` with a `README.md` | how it is built and why; it may hold no entry yet |
+| `path@*@docs/rejected-alternatives.md` | what lost, and why; it may hold no entry yet |
+| `path@*@docs/tripwires.md`, or `path@*@docs/tripwires/` with a `README.md` | evidence that would flip a decision; it may hold no entry yet |
+| `path@*@docs/open-issues/` | one file per outstanding item, a hand-written `README.md` and an `index.md` that `{{command}} index` generates |
 
 **The root Component also carries the plans directory**, docs/plans/, whose path the checker fixes:
 
 | document | holds |
 | --- | --- |
-| `docs/plans/README.md` | what the plans directory holds |
-| `docs/plans/specs/`, with a `README.md` and an `index.md` | one file per spec; none until work is planned |
-| `docs/plans/milestones/`, with a `README.md` and an `index.md` | one directory per milestone; none until work is planned |
+| `path@plans@README.md` | what the plans directory holds |
+| `path@plans@specs/`, with a `README.md` and an `index.md` | one file per spec; none until work is planned |
+| `path@plans@milestones/`, with a `README.md` and an `index.md` | one directory per milestone; none until work is planned |
 
 `{{command}} index` writes each `index.md`. A roadmap, docs/roadmap.md at the root, is optional:
 it is written when the owner wants known work ordered, under `knowledge-architect-planning`.
@@ -245,7 +245,8 @@ To move to another version:
 ## In a Rust project
 
 A Rust project gets its gates and its pinned checker from one maintenance crate, a package named
-`xtask` in a directory such as `xtask/` or `tools/xtask/`, a member of its workspace that is never
+`xtask` in a directory of its own, `<xtask-dir>/`, such as `xtask/` at the root, a member of its
+workspace that is never
 published. The shapes below are illustrations, to adapt.
 
 **The crate.** It depends on the checker and on the gates library, both pinned exactly to the
@@ -264,7 +265,7 @@ knowledge-architect = "=<version>"
 knowledge-architect-gates = "=<version>"
 ```
 
-**The aliases**, in `.cargo/config.toml`: `cargo x` runs the crate's own commands, and
+**The aliases**, in `<workspace-root>/.cargo/config.toml`: `cargo x` runs the crate's own commands, and
 `cargo klarch` runs the checker it pins, in release mode. Declare `cargo klarch` as the project's
 command (§2).
 

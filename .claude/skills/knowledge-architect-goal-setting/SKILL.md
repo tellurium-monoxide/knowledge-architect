@@ -5,7 +5,7 @@ description: MUST use when a Component has no goal, when the owner states a new 
 
 # Setting goals
 
-Scope: the goals homes of the project, one per Component, `docs/goals.md` or `docs/goals/`. Writing
+Scope: the goals homes of the project, one per Component, `path@*@docs/goals.md` or `path@*@docs/goals/`. Writing
 a goal, changing its wording, and removing it.
 
 Not covered here: **a decision about how something is built**, which is
