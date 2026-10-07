@@ -124,9 +124,11 @@ at that code, not the design home (a23); the tests are where the checker's reach
 comment cannot be cited (a29). Nearest rival: a head for every decision that was discussed with the
 owner. It is what this session did on the snippet branch, and the owner judged the result
 unneeded (a1, a2). The head names `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
-The owner discharged the audit's condition in R8: the audit changed nothing the owner found
-critical in the code Components, and agent-skills, whose outcome stays unconfirmed (a65), differs
-in scope and structure.
+The audit's condition, as the owner's R8 words are presumed to give it, awaiting the owner's
+ruling: discharged for the code Components, where the audit changed nothing the owner found
+critical; open for agent-skills, whose outcome stays unconfirmed (a65), so the cleanup issue's
+judgement of its heads can reopen this thread. The head carries the owner's condition: "as long
+as no critical intent and arguments are lost".
 
 ### #local-intent-binds: the order, and what an agent does
 
@@ -247,6 +249,14 @@ ruling, quote or acceptance of the owner for "the owner's intent", so an argumen
 goal did not count; and it did not count consistency with core or with a root decision as "two
 parts of the workflow". 14 of the 16 verdicts rest on that reading, so the cleanup session puts
 both readings to the owner before it applies them.
+
+It records that the owner judged two heads that pass, `design@agent-skills@knowledge-table-home`
+and `design@agent-skills@design-hands-off-to-planning`, "not critical, but they still carry useful
+informations" (R4), so the cleanup leaves them.
+
+It carries the reopening of #record-volume for agent-skills: if the cleanup's judgement in full
+finds over-recording there that the owner rules significant, the head of #record-volume is reopened
+with the owner.
 
 It states that the agent-skills verdicts were the audit agents', and that the owner read them by
 title, not as a ruling (a58): the session that does the cleanup judges each head in full and
