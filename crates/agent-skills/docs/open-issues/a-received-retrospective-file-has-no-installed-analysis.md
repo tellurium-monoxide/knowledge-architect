@@ -28,14 +28,18 @@ because a checked form already existed, two whose report claimed a repair the hi
 earlier, and three whose proposed fix would have reversed a recorded head.
 
 What is this repository's own in the skill: the files it takes in scope, the home of the analysis
-under docs/retrospective-reports/, and the commit lifecycle of that file. The checks are not.
+in `path@knowledge-architect@docs/retrospective-reports/` and the commit lifecycle of that file,
+per `design@knowledge-architect@committed-findings-analysis`, and the names its checks e, f and g
+give to this repository's Components and skills. What each check establishes is general: a project
+would name its own Components and skills there.
 
 ### Why it matters
 
 `goal@knowledge-architect@the-workflow-improves-through-real-use` is met only while findings are
 judged on evidence before they change the workflow, and `goal@knowledge-architect@the-owner-decides`
 asks that the owner rule with the facts in front of them. A consuming project receives its own
-project file's findings with neither.
+project file's findings with neither: `design@agent-skills@retrospective-destination` sends a kept
+finding to an entry with no analysis between.
 
 ### What would close it
 

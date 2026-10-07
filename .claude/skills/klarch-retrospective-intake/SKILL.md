@@ -24,7 +24,8 @@ with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-
   `<date>-<project>-<subject>-klarch-workflow.md`, or `<date>-<project>-workflow.md` before that
   name. It holds the findings on the installed skills and agents (W), on the checker (C), and the
   answers to the standing questions.
-- **In scope: this repository's own project file**, `<date>-knowledge-architect-<subject>.md`.
+- **In scope: this repository's own project file**, `<date>-knowledge-architect-<subject>.md`, or
+  `<date>-knowledge-architect.md` before that name.
   Its findings (P) are on this repository's own instructions, and the same checks apply to them.
 - **For grounding only: another project's file** of the same retrospective, when it is present. It
   can explain a workflow finding: what the project's text said, what the session did. Its own
@@ -37,7 +38,7 @@ The findings of this repository's two files are handled here, never as an issue 
 arrives the same way once the owner hands it over.
 
 A finding is cited by its id and its file's stem, as "W3 of
-2026-10-07-thaum-mock-reduction-workflow", since several retrospectives share a date.
+2026-10-07-thaum-mock-reduction-workflow", the form the installed retrospective skill gives.
 
 ## 2. Ground before judging any finding
 
@@ -48,14 +49,15 @@ A finding is cited by its id and its file's stem, as "W3 of
 3. **Search the standing entries with the received files as the work.** One search covers every
    file received together. Dispatch `knowledge-architect-standing-entry-searcher`:
    - count the rows of `cargo klarch issues` and of `cargo klarch tripwires`, the header rows
-     excluded;
+     excluded, a listing that prints only `(no entry)` counting 0;
    - send ceil(count / 60) agents, all in parallel, on consecutive groups whose sizes differ by at
      most one;
    - give each the work (the files' paths and their subjects), the seeds (the design heads and
      goals the findings name, or none), its group's first and last positions, and a scratch
      directory of its own.
 
-   Read every entry returned whole with `cargo klarch show <ref>`, never from its reason line. The
+   This restates the dispatch rule of `design@agent-skills@standing-entry-search-agent`, which the
+   agent's description also carries. Read every entry returned whole with `cargo klarch show <ref>`, never from its reason line. The
    search finds what a grep per finding does not: a finding already recorded, a deferred issue
    whose trigger the file meets, a tripwire whose firing evidence the file carries, a design
    issue whose re-entry it meets.
@@ -111,8 +113,9 @@ Each item below is answered with its evidence. The order is a suggestion; the co
 
   A fix to an installed skill passes the four tests of the agent-skills `CLAUDE.md`, "Editing an
   installed skill or agent": scope, necessity, kind, built intent. An addition needs an observation
-  from a real session, which the finding is, and a one-sentence mechanism, which the analysis
-  writes.
+  from a real session, which the finding is, the owner's named lack, which the owner gives at the
+  ruling, and a one-sentence mechanism, which the analysis writes, per
+  `design@agent-skills@additions-need-real-use`.
 - **g. Its route.** What handling it needs, which says what "now" would mean:
   - a text edit whose design is settled: under `knowledge-architect-agent-configuration`, and for
     the installed text the agent-skills `CLAUDE.md`;
@@ -165,8 +168,9 @@ ruling given in the conversation instead, such as "now: W1, W5; issue: C3; no ch
 for the rest", is copied into the `Outcome` lines verbatim. Before committing, list every section
 whose `Outcome` line is still pending, and ask the owner for those. **Three outcomes**:
 
-- **handle now**: the finding is handled in this session, under the skill its route names. It
-  needs no issue entry, and the proposal does not suggest one;
+- **handle now**: the finding is handled after the ruling, on the same branch or on the branches
+  that follow it, under the skill its route names. It needs no issue entry, and the proposal does
+  not suggest one;
 - **open an issue**: name its anchor and its kind;
 - **no change, with the reason**: a lapse, already repaired, out of scope, or an observation.
 
@@ -177,7 +181,7 @@ rival fix the ruling depends on.
 
 Each section's `Outcome` line holds the owner's choice and the owner's words, verbatim. The
 analysis is then committed on a branch, under the root `CLAUDE.md` `## Git` rules. Its life
-after that:
+after that, per `design@knowledge-architect@committed-findings-analysis`:
 
 1. a commit adds the analysis, with its Outcome lines;
 2. the next commit opens the issues it ruled;
@@ -188,3 +192,8 @@ after that:
 A finding handled now can turn out to need a design discussion and a plan. Its Outcome line is then
 rewritten, on the owner's word, to name the plan document or the issue that now carries it, so the
 analysis can still leave.
+
+Until it leaves, an analysis is outstanding work that no register lists. The root `CLAUDE.md`
+lists the directory among the places a session looks for what is already known. A file whose
+cluster other files point to leaves after them, or the commit that deletes it rewrites the
+pointing sections, since their references would dangle.

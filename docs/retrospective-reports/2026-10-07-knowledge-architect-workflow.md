@@ -191,8 +191,8 @@ Analysed with C1 of 2026-10-07-thaum-workflow, as one cluster, in
 - **Better fix.** The report's, as a listing rather than a check, recorded as the tripwire's
   re-acceptance with its compensating tool.
 - **Route.** Rust work, after a small decision.
-- **Proposal.** Open an issue: core, `todo`, naming the tripwire; the tripwire is judged as fired, and
-  the issue records the response chosen.
+- **Proposal.** Open an issue: core, `todo`, naming the tripwire. Whether the tripwire fired is
+  judged in the section "Standing entries: two tripwires the file comes near" below.
 - **Default:** open an issue.
 - **Outcome:** I think that the best fix would be to check and report as findings any bare mention of a declared slug. Maybe it is too costly, unsure about this. Ooen an issue.
 
