@@ -95,6 +95,7 @@ records dozens per unit of work stops being readable and stops being ranked.
 3. **its argument turns on the behaviour of something outside the project**: an external
    specification the project implements (a standard, a protocol, a rule set), or an external tool's
    behaviour, read in its documentation or measured; or
+%% The `Q` label: `design@agent-skills@ruled-items-labelled`.
 4. **the owner confirms that it records the owner's own intent**: a ruling the owner gave that an
    agent could judge superfluous and reverse as a small fix, or an argument the owner made and wants
    kept so as not to restate it. The agent does not judge this. When a decision would earn a head

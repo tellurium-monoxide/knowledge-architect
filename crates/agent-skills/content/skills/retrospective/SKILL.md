@@ -51,7 +51,8 @@ done instead.
 
 %% The owner rules on findings one by one, and an id lets a ruling, a fix or a commit cite one
 %% without restating it. An interaction finding has an id in each file because the workflow's file
-%% may be published without the project's.
+%% may be published without the project's. The prefixes are those of
+%% `design@agent-skills@ruled-items-labelled`.
 **Each finding is named by a letter and a number**, so that a fix, an issue or a commit can cite it
 by its id and the stem of its file (§3), as "W3 of <date>-<project>-<subject>-klarch-workflow":
 **W** for the installed skills and agents, **C** for the checker, **P** for the project's own

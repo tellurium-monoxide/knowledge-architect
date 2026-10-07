@@ -73,7 +73,7 @@ subsection is omitted.
 - `agent-skills`, patch: the items the owner rules on one by one carry labels: `T<n>` for
   tripwires, `AC<n>` for acceptance criteria and `D<n>` for a plan document's defaults, and `Q<n>`
   where the label stays in the conversation, as for review items, the setup's proposed
-  destinations, and criteria proposed as tripwires when a plan document leaves.
+  destinations, and an audit's gaps put to the owner in one question.
 - `agent-skills`, patch: the design skill builds no discriminating evidence that the project's
   goals or design heads rule out, and sends the fork to the owner as a tie.
 

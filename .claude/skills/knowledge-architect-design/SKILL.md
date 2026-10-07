@@ -582,7 +582,9 @@ choices whose option space genuinely is closed and consequence-free.
    firing reopens. Put each under a label, `T<n>` for a tripwire and
    `AC<n>` for an acceptance criterion, numbered from 1 in order of
    appearance across the whole discussion, a resumed session included,
-   and never reused, so that the owner rules on each by its label.
+   and never reused, so that the owner rules on each by its label. The
+   tripwire's entry and the criterion's item keep that label in their
+   text, so the ruling in the transcript is found from either.
    Some may be out of scope of the project, and the owner is the only judge of that.
    A tripwire the owner rules to record is written at the harvest of the decision
    it guards, in the tripwires home of the Component that owns that decision,

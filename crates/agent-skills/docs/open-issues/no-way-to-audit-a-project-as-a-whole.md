@@ -66,7 +66,9 @@ Additions of the session, for the discussion to judge:
   deferred trigger met without anyone noticing; the standing-state reviewer does this only for the
   entries a diff bears on;
 - **goal coverage**: each goal against the design heads that serve it, for a goal no head serves and
-  a head that serves no goal;
+  a head that serves no goal. The installed design-conformance reviewer already reads one plan
+  document against the goals and the heads, per `design@agent-skills@plan-read-against-the-record`;
+  its reading is a lead for this audit at the scale of the whole project;
 - **restatements**: every restatement of a directive against its home, since a restatement is the
   defect where the two disagree and the checker cannot compare prose.
 

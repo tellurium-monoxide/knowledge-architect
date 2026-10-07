@@ -183,7 +183,8 @@ retrospective's question on references written without backticks, which reads th
 ## Guarding `design@agent-skills@plan-read-against-the-record`: the design-conformance reviewer's findings are mostly needless `##design-conformance-findings-needless`
 
 The decision rests on the premise that the reviewer reports departures from the record, and not the
-widenings a plan document makes on purpose, so that its findings are worth the owner's reading.
+widenings a plan document makes on purpose, so that its findings are worth the owner's reading. The
+owner ruled on it as T1 at the premortem of its discussion.
 
 **Fires when:** at two moments in a row at which the planning skill sends a plan document's
 reviewers, a re-review after a revision included, more than half of the design-conformance
@@ -191,5 +192,6 @@ reviewer's findings end judged to need nothing, by the dispatching session or by
 count, two moments, and the proportion, half, are defaults the owner may reset.
 **Response:** open a `design` issue naming the two reviews and their findings, and reopen
 `design@agent-skills@plan-read-against-the-record` on the reviewer's scope.
-**Re-entry:** the retrospective of the session where the second of those reviews ran, which reads
-that session's record.
+**Re-entry:** the standing-state review before every merge, which reads the outcome each review
+commit records for each finding; and the retrospective of the session where the second of those
+reviews ran, which reads that session's record.
