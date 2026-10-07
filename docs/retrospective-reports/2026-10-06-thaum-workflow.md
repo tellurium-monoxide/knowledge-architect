@@ -280,4 +280,4 @@
   `design@agent-skills@checker-syntax-without-backticks-names-its-gap`. The cost was real all the
   same, and C1's repair text addresses it: a checked form existed and the refusal did not lead to it.
 - **Default:** not fired; no response.
-- **Outcome:** pending.
+- **Outcome:** approved.

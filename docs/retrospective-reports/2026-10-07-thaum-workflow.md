@@ -155,7 +155,7 @@
 - **A pointer no checked form expresses:** the root of a location, which C1 above shows a checked
   form serves.
 - **Default:** no change beyond C1.
-- **Outcome:** pending.
+- **Outcome:** approved.
 
 ## Noted, not findings
 
@@ -166,7 +166,7 @@
   unless input is piped (`path@core@src/git.rs` lines 93-97). No change.
 
 - **Default:** no change for either noted item.
-- **Outcome:** pending.
+- **Outcome:** approved.
 
 ## Standing entries: two tripwires the file comes near
 
@@ -178,4 +178,4 @@
   bears on that no search before the work returned. W3 is about the searchers' scratch files; the
   file reports no missed entry. Judgement proposed: not fired.
 - **Default:** neither fired; no response.
-- **Outcome:** pending.
+- **Outcome:** approved.

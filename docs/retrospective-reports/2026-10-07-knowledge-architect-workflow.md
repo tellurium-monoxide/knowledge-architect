@@ -213,7 +213,7 @@ Analysed with C1 of 2026-10-07-thaum-workflow, as one cluster, in
   change or remove an instruction for its own work; it is not met.
 - **The other two answers** name no gap.
 - **Default:** no change; the trigger of `issue@agent-skills@patching-an-installed-skill` is not met.
-- **Outcome:** pending.
+- **Outcome:** approved.
 
 ## Standing entries: two tripwires the file comes near
 
@@ -231,4 +231,4 @@ Analysed with C1 of 2026-10-07-thaum-workflow, as one cluster, in
   established. Judgement proposed: not established, so no response now; the issue's census will
   show whether such spans are backticked.
 - **Default:** the first not fired; the second not established, carried by the issue.
-- **Outcome:** pending.
+- **Outcome:** approved.

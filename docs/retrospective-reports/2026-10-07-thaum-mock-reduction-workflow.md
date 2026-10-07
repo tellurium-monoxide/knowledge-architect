@@ -125,7 +125,7 @@ nothing.
   cleared, so `tripwire@agent-skills@plain-text-pointer-found` does not fire. No change.
 
 - **Default:** no change.
-- **Outcome:** pending.
+- **Outcome:** approved.
 
 ## Standing entry: whether `tripwire@core@private-item-needed` fired on C1
 
@@ -136,4 +136,4 @@ nothing.
   binary, so a function of the consumer's own can return it and be tested, with no core change.
   What the core does with the list is the core's to test.
 - **Default:** not fired; no response.
-- **Outcome:** pending.
+- **Outcome:** approved.
