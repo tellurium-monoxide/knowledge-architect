@@ -36,6 +36,10 @@ Then **the version of knowledge-architect the session used**, in one line:
   the session worked on, and whether the tree held uncommitted changes. A commit of the branch
   itself is not named: a merge that rewrites the branch's commits leaves it pointing at nothing.
 
+%% A wider "missing" turns every judgement into a request for a rule, against
+%% `goal@agent-skills@installed-text-leaves-room-to-judge`. The scope is wider than the installed
+%% text because a project's problems may come from its own instructions and their interaction with
+%% the installed ones, per `goal@knowledge-architect@the-workflow-improves-through-real-use`.
 Then read back over the session: the instructions that were followed, where they were followed with
 difficulty, where they were not followed, and what the owner corrected. Then, for each of the four
 subjects below, list what was **unclear** (it could be read two ways), **missing** (the session

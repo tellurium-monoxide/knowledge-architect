@@ -231,8 +231,9 @@ is phrased, is not recorded. Such proposals can be made without bound, unlike a 
 which costs implementation work. The commit message carries a rewording's argument.
 
 The owner's intent is on record where §2's test 4 of the installed decision-recording skill holds, per
-`design@agent-skills@a-head-is-owed-by-an-entry-test`: a ruling of the owner an agent could reverse
-as a small fix, or an argument the owner wants kept; an approval of the agent's proposal is not.
+`design@agent-skills@a-head-is-owed-by-an-entry-test`: the owner, asked, confirms that a ruling an
+agent could reverse as a small fix, or an argument the owner wants kept, records the owner's intent;
+an approval of the agent's proposal does not.
 Two parts of the workflow are installed texts, or an installed text and the checker it must agree
 with, as the planning skill's sections agree with what the core checks; a decision of this
 repository alone is not one, since the installed text names none of this repository's conventions.
@@ -291,7 +292,7 @@ satisfying both is always in scope, because `goal@agent-skills@one-skill-per-act
 while no two installed instructions contradict.
 
 The sets live in the retrospective skill, the one installed activity that judges whether something
-is a defect of an installed skill, per `design@agent-skills@retro-content`. The retrospective runs in the installing project, which holds the
+is a defect of an installed skill. The retrospective runs in the installing project, which holds the
 installed files and not this component's README, so a set the retrospective applies has to ship. A
 set inside the skill it bounds would be read on every use of that skill, and an agent reading it
 would check the owner against a list. The README restates each set for the owner, who is the one it
@@ -770,15 +771,6 @@ discussion to one thread, against `design@agent-skills@structure-the-flow`. The 
 owner accepted, is a long commit message when a discussion inside a task grows to several threads;
 its length is not bounded, since a bound on it would bound the discussion.
 
-### On the in-change path, nothing is implemented or committed before the premortem and its rulings `##in-change-waits-for-premortem`
-
-Where the premortem runs on the in-change path, per `design@agent-skills@in-change-path`, nothing of
-the decision is implemented or committed before it has run and the owner has ruled on its
-tripwires, so the commit that carries the deliberation carries those rulings, as a plan document
-would. A premortem can surface a material finding that reopens a thread, and work committed before
-it would then be undone. The rival, the rulings landing in the later commit that writes the
-tripwires, leaves the deliberation split over two commits.
-
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
 The planning skill starts where a design discussion has converged on the full path, and writes the
@@ -982,10 +974,15 @@ the citing plan, so it cannot outlive it, and its `Why it matters` cites what th
 harvested, since that plan no longer exists. It is a `question` rather than a `todo` because the
 reading may find nothing to change. For a milestone, its next slice's audit reads it. The retiring
 session revisits nothing itself: a revisit at that moment would redesign the citing plan at a time
-chosen by another plan's landing.
+chosen by another plan's landing, rather than at its own audit, where the owner rules on it as
+`goal@knowledge-architect@the-owner-decides` asks.
 
-The procedure was the owner's proposal, with the owner's argument against citing a plan's items
-from another plan: it "forces design work at a moment that might not be the best".
+The decision is recorded here because two installed skills apply it, the planning skill where a
+plan document leaves and the issue-tracking skill among the issue kinds, and both act on the
+dangling citation the checker reports: the same reason at two sites, and a procedure the installed
+text and the checker must keep consistent, per `design@agent-skills@instruction-record-is-minimal`.
+The argument is the owner's, against citing a plan's items from another plan: it "forces design
+work at a moment that might not be the best".
 
 ## Reviews
 
@@ -1263,28 +1260,6 @@ The retrospective is offered once per session, at the first of three moments: a 
 session worked on has merged, a plan document has left, or the owner says the session is ending.
 It runs only if the owner accepts. A moment named by an event can be followed by any agent where
 "a moment it judges right" could not, and offering it once keeps it from interrupting work.
-
-### A retrospective examines four subjects, and counts an instruction missing only where the workflow needed one `##retro-content`
-
-It opens with what the session did, at the level of the workflow, and examines the installed skills
-and agents, the project's own instructions, how the two interact, and the checker: its defects, its
-blind spots, its false findings, and what would make it easier to use. For each it lists what was
-unclear, missing or wrong, quoting the instruction. An instruction is missing only where the
-session could not follow the workflow, or could not produce a document the checker accepts,
-without it; a decision made by judgement where no instruction covers it is no finding. A wider
-"missing" turns every judgement into a request for a rule, which narrows the instructions against
-`goal@agent-skills@installed-text-leaves-room-to-judge`. Its scope is wider than the installed text so
-that it is useful to a project adopting the workflow, whose problems may come from its own
-instructions and from their interaction with the installed ones as well, per
-`goal@knowledge-architect@the-workflow-improves-through-real-use`.
-
-The scope rests on the owner's argument: "to be interesting for external
-projects to use, it should not only cover what the installed skills and agents did … (there might be problems coming
-from that too)". The narrower "missing" was the owner's proposal, opened with "maybe" and approved
-with the discussion's table: "Otherwise, the retrospective skill will keep producing
-findings that ask to narrow the instructions, instead of findings about contradictions or errors in
-instructions. A missing instruction is only a finding if it is needed to follow the workflow and to
-produce documents that the checker allows."
 
 ### A retrospective asks standing questions, each on the decisions it watches `##premortem-as-watch-points`
 
