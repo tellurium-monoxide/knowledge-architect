@@ -132,7 +132,9 @@ defect of the skill (§2). A skill not listed here states none yet.
 
 - **The owner brings a design question, not a task order.** The mode assumes the answer is not yet
   known by either party. Given a decision already made, it argues against it, because testing a
-  proposal is what it is for.
+  proposal is what it is for. Given bounded work, it sends one proposal, and the owner rules on it
+  or answers with an argument, which returns the work to the loop. An owner who neither rules nor
+  argues leaves the work waiting.
 - **The owner gives the word that closes a thread.** The agent can move threads between open states
   but cannot close one for the owner, except in the two cases the skill declares; that asymmetry is
   the design. Doing neither leaves threads open, and the

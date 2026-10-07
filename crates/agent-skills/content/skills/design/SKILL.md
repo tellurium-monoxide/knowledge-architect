@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-design
-description: MUST use when a design discussion has an open solution space — requirements still being discovered, several defensible shapes, a technical choice with real trade-offs — when evaluating whether to keep or change an existing design or architecture, when a recurring bug trend suggests the design itself is the problem, when a choice about how something is built, or an owner's word that settles one, is met during another task and the decision creates a design head, contradicts a statement of one, or takes one beyond what its title states, or when a discussion is reverting to multiple-choice menus, minimal-solution defaults, or approval-seeking closers. Covers threads and their states, criteria, decision authority and material findings, the loop from grounding to convergence and the premortem, the hand-off to planning, and keep-or-change verdicts. Requires a frontier-tier model (Opus-class or stronger).
+description: MUST use when a design discussion has an open solution space — requirements still being discovered, several defensible shapes, a technical choice with real trade-offs — when evaluating whether to keep or change an existing design or architecture, when a recurring bug trend suggests the design itself is the problem, when a choice about how something is built, or an owner's word that settles one, is met during another task and the decision creates a design head, contradicts a statement of one, or takes one beyond what its title states, before starting a requested change whose design is not settled, to ground it and to find out whether it is bounded work that needs only a proposal and the owner's word, or when a discussion is reverting to multiple-choice menus, minimal-solution defaults, or approval-seeking closers. Covers bounded work, threads and their states, criteria, decision authority and material findings, the loop from grounding to convergence and the premortem, the hand-off to planning, and keep-or-change verdicts. Requires a frontier-tier model (Opus-class or stronger).
 ---
 
 # Discussing design decisions
@@ -150,20 +150,28 @@ which is not the same as any user-visible string; or a decided thread
 that would have to be REOPENED if this one changed, as opposed to one
 that merely reads it.
 
-## When NOT to use
+## Bounded work
 
-When the problem arrives genuinely bounded — a clear requirement
-whose main risk is over-building — say so. Before classifying it as
-bounded, state the strongest OPEN reading of the problem — the design
-question the bounded framing would suppress. If you can name a second
-defensible shape for the solution, the space is open, and this skill
-applies. Otherwise present both readings, so the owner rules on the
-classification knowing both, and leave the next step to the owner: no
-installed skill covers a bounded problem yet. This applies in both
-directions: a bounded problem does not need a design discussion, an open
-one needs argument, and misclassifying in either direction wastes the discussion.
-Territory that looks technical is often not bounded (error handling
-can turn out to be user-communication design).
+Whether a request is a design question or bounded work, a clear requirement whose main risk is
+over-building, is known only after grounding. So a requested change whose design is not settled
+starts here, at loop step 1, the search for standing entries included. After the grounding, the
+work is **bounded** when all three hold:
+
+- it reverses no recorded decision, as §1 of `knowledge-architect-decision-recording` asks;
+- every decision it makes fails the entry tests of §2 of that skill, so none earns a design head;
+- no second defensible shape survives the nearest-rival test of loop step 3. State the strongest
+  open reading of the problem beside the bounded one: the design question the bounded framing would
+  suppress.
+
+Then send **one message**: what the grounding found, the proposal, its nearest rival and the fact
+that defeats it, the consequences the owner must know, and the default. Wait for the owner's word.
+A reply that brings an argument, a new shape or a doubt returns the work to the loop, on the
+in-change path or the full path. The commit that implements bounded work carries the proposal and
+the owner's words verbatim.
+
+Misclassifying costs in both directions: a bounded problem does not need a discussion, and an open
+one needs argument. Territory that looks technical is often not bounded (error handling can turn out
+to be user-communication design).
 
 ## Language
 

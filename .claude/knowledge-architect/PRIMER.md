@@ -32,6 +32,14 @@ to judge is never room to act against an instruction.
   the head, or when the head is reversed under `knowledge-architect-decision-recording`; it never
   closes by following the code. Work that goes on meanwhile, on the owner's word, builds on the
   head.
+- **A reason recorded at the code** (an inline comment saying why the code is shaped so, or the
+  message of the commit that argued it) is intent at the scale of that code. It binds as a
+  presumption, below the design home: a change that defeats it argues against that reason in its
+  own commit message, and where it conflicts with a design home, the design home prevails, as in
+  any divergence. Between a comment and a commit message, the comment is the current statement.
+  **Before removing or reshaping code as unneeded, read its comment and the message of the commit
+  that introduced it** (`git log -L`, `git blame`): absence from the design home is not evidence
+  that code is superfluous.
 - **A claim about the code as it stands** (a scoped `CLAUDE.md` invariant, a doc comment, a name, an
   issue's diagnosis) goes stale. Verify it against the code, or against a run you observe, before
   relying on it.

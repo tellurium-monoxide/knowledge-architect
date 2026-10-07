@@ -25,8 +25,9 @@ While the work is open, the decision is unbuilt intent, and the spec or the mile
 the only place it exists, on the main branch or on the work's. Writing it into the design homes from there is
 the **harvest**, and it happens in the change that lands the work.
 
-A decision that constrains work nobody has started, and that is not part of any spec, is recorded
-when it is made: there is no implementing change to wait for. §2's second test is that case.
+A decision that no work implements, such as a policy, and that is not part of any spec, is
+recorded when it is made: there is no implementing change to wait for. §2's second test admits it,
+as a decision with no site of its own.
 
 ## 1. Does it reverse something already recorded?
 
@@ -82,19 +83,28 @@ records dozens per unit of work stops being readable and stops being ranked.
 
 **A decision earns an entry in a design home only if at least one of these holds:**
 
-1. reversing it would change a type or a signature that **crosses the boundary of a separately
-   built unit**: a crate, a package, a library, a module others import;
-2. it **constrains work that has not been built**; or
-3. **its argument turns on a reading of an external specification the project implements**: a
-   standard, a protocol, a rule set.
+1. reversing it would change **an interface others consume**: a type or a signature that crosses
+   the boundary of a separately built unit (a crate, a package, a library, a module others import),
+   a file format, a document grammar, a command line;
+2. **the same reason must be respected at more than one site, or at none.** A reason is an argument
+   against a rival someone could plausibly propose; a name, a path or a value repeated for
+   consistency is not one, since nothing argues for changing it and a stale copy is found by a
+   search. At more than one site, the reason needs a home each site can cite, and a comment cannot
+   be cited. At none: a decision about an absence ("we do not do X"), or a policy with no code of
+   its own; or
+3. **its argument turns on the behaviour of something outside the project**: an external
+   specification the project implements (a standard, a protocol, a rule set), or an external tool's
+   behaviour, read in its documentation or measured.
 
-Test 3 matters most in a project that implements a specification. A choice that turns on what the
-specification means is expensive to get wrong and expensive to derive again, and it is visible: the
-argument quotes or cites the specification.
+Test 3 matters most in a project that implements a specification or leans on a tool's behaviour. A
+choice that turns on what the specification means, or on how the tool behaves, is expensive to get
+wrong and expensive to derive again, and it is visible: the argument quotes the specification or
+the documentation, or names the measurement.
 
 Otherwise it belongs in an **inline comment at the code it explains, plus the commit message**.
-That is not a lesser home: the comment is read by everyone who touches the code, and the commit
-carries the argument.
+That is not a lesser home: the comment is read by every session that touches the code, which a head
+is not, and the commit carries the argument. A reason that fits in one comment at one site, about
+that site's own code, fails test 2.
 
 **A decision that creates a design head, contradicts a statement of one, its argument included,
 or extends one beyond what its title states, and was not argued under `knowledge-architect-design`,
