@@ -137,7 +137,7 @@ alternatives, and does not search the registers again. Each
 returns, per finding: the quotation, its `file:line`, and its verdict. The session itself
 establishes d to h, and re-checks every verdict a proposal rests on. No subagent replays the
 reported session or builds a scenario of agent behaviour, per
-`issue@agent-skills@synthetic-evidence-about-the-workflow-is-undecided`.
+`spec@plans@synthetic-evidence-and-plan-reviews`.
 
 ## 5. The analysis file and the owner's ruling
 
