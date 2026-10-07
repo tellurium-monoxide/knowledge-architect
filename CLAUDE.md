@@ -569,8 +569,8 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   Check that `git diff <old-head> HEAD` is empty, which shows no content was lost, and that
   `git range-diff origin/main..<old-head> origin/main..HEAD` marks with `!` each commit the reword
   meant to change and no other, which shows the reword applied: a script whose pattern misses, on a
-  wrapped line or a quote, leaves the message as it was and the diff empty all the same. Then
-  delete the backup refs, in any checkout:
+  wrapped line or a quote, leaves the message as it was and the diff empty all the same. Run both
+  checks before any push, then delete the backup refs, in any checkout:
   `git for-each-ref --format='%(refname)' refs/original/ | xargs -r -n1 git update-ref -d`.
 - **main's history is never rewritten.** It is the shared trunk. A pushed branch of your own may
   be rewritten and force-pushed, since origin holds the old head until then. A branch that a live
