@@ -44,7 +44,8 @@ axis's question as this table states it, the commit range, and the files that ca
 with the reason, in the commit that records the review.**
 
 **Last, before every merge to the main branch, the transcript reviewer runs once more, alone**:
-after every other axis has run and its repairs are committed. Its range is the whole branch,
+after every other axis has run and its repairs are committed, and once the owner has answered every
+ruling those repairs asked for, since an answer given after its extraction reads to it as missing. Its range is the whole branch,
 `<main branch>..<head>`, and its brief names the transcripts of every session that worked on the
 branch, with the message where the branch's work begins in each. It is the one axis that can see whether the findings of the others were acted on, since
 their reports reach the session as messages of its transcript. Its repairs land as additional
@@ -93,7 +94,10 @@ re-checking.
   dispatcher's next commit. The shape is `git worktree add --detach <path> <commit>`, at a path
   where it pollutes no search, and `git worktree remove <path>` once the review and the repairs are
   done. **The dispatcher names each reviewer's path in its brief, distinct for each reviewer**, so
-  reviewers dispatched together never build inside one another's worktree. **The reviewer's build output
+  reviewers dispatched together never build inside one another's worktree. **It names a scratch
+  directory too, distinct for each subagent dispatched together**, reviewer or not, and a subagent
+  that writes working files writes them there only: subagents sharing one scratch directory
+  overwrite one another's files. **The reviewer's build output
   stays inside its worktree.** Unless every target is tied to its checkout, as the setup skill
   shows, a build directory two checkouts share lets the live checkout run the reviewer's build,
   which judges the live tree with the reviewer's code. Where every target is tied, a shared
@@ -122,6 +126,12 @@ lost unless a later review finds it.
 reviewer's axis, an observation it declined to call a finding, a remark that a defect predates the
 change. Each is a claim about the work like any finding. So is a repair the dispatcher promised the
 owner while answering a review. The record of the review lists each item with its outcome.
+
+**An item whose outcome turns on a ruling the owner has not given is put to the owner** before its
+outcome is recorded, and its outcome is then one of the three above. **A defect that predates the
+change** is routed by the primer's table of what is met outside the task: a fix checkable from the
+diff alone lands in a commit of its own, and the record of the review names that commit by its
+subject.
 
 A transcript reviewer's finding that something **has no durable outcome** is acted on by the
 dispatcher without waiting for the owner: it is recorded in its home, repaired, opened as an issue,

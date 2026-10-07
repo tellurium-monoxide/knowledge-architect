@@ -131,7 +131,10 @@ evidence bring, which nobody knows in advance.
   owner's words verbatim for each closure, the rivals that lost with
   their reasons, and the owner's rulings on tripwires. The decision is
   recorded at that landing like any other, under
-  `knowledge-architect-decision-recording`. The checkpoint table is
+  `knowledge-architect-decision-recording`, whose §1 decides the Component
+  of a decision that reverses a recorded one, and whose §2 decides whether
+  it earns a design head at all. Apply both before proposing to the owner
+  where a decision lands. The checkpoint table is
   shown at convergence when the ledger holds more than one thread. The
   premortem runs when reversal touches any of the four. Where it runs,
   nothing of the decision is implemented or committed before it has run

@@ -354,6 +354,9 @@ the decision's head exists before the tripwire that names it. Its shape and its 
 
 Every reference you wrote must resolve.
 
+Then, in the commit message, say what you searched for the incumbent and what it returned (§1),
+and re-read each head you wrote: present tense, as if the design had always been so (§5).
+
 Then re-read what you wrote against the head you replaced: **rewriting argued text is where
 fidelity gets lost.** If you cannot restate a losing alternative as strongly as it was written, you
 have not understood it well enough to move it.
