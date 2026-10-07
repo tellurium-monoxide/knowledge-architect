@@ -31,6 +31,13 @@ Two cases met in the review of the 0.3.0 release:
 
 Neither changes the version of 0.3.0, whose highest class is a major entry.
 
+The looser check was then met from a consumer's side, W4 of 2026-10-06-thaum-workflow: the entry
+sat under New features, a project whose extension tests counted the core's findings broke on it,
+and that project's pin-move procedure read only the Migration entries. The setup skill now says
+that a version may make a check stricter or looser. Counting the core's findings is what the
+checker crate's section "Testing an extension" advises against, so a consumer following it is not
+broken by a looser check; which row such a change takes is still open.
+
 ### Why it matters
 
 A writer of an entry cannot tell from the table which class these changes take, and the reviewer

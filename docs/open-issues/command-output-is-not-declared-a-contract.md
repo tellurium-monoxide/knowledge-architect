@@ -27,6 +27,16 @@ Instances seen:
   below.
 - The two output additions that `issue@knowledge-architect@the-bump-table-has-no-row-for-a-looser-check`
   records, classed minor and patch within one release.
+- A consumer's extension tests asserted text the core prints, and the consumer's owner ruled
+  mid-review that they assert none: W5 of 2026-10-07-thaum-mock-reduction-workflow. The checker
+  crate's section "Testing an extension" said nothing of printed output; it now sends a test to the
+  public fields `Report::checks`, `Report::not_run` and `Report::summaries`, which hold what the
+  printed lines show. It says nothing yet of which printed text is a contract.
+- Under that ruling, one property of the consumer's binary had no observation left: which
+  checker-source directories it passes to the core, printed only as the `checker source:` line.
+  `cli::run` returns an exit code and no `Report`: C1 of the same file. The workaround on the
+  consumer's side: the binary computes the list in a function of its own, and a test calls that
+  function. It tests what the binary passes, not what the core does with it.
 
 The README of the core, `path@core@README.md`, states two output contracts: for `check`, the order
 of the summary, the findings and the verdict line; and for a generated file-register index, written
