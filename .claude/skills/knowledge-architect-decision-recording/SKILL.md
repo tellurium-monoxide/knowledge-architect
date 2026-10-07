@@ -341,7 +341,7 @@ must not describe as rejected a design the project now has.
 ## 7. Tripwires from a premortem
 
 A design discussion that runs a premortem ends with it, and the owner rules on which of its surviving causes
-become tripwires. **A tripwire is written at harvest, with the decision it guards, and only on the
+become tripwires, each by the label, `T<n>`, it was put to the owner under. **A tripwire is written at harvest, with the decision it guards, and only on the
 owner's word.** It goes in the tripwires home of the Component that owns the guarded decision, so
 the decision's head exists before the tripwire that names it. Its shape and its lifecycle are
 `knowledge-architect-issue-tracking`.
