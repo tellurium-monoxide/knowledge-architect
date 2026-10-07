@@ -5,9 +5,9 @@ slice builds; what crosses slices is in the milestone document. Every item it ci
 there, except its own acceptance criterion. It starts after slice 1 and the snippet branch have
 merged.
 
-**The repairs of the first three classes in the mapping table, and the narrowed head's use of
-`path@*@<path>` for the directory shape, rest on the first default awaiting the owner in the
-milestone document.** Until the owner rules on it, they are that default, not a decided shape.
+The repairs of the first three classes in the mapping table, and the narrowed head's use of
+`path@*@<path>` for the directory shape, follow the owner's ruling in R8, recorded under
+#shipped-text-entry-references-only.
 
 ## Builds
 
@@ -106,7 +106,7 @@ each Component's own copy, required by `design@core@components-carry-the-same-do
 true in every project that installs the text, and it shows the syntax the checker enforces there
 (a67). The checker accepts the generic anchor for every shape of a required document, so the
 directory shape is written as a reference too: `path@*@docs/goals/`. The head is rewritten in place
-under a slug that names the narrowed rule. This rests on the first default awaiting the owner.
+under a slug that names the narrowed rule. The owner ruled this in R8.
 
 The plain-text paths of the shipped text are no longer hidden from the walk, so the walk also
 checks that each generic path names a document the workflow requires, or a path that at least one

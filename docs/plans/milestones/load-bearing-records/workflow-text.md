@@ -124,9 +124,9 @@ at that code, not the design home (a23); the tests are where the checker's reach
 comment cannot be cited (a29). Nearest rival: a head for every decision that was discussed with the
 owner. It is what this session did on the snippet branch, and the owner judged the result
 unneeded (a1, a2). The head names `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
-The audit may reopen it, on the owner's word: where the owner read the sample, over-recording was
-below the threshold (a36); for agent-skills the outcome stays unconfirmed until the cleanup issue
-judges each head in full (a65).
+The owner discharged the audit's condition in R8: the audit changed nothing the owner found
+critical in the code Components, and agent-skills, whose outcome stays unconfirmed (a65), differs
+in scope and structure.
 
 ### #local-intent-binds: the order, and what an agent does
 
@@ -312,7 +312,7 @@ At this slice's landing, under `knowledge-architect-decision-recording` and
 | the intent-and-claims rule's third class | `design@agent-skills@primer-content`: its bullet naming two classes names three, within its title; the root `path@knowledge-architect@CLAUDE.md` restates the three classes under "Verify before relying on anything", with its pointer to the head of #local-intent-binds |
 | the two issues citing `design@agent-skills@conformance-before-every-merge` | `issue@agent-skills@a-design-issue-s-re-entry-point-is-read-by-no-review`: its sentence on work neither designed nor planned restated for work that bypasses the design skill; `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`: judged at the audit |
 | #record-audit | `planned@agent-skills@docs/open-issues/heads-no-entry-test-admits.md` |
-| the lead of the closed issue, if the owner keeps the default | `planned@agent-skills@docs/open-issues/the-open-space-test-may-admit-every-problem.md`, a `question` |
+| the lead of the closed issue, ruled in R8 | `planned@agent-skills@docs/open-issues/the-open-space-test-may-admit-every-problem.md`, a `question` |
 | #record-test-at-classification | none: superseded, named in the harvest's commit |
 
 The rename of `design@agent-skills@bounded-problem-branch` rewrites, in the same commit, every
