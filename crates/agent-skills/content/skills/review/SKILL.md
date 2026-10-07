@@ -127,6 +127,10 @@ reviewer's axis, an observation it declined to call a finding, a remark that a d
 change. Each is a claim about the work like any finding. So is a repair the dispatcher promised the
 owner while answering a review. The record of the review lists each item with its outcome.
 
+**A repair that makes or reverses a decision is reviewed by the decision-record axis**, whichever
+axis's finding it answers, before the last transcript review; the review ends with that review's
+repairs. A repair that only corrects is reviewed by no axis again.
+
 **An item whose outcome turns on a ruling the owner has not given is put to the owner** before its
 outcome is recorded, and its outcome is then one of the three above. **A defect that predates the
 change** is routed by the primer's table of what is met outside the task: a fix checkable from the

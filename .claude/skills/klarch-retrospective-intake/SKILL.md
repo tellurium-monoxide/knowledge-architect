@@ -186,8 +186,8 @@ after that, per `design@knowledge-architect@committed-findings-analysis`:
 1. a commit adds the analysis, with its Outcome lines;
 2. the next commit opens the issues it ruled;
 3. the findings handled now are handled, in as many commits or branches as their routes need;
-4. the commit that carries out its last outcome deletes it, and its message names the analysis by
-   its path. History keeps it: `git log -- docs/retrospective-reports/` lists every analysis.
+4. the commit that carries out its last outcome, or a later commit of the same branch, deletes it,
+   and its message names the analysis by its path. History keeps it: `git log -- docs/retrospective-reports/` lists every analysis.
 
 A finding handled now can turn out to need a design discussion and a plan. Its Outcome line is then
 rewritten, on the owner's word, to name the plan document or the issue that now carries it, so the
