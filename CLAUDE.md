@@ -17,8 +17,8 @@ a better argument can rebut. Recorded decisions were often argued before the cod
 implementation is expected to prove some of them wrong: reversing one is an ordinary move, and
 `knowledge-architect-decision-recording` owns what it costs.
 
-The repository is a virtual workspace with five Components, each crate in a directory named by its
-role, per `design@knowledge-architect@crate-directory-named-by-role`:
+The repository is a virtual workspace with five Components, none in a directory named after the
+project, per `design@knowledge-architect@no-directory-named-after-the-project`:
 
 | Component | directory | what it is |
 | --- | --- | --- |

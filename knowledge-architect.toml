@@ -10,8 +10,9 @@
 # path relative to this file's own directory.
 
 # The components. The project root is a component too, named by `name`; every other one is named
-# by the basename of its directory, so a crate directory is named by its role and never by its
-# package: a directory named `knowledge-architect` would collide with the root's name.
+# by the basename of its directory, so no directory is named after the project: a directory named
+# `knowledge-architect` would collide with the root's name. The decision is
+# `design@knowledge-architect@no-directory-named-after-the-project`.
 [project]
 name = "knowledge-architect"
 # The checker this repository runs is the one it builds, so its version is the tree's own: the

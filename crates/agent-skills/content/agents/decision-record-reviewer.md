@@ -68,7 +68,7 @@ only in a doc comment, a scoped `CLAUDE.md` or a commit has no home a later read
 `git log -G'<slug>'` reaches nothing. The tell is a head elsewhere that leans on it by description
 rather than by slug.
 
-**Does a head admitted by test 4 alone record the owner's own intent?** It quotes the owner's words:
+**Does a head admitted by §2's test 4 alone record the owner's own intent?** It quotes the owner's words:
 a ruling an agent could otherwise reverse as a small fix, or an argument the owner made. A head
 whose only word of the owner is an approval of the agent's proposal, or a hedged proposal with no
 argument, earned no entry. Read the commit or the plan document that recorded the ruling.

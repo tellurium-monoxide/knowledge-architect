@@ -494,7 +494,8 @@ things in one commit:
 - it removes the citation from the citing plan;
 - it opens a `question` issue in the root's issue register, under
   `knowledge-architect-issue-tracking`: does the citing plan still hold now that the leaving plan is
-  built? It is answered by reading the citing plan against what the leaving plan harvested. The
+  built, accounting for deviations or other unplanned happenings? It is answered by reading the
+  citing plan against what the leaving plan harvested. The
   issue cites the citing plan, so it cannot outlive it, and its `Why it matters` cites the leaving
   plan's harvested design entries, since the leaving plan no longer exists. For a milestone, its
   next slice's audit reads the issue.

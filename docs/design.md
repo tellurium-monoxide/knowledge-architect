@@ -13,7 +13,7 @@ skills are shaped is `path@agent-skills@docs/design.md`.
 
 ## 1. Layout and packaging
 
-### No directory is named after the project, and a published crate's directory may differ from its package's name `##crate-directory-named-by-role`
+### No directory is named after the project, and a published crate's directory may differ from its package's name `##no-directory-named-after-the-project`
 
 A Component is named by the basename of its directory, and the project root by the project's name,
 so a directory named `knowledge-architect` would collide with the root: a run over a scratch project
@@ -28,7 +28,7 @@ packages deserves the record".
 
 Users install and depend on `knowledge-architect`. The package lives in crates/core and its
 component is named `core`, so a reference says `core` where cargo says `-p knowledge-architect`.
-That difference is the cost of `design@knowledge-architect@crate-directory-named-by-role`'s naming rule, and it is
+That difference is the cost of `design@knowledge-architect@no-directory-named-after-the-project`'s naming rule, and it is
 the usual shape of a Rust workspace.
 
 ### The installed text lives in its own crate, which the checker depends on `##two-crates`
