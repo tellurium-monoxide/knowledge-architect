@@ -115,7 +115,7 @@ Findings, each with:
   what is built or a load-bearing decision; **major** for an item of §2 with no durable outcome;
   **minor** for a ruling recorded a little wider, narrower or firmer than the owner gave it on a
   detail that is not load-bearing, and for an argument attributed to the owner that is not the
-  owner's. A minor misstated ruling still goes to the owner: the owner's words weigh heavily on any
+  owner's. A misstated ruling that is neither critical nor minor is major. A minor misstated ruling still goes to the owner: the owner's words weigh heavily on any
   agent that records them, so such slips recur at a low rate, and this review is where they are
   caught;
 - the quotation from the transcript, and for §4 the quotation from the tree or the history;

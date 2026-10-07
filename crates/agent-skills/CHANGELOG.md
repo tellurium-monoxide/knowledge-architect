@@ -38,7 +38,7 @@ subsection is omitted.
   as intent below the design home and is read before code is removed, and the decision-record
   reviewer reports a diff that defeats one.
 - `agent-skills`, patch: the transcript reviewer rates a misstated ruling critical only when it is
-  reversed or changes what is built, and the retrospective counts a minor one caught before the
+  reversed or changes what is built or a load-bearing decision, and the retrospective counts a minor one caught before the
   merge as no finding.
 
 ## 0.4.0

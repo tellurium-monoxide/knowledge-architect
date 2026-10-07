@@ -20,7 +20,10 @@ session's own record against the committed document.
 **Evidence when written:** in the commit that added the structured-plans milestone document, its
 transcript reviewers found three rulings recorded wider than the owner made them. The author wrote
 each of the three, and the extraction none, and each was repaired before that commit. That is
-before the commit, so it did not fire; it is why the guard exists.
+before the commit, so it did not fire; it is why the guard exists. Two later instances, in the
+discussion that produced the milestone load-bearing-records and in an earlier spec, recorded a
+hedged word of the owner firmer than given, on details that were not load-bearing; the owner ruled
+that such a slip is minor and not a defect, and under the firing condition above neither fires.
 
 ## Guarding `design@agent-skills@expectation-set-bounds-scope` `##expectation-set-closes-a-contradiction`
 

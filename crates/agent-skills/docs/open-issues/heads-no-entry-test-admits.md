@@ -5,7 +5,8 @@ kind: todo
 
 ## Summary
 
-An audit of the 178 design heads of this repository, read against the entry tests of
+An audit of the 178 design heads the design homes held when the tests were decided, read against the
+entry tests of
 `design@agent-skills@a-head-is-owed-by-an-entry-test`, found 16 heads that no test admits, and the
 owner named a few more to drop or split. They are still in the design homes, which every grounding
 reads whole.
@@ -23,12 +24,12 @@ TM is the test of `design@agent-skills@instruction-record-is-minimal`.
 
 The work:
 
-- the 16 heads admitted by no test: `toolchain-is-pinned` (root);
-  `content-mirrors-the-install-layout`, `in-change-waits-for-premortem`,
-  `plan-landing-is-not-tied-to-its-work`, `argument-ids`, `retiring-plan-opens-issue`,
-  `setup-rust-section`, `setup-default-crates-io-page`, `component-goal-refines-root`,
-  `retro-content`, `premortem-as-watch-points`, `retro-two-files`, `finding-ids`,
-  `version-in-report`, `retro-file-location` (agent-skills); `spec-file-owns-its-items` (core);
+- the 16 heads admitted by no test: `design@knowledge-architect@toolchain-is-pinned` (root);
+  `design@agent-skills@content-mirrors-the-install-layout`, `design@agent-skills@in-change-waits-for-premortem`,
+  `design@agent-skills@plan-landing-is-not-tied-to-its-work`, `design@agent-skills@argument-ids`, `design@agent-skills@retiring-plan-opens-issue`,
+  `design@agent-skills@setup-rust-section`, `design@agent-skills@setup-default-crates-io-page`, `design@agent-skills@component-goal-refines-root`,
+  `design@agent-skills@retro-content`, `design@agent-skills@premortem-as-watch-points`, `design@agent-skills@retro-two-files`, `design@agent-skills@finding-ids`,
+  `design@agent-skills@version-in-report`, `design@agent-skills@retro-file-location` (agent-skills); `design@core@spec-file-owns-its-items` (core);
 - `design@agent-skills@roadmap-home`, which passes, and which the owner judged unneeded: "It is
   something that has no reason to ever change, and the path being named in multiple places is just
   basic self consistency.";
@@ -42,26 +43,26 @@ The work:
   `design@knowledge-architect@a-past-sentence-is-rewritten` to agent-skills: they shape the installed
   text, which the primer and two installed skills restate, so their home is that Component.
 
-The audit agents' reasons for the 16, as they wrote them:
+The audit agents' reasons for the 16, as they wrote them, with the line numbers they gave dropped:
 
 | head | the audit agent's reason |
 | --- | --- |
-| `toolchain-is-pinned` | T2new fails: one site, rust-toolchain.toml, whose comment already carries the reason. T3 fails: the argument turns on clippy adding lints across releases, not on a reading of rustup's spec (unsure). T1: none. Built, so no T2old. |
-| `content-mirrors-the-install-layout` | FILES stays `&[(&str,&str)]` whether generated or hand-written, so no T1; built; one site, build.rs, carries it; about the crate's build, not the installed text's intent, so TM fails. (unsure: core's namespace test is a second site) |
-| `in-change-waits-for-premortem` | One site: the design skill; TM fails: no owner ruling, rationale of one instruction. |
-| `plan-landing-is-not-tied-to-its-work` | One site: the planning skill; TM fails: "an owner plans" is generic, no ruling. (unsure: may be an unmarked owner ruling) |
-| `argument-ids` | Id convention `a<n>` stated in planning only; ids are core's grammar either way, so no T1w; no owner ruling or two-part consistency. |
-| `retiring-plan-opens-issue` | One site: planning §9; TM fails: no owner ruling, no two-part consistency stated. (unsure: wording "unplanned happenings" may be the owner's) |
-| `setup-rust-section` | One site: setup skill (and its snippet); no owner ruling; no interface. |
-| `setup-default-crates-io-page` | One site: setup skill; a proposal, not a format; consistency is with this repo's own decision, not two workflow parts. |
-| `component-goal-refines-root` | One site: goal-setting; TM fails: consistency is with a root decision, not two workflow parts. (unsure) |
-| `retro-content` | One site: retrospective; TM fails: scope of "missing" is rationale. |
-| `premortem-as-watch-points` | One site: retrospective's standing questions; TM fails: no ruling, no consistency argued. |
-| `retro-two-files` | One site: retrospective; no ruling. |
-| `finding-ids` | One site: retrospective; an id convention of one text. |
-| `version-in-report` | One site: retrospective. |
-| `retro-file-location` | One site: retrospective; the owner's choice is made at run time, not a recorded ruling. |
-| `spec-file-owns-its-items` | T1/T1w fail: internal ownership mechanism, citations unchanged. T2new fails: one site, `Anchors::owns_entry` in entity.rs. T2old/T3 fail. (unsure: the rival "every spec a directory" would change the layout) |
+| `design@knowledge-architect@toolchain-is-pinned` | T2new fails: one site, rust-toolchain.toml, whose comment already carries the reason. T3 fails: the argument turns on clippy adding lints across releases, not on a reading of rustup's spec (unsure). T1: none. Built, so no T2old. |
+| `design@agent-skills@content-mirrors-the-install-layout` | FILES stays `&[(&str,&str)]` whether generated or hand-written, so no T1; built; one site, build.rs, carries it; about the crate's build, not the installed text's intent, so TM fails. (unsure: core's namespace test is a second site) |
+| `design@agent-skills@in-change-waits-for-premortem` | One site: the design skill; TM fails: no owner ruling, rationale of one instruction. |
+| `design@agent-skills@plan-landing-is-not-tied-to-its-work` | One site: the planning skill; TM fails: "an owner plans" is generic, no ruling. (unsure: may be an unmarked owner ruling) |
+| `design@agent-skills@argument-ids` | Id convention `a<n>` stated in planning only; ids are core's grammar either way, so no T1w; no owner ruling or two-part consistency. |
+| `design@agent-skills@retiring-plan-opens-issue` | One site: planning §9; TM fails: no owner ruling, no two-part consistency stated. (unsure: wording "unplanned happenings" may be the owner's) |
+| `design@agent-skills@setup-rust-section` | One site: setup skill (and its snippet); no owner ruling; no interface. |
+| `design@agent-skills@setup-default-crates-io-page` | One site: setup skill; a proposal, not a format; consistency is with this repo's own decision, not two workflow parts. |
+| `design@agent-skills@component-goal-refines-root` | One site: goal-setting; TM fails: consistency is with a root decision, not two workflow parts. (unsure) |
+| `design@agent-skills@retro-content` | One site: retrospective; TM fails: scope of "missing" is rationale. |
+| `design@agent-skills@premortem-as-watch-points` | One site: retrospective's standing questions; TM fails: no ruling, no consistency argued. |
+| `design@agent-skills@retro-two-files` | One site: retrospective; no ruling. |
+| `design@agent-skills@finding-ids` | One site: retrospective; an id convention of one text. |
+| `design@agent-skills@version-in-report` | One site: retrospective. |
+| `design@agent-skills@retro-file-location` | One site: retrospective; the owner's choice is made at run time, not a recorded ruling. |
+| `design@core@spec-file-owns-its-items` | T1/T1w fail: internal ownership mechanism, citations unchanged. T2new fails: one site, `Anchors::owns_entry` in entity.rs. T2old/T3 fail. (unsure: the rival "every spec a directory" would change the layout) |
 
 The counts, per Component:
 
@@ -87,8 +88,8 @@ What the cleanup owes before it deletes anything:
   `design@agent-skills@design-hands-off-to-planning` "not critical, but they still carry useful
   informations".
 - **Content worth keeping from an agent-skills head goes into a `%%` line** beside the instruction
-  it explains, once the milestone's second slice has landed; until then, the agent-skills part
-  waits.
+  it explains, once the second slice of `milestone@plans@load-bearing-records` has landed; until
+  then, the agent-skills part waits.
 
 ### Why it matters
 

@@ -207,8 +207,9 @@ A project that already has documentation keeps it until its move is planned:
    documents, decision records, notes, an issue tracker, a `CLAUDE.md` or another agent's
    configuration.
 2. **Propose a destination for each**, by the primer's knowledge table: a goal, a design entry, a
-   rejected alternative, an issue, a tripwire, a scoped `CLAUDE.md`, a skill, or nothing, for history
-   that records no current decision. Say what is uncertain: which recorded decisions still hold, and
+   rejected alternative, an issue, a tripwire, a scoped `CLAUDE.md`, a skill, a comment at the code
+   for a decision that earns no design entry, or nothing, for history that records no current
+   decision. Say what is uncertain: which recorded decisions still hold, and
    which describe a design the code has left.
 3. **The owner rules** on the proposal.
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the

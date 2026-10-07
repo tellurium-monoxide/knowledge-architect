@@ -130,7 +130,8 @@ defect of the skill (§2). A skill not listed here states none yet.
 
 ### `knowledge-architect-design`
 
-- **The owner brings a design question, not a task order.** The mode assumes the answer is not yet
+- **The owner brings a design question, or a requested change for the skill to ground, not a task
+  order to execute unexamined.** The mode assumes the answer is not yet
   known by either party. Given a decision already made, it argues against it, because testing a
   proposal is what it is for. Given bounded work, it sends one proposal, and the owner rules on it
   or answers with an argument, which returns the work to the loop. An owner who neither rules nor
