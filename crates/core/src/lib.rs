@@ -186,6 +186,10 @@
 //! reads: a failure then names each finding gained or lost. The wording of a finding is left out
 //! of the set, since a rewording is no change to what the check reports.
 //!
+//! **A test reads the report's data, not the text the core prints.** `report.checks` lists the
+//! checks the last phase ran, in the order of the `checked:` line, `report.not_run` the checks the
+//! tree gave no input to, and `report.summaries` each extension's block of the summary.
+//!
 //! # Compatibility
 //!
 //! Under the crate's versioning policy, a breaking change to this API is major. While the

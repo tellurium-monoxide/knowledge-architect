@@ -741,7 +741,7 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
     let reference = args.reference.trim_matches('`');
     let (kind, anchor, id) = match crate::entity::candidate(reference, &anchors) {
         Candidate::Reference { kind, anchor, id } => (kind, anchor, id),
-        Candidate::Malformed { why } => {
+        Candidate::Malformed { why, .. } => {
             return Err(format!("{reference} is malformed: {why}"));
         }
         Candidate::AnchorInKindPosition { head } => {
