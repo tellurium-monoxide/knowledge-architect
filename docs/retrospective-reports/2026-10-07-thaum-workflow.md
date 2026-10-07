@@ -154,6 +154,8 @@
   `path@knowledge-architect@docs/retrospective-reports/2026-10-06-thaum-workflow.md`.
 - **A pointer no checked form expresses:** the root of a location, which C1 above shows a checked
   form serves.
+- **Default:** no change beyond C1.
+- **Outcome:** pending.
 
 ## Noted, not findings
 
@@ -162,3 +164,18 @@
   project having it. No change.
 - **A `show` loop reading stdin.** Not reproduced. The checker spawns git only, with `Stdio::null()`
   unless input is piped (`path@core@src/git.rs` lines 93-97). No change.
+
+- **Default:** no change for either noted item.
+- **Outcome:** pending.
+
+## Standing entries: two tripwires the file comes near
+
+- **`tripwire@agent-skills@ruling-lost-in-change`**, on W1 and W4. It fires on a ruling "found
+  missing from, or misstated in, the commit message that carries the deliberation of a discussion
+  on the in-change path, after the branch's transcript review". Here the transcript reviewer found
+  the ruling before the merge. Judgement proposed: not fired.
+- **`tripwire@agent-skills@search-missed-before-the-work`**, on W3. It fires on an entry the work
+  bears on that no search before the work returned. W3 is about the searchers' scratch files; the
+  file reports no missed entry. Judgement proposed: not fired.
+- **Default:** neither fired; no response.
+- **Outcome:** pending.

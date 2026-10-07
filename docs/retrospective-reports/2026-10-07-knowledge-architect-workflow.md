@@ -212,3 +212,23 @@ Analysed with C1 of 2026-10-07-thaum-workflow, as one cluster, in
   The trigger of `issue@agent-skills@patching-an-installed-skill` asks for a session that needed to
   change or remove an instruction for its own work; it is not met.
 - **The other two answers** name no gap.
+- **Default:** no change; the trigger of `issue@agent-skills@patching-an-installed-skill` is not met.
+- **Outcome:** pending.
+
+## Standing entries: two tripwires the file comes near
+
+- **`tripwire@agent-skills@a-head-verdict-is-overruled`**, on W1 and W2. It fires the second time
+  the owner overrules a review's verdict on a head. The owner's words in that session, "Me saying
+  "They should be kept anyway" was me thinking that those heads would pass other record tests, not
+  a direct ruling", are recorded in the message of the commit "A decision-record review read test
+  4's new shape", which also says "So it is no overruling of a review's verdict". Judgement
+  proposed: not fired.
+- **`tripwire@core@candidate-rule-silence`**, on C3. It fires on "a backticked span that was meant
+  as a reference and for which `cargo klarch check` reported nothing". The file does not say whether
+  the three bare slugs were backticked, and the sites were repaired before the merge, so the
+  evidence is not established. The C3 section above proposed to judge it fired; the issue opened
+  for C3, `issue@core@a-bare-mention-of-a-deleted-entry-is-never-reported`, records it as not
+  established. Judgement proposed: not established, so no response now; the issue's census will
+  show whether such spans are backticked.
+- **Default:** the first not fired; the second not established, carried by the issue.
+- **Outcome:** pending.
