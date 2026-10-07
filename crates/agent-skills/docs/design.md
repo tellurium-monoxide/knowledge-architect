@@ -35,7 +35,9 @@ A line of a file of content/ whose first two characters are `%%` is a comment fo
 repository's maintainers. It sits beside the instruction it explains, and it may cite design heads
 and issues, which the walk checks, since content/ is in the walk. The build removes it whole, so no
 installed file holds it; a `%%` line inside a fenced block, or one with leading spaces, fails the
-build rather than ship. It gives the installed text what a comment gives code, the reason at the
+build rather than ship. The crate's published source holds the comment lines as written, with their
+citations of this repository: no installing project reads that source, only the text the install
+writes. It gives the installed text what a comment gives code, the reason at the
 site it explains, per `design@agent-skills@local-intent-binds`, so a decision about one instruction
 need not take a head, per `design@agent-skills@a-head-is-owed-by-an-entry-test`. The owner's
 argument: it "would solve in good part the problem where the design heads of the workflow get
@@ -49,8 +51,10 @@ for the long term". The marker `%%` has no Markdown meaning, reads as a comment 
 Obsidian, and cannot collide with a Rust snippet, whose comments are `//`. The comments are checked
 by putting content/ back in the walk, rather than leaving them unchecked or adding a test in this
 repository that would repeat the checker's reference reading. A declaration in the published
-checker would cater to this repository's use in what consumers receive; the owner: "I don't want to
-cater too much to this use case in the installed files".
+checker would cater to this repository's use in what consumers receive. That extends to the checker
+what the owner said of the installed files: "I don't want to cater too much to this use case in the
+installed files"; the extension is the session's argument, which the owner's choice of content/ in
+the walk followed.
 
 ### The shipped text cites no entry of this repository, and may write a path every conforming project holds as a reference `##shipped-text-cites-no-entry`
 
@@ -64,8 +68,10 @@ that every conforming project holds may be written as a reference: `path@*@docs/
 each Component's own copy, required by `design@core@components-carry-the-same-documents`, and
 `path@plans@README.md` names a file of the one plans directory, whose path the checker fixes, per
 `design@core@plans-dir-fixed`. Either is true in every installing project, and it shows the syntax
-the checker enforces there; the owner: "it promotes the same kind of syntax as what the checker
-enforces in projects holding the installed skills". The checker accepts every shape of a required
+the checker enforces there. The owner, of the per-Component paths: "it promotes the same kind of
+syntax as what the checker enforces in projects holding the installed skills"; the same holds of
+the plans directory's paths, which the owner approved with the default for the repairs:
+"Agreed on the three items awaiting my ruling." The checker accepts every shape of a required
 document, per `design@core@reserved-anchors`, so where the text names both shapes, both are
 references. A path that varies by project, and an illustration, are placeholders in
 angle brackets. The command a project runs is written as the placeholder that the install fills
