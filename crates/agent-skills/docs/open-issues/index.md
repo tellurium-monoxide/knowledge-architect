@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-17 entries
+18 entries
 
 | kind | title |
 | --- | --- |
@@ -8,6 +8,7 @@
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | design | [The workflow assumes one owner, unnamed, which a project with several contributors does not have](the-workflow-assumes-one-unnamed-owner.md) |
 | question | [A design issue's re-entry point is read by no review](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |
+| question | [A project that receives a retrospective's findings has no installed procedure to analyse them](a-received-retrospective-file-has-no-installed-analysis.md) |
 | question | [A word of the owner given on a premise that later proved false has no rule outside a design discussion](a-word-given-on-a-false-premise-outside-a-discussion.md) |
 | question | [Whether synthetic evidence about the workflow is built at all, and under which conditions, is undecided](synthetic-evidence-about-the-workflow-is-undecided.md) |
 | question | [Does test 3 admit a decision that only follows a practice its tool's documentation explains?](test-3-admits-a-practice-its-tool-documents.md) |
