@@ -214,7 +214,7 @@ The recorded decisions the work reverses or rewrites, each with every text that
 | --- | --- | --- | --- |
 | `design@agent-skills@bounded-problem-branch` | reversed by the bounded path | only the issue that asked for a skill for bounded problems, which this document's commit closes | slice 1, rewritten in place under a new slug |
 | `design@agent-skills@standing-entries-searched-before-the-work` | bounded work routed through the design skill is searched at its grounding | `design@agent-skills@conformance-before-every-merge`; `tripwire@agent-skills@search-missed-before-the-work`; `tripwire@agent-skills@deferred-trigger-met-by-undesigned-work` | slice 1 |
-| `design@agent-skills@conformance-before-every-merge` | its paragraph that parks a search before undesigned work, "proposed again at the design of a skill for bounded problems", is answered | none besides the design home | slice 1 |
+| `design@agent-skills@conformance-before-every-merge` | its paragraph that parks a search before undesigned work is answered: the design skill hosts it for bounded work | `design@agent-skills@standing-entries-searched-before-the-work`; `issue@agent-skills@a-design-issue-s-re-entry-point-is-read-by-no-review`, whose sentence "Work that is neither designed nor planned meets it at no step" stops holding for bounded work; `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` | slice 1 |
 | `design@agent-skills@primer-content` | the intent-and-claims rule gains a class, within the head's title | `path@knowledge-architect@CLAUDE.md` (its restatement of the primer's content); `path@agent-skills@docs/rejected-alternatives.md` | slice 1 |
 | `design@agent-skills@shipped-text-is-reference-free` | narrowed to "no reference to an entry", renamed | `path@agent-config@skills/klarch-release/SKILL.md` (its shipped-text step); `path@agent-skills@CLAUDE.md`; `issue@agent-skills@shipped-text-is-reference-free-mechanically` | slice 2 |
 | `issue@agent-skills@shipped-text-is-reference-free-mechanically` | rewritten: the walk exclusion goes, and the check applies to the installed copies | `path@agent-config@skills/klarch-release/SKILL.md`; `path@agent-skills@CLAUDE.md`; `path@agent-skills@docs/design.md` (the head above); `path@knowledge-architect@docs/design.md` (the list of `design@knowledge-architect@stays-at-zero-x`) | slice 2 |
@@ -322,7 +322,11 @@ Weighed; stated by the owner in R1, from no goal. Met in part by #record-volume 
   "record-volume: approved with that shape. But the result of the audit could still change that."
 - **Shape:** the decided design of slice 1. **Harvest:** a new head of agent-skills recording the
   entry tests and the principle, under a slug that names the decision, slice 1.
-- **Relations:** the audit could reopen it; it did not (a36, a65).
+- **Relations:** the audit may reopen it, as the owner's condition in R3 and the checkpoint row of
+  R6 say. Where the owner read the sample, it found over-recording below the threshold (a36). For
+  agent-skills its outcome is unconfirmed (a65): the cleanup issue judges each head in full, and
+  its result can reopen this thread. `issue@agent-skills@the-retrospective-counts-no-review-cost`
+  records the instrument that would measure what the design homes cost a session (a14).
 
 ### No new wording in the design and planning skills: the entry tests move to classification `##record-test-at-classification`
 
@@ -941,7 +945,8 @@ merge the snippet branch, then slice 2."
 
 Slice 1 comes first because its entry tests decide which records slice 2 writes, among them that
 #delivery-substitutions earns no head; and slice 2 comes after the snippet branch because it
-extends that branch's placeholder mechanism in `path@agent-skills@build.rs`.
+adds its comment strip and its substitutions beside that branch's placeholder mechanism in
+`path@agent-skills@build.rs`.
 
 ## Defaults awaiting the owner
 
@@ -961,7 +966,10 @@ extends that branch's placeholder mechanism in `path@agent-skills@build.rs`.
 - **The lead of the closed issue** (#bounded-path-in-design). The issue that asked for a skill for
   bounded problems, closed by the commit that adds this document, carried a lead, from a review of
   the project the design skill came from: "a second defensible shape is nameable for nearly any
-  request". It also said that the lead, untested by then, is carried to an issue of its own about
+  request", which would make the design skill's open-space test classify almost every problem as
+  open, and leave the bounded case nearly unreachable. No session had shown it. Its last state is
+  `path@elsewhere@crates/agent-skills/docs/open-issues/a-skill-for-bounded-problems.md`, read with
+  `git show` at the parent of the commit that adds this document. It also said that the lead, untested by then, is carried to an issue of its own about
   the design skill. Default: slice 1 opens `the-open-space-test-may-admit-every-problem`, a
   `question`, with that lead. It is the opposite failure to P1, and the bounded path's third
   condition is where it would show.
