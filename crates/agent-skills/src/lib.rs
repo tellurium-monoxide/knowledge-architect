@@ -39,6 +39,29 @@ mod tests {
         );
     }
 
+    /// No shipped file holds a `%%` line: the build removes each comment line, and refuses one it
+    /// would ship, per the acceptance criterion `no-comment-line-ships` of the milestone
+    /// load-bearing-records.
+    #[test]
+    fn no_shipped_file_holds_a_comment_line() {
+        for (path, text) in FILES {
+            assert!(
+                !text.lines().any(|line| line.trim_start().starts_with("%%")),
+                "{path} ships a `%%` line"
+            );
+        }
+    }
+
+    /// No shipped file holds an unfilled substitution placeholder. The text holds `{{` only as the
+    /// install's `{{command}}` and as the `${{` of a GitHub Actions expression.
+    #[test]
+    fn no_shipped_file_holds_an_unfilled_placeholder() {
+        for (path, text) in FILES {
+            let rest = text.replace("{{command}}", "").replace("${{", "");
+            assert!(!rest.contains("{{"), "{path} ships an unfilled placeholder");
+        }
+    }
+
     /// No shipped file holds a snippet placeholder: a line that is not exactly one, such as an
     /// indented one, is left as it is by the build.
     #[test]
