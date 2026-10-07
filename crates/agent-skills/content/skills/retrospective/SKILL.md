@@ -53,9 +53,10 @@ done instead.
 %% without restating it. An interaction finding has an id in each file because the workflow's file
 %% may be published without the project's.
 **Each finding is named by a letter and a number**, so that a fix, an issue or a commit can cite it
-in a few characters, as "W3 of the retrospective of <date>": **W** for the installed skills and
-agents, **C** for the checker, **P** for the project's own instructions. Numbers run from 1 within
-each letter, in order of appearance, so an id is unique within one retrospective. An interaction
+by its id and the stem of its file (§3), as "W3 of <date>-<project>-<subject>-klarch-workflow":
+**W** for the installed skills and agents, **C** for the checker, **P** for the project's own
+instructions. Numbers run from 1 within each letter, in order of appearance, so an id is unique
+within one file, and the stem makes the citation unique across retrospectives. An interaction
 finding whose fix may fall on either side goes in both files (§3) and gets one id in each, each
 naming the other, since the two files may be read apart. The standing questions below take no id: they are answers, not findings.
 
@@ -101,8 +102,17 @@ Each finding goes to the file of the project whose text or code must change:
 
 | file | holds |
 | --- | --- |
-| `<YYYY-MM-DD>-<project>.md` | what the session did and the version it used, the findings on the project's own instructions, and the project's side of an interaction |
-| `<YYYY-MM-DD>-<project>-workflow.md` | what the session did and the version it used, the findings on the installed skills and agents and on the checker, the workflow's side of an interaction, and the answers to the standing questions |
+| `<YYYY-MM-DD>-<project>-<subject>.md` | what the session did and the version it used, the findings on the project's own instructions, and the project's side of an interaction |
+| `<YYYY-MM-DD>-<project>-<subject>-klarch-workflow.md` | what the session did and the version it used, the findings on the installed skills and agents and on the checker, the workflow's side of an interaction, and the answers to the standing questions |
+
+%% A date and a project do not tell two retrospectives apart: three were written on one day, two of
+%% them for one project, and a citation by date named three findings. The subject makes the stem
+%% unique, and "klarch-workflow" says whose workflow the file is about, where "workflow" alone could
+%% name the project's own.
+`<subject>` names the session's work in a few words, in lowercase joined by hyphens, such as
+`pin-move`. The session proposes it, and the owner may change it on reading the files. Before
+writing, check that neither name exists in the directory: a file is never overwritten, and two
+retrospectives of one project on one day differ by their subject.
 
 An interaction finding whose fix may fall on either side goes in both files, each written from its
 own side.

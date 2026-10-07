@@ -342,11 +342,33 @@ skills do not mention the case: outside this repository the collision is unlikel
 it in the shipped text would be read by every installing project for a risk the owner judges very
 small.
 
-### This repository's retrospective findings go to its own registers `##retrospective-findings-stay-here`
+### This repository's retrospective findings stay in this repository, never on GitHub `##retrospective-findings-stay-here`
 
 A retrospective writes one file for the project and one for the workflow, and the workflow's file
 becomes an issue on knowledge-architect's repository where the owner directs it there, per
 `design@agent-skills@retrospective-destination`. Here the project is that repository, so the owner
-directs both files to this repository's own issue registers: an issue on GitHub would be a second
-place for what is open, beside the registers, against
-`goal@knowledge-architect@structure-and-workflow-work-together`.
+directs the findings of both files to this repository: each is handled in a session, or opened as an
+entry in its own issue registers. An issue on GitHub would be a second place for what is open,
+beside the registers, against `goal@knowledge-architect@structure-and-workflow-work-together`.
+
+### A received retrospective file is analysed in a committed file, which leaves when its last outcome is carried out `##committed-findings-analysis`
+
+A retrospective's workflow file that this repository receives, from its own sessions or from a
+project that uses the workflow, and the project file of this repository's own retrospective, are
+each analysed finding by finding under `klarch-retrospective-intake`,
+and the analysis is a file of `path@knowledge-architect@docs/retrospective-reports/`, named by the
+received file's stem. Each finding gets one of three outcomes, ruled by the owner: handled now,
+opened as an issue, or no change with the reason, per `goal@knowledge-architect@the-owner-decides`.
+The analysis is committed with the owner's ruling on each finding, the issues it rules are opened
+next, the findings handled now are handled, and the commit that carries out its last outcome
+deletes it. A finding handled now that grows into a design discussion has its outcome rewritten,
+on the owner's word, to name the plan document or the issue that carries it, so the file still
+leaves. The repository is public and the workflow file is the one a retrospective writes to be
+publishable, so the analysis names nothing of another project beyond what its workflow file holds,
+and no path or design head of it.
+
+The file is the record of the rulings, so every finding of a received file reaches an outcome that
+history keeps, per `goal@knowledge-architect@the-workflow-improves-through-real-use`. Its nearest
+rival, the ledger of outcomes in the message of the commit that handles the first finding, fails
+on a file whose findings all end in no change: that commit changes no file, and the rebase merge of
+`design@knowledge-architect@git-flow` drops a commit that changes no file.

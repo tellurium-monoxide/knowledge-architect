@@ -494,8 +494,10 @@ two.
 The installed agent `knowledge-architect-standing-entry-searcher` searches one group of a
 project's issue and tripwire entries for those a piece of work bears on. Its description carries
 the dispatch rule, since a dispatcher reads an agent's description and never its body: count the
-rows of the issue and tripwire listings, send one agent per group of at most 60 consecutive
-positions, all in parallel, and brief each with the work, the seeds and its group. A seed is a
+rows of the issue and tripwire listings, send the fewest agents that keep every group at 60
+consecutive positions or fewer, all in parallel, with group sizes that differ by at most one, and
+brief each with the work, the seeds and its group. Equal groups keep a last group of a few entries
+from costing an agent of its own while another carries the full bound. A seed is a
 decision or a goal the work names. Its body fixes the order of the rows, reads every entry of its
 group whole, follows each seed through `show` to the entries that cite it, which it always
 returns, and judges every entry of its group against the work, leaning to recall. It returns every

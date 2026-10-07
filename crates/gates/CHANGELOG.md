@@ -42,6 +42,10 @@ subsection is omitted.
 - `agent-skills`, patch: the transcript reviewer rates a misstated ruling critical only when it is
   reversed or changes what is built or a load-bearing decision, and the retrospective counts a minor one caught before the
   merge as no finding.
+- `agent-skills`, patch: the retrospective names its files
+  `<date>-<project>-<subject>.md` and `<date>-<project>-<subject>-klarch-workflow.md`, never
+  overwrites one, and cites a finding by its id and its file's stem, as "W3 of
+  <date>-<project>-<subject>-klarch-workflow".
 
 ## 0.4.0
 
