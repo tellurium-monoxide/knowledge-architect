@@ -38,6 +38,9 @@ The repairs of the first three classes in the mapping table, and the narrowed he
 | A substitution row that no text uses fails the build | the build | a row whose placeholder is deleted from content/ makes the build panic |
 | The import line the setup skill ships is the one the check looks for | a test in the core over `knowledge_architect_agent_skills::FILES`: the installed setup skill holds `IMPORT_LINE` of `path@core@src/agents.rs`, the only other copy of that literal, which the agent-skills build script cannot read since the core depends on agent-skills | a row whose literal differs by one character fails it |
 | content/ in the walk passes the check | `cargo klarch check` | the probe's 36 findings are the baseline: each repair removes one |
+| No shipped file holds an unfilled substitution placeholder | a test in `path@agent-skills@src/lib.rs` over `FILES`: no text holds `{{` except the install's `{{command}}` and the setup skill's `${{` expressions | a placeholder misspelt in content/, which no row fills, ships, and the test fails |
+| Every commit of the branch builds | `cargo klarch commits`, which builds nothing, does not see it; the branch lands a substitution row in the commit that adds the text using it, and a `%%` rule in the commit that needs it | a bisect over main stops on no commit of this slice |
+| The walk the check reads is the same on CI and locally | the `walk: n file(s)` line of the summary block on CI and on a local run of the same commit, per `tripwire@core@walked-count-differs-between-machines`, which re-enters at any change to the walk | the two counts compared at the landing |
 
 ## Audit subjects
 
@@ -50,7 +53,10 @@ The repairs of the first three classes in the mapping table, and the narrowed he
 - `path@agent-skills@CLAUDE.md`, its paragraph "No check reads content/".
 - `path@agent-config@skills/klarch-release/SKILL.md`, its step that checks the shipped text by hand
   and says the primer's import line "is no candidate", which the walk probe contradicts: the
-  checker reported that line as malformed.
+  checker reported that line as malformed. Found at the audit: the step greps content/ and
+  snippets/, where `%%` lines will cite entries on purpose and generic paths will be references;
+  it now reads the installed copies under .claude, which hold neither `%%` lines nor placeholders,
+  and accepts `path@*@<path>` and `path@plans@<path>` as the narrowed head allows.
 - The setup skill's section "In a Rust project", `path@agent-skills@content/skills/setup/SKILL.md`.
 
 ## Fails alone on
@@ -164,6 +170,8 @@ At this slice's landing, under `knowledge-architect-decision-recording` and
 | #delivery-substitutions | none: the comment of the table in `path@agent-skills@build.rs`, and the commit |
 | the walk | `issue@agent-skills@shipped-text-is-reference-free-mechanically` rewritten: the exclusion is gone; what remains is a check that the shipped text holds no reference to an entry, applied to the installed copies under .claude once a path can be declared reference-clean, per the owner in R5 |
 | the developer's contract | `path@agent-skills@CLAUDE.md`: "No check reads content/" becomes the `%%` convention and the delivery substitutions; the paragraph the snippet branch adds, which says the snippets stay "reference-free as content/ does", follows the narrowed rule |
-| the release procedure | `path@agent-config@skills/klarch-release/SKILL.md`, its step on the shipped text |
+| the release procedure | `path@agent-config@skills/klarch-release/SKILL.md`, its step on the shipped text, reading the installed copies |
+| the build's description | `design@agent-skills@content-mirrors-the-install-layout`: the build strips `%%` lines and fills the delivery substitutions as well as the snippets; found at the audit |
+| the cleanup's wait | `issue@agent-skills@heads-no-entry-test-admits`: its agent-skills part no longer waits, since `%%` lines exist; found at the audit |
 
 This slice's spec and the milestone document leave in the commit that completes this harvest.
