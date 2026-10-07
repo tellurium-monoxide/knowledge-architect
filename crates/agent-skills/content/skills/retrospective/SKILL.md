@@ -27,6 +27,8 @@ again in that session.
 Open with **what the session did**: one paragraph, at the level of the workflow ("a design
 discussion and two merged branches"), not of the project's subject matter.
 
+%% The version lets a finding be judged against the text that produced it. A commit of the branch is
+%% not named: a merge that rewrites the branch leaves it pointing at nothing.
 Then **the version of knowledge-architect the session used**, in one line:
 
 - where the project pins the checker, the exact version of the pin;
@@ -35,6 +37,10 @@ Then **the version of knowledge-architect the session used**, in one line:
   the session worked on, and whether the tree held uncommitted changes. A commit of the branch
   itself is not named: a merge that rewrites the branch's commits leaves it pointing at nothing.
 
+%% A wider "missing" turns every judgement into a request for a rule, against
+%% `goal@agent-skills@installed-text-leaves-room-to-judge`. The scope is wider than the installed
+%% text because a project's problems may come from its own instructions and their interaction with
+%% the installed ones, per `goal@knowledge-architect@the-workflow-improves-through-real-use`.
 Then read back over the session: the instructions that were followed, where they were followed with
 difficulty, where they were not followed, and what the owner corrected. Then, for each of the four
 subjects below, list what was **unclear** (it could be read two ways), **missing** (the session
@@ -44,6 +50,9 @@ decision the session made by its own judgement where no instruction covers it is
 installed text leaves that room on purpose. Each item quotes the instruction, says what happened when it was followed, and what was
 done instead.
 
+%% The owner rules on findings one by one, and an id lets a ruling, a fix or a commit cite one
+%% without restating it. An interaction finding has an id in each file because the workflow's file
+%% may be published without the project's.
 **Each finding is named by a letter and a number**, so that a fix, an issue or a commit can cite it
 in a few characters, as "W3 of the retrospective of <date>": **W** for the installed skills and
 agents, **C** for the checker, **P** for the project's own instructions. Numbers run from 1 within
@@ -87,6 +96,8 @@ End with **proposals**: for each finding that has one, what to change, and where
 
 ## 3. Two files, sorted by whose text must change
 
+%% The project's findings never leave the project, so only the workflow's file is held to the rule
+%% that it carries nothing of the project beyond what a finding needs.
 Each finding goes to the file of the project whose text or code must change:
 
 | file | holds |
@@ -101,6 +112,8 @@ own side.
 to be understood: no code, no names of the project's internals, no content of its documents beyond
 the instruction quoted.
 
+%% Inside the project the files would enter its history if committed, and be lost to the next clean
+%% if ignored.
 **Where the files go**: a directory outside the project, chosen by the owner. If the owner's
 user-level agent configuration names one, use it. Otherwise ask, propose a directory under the
 owner's home, and offer to record the answer in that user-level configuration, on the owner's word,

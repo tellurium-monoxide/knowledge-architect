@@ -1,5 +1,6 @@
 # The workspace: the checker's crate, the crate that carries the agent skills it installs, the gates
-# library, and the maintenance tool. The layout is `design@knowledge-architect@repo-layout`.
+# library, and the maintenance tool. Each sits in a directory named by its role, per
+# `design@knowledge-architect@crate-directory-named-by-role`.
 
 [workspace]
 resolver = "2"

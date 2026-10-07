@@ -213,6 +213,8 @@ level-three heading under the section of its kind, the statement first and the s
 Criteria `criterion`, Acceptance criteria `acceptance`. Every level-three heading of those four
 sections is an item, and a slug anywhere else in a plan document defines nothing.
 
+%% Arguments are never harvested as entries, so a content slug would cost a name for each of dozens
+%% of statements, for nothing; the numbers are assigned at assembly, and the discussion mints none.
 - An id is in the grammar `[a-z0-9]+(-[a-z0-9]+)*`. A thread keeps the slug the discussion minted.
   An argument is numbered `a1`, `a2`, …, in order of appearance and never reused, in one sequence
   across a milestone's README and its slice specs, which share one namespace.
@@ -418,6 +420,10 @@ design audit, applied in place: …`.
 
 ## 8. Reviews of a plan document
 
+%% An owner plans a feature that will not be built yet so that the work done meanwhile does not
+%% drift from it, which needs the document on the main branch, where every session reads it, per
+%% `goal@knowledge-architect@agents-work-without-drift`; spec and milestone measure the work, not
+%% where the document lands.
 A plan document is committed first, on a branch of its own or on its work's branch, and that
 commit is what the reviewers read; a repair lands after it, as a further commit or folded where
 `knowledge-architect-review` says. **It may be merged on its own, whatever the time of its
@@ -487,6 +493,9 @@ milestone document leaves with the last slice. Before deleting:
   leaves with it;
 - its row of the roadmap, if it has one, is removed (§2).
 
+%% The retiring session revisits nothing itself: a revisit then would redesign the citing plan at a
+%% time chosen by another plan's landing. The issue is a question, not a todo, because the reading
+%% may find nothing to change.
 **A citation of the leaving document from another plan dangles.** The session that meets it, the
 one deleting the document or the one rebasing the citing plan's branch onto that deletion, does two
 things in one commit:

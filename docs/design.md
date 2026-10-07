@@ -13,25 +13,19 @@ skills are shaped is `path@agent-skills@docs/design.md`.
 
 ## 1. Layout and packaging
 
-### The repository is a virtual workspace of components, each crate in a directory named by its role `##repo-layout`
+### A crate's directory is named by its role, never after its package, and no directory is named after the project `##crate-directory-named-by-role`
 
-The root holds the workspace manifest, the checker's manifest and the project's documents, and no
-crate. Each crate sits under crates/ in a directory named by what it does: crates/core is the
-checker, crates/agent-skills carries the text the checker installs, crates/gates runs a project's
-merge gates. The maintenance tool sits under tools/xtask. Each of the four is a component, so each carries its own design home, goals and
-registers, and a decision about one of them lives beside its code.
-
-A crate directory is never named after its package. A component is named by the basename of its
-directory, and the project root by the project's name, so a directory named `knowledge-architect`
-would collide with the root: a run over a scratch project laid out that way stopped in phase 1,
-reporting that the name "names 2 anchors". A future split of the core follows the same rule, as
-crates/core and crates/cli.
+A Component is named by the basename of its directory, and the project root by the project's name,
+so a directory named `knowledge-architect` would collide with the root: a run over a scratch project
+laid out that way stopped in phase 1, reporting that the name "names 2 anchors". So each crate sits
+in a directory named by what it does, crates/core for the package knowledge-architect, and a future
+split of the core follows the same rule, as crates/core and crates/cli.
 
 ### The checker is the package knowledge-architect, in crates/core `##crate-directory`
 
 Users install and depend on `knowledge-architect`. The package lives in crates/core and its
 component is named `core`, so a reference says `core` where cargo says `-p knowledge-architect`.
-That difference is the cost of `design@knowledge-architect@repo-layout`'s naming rule, and it is
+That difference is the cost of `design@knowledge-architect@crate-directory-named-by-role`'s naming rule, and it is
 the usual shape of a Rust workspace.
 
 ### The installed text lives in its own crate, which the checker depends on `##two-crates`
@@ -284,14 +278,6 @@ statement false until a repair lands. The procedure is
   main received re-takes it. So a record carried by a message alone rides on a commit that changes
   a file.
 
-### Every component builds under one pinned toolchain `##toolchain-is-pinned`
-
-rust-toolchain.toml at the root names one Rust release, with rustfmt and clippy, and rustup
-applies it to every cargo invocation in the tree, locally and in CI. fmt and clippy are gates, and
-their verdict is a property of the toolchain as much as of the tree: on floating stable, a release
-adding a clippy lint fails CI on a tree that passes locally, or the reverse, with no change in the
-diff. An upgrade is a one-line commit of that file, and the gates judge it like any other change.
-
 ### Every build is tied to the checkout that builds it `##a-build-is-tied-to-its-checkout`
 
 The `[env]` table of the cargo configuration sets `KNOWLEDGE_ARCHITECT_CHECKOUT` to the checkout's
@@ -334,39 +320,6 @@ nothing.
 
 ## 4. How documents point at each other
 
-### A reference is written where the text would have to be revisited if the entry it names changed `##a-reference-claims-a-revisit`
-
-Every citeable thing has one reference form, `<kind>@<anchor>@<id>`, and two mechanisms of the
-checker give a reference its value. `cargo klarch show <ref>` prints every reference to an entry,
-so what depends on an entry is computed from the tree and never written by hand. An entry that is
-deleted or renamed dangles every reference to it, and `cargo klarch check` reports each one, so the
-repair list a change produces is the list of texts that depended on what changed. A reference is
-therefore a claim of dependence: this text is to be revisited when that entry is reversed, closed,
-fired, abandoned or renamed.
-
-**The test for writing one is that claim.** Where a change to the entry would leave the text
-unaffected, the reference is decoration and costs a repair for nothing; where it would not, the
-reference is owed, or the change reaches nobody. What follows from the test, by the kind of text:
-
-| the text | names | so that |
-| --- | --- | --- |
-| a design head | the goal its argument derives a constraint from | `show` on the goal lists what abandoning it reopens |
-| a design head | a decision of another component it depends on | a reversal reaches it |
-| an issue entry | the decision it strains, and the goal it threatens when it does directly | `show` on a decision lists what is outstanding against it before it is reopened, and on a goal what stands between the project and it |
-| a guard, a workaround, a stub or a test that pins behaviour an open entry describes | the issue it exists because of, in the comment at the site | closing the entry dangles the comment, so the site is revisited and the workaround removed |
-| a tripwire | the decision it guards | a reversal dangles its tripwires |
-| a rejected alternative | the decision it lost to | a reversal finds what the old winner displaced |
-| a commit message | every entry it opens, closes, reverses or argues from | the commits gate judges it against the tree it was written against |
-| a restatement of a directive | its home | a drift between the two is found from either end |
-
-**An entry never lists what references it.** The inbound list is `show`'s to compute, and a
-hand-written one is stale at the next reference written elsewhere.
-
-**A reference in prose is checked wherever it stands**, a Rust comment and a fenced block
-included; a string literal bound to a name yields none. So a comment in code naming an issue is
-as live as a sentence in a document, and closing the issue reaches the code. This serves
-`goal@knowledge-architect@design-is-recorded-with-its-arguments`.
-
 ### Plain text is never the repair of a finding, and no instruction offers an unchecked form as the way to clear one `##plain-text-is-no-repair`
 
 A form a writer can use is either one the checker judges, and the workflow recommends it, or one
@@ -392,15 +345,6 @@ A label beside a checked pointer is not such a form. A plan item named outside i
 stands beside a citation of the whole plan, because an item reference is refused there, per
 `design@core@plan-item-scope`.
 
-### A sentence about the past whose reference dangles is rewritten to the present or removed, and a quotation of the owner is kept with a reference beside it `##a-past-sentence-is-rewritten`
-
-When an entry is deleted or renamed, a sentence that recorded its past, such as what an earlier
-step wrote, is rewritten to state the present, or removed, and its history stays in the commit
-messages. Retargeting it to the new name would make it false, and plain text would take it out of
-the check, per `design@knowledge-architect@plain-text-is-no-repair`. A verbatim quotation of the
-owner that names a renamed entry is left as it is, with a reference to the current entry beside
-it, since rewriting it would misstate the owner, against `goal@knowledge-architect@the-owner-decides`.
-
 ### The plain-text escape covers only text in the checker's syntax, which is written without backticks only beside a reference to an issue entry that records the missing form `##checker-syntax-without-backticks-names-its-gap`
 
 The checker cannot express every reference a project needs. This head covers text in the checker's
@@ -410,7 +354,7 @@ text points at, it may be written without backticks, and only beside a reference
 of the writing project that records the missing form. Any other text that names something, in the
 tree or outside it, such as another project's commit, an address on the web or a description in
 words, is outside this head. Whether it needs a reference is decided by
-`design@knowledge-architect@a-reference-claims-a-revisit`. A project that meets a gap of the checker itself opens that
+`design@agent-skills@a-reference-claims-a-revisit`. A project that meets a gap of the checker itself opens that
 entry in its own register, since a reference resolves only inside its own project, per
 `issue@core@cross-project-references`. A need that a checked form already serves is not a gap.
 

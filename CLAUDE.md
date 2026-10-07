@@ -17,8 +17,8 @@ a better argument can rebut. Recorded decisions were often argued before the cod
 implementation is expected to prove some of them wrong: reversing one is an ordinary move, and
 `knowledge-architect-decision-recording` owns what it costs.
 
-The repository is a virtual workspace with five Components, per
-`design@knowledge-architect@repo-layout`:
+The repository is a virtual workspace with five Components, each crate in a directory named by its
+role, per `design@knowledge-architect@crate-directory-named-by-role`:
 
 | Component | directory | what it is |
 | --- | --- | --- |
@@ -234,7 +234,7 @@ count over a frozen corpus and a zero keep their digits, because in those the va
 
 ### When to write a reference
 
-This is a restatement. Its home is `design@knowledge-architect@a-reference-claims-a-revisit`.
+This is a restatement. Its home is `design@agent-skills@a-reference-claims-a-revisit`.
 
 **Write a reference wherever the text would have to be revisited if the entry it names changed**:
 reversed, closed, fired, abandoned or renamed. `cargo klarch show <ref>` prints every reference to
@@ -265,9 +265,9 @@ milestone for work across several PRs. A plan document lands in a pull request o
 its work, whatever the time of its work. A correction is applied in place, so a
 partial reading cannot mislead. A plan document is deleted in the commit that completes its last
 harvest, and that commit's message cites it by its kind. This is a restatement; its homes are
-`design@agent-skills@document-vocabulary`, `design@agent-skills@spec-leaves-at-landing`,
-and `design@agent-skills@plan-landing-is-not-tied-to-its-work`, and the procedure is the installed
-`knowledge-architect-planning`, which also says when a plan document must land before its work.
+`design@agent-skills@document-vocabulary` and `design@agent-skills@spec-leaves-at-landing`, and the
+installed `knowledge-architect-planning`, which states where a plan document lands and when it
+must land before its work, and holds the procedure.
 
 ## Verify before relying on anything
 
