@@ -9,7 +9,7 @@ delivers. The project's own rules are in its root `CLAUDE.md`, beside this prime
 ## Goals bind; decisions bind as a presumption
 
 **The goals are the only statements assumed to come from the owner.** Each Component states them
-in its goals home, `docs/goals.md` or `docs/goals/`, one heading per goal. A recorded decision was reviewed, but its review can
+in its goals home, `path@*@docs/goals.md` or `path@*@docs/goals/`, one heading per goal. A recorded decision was reviewed, but its review can
 miss a detail or an implication, more often as the volume of agentic work grows. A decision binds
 as a presumption, which a better argument may rebut, and reversing one is an ordinary move with a
 procedure (`knowledge-architect-decision-recording`). **When a decision conflicts with a goal,
@@ -73,11 +73,11 @@ decision.
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
-| what the project, or one Component, is for, and what would show it achieved | that Component's goals home, `docs/goals.md` or `docs/goals/` (the project's root is a Component) | the owner abandons the goal |
-| how the project or a Component is built, and why | that Component's design home, `docs/design.md` or `docs/design/` | the design changes: the entry is rewritten in place |
-| the engineering alternative that lost, and why | that Component's `docs/rejected-alternatives.md` | never; a reversal moves the old winner into it if it meets a recording test of `knowledge-architect-decision-recording` |
-| what is outstanding: a defect, an unexplained observation, an open question, missing work | one file in the owning anchor's issue directory, `docs/open-issues/` in a Component | the issue closes |
-| evidence that would flip a recorded decision about code that exists | the owning Component's tripwires home, `docs/tripwires.md` or `docs/tripwires/` | it fires, or its decision is gone |
+| what the project, or one Component, is for, and what would show it achieved | that Component's goals home, `path@*@docs/goals.md` or `path@*@docs/goals/` (the project's root is a Component) | the owner abandons the goal |
+| how the project or a Component is built, and why | that Component's design home, `path@*@docs/design.md` or `path@*@docs/design/` | the design changes: the entry is rewritten in place |
+| the engineering alternative that lost, and why | that Component's `path@*@docs/rejected-alternatives.md` | never; a reversal moves the old winner into it if it meets a recording test of `knowledge-architect-decision-recording` |
+| what is outstanding: a defect, an unexplained observation, an open question, missing work | one file in the owning anchor's issue directory, `path@*@docs/open-issues/` in a Component | the issue closes |
+| evidence that would flip a recorded decision about code that exists | the owning Component's tripwires home, `path@*@docs/tripwires.md` or `path@*@docs/tripwires/` | it fires, or its decision is gone |
 | a contract or a trap that only a developer needs, true of the code as it stands | the scoped `CLAUDE.md` nearest the code | the contract changes or the trap is removed |
 | how a user can use a Component, and what to respect | its `README.md` | the contract changes |
 | directions about what to find where in a directory | a `README.md` in that directory | the directory's content changes |

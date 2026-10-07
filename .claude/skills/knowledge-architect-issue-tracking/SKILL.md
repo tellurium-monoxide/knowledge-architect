@@ -16,8 +16,8 @@ Keeping them apart is the point. A tripwire mixed into open issues inflates the 
 that look actionable, and that count is what makes an issue listing rankable.
 
 **Where they live is the project's manifest, `knowledge-architect.toml`, and it is the only
-answer.** Every Component carries both registers under its `docs/`: `docs/open-issues/` and
-`docs/tripwires.md`. The project's root is a Component too, so its pair is like any other. A
+answer.** Every Component carries both registers under its `docs/`: `path@*@docs/open-issues/` and
+`path@*@docs/tripwires.md`. The project's root is a Component too, so its pair is like any other. A
 **location** is a directory the manifest declares to carry registers outside every Component,
 with the homes directly under its own path, for instance an `open-issues/` directory for what is
 outstanding about the agent configuration. `cargo klarch check` asserts that every home exists and

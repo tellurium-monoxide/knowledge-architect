@@ -53,11 +53,6 @@ skip-files = [
 # checker that read them would report a fixture's planted defect as a defect of this repository.
 exclude = [
     "crates/core/tests/projects",
-    # The text this repository ships to other projects. It names no path of this repository, so
-    # its illustrations would be reported as paths here; the installed copies under .claude are
-    # out of the walk for the same reason, by construction. The row stands until a mechanical
-    # check of shipped text exists: issue@agent-skills@shipped-text-is-reference-free-mechanically.
-    "crates/agent-skills/content",
 ]
 
 # GitHub's rebase merge gives a branch's commits new SHAs, so a message or a document of the
