@@ -588,15 +588,16 @@ owner approved it in round 4:
 > - **Refused:** whether an agent invokes a skill from its description, whether a reviewer finds a
 >   given entry, whether an agent follows a step.
 > - **Always admitted as evidence:** a finding from a retrospective, and a misbehaviour observed in
->   real use.
+>   real use. A finding that comes from a synthetic run anyway is used only for the part a reading
+>   confirms.
 
 The head also states the four purposes it covers, the three the goal names and the closed issue's
 check that a text runs: to originate an edit, to choose between shapes, to accept a piece of work, and to check that a text
 runs as written. Each is refused only where its run observes an agent's decision: a single dispatch
 of a new agent to see that its tools are granted is a harness mechanic, and admitted, which
 narrows the loss `argument@synthetic-evidence-and-plan-reviews@a6` named; judging its report
-against its instructions is refused. The head, per D1 below, also carries the agent's round 1
-default on a finding from a synthetic run that was run anyway. It argues from `argument@synthetic-evidence-and-plan-reviews@a1`,
+against its instructions is refused. Its last sentence, on a finding from a synthetic run that was run anyway, is the agent's round 1
+default, ruled in as D1. It argues from `argument@synthetic-evidence-and-plan-reviews@a1`,
 `argument@synthetic-evidence-and-plan-reviews@a2` and `argument@synthetic-evidence-and-plan-reviews@a5`,
 records the two instances as its evidence, and cites
 `goal@knowledge-architect@the-workflow-improves-through-real-use`. The sentence of
@@ -708,6 +709,7 @@ The new head `ruled-items-labelled`, as approved in round 4:
 | `T` | tripwires put to the owner | yes: the plan's Premortem section |
 | `AC` | acceptance criteria put to the owner | yes: the plan's Premortem and defaults |
 | `W`, `C`, `P` | retrospective findings | yes: the retrospective files |
+| `D` | defaults awaiting the owner in a plan document | yes: the plan's "Defaults awaiting the owner" |
 | `Q` | entry test 4 questions, and any label that stays in the conversation | no |
 
 - **From the premortem, cause 5**: the sequence continues across a resumed session.
@@ -717,6 +719,9 @@ The new head `ruled-items-labelled`, as approved in round 4:
   owner's ruling in the transcript still finds it.
 - Each installed skill that asks for such rulings restates its own prefix where it asks. The `%%`
   comment citing the head is written at step 5, once the head exists.
+- The planning skill labels each default awaiting the owner `D<n>`, in its §4 row of that section
+  and in §8, where findings become defaults; the sequence continues the plan document's own, across
+  its revisions.
 - The plan document's Premortem section writes each label beside its verdict, so a reader goes from
   a ruling in the transcript to the plan.
 
@@ -862,21 +867,9 @@ the decisions the changelog's work implements.
 
 ## Defaults awaiting the owner
 
-Each default carries a label, `D<n>`, provisionally: `D` is itself D3.
-
-- **D1**, #synthetic-evidence-boundary. In round 1 the agent proposed, inside the thread: "The
-  default: a finding that comes from a synthetic run anyway is used only for the part a reading
-  confirms." The owner approved the thread in round 2. The round 3 rewording, which the owner
-  approved in round 4, neither carries nor withdraws it. Default: the head carries it, as the last
-  sentence of its "Always admitted as evidence" item.
-- **D2**, #ruled-items-labelled. The owner's round 4 words gave a permission: "it would be fine to
-  reuse a common letter (such as Q, like in decision record questions)". The head's sentence "A
-  label used only in the conversation reuses the common prefix `Q`" was first written in the
-  agent's reply to round 4, and the owner's round 5 word was given against the checkpoint row that
-  showed it. Default: the sentence stays as written.
-- **D3**, #ruled-items-labelled. The defaults awaiting the owner in a plan document are items ruled
-  by name that reach a committed document, so they need a distinct prefix, and the head's table has
-  none. Default: `D`, added to the head's table, and used by the planning skill's §8 for the list.
+None. D1, D2 and D3 stood after the reviews of this spec. The owner ruled on all three: "Agreed on
+all defaults." Each is applied in place: D1 in "The rule on synthetic evidence", D2 and D3 in
+"Labels".
 
 ## Harvest
 
