@@ -32,6 +32,13 @@ Its work is the installed text, so the development procedure of point 3 of §7 i
   requested change, per #bounded-path-in-design.
 - **`path@agent-skills@README.md`**: its two passages on a bounded problem rewritten to the bounded
   path.
+- **The design skill's expectation set**, in §5 of
+  `path@agent-skills@content/skills/retrospective/SKILL.md`, and its restatement under "What it
+  expects of you" in `path@agent-skills@README.md`: its first assumption, "The owner brings a design
+  question, not a task order", gains its counterpart for the bounded path: given bounded work, the
+  owner rules on the one proposal, or answers it with an argument, which returns the work to the
+  loop. Found at the audit; the owner: "For that gap in the expectation set, I agree with your
+  proposal." 
 - **The installed copies** under .claude, by `cargo klarch install-agent-skills`, in the same commit
   as each change to content/.
 - **The harvest** below.
@@ -288,6 +295,15 @@ None: the slice rewrites text and records, and the code needs no function.
 
 ## Acceptance criteria
 
+**Open at the audit, and the slice stopped on it.** The criterion below is a synthetic test of an
+installed text: a fresh subagent classifies three decisions written for the test, and its result
+can reopen a decision. `issue@agent-skills@synthetic-evidence-about-the-workflow-is-undecided`
+records that the owner ruled out a criterion of that kind before it ran: "From experience, they
+are not very reliable, and drive the workflow toward wrong directions more often than good ones."
+The criterion was the author's proposal and no word of the owner admitted it. Put to the owner,
+with the default: drop it; the claim it served is judged by the decision-record review at the
+harvest, and in real use by the tripwire of P2.
+
 ### A cold session applies the rewritten entry tests as the discussion ruled `##a-cold-session-applies-the-tests`
 
 - **Guards:** #entry-test-locality, with #t1-consumed-interface and #t3-external-behaviour.
@@ -326,7 +342,7 @@ At this slice's landing, under `knowledge-architect-decision-recording` and
 | P1, P2, P3 | `path@agent-skills@docs/tripwires.md`: `a-shortcut-decision-earns-a-head` guarding the head of #bounded-path-in-design, `a-head-verdict-is-overruled` guarding `a-head-is-owed-by-an-entry-test`, `a-comment-escalation-is-overruled` guarding `local-intent-binds` |
 | `tripwire@agent-skills@deferred-trigger-met-by-undesigned-work` | restated in place |
 | the intent-and-claims rule's third class | `design@agent-skills@primer-content`: its bullet naming two classes names three, within its title; the root `path@knowledge-architect@CLAUDE.md` restates the three classes under "Verify before relying on anything", with its pointer to the head of #local-intent-binds |
-| the two issues citing `design@agent-skills@conformance-before-every-merge` | `issue@agent-skills@a-design-issue-s-re-entry-point-is-read-by-no-review`: its sentence on work neither designed nor planned restated for work that bypasses the design skill; `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`: judged at the audit |
+| the two issues citing `design@agent-skills@conformance-before-every-merge` | `issue@agent-skills@a-design-issue-s-re-entry-point-is-read-by-no-review`: its sentence on work neither designed nor planned restated for work that bypasses the design skill; `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`: its sentence giving the re-entry of `tripwire@agent-skills@deferred-trigger-met-by-undesigned-work` as "the design of a skill for bounded problems" restated to the tripwire's new re-entry |
 | #record-audit | `planned@agent-skills@docs/open-issues/heads-no-entry-test-admits.md` |
 | the lead of the closed issue, ruled in R8 | `planned@agent-skills@docs/open-issues/the-open-space-test-may-admit-every-problem.md`, a `question` |
 | #record-test-at-classification | none: superseded, named in the harvest's commit |
