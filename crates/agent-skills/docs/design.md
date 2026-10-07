@@ -6,7 +6,8 @@ named, and how they divide the work. Present tense, each decision carrying a slu
 `path@agent-skills@docs/rejected-alternatives.md`.
 
 **What belongs here:** a decision about the installed text that does not survive deleting this
-component. How the checker installs and verifies the text, including the prefix that names the
+component, and the rules of the published workflow, which this repository follows as an adopting
+project does. How the checker installs and verifies the text, including the prefix that names the
 installed files, is `design@core@owned-namespace-check`.
 
 ## The shipped set
@@ -224,18 +225,19 @@ whose record is docs/decisions.md on its branch next.
 
 A decision about the installed text is recorded only where it keeps the owner's intent on record, as
 `goal@knowledge-architect@design-is-recorded-with-its-arguments` asks, or keeps two parts of the
-workflow consistent, as `goal@agent-skills@one-skill-per-activity` asks. A rewording, and the rationale for how one instruction
+workflow consistent, as `goal@agent-skills@one-skill-per-activity` asks; or where another entry test
+admits it, such as a reason several installed texts must respect. A rewording, and the rationale for how one instruction
 is phrased, is not recorded. Such proposals can be made without bound, unlike a technical decision,
 which costs implementation work. The commit message carries a rewording's argument.
 
-The owner's intent is on record where test 4 of the installed decision-recording skill holds, per
+The owner's intent is on record where §2's test 4 of the installed decision-recording skill holds, per
 `design@agent-skills@a-head-is-owed-by-an-entry-test`: a ruling of the owner an agent could reverse
 as a small fix, or an argument the owner wants kept; an approval of the agent's proposal is not.
 Two parts of the workflow are installed texts, or an installed text and the checker it must agree
 with, as the planning skill's sections agree with what the core checks; a decision of this
 repository alone is not one, since the installed text names none of this repository's conventions.
-On that second reading, the owner chose it among three, the narrower being installed texts alone
-and the wider any text the installed text must agree with. A reason that passes no test goes in a
+Installed texts alone would leave a skill free to disagree with what the checker enforces, which an
+adopting project meets as a check that fails on a document the skill told it to write. A reason that passes no test goes in a
 `%%` comment at the instruction it explains, per `design@agent-skills@shipped-text-line-comments`.
 
 ### An instruction is added to an installed skill or agent only on evidence from real use `##additions-need-real-use`
@@ -382,7 +384,8 @@ own intent, a ruling an agent could reverse as a small fix or an argument the ow
 which an approval of the agent's proposal or a hedged proposal with no argument is not. Every other
 decision lives in a comment at its code, a `%%` line for the installed text, and in the commit that
 argued it, where it binds as intent at that scale, per `design@agent-skills@local-intent-binds`.
-For the installed text, `design@agent-skills@instruction-record-is-minimal` adds its own test.
+For a decision about the installed text, `design@agent-skills@instruction-record-is-minimal` admits
+one case the four tests do not: one that keeps two parts of the workflow consistent.
 
 Fewer heads is the principle, as long as no critical intent and arguments are lost, in the owner's
 words. Every grounding reads the design homes whole, and a human overseer reviews them; the session
@@ -401,7 +404,7 @@ recorded ruling of the owner, admits nearly every head harvested from a discussi
 workflow asks the owner to confirm most decisions. The decision serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`: a later session can tell what it
 may change and what a change costs from the head where one is owed, and from the comment where none
-is. An audit of the 178 heads the design homes held when these tests were decided found
+is. An audit of the 178 heads the design homes held, against the first three tests, found
 over-recording below one head in five where the owner read it. The nearest rival of the principle,
 a head for every decision discussed with the owner, is what a session did for a mechanism carried
 at one site by its comments, and the owner judged the head unneeded. Within test 2, "the same
@@ -854,8 +857,9 @@ check of the working tree sees, such as installed text that the checker compares
 tree alone, leaves the per-commit gate unchanged and is outside this rule. Keeping both on one branch would force
 the fix the owner called absurd: the plan document committed after the work it plans. So that work
 begins on a branch of its own, after the document is merged. This holds for a spec as for a milestone document, whose slice
-that changes what the per-commit gate checks is the one this rule meets, per
-`design@agent-skills@plan-landing-is-not-tied-to-its-work`.
+that changes what the per-commit gate checks is the one this rule meets. It is the one exception to
+`design@agent-skills@plan-landing-is-not-tied-to-its-work`, whose plan document may otherwise land
+with its work.
 
 ### Undesigned work is an issue `##planned-work-is-an-issue`
 
