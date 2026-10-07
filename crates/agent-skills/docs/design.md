@@ -88,8 +88,8 @@ problem beside the bounded one, and leaves the next step to the owner. It names 
 bounded case, because no installed skill covers it, per `design@agent-skills@no-external-handoff`.
 It does not send the problem to the planning skill either: the owner holds that a bounded problem
 still needs investigation and testing, and a spec records a design and its implementation sequence
-without running either. The skill that will cover it is
-`issue@agent-skills@a-skill-for-bounded-problems`; when it lands, this branch names it.
+without running either. `milestone@plans@load-bearing-records` replaces this branch with a path inside the design
+skill.
 
 ### The design skill is written for frontier-tier models only `##frontier-tier-only`
 
@@ -761,9 +761,8 @@ trigger met by work that is neither designed nor planned has no reader at all: n
 start of such work. A search before such work is parked, on the owner's word: its one host today
 would be the primer, which holds only what every session needs, per
 `design@agent-skills@primer-limit`, the evidence for it is one instance, and a line sending every
-session to search before any work is a conformance rule. It is proposed again at the design of a
-skill for bounded problems, `issue@agent-skills@a-skill-for-bounded-problems`, which would host
-it. In thaum, a move of the pinned checker met the trigger of a deferred issue that
+session to search before any work is a conformance rule. The design skill hosts it for bounded work once
+`milestone@plans@load-bearing-records` lands. In thaum, a move of the pinned checker met the trigger of a deferred issue that
 named that move, and the session read it at no step.
 
 ### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
