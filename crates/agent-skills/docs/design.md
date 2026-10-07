@@ -80,7 +80,7 @@ and "discussing-design-decisions", which read as a sentence.
 "design" also names the design register, which the design skill does not write: in prose, the noun
 that follows, "the design skill" or "the design home", tells them apart.
 
-### Until a skill for bounded problems is installed, a bounded problem goes back to the owner `##bounded-problem-branch`
+### Until the design skill gains a path for bounded work, a bounded problem goes back to the owner `##bounded-problem-branch`
 
 A problem that arrives bounded, a clear requirement whose main risk is over-building, is not a
 design discussion. The design skill says so, states the strongest open reading of the
