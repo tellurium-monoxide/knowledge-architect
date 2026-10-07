@@ -83,8 +83,10 @@ following that documentation alone, without reading the source or asking the aut
 
 ## The workflow improves through real use `##the-workflow-improves-through-real-use`
 
-Real sessions are the test of the workflow, not synthetic scenarios. The retrospective collects
-what was unclear, missing or wrong, and the owner decides what changes.
+Real sessions are the test of the workflow. No session is built to observe how agents follow its
+instructions: not to originate an edit, to choose between shapes, or to accept a piece of work.
+The retrospective, and the owner's observations of real sessions, collect what was unclear,
+missing or wrong, and the owner decides what changes.
 
 ## Adopting the workflow sets up quality tools proven to work with it `##setup-brings-quality-tools`
 

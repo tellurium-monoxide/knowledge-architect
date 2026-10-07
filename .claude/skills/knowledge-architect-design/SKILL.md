@@ -518,7 +518,9 @@ choices whose option space genuinely is closed and consequence-free.
    rest on intuitions, a further round restates them and adds nothing
    either party could check. Build the
    discriminating artifact the project affords — a failing test, a
-   throwaway prototype, a benchmark, a mockup. Before building, both
+   throwaway prototype, a benchmark, a mockup. Evidence that the
+   project's goals or design heads rule out is not built, whatever the
+   stall; the fork goes to the owner as a tie. Before building, both
    parties state which outcome would flip their position; an artifact
    built without those pre-commitments cannot change either position,
    so it settles nothing. If the owner declines to pre-commit, build
