@@ -14,7 +14,7 @@ with the change, or the check fails.
 **content/ is in the walk, and every reference in it is checked against this repository.** So a
 reference to an entry of this repository passes here and would dangle in every installing project:
 the text cites no entry, per `design@agent-skills@shipped-text-cites-no-entry`, and nothing checks
-that yet, per `issue@agent-skills@shipped-text-is-reference-free-mechanically`. It names no
+that yet, per `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked`. It names no
 Component and no convention of this repository; it writes a path every conforming project holds as
 `path@*@<path>` or `path@plans@<path>`, a path that varies by project and an illustration as a
 placeholder in angle brackets, and the project's command as the install placeholder. A skill names
@@ -33,7 +33,7 @@ and the text writes its placeholder; a row no text uses fails the build.
 `rustfmt --edition 2021 --check` it by hand after an edit. The checker reads it as Rust source:
 its comments are prose, a reference in them that resolves here passes the check and ships, and the
 text it ships cites no entry, as content/ does, per
-`design@agent-skills@shipped-text-cites-no-entry`. The release's hand check reads snippets/ too.
+`design@agent-skills@shipped-text-cites-no-entry`. The release's hand check reads the installed copies, which hold the snippet inlined.
 
 **The primer reaches every session of every installing project**, so it holds only what every
 session needs and no installed skill delivers, per `design@agent-skills@primer-limit`. A line that

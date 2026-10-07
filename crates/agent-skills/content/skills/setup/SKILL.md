@@ -148,6 +148,8 @@ register home says it holds no entry yet. **Every Component states at least one 
 
 The project's root `CLAUDE.md` holds, besides what the project already keeps there:
 
+%% The import line is filled by a delivery substitution of the build, since the checker reads its
+%% span as a malformed reference, per `design@agent-skills@shipped-text-cites-no-entry`.
 - **the primer's import line**, alone on its own line of prose, outside any code block:
   `{{primer-import}}`. The install never writes it, because the root
   `CLAUDE.md` belongs to the project; the check reports it missing until it is there;

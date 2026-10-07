@@ -205,7 +205,7 @@ owner's, per `goal@knowledge-architect@the-owner-decides`. The open issues are
 `issue@core@tooling-for-project-skills`, `issue@core@configuration-for-several-agent-providers`,
 `issue@core@a-component-states-at-least-one-goal`, `issue@core@cross-project-references`,
 `issue@core@a-home-for-developer-contracts-outside-agent-configuration`,
-`issue@agent-skills@shipped-text-is-reference-free-mechanically`,
+`issue@agent-skills@shipped-text-citing-an-entry-is-unchecked`,
 `issue@agent-skills@patching-an-installed-skill` and
 `issue@agent-skills@a-skill-for-creating-a-component`.
 

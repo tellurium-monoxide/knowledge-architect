@@ -16,10 +16,19 @@
 //! that the walk checks and no installing project holds. A `%%` line inside a fenced block, or one
 //! with leading spaces, fails the build rather than ship. Then each placeholder of `SUBSTITUTIONS`
 //! is replaced, wherever it stands in a line, by its literal: text that must ship verbatim and
-//! that the checker would misread if content/ held it. A row no text uses fails the build.
+//! that the checker would misread if content/ held it. A row no text uses fails the build. The
+//! substitutions are filled here, not at install, for the snippets' reason: their literals do not
+//! vary by project. Snippets come last so that a snippet's own text is never stripped or
+//! substituted: a snippet is code a workspace target compiles, shipped as compiled.
 
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
+
+// The comment pass lives in the crate's source so that the crate's tests hold its rules; a build
+// script has no test target of its own.
+#[path = "src/render.rs"]
+mod render;
+use render::strip_comments;
 
 /// The prefix every installed skill directory and agent file carries in the project.
 const PREFIX: &str = "knowledge-architect-";
@@ -27,15 +36,13 @@ const PREFIX: &str = "knowledge-architect-";
 /// What opens a snippet placeholder; `}}` closes it.
 const SNIPPET: &str = "{{snippet:";
 
-/// What opens a comment line of the shipped text.
-const COMMENT: &str = "%%";
-
 /// Each placeholder and the literal it ships as. A row exists only for text that must ship
 /// verbatim and that the checker would misread; a sentence that can be rewritten is rewritten.
 const SUBSTITUTIONS: &[(&str, &str)] = &[
     // The primer's import line, which the root CLAUDE.md of a project holds alone on its line. Its
     // span has an empty head before the first `@`, which the checker reports as a malformed
-    // reference; the setup skill shows it inside a sentence, and an agent copies it exactly. The
+    // reference, per `issue@core@a-span-with-an-empty-head-is-malformed-against-its-head`; the setup
+    // skill shows it inside a sentence, and an agent copies it exactly. The
     // core's check looks for the same text, `IMPORT_LINE` in its agents module, and a test of the
     // core holds the two equal, since this script cannot read the core.
     (
@@ -175,38 +182,6 @@ impl Snippets {
             "snippets/ holds files no placeholder of content/ names: {unused:?}"
         );
     }
-}
-
-/// `text` without its comment lines. A fence opens and closes on a line whose first non-space
-/// characters are three backticks or three tildes, as CommonMark reads one.
-fn strip_comments(text: &str, file: &Path) -> String {
-    let mut stripped = String::with_capacity(text.len());
-    let mut fence: Option<&str> = None;
-    for (n, line) in text.split_inclusive('\n').enumerate() {
-        let trimmed = line.trim_start();
-        let marker = ["```", "~~~"]
-            .into_iter()
-            .find(|m| trimmed.starts_with(m) && line.len() - trimmed.len() <= 3);
-        match (fence, marker) {
-            (None, Some(m)) => fence = Some(m),
-            (Some(open), Some(m)) if open == m => fence = None,
-            _ => {}
-        }
-        if !trimmed.starts_with(COMMENT) {
-            stripped.push_str(line);
-            continue;
-        }
-        let at = format!("{}:{}", file.display(), n + 1);
-        assert!(
-            fence.is_none(),
-            "{at}: a `%%` line inside a fenced block would ship"
-        );
-        assert!(
-            line.starts_with(COMMENT),
-            "{at}: a `%%` line with leading spaces would ship"
-        );
-    }
-    stripped
 }
 
 /// `text` with every placeholder of `SUBSTITUTIONS` replaced, each row marked used where it is.

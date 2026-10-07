@@ -29,7 +29,7 @@ drift ships: a skill missing from the list is never installed, and nothing repor
 test `every_shipped_file_is_installed_in_the_owned_namespace` holds the build script to the
 namespace, since an install path outside it would write a file the project owns.
 
-### The shipped text carries comments for this repository, `%%` lines that the build removes `##shipped-text-line-comments`
+### The shipped text carries comments for this repository, `%%` lines the build removes, checked by taking content/ into the walk `##shipped-text-line-comments`
 
 A line of a file of content/ whose first two characters are `%%` is a comment for this
 repository's maintainers. It sits beside the instruction it explains, and it may cite design heads
@@ -52,20 +52,22 @@ repository that would repeat the checker's reference reading. A declaration in t
 checker would cater to this repository's use in what consumers receive; the owner: "I don't want to
 cater too much to this use case in the installed files".
 
-### The shipped text names no project and cites no entry of this repository `##shipped-text-cites-no-entry`
+### The shipped text cites no entry of this repository, and may write a path every conforming project holds as a reference `##shipped-text-cites-no-entry`
 
 The text under content/, with the snippets the build inlines, is read in every project that installs
 it, so it names no Component and no convention of this repository, per
-`goal@knowledge-architect@any-project-can-adopt-it`. The one name it holds on purpose is the
+`goal@agent-skills@installed-text-works-anywhere`. The one name it holds on purpose is the
 workflow's own upstream repository, where a retrospective's findings on the workflow go, per
 `design@agent-skills@retrospective-destination`. It cites no entry: a reference to an entry resolves
 only against the tree it stands in, and no tree but this one holds this repository's entries. A path
-that every conforming project holds is written as a reference, `path@*@docs/goals.md` or
-`path@plans@README.md`: it names each Component's own copy, required by
-`design@core@components-carry-the-same-documents`, so it is true in every installing project, and it
-shows the syntax the checker enforces there, in the owner's words "an upgrade over the current
-shape". The checker accepts every shape of a required document, per `design@core@reserved-anchors`,
-so both shapes are written. A path that varies by project, and an illustration, are placeholders in
+that every conforming project holds may be written as a reference: `path@*@docs/goals.md` names
+each Component's own copy, required by `design@core@components-carry-the-same-documents`, and
+`path@plans@README.md` names a file of the one plans directory, whose path the checker fixes, per
+`design@core@plans-dir-fixed`. Either is true in every installing project, and it shows the syntax
+the checker enforces there; the owner: "it promotes the same kind of syntax as what the checker
+enforces in projects holding the installed skills". The checker accepts every shape of a required
+document, per `design@core@reserved-anchors`, so where the text names both shapes, both are
+references. A path that varies by project, and an illustration, are placeholders in
 angle brackets. The command a project runs is written as the placeholder that the install fills
 with the project's declared command, per `design@core@declared-command`. A literal the checker
 would misread is a delivery substitution, which the build fills.
@@ -74,7 +76,7 @@ content/ and the snippets are in the walk, so every reference they hold is check
 repository. A reference to an entry that resolves here passes the check and would dangle in every
 installing project: the reviews of each change, and the release's hand check over the installed
 copies, judge that, until a mechanical check exists, which
-`issue@agent-skills@shipped-text-is-reference-free-mechanically` tracks.
+`issue@agent-skills@shipped-text-citing-an-entry-is-unchecked` tracks.
 
 ### An installed skill names only installed skills and the project's own `##no-external-handoff`
 

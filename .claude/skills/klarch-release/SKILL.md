@@ -51,7 +51,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    `design@core@candidate-rule-and-retired-forms`. Every candidate either carries a placeholder in
    angle brackets, as in `goal@<anchor>@<id>`, or is a path every conforming project holds,
    `path@*@<path>` or `path@plans@<path>`. No candidate names an entry. This is done by hand until
-   `issue@agent-skills@shipped-text-is-reference-free-mechanically` closes, per
+   `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked` closes, per
    `design@agent-skills@shipped-text-cites-no-entry`.
 5. **Every name the shipped text uses is shipped**, per `design@agent-skills@no-external-handoff`:
 
