@@ -566,7 +566,11 @@ Linear history, no merge commits, and no direct push to main. This section is a 
 - **To reword the message of a commit that is not the newest**, without an interactive rebase,
   which the harness refuses: write a script that reads a message on stdin and writes the reworded
   one, then run `git filter-branch -f --msg-filter '<script>' origin/main..HEAD` with a clean tree.
-  Check that `git diff <old-head> HEAD` is empty, then delete the backup refs, in any checkout:
+  Check that `git diff <old-head> HEAD` is empty, which shows no content was lost, and that
+  `git range-diff origin/main..<old-head> origin/main..HEAD` marks with `!` each commit the reword
+  meant to change and no other, which shows the reword applied: a script whose pattern misses, on a
+  wrapped line or a quote, leaves the message as it was and the diff empty all the same. Then
+  delete the backup refs, in any checkout:
   `git for-each-ref --format='%(refname)' refs/original/ | xargs -r -n1 git update-ref -d`.
 - **main's history is never rewritten.** It is the shared trunk. A pushed branch of your own may
   be rewritten and force-pushed, since origin holds the old head until then. A branch that a live
@@ -602,7 +606,8 @@ computed, so no hand merge is needed and none is lost.
 - The commit that lands the repairs says what was reviewed and what was decided. Where every
   repair was folded, the message of the branch's last commit says it, reworded with a clean tree:
   a commit of its own would change no file, and the rebase merge drops it.
-- Any finding not repaired becomes an issue entry, per `knowledge-architect-issue-tracking`.
+- Every finding gets one of the outcomes of `knowledge-architect-review`, §3: repaired, opened as an
+  issue entry per `knowledge-architect-issue-tracking`, or judged to need nothing, with the reason.
 - Once the branch is rebased and the repairs are pushed, mark the pull request ready:
   `gh pr ready`. That starts CI, and every later push re-runs it. First check that GitHub has
   taken the push: `gh pr view <branch> --json headRefOid` must equal `git rev-parse HEAD`. A pull
