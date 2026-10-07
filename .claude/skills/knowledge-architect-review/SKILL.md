@@ -139,7 +139,9 @@ axis again; one made before the last transcript review is still read by it.
 **An item whose outcome turns on a ruling the owner has not given is put to the owner** before its
 outcome is recorded, and its outcome is then one of the three above. Several such items go in one
 message, each under a label, `Q<n>`, so the owner rules on each by its label; the record of the
-review names each item by its content, not by the label. **A defect that predates the
+review names each item by its content, not by the label. Where the dispatching skill gives such an
+item a label of its own, as the planning skill gives a plan document's defaults `D<n>`, that label
+is used instead. **A defect that predates the
 change** is routed by the primer's table of what is met outside the task: a fix checkable from the
 diff alone lands in a commit of its own, and the record of the review names that commit by its
 subject.
