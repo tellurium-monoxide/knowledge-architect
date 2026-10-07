@@ -771,8 +771,8 @@ situation: LLM agents are trained to take the input they receive from humans ser
 them closely", and "This kind of findings being flagged by the transcript reviewer once in a while
 (for decisions that are not the most criticals, and with only a small deviation from my word, not a
 complete reversal) is not a critical defect and should not be considered as such." The rival, every
-misstated ruling rated critical, made a reviewer's report of a slip read as a defect of the work
-and of the workflow, which the owner ruled it is not.
+misstated ruling rated critical, made a reviewer's report of a slip read as a critical defect, which
+the owner ruled it is not; the slip is still repaired, and it is no defect of the workflow.
 
 ### A plan document records the whole discussion `##spec-records-the-exchange`
 
