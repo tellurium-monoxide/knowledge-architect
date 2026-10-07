@@ -3,16 +3,6 @@
 The alternatives that lost to a decision of `path@knowledge-architect@docs/design.md`, each with
 what it lost to and why. An entry stays while the argument that defeated it holds.
 
-**A checked form for a commit, resolved by its subject** — lost to
-`design@knowledge-architect@checker-syntax-without-backticks-names-its-gap`. `live`. A commit of the
-branch is named by its subject, and nothing checks that a commit with that subject exists. A
-checked form would read the history on every run, a cost that grows with the age of the project,
-to check names that git itself does not make permanent. A check bounded to the range `commits`
-judges fails too: a later branch's documents and messages cite, by subject, commits that are no
-longer in its range, so the check must either load every commit or issue no finding on them, and it
-then only confirms citations that are already correct. Its value is low, and a subject written in
-prose escapes no check: it names history, not the tree.
-
 **The checker's crate in crates/knowledge-architect** — lost to
 `design@knowledge-architect@crate-directory-named-by-role`. `live`. Refuted by a run, not by argument: in a scratch project
 named knowledge-architect with a component at that path, the check stopped in phase 1, because the

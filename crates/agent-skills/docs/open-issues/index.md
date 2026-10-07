@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-11 entries
+12 entries
 
 | kind | title |
 | --- | --- |
@@ -8,6 +8,7 @@
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | question | [A design issue's re-entry point is read by no review](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |
 | question | [Whether synthetic evidence about the workflow is built at all, and under which conditions, is undecided](synthetic-evidence-about-the-workflow-is-undecided.md) |
+| question | [Does test 3 admit a decision that only follows a practice its tool's documentation explains?](test-3-admits-a-practice-its-tool-documents.md) |
 | question | [Does the design skill's open-space test leave bounded work almost unreachable?](the-open-space-test-may-admit-every-problem.md) |
 | todo | [A reviewer that queues long work reports nothing until it is asked](a-reviewer-s-running-time-is-unbounded.md) |
 | todo | [No installed skill says how a new Component is created](a-skill-for-creating-a-component.md) |

@@ -136,3 +136,13 @@ into the walk checks the comments with no new format. The reason is about a decl
 repository alone: a declaration of paths that must cite no entry, which
 `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked` considers, would serve any project
 that ships text, and is not covered by it.
+
+**A checked form for a commit, resolved by its subject** — lost to
+`design@agent-skills@checker-syntax-without-backticks-names-its-gap`. `live`. A commit of the
+branch is named by its subject, and nothing checks that a commit with that subject exists. A
+checked form would read the history on every run, a cost that grows with the age of the project,
+to check names that git itself does not make permanent. A check bounded to the range `commits`
+judges fails too: a later branch's documents and messages cite, by subject, commits that are no
+longer in its range, so the check must either load every commit or issue no finding on them, and it
+then only confirms citations that are already correct. Its value is low, and a subject written in
+prose escapes no check: it names history, not the tree.

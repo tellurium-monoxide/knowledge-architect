@@ -13,13 +13,16 @@ skills are shaped is `path@agent-skills@docs/design.md`.
 
 ## 1. Layout and packaging
 
-### A crate's directory is named by its role, never after its package, and no directory is named after the project `##crate-directory-named-by-role`
+### No directory is named after the project, and a published crate's directory may differ from its package's name `##crate-directory-named-by-role`
 
 A Component is named by the basename of its directory, and the project root by the project's name,
 so a directory named `knowledge-architect` would collide with the root: a run over a scratch project
-laid out that way stopped in phase 1, reporting that the name "names 2 anchors". So each crate sits
-in a directory named by what it does, crates/core for the package knowledge-architect, and a future
-split of the core follows the same rule, as crates/core and crates/cli.
+laid out that way stopped in phase 1, reporting that the name "names 2 anchors". So a published
+crate may sit in a directory named by what it does rather than by its package, crates/core for the
+package knowledge-architect, and a future split of the core follows the same rule, as crates/core
+and crates/cli. The owner kept the head to this: "only the knowledge of not naming a component
+`knowledge-architect` and accepting directories for crates that are not named against published
+packages deserves the record".
 
 ### The checker is the package knowledge-architect, in crates/core `##crate-directory`
 
@@ -278,6 +281,14 @@ statement false until a repair lands. The procedure is
   main received re-takes it. So a record carried by a message alone rides on a commit that changes
   a file.
 
+### Every component builds under one pinned toolchain `##toolchain-is-pinned`
+
+rust-toolchain.toml at the root names one Rust release, with rustfmt and clippy, and rustup
+applies it to every cargo invocation in the tree, locally and in CI. fmt and clippy are gates, and
+their verdict is a property of the toolchain as much as of the tree: on floating stable, a release
+adding a clippy lint fails CI on a tree that passes locally, or the reverse, with no change in the
+diff. An upgrade is a one-line commit of that file, and the gates judge it like any other change.
+
 ### Every build is tied to the checkout that builds it `##a-build-is-tied-to-its-checkout`
 
 The `[env]` table of the cargo configuration sets `KNOWLEDGE_ARCHITECT_CHECKOUT` to the checkout's
@@ -318,69 +329,7 @@ for the rebuilds it saves and for the build lock two checkouts would otherwise w
 a rebuild at each switch between checkouts that share a target directory. A single checkout pays
 nothing.
 
-## 4. How documents point at each other
-
-### Plain text is never the repair of a finding, and no instruction offers an unchecked form as the way to clear one `##plain-text-is-no-repair`
-
-A form a writer can use is either one the checker judges, and the workflow recommends it, or one
-the checker does not read, and the workflow never directs a pointer into it to clear a finding. So
-no finding's repair, and no installed or project instruction, offers an unchecked form as the way
-to clear a finding. A repair names a checked form: the right anchor, `path@elsewhere@<path>` for a path this
-tree does not hold, `planned@<anchor>@<path>` in a plan document for a path its work will create,
-per `design@core@planned-path-form`, an angle-bracket placeholder for an illustration, or a
-rewrite of the sentence.
-The one exception is text in the checker's syntax that no checked form expresses, written without
-backticks beside a reference to the issue entry that records the missing form, per
-`design@knowledge-architect@checker-syntax-without-backticks-names-its-gap`. Prose that mentions a
-directory without asking the reader to follow it is not a repair and is outside this head.
-
-The argument: an unchecked form that clears a finding clears it for good, so a habit of writing one
-empties the check while every run still passes, against
-`goal@knowledge-architect@documentation-stays-consistent`. Two narrower stances of the checker
-make the same argument: `design@core@the-regime-has-no-opt-out`, where no declaration exempts a
-document from a rule, and `design@core@reserved-anchors`, where the escape anchor is refused on a
-path this tree holds, since it would otherwise silence the finding on a real path.
-
-A label beside a checked pointer is not such a form. A plan item named outside its plan as #<id>
-stands beside a citation of the whole plan, because an item reference is refused there, per
-`design@core@plan-item-scope`.
-
-### The plain-text escape covers only text in the checker's syntax, which is written without backticks only beside a reference to an issue entry that records the missing form `##checker-syntax-without-backticks-names-its-gap`
-
-The checker cannot express every reference a project needs. This head covers text in the checker's
-syntax, which would be read as a candidate if it were backticked: a reference,
-`<kind>@<anchor>@<id>`, or a path of two or more segments. Where no checked form expresses what such
-text points at, it may be written without backticks, and only beside a reference to an issue entry
-of the writing project that records the missing form. Any other text that names something, in the
-tree or outside it, such as another project's commit, an address on the web or a description in
-words, is outside this head. Whether it needs a reference is decided by
-`design@agent-skills@a-reference-claims-a-revisit`. A project that meets a gap of the checker itself opens that
-entry in its own register, since a reference resolves only inside its own project, per
-`issue@core@cross-project-references`. A need that a checked form already serves is not a gap.
-
-The entry owes its `Why it matters` and its `What would close it`, so the escape is available and
-never free. `cargo klarch show` on the entry lists every site, and closing it, once a checked form
-ships and the sites are converted, dangles each one, so the conversion list is computed. Plain text
-justified in a commit message alone lost: nothing finds the site again, and nothing revisits it
-when the form ships. A generic checked opt-out marker lost too: one marker fits every finding, so
-it becomes the cheap silence `design@core@reserved-anchors` refuses, while a gap concrete enough to
-name is closed by shipping its own form.
-
-The scope is the checker's syntax, so that a writer can tell from each span alone whether the head
-applies, per `goal@knowledge-architect@agents-get-a-complete-workflow`: every sentence names
-something, and a scope of "any pointer" would ask for an issue entry beside every mention of a
-thing outside the project. The evasion the head exists to stop is a reference or a path with its
-backticks removed, which this scope covers. A scope by target, any text naming something the tree
-holds, lost: when such text needs a reference is already decided by the rule on references, and
-whether a phrase names something cannot be decided span by span.
-
-A commit named by its subject, as `design@knowledge-architect@git-flow` directs for a commit of the
-branch, is outside this head. It names history as git names it. A reference resolves against the
-entities of a tree, per `design@core@one-entity-table`, and a commit is none of them; the one
-citation of a commit the checker judges is a branch commit's SHA, which
-`design@core@branch-shas-are-refused` refuses.
-
-## 5. This repository's agent configuration
+## 4. This repository's agent configuration
 
 ### This repository's own skills and agents take the prefix klarch- `##klarch-prefix`
 

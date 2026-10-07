@@ -33,8 +33,9 @@ subsection is omitted.
   shape, sends one proposal with its default and waits for the owner's word, where it left the next
   step to the owner.
 - `agent-skills`, patch: a decision earns a design head only when one of the rewritten entry tests
-  passes: an interface others consume, a reason several sites or no site must respect, or the
-  behaviour of something outside the project. The primer says a reason recorded at the code binds
+  passes: an interface others consume, a reason several sites or no site must respect, the
+  behaviour of something outside the project, or the owner's own intent, which an approval of the
+  agent's proposal is not; the decision-record reviewer checks the last. The primer says a reason recorded at the code binds
   as intent below the design home and is read before code is removed, and the decision-record
   reviewer reports a diff that defeats one.
 - `agent-skills`, patch: the transcript reviewer rates a misstated ruling critical only when it is

@@ -123,7 +123,8 @@ evidence bring, which nobody knows in advance.
 
 %% Nothing is committed before the premortem's rulings: a premortem can surface a material finding
 %% that reopens a thread, and work committed before it would then be undone; the commit that carries
-%% the deliberation carries the rulings, as a plan document would.
+%% the deliberation carries the rulings, as a plan document would. The rival, the rulings landing in
+%% the later commit that writes the tripwires, leaves the deliberation split over two commits.
 - **The in-change path.** It is open when the decision lands in the
   change under way: its work, as when the decision was met during an
   issue fix or a review repair, or its record, for a decision that
