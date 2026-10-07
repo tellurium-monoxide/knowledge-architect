@@ -21,6 +21,9 @@ pub const CRATE_DIR: &str = env!("CARGO_MANIFEST_DIR");
 pub const PACKAGE: &str = env!("CARGO_PKG_NAME");
 
 #[cfg(test)]
+mod render;
+
+#[cfg(test)]
 mod tests {
     use super::FILES;
 
@@ -40,8 +43,8 @@ mod tests {
     }
 
     /// No shipped file holds a `%%` line: the build removes each comment line, and refuses one it
-    /// would ship, per the acceptance criterion `no-comment-line-ships` of the milestone
-    /// load-bearing-records.
+    /// would ship, per `design@agent-skills@shipped-text-line-comments`. The rules of the pass
+    /// itself are held by the tests of `render`.
     #[test]
     fn no_shipped_file_holds_a_comment_line() {
         for (path, text) in FILES {
@@ -53,11 +56,12 @@ mod tests {
     }
 
     /// No shipped file holds an unfilled substitution placeholder. The text holds `{{` only as the
-    /// install's `{{command}}` and as the `${{` of a GitHub Actions expression.
+    /// install's `{{command}}` and as the `${{ ` that opens a GitHub Actions expression, which the
+    /// setup skill writes with a space.
     #[test]
     fn no_shipped_file_holds_an_unfilled_placeholder() {
         for (path, text) in FILES {
-            let rest = text.replace("{{command}}", "").replace("${{", "");
+            let rest = text.replace("{{command}}", "").replace("${{ ", "");
             assert!(!rest.contains("{{"), "{path} ships an unfilled placeholder");
         }
     }

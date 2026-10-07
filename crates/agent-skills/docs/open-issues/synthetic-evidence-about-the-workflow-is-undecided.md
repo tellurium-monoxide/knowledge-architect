@@ -52,7 +52,7 @@ Four parts of the configuration let it through:
   needs no word of the owner, unlike a tripwire, so one the agent proposes at the premortem reaches
   a committed plan document without a ruling.
 
-A second instance, in this repository. The milestone load-bearing-records, which rewrites the entry
+A second instance, in this repository. The milestone load-bearing-records, which rewrote the entry
 tests of the decision-recording skill, gave its first slice an acceptance criterion: a fresh
 subagent, given the rewritten tests and three decisions written for the check, had to classify them
 as the owner had ruled, and a second failure would reopen the decision on the tests. The agent

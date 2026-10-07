@@ -13,6 +13,6 @@
 | todo | [No installed skill says how a new Component is created](a-skill-for-creating-a-component.md) |
 | todo | [Only the design and setup skills state what they expect of the owner](expectation-sets-for-the-installed-skills.md) |
 | todo | [Design heads that no entry test admits are still in the design homes](heads-no-entry-test-admits.md) |
-| todo | [Nothing checks mechanically that the shipped text cites no entry of this repository](shipped-text-is-reference-free-mechanically.md) |
+| todo | [Nothing checks mechanically that the shipped text cites no entry of this repository](shipped-text-citing-an-entry-is-unchecked.md) |
 | todo | [The retrospective records no count of what a merged branch cost in review](the-retrospective-counts-no-review-cost.md) |
 | todo | [No check reads the setup skill's Cargo.toml, alias and CI blocks against the workspace](the-setup-section-s-toml-and-ci-blocks-are-unchecked.md) |
