@@ -309,6 +309,8 @@ every plan document and every slice owes is the baseline. A criterion names an o
 the decision it guards; listing "the reviews pass" in every plan document would be noise, and would
 stand in for the specific criterion that is harder to find.
 
+%% `design@agent-skills@acceptance-criteria-on-the-owners-word`; the label,
+%% `design@agent-skills@ruled-items-labelled`.
 **An acceptance criterion stands on the owner's word**, as a tripwire does. The owner rules on
 whether it is applied and on the decision its firing reopens; its observable is worded by the
 agent, and a rewording is listed to the owner at the end of the turn. It is put to the owner under
@@ -453,6 +455,7 @@ skill lists, the blind brief included:
   it did not see. It also applies the readiness checks below.
 - `knowledge-architect-code-claims-reviewer` verifies every statement the document makes about the
   code as it stands, and reports each as confirmed, wrong or imprecise, with the evidence.
+%% `design@agent-skills@plan-read-against-the-record`.
 - `knowledge-architect-design-conformance-reviewer` reads the document against the project's
   record: the goals, the design heads and the rejected alternatives of every Component it touches.
   It reports a shape, an acceptance criterion, a default, a step or a harvest row that contradicts
@@ -467,6 +470,7 @@ skill lists, the blind brief included:
   message where the discussion begins in each. When no
   transcript exists, say so, and why, in the commit that adds the document.
 
+%% The `D` label of a default: `design@agent-skills@ruled-items-labelled`.
 **What their findings become.** Check each finding against the tree, or against the transcript,
 before acting on it. A material finding is answered with a default, written into the sections it
 touches, and listed under the defaults awaiting the owner, with the thread it bears on and a label,

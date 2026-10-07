@@ -136,6 +136,7 @@ is reviewed after it, and the review ends with that review's repairs. Any other 
 or an argument, a mention or a reference added inside an existing head included, is reviewed by no
 axis again; one made before the last transcript review is still read by it.
 
+%% The `Q` label: `design@agent-skills@ruled-items-labelled`.
 **An item whose outcome turns on a ruling the owner has not given is put to the owner** before its
 outcome is recorded, and its outcome is then one of the three above. Several such items go in one
 message, each under a label, `Q<n>`, so the owner rules on each by its label; the record of the
