@@ -25,7 +25,7 @@ Not covered here either: **reviewing** (`knowledge-architect-review`), **recordi
 (`knowledge-architect-decision-recording`), and **parking anything**
 (`knowledge-architect-issue-tracking`).
 
-## 0. Ground before editing
+## 0. Ground before editing `##ground-before-editing`
 
 Read the Component's own files first:
 - its `CLAUDE.md`, for the invariants and traps that hold of the code as it stands;
@@ -43,7 +43,7 @@ code is checked against it. A claim about the code as it stands goes stale, and 
 divergence between a design document and the code is a defect in one of them. Say which, and open
 an entry in that Component's `path@*@docs/open-issues/`. It is not licence to follow the code.
 
-## 1. The loop
+## 1. The loop `##development-loop`
 
 1. **Claims.** Take the unit of work's claims, each with the test that could refute it.
 2. **Write the tests, and show that they discriminate** (§2).
@@ -57,7 +57,7 @@ an entry in that Component's `path@*@docs/open-issues/`. It is not licence to fo
    unless it would leave an earlier commit failing under the branch tip's checker: it is then
    folded into the earliest commit it repairs, per root `CLAUDE.md`, section Git, point 2.
 
-## 2. Claims, and tests that discriminate
+## 2. Claims, and tests that discriminate `##discriminating-tests`
 
 **A unit of work is a list of claims, each with the test that could refute it.** A part with no
 claim is cost with no information. Where the work has a spec or a milestone, its steps present the
@@ -153,7 +153,7 @@ the claim is about_, and the survivors are adjacent to it: in thaum, two units o
 own mutation checks and an independent review found survivors in both within one pass. So the
 adversarial review of §3 chooses its own mutations.
 
-## 3. The review axes for code
+## 3. The review axes for code `##code-review-axes`
 
 **Dispatch when a coherent piece of code compiles, passes its tests, and does what its claims say**,
 and a defect found after the next piece is built on it would mean unbuilding both. That is the
@@ -172,7 +172,7 @@ The axis this activity adds:
 
 Several adversarial reviewers may be dispatched, with different angles of attack.
 
-## 4. The gate
+## 4. The gate `##development-gate`
 
 **`cargo x gates` runs every gate in one command**: fmt, `cargo klarch check`,
 `cargo klarch commits origin/main..HEAD`, clippy with `-D warnings`, and the tests. It gives one
@@ -196,7 +196,7 @@ verdict that went through a pipe.
 **No test may run the gates over this repository**, since the test gate would run the suite that is
 running it: `path@gates@CLAUDE.md` and `path@xtask@CLAUDE.md`.
 
-## 5. Incompleteness is recorded, never encoded
+## 5. Incompleteness is recorded, never encoded `##incompleteness-recorded`
 
 Every unit of work is wrong about everything later work builds. A guard, a refusal or a special case
 added to mark work as unbuilt singles out one incompleteness among many and gives it a mechanism.
@@ -208,7 +208,7 @@ Unbuilt work belongs in a plan document or in the issue registers, whose entries
 what is true. A statement in code that is false, such as a doc comment claiming a capability the
 crate lacks, is corrected, which is a different thing from enforcing the lack.
 
-## 6. Comments: two species, two audiences
+## 6. Comments: two species, two audiences `##comment-species`
 
 Neither carries the history of a change: that lives in the commit message.
 

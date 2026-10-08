@@ -14,7 +14,7 @@ for a decision about the configuration lands**: `knowledge-architect-decision-re
 skill owns how to write the configuration, that one owns where the argument goes. **Setting the
 configuration up the first time**: `knowledge-architect-setup`.
 
-## 1. Content and style of agent-facing files
+## 1. Content and style of agent-facing files {{slug:content-and-style}}
 
 Everything written in a `SKILL.md`, a subagent definition or a `CLAUDE.md` follows these:
 
@@ -33,7 +33,7 @@ Everything written in a `SKILL.md`, a subagent definition or a `CLAUDE.md` follo
   goes to the owner, as a decision that conflicts with a goal does, under
   `knowledge-architect-goal-setting`. A rewording that changes no instruction is not a decision.
 
-## 2. Where a piece of agent-facing text goes
+## 2. Where a piece of agent-facing text goes {{slug:where-text-goes}}
 
 An agent needs two kinds of text: **knowledge** about the project (what exists, how it works) and
 **instructions** about the tasks it performs. They are split first by kind, then by **when the place
@@ -75,7 +75,7 @@ Decided in order; the first match wins.
    **standard**, not a one-off task, because it must be reusable. A review axis whose content
    depends too much on the task to be standardized stays as a line in the activity's skill.
 
-## 3. Shaping a skill
+## 3. Shaping a skill {{slug:shaping-a-skill}}
 
 - **Name it by its activity, as a noun of one or two words in common usage** (planning, review,
   issue-tracking), never as an artifact the activity writes: the text names both, and a skill named
@@ -102,7 +102,7 @@ without opening it? If not, the content belongs in the skill. What this guards a
 dilution rather than length: each pointer is an extra read a session must remember, and the more
 there are, the less likely all are followed.
 
-## 4. The two tables of the root CLAUDE.md
+## 4. The two tables of the root CLAUDE.md {{slug:root-claude-md-tables}}
 
 **The project's rows of the knowledge table.** The installed primer carries the workflow's own rows:
 where a goal, a decision, a losing alternative, an issue, a tripwire, a contract or a plan document
@@ -126,7 +126,7 @@ only repeats one is removed.
 A project skill that adds to no installed one needs no row: its own description triggers it. When
 a project skill is added, renamed or removed, its row changes in the same commit.
 
-## 5. Installed files are never edited
+## 5. Installed files are never edited {{slug:installed-files-never-edited}}
 
 An installed skill, agent or primer is compared byte for byte with the version the project pins, and
 the install overwrites it. **A change the project needs is a project skill or agent of its own**,
@@ -135,7 +135,7 @@ an extra review axis, a convention of the project. It never contradicts it. Wher
 contradict it, the installed text is wrong for this project: say so to the owner, who may report it
 to the workflow's maintainers.
 
-## 6. After installing a new version
+## 6. After installing a new version {{slug:after-installing}}
 
 `{{command}} install-agent-skills` writes the files the new version ships and removes the ones it no
 longer ships. In the same commit:
@@ -149,7 +149,7 @@ longer ships. In the same commit:
   its restatement of the procedure for working a slice, whether it held one before or not;
 - run `{{command}} check`.
 
-## 7. Reviewing a configuration change
+## 7. Reviewing a configuration change {{slug:reviewing-a-change}}
 
 Dispatch a review when an instruction is written and a mechanism is in place to deliver it, per
 `knowledge-architect-review`. This skill adds no axis of its own: a change to the

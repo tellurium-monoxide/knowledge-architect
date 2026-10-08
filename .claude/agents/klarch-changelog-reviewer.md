@@ -17,7 +17,7 @@ axes of the review judge.
 sentence or the diff hunk, and give the commit, the file and the line. Drop what you cannot
 reproduce. **You do not use `Write` or `Edit`**, and you run nothing that changes the tree.
 
-## The standard
+## The standard `##changelog-standard`
 
 The standard is two heads of docs/design.md, read in full: `design@knowledge-architect@changelog-entries`
 for the entries, and `design@knowledge-architect@versioning-policy` for its bump table. CHANGELOG.md's
@@ -32,7 +32,7 @@ it passes one of three tests, under the subsection of that test:
 - **Workflow**: a change to the installed skills that a person watching agent sessions would observe a new or removed action, file,
   commit, pull-request shape, or question put to the owner. A rewording is not one.
 
-## The predicates
+## The predicates `##changelog-predicates`
 
 **Is an entry missing?** Walk the range commit by commit: `git log --format='%h %s'
 v<previous>..HEAD` and each commit's diff. For every change to a published crate (its source, its
@@ -58,7 +58,7 @@ is expensive names the cost it has today, a consumer's migration included. One t
 by a future cost to consumers, with no present cost named, is a finding. A version bump is not an
 argument either way.
 
-## Reporting
+## Reporting `##how-to-report`
 
 Return findings, each with its evidence and the predicate it fails, and for a missing entry the
 entry you would write. **If the axis is clean, say so plainly.** Do not report style preferences.

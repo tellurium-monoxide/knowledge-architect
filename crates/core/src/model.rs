@@ -87,6 +87,13 @@ pub struct Model {
     /// The checker's own directories as the summary names them: each relative to the root when
     /// it sits under it, absolute otherwise, empty when the caller passed none.
     checker_sources: Vec<PathBuf>,
+    /// The markdown files of the installer's namespace, parsed and scanned like a document, and
+    /// walked by no check: they define the entities of the installed skills, agents and primer,
+    /// per `design@core@owned-namespace-check` as the entities slice of
+    /// `milestone@plans@agent-configuration-entities` rewrites it, and no reference in them is
+    /// read. A file the caller could not read as text is left out: `check::agents` judges the
+    /// bytes, and reports it.
+    installed: Vec<Document>,
 }
 
 impl Model {
@@ -204,14 +211,25 @@ impl Model {
                     .unwrap_or(c)
             })
             .collect();
-        Ok(Self {
+        let installed = files
+            .iter()
+            .filter(|f| manifest.owned(f) && f.extension().is_some_and(|e| e == "md"))
+            .filter_map(|rel| {
+                let text = std::fs::read_to_string(root.join(rel)).ok()?;
+                Some((rel.clone(), text))
+            })
+            .collect();
+        let mut model = Self {
             root: root.to_path_buf(),
             docs,
             listing,
             links,
             untracked,
             checker_sources,
-        })
+            installed: Vec::new(),
+        };
+        model.set_installed(installed);
+        Ok(model)
     }
 
     /// Git's live listing of the project, project-relative, before any manifest exclusion.
@@ -294,7 +312,36 @@ impl Model {
             links: Vec::new(),
             untracked: HashSet::new(),
             checker_sources: checker.iter().map(|p| p.to_path_buf()).collect(),
+            installed: Vec::new(),
         }
+    }
+
+    /// Set the installed copies the model holds, each project-relative with its text.
+    ///
+    /// `build` reads them off the disk; `commits` hands in a commit's own blobs, so each commit's
+    /// entities are its own installed set's. A copy is markdown, so it is parsed with no literal
+    /// mode, and nothing walks it.
+    pub(crate) fn set_installed(&mut self, copies: Vec<(PathBuf, String)>) {
+        self.installed = copies
+            .into_iter()
+            .map(|(rel, text)| {
+                let parsed = source::parse(&rel, &text, Literals::Prose);
+                let observations = scan::scan(&parsed);
+                Document {
+                    rel,
+                    text,
+                    parsed,
+                    observations,
+                    literals: Literals::Prose,
+                }
+            })
+            .collect();
+    }
+
+    /// The installed copies, parsed: read by the entity table for definitions, by no check for
+    /// references.
+    pub(crate) fn installed(&self) -> &[Document] {
+        &self.installed
     }
 
     /// Add a document the caller could not read, empty and carrying the reason.

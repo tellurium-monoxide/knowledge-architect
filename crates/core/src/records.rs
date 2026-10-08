@@ -190,6 +190,22 @@ pub(crate) fn inbound(
             let Observation::Span(span) = &l.what else {
                 continue;
             };
+            // A harness kind's reference names its owner where the table names the anchor, so
+            // one comparison serves both.
+            if let Candidate::Harness {
+                kind: k,
+                owner: a,
+                id: i,
+            } = candidate(span, anchors)
+            {
+                if &k == kind && a == anchor && i == id {
+                    out.push(Site {
+                        file: doc.rel.clone(),
+                        line: l.line,
+                    });
+                }
+                continue;
+            }
             if let Candidate::Reference {
                 kind: k,
                 anchor: a,

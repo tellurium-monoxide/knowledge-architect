@@ -27,14 +27,14 @@ are reading. If a check seems to need one, say so as a finding rather than worki
 can verify is reported as such, with the command that would verify it, so the dispatcher can
 run it in a worktree of its own.
 
-## 1. Collect the claims
+## 1. Collect the claims `##collect-the-claims`
 
 Read the document in full and list every sentence that states a fact about existing code, data,
 tests or tools: a table of what exists today, a named function's behaviour, a type's variants, a
 store's shape, a site's order of operations, a tool's refusal, a suite's cadence, a count. A
 sentence about unbuilt work is not a claim and is skipped; a sentence that says what exists is.
 
-## 2. Verify each
+## 2. Verify each `##verify-each-claim`
 
 For each claim, read the code that decides it and give one verdict:
 
@@ -48,14 +48,14 @@ For each claim, read the code that decides it and give one verdict:
 A claim that names a mechanism by a project shorthand is verified against what the shorthand
 names, and the report says what it names.
 
-## 3. Look for what the document does not say
+## 3. Look for what the document does not say `##what-is-unsaid`
 
 Every mechanism the document names has neighbours the document may not have read: a fast path
 that skips the mechanism under a condition, a hand-written list a new value must join, a second
 site performing the same write, a refusal in a tool the document plans to run. Report each as a
 finding under its own heading, with the evidence, since the implementer will meet it.
 
-## Reporting
+## Reporting `##how-to-report`
 
 Return a numbered list, each entry with the verdict, the document's sentence, and the evidence
 as file, function and lines. Then the neighbours found. Count the verdicts by kind at the end.

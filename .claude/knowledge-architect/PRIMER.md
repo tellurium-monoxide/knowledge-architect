@@ -6,7 +6,7 @@ register declares, and every generated listing is current. This primer is instal
 project's root `CLAUDE.md` imports it. It holds what every session needs and no installed skill
 delivers. The project's own rules are in its root `CLAUDE.md`, beside this primer, and add to it.
 
-## Goals bind; decisions bind as a presumption
+## Goals bind; decisions bind as a presumption `##goals-bind`
 
 **The goals are the only statements assumed to come from the owner.** Each Component states them
 in its goals home, `path@*@docs/goals.md` or `path@*@docs/goals/`, one heading per goal. A recorded decision was reviewed, but its review can
@@ -16,7 +16,7 @@ procedure (`knowledge-architect-decision-recording`). **When a decision conflict
 the likely cause is that the owner missed the conflict: the goal prevails, and the conflict goes to
 the owner.** It is not resolved by following the decision.
 
-## The owner's word and its premise
+## The owner's word and its premise `##owner-word-premise`
 
 **A word of the owner holds only as far as its premise.** A ruling given on a premise, stated by
 the owner or supplied by the session, does not rule on the case where that premise is false. When a
@@ -25,13 +25,13 @@ word it defeats, with a default chosen in view of the corrected premise, and pro
 unless the owner answers otherwise; a part of the work that cannot be undone waits for the answer.
 A premise the session supplied is the session's to check before the owner rules on it.
 
-## Room to judge
+## Room to judge `##room-to-judge`
 
 **Where the installed text is silent, judge.** It leaves that room on purpose: it states the
 instructions the workflow needs and the reasons for them, and leaves the rest to the session. Room
 to judge is never room to act against an instruction.
 
-## Intent and claims
+## Intent and claims `##intent-and-claims`
 
 - **A design home is built intent**: the design as built and its reasons, and the decisions that
   no work implements, recorded when made. Design that is decided and not built is in a plan
@@ -56,7 +56,7 @@ to judge is never room to act against an instruction.
   `cargo klarch issues`, `cargo klarch tripwires`, and `cargo klarch show <kind>@<anchor>@<id>` for one
   entry and every reference to it.
 
-## Something met outside the task
+## Something met outside the task `##met-outside-the-task`
 
 Something met while doing other work takes the first of these that applies:
 
@@ -71,7 +71,7 @@ Something met while doing other work takes the first of these that applies:
 listing every item with its outcome: fixed (with the commit), issue opened (with its id), waiting
 for the owner's ruling, or dropped (with the reason). A mention inside other prose does not count.
 
-## Where knowledge goes
+## Where knowledge goes `##where-knowledge-goes`
 
 **Every durable decision has exactly one home.** A second mention of a decision is a reference to
 it, never a copy, because a copy starts drifting the moment it is written. **A directive is
@@ -119,7 +119,7 @@ A gap of the checker itself gets that entry in this project's own register, sinc
 cannot reach another project. Text that is not in the checker's syntax, such as a commit named by
 its subject, a commit of another project or a description in words, is outside this rule.
 
-## The installed skills
+## The installed skills `##installed-skills`
 
 - `knowledge-architect-decision-recording`: before writing into a design home; a design decision
   has been made or reversed.

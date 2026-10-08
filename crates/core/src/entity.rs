@@ -5,10 +5,13 @@
 //! it. Before this table five checks held five notions of a name; the argument is
 //! `design@core@one-entity-table`.
 //!
-//! **A kind is a register's name, or `path`, or `planned`.** Ten registers are compiled in and a
-//! project declares the rest, so the kind set is data rather than an enum —
-//! `path@core@src/manifest.rs` owns what a register is, and this module owns what naming one
-//! means.
+//! **A kind is a register's name, `path`, `planned`, or, under the `claude` harness, one of the
+//! four harness kinds.** Ten registers are compiled in and a project declares the rest, so the
+//! kind set is data rather than an enum — `path@core@src/manifest.rs` owns what a register is,
+//! and this module owns what naming one means. A harness kind, `skill`, `agent`, `primer` or
+//! `instructions`, is no register: no anchor carries it, and a reference to one names no anchor,
+//! since the harness fixes where each lives, per the entities slice of
+//! `milestone@plans@agent-configuration-entities`.
 //!
 //! **An anchor is a named directory, or a spec file, that carries registers.** A component carries every
 //! component-scoped register with its homes under `docs/`; a location carries the subset it
@@ -44,7 +47,27 @@ pub(crate) const PATH_KIND: &str = "path";
 /// `design@core@planned-path-form`.
 pub(crate) const PLANNED_KIND: &str = "planned";
 
-/// What a reference names, in its first segment: a register's name, `path`, or `planned`.
+/// The kind of a skill of the harness, and of its sections.
+pub(crate) const SKILL_KIND: &str = "skill";
+
+/// The kind of a subagent of the harness, and of its sections.
+pub(crate) const AGENT_KIND: &str = "agent";
+
+/// The kind of a section of the installed primer.
+pub(crate) const PRIMER_KIND: &str = "primer";
+
+/// The kind of a section of the project's root instructions, its root CLAUDE.md.
+pub(crate) const INSTRUCTIONS_KIND: &str = "instructions";
+
+/// The four kinds a project serving the `claude` harness cites with no anchor.
+pub(crate) const HARNESS_KINDS: [&str; 4] =
+    [SKILL_KIND, AGENT_KIND, PRIMER_KIND, INSTRUCTIONS_KIND];
+
+/// The path of the primer, as the installer writes it.
+const PRIMER_PATH: &str = ".claude/knowledge-architect/PRIMER.md";
+
+/// What a reference names, in its first segment: a register's name, `path`, `planned`, or a
+/// harness kind.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct Kind(Arc<str>);
 
@@ -81,6 +104,17 @@ impl Kind {
     pub(crate) fn name(&self) -> &str {
         &self.0
     }
+
+    /// Whether this is a harness kind, cited with no anchor.
+    pub(crate) fn is_harness(&self) -> bool {
+        HARNESS_KINDS.contains(&&*self.0)
+    }
+
+    /// Whether this kind's entities have names of their own, a skill or an agent, rather than
+    /// sections alone.
+    pub(crate) fn is_named(&self) -> bool {
+        &*self.0 == SKILL_KIND || &*self.0 == AGENT_KIND
+    }
 }
 
 impl fmt::Display for Kind {
@@ -104,6 +138,20 @@ pub(crate) const PLANS_ANCHOR: &str = "plans";
 /// two words of the `path` kind, and the plans anchor's name.
 pub(crate) fn is_reserved_anchor(word: &str) -> bool {
     word == ESCAPE_ANCHOR || word == EVERY_ANCHOR || word == PLANS_ANCHOR
+}
+
+/// Whether a word is a kind's name in a project whose registers are `registers`: `path`,
+/// `planned`, a harness kind, whatever the harness, or a register's name.
+///
+/// No anchor may wear one. The head of a reference is asked for a kind before an anchor, so an
+/// anchor named like a kind would be shadowed there: the owner's ruling, recorded as D7 of
+/// `milestone@plans@agent-configuration-entities`, refuses every such name for anything that can
+/// be an anchor, a Component, a location or a plan.
+pub(crate) fn is_kind_name(word: &str, registers: &Registers) -> bool {
+    word == PATH_KIND
+        || word == PLANNED_KIND
+        || HARNESS_KINDS.contains(&word)
+        || registers.by_name(word).is_some()
 }
 
 /// The shape an anchor name must have for a reference to be able to name it.
@@ -311,6 +359,8 @@ impl Anchor {
 pub(crate) struct Anchors {
     list: Vec<Anchor>,
     registers: Registers,
+    /// Whether the project serves the `claude` harness, which makes the harness kinds kinds.
+    harness: bool,
 }
 
 impl Anchors {
@@ -353,7 +403,11 @@ impl Anchors {
                 }
             }
         }
-        Self { list, registers }
+        Self {
+            list,
+            registers,
+            harness: manifest.serves_claude(),
+        }
     }
 
     /// The anchors of a manifest over a tree that places no milestone, for a test about the
@@ -366,7 +420,16 @@ impl Anchors {
     /// Anchors stated directly, for a test that needs a register list no component has.
     #[cfg(test)]
     pub(crate) fn from_list(list: Vec<Anchor>, registers: Registers) -> Self {
-        Self { list, registers }
+        Self {
+            list,
+            registers,
+            harness: false,
+        }
+    }
+
+    /// Whether the harness kinds are kinds here: the project serves the `claude` harness.
+    pub(crate) fn serves_harness(&self) -> bool {
+        self.harness
     }
 
     pub(crate) fn all(&self) -> &[Anchor] {
@@ -377,13 +440,21 @@ impl Anchors {
         &self.registers
     }
 
-    /// The kind a word names: a declared register, `path`, or `planned`.
+    /// The kind a word names: a declared register, `path`, `planned`, or a harness kind where the
+    /// project serves the `claude` harness.
+    ///
+    /// Under no harness the four words name no kind, so a span headed by one is silent, as any
+    /// span whose head is no kind and no anchor: the project has no agent configuration for it to
+    /// point into.
     pub(crate) fn kind(&self, word: &str) -> Option<Kind> {
         if word == PATH_KIND {
             return Some(Kind::path());
         }
         if word == PLANNED_KIND {
             return Some(Kind::planned());
+        }
+        if self.harness && HARNESS_KINDS.contains(&word) {
+            return Some(Kind::new(word));
         }
         self.registers.by_name(word).map(|r| Kind::new(&r.name))
     }
@@ -398,6 +469,9 @@ impl Anchors {
             .collect();
         names.push(PATH_KIND);
         names.push(PLANNED_KIND);
+        if self.harness {
+            names.extend(HARNESS_KINDS);
+        }
         names.join(", ")
     }
 
@@ -602,6 +676,9 @@ pub(crate) fn milestone_refusal(name: &str, manifest: &Manifest) -> Option<Strin
     if is_reserved_anchor(name) {
         return Some("is a word the tool reserves".to_string());
     }
+    if is_kind_name(name, manifest.registers()) {
+        return Some("is the name of a kind".to_string());
+    }
     // The `<id>.md` beside a milestone is its home's retired single file, and beside `index`
     // that is the milestones home's own generated listing.
     if name == "index" {
@@ -650,6 +727,15 @@ pub(crate) enum Candidate<'a> {
     AnchorInKindPosition { head: &'a str },
     /// The head is neither a kind nor an anchor. Not a reference; silent.
     NotOne,
+    /// A well-formed reference of a harness kind, which names no anchor. `owner` is the skill
+    /// or the agent a section belongs to, and empty for a whole skill or agent and for a section
+    /// of the primer or the root instructions; `id` is the name or the slug. The pair is the
+    /// entity table's key below the kind.
+    Harness {
+        kind: Kind,
+        owner: &'a str,
+        id: &'a str,
+    },
 }
 
 /// The candidate rule and the segmentation, over one backticked span holding an `@`.
@@ -681,6 +767,9 @@ pub(crate) fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
         }
         return Candidate::NotOne;
     };
+    if kind.is_harness() {
+        return harness_candidate(kind, rest);
+    }
     let Some((anchor, id)) = rest.split_once('@') else {
         return Candidate::Malformed {
             why: "two segments; a reference has three",
@@ -717,6 +806,138 @@ pub(crate) fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
         };
     }
     Candidate::Reference { kind, anchor, id }
+}
+
+/// The segmentation of a harness kind's reference, `rest` being the span after the kind.
+///
+/// A skill or an agent takes its name, and its name and a section's slug: two or three
+/// segments. The primer and the root instructions take a slug alone: two segments. Any other
+/// arity, or an empty segment, is malformed, with the forms the kind takes as its repair.
+fn harness_candidate(kind: Kind, rest: &str) -> Candidate<'_> {
+    let repair = match kind.name() {
+        SKILL_KIND => {
+            "write `skill@<name>` for a skill, or `skill@<name>@<slug>` for one of its \
+                       sections"
+        }
+        AGENT_KIND => {
+            "write `agent@<name>` for an agent, or `agent@<name>@<slug>` for one of its \
+                       sections"
+        }
+        PRIMER_KIND => "write `primer@<slug>` for a section of the primer",
+        _ => "write `instructions@<slug>` for a section of the root CLAUDE.md",
+    };
+    let segments: Vec<&str> = rest.split('@').collect();
+    if segments.iter().any(|s| s.is_empty()) {
+        return Candidate::Malformed {
+            why: "a segment is empty",
+            repair,
+        };
+    }
+    match (kind.is_named(), segments.as_slice()) {
+        (_, [id]) => Candidate::Harness {
+            kind,
+            owner: "",
+            id,
+        },
+        (true, [owner, id]) => Candidate::Harness { kind, owner, id },
+        (true, _) => Candidate::Malformed {
+            why: "four or more segments; a skill or an agent is cited by its name and a section's \
+                  slug",
+            repair,
+        },
+        (false, _) => Candidate::Malformed {
+            why: "three or more segments; the primer and the root CLAUDE.md are cited by a \
+                  section's slug alone",
+            repair,
+        },
+    }
+}
+
+/// Which section home of the harness a document is, under the `claude` harness.
+///
+/// A skill is `.claude/skills/<dir>/SKILL.md`, named by its directory. An agent is a Markdown
+/// file at any depth under the agents directory, as `.claude/agents/<file>.md`, whose frontmatter
+/// sets `name`, named by the file's basename: the harness reads a file there with no `name` as
+/// documentation, and scans the directory recursively. The primer is the installed
+/// `PRIMER.md`, and the root instructions the root `CLAUDE.md`. Anything else is no section home.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) enum SectionHome {
+    Skill(String),
+    Agent(String),
+    Primer,
+    Instructions,
+}
+
+impl SectionHome {
+    /// The section home `rel` is, given its text, or `None`.
+    pub(crate) fn of(rel: &Path, text: &str) -> Option<Self> {
+        let parts: Vec<&str> = rel.iter().map(|c| c.to_str()).collect::<Option<_>>()?;
+        match parts.as_slice() {
+            [".claude", "skills", dir, "SKILL.md"] => Some(Self::Skill((*dir).to_string())),
+            [".claude", "agents", .., file] if file.ends_with(".md") => {
+                if frontmatter_name(text) == NameLine::Absent {
+                    return None;
+                }
+                Some(Self::Agent(file.trim_end_matches(".md").to_string()))
+            }
+            ["CLAUDE.md"] => Some(Self::Instructions),
+            _ if rel == Path::new(PRIMER_PATH) => Some(Self::Primer),
+            _ => None,
+        }
+    }
+
+    fn kind(&self) -> Kind {
+        Kind::new(match self {
+            Self::Skill(_) => SKILL_KIND,
+            Self::Agent(_) => AGENT_KIND,
+            Self::Primer => PRIMER_KIND,
+            Self::Instructions => INSTRUCTIONS_KIND,
+        })
+    }
+}
+
+/// What the `name:` lines of a frontmatter block say.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) enum NameLine {
+    /// No block, or a block with no `name:` line.
+    Absent,
+    One(String),
+    /// `name:` written twice: two values for one thing.
+    Twice,
+}
+
+/// The `name:` line of the frontmatter block opening `text`, read alone.
+///
+/// The block is opened by a first line holding only `---` and closed by the next such line. Only
+/// a line starting `name:` is read, by the frontmatter subset's line rule, with one pair of
+/// surrounding quotes removed; every other line of the block is left to the harness, which reads
+/// YAML the subset refuses, such as a list or a multi-line description. A block never closed is no
+/// block.
+pub(crate) fn frontmatter_name(text: &str) -> NameLine {
+    let mut lines = text.lines();
+    if lines.next().map(str::trim_end) != Some("---") {
+        return NameLine::Absent;
+    }
+    let mut found: Vec<String> = Vec::new();
+    for line in lines {
+        let line = line.trim_end();
+        if line == "---" {
+            return match found.len() {
+                0 => NameLine::Absent,
+                1 => NameLine::One(found.remove(0)),
+                _ => NameLine::Twice,
+            };
+        }
+        if let Some(value) = line.strip_prefix("name:") {
+            let value = value.trim();
+            let unquoted = ['"', '\'']
+                .iter()
+                .find_map(|q| value.strip_prefix(*q)?.strip_suffix(*q))
+                .unwrap_or(value);
+            found.push(unquoted.to_string());
+        }
+    }
+    NameLine::Absent
 }
 
 /// Why a reference to a table kind resolves to nothing, or that it resolves.
@@ -760,12 +981,20 @@ impl Entities {
         let mut out = Self::default();
         out.heading_definitions(model, anchors);
         out.file_definitions(model, anchors);
+        if anchors.serves_harness() {
+            out.harness_definitions(model);
+        }
         out.report_duplicates();
         out
     }
 
     fn heading_definitions(&mut self, model: &Model, anchors: &Anchors) {
         for doc in model.documents() {
+            // A section home of the harness is read by `harness_definitions`: its sections are
+            // the harness kinds', whatever anchor holds the file.
+            if anchors.serves_harness() && SectionHome::of(&doc.rel, &doc.text).is_some() {
+                continue;
+            }
             // Two passes produce this document's findings, and a reader walks it top to
             // bottom, so they are put in line order once both are done.
             let first = self.findings.len();
@@ -993,6 +1222,122 @@ impl Entities {
         }
     }
 
+    /// The entities of the harness kinds: every skill and agent, and the sections of each, of the
+    /// primer and of the root instructions.
+    ///
+    /// Read from the walked documents, for the project's own skills and agents and its root
+    /// CLAUDE.md, and from the installed copies the model holds, for the installed ones and the
+    /// primer, so each tree is judged against its own installed set. A skill or an agent is
+    /// defined at its file's first line, and a section at its slug: every level-two heading of a
+    /// section home owes one, and a slug anywhere else in it defines nothing.
+    fn harness_definitions(&mut self, model: &Model) {
+        for doc in model.documents().iter().chain(model.installed()) {
+            let Some(home) = SectionHome::of(&doc.rel, &doc.text) else {
+                continue;
+            };
+            let first = self.findings.len();
+            self.section_home(doc, &home);
+            self.findings[first..].sort_by_key(|f| f.line);
+        }
+    }
+
+    fn section_home(&mut self, doc: &crate::model::Document, home: &SectionHome) {
+        let kind = home.kind();
+        let owner = match home {
+            SectionHome::Skill(name) | SectionHome::Agent(name) => {
+                let what = if kind.name() == SKILL_KIND {
+                    "the skill's directory"
+                } else {
+                    "the agent's file"
+                };
+                if !is_entity_id(name) {
+                    self.findings.push(Finding::in_file(
+                        &doc.rel,
+                        format!("`{name}` cannot be the name of a {kind}"),
+                        format!(
+                            "rename {what} in lower-case words and digits joined by hyphens; a \
+                             {kind} no reference can spell is one every pointer misses"
+                        ),
+                    ));
+                    return;
+                }
+                match frontmatter_name(&doc.text) {
+                    NameLine::Twice => self.findings.push(Finding::in_file(
+                        &doc.rel,
+                        format!("the frontmatter of the {kind} `{name}` sets `name` twice"),
+                        "keep one `name` line; two values for one name leave the harness to pick",
+                    )),
+                    NameLine::One(set) if set != *name => self.findings.push(Finding::in_file(
+                        &doc.rel,
+                        format!(
+                            "the frontmatter names this {kind} `{set}`, and {what} names it \
+                             `{name}`"
+                        ),
+                        format!(
+                            "make the two the same, renaming {what} or the frontmatter's \
+                             `name`; a reference cites one name, and the harness answers to both"
+                        ),
+                    )),
+                    _ => {}
+                }
+                self.defined
+                    .entry((kind.clone(), String::new(), name.clone()))
+                    .or_default()
+                    .push(Site {
+                        file: doc.rel.clone(),
+                        line: 1,
+                    });
+                name.as_str()
+            }
+            SectionHome::Primer | SectionHome::Instructions => "",
+        };
+        let slugged: std::collections::HashSet<u32> = doc
+            .observations
+            .iter()
+            .filter(|l| matches!(l.what, Observation::SlugDef { .. }))
+            .map(|l| l.line)
+            .collect();
+        for l in &doc.observations {
+            match &l.what {
+                Observation::Heading { level: 2, text } if !slugged.contains(&l.line) => {
+                    self.findings.push(Finding::at(
+                        &doc.rel,
+                        l.line,
+                        format!(
+                            "the level-2 heading \"{text}\" of this {kind}'s file carries no slug"
+                        ),
+                        "every level-2 heading of a skill, an agent, the primer and the root \
+                         CLAUDE.md is a section a reference can cite: end it with its slug, two \
+                         hashes and the id in backticks, the id naming the section's subject",
+                    ));
+                }
+                Observation::SlugDef { id, site } => {
+                    if *site == SlugSite::Heading(2) {
+                        self.defined
+                            .entry((kind.clone(), owner.to_string(), id.clone()))
+                            .or_default()
+                            .push(Site {
+                                file: doc.rel.clone(),
+                                line: l.line,
+                            });
+                    } else {
+                        self.findings.push(Finding::at(
+                            &doc.rel,
+                            l.line,
+                            format!(
+                                "`##{id}` is written in this {kind}'s file away from a level-2 \
+                                 heading, and defines nothing"
+                            ),
+                            "a section is defined at the end of a level-2 heading; move the slug \
+                             to one, or delete it",
+                        ));
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
     /// Report every heading at the register's level that carries no slug.
     ///
     /// Every heading at that level in the register's home is an entry, so one without a slug
@@ -1144,13 +1489,17 @@ impl Entities {
                     .filter(|s| *s != site)
                     .map(Site::to_string)
                     .collect();
+                let named = if !kind.is_harness() {
+                    format!("{kind}@{anchor}@{id}")
+                } else if anchor.is_empty() {
+                    format!("{kind}@{id}")
+                } else {
+                    format!("{kind}@{anchor}@{id}")
+                };
                 found.push(Finding::at(
                     &site.file,
                     site.line,
-                    format!(
-                        "`{kind}@{anchor}@{id}` is also defined at {}",
-                        others.join(", ")
-                    ),
+                    format!("`{named}` is also defined at {}", others.join(", ")),
                     "keep one definition; a reference resolves to exactly one entity",
                 ));
             }
@@ -1240,6 +1589,21 @@ impl Entities {
             .filter(|((k, _, _), _)| k == kind)
             .map(|((_, anchor, id), sites)| (anchor.as_str(), id.as_str(), sites.as_slice()))
             .collect()
+    }
+
+    /// Whether the table defines this entity: a kind, the anchor or, for a harness kind, the
+    /// owner, empty where there is none, and the id.
+    pub(crate) fn defines(&self, kind: &Kind, anchor: &str, id: &str) -> bool {
+        self.defined
+            .contains_key(&(kind.clone(), anchor.to_string(), id.to_string()))
+    }
+
+    /// Where the table defines this entity, if it does.
+    pub(crate) fn sites(&self, kind: &Kind, anchor: &str, id: &str) -> &[Site] {
+        self.defined
+            .get(&(kind.clone(), anchor.to_string(), id.to_string()))
+            .map(Vec::as_slice)
+            .unwrap_or_default()
     }
 
     /// Whether any register of any anchor defines an entry with this id.
@@ -2157,5 +2521,256 @@ mod tests {
         ] {
             assert_eq!(is_anchor_name(name), ok, "{name:?}");
         }
+    }
+
+    // The harness kinds, per the entities slice of
+    // `milestone@plans@agent-configuration-entities`.
+
+    /// A model of walked documents and installed copies, and its table under the anchors of a
+    /// project serving the `claude` harness, which the fixture manifest does by default.
+    fn harness_table(walked: Vec<(&str, &str)>, installed: Vec<(&str, &str)>) -> Entities {
+        let mut model = Model::from_documents(
+            walked
+                .into_iter()
+                .map(|(p, t)| (PathBuf::from(p), t.to_string()))
+                .collect(),
+        );
+        model.set_installed(
+            installed
+                .into_iter()
+                .map(|(p, t)| (PathBuf::from(p), t.to_string()))
+                .collect(),
+        );
+        Entities::build(&model, &anchors())
+    }
+
+    fn whats(e: &Entities) -> Vec<String> {
+        e.definition_findings()
+            .iter()
+            .map(|f| f.what.clone())
+            .collect()
+    }
+
+    /// The claim: a skill or an agent is defined from a walked file and from an installed copy
+    /// alike, and each of its level-two headings' slugs defines a section under it. Mutation
+    /// checked: dropping `model.installed()` from the documents `harness_definitions` reads
+    /// leaves the installed skill and its section undefined.
+    #[test]
+    fn a_skill_is_defined_from_the_walk_and_from_an_installed_copy() {
+        let own = "---\nname: my-skill\n---\n# Mine\n\n## Its part `##its-part`\n";
+        let installed = "---\nname: knowledge-architect-review\n---\n# Review\n\n\
+                         ## The axes `##review-axes`\n";
+        let e = harness_table(
+            vec![(".claude/skills/my-skill/SKILL.md", own)],
+            vec![(
+                ".claude/skills/knowledge-architect-review/SKILL.md",
+                installed,
+            )],
+        );
+        assert!(e.definition_findings().is_empty(), "{:#?}", whats(&e));
+        let skill = Kind::new(SKILL_KIND);
+        assert!(e.defines(&skill, "", "my-skill"));
+        assert!(e.defines(&skill, "my-skill", "its-part"));
+        assert!(e.defines(&skill, "", "knowledge-architect-review"));
+        assert!(e.defines(&skill, "knowledge-architect-review", "review-axes"));
+        assert!(!e.defines(&skill, "my-skill", "review-axes"));
+    }
+
+    /// The claim: an agent is a Markdown file at any depth under the agents directory whose
+    /// frontmatter sets `name`, and a file there with no `name` is no agent. Mutation checked:
+    /// matching only a file directly under the directory leaves the nested agent undefined.
+    #[test]
+    fn an_agent_is_a_named_file_at_any_depth_and_a_file_with_no_name_is_none() {
+        let agent =
+            "---\nname: a-reviewer\ndescription: d\n---\n# A\n\n## Its steps `##its-steps`\n";
+        let nested = "---\nname: deep\n---\n# D\n";
+        let readme = "# Agents\n\nWhat sits here.\n";
+        let e = harness_table(
+            vec![
+                (".claude/agents/a-reviewer.md", agent),
+                (".claude/agents/review/deep.md", nested),
+                (".claude/agents/README.md", readme),
+            ],
+            vec![],
+        );
+        assert!(e.definition_findings().is_empty(), "{:#?}", whats(&e));
+        let kind = Kind::new(AGENT_KIND);
+        assert!(e.defines(&kind, "", "a-reviewer"));
+        assert!(e.defines(&kind, "a-reviewer", "its-steps"));
+        assert!(e.defines(&kind, "", "deep"));
+        assert!(!e.defines(&kind, "", "README"));
+    }
+
+    /// The claim: the primer and the root instructions define their sections with no owner.
+    #[test]
+    fn the_primer_and_the_root_instructions_define_their_sections() {
+        let e = harness_table(
+            vec![("CLAUDE.md", "# P\n\n## Git `##git-workflow`\n")],
+            vec![(
+                PRIMER_PATH,
+                "# Primer\n\n## Room to judge `##room-to-judge`\n",
+            )],
+        );
+        assert!(e.definition_findings().is_empty(), "{:#?}", whats(&e));
+        assert!(e.defines(&Kind::new(INSTRUCTIONS_KIND), "", "git-workflow"));
+        assert!(e.defines(&Kind::new(PRIMER_KIND), "", "room-to-judge"));
+    }
+
+    /// The claim: every level-two heading of a section home owes a slug, its finding names the
+    /// repair, a slug at another level there defines nothing, and a fenced heading owes nothing.
+    /// Mutation checked: the rule applied at level three reports neither case.
+    #[test]
+    fn a_section_home_owes_a_slug_on_every_level_two_heading() {
+        let skill = "# S\n\n## Bare\n\n### Deep `##deep`\n\n```\n## Fenced\n```\n";
+        let e = harness_table(vec![(".claude/skills/s/SKILL.md", skill)], vec![]);
+        let found = e.definition_findings();
+        assert_eq!(found.len(), 2, "{:#?}", whats(&e));
+        assert!(found[0].what.contains("\"Bare\""), "{:#?}", whats(&e));
+        assert!(
+            found[0].action.contains("end it with its slug"),
+            "{}",
+            found[0].action
+        );
+        assert!(found[1].what.contains("`##deep`"), "{:#?}", whats(&e));
+        assert!(!e.defines(&Kind::new(SKILL_KIND), "s", "deep"));
+    }
+
+    /// The claim: a frontmatter `name` that differs from the skill's directory, or from the
+    /// agent's file, is a finding, and so is `name` written twice; a skill with no `name` is
+    /// accepted. Mutation checked: comparing the name only for agents misses the skill's.
+    #[test]
+    fn a_name_its_frontmatter_contradicts_is_a_finding() {
+        let e = harness_table(
+            vec![
+                (".claude/skills/s/SKILL.md", "---\nname: other\n---\n# S\n"),
+                (".claude/agents/a.md", "---\nname: b\n---\n# A\n"),
+                (".claude/agents/t.md", "---\nname: t\nname: t\n---\n# T\n"),
+                (
+                    ".claude/skills/plain/SKILL.md",
+                    "---\ndescription: d\n---\n# P\n",
+                ),
+            ],
+            vec![],
+        );
+        let found = whats(&e);
+        assert_eq!(found.len(), 3, "{found:#?}");
+        assert!(
+            found.iter().any(|w| w.contains("names this skill `other`")),
+            "{found:#?}"
+        );
+        assert!(
+            found.iter().any(|w| w.contains("names this agent `b`")),
+            "{found:#?}"
+        );
+        assert!(
+            found.iter().any(|w| w.contains("sets `name` twice")),
+            "{found:#?}"
+        );
+        assert!(e.defines(&Kind::new(SKILL_KIND), "", "plain"));
+    }
+
+    /// The claim: a skill or an agent whose name a reference cannot spell is a finding, and
+    /// defines nothing. Mutation checked: deleting the grammar test defines `My_Skill`.
+    #[test]
+    fn a_name_outside_the_id_grammar_is_a_finding() {
+        let e = harness_table(vec![(".claude/skills/My_Skill/SKILL.md", "# S\n")], vec![]);
+        let found = whats(&e);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("`My_Skill` cannot be the name of a skill"),
+            "{found:#?}"
+        );
+        assert!(!e.defines(&Kind::new(SKILL_KIND), "", "My_Skill"));
+    }
+
+    /// The claim: only the `name:` line is read, so a frontmatter the subset refuses, with a list
+    /// or an indented continuation, still names its file; quotes are removed.
+    #[test]
+    fn the_name_line_is_read_alone() {
+        let yaml = "---\nname: \"a-skill\"\ntools: [Read, Grep]\ndescription: >\n  folded\n---\n";
+        assert_eq!(frontmatter_name(yaml), NameLine::One("a-skill".to_string()));
+        assert_eq!(frontmatter_name("# no block\n"), NameLine::Absent);
+        assert_eq!(frontmatter_name("---\nname: x\n"), NameLine::Absent);
+        assert_eq!(
+            frontmatter_name("---\nname: x\nname: y\n---\n"),
+            NameLine::Twice
+        );
+    }
+
+    /// The claim: each harness kind takes the arities of the milestone's mapping table, and any
+    /// other is malformed with the kind's forms as its repair; under no harness the four words
+    /// are no kind, and a span headed by one is silent. Mutation checked: segmenting a harness
+    /// kind as a register kind makes a two-segment span malformed.
+    #[test]
+    fn a_harness_kind_takes_its_arities_and_no_other() {
+        let a = anchors();
+        let harness = |span: &'static str| match candidate(span, &a) {
+            Candidate::Harness { kind, owner, id } => Some((kind.name().to_string(), owner, id)),
+            _ => None,
+        };
+        assert_eq!(harness("skill@x"), Some(("skill".into(), "", "x")));
+        assert_eq!(harness("skill@x@part"), Some(("skill".into(), "x", "part")));
+        assert_eq!(harness("agent@y"), Some(("agent".into(), "", "y")));
+        assert_eq!(harness("agent@y@part"), Some(("agent".into(), "y", "part")));
+        assert_eq!(harness("primer@part"), Some(("primer".into(), "", "part")));
+        assert_eq!(
+            harness("instructions@part"),
+            Some(("instructions".into(), "", "part"))
+        );
+        for span in [
+            "skill@x@part@more",
+            "agent@y@a@b",
+            "primer@x@part",
+            "instructions@x@part",
+            "skill@",
+            "skill@x@",
+            "primer@",
+        ] {
+            assert!(
+                matches!(candidate(span, &a), Candidate::Malformed { .. }),
+                "{span}"
+            );
+        }
+        let none =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
+                    [walk]\nskip-dirs = []\nskip-files = []\n\n[agents]\nharness = []\n";
+        let quiet = Anchors::declared(
+            &Manifest::parse(Path::new("/nowhere"), none).expect("a declaration"),
+        );
+        for span in [
+            "skill@x",
+            "agent@y@part",
+            "primer@part",
+            "instructions@part",
+        ] {
+            assert_eq!(candidate(span, &quiet), Candidate::NotOne, "{span}");
+        }
+    }
+
+    /// The claim: every kind name is refused as a plan's name, as the owner ruled in D7 of
+    /// `milestone@plans@agent-configuration-entities`.
+    #[test]
+    fn a_kind_name_is_no_plan_name() {
+        let text =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
+                    [walk]\nskip-dirs = []\nskip-files = []\n\n";
+        let m = Manifest::parse(Path::new("/nowhere"), text).expect("a declaration");
+        for name in [
+            "skill",
+            "agent",
+            "primer",
+            "instructions",
+            "design",
+            "issue",
+            "path",
+            "planned",
+        ] {
+            assert_eq!(
+                milestone_refusal(name, &m).as_deref(),
+                Some("is the name of a kind"),
+                "{name}"
+            );
+        }
+        assert_eq!(milestone_refusal("a-plan", &m), None);
     }
 }

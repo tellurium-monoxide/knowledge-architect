@@ -24,7 +24,7 @@ audit and at each landing.
   `knowledge-architect-decision-recording` for the decisions and the losing alternatives, and
   `knowledge-architect-issue-tracking` for the tripwires and the issues.
 
-## Terms
+## Terms `##planning-terms`
 
 | word | meaning |
 | --- | --- |
@@ -49,7 +49,7 @@ audit and at each landing.
 **The owner** is the person whose word closes a thread. Every ruling in this activity is theirs.
 The word "plan" alone never names a document: say spec, milestone document, or plan document.
 
-## 1. When this skill starts
+## 1. When this skill starts `##when-planning-starts`
 
 **In the session where the discussion converged, before that session ends.** The discussion's
 ledger, every thread with its state and its argument, lives in that conversation and in the
@@ -60,7 +60,7 @@ conditions of each closure.
 A problem that arrived bounded, with a clear requirement and no open design question, has no
 converged discussion to plan from. This skill does not apply to it.
 
-## 2. A spec or a milestone
+## 2. A spec or a milestone `##spec-or-milestone`
 
 | the work | its plan document |
 | --- | --- |
@@ -105,7 +105,7 @@ cannot go stale unnoticed. An illustration of the shape:
 - `issue@<anchor>@<id>`
 ```
 
-## 3. Layout
+## 3. Layout `##plans-layout`
 
 ```
 docs/plans/
@@ -141,7 +141,7 @@ docs/plans/
   items, so it is not the name of a Component, of a location or of a reserved anchor, `plans`,
   `elsewhere` or `*`, and one name is not used under both homes.
 
-## 4. What a spec holds
+## 4. What a spec holds `##spec-contents`
 
 **Written for a session that did not witness the discussion.** That is the standard every section
 is held to, and §8's reviews check it.
@@ -238,7 +238,7 @@ discussion's opening message, never by a session identifier, as `knowledge-archi
 Where the harness keeps no
 transcript, assemble from the conversation, and say so in the commit that adds the document.
 
-## 5. Cutting the steps and the slices
+## 5. Cutting the steps and the slices `##cutting-steps-and-slices`
 
 A step is one item of an implementation sequence. A spec's work is a sequence of steps on one
 branch. A milestone's work is a sequence of slices, each one branch and one PR with its own spec,
@@ -283,7 +283,7 @@ Claims and Audit subjects, and is not checked:
 - **Premises that expire**: where the slice relies on something a later slice or change ends, what
   ends it, and the criterion or guard that watches it.
 
-## 6. Acceptance criteria
+## 6. Acceptance criteria `##acceptance-criteria`
 
 An acceptance criterion is a bet about a decision the work is built on, where a claim is a bet about
 the work itself: firing a criterion reopens the decision, not the step. It lives in the plan
@@ -332,7 +332,7 @@ default marked as the owner's to reset.
   the harvested head, in the shape `knowledge-architect-issue-tracking` gives. One that is
   spent, or that the owner declines, is deleted with the document.
 
-## 7. Working a slice, and the work of a spec
+## 7. Working a slice, and the work of a spec `##working-a-slice`
 
 The milestone document restates this procedure with a pointer to this skill, so a cold session
 finds it there. The work of a spec follows it too, as its last paragraph says.
@@ -429,7 +429,7 @@ Where a point names the milestone document or the slice's spec, the work of a sp
 its defaults, its threads, its harvest row, and an audit's commit subject of the shape `The <spec>
 design audit, applied in place: …`.
 
-## 8. Reviews of a plan document
+## 8. Reviews of a plan document `##plan-reviews`
 
 A plan document is committed first, on a branch of its own or on its work's branch, and that
 commit is what the reviewers read; a repair lands after it, as a further commit or folded where
@@ -493,7 +493,7 @@ This list is their one home; the reviewer reads it here.
   harvest that judges or updates it;
 - every section of §4 is present, and an empty one says so.
 
-## 9. When a plan document leaves
+## 9. When a plan document leaves `##plan-document-leaves`
 
 **A spec is deleted in the commit that completes its last harvest, and that commit's message cites
 it by its kind**, `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<slice>`, which

@@ -6,6 +6,36 @@ class is `design@knowledge-architect@changelog-entries`. Inside a subsection, en
 surface, in the order `checks`, `cli`, `manifest`, `library`, `agent-skills`, `gates`; an empty
 subsection is omitted.
 
+## Next release
+
+### Migration
+
+- `checks`, minor: under the `claude` harness, every level-two heading of the root CLAUDE.md, of
+  each project skill, `.claude/skills/<name>/SKILL.md`, and of each project agent,
+  `.claude/agents/<file>.md`, ends with a slug, two hashes and the id in backticks. A project adds
+  one to each such heading; this holds for mock projects serving `claude` too.
+- `checks`, minor: a project skill's directory and a project agent's file are named in lower-case
+  words joined by hyphens, and a frontmatter `name`, where one is set, equals that name.
+- `manifest`, major: a Component, a location or a plan named after a kind, such as `design`,
+  `issue`, `path`, a declared register or one of `skill`, `agent`, `primer` and `instructions`, is
+  refused, and so is a register named after one of those four. A project renames it.
+
+### New features
+
+- `checks`, minor: under the `claude` harness, a skill, an agent and their sections, and a section
+  of the primer or of the root CLAUDE.md, are cited with no anchor: `skill@<name>`,
+  `skill@<name>@<slug>`, `agent@<name>`, `agent@<name>@<slug>`, `primer@<slug>` and
+  `instructions@<slug>`. Each resolves against the installed copies and the project's own files,
+  and `show` prints each.
+- `checks`, minor: a slug at a level-two heading of a project skill or agent defines a section, where
+  it was reported as a misplaced definition.
+
+### Workflow
+
+- `agent-skills`, patch: every level-two heading of the installed skills, agents and primer carries
+  a slug, and the setup skill states that the root CLAUDE.md and a project's own skills and agents
+  carry one too.
+
 ## 0.5.0
 
 ### Migration

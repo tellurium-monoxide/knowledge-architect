@@ -29,7 +29,7 @@ Where this text says a file is created, deleted, split, restated, absorbed or mo
 repair you report
 for the dispatcher to make.
 
-## 1. Mechanical
+## 1. Mechanical `##mechanical-checks`
 
 ```sh
 cargo klarch check
@@ -60,7 +60,7 @@ Every Component carries an issue directory and a tripwires home, and every locat
 registers it declares. Grepping the one you happen to think of is not the check. Run
 `cargo klarch issues` and `cargo klarch tripwires`.
 
-## 2. Re-read every tripwire and every deferred trigger
+## 2. Re-read every tripwire and every deferred trigger `##reread-standing-entries`
 
 **Every Component carries a tripwires home, `path@*@docs/tripwires.md` or a `path@*@docs/tripwires/`
 directory.** A tripwire guards a recorded decision, and a decision lives in the Component it is
@@ -101,7 +101,7 @@ A tripwire whose decision was **reversed** is deleted outright. A tripwire alrea
 entry against the same slug is **absorbed** into it, because one slug guarded from two places is one
 a reversal voids only half of.
 
-## 3. A landing plan document's acceptance criteria
+## 3. A landing plan document's acceptance criteria `##landing-acceptance-criteria`
 
 **An acceptance criterion is the same check for unbuilt work.** A check that can only be applied once
 unbuilt work is built is not a tripwire, so it lives in the plan document of the work that builds
@@ -115,7 +115,7 @@ When the diff deletes a plan document, confirm that every criterion still standi
 once more, and that each one that recurs at later work was proposed to the owner as a tripwire and
 either written, on the owner's word, or deleted.
 
-## 4. The predicate
+## 4. The predicate `##standing-predicate`
 
 **Did an open item lose its home?** An issue file deleted needs the work that closes it in the
 same change, because a fixed defect is deleted rather than marked resolved and the history of the
@@ -138,7 +138,7 @@ session that has no legal move.
 or an uncertainty that survived the fix, that content is not an open issue and belongs in the owning
 document head or the nearest scoped `CLAUDE.md`, moved there **before** the entry was deleted.
 
-## Reporting
+## Reporting `##how-to-report`
 
 Return findings, each naming the file and the exact reproduction, plus what the mechanical runs
 returned and **which tripwires and which deferred triggers you re-read**. Naming the ones that did

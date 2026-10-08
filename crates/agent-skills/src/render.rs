@@ -1,72 +1,221 @@
-//! The comment pass of the shipped text, shared by the build script, which includes this file with
-//! `#[path]`, and by this crate's tests, which hold its rules: the build script itself has no test
-//! target. A line whose first two characters are `%%` is a comment for this repository's
-//! maintainers, per `design@agent-skills@shipped-text-line-comments`.
+//! The passes of the shipped text that the build script and this crate's tests share: the build
+//! script includes this file with `#[path]`, and it has no test target of its own.
+//!
+//! - **The comment pass.** A line whose first two characters are `%%` is a comment for this
+//!   repository's maintainers, per `design@agent-skills@shipped-text-line-comments`.
+//! - **The section slug pass.** A level-two heading ends with a placeholder `{{slug:<id>}}`, which
+//!   ships as the slug the checker reads, so content/ defines no slug in this repository's walk
+//!   and the installed copy does.
 
 use std::path::Path;
 
 /// What opens a comment line of the shipped text.
 pub(crate) const COMMENT: &str = "%%";
 
-/// `text` without its comment lines. A `%%` line inside a fenced block, or one with leading
-/// spaces, panics with the file and the line: it would ship rather than be removed.
+/// What opens a section slug placeholder; `}}` closes it.
+pub(crate) const SLUG: &str = "{{slug:";
+
+/// Whether a line is inside a fenced block, read as CommonMark reads one.
 ///
-/// A fence is read as CommonMark reads one: it opens on a line indented by at most three spaces
-/// with a run of at least three backticks or three tildes, and closes on a line indented by at
-/// most three spaces holding a run of the same character at least as long, followed by spaces
-/// alone. A fence left open runs to the end of the text.
-pub(crate) fn strip_comments(text: &str, file: &Path) -> String {
-    let mut stripped = String::with_capacity(text.len());
-    let mut fence: Option<(char, usize)> = None;
-    for (n, line) in text.split_inclusive('\n').enumerate() {
-        let bare = line.trim_end_matches(['\n', '\r']);
+/// A fence opens on a line indented by at most three spaces with a run of at least three
+/// backticks or three tildes, and closes on a line indented by at most three spaces holding a run
+/// of the same character at least as long, followed by spaces alone. A fence left open runs to
+/// the end of the text.
+#[derive(Default)]
+struct Fence(Option<(char, usize)>);
+
+impl Fence {
+    /// Step over one line, its line break removed: whether the line itself is part of a fenced
+    /// block, its opening and closing lines included.
+    fn fenced(&mut self, bare: &str) -> bool {
         let trimmed = bare.trim_start_matches(' ');
         let indent = bare.len() - trimmed.len();
         let run = |c: char| trimmed.chars().take_while(|&x| x == c).count();
-        match fence {
+        match self.0 {
             None if indent <= 3 => {
                 for c in ['`', '~'] {
                     let len = run(c);
                     // A backtick fence's info string holds no backtick.
                     if len >= 3 && !(c == '`' && trimmed[len..].contains('`')) {
-                        fence = Some((c, len));
+                        self.0 = Some((c, len));
+                        return true;
                     }
                 }
+                false
             }
-            Some((c, len)) if indent <= 3 => {
+            None => false,
+            Some((c, len)) => {
                 let closing = run(c);
-                if closing >= len && trimmed[closing..].trim_end_matches(' ').is_empty() {
-                    fence = None;
-                    stripped.push_str(line);
-                    continue;
+                if indent <= 3
+                    && closing >= len
+                    && trimmed[closing..].trim_end_matches(' ').is_empty()
+                {
+                    self.0 = None;
                 }
+                true
             }
-            _ => {}
         }
+    }
+}
+
+/// `text` without its comment lines. A `%%` line inside a fenced block, or one with leading
+/// spaces, panics with the file and the line: it would ship rather than be removed.
+pub(crate) fn strip_comments(text: &str, file: &Path) -> String {
+    let mut stripped = String::with_capacity(text.len());
+    let mut fence = Fence::default();
+    for (n, line) in text.split_inclusive('\n').enumerate() {
+        let bare = line.trim_end_matches(['\n', '\r']);
+        let fenced = fence.fenced(bare);
+        let trimmed = bare.trim_start_matches(' ');
         if !trimmed.starts_with(COMMENT) {
             stripped.push_str(line);
             continue;
         }
         let at = format!("{}:{}", file.display(), n + 1);
         assert!(
-            fence.is_none(),
+            !fenced,
             "{at}: a `%%` line inside a fenced block would ship"
         );
         assert!(
-            indent == 0,
+            bare.len() == trimmed.len(),
             "{at}: a `%%` line with leading spaces would ship"
         );
     }
     stripped
 }
 
+/// `text` with each section slug placeholder rendered into the slug the checker reads.
+///
+/// A placeholder is legal at one place only: at the end of a level-two heading outside a fenced
+/// block, after a space, holding an id in the grammar `[a-z0-9]+(-[a-z0-9]+)*`. It ships as a
+/// backticked `##<id>`, which defines a section in the installed copy, per the section rule of
+/// the checker's entity table. Anywhere else it panics with the file and the line: a placeholder
+/// that shipped unrendered would leave the section without its slug, and one in a fence would
+/// render an illustration into a definition.
+pub(crate) fn render_slugs(text: &str, file: &Path) -> String {
+    let mut rendered = String::with_capacity(text.len());
+    let mut fence = Fence::default();
+    for (n, line) in text.split_inclusive('\n').enumerate() {
+        let bare = line.trim_end_matches(['\n', '\r']);
+        let fenced = fence.fenced(bare);
+        let Some(at) = bare.find(SLUG) else {
+            rendered.push_str(line);
+            continue;
+        };
+        let site = format!("{}:{}", file.display(), n + 1);
+        assert!(
+            !fenced,
+            "{site}: a section slug placeholder inside a fenced block would ship"
+        );
+        assert!(
+            bare.starts_with("## ") && !bare.starts_with("###"),
+            "{site}: a section slug placeholder ends a level-two heading, and this line is none"
+        );
+        let id = bare[at + SLUG.len()..]
+            .strip_suffix("}}")
+            .filter(|id| !id.contains('}'))
+            .unwrap_or_else(|| {
+                panic!("{site}: a section slug placeholder ends its heading, closed by `}}}}`")
+            });
+        assert!(
+            is_id(id),
+            "{site}: `{id}` is no slug: lower-case words and digits joined by hyphens"
+        );
+        assert!(
+            bare[..at].ends_with(' ')
+                && !bare[..at].trim_end().is_empty()
+                && bare[..at].trim_end() != "##",
+            "{site}: a section slug placeholder follows the heading's text and a space"
+        );
+        rendered.push_str(&bare[..at]);
+        rendered.push_str("`##");
+        rendered.push_str(id);
+        rendered.push('`');
+        rendered.push_str(&line[bare.len()..]);
+    }
+    rendered
+}
+
+/// The id grammar of the checker's entity table, `[a-z0-9]+(-[a-z0-9]+)*`, written out: this
+/// crate depends on no regex engine, and the checker's own pattern is in the core, which depends
+/// on this crate.
+fn is_id(id: &str) -> bool {
+    !id.is_empty()
+        && id.split('-').all(|w| {
+            !w.is_empty()
+                && w.bytes()
+                    .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit())
+        })
+}
+
 #[cfg(test)]
 mod tests {
-    use super::strip_comments;
+    use super::{render_slugs, strip_comments};
     use std::path::Path;
 
     fn strip(text: &str) -> String {
         strip_comments(text, Path::new("t.md"))
+    }
+
+    fn slugs(text: &str) -> String {
+        render_slugs(text, Path::new("t.md"))
+    }
+
+    #[test]
+    fn a_placeholder_ending_a_level_two_heading_ships_as_its_slug() {
+        // Each expected text is bound to a name: an unbound literal of this crate is prose to the
+        // checker's walk, and the slug it holds would read as a definition.
+        let rendered = "# T\n\n## The axes `##review-axes`\nbody\n";
+        assert_eq!(
+            slugs("# T\n\n## The axes {{slug:review-axes}}\nbody\n"),
+            rendered
+        );
+        let crlf = "## A `##a1`\r\nx";
+        assert_eq!(slugs("## A {{slug:a1}}\r\nx"), crlf);
+    }
+
+    #[test]
+    fn a_text_with_no_placeholder_is_unchanged() {
+        let text = "## Plain\n```\n## {{x}}\n```\n";
+        assert_eq!(slugs(text), text);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "t.md:2: a section slug placeholder inside a fenced block would ship"
+    )]
+    fn a_placeholder_inside_a_fence_fails() {
+        slugs("```\n## A {{slug:a}}\n```\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "t.md:1: a section slug placeholder ends a level-two heading")]
+    fn a_placeholder_on_a_level_three_heading_fails() {
+        slugs("### A {{slug:a}}\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "ends a level-two heading")]
+    fn a_placeholder_in_prose_fails() {
+        slugs("see {{slug:a}} here\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "closed by")]
+    fn a_placeholder_before_more_text_fails() {
+        slugs("## A {{slug:a}} more\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "is no slug")]
+    fn a_placeholder_outside_the_id_grammar_fails() {
+        slugs("## A {{slug:Not_An_Id}}\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "follows the heading's text and a space")]
+    fn a_placeholder_with_no_heading_text_fails() {
+        slugs("## {{slug:a}}\n");
     }
 
     #[test]

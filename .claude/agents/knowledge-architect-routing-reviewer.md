@@ -21,7 +21,7 @@ cannot reproduce.
 **You do not use `Write` or `Edit`.** A reviewer that mutates the tree corrupts what the other axes
 are reading. If a check seems to need one, say so as a finding rather than working around it.
 
-## 1. Mechanical
+## 1. Mechanical `##mechanical-checks`
 
 ```sh
 cargo klarch check
@@ -61,7 +61,7 @@ entry and whose word is no anchor, such as a copied slug whose entry has left. T
 source only, so a reference in a comment of another language is read by nobody but you. Those are
 yours to resolve by reading, and they are where this axis's real failures survive.
 
-## 2. The predicates
+## 2. The predicates `##routing-predicates`
 
 Each has a named consequence when the answer is wrong. The table they are judged against is the
 knowledge table, which maps each kind of statement to its one home: the workflow's rows in the
@@ -124,7 +124,7 @@ wording: a head that argues from a goal's words with no `goal` reference, an ent
 reference whose entry's change would leave the text unaffected, and a hand-written list of what
 references an entry, which `cargo klarch show` computes.
 
-## Reporting
+## Reporting `##how-to-report`
 
 Return findings, each naming the file and the exact reproduction, plus what the mechanical run
 returned. **If the axis is clean, say so plainly**: that is a real result, and a report padded to

@@ -3160,3 +3160,92 @@ fn a_foreign_build_is_refused_before_its_pin_is_read() {
     assert!(stderr.contains("built from another checkout"), "{stderr}");
     assert!(!stderr.contains("the manifest pins"), "{stderr}");
 }
+
+/// `tiny_project` serving the `claude` harness: the manifest declares it, the root CLAUDE.md
+/// imports the primer, and the shipped set is installed.
+fn tiny_project_serving_claude(history: &History) {
+    tiny_project(history, false);
+    history.write(
+        "knowledge-architect.toml",
+        "[project]\nname = \"tiny\"\ncomponents = []\n\n\
+         [walk]\nskip-dirs = []\nskip-files = []\nexclude = []\n\n\
+         [agents]\nharness = [\"claude\"]\n",
+    );
+    history.write(
+        "CLAUDE.md",
+        "# tiny\n\nNothing here holds of any code: this project has none.\n\n\
+         @.claude/knowledge-architect/PRIMER.md\n",
+    );
+    let (out, err, code) = history.run(&["install-agent-skills"]);
+    assert_eq!(code, 0, "{out}{err}");
+}
+
+/// AC2 of the entities slice of `milestone@plans@agent-configuration-entities`: commit 1 cites a
+/// section of an installed skill; commit 2 renames the section in the installed copy and repairs
+/// the citation. `commits` judges each commit against its own installed copies, so both pass.
+/// Mutation checked: `commit_tree` not handing the commit's installed blobs to the model makes
+/// both commits' citations dangle.
+#[test]
+fn a_branch_that_renames_an_installed_section_passes_commits_on_every_commit() {
+    let history = History::new("commits-own-copies");
+    tiny_project_serving_claude(&history);
+    let base = history.commit("The project is created\n");
+    history.write(
+        "docs/rejected-alternatives.md",
+        "# tiny — rejected alternatives\n\n\
+         Nothing has lost yet; see `skill@knowledge-architect-review@review-axes`.\n",
+    );
+    history.commit("Cite a section of an installed skill\n");
+    let skill = ".claude/skills/knowledge-architect-review/SKILL.md";
+    let text = std::fs::read_to_string(history.dir.join(skill)).expect("the installed skill");
+    assert_eq!(text.matches("`##review-axes`").count(), 1, "{text}");
+    history.write(skill, &text.replace("`##review-axes`", "`##the-axes`"));
+    history.write(
+        "docs/rejected-alternatives.md",
+        "# tiny — rejected alternatives\n\n\
+         Nothing has lost yet; see `skill@knowledge-architect-review@the-axes`.\n",
+    );
+    history.commit("Rename the section and repair its citation\n");
+    let (out, err, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "{out}{err}");
+}
+
+/// The claim: `show` prints a skill whole and a section of it, and lists what cites each.
+/// Mutation checked: the harness arm of `show` removed makes both resolve to nothing.
+#[test]
+fn show_prints_a_skill_and_one_of_its_sections() {
+    let sandbox = harnessed("show-skill");
+    sandbox.write(
+        "README.md",
+        &format!(
+            "{}\nSee `skill@knowledge-architect-review@review-axes`.\n",
+            std::fs::read_to_string(sandbox.path("README.md")).expect("the README")
+        ),
+    );
+    sandbox.stage();
+    let (out, err, code) = sandbox.run(&["show", "skill@knowledge-architect-review"]);
+    assert_eq!(code, 0, "{out}{err}");
+    assert!(out.contains("name: knowledge-architect-review"), "{out}");
+    let (out, err, code) = sandbox.run(&["show", "skill@knowledge-architect-review@review-axes"]);
+    assert_eq!(code, 0, "{out}{err}");
+    assert!(out.contains("`##review-axes`"), "{out}");
+    assert!(!out.contains("## 2."), "a section stops at the next: {out}");
+    assert!(out.contains("README.md:"), "{out}");
+}
+
+/// AC4 of the entities slice of `milestone@plans@agent-configuration-entities`: a project skill
+/// with a level-two heading that carries no slug fails the check, and the finding names the
+/// repair. Mutation checked: the finding's action replaced by an empty one fails the assertion.
+#[test]
+fn an_unslugged_heading_of_a_project_skill_is_reported_with_its_repair() {
+    let sandbox = harnessed("unslugged-skill");
+    sandbox.write(
+        ".claude/skills/tiny-own/SKILL.md",
+        "---\nname: tiny-own\ndescription: a project skill\n---\n# Own\n\n## A section\n",
+    );
+    sandbox.stage();
+    let (out, err, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{out}{err}");
+    assert!(out.contains("the level-2 heading \"A section\""), "{out}");
+    assert!(out.contains("end it with its slug"), "{out}");
+}

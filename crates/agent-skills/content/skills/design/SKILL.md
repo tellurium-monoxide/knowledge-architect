@@ -5,7 +5,7 @@ description: MUST use when a design discussion has an open solution space — re
 
 # Discussing design decisions
 
-## Overview
+## Overview {{slug:discussion-overview}}
 
 Design by open, argued exchange: both parties propose, push back with
 arguments, and converge through rounds.
@@ -52,7 +52,7 @@ in the same session (step 8); on the in-change path, a commit message
 carries the deliberation (Decision authority). Either way, the decisions
 are recorded at the landing of the work that implements them.
 
-## Decision authority
+## Decision authority {{slug:decision-authority}}
 
 The owner owns every decision. Their explicit word — an approval, a
 rejection, "stop, do X" — ends the argument on that point at any
@@ -163,7 +163,7 @@ which is not the same as any user-visible string; or a decided thread
 that would have to be REOPENED if this one changed, as opposed to one
 that merely reads it.
 
-## Bounded work
+## Bounded work {{slug:bounded-work}}
 
 Whether a request is a design question or bounded work, a clear requirement whose main risk is
 over-building, is known only after grounding. So a requested change whose design is not settled
@@ -187,7 +187,7 @@ Misclassifying costs in both directions: a bounded problem does not need a discu
 one needs argument. Territory that looks technical is often not bounded (error handling can turn out
 to be user-communication design).
 
-## Language
+## Language {{slug:discussion-language}}
 
 Write plain, direct technical English, in short sentences. Precise
 scientific and technical terms are welcome. Idioms, colloquialisms and
@@ -224,7 +224,7 @@ plain words. It lives as a titled summary line next to a plain-prose
 restatement — never as the body prose of a document, a commit
 message, or the discussion itself.
 
-## Threads and states
+## Threads and states {{slug:threads-and-states}}
 
 Track the discussion as named threads. This structure governs how the
 exchange is conducted and displayed — never what may be proposed. New
@@ -422,7 +422,7 @@ belongs next to each option, and collect a click where the exchange
 needs an argument. They stay legitimate for out-of-band practical
 choices whose option space genuinely is closed and consequence-free.
 
-## The loop
+## The loop {{slug:discussion-loop}}
 
 1. **Ground first**: read the project's record before proposing. The
    goals homes of the project's root and of every Component the question
@@ -651,7 +651,7 @@ planning or implementation surface through the material-findings
 protocol (Decision authority), except a load-bearing gap found at a
 design audit, which stops that work under `knowledge-architect-planning`.
 
-## Keep-or-change (evaluating an incumbent design)
+## Keep-or-change (evaluating an incumbent design) {{slug:keep-or-change}}
 
 A recurring bug trend, a refactor proposal, a questioned pillar: run
 the same exchange, plus:

@@ -132,6 +132,10 @@ pub(crate) fn judge_part(
                             );
                         }
                     }
+                    Candidate::Harness { kind, owner, id } => {
+                        counts.references += 1;
+                        harness(&mut out, &doc.rel, l.line, span, &kind, owner, id, entities);
+                    }
                     Candidate::Malformed { why, repair } => out.push(Finding::at(
                         &doc.rel,
                         l.line,
@@ -377,6 +381,57 @@ fn table(
             },
         )),
     }
+}
+
+/// A reference of a harness kind, against the entity table: the skill or the agent it names, and
+/// the section, or the section of the primer or of the root instructions.
+///
+/// A section of a skill or an agent that does not exist is reported as the missing skill or
+/// agent, not as the missing section: its repair is the name, whatever the slug says.
+#[allow(clippy::too_many_arguments)]
+fn harness(
+    out: &mut Vec<Finding>,
+    rel: &Path,
+    line: u32,
+    span: &str,
+    kind: &Kind,
+    owner: &str,
+    id: &str,
+    entities: &Entities,
+) {
+    if entities.defines(kind, owner, id) {
+        return;
+    }
+    let (what, action) = if !owner.is_empty() && !entities.defines(kind, "", owner) {
+        (
+            format!("`{span}` is referenced and no {kind} is named `{owner}`"),
+            format!("name an existing {kind}, or repair the reference"),
+        )
+    } else if !owner.is_empty() {
+        (
+            format!("`{span}` is referenced and the {kind} `{owner}` defines no section `{id}`"),
+            format!(
+                "end a level-2 heading of the {kind} `{owner}` with that slug, or repair the \
+                 reference"
+            ),
+        )
+    } else if kind.is_named() {
+        (
+            format!("`{span}` is referenced and no {kind} is named `{id}`"),
+            format!("name an existing {kind}, or repair the reference"),
+        )
+    } else {
+        let document = if kind.name() == entity::PRIMER_KIND {
+            "the primer"
+        } else {
+            "the root CLAUDE.md"
+        };
+        (
+            format!("`{span}` is referenced and {document} defines no section `{id}`"),
+            format!("end a level-2 heading of {document} with that slug, or repair the reference"),
+        )
+    };
+    out.push(Finding::at(rel, line, what, action));
 }
 
 /// Why a path's shape is refused before any resolution, or `None` for a plain relative path.
@@ -2129,9 +2184,10 @@ mod tests {
         );
         assert_eq!(counts.references, 1);
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+        // Under the default harness the four harness kinds follow `planned`.
         assert!(Anchors::declared(&m)
             .kinds_listed()
-            .ends_with("path, planned"));
+            .contains("path, planned"));
     }
 
     #[test]
@@ -2453,5 +2509,93 @@ mod tests {
         let (found, _) = checked_in(&m, at, "[a](../real/a.md)\n", &present);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("is refused"), "{found:#?}");
+    }
+
+    /// The harness kinds' references, against walked documents and installed copies.
+    fn harness_checked(
+        walked: Vec<(&str, &str)>,
+        installed: Vec<(&str, &str)>,
+    ) -> (Vec<String>, Counts) {
+        let mut model = Model::from_documents(
+            walked
+                .into_iter()
+                .map(|(p, t)| (PathBuf::from(p), t.to_string()))
+                .collect(),
+        );
+        model.set_installed(
+            installed
+                .into_iter()
+                .map(|(p, t)| (PathBuf::from(p), t.to_string()))
+                .collect(),
+        );
+        let committed = HashMap::new();
+        let present = HashSet::new();
+        let directories = HashSet::new();
+        let inputs = Inputs {
+            committed: &committed,
+            configs: &HashMap::new(),
+            present: &present,
+            directories: &directories,
+            outside: &[],
+            ignored: &HashSet::new(),
+            tracked_and_ignored: &[],
+            refused: &[],
+            links: &[],
+            installed: &[],
+            shipped: &[],
+        };
+        let (found, counts) = check_under(&model, &inputs, &Anchors::declared(&manifest()));
+        (found.iter().map(|f| f.to_string()).collect(), counts)
+    }
+
+    /// The claim: a harness kind's reference resolves to a skill, an agent or a section that
+    /// exists, and to nothing with the finding its repair needs: the missing skill named as the
+    /// skill, a section only under the skill that defines it. Mutation checked: resolving a
+    /// section by its slug across every skill passes a section of one skill cited through another.
+    #[test]
+    fn a_harness_reference_resolves_to_what_its_owner_defines() {
+        let a = "# A\n\n## A part `##a-part`\n";
+        let b = "# B\n\n## B part `##b-part`\n";
+        let citing = "See `skill@a`, `skill@a@a-part`, `skill@b@b-part`, `primer@goals-bind`.\n\
+                      Not `skill@b@a-part`, `skill@c@a-part`, `skill@c`, `primer@nothing`.\n";
+        let (found, counts) = harness_checked(
+            vec![
+                (".claude/skills/a/SKILL.md", a),
+                (".claude/skills/b/SKILL.md", b),
+                ("notes/prose.md", citing),
+            ],
+            vec![(
+                ".claude/knowledge-architect/PRIMER.md",
+                "# P\n\n## Goals bind `##goals-bind`\n",
+            )],
+        );
+        assert_eq!(counts.references, 8);
+        assert_eq!(found.len(), 4, "{found:#?}");
+        assert!(
+            found[0].contains("the skill `b` defines no section `a-part`"),
+            "{found:#?}"
+        );
+        assert!(found[1].contains("no skill is named `c`"), "{found:#?}");
+        assert!(found[2].contains("no skill is named `c`"), "{found:#?}");
+        assert!(
+            found[3].contains("the primer defines no section `nothing`"),
+            "{found:#?}"
+        );
+    }
+
+    /// The claim: an installed copy defines entities and is walked for no reference, so a
+    /// dangling reference in one is reported by nothing. Mutation checked: judging the installed
+    /// copies with the walked documents reports the planted reference.
+    #[test]
+    fn an_installed_copy_is_read_for_definitions_and_not_for_references() {
+        let copy = "# R\n\n## The axes `##review-axes`\n\nSee `design@a-project@nothing`.\n";
+        let (found, _) = harness_checked(
+            vec![(
+                "notes/prose.md",
+                "See `skill@knowledge-architect-review@review-axes`.\n",
+            )],
+            vec![(".claude/skills/knowledge-architect-review/SKILL.md", copy)],
+        );
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
     }
 }
