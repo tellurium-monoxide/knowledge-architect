@@ -35,10 +35,10 @@ there. It starts after the section-citations slice has merged.
 
 | claim | test that could refute it | how the test is shown to discriminate |
 | --- | --- | --- |
-| A backticked span equal to a defined skill's or agent's name is reported, with the reference as its repair | a unit test of the lint over a model defining one installed and one project skill | a lint matching the installer's prefix alone reports a crate's name, and the test's crate-name case fails |
+| A backticked span equal to a defined skill's or agent's name is reported, with the reference as its repair | a unit test of the lint over a model defining one installed and one project skill | a lint matching the installer's prefix alone reports a crate's name that carries it, such as `knowledge-architect-gates`, and the test's crate-name case fails |
 | A span naming no defined skill or agent is silent | the same test, with a crate's name and a removed agent's name | as above |
 | The lint judges a commit message, against the commit's own tree | a binary test built on `History` in `path@core@tests/binary.rs` | a lint run over the walk alone passes the planted message |
-| Under `harness = []` the lint reports nothing | a binary test over a copy of the `minimal` mock project | registering the lint whatever the harness reports the span |
+| Under `harness = []` the lint reports nothing | a binary test over a copy of the `minimal` mock project | building the harness definitions whatever the harness reports the span: the lint is registered under every harness, and the table defines no skill under `harness = []` |
 | The tree passes with every name rewritten | `cargo klarch check`, and `cargo klarch commits origin/main..HEAD` | the run with the lint and before the rewrite reports one finding per bare name |
 
 ## Audit subjects
@@ -69,8 +69,8 @@ and the one commit of the two steps. What the search returned, beyond the audit 
   alone, and no other check's findings. It does not fire.
 - `issue@core@finding-texts-are-not-audited-for-a-needless-cause`: the new finding names the span
   and its repair, and no cause.
-- `issue@core@tooling-for-project-skills` and `issue@knowledge-architect@a-mechanical-changelog-check`
-  are unaffected: the lint reads the names of skills in other documents, not a skill's structure,
+- `issue@core@tooling-for-project-skills` and
+  `issue@knowledge-architect@a-mechanical-changelog-check` are unaffected: the lint reads the names of skills in other documents, not a skill's structure,
   and the released sections' change is one of structure, which that entry's rule already admits.
 
 ## Fails alone on
@@ -140,7 +140,7 @@ At this slice's landing, under `skill@knowledge-architect-decision-recording` an
 
 | what | home |
 | --- | --- |
-| `thread@agent-configuration-entities@bare-skill-name-reported` | a new head in `path@core@docs/design.md`, §3, slug `bare-skill-name-reported`; `design@knowledge-architect@changelog-entries` rewritten in place for the released sections; `design@agent-skills@plain-text-is-no-repair` and `design@agent-skills@a-past-sentence-is-rewritten` rewritten in place, each naming the released changelog section as the case the owner ruled in R3 |
+| `thread@agent-configuration-entities@bare-skill-name-reported` | a new head in `path@core@docs/design.md`, §3, slug `bare-skill-name-reported`; `design@core@candidate-rule-and-retired-forms` rewritten in place, since its title's "every other span is silent" no longer holds of a skill's or an agent's name; `design@knowledge-architect@changelog-entries` rewritten in place for the released sections; `design@agent-skills@plain-text-is-no-repair` and `design@agent-skills@a-past-sentence-is-rewritten` rewritten in place, each naming the released changelog section as the case the owner ruled in R3 |
 | the restatements | `path@knowledge-architect@CLAUDE.md`, its restatement of the candidate rule and of the changelog rules; `path@agent-config@agents/klarch-changelog-reviewer.md`; `path@agent-config@skills/klarch-release/SKILL.md` |
 | `issue@core@a-bare-mention-of-a-deleted-entry-is-never-reported` | its What narrowed: the names of skills and agents are reported; the bare mention of a slug stays open |
 | the changelog | `Next release`: under Migration, every backticked bare name of a skill or an agent is written as its reference, mock projects serving `claude` included. Surface `checks`, class minor |
