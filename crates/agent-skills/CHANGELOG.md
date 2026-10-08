@@ -60,6 +60,9 @@ subsection is omitted.
   only after decision-recording decides its Component, for a reversal, and whether it earns a head.
 - `agent-skills`, patch: the retrospective gives the owner the full path of each file it writes,
   and no longer prints either file into the conversation, nor the workflow's file when `gh` fails.
+- `agent-skills`, patch: a session loads the decision-recording skill before any write into a design
+  home, and before editing a text whose behaviour a head describes, with no condition to judge
+  first; the agent-configuration skill and the decision-recording skill's description say so.
 - `agent-skills`, patch: a review repair that adds, removes or reverses a design head is reviewed
   by the decision-record axis whichever axis asked for it, and no other repair is, where any
   transcript-review repair that made a decision was; decision-recording's finishing step applies
