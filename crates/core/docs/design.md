@@ -1189,7 +1189,7 @@ migration. It would also mean every pointer written in an older form stops being
 nothing saying so, and a silent false negative is the failure this tool exists to prevent. The
 candidate rule that bounds this is `design@core@candidate-rule-and-retired-forms`.
 
-### A backticked `@` span is a reference candidate when its head is a kind or an anchor, the retired slug reference stays a finding where it names something of this project, and every other span is silent `##candidate-rule-and-retired-forms`
+### A backticked `@` span is a reference candidate when its head is a kind or an anchor, the retired slug reference stays a finding where it names something of this project, and every other `@` span is silent `##candidate-rule-and-retired-forms`
 
 The scanner records every backticked span that holds an `@` and no whitespace, backtick or
 angle bracket, as written; it has no manifest, so it cannot tell a kind from an email address.
@@ -1231,6 +1231,10 @@ segments, so without this clause a slug reference the migration missed would be 
 the founding failure class. The clause does not expire with the migration: the commit history is
 read by every session that runs `git log`, it holds the form, and a reference copied out of it
 would be checked by nothing.
+
+**A span with no `@` is read by three lints, and by nothing else**: a path-shaped span, per
+`design@core@every-path-names-its-anchor`, the retired slug reference below, and the exact name of
+a skill or an agent, per `design@core@bare-skill-name-reported`.
 
 **A shape that names nothing here is another tool's notation, and is silent**: an issue number
 `#123`, a preprocessor directive `#include`, a crate's item `serde#derive`. None was ever this
@@ -1396,6 +1400,37 @@ of each of its two homes, are not plan documents, and are cited `path@plans@<fil
 **A fenced path reference is live**, as every reference is, per
 `design@core@candidate-rule-and-retired-forms`: a sketch names its paths on purpose, and an
 illustration that needs a fake path writes the escape anchor or an angle-bracket placeholder.
+
+### A backticked span that is exactly the name of a skill or an agent the entity table defines is reported, with its reference as the repair `##bare-skill-name-reported`
+
+The scanner records every backticked span that is one word in the id grammar, a span wrapped
+across a line break at one of its hyphens joined. A lint of the last phase reports such a span when
+the entity table defines a skill or an agent of that name, installed or the project's own, and its
+repair is `skill@<name>` or `agent@<name>`, the skill where both kinds hold the name. Under
+`harness = []` the table defines neither kind, per `design@core@harness-kinds`, so nothing is
+reported. A commit message is judged as every lint is, per
+`design@core@a-commit-message-is-a-document`.
+
+**A bare name is a pointer written with no kind.** Silent, it dangles unseen when the skill or the
+agent is renamed or deleted, the class `issue@core@a-bare-mention-of-a-deleted-entry-is-never-reported`
+records for a register's slugs. The reference costs the kind and one `@`, and `show` then lists the
+text among what cites the skill.
+
+**The match is exact against the table.** A crate's name, a name that no longer exists, and a
+section's slug are silent, so the lint reports no span that is not a skill's or an agent's name.
+Whether such a name meets an ordinary word rests on the names: the installed ones carry the
+installer's prefix, and a project's own carry its prefix, per
+`design@agent-skills@skill-name-prefix`, which nothing checks yet, per
+`issue@core@tooling-for-project-skills`. A project skill named by an ordinary word makes every
+backticked use of that word a finding, and the repair is to rename the skill with the project's
+prefix. Re-take the false positives with `cargo klarch check` over a conformant tree, counting the
+findings of this lint: one on a span that is not meant as a pointer reopens the exact match.
+
+**A released section of CHANGELOG.md is rewritten too**, and back to the bare name once the skill or
+the agent is deleted, as a change of structure, per `design@knowledge-architect@changelog-entries`.
+The bare name of a deleted skill names nothing in the table, so the lint leaves it silent.
+
+The nearest rival is no lint, which keeps the silence this lint exists to end.
 
 ### Three anchor words are reserved: under the `path` kind the escape for a path this tree does not hold and `*` for every component's own copy, and `plans` for the anchor the tool constructs `##reserved-anchors`
 

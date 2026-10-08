@@ -192,6 +192,15 @@ reworded, restructured or pruned at any time, and a change reversed before the r
 since the section describes the release's net effect. A released section's content never changes;
 its structure may.
 
+**A skill's or an agent's name in a released section is structure.** Writing a bare name there as
+its reference, `skill@<name>` or `agent@<name>`, changes no statement of the section, and so does
+writing it back as the bare name once the skill or the agent is deleted, since the reference then
+names nothing and the section's content cannot change. The owner ruled both: "older changelog
+section allow structural changes, and this passes as a structural change in my view", and "the
+repair in a released changelog section citing a skill/agent to be replaced by bare text on
+deletion, this does not count as evasion, because there is nothing to cite that the checker would
+accept". The lint that reports the bare name is `design@core@bare-skill-name-reported`.
+
 ### The project stays at 0.x until the owner's word, given once its first design discussion's open issues are settled `##stays-at-zero-x`
 
 Breaking changes are allowed, and expected, while the shape of the tool and of its workflow
