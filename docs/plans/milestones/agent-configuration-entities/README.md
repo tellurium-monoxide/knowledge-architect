@@ -238,7 +238,7 @@ The recorded decisions the work reverses or rewrites, each with every text that
 | `design@core@a-plan-name-reads-as-nothing-else` | a plan's name is not a kind name either, per D7 | `path@core@docs/design.md`; `path@core@README.md`; `path@core@src/check/tree.rs` (2); `path@core@src/entity.rs`; `path@core@src/mock_projects.rs` | slice 1 |
 | `design@agent-skills@plain-text-is-no-repair` | the bare name in a released changelog section, after its skill or agent is deleted, is stated as no unchecked form clearing a finding, on the owner's ruling in R3 | `path@knowledge-architect@CLAUDE.md`; `path@agent-skills@docs/design.md` (2); `path@agent-skills@docs/tripwires.md` (2); `path@core@docs/design.md`; `path@core@src/check/references.rs` | slice 3 |
 | `design@agent-skills@a-past-sentence-is-rewritten` | a released changelog section is its exception: its content never changes, so a dangling skill or agent reference there goes back to the bare name | none outside the plans directory | slice 3 |
-| `goal@core@relocation-is-one-manifest-edit` | its sentence "Every reference names its anchor" is contradicted by the two-segment form; put to the owner after this document's first reviews, under `knowledge-architect-goal-setting` | `issue@core@an-extension-cannot-see-which-register-a-document-belongs-to` | the owner's ruling, before slice 1 |
+| `goal@core@relocation-is-one-manifest-edit` | its sentence "Every reference names its anchor" is contradicted by the two-segment form; reworded by the owner on D4: "Every reference to what the manifest places names its anchor" | `issue@core@an-extension-cannot-see-which-register-a-document-belongs-to`, which the rewording leaves true | done, in the commit of this branch titled "The owner rewords the core's relocation goal: a reference to what the manifest places names its anchor" |
 
 The parenthesised count is the number of referencing lines `cargo klarch show` printed for that
 file, taken in this session. "Updated by" names the slice whose harvest reads each referencing
@@ -274,7 +274,9 @@ the need (a26).
 
 Binding as a presumption, from `design@core@a-slug-belongs-to-a-component`. Rebutted for the harness
 kinds by #skill-cited-without-anchor: an anchor there would carry no information (a56). The head is
-rewritten at slice 1.
+rewritten at slice 1. The same sentence stood in `goal@core@relocation-is-one-manifest-edit`, a
+binding criterion the discussion did not list; the owner reworded the goal on D4, so it binds every
+reference to what the manifest places, which the harness kinds are not.
 
 ### The published checker carries no declaration that serves only this repository `##no-catering`
 
@@ -298,7 +300,8 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
 - **D1, ruled after the document's first commit:** a skill directory or an agent file whose name is
   outside the id grammar `[a-z0-9]+(-[a-z0-9]+)*` is a phase-2 finding, naming the file, since such
   a skill could not be cited (a59). The assistant had said in R2 that "the register reports it".
-  The owner: "Agreed on D1".
+  The owner: "Agreed on D1". D8, a kept installed copy under `harness = []` reporting its slugs, was
+  ruled after the first reviews: "Agreed on all defaults, and on the D4 goal rewording".
 - **Shape:** the decided design of the `entities` slice. **Harvest:** a new head in
   `path@core@docs/design.md`, slug `skill-register`, slice 1.
 
@@ -318,7 +321,9 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
   `design@core@candidate-rule-and-retired-forms` and `design@core@a-slug-belongs-to-a-component`,
   slice 1.
 - **Relations:** absorbs the kinds of #primer-sections and #root-instructions-cited, which take the
-  same form. Guarded by AC1, which the owner widened to every kind after the first reviews, as D7
+  same form. After the first reviews, the owner ruled D3, that the shape stands against the
+  rejected alternative "A register reference with no anchor", and D4, the goal's rewording: "Agreed on all defaults, and on the D4 goal rewording".
+  Guarded by AC1, which the owner widened to every kind after the first reviews, as D7
   records.
 
 ### The tool constructs an anchor for the agent configuration, and every reference keeps three segments `##skill-cited-in-a-constructed-anchor`
@@ -392,7 +397,8 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
   earlier commit of a branch. In a consumer, a branch whose first commit cites an installed section
   on the old pin, and whose second commit moves the pin, installs and repairs the citation, would
   fail on its first commit if the definitions came from the binary. The problem therefore reaches
-  consumers too. The owner's ruling on the corrected premise is recorded here when given.
+  consumers too. The owner ruled the default of D2, that the approval stands: "Agreed on all
+  defaults, and on the D4 goal rewording".
 - **The slug:** it names the R2 shape, "shipped set". The approved decision is "from the tree's
   installed copies", so the harvested head takes the slug `installed-entities-from-the-tree`, per
   §7 point 6 of the planning skill.
@@ -406,7 +412,8 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
 - **Proposed:** the assistant, R1.
 - **States:** R1 new; R2 approved.
 - **Arguments:** a36.
-- **Closed by:** R2: "section-numbers-dropped: agreed."
+- **Closed by:** R2: "section-numbers-dropped: agreed." After the first reviews, D5 extended it to
+  the agents and this repository's `klarch-` files: "Agreed on all defaults, and on the D4 goal rewording".
 - **Shape:** the `section-citations` slice. **Harvest:** none: a rewording of the installed text,
   per `design@agent-skills@instruction-record-is-minimal`; the commit records it.
 
@@ -435,7 +442,8 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
   ruling, modeling only the root CLAUDE.md (which would stay) is acceptable, and probably a good
   thing to do."
 - **Conditions:** every project serving `claude` adds a slug to every level-two heading of its root
-  CLAUDE.md: one Migration entry, minor.
+  CLAUDE.md: one Migration entry, minor. After the first reviews, D6 extended AC4 to project skills
+  and agents: "Agreed on all defaults, and on the D4 goal rewording".
 - **The owner's direction on scoped files, R2**, recorded in
   `issue@core@a-home-for-developer-contracts-outside-agent-configuration` in the commit of this
   branch titled "Record the owner's direction on scoped CLAUDE.md files in the developer-contracts
@@ -1080,30 +1088,31 @@ the two rewrites touch many of the same sentences (a77).
 
 ## Defaults awaiting the owner
 
-D1 was ruled by the owner after this document's first commit, "Agreed on D1", and is written into
-#skill-register. The first reviews of this document produced the defaults below. Each is applied in
-the sections it touches, and the work does not start on its point before the owner rules.
+None. D1 was ruled by the owner after this document's first commit, "Agreed on D1", and is written
+into #skill-register. The first reviews of this document produced D2 to D8. The owner ruled D7 while
+its repairs were written, and the rest after them: "Agreed on all defaults, and on the D4 goal
+rewording". Each ruling is applied in the sections it touches; the list stays as their record:
 
-- **D2**, on #installed-skills-defined-from-shipped-set: the corrected premise of the owner's
+- **D2, ruled as its default**, on #installed-skills-defined-from-shipped-set: the corrected premise of the owner's
   remark in R4, a75. The remark reads the problem as bearing on this repository only. It reaches
   consumers too, as the thread's item states. Default: the approval stands, since it covers both.
-- **D3**, on #skill-cited-without-anchor: the rejected alternative "A register reference with no
+- **D3, ruled as its default**, on #skill-cited-without-anchor: the rejected alternative "A register reference with no
   anchor", which the discussion did not read, and on whose absence the owner's R2 word rested ("I
   see no real argument in favor of that"). Its first reason does not hold for a harness kind; its
   second is the cost a14, which the owner weighed. Default: the decided shape stands, and the entry
   is amended at slice 1's harvest.
-- **D4**, on #skill-cited-without-anchor and the criterion #names-an-anchor:
+- **D4, ruled as its draft**, on #skill-cited-without-anchor and the criterion #names-an-anchor:
   `goal@core@relocation-is-one-manifest-edit` states "Every reference names its anchor", which the
   two-segment form contradicts by its letter. Its met condition, "such a move leaves no reference
   to repair", still holds: nothing a harness kind names moves with a manifest edit. A goal binds,
   and changes only on the owner's word, under `knowledge-architect-goal-setting`. Default, as a
   draft for the owner's ruling: "Every reference to what the manifest places names its anchor, and
   each anchor's directory is declared once, in the manifest, so moving a Component or a location
-  changes the manifest and no document." Slice 1 does not start before the ruling.
-- **D5**, on #section-numbers-dropped: the owner ruled on removing "the "1." numbering of skill
+  changes the manifest and no document." Written into the goals home on the owner's word.
+- **D5, ruled as its default**, on #section-numbers-dropped: the owner ruled on removing "the "1." numbering of skill
   sections". The section-citations slice also removes it from the agents, and from this
   repository's `klarch-` skills and agent. Default: both, since every one of them carries a slug.
-- **D6**, on #claude-md-sections and AC4: AC4 was applied as the setup skill stating the root
+- **D6, ruled as its default**, on #claude-md-sections and AC4: AC4 was applied as the setup skill stating the root
   CLAUDE.md's slug requirement. The entities slice also states it for a project skill or agent,
   which #skill-sections-carry-slugs and #agent-sections-carry-slugs bind too. Default: both.
 - **D7, ruled**, on #skill-cited-without-anchor and AC1: AC1 was applied to the four harness kinds.
@@ -1116,7 +1125,7 @@ the sections it touches, and the work does not start on its point before the own
   to the owner's correction: a plan is "anything that can be an anchor name", and a declared
   register's name is a kind name. The refusals make a manifest that was valid stop being accepted,
   a major change on the `manifest` surface.
-- **D8**, on #skill-register: under `harness = []`, a project that kept its installed copies walks
+- **D8, ruled as its default**, on #skill-register: under `harness = []`, a project that kept its installed copies walks
   them as its own documents, and their slugs are misplaced definitions there. Default: the findings
   stand; the repair is to remove the copies or to serve the harness.
 

@@ -2,8 +2,7 @@
 
 The spec of the first slice of `milestone@plans@agent-configuration-entities`. It holds what only
 this slice builds; what crosses slices is in the milestone document. Every item it cites is defined
-there, except its own acceptance criteria. It starts after the milestone document has merged, and
-after the owner has ruled on D4 of the milestone document, the goal it contradicts.
+there, except its own acceptance criteria. It starts after the milestone document has merged.
 
 ## Builds
 
@@ -337,7 +336,7 @@ The rows below name the texts known to change.
 | what | home |
 | --- | --- |
 | #skill-register, #claude-md-sections | a new head in `path@core@docs/design.md`, §6, slug `skill-register`, with the readings of the harness's layout the audit made |
-| #skill-cited-without-anchor, #root-instructions-cited, #primer-sections | a new head in `path@core@docs/design.md`, §3, slug `skill-cited-without-anchor`; `design@core@candidate-rule-and-retired-forms` and `design@core@a-slug-belongs-to-a-component` rewritten in place; the entry "A register reference with no anchor" of `path@core@docs/rejected-alternatives.md` gains that its first reason does not hold for a harness kind, per D3; `goal@core@relocation-is-one-manifest-edit` as the owner rules D4 |
+| #skill-cited-without-anchor, #root-instructions-cited, #primer-sections | a new head in `path@core@docs/design.md`, §3, slug `skill-cited-without-anchor`; `design@core@candidate-rule-and-retired-forms` and `design@core@a-slug-belongs-to-a-component` rewritten in place; the entry "A register reference with no anchor" of `path@core@docs/rejected-alternatives.md` gains that its first reason does not hold for a harness kind, per D3; `goal@core@relocation-is-one-manifest-edit` was reworded before the slice, on D4 |
 | #skill-sections-carry-slugs, #agent-sections-carry-slugs, #primer-sections | a new head in `path@core@docs/design.md`, §3, slug `skill-sections-carry-slugs`; `design@core@an-entry-is-a-heading-at-the-register-level` rewritten in place |
 | #installed-skills-defined-from-shipped-set | a new head in `path@core@docs/design.md`, §6, slug `installed-entities-from-the-tree`, the slug naming the approved source; `design@core@owned-namespace-check`, `design@core@phases-gate-the-report` and `design@core@anchors-are-components-and-locations` rewritten in place; `design@agent-skills@shipped-text-cites-no-entry` and `design@agent-skills@content-mirrors-the-install-layout` rewritten in place |
 | the kinds and AC1 | `design@core@one-entity-table` rewritten, its title and its kind list; `design@core@registers-are-declared`, the four names refused as a register; `design@core@anchors-are-components-and-locations` and `design@core@a-plan-name-reads-as-nothing-else`, every kind name refused as an anchor's name, with the owner's argument |
