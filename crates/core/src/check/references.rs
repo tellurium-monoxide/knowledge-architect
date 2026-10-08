@@ -200,7 +200,8 @@ pub(crate) fn judge_part(
                     // Exact against the table, so a crate's name or a name that no longer exists
                     // is silent: the lint reports a pointer written with no kind, and a word that
                     // names no skill and no agent here is no pointer. Under `harness = []` the
-                    // table defines neither kind, so nothing is reported.
+                    // table defines neither kind, so nothing is reported. A name both kinds hold
+                    // is repaired as the skill: the order below is the only reason.
                     let Some(kind) = [entity::SKILL_KIND, entity::AGENT_KIND]
                         .into_iter()
                         .find(|k| entities.defines(&Kind::new(k), "", name))

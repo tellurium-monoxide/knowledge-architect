@@ -1324,7 +1324,8 @@ position by `design@core@candidate-rule-and-retired-forms`, and the unanchored l
 one job. There is no unanchored form for a path of this tree: a backticked span of path characters
 with two or more segments and no `@` is a finding naming the grammar when its first segment names a
 file or a directory this tree's listing holds. One segment is a name rather
-than a pointer, and a span holding a space, an angle bracket, or a colon anywhere but in a line
+than a path, though the exact name of a skill or an agent is reported, per
+`design@core@bare-skill-name-reported`, and a span holding a space, an angle bracket, or a colon anywhere but in a line
 suffix is not path-shaped, which is what lets documentation of the syntax show a placeholder with no
 carve-out.
 
@@ -1406,7 +1407,7 @@ illustration that needs a fake path writes the escape anchor or an angle-bracket
 The scanner records every backticked span that is one word in the id grammar, a span wrapped
 across a line break at one of its hyphens joined. A lint of the last phase reports such a span when
 the entity table defines a skill or an agent of that name, installed or the project's own, and its
-repair is `skill@<name>` or `agent@<name>`, the skill where both kinds hold the name. Under
+repair is `skill@<name>` or `agent@<name>`. Under
 `harness = []` the table defines neither kind, per `design@core@harness-kinds`, so nothing is
 reported. A commit message is judged as every lint is, per
 `design@core@a-commit-message-is-a-document`.
@@ -1414,21 +1415,22 @@ reported. A commit message is judged as every lint is, per
 **A bare name is a pointer written with no kind.** Silent, it dangles unseen when the skill or the
 agent is renamed or deleted, the class `issue@core@a-bare-mention-of-a-deleted-entry-is-never-reported`
 records for a register's slugs. The reference costs the kind and one `@`, and `show` then lists the
-text among what cites the skill.
+text among what cites the skill, per `goal@core@records-reach-their-reader`.
 
 **The match is exact against the table.** A crate's name, a name that no longer exists, and a
 section's slug are silent, so the lint reports no span that is not a skill's or an agent's name.
 Whether such a name meets an ordinary word rests on the names: the installed ones carry the
 installer's prefix, and a project's own carry its prefix, per
 `design@agent-skills@skill-name-prefix`, which nothing checks yet, per
-`issue@core@tooling-for-project-skills`. A project skill named by an ordinary word makes every
-backticked use of that word a finding, and the repair is to rename the skill with the project's
-prefix. Re-take the false positives with `cargo klarch check` over a conformant tree, counting the
-findings of this lint: one on a span that is not meant as a pointer reopens the exact match.
+`issue@core@tooling-for-project-skills`. Re-take the false positives with `cargo klarch check` over
+a tree that serves the harness and has not rewritten its bare names, such as another project's at
+its upgrade, counting the findings of this lint: one on a span that is not meant as a pointer
+reopens the exact match.
 
-**A released section of CHANGELOG.md is rewritten too**, and back to the bare name once the skill or
-the agent is deleted, as a change of structure, per `design@knowledge-architect@changelog-entries`.
-The bare name of a deleted skill names nothing in the table, so the lint leaves it silent.
+**In a released section of CHANGELOG.md the name is written as its reference too**, and as the
+bare name again once the skill or the agent is deleted, per
+`design@knowledge-architect@changelog-entries`. That bare name names nothing in the table, so the
+lint leaves it silent.
 
 The nearest rival is no lint, which keeps the silence this lint exists to end.
 
