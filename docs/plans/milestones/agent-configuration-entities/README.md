@@ -1007,8 +1007,9 @@ The entities slice has landed. The design of `thread@agent-configuration-entitie
 `thread@agent-configuration-entities@skill-cited-without-anchor`, `thread@agent-configuration-entities@root-instructions-cited` and `thread@agent-configuration-entities@primer-sections` in
 `design@core@harness-kinds-cited-without-anchor`; that of `thread@agent-configuration-entities@skill-sections-carry-slugs` and
 `thread@agent-configuration-entities@agent-sections-carry-slugs` in `design@core@section-homes-carry-slugs`.
-[section-citations](section-citations.md) holds the design of `thread@agent-configuration-entities@section-numbers-dropped`, and
-[bare-names](bare-names.md) that of `thread@agent-configuration-entities@bare-skill-name-reported`.
+The section-citations slice has landed: `thread@agent-configuration-entities@section-numbers-dropped` earns no head, a rewording of
+the installed text per `design@agent-skills@instruction-record-is-minimal`.
+[bare-names](bare-names.md) holds the design of `thread@agent-configuration-entities@bare-skill-name-reported`.
 
 ## Mapping tables
 
@@ -1084,7 +1085,7 @@ AC1 to AC4 were judged by the entities slice, and reported in the commit that la
 1. Entities, landed: the four harness kinds and the two-segment form; definitions from the
    tree's installed copies and from the walk; the section rule at level two, with a slug on
    every level-two heading it covers, the section slug placeholder in content/; AC1 to AC4.
-2. [Section citations](section-citations.md): every `§N` citation of a skill's or an agent's section
+2. Section citations, landed: every `§N` citation of a skill's or an agent's section
    rewritten as a reference; the numbering of skill and agent sections removed.
 3. [Bare names](bare-names.md): the bare-name lint, and every backticked bare name of a skill or an
    agent rewritten as a reference, released changelog sections included.
