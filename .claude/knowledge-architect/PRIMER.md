@@ -16,6 +16,8 @@ procedure (`knowledge-architect-decision-recording`). **When a decision conflict
 the likely cause is that the owner missed the conflict: the goal prevails, and the conflict goes to
 the owner.** It is not resolved by following the decision.
 
+## The owner's word and its premise
+
 **A word of the owner holds only as far as its premise.** A ruling given on a premise, stated by
 the owner or supplied by the session, does not rule on the case where that premise is false. When a
 premise proves false, put the corrected premise to the owner at the top of the turn, quoting the
