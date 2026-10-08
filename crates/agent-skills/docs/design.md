@@ -1439,5 +1439,5 @@ there are, so adding one changes no count.
 
 The owner reads both files verbatim and may edit them. On the owner's word, and where the owner
 directs, the project's findings become issue entries in its own register, and the workflow's file
-becomes an issue on knowledge-architect's repository, through `gh` or by the text and the address.
+becomes an issue on knowledge-architect's repository, through `gh` or by the file and the address.
 The repository is the workflow's own upstream, the one name of a project the shipped text holds.

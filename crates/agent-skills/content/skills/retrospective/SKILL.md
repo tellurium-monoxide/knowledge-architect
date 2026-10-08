@@ -130,16 +130,19 @@ ignored, they would be lost to the next clean.
 
 ## 4. What becomes of each file
 
-Show the owner both files verbatim. The owner may edit them. Then, **on the owner's word only, and
-where the owner directs**:
+%% Printed into the conversation, the two files bury the discussion, and the owner asked for their
+%% paths instead.
+Give the owner the full path of each file, and never print either file into the conversation: the
+owner reads both files at those paths, verbatim, and may edit them. Then, **on the owner's word
+only, and where the owner directs**:
 
 - **The project's file**: each finding the owner keeps becomes an issue entry in the project's own
   register, under `knowledge-architect-issue-tracking`.
 - **The workflow's file**: it becomes an issue on the repository of knowledge-architect,
   <https://github.com/tellurium-monoxide/knowledge-architect>, opened with
   `gh issue create --repo tellurium-monoxide/knowledge-architect --title "<title>" --body-file <file>`.
-  If `gh` is absent or fails, give the owner the text and the address of the repository's new-issue
-  page.
+  If `gh` is absent or fails, give the owner the path of the workflow's file, whose text is the
+  issue's body, and the address of the repository's new-issue page.
 
 Nothing leaves the machine without the owner having read it.
 
