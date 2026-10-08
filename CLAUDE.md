@@ -135,8 +135,8 @@ win.
   `design@core@harness-kinds-cited-without-anchor`: `skill@<name>`, `skill@<name>@<slug>`,
   `agent@<name>`, `agent@<name>@<slug>`, `primer@<slug>`, `instructions@<slug>`. Every level-two
   heading of a skill, an agent, the primer and this file owes a slug, per
-  `design@core@section-homes-carry-slugs`, and a skill's or an agent's frontmatter `name` equals
-  its directory's or file's name, per `design@core@harness-kinds`.
+  `design@core@section-homes-carry-slugs`, and a skill's or an agent's frontmatter `name`, where
+  one is set, equals its directory's or file's name, per `design@core@harness-kinds`.
 
 - **Under the `path` kind, the id is a path under the anchor's directory**, and its target is
   checked to exist, per `design@core@every-path-names-its-anchor`.

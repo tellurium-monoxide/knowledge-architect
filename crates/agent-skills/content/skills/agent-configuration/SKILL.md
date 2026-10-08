@@ -87,7 +87,7 @@ Decided in order; the first match wins.
   slug**: two hashes and the id in backticks, the id naming the section's subject. It is what a
   reference such as `skill@<name>@<slug>` cites, and the check reports a heading without one. A
   subagent definition's file name and its frontmatter `name` are equal, as a skill's directory and
-  its `name` are.
+  its `name` are where a skill sets one.
 - **Begin the description with MUST**, and make the trigger **symptom-shaped, not request-shaped**.
   A session rarely asks to "track open issues"; it does meet a behaviour that looks wrong. Write the
   symptom.
