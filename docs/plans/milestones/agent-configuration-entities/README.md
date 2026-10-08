@@ -1089,7 +1089,7 @@ the two rewrites touch many of the same sentences (`argument@agent-configuration
 
 ## Defaults awaiting the owner
 
-None. D1 was ruled by the owner after this document's first commit, "Agreed on D1", and is written
+D9 awaits the owner. D1 was ruled by the owner after this document's first commit, "Agreed on D1", and is written
 into `thread@agent-configuration-entities@skill-register`. The first reviews of this document produced D2 to D8. The owner ruled D7 while
 its repairs were written, and the rest after them: "Agreed on all defaults, and on the D4 goal
 rewording". Each ruling is applied in the sections it touches; the list stays as their record:
@@ -1127,6 +1127,11 @@ rewording". Each ruling is applied in the sections it touches; the list stays as
 - **D8, ruled as its default**, on `thread@agent-configuration-entities@skill-register`: under `harness = []`, a project that kept its installed copies walks
   them as its own documents, and their slugs are misplaced definitions there. Default: the findings
   stand; the repair is to remove the copies or to serve the harness.
+- **D9**, on #skill-register, from Q1 of the entities slice's audit: how a skill's or an agent's
+  frontmatter `name` is read for the match the owner ruled. Default: the `name:` line alone, so a
+  frontmatter the harness reads but the subset refuses, a list or a multi-line description, is no
+  finding; a skill may omit `name`; an agent file with no `name` is no agent; an agent may sit in a
+  subdirectory. The work proceeds on the default unless the owner answers otherwise.
 
 ## Harvest
 
