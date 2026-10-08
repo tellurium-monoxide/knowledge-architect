@@ -699,7 +699,7 @@ included; a string literal bound to a name yields none. So a comment in code nam
 as live as a sentence in a document, and closing the issue reaches the code. This serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
 
-### A sentence about the past whose reference dangles is rewritten to the present or removed, except in a released changelog section, and a quotation of the owner is kept with a reference beside it `##a-past-sentence-is-rewritten`
+### A sentence about the past whose reference dangles is rewritten to the present or removed, except a deleted skill's or agent's reference in a released changelog section, and a quotation of the owner is kept with a reference beside it `##a-past-sentence-is-rewritten`
 
 When an entry is deleted or renamed, a sentence that recorded its past, such as what an earlier
 step wrote, is rewritten to state the present, or removed, and its history stays in the commit
@@ -707,11 +707,10 @@ messages. Retargeting it to the new name would make it false, and plain text wou
 the check, per `design@agent-skills@plain-text-is-no-repair`. A verbatim quotation of the
 owner that names a renamed entry is left as it is, with a reference to the current entry beside
 it, since rewriting it would misstate the owner, against `goal@knowledge-architect@the-owner-decides`.
-A released section of CHANGELOG.md is not rewritten, since its content never changes: a reference
-there to a deleted skill or agent goes back to the bare name, per
-`design@agent-skills@plain-text-is-no-repair`.
+In a released section of CHANGELOG.md, a reference to a deleted skill or agent goes back to the
+bare name instead, per `design@agent-skills@plain-text-is-no-repair`.
 
-### Plain text is never the repair of a finding while a checked form can name its target, and no instruction offers an unchecked form as the way to clear one `##plain-text-is-no-repair`
+### Plain text is never the repair of a finding, except a deleted skill's or agent's name in a released changelog section, and no instruction offers an unchecked form as the way to clear one `##plain-text-is-no-repair`
 
 A form a writer can use is either one the checker judges, and the workflow recommends it, or one
 the checker does not read, and the workflow never directs a pointer into it to clear a finding. So
@@ -720,13 +719,13 @@ to clear a finding. A repair names a checked form: the right anchor, `path@elsew
 tree does not hold, `planned@<anchor>@<path>` in a plan document for a path its work will create,
 per `design@core@planned-path-form`, an angle-bracket placeholder for an illustration, or a
 rewrite of the sentence.
-The one exception is text in the checker's syntax that no checked form expresses, written without
+One exception is text in the checker's syntax that no checked form expresses, written without
 backticks beside a reference to the issue entry that records the missing form, per
 `design@agent-skills@checker-syntax-without-backticks-names-its-gap`. Prose that mentions a
 directory without asking the reader to follow it is not a repair and is outside this head.
 
-A deleted skill's or agent's reference in a released section of CHANGELOG.md is the other case
-with no checked form: the section's content never changes, per
+The other exception is a deleted skill's or agent's reference in a released section of
+CHANGELOG.md: the section's content never changes, per
 `design@knowledge-architect@changelog-entries`, and nothing exists that a reference could cite.
 Its repair is the bare name, which `design@core@bare-skill-name-reported` leaves silent. The owner:
 "this does not count as evasion, because there is nothing to cite that the checker would

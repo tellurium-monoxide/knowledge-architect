@@ -184,7 +184,7 @@ win.
     entry that records the missing form, per
     `design@agent-skills@checker-syntax-without-backticks-names-its-gap`. A span naming nothing here, such as
     `origin/main` or `application/json`, is silent, and so is a one-segment span, which is a name
-    rather than a pointer.
+    rather than a path.
   - The one-segment span that is exactly the name of a skill or an agent is reported, per
     `design@core@bare-skill-name-reported`. Write it as its reference, `skill@<name>` or
     `agent@<name>`, released sections of CHANGELOG.md included. Once the skill or the agent is
