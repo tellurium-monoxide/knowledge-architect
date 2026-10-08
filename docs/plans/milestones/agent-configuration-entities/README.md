@@ -250,19 +250,19 @@ texts already known to change.
 ### Every record is cited in one readable grammar, the same in every project `##one-grammar`
 
 Binding, from `goal@knowledge-architect@any-project-can-adopt-it`. Met by
-#skill-cited-without-anchor, read as one grammar in which a kind whose namespace is global takes no
+`thread@agent-configuration-entities@skill-cited-without-anchor`, read as one grammar in which a kind whose namespace is global takes no
 anchor. The owner's reading in R2, which the assistant then shared (`argument@agent-configuration-entities@a44`, `argument@agent-configuration-entities@a55`, `argument@agent-configuration-entities@a56`).
 
 ### A reference in the shipped text resolves in every project that installs it `##works-anywhere`
 
 Binding, from `goal@agent-skills@installed-text-works-anywhere`. Met by
-#installed-skills-defined-from-shipped-set: the entities of the installed text are defined from the
+`thread@agent-configuration-entities@installed-skills-defined-from-shipped-set`: the entities of the installed text are defined from the
 installed copies, which every project serving `claude` holds, and AC3 judges the shipped set.
 
 ### A renamed or removed section dangles every citation of it, and `show` lists them `##revisit-computed`
 
 Binding, from `goal@core@records-reach-their-reader`. Met by `thread@agent-configuration-entities@skill-sections-carry-slugs`,
-#agent-sections-carry-slugs, #primer-sections, #claude-md-sections and #bare-skill-name-reported.
+`thread@agent-configuration-entities@agent-sections-carry-slugs`, `thread@agent-configuration-entities@primer-sections`, `thread@agent-configuration-entities@claude-md-sections` and `thread@agent-configuration-entities@bare-skill-name-reported`.
 
 ### A required slug is structure the work needs `##needed-structure`
 
@@ -282,12 +282,12 @@ reference to what the manifest places, which the harness kinds are not.
 
 Weighed, from the owner's words recorded in `design@agent-skills@shipped-text-line-comments`: "I
 don't want to cater too much to this use case". Met by the section slug placeholder of
-#installed-skills-defined-from-shipped-set, which needs no manifest declaration.
+`thread@agent-configuration-entities@installed-skills-defined-from-shipped-set`, which needs no manifest declaration.
 
 ### A citation stays short enough to read inline `##short-pointers`
 
 Weighed, the assistant's, R1: agents read these files at every load. Met by
-#skill-cited-without-anchor.
+`thread@agent-configuration-entities@skill-cited-without-anchor`.
 
 ## Threads
 
@@ -1000,9 +1000,9 @@ audit may change them, as an answer applied in place.
 ## Decided design
 
 In the slices' specs: [entities](entities.md) holds the design of `thread@agent-configuration-entities@skill-register`,
-#skill-cited-without-anchor, #skill-sections-carry-slugs, #agent-sections-carry-slugs,
-#installed-skills-defined-from-shipped-set, #claude-md-sections, #root-instructions-cited and
-#primer-sections; [section-citations](section-citations.md) of #section-numbers-dropped;
+`thread@agent-configuration-entities@skill-cited-without-anchor`, `thread@agent-configuration-entities@skill-sections-carry-slugs`, `thread@agent-configuration-entities@agent-sections-carry-slugs`,
+`thread@agent-configuration-entities@installed-skills-defined-from-shipped-set`, `thread@agent-configuration-entities@claude-md-sections`, `thread@agent-configuration-entities@root-instructions-cited` and
+`thread@agent-configuration-entities@primer-sections`; [section-citations](section-citations.md) of `thread@agent-configuration-entities@section-numbers-dropped`;
 [bare-names](bare-names.md) of `thread@agent-configuration-entities@bare-skill-name-reported`.
 
 ## Mapping tables
@@ -1046,7 +1046,7 @@ is a Markdown file under `path@agent-config@agents/`. The installer already writ
 `design@core@owned-namespace-check`. One reading is not established: whether the harness restricts
 a skill's or an agent's name to lowercase letters, digits and hyphens, which the assistant stated
 from memory in R2 (`argument@agent-configuration-entities@a59`). Slice 1's audit reads the harness's documentation for it, and the head of
-#skill-register records the reading. A second is an assumption: that the harness may read any
+`thread@agent-configuration-entities@skill-register` records the reading. A second is an assumption: that the harness may read any
 Markdown file under the agents directory as an agent definition, which is why no README is owed
 there (`argument@agent-configuration-entities@a8`).
 
@@ -1121,9 +1121,7 @@ rewording". Each ruling is applied in the sections it touches; the list stays as
   for anything that can be an anchor name (components, custom locations...). I'd rather make this
   decision early to avoid painful migrations." So AC1 refuses every kind name as the name of a
   Component, a location or a plan: `path`, `planned`, the ten built-in registers, the four harness
-  kinds whatever the harness, and every register the manifest declares. Reading of the ruling, open
-  to the owner's correction: a plan is "anything that can be an anchor name", and a declared
-  register's name is a kind name. The refusals make a manifest that was valid stop being accepted,
+  kinds whatever the harness, and every register the manifest declares. The two readings of the ruling were put to the owner with the defaults: a plan is "anything that can be an anchor name", and a declared register's name is a kind name. The owner's word on the list that showed them, "Agreed on all defaults, and on the D4 goal rewording", confirms both. The refusals make a manifest that was valid stop being accepted,
   a major change on the `manifest` surface.
 - **D8, ruled as its default**, on `thread@agent-configuration-entities@skill-register`: under `harness = []`, a project that kept its installed copies walks
   them as its own documents, and their slugs are misplaced definitions there. Default: the findings
