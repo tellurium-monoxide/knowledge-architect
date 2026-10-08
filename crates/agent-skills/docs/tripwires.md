@@ -34,33 +34,23 @@ by citing an expectation set.
 `design@agent-skills@expectation-set-bounds-scope` if its boundary sentence admits the reading.
 **Re-entry:** the standing-state review of the change that closed the finding.
 
-## Guarding `design@agent-skills@new-or-reshaped-head-needs-design`: a head is created or contradicted with no deliberation recorded `##head-created-without-deliberation`
+## Guarding `design@agent-skills@new-or-reshaped-head-needs-design`: a head is created, contradicted or extended beyond its title with no deliberation recorded `##head-created-without-deliberation`
 
 The decision rests on the premise that the design skill's description and the decision-recording
-skill's backstop reach a session before it writes a decision that creates a head or contradicts
-one.
+skill's backstop, loaded before any write into a design home per
+`design@agent-skills@design-home-write-loads-recording`, reach a session before it writes a
+decision that creates a head, contradicts one, or extends one beyond what its title states.
 
-**Fires when:** a commit creates a design head, or contradicts a statement of one, and neither its
-message nor a plan document carries the deliberation: no thread, no rival, and none of the owner's
-words where the owner ruled. A relocation or rewording that adds or removes no decision does not
-count.
+**Fires when:** a commit creates a design head, contradicts a statement of one, or adds to its body
+a decision its title does not state, and neither its message nor a plan document carries the
+deliberation: no thread, no rival, and none of the owner's words where the owner ruled. A relocation
+or rewording that adds or removes no decision does not count.
 **Response:** open a `defect` naming the head and the commit, and reopen
 `design@agent-skills@new-or-reshaped-head-needs-design` on where its trigger is delivered, with the
-primer line it rejected among the candidates.
+primer line it rejected among the candidates; for an extension beyond a title, with the rival that
+sends every decision earning durable text through the design skill among them too.
 **Re-entry:** the standing-state review before every merge: the commits and their messages are in
 the branch's history.
-
-## Guarding `design@agent-skills@new-or-reshaped-head-needs-design`: an addition recorded directly outgrows its head's title `##title-stops-stating-scope`
-
-The decision rests on the premise that a session reads a head's title strictly, and sends an
-addition outside it to the design skill rather than recording it directly.
-
-**Fires when:** a review finds a design head whose title no longer states a decision added to its
-body by the direct route: an addition whose commit carries no deliberation.
-**Response:** open a `defect` naming the head and the commit, and reopen
-`design@agent-skills@new-or-reshaped-head-needs-design` on its third case.
-**Re-entry:** the standing-state review before every merge: the head, its title and the commits
-that changed it are in the branch's history.
 
 ## Guarding `design@agent-skills@in-change-path`: a ruling lost or misstated in an in-change commit message `##ruling-lost-in-change`
 

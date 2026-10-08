@@ -27,11 +27,11 @@ Everything written in a `SKILL.md`, a subagent definition or a `CLAUDE.md` follo
 - **An edit that changes what an agent is told to do is a decision.** Before writing it, search
   the design homes and the goals for the behaviour the edited text describes, as §1 of
   `knowledge-architect-decision-recording` searches for a recorded statement a decision would
-  reverse. An edit that writes into a design home, or changes behaviour a head describes, loads
-  `knowledge-architect-decision-recording` before it is written; that skill judges whether it
-  contradicts a head, outgrows its title, or earns text at all. One that strains a goal goes to the owner, as a decision that
-  conflicts with a goal does, under `knowledge-architect-goal-setting`. A rewording that changes no
-  instruction is not a decision.
+  reverse. An edit that writes into a design home, or edits a text whose behaviour a head
+  describes, loads `knowledge-architect-decision-recording` before it is written; that skill judges
+  whether it contradicts a head, outgrows its title, or earns text at all. One that strains a goal
+  goes to the owner, as a decision that conflicts with a goal does, under
+  `knowledge-architect-goal-setting`. A rewording that changes no instruction is not a decision.
 
 ## 2. Where a piece of agent-facing text goes
 

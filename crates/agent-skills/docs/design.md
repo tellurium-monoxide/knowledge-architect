@@ -189,8 +189,9 @@ removes none, is not a decision and needs no design skill; the routing and fidel
 review axes judge that it adds or removes none. A choice that earns no durable text stays in a code
 comment and a commit message.
 
-The decision-recording skill triggers once a decision has been made, so a new decision met during
-an issue fix or a review repair otherwise reaches the record with no argument, no rival weighed,
+The decision-recording skill triggers once a decision has been made, or at the latest when its
+text is about to be written, so a new decision met during an issue fix or a review repair otherwise
+reaches the record with no argument, no rival weighed,
 and none of the design skill's rules for reading the owner's word. This serves
 `goal@knowledge-architect@the-owner-decides` and
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`. An addition inside a head's stated
@@ -208,28 +209,27 @@ is loaded before any write into a design home.
 time. A line in the primer lost to `design@agent-skills@primer-limit`: once the design
 skill's description carries the symptom, a skill delivers the rule.
 
-### A write into a design home loads the decision-recording skill first, with no condition judged before it `##design-home-write-loads-recording`
+### A write into a design home, or an edit of agent-facing text a head describes, loads the decision-recording skill first, with no condition judged before it `##design-home-write-loads-recording`
 
 A session loads the decision-recording skill before it writes into a design home, whatever its
-activity, and before it edits a text whose behaviour a head describes. The skill then judges
-whether the edit contradicts a head, outgrows its title, or earns text at all. Three texts state
-the trigger: the skill's own description, §1 of the agent-configuration skill, and test 4 of this
-crate's `path@agent-skills@CLAUDE.md`.
+activity. A session editing agent-facing text, a skill, an agent or a `CLAUDE.md`, also loads it
+before an edit of a text whose behaviour a head describes. The skill then judges whether the edit
+contradicts a head, outgrows its title, or records a decision at all. The skill's description
+states the first trigger, and reaches every session. §1 of the agent-configuration skill and test 4
+of this crate's `path@agent-skills@CLAUDE.md` state both, and reach a session editing agent-facing
+text, which is the one activity that asks for a search of the design homes before an edit.
 
 A session can see both conditions without any standard: the file it is about to edit, and the
-result of the search for heads that the agent-configuration skill already asks for. A load
-conditioned on whether an edit contradicts a head or outgrows its title fires only in a session that
-already applies the title test, and that test is held by the skill the condition decides whether to
-load. A session that judged only whether a head was contradicted added a second decision to a head
-whose title did not state it; a review caught it before the merge. This serves
-`goal@knowledge-architect@the-owner-decides` and
-`goal@knowledge-architect@design-is-recorded-with-its-arguments`.
+result of that search. A load conditioned on whether an edit contradicts a head or outgrows its
+title fires only in a session that already applies the title test, and that test is held by the
+skill the condition decides whether to load. This serves `goal@knowledge-architect@the-owner-decides`
+and `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
 
-The nearest rival restates the title test beside the condition at each site. It makes three copies
-of a test whose home is the decision-recording skill, and it still reaches only a session editing
-agent configuration, not an issue fix or a review repair that writes a head. The cost is one skill
-load on every edit of a design home, rewordings included, which the owner accepted; a rewording
-leaves at the skill's entry tests.
+The nearest rival restates the title test beside the condition at each site. It makes copies of a
+test whose home is the decision-recording skill, and it reaches only a session editing agent-facing
+text, not an issue fix or a review repair that writes a head. The cost is one skill load on every
+edit of a design home, rewordings included; a rewording records no decision and leaves at the end
+of the skill's §2.
 
 ### The design skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
 
