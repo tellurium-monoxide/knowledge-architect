@@ -25,7 +25,14 @@ prefix being defined separately from project name in the manifest, to allow for 
 (useful if the project has a long name, and needed here)." Needed here because this repository's
 own skills take the prefix `klarch-`, not its name, per `design@knowledge-architect@klarch-prefix`.
 A prefix declared in the manifest would also reach `design@agent-skills@skill-name-prefix`, which
-names the prefix after the project.
+names the prefix after the project. Open for that check's design session:
+
+- the field's name, its table, and its default when a manifest leaves it out, which decides
+  whether every existing manifest must gain the field;
+- the changelog entry it owes: a `manifest` entry for the field, and a `checks` entry for the
+  check;
+- whether a project's own agents follow the same rule: the owner's direction names skill names, and
+  `design@agent-skills@skill-name-prefix` names skills and agents.
 
 ### Why it matters
 
