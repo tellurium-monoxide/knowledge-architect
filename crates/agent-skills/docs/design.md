@@ -1259,7 +1259,10 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   session, which is the content test of `design@agent-skills@primer-limit`. It arrived twice
   outside a discussion: in a review repair, where the design skill is not loaded, and at the fourth
   entry test of `design@agent-skills@a-head-is-owed-by-an-entry-test`, so a rule beside that test
-  would miss the first case. A word acted on past its premise records a decision the owner did not make, per
+  would miss the first case. The second was answered on a premise the session supplied, that the
+  decision failed the first three tests, when the same change had made the second pass; so a premise
+  the session supplies is the session's to check before the owner rules on it. A word acted on past
+  its premise records a decision the owner did not make, per
   `goal@knowledge-architect@the-owner-decides`.
 - **Where the installed text is silent, a session judges**, since the installed text leaves that
   room on purpose, per `goal@agent-skills@installed-text-leaves-room-to-judge`; room to judge is
