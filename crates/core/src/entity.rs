@@ -1295,6 +1295,19 @@ impl Entities {
                     }
                     return;
                 }
+                // The harness loads no skill of a name it reserves, per `design@core@harness-kinds`:
+                // the check would otherwise pass a skill no session can use. The name is in the
+                // id grammar here, so only the lower-case spellings remain to refuse.
+                if kind.name() == SKILL_KIND
+                    && (name == "synced" || name.starts_with("anthropic-skills"))
+                {
+                    findings.push(Finding::in_file(
+                        &doc.rel,
+                        format!("the harness loads no skill named `{name}`"),
+                        "rename the skill's directory; the harness reserves `synced`, and every \
+                         name beginning `anthropic-skills`",
+                    ));
+                }
                 // The harness invokes a skill by its directory's name as well as by its `name`,
                 // and identifies an agent by its `name` alone, so the cause a mismatch leaves
                 // differs by kind.
@@ -2974,6 +2987,33 @@ mod tests {
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(
             found[0].contains("of the root CLAUDE.md carries no slug"),
+            "{found:#?}"
+        );
+    }
+
+    /// The claim: a skill the harness does not load, `synced` or a name beginning
+    /// `anthropic-skills`, is a finding, per `design@core@harness-kinds`. Mutation checked:
+    /// testing only `synced` passes the second.
+    #[test]
+    fn a_skill_name_the_harness_reserves_is_a_finding() {
+        let e = harness_table(
+            vec![
+                (".claude/skills/synced/SKILL.md", "# S\n"),
+                (".claude/skills/anthropic-skills-x/SKILL.md", "# A\n"),
+                (".claude/skills/synced-notes/SKILL.md", "# N\n"),
+            ],
+            vec![],
+        );
+        let found = whats(&e);
+        assert_eq!(found.len(), 2, "{found:#?}");
+        assert!(
+            found.iter().any(|w| w.contains("no skill named `synced`")),
+            "{found:#?}"
+        );
+        assert!(
+            found
+                .iter()
+                .any(|w| w.contains("no skill named `anthropic-skills-x`")),
             "{found:#?}"
         );
     }

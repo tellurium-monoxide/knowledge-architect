@@ -15,7 +15,9 @@ subsection is omitted.
   `.claude/agents/<file>.md`, ends with a slug, two hashes and the id in backticks. A project adds
   one to each such heading; this holds for mock projects serving `claude` too.
 - `checks`, minor: a project skill's directory and a project agent's file are named in lower-case
-  words joined by hyphens, and a frontmatter `name`, where one is set, equals that name.
+  words joined by hyphens, and a frontmatter `name`, where one is set, equals that name. A
+  skill's directory is not `synced`, nor begins `anthropic-skills`, which the harness does not
+  load.
 - `manifest`, major: a Component, a location or a plan named after a kind, such as `design`,
   `issue`, `path`, a declared register or one of `skill`, `agent`, `primer` and `instructions`, is
   refused, and so is a register named after one of those four. A project renames it.
