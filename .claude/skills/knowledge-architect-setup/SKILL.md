@@ -50,7 +50,7 @@ them.
 
 - **A Rust project** runs the checker from its maintenance crate, which depends on
   `knowledge-architect = "=<version>"` and serves the checker's commands through the cargo alias
-  `cargo klarch`, as "In a Rust project" below shows. The `=` pins exactly; without it,
+  `cargo klarch`, as `skill@knowledge-architect-setup@rust-project` below shows. The `=` pins exactly; without it,
   `"<version>"` accepts every later version below the next breaking one. `Cargo.lock` records the
   exact version, and `--locked` turns any change to it into a failure. A dependency alone builds
   no executable for the project: `cargo run -p` runs only the project's own packages, which is why
@@ -159,9 +159,9 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
   `| installed | project additions |`. It is empty until the project writes a skill of its own;
 - **the project's skill prefix**: its name and a hyphen, which names every project skill and agent.
 
-How the two tables are written is `knowledge-architect-agent-configuration`, its section on the
-two tables of the root `CLAUDE.md`; the prefix and a project skill are its section on shaping a
-skill.
+How the two tables are written is
+`skill@knowledge-architect-agent-configuration@root-claude-md-tables`; the prefix and a project
+skill are `skill@knowledge-architect-agent-configuration@shaping-a-skill`.
 
 **Every level-two heading of the root `CLAUDE.md`, and of each project skill and agent, ends with a
 slug**: two hashes and the id in backticks, the id naming the section's subject. The check reports a
@@ -175,8 +175,8 @@ cites: `instructions@<slug>` for the root `CLAUDE.md`, `skill@<name>@<slug>` for
 Recommend one command that runs every check the project owes before a merge (formatting, the
 document check, the commit messages, the linters, the tests), runs them all even when one fails,
 and exits non-zero when any fails. A verdict is then one exit code, and nothing is read from output
-filtered through a pipe. In a Rust project, the shape is the maintenance crate of "In a Rust project"
-below, run through the cargo alias `cargo x gates`, whose gates command hands the project's gate
+filtered through a pipe. In a Rust project, the shape is the maintenance crate of
+`skill@knowledge-architect-setup@rust-project` below, run through the cargo alias `cargo x gates`, whose gates command hands the project's gate
 list to the published library knowledge-architect-gates. The library runs the gates; the list is
 the project's own.
 

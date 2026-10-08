@@ -12,7 +12,7 @@ arguments, and converge through rounds.
 **The discussion is fully symmetric; only the decision is not.**
 Both parties' proposals are held to one standard, stated in loop step 4.
 The asymmetry lives in decision authority alone: closure and reopening
-belong to the owner's word (see Decision authority). **The owner** is the
+belong to the owner's word (see `skill@knowledge-architect-design@decision-authority`). **The owner** is the
 person whose word closes a thread.
 
 Terms this skill defines and then uses as vocabulary:
@@ -35,7 +35,7 @@ Distinct from every one of these is the project's **decision record**:
 the design homes of its Components and their rejected alternatives,
 which the discussion grounds against and the harvest records into.
 A metaphor that names a defined concept is legitimate vocabulary after its
-definition; undefined metaphors are not (see Language).
+definition; undefined metaphors are not (see `skill@knowledge-architect-design@discussion-language`).
 
 This mode fits an OPEN solution space: what the feature needs is not
 a requirement waiting to be extracted from the owner, because neither party
@@ -45,11 +45,11 @@ the open threads.
 **This skill ends at convergence**, and, where the premortem runs, the
 premortem and the owner's rulings on its tripwires and acceptance
 criteria. Bounded work ends
-sooner, at the owner's word on its one proposal (Bounded work), and takes
+sooner, at the owner's word on its one proposal (`skill@knowledge-architect-design@bounded-work`), and takes
 neither of the two paths below. It writes no plan document and no record. On the full
 path, the spec or the milestone is written by `knowledge-architect-planning`,
 in the same session (step 8); on the in-change path, a commit message
-carries the deliberation (Decision authority). Either way, the decisions
+carries the deliberation (`skill@knowledge-architect-design@decision-authority`). Either way, the decisions
 are recorded at the landing of the work that implements them.
 
 ## Decision authority {{slug:decision-authority}}
@@ -139,7 +139,7 @@ evidence bring, which nobody knows in advance.
   owner's words verbatim for each closure, the rivals that lost with
   their reasons, and the owner's rulings on tripwires. The decision is
   recorded at that landing like any other, under
-  `skill@knowledge-architect-decision-recording@reversal-check` decides the Component
+  `knowledge-architect-decision-recording`: `skill@knowledge-architect-decision-recording@reversal-check` decides the Component
   of a decision that reverses a recorded one, and `skill@knowledge-architect-decision-recording@entry-tests` decides whether
   any other decision earns a design head at all. Apply both before proposing to the owner
   where a decision lands. The checkpoint table is
@@ -337,8 +337,8 @@ each announced in the delta:
   withdrawal follows defeat by argument or evidence, record the
   defeating reason — the Reopening record test reads it.
 - `parked` — your own overruled dissent after the owner's explicit
-  ruling on the point (Decision authority), and the observation
-  recorded during a bug hunt for a later discussion (Keep-or-change).
+  ruling on the point (`skill@knowledge-architect-design@decision-authority`), and the observation
+  recorded during a bug hunt for a later discussion (`skill@knowledge-architect-design@keep-or-change`).
   Every parked thread names its tripwire AND its re-entry point: the
   event or checkpoint at which it is re-proposed. A parked thread
   missing either one is open. A tripwire with no re-entry point names
@@ -392,7 +392,7 @@ produced one — rather than silently carried.
 **Reopening — closed is not frozen.** This rule is the single owner
 of the novelty test. The owner reopens a closed thread by their word
 alone. You may only PROPOSE a reopening, with a new argument or new
-evidence named — the material-findings protocol (Decision authority)
+evidence named — the material-findings protocol (`skill@knowledge-architect-design@decision-authority`)
 owns the mechanics: the thread stays closed until the owner's word.
 The record arbitrates novelty: an alternative counts as
 argued-and-lost only when a recorded ruled-out alternative — a
@@ -506,7 +506,7 @@ choices whose option space genuinely is closed and consequence-free.
    it enables or rules out later — and gets tested with the same
    rigor. The owner's proposal is a claim to test, not a directive to
    follow — only an explicit decision converts their statement into a
-   directive (see Decision authority). Fill its missing slots, test
+   directive (see `skill@knowledge-architect-design@decision-authority`). Fill its missing slots, test
    it against the criteria, and when a shape exists that meets a
    named criterion theirs fails, propose it against theirs even when
    theirs would work; filling and testing their proposal is your job,
@@ -571,7 +571,7 @@ choices whose option space genuinely is closed and consequence-free.
    in place of closing open threads.
 
    When convergence can be proposed, prepare a premortem, unless the
-   in-change path skips it (Decision authority). See below.
+   in-change path skips it (`skill@knowledge-architect-design@decision-authority`). See below.
 
 7. **Premortem before convergence**: assume the design shipped and failed.
    Name the most plausible causes, each naming the approved thread it stresses.
@@ -648,7 +648,7 @@ tests say so. Open state goes to the issue register and the tripwires
 homes, under `knowledge-architect-issue-tracking`. A decision that no
 work implements is recorded when it is made. Findings made during
 planning or implementation surface through the material-findings
-protocol (Decision authority), except a load-bearing gap found at a
+protocol (`skill@knowledge-architect-design@decision-authority`), except a load-bearing gap found at a
 design audit, which stops that work under `knowledge-architect-planning`.
 
 ## Keep-or-change (evaluating an incumbent design) {{slug:keep-or-change}}

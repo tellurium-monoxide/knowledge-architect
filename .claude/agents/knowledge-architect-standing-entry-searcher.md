@@ -55,7 +55,7 @@ your last position in that order, both included.
 
 For each entry of your group, run `cargo klarch show <ref>`. Its first line is the reference, then
 the file and the line where the entry is defined; the entry follows, whole. Keep the file of each
-entry, for step 3.
+entry, for `agent@knowledge-architect-standing-entry-searcher@follow-the-seeds`.
 
 Read every entry of your group in full. Do not decide in advance, from a title, which entries are
 worth reading: a title does not show a tripwire's firing clause or a deferred issue's trigger.
@@ -72,7 +72,8 @@ line, a file and a line. Map each site to an entry of your group:
 | any other file | none of your group |
 
 **Every entry a seed reaches bears on the work**: it cites a decision or a goal the work names.
-Return it, with the seed as its reason, whatever step 4 judges of it.
+Return it, with the seed as its reason, whatever
+`agent@knowledge-architect-standing-entry-searcher@judge-each-entry` judges of it.
 
 ## Judge every entry against the work `##judge-each-entry`
 
