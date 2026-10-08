@@ -193,10 +193,10 @@ since the section describes the release's net effect. A released section's conte
 its structure may.
 
 **A skill's or an agent's name in a released section is structure.** Writing a bare name there as
-its reference, `skill@<name>` or `agent@<name>`, changes no statement of the section, and so does
-writing it back as the bare name once the skill or the agent is deleted, since the reference then
-names nothing and the section's content cannot change. The owner: "older changelog section allow
-structural changes, and this passes as a structural change in my view". Why the bare name is no
+its reference, `skill@<name>` or `agent@<name>`, changes no statement of the section. The owner:
+"older changelog section allow structural changes, and this passes as a structural change in my
+view". So does writing it back as the bare name once the skill or the agent is deleted, since the
+reference then names nothing and the section's content cannot change. Why the bare name is no
 evasion is `design@agent-skills@plain-text-is-no-repair`, and the lint that reports a bare name
 `design@core@bare-skill-name-reported`.
 

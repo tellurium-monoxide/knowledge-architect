@@ -3313,9 +3313,10 @@ fn show_prints_one_primer_section_and_its_own_references() {
 }
 
 /// The claim: a commit message naming a skill by its bare name is a finding, judged against the
-/// commit's own tree, so a project skill the commit adds is reported in its message; the message
-/// citing the skill as a reference passes. Mutation checked: the bare-name arm left out of the
-/// lints part makes the planted message pass.
+/// commit's own tree and its parent's, so a project skill the commit adds is reported in its
+/// message, and so is one it deletes; the message citing the skill as a reference passes.
+/// Mutations checked: the bare-name arm left out of the lints part makes the planted message pass;
+/// the parent tree's lints dropped makes the deleting commit's message pass.
 #[test]
 fn a_message_naming_a_skill_its_commit_adds_by_its_bare_name_is_a_finding() {
     let history = History::new("commit-bare-skill");
@@ -3327,8 +3328,11 @@ fn a_message_naming_a_skill_its_commit_adds_by_its_bare_name_is_a_finding() {
     );
     let sha = history.commit("A skill arrives\n\nIt adds `tiny-own`.\n");
     let cited = history.commit("A subject line\n\nIt cites `skill@tiny-own`.\n");
+    history.remove(".claude/skills/tiny-own/SKILL.md");
+    let gone = history.commit("A skill leaves\n\nIt deletes `tiny-own`.\n");
     let (out, err, code) = history.run(&["commits", &format!("{base}..HEAD")]);
     assert_eq!(code, 1, "{out}{err}");
+    assert!(out.contains(&format!("commit {gone}:3")), "{out}");
     assert!(
         out.contains(&format!("commit {sha}:3"))
             && out.contains("`tiny-own` is a bare skill name")

@@ -1434,7 +1434,9 @@ bare name again once the skill or the agent is deleted, per
 `design@knowledge-architect@changelog-entries`. That bare name names nothing in the table, so the
 lint leaves it silent.
 
-The nearest rival is no lint, which keeps the silence this lint exists to end.
+The nearest rival is no lint, which keeps the silence this lint exists to end. A narrower lint,
+matching only names that carry a known prefix, would leave an unprefixed project skill's bare
+names silent, the same failure for those names, so the skill is renamed instead.
 
 ### Three anchor words are reserved: under the `path` kind the escape for a path this tree does not hold and `*` for every component's own copy, and `plans` for the anchor the tool constructs `##reserved-anchors`
 
