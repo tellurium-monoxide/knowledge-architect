@@ -33,8 +33,9 @@ subsection is omitted.
 ### Workflow
 
 - `agent-skills`, patch: every level-two heading of the installed skills, agents and primer carries
-  a slug, and the setup skill states that the root CLAUDE.md and a project's own skills and agents
-  carry one too.
+  a slug, and the setup skill and the agent-configuration skill state that the root CLAUDE.md and a
+  project's own skills and agents carry one too, and that a subagent's file name equals its
+  frontmatter `name`.
 
 ## 0.5.0
 
