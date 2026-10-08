@@ -13,4 +13,4 @@ else:
 
 A plan document may land before its work starts, and leaves in the commit that completes its last
 harvest. The procedure is the
-installed `knowledge-architect-planning`.
+installed `skill@knowledge-architect-planning`.

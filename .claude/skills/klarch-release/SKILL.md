@@ -76,9 +76,9 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    agent-skills before the core, which depends on it. Its warnings "ignoring test `binary`" and
    "ignoring test `extension_api`" are expected: the whitelist keeps the tests out.
 9. **The gates and the review.** `cargo x gates --require-rebased`, then the push, the draft pull
-   request, and the review under `knowledge-architect-review`. Its axes include
-   `klarch-changelog-reviewer`, dispatched on `v<previous>..HEAD`: every change of the range has
-   the entries the policy owes, each entry's class is right, and the version is their highest
+   request, and the review under `skill@knowledge-architect-review`. Its axes include
+   `agent@klarch-changelog-reviewer`, dispatched on `v<previous>..HEAD`: every change of the range
+   has the entries the policy owes, each entry's class is right, and the version is their highest
    class. A repair is a new commit, or is folded per root `CLAUDE.md`, section Git, point 2, and
    steps 4 to 8 run again on the head if it touched a crate.
 

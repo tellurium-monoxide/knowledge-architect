@@ -17,13 +17,13 @@ for one of those gets a green gate on an unverified change.
 
 - The installed skills, agents and primer under `path@agent-skills@content/` follow
   `path@agent-skills@CLAUDE.md`, section "Editing an installed skill or agent", and
-  `knowledge-architect-agent-configuration`.
-- This repository's own agent configuration is `knowledge-architect-agent-configuration`.
-- A release is `klarch-release`.
+  `skill@knowledge-architect-agent-configuration`.
+- This repository's own agent configuration is `skill@knowledge-architect-agent-configuration`.
+- A release is `skill@klarch-release`.
 
-Not covered here either: **reviewing** (`knowledge-architect-review`), **recording a decision**
-(`knowledge-architect-decision-recording`), and **parking anything**
-(`knowledge-architect-issue-tracking`).
+Not covered here either: **reviewing** (`skill@knowledge-architect-review`), **recording a
+decision** (`skill@knowledge-architect-decision-recording`), and **parking anything**
+(`skill@knowledge-architect-issue-tracking`).
 
 ## Ground before editing `##ground-before-editing`
 
@@ -50,7 +50,7 @@ an entry in that Component's `path@*@docs/open-issues/`. It is not licence to fo
 3. **Implement.**
 4. **Gate** (`skill@klarch-development@development-gate`).
 5. **Commit.** The commit contract is root `CLAUDE.md`, section Git. A decision that clears the
-   recording threshold takes `knowledge-architect-decision-recording` as well.
+   recording threshold takes `skill@knowledge-architect-decision-recording` as well.
 6. **Review** (`skill@klarch-development@code-review-axes`), at any checkpoint where a coherent piece works, not only at the end. It follows
    the commit because a reviewer working on its own copy of the tree sees committed content only,
    so uncommitted work is reviewed by nobody. A repair the review asks for is a further commit,
@@ -61,7 +61,7 @@ an entry in that Component's `path@*@docs/open-issues/`. It is not licence to fo
 
 **A unit of work is a list of claims, each with the test that could refute it.** A part with no
 claim is cost with no information. Where the work has a spec or a milestone, its steps present the
-claims, under `knowledge-architect-planning`; this procedure does not depend on one existing.
+claims, under `skill@knowledge-architect-planning`; this procedure does not depend on one existing.
 
 **Every claim's test must be shown to fail against a plausible wrong implementation.** A test
 written first can still be written to the implementation its author already has in mind. It then
@@ -161,8 +161,8 @@ moment in this activity's terms; the list of such moments is open. Merging to ma
 is not on this list, because it belongs to every activity, and root `CLAUDE.md`, section Git,
 carries it.
 
-**How to dispatch is `knowledge-architect-review`**: the invariants that make a finding worth acting
-on, how to write a brief, and where findings land. Read it before sending anything.
+**How to dispatch is `skill@knowledge-architect-review`**: the invariants that make a finding worth
+acting on, how to write a brief, and where findings land. Read it before sending anything.
 
 The axis this activity adds:
 
@@ -230,7 +230,7 @@ Neither carries the history of a change: that lives in the commit message.
   checker's own source, every string literal is data, bound or not, per
   `design@core@checker-source-literals-are-data`.
 
-**Where a comment ends and a document begins** is `knowledge-architect-decision-recording`: its
-entry tests decide whether a decision earns a design head at all, and a decision that fails them
+**Where a comment ends and a document begins** is `skill@knowledge-architect-decision-recording`:
+its entry tests decide whether a decision earns a design head at all, and a decision that fails them
 lives in a comment at its code and in its commit; within a head, if changing a piece of code would
 force a change to the head, it is design, and if the head would be unaffected, it is a comment.

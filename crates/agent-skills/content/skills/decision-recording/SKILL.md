@@ -9,11 +9,11 @@ Scope: turning a decision about **what we build** into durable text. Whether it 
 at all, when it is written, which Component owns it, what goes in the design home, what stays in
 history, and what the premortem leaves behind.
 
-Not covered here: **having** the discussion (`knowledge-architect-design`);
+Not covered here: **having** the discussion (`skill@knowledge-architect-design`);
 **writing the spec or the milestone document** that carries a decision until its work lands
-(`knowledge-architect-planning`); **parking something undecided**, and writing a tripwire's entry
-(`knowledge-architect-issue-tracking`). A decision about the agent configuration itself is
-both this and `knowledge-architect-agent-configuration`: that skill owns how to write the
+(`skill@knowledge-architect-planning`); **parking something undecided**, and writing a tripwire's
+entry (`skill@knowledge-architect-issue-tracking`). A decision about the agent configuration itself
+is both this and `skill@knowledge-architect-agent-configuration`: that skill owns how to write the
 configuration, this one owns where the argument lands.
 
 ## When recording happens {{slug:when-recording-happens}}
@@ -63,16 +63,18 @@ change:
   the slug as well.
 - **Move the incumbent into the Component's rejected alternatives** (`skill@knowledge-architect-decision-recording@losing-alternatives`) with its reason and a
   validity marker, stated as strongly as it was originally made, if it meets one of the tests of `skill@knowledge-architect-decision-recording@losing-alternatives`.
-- **Argue it under `knowledge-architect-design` first**, if it was not: a reversal contradicts a
-  statement of the incumbent, the second case of the backstop of `skill@knowledge-architect-decision-recording@entry-tests`.
+- **Argue it under `skill@knowledge-architect-design` first**, if it was not: a reversal contradicts
+  a statement of the incumbent, the second case of the backstop of
+  `skill@knowledge-architect-decision-recording@entry-tests`.
 - **Delete the tripwires guarding the reversed decision.** A tripwire whose decision is reversed
-  goes outright. `knowledge-architect-issue-tracking` owns that movement.
+  goes outright. `skill@knowledge-architect-issue-tracking` owns that movement.
 - **Repair what pointed at the old behaviour**: skills, subagent definitions, scoped `CLAUDE.md`
   files, generated headers. Grep the behaviour's wording as well as the slug, since a pointer that
   describes the behaviour without naming it is the one a slug grep misses. A sentence about the
   past that named the old slug is rewritten to state the present, or removed, never retargeted and
-  never turned into plain text, as `knowledge-architect-issue-tracking` says of a deleted entry; a
-  verbatim quotation of the owner is left as it is, with a reference to the current entry beside it.
+  never turned into plain text, as `skill@knowledge-architect-issue-tracking` says of a deleted
+  entry; a verbatim quotation of the owner is left as it is, with a reference to the current entry
+  beside it.
 - **Close the issue entry that asked the question**, in this commit rather than a later one, and
   rewrite whatever half of it survives rather than deleting the whole.
 
@@ -102,8 +104,9 @@ records dozens per unit of work stops being readable and stops being ranked.
    by this test alone, ask the owner, one numbered question per decision (Q1, Q2, …), several in
    one message, each quoting the owner's words the decision rests on: do they record the owner's
    intent, or were they an answer to the agent's proposal, or a hedged statement ("I think",
-   "maybe"), which is a position to argue under `knowledge-architect-design`? The head quotes the
-   owner's words and the owner's answer. With no answer, the decision earns no head by this test.
+   "maybe"), which is a position to argue under `skill@knowledge-architect-design`? The head quotes
+   the owner's words and the owner's answer. With no answer, the decision earns no head by this
+   test.
 
 Test 3 matters most in a project that implements a specification or leans on a tool's behaviour. A
 choice that turns on what the specification means, or on how the tool behaves, is expensive to get
@@ -116,17 +119,18 @@ is not, and the commit carries the argument. A reason that fits in one comment a
 that site's own code, fails test 2.
 
 **A decision that creates a design head, contradicts a statement of one, its argument included,
-or extends one beyond what its title states, and was not argued under `knowledge-architect-design`,
-goes back to that skill before its text is written.** This is the case of a decision met during
-another task and settled there, by the owner's word or by the session's own choice. The design
-skill's in-change path keeps the deliberation in the commit message, so the task needs no plan
-document and no new session. For the third case, rewrite the head's title to state the addition as
-well, and apply the test of `skill@knowledge-architect-decision-recording@current-design` to it: if no title passes, the addition gets a head of its own. An
-addition within what the title states, which contradicts nothing, is recorded directly, with the
-owner's words quoted in the commit where they gave a ruling. A change that relocates or rewords
-recorded decisions, a split of a head included, and adds or removes none, is not a decision: it
-needs no design skill, and the routing and fidelity-of-relocation review axes judge that it adds or
-removes none.
+or extends one beyond what its title states, and was not argued under
+`skill@knowledge-architect-design`, goes back to that skill before its text is written.** This is
+the case of a decision met during another task and settled there, by the owner's word or by the
+session's own choice. The design skill's in-change path keeps the deliberation in the commit
+message, so the task needs no plan document and no new session. For the third case, rewrite the
+head's title to state the addition as well, and apply the test of
+`skill@knowledge-architect-decision-recording@current-design` to it: if no title passes, the
+addition gets a head of its own. An addition within what the title states, which contradicts
+nothing, is recorded directly, with the owner's words quoted in the commit where they gave a ruling.
+A change that relocates or rewords recorded decisions, a split of a head included, and adds or
+removes none, is not a decision: it needs no design skill, and the routing and
+fidelity-of-relocation review axes judge that it adds or removes none.
 
 ## Which Component owns it {{slug:owning-component}}
 
@@ -162,8 +166,8 @@ again? If yes, it is in the head.** If no, it is deliberation.
 
 **The deliberation is not copied into the head**, and, where a plan document carries it, not into
 the harvest's commit message either.
-A plan document is deleted when its work lands, per `knowledge-architect-planning`, and the commit
-that deletes it cites it by its kind. A reader who needs the deliberation finds it there:
+A plan document is deleted when its work lands, per `skill@knowledge-architect-planning`, and the
+commit that deletes it cites it by its kind. A reader who needs the deliberation finds it there:
 
 ```sh
 git log --diff-filter=D --name-only -- docs/plans/         # every deleted plan document, with its commit
@@ -174,8 +178,8 @@ git show <commit>^:<path of the document>                  # the document as it 
 **`-G` matches any commit whose diff touches the slug. `-S` matches only a change in how many times
 it occurs, so it misses every revision.**
 
-When a decision was taken with no spec, on the in-change path of `knowledge-architect-design`, its
-commit message carries the deliberation.
+When a decision was taken with no spec, on the in-change path of `skill@knowledge-architect-design`,
+its commit message carries the deliberation.
 
 ## The current design {{slug:current-design}}
 
@@ -276,7 +280,7 @@ question is whether **a shape lost to an argument**.
 | withdrawn with no defeating reason | the spec only. It carries no argument a later reader could test. |
 | superseded, when the absorbing thread carries its shape whole | the spec only |
 | superseded, when a distinct shape lost | judged by the tests below, as a ruled-out thread |
-| a shape that lost, when the question produced no decision | the spec only. An entry names the decision it lost to, and there is none. If the question stays open, it is an issue under `knowledge-architect-issue-tracking`. |
+| a shape that lost, when the question produced no decision | the spec only. An entry names the decision it lost to, and there is none. If the question stays open, it is an issue under `skill@knowledge-architect-issue-tracking`. |
 
 **An alternative earns an entry only if at least one of these holds:**
 
@@ -346,7 +350,7 @@ A design discussion that runs a premortem ends with it, and the owner rules on w
 become tripwires, each by the label, `T<n>`, it was put to the owner under. **A tripwire is written at harvest, with the decision it guards, and only on the
 owner's word.** It goes in the tripwires home of the Component that owns the guarded decision, so
 the decision's head exists before the tripwire that names it. Its shape and its lifecycle are
-`knowledge-architect-issue-tracking`.
+`skill@knowledge-architect-issue-tracking`.
 
 ## Before you finish {{slug:before-you-finish}}
 

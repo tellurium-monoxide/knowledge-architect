@@ -11,7 +11,7 @@ goals, or the project's own agent configuration against the installed workflow. 
 design head of this repository, run during the discussion that rewrote the entry tests, was useful
 and was built by hand. The owner: "The audit we did is probably something that is useful to run once
 in a while in any large project." The owner proposes a name that keeps such audits apart from
-reviews, and a later session under `knowledge-architect-design` to design them.
+reviews, and a later session under `skill@knowledge-architect-design` to design them.
 
 ## Details
 
@@ -21,7 +21,7 @@ The owner's statement of the gap: "the project does not offer a way to review a 
 globally". And: "Reviews are only offered on "diffs", the work of one branch or one document." The
 owner
 proposes the name **project audits** rather than reviews, to avoid confusion with the installed
-review skill, `knowledge-architect-review`, and its reviewer agents; the name is open to
+review skill, `skill@knowledge-architect-review`, and its reviewer agents; the name is open to
 discussion.
 
 **The audit that was run, as a worked instance.** In the discussion that produced the milestone
@@ -93,6 +93,6 @@ nearly everything, and two heads in the wrong Component, none of which a diff re
 
 ### What would close it
 
-A design discussion under `knowledge-architect-design` that decides whether project audits are
+A design discussion under `skill@knowledge-architect-design` that decides whether project audits are
 offered, under which name, which axes, how they are dispatched at scale, and what they leave behind;
 and, if they are, the installed skill or skills and agents built from it.

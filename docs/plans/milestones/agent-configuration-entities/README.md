@@ -47,12 +47,13 @@ installed skill. That skill is its home; where the two disagree, the skill wins.
    have, a consequence the entry did not see, and **a standing entry the slice's planned code bears on**:
    a tripwire whose firing condition, or a `deferred` issue whose trigger, the planned code meets,
    and an issue of any kind the slice's code touches, closes, makes worse or depends on. Dispatch the
-   search as the description of `knowledge-architect-standing-entry-searcher` says, with the slice's
-   spec and the milestone document as the work and, as seeds, the decisions the milestone document
-   lists under "What is already decided" and the decisions and goals the slice's spec cites. Read
-   whole, with `cargo klarch show`, every entry the search returns, and judge it against the slice;
-   never act on an entry from the reason the search gave. A firing found at the audit is ruled before the code is written, where one
-   found only by the review of the harvest reopens the harvest. Sort each gap:
+   search as the description of `agent@knowledge-architect-standing-entry-searcher` says, with the
+   slice's spec and the milestone document as the work and, as seeds, the decisions the milestone
+   document lists under "What is already decided" and the decisions and goals the slice's spec
+   cites. Read whole, with `cargo klarch show`, every entry the search returns, and judge it against
+   the slice; never act on an entry from the reason the search gave. A firing found at the audit is
+   ruled before the code is written, where one found only by the review of the harvest reopens the
+   harvest. Sort each gap:
    - **Applied in place.** The gap has one answer the document's decisions already imply, or is a
      choice among shapes the document rules out all but one of. Apply the answer in place, in the
      milestone document or the slice's spec, wherever the shape it changes is written. Commit the
@@ -72,7 +73,7 @@ installed skill. That skill is its home; where the two disagree, the skill wins.
    - **Load-bearing.** The gap is material, or is a choice between two shapes neither of which the
      document rules out, or needs a ruling the document marks as the owner's. Record it in the
      slice's spec as open at the audit, with the discriminating fact, stop the slice, and open a
-     design session with the owner under `knowledge-architect-design`. **The session's depth
+     design session with the owner under `skill@knowledge-architect-design`. **The session's depth
      follows the gap.**
      - A choice among shapes that can be stated in full, each with its consequence, is put to the
        owner in one message, with a default; several such gaps go in one question, each under a
@@ -88,28 +89,28 @@ installed skill. That skill is its home; where the two disagree, the skill wins.
 
      The slice resumes from the ruling or the converged design.
 3. **Claims, tests, implementation, gates, commits**, per the project's development procedure:
-   `klarch-development` for the Rust source; for a file under `path@agent-skills@content/`,
-   `knowledge-architect-agent-configuration` and the section "Editing an installed skill or agent"
-   of `path@agent-skills@CLAUDE.md`; in as many commits as the session judges the work needs. The commits name
-   how each claim's test was shown to fail against a wrong implementation, and say of any claim
-   whose test cannot yet do so why not.
-4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
-   or folded where that skill says.
+   `skill@klarch-development` for the Rust source; for a file under `path@agent-skills@content/`,
+   `skill@knowledge-architect-agent-configuration` and the section "Editing an installed skill or
+   agent" of `path@agent-skills@CLAUDE.md`; in as many commits as the session judges the work needs.
+   The commits name how each claim's test was shown to fail against a wrong implementation, and say
+   of any claim whose test cannot yet do so why not.
+4. **Review before the merge**, per `skill@knowledge-architect-review`. A repair is a further
+   commit, or folded where that skill says.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this slice,
    by its identifier in plain text, beside a citation of the milestone document.
 6. **The harvest**, per the harvest row of the slice's spec: the decisions and the losing
-   alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
-   under `knowledge-architect-issue-tracking`. The row names what is judged; the tests of
-   `knowledge-architect-decision-recording` decide whether each decision and each alternative
-   earns an entry, and they govern where the two disagree: an item of the row the tests exclude is
-   named in the harvest's commit, with the test it fails. A decision harvested from a thread takes
-   the thread's slug, unless the slug misdescribes the approved decision: the entry then takes a
-   slug that names it, and the slice's harvest row states the pair. A tripwire names the head that
-   harvested its decision, so the head is written first. Where a design home is a directory, a new
-   subdocument is linked from its README. **The harvest is reviewed before the merge**, per
-   `knowledge-architect-review`, on the decision-record, routing and standing-state axes, and by
-   the transcript reviewer where the transcripts are available: it writes the record those axes
-   judge, so the review of point 4 cannot see it.
+   alternatives under `skill@knowledge-architect-decision-recording`, then the tripwires and the
+   issues under `skill@knowledge-architect-issue-tracking`. The row names what is judged; the tests
+   of `skill@knowledge-architect-decision-recording` decide whether each decision and each
+   alternative earns an entry, and they govern where the two disagree: an item of the row the tests
+   exclude is named in the harvest's commit, with the test it fails. A decision harvested from a
+   thread takes the thread's slug, unless the slug misdescribes the approved decision: the entry
+   then takes a slug that names it, and the slice's harvest row states the pair. A tripwire names
+   the head that harvested its decision, so the head is written first. Where a design home is a
+   directory, a new subdocument is linked from its README. **The harvest is reviewed before the
+   merge**, per `skill@knowledge-architect-review`, on the decision-record, routing and
+   standing-state axes, and by the transcript reviewer where the transcripts are available: it
+   writes the record those axes judge, so the review of point 4 cannot see it.
 7. **The slice's spec leaves** in the commit that completes its harvest. What crosses slices stays
    in the milestone document, amended in place where the landing changed it.
 
@@ -120,7 +121,7 @@ installed skill. That skill is its home; where the two disagree, the skill wins.
 | the harness | the agent harness a project serves, declared by `[agents] harness` in its manifest, per `design@core@agents-table`; the checker knows one, `claude` |
 | the installed copies | the files `cargo klarch install-agent-skills` writes into a project's namespace under .claude: `.claude/skills/knowledge-architect-<name>/`, `.claude/agents/knowledge-architect-<name>.md` and `path@agent-config@knowledge-architect/PRIMER.md`, per `design@core@owned-namespace-check`; `owned_path` in `path@core@src/manifest.rs` decides membership |
 | the shipped set | the text the agent-skills crate ships, `FILES` of `path@agent-skills@src/lib.rs`, generated by `path@agent-skills@build.rs` from `path@agent-skills@content/` |
-| a project skill, a project agent | a skill or an agent of the project's own, outside the installer's namespace, such as `klarch-development` under `path@agent-config@skills/` |
+| a project skill, a project agent | a skill or an agent of the project's own, outside the installer's namespace, such as `skill@klarch-development` under `path@agent-config@skills/` |
 | the root instructions | the project's root CLAUDE.md, in this repository `path@knowledge-architect@CLAUDE.md`; a scoped CLAUDE.md is not one |
 | a section | a level-two heading of a skill's SKILL.md, of an agent's file, of the primer or of the root instructions, outside a fenced block, and the text under it |
 | a harness kind | one of the four kinds this work adds: `skill`, `agent`, `primer`, `instructions` |
@@ -184,7 +185,7 @@ What exists at each site the work touches:
 - **The sections to slug.** A count of the lines opening with `## ` outside blocks fenced by
   three backticks or tildes, `awk` over each file, gives 130,
   over the 9 skills and 8 agents of content/, content/PRIMER.md, the root CLAUDE.md, and this
-  repository's three `klarch-` skills and its agent `klarch-changelog-reviewer`.
+  repository's three `klarch-` skills and its agent `agent@klarch-changelog-reviewer`.
 
 Outside this work:
 
@@ -1041,12 +1042,13 @@ In the slices' specs.
 - **The kind name `claude-md`**, lost to `instructions` under `thread@agent-configuration-entities@root-instructions-cited`: it is tied
   to one harness's file name, and the owner announced a move to AGENTS.md (`argument@agent-configuration-entities@a66`, `argument@agent-configuration-entities@a67`).
 
-Judged at the entities slice's harvest by the tests of `knowledge-architect-decision-recording`: the
-constructed anchor and the section kind each earned an entry in
-`path@core@docs/rejected-alternatives.md`, by its first test, since each would change the reference
-grammar, a format every project writes. The manifest declaration of content/, the binary's shipped
-set as the source, scoped CLAUDE.md files and the kind name `claude-md` earned none: each lost to an
-argument a reader derives again, and the first two are argued in the heads that beat them.
+Judged at the entities slice's harvest by the tests of
+`skill@knowledge-architect-decision-recording`: the constructed anchor and the section kind each
+earned an entry in `path@core@docs/rejected-alternatives.md`, by its first test, since each would
+change the reference grammar, a format every project writes. The manifest declaration of content/,
+the binary's shipped set as the source, scoped CLAUDE.md files and the kind name `claude-md` earned
+none: each lost to an argument a reader derives again, and the first two are argued in the heads
+that beat them.
 
 ## Readings
 
@@ -1116,8 +1118,8 @@ rewording". Each ruling is applied in the sections it touches; the list stays as
   `goal@core@relocation-is-one-manifest-edit` states "Every reference names its anchor", which the
   two-segment form contradicts by its letter. Its met condition, "such a move leaves no reference
   to repair", still holds: nothing a harness kind names moves with a manifest edit. A goal binds,
-  and changes only on the owner's word, under `knowledge-architect-goal-setting`. Default, as a
-  draft for the owner's ruling: "Every reference to what the manifest places names its anchor, and
+  and changes only on the owner's word, under `skill@knowledge-architect-goal-setting`. Default, as
+  a draft for the owner's ruling: "Every reference to what the manifest places names its anchor, and
   each anchor's directory is declared once, in the manifest, so moving a Component or a location
   changes the manifest and no document." Written into the goals home on the owner's word.
 - **D5, ruled as its default**, on `thread@agent-configuration-entities@section-numbers-dropped`: the owner ruled on removing "the "1." numbering of skill

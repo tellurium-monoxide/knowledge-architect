@@ -11,7 +11,7 @@ A bounded problem, a clear requirement whose main risk is over-building, has no 
 the design skill grounds it, and then sends one proposal for the owner's word.
 
 The sections below describe one skill of the set, the design skill,
-`knowledge-architect-design`: it runs design discussions as open, argued
+`skill@knowledge-architect-design`: it runs design discussions as open, argued
 exchanges instead of narrowing questionnaires.
 
 ## The design skill: what it changes
@@ -56,7 +56,7 @@ about an existing architecture — the assistant:
   showing the full thread table for one batch confirmation, instead
   of asking approval questions — and runs a premortem before
   handing off;
-- hands the converged design to `knowledge-architect-planning`, which
+- hands the converged design to `skill@knowledge-architect-planning`, which
   writes the spec or the milestone in the same session; each decision
   is recorded in its design home when the work implementing it lands,
   or when it is made if no work implements it, and a losing alternative

@@ -8,7 +8,7 @@ kind: question
 The installed retrospective sends each finding the owner keeps straight to an issue entry, with no
 step that checks whether it still applies, whether it is already recorded, whether it is in scope,
 or whether a better fix exists. This repository built that step as its own skill,
-`klarch-retrospective-intake`, and every check of it is one any project would need. Should the
+`skill@klarch-retrospective-intake`, and every check of it is one any project would need. Should the
 method become part of the installed workflow, and in which shape?
 
 ## Details
@@ -43,8 +43,8 @@ finding to an entry with no analysis between.
 
 ### What would close it
 
-A design discussion under `knowledge-architect-design` on the installed shape: a section of the
-retrospective skill, or an installed skill of its own for the session that receives the files; where
-a consuming project keeps the analysis, given that the primer's knowledge table has no row for it;
-and whether the analysis home and its lifecycle ship or stay each project's own. Then the change, or
-the owner's ruling that the method stays local.
+A design discussion under `skill@knowledge-architect-design` on the installed shape: a section of
+the retrospective skill, or an installed skill of its own for the session that receives the files;
+where a consuming project keeps the analysis, given that the primer's knowledge table has no row for
+it; and whether the analysis home and its lifecycle ship or stay each project's own. Then the
+change, or the owner's ruling that the method stays local.

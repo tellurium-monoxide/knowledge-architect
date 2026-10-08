@@ -90,7 +90,7 @@ argument, or to task material that varies per instance such as a figure or a lay
 a named prerequisite skill, which is one complete instruction rather than a fragment to reassemble.
 A pointer into root `CLAUDE.md` is free, since root already reaches every session. A pointer to
 *part* of a directive the session must apply is the defect, and the content belongs in the
-instruction. `knowledge-architect-agent-configuration` owns the test.
+instruction. `skill@knowledge-architect-agent-configuration` owns the test.
 
 **Does a decision sit in the right Component?** One question decides it: *does this decision survive
 deleting the Component?* No, and it belongs in that Component's own design home. Yes, and it

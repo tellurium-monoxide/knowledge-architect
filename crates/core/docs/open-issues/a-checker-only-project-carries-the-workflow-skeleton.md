@@ -37,6 +37,6 @@ a project without agents never runs.
 ### What would close it
 
 Either the owner rules that the set stays as it is for every project, which removes this entry,
-or a design discussion under `knowledge-architect-design` settles what a project without the
+or a design discussion under `skill@knowledge-architect-design` settles what a project without the
 workflow owes. Evidence that would move it: a project that declines adoption, or asks for an
 exemption, because of the empty homes.

@@ -3311,3 +3311,59 @@ fn show_prints_one_primer_section_and_its_own_references() {
     let cited: Vec<&str> = out.lines().filter(|l| l.contains("README.md:")).collect();
     assert_eq!(cited.len(), 1, "{out}");
 }
+
+/// The claim: a commit message naming a skill by its bare name is a finding, judged against the
+/// commit's own tree, so a project skill the commit adds is reported in its message; the message
+/// citing the skill as a reference passes. Mutation checked: the bare-name arm left out of the
+/// lints part makes the planted message pass.
+#[test]
+fn a_message_naming_a_skill_its_commit_adds_by_its_bare_name_is_a_finding() {
+    let history = History::new("commit-bare-skill");
+    tiny_project_serving_claude(&history);
+    let base = history.commit("The project is created\n");
+    history.write(
+        ".claude/skills/tiny-own/SKILL.md",
+        "---\nname: tiny-own\ndescription: a project skill\n---\n# Own\n",
+    );
+    let sha = history.commit("A skill arrives\n\nIt adds `tiny-own`.\n");
+    let cited = history.commit("A subject line\n\nIt cites `skill@tiny-own`.\n");
+    let (out, err, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 1, "{out}{err}");
+    assert!(
+        out.contains(&format!("commit {sha}:3"))
+            && out.contains("`tiny-own` is a bare skill name")
+            && out.contains("write `skill@tiny-own`"),
+        "{out}"
+    );
+    assert!(!out.contains(&format!("commit {cited}:")), "{out}");
+}
+
+/// The claim: the bare-name lint reports under the `claude` harness and nothing under
+/// `harness = []`, where no skill is an entity. Mutation checked: the skills' definitions taken
+/// whatever the harness makes the unharnessed copy report the span.
+#[test]
+fn a_bare_skill_name_is_silent_under_no_harness() {
+    let plant = |sandbox: &Sandbox| {
+        sandbox.write(
+            ".claude/skills/tiny-own/SKILL.md",
+            "---\nname: tiny-own\ndescription: a project skill\n---\n# Own\n",
+        );
+        sandbox.write(
+            "README.md",
+            &format!(
+                "{}\nRun `tiny-own`.\n",
+                std::fs::read_to_string(sandbox.path("README.md")).expect("the README")
+            ),
+        );
+        sandbox.stage();
+    };
+    let harnessed = harnessed("bare-skill-harnessed");
+    plant(&harnessed);
+    let (out, err, code) = harnessed.run(&["check"]);
+    assert_eq!(code, 1, "{out}{err}");
+    assert!(out.contains("`tiny-own` is a bare skill name"), "{out}");
+    let bare = Sandbox::new("bare-skill-unharnessed", "minimal");
+    plant(&bare);
+    let (out, err, code) = bare.run(&["check"]);
+    assert_eq!(code, 0, "{out}{err}");
+}

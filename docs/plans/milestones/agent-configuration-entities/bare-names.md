@@ -24,7 +24,12 @@ there. It starts after the section-citations slice has merged.
   `knowledge-architect-transcript-conformity-reviewer` in the section that records its rename.
 - **The installed copies** under .claude, by `cargo klarch install-agent-skills`, in the same commit
   as each change to content/.
-- **The changelog entries** of this slice, in the `Next release` section, then `cargo x changelog`.
+- **The changelog entries** of this slice, in the `Next release` section, then `cargo x changelog`:
+  the Migration entry of the harvest, and a `library`, major entry, since `Observation` is public
+  through `document` and exhaustive, so a new variant breaks a consumer's exhaustive match.
+- **The rewrite reaches Markdown and Rust only**, the two file kinds the walk reads, per
+  `issue@core@references-are-read-in-markdown-and-rust-only`. A grep of every other tracked file
+  for a skill's or an agent's name returns nothing at the slice's start.
 
 ## Claims
 
@@ -51,6 +56,23 @@ there. It starts after the section-citations slice has merged.
 - `path@agent-config@agents/klarch-changelog-reviewer.md` and
   `path@agent-config@skills/klarch-release/SKILL.md`, which restate the changelog rules.
 
+## Audit
+
+Read against the tree at the slice's start, with the standing-entry search over every issue and
+tripwire. Gaps applied in place above: the `library` changelog entry, the reach of the rewrite,
+and the one commit of the two steps. What the search returned, beyond the audit subjects:
+
+- `tripwire@core@candidate-rule-silence` asks a false-positive census for a widened class. The
+  census is the lint's first run over the tree: every finding is a defined skill's or agent's name
+  in backticks, because the match is exact against the entity table, so none is a false positive.
+- `tripwire@core@phases-gate-the-report-two`: the lint reads the observation and the entity table
+  alone, and no other check's findings. It does not fire.
+- `issue@core@finding-texts-are-not-audited-for-a-needless-cause`: the new finding names the span
+  and its repair, and no cause.
+- `issue@core@tooling-for-project-skills` and `issue@knowledge-architect@a-mechanical-changelog-check`
+  are unaffected: the lint reads the names of skills in other documents, not a skill's structure,
+  and the released sections' change is one of structure, which that entry's rule already admits.
+
 ## Fails alone on
 
 - The lint reports a span that names no skill or agent the entity table defines.
@@ -65,10 +87,15 @@ there. It starts after the section-citations slice has merged.
 
 1. **The observation, empty.** The bare-span observation in the scanner, read by no check. Fails
    alone on: an existing test of the scanner's spans.
-2. **The lint and the rewrite, in one commit.** The lint, every bare name rewritten, the released
-   changelog sections included, the installed copies, the changelog entries. The lint and the
-   rewrite land in one commit, because every commit must pass under the branch tip's checker.
-   Fails alone on: a lint finding on a name the rewrite left.
+2. **The lint and the rewrite.** The lint, every bare name rewritten, the released changelog
+   sections included, the installed copies, the changelog entries. Fails alone on: a lint finding
+   on a name the rewrite left.
+
+Both steps, and this spec's audit, land as the branch's first commit. Every commit must pass under
+the branch tip's checker, and a tree that holds a bare name fails under it, so no commit can
+precede the rewrite: the class of
+`issue@core@a-contract-change-fails-every-earlier-commit-unexplained`, through a check rather than
+a generated file.
 
 ## Decided design
 
@@ -108,8 +135,8 @@ None: no acceptance criterion of the milestone is judged by this slice.
 
 ## Harvest
 
-At this slice's landing, under `knowledge-architect-decision-recording` and
-`knowledge-architect-issue-tracking`:
+At this slice's landing, under `skill@knowledge-architect-decision-recording` and
+`skill@knowledge-architect-issue-tracking`:
 
 | what | home |
 | --- | --- |

@@ -12,7 +12,8 @@ Scope: every statement in a plan document about the code as it stands: what a ty
 function does, where a write happens, which kinds exist, what a test asserts, what a tool refuses.
 **Not** whether the design is right, or whether the document is sufficient to implement from;
 those are other axes. A plan document describes existing code freely, and those descriptions are
-claims, not bets, per `knowledge-architect-planning`; this axis is what holds them to the tree.
+claims, not bets, per `skill@knowledge-architect-planning`; this axis is what holds them to the
+tree.
 
 **Establish the state of the tree yourself.** A brief that describes the code is a lead; a
 disagreement between the brief and the tree is itself a finding.

@@ -29,7 +29,7 @@ are reading. If a check seems to need one, say so as a finding rather than worki
 Read, in this order: the root `CLAUDE.md`; the `CLAUDE.md` of the Component the document is about,
 which the brief names or the document's head does; the document in full, and for a milestone its
 `README.md` and the spec of the slice to implement; the skill that owns plan documents,
-`knowledge-architect-planning`, and every other skill the document names; the design home, the
+`skill@knowledge-architect-planning`, and every other skill the document names; the design home, the
 rejected alternatives, the open issues and the tripwires of that Component. Then read the code the
 document points at, enough to know what exists.
 

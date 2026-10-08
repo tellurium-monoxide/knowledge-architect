@@ -31,9 +31,9 @@ The retrospective asks about it at every session, per
 ### Trigger
 
 A retrospective's workflow file from a project that uses the workflow, filed as an issue on
-knowledge-architect's repository or received and analysed under `klarch-retrospective-intake`, per
-`design@agent-skills@retrospective-destination`, names a session that needed to change or remove an
-instruction of an installed skill for its own project. A session of this repository does not meet
+knowledge-architect's repository or received and analysed under `skill@klarch-retrospective-intake`,
+per `design@agent-skills@retrospective-destination`, names a session that needed to change or remove
+an instruction of an installed skill for its own project. A session of this repository does not meet
 it: here the installed text is edited at its source, and the repository follows the published
 version without deviation, so that its own sessions test it. The session that triages that report decides what the workflow
 changes, and this means is one of the answers it weighs.

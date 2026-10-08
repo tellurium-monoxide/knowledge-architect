@@ -7,8 +7,8 @@ kind: question
 
 In a session in thaum on v0.1.0, two adversarial reviewers queued long batches of mutations, each
 signalled for many minutes that it was waiting on its own background work, and each reported only
-when the dispatcher asked. `knowledge-architect-review` says nothing about how long a reviewer runs
-or when it reports. Which addition to the review skill, if any, does the owner approve?
+when the dispatcher asked. `skill@knowledge-architect-review` says nothing about how long a reviewer
+runs or when it reports. Which addition to the review skill, if any, does the owner approve?
 
 ## Details
 

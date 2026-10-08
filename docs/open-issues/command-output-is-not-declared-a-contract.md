@@ -68,11 +68,12 @@ no statement telling it not to.
 
 ### What would close it
 
-A design discussion under `knowledge-architect-design` whose outcome is recorded: which parts of a
-command's output are stable, where users are told so, which data gets a machine-readable form or a
-library function, and the row of the versioning table each kind of change takes. That includes a line added to a command's
-output, which `issue@knowledge-architect@the-bump-table-has-no-row-for-a-looser-check` records
-and leaves to this entry.
+A design discussion under `skill@knowledge-architect-design` whose outcome is recorded: which parts
+of a command's output are stable, where users are told so, which data gets a machine-readable form
+or a library function, and the row of the versioning table each kind of change takes. That includes
+a line added to a command's output, which
+`issue@knowledge-architect@the-bump-table-has-no-row-for-a-looser-check` records and leaves to this
+entry.
 
 ### Re-entry point
 

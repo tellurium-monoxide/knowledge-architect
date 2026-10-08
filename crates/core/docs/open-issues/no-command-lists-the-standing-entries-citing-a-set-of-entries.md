@@ -44,7 +44,7 @@ per entry and a hand mapping, and a mapping done by hand can drop an entry.
 
 A command, or a filter of an existing one, that takes several references and prints every issue
 entry and every tripwire entry whose text cites any of them, one row per entry naming it as a
-reference. The installed search agent, `knowledge-architect-standing-entry-searcher`, changes
+reference. The installed search agent, `agent@knowledge-architect-standing-entry-searcher`, changes
 to use the command in the same work. It is tested over a mock project in which two tripwires of one home and one issue cite
 two different decisions. Or the owner rules that the search keeps using `show`, and this entry is
 deleted with that reason in the commit.

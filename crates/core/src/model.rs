@@ -440,6 +440,10 @@ fn describe(what: &Observation) -> (&'static str, String) {
             ("retired-slug-ref", span.clone())
         }
         Observation::Link(target) => ("link", target.clone()),
+        // Left out: every one-word code span is one, so the dump would list most of the prose's
+        // code spans, and the observation matters only where the entity table names a skill or
+        // an agent by it, which the bare-name lint judges.
+        Observation::BareName(_) => ("", String::new()),
     }
 }
 
