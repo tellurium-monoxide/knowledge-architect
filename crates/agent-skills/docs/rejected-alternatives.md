@@ -87,9 +87,9 @@ backstop reach a session in time, and names this line among the candidates if th
 `design@agent-skills@new-or-reshaped-head-needs-design`. `live`. It sends an addition within what a
 head's title states, and a relocation that adds or removes no decision, to a full discussion whose
 outcome the head already records; the owner ruled such a change does not need one. It is kept here
-because a doubt remains: `tripwire@agent-skills@title-stops-stating-scope` watches whether sessions
-read a title generously and record outside its scope by the direct route, and this alternative is
-the first candidate if they do.
+because a doubt remains: `tripwire@agent-skills@head-created-without-deliberation` watches whether
+a session adds to a head a decision its title does not state, with no deliberation, and this
+alternative is a candidate if it does.
 
 **One agent reading every issue and tripwire of the project for a piece of work** — lost to
 `design@agent-skills@standing-entry-search-agent`. `live`. One agent's load grows with the

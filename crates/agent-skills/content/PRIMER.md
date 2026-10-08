@@ -112,7 +112,8 @@ its subject, a commit of another project or a description in words, is outside t
 
 ## The installed skills
 
-- `knowledge-architect-decision-recording`: a design decision has been made or reversed.
+- `knowledge-architect-decision-recording`: before writing into a design home; a design decision
+  has been made or reversed.
 - `knowledge-architect-issue-tracking`: before diagnosing a problem; parking anything; a
   tripwire fires; work closes an entry.
 - `knowledge-architect-design`: a design question has an open solution space; a requested change
