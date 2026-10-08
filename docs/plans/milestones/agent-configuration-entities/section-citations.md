@@ -10,11 +10,19 @@ there. It starts after the entities slice has merged.
   becomes a reference to that section: `skill@<name>@<slug>` or `agent@<name>@<slug>`
   [placeholders], the skill's own name included when a skill cites itself. A citation of a point
   inside a section keeps the point in prose beside the reference, as "test 4 of" followed by the
-  section's reference. When this spec was written, `grep -rc '§'` found 65 lines in 13 files of
-  `path@agent-skills@content/` and 29 lines in 9 walked files outside it. The milestone document's
-  own citations, in its restatement of the planning skill's procedure, are among them.
+  section's reference. At origin/main when this spec was written, `grep -rc '§'` found 65 lines
+  in 13 files of `path@agent-skills@content/` and 29 lines in 9 walked files outside it. The branch
+  that adds this milestone added one more, in
+  `issue@core@a-home-for-developer-contracts-outside-agent-configuration`, and the plan documents
+  hold their own, the milestone document's restatement of the planning skill's procedure among
+  them. Those of the plan documents are rewritten too. The slice re-takes the count at its start.
+- **A citation of a section in words**, as in "section Decision authority" of the design skill, is
+  rewritten as the section's reference where the sentence asks the reader to follow it, per
+  `design@agent-skills@a-reference-claims-a-revisit`. The slice finds them by reading the texts its
+  audit subjects name, since no grep finds every wording.
 - **The section numbers removed** from the level-two headings of the skills and agents of content/,
-  and of this repository's `klarch-` skills and agent, per #section-numbers-dropped. A heading
+  and of this repository's `klarch-` skills and agent, per #section-numbers-dropped and D5 of the
+  milestone document. A heading
   `## 1. Does it reverse something already recorded? ` with its slug keeps its text and its slug,
   without `1. `.
 - **The installed copies** under .claude, by `cargo klarch install-agent-skills`, in the same commit
@@ -25,7 +33,7 @@ there. It starts after the entities slice has merged.
 
 | claim | test that could refute it | how the test is shown to discriminate |
 | --- | --- | --- |
-| No line of the walk cites a skill's or an agent's section by number | `grep -rn '§'` over the walk, minus the core's mock projects and the crates' changelog copies, each remaining line judged | the grep before the rewrite returns the 94 lines this spec counts |
+| No line of the walk cites a skill's or an agent's section by number | `grep -rn '§'` over the walk, minus the core's mock projects and the crates' changelog copies, each remaining line judged | the grep before the rewrite returns the lines the slice's start re-takes, 95 at least outside the plan documents |
 | Each rewritten citation names the section its number named | the mapping table below, built before any rewrite, and the review of the slice | a citation rewritten from the heading text alone, without the table, is found by the review comparing the old number with the table |
 | No level-two heading of a skill or an agent opens with a number | `grep -nE '^## [0-9]+\.'` over content/, the `klarch-` skills and agent, outside fenced blocks | the grep before the removal returns every numbered heading |
 | Every rewritten reference resolves | `cargo klarch check`, and `cargo klarch commits origin/main..HEAD` | a reference to a slug that does not exist is reported dangling |
@@ -35,15 +43,18 @@ there. It starts after the entities slice has merged.
 - The milestone document entire, and this spec.
 - `design@agent-skills@instruction-record-is-minimal`: the removal of the numbers is a rewording of
   the installed text, recorded by no head.
-- The head the entities slice wrote for the section register, and its slugs in each file.
+- The head the entities slice wrote for the section rule, and its slugs in each file.
 - `path@agent-skills@CLAUDE.md`, whose test 1 cites "§5 of" the retrospective skill, and
   `path@agent-skills@README.md`, which restates two expectation sets "§5 of" that skill names.
-- The issues whose text cites a section by number:
+- The issues whose text cites a section by number or in words:
   `issue@agent-skills@a-received-retrospective-file-has-no-installed-analysis`,
   `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined`,
-  `issue@agent-skills@test-3-admits-a-practice-its-tool-documents`, and
+  `issue@agent-skills@test-3-admits-a-practice-its-tool-documents`,
+  `issue@core@a-home-for-developer-contracts-outside-agent-configuration`;
   `issue@agent-skills@a-design-issue-s-re-entry-point-is-read-by-no-review`, which names "its
-  section 2" of the standing-state reviewer in words.
+  section 2" of the standing-state reviewer in words; and
+  `issue@agent-skills@the-material-finding-duty-has-no-head`, which names "section Decision
+  authority" of the design skill in words.
 
 ## Fails alone on
 
@@ -52,7 +63,16 @@ there. It starts after the entities slice has merged.
 ## Premises that expire
 
 - **The numbers of the sections are still in the headings when the slice starts**, which the
-  mapping table needs. The table is built first, before any heading is touched.
+  mapping table needs. Guard: the table is built first, before any heading is touched, and the
+  claim on numbered headings is taken after the rewrite.
+
+## Implementation sequence
+
+1. **The tables.** The mapping table of each cited file, from its headings, numbers included.
+   Fails alone on: a number the table does not hold.
+2. **The rewrite and the removal.** Every citation rewritten from its table, every
+   number removed, the installed copies, the changelog entry. Fails alone on: a rewritten citation
+   that names another section than its number did.
 
 ## Decided design
 
