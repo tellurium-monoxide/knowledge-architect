@@ -21,8 +21,9 @@ remembering the instructions. It refines `goal@knowledge-architect@documentation
 
 ## Relocating or refactoring what exists costs one manifest edit and no document `##relocation-is-one-manifest-edit`
 
-Every reference names its anchor, and each anchor's directory is declared once, in the manifest, so
-moving a Component or a location changes the manifest and no document. It is met while such a move
+Every reference to what the manifest places names its anchor, and each anchor's directory is
+declared once, in the manifest, so moving a Component or a location changes the manifest and no
+document. It is met while such a move
 leaves no reference to repair. It refines `goal@knowledge-architect@documentation-stays-consistent`.
 
 ## A recorded decision or an outstanding issue is delivered to whoever needs it, through checked references `##records-reach-their-reader`
