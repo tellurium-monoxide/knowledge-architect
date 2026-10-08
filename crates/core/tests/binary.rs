@@ -3180,7 +3180,7 @@ fn tiny_project_serving_claude(history: &History) {
     assert_eq!(code, 0, "{out}{err}");
 }
 
-/// AC2 of the entities slice of `milestone@plans@agent-configuration-entities`: commit 1 cites a
+/// The claim, per `design@core@installed-entities-from-the-tree`: commit 1 cites a
 /// section of an installed skill; commit 2 renames the section in the installed copy and repairs
 /// the citation. `commits` judges each commit against its own installed copies, so both pass.
 /// Mutation checked: `commit_tree` not handing the commit's installed blobs to the model makes
@@ -3233,7 +3233,7 @@ fn show_prints_a_skill_and_one_of_its_sections() {
     assert!(out.contains("README.md:"), "{out}");
 }
 
-/// AC4 of the entities slice of `milestone@plans@agent-configuration-entities`: a project skill
+/// The claim, per `design@core@section-homes-carry-slugs`: a project skill
 /// with a level-two heading that carries no slug fails the check, and the finding names the
 /// repair. Mutation checked: the finding's action replaced by an empty one fails the assertion.
 #[test]

@@ -92,7 +92,7 @@ phases, each of the first three building one input of the next:
 | ----- | ----------- | --------------- |
 | 1 | `Manifest::parse`, and each extension's resolution of its tables | a declaration the tool refused, which is then absent from the configuration |
 | 2 | `check::tree`, over the core's declared paths, the paths each extension declares and every document's parse, and `check::agents`, over the installed agent configuration | a file the walk could not read or refused, a tracked-and-ignored file, an anchor or a register home that is not there, a declared path that does not exist, a home a walk row keeps out, an installed agent file missing, differing or unshipped, a root CLAUDE.md that does not import a shipped primer, a heading markdown reads and the checker does not, per `design@core@headings-open-with-hash-marks` |
-| 3 | `Entities::build` | a slug or an entry id where none may sit, or defined twice |
+| 3 | `Entities::build` | a slug or an entry id where none may sit, or defined twice; a level-two heading of a section home with no slug; a skill's or an agent's name a reference cannot spell, or that its frontmatter contradicts |
 | 4 | every check, the core's and each extension's | everything computed over a complete model |
 
 A finding is classified by **the place it is produced**, never by a label at its site, so a
@@ -599,6 +599,19 @@ those shapes two anchors' homes cannot overlap: a home sits under its anchor's d
 overlapping homes put one anchor's directory on the path to the other's home, which is one of the
 shapes above.
 
+**No anchor wears a kind's name.** A reference's head is read as a kind before it is read as an
+anchor, so an anchor named `design`, `path` or `skill` would be shadowed there, and the old form
+written with it would be misread. Every kind's name, the harness kinds' whatever the harness and
+every declared register's included, is refused for a Component, a location, the project and a
+plan, per `design@core@a-plan-name-reads-as-nothing-else` for the last. The owner, on the question:
+"My ruling on this is that all kind names should be refused for anything that can be an anchor
+name (components, custom locations...). I'd rather make this decision early to avoid painful
+migrations."
+
+**A location's own registers are the only ones it carries**, and a skill or an agent of the
+project's own under one, such as this repository's under `agent-config`, is a section home of a
+harness kind, which no anchor carries, per `design@core@harness-kinds`.
+
 **A component cannot opt in to an `opt-in` register.** No syntax exists for it, and a component
 that wants one declares a location under its own directory. One mechanism, and the register list
 of a component stays a fact about the word _component_ rather than a per-component declaration.
@@ -680,11 +693,11 @@ refused, per `design@core@every-path-names-its-anchor`: with two names for one d
 `show` would miss the citations written the other way. A whole plan document may be cited from
 anywhere; when it leaves, each citation dangles, and that is the revisit it asks for.
 
-### A plan's name reads as no other anchor's name and no other plan's `##a-plan-name-reads-as-nothing-else`
+### A plan's name reads as no kind's name, no other anchor's and no other plan's `##a-plan-name-reads-as-nothing-else`
 
 A plan's name sits in the anchor position of a reference: a milestone's, and a spec's id, since
-each spec file is an anchor. So a milestone name or a spec id that is a component's name, a
-location's name, a reserved word, or the other home's name for another plan, is a phase-2 finding,
+each spec file is an anchor. So a milestone name or a spec id that is a kind's name, a component's
+name, a location's name, a reserved word, or the other home's name for another plan, is a phase-2 finding,
 and a plan so named is no anchor; of a spec and a milestone of one name, the milestone keeps it. Otherwise a reference reads as the other anchor, and which one
 wins depends on the order the anchors were built in. A milestone's name is also an entity id,
 since it is the id of a `milestone` entry, and is not `index`: the File shape's retired single
@@ -766,7 +779,9 @@ and nothing else, because their storage is what the word component means. A tabl
 register or an item register is refused whole, and so is any of their names in a location's
 `registers` list, and a
 component register whose home at the root would be the plans directory: the plans layout is the
-tool's, and a declaration that changes it changes nothing a project can rely on. Setting `scope`, `shape`, `dir`, `level`, `sections` or `metadata` on a
+tool's, and a declaration that changes it changes nothing a project can rely on. A declared
+register named `path`, `planned` or a harness kind is refused too: a reference whose kind segment
+is that word never reaches the register. Setting `scope`, `shape`, `dir`, `level`, `sections` or `metadata` on a
 built-in is a finding, and the compiled value stands.
 
 **Declarations go in the manifest because its header promises that what is checked is said in one
@@ -1027,9 +1042,11 @@ reopened.
 
 ## 3. Names and references
 
-### Every citeable thing is an entity with a kind, an anchor, an id and a definition site, held in one table built from the walk, and every check that resolves a name reads that table `##one-entity-table`
+### Every citeable thing is an entity with a kind, an id, a definition site and, where its kind takes one, an anchor, held in one table built from the model, and every check that resolves a name reads that table `##one-entity-table`
 
-**A kind is a register's name, or `path`, or `planned`.** The ten built-in registers give the kinds `design`,
+**A kind is a register's name, or `path`, or `planned`, or, under the `claude` harness, a harness
+kind**: `skill`, `agent`, `primer` or `instructions`, which is no register and takes no anchor, per
+`design@core@harness-kinds`. The ten built-in registers give the kinds `design`,
 `goal`, `tripwire`, `issue`, `spec`, `milestone`, `thread`, `argument`, `criterion` and
 `acceptance`, and a project's own declarations give the rest, so the kind set is
 data rather than a compiled enumeration. A heading register's entities are slugs defined in the
@@ -1077,6 +1094,10 @@ and not only design. A plan's items are the one register family read otherwise: 
 plan's own documents, a milestone's README included, and the section a heading sits under gives
 its kind, per `design@core@items-as-section-registers`. Which anchor owns a definition is where its document sits, per
 `design@core@a-slug-belongs-to-a-component`.
+
+**The section homes of the harness keep the same rule at level two**, a skill's, an agent's, the
+primer and the root CLAUDE.md, per `design@core@section-homes-carry-slugs`: their entries are
+the harness kinds', not a register's, and a slug at a level-two heading there defines a section.
 
 **Two findings, both about the definition site.** A heading at the register's level with no slug
 in its home is reported, naming the heading. A slug anywhere else defines nothing and is reported
@@ -1140,13 +1161,17 @@ block that markdown does not render as a heading is still read as one, per
   every heading findable by a search for lines opening with `#`.
 - **A Rust comment holds no section**, so a comment line underlined with dashes is not reported.
 
-### An entity belongs to its anchor and is unique inside one register instance, and a reference names all three: `` `<kind>@<anchor>@<id>` `` `##a-slug-belongs-to-a-component`
+### An entity of a register belongs to its anchor and is unique inside one register instance, and a reference to it names all three: `` `<kind>@<anchor>@<id>` `` `##a-slug-belongs-to-a-component`
 
 A definition is owned by where its document sits — the deepest anchor whose path holds it, and
 the register whose home holds it — rather than by anything the line says, so moving a document
 moves the entities in it. Two anchors may therefore each record an entity they call the same
 word, and two registers of one anchor may too, which is what naming the kind and the anchor in a
 reference buys. The id of a heading-register entity is still called a slug.
+
+**A harness kind names no anchor**, per `design@core@harness-kinds-cited-without-anchor`: its entities live
+where the harness puts them, one namespace per kind, so an anchor would carry no information. The
+refusal of a reference that names no anchor holds for every other kind.
 
 **A reference resolves to nothing in five ways, and each is reported as the repair it needs.**
 The kind position holds an anchor, the old form, and the repair names the kinds; the anchor is
@@ -1172,8 +1197,9 @@ The resolver reads the head — the text before the first `@` — and decides: a
 segmented and resolved; a declared anchor or a reserved anchor in that position is the old form
 and is reported with the repair "prefix the kind"; anything else is not a reference and reports
 nothing, so an email address or a git remote in backticks is silent unless the project declares
-an anchor by that word. Every kind but `path` and `planned` takes exactly three non-empty
-segments; `path` and `planned` take an anchor and then everything after the second `@`.
+an anchor by that word. Every kind but `path`, `planned` and the harness kinds takes exactly three
+non-empty segments; `path` and `planned` take an anchor and then everything after the second `@`;
+a harness kind takes the arities of `design@core@harness-kinds-cited-without-anchor`.
 
 **The silence is bounded and named.** A typo inside the kind, `desing@<anchor>@<id>`, is silent under this
 rule, because widening it to "any span with two `@`" would report every email address with a
@@ -1197,7 +1223,8 @@ punctuation inside the tokenizer, and a census of walked markdown finds no such 
 
 **The retired slug reference is a finding wherever it names something of this project.** A
 backticked `<word>#<id>` or a bare `#<id>` names the form it was when its id is an entry some
-register defines, and a qualified one also when its word is an anchor or a kind. The id is asked
+register defines, a harness kind's names and slugs excluded, since that form never cited one and
+a link to a heading in another tool's notation spells its slug so, and a qualified one also when its word is an anchor or a kind. The id is asked
 whatever the word, because a form copied out of the history may carry the name an anchor had
 before a rename, such as the core's former name `knowledge`. It has no `@` and no two path
 segments, so without this clause a slug reference the migration missed would be silent, which is
@@ -1223,6 +1250,64 @@ names what it names on purpose, and an illustration writes a placeholder in angl
 which the tokenizer does not record. Reading a fenced slug reference as an illustration, the
 stance the old grammar took, is in `path@core@docs/rejected-alternatives.md`. A string literal
 bound to a name in Rust yields no reference, unchanged from `design@core@grammars-not-prefixes`.
+
+### A skill, an agent, the primer and the root CLAUDE.md are cited with no anchor: `` `skill@<name>` ``, `` `skill@<name>@<slug>` ``, `` `primer@<slug>` `` and `` `instructions@<slug>` `` `##harness-kinds-cited-without-anchor`
+
+A harness kind takes no anchor. A skill or an agent is cited by its name, two segments, and one of
+its sections by its name and the section's slug, three: `skill@<name>`, `skill@<name>@<slug>`,
+`agent@<name>`, `agent@<name>@<slug>`. The primer and the root CLAUDE.md are one document each, so
+a section of either is cited by its slug alone: `primer@<slug>`, `instructions@<slug>`. Any other
+arity, and an empty segment, is malformed, with the kind's forms as its repair. The third segment
+narrows within the kind, as a path's last segment does, so the kind keeps the information that a
+section belongs to a skill or to an agent.
+
+- **No anchor, because the harness fixes one namespace per kind**: a skill or an agent is a
+  directory or a file of the harness's layout, unique by name, and a project has one primer and
+  one root CLAUDE.md. An anchor would carry no information, the argument
+  `design@core@reserved-anchors` makes for `plans`. A reference to a harness kind still serves
+  `goal@core@relocation-is-one-manifest-edit`, which binds a reference to what the manifest
+  places: nothing a harness kind names moves with a manifest edit.
+- **The rejected alternative "A register reference with no anchor"**, in
+  `path@core@docs/rejected-alternatives.md`, lost on two reasons. Its first, that the tool cannot
+  know which register is single-instance in a project, does not hold here: the tool fixes the four
+  kinds and their layout, and no project declares one. Its second, one grammar with no special case
+  in the resolver, is the cost of this form, which the owner weighed.
+- **The kind is read first**, so a word that is both a kind and an anchor would read as the kind;
+  no anchor may wear a kind's name, per `design@core@anchors-are-components-and-locations`.
+- **`instructions` names the document's role**, not one harness's file name, so a move of the root
+  instructions to another file name changes no reference, per
+  `issue@core@configuration-for-several-agent-providers`.
+
+The nearest rival, an anchor the tool constructs for the agent configuration with three segments
+everywhere, lost: every name for it stutters or names a provider, and it carries nothing. It is in
+`path@core@docs/rejected-alternatives.md`. Serves `goal@knowledge-architect@any-project-can-adopt-it`:
+one grammar, the same in every project, with a global namespace naming no anchor.
+
+### Every level-two heading of a skill, an agent, the primer and the root CLAUDE.md is a section, and owes a slug `##section-homes-carry-slugs`
+
+A section home is a skill's `SKILL.md`, an agent's file, the primer and the root CLAUDE.md, under
+the `claude` harness. The rule of `design@core@an-entry-is-a-heading-at-the-register-level` holds
+there at level two: every level-two heading outside a fence owes a slug, which defines a section
+of that home's skill, agent or document, and a slug anywhere else in it defines nothing. An id is
+unique within its document. A heading-shaped line inside the frontmatter block, as the harness
+reads that block, is no heading.
+
+- **A section slug names a section apart from its position**, where a paragraph number goes stale
+  at every insertion. A slug of the installed text is an interface: a rename dangles a consuming project's
+  citations of it, which `design@knowledge-architect@changelog-entries` owes a Migration entry for.
+  The owner, on that consequence: "The consequence you stated is accepted and positive in my view.
+  This is the fragility I mentionned at the beginning with using paragrap numbers."
+- **An installed copy defines its sections and raises no finding.** It is never the project's to
+  repair, and under `commits` a commit holding an earlier version's set is judged by a later
+  checker. The shipped set is held to the rule where it is written, by a test of the core over the
+  shipped text, which also requires every reference of a harness kind in it to resolve within the
+  set.
+- **A project skill's or agent's slug at a level-two heading defines a section** of that skill or
+  agent, whatever anchor holds its file.
+
+The finding on an unslugged heading names the repair, and the setup skill states the requirement,
+so an adopting project meets it in the documentation. Serves `goal@core@records-reach-their-reader`:
+`show` on a section lists every text that cites it.
 
 ### Every path reference names its kind and its anchor, `` `path@<anchor>@<path>` ``, and the deepest anchor wins `##every-path-names-its-anchor`
 
@@ -1759,6 +1844,9 @@ version ships must be installed, per `design@core@owned-namespace-check`. An emp
 no agent configuration: no CLAUDE.md is required, and nothing is installed or checked. A value the
 tool does not know is refused in phase 1, and leaves the list.
 
+Under `claude`, the four harness kinds exist, per `design@core@harness-kinds`; under an empty
+list, they do not.
+
 Under an empty list, the files of the installer's namespace are walked as the project's own
 documents, like any others. A harness for another provider is a value added to the list, requiring
 its own file and its own layout, which `issue@core@configuration-for-several-agent-providers`
@@ -1809,8 +1897,72 @@ construction, as the generated indexes are: their prose is the shipped text's, j
 text is written, and its illustration paths would otherwise be reported in every installing
 project.
 
+**The installed copies are also read, for definitions only**, per
+`design@core@installed-entities-from-the-tree`: the model holds them parsed, no check walks them
+for references, and they raise no finding of the section rule.
+
 The install edits nothing outside the namespace. In particular it does not edit the root
 CLAUDE.md, which belongs to the project: it says the import line is missing, and the check reports
 it with the line as its repair. A change a project needs to an installed skill belongs in a skill
 of its own, routed from the project's CLAUDE.md.
+
+### Under the `claude` harness, skills, agents, the primer and the root CLAUDE.md are entities of four kinds that are no register, and a skill or an agent is named by its directory or its file, which its frontmatter `name` equals `##harness-kinds`
+
+The four harness kinds, `skill`, `agent`, `primer` and `instructions`, exist under the `claude`
+harness alone, per `design@core@agents-table`. They are kinds, not registers: no anchor carries
+them and no project declares them, since the harness fixes where each lives. The owner, on the
+choice: "agreed, they are kinds only and not "register". I don't think they fit the "register"
+model we have, and it would be weird to force them to fit IMO."
+
+| kind | an entity | named by |
+| --- | --- | --- |
+| `skill` | a directory directly under `.claude/skills/<name>/` holding `SKILL.md` | the directory |
+| `agent` | a Markdown file at any depth under the agents directory whose frontmatter sets `name` | the file, its `.md` removed once |
+| `primer` | the installed primer; its sections alone are entities | none |
+| `instructions` | the root CLAUDE.md; its sections alone are entities | none |
+
+The layout is the harness's, read in its documentation of skills,
+https://code.claude.com/docs/en/skills.md, and of subagents,
+https://code.claude.com/docs/en/sub-agents.md:
+
+- "The directory name also invokes the skill", even where a frontmatter `name` sets a second
+  command; a skill in a `<subdirectory>/.claude/skills/` directory is loaded only when a session
+  reads a file there, and is no entity here.
+- An agent's "identity comes only from the `name` frontmatter field"; the agents directory is
+  scanned "recursively"; a file there with no `name` is treated "as documentation kept beside your
+  agents", so it is no agent, and no README or index is owed there. A `name` is "at most 256
+  characters", holds no `:` and does not start with `-`; the id grammar the checker asks is
+  stricter, and stands as its own requirement.
+
+**A name a reference cannot spell, and a frontmatter `name` that differs from the directory's or
+the file's, are findings.** A skill or an agent named outside `[a-z0-9]+(-[a-z0-9]+)*` could not
+be cited. The owner ruled the match for strictness: "I'd rather make the checks more strict to keep
+the workflow simpler than the other way around." The `name:` line is read alone, as YAML reads it,
+so frontmatter the harness reads and the checker's own frontmatter subset refuses, a list or a
+multi-line description, causes no finding.
+
+A scoped CLAUDE.md is not modelled: what such a file holds is the subject of
+`issue@core@a-home-for-developer-contracts-outside-agent-configuration`. Under `harness = []` none of
+the four kinds exists, a span headed by one is silent, and installed copies a project kept are its
+own documents, whose slugs are misplaced definitions. Serves
+`goal@core@records-reach-their-reader`: a citation of a skill, an agent or a section is checked,
+and `show` lists every one.
+
+### The installed skills, agents and primer are defined from the installed copies of the tree being judged `##installed-entities-from-the-tree`
+
+The model holds the installed copies, parsed like a walked document and walked by nothing:
+`Model::build` reads them off the disk, and `commits` hands in each commit's own blobs. Both read
+them whatever the walk rows say, so a skip over the installer's namespace leaves the two verdicts
+alike. A commit is therefore judged against the installed set it holds, so a branch that renames a
+section in an upgrade and repairs its citations passes `commits` on every commit.
+
+- **Not the binary's shipped set.** `commits` judges every commit of a range with the tip's binary,
+  per `design@core@installed-binary-version-check`, so definitions from the shipped set would fail
+  every earlier commit citing a section the tip renamed. That is why `design@core@owned-namespace-check`
+  already compares no installed copy under `commits`.
+- **An installed copy raises no finding**, per `design@core@section-homes-carry-slugs`.
+- **This repository's shipped text defines nothing in its walk**: content/ writes each section slug
+  as a build placeholder, per `design@agent-skills@content-mirrors-the-install-layout`, so the
+  definitions are the installed copies', which this repository installs with each change to
+  content/.
 

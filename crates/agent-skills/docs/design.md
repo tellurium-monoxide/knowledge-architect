@@ -17,8 +17,10 @@ installed files, is `design@core@owned-namespace-check`.
 The directory `path@agent-skills@content/` holds what `install-agent-skills` writes, and nothing
 else, except that a line `{{snippet:<file>}}` stands for a file of `path@agent-skills@snippets/`,
 which the build inlines there, a `%%` line is a comment the build removes, per
-`design@agent-skills@shipped-text-line-comments`, and a delivery placeholder is a literal the build
-fills. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, and the primer
+`design@agent-skills@shipped-text-line-comments`, a delivery placeholder is a literal the build
+fills, and a placeholder `{{slug:<id>}}` ending a level-two heading is rendered into that heading's
+section slug, so content/ defines no section in this repository's walk and the installed copy does,
+per `design@core@installed-entities-from-the-tree`. A slug placeholder anywhere else fails the build. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, and the primer
 is `PRIMER.md`. The build script, `path@agent-skills@build.rs`, walks the directory, renders each
 file, removing its comments, filling its delivery substitutions and inlining its snippets, and
 generates `FILES`, each entry the install path and the text. It adds the installer's prefix to each skill
@@ -57,7 +59,7 @@ what the owner said of the installed files: "I don't want to cater too much to t
 installed files"; the extension is the session's argument, which the owner's choice of content/ in
 the walk followed.
 
-### The shipped text cites no entry of this repository, and may write a path every conforming project holds as a reference `##shipped-text-cites-no-entry`
+### The shipped text cites no entry of this repository, and may write as a reference a path every conforming project holds, and the shipped set's own skills, agents, primer and sections `##shipped-text-cites-no-entry`
 
 The text under content/, with the snippets the build inlines, is read in every project that installs
 it, so it names no Component and no convention of this repository, per
@@ -78,6 +80,12 @@ references. A path that varies by project, and an illustration, are placeholders
 angle brackets. The command a project runs is written as the placeholder that the install fills
 with the project's declared command, per `design@core@declared-command`. A literal the checker
 would misread is a delivery substitution, which the build fills.
+
+**The shipped set may cite its own skills, agents and primer, and their sections**, as
+`skill@<name>@<slug>` or `primer@<slug>`: every project serving `claude` holds them, installed, and
+they are defined from its installed copies, per `design@core@installed-entities-from-the-tree`. A
+test of the core holds every such reference to resolve within the shipped set. It never cites
+`instructions@<slug>`, whose slugs are each project's own.
 
 content/ and the snippets are in the walk, so every reference they hold is checked against this
 repository. A reference to an entry that resolves here passes the check and would dangle in every

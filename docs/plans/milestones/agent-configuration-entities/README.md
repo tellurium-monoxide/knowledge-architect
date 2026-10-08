@@ -303,7 +303,7 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
   The owner: "Agreed on D1". D8, a kept installed copy under `harness = []` reporting its slugs, was
   ruled after the first reviews: "Agreed on all defaults, and on the D4 goal rewording".
 - **Shape:** the decided design of the `entities` slice. **Harvest:** a new head in
-  `path@core@docs/design.md`, slug `skill-register`, slice 1.
+  `path@core@docs/design.md`, slug `harness-kinds`, slice 1: the thread's name named the shape the owner ruled against in Q2, so the head takes a slug naming the decision, `thread@agent-configuration-entities@skill-register` → harness-kinds.
 
 ### A harness kind is cited without an anchor: `skill@<name>` and `skill@<name>@<section>` `##skill-cited-without-anchor`
 
@@ -317,7 +317,7 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
   description of what was done rather than what was decided." R3: "Agreed on
   skill-cited-without-anchor".
 - **Shape:** the decided design of the `entities` slice. **Harvest:** a new head in
-  `path@core@docs/design.md`, slug `skill-cited-without-anchor`, and the rewrites of
+  `path@core@docs/design.md`, slug `harness-kinds-cited-without-anchor`, since the head covers every harness kind, `thread@agent-configuration-entities@skill-cited-without-anchor` → harness-kinds-cited-without-anchor, and the rewrites of
   `design@core@candidate-rule-and-retired-forms` and `design@core@a-slug-belongs-to-a-component`,
   slice 1.
 - **Relations:** absorbs the kinds of `thread@agent-configuration-entities@primer-sections` and `thread@agent-configuration-entities@root-instructions-cited`, which take the
@@ -365,7 +365,7 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
   dangles a consumer's citations of it, and each such rename owes a Migration entry in the
   changelog. The owner accepted this as intended.
 - **Shape:** the decided design of the `entities` slice. **Harvest:** a new head in
-  `path@core@docs/design.md`, slug `skill-sections-carry-slugs`, recording the section rule for
+  `path@core@docs/design.md`, slug `section-homes-carry-slugs`, since the head binds every section home, `thread@agent-configuration-entities@skill-sections-carry-slugs` → section-homes-carry-slugs, recording the section rule for
   every harness kind, and the rewrite of `design@core@an-entry-is-a-heading-at-the-register-level`,
   slice 1.
 
@@ -988,9 +988,9 @@ crates/agent-skills/build.rs              the section slug placeholder, written 
                                           heading, rendered into a backticked ##<id> (slice 1)
 crates/core/src/check/references.rs       the bare-name lint (slice 3)
 crates/core/docs/design.md                design slugs, written at the harvests:
-                                          skill-register                    (slice 1, from #skill-register, #claude-md-sections)
-                                          skill-cited-without-anchor        (slice 1, with #root-instructions-cited, #primer-sections)
-                                          skill-sections-carry-slugs        (slice 1, with #agent-sections-carry-slugs, #primer-sections)
+                                          harness-kinds                     (slice 1, from #skill-register, #claude-md-sections)
+                                          harness-kinds-cited-without-anchor (slice 1, from #skill-cited-without-anchor, #root-instructions-cited, #primer-sections)
+                                          section-homes-carry-slugs         (slice 1, from #skill-sections-carry-slugs, #agent-sections-carry-slugs, #primer-sections)
                                           installed-entities-from-the-tree  (slice 1, from #installed-skills-defined-from-shipped-set)
                                           bare-skill-name-reported          (slice 3)
 ```
@@ -1000,11 +1000,14 @@ audit may change them, as an answer applied in place.
 
 ## Decided design
 
-In the slices' specs: [entities](entities.md) holds the design of `thread@agent-configuration-entities@skill-register`,
-`thread@agent-configuration-entities@skill-cited-without-anchor`, `thread@agent-configuration-entities@skill-sections-carry-slugs`, `thread@agent-configuration-entities@agent-sections-carry-slugs`,
-`thread@agent-configuration-entities@installed-skills-defined-from-shipped-set`, `thread@agent-configuration-entities@claude-md-sections`, `thread@agent-configuration-entities@root-instructions-cited` and
-`thread@agent-configuration-entities@primer-sections`; [section-citations](section-citations.md) of `thread@agent-configuration-entities@section-numbers-dropped`;
-[bare-names](bare-names.md) of `thread@agent-configuration-entities@bare-skill-name-reported`.
+The entities slice has landed. The design of `thread@agent-configuration-entities@skill-register`,
+`thread@agent-configuration-entities@claude-md-sections` and `thread@agent-configuration-entities@installed-skills-defined-from-shipped-set` is in
+`design@core@harness-kinds` and `design@core@installed-entities-from-the-tree`; that of
+`thread@agent-configuration-entities@skill-cited-without-anchor`, `thread@agent-configuration-entities@root-instructions-cited` and `thread@agent-configuration-entities@primer-sections` in
+`design@core@harness-kinds-cited-without-anchor`; that of `thread@agent-configuration-entities@skill-sections-carry-slugs` and
+`thread@agent-configuration-entities@agent-sections-carry-slugs` in `design@core@section-homes-carry-slugs`.
+[section-citations](section-citations.md) holds the design of `thread@agent-configuration-entities@section-numbers-dropped`, and
+[bare-names](bare-names.md) that of `thread@agent-configuration-entities@bare-skill-name-reported`.
 
 ## Mapping tables
 
@@ -1036,8 +1039,12 @@ In the slices' specs.
 - **The kind name `claude-md`**, lost to `instructions` under `thread@agent-configuration-entities@root-instructions-cited`: it is tied
   to one harness's file name, and the owner announced a move to AGENTS.md (`argument@agent-configuration-entities@a66`, `argument@agent-configuration-entities@a67`).
 
-Each is judged for an entry in `path@core@docs/rejected-alternatives.md` at the harvest of slice 1,
-by the tests of `knowledge-architect-decision-recording`.
+Judged at the entities slice's harvest by the tests of `knowledge-architect-decision-recording`: the
+constructed anchor and the section kind each earned an entry in
+`path@core@docs/rejected-alternatives.md`, by its first test, since each would change the reference
+grammar, a format every project writes. The manifest declaration of content/, the binary's shipped
+set as the source, scoped CLAUDE.md files and the kind name `claude-md` earned none: each lost to an
+argument a reader derives again, and the first two are argued in the heads that beat them.
 
 ## Readings
 
@@ -1046,7 +1053,7 @@ under `path@agent-config@skills/` holding `SKILL.md` with `name` and `descriptio
 is a Markdown file under `path@agent-config@agents/`. The installer already writes that layout, per
 `design@core@owned-namespace-check`. The entities slice's audit read the harness's documentation,
 https://code.claude.com/docs/en/skills.md and https://code.claude.com/docs/en/sub-agents.md, and
-records what it read in the slice's spec: a skill is invoked by its directory's name; an agent's
+records what it read in `design@core@harness-kinds`: a skill is invoked by its directory's name; an agent's
 identity is its frontmatter `name`, the agents directory is scanned recursively, and a file there
 with no `name` is documentation; an agent's `name` is at most 256 characters, holds no `:` and does
 not start with `-`; a skill's name defers to the Agent Skills specification. The name grammar the
@@ -1069,11 +1076,11 @@ ruled in R4: "Keep none of the tripwires." and "All four AC are applied."
 
 ## Acceptance criteria
 
-In the slices' specs: AC1 to AC4 are judged by the entities slice.
+AC1 to AC4 were judged by the entities slice, and reported in the commit that landed its harvest: none fired. The later slices judge none.
 
 ## Implementation sequence
 
-1. [Entities](entities.md): the four harness kinds and the two-segment form; definitions from the
+1. Entities, landed: the four harness kinds and the two-segment form; definitions from the
    tree's installed copies and from the walk; the section rule at level two, with a slug on
    every level-two heading it covers, the section slug placeholder in content/; AC1 to AC4.
 2. [Section citations](section-citations.md): every `§N` citation of a skill's or an agent's section

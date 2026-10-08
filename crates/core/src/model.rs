@@ -89,9 +89,7 @@ pub struct Model {
     checker_sources: Vec<PathBuf>,
     /// The markdown files of the installer's namespace, parsed and scanned like a document, and
     /// walked by no check: they define the entities of the installed skills, agents and primer,
-    /// per `design@core@owned-namespace-check` as the entities slice of
-    /// `milestone@plans@agent-configuration-entities` rewrites it, and no reference in them is
-    /// read. A file the caller could not read as text is left out: `check::agents` judges the
+    /// per `design@core@installed-entities-from-the-tree`, and no reference in them is read. A file the caller could not read as text is left out: `check::agents` judges the
     /// bytes, and reports it.
     installed: Vec<Document>,
 }

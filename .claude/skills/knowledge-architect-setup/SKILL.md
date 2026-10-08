@@ -166,7 +166,7 @@ skill.
 **Every level-two heading of the root `CLAUDE.md`, and of each project skill and agent, ends with a
 slug**: two hashes and the id in backticks, the id naming the section's subject. The check reports a
 heading without one. A skill's directory and an agent's file are named in lower-case words joined
-by hyphens, and a frontmatter `name` equals that name. The slug is what a reference to the section
+by hyphens, and a frontmatter `name`, where one is set, equals that name. The slug is what a reference to the section
 cites: `instructions@<slug>` for the root `CLAUDE.md`, `skill@<name>@<slug>` for a skill and
 `agent@<name>@<slug>` for an agent.
 
