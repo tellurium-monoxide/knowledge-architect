@@ -2619,37 +2619,47 @@ mod tests {
     }
 
     /// The claim: a backticked span that is exactly the name of a skill or an agent the table
-    /// defines, installed or the project's own, is reported with its reference as the repair,
-    /// and a span naming no skill and no agent, such as a crate's name or a removed agent's, is
-    /// silent. Mutation checked: matching any span with the installer's prefix reports the
-    /// crate's name and the removed agent's.
+    /// defines, installed or the project's own, is reported with its reference as the repair, in
+    /// a fenced block and in a Rust comment too; a span naming no skill and no agent is silent: a
+    /// crate's name carrying the installer's prefix, a removed agent's name, a skill's section
+    /// slug. Where a skill and an agent share a name, the repair names the skill. Mutations
+    /// checked: matching any span with the installer's prefix reports the crate's name and the
+    /// removed agent's; trying the agent kind first names the agent for `twin`.
     #[test]
     fn a_bare_name_of_a_skill_or_an_agent_is_reported() {
         let (found, _) = harness_checked(
             vec![
-                (".claude/skills/a-skill/SKILL.md", "# A\n"),
+                (
+                    ".claude/skills/a-skill/SKILL.md",
+                    "# A\n\n## A part `##a-part`\n",
+                ),
                 (
                     ".claude/agents/an-agent.md",
                     "---\nname: an-agent\n---\n# An agent\n",
                 ),
+                (".claude/skills/twin/SKILL.md", "# Twin\n"),
+                (".claude/agents/twin.md", "---\nname: twin\n---\n# Twin\n"),
                 (
                     "notes/prose.md",
                     "Run `knowledge-architect-review`, then `a-skill` and `an-agent`.\n\
-                     Not `knowledge-architect`, `knowledge-architect-gone-reviewer`, `a-part`.\n",
+                     Not `knowledge-architect-gates`, `knowledge-architect-gone-reviewer`, `a-part`.\n\
+                     ```\n`twin`\n```\n",
                 ),
+                ("src/lib.rs", "//! Run `a-skill`.\n"),
             ],
-            vec![(
-                ".claude/skills/knowledge-architect-review/SKILL.md",
-                "# R\n",
-            )],
+            vec![(".claude/skills/knowledge-architect-review/SKILL.md", "# R\n")],
         );
+        let mut found = found;
+        found.sort();
         assert_eq!(
             found,
             vec![
-                "notes/prose.md:1  `knowledge-architect-review` is a bare skill name\n    \
-                 → write `skill@knowledge-architect-review`",
                 "notes/prose.md:1  `a-skill` is a bare skill name\n    → write `skill@a-skill`",
                 "notes/prose.md:1  `an-agent` is a bare agent name\n    → write `agent@an-agent`",
+                "notes/prose.md:1  `knowledge-architect-review` is a bare skill name\n    \
+                 → write `skill@knowledge-architect-review`",
+                "notes/prose.md:4  `twin` is a bare skill name\n    → write `skill@twin`",
+                "src/lib.rs:1  `a-skill` is a bare skill name\n    → write `skill@a-skill`",
             ],
             "{found:#?}"
         );

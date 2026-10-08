@@ -170,6 +170,9 @@ static PATH_WHOLE: LazyLock<Regex> = LazyLock::new(|| {
 /// records it.
 static BARE_NAME: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"`([a-z0-9]+(?:-[a-z0-9]+)*)`").unwrap());
+/// The same, over the whole of a span's text joined across a line break.
+static NAME_WHOLE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^[a-z0-9]+(?:-[a-z0-9]+)*$").unwrap());
 /// A reference candidate as [`AT_SPAN`] reads one, over the whole of a span's text joined
 /// across a line break.
 static AT_WHOLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^[^\s`<>@]*@[^\s`<>]*$").unwrap());
@@ -278,6 +281,17 @@ fn joined(head: &str, tail: &str) -> Option<String> {
     }
     let text = format!("{head}{tail}");
     pointer_shaped(&text).then_some(text)
+}
+
+/// The name two halves of a span make when the break falls after one of its hyphens, if the
+/// joined text is one word in the id grammar.
+fn joined_name(head: &str, tail: &str) -> Option<String> {
+    let (head, tail) = (head.trim(), tail.trim());
+    if tail.is_empty() || !head.ends_with('-') {
+        return None;
+    }
+    let text = format!("{head}{tail}");
+    NAME_WHOLE.is_match(&text).then_some(text)
 }
 
 /// The lines of the headings markdown reads in a document and [`scan`] does not: each section
@@ -414,6 +428,15 @@ pub(crate) fn scan(parsed: &Parsed) -> Vec<Located> {
                         wrapped.push(Located {
                             line: o.line,
                             what: Observation::WrappedSpan(text),
+                        });
+                    } else if let Some(name) =
+                        joined_name(&o.head, &line[..close]).filter(|_| !o.crossed)
+                    {
+                        // A name wrapped at one of its hyphens is the name the bare-name lint
+                        // reads; read line by line, neither half is a closed span.
+                        wrapped.push(Located {
+                            line: o.line,
+                            what: Observation::BareName(name),
                         });
                     }
                 }
@@ -883,7 +906,27 @@ mod tests {
         assert_eq!(
             names("`a-skill`, `x2`, `citations.py`, `Name`, `a/b`, `skill@a`, `two words`, `-a`\n"),
             vec!["a-skill".to_string(), "x2".to_string()]
+        ); // Inside a fenced block too, since a reference is live there.
+        assert_eq!(
+            names("```\nrun `a-skill`\n```\n"),
+            vec!["a-skill".to_string()]
         );
+        // A name wrapped at one of its hyphens is recorded joined, at the line it opens on.
+        let wrapped = "A wrapped `knowledge-architect-\nreview` name, and `a b-\nc` prose.\n";
+        assert_eq!(
+            names(wrapped),
+            vec!["knowledge-architect-review".to_string()]
+        );
+        // A Rust comment is prose; a string literal bound to a name is data.
+        let rs = scan_rs("// Run `a-skill`.\nconst X: &str = \"`b-skill`\";\n");
+        let rs: Vec<_> = rs
+            .into_iter()
+            .filter_map(|o| match o {
+                Observation::BareName(n) => Some(n),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(rs, vec!["a-skill".to_string()]);
     }
 
     #[test]
