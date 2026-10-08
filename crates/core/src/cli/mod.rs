@@ -877,17 +877,28 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
 /// two or one outside a fenced block.
 fn section_text(text: &str, line: u32) -> String {
     let mut out = Vec::new();
-    let mut fence = false;
+    // The fence that is open, as its character and run length: a fence closes only on a run of
+    // its own character at least as long followed by nothing, so a shorter run is its content.
+    let mut fence: Option<(char, usize)> = None;
     for (n, l) in text
         .lines()
         .enumerate()
         .skip(line.saturating_sub(1) as usize)
     {
         let trimmed = l.trim_start();
-        if trimmed.starts_with("```") || trimmed.starts_with("~~~") {
-            fence = !fence;
+        for c in ['`', '~'] {
+            let run = trimmed.chars().take_while(|&x| x == c).count();
+            match fence {
+                None if run >= 3 => fence = Some((c, run)),
+                Some((open, len))
+                    if open == c && run >= len && trimmed[run..].trim().is_empty() =>
+                {
+                    fence = None
+                }
+                _ => {}
+            }
         }
-        let heading = !fence && (l.starts_with("## ") || l.starts_with("# "));
+        let heading = fence.is_none() && (l.starts_with("## ") || l.starts_with("# "));
         if heading && n + 1 != line as usize {
             break;
         }
@@ -1488,5 +1499,16 @@ mod tests {
             !out.contains("checked:") && !out.contains("registers:"),
             "{out}"
         );
+    }
+
+    /// The claim: a section runs to the next heading of level two or one outside a fence, and a
+    /// shorter run inside a longer fence does not close it. Mutation checked: a fence toggled on
+    /// any run stops at the fenced heading; a level-one heading ignored runs past it.
+    #[test]
+    fn a_section_runs_to_the_next_heading_outside_a_fence() {
+        let text = "# T\n\n## A `##a`\n\n````\n```sh\n## In the fence\n````\n\nend of A\n\n# Next\n\nafter\n";
+        let section = super::section_text(text, 3);
+        assert!(section.contains("end of A"), "{section}");
+        assert!(!section.contains("after"), "{section}");
     }
 }

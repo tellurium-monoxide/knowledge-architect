@@ -878,7 +878,9 @@ impl SectionHome {
                 if frontmatter_name(text) == NameLine::Absent {
                     return None;
                 }
-                Some(Self::Agent(file.trim_end_matches(".md").to_string()))
+                Some(Self::Agent(
+                    file.strip_suffix(".md").unwrap_or(file).to_string(),
+                ))
             }
             ["CLAUDE.md"] => Some(Self::Instructions),
             _ if rel == Path::new(PRIMER_PATH) => Some(Self::Primer),
@@ -908,36 +910,54 @@ pub(crate) enum NameLine {
 
 /// The `name:` line of the frontmatter block opening `text`, read alone.
 ///
-/// The block is opened by a first line holding only `---` and closed by the next such line. Only
-/// a line starting `name:` is read, by the frontmatter subset's line rule, with one pair of
-/// surrounding quotes removed; every other line of the block is left to the harness, which reads
-/// YAML the subset refuses, such as a list or a multi-line description. A block never closed is no
-/// block.
+/// The block is opened by a first line holding only `---` and closed by the next such line, as the
+/// harness reads YAML frontmatter: a blank line inside it is part of it. Only a line starting
+/// `name:`, unindented, is read: an indented one belongs to a nested mapping. Its value is the
+/// rest of the line, a pair of quotes around it removed, and an unquoted value ends at a ` #`,
+/// which opens a YAML comment. An empty value is no name. Every other line of the block is left to
+/// the harness, which reads YAML the checker's frontmatter subset refuses, such as a list or a
+/// multi-line description. A block never closed is no block.
 pub(crate) fn frontmatter_name(text: &str) -> NameLine {
+    let Some(end) = frontmatter_end(text) else {
+        return NameLine::Absent;
+    };
+    let mut found: Vec<String> = Vec::new();
+    for line in text.lines().take(end as usize).skip(1) {
+        let Some(value) = line.trim_end().strip_prefix("name:") else {
+            continue;
+        };
+        let value = value.trim();
+        let quoted = ['"', '\''].iter().find_map(|q| {
+            value
+                .strip_prefix(*q)?
+                .split_once(*q)
+                .map(|(inner, _)| inner)
+        });
+        let value = match quoted {
+            Some(inner) => inner,
+            None => value.split(" #").next().unwrap_or_default().trim_end(),
+        };
+        if !value.is_empty() {
+            found.push(value.to_string());
+        }
+    }
+    match found.len() {
+        0 => NameLine::Absent,
+        1 => NameLine::One(found.remove(0)),
+        _ => NameLine::Twice,
+    }
+}
+
+/// The line number of the `---` that closes the frontmatter block opening `text`, or `None`
+/// where no block opens it or none closes.
+fn frontmatter_end(text: &str) -> Option<u32> {
     let mut lines = text.lines();
     if lines.next().map(str::trim_end) != Some("---") {
-        return NameLine::Absent;
+        return None;
     }
-    let mut found: Vec<String> = Vec::new();
-    for line in lines {
-        let line = line.trim_end();
-        if line == "---" {
-            return match found.len() {
-                0 => NameLine::Absent,
-                1 => NameLine::One(found.remove(0)),
-                _ => NameLine::Twice,
-            };
-        }
-        if let Some(value) = line.strip_prefix("name:") {
-            let value = value.trim();
-            let unquoted = ['"', '\'']
-                .iter()
-                .find_map(|q| value.strip_prefix(*q)?.strip_suffix(*q))
-                .unwrap_or(value);
-            found.push(unquoted.to_string());
-        }
-    }
-    NameLine::Absent
+    lines
+        .position(|line| line.trim_end() == "---")
+        .map(|i| i as u32 + 2)
 }
 
 /// Why a reference to a table kind resolves to nothing, or that it resolves.
@@ -1230,19 +1250,32 @@ impl Entities {
     /// primer, so each tree is judged against its own installed set. A skill or an agent is
     /// defined at its file's first line, and a section at its slug: every level-two heading of a
     /// section home owes one, and a slug anywhere else in it defines nothing.
+    ///
+    /// **An installed copy defines and reports nothing.** It is the installer's file, never the
+    /// project's to repair, and a commit holding an earlier version's set is judged by a later
+    /// checker under `commits`: a finding in it would ask for an edit of an installed file. The
+    /// shipped set is held to the section rule where it is written, by a test of the core over
+    /// the shipped text, AC3 of the entities slice of
+    /// `milestone@plans@agent-configuration-entities`.
     fn harness_definitions(&mut self, model: &Model) {
-        for doc in model.documents().iter().chain(model.installed()) {
+        for doc in model.documents() {
             let Some(home) = SectionHome::of(&doc.rel, &doc.text) else {
                 continue;
             };
             let first = self.findings.len();
-            self.section_home(doc, &home);
+            self.section_home(doc, &home, true);
             self.findings[first..].sort_by_key(|f| f.line);
+        }
+        for doc in model.installed() {
+            if let Some(home) = SectionHome::of(&doc.rel, &doc.text) {
+                self.section_home(doc, &home, false);
+            }
         }
     }
 
-    fn section_home(&mut self, doc: &crate::model::Document, home: &SectionHome) {
+    fn section_home(&mut self, doc: &crate::model::Document, home: &SectionHome, report: bool) {
         let kind = home.kind();
+        let mut findings = Vec::new();
         let owner = match home {
             SectionHome::Skill(name) | SectionHome::Agent(name) => {
                 let what = if kind.name() == SKILL_KIND {
@@ -1251,7 +1284,7 @@ impl Entities {
                     "the agent's file"
                 };
                 if !is_entity_id(name) {
-                    self.findings.push(Finding::in_file(
+                    findings.push(Finding::in_file(
                         &doc.rel,
                         format!("`{name}` cannot be the name of a {kind}"),
                         format!(
@@ -1259,15 +1292,26 @@ impl Entities {
                              {kind} no reference can spell is one every pointer misses"
                         ),
                     ));
+                    if report {
+                        self.findings.extend(findings);
+                    }
                     return;
                 }
+                // The harness invokes a skill by its directory's name as well as by its `name`,
+                // and identifies an agent by its `name` alone, so the cause a mismatch leaves
+                // differs by kind.
+                let harness_reads = if kind.name() == SKILL_KIND {
+                    "the harness answers to both, and a reference cites one"
+                } else {
+                    "the harness names the agent by its `name`, and a reference cites the file's"
+                };
                 match frontmatter_name(&doc.text) {
-                    NameLine::Twice => self.findings.push(Finding::in_file(
+                    NameLine::Twice => findings.push(Finding::in_file(
                         &doc.rel,
                         format!("the frontmatter of the {kind} `{name}` sets `name` twice"),
                         "keep one `name` line; two values for one name leave the harness to pick",
                     )),
-                    NameLine::One(set) if set != *name => self.findings.push(Finding::in_file(
+                    NameLine::One(set) if set != *name => findings.push(Finding::in_file(
                         &doc.rel,
                         format!(
                             "the frontmatter names this {kind} `{set}`, and {what} names it \
@@ -1275,7 +1319,7 @@ impl Entities {
                         ),
                         format!(
                             "make the two the same, renaming {what} or the frontmatter's \
-                             `name`; a reference cites one name, and the harness answers to both"
+                             `name`; {harness_reads}"
                         ),
                     )),
                     _ => {}
@@ -1291,21 +1335,28 @@ impl Entities {
             }
             SectionHome::Primer | SectionHome::Instructions => "",
         };
+        let file = match home {
+            SectionHome::Skill(_) => "this skill's file",
+            SectionHome::Agent(_) => "this agent's file",
+            SectionHome::Primer => "the primer",
+            SectionHome::Instructions => "the root CLAUDE.md",
+        };
+        // The frontmatter block as the harness reads it, which may hold a blank line the
+        // checker's own frontmatter reader refuses: no line of it is a heading or a slug.
+        let block = frontmatter_end(&doc.text).unwrap_or(0);
         let slugged: std::collections::HashSet<u32> = doc
             .observations
             .iter()
             .filter(|l| matches!(l.what, Observation::SlugDef { .. }))
             .map(|l| l.line)
             .collect();
-        for l in &doc.observations {
+        for l in doc.observations.iter().filter(|l| l.line > block) {
             match &l.what {
                 Observation::Heading { level: 2, text } if !slugged.contains(&l.line) => {
-                    self.findings.push(Finding::at(
+                    findings.push(Finding::at(
                         &doc.rel,
                         l.line,
-                        format!(
-                            "the level-2 heading \"{text}\" of this {kind}'s file carries no slug"
-                        ),
+                        format!("the level-2 heading \"{text}\" of {file} carries no slug"),
                         "every level-2 heading of a skill, an agent, the primer and the root \
                          CLAUDE.md is a section a reference can cite: end it with its slug, two \
                          hashes and the id in backticks, the id naming the section's subject",
@@ -1321,12 +1372,12 @@ impl Entities {
                                 line: l.line,
                             });
                     } else {
-                        self.findings.push(Finding::at(
+                        findings.push(Finding::at(
                             &doc.rel,
                             l.line,
                             format!(
-                                "`##{id}` is written in this {kind}'s file away from a level-2 \
-                                 heading, and defines nothing"
+                                "`##{id}` is written in {file} away from a level-2 heading, and \
+                                 defines nothing"
                             ),
                             "a section is defined at the end of a level-2 heading; move the slug \
                              to one, or delete it",
@@ -1335,6 +1386,9 @@ impl Entities {
                 }
                 _ => {}
             }
+        }
+        if report {
+            self.findings.extend(findings);
         }
     }
 
@@ -1607,8 +1661,14 @@ impl Entities {
     }
 
     /// Whether any register of any anchor defines an entry with this id.
+    ///
+    /// A harness kind is no register, so its names and slugs are not counted: the retired slug
+    /// reference this answers for named a register's entry, and a `#<id>` naming a section, such
+    /// as a link to a heading of another tool, is that tool's notation.
     pub(crate) fn defines_id(&self, id: &str) -> bool {
-        self.defined.keys().any(|(_, _, defined)| defined == id)
+        self.defined
+            .keys()
+            .any(|(kind, _, defined)| defined == id && !kind.is_harness())
     }
 
     /// How many distinct entities the table holds.
@@ -2695,6 +2755,26 @@ mod tests {
             frontmatter_name("---\nname: x\nname: y\n---\n"),
             NameLine::Twice
         );
+        // A YAML comment ends an unquoted value, and a quoted value ends at its closing quote.
+        assert_eq!(
+            frontmatter_name("---\nname: deploy  # the command\n---\n"),
+            NameLine::One("deploy".to_string())
+        );
+        assert_eq!(
+            frontmatter_name("---\nname: \"my-skill\"   # it\n---\n"),
+            NameLine::One("my-skill".to_string())
+        );
+        // A blank line is part of a YAML block; an indented `name:` is a nested mapping's; an
+        // empty value is no name.
+        assert_eq!(
+            frontmatter_name("---\ndescription: d\n\nname: x\n---\n"),
+            NameLine::One("x".to_string())
+        );
+        assert_eq!(
+            frontmatter_name("---\nmetadata:\n  name: x\n---\n"),
+            NameLine::Absent
+        );
+        assert_eq!(frontmatter_name("---\nname:\n---\n"), NameLine::Absent);
     }
 
     /// The claim: each harness kind takes the arities of the milestone's mapping table, and any
@@ -2772,5 +2852,132 @@ mod tests {
             );
         }
         assert_eq!(milestone_refusal("a-plan", &m), None);
+    }
+
+    /// The claim: an installed copy defines its entities and reports nothing, since it is never the
+    /// project's to repair. Mutation checked: reporting the installed copies' findings fails it.
+    #[test]
+    fn an_installed_copy_defines_and_reports_nothing() {
+        let e = harness_table(
+            vec![],
+            vec![(
+                ".claude/skills/knowledge-architect-old/SKILL.md",
+                "---\nname: other\n---\n# Old\n\n## Unslugged\n\n## Slugged `##slugged`\n",
+            )],
+        );
+        assert!(e.definition_findings().is_empty(), "{:#?}", whats(&e));
+        assert!(e.defines(&Kind::new(SKILL_KIND), "knowledge-architect-old", "slugged"));
+    }
+
+    /// The claim: a frontmatter line that reads as a heading, inside a block holding a blank line,
+    /// is no heading of the section home. Mutation checked: reading observations from the first
+    /// line reports the comment line as an unslugged heading.
+    #[test]
+    fn a_frontmatter_line_is_no_section_heading() {
+        let agent = "---\nname: my-agent\n\n## The tools it may use\ntools: Read\n---\n# A\n";
+        let e = harness_table(vec![(".claude/agents/my-agent.md", agent)], vec![]);
+        assert!(e.definition_findings().is_empty(), "{:#?}", whats(&e));
+        assert!(e.defines(&Kind::new(AGENT_KIND), "", "my-agent"));
+    }
+
+    /// The claim: an agent's id is its file's name without one `.md`, so `dup.md.md` is an agent
+    /// named `dup.md`, which no reference can spell. Mutation checked: stripping every trailing
+    /// `.md` defines `dup`.
+    #[test]
+    fn an_agent_s_id_strips_one_suffix() {
+        let e = harness_table(
+            vec![(".claude/agents/dup.md.md", "---\nname: dup\n---\n# D\n")],
+            vec![],
+        );
+        let found = whats(&e);
+        assert!(
+            found
+                .iter()
+                .any(|w| w.contains("`dup.md` cannot be the name of a agent")),
+            "{found:#?}"
+        );
+        assert!(!e.defines(&Kind::new(AGENT_KIND), "", "dup"));
+    }
+
+    /// The claim: under `harness = []` a section home is an ordinary document, so a slug in the
+    /// root CLAUDE.md or a skill is a misplaced definition, per D8 of
+    /// `milestone@plans@agent-configuration-entities`; the harness kinds are listed as kinds only
+    /// under the harness. Mutation checked: skipping section homes whatever the harness passes
+    /// both; the harness kinds left out of the listing.
+    #[test]
+    fn under_no_harness_a_section_home_is_an_ordinary_document() {
+        let none =
+            "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = []\n\n\
+                    [walk]\nskip-dirs = []\nskip-files = []\n\n[agents]\nharness = []\n";
+        let quiet = Anchors::declared(
+            &Manifest::parse(Path::new("/nowhere"), none).expect("a declaration"),
+        );
+        let e = table_under(
+            vec![
+                ("CLAUDE.md", "# P\n\n## Git `##git-workflow`\n"),
+                (".claude/skills/s/SKILL.md", "# S\n\n## Part `##part`\n"),
+            ],
+            &quiet,
+        );
+        assert_eq!(e.definition_findings().len(), 2, "{:#?}", whats(&e));
+        assert!(!quiet.kinds_listed().contains(SKILL_KIND));
+        assert!(anchors()
+            .kinds_listed()
+            .ends_with("skill, agent, primer, instructions"));
+    }
+
+    /// The claim: only the root CLAUDE.md and a `SKILL.md` directly in a skills directory are
+    /// section homes. Mutation checked: a nested CLAUDE.md, or a nested `SKILL.md`, read as one.
+    #[test]
+    fn only_the_root_claude_md_and_a_direct_skill_are_section_homes() {
+        assert_eq!(
+            SectionHome::of(Path::new("CLAUDE.md"), ""),
+            Some(SectionHome::Instructions)
+        );
+        assert_eq!(SectionHome::of(Path::new("crates/x/CLAUDE.md"), ""), None);
+        assert_eq!(
+            SectionHome::of(Path::new(".claude/skills/a/SKILL.md"), ""),
+            Some(SectionHome::Skill("a".to_string()))
+        );
+        assert_eq!(
+            SectionHome::of(Path::new(".claude/skills/a/b/SKILL.md"), ""),
+            None
+        );
+        assert_eq!(
+            SectionHome::of(Path::new(".claude/skills/a/other.md"), ""),
+            None
+        );
+    }
+
+    /// The claim: two agents of one name, in two directories, are the duplicate finding.
+    #[test]
+    fn two_agents_of_one_name_are_a_duplicate() {
+        let e = harness_table(
+            vec![
+                (".claude/agents/a/twin.md", "---\nname: twin\n---\n# T\n"),
+                (".claude/agents/b/twin.md", "---\nname: twin\n---\n# T\n"),
+            ],
+            vec![],
+        );
+        let found = whats(&e);
+        assert_eq!(found.len(), 2, "{found:#?}");
+        assert!(
+            found
+                .iter()
+                .all(|w| w.contains("`agent@twin` is also defined")),
+            "{found:#?}"
+        );
+    }
+
+    /// The claim: the message names the file the way a reader knows it.
+    #[test]
+    fn an_unslugged_heading_names_its_file() {
+        let e = harness_table(vec![("CLAUDE.md", "# P\n\n## Bare\n")], vec![]);
+        let found = whats(&e);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(
+            found[0].contains("of the root CLAUDE.md carries no slug"),
+            "{found:#?}"
+        );
     }
 }

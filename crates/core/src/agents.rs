@@ -394,8 +394,9 @@ mod tests {
     fn shipped_set_violations(copies: &[(PathBuf, String)]) -> Vec<String> {
         use crate::entity::{candidate, Anchors, Candidate, Entities, INSTRUCTIONS_KIND};
         let m = manifest("");
-        let mut model = crate::model::Model::from_documents(Vec::new());
-        model.set_installed(copies.to_vec());
+        // The copies are read as walked documents, not as installed ones: an installed copy
+        // reports nothing in a project, and the shipped set is held to the section rule here.
+        let model = crate::model::Model::from_documents(copies.to_vec());
         let anchors = Anchors::declared(&m);
         let entities = Entities::build(&model, &anchors);
         let mut out: Vec<String> = entities
@@ -403,12 +404,26 @@ mod tests {
             .iter()
             .map(|f| f.to_string())
             .collect();
-        for doc in model.installed() {
+        for doc in model.documents() {
             for l in &doc.observations {
                 let crate::scan::Observation::Span(span) = &l.what else {
                     continue;
                 };
-                if let Candidate::Harness { kind, owner, id } = candidate(span, &anchors) {
+                let found = candidate(span, &anchors);
+                // A malformed span headed by a harness kind is one AC3 judges; any other head is
+                // the walk's to judge, as the primer's import line, which ships on purpose.
+                let head = span.split('@').next().unwrap_or_default();
+                if let Candidate::Malformed { why, .. } = &found {
+                    if crate::entity::HARNESS_KINDS.contains(&head) {
+                        out.push(format!(
+                            "{}:{} writes `{span}`, malformed: {why}",
+                            doc.rel.display(),
+                            l.line
+                        ));
+                    }
+                    continue;
+                }
+                if let Candidate::Harness { kind, owner, id } = found {
                     if kind.name() == INSTRUCTIONS_KIND {
                         out.push(format!(
                             "{}:{} cites `{span}`, a project's own section",
@@ -441,7 +456,8 @@ mod tests {
     }
 
     /// The same judgement, shown to fail: a copy of the set with a reference to a missing section
-    /// of a sibling skill, an `instructions` reference and an unslugged heading planted.
+    /// of a sibling skill, an `instructions` reference, a malformed span and an unslugged heading
+    /// planted.
     #[test]
     fn the_shipped_set_judgement_reports_what_is_planted() {
         let mut copies = shipped(&manifest(""));
@@ -450,11 +466,15 @@ mod tests {
             .find(|(p, _)| p.ends_with("knowledge-architect-review/SKILL.md"))
             .expect("the review skill ships");
         text.push_str(
-            "\n## Planted\n\nSee `skill@knowledge-architect-design@no-such-section` and \
-             `instructions@git-workflow`.\n",
+            "\n## Planted\n\nSee `skill@knowledge-architect-design@no-such-section`, \
+             `instructions@git-workflow` and `primer@a@b`.\n",
         );
         let found = shipped_set_violations(&copies);
-        assert_eq!(found.len(), 3, "{found:#?}");
+        assert_eq!(found.len(), 4, "{found:#?}");
+        assert!(
+            found.iter().any(|f| f.contains("`primer@a@b`, malformed")),
+            "{found:#?}"
+        );
         assert!(
             found.iter().any(|f| f.contains("\"Planted\"")),
             "{found:#?}"

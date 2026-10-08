@@ -274,4 +274,10 @@ mod tests {
     fn an_indented_comment_fails() {
         strip("  %% x\n");
     }
+
+    #[test]
+    #[should_panic(expected = "follows the heading's text and a space")]
+    fn a_placeholder_glued_to_the_heading_text_fails() {
+        slugs("## Text{{slug:a}}\n");
+    }
 }

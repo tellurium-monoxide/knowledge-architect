@@ -2598,4 +2598,25 @@ mod tests {
         );
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
     }
+
+    /// The claim: a `#<id>` whose id is only a harness entity's, a section slug or a skill's
+    /// name, is another tool's notation, not the retired slug reference. Mutation checked:
+    /// counting harness kinds in `Entities::defines_id` reports both spans.
+    #[test]
+    fn a_hash_naming_a_section_slug_is_no_retired_reference() {
+        let (found, _) = harness_checked(
+            vec![
+                (
+                    ".claude/skills/a/SKILL.md",
+                    "# A\n\n## How to report `##how-to-report`\n",
+                ),
+                (
+                    "notes/prose.md",
+                    "The anchor `#how-to-report` and `notes.md#a`.\n",
+                ),
+            ],
+            vec![],
+        );
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+    }
 }

@@ -313,7 +313,7 @@ fn plans_layout(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
 
     // The same rule over the specs, per `design@core@a-plan-name-reads-as-nothing-else`: a spec's id is a name
     // the next step of the plans layout makes an anchor, so it may be
-    // no component's, location's or reserved word, and no milestone's.
+    // no kind's, component's, location's or reserved word, and no milestone's.
     let mut ids: Vec<(String, &PathBuf)> = inputs
         .present
         .iter()
@@ -324,6 +324,8 @@ fn plans_layout(out: &mut Vec<Finding>, manifest: &Manifest, anchors: &Anchors, 
     for (id, path) in ids {
         let why = if entity::is_reserved_anchor(&id) {
             Some("is a word the tool reserves")
+        } else if entity::is_kind_name(&id, manifest.registers()) {
+            Some("is the name of a kind")
         } else if manifest.components().all().iter().any(|c| c.name == id) {
             Some("is the name of a component")
         } else if manifest.locations().contains_key(&id) {
