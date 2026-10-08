@@ -19,8 +19,9 @@ there, except its own acceptance criteria. It starts after the milestone documen
   definition.
 - **AC1**: the four kind names refused as a declared register's name and as a Component's or a
   location's name, in phase 1, as `planned` is refused as a register name.
-- **D1**, on the owner's ruling only: a skill directory or an agent file whose name is outside the
-  id grammar is a phase-2 finding.
+- **A name outside the id grammar**: a skill directory or an agent file whose name is outside
+  `[a-z0-9]+(-[a-z0-9]+)*` is a phase-2 finding, naming the file, since such a skill could not be
+  cited. This was D1, ruled by the owner after the first review dispatch: "Agreed on D1".
 - **The section slug placeholder** in `path@agent-skills@build.rs`: a level-two heading of a file
   under content/ ends with `{{slug:<id>}}`, which the build renders into a backticked `##<id>`. A
   placeholder anywhere else fails the build, as an unused substitution row does.

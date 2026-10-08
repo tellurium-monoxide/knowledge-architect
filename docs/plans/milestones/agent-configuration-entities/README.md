@@ -266,6 +266,10 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
 - **States:** R1 new; R2 approved.
 - **Arguments:** a6, a7, a8, a9.
 - **Closed by:** R2: "We align on skill-register."
+- **D1, ruled after the document's first commit:** a skill directory or an agent file whose name is
+  outside the id grammar `[a-z0-9]+(-[a-z0-9]+)*` is a phase-2 finding, naming the file, since such
+  a skill could not be cited (a59). The assistant had said in R2 that "the register reports it".
+  The owner: "Agreed on D1".
 - **Shape:** the decided design of the `entities` slice. **Harvest:** a new head in
   `path@core@docs/design.md`, slug `skill-register`, slice 1.
 
@@ -1023,10 +1027,8 @@ the two rewrites touch many of the same sentences (a77).
 
 ## Defaults awaiting the owner
 
-- **D1**, on #skill-cited-without-anchor and #skill-register: a skill directory or an agent file
-  whose name is outside the id grammar `[a-z0-9]+(-[a-z0-9]+)*` is a phase-2 finding, naming the
-  file, since such a skill could not be cited. The assistant said in R2 that "the register reports
-  it" (a59). It adds a check the owner did not rule on by name.
+None. D1 was ruled by the owner after this document's first commit, "Agreed on D1", and is written
+into #skill-register.
 
 ## Harvest
 
