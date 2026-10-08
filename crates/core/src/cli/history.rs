@@ -274,6 +274,15 @@ fn read_tree(
             wanted.push(rel.clone());
         }
     }
+    // The installed copies define the installed entities whatever the walk rows say, as
+    // `Model::build` reads them off the disk, so a skip over the installer's namespace leaves
+    // `check` and `commits` judging one tree alike.
+    wanted.extend(
+        files
+            .iter()
+            .filter(|rel| manifest.owned(rel) && rel.extension().is_some_and(|e| e == "md"))
+            .cloned(),
+    );
     wanted.sort();
     wanted.dedup();
     let mut blobs = std::collections::BTreeMap::new();

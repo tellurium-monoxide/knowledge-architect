@@ -1925,6 +1925,33 @@ pub(crate) mod tests {
         assert!(m.registers().by_name("note").is_some());
     }
 
+    /// The same refusals under `harness = []`: the kind names are the tool's words, whatever the
+    /// harness. Mutation checked: refusing the harness kinds only under `claude` accepts them.
+    #[test]
+    fn a_kind_name_is_refused_under_no_harness_too() {
+        let m = declaring_full(
+            "\"parts/skill\"",
+            "[agents]\nharness = []\n\n[registers.agent]\nscope = \"opt-in\"\nshape = \"file\"\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let whats = whats(&m);
+        assert!(
+            whats
+                .iter()
+                .any(|w| w.contains("the name `skill`, which is the name of a kind")),
+            "{whats:#?}"
+        );
+        assert!(
+            whats
+                .iter()
+                .any(|w| w.contains("`agent` is a kind of the agent harness")),
+            "{whats:#?}"
+        );
+    }
+
     #[test]
     fn a_register_named_planned_is_refused_as_a_reserved_kind() {
         // The claim, per `design@core@planned-path-form`: `planned` is a kind of the tree, so a

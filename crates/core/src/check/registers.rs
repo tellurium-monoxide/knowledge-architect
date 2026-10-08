@@ -1454,6 +1454,25 @@ mod tests {
         out
     }
 
+    /// The claim: a spec named after a kind is reported by its name, as a milestone is, per the
+    /// owner's ruling D7 of `milestone@plans@agent-configuration-entities`. Mutation checked:
+    /// the kind test removed from the spec-name check reports nothing.
+    #[test]
+    fn a_spec_named_after_a_kind_is_reported_by_its_name() {
+        let manifest = declaring("");
+        for name in ["skill", "design"] {
+            let mut present = all_of("");
+            present.push(format!("docs/plans/specs/{name}.md"));
+            let found = tree_findings(&manifest, &present);
+            assert!(
+                found
+                    .iter()
+                    .any(|f| f.contains(&format!("the spec `{name}`'s name is the name of a kind"))),
+                "{name}: {found:#?}"
+            );
+        }
+    }
+
     /// The claim: a spec of specs/ and a milestone's README owe the plan sections in order, and
     /// a slice spec owes the slice sections, each missing one a finding naming the list.
     /// Mutation checked: a slice spec checked against the plan sections.

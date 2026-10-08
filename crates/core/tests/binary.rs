@@ -3249,3 +3249,65 @@ fn an_unslugged_heading_of_a_project_skill_is_reported_with_its_repair() {
     assert!(out.contains("the level-2 heading \"A section\""), "{out}");
     assert!(out.contains("end it with its slug"), "{out}");
 }
+
+/// The claim: a walk row that skips the installer's namespace leaves `check` and `commits` judging
+/// one tree alike, both reading the installed copies for definitions. Mutation checked: `read_tree`
+/// fetching no installed blob a walk row skips makes `commits` report the primer's section missing.
+#[test]
+fn a_skipped_installed_namespace_defines_alike_under_check_and_commits() {
+    let history = History::new("skipped-installed");
+    tiny_project_serving_claude(&history);
+    history.write(
+        "knowledge-architect.toml",
+        "[project]\nname = \"tiny\"\ncomponents = []\n\n\
+         [walk]\nskip-dirs = [\".claude/knowledge-architect\"]\nskip-files = []\nexclude = []\n\n\
+         [agents]\nharness = [\"claude\"]\n",
+    );
+    let base = history.commit("The project is created\n");
+    history.write(
+        "docs/rejected-alternatives.md",
+        "# tiny — rejected alternatives\n\nNothing has lost yet; see `primer@room-to-judge`.\n",
+    );
+    history.commit("Cite a section of the primer\n");
+    let (out, err, code) = history.run(&["check"]);
+    assert_eq!(code, 0, "{out}{err}");
+    let (out, err, code) = history.run(&["commits", &format!("{base}..HEAD")]);
+    assert_eq!(code, 0, "{out}{err}");
+}
+
+/// The claim: `show` prints a section of the primer, not the whole primer, and lists the
+/// references to that section only, not to a slug of the same id under another owner. Mutation
+/// checked: printing whole every entity with no owner prints the primer's next section; listing
+/// inbound references by kind and id alone lists the other skill's citation.
+#[test]
+fn show_prints_one_primer_section_and_its_own_references() {
+    let sandbox = harnessed("show-primer");
+    sandbox.write(
+        ".claude/skills/tiny-a/SKILL.md",
+        "---\nname: tiny-a\n---\n# A\n\n## Room to judge `##room-to-judge`\n",
+    );
+    sandbox.write(
+        ".claude/skills/tiny-b/SKILL.md",
+        "---\nname: tiny-b\n---\n# B\n\n## Room to judge `##room-to-judge`\n",
+    );
+    sandbox.write(
+        "README.md",
+        &format!(
+            "{}\nSee `primer@room-to-judge` and `skill@tiny-a@room-to-judge`.\n\n\
+             And `skill@tiny-b@room-to-judge`.\n",
+            std::fs::read_to_string(sandbox.path("README.md")).expect("the README")
+        ),
+    );
+    sandbox.stage();
+    let (out, err, code) = sandbox.run(&["show", "primer@room-to-judge"]);
+    assert_eq!(code, 0, "{out}{err}");
+    assert!(out.contains("`##room-to-judge`"), "{out}");
+    assert!(
+        !out.contains("`##intent-and-claims`"),
+        "a section stops at the next: {out}"
+    );
+    let (out, err, code) = sandbox.run(&["show", "skill@tiny-a@room-to-judge"]);
+    assert_eq!(code, 0, "{out}{err}");
+    let cited: Vec<&str> = out.lines().filter(|l| l.contains("README.md:")).collect();
+    assert_eq!(cited.len(), 1, "{out}");
+}
