@@ -26,7 +26,6 @@ subsection is omitted.
   refused, and so is a register named after one of those four. A project renames it.
 - `library`, major: `document::Observation` has a variant `BareName`, a backticked span that is
   one word in the id grammar. Code that matches the enum exhaustively adds an arm.
-
 - `agent-skills`, patch: the installed skills and agents no longer number their sections, and cite
   each other's sections by reference, as `skill@<name>@<slug>`. A project's own text that cites a
   section of an installed skill or agent by its number cites it by its reference instead.
