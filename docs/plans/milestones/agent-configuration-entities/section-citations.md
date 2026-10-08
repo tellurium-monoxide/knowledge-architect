@@ -44,8 +44,8 @@ there. It starts after the entities slice has merged.
 - `design@agent-skills@instruction-record-is-minimal`: the removal of the numbers is a rewording of
   the installed text, recorded by no head.
 - The head the entities slice wrote for the section rule, and its slugs in each file.
-- `path@agent-skills@CLAUDE.md`, whose test 1 cites "§5 of" the retrospective skill, and
-  `path@agent-skills@README.md`, which restates two expectation sets "§5 of" that skill names.
+- `path@agent-skills@CLAUDE.md`, whose test 1 cited the retrospective skill's expectation sets by
+  number, and `path@agent-skills@README.md`, which restated two of them so.
 - The issues whose text cites a section by number or in words:
   `issue@agent-skills@a-received-retrospective-file-has-no-installed-analysis`,
   `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined`,

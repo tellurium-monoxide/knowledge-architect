@@ -58,7 +58,8 @@ Answer each with a list, quoting the sentence or naming the section for every it
 
 ## The readiness checks {{slug:readiness-checks}}
 
-The list is in the section on reviews of `knowledge-architect-planning`, which you read in `agent@knowledge-architect-cold-implementer-reviewer@ground-as-implementer`. It
+The list is in `skill@knowledge-architect-planning@plan-reviews`, which you read in
+`agent@knowledge-architect-cold-implementer-reviewer@ground-as-implementer`. It
 is that skill's and not restated here. Apply every check and report pass or fail with the evidence.
 
 ## Reporting {{slug:how-to-report}}

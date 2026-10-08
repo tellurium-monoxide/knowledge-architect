@@ -13,7 +13,8 @@ owner names. A later session receives them, and this skill is that session's pro
 Not covered here:
 - **running a retrospective**: `knowledge-architect-retrospective`;
 - **carrying out an outcome**: an issue is opened under `knowledge-architect-issue-tracking`; a
-  finding handled now is handled under the skill `skill@klarch-retrospective-intake@intake-subagents` names for it.
+  finding handled now is handled under the skill that item g of `skill@klarch-retrospective-intake@what-to-establish`
+  names for it.
 
 **This skill decides nothing.** It establishes the facts about each finding, proposes an action
 with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-decides`.
