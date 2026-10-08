@@ -1255,9 +1255,10 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   the session supplied, proves false, the corrected premise goes to the owner, with a default,
   before the word is acted on further. The design skill holds the same duty for a closed thread,
   and reaches only a session that has loaded it, where a word of the owner can arrive in any
-  session. It arrived twice outside a discussion: in a review repair, where no skill is loaded, and
-  at the fourth entry test of the decision-recording skill, so a rule beside that test would miss
-  the first case. A word acted on past its premise records a decision the owner did not make, per
+  session, which is the content test of `design@agent-skills@primer-limit`. It arrived twice
+  outside a discussion: in a review repair, where the design skill is not loaded, and at the fourth
+  entry test of `design@agent-skills@a-head-is-owed-by-an-entry-test`, so a rule beside that test
+  would miss the first case. A word acted on past its premise records a decision the owner did not make, per
   `goal@knowledge-architect@the-owner-decides`.
 - **Where the installed text is silent, a session judges**, since the installed text leaves that
   room on purpose, per `goal@agent-skills@installed-text-leaves-room-to-judge`; room to judge is
