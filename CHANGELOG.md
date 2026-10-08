@@ -22,6 +22,10 @@ subsection is omitted.
   `issue`, `path`, a declared register or one of `skill`, `agent`, `primer` and `instructions`, is
   refused, and so is a register named after one of those four. A project renames it.
 
+- `agent-skills`, patch: the installed skills and agents no longer number their sections, and cite
+  each other's sections by reference, as `skill@<name>@<slug>`. A project's own text that cites a
+  section of an installed skill or agent by its number cites it by its reference instead.
+
 ### New features
 
 - `checks`, minor: under the `claude` harness, a skill, an agent and their sections, and a section

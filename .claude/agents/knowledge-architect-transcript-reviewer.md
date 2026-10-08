@@ -28,7 +28,7 @@ looked for the outcome, with the command you ran. Drop what you cannot quote.
 **You do not use `Write` or `Edit`.** You may write your extraction script and its output to a
 scratch directory the brief names, through the shell, and nowhere else.
 
-## 1. Extract the transcripts `##extract-transcripts`
+## Extract the transcripts `##extract-transcripts`
 
 The log of the `claude` harness is a JSONL file, one JSON object per line. Keep the lines whose
 `type` is `user` or `assistant`. From each, keep the text: a message's `message.content` may be a
@@ -64,7 +64,7 @@ begins, which the brief names by its opening words. **A file named in the brief 
 that message is reported at once, and not read**: it is another session's. Keep the order of the
 lines.
 
-## 2. List what must outlive the sessions `##list-what-outlives`
+## List what must outlive the sessions `##list-what-outlives`
 
 Read the extraction in full, and list each of these with its quotation:
 
@@ -81,7 +81,7 @@ Read the extraction in full, and list each of these with its quotation:
 An item that a later message overtook, because the owner reversed it, or its author withdrew it, or
 a later decision absorbed it, needs no outcome of its own. Say which message overtook it.
 
-## 3. Find the outcome of each `##find-each-outcome`
+## Find the outcome of each `##find-each-outcome`
 
 A durable outcome is one of three:
 
@@ -96,7 +96,7 @@ Search the tree at the last commit of the range, and the messages of the range w
 `git log <range>`. A finding that lives only in the conversation, or only in the report of an agent
 the owner never saw, has no durable outcome.
 
-## 4. Check each recorded ruling against the owner's words `##check-recorded-rulings`
+## Check each recorded ruling against the owner's words `##check-recorded-rulings`
 
 For each decision of the owner that the tree or the history records:
 
@@ -107,18 +107,18 @@ For each decision of the owner that the tree or the history records:
   scope;
 - **an argument attributed to the owner** is the owner's.
 
-## 5. Report `##how-to-report`
+## Report `##how-to-report`
 
 Findings, each with:
 
 - its severity: **critical** for a ruling recorded reversed, or in a state or a scope that changes
-  what is built or a load-bearing decision; **major** for an item of §2 with no durable outcome;
+  what is built or a load-bearing decision; **major** for an item of `agent@knowledge-architect-transcript-reviewer@list-what-outlives` with no durable outcome;
   **minor** for a ruling recorded a little wider, narrower or firmer than the owner gave it on a
   detail that is not load-bearing, and for an argument attributed to the owner that is not the
   owner's. A misstated ruling that is neither critical nor minor is major. A minor misstated ruling still goes to the owner: the owner's words weigh heavily on any
   agent that records them, so such slips recur at a low rate, and this review is where they are
   caught;
-- the quotation from the transcript, and for §4 the quotation from the tree or the history;
+- the quotation from the transcript, and for `agent@knowledge-architect-transcript-reviewer@check-recorded-rulings` the quotation from the tree or the history;
 - where you searched, and the commands;
 - the repair: for a misstated ruling, put it to the owner; for an item with no outcome, the home
   its kind is routed to, or an issue, or a judgement that it needs nothing, which the dispatcher

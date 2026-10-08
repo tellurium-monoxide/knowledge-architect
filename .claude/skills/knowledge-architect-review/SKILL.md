@@ -24,7 +24,7 @@ and `knowledge-architect-transcript-reviewer`, all dispatched rather than read),
 **recording** what a review changes (`knowledge-architect-decision-recording`,
 `knowledge-architect-issue-tracking`).
 
-## 1. The axes `##review-axes`
+## The axes `##review-axes`
 
 | axis | what it does | applicable when |
 | --- | --- | --- |
@@ -51,7 +51,7 @@ ruling those repairs asked for, since an answer given after its extraction reads
 `<main branch>..<head>`, and its brief names the transcripts of every session that worked on the
 branch, with the message where the branch's work begins in each. It is the one axis that can see whether the findings of the others were acted on, since
 their reports reach the session as messages of its transcript. Its repairs land as additional
-commits, or are folded where §3 says. **Where one of them adds, removes or reverses a design head,
+commits, or are folded where `skill@knowledge-architect-review@what-review-leaves` says. **Where one of them adds, removes or reverses a design head,
 the decision-record axis reviews it**, and any other axis whose condition it meets; the review ends
 with their repairs. Any other additional commit is reviewed by no axis again.
 
@@ -60,7 +60,7 @@ identifier.** Search the harness's transcript directory for the opening words of
 name a file only once it is seen to hold the message: a session that was cleared or compacted can
 leave an earlier session's identifier in the harness's paths.
 
-## 2. The invariants `##review-invariants`
+## The invariants `##review-invariants`
 
 These hold whatever the axes are. They are what makes a finding worth acting on rather than
 re-checking.
@@ -110,7 +110,7 @@ re-checking.
 - **No reviewer edits the tree, and none runs an operation that can lose content**: no stash, no
   reset, no checkout of a path.
 
-## 3. What a review leaves behind `##what-review-leaves`
+## What a review leaves behind `##what-review-leaves`
 
 **Findings** become one of:
 
@@ -131,7 +131,7 @@ owner while answering a review. The record of the review lists each item with it
 
 **A repair that adds, removes or reverses a design head is reviewed by the decision-record axis**,
 whichever axis's finding it answers. A repair made before the last transcript review is reviewed
-before it, and that transcript review then runs as §1 says; a repair of the last transcript review
+before it, and that transcript review then runs as `skill@knowledge-architect-review@review-axes` says; a repair of the last transcript review
 is reviewed after it, and the review ends with that review's repairs. Any other repair, a rewording
 or an argument, a mention or a reference added inside an existing head included, is reviewed by no
 axis again; one made before the last transcript review is still read by it.

@@ -10,13 +10,13 @@ a tree over which `{{command}} check` passes, with the owner's goals stated. And
 the checker to another version.
 
 Not covered here: **stating the goals**, `knowledge-architect-goal-setting`; **moving the existing
-documentation into the new homes**, which is planned work of its own (§8); **writing the project's
+documentation into the new homes**, which is planned work of its own (`skill@knowledge-architect-setup@existing-documentation`); **writing the project's
 own skills**, `knowledge-architect-agent-configuration`.
 
 **Reaching this skill.** The skill is one of the files the install writes, so a session reads it
 once the project holds a manifest the install accepts and the install has run. The smallest such
 manifest is the file `knowledge-architect.toml` at the project's root, where `<version>` is the
-version of the checker the project runs, as section 1 says:
+version of the checker the project runs, as `skill@knowledge-architect-setup@pin-the-checker` says:
 
 ```toml
 [project]
@@ -42,7 +42,7 @@ and each choice below that changes the project's build or a file it already has.
 the agent proposes. The skill is built on an owner present to rule: a run without one, such as a
 trial, makes those choices itself.
 
-## 1. Pin the checker, and decide how it runs {{slug:pin-the-checker}}
+## Pin the checker, and decide how it runs {{slug:pin-the-checker}}
 
 A project runs the checker at the version it chose, and moves to another version by an explicit
 edit. The installed skills move with it, since one version of the checker ships one version of
@@ -59,7 +59,7 @@ them.
   maintenance crate: this is the shape to recommend, since it keeps the gates of "In a Rust
   project". The alternative is a local install, as the next point says, which leaves the project
   with no maintenance crate and no `cargo x gates`, so the project builds its own gates command,
-  per §6. The first changes the project's build, so the owner rules between the two.
+  per `skill@knowledge-architect-setup@setup-gates`. The first changes the project's build, so the owner rules between the two.
 - **Any other project**, and a Rust project that runs a local install, installs the binary into a
   directory of its own, ignored by git:
   `cargo install --locked --root <dir> knowledge-architect --version =<version>`. The binary is
@@ -81,7 +81,7 @@ writes the version of the checker it links into the copy's manifest: the library
 `CHECKER_VERSION`. It never spells the version in the test, so the pin stays written in one place.
 In an extension's crate, `CARGO_PKG_VERSION` is the extension's version, not the checker's.
 
-## 2. Declare the command {{slug:declare-the-command}}
+## Declare the command {{slug:declare-the-command}}
 
 The command the project runs is declared in the manifest, and the checker prints it in its
 messages, in the header of every generated listing and in every installed file:
@@ -94,7 +94,7 @@ command = "<the command, for instance cargo klarch or tools/bin/klarch>"
 When the key is absent, the command is `klarch`. After declaring it, run the install again, so the
 installed files carry it.
 
-## 3. The Components and the locations {{slug:components-and-locations}}
+## The Components and the locations {{slug:components-and-locations}}
 
 A **Component** is a directory the manifest names under `[project] components`, by its path; its
 name is the basename of that path, and the project's root is a Component named by
@@ -115,7 +115,7 @@ What the walk must not read is declared under `[walk]`, each row with its reason
 beside it: `skip-dirs` and `skip-files` for paths, `exclude` for another project kept inside this
 one. `[agents] harness` is absent for the default, the `claude` harness.
 
-## 4. The documents each Component carries {{slug:component-documents}}
+## The documents each Component carries {{slug:component-documents}}
 
 Every Component carries the same documents. `{{command}} check` names each one missing:
 
@@ -144,7 +144,7 @@ Each document opens with a short introduction saying what it holds and what it d
 register home says it holds no entry yet. **Every Component states at least one goal**: run
 `knowledge-architect-goal-setting` with the owner for each one.
 
-## 5. The root CLAUDE.md {{slug:root-claude-md}}
+## The root CLAUDE.md {{slug:root-claude-md}}
 
 The project's root `CLAUDE.md` holds, besides what the project already keeps there:
 
@@ -172,7 +172,7 @@ by hyphens, and a frontmatter `name`, where one is set, equals that name. The sl
 cites: `instructions@<slug>` for the root `CLAUDE.md`, `skill@<name>@<slug>` for a skill and
 `agent@<name>@<slug>` for an agent.
 
-## 6. The gates {{slug:setup-gates}}
+## The gates {{slug:setup-gates}}
 
 Recommend one command that runs every check the project owes before a merge (formatting, the
 document check, the commit messages, the linters, the tests), runs them all even when one fails,
@@ -202,13 +202,13 @@ becomes a command of the tool, so it runs the same way each time. It is met whil
 left to be done by hand.
 ```
 
-## 7. Finish {{slug:finish-setup}}
+## Finish {{slug:finish-setup}}
 
 - `{{command}} check --fix` until it passes: it writes the installed files and the generated
   `index.md` files the check would report, then checks.
 - Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together.
 
-## 8. Existing documentation {{slug:existing-documentation}}
+## Existing documentation {{slug:existing-documentation}}
 
 A project that already has documentation keeps it until its move is planned:
 
@@ -253,7 +253,7 @@ To move to another version:
    registry directory: `$CARGO_HOME/registry/src/<index>/knowledge-architect-<version>/CHANGELOG.md`.
 3. Run `{{command}} install-agent-skills`, then follow `knowledge-architect-agent-configuration`
    for what an upgrade owes the project's own configuration.
-4. Run the project's gates command of §6, or, where it has none, `{{command}} check` and the
+4. Run the project's gates command of `skill@knowledge-architect-setup@setup-gates`, or, where it has none, `{{command}} check` and the
    project's tests, and commit the pin, the installed files and the repairs together. A new
    version can change what a command prints, which only the tests see.
 
@@ -285,7 +285,7 @@ knowledge-architect-gates = "=<version>"
 
 **The aliases**, in `<workspace-root>/.cargo/config.toml`: `cargo x` runs the crate's own commands, and
 `cargo klarch` runs the checker it pins, in release mode. Declare `cargo klarch` as the project's
-command (§2).
+command (`skill@knowledge-architect-setup@declare-the-command`).
 
 ```toml
 [alias]

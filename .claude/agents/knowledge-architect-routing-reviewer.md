@@ -21,7 +21,7 @@ cannot reproduce.
 **You do not use `Write` or `Edit`.** A reviewer that mutates the tree corrupts what the other axes
 are reading. If a check seems to need one, say so as a finding rather than working around it.
 
-## 1. Mechanical `##mechanical-checks`
+## Mechanical `##mechanical-checks`
 
 ```sh
 cargo klarch check
@@ -61,7 +61,7 @@ entry and whose word is no anchor, such as a copied slug whose entry has left. T
 source only, so a reference in a comment of another language is read by nobody but you. Those are
 yours to resolve by reading, and they are where this axis's real failures survive.
 
-## 2. The predicates `##routing-predicates`
+## The predicates `##routing-predicates`
 
 Each has a named consequence when the answer is wrong. The table they are judged against is the
 knowledge table, which maps each kind of statement to its one home: the workflow's rows in the
@@ -98,7 +98,7 @@ belongs in the root Component's design home, which holds only what is true of th
 whole: which Components exist and how they depend on each other, the principles every Component
 follows, and the order in which they are built. **The exception is a reversal**: a decision that
 reverses a recorded one stays in the Component of the decision it reverses, whatever this question
-answers, per §1 of `knowledge-architect-decision-recording`.
+answers, per `skill@knowledge-architect-decision-recording@reversal-check`.
 
 The failure this catches is one-directional in practice: a decision about one Component filed at the
 project level reads as binding on all of them. Check that direction first.

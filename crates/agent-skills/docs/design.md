@@ -225,7 +225,7 @@ A session loads the decision-recording skill before it writes into a design home
 activity. A session editing agent-facing text, a skill, an agent or a `CLAUDE.md`, also loads it
 before an edit of a text whose behaviour a head describes. The skill then judges whether the edit
 contradicts a head, outgrows its title, or records a decision at all. The skill's description
-states the first trigger, and reaches every session. §1 of the agent-configuration skill and test 4
+states the first trigger, and reaches every session. `skill@knowledge-architect-agent-configuration@content-and-style` and test 4
 of this crate's `path@agent-skills@CLAUDE.md` state both, and reach a session editing agent-facing
 text, which is the one activity that asks for a search of the design homes before an edit.
 
@@ -239,7 +239,7 @@ The nearest rival restates the title test beside the condition at each site. It 
 test whose home is the decision-recording skill, and it reaches only a session editing agent-facing
 text, not an issue fix or a review repair that writes a head. The cost is one skill load on every
 edit of a design home, rewordings included; a rewording records no decision and leaves at the end
-of the skill's §2.
+of `skill@knowledge-architect-decision-recording@entry-tests`.
 
 ### The design skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
 
@@ -265,7 +265,7 @@ admits it, such as a reason several installed texts must respect. A rewording, a
 is phrased, is not recorded. Such proposals can be made without bound, unlike a technical decision,
 which costs implementation work. The commit message carries a rewording's argument.
 
-The owner's intent is on record where §2's test 4 of the installed decision-recording skill holds, per
+The owner's intent is on record where test 4 of `skill@knowledge-architect-decision-recording@entry-tests` holds, per
 `design@agent-skills@a-head-is-owed-by-an-entry-test`: the owner, asked, confirms that a ruling an
 agent could reverse as a small fix, or an argument the owner wants kept, records the owner's intent;
 an approval of the agent's proposal does not.
@@ -634,12 +634,12 @@ divided by the rows of the issue and tripwire listings for the second; real sess
 The installed design skill dispatches the search at its loop step 1, with the question as the work
 and the decisions and goals read so far as seeds, for a design question and for bounded work alike,
 per `design@agent-skills@bounded-path-in-design`. The installed planning skill dispatches it at
-the design audit of a milestone slice, §7 point 2, with the slice's spec and the milestone document
+the design audit of a milestone slice, point 2 of `skill@knowledge-architect-planning@working-a-slice`, with the slice's spec and the milestone document
 as the work and their decided entries and citations as seeds, and at the design audit of a spec
 where one runs, with the spec as the work. The audit lists as a gap every
 standing entry the slice's code bears on: a tripwire whose firing condition, or a deferred trigger,
 the planned code meets, and an issue of any kind the slice's code touches, closes, makes worse or
-depends on. The slice's grounding, §7 point 1, reads no issues and no tripwires, since the audit's
+depends on. The slice's grounding, point 1 of `skill@knowledge-architect-planning@working-a-slice`, reads no issues and no tripwires, since the audit's
 search covers every anchor. Work that does not go through the design skill sends no search: the
 standing-state review reads its deferred triggers, per
 `design@agent-skills@conformance-before-every-merge`, which this search adds to and never
@@ -1197,12 +1197,12 @@ reaches the main branch with no review of its record, against
 fidelity to the owner's rulings and not the record.
 
 The trigger is a whole head, which the diff shows: a heading with a slug that appears or
-disappears, or a reversal under decision-recording §1. Each round of repairs then adds at most as
+disappears, or a reversal under `skill@knowledge-architect-decision-recording@reversal-check`. Each round of repairs then adds at most as
 many re-reviews as it adds, removes or reverses heads. A trigger on any repair that "makes a
 decision" lost: whether a rewording makes one is a judgement, and read wide it re-reviews repairs
 that only reword a head. The rival that sends every axis again at every repair lost on the same
 cost. A narrowing of an approved head that this trigger leaves out still goes to the owner, per
-decision-recording §5, and the last transcript review checks it against the owner's rulings.
+`skill@knowledge-architect-decision-recording@current-design`, and the last transcript review checks it against the owner's rulings.
 
 ### Subagents dispatched together each get a scratch directory of their own `##a-scratch-directory-per-subagent`
 

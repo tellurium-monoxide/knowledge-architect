@@ -13,12 +13,12 @@ owner names. A later session receives them, and this skill is that session's pro
 Not covered here:
 - **running a retrospective**: `knowledge-architect-retrospective`;
 - **carrying out an outcome**: an issue is opened under `knowledge-architect-issue-tracking`; a
-  finding handled now is handled under the skill §4 names for it.
+  finding handled now is handled under the skill `skill@klarch-retrospective-intake@intake-subagents` names for it.
 
 **This skill decides nothing.** It establishes the facts about each finding, proposes an action
 with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-decides`.
 
-## 1. What it takes `##what-it-takes`
+## What it takes `##what-it-takes`
 
 - **In scope: a retrospective's workflow file**, whatever project wrote it. It is named
   `<date>-<project>-<subject>-klarch-workflow.md`, or `<date>-<project>-workflow.md` before that
@@ -40,7 +40,7 @@ arrives the same way once the owner hands it over.
 A finding is cited by its id and its file's stem, as "W3 of
 2026-10-07-thaum-mock-reduction-workflow", the form the installed retrospective skill gives.
 
-## 2. Ground before judging any finding `##ground-before-judging`
+## Ground before judging any finding `##ground-before-judging`
 
 1. **Read the workflow file whole**, and the project's file if present.
 2. **Note the version the retrospective used**, from its Version section, and the main commit you
@@ -66,7 +66,7 @@ A finding is cited by its id and its file's stem, as "W3 of
    every id in it; the analysis of each other file holds a section that points there. That a
    finding recurs across sessions is evidence: say how many times.
 
-## 3. What to establish for each finding or cluster `##what-to-establish`
+## What to establish for each finding or cluster `##what-to-establish`
 
 Each item below is answered with its evidence. The order is a suggestion; the content is not.
 
@@ -79,7 +79,7 @@ Each item below is answered with its evidence. The order is a suggestion; the co
   like any other, and is often wrong: find when the credited wording entered, with `git log -L` or
   `git log -G` on it, and compare with the session's work. A phrase searched in a commit message
   or in wrapped prose is matched across a line break.
-- **c. Whether it is already recorded.** An issue or a tripwire, from the search of §2. A
+- **c. Whether it is already recorded.** An issue or a tripwire, from the search of `skill@klarch-retrospective-intake@ground-before-judging`. A
   rejected alternative: read the rejected alternatives of the Component that owns the blamed text.
   A proposed fix that already lost is not proposed again, unless the finding brings a fact the
   recorded reason does not cover.
@@ -92,7 +92,7 @@ Each item below is answered with its evidence. The order is a suggestion; the co
     moment and needed at another. Then the fix moves where it is delivered, and the recurrence is
     its evidence;
   - **about the owner's behaviour**: judged against the expectation set of the skill concerned, in
-    §5 of the installed retrospective skill. Behaviour the set says the skill assumes otherwise is
+    `skill@knowledge-architect-retrospective@expectation-sets`. Behaviour the set says the skill assumes otherwise is
     outside that skill's scope, per `design@agent-skills@expectation-set-bounds-scope`. A skill
     with no set has no such test yet, per
     `issue@agent-skills@expectation-sets-for-the-installed-skills`. **A finding that two installed
@@ -102,7 +102,7 @@ Each item below is answered with its evidence. The order is a suggestion; the co
 - **e. Its scope.** The goal it serves or threatens, from the goals homes. The Component that owns
   the fix: agent-skills for the installed text, core for the checker, the root or the agent-config
   location for this repository's own configuration. Whether the fix reverses a recorded decision,
-  per §1 of `knowledge-architect-decision-recording`: if it does, the fix is a reversal and goes
+  per `skill@knowledge-architect-decision-recording@reversal-check`: if it does, the fix is a reversal and goes
   through that skill.
 - **f. A better fix.** Name the nearest rival to the fix the report proposes, and the fact that
   decides between them. Rivals worth looking for:
@@ -123,15 +123,15 @@ Each item below is answered with its evidence. The order is a suggestion; the co
   - a change to the Rust source: `klarch-development`;
   - an issue only, when the work is not to be done in this session;
   - nothing.
-- **h. The proposal.** The action, its argument, and the default outcome (§5).
+- **h. The proposal.** The action, its argument, and the default outcome (`skill@klarch-retrospective-intake@analysis-and-ruling`).
 
 **Every verdict carries its evidence**: a quotation with its `file:line`, a command and its
 output, a commit. A verdict without evidence is labelled an assumption.
 
-## 4. Subagents `##intake-subagents`
+## Subagents `##intake-subagents`
 
 The checks a to c read text, and fresh subagents may run them, one per file or per cluster. Brief
-each with the findings, the files to read, the entries the search of §2 returned, and a scratch
+each with the findings, the files to read, the entries the search of `skill@klarch-retrospective-intake@ground-before-judging` returned, and a scratch
 directory of its own, never shared. The agent checks c against those entries and the rejected
 alternatives, and does not search the registers again. Each
 returns, per finding: the quotation, its `file:line`, and its verdict. The session itself
@@ -139,7 +139,7 @@ establishes d to h, and re-checks every verdict a proposal rests on. No subagent
 reported session or builds a scenario of agent behaviour, per
 `design@agent-skills@synthetic-evidence-not-built`.
 
-## 5. The analysis file and the owner's ruling `##analysis-and-ruling`
+## The analysis file and the owner's ruling `##analysis-and-ruling`
 
 Write the analysis in `path@knowledge-architect@docs/retrospective-reports/`, as `<stem>.md`,
 where `<stem>` is the received file's stem. The directory's README says what it holds and when a file leaves it.
@@ -147,7 +147,7 @@ where `<stem>` is the received file's stem. The directory's README says what it 
 - A head: the received file's name, the version it used, the main commit analysed against, and the
   standing entries the search returned that bear on it.
 - **One section per finding or cluster**, headed by its ids and a short title, with a bullet per
-  item of §3, in prose. No table: the content of each item is too long to read in a cell.
+  item of `skill@klarch-retrospective-intake@what-to-establish`, in prose. No table: the content of each item is too long to read in a cell.
 - **Every section that proposes an action ends with a `Default` line and an `Outcome` line**, the
   latter left pending: a finding, a standing answer, a noted item, and a judgement on a standing
   entry. A standing entry the file may meet gets a section of its own: a tripwire that may have
@@ -177,7 +177,7 @@ whose `Outcome` line is still pending, and ask the owner for those. **Three outc
 A question tool is not the way to collect the ruling: it shows a label, not the evidence and the
 rival fix the ruling depends on.
 
-## 6. After the ruling `##after-the-ruling`
+## After the ruling `##after-the-ruling`
 
 Each section's `Outcome` line holds the owner's choice and the owner's words, verbatim. The
 analysis is then committed on a branch, under the root `CLAUDE.md` `## Git` rules. Its life

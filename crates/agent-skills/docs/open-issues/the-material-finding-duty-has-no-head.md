@@ -5,7 +5,7 @@ kind: todo
 
 ## Summary
 
-The design skill states, under Decision authority, that a decision is never assumed to have seen
+The design skill states, in `skill@knowledge-architect-design@decision-authority`, that a decision is never assumed to have seen
 all its consequences, and that a material finding comes back to the owner exactly once, with a
 default. The planning skill restates it. No head of the agent-skills design home records that
 decision, so a head that argues from it can describe it and cannot cite it.
@@ -14,7 +14,7 @@ decision, so a head that argues from it can describe it and cannot cite it.
 
 ### What
 
-The duty is in `path@agent-skills@content/skills/design/SKILL.md`, section Decision authority:
+The duty is in `skill@knowledge-architect-design@decision-authority`:
 "**Never assume the decision saw all its consequences.**" and "**Material findings come back
 exactly once.**", where a finding is material when it defeats "a reason the ruling gave, a premise
 it rested on, or a criterion it claimed to meet". `path@agent-skills@content/skills/planning/SKILL.md`

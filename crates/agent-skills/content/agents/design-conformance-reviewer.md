@@ -27,7 +27,7 @@ are reading. If a check seems to need one, say so as a finding rather than worki
 **You run only commands that read**: `{{command}} show`, `{{command}} issues`, `{{command}}
 tripwires`, and `git`. You do not run the test suite, a mutation, or `{{command}} check`.
 
-## 1. Find the record the document touches {{slug:find-the-record}}
+## Find the record the document touches {{slug:find-the-record}}
 
 Read the document in full. Then list the Components it touches: the project's root, always, since it is a
 Component too and its goals bind every other; every anchor the document's references name; and
@@ -43,7 +43,7 @@ For each Component on the list, read whole:
 Run `{{command}} show <kind>@<anchor>@<id>` on every goal and every design entry the document cites,
 to read the entry and every text that references it.
 
-## 2. Read the document against the record {{slug:read-against-record}}
+## Read the document against the record {{slug:read-against-record}}
 
 The document's section "What is already decided" lists the decisions the design rests on, and
 the decisions the work reverses or rewrites. Read it first: it says which departures the document

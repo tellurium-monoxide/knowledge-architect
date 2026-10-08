@@ -17,7 +17,7 @@ as a presumption, and a goal binds outright: a constraint derived from a goal ru
 That is why no goal is written that the owner did not rule on, and why an agent never edits a goal
 outside this skill.
 
-## 1. A goal, and what is not one {{slug:goal-or-not}}
+## A goal, and what is not one {{slug:goal-or-not}}
 
 **A goal is met or unmet. A decision is won or lost.** A goal states an outcome: what the project or
 the Component is for, and for whom. It never states a mechanism. The test, for each sentence: if it
@@ -28,7 +28,7 @@ A goal stays in its home **while it is met**. One removed when it is achieved st
 and can stop being met without anyone noticing. **A goal leaves only when the owner abandons it**,
 on the owner's word.
 
-## 2. The shape of a goal entry {{slug:goal-entry-shape}}
+## The shape of a goal entry {{slug:goal-entry-shape}}
 
 A level-two heading stating the goal as a sentence, its slug at the end, then one short paragraph:
 what the goal means, and **what would show it is met**.
@@ -59,7 +59,7 @@ The head of the goals home says what it holds: a goal is met or unmet, it stays 
 and it leaves only on the owner's word. Goals stay short: a goals home is read whenever a decision
 is argued from one.
 
-## 3. Drawing out the owner's intent {{slug:drawing-out-intent}}
+## Drawing out the owner's intent {{slug:drawing-out-intent}}
 
 **The owner states, the agent helps write, and the owner rules on every goal.**
 
@@ -82,13 +82,13 @@ and it constrains future work and design from the moment it is written. When not
 no plan document schedules the work that would, open a `todo` issue for that work, under
 `knowledge-architect-issue-tracking`, and reference the goal from it.
 
-## 4. When this runs again {{slug:when-it-runs-again}}
+## When this runs again {{slug:when-it-runs-again}}
 
 - **The owner states a new purpose, abandons one, or rewords one.** A goal is added or reworded
-  through §3. When one is removed, every reference to it dangles, and `{{command}} check` lists each
+  through `skill@knowledge-architect-goal-setting@drawing-out-intent`. When one is removed, every reference to it dangles, and `{{command}} check` lists each
   one: each is a text that derived something from the goal, and is read again.
 - **A decision conflicts with a goal**, and the primer's rule sends the conflict to the owner. The
-  goal prevails until the owner rules; if the ruling changes the goal, it changes through §3.
+  goal prevails until the owner rules; if the ruling changes the goal, it changes through `skill@knowledge-architect-goal-setting@drawing-out-intent`.
 
 The goals ruled on in one session are written in one commit, whose message quotes each ruling. A
 goal's removal and the repair of every reference it leaves dangling are one commit, so the commit

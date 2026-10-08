@@ -48,8 +48,8 @@ order; an edit of an installed agent passes the last three, since an agent never
 owner and has no expectation set. This is a restatement; its homes are the entries and the skill named.
 
 1. **Scope.** A finding about the owner's behaviour outside the skill's expectation set is not a
-   gap, and no instruction is written for it. The sets are in §5 of
-   `path@agent-skills@content/skills/retrospective/SKILL.md`; a skill not listed there has none yet.
+   gap, and no instruction is written for it. The sets are in
+   `skill@knowledge-architect-retrospective@expectation-sets`; a skill not listed there has none yet.
    A finding that two installed instructions leave no move satisfying both is always in scope
    (`design@agent-skills@expectation-set-bounds-scope`).
 2. **Necessity.** A contradiction, a broken trigger or a factual error is repaired on reading. An
@@ -65,7 +65,7 @@ owner and has no expectation set. This is a restatement; its homes are the entri
    whether it contradicts a head, outgrows its title, or earns text at all. That trigger's home is
    `design@agent-skills@design-home-write-loads-recording`. One that strains a goal goes to the
    owner, under `knowledge-architect-goal-setting`. The rest of this test restates the installed
-   `knowledge-architect-agent-configuration`, §1, and it holds because
+   `skill@knowledge-architect-agent-configuration@content-and-style`, and it holds because
    `design@agent-skills@design-home-is-built-intent` makes the design home authority over the
    shipped text.
 

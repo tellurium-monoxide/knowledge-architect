@@ -614,7 +614,7 @@ computed, so no hand merge is needed and none is lost.
 - The commit that lands the repairs says what was reviewed and what was decided. Where every
   repair was folded, the message of the branch's last commit says it, reworded with a clean tree:
   a commit of its own would change no file, and the rebase merge drops it.
-- Every finding gets one of the outcomes of `knowledge-architect-review`, §3: repaired, opened as an
+- Every finding gets one of the outcomes of `skill@knowledge-architect-review@what-review-leaves`: repaired, opened as an
   issue entry per `knowledge-architect-issue-tracking`, or judged to need nothing, with the reason.
 - Once the branch is rebased and the repairs are pushed, mark the pull request ready:
   `gh pr ready`. That starts CI, and every later push re-runs it. First check that GitHub has

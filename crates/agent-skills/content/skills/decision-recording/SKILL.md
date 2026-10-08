@@ -16,7 +16,7 @@ Not covered here: **having** the discussion (`knowledge-architect-design`);
 both this and `knowledge-architect-agent-configuration`: that skill owns how to write the
 configuration, this one owns where the argument lands.
 
-## 0. When recording happens {{slug:when-recording-happens}}
+## When recording happens {{slug:when-recording-happens}}
 
 **A decision is recorded when the work that implements it lands, not when it is decided.** A
 design home holds built intent: the design as built and its reasons, against which the code is
@@ -26,10 +26,10 @@ the only place it exists, on the main branch or on the work's. Writing it into t
 the **harvest**, and it happens in the change that lands the work.
 
 A decision that no work implements, such as a policy, and that is not part of any spec, is
-recorded when it is made: there is no implementing change to wait for. §2's second test admits it,
+recorded when it is made: there is no implementing change to wait for. The second test of `skill@knowledge-architect-decision-recording@entry-tests` admits it,
 as a decision with no site of its own.
 
-## 1. Does it reverse something already recorded? {{slug:reversal-check}}
+## Does it reverse something already recorded? {{slug:reversal-check}}
 
 **Ask this first, because the answer decides everything below it.** A decision routed by what it
 _is_ lands in the Component that fits its subject. A decision that reverses a recorded one belongs
@@ -43,16 +43,16 @@ rejected alternatives, the scoped `CLAUDE.md` files) and the comments of the cod
 touches, then `git log -G'<term>'` for the argument behind them. Say what you searched and what it returned. A
 search that returned nothing is a finding worth one line in the commit message.
 
-**If nothing holds it, carry on to §2.** If something does, do all of the following, in the same
+**If nothing holds it, carry on to `skill@knowledge-architect-decision-recording@entry-tests`.** If something does, do all of the following, in the same
 change:
 
-- **The Component is the incumbent's.** §3's test is not asked again. A reversal does not move a
+- **The Component is the incumbent's.** The test of `skill@knowledge-architect-decision-recording@owning-component` is not asked again. A reversal does not move a
   decision between Components. If the incumbent looks misfiled, that is a separate change with its
   own argument.
-- **It earns durable text whatever §2 says.** The incumbent's head now states something false, so
-  the minimum is rewriting it. §2's tests decide whether a _new_ decision earns an entry, not
+- **It earns durable text whatever `skill@knowledge-architect-decision-recording@entry-tests` says.** The incumbent's head now states something false, so
+  the minimum is rewriting it. The tests of `skill@knowledge-architect-decision-recording@entry-tests` decide whether a _new_ decision earns an entry, not
   whether a false one may stand.
-- **Rewrite the head in place** (§5), and give the new statement its own slug when it is a new
+- **Rewrite the head in place** (`skill@knowledge-architect-decision-recording@current-design`), and give the new statement its own slug when it is a new
   statement. Keep the old slug only where it still names the same decision. The slug and the
   title must stay aligned with the full scope of the decision: the slug is often the only part a
   reader sees, in a citing document or in code, and the title is what a document outline shows. A
@@ -61,10 +61,10 @@ change:
   rename is cheap, and the checker lists every reference it leaves dangling in the files it reads:
   Markdown and Rust source. A reference in a comment of another language is not read, so grep for
   the slug as well.
-- **Move the incumbent into the Component's rejected alternatives** (§6) with its reason and a
-  validity marker, stated as strongly as it was originally made, if it meets one of §6's tests.
+- **Move the incumbent into the Component's rejected alternatives** (`skill@knowledge-architect-decision-recording@losing-alternatives`) with its reason and a
+  validity marker, stated as strongly as it was originally made, if it meets one of the tests of `skill@knowledge-architect-decision-recording@losing-alternatives`.
 - **Argue it under `knowledge-architect-design` first**, if it was not: a reversal contradicts a
-  statement of the incumbent, the second case of §2's backstop.
+  statement of the incumbent, the second case of the backstop of `skill@knowledge-architect-decision-recording@entry-tests`.
 - **Delete the tripwires guarding the reversed decision.** A tripwire whose decision is reversed
   goes outright. `knowledge-architect-issue-tracking` owns that movement.
 - **Repair what pointed at the old behaviour**: skills, subagent definitions, scoped `CLAUDE.md`
@@ -76,7 +76,7 @@ change:
 - **Close the issue entry that asked the question**, in this commit rather than a later one, and
   rewrite whatever half of it survives rather than deleting the whole.
 
-## 2. Does it earn a document entry at all? {{slug:entry-tests}}
+## Does it earn a document entry at all? {{slug:entry-tests}}
 
 Most implementation choices do not. A unit of work produces dozens of them, and a design home that
 records dozens per unit of work stops being readable and stops being ranked.
@@ -121,14 +121,14 @@ goes back to that skill before its text is written.** This is the case of a deci
 another task and settled there, by the owner's word or by the session's own choice. The design
 skill's in-change path keeps the deliberation in the commit message, so the task needs no plan
 document and no new session. For the third case, rewrite the head's title to state the addition as
-well, and apply §5's test to it: if no title passes, the addition gets a head of its own. An
+well, and apply the test of `skill@knowledge-architect-decision-recording@current-design` to it: if no title passes, the addition gets a head of its own. An
 addition within what the title states, which contradicts nothing, is recorded directly, with the
 owner's words quoted in the commit where they gave a ruling. A change that relocates or rewords
 recorded decisions, a split of a head included, and adds or removes none, is not a decision: it
 needs no design skill, and the routing and fidelity-of-relocation review axes judge that it adds or
 removes none.
 
-## 3. Which Component owns it {{slug:owning-component}}
+## Which Component owns it {{slug:owning-component}}
 
 The project is partitioned into Components, which its manifest declares. The project's root is a
 Component too.
@@ -147,7 +147,7 @@ Component, each entry a level-two heading carrying a slug. A decision that leans
 
 If none of these fits, **ask the owner before writing it anywhere.**
 
-## 4. Three homes, split by function {{slug:three-homes}}
+## Three homes, split by function {{slug:three-homes}}
 
 | what | where | why there |
 | --- | --- | --- |
@@ -177,7 +177,7 @@ it occurs, so it misses every revision.**
 When a decision was taken with no spec, on the in-change path of `knowledge-architect-design`, its
 commit message carries the deliberation.
 
-## 5. The current design {{slug:current-design}}
+## The current design {{slug:current-design}}
 
 In the Component's design home. That is its `path@*@docs/design.md`, or, for a Component whose design has
 outgrown one file, its `path@*@docs/design/` directory. In the directory shape the decision goes in the
@@ -207,7 +207,7 @@ The slug is an id in the grammar `[a-z0-9]+(-[a-z0-9]+)*`, unique in the design 
 that name misdescribes the decision as approved, as a name for the change it proposed does. The
 discussion minted it in the same grammar and checked it for a collision with the Component's
 entries before using it, for that reason. When the name misdescribes the decision, the entry takes
-a slug that names the decision, by the alignment rule of §1, and the text that keeps the
+a slug that names the decision, by the alignment rule of `skill@knowledge-architect-decision-recording@reversal-check`, and the text that keeps the
 deliberation states the pair, `#<thread> → <entry slug>`: the plan document's harvest row, or the
 commit message on the in-change path. `git log --grep` on either name then finds a commit message
 that states the pair, and `git log -G` a plan document's diff that does.
@@ -258,7 +258,7 @@ against the project that holds it.
 The slug is an identifier. Code comments, tripwires, other documents and `git log -G` all cite it,
 so **renaming one means rewriting every reference in the same change.** Grep before you rename.
 
-## 6. Losing alternatives {{slug:losing-alternatives}}
+## Losing alternatives {{slug:losing-alternatives}}
 
 In the Component's `path@*@docs/rejected-alternatives.md`.
 
@@ -339,7 +339,7 @@ four tests.
 **A rejected alternative that is reopened, chosen and implemented moves out of the file.** The file
 must not describe as rejected a design the project now has.
 
-## 7. Tripwires from a premortem {{slug:premortem-tripwires}}
+## Tripwires from a premortem {{slug:premortem-tripwires}}
 
 %% The `T` label: `design@agent-skills@ruled-items-labelled`.
 A design discussion that runs a premortem ends with it, and the owner rules on which of its surviving causes
@@ -348,7 +348,7 @@ owner's word.** It goes in the tripwires home of the Component that owns the gua
 the decision's head exists before the tripwire that names it. Its shape and its lifecycle are
 `knowledge-architect-issue-tracking`.
 
-## 8. Before you finish {{slug:before-you-finish}}
+## Before you finish {{slug:before-you-finish}}
 
 ```sh
 {{command}} check
@@ -356,10 +356,10 @@ the decision's head exists before the tripwire that names it. Its shape and its 
 
 Every reference you wrote must resolve.
 
-Then, in the commit message, say what you searched for the incumbent and what it returned (§1),
-and re-read each head you wrote: present tense, as if the design had always been so (§5).
+Then, in the commit message, say what you searched for the incumbent and what it returned (`skill@knowledge-architect-decision-recording@reversal-check`),
+and re-read each head you wrote: present tense, as if the design had always been so (`skill@knowledge-architect-decision-recording@current-design`).
 
-Then apply the entry tests of §2 again to each decision of the change, now that every text of it is
+Then apply the entry tests of `skill@knowledge-architect-decision-recording@entry-tests` again to each decision of the change, now that every text of it is
 written: a site the change itself wrote counts, a skill or a restatement of the project's own
 included. A decision judged while its texts were still being written misses the second site the
 same change adds.

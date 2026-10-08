@@ -15,7 +15,7 @@ repaired by a later commit; a version on crates.io can be yanked and never delet
 is reviewed and merged first, and published from main last, on the owner's word, per
 `design@knowledge-architect@publish-after-merge`.
 
-## 1. The release branch `##release-branch`
+## The release branch `##release-branch`
 
 On a branch of its own, `release-<version>`, under the Git rules of the root `CLAUDE.md`:
 
@@ -82,7 +82,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    class. A repair is a new commit, or is folded per root `CLAUDE.md`, section Git, point 2, and
    steps 4 to 8 run again on the head if it touched a crate.
 
-## 2. Merge, then publish `##merge-then-publish`
+## Merge, then publish `##merge-then-publish`
 
 10. **Merge** under the root `CLAUDE.md`'s merge predicate. From this moment until step 12, main's
     README status line names a version that is not yet on crates.io.
@@ -100,7 +100,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
     git push origin v<version>      # only once all three crates are published
     ```
 
-## 3. When the publish fails `##failed-publish`
+## When the publish fails `##failed-publish`
 
 `cargo publish --workspace` uploads the crates one by one: agent-skills, gates, then the core. A
 crate it uploaded stays published.

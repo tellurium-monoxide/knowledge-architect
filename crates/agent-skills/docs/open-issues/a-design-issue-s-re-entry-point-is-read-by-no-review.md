@@ -21,7 +21,8 @@ kind is design, not deferred. A reviewer that reads only the triggers of deferre
 read it." That entry's re-entry point is "at the latest before the project leaves 0.x", an event
 a change can meet: the change that moves the version past 0.x.
 
-The standing-state reviewer, in its section 2, runs `{{command}} issues --kind deferred` and reads
+The standing-state reviewer, in
+`agent@knowledge-architect-standing-state-reviewer@reread-standing-entries`, runs `{{command}} issues --kind deferred` and reads
 each entry's `### Trigger`. The issue-tracking skill asks a `design` entry for "the re-entry point:
 the discussion at which it is raised again", with no fixed subsection name. In this repository,
 `grep -rln '^### Re-entry'` over the issue directories finds two entries carrying one: the entry

@@ -33,10 +33,10 @@ reference to nothing. The transcript holds each one verbatim.
 
 ## How the work is done
 
-The procedure for each slice is §7 of `knowledge-architect-planning`, restated below from the
+The procedure for each slice is `skill@knowledge-architect-planning@working-a-slice`, restated below from the
 installed skill. That skill is its home; where the two disagree, the skill wins.
 
-#### Working a slice, and the work of a spec (§7 of the installed planning skill)
+#### Working a slice, and the work of a spec (`skill@knowledge-architect-planning@working-a-slice`)
 
 1. **Ground**: the Component's `CLAUDE.md`, its design home, its rejected alternatives; then the
    milestone document entire, then the slice's spec. The issues and the tripwires, of every anchor,
@@ -78,12 +78,13 @@ installed skill. That skill is its home; where the two disagree, the skill wins.
        owner in one message, with a default; several such gaps go in one question, each under a
        label, `Q<n>`, since each is written in place as a thread with its slug. The slice's
        documents exist, so the ruling is written in place in the milestone's documents by the rule
-       of §4 of the planning skill, as a thread with the owner's words verbatim, like the audit's
+       of `skill@knowledge-architect-planning@spec-contents`, as a thread with the owner's words verbatim, like the audit's
        other answers, and the audit's commit lists it among its gaps. It owes no new review of the
        plan document, since it changes no decided shape.
      - A gap that defeats a reason, a premise or a criterion an approved thread rests on needs the
-       full session. Its converged design goes into the milestone's documents by the rule of §4 of
-       the planning skill, and owes that skill's reviews of a plan document.
+       full session. Its converged design goes into the milestone's documents by the rule of
+       `skill@knowledge-architect-planning@spec-contents`, and owes the reviews of
+       `skill@knowledge-architect-planning@plan-reviews`.
 
      The slice resumes from the ruling or the converged design.
 3. **Claims, tests, implementation, gates, commits**, per the project's development procedure:
@@ -401,7 +402,7 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
   defaults, and on the D4 goal rewording".
 - **The slug:** it names the R2 shape, "shipped set". The approved decision is "from the tree's
   installed copies", so the harvested head takes the slug `installed-entities-from-the-tree`, per
-  §7 point 6 of the planning skill.
+  point 6 of `skill@knowledge-architect-planning@working-a-slice`.
 - **Shape:** the decided design of the `entities` slice. **Harvest:** a new head in
   `path@core@docs/design.md`, slug `installed-entities-from-the-tree`; the rewrites of
   `design@core@owned-namespace-check`, `design@agent-skills@shipped-text-cites-no-entry` and
