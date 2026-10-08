@@ -24,7 +24,7 @@ leaves the repository in the commit that completes its harvest.
 - Every name it uses is defined in it, under Names or New names, or exists in the tree.
 - Where it marks a point as the owner's and the owner is absent, the work does not proceed on that
   point.
-- **No gate fixes when this spec lands against its work.** The work adds options to `check` and
+- **The spec and its work land together.** The work adds options to `check` and
   `index` and renames an extension type. It does not change what `cargo klarch commits` judges in a
   commit, so `design@agent-skills@plan-lands-before-gate-change` does not apply. The spec and its
   work land on one branch, `staged-tree-check`, in one pull request.
@@ -42,12 +42,14 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 
 ## Names
 
-- **the working tree**: what `check` judges today. Git's listing
-  `git ls-files --cached --others --exclude-standard`, read from disk, per
-  `design@core@git-supplies-the-walk`. It holds untracked files that no ignore rule covers.
-- **the staged tree**: the stage-0 entries of git's index, as `git ls-files -s -z` lists them, with
-  each blob's bytes read from git's object store. It is the tree `git commit` would record, absent
-  a pathspec or `-a`.
+- **the working tree**: what `check` judges today. Git's listing, which the head
+  `design@core@git-supplies-the-walk` spells `git ls-files --cached --others --exclude-standard` and
+  `git::entries` of `path@core@src/git.rs` runs as two invocations, `ls-files -z -s --cached` and
+  `ls-files -z --others --exclude-standard`; the bytes are read from disk. It holds untracked files
+  that no ignore rule covers.
+- **the staged tree**: the tree `git commit` would record, absent a pathspec or `-a`: HEAD's tree
+  with the index's changes against it, intent-to-add entries excluded, as "`check --staged`" under
+  Decided design lists it, with each blob's bytes read from git's object store.
 - **a snapshot**: a tree read from git objects alone, a commit's tree or the staged tree. Today
   `commits` builds one per commit, in `read_tree` and `commit_tree` of
   `path@core@src/cli/history.rs`.
@@ -59,8 +61,15 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   `cargo klarch install-agent-skills`. `{{command}}` is its placeholder for the project's command;
   in this repository it is `cargo klarch`.
 - **thaum**: the one known consumer of the extension API, a separate repository whose extension
-  is `path@elsewhere@tools/rules-corpus/citations/src/rules_extension.rs`, read at its commit
-  `6a2a1d79`.
+  is `path@elsewhere@thaum/tools/rules-corpus/citations/src/rules_extension.rs`, read at its commit
+  `6a2a1d79`. Its checkout sits beside this repository's, at `../thaum` from this repository's
+  root, on the owner's machine.
+- **F1, F2, F3, F4**: the four facts the agent's reply to round 1 stated before its proposals, each
+  an argument below: F1 is `argument@staged-tree-check@a4`, F2 `argument@staged-tree-check@a5`, F3
+  `argument@staged-tree-check@a6`, F4 `argument@staged-tree-check@a12`.
+- **the checkpoint table**: the full table of threads and criteria the agent displayed at the end of
+  its reply to round 2, which the owner approved in round 3. Every row of it is a thread or a
+  criterion of this spec.
 - **T1, T2, AC1, AC2, AC3**: the labels the premortem put to the owner, kept in the items below.
 
 ## What the work is
@@ -72,9 +81,10 @@ What exists today at each site the work touches:
 | `check`, `check` in `path@core@src/cli/mod.rs` | builds the model from disk with `Model::build`, gathers `Inputs` with `Gathered::over` of `path@core@src/cli/gathered.rs`, runs `check::foundation`, prepares each extension with `Tree::Checkout(manifest.root())` and `Purpose::Check`, then `check::run_with` |
 | `CheckArgs`, same file | one flag, `--fix` |
 | `index`, `index` in the same file | builds the model from disk, gates with `complete_working_tree`, writes each generated file whose bytes differ into the working tree, and takes no flags, per `design@core@generated-files-are-pure` |
-| `check --fix`, `fix_then_check` in the same file | repairs the installed files, gates the model on phases 1 to 3, writes the generated files into the working tree, then runs `check`, per `design@core@fix-before-the-checks`. It never reads git's index |
+| `check --fix`, `fix_then_check` in the same file | repairs the installed files, gates the model on phases 1 to 3, writes the generated files into the working tree, then runs `check`, per `design@core@fix-before-the-checks`. It reads the index's listing through the walk, and never a staged blob |
 | the summary block, `counts` in the same file | prints `walk: <n> file(s)` on a stop and on a full run; nothing says which tree was walked |
-| a commit's snapshot, `read_tree` and `commit_tree` in `path@core@src/cli/history.rs` | lists a commit with `git::tree_entries` (`ls-tree -r -z`), reads blobs with `git::blob_bytes` (`cat-file --batch -z`, each request `<sha>:./<path>` from `git::tree_object`), and assembles a model and an `Assembly` whose `inputs()` sets `installed` and `shipped` empty (history.rs:77) and `tracked_and_ignored` empty |
+| a commit's snapshot, `read_tree` and `commit_tree` in `path@core@src/cli/history.rs` | lists a commit with `git::tree_entries` (`ls-tree -r -z`); reads blobs with `git::blob_bytes` and `git::blobs` (`cat-file --batch -z`, each request `tree_object(sha, "")` followed by the path's bytes); reads, in the installer's namespace, only the `.md` files' blobs (history.rs:280-285); and assembles a model and an `Assembly` whose `inputs()` sets `installed` and `shipped` empty (history.rs:81-82) and whose `tracked_and_ignored` is empty (history.rs:483). `Assembly`, `Depth`, `read_tree` and `commit_tree` are private to the module; `commits` passes them project-relative checker directories (history.rs:590-594). `CommitTree::read` and `CommitTree::object_id` name the commit by its sha (extension.rs:94 and 103), and the unit test `a_tree_object_is_named_relative_to_the_working_directory` of `path@core@src/git.rs` pins `tree_object` |
+| `path@core@tests/extension_api.rs` | matches `Tree::Commit(_)` at line 49 |
 | `Gathered::over`, `path@core@src/cli/gathered.rs` | reads the generated files and every `register.toml` from disk, surveys the disk, asks git's ignore batch and `git::tracked_and_ignored`, and reads the shipped set |
 | `survey::from_listing`, `path@core@src/survey.rs` | builds a survey from a listing and a read closure, the installed files' bytes included |
 | `extension::Tree` and `extension::Purpose`, `path@core@src/extension.rs` | `Tree` has two variants, `Checkout(&Path)` and `Commit(&CommitTree)`; `Purpose` has `Check`, `Commit` and `Index`; neither is non-exhaustive. `CommitTree` offers `holds`, `read` and `object_id` |
@@ -109,6 +119,16 @@ Outside the work:
 | `issue@core@installed-file-findings-belong-in-phase-four` | outside the work, above |
 | `issue@knowledge-architect@command-output-is-not-declared-a-contract` | outside the work, above |
 | `issue@agent-skills@the-setup-section-s-toml-and-ci-blocks-are-unchecked` | needs nothing: the setup skill's edit adds no TOML, alias or CI block |
+| `issue@core@a-message-lint-is-deduplicated-in-one-tree-only` | needs nothing: it is about `judge_message`, which a staged run does not call; step 1 reshapes `read_tree` and `commit_tree` only |
+| `issue@core@branch-sha-citations-are-judged-within-the-range-only` | read at step 5: the CLAUDE.md sentence step 5 edits is the one this issue's closing condition rewrites. Step 5 changes its first half, `check` to `check --staged`, and leaves the `commits origin/main..HEAD` half and its pointer to this issue as they are |
+| `issue@core@a-submodule-is-a-project-of-its-own` | its trigger is not met; the staged listing reads a gitlink and a symlink by mode, as a commit's does, and a claim of step 1 tests it |
+| `issue@core@finding-texts-are-not-audited-for-a-needless-cause` | needs nothing: the work adds refusals, which are errors with exit 2 and no finding, and each names its repair only |
+| `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked` | needs nothing new: step 5's shipped edits cite no entry, per `design@agent-skills@shipped-text-cites-no-entry`, and the review of step 5 reads them |
+| `issue@knowledge-architect@the-bump-table-has-no-row-for-a-looser-check` | the new `tree:` line is an output line added, the case this issue leaves open; classed with the refusal under D1 |
+| `issue@core@a-contract-change-fails-every-earlier-commit-unexplained` | needs nothing: the searcher tied it to judging a given commit's tree, which #commit-tree-in-check rules out |
+| `tripwire@core@checker-source-literals-are-data-self-location` | does not fire, and a claim of step 2 watches it: the staged model is built with the checker's directories, as `commit_tree` builds a commit's, so the `checker source:` line under `--staged` names the same directories as `check` |
+| `tripwire@core@grammars-not-prefixes` | does not fire: a blob the batch returns no text for is kept as an unreadable document and reported, as `commit_tree` does today; no blob read yields nothing silently |
+| `tripwire@core@private-item-needed` | does not fire: `Snapshot` and `Revision` are public in the `extension` role module from step 2 |
 | `issue@core@an-extension-cannot-see-which-register-a-document-belongs-to` | read again at step 2: it asks which tree `Inputs.present` describes under `commits`; under `--staged` it describes the staged tree, and the doc comment written at step 2 says so |
 
 ## What is already decided
@@ -137,6 +157,14 @@ on the main branch before this spec:
 | `design@core@check-fix-flag`: gains the two refusals | `path@core@README.md` line 118; `path@core@src/cli/mod.rs` line 429 | step 4 |
 | `design@core@fix-before-the-checks`: the order gains the refusal first | `path@core@README.md` line 127; `path@core@docs/design.md` lines 71 and 114; `issue@core@installed-file-findings-belong-in-phase-four`; `path@core@src/cli/mod.rs` line 430 | step 4 for the README and the source; the harvest for the design home and the issue |
 | `design@core@git-supplies-the-walk`: the walk has a second source | `path@core@CLAUDE.md` line 23; `path@core@README.md` line 31; `path@core@docs/design.md` line 1515; `path@core@docs/rejected-alternatives.md` line 11; `tripwire@core@walked-count-differs-between-machines`; `path@core@src/check/mod.rs` line 39; `path@core@src/check/tree.rs` line 547; `path@core@src/cli/mod.rs` line 1127; `path@core@src/git.rs` lines 6 and 184; `path@core@src/manifest.rs` line 593; `path@core@src/walk.rs` lines 20 and 61 | step 1 for the source; step 2 for the README and CLAUDE.md; the harvest for the design home, the rejected alternatives and the tripwire |
+
+Two more heads have a sentence the work makes false, and the harvest rewrites that sentence:
+
+- `design@core@the-core-cli-is-a-library-module`: "`check`, the commands that write files (through
+  `complete_working_tree` …) … all build on it", of `Gathered`. After the work, `check --staged`
+  and `index --staged` build on the staged assembly instead.
+- `design@core@an-extension-plugs-in-through-phased-hooks`: "Over a commit it reads git objects
+  only". After the work, over a snapshot, a commit or the index.
 
 `design@core@api-facade` names `CommitTree` in its text, at `path@core@docs/design.md` line 278.
 The rename edits that word at the harvest, and the head's decision is unchanged.
@@ -175,7 +203,7 @@ approved in round 2.
 
 ## Threads
 
-### `check --staged` judges the stage-0 entries of git's index, read through the snapshot reader `commits` uses `##staged-tree-source`
+### `check --staged` judges the tree `git commit` would record, read through the snapshot reader `commits` uses `##staged-tree-source`
 
 Proposed by the owner, round 1, as item 2 of the request; shaped by the agent in its reply to round
 1. Approved. Arguments: `argument@staged-tree-check@a1`, `argument@staged-tree-check@a5`,
@@ -226,9 +254,7 @@ agent's. Approved, shape B. Arguments: `argument@staged-tree-check@a2`,
 "`index --staged`". Harvest: the new head `index-staged-write`. The owner's words, round 2:
 "index-staged-write: B looks fine to me. This is not definitive, but I would not recommend to use
 this with --fix though. The reason  is that I'd like to provide more types of quick fixes later,
-and this might not be compatible." The words "not definitive" are recorded with the ruling: the
-head written at the harvest carries the decision as approved, and a later reversal takes the
-ordinary procedure.
+and this might not be compatible." How "not definitive" is carried into the head is D2.
 
 ### `check --fix` refuses when the index differs from HEAD and a generated file differs between the two trees `##fix-refusal-mixed-state`
 
@@ -356,7 +382,7 @@ it gives every extension a third case to handle."
 
 Round 2, the agent, on the owner's request to "check thaum at ../thaum, to assess migration cost".
 Bears on #extension-tree-for-index. "The only consumer of `Tree` is
-`path@elsewhere@tools/rules-corpus/citations/src/rules_extension.rs`" … "The mechanical migration is two sites:
+`path@elsewhere@thaum/tools/rules-corpus/citations/src/rules_extension.rs`" … "The mechanical migration is two sites:
 `Tree::Commit` becomes `Tree::Snapshot`, and `CommitTree` becomes `Snapshot`. The snapshot API
 thaum uses is `read` and `object_id`. Both have an index answer: the blob id comes from
 `ls-files -s`."
@@ -376,7 +402,10 @@ judges that commit's tree with the tip checker, and its message too. A `check --
 `check`'s rules (installed files compared) would give a different verdict on the same tree than
 `commits` gives (F2, `history.rs:77`). That fails #c-one-verdict-per-tree." With `commits`'s rules
 it "is the tree half of `commits` under a second name, so it adds a command and no capability."
-The gap named, unverified: "the root commit has no `<rev>~1`."
+The gap named, unverified at the time: "the root commit has no `<rev>~1`." Measured at assembly,
+with this repository's root commit: `cargo klarch commits <root-sha>` judges that commit alone, and
+`<root-sha>~1..<root-sha>` exits 2 as unresolvable. So `commits <rev>` covers a root commit, and the
+gap is closed.
 
 ### `index --staged` earns its place when the unstaged changes touch a register `##a18`
 
@@ -454,6 +483,8 @@ sequence I traced commits a stale index." "The narrow refusal's repair line name
 
 Round 1, the agent. Bears on #workflow-delivery-staged. "The shipped skills never tell a session to
 check before each commit. That instruction is this repository's (CLAUDE.md, `## Git` point 1)."
+The location quoted was wrong: the sentence is in the section `instructions@verify-mechanically`
+of the root CLAUDE.md, and is restated in two project skills, per the delivery table.
 The setup line: "The workflow currently ships no pre-commit instruction, so this is new workflow (a
 CHANGELOG `Workflow` entry)."
 
@@ -469,12 +500,15 @@ Round 1, the agent. Bears on every thread. "`cli`, minor for `--staged` on `chec
 ```text
 crates/core/src/git.rs
   enum Source<'a> { Index, Commit(&'a str) }        new: which snapshot a read names
-  fn snapshot_entries(root, Source) -> Vec<Entry>   new: `ls-tree -r -z <sha>` or `ls-files -s -z`
+  fn snapshot_entries(root, Source) -> Vec<Entry>   new: `ls-tree -r -z <sha>` for a commit; for the
+                                                    index, HEAD's `ls-tree` overlaid with
+                                                    `diff --cached --raw -z --no-renames
+                                                    --full-index --ita-invisible-in-index`
   fn object_name(Source, rel) -> String             replaces tree_object: "<sha>:./<path>" or ":./<path>"
   fn blob_bytes(root, Source, paths)                existing, takes a Source instead of a sha
   fn blobs(root, Source, paths)                     existing, takes a Source instead of a sha
   fn index_differs_from_head(root) -> bool          new: `git diff --cached --quiet`, exit 1 = differs
-  fn unmerged(root) -> Vec<PathBuf>                 new: index entries at stage 1 to 3
+  fn unmerged(root) -> Vec<PathBuf>                 new: `ls-files -u -z`, the entries at stage 1 to 3
   fn stage_generated(root, &[(PathBuf, String)])    new: `hash-object -w --stdin`, then
                                                     `update-index --add --cacheinfo <mode>,<oid>,<path>`
 
@@ -482,21 +516,29 @@ crates/core/src/extension.rs
   enum Tree { Checkout(&Path), Snapshot(&Snapshot) } Commit renamed Snapshot
   struct Snapshot                                   CommitTree renamed; holds, read, object_id kept
   fn Snapshot::revision(&self) -> Revision<'_>      new
-  enum Revision<'a> { Commit(&'a str), Index }      new, public
+  enum Revision<'a> { Commit(&'a str), Index }      new, public in the `extension` role module
 
 crates/core/src/cli/mod.rs
-  CheckArgs::staged: bool                           new: `--staged`, conflicts_with `fix`
+  CheckArgs::staged: bool                           new: `--staged`
   IndexArgs { staged: bool }                        new: `Command::Index` takes `IndexArgs`
   Command::Index(IndexArgs)                         changed: was a unit variant
+  generated_list(manifest, model, inputs, ...)      existing, takes `Inputs` and a `Tree` instead of
+                                                    `&Gathered` and a hard-coded `Tree::Checkout`
 
 crates/core/src/cli/history.rs
-  read_tree, commit_tree                            existing, take a Source; a staged run
-                                                    builds `Inputs` with installed and shipped
-                                                    filled and tracked_and_ignored asked of git
+  read_tree, commit_tree                            existing, take a Source
+  Depth::Gated                                      new: phases 1 to 3 only, for `index --staged`
+                                                    and the `--fix` comparison
+  Assembly::installed, Assembly::shipped            new fields: empty under `commits`, filled
+                                                    under `--staged`
+  Assembly::report: Option<Report>                  new: the whole `Report` of a judged tree, or of
+                                                    its stop; `commits` reads its findings as today
 ```
 
 Each name is an illustration of a shape, not authority. The implementing session chooses the
-final spelling; `Snapshot`, `Revision`, `--staged` and `IndexArgs` are the names the owner was shown.
+final spelling. The owner was shown `--staged`, `Tree::Snapshot(&Snapshot)` and
+`Snapshot::revision()` returning `Commit(sha)` or `Index`; `Revision`, `IndexArgs`, `Depth::Gated`,
+the `Assembly` fields and the `git` function names are the author's.
 
 ## Decided design
 
@@ -507,9 +549,16 @@ cargo klarch check              the working tree, as today
 cargo klarch check --staged     the staged tree
 ```
 
-- **The listing** is `git ls-files -s -z`, run from the project root, so the paths are
-  project-relative as `ls-tree` gives them. Mode `120000` and `160000` are read as a symlink and a
-  gitlink, as in a commit's tree.
+- **The listing** is the tree `git commit` would record, per D3: the entries of HEAD's tree,
+  `ls-tree -r -z HEAD`, or none where HEAD does not exist yet, overlaid with the index's changes
+  against it, `git diff --cached --raw -z --no-renames --full-index --ita-invisible-in-index`.
+  An added or modified row sets the path's mode and blob, and a deleted row removes the path. Run
+  from the project root, every path is project-relative. Mode `120000` and `160000` are read as a
+  symlink and a gitlink, as in a commit's tree. `git ls-files -s` is not the listing: it lists an
+  intent-to-add entry, `git add -N`, at stage 0 with the empty blob, the same line as a staged
+  empty file, and `git commit` records no intent-to-add entry. Measured on git 2.43.0 at the
+  review of this spec: `ls-files -s` listed both, `diff --cached` and `write-tree` only the empty
+  file; with no HEAD, `diff --cached` compared against the empty tree.
 - **The bytes** are read with the existing `cat-file --batch -z`, each request `:./<path>`, which
   names the stage-0 blob relative to the working directory. Measured on git 2.43.0 in a scratch
   repository in round 1: after staging `a` and writing `b` to the file, the request returned `a`.
@@ -521,10 +570,16 @@ cargo klarch check --staged     the staged tree
   compared against the running binary's shipped set; the tracked-and-ignored files are reported,
   asked of git as today, since the question is about the index; the untracked-files note is not
   printed, since a staged tree holds no untracked file. The ignore rules a path reference asks are
-  read from disk, as `commits` reads them.
-- **The summary block gains a line**, `tree: staged`, printed beside `walk:` on a stop and on a full
-  run. When the index equals HEAD the line reads `tree: staged (nothing staged: the tree of HEAD)`,
-  per AC2. Plain `check` prints `tree: working`.
+  read from disk, as `commits` reads them. The checker version pin is the working tree's, compared
+  before any command per `design@core@installed-binary-version-check`, which compares no other
+  tree's value; a staged change to the pin is not compared.
+- **The report.** `commit_tree` at `Depth::Judged` keeps the whole `Report` that `check::run_with`
+  or the stop returns, in `Assembly::report`, and `check --staged` prints it with `print_report`,
+  so the summary block, the findings and the verdict line are `check`'s. `commits` reads the
+  report's findings where it read `run_with(...).findings` before.
+- **The summary block gains a line of its own**, `tree: staged`, directly after the `walk:` line, on
+  a stop and on a full run. When the index equals HEAD the line reads
+  `tree: staged (nothing staged: the tree of HEAD)`, per AC2. Plain `check` prints `tree: working`.
 - **The default is unchanged.** Plain `check` judges the working tree, untracked files included.
 
 The argument: the staged tree is the only tree a session cannot judge before the commit exists,
@@ -535,10 +590,10 @@ CI fails.
 ### Extensions over a snapshot
 
 `Tree::Commit(&CommitTree)` is renamed `Tree::Snapshot(&Snapshot)`. `Snapshot::revision()`
-answers `Revision::Commit(sha)` or `Revision::Index`. `object_id` answers the blob id, from
-`ls-files -s` for the index. Under `check --staged`, each extension is prepared with
-`Tree::Snapshot` and `Purpose::Check`; under `commits`, with `Tree::Snapshot` and `Purpose::Commit`
-as today.
+answers `Revision::Commit(sha)` or `Revision::Index`. `object_id` answers the blob id of the
+listing. Under `check --staged`, each extension is prepared with `Tree::Snapshot` and
+`Purpose::Check`; under `index --staged`, with `Tree::Snapshot` and `Purpose::Index`; under
+`commits`, with `Tree::Snapshot` and `Purpose::Commit` as today.
 
 The cost, measured by reading thaum at `6a2a1d79`: two edit sites, lines 205 and 313 of its
 extension. Its `commit` function sets `Purpose::Commit` itself, so its `changes` and `corpus`
@@ -548,9 +603,12 @@ git objects as the second.
 
 ### `index --staged`
 
-`cargo klarch index --staged` builds the staged model, gates it on phases 1 to 3, and computes the
-generated files from it. For each one whose bytes differ from the staged blob, it writes the bytes
-into git's object store and sets the staged entry to them. The working-tree file is not touched.
+`cargo klarch index --staged` assembles the staged tree at `Depth::Gated`, which runs phases 1 to
+3, and stops there with exit 2 and nothing written when they find anything, as `index` does over
+the working tree. It then computes the generated files with `generated_list`, given the staged
+assembly's `Inputs` and `Tree::Snapshot`. For each one whose bytes differ from the staged blob, or
+that the staged tree does not hold, it writes the bytes into git's object store and sets the staged
+entry to them. The working-tree file is not touched.
 
 ```text
                           working-tree index.md     staged index.md
@@ -559,6 +617,9 @@ index --staged            unchanged                 = the staged tree's rows
 
 - After it, `check` and `check --staged` both pass, where each passed but for the generated files.
 - A missing staged entry is added with mode `100644`; an existing one keeps its mode.
+- **A destination is refused**, before any write, when its staged entry is a symlink or a gitlink,
+  or when its directory is not in the staged listing: the two refusals of `check_destinations`,
+  asked of the staged tree instead of the disk.
 - Nothing is written when the gate finds anything, when a destination is refused, or when git
   refuses the index lock: exit 2, per AC3.
 - It prints each file it staged, `<path>  staged`, and `<path>  already current` for the others,
@@ -572,34 +633,45 @@ tree, and `check --staged` fails until the file is staged.
 
 ### `check --fix` refusals
 
-Two refusals, both exit 2 with nothing written:
+Two refusals:
 
-1. **`--fix` with `--staged`** is refused at parse time by clap:
+1. **`--fix` with `--staged`** is refused before anything is read, by a test at the top of the
+   `check` arm of `cli::run`, which returns `Err` and so exits 2 with this message:
 
    ```text
    error: --fix judges and repairs the working tree; it cannot be combined with --staged
      → for the staged tree: cargo klarch index --staged, then cargo klarch check --staged
    ```
 
-2. **A partial commit's mismatch.** Before any write, when `git diff --cached --quiet` says the
-   index differs from HEAD, `--fix` computes the generated files from the working tree and from the
-   staged tree. When any differ, it refuses:
+   clap's `conflicts_with` is not used: it prints clap's own wording, which cannot name the repair.
+
+2. **A partial commit's mismatch.** When `git diff --cached --quiet` says the index differs from
+   HEAD, `--fix` computes the generated files from the working tree and from the staged tree. A
+   path that one list holds and the other does not differs, as do two lists' bytes for one path.
+   When any differ, it refuses, naming every differing path:
 
    ```text
-   error: <path> would differ between the working tree and the staged tree
+   error: these generated files would differ between the working tree and the staged tree: <paths>
      → to commit the staged changes: cargo klarch index --staged, then cargo klarch check --staged
      → to fix the working tree as a whole: cargo klarch index
    ```
 
    When the index equals HEAD, or every generated file is the same in both, `--fix` runs as today.
 
-The refusal comes first in the order of `design@core@fix-before-the-checks`, before the installed
-files are repaired. A staged tree that stops in phases 1 to 3 cannot be compared; `--fix` then
-runs as today, since no staged generated file can be computed. The argument: `--fix` cannot lose
-unstaged content, since it writes only generated and installed files, but the `index.md` it writes
-reflects the working tree, and staging it with a partial commit makes a commit whose tree fails.
-The owner's wider trigger, any staged change with any unstaged change, lost: it also fires when the
-unstaged changes touch no input of a generated file, where the fix is correct for both trees.
+**Where refusal 2 sits in the order of `design@core@fix-before-the-checks`**, per D4: after the
+manifest's early return, which writes nothing; after the installed files are repaired, since their
+bytes do not depend on the tree and are correct for both trees; after the working tree's gate of
+phases 1 to 3, whose model the comparison reads; and before any generated file is written. So it
+refuses with exit 2 when nothing was installed, and with exit 1 when installed files were written,
+as the rule "2 promises an untouched tree" of `fix_then_check` already says. The staged side is
+assembled at `Depth::Gated`. Where it stops in phases 1 to 3, or the index holds an unmerged entry,
+no staged generated file can be computed, and `--fix` runs as today.
+
+The argument: `--fix` cannot lose unstaged content, since it writes only generated and installed
+files, but the `index.md` it writes reflects the working tree, and staging it with a partial commit
+makes a commit whose tree fails. The owner's wider trigger, any staged change with any unstaged
+change, lost: it also fires when the unstaged changes touch no input of a generated file, where the
+fix is correct for both trees.
 
 ### Delivery in the shipped text and in this repository
 
@@ -609,10 +681,15 @@ unstaged changes touch no input of a generated file, where the fix is correct fo
 | `path@agent-skills@content/skills/planning/SKILL.md`, the layout bullet on `index.md` | one sentence naming `{{command}} index --staged` for a partial commit |
 | `path@agent-skills@content/skills/setup/SKILL.md`, section `skill@knowledge-architect-setup@setup-gates` | recommend `{{command}} check --staged` after staging and before each commit, beside the gates command, which judges the branch before a merge |
 | `path@knowledge-architect@CLAUDE.md`, section `instructions@verify-mechanically` | "Run `cargo klarch check` before each commit" becomes "Run `cargo klarch check --staged` after staging and before each commit" |
-| `path@core@README.md` | the command table gains `check --staged` and `index --staged`; the `--fix` paragraph gains the two refusals |
+| `path@agent-config@skills/klarch-development/SKILL.md`, the paragraph "Every commit of a branch must pass `commits`" | the same restatement, the same edit |
+| `path@agent-config@skills/klarch-release/SKILL.md`, step 3 "Commit" | "with `cargo klarch check` before" becomes "with `cargo klarch check --staged` before" |
+| `path@core@README.md` | the command table, lines 35 and 41, gains `check --staged` and `index --staged`; the exit-code table, lines 54 to 56, gains the unmerged refusal and the two `--fix` refusals; the writer-gate paragraph, lines 112 to 115, names `index --staged`; the `--fix` paragraph, from line 117, gains the two refusals; the `## index` section's "It takes no flags", line 178, names `--staged` |
 
-The shipped edits cite no entry of this repository and write the command as `{{command}}`, per
-`design@agent-skills@shipped-text-cites-no-entry`.
+The two rows of the agent-config location's project skills restate the directive of the root CLAUDE.md row and change with
+it. The shipped edits cite no entry of this repository and write the command as `{{command}}`, per
+`design@agent-skills@shipped-text-cites-no-entry`. Every edit of this table is made under
+`skill@knowledge-architect-agent-configuration`, and an edit of the shipped text also follows the
+section "Editing an installed skill or agent" of `path@agent-skills@CLAUDE.md`.
 
 ## Mapping tables
 
@@ -621,8 +698,27 @@ The shipped edits cite no entry of this repository and write the command as `{{c
 | `Model::build` from disk | `commit_tree` over `Source::Index`, at `Depth::Judged` |
 | `Gathered::over` | the snapshot's `Assembly::inputs()`, with `installed` from the survey, `shipped` from `agents::shipped`, and `tracked_and_ignored` from `git::tracked_and_ignored` |
 | `Tree::Checkout(root)`, `Purpose::Check` | `Tree::Snapshot(&snapshot)`, `Purpose::Check` |
+| `check::run_with(...)` printed by `print_report` | `Assembly::report` printed by `print_report` |
 | the untracked-files note | not printed |
-| `walk:` | `walk:` and `tree: staged` |
+| `walk:` | `walk:`, then `tree: staged` |
+
+| `index` today | `index --staged` |
+| --- | --- |
+| `Model::build` from disk | `commit_tree` over `Source::Index`, at `Depth::Gated` |
+| `complete_working_tree`, which calls `Gathered::over` | the stop of `Depth::Gated`, then the staged assembly's `Inputs` |
+| `generated_list` with `Tree::Checkout(root)`, `Purpose::Index` | `generated_list` with `Tree::Snapshot(&snapshot)`, `Purpose::Index` |
+| `check_destinations`: a symlink on disk, a directory absent on disk | a symlink or gitlink entry in the staged listing, a directory absent from it |
+| `fs::write` where the bytes differ from the file | `git::stage_generated` where the bytes differ from the staged blob, or no blob is staged |
+| `<path>  rewritten` | `<path>  staged` |
+
+| `check --fix` today | after |
+| --- | --- |
+| manifest complaints: run `check` | unchanged |
+| none | `--staged` given: exit 2, refusal 1 |
+| installed repairs | unchanged |
+| the gate of phases 1 to 3 | unchanged |
+| none | the index differs from HEAD and the staged side gates: compare the two generated lists, and refuse 2 on a difference |
+| generated files written, then `check` | unchanged |
 
 | `extension` today | after |
 | --- | --- |
@@ -715,20 +811,35 @@ find anything, and when `.git/index.lock` exists. Fires when any assertion fails
 
 ## Implementation sequence
 
-Each step follows the project's development procedure, `skill@klarch-development`, and passes the
-gates it owes. Each commit that changes `path@agent-skills@content/` runs
+Steps 1 to 4 follow the project's development procedure, `skill@klarch-development`, and pass the
+gates they owe. Step 5 edits a CLAUDE.md, project skills and the shipped text, which that skill
+excludes: it follows `skill@knowledge-architect-agent-configuration`, and for the shipped text the
+section "Editing an installed skill or agent" of `path@agent-skills@CLAUDE.md`. Its tests are the
+ones step 5 names. The tests of steps 1 to 4 are built with `Sandbox` and `History` of
+`path@core@tests/binary.rs`, per `path@core@CLAUDE.md`. Each default under "Defaults awaiting the
+owner" gates the point it names: that point is built on the default only once the owner has ruled,
+and the rest of the step proceeds. Each commit that changes `path@agent-skills@content/` runs
 `cargo klarch install-agent-skills` and holds the installed copies.
 
 1. **The staged snapshot, empty of any command.** `git::Source`, the index listing, the
    `:./<path>` requests, the unmerged refusal, and `read_tree`/`commit_tree` taking a `Source`.
-   `commits` passes `Source::Commit` and is otherwise unchanged. Claims: AC1; every existing test of
-   `commits` passes unchanged. Fails alone on: AC1's set or bytes.
+   `commits` passes `Source::Commit` and is otherwise unchanged. `CommitTree::read` and
+   `object_id` name their tree through the `Source`, and the unit test of `tree_object` follows
+   its replacement. Claims: AC1; every existing test of
+   `commits` passes unchanged; a staged symlink and a staged gitlink are read as links, as in a
+   commit's tree. Fails alone on: AC1's set or bytes.
 2. **`check --staged` and the extension snapshot.** `CheckArgs::staged`, the staged run with
    `check`'s inputs, the `tree:` line, `Tree::Snapshot`, `Snapshot::revision`. The doc comments of
-   `Tree`, `Snapshot` and `Inputs.present` say which tree each describes. `path@core@README.md` and
+   `Tree`, `Snapshot`, `Purpose::Check` and `Inputs.present` say which tree each describes; the
+   match on `Tree::Commit(_)` of `path@core@tests/extension_api.rs` is renamed. The staged run
+   passes the checker directories project-relative, as `commits` does, since
+   `Model::from_documents_under` matches them against project-relative paths; and under `--staged`
+   `read_tree` reads every file of the installer's namespace, not only its `.md` files, so the
+   installed comparison reads the bytes it reads on disk. `path@core@README.md` and
    `path@core@CLAUDE.md` updated for the second source. Claims: AC2; a test in which the working
    tree passes and the staged tree fails, and the reverse, each giving the staged verdict under
-   `--staged`; a stale installed file in the staged tree is reported. Fails alone on: a verdict
+   `--staged`; a stale installed file in the staged tree is reported; the `checker source:` line under
+   `--staged` names the same directories as under `check`. Fails alone on: a verdict
    that follows the working tree under `--staged`.
 3. **`index --staged`.** `IndexArgs`, `git::stage_generated`, the gate over the staged model.
    README and source references to `design@core@generated-files-are-pure` updated. Claims: AC3.
@@ -769,7 +880,49 @@ that step 3 computes. Step 4 before step 5: the shipped text describes the comma
   since a `check --fix` that succeeded before now exits 2. Round 1 named it "`checks`, minor or
   major" and left the class to
   `issue@knowledge-architect@command-output-is-not-declared-a-contract`. The default is the
-  author's judgement: the refusal changes no check's verdict, it changes what a command does.
+  author's judgement: the refusal changes no check's verdict, it changes what a command does. A
+  major change owes an entry, and `design@knowledge-architect@changelog-entries` gives Migration
+  to what a consumer changes in its own files, so the entry names one: "a script or a CI step that
+  runs `check --fix` over a partly staged index handles exit 2, or runs `index --staged`".
+- **D2**, on #index-staged-write: the owner ruled in round 2 "B looks fine to me. This is not
+  definitive", and approved the table showing B as approved in round 3. The default: the head
+  written at the harvest carries B as approved, and a later change is an ordinary reversal. The
+  alternative is a head that states B as provisional.
+- **D3**, on #staged-tree-source, from the cold-implementer review: the owner was shown the listing
+  as `git ls-files -s`. That listing lists an intent-to-add entry, which `git commit` does not
+  record, so the shape as shown fails AC1. The default: the listing is HEAD's tree overlaid with
+  `git diff --cached`, which hides intent-to-add entries, as "`check --staged`" states. The
+  decision, the staged tree judged with `check`'s rules, is unchanged; the mechanism shown is.
+- **D4**, on #fix-refusal-mixed-state, from the cold-implementer review: the owner approved a
+  refusal that writes nothing. The comparison needs the working tree's model past phases 1 to 3,
+  which a stale install stops in phase 2, the case `--fix` exists to repair. The default: the
+  refusal comes after the installed repairs, so it writes no generated file and may have written
+  installed files, whose bytes are the same for both trees; it then exits 1 where it wrote, and 2
+  where it did not. The alternative: refuse first, before any write, and skip the comparison when
+  the working tree stops in phases 1 to 3.
+- **D5**, on #extension-tree-for-index, from the design-conformance review: the thread closed on
+  `argument@staged-tree-check@a14`, which counts "a third case to handle" as a cost of the rival
+  `Tree::Index`. `design@core@ne-minimal` and `design@core@trait-defaults` count the compile error
+  that makes every extension say how it reads a new tree as the effect wanted. The rename also
+  breaks every extension's match, but the repair it asks is a rename, which carries an extension's
+  commit-mode handling into `check --staged` without the extension deciding anything: thaum's
+  `changes` and `corpus` checks are then not run under `--staged`, which thaum lists, and an
+  extension that lists nothing would skip them silently. The default: the decided shape, the
+  rename, with the doc comment of `Tree::Snapshot` stating that the index is one of its
+  revisions and that `Purpose::Check` over a snapshot asks for every check the snapshot can
+  answer. The alternative: `Tree::Index(&Snapshot)` as a third variant, which makes each extension
+  write the arm for the index itself.
+- **D6**, on #workflow-delivery-staged, from the design-conformance review:
+  `design@agent-skills@additions-need-real-use` admits an addition to an installed skill on a
+  behaviour seen in a real session or asked for by the owner mid-session, "with the owner naming
+  what the session would have lacked without it". The owner asked for the delivery in round 1 and
+  approved the table in round 2. The lack the owner named in round 1 is the partial commit: "the
+  user intent in this case is probably to commit partially, and then --fix cannot apply its changes
+  safely". It covers the issue-tracking and planning edits, which name the partial-commit forms. It
+  does not cover the setup skill's new recommendation of `check --staged` before each commit, for
+  which no lack was named. The default: build the whole table, and record the owner's round-1
+  words as the named lack in the harvest's commit. The alternative: drop the setup row until a real
+  session shows the lack.
 
 ## Harvest
 
@@ -781,7 +934,8 @@ commit, with the test it fails.
 | item | home |
 | --- | --- |
 | #staged-tree-source, with #staged-check-semantics and #default-source-worktree | a new head in `path@core@docs/design.md`, slug `staged-tree-source`, under "1. The shape of a run", after `design@core@git-supplies-the-walk`; that head rewritten in place to name the second source |
-| #extension-tree-for-index | a new head in `path@core@docs/design.md`, slug `an-extension-reads-a-snapshot`, since the thread's slug names the question rather than the decision; `design@core@api-facade` edited for the rename |
+| #staged-tree-source, #index-staged-write | `design@core@the-core-cli-is-a-library-module` rewritten: the staged commands build on the staged assembly, not on `Gathered` |
+| #extension-tree-for-index | `design@core@an-extension-plugs-in-through-phased-hooks` rewritten: over a snapshot, git objects only; and a new head in `path@core@docs/design.md`, slug `an-extension-reads-a-snapshot`, since the thread's slug names the question rather than the decision; `design@core@api-facade` edited for the rename |
 | #index-staged-write | a new head in `path@core@docs/design.md`, slug `index-staged-write`, after `design@core@generated-files-are-pure`, which is rewritten: `index` takes one flag |
 | #fix-refusal-mixed-state, with #fix-with-staged | a new head in `path@core@docs/design.md`, slug `fix-refusal-mixed-state`, after `design@core@check-fix-flag`; `design@core@fix-before-the-checks` rewritten: the refusal comes first |
 | #workflow-delivery-staged | judged by the recording tests for a head in `path@agent-skills@docs/design.md` on the recommendation of `check --staged` before each commit |
