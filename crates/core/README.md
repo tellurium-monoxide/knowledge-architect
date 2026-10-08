@@ -96,7 +96,8 @@ every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a regi
 entries its home defines, the `path` kind against the tree, the `planned` kind against its absence
 from the tree, and, under the `claude` harness, a skill, an agent, the primer and the root
 CLAUDE.md, cited with no anchor as `skill@<name>@<slug>` — and reports the retired slug
-reference form and the unanchored path shape where either names something of this project.
+reference form and the unanchored path shape where either names something of this project, and
+a backticked bare name of a skill or an agent, per `design@core@bare-skill-name-reported`.
 The directory of an anchor other than the root has no spelling under its own name, so a reference
 names it from the anchor above it, as `path@<parent-anchor>@<dir>/`, per
 `design@core@every-path-names-its-anchor`. An illustration of a form writes its id as a placeholder

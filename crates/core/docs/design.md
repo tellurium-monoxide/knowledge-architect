@@ -1422,7 +1422,10 @@ section's slug are silent, so the lint reports no span that is not a skill's or 
 Whether such a name meets an ordinary word rests on the names: the installed ones carry the
 installer's prefix, and a project's own carry its prefix, per
 `design@agent-skills@skill-name-prefix`, which nothing checks yet, per
-`issue@core@tooling-for-project-skills`. Re-take the false positives with `cargo klarch check` over
+`issue@core@tooling-for-project-skills`. A project skill named by an ordinary word makes every
+backticked use of that word a finding, and the repair is to rename the skill with the project's
+prefix. The owner ruled this when the case was put with it as the default: "Q1: default
+approved." Re-take the false positives with `cargo klarch check` over
 a tree that serves the harness and has not rewritten its bare names, such as another project's at
 its upgrade, counting the findings of this lint: one on a span that is not meant as a pointer
 reopens the exact match.

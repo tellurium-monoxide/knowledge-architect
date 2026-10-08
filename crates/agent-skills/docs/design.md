@@ -710,7 +710,7 @@ it, since rewriting it would misstate the owner, against `goal@knowledge-archite
 In a released section of CHANGELOG.md, a reference to a deleted skill or agent goes back to the
 bare name instead, per `design@agent-skills@plain-text-is-no-repair`.
 
-### Plain text is never the repair of a finding, except a deleted skill's or agent's name in a released changelog section, and no instruction offers an unchecked form as the way to clear one `##plain-text-is-no-repair`
+### Plain text is never the repair of a finding, except text in the checker's syntax beside the issue that records its missing form and a deleted skill's or agent's name in a released changelog section, and no instruction offers an unchecked form as the way to clear one `##plain-text-is-no-repair`
 
 A form a writer can use is either one the checker judges, and the workflow recommends it, or one
 the checker does not read, and the workflow never directs a pointer into it to clear a finding. So
