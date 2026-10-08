@@ -742,7 +742,7 @@ A label beside a checked pointer is not such a form. A plan item named outside i
 stands beside a citation of the whole plan, because an item reference is refused there, per
 `design@core@plan-item-scope`.
 
-### The plain-text escape covers only text in the checker's syntax, which is written without backticks only beside a reference to an issue entry that records the missing form `##checker-syntax-without-backticks-names-its-gap`
+### The plain-text escape for text in the checker's syntax writes it without backticks only beside a reference to an issue entry that records the missing form `##checker-syntax-without-backticks-names-its-gap`
 
 The checker cannot express every reference a project needs. This head covers text in the checker's
 syntax, which would be read as a candidate if it were backticked: a reference,
