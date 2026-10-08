@@ -1402,7 +1402,7 @@ of each of its two homes, are not plan documents, and are cited `path@plans@<fil
 `design@core@candidate-rule-and-retired-forms`: a sketch names its paths on purpose, and an
 illustration that needs a fake path writes the escape anchor or an angle-bracket placeholder.
 
-### A backticked span that is exactly the name of a skill or an agent the entity table defines is reported, with its reference as the repair `##bare-skill-name-reported`
+### A backticked span that is exactly the name of a skill or an agent the entity table defines is reported, with its reference as the repair, and a project skill named by an ordinary word is renamed with the project's prefix `##bare-skill-name-reported`
 
 The scanner records every backticked span that is one word in the id grammar, a span wrapped
 across a line break at one of its hyphens joined. A lint of the last phase reports such a span when
@@ -1424,8 +1424,7 @@ installer's prefix, and a project's own carry its prefix, per
 `design@agent-skills@skill-name-prefix`, which nothing checks yet, per
 `issue@core@tooling-for-project-skills`. A project skill named by an ordinary word makes every
 backticked use of that word a finding, and the repair is to rename the skill with the project's
-prefix. The owner ruled this when the case was put with it as the default: "Q1: default
-approved." Re-take the false positives with `cargo klarch check` over
+prefix. Re-take the false positives with `cargo klarch check` over
 a tree that serves the harness and has not rewritten its bare names, such as another project's at
 its upgrade, counting the findings of this lint: one on a span that is not meant as a pointer
 reopens the exact match.

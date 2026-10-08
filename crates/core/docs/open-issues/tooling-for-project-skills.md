@@ -20,7 +20,7 @@ routing table, the description field and which installed skill one adds to. Long
 entity table rather than guess from paths.
 
 The owner's direction for the prefix, when the bare-name lint's reliance on it was ruled: "adding
-a check that asserts a project's skill names follow the <project-name> prefix rule. Maybe with the
+a check that asserts a project's skill names follow the `<project-name>` prefix rule. Maybe with the
 prefix being defined separately from project name in the manifest, to allow for what shortcuts
 (useful if the project has a long name, and needed here)." Needed here because this repository's
 own skills take the prefix `klarch-`, not its name, per `design@knowledge-architect@klarch-prefix`.
