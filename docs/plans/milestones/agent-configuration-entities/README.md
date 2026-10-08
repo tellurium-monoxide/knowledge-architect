@@ -6,7 +6,7 @@ This is the milestone document of the work that makes a project's agent configur
 checker's entity table. Under the `claude` harness, every skill and every agent becomes an entity
 of a built-in kind, `skill` or `agent`, cited without an anchor. Each of its level-two sections
 carries a slug and is cited by a third segment. The installed primer and the project's root
-CLAUDE.md get the same section register, under the kinds `primer` and `instructions`. A backticked
+CLAUDE.md get the same section rule, under the kinds `primer` and `instructions`. A backticked
 bare name of a skill or an agent becomes a finding. The work also replaces the paragraph numbers,
 `§N`, by which the installed skills cite each other. It is written for a session that did not
 witness the discussion.
@@ -86,8 +86,10 @@ installed skill. That skill is its home; where the two disagree, the skill wins.
        the planning skill, and owes that skill's reviews of a plan document.
 
      The slice resumes from the ruling or the converged design.
-3. **Claims, tests, implementation, gates, commits**, per the project's development procedure,
-   `klarch-development`, in as many commits as the session judges the work needs. The commits name
+3. **Claims, tests, implementation, gates, commits**, per the project's development procedure:
+   `klarch-development` for the Rust source; for a file under `path@agent-skills@content/`,
+   `knowledge-architect-agent-configuration` and the section "Editing an installed skill or agent"
+   of `path@agent-skills@CLAUDE.md`; in as many commits as the session judges the work needs. The commits name
    how each claim's test was shown to fail against a wrong implementation, and say of any claim
    whose test cannot yet do so why not.
 4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
@@ -136,15 +138,27 @@ What exists at each site the work touches:
   `planned`, per `design@core@candidate-rule-and-retired-forms`. `candidate` asks
   `Anchors::kind` for the head before it asks `Anchors::is_anchor_word`, so a kind wins over an
   anchor of the same name. `design@core@a-slug-belongs-to-a-component` refuses a reference that
-  names no anchor. Neither states a reason for the arity. The commit that introduced it, the one
-  titled "The entity table and the `<kind>@<anchor>@<id>` grammar", lists "two and four segments"
-  only among the planted defects.
+  names no anchor. The first head states the arity with no reason. The second gives one for the
+  anchor: "Two anchors may therefore each record an entity they call the same word". The commit
+  that introduced the arity, the one titled "The entity table and the `<kind>@<anchor>@<id>`
+  grammar", lists "two and four segments" only among the planted defects. **The rejected
+  alternatives hold the argued case**: "A register reference with no anchor", in
+  `path@core@docs/rejected-alternatives.md`, lost to `design@core@a-slug-belongs-to-a-component`
+  "because the extracted tool cannot know which register is single-instance in a given project,
+  and one three-part grammar serves every kind without a special case in the resolver or in the
+  instructions". The discussion did not read that entry; it was put to the owner after this
+  document's first reviews, under #skill-cited-without-anchor.
 - **Ten registers are compiled in**, per `design@core@registers-are-declared`, and the kind set is
-  their names with `path` and `planned`, per `design@core@one-entity-table`. No register's home is
-  under .claude.
+  their names with `path` and `planned`, per `design@core@one-entity-table`. In this repository
+  one register's home is under .claude: the `issue` register of the location `agent-config`, at
+  `path@agent-config@open-issues/`. No register's home is under `path@agent-config@skills/` or
+  `path@agent-config@agents/`.
 - **The installed copies are outside the walk** in every project, this one included, and only
   `check::agents` judges their bytes, per `design@core@owned-namespace-check`. `commits` does not
-  compare them. `Survey::installed` already holds their text, for a checkout and for each commit.
+  compare them: `Inputs.installed` is empty under `commits`. `Survey::installed` already holds
+  each installed copy with what reading it gave, `Outside::Text` for a file that reads as text,
+  for a checkout and, through `read_tree` and `from_listing` in `path@core@src/cli/history.rs`, for
+  each commit.
 - **A project skill or agent is walked** like any document. Under .claude in this repository it
   belongs to the location `agent-config`. A slug on one of its headings is a misplaced definition
   today: the file is no register home.
@@ -153,15 +167,21 @@ What exists at each site the work touches:
   carry the prefixed name, as in `name: knowledge-architect-decision-recording`. The build adds the
   prefix to each skill directory and agent file, per
   `design@agent-skills@content-mirrors-the-install-layout`.
-- **Skills cite each other's sections by number.** `grep -rc '§'` finds 65 lines in 13 files of
-  `path@agent-skills@content/`, and 29 lines in 9 walked files outside it: CLAUDE.md files, the
-  agent-skills README and design home, three issues and two `klarch-` skills.
-- **Skills and agents are named by backticked bare names**: 205 spans of the shape
-  `` `knowledge-architect-*` `` or `` `klarch-*` `` in 46 walked files, over the walk minus the
-  core's mock projects and the crates' changelog copies. 8 of them are crate names. 1 is
+- **Skills cite each other's sections by number.** At origin/main, `grep -rc '§'` finds 65 lines in
+  13 files of `path@agent-skills@content/`, and 29 lines in 9 walked files outside it: CLAUDE.md
+  files, the agent-skills README and design home, three issues and two `klarch-` skills. The walk
+  for the second count is `git ls-files '*.md' '*.rs'` minus the installed copies, the core's mock
+  projects and the crates' changelog copies. This branch adds one more line, in
+  `issue@core@a-home-for-developer-contracts-outside-agent-configuration`, and the plan documents'
+  own lines. The section-citations slice re-takes the count.
+- **Skills and agents are named by backticked bare names**: at origin/main, 205 spans matching
+  `` `(knowledge-architect|klarch)-[a-z-]+` `` in 46 walked files, by `grep -ohE` over the walk
+  above. 8 of them are crate names, `knowledge-architect-agent-skills` and
+  `knowledge-architect-gates`, so 197 spans name a skill or an agent, in 45 files. 1 is
   `knowledge-architect-transcript-conformity-reviewer`, an agent that no longer exists, named in
   the released changelog section that records its rename.
-- **The sections to slug.** An awk count of level-two headings outside fenced blocks gives 130,
+- **The sections to slug.** A count of the lines opening with `## ` outside blocks fenced by
+  three backticks or tildes, `awk` over each file, gives 130,
   over the 9 skills and 8 agents of content/, content/PRIMER.md, the root CLAUDE.md, and this
   repository's three `klarch-` skills and its agent `klarch-changelog-reviewer`.
 
@@ -186,8 +206,8 @@ The decisions this work rests on and does not argue again:
 - `design@core@one-entity-table`: one table and one resolver for every kind. The harness kinds are
   more entries of it.
 - `design@core@an-entry-is-a-heading-at-the-register-level`: a heading register declares one
-  level, and every heading at that level in its home owes a slug. The section register is one more
-  heading register, at level two.
+  level, and every heading at that level in its home owes a slug. The section rule of the entities
+  slice is that rule at level two, over each section home.
 - `design@core@phases-gate-the-report`: the entity table is phase 3, so the definitions from the
   installed copies are built there.
 - `design@core@owned-namespace-check`: the installed copies stay byte-checked by `check` and
@@ -206,15 +226,24 @@ The recorded decisions the work reverses or rewrites, each with every text that
 | `design@core@candidate-rule-and-retired-forms` | its arity sentence names the two-segment form of a harness kind; the four new heads become candidates | `path@knowledge-architect@CLAUDE.md` (2, its restatement of the candidate rule); `path@agent-config@skills/klarch-release/SKILL.md`; `path@core@docs/design.md` (5); `issue@core@a-bare-mention-of-a-deleted-entry-is-never-reported`; `issue@core@a-span-with-an-empty-head-is-malformed-against-its-head`; `path@core@docs/rejected-alternatives.md` (3); `path@core@docs/tripwires.md` (2); `path@core@README.md`; `path@core@src/check/references.rs` | slice 1, and slice 3 for the bare-name lint |
 | `design@core@a-slug-belongs-to-a-component` | its refusal of a reference that names no anchor exempts a harness kind, whose namespace is the harness's | `path@knowledge-architect@CLAUDE.md`; `path@agent-skills@docs/design.md`; `path@core@docs/design.md` (4); `issue@core@cross-project-references`; `path@core@docs/rejected-alternatives.md` (5); `path@core@src/check/references.rs`; `path@core@src/source/mod.rs`; `path@core@src/source/rs.rs` | slice 1 |
 | `design@core@owned-namespace-check` | the installed copies are read for definitions, still outside the walk for references | `path@agent-skills@docs/design.md` (4); `issue@agent-skills@patching-an-installed-skill`; `path@core@docs/design.md` (4); `issue@core@installed-file-findings-belong-in-phase-four`, whose premise "the installed files are outside the model" stops holding; `path@core@docs/rejected-alternatives.md` (2); `path@core@README.md`; `path@core@src/agents.rs`; `path@core@src/check/agents.rs`; `path@core@src/check/mod.rs`; `path@core@src/cli/history.rs` (2); `path@core@src/cli/mod.rs`; `path@core@src/manifest.rs` (2); `path@core@src/mock_projects.rs`; `path@core@src/survey.rs`; `path@core@src/walk.rs`; `path@core@tests/binary.rs` (3); `path@knowledge-architect@docs/design.md` (2) | slice 1 |
-| `design@core@registers-are-declared` and `design@core@one-entity-table` | the count of built-in registers and the kind list grow by the four harness kinds; a declared register under one of their names is refused, per AC1 | `path@knowledge-architect@CLAUDE.md` ("Ten are built in"); `path@core@README.md` ("Ten registers are compiled in"); `path@core@docs/design.md`; `path@core@docs/rejected-alternatives.md` (2); `path@core@src/manifest.rs`; `path@agent-skills@docs/design.md`; `path@core@src/entity.rs` | slice 1 |
-| `design@core@an-entry-is-a-heading-at-the-register-level` | its list of homes gains the section register's: a skill's SKILL.md, an agent's file, the primer, the root instructions | `path@knowledge-architect@CLAUDE.md`; `path@agent-skills@docs/design.md`; `path@core@docs/design.md` (3); `issue@core@a-heading-line-markdown-renders-as-no-heading-defines-an-entry`; `path@core@docs/rejected-alternatives.md` (2); `path@core@README.md` | slice 1 |
+| `design@core@registers-are-declared` and `design@core@one-entity-table` | the kind list grows by the four harness kinds, which, like `path` and `planned`, are no register, so the count of built-in registers stays ten; a declared register under one of their names is refused, per AC1 | `path@knowledge-architect@CLAUDE.md` ("Ten are built in"); `path@core@README.md` ("Ten registers are compiled in"); `path@core@docs/design.md`; `path@core@docs/rejected-alternatives.md` (2); `path@core@src/manifest.rs`; `path@agent-skills@docs/design.md`; `path@core@src/entity.rs` | slice 1 |
+| `design@core@an-entry-is-a-heading-at-the-register-level` | its rule is applied at level two to the section homes: a skill's SKILL.md, an agent's file, the primer, the root instructions | `path@knowledge-architect@CLAUDE.md`; `path@agent-skills@docs/design.md`; `path@core@docs/design.md` (3); `issue@core@a-heading-line-markdown-renders-as-no-heading-defines-an-entry`; `path@core@docs/rejected-alternatives.md` (2); `path@core@README.md` | slice 1 |
 | `design@core@agents-table` | under `claude`, the harness kinds exist; under an empty list, they do not | `path@core@docs/design.md` (3); `issue@core@a-checker-only-project-carries-the-workflow-skeleton`; `issue@core@a-home-for-developer-contracts-outside-agent-configuration`; `issue@core@configuration-for-several-agent-providers`; `path@core@docs/rejected-alternatives.md`; `path@core@README.md`; `path@core@src/agents.rs`; `path@core@src/check/agents.rs`; `path@core@src/manifest.rs` (4) | slice 1 |
 | `design@agent-skills@shipped-text-cites-no-entry` | the shipped text may cite the entities of the shipped set: its skills, its agents, the primer, and their sections | `path@agent-config@skills/klarch-release/SKILL.md`; `path@agent-skills@CLAUDE.md` (2); `path@agent-skills@content/skills/setup/SKILL.md`; `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked` (2) | slice 1 |
 | `design@agent-skills@content-mirrors-the-install-layout` | the build also renders the section slug placeholders | `path@agent-skills@CLAUDE.md` | slice 1 |
 | `design@knowledge-architect@changelog-entries` | rewriting a bare name of a skill or agent into a reference in a released section, and back into a bare name after its entity is deleted, is a change of structure | `path@knowledge-architect@CHANGELOG.md`; `path@agent-config@agents/klarch-changelog-reviewer.md`; `path@knowledge-architect@CLAUDE.md` (2); `path@agent-config@skills/klarch-release/SKILL.md`; `path@knowledge-architect@docs/design.md`; `issue@knowledge-architect@a-mechanical-changelog-check` (2) | slice 3 |
+| `design@core@one-entity-table`, its title | "an entity with a kind, an anchor, an id and a definition site, held in one table built from the walk" no longer holds for a harness kind, which names no anchor and is partly defined from the installed copies, outside the walk | as in its row above | slice 1 |
+| `design@core@phases-gate-the-report` | its chain, "the manifest feeds the walk, the walk the model, the model the table", gains the installed copies, which the survey of phase 2 reads and the table of phase 3 takes | `path@knowledge-architect@CLAUDE.md`; `path@core@CLAUDE.md`; `path@core@docs/design.md` (7); `issue@core@installed-file-findings-belong-in-phase-four`; `path@core@docs/rejected-alternatives.md` (4); `path@core@docs/tripwires.md`; `path@core@README.md` | slice 1 |
+| `design@core@anchors-are-components-and-locations` | a location "owes the homes of the registers its row declares and nothing else"; a project skill under a location is a section home of a harness kind, which no anchor carries; and every kind name is refused as a Component's or a location's name, per D7 | `path@knowledge-architect@CLAUDE.md`; `path@core@docs/design.md` (3); `path@core@docs/rejected-alternatives.md`; `path@core@src/manifest.rs` | slice 1 |
+| `design@core@a-plan-name-reads-as-nothing-else` | a plan's name is not a kind name either, per D7 | `path@core@docs/design.md`; `path@core@README.md`; `path@core@src/check/tree.rs` (2); `path@core@src/entity.rs`; `path@core@src/mock_projects.rs` | slice 1 |
+| `design@agent-skills@plain-text-is-no-repair` | the bare name in a released changelog section, after its skill or agent is deleted, is stated as no unchecked form clearing a finding, on the owner's ruling in R3 | `path@knowledge-architect@CLAUDE.md`; `path@agent-skills@docs/design.md` (2); `path@agent-skills@docs/tripwires.md` (2); `path@core@docs/design.md`; `path@core@src/check/references.rs` | slice 3 |
+| `design@agent-skills@a-past-sentence-is-rewritten` | a released changelog section is its exception: its content never changes, so a dangling skill or agent reference there goes back to the bare name | none outside the plans directory | slice 3 |
+| `goal@core@relocation-is-one-manifest-edit` | its sentence "Every reference names its anchor" is contradicted by the two-segment form; put to the owner after this document's first reviews, under `knowledge-architect-goal-setting` | `issue@core@an-extension-cannot-see-which-register-a-document-belongs-to` | the owner's ruling, before slice 1 |
 
 The parenthesised count is the number of referencing lines `cargo klarch show` printed for that
-file, taken in this session.
+file, taken in this session. "Updated by" names the slice whose harvest reads each referencing
+text, and edits each one whose statement the change makes false; the slice's harvest rows name the
+texts already known to change.
 
 ## Criteria
 
@@ -289,7 +318,8 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
   `design@core@candidate-rule-and-retired-forms` and `design@core@a-slug-belongs-to-a-component`,
   slice 1.
 - **Relations:** absorbs the kinds of #primer-sections and #root-instructions-cited, which take the
-  same form. Guarded by AC1.
+  same form. Guarded by AC1, which the owner widened to every kind after the first reviews, as D7
+  records.
 
 ### The tool constructs an anchor for the agent configuration, and every reference keeps three segments `##skill-cited-in-a-constructed-anchor`
 
@@ -330,7 +360,7 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
   dangles a consumer's citations of it, and each such rename owes a Migration entry in the
   changelog. The owner accepted this as intended.
 - **Shape:** the decided design of the `entities` slice. **Harvest:** a new head in
-  `path@core@docs/design.md`, slug `skill-sections-carry-slugs`, recording the section register for
+  `path@core@docs/design.md`, slug `skill-sections-carry-slugs`, recording the section rule for
   every harness kind, and the rewrite of `design@core@an-entry-is-a-heading-at-the-register-level`,
   slice 1.
 
@@ -355,13 +385,14 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
 - **Closed by:** R2: "installed-skills-defined-from-shipped-set: (b) looks right here IMO." R4:
   "installed-skills-defined-from-shipped-set approved. Though the problem you mention is only
   bearing on the current project, and not on external consumers, I believe."
-- **The premise of the owner's remark, corrected in R4 by the assistant**: "The problem does reach
-  consumers. `design@core@installed-binary-version-check` says of `commits`: it "compares no
-  historical value, so moving the pin fails no earlier commit". So the tip's binary judges every
-  earlier commit of a branch." In a consumer, a branch whose first commit cites an installed section
+- **The premise of the owner's remark.** In R4 the assistant said it would check the remark, and
+  showed no answer in that round. The answer was put to the owner after this document's first
+  reviews: `design@core@installed-binary-version-check` says of `commits` that it "compares no
+  historical value, so moving the pin fails no earlier commit", so the tip's binary judges every
+  earlier commit of a branch. In a consumer, a branch whose first commit cites an installed section
   on the old pin, and whose second commit moves the pin, installs and repairs the citation, would
-  fail on its first commit if the definitions came from the binary. The owner's approval stands on
-  either premise, and AC2's test may model either case.
+  fail on its first commit if the definitions came from the binary. The problem therefore reaches
+  consumers too. The owner's ruling on the corrected premise is recorded here when given.
 - **The slug:** it names the R2 shape, "shipped set". The approved decision is "from the tree's
   installed copies", so the harvested head takes the slug `installed-entities-from-the-tree`, per
   §7 point 6 of the planning skill.
@@ -406,8 +437,9 @@ Weighed, the assistant's, R1: agents read these files at every load. Met by
 - **Conditions:** every project serving `claude` adds a slug to every level-two heading of its root
   CLAUDE.md: one Migration entry, minor.
 - **The owner's direction on scoped files, R2**, recorded in
-  `issue@core@a-home-for-developer-contracts-outside-agent-configuration` in the commit that adds
-  this document: "after investigation, I found that delivery of scoped CLAUDE.md and AGENTS.md files
+  `issue@core@a-home-for-developer-contracts-outside-agent-configuration` in the commit of this
+  branch titled "Record the owner's direction on scoped CLAUDE.md files in the developer-contracts
+  issue": "after investigation, I found that delivery of scoped CLAUDE.md and AGENTS.md files
   is very unreliable. In the future, I'm going to remove any recommendation for them, and change the
   contract home. This would be its own session."
 - **Shape:** the decided design of the `entities` slice. **Harvest:** the heads of
@@ -504,6 +536,9 @@ R1, assistant; bears on #skill-cited-without-anchor (for).
 
 > It is the shortest form. `` `skill@knowledge-architect-review` `` is 34 characters, against 26 for the bare name.
 
+Correction, from the review of this document: the 34 counts the backticks and the 26 does not. It is
+32 against 26 without them.
+
 ### A skill name is already unique, as a directory name `##a11`
 
 R1, assistant; bears on #skill-cited-without-anchor (for).
@@ -552,6 +587,9 @@ R1, assistant; bears on #skill-cited-in-a-constructed-anchor (cost).
 
 > An anchor at `.claude/` itself collides with this repository's declared `agent-config` location: "two anchors at one path" is refused. ... There are 6 references to `agent-config` today.
 
+Correction, from the review of this document: one of the 6 spans is the placeholder
+`path@agent-config@<file>`, which the scanner does not record, so there are 5 references.
+
 ### A constructed anchor keeps the grammar and copies the plans precedent `##a19`
 
 R1, assistant; bears on #skill-cited-in-a-constructed-anchor (for).
@@ -582,7 +620,7 @@ R1, assistant; bears on #section-kind (cost).
 
 > the word `section` becomes a candidate head. A span like `` `section@<word>` `` [placeholder] in prose would start being read. That is the kind of change `tripwire@core@candidate-rule-silence` watches.
 
-### The section register reuses the rule that every heading at the level owes a slug `##a24`
+### The section rule reuses the rule that every heading at the level owes a slug `##a24`
 
 R1, assistant; bears on #skill-sections-carry-slugs.
 
@@ -677,6 +715,9 @@ R1, assistant; bears on #bare-skill-name-reported (false positives).
 R1, assistant; bears on #bare-skill-name-reported (against).
 
 > Every citation of a skill grows by 8 to 16 characters.
+
+Correction, from the review of this document: rewriting a bare name into its reference adds the
+kind and one `@`, 6 characters for `skill` and `agent`.
 
 ### A released changelog section naming an existing skill would be reported `##a40`
 
@@ -900,6 +941,9 @@ R4, assistant; bears on plan shape (milestone).
 
 > The work cannot be one pull request without one oversized commit. The slug requirement and the content that satisfies it must land in the same commit, because every commit must pass under the tip's checker. And the two migrations, `§N` citations and bare names, touch about 46 files each.
 
+Correction, from the review of this document: the `§N` migration touched 22 files at origin/main,
+13 in content/ and 9 outside it; the bare-name migration 45.
+
 ### The later slices need the kinds, and the lint comes after the citation rewrite `##a77`
 
 R4, assistant; bears on plan shape (order), #bare-skill-name-reported.
@@ -920,10 +964,17 @@ R4, assistant; bears on plan shape (against one spec).
 ## New names, in one place
 
 ```text
-crates/core/src/entity.rs                 the kinds skill, agent, primer and instructions (slice 1)
-                                          the two-segment form of a harness kind (slice 1)
-                                          Entities::build gains the installed copies' texts as an input (slice 1)
-crates/core/src/manifest.rs               the four kind names refused as a register or an anchor name (slice 1, AC1)
+crates/core/src/entity.rs                 the kinds skill, agent, primer and instructions, answered by
+                                          Anchors::kind beside path and planned (slice 1)
+                                          a variant of Candidate for the anchorless reference, beside
+                                          Candidate::Reference, holding the kind, the name and the slug (slice 1)
+                                          Entities::build gains the installed copies as an input (slice 1)
+                                          milestone_refusal refuses every kind name (slice 1, AC1)
+crates/core/src/manifest.rs               every kind name refused as an anchor's name, and the four harness
+                                          kinds as a register's name (slice 1, AC1)
+crates/core/tests/binary.rs               a helper of History that serves claude and installs the shipped set (slice 1)
+crates/core/src/scan.rs                   an observation of a backticked span with no @ and no /, which the
+                                          bare-name lint reads (slice 3)
 crates/agent-skills/build.rs              the section slug placeholder, written {{slug:<id>}} at the end of a
                                           heading, rendered into a backticked ##<id> (slice 1)
 crates/core/src/check/references.rs       the bare-name lint (slice 3)
@@ -987,7 +1038,9 @@ is a Markdown file under `path@agent-config@agents/`. The installer already writ
 `design@core@owned-namespace-check`. One reading is not established: whether the harness restricts
 a skill's or an agent's name to lowercase letters, digits and hyphens, which the assistant stated
 from memory in R2 (a59). Slice 1's audit reads the harness's documentation for it, and the head of
-#skill-register records the reading.
+#skill-register records the reading. A second is an assumption: that the harness may read any
+Markdown file under the agents directory as an agent definition, which is why no README is owed
+there (a8).
 
 ## Premortem
 
@@ -999,7 +1052,7 @@ ruled in R4: "Keep none of the tripwires." and "All four AC are applied."
 | T1 | The four new heads turn spans that were never pointers into dangling references, such as `agent@<host>` [placeholder] | #skill-cited-without-anchor | proposed as a tripwire, not recorded on the owner's word |
 | T2 | The bare-name lint reports a span that is a name and not a pointer, such as a skill named in an example command line | #bare-skill-name-reported | proposed as a tripwire, not recorded on the owner's word |
 | T3 | Section slugs of the installed text churn, so every upgrade costs consumers a round of repairs; proposed to fire when one release's changelog holds more than 3 Migration entries for renamed or removed sections | #skill-sections-carry-slugs, #primer-sections | proposed as a tripwire, not recorded on the owner's word |
-| AC1 | A kind shadows an anchor of the same name in the head position | #skill-cited-without-anchor | an acceptance criterion of the entities slice, applied on the owner's word |
+| AC1 | A kind shadows an anchor of the same name in the head position | #skill-cited-without-anchor | an acceptance criterion of the entities slice, applied on the owner's word, and widened to every kind by the owner's ruling recorded under D7 |
 | AC2 | Definitions taken from anything but the judged tree fail `commits` on an earlier commit | #installed-skills-defined-from-shipped-set | an acceptance criterion of the entities slice, applied on the owner's word |
 | AC3 | The shipped text cites a section that does not exist | #installed-skills-defined-from-shipped-set | an acceptance criterion of the entities slice, applied on the owner's word |
 | AC4 | Adopting projects meet the root CLAUDE.md slug requirement as an unexplained finding | #claude-md-sections | an acceptance criterion of the entities slice, applied on the owner's word |
@@ -1011,7 +1064,7 @@ In the slices' specs: AC1 to AC4 are judged by the entities slice.
 ## Implementation sequence
 
 1. [Entities](entities.md): the four harness kinds and the two-segment form; definitions from the
-   tree's installed copies and from the walk; the section register at level two, with a slug on
+   tree's installed copies and from the walk; the section rule at level two, with a slug on
    every level-two heading it covers, the section slug placeholder in content/; AC1 to AC4.
 2. [Section citations](section-citations.md): every `§N` citation of a skill's or an agent's section
    rewritten as a reference; the numbering of skill and agent sections removed.
@@ -1027,8 +1080,45 @@ the two rewrites touch many of the same sentences (a77).
 
 ## Defaults awaiting the owner
 
-None. D1 was ruled by the owner after this document's first commit, "Agreed on D1", and is written
-into #skill-register.
+D1 was ruled by the owner after this document's first commit, "Agreed on D1", and is written into
+#skill-register. The first reviews of this document produced the defaults below. Each is applied in
+the sections it touches, and the work does not start on its point before the owner rules.
+
+- **D2**, on #installed-skills-defined-from-shipped-set: the corrected premise of the owner's
+  remark in R4, a75. The remark reads the problem as bearing on this repository only. It reaches
+  consumers too, as the thread's item states. Default: the approval stands, since it covers both.
+- **D3**, on #skill-cited-without-anchor: the rejected alternative "A register reference with no
+  anchor", which the discussion did not read, and on whose absence the owner's R2 word rested ("I
+  see no real argument in favor of that"). Its first reason does not hold for a harness kind; its
+  second is the cost a14, which the owner weighed. Default: the decided shape stands, and the entry
+  is amended at slice 1's harvest.
+- **D4**, on #skill-cited-without-anchor and the criterion #names-an-anchor:
+  `goal@core@relocation-is-one-manifest-edit` states "Every reference names its anchor", which the
+  two-segment form contradicts by its letter. Its met condition, "such a move leaves no reference
+  to repair", still holds: nothing a harness kind names moves with a manifest edit. A goal binds,
+  and changes only on the owner's word, under `knowledge-architect-goal-setting`. Default, as a
+  draft for the owner's ruling: "Every reference to what the manifest places names its anchor, and
+  each anchor's directory is declared once, in the manifest, so moving a Component or a location
+  changes the manifest and no document." Slice 1 does not start before the ruling.
+- **D5**, on #section-numbers-dropped: the owner ruled on removing "the "1." numbering of skill
+  sections". The section-citations slice also removes it from the agents, and from this
+  repository's `klarch-` skills and agent. Default: both, since every one of them carries a slug.
+- **D6**, on #claude-md-sections and AC4: AC4 was applied as the setup skill stating the root
+  CLAUDE.md's slug requirement. The entities slice also states it for a project skill or agent,
+  which #skill-sections-carry-slugs and #agent-sections-carry-slugs bind too. Default: both.
+- **D7, ruled**, on #skill-cited-without-anchor and AC1: AC1 was applied to the four harness kinds.
+  The review found that the same shadowing reaches every existing kind, and a plan's name too. The
+  owner ruled, after the first reviews: "My ruling on this is that all kind names should be refused
+  for anything that can be an anchor name (components, custom locations...). I'd rather make this
+  decision early to avoid painful migrations." So AC1 refuses every kind name as the name of a
+  Component, a location or a plan: `path`, `planned`, the ten built-in registers, the four harness
+  kinds whatever the harness, and every register the manifest declares. Reading of the ruling, open
+  to the owner's correction: a plan is "anything that can be an anchor name", and a declared
+  register's name is a kind name. The refusals make a manifest that was valid stop being accepted,
+  a major change on the `manifest` surface.
+- **D8**, on #skill-register: under `harness = []`, a project that kept its installed copies walks
+  them as its own documents, and their slugs are misplaced definitions there. Default: the findings
+  stand; the repair is to remove the copies or to serve the harness.
 
 ## Harvest
 

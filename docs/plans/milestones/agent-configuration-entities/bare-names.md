@@ -6,14 +6,18 @@ there. It starts after the section-citations slice has merged.
 
 ## Builds
 
+- **An observation of a bare span** in `path@core@src/scan.rs`: a backticked span with no `@` and
+  no `/` records nothing today, since the span patterns there need one of the two. The lint reads
+  the new observation.
 - **The bare-name lint**, in the last phase, beside the path-to-anchor lint of
   `design@core@every-path-names-its-anchor`: a backticked span that is exactly the name of a skill
   or an agent the entity table defines, installed or the project's own, is a finding, whose repair
   is the reference `skill@<name>` or `agent@<name>` [placeholders]. A span that names no defined
   skill or agent is silent, so a crate's name and a name that no longer exists report nothing.
 - **Every bare name rewritten**, in the same commit as the lint, since every commit must pass under
-  the branch tip's checker. When the milestone was written, 197 spans of a skill or an agent's
-  name stood in 46 walked files. The sites are re-listed by running the lint at the slice's start.
+  the branch tip's checker. At origin/main when the milestone was written, 197 spans of a skill's or
+  an agent's name stood in 45 walked files. The milestone's own documents add theirs, and are
+  rewritten too. The sites are re-listed by running the lint at the slice's start.
 - **The released changelog sections** rewritten the same way, on the owner's ruling in R2 that it
   is a change of structure. A released section that names a skill or an agent that no longer exists
   keeps the bare name, which the lint leaves silent, as
@@ -35,7 +39,8 @@ there. It starts after the section-citations slice has merged.
 ## Audit subjects
 
 - The milestone document entire, and this spec.
-- `path@core@src/check/references.rs`, where the path-to-anchor lint is written.
+- `path@core@src/check/references.rs`, where the path-to-anchor lint is written, and
+  `path@core@src/scan.rs`, its span patterns.
 - `design@core@every-path-names-its-anchor`, `design@core@candidate-rule-and-retired-forms`,
   `design@knowledge-architect@changelog-entries`, `design@agent-skills@a-past-sentence-is-rewritten`,
   `design@agent-skills@plain-text-is-no-repair`.
@@ -53,7 +58,17 @@ there. It starts after the section-citations slice has merged.
 ## Premises that expire
 
 - **The section-citations slice has rewritten every `§N` citation.** Many of the bare names stand
-  beside them, and rewriting both at once would mix the two rewrites in one review.
+  beside them, and rewriting both at once would mix the two rewrites in one review. Guard: the
+  claim of that slice, a grep for `§` over the walk, re-run at this slice's start.
+
+## Implementation sequence
+
+1. **The observation, empty.** The bare-span observation in the scanner, read by no check. Fails
+   alone on: an existing test of the scanner's spans.
+2. **The lint and the rewrite, in one commit.** The lint, every bare name rewritten, the released
+   changelog sections included, the installed copies, the changelog entries. The lint and the
+   rewrite land in one commit, because every commit must pass under the branch tip's checker.
+   Fails alone on: a lint finding on a name the rewrite left.
 
 ## Decided design
 
@@ -98,7 +113,7 @@ At this slice's landing, under `knowledge-architect-decision-recording` and
 
 | what | home |
 | --- | --- |
-| #bare-skill-name-reported | a new head in `path@core@docs/design.md`, §3, slug `bare-skill-name-reported`; `design@knowledge-architect@changelog-entries` rewritten in place for the released sections |
+| #bare-skill-name-reported | a new head in `path@core@docs/design.md`, §3, slug `bare-skill-name-reported`; `design@knowledge-architect@changelog-entries` rewritten in place for the released sections; `design@agent-skills@plain-text-is-no-repair` and `design@agent-skills@a-past-sentence-is-rewritten` rewritten in place, each naming the released changelog section as the case the owner ruled in R3 |
 | the restatements | `path@knowledge-architect@CLAUDE.md`, its restatement of the candidate rule and of the changelog rules; `path@agent-config@agents/klarch-changelog-reviewer.md`; `path@agent-config@skills/klarch-release/SKILL.md` |
 | `issue@core@a-bare-mention-of-a-deleted-entry-is-never-reported` | its What narrowed: the names of skills and agents are reported; the bare mention of a slug stays open |
 | the changelog | `Next release`: under Migration, every backticked bare name of a skill or an agent is written as its reference, mock projects serving `claude` included. Surface `checks`, class minor |
