@@ -20,7 +20,8 @@ subsection is omitted.
   slice, and "step" names any item of an implementation sequence. The planning skill says how a
   spec's work takes the procedure once, and how many commits a step takes is the session's to judge.
 - `agent-skills`, patch: a spec's design audit runs only when the work does not start in the session
-  that wrote the spec, or when commits have landed on the main branch since.
+  where the discussion converged, or when commits other than the spec's own have landed on the main
+  branch since the spec was written.
 - `agent-skills`, patch: a plan document lands before its work only when the work changes what the
   per-commit gate checks; a change only the working-tree check sees, such as installed text, does
   not count.
@@ -51,6 +52,9 @@ subsection is omitted.
   is routed by the primer's table of what is met outside the task, a fix checkable from the diff
   landing in a commit of its own that the review's record names; and the last transcript review
   waits until the owner has answered every ruling the repairs asked for.
+- `agent-skills`, patch: the review of a slice or of a spec's work gives each finding one of the
+  review skill's three outcomes, where the planning skill made every unrepaired finding an issue
+  entry.
 - `agent-skills`, patch: a dispatcher names a scratch directory of its own to each subagent sent
   together with others, and the standing-entry searcher writes its working files there.
 - `agent-skills`, patch: moving the pin runs the project's gates command, or the check and the
