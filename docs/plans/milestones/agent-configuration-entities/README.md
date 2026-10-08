@@ -1043,12 +1043,13 @@ by the tests of `knowledge-architect-decision-recording`.
 The work reads the layout the `claude` harness gives an agent configuration: a skill is a directory
 under `path@agent-config@skills/` holding `SKILL.md` with `name` and `description` frontmatter, and an agent
 is a Markdown file under `path@agent-config@agents/`. The installer already writes that layout, per
-`design@core@owned-namespace-check`. One reading is not established: whether the harness restricts
-a skill's or an agent's name to lowercase letters, digits and hyphens, which the assistant stated
-from memory in R2 (`argument@agent-configuration-entities@a59`). Slice 1's audit reads the harness's documentation for it, and the head of
-`thread@agent-configuration-entities@skill-register` records the reading. A second is an assumption: that the harness may read any
-Markdown file under the agents directory as an agent definition, which is why no README is owed
-there (`argument@agent-configuration-entities@a8`).
+`design@core@owned-namespace-check`. The entities slice's audit read the harness's documentation,
+https://code.claude.com/docs/en/skills.md and https://code.claude.com/docs/en/sub-agents.md, and
+records what it read in the slice's spec: a skill is invoked by its directory's name; an agent's
+identity is its frontmatter `name`, the agents directory is scanned recursively, and a file there
+with no `name` is documentation; an agent's `name` is at most 256 characters, holds no `:` and does
+not start with `-`; a skill's name defers to the Agent Skills specification. The name grammar the
+owner ruled in D1 is stricter than either, and stands as the checker's own requirement.
 
 ## Premortem
 

@@ -60,6 +60,8 @@ there, except its own acceptance criteria. It starts after the milestone documen
   every level-two heading of the root CLAUDE.md, and, per D6 of the milestone document, of a project
   skill or agent, carries a slug; and the finding's text names that repair.
 - **The changelog entries** of this slice, in the `Next release` section, then `cargo x changelog`.
+- **The finding texts** of every new finding name the repair, and a cause only where the repair
+  depends on it, per `design@core@finding-names-the-repair`.
 
 ## Claims
 
@@ -152,6 +154,15 @@ there, except its own acceptance criteria. It starts after the milestone documen
    (`argument@agent-configuration-entities@a76`). Fails alone on: a heading the table lists reported unslugged.
 3. **The text that states it.** AC4's setup-skill text, the changelog entries, then the harvest.
 
+**The branch's first commit holds every stricter check and the content it needs**: the section rule,
+the name-grammar finding and the kind-name refusals, with the 130 slugs. `commits` judges every
+earlier commit of a branch with the tip's checker, so a commit before the one that makes a check
+stricter fails under the tip, per `design@core@a-commit-message-is-a-document` and §4 of
+`klarch-development`. Steps 1 and 2 may be developed as separate commits, and are squashed into the
+first commit before the review; step 3 and the review repairs follow it. Found at the audit, from
+`issue@core@a-contract-change-fails-every-earlier-commit-unexplained`, which describes the same
+failure for a generated file.
+
 ## Decided design
 
 ### #skill-register and #claude-md-sections: four kinds, under the `claude` harness
@@ -159,7 +170,7 @@ there, except its own acceptance criteria. It starts after the milestone documen
 | kind | an entity | defined from | cited |
 | --- | --- | --- | --- |
 | `skill` | a directory directly under `path@agent-config@skills/` holding `SKILL.md`, its id the directory's name | the installed copies for a name the installer's namespace holds, the walk otherwise | `skill@<name>` |
-| `agent` | a Markdown file directly under `path@agent-config@agents/`, its id the file's basename | the same | `agent@<name>` |
+| `agent` | a Markdown file under `path@agent-config@agents/`; its id is open at the audit, Q1 below | the same | `agent@<name>` |
 | `primer` | the primer, `path@agent-config@knowledge-architect/PRIMER.md`; only its sections are entities | the installed copies | `primer@<slug>` |
 | `instructions` | the root CLAUDE.md; only its sections are entities | the walk | `instructions@<slug>` |
 
@@ -168,12 +179,21 @@ project's root, in every project.
 
 - **Nothing is declared** (`argument@agent-configuration-entities@a6`): the harness fixes the layout. Under `harness = []` none of the four
   kinds exists, and a span headed by one is silent, as any span whose head is no kind and no anchor.
-- **Kinds, not registers.** A harness kind is answered as `path` and `planned` are, with no anchor
-  and no declared home, so nothing a project declares can add one. This is a choice inside the
-  scope of `thread@agent-configuration-entities@skill-register`: the owner ruled that skills and agents are entities, and no ruling
-  names their storage.
-- **No README and no index** are owed under the skills and agents directories (`argument@agent-configuration-entities@a8`). The reason is
-  an assumption, not established: the harness may read any Markdown file there as a definition.
+- **Kinds, not registers**, open at the audit, Q2 below. A harness kind is answered as `path` and
+  `planned` are, with no anchor and no declared home, so nothing a project declares can add one.
+- **No README and no index** are owed under the skills and agents directories (`argument@agent-configuration-entities@a8`). Read at
+  the audit, in the harness's documentation of subagents,
+  https://code.claude.com/docs/en/sub-agents.md: a file there with "No `name`: Claude Code treats
+  the file as documentation kept beside your agents", so a README is harmless, and owing one would
+  be structure the harness does not need.
+- **A skill is named by its directory.** Read at the audit, in
+  https://code.claude.com/docs/en/skills.md: "The directory name, or the frontmatter `name` when
+  you set one, becomes the command you type", and when `name` is set, "The directory name also
+  invokes the skill". So the directory's name always invokes a skill, and the frontmatter adds a
+  second command. A skill is cited by its directory's name, and no check compares the two.
+- **A skill below the project's root**, in a directory `<subdirectory>/.claude/skills/`, is
+  loaded by the harness when a session reads a file there, per the same page. It is no entity of
+  this slice: a reference to it is reported dangling.
 - **What is no entity**: a directory under the skills directory that holds no `SKILL.md`, a file of
   a skill directory other than `SKILL.md`, and a file under the agents directory that is not
   Markdown or sits in a subdirectory. None is reported. A project-owned one stays an ordinary
@@ -185,6 +205,32 @@ project's root, in every project.
   the harness.
 - **Nearest rival:** no entities, with skills cited by path, as today. It leaves every citation of a
   skill unchecked, which is the need the owner named in R1 (`argument@agent-configuration-entities@a1`).
+
+### Open at the audit
+
+- **Q1, an agent's id.** The harness's documentation of subagents says "identity comes only from
+  the `name` frontmatter field", that the agents directory, `path@agent-config@agents/` here, is scanned "recursively, so you can organize
+  definitions into subfolders", and that a file with no `name` is documentation. This spec took the
+  file's basename as the id, directly under the agents directory. Two shapes:
+  - **(a) the id is the frontmatter `name`**, of any Markdown file at any depth under the agents
+    directory that has one, read with the frontmatter subset of `path@core@src/source/md.rs`; a
+    file with no `name` is no agent. A frontmatter block the subset refuses is a finding, since the
+    agent's name could not be read. The harness's identity is the cited one.
+  - **(b) the id is the basename**, of a file directly under the directory, and a finding where the
+    frontmatter `name` differs. It imposes a naming convention the harness does not need.
+
+  Default: (a). In this repository, each of the 9 agents' `name` equals its basename, and every
+  agent's and skill's frontmatter fits the subset, so neither shape changes a file here.
+- **Q2, kinds or registers.** The new heads record how a harness kind is stored, and the owner has
+  ruled only that skills and agents are entities. Two shapes:
+  - **kinds answered beside `path` and `planned`**, with no anchor and no declared home: the built-in
+    registers stay ten, and nothing a project declares adds a harness kind;
+  - **built-in registers of a new shape**, carried by no anchor: `Registers` lists them, so every
+    reader of a register, the manifest's refusals and the index included, must learn a register
+    with no carrier.
+
+  Default: kinds. The discriminating fact: a register is what an anchor carries, and a harness kind
+  has no anchor; the kind set already holds two kinds that are no register.
 
 ### #skill-cited-without-anchor, #root-instructions-cited and #primer-sections: the two-segment form
 
@@ -345,6 +391,6 @@ The rows below name the texts known to change.
 | `issue@core@installed-file-findings-belong-in-phase-four` | its premise "the installed files are outside the model" rewritten: they define entities, and no check reads their findings |
 | `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked` | its What narrowed: a reference of a harness kind in the shipped text is legitimate and judged by AC3 |
 | `issue@core@tooling-for-project-skills` | narrowed in its Summary and its What: a project skill's name is checked against the id grammar, and its level-two headings against the section rule, both built by this slice; skills and agents are entities, so its remaining checks read the entity table. What stays open: the project's prefix, the routing table, the description field, and which installed skill a project skill adds to |
-| the changelog | `Next release`. Under Migration: every level-two heading of the root CLAUDE.md and of each project skill and agent owes a slug, mock projects serving `claude` included; a Component, location or plan named after any kind, and a register named after a harness kind, is renamed. Under New features: the four harness kinds and the section references. Surfaces and classes: `manifest`, major, for the refused names, per `design@knowledge-architect@versioning-policy`, since a manifest that was valid stops being accepted; `checks`, minor, for the slug requirement and the new kinds; `agent-skills`, patch, for the slugs in the installed text |
+| the changelog | `Next release`. Under Migration: every level-two heading of the root CLAUDE.md and of each project skill and agent owes a slug, mock projects serving `claude` included; a Component, location or plan named after any kind, and a register named after a harness kind, is renamed. Under New features: the four harness kinds and the section references. Surfaces and classes: `manifest`, major, for the refused names, per `design@knowledge-architect@versioning-policy`, since a manifest that was valid stops being accepted; `checks`, minor, for the slug requirement and the new kinds; `agent-skills`, patch, for the slugs in the installed text. A project skill's slug stops being a misplaced definition, a check made looser, which the table has no row for, per `issue@knowledge-architect@the-bump-table-has-no-row-for-a-looser-check`: it is classed minor, the nearest reading, as the 0.3.0 changelog did |
 
 This slice's spec leaves in the commit that completes this harvest.
