@@ -151,7 +151,22 @@ reference bought one tokenizer and one candidate rule.
 instance of — lost to `design@core@a-slug-belongs-to-a-component`. `live`. It is shorter for the
 common case. It loses because the extracted tool cannot know which register is single-instance
 in a given project, and one three-part grammar serves every kind without a special case in the
-resolver or in the instructions.
+resolver or in the instructions. Its first reason does not hold for a kind whose namespace the harness fixes,
+which `design@core@harness-kinds-cited-without-anchor` cites with no anchor; the second stands as the cost
+that head accepts.
+
+**An anchor the tool constructs for the agent configuration**, so that a skill, an agent and their
+sections keep three segments, as `skill@<cfg>@<name>` — lost to
+`design@core@harness-kinds-cited-without-anchor`. `live`. It keeps one arity for every kind. It loses
+because the anchor carries no information, one namespace per harness, and every word for it
+stutters, as `skill@skills@<name>`, or names one provider, which a skill served to two harnesses would cite
+two ways.
+
+**A kind of its own for a section**, as `section@<skill>@<slug>` — lost to
+`design@core@harness-kinds-cited-without-anchor`. `live`. One kind would keep one meaning. It loses because
+a section's reference would no longer say whether the section belongs to a skill or to an agent,
+which the owner judged important, while the third segment of `skill@<name>@<slug>` narrows within
+one kind as a path's last segment does.
 
 **Keeping the `@` prefix as the escape** — lost to `design@core@reserved-anchors`. `live`. It
 costs no migration. It loses on the census taken at the design session: the tree held 75

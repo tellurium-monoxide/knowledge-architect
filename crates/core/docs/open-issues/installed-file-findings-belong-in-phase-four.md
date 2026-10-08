@@ -8,7 +8,9 @@ kind: todo
 The findings of `check::agents` (an installed file missing, differing or unshipped, a primer not
 imported) are raised in phase 2. The core's own placement rule puts a check before the last phase
 only when another check reads its findings, or when it reports what the model could not read.
-Neither holds: the installed files are outside the model, and no check reads these findings.
+Neither holds: the installed files are outside the walk, and no check reads these findings. The
+model holds them for definitions only, per `design@core@installed-entities-from-the-tree`, and
+`check::agents` reads their bytes from the survey, not from the model.
 
 ## Details
 

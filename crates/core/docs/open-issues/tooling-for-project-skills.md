@@ -5,15 +5,19 @@ kind: todo
 
 ## Summary
 
-A project's agent skills are prose files in its agent configuration. The checker reads their
-references like any document, and nothing about their structure: their names, their description
-fields, which other skill they extend.
+A project's agent skills are prose files in its agent configuration. The checker reads each as a
+skill entity, per `design@core@harness-kinds`: its name against the id grammar and against its
+frontmatter `name`, and its level-two headings against the section rule. It reads nothing else of
+their structure: the project's prefix, their description fields, which installed skill one adds
+to.
 
 ## Details
 
 ### What
 
-Checks over the structure of a project's own skills. Long term; the shape is open.
+Checks over the rest of the structure of a project's own skills and agents: the prefix, the
+routing table, the description field and which installed skill one adds to. Long term; the shape is open. Skills and agents are entities, so the checks read the
+entity table rather than guess from paths.
 
 ### Why it matters
 
@@ -24,4 +28,6 @@ by review or not at all.
 
 ### What would close it
 
-Checks over the structure of a project's own skills, shipped in the checker.
+Checks shipped in the checker over the rest of a project's own skills' and agents' structure: the
+project's prefix, the routing table, the description field, and which installed skill a project
+skill adds to.

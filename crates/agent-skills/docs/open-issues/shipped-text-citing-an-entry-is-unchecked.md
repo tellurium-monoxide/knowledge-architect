@@ -16,8 +16,11 @@ judge it.
 ### What
 
 A mechanical check that the shipped text, as it ships, holds no reference to an entry. A path every
-conforming project holds, `path@*@<path>` or `path@plans@<path>`, and a placeholder in angle
-brackets stay allowed, per `design@agent-skills@shipped-text-cites-no-entry`. The text as it ships
+conforming project holds, `path@*@<path>` or `path@plans@<path>`, a reference to the shipped
+set's own skills, agents, primer and sections, and a placeholder in angle brackets stay allowed,
+per `design@agent-skills@shipped-text-cites-no-entry`. The shipped set's own references are
+already judged, by a test of the core that requires each to resolve within the set; what stays
+unchecked is a reference to an entry of a register. The text as it ships
 is the installed copies under .claude: their `%%` comments are removed and their placeholders
 filled, so the comments, which cite entries on purpose, are not judged by it.
 

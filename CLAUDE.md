@@ -116,19 +116,27 @@ win.
     heading at another level is section text.
   - A slug anywhere else defines nothing and is reported as a misplaced definition: at a heading
     of another level, in a table cell, at the head of a plain line, in the middle of a line, in a
-    file that is no register home.
+    file that is no register home and no section home of the harness, per
+    `design@core@section-homes-carry-slugs`.
   - An id is defined once per register instance. Two definitions are a finding at each site.
   - An id matches `[a-z0-9]+(-[a-z0-9]+)*`. A file register's entry id is the file's basename.
 
 - **Every reference is one backticked span, `<kind>@<anchor>@<id>`**, per
-  `design@core@a-slug-belongs-to-a-component`. The kind is a register's name, `path`, or
-  `planned` for a path a plan's work will create, per `design@core@planned-path-form`. The anchor
-  is a Component, a location or a plan. The id is the entry's. A plan's item is cited from
+  `design@core@a-slug-belongs-to-a-component`. The kind is a register's name, `path`,
+  `planned` for a path a plan's work will create, per `design@core@planned-path-form`, or a
+  harness kind, per the bullet below. The anchor
+  is a Component, a location or a plan, and no anchor wears a kind's name. The id is the entry's. A plan's item is cited from
   inside that plan only, per `design@core@plan-item-scope`. Examples:
   `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/tripwires.md`. A reference that resolves to nothing
   is reported with the repair it needs: the kind is unknown, the anchor is unknown, the anchor
-  carries no register of that kind, or the id is not defined there. A reference that names no
-  anchor is refused, including inside the file that defines the id.
+  carries no register of that kind, or the id is not defined there. A reference of any other kind
+  that names no anchor is refused, including inside the file that defines the id.
+- **A skill, an agent, the primer and the root CLAUDE.md are cited with no anchor**, per
+  `design@core@harness-kinds-cited-without-anchor`: `skill@<name>`, `skill@<name>@<slug>`,
+  `agent@<name>`, `agent@<name>@<slug>`, `primer@<slug>`, `instructions@<slug>`. Every level-two
+  heading of a skill, an agent, the primer and this file owes a slug, per
+  `design@core@section-homes-carry-slugs`, and a skill's or an agent's frontmatter `name` equals
+  its directory's or file's name, per `design@core@harness-kinds`.
 
 - **Under the `path` kind, the id is a path under the anchor's directory**, and its target is
   checked to exist, per `design@core@every-path-names-its-anchor`.

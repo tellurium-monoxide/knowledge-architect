@@ -10,8 +10,7 @@
 //! kind set is data rather than an enum — `path@core@src/manifest.rs` owns what a register is,
 //! and this module owns what naming one means. A harness kind, `skill`, `agent`, `primer` or
 //! `instructions`, is no register: no anchor carries it, and a reference to one names no anchor,
-//! since the harness fixes where each lives, per the entities slice of
-//! `milestone@plans@agent-configuration-entities`.
+//! since the harness fixes where each lives, per `design@core@harness-kinds`.
 //!
 //! **An anchor is a named directory, or a spec file, that carries registers.** A component carries every
 //! component-scoped register with its homes under `docs/`; a location carries the subset it
@@ -144,9 +143,9 @@ pub(crate) fn is_reserved_anchor(word: &str) -> bool {
 /// `planned`, a harness kind, whatever the harness, or a register's name.
 ///
 /// No anchor may wear one. The head of a reference is asked for a kind before an anchor, so an
-/// anchor named like a kind would be shadowed there: the owner's ruling, recorded as D7 of
-/// `milestone@plans@agent-configuration-entities`, refuses every such name for anything that can
-/// be an anchor, a Component, a location or a plan.
+/// anchor named like a kind would be shadowed there, so every such name is refused for anything
+/// that can be an anchor, a Component, a location or a plan, per
+/// `design@core@anchors-are-components-and-locations`.
 pub(crate) fn is_kind_name(word: &str, registers: &Registers) -> bool {
     word == PATH_KIND
         || word == PLANNED_KIND
@@ -1255,8 +1254,7 @@ impl Entities {
     /// project's to repair, and a commit holding an earlier version's set is judged by a later
     /// checker under `commits`: a finding in it would ask for an edit of an installed file. The
     /// shipped set is held to the section rule where it is written, by a test of the core over
-    /// the shipped text, AC3 of the entities slice of
-    /// `milestone@plans@agent-configuration-entities`.
+    /// the shipped text, per `design@core@section-homes-carry-slugs`.
     fn harness_definitions(&mut self, model: &Model) {
         for doc in model.documents() {
             let Some(home) = SectionHome::of(&doc.rel, &doc.text) else {
@@ -2583,8 +2581,7 @@ mod tests {
         }
     }
 
-    // The harness kinds, per the entities slice of
-    // `milestone@plans@agent-configuration-entities`.
+    // The harness kinds, per `design@core@harness-kinds`.
 
     /// A model of walked documents and installed copies, and its table under the anchors of a
     /// project serving the `claude` harness, which the fixture manifest does by default.
@@ -2827,8 +2824,8 @@ mod tests {
         }
     }
 
-    /// The claim: every kind name is refused as a plan's name, as the owner ruled in D7 of
-    /// `milestone@plans@agent-configuration-entities`.
+    /// The claim: every kind name is refused as a plan's name, per
+    /// `design@core@a-plan-name-reads-as-nothing-else`.
     #[test]
     fn a_kind_name_is_no_plan_name() {
         let text =
@@ -2900,8 +2897,8 @@ mod tests {
     }
 
     /// The claim: under `harness = []` a section home is an ordinary document, so a slug in the
-    /// root CLAUDE.md or a skill is a misplaced definition, per D8 of
-    /// `milestone@plans@agent-configuration-entities`; the harness kinds are listed as kinds only
+    /// root CLAUDE.md or a skill is a misplaced definition, per `design@core@harness-kinds`; the
+    /// harness kinds are listed as kinds only
     /// under the harness. Mutation checked: skipping section homes whatever the harness passes
     /// both; the harness kinds left out of the listing.
     #[test]

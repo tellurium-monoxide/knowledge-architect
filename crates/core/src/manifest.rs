@@ -1892,8 +1892,8 @@ pub(crate) mod tests {
     }
 
     /// The claim: every kind name is refused as the name of a Component, a location or the
-    /// project, and a harness kind's name as a register's, as the owner ruled in D7 of
-    /// `milestone@plans@agent-configuration-entities`. Mutation checked: deleting the anchor
+    /// project, and a harness kind's name as a register's, per
+    /// `design@core@anchors-are-components-and-locations`. Mutation checked: deleting the anchor
     /// refusal accepts the component `parts/design`.
     #[test]
     fn a_kind_name_is_refused_for_every_anchor_and_a_harness_kind_for_a_register() {

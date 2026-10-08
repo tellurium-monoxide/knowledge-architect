@@ -410,7 +410,7 @@ mod tests {
                     continue;
                 };
                 let found = candidate(span, &anchors);
-                // A malformed span headed by a harness kind is one AC3 judges; any other head is
+                // A malformed span headed by a harness kind is one this judges; any other head is
                 // the walk's to judge, as the primer's import line, which ships on purpose.
                 let head = span.split('@').next().unwrap_or_default();
                 if let Candidate::Malformed { why, .. } = &found {
@@ -443,7 +443,7 @@ mod tests {
         out
     }
 
-    /// AC3 of the entities slice of `milestone@plans@agent-configuration-entities`: every level-two
+    /// The claim, per `design@core@section-homes-carry-slugs`: every level-two
     /// heading of each shipped skill, agent and the primer carries a slug unique within its file,
     /// and every reference of a harness kind in the shipped text resolves within the shipped set,
     /// citing no project's own root CLAUDE.md. The set is judged here because no installing

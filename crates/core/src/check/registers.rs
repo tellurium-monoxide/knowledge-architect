@@ -1454,8 +1454,8 @@ mod tests {
         out
     }
 
-    /// The claim: a spec named after a kind is reported by its name, as a milestone is, per the
-    /// owner's ruling D7 of `milestone@plans@agent-configuration-entities`. Mutation checked:
+    /// The claim: a spec named after a kind is reported by its name, as a milestone is, per
+    /// `design@core@a-plan-name-reads-as-nothing-else`. Mutation checked:
     /// the kind test removed from the spec-name check reports nothing.
     #[test]
     fn a_spec_named_after_a_kind_is_reported_by_its_name() {

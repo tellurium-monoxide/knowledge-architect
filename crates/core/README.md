@@ -94,7 +94,8 @@ core's `generated`, `registers` and `references`, each a module under
 `design@core@an-extension-plugs-in-through-phased-hooks`. `references` judges
 every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a register kind against the
 entries its home defines, the `path` kind against the tree, the `planned` kind against its absence
-from the tree — and reports the retired slug
+from the tree, and, under the `claude` harness, a skill, an agent, the primer and the root
+CLAUDE.md, cited with no anchor as `skill@<name>@<slug>` — and reports the retired slug
 reference form and the unanchored path shape where either names something of this project.
 The directory of an anchor other than the root has no spelling under its own name, so a reference
 names it from the anchor above it, as `path@<parent-anchor>@<dir>/`, per
