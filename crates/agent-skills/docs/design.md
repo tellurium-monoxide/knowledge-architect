@@ -201,9 +201,11 @@ text through the design skill, puts such an addition, and every relocation, to a
 whose outcome the head already records. A test on the size of a change lost: a one-sentence
 reversal is the change that most needs the discussion.
 
-Two texts deliver it. The design skill's description names the symptom. The decision-recording
-skill sends a decision in one of the three cases, not argued, back to the design skill before its
-text is written, and `design@agent-skills@design-home-write-loads-recording` makes sure that skill
+Two texts deliver it. The design skill's description names the symptom, and keeps the three cases
+although judging the third needs the title test: it fires while a decision is still being settled
+in the conversation, before any write, and once a write starts the backstop catches what it missed.
+The decision-recording skill sends a decision in one of the three cases, not argued, back to the
+design skill before its text is written, and `design@agent-skills@design-home-write-loads-recording` makes sure that skill
 is loaded before any write into a design home.
 `tripwire@agent-skills@head-created-without-deliberation` watches whether they reach a session in
 time. A line in the primer lost to `design@agent-skills@primer-limit`: once the design
