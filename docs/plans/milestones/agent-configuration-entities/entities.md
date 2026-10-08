@@ -258,7 +258,141 @@ Every source of a harness-kind entity, by project:
 heading as it stands, and its slug. The slice writes it into this spec in its audit's commit,
 before step 2, re-taking the 130 headings with the count the milestone document names; step 2
 writes each slug from it, and the slice's review reads it. A section slug of the installed text is
-an interface, so this table is where its names are judged.
+an interface, so this table is where its names are judged. A slug is written in the code span of a
+slug, here without the two hashes.
+
+| file | heading | slug |
+| --- | --- | --- |
+| `path@agent-skills@content/skills/agent-configuration/SKILL.md` | 1. Content and style of agent-facing files | `content-and-style` |
+|  | 2. Where a piece of agent-facing text goes | `where-text-goes` |
+|  | 3. Shaping a skill | `shaping-a-skill` |
+|  | 4. The two tables of the root CLAUDE.md | `root-claude-md-tables` |
+|  | 5. Installed files are never edited | `installed-files-never-edited` |
+|  | 6. After installing a new version | `after-installing` |
+|  | 7. Reviewing a configuration change | `reviewing-a-change` |
+| `path@agent-skills@content/skills/decision-recording/SKILL.md` | 0. When recording happens | `when-recording-happens` |
+|  | 1. Does it reverse something already recorded? | `reversal-check` |
+|  | 2. Does it earn a document entry at all? | `entry-tests` |
+|  | 3. Which Component owns it | `owning-component` |
+|  | 4. Three homes, split by function | `three-homes` |
+|  | 5. The current design | `current-design` |
+|  | 6. Losing alternatives | `losing-alternatives` |
+|  | 7. Tripwires from a premortem | `premortem-tripwires` |
+|  | 8. Before you finish | `before-you-finish` |
+| `path@agent-skills@content/skills/design/SKILL.md` | Overview | `discussion-overview` |
+|  | Decision authority | `decision-authority` |
+|  | Bounded work | `bounded-work` |
+|  | Language | `discussion-language` |
+|  | Threads and states | `threads-and-states` |
+|  | The loop | `discussion-loop` |
+|  | Keep-or-change (evaluating an incumbent design) | `keep-or-change` |
+| `path@agent-skills@content/skills/goal-setting/SKILL.md` | 1. A goal, and what is not one | `goal-or-not` |
+|  | 2. The shape of a goal entry | `goal-entry-shape` |
+|  | 3. Drawing out the owner's intent | `drawing-out-intent` |
+|  | 4. When this runs again | `when-it-runs-again` |
+| `path@agent-skills@content/skills/issue-tracking/SKILL.md` | What is outstanding, across every register | `outstanding-across-registers` |
+|  | Read before you diagnose | `read-before-diagnosing` |
+|  | An issue entry | `issue-entry` |
+|  | The trigger test | `trigger-test` |
+|  | A tripwire entry | `tripwire-entry` |
+|  | The movement instruction | `movement-instruction` |
+|  | The cold-reader standard | `cold-reader-standard` |
+|  | Reviews | `reviews-and-entries` |
+| `path@agent-skills@content/skills/planning/SKILL.md` | Terms | `planning-terms` |
+|  | 1. When this skill starts | `when-planning-starts` |
+|  | 2. A spec or a milestone | `spec-or-milestone` |
+|  | 3. Layout | `plans-layout` |
+|  | 4. What a spec holds | `spec-contents` |
+|  | 5. Cutting the steps and the slices | `cutting-steps-and-slices` |
+|  | 6. Acceptance criteria | `acceptance-criteria` |
+|  | 7. Working a slice, and the work of a spec | `working-a-slice` |
+|  | 8. Reviews of a plan document | `plan-reviews` |
+|  | 9. When a plan document leaves | `plan-document-leaves` |
+| `path@agent-skills@content/skills/retrospective/SKILL.md` | 1. When it is offered | `when-offered` |
+|  | 2. What it examines | `what-it-examines` |
+|  | 3. Two files, sorted by whose text must change | `two-files` |
+|  | 4. What becomes of each file | `what-becomes-of-files` |
+|  | 5. What the installed skills expect of the owner | `expectation-sets` |
+| `path@agent-skills@content/skills/review/SKILL.md` | 1. The axes | `review-axes` |
+|  | 2. The invariants | `review-invariants` |
+|  | 3. What a review leaves behind | `what-review-leaves` |
+| `path@agent-skills@content/skills/setup/SKILL.md` | 1. Pin the checker, and decide how it runs | `pin-the-checker` |
+|  | 2. Declare the command | `declare-the-command` |
+|  | 3. The Components and the locations | `components-and-locations` |
+|  | 4. The documents each Component carries | `component-documents` |
+|  | 5. The root CLAUDE.md | `root-claude-md` |
+|  | 6. The gates | `setup-gates` |
+|  | 7. Finish | `finish-setup` |
+|  | 8. Existing documentation | `existing-documentation` |
+|  | Moving the pin | `moving-the-pin` |
+|  | In a Rust project | `rust-project` |
+| `path@agent-skills@content/agents/code-claims-reviewer.md` | 1. Collect the claims | `collect-the-claims` |
+|  | 2. Verify each | `verify-each-claim` |
+|  | 3. Look for what the document does not say | `what-is-unsaid` |
+|  | Reporting | `how-to-report` |
+| `path@agent-skills@content/agents/cold-implementer-reviewer.md` | 1. Ground as the implementer would | `ground-as-implementer` |
+|  | 2. The five questions | `five-questions` |
+|  | 3. The readiness checks | `readiness-checks` |
+|  | Reporting | `how-to-report` |
+| `path@agent-skills@content/agents/decision-record-reviewer.md` | 1. Tools to carry your task | `carrying-tools` |
+|  | 2. The predicates | `record-predicates` |
+|  | Reporting | `how-to-report` |
+| `path@agent-skills@content/agents/design-conformance-reviewer.md` | 1. Find the record the document touches | `find-the-record` |
+|  | 2. Read the document against the record | `read-against-record` |
+|  | Reporting | `how-to-report` |
+| `path@agent-skills@content/agents/routing-reviewer.md` | 1. Mechanical | `mechanical-checks` |
+|  | 2. The predicates | `routing-predicates` |
+|  | Reporting | `how-to-report` |
+| `path@agent-skills@content/agents/standing-entry-searcher.md` | Your brief | `your-brief` |
+|  | 1. Take your group | `take-your-group` |
+|  | 2. Read every entry of your group | `read-every-entry` |
+|  | 3. Follow the seeds | `follow-the-seeds` |
+|  | 4. Judge every entry against the work | `judge-each-entry` |
+|  | Return | `what-to-return` |
+| `path@agent-skills@content/agents/standing-state-reviewer.md` | 1. Mechanical | `mechanical-checks` |
+|  | 2. Re-read every tripwire and every deferred trigger | `reread-standing-entries` |
+|  | 3. A landing plan document's acceptance criteria | `landing-acceptance-criteria` |
+|  | 4. The predicate | `standing-predicate` |
+|  | Reporting | `how-to-report` |
+| `path@agent-skills@content/agents/transcript-reviewer.md` | 1. Extract the transcripts | `extract-transcripts` |
+|  | 2. List what must outlive the sessions | `list-what-outlives` |
+|  | 3. Find the outcome of each | `find-each-outcome` |
+|  | 4. Check each recorded ruling against the owner's words | `check-recorded-rulings` |
+|  | 5. Report | `how-to-report` |
+| `path@agent-skills@content/PRIMER.md` | Goals bind; decisions bind as a presumption | `goals-bind` |
+|  | The owner's word and its premise | `owner-word-premise` |
+|  | Room to judge | `room-to-judge` |
+|  | Intent and claims | `intent-and-claims` |
+|  | Something met outside the task | `met-outside-the-task` |
+|  | Where knowledge goes | `where-knowledge-goes` |
+|  | The installed skills | `installed-skills` |
+| `path@knowledge-architect@CLAUDE.md` | Language, tone and style | `language-and-style` |
+|  | Mechanical validation of documents | `mechanical-validation` |
+|  | Where knowledge goes | `where-knowledge-goes` |
+|  | Verify before relying on anything | `verify-before-relying` |
+|  | Verify mechanically | `verify-mechanically` |
+|  | Skills | `repository-skills` |
+|  | Git | `git-workflow` |
+|  | Release status | `release-status` |
+| `path@agent-config@skills/klarch-development/SKILL.md` | 0. Ground before editing | `ground-before-editing` |
+|  | 1. The loop | `development-loop` |
+|  | 2. Claims, and tests that discriminate | `discriminating-tests` |
+|  | 3. The review axes for code | `code-review-axes` |
+|  | 4. The gate | `development-gate` |
+|  | 5. Incompleteness is recorded, never encoded | `incompleteness-recorded` |
+|  | 6. Comments: two species, two audiences | `comment-species` |
+| `path@agent-config@skills/klarch-release/SKILL.md` | 1. The release branch | `release-branch` |
+|  | 2. Merge, then publish | `merge-then-publish` |
+|  | 3. When the publish fails | `failed-publish` |
+| `path@agent-config@skills/klarch-retrospective-intake/SKILL.md` | 1. What it takes | `what-it-takes` |
+|  | 2. Ground before judging any finding | `ground-before-judging` |
+|  | 3. What to establish for each finding or cluster | `what-to-establish` |
+|  | 4. Subagents | `intake-subagents` |
+|  | 5. The analysis file and the owner's ruling | `analysis-and-ruling` |
+|  | 6. After the ruling | `after-the-ruling` |
+| `path@agent-config@agents/klarch-changelog-reviewer.md` | The standard | `changelog-standard` |
+|  | The predicates | `changelog-predicates` |
+|  | Reporting | `how-to-report` |
 
 ## Acceptance criteria
 
