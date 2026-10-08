@@ -149,7 +149,7 @@ there, except its own acceptance criteria. It starts after the milestone documen
 2. **The section rule and the slugs, in one commit.** The rule, the placeholder in the build, the
    130 slugs from the mapping table, the installed copies, AC2 and AC3. The rule and the slugs that
    satisfy it land in one commit, because every commit must pass under the branch tip's checker
-   (a76). Fails alone on: a heading the table lists reported unslugged.
+   (`argument@agent-configuration-entities@a76`). Fails alone on: a heading the table lists reported unslugged.
 3. **The text that states it.** AC4's setup-skill text, the changelog entries, then the harvest.
 
 ## Decided design
@@ -166,25 +166,25 @@ there, except its own acceptance criteria. It starts after the milestone documen
 The paths are this repository's spelling. The layout is the harness's, a directory `.claude` at the
 project's root, in every project.
 
-- **Nothing is declared** (a6): the harness fixes the layout. Under `harness = []` none of the four
+- **Nothing is declared** (`argument@agent-configuration-entities@a6`): the harness fixes the layout. Under `harness = []` none of the four
   kinds exists, and a span headed by one is silent, as any span whose head is no kind and no anchor.
 - **Kinds, not registers.** A harness kind is answered as `path` and `planned` are, with no anchor
   and no declared home, so nothing a project declares can add one. This is a choice inside the
-  scope of #skill-register: the owner ruled that skills and agents are entities, and no ruling
+  scope of `thread@agent-configuration-entities@skill-register`: the owner ruled that skills and agents are entities, and no ruling
   names their storage.
-- **No README and no index** are owed under the skills and agents directories (a8). The reason is
+- **No README and no index** are owed under the skills and agents directories (`argument@agent-configuration-entities@a8`). The reason is
   an assumption, not established: the harness may read any Markdown file there as a definition.
 - **What is no entity**: a directory under the skills directory that holds no `SKILL.md`, a file of
   a skill directory other than `SKILL.md`, and a file under the agents directory that is not
   Markdown or sits in a subdirectory. None is reported. A project-owned one stays an ordinary
   walked document; an installed one stays outside the walk.
-- **A scoped CLAUDE.md is not modelled** (a51, a52). The root CLAUDE.md stays, so its sections are.
+- **A scoped CLAUDE.md is not modelled** (`argument@agent-configuration-entities@a51`, `argument@agent-configuration-entities@a52`). The root CLAUDE.md stays, so its sections are.
 - **Under `harness = []`, the installed copies a project kept** are walked as its own documents,
   per `design@core@agents-table`, and their rendered slugs are misplaced definitions there. Per D8
   of the milestone document, those findings stand: the repair is to remove the copies or to serve
   the harness.
 - **Nearest rival:** no entities, with skills cited by path, as today. It leaves every citation of a
-  skill unchecked, which is the need the owner named in R1 (a1).
+  skill unchecked, which is the need the owner named in R1 (`argument@agent-configuration-entities@a1`).
 
 ### #skill-cited-without-anchor, #root-instructions-cited and #primer-sections: the two-segment form
 
@@ -200,32 +200,32 @@ instructions@<slug>          a section of the root instructions
 An illustration of the shapes, not of code.
 
 - **No anchor**, because a skill or an agent has one namespace per harness, which the harness
-  enforces as directory and file names, so an anchor carries no information (a56). The primer and
-  the root instructions are one document each in a project (a64).
+  enforces as directory and file names, so an anchor carries no information (`argument@agent-configuration-entities@a56`). The primer and
+  the root instructions are one document each in a project (`argument@agent-configuration-entities@a64`).
 - **The rejected alternative "A register reference with no anchor"**, in
   `path@core@docs/rejected-alternatives.md`, gives two reasons. Its first, that "the extracted tool
   cannot know which register is single-instance in a given project", does not hold for a harness
   kind: the tool fixes the four kinds and their layout, and no project declares one. Its second,
   "one three-part grammar serves every kind without a special case in the resolver or in the
-  instructions", is the cost a14 names, which the owner weighed. Per D3 of the milestone document.
-- **The third segment narrows within the kind** (a61), so a section keeps the information that it
-  belongs to a skill or to an agent (a48).
+  instructions", is the cost `argument@agent-configuration-entities@a14` names, which the owner weighed. Per D3 of the milestone document.
+- **The third segment narrows within the kind** (`argument@agent-configuration-entities@a61`), so a section keeps the information that it
+  belongs to a skill or to an agent (`argument@agent-configuration-entities@a48`).
 - **The kind is asked first**, as `candidate` does today, so a Component, a location or a plan named
-  after a harness kind would be shadowed (a57). AC1 refuses such a name.
-- **`instructions` names the document's role** (a65), so the announced move to AGENTS.md changes no
+  after a harness kind would be shadowed (`argument@agent-configuration-entities@a57`). AC1 refuses such a name.
+- **`instructions` names the document's role** (`argument@agent-configuration-entities@a65`), so the announced move to AGENTS.md changes no
   reference.
-- **Nearest rival:** #skill-cited-in-a-constructed-anchor, see the milestone's Losing alternatives.
+- **Nearest rival:** `thread@agent-configuration-entities@skill-cited-in-a-constructed-anchor`, see the milestone's Losing alternatives.
 
 ### #skill-sections-carry-slugs, #agent-sections-carry-slugs and #primer-sections: the section rule
 
 - **The rule of `design@core@an-entry-is-a-heading-at-the-register-level`, at level two**, over the
   section homes: every level-two heading outside a fence owes a slug, and a slug elsewhere in a
-  section home is misplaced (a24). An id is unique within its one document.
-- **Fenced headings define nothing** (a25), so the illustrations of an issue entry's shape in the
+  section home is misplaced (`argument@agent-configuration-entities@a24`). An id is unique within its one document.
+- **Fenced headings define nothing** (`argument@agent-configuration-entities@a25`), so the illustrations of an issue entry's shape in the
   issue-tracking skill, or of a design entry in the decision-recording skill, owe no slug.
 - **A slug's form**: the id grammar, two to four words naming the section's subject, not its number
   or its position.
-- **A section slug of the installed text is an interface** (a27, a49): a rename dangles a
+- **A section slug of the installed text is an interface** (`argument@agent-configuration-entities@a27`, `argument@agent-configuration-entities@a49`): a rename dangles a
   consumer's citations, and owes a Migration entry in the changelog.
 
 ### #installed-skills-defined-from-shipped-set: definitions from the judged tree, slugs as placeholders in content/
@@ -233,19 +233,19 @@ An illustration of the shapes, not of code.
 - **The source.** `Entities::build` takes the installed copies of the tree it judges, as
   `Survey::installed` holds them, and defines the installed skills, agents, the primer, and their
   sections. Under `commits`, `read_tree` reads each commit's installed blobs with every other
-  unskipped file, so each commit is judged against its own installed set (a72, a73, a74). `check`
+  unskipped file, so each commit is judged against its own installed set (`argument@agent-configuration-entities@a72`, `argument@agent-configuration-entities@a73`, `argument@agent-configuration-entities@a74`). `check`
   guarantees that a working tree's copies equal the pinned shipped set, per
   `design@core@owned-namespace-check`.
 - **Still outside the walk for references.** A reference inside an installed copy is not read, as
   today. The shipped text's references are judged in this repository, in content/, and by AC3.
-- **content/ defines nothing** (a31, a33). A heading there ends with `{{slug:<id>}}`, and the build
+- **content/ defines nothing** (`argument@agent-configuration-entities@a31`, `argument@agent-configuration-entities@a33`). A heading there ends with `{{slug:<id>}}`, and the build
   renders it. So the slug a reference in content/ resolves to is the one in the installed copy,
   which this repository installs in the same commit as each change to content/.
 - **`design@agent-skills@shipped-text-cites-no-entry` is rewritten**: the shipped text may cite the
   shipped set's own skills, agents, primer and their sections, which every project serving `claude`
-  holds, and never `instructions`, whose slugs are each project's own (a34).
+  holds, and never `instructions`, whose slugs are each project's own (`argument@agent-configuration-entities@a34`).
 - **Nearest rival:** the binary's shipped set as the source, which fails `commits` on an earlier
-  commit; and a manifest declaration of content/, which fails #no-catering. See the milestone's
+  commit; and a manifest declaration of content/, which fails `criterion@agent-configuration-entities@no-catering`. See the milestone's
   Losing alternatives.
 
 ## Mapping tables
@@ -280,32 +280,32 @@ an interface, so this table is where its names are judged.
 AC1, applied on the owner's word in R4, its scope widened by the owner's ruling recorded under D7 of
 the milestone document.
 
-- **Guards:** #skill-cited-without-anchor.
+- **Guards:** `thread@agent-configuration-entities@skill-cited-without-anchor`.
 - **Judged by:** this slice, with unit tests of `path@core@src/manifest.rs` and of
   `milestone_refusal`.
 - **Fires when:** a manifest declaring a Component directory or a location named after any kind
   loads with no phase-1 complaint naming it; or a plan so named is an anchor; or a declared register
   named `skill`, `agent`, `primer` or `instructions` is accepted; under either harness.
 - **Response:** the refusal is repaired. If a name cannot be refused without breaking a consuming
-  project, #skill-cited-without-anchor reopens with the owner.
+  project, `thread@agent-configuration-entities@skill-cited-without-anchor` reopens with the owner.
 
 ### A branch that renames an installed section passes `commits` on every commit `##commits-judges-each-commit-by-its-own-copies`
 
 AC2, applied on the owner's word in R4.
 
-- **Guards:** #installed-skills-defined-from-shipped-set.
+- **Guards:** `thread@agent-configuration-entities@installed-skills-defined-from-shipped-set`.
 - **Judged by:** this slice, with a test in `path@core@tests/binary.rs` over the `History` project
   of the Fixtures section: commit 1 cites a section of an installed skill; commit 2 renames that
   section in the installed copies and repairs the citation.
 - **Fires when:** `commits` over both reports a dangling reference on commit 1.
 - **Response:** the source of the definitions is repaired. If the judged tree's copies cannot be
-  read there, #installed-skills-defined-from-shipped-set reopens with the owner.
+  read there, `thread@agent-configuration-entities@installed-skills-defined-from-shipped-set` reopens with the owner.
 
 ### The shipped set cites only sections it defines `##the-shipped-set-cites-only-its-own-sections`
 
 AC3, applied on the owner's word in R4.
 
-- **Guards:** #installed-skills-defined-from-shipped-set.
+- **Guards:** `thread@agent-configuration-entities@installed-skills-defined-from-shipped-set`.
 - **Judged by:** this slice, with a test of the core over `knowledge_architect_agent_skills::FILES`:
   every level-two heading outside a fence of each skill, agent and the primer carries a slug, unique
   within its file, and every reference of a harness kind in the shipped text resolves within the
@@ -318,7 +318,7 @@ AC3, applied on the owner's word in R4.
 
 AC4, applied on the owner's word in R4, its scope per D6 of the milestone document.
 
-- **Guards:** #claude-md-sections.
+- **Guards:** `thread@agent-configuration-entities@claude-md-sections`.
 - **Judged by:** this slice, by reading the setup skill as installed, and with a binary test of the
   finding's text.
 - **Fires when:** the installed setup skill does not state that every level-two heading of the root
@@ -335,13 +335,13 @@ The rows below name the texts known to change.
 
 | what | home |
 | --- | --- |
-| #skill-register, #claude-md-sections | a new head in `path@core@docs/design.md`, §6, slug `skill-register`, with the readings of the harness's layout the audit made |
-| #skill-cited-without-anchor, #root-instructions-cited, #primer-sections | a new head in `path@core@docs/design.md`, §3, slug `skill-cited-without-anchor`; `design@core@candidate-rule-and-retired-forms` and `design@core@a-slug-belongs-to-a-component` rewritten in place; the entry "A register reference with no anchor" of `path@core@docs/rejected-alternatives.md` gains that its first reason does not hold for a harness kind, per D3; `goal@core@relocation-is-one-manifest-edit` was reworded before the slice, on D4 |
-| #skill-sections-carry-slugs, #agent-sections-carry-slugs, #primer-sections | a new head in `path@core@docs/design.md`, §3, slug `skill-sections-carry-slugs`; `design@core@an-entry-is-a-heading-at-the-register-level` rewritten in place |
-| #installed-skills-defined-from-shipped-set | a new head in `path@core@docs/design.md`, §6, slug `installed-entities-from-the-tree`, the slug naming the approved source; `design@core@owned-namespace-check`, `design@core@phases-gate-the-report` and `design@core@anchors-are-components-and-locations` rewritten in place; `design@agent-skills@shipped-text-cites-no-entry` and `design@agent-skills@content-mirrors-the-install-layout` rewritten in place |
+| `thread@agent-configuration-entities@skill-register`, `thread@agent-configuration-entities@claude-md-sections` | a new head in `path@core@docs/design.md`, §6, slug `skill-register`, with the readings of the harness's layout the audit made |
+| `thread@agent-configuration-entities@skill-cited-without-anchor`, `thread@agent-configuration-entities@root-instructions-cited`, `thread@agent-configuration-entities@primer-sections` | a new head in `path@core@docs/design.md`, §3, slug `skill-cited-without-anchor`; `design@core@candidate-rule-and-retired-forms` and `design@core@a-slug-belongs-to-a-component` rewritten in place; the entry "A register reference with no anchor" of `path@core@docs/rejected-alternatives.md` gains that its first reason does not hold for a harness kind, per D3; `goal@core@relocation-is-one-manifest-edit` was reworded before the slice, on D4 |
+| `thread@agent-configuration-entities@skill-sections-carry-slugs`, `thread@agent-configuration-entities@agent-sections-carry-slugs`, `thread@agent-configuration-entities@primer-sections` | a new head in `path@core@docs/design.md`, §3, slug `skill-sections-carry-slugs`; `design@core@an-entry-is-a-heading-at-the-register-level` rewritten in place |
+| `thread@agent-configuration-entities@installed-skills-defined-from-shipped-set` | a new head in `path@core@docs/design.md`, §6, slug `installed-entities-from-the-tree`, the slug naming the approved source; `design@core@owned-namespace-check`, `design@core@phases-gate-the-report` and `design@core@anchors-are-components-and-locations` rewritten in place; `design@agent-skills@shipped-text-cites-no-entry` and `design@agent-skills@content-mirrors-the-install-layout` rewritten in place |
 | the kinds and AC1 | `design@core@one-entity-table` rewritten, its title and its kind list; `design@core@registers-are-declared`, the four names refused as a register; `design@core@anchors-are-components-and-locations` and `design@core@a-plan-name-reads-as-nothing-else`, every kind name refused as an anchor's name, with the owner's argument |
 | the restatements | `path@knowledge-architect@CLAUDE.md`: the kind list, the candidate rule and the anchor rule; `path@core@CLAUDE.md` and `path@agent-skills@CLAUDE.md` where they state the rewritten heads; the module docs of `path@core@src/manifest.rs` and `path@core@src/entity.rs` |
-| #skill-cited-in-a-constructed-anchor, #section-kind, and the other losing alternatives of the milestone | judged for entries in `path@core@docs/rejected-alternatives.md` |
+| `thread@agent-configuration-entities@skill-cited-in-a-constructed-anchor`, `thread@agent-configuration-entities@section-kind`, and the other losing alternatives of the milestone | judged for entries in `path@core@docs/rejected-alternatives.md` |
 | `issue@core@installed-file-findings-belong-in-phase-four` | its premise "the installed files are outside the model" rewritten: they define entities, and no check reads their findings |
 | `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked` | its What narrowed: a reference of a harness kind in the shipped text is legitimate and judged by AC3 |
 | `issue@core@tooling-for-project-skills` | a sentence in its What: skills and agents are entities, so its checks read the entity table |
