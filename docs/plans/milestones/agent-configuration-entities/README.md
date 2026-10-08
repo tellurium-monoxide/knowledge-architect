@@ -1090,7 +1090,7 @@ the two rewrites touch many of the same sentences (`argument@agent-configuration
 
 ## Defaults awaiting the owner
 
-D9 and D10 await the owner. D1 was ruled by the owner after this document's first commit, "Agreed on D1", and is written
+None awaits the owner. D1 was ruled by the owner after this document's first commit, "Agreed on D1", and is written
 into `thread@agent-configuration-entities@skill-register`. The first reviews of this document produced D2 to D8. The owner ruled D7 while
 its repairs were written, and the rest after them: "Agreed on all defaults, and on the D4 goal
 rewording". Each ruling is applied in the sections it touches; the list stays as their record:
@@ -1128,17 +1128,19 @@ rewording". Each ruling is applied in the sections it touches; the list stays as
 - **D8, ruled as its default**, on `thread@agent-configuration-entities@skill-register`: under `harness = []`, a project that kept its installed copies walks
   them as its own documents, and their slugs are misplaced definitions there. Default: the findings
   stand; the repair is to remove the copies or to serve the harness.
-- **D9**, on `thread@agent-configuration-entities@skill-register`, from Q1 of the entities slice's audit: how a skill's or an agent's
+- **D9, ruled as its default**, on `thread@agent-configuration-entities@skill-register`, from Q1 of the entities slice's audit: how a skill's or an agent's
   frontmatter `name` is read for the match the owner ruled. Default: the `name:` line alone, so a
   frontmatter the harness reads but the subset refuses, a list or a multi-line description, is no
   finding; a skill may omit `name`; an agent file with no `name` is no agent; an agent may sit in a
-  subdirectory. The work proceeds on the default unless the owner answers otherwise.
-- **D10**, on `thread@agent-configuration-entities@skill-sections-carry-slugs`, from the review of the entities slice: an installed copy
+  subdirectory.
+- **D10, ruled as its default**, on `thread@agent-configuration-entities@skill-sections-carry-slugs`, from the review of the entities slice: an installed copy
   defines its entities and raises no finding. A consuming project whose branch upgrades after other
   commits holds, under `commits`, an earlier version's set with no slugs, and every heading of it
   would be a finding inside a file the project may not edit. The shipped set is held to the section
   rule in this repository, by AC3. This narrows the ruling that every level-two heading of a skill
   owes a slug to the files a project can repair. Default: the narrowing, as built.
+
+The owner ruled D9 and D10 after the review of the entities slice: "D9 approved. D10 approved."
 
 ## Harvest
 
