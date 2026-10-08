@@ -21,8 +21,9 @@ the owner.** It is not resolved by following the decision.
 **A word of the owner holds only as far as its premise.** A ruling given on a premise, stated by
 the owner or supplied by the session, does not rule on the case where that premise is false. When a
 premise proves false, put the corrected premise to the owner at the top of the turn, quoting the
-word it defeats, with a default, before acting further on that word. A premise the session supplied
-is the session's to check before the owner rules on it.
+word it defeats, with a default chosen in view of the corrected premise, and proceed on the default
+unless the owner answers otherwise; a part of the work that cannot be undone waits for the answer.
+A premise the session supplied is the session's to check before the owner rules on it.
 
 ## Room to judge
 
