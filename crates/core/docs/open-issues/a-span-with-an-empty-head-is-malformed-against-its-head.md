@@ -6,8 +6,8 @@ kind: defect
 ## Summary
 
 The head `design@core@candidate-rule-and-retired-forms` says a backticked `@` span is a reference
-candidate when its head before the first `@` is a kind or an anchor, and that "every other span is
-silent". The code reports a span whose head is empty and whose rest holds a `/` as a malformed
+candidate when its head before the first `@` is a kind or an anchor, and that "every other `@` span
+is silent". The code reports a span whose head is empty and whose rest holds a `/` as a malformed
 reference. The head and the code diverge; which one is the defect is not established. Below, such a span is
 written without its backticks, since written with them it is the finding this entry records.
 
