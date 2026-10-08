@@ -54,7 +54,10 @@ there. It starts after the entities slice has merged.
   `issue@agent-skills@a-design-issue-s-re-entry-point-is-read-by-no-review`, which names "its
   section 2" of the standing-state reviewer in words; and
   `issue@agent-skills@the-material-finding-duty-has-no-head`, which names "section Decision
-  authority" of the design skill in words.
+  authority" of the design skill in words. Found at the audit: `issue@agent-skills@the-setup-section-s-toml-and-ci-blocks-are-unchecked`,
+  which names the setup skill's section "In a Rust project" in words. A citation of a level-three
+  subsection in words, as an expectation set of the retrospective skill, is not rewritten: no
+  checked form names a subsection.
 
 ## Fails alone on
 
