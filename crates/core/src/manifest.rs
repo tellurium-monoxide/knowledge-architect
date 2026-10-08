@@ -836,7 +836,17 @@ fn resolve_registers(registers: &mut Registers, complaints: &mut Vec<Finding>) {
         if register.built_in {
             return true;
         }
-        let refusal = if register.name == crate::entity::PATH_KIND
+        let refusal = if crate::entity::HARNESS_KINDS.contains(&register.name.as_str()) {
+            Some((
+                format!(
+                    "`{}` is a kind of the agent harness, a skill, an agent or a section of the \
+                     primer or of the root CLAUDE.md",
+                    register.name
+                ),
+                "rename the register; a reference whose kind segment is this word names the \
+                 harness's entity and never reaches the register",
+            ))
+        } else if register.name == crate::entity::PATH_KIND
             || register.name == crate::entity::PLANNED_KIND
         {
             Some((
@@ -1125,6 +1135,19 @@ fn resolve_anchors(
                     candidate.declared_at, candidate.name
                 ),
                 "rename it; this word is reserved by the tool",
+            );
+            continue;
+        }
+        // A reference's head is read as a kind before an anchor, so an anchor named like a kind
+        // would be shadowed in every reference's head, per `crate::entity::is_kind_name`.
+        if !candidate.tool_built && crate::entity::is_kind_name(&candidate.name, registers) {
+            refuse(
+                format!(
+                    "{} gives the anchor the name `{}`, which is the name of a kind",
+                    candidate.declared_at, candidate.name
+                ),
+                "rename it; a reference's first segment is read as a kind before an anchor, so an \
+                 anchor of this name could not be told apart from the kind",
             );
             continue;
         }
@@ -1866,6 +1889,40 @@ pub(crate) mod tests {
         assert!(m.registers().by_name("path").is_none());
         assert!(m.registers().by_name("Notes").is_none());
         assert_eq!(m.locations()["papers"].registers, vec!["issue".to_string()]);
+    }
+
+    /// The claim: every kind name is refused as the name of a Component, a location or the
+    /// project, and a harness kind's name as a register's, as the owner ruled in D7 of
+    /// `milestone@plans@agent-configuration-entities`. Mutation checked: deleting the anchor
+    /// refusal accepts the component `parts/design`.
+    #[test]
+    fn a_kind_name_is_refused_for_every_anchor_and_a_harness_kind_for_a_register() {
+        let m = declaring_full(
+            "\"parts/design\", \"parts/skill\"",
+            "[registers.agent]\nscope = \"opt-in\"\nshape = \"file\"\n\n\
+             [registers.note]\nscope = \"opt-in\"\nshape = \"file\"\n\n\
+             [locations.primer]\npath = \"papers\"\nregisters = [\"issue\"]\n\n\
+             [locations.note]\npath = \"notes\"\nregisters = [\"issue\"]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let whats = whats(&m);
+        for name in ["design", "skill", "primer", "note"] {
+            assert!(
+                whats.iter().any(|w| w.contains(&format!("the name `{name}`, which is the name of a kind"))),
+                "{name}: {whats:#?}"
+            );
+        }
+        assert!(
+            whats
+                .iter()
+                .any(|w| w.contains("`agent` is a kind of the agent harness")),
+            "{whats:#?}"
+        );
+        assert!(m.registers().by_name("agent").is_none());
+        assert!(m.registers().by_name("note").is_some());
     }
 
     #[test]

@@ -24,7 +24,7 @@ cannot reproduce.
 **You do not use `Write` or `Edit`.** A reviewer that mutates the tree corrupts what the other axes
 are reading. If a check seems to need one, say so as a finding rather than working around it.
 
-## 1. Ground as the implementer would
+## 1. Ground as the implementer would {{slug:ground-as-implementer}}
 
 Read, in this order: the root `CLAUDE.md`; the `CLAUDE.md` of the Component the document is about,
 which the brief names or the document's head does; the document in full, and for a milestone its
@@ -33,7 +33,7 @@ which the brief names or the document's head does; the document in full, and for
 rejected alternatives, the open issues and the tripwires of that Component. Then read the code the
 document points at, enough to know what exists.
 
-## 2. The five questions
+## 2. The five questions {{slug:five-questions}}
 
 Answer each with a list, quoting the sentence or naming the section for every item.
 
@@ -56,12 +56,12 @@ Answer each with a list, quoting the sentence or naming the section for every it
    exist, thresholds with no owner, rulings attributed to an owner without saying what was
    ruled.
 
-## 3. The readiness checks
+## 3. The readiness checks {{slug:readiness-checks}}
 
 The list is in the section on reviews of `knowledge-architect-planning`, which you read in §1. It
 is that skill's and not restated here. Apply every check and report pass or fail with the evidence.
 
-## Reporting
+## Reporting {{slug:how-to-report}}
 
 Return the five lists and the readiness table, each item with the quoted sentence or section
 and the reproduction. Say which files you read. **If the axis is clean, say so plainly.** Do not

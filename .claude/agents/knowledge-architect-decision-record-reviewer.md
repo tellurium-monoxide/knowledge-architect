@@ -31,7 +31,7 @@ cannot reproduce.
 **You do not use `Write` or `Edit`.** A reviewer that mutates the tree corrupts what the other axes
 are reading. If a check seems to need one, say so as a finding rather than working around it.
 
-## 1. Tools to carry your task
+## 1. Tools to carry your task `##carrying-tools`
 
 Your instruments are the decision-carrying documents the diff touches, the diff itself, and, for a
 decision that earned no entry, the comment at its code and the message of the commit that introduced
@@ -51,7 +51,7 @@ for the incumbent; the owner's ruling on any tripwire the branch adds; and, when
 deleted, that the deleting commit cites it by its kind. None of the checks of
 `cargo klarch check` will help with your task. Do not run it.
 
-## 2. The predicates
+## 2. The predicates `##record-predicates`
 
 **Did a decision earn its document entry?** Judge it by the skill's tests for an entry. An entry
 meeting none belongs in an inline comment at the code plus the commit message, which is not a
@@ -133,7 +133,7 @@ vocabulary is the usual source: a thread name is not a slug anchor until somethi
 sentence in the message that states what was searched, counted or renamed is checked against the
 tree as well.
 
-## Reporting
+## Reporting `##how-to-report`
 
 Return findings, each naming the commit or the file and the exact reproduction. **If the axis is
 clean, say so plainly**: that is a real result, and a report padded to look productive costs the

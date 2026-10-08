@@ -11,7 +11,7 @@ how they report.
 
 Not covered here: **opening an issue entry in the project**, `knowledge-architect-issue-tracking`.
 
-## 1. When it is offered
+## 1. When it is offered {{slug:when-offered}}
 
 **Once per session, at the first of these moments**, and never during a task:
 
@@ -22,7 +22,7 @@ Not covered here: **opening an issue entry in the project**, `knowledge-architec
 Offer it in one line, and run it only if the owner accepts. A declined retrospective is not offered
 again in that session.
 
-## 2. What it examines
+## 2. What it examines {{slug:what-it-examines}}
 
 Open with **what the session did**: one paragraph, at the level of the workflow ("a design
 discussion and two merged branches"), not of the project's subject matter.
@@ -96,7 +96,7 @@ whatever the owner did.
 
 End with **proposals**: for each finding that has one, what to change, and where.
 
-## 3. Two files, sorted by whose text must change
+## 3. Two files, sorted by whose text must change {{slug:two-files}}
 
 %% The project's findings never leave the project, so only the workflow's file is held to the rule
 %% that it carries nothing of the project beyond what a finding needs.
@@ -129,7 +129,7 @@ owner's home, and offer to record the answer in that user-level configuration, o
 so later sessions find it. Never inside the project: committed, the files would enter its history;
 ignored, they would be lost to the next clean.
 
-## 4. What becomes of each file
+## 4. What becomes of each file {{slug:what-becomes-of-files}}
 
 %% Printed into the conversation, the two files bury the discussion, and the owner asked for their
 %% paths instead.
@@ -147,7 +147,7 @@ only, and where the owner directs**:
 
 Nothing leaves the machine without the owner having read it.
 
-## 5. What the installed skills expect of the owner
+## 5. What the installed skills expect of the owner {{slug:expectation-sets}}
 
 An installed skill is built on assumptions about how the owner works. Each names what degrades when
 it does not hold. They are not rules the owner is asked to follow; they bound what counts as a

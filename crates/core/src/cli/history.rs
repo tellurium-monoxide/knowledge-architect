@@ -405,6 +405,15 @@ fn commit_tree(
         }
     }
     let mut model = Model::from_documents_under(docs, checker);
+    // The commit's own installed copies define its installed entities, so a commit is judged
+    // against the set it holds rather than the one the running binary ships.
+    model.set_installed(
+        installed
+            .iter()
+            .filter(|rel| rel.extension().is_some_and(|e| e == "md"))
+            .filter_map(|rel| blobs.get(rel).map(|text| (rel.clone(), text.clone())))
+            .collect(),
+    );
     for rel in missing {
         model.push_unreadable(
             rel,

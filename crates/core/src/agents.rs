@@ -387,6 +387,90 @@ mod tests {
         }
     }
 
+    /// What the shipped set, installed as `copies`, owes and fails of the section rule and of its
+    /// own references: each finding of the entity table over the copies, each reference of a
+    /// harness kind that resolves within no copy, and each `instructions` reference, which
+    /// names a section of each project's own root CLAUDE.md.
+    fn shipped_set_violations(copies: &[(PathBuf, String)]) -> Vec<String> {
+        use crate::entity::{candidate, Anchors, Candidate, Entities, INSTRUCTIONS_KIND};
+        let m = manifest("");
+        let mut model = crate::model::Model::from_documents(Vec::new());
+        model.set_installed(copies.to_vec());
+        let anchors = Anchors::declared(&m);
+        let entities = Entities::build(&model, &anchors);
+        let mut out: Vec<String> = entities
+            .definition_findings()
+            .iter()
+            .map(|f| f.to_string())
+            .collect();
+        for doc in model.installed() {
+            for l in &doc.observations {
+                let crate::scan::Observation::Span(span) = &l.what else {
+                    continue;
+                };
+                if let Candidate::Harness { kind, owner, id } = candidate(span, &anchors) {
+                    if kind.name() == INSTRUCTIONS_KIND {
+                        out.push(format!(
+                            "{}:{} cites `{span}`, a project's own section",
+                            doc.rel.display(),
+                            l.line
+                        ));
+                    } else if !entities.defines(&kind, owner, id) {
+                        out.push(format!(
+                            "{}:{} cites `{span}`, which resolves to nothing",
+                            doc.rel.display(),
+                            l.line
+                        ));
+                    }
+                }
+            }
+        }
+        out
+    }
+
+    /// AC3 of the entities slice of `milestone@plans@agent-configuration-entities`: every level-two
+    /// heading of each shipped skill, agent and the primer carries a slug unique within its file,
+    /// and every reference of a harness kind in the shipped text resolves within the shipped set,
+    /// citing no project's own root CLAUDE.md. The set is judged here because no installing
+    /// project reads a reference in its installed copies.
+    #[test]
+    fn the_shipped_set_cites_only_sections_it_defines() {
+        let copies = shipped(&manifest(""));
+        assert!(!copies.is_empty());
+        assert_eq!(shipped_set_violations(&copies), Vec::<String>::new());
+    }
+
+    /// The same judgement, shown to fail: a copy of the set with a reference to a missing section
+    /// of a sibling skill, an `instructions` reference and an unslugged heading planted.
+    #[test]
+    fn the_shipped_set_judgement_reports_what_is_planted() {
+        let mut copies = shipped(&manifest(""));
+        let (_, text) = copies
+            .iter_mut()
+            .find(|(p, _)| p.ends_with("knowledge-architect-review/SKILL.md"))
+            .expect("the review skill ships");
+        text.push_str(
+            "\n## Planted\n\nSee `skill@knowledge-architect-design@no-such-section` and \
+             `instructions@git-workflow`.\n",
+        );
+        let found = shipped_set_violations(&copies);
+        assert_eq!(found.len(), 3, "{found:#?}");
+        assert!(
+            found.iter().any(|f| f.contains("\"Planted\"")),
+            "{found:#?}"
+        );
+        assert!(
+            found
+                .iter()
+                .any(|f| f.contains("no-such-section`, which resolves to nothing")),
+            "{found:#?}"
+        );
+        assert!(
+            found.iter().any(|f| f.contains("a project's own section")),
+            "{found:#?}"
+        );
+    }
+
     /// The claim: the placeholder takes the declared command, and the default command when
     /// none is declared. Mutation: rendering with a fixed command fails the declared case.
     #[test]

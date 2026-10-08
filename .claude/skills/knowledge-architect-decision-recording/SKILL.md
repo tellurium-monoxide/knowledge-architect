@@ -16,7 +16,7 @@ Not covered here: **having** the discussion (`knowledge-architect-design`);
 both this and `knowledge-architect-agent-configuration`: that skill owns how to write the
 configuration, this one owns where the argument lands.
 
-## 0. When recording happens
+## 0. When recording happens `##when-recording-happens`
 
 **A decision is recorded when the work that implements it lands, not when it is decided.** A
 design home holds built intent: the design as built and its reasons, against which the code is
@@ -29,7 +29,7 @@ A decision that no work implements, such as a policy, and that is not part of an
 recorded when it is made: there is no implementing change to wait for. §2's second test admits it,
 as a decision with no site of its own.
 
-## 1. Does it reverse something already recorded?
+## 1. Does it reverse something already recorded? `##reversal-check`
 
 **Ask this first, because the answer decides everything below it.** A decision routed by what it
 _is_ lands in the Component that fits its subject. A decision that reverses a recorded one belongs
@@ -76,7 +76,7 @@ change:
 - **Close the issue entry that asked the question**, in this commit rather than a later one, and
   rewrite whatever half of it survives rather than deleting the whole.
 
-## 2. Does it earn a document entry at all?
+## 2. Does it earn a document entry at all? `##entry-tests`
 
 Most implementation choices do not. A unit of work produces dozens of them, and a design home that
 records dozens per unit of work stops being readable and stops being ranked.
@@ -127,7 +127,7 @@ recorded decisions, a split of a head included, and adds or removes none, is not
 needs no design skill, and the routing and fidelity-of-relocation review axes judge that it adds or
 removes none.
 
-## 3. Which Component owns it
+## 3. Which Component owns it `##owning-component`
 
 The project is partitioned into Components, which its manifest declares. The project's root is a
 Component too.
@@ -146,7 +146,7 @@ Component, each entry a level-two heading carrying a slug. A decision that leans
 
 If none of these fits, **ask the owner before writing it anywhere.**
 
-## 4. Three homes, split by function
+## 4. Three homes, split by function `##three-homes`
 
 | what | where | why there |
 | --- | --- | --- |
@@ -176,7 +176,7 @@ it occurs, so it misses every revision.**
 When a decision was taken with no spec, on the in-change path of `knowledge-architect-design`, its
 commit message carries the deliberation.
 
-## 5. The current design
+## 5. The current design `##current-design`
 
 In the Component's design home. That is its `path@*@docs/design.md`, or, for a Component whose design has
 outgrown one file, its `path@*@docs/design/` directory. In the directory shape the decision goes in the
@@ -257,7 +257,7 @@ against the project that holds it.
 The slug is an identifier. Code comments, tripwires, other documents and `git log -G` all cite it,
 so **renaming one means rewriting every reference in the same change.** Grep before you rename.
 
-## 6. Losing alternatives
+## 6. Losing alternatives `##losing-alternatives`
 
 In the Component's `path@*@docs/rejected-alternatives.md`.
 
@@ -338,7 +338,7 @@ four tests.
 **A rejected alternative that is reopened, chosen and implemented moves out of the file.** The file
 must not describe as rejected a design the project now has.
 
-## 7. Tripwires from a premortem
+## 7. Tripwires from a premortem `##premortem-tripwires`
 
 A design discussion that runs a premortem ends with it, and the owner rules on which of its surviving causes
 become tripwires, each by the label, `T<n>`, it was put to the owner under. **A tripwire is written at harvest, with the decision it guards, and only on the
@@ -346,7 +346,7 @@ owner's word.** It goes in the tripwires home of the Component that owns the gua
 the decision's head exists before the tripwire that names it. Its shape and its lifecycle are
 `knowledge-architect-issue-tracking`.
 
-## 8. Before you finish
+## 8. Before you finish `##before-you-finish`
 
 ```sh
 cargo klarch check

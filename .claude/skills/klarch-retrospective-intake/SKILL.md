@@ -18,7 +18,7 @@ Not covered here:
 **This skill decides nothing.** It establishes the facts about each finding, proposes an action
 with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-decides`.
 
-## 1. What it takes
+## 1. What it takes `##what-it-takes`
 
 - **In scope: a retrospective's workflow file**, whatever project wrote it. It is named
   `<date>-<project>-<subject>-klarch-workflow.md`, or `<date>-<project>-workflow.md` before that
@@ -40,7 +40,7 @@ arrives the same way once the owner hands it over.
 A finding is cited by its id and its file's stem, as "W3 of
 2026-10-07-thaum-mock-reduction-workflow", the form the installed retrospective skill gives.
 
-## 2. Ground before judging any finding
+## 2. Ground before judging any finding `##ground-before-judging`
 
 1. **Read the workflow file whole**, and the project's file if present.
 2. **Note the version the retrospective used**, from its Version section, and the main commit you
@@ -66,7 +66,7 @@ A finding is cited by its id and its file's stem, as "W3 of
    every id in it; the analysis of each other file holds a section that points there. That a
    finding recurs across sessions is evidence: say how many times.
 
-## 3. What to establish for each finding or cluster
+## 3. What to establish for each finding or cluster `##what-to-establish`
 
 Each item below is answered with its evidence. The order is a suggestion; the content is not.
 
@@ -128,7 +128,7 @@ Each item below is answered with its evidence. The order is a suggestion; the co
 **Every verdict carries its evidence**: a quotation with its `file:line`, a command and its
 output, a commit. A verdict without evidence is labelled an assumption.
 
-## 4. Subagents
+## 4. Subagents `##intake-subagents`
 
 The checks a to c read text, and fresh subagents may run them, one per file or per cluster. Brief
 each with the findings, the files to read, the entries the search of §2 returned, and a scratch
@@ -139,7 +139,7 @@ establishes d to h, and re-checks every verdict a proposal rests on. No subagent
 reported session or builds a scenario of agent behaviour, per
 `design@agent-skills@synthetic-evidence-not-built`.
 
-## 5. The analysis file and the owner's ruling
+## 5. The analysis file and the owner's ruling `##analysis-and-ruling`
 
 Write the analysis in `path@knowledge-architect@docs/retrospective-reports/`, as `<stem>.md`,
 where `<stem>` is the received file's stem. The directory's README says what it holds and when a file leaves it.
@@ -177,7 +177,7 @@ whose `Outcome` line is still pending, and ask the owner for those. **Three outc
 A question tool is not the way to collect the ruling: it shows a label, not the evidence and the
 rival fix the ruling depends on.
 
-## 6. After the ruling
+## 6. After the ruling `##after-the-ruling`
 
 Each section's `Outcome` line holds the owner's choice and the owner's words, verbatim. The
 analysis is then committed on a branch, under the root `CLAUDE.md` `## Git` rules. Its life

@@ -741,6 +741,8 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
     let reference = args.reference.trim_matches('`');
     let (kind, anchor, id) = match crate::entity::candidate(reference, &anchors) {
         Candidate::Reference { kind, anchor, id } => (kind, anchor, id),
+        // The owner stands where the anchor does: the table keys a harness kind's entity so.
+        Candidate::Harness { kind, owner, id } => (kind, owner, id),
         Candidate::Malformed { why, .. } => {
             return Err(format!("{reference} is malformed: {why}"));
         }
@@ -762,7 +764,29 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
     // The body first, then what points at it. A reader asking for an entry wants the entry; the
     // inbound list is what tells them what closing it would break.
     let mut found = false;
-    if kind.takes_a_path() {
+    if kind.is_harness() {
+        // A skill or an agent prints whole, a section from its heading to the next heading of
+        // its level or above, out of the walked document or the installed copy that defines it.
+        let entities = Entities::build(&model, &anchors);
+        if let Some(site) = entities.sites(&kind, anchor, id).first() {
+            let doc = model
+                .documents()
+                .iter()
+                .chain(model.installed())
+                .find(|d| d.rel == site.file);
+            if let Some(doc) = doc {
+                let body = if kind.is_named() && anchor.is_empty() {
+                    doc.text.trim_end().to_string()
+                } else {
+                    section_text(&doc.text, site.line)
+                };
+                outln!("{reference}  {site}");
+                outln!();
+                outln!("{body}");
+                found = true;
+            }
+        }
+    } else if kind.takes_a_path() {
         // A path's entity is the tree's, so it is shown from the walked document where there is
         // one and from the survey where there is not: a directory and an unwalked file both
         // exist and are both worth resolving, and neither has a body to print.
@@ -847,6 +871,29 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
         }
     }
     Ok(ExitCode::SUCCESS)
+}
+
+/// The section of `text` whose level-two heading is at `line`, up to the next heading of level
+/// two or one outside a fenced block.
+fn section_text(text: &str, line: u32) -> String {
+    let mut out = Vec::new();
+    let mut fence = false;
+    for (n, l) in text
+        .lines()
+        .enumerate()
+        .skip(line.saturating_sub(1) as usize)
+    {
+        let trimmed = l.trim_start();
+        if trimmed.starts_with("```") || trimmed.starts_with("~~~") {
+            fence = !fence;
+        }
+        let heading = !fence && (l.starts_with("## ") || l.starts_with("# "));
+        if heading && n + 1 != line as usize {
+            break;
+        }
+        out.push(l);
+    }
+    out.join("\n").trim_end().to_string()
 }
 
 /// Every issue entry, one row each.

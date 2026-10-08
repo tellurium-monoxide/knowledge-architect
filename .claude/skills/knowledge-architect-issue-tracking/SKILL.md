@@ -31,7 +31,7 @@ decision is recorded and the tripwire is unreadable apart from it.
 work must prove, and it belongs with the work's planning, under `knowledge-architect-planning`. A
 tripwire is for a decision about code that exists.
 
-## What is outstanding, across every register
+## What is outstanding, across every register `##outstanding-across-registers`
 
 ```sh
 cargo klarch issues                          # every issue entry, one row each
@@ -52,14 +52,14 @@ reference the entry carries to a decision, a goal or a declared register's entry
 The listing exists because the registers are spread over every Component and location, so grepping
 the one you happen to think of is not the check.
 
-## Read before you diagnose
+## Read before you diagnose `##read-before-diagnosing`
 
 **Before concluding that a behaviour is a new problem, list the issues of the anchor it appears
 in**, `cargo klarch issues <anchor>`, and read the entries whose title comes near. Diagnosing a
 recorded issue again costs a session and produces nothing. The same applies before attributing a
 measurement to a change.
 
-## An issue entry
+## An issue entry `##issue-entry`
 
 One file, `<id>.md`, in the anchor's `open-issues/` directory or in one of its declared group
 subdirectories. The id is the file's basename, matches `[a-z0-9]+(-[a-z0-9]+)*`, says what the
@@ -169,7 +169,7 @@ already shared with the commit messages of fixes. The other kinds carry required
 template: a template imposed on a kind that cannot fill it produces empty headings, and empty
 headings teach readers to skim the entries where the checklist does matter.
 
-## The trigger test
+## The trigger test `##trigger-test`
 
 A `deferred` entry's trigger and a tripwire's firing evidence answer the same question: what will
 make someone do this. Both are subject to one test.
@@ -193,7 +193,7 @@ one blocks.
 one whose own work includes this, or do the work now, in a change of its own. Writing the trigger
 down anyway is the move this test exists to stop.
 
-## A tripwire entry
+## A tripwire entry `##tripwire-entry`
 
 A level-two heading carrying a slug at its end, in the anchor's tripwires home, and its body:
 
@@ -235,7 +235,7 @@ or a check the project runs on every commit. A threshold with no enforcement is 
 the trigger test above first, though: an assertion whose occasion fails it blocks a session rather
 than scheduling anyone.
 
-## The movement instruction
+## The movement instruction `##movement-instruction`
 
 The two kinds are coupled by movement, and that is what keeps both honest.
 
@@ -290,7 +290,7 @@ checker itself is recorded this way in the project that meets it, in the issue d
 its anchors, since `cargo klarch show` lists the entry's sites wherever it sits, and is reported to
 the workflow's maintainers by the retrospective.
 
-## The cold-reader standard
+## The cold-reader standard `##cold-reader-standard`
 
 Anyone who did not witness the work must be able to reproduce what the entry describes and start
 from the entry alone. It binds every issue entry and the commit message of every fix. Each carries,
@@ -308,7 +308,7 @@ as far as they exist:
 **This is verbosity with a purpose.** These entries are longer than the text around them on purpose,
 and the length is not a reason to compress them.
 
-## Reviews
+## Reviews `##reviews-and-entries`
 
 A review produces `observation` and `question` entries in the affected anchor's `open-issues/`
 directory. The review document itself is a working artifact and is not a durable home. This is

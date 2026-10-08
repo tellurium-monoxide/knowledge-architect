@@ -11,10 +11,13 @@
 //! placeholder is filled here rather than at install, where the project's command is filled,
 //! because a snippet does not vary by project.
 //!
-//! Before that, two passes, in this order. A line whose first two characters are `%%` is a comment
-//! for this repository's maintainers: it is removed whole, so it may cite design heads and issues
-//! that the walk checks and no installing project holds. A `%%` line inside a fenced block, or one
-//! with leading spaces, fails the build rather than ship. Then each placeholder of `SUBSTITUTIONS`
+//! Before that, three passes, in this order. A line whose first two characters are `%%` is a
+//! comment for this repository's maintainers: it is removed whole, so it may cite design heads and
+//! issues that the walk checks and no installing project holds. A `%%` line inside a fenced block,
+//! or one with leading spaces, fails the build rather than ship. Then a level-two heading's section
+//! slug placeholder, `{{slug:<id>}}`, is rendered into the slug the installed copy defines, so the
+//! walk of this repository reads no definition in content/; a placeholder anywhere else fails the
+//! build. Then each placeholder of `SUBSTITUTIONS`
 //! is replaced, wherever it stands in a line, by its literal: text that must ship verbatim and
 //! that the checker would misread if content/ held it. A row no text uses fails the build. The
 //! substitutions are filled here, not at install, for the snippets' reason: their literals do not
@@ -28,7 +31,7 @@ use std::path::{Path, PathBuf};
 // script has no test target of its own.
 #[path = "src/render.rs"]
 mod render;
-use render::strip_comments;
+use render::{render_slugs, strip_comments};
 
 /// The prefix every installed skill directory and agent file carries in the project.
 const PREFIX: &str = "knowledge-architect-";
@@ -94,7 +97,8 @@ fn main() {
         let rendered = out.join("rendered").join(install);
         std::fs::create_dir_all(rendered.parent().expect("an install path has a parent"))
             .expect("OUT_DIR is writable");
-        let text = substitute(&strip_comments(&text, file), &mut substituted);
+        let text = render_slugs(&strip_comments(&text, file), file);
+        let text = substitute(&text, &mut substituted);
         std::fs::write(&rendered, snippets.render(&text, file)).expect("OUT_DIR is writable");
         let rendered = rendered.to_str().expect("a UTF-8 path");
         writeln!(list, "    ({install:?}, include_str!({rendered:?})),").expect("a String");

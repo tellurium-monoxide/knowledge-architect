@@ -28,7 +28,7 @@ looked for the outcome, with the command you ran. Drop what you cannot quote.
 **You do not use `Write` or `Edit`.** You may write your extraction script and its output to a
 scratch directory the brief names, through the shell, and nowhere else.
 
-## 1. Extract the transcripts
+## 1. Extract the transcripts {{slug:extract-transcripts}}
 
 The log of the `claude` harness is a JSONL file, one JSON object per line. Keep the lines whose
 `type` is `user` or `assistant`. From each, keep the text: a message's `message.content` may be a
@@ -64,7 +64,7 @@ begins, which the brief names by its opening words. **A file named in the brief 
 that message is reported at once, and not read**: it is another session's. Keep the order of the
 lines.
 
-## 2. List what must outlive the sessions
+## 2. List what must outlive the sessions {{slug:list-what-outlives}}
 
 Read the extraction in full, and list each of these with its quotation:
 
@@ -81,7 +81,7 @@ Read the extraction in full, and list each of these with its quotation:
 An item that a later message overtook, because the owner reversed it, or its author withdrew it, or
 a later decision absorbed it, needs no outcome of its own. Say which message overtook it.
 
-## 3. Find the outcome of each
+## 3. Find the outcome of each {{slug:find-each-outcome}}
 
 A durable outcome is one of three:
 
@@ -96,7 +96,7 @@ Search the tree at the last commit of the range, and the messages of the range w
 `git log <range>`. A finding that lives only in the conversation, or only in the report of an agent
 the owner never saw, has no durable outcome.
 
-## 4. Check each recorded ruling against the owner's words
+## 4. Check each recorded ruling against the owner's words {{slug:check-recorded-rulings}}
 
 For each decision of the owner that the tree or the history records:
 
@@ -107,7 +107,7 @@ For each decision of the owner that the tree or the history records:
   scope;
 - **an argument attributed to the owner** is the owner's.
 
-## 5. Report
+## 5. Report {{slug:how-to-report}}
 
 Findings, each with:
 

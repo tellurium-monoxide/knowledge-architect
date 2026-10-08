@@ -42,7 +42,7 @@ and each choice below that changes the project's build or a file it already has.
 the agent proposes. The skill is built on an owner present to rule: a run without one, such as a
 trial, makes those choices itself.
 
-## 1. Pin the checker, and decide how it runs
+## 1. Pin the checker, and decide how it runs {{slug:pin-the-checker}}
 
 A project runs the checker at the version it chose, and moves to another version by an explicit
 edit. The installed skills move with it, since one version of the checker ships one version of
@@ -81,7 +81,7 @@ writes the version of the checker it links into the copy's manifest: the library
 `CHECKER_VERSION`. It never spells the version in the test, so the pin stays written in one place.
 In an extension's crate, `CARGO_PKG_VERSION` is the extension's version, not the checker's.
 
-## 2. Declare the command
+## 2. Declare the command {{slug:declare-the-command}}
 
 The command the project runs is declared in the manifest, and the checker prints it in its
 messages, in the header of every generated listing and in every installed file:
@@ -94,7 +94,7 @@ command = "<the command, for instance cargo klarch or tools/bin/klarch>"
 When the key is absent, the command is `klarch`. After declaring it, run the install again, so the
 installed files carry it.
 
-## 3. The Components and the locations
+## 3. The Components and the locations {{slug:components-and-locations}}
 
 A **Component** is a directory the manifest names under `[project] components`, by its path; its
 name is the basename of that path, and the project's root is a Component named by
@@ -115,7 +115,7 @@ What the walk must not read is declared under `[walk]`, each row with its reason
 beside it: `skip-dirs` and `skip-files` for paths, `exclude` for another project kept inside this
 one. `[agents] harness` is absent for the default, the `claude` harness.
 
-## 4. The documents each Component carries
+## 4. The documents each Component carries {{slug:component-documents}}
 
 Every Component carries the same documents. `{{command}} check` names each one missing:
 
@@ -144,7 +144,7 @@ Each document opens with a short introduction saying what it holds and what it d
 register home says it holds no entry yet. **Every Component states at least one goal**: run
 `knowledge-architect-goal-setting` with the owner for each one.
 
-## 5. The root CLAUDE.md
+## 5. The root CLAUDE.md {{slug:root-claude-md}}
 
 The project's root `CLAUDE.md` holds, besides what the project already keeps there:
 
@@ -165,7 +165,14 @@ How the two tables are written is `knowledge-architect-agent-configuration`, its
 two tables of the root `CLAUDE.md`; the prefix and a project skill are its section on shaping a
 skill.
 
-## 6. The gates
+**Every level-two heading of the root `CLAUDE.md`, and of each project skill and agent, ends with a
+slug**: two hashes and the id in backticks, the id naming the section's subject. The check reports a
+heading without one. A skill's directory and an agent's file are named in lower-case words joined
+by hyphens, and a frontmatter `name` equals that name. The slug is what a reference to the section
+cites: `instructions@<slug>` for the root `CLAUDE.md`, `skill@<name>@<slug>` for a skill and
+`agent@<name>@<slug>` for an agent.
+
+## 6. The gates {{slug:setup-gates}}
 
 Recommend one command that runs every check the project owes before a merge (formatting, the
 document check, the commit messages, the linters, the tests), runs them all even when one fails,
@@ -195,13 +202,13 @@ becomes a command of the tool, so it runs the same way each time. It is met whil
 left to be done by hand.
 ```
 
-## 7. Finish
+## 7. Finish {{slug:finish-setup}}
 
 - `{{command}} check --fix` until it passes: it writes the installed files and the generated
   `index.md` files the check would report, then checks.
 - Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together.
 
-## 8. Existing documentation
+## 8. Existing documentation {{slug:existing-documentation}}
 
 A project that already has documentation keeps it until its move is planned:
 
@@ -230,7 +237,7 @@ move.
 
 Setting up stops at a conformant structure, the goals, and that issue.
 
-## Moving the pin
+## Moving the pin {{slug:moving-the-pin}}
 
 To move to another version:
 
@@ -250,7 +257,7 @@ To move to another version:
    project's tests, and commit the pin, the installed files and the repairs together. A new
    version can change what a command prints, which only the tests see.
 
-## In a Rust project
+## In a Rust project {{slug:rust-project}}
 
 %% The section is for Rust because the project is focused on Rust, the language whose comments the
 %% checker reads; another language gets a section of its own when a project needs one. It serves

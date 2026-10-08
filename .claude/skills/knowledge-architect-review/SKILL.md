@@ -24,7 +24,7 @@ and `knowledge-architect-transcript-reviewer`, all dispatched rather than read),
 **recording** what a review changes (`knowledge-architect-decision-recording`,
 `knowledge-architect-issue-tracking`).
 
-## 1. The axes
+## 1. The axes `##review-axes`
 
 | axis | what it does | applicable when |
 | --- | --- | --- |
@@ -60,7 +60,7 @@ identifier.** Search the harness's transcript directory for the opening words of
 name a file only once it is seen to hold the message: a session that was cleared or compacted can
 leave an earlier session's identifier in the harness's paths.
 
-## 2. The invariants
+## 2. The invariants `##review-invariants`
 
 These hold whatever the axes are. They are what makes a finding worth acting on rather than
 re-checking.
@@ -110,7 +110,7 @@ re-checking.
 - **No reviewer edits the tree, and none runs an operation that can lose content**: no stash, no
   reset, no checkout of a path.
 
-## 3. What a review leaves behind
+## 3. What a review leaves behind `##what-review-leaves`
 
 **Findings** become one of:
 

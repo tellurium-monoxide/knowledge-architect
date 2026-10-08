@@ -28,7 +28,7 @@ project, per `design@knowledge-architect@no-directory-named-after-the-project`:
 | `gates` | crates/gates | package `knowledge-architect-gates`: the library that runs a project's merge gates |
 | `xtask` | tools/xtask | the maintenance tool, `cargo x gates` and `cargo x changelog`; never published |
 
-## Language, tone and style
+## Language, tone and style `##language-and-style`
 
 ### Always
 
@@ -60,7 +60,7 @@ State the consequences of a request explicitly. Never assume the user has consid
 - Avoid numbers that may go stale, except in issues that follow the cold-reader standard of the
   `knowledge-architect-issue-tracking` skill.
 
-## Mechanical validation of documents
+## Mechanical validation of documents `##mechanical-validation`
 
 The project keeps a precise record of decisions, their arguments, the alternatives that lost, and
 what is still open. The checker verifies that record mechanically, and this repository is checked
@@ -183,7 +183,7 @@ win.
   `design@core@a-commit-message-is-a-document`. A message is history, read years later, so a
   pointer in it that resolves to nothing tells its reader nothing.
 
-## Where knowledge goes
+## Where knowledge goes `##where-knowledge-goes`
 
 **Every durable decision has exactly one home**, chosen by what it is about and when it stops
 being true. What is bound is the _why_ of the decision, the losing arguments, and the evidence the
@@ -271,7 +271,7 @@ harvest, and that commit's message cites it by its kind. This is a restatement; 
 and `design@agent-skills@plan-landing-is-not-tied-to-its-work`, and the procedure is the installed
 `knowledge-architect-planning`, which also says when a plan document must land before its work.
 
-## Verify before relying on anything
+## Verify before relying on anything `##verify-before-relying`
 
 A document can describe the shape the code was committed at rather than the shape it has. Some of
 the core's documents were first written in another project, thaum; a figure measured there names
@@ -403,7 +403,7 @@ not of what should be done.
 
   The turn ends with a "Met outside the task" section listing every item and its outcome.
 
-## Verify mechanically
+## Verify mechanically `##verify-mechanically`
 
 The gates are how a session checks that it broke nothing project-wide. **One command runs every
 gate, and its exit code is trustworthy:**
@@ -477,7 +477,7 @@ repaired by an amend while it is the newest, and by a history edit after, both w
 `## Git` point 2. A branch about to merge owes all of them: one `cargo x gates --require-rebased`.
 CI runs them on every push to a ready pull request.
 
-## Skills
+## Skills `##repository-skills`
 
 **A skill is one activity**: the scope over which a complete set of procedures makes sense. Read
 the matching skill before doing that kind of work.
@@ -505,7 +505,7 @@ standing direction under that skill; its home is
 `klarch-changelog-reviewer`, is dispatched by `klarch-release`; the harness lists each with its
 description.
 
-## Git
+## Git `##git-workflow`
 
 Linear history, no merge commits, and no direct push to main. This section is a restatement. Its home is
 `design@knowledge-architect@git-flow`.
@@ -643,7 +643,7 @@ git checkout main && git pull --ff-only && git branch -D <branch>
 - A merge to main publishes nothing. A release is a separate procedure, per
   `design@knowledge-architect@publish-after-merge`.
 
-## Release status
+## Release status `##release-status`
 
 **The crates are published on crates.io, and at least one consumer is known.**
 

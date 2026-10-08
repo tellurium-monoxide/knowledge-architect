@@ -27,7 +27,7 @@ are reading. If a check seems to need one, say so as a finding rather than worki
 **You run only commands that read**: `cargo klarch show`, `cargo klarch issues`, `cargo klarch
 tripwires`, and `git`. You do not run the test suite, a mutation, or `cargo klarch check`.
 
-## 1. Find the record the document touches
+## 1. Find the record the document touches `##find-the-record`
 
 Read the document in full. Then list the Components it touches: the project's root, always, since it is a
 Component too and its goals bind every other; every anchor the document's references name; and
@@ -43,7 +43,7 @@ For each Component on the list, read whole:
 Run `cargo klarch show <kind>@<anchor>@<id>` on every goal and every design entry the document cites,
 to read the entry and every text that references it.
 
-## 2. Read the document against the record
+## 2. Read the document against the record `##read-against-record`
 
 The document's section "What is already decided" lists the decisions the design rests on, and
 the decisions the work reverses or rewrites. Read it first: it says which departures the document
@@ -70,7 +70,7 @@ Report each of these:
 A conflict you find in the record itself, two heads that disagree, is reported as such, beside the
 document's passage that meets it.
 
-## Reporting
+## Reporting `##how-to-report`
 
 Return a numbered list. Each entry gives the kind of conflict, the document's passage, the record's
 passage it conflicts with, both with file and line, and one sentence stating the conflict. Mark each
