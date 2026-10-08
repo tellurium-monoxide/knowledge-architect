@@ -1906,7 +1906,7 @@ CLAUDE.md, which belongs to the project: it says the import line is missing, and
 it with the line as its repair. A change a project needs to an installed skill belongs in a skill
 of its own, routed from the project's CLAUDE.md.
 
-### Under the `claude` harness, skills, agents, the primer and the root CLAUDE.md are entities of four kinds that are no register, and a skill or an agent is named by its directory or its file, which its frontmatter `name`, where one is set, equals `##harness-kinds`
+### Under the `claude` harness, skills, agents, the primer and the root CLAUDE.md are entities of four kinds that are no register, and a skill or an agent is named by its directory or its file, which its frontmatter `name`, where one is set, equals and which is no name the harness reserves `##harness-kinds`
 
 The four harness kinds, `skill`, `agent`, `primer` and `instructions`, exist under the `claude`
 harness alone, per `design@core@agents-table`. They are kinds, not registers: no anchor carries
@@ -1928,6 +1928,9 @@ https://code.claude.com/docs/en/sub-agents.md:
 - "The directory name also invokes the skill", even where a frontmatter `name` sets a second
   command; a skill in a `<subdirectory>/.claude/skills/` directory is loaded only when a session
   reads a file there, and is no entity here.
+- A skill folder is not named "`synced`, in any capitalization", and one named `anthropic-skills`
+  or beginning `anthropic-skills:` does not load. So a skill whose directory is `synced`, or begins
+  `anthropic-skills`, is a finding: the check would otherwise pass a skill no session can use.
 - An agent's "identity comes only from the `name` frontmatter field"; the agents directory is
   scanned "recursively"; a file there with no `name` is treated "as documentation kept beside your
   agents", so it is no agent, and no README or index is owed there. A `name` is "at most 256
