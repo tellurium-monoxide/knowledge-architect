@@ -24,7 +24,9 @@ entity table rather than guess from paths.
 The installed workflow asks a project to name its skills with its own prefix, per
 `design@agent-skills@skill-name-prefix`, and to route each installed skill to the project skills
 that add to it, per `design@agent-skills@routing-table-shape`. A skill that breaks either is found
-by review or not at all.
+by review or not at all. The bare-name lint, `design@core@bare-skill-name-reported`, rests on the
+prefix too: a project skill named by an ordinary word, such as `check`, makes every backticked use
+of that word a finding.
 
 ### What would close it
 

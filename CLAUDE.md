@@ -185,6 +185,11 @@ win.
     `design@agent-skills@checker-syntax-without-backticks-names-its-gap`. A span naming nothing here, such as
     `origin/main` or `application/json`, is silent, and so is a one-segment span, which is a name
     rather than a pointer.
+  - The one-segment span that is exactly the name of a skill or an agent is reported, per
+    `design@core@bare-skill-name-reported`. Write it as its reference, `skill@<name>` or
+    `agent@<name>`, released sections of CHANGELOG.md included. Once the skill or the agent is
+    deleted, a reference to it in a released section goes back to the bare name, per
+    `design@knowledge-architect@changelog-entries`.
 
 - **A commit message is a document.** It is parsed as one markdown document, and every reference
   in it must resolve, against its own commit's tree or its first parent's, per
@@ -469,7 +474,7 @@ of them:
 | check | judges |
 | --- | --- |
 | `generated` | every generated index against its regeneration |
-| `references` | every reference against the entity table, the two retired forms, the path to anchor |
+| `references` | every reference against the entity table, the two retired forms, the path to anchor, the bare name of a skill or an agent |
 | `registers` | the shape of what each anchor carries: a file register's entries, groups, README and index, and a directory home's links |
 
 What this project declares conformant, and what it exempts, is the manifest at the root.

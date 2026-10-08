@@ -14,7 +14,9 @@ branches. Finding C3 of 2026-10-07-knowledge-architect-workflow.
 ### What
 
 `design@core@candidate-rule-and-retired-forms` makes a one-segment span a name rather than a
-pointer, so `cargo klarch check` reads none. `cargo klarch show` lists checked references only. The
+pointer, so `cargo klarch check` reads none, except the exact name of a skill or an agent, which
+`design@core@bare-skill-name-reported` reports. A register's slug is not such a name, and stays
+silent. `cargo klarch show` lists checked references only. The
 installed text tells a session to grep for a reference only in a file the checker does not read, or
 for a rename: nothing makes the session that deletes an entry look for its bare mentions. The three
 instances are in the transcript of that session, and were repaired before the merge, so they are
@@ -47,5 +49,6 @@ happens to read it.
 ### What would close it
 
 A census of the bare mentions of every declared slug over this tree and one other project's, which
-measures the false positives of the check; then the check, or the listing if the census shows the
+measures the false positives of the check; the names of skills and agents are already reported, by
+an exact match against the entity table, and the census is of the register slugs; then the check, or the listing if the census shows the
 check too noisy.

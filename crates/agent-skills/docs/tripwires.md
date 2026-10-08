@@ -165,7 +165,8 @@ record; this is behaviour in sessions, with the limit
 
 **Fires when:** a review finds a diff that turns a checked reference or a backticked path into
 plain text naming the same target, with no reference beside it to an issue entry that records a
-missing form; or a retrospective's answer to its question on references written without backticks reports a pointer
+missing form, other than a deleted skill's or agent's name in a released changelog section, which
+the decision admits; or a retrospective's answer to its question on references written without backticks reports a pointer
 written as bare plain text to clear a finding.
 **Response:** open a `defect` for the instance. At the second instance, reopen
 `design@agent-skills@plain-text-is-no-repair`, with a mechanical check for plain-text
