@@ -18,8 +18,8 @@ The installed review skill states the invariants of a dispatched review: fresh r
 brief, reproduction, a worktree each. None bounds a reviewer's running time, or says that a
 reviewer reports what it has reproduced before it queues more work. The first observation is
 from the retrospective of one thaum session, written on 2026-10-02 outside this repository, with
-two reviewers of one review round. The second is below. It recurs in two real sessions; the owner ruled
-that it is worth an addition.
+two reviewers of one review round. The second is below. It recurs in two real sessions, both in
+adversarial reviews; the shape of an addition is not approved, per the closing condition below.
 
 A second instance, in this repository: the adversarial reviewer of the pre-release branch, which
 added `check --fix`, queued a batch of mutation runs and stopped with its background work still
@@ -37,7 +37,12 @@ sessions show it recurs; they do not show how often.
 
 ### What would close it
 
-The addition to the review skill, such as "report what is reproduced before queueing more", under
-`design@agent-skills@additions-need-real-use`. The second session met the earlier closing condition,
-and the owner ruled that the addition is made, in a pull request after the one that recorded the
-second observation.
+An addition to the review skill whose shape the owner approves, under
+`design@agent-skills@additions-need-real-use`, or the owner's ruling that the problem belongs to the
+projects that meet it. The owner approved an addition after the second session, "report what is
+reproduced before queueing more", and then withdrew that approval as written: "I'm not fully
+satisfied with the solution written in there. This problem only affects adversarial code reviews
+and not the others, so it is a project specific problem, actually. I don't want to block the
+release while I don't have a better solution in mind, and it has been fixed locally on thaum's
+side." Both instances were adversarial reviewers that queued mutation runs. A shape that the owner
+approves, or a third instance outside adversarial code review, reopens the addition.

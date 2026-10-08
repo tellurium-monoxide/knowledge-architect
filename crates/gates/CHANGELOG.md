@@ -82,6 +82,12 @@ subsection is omitted.
   destinations, and an audit's gaps put to the owner in one question.
 - `agent-skills`, patch: the design skill builds no discriminating evidence that the project's
   goals or design heads rule out, and sends the fork to the owner as a tie.
+- `agent-skills`, patch: the primer says a word of the owner holds only as far as its premise; when
+  the premise proves false, the session puts the corrected premise to the owner, with a default,
+  before acting further on the word.
+- `agent-skills`, patch: the retrospective's standing question on the primer asks whether the
+  session or one of its subagents acted as if a rule of the primer were absent, where it asked
+  whether the primer reached the subagents.
 
 ## 0.4.0
 
