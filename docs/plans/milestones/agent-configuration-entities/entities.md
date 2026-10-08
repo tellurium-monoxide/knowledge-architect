@@ -39,6 +39,9 @@ there, except its own acceptance criteria. It starts after the milestone documen
   longer a misplaced definition.
 - **A name outside the id grammar**, on the owner's ruling of D1: a skill directory or an agent file
   whose name is outside `[a-z0-9]+(-[a-z0-9]+)*` is a phase-2 finding, naming the file.
+- **A name that its frontmatter contradicts**, on the owner's ruling of Q1: a frontmatter `name`
+  that differs from the skill's directory name or the agent's file name, or a `name` written twice,
+  is a phase-2 finding, naming the file and both names.
 - **AC1, widened by the owner's ruling recorded under D7 of the milestone document**: every kind
   name is refused as an anchor's name. The kind names are `path`, `planned`, the ten built-in
   registers, the four harness kinds whatever the harness, and every register the manifest declares.
@@ -169,8 +172,8 @@ failure for a generated file.
 
 | kind | an entity | defined from | cited |
 | --- | --- | --- | --- |
-| `skill` | a directory directly under `path@agent-config@skills/` holding `SKILL.md`, its id the directory's name | the installed copies for a name the installer's namespace holds, the walk otherwise | `skill@<name>` |
-| `agent` | a Markdown file under `path@agent-config@agents/`; its id is open at the audit, Q1 below | the same | `agent@<name>` |
+| `skill` | a directory directly under `path@agent-config@skills/` holding `SKILL.md`, its id the directory's name, which a frontmatter `name` must equal where one is set, per Q1 below | the installed copies for a name the installer's namespace holds, the walk otherwise | `skill@<name>` |
+| `agent` | a Markdown file at any depth under `path@agent-config@agents/` with a frontmatter `name`, its id the file's basename, which the `name` must equal, per Q1 below | the same | `agent@<name>` |
 | `primer` | the primer, `path@agent-config@knowledge-architect/PRIMER.md`; only its sections are entities | the installed copies | `primer@<slug>` |
 | `instructions` | the root CLAUDE.md; only its sections are entities | the walk | `instructions@<slug>` |
 
@@ -179,7 +182,7 @@ project's root, in every project.
 
 - **Nothing is declared** (`argument@agent-configuration-entities@a6`): the harness fixes the layout. Under `harness = []` none of the four
   kinds exists, and a span headed by one is silent, as any span whose head is no kind and no anchor.
-- **Kinds, not registers**, open at the audit, Q2 below. A harness kind is answered as `path` and
+- **Kinds, not registers**, ruled at the audit, Q2 below. A harness kind is answered as `path` and
   `planned` are, with no anchor and no declared home, so nothing a project declares can add one.
 - **No README and no index** are owed under the skills and agents directories (`argument@agent-configuration-entities@a8`). Read at
   the audit, in the harness's documentation of subagents,
@@ -195,8 +198,8 @@ project's root, in every project.
   loaded by the harness when a session reads a file there, per the same page. It is no entity of
   this slice: a reference to it is reported dangling.
 - **What is no entity**: a directory under the skills directory that holds no `SKILL.md`, a file of
-  a skill directory other than `SKILL.md`, and a file under the agents directory that is not
-  Markdown or sits in a subdirectory. None is reported. A project-owned one stays an ordinary
+  a skill directory other than `SKILL.md`, a file under the agents directory that is not
+  Markdown, and a Markdown file there with no frontmatter `name`. None is reported. A project-owned one stays an ordinary
   walked document; an installed one stays outside the walk.
 - **A scoped CLAUDE.md is not modelled** (`argument@agent-configuration-entities@a51`, `argument@agent-configuration-entities@a52`). The root CLAUDE.md stays, so its sections are.
 - **Under `harness = []`, the installed copies a project kept** are walked as its own documents,
@@ -206,93 +209,31 @@ project's root, in every project.
 - **Nearest rival:** no entities, with skills cited by path, as today. It leaves every citation of a
   skill unchecked, which is the need the owner named in R1 (`argument@agent-configuration-entities@a1`).
 
-### Open at the audit
+### Ruled at the audit
 
-- **Q1, an agent's id.** The harness's documentation of subagents says "identity comes only from
-  the `name` frontmatter field", that the agents directory, `path@agent-config@agents/` here, is scanned "recursively, so you can organize
-  definitions into subfolders", and that a file with no `name` is documentation. This spec took the
-  file's basename as the id, directly under the agents directory. Two shapes:
-  - **(a) the id is the frontmatter `name`**, of any Markdown file at any depth under the agents
-    directory that has one, read with the frontmatter subset of `path@core@src/source/md.rs`; a
-    file with no `name` is no agent. A frontmatter block the subset refuses is a finding, since the
-    agent's name could not be read. The harness's identity is the cited one.
-  - **(b) the id is the basename**, of a file directly under the directory, and a finding where the
-    frontmatter `name` differs. It imposes a naming convention the harness does not need.
+- **Q1, an agent's id: the file-system name and the frontmatter `name` must match.** The owner:
+  "this finding makes me want to apply the check that the filesystem name and the frontmatter name
+  do match, returning a finding if they do not. I'm not sure our installed workflow would be able to
+  work properly if not, and I'd rather make the checks more strict to keep the workflow simpler
+  than the other way around." So a skill's id is its directory's name and an agent's id its file's
+  basename, and each equals its frontmatter `name` where one is set. How the name is read is D9 of
+  the milestone document, the assistant's default:
+  - only the `name:` line is read, by the frontmatter subset's line rule of
+    `path@core@src/source/md.rs`, even where other lines of the block fall outside the subset, so a
+    project keeps frontmatter the harness reads, such as a list or a multi-line description;
+  - a `name` that differs from the directory's or the file's name is a finding, and so is a `name`
+    written twice;
+  - a skill with no `name` is accepted, since the harness makes the field optional and invokes the
+    skill by its directory's name;
+  - a Markdown file under the agents directory with no `name` is no agent, since the harness reads
+    it as documentation;
+  - an agent in a subdirectory of the agents directory is an agent, since the harness scans the
+    directory recursively; two agents of one name are the duplicate finding.
 
-  Default: (a). In this repository, each of the 9 agents' `name` equals its basename, and every
-  agent's and skill's frontmatter fits the subset, so neither shape changes a file here.
-- **Q2, kinds or registers.** The new heads record how a harness kind is stored, and the owner has
-  ruled only that skills and agents are entities. Two shapes:
-  - **kinds answered beside `path` and `planned`**, with no anchor and no declared home: the built-in
-    registers stay ten, and nothing a project declares adds a harness kind;
-  - **built-in registers of a new shape**, carried by no anchor: `Registers` lists them, so every
-    reader of a register, the manifest's refusals and the index included, must learn a register
-    with no carrier.
-
-  Default: kinds. The discriminating fact: a register is what an anchor carries, and a harness kind
-  has no anchor; the kind set already holds two kinds that are no register.
-
-### #skill-cited-without-anchor, #root-instructions-cited and #primer-sections: the two-segment form
-
-```text
-skill@<name>                 the whole skill
-skill@<name>@<slug>          one of its sections
-agent@<name>                 the whole agent
-agent@<name>@<slug>          one of its sections
-primer@<slug>                a section of the primer
-instructions@<slug>          a section of the root instructions
-```
-
-An illustration of the shapes, not of code.
-
-- **No anchor**, because a skill or an agent has one namespace per harness, which the harness
-  enforces as directory and file names, so an anchor carries no information (`argument@agent-configuration-entities@a56`). The primer and
-  the root instructions are one document each in a project (`argument@agent-configuration-entities@a64`).
-- **The rejected alternative "A register reference with no anchor"**, in
-  `path@core@docs/rejected-alternatives.md`, gives two reasons. Its first, that "the extracted tool
-  cannot know which register is single-instance in a given project", does not hold for a harness
-  kind: the tool fixes the four kinds and their layout, and no project declares one. Its second,
-  "one three-part grammar serves every kind without a special case in the resolver or in the
-  instructions", is the cost `argument@agent-configuration-entities@a14` names, which the owner weighed. Per D3 of the milestone document.
-- **The third segment narrows within the kind** (`argument@agent-configuration-entities@a61`), so a section keeps the information that it
-  belongs to a skill or to an agent (`argument@agent-configuration-entities@a48`).
-- **The kind is asked first**, as `candidate` does today, so a Component, a location or a plan named
-  after a harness kind would be shadowed (`argument@agent-configuration-entities@a57`). AC1 refuses such a name.
-- **`instructions` names the document's role** (`argument@agent-configuration-entities@a65`), so the announced move to AGENTS.md changes no
-  reference.
-- **Nearest rival:** `thread@agent-configuration-entities@skill-cited-in-a-constructed-anchor`, see the milestone's Losing alternatives.
-
-### #skill-sections-carry-slugs, #agent-sections-carry-slugs and #primer-sections: the section rule
-
-- **The rule of `design@core@an-entry-is-a-heading-at-the-register-level`, at level two**, over the
-  section homes: every level-two heading outside a fence owes a slug, and a slug elsewhere in a
-  section home is misplaced (`argument@agent-configuration-entities@a24`). An id is unique within its one document.
-- **Fenced headings define nothing** (`argument@agent-configuration-entities@a25`), so the illustrations of an issue entry's shape in the
-  issue-tracking skill, or of a design entry in the decision-recording skill, owe no slug.
-- **A slug's form**: the id grammar, two to four words naming the section's subject, not its number
-  or its position.
-- **A section slug of the installed text is an interface** (`argument@agent-configuration-entities@a27`, `argument@agent-configuration-entities@a49`): a rename dangles a
-  consumer's citations, and owes a Migration entry in the changelog.
-
-### #installed-skills-defined-from-shipped-set: definitions from the judged tree, slugs as placeholders in content/
-
-- **The source.** `Entities::build` takes the installed copies of the tree it judges, as
-  `Survey::installed` holds them, and defines the installed skills, agents, the primer, and their
-  sections. Under `commits`, `read_tree` reads each commit's installed blobs with every other
-  unskipped file, so each commit is judged against its own installed set (`argument@agent-configuration-entities@a72`, `argument@agent-configuration-entities@a73`, `argument@agent-configuration-entities@a74`). `check`
-  guarantees that a working tree's copies equal the pinned shipped set, per
-  `design@core@owned-namespace-check`.
-- **Still outside the walk for references.** A reference inside an installed copy is not read, as
-  today. The shipped text's references are judged in this repository, in content/, and by AC3.
-- **content/ defines nothing** (`argument@agent-configuration-entities@a31`, `argument@agent-configuration-entities@a33`). A heading there ends with `{{slug:<id>}}`, and the build
-  renders it. So the slug a reference in content/ resolves to is the one in the installed copy,
-  which this repository installs in the same commit as each change to content/.
-- **`design@agent-skills@shipped-text-cites-no-entry` is rewritten**: the shipped text may cite the
-  shipped set's own skills, agents, primer and their sections, which every project serving `claude`
-  holds, and never `instructions`, whose slugs are each project's own (`argument@agent-configuration-entities@a34`).
-- **Nearest rival:** the binary's shipped set as the source, which fails `commits` on an earlier
-  commit; and a manifest declaration of content/, which fails `criterion@agent-configuration-entities@no-catering`. See the milestone's
-  Losing alternatives.
+  The discussion's rival, the frontmatter `name` alone as the id, lost to the owner's ruling for
+  strictness.
+- **Q2, kinds, not registers.** The owner: "agreed, they are kinds only and not "register". I don't
+  think they fit the "register" model we have, and it would be weird to force them to fit IMO."
 
 ## Mapping tables
 
