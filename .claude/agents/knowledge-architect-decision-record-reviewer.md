@@ -31,7 +31,7 @@ cannot reproduce.
 **You do not use `Write` or `Edit`.** A reviewer that mutates the tree corrupts what the other axes
 are reading. If a check seems to need one, say so as a finding rather than working around it.
 
-## 1. Tools to carry your task `##carrying-tools`
+## Tools to carry your task `##carrying-tools`
 
 Your instruments are the decision-carrying documents the diff touches, the diff itself, and, for a
 decision that earned no entry, the comment at its code and the message of the commit that introduced
@@ -51,7 +51,7 @@ for the incumbent; the owner's ruling on any tripwire the branch adds; and, when
 deleted, that the deleting commit cites it by its kind. None of the checks of
 `cargo klarch check` will help with your task. Do not run it.
 
-## 2. The predicates `##record-predicates`
+## The predicates `##record-predicates`
 
 **Did a decision earn its document entry?** Judge it by the skill's tests for an entry. An entry
 meeting none belongs in an inline comment at the code plus the commit message, which is not a
@@ -68,7 +68,7 @@ only in a doc comment, a scoped `CLAUDE.md` or a commit has no home a later read
 `git log -G'<slug>'` reaches nothing. The tell is a head elsewhere that leans on it by description
 rather than by slug.
 
-**Does a head admitted by §2's test 4 alone carry the owner's answer?** It quotes the owner's words
+**Does a head admitted by test 4 alone of `skill@knowledge-architect-decision-recording@entry-tests` carry the owner's answer?** It quotes the owner's words
 and the owner's answer that they record the owner's intent. A head with no such answer, whose only
 words of the owner are an approval of the agent's proposal or a hedged statement, earned no entry.
 

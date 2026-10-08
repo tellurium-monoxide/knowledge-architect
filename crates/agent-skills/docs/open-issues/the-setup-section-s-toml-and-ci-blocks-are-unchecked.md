@@ -5,7 +5,7 @@ kind: todo
 
 ## Summary
 
-The setup skill's section for a Rust project shows four blocks: the maintenance crate's
+The setup skill's section for a Rust project, `skill@knowledge-architect-setup@rust-project`, shows four blocks: the maintenance crate's
 Cargo.toml, its cargo aliases with the `[env]` entry, its main, and a continuous integration
 workflow. The main is compiled by an example of xtask. The other three are checked by nothing, so a
 change to the gates library, to the core's command line or to the tie of a build to its checkout
@@ -15,7 +15,7 @@ can leave them wrong while every gate passes.
 
 ### What
 
-In `path@agent-skills@content/skills/setup/SKILL.md`, section "In a Rust project":
+In `skill@knowledge-architect-setup@rust-project`:
 
 - the crate's manifest, a `toml` block: package name, `publish = false`, and the dependencies on
   clap, the checker and the gates library, pinned exactly;

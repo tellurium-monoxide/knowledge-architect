@@ -136,7 +136,7 @@ reviewed manifest change.
 **A plan document that leaves opens a `question`** on each plan that cited it: does the citing plan
 still hold now that the leaving plan is built? Its `Why it matters` cites what the leaving plan
 harvested, and the entry cites the citing plan, so it cannot outlive it. When it is opened is
-`knowledge-architect-planning`, §9.
+`skill@knowledge-architect-planning@plan-document-leaves`.
 
 Anything not verified carries an explicit `assumption` or `not established` label. **A plausible
 mechanism is not a finding.**

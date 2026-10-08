@@ -30,7 +30,7 @@ So the work is no longer only for a project without agents. It concerns every pr
 - the knowledge table's row for "a contract or a trap that only a developer needs" moves to a home
   unrelated to the agent configuration.
 - the workflow stops recommending scoped CLAUDE.md and AGENTS.md files.
-- the installed `knowledge-architect-agent-configuration` skill is edited to match. Its §2 chooses
+- the installed `knowledge-architect-agent-configuration` skill is edited to match. Its section `skill@knowledge-architect-agent-configuration@where-text-goes` chooses
   between the root CLAUDE.md, a skill, a scoped file and an agent.
 
 The investigation's report is the owner's. It is not in this repository. The root CLAUDE.md stays.

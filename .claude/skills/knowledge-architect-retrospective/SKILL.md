@@ -11,7 +11,7 @@ how they report.
 
 Not covered here: **opening an issue entry in the project**, `knowledge-architect-issue-tracking`.
 
-## 1. When it is offered `##when-offered`
+## When it is offered `##when-offered`
 
 **Once per session, at the first of these moments**, and never during a task:
 
@@ -22,7 +22,7 @@ Not covered here: **opening an issue entry in the project**, `knowledge-architec
 Offer it in one line, and run it only if the owner accepts. A declined retrospective is not offered
 again in that session.
 
-## 2. What it examines `##what-it-examines`
+## What it examines `##what-it-examines`
 
 Open with **what the session did**: one paragraph, at the level of the workflow ("a design
 discussion and two merged branches"), not of the project's subject matter.
@@ -45,11 +45,11 @@ installed text leaves that room on purpose. Each item quotes the instruction, sa
 done instead.
 
 **Each finding is named by a letter and a number**, so that a fix, an issue or a commit can cite it
-by its id and the stem of its file (§3), as "W3 of <date>-<project>-<subject>-klarch-workflow":
+by its id and the stem of its file (`skill@knowledge-architect-retrospective@two-files`), as "W3 of <date>-<project>-<subject>-klarch-workflow":
 **W** for the installed skills and agents, **C** for the checker, **P** for the project's own
 instructions. Numbers run from 1 within each letter, in order of appearance, so an id is unique
 within one file, and the stem makes the citation unique across retrospectives. An interaction
-finding whose fix may fall on either side goes in both files (§3) and gets one id in each, each
+finding whose fix may fall on either side goes in both files (`skill@knowledge-architect-retrospective@two-files`) and gets one id in each, each
 naming the other, since the two files may be read apart. The standing questions below take no id: they are answers, not findings.
 
 1. **The installed skills and agents.**
@@ -79,15 +79,15 @@ not load-bearing, and caught by the transcript reviewer before the merge, is no 
 reviewer exists to catch that expected rate, and it worked. A misstated ruling that changed what was
 built, or reached the main branch, is one.
 
-**A finding about how the owner works is judged against the skill's expectation set** (§5). A
-finding that describes the owner's behaviour where §5 states the skill assumes otherwise is
+**A finding about how the owner works is judged against the skill's expectation set** (`skill@knowledge-architect-retrospective@expectation-sets`). A
+finding that describes the owner's behaviour where `skill@knowledge-architect-retrospective@expectation-sets` states the skill assumes otherwise is
 reported as outside that skill's scope, with the assumption quoted, rather than as a defect of it.
 A finding that two installed instructions leave no move satisfying both is always in scope,
 whatever the owner did.
 
 End with **proposals**: for each finding that has one, what to change, and where.
 
-## 3. Two files, sorted by whose text must change `##two-files`
+## Two files, sorted by whose text must change `##two-files`
 
 Each finding goes to the file of the project whose text or code must change:
 
@@ -114,7 +114,7 @@ owner's home, and offer to record the answer in that user-level configuration, o
 so later sessions find it. Never inside the project: committed, the files would enter its history;
 ignored, they would be lost to the next clean.
 
-## 4. What becomes of each file `##what-becomes-of-files`
+## What becomes of each file `##what-becomes-of-files`
 
 Give the owner the full path of each file, and never print either file into the conversation: the
 owner reads both files at those paths, verbatim, and may edit them. Then, **on the owner's word
@@ -130,11 +130,11 @@ only, and where the owner directs**:
 
 Nothing leaves the machine without the owner having read it.
 
-## 5. What the installed skills expect of the owner `##expectation-sets`
+## What the installed skills expect of the owner `##expectation-sets`
 
 An installed skill is built on assumptions about how the owner works. Each names what degrades when
 it does not hold. They are not rules the owner is asked to follow; they bound what counts as a
-defect of the skill (§2). A skill not listed here states none yet.
+defect of the skill (`skill@knowledge-architect-retrospective@what-it-examines`). A skill not listed here states none yet.
 
 ### `knowledge-architect-design`
 

@@ -15,7 +15,7 @@ method become part of the installed workflow, and in which shape?
 
 ### What
 
-`path@agent-skills@content/skills/retrospective/SKILL.md`, §4, "What becomes of each file": "each
+`skill@knowledge-architect-retrospective@what-becomes-of-files`, "What becomes of each file": "each
 finding the owner keeps becomes an issue entry in the project's own register". A finding fixed at
 once needs no entry, and the owner decides with no analysis in front of them.
 

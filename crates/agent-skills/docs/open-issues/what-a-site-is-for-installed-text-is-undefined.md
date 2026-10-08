@@ -14,7 +14,7 @@ stating one decision as one site. Finding W1 of 2026-10-07-knowledge-architect-w
 
 ### What
 
-The test is §2 of `path@agent-skills@content/skills/decision-recording/SKILL.md`, test 2. In the
+The test is test 2 of `skill@knowledge-architect-decision-recording@entry-tests`. In the
 session that rewrote the entry tests, an audit of every design head judged the heads about installed
 text by its own reading: for an instruction, the site is the text that states it. It counted the
 sites of one decision as one where two skills state it. The owner, given the verdicts: "The problem
@@ -25,7 +25,7 @@ The retrospective proposed: for an instruction, the site of a reason is the text
 and "a policy with no code of its own" is a policy no text states either. That narrowing contradicts
 recorded intent:
 
-- §0 of the same skill: a policy is admitted by test 2 "as a decision with no site of its own";
+- `skill@knowledge-architect-decision-recording@when-recording-happens`: a policy is admitted by test 2 "as a decision with no site of its own";
 - `design@agent-skills@a-head-is-owed-by-an-entry-test`: a policy or an absence "has no site at
   all";
 - the rejected alternative on the earlier test 2, in `path@agent-skills@docs/rejected-alternatives.md`,

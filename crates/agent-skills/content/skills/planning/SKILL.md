@@ -20,7 +20,7 @@ audit and at each landing.
   procedure. This workflow installs none.
 - **Dispatching the reviewers**: `knowledge-architect-review`.
 - **Recording** what a landing establishes. Recording is not done once at the end of the
-  discussion: it is done at each landing, as the harvest of §7. The procedure is
+  discussion: it is done at each landing, as the harvest of `skill@knowledge-architect-planning@working-a-slice`. The procedure is
   `knowledge-architect-decision-recording` for the decisions and the losing alternatives, and
   `knowledge-architect-issue-tracking` for the tripwires and the issues.
 
@@ -29,15 +29,15 @@ audit and at each landing.
 | word | meaning |
 | --- | --- |
 | **plan document** | a spec, a milestone document, or the spec of a slice. Temporary: it leaves when its work lands |
-| **plans directory** | docs/plans/ at the project's root, the one directory where a project keeps its plan documents. The checker fixes the path and constructs the anchor `plans` there (§3) |
+| **plans directory** | docs/plans/ at the project's root, the one directory where a project keeps its plan documents. The checker fixes the path and constructs the anchor `plans` there (`skill@knowledge-architect-planning@plans-layout`) |
 | **spec** | the plan document of work done in one branch and one PR: the converged design and a concise implementation sequence. Cited `spec@plans@<id>` |
 | **step** | one item of an implementation sequence, in a spec or in a slice. How many commits a step takes is the implementing session's to judge |
 | **slice** | a part of a milestone that is one branch and one PR, with its own spec, cited `spec@<milestone>@<slice>` |
 | **milestone** | work across several PRs, with design sessions between them. Its plan documents are one directory: the **milestone document**, its `README.md`, and one spec per slice. Cited `milestone@plans@<id>`, and a slice's spec `spec@<milestone>@<slice>` |
-| **item** | a thread, an argument, a criterion or an acceptance criterion, defined in a plan document as a level-three heading ending with its slug, under the section of its kind (§4) |
-| **roadmap** | docs/roadmap.md at the project's root, optional: the order in which the owner wants known work done (§2) |
+| **item** | a thread, an argument, a criterion or an acceptance criterion, defined in a plan document as a level-three heading ending with its slug, under the section of its kind (`skill@knowledge-architect-planning@spec-contents`) |
+| **roadmap** | docs/roadmap.md at the project's root, optional: the order in which the owner wants known work done (`skill@knowledge-architect-planning@spec-or-milestone`) |
 | **transcript** | the harness's log of a session, on disk. It keeps the records from before a compaction |
-| **assembly** | writing a plan document from the discussion's transcript (§4) |
+| **assembly** | writing a plan document from the discussion's transcript (`skill@knowledge-architect-planning@spec-contents`) |
 | **converged** | every proposal of the discussion is closed, and no binding criterion is unmet |
 | **thread** | one proposal of the discussion, carrying a state; an approved thread is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
@@ -49,18 +49,18 @@ audit and at each landing.
 **The owner** is the person whose word closes a thread. Every ruling in this activity is theirs.
 The word "plan" alone never names a document: say spec, milestone document, or plan document.
 
-## 1. When this skill starts {{slug:when-planning-starts}}
+## When this skill starts {{slug:when-planning-starts}}
 
 **In the session where the discussion converged, before that session ends.** The discussion's
 ledger, every thread with its state and its argument, lives in that conversation and in the
-harness's transcript of it, which §4's assembly reads. A plan document written from memory in a
+harness's transcript of it, which the assembly of `skill@knowledge-architect-planning@spec-contents` reads. A plan document written from memory in a
 later session is written from a summary, and a summary loses exactly the losing arguments and the
 conditions of each closure.
 
 A problem that arrived bounded, with a clear requirement and no open design question, has no
 converged discussion to plan from. This skill does not apply to it.
 
-## 2. A spec or a milestone {{slug:spec-or-milestone}}
+## A spec or a milestone {{slug:spec-or-milestone}}
 
 | the work | its plan document |
 | --- | --- |
@@ -69,7 +69,7 @@ converged discussion to plan from. This skill does not apply to it.
 
 Propose which one, with the reason, and let the owner rule. A spec whose work turns out to need
 several PRs becomes a milestone: at that moment the spec is split into the milestone document and
-one spec per slice, by the rule of §4.
+one spec per slice, by the rule of `skill@knowledge-architect-planning@spec-contents`.
 
 **Work that is known but not designed is not a plan document.** It is a `todo` issue, or a
 `deferred` one if an event gates it (the default kinds; a project that declares its own kinds uses
@@ -105,7 +105,7 @@ cannot go stale unnoticed. An illustration of the shape:
 - `issue@<anchor>@<id>`
 ```
 
-## 3. Layout {{slug:plans-layout}}
+## Layout {{slug:plans-layout}}
 
 ```
 docs/plans/
@@ -136,15 +136,15 @@ docs/plans/
   its work, has its own home. If none fits, ask the owner before writing it anywhere.
 - **A plan document is cited by its kind**, never by its path: `spec@plans@<id>`,
   `milestone@plans@<id>`, `spec@<milestone>@<slice>`. A `path` citation of one is refused. A whole
-  plan document may be cited from anywhere, and its citations dangle when it leaves (§9).
-- **A plan document defines items, and no design entry** (§4). A plan's name is the anchor of its
+  plan document may be cited from anywhere, and its citations dangle when it leaves (`skill@knowledge-architect-planning@plan-document-leaves`).
+- **A plan document defines items, and no design entry** (`skill@knowledge-architect-planning@spec-contents`). A plan's name is the anchor of its
   items, so it is not the name of a Component, of a location or of a reserved anchor, `plans`,
   `elsewhere` or `*`, and one name is not used under both homes.
 
-## 4. What a spec holds {{slug:spec-contents}}
+## What a spec holds {{slug:spec-contents}}
 
 **Written for a session that did not witness the discussion.** That is the standard every section
-is held to, and §8's reviews check it.
+is held to, and the reviews of `skill@knowledge-architect-planning@plan-reviews` check it.
 
 **The sections are fixed: level-two headings with these titles, in this order.** `{{command}} check`
 reports a section missing or out of order. A section with nothing to hold says so in one line
@@ -153,7 +153,7 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 | section | holds |
 | --- | --- |
 | Status and audience | what the document is for; that it leaves when its work lands; that where it and a design home disagree, the design home wins; that every name it uses is defined in it or exists in the code; that where the owner's word is needed and the owner is absent, the work does not proceed on that point |
-| How the work is done | in a milestone document: §7 of this skill, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
+| How the work is done | in a milestone document: `skill@knowledge-architect-planning@working-a-slice`, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
 | Names | every project shorthand the document uses, expanded to the file, function or command it names |
 | What the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
 | What is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `{{command}} show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step, slice or harvest that judges or updates each |
@@ -166,8 +166,8 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 | Losing alternatives | every ruled-out thread, every thread withdrawn with its defeating reason, and every superseded thread under the thread that absorbed it, each with the thread it lost to and the fact that decided it |
 | Readings | where the work reads an external specification the project implements: each reading it makes, and where it is recorded. Empty for work that reads none |
 | Premortem | each cause, the thread it stresses, and its verdict: survives into a named claim, criterion or guard; converted into a named clause of the design; becomes a tripwire or an acceptance criterion, on the owner's word; or fired and the thread reopened. Each tripwire and acceptance criterion carries the label it was put to the owner under, `T<n>` or `AC<n>` |
-| Acceptance criteria | one item per criterion, ``### <criterion> `##<id>` ``, as §6 says |
-| Implementation sequence | in a spec, its steps; in a milestone document, its slices, each linked to its spec, whose own steps it holds (§5). Concise: what each builds and what it fails alone on |
+| Acceptance criteria | one item per criterion, ``### <criterion> `##<id>` ``, as `skill@knowledge-architect-planning@acceptance-criteria` says |
+| Implementation sequence | in a spec, its steps; in a milestone document, its slices, each linked to its spec, whose own steps it holds (`skill@knowledge-architect-planning@cutting-steps-and-slices`). Concise: what each builds and what it fails alone on |
 | Order rationale | one sentence per pair of adjacent steps or slices |
 | Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, labelled `D<n>`, with the thread it bears on, until the owner rules; and the label of each acceptance criterion awaiting the owner's word |
 | Harvest | what lands where and when. In a spec, its rows; in a milestone, each slice's row in that slice's spec, and the row of the milestone document itself in it |
@@ -179,7 +179,7 @@ document that held every slice's design would be read whole at every slice's gro
 with every slice the milestone has.
 
 - **A slice's spec leaves when its slice lands, so it holds what only that slice builds**: the slice's
-  entry (§5) and its steps, then, in the sections above, the items of its own threads and the arguments only
+  entry (`skill@knowledge-architect-planning@cutting-steps-and-slices`) and its steps, then, in the sections above, the items of its own threads and the arguments only
   they use, its decided design, its mapping tables, its losing alternatives, the acceptance
   criteria it judges and its harvest row. These sections are not ordered against the entry's.
 - **The milestone document holds what crosses slices or outlives one**: the status, how the work is
@@ -235,13 +235,13 @@ round, and its relations. It is assembled from the transcript, not from memory. 
 subagent that reads every transcript file the discussion spans, a resumed session included, and
 extracts the delta tables, the owner's messages verbatim and the arguments; the design skill's
 per-round delta is the draft it reads. Where one argument ends and the next begins is decided at
-assembly, and the transcript reviewer of §8 checks that no argument was lost. The status section names the
+assembly, and the transcript reviewer of `skill@knowledge-architect-planning@plan-reviews` checks that no argument was lost. The status section names the
 transcript files read, so that a reviewer reads the same ones. Each file is found by the
 discussion's opening message, never by a session identifier, as `knowledge-architect-review` says.
 Where the harness keeps no
 transcript, assemble from the conversation, and say so in the commit that adds the document.
 
-## 5. Cutting the steps and the slices {{slug:cutting-steps-and-slices}}
+## Cutting the steps and the slices {{slug:cutting-steps-and-slices}}
 
 A step is one item of an implementation sequence. A spec's work is a sequence of steps on one
 branch. A milestone's work is a sequence of slices, each one branch and one PR with its own spec,
@@ -286,7 +286,7 @@ Claims and Audit subjects, and is not checked:
 - **Premises that expire**: where the slice relies on something a later slice or change ends, what
   ends it, and the criterion or guard that watches it.
 
-## 6. Acceptance criteria {{slug:acceptance-criteria}}
+## Acceptance criteria {{slug:acceptance-criteria}}
 
 An acceptance criterion is a bet about a decision the work is built on, where a claim is a bet about
 the work itself: firing a criterion reopens the decision, not the step. It lives in the plan
@@ -337,7 +337,7 @@ default marked as the owner's to reset.
   the harvested head, in the shape `knowledge-architect-issue-tracking` gives. One that is
   spent, or that the owner declines, is deleted with the document.
 
-## 7. Working a slice, and the work of a spec {{slug:working-a-slice}}
+## Working a slice, and the work of a spec {{slug:working-a-slice}}
 
 The milestone document restates this procedure with a pointer to this skill, so a cold session
 finds it there. The work of a spec follows it too, as its last paragraph says.
@@ -384,12 +384,12 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
        label, `Q<n>`, since each is written in place as a thread with its slug. The slice's
        documents exist, so the ruling is not left to a commit message as that path would leave
        it: it is written in place in the
-       milestone's documents by the rule of §4, as a thread with the owner's words verbatim, like
+       milestone's documents by the rule of `skill@knowledge-architect-planning@spec-contents`, as a thread with the owner's words verbatim, like
        the audit's other answers, and the audit's commit lists it among its gaps. It owes no new
-       §8 review, since it changes no decided shape.
+       review of `skill@knowledge-architect-planning@plan-reviews`, since it changes no decided shape.
      - A gap that defeats a reason, a premise or a criterion an approved thread rests on needs the
-       full session. Its converged design goes into the milestone's documents by the rule of §4,
-       and owes §8's reviews.
+       full session. Its converged design goes into the milestone's documents by the rule of `skill@knowledge-architect-planning@spec-contents`,
+       and owes the reviews of `skill@knowledge-architect-planning@plan-reviews`.
 
      The slice resumes from the ruling or the converged design.
 3. **Claims, tests, implementation, gates, commits**, per the project's development procedure, in
@@ -399,7 +399,7 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
 4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
    or folded where that skill says.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this slice,
-   by its identifier in plain text, beside a citation of the milestone document (§6).
+   by its identifier in plain text, beside a citation of the milestone document (`skill@knowledge-architect-planning@acceptance-criteria`).
 6. **The harvest**, per the harvest row of the slice's spec: the decisions and the losing
    alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
    under `knowledge-architect-issue-tracking`. The row names what is judged; the tests of
@@ -414,7 +414,7 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
    `knowledge-architect-review`, on the decision-record, routing and standing-state axes, and by
    the transcript reviewer where the transcripts are available: it writes the record those axes
    judge, so the review of point 4 cannot see it.
-7. **The slice's spec leaves** in the commit that completes its harvest, as in §9. What crosses slices stays in the
+7. **The slice's spec leaves** in the commit that completes its harvest, as in `skill@knowledge-architect-planning@plan-document-leaves`. What crosses slices stays in the
    milestone document, amended in place where the landing changed it.
 
 **The work of a spec** takes the same points once, for the whole spec, on its one branch:
@@ -428,13 +428,13 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
 - point 4, the review, once, before the merge;
 - points 5 and 6, the report and the harvest, in the commits that land the work, the harvest
   reviewed before the merge;
-- point 7, the deletion of the spec, in the commit that completes its harvest, as in §9.
+- point 7, the deletion of the spec, in the commit that completes its harvest, as in `skill@knowledge-architect-planning@plan-document-leaves`.
 
 Where a point names the milestone document or the slice's spec, the work of a spec reads the spec:
 its defaults, its threads, its harvest row, and an audit's commit subject of the shape `The <spec>
 design audit, applied in place: …`.
 
-## 8. Reviews of a plan document {{slug:plan-reviews}}
+## Reviews of a plan document {{slug:plan-reviews}}
 
 A plan document is committed first, on a branch of its own or on its work's branch, and that
 commit is what the reviewers read; a repair lands after it, as a further commit or folded where
@@ -488,7 +488,7 @@ This list is their one home; the reviewer reads it here.
 - every name the document uses is defined in the names sections or exists in the code;
 - every total function the code will need is a mapping table;
 - every fixture is expressible in the vocabulary that exists, or names its addition;
-- a milestone document carries the procedure of §7;
+- a milestone document carries the procedure of `skill@knowledge-architect-planning@working-a-slice`;
 - every number is a measurement with its instrument, or a default marked as the owner's;
 - every premise a later step or change ends is stated with its guard;
 - every statement about the code names the file and the function, and its truth is the code-claims
@@ -498,9 +498,9 @@ This list is their one home; the reviewer reads it here.
 - every thread maps to a section and to a harvest home;
 - every text referencing a decision the work reverses or rewrites is named, with the step, slice or
   harvest that judges or updates it;
-- every section of §4 is present, and an empty one says so.
+- every section of `skill@knowledge-architect-planning@spec-contents` is present, and an empty one says so.
 
-## 9. When a plan document leaves {{slug:plan-document-leaves}}
+## When a plan document leaves {{slug:plan-document-leaves}}
 
 **A spec is deleted in the commit that completes its last harvest, and that commit's message cites
 it by its kind**, `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<slice>`, which
@@ -508,10 +508,10 @@ resolves against the commit's parent. A milestone's slice spec leaves when its s
 milestone document leaves with the last slice. Before deleting:
 
 - every harvest row of the document is done;
-- every acceptance criterion has been reported on, and has become a tripwire or left (§6);
+- every acceptance criterion has been reported on, and has become a tripwire or left (`skill@knowledge-architect-planning@acceptance-criteria`);
 - what the document established is in the design homes and the registers; what stayed a guess
   leaves with it;
-- its row of the roadmap, if it has one, is removed (§2).
+- its row of the roadmap, if it has one, is removed (`skill@knowledge-architect-planning@spec-or-milestone`).
 
 **A citation of the leaving document from another plan dangles.** The session that meets it, the
 one deleting the document or the one rebasing the citing plan's branch onto that deletion, does two

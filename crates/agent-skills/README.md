@@ -80,8 +80,8 @@ tripwires, losing arguments absorbed rather than deleted.
 
 ## What it expects of you
 
-This section restates, for you, the expectation set that §5 of the
-retrospective skill carries, `path@agent-skills@content/skills/retrospective/SKILL.md`,
+This section restates, for you, the expectation set that the retrospective skill carries in
+`skill@knowledge-architect-retrospective@expectation-sets`, `path@agent-skills@content/skills/retrospective/SKILL.md`,
 which is where it is applied, per `design@agent-skills@expectation-set-bounds-scope`.
 
 The skill is scoped on purpose. It does not try to behave well under
@@ -182,8 +182,8 @@ decisions already made without either party noticing.
 
 ## What the setup skill expects of you
 
-This section restates the setup skill's expectation set, which §5 of
-the retrospective skill carries, as the section above does for the
+This section restates the setup skill's expectation set, which the retrospective skill
+carries in `skill@knowledge-architect-retrospective@expectation-sets`, as the section above does for the
 design skill.
 
 **You are present to rule.** The setup proposes and you rule: the

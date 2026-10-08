@@ -132,8 +132,8 @@ evidence bring, which nobody knows in advance.
   owner's words verbatim for each closure, the rivals that lost with
   their reasons, and the owner's rulings on tripwires. The decision is
   recorded at that landing like any other, under
-  `knowledge-architect-decision-recording`, whose §1 decides the Component
-  of a decision that reverses a recorded one, and whose §2 decides whether
+  `skill@knowledge-architect-decision-recording@reversal-check` decides the Component
+  of a decision that reverses a recorded one, and `skill@knowledge-architect-decision-recording@entry-tests` decides whether
   any other decision earns a design head at all. Apply both before proposing to the owner
   where a decision lands. The checkpoint table is
   shown at convergence when the ledger holds more than one thread. The
@@ -163,8 +163,8 @@ over-building, is known only after grounding. So a requested change whose design
 starts here, at loop step 1, the search for standing entries included. After the grounding, the
 work is **bounded** when all three hold:
 
-- it reverses no recorded decision, as §1 of `knowledge-architect-decision-recording` asks;
-- every decision it makes fails the entry tests of §2 of that skill, so none earns a design head;
+- it reverses no recorded decision, as `skill@knowledge-architect-decision-recording@reversal-check` asks;
+- every decision it makes fails the entry tests of `skill@knowledge-architect-decision-recording@entry-tests`, so none earns a design head;
 - no second defensible shape survives the nearest-rival test of loop step 3. State the strongest
   open reading of the problem beside the bounded one: the design question the bounded framing would
   suppress.

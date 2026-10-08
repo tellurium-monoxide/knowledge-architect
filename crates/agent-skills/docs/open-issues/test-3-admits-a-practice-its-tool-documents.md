@@ -5,7 +5,7 @@ kind: question
 
 ## Summary
 
-Test 3 of §2 of the installed decision-recording skill admits a decision whose argument turns on the
+Test 3 of `skill@knowledge-architect-decision-recording@entry-tests` admits a decision whose argument turns on the
 behaviour of something outside the project, documented or measured. It admits
 `design@knowledge-architect@toolchain-is-pinned`, which pins the Rust toolchain, a practice that
 Rust's own documentation explains and that nobody has a reason to reverse. The owner doubts such a

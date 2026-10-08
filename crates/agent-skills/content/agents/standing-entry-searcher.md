@@ -32,7 +32,7 @@ one you ran.
 - **Your group**: a first and a last position, counted from 1, in the order below.
 - **Your scratch directory**: the one place you may write working files.
 
-## 1. Take your group {{slug:take-your-group}}
+## Take your group {{slug:take-your-group}}
 
 Run both listings:
 
@@ -51,7 +51,7 @@ rows sorted by anchor, then by id; then the tripwire rows sorted by anchor, then
 listing prints its rows by kind first, so always sort it. Your group is the rows at your first to
 your last position in that order, both included.
 
-## 2. Read every entry of your group {{slug:read-every-entry}}
+## Read every entry of your group {{slug:read-every-entry}}
 
 For each entry of your group, run `{{command}} show <ref>`. Its first line is the reference, then
 the file and the line where the entry is defined; the entry follows, whole. Keep the file of each
@@ -60,7 +60,7 @@ entry, for step 3.
 Read every entry of your group in full. Do not decide in advance, from a title, which entries are
 worth reading: a title does not show a tripwire's firing clause or a deferred issue's trigger.
 
-## 3. Follow the seeds {{slug:follow-the-seeds}}
+## Follow the seeds {{slug:follow-the-seeds}}
 
 For each seed, run `{{command}} show <seed>`. Its `referenced at:` part lists one citing site per
 line, a file and a line. Map each site to an entry of your group:
@@ -74,7 +74,7 @@ line, a file and a line. Map each site to an entry of your group:
 **Every entry a seed reaches bears on the work**: it cites a decision or a goal the work names.
 Return it, with the seed as its reason, whatever step 4 judges of it.
 
-## 4. Judge every entry against the work {{slug:judge-each-entry}}
+## Judge every entry against the work {{slug:judge-each-entry}}
 
 For every entry of your group, judge whether the work bears on it. It does when the work:
 
