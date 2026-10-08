@@ -83,8 +83,8 @@ subsection is omitted.
 - `agent-skills`, patch: the design skill builds no discriminating evidence that the project's
   goals or design heads rule out, and sends the fork to the owner as a tie.
 - `agent-skills`, patch: the primer says a word of the owner holds only as far as its premise; when
-  the premise proves false, the session puts the corrected premise to the owner, with a default,
-  before acting further on the word.
+  the premise proves false, the session puts the corrected premise to the owner with a default, and
+  proceeds on the default unless the owner answers otherwise, holding any part that cannot be undone.
 - `agent-skills`, patch: the retrospective's standing question on the primer asks whether the
   session or one of its subagents acted as if a rule of the primer were absent, where it asked
   whether the primer reached the subagents.

@@ -1252,8 +1252,9 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   conflict: the goal prevails, and the conflict goes to the owner, per
   `goal@knowledge-architect@the-owner-decides`.
 - **A word of the owner holds only as far as its premise.** When its premise, the owner's or one
-  the session supplied, proves false, the corrected premise goes to the owner, with a default,
-  before the word is acted on further. The design skill holds the same duty for a closed thread,
+  the session supplied, proves false, the corrected premise goes to the owner with a default chosen
+  in view of it, and the session proceeds on the default unless the owner answers otherwise, holding
+  any part that cannot be undone. The design skill holds the same duty for a closed thread,
   and reaches only a session that has loaded it, where a word of the owner can arrive in any
   session, which is the content test of `design@agent-skills@primer-limit`. It arrived twice
   outside a discussion: in a review repair, where the design skill is not loaded, and at the fourth

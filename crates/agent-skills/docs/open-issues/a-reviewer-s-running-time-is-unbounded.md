@@ -1,5 +1,5 @@
 ---
-kind: todo
+kind: question
 ---
 # A reviewer that queues long work reports nothing until it is asked
 
@@ -8,7 +8,7 @@ kind: todo
 In a session in thaum on v0.1.0, two adversarial reviewers queued long batches of mutations, each
 signalled for many minutes that it was waiting on its own background work, and each reported only
 when the dispatcher asked. `knowledge-architect-review` says nothing about how long a reviewer runs
-or when it reports.
+or when it reports. Which addition to the review skill, if any, does the owner approve?
 
 ## Details
 
@@ -37,12 +37,13 @@ sessions show it recurs; they do not show how often.
 
 ### What would close it
 
-An addition to the review skill whose shape the owner approves, under
-`design@agent-skills@additions-need-real-use`, or the owner's ruling that the problem belongs to the
-projects that meet it. The owner approved an addition after the second session, "report what is
-reproduced before queueing more", and then withdrew that approval as written: "I'm not fully
-satisfied with the solution written in there. This problem only affects adversarial code reviews
-and not the others, so it is a project specific problem, actually. I don't want to block the
-release while I don't have a better solution in mind, and it has been fixed locally on thaum's
-side." Both instances were adversarial reviewers that queued mutation runs. A shape that the owner
-approves, or a third instance outside adversarial code review, reopens the addition.
+The owner's approval of a shape of addition to the review skill, under
+`design@agent-skills@additions-need-real-use`, and the addition made. The owner approved an
+addition after the second session, "report what is reproduced before queueing more", and then
+withdrew that approval as written: "I'm not fully satisfied with the solution written in there.
+This problem only affects adversarial code reviews and not the others, so it is a project specific
+problem, actually. I don't want to block the release while I don't have a better solution in mind,
+and it has been fixed locally on thaum's side." The owner asked that the entry stay open with the
+approval withdrawn. Both instances were adversarial reviewers that queued mutation runs, so a
+proposed shape is weighed against whether it belongs to the review skill or to a project's own
+adversarial reviewer.
