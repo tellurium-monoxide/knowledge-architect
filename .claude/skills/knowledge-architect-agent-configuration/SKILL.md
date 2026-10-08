@@ -10,9 +10,9 @@ Its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own skills and its own s
 
 Not covered here: **the installed files**, the skills, agents and primer that
 `cargo klarch install-agent-skills` writes. They are never edited by hand (`skill@knowledge-architect-agent-configuration@installed-files-never-edited`). **Where the argument
-for a decision about the configuration lands**: `knowledge-architect-decision-recording`; this
+for a decision about the configuration lands**: `skill@knowledge-architect-decision-recording`; this
 skill owns how to write the configuration, that one owns where the argument goes. **Setting the
-configuration up the first time**: `knowledge-architect-setup`.
+configuration up the first time**: `skill@knowledge-architect-setup`.
 
 ## Content and style of agent-facing files `##content-and-style`
 
@@ -28,10 +28,11 @@ Everything written in a `SKILL.md`, a subagent definition or a `CLAUDE.md` follo
   the design homes and the goals for the behaviour the edited text describes, as
   `skill@knowledge-architect-decision-recording@reversal-check` searches for a recorded statement a decision would
   reverse. An edit that writes into a design home, or edits a text whose behaviour a head
-  describes, loads `knowledge-architect-decision-recording` before it is written; that skill judges
-  whether it contradicts a head, outgrows its title, or earns text at all. One that strains a goal
-  goes to the owner, as a decision that conflicts with a goal does, under
-  `knowledge-architect-goal-setting`. A rewording that changes no instruction is not a decision.
+  describes, loads `skill@knowledge-architect-decision-recording` before it is written; that skill
+  judges whether it contradicts a head, outgrows its title, or earns text at all. One that strains a
+  goal goes to the owner, as a decision that conflicts with a goal does, under
+  `skill@knowledge-architect-goal-setting`. A rewording that changes no instruction is not a
+  decision.
 
 ## Where a piece of agent-facing text goes `##where-text-goes`
 
@@ -150,12 +151,12 @@ longer ships. In the same commit:
 - update the routing table: a row whose installed skill was renamed or removed changes or goes;
 - read each project skill against the installed skill it adds to, for an instruction that now
   contradicts it;
-- write into each open milestone document, afresh from the new `knowledge-architect-planning`,
+- write into each open milestone document, afresh from the new `skill@knowledge-architect-planning`,
   its restatement of the procedure for working a slice, whether it held one before or not;
 - run `cargo klarch check`.
 
 ## Reviewing a configuration change `##reviewing-a-change`
 
 Dispatch a review when an instruction is written and a mechanism is in place to deliver it, per
-`knowledge-architect-review`. This skill adds no axis of its own: a change to the
+`skill@knowledge-architect-review`. This skill adds no axis of its own: a change to the
 configuration is a change to prose, which that skill's axes cover.

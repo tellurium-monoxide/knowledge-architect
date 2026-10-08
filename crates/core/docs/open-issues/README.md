@@ -7,4 +7,4 @@ What is outstanding about an extension of it is in that extension's own register
 entry, its kind in the frontmatter, and the listing beside this file is generated. **An entry
 leaves when it closes.**
 
-Read `knowledge-architect-issue-tracking` before adding.
+Read `skill@knowledge-architect-issue-tracking` before adding.

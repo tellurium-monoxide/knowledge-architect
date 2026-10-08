@@ -9,7 +9,8 @@ Scope: looking back at one session's use of the workflow, and turning what was u
 wrong into findings the owner can act on. Real sessions are the test of the workflow, and this is
 how they report.
 
-Not covered here: **opening an issue entry in the project**, `knowledge-architect-issue-tracking`.
+Not covered here: **opening an issue entry in the project**,
+`skill@knowledge-architect-issue-tracking`.
 
 ## When it is offered `##when-offered`
 
@@ -121,7 +122,7 @@ owner reads both files at those paths, verbatim, and may edit them. Then, **on t
 only, and where the owner directs**:
 
 - **The project's file**: each finding the owner keeps becomes an issue entry in the project's own
-  register, under `knowledge-architect-issue-tracking`.
+  register, under `skill@knowledge-architect-issue-tracking`.
 - **The workflow's file**: it becomes an issue on the repository of knowledge-architect,
   <https://github.com/tellurium-monoxide/knowledge-architect>, opened with
   `gh issue create --repo tellurium-monoxide/knowledge-architect --title "<title>" --body-file <file>`.
@@ -136,7 +137,7 @@ An installed skill is built on assumptions about how the owner works. Each names
 it does not hold. They are not rules the owner is asked to follow; they bound what counts as a
 defect of the skill (`skill@knowledge-architect-retrospective@what-it-examines`). A skill not listed here states none yet.
 
-### `knowledge-architect-design`
+### `skill@knowledge-architect-design`
 
 - **The owner brings a design question, or a requested change for the skill to ground, not a task
   order to execute unexamined.** The mode assumes the answer is not yet
@@ -167,10 +168,10 @@ defect of the skill (`skill@knowledge-architect-retrospective@what-it-examines`)
   act on.
 - **A discussion runs in one session, and its memory does not outlive it.** The ledger lives in the
   conversation and in the harness's transcript of it, and what survives is what
-  `knowledge-architect-planning` assembled from it into the plan document, and then the records
-  harvested from it. A previous discussion is not resumed in a new session: a new session starts a
-  new discussion, grounded on the record. A resumed session with its full transcript restored is
-  the same session.
+  `skill@knowledge-architect-planning` assembled from it into the plan document, and then the
+  records harvested from it. A previous discussion is not resumed in a new session: a new session
+  starts a new discussion, grounded on the record. A resumed session with its full transcript
+  restored is the same session.
 - **The owner is trying to converge**: arguing, ruling, or saying stop. Several rules are released
   only by the owner's word, and withholding it leaves the discussion parked rather than producing a
   wrong result.
@@ -182,7 +183,7 @@ defect of the skill (`skill@knowledge-architect-retrospective@what-it-examines`)
   those in the code and its history. Intent that exists only in someone's memory is not reachable,
   and proposals will contradict decisions already made without either party noticing.
 
-### `knowledge-architect-setup`
+### `skill@knowledge-architect-setup`
 
 - **The owner is present to rule.** The setup proposes and the owner rules: the Components, the
   goals, the place of each existing document, and each choice that changes the project's build or

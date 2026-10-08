@@ -9,9 +9,10 @@ Scope: making a project conformant to the workflow, from a manifest the first in
 a tree over which `{{command}} check` passes, with the owner's goals stated. And moving the pin of
 the checker to another version.
 
-Not covered here: **stating the goals**, `knowledge-architect-goal-setting`; **moving the existing
-documentation into the new homes**, which is planned work of its own (`skill@knowledge-architect-setup@existing-documentation`); **writing the project's
-own skills**, `knowledge-architect-agent-configuration`.
+Not covered here: **stating the goals**, `skill@knowledge-architect-goal-setting`; **moving the
+existing documentation into the new homes**, which is planned work of its own
+(`skill@knowledge-architect-setup@existing-documentation`); **writing the project's own skills**,
+`skill@knowledge-architect-agent-configuration`.
 
 **Reaching this skill.** The skill is one of the files the install writes, so a session reads it
 once the project holds a manifest the install accepts and the install has run. The smallest such
@@ -123,7 +124,7 @@ Every Component carries the same documents. `{{command}} check` names each one m
 | --- | --- |
 | `README.md` | how a user uses the Component |
 | `CLAUDE.md` | the contracts and traps a developer needs, true of the code as it stands |
-| `path@*@docs/goals.md`, or `path@*@docs/goals/` with a `README.md` | what the Component is for: at least one goal, under `knowledge-architect-goal-setting` |
+| `path@*@docs/goals.md`, or `path@*@docs/goals/` with a `README.md` | what the Component is for: at least one goal, under `skill@knowledge-architect-goal-setting` |
 | `path@*@docs/design.md`, or `path@*@docs/design/` with a `README.md` | how it is built and why; it may hold no entry yet |
 | `path@*@docs/rejected-alternatives.md` | what lost, and why; it may hold no entry yet |
 | `path@*@docs/tripwires.md`, or `path@*@docs/tripwires/` with a `README.md` | evidence that would flip a decision; it may hold no entry yet |
@@ -138,11 +139,11 @@ Every Component carries the same documents. `{{command}} check` names each one m
 | `path@plans@milestones/`, with a `README.md` and an `index.md` | one directory per milestone; none until work is planned |
 
 `{{command}} index` writes each `index.md`. A roadmap, docs/roadmap.md at the root, is optional:
-it is written when the owner wants known work ordered, under `knowledge-architect-planning`.
+it is written when the owner wants known work ordered, under `skill@knowledge-architect-planning`.
 
 Each document opens with a short introduction saying what it holds and what it does not. An empty
 register home says it holds no entry yet. **Every Component states at least one goal**: run
-`knowledge-architect-goal-setting` with the owner for each one.
+`skill@knowledge-architect-goal-setting` with the owner for each one.
 
 ## The root CLAUDE.md {{slug:root-claude-md}}
 
@@ -183,8 +184,8 @@ list to the published library knowledge-architect-gates. The library runs the ga
 the project's own.
 
 A maintenance tool of that kind is a Component of its own, which serves the project rather than its
-consumers. Propose these two goals for it, under `knowledge-architect-goal-setting`, for the owner's
-ruling like any draft:
+consumers. Propose these two goals for it, under `skill@knowledge-architect-goal-setting`, for the
+owner's ruling like any draft:
 
 ```markdown
 ## Every check the project owes before a merge runs from one command `##one-command-runs-every-gate`
@@ -224,7 +225,7 @@ A project that already has documentation keeps it until its move is planned:
 3. **The owner rules** on the proposal, on each document by a label, `Q<n>`, given to it in the
    proposal. The issue below names each document by its path, not by the label.
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the
-   rulings. The move is then planned work, under `knowledge-architect-planning`, and runs as a
+   rulings. The move is then planned work, under `skill@knowledge-architect-planning`, and runs as a
    milestone when the owner schedules it. Until then, the old documents and the new homes both
    exist, and the issue is what records that.
 
@@ -251,8 +252,9 @@ To move to another version:
    CHANGELOG.md. Fetch the new version first, with `cargo fetch` after editing the pin in a Rust
    project, or by the install; then read the file in the source cargo downloaded, under its
    registry directory: `$CARGO_HOME/registry/src/<index>/knowledge-architect-<version>/CHANGELOG.md`.
-3. Run `{{command}} install-agent-skills`, then follow `knowledge-architect-agent-configuration`
-   for what an upgrade owes the project's own configuration.
+3. Run `{{command}} install-agent-skills`, then follow
+   `skill@knowledge-architect-agent-configuration` for what an upgrade owes the project's own
+   configuration.
 4. Run the project's gates command of `skill@knowledge-architect-setup@setup-gates`, or, where it has none, `{{command}} check` and the
    project's tests, and commit the pin, the installed files and the repairs together. A new
    version can change what a command prints, which only the tests see.

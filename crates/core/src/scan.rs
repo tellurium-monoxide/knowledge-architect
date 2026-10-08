@@ -68,6 +68,11 @@ pub enum Observation {
     /// Reported, never ignored: it has no `@`, so without this a pointer the migration
     /// missed would be silent, which is the founding failure class.
     Retired(RetiredForm),
+    /// A backticked span that is one word in the id grammar `[a-z0-9]+(-[a-z0-9]+)*`, with no
+    /// `@` and no `/`: the bare-name lint's input. A skill's or an agent's name has that shape, so
+    /// a span naming one with no kind is recorded, and the lint reports it where the entity table
+    /// defines that name.
+    BareName(String),
     /// A markdown link's target, as written.
     ///
     /// Resolution is the consumer's: a design README's naming check resolves it against the
@@ -161,6 +166,10 @@ static PATH_SHAPED: LazyLock<Regex> = LazyLock::new(|| {
 static PATH_WHOLE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"^(([\w.*+-]*/[\w.*/+-]*?)(:\d+(?:-\d+)?|#[A-Za-z][\w-]*)?)$").unwrap()
 });
+/// A backticked span that is one word in the id grammar: a bare name, as [`Observation::BareName`]
+/// records it.
+static BARE_NAME: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"`([a-z0-9]+(?:-[a-z0-9]+)*)`").unwrap());
 /// A reference candidate as [`AT_SPAN`] reads one, over the whole of a span's text joined
 /// across a line break.
 static AT_WHOLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^[^\s`<>@]*@[^\s`<>]*$").unwrap());
@@ -444,6 +453,9 @@ pub(crate) fn scan(parsed: &Parsed) -> Vec<Located> {
             }
             for c in AT_SPAN.captures_iter(line) {
                 push(Observation::Span(c[1].to_string()));
+            }
+            for c in BARE_NAME.captures_iter(line) {
+                push(Observation::BareName(c[1].to_string()));
             }
             // The two classes are disjoint on `@`, so a span is one or the other and never
             // both.
@@ -852,6 +864,26 @@ mod tests {
         let text = "see `past/` and `citations.py` and `a/`";
         assert_eq!(unanchored(text), Vec::<String>::new());
         assert_eq!(spans(text), Vec::<String>::new());
+    }
+
+    /// The claim: a backticked span that is one word in the id grammar is recorded as a bare
+    /// name, and a span with a capital, a dot, a slash, an `@` or a space is not. Mutation
+    /// checked: the pattern widened to `[^`\s]+` records `citations.py` and `Name`.
+    #[test]
+    fn a_one_word_span_in_the_id_grammar_is_a_bare_name() {
+        let names = |text: &str| -> Vec<String> {
+            scan_md(text)
+                .into_iter()
+                .filter_map(|o| match o {
+                    Observation::BareName(n) => Some(n),
+                    _ => None,
+                })
+                .collect()
+        };
+        assert_eq!(
+            names("`a-skill`, `x2`, `citations.py`, `Name`, `a/b`, `skill@a`, `two words`, `-a`\n"),
+            vec!["a-skill".to_string(), "x2".to_string()]
+        );
     }
 
     #[test]

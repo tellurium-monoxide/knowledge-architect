@@ -91,7 +91,8 @@ pub(crate) enum Part {
     All,
     /// The references, the links and the wrapped spans.
     References,
-    /// The unanchored path and the retired slug reference.
+    /// The unanchored path, the retired slug reference and the bare name of a skill or an
+    /// agent.
     Lints,
 }
 
@@ -193,6 +194,24 @@ pub(crate) fn judge_part(
                                 ""
                             }
                         ),
+                    ))
+                }
+                Observation::BareName(name) if lints => {
+                    // Exact against the table, so a crate's name or a name that no longer exists
+                    // is silent: the lint reports a pointer written with no kind, and a word that
+                    // names no skill and no agent here is no pointer. Under `harness = []` the
+                    // table defines neither kind, so nothing is reported.
+                    let Some(kind) = [entity::SKILL_KIND, entity::AGENT_KIND]
+                        .into_iter()
+                        .find(|k| entities.defines(&Kind::new(k), "", name))
+                    else {
+                        continue;
+                    };
+                    out.push(Finding::at(
+                        &doc.rel,
+                        l.line,
+                        format!("`{name}` is a bare {kind} name"),
+                        format!("write `{kind}@{name}`"),
                     ))
                 }
                 Observation::WrappedSpan(span) if references => out.push(Finding::at(
@@ -2597,6 +2616,43 @@ mod tests {
             vec![(".claude/skills/knowledge-architect-review/SKILL.md", copy)],
         );
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+    }
+
+    /// The claim: a backticked span that is exactly the name of a skill or an agent the table
+    /// defines, installed or the project's own, is reported with its reference as the repair,
+    /// and a span naming no skill and no agent, such as a crate's name or a removed agent's, is
+    /// silent. Mutation checked: matching any span with the installer's prefix reports the
+    /// crate's name and the removed agent's.
+    #[test]
+    fn a_bare_name_of_a_skill_or_an_agent_is_reported() {
+        let (found, _) = harness_checked(
+            vec![
+                (".claude/skills/a-skill/SKILL.md", "# A\n"),
+                (
+                    ".claude/agents/an-agent.md",
+                    "---\nname: an-agent\n---\n# An agent\n",
+                ),
+                (
+                    "notes/prose.md",
+                    "Run `knowledge-architect-review`, then `a-skill` and `an-agent`.\n\
+                     Not `knowledge-architect`, `knowledge-architect-gone-reviewer`, `a-part`.\n",
+                ),
+            ],
+            vec![(
+                ".claude/skills/knowledge-architect-review/SKILL.md",
+                "# R\n",
+            )],
+        );
+        assert_eq!(
+            found,
+            vec![
+                "notes/prose.md:1  `knowledge-architect-review` is a bare skill name\n    \
+                 → write `skill@knowledge-architect-review`",
+                "notes/prose.md:1  `a-skill` is a bare skill name\n    → write `skill@a-skill`",
+                "notes/prose.md:1  `an-agent` is a bare agent name\n    → write `agent@an-agent`",
+            ],
+            "{found:#?}"
+        );
     }
 
     /// The claim: a `#<id>` whose id is only a harness entity's, a section slug or a skill's

@@ -9,8 +9,8 @@ Scope: the goals homes of the project, one per Component, `path@*@docs/goals.md`
 a goal, changing its wording, and removing it.
 
 Not covered here: **a decision about how something is built**, which is
-`knowledge-architect-decision-recording`; **setting up the rest of a Component**,
-`knowledge-architect-setup`.
+`skill@knowledge-architect-decision-recording`; **setting up the rest of a Component**,
+`skill@knowledge-architect-setup`.
 
 **The goals are the only statements assumed to come from the owner.** Every design decision binds
 as a presumption, and a goal binds outright: a constraint derived from a goal rules a proposal out.
@@ -80,7 +80,7 @@ is argued from one.
 **A goal need not be met yet.** A goal is the owner's intent about where the project should get to,
 and it constrains future work and design from the moment it is written. When nothing fulfils it yet and
 no plan document schedules the work that would, open a `todo` issue for that work, under
-`knowledge-architect-issue-tracking`, and reference the goal from it.
+`skill@knowledge-architect-issue-tracking`, and reference the goal from it.
 
 ## When this runs again {{slug:when-it-runs-again}}
 

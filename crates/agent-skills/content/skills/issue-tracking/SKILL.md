@@ -28,8 +28,8 @@ it and nothing counts it.
 decision is recorded and the tripwire is unreadable apart from it.
 
 **A check that can only be applied once unbuilt work is built is not a tripwire.** It is what that
-work must prove, and it belongs with the work's planning, under `knowledge-architect-planning`. A
-tripwire is for a decision about code that exists.
+work must prove, and it belongs with the work's planning, under
+`skill@knowledge-architect-planning`. A tripwire is for a decision about code that exists.
 
 ## What is outstanding, across every register {{slug:outstanding-across-registers}}
 
@@ -222,11 +222,11 @@ there with no slug is reported. A slug at another level, at the head of a plain 
 `README.md` of a directory-shaped home, defines nothing and is reported as misplaced.
 
 **A tripwire from a premortem is written on the owner's word only**, at the harvest of the decision
-it guards, per `knowledge-architect-decision-recording`.
+it guards, per `skill@knowledge-architect-decision-recording`.
 
-One standing re-entry point: `knowledge-architect-standing-state-reviewer` reads every tripwire
-home and every deferred trigger again, on the review axis whose whole subject they are. An entry
-may name a narrower one.
+One standing re-entry point: `agent@knowledge-architect-standing-state-reviewer` reads every
+tripwire home and every deferred trigger again, on the review axis whose whole subject they are. An
+entry may name a narrower one.
 **A tripwire nobody reads again is a parked item with no re-entry point**, which is the thing this
 register exists to avoid, not to become.
 

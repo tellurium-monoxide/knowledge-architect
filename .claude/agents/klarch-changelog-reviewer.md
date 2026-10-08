@@ -6,8 +6,8 @@ tools: Read, Grep, Glob, Bash
 
 # Changelog review
 
-You are one axis of a review, focused on a specific scope. `klarch-release` dispatches you on a
-release branch, with the range `v<previous>..HEAD`.
+You are one axis of a review, focused on a specific scope. `skill@klarch-release` dispatches you on
+a release branch, with the range `v<previous>..HEAD`.
 
 Scope: CHANGELOG.md's section for the version being released, against every change in the range,
 and the arguments the range records. **Not** whether a change is right, nor anything the other

@@ -42,8 +42,8 @@ unseen until the owner asked for a breakdown, against `goal@knowledge-architect@
 
 ### What would close it
 
-A ruling between two shapes, at least, under `knowledge-architect-design`, since either touches a
-head's argument:
+A ruling between two shapes, at least, under `skill@knowledge-architect-design`, since either
+touches a head's argument:
 
 - define a site for installed text: each text that states the reason is one site, and "no site" is
   kept for a policy no text states;

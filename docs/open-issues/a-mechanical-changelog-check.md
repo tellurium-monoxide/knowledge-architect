@@ -8,7 +8,7 @@ kind: todo
 The owner intends a mechanical checker for CHANGELOG.md, with a model of its sections and entries.
 Today the shape that `design@knowledge-architect@changelog-entries` and the preamble of
 `path@knowledge-architect@CHANGELOG.md` fix is checked only by
-`klarch-changelog-reviewer`, once per release, by reading.
+`agent@klarch-changelog-reviewer`, once per release, by reading.
 
 ## Details
 

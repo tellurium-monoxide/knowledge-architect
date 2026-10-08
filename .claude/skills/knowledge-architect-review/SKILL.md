@@ -10,19 +10,20 @@ sub-activity, required as a prerequisite by every activity that produces somethi
 
 **When to dispatch is the activity's**, because the moment differs and so does the vocabulary that
 names it: the project's development procedure says when a piece of code is ready,
-`knowledge-architect-planning` says when a plan document is, and
-`knowledge-architect-agent-configuration` says when a configuration change is. Read your
+`skill@knowledge-architect-planning` says when a plan document is, and
+`skill@knowledge-architect-agent-configuration` says when a configuration change is. Read your
 activity's skill for its moment. The one moment that belongs to no activity is **before merging
 anything to the main branch**.
 
 Not covered here: **being** any of the reviewers (the record reviewers
-`knowledge-architect-routing-reviewer`, `knowledge-architect-decision-record-reviewer` and
-`knowledge-architect-standing-state-reviewer`; the plan-document reviewers
-`knowledge-architect-cold-implementer-reviewer`, `knowledge-architect-code-claims-reviewer` and
-`knowledge-architect-design-conformance-reviewer`;
-and `knowledge-architect-transcript-reviewer`, all dispatched rather than read), and
-**recording** what a review changes (`knowledge-architect-decision-recording`,
-`knowledge-architect-issue-tracking`).
+`agent@knowledge-architect-routing-reviewer`, `agent@knowledge-architect-decision-record-reviewer`
+and `agent@knowledge-architect-standing-state-reviewer`; the plan-document reviewers
+`agent@knowledge-architect-cold-implementer-reviewer`,
+`agent@knowledge-architect-code-claims-reviewer` and
+`agent@knowledge-architect-design-conformance-reviewer`; and
+`agent@knowledge-architect-transcript-reviewer`, all dispatched rather than read), and **recording**
+what a review changes (`skill@knowledge-architect-decision-recording`,
+`skill@knowledge-architect-issue-tracking`).
 
 ## The axes `##review-axes`
 
@@ -31,13 +32,13 @@ and `knowledge-architect-transcript-reviewer`, all dispatched rather than read),
 | spec conformity | does the work implement what was decided, item by item. If deviations happened during implementation, are they justified? | a spec or a milestone slice's spec was written before the work |
 | self-consistency | does the result contradict itself. Two instructions a reader cannot both obey, a pointer into content that is not there, a statement no longer true | nearly all the time |
 | fidelity of relocation | where content moved, was anything lost? A reason dropped, a number changed, an argument compressed to an assertion | content was relocated, or forked from another source |
-| routing of knowledge | `knowledge-architect-routing-reviewer` | a durable statement was added or moved |
-| decision recording | `knowledge-architect-decision-record-reviewer`. If a plan document was written, hand it to this reviewer too | a decision was made, reversed or harvested |
-| standing state | `knowledge-architect-standing-state-reviewer` | before every merge to the main branch, since it is the standing re-entry point of every tripwire and every deferred trigger |
-| cold implementer | `knowledge-architect-cold-implementer-reviewer`: can a session that did not see the discussion act on the plan document | a spec or a milestone was written under `knowledge-architect-planning`, or a decided shape in one revised; that skill names the moment |
-| code claims | `knowledge-architect-code-claims-reviewer`: is every statement the plan document makes about existing code true of the tree | the same moment |
-| design conformance | `knowledge-architect-design-conformance-reviewer`: does the plan document fit the project's goals, design heads and rejected alternatives | the same moment |
-| transcript | `knowledge-architect-transcript-reviewer`: has everything the work's sessions established that must outlive them a durable outcome, and is no ruling of the owner misstated | the transcripts of the sessions that produced the work are available; and once more before every merge to the main branch, alone and last (below) |
+| routing of knowledge | `agent@knowledge-architect-routing-reviewer` | a durable statement was added or moved |
+| decision recording | `agent@knowledge-architect-decision-record-reviewer`. If a plan document was written, hand it to this reviewer too | a decision was made, reversed or harvested |
+| standing state | `agent@knowledge-architect-standing-state-reviewer` | before every merge to the main branch, since it is the standing re-entry point of every tripwire and every deferred trigger |
+| cold implementer | `agent@knowledge-architect-cold-implementer-reviewer`: can a session that did not see the discussion act on the plan document | a spec or a milestone was written under `skill@knowledge-architect-planning`, or a decided shape in one revised; that skill names the moment |
+| code claims | `agent@knowledge-architect-code-claims-reviewer`: is every statement the plan document makes about existing code true of the tree | the same moment |
+| design conformance | `agent@knowledge-architect-design-conformance-reviewer`: does the plan document fit the project's goals, design heads and rejected alternatives | the same moment |
+| transcript | `agent@knowledge-architect-transcript-reviewer`: has everything the work's sessions established that must outlive them a durable outcome, and is no ruling of the owner misstated | the transcripts of the sessions that produced the work are available; and once more before every merge to the main branch, alone and last (below) |
 
 Each of these is conditional on the work. In other skills, more axes are added to this list, when
 the work has properties these axes do not reach. **An axis named by an agent is dispatched as that
@@ -117,7 +118,7 @@ re-checking.
 - repairs, done on the branch before merge, if the defect is too large to consider the task
   achieved;
 - issues, one file each in the affected anchor's issue directory
-  (`knowledge-architect-issue-tracking`);
+  (`skill@knowledge-architect-issue-tracking`);
 - nothing, where the finding is judged to need nothing, with the reason.
 
 **A finding that makes several claims gets an outcome for each claim**: repaired, opened as an
@@ -150,9 +151,9 @@ A transcript reviewer's finding that something **has no durable outcome** is act
 dispatcher without waiting for the owner: it is recorded in its home, repaired, opened as an issue,
 or judged to need nothing, with the reason. The exception is a decision that creates a design head,
 contradicts a statement of one, or takes one beyond what its title states, and was not argued: it goes to
-`knowledge-architect-design` first, per `knowledge-architect-decision-recording`. Each outcome is reported to the owner, in the record of
-the review and at the end of the turn. A ruling the reviewer finds misstated is the owner's, and is
-put to the owner.
+`skill@knowledge-architect-design` first, per `skill@knowledge-architect-decision-recording`. Each
+outcome is reported to the owner, in the record of the review and at the end of the turn. A ruling
+the reviewer finds misstated is the owner's, and is put to the owner.
 
 **Where the branch's commits reach the main branch as they are** (a fast-forward, or a rebase merge,
 which keeps their trees and messages and may give them new SHAs):

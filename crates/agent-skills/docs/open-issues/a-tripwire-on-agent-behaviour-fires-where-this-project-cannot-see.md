@@ -66,18 +66,20 @@ nothing, and the decision it watches is treated as safe without having been watc
 
 A design discussion about how the tripwires of the shipped skills are watched, raised on the owner's
 word. An incoming retrospective file is analysed under this repository's
-`klarch-retrospective-intake`, whose search of the standing entries reads every tripwire against
-the file. That search reads only what the file carries. The shape the owner is considering, in their words: "add re-entry points 'when receiving retrospectives' to
-tripwires that look at agent behaviors under the workflow, and to record the watched behaviors in
-the shipped retrospective skill itself (or bundled in the agent skill crate under a command, to
-avoid polluting what gets committed in other projects)." The owner calls it larger design work. In a later discussion, about where
-the search for the issues and tripwires a piece of work bears on runs, the owner stated the aim of
-that work: "My later goal is to automate the retrospective skill to look at the tripwires of
-this project, without requiring a manual edit of the questions the retrospective skill asks." One
+`skill@klarch-retrospective-intake`, whose search of the standing entries reads every tripwire
+against the file. That search reads only what the file carries. The shape the owner is considering,
+in their words: "add re-entry points 'when receiving retrospectives' to tripwires that look at agent
+behaviors under the workflow, and to record the watched behaviors in the shipped retrospective skill
+itself (or bundled in the agent skill crate under a command, to avoid polluting what gets committed
+in other projects)." The owner calls it larger design work. In a later discussion, about where the
+search for the issues and tripwires a piece of work bears on runs, the owner stated the aim of that
+work: "My later goal is to automate the retrospective skill to look at the tripwires of this
+project, without requiring a manual edit of the questions the retrospective skill asks." One
 tripwire waits for this discussion on the owner's word,
-`tripwire@agent-skills@search-missed-before-the-work`. The owner's words, about that tripwire: "This waits for the session that discusses solving the issue
-a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see, whose plan is to make use of
-the retrospective skill to analyze other projects." A second tripwire of the same class,
+`tripwire@agent-skills@search-missed-before-the-work`. The owner's words, about that tripwire: "This
+waits for the session that discusses solving the issue
+a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see, whose plan is to make use of the
+retrospective skill to analyze other projects." A second tripwire of the same class,
 `tripwire@agent-skills@deferred-trigger-met-by-undesigned-work`, waits for evidence that arises
 mostly in the sessions of projects that use the workflow; its re-entry is the standing-state review
 of this repository, which holds only the tree.

@@ -121,7 +121,7 @@ skills too, through the agent-configuration skill.
 
 ### The design skill is named design `##design-skill-name`
 
-The skill is installed as `knowledge-architect-design`, under
+The skill is installed as `skill@knowledge-architect-design`, under
 `design@agent-skills@naming-rule`. The installer's prefix places it inside knowledge-architect, so
 the name is never read alone, and there is not much need to tell it apart from visual design. It names no domain: the owner uses the skill for programming, for game design, and
 for designing names and rules, always to advance a project. Three names lost: "project-design",
@@ -597,7 +597,7 @@ two.
 
 ### The issues and tripwires a piece of work bears on are searched by an installed agent of its own, apart from the standing-state reviewer, in groups of at most 60 entries each read whole `##standing-entry-search-agent`
 
-The installed agent `knowledge-architect-standing-entry-searcher` searches one group of a
+The installed agent `agent@knowledge-architect-standing-entry-searcher` searches one group of a
 project's issue and tripwire entries for those a piece of work bears on. Its description carries
 the dispatch rule, since a dispatcher reads an agent's description and never its body: count the
 rows of the issue and tripwire listings, send the fewest agents that keep every group at 60
@@ -1029,12 +1029,12 @@ the one place for what is open of `goal@knowledge-architect@structure-and-workfl
 
 ### A transcript reviewer checks that what a work's sessions established has a durable outcome, and rates a misstated ruling by what it changes `##transcript-reviewer-agent`
 
-The installed agent `knowledge-architect-transcript-reviewer` reads the transcripts of the sessions
-that produced a piece of work, named as a commit range, and checks two things. First, that each
-decision of the owner, each argument that decided something, each finding of a reviewer and each
-thing met outside the task has a durable outcome: recorded in its home, acted on by a repair or an
-issue, or judged to need nothing with the reason written where the owner reads it. What lives only
-in a conversation is lost when the session ends or is compacted. Second, that no ruling of the
+The installed agent `agent@knowledge-architect-transcript-reviewer` reads the transcripts of the
+sessions that produced a piece of work, named as a commit range, and checks two things. First, that
+each decision of the owner, each argument that decided something, each finding of a reviewer and
+each thing met outside the task has a durable outcome: recorded in its home, acted on by a repair or
+an issue, or judged to need nothing with the reason written where the owner reads it. What lives
+only in a conversation is lost when the session ends or is compacted. Second, that no ruling of the
 owner is recorded in a state or a scope the owner did not give. Detail added inside a ruling, and a
 wording better than the one the owner was shown, are not findings. The owner's words: "It bothers
 me that it flags every small addition you make as a finding, even when they are clearly sane

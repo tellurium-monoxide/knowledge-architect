@@ -18,9 +18,14 @@ subsection is omitted.
   words joined by hyphens, and a frontmatter `name`, where one is set, equals that name. A
   skill's directory is not `synced`, nor begins `anthropic-skills`, which the harness does not
   load.
+- `checks`, minor: under the `claude` harness, a backticked span that is exactly the name of a
+  skill or an agent, installed or the project's own, is reported. A project writes it as the
+  reference, `skill@<name>` or `agent@<name>`; this holds for mock projects serving `claude` too.
 - `manifest`, major: a Component, a location or a plan named after a kind, such as `design`,
   `issue`, `path`, a declared register or one of `skill`, `agent`, `primer` and `instructions`, is
   refused, and so is a register named after one of those four. A project renames it.
+- `library`, major: `document::Observation` has a variant `BareName`, a backticked span that is
+  one word in the id grammar. Code that matches the enum exhaustively adds an arm.
 
 - `agent-skills`, patch: the installed skills and agents no longer number their sections, and cite
   each other's sections by reference, as `skill@<name>@<slug>`. A project's own text that cites a
@@ -109,8 +114,8 @@ subsection is omitted.
   by the decision-record axis whichever axis asked for it, and no other repair is, where any
   transcript-review repair that made a decision was; decision-recording's finishing step applies
   the entry tests again once the change is written.
-- `agent-skills`, patch: a new reviewer, `knowledge-architect-design-conformance-reviewer`, reads a
-  plan document against the goals, the design heads and the rejected alternatives of every
+- `agent-skills`, patch: a new reviewer, `agent@knowledge-architect-design-conformance-reviewer`,
+  reads a plan document against the goals, the design heads and the rejected alternatives of every
   Component it touches, as the fourth reviewer the planning skill sends when a plan document is
   written or a decided shape in one is revised; the review skill's axis row of the standing-state
   reviewer is named "standing state".
@@ -218,7 +223,7 @@ subsection is omitted.
 - `agent-skills`, patch: on the design skill's in-change path, where the premortem runs, nothing of
   a decision is implemented or committed before it has run and the owner has ruled on its
   tripwires.
-- `agent-skills`, patch: a new installed agent, `knowledge-architect-standing-entry-searcher`,
+- `agent-skills`, patch: a new installed agent, `agent@knowledge-architect-standing-entry-searcher`,
   searches the issues and tripwires a piece of work bears on. The design skill dispatches it at the
   grounding of a discussion, and the planning skill at the design audit of a milestone step, one
   agent per group of at most 60 entries, in parallel. The session reads whole each entry it
@@ -332,8 +337,8 @@ subsection is omitted.
   the row naming the plans directory from the project's own rows of the knowledge table, in its root
   `CLAUDE.md`.
 - `agent-skills`, major: the agent `knowledge-architect-transcript-conformity-reviewer` is renamed
-  `knowledge-architect-transcript-reviewer`. Rename it wherever the project's own skills, agents
-  or `CLAUDE.md` files name it.
+  `agent@knowledge-architect-transcript-reviewer`. Rename it wherever the project's own skills,
+  agents or `CLAUDE.md` files name it.
 
 ### New features
 

@@ -15,7 +15,7 @@ The goals are `path@knowledge-architect@docs/goals.md`.
 an argument outright. One derived from a recorded decision binds it as a stated presumption, which
 a better argument can rebut. Recorded decisions were often argued before the code existed, so
 implementation is expected to prove some of them wrong: reversing one is an ordinary move, and
-`knowledge-architect-decision-recording` owns what it costs.
+`skill@knowledge-architect-decision-recording` owns what it costs.
 
 The repository is a virtual workspace with five Components, none in a directory named after the
 project, per `design@knowledge-architect@no-directory-named-after-the-project`:
@@ -58,7 +58,7 @@ State the consequences of a request explicitly. Never assume the user has consid
 - **Current reality only**: no dates in a head, no changelogs outside CHANGELOG.md, no "formerly
   known as".
 - Avoid numbers that may go stale, except in issues that follow the cold-reader standard of the
-  `knowledge-architect-issue-tracking` skill.
+  `skill@knowledge-architect-issue-tracking` skill.
 
 ## Mechanical validation of documents `##mechanical-validation`
 
@@ -223,7 +223,7 @@ the primer's:
 | what a consumer must change, can start using, or will see agents do differently, per release | CHANGELOG.md at the root: one section per version, and the `Next release` section | a released section's content never changes; its structure may, and the `Next release` section may change at any time, per `design@knowledge-architect@changelog-entries` |
 | a finding established outside this project that a decision here leans on | `docs/grounding/<subject>.md` in the Component the decision belongs to | the source is superseded, or a better one lands |
 | a Component that maintains the repository rather than shipping in it | `tools/<name>/`, one directory per tool | the tool is retired |
-| the analysis of a retrospective's findings received by this repository, and the owner's ruling on each | one file per received file in `path@knowledge-architect@docs/retrospective-reports/`, per `design@knowledge-architect@committed-findings-analysis`, written under `klarch-retrospective-intake` | the commit that carries out its last outcome, or a later commit of the same branch, deletes it |
+| the analysis of a retrospective's findings received by this repository, and the owner's ruling on each | one file per received file in `path@knowledge-architect@docs/retrospective-reports/`, per `design@knowledge-architect@committed-findings-analysis`, written under `skill@klarch-retrospective-intake` | the commit that carries out its last outcome, or a later commit of the same branch, deletes it |
 | **none of these, nor a row of the primer** | **ask, before writing it anywhere** | the table gains the row |
 
 **The last row is for a statement with no home, not for a choice between two.** When two rows
@@ -277,7 +277,8 @@ partial reading cannot mislead. A plan document is deleted in the commit that co
 harvest, and that commit's message cites it by its kind. This is a restatement; its homes are
 `design@agent-skills@document-vocabulary`, `design@agent-skills@spec-leaves-at-landing`,
 and `design@agent-skills@plan-landing-is-not-tied-to-its-work`, and the procedure is the installed
-`knowledge-architect-planning`, which also says when a plan document must land before its work.
+`skill@knowledge-architect-planning`, which also says when a plan document must land before its
+work.
 
 ## Verify before relying on anything `##verify-before-relying`
 
@@ -295,7 +296,7 @@ anyone has checked it.
   against the code. Verify the code against it. A divergence is a defect in one of them. Say which,
   open an entry, and stop. A design home can be wrong, and it still prevails until the entry closes:
   when the code meets the head, or when the head is reversed under
-  `knowledge-architect-decision-recording`. Work that goes on meanwhile builds on the head. A
+  `skill@knowledge-architect-decision-recording`. Work that goes on meanwhile builds on the head. A
   divergence is never licence to follow the code. This is a restatement; its home is
   `design@agent-skills@design-home-is-built-intent`.
 - **A reason recorded at the code**: an inline comment saying why the code is shaped so, or the
@@ -381,7 +382,7 @@ The issue and tripwire registers are spread over every Component and the agent-c
 grepping the one you happen to think of is not the check. The three commands read the same entity
 table that `cargo klarch check` resolves against. A recorded entry usually says more than a fresh
 diagnosis will: the measurement already taken, what was ruled out, and often why the work was left
-undone on purpose. The `knowledge-architect-issue-tracking` skill says what to do with what
+undone on purpose. The `skill@knowledge-architect-issue-tracking` skill says what to do with what
 you find, either way.
 
 ### Precedent is not authority
@@ -494,24 +495,24 @@ the matching skill before doing that kind of work.
 commits them under .claude. The harness lists each installed skill with its description, so a
 session finds which applies there. An axis of a review that has an installed reviewer agent is
 dispatched as that agent, and any other axis as a fresh general-purpose subagent, per
-`knowledge-architect-review`.
+`skill@knowledge-architect-review`.
 
 **This repository's own skills and agents take the prefix `klarch-`**, not the project's name: a
 name beginning with `knowledge-architect-` is the installer's, and the install would delete it.
 This is a restatement; its home is `design@knowledge-architect@klarch-prefix`.
 
 **A retrospective's findings stay in this repository.** Here the project is also the workflow's
-upstream, so the findings of both files of `knowledge-architect-retrospective` are handled here,
-on the owner's word: handled, opened as entries in this repository's own issue registers, or
+upstream, so the findings of both files of `skill@knowledge-architect-retrospective` are handled
+here, on the owner's word: handled, opened as entries in this repository's own issue registers, or
 closed with no change and the reason, never as an issue on GitHub. This is the owner's
 standing direction under that skill; its home is
 `design@knowledge-architect@retrospective-findings-stay-here`.
 
 **The routing table**: what this repository adds to an installed skill or agent. It holds no row.
-**This repository's own skills, `klarch-development`, `klarch-release` and
-`klarch-retrospective-intake`, add to no installed skill**, and its one agent,
-`klarch-changelog-reviewer`, is dispatched by `klarch-release`; the harness lists each with its
-description.
+**This repository's own skills, `skill@klarch-development`, `skill@klarch-release` and
+`skill@klarch-retrospective-intake`, add to no installed skill**, and its one agent,
+`agent@klarch-changelog-reviewer`, is dispatched by `skill@klarch-release`; the harness lists each
+with its description.
 
 ## Git `##git-workflow`
 
@@ -608,14 +609,15 @@ computed, so no hand merge is needed and none is lost.
 
 4. **Work is reviewed before any merge to main.**
 
-- Use `knowledge-architect-review` before the merge.
+- Use `skill@knowledge-architect-review` before the merge.
 - The axes come from the dispatching activity's own skill.
 - Critical findings are repaired before the merge.
 - The commit that lands the repairs says what was reviewed and what was decided. Where every
   repair was folded, the message of the branch's last commit says it, reworded with a clean tree:
   a commit of its own would change no file, and the rebase merge drops it.
 - Every finding gets one of the outcomes of `skill@knowledge-architect-review@what-review-leaves`: repaired, opened as an
-  issue entry per `knowledge-architect-issue-tracking`, or judged to need nothing, with the reason.
+  issue entry per `skill@knowledge-architect-issue-tracking`, or judged to need nothing, with the
+  reason.
 - Once the branch is rebased and the repairs are pushed, mark the pull request ready:
   `gh pr ready`. That starts CI, and every later push re-runs it. First check that GitHub has
   taken the push: `gh pr view <branch> --json headRefOid` must equal `git rev-parse HEAD`. A pull

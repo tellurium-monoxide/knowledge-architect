@@ -6,15 +6,16 @@ description: MUST use when the owner hands this session one or more retrospectiv
 # Retrospective intake
 
 Scope: the analysis of the findings a retrospective sends to this repository, up to the owner's
-ruling on each. A retrospective is run by `knowledge-architect-retrospective`, in this repository
-or in a project that uses the workflow, and its files land outside the project, in a directory the
-owner names. A later session receives them, and this skill is that session's procedure.
+ruling on each. A retrospective is run by `skill@knowledge-architect-retrospective`, in this
+repository or in a project that uses the workflow, and its files land outside the project, in a
+directory the owner names. A later session receives them, and this skill is that session's
+procedure.
 
 Not covered here:
-- **running a retrospective**: `knowledge-architect-retrospective`;
-- **carrying out an outcome**: an issue is opened under `knowledge-architect-issue-tracking`; a
-  finding handled now is handled under the skill that item g of `skill@klarch-retrospective-intake@what-to-establish`
-  names for it.
+- **running a retrospective**: `skill@knowledge-architect-retrospective`;
+- **carrying out an outcome**: an issue is opened under `skill@knowledge-architect-issue-tracking`;
+  a finding handled now is handled under the skill that item g of
+  `skill@klarch-retrospective-intake@what-to-establish` names for it.
 
 **This skill decides nothing.** It establishes the facts about each finding, proposes an action
 with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-decides`.
@@ -48,7 +49,7 @@ A finding is cited by its id and its file's stem, as "W3 of
    analyse against: `git describe --tags origin/main`. A finding against an older version may
    already be repaired.
 3. **Search the standing entries with the received files as the work.** One search covers every
-   file received together. Dispatch `knowledge-architect-standing-entry-searcher`:
+   file received together. Dispatch `agent@knowledge-architect-standing-entry-searcher`:
    - count the rows of `cargo klarch issues` and of `cargo klarch tripwires`, the header rows
      excluded, a listing that prints only `(no entry)` counting 0;
    - send ceil(count / 60) agents, all in parallel, on consecutive groups whose sizes differ by at
@@ -118,10 +119,10 @@ Each item below is answered with its evidence. The order is a suggestion; the co
   ruling, and a one-sentence mechanism, which the analysis writes, per
   `design@agent-skills@additions-need-real-use`.
 - **g. Its route.** What handling it needs, which says what "now" would mean:
-  - a text edit whose design is settled: under `knowledge-architect-agent-configuration`, and for
-    the installed text the agent-skills `CLAUDE.md`;
-  - a decision, or one whose design is not settled: `knowledge-architect-design`;
-  - a change to the Rust source: `klarch-development`;
+  - a text edit whose design is settled: under `skill@knowledge-architect-agent-configuration`, and
+    for the installed text the agent-skills `CLAUDE.md`;
+  - a decision, or one whose design is not settled: `skill@knowledge-architect-design`;
+  - a change to the Rust source: `skill@klarch-development`;
   - an issue only, when the work is not to be done in this session;
   - nothing.
 - **h. The proposal.** The action, its argument, and the default outcome (`skill@klarch-retrospective-intake@analysis-and-ruling`).

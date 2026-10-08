@@ -356,9 +356,9 @@ place for what is open, beside the registers, against
 
 A retrospective's workflow file that this repository receives, from its own sessions or from a
 project that uses the workflow, and the project file of this repository's own retrospective, are
-each analysed finding by finding under `klarch-retrospective-intake`, and the analysis is a file of
-`path@knowledge-architect@docs/retrospective-reports/`, named by the received file's stem. Each
-finding gets one of three outcomes, ruled by the owner: handled now, opened as an issue, or no
+each analysed finding by finding under `skill@klarch-retrospective-intake`, and the analysis is a
+file of `path@knowledge-architect@docs/retrospective-reports/`, named by the received file's stem.
+Each finding gets one of three outcomes, ruled by the owner: handled now, opened as an issue, or no
 change with the reason, per `goal@knowledge-architect@the-owner-decides`. The analysis is committed
 with the owner's ruling on each finding, the issues it rules are opened next, the findings handled
 now are handled, and the commit that carries out its last outcome, or a later commit of the same

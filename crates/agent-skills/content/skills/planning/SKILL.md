@@ -13,16 +13,16 @@ audit and at each landing.
 **Not covered here**, each named where it lives:
 
 - **The design discussion** that produces the converged design:
-  `knowledge-architect-design`. On its full path, it ends at convergence, the premortem and the
-  owner's rulings on its tripwires and acceptance criteria, and hands off to this skill; its in-change path writes no plan
-  document.
+  `skill@knowledge-architect-design`. On its full path, it ends at convergence, the premortem and
+  the owner's rulings on its tripwires and acceptance criteria, and hands off to this skill; its
+  in-change path writes no plan document.
 - **Writing the code** of a step, its claims and its tests: the project's own development
   procedure. This workflow installs none.
-- **Dispatching the reviewers**: `knowledge-architect-review`.
+- **Dispatching the reviewers**: `skill@knowledge-architect-review`.
 - **Recording** what a landing establishes. Recording is not done once at the end of the
   discussion: it is done at each landing, as the harvest of `skill@knowledge-architect-planning@working-a-slice`. The procedure is
-  `knowledge-architect-decision-recording` for the decisions and the losing alternatives, and
-  `knowledge-architect-issue-tracking` for the tripwires and the issues.
+  `skill@knowledge-architect-decision-recording` for the decisions and the losing alternatives, and
+  `skill@knowledge-architect-issue-tracking` for the tripwires and the issues.
 
 ## Terms {{slug:planning-terms}}
 
@@ -42,7 +42,7 @@ audit and at each landing.
 | **thread** | one proposal of the discussion, carrying a state; an approved thread is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
 | **acceptance criterion** | a check on a recorded decision that only the work's built code can apply |
-| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named, and the thread stays closed until the owner's word. The full protocol is `knowledge-architect-design`, under Decision authority |
+| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named, and the thread stays closed until the owner's word. The full protocol is `skill@knowledge-architect-design`, under Decision authority |
 | **audit** | the reading of a slice's entry, or of a spec, against the tree and the design homes before its work is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
 
@@ -237,8 +237,8 @@ extracts the delta tables, the owner's messages verbatim and the arguments; the 
 per-round delta is the draft it reads. Where one argument ends and the next begins is decided at
 assembly, and the transcript reviewer of `skill@knowledge-architect-planning@plan-reviews` checks that no argument was lost. The status section names the
 transcript files read, so that a reviewer reads the same ones. Each file is found by the
-discussion's opening message, never by a session identifier, as `knowledge-architect-review` says.
-Where the harness keeps no
+discussion's opening message, never by a session identifier, as `skill@knowledge-architect-review`
+says. Where the harness keeps no
 transcript, assemble from the conversation, and say so in the commit that adds the document.
 
 ## Cutting the steps and the slices {{slug:cutting-steps-and-slices}}
@@ -330,11 +330,11 @@ default marked as the owner's to reset.
   naming it as #<id> beside a citation of the whole plan, since a commit message cites a plan only
   whole: the decision guarded, fired or not, the evidence, the response taken.
 - **A criterion that fires** leaves the document at once, as an issue entry or a reopened decision,
-  under `knowledge-architect-issue-tracking`.
+  under `skill@knowledge-architect-issue-tracking`.
 - **When the document leaves**, its last landing commit reports on every criterion once more. One
   that did not fire and recurs at later work is proposed to the owner as a tripwire, and written on
   the owner's word in the tripwires home of the Component that owns the guarded decision, naming
-  the harvested head, in the shape `knowledge-architect-issue-tracking` gives. One that is
+  the harvested head, in the shape `skill@knowledge-architect-issue-tracking` gives. One that is
   spent, or that the owner declines, is deleted with the document.
 
 ## Working a slice, and the work of a spec {{slug:working-a-slice}}
@@ -351,13 +351,14 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
    have, a consequence the entry did not see, and **a standing entry the slice's planned code bears on**:
    a tripwire whose firing condition, or a `deferred` issue whose trigger, the planned code meets,
    and an issue of any kind the slice's code touches, closes, makes worse or depends on. Dispatch the
-   search as the description of `knowledge-architect-standing-entry-searcher` says, with the slice's
-   spec and the milestone document as the work and, as seeds, the decisions the milestone document
-   lists under "What is already decided" and the decisions and goals the slice's spec cites; for a
-   spec, the spec is the work and its own "What is already decided" gives the seeds. Read
-   whole, with `{{command}} show`, every entry the search returns, and judge it against the slice;
-   never act on an entry from the reason the search gave. A firing found at the audit is ruled before the code is written, where one
-   found only by the review of the harvest reopens the harvest. Sort each gap:
+   search as the description of `agent@knowledge-architect-standing-entry-searcher` says, with the
+   slice's spec and the milestone document as the work and, as seeds, the decisions the milestone
+   document lists under "What is already decided" and the decisions and goals the slice's spec
+   cites; for a spec, the spec is the work and its own "What is already decided" gives the seeds.
+   Read whole, with `{{command}} show`, every entry the search returns, and judge it against the
+   slice; never act on an entry from the reason the search gave. A firing found at the audit is
+   ruled before the code is written, where one found only by the review of the harvest reopens the
+   harvest. Sort each gap:
    - **Applied in place.** The gap has one answer the document's decisions already imply, or is a
      choice among shapes the document rules out all but one of. Apply the answer in place, in the
      milestone document or the slice's spec, wherever the shape it changes is written. Commit the
@@ -377,7 +378,7 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
    - **Load-bearing.** The gap is material, or is a choice between two shapes neither of which the
      document rules out, or needs a ruling the document marks as the owner's. Record it in the
      slice's spec as open at the audit, with the discriminating fact, stop the slice, and open a
-     design session with the owner under `knowledge-architect-design`. **The session's depth
+     design session with the owner under `skill@knowledge-architect-design`. **The session's depth
      follows the gap.**
      - A choice among shapes that can be stated in full, each with its consequence, is put to the
        owner in one message, with a default; several such gaps go in one question, each under a
@@ -396,23 +397,23 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
    as many commits as the session judges the work needs. The commits name how each claim's test was
    shown to fail against a wrong implementation, and say of any claim whose test cannot yet do so
    why not.
-4. **Review before the merge**, per `knowledge-architect-review`. A repair is a further commit,
-   or folded where that skill says.
+4. **Review before the merge**, per `skill@knowledge-architect-review`. A repair is a further
+   commit, or folded where that skill says.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this slice,
    by its identifier in plain text, beside a citation of the milestone document (`skill@knowledge-architect-planning@acceptance-criteria`).
 6. **The harvest**, per the harvest row of the slice's spec: the decisions and the losing
-   alternatives under `knowledge-architect-decision-recording`, then the tripwires and the issues
-   under `knowledge-architect-issue-tracking`. The row names what is judged; the tests of
-   `knowledge-architect-decision-recording` decide whether each decision and each alternative
-   earns an entry, and they govern where the two disagree: an item of the row the tests exclude is
-   named in the harvest's commit, with the test it fails. A decision harvested from a thread takes
-   the thread's slug, unless the slug misdescribes the approved decision: the entry then takes a
-   slug that names it, and the slice's harvest row states the pair, per
-   `knowledge-architect-decision-recording`. A tripwire names the head that harvested its
+   alternatives under `skill@knowledge-architect-decision-recording`, then the tripwires and the
+   issues under `skill@knowledge-architect-issue-tracking`. The row names what is judged; the tests
+   of `skill@knowledge-architect-decision-recording` decide whether each decision and each
+   alternative earns an entry, and they govern where the two disagree: an item of the row the tests
+   exclude is named in the harvest's commit, with the test it fails. A decision harvested from a
+   thread takes the thread's slug, unless the slug misdescribes the approved decision: the entry
+   then takes a slug that names it, and the slice's harvest row states the pair, per
+   `skill@knowledge-architect-decision-recording`. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
    linked from its README. **The harvest is reviewed before the merge**, per
-   `knowledge-architect-review`, on the decision-record, routing and standing-state axes, and by
-   the transcript reviewer where the transcripts are available: it writes the record those axes
+   `skill@knowledge-architect-review`, on the decision-record, routing and standing-state axes, and
+   by the transcript reviewer where the transcripts are available: it writes the record those axes
    judge, so the review of point 4 cannot see it.
 7. **The slice's spec leaves** in the commit that completes its harvest, as in `skill@knowledge-architect-planning@plan-document-leaves`. What crosses slices stays in the
    milestone document, amended in place where the landing changed it.
@@ -438,7 +439,7 @@ design audit, applied in place: …`.
 
 A plan document is committed first, on a branch of its own or on its work's branch, and that
 commit is what the reviewers read; a repair lands after it, as a further commit or folded where
-`knowledge-architect-review` says. **It may be merged on its own, whatever the time of its
+`skill@knowledge-architect-review` says. **It may be merged on its own, whatever the time of its
 work**: a plan document on the main branch keeps the work done meanwhile from drifting from it.
 **One whose work's first commit changes what the project's per-commit gate checks is merged
 before that work**, a spec as well as a milestone document: on one branch, that gate as the work
@@ -446,22 +447,22 @@ changes it would judge the commit that added the document, whose tree predates t
 change that only a check of the working tree sees does not count. It is read again after a revision that changes a decided shape (an
 audit applied in place is not one). Its reviewers are fresh, and did not witness the
 discussion. **Fresh, never a fork**: a fork inherits the discussion and reads the document as its
-author. Dispatch them through `knowledge-architect-review`, with the invariants that
+author. Dispatch them through `skill@knowledge-architect-review`, with the invariants that
 skill lists, the blind brief included:
 
-- `knowledge-architect-cold-implementer-reviewer` reads the document as the implementer of its work, or of a milestone's first
-  step and reports every place where it cannot act: undefined names, shapes without enough detail
-  to write, procedure gaps, ambiguities, and what it would have to reconstruct from a conversation
-  it did not see. It also applies the readiness checks below.
-- `knowledge-architect-code-claims-reviewer` verifies every statement the document makes about the
-  code as it stands, and reports each as confirmed, wrong or imprecise, with the evidence.
+- `agent@knowledge-architect-cold-implementer-reviewer` reads the document as the implementer of its
+  work, or of a milestone's first step and reports every place where it cannot act: undefined names,
+  shapes without enough detail to write, procedure gaps, ambiguities, and what it would have to
+  reconstruct from a conversation it did not see. It also applies the readiness checks below.
+- `agent@knowledge-architect-code-claims-reviewer` verifies every statement the document makes about
+  the code as it stands, and reports each as confirmed, wrong or imprecise, with the evidence.
 %% `design@agent-skills@plan-read-against-the-record`.
-- `knowledge-architect-design-conformance-reviewer` reads the document against the project's
+- `agent@knowledge-architect-design-conformance-reviewer` reads the document against the project's
   record: the goals, the design heads and the rejected alternatives of every Component it touches.
   It reports a shape, an acceptance criterion, a default, a step or a harvest row that contradicts
   a goal, that contradicts or widens a head the document does not list as reversed or rewritten,
   or that brings back an alternative that lost. A conflict with a goal goes to the owner.
-- `knowledge-architect-transcript-reviewer` reads the discussion's transcripts and checks that
+- `agent@knowledge-architect-transcript-reviewer` reads the discussion's transcripts and checks that
   everything the discussion established that must outlive it is in the document or has another
   durable outcome, and that no ruling of the owner is recorded wider, narrower or in another state
   than the owner gave it. Dispatch it on every assembled document, with the commit that adds the
@@ -519,9 +520,9 @@ things in one commit:
 
 - it removes the citation from the citing plan;
 - it opens a `question` issue in the root's issue register, under
-  `knowledge-architect-issue-tracking`: does the citing plan still hold now that the leaving plan is
-  built, accounting for deviations or other unplanned happenings? It is answered by reading the
-  citing plan against what the leaving plan harvested. The
+  `skill@knowledge-architect-issue-tracking`: does the citing plan still hold now that the leaving
+  plan is built, accounting for deviations or other unplanned happenings? It is answered by reading
+  the citing plan against what the leaving plan harvested. The
   issue cites the citing plan, so it cannot outlive it, and its `Why it matters` cites the leaving
   plan's harvested design entries, since the leaving plan no longer exists. For a milestone, its
   next slice's audit reads the issue.

@@ -47,7 +47,7 @@ premortem and the owner's rulings on its tripwires and acceptance
 criteria. Bounded work ends
 sooner, at the owner's word on its one proposal (`skill@knowledge-architect-design@bounded-work`), and takes
 neither of the two paths below. It writes no plan document and no record. On the full
-path, the spec or the milestone is written by `knowledge-architect-planning`,
+path, the spec or the milestone is written by `skill@knowledge-architect-planning`,
 in the same session (step 8); on the in-change path, a commit message
 carries the deliberation (`skill@knowledge-architect-design@decision-authority`). Either way, the decisions
 are recorded at the landing of the work that implements them.
@@ -100,7 +100,7 @@ It ends the argument, but it does not end your duties around it:
   next checkpoint — or the end of the current change, whichever comes
   first — the finding stays on the thread's ledger line, marked
   unacknowledged, and is carried into the plan document that
-  `knowledge-architect-planning` writes from the ledger, among its
+  `skill@knowledge-architect-planning` writes from the ledger, among its
   defaults awaiting the owner; on the in-change path below, into the
   commit message that carries the deliberation. The ledger does not outlive
   the discussion, and those do. It is not a fired tripwire. This is not
@@ -132,19 +132,19 @@ evidence bring, which nobody knows in advance.
 - **The in-change path.** It is open when the decision lands in the
   change under way: its work, as when the decision was met during an
   issue fix or a review repair, or its record, for a decision that
-  `knowledge-architect-decision-recording` records when it is made. No
+  `skill@knowledge-architect-decision-recording` records when it is made. No
   plan document is written. The deliberation goes in the message of the
   commit that writes the decision's design entry, or, for a decision
   that earns none, of the commit that implements it: every thread with its final state, the
   owner's words verbatim for each closure, the rivals that lost with
   their reasons, and the owner's rulings on tripwires. The decision is
   recorded at that landing like any other, under
-  `knowledge-architect-decision-recording`: `skill@knowledge-architect-decision-recording@reversal-check` decides the Component
-  of a decision that reverses a recorded one, and `skill@knowledge-architect-decision-recording@entry-tests` decides whether
-  any other decision earns a design head at all. Apply both before proposing to the owner
-  where a decision lands. The checkpoint table is
-  shown at convergence when the ledger holds more than one thread. The
-  premortem runs when reversal touches any of the four. Where it runs,
+  `skill@knowledge-architect-decision-recording`:
+  `skill@knowledge-architect-decision-recording@reversal-check` decides the Component of a decision
+  that reverses a recorded one, and `skill@knowledge-architect-decision-recording@entry-tests`
+  decides whether any other decision earns a design head at all. Apply both before proposing to the
+  owner where a decision lands. The checkpoint table is shown at convergence when the ledger holds
+  more than one thread. The premortem runs when reversal touches any of the four. Where it runs,
   nothing of the decision is implemented or committed before it has run
   and the owner has ruled on its tripwires, so the commit that carries
   the deliberation carries those rulings.
@@ -240,13 +240,13 @@ approved, not by the change it proposes: #retention-window, not
 #shorten-retention. A slug is never changed during the discussion, since
 every earlier delta carries it. When the approved decision has drifted
 from what the slug says, its entry takes a slug that names the decision,
-under `knowledge-architect-decision-recording`. Before using a slug, check that no entry of the
-Component that will own the decision already holds it, with
+under `skill@knowledge-architect-decision-recording`. Before using a slug, check that no entry of
+the Component that will own the decision already holds it, with
 `{{command}} show design@<anchor>@<slug>`. In prose, write it plain with a
 `#` before it, as in #retention-window, never in backticks: a backticked
 span may be read by the checker as a reference. In the plan document the
 thread becomes an item, cited from inside that document only, per
-`knowledge-architect-planning`. When the natural name is a
+`skill@knowledge-architect-planning`. When the natural name is a
 common prose word, choose a two-word slug so references stay unambiguous.
 
 **Granularity.** Every proposal either party made is a thread. A
@@ -375,8 +375,8 @@ binding criterion that is unmet blocks convergence, and no word
 waives it in place: the moves are to change the proposal, or for the
 owner to demote the criterion to weighed — a change to the criterion,
 recorded as one. A criterion derived from a goal is demoted only by
-changing the goal, under `knowledge-architect-goal-setting`. Were acceptance available to both kinds, binding and
-weighed would differ only in how much ceremony the acceptance takes.
+changing the goal, under `skill@knowledge-architect-goal-setting`. Were acceptance available to both
+kinds, binding and weighed would differ only in how much ceremony the acceptance takes.
 Convergence holds only when every criterion carries a satisfaction
 line and no binding criterion is unmet (loop step 6).
 
@@ -429,7 +429,7 @@ choices whose option space genuinely is closed and consequence-free.
    touches; their design homes; their rejected alternatives; their
    `README.md` files, which state their contracts. The open issues and
    the tripwires are searched by subagents: dispatch the search as the
-   description of `knowledge-architect-standing-entry-searcher` says,
+   description of `agent@knowledge-architect-standing-entry-searcher` says,
    with the question as the work and, as seeds, the decisions and goals
    read so far that bear on it. Then run
    `{{command}} show <kind>@<anchor>@<id>`, which prints the entry and
@@ -583,7 +583,7 @@ choices whose option space genuinely is closed and consequence-free.
 
    If the design holds against the premortem, what survives is proposed as tripwires,
    except a cause that only the built code can check: that is an acceptance
-   criterion, which `knowledge-architect-planning` writes into the plan document,
+   criterion, which `skill@knowledge-architect-planning` writes into the plan document,
    or, on the in-change path, a test of the change.
 %% A criterion on the owner's word: `design@agent-skills@acceptance-criteria-on-the-owners-word`.
 %% The labels: `design@agent-skills@ruled-items-labelled`.
@@ -598,7 +598,7 @@ choices whose option space genuinely is closed and consequence-free.
    Some may be out of scope of the project, and the owner is the only judge of that.
    A tripwire the owner rules to record is written at the harvest of the decision
    it guards, in the tripwires home of the Component that owns that decision,
-   under `knowledge-architect-issue-tracking`: a tripwire names its decision's
+   under `skill@knowledge-architect-issue-tracking`: a tripwire names its decision's
    design entry, so the entry exists first.
 
    Every tripwire, here and everywhere else, is recorded only on the
@@ -615,7 +615,7 @@ choices whose option space genuinely is closed and consequence-free.
    is. A tripwire that watches another cause is a new one, and needs the
    owner's word.
 
-8. **On the full path, hand off to `knowledge-architect-planning`, in this
+8. **On the full path, hand off to `skill@knowledge-architect-planning`, in this
    session.** On the in-change path there is no hand-off: the work
    continues in the change, and the deltas are the draft of the commit
    message that carries the deliberation.
@@ -641,15 +641,15 @@ rulings verbatim, the losing alternatives with their reasons, and the
 tripwires the premortem produced.
 The decision record is the durable harvest of that account, written when
 the work that implements each decision lands, under
-`knowledge-architect-decision-recording`: an approved thread becomes a
+`skill@knowledge-architect-decision-recording`: an approved thread becomes a
 design entry under its own slug when it earns one, and a shape that lost
 to an argument earns a rejected-alternative entry only when that skill's
 tests say so. Open state goes to the issue register and the tripwires
-homes, under `knowledge-architect-issue-tracking`. A decision that no
+homes, under `skill@knowledge-architect-issue-tracking`. A decision that no
 work implements is recorded when it is made. Findings made during
 planning or implementation surface through the material-findings
 protocol (`skill@knowledge-architect-design@decision-authority`), except a load-bearing gap found at a
-design audit, which stops that work under `knowledge-architect-planning`.
+design audit, which stops that work under `skill@knowledge-architect-planning`.
 
 ## Keep-or-change (evaluating an incumbent design) {{slug:keep-or-change}}
 
@@ -662,7 +662,7 @@ the same exchange, plus:
   evidence is lost when the incident closes. At the trigger moment,
   record the instance and the suspicion
   as an observation, not a verdict: an issue entry of kind `design`,
-  under `knowledge-architect-issue-tracking`. Finish the fix; then argue the
+  under `skill@knowledge-architect-issue-tracking`. Finish the fix; then argue the
   direction in a discussion whose entry point is the recorded trend,
   not the incident — a new session when the incident still dominates
   the context. Propose that discussion by name before the current

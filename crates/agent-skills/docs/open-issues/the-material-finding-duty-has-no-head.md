@@ -38,6 +38,6 @@ not list that head among what the change touches, against
 ### What would close it
 
 A head in `path@agent-skills@docs/design.md` recording the duty and its argument, written under
-`knowledge-architect-decision-recording` and argued under `knowledge-architect-design` since it
-creates a head, and the bullet of `design@agent-skills@primer-content` citing it. Or the owner's
-ruling that the duty earns no head, recorded in this entry's closing commit.
+`skill@knowledge-architect-decision-recording` and argued under `skill@knowledge-architect-design`
+since it creates a head, and the bullet of `design@agent-skills@primer-content` citing it. Or the
+owner's ruling that the duty earns no head, recorded in this entry's closing commit.

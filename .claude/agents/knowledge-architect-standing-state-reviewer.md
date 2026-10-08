@@ -80,7 +80,7 @@ available is deciding in advance which entries were worth reading.
 a slug may be guarded from more than one direction. That is where a firing has been missed.
 
 A tripwire that has fired **leaves its home**. Delete it there and create the consequence, an
-issue file or a reopened decision. `knowledge-architect-issue-tracking` owns the movement.
+issue file or a reopened decision. `skill@knowledge-architect-issue-tracking` owns the movement.
 **A fired-but-still-listed entry is the failure state.**
 
 One exception: **a tripwire guarding a standing guarantee is restated rather than deleted.** A
@@ -105,7 +105,7 @@ a reversal voids only half of.
 
 **An acceptance criterion is the same check for unbuilt work.** A check that can only be applied once
 unbuilt work is built is not a tripwire, so it lives in the plan document of the work that builds
-it, in its acceptance criteria section, per `knowledge-architect-planning`.
+it, in its acceptance criteria section, per `skill@knowledge-architect-planning`.
 
 When the diff lands a spec or a slice of a milestone, read the criteria that the plan document says
 that landing judges, and confirm the landing commit reports on **every one, including the ones that
