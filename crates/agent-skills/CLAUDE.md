@@ -58,9 +58,11 @@ owner and has no expectation set. This is a restatement; its homes are the entri
    the work and a unit of its record, only where the work needs it
    (`design@agent-skills@capabilities-not-structure`).
 4. **Built intent.** Grep the design homes and the goals for the behaviour the edited passage
-   describes. An edit that contradicts a statement of a head, or takes one beyond what its title
-   states, is a decision, under `knowledge-architect-decision-recording`; one that strains a goal
-   goes to the owner, under `knowledge-architect-goal-setting`. Its home is the installed
+   describes. An edit that writes into a design home, or changes behaviour a head describes, loads
+   `knowledge-architect-decision-recording` before it is written, per
+   `design@agent-skills@design-home-write-loads-recording`; that skill judges whether it contradicts
+   a head, outgrows its title, or earns text at all. One that strains a goal goes to the owner,
+   under `knowledge-architect-goal-setting`. Its home is the installed
    `knowledge-architect-agent-configuration`, §1, and it holds because
    `design@agent-skills@design-home-is-built-intent` makes the design home authority over the
    shipped text.

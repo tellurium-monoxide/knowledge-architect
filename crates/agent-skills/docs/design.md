@@ -202,9 +202,34 @@ reversal is the change that most needs the discussion.
 
 Two texts deliver it. The design skill's description names the symptom. The decision-recording
 skill sends a decision in one of the three cases, not argued, back to the design skill before its
-text is written. `tripwire@agent-skills@head-created-without-deliberation` watches whether they
-reach a session in time. A line in the primer lost to `design@agent-skills@primer-limit`: once the design
+text is written, and `design@agent-skills@design-home-write-loads-recording` makes sure that skill
+is loaded before any write into a design home.
+`tripwire@agent-skills@head-created-without-deliberation` watches whether they reach a session in
+time. A line in the primer lost to `design@agent-skills@primer-limit`: once the design
 skill's description carries the symptom, a skill delivers the rule.
+
+### A write into a design home loads the decision-recording skill first, with no condition judged before it `##design-home-write-loads-recording`
+
+A session loads the decision-recording skill before it writes into a design home, whatever its
+activity, and before it edits a text whose behaviour a head describes. The skill then judges
+whether the edit contradicts a head, outgrows its title, or earns text at all. Three texts state
+the trigger: the skill's own description, §1 of the agent-configuration skill, and test 4 of this
+crate's `path@agent-skills@CLAUDE.md`.
+
+A session can see both conditions without any standard: the file it is about to edit, and the
+result of the search for heads that the agent-configuration skill already asks for. A load
+conditioned on whether an edit contradicts a head or outgrows its title fires only in a session that
+already applies the title test, and that test is held by the skill the condition decides whether to
+load. A session that judged only whether a head was contradicted added a second decision to a head
+whose title did not state it; a review caught it before the merge. This serves
+`goal@knowledge-architect@the-owner-decides` and
+`goal@knowledge-architect@design-is-recorded-with-its-arguments`.
+
+The nearest rival restates the title test beside the condition at each site. It makes three copies
+of a test whose home is the decision-recording skill, and it still reaches only a session editing
+agent configuration, not an issue fix or a review repair that writes a head. The cost is one skill
+load on every edit of a design home, rewordings included, which the owner accepted; a rewording
+leaves at the skill's entry tests.
 
 ### The design skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
 

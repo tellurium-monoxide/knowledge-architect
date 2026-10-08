@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-decision-recording
-description: MUST use when a design decision has been made or reversed — a choice about how the project or one of its Components is built, including anything a consumer of it may depend on — in order to decide whether it earns durable text at all (most implementation choices do not) and where that text lands. Covers when recording happens, the reversal check that comes before everything else, the recording tests, which Component owns it, the split between the design home, the rejected alternatives and history, slug anchors, and the tripwires a premortem produces.
+description: MUST use before writing into a design home, whatever the activity, and when a design decision has been made or reversed — a choice about how the project or one of its Components is built, including anything a consumer of it may depend on — in order to decide whether it earns durable text at all (most implementation choices do not) and where that text lands. Covers when recording happens, the reversal check that comes before everything else, the recording tests, which Component owns it, the split between the design home, the rejected alternatives and history, slug anchors, and the tripwires a premortem produces.
 ---
 
 # Recording a decision
