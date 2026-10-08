@@ -1236,10 +1236,10 @@ skill delivers when it loads. The workflow targets frontier-tier models, which t
 design skill's work requires, per `design@agent-skills@frontier-tier-only`, so a size limit
 would protect a reader the workflow does not serve.
 
-### The primer carries the goals rule, the room to judge, the intent-and-claims rule, the check before diagnosing, and the rule for what is met outside the task `##primer-content`
+### The primer carries the goals rule, the owner's word bound by its premise, the room to judge, the intent-and-claims rule, the check before diagnosing, and the rule for what is met outside the task `##primer-content`
 
 Besides the knowledge table and the list of installed skills, the primer carries the rule on when
-to write a reference, and five directives the skills rely on and no skill delivers at the moment
+to write a reference, and six directives the skills rely on and no skill delivers at the moment
 they apply. **A reference is written wherever the text would have to be revisited if the entry it
 names changed.** That rule is the premise the workflow relies on to be useful: an entry of a
 register is referenced wherever it is load-bearing, so the checker can list what a reversal, a
@@ -1250,6 +1250,14 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   reviewed, but its review can miss a detail or an implication, more often as the volume of agentic
   work grows. When a decision conflicts with a goal, the likely cause is that the owner missed the
   conflict: the goal prevails, and the conflict goes to the owner, per
+  `goal@knowledge-architect@the-owner-decides`.
+- **A word of the owner holds only as far as its premise.** When its premise, the owner's or one
+  the session supplied, proves false, the corrected premise goes to the owner, with a default,
+  before the word is acted on further. The design skill holds the same duty for a closed thread,
+  and reaches only a session that has loaded it, where a word of the owner can arrive in any
+  session. It arrived twice outside a discussion: in a review repair, where no skill is loaded, and
+  at the fourth entry test of the decision-recording skill, so a rule beside that test would miss
+  the first case. A word acted on past its premise records a decision the owner did not make, per
   `goal@knowledge-architect@the-owner-decides`.
 - **Where the installed text is silent, a session judges**, since the installed text leaves that
   room on purpose, per `goal@agent-skills@installed-text-leaves-room-to-judge`; room to judge is
@@ -1450,17 +1458,19 @@ It runs only if the owner accepts. A moment named by an event can be followed by
 ### A retrospective asks standing questions, each on the decisions it watches `##premortem-as-watch-points`
 
 Every retrospective asks whether the session needed to change an installed skill or agent, whether the
-primer reached the session and its subagents, whether a project skill's addition was missed, and
-whether the session needed to write a reference or a path without backticks because no checked form
-expresses it. Each watches a decision whose
+session or one of its subagents acted as if a rule of the primer were absent, whether a project
+skill's addition was missed, and whether the session needed to write a reference or a path without
+backticks because no checked form expresses it. Each watches a decision whose
 failure would be seen in real sessions before any check could see it:
 `design@agent-skills@overlay-by-separate-skills`, the primer's delivery by an import line in
 `design@core@owned-namespace-check`, `design@agent-skills@routing-table-shape`, and
 `design@agent-skills@plain-text-is-no-repair` with
 `design@agent-skills@checker-syntax-without-backticks-names-its-gap`. The last question is the
 one channel by which a gap of the checker met in a consumer project reaches this repository, since
-the consumer's own entry for it is not citable here. The skill never states how many questions
-there are, so adding one changes no count.
+the consumer's own entry for it is not citable here. The primer question asks about behaviour
+because a session sees a subagent's brief and its report, not its context: asked whether the primer
+reached the subagents, four received retrospectives answered that it could not be observed, or was
+assumed. The skill never states how many questions there are, so adding one changes no count.
 
 ### Nothing of a retrospective leaves the machine without the owner's reading and word `##retrospective-destination`
 

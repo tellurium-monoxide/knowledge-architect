@@ -64,7 +64,8 @@ naming the other, since the two files may be read apart. The standing questions 
 **Always ask these standing questions**, and answer each with what the session shows:
 
 - Did this session need to change an installed skill or agent, and what for?
-- Was the primer present in this session, and in its subagents?
+- Did this session, or one of its subagents, act as if a rule of the primer were absent? For each:
+  the rule, who acted, and what they did.
 - Did this session miss something a project skill adds to an installed skill?
 - Did this session need to write a reference or a path without backticks, because no checked form
   expresses what it points at? For each: what it pointed at, the checked form that was missing, and
