@@ -17,31 +17,28 @@ there, except its own acceptance criteria. It starts after the milestone documen
   `path@core@src/check/references.rs` (the resolution and the dangling finding),
   `path@core@src/records.rs`, and `show` in `path@core@src/cli/mod.rs`, which prints the entity and
   every reference to it, as for any kind.
-- **The definitions**, built in `Entities::build`, which gains the installed copies as an input, as
-  `Survey::installed` holds them:
-  - an installed skill, an installed agent and the primer, and their sections, from each installed
-    copy whose `Outside` is `Text`, parsed with `parse` of `path@core@src/source/md.rs`, so the
-    fence, frontmatter and heading rules are the walk's;
+- **The definitions**, built in `Entities::build`, whose signature and callers are unchanged:
+  - an installed skill, an installed agent and the primer, and their sections, from the installed
+    copies the model holds, parsed like a walked document and walked by nothing: `Model::build`
+    reads them off the disk, and `commit_tree` in `path@core@src/cli/history.rs` hands in each
+    commit's own blobs, through `Model::set_installed`;
   - a project skill, a project agent and the root instructions, and their sections, from the walk.
-- **Every caller of `Entities::build` hands the installed copies in**: `foundation` in
-  `path@core@src/check/mod.rs` and `check_under` in `path@core@src/check/references.rs`, from the
-  survey built in `path@core@src/cli/gathered.rs`; the three calls in
-  `path@core@src/cli/history.rs`, from `Assembly.survey.installed`, never from `Inputs.installed`,
-  which is empty under `commits` on purpose; `show`, `issues` and `tripwires` in
-  `path@core@src/cli/mod.rs`, which today build no survey and read the installed copies off the
-  disk for this; the test callers in `path@core@src/records.rs`, `path@core@src/mock_projects.rs`,
-  `path@core@src/check/registers.rs` and `path@core@src/entity.rs`, with an empty list where the
-  test has no installed copy.
+
+  Found while building, applied in place: the spec first had every caller of `Entities::build`
+  hand the copies in, from `Survey::installed`. The public `Inputs` holds no copy under `commits`
+  on purpose, and the model carrying them reaches the same end with no change to that interface.
 - **The section rule**: every level-two heading outside a fenced block of a section home owes a
   slug, and a slug at another level of a section home is a misplaced definition. A section home is
   each skill's `SKILL.md`, each agent's file, the primer and the root instructions. An id is unique
   within its one document. A slug defined at a level-two heading of a project skill or agent is no
   longer a misplaced definition.
 - **A name outside the id grammar**, on the owner's ruling of D1: a skill directory or an agent file
-  whose name is outside `[a-z0-9]+(-[a-z0-9]+)*` is a phase-2 finding, naming the file.
+  whose name is outside `[a-z0-9]+(-[a-z0-9]+)*` is a finding, naming the file.
 - **A name that its frontmatter contradicts**, on the owner's ruling of Q1: a frontmatter `name`
   that differs from the skill's directory name or the agent's file name, or a `name` written twice,
-  is a phase-2 finding, naming the file and both names.
+  is a finding, naming the file and both names. Both are raised while the entity table is built,
+  phase 3, where an entry id no reference can spell is already reported; the spec first placed
+  them in phase 2, which reads no frontmatter.
 - **AC1, widened by the owner's ruling recorded under D7 of the milestone document**: every kind
   name is refused as an anchor's name. The kind names are `path`, `planned`, the ten built-in
   registers, the four harness kinds whatever the harness, and every register the manifest declares.
@@ -73,7 +70,7 @@ there, except its own acceptance criteria. It starts after the milestone documen
 | `skill@<name>` resolves to an installed skill, a project skill, or to nothing with a finding naming the skill | a unit test of `path@core@src/entity.rs` over a model holding one project skill and a list of installed copies holding one installed skill | a mutation that drops the installed list in `Entities::build` makes the installed case dangle |
 | A section reference resolves only to a slug defined in that skill's own file | a unit test citing a slug of skill A through skill B | a resolver that looks the slug up across every skill passes the wrong case, and the test fails |
 | Every arity the mapping table does not list is malformed, with the forms in the repair | a unit test per arity, for each kind | a segmentation that accepts any arity for a harness kind passes a four-segment span |
-| Under `harness = []`, a span headed by a harness kind is silent | a binary test over a copy of the `minimal` mock project, which declares `harness = []`, with such a span planted | registering the kinds whatever the harness reports the span |
+| Under `harness = []`, a span headed by a harness kind is silent | a unit test of `candidate` over the anchors of a manifest declaring `harness = []`, in `path@core@src/entity.rs` | registering the kinds whatever the harness reports the span |
 | A level-two heading of a section home with no slug is a finding; a slug at another level there is misplaced | a binary test over a project serving `claude` and past phase 2, as `harnessed` builds one in `path@core@tests/binary.rs` | a rule applied at level three reports neither case |
 | The installed copies define entities and stay outside the walk for references | a unit test planting a dangling reference in an installed copy | walking the installed copies reports the planted reference |
 | `show` prints a harness-kind entity and every reference to it | a binary test of `show` on a whole skill and on a section | today the span is refused as malformed, exit 2 |
