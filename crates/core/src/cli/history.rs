@@ -368,8 +368,9 @@ fn commit_tree(
         .cloned()
         .collect();
     // An installed file leaves the walk as a generated one does, per
-    // `design@core@owned-namespace-check`; a commit's installed files are not compared, so their
-    // blobs are not read.
+    // `design@core@owned-namespace-check`. A commit's installed files are not compared, but
+    // `read_tree` reads their blobs with every other unskipped file, and the survey keeps their
+    // text.
     let installed: Vec<PathBuf> = files
         .iter()
         .filter(|f| manifest.owned(f))
