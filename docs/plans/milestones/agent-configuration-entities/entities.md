@@ -31,7 +31,10 @@ there, except its own acceptance criteria. It starts after the milestone documen
   slug, and a slug at another level of a section home is a misplaced definition. A section home is
   each skill's `SKILL.md`, each agent's file, the primer and the root instructions. An id is unique
   within its one document. A slug defined at a level-two heading of a project skill or agent is no
-  longer a misplaced definition.
+  longer a misplaced definition. **An installed copy defines its entities and raises no finding**,
+  per D10 of the milestone document: it is never the project's to repair, and a commit holding an
+  earlier version's set is judged by a later checker under `commits`. The shipped set is held to the
+  rule where it is written, by AC3.
 - **A name outside the id grammar**, on the owner's ruling of D1: a skill directory or an agent file
   whose name is outside `[a-z0-9]+(-[a-z0-9]+)*` is a finding, naming the file.
 - **A name that its frontmatter contradicts**, on the owner's ruling of Q1: a frontmatter `name`
@@ -71,7 +74,7 @@ there, except its own acceptance criteria. It starts after the milestone documen
 | A section reference resolves only to a slug defined in that skill's own file | a unit test citing a slug of skill A through skill B | a resolver that looks the slug up across every skill passes the wrong case, and the test fails |
 | Every arity the mapping table does not list is malformed, with the forms in the repair | a unit test per arity, for each kind | a segmentation that accepts any arity for a harness kind passes a four-segment span |
 | Under `harness = []`, a span headed by a harness kind is silent | a unit test of `candidate` over the anchors of a manifest declaring `harness = []`, in `path@core@src/entity.rs` | registering the kinds whatever the harness reports the span |
-| A level-two heading of a section home with no slug is a finding; a slug at another level there is misplaced | a binary test over a project serving `claude` and past phase 2, as `harnessed` builds one in `path@core@tests/binary.rs` | a rule applied at level three reports neither case |
+| A level-two heading of a section home with no slug is a finding; a slug at another level there is misplaced | a unit test of `path@core@src/entity.rs` for both cases, and a binary test over a project serving `claude` and past phase 2, built by `harnessed` in `path@core@tests/binary.rs`, for the unslugged case, AC4's | a rule applied at level three reports neither case |
 | The installed copies define entities and stay outside the walk for references | a unit test planting a dangling reference in an installed copy | walking the installed copies reports the planted reference |
 | `show` prints a harness-kind entity and every reference to it | a binary test of `show` on a whole skill and on a section | today the span is refused as malformed, exit 2 |
 | AC1 to AC4 | each criterion's test, below | each criterion's own discrimination |
@@ -88,7 +91,7 @@ there, except its own acceptance criteria. It starts after the milestone documen
   `install-agent-skills` in the history project before its first commit, as `harnessed` does for a
   `Sandbox`. Commit 2 then edits one installed copy by hand, which `commits` does not compare.
 - **A list of installed copies** for the unit tests of `path@core@src/entity.rs`: pairs of a path
-  under the installer's namespace and an `Outside::Text`, built in the test.
+  under the installer's namespace and its text, handed to `Model::set_installed`.
 
 ## Audit subjects
 
@@ -109,9 +112,8 @@ there, except its own acceptance criteria. It starts after the milestone documen
 - The harness's documentation of skills and of subagents, on the provider's documentation site,
   for the two readings the milestone's Readings section leaves not established. The audit records
   the address it read. It also reads **whether the harness names a skill by its directory or by its
-  frontmatter `name`**. This spec takes the directory's name as the id, and adds no check of the
-  frontmatter. If the harness names a skill by its frontmatter and the two can differ, that is a
-  load-bearing gap of the audit.
+  frontmatter `name`**. The audit read it, and the owner ruled Q1 on it: the directory's or the
+  file's name is the id, and a frontmatter `name` must equal it.
 - The standing entries the milestone's grounding returned:
   `issue@core@installed-file-findings-belong-in-phase-four`, whose premise this slice changes;
   `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked`;
@@ -190,7 +192,8 @@ project's root, in every project.
   https://code.claude.com/docs/en/skills.md: "The directory name, or the frontmatter `name` when
   you set one, becomes the command you type", and when `name` is set, "The directory name also
   invokes the skill". So the directory's name always invokes a skill, and the frontmatter adds a
-  second command. A skill is cited by its directory's name, and no check compares the two.
+  second command. A skill is cited by its directory's name, and a frontmatter `name` must equal it,
+  per Q1 below.
 - **A skill below the project's root**, in a directory `<subdirectory>/.claude/skills/`, is
   loaded by the harness when a session reads a file there, per the same page. It is no entity of
   this slice: a reference to it is reported dangling.
@@ -252,9 +255,10 @@ Every source of a harness-kind entity, by project:
 | the root instructions | the walk | the walk | the commit's walk |
 
 **The slugs.** One row per level-two heading of a section home, outside a fence: the file, the
-heading as it stands, and its slug. The slice writes it into this spec in its audit's commit,
-before step 2, re-taking the 130 headings with the count the milestone document names; step 2
-writes each slug from it, and the slice's review reads it. A section slug of the installed text is
+heading as it stands, and its slug. It is written into this spec in a commit of its own, re-taking
+the 130 headings with the count the milestone document names; step 2 writes each slug from it, and
+the slice's review reads it. The branch's history places that commit after the one holding step 2,
+since the first commit of the branch holds every stricter check, and the review's commit says so. A section slug of the installed text is
 an interface, so this table is where its names are judged. A slug is written in the code span of a
 slug, here without the two hashes.
 
