@@ -76,15 +76,15 @@ there. It starts after the section-citations slice has merged.
 
 - **The lint.** A backticked span that is exactly a defined skill's or agent's name is a pointer
   written with no kind. Silent, a rename dangles it unseen, the class of
-  `issue@core@a-bare-mention-of-a-deleted-entry-is-never-reported` for these names (a37). The
+  `issue@core@a-bare-mention-of-a-deleted-entry-is-never-reported` for these names (`argument@agent-configuration-entities@a37`). The
   match is exact against the entity table, so a crate's name is silent, and a name carries the
-  project's prefix or the installer's, so it meets no ordinary word (a38). The cost is a citation
-  longer by the kind and one `@` (a39).
+  project's prefix or the installer's, so it meets no ordinary word (`argument@agent-configuration-entities@a38`). The cost is a citation
+  longer by the kind and one `@` (`argument@agent-configuration-entities@a39`).
 - **A released changelog section.** Rewriting a bare name there into a reference is a change of
-  structure, which a released section allows (a50). When the skill or the agent is later deleted,
-  the reference dangles, and the repair is the bare name again (a53, a54). That is no evasion of
+  structure, which a released section allows (`argument@agent-configuration-entities@a50`). When the skill or the agent is later deleted,
+  the reference dangles, and the repair is the bare name again (`argument@agent-configuration-entities@a53`, `argument@agent-configuration-entities@a54`). That is no evasion of
   `design@agent-skills@plain-text-is-no-repair`, "because there is nothing to cite that the checker
-  would accept" (a71). `design@knowledge-architect@changelog-entries` states both moves.
+  would accept" (`argument@agent-configuration-entities@a71`). `design@knowledge-architect@changelog-entries` states both moves.
 - **Nearest rival:** no lint, leaving the names silent, which keeps the failure the lint exists for.
 
 ## Mapping tables
@@ -113,7 +113,7 @@ At this slice's landing, under `knowledge-architect-decision-recording` and
 
 | what | home |
 | --- | --- |
-| #bare-skill-name-reported | a new head in `path@core@docs/design.md`, §3, slug `bare-skill-name-reported`; `design@knowledge-architect@changelog-entries` rewritten in place for the released sections; `design@agent-skills@plain-text-is-no-repair` and `design@agent-skills@a-past-sentence-is-rewritten` rewritten in place, each naming the released changelog section as the case the owner ruled in R3 |
+| `thread@agent-configuration-entities@bare-skill-name-reported` | a new head in `path@core@docs/design.md`, §3, slug `bare-skill-name-reported`; `design@knowledge-architect@changelog-entries` rewritten in place for the released sections; `design@agent-skills@plain-text-is-no-repair` and `design@agent-skills@a-past-sentence-is-rewritten` rewritten in place, each naming the released changelog section as the case the owner ruled in R3 |
 | the restatements | `path@knowledge-architect@CLAUDE.md`, its restatement of the candidate rule and of the changelog rules; `path@agent-config@agents/klarch-changelog-reviewer.md`; `path@agent-config@skills/klarch-release/SKILL.md` |
 | `issue@core@a-bare-mention-of-a-deleted-entry-is-never-reported` | its What narrowed: the names of skills and agents are reported; the bare mention of a slug stays open |
 | the changelog | `Next release`: under Migration, every backticked bare name of a skill or an agent is written as its reference, mock projects serving `claude` included. Surface `checks`, class minor |

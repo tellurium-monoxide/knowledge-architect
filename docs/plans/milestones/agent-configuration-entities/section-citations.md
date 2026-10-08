@@ -21,7 +21,7 @@ there. It starts after the entities slice has merged.
   `design@agent-skills@a-reference-claims-a-revisit`. The slice finds them by reading the texts its
   audit subjects name, since no grep finds every wording.
 - **The section numbers removed** from the level-two headings of the skills and agents of content/,
-  and of this repository's `klarch-` skills and agent, per #section-numbers-dropped and D5 of the
+  and of this repository's `klarch-` skills and agent, per `thread@agent-configuration-entities@section-numbers-dropped` and D5 of the
   milestone document. A heading
   `## 1. Does it reverse something already recorded? ` with its slug keeps its text and its slug,
   without `1. `.
@@ -78,7 +78,7 @@ there. It starts after the entities slice has merged.
 
 ### #section-numbers-dropped: the numbers go, and each citation names the section's slug
 
-A number is a second name for a section, and it goes stale on every insertion (a36). Once each
+A number is a second name for a section, and it goes stale on every insertion (`argument@agent-configuration-entities@a36`). Once each
 section carries a slug, the slug is the name a citation uses, and the number is removed. A
 citation of a point inside a section, such as a numbered test or a numbered step, keeps the
 point's number in prose, since those points carry no slug. Nearest rival: keeping the numbers for
@@ -106,7 +106,7 @@ At this slice's landing:
 
 | what | home |
 | --- | --- |
-| #section-numbers-dropped | none: a rewording of the installed text, per `design@agent-skills@instruction-record-is-minimal`; the commit records it |
+| `thread@agent-configuration-entities@section-numbers-dropped` | none: a rewording of the installed text, per `design@agent-skills@instruction-record-is-minimal`; the commit records it |
 | the changelog | `Next release`, under Migration: a project's own text that cites a section of an installed skill or agent by number now cites it by its reference, since the numbers are gone. Surface `agent-skills`, class patch |
 
 This slice's spec leaves in the commit that completes this harvest.
