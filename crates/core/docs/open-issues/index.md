@@ -7,7 +7,7 @@
 | defect | [A heading-shaped line that markdown reads as no heading still defines an entry](a-heading-line-markdown-renders-as-no-heading-defines-an-entry.md) |
 | defect | [A backticked span with an empty head and a slash is reported as malformed, which the candidate rule says is silent](a-span-with-an-empty-head-is-malformed-against-its-head.md) |
 | deferred | [Nothing checks that a component states a goal](a-component-states-at-least-one-goal.md) |
-| deferred | [Developer contracts have no home when a project declares no agent harness](a-home-for-developer-contracts-outside-agent-configuration.md) |
+| deferred | [Developer contracts sit in scoped CLAUDE.md files, which reach agents unreliably and are not required without a harness](a-home-for-developer-contracts-outside-agent-configuration.md) |
 | deferred | [A submodule is a project of its own, or nothing, and the tool has no model for either](a-submodule-is-a-project-of-its-own.md) |
 | deferred | [The citation regime could be offered by the core over any pinned text](citation-regime-over-any-pinned-text.md) |
 | deferred | [The agent configuration serves one provider's harness](configuration-for-several-agent-providers.md) |
