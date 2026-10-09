@@ -139,7 +139,8 @@ not the owner's rests on that history, never on the head's text alone.
 **Not in this axis**: whether a head is true of the code, and the restatements of a head in other
 texts. A head found false of the code gets an issue entry, kind `defect`.
 
-**The agent**: the design-record auditor, dispatched once per group.
+**The agent**: `agent@knowledge-architect-design-record-auditor`, dispatched once per group, as its
+description says.
 
 **The outcomes of this axis:**
 
