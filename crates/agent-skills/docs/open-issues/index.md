@@ -1,9 +1,10 @@
 **Generated — do not edit.** `cargo klarch index`
 
-17 entries
+18 entries
 
 | kind | title |
 | --- | --- |
+| defect | [The title of the gates convention states every project runs the published gates library](the-gates-convention-title-overstates-its-scope.md) |
 | deferred | [A project cannot change one instruction of an installed skill](patching-an-installed-skill.md) |
 | design | [A design head can state the instance that was built as if it were the rule](a-head-states-the-instance-built-rather-than-the-principle.md) |
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
