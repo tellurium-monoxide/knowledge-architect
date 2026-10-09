@@ -89,11 +89,11 @@ it cannot reference.
 **Does any pointer have to be followed before a session can act?** Ask it of each pointer out of an
 instruction: *could a session complete this activity correctly without opening this?* A pointer to an
 argument, or to task material that varies per instance such as a figure or a layout, is fine. So is
-a named prerequisite skill, which is one complete instruction rather than a fragment to reassemble.
-A pointer into root `CLAUDE.md` or into the primer is free, since both already reach every
-session. A pointer to
-*part* of a directive the session must apply is the defect, and the content belongs in the
-instruction. `skill@knowledge-architect-agent-configuration` owns the test.
+a named prerequisite skill, or a complete home the pointer asks to read whole, which is one complete
+instruction rather than a fragment to reassemble. A pointer into root `CLAUDE.md` or into the
+primer is free, since both already reach every session. A pointer to *part* of a directive the
+session must apply is the defect: the pointer names the whole home, or the part is restated where it
+is no longer than a pointer. `skill@knowledge-architect-agent-configuration` owns the test.
 
 **Does a decision sit in the right Component?** Judge it by the three questions of
 `skill@knowledge-architect-decision-recording@owning-component`, read whole, and by its exception
@@ -110,9 +110,7 @@ any spec, which is recorded when made, per
 `skill@knowledge-architect-decision-recording@when-recording-happens`. A reference from outside a plan to one of its items is refused by the
 checker, and a whole plan document is cited by its kind, from anywhere.
 
-**Is the head still present tense?** Judge it by `primer@design-heads`: a sentence saying what
-something *used to* be belongs in the commit, including an opening that motivates a decision by
-describing the state before it.
+**Is the head still present tense?** Judge it by `primer@design-heads`, read whole.
 
 **Does the diff write the references it owes?** Judge it by the rule on when to write a reference
 in `primer@where-knowledge-goes`, read whole. The tell is the wording: a head that argues from a goal's words with no `goal` reference, an entry whose

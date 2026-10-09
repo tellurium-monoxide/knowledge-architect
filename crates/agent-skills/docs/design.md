@@ -231,12 +231,12 @@ body. A title states no more than its argument argues.
 A count or a list in a title goes stale at the next member, and every later member then reads as a
 change of the decision, with its reversal, its slug rename and its tripwire rename, against
 `goal@knowledge-architect@agents-get-a-complete-workflow`, which aims for fewer decisions reversed
-by accident. The nearest rival, the instance in the title, is what the design homes held: an audit
-of this repository's design heads, and of those of a project that uses the workflow, read every
-head and its history, and found the instance stated as the rule in about one head in ten, and
-about fifteen rewrites of such heads that a member the argument already admitted forced. The figure
-is re-taken by a fresh read-only audit of every head against this rule. A review repair that moved
-a member into a title made the defect: "the title now states it". The opposite defect, a title
+by accident. The nearest rival, the instance in the title, has that cost: an audit of this
+repository's design heads, and of those of a project that uses the workflow, reading every head and
+its history, finds the instance stated as the rule in about one head in ten, and about fifteen
+rewrites of such heads that a member the argument already admitted forced. The figure is re-taken
+by a fresh read-only audit of every head against this rule. A review repair that moves a member
+into a title makes the defect: "the title now states it". The opposite defect, a title
 wider than its argument, caused reversals too, which the last sentence of the rule guards. A title
 stating a rule alone would let a session add members the owner never saw, so it holds only with the
 routing of `design@agent-skills@extension-follows-the-ground`.
@@ -252,11 +252,12 @@ and rewording the title to state both does not make them one. A member of a set 
 admits is no decision, so a member missing from a title is no finding.
 
 The owner raised the question: "I'm not certain there is anything in the decision record skill that
-gives a split criteria for design heads." The installed text then said only that a head carrying
-several decisions "passes the test for each one, or is split", and sent an addition beyond a title
-to a reworded title stating both, so the design homes held bundles: an audit found about one head
-in five holding two or more decisions, and every split in this repository's history had been
-triggered by a title false of part of its body, none by a criterion. The nearest rival, the test
+gives a split criteria for design heads." A rule that only asks a head carrying several decisions
+to pass "the test for each one, or is split", and rewords a title to state an addition beyond it,
+gives no test: an audit of the design heads, re-taken by a fresh read-only audit of every head
+against this rule, finds about one head in five holding two or more decisions, and every split in
+this repository's history is one a title false of part of its body triggered, none a criterion.
+The nearest rival, the test
 "would reversing one part leave the other standing?", splits a rule from its exception, which always
 passes it; four audits run apart found the parts' nearest rivals the stronger signal. The cost is
 more heads, not more decisions: the owner's words, "We are not adding content and arguments, only
@@ -277,8 +278,8 @@ The owner approves an argued decision on its argument, so a member the argument 
 what was approved, and a member the owner's own words enumerate is not, per
 `goal@knowledge-architect@the-owner-decides`. The head shows its ground, so the route is read from
 the head itself. The nearest rival, routing by the scope of the owner's approval, needed that scope
-found in the history of each head, often over several commits. The status quo, every new member
-through the design skill, cost a reversal for an ordinary extension, which
+found in the history of each head, often over several commits. Sending every new member through
+the design skill costs a reversal for an ordinary extension, which
 `design@agent-skills@title-states-the-rule` measured. The risk is a session judging "the argument
 covers it" too widely; the design-conformance reviewer reads every plan document against the heads.
 
@@ -292,8 +293,8 @@ members the owner named to the rule, the change goes to the owner as one proposa
 The rules apply at the moment a session already reads and edits the head, so a head is repaired at
 the cost of one read. The rival, a sweep of every head stating the instance as its rule, would have
 put about nine widenings to the owner at once in this repository, each a head whose approval named
-its members. An approval cited as a head's ground is the exception that was swept, since its repair
-removes a false ground and widens nothing.
+its members. An approval cited as a head's ground is the exception that a sweep repairs, since its
+repair removes a false ground and widens nothing.
 
 ### A write into a design home, or an edit of agent-facing text a head describes, loads the decision-recording skill first, with no condition judged before it `##design-home-write-loads-recording`
 
@@ -371,7 +372,9 @@ sessions held the design skill's full ledger discipline at several hundred lines
 workflow, so it covers every installed skill and every installed agent: a reviewer agent grows
 the same way, one predicted check at a time. The evidence behind it came from one skill, and the
 skills and agents forked from thaum were never edited under it: one that needs a different
-standard argues its exception.
+standard argues its exception. Two exceptions are argued in their own heads:
+`design@agent-skills@staged-check-before-each-commit` and
+`design@agent-skills@in-change-grounding-rereads-the-primer`.
 
 ### No run is built to observe how an agent follows the workflow's instructions, and a run is admitted only when its verdict reproduces `##synthetic-evidence-not-built`
 
@@ -468,7 +471,7 @@ A decision is written into the design homes in the change that lands the work im
 when the spec is written, because a design home holds built intent, per
 `design@agent-skills@design-home-is-built-intent`. While the work is open, the spec or the
 milestone document, on the main branch or on the work's, is the only place the decision exists. A decision that
-no work implements, such as a policy, is recorded when it is made.
+no work implements, such as a policy, and that is not part of any spec, is recorded when it is made.
 
 ### Every item the owner rules on by name and that carries no slug gets a label, of a prefix of its own kind where the label reaches a committed document and of the common `Q` where it does not `##ruled-items-labelled`
 
@@ -504,8 +507,8 @@ its own prefix where it asks.
 
 A design home holds the design as built and its reasons, and the code is checked against it. A plan
 document holds decided design that is not built yet, and each decision moves into the design home at
-the landing of the work that builds it. A decision that no work implements counts as built intent,
-since nothing waits to be built. The rival, a design home holding intent built or not, needs a
+the landing of the work that builds it. A decision that no work implements, and that is not part of
+any spec, counts as built intent, since nothing waits to be built. The rival, a design home holding intent built or not, needs a
 marker on every entry to tell the two apart, and checking the code against an unbuilt entry reports
 a defect in code nobody has written. Unbuilt intent has a checked home because plan documents are a
 structure the checker reads, per `design@core@plan-register`. A head can be wrong, and while it
@@ -579,10 +582,11 @@ ground of **owner ruled**. In particular when the decision was an agent's positi
 only approved it." And on why it matters: "This provenance of design heads matters a lot for agents
 to judg and weigh any design change or addition." It serves `goal@knowledge-architect@the-owner-decides`,
 which asks that the record show the owner's decisions. The nearest rival, citing every ruling in its
-head, was the drift the rule repairs: in the week entry test 4 was added, an audit of the heads
-added or rewritten found about two in five of their citations of the owner to be an approval of the
-agent's position, often a batch word such as "All defaults approved", and the citation, deleted,
-took no argument with it.
+head, makes an approved default read as the owner's intent: an audit of the heads added or
+rewritten in the week entry test 4 was added finds about two in five of their citations of the owner
+to be an approval of the agent's position, often a batch word such as "All defaults approved", and
+the citation, deleted, takes no argument with it. The figure is re-taken by a fresh read-only audit
+of the heads that cite the owner, against the commits and plan documents that wrote each citation.
 
 ### A decision approved with no argument is argued before it is recorded `##unargued-approval-is-argued`
 
@@ -644,10 +648,11 @@ the owner to confirm most decisions. The decision serves
 may change and what a change costs from the head where one is owed, and from the comment where none
 is. An audit of the 178 heads the design homes held, against the first three tests, found
 over-recording below one head in five where the owner read it. The nearest rival of the principle, a
-head for every decision discussed with the owner, is what a session did for a mechanism carried at
-one site by its comments, and the owner judged the head unneeded. Within test 2, "the same statement
-at more than one site" admits a path repeated for consistency, which the owner judged no reason to
-keep a head. The wider test 2, "constrains work that has not been built", admitted nearly every head
+head for every decision discussed with the owner, records a mechanism carried at one site by its
+comments, of which the owner's words are: "the intent can easily be carried by local code
+comments". Within test 2, "the same statement at more than one site" admits a path repeated for
+consistency, of which the owner's words are: "It is something that has no reason to ever change, and
+the path being named in multiple places is just basic self consistency." The wider test 2, "constrains work that has not been built", admitted nearly every head
 under a wide reading and almost none under a narrow one, and the design homes hold built intent, per
 `design@agent-skills@design-home-is-built-intent`. Whether the heads cost a session more than they
 save is not measured: `issue@agent-skills@the-retrospective-counts-no-review-cost`.
@@ -747,8 +752,8 @@ the wrong one.
 Every entry is read whole rather than by its title, since a title shows neither a tripwire's firing
 clause nor a deferred trigger. It is read by several agents rather than by one: one agent's load
 grows linearly with the project, so one agent reads every entry whole only while its context holds
-them, and the owner expects thaum to grow much more; a group size bounds each agent's load whatever
-the project's size. The groups are consecutive positions of the combined rows of the issue and
+them, and cannot judge so many entries reliably; a group size bounds each agent's load whatever the
+project's size. The groups are consecutive positions of the combined rows of the issue and
 tripwire listings, 60 or fewer each, the fewest groups that keep that bound, with sizes that differ
 by at most one. Equal groups keep a last group of a few entries from costing an agent of its own
 while another carries the full bound. The unit of a group is the entry rather than the anchor: in
@@ -860,8 +865,8 @@ CHANGELOG.md: the section's content never changes, per
 Its repair is the bare name, which `design@core@bare-skill-name-reported` leaves silent. It evades
 nothing, since no checked form remains that it could have used. The rival, rewriting the sentence
 as `design@agent-skills@a-past-sentence-is-rewritten` asks elsewhere, would change a released
-section's content. The two exceptions are the cases ruled; another case where no checked form can
-name the target is a change of this decision.
+section's content. The set of exceptions is closed: each lets a finding clear without a checked form,
+so another one weakens the check, and is argued as a change of this decision.
 
 The argument: an unchecked form that clears a finding clears it for good, so a habit of writing one
 empties the check while every run still passes, against
@@ -937,7 +942,8 @@ needs for another reason, such as a fix met outside the task, would then contrad
 
 The work of one PR has one plan document, its spec. A milestone has a milestone document and one
 spec per slice, which hold the spec's sections between them, split as
-`design@agent-skills@milestone-is-a-directory` says. The two layers are the owner's proposal. A
+`design@agent-skills@milestone-is-a-directory` says. The two layers are the owner's proposal: "I
+would decompose this into two layers: plans for short work, and plan for multi session work". A
 spec plus a separate detailed implementation plan lost: both carry the same decisions and the
 second drifts from the first, against `goal@knowledge-architect@documentation-stays-consistent`.
 
@@ -1035,8 +1041,7 @@ inside a task grows to several threads; its length is not bounded, since a bound
 the discussion.
 
 Its grounding reads the primer's section on design heads again, since the path runs late in a
-session, when a decision is met during an issue fix or a review repair, per
-`design@agent-skills@primer-reread-before-recording`.
+session, per `design@agent-skills@in-change-grounding-rereads-the-primer`.
 
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
@@ -1485,14 +1490,21 @@ other text points to the section rather than restating part of it, per
 The centralization is the owner's proposal: "I want to make sure the rules for what is recorded in
 design heads and how are centralized, consistent with each other and applicable. I think that
 partial restatements of them should be avoided at all cost, instead pointing to a single location
-where they are all together and asking for a read of that full location when needed." About ten
-installed texts had restated parts of the decision-recording skill, and an inventory found nine
-inconsistencies between them and it. The location is the primer on the owner's arguments that the
+where they are all together and asking for a read of that full location when needed." The rival,
+restating the rules wherever they are delivered, gives partial copies that drift: an inventory of
+the installed text, re-taken by a fresh read-only subagent listing each statement of a rule on heads
+outside its home, finds about ten texts restating parts of the decision-recording skill, with nine
+inconsistencies between them and it. The section is also the home of four rules on heads that have
+no head of their own: present tense, the alignment of the slug and the title, a decision worth a
+slug has its own level-three heading, and fidelity to what the owner approved; this head records
+them as part of the section. The location is the primer on the owner's arguments that the
 rules are "nearly baseline": "nearly every piece of work will have to add or rewrite recorded
 design", "they are useful to interpret recorded design", and "it is useful to be able to identify
 in advance what kind of decision may need to enter the design home". Reading a head loads no skill,
-and every subagent holds the primer in its initial context, as a probe of two subagent types
-measured in one harness, so a pointer to the section costs nothing. The nearest rival, one section
+and every subagent holds the primer in its initial context, so a pointer to the section costs
+nothing. That is measured in one harness by a probe, re-taken by dispatching a subagent of each
+type, with no file read and no tool, and asking it to quote a sentence of the primer from its
+initial context; a subagent that cannot reopens this decision. The nearest rival, one section
 of the decision-recording skill, is enough only where every session that reads a head loads it
 first, and nothing makes it do so. The cost is the primer's size, roughly doubled, in every session
 of every installing project, which `design@agent-skills@primer-limit` admits for what no skill
@@ -1505,8 +1517,9 @@ pointer to it: a path, a file name, a command, a value, or one sentence, a sente
 pointer beside it. A longer directive is delivered by a pointer to its home, read whole at that
 moment, and part of it is never restated. For installed text, the home a pointer names is
 installed text, since installed text cites no entry of the project, per
-`design@agent-skills@shipped-text-cites-no-entry`. The rule is the primer's
-`primer@where-knowledge-goes`.
+`design@agent-skills@shipped-text-cites-no-entry`. The rule governs new text and text a change
+touches: an existing longer restatement is converted when a change touches it, and no sweep
+converts them all. The rule is the primer's `primer@where-knowledge-goes`.
 
 The test is the owner's proposal: "is the restatement significantly bigger than a pointer ? Then use
 a pointer." Its reason is the owner's too: the rule that a directive is restated wherever it is
@@ -1514,27 +1527,34 @@ delivered "is meant to avoid loading excessive unrelated informations", and "Jus
 path/filename, it takes as much space as the pointer", while "We can't restate a skill inside every
 other one". One sentence is the checkable form of that size, since a pointer with its instruction to
 read the home whole is itself about one sentence. A partial copy drifts, and its reader takes it for
-the whole: the rival, the old rule, left about ten partial restatements of one skill, with nine
-inconsistencies. The old rule's own reason, that a reader who cannot reach a statement at the moment
+the whole: the rival, the old rule, gives the partial restatements that
+`design@agent-skills@one-home-for-head-rules` measures. The old rule's own reason, that a reader who cannot reach a statement at the moment
 of acting is not served by a pointer, stays answered for a short directive, which is still restated.
 
-### The decision-recording skill, and the design skill's in-change path, ask for the primer's section on design heads to be read again `##primer-reread-before-recording`
+### The decision-recording skill asks for the primer's section on design heads to be read again before a head is written `##primer-reread-before-recording`
 
 The decision-recording skill opens by asking for `primer@design-heads` to be read again, whole,
-before a head is written or judged. The design skill's in-change path asks the same before its
-grounding.
+before a head is written or judged.
 
-The first is the owner's proposal: "The point that would worry me however would still be dilution
+The rule is the owner's proposal: "The point that would worry me however would still be dilution
 over long session. Maybe a few instructions to reread the primer should be kept at key locations,
 in particular the decision recording skill whose writes happen at the end of sessions". Every write
 into a design home loads that skill first, per
 `design@agent-skills@design-home-write-loads-recording`, so one instruction reaches every write,
-and a review agent starts with a fresh context that holds the primer. The second stands on its
-argument and rests on a prediction, not on a behaviour seen in a session: the in-change path runs
-when a decision is met during an issue fix or a review repair, which is late in a session by
-definition, and its grounding reads heads to judge the decision. It is an exception to
-`design@agent-skills@additions-need-real-use`; the owner ruled that no issue track it: "There's no
-way to show that the workflow is not functional without it once it is built, anyway."
+and a review agent starts with a fresh context that holds the primer.
+
+### The design skill's in-change path reads the primer's section on design heads again before its grounding `##in-change-grounding-rereads-the-primer`
+
+The design skill's in-change path asks for `primer@design-heads` to be read again, whole, before
+its grounding.
+
+It stands on its argument and rests on a prediction, not on a behaviour seen in a session: the
+in-change path runs when a decision is met during an issue fix or a review repair, which is late in
+a session by definition, and its grounding reads heads to judge the decision. Its nearest rival,
+the reread at recording alone, leaves that grounding reading heads under a primer far back in the
+session. It is an exception to `design@agent-skills@additions-need-real-use`; the owner ruled that
+no issue track it: "There's no way to show that the workflow is not functional without it once it
+is built, anyway."
 
 ### The primer names the plans directory the checker fixes `##plans-directory-in-primer`
 

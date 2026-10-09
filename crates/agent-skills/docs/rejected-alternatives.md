@@ -12,8 +12,9 @@ kept here because a doubt remains: the owner judges the filter "still a little i
 and why, which the filter records only in part.
 
 **A spec plus a separate detailed implementation plan, each step written out with its code** — lost
-to `design@agent-skills@spec-and-milestone`. `live`. Both documents carry the same decisions and the
-second drifts from the first. Its refutation rests on the owner's account of real sessions, quoted
+to `design@agent-skills@spec-and-milestone` and to `design@agent-skills@no-untested-snippet-is-authority`.
+`live`. Both documents carry the same decisions and the second drifts from the first. Its
+refutation also rests on the owner's account of real sessions, quoted
 in `design@agent-skills@no-untested-snippet-is-authority`: implementers force such a plan's untested
 snippets into the code at any cost and copy their comments verbatim. That observation cannot be
 derived again in one discussion round, and workflows that write such plans are in common use, so the
@@ -90,7 +91,7 @@ does.
 **One agent reading every issue and tripwire of the project for a piece of work** — lost to
 `design@agent-skills@standing-entry-search-groups`. `live`. One agent's load grows linearly with the
 project: the standing entries of thaum at its commit ef21314 hold 318,947 bytes. One agent reads
-every entry whole only while its context holds them, and the owner expects thaum to grow much more.
+every entry whole only while its context holds them, and cannot judge so many entries reliably.
 It is kept here because a doubt remains: no measurement shows that agents given groups of 60 entries
 judge better, and one agent sees every entry beside every other, where a group sees only its own.
 
@@ -168,3 +169,16 @@ in one week found about two in five of their citations of the owner to be an app
 agent's position, often a batch word, which made an approved default read as the owner's intent. It
 is kept here because a doubt remains: `tripwire@agent-skills@owner-intent-stripped` watches whether
 the correction removes the owner's own words, and this alternative is the candidate if it does.
+
+**A new member routed by the scope of the owner's approval, found in the history of each head** —
+lost to `design@agent-skills@extension-follows-the-ground`. `live`. It needs the word that approved
+a head found over the commits and plan documents that wrote it, where the head's ground is read from
+the head itself. It is kept here because a doubt remains:
+`tripwire@agent-skills@member-beyond-the-argument` watches whether a session records a member its
+head's argument does not cover, and this alternative is the candidate if it does.
+
+**A sweep that brings every head stating the instance as its rule to its rule at once** — lost to
+`design@agent-skills@existing-heads-on-touch`. `live`. An audit of this repository's design heads
+found about nine of them whose approval named their members, so the sweep would put that many
+widenings to the owner at once; the count is re-taken by a fresh read-only audit of the heads and
+the words that approved each.

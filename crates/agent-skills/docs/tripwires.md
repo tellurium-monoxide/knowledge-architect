@@ -211,7 +211,8 @@ that the repair of an approval cited as a ground does not remove the owner's own
 **Fires when:** a commit removes or rewords as an argument a quotation of the owner in a design head,
 and the transcript or the plan document shows that the decision, or that part, came from the owner.
 **Response:** restore the quotation as the ground, and reopen
-`design@agent-skills@head-ground-is-the-argument` on how a ground is told apart.
+`design@agent-skills@head-ground-is-the-argument` on how a ground is told apart, with the rival
+that cites every ruling of the owner among the candidates.
 **Re-entry:** the standing-state review before every merge, and the transcript review of the change.
 
 ## Guarding `design@agent-skills@title-states-the-rule`: a rule title wider than its argument `##rule-title-wider-than-its-argument`
@@ -227,10 +228,10 @@ the decision.
 ## Guarding `design@agent-skills@one-decision-per-head`: a split that separates a rule from its own exception `##split-rule-from-exception`
 
 T4 of the premortem of the discussion that made the decision. The decision rests on the premise
-that the nearest-rival test keeps a rule's exception, parameter and delivery with the rule.
+that the nearest-rival test keeps a rule's exception with the rule.
 
 **Fires when:** a commit merges back two heads split under the decision, or a review finds an
-exception, a parameter or a delivery split from its rule.
+exception split from its rule.
 **Response:** reopen `design@agent-skills@one-decision-per-head`, with the reversal test among the
 candidates.
 **Re-entry:** the decision-record review of every change that writes a head.

@@ -1,7 +1,7 @@
 ---
 kind: question
 ---
-# Test 2 of decision-recording does not say what a site is when the decision is about installed text
+# Entry test 2 of the primer's section on design heads does not say what a site is when the decision is about installed text
 
 ## Summary
 

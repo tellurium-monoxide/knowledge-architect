@@ -58,7 +58,8 @@ deleted, that the deleting commit cites it by its kind. None of the checks of
 meeting none belongs in an inline comment at the code plus the commit message, which is not a
 lesser home.
 
-**The failure runs both ways.** Check the direction the diff actually went before assuming which
+**The failure runs both ways, and the more likely one is a document accumulating implementation
+choices until nobody ranks it.** Check the direction the diff actually went before assuming which
 failure you are looking at.
 
 **Does a decision that earned an entry have one?** A decision meeting one of the tests and recorded
@@ -71,6 +72,8 @@ the whole section: what earns a head, test 4 included; the standing argument and
 title tests; one decision per head; the slug, its level and its alignment; present
 tense; fidelity to what the owner approved; and the backstop, for a decision that should have gone
 to the design skill.
+A head that argues from a goal's words without naming the goal is the common miss of the standing
+argument.
 
 **Does the diff defeat a reason recorded at the code?** A decision that earned no entry lives in a
 comment at the code and in the message of the commit that introduced it. A diff that removes or
@@ -81,9 +84,6 @@ home is not evidence that code is superfluous.
 
 **Was it recorded when its work landed?** A head written for work a plan document schedules and that
 has not landed is a hypothesis presented as a fact. A head must be true of the tree as it stands.
-
-A head that argues from a goal's words without naming the goal is the common miss of the standing
-argument.
 
 **Did an alternative that lost earn its entry?** Most do not. Judge it by the skill's tests for a
 losing alternative, and apply them to every thread whose shape lost to an argument: a ruled-out

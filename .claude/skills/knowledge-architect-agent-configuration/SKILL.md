@@ -106,8 +106,9 @@ build command, a dispatch table or a common trap, even where it is stated elsewh
 the restatement is no longer than a pointer, and otherwise by a pointer to a complete home read
 whole, per `primer@where-knowledge-goes`. It points only to **task material**, data that varies per
 instance, to **a named prerequisite skill** or a section of the primer, one complete instruction
-rather than a fragment to reassemble. The test, per pointer: could a session complete this activity correctly
-without opening it? If not, the content belongs in the skill. What this guards against is
+rather than a fragment to reassemble. The test, per pointer: could a session complete this activity
+correctly without opening it? If not, the content is restated in the skill where it is no longer
+than a pointer, and otherwise the pointer names a complete home and asks for it to be read whole. What this guards against is
 dilution rather than length: each pointer is an extra read a session must remember, and the more
 there are, the less likely all are followed.
 
