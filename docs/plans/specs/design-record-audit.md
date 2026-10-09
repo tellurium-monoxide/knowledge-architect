@@ -42,8 +42,12 @@ leaves the repository in the commit that completes its harvest.
 - After the four plan reviews, two more rulings came in the same transcript. "The `%%` message" is
   the agent's message that opens "Code claims has reported", and the owner's reply to it is "default
   approved". "The review message" is the agent's message that opens "The design-conformance reviewer
-  has reported", which put D1, D2, D4, D5 and D6 under the labels D1, D2, R1, R2 and R3, and the
+  has reported, and all four reviews are in", which put D1, D2, D4, D5 and D6 under the labels D1, D2, R1, R2 and R3, and the
   owner's reply to it is "Agreed on these defaults".
+- **Labels.** The head-rules discussion, earlier in the same transcript, used T1 to T5 and AC1 to
+  AC2. Round 2 of this discussion put its acceptance criterion as AC1 again. This spec labels it AC3,
+  so that no label names two items in this file; "AC1" and "AC2" in a quotation of round 1 name the
+  head-rules work's criteria.
 
 ## How the work is done
 
@@ -66,14 +70,14 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   `primer@design-heads` and its heads in `path@agent-skills@docs/design.md`.
   `git log --diff-filter=D --name-only -- docs/plans/` finds it, deleted by the commit "The harvest
   of the head-rules work: the decisions are recorded, the tripwires written, the issue closed, and
-  the spec leaves". Its CHANGELOG.md entries are the Workflow entries of the `Next release` section
-  that cite `primer@design-heads`, and one Migration entry that moves a citation from the
-  decision-recording skill's section entry-tests to `primer@design-heads`.
+  the spec leaves". Its CHANGELOG.md entries, written by that commit in the `Next release` section,
+  are four Workflow entries on the rules of design heads, and one Migration entry that moves a
+  citation from the decision-recording skill's section entry-tests to `primer@design-heads`.
 - **the audit skill**: the new installed skill, named per D1.
 - **the design-record auditor**: the new installed agent that drafts the axis's verdicts for one
   group of entries.
 - **a group**: a run of consecutive entries of one Component's design home and rejected
-  alternatives, of at most 60 entries, per "The audit's method".
+  alternatives, of at most 60 entries besides the calibration sample, per "The audit's method".
 - **a draft**: one auditor's file per entry, in the shape of "The design-record auditor".
 - **the owner list**: one message to the owner holding every finding that needs the owner's word,
   grouped by kind, each item under a label `F<n>` with a default.
@@ -90,7 +94,7 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   reads a diff. `issue@agent-skills@no-way-to-audit-a-project-as-a-whole` records the gap and two
   worked instances; this repository's history holds a third, the sweep of the commit "The heads that
   cited an approval as their ground stand on their argument, and six bundles are split", with its
-  drafts, owner list, applying agents and re-check (AC1 of the head-rules work).
+  drafts, owner list, applying agents and re-check (the head-rules work's acceptance criterion on the sweep).
 - **Entry test 2** in `primer@design-heads` reads: "**the same reason must be respected at more than
   one site, or at none.** [...] At none: a decision about an absence ("we do not do X"), or a policy
   with no code of its own". `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined`
@@ -111,26 +115,31 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   ends with a `todo` issue for the move, which "runs as a milestone when the owner schedules it".
 - **The changelog's Migration entries**, per `design@knowledge-architect@changelog-entries`, say
   what a consumer must change in its own files. The head-rules work's entries in the `Next release`
-  section are Workflow entries. No Migration entry asks a consumer to bring its design homes to the
+  section are four Workflow entries and one Migration entry that moves a citation. No Migration entry asks a consumer to bring its design homes to the
   new rules, and the design-record axis's Migration entry is a new one.
 - **The installed agents** are seven reviewers and the standing-entry searcher, under
   `path@agent-skills@content/agents/`. Each declares `tools: Read, Grep, Glob, Bash`, so read-only is
   enforced by the agent's text, not by its tools: the searcher's body forbids `Write` and `Edit` on
   the project and allows writes to its scratch directory only. The searcher's description carries its
   dispatch rule, groups of at most 60 entries, per `design@agent-skills@standing-entry-search-groups`.
-  The review skill's "Not covered here" paragraph lists every installed agent by name.
-- **No command lists design heads or rejected alternatives.** `cargo klarch issues` and
-  `cargo klarch tripwires` list their registers; a design head is found as a level-three heading
-  ending with its slug, and a rejected alternative carries no slug.
+  The review skill's "Not covered here" paragraph lists the seven reviewers, under "**being** any of
+  the reviewers"; the searcher is named by the design and planning skills, which dispatch it.
+- **No command is dedicated to listing design heads or rejected alternatives.** `cargo klarch issues`
+  and `cargo klarch tripwires` list their registers. `cargo klarch model` prints every observation of
+  the walk with its file and line, headings and slug definitions included, so the heads can be
+  filtered from it. A rejected alternative carries no slug, and its shape varies: a paragraph that
+  opens with its name in bold in four of the five files, a level-two heading in
+  `path@gates@docs/rejected-alternatives.md`.
 - **`design@agent-skills@ruled-items-labelled`** lists every label prefix; a label that reaches a
   committed document takes a prefix of its own kind. An audit's owner list reaches its commit
   messages.
-- **The head-rules work's tripwires** fire on the kind of edit this axis makes:
+- **Tripwires on the rules of design heads** fire on the kind of edit this axis makes:
   `tripwire@agent-skills@owner-intent-stripped`, `tripwire@agent-skills@split-rule-from-exception`,
   `tripwire@agent-skills@rule-title-wider-than-its-argument`,
   `tripwire@agent-skills@member-beyond-the-argument`, and
   `tripwire@agent-skills@head-created-without-deliberation`. The auditor reads them as the failure
-  modes of its edits, and the run's commit messages carry the deliberation of each split.
+  modes of its edits, stated in words, since shipped text cites no entry of this repository; the
+  run's commit messages carry the deliberation of each split.
   `tripwire@agent-skills@a-head-verdict-is-overruled` fires on a review's verdict, not an audit's.
 
 ### The standing entries the work bears on
@@ -165,9 +174,11 @@ The two standing-entry searches of round 1 returned these, each with its outcome
 - **The other axes the issue names**: design self-consistency, alignment of the code with the design
   and goals, the agentic-workflow axis (which takes the restatements, per the reply to round 1),
   standing state as a whole, goal coverage. They stay in
-  `issue@agent-skills@no-way-to-audit-a-project-as-a-whole`, which the commit that adds this spec
-  rewrites to them, per the planning skill's rule that the plan document scheduling a `todo` takes it
-  over: this spec schedules the design-record axis, and the issue keeps what no plan schedules.
+  `issue@agent-skills@no-way-to-audit-a-project-as-a-whole`, which the commit that repaired this spec
+  after its first plan reviews rewrote to them. The planning skill says the plan document that
+  schedules a `todo` closes it in the commit that adds the plan document, so that the work is listed
+  in one place at a time. This issue also holds work no plan schedules, so it is rewritten rather
+  than closed, which keeps that purpose.
 - **An audit report document**, for axes whose fixes are code: the owner left it "a question for
   later" in round 0; it stays in that issue.
 - **Whether a head is true of the code**: left out of this axis, per the reply to round 1; a head the
@@ -201,16 +212,18 @@ as referencing it, and where each is judged:
 | entry test 2 of `primer@design-heads` | a site for agent-facing text is a text that states the instruction; "no site" is an absence or a policy that no code and no text states | step 1 |
 | `skill@knowledge-architect-decision-recording@when-recording-happens`, "as a decision with no site of its own" | reworded to the new test 2 | step 1 |
 | the rejected alternative "A second entry test that admits a decision because it constrains work not yet built", "admits as a decision with no site" | reworded to the new test 2 | step 1 |
-| `design@agent-skills@a-head-is-owed-by-an-entry-test`, "a policy or an absence has no site at all" | reworded to the new test 2. Its other referencing texts are read again: the lines of `path@agent-skills@docs/design.md` that cite it, `tripwire@agent-skills@a-head-verdict-is-overruled` and the two other tripwires that name it, `issue@agent-skills@the-material-finding-duty-has-no-head`, and the rejected alternative above | the harvest |
+| the released 0.5.0 section of CHANGELOG.md, "a reason several sites or no site must respect" | unchanged: a released section's content never changes, per `design@knowledge-architect@changelog-entries` | none |
+| `design@agent-skills@a-head-is-owed-by-an-entry-test`, "a policy or an absence has no site at all" | reworded to the new test 2. Its other referencing texts are read again: the lines of `path@agent-skills@docs/design.md` that cite it, `tripwire@agent-skills@a-head-verdict-is-overruled`, `tripwire@agent-skills@a-shortcut-decision-earns-a-head`, `issue@agent-skills@the-material-finding-duty-has-no-head`, `issue@agent-skills@no-way-to-audit-a-project-as-a-whole`, and the rejected alternative above. `issue@agent-skills@test-3-admits-a-practice-its-tool-documents` and `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined` close | the harvest |
 | `design@agent-skills@instruction-record-is-minimal` | read again: its exception for a decision that keeps two parts consistent stays | the harvest |
-| `design@agent-skills@existing-heads-on-touch` | rewritten, per D4: a head is repaired when a change touches it, and the whole record is repaired by a project audit, at a migration or at the owner's request. Its referencing texts are read again: `issue@agent-skills@primer-content-bundles-each-directive-s-decision` and `issue@knowledge-architect@the-klarch-prefix-head-holds-a-decision-of-the-published-workflow` | the harvest |
+| `design@agent-skills@existing-heads-on-touch` | rewritten, per D4: a head is repaired when a change touches it, and the whole record is repaired by a project audit, at a migration or at the owner's request. Its sentence that a sweep repairs an approval cited as a ground is the narrower case the audit now covers. Its referencing texts are read again: `issue@agent-skills@primer-content-bundles-each-directive-s-decision` and `issue@knowledge-architect@the-klarch-prefix-head-holds-a-decision-of-the-published-workflow` | the harvest |
 | the rejected alternative "A sweep that brings every head stating the instance as its rule to its rule at once" | leaves `path@agent-skills@docs/rejected-alternatives.md`: it is chosen now, per D4 | the harvest |
-| `design@agent-skills@ruled-items-labelled` | its prefix table gains `F`, a project audit's findings put to the owner, which reach the audit's commit messages | step 2 writes the prefix where the skill asks; the head's table at the harvest |
-| `design@knowledge-architect@changelog-entries` | gains the convention: a Migration entry that changes the rules on recorded content cites the axis to run | the harvest. Its referencing texts: the restatement of the three tests in the root `CLAUDE.md`, `instructions@git-workflow`, stays unchanged, since the convention adds to the Migration test and makes no clause of it false; `agent@klarch-changelog-reviewer` reads the head in full and is unchanged; `skill@klarch-release` is unchanged |
+| `design@agent-skills@ruled-items-labelled` | its prefix table gains `F`, a project audit's findings put to the owner, which reach the audit's commit messages | step 2 writes the prefix where the skill asks; the head's table at the harvest. Its nine referencing texts, the primer and six skills that restate their own prefix and one line of `path@agent-skills@docs/design.md`, are unchanged: none restates the table |
+| `design@knowledge-architect@changelog-entries` | gains the convention: a Migration entry that changes the rules on recorded content cites the axis to run | the harvest. Its referencing texts are unchanged, since the convention adds to the Migration test and makes no clause of any of them false: the root `CLAUDE.md` in `instructions@mechanical-validation`, `instructions@where-knowledge-goes` and the restatement of the three tests in `instructions@git-workflow`; the preamble of CHANGELOG.md and its crate copies; one line each of `path@knowledge-architect@docs/design.md` and `path@agent-skills@docs/design.md` and two of `path@core@docs/design.md`; `issue@knowledge-architect@a-mechanical-changelog-check`; `agent@klarch-changelog-reviewer`, which reads the head in full; `skill@klarch-release` |
 | `skill@knowledge-architect-setup@moving-the-pin` and `skill@knowledge-architect-setup@existing-documentation` | run the axis a Migration entry cites; the move of existing documents runs the axis | step 4 |
-| the primer's `primer@installed-skills`, the review skill's scope and its list of agents, the planning skill's scope | name the audit skill and the auditor; a review stays a review of a diff, and a design audit stays the planning skill's | steps 2 and 3 |
-| `goal@agent-skills@one-skill-per-activity` and `goal@knowledge-architect@agents-get-a-complete-workflow`, which list the workflow's activities | auditing is an activity they do not list, per D2 | the harvest, on the owner's word |
-| `issue@agent-skills@no-way-to-audit-a-project-as-a-whole` | rewritten to the other axes, the report question and the lessons on method | the commit that adds this spec |
+| the primer's `primer@installed-skills`, the review skill's scope, the planning skill's scope | name the audit skill; a review stays a review of a diff, and a design audit stays the planning skill's | step 2 |
+| the root `path@knowledge-architect@README.md`, which lists the workflow's activities | gains auditing | step 2 |
+| `goal@agent-skills@one-skill-per-activity` and `goal@knowledge-architect@agents-get-a-complete-workflow`, which list the workflow's activities | auditing is an activity they do not list, and the first names "the review agents its skills dispatch", which the auditor is not, per D2 | the harvest, on the owner's word |
+| `issue@agent-skills@no-way-to-audit-a-project-as-a-whole` | rewritten to the other axes, the report question and the lessons on method | the commit that repaired this spec after its first plan reviews |
 | `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined` | closed | the harvest |
 | `issue@agent-skills@test-3-admits-a-practice-its-tool-documents` | closed on the owner's ruling | the harvest |
 
@@ -253,13 +266,15 @@ C7. Binding: bounded groups, results in files. Met by `thread@design-record-audi
 
 ### Its cost in subagents and in the owner's reading time stays proportionate `##c8`
 
-C8. Weighed. Unmet and accepted. Round 1 gave "about ten" subagents for "this repository's 189
-heads", and said "A project the size of thaum, about 220 heads, would cost about the same per run."
-The owner, the reply to round 2: "Agreed on all, tripwires and AC approved." Both figures were
-wrong, and D7 carries the corrected premise. Re-taken at the commit that added this spec, by
+C8. Weighed. Unmet and accepted. Round 1 said "today's sweep took about 10 subagents for 189
+heads", and "A project the size of thaum, about 220 heads, would cost about the same per run."
+The owner, the reply to round 2: "Agreed on all, tripwires and AC approved." 189 was right at
+commit c282b00, where the sweep counted it. The record has grown since, and the axis reads more than
+the heads, so the cost of a run differs; D7 carries the corrected premise. Re-taken at the commit
+that added this spec, by
 counting the level-three headings that end with a slug in the five design homes: 206 heads. The
-rejected alternatives add about 100 entries, counted as the paragraphs and headings that open an
-entry. Groups of at most 60 entries per Component give 9 groups in this repository, so a run costs
+rejected alternatives add about 100 entries, counted as the paragraphs that open with bold text,
+and the level-two headings of `path@gates@docs/rejected-alternatives.md`. Groups of at most 60 entries per Component give 9 groups in this repository, so a run costs
 about 9 auditors and 9 re-check auditors.
 
 ## Threads
@@ -334,11 +349,11 @@ think we can ship this audit workflow without fixing them."; the reply to round 
 
 ### For agent-facing text, each text that states an instruction is one site, and "no site" is an absence or a policy no text states `##test-2-site-for-installed-text`
 
-Proposed by the agent, round 3, as shape A of the issue. Approved; its wording of where the reason
+Proposed by the agent, round 3, as the first of the two shapes the issue lists. Approved; its wording of where the reason
 lives corrected by D3. Arguments: `argument@design-record-audit@a19`,
 `argument@design-record-audit@a20`. Shape: "Decided design". Harvest:
-`design@agent-skills@a-head-is-owed-by-an-entry-test` rewritten, or a head of its own, as the tests
-decide; the issue closes. The owner's words, the reply to round 3: "test-2-site-for-installed-text:
+`design@agent-skills@a-head-is-owed-by-an-entry-test` rewritten, since it holds the argument of
+every entry test; the issue closes. The owner's words, the reply to round 3: "test-2-site-for-installed-text:
 we can go with your solution, it looks better than the current ambiguity."; the reply to the `%%`
 message: "default approved".
 
@@ -545,14 +560,19 @@ applying a test measure how agents read it, not whether it is right".
 
 ## New names, in one place
 
+- the audit skill: `planned@agent-skills@content/skills/project-audit/SKILL.md`, per D1.
+- the design-record auditor: `planned@agent-skills@content/agents/design-record-auditor.md`.
+
 ```text
-the audit skill            planned@agent-skills@content/skills/project-audit/SKILL.md, per D1;
-                           installed as knowledge-architect-project-audit
-the design-record auditor  planned@agent-skills@content/agents/design-record-auditor.md;
-                           installed as knowledge-architect-design-record-auditor
-the axis's section         the level-two section of the audit skill whose slug is design-record-axis
-the label prefix F         a project audit's findings put to the owner
+the audit skill, installed as  knowledge-architect-project-audit
+the auditor, installed as      knowledge-architect-design-record-auditor
+the axis's section             the level-two section of the audit skill whose slug is design-record-axis
+the label prefix F             a project audit's findings put to the owner
 ```
+
+The installed names are written without backticks, here and everywhere in this spec: the checker
+reports a backticked one-word span that is exactly the name of an installed skill or agent, fenced
+or not, per `design@core@bare-skill-name-reported`.
 
 ## Decided design
 
@@ -595,30 +615,47 @@ restates the method in each (`argument@design-record-audit@a6`).
 Shape. The skill states each point with the judgement it needs, and an axis's section adjusts it:
 
 1. **Corpus.** The axis names its corpus and its inputs.
-2. **Groups.** The corpus is cut by Component: one Component's entries in their file order, cut into
-   ceil(count / 60) runs of consecutive entries, the sizes of any two runs differing by at most one,
-   as `design@agent-skills@standing-entry-search-groups` cuts its own. The session counts the entries
-   itself, since no command lists them, and names each group by its first and last entry.
-3. **Pre-commitments and calibration.** An axis that measures states before the run which outcome
-   would show which conclusion. The session picks a shared sample of about five entries, from
-   different Components, and adds it to every group. When the drafts are in, it compares the
-   verdicts on the sample. Where they differ, it settles the reading, says which, and re-judges, in
-   every group, the drafts that the difference bears on, before any draft is sorted.
+2. **Groups.** A group holds the entries of one Component only, since a rejected alternative is
+   judged against the head it lost to. A Component's entries are ordered: its design home first,
+   a directory-shaped home's subdocuments in the order its README links them, then its rejected
+   alternatives in file order, each entry as the file shapes it, a heading or a paragraph that opens
+   with its name in bold. They are cut into ceil(count / 60) runs of consecutive entries, the sizes
+   of any two runs differing by at most one. The bound of 60 is the one
+   `design@agent-skills@standing-entry-search-groups` argues for a standing entry; an auditor also
+   reads, per head, its tripwires, its issues and its history, and no measurement shows the bound
+   right for that load, which T6 and AC3 watch. The session lists the heads from
+   `cargo klarch model` or by reading, counts the entries, and names each group by its first and
+   last entry.
+3. **Pre-commitments and calibration.** An axis that measures, one whose run yields a figure a
+   conclusion rests on, states before the run which figure would show which conclusion; an axis
+   that only applies rules, as the design-record axis does, owes none. The session picks a shared
+   sample of about five entries from different Components, a size no measurement fixes, and adds it
+   to every group beyond its bound. When the drafts are in, it compares the verdicts on the sample.
+   Where they differ and one follows the rule's text, the session settles the reading, states it in
+   the run's commit message, and itself re-reads, in every group, the drafts that the difference
+   bears on, before any draft is sorted. Where the rule's text admits both, the difference goes on
+   the owner list, as a verdict where a test reads two ways.
 4. **Drafts.** One auditor per group, in a scratch directory of its own, writes one draft per entry
-   there and edits nothing else.
-5. **The sort.** The session reads every draft whose outcome is the owner's or an issue, and a
-   sample of the rest, at least one per group, against the entry and its history. It sorts each
+   there and edits nothing else. Its brief names the commit audited, its group's first and last
+   entry, the sample's entries, and its scratch directory.
+5. **The sort.** The session reads every draft whose outcome is not "nothing", against the entry and
+   its history, and a sample of the drafts that find the entry conforming, at least one per group. It sorts each
    finding into its outcome. A draft it finds wrong is corrected, and the group's other drafts of the
    same kind are read again.
 6. **The owner list.** One message, the items grouped by kind, each under a label `F<n>` with a
    default. The session applies nothing on the list before the owner answers.
 7. **Application.** The session, or agents it dispatches on disjoint files, applies the edits. The
    session reads the whole diff before each commit. Each commit message records what it applied:
-   what was audited, at which commit, the counts, and each finding's outcome.
-8. **The re-check.** Fresh auditors over the same groups, after the edits, report every violation
-   left. A violation a draft named and the owner ruled to keep is not one.
-9. **Review.** The audit's commits are reviewed as any change, on the axes of
-   `skill@knowledge-architect-review`, the transcript review last. An audit runs in a branch of its
+   what was audited, at which commit, the counts, and each finding's outcome. A run that changes no
+   file leaves no commit, since a commit that changes no file does not reach main, per
+   `design@knowledge-architect@git-flow`; its record is then the report to the owner.
+8. **The re-check.** Fresh auditors over the same groups, after the edits, each briefed as in point
+   4 and also given the entries and rules the owner ruled to keep, as a file in its scratch
+   directory. Each writes its drafts as in point 4. A draft that finds a rule failed, and is not on
+   the kept list, is a violation left, whether a draft missed it or an edit made it.
+9. **Review.** The audit's commits are reviewed on these axes of `skill@knowledge-architect-review`:
+   self-consistency, fidelity of relocation, routing of knowledge, decision recording, standing
+   state, and the transcript review last. An audit runs in a branch of its
    own, unless the owner gives it to another work's branch, as the first run is.
 
 Arguments: `argument@design-record-audit@a3`, `argument@design-record-audit@a4`,
@@ -631,7 +668,10 @@ re-check, lost because the re-check found real defects each time it ran.
 
 Shape. The corpus is every design head of every Component and every entry of its rejected
 alternatives. The inputs, for each head: every tripwire guarding it and every issue naming it, read
-with `cargo klarch show`, and the history behind each citation of the owner. The rules: every rule of
+with `cargo klarch show`, and the history behind each citation of the owner: the commit messages
+that touch its slug, `git log -G'<slug>'`, and the deleted plan documents,
+`git log --diff-filter=D --name-only -- docs/plans/`, read as the decision-recording skill's
+section `skill@knowledge-architect-decision-recording@three-homes` shows. The rules: every rule of
 `primer@design-heads` for a head, and every rule of
 `skill@knowledge-architect-decision-recording@losing-alternatives` for a rejected alternative. A
 tripwire or an issue is repaired only where an edit of the run makes it stale. Restatements of heads
@@ -650,7 +690,7 @@ named cases goes to the owner list.
 | --- | --- |
 | applied in the branch | a rewording; the tense; a missing or wrong reference; an approval cited as a head's ground, removed when the head stands on its argument; a split that touches no word of the owner; a rejected alternative repaired in place: its reason made checkable, its marker set; a tripwire or an issue made stale by an edit, repaired in place |
 | put to the owner, on the owner list | a widening of what the owner's words approved; the removal of a head that fails every entry test; the removal of a rejected alternative that fails every recording test; a ground that is the owner's words; a verdict where a test reads two ways; a head in the wrong Component; a conflict with a goal, handled under `skill@knowledge-architect-goal-setting`; any finding the other rows do not name |
-| an issue entry | a head false of the code, which this axis does not judge, kind `defect`; a split or a move the owner approved that is too large for the branch, kind `design`; a finding the owner defers |
+| an issue entry | a head false of the code, which this axis does not judge, kind `defect`; a split or a move the owner approved that is too large for the branch, kind `design`; a finding the owner defers, kind `todo`, or `deferred` where the owner names the event that should make someone do it |
 | nothing | the entry conforms |
 
 Arguments: `argument@design-record-audit@a1`, `argument@design-record-audit@a12`. The nearest rival,
@@ -661,18 +701,22 @@ moved a conflict with a goal from the issue row to the owner.
 
 Shape. One installed agent, the design-record auditor of "New names, in one place", dispatched once
 per group. Its description carries the dispatch rule of the method's point 2 with a worked example,
-as the standing-entry searcher's does. Its tools line is the searcher's, and its body forbids `Write`
+and its body a section on its brief, as the standing-entry searcher's does: the brief of point 4,
+and, for a re-check, the kept list of point 8. Its tools line is the searcher's, and its body forbids `Write`
 and `Edit` on the project and allows writes to its scratch directory only. Its body is the axis's
 standard:
 
 - read `primer@design-heads` and `skill@knowledge-architect-decision-recording@losing-alternatives`
-  whole first, and the tripwires guarding the decisions behind those rules, as the failure modes of
-  an edit;
+  whole first; and keep in view the failure modes of an edit, stated in words since the agent cites
+  no entry of this repository: removing the owner's own words with an approval; splitting a rule
+  from its own exception; a title wider than its argument; a member the argument does not cover; a
+  head created with no deliberation recorded;
 - for each head of its group, read every tripwire guarding it and every issue naming it, with
   `cargo klarch show`, and the history behind every citation of the owner;
 - judge each head against every rule of `primer@design-heads`, and each rejected alternative against
   its rules;
-- write one draft per entry and return the list of drafts with their outcomes.
+- write one draft per entry, and return the scratch directory and one row per entry: the entry,
+  the verdict and the proposed outcome.
 
 A draft holds: the entry, by its reference or, for a rejected alternative, its name and file; the
 verdict, `conforms` or each rule it fails; the evidence, quoted, with the commits read where the
@@ -708,7 +752,9 @@ rival, a periodic run, has no evidence for a period.
 
 Shape. `design@agent-skills@existing-heads-on-touch` states both: a head a change touches is brought
 to the rules in that change, and a project audit brings the whole record to them, at a migration or
-at the owner's request, its widenings going to the owner on the owner list. The rejected alternative
+at the owner's request, its widenings going to the owner on the owner list. The head's sentence that a sweep
+repairs an approval cited as a ground, since that repair widens nothing, becomes a case of the
+audit. The rejected alternative
 "A sweep that brings every head stating the instance as its rule to its rule at once" leaves the
 rejected alternatives, since it is now chosen.
 
@@ -750,8 +796,8 @@ The work reads no external specification.
 ## Premortem
 
 Each cause was put to the owner in round 2 under its label; the owner, the reply to round 2: "Agreed
-on all, tripwires and AC approved." Labels T1 to T5 and AC1 to AC2 were used by the head-rules
-discussion earlier in the same transcript, so this discussion's labels continue at T6.
+on all, tripwires and AC approved." Round 2 labelled them T6 to T8 and AC1; this spec labels the
+acceptance criterion AC3, per "Status and audience".
 
 - Round 2 also put a cause with no label: an audit commit that removes the owner's own words. It
   proposed no new tripwire, since `tripwire@agent-skills@owner-intent-stripped` already watches it.
@@ -765,17 +811,17 @@ discussion earlier in the same transcript, so this discussion's labels continue 
 | T6 | The calibration fails silently, and the owner list fills with defaults the owner reverses | `thread@design-record-audit@audit-method` | tripwire. Fires when, in one run, the owner rules against the default on more than a quarter of the listed items; the bound is the owner's to reset. Response: reopen the decision harvested from that thread. Re-entry: the session that receives the owner's answers to an owner list counts them, and the standing-state review of the audit's branch reads it again |
 | T7 | A Migration entry cites the axis, and the pin moves without the axis run | `thread@design-record-audit@audit-triggers` | tripwire. Fires when a retrospective finds a pin moved across such a version with the axis not run. Response: reopen the decision harvested from that thread. Re-entry: the retrospective of a session that moved a pin. It watches agent behaviour in a consumer project, which `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` says this project cannot see; the harvested tripwire cites that issue |
 | T8 | An edit makes a tripwire or an issue it never read stale | `thread@design-record-audit@design-record-axis` | tripwire. Fires when a review of an audit branch finds a tripwire guarding, or an issue naming, a head the branch changed, left false. Response: reopen the decision harvested from that thread. Re-entry: the standing-state review of every audit branch |
-| AC1 | The method does not work at its first real run | `thread@design-record-audit@audit-method`, `thread@design-record-audit@design-record-axis` | acceptance criterion, `acceptance@design-record-audit@first-run-leaves-nothing-missed` |
+| AC3 | The method does not work at its first real run | `thread@design-record-audit@audit-method`, `thread@design-record-audit@design-record-axis` | acceptance criterion, `acceptance@design-record-audit@first-run-leaves-nothing-missed` |
 
 ## Acceptance criteria
 
 ### The first run of the axis on this repository ends with a re-check that finds no violation the drafts missed `##first-run-leaves-nothing-missed`
 
-AC1. Guards `thread@design-record-audit@audit-method` and `thread@design-record-audit@design-record-axis`.
+AC3, put to the owner as AC1 in round 2. Guards `thread@design-record-audit@audit-method` and `thread@design-record-audit@design-record-axis`.
 Judged at step 5. The instrument: the run's own re-check, fresh design-record auditors over the same
 groups after the run's edits, against the rules shipped by steps 1 to 4. Fires on one violation of
-`primer@design-heads` or of the rules on rejected alternatives that the drafts missed, confirmed by
-the session's reading of the entry. Response: repair it, and reopen the thread the miss comes from.
+`primer@design-heads` or of the rules on rejected alternatives left after the run, whether the
+drafts missed it or an edit made it, confirmed by the session's reading of the entry. Response: repair it, and reopen the thread the miss comes from.
 Per D6, the run is this repository's own migration, an observation of real use under
 `design@agent-skills@synthetic-evidence-not-built`; no finding of the re-check is acted on before a
 reading confirms it.
@@ -794,17 +840,16 @@ repository outside a `%%` line. Every commit runs `cargo klarch check --staged` 
 2. **The audit skill.** The skill of "The audit skill is an activity of its own", "The audit's
    method", "The design-record axis" and "The outcomes", named per D1, with its `%%` line for the
    `F` label; the primer's `primer@installed-skills`; the review skill's and the planning skill's
-   scopes. The commit converts the spec's `planned` citation of the skill to a `path` citation.
+   scopes; the root README's list of activities. The commit converts the spec's `planned` citation
+   of the skill to a `path` citation.
    Fails alone on: a skill that reads as a review.
-3. **The design-record auditor.** The agent of "The design-record auditor"; the review skill's list
-   of agents names it. The commit converts the spec's `planned` citation of the agent. The spec
-   writes the agent's installed name only in its fenced block, so the bare-name lint does not report
-   it. Fails alone on: an agent whose description cannot be dispatched from, or whose body edits.
+3. **The design-record auditor.** The agent of "The design-record auditor"; the audit skill names
+   it where it dispatches it. The commit converts the spec's `planned` citation of the agent. Fails alone on: an agent whose description cannot be dispatched from, or whose body edits.
 4. **The triggers.** The setup skill's two sections, per "The triggers"; the CHANGELOG.md Migration
    entry citing the axis; `cargo x changelog`. Fails alone on: a pin move that reads no axis.
 5. **The first run.** The axis runs on this repository under the skill, on this branch. Its owner
    list waits for the owner's answers, and nothing on it is applied before them; the branch does not
-   merge before they come. Its re-check judges AC1. Fails alone on: a draft or an edit the method
+   merge before they come. Its re-check judges AC3. Fails alone on: a draft or an edit the method
    did not prevent.
 6. **The harvest and the changelog.** The rows of "Harvest"; the CHANGELOG.md entries the three
    tests of `design@knowledge-architect@changelog-entries` owe for steps 1 to 4; the spec deleted.
@@ -816,7 +861,7 @@ repository outside a `%%` line. Every commit runs `cargo klarch check --staged` 
 - 3 before 4: the Migration entry cites a section of the skill, and the run it asks for dispatches the
   agent.
 - 4 before 5: the run is the migration the entry asks for, so it runs on the text that asks.
-- 5 before 6: the harvest records the decisions after AC1 is judged.
+- 5 before 6: the harvest records the decisions after AC3 is judged.
 
 ## Defaults awaiting the owner
 
@@ -825,7 +870,8 @@ repository outside a `%%` line. Every commit runs `cargo klarch check --staged` 
   review message: "Agreed on these defaults".
 - **D2**, on `thread@design-record-audit@audit-is-an-activity`:
   `goal@agent-skills@one-skill-per-activity` and `goal@knowledge-architect@agents-get-a-complete-workflow`
-  list the workflow's activities, and auditing is not among them. At the harvest, the session drafts
+  list the workflow's activities, and auditing is not among them; the first also names "the review
+  agents its skills dispatch", which the auditor is not. At the harvest, the session drafts
   the two goals with auditing added and puts the drafts to the owner, under
   `skill@knowledge-architect-goal-setting`. The default ruled, the reply to the review message; the
   drafts await the owner at the harvest.
@@ -842,15 +888,17 @@ repository outside a `%%` line. Every commit runs `cargo klarch check --staged` 
   conflict with a goal goes on the owner list and is handled under the goal-setting skill. Ruled, the
   reply to the review message.
 - **D6** (R3), on `acceptance@design-record-audit@first-run-leaves-nothing-missed`, from the
-  design-conformance review: AC1 is kept, read as an observation of real use, since step 5 is this
+  design-conformance review: AC3 is kept, read as an observation of real use, since step 5 is this
   repository's own migration; the re-check's findings are confirmed by reading before anything is
   done with them. Ruled, the reply to the review message.
 - **D7**, on `criterion@design-record-audit@c8`, from the code-claims and cold-implementer reviews: the
   owner accepted C8 on a cost of "about ten" subagents for 189 heads. The corpus holds 206 heads and
   about 100 rejected alternatives, and a re-check bounded by C7 takes one auditor per group, so a run
   costs about 18 subagents. Default: keep the per-group re-check, since one auditor over the whole
-  corpus breaks C7 on a large project. Awaiting the owner; the work proceeds on the default unless
-  the owner answers otherwise, and step 5 does not start before the answer.
+  corpus breaks C7 on a large project. Awaiting the owner. D7 corrects the premise of a ruling, so
+  `primer@owner-word-premise` applies rather than the status rule on the owner's absence: the work
+  proceeds on the default unless the owner answers otherwise, and step 5, which spends the cost,
+  does not start before the answer.
 
 ## Harvest
 
@@ -864,12 +912,12 @@ Every head lands in `path@agent-skills@docs/design.md`, unless the row says othe
 | `thread@design-record-audit@audit-outcomes` | a head |
 | `thread@design-record-audit@audit-triggers` | a head; `design@knowledge-architect@changelog-entries`, in `path@knowledge-architect@docs/design.md`, gains the convention |
 | `thread@design-record-audit@audit-agent-per-axis` | a head |
-| `thread@design-record-audit@test-2-site-for-installed-text` | `design@agent-skills@a-head-is-owed-by-an-entry-test` rewritten, or a head, as the tests decide |
+| `thread@design-record-audit@test-2-site-for-installed-text` | `design@agent-skills@a-head-is-owed-by-an-entry-test` rewritten |
 | `thread@design-record-audit@whole-record-repair-at-a-migration` | `design@agent-skills@existing-heads-on-touch` rewritten; the rejected sweep leaves `path@agent-skills@docs/rejected-alternatives.md` |
 | `thread@design-record-audit@test-3-reading-not-practice` | `issue@agent-skills@test-3-admits-a-practice-its-tool-documents` closed on the owner's ruling |
 | the `F` prefix | `design@agent-skills@ruled-items-labelled`, its table |
 | T6, T7, T8 | `path@agent-skills@docs/tripwires.md`, each naming its head, with its label; T7 cites `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` |
-| AC1 | reported in the landing commit |
+| AC3 | reported in the landing commit |
 | every item of "Losing alternatives" | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit |
 | `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined` | closed |
 | `issue@agent-skills@no-way-to-audit-a-project-as-a-whole` | retitled and rewritten to the axes it still holds, since the workflow then offers a project audit |
