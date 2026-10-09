@@ -44,7 +44,8 @@ leaves the repository in the commit that completes its harvest.
   3. The agent's replies carry the headings "Round 1", "Round 2" and "Round 3" in the transcript;
   each is called here "the reply to round 1", "the reply to round 2" and "the reply to round 3".
   Find the file by that opening message, not by its name. The reviews of this spec raised six
-  defaults, D1 to D6, which await the owner.
+  defaults, D1 to D6; the owner approved all six in a fifth message, called round 5: "All defaults
+  approved, proceed."
 
 ## How the work is done
 
@@ -97,7 +98,8 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 - **the generated list**: the files `generated_list` in `path@core@src/cli/mod.rs`, line 750,
   returns.
 - **T1, T2, AC1 to AC4**: the labels the premortem put to the owner, kept in the items below.
-- **D1 to D6**: the defaults awaiting the owner, under that section.
+- **D1 to D6**: the defaults the reviews raised, ruled by the owner in round 5, under "Defaults
+  awaiting the owner".
 
 ## What the work is
 
@@ -337,7 +339,7 @@ owner's words, round 2: "skill-cited-by-path: approved."
 
 Proposed by the agent in the reply to round 1. Approved, as the checkpoint table of the reply to
 round 3 showed it: installed files, gate, refusal of a partial commit's mismatch, respellings,
-model rebuilt, generated files, check. D1 proposes to replace that order. Arguments:
+model rebuilt, generated files, check. D1 replaced that order, approved by the owner in round 5. Arguments:
 `argument@path-quickfixes@a16`, `argument@path-quickfixes@a29`. Shape: Decided design, "The order of a
 run". Harvest: `design@core@fix-before-the-checks` rewritten, and the sentence of
 `design@core@fix-refusal-mixed-state` named in "What is already decided". The owner's words, round
@@ -760,7 +762,7 @@ Nearest rival: no check, the citation accepted as a path. It lost on `argument@p
 
 ### The order of a run
 
-Per D1, which awaits the owner:
+Per D1, which the owner approved in round 5:
 
 1. a manifest holding a refused declaration writes nothing;
 2. the installed files are repaired;
@@ -782,7 +784,7 @@ file whose staged copy differs keeps the old span in git's index, and `check --s
 until the file is staged again.
 
 Nearest rival: the approved order of the checkpoint table, the refusal before the respellings.
-D1 proposes to replace it, `argument@path-quickfixes@a29`.
+D1 replaced it, `argument@path-quickfixes@a29`, on the owner's word of round 5.
 
 ## Mapping tables
 
@@ -982,6 +984,15 @@ the harvest records the decisions the built work implements.
 
 ## Defaults awaiting the owner
 
+None. D1 to D6 are under the subsection below.
+
+### The defaults the owner ruled on
+
+Six defaults stood after the reviews of this spec. The owner ruled on all six in one message,
+called round 5: "All defaults approved, proceed." Each is applied in the sections it names, and is
+kept here with its reason. D4's narrowing of `tripwire@core@fix-makes-a-choice` is applied in the
+commit that records the ruling.
+
 - **D1**, on `thread@path-quickfixes@fix-run-order`, from the author at assembly. The order the owner approved puts the
   refusal of a partial commit's mismatch before the respellings. The refusal compares the generated
   files of the working tree with the staged tree's; a respelling inside an issue title changes the
@@ -1005,7 +1016,7 @@ the harvest records the decisions the built work implements.
 - **D4**, on `thread@path-quickfixes@fix-admission`, from the standing-state, routing and decision-record reviews.
   `tripwire@core@fix-makes-a-choice` fired on the proposal this spec plans, and stays listed with
   its clause until the harvest, so every standing-state review until then finds it fired. The
-  owner's word of round 4 did not rule on its wording. The default: on the owner's word, this
+  owner's word of round 4 did not rule on its wording. The default, applied: on the owner's word, this
   spec's branch narrows its firing clause to a fix other than the respellings
   `spec@plans@path-quickfixes` defines, a reference that dangles when the spec leaves and so forces
   the harvest to judge it again; at the harvest, the tripwire is deleted, since its decision is
