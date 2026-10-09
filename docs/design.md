@@ -62,12 +62,13 @@ it carries none of these copies. This keeps what a project receives to what it u
 A project moving its pin reads the changelog of every version crossed. Each crate under crates/
 carries a copy of the root CHANGELOG.md, listed in its `include`, so the changelog of a version is
 in the source cargo fetches for that version, and a project reads it there, at the version it pins,
-with no address outside the crate. `cargo x changelog` writes the copies, and
-`every_published_crate_carries_the_root_changelog` in `path@xtask@src/changelog.rs` fails while one
-differs or a crate's `include` stops listing it, so a branch that writes an entry copies it before
-it can pass the gates. The walk skips the copies, by three `skip-files` rows of the manifest: the
+with no address outside the crate. `cargo x changelog` writes the copies, one command for every
+copy, as the owner proposed: "I'd also provide a `cargo x` subcommand that updates all changelog
+copies at once". The test `every_published_crate_carries_the_root_changelog` in
+`path@xtask@src/changelog.rs` fails while one differs or a crate's `include` stops listing it, so a
+branch that writes an entry copies it before it can pass the gates. The walk skips the copies, by three `skip-files` rows of the manifest: the
 root file is checked, and they are identical to it. One changelog for every crate, rather than one
-per crate, keeps one file to write and gives each crate the whole history; the owner chose it.
+per crate, keeps one file to write and gives each crate the whole history.
 
 **The copies are committed, because cargo packages nothing else.** Measured on cargo 1.98.0: a copy
 that `include` lists and git ignores makes `cargo package --list -p <crate>` exit 101, "files in the

@@ -13,10 +13,11 @@ and why, which the filter records only in part.
 
 **A spec plus a separate detailed implementation plan, each step written out with its code** — lost
 to `design@agent-skills@spec-and-milestone`. `live`. Both documents carry the same decisions and the
-second drifts from the first. Its refutation rests on what the owner observed over real sessions:
-implementers force such a plan's untested snippets into the code at any cost and copy their
-comments verbatim. That observation cannot be derived again in one discussion round, and workflows
-that write such plans are in common use, so the alternative will be proposed again.
+second drifts from the first. Its refutation rests on the owner's account of real sessions, quoted
+in `design@agent-skills@no-untested-snippet-is-authority`: implementers force such a plan's untested
+snippets into the code at any cost and copy their comments verbatim. That observation cannot be
+derived again in one discussion round, and workflows that write such plans are in common use, so the
+alternative will be proposed again.
 
 **Reporting a finding met outside the task without recording it** ("finish the task, then say what
 you found") — lost to `design@agent-skills@primer-content`. `live`. The owner observed, over real
@@ -92,13 +93,13 @@ a session adds to a head a decision its title does not state, with no deliberati
 alternative is a candidate if it does.
 
 **One agent reading every issue and tripwire of the project for a piece of work** — lost to
-`design@agent-skills@standing-entry-search-agent`. `live`. One agent's load grows with the
-project: the standing entries of thaum at its commit ef21314 hold 318,947 bytes. The owner judged
-that a single agent cannot judge so many entries reliably. It is kept here because a doubt
-remains: no measurement shows that agents given groups of 60 entries judge better, and one agent
-sees every entry beside every other, where a group sees only its own.
+`design@agent-skills@standing-entry-search-groups`. `live`. One agent's load grows linearly with the
+project: the standing entries of thaum at its commit ef21314 hold 318,947 bytes. One agent reads
+every entry whole only while its context holds them, and the owner expects thaum to grow much more.
+It is kept here because a doubt remains: no measurement shows that agents given groups of 60 entries
+judge better, and one agent sees every entry beside every other, where a group sees only its own.
 
-**One search agent per anchor** — lost to `design@agent-skills@standing-entry-search-agent`.
+**One search agent per anchor** — lost to `design@agent-skills@standing-entry-search-groups`.
 `live`. An anchor bounds nothing: in thaum at its commit ef21314, one Component holds 51.9% of the
 bytes of the standing entries, measured with `git ls-files` over the issue entry files and the
 tripwires homes and `wc -c`, summed by the anchor that holds each file.
@@ -113,10 +114,12 @@ candidate if it fires.
 **A separate installed skill for bounded problems** — lost to
 `design@agent-skills@bounded-path-in-design`. `live`. Whether work is bounded is known only after
 the design skill's grounding, so a separate skill would repeat that grounding to classify at all.
-The owner had planned one and ruled for the path inside the design skill once that was argued. It
-is kept here because a doubt remains: `tripwire@agent-skills@a-shortcut-decision-earns-a-head`
-watches whether the path lets a decision that earns a head skip its discussion, and this
-alternative is a candidate if it fires.
+The owner had planned one, then proposed the path inside the design skill instead, on the argument
+above: "IMO, there is no way to determine whether a task is "bounded work that does not change the
+project's design" without going through the grounding steps of the design skill." It is kept here
+because a doubt remains: `tripwire@agent-skills@a-shortcut-decision-earns-a-head` watches whether
+the path lets a decision that earns a head skip its discussion, and this alternative is a candidate
+if it fires.
 
 **A second entry test that admits a decision because it constrains work not yet built** — lost to
 `design@agent-skills@a-head-is-owed-by-an-entry-test`. `live`. Read against the 178 heads the design
