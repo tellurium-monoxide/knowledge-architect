@@ -15,9 +15,10 @@
 //! links every subdocument. A file register has one home, a directory holding one file per
 //! entry beside a hand-written `README.md`, a generated `index.md` and an optional
 //! `register.toml`; the entries' frontmatter, title, sections and owed subsections are asserted
-//! here, per `design@core@a-file-register-is-a-directory-of-entries`. A Directory register, the
-//! milestones home, owes the same two navigation files, and each of its entries is a directory
-//! whose README is asserted as a File entry is.
+//! here, per `design@core@a-file-register-is-a-directory-of-entries` and
+//! `design@core@frontmatter-subset`. A Directory register, the milestones home, owes the same two
+//! navigation files, and each of its entries is a directory whose README is asserted as a File
+//! entry is.
 //!
 //! **Whether what is there exists is not this check's question.** An anchor or a home that is
 //! not there is `check::tree`'s finding, phase 2, and a definition sitting where none may is
@@ -269,7 +270,8 @@ fn navigation(out: &mut Vec<Finding>, register: &Register, home: &Home, inputs: 
     }
 }
 
-/// The declared groups of one instance, and the verdicts on the file that declares them.
+/// The declared groups of one instance, and the verdicts on the file that declares them, per
+/// `design@core@groups-are-subdirectories`.
 fn config(
     out: &mut Vec<Finding>,
     register: &Register,

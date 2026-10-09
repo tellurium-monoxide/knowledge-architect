@@ -36,7 +36,7 @@ through the design skill meets it at no step.
 
 ### Why it matters
 
-`design@agent-skills@conformance-before-every-merge` makes the standing-state review the reader,
+`design@agent-skills@standing-state-review-before-every-merge` makes the standing-state review the reader,
 for every change, of what waits for an event. A re-entry point that names such an event and that
 no review reads is a parked item with no re-entry, which the issue-tracking skill says the
 registers exist to avoid. It threatens `goal@knowledge-architect@agents-work-without-drift`.

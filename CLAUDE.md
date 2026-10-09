@@ -117,7 +117,7 @@ win.
   - A slug anywhere else defines nothing and is reported as a misplaced definition: at a heading
     of another level, in a table cell, at the head of a plain line, in the middle of a line, in a
     file that is no register home and no section home of the harness, per
-    `design@core@section-homes-carry-slugs`.
+    `design@core@a-slug-elsewhere-defines-nothing` and `design@core@section-homes-carry-slugs`.
   - An id is defined once per register instance. Two definitions are a finding at each site.
   - An id matches `[a-z0-9]+(-[a-z0-9]+)*`. A file register's entry id is the file's basename.
 
@@ -272,7 +272,7 @@ milestone for work across several PRs. A plan document lands in a pull request o
 its work, whatever the time of its work. A correction is applied in place, so a
 partial reading cannot mislead. A plan document is deleted in the commit that completes its last
 harvest, and that commit's message cites it by its kind. This is a restatement; its homes are
-`design@agent-skills@document-vocabulary`, `design@agent-skills@spec-leaves-at-landing`,
+`design@agent-skills@document-vocabulary`, `design@agent-skills@plan-document-leaves-at-landing`,
 and `design@agent-skills@plan-landing-is-not-tied-to-its-work`, and the procedure is the installed
 `skill@knowledge-architect-planning`, which also says when a plan document must land before its
 work.

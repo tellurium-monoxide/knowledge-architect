@@ -105,7 +105,7 @@ pub fn rust_project(checker: Checker, base: &str) -> Vec<Gate> {
     vec![
         Gate {
             // First because it builds nothing. Behind a flag because a branch not yet rebased is
-            // normal while it is worked on, per `design@gates@rebased-gate-behind-a-flag`.
+            // normal while it is worked on, per `design@gates@rebase-checks-behind-a-flag`.
             rebased_only: true,
             ..gate(
                 "rebased",

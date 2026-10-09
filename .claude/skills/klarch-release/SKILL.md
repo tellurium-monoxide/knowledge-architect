@@ -33,7 +33,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    `cargo x changelog` to write the crates' copies, per
    `design@knowledge-architect@the-changelog-ships-in-every-crate`. Each branch wrote its own
    entries there, per `design@knowledge-architect@the-branch-writes-its-changelog-entries`, and step 9's review checks
-   them. The version chosen at step 1 follows the highest bump class among its entries, a patch at
+   them, per `design@knowledge-architect@changelog-reviewed-at-the-release`. The version chosen at step 1 follows the highest bump class among its entries, a patch at
    least.
 3. **Commit**, with `cargo klarch check --staged` before and
    `cargo klarch commits origin/main..HEAD` after: the whole branch, per root `CLAUDE.md`, section

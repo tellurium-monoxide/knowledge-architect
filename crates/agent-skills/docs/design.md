@@ -271,7 +271,7 @@ decisions, and every split in this repository's history up to that commit is one
 part of its body triggered, none a criterion.
 The nearest rival, the test
 "would reversing one part leave the other standing?", splits a rule from its exception, which always
-passes it; four audits run apart found the parts' nearest rivals the stronger signal. The cost is
+passes it. The cost is
 more heads, not more decisions: the owner's words, "We are not adding content and arguments, only
 slugs and independent heads", and the entry tests still judge each part, so the decisions recorded
 stay few, per `design@agent-skills@a-head-is-owed-by-an-entry-test`.
@@ -572,7 +572,7 @@ tell what a change costs without deriving the argument again, so the premises a 
 defeat are in the head. The deliberation is not, because every session reads the design homes
 before it changes code, and a head that carried its whole deliberation would make that read cost
 the length of every discussion ever held. History serves the reader who needs it, because a spec leaves when its work lands, per
-`design@agent-skills@spec-leaves-at-landing`: a deleted spec is
+`design@agent-skills@plan-document-leaves-at-landing`: a deleted spec is
 listed by `git log --diff-filter=D` on the plans directory, and its last state is one `git show`
 away. That agents take that route is measured, not assumed: a scan of a project's session logs for
 a `git show` or `git log` command naming a deleted plan document re-takes it, and a scan that finds
@@ -661,8 +661,7 @@ ruling of the owner, admits nearly every head harvested from a discussion, since
 the owner to confirm most decisions. The decision serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`: a later session can tell what it
 may change and what a change costs from the head where one is owed, and from the comment where none
-is. An audit of the design heads against the first three tests, during the discussion that made
-the tests, found over-recording below one head in five where the owner read it. The nearest rival of the principle, a
+is. The nearest rival of the principle, a
 head for every decision discussed with the owner, records a mechanism carried at one site by its
 comments, of which the owner's words are: "the intent can easily be carried by local code
 comments". Within test 2, "the same statement at more than one site" admits a path repeated for
@@ -795,7 +794,7 @@ the planned code meets, and an issue of any kind the slice's code touches, close
 depends on. The slice's grounding, point 1 of `skill@knowledge-architect-planning@working-a-slice`, reads no issues and no tripwires, since the audit's
 search covers every anchor. Work that does not go through the design skill sends no search: the
 standing-state review reads its deferred triggers, per
-`design@agent-skills@conformance-before-every-merge`, which this search adds to and never
+`design@agent-skills@standing-state-review-before-every-merge`, which this search adds to and never
 replaces. The design skill
 hosts a search before bounded work, at its grounding, per `design@agent-skills@bounded-path-in-design`.
 A search before every other piece of work stays parked: its one host would be
@@ -949,8 +948,8 @@ directory, docs/plans/ at the project's root, whose path the checker fixes, per
 planned work is intended or scheduled work, designed or not, which is the roadmap's content. A spec is the plan document of work done in one branch and one PR. A milestone is work across
 several PRs with design sessions between them; its plan documents are its milestone document and
 one spec per slice. A slice is a part of a milestone that is one branch and one PR, with its own
-spec. A step is one item of an implementation sequence, in a spec or in a slice, and how many
-commits it takes is the implementing session's to judge. The word "plan" alone never names a document: it would name the directory, a
+spec. A step is one item of an implementation sequence, in a spec or in a slice, and no unit of
+the history, per `design@agent-skills@step-is-no-commit`. The word "plan" alone never names a document: it would name the directory, a
 document and a kind of document at once. The words follow common usage among developers, which the
 owner made binding: "the vocabulary must be conform with common usage, especially in the developing
 community". A milestone groups the work toward one goal, as GitLab's milestones do, and a
@@ -1009,7 +1008,7 @@ beside it, cited `spec@<milestone>@<slice>`. The head is a README because the ch
 resolves a relative link only in a `README.md` or an `index.md`, per
 `design@core@links-are-navigation-rows`, so the head can link each slice's spec as a navigation row.
 A slice's spec is a spec, so it leaves when its slice lands, per
-`design@agent-skills@spec-leaves-at-landing`: its decisions are then in the design homes. The
+`design@agent-skills@plan-document-leaves-at-landing`: its decisions are then in the design homes. The
 README leaves with the last slice.
 
 ### A milestone's design is split across its documents by lifetime, from the session that converged `##milestone-split-by-lifetime`
@@ -1025,7 +1024,7 @@ own, as a scope change the owner rules on. The audit's commit message lists each
 gap, its answer and the decision it follows from, so an edit in place loses no record of what the
 audit found.
 
-### A plan document leaves when its work lands `##spec-leaves-at-landing`
+### A plan document leaves when its work lands `##plan-document-leaves-at-landing`
 
 A plan document is deleted in the commit that completes its last harvest, and that commit's message
 cites it by its kind, which resolves against the commit's parent. A plan document kept after its harvest is a second home for every decision it
@@ -1112,8 +1111,9 @@ as a tripwire and written on the owner's word, per
 `design@agent-skills@premortem-tripwires-on-the-owners-word`; any other is deleted. A separate file
 of criteria would hold statements about the same work with the same lifetime, drift from the
 document, against `goal@knowledge-architect@documentation-stays-consistent`, and stay behind when
-the document leaves. The plan document is written in the session that converged, so the criteria
-and the document are born together.
+the document leaves. The plan document is written in the session that converged, per
+`design@agent-skills@plan-written-in-the-converging-session`, so the criteria and the document
+are born together.
 
 ### An acceptance criterion stands on the owner's word, as a tripwire does `##acceptance-criteria-on-the-owners-word`
 
@@ -1161,7 +1161,7 @@ plans a feature that will not be built yet so that the work done meanwhile does 
 which needs the document where every session reads it, on the main branch; that serves
 `goal@knowledge-architect@agents-work-without-drift`. What "spec" and "milestone" measure is the
 work, one pull request or several, not where the document lands. The document leaves when its work
-lands, per `design@agent-skills@spec-leaves-at-landing`.
+lands, per `design@agent-skills@plan-document-leaves-at-landing`.
 
 The owner's intent: "It regularly happens that I will prepare a spec/design for a feature that I
 won't be implementing right now, just to ensure that the intermediate tasks I will perform do not
@@ -1171,7 +1171,8 @@ records the owner's intent, the owner answered: "Q1 yes".
 
 The one exception: a plan document lands before any work that changes what the project's
 per-commit gate checks. The per-commit gate judges each commit of a branch, its tree and its
-message, with the checker at the branch's tip. On one branch, that gate as the work's first commit changes it would judge the
+message, with the checker at the branch's tip, per `design@core@a-commit-message-is-a-document`.
+On one branch, that gate as the work's first commit changes it would judge the
 commit that added the document, whose tree predates the change, and refuse it. A change that only a
 check of the working tree sees, such as installed text that the checker compares on the working
 tree alone, leaves the per-commit gate unchanged and is outside this exception. Keeping both on one branch would force
@@ -1215,7 +1216,7 @@ that left, and each landing commit says where its results live; releases are in 
 progress file would be a third document about the same work, with a lifetime of its own, against
 the one place for what is open of `goal@knowledge-architect@structure-and-workflow-work-together`.
 
-### A transcript reviewer checks that what a work's sessions established has a durable outcome `##transcript-reviewer-agent`
+### A transcript reviewer checks that what a work's sessions established has a durable outcome, and that no ruling of the owner is recorded in a state or a scope the owner did not give `##transcript-reviewer-agent`
 
 The installed agent `agent@knowledge-architect-transcript-reviewer` reads the transcripts of the
 sessions that produced a piece of work, named as a commit range, and checks two things. First, that
@@ -1256,7 +1257,7 @@ considered as such." The rival, every misstated ruling rated critical, made a re
 slip read as a critical defect, which the owner ruled it is not; the slip is still repaired, and it
 is no defect of the workflow.
 
-### A plan document records the whole discussion `##spec-records-the-exchange`
+### A plan document records the whole discussion `##plan-records-the-exchange`
 
 A plan document assembled from a discussion records every thread with its proposer and round, its
 final state, the arguments on each side, the owner's rulings verbatim with their round, and its
@@ -1271,7 +1272,7 @@ names the plan document as the home of the deliberation while it exists, and
 `goal@knowledge-architect@the-owner-decides` is served only where the rulings are recorded as the
 owner made them. On the in-change path, the commit message carries the same record, for the same
 reason, per `design@agent-skills@in-change-path`. The rival, a plan document recording each thread's
-final state and resolution, left the rulings and the arguments to memory. The cost is a longer plan
+final state and resolution, leaves the rulings and the arguments to memory. The cost is a longer plan
 document to write and to read.
 
 ### An argument is an item, without a state `##arguments-as-items`
@@ -1305,7 +1306,7 @@ work at a moment that might not be the best".
 
 ## Reviews
 
-### The standing-state review runs before every merge, and reads every tripwire and every deferred trigger `##conformance-before-every-merge`
+### The standing-state review runs before every merge, and reads every tripwire and every deferred trigger `##standing-state-review-before-every-merge`
 
 The installed review skill sends the standing-state reviewer before every merge to the
 main branch, whatever the change. That reviewer is the standing re-entry point of every tripwire
@@ -1542,7 +1543,7 @@ own row for it would only repeat the primer's, and is removed, per
 `design@agent-skills@knowledge-table-home`. A row each project declared lost: once the checker
 fixes the path, a declared one could name no other.
 
-### The routing table lists only what a project adds to an installed skill `##routing-table-shape`
+### The routing table lists only what a project adds to an installed skill or agent `##routing-table-shape`
 
 The project's root `CLAUDE.md` carries one row per installed skill or agent that a project skill or
 agent adds to, naming the additions. The setup skill writes the table, and the
@@ -1621,13 +1622,13 @@ before the merge.
 
 `design@agent-skills@additions-need-real-use` asks of an addition a behaviour seen in real use, or
 asked for by the owner with the lack named. The setup recommendation has no named lack of its own,
-so it is an exception to that rule, argued on delivery: no shipped text told a session to check
+so it is an exception to that rule, argued on delivery: without it, no shipped text tells a session to check
 before a commit, so a command that judges the commit's tree is used only where a project's own
 instructions already ask for it. Its rival, dropping the recommendation until a real session shows
 the lack, keeps the rule and leaves the command undelivered. Its cost is an instruction no observed
 session asked for.
 
-### The skills name `index --staged` and `check --staged` for a commit of part of the working tree `##staged-forms-for-a-partial-commit`
+### The skills name the staged forms of the checker's commands for a commit of part of the working tree `##staged-forms-for-a-partial-commit`
 
 The issue-tracking and planning skills name `index --staged` and `check --staged` for a commit of
 part of the working tree. Both commands are the core's, `design@core@staged-tree-source` and
@@ -1781,12 +1782,11 @@ its context: asked whether the primer reached the subagents, four received retro
 that it could not be observed, or was assumed, as the issue closed in commit 61a9219 lists, read
 with `git show 61a9219^:crates/agent-skills/docs/open-issues/the-primer-question-cannot-be-answered-for-subagents.md`. The skill never states how many questions there are, so adding one changes no count.
 
-### Nothing of a retrospective leaves the machine without the owner's reading and word `##retrospective-destination`
+### A retrospective's files go where the owner directs, and nothing of them leaves the machine before the owner's reading and word `##retrospective-destination`
 
 The owner reads both files verbatim and may edit them. The workflow's file can become a public
 issue on another repository, and a finding written in a session can carry the project's content, so
-nothing of either file leaves before the owner has read it; project content in a public issue was a
-cause of the premortem of the discussion that made this decision. On the owner's word, and where the owner
+nothing of either file leaves before the owner has read it. On the owner's word, and where the owner
 directs, the project's findings become issue entries in its own register, and the workflow's file
 becomes an issue on knowledge-architect's repository, through `gh` or by the file and the address.
 The repository is the workflow's own upstream, the one name of a project the shipped text holds.

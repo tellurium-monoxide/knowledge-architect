@@ -170,15 +170,18 @@ construction. One mute marker for three meanings is the confusion the anchor wor
 **The `@` prefix reused as the root-relative spelling** — lost to
 `design@core@every-path-names-its-anchor`. `live`. It is one character where the project's name is
 several. It loses on shape: the root is a component and already has a spelling under the one
-grammar, so a second one puts two shapes on one meaning — and it spends the prefix that the census
-of the entry "Keeping the `@` prefix as the escape" shows is needed for the generic and escape
-meanings.
+grammar, so a second one puts two shapes on one meaning. Its second reason, that it spends the
+prefix the census of the entry "Keeping the `@` prefix as the escape" shows is needed for the
+generic and escape meanings, no longer holds: `design@core@reserved-anchors` spells those meanings
+with the anchor words `elsewhere` and `*`, so the prefix carries none of them.
 
-**Widening the retired form's suffix set by one entry** — superseded by
-`design@core@every-path-names-its-anchor`, which retires suffix sets with the form that carried
-them. `live`. The measured cost of the set: relocating thaum's nine game-driving suites moved
-every backticked Rust path across five of its knowledge documents and the checker reported none of
-them, because no suffix in the set covered them; the sweep had to be grep-driven.
+**Widening the retired form's suffix set by one entry**, `.rs` — lost to
+`design@core@every-path-names-its-anchor`. `live`. It was the repair a defect proposed: relocating
+thaum's nine game-driving suites moved every backticked Rust path across five of its knowledge
+documents, and the checker reported none of them, because no suffix in the set covered them; the
+sweep had to be grep-driven. It loses because the winner retires the form that carried the set: a
+path reference names its kind and its anchor and is checked whatever its suffix, so no set is left
+to widen and no suffix can be missing from one.
 
 **`syn` as the Rust parser** — lost to `design@core@grammars-not-prefixes`. `live`. Prototyped: it
 parses all 68 files without error, but doc comments survive only as attributes and ordinary comments
@@ -196,7 +199,7 @@ would have resembled was the single cause of the four defects in thaum's tree th
 `design@core@grammars-not-prefixes` lists.
 
 **`--lines` on thaum's interpretation index**, a temporary copy carrying each citation's line
-numbers — lost to `design@core@generated-files-are-pure`. `live`. Refuted by a census over the file's whole
+numbers — lost to `design@core@a-file-register-index-is-rows`. `live`. Refuted by a census over the file's whole
 history rather than by argument: `git log -p -- docs/rules/interpretations/index.md` matches no
 line-numbered citing row, so in every commit the index has ever had, the flag's output was never
 one of them. Every generated index gates on data that does not move when unrelated prose shifts a
@@ -244,8 +247,8 @@ place of refusing a binary built elsewhere — lost to `design@core@a-foreign-bu
 `live`. Reproduced on thaum's repository: a binary built from a second checkout into the first one's
 target directory, run in the first, printed a verdict string changed only in the second, so the
 other checkout's code runs and not only its compiled paths; correct paths would still judge the
-tree with the wrong code. The exemption half of the argument is the entry
-**A manifest row naming the exempt directory**.
+tree with the wrong code. The exemption half of the argument is the entry "A manifest row naming
+the exempt directory".
 
 **A manifest row naming the exempt directory** — lost to `design@core@the-regime-has-no-opt-out`.
 `live`. A row can be pointed at any directory, and the tree declaring it decides what conformance
@@ -259,7 +262,7 @@ there, and the register thaum's rules directory holds could not be named at all.
 tool is about citing, so a recorded thing with no name is the one shape it may not have.
 
 **A `theme` metadata key in place of group subdirectories** — lost to
-`design@core@a-file-register-is-a-directory-of-entries`. `live`. It keeps every entry in one flat
+`design@core@groups-are-subdirectories`. `live`. It keeps every entry in one flat
 directory and regroups by editing one line. It loses on two counts: a subdirectory is visible to
 `ls` and to a listing without parsing any file, and a group that is not part of an entry's id
 makes regrouping a `git mv` that breaks no reference — which a metadata key would also have to
@@ -400,7 +403,7 @@ in a cell is missing from the document outline, which is the index the heading f
 give.
 
 **Table cells kept as a second definition site, behind a per-register manifest key** — lost to
-`design@core@an-entry-is-a-heading-at-the-register-level`. `live`. It would have kept decision
+`design@core@a-slug-elsewhere-defines-nothing`. `live`. It would have kept decision
 tables readable as tables, and left the declared level to govern headings alone. It loses because
 one register would then have two definition sites, and the outline would again fail to list every
 entry of a register that opts in. The one home that held cell definitions converts to headings
