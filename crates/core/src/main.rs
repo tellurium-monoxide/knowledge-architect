@@ -86,4 +86,13 @@ mod tests {
         assert!(Cli::try_parse_from(["klarch", "check", "--only", "references"]).is_err());
         assert!(Cli::try_parse_from(["klarch", "no-such-command"]).is_err());
     }
+
+    /// The claim: `--fix` and `--staged` are refused together while parsing, since `--fix`
+    /// repairs the working tree and `--staged` judges the index.
+    #[test]
+    fn fix_and_staged_are_refused_together() {
+        assert!(Cli::try_parse_from(["klarch", "check", "--staged"]).is_ok());
+        assert!(Cli::try_parse_from(["klarch", "check", "--fix"]).is_ok());
+        assert!(Cli::try_parse_from(["klarch", "check", "--fix", "--staged"]).is_err());
+    }
 }

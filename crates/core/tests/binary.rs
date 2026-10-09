@@ -3371,3 +3371,150 @@ fn a_bare_skill_name_is_silent_under_no_harness() {
     let (out, err, code) = bare.run(&["check"]);
     assert_eq!(code, 0, "{out}{err}");
 }
+
+/// Commit what the sandbox holds, with an identity given on the command line only.
+fn commit_all(sandbox: &Sandbox, subject: &str) {
+    sandbox.stage();
+    sandbox.git(&[
+        "-c",
+        "user.name=fixture",
+        "-c",
+        "user.email=fixture@example.invalid",
+        "commit",
+        "-qm",
+        subject,
+    ]);
+}
+
+/// The line of a report that opens with `prefix`, or `None`.
+fn line_of<'a>(out: &'a str, prefix: &str) -> Option<&'a str> {
+    out.lines().find(|l| l.starts_with(prefix))
+}
+
+/// The claim: `check --staged` judges the tree git's index would commit and nothing of the
+/// working tree, in both directions, and plain `check` judges the working tree and prints no
+/// `tree:` line. With nothing staged it says it judged HEAD's tree (AC2 of the spec of
+/// `check --staged`).
+#[test]
+fn check_staged_judges_the_index_and_not_the_working_tree() {
+    let sandbox = Sandbox::new("staged-verdict", "dirhome");
+    commit_all(&sandbox, "the base");
+    let readme = std::fs::read_to_string(sandbox.path("README.md")).expect("the README");
+    let dangling = format!("{readme}\nIt leans on `design@dirhome@no-such-entry` too.\n");
+
+    // A dangling reference staged, and the working tree restored: the index fails alone.
+    sandbox.write("README.md", &dangling);
+    sandbox.git(&["add", "README.md"]);
+    sandbox.write("README.md", &readme);
+    let (out, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 0, "the working tree passes: {out}{stderr}");
+    assert_eq!(
+        line_of(&out, "tree:"),
+        None,
+        "plain `check` names no tree: {out}"
+    );
+    let (out, stderr, code) = sandbox.run(&["check", "--staged"]);
+    assert_eq!(code, 1, "the staged tree fails: {out}{stderr}");
+    assert!(out.contains("no-such-entry"), "{out}");
+    assert_eq!(line_of(&out, "tree:"), Some("tree: staged"), "{out}");
+
+    // The reverse: the index holds HEAD's README, the working tree the dangling one.
+    sandbox.git(&["add", "README.md"]);
+    sandbox.write("README.md", &dangling);
+    let (out, _, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "the working tree fails: {out}");
+    let (out, stderr, code) = sandbox.run(&["check", "--staged"]);
+    assert_eq!(code, 0, "the staged tree passes: {out}{stderr}");
+    assert_eq!(
+        line_of(&out, "tree:"),
+        Some("tree: staged (nothing staged: the tree of HEAD)"),
+        "nothing is staged, and the run says so: {out}"
+    );
+}
+
+/// The claim: `check --staged` compares the staged installed files against the shipped set, as
+/// `check` does on disk, and prints the `checker source:` line `check` prints.
+#[test]
+fn check_staged_compares_the_staged_installed_files_and_names_the_checker_source() {
+    let sandbox = Sandbox::new("staged-installed", "dirhome");
+    sandbox.serve_claude();
+    let (out, stderr, code) = sandbox.run(&["install-agent-skills"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    commit_all(&sandbox, "the base, installed");
+    let primer = ".claude/knowledge-architect/PRIMER.md";
+    let shipped = std::fs::read_to_string(sandbox.path(primer)).expect("the primer");
+    sandbox.write(
+        primer,
+        &format!("{shipped}\nA line the version does not ship.\n"),
+    );
+    sandbox.git(&["add", primer]);
+    sandbox.write(primer, &shipped);
+
+    let (plain, stderr, code) = sandbox.run(&["check"]);
+    assert_eq!(
+        code, 0,
+        "the working copy is the shipped one: {plain}{stderr}"
+    );
+    let (staged, stderr, code) = sandbox.run(&["check", "--staged"]);
+    assert_eq!(code, 1, "the staged copy is not: {staged}{stderr}");
+    // The one finding is the staged primer's: every other installed file is staged as shipped.
+    assert!(staged.contains("phase 2: 1 finding(s)"), "{staged}");
+    assert!(
+        staged.contains(&format!("{primer}  this installed file differs")),
+        "{staged}"
+    );
+    let checker = line_of(&plain, "checker source:");
+    assert!(checker.is_some(), "{plain}");
+    assert_eq!(line_of(&staged, "checker source:"), checker, "{staged}");
+}
+
+/// The claim: an index holding an unmerged path is refused with exit 2, naming the path once.
+#[test]
+fn check_staged_refuses_an_unmerged_index() {
+    let sandbox = Sandbox::new("staged-unmerged", "dirhome");
+    commit_all(&sandbox, "the base");
+    let readme = std::fs::read_to_string(sandbox.path("README.md")).expect("the README");
+    sandbox.git(&["checkout", "-qb", "side"]);
+    sandbox.write("README.md", &format!("{readme}\nSide.\n"));
+    commit_all(&sandbox, "side");
+    sandbox.git(&["checkout", "-q", "-"]);
+    sandbox.write("README.md", &format!("{readme}\nMain.\n"));
+    commit_all(&sandbox, "main");
+    // The merge conflicts and exits 1; the index it leaves is the subject.
+    let _ = Command::new("git")
+        .args(["merge", "-q", "side"])
+        .current_dir(sandbox.path(""))
+        .output();
+    let (out, stderr, code) = sandbox.run(&["check", "--staged"]);
+    assert_eq!(code, 2, "{out}{stderr}");
+    assert!(
+        stderr.contains("the index holds unmerged paths: README.md\n")
+            || stderr
+                .trim_end()
+                .ends_with("the index holds unmerged paths: README.md"),
+        "{stderr}"
+    );
+}
+
+/// The claim: `check --staged` reports a file git both tracks and ignores, as `check` does,
+/// since the question is about the index.
+#[test]
+fn check_staged_reports_a_tracked_file_the_ignore_rules_cover() {
+    let sandbox = Sandbox::new("staged-tracked-ignored", "dirhome");
+    // Staged first, then covered: the add finds the file already in the index.
+    sandbox.write("notes.txt", "kept\n");
+    sandbox.stage();
+    sandbox.write(".gitignore", "notes.txt\n");
+    sandbox.git(&["add", ".gitignore"]);
+    let (plain, _, code) = sandbox.run(&["check"]);
+    assert_eq!(code, 1, "{plain}");
+    let (staged, _, code) = sandbox.run(&["check", "--staged"]);
+    assert_eq!(code, 1, "{staged}");
+    assert!(staged.contains("notes.txt"), "{staged}");
+    let finding = |out: &str| {
+        out.lines()
+            .find(|l| l.starts_with("notes.txt"))
+            .map(str::to_string)
+    };
+    assert_eq!(finding(&staged), finding(&plain), "{plain}\n{staged}");
+}

@@ -94,6 +94,46 @@ pub struct Model {
     installed: Vec<Document>,
 }
 
+/// The checker's directories as the summary block names them: project-relative where one sits
+/// inside the canonical root, as given or canonical otherwise.
+fn named_checker_sources(
+    canonical_root: &Path,
+    checkers: &[(&Path, Option<PathBuf>)],
+) -> Vec<PathBuf> {
+    checkers
+        .iter()
+        .map(|(given, canonical)| {
+            let c = canonical.clone().unwrap_or_else(|| given.to_path_buf());
+            c.strip_prefix(canonical_root)
+                .map(Path::to_path_buf)
+                .unwrap_or(c)
+        })
+        .collect()
+}
+
+/// The checker's directories for a model assembled from a snapshot: those inside the project,
+/// project-relative, which [`Model::from_documents_under`] matches a document's path against,
+/// and every one as [`Model::build`] names it in the summary block, so `check --staged` prints
+/// the same `checker source:` line as `check`. A directory outside the project, such as the
+/// registry copy of a published binary's source, holds no file of the project's tree, so it
+/// matches nothing and is still named.
+pub(crate) fn snapshot_checker_dirs(
+    root: &Path,
+    checker: &[&Path],
+) -> std::io::Result<(Vec<PathBuf>, Vec<PathBuf>)> {
+    let canonical_root = root.canonicalize()?;
+    let checkers: Vec<(&Path, Option<PathBuf>)> = checker
+        .iter()
+        .map(|p| (*p, p.canonicalize().ok()))
+        .collect();
+    let inside = checkers
+        .iter()
+        .filter_map(|(_, c)| c.as_ref()?.strip_prefix(&canonical_root).ok())
+        .map(Path::to_path_buf)
+        .collect();
+    Ok((inside, named_checker_sources(&canonical_root, &checkers)))
+}
+
 impl Model {
     /// Read and scan a project, as its own manifest declares it.
     ///
@@ -200,15 +240,7 @@ impl Model {
         }
         // Named even when it does not exist: the summary line is how a binary compiled from
         // a directory that is gone says so, and a missing line is the silent shape.
-        let checker_sources = checkers
-            .into_iter()
-            .map(|(given, canonical)| {
-                let c = canonical.unwrap_or_else(|| given.to_path_buf());
-                c.strip_prefix(&canonical_root)
-                    .map(Path::to_path_buf)
-                    .unwrap_or(c)
-            })
-            .collect();
+        let checker_sources = named_checker_sources(&canonical_root, &checkers);
         let installed = files
             .iter()
             .filter(|f| manifest.owned(f) && f.extension().is_some_and(|e| e == "md"))

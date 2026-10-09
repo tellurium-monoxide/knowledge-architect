@@ -119,7 +119,9 @@
 //!    the paths it declares and the files it generates. A table it claims that the manifest
 //!    does not hold, and a table no extension claims, are reported in phase 1.
 //! 2. Once the first three phases have found nothing, `prepare` reads what its checks need for
-//!    one tree, an [`extension::Tree`]: the working tree, or one commit's tree under `commits`.
+//!    one tree, an [`extension::Tree`]: the working tree, or a snapshot read from git objects,
+//!    which is one commit's tree under `commits` and the tree git's index would commit under
+//!    `check --staged`.
 //!    It returns an [`extension::Prepared`].
 //! 3. `Prepared::check` runs its checks in the last phase. It reads the model and the
 //!    [`extension::Inputs`] the core gathered, and returns an [`extension::ExtensionReport`].

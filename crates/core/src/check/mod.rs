@@ -197,7 +197,9 @@ pub struct Inputs<'a> {
     /// touch the filesystem, and this one is outside the walk because it is not markdown.
     pub configs: &'a HashMap<PathBuf, String>,
     /// Every path that exists in the project, files and directories, project-relative. One
-    /// listing by the caller answers every question a check has about what is there.
+    /// listing by the caller answers every question a check has about what is there. It is the
+    /// listing of the tree being judged: the working tree under `check`, and a snapshot's
+    /// listing under `check --staged` and `commits`.
     pub present: &'a HashSet<PathBuf>,
     /// The subset of `present` that is directories, so a check can assert a path's kind —
     /// a required document is a file, and a reference's trailing slash claims a directory.

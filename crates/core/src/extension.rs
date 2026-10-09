@@ -28,9 +28,12 @@ pub use crate::survey::Outside;
 /// What a tree is prepared for.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Purpose {
-    /// `check` over the checkout: every check of the extension.
+    /// `check`: every check of the extension. Over [`Tree::Checkout`] that is the working
+    /// tree. Over [`Tree::Snapshot`] it is `check --staged`, the tree git's index would commit,
+    /// and it asks for every check the snapshot can answer: one whose subject is filesystem
+    /// state has none there, and is listed as not run.
     Check,
-    /// One commit's tree under `commits`. A check whose subject is filesystem state has no
+    /// One commit's tree under `commits`, over [`Tree::Snapshot`]. A check whose subject is filesystem state has no
     /// subject here, per `design@core@a-commit-message-is-a-document`, and a release the
     /// tree cannot supply is a finding of the tree rather than a could-not-run.
     Commit,
@@ -39,16 +42,31 @@ pub enum Purpose {
 }
 
 /// The tree being judged.
+///
+/// Exhaustive, so a new kind of tree makes every extension say how it reads it, per
+/// `design@core@ne-minimal`. The tree git's index would commit is not a new kind: it is a
+/// [`Snapshot`], read from git objects like a commit's, and [`Snapshot::revision`] says which.
 pub enum Tree<'a> {
     /// The working tree. An extension may read the filesystem under this root: a subject such
     /// as a vendored corpus is filesystem state, per `design@core@model-then-checks`.
     Checkout(&'a Path),
-    /// One commit's tree, read from git objects only.
-    Commit(&'a CommitTree),
+    /// A tree read from git objects only: one commit's, under `commits`, or the one git's index
+    /// would commit, under `check --staged`. Nothing under the working directory is its
+    /// content.
+    Snapshot(&'a Snapshot),
 }
 
-/// One commit's tree, as an extension may read it.
-pub struct CommitTree {
+/// Which tree a [`Snapshot`] is.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Revision<'a> {
+    /// The tree of the commit this names.
+    Commit(&'a str),
+    /// The tree `git commit` would record now: HEAD's, with the index's changes.
+    Index,
+}
+
+/// A tree read from git objects, as an extension may read it.
+pub struct Snapshot {
     root: PathBuf,
     /// The commit read, or `None` for the tree git's index would commit.
     sha: Option<String>,
@@ -57,14 +75,14 @@ pub struct CommitTree {
     blobs: BTreeMap<PathBuf, String>,
 }
 
-impl CommitTree {
+impl Snapshot {
     pub(crate) fn new(
         root: &Path,
         source: crate::git::Source,
         listing: Vec<PathBuf>,
         blobs: BTreeMap<PathBuf, String>,
     ) -> Self {
-        CommitTree {
+        Snapshot {
             root: root.to_path_buf(),
             sha: match source {
                 crate::git::Source::Commit(sha) => Some(sha.to_string()),
@@ -72,6 +90,14 @@ impl CommitTree {
             },
             listing,
             blobs,
+        }
+    }
+
+    /// Which tree this is.
+    pub fn revision(&self) -> Revision<'_> {
+        match &self.sha {
+            Some(sha) => Revision::Commit(sha),
+            None => Revision::Index,
         }
     }
 
@@ -107,7 +133,7 @@ impl CommitTree {
         Ok(out)
     }
 
-    /// The name of the blob at a path, which stays the same across commits that hold the same
+    /// The name of the blob at a path, which stays the same across snapshots that hold the same
     /// bytes. An extension keys what it parsed from a blob by it, so a parse is paid once per
     /// content rather than once per commit.
     pub fn object_id(&self, rel: &Path) -> Option<String> {

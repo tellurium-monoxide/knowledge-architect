@@ -46,7 +46,7 @@ impl Extension for FirstHeading {
         // Exhaustive on purpose: a new tree kind must make an extension say how it reads it.
         match tree {
             Tree::Checkout(_) => {}
-            Tree::Commit(_) => return Err("this extension reads the checkout only".into()),
+            Tree::Snapshot(_) => return Err("this extension reads the checkout only".into()),
         }
         assert_eq!(purpose, Purpose::Check);
         Ok(Box::new(Prepared1))
@@ -292,7 +292,7 @@ fn check_fix_writes_an_extensions_generated_file_and_the_run_passes() {
     let mut extensions: Vec<Box<dyn Extension>> = vec![Box::new(Listing)];
     let check = |fix: bool, extensions: &mut Vec<Box<dyn Extension>>| {
         cli::run(
-            cli::Command::Check(cli::CheckArgs { fix }),
+            cli::Command::Check(cli::CheckArgs { fix, staged: false }),
             &manifest,
             &[],
             extensions,
@@ -332,7 +332,10 @@ fn check_fix_after_a_write_never_reports_could_not_run() {
     let manifest = Manifest::load(&root).expect("the copy's manifest");
     let mut extensions: Vec<Box<dyn Extension>> = vec![Box::new(ListingThenFails)];
     let outcome = cli::run(
-        cli::Command::Check(cli::CheckArgs { fix: true }),
+        cli::Command::Check(cli::CheckArgs {
+            fix: true,
+            staged: false,
+        }),
         &manifest,
         &[],
         &mut extensions,
@@ -419,7 +422,10 @@ fn check_fix_refuses_a_destination_whose_directory_is_missing() {
     let manifest = Manifest::load(&root).expect("the copy's manifest");
     let mut extensions: Vec<Box<dyn Extension>> = vec![Box::new(ListingNowhere)];
     let outcome = cli::run(
-        cli::Command::Check(cli::CheckArgs { fix: true }),
+        cli::Command::Check(cli::CheckArgs {
+            fix: true,
+            staged: false,
+        }),
         &manifest,
         &[],
         &mut extensions,

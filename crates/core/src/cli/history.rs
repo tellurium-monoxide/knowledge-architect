@@ -17,7 +17,7 @@ use std::process::ExitCode;
 
 use crate::check::{self, Inputs};
 use crate::entity::{Anchors, Entities};
-use crate::extension::{CommitTree, Extension, Prepared, Purpose, Tree};
+use crate::extension::{Extension, Prepared, Purpose, Snapshot, Tree};
 use crate::git::Source;
 use crate::manifest::MANIFEST_NAME;
 use crate::survey::Survey;
@@ -57,6 +57,17 @@ struct Assembly {
     /// The phase the tree's run stopped in, where it stopped before the last: its entity
     /// table is then incomplete, and a message judged against it is judged against nothing.
     stopped: Option<check::Phase>,
+    /// Whether the installed files are compared against `shipped`: under `check --staged`,
+    /// never under `commits`.
+    compare_installed: bool,
+    /// The agent files the running binary ships; empty where nothing is compared.
+    shipped: Vec<(PathBuf, String)>,
+    /// The whole report of a judged tree, or of its stop, for a caller that prints it as `check`
+    /// does; `None` for a tree assembled for its references alone.
+    report: Option<check::Report>,
+    /// The snapshot the extensions were prepared over, kept for a caller that asks them for
+    /// their generated files; `None` where no extension was prepared.
+    snapshot: Option<Snapshot>,
 }
 
 impl Assembly {
@@ -78,9 +89,14 @@ impl Assembly {
             // A commit's installed files are not compared: the running binary ships its own
             // version's text, and an older commit's installed set would fail against it with no
             // repair a commit in history can take. `check` on the working tree enforces them,
-            // per `design@core@owned-namespace-check`.
-            installed: &[],
-            shipped: &[],
+            // per `design@core@owned-namespace-check`, and so does `check --staged`, whose
+            // snapshot is the next commit, judged as a clean checkout of it would be.
+            installed: if self.compare_installed {
+                &self.survey.installed
+            } else {
+                &[]
+            },
+            shipped: &self.shipped,
         }
     }
 }
@@ -297,11 +313,15 @@ fn read_tree(
     }
     // The installed copies define the installed entities whatever the walk rows say, as
     // `Model::build` reads them off the disk, so a skip over the installer's namespace leaves
-    // `check` and `commits` judging one tree alike.
+    // `check` and `commits` judging one tree alike. The index's snapshot compares every
+    // installed file's bytes, as `check` does on disk, so it reads every one, skipped or not.
     wanted.extend(
         files
             .iter()
-            .filter(|rel| manifest.owned(rel) && rel.extension().is_some_and(|e| e == "md"))
+            .filter(|rel| {
+                manifest.owned(rel)
+                    && (source == Source::Index || rel.extension().is_some_and(|e| e == "md"))
+            })
             .cloned(),
     );
     wanted.sort();
@@ -344,17 +364,22 @@ enum Depth {
 
 /// Assemble one tree into a model, and judge it as far as `depth` asks.
 ///
-/// **An extension is prepared for a commit, not for a checkout.** A check whose subject is
-/// filesystem state has no subject in a commit's tree, and one that would read the whole
-/// archive at every step of the range decides nothing about whether a message's references
-/// resolve, which is the question this assembly exists to answer; the extension leaves both
-/// out, per `design@core@a-commit-message-is-a-document`.
+/// **An extension is prepared for a snapshot, not for a checkout**, with `purpose`. A check
+/// whose subject is filesystem state has no subject in a snapshot, and one that would read the
+/// whole archive at every step of the range decides nothing about whether a message's
+/// references resolve, which is the question a commit's assembly exists to answer; the
+/// extension leaves both out, per `design@core@a-commit-message-is-a-document`.
+///
+/// **The index's snapshot is judged as `check` would judge a clean checkout of it**: its
+/// installed files are compared against the running binary's shipped set, and the files git
+/// both tracks and ignores are reported, since the index is what that question is about.
 fn commit_tree(
     root: &Path,
     source: Source,
     checker: &[&Path],
     extensions: &mut [Box<dyn Extension>],
     depth: Depth,
+    purpose: Purpose,
 ) -> Result<Assembly, Unloadable> {
     let read = read_tree(root, source, &[], extensions)?;
     let manifest = read.manifest;
@@ -373,6 +398,15 @@ fn commit_tree(
         } else {
             Vec::new()
         };
+        let report = (depth == Depth::Judged).then(|| {
+            check::Report::stopped(
+                check::Stop {
+                    phase: check::Phase::Resolution,
+                    findings: trouble.clone(),
+                },
+                &model,
+            )
+        });
         return Ok(Assembly {
             manifest,
             model,
@@ -384,6 +418,10 @@ fn commit_tree(
             tracked_and_ignored: Vec::new(),
             trouble,
             stopped: Some(check::Phase::Resolution),
+            compare_installed: false,
+            shipped: Vec::new(),
+            report,
+            snapshot: None,
         });
     }
     // The commit's own listing places its milestone anchors, so a message is judged against
@@ -491,6 +529,23 @@ fn commit_tree(
     let queries = check::references::ignore_queries(&model, &anchors);
     let ignored = crate::git::ignored(root, &queries)
         .map_err(|e| Unloadable(format!("its ignore rules could not be asked: {e}")))?;
+    let staged = source == Source::Index;
+    // A commit holds no index, so nothing is both tracked and ignored in a tree; the index's
+    // snapshot is the index, and the question is asked of it as `check` asks it.
+    let tracked_and_ignored = if staged {
+        crate::git::tracked_and_ignored(root).map_err(|e| {
+            Unloadable(format!(
+                "its tracked and ignored files could not be listed: {e}"
+            ))
+        })?
+    } else {
+        Vec::new()
+    };
+    let shipped = if staged {
+        crate::agents::shipped(&manifest)
+    } else {
+        Vec::new()
+    };
 
     let mut assembly = Assembly {
         manifest,
@@ -500,52 +555,97 @@ fn commit_tree(
         configs,
         survey,
         ignored,
-        // A commit holds no index, so nothing is both tracked and ignored in a tree.
-        tracked_and_ignored: Vec::new(),
+        tracked_and_ignored,
         trouble: Vec::new(),
         stopped: None,
+        compare_installed: staged,
+        shipped,
+        report: None,
+        snapshot: None,
     };
     if !judging {
         return Ok(assembly);
     }
     // The phases, as `check` runs them: a tree that stops in one of the first three carries
     // that phase's findings as its trouble and is judged no further.
-    assembly.trouble =
-        match check::foundation(&assembly.model, &assembly.manifest, &assembly.inputs()) {
-            Err(stop) => {
-                assembly.stopped = Some(stop.phase);
-                stop.findings
+    let report = match check::foundation(&assembly.model, &assembly.manifest, &assembly.inputs()) {
+        Err(stop) => {
+            assembly.stopped = Some(stop.phase);
+            check::Report::stopped(stop, &assembly.model)
+        }
+        Ok(()) => {
+            // The foundation passed, so each extension reads what it needs from this
+            // snapshot's git objects now, and a tree that stopped earlier read nothing.
+            let snapshot = Snapshot::new(root, source, read.listing, blobs);
+            for extension in extensions.iter_mut() {
+                let prepared = extension
+                    .prepare(
+                        &assembly.manifest,
+                        &assembly.model,
+                        Tree::Snapshot(&snapshot),
+                        purpose,
+                    )
+                    .map_err(Unloadable)?;
+                assembly.prepared.push((extension.checks(), prepared));
             }
-            Ok(()) => {
-                // The foundation passed, so each extension reads what it needs from this
-                // commit's git objects now, and a tree that stopped earlier read nothing.
-                let commit = CommitTree::new(root, source, read.listing, blobs);
-                for extension in extensions.iter_mut() {
-                    let prepared = extension
-                        .prepare(
-                            &assembly.manifest,
-                            &assembly.model,
-                            Tree::Commit(&commit),
-                            Purpose::Commit,
-                        )
-                        .map_err(Unloadable)?;
-                    assembly.prepared.push((extension.checks(), prepared));
-                }
-                let with: Vec<(&[&'static str], &dyn Prepared)> = assembly
-                    .prepared
-                    .iter()
-                    .map(|(c, p)| (*c, p.as_ref()))
-                    .collect();
-                check::run_with(
-                    &assembly.model,
-                    &assembly.manifest,
-                    &assembly.inputs(),
-                    &with,
-                )
-                .findings
-            }
-        };
+            assembly.snapshot = Some(snapshot);
+            let with: Vec<(&[&'static str], &dyn Prepared)> = assembly
+                .prepared
+                .iter()
+                .map(|(c, p)| (*c, p.as_ref()))
+                .collect();
+            check::run_with(
+                &assembly.model,
+                &assembly.manifest,
+                &assembly.inputs(),
+                &with,
+            )
+        }
+    };
+    assembly.trouble = report.findings.clone();
+    assembly.report = Some(report);
     Ok(assembly)
+}
+
+/// `check --staged`: every check, over the tree git's index would commit, printed as `check`
+/// prints, with a `tree:` line saying which tree was walked.
+///
+/// A staged tree that cannot be assembled, an unmerged index among them, is a could-not-run.
+pub(super) fn check_staged(
+    manifest: &Manifest,
+    checker: &[&Path],
+    extensions: &mut [Box<dyn Extension>],
+) -> Result<ExitCode, String> {
+    let root = manifest.root();
+    let (inside, named) = crate::model::snapshot_checker_dirs(root, checker)
+        .map_err(|e| format!("cannot read the project root: {e}"))?;
+    let inside: Vec<&Path> = inside.iter().map(PathBuf::as_path).collect();
+    let assembly = commit_tree(
+        root,
+        Source::Index,
+        &inside,
+        extensions,
+        Depth::Judged,
+        Purpose::Check,
+    )
+    .map_err(|Unloadable(why)| format!("the staged tree cannot be judged: {why}"))?;
+    let mut report = assembly
+        .report
+        .expect("a tree assembled at `Depth::Judged` carries its report");
+    report.structure.checker_sources = named;
+    // A session that runs this before staging anything judges the previous commit's tree,
+    // and is told so rather than reading a pass as a verdict on its edits.
+    let tree = if crate::git::index_differs_from_head(root).map_err(|e| e.to_string())? {
+        "staged"
+    } else {
+        "staged (nothing staged: the tree of HEAD)"
+    };
+    super::print_report(&report, &assembly.model, Some(tree));
+    Ok(if report.failed() {
+        ExitCode::FAILURE
+    } else {
+        ExitCode::SUCCESS
+    })
 }
 
 /// Every generated file whose committed bytes a check compares against: each file an
@@ -626,6 +726,7 @@ pub(super) fn commits(
             &checker_rel,
             extensions,
             Depth::Judged,
+            Purpose::Commit,
         );
         let tree = match assembled {
             Ok(tree) => tree,
@@ -717,6 +818,7 @@ pub(super) fn commits(
                     &checker_rel,
                     extensions,
                     Depth::References,
+                    Purpose::Commit,
                 )
                 .ok()
                 // A parent whose phase 1 fails was not read, and serves as no parent.
