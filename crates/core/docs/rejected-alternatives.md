@@ -483,3 +483,36 @@ already carry the dependency while few plans are open at once, and because item 
 plans would force a design revisit of every citing plan, item by item, at the moment a plan is
 retired, a moment the owner judged might not be the best for it.
 
+
+**`check --commit <rev>`, judging a given commit's tree with `check`** — lost to
+`design@core@staged-tree-source`. `live`. `commits <rev>~1..<rev>`, or `commits <rev>` for a root
+commit, judges that tree with the tip checker. With `check`'s rules, which compare the installed
+files where `commits` does not, it gives one tree a second verdict; with `commits`'s rules it is
+the tree half of `commits` under a second name.
+
+**The staged tree as `git ls-files -s` lists it** — lost to `design@core@staged-tree-source`.
+`live`. It lists an entry staged with `git add -N` at stage 0 with the empty blob, the line a
+staged empty file also gives, and `git commit` records no such entry. Measured on git 2.43.0:
+`ls-files -s` listed both, `git diff --cached` and `git write-tree` the empty file alone.
+
+**A third `extension::Tree` variant for the index** — lost to
+`design@core@an-extension-reads-a-snapshot`. `live`. The index is read through the same git
+objects as a commit, so the third arm reads what the second reads. It is what
+`design@core@ne-minimal` would ask of a new tree, and the winner records the cost of not taking
+it: an extension's commit-mode handling runs under `check --staged` without the extension deciding
+anything.
+
+**`index --staged` writing the staged rows into the working-tree file** — lost to
+`design@core@index-staged-write`. `live`. After it, plain `check` fails, since the working-tree
+file no longer matches the working tree, and `check --staged` fails until the file is staged. The
+owner called the winner "not definitive".
+
+**`check --fix` refusing whenever the tree holds both staged and unstaged changes** — lost to
+`design@core@fix-refusal-mixed-state`. `live`. It fires where the unstaged changes touch no input
+of a generated file, and the fix is then correct for both trees. `--fix` cannot lose unstaged
+content, since it writes only generated and installed files; the hazard is the generated files of
+the wrong tree reaching a partial commit, which the winner's narrower condition names.
+
+**`check --fix --staged`, running `index --staged` then `check --staged`** — lost to
+`design@core@fix-refusal-mixed-state`. `live`. It ties every fix of `--fix` to a write into git's
+index, and later quick fixes may not be compatible with that, the owner's reason.
