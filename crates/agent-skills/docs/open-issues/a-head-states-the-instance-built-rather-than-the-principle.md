@@ -19,8 +19,8 @@ installer's namespace or of the generated list". Its argument states the princip
 makes a choice, or touches git or a hand-written file, would rewrite what a writer meant." The
 second clause of the title is the list of the two fixes that existed when it was written. A fix that
 rewrites the spelling of a reference, and not its meaning, meets the principle and fails the
-clause, so the design discussion of `spec@plans@path-quickfixes` had to reverse the head to admit
-it.
+clause, so the design discussion of `spec@plans@path-quickfixes` plans the reversal of the head to
+admit it.
 
 **The owner's words**, in that discussion: "I think the current design heads are overstated on the
 admissible shape, I suspect they were written as a description of what was done and not as a
