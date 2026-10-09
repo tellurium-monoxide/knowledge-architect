@@ -282,6 +282,11 @@ fn read_tree(
         .map(|e| e.rel)
         .collect();
     let manifest_rel = PathBuf::from(MANIFEST_NAME);
+    // Asked of the listing first: git names a blob for a path the snapshot does not hold, the
+    // empty blob for an intent-to-add entry, and a manifest read from it would be an empty one.
+    if !files.contains(&manifest_rel) {
+        return Err(Unloadable(format!("its tree holds no {MANIFEST_NAME}")));
+    }
     let declaration = crate::git::blobs(root, source, std::slice::from_ref(&manifest_rel))
         .map_err(|e| Unloadable(format!("its {MANIFEST_NAME} could not be read: {e}")))?;
     let Some(text) = declaration.get(&manifest_rel) else {
@@ -1100,6 +1105,66 @@ fn verdict(n: usize) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A repository under the temporary directory, configured to commit, holding a manifest
+    /// committed and, as intent-to-add, a file nothing commits.
+    fn repository_with_an_intent_to_add_entry(tag: &str) -> PathBuf {
+        let repo = std::env::temp_dir().join(format!(
+            "knowledge-history-{tag}-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
+        let _ = std::fs::remove_dir_all(&repo);
+        std::fs::create_dir_all(&repo).expect("a repository directory");
+        let run = |args: &[&str]| {
+            crate::git::git(&repo).args(args).output().expect("git");
+        };
+        run(&["init", "-q"]);
+        run(&["config", "user.name", "fixture"]);
+        run(&["config", "user.email", "fixture@example.invalid"]);
+        std::fs::write(repo.join(MANIFEST_NAME), "[project]\n").expect("a manifest");
+        std::fs::write(repo.join("ita.md"), "# Intent to add\n").expect("a file");
+        run(&["add", MANIFEST_NAME]);
+        run(&["commit", "-qm", "base"]);
+        run(&["add", "-N", "ita.md"]);
+        repo
+    }
+
+    /// The claim: a manifest the index holds only as intent-to-add is no manifest of the staged
+    /// tree, since a commit would record none, and the refusal says so rather than reading the
+    /// empty blob git names for it.
+    #[test]
+    fn an_intent_to_add_manifest_is_no_manifest_of_the_staged_tree() {
+        let repo = repository_with_an_intent_to_add_entry("ita-manifest");
+        let run = |args: &[&str]| {
+            crate::git::git(&repo).args(args).output().expect("git");
+        };
+        run(&["rm", "-q", "--cached", MANIFEST_NAME]);
+        run(&["add", "-N", MANIFEST_NAME]);
+        let refused = read_tree(&repo, Source::Index, &[], &mut [])
+            .err()
+            .expect("no manifest is staged")
+            .0;
+        assert_eq!(refused, format!("its tree holds no {MANIFEST_NAME}"));
+        let _ = std::fs::remove_dir_all(&repo);
+    }
+
+    /// The claim: a snapshot names a blob only for a path it holds; an intent-to-add entry, which
+    /// git names with the empty blob, is not one.
+    #[test]
+    fn a_snapshot_names_no_blob_for_a_path_it_does_not_hold() {
+        let repo = repository_with_an_intent_to_add_entry("ita-object");
+        let listing: Vec<PathBuf> = crate::git::snapshot_entries(&repo, Source::Index)
+            .expect("the snapshot")
+            .into_iter()
+            .map(|e| e.rel)
+            .collect();
+        let snapshot = Snapshot::new(&repo, Source::Index, listing, Default::default());
+        assert!(snapshot.object_id(Path::new(MANIFEST_NAME)).is_some());
+        assert!(!snapshot.holds(Path::new("ita.md")));
+        assert_eq!(snapshot.object_id(Path::new("ita.md")), None);
+        let _ = std::fs::remove_dir_all(&repo);
+    }
 
     /// The staged assembly refuses an index holding an unmerged path, naming each path once,
     /// before it reads anything else: a conflicted merge has no tree to commit.
