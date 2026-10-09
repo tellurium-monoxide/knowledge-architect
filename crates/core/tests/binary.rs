@@ -3518,3 +3518,142 @@ fn check_staged_reports_a_tracked_file_the_ignore_rules_cover() {
     };
     assert_eq!(finding(&staged), finding(&plain), "{plain}\n{staged}");
 }
+
+/// Every file of the sandbox but git's own, with its bytes.
+fn working_files(sandbox: &Sandbox) -> std::collections::BTreeMap<PathBuf, Vec<u8>> {
+    fn walk(dir: &Path, root: &Path, out: &mut std::collections::BTreeMap<PathBuf, Vec<u8>>) {
+        for entry in std::fs::read_dir(dir).expect("a directory") {
+            let path = entry.expect("an entry").path();
+            if path.file_name().is_some_and(|n| n == ".git") {
+                continue;
+            }
+            if path.is_dir() {
+                walk(&path, root, out);
+            } else {
+                let rel = path
+                    .strip_prefix(root)
+                    .expect("under the root")
+                    .to_path_buf();
+                out.insert(rel, std::fs::read(&path).expect("a file"));
+            }
+        }
+    }
+    let mut out = std::collections::BTreeMap::new();
+    walk(&sandbox.path(""), &sandbox.path(""), &mut out);
+    out
+}
+
+/// What `git ls-files -s` lists in the sandbox, one entry per line.
+fn index_lines(sandbox: &Sandbox) -> Vec<String> {
+    let out = Command::new("git")
+        .args(["ls-files", "-s"])
+        .current_dir(sandbox.path(""))
+        .output()
+        .expect("git runs");
+    String::from_utf8_lossy(&out.stdout)
+        .lines()
+        .map(str::to_string)
+        .collect()
+}
+
+/// The lines of `after` that `before` does not hold.
+fn changed_lines(before: &[String], after: &[String]) -> Vec<String> {
+    after
+        .iter()
+        .filter(|l| !before.contains(l))
+        .cloned()
+        .collect()
+}
+
+const STAGED_ENTRY: &str = "---\nkind: todo\n---\n# An entry staged for this commit\n\n## Summary\n\nStaged.\n\n## Details\n\n### What\n\nStaged.\n\n### Why it matters\n\nIt is.\n\n### What would close it\n\nA commit.\n";
+const WORKING_ENTRY: &str = "---\nkind: todo\n---\n# An entry left for a later commit\n\n## Summary\n\nUnstaged.\n\n## Details\n\n### What\n\nUnstaged.\n\n### Why it matters\n\nIt is.\n\n### What would close it\n\nA later commit.\n";
+
+/// AC3 of the spec of `check --staged`: `index --staged` changes exactly the staged entries of
+/// the generated files whose staged bytes differ, a missing one included, and no working-tree
+/// file. After it the staged tree passes, while the working tree still needs its own index.
+#[test]
+fn index_staged_stages_the_generated_files_and_touches_no_working_file() {
+    let sandbox = Sandbox::new("index-staged", "dirhome");
+    commit_all(&sandbox, "the base");
+    sandbox.write("docs/open-issues/staged-entry.md", STAGED_ENTRY);
+    sandbox.git(&["add", "docs/open-issues/staged-entry.md"]);
+    sandbox.write("docs/open-issues/working-entry.md", WORKING_ENTRY);
+    // The specs index leaves the index, so it is a missing generated file of the staged tree.
+    sandbox.git(&["rm", "-q", "--cached", "docs/plans/specs/index.md"]);
+    let (out, _, code) = sandbox.run(&["check", "--staged"]);
+    assert_eq!(code, 1, "the staged tree needs its index: {out}");
+
+    let files_before = working_files(&sandbox);
+    let index_before = index_lines(&sandbox);
+    let (out, stderr, code) = sandbox.run(&["index", "--staged"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    assert!(out.contains("docs/open-issues/index.md"), "{out}");
+    assert!(out.contains("staged"), "{out}");
+    let changed: Vec<String> = changed_lines(&index_before, &index_lines(&sandbox))
+        .into_iter()
+        .map(|l| l.split('\t').nth(1).unwrap_or_default().to_string())
+        .collect();
+    assert_eq!(
+        changed,
+        vec![
+            "docs/open-issues/index.md".to_string(),
+            "docs/plans/specs/index.md".to_string()
+        ],
+        "exactly the generated files whose staged bytes differed"
+    );
+    assert_eq!(
+        working_files(&sandbox),
+        files_before,
+        "no working-tree file changes"
+    );
+    let (out, stderr, code) = sandbox.run(&["check", "--staged"]);
+    assert_eq!(code, 0, "the staged tree passes: {out}{stderr}");
+    let (out, stderr, code) = sandbox.run(&["index", "--staged"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    assert!(
+        !out.contains(" staged"),
+        "a second run stages nothing: {out}"
+    );
+}
+
+/// AC3: `index --staged` writes nothing, exit 2, when phases 1 to 3 of the staged tree find
+/// anything, and when git's index lock is held.
+#[test]
+fn index_staged_refuses_with_the_index_unchanged() {
+    let sandbox = Sandbox::new("index-staged-refused", "dirhome");
+    commit_all(&sandbox, "the base");
+    sandbox.write("docs/open-issues/staged-entry.md", STAGED_ENTRY);
+    sandbox.git(&["add", "docs/open-issues/staged-entry.md"]);
+
+    let lock = sandbox.path(".git/index.lock");
+    std::fs::write(&lock, "").expect("a held lock");
+    let before = index_lines(&sandbox);
+    let (out, stderr, code) = sandbox.run(&["index", "--staged"]);
+    assert_eq!(code, 2, "{out}{stderr}");
+    assert!(stderr.contains("Nothing was staged."), "{stderr}");
+    std::fs::remove_file(&lock).expect("the lock released");
+    assert_eq!(index_lines(&sandbox), before, "the index is as it was");
+
+    // A gitlink staged in the index stops the staged tree in phase 2, per
+    // `design@core@git-supplies-the-walk`.
+    let head = Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .current_dir(sandbox.path(""))
+        .output()
+        .expect("git runs");
+    let head = String::from_utf8_lossy(&head.stdout).trim().to_string();
+    sandbox.git(&[
+        "update-index",
+        "--add",
+        "--cacheinfo",
+        &format!("160000,{head},docs/sub"),
+    ]);
+    let before = index_lines(&sandbox);
+    let (out, stderr, code) = sandbox.run(&["index", "--staged"]);
+    assert_eq!(code, 2, "{out}{stderr}");
+    assert!(
+        stderr.contains("the staged model is incomplete"),
+        "{stderr}"
+    );
+    assert_eq!(index_lines(&sandbox), before, "the index is as it was");
+}
