@@ -96,6 +96,15 @@ Component, each entry a level-two heading carrying a slug. A decision that leans
 
 If none of these fits, **ask the owner before writing it anywhere.**
 
+## A decision approved with no argument {{slug:unargued-approval}}
+
+**A decision approved with no argument is argued before it is recorded.** Before a head is written
+from an approval that no argument for the decision, no rival and no cost stand behind, such as a
+default approved in a batch, search for the arguments for and against it, its costs and its rivals,
+and record what the search finds. When the search leaves the rivals equal, put the fork to the
+owner as a tie. The owner's choice is then the head's ground, as a decision that came from the
+owner, per `primer@design-heads`.
+
 ## Three homes, split by function {{slug:three-homes}}
 
 | what | where | why there |
