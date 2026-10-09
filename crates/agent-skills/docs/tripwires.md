@@ -248,3 +248,37 @@ restatement had been replaced by a pointer under the decision.
 **Response:** reopen `design@agent-skills@restatement-size-test`, with the rule it replaced, a
 directive restated wherever it is delivered, among the candidates.
 **Re-entry:** the retrospective of each session, and the review of every change.
+
+## Guarding `design@agent-skills@audit-method`: the owner overrules the defaults of an audit's owner list `##audit-defaults-overruled`
+
+T6 of the premortem of the discussion that made the decision. The decision rests on the premise
+that the calibration and the session's sort give the owner defaults the owner mostly accepts, so
+the owner list costs a ruling per kind rather than a judgement per item.
+
+**Fires when:** in one run, the owner rules against the default on more than a quarter of the items
+of the owner list; the bound is the owner's to reset.
+**Response:** reopen `design@agent-skills@audit-method`.
+**Re-entry:** the session that receives the owner's answers to an owner list counts them; the
+standing-state review of the audit's branch reads it again.
+
+## Guarding `design@agent-skills@audit-triggers`: a pin moves across a version whose changelog cites an axis, and the axis is not run `##axis-not-run-at-a-pin-move`
+
+T7 of the premortem of the discussion that made the decision. The decision rests on the premise
+that the move of a pin reads the Migration entries of the versions crossed and runs the axis they
+cite. It watches agent behaviour in a consumer project, which this project cannot see, per
+`issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`.
+
+**Fires when:** a retrospective finds a pin moved across such a version with the axis not run.
+**Response:** reopen `design@agent-skills@audit-triggers`.
+**Re-entry:** the retrospective of a session that moved a pin.
+
+## Guarding `design@agent-skills@design-record-axis`: an audit's edit leaves a tripwire or an issue on the edited head false `##audit-edit-leaves-an-entry-stale`
+
+T8 of the premortem of the discussion that made the decision. The decision rests on the premise
+that reading each head's tripwires and issues before judging it keeps them true of the head the
+audit edits.
+
+**Fires when:** a review of an audit's branch finds a tripwire guarding, or an issue naming, a head
+the branch changed, left false.
+**Response:** reopen `design@agent-skills@design-record-axis`.
+**Re-entry:** the standing-state review of every audit's branch.

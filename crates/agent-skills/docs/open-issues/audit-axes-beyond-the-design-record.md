@@ -1,31 +1,26 @@
 ---
 kind: todo
 ---
-# The workflow offers no way to audit a project as a whole
+# The project audit has one axis, and the other axes the owner named have none
 
 ## Summary
 
-Every review the workflow offers reads a diff: the work of one branch, or one plan document. Nothing
-reads a project's record as a whole: its design homes against each other, against the code and the
-goals, or the project's own agent configuration against the installed workflow. An audit of every
-design head of this repository, run during the discussion that rewrote the entry tests, was useful
-and was built by hand. The owner: "The audit we did is probably something that is useful to run once
-in a while in any large project." The owner proposes a name that keeps such audits apart from
-reviews, and a later session under `skill@knowledge-architect-design` to design them.
-`spec@plans@design-record-audit` schedules the method and the first axis, the conformance of the
-decision record; this entry keeps the other axes, the question of an audit report, and the lessons
-on method.
+`skill@knowledge-architect-project-audit` audits a whole project on one axis, the design record,
+per `design@agent-skills@audit-is-an-activity`. The other axes the owner named have no section, no
+agent and no designed outcome: design self-consistency, the alignment of the code with the design
+and the goals, and the consistency of the project's own agent workflows; and the session's
+additions, standing state as a whole, goal coverage and the restatements. An axis whose fixes are
+code may also need an output other than commit messages, an audit report, which the owner left "a
+question for later". This entry keeps those axes, the report question, and the lessons of the
+audits run by hand before the skill existed.
 
 ## Details
 
 ### What
 
-The owner's statement of the gap: "the project does not offer a way to review a consumer project
-globally". And: "Reviews are only offered on "diffs", the work of one branch or one document." The
-owner
-proposes the name **project audits** rather than reviews, to avoid confusion with the installed
-review skill, `skill@knowledge-architect-review`, and its reviewer agents; the name is open to
-discussion.
+The owner's statement of the gap, before the audit skill existed: "the project does not offer a way
+to review a consumer project globally". The owner named such audits **project audits**, apart from
+reviews.
 
 **The audit that was run, as a worked instance.** In the discussion that produced the milestone
 load-bearing-records, the owner proposed "an audit of all decisions recorded in the project against
@@ -53,10 +48,8 @@ proposed", carried "by one or several subagents (maybe one per component)". As r
   This led the owner to a new entry test, recorded in
   `design@agent-skills@a-head-is-owed-by-an-entry-test`.
 
-**Axes the owner names**, a list to be completed and refined:
+**Axes the owner names**, a list to be completed and refined, the decision-record axis aside:
 
-- **decision-record volume**: every head against the entry tests, as run above; scheduled by
-  `spec@plans@design-record-audit` as part of its design-record axis;
 - **design self-consistency**, of the design homes as a whole rather than of one branch;
 - **alignment of implementation with design and goals**: the code against the design homes, and
   both against the goals;
@@ -106,16 +99,15 @@ the verdicts.
 ### Why it matters
 
 `goal@knowledge-architect@documentation-stays-consistent` is met while the reviews keep the record
-consistent, and every review reads only what a diff touches: a drift between two heads that no
-branch touches, or between the code and a head no branch cites, is read by no step of the workflow.
-`goal@knowledge-architect@agents-work-without-drift` depends on the record being right as a whole,
-since agents ground on all of it. The audit above found over-recording, a test that admitted
-nearly everything, and two heads in the wrong Component, none of which a diff review had reported.
+consistent, and every review reads only what a diff touches. The design-record axis reads the
+decision record as a whole; a drift between the code and a head no branch cites, between two
+skills, or between an issue and the tree as it stands, is still read by no step of the workflow.
+`goal@knowledge-architect@agents-work-without-drift` depends on the whole record, since agents
+ground on all of it.
 
 ### What would close it
 
-For each axis above other than decision-record volume, a design discussion under
-`skill@knowledge-architect-design` that decides whether it is offered, its corpus and its outcomes,
-and, if it is, its agent and its section of the audit skill that `spec@plans@design-record-audit`
-builds; and for an axis whose fixes are code, whether it leaves an audit report. The owner left the
-report "a question for later".
+For each axis above, a design discussion under `skill@knowledge-architect-design` that decides
+whether it is offered, its corpus and its outcomes, and, if it is, its agent and its section of
+the audit skill, per `design@agent-skills@audit-agent-per-axis`; and, for an axis whose fixes are
+code, whether it leaves an audit report.

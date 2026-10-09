@@ -8,8 +8,8 @@ goal of the project as a whole, `path@knowledge-architect@docs/goals.md`.
 ## Every activity of the workflow has one installed skill, and no two installed texts contradict `##one-skill-per-activity`
 
 The installed set covers setting up, setting goals, discussing designs, planning, recording
-decisions, tracking open issues, reviewing, maintaining the configuration and the retrospective,
-one skill each, and the review agents its skills dispatch. It is met while no activity of the
+decisions, tracking open issues, reviewing, auditing a whole project on one aspect, maintaining the
+configuration and the retrospective, one skill each, and the agents its skills dispatch. It is met while no activity of the
 workflow is left without its skill, and a review finds no two installed instructions a session
 cannot both obey. It refines `goal@knowledge-architect@agents-get-a-complete-workflow`.
 
