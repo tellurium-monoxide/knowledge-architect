@@ -61,9 +61,10 @@ owner and has no expectation set. This is a restatement; its homes are the entri
    (`design@agent-skills@capabilities-not-structure`).
 4. **Built intent.** Grep the design homes and the goals for the behaviour the edited passage
    describes. An edit that writes into a design home, or edits a text whose behaviour a head
-   describes, loads `skill@knowledge-architect-decision-recording` before it is written; that skill
-   judges whether it contradicts a head, outgrows its title, or earns text at all. That trigger's
-   home is `design@agent-skills@design-home-write-loads-recording`. One that strains a goal goes to
+   describes, loads `skill@knowledge-architect-decision-recording` before it is written; that skill,
+   with `primer@design-heads`, judges whether it contradicts a head, adds a member its argument does
+   not cover, or earns text at all. That trigger's home is
+   `design@agent-skills@design-home-write-loads-recording`. One that strains a goal goes to
    the owner, under `skill@knowledge-architect-goal-setting`. The rest of this test restates the
    installed `skill@knowledge-architect-agent-configuration@content-and-style`, and it holds because
    `design@agent-skills@design-home-is-built-intent` makes the design home authority over the

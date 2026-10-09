@@ -231,7 +231,7 @@ Neither carries the history of a change: that lives in the commit message.
   checker's own source, every string literal is data, bound or not, per
   `design@core@checker-source-literals-are-data`.
 
-**Where a comment ends and a document begins** is `skill@knowledge-architect-decision-recording`:
-its entry tests decide whether a decision earns a design head at all, and a decision that fails them
-lives in a comment at its code and in its commit; within a head, if changing a piece of code would
-force a change to the head, it is design, and if the head would be unaffected, it is a comment.
+**Where a comment ends and a document begins** is `primer@design-heads`: its entry tests decide
+whether a decision earns a design head at all, and a decision that fails them lives in a comment at
+its code and in its commit; within a head, if changing a piece of code would force a change to the
+head, it is design, and if the head would be unaffected, it is a comment.
