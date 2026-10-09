@@ -123,6 +123,148 @@ A gap of the checker itself gets that entry in this project's own register, sinc
 cannot reach another project. Text that is not in the checker's syntax, such as a commit named by
 its subject, a commit of another project or a description in words, is outside this rule.
 
+## Design heads {{slug:design-heads}}
+
+A design head is an entry of a design home: a level-three heading that states a decision, and its
+body. This section holds what earns a head, what a head holds and how it is shaped. Read it to read
+a head, to tell in advance whether a change bears on one, and before writing or judging one;
+`skill@knowledge-architect-decision-recording` holds the procedures of recording, and is loaded
+before any write into a design home.
+
+### What earns a head
+
+Most implementation choices earn no head. A unit of work produces dozens of them, and a design home that
+records dozens per unit of work stops being readable and stops being ranked.
+
+**A decision earns an entry in a design home only if at least one of these holds:**
+
+1. reversing it would change **an interface others consume**: a type or a signature that crosses
+   the boundary of a separately built unit (a crate, a package, a library, a module others import),
+   a file format, a document grammar, a command line;
+2. **the same reason must be respected at more than one site, or at none.** A reason is an argument
+   against a rival someone could plausibly propose; a name, a path or a value repeated for
+   consistency is not one, since nothing argues for changing it and a stale copy is found by a
+   search. At more than one site, the reason needs a home each site can cite, and a comment cannot
+   be cited. At none: a decision about an absence ("we do not do X"), or a policy with no code of
+   its own; or
+3. **its argument turns on the behaviour of something outside the project**: an external
+   specification the project implements (a standard, a protocol, a rule set), or an external tool's
+   behaviour, read in its documentation or measured; or
+%% The `Q` label: `design@agent-skills@ruled-items-labelled`.
+4. **the owner confirms that it records the owner's own intent**: a ruling the owner gave that an
+   agent could judge superfluous and reverse as a small fix, or an argument the owner made and wants
+   kept so as not to restate it. The agent does not judge this. When a decision would earn a head
+   by this test alone, ask the owner, one numbered question per decision (Q1, Q2, …), several in
+   one message, each quoting the owner's words the decision rests on: do they record the owner's
+   intent, or were they an answer to the agent's proposal, or a hedged statement ("I think",
+   "maybe"), which is a position to argue under `skill@knowledge-architect-design`? The head quotes
+   the owner's words and the owner's answer. With no answer, the decision earns no head by this
+   test.
+
+Test 3 matters most in a project that implements a specification or leans on a tool's behaviour. A
+choice that turns on what the specification means, or on how the tool behaves, is expensive to get
+wrong and expensive to derive again, and it is visible: the argument quotes the specification or
+the documentation, or names the measurement.
+
+Otherwise it belongs in an **inline comment at the code it explains, plus the commit message**.
+That is not a lesser home: the comment is read by every session that touches the code, which a head
+is not, and the commit carries the argument. A reason that fits in one comment at one site, about
+that site's own code, fails test 2.
+
+**A decision that creates a design head, contradicts a statement of one, its argument included,
+or extends one beyond what its title states, and was not argued under
+`skill@knowledge-architect-design`, goes back to that skill before its text is written.** This is
+the case of a decision met during another task and settled there, by the owner's word or by the
+session's own choice. The design skill's in-change path keeps the deliberation in the commit
+message, so the task needs no plan document and no new session. For the third case, rewrite the
+head's title to state the addition as well, and apply the title test below to it: if no title
+passes, the addition gets a head of its own. An addition within what the title states, which
+contradicts nothing, is recorded directly, with the owner's words quoted in the commit where they
+gave a ruling.
+A change that relocates or rewords recorded decisions, a split of a head included, and adds or
+removes none, is not a decision: it needs no design skill, and the routing and
+fidelity-of-relocation review axes judge that it adds or removes none.
+
+### What a head holds
+
+**The standing argument** is every premise whose failure would reopen the decision: the goal or
+the decision it derives from, as references; the measurement it rests on; the fact that defeated
+its nearest rival. **The test: if this premise turned false, would the decision have to be argued
+again? If yes, it is in the head.** If no, it is deliberation.
+
+**The deliberation is not copied into the head.** Where it is kept, and how a reader finds it,
+is `skill@knowledge-architect-decision-recording@three-homes`.
+
+A head is written **as if the design had always been so**. Present tense, no dates, no "formerly", no
+account of the change. If you find yourself writing "we used to…", that sentence belongs in the
+commit.
+
+**A head carries intent, shape and the standing argument, not implementation.** What the project is
+for, and how it is arranged in order to get there, belongs here. How a particular function does its
+work belongs in a comment at that function. The test: **if changing a piece of code would force a
+change to the design home, it is design; if the design home would be unaffected, it is a comment.**
+
+A reference is one backticked span, `design@<component>@<slug>`, naming the Component that
+defines it. It is live wherever it is prose, a fenced block included. An illustration that must not
+resolve writes a placeholder in angle brackets.
+
+**Name what the argument depends on.** The goal a constraint is derived from,
+`goal@<component>@<slug>`: a constraint from a goal binds outright, where one from a decision is a
+presumption, and the reference is what tells a reader which. A decision of another Component the
+head depends on. **A reference is a claim that this head is revisited when that entry changes**,
+so a reference whose entry's change would leave the head unaffected is not written. Never list what
+cites this head: `{{command}} show design@<component>@<slug>` computes it.
+
+A decision that relies on the checker of this workflow states that it relies on the checker
+working as intended. It cannot reference the checker's own decisions: a reference resolves only
+against the project that holds it.
+
+### How a head is shaped
+
+Give the decision a **slug anchor**: a short hyphenated name in backticks, prefixed with `##`. It
+goes at the **end of a level-three heading**, the level the design register declares, so that the
+outline reads as decisions under level-two subjects. **Every level-three heading in a design home
+is an entry** and carries a slug: one without is a finding, so a heading that is section text sits
+at level two or four. Nowhere else: a slug at another heading level, in a table cell, at the head
+of a plain line, in the middle of a line or in a file that is not the design home defines nothing.
+`{{command}} check` reports it as a misplaced definition, and every reference to it as dangling.
+The slug is an id in the grammar `[a-z0-9]+(-[a-z0-9]+)*`, unique in the design home.
+
+**When the decision was a thread of a design discussion, its slug is the thread's name**, unless
+that name misdescribes the decision as approved, as a name for the change it proposed does. The
+discussion minted it in the same grammar and checked it for a collision with the Component's
+entries before using it, for that reason. When the name misdescribes the decision, the entry takes
+a slug that names the decision, by the alignment rule below, and the text that keeps the
+deliberation states the pair, `#<thread> → <entry slug>`: the plan document's harvest row, or the
+commit message on the in-change path. `git log --grep` on either name then finds a commit message
+that states the pair, and `git log -G` a plan document's diff that does.
+
+**A list item is not a definition site either**, so a decision written as one bullet among several
+carries no anchor and cannot be cited or found by `git log -G`. This is a constraint on the
+document rather than a gap in the checker: **a decision worth a slug is worth its own level-three
+heading**. When a section of bulleted arguments produces one, break it out of the list.
+
+The statement comes first and the slug last, with no bold and no em dash between them, so that a
+document outline reads as a list of decisions rather than a list of identifiers. The body follows as
+ordinary prose.
+
+**A title states a decision only while it is false of the nearest rival it beat.** A title that the
+losing alternative would make true names a subject, not a decision: "The configuration is read
+once, at start-up" is false of a configuration read again on every request, and "The configuration
+is read with care" is true of nearly any rival. A head that carries several decisions passes the test
+for each one, or is split.
+
+**A head written from a decision the owner approved is read against that approval before it is
+written.** The title and the body state the position as the owner saw it, in a plan document's
+thread or in the discussion of the in-change path. A clause that widens it, narrows it, or drops
+part of it can still be false of the nearest rival, and is still not what was approved: it goes to
+the owner, as a change of the decision.
+
+**The slug and the title stay aligned with the full scope of the decision**: the slug is often the
+only part a reader sees, in a citing document or in code, and the title is what a document outline
+shows. A slug or a title that misdescribes its decision misinforms every reader, or undermines the
+decision it names, so rename it even when that means rewriting every reference in the project.
+
 ## The installed skills {{slug:installed-skills}}
 
 - `skill@knowledge-architect-decision-recording`: before writing into a design home; a design
