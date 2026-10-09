@@ -258,7 +258,7 @@ unaffected is decoration, and it costs a repair for nothing.
 | a tripwire | the decision it guards |
 | a rejected alternative | the decision it lost to |
 | a commit message | every entry it opens, closes, reverses or argues from |
-| a restatement of a directive | its home |
+| a restatement of a directive sentence | its home |
 
 A reference in prose is checked wherever it stands, a Rust comment and a fenced block included. So
 a comment in code that names an issue is reached when the issue closes. Never keep a hand-written

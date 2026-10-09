@@ -178,9 +178,8 @@ What exists today at each site the work touches:
 - **A span read from a Rust string literal.** Outside the checker's own source, an unbound string
   literal is read as prose, per `path@core@src/source/mod.rs` line 45; rewriting it would change a
   program's bytes. Only Markdown and Rust comments are respelled.
-- **The retrospective finding on heads that state the built instance** is an issue entry, opened
-  with this spec, `issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`,
-  per `thread@path-quickfixes@head-states-the-principle`.
+- **The retrospective finding on heads that state the built instance** is decided by
+  `design@agent-skills@title-states-the-rule`, per `thread@path-quickfixes@head-states-the-principle`.
 
 ## What is already decided
 
@@ -212,7 +211,7 @@ adds:
 
 | decision | texts referencing it | judged or updated at |
 | --- | --- | --- |
-| `design@core@safe-fix-definition`: reversed in its second clause, "it writes or removes only files of the installer's namespace or of the generated list"; restated as the principle with the respelling as its test | `path@core@README.md` line 124; `path@core@docs/design.md` lines 142, 1088 and 1150; `path@core@docs/tripwires.md`, the entry `tripwire@core@fix-makes-a-choice`; `path@core@src/cli/mod.rs` line 445; `issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`, which quotes the clause as its instance | step 1 for the README and the source; the harvest for the design home, the tripwires and the issue, whose quotation then names the head as it stood |
+| `design@core@safe-fix-definition`: reversed in its second clause, "it writes or removes only files of the installer's namespace or of the generated list"; restated as the principle with the respelling as its test | `path@core@README.md` line 124; `path@core@docs/design.md` lines 142, 1088 and 1150; `path@core@docs/tripwires.md`, the entry `tripwire@core@fix-makes-a-choice`; `path@core@src/cli/mod.rs` line 445 | step 1 for the README and the source; the harvest for the design home, the tripwires and the issue, whose quotation then names the head as it stood |
 | `design@core@fix-scope`: gains the respellings | `path@core@src/agents.rs` line 181 | the harvest; the comment stays true where it names the installed files only |
 | `design@core@fix-refusal-mixed-state`: its sentence "`--fix` cannot lose unstaged content, since it writes only generated and installed files" is rewritten, and, per D1, its clause "The refusal is exit 2, or 1 where agent files were installed before it" becomes "exit 2, or 1 where any file was written before it" | `path@core@README.md` line 139; `path@core@docs/design.md` lines 1090, 1108 and 1164; `path@core@docs/tripwires.md`, the entry `tripwire@core@fix-refusal-routed-around` | step 1 for the README; the harvest for the design home and the tripwires |
 | `design@core@fix-before-the-checks`, and the sentence of `design@core@phases-gate-the-report` at `path@core@docs/design.md` lines 112 to 114, "having repaired before that gate only the installed files": the respellings join the order, per D1; the same sentence's "exits 1" stays, per D7. The other texts referencing `design@core@phases-gate-the-report` cite it for the gate itself, which the work keeps: `path@knowledge-architect@CLAUDE.md` line 468, `path@core@CLAUDE.md` line 90, `path@core@docs/design.md` lines 56, 162, 504, 873, 1079, 1168, 1288 and 2064, `path@core@docs/rejected-alternatives.md` lines 74, 84, 90 and 96, `issue@core@installed-file-findings-belong-in-phase-four` line 20, and `tripwire@core@phases-gate-the-report-two`; `path@core@README.md` lines 115 to 121 restates the sentence and is updated | `path@core@README.md` lines 115 to 121 and line 133; `path@core@docs/design.md` lines 71 and 114; `issue@core@installed-file-findings-belong-in-phase-four`, line 27; `path@core@src/cli/mod.rs` lines 445 and 542; `path@core@tests/binary.rs` line 3746 | step 1 for the README, the source and the test; the harvest for the design home and the issue |
@@ -362,8 +361,8 @@ AC, proceed."
 
 Proposed by the owner in round 2 as a remark; the agent proposed the issue entry in the reply to
 round 2. Approved. Arguments: `argument@path-quickfixes@a17`, `argument@path-quickfixes@a21`.
-Harvest: `issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`, opened in
-the commit that adds this spec. The owner's words, round 3: "head-states-the-principle: agreed on
+Harvest: none left; the question it recorded is decided by
+`design@agent-skills@title-states-the-rule`. The owner's words, round 3: "head-states-the-principle: agreed on
 the issue."
 
 ### An inference applied when its single candidate lies under the file's own anchor `##same-anchor-inference`
@@ -1114,7 +1113,7 @@ commit, with the test it fails.
 | `thread@path-quickfixes@fix-run-order` | `design@core@fix-before-the-checks` rewritten with the order of "The order of a run"; the sentence and the exit clause of `design@core@fix-refusal-mixed-state` named in "What is already decided" rewritten; the sentence of `design@core@phases-gate-the-report` named there rewritten; `issue@core@installed-file-findings-belong-in-phase-four` read again for its sentence on the order |
 | `thread@path-quickfixes@skill-cited-by-path` | a head whose title states that a skill or an agent has no `path` spelling: a new head, or `design@core@harness-kinds-cited-without-anchor` with its title rewritten to state it, as `primer@design-heads` decides; with `argument@path-quickfixes@a15` |
 | `thread@path-quickfixes@raw-path-inference` | a head whose title states the question form: a new head, or `design@core@every-path-names-its-anchor` with its title rewritten to state it, as `primer@design-heads` decides |
-| `thread@path-quickfixes@head-states-the-principle` | done in the commit that adds this spec: `issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`; read again at the harvest, whose quotation of the head then names the head as it stood, and whose reference to this spec dangles when the spec leaves |
+| `thread@path-quickfixes@head-states-the-principle` | nothing: its question is decided by `design@agent-skills@title-states-the-rule` |
 | `thread@path-quickfixes@same-anchor-inference` | per D2 |
 | `tripwire@core@fix-makes-a-choice` | per D4 |
 | the owner's direction of round 2 on this repository's own needs | per D5 |

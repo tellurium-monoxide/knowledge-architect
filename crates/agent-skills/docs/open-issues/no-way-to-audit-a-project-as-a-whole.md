@@ -72,12 +72,13 @@ Additions of the session, for the discussion to judge:
 - **restatements**: every restatement of a directive against its home, since a restatement is the
   defect where the two disagree and the checker cannot compare prose.
 
-**A second worked instance.** The design discussion of
-`issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle` audited every head
-of this repository's five design homes, 189, and 219 heads of thaum, read-only, one subagent per
-group of design homes, on three axes: a head stating the instance built as its rule, a head
-bundling several decisions, and a head citing an approval of the owner as its ground. Its record is
-`spec@plans@head-rules`, under "What the audits measured". Two lessons on method:
+**A second worked instance.** The design discussion that produced
+`design@agent-skills@title-states-the-rule` audited every head of this repository's five design
+homes, 189, and 219 heads of thaum, read-only, one subagent per group of design homes, on three
+axes: a head stating the instance built as its rule, a head bundling several decisions, and a head
+citing an approval of the owner as its ground. Its record is the deleted plan document head-rules,
+under "What the audits measured", found by `git log --diff-filter=D` on the plans directory. Two
+lessons on method:
 
 - **A test given to the auditors can be wrong, and the auditors find it.** The split test briefed
   to the agents, "would reversing one part leave the other standing?", over-split a rule from its

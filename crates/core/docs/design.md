@@ -1096,7 +1096,7 @@ longer matches the working tree, and `check --staged` fails until the file is st
 or removed, then runs the check, whose report and exit code are the run's. It makes an edit cycle
 one command: updating the generated files is needed after nearly every edit of a register, and
 `index` then `check` were two. Tools of this kind offer such a quick fix for what they can repair
-safely, as `cargo clippy --fix` and `eslint --fix` do, which was the owner's argument for it. Without `--fix`, `check`
+safely, which was the owner's argument for it, and as `cargo clippy --fix` and `eslint --fix` do. Without `--fix`, `check`
 is unchanged, and `index` and `install-agent-skills` stay as commands, each for one fix alone. The
 option takes a generic name because a later safe fix needs no new option. The rival, a separate
 `fix` command that writes and then runs the check, lost: with the option, the check stays one
@@ -1136,7 +1136,9 @@ the owner's reason.
 
 This is the test every fix must pass before `--fix` applies it. The installer's namespace counts
 whole, per `design@core@owned-namespace-check`: an unshipped file the check reports there is
-removed, as the install removes it, whoever put it there. A fix that makes a choice, or touches
+removed, as the install removes it, whoever put it there. The rival, removing only the files the
+install itself wrote, has nothing to tell them by: ownership is decided by a name, with no record
+and no history, per that head. A fix that makes a choice, or touches
 git or a hand-written file, would rewrite what a writer meant, so its repair stays the reader's.
 The test is what keeps `--fix` safe to run after every edit, which serves
 `goal@knowledge-architect@agents-work-without-drift`. `tripwire@core@fix-makes-a-choice` watches
@@ -1164,8 +1166,10 @@ written, from the list `index` reads, after every destination is checked; the fu
 installed files' bytes do not depend on the model, so they are repaired before the gate, while a
 generated file is never written over an incomplete model, per `design@core@phases-gate-the-report`.
 An upgrade that removes a shipped file takes two runs: the deletion is unstaged, phase 2 reports
-it, and staging it touches git. The owner chose to keep that cost: "skill deletion/rename is a
-rare thing anyway. Not much of a problem if it takes multiple invocations to handle." A failed
+it, and staging it touches git. The rival, `--fix` treating the deletions its own install just made
+as done, adds a special case to the phase gate. The cost of two runs is small by the owner's
+weighing: "skill deletion/rename is a rare thing anyway. Not much of a problem if it takes multiple
+invocations to handle." A failed
 write exits 2 with nothing written, and 1 after any write, since 2 promises an untouched tree. The check stays the only verifier: `--fix` only writes
 before it verifies, so the rejected alternative of an `index` that prints a diff and a `--write`
 that applies it, a second command answering whether a file is current in its own format, is not

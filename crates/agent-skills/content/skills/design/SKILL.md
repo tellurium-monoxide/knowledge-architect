@@ -233,15 +233,12 @@ threads, new arguments, and proposals that supersede settled points
 enter freely at any time.
 
 **Naming.** A thread gets a short content-named slug in the grammar of an
-entry id, `[a-z0-9]+(-[a-z0-9]+)*`, because an approved thread whose
-decision earns a design entry gives that entry its slug: the plan
-document, the commit messages and the design home then name the decision
-with one identifier. Name the thread by the decision it would record if
-approved, not by the change it proposes: #retention-window, not
-#shorten-retention. A slug is never changed during the discussion, since
-every earlier delta carries it. When the approved decision has drifted
-from what the slug says, its entry takes a slug that names the decision,
-and the text that keeps the deliberation states the pair, per `primer@design-heads`. Before using a slug, check that no entry of
+entry id, `[a-z0-9]+(-[a-z0-9]+)*`, since an approved thread whose
+decision earns a design entry gives that entry its slug, or a slug and a
+stated pair, per `primer@design-heads`. Name the thread by the decision it
+would record if approved, not by the change it proposes: #retention-window,
+not #shorten-retention. A slug is never changed during the discussion, since
+every earlier delta carries it. Before using a slug, check that no entry of
 the Component that will own the decision already holds it, with
 `{{command}} show design@<anchor>@<slug>`. In prose, write it plain with a
 `#` before it, as in #retention-window, never in backticks: a backticked

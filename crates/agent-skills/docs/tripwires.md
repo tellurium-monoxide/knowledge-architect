@@ -34,21 +34,22 @@ by citing an expectation set.
 `design@agent-skills@expectation-set-bounds-scope` if its boundary sentence admits the reading.
 **Re-entry:** the standing-state review of the change that closed the finding.
 
-## Guarding `design@agent-skills@new-or-reshaped-head-needs-design`: a head is created, contradicted or extended beyond its title with no deliberation recorded `##head-created-without-deliberation`
+## Guarding `design@agent-skills@new-or-reshaped-head-needs-design`: a head is created, contradicted or given a member its argument does not cover with no deliberation recorded `##head-created-without-deliberation`
 
-The decision rests on the premise that the design skill's description and the decision-recording
-skill's backstop, loaded before any write into a design home per
-`design@agent-skills@design-home-write-loads-recording`, reach a session before it writes a
-decision that creates a head, contradicts one, or extends one beyond what its title states.
+The decision rests on the premise that the design skill's description and the backstop of the
+primer's section on design heads, read again at the head of the decision-recording skill loaded
+before any write into a design home per `design@agent-skills@design-home-write-loads-recording`,
+reach a session before it writes a decision that creates a head, contradicts one, or adds a member
+its argument does not cover.
 
-**Fires when:** a commit creates a design head, contradicts a statement of one, or adds to its body
-a decision its title does not state, and neither its message nor a plan document carries the
+**Fires when:** a commit creates a design head, contradicts a statement of one, or adds to it a
+member its argument does not cover, and neither its message nor a plan document carries the
 deliberation: no thread, no rival, and none of the owner's words where the owner ruled. A relocation
 or rewording that adds or removes no decision does not count.
 **Response:** open a `defect` naming the head and the commit, and reopen
-`design@agent-skills@new-or-reshaped-head-needs-design` on where its trigger is delivered, with the
-primer line it rejected among the candidates; for an extension beyond a title, with the rival that
-sends every decision earning durable text through the design skill among them too.
+`design@agent-skills@new-or-reshaped-head-needs-design` on where its trigger is delivered; for a
+member beyond the argument, with the rival that sends every decision earning durable text through
+the design skill among the candidates.
 **Re-entry:** the standing-state review before every merge: the commits and their messages are in
 the branch's history.
 
@@ -189,3 +190,58 @@ count, two moments, and the proportion, half, are defaults the owner may reset.
 **Re-entry:** the standing-state review before every merge, which reads the outcome each review
 commit records for each finding; and the retrospective of the session where the second of those
 reviews ran, which reads that session's record.
+
+## Guarding `design@agent-skills@extension-follows-the-ground`: a member recorded directly that the argument does not cover `##member-beyond-the-argument`
+
+T1 of the premortem of the discussion that made the decision. The decision rests on the premise
+that a session judges whether a head's argument covers a new member as the owner would.
+
+**Fires when:** the owner, or a review, names one member recorded directly, as covered by its head's
+argument, that the argument does not cover.
+**Response:** reopen `design@agent-skills@extension-follows-the-ground`, with the rival that routes
+by the scope of the owner's approval among the candidates.
+**Re-entry:** the standing-state review before every merge, and the decision-record and
+design-conformance reviews, which read the heads a change writes.
+
+## Guarding `design@agent-skills@head-ground-is-the-argument`: a quotation that was the owner's own intent is removed `##owner-intent-stripped`
+
+T2 of the premortem of the discussion that made the decision. The decision rests on the premise
+that the repair of an approval cited as a ground does not remove the owner's own words with it.
+
+**Fires when:** a commit removes or rewords as an argument a quotation of the owner in a design head,
+and the transcript or the plan document shows that the decision, or that part, came from the owner.
+**Response:** restore the quotation as the ground, and reopen
+`design@agent-skills@head-ground-is-the-argument` on how a ground is told apart.
+**Re-entry:** the standing-state review before every merge, and the transcript review of the change.
+
+## Guarding `design@agent-skills@title-states-the-rule`: a rule title wider than its argument `##rule-title-wider-than-its-argument`
+
+T3 of the premortem of the discussion that made the decision. The decision rests on the premise
+that a title moved to the rule stays within what its argument argues.
+
+**Fires when:** a review finds a title wider than its argument in a head written or rewritten after
+the decision.
+**Response:** repair the title, and reopen `design@agent-skills@title-states-the-rule`.
+**Re-entry:** the decision-record review of every change that writes a head.
+
+## Guarding `design@agent-skills@one-decision-per-head`: a split that separates a rule from its own exception `##split-rule-from-exception`
+
+T4 of the premortem of the discussion that made the decision. The decision rests on the premise
+that the nearest-rival test keeps a rule's exception, parameter and delivery with the rule.
+
+**Fires when:** a commit merges back two heads split under the decision, or a review finds an
+exception, a parameter or a delivery split from its rule.
+**Response:** reopen `design@agent-skills@one-decision-per-head`, with the reversal test among the
+candidates.
+**Re-entry:** the decision-record review of every change that writes a head.
+
+## Guarding `design@agent-skills@restatement-size-test`: a directive missed because its restatement became a pointer `##pointer-not-followed`
+
+T5 of the premortem of the discussion that made the decision. The decision rests on the premise
+that a session follows a pointer to a directive's home at the moment it needs the directive.
+
+**Fires when:** a review or a retrospective finds a directive broken in a session where its
+restatement had been replaced by a pointer under the decision.
+**Response:** reopen `design@agent-skills@restatement-size-test`, with the rule it replaced, a
+directive restated wherever it is delivered, among the candidates.
+**Re-entry:** the retrospective of each session, and the review of every change.

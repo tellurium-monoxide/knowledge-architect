@@ -25,8 +25,8 @@ So the title, and the clause "every adopting project runs the gates refined in t
 state more than the argument argues, and the record contradicts itself on a project that is not
 Rust or has no maintenance crate.
 
-Found by a read-only audit of the agent-skills design heads during the design discussion of
-`issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`, and reproduced by
+Found by a read-only audit of the agent-skills design heads against
+`design@agent-skills@title-states-the-rule` and its neighbours, and reproduced by
 reading the three texts side by side.
 
 ### Why it matters

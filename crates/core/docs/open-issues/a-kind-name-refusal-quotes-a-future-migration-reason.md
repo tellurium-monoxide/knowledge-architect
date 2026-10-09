@@ -30,10 +30,8 @@ The ruling came from the owner, after a review found that the shadowing reaches 
 agent had proposed an issue entry for it; the commit that put the ruling into the milestone
 agent-configuration-entities says "The issue opened for the shadowing of the existing kinds was
 never committed: the ruling puts that work in the milestone."
-So under the design discussion of
-`issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`, which converged on
-a head citing the owner's words only for what came from the owner, the quotation is a legitimate
-ground of provenance. Its stated reason is still the forbidden one.
+So under `design@agent-skills@head-ground-is-the-argument`, which cites the owner's words only for
+what came from the owner, the quotation is a legitimate ground of provenance. Its stated reason is still the forbidden one.
 
 Not established: whether the owner meant the migration cost of today's consumers, which the root
 head admits as a present cost, or a cost in a future where changes are refused.

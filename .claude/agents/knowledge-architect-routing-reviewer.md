@@ -114,13 +114,8 @@ checker, and a whole plan document is cited by its kind, from anywhere.
 something *used to* be belongs in the commit, including an opening that motivates a decision by
 describing the state before it.
 
-**Does the diff write the references it owes?** A reference is written where the text would have
-to be revisited if the entry it names changed: reversed, closed, fired, abandoned or renamed. A
-design head names the goal its argument derives a constraint from and a decision of another
-Component it depends on; an issue entry names the
-decision it strains and the goal it threatens when it does directly; a guard or a workaround in
-code that exists because of an open entry names it in the comment at the site. The tell is the
-wording: a head that argues from a goal's words with no `goal` reference, an entry whose
+**Does the diff write the references it owes?** Judge it by the rule on when to write a reference
+in `primer@where-knowledge-goes`, read whole. The tell is the wording: a head that argues from a goal's words with no `goal` reference, an entry whose
 `Why it matters` describes a decision without naming it. The reverse is a finding too: a
 reference whose entry's change would leave the text unaffected, and a hand-written list of what
 references an entry, which `cargo klarch show` computes.
