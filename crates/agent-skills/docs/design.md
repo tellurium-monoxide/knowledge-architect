@@ -233,10 +233,9 @@ change of the decision, with its reversal, its slug rename and its tripwire rena
 `goal@knowledge-architect@agents-get-a-complete-workflow`, which aims for fewer decisions reversed
 by accident. The nearest rival, the instance in the title, has that cost: an audit of this
 repository's design heads at commit c282b00, reading every head and its history, finds the instance
-stated as the rule in 27 of its 189 heads, and an audit of a project that uses the workflow finds
-about one head in fourteen; the two histories hold about fifteen rewrites of such heads that a
-member the argument already admitted forced. The figures are re-taken by a fresh read-only audit of
-the heads at that commit, and of each project's history, against this rule. A review repair that moves a member
+stated as the rule in 27 of its 189 heads, and its history holds rewrites of such heads that a
+member the argument already admitted forced. The figure is re-taken by a fresh read-only audit of
+the heads at that commit against this rule. A review repair that moves a member
 into a title makes the defect: "the title now states it". The opposite defect, a title
 wider than its argument, caused reversals too, which the last sentence of the rule guards. A title
 stating a rule alone would let a session add members the owner never saw, so it holds only with the
@@ -1548,7 +1547,8 @@ in particular the decision recording skill whose writes happen at the end of ses
 into a design home loads that skill first, per
 `design@agent-skills@design-home-write-loads-recording`, so one instruction reaches every write,
 and that skill is also loaded before an edit of a text a head describes, where the session judges
-the edit against the heads, late in the same session. A review agent starts with a fresh context
+the edit against the heads; such an edit comes at any point of a session, and where it comes early
+the reread costs one read. A review agent starts with a fresh context
 that holds the primer, so it needs no reread.
 
 ### The design skill's in-change path reads the primer's section on design heads again before its grounding `##in-change-grounding-rereads-the-primer`
