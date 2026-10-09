@@ -50,7 +50,8 @@ pub enum Tree<'a> {
 /// One commit's tree, as an extension may read it.
 pub struct CommitTree {
     root: PathBuf,
-    sha: String,
+    /// The commit read, or `None` for the tree git's index would commit.
+    sha: Option<String>,
     listing: Vec<PathBuf>,
     /// Every blob already read for the walk, so an extension asking for one costs nothing.
     blobs: BTreeMap<PathBuf, String>,
@@ -59,15 +60,25 @@ pub struct CommitTree {
 impl CommitTree {
     pub(crate) fn new(
         root: &Path,
-        sha: &str,
+        source: crate::git::Source,
         listing: Vec<PathBuf>,
         blobs: BTreeMap<PathBuf, String>,
     ) -> Self {
         CommitTree {
             root: root.to_path_buf(),
-            sha: sha.to_string(),
+            sha: match source {
+                crate::git::Source::Commit(sha) => Some(sha.to_string()),
+                crate::git::Source::Index => None,
+            },
             listing,
             blobs,
+        }
+    }
+
+    fn source(&self) -> crate::git::Source<'_> {
+        match &self.sha {
+            Some(sha) => crate::git::Source::Commit(sha),
+            None => crate::git::Source::Index,
         }
     }
 
@@ -91,7 +102,7 @@ impl CommitTree {
             }
         }
         if !wanted.is_empty() {
-            out.extend(crate::git::blobs(&self.root, &self.sha, &wanted)?);
+            out.extend(crate::git::blobs(&self.root, self.source(), &wanted)?);
         }
         Ok(out)
     }
@@ -100,7 +111,7 @@ impl CommitTree {
     /// bytes. An extension keys what it parsed from a blob by it, so a parse is paid once per
     /// content rather than once per commit.
     pub fn object_id(&self, rel: &Path) -> Option<String> {
-        crate::git::rev_parse(&self.root, &crate::git::tree_object(&self.sha, rel))
+        crate::git::rev_parse(&self.root, &crate::git::object_name(self.source(), rel))
     }
 }
 

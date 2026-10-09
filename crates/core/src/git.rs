@@ -437,28 +437,196 @@ pub(crate) fn rev_parse(root: &Path, expression: &str) -> Option<String> {
     (!text.is_empty()).then_some(text)
 }
 
-/// Every entry of one commit's tree, project-relative, with its kind read off the mode the tree
-/// records.
+/// Which snapshot a read names: one commit's tree, or the tree git's index would commit.
+///
+/// A snapshot is read from git objects alone, never from the working tree, so two runs over one
+/// snapshot read the same bytes whatever the working tree holds.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Source<'a> {
+    /// The tree `git commit` would record now, absent a pathspec or `-a`.
+    Index,
+    /// The tree of the commit this names.
+    Commit(&'a str),
+}
+
+/// One entry of a snapshot's listing: the path and kind a walk reads, and the mode and blob id
+/// the snapshot records for it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct SnapshotEntry {
+    pub(crate) rel: PathBuf,
+    pub(crate) kind: EntryKind,
+    pub(crate) mode: String,
+    pub(crate) oid: String,
+}
+
+impl SnapshotEntry {
+    pub(crate) fn entry(&self) -> Entry {
+        Entry {
+            rel: self.rel.clone(),
+            kind: self.kind,
+        }
+    }
+}
+
+/// Every entry of a snapshot, project-relative, sorted by path, with its kind read off the mode
+/// the snapshot records.
 ///
 /// **Run from the project root, `ls-tree` is scoped to it and names its entries relative to
 /// it.** That is the default and `--full-name` is what turns it off, so a project vendored as
 /// a subdirectory of its repository gets exactly the paths its manifest declares, and nothing
 /// from outside it. The same holds of the blob requests below, which name a path relative to
 /// the working directory.
-pub(crate) fn tree_entries(root: &Path, sha: &str) -> io::Result<Vec<Entry>> {
-    let listed = git(root).args(["ls-tree", "-r", "-z", sha]).output()?;
-    Ok(nul_separated(&listed)
-        .into_iter()
-        .filter_map(mode_and_path)
-        .collect())
+///
+/// **The index's snapshot is HEAD's tree with the index's changes against it**, the tree a
+/// commit would record, per `design@core@git-supplies-the-walk`. It is not `ls-files -s`, which
+/// lists an intent-to-add entry, `git add -N`, at stage 0 with the empty blob, the same line as
+/// a staged empty file, while `git commit` records no such entry. `diff --cached` leaves an
+/// intent-to-add entry out, and compares against the empty tree where HEAD does not exist yet.
+/// The caller asks [`unmerged`] first: an unmerged path has no blob to commit, and a `U` row
+/// here is an error.
+pub(crate) fn snapshot_entries(root: &Path, source: Source) -> io::Result<Vec<SnapshotEntry>> {
+    let base = match source {
+        Source::Commit(sha) => Some(sha.to_string()),
+        Source::Index => rev_parse(root, "HEAD"),
+    };
+    let mut listing: BTreeMap<PathBuf, SnapshotEntry> = BTreeMap::new();
+    if let Some(base) = base {
+        let listed = git(root).args(["ls-tree", "-r", "-z", &base]).output()?;
+        for line in nul_separated(&listed) {
+            if let Some(entry) = tree_line(line) {
+                listing.insert(entry.rel.clone(), entry);
+            }
+        }
+    }
+    if source == Source::Index {
+        // `--relative` keeps the diff to the project and names its paths from it, as `ls-tree`
+        // run from the root already does; without it the paths are the repository's and a
+        // sibling directory's changes come in. `--no-abbrev` gives whole blob ids, which
+        // `--full-index` does not under `--raw`. `--ita-invisible-in-index` is git's default
+        // for `diff --cached` and is passed so the listing does not rest on that default.
+        let changed = git(root)
+            .args([
+                "diff",
+                "--cached",
+                "--raw",
+                "-z",
+                "--no-renames",
+                "--no-abbrev",
+                "--no-color",
+                "--relative",
+                "--ita-invisible-in-index",
+            ])
+            .output()?;
+        overlay(&mut listing, &changed)?;
+    }
+    Ok(listing.into_values().collect())
 }
 
-/// How one path in one commit's tree is named to `cat-file` and `rev-parse`.
+/// One line of `ls-tree -r -z`: `<mode> <type> <oid>` then a tab and the path. The first tab,
+/// because the fields hold none and the path may.
+fn tree_line(line: &[u8]) -> Option<SnapshotEntry> {
+    let tab = line.iter().position(|b| *b == b'\t')?;
+    let fields: Vec<&[u8]> = line[..tab].split(|b| *b == b' ').collect();
+    let [mode, _, oid] = fields[..] else {
+        return None;
+    };
+    Some(SnapshotEntry {
+        rel: as_path(&line[tab + 1..]),
+        kind: kind_of(mode),
+        mode: String::from_utf8_lossy(mode).into_owned(),
+        oid: String::from_utf8_lossy(oid).into_owned(),
+    })
+}
+
+/// Apply `diff --cached --raw -z` output to a listing: each record is a header,
+/// `:<src mode> <dst mode> <src oid> <dst oid> <status>`, then the path as the next field.
+///
+/// The status letters `--no-renames` leaves are `A`, `M`, `T`, `D` and `U`. A, M and T give the
+/// path the index's mode and blob; D removes it; U is an unmerged path, which [`unmerged`]
+/// refuses before this runs, and any letter this does not know is refused rather than skipped,
+/// since a skipped row is a path the snapshot holds wrongly with nothing saying so.
+fn overlay(listing: &mut BTreeMap<PathBuf, SnapshotEntry>, raw: &[u8]) -> io::Result<()> {
+    let mut fields = nul_separated(raw).into_iter();
+    while let Some(header) = fields.next() {
+        let Some(path) = fields.next() else {
+            return Err(io::Error::other(
+                "`git diff --cached --raw` printed a record with no path",
+            ));
+        };
+        let header = String::from_utf8_lossy(header);
+        let parts: Vec<&str> = header.trim_start_matches(':').split(' ').collect();
+        let [_, mode, _, oid, status] = parts[..] else {
+            return Err(io::Error::other(format!(
+                "`git diff --cached --raw` printed a record this tool cannot read: {header}"
+            )));
+        };
+        let rel = as_path(path);
+        match status {
+            "A" | "M" | "T" => {
+                listing.insert(
+                    rel.clone(),
+                    SnapshotEntry {
+                        rel,
+                        kind: kind_of(mode.as_bytes()),
+                        mode: mode.to_string(),
+                        oid: oid.to_string(),
+                    },
+                );
+            }
+            "D" => {
+                listing.remove(&rel);
+            }
+            "U" => {
+                return Err(io::Error::other(format!(
+                    "the index holds an unmerged path: {}",
+                    rel.display()
+                )))
+            }
+            other => {
+                return Err(io::Error::other(format!(
+                    "`git diff --cached --raw` reported a change of kind `{other}` at {}, \
+                     which this tool does not read",
+                    rel.display()
+                )))
+            }
+        }
+    }
+    Ok(())
+}
+
+fn kind_of(mode: &[u8]) -> EntryKind {
+    match mode {
+        b"120000" => EntryKind::Symlink,
+        b"160000" => EntryKind::Gitlink,
+        _ => EntryKind::File,
+    }
+}
+
+/// The project's paths the index holds unmerged, at stage 1 to 3, each named once.
+///
+/// A conflicted merge or rebase leaves them, and the index then has no tree to commit: git
+/// refuses `commit` and `write-tree` alike. `ls-files -u` prints one line per stage.
+pub(crate) fn unmerged(root: &Path) -> io::Result<Vec<PathBuf>> {
+    let listed = git(root).args(["ls-files", "-u", "-z"]).output()?;
+    let mut out: Vec<PathBuf> = nul_separated(&listed)
+        .into_iter()
+        .filter_map(mode_and_path)
+        .map(|e| e.rel)
+        .collect();
+    out.dedup();
+    Ok(out)
+}
+
+/// How one path of a snapshot is named to `cat-file` and `rev-parse`.
 ///
 /// `<rev>:./<path>` resolves relative to the working directory, where `<rev>:<path>` resolves
-/// from the repository root. The first is what a project-relative path needs.
-pub(crate) fn tree_object(sha: &str, rel: &Path) -> String {
-    format!("{sha}:./{}", rel.display())
+/// from the repository root. The first is what a project-relative path needs. `:./<path>` names
+/// the index's stage-0 blob the same way.
+pub(crate) fn object_name(source: Source, rel: &Path) -> String {
+    match source {
+        Source::Commit(sha) => format!("{sha}:./{}", rel.display()),
+        Source::Index => format!(":./{}", rel.display()),
+    }
 }
 
 #[cfg(test)]
@@ -471,16 +639,21 @@ mod object_naming {
     /// repository would ask for every one of its documents at a path the root does not hold
     /// and git would answer `missing` to all of them.
     #[test]
-    fn a_tree_object_is_named_relative_to_the_working_directory() {
+    fn a_snapshot_object_is_named_relative_to_the_working_directory() {
         assert_eq!(
-            tree_object("abc", Path::new("docs/a.md")),
+            object_name(Source::Commit("abc"), Path::new("docs/a.md")),
             "abc:./docs/a.md"
         );
-        assert_eq!(tree_object("abc", Path::new("")), "abc:./");
+        assert_eq!(object_name(Source::Commit("abc"), Path::new("")), "abc:./");
+        assert_eq!(
+            object_name(Source::Index, Path::new("docs/a.md")),
+            ":./docs/a.md"
+        );
+        assert_eq!(object_name(Source::Index, Path::new("")), ":./");
     }
 }
 
-/// The contents of many blobs of one commit's tree, in one process.
+/// The contents of many blobs of one snapshot, in one process.
 ///
 /// **One `cat-file --batch`, not one process per file.** A tree of a thousand documents would
 /// otherwise spawn a thousand processes at every commit in the range. A path the tree does not
@@ -493,20 +666,20 @@ mod object_naming {
 /// bytes whatever they are.
 pub(crate) fn blobs(
     root: &Path,
-    sha: &str,
+    source: Source,
     paths: &[PathBuf],
 ) -> io::Result<BTreeMap<PathBuf, String>> {
-    Ok(blob_bytes(root, sha, paths)?
+    Ok(blob_bytes(root, source, paths)?
         .into_iter()
         .filter_map(|(rel, bytes)| Some((rel, String::from_utf8(bytes).ok()?)))
         .collect())
 }
 
-/// The bytes of many blobs of one commit's tree, in one process, as [`blobs`] reads them and
-/// with no decoding. A path the tree does not hold contributes no entry.
+/// The bytes of many blobs of one snapshot, in one process, as [`blobs`] reads them and
+/// with no decoding. A path the snapshot does not hold contributes no entry.
 pub(crate) fn blob_bytes(
     root: &Path,
-    sha: &str,
+    source: Source,
     paths: &[PathBuf],
 ) -> io::Result<BTreeMap<PathBuf, Vec<u8>>> {
     if paths.is_empty() {
@@ -516,7 +689,7 @@ pub(crate) fn blob_bytes(
     for rel in paths {
         // The one spelling, shared with the object lookup, so a path is named to git in one
         // way and a change to it cannot reach one caller and miss the other.
-        stdin.extend_from_slice(tree_object(sha, Path::new("")).as_bytes());
+        stdin.extend_from_slice(object_name(source, Path::new("")).as_bytes());
         stdin.extend_from_slice(path_bytes(rel));
         stdin.push(0);
     }
@@ -849,7 +1022,8 @@ mod tests {
             .expect("a commit");
         let sha = rev_parse(&repo, "HEAD").expect("the head");
 
-        let read = blobs(&repo, &sha, &[odd.clone(), plain.clone()]).expect("both blobs");
+        let read =
+            blobs(&repo, Source::Commit(&sha), &[odd.clone(), plain.clone()]).expect("both blobs");
         assert_eq!(read.get(&odd).map(String::as_str), Some("# Odd\n"));
         assert_eq!(
             read.get(&plain).map(String::as_str),
@@ -896,7 +1070,7 @@ mod tests {
             None,
             "a root commit has no first parent"
         );
-        let listed: Vec<PathBuf> = tree_entries(&repo, &shas[2])
+        let listed: Vec<PathBuf> = snapshot_entries(&repo, Source::Commit(&shas[2]))
             .expect("a tree listing")
             .into_iter()
             .map(|e| e.rel)
@@ -909,11 +1083,216 @@ mod tests {
                 PathBuf::from("2.md")
             ]
         );
-        let read = blobs(&repo, &shas[2], &listed).expect("its blobs");
+        let read = blobs(&repo, Source::Commit(&shas[2]), &listed).expect("its blobs");
         assert_eq!(read.len(), 3);
         assert_eq!(
             read.get(Path::new("1.md")).map(String::as_str),
             Some("# A\n")
+        );
+        let _ = std::fs::remove_dir_all(&repo);
+    }
+
+    /// A repository under the temporary directory, configured to commit, with nothing in it.
+    fn scratch_repository(tag: &str) -> PathBuf {
+        let repo = std::env::temp_dir().join(format!(
+            "knowledge-git-{tag}-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
+        let _ = std::fs::remove_dir_all(&repo);
+        std::fs::create_dir_all(&repo).expect("a repository directory");
+        for args in [
+            vec!["init", "-q"],
+            vec!["config", "user.name", "fixture"],
+            vec!["config", "user.email", "fixture@example.invalid"],
+        ] {
+            git(&repo).args(args).output().expect("a repository");
+        }
+        repo
+    }
+
+    fn write(dir: &Path, rel: &str, text: &str) {
+        let path = dir.join(rel);
+        std::fs::create_dir_all(path.parent().expect("a parent")).expect("its directory");
+        std::fs::write(path, text).expect("a file");
+    }
+
+    /// AC1 of the spec of `check --staged`: the index's snapshot is the tree `git write-tree`
+    /// records, and its bytes are the staged ones, not the working tree's.
+    ///
+    /// The project sits in a subdirectory of its repository beside a sibling whose change is
+    /// staged too, because that is where a listing that is not scoped to the project, or that
+    /// names paths from the repository's root, goes wrong. The index holds every entry kind a
+    /// commit records differently from a plain listing: an intent-to-add entry, which
+    /// `ls-files -s` lists and a commit does not; a staged deletion; a staged empty file, which
+    /// `ls-files -s` cannot tell from the first; a file whose working bytes differ from its
+    /// staged ones; a symlink; and a gitlink.
+    #[test]
+    fn the_index_snapshot_is_the_tree_a_commit_would_record() {
+        let repo = scratch_repository("staged");
+        let project = repo.join("proj");
+        write(&project, "keep.md", "# Keep\n");
+        write(&project, "gone.md", "# Gone\n");
+        write(&project, "changed.md", "# Committed\n");
+        write(&repo, "other/o.md", "# Other\n");
+        git(&repo).args(["add", "-A"]).output().expect("staged");
+        git(&repo)
+            .args(["commit", "-qm", "the base"])
+            .output()
+            .expect("a commit");
+        let head = rev_parse(&repo, "HEAD").expect("the head");
+
+        write(&project, "changed.md", "# Staged\n");
+        write(&project, "empty.md", "");
+        write(&project, "ita.md", "# Intent to add\n");
+        write(&repo, "other/o.md", "# Other, staged\n");
+        git(&project)
+            .args(["add", "changed.md", "empty.md", "../other/o.md"])
+            .output()
+            .expect("staged");
+        git(&project)
+            .args(["add", "-N", "ita.md"])
+            .output()
+            .expect("intent to add");
+        git(&project)
+            .args(["rm", "-q", "gone.md"])
+            .output()
+            .expect("a staged deletion");
+        let target = String::from_utf8(
+            git(&project)
+                .args(["hash-object", "-w", "--stdin"])
+                .stdin(b"keep.md".to_vec())
+                .output()
+                .expect("a symlink target"),
+        )
+        .expect("an id");
+        // `--cacheinfo` names a path from the repository's root, not from the working directory.
+        for info in [
+            format!("120000,{},proj/link.md", target.trim()),
+            format!("160000,{head},proj/sub"),
+        ] {
+            git(&project)
+                .args(["update-index", "--add", "--cacheinfo", &info])
+                .output()
+                .expect("an entry the working tree does not hold");
+        }
+        write(&project, "changed.md", "# Working\n");
+
+        let listed = snapshot_entries(&project, Source::Index).expect("the index's snapshot");
+        let names: Vec<PathBuf> = listed.iter().map(|e| e.rel.clone()).collect();
+        let tree = String::from_utf8(
+            git(&project)
+                .args(["write-tree"])
+                .output()
+                .expect("the tree a commit would record"),
+        )
+        .expect("an id");
+        let recorded = git(&project)
+            .args(["ls-tree", "-r", "-z", "--name-only", tree.trim()])
+            .paths()
+            .expect("its listing");
+        assert_eq!(names, recorded, "the listing is the tree a commit records");
+        assert_eq!(
+            names,
+            ["changed.md", "empty.md", "keep.md", "link.md", "sub"]
+                .map(PathBuf::from)
+                .to_vec(),
+            "scoped to the project, named from it, with no intent-to-add entry"
+        );
+        let kind = |rel: &str| {
+            listed
+                .iter()
+                .find(|e| e.rel == Path::new(rel))
+                .map(|e| e.kind)
+        };
+        assert_eq!(kind("link.md"), Some(EntryKind::Symlink));
+        assert_eq!(kind("sub"), Some(EntryKind::Gitlink));
+        assert_eq!(kind("changed.md"), Some(EntryKind::File));
+        let staged_id = rev_parse(&project, ":./changed.md").expect("the staged blob");
+        assert_eq!(
+            listed
+                .iter()
+                .find(|e| e.rel == Path::new("changed.md"))
+                .map(|e| e.oid.clone()),
+            Some(staged_id),
+            "the whole id of the staged blob"
+        );
+        let read = blobs(
+            &project,
+            Source::Index,
+            &[PathBuf::from("changed.md"), PathBuf::from("keep.md")],
+        )
+        .expect("the staged blobs");
+        assert_eq!(
+            read.get(Path::new("changed.md")).map(String::as_str),
+            Some("# Staged\n"),
+            "the staged bytes, not the working tree's"
+        );
+        assert_eq!(
+            read.get(Path::new("keep.md")).map(String::as_str),
+            Some("# Keep\n")
+        );
+        let _ = std::fs::remove_dir_all(&repo);
+    }
+
+    /// Before the first commit there is no HEAD to overlay, and the snapshot is the index's
+    /// additions alone, an intent-to-add entry still left out.
+    #[test]
+    fn the_index_snapshot_holds_the_additions_alone_before_any_commit() {
+        let repo = scratch_repository("unborn");
+        write(&repo, "a.md", "# A\n");
+        write(&repo, "n.md", "# N\n");
+        git(&repo).args(["add", "a.md"]).output().expect("staged");
+        git(&repo)
+            .args(["add", "-N", "n.md"])
+            .output()
+            .expect("intent to add");
+        let names: Vec<PathBuf> = snapshot_entries(&repo, Source::Index)
+            .expect("the index's snapshot")
+            .into_iter()
+            .map(|e| e.rel)
+            .collect();
+        assert_eq!(names, vec![PathBuf::from("a.md")]);
+        let _ = std::fs::remove_dir_all(&repo);
+    }
+
+    /// A conflicted path is named once, though the index holds it at three stages.
+    #[test]
+    fn an_unmerged_path_is_named_once() {
+        let repo = scratch_repository("unmerged");
+        write(&repo, "c.md", "base\n");
+        git(&repo).args(["add", "-A"]).output().expect("staged");
+        git(&repo)
+            .args(["commit", "-qm", "base"])
+            .output()
+            .expect("a commit");
+        git(&repo)
+            .args(["checkout", "-qb", "side"])
+            .output()
+            .expect("a branch");
+        write(&repo, "c.md", "side\n");
+        git(&repo)
+            .args(["commit", "-qam", "side"])
+            .output()
+            .expect("a commit");
+        git(&repo)
+            .args(["checkout", "-q", "-"])
+            .output()
+            .expect("back");
+        write(&repo, "c.md", "main\n");
+        git(&repo)
+            .args(["commit", "-qam", "main"])
+            .output()
+            .expect("a commit");
+        // The merge conflicts and exits 1; the index it leaves is the subject.
+        let _ = git(&repo).args(["merge", "-q", "side"]).accept(1).output();
+        assert_eq!(
+            unmerged(&repo).expect("a listing"),
+            vec![PathBuf::from("c.md")]
+        );
+        assert!(
+            snapshot_entries(&repo, Source::Index).is_err(),
+            "a `U` row is refused"
         );
         let _ = std::fs::remove_dir_all(&repo);
     }

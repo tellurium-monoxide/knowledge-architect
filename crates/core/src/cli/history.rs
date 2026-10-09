@@ -18,6 +18,7 @@ use std::process::ExitCode;
 use crate::check::{self, Inputs};
 use crate::entity::{Anchors, Entities};
 use crate::extension::{CommitTree, Extension, Prepared, Purpose, Tree};
+use crate::git::Source;
 use crate::manifest::MANIFEST_NAME;
 use crate::survey::Survey;
 use crate::{Finding, Manifest, Model};
@@ -227,12 +228,32 @@ struct FromTree {
 /// stops at phase 1, and nothing it holds is judged or read as a parent.
 fn read_tree(
     root: &Path,
-    sha: &str,
+    source: Source,
     generated_extra: &[PathBuf],
     extensions: &mut [Box<dyn Extension>],
 ) -> Result<FromTree, Unloadable> {
-    let entries = crate::git::tree_entries(root, sha)
-        .map_err(|e| Unloadable(format!("its tree could not be listed: {e}")))?;
+    // **An unmerged index has no tree to commit**: a conflicted merge or rebase leaves it, and
+    // git refuses `commit` there. Asked before the listing, which would meet the same paths as
+    // `U` rows and name only the first.
+    if source == Source::Index {
+        let unmerged = crate::git::unmerged(root)
+            .map_err(|e| Unloadable(format!("its unmerged paths could not be listed: {e}")))?;
+        if !unmerged.is_empty() {
+            let names: Vec<String> = unmerged
+                .iter()
+                .map(|p| crate::finding::escaped(&p.display().to_string()))
+                .collect();
+            return Err(Unloadable(format!(
+                "the index holds unmerged paths: {}",
+                names.join(", ")
+            )));
+        }
+    }
+    let entries: Vec<crate::git::Entry> = crate::git::snapshot_entries(root, source)
+        .map_err(|e| Unloadable(format!("its tree could not be listed: {e}")))?
+        .iter()
+        .map(crate::git::SnapshotEntry::entry)
+        .collect();
     let listing: Vec<PathBuf> = entries.iter().map(|e| e.rel.clone()).collect();
     let links: Vec<crate::git::Entry> = entries
         .iter()
@@ -245,7 +266,7 @@ fn read_tree(
         .map(|e| e.rel)
         .collect();
     let manifest_rel = PathBuf::from(MANIFEST_NAME);
-    let declaration = crate::git::blobs(root, sha, std::slice::from_ref(&manifest_rel))
+    let declaration = crate::git::blobs(root, source, std::slice::from_ref(&manifest_rel))
         .map_err(|e| Unloadable(format!("its {MANIFEST_NAME} could not be read: {e}")))?;
     let Some(text) = declaration.get(&manifest_rel) else {
         return Err(Unloadable(format!("its tree holds no {MANIFEST_NAME}")));
@@ -287,7 +308,7 @@ fn read_tree(
     wanted.dedup();
     let mut blobs = std::collections::BTreeMap::new();
     let mut not_text = std::collections::BTreeMap::new();
-    for (rel, bytes) in crate::git::blob_bytes(root, sha, &wanted)
+    for (rel, bytes) in crate::git::blob_bytes(root, source, &wanted)
         .map_err(|e| Unloadable(format!("its blobs could not be read: {e}")))?
     {
         match String::from_utf8(bytes) {
@@ -330,12 +351,12 @@ enum Depth {
 /// out, per `design@core@a-commit-message-is-a-document`.
 fn commit_tree(
     root: &Path,
-    sha: &str,
+    source: Source,
     checker: &[&Path],
     extensions: &mut [Box<dyn Extension>],
     depth: Depth,
 ) -> Result<Assembly, Unloadable> {
-    let read = read_tree(root, sha, &[], extensions)?;
+    let read = read_tree(root, source, &[], extensions)?;
     let manifest = read.manifest;
     if !manifest.complaints().is_empty() {
         // Phase 1 failed, so no blob was read and nothing is assembled: the tree is judged no
@@ -397,7 +418,7 @@ fn commit_tree(
     }
     extra.retain(|rel| read.listing.contains(rel) && !blobs.contains_key(rel));
     if !extra.is_empty() {
-        let more = crate::git::blobs(root, sha, &extra)
+        let more = crate::git::blobs(root, source, &extra)
             .map_err(|e| Unloadable(format!("its generated files could not be read: {e}")))?;
         blobs.extend(more);
     }
@@ -498,7 +519,7 @@ fn commit_tree(
             Ok(()) => {
                 // The foundation passed, so each extension reads what it needs from this
                 // commit's git objects now, and a tree that stopped earlier read nothing.
-                let commit = CommitTree::new(root, sha, read.listing, blobs);
+                let commit = CommitTree::new(root, source, read.listing, blobs);
                 for extension in extensions.iter_mut() {
                     let prepared = extension
                         .prepare(
@@ -599,7 +620,13 @@ pub(super) fn commits(
 
     for sha in &shas {
         let short = &sha[..7.min(sha.len())];
-        let assembled = commit_tree(root, sha, &checker_rel, extensions, Depth::Judged);
+        let assembled = commit_tree(
+            root,
+            Source::Commit(sha),
+            &checker_rel,
+            extensions,
+            Depth::Judged,
+        );
         let tree = match assembled {
             Ok(tree) => tree,
             Err(Unloadable(why)) => {
@@ -684,14 +711,20 @@ pub(super) fn commits(
         let parent_owned = match (&previous, &first_parent) {
             (Some((seen, _, _)), Some(parent)) if seen == parent => None,
             (_, Some(parent)) => {
-                commit_tree(root, parent, &checker_rel, extensions, Depth::References)
-                    .ok()
-                    // A parent whose phase 1 fails was not read, and serves as no parent.
-                    .filter(|a| a.stopped != Some(check::Phase::Resolution))
-                    .map(|a| {
-                        let e = Entities::build(&a.model, &a.anchors());
-                        (a, e)
-                    })
+                commit_tree(
+                    root,
+                    Source::Commit(parent),
+                    &checker_rel,
+                    extensions,
+                    Depth::References,
+                )
+                .ok()
+                // A parent whose phase 1 fails was not read, and serves as no parent.
+                .filter(|a| a.stopped != Some(check::Phase::Resolution))
+                .map(|a| {
+                    let e = Entities::build(&a.model, &a.anchors());
+                    (a, e)
+                })
             }
             (_, None) => None,
         };
@@ -843,6 +876,43 @@ fn verdict(n: usize) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// The staged assembly refuses an index holding an unmerged path, naming each path once,
+    /// before it reads anything else: a conflicted merge has no tree to commit.
+    #[test]
+    fn an_unmerged_index_is_refused_naming_each_path_once() {
+        let repo = std::env::temp_dir().join(format!(
+            "knowledge-history-unmerged-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
+        let _ = std::fs::remove_dir_all(&repo);
+        std::fs::create_dir_all(&repo).expect("a repository directory");
+        let run = |args: &[&str]| {
+            let _ = crate::git::git(&repo).args(args).accept(1).output();
+        };
+        run(&["init", "-q"]);
+        run(&["config", "user.name", "fixture"]);
+        run(&["config", "user.email", "fixture@example.invalid"]);
+        for (branch, text) in [(None, "base\n"), (Some("side"), "side\n"), (None, "main\n")] {
+            match branch {
+                Some(name) => run(&["checkout", "-qb", name]),
+                None if text == "main\n" => run(&["checkout", "-q", "-"]),
+                None => {}
+            }
+            std::fs::write(repo.join("c.md"), text).expect("a file");
+            std::fs::write(repo.join("d.md"), text).expect("a file");
+            run(&["add", "-A"]);
+            run(&["commit", "-qm", text.trim()]);
+        }
+        run(&["merge", "-q", "side"]);
+        let refused = read_tree(&repo, Source::Index, &[], &mut [])
+            .err()
+            .expect("an unmerged index is refused")
+            .0;
+        assert_eq!(refused, "the index holds unmerged paths: c.md, d.md");
+        let _ = std::fs::remove_dir_all(&repo);
+    }
 
     // Every fixture is written as the bytes it means: the checker reads no string literal of
     // its own source, per `design@core@checker-source-literals-are-data`.
