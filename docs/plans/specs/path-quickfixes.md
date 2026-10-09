@@ -304,7 +304,7 @@ methods are "safe under the recorded condition for admitting quickfixes". Approv
 `argument@path-quickfixes@a17`, `argument@path-quickfixes@a18`, `argument@path-quickfixes@a19`,
 `argument@path-quickfixes@a20`, `argument@path-quickfixes@a21`. Shape: Decided design, "What a fix
 may write". Harvest: `design@core@safe-fix-definition` rewritten in place, and
-`tripwire@core@fix-makes-a-choice` rewritten. The owner's words, round 2: "fix-admission: agreed."
+`tripwire@core@fix-makes-a-choice` deleted, per D4. The owner's words, round 2: "fix-admission: agreed."
 After the agent's correction of the census, reply to round 2, the owner's words, round 3: "We'll go
 with the current design."
 
