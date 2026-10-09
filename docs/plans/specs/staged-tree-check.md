@@ -34,7 +34,8 @@ leaves the repository in the commit that completes its harvest.
   the ability to run the checks on a tree restricted to either of", and ends at the owner's message
   "Table approved, keep all tripwires and acceptance criteria.proceed to the spec". It holds 3
   owner messages, called rounds 1 to 3 below, and 2 agent replies, one after each of rounds 1 and
-  2.
+  2. After the spec's reviews, the owner ruled on its six defaults in one message, called round 4
+  below: "All defaults approved".
 
 ## How the work is done
 
@@ -589,7 +590,9 @@ CI fails.
 
 ### Extensions over a snapshot
 
-`Tree::Commit(&CommitTree)` is renamed `Tree::Snapshot(&Snapshot)`. `Snapshot::revision()`
+`Tree::Commit(&CommitTree)` is renamed `Tree::Snapshot(&Snapshot)`, per D5. Its doc comment
+states that the index is one of a snapshot's revisions, and that `Purpose::Check` over a snapshot
+asks for every check the snapshot can answer. `Snapshot::revision()`
 answers `Revision::Commit(sha)` or `Revision::Index`. `object_id` answers the blob id of the
 listing. Under `check --staged`, each extension is prepared with `Tree::Snapshot` and
 `Purpose::Check`; under `index --staged`, with `Tree::Snapshot` and `Purpose::Index`; under
@@ -876,6 +879,13 @@ that step 3 computes. Step 4 before step 5: the shipped text describes the comma
 
 ## Defaults awaiting the owner
 
+None.
+
+### The defaults the owner ruled on
+
+Six defaults stood after the reviews of this spec. The owner ruled on all six in round 4: "All
+defaults approved". Each is applied in the sections it names, and is kept here with its reason.
+
 - **D1**, on #fix-refusal-mixed-state: the refusal is classed `cli`, major, in the changelog,
   since a `check --fix` that succeeded before now exits 2. Round 1 named it "`checks`, minor or
   major" and left the class to
@@ -936,9 +946,9 @@ commit, with the test it fails.
 | #staged-tree-source, with #staged-check-semantics and #default-source-worktree | a new head in `path@core@docs/design.md`, slug `staged-tree-source`, under "1. The shape of a run", after `design@core@git-supplies-the-walk`; that head rewritten in place to name the second source |
 | #staged-tree-source, #index-staged-write | `design@core@the-core-cli-is-a-library-module` rewritten: the staged commands build on the staged assembly, not on `Gathered` |
 | #extension-tree-for-index | `design@core@an-extension-plugs-in-through-phased-hooks` rewritten: over a snapshot, git objects only; and a new head in `path@core@docs/design.md`, slug `an-extension-reads-a-snapshot`, since the thread's slug names the question rather than the decision; `design@core@api-facade` edited for the rename |
-| #index-staged-write | a new head in `path@core@docs/design.md`, slug `index-staged-write`, after `design@core@generated-files-are-pure`, which is rewritten: `index` takes one flag |
+| #index-staged-write | per D2, the head states B as approved; a new head in `path@core@docs/design.md`, slug `index-staged-write`, after `design@core@generated-files-are-pure`, which is rewritten: `index` takes one flag |
 | #fix-refusal-mixed-state, with #fix-with-staged | a new head in `path@core@docs/design.md`, slug `fix-refusal-mixed-state`, after `design@core@check-fix-flag`; `design@core@fix-before-the-checks` rewritten: the refusal comes first |
-| #workflow-delivery-staged | judged by the recording tests for a head in `path@agent-skills@docs/design.md` on the recommendation of `check --staged` before each commit |
+| #workflow-delivery-staged | per D6, the harvest's commit quotes the owner's round-1 words as the lack named under `design@agent-skills@additions-need-real-use`; judged by the recording tests for a head in `path@agent-skills@docs/design.md` on the recommendation of `check --staged` before each commit |
 | every item of "Losing alternatives" | `path@core@docs/rejected-alternatives.md`, each as the recording tests admit |
 | T1 | `path@core@docs/tripwires.md`, guarding the head `staged-tree-source`, as the Premortem section words it |
 | T2 | `path@core@docs/tripwires.md`, guarding the head `fix-refusal-mixed-state`, as the Premortem section words it |
