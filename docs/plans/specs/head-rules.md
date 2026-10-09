@@ -6,7 +6,8 @@ This spec is the plan of the work that changes how the workflow records and read
 The work does six things:
 
 - the rules on what a design head records and how move out of the decision-recording skill into
-  one new section of the primer, and every other installed text keeps only a pointer to it;
+  one new section of the primer, and every other installed text keeps a pointer to it, or a
+  restatement of one sentence beside its pointer;
 - a head's title states the rule that decided, and its body names the members built under it;
 - a head stands on its argument, and cites the owner's words only for what came from the owner;
 - a head holds one decision, by a stated test;
@@ -24,8 +25,8 @@ leaves the repository in the commit that completes its harvest.
   point.
 - **The spec lands before its work, in a pull request of its own**, per default D9. No gate
   requires it: `cargo klarch commits` judges each commit against that commit's own installed
-  copies, per `design@core@owned-namespace-check`, "Only `check` compares: `commits` does not",
-  and the work changes no code of the checker. A plan document on main keeps work done meanwhile
+  copies, per `design@core@installed-entities-from-the-tree`, "A commit is therefore judged against
+  the installed set it holds", and the work changes no code of the checker. A plan document on main keeps work done meanwhile
   from drifting from it, per `skill@knowledge-architect-planning@plan-reviews`.
 - **The work starts with the design audit** of `skill@knowledge-architect-planning@working-a-slice`
   point 2 when it does not start in the session where the discussion converged, or when commits
@@ -102,8 +103,15 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 | `skill@knowledge-architect-decision-recording@before-you-finish` | re-read each head for present tense; apply the entry tests again; "rewriting argued text is where fidelity gets lost" |
 
 The skill's description, in its frontmatter, names "the recording tests, which Component owns it,
-the split between the design home, the rejected alternatives and history, slug anchors", and the
-primer's `primer@installed-skills` bullet describes the skill.
+the split between the design home, the rejected alternatives and history, slug anchors". The
+primer's `primer@installed-skills` bullet names only the skill's triggers. The design skill's
+description, in `path@agent-skills@content/skills/design/SKILL.md` line 3, restates the backstop's
+three cases: "the decision creates a design head, contradicts a statement of one, or takes one
+beyond what its title states".
+
+Line numbers below in the design skill are those of its source,
+`path@agent-skills@content/skills/design/SKILL.md`, which holds `%%` lines the installed copy does
+not.
 
 **About 10 other installed texts restate parts of them**, most with no adjacent pointer. The
 inventory of the grounding of round 2 found 9 inconsistencies. Each is read against the tree at
@@ -114,7 +122,7 @@ the commit that adds this spec, with the line where it stands and the resolution
 | I1 | which Component owns a decision | the skill's three questions; `path@agent-skills@content/agents/routing-reviewer.md` line 96: "*does this decision survive deleting the Component?*" | the reviewer points to the skill's three questions, which stay in the skill, per default D8 |
 | I2 | where the owner's words go for an addition within a title | the skill line 130, "quoted in the commit"; `design@agent-skills@new-or-reshaped-head-needs-design`, "quoted where they gave a ruling" | the routing of a new member, and the rule that an approval goes to the deliberation |
 | I3 | "recorded when made" missing the clause "and that is not part of any spec" | the skill line 28 holds it; the primer line 37, the routing reviewer line 110, the design skill lines 135 and 649, and the root CLAUDE.md line 299 do not | each restatement points to `skill@knowledge-architect-decision-recording@when-recording-happens`, or carries the whole sentence with its pointer, under `thread@head-rules@restatement-size-test` |
-| I4 | what a measurement in a head carries | the skill line 163, "the measurement it rests on"; the decision-record reviewer line 97, "with the command that takes it again" | the head section states "the measurement it rests on, with the command that takes it again"; the root CLAUDE.md's own row, which adds the direction that would reopen the argument, is this repository's addition and stays |
+| I4 | what a measurement in a head carries | the skill line 163, "the measurement it rests on"; the decision-record reviewer line 97, "with the command that takes it again" | the head section states "the measurement it rests on, with the command that takes it again"; the root CLAUDE.md's own paragraph "Never record a number that will go stale", which adds the direction that would reopen the argument, is this repository's addition and stays |
 | I5 | the thread's slug as the entry's slug | the design skill line 645, "under its own slug when it earns one", without the skill's exception | the design skill points to the head section for the entry's slug |
 | I6 | which losing alternatives are recorded | the design skill line 688, "Record the losing alternatives"; the skill line 269, "Most alternatives that lose earn no entry" | the design skill's keep-or-change says the plan document records them, and points to `skill@knowledge-architect-decision-recording@losing-alternatives` for the entries |
 | I7 | which decisions a head references | the skill lines 162 and 163, "the goal or the decision it derives from"; the skill line 253, "A decision of another Component the head depends on" | the head section states the second, which `design@agent-skills@a-reference-claims-a-revisit` records |
@@ -151,8 +159,8 @@ sample of each audit against the tree and the history, and every sampled claim h
   shape: a head lists the members built, a member arrives, the head is rewritten, often with its
   slug and its tripwire renamed. Of 15 reversals in this repository's history that the audit of
   the root, gates and xtask homes judged, 6 come from it.
-- **Approval citations rose in one week.** Counted as heads added or rewritten per week across
-  this repository's design homes: W36 to W39, 51 heads, none citing the owner; W40, 230 heads, 24
+- **Approval citations rose in one week.** Counted by the audit of the root, gates and xtask
+  homes, as heads added or rewritten per week across this repository's design homes: W36 to W39, 51 heads, none citing the owner; W40, 230 heads, 24
   citing the owner, 9 of them an approval; W41 to 2026-10-09, 142 heads, 75 citing the owner, 30
   of them an approval, whole or in part. Entry test 4 was added on 2026-10-07.
 - **Three verified commits show the title-completeness rule pushing a list into a title**: this
@@ -161,8 +169,10 @@ sample of each audit against the tree and the history, and every sampled claim h
 ### What is outside the work
 
 - **thaum's heads.** The audit found the same defects there; thaum's record is thaum's to change.
-- **The bundles and the instance-as-the-rule heads of this repository** are fixed when a change
-  touches them, per `thread@head-rules@existing-heads-on-touch`, not in this work.
+- **The bundles and the instance-as-the-rule heads of this repository** are not swept. Each is
+  brought to the head section's rules when a change touches it, per
+  `thread@head-rules@existing-heads-on-touch`; the heads this work's sweep and harvest touch are
+  brought to them in this work, since the rule is written at step 3, before them.
 - **The existing long restatements of the root CLAUDE.md**, such as
   `instructions@mechanical-validation` and `instructions@git-workflow`, which
   `thread@head-rules@restatement-size-test` would turn into pointers, are left until a change
@@ -194,9 +204,9 @@ as referencing each, on the branch of this spec at the commit that adds it:
 
 | decision | texts referencing it | judged or updated at |
 | --- | --- | --- |
-| `design@agent-skills@new-or-reshaped-head-needs-design`: its third case, "the title is reworded to state both decisions, or, where no title can, the addition gets a head of its own", rewritten by `thread@head-rules@one-decision-per-head`; an addition within the title is routed by `thread@head-rules@extension-follows-the-ground`; its paragraph "Two texts deliver it", which places the backstop in the decision-recording skill and says "A line in the primer lost to `design@agent-skills@primer-limit`", rewritten per default D7 | `path@agent-skills@docs/design.md` line 885; `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`, lines 20 and 43; `path@agent-skills@docs/rejected-alternatives.md` lines 80 and 87; `tripwire@agent-skills@head-created-without-deliberation`, whose response names "the primer line it rejected", and the entry at line 49 of `path@agent-skills@docs/tripwires.md` | the harvest |
+| `design@agent-skills@new-or-reshaped-head-needs-design`: its third case, "the title is reworded to state both decisions, or, where no title can, the addition gets a head of its own", rewritten by `thread@head-rules@one-decision-per-head`; an addition within the title is routed by `thread@head-rules@extension-follows-the-ground`; its paragraph "Two texts deliver it", which places the backstop in the decision-recording skill and says "A line in the primer lost to `design@agent-skills@primer-limit`", rewritten per default D7 | `path@agent-skills@docs/design.md` line 885; `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`, lines 20 and 43; `path@agent-skills@docs/rejected-alternatives.md` lines 80 and 87; `tripwire@agent-skills@head-created-without-deliberation`, whose heading references it at line 37, whose premise names "the decision-recording skill's backstop" and whose response, at line 49, names "the primer line it rejected" | the harvest |
 | `design@agent-skills@standing-argument-in-head`: "who ruled what" stays in the deliberation, except the owner's words that are a decision's ground | `path@agent-skills@docs/design.md` line 1081; `issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle` line 40 | the harvest; the issue closes there |
-| `design@agent-skills@a-head-is-owed-by-an-entry-test`: its sentence "which the owner confirms when asked" is read against `thread@head-rules@head-ground-is-the-argument`, together with the skill's "The head quotes the owner's words and the owner's answer"; its "the four entry tests of the installed decision-recording skill" names the head section; its title's "the heads stay few", per default D12; it is approval-cited in part and swept | `path@agent-skills@docs/design.md` lines 45, 139, 269, 414, 453 and 1278; the issues `issue@agent-skills@no-way-to-audit-a-project-as-a-whole`, `issue@agent-skills@test-3-admits-a-practice-its-tool-documents`, `issue@agent-skills@the-material-finding-duty-has-no-head` and `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined`; `path@agent-skills@docs/rejected-alternatives.md` line 122; `path@agent-skills@docs/tripwires.md` lines 135, 141 and 148 | step 6 for the citation; the harvest for the rest; each referencing text read again there |
+| `design@agent-skills@a-head-is-owed-by-an-entry-test`: its sentence "which the owner confirms when asked", and the skill's "The head quotes the owner's words and the owner's answer", stay: a head admitted by test 4 is one whose ground is the owner's words, which `thread@head-rules@head-ground-is-the-argument` names "such a case"; its "the four entry tests of the installed decision-recording skill" names the head section; its title's "the heads stay few", per default D12; it is approval-cited in part and swept | `path@agent-skills@docs/design.md` lines 45, 139, 269, 414, 453 and 1278; the issues `issue@agent-skills@no-way-to-audit-a-project-as-a-whole`, `issue@agent-skills@test-3-admits-a-practice-its-tool-documents`, `issue@agent-skills@the-material-finding-duty-has-no-head` and `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined`; `path@agent-skills@docs/rejected-alternatives.md` line 122; `path@agent-skills@docs/tripwires.md` lines 135, 141 and 148 | step 6 for the citation; the harvest for the rest; each referencing text read again there |
 | `design@agent-skills@primer-content`: its title lists the primer's directives; it gains the head section, and its title states the rule, per `thread@head-rules@title-states-the-rule` | `path@knowledge-architect@CLAUDE.md` line 410; `issue@agent-skills@the-material-finding-duty-has-no-head` lines 25, 34 and 42; `path@agent-skills@docs/rejected-alternatives.md` line 22 | the harvest |
 | `design@agent-skills@primer-limit`: "neither does a procedure a skill delivers when it loads". The head section holds the rules needed to read a head and to tell in advance what a change must be checked against, which no skill delivers at that moment (`argument@head-rules@a72`); the writing procedures stay in the decision-recording skill, per the mapping table. The head is read again, and its text names the head section as what passes its test | `path@agent-skills@CLAUDE.md` line 41; `path@agent-skills@docs/design.md` lines 219, 1146 and 1276; `path@agent-skills@docs/rejected-alternatives.md` line 81 | the harvest |
 | `design@agent-skills@design-home-write-loads-recording`: its argument, "that test is held by the skill the condition decides whether to load", and its rival's loss, "makes copies of a test whose home is the decision-recording skill", become false once the title test is in the primer. The load stays, for the recording procedures and the reread; its argument is rewritten | `path@agent-skills@CLAUDE.md` line 66; `path@agent-skills@docs/design.md` line 216; `path@agent-skills@docs/tripwires.md` line 41 | the harvest |
@@ -207,7 +217,11 @@ as referencing each, on the branch of this spec at the commit that adds it:
 | the approval-cited heads, listed in "Decided design", the sweep | each head's own references, read again at the sweep | step 6 |
 | the sections of the decision-recording skill whose content moves, cited by section reference: `skill@knowledge-architect-decision-recording@entry-tests` from the decision-record reviewer, the design skill (2), the agent-skills design home (2), the issues `issue@agent-skills@test-3-admits-a-practice-its-tool-documents` and `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined`, the skill itself (6) and this spec; `skill@knowledge-architect-decision-recording@current-design` from the agent-skills design home, `spec@plans@path-quickfixes` (2), the skill itself (3) and this spec; `skill@knowledge-architect-decision-recording@three-homes` from this spec. `skill@knowledge-architect-decision-recording@reversal-check` stays, so its references stay, except one that cites it for the alignment clause | as listed | step 2 retargets every reference whose section moves; this spec's own references are rewritten in plain text in step 2's commit, "the skill's former entry-tests section", so that its record of the move stays readable; `cargo klarch check` lists any left dangling |
 | the core design home's introduction, "`skill@knowledge-architect-decision-recording` owns the shape" | `path@core@docs/design.md` lines 5 and 6, an introduction and not a head | step 4: it names the head section |
-| the skill's description and the primer's `primer@installed-skills` bullet, which name content that moves | the frontmatter of `path@agent-skills@content/skills/decision-recording/SKILL.md`; `path@agent-skills@content/PRIMER.md` | step 2 |
+| the skill's description, which names content that moves | the frontmatter of `path@agent-skills@content/skills/decision-recording/SKILL.md` | step 2 |
+| the design skill's description, which restates the backstop's three cases | the frontmatter of `path@agent-skills@content/skills/design/SKILL.md` | step 3, reworded to the backstop's cases |
+| `design@agent-skills@additions-need-real-use`: not reversed. The in-change reread is built against its rule on a predicted behaviour, on the owner's ruling D10 | `design@agent-skills@in-change-path`, which will carry the reread | the harvest: the head that records the reread gives the owner's ruling as its ground, quoting it |
+| `design@agent-skills@a-reference-claims-a-revisit`, its row on a restatement of a directive, which names its home: under the approved restatement rule a bare fact, a path, a name or a command, is restated with no pointer | the root CLAUDE.md's table of when to write a reference | the harvest: the row is narrowed to a directive sentence |
+| `design@agent-skills@shipped-text-cites-no-entry`: not changed. For installed text, the home a pointer names is installed text, a skill's section or the primer's; a design entry of this repository is a decision's home, which the installed text never cites. The restatement rule is read so | none to update | step 1, where the rule's text says it |
 | `issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`, which this work closes | `spec@plans@path-quickfixes` lines 182, 215, 365 and 1117; `issue@core@a-kind-name-refusal-quotes-a-future-migration-reason` line 34 | the harvest: the closing commit rewrites each to state the present |
 
 ## Criteria
@@ -258,9 +272,10 @@ C8. Binding, derived from `goal@knowledge-architect@the-owner-decides`: "the rec
 owner's decisions". Met by `thread@head-rules@head-ground-is-the-argument` and
 `thread@head-rules@existing-heads-on-touch`.
 
-### Every rule on what a head records and how sits in one location, and no other text restates part of it `##c9`
+### Every rule on what a head records and how sits in one location, and no other text restates more than one sentence of it `##c9`
 
-C9. Binding: the owner's direction in the reply to round 1. Met by
+C9. Binding: the owner's direction in the reply to round 1, as `thread@head-rules@restatement-size-test`
+bounds it. Met by
 `thread@head-rules@one-home-for-head-rules` and `thread@head-rules@restatement-size-test`.
 
 ### The design homes stay few heads `##c10`
@@ -673,6 +688,10 @@ W40: 24 of 230, 9 of them an approval; W41: 75 of 142, 30 of them an approval.
 Round 2, the agent. Bears on `thread@head-rules@head-ground-is-the-argument`. "Batch approvals are
 cited as rulings. The common forms are "All defaults approved", "Defaults approved on all four",
 "Q1: default approved", "the owner accepted the cost". Three of them are still in the tree".
+The three sites round 2 named are variants of these forms, not the literal phrases: "The owner
+approved this shape while calling it not definitive.", "The cost, which the owner accepted by
+name", "Its cost, one more dispatch at each of those moments, the owner accepted.", per the
+code-claims review.
 
 ### The citation adds a false ground and removes nothing `##a39`
 
@@ -992,6 +1011,11 @@ are section text: the primer's sections are level-two homes of the harness kind 
 
 ## Decided design
 
+Each draft text below is copied into the work as approved. A rewording that changes no rule is
+listed to the owner in the commit that makes it; one that changes a rule goes to the owner first.
+The reviews of this spec are recorded in the messages of its commits whose subjects begin
+"[review]"; "the code-claims review" and "the transcript review" below name those.
+
 ### The head section
 
 One new level-two section of the primer holds every rule on what a head records and how, as
@@ -1033,8 +1057,7 @@ what a head records, and a reader of a head does not need them.
 
 ### The title states the rule
 
-Draft text for the head section, approved by the owner as a principle in the reply to round 3; the
-wording is the agent's and may be refined in the work:
+Draft text for the head section, approved by the owner as a principle in the reply to round 3.
 
 > **A title states the rule that decided, not the list of what it admits today.** When a decision
 > admits members (fixes, kinds, verbs, sections, consumers), or picks a mechanism to meet a
@@ -1108,9 +1131,7 @@ the other standing?", over-splits a rule from its exception (`argument@head-rule
 
 ### How a new member is routed
 
-Approved by the owner in the reply to round 2:
-
-The tree as the owner approved it, in round 2:
+The tree as round 2 presented it, which the owner approved in the reply to round 2:
 
 ```text
 a new member M, and the head's rule R admits M
@@ -1136,16 +1157,22 @@ approval decided by finding the word in history, met C7 only partly (`argument@h
 ### The backstop
 
 Draft text for the head section, in place of the backstop of
-`skill@knowledge-architect-decision-recording@entry-tests`; the wording is the agent's, and states
-`thread@head-rules@one-decision-per-head` and `thread@head-rules@extension-follows-the-ground`:
+`skill@knowledge-architect-decision-recording@entry-tests`. It states
+`thread@head-rules@one-decision-per-head` and `thread@head-rules@extension-follows-the-ground`, and
+keeps the sentences of the skill's backstop that neither thread changes: the case of a decision met
+during another task, the in-change path, and the review axes that judge a relocation:
 
 > **A decision that creates a head, contradicts a statement of one, its argument included, or adds
 > a member the head's argument does not cover, goes to the design skill before its text is
-> written**, unless it was argued there. An addition that answers another question than the head's
-> takes a head of its own, by the test of one decision per head. A member the head's argument
-> covers is recorded directly, routed as above; where the owner approved it, the approval is quoted
-> in the commit, not in the head. A change that relocates or rewords recorded decisions, a split of
-> a head included, and adds or removes none, is not a decision: it needs no design skill.
+> written**, unless it was argued there. This is the case of a decision met during another task
+> and settled there, by the owner's word or by the session's own choice. The design skill's
+> in-change path keeps the deliberation in the commit message, so the task needs no plan document
+> and no new session. An addition that answers another question than the head's takes a head of
+> its own, by the test of one decision per head. A member the head's argument covers is recorded
+> directly, routed as above; where the owner approved it, the approval is quoted in the commit, not
+> in the head. A change that relocates or rewords recorded decisions, a split of a head included,
+> and adds or removes none, is not a decision: it needs no design skill, and the routing and
+> fidelity-of-relocation review axes judge that it adds or removes none.
 
 ### A head a change touches
 
@@ -1195,7 +1222,10 @@ approval. Two texts understate the owner's role in the other direction and are r
 step: the rejected alternative at `path@agent-skills@docs/rejected-alternatives.md` line 116,
 "ruled for the path inside the design skill once that was argued", where the transcript of its
 discussion shows the owner proposed that path; and the head `design@agent-skills@in-change-path`,
-which does not credit the owner's proposal of the widening.
+which does not credit the owner's proposal of the widening. The repair of the first: its reason
+says the owner proposed the path, and keeps the argument it lost to. The second is a mixed head
+after the sweep: the widening of the in-change path is the owner's proposal, quoted as its ground;
+the cost of a long commit message stands on its argument, its approval citation removed.
 
 ### A directive longer than a pointer is pointed to
 
@@ -1275,7 +1305,7 @@ The relocation of step 2, total over the sections of the decision-recording skil
 | `skill@knowledge-architect-decision-recording@three-homes` | the standing argument, its test and the rule that the deliberation is not copied into the head move; the table and the commands stay |
 | `skill@knowledge-architect-decision-recording@current-design` | its rules on a head move; where a design home sits, how a subdocument is linked, the template and how to rename a slug stay, under a section of the skill that keeps the slug `current-design` |
 | `skill@knowledge-architect-decision-recording@losing-alternatives` | stays |
-| `skill@knowledge-architect-decision-recording@premortem-tripwires` | stays |
+| `skill@knowledge-architect-decision-recording@premortem-tripwires` | stays, with its own `%%` line citing `design@agent-skills@ruled-items-labelled` |
 | `skill@knowledge-architect-decision-recording@before-you-finish` | stays, pointing to the head section for the re-read of each head |
 
 A reference to `skill@knowledge-architect-decision-recording@entry-tests` is retargeted to the head
@@ -1348,13 +1378,13 @@ the sweep.
 ### No installed text restates more than one sentence of the head rules `##no-partial-restatement-remains`
 
 AC2. Guards `thread@head-rules@one-home-for-head-rules` and
-`thread@head-rules@restatement-size-test`. Judged at step 4 and again at the harvest. The
-instrument: a fresh read-only subagent reads the source of every installed text, the root
-CLAUDE.md, every scoped CLAUDE.md and this repository's own skills and agents. It lists each
-statement of a rule the head section holds, with its file and line, and judges whether it stands
-outside the head section in more than one sentence, and whether it agrees with the head section.
-It reads each of the 9 inconsistencies at the lines given under "What the work is". Fires on one
-statement found. Response: replace it by a pointer; a rule that cannot be pointed to reopens
+`thread@head-rules@restatement-size-test`. Judged at step 4 over the installed text, and at the
+harvest over the installed text and every text of this repository the work touched; text the work
+leaves untouched is out of its scope, per D6. The instrument: a fresh read-only subagent reads
+those texts and lists each statement of a rule the head section holds, with its file and line. It
+fires on either of two observations: a statement outside the head section longer than one
+sentence, or a statement that disagrees with the head section. It also reads each of the 9
+inconsistencies at the lines given under "What the work is", and fires on one that remains. Response: replace it by a pointer; a rule that cannot be pointed to reopens
 `thread@head-rules@one-home-for-head-rules`.
 
 ## Implementation sequence
@@ -1365,15 +1395,20 @@ Steps 1 to 4 change the installed text: each of their commits runs
 default it names still awaits, unless the owner has ruled.
 
 1. **The restatement rule.** Rewrite the restatement sentences of `primer@where-knowledge-goes` to
-   the approved text. Replace the restatement of the old rule in `instructions@where-knowledge-goes`
-   by a pointer to the primer's section, since the approved text is longer than one sentence.
-   Waits on D6. Fails alone on: the wording of one section.
+   the approved text, with one sentence more: for installed text, the home a pointer names is
+   installed text, since installed text cites no entry of this repository, per
+   `design@agent-skills@shipped-text-cites-no-entry`. Replace the restatement of the old rule in
+   `instructions@where-knowledge-goes` by a pointer to the primer's section, since the approved
+   text is longer than one sentence, under `skill@knowledge-architect-agent-configuration`. Waits on
+   D6. Fails alone on: the wording of one section.
 2. **The relocation.** Write the head section with the rules of the mapping table, relocated with
    no change of meaning; the decision-recording skill keeps what the table says, points to the
-   section, and gains the reread instruction; its description and the primer's
-   `primer@installed-skills` bullet name what moved; every reference whose section moves is
-   retargeted, and this spec's own references to them are rewritten in plain text. Waits on D7 and
-   D8. Fails alone on: a rule lost, doubled or changed in the move, read as a diff of the moved
+   section, and gains the reread instruction; its description names what moved; every reference
+   whose section moves is retargeted, and this spec's own references to them are rewritten in plain
+   text. The section's heading carries its slug as the build placeholder the source uses,
+   `{{slug:design-heads}}`. A dangling reference of the shipped text fails the test gate too, by
+   `shipped_set_violations` in `path@core@src/agents.rs`, as well as `cargo klarch check`. Waits on
+   D7 and D8. Fails alone on: a rule lost, doubled or changed in the move, read as a diff of the moved
    text.
 3. **The new rules.** Add to the head section the rules of
    `thread@head-rules@title-states-the-rule`, `thread@head-rules@head-ground-is-the-argument`,
@@ -1422,7 +1457,7 @@ The owner ruled on all fourteen in one message after them: "All defaults approve
 is applied in the sections it names, and is kept here with its reason.
 
 - **D2**, on `criterion@head-rules@c10`: the satisfaction line is "met on the owner's reading, the
-  count of heads accepted to rise", a line the owner has not seen. Default: as written.
+  count of heads accepted to rise". Ruled: as written.
 - **D3**, on `thread@head-rules@one-home-for-head-rules`: its scope is the rules on heads; the
   general question became `thread@head-rules@restatement-size-test`. Default: as written.
 - **D4**, on `thread@head-rules@existing-heads-on-touch`: round 1's default, adding the audit's list
@@ -1443,8 +1478,12 @@ is applied in the sections it names, and is kept here with its reason.
   defeat that reason for the head rules: they are needed at every reading of a head. Default: the
   line is in the head section; the rejected alternative leaves the file at the harvest, since a
   rejected alternative that is chosen moves out of it; the paragraph "Two texts deliver it" of
-  `design@agent-skills@new-or-reshaped-head-needs-design` and the response of
-  `tripwire@agent-skills@head-created-without-deliberation` are rewritten with it.
+  `design@agent-skills@new-or-reshaped-head-needs-design`, and the premise and the response of
+  `tripwire@agent-skills@head-created-without-deliberation`, are rewritten with it. The second
+  clause of the recorded reason, "the design skill's description carries the symptom", stays true:
+  the description keeps the symptom, and the primer line adds a delivery at the moment a head is
+  read. The owner's "All defaults approved, proceed." is the ruling that reopens and chooses the
+  alternative.
 - **D8**, on `thread@head-rules@one-home-for-head-rules`: the first draft of this spec moved the
   owning-Component rules into the head section. Round 3, which the owner approved as shape (b),
   said "The decision-recording skill keeps its procedures and points to that section: when to
@@ -1461,7 +1500,8 @@ is applied in the sections it names, and is kept here with its reason.
   (`argument@head-rules@a83`), and `design@agent-skills@additions-need-real-use` says "A finding
   that predicts a behaviour is parked as an issue". The reread in the decision-recording skill meets
   that head: the owner asked for it mid-session and named what a long session lacks. Default: the
-  decided shape is built, the in-change reread included; the owner may instead park it as an issue.
+  decided shape is built, the in-change reread included. Ruled: built, and the head that records it
+  gives the owner's ruling as its ground.
 - **D11**, on `thread@head-rules@existing-heads-on-touch`, found by the reviews: the approved list
   of 19 changes by two heads. `design@knowledge-architect@retrospective-findings-stay-here` leaves
   it, since its owner citation states the direction `design@agent-skills@retrospective-destination`
@@ -1481,8 +1521,7 @@ is applied in the sections it names, and is kept here with its reason.
 - **D14**, on `thread@head-rules@existing-heads-on-touch`: the owner approved fixing this
   repository's existing heads on touch. Writing the rule into the primer makes it a directive of
   every installing project. Default: the rule is written into the head section, as drafted under "A
-  head a change touches"; the owner may keep it to this repository instead, as a sentence of the
-  root CLAUDE.md.
+  head a change touches". Ruled: written into the head section.
 - **D15**, found by the code-claims review: the skill's section entry-tests leaves it, and a slug of
   the installed text is an interface, per `design@core@section-homes-carry-slugs`, whose change
   `design@knowledge-architect@changelog-entries` owes a Migration entry for. Default: a Migration

@@ -55,3 +55,6 @@ recorded in this entry's closing commit.
 
 A design discussion under `skill@knowledge-architect-design`, opened on the owner's word, whose
 grounding includes the search above.
+
+The discussion has run and converged: `spec@plans@head-rules` plans the work that answers this
+entry, and the commit that completes that work's harvest closes it.
