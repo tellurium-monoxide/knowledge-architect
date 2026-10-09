@@ -737,6 +737,39 @@ pub(super) fn index_staged(
     Ok(ExitCode::SUCCESS)
 }
 
+/// The generated files the tree git's index would commit needs, or `None` where they cannot be
+/// computed: an index that does not assemble, an unmerged one among them, or a staged tree that
+/// stops in phases 1 to 3. For `check --fix`, which compares them with the working tree's.
+pub(super) fn staged_generated(
+    root: &Path,
+    checker: &[&Path],
+    extensions: &mut [Box<dyn Extension>],
+) -> Option<Vec<(PathBuf, String)>> {
+    let (inside, _) = crate::model::snapshot_checker_dirs(root, checker).ok()?;
+    let inside: Vec<&Path> = inside.iter().map(PathBuf::as_path).collect();
+    let assembly = commit_tree(
+        root,
+        Source::Index,
+        &inside,
+        extensions,
+        Depth::Gated,
+        Purpose::Index,
+    )
+    .ok()?;
+    if assembly.stopped.is_some() {
+        return None;
+    }
+    let snapshot = assembly.snapshot.as_ref()?;
+    super::generated_list(
+        &assembly.manifest,
+        &assembly.model,
+        &assembly.inputs(),
+        Tree::Snapshot(snapshot),
+        extensions,
+    )
+    .ok()
+}
+
 /// Every generated file whose committed bytes a check compares against: each file an
 /// extension generates, and one index per file-register instance.
 fn extra_generated(generated: &HashSet<PathBuf>) -> Vec<PathBuf> {

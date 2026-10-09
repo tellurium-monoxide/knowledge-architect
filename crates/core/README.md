@@ -56,8 +56,8 @@ Three, per `design@core@exit-code-ladder`, and the third is what makes the other
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
 | `0` | the command ran and its subject is in order | `--version`, from any directory; `check` with no findings; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commits` with no finding, an empty range included; `install-agent-skills` having written and removed what it had to, or found nothing to do |
-| `1` | the command ran and reports a negative answer | `check` with findings, `--fix` included; `check --fix` when a write failed, a destination was refused, or the final check could not run, after another file was already written; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, a binary of another version than `[project] checker-version` pins, or a pin it does not confirm, or a manifest with no pin, `index` or `check --fix` refusing a destination — a symlink, or a directory that is not there — having written nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, `install-agent-skills` over a manifest holding a refused declaration, over a symbolic link on an owned path, or when a write or a removal failed, naming the path, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
+| `1` | the command ran and reports a negative answer | `check` with findings, `--fix` included; `check --fix` when a write failed, a destination was refused, a partial commit's mismatch was refused, or the final check could not run, after another file was already written; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree |
+| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, a binary of another version than `[project] checker-version` pins, or a pin it does not confirm, or a manifest with no pin, `index` or `check --fix` refusing a destination — a symlink, or a directory that is not there — having written nothing, `check --fix` refusing a partial commit's mismatch having installed nothing, `check --staged` or `index --staged` over an index that holds an unmerged path or a staged tree that cannot be read, `index --staged` refused by its gate, a destination or git's index lock, having staged nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, `install-agent-skills` over a manifest holding a refused declaration, over a symbolic link on an owned path, or when a write or a removal failed, naming the path, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -131,8 +131,19 @@ or touches git or a hand-written file, and stays the reader's.
 - The order, per `design@core@fix-before-the-checks`: a manifest holding a refused declaration
   writes nothing; then the agent files; then
   the first three phases, over the tree as the install left it, which stop the run and write nothing
-  more; then the generated files; then the full check, whose report and exit code are the run's.
-  With nothing to fix, the output is a plain `check`'s.
+  more; then the refusal of a partial commit's mismatch, below; then the generated files; then the
+  full check, whose report and exit code are the run's. With nothing to fix, the output is a plain
+  `check`'s.
+- **A partial commit's mismatch is refused.** Where the index differs from HEAD, and the
+  generated files the working tree needs differ from those the tree git's index would commit
+  needs, `--fix` writes no generated file and names each that differs, with the two repairs:
+  `index --staged`, then `check --staged`, to commit the staged changes; `index`, to fix the working
+  tree as a whole. Staged with a partial commit, the working tree's files would make a commit
+  whose tree fails. It exits 2, or 1 when agent files were already installed. Where the staged
+  side cannot be computed, an unmerged index or a staged tree stopped in phases 1 to 3, `--fix`
+  compares nothing and runs as before.
+- **`--fix` with `--staged` is refused** while parsing, exit 2: `--fix` repairs the working tree.
+  For the staged tree, run `index --staged`, then `check --staged`.
 - **An upgrade that removes a shipped file takes two runs.** The install deletes the file, git
   still lists it, and phase 2 reports the deletion as not staged, so the generated files wait. Run
   `check --fix`, stage the deletion with `git add`, then run `check --fix` again: no fix touches

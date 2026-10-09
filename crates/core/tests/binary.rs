@@ -3657,3 +3657,99 @@ fn index_staged_refuses_with_the_index_unchanged() {
     );
     assert_eq!(index_lines(&sandbox), before, "the index is as it was");
 }
+
+/// The claim: `check --fix` runs as before where the staged tree and the working tree need the
+/// same generated files, though the index differs from HEAD.
+#[test]
+fn fix_runs_where_both_trees_need_the_same_generated_files() {
+    let sandbox = Sandbox::new("fix-same", "dirhome");
+    commit_all(&sandbox, "the base");
+    let readme = std::fs::read_to_string(sandbox.path("README.md")).expect("the README");
+    sandbox.write("README.md", &format!("{readme}\nStaged.\n"));
+    sandbox.git(&["add", "README.md"]);
+    sandbox.write("README.md", &format!("{readme}\nStaged.\n\nNot staged.\n"));
+    let (out, stderr, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+}
+
+/// The claim: `check --fix` refuses, exit 2 and nothing written, where the index differs from HEAD
+/// and the two trees need different generated files, naming each and both repairs.
+#[test]
+fn fix_refuses_where_the_two_trees_need_different_generated_files() {
+    let sandbox = Sandbox::new("fix-differs", "dirhome");
+    commit_all(&sandbox, "the base");
+    sandbox.write("docs/open-issues/staged-entry.md", STAGED_ENTRY);
+    sandbox.git(&["add", "docs/open-issues/staged-entry.md"]);
+    sandbox.write("docs/open-issues/working-entry.md", WORKING_ENTRY);
+    let before = working_files(&sandbox);
+    let (out, stderr, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 2, "{out}{stderr}");
+    assert!(
+        stderr.contains(
+            "these generated files would differ between the working tree and the staged tree: \
+             docs/open-issues/index.md"
+        ),
+        "{stderr}"
+    );
+    assert!(stderr.contains("index --staged, then"), "{stderr}");
+    assert!(
+        stderr.contains("to fix the working tree as a whole"),
+        "{stderr}"
+    );
+    assert_eq!(working_files(&sandbox), before, "nothing is written");
+}
+
+/// The claim: with the index equal to HEAD, `check --fix` compares nothing and writes the working
+/// tree's generated files as before.
+#[test]
+fn fix_writes_the_working_trees_files_where_nothing_is_staged() {
+    let sandbox = Sandbox::new("fix-unstaged", "dirhome");
+    commit_all(&sandbox, "the base");
+    sandbox.write("docs/open-issues/working-entry.md", WORKING_ENTRY);
+    let (out, stderr, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    assert!(
+        out.contains("fixed: wrote docs/open-issues/index.md"),
+        "{out}"
+    );
+}
+
+/// The claim: the refusal comes after the installed repairs, per D4 of the spec of `check
+/// --staged`: a run that repaired an installed file and then refuses exits 1 and writes no
+/// generated file.
+#[test]
+fn fix_refuses_after_the_installed_repairs_with_exit_one() {
+    let sandbox = Sandbox::new("fix-differs-installed", "dirhome");
+    sandbox.serve_claude();
+    let (out, stderr, code) = sandbox.run(&["install-agent-skills"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    commit_all(&sandbox, "the base, installed");
+    let primer = ".claude/knowledge-architect/PRIMER.md";
+    sandbox.write(primer, "A primer the version does not ship.\n");
+    sandbox.write("docs/open-issues/staged-entry.md", STAGED_ENTRY);
+    sandbox.git(&["add", "docs/open-issues/staged-entry.md"]);
+    sandbox.write("docs/open-issues/working-entry.md", WORKING_ENTRY);
+    let index = std::fs::read(sandbox.path("docs/open-issues/index.md")).expect("the index");
+    let (out, stderr, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 1, "{out}{stderr}");
+    assert!(
+        out.contains(&format!("fixed: wrote {primer} (installed)")),
+        "{out}"
+    );
+    assert!(stderr.contains("would differ"), "{stderr}");
+    assert_eq!(
+        std::fs::read(sandbox.path("docs/open-issues/index.md")).expect("the index"),
+        index,
+        "no generated file is written"
+    );
+}
+
+/// The claim: `--fix` with `--staged` is refused with exit 2 before anything is read: run where no
+/// project is, it is clap that answers.
+#[test]
+fn fix_with_staged_is_refused_before_anything_is_read() {
+    let nowhere = std::env::temp_dir();
+    let (out, stderr, code) = run_in(&nowhere, &["check", "--fix", "--staged"]);
+    assert_eq!(code, 2, "{out}{stderr}");
+    assert!(stderr.contains("cannot be used with"), "{stderr}");
+}
