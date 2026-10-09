@@ -79,7 +79,7 @@ asserting something false the day it fires.
 before judging one: a directive is restated at its point of delivery only when the restatement is
 no longer than a pointer to it, a path, a name, a command, a value or one sentence, and a directive
 sentence carries its pointer adjacent. **Never report such a restatement as a two-homes
-violation.** A restatement longer than one sentence, or a part of a longer directive, is a finding:
+violation.** A restatement longer than one sentence, of a whole directive or of part of one, is a finding:
 the repair is a pointer to its home with an instruction to read the home whole. A restatement that
 *contradicts* its home is a finding, against the restatement, which is the defect. Whether a
 directive is needed at its point of delivery is a delivery decision and belongs to the owner. For an

@@ -287,15 +287,8 @@ anyone has checked it.
 
 **Three classes of statement, and the instruction differs.**
 
-- **Built intent**: the root's design home, and a Component's design home. They hold the design as
-  built and its reasons, and the decisions that no work implements and that are not part of any
-  spec, recorded when made. Design that is decided and not built is in a plan document until it lands.
-  This is authority. Do not verify it against the code. Verify the code against it. A divergence is a defect in one of them. Say which,
-  open an entry, and stop. A design home can be wrong, and it still prevails until the entry closes:
-  when the code meets the head, or when the head is reversed under
-  `skill@knowledge-architect-decision-recording`. Work that goes on meanwhile builds on the head. A
-  divergence is never licence to follow the code. This is a restatement; its home is
-  `design@agent-skills@design-home-is-built-intent`.
+- **Built intent**: the root's design home, and a Component's design home, are authority over the
+  code until a divergence closes, per `primer@intent-and-claims`, read whole.
 - **A reason recorded at the code**: an inline comment saying why the code is shaped so, or the
   message of the commit that argued it. It is intent at the scale of that code, and binds as a
   presumption below the design home: a change that defeats it argues against that reason in its

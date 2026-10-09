@@ -59,16 +59,8 @@ owner and has no expectation set. This is a restatement; its homes are the entri
    systematically wrong; a structure imposed on the work, such as a fixed mapping between a unit of
    the work and a unit of its record, only where the work needs it
    (`design@agent-skills@capabilities-not-structure`).
-4. **Built intent.** Grep the design homes and the goals for the behaviour the edited passage
-   describes. An edit that writes into a design home, or edits a text whose behaviour a head
-   describes, loads `skill@knowledge-architect-decision-recording` before it is written; that skill,
-   with `primer@design-heads`, judges whether it contradicts a head, adds a member its argument does
-   not cover, or earns text at all. That trigger's home is
-   `design@agent-skills@design-home-write-loads-recording`. One that strains a goal goes to
-   the owner, under `skill@knowledge-architect-goal-setting`. The rest of this test restates the
-   installed `skill@knowledge-architect-agent-configuration@content-and-style`, and it holds because
-   `design@agent-skills@design-home-is-built-intent` makes the design home authority over the
-   shipped text.
+4. **Built intent.** An edit is checked against the design homes and the goals as
+   `skill@knowledge-architect-agent-configuration@content-and-style` says, read whole.
 
 For the design skill, a finding about an intermediate table rather than the outcome is
 not worth text (`design@agent-skills@outcome-over-display`). A rewording needs no design entry

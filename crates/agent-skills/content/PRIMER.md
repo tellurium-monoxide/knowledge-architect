@@ -79,10 +79,10 @@ restated where it has to be delivered only when the restatement is no longer tha
 it**: a path, a file name, a command, a value, or one sentence. A directive sentence carries its
 pointer beside it, and where the two disagree the restatement is the defect. A directive longer
 than one sentence is delivered by a pointer to its home, with an instruction to read the home whole
-at that moment. Part of it is never restated: a partial copy drifts, and its reader takes it for
-the whole. For installed text, the home a pointer names is installed text, a skill's section or the
+at that moment. More than one sentence of it is never restated: a partial copy drifts, and its
+reader takes it for the whole. For installed text, the home a pointer names is installed text, a skill's section or the
 primer's, since installed text cites no entry of the project. An existing longer restatement is
-converted when a change touches it. Whether a directive is needed at a point of delivery is the
+converted when a change edits what it says; re-pointing a reference in it does not count. Whether a directive is needed at a point of delivery is the
 owner's decision.
 
 | the statement is about | home | it leaves when |
