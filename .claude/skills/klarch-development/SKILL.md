@@ -185,7 +185,8 @@ mechanically. Do not filter its output through pipes. Before a merge, run
 only the branch's tip: its message and its tree. Run `cargo klarch check --staged` after staging
 and before each commit, and `cargo klarch commits origin/main..HEAD` after it: the whole branch, since a citation of an earlier
 commit of the branch by SHA is refused only when that commit is in the range judged, per
-`issue@core@branch-sha-citations-are-judged-within-the-range-only`. Amend the commit if either
+`issue@core@branch-sha-citations-are-judged-within-the-range-only`; the check before the commit
+restates `design@agent-skills@staged-check-before-each-commit`. Amend the commit if either
 fails, with a clean tree; once later commits sit on top, the repair is a history edit. **A change to
 the core that makes a check stricter, or changes the manifest format, makes every earlier commit of
 its branch fail.** Put that change in the branch's first commit, with every fix the tree needs to

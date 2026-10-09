@@ -37,14 +37,18 @@ pub enum Purpose {
     /// subject here, per `design@core@a-commit-message-is-a-document`, and a release the
     /// tree cannot supply is a finding of the tree rather than a could-not-run.
     Commit,
-    /// `index`: what the extension generates, and nothing fetched over the network.
+    /// `index`: what the extension generates, and nothing fetched over the network. Over
+    /// [`Tree::Snapshot`] it is `index --staged`, or `check --fix` computing what the tree git's
+    /// index would commit needs; an extension that refuses a snapshot there makes `--fix` refuse
+    /// a partial commit rather than compare nothing.
     Index,
 }
 
 /// The tree being judged.
 ///
 /// Exhaustive, so a new kind of tree makes every extension say how it reads it, per
-/// `design@core@ne-minimal`. The tree git's index would commit is not a new kind: it is a
+/// `design@core@ne-minimal`. The tree git's index would commit is not a new kind, per
+/// `design@core@an-extension-reads-a-snapshot`: it is a
 /// [`Snapshot`], read from git objects like a commit's, and [`Snapshot::revision`] says which.
 #[derive(Clone, Copy)]
 pub enum Tree<'a> {
@@ -52,8 +56,8 @@ pub enum Tree<'a> {
     /// as a vendored corpus is filesystem state, per `design@core@model-then-checks`.
     Checkout(&'a Path),
     /// A tree read from git objects only: one commit's, under `commits`, or the one git's index
-    /// would commit, under `check --staged`. Nothing under the working directory is its
-    /// content.
+    /// would commit, under `check --staged`, `index --staged` and the comparison `check --fix`
+    /// makes before it writes. Nothing under the working directory is its content.
     Snapshot(&'a Snapshot),
 }
 

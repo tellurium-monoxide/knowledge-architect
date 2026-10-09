@@ -1,4 +1,6 @@
-//! Commit messages under the regime, judged by `commits` over a range.
+//! Commit messages under the regime, judged by `commits` over a range, and the snapshot of a tree
+//! read from git objects that judging them needs, which `check --staged`, `index --staged` and the
+//! comparison of `check --fix` read too.
 //!
 //! **A commit message is a document.** It is parsed as one markdown document — the subject
 //! line, the blank line and the body — and every rule of the regime runs over it: every
@@ -7,8 +9,9 @@
 //! The decision, and why a message is judged against a tree read from git objects rather than
 //! against the working tree, is `design@core@a-commit-message-is-a-document`.
 //!
-//! One command lives here: `commits <range>` walks the range and judges each commit's message
-//! and tree against that commit's own tree.
+//! `commits <range>` lives here: it walks the range and judges each commit's message and tree
+//! against that commit's own tree. So do `check --staged` and `index --staged`, which assemble the
+//! tree git's index would commit the same way, per `design@core@staged-tree-source`.
 
 use super::output::outln;
 use std::collections::{HashMap, HashSet};
@@ -36,7 +39,8 @@ fn message_rel() -> PathBuf {
     PathBuf::from("commit-message.md")
 }
 
-/// Everything one tree contributes to judging a message written against it.
+/// Everything one snapshot contributes to judging a message written against it, or to judging
+/// and generating over the tree git's index would commit.
 ///
 /// Held together because `Inputs` borrows every field of it: a check is a pure function over
 /// the model, so whatever it needs about the tree is gathered once and handed in.
@@ -51,8 +55,8 @@ struct Assembly {
     survey: Survey,
     ignored: HashSet<String>,
     tracked_and_ignored: Vec<PathBuf>,
-    /// What is wrong with the tree itself: every check but `corpus` and `changes` at
-    /// `Depth::Judged`, nothing at `Depth::References`.
+    /// What is wrong with the tree itself: every check's findings at `Depth::Judged`, the
+    /// findings of phases 1 to 3 at `Depth::Gated`, nothing at `Depth::References`.
     trouble: Vec<Finding>,
     /// The phase the tree's run stopped in, where it stopped before the last: its entity
     /// table is then incomplete, and a message judged against it is judged against nothing.
@@ -221,7 +225,7 @@ fn relabelled(findings: Vec<Finding>, label: &str) -> Vec<Finding> {
 /// produces, and the second names its finding count.
 struct Unloadable(String);
 
-/// Everything read from one commit's tree, before the checks run over it.
+/// Everything read from one snapshot, before the checks run over it.
 struct FromTree {
     manifest: Manifest,
     /// Every path of the tree, the symlink and gitlink entries included.
@@ -235,7 +239,8 @@ struct FromTree {
     not_text: std::collections::BTreeMap<PathBuf, crate::survey::Outside>,
 }
 
-/// Read one commit's tree: its manifest, configured against the extensions, its listing, and
+/// Read one snapshot, a commit's tree or the one git's index would commit: its manifest,
+/// configured against the extensions, its listing, and
 /// the text of everything the walk or the inverse assertion reads.
 ///
 /// Deliberately not the whole tree. A path under a skipped directory, an excluded path and a
@@ -363,7 +368,8 @@ fn read_tree(
 enum Depth {
     /// The entity table and the path facts. Nothing is judged.
     References,
-    /// Everything: every check of the core, and each extension prepared for a commit.
+    /// Everything: every check of the core, and each extension prepared for the snapshot with the
+    /// caller's purpose.
     Judged,
     /// Phases 1 to 3, the gate a writer passes before it writes, and the snapshot kept for the
     /// writer. No extension is prepared: the writer prepares them for what it generates.
@@ -742,15 +748,25 @@ pub(super) fn index_staged(
     Ok(ExitCode::SUCCESS)
 }
 
-/// The generated files the tree git's index would commit needs, or `None` where they cannot be
-/// computed: an index that does not assemble, an unmerged one among them, or a staged tree that
-/// stops in phases 1 to 3. For `check --fix`, which compares them with the working tree's.
+/// The generated files the tree git's index would commit needs, for `check --fix`, which compares
+/// them with the working tree's.
+///
+/// `Ok(None)` in the two states where no staged tree is there to commit: an index holding an
+/// unmerged path, and a staged tree that stops in phases 1 to 3. **Every other failure is an
+/// error**, a git read or an extension that cannot prepare over the snapshot among them: the
+/// comparison guards a partial commit against the generated files of the wrong tree, and a
+/// comparison skipped in silence lets that commit through.
 pub(super) fn staged_generated(
     root: &Path,
     checker: &[&Path],
     extensions: &mut [Box<dyn Extension>],
-) -> Option<Vec<(PathBuf, String)>> {
-    let (inside, _) = crate::model::snapshot_checker_dirs(root, checker).ok()?;
+) -> Result<Option<Vec<(PathBuf, String)>>, String> {
+    let unmerged = crate::git::unmerged(root).map_err(|e| e.to_string())?;
+    if !unmerged.is_empty() {
+        return Ok(None);
+    }
+    let (inside, _) = crate::model::snapshot_checker_dirs(root, checker)
+        .map_err(|e| format!("cannot read the project root: {e}"))?;
     let inside: Vec<&Path> = inside.iter().map(PathBuf::as_path).collect();
     let assembly = commit_tree(
         root,
@@ -760,11 +776,14 @@ pub(super) fn staged_generated(
         Depth::Gated,
         Purpose::Index,
     )
-    .ok()?;
+    .map_err(|Unloadable(why)| format!("the staged tree cannot be read: {why}"))?;
     if assembly.stopped.is_some() {
-        return None;
+        return Ok(None);
     }
-    let snapshot = assembly.snapshot.as_ref()?;
+    let snapshot = assembly
+        .snapshot
+        .as_ref()
+        .expect("a gated tree that passed the gate keeps its snapshot");
     super::generated_list(
         &assembly.manifest,
         &assembly.model,
@@ -772,7 +791,7 @@ pub(super) fn staged_generated(
         Tree::Snapshot(snapshot),
         extensions,
     )
-    .ok()
+    .map(Some)
 }
 
 /// Every generated file whose committed bytes a check compares against: each file an

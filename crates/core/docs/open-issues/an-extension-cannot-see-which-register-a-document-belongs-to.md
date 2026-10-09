@@ -46,8 +46,6 @@ Three smaller gaps came out of the same trial:
   2026-10-07-thaum-mock-reduction-workflow. For that split, `Prepared::check` already returns an
   `ExtensionReport` holding the extension's findings alone; it does not name which of the
   extension's own checks wrote each;
-- the documentation does not say which tree `Inputs.present` describes under `commits`; it is the
-  commit's tree, read in the code of `path@core@src/cli/history.rs`;
 - the rustdoc holds no complete `impl Extension`; the only one is in
   `path@core@tests/extension_api.rs`, which a reader of the published crate does not see.
 
@@ -75,4 +73,4 @@ they are. It widens what `design@core@an-extension-builds-its-own-model` lists a
 reading. Its design settles how the view reaches `check` (a new parameter breaks every
 extension; a field of `Inputs` meets `tripwire@core@inputs-builder-needed`), and whether a
 `Finding` gains a check name. Then the implementation, a worked `impl Extension` in the crate
-docs, and a sentence on what `Inputs.present` describes under `commits`.
+docs.

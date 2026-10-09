@@ -1371,21 +1371,22 @@ owes are its own list. The setup skill proposes two goals for such a tool, for t
 ruling: one command runs every check owed before a merge, and a task performed repeatedly becomes a
 command of the tool.
 
-### The setup skill recommends `check --staged` after staging and before each commit `##staged-check-before-each-commit`
+### The setup skill recommends `check --staged` after staging and before each commit, and the skills name the staged forms for a partial commit `##staged-check-before-each-commit`
 
 The setup skill recommends that a project's root `CLAUDE.md` tell a session to run
 `check --staged` after staging and before each commit, beside the gates command, which
 judges the branch before a merge. The issue-tracking and planning skills name `index --staged` and
-`check --staged` for a commit of part of the working tree. The reason is the same at every site: the
+`check --staged` for a commit of part of the working tree. Both commands are the core's,
+`design@core@staged-tree-source` and `design@core@index-staged-write`. The reason is the same at every site: the
 staged tree is the one the commit records, and a file left unstaged, or a change staged in part,
 passes a check of the working tree and fails the commit's own, which the gates meet only before the
-merge. This repository's root `CLAUDE.md` and its project skills follow it.
+merge.
 
 `design@agent-skills@additions-need-real-use` asks of an addition a behaviour seen in real use, or
 asked for by the owner with the lack named. The owner asked for the delivery of the staged forms
 and named the partial commit's lack, which covers the issue-tracking and planning sentences. The
 setup recommendation has no named lack of its own, and stands on the owner's ruling that it be
-built, D6 of the plan of the work: "All defaults approved".
+built.
 
 ### In a Rust project, one maintenance crate pins the checker and runs the gates `##xtask-pins-checker`
 

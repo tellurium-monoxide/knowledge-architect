@@ -30,7 +30,8 @@ Neither failure is silent: no binary and no worktree are both exit 2 naming the 
 empty walk. `commits` reads a commit's tree through `cat-file --batch -z`, which is where the
 version floor comes from. `check --staged` reads the tree git's index would commit the same way:
 HEAD's tree with the staged changes, a file added with `git add -N` left out, as `git commit`
-leaves it out. The decision is `design@core@git-supplies-the-walk`.
+leaves it out. The decisions are `design@core@git-supplies-the-walk` and
+`design@core@staged-tree-source`.
 
 ```sh
 cargo klarch check                     every check, over one walk, in four phases
@@ -55,9 +56,9 @@ Three, per `design@core@exit-code-ladder`, and the third is what makes the other
 
 | code | meaning | where it comes from |
 | ---- | ------- | ------------------- |
-| `0` | the command ran and its subject is in order | `--version`, from any directory; `check` with no findings; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; every `model` run; `commits` with no finding, an empty range included; `install-agent-skills` having written and removed what it had to, or found nothing to do |
+| `0` | the command ran and its subject is in order | `--version`, from any directory; `check` with no findings; `show` on a reference that resolves; `issues` and `tripwires` with at least one row; `index` having written every destination, or found each already current; `index --staged` having staged every generated file whose staged bytes differed, or found each already current; every `model` run; `commits` with no finding, an empty range included; `install-agent-skills` having written and removed what it had to, or found nothing to do |
 | `1` | the command ran and reports a negative answer | `check` with findings, `--fix` included; `check --fix` when a write failed, a destination was refused, a partial commit's mismatch was refused, or the final check could not run, after another file was already written; `show` on a reference that resolves to nothing; `issues` or `tripwires` with no row; `index` when a write failed after another destination was already rewritten; `commits` with a finding against a judged message or a failing tree |
-| `2` | the command could not run | an unknown or invalid argument, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, a binary of another version than `[project] checker-version` pins, or a pin it does not confirm, or a manifest with no pin, `index` or `check --fix` refusing a destination — a symlink, or a directory that is not there — having written nothing, `check --fix` refusing a partial commit's mismatch having installed nothing, `check --staged` or `index --staged` over an index that holds an unmerged path or a staged tree that cannot be read, `index --staged` refused by its gate, a destination or git's index lock, having staged nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, `install-agent-skills` over a manifest holding a refused declaration, over a symbolic link on an owned path, or when a write or a removal failed, naming the path, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
+| `2` | the command could not run | an unknown or invalid argument, `--fix` with `--staged` among them, a `show` argument that is not reference-shaped, a binary built from another checkout of the tool, which names the `cargo clean` that rebuilds it, a binary of another version than `[project] checker-version` pins, or a pin it does not confirm, or a manifest with no pin, `index` or `check --fix` refusing a destination — a symlink, or a directory that is not there — having written nothing, `check --fix` refusing a partial commit's mismatch having installed nothing, `check --staged` or `index --staged` over an index that holds an unmerged path or a staged tree that cannot be read, `index --staged` refused by its gate, a destination or git's index lock, having staged nothing, `commits` on a range that does not resolve, no project above the working directory, no `git` on the path or a project outside a worktree, `install-agent-skills` over a manifest holding a refused declaration, over a symbolic link on an owned path, or when a write or a removal failed, naming the path, a stdout closed before the output was written — as `\| head` does — which ends the run silently, an input that cannot be read, an input an extension prepares that it cannot resolve |
 
 **A caller scripting against a run reads the exit code; a person reads the last line.** Arguments
 are refused before the project is located, so `--help` answers from anywhere and a mistyped
@@ -113,7 +114,8 @@ gives no input to is printed as not run rather than counted. There is no way to 
 the checks cross the phases, and a run over a passing tree costs under a second. The argument is
 `design@core@phases-gate-the-report`.
 
-`index`, `check --fix` and a writing command of an extension run the first three phases too, and
+`index`, `index --staged` over the staged tree, `check --fix` and a writing command of an
+extension run the first three phases too, and
 write no generated file while one of them holds anything. `index` and an extension's command refuse
 with exit 2; `check --fix` prints the stopped report and exits 1, having installed agent files
 before that gate when they needed it, since their bytes do not depend on the model: an index generated over an incomplete model lists rows nobody asked for.
@@ -134,14 +136,17 @@ or touches git or a hand-written file, and stays the reader's.
   more; then the refusal of a partial commit's mismatch, below; then the generated files; then the
   full check, whose report and exit code are the run's. With nothing to fix, the output is a plain
   `check`'s.
-- **A partial commit's mismatch is refused.** Where the index differs from HEAD, and the
-  generated files the working tree needs differ from those the tree git's index would commit
-  needs, `--fix` writes no generated file and names each that differs, with the two repairs:
-  `index --staged`, then `check --staged`, to commit the staged changes; `index`, to fix the working
-  tree as a whole. Staged with a partial commit, the working tree's files would make a commit
-  whose tree fails. It exits 2, or 1 when agent files were already installed. Where the staged
-  side cannot be computed, an unmerged index or a staged tree stopped in phases 1 to 3, `--fix`
-  compares nothing and runs as before.
+- **A partial commit's mismatch is refused**, per `design@core@fix-refusal-mixed-state`. Where the
+  index differs from HEAD, and a generated
+  file `--fix` would write differs from the one the tree git's index would commit needs, `--fix`
+  writes no generated file and names each such file, with the two repairs: `index --staged`, then
+  `check --staged`, to commit the staged changes; `index`, to fix the working tree as a whole.
+  Staged with a partial commit, the files `--fix` writes would make a commit whose tree fails. A
+  file already current on disk is not written, so it is not refused, and after `index` the run
+  writes nothing and refuses nothing. It exits 2, or 1 when agent files were already installed.
+  Where no staged tree is there to commit, an unmerged index or a staged tree stopped in phases 1
+  to 3, `--fix` compares nothing and runs; any other failure to compute the staged side,
+  such as an extension that cannot prepare over a snapshot, refuses the same way, naming it.
 - **`--fix` with `--staged` is refused** while parsing, exit 2: `--fix` repairs the working tree.
   For the staged tree, run `index --staged`, then `check --staged`.
 - **An upgrade that removes a shipped file takes two runs.** The install deletes the file, git
@@ -232,7 +237,8 @@ current is not this command's question** — that is `cargo klarch check`, whose
 is a gate and names the first line at which the committed file and the regenerated one disagree.
 Both halves are `design@core@generated-files-are-pure`.
 
-**`index --staged` writes into git's index instead, for a commit of part of the working tree.**
+**`index --staged` writes into git's index instead, for a commit of part of the working tree**,
+per `design@core@index-staged-write`.
 It generates each file from the tree git's index would commit, which is HEAD's tree with the
 staged changes, and sets the staged entry of each one whose bytes differ. No working-tree file
 changes: after it, `check --staged` passes on what will be committed, and the working tree keeps
@@ -240,13 +246,13 @@ the rows of the working tree for a later commit.
 
 ```
 $ cargo klarch index --staged
-docs/open-issues/index.md                staged
 docs/plans/specs/index.md                already current
+docs/open-issues/index.md                staged
 ```
 
 It refuses with exit 2, having staged nothing, when phases 1 to 3 of the staged tree find
-anything, when a generated path is staged as a symlink or a gitlink or its directory is not in
-the staged tree, when the index holds an unmerged path, and when git cannot take its index lock.
+anything, when a generated path is staged as a symlink, a gitlink or a directory, or its directory
+is not in the staged tree, when the index holds an unmerged path, and when git cannot take its index lock.
 
 ## `install-agent-skills`
 
@@ -456,7 +462,7 @@ over `HEAD~1..HEAD`, a citation of an earlier commit of the branch passes, per
 `issue@core@branch-sha-citations-are-judged-within-the-range-only`. The argument is
 `design@core@branch-shas-are-refused`.
 
-`check` reads no history, and the range is always explicit. `cargo x gates` runs
+`check` reads no range of history, and the range is always explicit. `cargo x gates` runs
 `commits origin/main..HEAD` as a gate.
 
 **The range need not end at the checkout.** Any range `git rev-list` resolves is judged, commit by

@@ -484,3 +484,121 @@ fn a_copied_mock_pinned_to_the_exported_version_is_accepted() {
     assert_eq!(accepted, Ok(()));
     let _ = std::fs::remove_dir_all(&root);
 }
+
+/// The same generated file, from an extension that prepares over the checkout and refuses a
+/// snapshot.
+struct ListingCheckoutOnly;
+
+impl Extension for ListingCheckoutOnly {
+    fn tables(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn resolve(&mut self, manifest: &Manifest) -> Resolution {
+        Listing.resolve(manifest)
+    }
+
+    fn checks(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn dump(&self, _: &Model) -> Vec<DumpRow> {
+        Vec::new()
+    }
+
+    fn prepare(
+        &mut self,
+        _: &Manifest,
+        _: &Model,
+        tree: Tree<'_>,
+        _: Purpose,
+    ) -> Result<Box<dyn Prepared>, String> {
+        match tree {
+            Tree::Checkout(_) => Ok(Box::new(ListingPrepared)),
+            Tree::Snapshot(_) => Err("this extension reads the checkout only".into()),
+        }
+    }
+}
+
+/// The claim: where the index differs from HEAD and the staged tree's generated files cannot be
+/// computed for a reason other than an unmerged index or a staged stop, `check --fix` refuses,
+/// exit 2, and writes no generated file, rather than skipping the comparison in silence.
+#[test]
+fn check_fix_refuses_when_the_staged_side_cannot_be_computed() {
+    let root = std::env::temp_dir().join(format!("ka-fix-no-snapshot-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&root);
+    copy_tree(
+        &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/projects/dirhome"),
+        &root,
+    );
+    git(&root, &["init", "-q"]);
+    git(&root, &["add", "-A"]);
+    git(
+        &root,
+        &[
+            "-c",
+            "user.name=fixture",
+            "-c",
+            "user.email=fixture@example.invalid",
+            "commit",
+            "-qm",
+            "the base",
+        ],
+    );
+    let readme = std::fs::read_to_string(root.join("README.md")).expect("the README");
+    std::fs::write(root.join("README.md"), format!("{readme}\nStaged.\n")).expect("an edit");
+    git(&root, &["add", "README.md"]);
+    let manifest = Manifest::load(&root).expect("the copy's manifest");
+    let mut extensions: Vec<Box<dyn Extension>> = vec![Box::new(ListingCheckoutOnly)];
+    let outcome = cli::run(
+        cli::Command::Check(cli::CheckArgs {
+            fix: true,
+            staged: false,
+        }),
+        &manifest,
+        &[],
+        &mut extensions,
+    );
+    assert_eq!(outcome, Ok(std::process::ExitCode::from(2)));
+    assert!(
+        !root.join("listing.md").exists(),
+        "no generated file is written"
+    );
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+/// The claim: `index --staged` refuses, staging nothing, a generated file whose directory the
+/// staged tree does not hold, as `index` refuses one the working tree does not hold.
+#[test]
+fn index_staged_refuses_a_destination_whose_directory_is_not_staged() {
+    let root = std::env::temp_dir().join(format!("ka-index-staged-nowhere-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&root);
+    copy_tree(
+        &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/projects/dirhome"),
+        &root,
+    );
+    git(&root, &["init", "-q"]);
+    git(&root, &["add", "-A"]);
+    let manifest = Manifest::load(&root).expect("the copy's manifest");
+    let mut extensions: Vec<Box<dyn Extension>> = vec![Box::new(ListingNowhere)];
+    let outcome = cli::run(
+        cli::Command::Index(cli::IndexArgs { staged: true }),
+        &manifest,
+        &[],
+        &mut extensions,
+    );
+    let error = outcome.expect_err("the destination is refused");
+    assert!(
+        error.contains(
+            "nowhere: the directory this file is generated into is not in the staged tree"
+        ),
+        "{error}"
+    );
+    let staged = std::process::Command::new("git")
+        .args(["ls-files", "nowhere"])
+        .current_dir(&root)
+        .output()
+        .expect("git runs");
+    assert!(staged.stdout.is_empty(), "nothing is staged");
+    let _ = std::fs::remove_dir_all(&root);
+}

@@ -200,8 +200,8 @@ the second. That departs from what `design@core@ne-minimal` asks of a new tree, 
 extension say how it reads it, and `design@core@trait-defaults` records the cost: an extension
 that maps a snapshot to its commit-mode handling runs, under `--staged`, only what it runs for a
 commit. thaum's rules extension lists its `changes` and `corpus` checks as not run there; one
-that lists nothing skips them silently. The owner ruled the rename knowing that cost, D5 of the
-plan of the work, whose words were "All defaults approved". An extension that wants more under
+that lists nothing skips them silently. The owner accepted that cost for one kind of snapshot
+over two. An extension that wants more under
 `--staged` reads `Snapshot::revision()`.
 
 ### An extension scans the core's parse on its own, and the core's model carries nothing for it `##an-extension-builds-its-own-model`
@@ -534,14 +534,13 @@ visible in the output rather than inferred from a finding list. The tripwire is 
 read a snapshot instead, from git objects alone, per `design@core@staged-tree-source` and
 `design@core@a-commit-message-is-a-document`.
 
-### `check --staged` judges the tree git's index would commit, by `check`'s rules, and plain `check` the working tree `##staged-tree-source`
+### `check --staged` judges the tree git's index would commit, by `check`'s rules, plain `check` the working tree, and `check` judges no given commit's tree `##staged-tree-source`
 
 `cargo klarch check` judges the working tree as git lists it, untracked files included, and prints
-what it printed before this option existed. `cargo klarch check --staged` judges the tree
+no `tree:` line. `cargo klarch check --staged` judges the tree
 `git commit` would record now: HEAD's tree, or none before the first commit, overlaid with the
-index's changes as `git diff --cached --raw -z --no-renames --no-abbrev --no-color --relative
---ita-invisible-in-index --ignore-submodules=none` lists them, each blob read with the `cat-file`
-batch `commits` reads a commit with, its request `:./<path>`. It is the only tree a session cannot
+index's changes as `git diff --cached --raw` lists them, each blob read with the `cat-file` batch
+`commits` reads a commit with. It is the only tree a session cannot
 judge before the commit exists, and `commits` judges it only after; the motive is a partial commit,
 where the working tree passes and what is committed does not.
 
@@ -549,12 +548,12 @@ where the working tree passes and what is committed does not.
   at stage 0 with the empty blob, the same line as a staged empty file, and `git commit` records no
   such entry; `diff --cached` leaves it out. Measured on git 2.43.0. A path the listing does not
   hold is no path of the snapshot, a manifest staged as intent-to-add included.
-- **Every flag of the diff is load-bearing.** `--relative` keeps the listing to the project and
-  names its paths from it, where without it a project in a subdirectory of its repository meets
-  repository-relative paths and its siblings' changes. `--no-abbrev` gives whole blob ids, which
-  `--full-index` does not under `--raw`. `--ignore-submodules=none` stops `diff.ignoreSubmodules`
-  and a `.gitmodules` entry's `ignore` key from dropping a staged gitlink. Each was measured, and
-  each has a test.
+- **The diff is git's, and three of its behaviours are pinned against**, each measured on git
+  2.43.0 and each with a test: without `--relative` a project in a subdirectory of its repository
+  meets repository-relative paths and its siblings' changes; under `--raw` only `--no-abbrev`
+  gives whole blob ids; and `diff.ignoreSubmodules` or a `.gitmodules` entry's `ignore` key drops a
+  staged gitlink unless `--ignore-submodules=none` overrides it. The full invocation is at
+  `snapshot_entries` in `path@core@src/git.rs`.
 - **An unmerged index is refused**, exit 2 naming each path once: a conflicted merge or rebase has
   no tree to commit. `git write-tree` is not used, since it writes objects into the repository and
   fails there too.
@@ -1074,17 +1073,17 @@ check would report a file stale that nobody had changed, and `index` would rewri
 that the index lacks, leaving the working-tree file as it is. After it, `check --staged` passes on
 what will be committed, and plain `check` judges the working tree as before. It serves a commit
 of part of the working tree when an unstaged change touches the same register: the `index.md` that
-commit needs then differs from what `index` writes, and the only repairs before were a hand edit of
-a generated file or moving the unstaged file away.
+commit needs then differs from what `index` writes, and without this command the repairs are a
+hand edit of a generated file or moving the unstaged file away.
 
 - It gates the staged tree on phases 1 to 3, per `design@core@phases-gate-the-report`, and refuses,
-  having staged nothing, a destination the index holds as a symlink or a gitlink or whose directory
-  the staged tree does not hold.
-- It stages every entry in one `update-index -z --index-info` call, so git's lock makes the index
-  change for all or for none: a held lock is exit 2 with the index as it was. Each blob is written
-  first with `hash-object -w`, and a refused run can leave those, unreachable. `--index-info` reads
-  a path from the repository's root, so each path is prefixed with the project's place in it. An
-  existing entry keeps its mode.
+  having staged nothing, a destination the index holds as a symlink, a gitlink or a directory, asked
+  of the index itself so that no walk row hides it, or whose directory the staged tree does not
+  hold. A symlink's or a gitlink's mode would carry the generated text, and `--index-info` would
+  replace the entries under a directory.
+- It stages every entry in one locked write, so the index changes for all of them or for none: a
+  held lock is exit 2 with the index as it was. How, and what a refused run can leave in the object
+  store, is the doc comment of `stage_generated` in `path@core@src/git.rs`.
 
 It writes into git, where `design@core@safe-fix-definition` refuses a fix that touches git. That
 test is the one `--fix` applies before a fix, and `--fix` never applies this one, per
@@ -1092,7 +1091,7 @@ test is the one `--fix` applies before a fix, and `--fix` never applies this one
 whose bytes the staged tree determines, so no bytes a writer meant are lost. The rival, writing
 the staged rows into the working-tree file, lost: after it, plain `check` fails, since that file no
 longer matches the working tree, and `check --staged` fails until the file is staged. The owner
-ruled B "not definitive"; the head states it as approved, and a change is an ordinary reversal.
+holds this shape not definitive; a change is an ordinary reversal.
 
 ### `check --fix` applies every safe fix, then runs the full check `##check-fix-flag`
 
@@ -1108,22 +1107,27 @@ command rather than two that end in one report. `commits` judges history and tak
 and the gates run `check` without it, so continuous integration judges the tree as committed. It
 refuses a partial commit's mismatch, and `--staged`, per `design@core@fix-refusal-mixed-state`.
 
-### `check --fix` refuses where a partial commit would stage files of the wrong tree, and refuses `--staged` `##fix-refusal-mixed-state`
+### `check --fix` refuses only where a generated file it would write differs from the one the staged tree needs, and refuses `--staged` `##fix-refusal-mixed-state`
 
-**Where the project's part of the index differs from HEAD, and the generated files the working
-tree needs differ from those the tree git's index would commit needs, `--fix` writes no generated
-file.** It names each differing path, a path one tree needs and the other does not included, with
-the two repairs: `index --staged` then `check --staged`, to commit the staged changes, and `index`,
+**Where the project's part of the index differs from HEAD, and a generated file `--fix` would
+write differs from the one the tree git's index would commit needs, `--fix` writes no generated
+file.** It names each such path, a path the staged tree does not need included, with the two
+repairs: `index --staged` then `check --staged`, to commit the staged changes, and `index`,
 to fix the working tree as a whole. `--fix` cannot lose unstaged content, since it writes only
 generated and installed files; the hazard is a wrong commit, since the `index.md` it writes
-reflects the working tree, and staged with a partial commit it makes a commit whose tree fails.
-Where the staged side cannot be computed, an unmerged index or a staged tree stopped in phases 1
-to 3, nothing is compared and `--fix` runs as before. The refusal is exit 2, or 1 where agent files
-were installed before it, since 2 promises an untouched tree.
+reflects the working tree, and staged with a partial commit it makes a commit whose tree fails. A
+file already current on disk is not written, so no refusal names it: the hazard is in what `--fix`
+writes, and refusing a run that writes nothing would refuse one that `index`, the repair it names,
+cannot clear. Where no staged tree is there to commit, an unmerged index or a staged tree stopped
+in phases 1 to 3, nothing is compared and the fix runs. Any other failure to compute the staged
+side refuses, naming it, such as an extension that cannot prepare over a snapshot: a comparison
+skipped in silence lets the partial commit through, per `design@core@a-failed-parse-is-loud`. The
+refusal is exit 2, or 1 where agent files were installed before it, since 2 promises an untouched
+tree.
 
-The owner's first trigger, any staged change with any unstaged change, lost: it also fires where
+A refusal wherever the tree holds both staged and unstaged changes loses: it also fires where
 the unstaged changes touch no input of a generated file and the fix is correct for both trees,
-which blocks the edit-then-`--fix` loop for nothing. A printed note in place of the refusal lost: a
+which blocks the edit-then-`--fix` loop for nothing. A printed note in place of the refusal loses: a
 line in a long report is missed where an exit code is not.
 
 **`--fix` with `--staged` is refused while parsing**, clap's `conflicts_with`, per

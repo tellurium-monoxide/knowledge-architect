@@ -31,5 +31,6 @@ The owner judged the move correct and not worth doing now.
 
 ### What would close it
 
-The check runs in the last phase, `index` is no longer refused by a stale install, and the two
+The check runs in the last phase, `index` and `index --staged` are no longer refused by a stale
+install, and the two
 design heads say so.

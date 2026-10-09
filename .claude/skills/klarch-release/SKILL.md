@@ -37,7 +37,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    least.
 3. **Commit**, with `cargo klarch check --staged` before and
    `cargo klarch commits origin/main..HEAD` after: the whole branch, per root `CLAUDE.md`, section
-   Verify mechanically, and
+   Verify mechanically, `design@agent-skills@staged-check-before-each-commit`, and
    `issue@core@branch-sha-citations-are-judged-within-the-range-only`.
    Cargo refuses to package an uncommitted tree, so the commit comes before the next steps.
 4. **The shipped text cites no entry.** List every backticked span with an `@` in the installed

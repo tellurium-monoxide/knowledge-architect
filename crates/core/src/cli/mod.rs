@@ -542,15 +542,50 @@ fn fix_then_check(
     // `design@core@fix-before-the-checks`: where the index differs from HEAD, the files written
     // from the working tree would, staged with a partial commit, make a commit whose tree fails.
     // It comes after the installed repairs, whose bytes are the same for both trees, and after
-    // the gate, whose model the comparison reads. Where the staged side cannot be computed, an
-    // unmerged index or a staged tree stopped in phases 1 to 3, nothing is compared.
+    // the gate, whose model the comparison reads. Where no staged tree is there to commit, an
+    // unmerged index or a staged tree stopped in phases 1 to 3, nothing is compared; any other
+    // failure to compute the staged side refuses, since a comparison skipped in silence is the
+    // hazard it guards against.
     let staged_differs = match crate::git::index_differs_from_head(manifest.root()) {
         Ok(differs) => differs,
         Err(e) => return failed(written, e.to_string()),
     };
     if staged_differs {
-        if let Some(staged) = history::staged_generated(manifest.root(), checker, extensions) {
-            let differing = differing_paths(&generated, &staged);
+        let staged = match history::staged_generated(manifest.root(), checker, extensions) {
+            Ok(staged) => staged,
+            Err(e) => {
+                return failed(
+                    written,
+                    format!(
+                        "the generated files of the staged tree cannot be computed, so a partial \
+                         commit cannot be told apart: {e}. No generated file was written."
+                    ),
+                )
+            }
+        };
+        if let Some(staged) = staged {
+            // Only a file `--fix` would write can carry the working tree's bytes into a partial
+            // commit: one already current on disk is the user's, written by `index` or by hand,
+            // and refusing over it would refuse a run that writes nothing, which `index` cannot
+            // clear.
+            let written_here: Vec<(std::path::PathBuf, String)> = generated
+                .iter()
+                .filter(|(rel, text)| {
+                    std::fs::read_to_string(manifest.root().join(rel))
+                        .ok()
+                        .as_deref()
+                        != Some(text.as_str())
+                })
+                .cloned()
+                .collect();
+            let differing: Vec<String> = differing_paths(&generated, &staged)
+                .into_iter()
+                .filter(|path| {
+                    written_here.iter().any(|(rel, _)| {
+                        crate::finding::escaped(&rel.display().to_string()) == *path
+                    })
+                })
+                .collect();
             if !differing.is_empty() {
                 let command = manifest.command();
                 return failed(
