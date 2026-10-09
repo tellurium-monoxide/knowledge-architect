@@ -405,13 +405,12 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
    by its identifier in plain text, beside a citation of the milestone document (`skill@knowledge-architect-planning@acceptance-criteria`).
 6. **The harvest**, per the harvest row of the slice's spec: the decisions and the losing
    alternatives under `skill@knowledge-architect-decision-recording`, then the tripwires and the
-   issues under `skill@knowledge-architect-issue-tracking`. The row names what is judged; the tests
-   of `skill@knowledge-architect-decision-recording` decide whether each decision and each
-   alternative earns an entry, and they govern where the two disagree: an item of the row the tests
-   exclude is named in the harvest's commit, with the test it fails. A decision harvested from a
-   thread takes the thread's slug, unless the slug misdescribes the approved decision: the entry
-   then takes a slug that names it, and the slice's harvest row states the pair, per
-   `skill@knowledge-architect-decision-recording`. A tripwire names the head that harvested its
+   issues under `skill@knowledge-architect-issue-tracking`. Read `primer@design-heads` again, whole,
+   before writing a head: it holds what earns one and how it is shaped, the thread's slug and its
+   pair included. The row names what is judged; the entry tests and the tests for a losing
+   alternative decide whether each decision and each alternative earns an entry, and they govern
+   where the two disagree: an item of the row the tests exclude is named in the harvest's commit,
+   with the test it fails. A tripwire names the head that harvested its
    decision, so the head is written first. Where a design home is a directory, a new subdocument is
    linked from its README. **The harvest is reviewed before the merge**, per
    `skill@knowledge-architect-review`, on the decision-record, routing and standing-state axes, and

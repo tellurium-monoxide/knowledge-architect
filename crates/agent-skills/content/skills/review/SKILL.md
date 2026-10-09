@@ -151,8 +151,8 @@ subject.
 A transcript reviewer's finding that something **has no durable outcome** is acted on by the
 dispatcher without waiting for the owner: it is recorded in its home, repaired, opened as an issue,
 or judged to need nothing, with the reason. The exception is a decision that creates a design head,
-contradicts a statement of one, or takes one beyond what its title states, and was not argued: it goes to
-`skill@knowledge-architect-design` first, per `skill@knowledge-architect-decision-recording`. Each
+contradicts a statement of one, or adds a member its argument does not cover, and was not argued:
+it goes to `skill@knowledge-architect-design` first, per the backstop of `primer@design-heads`. Each
 outcome is reported to the owner, in the record of the review and at the end of the turn. A ruling
 the reviewer finds misstated is the owner's, and is put to the owner.
 

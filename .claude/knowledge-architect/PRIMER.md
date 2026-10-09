@@ -34,7 +34,7 @@ to judge is never room to act against an instruction.
 ## Intent and claims `##intent-and-claims`
 
 - **A design home is built intent**: the design as built and its reasons, and the decisions that
-  no work implements, recorded when made. Design that is decided and not built is in a plan
+  no work implements and no plan document holds, recorded when made. Design that is decided and not built is in a plan
   document until it lands. Check the code against a design home, never the other way. A divergence
   is a defect in one of them: say which, open an issue, and stop. A design home can be wrong, and
   it still prevails over the code until the issue closes. It closes when the code changes to meet
@@ -195,9 +195,10 @@ design skill, as the backstop says.
 
 ### What a head holds
 
-**The standing argument** is every premise whose failure would reopen the decision: the goal or
-the decision it derives from, as references; the measurement it rests on; the fact that defeated
-its nearest rival. **The test: if this premise turned false, would the decision have to be argued
+**The standing argument** is every premise whose failure would reopen the decision: the goal it
+derives a constraint from and a decision of another Component it depends on, as references; the
+measurement it rests on, with the command that takes it again; the fact that defeated its nearest
+rival. **The test: if this premise turned false, would the decision have to be argued
 again? If yes, it is in the head.** If no, it is deliberation.
 
 **A head stands on its argument, and cites the owner only for what came from the owner.** Most

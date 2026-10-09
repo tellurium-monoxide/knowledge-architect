@@ -28,8 +28,9 @@ Everything written in a `SKILL.md`, a subagent definition or a `CLAUDE.md` follo
   the design homes and the goals for the behaviour the edited text describes, as
   `skill@knowledge-architect-decision-recording@reversal-check` searches for a recorded statement a decision would
   reverse. An edit that writes into a design home, or edits a text whose behaviour a head
-  describes, loads `skill@knowledge-architect-decision-recording` before it is written; that skill
-  judges whether it contradicts a head, outgrows its title, or earns text at all. One that strains a
+  describes, loads `skill@knowledge-architect-decision-recording` before it is written; that skill,
+  with `primer@design-heads`, judges whether it contradicts a head, adds a member its argument does
+  not cover, or earns text at all. One that strains a
   goal goes to the owner, as a decision that conflicts with a goal does, under
   `skill@knowledge-architect-goal-setting`. A rewording that changes no instruction is not a
   decision.

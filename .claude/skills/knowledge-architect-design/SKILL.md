@@ -124,9 +124,10 @@ evidence bring, which nobody knows in advance.
 
 - **The in-change path.** It is open when the decision lands in the
   change under way: its work, as when the decision was met during an
-  issue fix or a review repair, or its record, for a decision that
-  `skill@knowledge-architect-decision-recording` records when it is made. No
-  plan document is written. The deliberation goes in the message of the
+  issue fix or a review repair, or its record, for a decision that no work
+  implements and that is not part of any spec, which
+  `skill@knowledge-architect-decision-recording@when-recording-happens` records when it is made. No
+  plan document is written. Read `primer@design-heads` again, whole, before grounding. The deliberation goes in the message of the
   commit that writes the decision's design entry, or, for a decision
   that earns none, of the commit that implements it: every thread with its final state, the
   owner's words verbatim for each closure, the rivals that lost with
@@ -233,7 +234,7 @@ approved, not by the change it proposes: #retention-window, not
 #shorten-retention. A slug is never changed during the discussion, since
 every earlier delta carries it. When the approved decision has drifted
 from what the slug says, its entry takes a slug that names the decision,
-under `skill@knowledge-architect-decision-recording`. Before using a slug, check that no entry of
+and the text that keeps the deliberation states the pair, per `primer@design-heads`. Before using a slug, check that no entry of
 the Component that will own the decision already holds it, with
 `cargo klarch show design@<anchor>@<slug>`. In prose, write it plain with a
 `#` before it, as in #retention-window, never in backticks: a backticked
@@ -632,11 +633,12 @@ tripwires the premortem produced.
 The decision record is the durable harvest of that account, written when
 the work that implements each decision lands, under
 `skill@knowledge-architect-decision-recording`: an approved thread becomes a
-design entry under its own slug when it earns one, and a shape that lost
+design entry when it earns one, under its own slug or under one that names
+the decision with the pair stated, per `primer@design-heads`, and a shape that lost
 to an argument earns a rejected-alternative entry only when that skill's
 tests say so. Open state goes to the issue register and the tripwires
 homes, under `skill@knowledge-architect-issue-tracking`. A decision that no
-work implements is recorded when it is made. Findings made during
+work implements and that is not part of any spec is recorded when it is made. Findings made during
 planning or implementation surface through the material-findings
 protocol (`skill@knowledge-architect-design@decision-authority`), except a load-bearing gap found at a
 design audit, which stops that work under `skill@knowledge-architect-planning`.
@@ -676,7 +678,10 @@ the same exchange, plus:
   owner brings instances and a suspicion; writing that one-sentence
   mechanism statement is your job.
 - **The losing side relocates, never deletes.** Record the losing
-  alternatives, and design the winner to absorb what was right in them.
+  alternatives in the plan document, or the commit message on the in-change
+  path; which of them earn an entry is
+  `skill@knowledge-architect-decision-recording@losing-alternatives`. Design
+  the winner to absorb what was right in them.
   That absorption is design work in its own right.
 - **Incumbent behavior counts as a constraint only on evidence.** A
   behavior is established by a document that argues it — a commit
