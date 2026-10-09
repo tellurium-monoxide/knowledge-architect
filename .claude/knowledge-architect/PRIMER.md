@@ -148,8 +148,10 @@ records dozens per unit of work stops being readable and stops being ranked.
    against a rival someone could plausibly propose; a name, a path or a value repeated for
    consistency is not one, since nothing argues for changing it and a stale copy is found by a
    search. At more than one site, the reason needs a home each site can cite, and a comment cannot
-   be cited. At none: a decision about an absence ("we do not do X"), or a policy with no code of
-   its own; or
+   be cited. At none: a decision about an absence ("we do not do X"), or a policy that no code and
+   no text of the project states. For a decision about agent-facing text, a skill, an agent or a
+   `CLAUDE.md`, each text that states the instruction is one site: a decision stated by one text
+   has one site, and its reason lives in that text, beside the instruction; or
 3. **its argument turns on the behaviour of something outside the project**: an external
    specification the project implements (a standard, a protocol, a rule set), or an external tool's
    behaviour, read in its documentation or measured; or

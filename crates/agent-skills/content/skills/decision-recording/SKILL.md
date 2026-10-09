@@ -30,7 +30,7 @@ the **harvest**, and it happens in the change that lands the work.
 
 A decision that no work implements, such as a policy, and that is not part of any spec, is
 recorded when it is made: there is no implementing change to wait for. The second entry test of
-`primer@design-heads` admits it, as a decision with no site of its own.
+`primer@design-heads` admits it, as a decision that no code and no text of the project states.
 
 ## Does it reverse something already recorded? {{slug:reversal-check}}
 
