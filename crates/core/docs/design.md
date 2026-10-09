@@ -2,8 +2,7 @@
 
 Recorded intent for this tool: how it is built internally, and why. Present tense, each decision
 carrying a slug anchor, cited from elsewhere with `core` as its component. What lost to a decision
-here is `path@core@docs/rejected-alternatives.md`, and
-`skill@knowledge-architect-decision-recording` owns the shape.
+here is `path@core@docs/rejected-alternatives.md`, and `primer@design-heads` owns the shape.
 
 **What belongs here:** a decision that does **not** survive deleting this tool. How it works and
 how the pieces inside divide the work belongs here.

@@ -57,7 +57,8 @@ Report each of these:
   leave a goal unmet, or that a goal's wording rules out. Report it always, whatever the document
   declares: a goal is the owner's intent, and only the owner changes it.
 - **A contradiction or a widening of a head that is not declared.** A shape, a criterion, a
-  default, a step or a harvest row that contradicts a design head, or takes it beyond what its title states, unless "What is already decided" lists
+  default, a step or a harvest row that contradicts a design head, or adds a member its argument
+  does not cover, as `primer@design-heads` routes a new member, unless "What is already decided" lists
   that head as reversed or rewritten. A head listed only as one the design rests on does not
   excuse it. A plan decides new things on purpose; what you report is a departure from a recorded
   decision that the document does not say it makes.

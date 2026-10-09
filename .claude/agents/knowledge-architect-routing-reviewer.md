@@ -90,17 +90,14 @@ it cannot reference.
 instruction: *could a session complete this activity correctly without opening this?* A pointer to an
 argument, or to task material that varies per instance such as a figure or a layout, is fine. So is
 a named prerequisite skill, which is one complete instruction rather than a fragment to reassemble.
-A pointer into root `CLAUDE.md` is free, since root already reaches every session. A pointer to
+A pointer into root `CLAUDE.md` or into the primer is free, since both already reach every
+session. A pointer to
 *part* of a directive the session must apply is the defect, and the content belongs in the
 instruction. `skill@knowledge-architect-agent-configuration` owns the test.
 
-**Does a decision sit in the right Component?** One question decides it: *does this decision survive
-deleting the Component?* No, and it belongs in that Component's own design home. Yes, and it
-belongs in the root Component's design home, which holds only what is true of the project as a
-whole: which Components exist and how they depend on each other, the principles every Component
-follows, and the order in which they are built. **The exception is a reversal**: a decision that
-reverses a recorded one stays in the Component of the decision it reverses, whatever this question
-answers, per `skill@knowledge-architect-decision-recording@reversal-check`.
+**Does a decision sit in the right Component?** Judge it by the three questions of
+`skill@knowledge-architect-decision-recording@owning-component`, read whole, and by its exception
+for a reversal, per `skill@knowledge-architect-decision-recording@reversal-check`.
 
 The failure this catches is one-directional in practice: a decision about one Component filed at the
 project level reads as binding on all of them. Check that direction first.
@@ -108,13 +105,14 @@ project level reads as binding on all of them. Check that direction first.
 **Is something recorded as a decision that is not one yet?** A shape for work nobody has built
 belongs in a plan document, in the plans directory, as an item of that plan: a slug cited only from
 inside the plan, so that nothing outside it can cite the shape as settled. A design-register slug
-on unbuilt work is a finding, except a decision that no work implements, which is recorded when
-made. A reference from outside a plan to one of its items is refused by the
+on unbuilt work is a finding, except a decision that no work implements and that is not part of
+any spec, which is recorded when made, per
+`skill@knowledge-architect-decision-recording@when-recording-happens`. A reference from outside a plan to one of its items is refused by the
 checker, and a whole plan document is cited by its kind, from anywhere.
 
-**Is the head still present tense?** No dates, no "formerly", no account of the change. A sentence
-saying what something *used to* be belongs in the commit, including an opening that motivates a
-decision by describing the state before it.
+**Is the head still present tense?** Judge it by `primer@design-heads`: a sentence saying what
+something *used to* be belongs in the commit, including an opening that motivates a decision by
+describing the state before it.
 
 **Does the diff write the references it owes?** A reference is written where the text would have
 to be revisited if the entry it names changed: reversed, closed, fired, abandoned or renamed. A

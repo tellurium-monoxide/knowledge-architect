@@ -14,10 +14,11 @@ rejected alternatives with what an entry there owes, and whether a reversal did 
 reversal owes. **Not** whether the decision is right, and not _which_ document family owns it,
 which is the routing axis.
 
-**The standard is the installed skill `skill@knowledge-architect-decision-recording`.** Read it in
-full before anything else: its tests for an entry and for a losing alternative, its split between
-the design home and history, and its reversal procedure are what you judge against. This
-definition does not restate them.
+**The standard is the primer's section `primer@design-heads` and the installed skill
+`skill@knowledge-architect-decision-recording`.** Read both in full before anything else: the
+section's rules on what earns a head, what a head holds and how it is shaped, and the skill's tests
+for a losing alternative, its split between the design home and history, and its reversal procedure
+are what you judge against. This definition does not restate them.
 
 **Establish the state of the tree yourself.** A brief that describes the change is a lead, and a
 disagreement between the brief and the tree is itself a finding. A plan document the brief hands
@@ -53,7 +54,7 @@ deleted, that the deleting commit cites it by its kind. None of the checks of
 
 ## The predicates {{slug:record-predicates}}
 
-**Did a decision earn its document entry?** Judge it by the skill's tests for an entry. An entry
+**Did a decision earn its document entry?** Judge it by the entry tests of `primer@design-heads`. An entry
 meeting none belongs in an inline comment at the code plus the commit message, which is not a
 lesser home.
 
@@ -68,9 +69,12 @@ only in a doc comment, a scoped `CLAUDE.md` or a commit has no home a later read
 `git log -G'<slug>'` reaches nothing. The tell is a head elsewhere that leans on it by description
 rather than by slug.
 
-**Does a head admitted by test 4 alone of `primer@design-heads` carry the owner's answer?** It quotes the owner's words
-and the owner's answer that they record the owner's intent. A head with no such answer, whose only
-words of the owner are an approval of the agent's proposal or a hedged statement, earned no entry.
+**Does each head the diff writes meet every rule of `primer@design-heads`?** Judge each against
+the whole section: what earns a head, test 4 included; the standing argument and the ground, an
+approval of the owner cited as a ground being a finding; the title, which states the rule and is
+false of its nearest rival; one decision per head; the slug, its level and its alignment; present
+tense; fidelity to what the owner approved; and the backstop, for a decision that should have gone
+to the design skill.
 
 **Does the diff defeat a reason recorded at the code?** A decision that earned no entry lives in a
 comment at the code and in the message of the commit that introduced it. A diff that removes or
@@ -82,22 +86,8 @@ home is not evidence that code is superfluous.
 **Was it recorded when its work landed?** A head written for work a plan document schedules and that
 has not landed is a hypothesis presented as a fact. A head must be true of the tree as it stands.
 
-**Is the head in the shape a head owes?** Present tense, the current design as if it had always
-been so, no account of the change; a slug at the end of a level-three heading, never on another
-level, in a table cell, on a plain line or in a list item; the statement first and the slug last;
-a title and a slug that state the head's full scope, the title false of the nearest rival each
-decision under it beat.
-A decision written as one bullet among several carries no anchor and cannot be cited. When the
-decision was a thread of a design discussion, the slug is the thread's name, unless that name
-misdescribes the approved decision: then the slug names the decision, and the plan document's
-harvest row or the commit message carrying the deliberation states the pair of thread and slug.
-
-**Does the head carry its standing argument?** Every premise whose failure would reopen the
-decision: the goal it derives a constraint from, as a `goal@<anchor>@<id>` reference; a decision of
-another Component it depends on, as a reference; the measurement it rests on, with the command that
-takes it again; the fact that defeated its nearest rival. The deliberation, what was weighed and in
-which order, is not in the head. A head that argues from a goal's words without naming the goal is
-the common miss.
+A head that argues from a goal's words without naming the goal is the common miss of the standing
+argument.
 
 **Did an alternative that lost earn its entry?** Most do not. Judge it by the skill's tests for a
 losing alternative, and apply them to every thread whose shape lost to an argument: a ruled-out
