@@ -13,8 +13,8 @@ declaration, as `design@core@arguments-parse-through-clap` argues for the checke
 
 A subcommand is one module owning everything it is, plus one variant in `path@xtask@src/main.rs`'s
 command enum. Code is shared only when every subcommand needs it. What that admits today: the gates
-library's output helpers, `say` and `complain`, which `design@gates@one-spawn-helper` keeps in its
-process module; its `project_root`; and the core's `MANIFEST_NAME`, per
+library's output helper `complain`, which `design@gates@one-spawn-helper` keeps in its process
+module; its `project_root`; and the core's `MANIFEST_NAME`, per
 `design@xtask@root-finder-uses-the-core-constant`. Adding a workflow adds its module and its
 variant and edits nothing else. This is what keeps later workflows independent of each other and
 of `gates`.

@@ -235,8 +235,8 @@ Measured: 31 files carry a test module, 349 tests, most over private functions, 
 move makes those public or drops the tests.
 
 **Literals as data in every `cfg(test)` module of every crate** — lost to
-`design@core@checker-source-literals-are-data`. `live`. The owner's ruling is that a reference
-written in another crate's unit test stays checked.
+`design@core@checker-source-literals-are-data`. `live`. Zero members outside the tool today, and the
+owner's ruling is that a rule cited in another crate's unit test stays checked.
 
 **Reading no string literal anywhere** — lost to `design@core@checker-source-literals-are-data`.
 `live`. Measured: 17 assertion messages in the tests of thaum's `thaum-testing` crate cite a rule

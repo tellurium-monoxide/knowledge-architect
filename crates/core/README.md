@@ -36,7 +36,7 @@ leaves it out. The decisions are `design@core@git-supplies-the-walk`,
 
 ```sh
 cargo klarch check                     every check, over one walk, in four phases
-cargo klarch check --fix               apply every safe fix, list each, then every check
+cargo klarch check --fix               apply the admitted safe fixes, list each, then every check
 cargo klarch check --staged            every check, over the tree git's index would commit
 cargo klarch show <kind>@<anchor>@<id> one recorded entry, and every reference to it
 cargo klarch issues [anchor] [--kind k] [--group g] [text …]

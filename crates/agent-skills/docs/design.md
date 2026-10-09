@@ -83,10 +83,10 @@ document, per `design@core@reserved-anchors`, so where the text names both shape
 references. A path that varies by project, and an illustration, are placeholders in
 angle brackets. The command a project runs is written as the placeholder that the install fills
 with the project's declared command, per `design@core@declared-command`. A literal the checker
-would misread is a delivery substitution, which the build fills. The owner's argument: the text
-is applied "using substitution at build or install time" "to avoid convoluted sentences (such as
-for the primer import line)", "as documented exceptions where we are avoiding the checker on
-purpose in order to facilitate delivery of the installed skills".
+would misread is a delivery substitution, which the build fills. The owner's argument: "to avoid
+convoluted sentences (such as for the primer import line), the text could be applied using
+substitution at build or install time, as documented exceptions where we are avoiding the checker
+on purpose in order to facilitate delivery of the installed skills."
 
 **The shipped set may cite its own skills, agents and primer, and their sections**, as
 `skill@<name>@<slug>` or `primer@<slug>`: every project serving `claude` holds them, installed, and
@@ -158,7 +158,7 @@ counterpart in the discussion. So "a smaller model would not follow this" is not
 against any wording of the skill. Its description states "Requires a frontier-tier model
 (Opus-class or stronger)": a model below that bar produces the format without the discipline, and
 the description is the only text an installer reads before the first run. The evidence is a
-scripted four-turn discussion run on three models in the designing-together repository, described
+scripted four-turn discussion run on three models, described
 in `path@agent-skills@README.md`; it is not re-taken, since
 `design@agent-skills@synthetic-evidence-not-built` builds no such run, and it stands for the part a
 reading of its transcripts confirms: the smaller one reproduced the ledger's format, and it endorsed a weak proposal, invented states outside
@@ -179,9 +179,10 @@ this entry.
 No bound is set on how much is proposed either: on the number of threads, of proposals, or of
 rounds. The ground is the owner's: "a bound on what and how much the design skill may propose must
 NOT be added, as it would go against the core idea of the 'open design discussion' that the skill
-tries to encourage", since a discussion "should not be bounded in threads or rounds IMO, because
-this depends only on what the grounding and investigation and experimentation brings to the table,
-and we cannot know about this in advance." A bound fixed before the discussion decides its size
+tries to encourage". Answering a proposed path that would bound a discussion to one decision met
+during a task, the owner said: "The discussion starts with a single decision, but should not be
+bounded in threads or rounds IMO, because this depends only on what the grounding and investigation
+and experimentation brings to the table, and we cannot know about this in advance." A bound fixed before the discussion decides its size
 before its content. A path chosen by the cost of reversal, or by where the work lands, changes where the
 deliberation is kept, never how large the discussion may grow.
 
@@ -291,8 +292,9 @@ argument. Where that would widen what the owner's words in it approved, as a tit
 members the owner named to the rule, the change goes to the owner as one proposal.
 
 The rules apply at the moment a session already reads and edits the head, so a head is repaired at
-the cost of one read. The whole record is repaired at once only by a project audit, at a migration
-or at the owner's request, per `design@agent-skills@whole-record-repair-at-a-migration`.
+the cost of one read. The whole record is repaired at once only by a project audit, on the
+occasions of `design@agent-skills@audit-triggers`, per
+`design@agent-skills@audit-repairs-the-whole-record`.
 
 ### A write into a design home, or an edit of agent-facing text a head describes, loads the decision-recording skill first, with no condition judged before it `##design-home-write-loads-recording`
 
@@ -631,7 +633,11 @@ code reads the comment at that code, not a design home it would have to think to
 where the checker's reach ends: a reason that several sites must respect needs a home each site can
 cite, and a comment cannot be cited, while a policy no code and no text states, or an absence, has
 none; for agent-facing text, each text that states the instruction is one site, so a reason stated
-by one text lives beside its instruction. Test 1 covers
+by one text lives beside its instruction. The earlier reading of test 2 for installed text failed: an
+audit counted two skills stating one decision as one site, and its clause "a policy with no code of
+its own" could be read to admit every decision about installed text, as the closed issue
+what-a-site-is-for-installed-text-is-undefined records, found with
+`git log --diff-filter=D -- '*/what-a-site-is-for-installed-text-is-undefined.md'`. Test 1 covers
 every interface others consume, not only a type or a signature: a head about a grammar, a file
 format or a command binds every adopting project, and under a strict test 1 such a head enforced in
 one module would pass no test. Test 3 counts a tool's behaviour measured as well as documented: a
@@ -970,7 +976,7 @@ spec per slice, which hold the spec's sections between them, split as
 would decompose this into two layers: plans for short work, and plan for multi session work". A
 spec plus a separate detailed implementation plan lost: both carry the same decisions and the
 second drifts from the first, against `goal@knowledge-architect@documentation-stays-consistent`.
-The one exception is a detailed plan written for a less capable implementer: it covers a bounded
+The one exception is a detailed plan, if one is ever written for a less capable implementer: it covers a bounded
 amount of work and opens by saying it rests on assumptions, per
 `design@agent-skills@no-untested-snippet-is-authority`.
 
@@ -1396,48 +1402,63 @@ skill per axis would restate the method in each, against
 reads a diff, so without an audit a drift between two heads no branch touches is read by no step
 of the workflow, against `goal@knowledge-architect@documentation-stays-consistent`.
 
-### An audit reads its corpus in bounded groups of drafts, sorts every finding by reading, puts the owner's on one list, and re-checks the result with fresh agents `##audit-method`
+### An audit is read in bounded groups by agents calibrated on a shared sample, and nothing they propose is applied before the session's reading and a fresh re-check `##audit-method`
 
 The method of `skill@knowledge-architect-project-audit@audit-method`: groups of at most 60 entries
 of one Component, each read by one agent that writes one draft per entry to a scratch directory of
-its own; a shared sample judged by every agent, whose differences the session settles before
-sorting; every draft that proposes a change read by the session against its entry and its history;
-one list for the owner, labelled `F<n>`; the edits applied and their diff read whole, each head a
-split, a rename or a merge creates judged alone against every rule; and a re-check by fresh agents
-over the same groups. It rests on subagents alone, so it runs under any harness, per
-`goal@agent-skills@installed-text-works-anywhere`, and its bounded groups keep each agent's reading
-whole on a large project, as `design@agent-skills@standing-entry-search-groups` bounds the search.
-Nothing an agent proposes is applied before a reading confirms it, per
-`design@agent-skills@synthetic-evidence-not-built`.
+its own; a shared sample judged by every agent, where a difference that one reading of the rule's
+text settles is settled by the session before sorting, and a difference the rule's text admits both
+ways goes on the owner list; every draft that proposes a change read by the session against its
+entry and its history; one list for the owner, labelled `F<n>`; the edits applied and their diff
+read whole, each head a split, a rename or a merge creates judged alone against every rule; and a
+re-check by fresh agents over the same groups. A group holds one Component's entries, since a
+rejected alternative is judged against the head it lost to. The bound of 60 is the one
+`design@agent-skills@standing-entry-search-groups` argues for a standing entry; an auditor reads
+more per head, its tripwires, its issues and its history, and no measurement shows the bound right
+for that load, though the three passes of the first run ran with it. It rests on subagents alone,
+so it runs under any harness, per `goal@agent-skills@installed-text-works-anywhere`, and its bounded
+groups keep each agent's reading whole on a large project. Nothing an agent proposes is applied
+before a reading confirms it, per `design@agent-skills@synthetic-evidence-not-built`.
 
-The rival, a lighter method with no calibration and no re-check, lost on real runs: in the first
-run of the design-record axis on this repository, the re-check of each pass found what that pass
-missed, and two agents read one shared entry two ways in two of the samples. The same run showed
-the two failure modes the method guards against since: a head created by a split that fails a rule
-read alone, and a quotation of the owner verbatim but taken from the answer to another question.
+The rival, a lighter method with no calibration and no re-check, lost on real runs, whose commits
+`git log --grep='design-record axis'` finds: in the first run of the design-record axis on this
+repository, the re-check of each pass found what that pass missed, and two agents read one shared
+entry two ways in two of the samples. The method guards against two failure modes that run showed:
+a head created by a split that fails a rule read alone, and a quotation of the owner verbatim but
+taken from the answer to another question.
 
 ### The design-record axis re-applies the rules on design heads and on rejected alternatives to every entry, reading the tripwires and issues that bear on each head `##design-record-axis`
 
 Its corpus is every design head and every rejected alternative of every Component, and its rules
 are `primer@design-heads` and `skill@knowledge-architect-decision-recording@losing-alternatives`.
 Each head is read with the tripwires guarding it, the issues naming it and the history behind each
-citation of the owner, so that the audit takes them into account and repairs one only where its own
-edit makes it stale. The truth of a head about the code, and the restatements of a head in other
-texts, are other axes: they read other things than the decision record. A head the axis meets false
-of the code gets an issue. The axis is carried by `agent@knowledge-architect-design-record-auditor`.
+citation of the owner, and the audit repairs a tripwire or an issue only where its own edit makes it
+stale. The owner narrowed the axis to that reading: "Reading the tripwires and issues related to design is important IMO, so that the audit
+on design takes them into account." The restatements of a head in other texts left the axis on the
+owner's word: "It does not read the same thing at all." The truth of a head about the code is
+another axis too, since it reads the code rather than the decision record. A head the axis meets
+false of the code gets an issue. The axis is carried by `agent@knowledge-architect-design-record-auditor`.
 
-### A finding of an audit is applied in its branch, put to the owner, or opened as an issue, and the commit messages are the record `##audit-outcomes`
+### A finding of an audit is applied in its branch, put to the owner, or opened as an issue `##audit-outcomes`
 
 An edit that changes no ruling of the owner is applied in the audit's branch: a rewording, a tense,
-a reference, a split that moves no word of the owner, a rejected alternative repaired in place. A
-widening of what the owner's words approved, the removal of an entry, a ground that is the owner's
-words, a rule that reads two ways, a head in the wrong Component and a conflict with a goal go to
-the owner, per `goal@knowledge-architect@the-owner-decides`; any finding no case names goes there
-too. A finding outside the axis, or work too large for the branch, becomes an issue. Most findings
-of the design-record axis are text edits, so they are applied at once. The commit messages record
-what was audited, at which commit, the counts and each finding's outcome, as a measurement is
-routed to the commit that took it; a run that changes no file reports to the owner instead, since
-its commit would not reach the main branch, per
+a reference, a split that moves no word of the owner, a rejected alternative repaired in place. An
+approval cited as a head's ground is removed in the branch where the head stands on its argument,
+since its repair removes a false ground and widens nothing. A widening of what the owner's words
+approved, the removal of an entry, a ground that is the owner's words, a rule that reads two ways, a
+head in the wrong Component and a conflict with a goal go to the owner, per
+`goal@knowledge-architect@the-owner-decides`; any finding no case names goes there too. A finding
+outside the axis, work too large for the branch, or a finding the owner defers becomes an issue.
+Most findings of the design-record axis are text edits, so they are applied at once, as the owner
+stated: "For the axis we are discussing, I think the goal is usually immediate application. I don't
+think there is much reason to delay, since those are mostly text edits, unless some design entries
+have major, issues that bear on project goals for example."
+
+### The commit messages of an audit run are its record `##audit-record-in-commit-messages`
+
+The commit messages record what was audited, at which commit, the counts and each finding's outcome,
+as a measurement is routed to the commit that took it; a run that changes no file reports to the
+owner instead, since its commit would not reach the main branch, per
 `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`. A report document, for
 an axis whose fixes are code, is `issue@agent-skills@audit-axes-beyond-the-design-record`'s
 question.
@@ -1460,14 +1481,16 @@ one text. Its read-only rule is in its body, since its tools include a shell. Th
 generic auditor briefed to read the axis's section of the skill, puts the standard behind a read the
 brief must ask for.
 
-### A project audit repairs the whole record at once, at a migration or at the owner's request `##whole-record-repair-at-a-migration`
+### A project audit repairs the whole record at once, on each occasion an audit runs `##audit-repairs-the-whole-record`
 
 Beside the repair of a head a change touches, `design@agent-skills@existing-heads-on-touch`, a
 project audit brings every head and every rejected alternative to the rules at once, under
-`design@agent-skills@audit-method`, its widenings going to the owner on one list. At a pin move that
-changes the rules, every adopting project must bring its record to them, and a repair on touch
-never reaches a head no change touches. The rival, the repair on touch alone, leaves a project's
-record under the old rules after its migration.
+`design@agent-skills@audit-method`, its widenings going to the owner on one list, on the occasions
+of `design@agent-skills@audit-triggers`. Its premise is the owner's: "With the changes we just did
+to decision record conditions and shapes, at the next version pin, projects migrating will need to
+migrate their design home to match them." A repair on touch never reaches a head no change touches.
+The rival, the repair on touch alone, leaves a project's record under the old rules after its
+migration.
 
 ## The configuration a project holds
 

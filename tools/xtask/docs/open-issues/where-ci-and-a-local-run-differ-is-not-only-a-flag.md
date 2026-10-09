@@ -18,8 +18,8 @@ The sentence holds of which gates run and how a run stops, and not of what the r
   a flag.**" It then lists `--locked`, `--fail-fast`, `--require-rebased` and `--full`.
 - The code, `path@gates@src/gates.rs`, function `under_actions`: it returns true when the
   environment variable `GITHUB_ACTIONS` is `true`. Its doc comment says two things follow: "a pipe
-  on stdout is accepted, and each gate is wrapped in workflow commands", per the gates heads on
-  the verdict and on annotations under Actions.
+  on stdout is accepted, and each gate is wrapped in workflow commands", per
+  `design@gates@gates-refuse-a-pipe` and `design@gates@annotations-under-actions`.
 - So a CI run differs from a local run in two ways that no flag of xtask selects.
 
 Found by the first run of the design-record axis on this repository, whose auditor noted it
@@ -35,6 +35,6 @@ one. A head false of the code misleads every reader until it is repaired,
 ### What would close it
 
 The sentence restated to what holds, for example "Where CI and a local run differ in what they run,
-the difference is a flag", with the output the library adapts to Actions pointed to the gates
-head on annotations; or the library's detection of Actions turned into a flag, if that is the
+the difference is a flag", with the output the library adapts to Actions pointed to
+`design@gates@annotations-under-actions`; or the library's detection of Actions turned into a flag, if that is the
 better design. Either goes through the decision-recording skill.

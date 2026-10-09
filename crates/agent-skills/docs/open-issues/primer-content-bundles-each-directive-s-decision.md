@@ -29,9 +29,13 @@ without recording it".
 **Suspected mechanism**: the head listed its members in its title, and moving the title to its rule
 made it the rule another head already states, while the members' own decisions stayed bundled.
 
-**The re-entry point**: the next change that edits `design@agent-skills@primer-content`, which
-`design@agent-skills@existing-heads-on-touch` brings to the rules on heads; or a design discussion
-under `skill@knowledge-architect-design` on the owner's word.
+**The re-entry point**: the next run of the design-record axis on this repository, under
+`skill@knowledge-architect-project-audit`, which reads this head and this entry together; or a
+design discussion under `skill@knowledge-architect-design` on the owner's word. The earlier re-entry
+point, the next change that edits the head, was met by the first run of that axis, in the commit
+"The first run of the design-record axis: every head and rejected alternative read against the
+rules, 49 rulings of the owner applied, four issues closed and three opened". It edited the head,
+quoting the owner there, and the run's re-checks left the bundle to this entry, which was open.
 
 ### Why it matters
 

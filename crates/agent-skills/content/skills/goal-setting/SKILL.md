@@ -45,7 +45,7 @@ what the goal means, and **what would show it is met**.
 %% into the root documents, and leaves a goal with no Component responsible for it, against
 %% `goal@knowledge-architect@the-owner-decides`. A published Component serves the consumers whose
 %% provision the root's goals state, so its goals refine a root goal; this is an encouragement, not a
-%% rule, since whether a goal refines another is a subjective judgement.
+%% rule.
 **Where a goal goes.** A goal is written in the goals home of the Component whose responsibility it
 is to fulfil it, even when other Components' decisions serve it too: any goal can be referenced from
 anywhere. The root's goals state what the project provides to its consumers. A published Component
@@ -72,8 +72,9 @@ is argued from one.
 %% its slug so that the goals home holds the owner's mind, per
 %% `goal@knowledge-architect@the-owner-decides`. Drafting nothing and only asking gives up the help
 %% with the wording. Drafting and letting the owner correct accepts a goal by the owner's silence,
-%% which is not the owner's word; for the same reason a goal with no ruling is neither written nor
-%% dropped.
+%% which is not the owner's word; for the same reason a goal with no ruling is not written. It is not
+%% dropped either, since a goal with no ruling may still be the owner's intent, and dropping it
+%% silently can discard it.
 **The owner states, the agent helps write, and the owner rules on every goal.**
 
 1. **Ask the owner to state their intent** for the Component, and any goals they already have, in

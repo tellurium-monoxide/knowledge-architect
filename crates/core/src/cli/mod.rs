@@ -67,8 +67,8 @@ pub enum Command {
 
 #[derive(Args)]
 pub struct CheckArgs {
-    /// Apply every fix the checker can make safely before checking: write the generated files and
-    /// the installed agent files whose bytes the tree and this version determine, and list each.
+    /// Apply the safe fixes the checker admits before checking: write the generated files and the
+    /// installed agent files whose bytes the tree and this version determine, and list each.
     #[arg(long)]
     pub fix: bool,
     /// Judge the tree git's index would commit, instead of the working tree: HEAD's tree with

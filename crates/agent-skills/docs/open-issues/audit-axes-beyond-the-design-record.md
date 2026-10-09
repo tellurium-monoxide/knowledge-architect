@@ -48,13 +48,20 @@ proposed", carried "by one or several subagents (maybe one per component)". As r
   This led the owner to a new entry test, recorded in
   `design@agent-skills@a-head-is-owed-by-an-entry-test`.
 
-**Axes the owner names**, a list to be completed and refined, the decision-record axis aside:
+**Axes the owner names**, a list to be completed and refined, the design-record axis aside:
 
 - **design self-consistency**, of the design homes as a whole rather than of one branch;
 - **alignment of implementation with design and goals**: the code against the design homes, and
   both against the goals;
 - **consistency of the project's own agent workflows**, its CLAUDE.md files and skills, combined
-  with the workflow the project installs.
+  with the workflow the project installs. A lead from the owner for what it reads: an audit and a review that
+  share a subject are given compatible instructions for the verdicts they give. A comparison of the two
+  agents, made on that request after the first run, found
+  `agent@knowledge-architect-design-record-auditor` and
+  `agent@knowledge-architect-decision-record-reviewer` judging rejected alternatives by two
+  different restatements of one rule, one of which reported as a defect what the other must not;
+  the commit "The decision-record reviewer and the design-record auditor judge the record by the
+  same rules" aligned them.
 
 Additions of the session, for the discussion to judge:
 
@@ -83,25 +90,21 @@ plans directory finds it. Two lessons on method:
   nearest rivals, which the discussion adopted.
 - **Agents dispatched together are not calibrated alike.** One audit reported that its own
   subagents classed a ground taken from a goal differently and used different thresholds for a
-  rewritten head, so its weekly counts carry that uncertainty. An audit that compares figures across
-  agents owes a calibration: a shared sample classed by each.
+  rewritten head, so its weekly counts carry that uncertainty.
 
-**Scale.** Such audits must work on large projects, so they rest on subagents: groups of entries
-of bounded size, as `design@agent-skills@standing-entry-search-groups` sizes its groups, each read
-whole, with results written to files rather than returned into the dispatching conversation.
-A harness's dynamic workflows could orchestrate them, but that is specific to one harness, against
-`goal@agent-skills@installed-text-works-anywhere`. What the instance above suggests an audit owes:
-pre-commitments stated before it runs; the owner's reading of a sample, since agents applying a
-test measure how agents read it, not whether it is right; history read as well as text, wherever a
-verdict rests on what was ruled; and a follow-up that changes nothing before the owner has seen
-the verdicts.
+**Method.** The method these lessons led to, and every axis shares, is
+`design@agent-skills@audit-method`: bounded groups, a calibration sample, history read behind each
+ruling, and nothing applied before a reading confirms it. One lesson it does not adopt stays open
+here, for an axis to weigh: the owner's reading of a sample of the verdicts, since agents applying a
+test measure how agents read it, not whether it is right.
 
 ### Why it matters
 
 `goal@knowledge-architect@documentation-stays-consistent` is met while the reviews keep the record
 consistent, and every review reads only what a diff touches. The design-record axis reads the
-decision record as a whole; a drift between the code and a head no branch cites, between two
-skills, or between an issue and the tree as it stands, is still read by no step of the workflow.
+decision record as a whole against the rules on its entries; a drift between two heads that no
+branch touches, between the code and a head no branch cites, between two skills, or between an
+issue and the tree as it stands, is still read by no step of the workflow.
 `goal@knowledge-architect@agents-work-without-drift` depends on the whole record, since agents
 ground on all of it.
 
