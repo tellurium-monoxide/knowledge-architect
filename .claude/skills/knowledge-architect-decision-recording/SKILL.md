@@ -146,8 +146,7 @@ a head. The template:
 ```markdown
 ### <The decision, stated as a sentence> `##<slug>`
 
-<The shape, present tense. Then the standing argument: what it derives from, as references, and
-the fact that defeated its nearest rival.>
+<The shape, present tense. Then the standing argument, per the primer's section on design heads.>
 ```
 
 The slug is an identifier. Code comments, tripwires, other documents and `git log -G` all cite it,

@@ -58,11 +58,8 @@ deleted, that the deleting commit cites it by its kind. None of the checks of
 meeting none belongs in an inline comment at the code plus the commit message, which is not a
 lesser home.
 
-**The failure runs both ways, and the more likely one is a document accumulating implementation
-choices until nobody ranks it.** A unit of work produces dozens of choices. Check the direction the
-diff actually went before assuming which failure you are looking at. Inside a head the test is
-the same: if changing a piece of code would force a change to the head, it is design; if the
-head would be unaffected, it is a comment and belongs at the code.
+**The failure runs both ways.** Check the direction the diff actually went before assuming which
+failure you are looking at.
 
 **Does a decision that earned an entry have one?** A decision meeting one of the tests and recorded
 only in a doc comment, a scoped `CLAUDE.md` or a commit has no home a later reader can cite, and
@@ -70,9 +67,8 @@ only in a doc comment, a scoped `CLAUDE.md` or a commit has no home a later read
 rather than by slug.
 
 **Does each head the diff writes meet every rule of `primer@design-heads`?** Judge each against
-the whole section: what earns a head, test 4 included; the standing argument and the ground, an
-approval of the owner cited as a ground being a finding; the title, which states the rule and is
-false of its nearest rival; one decision per head; the slug, its level and its alignment; present
+the whole section: what earns a head, test 4 included; the standing argument and the ground; the
+title tests; one decision per head; the slug, its level and its alignment; present
 tense; fidelity to what the owner approved; and the backstop, for a decision that should have gone
 to the design skill.
 
@@ -102,16 +98,10 @@ avoid here. An entry asserting that a checkable reason exists somewhere without 
 satisfies neither: _"refuted by measurement"_ names no measurement and points at none. An entry
 detailed enough to build from is the other failure: it reads as the current design under grep.
 
-**Does a reversal do all of what a reversal owes?** When the diff replaces a recorded decision: the
-head is rewritten in place rather than appended to, and a new statement carries a new slug while
-the old slug survives only where it still names the same decision; the incumbent is moved into
-rejected alternatives with its reason stated as strongly as it was originally made, if it meets the
-tests; the tripwires guarding the reversed decision are deleted outright; everything that pointed at
-the old behaviour (skills, subagent definitions, scoped `CLAUDE.md` files, generated headers) is
-repaired, found by its wording as well as by its slug; the issue entry that asked the question is
-closed in this change rather than a later one; and the commit message says what was searched for the
-incumbent and what the search returned. A reversal that leaves the old head standing is two homes
-for one question, with the old one still asserting what the new one denies.
+**Does a reversal do all of what a reversal owes?** When the diff replaces a recorded decision,
+judge it against every point of `skill@knowledge-architect-decision-recording@reversal-check`, read
+whole. A reversal that leaves the old head standing is two homes for one question, with the old one
+still asserting what the new one denies.
 
 **Does a tripwire stand on the owner's word?** A tripwire a premortem or an acceptance criterion
 produced is written only where the owner ruled that it should be. A tripwire the diff adds with no

@@ -116,7 +116,8 @@ describing the state before it.
 
 **Does the diff write the references it owes?** A reference is written where the text would have
 to be revisited if the entry it names changed: reversed, closed, fired, abandoned or renamed. A
-design head whose argument derives a constraint from a goal names it; an issue entry names the
+design head names the goal its argument derives a constraint from and a decision of another
+Component it depends on; an issue entry names the
 decision it strains and the goal it threatens when it does directly; a guard or a workaround in
 code that exists because of an open entry names it in the comment at the site. The tell is the
 wording: a head that argues from a goal's words with no `goal` reference, an entry whose

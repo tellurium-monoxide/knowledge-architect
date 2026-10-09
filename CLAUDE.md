@@ -288,8 +288,8 @@ anyone has checked it.
 **Three classes of statement, and the instruction differs.**
 
 - **Built intent**: the root's design home, and a Component's design home. They hold the design as
-  built and its reasons, and the decisions that no work implements and no plan document holds,
-  recorded when made. Design that is decided and not built is in a plan document until it lands.
+  built and its reasons, and the decisions that no work implements and that are not part of any
+  spec, recorded when made. Design that is decided and not built is in a plan document until it lands.
   This is authority. Do not verify it against the code. Verify the code against it. A divergence is a defect in one of them. Say which,
   open an entry, and stop. A design home can be wrong, and it still prevails until the entry closes:
   when the code meets the head, or when the head is reversed under

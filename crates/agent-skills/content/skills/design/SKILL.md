@@ -648,7 +648,8 @@ the decision with the pair stated, per `primer@design-heads`, and a shape that l
 to an argument earns a rejected-alternative entry only when that skill's
 tests say so. Open state goes to the issue register and the tripwires
 homes, under `skill@knowledge-architect-issue-tracking`. A decision that no
-work implements and that is not part of any spec is recorded when it is made. Findings made during
+work implements and that is not part of any spec is recorded when it is made, per
+`skill@knowledge-architect-decision-recording@when-recording-happens`. Findings made during
 planning or implementation surface through the material-findings
 protocol (`skill@knowledge-architect-design@decision-authority`), except a load-bearing gap found at a
 design audit, which stops that work under `skill@knowledge-architect-planning`.
