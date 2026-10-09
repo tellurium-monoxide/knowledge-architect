@@ -75,15 +75,16 @@ happens to find is the one they act on. The fix is a pointer. **Count the homes 
 the nearest one.** A fact repeated in five places with a tripwire naming two of them leaves three
 asserting something false the day it fires.
 
-**A directive is not bound by that, and pointerising one is itself the defect.** An instruction, in
-root `CLAUDE.md`, a skill, a subagent definition or a scoped `CLAUDE.md`, states every directive its
-activity applies and is restated wherever it has to be delivered. Its home stays authoritative and
-carries the argument. The restatement carries a pointer to it, adjacent. **Never report a restated
-directive as a two-homes violation, and never propose replacing one with a pointer.** Whether a
-directive is needed at its point of delivery is a delivery decision and belongs to the owner. A
-restatement that *contradicts* its home is a finding, against the restatement, which is the defect.
-An installed skill or agent restates directives with no pointer, because it is shipped to projects
-whose records it cannot reference.
+**A directive is bound by a size, not by that.** Per `primer@where-knowledge-goes`, read whole
+before judging one: a directive is restated at its point of delivery only when the restatement is
+no longer than a pointer to it, a path, a name, a command, a value or one sentence, and a directive
+sentence carries its pointer adjacent. **Never report such a restatement as a two-homes
+violation.** A restatement longer than one sentence, or a part of a longer directive, is a finding:
+the repair is a pointer to its home with an instruction to read the home whole. A restatement that
+*contradicts* its home is a finding, against the restatement, which is the defect. Whether a
+directive is needed at its point of delivery is a delivery decision and belongs to the owner. For an
+installed skill or agent, the home is installed text, since it is shipped to projects whose records
+it cannot reference.
 
 **Does any pointer have to be followed before a session can act?** Ask it of each pointer out of an
 instruction: *could a session complete this activity correctly without opening this?* A pointer to an

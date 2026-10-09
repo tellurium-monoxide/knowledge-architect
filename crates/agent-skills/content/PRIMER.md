@@ -75,10 +75,14 @@ for the owner's ruling, or dropped (with the reason). A mention inside other pro
 
 **Every durable decision has exactly one home.** A second mention of a decision is a reference to
 it, never a copy, because a copy starts drifting the moment it is written. **A directive is
-different**: it is restated wherever it has to be delivered, with a reference to its home beside
-it, and where the two disagree the restatement is the defect. A restatement is never replaced by a
-reference on one-home grounds: whether a directive is needed where it is restated is the owner's
-decision.
+restated where it has to be delivered only when the restatement is no longer than a pointer to
+it**: a path, a file name, a command, a value, or one sentence. A directive sentence carries its
+pointer beside it, and where the two disagree the restatement is the defect. A directive longer
+than one sentence is delivered by a pointer to its home, with an instruction to read the home whole
+at that moment. Part of it is never restated: a partial copy drifts, and its reader takes it for
+the whole. For installed text, the home a pointer names is installed text, a skill's section or the
+primer's, since installed text cites no entry of the project. Whether a directive is needed at a
+point of delivery is the owner's decision.
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |

@@ -203,17 +203,9 @@ being true. What is bound is the _why_ of the decision, the losing arguments, an
 decision rests on. A second mention of a decision is a pointer, never a copy, because a restated
 decision starts drifting the moment it is written.
 
-**A directive is different, and is restated wherever it has to be delivered.** A reader who cannot
-reach a statement at the moment they act is not served by a pointer to it. Three clauses bound
-this, and they pay for the drift it admits:
-
-- the decision's home is authoritative, so where a restatement and its home disagree, the
-  restatement is the defect.
-- a restatement carries its pointer, adjacent. The pointer marks it deliberate rather than an
-  orphan copy.
-- **a restatement is never replaced by a pointer on one-home grounds.** Whether a directive is
-  needed at a point of delivery is a delivery decision, and those belong to the owner of the
-  configuration.
+**A directive is different: it is restated only when the restatement is no longer than a pointer
+to it.** The rule and its bounds are `primer@where-knowledge-goes`; read that section whole before
+restating a directive or replacing a restatement by a pointer.
 
 The workflow's rows of the knowledge table are in the primer, per
 `design@agent-skills@knowledge-table-home`. This repository's own rows, each refining or adding to
