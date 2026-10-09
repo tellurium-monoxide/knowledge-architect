@@ -232,10 +232,11 @@ A count or a list in a title goes stale at the next member, and every later memb
 change of the decision, with its reversal, its slug rename and its tripwire rename, against
 `goal@knowledge-architect@agents-get-a-complete-workflow`, which aims for fewer decisions reversed
 by accident. The nearest rival, the instance in the title, has that cost: an audit of this
-repository's design heads at commit c282b00, and of those of a project that uses the workflow,
-reading every head and its history, finds the instance stated as the rule in about one head in ten,
-and about fifteen rewrites of such heads that a member the argument already admitted forced. The
-figure is re-taken by a fresh read-only audit of the heads at that commit against this rule. A review repair that moves a member
+repository's design heads at commit c282b00, reading every head and its history, finds the instance
+stated as the rule in 27 of its 189 heads, and an audit of a project that uses the workflow finds
+about one head in fourteen; the two histories hold about fifteen rewrites of such heads that a
+member the argument already admitted forced. The figures are re-taken by a fresh read-only audit of
+the heads at that commit, and of each project's history, against this rule. A review repair that moves a member
 into a title makes the defect: "the title now states it". The opposite defect, a title
 wider than its argument, caused reversals too, which the last sentence of the rule guards. A title
 stating a rule alone would let a session add members the owner never saw, so it holds only with the
@@ -375,7 +376,7 @@ the same way, one predicted check at a time. The evidence behind it came from on
 skills and agents forked from thaum were never edited under it: one that needs a different
 standard argues its exception. Two exceptions are argued in their own heads:
 `design@agent-skills@staged-check-before-each-commit` and
-`design@agent-skills@in-change-path`.
+`design@agent-skills@in-change-grounding-rereads-the-primer`.
 
 ### No run is built to observe how an agent follows the workflow's instructions, and a run is admitted only when its verdict reproduces `##synthetic-evidence-not-built`
 
@@ -1042,14 +1043,8 @@ about this in advance." The separate path bounded the discussion to one thread, 
 inside a task grows to several threads; its length is not bounded, since a bound on it would bound
 the discussion.
 
-Its grounding reads the primer's section on design heads again, whole. That stands on its argument
-and rests on a prediction, not on a behaviour seen in a session: the path runs when a decision is
-met during an issue fix or a review repair, which is late in a session by definition, and its
-grounding reads heads to judge the decision. Its nearest rival, the reread at recording alone, per
-`design@agent-skills@primer-reread-before-recording`, leaves that grounding reading heads under a
-primer far back in the session. It is an exception to
-`design@agent-skills@additions-need-real-use`; the owner ruled that no issue track it: "There's no
-way to show that the workflow is not functional without it once it is built, anyway."
+Its grounding reads the primer's section on design heads again, per
+`design@agent-skills@in-change-grounding-rereads-the-primer`.
 
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
@@ -1552,7 +1547,23 @@ over long session. Maybe a few instructions to reread the primer should be kept 
 in particular the decision recording skill whose writes happen at the end of sessions". Every write
 into a design home loads that skill first, per
 `design@agent-skills@design-home-write-loads-recording`, so one instruction reaches every write,
-and a review agent starts with a fresh context that holds the primer.
+and that skill is also loaded before an edit of a text a head describes, where the session judges
+the edit against the heads, late in the same session. A review agent starts with a fresh context
+that holds the primer, so it needs no reread.
+
+### The design skill's in-change path reads the primer's section on design heads again before its grounding `##in-change-grounding-rereads-the-primer`
+
+The design skill's in-change path asks for `primer@design-heads` to be read again, whole, before
+its grounding.
+
+It stands on its argument and rests on a prediction, not on a behaviour seen in a session: the
+in-change path runs when a decision is met during an issue fix or a review repair, which is late in
+a session by definition, and its grounding reads heads to judge the decision. Its nearest rival,
+the reread at recording alone, per `design@agent-skills@primer-reread-before-recording`, leaves that
+grounding reading heads under a primer far back in the session. It is an exception to
+`design@agent-skills@additions-need-real-use`, which names it, so its reason is respected at two
+sites, the design skill's instruction and that rule; the owner ruled that no issue track it:
+"There's no way to show that the workflow is not functional without it once it is built, anyway."
 
 ### The primer names the plans directory the checker fixes `##plans-directory-in-primer`
 
