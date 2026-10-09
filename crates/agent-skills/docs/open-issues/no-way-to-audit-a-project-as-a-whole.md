@@ -76,7 +76,9 @@ Additions of the session, for the discussion to judge:
 `design@agent-skills@title-states-the-rule` audited every head of this repository's five design
 homes, 189, and 219 heads of thaum, read-only, one subagent per group of design homes, on three
 axes: a head stating the instance built as its rule, a head bundling several decisions, and a head
-citing an approval of the owner as its ground. Two lessons on method:
+citing an approval of the owner as its ground. Its record is the plan document head-rules, under
+"What the audits measured", deleted at the landing of its work; `git log --diff-filter=D` on the
+plans directory finds it. Two lessons on method:
 
 - **A test given to the auditors can be wrong, and the auditors find it.** The split test briefed
   to the agents, "would reversing one part leave the other standing?", over-split a rule from its

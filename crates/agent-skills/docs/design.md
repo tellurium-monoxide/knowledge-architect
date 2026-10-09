@@ -232,10 +232,10 @@ A count or a list in a title goes stale at the next member, and every later memb
 change of the decision, with its reversal, its slug rename and its tripwire rename, against
 `goal@knowledge-architect@agents-get-a-complete-workflow`, which aims for fewer decisions reversed
 by accident. The nearest rival, the instance in the title, has that cost: an audit of this
-repository's design heads, and of those of a project that uses the workflow, reading every head and
-its history, finds the instance stated as the rule in about one head in ten, and about fifteen
-rewrites of such heads that a member the argument already admitted forced. The figure is re-taken
-by a fresh read-only audit of every head against this rule. A review repair that moves a member
+repository's design heads at commit c282b00, and of those of a project that uses the workflow,
+reading every head and its history, finds the instance stated as the rule in about one head in ten,
+and about fifteen rewrites of such heads that a member the argument already admitted forced. The
+figure is re-taken by a fresh read-only audit of the heads at that commit against this rule. A review repair that moves a member
 into a title makes the defect: "the title now states it". The opposite defect, a title
 wider than its argument, caused reversals too, which the last sentence of the rule guards. A title
 stating a rule alone would let a session add members the owner never saw, so it holds only with the
@@ -254,9 +254,10 @@ admits is no decision, so a member missing from a title is no finding.
 The owner raised the question: "I'm not certain there is anything in the decision record skill that
 gives a split criteria for design heads." A rule that only asks a head carrying several decisions
 to pass "the test for each one, or is split", and rewords a title to state an addition beyond it,
-gives no test: an audit of the design heads, re-taken by a fresh read-only audit of every head
-against this rule, finds about one head in five holding two or more decisions, and every split in
-this repository's history is one a title false of part of its body triggered, none a criterion.
+gives no test: an audit of the design heads at commit c282b00, re-taken by a fresh read-only audit
+of the heads at that commit against this rule, finds about one head in five holding two or more
+decisions, and every split in this repository's history up to that commit is one a title false of
+part of its body triggered, none a criterion.
 The nearest rival, the test
 "would reversing one part leave the other standing?", splits a rule from its exception, which always
 passes it; four audits run apart found the parts' nearest rivals the stronger signal. The cost is
@@ -277,7 +278,7 @@ change of the decision, per `design@agent-skills@new-or-reshaped-head-needs-desi
 The owner approves an argued decision on its argument, so a member the argument covers is within
 what was approved, and a member the owner's own words enumerate is not, per
 `goal@knowledge-architect@the-owner-decides`. The head shows its ground, so the route is read from
-the head itself. The nearest rival, routing by the scope of the owner's approval, needed that scope
+the head itself. The nearest rival, routing by the scope of the owner's approval, needs that scope
 found in the history of each head, often over several commits. Sending every new member through
 the design skill costs a reversal for an ordinary extension, which
 `design@agent-skills@title-states-the-rule` measured. The risk is a session judging "the argument
@@ -291,9 +292,9 @@ argument. Where that would widen what the owner's words in it approved, as a tit
 members the owner named to the rule, the change goes to the owner as one proposal.
 
 The rules apply at the moment a session already reads and edits the head, so a head is repaired at
-the cost of one read. The rival, a sweep of every head stating the instance as its rule, would have
-put about nine widenings to the owner at once in this repository, each a head whose approval named
-its members. An approval cited as a head's ground is the exception that a sweep repairs, since its
+the cost of one read. The rival, a sweep of every head stating the instance as its rule, puts about
+nine widenings to the owner at once in this repository at commit c282b00, each a head whose
+approval named its members. An approval cited as a head's ground is the exception that a sweep repairs, since its
 repair removes a false ground and widens nothing.
 
 ### A write into a design home, or an edit of agent-facing text a head describes, loads the decision-recording skill first, with no condition judged before it `##design-home-write-loads-recording`
@@ -374,7 +375,7 @@ the same way, one predicted check at a time. The evidence behind it came from on
 skills and agents forked from thaum were never edited under it: one that needs a different
 standard argues its exception. Two exceptions are argued in their own heads:
 `design@agent-skills@staged-check-before-each-commit` and
-`design@agent-skills@in-change-grounding-rereads-the-primer`.
+`design@agent-skills@in-change-path`.
 
 ### No run is built to observe how an agent follows the workflow's instructions, and a run is admitted only when its verdict reproduces `##synthetic-evidence-not-built`
 
@@ -583,10 +584,11 @@ only approved it." And on why it matters: "This provenance of design heads matte
 to judg and weigh any design change or addition." It serves `goal@knowledge-architect@the-owner-decides`,
 which asks that the record show the owner's decisions. The nearest rival, citing every ruling in its
 head, makes an approved default read as the owner's intent: an audit of the heads added or
-rewritten in the week entry test 4 was added finds about two in five of their citations of the owner
-to be an approval of the agent's position, often a batch word such as "All defaults approved", and
-the citation, deleted, takes no argument with it. The figure is re-taken by a fresh read-only audit
-of the heads that cite the owner, against the commits and plan documents that wrote each citation.
+rewritten in the week entry test 4 was added, up to commit c282b00, finds about two in five of their
+citations of the owner to be an approval of the agent's position, often a batch word such as "All
+defaults approved", and the citation, deleted, takes no argument with it. The figure is re-taken by
+a fresh read-only audit of those heads at that commit, against the commits and plan documents that
+wrote each citation.
 
 ### A decision approved with no argument is argued before it is recorded `##unargued-approval-is-argued`
 
@@ -1040,8 +1042,14 @@ about this in advance." The separate path bounded the discussion to one thread, 
 inside a task grows to several threads; its length is not bounded, since a bound on it would bound
 the discussion.
 
-Its grounding reads the primer's section on design heads again, since the path runs late in a
-session, per `design@agent-skills@in-change-grounding-rereads-the-primer`.
+Its grounding reads the primer's section on design heads again, whole. That stands on its argument
+and rests on a prediction, not on a behaviour seen in a session: the path runs when a decision is
+met during an issue fix or a review repair, which is late in a session by definition, and its
+grounding reads heads to judge the decision. Its nearest rival, the reread at recording alone, per
+`design@agent-skills@primer-reread-before-recording`, leaves that grounding reading heads under a
+primer far back in the session. It is an exception to
+`design@agent-skills@additions-need-real-use`; the owner ruled that no issue track it: "There's no
+way to show that the workflow is not functional without it once it is built, anyway."
 
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
@@ -1492,9 +1500,9 @@ design heads and how are centralized, consistent with each other and applicable.
 partial restatements of them should be avoided at all cost, instead pointing to a single location
 where they are all together and asking for a read of that full location when needed." The rival,
 restating the rules wherever they are delivered, gives partial copies that drift: an inventory of
-the installed text, re-taken by a fresh read-only subagent listing each statement of a rule on heads
-outside its home, finds about ten texts restating parts of the decision-recording skill, with nine
-inconsistencies between them and it. The section is also the home of four rules on heads that have
+the installed text at commit c282b00, re-taken by a fresh read-only subagent listing each statement
+of a rule on heads outside its home at that commit, finds about ten texts restating parts of the
+decision-recording skill, with nine inconsistencies between them and it. The section is also the home of four rules on heads that have
 no head of their own: present tense, the alignment of the slug and the title, a decision worth a
 slug has its own level-three heading, and fidelity to what the owner approved; this head records
 them as part of the section. The location is the primer on the owner's arguments that the
@@ -1534,7 +1542,7 @@ the whole: the rival, the old rule, gives the partial restatements that
 `design@agent-skills@one-home-for-head-rules` measures. The old rule's own reason, that a reader who cannot reach a statement at the moment
 of acting is not served by a pointer, stays answered for a short directive, which is still restated.
 
-### The decision-recording skill asks for the primer's section on design heads to be read again before a head is written `##primer-reread-before-recording`
+### The decision-recording skill asks for the primer's section on design heads to be read again before a head is written or judged `##primer-reread-before-recording`
 
 The decision-recording skill opens by asking for `primer@design-heads` to be read again, whole,
 before a head is written or judged.
@@ -1545,19 +1553,6 @@ in particular the decision recording skill whose writes happen at the end of ses
 into a design home loads that skill first, per
 `design@agent-skills@design-home-write-loads-recording`, so one instruction reaches every write,
 and a review agent starts with a fresh context that holds the primer.
-
-### The design skill's in-change path reads the primer's section on design heads again before its grounding `##in-change-grounding-rereads-the-primer`
-
-The design skill's in-change path asks for `primer@design-heads` to be read again, whole, before
-its grounding.
-
-It stands on its argument and rests on a prediction, not on a behaviour seen in a session: the
-in-change path runs when a decision is met during an issue fix or a review repair, which is late in
-a session by definition, and its grounding reads heads to judge the decision. Its nearest rival,
-the reread at recording alone, leaves that grounding reading heads under a primer far back in the
-session. It is an exception to `design@agent-skills@additions-need-real-use`; the owner ruled that
-no issue track it: "There's no way to show that the workflow is not functional without it once it
-is built, anyway."
 
 ### The primer names the plans directory the checker fixes `##plans-directory-in-primer`
 
