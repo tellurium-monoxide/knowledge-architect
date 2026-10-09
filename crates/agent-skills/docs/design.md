@@ -238,8 +238,8 @@ and `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
 The nearest rival restates the title test beside the condition at each site. It makes copies of a
 test whose home is the decision-recording skill, and it reaches only a session editing agent-facing
 text, not an issue fix or a review repair that writes a head. The cost is one skill load on every
-edit of a design home, rewordings included; a rewording records no decision and leaves at the end
-of `skill@knowledge-architect-decision-recording@entry-tests`.
+edit of a design home, rewordings included; a rewording records no decision and leaves by the last
+sentence of the backstop of `primer@design-heads`.
 
 ### The design skill guards the outcome of a discussion, and its tables are a display `##outcome-over-display`
 
@@ -265,7 +265,7 @@ admits it, such as a reason several installed texts must respect. A rewording, a
 is phrased, is not recorded. Such proposals can be made without bound, unlike a technical decision,
 which costs implementation work. The commit message carries a rewording's argument.
 
-The owner's intent is on record where test 4 of `skill@knowledge-architect-decision-recording@entry-tests` holds, per
+The owner's intent is on record where test 4 of `primer@design-heads` holds, per
 `design@agent-skills@a-head-is-owed-by-an-entry-test`: the owner, asked, confirms that a ruling an
 agent could reverse as a small fix, or an argument the owner wants kept, records the owner's intent;
 an approval of the agent's proposal does not.
@@ -1211,7 +1211,7 @@ many re-reviews as it adds, removes or reverses heads. A trigger on any repair t
 decision" lost: whether a rewording makes one is a judgement, and read wide it re-reviews repairs
 that only reword a head. The rival that sends every axis again at every repair lost on the same
 cost. A narrowing of an approved head that this trigger leaves out still goes to the owner, per
-`skill@knowledge-architect-decision-recording@current-design`, and the last transcript review checks it against the owner's rulings.
+`primer@design-heads`, and the last transcript review checks it against the owner's rulings.
 
 ### Subagents dispatched together each get a scratch directory of their own `##a-scratch-directory-per-subagent`
 

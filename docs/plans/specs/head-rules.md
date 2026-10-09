@@ -97,7 +97,7 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 | section | rules on heads it holds |
 | --- | --- |
 | `skill@knowledge-architect-decision-recording@reversal-check` | "The slug and the title must stay aligned with the full scope of the decision", inside the reversal procedure |
-| `skill@knowledge-architect-decision-recording@entry-tests` | the four entry tests; the comment-and-commit home for a decision that passes none; the backstop sending a decision that creates, contradicts or outgrows a head to the design skill, with "rewrite the head's title to state the addition as well"; a `%%` line citing `design@agent-skills@ruled-items-labelled`, which the build removes from the installed text |
+| the skill's former entry-tests section | the four entry tests; the comment-and-commit home for a decision that passes none; the backstop sending a decision that creates, contradicts or outgrows a head to the design skill, with "rewrite the head's title to state the addition as well"; a `%%` line citing `design@agent-skills@ruled-items-labelled`, which the build removes from the installed text |
 | `skill@knowledge-architect-decision-recording@owning-component` | which Component's design home holds a decision |
 | `skill@knowledge-architect-decision-recording@three-homes` | the standing argument, its test, and "who ruled what" kept in the deliberation |
 | `skill@knowledge-architect-decision-recording@current-design` | where a design home sits and how a subdocument is linked; present tense; intent, not implementation; slug at level three; the thread's slug as the entry's slug, and the pair when it misdescribes; a list item is no definition; statement first; "A title states a decision only while it is false of the nearest rival it beat. [...] A head that carries several decisions passes the test for each one, or is split."; fidelity to an approval; the template; the reference form; what the argument depends on; reliance on the checker; renaming a slug |
@@ -224,7 +224,7 @@ as referencing each, on the branch of this spec at the commit that adds it:
 | the restatement rule of `primer@where-knowledge-goes`, which has no head, per `thread@head-rules@restatement-size-test` | `instructions@where-knowledge-goes`, the restatement in the root CLAUDE.md; the row "a restatement of a directive" of `design@agent-skills@a-reference-claims-a-revisit`, which stays true, read again; no text references the primer section by its slug | step 1; the row at the harvest |
 | the rejected alternative "A line in the primer that sends a decision met during another task to the design skill", lost to `design@agent-skills@new-or-reshaped-head-needs-design`: the head section carries such a line, per default D7 | `path@agent-skills@docs/rejected-alternatives.md` line 79; `tripwire@agent-skills@head-created-without-deliberation`, which names it as a candidate | the harvest |
 | the approval-cited heads, listed in "Decided design", the sweep | each head's own references, read again at the sweep | step 6 |
-| the sections of the decision-recording skill whose content moves, cited by section reference: `skill@knowledge-architect-decision-recording@entry-tests` from the decision-record reviewer, the design skill (2), the agent-skills design home (2), the issues `issue@agent-skills@test-3-admits-a-practice-its-tool-documents` and `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined`, the skill itself (6) and this spec; `skill@knowledge-architect-decision-recording@current-design` from the agent-skills design home, `spec@plans@path-quickfixes` (2), the skill itself (3) and this spec; `skill@knowledge-architect-decision-recording@three-homes` from this spec. `skill@knowledge-architect-decision-recording@reversal-check` stays, so its references stay, except one that cites it for the alignment clause | as listed | step 2 retargets every reference whose section moves; this spec's own references are rewritten in plain text in step 2's commit, "the skill's former entry-tests section", so that its record of the move stays readable; `cargo klarch check` lists any left dangling |
+| the sections of the decision-recording skill whose content moves, cited by section reference: the skill's former entry-tests section from the decision-record reviewer, the design skill (2), the agent-skills design home (2), the issues `issue@agent-skills@test-3-admits-a-practice-its-tool-documents` and `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined`, the skill itself (6) and this spec; `skill@knowledge-architect-decision-recording@current-design` from the agent-skills design home, `spec@plans@path-quickfixes` (2), the skill itself (3) and this spec; `skill@knowledge-architect-decision-recording@three-homes` from this spec. `skill@knowledge-architect-decision-recording@reversal-check` stays, so its references stay, except one that cites it for the alignment clause | as listed | step 2 retargets every reference whose section moves; this spec's own references are rewritten in plain text in step 2's commit, "the skill's former entry-tests section", so that its record of the move stays readable; `cargo klarch check` lists any left dangling |
 | the core design home's introduction, "`skill@knowledge-architect-decision-recording` owns the shape" | `path@core@docs/design.md` lines 5 and 6, an introduction and not a head | step 4: it names the head section |
 | the skill's description, which names content that moves | the frontmatter of `path@agent-skills@content/skills/decision-recording/SKILL.md` | step 2 |
 | the design skill's description, which restates the backstop's three cases | the frontmatter of `path@agent-skills@content/skills/design/SKILL.md` | step 3, reworded to the backstop's cases |
@@ -1032,12 +1032,12 @@ One new level-two section of the primer holds every rule on what a head records 
 
 | rule | from |
 | --- | --- |
-| the four entry tests, and the comment-and-commit home of a decision that passes none | `skill@knowledge-architect-decision-recording@entry-tests`, relocated, with its `%%` line |
+| the four entry tests, and the comment-and-commit home of a decision that passes none | the skill's former entry-tests section, relocated, with its `%%` line |
 | the standing argument, its test, and the deliberation kept out of the head | `skill@knowledge-architect-decision-recording@three-homes`, relocated |
 | present tense; intent, not implementation; the slug at level three; a list item is no definition; statement first; the thread's slug as the entry's slug; the reference form; what the argument depends on, with I7 resolved; the measurement with the command that takes it again, I4; reliance on the checker | `skill@knowledge-architect-decision-recording@current-design`, relocated |
 | a title is false of its nearest rival; fidelity to an approval | `skill@knowledge-architect-decision-recording@current-design`, relocated |
 | the slug and the title stay aligned with the decision's full scope | `skill@knowledge-architect-decision-recording@reversal-check`, relocated out of the reversal procedure |
-| a decision that creates a head, contradicts one or adds a member its argument does not cover goes to the design skill | the backstop of `skill@knowledge-architect-decision-recording@entry-tests`, rewritten in step 3 to the draft under "The backstop" |
+| a decision that creates a head, contradicts one or adds a member its argument does not cover goes to the design skill | the backstop of the skill's former entry-tests section, rewritten in step 3 to the draft under "The backstop" |
 | a title states the rule, the body names the members | new, `thread@head-rules@title-states-the-rule` |
 | a head stands on its argument; the owner's words are a ground only where the decision came from the owner; what the ground means to a later session | new, `thread@head-rules@head-ground-is-the-argument` |
 | a head holds one decision | new, `thread@head-rules@one-decision-per-head` |
@@ -1166,7 +1166,7 @@ approval decided by finding the word in history, met C7 only partly (`argument@h
 ### The backstop
 
 Draft text for the head section, in place of the backstop of
-`skill@knowledge-architect-decision-recording@entry-tests`. It states
+the skill's former entry-tests section. It states
 `thread@head-rules@one-decision-per-head` and `thread@head-rules@extension-follows-the-ground`, and
 keeps the sentences of the skill's backstop that neither thread changes: the case of a decision met
 during another task, the in-change path, and the review axes that judge a relocation:
@@ -1313,7 +1313,7 @@ The relocation of step 2, total over the sections of the decision-recording skil
 | --- | --- |
 | `skill@knowledge-architect-decision-recording@when-recording-happens` | stays |
 | `skill@knowledge-architect-decision-recording@reversal-check` | stays, without the alignment clause, which moves to the head section |
-| `skill@knowledge-architect-decision-recording@entry-tests` | moves to the head section, with its `%%` line; the section and its slug leave the skill; its backstop is rewritten in step 3 |
+| the skill's former entry-tests section | moves to the head section, with its `%%` line; the section and its slug leave the skill; its backstop is rewritten in step 3 |
 | `skill@knowledge-architect-decision-recording@owning-component` | stays, per default D8 |
 | `skill@knowledge-architect-decision-recording@three-homes` | the standing argument, its test and the rule that the deliberation is not copied into the head move; the table and the commands stay |
 | `skill@knowledge-architect-decision-recording@current-design` | its rules on a head move; where a design home sits, how a subdocument is linked, the template and how to rename a slug stay, under a section of the skill that keeps the slug `current-design` |
@@ -1321,7 +1321,7 @@ The relocation of step 2, total over the sections of the decision-recording skil
 | `skill@knowledge-architect-decision-recording@premortem-tripwires` | stays, with its own `%%` line citing `design@agent-skills@ruled-items-labelled` |
 | `skill@knowledge-architect-decision-recording@before-you-finish` | stays, pointing to the head section for the re-read of each head |
 
-A reference to `skill@knowledge-architect-decision-recording@entry-tests` is retargeted to the head
+A reference to the skill's former entry-tests section is retargeted to the head
 section in step 2's commit. A reference to `skill@knowledge-architect-decision-recording@current-design`
 or `skill@knowledge-architect-decision-recording@reversal-check` is retargeted only where it cites a
 rule that moves. A consuming project's citation of the skill's section that leaves dangles: default

@@ -141,7 +141,7 @@ evidence bring, which nobody knows in advance.
   recorded at that landing like any other, under
   `skill@knowledge-architect-decision-recording`:
   `skill@knowledge-architect-decision-recording@reversal-check` decides the Component of a decision
-  that reverses a recorded one, and `skill@knowledge-architect-decision-recording@entry-tests`
+  that reverses a recorded one, and `primer@design-heads`
   decides whether any other decision earns a design head at all. Apply both before proposing to the
   owner where a decision lands. The checkpoint table is shown at convergence when the ledger holds
   more than one thread. The premortem runs when reversal touches any of the four. Where it runs,
@@ -171,7 +171,7 @@ starts here, at loop step 1, the search for standing entries included. After the
 work is **bounded** when all three hold:
 
 - it reverses no recorded decision, as `skill@knowledge-architect-decision-recording@reversal-check` asks;
-- every decision it makes fails the entry tests of `skill@knowledge-architect-decision-recording@entry-tests`, so none earns a design head;
+- every decision it makes fails the entry tests of `primer@design-heads`, so none earns a design head;
 - no second defensible shape survives the nearest-rival test of loop step 3. State the strongest
   open reading of the problem beside the bounded one: the design question the bounded framing would
   suppress.

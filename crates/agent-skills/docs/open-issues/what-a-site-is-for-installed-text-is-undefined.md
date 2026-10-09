@@ -14,7 +14,7 @@ stating one decision as one site. Finding W1 of 2026-10-07-knowledge-architect-w
 
 ### What
 
-The test is test 2 of `skill@knowledge-architect-decision-recording@entry-tests`. In the
+The test is test 2 of `primer@design-heads`. In the
 session that rewrote the entry tests, an audit of every design head judged the heads about installed
 text by its own reading: for an instruction, the site is the text that states it. It counted the
 sites of one decision as one where two skills state it. The owner, given the verdicts: "The problem
