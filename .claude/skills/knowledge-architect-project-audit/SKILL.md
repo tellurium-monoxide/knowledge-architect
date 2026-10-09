@@ -77,13 +77,17 @@ needs.
    group. Sort each finding into its outcome, under
    `skill@knowledge-architect-project-audit@outcomes`. A draft found wrong is corrected, and the
    group's other drafts of the same kind are read again. Nothing an agent proposes is applied
-   before a reading confirms it.
+   before a reading confirms it. A quotation of the owner is confirmed against the question it
+   answered, in its source, as well as against its words: a verbatim answer to another question
+   is not the owner's ground for this one.
 7. **The owner list.** One message: the items grouped by kind, each under a label, `F<n>`, with a
    default and the entry's words the item turns on. Apply nothing on the list before the owner
    answers. An item the owner defers becomes an issue entry.
 8. **Application.** Apply the edits, yourself or through agents dispatched on disjoint files. Read
    the whole diff before each commit. A split, a merge or a move of a head is drafted first, like
-   any other finding: a fold judged alone is the edit most often undone.
+   any other finding: a fold judged alone is the edit most often undone. Each head a split, a rename
+   or a merge creates is then judged against every rule as an entry of its own, before the commit:
+   moving text unchanged does not make the new head conform.
 9. **The re-check.** Dispatch fresh agents of the axis over the same groups, after the edits, each
    briefed as in point 5 and also given the entries and rules the owner ruled to keep, as a file in
    its scratch directory. A draft that finds a rule failed, and is not on the kept list, is a

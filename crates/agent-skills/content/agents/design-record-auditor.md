@@ -44,7 +44,10 @@ Before your first entry, read whole:
 - split a rule from its own exception, its parameter or its delivery;
 - move a title to a rule wider than the head's argument;
 - add a member the argument does not cover;
-- create a head whose deliberation no commit message or plan document records.
+- create a head whose deliberation no commit message or plan document records;
+- create a head, by a split, a rename or a merge, that fails a rule read alone;
+- quote the owner's words as the ground of a decision they did not answer: read the question each
+  quotation answered in its source.
 
 ## Take your group {{slug:take-your-group}}
 

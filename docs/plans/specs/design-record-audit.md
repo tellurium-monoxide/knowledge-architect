@@ -808,17 +808,20 @@ acceptance criterion AC3, per "Status and audience".
 | T6 | The calibration fails silently, and the owner list fills with defaults the owner reverses | `thread@design-record-audit@audit-method` | tripwire. Fires when, in one run, the owner rules against the default on more than a quarter of the listed items; the bound is the owner's to reset. Response: reopen the decision harvested from that thread. Re-entry: the session that receives the owner's answers to an owner list counts them, and the standing-state review of the audit's branch reads it again |
 | T7 | A Migration entry cites the axis, and the pin moves without the axis run | `thread@design-record-audit@audit-triggers` | tripwire. Fires when a retrospective finds a pin moved across such a version with the axis not run. Response: reopen the decision harvested from that thread. Re-entry: the retrospective of a session that moved a pin. It watches agent behaviour in a consumer project, which `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` says this project cannot see; the harvested tripwire cites that issue |
 | T8 | An edit makes a tripwire or an issue it never read stale | `thread@design-record-audit@design-record-axis` | tripwire. Fires when a review of an audit branch finds a tripwire guarding, or an issue naming, a head the branch changed, left false. Response: reopen the decision harvested from that thread. Re-entry: the standing-state review of every audit branch |
-| AC3 | The method does not work at its first real run | `thread@design-record-audit@audit-method`, `thread@design-record-audit@design-record-axis` | acceptance criterion, `acceptance@design-record-audit@first-run-leaves-nothing-missed` |
+| AC3 | The method does not work at its first real run | `thread@design-record-audit@audit-method`, `thread@design-record-audit@design-record-axis` | acceptance criterion, `acceptance@design-record-audit@passes-converge` |
 
 ## Acceptance criteria
 
-### The first run of the axis on this repository ends with a re-check that finds no violation the drafts missed `##first-run-leaves-nothing-missed`
+### Repeated passes of the axis on this repository converge, and what is left is small enough in the owner's judgement `##passes-converge`
 
 AC3, put to the owner as AC1 in round 2. Guards `thread@design-record-audit@audit-method` and `thread@design-record-audit@design-record-axis`.
-Judged at step 5. The instrument: the run's own re-check, fresh design-record auditors over the same
-groups after the run's edits, against the rules shipped by steps 1 to 4. Fires on one violation of
-`primer@design-heads` or of the rules on rejected alternatives left after the run, whether the
-drafts missed it or an edit made it, confirmed by the session's reading of the entry. Response: repair it, and reopen the thread the miss comes from.
+Judged at step 5. The instrument: each pass's re-check, fresh design-record auditors over the same
+groups after the pass's edits, against the rules shipped by steps 1 to 4. Each violation it reports,
+whether the drafts missed it or an edit made it, counts once the session's reading confirms it. A
+pass's re-check is the next pass's drafts. The observable is the count of violations left, pass
+after pass: it fires when a pass leaves as many as the pass before, or when the owner judges what is
+left not small enough. There is no fixed bound, per D8. Response: reopen the thread the misses come
+from.
 Per D6, the run is this repository's own migration, an observation of real use under
 `design@agent-skills@synthetic-evidence-not-built`; no finding of the re-check is acted on before a
 reading confirms it.
@@ -884,7 +887,7 @@ repository outside a `%%` line. Every commit runs `cargo klarch check --staged` 
 - **D5** (R2), on `thread@design-record-audit@audit-outcomes`, from the design-conformance review: a
   conflict with a goal goes on the owner list and is handled under the goal-setting skill. Ruled, the
   reply to the review message.
-- **D6** (R3), on `acceptance@design-record-audit@first-run-leaves-nothing-missed`, from the
+- **D6** (R3), on `acceptance@design-record-audit@passes-converge`, from the
   design-conformance review: AC3 is kept, read as an observation of real use, since step 5 is this
   repository's own migration; the re-check's findings are confirmed by reading before anything is
   done with them. Ruled, the reply to the review message.
@@ -895,6 +898,21 @@ repository outside a `%%` line. Every commit runs `cargo klarch check --staged` 
   corpus breaks C7 on a large project. D7 corrected the premise of a ruling, so
   `primer@owner-word-premise` applied rather than the status rule on the owner's absence. Ruled,
   the owner's message after step 1: "D7 default approved".
+- **D8**, on `acceptance@design-record-audit@passes-converge`, from the first run's re-check, which
+  found violations left in 8 of its 9 groups: AC3 as first written fired on one violation left. The
+  owner, before the ruling: "IMO, it is not too bad that a run of the audit and repair leaves (or
+  recreate) some violations. We'll try to improve by iterating, but I believe the important point
+  is that it should converge and leave no more findings after a few passes." The session's default
+  was a bound of 3 passes. Ruled against the default: "About AC3: I would not put such a rigid
+  criterion. As long as we observe a "convergence", and the amount of leftover violations is small
+  enough, I think that is good. If you ask an LLM to find a flaw or defect in something, it will
+  nearly always find one IMO. Especialy if that something is prose and not code."
+- **D9**, on `thread@design-record-audit@audit-method`, from the first run's re-check: a head that a
+  split, a rename or a merge creates is drafted as an entry of its own and judged against every rule
+  before its commit, since about a dozen of the violations left were in heads the run created; and
+  a quotation of the owner is checked against the question it answered, not only against its words,
+  since the run quoted a verbatim answer to another question. Ruled: "D9: agreed on these
+  refinements."
 
 ## Harvest
 
