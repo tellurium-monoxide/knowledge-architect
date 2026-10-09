@@ -231,7 +231,9 @@ A project that already has documentation keeps it until its move is planned:
    proposal. The issue below names each document by its path, not by the label.
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the
    rulings. The move is then planned work, under `skill@knowledge-architect-planning`, and runs as a
-   milestone when the owner schedules it. Until then, the old documents and the new homes both
+   milestone when the owner schedules it. The milestone ends by running the design-record axis of
+   `skill@knowledge-architect-project-audit@design-record-axis` over the design homes and the
+   rejected alternatives the move wrote. Until then, the old documents and the new homes both
    exist, and the issue is what records that.
 
 **A finding the check reports in an existing file is the owner's to rule**, since the setup does
@@ -257,12 +259,17 @@ To move to another version:
    CHANGELOG.md. Fetch the new version first, with `cargo fetch` after editing the pin in a Rust
    project, or by the install; then read the file in the source cargo downloaded, under its
    registry directory: `$CARGO_HOME/registry/src/<index>/knowledge-architect-<version>/CHANGELOG.md`.
+   List each Migration entry that cites an axis's section of
+   `skill@knowledge-architect-project-audit`, for step 5.
 3. Run `{{command}} install-agent-skills`, then follow
    `skill@knowledge-architect-agent-configuration` for what an upgrade owes the project's own
    configuration.
 4. Run the project's gates command of `skill@knowledge-architect-setup@setup-gates`, or, where it has none, `{{command}} check` and the
    project's tests, and commit the pin, the installed files and the repairs together. A new
    version can change what a command prints, which only the tests see.
+5. For each axis that step 2 listed, run it under `skill@knowledge-architect-project-audit`, after
+   the pin's commit, in a branch of its own. Such an entry changes the rules the project's existing
+   record must meet, and the audit brings that record to them.
 
 ## In a Rust project {{slug:rust-project}}
 

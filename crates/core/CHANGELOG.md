@@ -44,6 +44,9 @@ subsection is omitted.
 - `agent-skills`, patch: the decision-recording skill's section entry-tests leaves it; its content
   is in the primer's new section on design heads. A project's text that cites that section of the
   skill cites `primer@design-heads` instead.
+- `agent-skills`, patch: the design homes and the rejected alternatives a project holds are brought
+  to the rules of `primer@design-heads` and to its new entry test 2, by running the design-record
+  axis, `skill@knowledge-architect-project-audit@design-record-axis`, after the pin moves.
 
 ### New features
 
