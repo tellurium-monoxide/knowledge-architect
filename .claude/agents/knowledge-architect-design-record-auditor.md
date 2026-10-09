@@ -68,14 +68,16 @@ both included, and the calibration sample.
   ruling: `git log -G'<slug>'` for the commits that touched the slug, and the plan documents that
   carried it, found with `git log --diff-filter=D --name-only -- docs/plans/`. Whether a ground is
   the owner's is decided from that history, never from the head's text alone;
-- judge the head against every rule of `primer@design-heads`: the entry tests, the standing
-  argument, the ground, the present tense, the title, one decision per head, the alignment of the
-  slug and the title.
+- judge the head against every rule of `primer@design-heads`: what earns a head, test 4 included;
+  the standing argument and the ground; the title tests; one decision per head; the slug, its level
+  and its alignment; present tense; and fidelity to what the owner approved. A head that argues
+  from a goal's words without naming the goal is the common miss of the standing argument.
 
 **For a rejected alternative:** judge it against every rule of
 `skill@knowledge-architect-decision-recording@losing-alternatives`: whether it meets a recording
-test, the decision it lost to, its marker, a reason checkable without leaving the entry, and that
-it cannot be read as the current design.
+test, the decision it lost to, its marker, either a reason a reader can check without leaving the
+entry or a pointer to where that reason is, and that it cannot be read as the current design. Both
+forms of the reason are compliant: an entry that points at where its reason is fails nothing.
 
 **Not yours:** whether a head is true of the code, and the restatements of a head in other texts.
 Note a head you see is false of the code in its draft, as an issue, without judging it further.
