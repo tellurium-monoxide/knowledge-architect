@@ -12,6 +12,9 @@ design head of this repository, run during the discussion that rewrote the entry
 and was built by hand. The owner: "The audit we did is probably something that is useful to run once
 in a while in any large project." The owner proposes a name that keeps such audits apart from
 reviews, and a later session under `skill@knowledge-architect-design` to design them.
+`spec@plans@design-record-audit` schedules the method and the first axis, the conformance of the
+decision record; this entry keeps the other axes, the question of an audit report, and the lessons
+on method.
 
 ## Details
 
@@ -52,7 +55,8 @@ proposed", carried "by one or several subagents (maybe one per component)". As r
 
 **Axes the owner names**, a list to be completed and refined:
 
-- **decision-record volume**: every head against the entry tests, as run above;
+- **decision-record volume**: every head against the entry tests, as run above; scheduled by
+  `spec@plans@design-record-audit` as part of its design-record axis;
 - **design self-consistency**, of the design homes as a whole rather than of one branch;
 - **alignment of implementation with design and goals**: the code against the design homes, and
   both against the goals;
@@ -110,6 +114,8 @@ nearly everything, and two heads in the wrong Component, none of which a diff re
 
 ### What would close it
 
-A design discussion under `skill@knowledge-architect-design` that decides whether project audits are
-offered, under which name, which axes, how they are dispatched at scale, and what they leave behind;
-and, if they are, the installed skill or skills and agents built from it.
+For each axis above other than decision-record volume, a design discussion under
+`skill@knowledge-architect-design` that decides whether it is offered, its corpus and its outcomes,
+and, if it is, its agent and its section of the audit skill that `spec@plans@design-record-audit`
+builds; and for an axis whose fixes are code, whether it leaves an audit report. The owner left the
+report "a question for later".
