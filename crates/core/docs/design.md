@@ -177,12 +177,32 @@ table alone, prepares no extension.
 
 **An extension reads the tree through the core.** Over the checkout it may read the filesystem under
 the root, because a subject such as a vendored corpus is filesystem state, per
-`design@core@model-then-checks`. Over a commit it reads git objects only, through the same
+`design@core@model-then-checks`. Over a snapshot, a commit's tree or the tree git's index would
+commit, per `design@core@an-extension-reads-a-snapshot`, it reads git objects only, through the same
 batch reader the core assembles that tree with, which also names each blob so that an extension can
 cache what it parsed from one blob across commits.
 
 **The core's summary prints its own count lines, then each extension's**, and the list of checks
 performed names the core's checks, then each extension's.
+
+### An extension is handed a snapshot, `Tree::Snapshot`, for a commit's tree and for the tree git's index would commit alike `##an-extension-reads-a-snapshot`
+
+`extension::Tree` has two variants: `Checkout`, the working tree, which an extension may read on
+disk; and `Snapshot(&Snapshot)`, a tree read from git objects only, which is one commit's under
+`commits` and the one git's index would commit under `check --staged`. `Snapshot::revision()` says
+which. Under `check --staged` an extension is prepared with `Purpose::Check`, under `commits` with
+`Purpose::Commit`, and under `index --staged` with `Purpose::Index`. `Snapshot::object_id` answers
+only for a path the snapshot holds.
+
+The index is not a third kind of tree for an extension: it is read through the same git objects as
+a commit, so a third variant would make every extension write an arm reading the same objects as
+the second. That departs from what `design@core@ne-minimal` asks of a new tree, that every
+extension say how it reads it, and `design@core@trait-defaults` records the cost: an extension
+that maps a snapshot to its commit-mode handling runs, under `--staged`, only what it runs for a
+commit. thaum's rules extension lists its `changes` and `corpus` checks as not run there; one
+that lists nothing skips them silently. The owner ruled the rename knowing that cost, D5 of the
+plan of the work, whose words were "All defaults approved". An extension that wants more under
+`--staged` reads `Snapshot::revision()`.
 
 ### An extension scans the core's parse on its own, and the core's model carries nothing for it `##an-extension-builds-its-own-model`
 
@@ -241,8 +261,10 @@ in the same module for the same reason.
 **What a run fetches before any check is gathered once, in this module.** `Gathered` reads the
 committed generated files, every `register.toml`, one survey, the two git batches and the shipped
 agent files, and lends them as the `Inputs` a check of the working tree reads. `check`, the
-commands that write files (through `complete_working_tree`, which refuses over an incomplete
-model), and an extension's tests all build on it. So no caller outside the crate assembles
+commands that write files into the working tree (through `complete_working_tree`, which refuses
+over an incomplete model), and an extension's tests all build on it. `check --staged` and
+`index --staged` read a snapshot instead, and build their `Inputs` from it, per
+`design@core@staged-tree-source`. So no caller outside the crate assembles
 `Inputs`, which `design@core@ne-minimal` makes impossible for a literal. A new input is then a
 change inside the core alone. The core's own mock-project tests still assemble `Inputs` by hand:
 some of them hand a check an input that differs from the tree's, such as no committed file.
@@ -275,7 +297,7 @@ re-export:
   its fields expose `Entry` and `Outside`, so those are public although no consumer names them.
 - **A `pub` item no consumer can reach is refused.** lib.rs carries `#![warn(unreachable_pub)]`,
   and the clippy gate runs with `-D warnings`, so an item is public only through the facade.
-- **A value only the core produces is read, not built.** `Report`, `CommitTree` and `Outside`
+- **A value only the core produces is read, not built.** `Report`, `Snapshot` and `Outside`
   have public read-only methods and no public constructor. A value a consumer starts from, such
   as a `Manifest`, a `Model` or a `Finding`, keeps its public constructors.
 - **Nothing becomes public for the core's own tests.** A test that needs a private item is a
@@ -300,7 +322,9 @@ and `extension::Resolution`. Every other public enum and struct is exhaustive on
   unstable on the pinned toolchain.
 - **For an enum the core hands an extension, the compile error is wanted.** A third
   `extension::Tree` must make every extension say how it reads it. A wildcard would read the
-  working tree while the run judges another tree: a wrong verdict, with exit 0.
+  working tree while the run judges another tree: a wrong verdict, with exit 0. The tree git's
+  index would commit is no third kind: it is a revision of `Tree::Snapshot`, read from git objects
+  as a commit is, on the owner's ruling, per `design@core@an-extension-reads-a-snapshot`.
 - **The attribute's gain is the library's:** a variant added to an enum without it is a breaking
   change under Rust's semver rules. Under 0.x that gain is nil, because major and minor both
   bump 0.MINOR, per `design@knowledge-architect@versioning-policy`. Every variant now foreseen
@@ -324,6 +348,9 @@ whose absence would make a verdict wrong is added without a default, and adding 
 change. The argument is the one of `design@core@ne-minimal`: suppose a pre-commit mode adds
 `Prepared::check_staged` with a default that returns no findings. Every existing extension
 compiles unchanged, its checks silently do not run in the new mode, and the run reports success.
+`check --staged` adds no hook: it hands an extension a snapshot, as `commits` does, and what an
+extension runs over one is its own, per `design@core@an-extension-reads-a-snapshot`, which records
+where that falls short of this argument.
 
 ### The library and the binary are one crate, `knowledge-architect` `##single-crate`
 
@@ -501,6 +528,53 @@ the strength of a working-tree state.
 
 **The summary block prints the walked-file count**, so two machines disagreeing about the walk is
 visible in the output rather than inferred from a finding list. The tripwire is in
+`path@core@docs/tripwires.md`.
+
+**This is the working tree's walk, the one plain `check` reads.** `check --staged` and `commits`
+read a snapshot instead, from git objects alone, per `design@core@staged-tree-source` and
+`design@core@a-commit-message-is-a-document`.
+
+### `check --staged` judges the tree git's index would commit, by `check`'s rules, and plain `check` the working tree `##staged-tree-source`
+
+`cargo klarch check` judges the working tree as git lists it, untracked files included, and prints
+what it printed before this option existed. `cargo klarch check --staged` judges the tree
+`git commit` would record now: HEAD's tree, or none before the first commit, overlaid with the
+index's changes as `git diff --cached --raw -z --no-renames --no-abbrev --no-color --relative
+--ita-invisible-in-index --ignore-submodules=none` lists them, each blob read with the `cat-file`
+batch `commits` reads a commit with, its request `:./<path>`. It is the only tree a session cannot
+judge before the commit exists, and `commits` judges it only after; the motive is a partial commit,
+where the working tree passes and what is committed does not.
+
+- **The listing is not `ls-files -s`.** That lists an entry staged as intent-to-add, `git add -N`,
+  at stage 0 with the empty blob, the same line as a staged empty file, and `git commit` records no
+  such entry; `diff --cached` leaves it out. Measured on git 2.43.0. A path the listing does not
+  hold is no path of the snapshot, a manifest staged as intent-to-add included.
+- **Every flag of the diff is load-bearing.** `--relative` keeps the listing to the project and
+  names its paths from it, where without it a project in a subdirectory of its repository meets
+  repository-relative paths and its siblings' changes. `--no-abbrev` gives whole blob ids, which
+  `--full-index` does not under `--raw`. `--ignore-submodules=none` stops `diff.ignoreSubmodules`
+  and a `.gitmodules` entry's `ignore` key from dropping a staged gitlink. Each was measured, and
+  each has a test.
+- **An unmerged index is refused**, exit 2 naming each path once: a conflicted merge or rebase has
+  no tree to commit. `git write-tree` is not used, since it writes objects into the repository and
+  fails there too.
+- **The rules are `check`'s, as on a clean checkout of the staged tree**: the staged installed
+  files are compared with the running binary's shipped set, per `design@core@owned-namespace-check`,
+  and the files git both tracks and ignores are reported. The rival, `commits`'s rules over the
+  staged tree, lost because CI runs `check` on a checkout: a staged run that skips the installed
+  files passes a tree CI fails. Two reads stay the working tree's: the ignore rules a path reference
+  asks, as for `commits`, and the version pin, compared before any command per
+  `design@core@installed-binary-version-check`.
+- **The summary block says which tree was walked.** `--staged` prints `tree: staged` after the
+  `walk:` line, or `tree: staged (nothing staged: the tree of HEAD)` where the project's part of
+  the index equals HEAD, so a run made before staging is not read as a verdict on the edits.
+  Plain `check` prints no `tree:` line, so a `walk:` count CI compares with a local one is of the
+  working tree on both sides.
+
+**`check` does not judge a given commit's tree.** `commits <rev>~1..<rev>`, or `commits <rev>` for
+a root commit, judges it with the tip checker, and a second judge with `check`'s rules would give
+one tree two verdicts, per `design@core@generated-files-are-pure`'s argument against a second
+command answering one question. The tripwire on a staged pass that CI then fails is in
 `path@core@docs/tripwires.md`.
 
 ### Every rule over a document is enforced, and no declaration exempts a document from one `##the-regime-has-no-opt-out`
@@ -971,7 +1045,8 @@ gate both take them from those two calls, per
 **An instance with no directory contributes no index**: generating into it would create a register home as a side effect of a listing, and the
 missing home is what `check::tree` reports.
 
-**Writing one destroys nothing**, so `cargo klarch index` takes no flags. The dry run a write
+**Writing one destroys nothing**, so `cargo klarch index` takes no dry-run flag. Its one flag,
+`--staged`, chooses the tree and the destination, per `design@core@index-staged-write`. The dry run a write
 command normally owes exists because a write can lose something, and here it cannot: the worst a
 run can do is replace a file with what the tree says that file is. It writes only where the bytes
 differ, so running it to look moves not even an mtime, and it names each file it rewrote.
@@ -992,6 +1067,33 @@ say which of the two was right.
 timestamp, a hostname, or anything the walk does not see would break both consequences at once: the
 check would report a file stale that nobody had changed, and `index` would rewrite on every run.
 
+### `index --staged` writes the staged tree's generated files into git's index, and no working-tree file `##index-staged-write`
+
+`cargo klarch index --staged` generates each file from the tree git's index would commit, per
+`design@core@staged-tree-source`, and sets the staged entry of each whose staged bytes differ, or
+that the index lacks, leaving the working-tree file as it is. After it, `check --staged` passes on
+what will be committed, and plain `check` judges the working tree as before. It serves a commit
+of part of the working tree when an unstaged change touches the same register: the `index.md` that
+commit needs then differs from what `index` writes, and the only repairs before were a hand edit of
+a generated file or moving the unstaged file away.
+
+- It gates the staged tree on phases 1 to 3, per `design@core@phases-gate-the-report`, and refuses,
+  having staged nothing, a destination the index holds as a symlink or a gitlink or whose directory
+  the staged tree does not hold.
+- It stages every entry in one `update-index -z --index-info` call, so git's lock makes the index
+  change for all or for none: a held lock is exit 2 with the index as it was. Each blob is written
+  first with `hash-object -w`, and a refused run can leave those, unreachable. `--index-info` reads
+  a path from the repository's root, so each path is prefixed with the project's place in it. An
+  existing entry keeps its mode.
+
+It writes into git, where `design@core@safe-fix-definition` refuses a fix that touches git. That
+test is the one `--fix` applies before a fix, and `--fix` never applies this one, per
+`design@core@fix-refusal-mixed-state`. What it writes is the staged entry of a generated file,
+whose bytes the staged tree determines, so no bytes a writer meant are lost. The rival, writing
+the staged rows into the working-tree file, lost: after it, plain `check` fails, since that file no
+longer matches the working tree, and `check --staged` fails until the file is staged. The owner
+ruled B "not definitive"; the head states it as approved, and a change is an ordinary reversal.
+
 ### `check --fix` applies every safe fix, then runs the full check `##check-fix-flag`
 
 `cargo klarch check --fix` applies every fix the checker can make safely, lists each file it wrote
@@ -1003,7 +1105,31 @@ is unchanged, and `index` and `install-agent-skills` stay as commands, each for 
 option takes a generic name because a later safe fix needs no new option. The rival, a separate
 `fix` command that writes and then runs the check, lost: with the option, the check stays one
 command rather than two that end in one report. `commits` judges history and takes no `--fix`,
-and the gates run `check` without it, so continuous integration judges the tree as committed.
+and the gates run `check` without it, so continuous integration judges the tree as committed. It
+refuses a partial commit's mismatch, and `--staged`, per `design@core@fix-refusal-mixed-state`.
+
+### `check --fix` refuses where a partial commit would stage files of the wrong tree, and refuses `--staged` `##fix-refusal-mixed-state`
+
+**Where the project's part of the index differs from HEAD, and the generated files the working
+tree needs differ from those the tree git's index would commit needs, `--fix` writes no generated
+file.** It names each differing path, a path one tree needs and the other does not included, with
+the two repairs: `index --staged` then `check --staged`, to commit the staged changes, and `index`,
+to fix the working tree as a whole. `--fix` cannot lose unstaged content, since it writes only
+generated and installed files; the hazard is a wrong commit, since the `index.md` it writes
+reflects the working tree, and staged with a partial commit it makes a commit whose tree fails.
+Where the staged side cannot be computed, an unmerged index or a staged tree stopped in phases 1
+to 3, nothing is compared and `--fix` runs as before. The refusal is exit 2, or 1 where agent files
+were installed before it, since 2 promises an untouched tree.
+
+The owner's first trigger, any staged change with any unstaged change, lost: it also fires where
+the unstaged changes touch no input of a generated file and the fix is correct for both trees,
+which blocks the edit-then-`--fix` loop for nothing. A printed note in place of the refusal lost: a
+line in a long report is missed where an exit code is not.
+
+**`--fix` with `--staged` is refused while parsing**, clap's `conflicts_with`, per
+`design@core@arguments-parse-through-clap`. `--fix` repairs the working tree. Combining them would
+tie every fix to a write into git's index, and later quick fixes may not be compatible with that,
+the owner's reason.
 
 ### A fix is safe when its bytes are determined by the tree and the pinned version, and it writes or removes only files of the installer's namespace or of the generated list `##safe-fix-definition`
 
@@ -1025,11 +1151,14 @@ git's listing after normalising line endings: a file git does not list, such as 
 the namespace, is never touched. The generated files alone, the rival, lost: repairing the installed set costs little, and it removes the
 install-then-index sequence from an upgrade.
 
-### A fix run repairs the installed files, gates the model, writes the generated files, then checks `##fix-before-the-checks`
+### A fix run repairs the installed files, gates the model, refuses a partial commit's mismatch, writes the generated files, then checks `##fix-before-the-checks`
 
-The order of a `--fix` run: a manifest holding a refused declaration writes nothing; the installed
-files are repaired; phases 1 to 3 run over the tree as the repairs left it, and a finding there
-stops the run, printed as `check` prints a stop, with nothing more written; the generated files are
+The order of a `--fix` run: `--fix` with `--staged` is refused while parsing; a manifest holding a
+refused declaration writes nothing; the installed files are repaired; phases 1 to 3 run over the
+tree as the repairs left it, and a finding there stops the run, printed as `check` prints a stop,
+with nothing more written; a partial commit's mismatch is refused, per
+`design@core@fix-refusal-mixed-state`, after the installed repairs, whose bytes are the same for
+both trees, and after the gate, whose model the comparison reads; the generated files are
 written, from the list `index` reads, after every destination is checked; the full check runs. The
 installed files' bytes do not depend on the model, so they are repaired before the gate, while a
 generated file is never written over an incomplete model, per `design@core@phases-gate-the-report`.
@@ -1825,9 +1954,10 @@ would let a reference that resolves in neither pass.
 tree in phase 1; its value is never compared with the tip checker's version, so moving the pin
 fails no earlier commit, per `design@core@installed-binary-version-check`.
 
-**`check` reads no history.** A message is not a file of the tree, and a check whose verdict
-moved with the branch's history would be a check nobody could reproduce from a checkout: `git
-stash` alone would move it. The range is always explicit, and the gates pass the range from the
+**`check` reads no range of history.** A message is not a file of the tree, and a check whose
+verdict moved with the branch's history would be a check nobody could reproduce from a checkout:
+`git stash` alone would move it. `check --staged` reads HEAD's tree and the index, one tree and no
+range, per `design@core@staged-tree-source`. The range is always explicit, and the gates pass the range from the
 remote `main` to `HEAD`, so what is judged is the branch's own commits and never `main`'s.
 
 **An extension leaves out, over a commit's tree, a check whose subject is not the tree.** A

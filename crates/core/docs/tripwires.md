@@ -219,3 +219,28 @@ installer's namespace and the generated list.
 what `--fix` does under its present argument.
 **Re-entry:** the standing-state review before every merge, and any change that adds a fix.
 
+
+## Guarding `design@core@staged-tree-source`: a staged pass that a clean checkout of the same tree fails `##staged-pass-fails-the-checkout`
+
+T1 of the premortem of the work that built `check --staged`. Two reads stay outside the snapshot:
+the ignore rules a path reference asks, read from disk, and an extension's checks of filesystem
+state, not run over a snapshot.
+
+**Fires when:** a commit whose tree passed `check --staged` just before it was made then fails
+`check` in CI, or the tree half of `commits`, with no file edited in between.
+**Response:** open a `defect` naming the finding and which read it came from: an unstaged ignore
+rule, an extension check not run under `--staged`, or another.
+**Re-entry:** each time a CI failure is read against a local run.
+
+## Guarding `design@core@fix-refusal-mixed-state`: sessions unstage to get past the refusal `##fix-refusal-routed-around`
+
+T2 of the premortem of the work that built `check --staged`. It fires only in sessions the owner
+sees, as `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`
+records of every tripwire on agent behaviour.
+
+**Fires when:** a retrospective finding, or an observation of the owner, reports a session that
+ran `git reset`, `git restore --staged` or `git stash`, or otherwise unstaged changes, after
+`check --fix` refused a partial commit's mismatch, instead of taking one of the two repairs it
+named.
+**Response:** reopen `design@core@fix-refusal-mixed-state`.
+**Re-entry:** each retrospective intake.
