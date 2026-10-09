@@ -1484,7 +1484,7 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
 
 What earns a head, what a head holds and how it is shaped are one section of the primer,
 `primer@design-heads`. The decision-recording skill keeps the procedures of writing one; every
-other text points to the section rather than restating part of it, per
+other text points to the section rather than restating more than one sentence of it, per
 `design@agent-skills@restatement-size-test`.
 
 The centralization is the owner's proposal: "I want to make sure the rules for what is recorded in
@@ -1515,11 +1515,14 @@ delivers at the moment it is needed; it is re-taken with `wc -w` on the primer.
 A directive is restated at its point of delivery only when the restatement is no longer than a
 pointer to it: a path, a file name, a command, a value, or one sentence, a sentence carrying its
 pointer beside it. A longer directive is delivered by a pointer to its home, read whole at that
-moment, and part of it is never restated. For installed text, the home a pointer names is
+moment, and more than one sentence of it is never restated. For installed text, the home a pointer names is
 installed text, since installed text cites no entry of the project, per
 `design@agent-skills@shipped-text-cites-no-entry`. The rule governs new text and text a change
-touches: an existing longer restatement is converted when a change touches it, and no sweep
-converts them all. The rule is the primer's `primer@where-knowledge-goes`.
+touches: an existing longer restatement is converted when a change edits what it says, and no sweep
+converts them all; re-pointing a reference in it does not count as an edit, since it changes no
+directive. A sweep would convert at once every long restatement a project holds, each of them a
+delivery choice of its owner, where a conversion at an edit costs one read of a text the change
+already reads. The rule is the primer's `primer@where-knowledge-goes`.
 
 The test is the owner's proposal: "is the restatement significantly bigger than a pointer ? Then use
 a pointer." Its reason is the owner's too: the rule that a directive is restated wherever it is
