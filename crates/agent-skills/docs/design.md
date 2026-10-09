@@ -1548,8 +1548,8 @@ into a design home loads that skill first, per
 `design@agent-skills@design-home-write-loads-recording`, so one instruction reaches every write,
 and that skill is also loaded before an edit of a text a head describes, where the session judges
 the edit against the heads; such an edit comes at any point of a session, and where it comes early
-the reread costs one read. A review agent starts with a fresh context
-that holds the primer, so it needs no reread.
+the reread costs one read. The reread is owed by the session that writes or edits: a review agent
+that judges heads starts with a fresh context that holds the primer, so it needs none.
 
 ### The design skill's in-change path reads the primer's section on design heads again before its grounding `##in-change-grounding-rereads-the-primer`
 
@@ -1562,8 +1562,9 @@ a session by definition, and its grounding reads heads to judge the decision. It
 the reread at recording alone, per `design@agent-skills@primer-reread-before-recording`, leaves that
 grounding reading heads under a primer far back in the session. It is an exception to
 `design@agent-skills@additions-need-real-use`, which names it, so its reason is respected at two
-sites, the design skill's instruction and that rule; the owner ruled that no issue track it:
-"There's no way to show that the workflow is not functional without it once it is built, anyway."
+sites, the design skill's instruction and that rule; the owner ruled that it needs no issue: "you
+can skip the issue. There's no way to show that the workflow is not functional without it once it
+is built, anyway."
 
 ### The primer names the plans directory the checker fixes `##plans-directory-in-primer`
 

@@ -1410,7 +1410,7 @@ section belongs to a skill or to an agent.
   `path@core@docs/rejected-alternatives.md`, lost on two reasons. Its first, that the tool cannot
   know which register is single-instance in a project, does not hold here: the tool fixes the four
   kinds and their layout, and no project declares one. Its second, one grammar with no special case
-  in the resolver, is the cost of this form, which the owner weighed.
+  in the resolver, is the cost of this form.
 - **The kind is read first**, so a word that is both a kind and an anchor would read as the kind;
   no anchor may wear a kind's name, per `design@core@anchors-are-components-and-locations`.
 - **`instructions` names the document's role**, not one harness's file name, so a move of the root
