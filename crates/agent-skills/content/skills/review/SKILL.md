@@ -21,9 +21,10 @@ and `agent@knowledge-architect-standing-state-reviewer`; the plan-document revie
 `agent@knowledge-architect-cold-implementer-reviewer`,
 `agent@knowledge-architect-code-claims-reviewer` and
 `agent@knowledge-architect-design-conformance-reviewer`; and
-`agent@knowledge-architect-transcript-reviewer`, all dispatched rather than read), and **recording**
+`agent@knowledge-architect-transcript-reviewer`, all dispatched rather than read), **recording**
 what a review changes (`skill@knowledge-architect-decision-recording`,
-`skill@knowledge-architect-issue-tracking`).
+`skill@knowledge-architect-issue-tracking`), and **auditing** one aspect of the whole project
+rather than a diff (`skill@knowledge-architect-project-audit`).
 
 ## The axes {{slug:review-axes}}
 

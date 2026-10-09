@@ -331,6 +331,9 @@ the owner named to the rule, the change goes to the owner as one proposal, as a 
   installed.
 - `skill@knowledge-architect-goal-setting`: before writing or editing any goals home; a Component
   has no goal; the owner states or abandons a purpose; a decision conflicts with a goal.
+- `skill@knowledge-architect-project-audit`: the owner asks to audit one aspect of the whole
+  project; a pin move crosses a version whose Migration entry cites an audit axis; an adopting
+  project's existing documents have moved.
 - `skill@knowledge-architect-retrospective`: once per session, offered when a branch the session
   worked on merges, a plan document leaves, or the session ends.
 

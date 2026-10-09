@@ -19,6 +19,8 @@ audit and at each landing.
 - **Writing the code** of a step, its claims and its tests: the project's own development
   procedure. This workflow installs none.
 - **Dispatching the reviewers**: `skill@knowledge-architect-review`.
+- **Auditing one aspect of the whole project**, which the design audit of a slice or a spec is
+  not: `skill@knowledge-architect-project-audit`.
 - **Recording** what a landing establishes. Recording is not done once at the end of the
   discussion: it is done at each landing, as the harvest of `skill@knowledge-architect-planning@working-a-slice`. The procedure is
   `skill@knowledge-architect-decision-recording` for the decisions and the losing alternatives, and

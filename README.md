@@ -10,7 +10,7 @@ It is built for projects developed mostly by AI agents, and has two parts that w
   display the records a session must read before it changes something.
 - **An agent workflow**, a set of skills and subagent definitions the checker installs into a
   project: setting up, writing goals, designing, planning, recording decisions, tracking open
-  issues, reviewing, and a retrospective.
+  issues, reviewing, auditing the whole project on one aspect, and a retrospective.
 
 Why it exists, and what it aims for, is `path@knowledge-architect@docs/goals.md`.
 
