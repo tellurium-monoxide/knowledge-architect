@@ -72,6 +72,22 @@ Additions of the session, for the discussion to judge:
 - **restatements**: every restatement of a directive against its home, since a restatement is the
   defect where the two disagree and the checker cannot compare prose.
 
+**A second worked instance.** The design discussion of
+`issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle` audited every head
+of this repository's five design homes, 189, and 219 heads of thaum, read-only, one subagent per
+group of design homes, on three axes: a head stating the instance built as its rule, a head
+bundling several decisions, and a head citing an approval of the owner as its ground. Its record is
+`spec@plans@head-rules`, under "What the audits measured". Two lessons on method:
+
+- **A test given to the auditors can be wrong, and the auditors find it.** The split test briefed
+  to the agents, "would reversing one part leave the other standing?", over-split a rule from its
+  exception; four audits independently reported a better signal, parts that lose to different
+  nearest rivals, which the discussion adopted.
+- **Agents dispatched together are not calibrated alike.** One audit reported that its own
+  subagents classed a ground taken from a goal differently and used different thresholds for a
+  rewritten head, so its weekly counts carry that uncertainty. An audit that compares figures across
+  agents owes a calibration: a shared sample classed by each.
+
 **Scale.** Such audits must work on large projects, so they rest on subagents: groups of entries
 of bounded size, as `design@agent-skills@standing-entry-search-agent` sizes its groups, each read
 whole, with results written to files rather than returned into the dispatching conversation.

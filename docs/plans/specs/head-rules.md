@@ -169,6 +169,14 @@ sample of each audit against the tree and the history, and every sampled claim h
 ### What is outside the work
 
 - **thaum's heads.** The audit found the same defects there; thaum's record is thaum's to change.
+- **The heads the audits found with a title wider than their argument, or bundled with a decision
+  routed to another home**, `design@core@nothing-of-a-project-is-compiled-in`,
+  `design@core@the-regime-has-no-opt-out`, `design@core@registers-are-declared` and the second part
+  of `design@knowledge-architect@klarch-prefix`, are brought to the head section's rules when a
+  change touches them, as the bundles are. Three heads the audits found false of the tree each have
+  an issue entry: `issue@knowledge-architect@the-directory-head-title-is-false-of-the-tree`,
+  `issue@xtask@the-subcommands-share-more-than-the-spawn-helper` and
+  `issue@agent-skills@the-gates-convention-title-overstates-its-scope`.
 - **The bundles and the instance-as-the-rule heads of this repository** are not swept. Each is
   brought to the head section's rules when a change touches it, per
   `thread@head-rules@existing-heads-on-touch`; the heads this work's sweep and harvest touch are
@@ -219,7 +227,7 @@ as referencing each, on the branch of this spec at the commit that adds it:
 | the core design home's introduction, "`skill@knowledge-architect-decision-recording` owns the shape" | `path@core@docs/design.md` lines 5 and 6, an introduction and not a head | step 4: it names the head section |
 | the skill's description, which names content that moves | the frontmatter of `path@agent-skills@content/skills/decision-recording/SKILL.md` | step 2 |
 | the design skill's description, which restates the backstop's three cases | the frontmatter of `path@agent-skills@content/skills/design/SKILL.md` | step 3, reworded to the backstop's cases |
-| `design@agent-skills@additions-need-real-use`: not reversed. The in-change reread is built against its rule on a predicted behaviour, on the owner's ruling D10 | `design@agent-skills@in-change-path`, which will carry the reread | the harvest: the head that records the reread gives the owner's ruling as its ground, quoting it |
+| `design@agent-skills@additions-need-real-use`: not reversed. The in-change reread is built against its rule on a predicted behaviour, per D10 | `design@agent-skills@in-change-path`, which will carry the reread | the harvest, per D16 |
 | `design@agent-skills@a-reference-claims-a-revisit`, its row on a restatement of a directive, which names its home: under the approved restatement rule a bare fact, a path, a name or a command, is restated with no pointer | the root CLAUDE.md's table of when to write a reference | the harvest: the row is narrowed to a directive sentence |
 | `design@agent-skills@shipped-text-cites-no-entry`: not changed. For installed text, the home a pointer names is installed text, a skill's section or the primer's; a design entry of this repository is a decision's home, which the installed text never cites. The restatement rule is read so | none to update | step 1, where the rule's text says it |
 | `issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`, which this work closes | `spec@plans@path-quickfixes` lines 182, 215, 365 and 1117; `issue@core@a-kind-name-refusal-quotes-a-future-migration-reason` line 34 | the harvest: the closing commit rewrites each to state the present |
@@ -1222,7 +1230,11 @@ approval. Two texts understate the owner's role in the other direction and are r
 step: the rejected alternative at `path@agent-skills@docs/rejected-alternatives.md` line 116,
 "ruled for the path inside the design skill once that was argued", where the transcript of its
 discussion shows the owner proposed that path; and the head `design@agent-skills@in-change-path`,
-which does not credit the owner's proposal of the widening. The repair of the first: its reason
+which does not credit the owner's proposal of the widening. A third is read with them: the head
+`design@agent-skills@spec-and-milestone` gives the owner's words on untested snippets only as an
+observation, "the owner observed", where the rule on snippets was the owner's proposal, per the
+agent-skills provenance audit; the step reads its provenance and credits it if the audit holds. The
+repair of the first: its reason
 says the owner proposed the path, and keeps the argument it lost to. The second is a mixed head
 after the sweep: the widening of the in-change path is the owner's proposal, quoted as its ground;
 the cost of a long commit message stands on its argument, its approval citation removed.
@@ -1446,7 +1458,28 @@ default it names still awaits, unless the owner has ruled.
 
 ## Defaults awaiting the owner
 
-None. D1 to D15 are under the subsection below.
+Three, D16 to D18, from the last transcript review of the branch. D1 to D15 are under the
+subsection below.
+
+- **D16**, from the last transcript review, on D10: the first wording of the ruled D10 had the head
+  recording the in-change reread give the owner's ruling as its ground. The ruling was a batch
+  word, "All defaults approved, proceed.", which `thread@head-rules@head-ground-is-the-argument`
+  says is no ground, and D10 as the owner saw it ruled only that the reread is built. Default: the
+  head records the reread on its argument, `argument@head-rules@a83` and `argument@head-rules@a84`,
+  and states that it rests on a prediction; an issue entry, opened with the harvest, states what a
+  real session would have to show, as `design@agent-skills@additions-need-real-use` asks of a
+  predicted behaviour.
+- **D17**, from the last transcript review, on `thread@head-rules@restatement-size-test`: round 3's
+  sub-default, "a bare fact (a path, a name, a command) needs no pointer beside it", was not in the
+  delta row the owner ruled on; the owner's word named "this wording", whose sentence "A directive
+  sentence carries its pointer beside it" implies it. The spec narrows the row of
+  `design@agent-skills@a-reference-claims-a-revisit` on it. Default: the sub-default holds, and the
+  row is narrowed.
+- **D18**, from the last transcript review, on `thread@head-rules@restatement-size-test`: step 1
+  adds a sentence to the approved wording, "for installed text, the home a pointer names is
+  installed text", answering a design-conformance finding against
+  `design@agent-skills@shipped-text-cites-no-entry`. It changes which home a pointer of installed
+  text names. Default: the sentence is added.
 
 ### The defaults the owner ruled on
 
@@ -1500,8 +1533,8 @@ is applied in the sections it names, and is kept here with its reason.
   (`argument@head-rules@a83`), and `design@agent-skills@additions-need-real-use` says "A finding
   that predicts a behaviour is parked as an issue". The reread in the decision-recording skill meets
   that head: the owner asked for it mid-session and named what a long session lacks. Default: the
-  decided shape is built, the in-change reread included. Ruled: built, and the head that records it
-  gives the owner's ruling as its ground.
+  decided shape is built, the in-change reread included. Ruled: built. How its head is recorded is
+  D16.
 - **D11**, on `thread@head-rules@existing-heads-on-touch`, found by the reviews: the approved list
   of 19 changes by two heads. `design@knowledge-architect@retrospective-findings-stay-here` leaves
   it, since its owner citation states the direction `design@agent-skills@retrospective-destination`
@@ -1544,6 +1577,7 @@ is applied in the sections it names, and is kept here with its reason.
 | AC1, AC2 | reported in the landing commit; deleted with the spec unless proposed as tripwires |
 | every item of "Losing alternatives" | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit; the measured probe of shape (a) by test 3 |
 | the section slug the skill loses | a Migration entry of CHANGELOG.md, per D15 |
+| the citations of this spec from `issue@agent-skills@no-way-to-audit-a-project-as-a-whole` and from the issue this work closes | the commit that deletes the spec rewrites the first to the present, naming the spec in words; the second closes |
 | `issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle` | closed; its references in `spec@plans@path-quickfixes` and in `issue@core@a-kind-name-refusal-quotes-a-future-migration-reason` rewritten to the present |
 
 ## Later consequences
