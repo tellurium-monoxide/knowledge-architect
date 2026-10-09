@@ -83,10 +83,10 @@ document, per `design@core@reserved-anchors`, so where the text names both shape
 references. A path that varies by project, and an illustration, are placeholders in
 angle brackets. The command a project runs is written as the placeholder that the install fills
 with the project's declared command, per `design@core@declared-command`. A literal the checker
-would misread is a delivery substitution, which the build fills: the owner's argument is that
-placeholders "would be better than convoluted sentences", and a substitution is a documented
-exception "where we are avoiding the checker on purpose in order to facilitate delivery of the
-installed skills".
+would misread is a delivery substitution, which the build fills. The owner's argument: the text
+is applied "using substitution at build or install time" "to avoid convoluted sentences (such as
+for the primer import line)", "as documented exceptions where we are avoiding the checker on
+purpose in order to facilitate delivery of the installed skills".
 
 **The shipped set may cite its own skills, agents and primer, and their sections**, as
 `skill@<name>@<slug>` or `primer@<slug>`: every project serving `claude` holds them, installed, and
