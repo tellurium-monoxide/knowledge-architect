@@ -288,14 +288,18 @@ agent's. Approved, shape B. Arguments: `argument@staged-tree-check@a2`,
 this with --fix though. The reason  is that I'd like to provide more types of quick fixes later,
 and this might not be compatible." How "not definitive" is carried into the head is D2.
 
-### `check --fix` refuses when the index differs from HEAD and a generated file differs between the two trees `##fix-refusal-mixed-state`
+### `check --fix` refuses when the index differs from HEAD and a generated file it would write differs from the staged tree's `##fix-refusal-mixed-state`
 
 Proposed by the owner, round 1, with a wider trigger; the narrow condition by the agent, round 1.
 Approved, narrow condition. Arguments: `argument@staged-tree-check@a3`,
 `argument@staged-tree-check@a21`, `argument@staged-tree-check@a22`,
 `argument@staged-tree-check@a23`, `argument@staged-tree-check@a24`. Shape: Decided design,
 "`check --fix` refusals", refusal 2. Harvest: the new head `fix-refusal-mixed-state`. The owner's
-words, round 2: "fix-refusal-mixed-state: agreed on your narrower condition".
+words, round 2: "fix-refusal-mixed-state: agreed on your narrower condition". The adversarial review
+of step 4 found that this condition refuses where `--fix` would write nothing, which `index`, the
+repair it names, cannot clear: a material finding against the premise the closure argued from,
+put to the owner as D7. The owner's words, after the work: "Narrower condition approved, go
+ahead".
 
 ### `--fix` with `--staged` is refused at parse time `##fix-with-staged`
 
@@ -725,7 +729,8 @@ Two refusals:
 2. **A partial commit's mismatch.** When `git diff --cached --quiet` says the index differs from
    HEAD, `--fix` computes the generated files from the working tree and from the staged tree. A
    path that one list holds and the other does not differs, as do two lists' bytes for one path.
-   When any differ, it refuses, naming every differing path:
+   Per D7, only a differing file `--fix` would write counts: one already current on disk is not
+   written. When any counts, it refuses, naming each:
 
    ```text
    error: these generated files would differ between the working tree and the staged tree: <paths>
@@ -733,7 +738,8 @@ Two refusals:
      → to fix the working tree as a whole: cargo klarch index
    ```
 
-   When the index equals HEAD, or every generated file is the same in both, `--fix` runs as today.
+   When the index equals HEAD, or no differing file is one `--fix` would write, `--fix` runs as
+   today. Per D8, a failure to compute the staged side other than the two below refuses, naming it.
 
 **Where refusal 2 sits in the order of `design@core@fix-before-the-checks`**, per D4: after the
 manifest's early return, which writes nothing; after the installed files are repaired, since their
@@ -975,12 +981,25 @@ that step 3 computes. Step 4 before step 5: the shipped text describes the comma
 
 ## Defaults awaiting the owner
 
-None.
+One, D8. D7, ruled after the work, is under the subsection below.
+
+- **D8**, on #fix-refusal-mixed-state, from the self-consistency and spec-conformity reviews of
+  the work: the decided design names two states where the staged side cannot be computed and
+  `--fix` runs as before, an unmerged index and a staged tree stopped in phases 1 to 3, and says
+  nothing of any other failure, such as an extension that cannot prepare over a snapshot. The code
+  first skipped the comparison on every failure. The default, built: any other failure refuses,
+  exit 2 or 1, naming it, since a comparison skipped in silence lets the partial commit through,
+  per `design@core@a-failed-parse-is-loud`. The alternative: skip it on any failure.
 
 ### The defaults the owner ruled on
 
 Six defaults stood after the reviews of this spec. The owner ruled on all six in round 4: "All
-defaults approved". Each is applied in the sections it names, and is kept here with its reason.
+defaults approved". Each is applied in the sections it names, and is kept here with its reason. D7
+came from the adversarial review of step 4, and the owner ruled it: "Narrower condition approved,
+go ahead".
+
+- **D7**, on #fix-refusal-mixed-state: the refusal names only a differing generated file `--fix`
+  would write, so a run that writes nothing refuses nothing, and `index` clears it.
 
 - **D1**, on #fix-refusal-mixed-state: the refusal is classed `cli`, major, in the changelog,
   since a `check --fix` that succeeded before now exits 2. Round 1 named it "`checks`, minor or
