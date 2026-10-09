@@ -30,7 +30,8 @@ Neither failure is silent: no binary and no worktree are both exit 2 naming the 
 empty walk. `commits` reads a commit's tree through `cat-file --batch -z`, which is where the
 version floor comes from. `check --staged` reads the tree git's index would commit the same way:
 HEAD's tree with the staged changes, a file added with `git add -N` left out, as `git commit`
-leaves it out. The decisions are `design@core@git-supplies-the-walk` and
+leaves it out. The decisions are `design@core@git-supplies-the-walk`,
+`design@core@failed-git-is-exit-two`, `design@core@git-floor-for-commit-trees` and
 `design@core@staged-tree-source`.
 
 ```sh
@@ -336,8 +337,9 @@ level = 2                      # a heading register only: the heading level its 
 
 A **heading register** keeps its entries as slugged headings, in `<dir>.md` or in `<dir>/` behind
 a `README.md` that links every subdocument. It declares `level`, from 2 to 6: every heading at that
-level in its home is an entry and carries a slug, and a slug at any other level defines nothing,
-per `design@core@an-entry-is-a-heading-at-the-register-level`. The built-in levels are 3 for
+level in its home is an entry and carries a slug, per
+`design@core@an-entry-is-a-heading-at-the-register-level`, and a slug at any other level defines
+nothing, per `design@core@a-slug-elsewhere-defines-nothing`. The built-in levels are 3 for
 `design` and 2 for `goal` and `tripwire`. A heading is a line that opens with `#` marks, at most
 three spaces in, followed by a space or a tab and text. A setext heading, a heading after a list or
 block-quote marker on its line, and a heading with no text are reported in any markdown document,

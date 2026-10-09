@@ -304,6 +304,7 @@ impl Anchor {
 
     /// The level-two sections an entry of `register` owes at this anchor: a slice spec, a `spec`
     /// entry of a milestone, owes the slice sections, and every other entry its register's own.
+    /// One register owes a list per anchor here, as `home_of` gives its home.
     pub(crate) fn sections_of(&self, register: &Register) -> Vec<String> {
         if self.is_milestone() && register.name == SPEC_REGISTER {
             return SLICE_SECTIONS.iter().map(|s| s.to_string()).collect();

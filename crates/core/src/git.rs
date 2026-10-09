@@ -94,7 +94,8 @@ impl Invocation {
             // takes an untracked live document out of every check on one clone and not on
             // another. What still decides the walk is the tree's own ignore files and git's
             // per-clone exclude file, which git offers no way to pin; the tripwire in
-            // `path@core@docs/tripwires.md` guards what remains.
+            // `path@core@docs/tripwires.md` guards what remains. The decision is
+            // `design@core@per-user-ignore-file-pinned`.
             .args(["-c", "core.excludesFile=/dev/null"])
             .args(&self.args)
             .stdout(Stdio::piped())
@@ -186,8 +187,8 @@ fn nul_separated(bytes: &[u8]) -> Vec<&[u8]> {
 
 /// The same, read as project-relative paths.
 ///
-/// **A path is bytes, not text.** A filename holding a byte sequence that is not UTF-8 is
-/// legal on this platform and git reports it as it is under `-z`; decoding it lossily would
+/// **A path is bytes, not text**, per `design@core@a-path-is-bytes`. A filename holding a byte
+/// sequence that is not UTF-8 is legal on this platform and git reports it as it is under `-z`; decoding it lossily would
 /// substitute a replacement character and produce a path nothing on disk answers to. The file
 /// would then read as unreadable — or, where nothing reports that, leave every check while the
 /// run stayed green, which is the failure `design@core@git-supplies-the-walk` exists against.
@@ -808,7 +809,8 @@ pub(crate) fn blob_bytes(
     // the newline-terminated input that name becomes two requests, git answers both, and every
     // later answer is paired with the wrong path — silently, because the map still comes back
     // full. `-z` on `cat-file --batch` needs git 2.36 or newer, and an older git refuses the
-    // flag loudly, which is the failure this module already turns into exit 2.
+    // flag loudly, which is the failure this module already turns into exit 2, per
+    // `design@core@git-floor-for-commit-trees`.
     let raw = git(root)
         .args(["cat-file", "--batch", "-z"])
         .stdin(stdin)

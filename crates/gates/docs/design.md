@@ -12,7 +12,7 @@ repository's are `design@xtask@gates-list-primary-home`.
 
 The runner is the package knowledge-architect-gates. A project's maintenance binary, conventionally
 a crate named xtask run through a cargo alias, hands it the project root, its gate list and the
-flags it parsed. The runner was shared, almost line for line, by this repository and by thaum, as a comparison of
+flags it parsed. The runner is, almost line for line, the gates code thaum holds at its commit e98e296, as a comparison of
 `git -C <thaum checkout> show e98e296:tools/xtask/src/gates.rs` with this crate shows, and it serves
 `goal@knowledge-architect@setup-brings-quality-tools` and `goal@gates@gates-from-a-list`: a project
 adopting the workflow gets gates refined over two projects instead of writing its own. A `gates` command of the
@@ -84,7 +84,7 @@ pipe and takes the step's verdict from the shell's exit code, so no reader stand
 run and its verdict, which is the refusal's reason. `GITHUB_ACTIONS` set to `true` is how the
 tool knows; the output then stays live in the job log.
 
-### The rebased gate runs behind a flag `##rebased-gate-behind-a-flag`
+### A gate marked as a rebase check runs only under a flag `##rebase-checks-behind-a-flag`
 
 `--require-rebased` adds the gates marked as rebase checks. The recommended list holds one,
 `rebased`, first: `git merge-base --is-ancestor <base> HEAD`, where the base is the main branch

@@ -112,7 +112,7 @@ if it fires.
 
 **A second entry test that admits a decision because it constrains work not yet built** — lost to
 `design@agent-skills@a-head-is-owed-by-an-entry-test`. `live`. Read against the 178 heads the design
-homes held when it was replaced, by four subagents, it admitted nearly every head under a wide
+homes held at commit 3a10fc9, which replaced it, by four subagents, it admitted nearly every head under a wide
 reading, "governs future work", and almost none under a narrow one, two of them reporting on their
 own that it does not discriminate. Designed work that is not built has its home in a plan document,
 per `design@agent-skills@design-home-is-built-intent`, so the test's narrow reading had nothing left

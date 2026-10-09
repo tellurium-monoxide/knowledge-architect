@@ -123,8 +123,8 @@ for reading alone, such as its changelog: each is at most a patch.
 | minor | a check becomes stricter, or a check is added, even when a project must change its content to pass it; additions that change nothing existing; command and manifest changes that only add |
 | major | a command change that breaks existing usage; a change to the documents and homes a project must carry; a manifest that was valid and stops being accepted; a breaking change to the library API |
 
-The table is the owner's scheme. The bullets below are the refinements argued since, and the first
-is the owner's argument, given in the ruling that a stricter check is minor.
+The table is the owner's scheme. The bullets below refine it, and the first is the owner's
+argument, given in the ruling that a stricter check is minor.
 
 - **A stricter check is minor even when it requires a content change.** Every stricter check may
   require a content change in some project, so a major row that took every content change would
@@ -192,14 +192,18 @@ reference then names nothing and the section's content cannot change. Why the ba
 evasion is `design@agent-skills@plain-text-is-no-repair`, and the lint that reports a bare name
 `design@core@bare-skill-name-reported`.
 
-### The branch that makes a change writes its changelog entries, and the release reviews them once `##the-branch-writes-its-changelog-entries`
+### The branch that makes a change writes its changelog entries `##the-branch-writes-its-changelog-entries`
 
 The branch that makes a change writes its entries, in the `Next release` section, and creates the
 section above the newest released one when it is absent, as it is after a release renames it. It
 writes them because its author knows what changed and in which class at that moment; rebuilt at the
 release from commit messages, an entry is lost when nothing asks for it, as one change to a shipped
-skill after 0.1.0 was. The release is reviewed once against the tests of
-`design@knowledge-architect@changelog-entries`, rather than every merge, because a release branch
+skill after 0.1.0 was.
+
+### The changelog entries are reviewed once, at the release, rather than at every merge `##changelog-reviewed-at-the-release`
+
+The entries are reviewed once, at the release, against the tests of
+`design@knowledge-architect@changelog-entries`, rather than at every merge, because a release branch
 can repair any gap before anything is published.
 
 ### The project stays at 0.x until the owner's word, given once its first design discussion's open issues are settled `##stays-at-zero-x`
@@ -234,7 +238,8 @@ migration is a present cost, named in the changelog's migration entries.
 
 A merge to main publishes nothing, and any number of merges land between two releases. A release
 is a branch like any other: reviewed, merged once CI passes on its head, and only then tagged and
-published from main's head, on the owner's word given at that moment. The order follows what can
+published from main's head, on the owner's word given at that moment, per
+`goal@knowledge-architect@the-owner-decides`. The order follows what can
 be undone. A mistake on main is repaired by a later commit, while a version published on crates.io
 can be yanked and never deleted, so the irreversible step comes last, after review and CI have
 judged exactly what it publishes, and the tag names a commit on main. The cost: main states the
@@ -275,8 +280,10 @@ statement false until a repair lands. The procedure is
 
 ### No operation can lose content, and the branch's own history is edited only with a clean tree `##no-operation-loses-content`
 
-No operation that can lose content, committed or not. With a clean tree, editing the branch's
-own history is an ordinary move, bounded by verifying that nothing was lost.
+No operation can lose content, committed or not. Content is lost in two forms: an operation that
+removes uncommitted content from the working tree, which no commit holds, and a history edit that
+drops a commit no other reference holds. With a clean tree, editing the branch's own history is an
+ordinary move, bounded by verifying that nothing was lost.
 
 ### A commit is pushed only after the commits check passed on it `##push-after-the-commits-check`
 
@@ -391,7 +398,7 @@ rival, the ledger of outcomes in the message of the commit that handles the firs
 on a file whose findings all end in no change: that commit changes no file, and the rebase merge
 drops a commit that changes no file, per `design@knowledge-architect@no-branch-sha-is-cited`.
 
-### An analysis of a received file names nothing of another project beyond what that file holds `##analysis-names-nothing-of-another-project`
+### An analysis of a received file names nothing of another project beyond what that file holds, and no path or design head of it `##analysis-names-nothing-of-another-project`
 
 The repository is public and the workflow file is the one a retrospective writes to be
 publishable, so the analysis names nothing of another project beyond what its workflow file holds.

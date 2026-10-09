@@ -25,7 +25,7 @@ has to answer.
 ## A `gates` command of the checker's binary, with the gate list declared in the manifest
 
 Lost to `design@gates@gates-crate`. `live`. It would have changed the manifest's format and the
-checker's command line, and needed no code in a project. It makes the document checker run cargo,
+checker's command line, and needed no code in a project. It would make the document checker run cargo,
 the linter and the tests. A second reason, that a gate list in TOML cannot carry a distiller, no
 longer holds: the distillers are a closed set a list can name.
 

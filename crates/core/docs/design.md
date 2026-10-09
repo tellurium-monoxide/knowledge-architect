@@ -100,7 +100,7 @@ last phase can undermine anything, because no check reads another check's findin
 stops at the first phase that produced anything, prints those findings, and opens its summary
 with the phase, the count and the phases not judged, so a stop is never mistaken for a pass;
 a clean run names every check it performed. The whole report stops: the per-document form,
-hiding only what an unread file could have defined, was three times the machinery for facts
+hiding only what an unread file could have defined, is three times the machinery for facts
 that mostly have no per-file scope, and `path@core@docs/tripwires.md` guards that choice.
 
 **An extension prepares its tree when the last phase is reached**, so a run that stops earlier
@@ -124,8 +124,7 @@ selection, and what it bought, is `path@core@docs/rejected-alternatives.md`.
 **One producer chain, and a rule for a second.** The manifest feeds the walk, the walk the
 model, the model the table, and every check consumes the table. A future check whose findings
 another check reads would be a second chain, and nothing prevents one: such a check is a phase,
-not a check of the last one, and it goes before its consumers. `path@core@CLAUDE.md`
-restates that at the point of adding a check, and a tripwire names the event.
+not a check of the last one, and it goes before its consumers. A tripwire names the event.
 
 ### A finding names a cause only where the repair depends on which cause holds `##finding-names-the-repair`
 
@@ -174,13 +173,6 @@ trees in one run, and a message is judged against what its own commit's tree hol
 prepared state belongs to the tree and not to the extension. A parent tree, assembled for its entity
 table alone, prepares no extension.
 
-**An extension reads the tree through the core.** Over the checkout it may read the filesystem under
-the root, because a subject such as a vendored corpus is filesystem state, per
-`design@core@model-then-checks`. Over a snapshot, a commit's tree or the tree git's index would
-commit, per `design@core@an-extension-reads-a-snapshot`, it reads git objects only, through the same
-batch reader the core assembles that tree with, which also names each blob so that an extension can
-cache what it parsed from one blob across commits.
-
 **The core's summary prints its own count lines, then each extension's**, and the list of checks
 performed names the core's checks, then each extension's.
 
@@ -201,6 +193,12 @@ that maps a snapshot to its commit-mode handling runs, under `--staged`, only wh
 commit. thaum's rules extension lists its `changes` and `corpus` checks as not run there, and an
 extension that lists nothing skips them silently. An extension that wants more under `--staged`
 reads `Snapshot::revision()`.
+
+**An extension reads the tree through the core.** Over the checkout it may read the filesystem under
+the root, because a subject such as a vendored corpus is filesystem state, per
+`design@core@model-then-checks`. Over a snapshot it reads git objects only, through the same
+batch reader the core assembles that tree with, which also names each blob so that an extension can
+cache what it parsed from one blob across commits.
 
 ### An extension scans the core's parse on its own, and the core's model carries nothing for it `##an-extension-builds-its-own-model`
 
@@ -465,31 +463,7 @@ hand-rolled matcher cannot promise, and it is the property the whole walk is
 chosen for; the matcher and the three things it could not do are
 `path@core@docs/rejected-alternatives.md`.
 
-**The per-user ignore file is pinned away.** `core.excludesFile` lives in a developer's home and
-is no part of any project, so every invocation runs with it pointed at the null device: a line
-there would otherwise take an untracked live document out of every check on one clone and not on
-another. What still decides the walk beside the tree's own ignore files is git's per-clone exclude
-file, which git offers no way to pin, and that is what the tripwire in
-`path@core@docs/tripwires.md` is left guarding.
-
-**A path is bytes, not text.** The `-z` output is split on NUL and turned into paths byte for
-byte. A name holding a byte no UTF-8 decoding accepts is legal here, and decoding it lossily
-produces a path nothing on disk answers to — so the file leaves every check, and where nothing
-reports the failed read the run stays green. That is the shape this whole head exists against.
-
-**Reading a commit's tree needs git 2.36.** `cat-file --batch -z` takes its requests
-NUL-terminated, and a tracked filename may hold a newline: under the newline-terminated input
-such a name is two requests, git answers both, and every later answer is paired with the wrong
-path while the map still comes back full. An older git refuses the flag loudly, which is exit 2
-with git's own reason.
-
-**No `git`, or no worktree, is exit 2 with the reason.** Never an empty walk: a project reported as
-holding no document is a run that checked nothing and said so as a clean verdict, which is the
-failure this tool exists to prevent. **Every invocation a verdict depends on fails that way** —
-the listing, the tracked-and-ignored listing and the `check-ignore` batch — carrying git's own
-stderr, whatever the reason. The one invocation that degrades instead is `last_changed`, which
-fills a listing's convenience column and moves no verdict: where git answers nothing the column
-shows `-`. A tracked path the working tree does not hold — a deletion nobody has staged — stays
+A tracked path the working tree does not hold — a deletion nobody has staged — stays
 in the walk and is reported, because dropping it would take a live document out of every check on
 the strength of a working-tree state.
 
@@ -501,6 +475,41 @@ visible in the output rather than inferred from a finding list. The tripwire is 
 read a snapshot instead, from git objects alone, per `design@core@staged-tree-source` and
 `design@core@a-commit-message-is-a-document`.
 
+### Every git invocation runs with the per-user ignore file pointed at the null device `##per-user-ignore-file-pinned`
+
+**The per-user ignore file is pinned away.** `core.excludesFile` lives in a developer's home and
+is no part of any project, so every invocation runs with it pointed at the null device: a line
+there would otherwise take an untracked live document out of every check on one clone and not on
+another. What still decides the walk beside the tree's own ignore files is git's per-clone exclude
+file, which git offers no way to pin, and that is what the tripwire in
+`path@core@docs/tripwires.md` is left guarding.
+
+### A listed path is read as git's bytes, never decoded `##a-path-is-bytes`
+
+**A path is bytes, not text.** The `-z` output is split on NUL and turned into paths byte for
+byte. A name holding a byte no UTF-8 decoding accepts is legal here, and decoding it lossily
+produces a path nothing on disk answers to — so the file leaves every check, and where nothing
+reports the failed read the run stays green. That is the failure
+`design@core@git-supplies-the-walk` exists against.
+
+### Reading a commit's tree needs git 2.36 `##git-floor-for-commit-trees`
+
+**Reading a commit's tree needs git 2.36.** `cat-file --batch -z` takes its requests
+NUL-terminated, and a tracked filename may hold a newline: under the newline-terminated input
+such a name is two requests, git answers both, and every later answer is paired with the wrong
+path while the map still comes back full. An older git refuses the flag loudly, which is exit 2
+with git's own reason.
+
+### A git invocation a verdict depends on that fails is exit 2 with git's reason, never an empty walk `##failed-git-is-exit-two`
+
+**No `git`, or no worktree, is exit 2 with the reason.** Never an empty walk: a project reported as
+holding no document is a run that checked nothing and said so as a clean verdict, which is the
+failure this tool exists to prevent. **Every invocation a verdict depends on fails that way** —
+the listing, the tracked-and-ignored listing and the `check-ignore` batch — carrying git's own
+stderr, whatever the reason. The one invocation that degrades instead is `last_changed`, which
+fills a listing's convenience column and moves no verdict: where git answers nothing the column
+shows `-`.
+
 ### A symlink and a gitlink are read as no document, and each is a phase-2 finding naming it `##links-are-no-documents`
 
 Git records a symlink as mode `120000` and a submodule's gitlink as `160000`, in the index and in
@@ -511,7 +520,7 @@ a platform without symlinks holds that text as a plain file, so two readers of o
 judge two documents; a gitlink names a commit of another repository the listing never descends
 into, so everything under it would be conformant by vacuum. A `skip-files` row keeps a symlink
 and an `exclude` row a submodule, as declared silences. What a submodule is to the project that
-holds it is an open question, in `path@core@docs/open-issues/`.
+holds it is an open question, `issue@core@a-submodule-is-a-project-of-its-own`.
 
 ### A name holding a line break, or one Windows cannot create, is refused with a finding naming the file and the reason `##unportable-names-refused`
 
@@ -809,12 +818,9 @@ of their own because a heading register has one home file per anchor and one lev
 has one home and four kinds; an extension runs after the entity table is built, so items are the
 core's, per `design@core@an-extension-plugs-in-through-phased-hooks`.
 
-### An item is cited `<kind>@<plan>@<id>`, from inside its own plan only `##plan-item-scope`
+### An item is cited from inside its own plan only `##plan-item-scope`
 
-The plan anchor stands in the anchor position, so an item citation keeps the three-part grammar,
-shorter than the root anchor and a compound id by the root anchor's name and one separator. It
-resolves only
-from a file inside the plan: the spec file, or a file of the milestone's directory. From anywhere
+An item citation, `<kind>@<plan>@<id>`, resolves only from a file inside the plan: the spec file, or a file of the milestone's directory. From anywhere
 else, a commit message included, it is refused before its id is looked up, and the repair names
 the document to cite whole: the spec, the milestone, or the slice spec that defines the item. A
 whole plan may be cited from anywhere, so a dependency between plans is carried by the document,
@@ -835,13 +841,14 @@ each claim the same file, and only the first would define anything.
 
 Like `spec` and `milestone`, the item registers are the tool's, because their storage is the plan
 documents, which the plans layout fixes. A declaration of one is refused, per
-`design@core@registers-are-declared`. A project that already declared a register under one of the four names renames it on
-upgrade.
+`design@core@registers-are-declared`.
 
 ### A spec file is an anchor of its own, so a spec's items are cited by the spec's name `##spec-file-is-an-anchor`
 
 Each spec file of specs/ is an anchor, so its items are cited `<kind>@<spec>@<id>`, as a slice's
-are cited by its milestone's name, in every project that writes specs. The anchor holds its own
+are cited by its milestone's name, in every project that writes specs. The plan anchor stands in
+the anchor position, so an item citation keeps the three-part grammar, shorter than the root
+anchor and a compound id by the root anchor's name and one separator. The anchor holds its own
 file, which stays an entry of the `spec` register that holds it. Making every spec a directory was
 the rival; it reopens the decision that a spec is one file.
 
@@ -856,11 +863,11 @@ consequences. A slice spec owes Builds, Claims, Audit subjects, Fails alone on a
 expire, in order; the plan sections a slice spec holds, for the design only its slice builds, are
 not ordered against them. Fixtures is owed only where a Component drives its tests with authored
 content, a condition no check can read, so it is not checked. One `spec` register owes two lists,
-and `Anchor::sections_of` gives the list at each anchor, as `Anchor::home_of` gives the home.
+chosen by the anchor that holds the spec.
 The two lists are the planning skill's, which owns the shape of a plan document, per
 `design@agent-skills@design-hands-off-to-planning`; a change to them changes this head.
 
-### Which registers exist is the manifest's `##registers-are-declared`
+### Which registers exist beyond the built-in ones is the manifest's `##registers-are-declared`
 
 `[registers.<name>]` declares a register's `scope`, `shape`, `dir`, `level`, `sections` and
 `metadata.<key>.values`; `[locations.<name>]` declares a directory and the registers it carries.
@@ -929,7 +936,7 @@ shows the page, and a bullet list is its conventional shape — a table grows pa
 soon as a row outgrows a short sentence. Both directions are asserted over the same links: an
 existing subdocument no link names is reported, and a link that resolves to nothing is reported.
 A fenced link is an illustration and discharges nothing, the stance a fenced definition takes
-per `design@core@an-entry-is-a-heading-at-the-register-level`, and a link inside a code span is typography showing the
+per `design@core@a-slug-elsewhere-defines-nothing`, and a link inside a code span is typography showing the
 shape. **A row is any link shape `design@core@links-are-navigation-rows` reads**, a link
 definition included, so a README written with reference-style links indexes its subdocuments
 like one written with inline links.
@@ -961,11 +968,14 @@ left, and a listing nobody generates is one that silently stops listing. This he
 index exists; what it holds is `design@core@a-file-register-index-is-rows`, and that it is generated
 rather than written by hand is `design@core@generated-files-are-pure`.
 
-**Grouping is a subdirectory, declared beside the instance.** A subdirectory is visible to `ls`
-and to a listing without parsing anything, and the group is not part of an entry's id, so
-regrouping is a `git mv` that breaks no reference. The declared list is what keeps the naming from
+### A file register's groups are subdirectories, declared beside the instance `##groups-are-subdirectories`
+
+A subdirectory is visible to `ls` and to a listing without parsing anything, and the group is not
+part of an entry's id, so regrouping is a `git mv` that breaks no reference. The declared list is what keeps the naming from
 drifting, and it is checked in both directions. An entry may sit ungrouped at the top level, so a
 two-entry instance owes no directory.
+
+### An entry's frontmatter is a small subset, refused loudly outside it `##frontmatter-subset`
 
 **The frontmatter subset is small and refused loudly outside itself**, per
 `design@core@a-failed-parse-is-loud`: a block opened and closed by a line holding only `---`, at the
@@ -977,6 +987,8 @@ declares none — an undeclared block is metadata nothing checks.
 **A blank line between the delimiters means there is no block**, which is what tells a block from
 a document opening on a thematic break: a paragraph between two thematic breaks has blank lines
 around it, and a block has none.
+
+### An entry's frontmatter block is read as prose, outside the document's structure `##frontmatter-is-prose`
 
 **The block is prose, entire, and its lines are marked as a fence.** That marking keeps a value
 out of the document's structure — a heading, a slug definition, a navigation link — and buys
@@ -1087,7 +1099,7 @@ all. Remove either check and the paragraph above stops being true.
 timestamp, a hostname, or anything the walk does not see would break both consequences at once: the
 check would report a file stale that nobody had changed, and `index` would rewrite on every run.
 
-### One question has one command that answers it, and `index` does not verify `##one-question-one-command`
+### One question has one command that answers it `##one-question-one-command`
 
 Verifying is not `index`'s question. The `generated` check of `cargo klarch check` is the gate,
 and it names the first line at which the committed file and the regenerated one disagree. A second
@@ -1241,7 +1253,7 @@ published. A check that resolves a name of its own is the shape this refuses: tw
 disagree the first time one of them is edited, and only the entities one of them knows can be
 printed or rewritten.
 
-### Each heading register declares the one heading level its entries sit at, every heading at that level in its home carries a slug, and a slug nowhere else defines anything `##an-entry-is-a-heading-at-the-register-level`
+### Each heading register declares the one heading level its entries sit at, and every heading at that level in its home carries a slug `##an-entry-is-a-heading-at-the-register-level`
 
 **The level is part of the register.** `design` sits at level three, `goal` and `tripwire` at
 level two, compiled in; a declared heading register states its level with the `level` key of its
@@ -1269,12 +1281,28 @@ its kind, per `design@core@items-as-section-registers`. Which anchor owns a defi
 primer and the root CLAUDE.md, per `design@core@section-homes-carry-slugs`: their entries are
 the harness kinds', not a register's, and a slug at a level-two heading there defines a section.
 
-**Two findings, both about the definition site.** A heading at the register's level with no slug
-in its home is reported, naming the heading. A slug anywhere else defines nothing and is reported
-as a misplaced definition: at a heading of another level, level one included, in a table cell, at
-the head of a plain line, in the middle of a line, as a second slug on a definition line, in a
-file that is no register home — a Rust comment included — or in a directory home's README. An id
+A heading at the register's level with no slug in its home is reported, naming the heading. An id
 is `[a-z0-9]+(-[a-z0-9]+)*`.
+
+Two definitions of one id in one register instance are a finding at each site, each naming the
+other.
+
+**Which homes an anchor must carry is `check::tree`'s question, not the table's.** The
+table defines from every home shape of every heading register the anchor carries, and reports a
+definition that sits where none may; whether the home is there at all, and in which shape, is
+`check::tree`'s.
+
+**The slug may sit anywhere in the heading.** A pattern that requires text after the slug matches
+no heading carrying nothing but the slug, and every reference to such an anchor is then reported
+as dangling while the definition sits in the file.
+
+### A slug anywhere but at a heading of its register's level in the register's home defines nothing, and is reported as a misplaced definition `##a-slug-elsewhere-defines-nothing`
+
+A slug anywhere but at a heading of its register's level in the register's home defines nothing
+and is reported as a misplaced definition: at a heading of another level, level one included, in a
+table cell, at the head of a plain line, in the middle of a line, as a second slug on a definition
+line, in a file that is no register home — a Rust comment included — or in a directory home's
+README.
 
 - **A table cell defines nothing.** A decision written as a row has no heading, so the outline does
   not list every decision, and one register would have two definition sites.
@@ -1285,22 +1313,10 @@ is `[a-z0-9]+(-[a-z0-9]+)*`.
 - **A mid-line slug is a pointer written in the definition form**, and recording it is what makes
   such a pointer visible: four sat in thaum's design homes, checked by nothing.
 
-Two definitions of one id in one register instance are a finding at each site, each naming the
-other.
-
-**Which homes an anchor must carry is `check::tree`'s question, not the table's.** The
-table defines from every home shape of every heading register the anchor carries, and reports a
-definition that sits where none may; whether the home is there at all, and in which shape, is
-`check::tree`'s.
-
 **A fenced heading is an illustration, so a fenced slug neither defines nor is misplaced.** A
 definition site is a heading, and the scanner already reads no heading inside a fence; the one
 stance covers both. This is the one place a fence still suppresses anything in the grammar —
 references are live in a fence for every kind, per `design@core@candidate-rule-and-retired-forms`.
-
-**The slug may sit anywhere in the heading.** A pattern that requires text after the slug matches
-no heading carrying nothing but the slug, and every reference to such an anchor is then reported
-as dangling while the definition sits in the file.
 
 ### A heading is a line that opens with `#` marks, and a heading markdown reads in any other shape is reported `##headings-open-with-hash-marks`
 
@@ -1336,7 +1352,7 @@ A definition is owned by where its document sits — the deepest anchor whose pa
 the register whose home holds it — rather than by anything the line says, so moving a document
 moves the entities in it. Two anchors may therefore each record an entity they call the same
 word, and two registers of one anchor may too, which is what naming the kind and the anchor in a
-reference buys. The id of a heading-register entity is still called a slug.
+reference buys. The id of a heading-register entity is called a slug.
 
 **A harness kind names no anchor**, per `design@core@harness-kinds-cited-without-anchor`: its entities live
 where the harness puts them, one namespace per kind, so an anchor would carry no information. The
@@ -1390,7 +1406,9 @@ reference or a path it held.
 
 **A fullwidth at sign is not an `@`.** A span written with `＠` is no candidate, and nothing
 reports it. Reading lookalike characters as the grammar's would put every script's
-punctuation inside the tokenizer, and a census of walked markdown finds no such span.
+punctuation inside the tokenizer, and a census of walked markdown finds no such span outside this
+paragraph; re-take it with `git grep -n --untracked '＠' -- '*.md'`, and a span meant as a
+reference reopens the silence.
 
 **The retired slug reference is a finding wherever it names something of this project.** A
 backticked `<word>#<id>` or a bare `#<id>` names the form it was when its id is an entry some
@@ -1425,9 +1443,9 @@ which the tokenizer does not record. Reading a fenced slug reference as an illus
 `path@core@docs/rejected-alternatives.md`. A string literal bound to a name in Rust yields no
 reference, per `design@core@grammars-not-prefixes`.
 
-### A skill, an agent, the primer and the root CLAUDE.md are cited with no anchor `##harness-kinds-cited-without-anchor`
+### A harness kind is cited with no anchor `##harness-kinds-cited-without-anchor`
 
-A harness kind takes no anchor. A skill or an agent is cited by its name, two segments, and one of
+A harness kind takes no anchor: today a skill, an agent, the primer and the root CLAUDE.md. A skill or an agent is cited by its name, two segments, and one of
 its sections by its name and the section's slug, three: `skill@<name>`, `skill@<name>@<slug>`,
 `agent@<name>`, `agent@<name>@<slug>`. The primer and the root CLAUDE.md are one document each, so
 a section of either is cited by its slug alone: `primer@<slug>`, `instructions@<slug>`. Any other
@@ -1462,7 +1480,8 @@ one grammar, the same in every project, with a global namespace naming no anchor
 A section home is a skill's `SKILL.md`, an agent's file, the primer and the root CLAUDE.md, under
 the `claude` harness. The rule of `design@core@an-entry-is-a-heading-at-the-register-level` holds
 there at level two: every level-two heading outside a fence owes a slug, which defines a section
-of that home's skill, agent or document, and a slug anywhere else in it defines nothing. An id is
+of that home's skill, agent or document, and a slug anywhere else in it defines nothing, per
+`design@core@a-slug-elsewhere-defines-nothing`. An id is
 unique within its document. A heading-shaped line inside the frontmatter block, as the harness
 reads that block, is no heading.
 
@@ -1710,7 +1729,8 @@ through; a label opening with `^` is a footnote, whose definition holds text. An
 `![alt](target)`, is a link to its target.
 
 **An HTML link, `<a href="…">`, is not read.** Markdown is where a row is written, and the
-census of walked markdown finds no HTML link.
+census of walked markdown finds no HTML link outside this paragraph:
+`git grep -n -i --untracked '<a href' -- '*.md'`. One written as a row reopens this clause.
 
 **Markdown documents only.** In Rust prose a markdown link is rustdoc's mechanism, resolved by
 rustdoc against the crate namespace, and reading those as index rows would report every
@@ -1745,13 +1765,13 @@ message cites rules for a human to read on failure, and reading every literal as
 of them. A macro body is not an argument list, so a binding still applies inside one. **Reading
 every literal as prose is a recorded losing alternative**, in
 `path@core@docs/rejected-alternatives.md`, with the bound literals outside the checker that carry
-a rule-shaped number by accident. What the binding rule no longer serves is the checker's own
-fixtures, which have their own answer below.
+a rule-shaped number by accident. The binding rule does not serve the checker's own
+fixtures, which `design@core@checker-source-literals-are-data` answers.
 
 ### A Rust name is collected where it is declared, never where it is used `##names-collected-where-declared`
 
 **A name is the one thing prose cannot reach**, and the identifier form of a rule marker exists
-for names. Names are collected where they are DECLARED. Collecting every occurrence made a call
+for names. Names are collected where they are DECLARED. Collecting every occurrence would make a call
 site and a `use` import citations owing the rule's whole body in the caller's scope, where there
 is nowhere to put it.
 
@@ -1764,7 +1784,7 @@ to a name, per `design@core@grammars-not-prefixes`.
 **The tool's unit tests are the one place in a tree whose fixtures are rule-shaped on purpose.**
 A number, a marker, a slug, a path or a version pin is written so that a test can watch a check
 react to it. Read as prose each one is a live claim, and hiding each behind a named constant to
-be interpolated made the tests harder to read than the code they test. Comments stay prose
+be interpolated makes the tests harder to read than the code they test. Comments stay prose
 because the test modules point at decisions and paths for real, and those pointers stay checked.
 
 **The directories are compiled in, never declared.** A binary's source spans several
@@ -1877,7 +1897,7 @@ phase 1, and compares no historical value, so moving the pin fails no earlier co
 since `[project]` denies unknown keys: it runs no command, so it cannot suggest a downgrade, but
 its message does not name the pin.
 
-### `"fixture"` and `"self"` are accepted only where the running binary's build confirms them `##checked-sentinel-values`
+### A checker version that is no version is accepted only where the running binary's build confirms it `##checked-sentinel-values`
 
 Two values of `[project] checker-version` are not versions, for a project's own tests and for a
 tree the checker is built from:
@@ -1911,7 +1931,7 @@ against the tree it prepared for that commit.
 **A message is history, and it cannot be edited.** `main`'s history is never rewritten, so a
 message's claims are fixed the moment it lands: a pointer that stops resolving in a document is
 repaired where it stands, and the same pointer in a message can only be read wrong. That is why
-the surface the regime reached last is the one it matters most on.
+the regime matters most on messages.
 
 **A message is judged byte for byte, as the commit holds it.** `commits` reads the message
 with `%B` and cleans nothing: git applied its own cleanup before the commit existed, and a
