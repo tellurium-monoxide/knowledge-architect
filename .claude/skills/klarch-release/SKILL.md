@@ -35,8 +35,9 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    entries there, per `design@knowledge-architect@changelog-entries`, and step 9's review checks
    them. The version chosen at step 1 follows the highest bump class among its entries, a patch at
    least.
-3. **Commit**, with `cargo klarch check` before and `cargo klarch commits origin/main..HEAD` after:
-   the whole branch, per root `CLAUDE.md`, section Verify mechanically, and
+3. **Commit**, with `cargo klarch check --staged` before and
+   `cargo klarch commits origin/main..HEAD` after: the whole branch, per root `CLAUDE.md`, section
+   Verify mechanically, and
    `issue@core@branch-sha-citations-are-judged-within-the-range-only`.
    Cargo refuses to package an uncommitted tree, so the commit comes before the next steps.
 4. **The shipped text cites no entry.** List every backticked span with an `@` in the installed

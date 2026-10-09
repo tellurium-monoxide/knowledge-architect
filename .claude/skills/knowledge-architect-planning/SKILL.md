@@ -126,7 +126,9 @@ docs/plans/
 - The checker constructs the anchor `plans` at docs/plans/, one anchor per milestone directory and
   one per spec file. A file or a directory directly under docs/plans/ outside this layout is a
   finding, and so is a directory under milestones/ with no `README.md`. `cargo klarch index` writes
-  every `index.md`, and `cargo klarch check --fix` writes them and then checks.
+  every `index.md`, and `cargo klarch check --fix` writes them and then checks. For a commit of part
+  of the working tree, `cargo klarch index --staged` writes them into git's index from what is
+  staged, and `cargo klarch check --staged` checks what the commit will record.
 - The milestone document links each slice's spec as a navigation row, `[<slice title>](<slice>.md)`.
   The checker resolves a relative link only in a `README.md` or an `index.md`, which is why the head
   is a README.

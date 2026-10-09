@@ -155,6 +155,18 @@ cargo klarch check --fix
 
 `cargo klarch index` writes the generated files alone, with no check.
 
+**A commit of part of the working tree** needs the index of what it commits, which differs from
+the working tree's when an unstaged change touches the same register. Stage the part, then:
+
+```sh
+cargo klarch index --staged
+cargo klarch check --staged
+```
+
+`index --staged` writes the staged tree's generated files into git's index and touches no
+working-tree file; `check --staged` judges what the commit will record. `cargo klarch check --fix`
+refuses while the two trees need different generated files, and names both repairs.
+
 **One home does not bind an issue entry.**
 
 - Two entries may carry the same measurement, and an entry may restate a figure that also lives in
