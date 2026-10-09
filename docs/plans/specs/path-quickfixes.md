@@ -45,7 +45,8 @@ leaves the repository in the commit that completes its harvest.
   each is called here "the reply to round 1", "the reply to round 2" and "the reply to round 3".
   Find the file by that opening message, not by its name. The reviews of this spec raised six
   defaults, D1 to D6; the owner approved all six in a fifth message, called round 5: "All defaults
-  approved, proceed." The second reading raised D7 and D8, which await the owner.
+  approved, proceed." The second reading raised D7 and D8, which the owner approved in a sixth message, called
+  round 6: "Agreed, those are small details."
 
 ## How the work is done
 
@@ -105,7 +106,7 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   returns.
 - **T1, T2, AC1 to AC4**: the labels the premortem put to the owner, kept in the items below.
 - **D1 to D8**: the defaults the reviews raised, under "Defaults awaiting the owner": D1 to D6
-  ruled by the owner in round 5, D7 and D8 awaiting the owner.
+  ruled by the owner in round 5, D7 and D8 in round 6.
 
 ## What the work is
 
@@ -765,7 +766,7 @@ row's output is already computed or named by the check, and applying it changes 
 
 The finding on a raw path keeps its statement. Its repair lists the candidates as a question, and
 keeps the forms for a path the tree does not hold. The repair, with one candidate and with two or
-more, the candidates in byte order of their spelling, per D8:
+more, the candidates in byte order of their spelling, per D8, approved in round 6:
 
 ```text
 → did you mean `<c1>`? Otherwise write `path@elsewhere@<project>/<path>` for another project's
@@ -818,7 +819,7 @@ Per D1, which the owner approved in round 5:
 7. the generated files;
 8. the full check.
 
-Exit codes, per D7: a stop at either gate exits 1, as today, whatever was written: it reports
+Exit codes, per D7, approved in round 6: a stop at either gate exits 1, as today, whatever was written: it reports
 findings. A failed write and the refusal each exit 2 when nothing was written, and 1 once any file,
 installed or respelled, was written; 2 promises an untouched tree. A file skipped by `apply` because it changed since it was read is printed as a `not fixed:` line and
 is not a failed write: the run continues, and the check of point 8 reports the findings left in
@@ -1031,8 +1032,15 @@ the harvest records the decisions the built work implements.
 
 ## Defaults awaiting the owner
 
-Two, from the second reading of this spec by its reviewers. D1 to D6 are under the subsection
-below.
+None. D1 to D8 are under the subsection below.
+
+### The defaults the owner ruled on
+
+Six defaults stood after the reviews of this spec. The owner ruled on all six in one message,
+called round 5: "All defaults approved, proceed." Each is applied in the sections it names, and is
+kept here with its reason. D4's narrowing of `tripwire@core@fix-makes-a-choice` is applied in the
+commit that records the ruling. The second reading of this spec raised D7 and D8, which the owner
+approved in a sixth message, called round 6: "Agreed, those are small details."
 
 - **D7**, on `thread@path-quickfixes@fix-run-order`, from the design-conformance and code-claims
   reviews, `argument@path-quickfixes@a29`. D1, as the owner approved it in round 5, made a stop at
@@ -1048,13 +1056,6 @@ below.
   position" as a candidate fix. The default: every candidate is listed, in byte order of its
   spelling, so no position is chosen by the tree's meaning, and the question reads "did you mean
   one of" when there are two or more. The alternative: a bound, with the remaining count printed.
-
-### The defaults the owner ruled on
-
-Six defaults stood after the reviews of this spec. The owner ruled on all six in one message,
-called round 5: "All defaults approved, proceed." Each is applied in the sections it names, and is
-kept here with its reason. D4's narrowing of `tripwire@core@fix-makes-a-choice` is applied in the
-commit that records the ruling.
 
 - **D1**, on `thread@path-quickfixes@fix-run-order`, from the author at assembly. The order the owner approved puts the
   refusal of a partial commit's mismatch before the respellings. The refusal compares the generated
