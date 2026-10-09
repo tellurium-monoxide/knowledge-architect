@@ -583,7 +583,7 @@ Linear history, no merge commits, and no direct push to main. This section is a 
 - A repair from a review is a new commit, which edits no history. The exception is a repair that
   would leave an earlier commit failing under the branch tip's checker: it is folded into the
   earliest commit it repairs, with a clean tree, and the commit that records the review says what
-  was folded.
+  was folded. Its home is `design@agent-skills@review-repair-appended-or-folded`.
 - To test a previous state of the project, create a worktree in a place where it pollutes
   nothing, such as the worktrees directory under .claude, which is ignored. Do not use
   `git stash` or another operation that can lose content. Remove the worktree and its branch once
@@ -643,8 +643,9 @@ git checkout main && git pull --ff-only && git branch -D <branch>
   a record carried by a message alone rides on a commit that changes a file. So **neither a commit message nor a document cites the
   SHA of a commit of its own branch**: name that commit by its subject. A SHA already on main may
   be cited. `cargo klarch commits` refuses such a citation, per
-  `design@core@branch-shas-are-refused`. Its home is
-  `design@knowledge-architect@no-branch-sha-is-cited`.
+  `design@core@branch-shas-are-refused`. Its homes are
+  `design@knowledge-architect@no-branch-sha-is-cited` and
+  `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
 - The local branch is deleted with `-D`: its commits are not ancestors of main, since their SHAs
   differ.
 - A merge to main publishes nothing. A release is a separate procedure, per

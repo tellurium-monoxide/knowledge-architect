@@ -645,7 +645,7 @@ Shape. The skill states each point with the judgement it needs, and an axis's se
    session reads the whole diff before each commit. Each commit message records what it applied:
    what was audited, at which commit, the counts, and each finding's outcome. A run that changes no
    file leaves no commit, since a commit that changes no file does not reach main, per
-   `design@knowledge-architect@no-branch-sha-is-cited`; its record is then the report to the owner.
+   `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`; its record is then the report to the owner.
 8. **The re-check.** Fresh auditors over the same groups, after the edits, each briefed as in point
    4 and also given the entries and rules the owner ruled to keep, as a file in its scratch
    directory. Each writes its drafts as in point 4. A draft that finds a rule failed, and is not on

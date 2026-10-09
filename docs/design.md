@@ -20,10 +20,7 @@ so a directory named `knowledge-architect` would collide with the root: a run ov
 laid out that way stopped in phase 1, reporting that the name "names 2 anchors". So a published
 crate may sit in a directory named by what it does rather than by its package, crates/core for the
 package knowledge-architect, and a future split of the core follows the same rule, as crates/core
-and crates/cli. The cost: a reference says `core` where cargo says `-p knowledge-architect`. The
-owner kept the head to this: "only the knowledge of not naming a component `knowledge-architect`
-and accepting directories for crates that are not named against published packages deserves the
-record".
+and crates/cli. The cost: a reference says `core` where cargo says `-p knowledge-architect`.
 
 ### The installed text lives in its own crate, which the checker depends on `##two-crates`
 
@@ -155,7 +152,7 @@ A version stricter than a patch never reaches a project through a plain `cargo u
 project can therefore tell from the version alone whether moving to it may require work, per
 `goal@knowledge-architect@any-project-can-adopt-it`.
 
-### The changelog records what a consumer must plan for, one entry per change that passes a test `##changelog-entries`
+### The changelog records what a consumer must plan for: one entry per change that passes a test, under released sections whose content never changes `##changelog-entries`
 
 An entry of CHANGELOG.md is written for a consumer planning a move to the version. It exists when
 the change passes one of three tests, and sits under the subsection of that test:
@@ -253,15 +250,15 @@ statement false until a repair lands. The procedure is
 
 - All work happens on a branch. Once it holds a first commit, it is pushed and a draft pull
   request is opened. CI does not run on a draft.
-- The branch is rebased on main before review and merge, and reviewed before any merge. A repair
-  from a review is a new commit, so that no history is edited for it; a repair that would leave an
-  earlier commit failing the per-commit rule below is folded into the earliest commit it repairs,
-  and the commit recording the review says what was folded. Where every repair was folded, no
-  repair commit is left to carry that record, and a commit of its own would change no file, which
-  the rebase merge drops; the record goes into the message of the branch's last commit, by a
-  reword with a clean tree. The rule exists to avoid history
-  edits, not to keep repairs apart, and the owner's reason for the exception is that this
-  repository keeps rewriting its checker, so a repair that changes what it judges is no rare case.
+- The branch is rebased on main before review and merge, and reviewed before any merge. A review
+  repair lands as `design@agent-skills@review-repair-appended-or-folded` decides: appended, and
+  folded where appending leaves an earlier commit failing the per-commit rule below. Where every
+  repair was folded, no repair commit is left to carry the record of the review, and a commit of
+  its own would change no file, which the rebase merge drops, per
+  `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`; the record goes into
+  the message of the branch's last commit, by a reword with a clean tree. The owner's reason the
+  fold applies here is that this repository keeps rewriting its checker, so a repair that changes
+  what it judges is no rare case.
 - **Every commit of a branch passes the check under the branch tip's checker**, as
   `design@core@a-commit-message-is-a-document` decides. So work whose intermediate trees cannot
   pass lands as one commit, squashed before review.
@@ -291,7 +288,7 @@ A commit is pushed only after `commits` has passed on it, since a failing messag
 branch is what a later fetch or review reads. The push runs in a command of its own, or behind
 `&&` on the bare check: after `;`, or after a pipe, the shell runs it whatever the check found.
 
-### No text cites the SHA of a commit of its own branch, and a record carried by a message rides on a commit that changes a file `##no-branch-sha-is-cited`
+### No text cites the SHA of a commit of its own branch `##no-branch-sha-is-cited`
 
 GitHub's rebase merge gives the branch's commits new SHAs, even when the branch is already up
 to date with main. Its documentation says it "always updates the committer information and
@@ -303,7 +300,9 @@ commits reached main with the same trees, the same author, a new committer and n
 of a commit of its own branch: it names that commit by its subject. `commits` refuses such a
 citation, under this repository's manifest.
 
-**A commit that changes no file does not reach main.** The rebase merge drops it: pull request
+### A record carried by a commit message rides on a commit that changes a file `##a-record-rides-on-a-commit-that-changes-a-file`
+
+**A commit that changes no file does not reach main.** GitHub's rebase merge drops it: pull request
 #42 of this repository held eight commits, two of them made with `--allow-empty` to record the
 owner's rulings, and main received the other six. `gh api
 repos/tellurium-monoxide/knowledge-architect/pulls/42/commits --jq length` against the commits
@@ -396,7 +395,8 @@ The file is the record of the rulings, so every finding of a received file reach
 history keeps, per `goal@knowledge-architect@the-workflow-improves-through-real-use`. Its nearest
 rival, the ledger of outcomes in the message of the commit that handles the first finding, fails
 on a file whose findings all end in no change: that commit changes no file, and the rebase merge
-drops a commit that changes no file, per `design@knowledge-architect@no-branch-sha-is-cited`.
+drops a commit that changes no file, per
+`design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
 
 ### An analysis of a received file names nothing of another project beyond what that file holds, and no path or design head of it `##analysis-names-nothing-of-another-project`
 

@@ -129,18 +129,6 @@ and grows long. That argument is the owner's: "naming an "action" makes the skil
 sentences, which is weird and often too long". The rule binds a project's own skills too, through
 the agent-configuration skill.
 
-### The design skill is named design `##design-skill-name`
-
-The skill is installed as `skill@knowledge-architect-design`, under
-`design@agent-skills@naming-rule`. The installer's prefix places it inside knowledge-architect, so
-the name is never read alone, and there is not much need to tell it apart from visual design. It names no domain: the owner uses the skill for programming, for game design, and
-for designing names and rules, always to advance a project. Three names lost: "project-design",
-because in project-management usage it often means shaping a project's plan, which the planning
-skill does; "decision-design", withdrawn by the owner, since the skill does not design decisions;
-and "discussing-design-decisions", which read as a sentence.
-"design" also names the design register, which the design skill does not write: in prose, the noun
-that follows, "the design skill" or "the design home", tells them apart.
-
 ### Bounded work takes a path inside the design skill, after its grounding `##bounded-path-in-design`
 
 Whether a request is a design question or bounded work, a clear requirement whose main risk is
@@ -809,13 +797,15 @@ ruling before the work rather than rework after it, per
 `design@agent-skills@additions-need-real-use`: in thaum, the standing-state reviewer found, after
 the work, issues the changes bore on and tripwires that had fired, especially in the slices of large
 milestones, and the repairs and decisions this forced could have been taken before the design and
-the implementation, in the owner's account. The audit reads every issue kind because those late
+the implementation. The owner's account: the reviewer "is too often finding issues that are
+impacted by the changes or triggered tripwires that bear on the design 'after the work', especially
+on large work that is part of big milestones in thaum". The audit reads every issue kind because those late
 findings included issues the changes touched, not only fired tripwires. The slices of thaum whose
 reviews found such entries had their audits before the installed planning skill told an audit to
 read the tripwires and the deferred issues, and the reviews of the two slices audited after it
 found no entry missed. The
-owner judged that the work before that change did not differ from the work just before this
-search, so the evidence stands; a stream of audits that read the standing entries in the session
+owner judged the earlier work comparable, "Pre 0.2.0 was not that different from right before our
+work.", so the evidence stands; a stream of audits that read the standing entries in the session
 and miss none would weaken it. A search at the reviews of
 a plan document lost to a second search when convergence is proposed, before the premortem: those
 reviews run only where a discussion wrote a plan document, and a search at convergence covers a
@@ -1151,7 +1141,7 @@ appended repair leaves the earlier commits failing, and the project's rule and t
 legal move; the repair is then folded into the earliest commit it repairs, with a clean tree,
 confirmed to have lost no content. The record of the review says what was folded, so the landing
 history still says what the review found. The rule exists to avoid history edits, not to keep a
-repair apart from what it repairs.
+repair apart from what it repairs, which is the owner's reason for it.
 
 ### A plan document's landing is not tied to its work's, except before work that changes what the per-commit gate checks `##plan-landing-is-not-tied-to-its-work`
 
@@ -1670,8 +1660,9 @@ owner answered: "Q5: yes".
 The setup skill does not finish a Component without at least one goal, stated with the owner.
 A Component with no goal gives its design nothing of its own to be judged against, and a goal that
 is a Component's responsibility left unstated is one nobody is responsible for, against
-`goal@knowledge-architect@the-owner-decides`. What those goals are is
-`design@agent-skills@goal-placement`. Nothing checks it mechanically yet:
+`goal@knowledge-architect@the-owner-decides`. Where those goals sit is
+`design@agent-skills@goal-placement`, and how a published Component's goals relate to the root's is
+`design@agent-skills@published-component-goals-refine-a-root-goal`. Nothing checks it mechanically yet:
 `issue@core@a-component-states-at-least-one-goal`.
 
 ### A decision that relies on the checker says so, and references none of its decisions `##relying-on-the-checker`
@@ -1728,17 +1719,21 @@ A goal is written in the goals home of the Component whose responsibility it is 
 when decisions of other Components serve it too: a goal of any Component can be referenced from
 anywhere, per `design@core@an-entity-belongs-to-its-anchor`, so serving it does not require moving
 it. The rule is the owner's: "goals stay confined to the main component whose responsibiliy is
-fulfilling them". The root's goals state what the project provides to its consumers. A published Component
+fulfilling them". Placing
+each goal in the smallest scope serving it lost to the owner's argument that it "might lead to
+excessive promotion of goals into the root documents", and would leave a goal with no Component
+responsible for it, against `goal@knowledge-architect@the-owner-decides`.
+
+### A published Component's goals are encouraged to refine a root goal, and reference it `##published-component-goals-refine-a-root-goal`
+
+The root's goals state what the project provides to its consumers. A published Component
 serves those consumers, so its goals are encouraged to be sub-goals that refine a root goal, more
 specific than the root states, and each such goal references the root goal it refines. The owner's
 reason: "components that are published are serving external consumers, and project goals are what
 describe what we intend to provide to external consumers"; "encouraged" is the owner's own
 softening of "nearly always". A Component that
 serves only the project, such as a maintenance tool, serves all of the root's goals at once, in the
-owner's words "they serve all of them all the time", and its goals need not refine one. Placing
-each goal in the smallest scope serving it lost to the owner's argument that it "might lead to
-excessive promotion of goals into the root documents", and would leave a goal with no Component
-responsible for it, against `goal@knowledge-architect@the-owner-decides`.
+owner's words "they serve all of them all the time", and its goals need not refine one.
 
 ### A goal need not be met yet, and an unmet goal no plan schedules is an open `todo` issue `##an-unmet-goal-is-intent`
 

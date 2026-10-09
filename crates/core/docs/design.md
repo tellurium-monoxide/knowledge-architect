@@ -1191,12 +1191,19 @@ The test is what keeps `--fix` safe to run after every edit, which serves
 `goal@knowledge-architect@agents-work-without-drift`. `tripwire@core@fix-makes-a-choice` watches
 it.
 
-### `--fix` repairs the installed agent files the check reports, not only the generated files `##fix-scope`
+### `--fix` admits a repair only when it passes the safe-fix test `##fix-scope`
 
-Two kinds of finding pass `design@core@safe-fix-definition`: an installed file missing, differing or
-no longer shipped, and a stale or missing generated file. Every other repair touches git, such as
-staging a deletion, or a hand-written file, such as the root CLAUDE.md's primer import, or is a
-choice. The installed set is repaired exactly where the installed-file check reports it, judged from
+`--fix` applies a repair only when it passes `design@core@safe-fix-definition`. Passing the test
+makes a repair admissible, not owed: each kind of repair `--fix` applies is a member added on
+purpose. The direction of the rule is the owner's, given against a title stating that `--fix`
+repairs every finding whose repair passes the test: "I'd word it the other way: '--fix only admit
+repairs when they pass the safe-fix test'. Otherwise, it becomes a source of defects when we might
+have never intended to cover some possible repairs."
+
+`--fix` applies two kinds of repair today: an installed file missing, differing or no longer
+shipped, and a stale or missing generated file. Every other repair touches git, such as staging a
+deletion, or a hand-written file, such as the root CLAUDE.md's primer import, or is a choice. The
+installed set is repaired exactly where the installed-file check reports it, judged from
 git's listing after normalising line endings: a file git does not list, such as an ignored file in
 the namespace, is never touched. The generated files alone, the rival, lost: repairing the installed set costs little, and it removes the
 install-then-index sequence from an upgrade.
@@ -1475,7 +1482,7 @@ everywhere, lost: every name for it stutters or names a provider, and it carries
 `path@core@docs/rejected-alternatives.md`. Serves `goal@knowledge-architect@any-project-can-adopt-it`:
 one grammar, the same in every project, with a global namespace naming no anchor.
 
-### Every level-two heading of a skill, an agent, the primer and the root CLAUDE.md is a section, and owes a slug `##section-homes-carry-slugs`
+### Every level-two heading of a section home of the harness is a section, and owes a slug `##section-homes-carry-slugs`
 
 A section home is a skill's `SKILL.md`, an agent's file, the primer and the root CLAUDE.md, under
 the `claude` harness. The rule of `design@core@an-entry-is-a-heading-at-the-register-level` holds
@@ -1486,7 +1493,9 @@ unique within its document. A heading-shaped line inside the frontmatter block, 
 reads that block, is no heading.
 
 - **A section slug names a section apart from its position**, where a paragraph number goes stale
-  at every insertion. A slug of the installed text is an interface: a rename dangles a consuming project's
+  at every insertion. The rule, for a skill's sections, is the owner's proposal: "Better than
+  paragraph numbers, which might get stale at any time. Use this in the published skills to refer
+  between each other." A slug of the installed text is an interface: a rename dangles a consuming project's
   citations of it, which `design@knowledge-architect@changelog-entries` owes a Migration entry for.
   The owner, on that consequence: "The consequence you stated is accepted and positive in my view.
   This is the fragility I mentionned at the beginning with using paragrap numbers."
