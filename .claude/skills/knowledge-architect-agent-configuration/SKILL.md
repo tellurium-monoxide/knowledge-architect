@@ -100,10 +100,12 @@ task, so it loads for none. The cause looks like the wording of the description,
 was scoped wrong before the description was written: fix the scope, not the wording. Enumerating the facets of one activity is the opposite move and is
 correct. The test is whether a single task can want all of them at once.
 
-**A skill is self-sufficient.** It restates every piece of knowledge its activity needs, such as a
-build command, a dispatch table or a common trap, even where it is stated elsewhere. It points only
-to **task material**, data that varies per instance, and to **a named prerequisite skill**, one
-complete instruction rather than a fragment to reassemble. The test, per pointer: could a session complete this activity correctly
+**A skill is self-sufficient.** It holds every piece of knowledge its activity needs, such as a
+build command, a dispatch table or a common trap, even where it is stated elsewhere: restated where
+the restatement is no longer than a pointer, and otherwise by a pointer to a complete home read
+whole, per `primer@where-knowledge-goes`. It points only to **task material**, data that varies per
+instance, to **a named prerequisite skill** or a section of the primer, one complete instruction
+rather than a fragment to reassemble. The test, per pointer: could a session complete this activity correctly
 without opening it? If not, the content belongs in the skill. What this guards against is
 dilution rather than length: each pointer is an extra read a session must remember, and the more
 there are, the less likely all are followed.
