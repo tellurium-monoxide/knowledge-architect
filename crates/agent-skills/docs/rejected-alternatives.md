@@ -123,7 +123,8 @@ homes held when it was replaced, by four subagents, it admitted nearly every hea
 reading, "governs future work", and almost none under a narrow one, two of them reporting on their
 own that it does not discriminate. Designed work that is not built has its home in a plan document,
 per `design@agent-skills@design-home-is-built-intent`, so the test's narrow reading had nothing left
-to admit but a policy, which the test that replaced it admits as a decision with no site.
+to admit but a policy, which the test that replaced it admits as a decision that no code and no
+text of the project states.
 
 **A manifest declaration in the published checker that reads only the `%%` lines of a path** — lost
 to `design@agent-skills@shipped-text-line-comments`. `live`. It would have checked the comments
