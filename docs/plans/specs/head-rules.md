@@ -35,11 +35,12 @@ leaves the repository in the commit that completes its harvest.
   The discussion begins at the owner's message that opens "I'd like to discuss the issue
   a-head-states-the-instance-built-rather-than-the-principle." and ends at the owner's message
   that opens "I agree with primer-reread-before-recording as you proposed." It holds 5 owner
-  messages and 4 agent replies headed "Round 1" to "Round 4". Below, "round 0" is the owner's
-  opening message, "round n" is the agent's reply headed "Round n", and "the reply to round n" is
-  the owner's message after it. Find the file by that opening message, not by its name. The status
-  messages the agent wrote between rounds, while audits returned, are called "the grounding of
-  round n" for the round they precede.
+  messages and 4 agent replies headed "Round 1" to "Round 4". After the reviews of this spec, the
+  owner ruled on its defaults in a sixth message: "All defaults approved, proceed." Below,
+  "round 0" is the owner's opening message, "round n" is the agent's reply headed "Round n", and
+  "the reply to round n" is the owner's message after it. Find the file by that opening message,
+  not by its name. The status messages the agent wrote between rounds, while audits returned, are
+  called "the grounding of round n" for the round they precede.
 - The grounding used read-only audits by subagents, whose tables were scratch files and are not in
   the tree. Every figure below names the audit that took it. A figure is taken again by a fresh
   read-only subagent that reads every head of the design homes named and applies the definition
@@ -1410,8 +1411,15 @@ default it names still awaits, unless the owner has ruled.
 
 ## Defaults awaiting the owner
 
-D1 left the list: the owner's word on `thread@head-rules@primer-reread-before-recording` was given
-against a checkpoint table that held the addition, so it closed it.
+None. D1 to D15 are under the subsection below.
+
+### The defaults the owner ruled on
+
+D1 left the list after the reviews: the owner's word on
+`thread@head-rules@primer-reread-before-recording` was given against a checkpoint table that held
+the addition, so it closed it. Fourteen defaults stood after the reviews of this spec, D2 to D15.
+The owner ruled on all fourteen in one message after them: "All defaults approved, proceed." Each
+is applied in the sections it names, and is kept here with its reason.
 
 - **D2**, on `criterion@head-rules@c10`: the satisfaction line is "met on the owner's reading, the
   count of heads accepted to rise", a line the owner has not seen. Default: as written.
