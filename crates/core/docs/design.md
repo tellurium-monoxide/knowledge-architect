@@ -199,9 +199,9 @@ a commit, so a third variant would make every extension write an arm reading the
 the second. That departs from what `design@core@ne-minimal` asks of a new tree, that every
 extension say how it reads it, and `design@core@trait-defaults` records the cost: an extension
 that maps a snapshot to its commit-mode handling runs, under `--staged`, only what it runs for a
-commit. thaum's rules extension lists its `changes` and `corpus` checks as not run there; one
-that lists nothing skips them silently. The owner accepted that cost for one kind of snapshot
-over two. An extension that wants more under
+commit. thaum's rules extension lists its `changes` and `corpus` checks as not run there, and the
+owner accepted that cost, shown in that form; an extension that lists nothing skips them
+silently. An extension that wants more under
 `--staged` reads `Snapshot::revision()`.
 
 ### An extension scans the core's parse on its own, and the core's model carries nothing for it `##an-extension-builds-its-own-model`

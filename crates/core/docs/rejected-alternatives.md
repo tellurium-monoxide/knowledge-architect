@@ -500,4 +500,4 @@ anything.
 **`index --staged` writing the staged rows into the working-tree file** — lost to
 `design@core@index-staged-write`. `live`. After it, plain `check` fails, since the working-tree
 file no longer matches the working tree, and `check --staged` fails until the file is staged. The
-owner holds the winner not definitive.
+owner approved the winner while calling it not definitive.

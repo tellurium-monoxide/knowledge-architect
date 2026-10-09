@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-22 entries
+23 entries
 
 | kind | title |
 | --- | --- |
@@ -13,6 +13,7 @@
 | deferred | [The agent configuration serves one provider's harness](configuration-for-several-agent-providers.md) |
 | deferred | [A project cannot reference an entry of another project](cross-project-references.md) |
 | observation | [A lint written twice on one line of a message is reported once or twice, by which tree holds it](a-message-lint-is-deduplicated-in-one-tree-only.md) |
+| observation | [Plain `check` under a sparse checkout reports every file outside the cone as an unstaged deletion](check-under-a-sparse-checkout-reports-every-file-outside-the-cone.md) |
 | observation | [`index --staged` clears the assume-unchanged bit of the entry it stages, and maybe its skip-worktree bit](index-staged-clears-an-entrys-flags.md) |
 | question | [A project that uses the checker without the workflow still carries every workflow home](a-checker-only-project-carries-the-workflow-skeleton.md) |
 | question | [An extension reads its manifest table as a `toml::Value`, so the core's toml version is part of the public API](manifest-table-exposes-the-toml-crate.md) |
