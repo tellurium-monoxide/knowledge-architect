@@ -170,19 +170,28 @@ That is not a lesser home: the comment is read by every session that touches the
 is not, and the commit carries the argument. A reason that fits in one comment at one site, about
 that site's own code, fails test 2.
 
-**A decision that creates a design head, contradicts a statement of one, its argument included,
-or extends one beyond what its title states, and was not argued under
-`skill@knowledge-architect-design`, goes back to that skill before its text is written.** This is
-the case of a decision met during another task and settled there, by the owner's word or by the
-session's own choice. The design skill's in-change path keeps the deliberation in the commit
-message, so the task needs no plan document and no new session. For the third case, rewrite the
-head's title to state the addition as well, and apply the title test below to it: if no title
-passes, the addition gets a head of its own. An addition within what the title states, which
-contradicts nothing, is recorded directly, with the owner's words quoted in the commit where they
-gave a ruling.
-A change that relocates or rewords recorded decisions, a split of a head included, and adds or
-removes none, is not a decision: it needs no design skill, and the routing and
-fidelity-of-relocation review axes judge that it adds or removes none.
+**A decision that creates a head, contradicts a statement of one, its argument included, or adds
+a member the head's argument does not cover, goes to the design skill before its text is
+written**, unless it was argued there, under `skill@knowledge-architect-design`. This is the case of
+a decision met during another task and settled there, by the owner's word or by the session's own
+choice. The design skill's in-change path keeps the deliberation in the commit message, so the task
+needs no plan document and no new session. An addition that answers another question than the
+head's takes a head of its own, by the test of one decision per head below. A member the head's
+argument covers is recorded directly, routed as the next paragraph says; where the owner approved
+it, the approval is quoted in the commit, not in the head. A change that relocates or rewords
+recorded decisions, a split of a head included, and adds or removes none, is not a decision: it
+needs no design skill, and the routing and fidelity-of-relocation review axes judge that it adds or
+removes none.
+
+**A new member of a head is routed by the head's ground.** A member is what a head's rule admits
+and its body does not yet name. Where the part of the head that admits it stands on its argument,
+and the argument covers the member, it is recorded directly. Where that part's ground is the
+owner's words and they state the rule, the member is within the ruling and is recorded directly,
+the words quoted as before. Where the owner's words name the members, it goes to the owner as one
+proposal: one message stating the rule, the member and a default, and nothing of it is written
+before the owner's word; it is no change of the decision, so it owes no reversal. A member the rule
+does not admit, or that the argument does not cover, is a change of the decision, and goes to the
+design skill, as the backstop says.
 
 ### What a head holds
 
@@ -190,6 +199,22 @@ fidelity-of-relocation review axes judge that it adds or removes none.
 the decision it derives from, as references; the measurement it rests on; the fact that defeated
 its nearest rival. **The test: if this premise turned false, would the decision have to be argued
 again? If yes, it is in the head.** If no, it is deliberation.
+
+**A head stands on its argument, and cites the owner only for what came from the owner.** Most
+decisions are proposed, argued over their costs and rivals, and approved by the owner. The head
+records such a decision on that argument, with its costs and rivals in its body or in the rejected
+alternatives. An approval is not a ground, whatever its words ("approved", "agreed", "all defaults
+approved", "accepted the cost"). It stays in the deliberation: the plan document or the commit
+message. The owner's words are a ground, quoted, only where the decision came from the owner: the
+owner proposed it, the owner chose where the argued rivals did not settle it, or it rests on a
+premise only the owner can state, such as an intent, a plan or a weighing the owner made. Test 4 is
+such a case. In a head that holds a part of each, the part that came from the owner says so, and
+the rest stands on its argument.
+
+**What the ground means to a later session.** A head that stands on its argument is reversed by a
+better argument, which the owner then approves. A head whose ground is the owner's words is
+reversed by the owner, or by a defeated premise of those words. An argument against it goes to the
+owner as a question about their intent.
 
 **The deliberation is not copied into the head.** Where it is kept, and how a reader finds it,
 is `skill@knowledge-architect-decision-recording@three-homes`.
@@ -250,8 +275,24 @@ ordinary prose.
 **A title states a decision only while it is false of the nearest rival it beat.** A title that the
 losing alternative would make true names a subject, not a decision: "The configuration is read
 once, at start-up" is false of a configuration read again on every request, and "The configuration
-is read with care" is true of nearly any rival. A head that carries several decisions passes the test
-for each one, or is split.
+is read with care" is true of nearly any rival.
+
+**A title states the rule that decided, not the list of what it admits today.** When a decision
+admits members (fixes, kinds, verbs, sections, consumers), or picks a mechanism to meet a
+requirement, the title states the property that admits a member, in the argument's own terms, and
+the body names the members built as what the rule admits today. A count or a list in a title goes
+stale at the next member, and every later member then reads as a change of the decision. A set
+closed on purpose keeps its list in the title, with the sentence that argues the closure in the
+body. A title states no more than its argument argues.
+
+**A head holds one decision.** Two statements are one decision when they answer one question and
+lose to the same nearest rival. A rule's exception, its parameter and its delivery belong to its
+head, since none means anything without the rule. Two statements that lose to different nearest
+rivals, or whose arguments share no premise, are two decisions. Each takes a head of its own when
+it passes an entry test, and a comment at its code when it passes none. A title joined by "and"
+over two decisions shows a bundle. Rewording the title to state both does not make them one. A
+member of a set the title's rule admits is no decision, so a member missing from a title is no
+finding.
 
 **A head written from a decision the owner approved is read against that approval before it is
 written.** The title and the body state the position as the owner saw it, in a plan document's
@@ -263,6 +304,11 @@ the owner, as a change of the decision.
 only part a reader sees, in a citing document or in code, and the title is what a document outline
 shows. A slug or a title that misdescribes its decision misinforms every reader, or undermines the
 decision it names, so rename it even when that means rewriting every reference in the project.
+
+**A head that a change touches is brought to these rules in that change**: its title to the rule it
+argues, each decision it bundles to a head of its own, its ground to its argument. Where bringing it
+to the rule would widen what the owner's words in it approved, as a title moved from the members
+the owner named to the rule, the change goes to the owner as one proposal, as a new member does.
 
 ## The installed skills `##installed-skills`
 
