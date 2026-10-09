@@ -34,7 +34,7 @@ to judge is never room to act against an instruction.
 ## Intent and claims {{slug:intent-and-claims}}
 
 - **A design home is built intent**: the design as built and its reasons, and the decisions that
-  no work implements and no plan document holds, recorded when made. Design that is decided and not built is in a plan
+  no work implements and that are not part of any spec, recorded when made. Design that is decided and not built is in a plan
   document until it lands. Check the code against a design home, never the other way. A divergence
   is a defect in one of them: say which, open an issue, and stop. A design home can be wrong, and
   it still prevails over the code until the issue closes. It closes when the code changes to meet
