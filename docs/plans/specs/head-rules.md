@@ -37,7 +37,8 @@ leaves the repository in the commit that completes its harvest.
   a-head-states-the-instance-built-rather-than-the-principle." and ends at the owner's message
   that opens "I agree with primer-reread-before-recording as you proposed." It holds 5 owner
   messages and 4 agent replies headed "Round 1" to "Round 4". After the reviews of this spec, the
-  owner ruled on its defaults in a sixth message: "All defaults approved, proceed." Below,
+  owner ruled on its defaults in a sixth message, "All defaults approved, proceed.", and on the
+  defaults of the last review in a seventh, quoted under D16 to D18. Below,
   "round 0" is the owner's opening message, "round n" is the agent's reply headed "Round n", and
   "the reply to round n" is the owner's message after it. Find the file by that opening message,
   not by its name. The status messages the agent wrote between rounds, while audits returned, are
@@ -1458,28 +1459,7 @@ default it names still awaits, unless the owner has ruled.
 
 ## Defaults awaiting the owner
 
-Three, D16 to D18, from the last transcript review of the branch. D1 to D15 are under the
-subsection below.
-
-- **D16**, from the last transcript review, on D10: the first wording of the ruled D10 had the head
-  recording the in-change reread give the owner's ruling as its ground. The ruling was a batch
-  word, "All defaults approved, proceed.", which `thread@head-rules@head-ground-is-the-argument`
-  says is no ground, and D10 as the owner saw it ruled only that the reread is built. Default: the
-  head records the reread on its argument, `argument@head-rules@a83` and `argument@head-rules@a84`,
-  and states that it rests on a prediction; an issue entry, opened with the harvest, states what a
-  real session would have to show, as `design@agent-skills@additions-need-real-use` asks of a
-  predicted behaviour.
-- **D17**, from the last transcript review, on `thread@head-rules@restatement-size-test`: round 3's
-  sub-default, "a bare fact (a path, a name, a command) needs no pointer beside it", was not in the
-  delta row the owner ruled on; the owner's word named "this wording", whose sentence "A directive
-  sentence carries its pointer beside it" implies it. The spec narrows the row of
-  `design@agent-skills@a-reference-claims-a-revisit` on it. Default: the sub-default holds, and the
-  row is narrowed.
-- **D18**, from the last transcript review, on `thread@head-rules@restatement-size-test`: step 1
-  adds a sentence to the approved wording, "for installed text, the home a pointer names is
-  installed text", answering a design-conformance finding against
-  `design@agent-skills@shipped-text-cites-no-entry`. It changes which home a pointer of installed
-  text names. Default: the sentence is added.
+None. D1 to D18 are under the subsection below.
 
 ### The defaults the owner ruled on
 
@@ -1489,6 +1469,31 @@ the addition, so it closed it. Fourteen defaults stood after the reviews of this
 The owner ruled on all fourteen in one message after them: "All defaults approved, proceed." Each
 is applied in the sections it names, and is kept here with its reason.
 
+D16 to D18 came from the last transcript review of the branch; the owner ruled on them in a
+seventh message, quoted under each.
+
+- **D16**, from the last transcript review, on D10: the first wording of the ruled D10 had the head
+  recording the in-change reread give the owner's ruling as its ground. The ruling was a batch
+  word, "All defaults approved, proceed.", which `thread@head-rules@head-ground-is-the-argument`
+  says is no ground, and D10 as the owner saw it ruled only that the reread is built. Default: the
+  head records the reread on its argument, `argument@head-rules@a83` and `argument@head-rules@a84`,
+  and states that it rests on a prediction; an issue entry, opened with the harvest, states what a
+  real session would have to show, as `design@agent-skills@additions-need-real-use` asks of a
+  predicted behaviour. The owner: "D16: it stands on an argument, but you can skip the issue.
+  There's no way to show that the workflow is not functional without it once it is built,
+  anyway." Ruled: the head stands on its argument and says it rests on a prediction; no issue is
+  opened.
+- **D17**, from the last transcript review, on `thread@head-rules@restatement-size-test`: round 3's
+  sub-default, "a bare fact (a path, a name, a command) needs no pointer beside it", was not in the
+  delta row the owner ruled on; the owner's word named "this wording", whose sentence "A directive
+  sentence carries its pointer beside it" implies it. The spec narrows the row of
+  `design@agent-skills@a-reference-claims-a-revisit` on it. Default: the sub-default holds, and the
+  row is narrowed. Ruled: "Agreed on D17 and D18 defaults."
+- **D18**, from the last transcript review, on `thread@head-rules@restatement-size-test`: step 1
+  adds a sentence to the approved wording, "for installed text, the home a pointer names is
+  installed text", answering a design-conformance finding against
+  `design@agent-skills@shipped-text-cites-no-entry`. It changes which home a pointer of installed
+  text names. Default: the sentence is added. Ruled: as D17.
 - **D2**, on `criterion@head-rules@c10`: the satisfaction line is "met on the owner's reading, the
   count of heads accepted to rise". Ruled: as written.
 - **D3**, on `thread@head-rules@one-home-for-head-rules`: its scope is the rules on heads; the
