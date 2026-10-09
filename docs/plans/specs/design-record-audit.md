@@ -561,7 +561,7 @@ applying a test measure how agents read it, not whether it is right".
 ## New names, in one place
 
 - the audit skill: `path@agent-skills@content/skills/project-audit/SKILL.md`, per D1.
-- the design-record auditor: `planned@agent-skills@content/agents/design-record-auditor.md`.
+- the design-record auditor: `path@agent-skills@content/agents/design-record-auditor.md`.
 
 ```text
 the audit skill, installed as  knowledge-architect-project-audit
