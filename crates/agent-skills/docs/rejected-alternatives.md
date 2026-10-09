@@ -173,14 +173,21 @@ the head itself. It is kept here because a doubt remains:
 `tripwire@agent-skills@member-beyond-the-argument` watches whether a session records a member its
 head's argument does not cover, and this alternative is the candidate if it does.
 
-**A sweep that brings every head stating the instance as its rule to its rule at once** — lost to
-`design@agent-skills@existing-heads-on-touch`. `live`. An audit of this repository's design heads
-found about nine of them whose approval named their members, so the sweep would put that many
-widenings to the owner at once; the count is re-taken by a fresh read-only audit of the heads and
-the words that approved each.
-
 **A head's title stating the instance built, the members or the mechanism that exist** — lost to
 `design@agent-skills@title-states-the-rule`. `live`. An audit of this repository's design heads at
 commit c282b00 found the instance stated as the rule in 27 of its 189 heads, and its history holds
 rewrites of such heads, with their slugs and tripwires renamed, that a member the argument already
 admitted forced; the count is re-taken by a fresh read-only audit of the heads at that commit.
+
+**An audit method with no calibration and no re-check** — lost to `design@agent-skills@audit-method`.
+`live`. On the first run of the design-record axis on this repository, the re-check of each pass
+found violations the pass had missed or made, and two agents read one shared sample entry two ways
+in two of the samples; a method that trusted one reading per entry would have left both. The run's
+commits, found with `git log --grep='design-record axis'`, carry the counts.
+
+**The repair of a head only when a change touches it** — lost to
+`design@agent-skills@whole-record-repair-at-a-migration`. `live`. It costs the owner one proposal per
+head, at the moment a session already edits it, where a project audit puts every widening of the
+record to the owner at once: the first run on this repository put 72 items to the owner over three
+passes. It is kept because a doubt remains on that cost, and it is the candidate if a project's
+owner finds an audit's lists too long to read.

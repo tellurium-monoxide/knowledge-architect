@@ -33,7 +33,8 @@ costs, without re-deriving the argument or reversing a decision blind.
 ## AI agents get a complete workflow that raises the quality and the efficiency of their work `##agents-get-a-complete-workflow`
 
 The workflow covers setting up a project and its goals, design discussion, planning, recording
-decisions, tracking open issues, review, and a retrospective. It targets projects where agents do
+decisions, tracking open issues, review, auditing a whole project on one aspect, and a
+retrospective. It targets projects where agents do
 most of the development. It aims for fewer review rounds, less re-derivation of past arguments, and
 fewer decisions reversed by accident. Each instruction says what it asks plainly enough to
 follow without guessing what it means, and no two parts contradict each other. What no instruction

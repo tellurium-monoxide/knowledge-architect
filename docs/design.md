@@ -163,7 +163,9 @@ the change passes one of three tests, and sits under the subsection of that test
   to its own files because of the new skills is one. An entry that adds a required document or
   home says it holds for every project the consumer's tests build, mock projects included: a
   consumer whose extension tests the checker over its own fixture projects otherwise meets the
-  change as failing tests.
+  change as failing tests. An entry for a change of the rules a project's recorded content must meet cites
+  the audit axis that brings that content to them, as a reference to the axis's section of the
+  audit skill, so the move of the pin runs it, per `design@agent-skills@audit-triggers`.
 - **New features**: something a consumer can start using, in one line; the documentation carries
   the detail.
 - **Workflow**: a change to the installed skills that a person watching agent sessions would

@@ -63,6 +63,10 @@ subsection is omitted.
 - `cli`, minor: `index --staged` writes the generated files the staged tree needs into git's index,
   and touches no working-tree file, for a commit of part of the working tree.
 - `library`, minor: `extension::Tree` is `Clone` and `Copy`.
+- `agent-skills`, minor: `skill@knowledge-architect-project-audit` audits a whole project on one
+  axis, as opposed to a review of a diff, and its first axis, the design-record axis, re-applies
+  the rules on design heads and on rejected alternatives to every entry; the agent
+  `agent@knowledge-architect-design-record-auditor` drafts its verdicts, one per entry.
 
 ### Workflow
 
@@ -89,6 +93,12 @@ subsection is omitted.
   pointer to it, one sentence; a longer one is a pointer to its home, read whole. The routing
   reviewer reports a longer restatement, and the design skill's in-change path reads the section on
   design heads again before its grounding.
+- `agent-skills`, patch: entry test 2 counts each text that states an instruction as one site of a
+  decision about agent-facing text, so a decision one text states has one site, and its reason
+  lives beside the instruction rather than in a head.
+- `agent-skills`, patch: moving the pin runs the audit axis a Migration entry of a version crossed
+  cites, after the pin's commit, in a branch of its own; the milestone that moves an adopting
+  project's existing documents ends by running the design-record axis.
 
 ## 0.5.0
 
