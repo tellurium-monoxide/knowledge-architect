@@ -31,7 +31,7 @@ The gates, in cost order:
 ## What a run produces
 
 **Stdout must be a terminal or a file.** `gates` refuses to start when stdout is a pipe, per
-`design@gates@verdict-from-exit-codes`: a pipe's reader replaces the exit code and a filter drops
+`design@gates@gates-refuse-a-pipe`: a pipe's reader replaces the exit code and a filter drops
 lines. When the text is wanted, redirect: `cargo x gates > target/gates/run.txt 2>&1`. Under
 GitHub Actions (`GITHUB_ACTIONS=true`) a pipe is accepted, since the runner reads the exit code
 itself, and each gate is wrapped in `::group::` and, when it fails, one `::error` line, per

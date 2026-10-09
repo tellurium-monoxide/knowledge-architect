@@ -17,9 +17,8 @@ flags it parsed. The runner was shared, almost line for line, by this repository
 `goal@knowledge-architect@setup-brings-quality-tools` and `goal@gates@gates-from-a-list`: a project
 adopting the workflow gets gates refined over two projects instead of writing its own. A `gates` command of the
 checker's own binary lost: it would make the document checker run cargo, the linter and the
-tests, and a gate list declared in the manifest cannot carry a distiller. A published binary
-configured by a file lost on the same grounds, and leaves the project no place for its other
-repeated tasks.
+tests. A published binary configured by a file lost because it leaves the project no place for its
+other repeated tasks, and adds a configuration format a list in Rust does not need.
 
 ### A project holds its gate list, and the library offers a recommended one `##a-project-holds-its-gate-list`
 
@@ -29,17 +28,21 @@ recommended list of a Rust project that uses the checker, in cost order: the reb
 its flag, formatting, the document check, the commit messages of the branch, clippy, and the
 tests. It takes how the project runs its checker, a package and the arguments before the
 checker's command, and the main branch as git names it. A project adds, removes or reorders gates
-in the list it receives. The library depends on nothing of the checker: the root finder takes the
+in the list it receives, so a Rust project's list is the recommended one with its own edits, per
+`goal@gates@gates-from-a-list`. The library depends on nothing of the checker: the root finder takes the
 marker file's name from the caller.
 
-### The library owns the gates' flags and the set of distillers `##the-library-owns-the-flags`
+### The library owns the gates' flags `##the-library-owns-the-flags`
 
 The flags of a gates run are the library's `GatesArgs`, which derives clap's `Args`, so a project's
 binary flattens them into its own command and every project's gates take the same flags. clap's
-major version is therefore part of the library's interface, as it is of the core's. The distillers
-are a closed set, `Distiller`: a project chooses one for each gate and cannot add its own, so every
-distiller is tested here. A project that needs another distiller is a reason to add one to the
-library.
+major version is therefore part of the library's interface, as it is of the core's.
+
+### The distillers are a closed set the library holds `##distillers-are-a-closed-set`
+
+The distillers are a closed set, `Distiller`: a project chooses one for each gate and cannot add
+its own, so every distiller is tested here. A project that needs another distiller is a reason to
+add one to the library.
 
 ### One spawn helper captures a child's two streams through two pipes `##one-spawn-helper`
 
@@ -47,7 +50,10 @@ library.
 pipes into one buffer, optionally mirrors them live, and holds the best-effort output helpers
 every print goes through. The gates use it, and a project's own commands may: a new command calls
 it and never edits it. Reading both pipes concurrently is what prevents the deadlock where the
-child blocks writing a pipe nobody drains.
+child blocks writing a pipe nobody drains. Two pipes have none of the three losses a regular file
+shared by both streams showed: it lost output written through /dev/stdout and output of a
+descendant that outlives the child, and a killed run left the file behind to fail a later run, as
+the rejected alternative on it records.
 
 ### Every gate runs; nothing fails fast by default `##gates-run-all`
 
@@ -64,6 +70,8 @@ slow-test extraction sits between a child's exit status and the run's own: a bug
 handling can degrade what is printed, never flip a verdict. Printing itself is inside the
 contract: every stdout and stderr write is best-effort, so a write error truncates the report
 and never the run, the logs or the exit code.
+
+### Outside GitHub Actions, a gates run refuses a pipe on stdout `##gates-refuse-a-pipe`
 
 **Outside GitHub Actions, a gates run refuses a pipe on stdout before running anything.** The
 exit code is the run's product, and a pipe hands it to the reader at the far end: `| tail`
@@ -88,13 +96,13 @@ CI passes the flag. It reads the local copy of the base, so a caller fetches fir
 
 ### Under Actions each gate is a group, and a failed one an error `##annotations-under-actions`
 
-CI runs every gate in one step, so the job's step list no longer names the failing gate. Under
+A CI job that runs every gate in one step has a step list that does not name the failing gate. Under
 Actions the library prints GitHub workflow commands around each gate: `::group::<gate>` before it
 and `::endgroup::` after its verdict line, so the job log folds per gate, and for a failed gate
 one `::error title=<gate>::` line, which the job summary lists by the gate's name. Outside
 Actions none of it is printed.
 
-### Distilled stdout over complete logs `##distill-over-full-logs`
+### A failed gate's stdout is a distilled extract of a log that keeps its full output `##distill-over-full-logs`
 
 Every gate's full output — both streams — is always written to `target/gates/<gate>.log`,
 under `target/` so it is ignored and leaves with the build. stdout gets one verdict line per

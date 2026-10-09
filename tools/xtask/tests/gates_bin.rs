@@ -94,7 +94,7 @@ fn with_history(project: &Path, origin_at: &str) {
     git(&["update-ref", "refs/remotes/origin/main", &target]);
 }
 
-// The claim behind `design@gates@verdict-from-exit-codes`'s pipe refusal: a pipe on stdout is
+// The claim behind `design@gates@gates-refuse-a-pipe`: a pipe on stdout is
 // refused before any gate runs, because the pipe's reader would replace the exit code the run
 // exists to deliver. A harness capturing through a pipe is exactly that shape, so this is the
 // one test that captures through one. Mutation check: dropping the refusal makes every fake

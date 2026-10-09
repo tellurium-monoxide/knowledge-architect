@@ -4,4 +4,4 @@
 
 | kind | title |
 | --- | --- |
-| defect | [The subcommands share the manifest's name, which the head on shared code does not state](the-subcommands-share-more-than-the-spawn-helper.md) |
+| defect | [The gate-list head says every difference between CI and a local run is a flag, and the library also adapts its output to Actions](where-ci-and-a-local-run-differ-is-not-only-a-flag.md) |

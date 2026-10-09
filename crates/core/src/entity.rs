@@ -145,7 +145,7 @@ pub(crate) fn is_reserved_anchor(word: &str) -> bool {
 /// No anchor may wear one. The head of a reference is asked for a kind before an anchor, so an
 /// anchor named like a kind would be shadowed there, so every such name is refused for anything
 /// that can be an anchor, a Component, a location or a plan, per
-/// `design@core@anchors-are-components-and-locations`.
+/// `design@core@kind-names-refused-as-anchors`.
 pub(crate) fn is_kind_name(word: &str, registers: &Registers) -> bool {
     word == PATH_KIND
         || word == PLANNED_KIND

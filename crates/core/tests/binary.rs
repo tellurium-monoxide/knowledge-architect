@@ -3663,7 +3663,7 @@ fn index_staged_refuses_with_the_index_unchanged() {
     assert_eq!(index_lines(&sandbox), before, "the index is as it was");
 
     // A gitlink staged in the index stops the staged tree in phase 2, per
-    // `design@core@git-supplies-the-walk`.
+    // `design@core@links-are-no-documents`.
     let head = Command::new("git")
         .args(["rev-parse", "HEAD"])
         .current_dir(sandbox.path(""))

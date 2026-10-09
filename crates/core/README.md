@@ -235,7 +235,7 @@ and none can be created inside the walk.
 Running it to look therefore costs nothing, not even an mtime. **Whether a generated file is
 current is not this command's question** — that is `cargo klarch check`, whose `generated` check
 is a gate and names the first line at which the committed file and the regenerated one disagree.
-Both halves are `design@core@generated-files-are-pure`.
+The two halves are `design@core@generated-files-are-pure` and `design@core@one-question-one-command`.
 
 **`index --staged` writes into git's index instead, for a commit of part of the working tree**,
 per `design@core@index-staged-write`.

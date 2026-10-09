@@ -103,7 +103,7 @@ the decision says it is not. Establish which: if the checker reported the plain 
 the self-location tripwire above; otherwise open an `observation` and rewrite the fixture inline.
 **Re-entry:** standing.
 
-## Guarding `design@core@a-file-register-is-a-directory-of-entries`' closed kind list `##issue-kind-list-grows`
+## Guarding `design@core@issue-kind-list-closed` `##issue-kind-list-grows`
 
 The kind list was closed so that an unknown kind is a finding naming the list, and so that the
 kind can decide which subsections an entry owes. The failure that would make the closing wrong is
@@ -175,7 +175,7 @@ the direction the owner chose for the entity table. Add it to the facade's entry
 rule rather than the list.
 **Re-entry:** thaum's migration onto the published crate, and each extension written after it.
 
-## Guarding `Gathered`, per `design@core@the-core-cli-is-a-library-module` `##inputs-builder-needed`
+## Guarding `Gathered`, per `design@core@inputs-are-gathered` `##inputs-builder-needed`
 
 **Fires when:** an extension's test needs an `Inputs` value that `Gathered::over` cannot produce
 from a tree on disk, such as an `Outside::Unreadable` planted in memory. `Inputs` is
@@ -222,7 +222,7 @@ what `--fix` does under its present argument.
 **Re-entry:** the standing-state review before every merge, and any change that adds a fix.
 
 
-## Guarding `design@core@staged-tree-source`: a staged pass that a clean checkout of the same tree fails `##staged-pass-fails-the-checkout`
+## Guarding `design@core@staged-check-semantics`: a staged pass that a clean checkout of the same tree fails `##staged-pass-fails-the-checkout`
 
 T1, as the owner ruled it at the premortem of `check --staged`. Two reads stay outside the snapshot:
 the ignore rules a path reference asks, read from disk, and an extension's checks of filesystem

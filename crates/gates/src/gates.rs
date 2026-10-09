@@ -191,7 +191,7 @@ fn gate_args(gate: &Gate, locked: bool) -> Vec<&str> {
 }
 
 /// Whether this run is a GitHub Actions job step, which the runner says by setting
-/// `GITHUB_ACTIONS` to `true`. Two things follow, per `design@gates@verdict-from-exit-codes`
+/// `GITHUB_ACTIONS` to `true`. Two things follow, per `design@gates@gates-refuse-a-pipe`
 /// and `design@gates@annotations-under-actions`: a pipe on stdout is accepted, and each gate
 /// is wrapped in workflow commands.
 fn under_actions() -> bool {

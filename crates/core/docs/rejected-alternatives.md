@@ -26,9 +26,7 @@ not load or carried findings was named in the summary and judged no further, so 
 walk over commits older than a manifest migration, and over the commits of a branch before its
 tree went green. It loses because each skipped commit took its message out of the regime while the
 run exited 0, and the summary line was the only trace. The migration it served is done, and a
-branch that tightens the checker orders or squashes its commits instead. Judging each commit with
-the checker built from its own tree would also serve a migration branch; it costs one release
-build per commit of every range.
+branch that tightens the checker orders or squashes its commits instead.
 
 **`check` and `commits` refusing a pipe on stdout** — lost to
 `design@core@a-commit-message-is-a-document`. `live`. It was meant to stop
@@ -61,14 +59,7 @@ in CI before every merge, so the hook guarded nothing the merge does not. It jud
 against HEAD as the parent, which under an amend or a reword is the commit being replaced: a
 rebase rewording two messages that `commits` accepted was refused by it twice and needed
 `--no-verify`. And it was per-clone configuration every clone had to install and every session
-had to check. The variant that also refused a staged tree carrying findings is the entry below.
-
-**The `commit-msg` hook refusing a commit whose staged tree carries content findings** — lost to
-`design@core@a-commit-message-is-a-document`. `live`. It would catch a failing tree at the
-moment it is written rather than at the range check. It loses because every work-in-progress
-commit would then need a way around the hook, and `commits` already judges each commit's tree
-before a merge. The opt-in `check --staged` judges the staged tree with no hook and needs no way
-around, per `design@core@staged-tree-source`.
+had to check.
 
 **Selecting a subset of the checks with `--only`, one family per check** — lost to
 `design@core@phases-gate-the-report`. `live`. It let a reviewer run the checks of its own axis
@@ -81,13 +72,14 @@ over thaum's tree against a references-only one, with the GNU time command, and 
 are in the message of the change that removed the selection. A full run of `cargo klarch check`
 over thaum's tree growing past a few seconds is what would reopen it.
 
-**Families named for the subjects that read them** — lost to `design@core@phases-gate-the-report`.
+**Families named for the subjects that read them** — lost to
+`design@core@nothing-of-a-project-is-compiled-in`.
 `live`. No selection exists to name families for, and the reason it lost while one did holds
 against any that returns: nothing about a project is compiled into the tool, per
 `design@core@nothing-of-a-project-is-compiled-in`, and a subject's name inside the parser
 is exactly that project's knowledge, compiled in.
 
-**One family per invocation, instead of a set** — lost to `design@core@phases-gate-the-report`.
+**One family per invocation, instead of a set** — lost to `design@core@model-then-checks`.
 `live`. No selection exists, and the reason it lost while one did, from
 `design@core@model-then-checks`, holds against any that returns: the walk happens once per
 invocation, so a caller wanting five families would read every live document five times.
@@ -101,13 +93,13 @@ home that is not there, a refused declaration — have no per-file scope to trac
 the tripwire on the whole-report stop reopens with, which is why it is here.
 
 **A slug unique across the whole project, with the component named for the reader only** — lost to
-`design@core@a-slug-belongs-to-a-component`. `live`. It keeps one meaning per word everywhere and needs
+`design@core@an-entity-belongs-to-its-anchor`. `live`. It keeps one meaning per word everywhere and needs
 no lookup to resolve a reference. It loses because it makes every component's vocabulary global: two
 components cannot each decide something they call the same word, and the second one to want the word
 has to take a worse one.
 
 **A reference with no component read as one inside its own component** — lost to
-`design@core@a-slug-belongs-to-a-component`. `live`. It would leave a pointer inside a component as
+`design@core@an-entity-belongs-to-its-anchor`. `live`. It would leave a pointer inside a component as
 short as it was before components existed, and qualify only the crossings. It loses on what a
 reference has to carry by itself: the same text would name different decisions depending on which
 file it sits in, so moving a document between components would silently retarget every unqualified
@@ -129,18 +121,17 @@ design document names its decisions as deliberately as it names its paths. The i
 placeholder in angle brackets, which the tokenizer does not record.
 
 **`#` as the reference separator**, the incumbent of `` `<component>#<slug>` `` — lost to
-`design@core@a-slug-belongs-to-a-component`, which fixes `@`. `live`. It costs no migration of
+`design@core@an-entity-belongs-to-its-anchor`, which fixes `@`. `live`. It costs no migration of
 the slug references. It loses on collision: `#` is a Rust attribute opener and a markdown
 heading marker, both of which sit inside code spans in thaum's tree, and `:` — the other
 candidate — is a Rust path separator; `@` meets almost nothing in Rust and only email
 addresses in prose, which never sit in backticks here. It entered the tree with the first
 migration to qualified references, carrying no argument of its own.
 
-**A configurable reference separator** — lost to `design@core@a-slug-belongs-to-a-component`,
+**A configurable reference separator** — lost to `design@core@an-entity-belongs-to-its-anchor`,
 which fixes `@`. `live`. A project could pick the character its prose collides with least. It
-loses because every instruction, every skill and the future link preprocessor would be
-parameterised on it, and `@` already meets almost nothing in Rust and only email addresses in
-prose, which never sit in backticks here.
+loses because every instruction and every skill would be parameterised on it, and `@` already
+meets almost nothing in Rust and only email addresses in prose, which never sit in backticks here.
 
 **Paths without the kind prefix**, keeping `` `<anchor>@<path>` `` beside
 `` `<kind>@<anchor>@<id>` `` — lost to `design@core@every-path-names-its-anchor`. `live`. It costs
@@ -149,7 +140,7 @@ that keeps its heuristic instead of becoming "unknown kind". Five characters at 
 reference bought one tokenizer and one candidate rule.
 
 **A register reference with no anchor**, `<kind>@<id>` for a register a project has only one
-instance of — lost to `design@core@a-slug-belongs-to-a-component`. `live`. It is shorter for the
+instance of — lost to `design@core@an-entity-belongs-to-its-anchor`. `live`. It is shorter for the
 common case. It loses because the extracted tool cannot know which register is single-instance
 in a given project, and one three-part grammar serves every kind without a special case in the
 resolver or in the instructions. Its first reason does not hold for a kind whose namespace the harness fixes,
@@ -177,10 +168,11 @@ syntax — and the scanner registered none of them, so a typo'd escape was invis
 construction. One mute marker for three meanings is the confusion the anchor words dissolve.
 
 **The `@` prefix reused as the root-relative spelling** — lost to
-`design@core@every-path-names-its-anchor`. `live`. It is one character where the project name is
-five. It loses on shape: the root is a component and already has a spelling under the one
-grammar, so a second one puts two shapes on one meaning — and it spends the prefix the census
-above shows is needed for the generic and escape meanings.
+`design@core@every-path-names-its-anchor`. `live`. It is one character where the project's name is
+several. It loses on shape: the root is a component and already has a spelling under the one
+grammar, so a second one puts two shapes on one meaning — and it spends the prefix that the census
+of the entry "Keeping the `@` prefix as the escape" shows is needed for the generic and escape
+meanings.
 
 **Widening the retired form's suffix set by one entry** — superseded by
 `design@core@every-path-names-its-anchor`, which retires suffix sets with the form that carried
@@ -200,7 +192,8 @@ crate of compiler internals that churns weekly.
 **A hand-rolled indentation scanner**, leaning on the formatter gate to normalise indentation — lost
 to `design@core@grammars-not-prefixes`. `live`. Zero dependencies, and rejected because a mis-scope
 would be silent, which is the failure class this tool exists to prevent. The line-prefix scanner it
-would have resembled was the single cause of four recorded defects.
+would have resembled was the single cause of the four defects in thaum's tree that
+`design@core@grammars-not-prefixes` lists.
 
 **`--lines` on thaum's interpretation index**, a temporary copy carrying each citation's line
 numbers — lost to `design@core@generated-files-are-pure`. `live`. Refuted by a census over the file's whole
@@ -213,7 +206,7 @@ argument for the file it would have sat in. What it would have bought is answere
 filtering `cargo klarch model` on the rule number.
 
 **`cargo klarch index` prints the diff it would apply, and `--write` applies it** — lost to
-`design@core@generated-files-are-pure`. `live`. This is the `cargo fmt` / `cargo fmt --check` shape,
+`design@core@one-question-one-command`. `live`. This is the `cargo fmt` / `cargo fmt --check` shape,
 and it lost to a prior-art survey rather than to reasoning. `fmt`, `gofmt` and `prettier` each
 build the check into the generator, and the discriminator is that **none of them had a separate
 verifier to build it into anything else**. Here the `generated` check of `cargo klarch check` is a gate
@@ -230,7 +223,7 @@ output a parser is fed, and the class recurs wherever a test displays a three-di
 
 **A fixture marker, a macro whose token tree the checker reads as data** — lost to
 `design@core@checker-source-literals-are-data`. `live`. It frees every fixture and needs a
-convention at each one, which the location does not. It is the recorded fallback should a literal
+convention at each one, which the winner's rule, by the directory a file sits in, does not. It is the recorded fallback should a literal
 outside the tool ever need rule-shaped bytes as data where no binding can hold it.
 
 **Moving the tool's unit tests under `path@core@tests/` and excluding the directory** — lost to
@@ -239,8 +232,8 @@ Measured: 31 files carry a test module, 349 tests, most over private functions, 
 move makes those public or drops the tests.
 
 **Literals as data in every `cfg(test)` module of every crate** — lost to
-`design@core@checker-source-literals-are-data`. `live`. Zero members outside the tool today, and the
-owner's ruling is that a rule cited in another crate's unit test stays checked.
+`design@core@checker-source-literals-are-data`. `live`. The owner's ruling is that a reference
+written in another crate's unit test stays checked.
 
 **Reading no string literal anywhere** — lost to `design@core@checker-source-literals-are-data`.
 `live`. Measured: 17 assertion messages in the tests of thaum's `thaum-testing` crate cite a rule
@@ -251,7 +244,8 @@ place of refusing a binary built elsewhere — lost to `design@core@a-foreign-bu
 `live`. Reproduced on thaum's repository: a binary built from a second checkout into the first one's
 target directory, run in the first, printed a verdict string changed only in the second, so the
 other checkout's code runs and not only its compiled paths; correct paths would still judge the
-tree with the wrong code. The exemption half of the argument is the manifest-row entry below.
+tree with the wrong code. The exemption half of the argument is the entry
+**A manifest row naming the exempt directory**.
 
 **A manifest row naming the exempt directory** — lost to `design@core@the-regime-has-no-opt-out`.
 `live`. A row can be pointed at any directory, and the tree declaring it decides what conformance
@@ -296,7 +290,7 @@ that nobody had touched. Both are answered by a command instead, `issues` for th
 `show <ref>` for the body.
 
 **Per-instance register options declared at the root, in the project's own instance** — lost to
-`design@core@registers-are-declared`. `live`. It puts every option in one place beside the
+`design@core@instance-options-beside-the-instance`. `live`. It puts every option in one place beside the
 manifest, with no second configuration file to find. It loses on where the file would sit: the
 root component's own issue directory would carry the groups of every other component's issue
 instance, which is the one-home failure written into the layout.
@@ -309,7 +303,7 @@ home's README written with link definitions would have been reported as linking 
 subdocuments. Both are wrong findings, where the head had judged the gap to be a silence.
 
 **Refusing to load a manifest whose register declaration is wrong** — lost to
-`design@core@registers-are-declared`. `live`. A declaration the tool cannot act on is a could-not-run
+`design@core@a-wrong-declaration-is-a-finding`. `live`. A declaration the tool cannot act on is a could-not-run
 by `design@core@exit-code-ladder`, and exiting 2 is what a manifest the grammar cannot
 parse does, a key of `[project]` it does not know included. It loses for the case where the tool
 CAN act: a bad `dir` on a built-in has a compiled default to fall back on, so refusing the whole
@@ -317,16 +311,14 @@ run would report nothing at all about the tree — and nothing at all is what a 
 conformance. An unknown key keeps the refusal because there is no default to fall back on.
 
 **An open set of issue kinds, the label read off each entry as written** — lost to
-`design@core@a-file-register-is-a-directory-of-entries`. `live`. It was the incumbent: the listing
+`design@core@issue-kind-list-closed`. `live`. It was the incumbent: the listing
 derived an entry's label from the tag its own title carried rather than matching a list,
 because an entry written with a kind nobody anticipated is intended, and matching against a list
 made such an entry fall through to a label that is also a real kind. It loses once the kind
 decides which subsections an entry owes: an unanticipated kind then owes the wrong three, silently,
 and no reader can tell. A closed list makes an unknown kind a finding naming the list and an
-addition a reviewed manifest diff, which is what the concern list already did; the failure case the
-open set was written against — a wrong label — cannot occur once an unknown kind is refused. No
-fallback label exists now: `path@core@src/records.rs` reads each entry's kind out of
-its own frontmatter, and an entry that declares none has no kind rather than a wrong one.
+addition a reviewed manifest diff; the failure case the open set was written against — a wrong
+label — cannot occur once an unknown kind is refused.
 
 
 **A model generic over the extension's observation type**, `Model<E>` with the extension's
@@ -436,7 +428,7 @@ consumers who opted into an exhaustive match, and removes that option from every
 0.x it buys no version number, because major and minor both bump 0.MINOR.
 
 **A struct literal of `Inputs` in each caller, accepting a break per new input** — lost to
-`design@core@the-core-cli-is-a-library-module`, which gathers the inputs. `live`. The checker
+`design@core@inputs-are-gathered`, which gathers the inputs. `live`. The checker
 surface of v0.1 added two inputs and broke all five literals in thaum's rules extension; each
 later input would do the same.
 
@@ -446,7 +438,8 @@ one the facade states.
 
 **The items only the core's own tests use gated behind a `testing` feature** — lost to
 `design@core@api-facade`. `live`. A unit-test module inside the crate reaches them with no feature
-and no second surface, and the feature gated nothing before.
+and no second surface, and the crate declares no feature, so this one would exist for the core's
+own tests alone.
 
 **A default body that does nothing on every hook added to the extension traits** — lost to
 `design@core@trait-defaults`. `live`. A judging hook defaulted to nothing turns a compile error
@@ -465,8 +458,8 @@ run, and the owner wanted it short to type. Renaming the binary is a change to t
 surface every installing project scripts against, so the alternative will be raised again whenever
 the name is questioned.
 
-**An install record file listing what the installer wrote** (option (c) of the owned namespace) —
-lost to `design@core@owned-namespace-check`. `live`. The checker would read a committed file of its
+**An install record file listing what the installer wrote** — lost to
+`design@core@owned-namespace-check`. `live`. The checker would read a committed file of its
 own format to know which installed files are its own. It is one more committed file, which can
 itself be edited, while the prefix makes ownership readable from a path alone with no record and
 no history.

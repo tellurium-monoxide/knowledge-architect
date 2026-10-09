@@ -1,10 +1,9 @@
 **Generated — do not edit.** `cargo klarch index`
 
-18 entries
+17 entries
 
 | kind | title |
 | --- | --- |
-| defect | [The title of the gates convention states every project runs the published gates library](the-gates-convention-title-overstates-its-scope.md) |
 | deferred | [A project cannot change one instruction of an installed skill](patching-an-installed-skill.md) |
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | design | [The head on the primer's content restates the primer's limit and bundles the decision behind each directive](primer-content-bundles-each-directive-s-decision.md) |

@@ -172,7 +172,7 @@ What exists today at each site the work touches:
 - **Commit messages.** `commits` judges history and takes no `--fix`, per
   `design@core@check-fix-flag`. The census found 70 of the 179 raw-path findings there.
 - **`--fix` with `--staged`.** It stays refused while parsing, per
-  `design@core@fix-refusal-mixed-state`.
+  `design@core@fix-with-staged`.
 - **The shapes "The respellings" lists as not respelled**, per
   `thread@path-quickfixes@respelling-fixes`.
 - **A span read from a Rust string literal.** Outside the checker's own source, an unbound string

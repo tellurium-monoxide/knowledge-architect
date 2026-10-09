@@ -24,6 +24,10 @@ pub(crate) struct Survey {
     pub present: HashSet<PathBuf>,
     /// The subset of `present` that is directories.
     ///
+    /// Directories are recorded in their own set beside the presence listing, so the kind a
+    /// reference claims, per `design@core@trailing-slash-claims-directory`, is asserted as a fact
+    /// in both directions rather than inferred from what happens to exist.
+    ///
     /// Derived from the listing's own ancestors: git names files, and a directory exists
     /// exactly where a listed file sits under it. A directory holding no file at all cannot be
     /// committed, so nothing that git can report is missed.
