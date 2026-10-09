@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-25 entries
+26 entries
 
 | kind | title |
 | --- | --- |
@@ -13,6 +13,7 @@
 | deferred | [The agent configuration serves one provider's harness](configuration-for-several-agent-providers.md) |
 | deferred | [A project cannot reference an entry of another project](cross-project-references.md) |
 | design | [Four core heads bundle decisions that lose to different rivals, and each has many citing sites](four-heads-bundle-decisions-with-many-citing-sites.md) |
+| design | [The choice of tree-sitter-rust as the Rust parser has no head, and two rejected alternatives lost to it](the-rust-parser-choice-has-no-head.md) |
 | observation | [A lint written twice on one line of a message is reported once or twice, by which tree holds it](a-message-lint-is-deduplicated-in-one-tree-only.md) |
 | observation | [Plain `check` under a sparse checkout reports every file outside the cone as an unstaged deletion](check-under-a-sparse-checkout-reports-every-file-outside-the-cone.md) |
 | observation | [`index --staged` clears the assume-unchanged bit of the entry it stages, and maybe its skip-worktree bit](index-staged-clears-an-entrys-flags.md) |
