@@ -182,3 +182,9 @@ head's argument does not cover, and this alternative is the candidate if it does
 found about nine of them whose approval named their members, so the sweep would put that many
 widenings to the owner at once; the count is re-taken by a fresh read-only audit of the heads and
 the words that approved each.
+
+**A head's title stating the instance built, the members or the mechanism that exist** — lost to
+`design@agent-skills@title-states-the-rule`. `live`. An audit of this repository's design heads at
+commit c282b00 found the instance stated as the rule in 27 of its 189 heads, and its history holds
+rewrites of such heads, with their slugs and tripwires renamed, that a member the argument already
+admitted forced; the count is re-taken by a fresh read-only audit of the heads at that commit.
