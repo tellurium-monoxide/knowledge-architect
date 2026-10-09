@@ -513,6 +513,8 @@ pub(crate) fn snapshot_entries(root: &Path, source: Source) -> io::Result<Vec<Sn
         // sibling directory's changes come in. `--no-abbrev` gives whole blob ids, which
         // `--full-index` does not under `--raw`. `--ita-invisible-in-index` is git's default
         // for `diff --cached` and is passed so the listing does not rest on that default.
+        // `--ignore-submodules=none` because `diff` otherwise applies `diff.ignoreSubmodules` and
+        // a `.gitmodules` entry's `ignore` key, and drops a staged gitlink a commit records.
         let changed = git(root)
             .args([
                 "diff",
@@ -524,6 +526,7 @@ pub(crate) fn snapshot_entries(root: &Path, source: Source) -> io::Result<Vec<Sn
                 "--no-color",
                 "--relative",
                 "--ita-invisible-in-index",
+                "--ignore-submodules=none",
             ])
             .output()?;
         overlay(&mut listing, &changed)?;
@@ -613,11 +616,18 @@ fn kind_of(mode: &[u8]) -> EntryKind {
 
 /// Whether the project's part of the index differs from HEAD: whether anything of the project
 /// is staged. `--relative` keeps the question to the project, since without it a staged change
-/// anywhere in the repository answers yes. Before the first commit, the index is compared with
+/// anywhere in the repository answers yes; `--ignore-submodules=none`, since without it the
+/// configuration can hide a staged gitlink. Before the first commit, the index is compared with
 /// the empty tree.
 pub(crate) fn index_differs_from_head(root: &Path) -> io::Result<bool> {
     let code = git(root)
-        .args(["diff", "--cached", "--quiet", "--relative"])
+        .args([
+            "diff",
+            "--cached",
+            "--quiet",
+            "--relative",
+            "--ignore-submodules=none",
+        ])
         .accept(1)
         .code()?;
     Ok(code == 1)
@@ -1370,6 +1380,64 @@ mod tests {
             "the working file is untouched"
         );
         assert!(!project.join("docs/added.md").exists());
+        let _ = std::fs::remove_dir_all(&repo);
+    }
+
+    /// The claim: a staged submodule change is in the index's snapshot whatever the
+    /// configuration says to ignore, and the project's staged part is told from a sibling's.
+    ///
+    /// `git diff` applies `diff.ignoreSubmodules` and a `.gitmodules` entry's `ignore` key, so a
+    /// staged gitlink can leave a diff that does not ask for every submodule change. And a staged
+    /// change outside the project is no change of the project.
+    #[test]
+    fn a_staged_submodule_change_is_listed_whatever_the_configuration_ignores() {
+        let repo = scratch_repository("submodule-ignored");
+        let project = repo.join("proj");
+        write(&project, "keep.md", "# Keep\n");
+        write(&repo, "other/o.md", "# Other\n");
+        write(
+            &project,
+            ".gitmodules",
+            "[submodule \"s\"]\n\tpath = sub\n\turl = ./x\n\tignore = all\n",
+        );
+        git(&repo).args(["add", "-A"]).output().expect("staged");
+        git(&repo)
+            .args(["commit", "-qm", "base"])
+            .output()
+            .expect("a commit");
+        let head = rev_parse(&repo, "HEAD").expect("the head");
+        git(&repo)
+            .args(["config", "diff.ignoreSubmodules", "all"])
+            .output()
+            .expect("configured");
+
+        // A sibling's change alone is staged: the project's part equals HEAD.
+        write(&repo, "other/o.md", "# Other, staged\n");
+        git(&repo)
+            .args(["add", "other/o.md"])
+            .output()
+            .expect("staged");
+        assert!(!index_differs_from_head(&project).expect("an answer"));
+
+        git(&repo)
+            .args([
+                "update-index",
+                "--add",
+                "--cacheinfo",
+                &format!("160000,{head},proj/sub"),
+            ])
+            .output()
+            .expect("a staged gitlink");
+        assert!(index_differs_from_head(&project).expect("an answer"));
+        let listed = snapshot_entries(&project, Source::Index).expect("the snapshot");
+        assert_eq!(
+            listed
+                .iter()
+                .find(|e| e.rel == Path::new("sub"))
+                .map(|e| e.kind),
+            Some(EntryKind::Gitlink),
+            "{listed:?}"
+        );
         let _ = std::fs::remove_dir_all(&repo);
     }
 

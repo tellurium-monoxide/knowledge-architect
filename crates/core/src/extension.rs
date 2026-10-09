@@ -137,7 +137,13 @@ impl Snapshot {
     /// The name of the blob at a path, which stays the same across snapshots that hold the same
     /// bytes. An extension keys what it parsed from a blob by it, so a parse is paid once per
     /// content rather than once per commit.
+    ///
+    /// `None` for a path the snapshot does not hold, though git names a blob for some: the empty
+    /// blob for an entry staged as intent-to-add, which a commit does not record.
     pub fn object_id(&self, rel: &Path) -> Option<String> {
+        if !self.holds(rel) {
+            return None;
+        }
         crate::git::rev_parse(&self.root, &crate::git::object_name(self.source(), rel))
     }
 }
