@@ -182,8 +182,8 @@ mechanically. Do not filter its output through pipes. Before a merge, run
 `cargo x gates --require-rebased`.
 
 **Every commit of a branch must pass `commits` under the checker built from the working tree**, not
-only the branch's tip: its message and its tree. Run `cargo klarch check` before each commit, and
-`cargo klarch commits origin/main..HEAD` after it: the whole branch, since a citation of an earlier
+only the branch's tip: its message and its tree. Run `cargo klarch check --staged` after staging
+and before each commit, and `cargo klarch commits origin/main..HEAD` after it: the whole branch, since a citation of an earlier
 commit of the branch by SHA is refused only when that commit is in the range judged, per
 `issue@core@branch-sha-citations-are-judged-within-the-range-only`. Amend the commit if either
 fails, with a clean tree; once later commits sit on top, the repair is a history edit. **A change to

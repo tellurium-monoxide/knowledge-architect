@@ -21,11 +21,21 @@ subsection is omitted.
 - `checks`, minor: under the `claude` harness, a backticked span that is exactly the name of a
   skill or an agent, installed or the project's own, is reported. A project writes it as the
   reference, `skill@<name>` or `agent@<name>`; this holds for mock projects serving `claude` too.
+- `cli`, major: `check --fix` refuses, exit 2, or 1 where it already installed agent files, when
+  the index differs from HEAD and the generated files the staged tree needs differ from the working
+  tree's, and it refuses `--staged`. A script or a CI step that runs `check --fix` over a partly
+  staged index handles exit 2, or runs `index --staged` first.
 - `manifest`, major: a Component, a location or a plan named after a kind, such as `design`,
   `issue`, `path`, a declared register or one of `skill`, `agent`, `primer` and `instructions`, is
   refused, and so is a register named after one of those four. A project renames it.
 - `library`, major: `document::Observation` has a variant `BareName`, a backticked span that is
   one word in the id grammar. Code that matches the enum exhaustively adds an arm.
+- `library`, major: `extension::Tree::Commit(&CommitTree)` is `Tree::Snapshot(&Snapshot)`, and
+  `Snapshot::revision` says whether the snapshot is a commit's tree or the one git's index would
+  commit. An extension renames the variant and the type; under `check --staged` it is prepared
+  over a snapshot with `Purpose::Check`.
+- `library`, major: `cli::Command::Index` carries `IndexArgs`, and `cli::CheckArgs` has the field
+  `staged`. Code that builds either by name adds the field.
 - `agent-skills`, patch: the installed skills and agents no longer number their sections, and cite
   each other's sections by reference, as `skill@<name>@<slug>`. A project's own text that cites a
   section of an installed skill or agent by its number cites it by its reference instead.
@@ -39,6 +49,12 @@ subsection is omitted.
   and `show` prints each.
 - `checks`, minor: a slug at a level-two heading of a project skill or agent defines a section, where
   it was reported as a misplaced definition.
+- `cli`, minor: `check --staged` judges the tree git's index would commit, HEAD's tree with the
+  staged changes, by `check`'s rules, and prints a `tree: staged` line; it says when nothing is
+  staged.
+- `cli`, minor: `index --staged` writes the generated files the staged tree needs into git's index,
+  and touches no working-tree file, for a commit of part of the working tree.
+- `library`, minor: `extension::Tree` is `Clone` and `Copy`.
 
 ### Workflow
 
@@ -46,6 +62,9 @@ subsection is omitted.
   a slug, and the setup skill and the agent-configuration skill state that the root CLAUDE.md and a
   project's own skills and agents carry one too, and that a subagent's file name equals its
   frontmatter `name`.
+- `agent-skills`, patch: the setup skill recommends `check --staged` after staging and before each
+  commit, and the issue-tracking and planning skills name `index --staged` and `check --staged` for
+  a commit of part of the working tree.
 
 ## 0.5.0
 

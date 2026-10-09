@@ -481,9 +481,10 @@ What this project declares conformant, and what it exempts, is the manifest at t
 
 **Which gates you owe depends on what you touched.** Anything that writes a reference or touches a
 register entry owes `cargo klarch check`. Any change to the Rust source owes fmt, clippy and the
-test suite. Every commit owes `commits`: its message and its tree. **Run `cargo klarch check` before
-each commit, which judges the tree, and `cargo klarch commits origin/main..HEAD` after it, which
-judges the message.** The range is the whole branch because this repository refuses citations of its
+test suite. Every commit owes `commits`: its message and its tree. **Run
+`cargo klarch check --staged` after staging and before each commit, which judges the tree the
+commit will record, and `cargo klarch commits origin/main..HEAD` after it, which judges the
+message.** The range is the whole branch because this repository refuses citations of its
 branch's own commits by SHA, and `commits` sees a citation only of a commit in the range it judges,
 per `design@core@branch-shas-are-refused`; the checker-side fix is
 `issue@core@branch-sha-citations-are-judged-within-the-range-only`. A commit that fails either is
