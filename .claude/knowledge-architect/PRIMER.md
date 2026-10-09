@@ -81,8 +81,9 @@ pointer beside it, and where the two disagree the restatement is the defect. A d
 than one sentence is delivered by a pointer to its home, with an instruction to read the home whole
 at that moment. Part of it is never restated: a partial copy drifts, and its reader takes it for
 the whole. For installed text, the home a pointer names is installed text, a skill's section or the
-primer's, since installed text cites no entry of the project. Whether a directive is needed at a
-point of delivery is the owner's decision.
+primer's, since installed text cites no entry of the project. An existing longer restatement is
+converted when a change touches it. Whether a directive is needed at a point of delivery is the
+owner's decision.
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
@@ -107,12 +108,14 @@ threshold it is, or else the commit message that took it.
 
 **A reference is written wherever the text would have to be revisited if the entry it names
 changed**: a design head names the goal it derives from and a decision of another Component it
-depends on; an issue names the decision it strains and the goal it threatens; a guard, a
+depends on; an issue names the decision it strains and the goal it threatens, when it does
+directly; a guard, a
 workaround, a stub or a test that exists because of an issue names it in the comment at the site; a
 tripwire names its decision; a rejected alternative names the decision it lost to; a commit message
 names every entry it opens, closes, reverses or argues from. A reference whose entry's change would
 leave the text unaffected is not written. A reference is one backticked span,
-`<kind>@<anchor>@<id>`; an illustration that must not resolve writes a placeholder in angle
+`<kind>@<anchor>@<id>`, naming the anchor that defines the entry, and it is live wherever it is
+prose, a fenced block included; an illustration that must not resolve writes a placeholder in angle
 brackets. The checker reads Markdown and Rust source; a reference anywhere else is found by grep.
 
 **A finding is repaired in a form the checker judges, never by moving the pointer into plain
@@ -170,9 +173,9 @@ That is not a lesser home: the comment is read by every session that touches the
 is not, and the commit carries the argument. A reason that fits in one comment at one site, about
 that site's own code, fails test 2.
 
-**A decision that creates a head, contradicts a statement of one, its argument included, or adds
-a member the head's argument does not cover, goes to the design skill before its text is
-written**, unless it was argued there, under `skill@knowledge-architect-design`. This is the case of
+**The backstop. A decision that creates a head, contradicts a statement of one, its argument
+included, or adds a member the head's argument does not cover, goes to the design skill before its
+text is written**, unless it was argued there, under `skill@knowledge-architect-design`. This is the case of
 a decision met during another task and settled there, by the owner's word or by the session's own
 choice. The design skill's in-change path keeps the deliberation in the commit message, so the task
 needs no plan document and no new session. An addition that answers another question than the
@@ -222,7 +225,7 @@ is `skill@knowledge-architect-decision-recording@three-homes`.
 
 A head is written **as if the design had always been so**. Present tense, no dates, no "formerly", no
 account of the change. If you find yourself writing "we used to…", that sentence belongs in the
-commit.
+commit, and so does an opening that motivates a decision by describing the state before it.
 
 **A head carries intent, shape and the standing argument, not implementation.** What the project is
 for, and how it is arranged in order to get there, belongs here. How a particular function does its
