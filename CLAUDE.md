@@ -180,9 +180,8 @@ win.
     path to anchor when its first segment names a file or a directory that the tree's listing
     holds, per `design@core@every-path-names-its-anchor`. Write it as a `path` reference, or as
     `path@elsewhere@<path>` for a path this tree does not hold, or, in a plan document, as
-    `planned@<anchor>@<path>` for a path its work will create, never in plain text, per
-    `design@agent-skills@plain-text-is-no-repair`, except beside a reference to an issue
-    entry that records the missing form, per
+    `planned@<anchor>@<path>` for a path its work will create, never in plain text, except beside
+    a reference to an issue entry that records the missing form, per
     `design@agent-skills@plain-text-is-no-repair`. A span naming nothing here, such as
     `origin/main` or `application/json`, is silent, and so is a one-segment span, which is a name
     rather than a path.
@@ -554,7 +553,8 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   `design@knowledge-architect@versioning-policy`.
 
 2. **No operation that can lose content, committed or not.** Its home is
-   `design@knowledge-architect@no-operation-loses-content`.
+   `design@knowledge-architect@no-operation-loses-content`, and `design@knowledge-architect@git-flow`
+   for "main's history is never rewritten".
 
 - The hazard is **content loss**, in two forms: an operation that removes uncommitted content from
   the working tree, and a history edit that drops a commit no other reference holds.

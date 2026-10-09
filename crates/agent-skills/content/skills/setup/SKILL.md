@@ -231,10 +231,10 @@ A project that already has documentation keeps it until its move is planned:
    proposal. The issue below names each document by its path, not by the label.
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the
    rulings. The move is then planned work, under `skill@knowledge-architect-planning`, and runs as a
-   milestone when the owner schedules it. The milestone ends by running the design-record axis of
-   `skill@knowledge-architect-project-audit@design-record-axis` over the design homes and the
-   rejected alternatives the move wrote. Until then, the old documents and the new homes both
-   exist, and the issue is what records that.
+   milestone when the owner schedules it. Until then, the old documents and the new homes both
+   exist, and the issue is what records that. The milestone ends by running the design-record axis
+   of `skill@knowledge-architect-project-audit@design-record-axis` over the design homes and the
+   rejected alternatives the move wrote.
 
 **A finding the check reports in an existing file is the owner's to rule**, since the setup does
 not move or rewrite that file. Show the owner the finding and its repair, each finding under a

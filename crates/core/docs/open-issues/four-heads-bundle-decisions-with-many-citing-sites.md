@@ -66,15 +66,19 @@ taken on the working tree of that run, after its other edits were applied.
     decided by a name; its rivals are a record of installed files and a digest.
 
 The run applied rewordings of tense to `design@core@candidate-rule-and-retired-forms` and left its
-bundle, so that head is a change's touched head left short of
+bundle. Its second pass edited two of the four heads again and split neither, the four bundles
+being left to this entry: it gave a census in `design@core@candidate-rule-and-retired-forms` its
+re-take command, and reworded a sentence of `design@core@a-commit-message-is-a-document` into the
+present tense. So both heads are a change's touched heads left short of
 `design@agent-skills@existing-heads-on-touch`.
 
 **Suspected mechanism**: each head grew by appending a bold paragraph for a decision argued later
 in the same subject, and a citing site then cited the head for whichever paragraph it needed.
 
-**The re-entry point**: the next change that edits one of the four heads, which
-`design@agent-skills@existing-heads-on-touch` brings to the rules on heads; or the next run of the
-design-record axis of `skill@knowledge-architect-project-audit`.
+**The re-entry point**: the next change that edits one of the four heads, in a branch other than
+the one that opened this entry, which `design@agent-skills@existing-heads-on-touch` brings to the
+rules on heads; or the next run of the design-record axis of
+`skill@knowledge-architect-project-audit`.
 
 Not established: whether every citing site cites one part alone. The sites were not all read.
 

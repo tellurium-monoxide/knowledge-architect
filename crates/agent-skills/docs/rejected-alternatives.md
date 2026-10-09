@@ -186,8 +186,16 @@ in two of the samples; a method that trusted one reading per entry would have le
 commits, found with `git log --grep='design-record axis'`, carry the counts.
 
 **The repair of a head only when a change touches it** — lost to
-`design@agent-skills@whole-record-repair-at-a-migration`. `live`. It costs the owner one proposal per
-head, at the moment a session already edits it, where a project audit puts every widening of the
-record to the owner at once: the first run on this repository put 72 items to the owner over three
-passes. It is kept because a doubt remains on that cost, and it is the candidate if a project's
-owner finds an audit's lists too long to read.
+`design@agent-skills@audit-repairs-the-whole-record`. `live`. A repair on touch never reaches a
+head no change touches, so a project's record stays under the old rules after its migration. It
+costs the owner one proposal per head, at the moment a session already edits it, where a project
+audit puts every item of its owner list to the owner at once: the first run on this repository put
+72 items to the owner over three passes. It is kept because a doubt remains on that cost to the
+owner's reading time, which `goal@knowledge-architect@the-owner-decides` spends, and it is the
+candidate if a project's owner finds an audit's lists too long to read.
+
+**One generic auditor agent, briefed to read the axis's section of the skill** — lost to
+`design@agent-skills@audit-agent-per-axis`. `live`. It puts the axis's standard behind a read the
+brief must ask for. The head-rules sweep that preceded the audit skill ran that way, and the
+discussion that chose the agent recorded its result, in its argument a16 of the deleted spec
+design-record-audit: "Today's sweep drafts came out uneven where the brief was the only standard."

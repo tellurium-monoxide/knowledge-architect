@@ -337,8 +337,9 @@ and `extension::Resolution`. Every other public enum and struct is exhaustive on
   obligation on the extension or the binary that builds the value, and the compile error says
   so.
 
-After 1.0 the attribute decides minor against major for every added variant, so this is
-re-examined before the project leaves 0.x, per `design@knowledge-architect@stays-at-zero-x`.
+After 1.0 the attribute decides minor against major for every added variant, so this decision is
+re-examined before the project leaves 0.x. When it leaves is
+`design@knowledge-architect@stays-at-zero-x`.
 
 ### A hook added to `Extension` or `Prepared` has a default body only when doing nothing is a correct answer `##trait-defaults`
 
@@ -423,9 +424,10 @@ lists and the working tree does not hold, a directory where git lists one entry,
 bytes cannot be had at all. A symlink and a gitlink are no file to read, and are reported as
 links.
 
-One byte of Windows-1252, such as a pasted em dash, puts a document read strictly outside the walk
-and outside the inverse assertion, so a fabricated quote in it is read by nothing. Unbounded
-recursion aborts the whole run with no file named and no finding printed.
+The rival, a read or a parse that fails in silence, fails in two ways. Under it, one byte of
+Windows-1252, such as a pasted em dash, puts a document read strictly outside the walk and outside
+the inverse assertion, so a fabricated quote in it is read by nothing. And unbounded recursion
+aborts the whole run with no file named and no finding printed.
 
 ### Git supplies the walk, and the manifest declares only what git tracks `##git-supplies-the-walk`
 
@@ -1173,8 +1175,9 @@ line in a long report is missed where an exit code is not.
 
 The refusal is clap's `conflicts_with`, per `design@core@arguments-parse-through-clap`. `--fix`
 repairs the working tree. Combining them would tie every fix to a write into git's index. The
-owner's reason: "I'd like to provide more types of quick fixes later, and this might not be
-compatible."
+owner's words, given with the ruling on `index --staged`, and hedged: "This is not definitive, but
+I would not recommend to use this with --fix though. The reason  is that I'd like to provide more
+types of quick fixes later, and this might not be compatible."
 
 ### A fix is safe when its bytes are determined by the tree and the pinned version, and it writes or removes only files of the installer's namespace or of the generated list `##safe-fix-definition`
 
@@ -1294,10 +1297,12 @@ table defines from every home shape of every heading register the anchor carries
 definition that sits where none may; whether the home is there at all, and in which shape, is
 `check::tree`'s.
 
-### An entry's heading puts its statement before its slug, and the slug is read wherever it sits `##statement-precedes-the-slug`
+### An entry's heading puts its statement before its slug `##statement-precedes-the-slug`
 
 **The statement precedes the slug in the heading**, so a document outline lists the entries
 rather than a set of identifiers, and an editor's outline view is the index.
+
+### A slug is read wherever it sits in its heading `##a-slug-is-read-anywhere-in-its-heading`
 
 **The slug may sit anywhere in the heading.** A pattern that requires text after the slug matches
 no heading carrying nothing but the slug, and every reference to such an anchor is then reported
@@ -1308,8 +1313,8 @@ as dangling while the definition sits in the file.
 A slug anywhere but at a heading of its register's level in the register's home defines nothing
 and is reported as a misplaced definition: at a heading of another level, level one included, in a
 table cell, at the head of a plain line, in the middle of a line, as a second slug on a definition
-line, in a file that is no register home — a Rust comment included — or in a directory home's
-README.
+line, in a file that is no register home and no section home of the harness — a Rust comment
+included — or in a directory home's README.
 
 - **A table cell defines nothing.** A decision written as a row has no heading, so the outline does
   not list every decision, and one register would have two definition sites.
