@@ -485,13 +485,6 @@ plans would force a design revisit of every citing plan, item by item, at the mo
 retired, a moment the owner judged might not be the best for it.
 
 
-**`check --commit <rev>`, judging a given commit's tree with `check`** — lost to
-`design@core@staged-tree-source`. `live`. `commits <rev>~1..<rev>`, or `commits <rev>` for a root
-commit, judges that tree with the tip checker: measured over this repository's root commit,
-`commits <root-sha>` judged it alone, where `<root-sha>~1..<root-sha>` exits 2. With `check`'s rules, which compare the installed
-files where `commits` does not, it gives one tree a second verdict; with `commits`'s rules it is
-the tree half of `commits` under a second name.
-
 **The staged tree as `git ls-files -s` lists it** — lost to `design@core@staged-tree-source`.
 `live`. It lists an entry staged with `git add -N` at stage 0 with the empty blob, the line a
 staged empty file also gives, and `git commit` records no such entry. Measured on git 2.43.0:

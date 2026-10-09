@@ -165,7 +165,8 @@ cargo klarch check --staged
 
 `index --staged` writes the staged tree's generated files into git's index and touches no
 working-tree file; `check --staged` judges what the commit will record. `cargo klarch check --fix`
-refuses while the two trees need different generated files, and names both repairs.
+refuses while a generated file it would write differs from the one the staged tree needs, and
+names both repairs.
 
 **One home does not bind an issue entry.**
 

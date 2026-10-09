@@ -1091,7 +1091,7 @@ test is the one `--fix` applies before a fix, and `--fix` never applies this one
 whose bytes the staged tree determines, so no bytes a writer meant are lost. The rival, writing
 the staged rows into the working-tree file, lost: after it, plain `check` fails, since that file no
 longer matches the working tree, and `check --staged` fails until the file is staged. The owner
-holds this shape not definitive; a change is an ordinary reversal.
+approved this shape while calling it not definitive.
 
 ### `check --fix` applies every safe fix, then runs the full check `##check-fix-flag`
 
@@ -1107,7 +1107,7 @@ command rather than two that end in one report. `commits` judges history and tak
 and the gates run `check` without it, so continuous integration judges the tree as committed. It
 refuses a partial commit's mismatch, and `--staged`, per `design@core@fix-refusal-mixed-state`.
 
-### `check --fix` refuses only where a generated file it would write differs from the one the staged tree needs, and refuses `--staged` `##fix-refusal-mixed-state`
+### `check --fix` refuses where a generated file it would write differs from the staged tree's, not wherever the tree holds staged and unstaged changes, and refuses `--staged` `##fix-refusal-mixed-state`
 
 **Where the project's part of the index differs from HEAD, and a generated file `--fix` would
 write differs from the one the tree git's index would commit needs, `--fix` writes no generated
