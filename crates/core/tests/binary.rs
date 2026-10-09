@@ -3393,8 +3393,8 @@ fn line_of<'a>(out: &'a str, prefix: &str) -> Option<&'a str> {
 
 /// The claim: `check --staged` judges the tree git's index would commit and nothing of the
 /// working tree, in both directions, and plain `check` judges the working tree and prints no
-/// `tree:` line. With nothing staged it says it judged HEAD's tree (AC2 of the spec of
-/// `check --staged`).
+/// `tree:` line. With nothing staged it says it judged HEAD's tree. Per
+/// `design@core@staged-tree-source`.
 #[test]
 fn check_staged_judges_the_index_and_not_the_working_tree() {
     let sandbox = Sandbox::new("staged-verdict", "dirhome");
@@ -3568,7 +3568,7 @@ fn changed_lines(before: &[String], after: &[String]) -> Vec<String> {
 const STAGED_ENTRY: &str = "---\nkind: todo\n---\n# An entry staged for this commit\n\n## Summary\n\nStaged.\n\n## Details\n\n### What\n\nStaged.\n\n### Why it matters\n\nIt is.\n\n### What would close it\n\nA commit.\n";
 const WORKING_ENTRY: &str = "---\nkind: todo\n---\n# An entry left for a later commit\n\n## Summary\n\nUnstaged.\n\n## Details\n\n### What\n\nUnstaged.\n\n### Why it matters\n\nIt is.\n\n### What would close it\n\nA later commit.\n";
 
-/// AC3 of the spec of `check --staged`: `index --staged` changes exactly the staged entries of
+/// The claim of `design@core@index-staged-write`: `index --staged` changes exactly the staged entries of
 /// the generated files whose staged bytes differ, a missing one included, and no working-tree
 /// file. After it the staged tree passes, while the working tree still needs its own index.
 #[test]
@@ -3616,7 +3616,7 @@ fn index_staged_stages_the_generated_files_and_touches_no_working_file() {
     );
 }
 
-/// AC3: `index --staged` writes nothing, exit 2, when phases 1 to 3 of the staged tree find
+/// `design@core@index-staged-write`: `index --staged` writes nothing, exit 2, when phases 1 to 3 of the staged tree find
 /// anything, and when git's index lock is held.
 #[test]
 fn index_staged_refuses_with_the_index_unchanged() {
@@ -3658,7 +3658,7 @@ fn index_staged_refuses_with_the_index_unchanged() {
     assert_eq!(index_lines(&sandbox), before, "the index is as it was");
 }
 
-/// The claim: `check --fix` runs as before where the staged tree and the working tree need the
+/// The claim: `check --fix` runs where the staged tree and the working tree need the
 /// same generated files, though the index differs from HEAD.
 #[test]
 fn fix_runs_where_both_trees_need_the_same_generated_files() {
@@ -3714,9 +3714,9 @@ fn fix_writes_the_working_trees_files_where_nothing_is_staged() {
     );
 }
 
-/// The claim: the refusal comes after the installed repairs, per D4 of the spec of `check
-/// --staged`: a run that repaired an installed file and then refuses exits 1 and writes no
-/// generated file.
+/// The claim: the refusal comes after the installed repairs, per
+/// `design@core@fix-before-the-checks`: a run that repaired an installed file and then refuses
+/// exits 1 and writes no generated file.
 #[test]
 fn fix_refuses_after_the_installed_repairs_with_exit_one() {
     let sandbox = Sandbox::new("fix-differs-installed", "dirhome");
@@ -3752,4 +3752,99 @@ fn fix_with_staged_is_refused_before_anything_is_read() {
     let (out, stderr, code) = run_in(&nowhere, &["check", "--fix", "--staged"]);
     assert_eq!(code, 2, "{out}{stderr}");
     assert!(stderr.contains("cannot be used with"), "{stderr}");
+}
+
+/// The claim: `index --staged` refuses, exit 2 with the index unchanged, a generated path the
+/// index holds as a gitlink, a symlink or a directory, though a walk row hides the path from the
+/// survey: it never writes a generated file's text under another kind of entry, nor replaces the
+/// entries under a directory.
+#[test]
+fn index_staged_refuses_a_destination_staged_as_another_kind_of_entry() {
+    let sandbox = Sandbox::new("index-staged-kinds", "dirhome");
+    let manifest =
+        std::fs::read_to_string(sandbox.path("knowledge-architect.toml")).expect("the manifest");
+    sandbox.write(
+        "knowledge-architect.toml",
+        &manifest.replacen(
+            "skip-files = []",
+            "skip-files = [\"docs/open-issues/index.md\"]",
+            1,
+        ),
+    );
+    commit_all(&sandbox, "the base");
+    sandbox.write("docs/open-issues/staged-entry.md", STAGED_ENTRY);
+    sandbox.git(&["add", "docs/open-issues/staged-entry.md"]);
+    let head = Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .current_dir(sandbox.path(""))
+        .output()
+        .expect("git runs");
+    let head = String::from_utf8_lossy(&head.stdout).trim().to_string();
+    for mode in ["160000", "120000"] {
+        sandbox.git(&[
+            "update-index",
+            "--cacheinfo",
+            &format!("{mode},{head},docs/open-issues/index.md"),
+        ]);
+        let before = index_lines(&sandbox);
+        let (out, stderr, code) = sandbox.run(&["index", "--staged"]);
+        assert_eq!(code, 2, "mode {mode}: {out}{stderr}");
+        assert!(
+            stderr.contains("is staged as a symlink or a gitlink"),
+            "{stderr}"
+        );
+        assert_eq!(
+            index_lines(&sandbox),
+            before,
+            "mode {mode}: the index is as it was"
+        );
+    }
+
+    // A directory in the index at the generated path.
+    sandbox.git(&["rm", "-q", "-f", "--cached", "docs/open-issues/index.md"]);
+    let blob = Command::new("git")
+        .args(["hash-object", "-w", "--stdin"])
+        .current_dir(sandbox.path(""))
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .spawn()
+        .and_then(|mut child| {
+            use std::io::Write;
+            child
+                .stdin
+                .take()
+                .expect("stdin")
+                .write_all(b"a staged note\n")?;
+            child.wait_with_output()
+        })
+        .expect("a blob");
+    let blob = String::from_utf8_lossy(&blob.stdout).trim().to_string();
+    sandbox.git(&[
+        "update-index",
+        "--add",
+        "--cacheinfo",
+        &format!("100644,{blob},docs/open-issues/index.md/note.txt"),
+    ]);
+    let before = index_lines(&sandbox);
+    let (out, stderr, code) = sandbox.run(&["index", "--staged"]);
+    assert_eq!(code, 2, "{out}{stderr}");
+    assert!(stderr.contains("is a directory in the index"), "{stderr}");
+    assert_eq!(index_lines(&sandbox), before, "the index is as it was");
+}
+
+/// The claim: `check --fix` refuses only for a generated file it would write. With the working
+/// tree's index already current, a partial stage makes it write nothing, and the repair the refusal
+/// names, `index`, leaves nothing to refuse: `--fix` runs as `check` does.
+#[test]
+fn fix_refuses_nothing_where_it_would_write_nothing() {
+    let sandbox = Sandbox::new("fix-writes-nothing", "dirhome");
+    commit_all(&sandbox, "the base");
+    sandbox.write("docs/open-issues/staged-entry.md", STAGED_ENTRY);
+    sandbox.git(&["add", "docs/open-issues/staged-entry.md"]);
+    sandbox.write("docs/open-issues/working-entry.md", WORKING_ENTRY);
+    let (out, stderr, code) = sandbox.run(&["index"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    let (out, stderr, code) = sandbox.run(&["check", "--fix"]);
+    assert_eq!(code, 0, "{out}{stderr}");
+    assert!(!out.contains("fixed:"), "{out}");
 }

@@ -222,7 +222,7 @@ what `--fix` does under its present argument.
 
 ## Guarding `design@core@staged-tree-source`: a staged pass that a clean checkout of the same tree fails `##staged-pass-fails-the-checkout`
 
-T1 of the premortem of the work that built `check --staged`. Two reads stay outside the snapshot:
+T1, as the owner ruled it at the premortem of `check --staged`. Two reads stay outside the snapshot:
 the ignore rules a path reference asks, read from disk, and an extension's checks of filesystem
 state, not run over a snapshot.
 
@@ -234,7 +234,7 @@ rule, an extension check not run under `--staged`, or another.
 
 ## Guarding `design@core@fix-refusal-mixed-state`: sessions unstage to get past the refusal `##fix-refusal-routed-around`
 
-T2 of the premortem of the work that built `check --staged`. It fires only in sessions the owner
+T2, as the owner ruled it at the premortem of `check --staged`. It fires only in sessions the owner
 sees, as `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`
 records of every tripwire on agent behaviour.
 

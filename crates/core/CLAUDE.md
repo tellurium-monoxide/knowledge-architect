@@ -21,9 +21,10 @@ ignore question a path reference asks is one `git check-ignore` batch per run, a
 last-change column is one `git log`. A check may spawn nothing, so each of those is taken by the
 caller and handed in. A tree with no `git`, or a project outside a worktree, is exit 2 with the
 reason; an empty walk is never an answer. The decision is `design@core@git-supplies-the-walk`.
-`check --staged` and `commits` read a snapshot instead, from git objects, through
+`check --staged`, `index --staged`, the comparison of `check --fix` and `commits` read a snapshot
+instead, from git objects, through
 `git::snapshot_entries` and the same `cat-file` batch: HEAD's tree overlaid with the index's
-changes, or one commit's tree.
+changes, or one commit's tree, per `design@core@staged-tree-source`.
 
 **A test that copies a mock project runs `git init` and `git add -A` in the copy**, or the walk
 is empty and the test proves nothing; `Sandbox` in `path@core@tests/binary.rs` does it. Two

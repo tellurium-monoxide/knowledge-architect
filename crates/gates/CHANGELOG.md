@@ -22,8 +22,9 @@ subsection is omitted.
   skill or an agent, installed or the project's own, is reported. A project writes it as the
   reference, `skill@<name>` or `agent@<name>`; this holds for mock projects serving `claude` too.
 - `cli`, major: `check --fix` refuses, exit 2, or 1 where it already installed agent files, when
-  the index differs from HEAD and the generated files the staged tree needs differ from the working
-  tree's, and it refuses `--staged`. A script or a CI step that runs `check --fix` over a partly
+  the index differs from HEAD and a generated file it would write differs from the one the staged
+  tree needs, or when the staged tree's generated files cannot be computed, and it refuses
+  `--staged`. A script or a CI step that runs `check --fix` over a partly
   staged index handles exit 2, or runs `index --staged` first.
 - `manifest`, major: a Component, a location or a plan named after a kind, such as `design`,
   `issue`, `path`, a declared register or one of `skill`, `agent`, `primer` and `instructions`, is
@@ -33,7 +34,8 @@ subsection is omitted.
 - `library`, major: `extension::Tree::Commit(&CommitTree)` is `Tree::Snapshot(&Snapshot)`, and
   `Snapshot::revision` says whether the snapshot is a commit's tree or the one git's index would
   commit. An extension renames the variant and the type; under `check --staged` it is prepared
-  over a snapshot with `Purpose::Check`.
+  over a snapshot with `Purpose::Check`, and under `index --staged` and the comparison of
+  `check --fix` with `Purpose::Index`.
 - `library`, major: `cli::Command::Index` carries `IndexArgs`, and `cli::CheckArgs` has the field
   `staged`. Code that builds either by name adds the field.
 - `agent-skills`, patch: the installed skills and agents no longer number their sections, and cite

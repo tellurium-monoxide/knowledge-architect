@@ -121,7 +121,7 @@
 //! 2. Once the first three phases have found nothing, `prepare` reads what its checks need for
 //!    one tree, an [`extension::Tree`]: the working tree, or a snapshot read from git objects,
 //!    which is one commit's tree under `commits` and the tree git's index would commit under
-//!    `check --staged`.
+//!    `check --staged`, `index --staged` and the comparison of `check --fix`.
 //!    It returns an [`extension::Prepared`].
 //! 3. `Prepared::check` runs its checks in the last phase. It reads the model and the
 //!    [`extension::Inputs`] the core gathered, and returns an [`extension::ExtensionReport`].

@@ -484,7 +484,8 @@ register entry owes `cargo klarch check`. Any change to the Rust source owes fmt
 test suite. Every commit owes `commits`: its message and its tree. **Run
 `cargo klarch check --staged` after staging and before each commit, which judges the tree the
 commit will record, and `cargo klarch commits origin/main..HEAD` after it, which judges the
-message.** The range is the whole branch because this repository refuses citations of its
+message.** The first is a restatement; its home is
+`design@agent-skills@staged-check-before-each-commit`. The range is the whole branch because this repository refuses citations of its
 branch's own commits by SHA, and `commits` sees a citation only of a commit in the range it judges,
 per `design@core@branch-shas-are-refused`; the checker-side fix is
 `issue@core@branch-sha-citations-are-judged-within-the-range-only`. A commit that fails either is

@@ -487,7 +487,7 @@ impl SnapshotEntry {
 /// the working directory.
 ///
 /// **The index's snapshot is HEAD's tree with the index's changes against it**, the tree a
-/// commit would record, per `design@core@git-supplies-the-walk`. It is not `ls-files -s`, which
+/// commit would record, per `design@core@staged-tree-source`. It is not `ls-files -s`, which
 /// lists an intent-to-add entry, `git add -N`, at stage 0 with the empty blob, the same line as
 /// a staged empty file, while `git commit` records no such entry. `diff --cached` leaves an
 /// intent-to-add entry out, and compares against the empty tree where HEAD does not exist yet.
@@ -626,6 +626,7 @@ pub(crate) fn index_differs_from_head(root: &Path) -> io::Result<bool> {
             "--cached",
             "--quiet",
             "--relative",
+            "--ita-invisible-in-index",
             "--ignore-submodules=none",
         ])
         .accept(1)
@@ -659,6 +660,11 @@ pub(crate) fn unmerged(root: &Path) -> io::Result<Vec<PathBuf>> {
 /// An entry the index holds keeps its mode; a new one is a regular file. `--index-info` reads a
 /// path from the repository's root, not from the working directory, so each project-relative
 /// path is prefixed with the project's place in the repository.
+///
+/// **It refuses, staging nothing, a path the index holds as anything but a regular file**: a
+/// symlink or a gitlink, whose mode the text would be put under, and a directory, whose entries
+/// `--index-info` would replace. It asks the index itself rather than a listing a walk row can
+/// filter.
 pub(crate) fn stage_generated(root: &Path, files: &[(PathBuf, String)]) -> io::Result<()> {
     if files.is_empty() {
         return Ok(());
@@ -680,6 +686,28 @@ pub(crate) fn stage_generated(root: &Path, files: &[(PathBuf, String)]) -> io::R
             ))
         })
         .collect();
+    for (rel, _) in files {
+        // A pathspec naming a directory matches the entries under it.
+        if modes
+            .keys()
+            .any(|staged| staged != rel && staged.starts_with(rel))
+        {
+            return Err(io::Error::other(format!(
+                "{} is a directory in the index, and staging a file there would replace its entries",
+                rel.display()
+            )));
+        }
+        if let Some(mode) = modes
+            .get(rel)
+            .filter(|m| !matches!(m.as_str(), "100644" | "100755"))
+        {
+            return Err(io::Error::other(format!(
+                "{} is staged as a symlink or a gitlink, mode {mode}, and a generated file's text \
+                 would be put under it",
+                rel.display()
+            )));
+        }
+    }
     let mut info = Vec::new();
     for (rel, text) in files {
         let oid = git(root)
@@ -1200,7 +1228,7 @@ mod tests {
         std::fs::write(path, text).expect("a file");
     }
 
-    /// AC1 of the spec of `check --staged`: the index's snapshot is the tree `git write-tree`
+    /// The claim of `design@core@staged-tree-source`: the index's snapshot is the tree `git write-tree`
     /// records, and its bytes are the staged ones, not the working tree's.
     ///
     /// The project sits in a subdirectory of its repository beside a sibling whose change is
