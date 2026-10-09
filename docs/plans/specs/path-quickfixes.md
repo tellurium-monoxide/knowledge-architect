@@ -45,7 +45,7 @@ leaves the repository in the commit that completes its harvest.
   each is called here "the reply to round 1", "the reply to round 2" and "the reply to round 3".
   Find the file by that opening message, not by its name. The reviews of this spec raised six
   defaults, D1 to D6; the owner approved all six in a fifth message, called round 5: "All defaults
-  approved, proceed."
+  approved, proceed." The second reading raised D7 and D8, which await the owner.
 
 ## How the work is done
 
@@ -67,12 +67,18 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 - **a candidate**: for a raw path, a target the tree's listing holds. The owner proposed in round 1
   "look at the path, under each component (including root), and at paths relative to the
   containing file"; the agent widened "each component" to each anchor in the reply to round 2. As
-  decided: the span, with any line suffix or fragment dropped, joined to the directory of each
-  anchor that is a directory (every Component, every location, and the plans directory; a spec or
-  a milestone anchor is not), and to the directory of the file that holds it, with `..` and `.`
-  read lexically. A target the ignore rules cover, and not in the listing, is no candidate.
-  Distinct targets only, each spelled in the one form the check accepts for it: a plan document by
-  its kind, anything else with its deepest anchor and a trailing slash when it is a directory.
+  decided, the places `names_this_tree` reads the first segment from: the span, with any line
+  suffix or fragment dropped, joined to the root, to the directory of every anchor that is a
+  directory (every Component, every location, the plans directory and every milestone; a spec is a
+  file and is no place), and to the directory of the file that holds it, with `..` and `.` read
+  lexically; a span with a leading `/` is joined to the root alone. A target is a candidate when
+  the listing holds it; an ignored target is not. Distinct targets only, each spelled in the one
+  form the check accepts for it: a plan document by its kind; a skill's or an agent's site, or a
+  skill's directory, as `skill@<name>` or `agent@<name>`; an anchor's own directory from the
+  anchor above it; anything else with its deepest anchor, and a trailing slash when it is a
+  directory.
+- **the lint**: the bare-name lint, `Observation::BareName` at line 199 of
+  `path@core@src/check/references.rs`, per `design@core@bare-skill-name-reported`.
 - **the census**: the measurement the agent's subagent took during the discussion, over the
   transcripts of this repository (14 sessions) and of thaum (25 sessions), of every reference
   finding and of how each session repaired it. Its figures are the ones quoted under Arguments.
@@ -98,8 +104,8 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 - **the generated list**: the files `generated_list` in `path@core@src/cli/mod.rs`, line 750,
   returns.
 - **T1, T2, AC1 to AC4**: the labels the premortem put to the owner, kept in the items below.
-- **D1 to D6**: the defaults the reviews raised, ruled by the owner in round 5, under "Defaults
-  awaiting the owner".
+- **D1 to D8**: the defaults the reviews raised, under "Defaults awaiting the owner": D1 to D6
+  ruled by the owner in round 5, D7 and D8 awaiting the owner.
 
 ## What the work is
 
@@ -137,9 +143,14 @@ What exists today at each site the work touches:
   document where nothing exists, plus a sentence on dropping a line suffix or a fragment. Two tests
   pin the whole repair line: `an_unanchored_path_shape_s_repair_offers_no_unchecked_form`, line
   2068, and `an_unanchored_path_in_a_plan_document_is_offered_the_planned_form`, line 2279. Others
-  match parts of it: `path@core@src/check/references.rs` lines 2057 and 2407, and
-  `path@core@src/mock_projects.rs` line 705. Two sites already compute where a raw path lands:
-  `names_this_tree`, line 267, and the `exists` computation of the raw-path arm, lines 166 to 173.
+  match parts of it: `an_unanchored_path_shape_is_a_finding_naming_the_grammar` and
+  `a_located_path_is_told_to_drop_its_suffix`, `path@core@src/check/references.rs` lines 2058 and
+  2408. Others match only the statement, which the work keeps: `path@core@src/mock_projects.rs`
+  line 706, and `path@core@tests/binary.rs` lines 1720, 1805, 1855, 1879 and 1886. Two sites read a
+  raw path today: `names_this_tree`, line 267, which asks only whether the first segment exists and
+  so decides whether the finding is raised; and the `exists` computation of the raw-path arm,
+  lines 168 to 176, which joins the span unnormalized to every anchor and decides whether the
+  `planned` form is offered.
 - **A bare skill or agent name** is reported at `Observation::BareName`, line 199, with the repair
   `write `skill@<name>`` or `write `agent@<name>``, per `design@core@bare-skill-name-reported`.
 - **The retired form `<anchor>@<path>`** is reported at `Candidate::AnchorInKindPosition`, line 146,
@@ -200,10 +211,10 @@ adds:
 
 | decision | texts referencing it | judged or updated at |
 | --- | --- | --- |
-| `design@core@safe-fix-definition`: reversed in its second clause, "it writes or removes only files of the installer's namespace or of the generated list"; restated as the principle with the respelling as its test | `path@core@README.md` line 124; `path@core@docs/design.md` lines 142, 1088 and 1150; `path@core@docs/tripwires.md` lines 213 and 218; `path@core@src/cli/mod.rs` line 445; `issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`, which quotes the clause as its instance | step 1 for the README and the source; the harvest for the design home, the tripwires and the issue, whose quotation then names the head as it stood |
+| `design@core@safe-fix-definition`: reversed in its second clause, "it writes or removes only files of the installer's namespace or of the generated list"; restated as the principle with the respelling as its test | `path@core@README.md` line 124; `path@core@docs/design.md` lines 142, 1088 and 1150; `path@core@docs/tripwires.md`, the entry `tripwire@core@fix-makes-a-choice`; `path@core@src/cli/mod.rs` line 445; `issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`, which quotes the clause as its instance | step 1 for the README and the source; the harvest for the design home, the tripwires and the issue, whose quotation then names the head as it stood |
 | `design@core@fix-scope`: gains the respellings | `path@core@src/agents.rs` line 181 | the harvest; the comment stays true where it names the installed files only |
-| `design@core@fix-refusal-mixed-state`: its sentence "`--fix` cannot lose unstaged content, since it writes only generated and installed files" is rewritten, and, per D1, its clause "The refusal is exit 2, or 1 where agent files were installed before it" becomes "exit 2, or 1 where any file was written before it" | `path@core@README.md` line 139; `path@core@docs/design.md` lines 1090, 1108 and 1164; `path@core@docs/tripwires.md` lines 235 and 245 | step 1 for the README; the harvest for the design home and the tripwires |
-| `design@core@fix-before-the-checks`, and the sentence of `design@core@phases-gate-the-report` at `path@core@docs/design.md` lines 112 to 114, "having repaired before that gate only the installed files": the respellings join the order, per D1 | `path@core@README.md` line 133; `path@core@docs/design.md` lines 71 and 114; `issue@core@installed-file-findings-belong-in-phase-four`, line 27; `path@core@src/cli/mod.rs` lines 445 and 542; `path@core@tests/binary.rs` line 3746 | step 1 for the README, the source and the test; the harvest for the design home and the issue |
+| `design@core@fix-refusal-mixed-state`: its sentence "`--fix` cannot lose unstaged content, since it writes only generated and installed files" is rewritten, and, per D1, its clause "The refusal is exit 2, or 1 where agent files were installed before it" becomes "exit 2, or 1 where any file was written before it" | `path@core@README.md` line 139; `path@core@docs/design.md` lines 1090, 1108 and 1164; `path@core@docs/tripwires.md`, the entry `tripwire@core@fix-refusal-routed-around` | step 1 for the README; the harvest for the design home and the tripwires |
+| `design@core@fix-before-the-checks`, and the sentence of `design@core@phases-gate-the-report` at `path@core@docs/design.md` lines 112 to 114, "having repaired before that gate only the installed files": the respellings join the order, per D1; the same sentence's "exits 1" stays, per D7. The other texts referencing `design@core@phases-gate-the-report` cite it for the gate itself, which the work keeps: `path@knowledge-architect@CLAUDE.md` line 468, `path@core@CLAUDE.md` line 90, `path@core@docs/design.md` lines 56, 162, 504, 873, 1079, 1168, 1288 and 2064, `path@core@docs/rejected-alternatives.md` lines 74, 84, 90 and 96, `issue@core@installed-file-findings-belong-in-phase-four` line 20, and `tripwire@core@phases-gate-the-report-two`; `path@core@README.md` lines 115 to 121 restates the sentence and is updated | `path@core@README.md` lines 115 to 121 and line 133; `path@core@docs/design.md` lines 71 and 114; `issue@core@installed-file-findings-belong-in-phase-four`, line 27; `path@core@src/cli/mod.rs` lines 445 and 542; `path@core@tests/binary.rs` line 3746 | step 1 for the README, the source and the test; the harvest for the design home and the issue |
 | `tripwire@core@fix-makes-a-choice`: it fired on the proposal this spec plans, per D4 | `path@core@docs/design.md` line 1145 | per D4: its firing clause narrowed in this spec's branch, on the owner's word; deleted at the harvest |
 | `design@core@every-path-names-its-anchor`: gains the refusal of a `path` citation of a skill or an agent, and the question form of a raw path's repair | `path@knowledge-architect@CLAUDE.md` lines 142 and 180; `path@core@README.md` line 108; `path@core@docs/design.md` lines 635, 644, 765, 1369 and 1941; `path@core@docs/rejected-alternatives.md` lines 117, 146, 180, 186, 362 and 371; `path@core@src/check/references.rs` line 14; `path@core@src/manifest.rs` line 971 | steps 3 and 5 for the source; step 6 for the README and the root CLAUDE.md; the harvest for the design home and the rejected alternatives |
 | `design@core@harness-kinds-cited-without-anchor`: a skill or an agent has no `path` spelling | `path@knowledge-architect@CLAUDE.md` line 135; `path@core@docs/design.md` lines 1305 and 1335; `path@core@docs/rejected-alternatives.md` lines 156, 161 and 167 | step 6 for the root CLAUDE.md; the harvest for the design home and the rejected alternatives |
@@ -611,13 +622,28 @@ span names equally, which the respelling test excludes. The round-1 table of the
 named the row "bare skill or agent name → `skill@<name>` or `agent@<name>`", with no precedence; the
 precedence was added at assembly and is removed.
 
-### Under D1, a stop or a refusal can follow a written respelling `##a29`
+### Under D1, a refusal can follow a written respelling, and a stop stays a report `##a29`
 
-The design-conformance review of this spec. Bears on `thread@path-quickfixes@fix-run-order`. With the respellings before
-the second gate and the refusal, a stop or a refusal may come after hand-written files were
-written. Exit 2 promises an untouched tree, so either exits 1 once any file was written, and the
-sentence of `design@core@phases-gate-the-report` that names "only the installed files" as written
-before the gate is rewritten.
+The design-conformance reviews of this spec. Bears on `thread@path-quickfixes@fix-run-order`. With
+the respellings before the second gate and the refusal, a refusal may come after hand-written files
+were written. Exit 2 promises an untouched tree, so the refusal exits 1 once any file was written,
+and the sentence of `design@core@phases-gate-the-report` that names "only the installed files" as
+written before the gate is rewritten. A stop at a gate is not a failure to run: it reports
+findings, and exits 1 whatever was written, per `design@core@exit-code-ladder`, "1 | the command
+ran, and reports a negative answer about its subject", and per the same sentence of
+`design@core@phases-gate-the-report`, "it prints the stopped report and exits 1". The first
+revision of this spec made a stop exit 2 when nothing was written, which contradicted both heads;
+D7 restores exit 1.
+
+### A bare-name respelling rests on the head's presumption, not on a guarantee `##a30`
+
+The design-conformance re-review of this spec. Bears on `thread@path-quickfixes@respelling-fixes`.
+`design@core@bare-skill-name-reported` states "A bare name is a pointer written with no kind", and
+also keeps a census that re-takes its false positives: "one on a span that is not meant as a
+pointer reopens the exact match". So the row respells under the head's presumption that a matched
+name is a pointer. A false positive is the case T1 watches, and the owner kept T1 on the premortem
+cause that named it, round 4. The harvest rewrites the head to say that `--fix` applies its repair,
+and that a false positive reopens both the exact match and the respelling.
 
 ## New names, in one place
 
@@ -634,6 +660,10 @@ crates/core/src/fix.rs                                  new module, pub(crate)
                                                         read it; writes a file only if its bytes on
                                                         disk equal its baseline, and returns the
                                                         files written and the files skipped
+
+crates/core/src/scan.rs
+  Located::origin                                       new: whether a span of Rust source was read
+                                                        from a comment or a string literal
 
 crates/core/src/check/references.rs
   fn candidates(span, rel, anchors, inputs)             new: the candidates of a raw path, as Names
@@ -673,14 +703,22 @@ tests, not the test.
 
 **Where a respelling may write**: a Markdown document of the walk, and the comments of a Rust
 source file of the walk. Never a Rust string literal, never a file of the generated list, which
-the generator rewrites, and never a commit message.
+the generator rewrites, and never a commit message. The scanner drops the origin of a Rust span
+today: `Located` holds a line and the observation, and the comment-or-literal flag of
+`CommentLine` in `path@core@src/source/rs.rs` is not carried. Step 1 carries it, as `Located::origin`
+under New names, and a span whose origin is a literal is not respelled.
 
 **How a span is found in its line**: the scanner records a span's line and text, not its column.
-`apply` finds, in the line as stored on disk, each occurrence of the span's text delimited by one
-backtick on each side, where neither delimiter touches a further backtick. When the number of such
-occurrences differs from the number of findings the check raised for that span on that line, the
-line is not rewritten. Every occurrence is replaced, from the end of the line to its start, so the
-offsets of the earlier ones stay valid.
+`respellings` emits one `Respelling` per observation, so two observations of one span on one line
+give two. `apply` finds, in the line as stored on disk, each occurrence of the span's text delimited
+by one backtick on each side, where neither delimiter touches a further backtick. When the number
+of such occurrences differs from the number of `Respelling` values with that file, line and text,
+the line is not rewritten. Every occurrence is replaced, from the end of the line to its start, so
+the offsets of the earlier ones stay valid.
+
+**What a run prints**: one line per respelling, `fixed: respelled <file>:<line> `<old>` → `<new>``,
+after the installed files' lines and before the generated files'; and one line per skipped file,
+`not fixed: <file> changed since it was read`.
 
 Nearest rival: the owner's unique-candidate rule as the admission test. The fact that defeated it:
 the census found 4 misbindings among the one-candidate findings in files, and the tree cannot tell
@@ -690,10 +728,11 @@ premise, `argument@path-quickfixes@a18`, and kept the ruling.
 ### The respellings
 
 A respelling computes the one form the check accepts for the target the span already names, in one
-step: the path is normalized lexically, then spelled with its deepest anchor, or by its kind when it
-is a plan document. The writer's kind claim, the trailing slash or its absence, is kept as written.
-A respelling applies to a `path` reference with a declared anchor: never to `*`, `elsewhere` or
-`planned`. A respelling whose result would itself be a finding is not applied;
+step: the path is normalized lexically, then spelled as Names spells a candidate, the kind claim
+excepted: the writer's trailing slash, or its absence, is kept as written. A respelling applies to
+a `path` reference whose anchor is one the manifest declares or one the tool constructs, the plans
+directory or a milestone: never to `*` or `elsewhere`, and never to a `planned` reference. A
+target the ignore rules cover is accepted by the check without existing, and is not respelled. A respelling whose result would itself be a finding is not applied;
 `acceptance@path-quickfixes@respellings-leave-no-finding` judges it.
 
 | finding | its respelling | condition |
@@ -701,7 +740,7 @@ A respelling applies to a `path` reference with a declared anchor: never to `*`,
 | a target inside a deeper anchor | `path@<deepest>@<rest>` | the target exists |
 | a `..` or a `.` segment | the normalized path, spelled as above | the normalized target stays inside the root and exists |
 | a plan document cited by its path | the form `plan_document` already names: `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<slice>` | the finding is raised |
-| the retired `<anchor>@<path>`, the anchor a declared one | `path@<anchor>@<path>` | the target exists under that anchor |
+| the retired `<anchor>@<path>`, the anchor not a reserved word | the target's one form, as above | the target exists under that anchor |
 | a bare skill or agent name, on one line | `skill@<name>` or `agent@<name>` | the lint reports it, and the name is a skill's or an agent's, not both |
 | a `path` citation of a skill or an agent | `skill@<name>` or `agent@<name>` | the finding of "The skill and agent citation" is raised |
 
@@ -725,14 +764,20 @@ row's output is already computed or named by the check, and applying it changes 
 ### The question form
 
 The finding on a raw path keeps its statement. Its repair lists the candidates as a question, and
-keeps the forms for a path the tree does not hold. An illustration, two candidates:
+keeps the forms for a path the tree does not hold. The repair, with one candidate and with two or
+more, the candidates in byte order of their spelling, per D8:
 
 ```text
-docs/x.md:12  `<span>` is shaped like a path and names no anchor
-  → did you mean `path@core@<path>` or `path@gates@<path>`? Otherwise write
-    `path@elsewhere@<project>/<path>` for another project's file, `path@*@<path>` for every
-    component's own copy, or a placeholder for a pattern
+→ did you mean `<c1>`? Otherwise write `path@elsewhere@<project>/<path>` for another project's
+  file, `path@*@<path>` for every component's own copy, or a placeholder for a pattern
+→ did you mean one of `<c1>`, `<c2>`? Otherwise write `path@elsewhere@<project>/<path>` for
+  another project's file, `path@*@<path>` for every component's own copy, or a placeholder for a
+  pattern
 ```
+
+The `planned` clause of a plan document and the suffix sentence follow the "Otherwise" sentence, as
+each follows today's repair. The exact words are the implementing session's, within these
+constraints, and the pinned tests pin them.
 
 - With no candidate, the repair is today's.
 - With a line suffix or a fragment, the candidates are computed from the span with the suffix
@@ -740,9 +785,9 @@ docs/x.md:12  `<span>` is shaped like a path and names no anchor
 - In a plan document, where nothing exists, today's `planned` form stays.
 - `--fix` writes nothing for this finding.
 - The candidates are computed by one function, which replaces the `exists` computation of the
-  raw-path arm; `names_this_tree` keeps its role of deciding whether the finding is raised.
-
-The order of the candidates and a bound on how many are listed are the audit's to settle, under T2.
+  raw-path arm; `names_this_tree` keeps its role of deciding whether the finding is raised. A
+  finding raised with no candidate is possible, where the first segment exists and the rest does
+  not.
 
 Nearest rival: B, a repair that names the one candidate as an instruction, "write
 `path@core@<path>`". It lost to the owner's question in round 2, `argument@path-quickfixes@a14`.
@@ -773,9 +818,9 @@ Per D1, which the owner approved in round 5:
 7. the generated files;
 8. the full check.
 
-Exit codes: a failed write, a stop at either gate, and the refusal each exit 2 when nothing was
-written, and 1 once any file, installed or respelled, was written; 2 promises an untouched tree. A
-file skipped by `apply` because it changed since it was read is printed as a `not fixed:` line and
+Exit codes, per D7: a stop at either gate exits 1, as today, whatever was written: it reports
+findings. A failed write and the refusal each exit 2 when nothing was written, and 1 once any file,
+installed or respelled, was written; 2 promises an untouched tree. A file skipped by `apply` because it changed since it was read is printed as a `not fixed:` line and
 is not a failed write: the run continues, and the check of point 8 reports the findings left in
 it.
 
@@ -868,13 +913,13 @@ T1, as the harvest writes it: guards `design@core@fix-scope`. Fires when a revie
 retrospective reports a `--fix` rewrite of a bare name the writer did not mean as a skill or an
 agent. Response: reopen the bare-name respelling; the candidate fix is to respell only names that
 carry a prefix, which `issue@core@tooling-for-project-skills` would check. Re-entry: the
-standing-state review of every dispatched review, and each retrospective intake.
+standing-state review of every dispatched review, `agent@knowledge-architect-standing-state-reviewer`, and each retrospective intake.
 
 T2, as the harvest writes it: guards the head that records the question form, per the harvest row
 of `thread@path-quickfixes@raw-path-inference`. Fires when a review finds a raw-path repair that took a listed candidate where
 the text meant another project's file or every project's layout. Response: reopen the question
 form; one candidate fix is to list the candidates in a fixed order with no first-choice position.
-Re-entry: the standing-state review of every dispatched review. It fires only in sessions the owner
+Re-entry: the standing-state review of every dispatched review, `agent@knowledge-architect-standing-state-reviewer`. It fires only in sessions the owner
 sees, as `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`
 records of every tripwire on agent behaviour.
 
@@ -887,7 +932,7 @@ Guards `thread@path-quickfixes@fix-run-order`, and `criterion@path-quickfixes@no
 Judged at step 1. The baseline is the document's text as the model read it, from which the
 respellings were computed. A unit test calls `apply` with a baseline that differs from the bytes
 on disk, and asserts that the file keeps the bytes on disk and that `apply` returns it as skipped;
-a binary test asserts the `not fixed:` line. Fires when the file is written. Response: reopen
+the `not fixed:` line is asserted by a unit test of the function that prints it, since no binary test can change a file inside one run. Fires when the file is written. Response: reopen
 `thread@path-quickfixes@fix-run-order` on how a document is written.
 
 ### AC2: every respelling leaves no finding on its span, and a second run writes nothing `##respellings-leave-no-finding`
@@ -929,8 +974,8 @@ harness, as `Sandbox::serve_claude` does; `check --fix` is never run inside `pla
 `path@core@CLAUDE.md`.
 
 1. **The respelling machinery, empty.** `planned@core@src/fix.rs` with `Respelling`, `respellings`
-   returning none, and `apply` with its baseline; the order and the exit codes of "The order of a
-   run" in `fix_then_check`; the `fixed: respelled` and `not fixed:` lines. The README, the doc
+   returning none, and `apply` with its baseline; `Located::origin`; the order and the exit codes
+   of "The order of a run" in `fix_then_check`; the `fixed: respelled` and `not fixed:` lines. The README, the doc
    comment of `CheckArgs::fix`, and the source comments that cite
    `design@core@safe-fix-definition`, `design@core@fix-before-the-checks` and
    `design@core@fix-refusal-mixed-state` updated. Claims: AC1; AC3; `check --fix` over `dirhome`
@@ -958,7 +1003,9 @@ harness, as `Sandbox::serve_claude` does; `check --fix` is never run inside `pla
    and on the question form; the root CLAUDE.md where it restates
    `design@core@every-path-names-its-anchor`, `design@core@harness-kinds-cited-without-anchor` and
    `design@core@bare-skill-name-reported`; the shipped setup, issue-tracking and planning skills
-   where they say what `--fix` writes, then `cargo klarch install-agent-skills`. Entries in the
+   where they say what `--fix` writes, then `cargo klarch install-agent-skills`. In this
+   repository the root CHANGELOG.md is walked and its copies in the crates are not, so a `--fix`
+   that respells the root file leaves the copies different until `cargo x changelog` runs. Entries in the
    `Next release` section of CHANGELOG.md, then `cargo x changelog`:
    - New features: `cli`, minor: `check --fix` respells a reference whose target its span names,
      and prints each rewrite.
@@ -978,13 +1025,29 @@ Step 1 before step 2: the respellings need the machinery that step 1 proves empt
 step 3: the citation's respelling goes through the path resolution that step 2 changes. Step 3
 before step 4: step 3 is the change to what the check judges, and lands while the respelling
 machinery is fresh; step 4 changes no check. Step 4 before step 5: the question form is
-independent of `--fix`, and comes last among the code so the `--fix` steps share one review of
-the order. Step 5 before step 6: the documentation describes what was built. Step 6 before step 7:
+independent of `--fix`, and comes last among the code so the `--fix` steps 1 to 4 are read together by the review of point 4 of `skill@knowledge-architect-planning@working-a-slice`, which then
+judges the run order they build as a whole. Step 5 before step 6: the documentation describes what was built. Step 6 before step 7:
 the harvest records the decisions the built work implements.
 
 ## Defaults awaiting the owner
 
-None. D1 to D6 are under the subsection below.
+Two, from the second reading of this spec by its reviewers. D1 to D6 are under the subsection
+below.
+
+- **D7**, on `thread@path-quickfixes@fix-run-order`, from the design-conformance and code-claims
+  reviews, `argument@path-quickfixes@a29`. D1, as the owner approved it in round 5, made a stop at
+  either gate exit 2 when nothing was written. That contradicts `design@core@exit-code-ladder` and
+  the sentence of `design@core@phases-gate-the-report` that says the stop "exits 1", and the
+  existing test `check_fix_writes_no_generated_file_over_an_incomplete_model` of
+  `path@core@tests/binary.rs` asserts exit 1. The default: a stop exits 1 whatever was written, as
+  today; only the refusal and a failed write take 2 or 1 by what was written. This narrows the
+  approved D1. The alternative: D1 as approved, with both heads and the test changed.
+- **D8**, on `thread@path-quickfixes@raw-path-inference`, from the cold-implementer review. The
+  first revision left the order of the candidates and a bound on their number to the audit, a
+  choice the document did not rule. T2's response names "a fixed order with no first-choice
+  position" as a candidate fix. The default: every candidate is listed, in byte order of its
+  spelling, so no position is chosen by the tree's meaning, and the question reads "did you mean
+  one of" when there are two or more. The alternative: a bound, with the remaining count printed.
 
 ### The defaults the owner ruled on
 
@@ -1005,7 +1068,7 @@ commit that records the ruling.
   round 4, "Keep all tripwires and AC", stands after a premortem that labelled T1 and T2, while the
   parked thread's tripwire stood in the checkpoint table with no label. The default: if the thread
   is still parked at the harvest, its tripwire is recorded in `path@core@docs/tripwires.md`,
-  guarding `design@core@safe-fix-definition`, the one tripwire that head keeps, per D4. The
+  guarding `design@core@safe-fix-definition`, as rewritten. The
   alternative: it leaves with this spec.
 - **D3**, on `thread@path-quickfixes@respelling-fixes`, a material finding of the decision-record and design-conformance
   reviews, `argument@path-quickfixes@a27`. The owner approved the trailing-slash row without the
@@ -1020,7 +1083,8 @@ commit that records the ruling.
   spec's branch narrows its firing clause to a fix other than the respellings
   `spec@plans@path-quickfixes` defines, a reference that dangles when the spec leaves and so forces
   the harvest to judge it again; at the harvest, the tripwire is deleted, since its decision is
-  reversed, and the new head is guarded by the parked thread's tripwire, per D2, by T1 and by T2.
+  reversed; the rewritten head is guarded by the parked thread's tripwire, per D2, while T1
+  guards `design@core@fix-scope` and T2 the head that records the question form.
   The alternative: the tripwire stays as written until the harvest, which rewrites it.
 - **D5**, from the transcript review. The owner's direction of round 2, "I want to avoid catering to
   this project's own needs when designing the checker", is a standing direction about the
@@ -1045,7 +1109,7 @@ commit, with the test it fails.
 | item | home |
 | --- | --- |
 | `thread@path-quickfixes@fix-admission` | `design@core@safe-fix-definition` rewritten in place: the principle in its title, its tests, the respelling and the inference; `argument@path-quickfixes@a20` as its argument, and the census figures in the harvest's commit message, per D6 |
-| `thread@path-quickfixes@respelling-fixes` | `design@core@fix-scope` rewritten: the three kinds of fix, the respellings listed as the table of "The respellings", the shapes not respelled; `design@core@bare-skill-name-reported` rewritten where it names renaming the skill as the repair of an ordinary-word match |
+| `thread@path-quickfixes@respelling-fixes` | `design@core@fix-scope` rewritten: the three kinds of fix, the respellings listed as the table of "The respellings", the shapes not respelled; `design@core@bare-skill-name-reported` rewritten, its title and its sentence that name renaming the skill as the repair of an ordinary-word match, and its census clause, per `argument@path-quickfixes@a30` |
 | `thread@path-quickfixes@fix-run-order` | `design@core@fix-before-the-checks` rewritten with the order of "The order of a run"; the sentence and the exit clause of `design@core@fix-refusal-mixed-state` named in "What is already decided" rewritten; the sentence of `design@core@phases-gate-the-report` named there rewritten; `issue@core@installed-file-findings-belong-in-phase-four` read again for its sentence on the order |
 | `thread@path-quickfixes@skill-cited-by-path` | a head whose title states that a skill or an agent has no `path` spelling: a new head, or `design@core@harness-kinds-cited-without-anchor` with its title rewritten to state it, as `skill@knowledge-architect-decision-recording@current-design` decides; with `argument@path-quickfixes@a15` |
 | `thread@path-quickfixes@raw-path-inference` | a head whose title states the question form: a new head, or `design@core@every-path-names-its-anchor` with its title rewritten to state it, as `skill@knowledge-architect-decision-recording@current-design` decides |
