@@ -84,7 +84,7 @@ Decided in order; the first match wins.
   like its artifact cannot be told from it. Give it the project's prefix: the project's name and a
   hyphen, as in `<project>-development`. The directory name and the frontmatter `name` are equal.
   The same prefix names the project's subagent definitions.
-%% The two rules below restate `design@core@section-homes-carry-slugs` and `design@core@harness-kinds`.
+%% The two rules below restate `design@core@section-homes-carry-slugs` and `design@core@harness-entity-names`.
 - **End every level-two heading of a skill, a subagent definition and the root `CLAUDE.md` with a
   slug**: two hashes and the id in backticks, the id naming the section's subject. It is what a
   reference such as `skill@<name>@<slug>` cites, and the check reports a heading without one. A

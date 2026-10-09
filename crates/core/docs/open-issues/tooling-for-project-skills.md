@@ -6,10 +6,11 @@ kind: todo
 ## Summary
 
 A project's agent skills are prose files in its agent configuration. The checker reads each as a
-skill entity, per `design@core@harness-kinds`: its name against the id grammar and against its
-frontmatter `name`, and its level-two headings against the section rule. It reads nothing else of
-their structure: the project's prefix, their description fields, which installed skill one adds
-to.
+skill entity, per `design@core@harness-kinds`: its name against the id grammar, per
+`design@core@unusable-harness-name-is-a-finding`, and against its frontmatter `name`, per
+`design@core@harness-entity-names`, and its level-two headings against the section rule. It
+reads nothing else of their structure: the project's prefix, their description fields, which
+installed skill one adds to.
 
 ## Details
 

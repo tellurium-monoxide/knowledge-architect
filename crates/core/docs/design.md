@@ -198,10 +198,9 @@ a commit, so a third variant would make every extension write an arm reading the
 the second. That departs from what `design@core@ne-minimal` asks of a new tree, that every
 extension say how it reads it, and `design@core@trait-defaults` records the cost: an extension
 that maps a snapshot to its commit-mode handling runs, under `--staged`, only what it runs for a
-commit. thaum's rules extension lists its `changes` and `corpus` checks as not run there, and the
-owner accepted that cost, shown in that form; an extension that lists nothing skips them
-silently. An extension that wants more under
-`--staged` reads `Snapshot::revision()`.
+commit. thaum's rules extension lists its `changes` and `corpus` checks as not run there, and an
+extension that lists nothing skips them silently. An extension that wants more under `--staged`
+reads `Snapshot::revision()`.
 
 ### An extension scans the core's parse on its own, and the core's model carries nothing for it `##an-extension-builds-its-own-model`
 
@@ -322,8 +321,8 @@ and `extension::Resolution`. Every other public enum and struct is exhaustive on
 - **For an enum the core hands an extension, the compile error is wanted.** A third
   `extension::Tree` must make every extension say how it reads it. A wildcard would read the
   working tree while the run judges another tree: a wrong verdict, with exit 0. The tree git's
-  index would commit is no third kind: it is a revision of `Tree::Snapshot`, read from git objects
-  as a commit is, on the owner's ruling, per `design@core@an-extension-reads-a-snapshot`.
+  index would commit is no third kind, since it is read from the same git objects as a commit, per
+  `design@core@an-extension-reads-a-snapshot`, which records the cost.
 - **The attribute's gain is the library's:** a variant added to an enum without it is a breaking
   change under Rust's semver rules. Under 0.x that gain is nil, because major and minor both
   bump 0.MINOR, per `design@knowledge-architect@versioning-policy`. Every variant now foreseen
@@ -1089,8 +1088,7 @@ test is the one `--fix` applies before a fix, and `--fix` never applies this one
 `design@core@fix-refusal-mixed-state`. What it writes is the staged entry of a generated file,
 whose bytes the staged tree determines, so no bytes a writer meant are lost. The rival, writing
 the staged rows into the working-tree file, lost: after it, plain `check` fails, since that file no
-longer matches the working tree, and `check --staged` fails until the file is staged. The owner
-approved this shape while calling it not definitive.
+longer matches the working tree, and `check --staged` fails until the file is staged.
 
 ### `check --fix` applies every safe fix, then runs the full check `##check-fix-flag`
 
@@ -1138,9 +1136,9 @@ the owner's reason.
 
 This is the test every fix must pass before `--fix` applies it. The installer's namespace counts
 whole, per `design@core@owned-namespace-check`: an unshipped file the check reports there is
-removed, as the install removes it, whoever put it there; the owner ruled this. A fix that makes a choice, or
-touches git or a hand-written file, would rewrite what a writer meant, so its repair stays the
-reader's. The test is what keeps `--fix` safe to run after every edit, which serves
+removed, as the install removes it, whoever put it there. A fix that makes a choice, or touches
+git or a hand-written file, would rewrite what a writer meant, so its repair stays the reader's.
+The test is what keeps `--fix` safe to run after every edit, which serves
 `goal@knowledge-architect@agents-work-without-drift`. `tripwire@core@fix-makes-a-choice` watches
 it.
 
@@ -1166,8 +1164,9 @@ written, from the list `index` reads, after every destination is checked; the fu
 installed files' bytes do not depend on the model, so they are repaired before the gate, while a
 generated file is never written over an incomplete model, per `design@core@phases-gate-the-report`.
 An upgrade that removes a shipped file takes two runs: the deletion is unstaged, phase 2 reports
-it, and staging it touches git. The owner accepted that cost because such an upgrade is rare. A failed write exits 2 with nothing written, and 1 after any write,
-since 2 promises an untouched tree. The check stays the only verifier: `--fix` only writes
+it, and staging it touches git. The owner chose to keep that cost: "skill deletion/rename is a
+rare thing anyway. Not much of a problem if it takes multiple invocations to handle." A failed
+write exits 2 with nothing written, and 1 after any write, since 2 promises an untouched tree. The check stays the only verifier: `--fix` only writes
 before it verifies, so the rejected alternative of an `index` that prints a diff and a `--write`
 that applies it, a second command answering whether a file is current in its own format, is not
 reopened.
@@ -2080,50 +2079,60 @@ CLAUDE.md, which belongs to the project: it says the import line is missing, and
 it with the line as its repair. A change a project needs to an installed skill belongs in a skill
 of its own, routed from the project's CLAUDE.md.
 
-### Under the `claude` harness, skills, agents, the primer and the root CLAUDE.md are entities of four kinds that are no register, and a skill or an agent is named by its directory or its file, which its frontmatter `name`, where one is set, equals and which is no name the harness reserves `##harness-kinds`
+### Under the `claude` harness, skills, agents, the primer and the root CLAUDE.md are entities of kinds that are no register `##harness-kinds`
 
 The four harness kinds, `skill`, `agent`, `primer` and `instructions`, exist under the `claude`
-harness alone, per `design@core@agents-table`. They are kinds, not registers: no anchor carries
-them and no project declares them, since the harness fixes where each lives. The owner, on the
-choice: "agreed, they are kinds only and not "register". I don't think they fit the "register"
-model we have, and it would be weird to force them to fit IMO."
+harness alone, per `design@core@agents-table`. They are kinds, not registers: a register is what
+an anchor carries, and no anchor carries them and no project declares them, since the harness fixes
+where each lives. So they sit beside `path` and `planned`, the two kinds already no register. The
+rival, built-in registers of a new shape carried by no anchor, would make every reader of a
+register handle a register with no carrier: the manifest's refusals, the index, the extension view.
 
 | kind | an entity | named by |
 | --- | --- | --- |
-| `skill` | a directory directly under `.claude/skills/<name>/` holding `SKILL.md` | the directory |
-| `agent` | a Markdown file at any depth under the agents directory whose frontmatter sets `name` | the file, its `.md` removed once |
+| `skill` | a directory directly under `.claude/skills/<name>/` holding `SKILL.md` | the directory, per `design@core@harness-entity-names` |
+| `agent` | a Markdown file at any depth under the agents directory whose frontmatter sets `name` | the file, its `.md` removed once, per `design@core@harness-entity-names` |
 | `primer` | the installed primer; its sections alone are entities | none |
 | `instructions` | the root CLAUDE.md; its sections alone are entities | none |
 
 The layout is the harness's, read in its documentation of skills,
 https://code.claude.com/docs/en/skills.md, and of subagents,
-https://code.claude.com/docs/en/sub-agents.md:
+https://code.claude.com/docs/en/sub-agents.md: a skill in a `<subdirectory>/.claude/skills/`
+directory is loaded only when a session reads a file there, and is no entity here; the agents
+directory is scanned "recursively"; a file there with no `name` is treated "as documentation kept
+beside your agents", so it is no agent, and no README or index is owed there.
 
-- "The directory name also invokes the skill", even where a frontmatter `name` sets a second
-  command; a skill in a `<subdirectory>/.claude/skills/` directory is loaded only when a session
-  reads a file there, and is no entity here.
-- A skill folder is not named "`synced`, in any capitalization", and one named `anthropic-skills`
-  or beginning `anthropic-skills:` does not load. So a skill whose directory is `synced`, or begins
-  `anthropic-skills`, is a finding: the check would otherwise pass a skill no session can use.
-- An agent's "identity comes only from the `name` frontmatter field"; the agents directory is
-  scanned "recursively"; a file there with no `name` is treated "as documentation kept beside your
-  agents", so it is no agent, and no README or index is owed there. A `name` is "at most 256
-  characters", holds no `:` and does not start with `-`; the id grammar the checker asks is
-  stricter, and stands as its own requirement.
-
-**A name a reference cannot spell, and a frontmatter `name` that differs from the directory's or
-the file's, are findings.** A skill or an agent named outside `[a-z0-9]+(-[a-z0-9]+)*` could not
-be cited. The owner ruled the match for strictness: "I'd rather make the checks more strict to keep
-the workflow simpler than the other way around." The `name:` line is read alone, as YAML reads it,
-so frontmatter the harness reads and the checker's own frontmatter subset refuses, a list or a
-multi-line description, causes no finding.
-
-A scoped CLAUDE.md is not modelled: what such a file holds is the subject of
+The root CLAUDE.md alone is modelled, as the owner chose: "I'd model only root CLAUDE.md
+sections." A scoped CLAUDE.md is not modelled: what such a file holds is the subject of
 `issue@core@a-home-for-developer-contracts-outside-agent-configuration`. Under `harness = []` none of
 the four kinds exists, a span headed by one is silent, and installed copies a project kept are its
 own documents, whose slugs are misplaced definitions. Serves
 `goal@core@records-reach-their-reader`: a citation of a skill, an agent or a section is checked,
 and `show` lists every one.
+
+### Under the `claude` harness, a skill is named by its directory and an agent by its file, and a frontmatter `name`, where one is set, equals that name `##harness-entity-names`
+
+"The directory name also invokes the skill", in the harness's documentation of skills, even where a
+frontmatter `name` sets a second command. An agent's "identity comes only from the `name`
+frontmatter field", in its documentation of subagents. A frontmatter `name` that differs from the
+directory's or the file's name is a finding, so the name a reference cites and the name the harness
+uses are one. The match is the owner's ruling, against the frontmatter `name` alone as an agent's
+id: "I'm not sure our installed workflow would be able to work properly if not, and I'd rather make
+the checks more strict to keep the workflow simpler than the other way around." Its cost: the
+harness documents a skill whose `name` differs from its directory as a second command for it,
+which is a finding here, so a project that wants a short alias renames the directory. The `name:`
+line is read alone, as YAML reads it, so frontmatter the harness reads and the checker's own
+frontmatter subset refuses, a list or a multi-line description, causes no finding.
+
+### Under the `claude` harness, a skill or an agent whose name a reference cannot spell, or that the harness does not load, is a finding `##unusable-harness-name-is-a-finding`
+
+A skill or an agent named outside `[a-z0-9]+(-[a-z0-9]+)*` could not be cited. The harness's
+documentation of skills says a skill folder is not named "`synced`, in any capitalization", and that
+one named `anthropic-skills` or beginning `anthropic-skills:` does not load. So a skill whose
+directory is `synced`, or begins `anthropic-skills`, is a finding. The rival, recording the
+documentation with no check, would pass a skill no session can use. An agent's `name` is, in the
+documentation of subagents, "at most 256 characters", holds no `:` and does not start with `-`; the
+id grammar is stricter, and stands as its own requirement.
 
 ### The installed skills, agents and primer are defined from the installed copies of the tree being judged `##installed-entities-from-the-tree`
 

@@ -10,8 +10,8 @@ reviewer, records the owner's rulings as the owner made them.
 
 **Fires when:** a ruling of the owner is found missing from, or misstated in, a committed plan
 document, after the plan document's own reviews, where the misstatement is critical under
-`design@agent-skills@transcript-reviewer-agent`: reversed, or changing what is built or a
-load-bearing decision.
+`design@agent-skills@misstated-ruling-rated-by-what-it-changes`: reversed, or changing what is
+built or a load-bearing decision.
 **Response:** open a `defect` naming the ruling and the document, and reopen
 `design@agent-skills@ledger-from-transcript`, with the rejected alternative "Writing the
 discussion's ledger to a file during the discussion" among the candidates.

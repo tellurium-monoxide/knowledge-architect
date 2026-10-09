@@ -71,10 +71,10 @@ that every conforming project holds may be written as a reference: `path@*@docs/
 each Component's own copy, required by `design@core@components-carry-the-same-documents`, and
 `path@plans@README.md` names a file of the one plans directory, whose path the checker fixes, per
 `design@core@plans-dir-fixed`. Either is true in every installing project, and it shows the syntax
-the checker enforces there. The owner, of the per-Component paths: "it promotes the same kind of
-syntax as what the checker enforces in projects holding the installed skills"; the same holds of
-the plans directory's paths, which the owner approved with the default for the repairs:
-"Agreed on the three items awaiting my ruling." The checker accepts every shape of a required
+the checker enforces there. Writing a per-Component path in that syntax is the owner's proposal:
+"it promotes the same kind of syntax as what the checker enforces in projects holding the
+installed skills". The same argument holds of the plans directory's paths, since the checker fixes
+that directory's path. The checker accepts every shape of a required
 document, per `design@core@reserved-anchors`, so where the text names both shapes, both are
 references. A path that varies by project, and an illustration, are placeholders in
 angle brackets. The command a project runs is written as the placeholder that the install fills
@@ -114,10 +114,13 @@ the workflow one skill.
 It is never named as an artifact the activity writes, because the text names both: a skill called
 "decision-record" would share its name with the design homes and rejected alternatives the
 design skill calls the decision record, and one called "open-issues" with the issue directory. One
-exception is accepted: agent-configuration is named like the configuration it edits, because the
-owner judged it the clearest name for that activity. A name built on a verb form, such as
-discussing-design-decisions, reads as a sentence and grows long. The rule binds a project's own
-skills too, through the agent-configuration skill.
+exception holds: agent-configuration is named like the configuration it edits. Its nearest rival,
+agent-setup, reads like the setup skill, and the installer's prefix makes the full name,
+knowledge-architect-agent-configuration, read as a skill; the cost is that the name is also the
+artifact's. A name built on a verb form, such as discussing-design-decisions, reads as a sentence
+and grows long. That argument is the owner's: "naming an "action" makes the skill names into full
+sentences, which is weird and often too long". The rule binds a project's own skills too, through
+the agent-configuration skill.
 
 ### The design skill is named design `##design-skill-name`
 
@@ -316,23 +319,25 @@ one does would take the repeated runs this rule refuses.
   real use. A finding that comes from a synthetic run anyway is used only for the part a reading
   confirms.
 
-The rule derives from `goal@knowledge-architect@the-workflow-improves-through-real-use`, which states
-it for the whole workflow. The owner's argument: "the synthetic evidence is too unreliable. It would
-need at least statistical analysis, which is too costly, and a proper mock task cannot be created
-on a whim, it needs design and testing itself." One run of an agent is a sample of one. The
-evidence the rule gives up is supplied otherwise: retrospectives of real work reach this
-repository, and this repository installs its own skills, so its own sessions use each change
-before a release reaches a consumer. The cost accepted is that a defect in a new text is found at
-its first real use, not before its merge. The owner accepted it: "If the loss you mentionned is the
-only one you could think of, indeed it is small. Most things we do here are already well proven to
-work." Two instances in this repository grounded the rule. A
-spec's acceptance criterion, a replay of a search agent over another project's history, was ruled
-out at the step that ran it: "From experience, they are not very reliable, and drive the workflow
-toward wrong directions more often than good ones." A slice's criterion, a subagent classifying
-decisions written for the check, was dropped at the slice's design audit. The boundary is a property
-of the verdict, not a list of subjects: the owner asked for "a wider category that matches my
-intent", since "narrow wordings … reduce the underlying intent to something lesser". The nearest
-rival, a list of exempt subjects naming harness mechanics, leaves out the installer and the checker.
+The rule derives from `goal@knowledge-architect@the-workflow-improves-through-real-use`, which
+states it for the whole workflow. The owner's argument: "the synthetic evidence is too unreliable.
+It would need at least statistical analysis, which is too costly, and a proper mock task cannot be
+created on a whim, it needs design and testing itself." One run of an agent is a sample of one. The
+evidence the rule gives up is supplied otherwise: retrospectives of real work reach this repository,
+and this repository installs its own skills, so its own sessions use each change before a release
+reaches a consumer. The cost accepted is that a defect in a new text is found at its first real use,
+not before its merge. The cost is small: the defect a run would catch first is a text's mechanics,
+such as a new agent's tools or report format, and this repository's own next review is that text's
+first real dispatch, where such a failure shows at once and costs one re-dispatch. The owner added
+that "Most things we do here are already well proven to work." Two instances in this repository
+grounded the rule. A spec's acceptance criterion, a replay of a search agent over another project's
+history, was ruled out at the step that ran it: "From experience, they are not very reliable, and
+drive the workflow toward wrong directions more often than good ones." A slice's criterion, a
+subagent classifying decisions written for the check, was dropped at the slice's design audit. The
+boundary is a property of the verdict, not a list of subjects: the owner asked for "a wider category
+that matches my intent", since "narrow wordings … reduce the underlying intent to something lesser".
+The nearest rival, a list of exempt subjects naming harness mechanics, leaves out the installer and
+the checker.
 
 ### An installed instruction adds a capability and the judgement to use it, not a rule or a structure for one interaction `##capabilities-not-structure`
 
@@ -479,7 +484,7 @@ a `git show` or `git log` command naming a deleted plan document re-takes it, an
 none in a project whose specs are deleted reopens this decision. The cost is accepted: a reader
 without a clone of the repository cannot reach a deliberation.
 
-### A decision earns a design head only when an entry test passes, and the heads stay few `##a-head-is-owed-by-an-entry-test`
+### A decision earns a design head only when an entry test passes, and the decisions recorded stay few `##a-head-is-owed-by-an-entry-test`
 
 A decision earns a head in a design home only when one of the four entry tests of the installed
 decision-recording skill passes: reversing it would change an interface others consume, a type or
@@ -495,39 +500,42 @@ argued it, where it binds as intent at that scale, per `design@agent-skills@loca
 For a decision about the installed text, `design@agent-skills@instruction-record-is-minimal` admits
 one case the four tests do not: one that keeps two parts of the workflow consistent.
 
-Fewer heads is the principle, as long as no critical intent and arguments are lost, in the owner's
-words. Every grounding reads the design homes whole, and a human overseer reviews them; the session
-that changes local code reads the comment at that code, not a design home it would have to think to
-search. Test 2 is where the checker's reach ends: a reason that several sites must respect needs a
-home each site can cite, and a comment cannot be cited, while a policy or an absence has no site at
-all. Test 1 covers every interface others consume, not only a type or a signature: a head about a
-grammar, a file format or a command binds every adopting project, and under a strict test 1 such a
-head enforced in one module would pass no test. Test 3 counts a tool's behaviour measured as well as
-documented: a measurement costs as much to take again as a documentation reading to derive again,
-and a documented-only test 3 fails where the documentation is silent. Test 4 is the owner's: "Me
-answering "yes" or "approved" is not ground for recording a design decision, it is not "intent"
-from me, it is simply me answering your question "should I do that?" The key point is that my
-ruling has to carry **my** intent, not just acceptation/approval of your proposals." On a hedged
-word: "Under (b), anything I says in a discussion of the design skills comes out as "my intent", as
-I read it. This should not be the case." And on who judges it: "maybe the correct solution would be
-to ask the owner, rather than judge yourself. It would be more reliable IMO", ruled with "Agreed on
-this shape. The questions should be numbered (Q<N> or similar shape), so I can answer each one
+Fewer decisions recorded is the principle, as long as no critical intent or argument is lost. Every
+grounding reads the design homes whole, and a human overseer reviews them, so each head costs every
+later session and every review; the owner's statement of the trade-off: "more decision records,
+which over time bloat the design docs and make them harder to review by human overseers of the
+agents, as well as harder to ground on for agents, or less decision records, only when load bearing,
+but anything not argued in there has to be judged by the agents." The session that changes local
+code reads the comment at that code, not a design home it would have to think to search. Test 2 is
+where the checker's reach ends: a reason that several sites must respect needs a home each site can
+cite, and a comment cannot be cited, while a policy or an absence has no site at all. Test 1 covers
+every interface others consume, not only a type or a signature: a head about a grammar, a file
+format or a command binds every adopting project, and under a strict test 1 such a head enforced in
+one module would pass no test. Test 3 counts a tool's behaviour measured as well as documented: a
+measurement costs as much to take again as a documentation reading to derive again, and a
+documented-only test 3 fails where the documentation is silent. Test 4 is the owner's: "Me answering
+"yes" or "approved" is not ground for recording a design decision, it is not "intent" from me, it is
+simply me answering your question "should I do that?" The key point is that my ruling has to carry
+**my** intent, not just acceptation/approval of your proposals." On a hedged word: "Under (b),
+anything I says in a discussion of the design skills comes out as "my intent", as I read it. This
+should not be the case." And on who judges it: "maybe the correct solution would be to ask the
+owner, rather than judge yourself. It would be more reliable IMO". The questions are numbered at the
+owner's request: "The questions should be numbered (Q<N> or similar shape), so I can answer each one
 quickly without confusion." The agent's own judgement of the owner's intent, its rival, misread a
-hedged proposal as a ruling twice in the session that made the test. Its other rival, any
-recorded ruling of the owner, admits nearly every head harvested from a discussion, since the
-workflow asks the owner to confirm most decisions. The decision serves
+hedged proposal as a ruling twice in the session that made the test. Its other rival, any recorded
+ruling of the owner, admits nearly every head harvested from a discussion, since the workflow asks
+the owner to confirm most decisions. The decision serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`: a later session can tell what it
 may change and what a change costs from the head where one is owed, and from the comment where none
 is. An audit of the 178 heads the design homes held, against the first three tests, found
-over-recording below one head in five where the owner read it. The nearest rival of the principle,
-a head for every decision discussed with the owner, is what a session did for a mechanism carried
-at one site by its comments, and the owner judged the head unneeded. Within test 2, "the same
-statement at more than one site" admits a path repeated for consistency, which the owner judged no
-reason to keep a head. The wider test 2, "constrains work that has not been built", admitted nearly
-every head under a wide reading and almost none under a narrow one, and the design homes hold
-built intent, per `design@agent-skills@design-home-is-built-intent`. Whether the heads cost a
-session more than they save is not measured:
-`issue@agent-skills@the-retrospective-counts-no-review-cost`.
+over-recording below one head in five where the owner read it. The nearest rival of the principle, a
+head for every decision discussed with the owner, is what a session did for a mechanism carried at
+one site by its comments, and the owner judged the head unneeded. Within test 2, "the same statement
+at more than one site" admits a path repeated for consistency, which the owner judged no reason to
+keep a head. The wider test 2, "constrains work that has not been built", admitted nearly every head
+under a wide reading and almost none under a narrow one, and the design homes hold built intent, per
+`design@agent-skills@design-home-is-built-intent`. Whether the heads cost a session more than they
+save is not measured: `issue@agent-skills@the-retrospective-counts-no-review-cost`.
 
 ### An alternative earns an entry by the recording tests, not by having lost `##losing-alternatives-filter`
 
@@ -595,22 +603,21 @@ once it drifts, lost: every earlier delta carries the old slug, and the assembly
 from the transcript, per `design@agent-skills@ledger-from-transcript`, would read one thread as
 two.
 
-### The issues and tripwires a piece of work bears on are searched by an installed agent of its own, apart from the standing-state reviewer, in groups of at most 60 entries each read whole `##standing-entry-search-agent`
+### The issues and tripwires a piece of work bears on are searched by an installed agent of its own, apart from the standing-state reviewer `##standing-entry-search-agent`
 
 The installed agent `agent@knowledge-architect-standing-entry-searcher` searches one group of a
 project's issue and tripwire entries for those a piece of work bears on. Its description carries
 the dispatch rule, since a dispatcher reads an agent's description and never its body: count the
-rows of the issue and tripwire listings, send the fewest agents that keep every group at 60
-consecutive positions or fewer, all in parallel, with group sizes that differ by at most one, and
-brief each with the work, the seeds and its group. Equal groups keep a last group of a few entries
-from costing an agent of its own while another carries the full bound. A seed is a
-decision or a goal the work names. Its body fixes the order of the rows, reads every entry of its
-group whole, follows each seed through `show` to the entries that cite it, which it always
-returns, and judges every entry of its group against the work, leaning to recall. It returns every
-entry of its group in one of two lists, the entries that bear on the work, each with a reason, and
-the entries judged unrelated, so that a silent report cannot be mistaken for a skipped one. The
-session reads whole every entry returned, never from its reason line. It relies on the checker
-working as intended: `show` prints an entry's file and definition line, and the references to it.
+rows of the issue and tripwire listings, cut them into groups by the rule of
+`design@agent-skills@standing-entry-search-groups`, send one agent per group, all in parallel, and
+brief each with the work, the seeds and its group. A seed is a decision or a goal the work names.
+Its body fixes the order of the rows, reads every entry of its group whole, follows each seed
+through `show` to the entries that cite it, which it always returns, and judges every entry of its
+group against the work, leaning to recall. It returns every entry of its group in one of two lists,
+the entries that bear on the work, each with a reason, and the entries judged unrelated, so that a
+silent report cannot be mistaken for a skipped one. The session reads whole every entry returned,
+never from its reason line. It relies on the checker working as intended: `show` prints an entry's
+file and definition line, and the references to it.
 
 The search runs in a subagent so that the main session spends its context on the entries the work
 bears on, per `goal@knowledge-architect@agents-get-a-complete-workflow`, and the session still
@@ -618,16 +625,24 @@ reads each of those whole, as the owner asked, since the session acts on the ent
 summary of it, per `goal@knowledge-architect@the-owner-decides`. It is an agent of its own rather
 than the standing-state reviewer in a second mode: that reviewer reads every entry by rule, the
 search filters by relevance on purpose, and one text holding both standards lets a session apply
-the wrong one. Every entry is read whole rather than by its title, since a title shows neither a tripwire's firing
+the wrong one.
+
+### The search reads every standing entry whole, split over parallel agents in groups of a bounded number of entries `##standing-entry-search-groups`
+
+Every entry is read whole rather than by its title, since a title shows neither a tripwire's firing
 clause nor a deferred trigger. It is read by several agents rather than by one: one agent's load
-grows with the project, and one agent cannot judge so many entries reliably, in the owner's
-judgement. The unit of a group is the entry rather than the anchor: in thaum at its commit
-ef21314, one Component holds 51.9% of the bytes of the standing entries, so a group per anchor
-bounds nothing. The bound of 60 rests on the mean size of an entry there, 1.6 KB, and on no
-measurement of recall. Both figures are re-taken with `git ls-files` over the issue entry files
-and the tripwires homes, then `wc -c`: summed by the anchor that holds each file for the first,
-divided by the rows of the issue and tripwire listings for the second; real sessions measure it, per
-`goal@knowledge-architect@the-workflow-improves-through-real-use`.
+grows linearly with the project, so one agent reads every entry whole only while its context holds
+them, and the owner expects thaum to grow much more; a group size bounds each agent's load whatever
+the project's size. The groups are consecutive positions of the combined rows of the issue and
+tripwire listings, 60 or fewer each, the fewest groups that keep that bound, with sizes that differ
+by at most one. Equal groups keep a last group of a few entries from costing an agent of its own
+while another carries the full bound. The unit of a group is the entry rather than the anchor: in
+thaum at its commit ef21314, one Component holds 51.9% of the bytes of the standing entries, so a
+group per anchor bounds nothing. The bound of 60 rests on the mean size of an entry there, 1.6 KB,
+and on no measurement of recall. Both figures are re-taken with `git ls-files` over the issue entry
+files and the tripwires homes, then `wc -c`: summed by the anchor that holds each file for the
+first, divided by the rows of the issue and tripwire listings for the second; real sessions measure
+it, per `goal@knowledge-architect@the-workflow-improves-through-real-use`.
 
 ### The search runs at the design skill's grounding, of a discussion or of bounded work, and at the design audit of a milestone slice or of a spec, over every issue kind and every tripwire `##standing-entries-searched-before-the-work`
 
@@ -727,9 +742,11 @@ directory without asking the reader to follow it is not a repair and is outside 
 The other exception is a deleted skill's or agent's reference in a released section of
 CHANGELOG.md: the section's content never changes, per
 `design@knowledge-architect@changelog-entries`, and nothing exists that a reference could cite.
-Its repair is the bare name, which `design@core@bare-skill-name-reported` leaves silent. The owner:
-"this does not count as evasion, because there is nothing to cite that the checker would
-accept".
+Its repair is the bare name, which `design@core@bare-skill-name-reported` leaves silent. It evades
+nothing, since no checked form remains that it could have used. The rival, rewriting the sentence
+as `design@agent-skills@a-past-sentence-is-rewritten` asks elsewhere, would change a released
+section's content. The two exceptions are the cases ruled; another case where no checked form can
+name the target is a change of this decision.
 
 The argument: an unchecked form that clears a finding clears it for good, so a habit of writing one
 empties the check while every run still passes, against
@@ -801,18 +818,28 @@ items by a unit of the history instead, one step to one commit, lost: it fixes t
 history, against `goal@agent-skills@installed-text-leaves-room-to-judge`, and a commit the work
 needs for another reason, such as a fix met outside the task, would then contradict the plan.
 
-### One document per layer, and no snippet is authority `##spec-and-milestone`
+### A layer of planned work has one plan document `##spec-and-milestone`
 
 The work of one PR has one plan document, its spec. A milestone has a milestone document and one
 spec per slice, which hold the spec's sections between them, split as
-`design@agent-skills@milestone-is-a-directory` says. A plan document is detailed about the
-design and concise about the implementation sequence. No untested code snippet in it is presented
-as authority: a snippet is labelled as an illustration of a shape. A spec plus a separate detailed
-implementation plan lost: both carry the same decisions and the second drifts from the first,
-against `goal@knowledge-architect@documentation-stays-consistent`, and the owner observed that
-implementers force such plans' untested snippets into the code at any cost, copying their comments
-verbatim. A detailed plan, if one is ever written for a less capable implementer, covers a bounded
-amount of work and opens by saying it rests on assumptions.
+`design@agent-skills@milestone-is-a-directory` says. The two layers are the owner's proposal. A
+spec plus a separate detailed implementation plan lost: both carry the same decisions and the
+second drifts from the first, against `goal@knowledge-architect@documentation-stays-consistent`.
+
+### No untested code snippet in a plan document is authority `##no-untested-snippet-is-authority`
+
+A plan document is detailed about the design and concise about the implementation sequence, and no
+untested code snippet in it is presented as authority: a snippet is labelled as an illustration of
+a shape. The rule is the owner's: "a detailed design/spec document, with a concise implementation
+sequencing plan, is much better than a very detailed plan", from what the owner saw of detailed
+plans: "an implementer that is only given the resulting plan often takes it as absolute truth, and
+does anything to make the code snippets work, at all costs (sometimes breaking everything else
+instead). They also often keep comments in snippets (that are meant as guidelines for the
+implementer) verbatim in the real project", and "it must keep a disclaimer that content is based on
+assumption and might not be perfect". The rival, a plan document whose snippets read as
+instructions, is not prevented by one document per layer, since a spec with no separate plan can
+still carry them. A detailed plan, if one is ever written for a less capable implementer, covers a
+bounded amount of work and opens by saying it rests on assumptions.
 
 ### A milestone is a directory, its head a README, each slice a spec `##milestone-is-a-directory`
 
@@ -883,10 +910,14 @@ A plan document exists to carry a decision from convergence to a landing that co
 be reviewed before another session implements it. When the work lands in the change under way,
 neither applies, and requiring a spec would make every decision met during a task cost a plan
 document, which is what `design@agent-skills@new-or-reshaped-head-needs-design` must not cost to
-be followed. The rival, a separate path for one decision met during a task, lost: it bounded the
-discussion to one thread, against `design@agent-skills@structure-the-flow`. The cost, which the
-owner accepted, is a long commit message when a discussion inside a task grows to several threads;
-its length is not bounded, since a bound on it would bound the discussion.
+be followed. Widening the existing short path, rather than adding a path for one decision met
+during a task, is the owner's proposal, on the owner's argument: "The discussion starts with a
+single decision, but should not be bounded in threads or rounds IMO, because this depends only on
+what the grounding and investigation and experimentation brings to the table, and we cannot know
+about this in advance." The separate path bounded the discussion to one thread, against
+`design@agent-skills@structure-the-flow`. The cost is a long commit message when a discussion
+inside a task grows to several threads; its length is not bounded, since a bound on it would bound
+the discussion.
 
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
@@ -1021,13 +1052,18 @@ directory, so what is open is still listed in one place, per
 `goal@knowledge-architect@structure-and-workflow-work-together`; the roadmap adds only the order. A
 row dangles when its issue closes or its plan document leaves, and the check reports it, so the
 order cannot drift from the work unnoticed. The commit that adds a plan document rewrites the row
-of the issue it closes, and the commit that deletes one removes its row. A row is added or moved
-on the owner's word, since ordering work is a weighing, per
-`goal@knowledge-architect@the-owner-decides`. The owner's reason for the shape: it builds the
-roadmap from several register shapes using only references. The need is observed in real use: thaum kept a file
-of its next milestones as an exception to the installed skill. A roadmap register of its own,
-holding undesigned work, lost: two registers would each hold known, undesigned work, which needs a
-routing rule and hides one of them from the issue listing.
+of the issue it closes, and the commit that deletes one removes its row. The need is observed in
+real use: thaum kept a file of its next milestones as an exception to the installed skill. A
+roadmap register of its own, holding undesigned work, lost: two registers would each hold known,
+undesigned work, which needs a routing rule and hides one of them from the issue listing.
+
+### The roadmap's order is the owner's `##roadmap-order-is-the-owners`
+
+A row of the roadmap is added or moved on the owner's word, since ordering work is a weighing, per
+`goal@knowledge-architect@the-owner-decides`. The rival, any session ordering the work, would make
+the order a session's weighing. The two edits that keep a row pointing at the same work, rewriting
+the row of an issue a new plan document closes and removing the row of a plan document that
+leaves, need no word, per `design@agent-skills@roadmap-orders-issues`.
 
 ### No record of landed work is kept `##no-progress-record`
 
@@ -1036,7 +1072,7 @@ that left, and each landing commit says where its results live; releases are in 
 progress file would be a third document about the same work, with a lifetime of its own, against
 the one place for what is open of `goal@knowledge-architect@structure-and-workflow-work-together`.
 
-### A transcript reviewer checks that what a work's sessions established has a durable outcome, and rates a misstated ruling by what it changes `##transcript-reviewer-agent`
+### A transcript reviewer checks that what a work's sessions established has a durable outcome `##transcript-reviewer-agent`
 
 The installed agent `agent@knowledge-architect-transcript-reviewer` reads the transcripts of the
 sessions that produced a piece of work, named as a commit range, and checks two things. First, that
@@ -1060,31 +1096,42 @@ misstated ruling goes to the owner. The durability check serves
 its worth: in the review of the change that installed the first skills, a reviewer briefed with it
 was the one of six to find a decision recorded narrower than the owner's approval.
 
+### A misstated ruling is critical only when it reverses the ruling, or changes what is built or a load-bearing decision `##misstated-ruling-rated-by-what-it-changes`
+
 A misstated ruling is critical only when it is reversed, or when its state or scope changes what is
 built or a load-bearing decision. A ruling recorded a little wider, narrower or firmer on a detail
 that is not load-bearing is minor, still goes to the owner, and is no finding of the retrospective
-once caught before the merge. Any other misstated ruling is major. The owner's words: "everytime, it was on details that were small and
-not load bearing in my opinion", "the transcript reviewer is catching those issues reliably IMO. I
-do not believe any amount of instruction anywhere would help improve more than the current
-situation: LLM agents are trained to take the input they receive from humans seriously and follow
-them closely", and "This kind of findings being flagged by the transcript reviewer once in a while
-(for decisions that are not the most criticals, and with only a small deviation from my word, not a
-complete reversal) is not a critical defect and should not be considered as such." The rival, every
-misstated ruling rated critical, made a reviewer's report of a slip read as a critical defect, which
-the owner ruled it is not; the slip is still repaired, and it is no defect of the workflow.
+once caught before the merge. Any other misstated ruling is major. The cut is what the misstatement
+would build: a reversal, or a change of what is built or of a decision others rest on, produces
+wrong work if it merges, where a slip on a detail that bears on nothing built produces none, and is
+repaired once the owner sees it. That such a slip is no critical defect is the owner's weighing,
+from the owner's observation of real sessions: "everytime, it was on details that were small and
+not load bearing in my opinion", "the transcript reviewer is catching those issues reliably IMO. I do not believe any amount of instruction anywhere would help improve
+more than the current situation: LLM agents are trained to take the input they receive from humans
+seriously and follow them closely", and "This kind of findings being flagged by the transcript
+reviewer once in a while (for decisions that are not the most criticals, and with only a small
+deviation from my word, not a complete reversal) is not a critical defect and should not be
+considered as such." The rival, every misstated ruling rated critical, made a reviewer's report of a
+slip read as a critical defect, which the owner ruled it is not; the slip is still repaired, and it
+is no defect of the workflow.
 
 ### A plan document records the whole discussion `##spec-records-the-exchange`
 
 A plan document assembled from a discussion records every thread with its proposer and round, its
 final state, the arguments on each side, the owner's rulings verbatim with their round, and its
-relations. It applies to a spec, and to a milestone document with its slice specs, which share the
-record by the rule of `design@agent-skills@milestone-is-a-directory`. `design@agent-skills@standing-argument-in-head` names the plan document
-as the home of the deliberation while it exists, and `goal@knowledge-architect@the-owner-decides`
-is served only where the rulings are recorded as the owner made them. On the in-change path, the
-commit message carries the same record, for the same reason, per `design@agent-skills@in-change-path`.
-The rival, a plan document
-recording each thread's final state and resolution, left the rulings and the arguments to memory.
-The cost, which the owner accepted by name, is a longer plan document to write and to read.
+relations. The record is the owner's proposal: "I'd like to have the initial spec aim to be contain
+a precise record of the design work and exchange that happened, with all threads written, their
+final states, and the arguments, with the possibility of cross referencing all these items, bounded
+to the spec document or the milestone directory." It applies to a spec, and to a milestone document
+with its slice specs, which share the record by the rule of
+`design@agent-skills@milestone-is-a-directory`; the owner extended it to milestones: "Milestones are
+created through the design skill too after all." `design@agent-skills@standing-argument-in-head`
+names the plan document as the home of the deliberation while it exists, and
+`goal@knowledge-architect@the-owner-decides` is served only where the rulings are recorded as the
+owner made them. On the in-change path, the commit message carries the same record, for the same
+reason, per `design@agent-skills@in-change-path`. The rival, a plan document recording each thread's
+final state and resolution, left the rulings and the arguments to memory. The cost is a longer plan
+document to write and to read.
 
 ### An argument is an item, without a state `##arguments-as-items`
 
@@ -1142,7 +1189,7 @@ deferred trigger against the change, as it reads every tripwire, and reports a t
 meets as a finding, whose repair is the work the issue names or the owner's ruling. Without it, a
 trigger met by work that does not go through the design skill has no reader at all. The design skill
 hosts a search before bounded work, at its grounding, per `design@agent-skills@bounded-path-in-design`.
-A search before every other piece of work stays parked, on the owner's word: its one host would be
+A search before every other piece of work stays parked: its one host would be
 the primer, which holds only what every session needs, per `design@agent-skills@primer-limit`, the
 evidence for it is one instance, and a line sending every session to search before any work is a
 conformance rule. In thaum, a move of the pinned checker met the trigger of a deferred issue that
@@ -1161,20 +1208,25 @@ the record rules out. The second rule keeps it from reporting each widening the 
 purpose. It runs only commands that read.
 
 The decision serves `goal@knowledge-architect@agents-work-without-drift`, which is met when "a
-departure from the recorded design is caught by a check or a review before it merges". The other
-reviewers read the document against itself, against the code, or against the discussion. The
-design audit reads design homes, but not goals, and it is run by the session that implements the
+departure from the recorded design is caught by a check or a review before it merges". The owner
+named the lack: "nothing seems to be reviewing a plan document against recorded goals and design."
+The other reviewers read the document against itself, against the code, or against the discussion.
+The design audit reads design homes, but not goals, and it is run by the session that implements the
 work, which may be the document's author, and skipped for a spec worked in the session that
-converged. Two acceptance criteria that `goal@knowledge-architect@the-workflow-improves-through-real-use`
-rules out each passed a plan document's three reviews in this repository. Its nearest rival, the decision-record reviewer
+converged. Two acceptance criteria that
+`goal@knowledge-architect@the-workflow-improves-through-real-use` rules out each passed a plan
+document's three reviews in this repository. Its nearest rival, the decision-record reviewer
 extended to plan documents, judges the record a diff writes and holds a plan's items as not
-decisions yet, so it would carry two questions with two yardsticks. The cold implementer, the
-other rival, asks whether the document can be acted on, and a document that contradicts a goal
-can. The reviewer depends on a record worded wide enough, which the owner acknowledged: "this is
-always dependent on the project being diligent in its goals and design records. Everything in the
-workflow is, after all. Project owners still have to watch agent behavior and interrupt them if they
-find them acting differently than their intent. Whether this is a published workflow defect or an
-internal documentation defect is left to the retrospective skill to judge." Its cost, one more dispatch at each of those moments, the owner accepted.
+decisions yet, so it would carry two questions with two yardsticks. The cold implementer, the other
+rival, asks whether the document can be acted on, and a document that contradicts a goal can. The
+reviewer depends on a record worded wide enough. The owner's words state where a miss then belongs:
+"this is always dependent on the project being diligent in its goals and design records. Everything
+in the workflow is, after all. Project owners still have to watch agent behavior and interrupt them
+if they find them acting differently than their intent. Whether this is a published workflow defect
+or an internal documentation defect is left to the retrospective skill to judge." Its cost is one
+more dispatch at each of those moments; what it buys is a reader of the record that neither the
+author nor the implementing session is, which the two acceptance criteria above show the other
+reviews lacked.
 
 ### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
 
@@ -1371,22 +1423,34 @@ owes are its own list. The setup skill proposes two goals for such a tool, for t
 ruling: one command runs every check owed before a merge, and a task performed repeatedly becomes a
 command of the tool.
 
-### The setup skill recommends `check --staged` after staging and before each commit, and the skills name the staged forms for a partial commit `##staged-check-before-each-commit`
+### The setup skill recommends `check --staged` after staging and before each commit `##staged-check-before-each-commit`
 
 The setup skill recommends that a project's root `CLAUDE.md` tell a session to run
 `check --staged` after staging and before each commit, beside the gates command, which
-judges the branch before a merge. The issue-tracking and planning skills name `index --staged` and
-`check --staged` for a commit of part of the working tree. Both commands are the core's,
-`design@core@staged-tree-source` and `design@core@index-staged-write`. The reason is the same at every site: the
-staged tree is the one the commit records, and a file left unstaged, or a change staged in part,
-passes a check of the working tree and fails the commit's own, which the gates meet only before the
-merge.
+judges the branch before a merge. The command is the core's, `design@core@staged-tree-source`. The
+reason: the staged tree is the one the commit records, and a file left unstaged, or a change staged
+in part, passes a check of the working tree and fails the commit's own, which the gates meet only
+before the merge.
 
 `design@agent-skills@additions-need-real-use` asks of an addition a behaviour seen in real use, or
-asked for by the owner with the lack named. The owner asked for the delivery of the staged forms
-and named the partial commit's lack, which covers the issue-tracking and planning sentences. The
-setup recommendation has no named lack of its own, and stands on the owner's ruling that it be
-built.
+asked for by the owner with the lack named. The setup recommendation has no named lack of its own,
+so it is an exception to that rule, argued on delivery: no shipped text told a session to check
+before a commit, so a command that judges the commit's tree is used only where a project's own
+instructions already ask for it. Its rival, dropping the recommendation until a real session shows
+the lack, keeps the rule and leaves the command undelivered. Its cost is an instruction no observed
+session asked for.
+
+### The skills name `index --staged` and `check --staged` for a commit of part of the working tree `##staged-forms-for-a-partial-commit`
+
+The issue-tracking and planning skills name `index --staged` and `check --staged` for a commit of
+part of the working tree. Both commands are the core's, `design@core@staged-tree-source` and
+`design@core@index-staged-write`. The staged tree is the one the commit records, and a change
+staged in part passes a check of the working tree and fails the commit's own.
+`design@agent-skills@additions-need-real-use` asks of an addition a behaviour seen in real use, or
+asked for by the owner with the lack named. The owner asked for the delivery, "identify shipped
+workflow changes needed to deliver this new feature", and named the partial commit's lack: "the
+user intent in this case is probably to commit partially, and then --fix cannot apply its changes
+safely". The rival, the skills naming only the working-tree forms, is what that lack defeats.
 
 ### In a Rust project, one maintenance crate pins the checker and runs the gates `##xtask-pins-checker`
 

@@ -1295,9 +1295,10 @@ impl Entities {
                     }
                     return;
                 }
-                // The harness loads no skill of a name it reserves, per `design@core@harness-kinds`:
-                // the check would otherwise pass a skill no session can use. The name is in the
-                // id grammar here, so only the lower-case spellings remain to refuse.
+                // The harness loads no skill of a name it reserves, per
+                // `design@core@unusable-harness-name-is-a-finding`: the check would otherwise pass
+                // a skill no session can use. The name is in the id grammar here, so only the
+                // lower-case spellings remain to refuse.
                 if kind.name() == SKILL_KIND
                     && (name == "synced" || name.starts_with("anthropic-skills"))
                 {
@@ -2992,8 +2993,8 @@ mod tests {
     }
 
     /// The claim: a skill the harness does not load, `synced` or a name beginning
-    /// `anthropic-skills`, is a finding, per `design@core@harness-kinds`. Mutation checked:
-    /// testing only `synced` passes the second.
+    /// `anthropic-skills`, is a finding, per `design@core@unusable-harness-name-is-a-finding`.
+    /// Mutation checked: testing only `synced` passes the second.
     #[test]
     fn a_skill_name_the_harness_reserves_is_a_finding() {
         let e = harness_table(

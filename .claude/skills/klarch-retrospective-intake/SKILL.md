@@ -58,10 +58,11 @@ A finding is cited by its id and its file's stem, as "W3 of
      goals the findings name, or none), its group's first and last positions, and a scratch
      directory of its own.
 
-   This restates the dispatch rule of `design@agent-skills@standing-entry-search-agent`, which the
-   agent's description also carries. Read every entry returned whole with `cargo klarch show <ref>`, never from its reason line. The
-   search finds what a grep per finding does not: a finding already recorded, a deferred issue
-   whose trigger the file meets, a tripwire whose firing evidence the file carries, a design
+   This restates the dispatch rule of `design@agent-skills@standing-entry-search-agent` and the
+   groups of `design@agent-skills@standing-entry-search-groups`, which the agent's description also
+   carries. Read every entry returned whole with `cargo klarch show <ref>`, never from its reason
+   line. The search finds what a grep per finding does not: a finding already recorded, a deferred
+   issue whose trigger the file meets, a tripwire whose firing evidence the file carries, a design
    issue whose re-entry it meets.
 4. **Cluster the findings.** One defect is often reported in several files, or as two findings of
    one file. A cluster is analysed once, in the analysis of the first file that holds it, and cites

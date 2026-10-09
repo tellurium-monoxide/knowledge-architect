@@ -89,7 +89,7 @@ bundling several decisions, and a head citing an approval of the owner as its gr
   agents owes a calibration: a shared sample classed by each.
 
 **Scale.** Such audits must work on large projects, so they rest on subagents: groups of entries
-of bounded size, as `design@agent-skills@standing-entry-search-agent` sizes its groups, each read
+of bounded size, as `design@agent-skills@standing-entry-search-groups` sizes its groups, each read
 whole, with results written to files rather than returned into the dispatching conversation.
 A harness's dynamic workflows could orchestrate them, but that is specific to one harness, against
 `goal@agent-skills@installed-text-works-anywhere`. What the instance above suggests an audit owes:
