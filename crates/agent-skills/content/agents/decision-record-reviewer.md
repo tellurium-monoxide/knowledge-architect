@@ -73,7 +73,9 @@ title tests; one decision per head; the slug, its level and its alignment; prese
 tense; fidelity to what the owner approved; and the backstop, for a decision that should have gone
 to the design skill.
 A head that argues from a goal's words without naming the goal is the common miss of the standing
-argument.
+argument. A quotation of the owner a head cites as its ground is read in its source, against the
+question it answered: a verbatim answer to another question is not the owner's ground for this
+one.
 
 **Does the diff defeat a reason recorded at the code?** A decision that earned no entry lives in a
 comment at the code and in the message of the commit that introduced it. A diff that removes or
