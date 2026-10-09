@@ -77,20 +77,15 @@ place to read. It lost to a measurement: the first milestone written that way, s
 had a README of 1,624 lines when it left, read whole at the grounding of every slice. That cannot be
 derived again in one discussion round.
 
-**A line in the primer that sends a decision met during another task to the design skill** — lost
-to `design@agent-skills@new-or-reshaped-head-needs-design`. `live`. The primer holds only what every
-session needs and no installed skill delivers, per `design@agent-skills@primer-limit`, and the
-design skill's description carries the symptom. It is kept here because a doubt remains:
-`tripwire@agent-skills@head-created-without-deliberation` watches whether the description and the
-backstop reach a session in time, and names this line among the candidates if they do not.
-
 **Every decision that earns durable text goes through the design skill** — lost to
-`design@agent-skills@new-or-reshaped-head-needs-design`. `live`. It sends an addition within what a
-head's title states, and a relocation that adds or removes no decision, to a full discussion whose
-outcome the head already records; the owner ruled such a change does not need one. It is kept here
-because a doubt remains: `tripwire@agent-skills@head-created-without-deliberation` watches whether
-a session adds to a head a decision its title does not state, with no deliberation, and this
-alternative is a candidate if it does.
+`design@agent-skills@new-or-reshaped-head-needs-design`. `live`. It sends a member a head's argument
+covers, and a relocation that adds or removes no decision, to a full discussion whose outcome the
+head already records; the owner ruled such a change does not need one, and every new member through
+the design skill cost a reversal for an ordinary extension, per
+`design@agent-skills@title-states-the-rule`. It is kept here because a doubt remains:
+`tripwire@agent-skills@head-created-without-deliberation` watches whether a session adds to a head a
+member its argument does not cover, with no deliberation, and this alternative is a candidate if it
+does.
 
 **One agent reading every issue and tripwire of the project for a piece of work** — lost to
 `design@agent-skills@standing-entry-search-groups`. `live`. One agent's load grows linearly with the
@@ -149,3 +144,27 @@ judges fails too: a later branch's documents and messages cite, by subject, comm
 longer in its range, so the check must either load every commit or issue no finding on them, and it
 then only confirms citations that are already correct. Its value is low, and a subject written in
 prose escapes no check: it names history, not the tree.
+
+**The rules on design heads in one section of the decision-recording skill** — lost to
+`design@agent-skills@one-home-for-head-rules`. `live`. A session reads a head at every grounding
+and every plan, and nothing loads the skill at that moment, while every subagent holds the primer
+in its initial context, which a probe of two subagent types measured in one harness. It is kept
+here because the probe covers one harness, and another agent provider may not load the primer.
+
+**A directive restated wherever it has to be delivered** — lost to
+`design@agent-skills@restatement-size-test`. `live`. About ten installed texts each restated part of
+one skill, and an inventory found nine inconsistencies between them and it. It is kept here
+because a doubt remains: `tripwire@agent-skills@pointer-not-followed` watches whether a session
+misses a directive whose restatement became a pointer, and this rule is the candidate if it does.
+
+**Splitting a head where reversing one part leaves the other standing** — lost to
+`design@agent-skills@one-decision-per-head`. `live`. Four audits of the design heads, run apart, found
+that the test splits a rule from its own exception, which always passes it, and that parts losing
+to different nearest rivals discriminate better.
+
+**A head citing every ruling of the owner as its ground** — lost to
+`design@agent-skills@head-ground-is-the-argument`. `live`. An audit of the heads added or rewritten
+in one week found about two in five of their citations of the owner to be an approval of the
+agent's position, often a batch word, which made an approved default read as the owner's intent. It
+is kept here because a doubt remains: `tripwire@agent-skills@owner-intent-stripped` watches whether
+the correction removes the owner's own words, and this alternative is the candidate if it does.

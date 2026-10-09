@@ -233,5 +233,5 @@ Neither carries the history of a change: that lives in the commit message.
 
 **Where a comment ends and a document begins** is `primer@design-heads`: its entry tests decide
 whether a decision earns a design head at all, and a decision that fails them lives in a comment at
-its code and in its commit; within a head, if changing a piece of code would force a change to the
-head, it is design, and if the head would be unaffected, it is a comment.
+its code and in its commit; if changing a piece of code would force a change to the design home, it
+is design, and if the design home would be unaffected, it is a comment.

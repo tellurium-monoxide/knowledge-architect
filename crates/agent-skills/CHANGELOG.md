@@ -41,6 +41,9 @@ subsection is omitted.
 - `agent-skills`, patch: the installed skills and agents no longer number their sections, and cite
   each other's sections by reference, as `skill@<name>@<slug>`. A project's own text that cites a
   section of an installed skill or agent by its number cites it by its reference instead.
+- `agent-skills`, patch: the decision-recording skill's section entry-tests leaves it; its content
+  is in the primer's new section on design heads. A project's text that cites that section of the
+  skill cites `primer@design-heads` instead.
 
 ### New features
 
@@ -67,6 +70,22 @@ subsection is omitted.
 - `agent-skills`, patch: the setup skill recommends `check --staged` after staging and before each
   commit, and the issue-tracking and planning skills name `index --staged` and `check --staged` for
   a commit of part of the working tree.
+- `agent-skills`, patch: the rules on what a design head records and how move into one section of
+  the primer, `primer@design-heads`, which every session holds; the decision-recording skill keeps
+  the procedures of recording and opens by asking for that section to be read again, and the other
+  installed skills and agents point to it.
+- `agent-skills`, patch: a head's title states the rule that decided, and its body names the members
+  built; a head holds one decision, split where two parts lose to different nearest rivals; a head
+  stands on its argument and cites the owner only for what came from the owner; a member the
+  argument covers is recorded directly, and one the owner's words name goes to the owner as one
+  proposal; a head a change touches is brought to these rules.
+- `agent-skills`, patch: before a head is written from an approval with no argument behind it, the
+  decision-recording skill searches for its arguments, costs and rivals, and an even result goes to
+  the owner as a tie.
+- `agent-skills`, patch: a directive is restated only where the restatement is no longer than a
+  pointer to it, one sentence; a longer one is a pointer to its home, read whole. The routing
+  reviewer reports a longer restatement, and the design skill's in-change path reads the section on
+  design heads again before its grounding.
 
 ## 0.5.0
 

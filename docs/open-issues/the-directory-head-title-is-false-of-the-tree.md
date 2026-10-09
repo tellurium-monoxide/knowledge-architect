@@ -23,8 +23,8 @@ The tree holds the directory knowledge-architect under the agent-config location
 installed primer: `git ls-files` on that directory lists its PRIMER.md. It is no anchor, so it
 collides with nothing, and the checker passes. The defect is in the head's title, not in the tree.
 
-Found by a read-only audit of the root's design heads during the design discussion of
-`issue@agent-skills@a-head-states-the-instance-built-rather-than-the-principle`, and reproduced by
+Found by a read-only audit of the root's design heads against
+`design@agent-skills@title-states-the-rule` and its neighbours, and reproduced by
 reading the title against the listing.
 
 ### Why it matters

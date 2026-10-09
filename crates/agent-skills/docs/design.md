@@ -186,16 +186,14 @@ discussion decides its size before its content, against the open discussion the 
 run. A path chosen by the cost of reversal, or by where the work lands, changes where the
 deliberation is kept, never how large the discussion may grow.
 
-### Only a decision that creates a head, contradicts one, or outgrows its title is argued under the design skill `##new-or-reshaped-head-needs-design`
+### Only a decision that creates a head, contradicts one, or adds a member its argument does not cover is argued under the design skill `##new-or-reshaped-head-needs-design`
 
 A decision goes through the design skill, whatever activity met it, when it creates a design head,
-contradicts a statement of one, its argument included, or extends one beyond what its title
-states. In the third case the title is reworded to state both decisions, or, where no title can,
-the addition gets a head of its own. A title states a decision only while it is false of the
-nearest rival it beat, so a reworded title passes that test for each decision under it, and a
-title made generic enough to cover both fails it. An addition within what the title states, which
-contradicts nothing, is recorded directly, with the owner's words quoted where they gave a ruling.
-A change that relocates or rewords recorded decisions, a split of a head included, and adds or
+contradicts a statement of one, its argument included, or adds a member the head's argument does
+not cover. An addition that answers another question than the head's takes a head of its own, per
+`design@agent-skills@one-decision-per-head`. A member the head's argument covers is recorded
+directly, routed per `design@agent-skills@extension-follows-the-ground`; an approval the owner gave
+it is quoted in the commit, not in the head. A change that relocates or rewords recorded decisions, a split of a head included, and adds or
 removes none, is not a decision and needs no design skill; the routing and fidelity-of-relocation
 review axes judge that it adds or removes none. A choice that earns no durable text stays in a code
 comment and a commit message.
@@ -205,41 +203,119 @@ text is about to be written, so a new decision met during an issue fix or a revi
 reaches the record with no argument, no rival weighed,
 and none of the design skill's rules for reading the owner's word. This serves
 `goal@knowledge-architect@the-owner-decides` and
-`goal@knowledge-architect@design-is-recorded-with-its-arguments`. An addition inside a head's stated
-scope carries less risk: the decision the head records, and its argument, stand, and the title
-still tells a reader of the outline what is decided. The rival, every decision that earns durable
+`goal@knowledge-architect@design-is-recorded-with-its-arguments`. A member inside a head's argument
+carries less risk: the decision the head records, and its argument, stand, and the title still
+tells a reader of the outline what is decided. The rival, every decision that earns durable
 text through the design skill, puts such an addition, and every relocation, to a full discussion
 whose outcome the head already records. A test on the size of a change lost: a one-sentence
 reversal is the change that most needs the discussion.
 
-Two texts deliver it. The design skill's description names the symptom, and keeps the three cases
-although judging the third needs the title test: it fires while a decision is still being settled
-in the conversation, before any write, and once a write starts the backstop catches what it missed.
-The decision-recording skill sends a decision in one of the three cases, not argued, back to the
-design skill before its text is written, and `design@agent-skills@design-home-write-loads-recording` makes sure that skill
-is loaded before any write into a design home.
+Three texts deliver it. The design skill's description names the symptom: it fires while a
+decision is still being settled in the conversation, before any write. The primer's section on
+design heads holds the backstop, which sends a decision in one of the three cases, not argued, back
+to the design skill before its text is written; it reaches every session at every reading of a
+head, per `design@agent-skills@one-home-for-head-rules`. The decision-recording skill, loaded
+before any write into a design home per `design@agent-skills@design-home-write-loads-recording`,
+asks for that section to be read again at the moment of writing.
 `tripwire@agent-skills@head-created-without-deliberation` watches whether they reach a session in
-time. A line in the primer lost to `design@agent-skills@primer-limit`: once the design
-skill's description carries the symptom, a skill delivers the rule.
+time.
+
+### A head's title states the rule that decided, and its body names the members built `##title-states-the-rule`
+
+When a decision admits members, such as fixes, kinds, verbs, sections or consumers, or picks a
+mechanism to meet a requirement, the head's title states the property that admits a member, in its
+argument's own terms, and its body names the members built as what the rule admits today. A set
+closed on purpose keeps its list in the title, with the sentence that argues the closure in the
+body. A title states no more than its argument argues.
+
+A count or a list in a title goes stale at the next member, and every later member then reads as a
+change of the decision, with its reversal, its slug rename and its tripwire rename, against
+`goal@knowledge-architect@agents-get-a-complete-workflow`, which aims for fewer decisions reversed
+by accident. The nearest rival, the instance in the title, is what the design homes held: an audit
+of this repository's design heads, and of those of a project that uses the workflow, read every
+head and its history, and found the instance stated as the rule in about one head in ten, and
+about fifteen rewrites of such heads that a member the argument already admitted forced. The figure
+is re-taken by a fresh read-only audit of every head against this rule. A review repair that moved
+a member into a title made the defect: "the title now states it". The opposite defect, a title
+wider than its argument, caused reversals too, which the last sentence of the rule guards. A title
+stating a rule alone would let a session add members the owner never saw, so it holds only with the
+routing of `design@agent-skills@extension-follows-the-ground`.
+
+### A head holds one decision, and parts that lose to different nearest rivals are separate heads `##one-decision-per-head`
+
+Two statements are one decision when they answer one question and lose to the same nearest rival.
+A rule's exception, its parameter and its delivery belong to its head, since none means anything
+without the rule. Two statements that lose to different nearest rivals, or whose arguments share no
+premise, are two decisions, and each takes a head of its own when it passes an entry test, and a
+comment at its code when it passes none. A title joined by "and" over two decisions shows a bundle,
+and rewording the title to state both does not make them one. A member of a set the title's rule
+admits is no decision, so a member missing from a title is no finding.
+
+The owner raised the question: "I'm not certain there is anything in the decision record skill that
+gives a split criteria for design heads." The installed text then said only that a head carrying
+several decisions "passes the test for each one, or is split", and sent an addition beyond a title
+to a reworded title stating both, so the design homes held bundles: an audit found about one head
+in five holding two or more decisions, and every split in this repository's history had been
+triggered by a title false of part of its body, none by a criterion. The nearest rival, the test
+"would reversing one part leave the other standing?", splits a rule from its exception, which always
+passes it; four audits run apart found the parts' nearest rivals the stronger signal. The cost is
+more heads, not more decisions: the owner's words, "We are not adding content and arguments, only
+slugs and independent heads", and the entry tests still judge each part, so the decisions recorded
+stay few, per `design@agent-skills@a-head-is-owed-by-an-entry-test`.
+
+### A member that a head's argument covers is recorded directly, and one that the owner's words name goes to the owner `##extension-follows-the-ground`
+
+A new member of a head, which the head's rule admits and its body does not name, is routed by the
+head's ground, as `primer@design-heads` states it. Where the part of the head that admits it stands
+on its argument, and the argument covers the member, it is recorded directly. Where that part's
+ground is the owner's words and they state the rule, the member is within the ruling and is
+recorded directly. Where the owner's words name the members, it goes to the owner as one proposal,
+which owes no reversal. A member the rule does not admit, or the argument does not cover, is a
+change of the decision, per `design@agent-skills@new-or-reshaped-head-needs-design`.
+
+The owner approves an argued decision on its argument, so a member the argument covers is within
+what was approved, and a member the owner's own words enumerate is not, per
+`goal@knowledge-architect@the-owner-decides`. The head shows its ground, so the route is read from
+the head itself. The nearest rival, routing by the scope of the owner's approval, needed that scope
+found in the history of each head, often over several commits. The status quo, every new member
+through the design skill, cost a reversal for an ordinary extension, which
+`design@agent-skills@title-states-the-rule` measured. The risk is a session judging "the argument
+covers it" too widely; the design-conformance reviewer reads every plan document against the heads.
+
+### A head that a change touches is brought to the rules on heads in that change `##existing-heads-on-touch`
+
+A head that a change edits is brought, in that change, to the rules of `primer@design-heads`: its
+title to the rule it argues, each decision it bundles to a head of its own, its ground to its
+argument. Where that would widen what the owner's words in it approved, as a title moved from the
+members the owner named to the rule, the change goes to the owner as one proposal.
+
+The rules apply at the moment a session already reads and edits the head, so a head is repaired at
+the cost of one read. The rival, a sweep of every head stating the instance as its rule, would have
+put about nine widenings to the owner at once in this repository, each a head whose approval named
+its members. An approval cited as a head's ground is the exception that was swept, since its repair
+removes a false ground and widens nothing.
 
 ### A write into a design home, or an edit of agent-facing text a head describes, loads the decision-recording skill first, with no condition judged before it `##design-home-write-loads-recording`
 
 A session loads the decision-recording skill before it writes into a design home, whatever its
 activity. A session editing agent-facing text, a skill, an agent or a `CLAUDE.md`, also loads it
-before an edit of a text whose behaviour a head describes. The skill then judges whether the edit
-contradicts a head, outgrows its title, or records a decision at all. The skill's description
+before an edit of a text whose behaviour a head describes. The skill, with `primer@design-heads`,
+then judges whether the edit contradicts a head, adds a member its argument does not cover, or
+records a decision at all. The skill's description
 states the first trigger, and reaches every session. `skill@knowledge-architect-agent-configuration@content-and-style` and test 4
 of this crate's `path@agent-skills@CLAUDE.md` state both, and reach a session editing agent-facing
 text, which is the one activity that asks for a search of the design homes before an edit.
 
 A session can see both conditions without any standard: the file it is about to edit, and the
-result of that search. A load conditioned on whether an edit contradicts a head or outgrows its
-title fires only in a session that already applies the title test, and that test is held by the
-skill the condition decides whether to load. This serves `goal@knowledge-architect@the-owner-decides`
+result of that search. A load conditioned on whether an edit contradicts a head or adds a member
+fires only in a session that already applies those tests at the moment of writing; the tests are
+in the primer, but the skill holds the recording procedures and the instruction to read the
+primer's section again, which brings it back late in a session, per
+`design@agent-skills@primer-reread-before-recording`. This serves `goal@knowledge-architect@the-owner-decides`
 and `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
 
-The nearest rival restates the title test beside the condition at each site. It makes copies of a
-test whose home is the decision-recording skill, and it reaches only a session editing agent-facing
+The nearest rival restates the backstop's tests beside the condition at each site. It makes copies of a
+test whose home is `primer@design-heads`, and it reaches only a session editing agent-facing
 text, not an issue fix or a review repair that writes a head. The cost is one skill load on every
 edit of a design home, rewordings included; a rewording records no decision and leaves by the last
 sentence of the backstop of `primer@design-heads`.
@@ -466,10 +542,12 @@ not read, a reference in a comment is not checked, which weakens this record the
 ### A design head carries the standing argument, and history carries the deliberation `##standing-argument-in-head`
 
 A design head carries the decision and its standing argument: every premise whose failure would
-reopen it, which is the goal or decision it derives from as a reference, the measurement it rests
-on, and the fact that defeated its nearest rival. The deliberation, which is what was weighed, in
-which order, what evidence was built and who ruled what, stays in the spec while the spec exists,
-and in history after that. A decision taken with no spec carries its deliberation in its commit
+reopen it, which is the goal it derives a constraint from and a decision of another Component it
+depends on, as references, the measurement it rests on, with the command that takes it again, and
+the fact that defeated its nearest rival. The deliberation, which is what was weighed, in which
+order, what evidence was built and who ruled what, stays in the spec while the spec exists, and in
+history after that. The owner's words that are a decision's ground are the exception, per
+`design@agent-skills@head-ground-is-the-argument`. A decision taken with no spec carries its deliberation in its commit
 message.
 
 `goal@knowledge-architect@design-is-recorded-with-its-arguments` requires that a later session can
@@ -484,10 +562,47 @@ a `git show` or `git log` command naming a deleted plan document re-takes it, an
 none in a project whose specs are deleted reopens this decision. The cost is accepted: a reader
 without a clone of the repository cannot reach a deliberation.
 
+### A head stands on its argument, and cites the owner only for what came from the owner `##head-ground-is-the-argument`
+
+A head records a decision that was proposed, argued over its costs and rivals and approved, on that
+argument, with its costs and rivals in its body or in the rejected alternatives. An approval is no
+ground, whatever its words: it stays in the deliberation. The owner's words are a ground, quoted,
+only where the decision came from the owner: the owner proposed it, chose where the argued rivals
+did not settle it, or stated a premise only the owner can state. A head holding a part of each
+says which part came from the owner. A head that stands on its argument is reversed by a better
+argument, which the owner approves; one whose ground is the owner's words is reversed by the owner,
+or by a defeated premise of those words.
+
+The rule is the owner's proposal: "it is the recorded **on the ground of the arguments that were
+discussed, with costs and rivals stated in the body or as rejected alternatives**, not on the
+ground of **owner ruled**. In particular when the decision was an agent's position or default, and I
+only approved it." And on why it matters: "This provenance of design heads matters a lot for agents
+to judg and weigh any design change or addition." It serves `goal@knowledge-architect@the-owner-decides`,
+which asks that the record show the owner's decisions. The nearest rival, citing every ruling in its
+head, was the drift the rule repairs: in the week entry test 4 was added, an audit of the heads
+added or rewritten found about two in five of their citations of the owner to be an approval of the
+agent's position, often a batch word such as "All defaults approved", and the citation, deleted,
+took no argument with it.
+
+### A decision approved with no argument is argued before it is recorded `##unargued-approval-is-argued`
+
+Before a head is written from an approval that no argument, rival or cost stands behind, such as a
+default approved in a batch, the session searches for the arguments for and against it, its costs
+and its rivals, and records what it finds. Where the rivals come out equal, the fork goes to the
+owner as a tie, and the owner's choice is the ground, as a decision that came from the owner. It is
+the decision-recording skill's, `skill@knowledge-architect-decision-recording@unargued-approval`,
+since recording is the last point before a head exists.
+
+The rule is the owner's proposal: "a decision approved without arguments should always go through a
+step of searching for arguments in favor or against, costs and rivals." Without it, a batch approval
+of an unargued default gives a head with neither an argument nor, under
+`design@agent-skills@head-ground-is-the-argument`, a ground. The nearest rival, recording the
+approval as it stands, is that head. The cost is one search per unargued default.
+
 ### A decision earns a design head only when an entry test passes, and the decisions recorded stay few `##a-head-is-owed-by-an-entry-test`
 
-A decision earns a head in a design home only when one of the four entry tests of the installed
-decision-recording skill passes: reversing it would change an interface others consume, a type or
+A decision earns a head in a design home only when one of the four entry tests of
+`primer@design-heads` passes: reversing it would change an interface others consume, a type or
 a signature crossing a separately built unit, a file format, a document grammar or a command line;
 the same reason must be respected at more than one site, or at none, a name or a path repeated for
 consistency being no reason; its argument turns on the behaviour of something outside the project,
@@ -596,7 +711,7 @@ thread's slug is minted in the round it opens, and the approved shape can drift 
 so the rule has one exception: when the thread's slug misdescribes the decision as approved, the
 entry takes a slug that names the decision, and the plan document's harvest row, or the commit
 message on the in-change path, states the pair. A slug that misdescribes its decision misinforms
-every reader of every citation, and the decision-recording skill's alignment rule orders a rename
+every reader of every citation, and the alignment rule of `primer@design-heads` orders a rename
 in that case; without the exception, the two rules would give opposite orders, against
 `goal@agent-skills@one-skill-per-activity`. The rival, renaming the thread during the discussion
 once it drifts, lost: every earlier delta carries the old slug, and the assembly that reads them
@@ -704,7 +819,7 @@ reference is owed, or the change reaches nobody. What follows from the test, by 
 | a tripwire | the decision it guards | a reversal dangles its tripwires |
 | a rejected alternative | the decision it lost to | a reversal finds what the old winner displaced |
 | a commit message | every entry it opens, closes, reverses or argues from | the commits gate judges it against the tree it was written against |
-| a restatement of a directive | its home | a drift between the two is found from either end |
+| a restatement of a directive sentence, per `design@agent-skills@restatement-size-test` | its home | a drift between the two is found from either end |
 
 **An entry never lists what references it.** The inbound list is `show`'s to compute, and a
 hand-written one is stale at the next reference written elsewhere.
@@ -918,6 +1033,10 @@ about this in advance." The separate path bounded the discussion to one thread, 
 `design@agent-skills@structure-the-flow`. The cost is a long commit message when a discussion
 inside a task grows to several threads; its length is not bounded, since a bound on it would bound
 the discussion.
+
+Its grounding reads the primer's section on design heads again, since the path runs late in a
+session, when a decision is met during an issue fix or a review repair, per
+`design@agent-skills@primer-reread-before-recording`.
 
 ### The planning skill writes the plan document, in the session that converged `##design-hands-off-to-planning`
 
@@ -1301,15 +1420,19 @@ that only repeats one is removed.
 The primer reaches every session of every installing project, so its content test is the bound,
 not a count of lines: it holds what every session needs and no installed skill delivers at the
 moment it is needed. A convention of one project does not go in it, and neither does a procedure a
-skill delivers when it loads. The workflow targets frontier-tier models, which the
+skill delivers when it loads. The rules on what a design head records and how pass that test, since
+every reading of a head needs them and no skill loads at that moment, per
+`design@agent-skills@one-home-for-head-rules`; the procedures of writing one stay in the
+decision-recording skill. The workflow targets frontier-tier models, which the
 design skill's work requires, per `design@agent-skills@frontier-tier-only`, so a size limit
 would protect a reader the workflow does not serve.
 
-### The primer carries the goals rule, the owner's word bound by its premise, the room to judge, the intent-and-claims rule, the check before diagnosing, and the rule for what is met outside the task `##primer-content`
+### The primer carries the directives that every session applies and that no skill delivers at the moment they apply `##primer-content`
 
 Besides the knowledge table and the list of installed skills, the primer carries the rule on when
-to write a reference, and six directives the skills rely on and no skill delivers at the moment
-they apply. **A reference is written wherever the text would have to be revisited if the entry it
+to write a reference, the section on design heads, per
+`design@agent-skills@one-home-for-head-rules`, and the directives the skills rely on and no skill
+delivers at the moment they apply. The directives it carries today follow. **A reference is written wherever the text would have to be revisited if the entry it
 names changed.** That rule is the premise the workflow relies on to be useful: an entry of a
 register is referenced wherever it is load-bearing, so the checker can list what a reversal, a
 closure or a firing touches, and the scope of reversing a decision can be assessed from that list,
@@ -1351,6 +1474,67 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   ends with a section listing every item and its outcome. A one-line mention inside a long report
   is easy to miss, as the owner observed in real sessions, so every outcome leaves a record or a
   listed line. The owner rules that a fix under the second outcome needs no word of theirs.
+
+### Every rule on what a design head records and how lives in one section of the primer `##one-home-for-head-rules`
+
+What earns a head, what a head holds and how it is shaped are one section of the primer,
+`primer@design-heads`. The decision-recording skill keeps the procedures of writing one; every
+other text points to the section rather than restating part of it, per
+`design@agent-skills@restatement-size-test`.
+
+The centralization is the owner's proposal: "I want to make sure the rules for what is recorded in
+design heads and how are centralized, consistent with each other and applicable. I think that
+partial restatements of them should be avoided at all cost, instead pointing to a single location
+where they are all together and asking for a read of that full location when needed." About ten
+installed texts had restated parts of the decision-recording skill, and an inventory found nine
+inconsistencies between them and it. The location is the primer on the owner's arguments that the
+rules are "nearly baseline": "nearly every piece of work will have to add or rewrite recorded
+design", "they are useful to interpret recorded design", and "it is useful to be able to identify
+in advance what kind of decision may need to enter the design home". Reading a head loads no skill,
+and every subagent holds the primer in its initial context, as a probe of two subagent types
+measured in one harness, so a pointer to the section costs nothing. The nearest rival, one section
+of the decision-recording skill, is enough only where every session that reads a head loads it
+first, and nothing makes it do so. The cost is the primer's size, roughly doubled, in every session
+of every installing project, which `design@agent-skills@primer-limit` admits for what no skill
+delivers at the moment it is needed; it is re-taken with `wc -w` on the primer.
+
+### A directive is restated only where the restatement is no longer than a pointer to it `##restatement-size-test`
+
+A directive is restated at its point of delivery only when the restatement is no longer than a
+pointer to it: a path, a file name, a command, a value, or one sentence, a sentence carrying its
+pointer beside it. A longer directive is delivered by a pointer to its home, read whole at that
+moment, and part of it is never restated. For installed text, the home a pointer names is
+installed text, since installed text cites no entry of the project, per
+`design@agent-skills@shipped-text-cites-no-entry`. The rule is the primer's
+`primer@where-knowledge-goes`.
+
+The test is the owner's proposal: "is the restatement significantly bigger than a pointer ? Then use
+a pointer." Its reason is the owner's too: the rule that a directive is restated wherever it is
+delivered "is meant to avoid loading excessive unrelated informations", and "Just state the
+path/filename, it takes as much space as the pointer", while "We can't restate a skill inside every
+other one". One sentence is the checkable form of that size, since a pointer with its instruction to
+read the home whole is itself about one sentence. A partial copy drifts, and its reader takes it for
+the whole: the rival, the old rule, left about ten partial restatements of one skill, with nine
+inconsistencies. The old rule's own reason, that a reader who cannot reach a statement at the moment
+of acting is not served by a pointer, stays answered for a short directive, which is still restated.
+
+### The decision-recording skill, and the design skill's in-change path, ask for the primer's section on design heads to be read again `##primer-reread-before-recording`
+
+The decision-recording skill opens by asking for `primer@design-heads` to be read again, whole,
+before a head is written or judged. The design skill's in-change path asks the same before its
+grounding.
+
+The first is the owner's proposal: "The point that would worry me however would still be dilution
+over long session. Maybe a few instructions to reread the primer should be kept at key locations,
+in particular the decision recording skill whose writes happen at the end of sessions". Every write
+into a design home loads that skill first, per
+`design@agent-skills@design-home-write-loads-recording`, so one instruction reaches every write,
+and a review agent starts with a fresh context that holds the primer. The second stands on its
+argument and rests on a prediction, not on a behaviour seen in a session: the in-change path runs
+when a decision is met during an issue fix or a review repair, which is late in a session by
+definition, and its grounding reads heads to judge the decision. It is an exception to
+`design@agent-skills@additions-need-real-use`; the owner ruled that no issue track it: "There's no
+way to show that the workflow is not functional without it once it is built, anyway."
 
 ### The primer names the plans directory the checker fixes `##plans-directory-in-primer`
 

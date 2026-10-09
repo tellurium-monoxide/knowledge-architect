@@ -229,10 +229,6 @@ for, and how it is arranged in order to get there, belongs here. How a particula
 work belongs in a comment at that function. The test: **if changing a piece of code would force a
 change to the design home, it is design; if the design home would be unaffected, it is a comment.**
 
-A reference is one backticked span, `design@<component>@<slug>`, naming the Component that
-defines it. It is live wherever it is prose, a fenced block included. An illustration that must not
-resolve writes a placeholder in angle brackets.
-
 **Name what the argument depends on.** The goal a constraint is derived from,
 `goal@<component>@<slug>`: a constraint from a goal binds outright, where one from a decision is a
 presumption, and the reference is what tells a reader which. A decision of another Component the
