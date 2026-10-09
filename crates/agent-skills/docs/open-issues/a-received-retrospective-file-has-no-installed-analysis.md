@@ -19,7 +19,7 @@ method become part of the installed workflow, and in which shape?
 finding the owner keeps becomes an issue entry in the project's own register". A finding fixed at
 once needs no entry, and the owner decides with no analysis in front of them.
 
-The local skill, at `path@agent-config@skills/klarch-retrospective-intake/SKILL.md`, establishes
+The local skill, `skill@klarch-retrospective-intake`, establishes
 for each finding what it says, whether it still applies, whether it is recorded, its kind, its
 scope, a better fix, its route and a proposal, and offers three outcomes: handle now, open an
 issue, or no change with the reason. Its first use analysed five received files, 40 findings in

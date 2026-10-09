@@ -46,5 +46,5 @@ free of references.
 
 The check, run by `cargo x gates`, failing on a reference to an entry planted in a scratch copy of a
 file the installed copies hold, and passing on a `%%` comment that cites one in content/. The
-release procedure, `path@agent-config@skills/klarch-release/SKILL.md`, checks the shipped text for
+release procedure, `skill@klarch-release`, checks the shipped text for
 references by hand; the check replaces that step.
