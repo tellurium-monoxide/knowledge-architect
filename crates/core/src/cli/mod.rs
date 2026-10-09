@@ -55,7 +55,7 @@ pub enum Command {
     /// Every tripwire entry, one row each.
     Tripwires(TripwiresArgs),
     /// Regenerate every generated index in place.
-    Index,
+    Index(IndexArgs),
     /// Every observation the walk produced: file, line, kind, value.
     Model,
     /// Judge every commit message in a range, each against its own commit's tree.
@@ -75,6 +75,14 @@ pub struct CheckArgs {
     /// the staged changes, read from git objects. To repair its generated files, run `index
     /// --staged`, then `check --staged` again; `--fix` repairs the working tree only.
     #[arg(long, conflicts_with = "fix")]
+    pub staged: bool,
+}
+
+#[derive(Args)]
+pub struct IndexArgs {
+    /// Write the generated files the tree git's index would commit needs into the index, and
+    /// touch no working-tree file: for a commit of part of the working tree.
+    #[arg(long)]
     pub staged: bool,
 }
 
@@ -142,7 +150,8 @@ pub fn run(
         Command::Show(args) => show(manifest, &args, checker),
         Command::Issues(args) => issues(manifest, &args, checker),
         Command::Tripwires(args) => tripwires(manifest, &args, checker),
-        Command::Index => index(manifest, checker, extensions),
+        Command::Index(args) if args.staged => history::index_staged(manifest, checker, extensions),
+        Command::Index(_) => index(manifest, checker, extensions),
         Command::Model => model(manifest, checker, extensions),
         Command::Commits(args) => history::commits(manifest, &args.range, checker, extensions),
         Command::InstallAgentSkills => install_agent_skills(manifest),
@@ -517,7 +526,13 @@ fn fix_then_check(
         return Ok(ExitCode::FAILURE);
     }
 
-    let generated = match generated_list(manifest, &model, &gathered, extensions) {
+    let generated = match generated_list(
+        manifest,
+        &model,
+        &gathered.inputs(),
+        Tree::Checkout(manifest.root()),
+        extensions,
+    ) {
         Ok(generated) => generated,
         Err(e) => return failed(written, e),
     };
@@ -608,9 +623,9 @@ fn untracked_note(
 ///
 /// **It writes only where the bytes differ**, per `design@core@generated-files-are-pure`: what a
 /// generated file holds is a function of the walked tree, so rewriting an already current one
-/// moves nothing but its mtime, and running this to look must cost nothing. It takes no flags
-/// for the same reason — nothing here can lose content, so there is nothing for a dry run to
-/// protect.
+/// moves nothing but its mtime, and running this to look must cost nothing. It takes no dry-run
+/// flag for the same reason — nothing here can lose content, so there is nothing for a dry run
+/// to protect. `--staged` is `history::index_staged`, which writes into git's index instead.
 ///
 /// **Whether a generated file is current is not this command's question.**
 /// The `generated` check of `cargo klarch check` is the gate, and it names the first line at which
@@ -624,7 +639,13 @@ fn index(
     // The gate first: a file an extension reads that is not there is phase 2's finding, named
     // by path, and reading it before the gate would turn that into an error naming nothing.
     let gathered = complete_working_tree(manifest, &model)?;
-    let generated = generated_list(manifest, &model, &gathered, extensions)?;
+    let generated = generated_list(
+        manifest,
+        &model,
+        &gathered.inputs(),
+        Tree::Checkout(manifest.root()),
+        extensions,
+    )?;
     check_destinations(manifest, &generated).map_err(|e| format!("{e} Nothing was written."))?;
 
     let mut written = 0usize;
@@ -655,25 +676,22 @@ fn index(
 /// Every generated file, destination and bytes, over a model the writer gate has passed: each
 /// extension's, then one index per file-register instance.
 ///
-/// One function for `index` and `check --fix`, so the two write the same files, per
-/// `design@core@generated-files-are-pure`. Every generated file comes in one call, so a flag
-/// choosing between them buys nothing and cannot be given an invalid combination. The survey
-/// answers which instance directories are there, and an instance without one contributes no index
-/// rather than having its home created here.
+/// One function for `index`, `index --staged` and `check --fix`, so the three generate the same
+/// files from one tree, per `design@core@generated-files-are-pure`. `tree` is the tree each
+/// extension is prepared over: the checkout, or the staged snapshot. Every generated file comes in
+/// one call, so a flag choosing between them buys nothing and cannot be given an invalid
+/// combination. `inputs` answers which instance directories are there, and an instance without one
+/// contributes no index rather than having its home created here.
 fn generated_list(
     manifest: &Manifest,
     model: &crate::Model,
-    gathered: &Gathered,
+    inputs: &crate::check::Inputs,
+    tree: Tree,
     extensions: &mut [Box<dyn Extension>],
 ) -> Result<Vec<(std::path::PathBuf, String)>, String> {
     let mut generated = Vec::new();
     for extension in extensions.iter_mut() {
-        let prepared = extension.prepare(
-            manifest,
-            model,
-            Tree::Checkout(manifest.root()),
-            Purpose::Index,
-        )?;
+        let prepared = extension.prepare(manifest, model, tree, Purpose::Index)?;
         generated.extend(
             prepared
                 .generated(model, manifest)
@@ -684,8 +702,8 @@ fn generated_list(
     generated.extend(crate::index::file_register_indexes(
         model,
         manifest,
-        gathered.inputs().present,
-        gathered.inputs().directories,
+        inputs.present,
+        inputs.directories,
     ));
     Ok(generated)
 }

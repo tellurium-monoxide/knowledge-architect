@@ -42,6 +42,7 @@ cargo klarch issues [anchor] [--kind k] [--group g] [text …]
 cargo klarch tripwires [anchor] [--guarding <ref>] [text …]
                                        every tripwire entry, and what each guards
 cargo klarch index                     regenerate every generated index in place
+cargo klarch index --staged            stage the generated files the tree git's index would commit needs
 cargo klarch model                     every observation the walk produced
 cargo klarch commits <range>           judge every commit in the range, message and tree, against its own tree
 cargo klarch install-agent-skills      write the agent files this version ships, remove the ones it does not
@@ -178,8 +179,8 @@ here and nowhere else.
 ## `index`
 
 Regenerates every generated file in place, from one walk: each file a registered extension
-generates, and one `index.md` per file-register instance whose directory is there. It takes no flags and **writes only where the
-bytes differ**, naming each file it rewrote:
+generates, and one `index.md` per file-register instance whose directory is there. It takes no
+dry-run flag and **writes only where the bytes differ**, naming each file it rewrote:
 
 ```
 $ cargo klarch index
@@ -219,6 +220,22 @@ Running it to look therefore costs nothing, not even an mtime. **Whether a gener
 current is not this command's question** — that is `cargo klarch check`, whose `generated` check
 is a gate and names the first line at which the committed file and the regenerated one disagree.
 Both halves are `design@core@generated-files-are-pure`.
+
+**`index --staged` writes into git's index instead, for a commit of part of the working tree.**
+It generates each file from the tree git's index would commit, which is HEAD's tree with the
+staged changes, and sets the staged entry of each one whose bytes differ. No working-tree file
+changes: after it, `check --staged` passes on what will be committed, and the working tree keeps
+the rows of the working tree for a later commit.
+
+```
+$ cargo klarch index --staged
+docs/open-issues/index.md                staged
+docs/plans/specs/index.md                already current
+```
+
+It refuses with exit 2, having staged nothing, when phases 1 to 3 of the staged tree find
+anything, when a generated path is staged as a symlink or a gitlink or its directory is not in
+the staged tree, when the index holds an unmerged path, and when git cannot take its index lock.
 
 ## `install-agent-skills`
 

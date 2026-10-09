@@ -46,6 +46,7 @@ pub enum Purpose {
 /// Exhaustive, so a new kind of tree makes every extension say how it reads it, per
 /// `design@core@ne-minimal`. The tree git's index would commit is not a new kind: it is a
 /// [`Snapshot`], read from git objects like a commit's, and [`Snapshot::revision`] says which.
+#[derive(Clone, Copy)]
 pub enum Tree<'a> {
     /// The working tree. An extension may read the filesystem under this root: a subject such
     /// as a vendored corpus is filesystem state, per `design@core@model-then-checks`.

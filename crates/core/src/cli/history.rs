@@ -360,6 +360,9 @@ enum Depth {
     References,
     /// Everything: every check of the core, and each extension prepared for a commit.
     Judged,
+    /// Phases 1 to 3, the gate a writer passes before it writes, and the snapshot kept for the
+    /// writer. No extension is prepared: the writer prepares them for what it generates.
+    Gated,
 }
 
 /// Assemble one tree into a model, and judge it as far as `depth` asks.
@@ -393,12 +396,12 @@ fn commit_tree(
         let survey = crate::survey::from_listing(&manifest, &model, &[], &[], |_| {
             crate::survey::Outside::Missing
         });
-        let trouble = if depth == Depth::Judged {
+        let trouble = if depth != Depth::References {
             manifest.complaints().to_vec()
         } else {
             Vec::new()
         };
-        let report = (depth == Depth::Judged).then(|| {
+        let report = (depth != Depth::References).then(|| {
             check::Report::stopped(
                 check::Stop {
                     phase: check::Phase::Resolution,
@@ -492,7 +495,7 @@ fn commit_tree(
         );
     }
 
-    let judging = depth == Depth::Judged;
+    let judging = depth != Depth::References;
 
     let mut committed = HashMap::new();
     for rel in extra_generated(&generated) {
@@ -573,6 +576,10 @@ fn commit_tree(
             assembly.stopped = Some(stop.phase);
             check::Report::stopped(stop, &assembly.model)
         }
+        Ok(()) if depth == Depth::Gated => {
+            assembly.snapshot = Some(Snapshot::new(root, source, read.listing, blobs));
+            return Ok(assembly);
+        }
         Ok(()) => {
             // The foundation passed, so each extension reads what it needs from this
             // snapshot's git objects now, and a tree that stopped earlier read nothing.
@@ -646,6 +653,88 @@ pub(super) fn check_staged(
     } else {
         ExitCode::SUCCESS
     })
+}
+
+/// `index --staged`: write each generated file the tree git's index would commit needs into the
+/// index, and touch no working-tree file.
+///
+/// **A writer refuses over an incomplete model**, as `index` does over the working tree: the
+/// staged tree is gated on phases 1 to 3, and a stop writes nothing. Every destination is checked
+/// against the staged listing before any is written: a generated path the index holds as a
+/// symlink or a gitlink, or whose directory the staged tree does not hold, is refused. Every entry
+/// is then staged in one locked write, so a refusal of git's lock leaves the index as it was.
+/// Each of those refusals is exit 2, which promises an index as the caller left it.
+pub(super) fn index_staged(
+    manifest: &Manifest,
+    checker: &[&Path],
+    extensions: &mut [Box<dyn Extension>],
+) -> Result<ExitCode, String> {
+    let root = manifest.root();
+    let (inside, _) = crate::model::snapshot_checker_dirs(root, checker)
+        .map_err(|e| format!("cannot read the project root: {e}"))?;
+    let inside: Vec<&Path> = inside.iter().map(PathBuf::as_path).collect();
+    let assembly = commit_tree(
+        root,
+        Source::Index,
+        &inside,
+        extensions,
+        Depth::Gated,
+        Purpose::Index,
+    )
+    .map_err(|Unloadable(why)| format!("the staged tree cannot be read: {why}"))?;
+    if let Some(report) = assembly
+        .report
+        .as_ref()
+        .filter(|_| assembly.stopped.is_some())
+    {
+        return Err(format!(
+            "the staged model is incomplete: {}. `{} check --staged` reports them. Nothing \
+             was written.",
+            report.phase.stop_line(report.findings.len()),
+            manifest.command()
+        ));
+    }
+    let snapshot = assembly
+        .snapshot
+        .as_ref()
+        .expect("a gated tree that passed the gate keeps its snapshot");
+    let generated = super::generated_list(
+        &assembly.manifest,
+        &assembly.model,
+        &assembly.inputs(),
+        Tree::Snapshot(snapshot),
+        extensions,
+    )?;
+    for (rel, _) in &generated {
+        let dir = rel.parent().unwrap_or(Path::new(""));
+        if assembly.survey.links.iter().any(|e| e.rel == *rel) {
+            return Err(format!(
+                "{}: the index holds this generated path as a symlink or a gitlink. Nothing \
+                 was written.",
+                rel.display()
+            ));
+        }
+        if !dir.as_os_str().is_empty() && !assembly.survey.directories.contains(dir) {
+            return Err(format!(
+                "{}: the directory this file is generated into is not in the staged tree. \
+                 Nothing was written.",
+                dir.display()
+            ));
+        }
+    }
+    let mut stale = Vec::new();
+    for (rel, text) in generated {
+        if assembly.committed.get(&rel) == Some(&text) {
+            outln!("{:<40} already current", rel.display());
+        } else {
+            stale.push((rel, text));
+        }
+    }
+    crate::git::stage_generated(root, &stale).map_err(|e| format!("{e}. Nothing was staged."))?;
+    for (rel, _) in &stale {
+        outln!("{:<40} staged", rel.display());
+    }
+    Ok(ExitCode::SUCCESS)
 }
 
 /// Every generated file whose committed bytes a check compares against: each file an

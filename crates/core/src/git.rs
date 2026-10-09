@@ -638,6 +638,58 @@ pub(crate) fn unmerged(root: &Path) -> io::Result<Vec<PathBuf>> {
     Ok(out)
 }
 
+/// Stage each generated file's bytes as the index's entry at its path, in one locked write, and
+/// touch no working-tree file.
+///
+/// Each file's bytes become a blob first, with `hash-object -w`; then ONE `update-index -z
+/// --index-info` call sets every entry, so the index changes for all of them or for none: git
+/// takes its lock once, and a held lock fails the call with the index as it was. A refused run can
+/// leave the blobs it wrote in the object store, unreachable, which `git gc` removes.
+///
+/// An entry the index holds keeps its mode; a new one is a regular file. `--index-info` reads a
+/// path from the repository's root, not from the working directory, so each project-relative
+/// path is prefixed with the project's place in the repository.
+pub(crate) fn stage_generated(root: &Path, files: &[(PathBuf, String)]) -> io::Result<()> {
+    if files.is_empty() {
+        return Ok(());
+    }
+    let prefix = git(root).args(["rev-parse", "--show-prefix"]).output()?;
+    let prefix = prefix.strip_suffix(b"\n").unwrap_or(&prefix).to_vec();
+    let mut asked: Vec<OsString> = vec!["--literal-pathspecs".into(), "ls-files".into()];
+    asked.extend(["-s", "-z", "--"].map(OsString::from));
+    asked.extend(files.iter().map(|(rel, _)| rel.as_os_str().to_os_string()));
+    let staged = git(root).args(asked).output()?;
+    let modes: BTreeMap<PathBuf, String> = nul_separated(&staged)
+        .into_iter()
+        .filter_map(|line| {
+            let space = line.iter().position(|b| *b == b' ')?;
+            let tab = line.iter().position(|b| *b == b'\t')?;
+            Some((
+                as_path(&line[tab + 1..]),
+                String::from_utf8_lossy(&line[..space]).into_owned(),
+            ))
+        })
+        .collect();
+    let mut info = Vec::new();
+    for (rel, text) in files {
+        let oid = git(root)
+            .args(["hash-object", "-w", "--stdin"])
+            .stdin(text.as_bytes().to_vec())
+            .output()?;
+        let oid = String::from_utf8_lossy(&oid).trim().to_string();
+        let mode = modes.get(rel).map(String::as_str).unwrap_or("100644");
+        info.extend_from_slice(format!("{mode} {oid}\t").as_bytes());
+        info.extend_from_slice(&prefix);
+        info.extend_from_slice(path_bytes(rel).as_ref());
+        info.push(0);
+    }
+    git(root)
+        .args(["update-index", "-z", "--index-info"])
+        .stdin(info)
+        .output()?;
+    Ok(())
+}
+
 /// How one path of a snapshot is named to `cat-file` and `rev-parse`.
 ///
 /// `<rev>:./<path>` resolves relative to the working directory, where `<rev>:<path>` resolves
@@ -1253,6 +1305,71 @@ mod tests {
             read.get(Path::new("keep.md")).map(String::as_str),
             Some("# Keep\n")
         );
+        let _ = std::fs::remove_dir_all(&repo);
+    }
+
+    /// The claim: staging generated files from a project in a subdirectory of its repository
+    /// sets the entries at the project's paths, keeps an existing entry's mode, adds a missing
+    /// one as a regular file, and leaves the working files as they were.
+    #[test]
+    fn generated_files_are_staged_at_the_projects_paths_with_their_modes() {
+        let repo = scratch_repository("stage-generated");
+        let project = repo.join("proj");
+        write(&project, "docs/g.md", "# Old\n");
+        git(&repo).args(["add", "-A"]).output().expect("staged");
+        git(&repo)
+            .args(["update-index", "--chmod=+x", "proj/docs/g.md"])
+            .output()
+            .expect("an executable entry");
+        stage_generated(
+            &project,
+            &[
+                (PathBuf::from("docs/g.md"), "# New\n".to_string()),
+                (PathBuf::from("docs/added.md"), "# Added\n".to_string()),
+            ],
+        )
+        .expect("staged");
+        let listed = String::from_utf8(
+            git(&repo)
+                .args(["ls-files", "-s"])
+                .output()
+                .expect("a listing"),
+        )
+        .expect("text");
+        let entry = |path: &str| {
+            listed
+                .lines()
+                .find(|l| l.ends_with(&format!("\t{path}")))
+                .map(|l| l.split(' ').next().unwrap_or_default().to_string())
+        };
+        assert_eq!(
+            entry("proj/docs/g.md").as_deref(),
+            Some("100755"),
+            "{listed}"
+        );
+        assert_eq!(
+            entry("proj/docs/added.md").as_deref(),
+            Some("100644"),
+            "{listed}"
+        );
+        assert_eq!(
+            entry("docs/g.md"),
+            None,
+            "nothing at the repository's root: {listed}"
+        );
+        assert_eq!(
+            blobs(&project, Source::Index, &[PathBuf::from("docs/g.md")])
+                .expect("the staged blob")
+                .get(Path::new("docs/g.md"))
+                .map(String::as_str),
+            Some("# New\n")
+        );
+        assert_eq!(
+            std::fs::read_to_string(project.join("docs/g.md")).expect("the working file"),
+            "# Old\n",
+            "the working file is untouched"
+        );
+        assert!(!project.join("docs/added.md").exists());
         let _ = std::fs::remove_dir_all(&repo);
     }
 
