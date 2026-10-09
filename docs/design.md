@@ -236,7 +236,7 @@ can be yanked and never deleted, so the irreversible step comes last, after revi
 judged exactly what it publishes, and the tag names a commit on main. The cost: main states the
 new version for the minutes between the merge and the publish, and a failed publish leaves that
 statement false until a repair lands. The procedure is
-`path@agent-config@skills/klarch-release/SKILL.md`.
+`skill@klarch-release`.
 
 ## 3. How work reaches main
 
