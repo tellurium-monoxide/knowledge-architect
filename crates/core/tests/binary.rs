@@ -3474,17 +3474,45 @@ fn check_staged_refuses_an_unmerged_index() {
     let sandbox = Sandbox::new("staged-unmerged", "dirhome");
     commit_all(&sandbox, "the base");
     let readme = std::fs::read_to_string(sandbox.path("README.md")).expect("the README");
+    let base = Command::new("git")
+        .args(["rev-parse", "--abbrev-ref", "HEAD"])
+        .current_dir(sandbox.path(""))
+        .output()
+        .expect("git runs");
+    let base = String::from_utf8_lossy(&base.stdout).trim().to_string();
     sandbox.git(&["checkout", "-qb", "side"]);
     sandbox.write("README.md", &format!("{readme}\nSide.\n"));
     commit_all(&sandbox, "side");
-    sandbox.git(&["checkout", "-q", "-"]);
+    sandbox.git(&["checkout", "-q", &base]);
     sandbox.write("README.md", &format!("{readme}\nMain.\n"));
     commit_all(&sandbox, "main");
-    // The merge conflicts and exits 1; the index it leaves is the subject.
-    let _ = Command::new("git")
-        .args(["merge", "-q", "side"])
+    // The merge conflicts and exits 1; the index it leaves is the subject. It is given an identity,
+    // as every commit of these tests is, and its own output is kept for the assertion below.
+    let merge = Command::new("git")
+        .args([
+            "-c",
+            "user.name=fixture",
+            "-c",
+            "user.email=fixture@example.invalid",
+            "merge",
+            "-q",
+            "side",
+        ])
         .current_dir(sandbox.path(""))
-        .output();
+        .output()
+        .expect("git runs");
+    let unmerged = Command::new("git")
+        .args(["ls-files", "-u"])
+        .current_dir(sandbox.path(""))
+        .output()
+        .expect("git runs");
+    assert!(
+        !unmerged.stdout.is_empty(),
+        "the merge left no unmerged path: exit {:?}, {}{}",
+        merge.status.code(),
+        String::from_utf8_lossy(&merge.stdout),
+        String::from_utf8_lossy(&merge.stderr)
+    );
     let (out, stderr, code) = sandbox.run(&["check", "--staged"]);
     assert_eq!(code, 2, "{out}{stderr}");
     assert!(
