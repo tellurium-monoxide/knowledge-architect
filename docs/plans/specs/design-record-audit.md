@@ -270,7 +270,7 @@ C8. Weighed. Unmet and accepted. Round 1 said "today's sweep took about 10 subag
 heads", and "A project the size of thaum, about 220 heads, would cost about the same per run."
 The owner, the reply to round 2: "Agreed on all, tripwires and AC approved." 189 was right at
 commit c282b00, where the sweep counted it. The record has grown since, and the axis reads more than
-the heads, so the cost of a run differs; D7 carries the corrected premise. Re-taken at the commit
+the heads, so the cost of a run differs; D7 carried the corrected premise, and the owner accepted it. Re-taken at the commit
 that added this spec, by
 counting the level-three headings that end with a slug in the five design homes: 206 heads. The
 rejected alternatives add about 100 entries, counted as the paragraphs that open with bold text,
@@ -560,7 +560,7 @@ applying a test measure how agents read it, not whether it is right".
 
 ## New names, in one place
 
-- the audit skill: `planned@agent-skills@content/skills/project-audit/SKILL.md`, per D1.
+- the audit skill: `path@agent-skills@content/skills/project-audit/SKILL.md`, per D1.
 - the design-record auditor: `planned@agent-skills@content/agents/design-record-auditor.md`.
 
 ```text
@@ -895,10 +895,9 @@ repository outside a `%%` line. Every commit runs `cargo klarch check --staged` 
   owner accepted C8 on a cost of "about ten" subagents for 189 heads. The corpus holds 206 heads and
   about 100 rejected alternatives, and a re-check bounded by C7 takes one auditor per group, so a run
   costs about 18 subagents. Default: keep the per-group re-check, since one auditor over the whole
-  corpus breaks C7 on a large project. Awaiting the owner. D7 corrects the premise of a ruling, so
-  `primer@owner-word-premise` applies rather than the status rule on the owner's absence: the work
-  proceeds on the default unless the owner answers otherwise, and step 5, which spends the cost,
-  does not start before the answer.
+  corpus breaks C7 on a large project. D7 corrected the premise of a ruling, so
+  `primer@owner-word-premise` applied rather than the status rule on the owner's absence. Ruled,
+  the owner's message after step 1: "D7 default approved".
 
 ## Harvest
 
