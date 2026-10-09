@@ -481,8 +481,8 @@ read a snapshot instead, from git objects alone, per `design@core@staged-tree-so
 is no part of any project, so every invocation runs with it pointed at the null device: a line
 there would otherwise take an untracked live document out of every check on one clone and not on
 another. What still decides the walk beside the tree's own ignore files is git's per-clone exclude
-file, which git offers no way to pin, and that is what the tripwire in
-`path@core@docs/tripwires.md` is left guarding.
+file, which git offers no way to pin, and that is what
+`tripwire@core@walked-count-differs-between-machines` is left guarding.
 
 ### A listed path is read as git's bytes, never decoded `##a-path-is-bytes`
 
@@ -650,10 +650,6 @@ developer's contracts lose their required home in a project without agents, is
 
 **A directory that carries outstanding state without being a component is a location**, per
 `design@core@anchors-are-components-and-locations`.
-
-**A component directory that does not exist is one finding rather than one per document.** Six
-findings from one cause bury the cause, and the repair for all of them is the same line of the
-manifest.
 
 ### An anchor is a component or a location, and a location carries the registers it declares or the tool gives it `##anchors-are-components-and-locations`
 
@@ -1018,8 +1014,8 @@ document and owes a level-one title. Nothing else sits in the home, and no entry
 anchors read off the tree. An entry is defined at its `README.md`, and only while the walk reads
 that file, as a File entry the walk leaves out defines nothing. The shape exists because the owner
 asked to cite a milestone as `milestone@plans@<id>`, and a milestone is a directory: a File entry
-is one file and could hold no slice specs. Citing the milestone by a path to its README would have
-needed no new shape, and was set aside for that request.
+is one file and could hold no slice specs. Citing the milestone by a path to its README needs no
+new shape, and loses to that request.
 
 ### A file register's index is a banner, a count and one row per entry, and its bytes are the contract `##a-file-register-index-is-rows`
 
@@ -1067,20 +1063,7 @@ because a declaration disagreed would be a listing that stops listing, and the d
 No generated file holds hand-written bytes: not a file-register `index.md`, and not a file an
 extension generates. Each is what its generator returns over the model, which is what lets
 `path@core@src/check/generated.rs` verify one by regenerating into a `String` and
-comparing rather than by writing the file and reading it back. Two things follow, and both are
-load-bearing.
-
-**One list names the file-register indexes, and the writer and the gate both read it.**
-`cargo klarch index` and the `generated` check take the same pairs of destination and expected
-bytes from one function, so neither can generate one the other does not know about, nor disagree
-about what is in it. Each is derived from the file-register instances, one per instance whose
-directory is there. **An extension's generated files are read the same way**: the extension
-names their paths before the walk and renders their bytes when prepared, and the writer and the
-gate both take them from those two calls, per
-`design@core@an-extension-plugs-in-through-phased-hooks`.
-
-**An instance with no directory contributes no index**: generating into it would create a register home as a side effect of a listing, and the
-missing home is what `check::tree` reports.
+comparing rather than by writing the file and reading it back.
 
 **Writing one destroys nothing**, so `cargo klarch index` takes no dry-run flag. Its one flag,
 `--staged`, chooses the tree and the destination, per `design@core@index-staged-write`. The dry run a write
@@ -1098,6 +1081,20 @@ all. Remove either check and the paragraph above stops being true.
 **The purity is a property to preserve, not one to observe.** A generator that embedded a
 timestamp, a hostname, or anything the walk does not see would break both consequences at once: the
 check would report a file stale that nobody had changed, and `index` would rewrite on every run.
+
+### The writer and the `generated` check take the generated files from one list `##one-list-of-generated-files`
+
+**One list names the file-register indexes, and the writer and the gate both read it.**
+`cargo klarch index` and the `generated` check take the same pairs of destination and expected
+bytes from one function, so neither can generate one the other does not know about, nor disagree
+about what is in it. Each is derived from the file-register instances, one per instance whose
+directory is there. **An extension's generated files are read the same way**: the extension
+names their paths before the walk and renders their bytes when prepared, and the writer and the
+gate both take them from those two calls, per
+`design@core@an-extension-plugs-in-through-phased-hooks`.
+
+**An instance with no directory contributes no index**: generating into it would create a register home as a side effect of a listing, and the
+missing home is what `check::tree` reports.
 
 ### One question has one command that answers it `##one-question-one-command`
 
@@ -1132,10 +1129,10 @@ whose bytes the staged tree determines, so no bytes a writer meant are lost. The
 the staged rows into the working-tree file, lost: after it, plain `check` fails, since that file no
 longer matches the working tree, and `check --staged` fails until the file is staged.
 
-### `check --fix` applies every safe fix, then runs the full check `##check-fix-flag`
+### `check --fix` applies the safe fixes `design@core@fix-scope` admits, then runs the full check `##check-fix-flag`
 
-`cargo klarch check --fix` applies every fix the checker can make safely, lists each file it wrote
-or removed, then runs the check, whose report and exit code are the run's. It makes an edit cycle
+`cargo klarch check --fix` applies the safe fixes `design@core@fix-scope` admits, lists each file it
+wrote or removed, then runs the check, whose report and exit code are the run's. It makes an edit cycle
 one command: updating the generated files is needed after nearly every edit of a register, and
 without the option it takes `index` then `check`. The option came from the owner: "it's quite
 common for tools similar as this one to provide a "quick fix" option, that performs the fixes it
@@ -1270,10 +1267,8 @@ is a checked invariant, so the tool can tell a heading that is no entry from an 
 is missing. Without it, a tripwire written without a slug is defined nowhere, listed by nothing
 and reported by nothing.
 
-**The statement precedes the slug in the heading**, so a document outline lists the entries
-rather than a set of identifiers, and an editor's outline view is the index. A heading at another
-level is section text and owes nothing: a design home groups its level-three decisions under
-level-two subjects.
+A heading at another level is section text and owes nothing: a design home groups its
+level-three decisions under level-two subjects.
 
 **The homes are the design, goals and tripwires homes of the owning anchor**, and the home of
 any heading register the project declares, each in either shape of
@@ -1299,6 +1294,11 @@ table defines from every home shape of every heading register the anchor carries
 definition that sits where none may; whether the home is there at all, and in which shape, is
 `check::tree`'s.
 
+### An entry's heading puts its statement before its slug, and the slug is read wherever it sits `##statement-precedes-the-slug`
+
+**The statement precedes the slug in the heading**, so a document outline lists the entries
+rather than a set of identifiers, and an editor's outline view is the index.
+
 **The slug may sit anywhere in the heading.** A pattern that requires text after the slug matches
 no heading carrying nothing but the slug, and every reference to such an anchor is then reported
 as dangling while the definition sits in the file.
@@ -1318,7 +1318,8 @@ README.
   beside the heading form would leave the two indistinguishable, and nothing would say which
   anchors use which.
 - **A mid-line slug is a pointer written in the definition form**, and recording it is what makes
-  such a pointer visible: four sat in thaum's design homes, checked by nothing.
+  such a pointer visible: a census found such pointers in thaum's design homes, checked by
+  nothing, in the message of 115f8ae.
 
 **A fenced heading is an illustration, so a fenced slug neither defines nor is misplaced.** A
 definition site is a heading, and the scanner already reads no heading inside a fence; the one
@@ -1767,9 +1768,9 @@ blockquote; a float literal read as a rule number; a test fixture's string liter
 content; and a rule quoted inside a block comment lost because the `*` continuation was left in
 front of it.
 
-**Three readings of "data" were too broad, and the measurement over thaum's tree caught each.** A
-fenced block is not data — a sketch in a design document comments its rules on purpose, and reading fences as
-data lost 34 citations. A string literal is data only when BOUND to a name — an assertion's
+**Three readings of "data" were too broad, and the measurement over thaum's tree, in the message
+of 94f6d67, caught each.** A fenced block is not data — a sketch in a design document comments
+its rules on purpose, and reading fences as data lost 34 citations. A string literal is data only when BOUND to a name — an assertion's
 message cites rules for a human to read on failure, and reading every literal as data lost 32
 of them. A macro body is not an argument list, so a binding still applies inside one. **Reading
 every literal as prose is a recorded losing alternative**, in
@@ -1830,7 +1831,8 @@ attribute lookup to protect a class with zero members.
 Two checkouts sharing one
 target directory leave the last build's binary for both, and cargo does not rebuild it for the
 other checkout, whose own package is still fresh; observed on thaum's repository, the other
-checkout then runs that binary, its code and not only its compiled paths. Before any command,
+checkout then runs that binary, its code and not only its compiled paths; the reproduction is in
+the message of 33d3bd2. Before any command,
 the binary compares where its own crate and each library it links were compiled with the tree it
 is run over: a tree that holds the same package, by the name its `Cargo.toml` declares, at a
 trailing run of the compiled directory but not at the compiled directory itself is a second

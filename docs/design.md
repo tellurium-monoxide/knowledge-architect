@@ -16,7 +16,8 @@ skills are shaped is `path@agent-skills@docs/design.md`.
 ### No Component's directory is named after the project, and a published crate's directory may differ from its package's name `##no-component-directory-named-after-the-project`
 
 A Component is named by the basename of its directory, and the project root by the project's name,
-so a directory named `knowledge-architect` would collide with the root: a run over a scratch project
+per `design@core@components-carry-the-same-documents`, so a directory named `knowledge-architect`
+would collide with the root: a run over a scratch project
 laid out that way stopped in phase 1, reporting that the name "names 2 anchors". So a published
 crate may sit in a directory named by what it does rather than by its package, crates/core for the
 package knowledge-architect, and a future split of the core follows the same rule, as crates/core
@@ -219,9 +220,6 @@ owner's, per `goal@knowledge-architect@the-owner-decides`. The open issues are
 `issue@agent-skills@patching-an-installed-skill` and
 `issue@agent-skills@a-skill-for-creating-a-component`.
 
-Leaving 0.x re-examines `design@core@ne-minimal`. After 1.0, a variant added to one of the
-library's exhaustive enums is a major, where under 0.x it bumps 0.MINOR.
-
 ### A decision is never argued on the grounds that changing it later would be breaking `##no-future-breaking-cost-argument`
 
 An argument that a change is expensive names the cost it has today, a consumer's migration
@@ -298,7 +296,7 @@ commits reached main with the same trees, the same author, a new committer and n
 `gh api repos/tellurium-monoxide/rebase-merge-probe/pulls/1/commits` and
 `gh api repos/tellurium-monoxide/rebase-merge-probe/commits` re-read both sides. So neither a commit message nor a document cites the SHA
 of a commit of its own branch: it names that commit by its subject. `commits` refuses such a
-citation, under this repository's manifest.
+citation, per `design@core@branch-shas-are-refused`, which this repository's manifest turns on.
 
 ### A record carried by a commit message rides on a commit that changes a file `##a-record-rides-on-a-commit-that-changes-a-file`
 

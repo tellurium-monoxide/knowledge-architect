@@ -1356,6 +1356,9 @@ messages of its transcript, so only a reviewer reading it after their repairs ca
 was acted on durably, per `goal@knowledge-architect@design-is-recorded-with-its-arguments`. Its own
 repairs land as additional commits, as many as their kinds need: a repair that the primer routes to
 a commit of its own stays one, and nothing asks the dispatcher to merge them into a single commit.
+The additional commits are the owner's proposal: "I'd just replace "as a last commit" by "as an
+additional commit". This is simpler, it prevents any possible conflict, without exceptions and no
+need to check a condition."
 A repair that would leave an earlier commit failing is folded, per
 `design@agent-skills@review-repair-appended-or-folded`.
 An additional commit that adds, removes or reverses a design head is reviewed by the
@@ -1594,9 +1597,10 @@ binary under a name of its own, per `design@core@declared-command`.
 
 One command runs every check a project owes before a merge, runs them all when one fails, and exits
 non-zero when any fails, so a verdict is one exit code and nothing is read through a pipe. In a Rust
-project with a maintenance crate it is a command of that crate, per `design@agent-skills@xtask-pins-checker`, so
-every adopting project with a maintenance crate runs the gates refined in this repository and in thaum. The gates a project
-owes are its own list. The setup skill proposes two goals for such a tool, for the owner's
+project with a maintenance crate it is a command of that crate, per `design@agent-skills@xtask-pins-checker`, run by
+the published gates library, per `design@gates@gates-crate`, so every adopting project with a maintenance crate runs
+the gates refined in this repository and in thaum. The gates a project owes are its own list, per
+`design@gates@a-project-holds-its-gate-list`. The setup skill proposes two goals for such a tool, for the owner's
 ruling: one command runs every check owed before a merge, and a task performed repeatedly becomes a
 command of the tool. The proposal is the owner's: "I would also recommend setting these two goals
 (with those wordings) in the project setting-up skill".
@@ -1626,9 +1630,11 @@ part of the working tree. Both commands are the core's, `design@core@staged-tree
 staged in part passes a check of the working tree and fails the commit's own.
 `design@agent-skills@additions-need-real-use` asks of an addition a behaviour seen in real use, or
 asked for by the owner with the lack named. The owner asked for the delivery, "identify shipped
-workflow changes needed to deliver this new feature", and named the partial commit's lack: "the
-user intent in this case is probably to commit partially, and then --fix cannot apply its changes
-safely". The rival, the skills naming only the working-tree forms, is what that lack defeats.
+workflow changes needed to deliver this new feature", and, on the refusal of `--fix` for a partial
+commit, named what a session does instead: "the recommended action would be to run check without
+--fix and restricted to staged area, and fix findings manually (fixing indexes might need index to
+accept running on staged changes)". The rival, the skills naming only the working-tree forms, leaves
+that action undelivered.
 
 ### In a Rust project with a maintenance crate, that one crate pins the checker and runs the gates `##xtask-pins-checker`
 
@@ -1660,9 +1666,7 @@ owner answered: "Q5: yes".
 The setup skill does not finish a Component without at least one goal, stated with the owner.
 A Component with no goal gives its design nothing of its own to be judged against, and a goal that
 is a Component's responsibility left unstated is one nobody is responsible for, against
-`goal@knowledge-architect@the-owner-decides`. Where those goals sit is
-`design@agent-skills@goal-placement`, and how a published Component's goals relate to the root's is
-`design@agent-skills@published-component-goals-refine-a-root-goal`. Nothing checks it mechanically yet:
+`goal@knowledge-architect@the-owner-decides`. Nothing checks it mechanically yet:
 `issue@core@a-component-states-at-least-one-goal`.
 
 ### A decision that relies on the checker says so, and references none of its decisions `##relying-on-the-checker`
@@ -1697,51 +1701,6 @@ paragraph saying what it means and what would show it is met. It never states a 
 is whether a change would make the Component for something else, which is a goal, or reach the same
 end another way, which is a decision. Goals stay short, because a goals home is read whenever a
 decision is argued from one.
-
-### The owner states intent, the agent drafts, and the owner rules on every goal by its slug `##eliciting-goals`
-
-The agent asks the owner to state their intent and any goals they have, refines the wording, and
-proposes further goals from the documentation, or from the code and content when the documentation
-does not say enough. It writes a short draft that goes into the goals home verbatim if approved,
-each goal marked with its source, the owner's statement or what it was proposed from, and asks the
-owner to read it in full. The owner rules on each goal by its slug: approved or dropped. A goal
-with no ruling is asked about again; it is neither written nor dropped silently. Both are the
-owner's refinement: "the agent should still help humans writing this document, while making sure it
-reflects the owner's mind", and "an unnamed goal should not be dropped silently either IMO. Each
-goal should require a ruling, "approved" or "drop"". The rulings by slug keep the document the
-owner's, per `goal@knowledge-architect@the-owner-decides`. Drafting
-nothing and only asking lost: it gave up the help with the wording. Drafting and letting the owner
-correct lost too: a goal accepted by not objecting is not the owner's word.
-
-### A goal sits in the Component responsible for fulfilling it `##goal-placement`
-
-A goal is written in the goals home of the Component whose responsibility it is to fulfil it, even
-when decisions of other Components serve it too: a goal of any Component can be referenced from
-anywhere, per `design@core@an-entity-belongs-to-its-anchor`, so serving it does not require moving
-it. The rule is the owner's: "goals stay confined to the main component whose responsibiliy is
-fulfilling them". Placing
-each goal in the smallest scope serving it lost to the owner's argument that it "might lead to
-excessive promotion of goals into the root documents", and would leave a goal with no Component
-responsible for it, against `goal@knowledge-architect@the-owner-decides`.
-
-### A published Component's goals are encouraged to refine a root goal, and reference it `##published-component-goals-refine-a-root-goal`
-
-The root's goals state what the project provides to its consumers. A published Component
-serves those consumers, so its goals are encouraged to be sub-goals that refine a root goal, more
-specific than the root states, and each such goal references the root goal it refines. The owner's
-reason: "components that are published are serving external consumers, and project goals are what
-describe what we intend to provide to external consumers"; "encouraged" is the owner's own
-softening of "nearly always". A Component that
-serves only the project, such as a maintenance tool, serves all of the root's goals at once, in the
-owner's words "they serve all of them all the time", and its goals need not refine one.
-
-### A goal need not be met yet, and an unmet goal no plan schedules is an open `todo` issue `##an-unmet-goal-is-intent`
-
-A goal constrains future work and design from the moment it is written, met or not. This is the
-owner's: "A goal does not need to be fulfilled *right now*. It is my intent about where I want the
-project to reach, and constrains future work and design". When nothing fulfils it yet and no plan
-document schedules the work, a `todo` issue holds that work and references the goal, so the gap
-between the goal and the tree is listed as outstanding work.
 
 ### Goals change only through the goal-setting skill `##goals-change-through-goal-setting`
 

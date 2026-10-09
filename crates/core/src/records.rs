@@ -290,8 +290,8 @@ fn heading_at(doc: &Document, line: u32) -> Option<String> {
 
 /// A heading's text without the slug that ends it.
 ///
-/// The statement comes first and the slug last, so the title is everything before the last
-/// backticked span opening with `##`.
+/// The statement comes first and the slug last, per `design@core@statement-precedes-the-slug`, so
+/// the title is everything before the last backticked span opening with `##`.
 fn strip_slug(text: &str) -> String {
     let trimmed = text.trim_end();
     let Some(inner) = trimmed.strip_suffix('`') else {

@@ -185,7 +185,7 @@ What exists today at each site the work touches:
 
 The design rests on these decisions, and does not argue them again:
 
-- `design@core@check-fix-flag`: `--fix` applies every safe fix, then runs the full check; the
+- `design@core@check-fix-flag`: `--fix` applies the safe fixes `design@core@fix-scope` admits, then runs the full check; the
   option's generic name was chosen because "a later safe fix needs no new option".
 - `design@core@phases-gate-the-report`: no writer writes over an incomplete model. A respelling
   reads the entity table, so it runs after the gate. One sentence of the head is rewritten, per
@@ -697,8 +697,8 @@ The new module is `planned@core@src/fix.rs`.
 - **git is never touched**: staging and the index stay outside `--fix`, as today.
 
 The installed files and the generated files still pass, as their bytes are the installer's and the
-generator's, not a writer's. The scope list of `design@core@fix-scope` becomes a consequence of the
-tests, not the test.
+generator's, not a writer's. The respellings join `design@core@fix-scope`'s members as a kind
+added on purpose, each passing the safe-fix test.
 
 **Where a respelling may write**: a Markdown document of the walk, and the comments of a Rust
 source file of the walk. Never a Rust string literal, never a file of the generated list, which
