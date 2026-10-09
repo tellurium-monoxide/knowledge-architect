@@ -250,9 +250,10 @@ other checkout's code runs and not only its compiled paths; correct paths would 
 tree with the wrong code. The exemption half of the argument is the entry "A manifest row naming
 the exempt directory".
 
-**A manifest row naming the exempt directory** — lost to `design@core@the-regime-has-no-opt-out`.
-`live`. A row can be pointed at any directory, and the tree declaring it decides what conformance
-means. The compiled path can name only the checker's own source.
+**A manifest row naming the exempt directory** — lost to
+`design@core@checker-source-literals-are-data`. `live`. A row can be pointed at any directory, and
+the tree declaring it decides what conformance means, which `design@core@the-regime-has-no-opt-out`
+refuses. The compiled path can name only the checker's own source.
 
 **`additional-trackers` kept as a file list** — lost to
 `design@core@anchors-are-components-and-locations`. `live`. It named each tracker outside every
@@ -282,15 +283,19 @@ README holds the directory open, because the rows change only on create, delete,
 and a metadata change — not on a wording edit — so the churn the argument feared does not happen.
 An optional index is also an opt-out, which `design@core@the-regime-has-no-opt-out` refuses.
 
-**A summary column, or a last-change date, in a file register's index** — lost to
-`design@core@a-file-register-index-is-rows`. `live`. Either would let a reader take in what an
+**A summary column in a file register's index** — lost to
+`design@core@a-file-register-index-is-rows`. `live`. It would let a reader take in what an
 instance holds without opening a file, which is the whole point of a listing. The summary loses on
 churn: it changes on every wording edit of every entry, so an index that today is regenerated on
 create, delete, retitle, regroup and a metadata change would go stale on each one and fail the gate.
-The date loses outright to `design@core@generated-files-are-pure`: the last change is git's, not the
-walked tree's, so a generator reading it would rewrite the file on a rebase and report a file stale
-that nobody had touched. Both are answered by a command instead, `issues` for the dates and
-`show <ref>` for the body.
+It is answered by a command instead, `show <ref>` for the body.
+
+**A last-change date in a file register's index** — lost to
+`design@core@a-file-register-index-is-rows`. `live`. It would let a reader take in what an
+instance holds without opening a file, which is the whole point of a listing. The date loses
+outright to `design@core@generated-files-are-pure`: the last change is git's, not the walked
+tree's, so a generator reading it would rewrite the file on a rebase and report a file stale that
+nobody had touched. It is answered by a command instead, `issues` for the dates.
 
 **Per-instance register options declared at the root, in the project's own instance** — lost to
 `design@core@instance-options-beside-the-instance`. `live`. It puts every option in one place beside the

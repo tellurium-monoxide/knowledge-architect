@@ -441,8 +441,9 @@ fn check(
     })
 }
 
-/// Apply every safe fix, then run the full check: `check --fix`, per `design@core@check-fix-flag`,
-/// `design@core@safe-fix-definition` and `design@core@fix-before-the-checks`.
+/// Apply the safe fixes `design@core@fix-scope` admits, then run the full check: `check --fix`, per
+/// `design@core@check-fix-flag`, `design@core@safe-fix-definition` and
+/// `design@core@fix-before-the-checks`.
 ///
 /// **A fix is safe when its bytes are determined by the tree and the pinned version, and it
 /// writes or removes only files of the installer's namespace or of the generated list.** Two pass that test: the install
@@ -742,7 +743,7 @@ fn index(
 /// extension's, then one index per file-register instance.
 ///
 /// One function for `index`, `index --staged` and `check --fix`, so the three generate the same
-/// files from one tree, per `design@core@generated-files-are-pure`. `tree` is the tree each
+/// files from one tree, per `design@core@one-list-of-generated-files`. `tree` is the tree each
 /// extension is prepared over: the checkout, or the staged snapshot. Every generated file comes in
 /// one call, so a flag choosing between them buys nothing and cannot be given an invalid
 /// combination. `inputs` answers which instance directories are there, and an instance without one

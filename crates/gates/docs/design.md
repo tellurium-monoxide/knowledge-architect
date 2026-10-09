@@ -35,8 +35,8 @@ marker file's name from the caller.
 ### The library owns the gates' flags `##the-library-owns-the-flags`
 
 The flags of a gates run are the library's `GatesArgs`, which derives clap's `Args`, so a project's
-binary flattens them into its own command and every project's gates take the same flags. clap's
-major version is therefore part of the library's interface, as it is of the core's.
+binary flattens them into its own command and every project's gates take the same flags, per
+`goal@gates@gates-from-a-list`. clap's major version is therefore part of the library's interface, as it is of the core's.
 
 ### The distillers are a closed set the library holds `##distillers-are-a-closed-set`
 
@@ -94,7 +94,7 @@ is the tree the main branch receives only when the branch contains the base; a b
 nothing. It is behind a flag because a branch not yet rebased is normal while it is worked on;
 CI passes the flag. It reads the local copy of the base, so a caller fetches first.
 
-### Under Actions each gate is a group, and a failed one an error `##annotations-under-actions`
+### Under GitHub Actions, the run marks each gate with workflow commands, so the job's log and summary name it `##annotations-under-actions`
 
 A CI job that runs every gate in one step has a step list that does not name the failing gate. Under
 Actions the library prints GitHub workflow commands around each gate: `::group::<gate>` before it
@@ -118,7 +118,9 @@ diagnostics.
 The spawn helper removes `RUSTC_BOOTSTRAP` from the environment of every child the library starts,
 gates included, and a child that needs a value sets it explicitly. `RUSTC_BOOTSTRAP=1` makes a
 whole build nightly-equivalent, so nightly-gated code that CI rejects compiles and passes: thaum's
-review reproduced it with a `#![feature(test)]` doc test. libtest also reads the variable's mere
+review reproduced it with a `#![feature(test)]` doc test. A crate whose one doc test opens with
+`#![feature(test)]` and `extern crate test;` takes it again: `cargo test --doc` fails on a stable
+toolchain, and `RUSTC_BOOTSTRAP=1 cargo test --doc` passes. libtest also reads the variable's mere
 presence. A caller who exported it would turn every local gate run into that false green, and the
 verdict run exists to exclude it. The test `gate_children_never_inherit_a_caller_exported_bootstrap`
 in `path@xtask@tests/gates_bin.rs` asserts the scrub.

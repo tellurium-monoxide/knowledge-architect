@@ -23,9 +23,8 @@ of `gates`.
 
 The list in `path@xtask@src/gates.rs` is the one home of what the project's gates are: the
 recommended list of the gates library, `design@gates@a-project-holds-its-gate-list`, with this
-repository's own package as the checker. Root
-`CLAUDE.md`'s "Verify mechanically" section points at `cargo x gates`, and
-`path@knowledge-architect@.github/workflows/ci.yml` runs the tool in one step, on every push to a ready pull
+repository's own package as the checker. A local run is `cargo x gates`, and
+`path@knowledge-architect@.github/workflows/ci.yml` runs the same tool in one step, on every push to a ready pull
 request: `cargo --locked x gates --locked --fail-fast --require-rebased --full`. A list restated as
 workflow steps drifts from this one, and a gate added to one list and not the other makes a
 local run pass what CI fails, or the reverse. The job UI names the failing gate through

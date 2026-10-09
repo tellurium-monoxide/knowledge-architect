@@ -24,9 +24,9 @@ the finding names, `index`, cannot repair a commit already made.
 
 `design@core@a-commit-message-is-a-document` judges every commit's tree with the tip's checker,
 so a change to a generated file's contract is a change that fails earlier trees, and
-`design@knowledge-architect@git-flow` folds such a repair into the earliest commit by a history
-edit. A
-reader of the finding as it stands repairs nothing, or runs `index` on the tip, which does not
+`design@knowledge-architect@git-flow`, with
+`design@agent-skills@review-repair-appended-or-folded`, folds such a repair into the earliest
+commit by a history edit. A reader of the finding as it stands repairs nothing, or runs `index` on the tip, which does not
 change the earlier commits; the repair that works is found only by reasoning from the pattern.
 
 ### What would close it

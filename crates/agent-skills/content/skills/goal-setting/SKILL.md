@@ -39,6 +39,13 @@ what the goal means, and **what would show it is met**.
 <What it means, in two to four sentences, and what would show it is met.>
 ```
 
+%% A goal sits in the Component responsible for fulfilling it because a reference reaches a goal of
+%% any Component from anywhere, per `design@core@an-entity-belongs-to-its-anchor`, so serving a goal
+%% does not require moving it. The rival, each goal in the smallest scope serving it, promotes goals
+%% into the root documents, and leaves a goal with no Component responsible for it, against
+%% `goal@knowledge-architect@the-owner-decides`. A published Component serves the consumers whose
+%% provision the root's goals state, so its goals refine a root goal; this is an encouragement, not a
+%% rule, since whether a goal refines another is a subjective judgement.
 **Where a goal goes.** A goal is written in the goals home of the Component whose responsibility it
 is to fulfil it, even when other Components' decisions serve it too: any goal can be referenced from
 anywhere. The root's goals state what the project provides to its consumers. A published Component
@@ -61,6 +68,12 @@ is argued from one.
 
 ## Drawing out the owner's intent {{slug:drawing-out-intent}}
 
+%% The agent drafts so that the owner gets help with the wording, and the owner rules on every goal by
+%% its slug so that the goals home holds the owner's mind, per
+%% `goal@knowledge-architect@the-owner-decides`. Drafting nothing and only asking gives up the help
+%% with the wording. Drafting and letting the owner correct accepts a goal by the owner's silence,
+%% which is not the owner's word; for the same reason a goal with no ruling is neither written nor
+%% dropped.
 **The owner states, the agent helps write, and the owner rules on every goal.**
 
 1. **Ask the owner to state their intent** for the Component, and any goals they already have, in
@@ -77,6 +90,9 @@ is argued from one.
    goal the owner rewords is shown again in its new wording before it is written.
 5. Write the approved goals, exactly as approved, and nothing else.
 
+%% A goal is intent about where the project should get to, so it constrains work from the moment it is
+%% written, met or not. The `todo` issue lists the gap between an unmet goal and the tree as
+%% outstanding work where no plan document already schedules it.
 **A goal need not be met yet.** A goal is the owner's intent about where the project should get to,
 and it constrains future work and design from the moment it is written. When nothing fulfils it yet and
 no plan document schedules the work that would, open a `todo` issue for that work, under

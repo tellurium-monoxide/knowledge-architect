@@ -107,7 +107,8 @@ win.
 - **An entry of a heading register is a heading at the register's level, ending with its slug**,
   per `design@core@an-entry-is-a-heading-at-the-register-level`.
   - The shape is ``### The statement `##<slug>` ``: the statement first and the slug last, with no
-    bold and no em dash between them, so that a document outline reads as a list of decisions.
+    bold and no em dash between them, so that a document outline reads as a list of decisions, per
+    `design@core@statement-precedes-the-slug`.
   - Design entries sit at level three. Goal and tripwire entries sit at level two. A plan's item
     sits at level three, and the level-two section above it gives its kind, per
     `design@core@plan-items-by-section`.

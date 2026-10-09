@@ -121,7 +121,7 @@ write no generated file while one of them holds anything. `index` and an extensi
 with exit 2; `check --fix` prints the stopped report and exits 1, having installed agent files
 before that gate when they needed it, since their bytes do not depend on the model: an index generated over an incomplete model lists rows nobody asked for.
 
-**`check --fix` applies every fix the checker can make safely, then runs the check**, per
+**`check --fix` applies the safe fixes `design@core@fix-scope` admits, then runs the check**, per
 `design@core@check-fix-flag`. A fix is safe, per `design@core@safe-fix-definition`, when its
 bytes are determined by the tree and the pinned version, and it writes or removes only files of
 the installer's namespace or of the generated list. Two pass: the agent files the check reports missing,
