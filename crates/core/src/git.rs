@@ -75,6 +75,15 @@ impl Invocation {
     /// The two failures a caller must be able to tell apart from an empty answer are named in
     /// the error: git is not there, or git refused. Both reach the binary as exit 2.
     pub(crate) fn output(self) -> io::Result<Vec<u8>> {
+        self.run().map(|(_, stdout)| stdout)
+    }
+
+    /// Run it, and give back the exit code, which must be one [`Invocation::accept`] names.
+    pub(crate) fn code(self) -> io::Result<i32> {
+        self.run().map(|(code, _)| code)
+    }
+
+    fn run(self) -> io::Result<(i32, Vec<u8>)> {
         let shown = self.shown();
         let mut command = Command::new("git");
         command
@@ -148,7 +157,7 @@ impl Invocation {
                 self.root.display()
             )));
         }
-        Ok(out.stdout)
+        Ok((code, out.stdout))
     }
 
     /// The same, with the output read as a NUL-separated list of project-relative paths.
@@ -600,6 +609,18 @@ fn kind_of(mode: &[u8]) -> EntryKind {
         b"160000" => EntryKind::Gitlink,
         _ => EntryKind::File,
     }
+}
+
+/// Whether the project's part of the index differs from HEAD: whether anything of the project
+/// is staged. `--relative` keeps the question to the project, since without it a staged change
+/// anywhere in the repository answers yes. Before the first commit, the index is compared with
+/// the empty tree.
+pub(crate) fn index_differs_from_head(root: &Path) -> io::Result<bool> {
+    let code = git(root)
+        .args(["diff", "--cached", "--quiet", "--relative"])
+        .accept(1)
+        .code()?;
+    Ok(code == 1)
 }
 
 /// The project's paths the index holds unmerged, at stage 1 to 3, each named once.

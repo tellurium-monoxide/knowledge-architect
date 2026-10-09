@@ -71,6 +71,11 @@ pub struct CheckArgs {
     /// the installed agent files whose bytes the tree and this version determine, and list each.
     #[arg(long)]
     pub fix: bool,
+    /// Judge the tree git's index would commit, instead of the working tree: HEAD's tree with
+    /// the staged changes, read from git objects. To repair its generated files, run `index
+    /// --staged`, then `check --staged` again; `--fix` repairs the working tree only.
+    #[arg(long, conflicts_with = "fix")]
+    pub staged: bool,
 }
 
 #[derive(Args)]
@@ -132,6 +137,7 @@ pub fn run(
     let manifest = &configured;
     match command {
         Command::Check(args) if args.fix => fix_then_check(manifest, checker, extensions),
+        Command::Check(args) if args.staged => history::check_staged(manifest, checker, extensions),
         Command::Check(_) => check(manifest, checker, extensions),
         Command::Show(args) => show(manifest, &args, checker),
         Command::Issues(args) => issues(manifest, &args, checker),
@@ -399,7 +405,7 @@ fn check(
     let inputs = gathered.inputs();
     if let Err(stop) = crate::check::foundation(&model, manifest, &inputs) {
         let report = Report::stopped(stop, &model);
-        print_report(&report, &model);
+        print_report(&report, &model, None);
         return Ok(ExitCode::FAILURE);
     }
 
@@ -418,7 +424,7 @@ fn check(
     let with: Vec<(&[&'static str], &dyn Prepared)> =
         prepared.iter().map(|(c, p)| (*c, p.as_ref())).collect();
     let report = crate::check::run_with(&model, manifest, &inputs, &with);
-    print_report(&report, &model);
+    print_report(&report, &model, None);
     Ok(if report.failed() {
         ExitCode::FAILURE
     } else {
@@ -507,7 +513,7 @@ fn fix_then_check(
         if written > 0 {
             outln!();
         }
-        print_report(&report, &model);
+        print_report(&report, &model, None);
         return Ok(ExitCode::FAILURE);
     }
 
@@ -546,8 +552,8 @@ fn fix_then_check(
 /// The order is the whole point: a caller reading the tail of the output has to reach the
 /// answer, and when the findings came first every `| tail` and every `| grep` for a count
 /// printed a success-shaped report over a failing run.
-fn print_report(report: &Report, model: &crate::Model) {
-    out!("{}", counts(report));
+fn print_report(report: &Report, model: &crate::Model, tree: Option<&str>) {
+    out!("{}", counts(report, tree));
     if !report.findings.is_empty() {
         outln!();
         for finding in &report.findings {
@@ -1095,7 +1101,10 @@ fn sources(dirs: &[std::path::PathBuf]) -> String {
         .join(", ")
 }
 
-fn counts(report: &Report) -> String {
+/// `tree` names the tree walked, where it is not the working tree: plain `check` prints no
+/// `tree:` line, so its output is what it was before `--staged` existed, and a `walk:` count
+/// with no `tree:` line is of the working tree.
+fn counts(report: &Report, tree: Option<&str>) -> String {
     use std::fmt::Write;
 
     let mut out = String::new();
@@ -1104,6 +1113,9 @@ fn counts(report: &Report) -> String {
         // follows, because no family ran, and a zero would read as nothing found.
         let _ = write!(out, "\n{}", report.phase.stop_line(report.findings.len()));
         let _ = write!(out, "\nwalk: {} file(s)", report.structure.walked);
+        if let Some(tree) = tree {
+            let _ = write!(out, "\ntree: {tree}");
+        }
         if !report.structure.checker_sources.is_empty() {
             let _ = write!(
                 out,
@@ -1127,6 +1139,9 @@ fn counts(report: &Report) -> String {
     // `design@core@git-supplies-the-walk`, so the count is what a reader compares between CI and
     // a local run. It prints on a failing run as readily as a passing one.
     let _ = write!(out, "\nwalk: {} file(s)", report.structure.walked);
+    if let Some(tree) = tree {
+        let _ = write!(out, "\ntree: {tree}");
+    }
     if !report.not_run.is_empty() {
         // Not performed. Without this line the two failures are the same output: a check
         // that ran and found nothing, and one that could not run at all.
@@ -1412,7 +1427,7 @@ mod tests {
 
     #[test]
     fn every_count_is_rendered_in_the_position_its_label_promises() {
-        let out = counts(&numbered());
+        let out = counts(&numbered(), None);
         for expected in [
             "registers: 188 component(s), 199 location(s), 88 instance(s), 99 file entry(ies)",
             "references: 55 entities defined, 77 reference(s), 78 link(s)",
@@ -1426,7 +1441,7 @@ mod tests {
     fn each_extension_block_follows_the_core_lines_in_order() {
         let mut r = numbered();
         r.summaries = vec!["\nfirst: 1".to_string(), "\nsecond: 2".to_string()];
-        let out = counts(&r);
+        let out = counts(&r, None);
         let references = out.find("references:").expect("the core line");
         let first = out.find("first: 1").expect("the first block");
         let second = out.find("second: 2").expect("the second block");
@@ -1440,7 +1455,7 @@ mod tests {
         let mut r = report();
         r.checks.extend(["history", "sources"]);
         r.not_run = vec!["history", "sources"];
-        let out = counts(&r);
+        let out = counts(&r, None);
         assert!(out.contains("NOT RUN: history, sources"), "{out}");
         let checked = out
             .lines()
@@ -1451,7 +1466,7 @@ mod tests {
             "{checked}"
         );
         // Nothing is withheld when everything ran.
-        assert!(!counts(&report()).contains("NOT RUN"));
+        assert!(!counts(&report(), None).contains("NOT RUN"));
     }
 
     #[test]
@@ -1460,7 +1475,7 @@ mod tests {
         // only thing separating "ran and found nothing" from "did not run".
         let mut r = report();
         r.checks.push("an-extension-check");
-        let out = counts(&r);
+        let out = counts(&r, None);
         let checked = out
             .lines()
             .find(|l| l.starts_with("checked:"))
@@ -1481,7 +1496,7 @@ mod tests {
             .push(crate::Finding::in_file("a.md", "what", "action"));
         r.structure.checker_sources = vec!["crates/core".into()];
         r.structure.checker_files = 27;
-        let out = counts(&r);
+        let out = counts(&r, None);
         assert!(
             out.contains("phase 2: 1 finding(s); phases 3 and 4 were not judged"),
             "{out}"

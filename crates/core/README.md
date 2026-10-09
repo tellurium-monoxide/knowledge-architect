@@ -28,11 +28,14 @@ reported once with the reason, any line break escaped: name it in `[walk] skip-f
 ignore rule to keep it.
 Neither failure is silent: no binary and no worktree are both exit 2 naming the reason, never an
 empty walk. `commits` reads a commit's tree through `cat-file --batch -z`, which is where the
-version floor comes from. The decision is `design@core@git-supplies-the-walk`.
+version floor comes from. `check --staged` reads the tree git's index would commit the same way:
+HEAD's tree with the staged changes, a file added with `git add -N` left out, as `git commit`
+leaves it out. The decision is `design@core@git-supplies-the-walk`.
 
 ```sh
 cargo klarch check                     every check, over one walk, in four phases
 cargo klarch check --fix               apply every safe fix, list each, then every check
+cargo klarch check --staged            every check, over the tree git's index would commit
 cargo klarch show <kind>@<anchor>@<id> one recorded entry, and every reference to it
 cargo klarch issues [anchor] [--kind k] [--group g] [text …]
                                        every issue entry, one row each
