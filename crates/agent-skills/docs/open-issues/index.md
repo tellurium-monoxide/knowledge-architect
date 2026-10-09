@@ -1,10 +1,11 @@
 **Generated — do not edit.** `cargo klarch index`
 
-16 entries
+17 entries
 
 | kind | title |
 | --- | --- |
 | deferred | [A project cannot change one instruction of an installed skill](patching-an-installed-skill.md) |
+| design | [A design head can state the instance that was built as if it were the rule](a-head-states-the-instance-built-rather-than-the-principle.md) |
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | design | [The workflow assumes one owner, unnamed, which a project with several contributors does not have](the-workflow-assumes-one-unnamed-owner.md) |
 | question | [A design issue's re-entry point is read by no review](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |
