@@ -58,7 +58,7 @@ pub(crate) fn refused(rel: &Path) -> bool {
 /// `<>:"|?*\`, a control character below the space, a trailing space or period, or a Windows
 /// device name — `CON`, `PRN`, `AUX`, `NUL`, `COM0` to `COM9` and `LPT0` to `LPT9`, with the
 /// superscript digits `¹²³` as well — in any case and whatever follows its first period. A line
-/// break is named first. The grounds are `design@core@git-supplies-the-walk`. The file is
+/// break is named first. The grounds are `design@core@unportable-names-refused`. The file is
 /// not read, and the caller reports it once by name; `skip-files` or an ignore rule is how a
 /// project keeps one deliberately. A name that is not UTF-8 is judged on the bytes it has.
 pub(crate) fn refusal(rel: &Path) -> Option<String> {

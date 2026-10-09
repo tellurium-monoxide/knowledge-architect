@@ -233,6 +233,9 @@ sections is an item, and a slug anywhere else in a plan document defines nothing
 in the plans directory only. `{{command}} check` reports it once the target exists, and the commit
 that creates the file converts it to `path@<anchor>@<path>` in the same change.
 
+%% Argument boundaries are a judgement made once, at assembly, and the transcript reviewer judges
+%% none: a boundary drawn differently loses no argument. The rival, arguments marked in each round
+%% of the discussion, makes the extraction exact at a cost paid every round.
 **Assembly from the transcript.** A plan document records the whole discussion: every thread with
 its proposer, its final state, the arguments on each side, the owner's rulings verbatim with their
 round, and its relations. It is assembled from the transcript, not from memory. Dispatch a
@@ -308,6 +311,8 @@ becomes a criterion of the plan document, or it is dropped. It fires nothing whi
 Evidence that bears on it before the design session is an issue entry of its own, an
 `observation` or a `defect` by what it establishes, which the work's issue names.
 
+%% Written as a criterion in every plan document, the reviews' expected result would become the
+%% habitual criterion, in place of a specific one that is harder to find.
 **The result a scheduled review is expected to give is not a criterion.** Passing the reviews that
 every plan document and every slice owes is the baseline. A criterion names an observable specific to
 the decision it guards; listing "the reviews pass" in every plan document would be noise, and would
@@ -421,6 +426,13 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
 7. **The slice's spec leaves** in the commit that completes its harvest, as in `skill@knowledge-architect-planning@plan-document-leaves`. What crosses slices stays in the
    milestone document, amended in place where the landing changed it.
 
+%% A spec of several steps on one branch, with no stated procedure, cannot tell which points of a
+%% slice's procedure apply to which part of its work. Its audit reads the design against the tree as
+%% it stands and recovers what a session that did not witness the discussion lacks, so a spec
+%% implemented by the session that wrote it, on an unmoved main branch, likely gives it nothing to
+%% find. The rival, an audit for every spec as for every slice, costs a reading with nothing to find;
+%% it is the first candidate if `tripwire@agent-skills@skipped-spec-audit-would-have-found-a-gap`
+%% fires.
 **The work of a spec** takes the same points once, for the whole spec, on its one branch:
 
 - point 1, the grounding;

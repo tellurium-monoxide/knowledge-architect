@@ -67,7 +67,7 @@ pub struct Prose {
     /// Whether this run may carry a decision's anchor and a document's structure.
     ///
     /// Markdown only. A slug definition inside a doc comment would move a decision's home into
-    /// a source file, which `design@core@a-slug-belongs-to-a-component` places in a component's design
+    /// a source file, which `design@core@an-entity-belongs-to-its-anchor` places in a component's design
     /// document.
     pub structural: bool,
     /// Byte ranges in `text` that are inline code spans.

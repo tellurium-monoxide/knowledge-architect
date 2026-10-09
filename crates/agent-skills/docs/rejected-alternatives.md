@@ -73,7 +73,7 @@ reports in real sessions that it was "focusing more on the wrong side, the small
 what I approved", and ruled that a detail or a better wording inside a ruling needs no report.
 
 **A milestone document holding the design of every slice, with slice specs holding only their entry**
-— lost to `design@agent-skills@milestone-is-a-directory`. `live`. It kept the whole design in one
+— lost to `design@agent-skills@milestone-split-by-lifetime`. `live`. It kept the whole design in one
 place to read. It lost to a measurement: the first milestone written that way, structured-plans,
 had a README of 1,624 lines when it left, read whole at the grounding of every slice. That cannot be
 derived again in one discussion round.
@@ -100,13 +100,6 @@ judge better, and one agent sees every entry beside every other, where a group s
 bytes of the standing entries, measured with `git ls-files` over the issue entry files and the
 tripwires homes and `wc -c`, summed by the anchor that holds each file.
 
-**A design audit for the work of every spec, as for every slice** — lost to
-`design@agent-skills@spec-work-procedure`. `live`. A spec implemented by the session that wrote
-it, on a main branch with no other commit since, likely gives an audit nothing to find: the owner
-doubts that an audit makes sense there. It is kept here because a doubt remains: the owner chose to watch that premise with
-`tripwire@agent-skills@skipped-spec-audit-would-have-found-a-gap`, and this alternative is the first
-candidate if it fires.
-
 **A separate installed skill for bounded problems** — lost to
 `design@agent-skills@bounded-path-in-design`. `live`. Whether work is bounded is known only after
 the design skill's grounding, so a separate skill would repeat that grounding to classify at all.
@@ -127,7 +120,7 @@ to admit but a policy, which the test that replaced it admits as a decision that
 text of the project states.
 
 **A manifest declaration in the published checker that reads only the `%%` lines of a path** — lost
-to `design@agent-skills@shipped-text-line-comments`. `live`. It would have checked the comments
+to `design@agent-skills@content-is-in-the-walk`. `live`. It would have checked the comments
 while content/ stayed out of the walk, at the cost of a key in the manifest format that every
 consumer's checker reads, built for this repository's use of the workflow for its own text. The
 owner said of the installed files: "I don't want to cater too much to this use case in the
@@ -138,7 +131,7 @@ repository alone: a declaration of paths that must cite no entry, which
 that ships text, and is not covered by it.
 
 **A checked form for a commit, resolved by its subject** — lost to
-`design@agent-skills@checker-syntax-without-backticks-names-its-gap`. `live`. A commit of the
+`design@agent-skills@plain-text-is-no-repair`. `live`. A commit of the
 branch is named by its subject, and nothing checks that a commit with that subject exists. A
 checked form would read the history on every run, a cost that grows with the age of the project,
 to check names that git itself does not make permanent. A check bounded to the range `commits`
@@ -154,8 +147,10 @@ in its initial context, which a probe of two subagent types measured in one harn
 here because the probe covers one harness, and another agent provider may not load the primer.
 
 **A directive restated wherever it has to be delivered** — lost to
-`design@agent-skills@restatement-size-test`. `live`. About ten installed texts each restated part of
-one skill, and an inventory found nine inconsistencies between them and it. It is kept here
+`design@agent-skills@restatement-size-test`. `live`. An inventory of the installed text at commit
+c282b00 found about ten texts restating parts of the decision-recording skill, with nine
+inconsistencies between them and it; it is re-taken by a fresh read-only subagent listing each
+statement of a rule on heads outside its home at that commit. It is kept here
 because a doubt remains: `tripwire@agent-skills@pointer-not-followed` watches whether a session
 misses a directive whose restatement became a pointer, and this rule is the candidate if it does.
 
@@ -166,7 +161,7 @@ to different nearest rivals discriminate better.
 
 **A head citing every ruling of the owner as its ground** — lost to
 `design@agent-skills@head-ground-is-the-argument`. `live`. An audit of the heads added or rewritten
-in one week found about two in five of their citations of the owner to be an approval of the
+in the week entry test 4 was added, up to commit c282b00, found about two in five of their citations of the owner to be an approval of the
 agent's position, often a batch word, which made an approved default read as the owner's intent. It
 is kept here because a doubt remains: `tripwire@agent-skills@owner-intent-stripped` watches whether
 the correction removes the owner's own words, and this alternative is the candidate if it does.

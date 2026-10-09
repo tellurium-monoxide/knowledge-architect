@@ -5,7 +5,7 @@ kind: question
 
 ## Summary
 
-`design@core@anchors-are-components-and-locations` refuses every kind's name for an anchor, and
+`design@core@kind-names-refused-as-anchors` refuses every kind's name for an anchor, and
 quotes the owner's ruling as its ground. The ruling's reason is a future migration, the kind of
 reason `design@knowledge-architect@no-future-breaking-cost-argument` says argues against nothing.
 The head also carries an argument of its own, the shadowing of a reference's head, so the question
@@ -15,7 +15,7 @@ is which of the two the head stands on.
 
 ### What
 
-The head's paragraph "**No anchor wears a kind's name.**", in `path@core@docs/design.md`, argues
+The head, in `path@core@docs/design.md`, argues
 first: "A reference's head is read as a kind before it is read as an anchor, so an anchor named
 `design`, `path` or `skill` would be shadowed there, and the old form written with it would be
 misread." It then quotes: "The owner, on the question: "My ruling on this is that all kind names

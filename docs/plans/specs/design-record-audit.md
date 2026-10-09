@@ -146,14 +146,11 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 
 The two standing-entry searches of round 1 returned these, each with its outcome here:
 
-- **Five open entries are this axis's output as issues**:
-  `issue@knowledge-architect@the-directory-head-title-is-false-of-the-tree`,
-  `issue@agent-skills@the-gates-convention-title-overstates-its-scope`,
-  `issue@xtask@the-subcommands-share-more-than-the-spawn-helper`,
-  `issue@agent-skills@primer-content-bundles-each-directive-s-decision` and
-  `issue@knowledge-architect@the-klarch-prefix-head-holds-a-decision-of-the-published-workflow`.
-  The first run reads each as an input to its head. It closes one where its edit does what the
-  entry's "What would close it" says, and leaves the others open.
+- **Five open entries were this axis's output as issues.** The first run read each as an input to
+  its head, and closed the four whose "What would close it" its edits did: the title of the head on
+  directories named after the project, the title of the gates convention, the xtask head on shared
+  code, and the klarch-prefix head's decision of the published workflow.
+  `issue@agent-skills@primer-content-bundles-each-directive-s-decision` stays open.
 - `issue@agent-skills@a-received-retrospective-file-has-no-installed-analysis` asks the same
   question for a batch of received findings: handle now, open an issue, or close with a reason. The
   audit skill does not cover a received retrospective; the question stays open.
@@ -199,7 +196,7 @@ The design rests on these, and does not argue them again:
   `design@agent-skills@head-ground-is-the-argument`, `design@agent-skills@shipped-text-line-comments`
   (the `%%` line, this repository's place for a reason beside an instruction of the installed text),
   `design@agent-skills@shipped-text-cites-no-entry`.
-- `design@agent-skills@primer-content` and `design@agent-skills@when-goal-setting-runs`: a conflict
+- `design@agent-skills@primer-content` and `design@agent-skills@goals-change-through-goal-setting`: a conflict
   with a goal goes to the owner, under `skill@knowledge-architect-goal-setting`.
 - `design@agent-skills@additions-need-real-use`: the evidence is the three worked instances and the
   owner's named lack in round 0, a migration of every adopting project's design homes at the next pin.
@@ -215,7 +212,7 @@ as referencing it, and where each is judged:
 | the released 0.5.0 section of CHANGELOG.md, "a reason several sites or no site must respect" | unchanged: a released section's content never changes, per `design@knowledge-architect@changelog-entries` | none |
 | `design@agent-skills@a-head-is-owed-by-an-entry-test`, "a policy or an absence has no site at all" | reworded to the new test 2. Its other referencing texts are read again: the lines of `path@agent-skills@docs/design.md` that cite it, `tripwire@agent-skills@a-head-verdict-is-overruled`, `tripwire@agent-skills@a-shortcut-decision-earns-a-head`, `issue@agent-skills@the-material-finding-duty-has-no-head`, `issue@agent-skills@no-way-to-audit-a-project-as-a-whole`, and the rejected alternative above. `issue@agent-skills@test-3-admits-a-practice-its-tool-documents` and `issue@agent-skills@what-a-site-is-for-installed-text-is-undefined` close | the harvest |
 | `design@agent-skills@instruction-record-is-minimal` | read again: its exception for a decision that keeps two parts consistent stays | the harvest |
-| `design@agent-skills@existing-heads-on-touch` | rewritten, per D4: a head is repaired when a change touches it, and the whole record is repaired by a project audit, at a migration or at the owner's request. Its sentence that a sweep repairs an approval cited as a ground is the narrower case the audit now covers. Its referencing texts are read again: `issue@agent-skills@primer-content-bundles-each-directive-s-decision` and `issue@knowledge-architect@the-klarch-prefix-head-holds-a-decision-of-the-published-workflow` | the harvest |
+| `design@agent-skills@existing-heads-on-touch` | rewritten, per D4: a head is repaired when a change touches it, and the whole record is repaired by a project audit, at a migration or at the owner's request. Its sentence that a sweep repairs an approval cited as a ground is the narrower case the audit now covers. Its referencing text is read again: `issue@agent-skills@primer-content-bundles-each-directive-s-decision` | the harvest |
 | the rejected alternative "A sweep that brings every head stating the instance as its rule to its rule at once" | leaves `path@agent-skills@docs/rejected-alternatives.md`: it is chosen now, per D4 | the harvest |
 | `design@agent-skills@ruled-items-labelled` | its prefix table gains `F`, a project audit's findings put to the owner, which reach the audit's commit messages | step 2 writes the prefix where the skill asks; the head's table at the harvest. Its nine referencing texts, the primer and six skills that restate their own prefix and one line of `path@agent-skills@docs/design.md`, are unchanged: none restates the table |
 | `design@knowledge-architect@changelog-entries` | gains the convention: a Migration entry that changes the rules on recorded content cites the axis to run | the harvest. Its referencing texts are unchanged, since the convention adds to the Migration test and makes no clause of any of them false: the root `CLAUDE.md` in `instructions@mechanical-validation`, `instructions@where-knowledge-goes` and the restatement of the three tests in `instructions@git-workflow`; the preamble of CHANGELOG.md and its crate copies; one line each of `path@knowledge-architect@docs/design.md` and `path@agent-skills@docs/design.md` and two of `path@core@docs/design.md`; `issue@knowledge-architect@a-mechanical-changelog-check`; `agent@klarch-changelog-reviewer`, which reads the head in full; `skill@klarch-release` |
@@ -648,7 +645,7 @@ Shape. The skill states each point with the judgement it needs, and an axis's se
    session reads the whole diff before each commit. Each commit message records what it applied:
    what was audited, at which commit, the counts, and each finding's outcome. A run that changes no
    file leaves no commit, since a commit that changes no file does not reach main, per
-   `design@knowledge-architect@git-flow`; its record is then the report to the owner.
+   `design@knowledge-architect@no-branch-sha-is-cited`; its record is then the report to the owner.
 8. **The re-check.** Fresh auditors over the same groups, after the edits, each briefed as in point
    4 and also given the entries and rules the owner ruled to keep, as a file in its scratch
    directory. Each writes its drafts as in point 4. A draft that finds a rule failed, and is not on

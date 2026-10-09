@@ -7,7 +7,7 @@
 //! that resolves to nothing is reported as the repair it needs, five ways: the kind position
 //! holds an anchor, the anchor is unknown, the anchor does not carry that register, an item of a
 //! plan is cited from outside it, or the id is not defined there. The argument is
-//! `design@core@a-slug-belongs-to-a-component`.
+//! `design@core@an-unresolved-reference-is-reported`.
 //!
 //! **Nothing that points into this project passes unregistered.** A span with no `@` that is
 //! shaped like a path, and whose first segment names a file or a directory of this tree, is
@@ -979,8 +979,9 @@ fn link(
 
 /// Every spelling a path reference in this model could ask the ignore rules about.
 ///
-/// The caller batches these through one `git check-ignore` and hands the answers back in
-/// `Inputs::ignored`, because a check may spawn nothing. **Every arm that reaches
+/// **One batch per run, taken by the caller.** The caller batches these through one
+/// `git check-ignore` and hands the answers back in `Inputs::ignored`, because a check may spawn
+/// nothing, per `design@core@model-then-checks`. **Every arm that reaches
 /// `assert_target` is here**, and there are three: an anchored reference resolves under the
 /// anchor it names, the generic form resolves under every anchor at once, and a relative
 /// markdown link resolves beside its own file. The escape anchor resolves under none, so it

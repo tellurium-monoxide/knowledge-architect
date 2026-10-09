@@ -9,7 +9,7 @@ A reference names an entry of the project that holds it, and nothing else. A pro
 this checker, or builds an extension on it, cannot point at one of the checker's own decisions:
 the reference grammar has no form for another project's entry. Such a pointer is written as prose,
 beside a reference to an entry of the writing project that records this gap, per
-`design@agent-skills@checker-syntax-without-backticks-names-its-gap`, and nothing checks the
+`design@agent-skills@plain-text-is-no-repair`, and nothing checks the
 pointer itself.
 
 ## Details
@@ -22,7 +22,7 @@ design homes. Nothing about the shape is decided.
 
 ### Why it matters
 
-It would extend `design@core@a-slug-belongs-to-a-component`, under which every reference names an
+It would extend `design@core@an-entity-belongs-to-its-anchor`, under which every reference names an
 anchor of its own project. The owner doubts there is a real need: a design decision of a project
 that relies on the checker states that it relies on the checker working as intended, and needs no
 pointer into the checker's design, per `design@agent-skills@relying-on-the-checker`. thaum meets the question first: when it moves onto the

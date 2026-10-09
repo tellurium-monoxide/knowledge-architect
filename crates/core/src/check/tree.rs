@@ -544,7 +544,7 @@ fn declarations(out: &mut Vec<Finding>, manifest: &Manifest, inputs: &Inputs) {
     // the tracked listing is unaffected by the ignore rules; and every path reference to it is
     // asserted, because `git check-ignore` skips what the index holds. So the ignore rule says
     // the file is out of the project and every check reads it in, and untracking it would flip
-    // both answers at once. `design@core@git-supplies-the-walk` is the head.
+    // both answers at once. `design@core@tracked-and-ignored-is-a-finding` is the head.
     for path in inputs.tracked_and_ignored {
         out.push(Finding::in_file(
             path,

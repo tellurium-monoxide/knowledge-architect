@@ -1,6 +1,6 @@
 # The workspace: the checker's crate, the crate that carries the agent skills it installs, the gates
-# library, and the maintenance tool. No directory is named after the project, per
-# `design@knowledge-architect@no-directory-named-after-the-project`.
+# library, and the maintenance tool. No Component's directory is named after the project, per
+# `design@knowledge-architect@no-component-directory-named-after-the-project`.
 
 [workspace]
 resolver = "2"

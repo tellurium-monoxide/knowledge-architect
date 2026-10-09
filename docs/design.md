@@ -13,23 +13,17 @@ skills are shaped is `path@agent-skills@docs/design.md`.
 
 ## 1. Layout and packaging
 
-### No directory is named after the project, and a published crate's directory may differ from its package's name `##no-directory-named-after-the-project`
+### No Component's directory is named after the project, and a published crate's directory may differ from its package's name `##no-component-directory-named-after-the-project`
 
 A Component is named by the basename of its directory, and the project root by the project's name,
 so a directory named `knowledge-architect` would collide with the root: a run over a scratch project
 laid out that way stopped in phase 1, reporting that the name "names 2 anchors". So a published
 crate may sit in a directory named by what it does rather than by its package, crates/core for the
 package knowledge-architect, and a future split of the core follows the same rule, as crates/core
-and crates/cli. The owner kept the head to this: "only the knowledge of not naming a component
-`knowledge-architect` and accepting directories for crates that are not named against published
-packages deserves the record".
-
-### The checker is the package knowledge-architect, in crates/core `##crate-directory`
-
-Users install and depend on `knowledge-architect`. The package lives in crates/core and its
-component is named `core`, so a reference says `core` where cargo says `-p knowledge-architect`.
-That difference is the cost of `design@knowledge-architect@no-directory-named-after-the-project`'s naming rule, and it is
-the usual shape of a Rust workspace.
+and crates/cli. The cost: a reference says `core` where cargo says `-p knowledge-architect`. The
+owner kept the head to this: "only the knowledge of not naming a component `knowledge-architect`
+and accepting directories for crates that are not named against published packages deserves the
+record".
 
 ### The installed text lives in its own crate, which the checker depends on `##two-crates`
 
@@ -115,7 +109,7 @@ is what lets a project pin one version and move when it chooses, per
 setup skill that recommends it is the same version's, so a project pins one version for all of
 it. The cost accepted: a fix to the gates alone is released as a version of every crate.
 
-### Versions follow the owner's scheme, mapped onto Cargo's two positions under 0.x `##versioning-policy`
+### A version's bump is the class of what it changes in a consuming project, mapped onto Cargo's two positions under 0.x `##versioning-policy`
 
 The table classes what the published crates do in a consuming project: the checks the checker runs
 over its tree, its commands, its manifest, the library APIs and the installed skills. A check, a
@@ -128,6 +122,9 @@ for reading alone, such as its changelog: each is at most a patch.
 | patch | skill changes; code changes that change no check and no command |
 | minor | a check becomes stricter, or a check is added, even when a project must change its content to pass it; additions that change nothing existing; command and manifest changes that only add |
 | major | a command change that breaks existing usage; a change to the documents and homes a project must carry; a manifest that was valid and stops being accepted; a breaking change to the library API |
+
+The table is the owner's scheme. The bullets below are the refinements argued since, and the first
+is the owner's argument, given in the ruling that a stricter check is minor.
 
 - **A stricter check is minor even when it requires a content change.** Every stricter check may
   require a content change in some project, so a major row that took every content change would
@@ -150,16 +147,15 @@ for reading alone, such as its changelog: each is at most a patch.
 - **A patch can bring a finding.** A skill change is a patch, and after it a project's installed
   files differ from the new text until it runs the install. A project that pins the checker
   exactly meets this only when it moves the pin.
-- **CHANGELOG.md** has one section per version, and one working section above them, `Next
-  release`, which the release renames to its version. Which change gets an entry, and with which
-  class, is `design@knowledge-architect@changelog-entries`.
+- Which change gets a CHANGELOG.md entry, and with which class, is
+  `design@knowledge-architect@changelog-entries`.
 
 A version stricter than a patch never reaches a project through a plain `cargo update` while at
 0.x, and a release that changes only skill text publishes all three crates with identical code. A
 project can therefore tell from the version alone whether moving to it may require work, per
 `goal@knowledge-architect@any-project-can-adopt-it`.
 
-### The changelog records what a consumer must plan for, and the branch that makes a change writes its entries `##changelog-entries`
+### The changelog records what a consumer must plan for, one entry per change that passes a test `##changelog-entries`
 
 An entry of CHANGELOG.md is written for a consumer planning a move to the version. It exists when
 the change passes one of three tests, and sits under the subsection of that test:
@@ -183,15 +179,10 @@ patch**: every minor or major change passes the migration or the new-feature tes
 release's bump is the highest class among its entries, a patch at least, and a review of the
 release can tell a missing entry from a change that owes none.
 
-The branch that makes a change writes its entries, in the `Next release` section, and creates the
-section above the newest released one when it is absent, as it is after a release renames it. It
-writes them because its author knows what changed and in which class at that moment; rebuilt at the
-release from commit messages, an entry is lost when nothing asks for it, as one change to a shipped
-skill after 0.1.0 was. The release is reviewed once against these tests, rather than every merge,
-because a release branch can repair any gap before anything is published. The working section may be
-reworded, restructured or pruned at any time, and a change reversed before the release leaves it,
-since the section describes the release's net effect. A released section's content never changes;
-its structure may.
+CHANGELOG.md has one section per version, and one working section above them, `Next release`,
+which the release renames to its version. The working section may be reworded, restructured or
+pruned at any time, and a change reversed before the release leaves it, since the section describes
+the release's net effect. A released section's content never changes; its structure may.
 
 **A skill's or an agent's name in a released section is structure.** Writing a bare name there as
 its reference, `skill@<name>` or `agent@<name>`, changes no statement of the section. The owner:
@@ -201,12 +192,24 @@ reference then names nothing and the section's content cannot change. Why the ba
 evasion is `design@agent-skills@plain-text-is-no-repair`, and the lint that reports a bare name
 `design@core@bare-skill-name-reported`.
 
+### The branch that makes a change writes its changelog entries, and the release reviews them once `##the-branch-writes-its-changelog-entries`
+
+The branch that makes a change writes its entries, in the `Next release` section, and creates the
+section above the newest released one when it is absent, as it is after a release renames it. It
+writes them because its author knows what changed and in which class at that moment; rebuilt at the
+release from commit messages, an entry is lost when nothing asks for it, as one change to a shipped
+skill after 0.1.0 was. The release is reviewed once against the tests of
+`design@knowledge-architect@changelog-entries`, rather than every merge, because a release branch
+can repair any gap before anything is published.
+
 ### The project stays at 0.x until the owner's word, given once its first design discussion's open issues are settled `##stays-at-zero-x`
 
 Breaking changes are allowed, and expected, while the shape of the tool and of its workflow
 converges. The project leaves 0.x only on the owner's word, and not before the open issues recorded
 from the discussion that designed it are implemented, or at least argued thoroughly: both are
-required. Whether the tool and its workflow have converged is a weighing, and the weighing is the
+required. The condition and the list are the owner's: "take (A) for 1.0", on the principle the
+owner stated in the discussion that designed the project, that it stays at 0.x until the open
+issues of that discussion are implemented, or at least argued thoroughly. Whether the tool and its workflow have converged is a weighing, and the weighing is the
 owner's, per `goal@knowledge-architect@the-owner-decides`. The open issues are
 `issue@core@tooling-for-project-skills`, `issue@core@configuration-for-several-agent-providers`,
 `issue@core@a-component-states-at-least-one-goal`, `issue@core@cross-project-references`,
@@ -244,12 +247,7 @@ statement false until a repair lands. The procedure is
 ### All work goes through a branch, a review and a pull request merged up to date with main `##git-flow`
 
 - All work happens on a branch. Once it holds a first commit, it is pushed and a draft pull
-  request is opened. CI does not run on a draft. A commit is pushed only after `commits` has
-  passed on it, since a failing message on the remote branch is what a later fetch or review reads.
-  The push runs in a command of its own, or behind `&&` on the bare check: after `;`, or after a
-  pipe, the shell runs it whatever the check found.
-- No operation that can lose content, committed or not. With a clean tree, editing the branch's
-  own history is an ordinary move, bounded by verifying that nothing was lost.
+  request is opened. CI does not run on a draft.
 - The branch is rebased on main before review and merge, and reviewed before any merge. A repair
   from a review is a new commit, so that no history is edited for it; a repair that would leave an
   earlier commit failing the per-commit rule below is folded into the earliest commit it repairs,
@@ -271,24 +269,39 @@ statement false until a repair lands. The procedure is
   the head whose conclusion is success.
   A fast-forward pushed from a checkout is a direct push, which the ruleset refuses, and GitHub
   offers no fast-forward merge method. main's history is never rewritten.
-- The strict check makes the tree CI judged the tree main receives, which is what matters. Without
-  it, a merge button that rebases makes CI meaningless when history was not already linear, as
-  the owner put it.
-- GitHub's rebase merge gives the branch's commits new SHAs, even when the branch is already up
-  to date with main. Its documentation says it "always updates the committer information and
-  creates new commit SHAs". A probe repository, tellurium-monoxide/rebase-merge-probe, archived,
-  with a ruleset identical to this repository's, measured it: an up-to-date pull request of two
-  commits reached main with the same trees, the same author, a new committer and new SHAs.
-  `gh api repos/tellurium-monoxide/rebase-merge-probe/pulls/1/commits` and
-  `gh api repos/tellurium-monoxide/rebase-merge-probe/commits` re-read both sides. So neither a commit message nor a document cites the SHA
-  of a commit of its own branch: it names that commit by its subject. `commits` refuses such a
-  citation, under this repository's manifest.
-- **A commit that changes no file does not reach main.** The rebase merge drops it: pull request
-  #42 of this repository held eight commits, two of them made with `--allow-empty` to record the
-  owner's rulings, and main received the other six. `gh api
-  repos/tellurium-monoxide/knowledge-architect/pulls/42/commits --jq length` against the commits
-  main received re-takes it. So a record carried by a message alone rides on a commit that changes
-  a file.
+- The strict check makes the tree CI judged the tree main receives, which is what matters. The
+  owner, on the ruleset: "This is much cleaner than a "rebase and merge" button, which makes CI
+  meaningless if history was not already linear."
+
+### No operation can lose content, and the branch's own history is edited only with a clean tree `##no-operation-loses-content`
+
+No operation that can lose content, committed or not. With a clean tree, editing the branch's
+own history is an ordinary move, bounded by verifying that nothing was lost.
+
+### A commit is pushed only after the commits check passed on it `##push-after-the-commits-check`
+
+A commit is pushed only after `commits` has passed on it, since a failing message on the remote
+branch is what a later fetch or review reads. The push runs in a command of its own, or behind
+`&&` on the bare check: after `;`, or after a pipe, the shell runs it whatever the check found.
+
+### No text cites the SHA of a commit of its own branch, and a record carried by a message rides on a commit that changes a file `##no-branch-sha-is-cited`
+
+GitHub's rebase merge gives the branch's commits new SHAs, even when the branch is already up
+to date with main. Its documentation says it "always updates the committer information and
+creates new commit SHAs". A probe repository, tellurium-monoxide/rebase-merge-probe, archived,
+with a ruleset identical to this repository's, measured it: an up-to-date pull request of two
+commits reached main with the same trees, the same author, a new committer and new SHAs.
+`gh api repos/tellurium-monoxide/rebase-merge-probe/pulls/1/commits` and
+`gh api repos/tellurium-monoxide/rebase-merge-probe/commits` re-read both sides. So neither a commit message nor a document cites the SHA
+of a commit of its own branch: it names that commit by its subject. `commits` refuses such a
+citation, under this repository's manifest.
+
+**A commit that changes no file does not reach main.** The rebase merge drops it: pull request
+#42 of this repository held eight commits, two of them made with `--allow-empty` to record the
+owner's rulings, and main received the other six. `gh api
+repos/tellurium-monoxide/knowledge-architect/pulls/42/commits --jq length` against the commits
+main received re-takes it. So a record carried by a message alone rides on a commit that changes
+a file.
 
 ### Every component builds under one pinned toolchain `##toolchain-is-pinned`
 
@@ -346,10 +359,7 @@ This repository installs the workflow it ships, and a project's own skills carry
 name as a prefix, per `design@agent-skills@skill-name-prefix`. Here that name is
 `knowledge-architect`, which is the installer's namespace: a project skill named after it would be
 reported as unshipped by `design@core@owned-namespace-check`, and removed by the install. So this
-repository's own skills and agents take the prefix `klarch-`, the binary's name. The installed
-skills do not mention the case: outside this repository the collision is unlikely, and a rule for
-it in the shipped text would be read by every installing project for a risk the owner judges very
-small.
+repository's own skills and agents take the prefix `klarch-`, the binary's name.
 
 ### This repository's retrospective findings stay in this repository, never on GitHub `##retrospective-findings-stay-here`
 
@@ -373,13 +383,17 @@ with the owner's ruling on each finding, the issues it rules are opened next, th
 now are handled, and the commit that carries out its last outcome, or a later commit of the same
 branch, deletes it. A finding handled now that grows into a design discussion has its outcome
 rewritten, on the owner's word, to name the plan document or the issue that carries it, so the file
-still leaves. The repository is public and the workflow file is the one a retrospective writes to be
-publishable, so the analysis names nothing of another project beyond what its workflow file holds.
-It names no path or design head of that project either, which in the owner's words "is useless
-information here anyway": where a finding needs one, the analysis says it in words.
+still leaves.
 
 The file is the record of the rulings, so every finding of a received file reaches an outcome that
 history keeps, per `goal@knowledge-architect@the-workflow-improves-through-real-use`. Its nearest
 rival, the ledger of outcomes in the message of the commit that handles the first finding, fails
-on a file whose findings all end in no change: that commit changes no file, and the rebase merge of
-`design@knowledge-architect@git-flow` drops a commit that changes no file.
+on a file whose findings all end in no change: that commit changes no file, and the rebase merge
+drops a commit that changes no file, per `design@knowledge-architect@no-branch-sha-is-cited`.
+
+### An analysis of a received file names nothing of another project beyond what that file holds `##analysis-names-nothing-of-another-project`
+
+The repository is public and the workflow file is the one a retrospective writes to be
+publishable, so the analysis names nothing of another project beyond what its workflow file holds.
+It names no path or design head of that project either, which in the owner's words "is useless
+information here anyway": where a finding needs one, the analysis says it in words.

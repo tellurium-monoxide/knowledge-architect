@@ -129,6 +129,12 @@ evidence bring, which nobody knows in advance.
 %% show would land after the work they bear on. The commit that carries the deliberation carries
 %% the rulings, as a plan document would; the rival, the rulings landing in the later commit that
 %% writes the tripwires, splits the deliberation over two commits.
+%% The reread before the in-change grounding: that path runs when a decision is met during an issue
+%% fix or a review repair, late in a session by definition, and its grounding reads heads to judge
+%% the decision. The rival, the reread at recording alone, per
+%% `design@agent-skills@primer-reread-before-recording`, leaves that grounding reading heads under a
+%% primer far back in the session. It rests on a prediction, not on a behaviour seen in a session,
+%% so it is an exception to `design@agent-skills@additions-need-real-use`.
 - **The in-change path.** It is open when the decision lands in the
   change under way: its work, as when the decision was met during an
   issue fix or a review repair, or its record, for a decision that no work

@@ -131,6 +131,16 @@ reviewer's axis, an observation it declined to call a finding, a remark that a d
 change. Each is a claim about the work like any finding. So is a repair the dispatcher promised the
 owner while answering a review. The record of the review lists each item with its outcome.
 
+%% Without the record review, a head added, removed or reversed in answer to a review reaches the
+%% main branch with no review of its record, against
+%% `goal@knowledge-architect@design-is-recorded-with-its-arguments`: the last transcript review
+%% judges fidelity to the owner's rulings, not the record. The trigger is a whole head, which the
+%% diff shows: a heading with a slug that appears or disappears, or a reversal, so each round of
+%% repairs adds at most as many re-reviews as heads it changes. A trigger on any repair that "makes a
+%% decision" lost: whether a rewording makes one is a judgement, and read wide it re-reviews repairs
+%% that only reword a head. Sending every axis again at every repair lost on the same cost. A
+%% narrowing of an approved head that this trigger leaves out still goes to the owner, per the
+%% primer's section on design heads, and the last transcript review checks it.
 **A repair that adds, removes or reverses a design head is reviewed by the decision-record axis**,
 whichever axis's finding it answers. A repair made before the last transcript review is reviewed
 before it, and that transcript review then runs as `skill@knowledge-architect-review@review-axes` says; a repair of the last transcript review

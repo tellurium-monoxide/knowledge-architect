@@ -18,7 +18,7 @@ implementation is expected to prove some of them wrong: reversing one is an ordi
 `skill@knowledge-architect-decision-recording` owns what it costs.
 
 The repository is a virtual workspace with five Components, none in a directory named after the
-project, per `design@knowledge-architect@no-directory-named-after-the-project`:
+project, per `design@knowledge-architect@no-component-directory-named-after-the-project`:
 
 | Component | directory | what it is |
 | --- | --- | --- |
@@ -122,13 +122,13 @@ win.
   - An id matches `[a-z0-9]+(-[a-z0-9]+)*`. A file register's entry id is the file's basename.
 
 - **Every reference is one backticked span, `<kind>@<anchor>@<id>`**, per
-  `design@core@a-slug-belongs-to-a-component`. The kind is a register's name, `path`,
+  `design@core@an-entity-belongs-to-its-anchor`. The kind is a register's name, `path`,
   `planned` for a path a plan's work will create, per `design@core@planned-path-form`, or a
   harness kind, per the bullet below. The anchor
   is a Component, a location or a plan, and no anchor wears a kind's name. The id is the entry's. A plan's item is cited from
   inside that plan only, per `design@core@plan-item-scope`. Examples:
   `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/tripwires.md`. A reference that resolves to nothing
-  is reported with the repair it needs: the kind is unknown, the anchor is unknown, the anchor
+  is reported with the repair it needs, per `design@core@an-unresolved-reference-is-reported`: the kind is unknown, the anchor is unknown, the anchor
   carries no register of that kind, or the id is not defined there. A reference of any other kind
   that names no anchor is refused, including inside the file that defines the id.
 - **A skill, an agent, the primer and the root CLAUDE.md are cited with no anchor**, per
@@ -147,7 +147,7 @@ win.
     manifest and no document. A file under crates/core is `path@core@<file>`, and one under .claude
     is `path@agent-config@<file>`.
   - Two anchors are reserved under `path` alone, and the word `plans` names the anchor the tool
-    constructs, per `design@core@reserved-anchors`. A plan document is cited by its kind,
+    constructs, per `design@core@reserved-anchors` and `design@core@plans-is-a-reserved-anchor`. A plan document is cited by its kind,
     `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<slice>`, never by its path.
     `path@*@<path>` names every Component's own copy of a path, as in `path@*@docs/tripwires.md`.
     `path@elsewhere@<path>` names a path that is deliberately not resolvable in this tree: another
@@ -182,7 +182,7 @@ win.
     `planned@<anchor>@<path>` for a path its work will create, never in plain text, per
     `design@agent-skills@plain-text-is-no-repair`, except beside a reference to an issue
     entry that records the missing form, per
-    `design@agent-skills@checker-syntax-without-backticks-names-its-gap`. A span naming nothing here, such as
+    `design@agent-skills@plain-text-is-no-repair`. A span naming nothing here, such as
     `origin/main` or `application/json`, is silent, and so is a one-segment span, which is a name
     rather than a path.
   - The one-segment span that is exactly the name of a skill or an agent is reported, per
@@ -425,7 +425,7 @@ restatement.
 
 **Do not filter the tool's output through pipes.** A hand-built filter pipeline hides lines and
 loses the exit code. `cargo x gates` refuses a pipe on stdout for that reason, outside GitHub
-Actions, per `design@gates@verdict-from-exit-codes`. When the text is wanted, redirect it to a
+Actions, per `design@gates@gates-refuse-a-pipe`. When the text is wanted, redirect it to a
 file.
 
 `cargo klarch` runs the checker built from this checkout, in release mode. A single gate is still
@@ -509,7 +509,7 @@ with its description.
 ## Git `##git-workflow`
 
 Linear history, no merge commits, and no direct push to main. This section is a restatement. Its home is
-`design@knowledge-architect@git-flow`.
+`design@knowledge-architect@git-flow`, except where a point names its own.
 
 1. **All work happens on a branch.**
 
@@ -519,7 +519,8 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   it: `git push -u origin <branch>`, then `gh pr create --draft`. CI does not run on a draft.
 - **A commit is pushed only after `cargo klarch commits` has passed on it**: in a command of its
   own, or behind `&&` on the bare check. A push after `;`, or after a check whose output went
-  through a pipe, runs whatever the check found.
+  through a pipe, runs whatever the check found. Its home is
+  `design@knowledge-architect@push-after-the-commits-check`.
 - **Every commit of the branch must pass the check under the branch tip's checker.** The
   `commits` gate judges each commit's tree with the tip's binary, and refuses a tree with no
   manifest or with findings. So a step whose intermediate trees cannot pass lands as one commit,
@@ -547,9 +548,12 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   A check, a command or an addition is one the published crates bring to a consuming project; a
   test, a gate or an xtask subcommand of this repository, and a file shipped for reading alone, are
   none. A change with no entry is at most a patch. This is a restatement; its homes are
-  `design@knowledge-architect@changelog-entries` and `design@knowledge-architect@versioning-policy`.
+  `design@knowledge-architect@changelog-entries`,
+  `design@knowledge-architect@the-branch-writes-its-changelog-entries` and
+  `design@knowledge-architect@versioning-policy`.
 
-2. **No operation that can lose content, committed or not.**
+2. **No operation that can lose content, committed or not.** Its home is
+   `design@knowledge-architect@no-operation-loses-content`.
 
 - The hazard is **content loss**, in two forms: an operation that removes uncommitted content from
   the working tree, and a history edit that drops a commit no other reference holds.
@@ -639,7 +643,8 @@ git checkout main && git pull --ff-only && git branch -D <branch>
   a record carried by a message alone rides on a commit that changes a file. So **neither a commit message nor a document cites the
   SHA of a commit of its own branch**: name that commit by its subject. A SHA already on main may
   be cited. `cargo klarch commits` refuses such a citation, per
-  `design@core@branch-shas-are-refused`.
+  `design@core@branch-shas-are-refused`. Its home is
+  `design@knowledge-architect@no-branch-sha-is-cited`.
 - The local branch is deleted with `-D`: its commits are not ancestors of main, since their SHAs
   differ.
 - A merge to main publishes nothing. A release is a separate procedure, per

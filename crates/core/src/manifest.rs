@@ -971,7 +971,7 @@ impl Candidate {
 /// every document under its path, per `design@core@every-path-names-its-anchor`, so an
 /// anchor inside another's directory is the ordinary case — thaum's two locations
 /// both sit inside the root component. What that rule cannot absorb is refused here, per
-/// `design@core@anchors-are-components-and-locations`, and **the refused anchor is not an
+/// `design@core@anchor-collisions-refused`, and **the refused anchor is not an
 /// anchor**: it owns nothing, carries nothing and is asserted against nothing, so the
 /// consequences of the declaration are not reported as defects of the tree.
 ///
@@ -1893,7 +1893,7 @@ pub(crate) mod tests {
 
     /// The claim: every kind name is refused as the name of a Component, a location or the
     /// project, and a harness kind's name as a register's, per
-    /// `design@core@anchors-are-components-and-locations`. Mutation checked: deleting the anchor
+    /// `design@core@kind-names-refused-as-anchors`. Mutation checked: deleting the anchor
     /// refusal accepts the component `parts/design`.
     #[test]
     fn a_kind_name_is_refused_for_every_anchor_and_a_harness_kind_for_a_register() {

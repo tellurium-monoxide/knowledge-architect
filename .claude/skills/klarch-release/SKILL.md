@@ -32,7 +32,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
 2. **The changelog.** Rename CHANGELOG.md's `## Next release` to `## <version>`, then run
    `cargo x changelog` to write the crates' copies, per
    `design@knowledge-architect@the-changelog-ships-in-every-crate`. Each branch wrote its own
-   entries there, per `design@knowledge-architect@changelog-entries`, and step 9's review checks
+   entries there, per `design@knowledge-architect@the-branch-writes-its-changelog-entries`, and step 9's review checks
    them. The version chosen at step 1 follows the highest bump class among its entries, a patch at
    least.
 3. **Commit**, with `cargo klarch check --staged` before and

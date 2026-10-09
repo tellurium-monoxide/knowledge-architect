@@ -20,7 +20,8 @@ reads a commit's tree with. The walk is `git ls-files` from the project root, th
 ignore question a path reference asks is one `git check-ignore` batch per run, and a listing's
 last-change column is one `git log`. A check may spawn nothing, so each of those is taken by the
 caller and handed in. A tree with no `git`, or a project outside a worktree, is exit 2 with the
-reason; an empty walk is never an answer. The decision is `design@core@git-supplies-the-walk`.
+reason; an empty walk is never an answer. The decisions are `design@core@git-supplies-the-walk`
+and `design@core@git-is-asked-through-one-module`.
 `check --staged`, `index --staged`, the comparison of `check --fix` and `commits` read a snapshot
 instead, from git objects, through
 `git::snapshot_entries` and the same `cat-file` batch: HEAD's tree overlaid with the index's
