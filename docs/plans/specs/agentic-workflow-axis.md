@@ -3,7 +3,7 @@
 ## Status and audience
 
 This spec is the plan of the work that gives the project audit its second axis, the agentic-workflow
-axis, and runs it on this repository. The work does six things:
+axis, and runs it on this repository. The work does seven things:
 
 - the method of `skill@knowledge-architect-project-audit` becomes generic, and the dispatch of the
   design-record axis, its groups and its calibration sample, moves into that axis's section;
@@ -13,7 +13,10 @@ axis, and runs it on this repository. The work does six things:
 - the axis runs on this repository, in this branch, which judges AC4 and counts T1 to T4;
 - the axis repairs by cause, with a workflow script beside its prose, per "The repair by cause" and
   "The workflow script";
-- the findings of passes 2 and 3 are repaired by cause, and a fourth pass runs through the script.
+- the findings of passes 2 and 3 are repaired by cause, and a fourth pass runs through the script;
+- a pass runs as one run of the axis's saved workflow, which delivers a report the session verifies
+  after the run, the generic method takes that shape for every axis, and a fifth pass tries it,
+  per "The one-run pass".
 
 The spec is written for a session that did not witness the design discussion that produced it. It
 leaves the repository in the commit that completes its harvest.
@@ -53,7 +56,17 @@ leaves the repository in the commit that completes its harvest.
   9" is the owner's message "audit-net-growth approved with that shape, proceed as proposed."; "the
   third review message" is the agent's message that opens "All four reviews are back", which put D16
   to D21 to the owner, and "round 10" is the owner's reply, which opens "After updating the spec and
-  implementing the workflow". An extraction agent wrote the owner messages,
+  implementing the workflow". "Round 11" is the owner's message that opens "I think it would be
+best to deliver the workflow as a file". "Round 12" is the owner's message that opens "Wait before
+the harvest. Honestly, I'm not fully satisfied", the owner's next message, "I think we should
+carry the discussion about this under the design skill once again.", and the agent's reply that
+opens "## Round 1: one run of the workflow for a whole pass"; "round 13" is the owner's message
+that opens "The cross check and the report should be one agent each" and the reply that opens
+"## Round 2"; "round 14" is the owner's message that opens "audit-axis-runs-a-workflow: agreed on
+this shape" and the reply that opens "## Round 3"; "round 15" is the owner's message
+"preflight-step approved; record T5, T6, apply AC5, AC6". The replies of rounds 12 to 14 call the
+criteria of that discussion C1 to C6; they are the items `criterion@agentic-workflow-axis@c7` to
+`criterion@agentic-workflow-axis@c12`, in order. An extraction agent wrote the owner messages,
   the agent messages, the tables and the arguments verbatim to scratch; the session assembled this
   spec from that file and its own context.
 - **Labels.** The discussion used T1 to T4 and AC1 to AC4. No other discussion in the transcript
@@ -113,9 +126,15 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   workflow** is a script file directly under .claude/workflows/, run by the name its `meta`
   declares; the harness lists it with the skills. Source: the tool's description and its
   authoring reference, read in this session, and the probes of `argument@agentic-workflow-axis@a57`.
-- **the stages**: drafts, clusters and repairs, the three invocations of the workflow script.
-- **the owner's budget**: the number of agents the owner names when asking for the run; the lens
-  table's total, 16, when the owner names none.
+- **the run**: one invocation of the axis's saved workflow, which covers a whole pass from the
+  preflight to the report, per "The one-run pass".
+- **the steps**: the steps of the run, in order: preflight, drafts, verify, dedup, cluster, merge,
+  repairs, cross-check, report.
+- **the report**: report.md, which the report step writes in the run's scratch directory, holding
+  the six parts of "The one-run pass".
+- **the counts**: `args.counts` of the run, the number of auditors per lens; the lens table's
+  values, 16 auditors in all, when the session passes none. Before the one-run pass, this was the
+  owner's budget, a total the session shared out.
 
 ## What the work is
 
@@ -196,6 +215,15 @@ The grounding search of round 1 returned these, each read whole with `cargo klar
   `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`,
   `issue@knowledge-architect@a-mechanical-changelog-check`,
   `issue@xtask@where-ci-and-a-local-run-differ-is-not-only-a-flag`.
+- Found again by the grounding search of round 12, for the one-run pass:
+  `tripwire@agent-skills@audit-defaults-overruled` watches the owner list the report's draft
+  feeds, every default of steps 5 and 6 having been accepted; `tripwire@agent-skills@owner-intent-stripped`
+  fires if the rewrite of `design@agent-skills@audit-method` drops the owner's quoted stop rule,
+  which the harvest keeps; `issue@agent-skills@audit-axes-beyond-the-design-record` keeps "an audit
+  report" as "a question for later", which the one-run pass answers for this axis, and the lesson
+  of the owner's sample of verdicts, which `thread@agentic-workflow-axis@session-verifies-the-report`
+  takes as the session's sample of refuted drafts; `issue@agent-skills@a-reviewer-s-running-time-is-unbounded`
+  bears on one long run, which logs its progress per step.
 - `tripwire@agent-skills@head-created-without-deliberation` and
   `tripwire@agent-skills@search-missed-before-the-work` watch any design work; this spec is the
   deliberation, and the search ran at grounding. Nothing more is owed.
@@ -208,6 +236,9 @@ The grounding search of round 1 returned these, each read whole with `cargo klar
   `thread@agentic-workflow-axis@workflow-axis-corpus`; their home is the subject of
   `issue@core@a-home-for-developer-contracts-outside-agent-configuration`.
 - A mechanical check of the properties of a project's own skills: `issue@core@tooling-for-project-skills`.
+- The design-record axis's workflow: its own design work, per
+  `thread@agentic-workflow-axis@audit-axis-runs-a-workflow`; step 7 opens the `todo` issue that
+  holds it.
 
 ## What is already decided
 
@@ -285,8 +316,8 @@ Binding, from `goal@agent-skills@installed-text-works-anywhere`. Met by
 ### The method fixes no count where judgement would serve `##c3`
 
 Binding, from `goal@agent-skills@installed-text-leaves-room-to-judge`. Met by
-`thread@agentic-workflow-axis@workflow-axis-lenses`: each lens at least once, the count the session's
-within the owner's budget.
+`thread@agentic-workflow-axis@workflow-axis-lenses`: each lens at least once, the count per lens the
+session's, passed to the run as the counts, per `thread@agentic-workflow-axis@lens-table-in-the-script`.
 
 ### Only findings provable by reading lead to an edit `##c4`
 
@@ -301,7 +332,45 @@ Binding as a presumption, from `design@agent-skills@audit-agent-per-axis`. Met b
 ### One pass costs about the owner's budget of 15 agents, in the owner's words `##c6`
 
 Weighed, from the owner's words, round 1: "the budget should be around 15 subagents I think." Met by
-`thread@agentic-workflow-axis@workflow-axis-lenses`, whose default is 16 agents per D8.
+`thread@agentic-workflow-axis@workflow-axis-lenses`, whose default is 16 agents per D8. The
+one-run pass keeps 16 auditors by default and adds about 18 agents to a pass, verifiers, dedup and
+cross-check; round 12 stated that cost, and the owner approved
+`thread@agentic-workflow-axis@one-run-pass` with it.
+
+### Nothing is applied before the session's reading, and the owner's word where the outcome needs it `##c7`
+
+Binding, from `design@agent-skills@audit-method` and `goal@knowledge-architect@the-owner-decides`;
+C1 of round 12. Met by `thread@agentic-workflow-axis@session-verifies-the-report` and
+`thread@agentic-workflow-axis@apply-stays-with-the-session`.
+
+### A finding is used only for the part a reading confirms `##c8`
+
+Binding, from `design@agent-skills@synthetic-evidence-not-built`; C2 of round 12. Met by
+`thread@agentic-workflow-axis@verifier-in-the-run` and
+`thread@agentic-workflow-axis@session-verifies-the-report`.
+
+### The method stays usable by a session without the Workflow tool `##c9`
+
+Binding as a presumption, from `thread@agentic-workflow-axis@audit-harness`; C3 of round 12. Met by
+`thread@agentic-workflow-axis@manual-fallback-home`.
+
+### The session's burden during a pass is small `##c10`
+
+Weighed, from the owner's words, round 12: "minimizing the burden placed on the main session"; C4
+of round 12. Met by `thread@agentic-workflow-axis@one-run-pass`,
+`thread@agentic-workflow-axis@lens-table-in-the-script` and
+`thread@agentic-workflow-axis@preflight-step`.
+
+### The report is enough to discuss with the owner and act on `##c11`
+
+Weighed, from the owner's words, round 12: "a bit more thorough to be at the level where the main
+session can discuss with the owner and act"; C5 of round 12. Met by
+`thread@agentic-workflow-axis@report-contents`; judged by AC6.
+
+### The counts AC4 reads stay comparable from pass to pass `##c12`
+
+Weighed; C6 of round 12. Met by `thread@agentic-workflow-axis@session-verifies-the-report`: the
+counts are taken after the session's reading, as pass 4's were after its sort.
 
 ## Threads
 
@@ -423,6 +492,82 @@ Arguments: `argument@agentic-workflow-axis@a1`, `argument@agentic-workflow-axis@
 `argument@agentic-workflow-axis@a32`, `argument@agentic-workflow-axis@a33`. Shape: Implementation
 sequence, step 3. Harvest: none; a choice of this work, carried by its commits. Closed, round 2:
 "workflow-axis-first-run: agreed to run in the same branch."
+
+### A pass runs as one run of the axis's saved workflow, from its preflight to its report, with no reading by the session between steps `##one-run-pass`
+
+Proposed by the owner in round 12: "the main power of that tool is to organize multiple complex
+steps that produce a complete result (such as a report) which is as ready as possible for the main
+session to dicuss it with the owner, then act on it, while minimizing the burden placed on the
+main session", and "verification by the session is indeed necessary, but not in the middle of the
+workflow steps". It reopens the three-stage shape of `thread@agentic-workflow-axis@audit-harness`.
+Arguments: `argument@agentic-workflow-axis@a51`, `argument@agentic-workflow-axis@a58`. Shape:
+Decided design, "The one-run pass". Harvest: `design@agent-skills@audit-method` and the head of
+`thread@agentic-workflow-axis@audit-harness`. Closed, round 13, the owner: "Agreed on your shapes
+for all 5 threads. That matches what I had in mind."
+
+### One adversarial verifier per auditor confirms or refutes its drafts inside the run `##verifier-in-the-run`
+
+Proposed by the agent in round 12, as what `thread@agentic-workflow-axis@one-run-pass` needs.
+Arguments: `argument@agentic-workflow-axis@a58`, `argument@agentic-workflow-axis@a59`. Shape:
+Decided design, "The one-run pass". Harvest: within the head of
+`thread@agentic-workflow-axis@audit-harness`. Closed, round 13, by the same words.
+
+### The report holds the six parts that let the session discuss and act without reopening drafts `##report-contents`
+
+Proposed by the agent in round 12. Shape: Decided design, "The one-run pass". Harvest: within the
+head of `thread@agentic-workflow-axis@audit-harness`. Closed, round 13, by the same words, with the
+owner's detail: "The cross check and the report should be one agent each (two total)."
+
+### The session verifies the report after the run, before the owner list `##session-verifies-the-report`
+
+Proposed by the agent in round 12. Arguments: `argument@agentic-workflow-axis@a58`. Shape: Decided
+design, "The one-run pass". Harvest: `design@agent-skills@audit-method`. Closed, round 13, by the
+same words, with the owner's change: "Sample left to judgement", where round 12 proposed a sample
+chosen by a stated rule.
+
+### The session applies the approved repairs, and no workflow does `##apply-stays-with-the-session`
+
+Proposed by the agent in round 12. Arguments: `argument@agentic-workflow-axis@a60`. Shape: Decided
+design, "The one-run pass". Harvest: within `design@agent-skills@audit-method`. Closed, round 13,
+by the same words.
+
+### Every audit axis runs a saved workflow of its own that delivers a report, and the generic method takes that shape `##audit-axis-runs-a-workflow`
+
+Proposed by the owner in round 13: "ultimately, I think it should become the generic shape of every
+audit axis, with every audit axis having its own dynamic workflow that produces a ready to discuss
+and act report. That would also make the project audit skill much more concise." Arguments:
+`argument@agentic-workflow-axis@a61`. Shape: Decided design, "The generic shape of an axis". The
+design-record axis's workflow is a `todo` issue, its own design work. Harvest:
+`design@agent-skills@audit-method`. Closed, round 14, the owner: "audit-axis-runs-a-workflow: agreed
+on this shape, agreed on a todo issue for the design-record axis, which is its own piece of design
+work."
+
+### The saved workflow is the home of the manual fallback `##manual-fallback-home`
+
+Raised by the owner in round 13: "The detailed descriptions needed for a "manual fallback" outside
+of Claude code harness could be relocated somewhere else, one markdown file per axis." The agent
+proposed the script itself as that home. Arguments: `argument@agentic-workflow-axis@a62`. Shape:
+Decided design, "The generic shape of an axis". Harvest: within the head of
+`thread@agentic-workflow-axis@audit-harness`. Closed, round 14, the owner: "manual-fallback-home:
+agreed on shape 2."
+
+### The lens table lives in the script, and the run takes a count per lens `##lens-table-in-the-script`
+
+Proposed by the agent in round 13; the owner changed its input in round 14. Arguments:
+`argument@agentic-workflow-axis@a63`, `argument@agentic-workflow-axis@a64`. Shape: Decided design,
+"The one-run pass". Harvest: within the head of `thread@agentic-workflow-axis@workflow-axis-lenses`.
+Closed, round 14, the owner: "I think it's a good thing indeed for the lens table to move directly
+into the workflow rather than passed as args. this is indeed quite error prone. Also, as argument,
+it would probably be better to pass a list of count per lens, rather than a total budget (which
+needs to be dispatched by the script rather than by the judgement of the session). Using our
+current values as the defaults."
+
+### A preflight agent sets up the run: the auditors' worktrees, their kept lists and the issues listing `##preflight-step`
+
+Proposed by the agent in round 14. Arguments: `argument@agentic-workflow-axis@a65`. Shape: Decided
+design, "The one-run pass". Harvest: within the head of
+`thread@agentic-workflow-axis@audit-harness`. Closed, round 15, the owner: "preflight-step
+approved".
 
 ## Arguments
 
@@ -808,6 +953,72 @@ lives in a skill as text no session needs to read; a saved workflow is run by na
 copy. The owner, on the proposal stating these consequences: "Agreed, proceed with the delivery as
 proposed".
 
+### The readings between the stages of pass 4 changed little, and cost the session the bulk of its context `##a58`
+
+Round 12, agent. Bears on `thread@agentic-workflow-axis@one-run-pass`,
+`thread@agentic-workflow-axis@verifier-in-the-run` and
+`thread@agentic-workflow-axis@session-verifies-the-report`. Measured on pass 4, the files in its
+scratch directory: the sort read 63 drafts, about 3,000 lines, confirmed 36 findings, merged six
+drafts of one finding into one, and refuted 3; the merge read two groupings, 1,074 lines, and made
+two choices of boundary; the confirmation read 23 proposals, 4,030 lines, and sent none back. Of
+the 3 refutations, 2 were mechanical, a kept item and a pair of texts one move satisfies, and 1 rested
+on the run's history, a pointer step 5's K9 had judged; a verifier given the run's commit messages
+can make all three. One pass's figures: evidence, not proof. Argument a51 had already pointed
+here, and the script of step 4 still left the sort to the session.
+
+### A verifier per auditor reads the corpus once per auditor, and sees that auditor's drafts together `##a59`
+
+Round 12, agent. Bears on `thread@agentic-workflow-axis@verifier-in-the-run`. The rival, one
+verifier per draft, 63 agents in pass 4, reads the whole corpus once per draft; one per auditor
+reads it 16 times, and the sort's rule "a draft found wrong sends that agent's other drafts back"
+applies within one verifier.
+
+### Applying repairs merges overlapping edits against a tree that may have moved `##a60`
+
+Round 12, agent. Bears on `thread@agentic-workflow-axis@apply-stays-with-the-session`. In steps 5
+and 6 the applying agents merged repairs that edited one paragraph six times, three in each, by
+their reports; round 12 counted four. The session softened one claim in the diff. Two runs of
+evidence: the position is held loosely.
+
+### Each axis's section keeps only what the session needs to verify a report and write the owner list `##a61`
+
+Round 13, agent and owner. Bears on `thread@agentic-workflow-axis@audit-axis-runs-a-workflow`. The
+session reads the axis's corpus, rules and outcome table to verify a report; the dispatch tables,
+the prompts and the order of the steps live in the script. The owner: "That would also make the
+project audit skill much more concise." The design-record axis's workflow is design work of its
+own, its groups of 60, its calibration sample and its drafts per entry; its section stays until it
+exists, since moving its prose now and again then would relocate it twice.
+
+### The prompts and the order of the steps already have one home, the script `##a62`
+
+Round 13, agent. Bears on `thread@agentic-workflow-axis@manual-fallback-home`. A markdown file per
+axis restating the steps would be a second home for one moment, against
+`thread@agentic-workflow-axis@moment-homes`; pass 4's P4-27 was such a drift, the script's repair
+prompt narrowing the skill's text it restated. The rival's one advantage, that the checker reads
+markdown and no JavaScript, bears on references, and the script's prompts cite no entry. A file per
+axis stays available for reading guidance that is not a step.
+
+### Sixteen agent entries written by hand were the largest and most error-prone input of a run `##a63`
+
+Round 13, agent and owner. Bears on `thread@agentic-workflow-axis@lens-table-in-the-script`. In
+pass 4 the session wrote the drafts stage's `args` as sixteen entries, each with a lens, a group,
+a scratch directory and a kept list. The owner, round 14: "this is indeed quite error prone."
+
+### A count per lens keeps the choice with the session, where a total budget leaves it to the script `##a64`
+
+Round 14, owner. Bears on `thread@agentic-workflow-axis@lens-table-in-the-script`: "it would
+probably be better to pass a list of count per lens, rather than a total budget (which needs to be
+dispatched by the script rather than by the judgement of the session)."
+
+### Each auditor's own worktree is set up inside the run, where the script names the auditors `##a65`
+
+Round 14, agent. Bears on `thread@agentic-workflow-axis@preflight-step`. Pass 4's F92 gives every
+auditor a worktree of its own, detached at the commit audited, and the script makes the auditors'
+labels from the counts; a session creating the worktrees before the run would first rebuild those
+labels, the hand input `thread@agentic-workflow-axis@lens-table-in-the-script` removes. The rival,
+one worktree shared by every auditor, each building into its own scratch directory, contradicts
+F92's "its own worktree", approved one round earlier.
+
 ## New names, in one place
 
 ```text
@@ -893,8 +1104,9 @@ one lens:
 | L6 local against installed | the project's own text against the installed text: a contradiction, a duplicate | 2 |
 | L7 checker rules | per "The checker-rules lens" | 2 |
 
-Each lens is dispatched at least once. The count is the session's, within the owner's budget, and the
-table's total, 16, is the stated default. An L2 agent's brief names its group of activities; two L2 agents
+Each lens is dispatched at least once. The count per lens is the session's, passed as the counts,
+and the table's values, 16 in all, are the defaults, per
+`thread@agentic-workflow-axis@lens-table-in-the-script`. An L2 agent's brief names its group of activities; two L2 agents
 are duplicates only when they share a group. Each agent takes one lens; a lens takes as many agents as its row says. The re-check dispatches the
 same lenses with the same count per lens as the first dispatch. There is
 no calibration sample: the sort reads every finding, the duplicates of a lens add coverage, and the
@@ -1079,6 +1291,9 @@ on:
    corpus's word count before and after, measured with `wc -w` over the corpus's files, and the
    instructions added and removed, from the proposals.
 
+In the one-run pass, points 1, 2 and 4 are steps of the run, done by agents, and the session's
+reading moves after the run, per "The one-run pass".
+
 The finding classes and the tags stand.
 
 ### The workflow script
@@ -1087,39 +1302,141 @@ The finding classes and the tags stand.
 workflow: its source is `path@agent-skills@content/workflows/agentic-workflow-audit.js`, installed
 as .claude/workflows/knowledge-architect-agentic-workflow-audit.js, its `meta` declaring that stem
 as its name, per `argument@agentic-workflow-axis@a57`. The installer's namespace holds it, so the
-install writes and removes it and `check` compares it, as it does a skill or an agent. The axis's
-section names it and the `args` of each stage, and says: where the harness offers the tool, the
-session runs the saved workflow by name; elsewhere it dispatches the same agents with the same
-prompts, in the same order, as the section's prose says. The prose is the method; the script is a
-means to run it.
-
-**The agents**, per D16. The lens agents are `agent@knowledge-architect-workflow-auditor`, by
-`agentType`. The cluster and repair agents are general-purpose agents whose prompts are written in
-the script, their one home, rather than in agent definitions, which are the copies the harness
-registered at the session's start. The prose path dispatches the same prompts, read from the
-script.
-
-**Inputs**, all in `args`, since a script reads no file: the commit audited; the stage; for drafts,
-one entry per lens agent with its lens, its L2 group where it has one, its scratch directory and its
-kept-list path; for clusters, the confirmed-findings file and one scratch directory per cluster
-agent; for repairs, the causes file and one entry per cause with its id and its scratch directory.
-The session writes each kept list into each agent's scratch directory, per point 8 of the generic
-method, before the stage.
-
-**Three stages, one invocation each**, because a reading of the session sits between each two:
-
-- **drafts**: the lens agents, in parallel. Each writes its drafts and returns its text, as the
-  auditor's return says. The session's sort follows.
-- **clusters**: the cluster agents, in parallel, each writing its grouping to its scratch directory
-  and returning its path by schema. The session's merge follows.
-- **repairs**: the repair agents, in parallel, each writing its proposal and returning its path by
-  schema. The session's confirmation follows.
+install writes and removes it and `check` compares it, as it does a skill or an agent. Where the
+harness lists it, the session runs it by name, once per pass, as "The one-run pass" says.
 
 **Its file.** The checker reads no JavaScript, so a reference in the script is checked by nobody,
 and it cites none. The build fails unless the declared name equals the installed stem. Its `meta` is
 a pure literal, which the tool requires, so its description is one string. It is checked with
 `node --check` on its body wrapped in an async function, since a top-level `return` fails a bare
 check.
+
+### The one-run pass
+
+`thread@agentic-workflow-axis@one-run-pass`, `thread@agentic-workflow-axis@verifier-in-the-run`,
+`thread@agentic-workflow-axis@report-contents`, `thread@agentic-workflow-axis@session-verifies-the-report`,
+`thread@agentic-workflow-axis@apply-stays-with-the-session`,
+`thread@agentic-workflow-axis@lens-table-in-the-script`, `thread@agentic-workflow-axis@preflight-step`.
+A pass of the axis is one run of its saved workflow. The session reads nothing between its steps;
+it verifies the report after the run. Every step writes its files in the run's scratch directory,
+so the session can open any draft, grouping or proposal the report cites.
+
+```
+            ┌──── one run of knowledge-architect-agentic-workflow-audit ────┐
+args ──►  preflight (1 agent: worktrees, kept lists, issues listing)
+           ▼
+          drafts (one auditor per lens and count)
+           │ pipeline: each auditor's drafts go to its verifier at once
+           ▼
+          verify (1 adversarial verifier per auditor)
+           ▼  barrier: needs every verdict
+          dedup (1 agent: merge instructions; the script applies them)
+           ▼
+          cluster (2 agents) ──► merge (1 agent: the causes file, its choices stated)
+           ▼
+          repairs (1 agent per cause)
+           ▼  barrier
+          cross-check (1 agent)
+           ▼
+          report (1 agent: report.md)
+            └──────────────────────────────────────────────────────────────┘
+                    ▼
+          session: verifies the report ──► owner list ──► the owner's word ──► application
+```
+
+This diagram illustrates the shape; the script is its home.
+
+**Inputs**, in `args`: the commit audited; the scratch root, under which each agent gets a
+directory of its own; the worktree root, under which the preflight creates each auditor's
+worktree, named by its label; for a re-check, the kept list's path; `counts`, the auditors per
+lens, optional, whose defaults are the lens table's values, L1 3, L2 4, L3 2, L4 2, L5 1, L6 2,
+L7 2; and `from`, optional, which restarts the chain at the verify, cluster or repairs step from
+the files a run already wrote. The lens table, with L2's four groups of activities, lives in the
+script. L2's count is its number of groups by default; a count above it adds walkers on the same
+groups in turn.
+
+**The preflight** creates each auditor's worktree, detached at the commit audited, per
+`skill@knowledge-architect-review@review-invariants`; writes the kept list, where `args` name one,
+into each auditor's scratch directory; and saves the `cargo klarch issues` listing at that commit
+for the verifiers. The session removes the worktrees after its verification.
+
+**The verify step**: one adversarial verifier per auditor, which tries to refute each of its
+drafts. It checks every quotation against the worktree; reads the kept list, the issues and the
+commit messages of the run's earlier passes, and refutes a finding a ruling or a record already
+settles, naming it; checks that the moment the draft describes exists; and tests the finding's
+class against the auditor's definitions. Its verdict per draft is confirmed, refuted or plausible,
+with a reason. A refuted draft is kept with its reason. A draft that turns on an earlier ruling of
+the owner is not settled by the verifier: it is marked `bears-on-ruling`.
+
+**The dedup step** returns merge instructions, which the script applies: the kept id, the dropped
+ids, and the shared defect.
+
+**The cluster and merge steps**: two cluster agents group the confirmed findings by cause, as "The
+repair by cause" says; one merge agent writes the causes file from both groupings, and states each
+choice it made where they differ.
+
+**The repairs step**: one repair agent per cause, as "The repair by cause" says.
+
+**The cross-check step**, one agent, reads every proposal against the others and the corpus: the
+paragraphs several repairs edit, the instruction counts summed, the outcome of each cause under the
+axis's outcome table, and the findings that bear on an earlier ruling of the owner, with the ruling
+quoted and the premise that may be false.
+
+**The report step**, one agent, writes report.md in the run's scratch directory, holding:
+
+1. the header: the commit audited; the agents per step; the drafts, verified, after dedup and
+   refuted, each refuted draft with its reason;
+2. the figures: the counts AC4 reads, and the instructions added and removed, from the proposals;
+3. one section per cause: its kind and its one-sentence mechanism; its findings, each with its
+   quoted evidence, the verifier's verdict and note, and its tag; the repair as edits before and
+   after, per file; the instructions it adds and removes, quoted; its outcome under the axis's
+   table, and the default; a finding marked `bears-on-ruling`, with the ruling quoted and the
+   premise that may be false;
+4. the overlap map: each paragraph several repairs edit, and the causes concerned;
+5. the draft of the owner list, its labels left for the session to number per
+   `primer@labelled-items`;
+6. what the run did not decide: the merge's choices, the plausible verdicts, and every step that
+   failed or returned nothing.
+
+**The session's verification**, after the run: it reads the whole report; every proposal in full,
+since the owner list goes out under its responsibility; every finding marked `bears-on-ruling` or
+plausible, against its draft; and a sample of the refuted drafts, chosen by its judgement. Then it
+writes the owner list. The counts AC4 reads are taken after this reading.
+
+**The application** stays with the session, after the owner's word, as steps 5 and 6 did it:
+agents on disjoint files, every repair merged where two edit one paragraph, the whole diff read
+before the commit.
+
+**Without the Workflow tool**, or where the harness does not list the saved workflow, the session
+dispatches the same steps by hand, in the script's order, with the script's prompts, read from the
+script.
+
+Nearest rivals, each with the fact that defeated it: the three runs of step 4 with a reading
+between each, by `argument@agentic-workflow-axis@a58`; a verifier per draft, by
+`argument@agentic-workflow-axis@a59`; the session reading every draft again after the run, by
+`argument@agentic-workflow-axis@a58`, since the verifier with the run's history makes the
+refutations pass 4's sort made; a second saved workflow that applies the approved repairs, by
+`argument@agentic-workflow-axis@a60`; one worktree shared by every auditor, by
+`argument@agentic-workflow-axis@a65`.
+
+### The generic shape of an axis
+
+`thread@agentic-workflow-axis@audit-axis-runs-a-workflow`,
+`thread@agentic-workflow-axis@manual-fallback-home`. The generic method of the audit skill takes the
+one-run pass as its shape for every axis: run the axis's saved workflow; verify the report; put the
+owner list; apply on the owner's word; the next run is the re-check. Each axis's section keeps what
+the session needs to verify a report and write the owner list, its corpus, its rules and its
+outcome table, and names its saved workflow and the `args` it takes. The dispatch tables, the
+prompts and the order of the steps live in the script, which is also the home of the manual
+fallback: the skill keeps one sentence that a session without the tool dispatches the script's
+steps by hand, in its order, with its prompts. A per-axis markdown file is written only for reading
+guidance that is not a step; this axis has none.
+
+The design-record axis has no workflow yet. Its section keeps its manual method until its workflow
+is designed, which a `todo` issue holds.
+
+Nearest rival: one markdown file per axis holding the manual fallback, the owner's first shape, by
+`argument@agentic-workflow-axis@a62`.
 
 ## Mapping tables
 
@@ -1170,6 +1487,20 @@ check.
   `thread@agentic-workflow-axis@audit-harness`: it fails in every other harness, and adds to
   `issue@core@configuration-for-several-agent-providers` a dependency no text-only skill has, for a
   gain the script beside the prose already gives.
+- **Three runs of the workflow per pass, the session reading between each**: lost to
+  `thread@agentic-workflow-axis@one-run-pass`, on `argument@agentic-workflow-axis@a58`.
+- **One verifier per draft**: lost to `thread@agentic-workflow-axis@verifier-in-the-run`, on
+  `argument@agentic-workflow-axis@a59`.
+- **The session reading every draft again after the run**: lost to
+  `thread@agentic-workflow-axis@session-verifies-the-report`, on `argument@agentic-workflow-axis@a58`.
+- **A second saved workflow that applies the approved repairs**: lost to
+  `thread@agentic-workflow-axis@apply-stays-with-the-session`, on `argument@agentic-workflow-axis@a60`.
+- **One markdown file per axis holding the manual fallback**: lost to
+  `thread@agentic-workflow-axis@manual-fallback-home`, on `argument@agentic-workflow-axis@a62`.
+- **A total budget the script shares out among the lenses**: lost to
+  `thread@agentic-workflow-axis@lens-table-in-the-script`, on `argument@agentic-workflow-axis@a64`.
+- **One worktree shared by every auditor**: lost to `thread@agentic-workflow-axis@preflight-step`,
+  on `argument@agentic-workflow-axis@a65`.
 - **The script in a fenced block of the skill, passed to the tool inline**: lost to
   `thread@agentic-workflow-axis@audit-harness`, on `argument@agentic-workflow-axis@a57`.
 - **A bound on words**: lost to `thread@agentic-workflow-axis@audit-net-growth`, on
@@ -1186,6 +1517,9 @@ re-check, and `design@agent-skills@design-record-axis`, which keeps the calibrat
 Empty: the work reads no external specification.
 
 ## Premortem
+
+The premortem of rounds 12 to 15 put T5, T6, AC5 and AC6 to the owner in round 14; the owner,
+round 15: "record T5, T6, apply AC5, AC6". Its causes are the rows from T5 to the one after AC6.
 
 Each cause was put to the owner in round 2 under its label; the owner, round 3: "record all four,
 apply the three acceptance criteria." The owner proposed AC4 in the same message; its wording is
@@ -1207,6 +1541,11 @@ are weighed by the owner on the owner list and counted by T2 and AC4.
 | AC1 | (cause 3) | `thread@agentic-workflow-axis@workflow-axis-corpus` | acceptance criterion, `acceptance@agentic-workflow-axis@files-read-and-drafts-tagged` |
 | AC2 | The relocation loses a rule of the design-record method | `thread@agentic-workflow-axis@audit-method-per-axis` | acceptance criterion, `acceptance@agentic-workflow-axis@design-record-dispatch-kept` |
 | AC3 | Shipped text cites an entry of this repository | `thread@agentic-workflow-axis@workflow-auditor-agent` | acceptance criterion, `acceptance@agentic-workflow-axis@shipped-text-cites-no-entry` |
+| T5 | The verifiers refute true findings, and the session sees only a sample of what they refute | `thread@agentic-workflow-axis@verifier-in-the-run` | tripwire. Fires when the session's sample of refuted drafts finds one that a reading confirms, in any pass. Response: reopen `thread@agentic-workflow-axis@verifier-in-the-run`. Re-entry: the session's verification of every report |
+| T6 | The verifiers wave findings through, and the session sorts again after the run | `thread@agentic-workflow-axis@verifier-in-the-run` | tripwire. Fires when the session rejects more than a quarter of a report's confirmed findings in one pass; the bound is the owner's to reset. Response: reopen `thread@agentic-workflow-axis@verifier-in-the-run`. Re-entry: the session's verification of every report |
+| AC5 | The run dies part-way, and the report covers half a pass as if whole | `thread@agentic-workflow-axis@one-run-pass` | acceptance criterion, `acceptance@agentic-workflow-axis@one-run-delivers` |
+| AC6 | The report compresses the evidence, and the session reopens drafts for most causes | `thread@agentic-workflow-axis@report-contents` | acceptance criterion, `acceptance@agentic-workflow-axis@report-suffices` |
+| (cause 5 of round 14) | The merge agent draws a cause boundary wrongly, and one proposal mixes two mechanisms | `thread@agentic-workflow-axis@one-run-pass` | survives into a named clause: the session reads every proposal in full, per `thread@agentic-workflow-axis@session-verifies-the-report`, and the report lists the merge's choices |
 | AC4 | The audit does not push the workflow toward improvement | `thread@agentic-workflow-axis@workflow-axis-lenses`, `thread@agentic-workflow-axis@workflow-axis-finding-standard` | acceptance criterion, `acceptance@agentic-workflow-axis@passes-fall` |
 
 ## Acceptance criteria
@@ -1249,6 +1588,23 @@ owner's judgement. Response: before the merge, reopen
 `thread@agentic-workflow-axis@workflow-axis-lenses` and
 `thread@agentic-workflow-axis@workflow-axis-finding-standard`.
 
+### A pass runs from its preflight to its report in one run `##one-run-delivers`
+
+AC5, applied by the owner in round 15. Guards `thread@agentic-workflow-axis@one-run-pass`. Judged
+at step 8. The observable: pass 5 runs from the preflight to the report in one run of the saved
+workflow, with no action of the session between its steps. Fires when a step fails and the run is
+restarted with `args.from`, or when the session acts between steps; a restart is reported as such.
+Response: reopen `thread@agentic-workflow-axis@one-run-pass`.
+
+### The session writes the owner list from the report and the proposals `##report-suffices`
+
+AC6, applied by the owner in round 15. Guards `thread@agentic-workflow-axis@report-contents`. Judged
+at step 8. The observable: the session opens drafts only for the findings marked `bears-on-ruling`
+or plausible and for its sample of refuted drafts; pass 5's commit message lists every other draft
+it opened, with the reason. Fires when it opens other drafts for more than a quarter of the
+report's causes, a default awaiting the owner as D22. Response: reopen
+`thread@agentic-workflow-axis@report-contents`.
+
 ## AC4's firing on the first run
 
 | pass | confirmed | severe, to the owner list | source |
@@ -1274,7 +1630,7 @@ workflow's delivery.
 
 ## Implementation sequence
 
-Every step that changes the installed text, steps 1 to 6, runs
+Every step that changes the installed text, steps 1 to 8, runs
 `cargo klarch install-agent-skills` and commits the installed copies with their source, passes the
 edit tests of `path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", read with
 `design@agent-skills@additions-need-real-use` as D4 and D11 rewrite it, and adds the
@@ -1313,7 +1669,18 @@ CHANGELOG.md entries `design@knowledge-architect@changelog-entries` owes, then r
 6. **The fourth pass**, per round 10: the axis runs again on this repository through the script, all
    three stages, as real use before the merge. Its commit message carries the counts AC4 reads.
    Judges AC3 and AC4. Fails alone on: the counts of AC4.
-7. **The harvest.** The rows of "Harvest"; the spec deleted.
+7. **The one-run pass.** The saved workflow rewritten to "The one-run pass": the lens table in the
+   script, the steps from the preflight to the report, their prompts, and `args.from`. The audit
+   skill's generic method rewritten to "The generic shape of an axis", and the agentic-workflow
+   axis's section to the one-run pass, its manual fallback one sentence. The workflow auditor's
+   description re-pointed. The `todo` issue for the design-record axis's workflow opened, naming
+   what its design must decide. The script checked with `node --check`, and the build's name check
+   passes. Fails alone on: a step whose agents cannot do their brief from the script's prompts.
+8. **The fifth pass**, per round 13: the axis runs on this repository in one run of the saved
+   workflow, the session verifies the report, the owner list waits for the owner's answers, and the
+   repairs are applied. Its commit message carries the counts AC4 reads, and the observations T5,
+   T6, AC5 and AC6 read. Judges AC3, AC4, AC5 and AC6. Fails alone on: AC5's observable.
+9. **The harvest.** The rows of "Harvest"; the spec deleted.
 
 The branch is reviewed once, before the merge, on the axes of the generic method's review, which
 include the decision-record, routing and standing-state axes the harvest owes, and on spec
@@ -1327,7 +1694,9 @@ before.
 - 3 before 4: the repair by cause answers AC4's firing on the run.
 - 4 before 5: passes 2 and 3 are repaired with the method built at step 4.
 - 5 before 6: the fourth pass reads the corpus the repairs left, so its counts judge them.
-- 6 before 7: the harvest records the decisions after the method is built and used.
+- 6 before 7: the one-run pass answers the owner's reading of how pass 4 used the workflow.
+- 7 before 8: the fifth pass is the one-run pass's real use.
+- 8 before 9: the harvest records the decisions after the method is built and used.
 
 ## Defaults awaiting the owner
 
@@ -1465,6 +1834,9 @@ cite it by its label.
 - Listed, no ruling needed: a draft names a finding of another lens met on the way, with the
   finding's lens, an obligation step 2 added to the auditor so that no finding met is lost and T4
   can count drift.
+- **D22**, awaiting the owner, on `thread@agentic-workflow-axis@report-contents`: AC6 fires when
+  the session opens other drafts for more than a quarter of the report's causes. Round 14 worded
+  AC6's observable and named no bound; the quarter is the author's default, the owner's to reset.
 
 ## Harvest
 
@@ -1494,12 +1866,20 @@ auditor each state its reason, two texts. The harvest confirms each against the 
 | `thread@agentic-workflow-axis@audit-harness` | `design@agent-skills@audit-method` loses "so it runs under any harness"; a head, by entry test 3, since it turns on the Workflow tool's behaviour. The saved workflow's place in the install layout and the namespace is recorded in `design@agent-skills@content-mirrors-the-install-layout` and `design@core@owned-namespace-check` by the change that built it |
 | `thread@agentic-workflow-axis@moment-homes` | a head, if step 5 lands a home |
 | `thread@agentic-workflow-axis@revisit-pass-2` | none: step 5's commits |
+| `thread@agentic-workflow-axis@one-run-pass`, `thread@agentic-workflow-axis@session-verifies-the-report`, `thread@agentic-workflow-axis@apply-stays-with-the-session`, `thread@agentic-workflow-axis@audit-axis-runs-a-workflow` | `design@agent-skills@audit-method` rewritten: a pass is one run of the axis's saved workflow, the session verifies its report and applies; the owner's quoted stop rule kept |
+| `thread@agentic-workflow-axis@verifier-in-the-run`, `thread@agentic-workflow-axis@report-contents`, `thread@agentic-workflow-axis@manual-fallback-home`, `thread@agentic-workflow-axis@preflight-step` | within the head of `thread@agentic-workflow-axis@audit-harness` |
+| `thread@agentic-workflow-axis@lens-table-in-the-script` | within the head of `thread@agentic-workflow-axis@workflow-axis-lenses` |
+| T5, T6 | `path@agent-skills@docs/tripwires.md`, each naming the head that holds `thread@agentic-workflow-axis@verifier-in-the-run`, with its label |
+| AC5, AC6 | reported in the landing commit |
 | `issue@agent-skills@audit-axes-beyond-the-design-record` | rewritten to the axes it still holds; its open lesson, the owner's reading of a sample of the verdicts, stays, since this axis does not adopt it |
 
 ## Later consequences
 
 - The other axes of `issue@agent-skills@audit-axes-beyond-the-design-record` each give their own
-  dispatch under the generic method.
+  dispatch under the generic method, as a saved workflow of their own, per
+  `thread@agentic-workflow-axis@audit-axis-runs-a-workflow`.
+- The design-record axis's workflow, held by the `todo` issue step 7 opens; its section then
+  shrinks to the generic shape.
 - A pin move across the version that ships the axis may cite it in a Migration entry, if the version
   changes rules the corpus must meet; `tripwire@agent-skills@axis-not-run-at-a-pin-move` then watches
   it as it watches the design-record axis.
