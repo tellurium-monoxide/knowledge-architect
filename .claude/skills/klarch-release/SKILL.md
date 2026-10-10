@@ -51,7 +51,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    and read each one:
 
    ```sh
-   grep -rnoE '`[^`]*@[^`]*`' .claude/knowledge-architect .claude/skills/knowledge-architect-* .claude/agents/knowledge-architect-*
+   grep -rnoE '`[^`]*@[^`]*`' .claude/knowledge-architect .claude/skills/knowledge-architect-* .claude/agents/knowledge-architect-* .claude/workflows/knowledge-architect-*
    ```
 
    A span is a reference candidate when its head before the first `@` is a kind or an anchor, per
@@ -65,12 +65,12 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
 5. **Every name the shipped text uses is shipped**, per `design@agent-skills@no-external-handoff`:
 
    ```sh
-   grep -rhoE 'knowledge-architect-[a-z-]+' .claude/knowledge-architect .claude/skills/knowledge-architect-* .claude/agents/knowledge-architect-* | sort -u
+   grep -rhoE 'knowledge-architect-[a-z-]+' .claude/knowledge-architect .claude/skills/knowledge-architect-* .claude/agents/knowledge-architect-* .claude/workflows/knowledge-architect-* | sort -u
    ```
 
    Each name must be a shipped skill (`content/skills/<name>/`) or a shipped agent
-   (`content/agents/<name>.md`), both installed as `knowledge-architect-<name>`, or one of the
-   three crates. Every document the shipped text relies on in a project, such as the knowledge
+   (`content/agents/<name>.md`) or a shipped saved workflow (`content/workflows/<name>.js`), each
+   installed as `knowledge-architect-<name>`, or one of the three crates. Every document the shipped text relies on in a project, such as the knowledge
    table, is written by an installed skill.
 6. **crates.io.** For each crate, the API answers 404 for a first release, or shows the crate owned
    by the owner's account; in both cases the version itself must be absent:

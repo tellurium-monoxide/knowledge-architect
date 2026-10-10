@@ -6,6 +6,8 @@
 //! - **The section slug pass.** A level-two heading ends with a placeholder `{{slug:<id>}}`, which
 //!   ships as the slug the checker reads, so content/ defines no slug in this repository's walk
 //!   and the installed copy does.
+//! - **The workflow name check.** A saved workflow is called by the name its `meta` declares, not
+//!   by its file's name, so the name must carry the installer's prefix as the file does.
 
 use std::path::Path;
 
@@ -136,6 +138,44 @@ pub(crate) fn render_slugs(text: &str, file: &Path) -> String {
     rendered
 }
 
+/// What opens a saved workflow's declaration; its `name` key follows inside the object.
+const WORKFLOW_META: &str = "export const meta = {";
+
+/// Panics unless the saved workflow `text` declares `name` as `expected`, its installed file's
+/// stem. Claude Code calls a saved workflow by its declared `name` and never by its file name, so
+/// a prefixed file whose declared name lacks the prefix would sit in the installer's namespace
+/// while it answers to a name a project's own workflow can take. The name is read as the first
+/// line of the declaration that opens with `name:`, holding one quoted string: the declaration is
+/// a literal the harness parses, so it holds no computed value.
+pub(crate) fn check_workflow_name(text: &str, expected: &str, file: &Path) {
+    let site = file.display();
+    let start = text
+        .find(WORKFLOW_META)
+        .unwrap_or_else(|| panic!("{site}: a saved workflow opens with `{WORKFLOW_META}`"));
+    let declaration = &text[start + WORKFLOW_META.len()..];
+    let declaration = &declaration[..declaration
+        .find(
+            "
+}",
+        )
+        .unwrap_or(declaration.len())];
+    let name = declaration
+        .lines()
+        .find_map(|line| line.trim_start().strip_prefix("name:"))
+        .map(|rest| rest.trim().trim_end_matches(','))
+        .and_then(|quoted| {
+            ['\'', '"']
+                .iter()
+                .find_map(|q| quoted.strip_prefix(*q)?.strip_suffix(*q))
+        })
+        .unwrap_or_else(|| panic!("{site}: the workflow's meta declares no quoted `name`"));
+    assert!(
+        name == expected,
+        "{site}: the workflow declares the name `{name}`, and is installed as `{expected}`: \
+         the harness calls it by the declared name, so the two are equal"
+    );
+}
+
 /// The id grammar of the checker's entity table, `[a-z0-9]+(-[a-z0-9]+)*`, written out: this
 /// crate depends on no regex engine, and the checker's own pattern is in the core, which depends
 /// on this crate.
@@ -150,7 +190,7 @@ fn is_id(id: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{render_slugs, strip_comments};
+    use super::{check_workflow_name, render_slugs, strip_comments};
     use std::path::Path;
 
     fn strip(text: &str) -> String {
@@ -279,5 +319,33 @@ mod tests {
     #[should_panic(expected = "follows the heading's text and a space")]
     fn a_placeholder_glued_to_the_heading_text_fails() {
         slugs("## Text{{slug:a}}\n");
+    }
+
+    fn named(text: &str) {
+        check_workflow_name(text, "knowledge-architect-w", Path::new("w.js"));
+    }
+
+    #[test]
+    fn a_workflow_declaring_its_installed_name_passes() {
+        named("export const meta = {\n  name: 'knowledge-architect-w',\n  description: 'd',\n}\n");
+        named("export const meta = {\n  name: \"knowledge-architect-w\"\n}\nreturn 1\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "w.js: the workflow declares the name `w`")]
+    fn a_workflow_declaring_another_name_fails() {
+        named("export const meta = {\n  name: 'w',\n}\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "declares no quoted `name`")]
+    fn a_name_outside_the_declaration_is_not_read() {
+        named("export const meta = {\n  description: 'd',\n}\nconst x = {\n  name: 'knowledge-architect-w',\n}\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "w.js: a saved workflow opens with")]
+    fn a_workflow_with_no_declaration_fails() {
+        named("return 1\n");
     }
 }
