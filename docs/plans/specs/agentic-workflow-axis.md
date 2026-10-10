@@ -3,14 +3,17 @@
 ## Status and audience
 
 This spec is the plan of the work that gives the project audit its second axis, the agentic-workflow
-axis, and runs it on this repository. The work does four things:
+axis, and runs it on this repository. The work does six things:
 
 - the method of `skill@knowledge-architect-project-audit` becomes generic, and the dispatch of the
   design-record axis, its groups and its calibration sample, moves into that axis's section;
 - a new installed agent, the workflow auditor, holds the standard of the new axis;
 - a new section of the audit skill holds the axis: its corpus, its lenses, its finding standard and
   its outcomes;
-- the axis runs on this repository, in this branch, which judges AC1 and AC4 and counts T1 to T4.
+- the axis runs on this repository, in this branch, which judges AC4 and counts T1 to T4;
+- the axis repairs by cause, with a workflow script beside its prose, per "The repair by cause" and
+  "The workflow script";
+- the findings of passes 2 and 3 are repaired by cause, and a fourth pass runs through the script.
 
 The spec is written for a session that did not witness the design discussion that produced it. It
 leaves the repository in the commit that completes its harvest.
@@ -38,14 +41,17 @@ leaves the repository in the commit that completes its harvest.
   premises were wrong", which put D1 to D7 to the owner. "Round 4" is the owner's reply to it, which
   opens "All defaults approved." and proposes a lens, and the agent's reply that opens "D1 to D7 are
   now ruled"; "round 5" is the owner's message "checker-rules-lens approved, go ahead". "Round 6" is the owner's
-  reply to the re-review message, which opens "All defaults approved.". The three passes of the first
+  reply to the re-review message, which opens "All defaults approved.". Passes 1 and 2 of the first
   run put their owner lists in messages that open "Pass 1 of the agentic-workflow axis: the sort,
   and the owner list" and "Pass 2 is sorted"; the owner's replies open "F1: agreed" and "All
   defaults approved for F28 to F57.", and their rulings are in the passes' commit messages. "Round
   7" is the owner's message that opens "Hmm, this is interesting." and the agent's reply that opens
   "A premise to correct first"; "round 8" is the owner's message that opens "audit-net-growth: I
   don't think word count is the correct metric" and the reply that opens "F37 to F57 aside"; "round
-  9" is the owner's message "audit-net-growth approved with that shape, proceed as proposed." An extraction agent wrote the owner messages,
+  9" is the owner's message "audit-net-growth approved with that shape, proceed as proposed."; "the
+  third review message" is the agent's message that opens "All four reviews are back", which put D16
+  to D21 to the owner, and "round 10" is the owner's reply, which opens "After updating the spec and
+  implementing the workflow". An extraction agent wrote the owner messages,
   the agent messages, the tables and the arguments verbatim to scratch; the session assembled this
   spec from that file and its own context.
 - **Labels.** The discussion used T1 to T4 and AC1 to AC4. No other discussion in the transcript
@@ -78,8 +84,9 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   label of an item the owner rules on, so `design@agent-skills@ruled-items-labelled` gains no prefix.
 - **the owner list**: as the audit skill's terms define it,
   `skill@knowledge-architect-project-audit@audit-terms`.
-- **a pass**: one round of the method: the drafts, the sort, the owner list, the application. The
-  re-check's drafts start the next pass. Today the skill uses the word in point 7 and point 9 and
+- **a pass**: one round of the method: the drafts, the sort, the owner list, the application; for
+  this axis also the cluster, the repair proposals and their confirmation, between the sort and the
+  owner list. The re-check's drafts start the next pass. Today the skill uses the word in point 7 and point 9 and
   does not define it; step 1 adds it to the terms.
 - **the re-check**: fresh agents of the axis, dispatched as the axis's first dispatch was, after a
   pass's edits. For this axis: the same lenses with the same count per lens as the first dispatch,
@@ -88,6 +95,21 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 - **a violation left**, for this axis: a confirmed finding of a re-check that is not on the kept
   list. It is what the generic stop rule counts.
 - **severe**: a confirmed finding whose outcome is the owner list, whatever its class.
+- **a cause**: what produced one or more confirmed findings, of one of the four kinds of "The
+  repair by cause".
+- **an instruction**: a sentence that tells an agent to do, or not to do, an act at a moment. A
+  rewording that makes an existing instruction's intent clearer adds none, whatever its length.
+- **the run's scratch directory**: one directory the session chooses per run, holding each agent's
+  scratch directory, the confirmed-findings file and the causes file, whose formats are in "The
+  repair by cause".
+- **the Workflow tool**: Claude Code's tool that runs a JavaScript script orchestrating subagents. A
+  script begins with a literal `export const meta`; it reads no file and no clock; it takes its
+  inputs in `args`; it calls `agent(prompt, opts)`, where `opts` may name a `schema` the agent's
+  return must match and an `agentType`, `parallel()`, a barrier, and `pipeline()`; a top-level
+  `return` gives its result. The tool runs only on an explicit opt-in, and a skill whose
+  instructions call it counts as one. Source: the tool's description and its authoring reference,
+  read in this session.
+- **the stages**: drafts, clusters and repairs, the three invocations of the workflow script.
 - **the owner's budget**: the number of agents the owner names when asking for the run; the lens
   table's total, 16, when the owner names none.
 
@@ -280,8 +302,9 @@ Weighed, from the owner's words, round 1: "the budget should be around 15 subage
 
 ## Threads
 
-Every thread but #checker-rules-lens was proposed by the agent in round 1 and approved by the owner
-in round 2; #checker-rules-lens was proposed by the owner in round 4 and approved in round 5.
+The first seven threads were proposed by the agent in round 1 and approved by the owner in round 2;
+#checker-rules-lens was proposed by the owner in round 4 and approved in round 5. The last six were
+raised in round 7 and closed in rounds 8 and 9, each as its entry says.
 
 ### The audit's method is generic, and each axis gives its own dispatch `##audit-method-per-axis`
 
@@ -344,8 +367,8 @@ Closed, round 5: "checker-rules-lens approved, go ahead".
 
 ### A finding is repaired at the cause that produced it, not at its site `##root-cause-repair`
 
-Proposed by the owner in round 7, shaped by the agent in its reply: "search for root causes, not
-local fixes". Arguments: `argument@agentic-workflow-axis@a47`, `argument@agentic-workflow-axis@a48`,
+Proposed by the owner in round 7: "search for root causes, not local fixes"; shaped by the agent in
+its reply, which named the four kinds of cause. Arguments: `argument@agentic-workflow-axis@a47`, `argument@agentic-workflow-axis@a48`,
 `argument@agentic-workflow-axis@a49`. Shape: Decided design, "The repair by cause". Harvest: a head.
 Closed, round 8: "For the other threads, I agree with your positions."
 
@@ -353,9 +376,9 @@ Closed, round 8: "For the other threads, I agree with your positions."
 
 Proposed by the owner in round 7: "try to centralize instructions that pertain to the same moment or
 type of action (like we did for the decision record rules)". Argument:
-`argument@agentic-workflow-axis@a50`. Shape: none in this branch; the next run's work, per
-`issue@agent-skills@the-agentic-workflow-audit-s-next-run`. Harvest: a head when that run lands it.
-Closed, round 8, as above.
+`argument@agentic-workflow-axis@a50`. Shape: a repair kind of "The repair by cause"; the homes
+themselves are what step 5 lands, from the causes it confirms, per round 10. Harvest: a head, if a
+home lands. Closed, round 8, as above.
 
 ### A second phase of agents clusters the confirmed findings by cause and proposes a repair per cause `##audit-synthesis-phase`
 
@@ -380,14 +403,15 @@ is the correct metric here ... It should probably apply to "more instructions" r
 words. Though monitoring net word count change produced by this process is still interesting, and
 should at least be done and recorded in commit messages of audit repairs." Arguments:
 `argument@agentic-workflow-axis@a54`, `argument@agentic-workflow-axis@a55`. Shape: Decided design,
-"The repair by cause". Harvest: within the head of `thread@agentic-workflow-axis@root-cause-repair`.
+"The repair by cause". Harvest: a head of its own, per D20.
 Closed, round 9: "audit-net-growth approved with that shape, proceed as proposed."
 
 ### Pass 2's additions that only spell out a judgement agents already make are reverted `##revisit-pass-2`
 
 Proposed by the agent in round 7 from the owner's observation after pass 2. Argument:
-`argument@agentic-workflow-axis@a56`. Shape: none in this branch; the next run's work. Harvest:
-none; the commits of that run. Closed, round 8.
+`argument@agentic-workflow-axis@a56`. Shape: step 5 gives the clusters stage pass 2's additions the
+owner observed as judged correctly already, each as a finding of the kind "a rule written for one
+interaction", per round 10. Harvest: none; step 5's commits. Closed, round 8.
 
 ### The axis's first run is in the branch that builds it `##workflow-axis-first-run`
 
@@ -699,10 +723,11 @@ to give rise to incompatible interactions, simply due to the shear amount of rul
 need to define a more thorough method to repair incompatible and contradicting instructions.
 Solving them locally, as the current audit method encourages, is not viable."
 
-### The run measured it: pass 3 found about 25 interactions among pass 2's 67 edits `##a48`
+### The run measured it: pass 3 found about 25 interactions between the rules passes 1 and 2 added `##a48`
 
-Round 7, agent. Bears on `thread@agentic-workflow-axis@root-cause-repair`. Pass 2 applied 37 edits
-and 30 rulings; pass 3's lenses found about 25 findings in their interactions, and the
+Round 7, agent. Bears on `thread@agentic-workflow-axis@root-cause-repair`. Passes 1 and 2 applied 63
+findings and the owner ruled 57; pass 3's lenses found about 25 findings in the interactions of the
+rules they added, by the auditors' returns before the sort, and the
 contradiction lens "no strict contradiction ... that is not on the kept list or recorded".
 `design@agent-skills@capabilities-not-structure` records the same effect: "34 edits produced 10
 interaction defects".
@@ -733,8 +758,11 @@ much better handled by a dynamic workflow".
 
 Round 7, agent. Bears on `thread@agentic-workflow-axis@audit-harness`. `grep -i "harness\|provider\|claude
 code"` over every goals home returns nothing; `goal@agent-skills@installed-text-works-anywhere`
-says "a project of any language and layout"; the one claim is
-`design@agent-skills@audit-method`'s "so it runs under any harness".
+says "a project of any language and layout". The one sentence that binds the audit to any harness
+is `design@agent-skills@audit-method`'s "so it runs under any harness". Other records keep a second
+provider open as a design target, `design@knowledge-architect@binary-bundles-workflow`,
+`design@core@agents-table` and `issue@core@configuration-for-several-agent-providers`: a script
+used where the tool exists, beside a prose method, keeps it open.
 
 ### A workflow fixes the order and the inputs of every agent, and the owner uses Claude Code only `##a53`
 
@@ -997,58 +1025,79 @@ The nearest rival, one agent per lens, loses on `argument@agentic-workflow-axis@
 `thread@agentic-workflow-axis@audit-net-growth`. The axis's pass, from point 5 of the generic method
 on:
 
-1. **The sort** confirms each finding by a reading, as today, and writes the confirmed findings, one
-   line each with the path of its draft, into one file of the run's scratch directory.
-2. **The cluster.** Two workflow auditors, briefed with the role "cluster", each read the file, every
-   draft it names, and the whole corpus, and group the findings by cause: one cause per group, its
-   mechanism in one sentence, the moment or the kind of act it bears on, and the texts that state an
-   instruction about that moment. A finding may stand alone. The two run independently, per D16; the
-   session merges their groupings, and where they differ it reads the findings concerned and chooses.
-3. **The repair proposals.** One workflow auditor per cause, briefed with the role "repair", reads
-   the cause, its drafts and the whole corpus, and proposes one repair for the cause, never one per
-   finding. It tries, in this order: remove the structure that produced the conflict; gather the
-   instructions of one moment into one home and point to it from the others, per
-   `thread@agentic-workflow-axis@moment-homes`; replace a restatement by a pointer; delete a rule
-   narrower than the judgement it replaces. It adds an instruction only where none of these closes
-   the cause, and says why. Its proposal states the edits, the findings each closes, and the count
-   of instructions it adds and removes, an instruction being a sentence that tells an agent to do or
-   not to do an act, or that sets a condition on one.
-4. **The confirmation.** The session reads each proposal against its cause and the corpus, as point
-   5 of the generic method reads a draft. A proposal found wrong is corrected or sent back to a
-   repair agent.
-5. **The owner list** holds one item per cause, under its label `F<n>`: the cause, its findings,
-   the repair, its instruction count, and a default. A repair is applied without the owner's word
-   only where today's outcome table applies it: it changes no instruction. **When the repairs of a
-   pass, taken together, add more instructions than they remove, the list says so first, with the
-   net figure**, and the owner rules on the pass's growth before any of it is applied.
-6. **Application** as point 7 of the generic method. The commit message of each pass gives the
-   corpus's word count before and after, measured with `wc -w` over the corpus's files, and its
-   instruction count from the proposals, added and removed.
+1. **The sort** confirms each finding by a reading, as today, and writes the confirmed-findings file:
+   one line per finding, its label, its tag, and the path of its draft.
+2. **The cluster.** Cluster agents, two by default, each read the file, every draft it names and the
+   whole corpus, and group the findings by cause. A cause is one of these:
+   - **two homes for one moment**: instructions about one moment or one kind of act stated in more
+     than one text;
+   - **a structure the work did not need**: a fixed sequence, count or mapping that another
+     instruction needs to vary;
+   - **a restatement that drifted from its home**;
+   - **a rule written for one interaction**: a narrow rule where judgement already decides.
 
-The finding classes, the tags and today's outcome table stand: the table now decides a cause's
-outcome from the most constraining outcome among the edits of its repair.
+   A finding that fits none stands alone. Each group names its kind, its mechanism in one sentence,
+   and the texts that state an instruction about its moment. The agents run independently; the
+   session merges their groupings into the causes file, one section per cause, and where they
+   differ it reads the findings concerned and chooses. The session may merge or split causes.
+3. **The repair proposals.** One repair agent per cause by default reads the cause, its drafts and
+   the whole corpus, and proposes one repair for the cause, never one per finding. The repair by
+   kind: merge the homes into one and point to it from the others, per
+   `thread@agentic-workflow-axis@moment-homes`; remove the structure; bring the restatement back to
+   a pointer; delete the narrow rule and leave the case to judgement. It adds an instruction only
+   where none of these closes the cause, and says why. Its proposal states the edits, the findings
+   each closes, and the instructions it adds and removes, counted. In a project that is not the
+   workflow's upstream, a cause whose findings are on both sides is repaired in two parts: the
+   installed side is sent upstream, the project side takes its outcome here.
+4. **The confirmation.** The session reads each proposal against its cause and the corpus, as point
+   5 of the generic method reads a draft. A proposal found wrong is corrected, or sent back to a
+   repair agent.
+5. **The owner list** holds one item per cause, under its label `F<n>`, with the labels of its
+   findings, the repair, its instruction count and a default. A cause whose repair the axis's
+   outcome table lists as applied in the branch is applied without the owner's word; any other goes
+   on the list. Each finding takes the outcome of its cause's repair. **When the repairs of a pass,
+   taken together, add more instructions than they remove, the list says so first, with the net
+   figure**, and the owner rules on the pass's growth before any repair of the pass is applied.
+6. **Application** as point 7 of the generic method. The commit message of each pass gives the
+   corpus's word count before and after, measured with `wc -w` over the corpus's files, and the
+   instructions added and removed, from the proposals.
+
+The finding classes and the tags stand.
 
 ### The workflow script
 
 `thread@agentic-workflow-axis@audit-harness`. The axis's section of the audit skill holds one script
 for the Workflow tool, in a fenced block, and says: where the harness offers that tool, the session
-runs the script; elsewhere it dispatches the same agents with the same briefs, in the same order,
-as the section's prose says. The prose is the method; the script is a means to run it.
+passes the block to it inline; elsewhere it dispatches the same agents with the same prompts, in the
+same order, as the section's prose says. The prose is the method; the script is a means to run it.
 
-The script takes its inputs in `args`, since a script reads no file: the commit audited, the scratch
-root, the stage, the lens counts or the file the stage reads, the kept-list file. Three stages, one
-invocation each, because a reading of the session sits between each two:
+**The agents**, per D16. The lens agents are `agent@knowledge-architect-workflow-auditor`, by
+`agentType`. The cluster and repair agents are general-purpose agents whose prompts are written in
+the script block, their one home: a prompt passed at dispatch is read from the skill as the session
+finds it, where an agent definition is the one the harness registered at the session's start. The
+prose path dispatches the same prompts, read from the block.
 
-- **drafts**: every lens agent of the dispatch, in parallel, with
-  `agentType: 'knowledge-architect-workflow-auditor'`, each returning by schema the paths of its
-  drafts. The session's sort follows.
-- **clusters**: the two cluster agents, in parallel, on the confirmed-findings file, each returning
-  its grouping by schema. The session's merge follows, written to a causes file.
-- **repairs**: one repair agent per cause of the causes file, in parallel, each returning its
-  proposal by schema. The session's confirmation follows.
+**Inputs**, all in `args`, since a script reads no file: the commit audited; the stage; for drafts,
+one entry per lens agent with its lens, its L2 group where it has one, its scratch directory and its
+kept-list path; for clusters, the confirmed-findings file and one scratch directory per cluster
+agent; for repairs, the causes file and one entry per cause with its id and its scratch directory.
+The session writes each kept list into each agent's scratch directory, per point 8 of the generic
+method, before the stage.
 
-The script avoids backticks and `@` in its strings, since the checker reads a fenced block as
-prose. Step 4 runs the clusters and repairs stages on pass 3's findings, per D17.
+**Three stages, one invocation each**, because a reading of the session sits between each two:
+
+- **drafts**: the lens agents, in parallel. Each writes its drafts and returns its text, as the
+  auditor's return says. The session's sort follows.
+- **clusters**: the cluster agents, in parallel, each writing its grouping to its scratch directory
+  and returning its path by schema. The session's merge follows.
+- **repairs**: the repair agents, in parallel, each writing its proposal and returning its path by
+  schema. The session's confirmation follows.
+
+**Its text in a fenced block.** The checker reads a fenced block as prose: a backticked span in it is
+a reference candidate, so the script quotes its strings with single quotes, never with backticks.
+The build of content/ fails on a `%%` line in a fenced block and renders `{{…}}` placeholders, so the
+script holds neither. Step 4 checks it with `node --check` on the block wrapped in an async
+function, since a top-level `return` fails a bare check.
 
 ## Mapping tables
 
@@ -1087,6 +1136,22 @@ prose. Step 4 runs the clusters and repairs stages on pass 3's findings, per D17
   `argument@agentic-workflow-axis@a29` and the owner's `argument@agentic-workflow-axis@a34`.
 - **The first run in a branch of its own**: lost to
   `thread@agentic-workflow-axis@workflow-axis-first-run`, on `argument@agentic-workflow-axis@a31`.
+
+- **One repair per finding, at its site**: lost to
+  `thread@agentic-workflow-axis@root-cause-repair`, on `argument@agentic-workflow-axis@a48`.
+- **Moments stated across texts, their restatements policed by L5**: lost to
+  `thread@agentic-workflow-axis@moment-homes`: L5 finds a drift only after it happens; one home
+  leaves nothing to drift.
+- **The session synthesises the findings alone**: lost to
+  `thread@agentic-workflow-axis@audit-synthesis-phase`, on `argument@agentic-workflow-axis@a51`.
+- **A skill written for the Workflow tool only**: lost to
+  `thread@agentic-workflow-axis@audit-harness`: it fails in every other harness, and adds to
+  `issue@core@configuration-for-several-agent-providers` a dependency no text-only skill has, for a
+  gain the script beside the prose already gives.
+- **A bound on words**: lost to `thread@agentic-workflow-axis@audit-net-growth`, on
+  `argument@agentic-workflow-axis@a54`.
+- **No bound on a pass's growth**: lost to `thread@agentic-workflow-axis@audit-net-growth`: passes 1
+  and 2 turned most findings into added rules, which pass 3 then found interacting.
 
 The recorded rejected alternative "An audit method with no calibration and no re-check" stays
 rejected. At the harvest it names both heads it lost to: the generic method, which keeps the
@@ -1138,7 +1203,7 @@ with it and stays true. Fires when one is missing. Response: restore it before t
 ### The shipped text the branch writes cites no entry of this repository `##shipped-text-cites-no-entry`
 
 AC3. Guards `thread@agentic-workflow-axis@workflow-auditor-agent` and
-`thread@agentic-workflow-axis@audit-method-per-axis`. Judged at steps 1, 2 and 3, per D7, on every
+`thread@agentic-workflow-axis@audit-method-per-axis`. Judged at steps 1 to 6, per D7, on every
 line the branch adds under `path@agent-skills@content/` and `path@agent-skills@snippets/`. The
 instrument:
 ``git diff origin/main -- crates/agent-skills/content crates/agent-skills/snippets | grep '^+' | grep -v '^+%%' | grep -E '`(design|issue|tripwire|goal|spec|milestone)@[a-z0-9-]+@[a-z0-9]'``
@@ -1148,7 +1213,8 @@ not match; over the whole shipped text at the spec's revision it prints nothing.
 
 ### The confirmed findings and the severe ones fall from each pass to the next `##passes-fall`
 
-AC4, proposed by the owner in round 3; its wording is D1, ruled in round 4. Guards
+AC4, proposed by the owner in round 3; its wording is D1, ruled in round 4. It fired on passes 1 to
+3, per "AC4's firing on the first run", and is judged again at step 6. Guards
 `thread@agentic-workflow-axis@workflow-axis-lenses` and
 `thread@agentic-workflow-axis@workflow-axis-finding-standard`. Judged at step 3, read as an
 observation of real use per D2. The instrument: the count of confirmed findings of each pass, and
@@ -1161,20 +1227,23 @@ owner's judgement. Response: before the merge, reopen
 
 ## AC4's firing on the first run
 
-Pass 1 confirmed 54 findings, pass 2 70, and pass 3 about 70 before the owner stopped it; the severe
-ones were not counted, since the owner judged in round 7 that no comparable score of severity can
-be built ("I think it would be very hard to find a proper way to score severity for comparison"),
-and judged pass 2's severity "very low". AC4 fired on the count. Its response was taken before the
-merge: the owner read the cause in round 7, and the threads
-`thread@agentic-workflow-axis@root-cause-repair`, `thread@agentic-workflow-axis@moment-homes`,
-`thread@agentic-workflow-axis@audit-synthesis-phase`, `thread@agentic-workflow-axis@audit-harness`,
-`thread@agentic-workflow-axis@audit-net-growth` and `thread@agentic-workflow-axis@revisit-pass-2`
-reopen the lenses' and the finding standard's repair side rather than the lenses themselves: the
-lenses found what the passes left, and the repairs made it. AC4 is judged again on the next run.
+| pass | confirmed | severe, to the owner list | source |
+| --- | --- | --- | --- |
+| 1 | 54 | 27 | the pass-1 commit's message |
+| 2 | 70 | 30 | the pass-2 commit's message |
+| 3 | about 70 | about 35 | the pass-3 commit's message, from the auditors' returns before a full reading |
+
+Neither count fell, so AC4 fired. During pass 2's sort the owner had written: "I think it would be
+very hard to find a proper way to score severity for comparison. But here, I'm not sure we should
+consider AC4 triggered." The response was taken before the merge: the owner read the cause in round
+7, "Solving them locally, as the current audit method encourages, is not viable", and the six
+threads of rounds 7 to 9 reopen the repair side of the method. The lenses and the finding standard
+stand, since the lenses found what the passes left, and the repairs made it. Per round 10, AC4 is
+judged again in this branch, at step 6: pass 4 against pass 3, whose drafts step 5 sorts.
 
 ## Implementation sequence
 
-Every step that changes the installed text, steps 1, 2 and 3, runs
+Every step that changes the installed text, steps 1 to 6, runs
 `cargo klarch install-agent-skills` and commits the installed copies with their source, passes the
 edit tests of `path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", read with
 `design@agent-skills@additions-need-real-use` as D4 and D11 rewrite it, and adds the
@@ -1200,13 +1269,20 @@ CHANGELOG.md entries `design@knowledge-architect@changelog-entries` owes, then r
    found by the run amend the section or the agent in their own commits; a repair of a W finding is
    an edit of installed text. Judges AC3 and AC4. Fails alone on: the counts of AC4.
 4. **The repair by cause.** The axis's section rewritten per "The repair by cause" and "The
-   workflow script"; the workflow auditor gains the roles "cluster" and "repair", per D16; the
-   script's text checked with `node --check` on the extracted block. Then, per D17, the clusters and
-   repairs stages run on pass 3's confirmed findings, nothing applied, and the causes and proposals
-   they return are written into `issue@agent-skills@the-agentic-workflow-audit-s-next-run` as that
-   run's starting point. Judges AC3. Fails alone on: a script that does not parse, or a stage whose
-   agents cannot fill their brief from the section.
-5. **The harvest.** The rows of "Harvest"; the spec deleted.
+   workflow script", the script in its fenced block; the workflow auditor's description names the
+   script's drafts stage. The script checked with `node --check`, wrapped as "The workflow script"
+   says. Judges AC3. Fails alone on: a script that does not parse.
+5. **The repair of passes 2 and 3**, per round 10. The session sorts pass 3's drafts, which this
+   session holds in its scratch directory, and writes the confirmed-findings file: pass 3's
+   confirmed findings, and pass 2's additions per `thread@agentic-workflow-axis@revisit-pass-2`. The
+   clusters and repairs stages run through the script; the owner list of causes waits for the
+   owner's answers; the repairs are applied. Its commit closes
+   `issue@agent-skills@the-agentic-workflow-audit-s-next-run`, whose work it does. Judges AC3.
+   Fails alone on: a stage whose agents cannot do their brief from the section's prompts.
+6. **The fourth pass**, per round 10: the axis runs again on this repository through the script, all
+   three stages, as real use before the merge. Its commit message carries the counts AC4 reads.
+   Judges AC3 and AC4. Fails alone on: the counts of AC4.
+7. **The harvest.** The rows of "Harvest"; the spec deleted.
 
 The branch is reviewed once, before the merge, on the axes of the generic method's review, which
 include the decision-record, routing and standing-state axes the harvest owes, and on spec
@@ -1218,11 +1294,15 @@ before.
 - 1 before 2: the new section is written against the generic method.
 - 2 before 3: the run dispatches the agent the section describes.
 - 3 before 4: the repair by cause answers AC4's firing on the run.
-- 4 before 5: the harvest records the decisions after the method is built and tried.
+- 4 before 5: passes 2 and 3 are repaired with the method built at step 4.
+- 5 before 6: the fourth pass reads the corpus the repairs left, so its counts judge them.
+- 6 before 7: the harvest records the decisions after the method is built and used.
 
 ## Defaults awaiting the owner
 
-D16 and D17 await the owner. D1 to D7 were ruled in round 4, on the review message: "All defaults
+None awaits the owner. D16 to D21 were ruled in round 10, on the third review message: "I agree with
+your defaults, as long as they align with that plan.", the plan being steps 4 to 6; D17 is replaced
+by that plan. D1 to D7 were ruled in round 4, on the review message: "All defaults
 approved." D8 to D15 were ruled in round 6, on the re-review message, the agent's message that opens
 "Process slip, already contained": "All defaults approved." Each is kept below, marked as ruled, since the sections and the harvest rows it shaped
 cite it by its label.
@@ -1318,17 +1398,39 @@ cite it by its label.
   retrospective's findings". Default: its row widens to the findings on the installed workflow, in a
   retrospective's file and in an audit's upstream file, since both go to the same receiver, which
   cites each by its file's stem.
-- **D16**, on `thread@agentic-workflow-axis@audit-synthesis-phase`: which agent clusters and
-  proposes repairs, and how many. Default: the workflow auditor, with two roles beside the lens,
-  "cluster" and "repair", named by its brief, so no agent is added to the installed set, which the
-  owner wanted kept small in round 1; two cluster agents, independent, since agents dispatched
-  together do not read alike and a merge of two groupings shows where a cause is unsure; one repair
-  agent per cause.
-- **D17**, on `thread@agentic-workflow-axis@audit-harness`: whether this branch tries the new
-  stages. Default: yes, the clusters and repairs stages on pass 3's confirmed findings, the ones
-  `issue@agent-skills@the-agentic-workflow-audit-s-next-run` lists, applying nothing: the script is
-  then run once before it ships, and the next run starts from causes rather than from a list the
-  session grouped. Cost: two cluster agents and one repair agent per cause, about ten.
+- **D16**, ruled, on `thread@agentic-workflow-axis@audit-synthesis-phase`: which agents cluster
+  and propose repairs, and how many. The agent's round-8 reply left it open: "Either the workflow
+  auditor gains two more briefs, or the script carries their prompts." In round 7 it had argued:
+  "the prompt goes in the script, not in a definition the harness registered at session start".
+  Default: the script block carries the cluster and repair prompts, and the prose path dispatches
+  general-purpose agents with them; the lens agents stay the workflow auditor. Two cluster agents
+  and one repair agent per cause are defaults the session may vary within the owner's budget, since
+  `goal@agent-skills@installed-text-leaves-room-to-judge` refuses a fixed count another instruction
+  needs to vary. Outside the upstream project, a cause whose findings are on both sides is repaired
+  in two parts.
+- **D17**, replaced in round 10. Its default ran the clusters and repairs stages on pass 3, applying
+  nothing; the design-conformance review found it built to observe agents follow new text, which
+  `goal@knowledge-architect@the-workflow-improves-through-real-use` refuses. The owner's plan: "After
+  updating the spec and implementing the workflow, we'll fix the findings from run 2 and 3 by
+  following its principles. Then, we'll run a fourth pass using the dynamic workflow, before
+  shipping it, on the project (a real usage)." Steps 5 and 6.
+- **D18**, ruled, on AC4: what becomes of it once the spec leaves. Default: AC4 is judged at step 6;
+  at the harvest it is proposed to the owner as a tripwire on the head of
+  `thread@agentic-workflow-axis@root-cause-repair`, firing when the confirmed findings or the severe
+  ones do not fall from one pass to the next of a run. The agent's two round-7 proposals the owner
+  did not rule, recording the mechanism "as a reason not to run many passes" and "rewording AC4 to
+  judge severity by your reading", are dropped: the repair by cause answers the first, and the
+  owner-list count stays the measure of severity.
+- **D19**, ruled, on `thread@agentic-workflow-axis@root-cause-repair`: the kinds of cause the
+  agent's round-7 reply listed, "A cause is one of these:", restored as a closed list; a finding
+  that fits none stands alone.
+- **D20**, ruled, on `thread@agentic-workflow-axis@audit-net-growth`: it answers another question
+  than the repair by cause and loses to another rival, a bound on words, so it takes a head of its
+  own, per `design@agent-skills@one-decision-per-head`. The synthesis phase is how the repair by
+  cause is delivered, and stays in its head. Each finding takes the outcome of its cause's repair,
+  so "Every finding takes exactly one outcome" holds unchanged.
+- **D21**, ruled, on `thread@agentic-workflow-axis@audit-net-growth`: the definition of an
+  instruction restored to the round-8 wording, under Names.
 - Listed, no ruling needed: a draft names a finding of another lens met on the way, with the
   finding's lens, an obligation step 2 added to the auditor so that no finding met is lost and T4
   can count drift.
@@ -1351,14 +1453,16 @@ auditor each state its reason, two texts. The harvest confirms each against the 
 | `thread@agentic-workflow-axis@workflow-axis-first-run` | none: carried by the run's commits |
 | T1, T2, T3, T4 | `path@agent-skills@docs/tripwires.md`, each naming the head of the thread it stresses, with its label |
 | `tripwire@agent-skills@audit-defaults-overruled` | its premise rewritten to the sort, and the calibration where an axis has one |
-| AC1 to AC4 | reported in the landing commit; one that recurs is proposed as a tripwire |
+| AC1 to AC4 | reported in the landing commit; AC4 proposed to the owner as a tripwire, per D18 |
 | "An audit method with no calibration and no re-check" | names both heads it lost to |
 | every other item of "Losing alternatives" | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit |
 | D12 | `design@knowledge-architect@retrospective-findings-stay-here` widened to an audit's findings on the installed text; its restatement in `instructions@repository-skills`, written at step 2 |
 | D15 | `design@agent-skills@ruled-items-labelled`, its `W` row widened |
-| `thread@agentic-workflow-axis@root-cause-repair` | a head, holding `thread@agentic-workflow-axis@audit-synthesis-phase` and `thread@agentic-workflow-axis@audit-net-growth`: two texts state it, the axis's section and the workflow auditor's roles |
+| `thread@agentic-workflow-axis@root-cause-repair` | a head, holding `thread@agentic-workflow-axis@audit-synthesis-phase`: two texts state it, the axis's prose and its script block |
+| `thread@agentic-workflow-axis@audit-net-growth` | a head, per D20 |
 | `thread@agentic-workflow-axis@audit-harness` | `design@agent-skills@audit-method` loses "so it runs under any harness"; a head, by entry test 3, since it turns on the Workflow tool's behaviour |
-| `thread@agentic-workflow-axis@moment-homes`, `thread@agentic-workflow-axis@revisit-pass-2` | none: `issue@agent-skills@the-agentic-workflow-audit-s-next-run` carries them |
+| `thread@agentic-workflow-axis@moment-homes` | a head, if step 5 lands a home |
+| `thread@agentic-workflow-axis@revisit-pass-2` | none: step 5's commits |
 | `issue@agent-skills@audit-axes-beyond-the-design-record` | rewritten to the axes it still holds; its open lesson, the owner's reading of a sample of the verdicts, stays, since this axis does not adopt it |
 
 ## Later consequences
