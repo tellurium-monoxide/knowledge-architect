@@ -51,6 +51,9 @@ subsection is omitted.
   `skill@knowledge-architect-decision-recording@ruled-tripwires`, the one home of when and where any
   tripwire the owner ruled on is written, a parked thread's included. A project's text that cites
   the old section cites the new one.
+- `agent-skills`, patch: the project-audit skill's section `record-of-a-run` becomes
+  `skill@knowledge-architect-project-audit@record-of-an-audit`, since a run is now one pass of an
+  axis's saved workflow. A project's text that cites the old section cites the new one.
 
 ### New features
 
@@ -74,11 +77,14 @@ subsection is omitted.
   axis, the agentic-workflow axis, reads every instruction the harness delivers, the root CLAUDE.md,
   the installed skills, agents and primer, and the project's own skills and agents, as one whole,
   for instructions a session cannot follow; the agent `agent@knowledge-architect-workflow-auditor`
-  drafts its findings through seven lenses, each agent reading the whole corpus, and the findings on
-  the installed text go into a file for the workflow's maintainers. The confirmed findings are
+  drafts its findings through eight lenses, each agent reading the whole corpus, one of them
+  comparing what the reviews and the audits count as a finding, and the findings on the installed
+  text go into a file for the workflow's maintainers. The confirmed findings are
   grouped by cause and repaired by cause, a pass whose repairs add more instructions than they
-  remove goes to the owner with its net figure, and a saved workflow for Claude Code's Workflow
-  tool, `knowledge-architect-agentic-workflow-audit`, runs the stages where the tool is available.
+  remove goes to the owner with its net figure. A pass is one run of a saved workflow for Claude
+  Code's Workflow tool, `knowledge-architect-agentic-workflow-audit`: it drafts, verifies the drafts
+  adversarially, clusters the findings by cause, proposes the repairs and writes a report the
+  session verifies before the owner list; a session without the tool runs its steps by hand.
 - `agent-skills`, minor: the shipped set holds saved workflows of Claude Code's Workflow tool,
   installed as `.claude/workflows/knowledge-architect-<name>.js`; each declares its installed name
   as the name the harness calls it by.
@@ -136,8 +142,7 @@ subsection is omitted.
 - `agent-skills`, patch: before diagnosing a problem, a session lists the issues and the tripwires
   of every anchor.
 - `agent-skills`, patch: a project audit stops on the owner's judgement, and a pass whose count of
-  violations left does not fall goes to the owner as a question; a budget too small for the
-  agentic-workflow axis's dispatch is said to the owner.
+  violations left does not fall goes to the owner as a question.
 - `agent-skills`, patch: the review before a merge is the last review of a branch, whichever
   activity's skill dispatched it, and there the transcript reviewer runs only alone and last; an
   activity's skill may defer the transcript axis of an earlier review to it; every subagent that

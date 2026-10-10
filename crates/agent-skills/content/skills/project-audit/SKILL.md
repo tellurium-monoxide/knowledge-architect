@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-project-audit
-description: MUST use when the owner asks to audit one aspect of the whole project rather than the work of one branch; when a pin move crosses a version whose changelog has a Migration entry citing an axis of this skill; and when an adopting project's existing documents have been moved into the workflow's homes. Covers what a project audit is, its method (the corpus, a dispatch each axis gives, drafts in files, the sort, one list for the owner, the application, a fresh re-check, the review), the outcome of each kind of finding, where the record of a run goes, and one section per axis: the design-record axis, which re-applies the rules on design heads and rejected alternatives to every entry, and the agentic-workflow axis, which reads every instruction the harness delivers as one whole for instructions a session cannot follow.
+description: MUST use when the owner asks to audit one aspect of the whole project rather than the work of one branch; when a pin move crosses a version whose changelog has a Migration entry citing an axis of this skill; and when an adopting project's existing documents have been moved into the workflow's homes. Covers what a project audit is, its method (an axis's saved workflow, whose one run per pass delivers a report the session verifies, or, for an axis with none, the corpus, a dispatch each axis gives, drafts in files and the sort; then one list for the owner, the application, the re-check, the review), the outcome of each kind of finding, where the record of an audit goes, and one section per axis: the design-record axis, which re-applies the rules on design heads and rejected alternatives to every entry, and the agentic-workflow axis, which reads every instruction the harness delivers as one whole for instructions a session cannot follow.
 ---
 
 # Auditing a project
@@ -33,7 +33,9 @@ project, not a verdict on one branch.
 | **draft** | one agent's file for one entry or for one finding, as the axis says: the verdict or the finding, the evidence, a proposed edit and a proposed outcome |
 | **the owner list** | one message to the owner holding every finding that needs the owner's word |
 | **the re-check** | fresh agents of the axis, dispatched as its first dispatch was, after the edits |
-| **pass** | one round of the method: the drafts, the sort, the owner list, the application. The re-check's drafts start the next pass |
+| **pass** | one round of the method. For an axis with a saved workflow: one run of it, the session's verification of its report, the owner list and the application. For an axis with none: the drafts, the sort, the owner list and the application. The re-check starts the next pass |
+| **run** | one invocation of an axis's saved workflow, which covers one pass |
+| **audit** | the passes on one axis, from the first until the owner stops them |
 
 ## When an audit runs {{slug:when-an-audit-runs}}
 
@@ -52,16 +54,27 @@ An audit runs in a branch of its own, unless the owner gives it to another work'
 ## The method {{slug:audit-method}}
 
 Each point leaves judgement to the session, and an axis's section adjusts it where its corpus
-needs. The points hold for every axis; the dispatch is the axis's own, in its section.
+needs.
+
+**An axis with a saved workflow** runs each pass as one run of it, named in its section, with the
+`args` its section lists. The run dispatches every agent of the pass, verifies their drafts and
+delivers a report; the session reads nothing between its steps. The session then verifies the
+report: it reads it whole, every repair proposal in full, every finding the report marks as bearing
+on a ruling of the owner or as plausible, against its draft, and a sample of the refuted drafts it
+chooses. Then come points 6, 7 and 9 below, and the next run is the re-check of point 8. A session
+whose harness does not list the workflow dispatches its steps by hand, in the script's order, with
+the script's prompts, read from the script.
+
+**An axis with no saved workflow** runs the points below. Points 3, 6, 7, 8 and 9 hold for both.
 
 1. **The corpus.** The axis's section names its corpus and what is read beside it.
 2. **The dispatch.** Dispatch the axis's agents as its section says, all in parallel, each with a
    scratch directory and a worktree of its own, as
    `skill@knowledge-architect-review@review-invariants` says.
-3. **Pre-commitments.** An axis that measures, one whose run yields a figure a conclusion rests on,
-   states before the run which figure would show which conclusion, and the owner sees them before
-   the run. An axis that only applies rules owes none, and the count of violations left per pass,
-   which point 8 reads, makes no axis one that measures.
+3. **Pre-commitments.** An axis that measures, one whose audit yields a figure a conclusion rests
+   on, states before the audit which figure would show which conclusion, and the owner sees them
+   before the audit. An axis that only applies rules owes none, and the count of violations left
+   per pass, which point 8 reads, makes no axis one that measures.
 4. **Drafts.** Each agent writes its drafts in its scratch directory and edits nothing else.
    Results stay in the files: the session reads the drafts, not a summary of them.
 5. **The sort.** Read every draft whose proposed outcome is not "nothing" against what it cites and
@@ -84,8 +97,8 @@ needs. The points hold for every axis; the dispatch is the axis's own, in its se
    `skill@knowledge-architect-review@review-invariants` says. A finding of the re-check that a
    reading confirms, that is not on the kept list, and that no issue entry records, is a violation
    left, whether a draft missed it or an edit made it: repair it or put it to the owner. The
-   re-check's drafts start the next pass, from point 5. The run stops when the owner judges what is
-   left small enough. The violations left
+   re-check's drafts start the next pass, from point 5. The audit stops when the owner judges what
+   is left small enough. The violations left
    then take their outcomes, as in points 5 to 7, and no re-check follows; one the owner does not
    rule on becomes an issue entry, as a deferred item does. The count of violations left is expected
    to fall from one pass to the next; a pass where it does not goes to the owner as a question,
@@ -108,21 +121,23 @@ Every finding takes exactly one outcome. A finding that fits no named case goes 
 
 A finding outside the axis takes the first case of `primer@met-outside-the-task` that applies.
 
-## The record of a run {{slug:record-of-a-run}}
+## The record of an audit {{slug:record-of-an-audit}}
 
 %% The record is the commit messages, as a measurement is routed to the commit that took it; the
 %% rival, a report document, is the open question of
 %% `issue@agent-skills@audit-axes-beyond-the-design-record` for an axis whose fixes are code.
-**The commit messages are the record.** Each commit of a run says what was audited, at which
+**The commit messages are the record.** Each commit of an audit says what was audited, at which
 commit, named by its subject since a rebase merge gives the audit branch's commits new SHAs, how it
 was dispatched, the calibration reading settled where the axis has one, and the outcome of every
 finding: applied, ruled by the owner under its label, opened as an issue with its id, or found to
-need nothing. A figure the run measured goes there too. A finding whose only record is a scratch
-file, or a plan document that will leave, is lost when that file goes.
+need nothing. A figure the audit measured goes there too, and each pass's message gives the count of
+confirmed findings and of those that went on the owner list, so that the passes show whether the
+audit converges. A finding whose only record is a scratch file, a run's report, or a plan document
+that will leave, is lost when that file goes.
 
-%% The case of a run that changes no file follows
+%% The case of an audit that changes no file follows
 %% `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
-A run that changes no file leaves no commit that changes a file, and a merge that drops such a
+An audit that changes no file leaves no commit that changes a file, and a merge that drops such a
 commit, as a rebase merge does, would drop its record. Its record is then the report to the
 owner.
 
@@ -152,7 +167,7 @@ texts. A head found false of the code gets an issue entry, kind `defect`.
 - **Calibration.** Pick a shared sample of about five entries from different Components, and add it
   to every group, beyond its bound. Agents dispatched together do not read a rule alike. When the
   drafts are in, compare the verdicts on the sample. Where they differ and one follows the rule's
-  text, settle the reading, state it in the run's commit message, and read again yourself, in every
+  text, settle the reading, state it in the pass's commit message, and read again yourself, in every
   group, the drafts the difference bears on, before any draft is sorted. Where the rule's text admits
   both readings, the difference goes on the owner list.
 - **The brief.** One agent per group writes one draft per entry. Its brief names the commit
@@ -175,8 +190,8 @@ texts. A head found false of the code gets an issue entry, kind `defect`.
 | put to the owner, on the owner list | a widening of what the owner's words approved, such as a title moved from the members the owner named to the rule; the removal of a head that fails every entry test; the removal of a rejected alternative that fails every recording test; a ground that is the owner's words; a head in the wrong Component |
 | an issue entry | a head false of the code, kind `defect`; a split or a move the owner approved that is too large for the branch, kind `design` |
 
-A tripwire or an issue is edited only where an edit of the run makes it stale. An issue whose "What
-would close it" an edit of the run does is closed in that commit.
+A tripwire or an issue is edited only where an edit of the audit makes it stale. An issue whose
+"What would close it" an edit of the audit does is closed in that commit.
 
 ## The agentic-workflow axis {{slug:agentic-workflow-axis}}
 
@@ -188,8 +203,8 @@ texts a session cannot both obey, so every agent reads the whole corpus.
 
 **The rules**: a session can follow every instruction. A finding is admitted when a reading confirms
 it, in the classes `agent@knowledge-architect-workflow-auditor` defines: a contradiction, a broken
-trigger, a factual error, two readings, a provable gap. A gap that only predicts what an agent would
-do is a predicted gap, and is never repaired by an edit, since an instruction about how an agent
+trigger, a factual error, two readings, a provable gap, divergent verdicts. A gap that only predicts
+what an agent would do is a predicted gap, and is never repaired by an edit, since an instruction about how an agent
 behaves is added on evidence from real use. A case no instruction covers and judgement can decide
 is no finding, per `primer@room-to-judge`.
 
@@ -198,101 +213,76 @@ sets; the checker's own behaviour, whose code is not in the corpus; the scoped `
 
 **The agent**: `agent@knowledge-architect-workflow-auditor`.
 
-**The dispatch**: each agent takes one lens, and a lens's row gives its default count. Each lens is
-dispatched at least once, and L2 keeps one agent per group, since a group no agent walks is not
-read. The count is the session's, within the budget the owner names, and the table's total is the
-default; a smaller budget drops the duplicates of the other lenses first. A budget too small for
-one agent per lens and per L2 group is said to the owner, who names more agents or the lenses to
-drop. Agents with the same lens find different things, so a
-duplicate adds coverage. There is no calibration sample: the sort reads every finding, and the
-re-check reads again. An activity walk's brief names one group of activities; a project's own skill
-is walked in the group of the activity it serves.
+**The saved workflow**: `knowledge-architect-agentic-workflow-audit`. One run of it is one pass:
+a preflight sets up a worktree per auditor and the listings the agents read; the auditors draft,
+one per lens and count; one verifier per auditor tries to refute each draft; a dedup writes the
+confirmed-findings file; cluster agents group the findings by cause and a merge writes the causes
+file; one repair agent per cause proposes its repair; a cross-check reads the proposals together;
+the report gathers all of it. Its `args`:
 
-| lens | looks for | default agents |
-| --- | --- | --- |
-| L1 contradiction | two instructions that no single move satisfies; a term defined two ways | 3 |
-| L2 activity walk | one activity followed across files, the instructions that apply at each moment | 4, one per group: design, planning, decision recording and issue tracking; development, review and merge; audit and retrospective; setup, pin move, goal setting and agent configuration |
-| L3 two readings | an instruction whose words allow two readings that lead to different acts | 2 |
-| L4 provable gap | a requirement the corpus states, and an input no text supplies | 2 |
-| L5 restatement | a restatement that drifted from its home, or that lost its pointer | 1 |
-| L6 local against installed | the project's own text against the installed text | 2 |
-| L7 checker rules | a checker rule the corpus states wrongly, or one the installed text leaves unstated whose finding message does not name its repair | 2 |
+| arg | what it is |
+| --- | --- |
+| `commit` | the commit audited |
+| `scratch` | the run's scratch directory, under which every step and agent writes |
+| `worktrees` | the directory under which the preflight creates the worktrees, outside the project or under a path its ignore rules cover |
+| `history` | a git range whose commit messages record the audit's earlier passes, for the verifiers |
+| `kept` | for a re-check, the path of the file of entries, texts and rules the owner ruled to keep |
+| `counts` | optional: the auditors per lens, keyed L1 to L8, `clusters` and `repairsPerCause`; a key left out takes its default, written in the script |
+| `from` | optional: `verify`, `cluster` or `repairs`, to restart a run from the files it already wrote |
 
-**The sort** merges a finding two agents report, and notes it. It splits a finding tagged `I` into
-its installed side and its project side, each a finding with one outcome. A draft found wrong
-sends the same agent's other drafts of the same class back to a reading. It writes the
-confirmed-findings file in the run's scratch directory, the directory that holds every agent's
-own: one line per confirmed finding, an id the session gives it, its tag, and the path of its
-draft. Each pass's commit message gives the count of confirmed findings and of those that went on
-the owner list, so that the passes show whether the run converges.
+**The lenses**, each described in `agent@knowledge-architect-workflow-auditor@the-lenses`: L1
+contradiction, L2 activity walk, L3 two readings, L4 provable gap, L5 restatement, L6 local against
+installed, L7 checker rules, L8 verdict alignment. Each lens is dispatched at least once; L2's walkers
+take its groups of activities in turn, and a group no walker takes is named in the report. Agents
+with the same lens find different things, so a duplicate adds coverage. A project's own skill is
+walked in the group of the activity it serves.
 
 **The repair by cause.** A finding is repaired at the cause that produced it, not at its site: a
-repair written for one finding adds a rule, and added rules interact at the next pass. Between the
-sort and the owner list:
+repair written for one finding adds a rule, and added rules interact at the next pass. A cause is
+one of four kinds:
 
-1. **The cluster.** Cluster agents, two by default, each read the confirmed-findings file, every
-   draft it names and the whole corpus, and group the findings by cause, of one of four kinds:
-   - **two homes for one moment**: instructions about one moment or one kind of act stated in more
-     than one text;
-   - **a structure the work did not need**: a fixed sequence, count or mapping that another
-     instruction needs to vary;
-   - **a restatement that drifted from its home**;
-   - **a rule written for one interaction**: a narrow rule where judgement already decides.
+- **two homes for one moment**: instructions about one moment or one kind of act stated in more
+  than one text;
+- **a structure the work did not need**: a fixed sequence, count or mapping that another
+  instruction needs to vary;
+- **a restatement that drifted from its home**;
+- **a rule written for one interaction**: a narrow rule where judgement already decides.
 
-   A finding that fits none stands alone. The agents run independently. The session merges their
-   groupings into the causes file, in the run's scratch directory, one section per cause, and where
-   they differ it reads the findings concerned and chooses. It may merge or split causes.
-2. **The repair proposals.** One repair agent per cause by default proposes one repair for the
-   cause, never one per finding: the homes merged into one and the others pointing to it, the
-   structure removed, the restatement brought back to a pointer, or the narrow rule deleted and the
-   case left to judgement. It adds an instruction only where none of these closes the cause.
-   **An instruction** is a sentence that tells an agent to do, or not to do, an act at a moment; a
-   rewording that makes an existing instruction's intent clearer adds none, whatever its length.
-   Each proposal counts the instructions it adds and removes.
-3. **The confirmation.** The session reads each proposal against its cause and the corpus, as it
-   reads a draft at the sort, and corrects it or sends it back.
+A finding that fits none stands alone. One repair is proposed per cause, never one per finding: the
+homes merged into one and the others pointing to it, the structure removed, the restatement brought
+back to a pointer, or the narrow rule deleted and the case left to judgement. It adds an
+instruction only where none of these closes the cause. **An instruction** is a sentence that tells
+an agent to do, or not to do, an act at a moment; a rewording that makes an existing instruction's
+intent clearer adds none, whatever its length. Each proposal counts the instructions it adds and
+removes. The session's verification reads each proposal against its cause and the corpus, and
+corrects it or sends it back, re-running the repairs step from the causes file.
 
 A cause's findings on the installed text are sent upstream, as below. Its findings on the
 project's own text take the outcome its repair's edits on that text take in the table below:
-applied in the branch when every such edit falls in the applied row, the owner list otherwise. An
-item of the owner list is one cause, with the ids of its findings, the repair, its count and a
-default. **When the repairs of a pass add more instructions than they remove, the owner
-list says so first, with the net figure**, and the owner rules on that growth before any repair of
-the pass is applied. Each pass's commit message also gives the corpus's word count before and
-after the pass, `wc -w` over the corpus's files.
+applied in the branch when every such edit falls in the applied row, the owner list otherwise. The
+cross-check proposes each cause's outcome, and the session decides it. An item of the owner list is
+one cause, with the ids of its findings, the repair, its count and a default. **When the repairs of
+a pass add more instructions than they remove, the owner list says so first, with the net figure**,
+and the owner rules on that growth before any repair of the pass is applied. Each pass's commit
+message also gives the corpus's word count before and after the pass, `wc -w` over the corpus's
+files.
 
 **The outcomes of this axis**, for a finding on the project's own text:
 
 | outcome | the findings |
 | --- | --- |
 | applied in the branch | a rewording that changes no instruction, a two-reading instruction among them where a design head or another instruction states the reading meant; a broken trigger whose target exists under another name; a pointer added to a restatement without one, or to a project text that repeats an installed one; a factual error; a drifted restatement brought back to its home, which converts it to a pointer when it is longer than one |
-| put to the owner, on the owner list | which side of a contradiction wins, a loop with no exit among them; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction |
+| put to the owner, on the owner list | which side of a contradiction wins, a loop with no exit among them; which standard wins, for divergent verdicts; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction |
 | an issue entry | a predicted gap; a finding the owner defers |
 
-**Sent upstream**: every finding on the installed text, over every pass of the run, a predicted
-gap included, goes into one file per run, written when the run stops. That file is the workflow's
-file of `skill@knowledge-architect-retrospective@two-files`, named, written and handled as that
-section and `skill@knowledge-architect-retrospective@what-becomes-of-files` say, its subject
-naming the audit. It differs in its content only: what was audited at which commit in place of
-what the session did, each finding numbered `W<n>`, and no standing answers.
+**Sent upstream**: every finding on the installed text, over every pass of the audit, a predicted
+gap included, goes into one file per audit, written when the audit stops. That file is the
+workflow's file of `skill@knowledge-architect-retrospective@two-files`, named, written and handled
+as that section and `skill@knowledge-architect-retrospective@what-becomes-of-files` say, its
+subject naming the audit. It differs in its content only: what was audited at which commit in
+place of what the session did, each finding numbered `W<n>`, and no standing answers.
 
-**The workflow script.** Where the harness offers the Workflow tool and lists the saved workflow
-the install writes, `knowledge-architect-agentic-workflow-audit`, the session runs each stage of
-the pass through it, by name, with the stage's inputs in `args`. A harness may list saved
-workflows only when a session starts, so a session that ran the install later may not see it.
-Elsewhere the session dispatches the same agents with the same prompts, in the same order. The
-stages are three, one run each, since a reading of the session sits between each two: `drafts`,
-then the sort; `clusters`, then the merge; `repairs`, then the confirmation. Each stage's `args`
-are `stage`, `commit`, the commit audited, and:
-
-| stage | its inputs |
-| --- | --- |
-| `drafts` | `agents`, one entry per auditor: its `lens`, its `group` of activities for L2, its `scratch` directory, its `worktree`, and for a re-check `kept`, the path of its kept list |
-| `clusters` | `findings`, the confirmed-findings file; `scratches`, one directory per cluster agent |
-| `repairs` | `causesFile`, the file of merged causes; `causes`, each cause's id and scratch directory |
-
-The cluster and repair prompts are written in the script and nowhere else, rather than in agent
-definitions: an agent's definition is the copy the harness registered when the session started,
-per `skill@knowledge-architect-review@review-invariants`. Before the `drafts` stage of a re-check,
-the session writes the kept list into each agent's scratch directory, and names it in that
-agent's entry.
+**Before a run**: the session writes the kept list, for a re-check, and names the history. A harness
+may list saved workflows only when a session starts, so a session that ran the install later may
+not see the workflow listed. The worktrees are removed once the pass's findings have their
+outcomes, as `skill@knowledge-architect-review@review-invariants` says.

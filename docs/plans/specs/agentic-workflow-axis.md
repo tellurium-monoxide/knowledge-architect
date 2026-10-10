@@ -68,7 +68,8 @@ this shape" and the reply that opens "## Round 3"; "round 15" is the owner's mes
 "preflight-step approved; record T5, T6, apply AC5, AC6". "Round 16" is the owner's message that
 opens "Hmm, AC6 looks a bit too vague" and the reply that opens "## Round 4"; "round 17" is the
 owner's message "verdict-alignment-lens approved.", which came while the session applied the
-review repairs; "round 18" is the owner's message "D23 to D27 approved, run the re-review". The
+review repairs; "round 18" is the owner's message "D23 to D27 approved, run the re-review";
+"round 19" is the owner's message "D28 to D31 approved, proceed to step 7". The
 replies of rounds 12 to 14 call the
 criteria of that discussion C1 to C6; they are the items `criterion@agentic-workflow-axis@c7` to
 `criterion@agentic-workflow-axis@c12`, in order. An extraction agent wrote the owner messages,
@@ -2104,24 +2105,24 @@ cite it by its label.
   cold-implementer review: the counts' edge cases. Default: a lens missing from `counts` takes its
   default; a count below 1 is refused; an L2 count below its four groups walks the first groups in
   the table's order, and the report names the groups left unwalked.
-- **D28**, awaiting the owner, on `thread@agentic-workflow-axis@audit-axis-runs-a-workflow`, from
+- **D28**, ruled, round 19, on `thread@agentic-workflow-axis@audit-axis-runs-a-workflow`, from
   the transcript re-review: round 13 put to the owner that the design-record axis's section "stays
   as it is until then", and the review repairs had moved the generic method's points into it, a
   change the owner was not shown. Default: the section stays as it is, and the generic method keeps
   its points in place, under a sentence that an axis with no saved workflow runs them, the one-run
   shape stated beside them; the move is dropped.
-- **D29**, awaiting the owner, on `thread@agentic-workflow-axis@preflight-step`, from the
+- **D29**, ruled, round 19, on `thread@agentic-workflow-axis@preflight-step`, from the
   design-conformance and cold-implementer re-reviews: the preflight read the audit's earlier passes
   as the commits whose subject opens with `[audit]`, a convention of this repository that
   `goal@agent-skills@installed-text-works-anywhere` keeps out of shipped text. Default: the session
   names the history in `args`, a git range; for this repository's pass 5, the branch since its
   merge base with the main branch.
-- **D30**, awaiting the owner, on `thread@agentic-workflow-axis@verdict-alignment-lens`, from the
+- **D30**, ruled, round 19, on `thread@agentic-workflow-axis@verdict-alignment-lens`, from the
   design-conformance re-review: a draft of divergent verdicts resting on "a minimal example it
   writes" is a synthetic scenario, which `design@agent-skills@additions-need-real-use` lets
   originate no edit. Default: the class needs a text of the project; with it, the class is provable
   by reading, a member the head's rewrite per D4 admits, and "What is already decided" lists it.
-- **D31**, awaiting the owner, on `thread@agentic-workflow-axis@report-contents`, from the
+- **D31**, ruled, round 19, on `thread@agentic-workflow-axis@report-contents`, from the
   design-conformance re-review: the cross-check and report agents apply the axis's outcome table
   through script prompts, close to the shape `design@agent-skills@audit-agent-per-axis` rejected.
   Default: the cross-check proposes each cause's outcome and the session decides it, as the session
