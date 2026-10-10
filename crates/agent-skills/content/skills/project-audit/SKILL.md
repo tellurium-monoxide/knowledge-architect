@@ -1,13 +1,13 @@
 ---
 name: knowledge-architect-project-audit
-description: MUST use when the owner asks to audit one aspect of the whole project rather than the work of one branch; when a pin move crosses a version whose changelog has a Migration entry citing an axis of this skill; and when an adopting project's existing documents have been moved into the workflow's homes. Covers what a project audit is, its method (the corpus, bounded groups, calibration, one draft per entry, the sort, one list for the owner, the application, a fresh re-check, the review), the outcome of each kind of finding, where the record of a run goes, and one section per axis, the first the design-record axis, which re-applies the rules on design heads and rejected alternatives to every entry.
+description: MUST use when the owner asks to audit one aspect of the whole project rather than the work of one branch; when a pin move crosses a version whose changelog has a Migration entry citing an axis of this skill; and when an adopting project's existing documents have been moved into the workflow's homes. Covers what a project audit is, its method (the corpus, a dispatch each axis gives, drafts in files, the sort, one list for the owner, the application, a fresh re-check, the review), the outcome of each kind of finding, where the record of a run goes, and one section per axis, the first the design-record axis, which re-applies the rules on design heads and rejected alternatives to every entry.
 ---
 
 # Auditing a project
 
-Scope: reading one aspect of a whole project, every entry of a corpus, against the rules that
-apply to it, and bringing what fails into line. A project audit is the reading of the whole record
-on one axis; a review reads a diff. One activity: its artifact is a repaired record across the
+Scope: reading one aspect of a whole project, every entry or text of a corpus, against the rules
+that apply to it, and bringing what fails into line. A project audit is the reading of the whole
+record on one axis; a review reads a diff. One activity: its artifact is a repaired record across the
 project, not a verdict on one branch.
 
 **Not covered here**, each named where it lives:
@@ -28,11 +28,12 @@ project, not a verdict on one branch.
 | word | meaning |
 | --- | --- |
 | **axis** | one aspect an audit reads, with its corpus, its rules, its agent and the outcome of each kind of finding. Each axis has a section below |
-| **corpus** | the entries an axis reads, all of them |
-| **group** | a run of consecutive entries of the corpus that one agent reads whole |
-| **draft** | one agent's file for one entry: its verdict, the evidence, a proposed edit and a proposed outcome |
+| **corpus** | the entries or the texts an axis reads, all of them |
+| **dispatch** | how an axis shares its corpus out among agents, how many, what each brief names, and how they are calibrated, if they are. Each axis's section gives its own |
+| **draft** | one agent's file for one entry or for one finding, as the axis says: the verdict or the finding, the evidence, a proposed edit and a proposed outcome |
 | **the owner list** | one message to the owner holding every finding that needs the owner's word |
-| **the re-check** | fresh agents over the same groups, after the edits |
+| **the re-check** | fresh agents of the axis, dispatched as its first dispatch was, after the edits |
+| **pass** | one round of the method: the drafts, the sort, the owner list, the application. The re-check's drafts start the next pass |
 
 ## When an audit runs {{slug:when-an-audit-runs}}
 
@@ -51,54 +52,39 @@ An audit runs in a branch of its own, unless the owner gives it to another work'
 ## The method {{slug:audit-method}}
 
 Each point leaves judgement to the session, and an axis's section adjusts it where its corpus
-needs.
+needs. The points hold for every axis; the dispatch is the axis's own, in its section.
 
-1. **The corpus.** The axis's section names its corpus and the inputs read beside each entry.
-2. **Groups.** A group holds the entries of one Component only, unless the axis says otherwise.
-   The entries of a Component are taken in a fixed order, which the axis's section gives, and cut
-   into ceil(count / 60) runs of consecutive entries, the sizes of any two runs differing by at
-   most one: 125 entries make three groups of 42, 42 and 41. Count the entries, and name each group
-   by its first and last entry.
+1. **The corpus.** The axis's section names its corpus and what is read beside it.
+2. **The dispatch.** Dispatch the axis's agents as its section says, all in parallel, each with a
+   scratch directory of its own.
 3. **Pre-commitments.** An axis that measures, one whose run yields a figure a conclusion rests on,
    states before the run which figure would show which conclusion, and the owner sees them before
    the run. An axis that only applies rules owes none.
-4. **Calibration.** Pick a shared sample of about five entries from different Components, and add
-   it to every group, beyond its bound. Agents dispatched together do not read a rule alike. When
-   the drafts are in, compare the verdicts on the sample. Where they differ and one follows the
-   rule's text, settle the reading, state it in the run's commit message, and read again yourself,
-   in every group, the drafts the difference bears on, before any draft is sorted. Where the rule's
-   text admits both readings, the difference goes on the owner list.
-5. **Drafts.** Dispatch the axis's agent once per group, all in parallel, each with a scratch
-   directory of its own. Each writes one draft per entry there and edits nothing else. Its brief
-   names the commit audited, its group's first and last entry, the sample's entries and its scratch
-   directory. Results stay in the files: the session reads the drafts, not a summary of them.
-6. **The sort.** Read every draft whose proposed outcome is not "nothing" against its entry and the
-   history it cites, and a sample of the drafts that find their entry conforming, at least one per
-   group. Sort each finding into its outcome, under
-   `skill@knowledge-architect-project-audit@outcomes`. A draft found wrong is corrected, and the
-   group's other drafts of the same kind are read again. Nothing an agent proposes is applied
+4. **Drafts.** Each agent writes its drafts in its scratch directory and edits nothing else.
+   Results stay in the files: the session reads the drafts, not a summary of them.
+5. **The sort.** Read every draft whose proposed outcome is not "nothing" against what it cites and
+   the history it cites. Sort each finding into its outcome, under
+   `skill@knowledge-architect-project-audit@outcomes`. A draft found wrong is corrected, and the same
+   agent's other drafts of the same kind are read again. Nothing an agent proposes is applied
    before a reading confirms it. A quotation of the owner is confirmed against the question it
    answered, in its source, as well as against its words: a verbatim answer to another question
    is not the owner's ground for this one.
 %% The `F` label: `design@agent-skills@ruled-items-labelled`.
-7. **The owner list.** One message per pass: the items grouped by kind, each under a label, `F<n>`, with a
-   default and the entry's words the item turns on. Apply nothing on the list before the owner
-   answers. An item the owner defers becomes an issue entry.
-8. **Application.** Apply the edits, yourself or through agents dispatched on disjoint files. Read
-   the whole diff before each commit. A split, a merge or a move of a head is drafted first, like
-   any other finding: a fold judged alone is the edit most often undone. Each head a split, a rename
-   or a merge creates is then judged against every rule as an entry of its own, before the commit:
-   moving text unchanged does not make the new head conform.
-9. **The re-check.** Dispatch fresh agents of the axis over the same groups, after the edits, each
-   briefed as in point 5 and also given the entries and rules the owner ruled to keep, as a file in
-   its scratch directory. A draft that finds a rule failed, and is not on the kept list, is a
-   violation left, whether a draft missed it or an edit made it. Read each one against its entry,
-   then repair it or put it to the owner. The re-check's drafts start the next pass, from point 6:
-   passes repeat while the violations left fall from one pass to the next, until the owner judges
-   what is left small enough.
-10. **Review.** The audit's branch is reviewed under `skill@knowledge-architect-review`, on these
-    axes: self-consistency, fidelity of relocation, routing of knowledge, decision recording,
-    standing state, and the transcript review last.
+6. **The owner list.** One message per pass: the items grouped by kind, each under a label, `F<n>`, with a
+   default and the words of the entry or the text the item turns on. Apply nothing on the list
+   before the owner answers. An item the owner defers becomes an issue entry.
+7. **Application.** Apply the edits, yourself or through agents dispatched on disjoint files. Read
+   the whole diff before each commit.
+8. **The re-check.** Dispatch fresh agents of the axis, as its first dispatch was, after the edits,
+   each also given the entries, the texts and the rules the owner ruled to keep, as a file in its
+   scratch directory. A finding of the re-check that a reading confirms and that is not on the kept
+   list is a violation left, whether a draft missed it or an edit made it: repair it or put it to
+   the owner. The re-check's drafts start the next pass, from point 5: passes repeat while the
+   violations left fall from one pass to the next, until the owner judges what is left small
+   enough.
+9. **Review.** The audit's branch is reviewed under `skill@knowledge-architect-review`, on these
+   axes: self-consistency, fidelity of relocation, routing of knowledge, decision recording,
+   standing state, and the transcript review last.
 
 ## Outcomes {{slug:outcomes}}
 
@@ -109,7 +95,7 @@ Every finding takes exactly one outcome. A finding that fits no named case goes 
 | applied in the branch | the edits the axis's section lists as applied |
 | put to the owner, on the owner list | the edits the axis's section lists as the owner's; a verdict where a rule reads two ways; a conflict with a goal, which then follows `skill@knowledge-architect-goal-setting`; any finding no row names |
 | an issue entry | a finding outside the axis, such as a statement false of the code when the axis does not read the code; work the owner approved that is too large for the branch; a finding the owner defers. The kind follows `skill@knowledge-architect-issue-tracking` |
-| nothing | the entry conforms |
+| nothing | the entry or the text conforms |
 
 ## The record of a run {{slug:record-of-a-run}}
 
@@ -117,10 +103,10 @@ Every finding takes exactly one outcome. A finding that fits no named case goes 
 %% rival, a report document, is the open question of
 %% `issue@agent-skills@audit-axes-beyond-the-design-record` for an axis whose fixes are code.
 **The commit messages are the record.** Each commit of a run says what was audited, at which
-commit, how many entries and groups, the calibration reading settled, and the outcome of every
-finding: applied, ruled by the owner under its label, opened as an issue with its id, or found to
-need nothing. A figure the run measured goes there too. A finding whose only record is a scratch
-file, or a plan document that will leave, is lost when that file goes.
+commit, how it was dispatched, the calibration reading settled where the axis has one, and the
+outcome of every finding: applied, ruled by the owner under its label, opened as an issue with its
+id, or found to need nothing. A figure the run measured goes there too. A finding whose only record
+is a scratch file, or a plan document that will leave, is lost when that file goes.
 
 %% The case of a run that changes no file follows
 %% `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
@@ -142,8 +128,29 @@ alternatives.
 **Not in this axis**: whether a head is true of the code, and the restatements of a head in other
 texts. A head found false of the code gets an issue entry, kind `defect`.
 
-**The agent**: `agent@knowledge-architect-design-record-auditor`, dispatched once per group, as its
-description says.
+**The agent**: `agent@knowledge-architect-design-record-auditor`.
+
+**The dispatch:**
+
+- **Groups.** A group holds the entries of one Component only. The entries of a Component are taken
+  in the order the agent gives, and cut into ceil(count / 60) runs of consecutive entries, the sizes
+  of any two runs differing by at most one: 125 entries make three groups of 42, 42 and 41. Count
+  the entries, and name each group by its first and last entry.
+- **Calibration.** Pick a shared sample of about five entries from different Components, and add it
+  to every group, beyond its bound. Agents dispatched together do not read a rule alike. When the
+  drafts are in, compare the verdicts on the sample. Where they differ and one follows the rule's
+  text, settle the reading, state it in the run's commit message, and read again yourself, in every
+  group, the drafts the difference bears on, before any draft is sorted. Where the rule's text admits
+  both readings, the difference goes on the owner list.
+- **The brief.** One agent per group writes one draft per entry. Its brief names the commit
+  audited, its group's first and last entry, the sample's entries and its scratch directory.
+- **The sort** also reads a sample of the drafts that find their entry conforming, at least one per
+  group, and a draft found wrong sends the group's other drafts of the same kind back to a reading.
+- **Application.** A split, a merge or a move of a head is drafted first, like any other finding: a
+  fold judged alone is the edit most often undone. Each head a split, a rename or a merge creates is
+  then judged against every rule as an entry of its own, before the commit: moving text unchanged
+  does not make the new head conform.
+- **The re-check** runs over the same groups.
 
 **The outcomes of this axis:**
 
