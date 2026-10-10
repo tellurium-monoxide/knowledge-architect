@@ -68,6 +68,10 @@ A finding is admitted when the session can confirm it by reading. Each class car
 - **divergent verdicts**: one text of the project that a review standard and an audit standard
   both judge, and the sentence of each that judges it, quoted, the two giving different verdicts;
   a written example is no evidence;
+- **a restatement or a pointer its home does not allow**: a restatement of a directive, or a
+  pointer out of an instruction, quoted, and the sentence it fails of `primer@where-knowledge-goes`
+  or, for a pointer, of `skill@knowledge-architect-agent-configuration@shaping-a-skill`, each read
+  whole before you judge one;
 - **a predicted gap**: "an agent might misjudge X". Draft it as such, with what a real session
   would have to show; it is never repaired by an edit.
 
@@ -92,10 +96,10 @@ too, and its draft names the finding's lens, not your brief's.
   read; you do not decide as a session would.
 - **L3 two readings.** An instruction whose words allow two readings that lead to different acts.
 - **L4 provable gap.** A requirement the corpus states, and an input to it that no text supplies.
-- **L5 restatement.** Each restatement of a directive against its home: one that drifted from its
-  home, or one without its pointer. A restatement that is only longer than a pointer is no finding.
+- **L5 restatement.** Each restatement of a directive and each pointer out of an instruction,
+  under the class of a restatement or a pointer its home does not allow.
 - **L6 local against installed.** The project's own text against the installed text: a
-  contradiction, a duplicate.
+  contradiction; a duplicate is judged as L5 judges a restatement.
 - **L7 checker rules.** Read, beside the corpus, the checker's user documentation: its README for
   the version the project uses, which ships in the checker's package, and the help of
   `cargo klarch` and of each of its commands. Report a rule the corpus states wrongly, as a
@@ -108,8 +112,8 @@ too, and its draft names the finding's lens, not your brief's.
   the two standards side by side, and report a text of the project that one reports as a finding
   and the other must not report, or treats as conforming, as divergent verdicts. Start from these
   pairs, and add any other the corpus holds: the decision-record reviewer and the design-record
-  auditor, on design heads and rejected alternatives; the routing reviewer and this agent's L5 and
-  L6, on restatements and pointers; the review's self-consistency axis and L1, on contradictions;
+  auditor, on design heads and rejected alternatives; the routing reviewer and this agent's L5,
+  on restatements and pointers; the review's self-consistency axis and L1, on contradictions;
   the standing-state reviewer and the audits' reading of tripwires and issues; the review skill's
   outcomes and the audit's outcome table. Judge every audit agent the corpus holds, not only this
   one.
@@ -162,14 +166,16 @@ draft, against its class and its lens as this definition gives them:
 - check every quotation against your worktree;
 - check a quotation of the owner against the question it answered, in its source;
 - check that the moment the draft describes exists;
-- refute a draft whose finding the owner already ruled on, naming the commit of the history;
 - mark known a draft whose finding an issue entry records, naming the entry, and kept a draft on
   the kept list;
 - mark `bears-on-ruling` a draft whose finding is that a ruling's premise has proved false, and
   do not settle it: the session does;
+- refute any other draft whose finding the owner already ruled on, naming the commit of the history;
 - split a finding tagged `I` into its W side and its P side, each with its own outcome.
 
-Give each draft a verdict, verified, refuted or plausible, with a one-line reason, and its marks.
+Give each draft a verdict, with a one-line reason, and its marks: refuted, where a check above fails
+it; verified, where a reading confirms its finding; plausible, where no reading confirms or refutes
+it, as for a predicted gap.
 Write `verdicts.md` in your directory: one line per draft, its file, its verdict, its marks and its
 reason, and for a split finding one line per side. Return its path and the count of each verdict
 and mark.

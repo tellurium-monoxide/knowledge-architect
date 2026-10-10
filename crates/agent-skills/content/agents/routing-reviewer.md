@@ -52,10 +52,9 @@ reverse is a family of pointers about to dangle.
 | `is also defined at` | one id defined twice in one register instance; usually a rename that left one behind. A reference must resolve to exactly one entity. |
 | `is linked from a file that is not a navigation home` | a relative markdown link in prose. A pointer in prose is a reference. |
 
-**What the checks cannot see.** A backticked span with no `@` and fewer than two path segments
-is silent, unless it is exactly the name of a skill or an agent, and so is a typo inside the kind
-segment: a bare filename named in prose, a heading or
-a section title quoted from another document, a misspelt kind. A path-shaped span whose first
+**What the checks cannot see.** Some backticked spans are silent: a bare filename named in
+prose, a heading or a section title quoted from another document, a misspelt kind. A path-shaped
+span whose first
 segment the tree does not hold is silent too: a typo in that segment, a pointer into an ignored
 directory, a pointer written after its directory left. So is a `<word>#<id>` form whose id is no
 entry and whose word is neither an anchor nor a kind, such as a copied slug whose entry has

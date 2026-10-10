@@ -61,7 +61,8 @@ needs.
 delivers a report; the session reads nothing between its steps. The session then verifies the
 report: it reads it whole, every repair proposal in full, every finding the report marks as bearing
 on a ruling of the owner or as plausible, against its draft, and a sample of the refuted drafts it
-chooses. Then come points 6, 7 and 9 below, and the next run is the re-check of point 8. A session
+chooses. Then come points 6 and 7 below, and the next run is the re-check of point 8; point 9
+follows once the audit stops. A session
 whose harness does not list the workflow dispatches its steps by hand, in the script's order, with
 the script's prompts, read from the script.
 
@@ -97,13 +98,13 @@ the script's prompts, read from the script.
    `skill@knowledge-architect-review@review-invariants` says. A finding of the re-check that a
    reading confirms, that is not on the kept list, and that no issue entry records, is a violation
    left, whether a draft missed it or an edit made it: repair it or put it to the owner. The
-   re-check's drafts start the next pass, from point 5. The audit stops when the owner judges what
-   is left small enough. The violations left
-   then take their outcomes, as in points 5 to 7, and no re-check follows; one the owner does not
-   rule on becomes an issue entry, as a deferred item does. The count of violations left is expected
-   to fall from one pass to the next; a pass where it does not goes to the owner as a question,
-   with the counts, and starts no new pass on its own.
-9. **Review.** The audit's branch is reviewed before its merge under
+   re-check is the next pass, and gets its findings as the axis's shape says. The audit stops when
+   the owner judges what is left small enough. The violations left then take their outcomes, as
+   any pass's findings do, and no re-check follows; one the owner does not rule on becomes an issue
+   entry, as a deferred item does. The count of violations left is expected to fall from one pass
+   to the next; a pass where it does not goes to the owner as a question, with the counts, and
+   starts no new pass on its own.
+9. **Review.** Once the audit stops, the audit's branch is reviewed before its merge under
    `skill@knowledge-architect-review`, on the axes `skill@knowledge-architect-review@review-axes`
    says that review owes.
 
@@ -117,7 +118,7 @@ Every finding takes exactly one outcome. A finding that fits no named case goes 
 | put to the owner, on the owner list | the edits the axis's section lists as the owner's; a verdict where a rule reads two ways; a conflict with a goal, which then follows `skill@knowledge-architect-goal-setting`; any finding no row names |
 | sent upstream | a finding on the installed text, which the project never edits: the axis's section says how |
 | an issue entry | a finding outside the axis that the primer's table routes to an issue, such as a statement false of the code when the axis does not read the code; work the owner approved that is too large for the branch; a finding the owner defers. The kind follows `skill@knowledge-architect-issue-tracking` |
-| nothing | the entry or the text conforms; a finding an issue entry already records |
+| nothing | the entry or the text conforms; a finding an issue entry already records; a finding on the kept list |
 
 A finding outside the axis takes the first case of `primer@met-outside-the-task` that applies.
 
@@ -129,17 +130,17 @@ A finding outside the axis takes the first case of `primer@met-outside-the-task`
 **The commit messages are the record.** Each commit of an audit says what was audited, at which
 commit, named by its subject since a rebase merge gives the audit branch's commits new SHAs, how it
 was dispatched, the calibration reading settled where the axis has one, and the outcome of every
-finding: applied, ruled by the owner under its label, opened as an issue with its id, or found to
-need nothing. A figure the audit measured goes there too, and each pass's message gives the count of
-confirmed findings and of those that went on the owner list, so that the passes show whether the
-audit converges. A finding whose only record is a scratch file, a run's report, or a plan document
-that will leave, is lost when that file goes.
+finding: applied, ruled by the owner under its label, opened as an issue with its id, sent
+upstream, or found to need nothing. A figure the audit measured goes there too, and each pass's
+message gives the count of violations left, as point 8 defines them, and of those that went on the
+owner list, so that the passes show whether the audit converges. A finding whose only record is a
+scratch file, a run's report, or a plan document that will leave, is lost when that file goes.
 
 %% The case of an audit that changes no file follows
 %% `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
-An audit that changes no file leaves no commit that changes a file, and a merge that drops such a
-commit, as a rebase merge does, would drop its record. Its record is then the report to the
-owner.
+An audit that changes no file leaves no commit that changes a file, and its record goes where
+`skill@knowledge-architect-review@what-review-leaves` puts a record carried by a message in that
+case.
 
 ## The design-record axis {{slug:design-record-axis}}
 
@@ -161,9 +162,9 @@ texts. A head found false of the code gets an issue entry, kind `defect`.
 **The dispatch:**
 
 - **Groups.** A group holds the entries of one Component only. The entries of a Component are taken
-  in the order the agent gives, and cut into ceil(count / 60) runs of consecutive entries, the sizes
-  of any two runs differing by at most one: 125 entries make three groups of 42, 42 and 41. Count
-  the entries, and name each group by its first and last entry.
+  in the order the agent gives, and cut into ceil(count / 60) groups of consecutive entries, the
+  sizes of any two groups differing by at most one: 125 entries make three groups of 42, 42 and 41.
+  Count the entries, and name each group by its first and last entry.
 - **Calibration.** Pick a shared sample of about five entries from different Components, and add it
   to every group, beyond its bound. Agents dispatched together do not read a rule alike. When the
   drafts are in, compare the verdicts on the sample. Where they differ and one follows the rule's
@@ -186,7 +187,7 @@ texts. A head found false of the code gets an issue entry, kind `defect`.
 
 | outcome | the findings |
 | --- | --- |
-| applied in the branch | a rewording; the tense; a missing or wrong reference; an approval cited as a head's ground, removed when the head stands on its argument; a split that touches no word of the owner; a rejected alternative repaired in place, its reason made checkable or its marker set; a tripwire or an issue made stale by an edit of the run, repaired in place |
+| applied in the branch | a rewording; the tense; a missing or wrong reference; an approval cited as a head's ground, removed when the head stands on its argument; a split that touches no word of the owner; a rejected alternative repaired in place, its reason made checkable or its marker set; a tripwire or an issue made stale by an edit of the audit, repaired in place |
 | put to the owner, on the owner list | a widening of what the owner's words approved, such as a title moved from the members the owner named to the rule; the removal of a head that fails every entry test; the removal of a rejected alternative that fails every recording test; a ground that is the owner's words; a head in the wrong Component |
 | an issue entry | a head false of the code, kind `defect`; a split or a move the owner approved that is too large for the branch, kind `design` |
 
@@ -203,7 +204,8 @@ texts a session cannot both obey, so every agent reads the whole corpus.
 
 **The rules**: a session can follow every instruction. A finding is admitted when a reading confirms
 it, in the classes `agent@knowledge-architect-workflow-auditor` defines: a contradiction, a broken
-trigger, a factual error, two readings, a provable gap, divergent verdicts. A gap that only predicts
+trigger, a factual error, two readings, a provable gap, divergent verdicts, a restatement or a
+pointer its home does not allow. A gap that only predicts
 what an agent would do is a predicted gap, and is never repaired by an edit, since an instruction about how an agent
 behaves is added on evidence from real use. A case no instruction covers and judgement can decide
 is no finding, per `primer@room-to-judge`.
@@ -217,8 +219,8 @@ sets; the checker's own behaviour, whose code is not in the corpus; the scoped `
 a preflight sets up a worktree per auditor and the listings the agents read; the auditors draft,
 one per lens and count; one verifier per auditor tries to refute each draft; a dedup writes the
 confirmed-findings file; cluster agents group the findings by cause and a merge writes the causes
-file; one repair agent per cause proposes its repair; a cross-check reads the proposals together;
-the report gathers all of it. Its `args`:
+file; repair agents propose each cause's repair, as "The repair by cause" says; a cross-check
+reads the proposals together; the report gathers all of it. Its `args`:
 
 | arg | what it is |
 | --- | --- |
@@ -248,22 +250,28 @@ one of four kinds:
 - **a restatement that drifted from its home**;
 - **a rule written for one interaction**: a narrow rule where judgement already decides.
 
-A finding that fits none stands alone. One repair is proposed per cause, never one per finding: the
-homes merged into one and the others pointing to it, the structure removed, the restatement brought
-back to a pointer, or the narrow rule deleted and the case left to judgement. It adds an
-instruction only where none of these closes the cause. **An instruction** is a sentence that tells
-an agent to do, or not to do, an act at a moment; a rewording that makes an existing instruction's
-intent clearer adds none, whatever its length. Each proposal counts the instructions it adds and
-removes. The session's verification reads each proposal against its cause and the corpus, and
-corrects it or sends it back, re-running the repairs step from the causes file.
+A finding that fits none is a cause of its own, with no kind. The repair step proposes one repair
+per cause, never one per finding, and a draft's proposed repair is one of its inputs; where
+`counts` gives a cause several repair agents, their proposals are alternatives for that one
+repair. A repair is the homes merged into one and the others pointing to it, the structure
+removed, the restatement brought back to a pointer, or the narrow rule deleted and the case left
+to judgement. It adds an instruction only where none of these closes the cause. **An
+instruction** is a sentence that tells an agent to do, or not to do, an act at a moment; a
+rewording that makes an existing instruction's intent clearer adds none, whatever its length.
+Each proposal counts the instructions it adds and removes. The session's verification reads each
+proposal against its cause and the corpus, and corrects it or sends it back to a repair agent of
+its cause, briefed with the script's repair prompt.
 
 A cause's findings on the installed text are sent upstream, as below. Its findings on the
 project's own text take the outcome its repair's edits on that text take in the table below:
-applied in the branch when every such edit falls in the applied row, the owner list otherwise. The
+applied in the branch when every such edit falls in the applied row, the owner list otherwise. A
+finding marked known or kept, and a predicted gap, take instead the outcome
+`skill@knowledge-architect-project-audit@outcomes` and the table below give them. The
 cross-check proposes each cause's outcome, and the session decides it. An item of the owner list is
-one cause, with the ids of its findings, the repair, its count and a default. **When the repairs of
-a pass add more instructions than they remove, the owner list says so first, with the net figure**,
-and the owner rules on that growth before any repair of the pass is applied. Each pass's commit
+one cause, with the ids of its findings, the repair, its count and a default. **When the repairs a
+pass applies in the project add more instructions than they remove, the owner list says so first,
+with the net figure**, and the owner rules on that growth before any repair of the pass is applied.
+Each pass's commit
 message also gives the corpus's word count before and after the pass, `wc -w` over the corpus's
 files.
 

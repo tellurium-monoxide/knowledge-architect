@@ -100,7 +100,7 @@ the main tree would not run the other's build, but each checkout would rebuild a
 ```sh
 cargo test -p <package>                # the baseline: it passes over the unmutated work
 # apply the mutation, then
-git diff                               # shows the mutation alone: this is what the record quotes
+git diff                               # shows the mutation alone: the record quotes its - and + lines
 cargo test -p <package> --no-run       # it compiles, or it proves nothing
 cargo test -p <package>                # nonzero: caught; zero: SURVIVED
 ```
@@ -122,7 +122,8 @@ shortening it.
 - **The test run:** its verdict is the result.
 
 **A recorded check that does not show the mutation applied establishes nothing.** It quotes the
-diff `git diff` printed, the file and line it changed, and the verdict.
+`-` and `+` lines `git diff` printed, the file and the function or type that holds them, and the
+verdict.
 
 The property being bought is that **the test discriminates**. Watching it fail first is one way of
 learning that. A claim already settled by a probe beforehand enters as a regression guard, and is
@@ -174,24 +175,12 @@ Several adversarial reviewers may be dispatched, with different angles of attack
 
 ## The gate `##development-gate`
 
-**`cargo x gates` runs every gate in one command**: fmt, `cargo klarch check`,
-`cargo klarch commits origin/main..HEAD`, clippy with `-D warnings`, and the tests. It gives one
-trustworthy exit code, a distilled report, and full logs under `path@knowledge-architect@target/gates/`.
-Its usage is `path@xtask@README.md`, and this is a restatement of root `CLAUDE.md`, section Verify
-mechanically. Do not filter its output through pipes. Before a merge, run
-`cargo x gates --require-rebased`.
-
-**Every commit of a branch must pass `commits` under the checker built from the working tree**, not
-only the branch's tip: its message and its tree. Run `cargo klarch check --staged` after staging
-and before each commit, and `cargo klarch commits origin/main..HEAD` after it: the whole branch, since a citation of an earlier
-commit of the branch by SHA is refused only when that commit is in the range judged, per
-`issue@core@branch-sha-citations-are-judged-within-the-range-only`; the check before the commit
-restates `design@agent-skills@staged-check-before-each-commit`. The repair of a failing
-check is `instructions@verify-mechanically`. **A change to the core that makes a check stricter,
-or changes the manifest format, makes every earlier commit of its branch fail**: it is placed on
-the branch as `primer@branch-commits` says, read whole. The decision is
-`design@core@a-commit-message-is-a-document`. Run both checks bare, and never chain a command on a
-verdict that went through a pipe.
+**`cargo x gates` runs every gate in one command**, and the gate list's home is
+`design@xtask@gates-list-primary-home`. How the gates are run, the checks owed before and after
+each commit, and the repair of a failing one are `instructions@verify-mechanically`, read whole.
+**A change to the core under which a tree that passed before can fail**, such as a stricter check
+of a commit's tree, a change of the manifest format or a change of what a generated file holds,
+**is placed on the branch as `primer@branch-commits` says**, read whole.
 
 **No test may run the gates over this repository**, since the test gate would run the suite that is
 running it: `path@gates@CLAUDE.md` and `path@xtask@CLAUDE.md`.

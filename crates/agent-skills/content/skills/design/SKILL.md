@@ -142,9 +142,11 @@ evidence bring, which nobody knows in advance.
   `skill@knowledge-architect-decision-recording@when-recording-happens` records when it is made. No
   plan document is written. Read `primer@design-heads` again, whole, before grounding. The deliberation goes in the message of the
   commit that writes the decision's design entry, or, for a decision
-  that earns none, of the commit that implements it: every thread with its final state, the
+  that earns none, of the commit that implements it, or, where neither
+  exists, where `skill@knowledge-architect-review@what-review-leaves`
+  puts a record carried by a message: every thread with its final state, the
   owner's words verbatim for each closure, the rivals that lost with
-  their reasons, and the owner's rulings on tripwires. The decision is
+  their reasons, and the owner's rulings on tripwires and acceptance criteria. The decision is
   recorded at that landing like any other, under
   `skill@knowledge-architect-decision-recording`:
   `skill@knowledge-architect-decision-recording@reversal-check` decides the Component of a decision
@@ -153,7 +155,7 @@ evidence bring, which nobody knows in advance.
   owner where a decision lands. The checkpoint table is shown at convergence when the ledger holds
   more than one thread. The premortem runs when reversal touches any of the four. Where it runs,
   nothing of the decision is implemented or committed before it has run
-  and the owner has ruled on its tripwires, so the commit that carries
+  and the owner has ruled on its tripwires and acceptance criteria, so the record that carries
   the deliberation carries those rulings.
 - **The full path.** Otherwise, and whenever a discussion converges on
   work that no longer lands in the change under way (it needs a branch
@@ -598,7 +600,7 @@ choices whose option space genuinely is closed and consequence-free.
    If the design holds against the premortem, what survives is proposed as tripwires,
    except a cause that only the built code can check: that is an acceptance
    criterion, which `skill@knowledge-architect-planning` writes into the plan document,
-   or, on the in-change path, a test of the change.
+   or which, on the in-change path, the change applies as a test.
 %% A criterion on the owner's word: `design@agent-skills@acceptance-criteria-on-the-owners-word`.
 %% The labels: `design@agent-skills@ruled-items-labelled`.
    Ask the owner, for each tripwire, whether it is recorded, and for each
@@ -607,15 +609,16 @@ choices whose option space genuinely is closed and consequence-free.
    `AC<n>` for an acceptance criterion, numbered as
    `primer@labelled-items` says, so that the owner rules on each by its
    label. The
-   tripwire's entry and the criterion's item keep that label in their
+   tripwire's entry, and the criterion's item or, on the in-change path,
+   the comment at its test, keep that label in their
    text, so the ruling in the transcript is found from either.
    Some may be out of scope of the project, and the owner is the only judge of that.
    A tripwire the owner rules to record is written as
    `skill@knowledge-architect-decision-recording@ruled-tripwires` says.
 
-   Every tripwire, here and everywhere else, meets the
-   falsifiability bar: evidence specific enough that both parties
-   would agree it fired — an event, a count crossing a bound.
+   Every tripwire meets the falsifiability bar of
+   `skill@knowledge-architect-issue-tracking@tripwire-entry`: evidence
+   specific enough that both parties would agree it fired.
 
    The owner's word rules on whether a cause is watched, not on the
    wording of the tripwire that watches it; the same holds for an
@@ -726,6 +729,6 @@ is not the shape for it.
 - Tripwires: the specific evidence that would flip this verdict
 - Losing alternatives: what they were, and where the winner absorbs them
 - Recorded at: the plan document, or, for a verdict no work implements,
-  such as keep, the commit message of the in-change path; the design
+  such as keep, where the in-change path puts its deliberation; the design
   entry of the owning Component, when the verdict earns one, at the
   harvest or, on the in-change path, when the verdict is made

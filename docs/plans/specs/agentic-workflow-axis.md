@@ -2061,8 +2061,10 @@ cite it by its label.
   shipping it, on the project (a real usage)." Steps 5 and 6.
 - **D18**, ruled, on AC4: what becomes of it once the spec leaves. Default: AC4 is judged at step 6;
   at the harvest it is proposed to the owner as a tripwire on the head of
-  `thread@agentic-workflow-axis@root-cause-repair`, firing when the confirmed findings or the severe
-  ones do not fall from one pass to the next of a run. The agent's two round-7 proposals the owner
+  `thread@agentic-workflow-axis@root-cause-repair`, firing when the violations left or the severe
+  ones do not fall from one pass to the next of a run. The count reads the violations left, not the
+  confirmed findings, on the owner's ruling of F97 at pass 5, which aligned the record of an audit
+  with the stop rule's count. The agent's two round-7 proposals the owner
   did not rule, recording the mechanism "as a reason not to run many passes" and "rewording AC4 to
   judge severity by your reading", are dropped: the repair by cause answers the first, and the
   owner-list count stays the measure of severity.

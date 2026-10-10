@@ -20,6 +20,12 @@ Python, TypeScript, Go or any other language would need, for each language, a wa
 comments, and a way for the manifest to say which source files are read. Nothing about the shape is
 decided.
 
+The installed saved workflows are JavaScript, so they are not read either. Their prompts name a
+skill section in words, inside string literals: the agentic-workflow audit's `SECTION` constant
+names the section `agentic-workflow-axis` of the project-audit skill. A rename of that section
+leaves the prompt pointing to nothing, with no finding. The fifth pass of the agentic-workflow
+audit found one such pointer already broken, a prompt naming a point the section no longer had.
+
 ### Why it matters
 
 `goal@knowledge-architect@any-project-can-adopt-it` targets projects whatever their language.

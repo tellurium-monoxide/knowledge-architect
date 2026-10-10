@@ -291,7 +291,9 @@ Claims and Audit subjects, and is not checked:
 
 An acceptance criterion is a bet about a decision the work is built on, where a claim is a bet about
 the work itself: firing a criterion reopens the decision, not the step. It lives in the plan
-document of the work that can judge it, in its acceptance criteria section, and nowhere else. Each
+document of the work that can judge it, in its acceptance criteria section, and in no file of its
+own. One of the in-change path, which has no plan document, is
+`skill@knowledge-architect-design@discussion-loop` step 7's. Each
 names:
 
 - the decision it guards, as a reference to its thread;

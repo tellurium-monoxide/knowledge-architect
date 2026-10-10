@@ -82,12 +82,10 @@ const CORPUS = 'The corpus is every text the harness delivers to a session as an
   'other such text in the project agent configuration directory. Read it in the worktree ' +
   reading + ', detached at commit ' + args.commit + ', every file whole. You edit nothing in the ' +
   'project, run no command of the checker, and write only in the directory your brief names.'
-const KINDS = 'A cause is one of four kinds. Two homes for one moment: instructions about one ' +
-  'moment or one kind of act stated in more than one text. A structure the work did not need: a ' +
-  'fixed sequence, count or mapping that another instruction needs to vary. A restatement that ' +
-  'drifted from its home. A rule written for one interaction: a narrow rule where judgement ' +
-  'already decides.'
 const SECTION = 'the section agentic-workflow-axis of the skill knowledge-architect-project-audit'
+// The cause, its kinds and the repair per cause are stated in that section, their one home.
+const KINDS = 'What a cause is, its four kinds, what becomes of a finding that fits none, and ' +
+  'how the repair of a cause is proposed are stated in ' + SECTION + '.'
 
 // Preflight: the worktrees, the kept lists, the issues listing and the history.
 if (!args.from) {
@@ -173,7 +171,7 @@ if (args.from !== 'repairs') {
       'audit by the cause that produced them.',
     CORPUS,
     'Read the confirmed-findings file ' + confirmed + ', every draft it names, and the corpus.',
-    KINDS + ' A finding that fits none stands alone.',
+    KINDS,
     'For each cause write: an id, its kind, its mechanism in one sentence, the ids of its ' +
       'findings, and every text, with its path and section, that states an instruction about ' +
       'its moment or its act.',
@@ -202,7 +200,7 @@ if (args.from !== 'repairs') {
 }
 log('causes: ' + causeIds.length)
 
-// Repairs: one agent per cause and per repairsPerCause.
+// Repairs: repairsPerCause agents per cause, their proposals alternatives for the cause's one repair.
 phase('repairs')
 const jobs = []
 for (const id of causeIds) for (let k = 1; k <= perCause; k++) jobs.push({ id, dir: at(args.scratch, 'repairs', perCause > 1 ? id + '-' + k : id) })
@@ -212,9 +210,8 @@ const proposals = (await parallel(jobs.map((j) => () => agent(lines([
   CORPUS,
   'Read the cause ' + j.id + ' in the causes file ' + causesFile + ', every draft its findings ' +
     'name, and the corpus. ' + KINDS,
-  'Propose the repair as point 2, "The repair proposals", of "The repair by cause" in ' + SECTION +
-    ' says: read that point whole. Where you add an instruction, say why none of its forms closes ' +
-    'the cause.',
+  'Propose the repair of the cause as that section says. Where you add an instruction, say why ' +
+    'none of the forms of repair the section names closes the cause.',
   'Write proposal.md in ' + j.dir + ': each edit as its file, the text before and the text after; ' +
     'the findings each edit closes; every instruction added and removed, quoted, and their two ' +
     'counts; and any finding of the cause the repair does not close, with the reason. Return its path.',
@@ -228,8 +225,8 @@ await agent(lines([
   CORPUS,
   'Read the causes file ' + causesFile + ', every proposal (' + proposals.map((p) => p.path).join(', ') +
     '), the confirmed-findings file ' + confirmed + ', and the axis outcome table in ' + SECTION + '.',
-  'Write ' + cross + ' with: every paragraph that two or more proposals edit, with the causes ' +
-    'concerned; the instructions added and removed, summed over the proposals; for each cause, the ' +
+  'Write ' + cross + ' with: every paragraph that the proposals of two or more causes edit, with ' +
+    'the causes concerned; for each cause, the ' +
     'outcome you propose under the axis outcome table, with its reason, for the session to decide; ' +
     'and every finding marked bears-on-ruling, with the ruling quoted from its source and the ' +
     'premise that may be false. Return its path.',
@@ -247,14 +244,14 @@ const report = await agent(lines([
   '1. the header: the commit audited, ' + args.commit + '; the agents of each step; the counts of ' +
     'drafts, verified, plausible, bearing on a ruling, known, kept, after dedup and refuted; each ' +
     'refuted draft with its reason; each auditor return that says a corpus file was not read whole;',
-  '2. the figures: the run counts of findings and causes, and the instructions added and removed, ' +
-    'from the proposals;',
+  '2. the figures: the run counts of findings and causes, and the instructions each proposal adds ' +
+    'and removes;',
   '3. one section per cause: its kind and its one-sentence mechanism; its findings, each with its ' +
     'quoted evidence, the verifier verdict and note, and its tag; the repair as edits before and ' +
     'after, per file; the instructions it adds and removes, quoted; the outcome the cross-check ' +
     'proposes, and the default; each finding marked bears-on-ruling, with the ruling quoted and ' +
     'the premise that may be false;',
-  '4. the overlap map: each paragraph several repairs edit, and the causes concerned;',
+  '4. the overlap map: each paragraph the proposals of several causes edit, and the causes concerned;',
   '5. the draft of the owner list, its labels left for the session to number;',
   '6. what the run did not decide: the merge choices, the plausible verdicts, the "Outside the ' +
     'axis" and "Met outside the task" notes of the returns, and every step that failed or returned ' +

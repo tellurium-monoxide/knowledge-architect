@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-design-record-auditor
-description: Drafts the verdicts of the design-record axis of a project audit for one group of entries, the design heads and the rejected alternatives of one Component, against the rules on design heads and on rejected alternatives, one draft file per entry, and the same for a re-check after the audit's edits. Beside each head it reads the tripwires and the issues that cite the head, and the history of any ruling of the owner the head rests on. To dispatch it, follow `skill@knowledge-architect-project-audit@design-record-axis`: order each Component's entries: its design home's level-three headings that end with a slug, in file order, a directory home's subdocuments in the order its README links them, then its rejected alternatives in file order, each a heading or a paragraph that opens with the alternative's name in bold; count them; send ceil(count / 60) agents per Component, all in parallel, each on a run of consecutive entries, the sizes of any two runs differing by at most one (125 entries make three groups, 1 to 42, 43 to 84 and 85 to 125); give each the commit audited, its group's first and last entry, the shared calibration sample, a scratch directory and a worktree of its own, as `skill@knowledge-architect-review@review-invariants` says, and, for a re-check, the file of entries and rules the owner ruled to keep. Then read its drafts, never its summary alone.
+description: Drafts the verdicts of the design-record axis of a project audit for one group of entries, the design heads and the rejected alternatives of one Component, against the rules on design heads and on rejected alternatives, one draft file per entry, and the same for a re-check after the audit's edits. Beside each head it reads the tripwires and the issues that cite the head, and the history of any ruling of the owner the head rests on. To dispatch it, follow `skill@knowledge-architect-project-audit@design-record-axis`: order each Component's entries: its design home's level-three headings that end with a slug, in file order, a directory home's subdocuments in the order its README links them, then its rejected alternatives in file order, each a heading or a paragraph that opens with the alternative's name in bold; count them; send ceil(count / 60) agents per Component, all in parallel, each on a group of consecutive entries, the sizes of any two groups differing by at most one (125 entries make three groups, 1 to 42, 43 to 84 and 85 to 125); give each the commit audited, its group's first and last entry, the shared calibration sample, a scratch directory and a worktree of its own, as `skill@knowledge-architect-review@review-invariants` says, and, for a re-check, the file of entries and rules the owner ruled to keep. Then read its drafts, never its summary alone.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -23,8 +23,8 @@ you read, and every command you list is one you ran.
 
 - **The commit audited, and your worktree, detached at it.** Read the tree, and run every
   command, in your worktree, with any build output inside it.
-- **Your group**: the Component, and the first and last entry of your run.
-- **The calibration sample**: a few entries of other Components that every auditor of the run
+- **Your group**: the Component, and the first and last entry of your group.
+- **The calibration sample**: a few entries of other Components that every auditor of the pass
   judges too. Judge them exactly as your own.
 - **Your scratch directory**: the one place you write your files.
 - **For a re-check only**: a file of the entries and rules the owner ruled to keep. A rule failed
@@ -37,7 +37,9 @@ Before your first entry, read whole:
 - `primer@design-heads`, for a design head;
 - `skill@knowledge-architect-decision-recording@losing-alternatives`, for a rejected alternative;
 - `skill@knowledge-architect-decision-recording@three-homes`, for where the deliberation behind a
-  head is kept.
+  head is kept;
+- `skill@knowledge-architect-project-audit@outcomes` and
+  `skill@knowledge-architect-project-audit@design-record-axis`, for the proposed outcome.
 
 **Keep in view the failure modes of an edit.** A proposed edit must not:
 
