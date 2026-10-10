@@ -37,7 +37,8 @@ leaves the repository in the commit that completes its harvest.
   is put to the owner as D1. "The review message" is the agent's message that opens "Two of my
   premises were wrong", which put D1 to D7 to the owner. "Round 4" is the owner's reply to it, which
   opens "All defaults approved." and proposes a lens, and the agent's reply that opens "D1 to D7 are
-  now ruled"; "round 5" is the owner's message "checker-rules-lens approved, go ahead". An extraction agent wrote the owner messages,
+  now ruled"; "round 5" is the owner's message "checker-rules-lens approved, go ahead". "Round 6" is the owner's
+  reply to the re-review message, which opens "All defaults approved.". An extraction agent wrote the owner messages,
   the agent messages, the tables and the arguments verbatim to scratch; the session assembled this
   spec from that file and its own context.
 - **Labels.** The discussion used T1 to T4 and AC1 to AC4. No other discussion in the transcript
@@ -939,10 +940,9 @@ are weighed by the owner on the owner list and counted by T2 and AC4.
 
 ### Every auditor reads the whole corpus, and every draft names its lens and its tag `##files-read-and-drafts-tagged`
 
-AC1. Per D10's default, withdrawn: its observable judges a new agent's report against its
+AC1. Withdrawn per D10, ruled in round 6: its observable judges a new agent's report against its
 instructions, which `design@agent-skills@synthetic-evidence-not-built` refuses by name. T3 keeps
-watching the cause, on what an auditor's return says. Until the owner rules on D10, step 3 does not
-judge it.
+watching the cause, on what an auditor's return says. Step 3 does not judge it.
 
 ### The design-record axis keeps every rule its method held `##design-record-dispatch-kept`
 
@@ -1017,8 +1017,9 @@ before.
 
 ## Defaults awaiting the owner
 
-D8 to D15 await the owner. D1 to D7 were ruled in round 4, on the review message: "All defaults
-approved." Each is kept below, marked as ruled, since the sections and the harvest rows it shaped
+None awaits the owner. D1 to D7 were ruled in round 4, on the review message: "All defaults
+approved." D8 to D15 were ruled in round 6, on the re-review message, the agent's message that opens
+"Process slip, already contained": "All defaults approved." Each is kept below, marked as ruled, since the sections and the harvest rows it shaped
 cite it by its label.
 
 - **D1**, ruled, on AC4, from the transcript review: the wording of AC4 shown in round 3 is not in the
@@ -1059,22 +1060,25 @@ cite it by its label.
   branch adds to shipped text, at steps 1, 2 and 3, with the instrument above, and counts only
   entries, not `path@*@<path>` paths.
 
-- **D8**, awaiting the owner, on `thread@agentic-workflow-axis@checker-rules-lens`, from the
+- **D8**, ruled, on `thread@agentic-workflow-axis@checker-rules-lens`, from the
   transcript review: round 4 proposed "keep the default at 15 agents: L7 gets 2, and L5 drops from 2
   to 1", and the counts sum to 16; the owner approved both statements. Default: 16, the counts as
   approved, which "around 15" admits.
-- **D9**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-first-run`, from the
+- **D9**, ruled, on `thread@agentic-workflow-axis@workflow-axis-first-run`, from the
   design-conformance review: `goal@knowledge-architect@the-workflow-improves-through-real-use` says
   "No session is built to observe how agents follow its instructions: not to originate an edit, to
   choose between shapes, or to accept a piece of work", and AC4 and the responses of T1 to T4 judge
   the first run before the merge. D2 answered the head, not the goal. Default: the first run is real
   use, an audit of this repository's workflow the owner asked for in round 1, "then self-apply it
   for real practical testing", whose repairs land; its counts are observations of that use, and the
-  goal holds. A conflict with a goal is the owner's.
-- **D10**, awaiting the owner, on AC1, from the design-conformance review: AC1 judges a new agent's
+  goal holds. A conflict with a goal is the owner's. The owner, round 6: "About D9: what we are doing
+  is real use, there is no doubt about that. Maybe there is a deeper question about what justifies
+  considering real useas more valuable than synthetic use. But its not for us to answer, and not
+  now."
+- **D10**, ruled, on AC1, from the design-conformance review: AC1 judges a new agent's
   report against its instructions, a case `design@agent-skills@synthetic-evidence-not-built` refuses
   by name. Default: AC1 is withdrawn; T3 keeps watching its cause.
-- **D11**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-finding-standard`, from
+- **D11**, ruled, on `thread@agentic-workflow-axis@workflow-axis-finding-standard`, from
   the design-conformance and cold-implementer reviews: filling a provable gap adds an instruction
   from a reading, against the first sentence of `design@agent-skills@additions-need-real-use`, "Real
   use originates an addition", which D4 left as it was, and the goal it derives from. Default: the
@@ -1082,24 +1086,24 @@ cite it by its label.
   that predicted behaviour is unreliable evidence, and a provable gap predicts no behaviour: it is a
   fact an act needs and no text gives. A fill still goes on the owner list. Step 3 applies the head
   as D4 and D11 rewrite it.
-- **D12**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-outcomes` and
+- **D12**, ruled, on `thread@agentic-workflow-axis@workflow-axis-outcomes` and
   `thread@agentic-workflow-axis@checker-rules-lens`, from the design-conformance review: the shipped
   text held a branch for the project that publishes the workflow and the checker, which only this
   repository meets; the owner ruled such a branch out of the shipped text before: "I don't want to
   cater too much to this use case in the installed files". Default: the shipped text holds none;
   the root CLAUDE.md gains a routing-table row for the audit skill: here a W finding is edited at
   its source, and L7 also reads `path@core@docs/design.md`.
-- **D13**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-lenses`, from the
+- **D13**, ruled, on `thread@agentic-workflow-axis@workflow-axis-lenses`, from the
   cold-implementer review: the four L2 groups left decision recording, issue tracking, goal setting
   and agent configuration in no group. Default: the groups are design, planning, decision recording
   and issue tracking; review and merge; audit and retrospective; setup, pin move, goal setting and
   agent configuration. A project's own skill is walked in the group of the activity it serves.
-- **D14**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-outcomes`, from the
+- **D14**, ruled, on `thread@agentic-workflow-axis@workflow-axis-outcomes`, from the
   transcript review: `design@agent-skills@audit-outcomes` routes a finding no case names to the
   owner, and names no predicted gap; the outcomes thread sends it to an issue. Default: the head is
   rewritten at the harvest to name a predicted gap among the issue entries, per
   `design@agent-skills@additions-need-real-use`.
-- **D15**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-outcomes`, from the
+- **D15**, ruled, on `thread@agentic-workflow-axis@workflow-axis-outcomes`, from the
   design-conformance review: numbering the upstream findings `W<n>` uses the retrospective's prefix
   for an audit's findings, and `design@agent-skills@ruled-items-labelled` lists `W` for "a
   retrospective's findings". Default: its row widens to the findings on the installed workflow, in a
