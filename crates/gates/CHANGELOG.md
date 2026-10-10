@@ -71,7 +71,10 @@ subsection is omitted.
   the installed skills, agents and primer, and the project's own skills and agents, as one whole,
   for instructions a session cannot follow; the agent `agent@knowledge-architect-workflow-auditor`
   drafts its findings through seven lenses, each agent reading the whole corpus, and the findings on
-  the installed text go into a file for the workflow's maintainers.
+  the installed text go into a file for the workflow's maintainers. The confirmed findings are
+  grouped by cause and repaired by cause, a pass whose repairs add more instructions than they
+  remove goes to the owner with its net figure, and a script for Claude Code's Workflow tool runs
+  the stages where the tool is available.
 
 ### Workflow
 

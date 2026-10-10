@@ -210,10 +210,47 @@ is walked in the group of the activity it serves.
 
 **The sort** merges a finding two agents report, and notes it. It splits a finding tagged `I` into
 its installed side and its project side, each a finding with one outcome. A draft found wrong
-sends the same agent's other drafts of the same class back to a reading. A violation left, at the
-re-check, is a finding a reading confirms, that is not on the kept list, and that no issue entry of
-the run records. Each pass's commit message gives the count of confirmed findings and of those that
-went on the owner list, so that the passes show whether the run converges.
+sends the same agent's other drafts of the same class back to a reading. It writes the
+confirmed-findings file in the run's scratch directory, the directory that holds every agent's
+own: one line per confirmed finding, an id the session gives it, its tag, and the path of its
+draft. A violation left, at the re-check, is a finding a reading confirms, that is not on the kept
+list, and that no issue entry of the run records. Each pass's commit message gives the count of
+confirmed findings and of those that went on the owner list, so that the passes show whether the
+run converges.
+
+**The repair by cause.** A finding is repaired at the cause that produced it, not at its site: a
+repair written for one finding adds a rule, and added rules interact at the next pass. Between the
+sort and the owner list:
+
+1. **The cluster.** Cluster agents, two by default, each read the confirmed-findings file, every
+   draft it names and the whole corpus, and group the findings by cause, of one of four kinds:
+   - **two homes for one moment**: instructions about one moment or one kind of act stated in more
+     than one text;
+   - **a structure the work did not need**: a fixed sequence, count or mapping that another
+     instruction needs to vary;
+   - **a restatement that drifted from its home**;
+   - **a rule written for one interaction**: a narrow rule where judgement already decides.
+
+   A finding that fits none stands alone. The agents run independently. The session merges their
+   groupings into the causes file, in the run's scratch directory, one section per cause, and where
+   they differ it reads the findings concerned and chooses. It may merge or split causes.
+2. **The repair proposals.** One repair agent per cause by default proposes one repair for the
+   cause, never one per finding: the homes merged into one and the others pointing to it, the
+   structure removed, the restatement brought back to a pointer, or the narrow rule deleted and the
+   case left to judgement. It adds an instruction only where none of these closes the cause.
+   **An instruction** is a sentence that tells an agent to do, or not to do, an act at a moment; a
+   rewording that makes an existing instruction's intent clearer adds none, whatever its length.
+   Each proposal counts the instructions it adds and removes.
+3. **The confirmation.** The session reads each proposal against its cause and the corpus, as it
+   reads a draft at the sort, and corrects it or sends it back.
+
+The owner list then holds one item per cause, with the ids of its findings, the repair, its count
+and a default. A cause takes the outcome its repair's edits take in the table below: applied in the
+branch when every edit falls in the applied row, the owner list otherwise. Each finding takes its
+cause's outcome. **When the repairs of a pass add more instructions than they remove, the owner
+list says so first, with the net figure**, and the owner rules on that growth before any repair of
+the pass is applied. Each pass's commit message also gives the corpus's word count before and
+after the pass, `wc -w` over the corpus's files.
 
 **The outcomes of this axis**, for a finding on the project's own text:
 
@@ -230,4 +267,84 @@ findings, with no standing questions. It is named
 `<YYYY-MM-DD>-<project>-workflow-audit-klarch-workflow.md`, and handled as
 `skill@knowledge-architect-retrospective@two-files` and
 `skill@knowledge-architect-retrospective@what-becomes-of-files` say for that file: it is written
-outside the project, and nothing of it leaves the machine before the owner has read it.
+outside the project, and nothing of it leaves the machine before the owner has read it. A cause
+whose findings are on both sides is repaired in two parts: its installed side is sent upstream, and
+its project side takes its outcome here.
+
+**The workflow script.** Where the harness offers the Workflow tool, the session runs each stage of
+the pass by passing the script below to that tool inline, with its inputs in `args`; elsewhere it
+dispatches the same agents with the same prompts, in the same order. The stages are three, one
+invocation each, since a reading of the session sits between each two: `drafts`, then the sort;
+`clusters`, then the merge; `repairs`, then the confirmation. The cluster and repair prompts are
+written in the script and nowhere else: a prompt is read from this skill as the session finds it,
+where an agent's definition is the one the harness registered when the session started. Before
+the `drafts` stage of a re-check, the session writes the kept list into each agent's scratch
+directory, and names it in that agent's entry.
+
+```js
+export const meta = {
+  name: 'agentic-workflow-audit',
+  description: 'One stage of a pass of the agentic-workflow axis: drafts, clusters or repairs',
+  phases: [{ title: 'drafts' }, { title: 'clusters' }, { title: 'repairs' }],
+}
+// args: { stage, commit,
+//   agents: [{ lens, group, scratch, kept }]     for drafts; group for L2 only, kept for a re-check only
+//   findings, scratches: [dir]                    for clusters: the confirmed-findings file, one dir per agent
+//   causesFile, causes: [{ id, scratch }]         for repairs }
+const PATH = { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] }
+const CORPUS = 'The corpus is every text the harness delivers to a session as an instruction: the ' +
+  'project root CLAUDE.md and the primer it imports, the installed skills and agents, and the ' +
+  'project own skills and agents. Read every file of it whole. You edit nothing in the project: ' +
+  'you write only in your scratch directory, and run only commands that read.'
+const KINDS = 'A cause is one of four kinds. Two homes for one moment: instructions about one ' +
+  'moment or one kind of act stated in more than one text. A structure the work did not need: a ' +
+  'fixed sequence, count or mapping that another instruction needs to vary. A restatement that ' +
+  'drifted from its home. A rule written for one interaction: a narrow rule where judgement ' +
+  'already decides.'
+const lines = (xs) => xs.filter(Boolean).join('\n')
+if (args.stage === 'drafts') {
+  phase('drafts')
+  return await parallel(args.agents.map((a) => () => agent(lines([
+    'Commit audited: ' + args.commit,
+    'Lens: ' + a.lens + (a.group ? ', group of activities: ' + a.group : ''),
+    'Scratch directory: ' + a.scratch,
+    a.kept ? 'Kept list, for this re-check: ' + a.kept : '',
+  ]), { agentType: 'knowledge-architect-workflow-auditor', phase: 'drafts', label: a.lens })))
+}
+if (args.stage === 'clusters') {
+  phase('clusters')
+  return await parallel(args.scratches.map((dir, i) => () => agent(lines([
+    'You group the confirmed findings of one pass of the agentic-workflow axis of a project ' +
+      'audit by the cause that produced them, at commit ' + args.commit + '.',
+    CORPUS,
+    'Read the confirmed-findings file ' + args.findings + ', every draft it names, and the corpus.',
+    KINDS + ' A finding that fits none stands alone.',
+    'For each cause write: an id, its kind, its mechanism in one sentence, the ids of its ' +
+      'findings, and every text, with its path and section, that states an instruction about ' +
+      'its moment or its act.',
+    'Write the grouping to grouping.md in your scratch directory, ' + dir + ', and return its path.',
+  ]), { schema: PATH, phase: 'clusters', label: 'cluster ' + (i + 1) })))
+}
+if (args.stage === 'repairs') {
+  phase('repairs')
+  return await parallel(args.causes.map((c) => () => agent(lines([
+    'You propose the repair of one cause of findings of the agentic-workflow axis of a project ' +
+      'audit, at commit ' + args.commit + '.',
+    CORPUS,
+    'Read the cause ' + c.id + ' in the causes file ' + args.causesFile + ', every draft its ' +
+      'findings name, and the corpus. ' + KINDS,
+    'Propose one repair for the cause, never one per finding. By its kind: gather the ' +
+      'instructions of the moment into one home, the section of the skill that owns the moment, ' +
+      'and replace the others by a pointer to it; remove the structure; bring the restatement ' +
+      'back to a pointer to its home; delete the narrow rule and leave the case to judgement. ' +
+      'Add an instruction only where none of these closes the cause, and say why.',
+    'An instruction is a sentence that tells an agent to do, or not to do, an act at a moment. ' +
+      'A rewording that makes an existing instruction intent clearer adds none, whatever its length.',
+    'Write proposal.md in your scratch directory, ' + c.scratch + ': each edit as its file, the ' +
+      'text before and the text after; the findings each edit closes; every instruction added ' +
+      'and removed, quoted, and their two counts; and any finding of the cause the repair does ' +
+      'not close, with the reason. Return its path.',
+  ]), { schema: PATH, phase: 'repairs', label: c.id })))
+}
+throw new Error('args.stage is drafts, clusters or repairs')
+```
