@@ -17,7 +17,7 @@ is reviewed and merged first, and published from main last, on the owner's word,
 
 Not covered here: **a repair to a crate's code** found on the release branch,
 `skill@klarch-development`; **the changelog entries of each change**, which each branch writes, per
-root `CLAUDE.md`, section Git, point 1; **the review itself**, `skill@knowledge-architect-review`,
+`instructions@git-workflow`, point 1; **the review itself**, `skill@knowledge-architect-review`,
 which step 9 dispatches.
 
 ## The release branch `##release-branch`
@@ -43,11 +43,11 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    them, per `design@knowledge-architect@changelog-reviewed-at-the-release`. The version chosen at step 1 follows the highest bump class among its entries, a patch at
    least.
 3. **Commit**, with `cargo klarch check --staged` before and
-   `cargo klarch commits origin/main..HEAD` after: the whole branch, per root `CLAUDE.md`, section
-   Verify mechanically, `design@agent-skills@staged-check-before-each-commit`, and
+   `cargo klarch commits origin/main..HEAD` after: the whole branch, per
+   `instructions@verify-mechanically`, `design@agent-skills@staged-check-before-each-commit`, and
    `issue@core@branch-sha-citations-are-judged-within-the-range-only`.
    Cargo refuses to package an uncommitted tree, so the commit comes before the next steps. Then
-   push the branch and open a draft pull request, per root `CLAUDE.md`, section Git, point 1.
+   push the branch and open a draft pull request, per `instructions@git-workflow`, point 1.
 4. **The shipped text cites no entry.** List every backticked span with an `@` in the installed
    copies, which hold the text as it ships, its `%%` comments removed and its placeholders filled,
    and read each one:

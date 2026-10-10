@@ -1600,8 +1600,8 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   the second outcome needs no word of the owner's: "as long as it does passes the test you wrote, I
   have no problem with that level of autonomous fix". A subagent that edits nothing reports each
   item to the session that dispatched it, which routes it.
-- **An item put to the owner under a label takes the next number of its prefix in the record that
-  keeps its ruling**, per `design@agent-skills@ruled-items-labelled`. Labels are given in sessions
+- **An item put to the owner under a label takes the next number of its prefix in the record the
+  label reaches**, per `design@agent-skills@ruled-items-labelled`. Labels are given in sessions
   of every activity, and no one skill is loaded in all of them.
 - **Every commit of a branch is judged by the checker at the branch's tip**, where the project's
   gates run the commits check over the branch, so a change that sets what that checker requires
