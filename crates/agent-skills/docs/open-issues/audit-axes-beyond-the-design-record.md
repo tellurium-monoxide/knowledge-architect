@@ -61,7 +61,10 @@ proposed", carried "by one or several subagents (maybe one per component)". As r
   `agent@knowledge-architect-decision-record-reviewer` judging rejected alternatives by two
   different restatements of one rule, one of which reported as a defect what the other must not;
   the commit "The decision-record reviewer and the design-record auditor judge the record by the
-  same rules" aligned them.
+  same rules" aligned them. The owner placed the restatements of directives in this axis, each read
+  against its home, since the checker cannot compare prose: "The restatement item, I find it weird
+  to add it in this axis. It does not read the same thing at all. It would go in the "agentic
+  workflow" axis mentionned in the issue, instead, IMO."
 
 Additions of the session, for the discussion to judge:
 
@@ -72,9 +75,7 @@ Additions of the session, for the discussion to judge:
 - **goal coverage**: each goal against the design heads that serve it, for a goal no head serves and
   a head that serves no goal. The installed design-conformance reviewer already reads one plan
   document against the goals and the heads, per `design@agent-skills@plan-read-against-the-record`;
-  its reading is a lead for this audit at the scale of the whole project;
-- **restatements**: every restatement of a directive against its home, since a restatement is the
-  defect where the two disagree and the checker cannot compare prose.
+  its reading is a lead for this audit at the scale of the whole project.
 
 **A second worked instance.** The design discussion that produced
 `design@agent-skills@title-states-the-rule` audited every head of this repository's five design
@@ -92,8 +93,11 @@ plans directory finds it. Two lessons on method:
   subagents classed a ground taken from a goal differently and used different thresholds for a
   rewritten head, so its weekly counts carry that uncertainty.
 
-**Method.** The method these lessons led to, and every axis shares, is
-`design@agent-skills@audit-method`: bounded groups, a calibration sample, history read behind each
+**Method.** The method these lessons led to is `design@agent-skills@audit-method`, approved for
+the design-record axis and as the generic shape to adjust for the others: "it might differ per
+axis. For now, we are only providing one axis, so we can adjust this generic shape later for the
+others. But I think your general shape should hold its ground for the other axis too." It holds
+bounded groups, a calibration sample, history read behind each
 ruling, and nothing applied before a reading confirms it. One lesson it does not adopt stays open
 here, for an axis to weigh: the owner's reading of a sample of the verdicts, since agents applying a
 test measure how agents read it, not whether it is right.

@@ -1320,8 +1320,8 @@ included — or in a directory home's README.
   not list every decision, and one register would have two definition sites.
 - **A slug at the head of a plain line is reported, not accepted.** It is neither a definition
   nor a reference, so every pointer at it dangles and the site itself is named. Accepting it
-  beside the heading form would leave the two indistinguishable, and nothing would say which
-  anchors use which.
+  beside the heading form would leave the two indistinguishable, and a project moving off the
+  line-head form could not tell which of its slugs are left to move.
 - **A mid-line slug is a pointer written in the definition form**, and recording it is what makes
   such a pointer visible: a census found such pointers in thaum's design homes, checked by
   nothing, in the message of 115f8ae.
@@ -1907,7 +1907,9 @@ the forgotten pin it exists for. This serves `goal@knowledge-architect@any-proje
 a project pins the version it uses, and moves when it chooses.
 
 **The working tree only.** `commits` reads a historical tree's key, so a tree without it stops in
-phase 1, and compares no historical value, so moving the pin fails no earlier commit.
+phase 1, and compares no historical value, so moving the pin fails no earlier commit. A branch that
+introduces the key therefore opens with the commit that gives every manifest the key, per
+`design@core@a-commit-message-is-a-document`.
 
 **A binary released before the key** refuses a manifest carrying it at parse, as an unknown field,
 since `[project]` denies unknown keys: it runs no command, so it cannot suggest a downgrade, but
