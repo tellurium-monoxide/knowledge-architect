@@ -30,7 +30,7 @@ with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-
   retrospective or the agentic-workflow axis of a project audit wrote it. It is named
   `<date>-<project>-<subject>-klarch-workflow.md`, or, before that name,
   `<date>-<project>-workflow.md` or `<date>-<project>-<subject>-workflow.md`. It holds the
-  findings on the installed skills, agents and primer (W), and, from a retrospective, the
+  findings on the installed files (W), and, from a retrospective, the
   findings on the checker (C) and the answers to the standing questions.
 - **In scope: this repository's own project file**, `<date>-knowledge-architect-<subject>.md`, or
   `<date>-knowledge-architect.md` before that name.
@@ -122,13 +122,12 @@ Each item below is answered with its evidence. The order is a suggestion; the co
   - no change.
 
   A fix to an installed skill passes the four tests of the agent-skills `CLAUDE.md`, "Editing an
-  installed skill or agent": scope, necessity, kind, built intent. An addition needs an observation
-  from a real session, which the finding is, the owner's named lack, which the owner gives at the
-  ruling, and a one-sentence mechanism, which the analysis writes, per
-  `design@agent-skills@additions-need-real-use`.
+  installed skill or agent", read whole: scope, necessity, kind, built intent.
 - **g. Its route.** What handling it needs, which says what "now" would mean:
-  - a text edit whose design is settled: under `skill@knowledge-architect-agent-configuration`, and
-    for the installed text the agent-skills `CLAUDE.md`;
+  - a text edit whose design is settled: under `skill@knowledge-architect-agent-configuration` for
+    this repository's own configuration, and for the installed text, at its source under
+    `path@agent-skills@content/`, under the agent-skills `CLAUDE.md`, section "Editing an installed
+    skill or agent", read whole;
   - a decision, or one whose design is not settled: `skill@knowledge-architect-design`;
   - a change to the Rust source: `skill@klarch-development`;
   - an issue only, when the work is not to be done in this session;

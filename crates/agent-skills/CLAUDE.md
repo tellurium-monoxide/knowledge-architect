@@ -51,6 +51,15 @@ restates a skill, or a convention of one project, does not go in it.
 
 ## Editing an installed skill or agent
 
+The text under `path@agent-skills@content/` is the source the install copies, not an installed
+file, and it is edited here by hand. It is written under
+`skill@knowledge-architect-agent-configuration`, read whole, as a project's own skill or agent is.
+Three parts of that skill concern a project's own names and the installed copies, and do not apply
+to this source: its scope sentence, the prefix rule of
+`skill@knowledge-architect-agent-configuration@shaping-a-skill`, since a shipped skill or agent is
+named with the installer's prefix, and
+`skill@knowledge-architect-agent-configuration@installed-files-never-edited`.
+
 An edit of an installed skill under `path@agent-skills@content/` passes the four tests below, in
 order; an edit of an installed agent passes the last three, since an agent never works with the
 owner and has no expectation set. This is a restatement; its homes are the entries and the skill named.

@@ -56,7 +56,8 @@ needs. The points hold for every axis; the dispatch is the axis's own, in its se
 
 1. **The corpus.** The axis's section names its corpus and what is read beside it.
 2. **The dispatch.** Dispatch the axis's agents as its section says, all in parallel, each with a
-   scratch directory of its own.
+   scratch directory and a worktree of its own, as
+   `skill@knowledge-architect-review@review-invariants` says.
 3. **Pre-commitments.** An axis that measures, one whose run yields a figure a conclusion rests on,
    states before the run which figure would show which conclusion, and the owner sees them before
    the run. An axis that only applies rules owes none, and the count of violations left per pass,
@@ -89,10 +90,9 @@ needs. The points hold for every axis; the dispatch is the axis's own, in its se
    rule on becomes an issue entry, as a deferred item does. The count of violations left is expected
    to fall from one pass to the next; a pass where it does not goes to the owner as a question,
    with the counts, and starts no new pass on its own.
-9. **Review.** The audit's branch is reviewed under `skill@knowledge-architect-review`, on every
-   axis of its table whose condition holds, which include self-consistency, fidelity of
-   relocation, routing of knowledge, decision recording, standing state, and the transcript review
-   last.
+9. **Review.** The audit's branch is reviewed before its merge under
+   `skill@knowledge-architect-review`, on the axes `skill@knowledge-architect-review@review-axes`
+   says that review owes.
 
 ## Outcomes {{slug:outcomes}}
 
@@ -156,7 +156,8 @@ texts. A head found false of the code gets an issue entry, kind `defect`.
   group, the drafts the difference bears on, before any draft is sorted. Where the rule's text admits
   both readings, the difference goes on the owner list.
 - **The brief.** One agent per group writes one draft per entry. Its brief names the commit
-  audited, its group's first and last entry, the sample's entries and its scratch directory.
+  audited, its group's first and last entry, the sample's entries, its scratch directory and its
+  worktree.
 - **The sort** also reads a sample of the drafts that find their entry conforming, at least one per
   group, and a draft found wrong sends the same agent's other drafts that judge the same rule back
   to a reading.
@@ -179,11 +180,11 @@ would close it" an edit of the run does is closed in that commit.
 
 ## The agentic-workflow axis {{slug:agentic-workflow-axis}}
 
-**The corpus**: every text the harness delivers to a session as an instruction: the project's root
-`CLAUDE.md` and the primer it imports, the installed skills and agents, and the project's own
-skills and agents. The scoped `CLAUDE.md` files next to the code are not in it, nor are the
-registers. The workflow functions as a whole, and its main defect is two texts a session cannot both
-obey, so every agent reads the whole corpus.
+**The corpus**: every text the harness delivers to a session as an instruction, installed or the
+project's own: the project's root `CLAUDE.md` and the primer it imports, and every other such text
+in the project's agent configuration directory. The scoped `CLAUDE.md` files next to the code are
+not in it, nor are the registers. The workflow functions as a whole, and its main defect is two
+texts a session cannot both obey, so every agent reads the whole corpus.
 
 **The rules**: a session can follow every instruction. A finding is admitted when a reading confirms
 it, in the classes `agent@knowledge-architect-workflow-auditor` defines: a contradiction, a broken
@@ -251,10 +252,11 @@ sort and the owner list:
 3. **The confirmation.** The session reads each proposal against its cause and the corpus, as it
    reads a draft at the sort, and corrects it or sends it back.
 
-The owner list then holds one item per cause, with the ids of its findings, the repair, its count
-and a default. A cause takes the outcome its repair's edits take in the table below: applied in the
-branch when every edit falls in the applied row, the owner list otherwise. Each finding takes its
-cause's outcome. **When the repairs of a pass add more instructions than they remove, the owner
+A cause's findings on the installed text are sent upstream, as below. Its findings on the
+project's own text take the outcome its repair's edits on that text take in the table below:
+applied in the branch when every such edit falls in the applied row, the owner list otherwise. An
+item of the owner list is one cause, with the ids of its findings, the repair, its count and a
+default. **When the repairs of a pass add more instructions than they remove, the owner
 list says so first, with the net figure**, and the owner rules on that growth before any repair of
 the pass is applied. Each pass's commit message also gives the corpus's word count before and
 after the pass, `wc -w` over the corpus's files.
@@ -272,27 +274,25 @@ gap included, goes into one file per run, written when the run stops. That file 
 file of `skill@knowledge-architect-retrospective@two-files`, named, written and handled as that
 section and `skill@knowledge-architect-retrospective@what-becomes-of-files` say, its subject
 naming the audit. It differs in its content only: what was audited at which commit in place of
-what the session did, each finding numbered `W<n>`, and no standing answers. A cause whose
-findings are on both sides is repaired in two parts: its installed side is sent upstream, and its
-project side takes its outcome here.
+what the session did, each finding numbered `W<n>`, and no standing answers.
 
-**The workflow script.** Where the harness offers the Workflow tool, the session runs each stage of
-the pass through the saved workflow the install writes,
-`knowledge-architect-agentic-workflow-audit`, by name, with the stage's inputs in `args`;
-elsewhere it dispatches the same agents with the same prompts, in the same order. The stages are
-three, one run each, since a reading of the session sits between each two: `drafts`, then the
-sort; `clusters`, then the merge; `repairs`, then the confirmation. Each stage's `args` are
-`stage`, `commit`, the commit audited, and:
+**The workflow script.** Where the harness offers the Workflow tool and lists the saved workflow
+the install writes, `knowledge-architect-agentic-workflow-audit`, the session runs each stage of
+the pass through it, by name, with the stage's inputs in `args`. A harness may list saved
+workflows only when a session starts, so a session that ran the install later may not see it.
+Elsewhere the session dispatches the same agents with the same prompts, in the same order. The
+stages are three, one run each, since a reading of the session sits between each two: `drafts`,
+then the sort; `clusters`, then the merge; `repairs`, then the confirmation. Each stage's `args`
+are `stage`, `commit`, the commit audited, and:
 
 | stage | its inputs |
 | --- | --- |
-| `drafts` | `agents`, one entry per auditor: its `lens`, its `group` of activities for L2, its `scratch` directory, and for a re-check `kept`, the path of its kept list |
+| `drafts` | `agents`, one entry per auditor: its `lens`, its `group` of activities for L2, its `scratch` directory, its `worktree`, and for a re-check `kept`, the path of its kept list |
 | `clusters` | `findings`, the confirmed-findings file; `scratches`, one directory per cluster agent |
 | `repairs` | `causesFile`, the file of merged causes; `causes`, each cause's id and scratch directory |
 
 The cluster and repair prompts are written in the script and nowhere else, rather than in agent
 definitions: an agent's definition is the copy the harness registered when the session started,
-per `skill@knowledge-architect-review@review-invariants`. A session that installed the workflow
-after it started reloads the harness's skills before the first run, since the harness lists saved
-workflows when the session starts. Before the `drafts` stage of a re-check, the session writes the
-kept list into each agent's scratch directory, and names it in that agent's entry.
+per `skill@knowledge-architect-review@review-invariants`. Before the `drafts` stage of a re-check,
+the session writes the kept list into each agent's scratch directory, and names it in that
+agent's entry.

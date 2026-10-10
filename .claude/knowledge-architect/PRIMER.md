@@ -28,10 +28,10 @@ A premise the session supplied is the session's to check before the owner rules 
 ## Items put to the owner under a label `##labelled-items`
 
 **An item put to the owner under a label**, `Q<n>` or the prefix a skill gives it, **takes the
-next number of its prefix in the record that will keep its ruling, from 1, and that number is never
-reused there.** The record is the document the label reaches: a plan document, a milestone's
-documents counting as one; a file; or the commit messages of one branch, counting as one. A label
-that reaches none is numbered within the message that puts it to the owner.
+next number of its prefix in the record the label reaches, from 1, and that number is never reused
+there.** That record is a plan document, a milestone's documents counting as one; a file; or the
+commit messages of one branch, counting as one. A label that reaches none is numbered within the
+message that puts it to the owner, wherever the item's ruling is kept.
 
 ## Room to judge `##room-to-judge`
 
@@ -91,11 +91,11 @@ it**: a path, a file name, a command, a value, or one sentence. A directive sent
 pointer beside it, and where the two disagree the restatement is the defect. A directive longer
 than one sentence is delivered by a pointer to its home, with an instruction to read the home whole
 at that moment, or by one of its sentences restated with its pointer beside it, where that one
-sentence is what the point of delivery needs. More than one sentence of it is never restated: a partial copy drifts, and its
-reader takes it for the whole. For installed text, the home a pointer names is installed text, a skill's section or the
-primer's, since installed text cites no entry of the project. An existing longer restatement is
-converted when a change edits what it says; re-pointing a reference in it does not count. Whether a directive is needed at a point of delivery is the
-owner's decision.
+sentence is what the point of delivery needs. More than one sentence of it is never restated: a
+partial copy drifts, and its reader takes it for the whole. For installed text, the home a pointer
+names is installed text, a skill's section or the primer's, since installed text cites no entry of
+the project. An existing longer restatement is converted when a change edits what it says;
+re-pointing a reference in it does not count.
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
@@ -140,9 +140,9 @@ a backticked reference.
 A heading is a line that opens with `#` marks and holds text, with no list or block-quote marker before
 them; a line markdown reads as a heading in another shape, as a `---` right under a paragraph is,
 stops the check. The checker reads Markdown, and in Rust source the comments and every string
-literal that a `let`, a `const` or a `static` does not bind to a name, a call's argument being never
-bound; it reads each commit's message and tree through `cargo klarch commits`. A reference anywhere
-else is found by grep.
+literal that a `let`, a `const` or a `static` does not bind to a name, a function call's argument
+being never bound and a macro's body bound like the rest of the value; it reads each commit's
+message and tree through `cargo klarch commits`. A reference anywhere else is found by grep.
 
 **A finding is repaired in a form the checker judges, never by moving the pointer into plain
 text**: the right anchor, `path@elsewhere@<path>` for a path the tree does not hold, a placeholder,
@@ -159,9 +159,10 @@ Where the project's gates run `cargo klarch commits` over a branch, as
 judges every commit of the range, its message and its tree, with the checker the branch's tip
 runs, and a tree that holds no manifest or has a finding under that checker fails it. **A change
 that sets what the tip's checker requires of every tree, such as adding the manifest, moving the
-pin, or changing the checker in a project that builds it, goes in the branch's first commit, with
-every fix the tree needs to pass it, or the branch is squashed to one commit before its review. A
-repair that would leave an earlier commit failing is folded into the earliest commit it repairs**,
+pin, or, in a project that builds the checker, a change to it under which a tree that passed
+before can fail, goes in the branch's first commit, with every fix the tree needs to pass it, or
+the branch is squashed to one commit before its review. A repair that would leave an earlier
+commit failing is folded into the earliest commit it repairs**,
 by a history edit with no uncommitted work in the tree, confirmed afterwards to have lost no
 content.
 
@@ -197,12 +198,12 @@ records dozens per unit of work stops being readable and stops being ranked.
 4. **the owner confirms that it records the owner's own intent**: a ruling the owner gave that an
    agent could judge superfluous and reverse as a small fix, or an argument the owner made and wants
    kept so as not to restate it. The agent does not judge this. When a decision would earn a head
-   by this test alone, ask the owner, one numbered question per decision (Q1, Q2, …), several in
-   one message, each quoting the owner's words the decision rests on: do they record the owner's
-   intent, or were they an answer to the agent's proposal, or a hedged statement ("I think",
-   "maybe"), which is a position to argue under `skill@knowledge-architect-design`? The head quotes
-   the owner's words and the owner's answer. With no answer, the decision earns no head by this
-   test.
+   by this test alone, ask the owner, one question per decision, each under a label, `Q<n>`,
+   numbered as `primer@labelled-items` says, several in one message, each quoting the owner's words
+   the decision rests on: do they record the owner's intent, or were they an answer to the agent's
+   proposal, or a hedged statement ("I think", "maybe"), which is a position to argue under
+   `skill@knowledge-architect-design`? The head quotes the owner's words and the owner's answer.
+   With no answer, the decision earns no head by this test.
 
 Test 3 matters most in a project that implements a specification or leans on a tool's behaviour. A
 choice that turns on what the specification means, or on how the tool behaves, is expensive to get

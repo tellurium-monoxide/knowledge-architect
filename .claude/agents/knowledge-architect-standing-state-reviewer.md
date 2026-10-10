@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-standing-state-reviewer
-description: The standing-state axis of a dispatched review. Re-reads, for every change, what no other step is sure to re-read before the merge: every tripwire in every tripwires home, every deferred issue's trigger, the acceptance criteria of a landing plan document, and every issue entry the change opens or closes. Dispatch it; do not read it.
+description: The standing-state axis of a dispatched review. Re-reads, for every change, what no other step is sure to re-read before the merge: every tripwire in every tripwires home, every deferred issue's trigger, the acceptance criteria of a landing plan document, and every issue entry the change opens or closes.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -94,7 +94,7 @@ the instance, and record the instance as the issue.
 what will make someone do this. `cargo klarch issues --kind deferred` lists every such entry. Read
 the trigger of each against the change, all of them, for the reason given above for tripwires. A
 trigger the change meets is a finding: name the issue and what in the change meets the trigger. By
-the trigger test of the installed issue-tracking skill, the occasion a trigger names includes the
+`skill@knowledge-architect-issue-tracking@trigger-test`, the occasion a trigger names includes the
 work the issue names, so the repair is that work in this change, or the owner's ruling.
 
 A tripwire whose decision was **reversed** is deleted outright. A tripwire already guarded by another
@@ -144,4 +144,4 @@ this axis is the one re-entry point scheduled for every change, so a silent repo
 one. **If the axis is clean, say so plainly.** Do not report style preferences, and do not review
 outside this axis.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
-to route; do not review it.
+to route, per `primer@met-outside-the-task`; do not review it.

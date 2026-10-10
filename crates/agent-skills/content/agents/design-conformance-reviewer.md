@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-design-conformance-reviewer
-description: The design-conformance axis of a dispatched review of a plan document, a spec or a milestone document. Reads the document against the project's record, the goals, the design heads and the rejected alternatives of every Component it touches, and reports every shape, acceptance criterion, default, step or harvest row that contradicts a goal, contradicts or widens a head the document does not list as reversed or rewritten, or brings back an alternative that lost. Dispatch it; do not read it.
+description: The design-conformance axis of a dispatched review of a plan document, a spec or a milestone document. Reads the document against the project's record, the goals, the design heads and the rejected alternatives of every Component it touches, and reports every shape, acceptance criterion, default, step or harvest row that contradicts a goal, contradicts or widens a head the document does not list as reversed or rewritten, or brings back an alternative that lost.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -81,4 +81,4 @@ Components you read and the entries you ran `show` on. **If the document fits th
 plainly.** Do not propose designs, do not report style preferences, and do not review outside this
 axis.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
-to route; do not review it.
+to route, per `primer@met-outside-the-task`; do not review it.

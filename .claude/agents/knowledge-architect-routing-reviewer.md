@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-routing-reviewer
-description: The knowledge-routing axis of a dispatched review. Judges whether a diff put each durable statement in its one home — the project's knowledge table, the argument-versus-directive split, references and path pointers, and whether a head is still present tense. Dispatch it; do not read it.
+description: The knowledge-routing axis of a dispatched review. Judges whether a diff put each durable statement in its one home — the project's knowledge table, the argument-versus-directive split, references and path pointers, and whether a head is still present tense.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -58,10 +58,10 @@ segment: a bare filename named in prose, a heading or
 a section title quoted from another document, a misspelt kind. A path-shaped span whose first
 segment the tree does not hold is silent too: a typo in that segment, a pointer into an ignored
 directory, a pointer written after its directory left. So is a `<word>#<id>` form whose id is no
-entry and whose word is no anchor, such as a copied slug whose entry has left. A reference in a
-file or a part of a file the checker does not read, per `primer@where-knowledge-goes`, is read by
-nobody but you. Those are yours to resolve by reading, and they are where this axis's real
-failures survive.
+entry and whose word is neither an anchor nor a kind, such as a copied slug whose entry has
+left. A reference in a file or a part of a file the checker does not read, per
+`primer@where-knowledge-goes`, is read by nobody but you. Those are yours to resolve by reading,
+and they are where this axis's real failures survive.
 
 ## The predicates `##routing-predicates`
 
@@ -81,9 +81,8 @@ and which existing restatement a change owes a conversion are `primer@where-know
 it whole before judging a restatement. **Never report a restatement the primer allows as a
 two-homes violation.** A restatement the primer does not allow is a finding, and its repair is the
 one the primer gives. A restatement that *contradicts* its home is a finding, against the
-restatement, which is the defect. Whether a directive is needed at its point of delivery is a
-delivery decision and belongs to the owner. For an installed skill or agent, the home is installed
-text, since it is shipped to projects whose records it cannot reference.
+restatement, which is the defect. For an installed skill or agent, the home is installed text,
+since it is shipped to projects whose records it cannot reference.
 
 **Does any pointer have to be followed before a session can act?** Judge each pointer out of an
 instruction by the test of `skill@knowledge-architect-agent-configuration@shaping-a-skill`, read
@@ -119,4 +118,4 @@ returned. **If the axis is clean, say so plainly**: that is a real result, and a
 look productive costs the dispatcher a verification pass per invented finding. Do not report style
 preferences, and do not review outside this axis.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
-to route; do not review it.
+to route, per `primer@met-outside-the-task`; do not review it.

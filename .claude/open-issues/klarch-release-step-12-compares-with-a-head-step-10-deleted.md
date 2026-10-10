@@ -16,8 +16,8 @@ the comparison against the wrong commit, is not established.
 ### What
 
 - `skill@klarch-release`, step 10: merge under the root CLAUDE.md's merge predicate.
-- `instructions@git-workflow`, point 5: `gh pr merge <branch> --rebase --delete-branch`, then
-  `git branch -D <branch>`.
+- `instructions@git-workflow`, point 5: `gh pr merge <branch> --rebase --delete-branch`, which
+  deletes the remote branch and the local one.
 - `skill@klarch-release`, step 12: `test "$(git rev-parse HEAD^{tree})" = "$(git rev-parse <the
   reviewed branch head>^{tree})"`.
 

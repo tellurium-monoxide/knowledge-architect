@@ -15,9 +15,9 @@ of them.
 tests Rust. It passes over a workflow file without seeing it, so a session that follows this skill
 for one of those gets a green gate on an unverified change.
 
-- The installed skills, agents and primer under `path@agent-skills@content/` follow
-  `path@agent-skills@CLAUDE.md`, section "Editing an installed skill or agent", and
-  `skill@knowledge-architect-agent-configuration`.
+- The installed text, at its source under `path@agent-skills@content/`, follows
+  `path@agent-skills@CLAUDE.md`, section "Editing an installed skill or agent", read whole: it
+  says which skill it is written under.
 - This repository's own agent configuration is `skill@knowledge-architect-agent-configuration`.
 - A release is `skill@klarch-release`.
 
@@ -54,9 +54,8 @@ follow the code.
 5. **Commit.** The commit contract is root `CLAUDE.md`, section Git.
 6. **Review** (`skill@klarch-development@code-review-axes`), at any checkpoint where a coherent piece works, not only at the end. It follows
    the commit because a reviewer working on its own copy of the tree sees committed content only,
-   so uncommitted work is reviewed by nobody. A repair the review asks for is a further commit,
-   unless it would leave an earlier commit failing under the branch tip's checker: it is then
-   folded into the earliest commit it repairs, per root `CLAUDE.md`, section Git, point 2.
+   so uncommitted work is reviewed by nobody. A repair the review asks for lands as
+   `skill@knowledge-architect-review@what-review-leaves` says.
 
 ## Claims, and tests that discriminate `##discriminating-tests`
 
@@ -187,13 +186,10 @@ only the branch's tip: its message and its tree. Run `cargo klarch check --stage
 and before each commit, and `cargo klarch commits origin/main..HEAD` after it: the whole branch, since a citation of an earlier
 commit of the branch by SHA is refused only when that commit is in the range judged, per
 `issue@core@branch-sha-citations-are-judged-within-the-range-only`; the check before the commit
-restates `design@agent-skills@staged-check-before-each-commit`. A failing staged check is
-repaired before the commit; a commit whose tree fails `commits` is repaired by a new commit, folded
-into it by a history edit with a clean tree, and one whose message fails it by a reword, per root
-`CLAUDE.md`, section Git, point 2. **A change to
-the core that makes a check stricter, or changes the manifest format, makes every earlier commit of
-its branch fail.** Put that change in the branch's first commit, with every fix the tree needs to
-pass it, or squash the branch to one commit before its review. The decision is
+restates `design@agent-skills@staged-check-before-each-commit`. The repair of a failing
+check is `instructions@verify-mechanically`. **A change to the core that makes a check stricter,
+or changes the manifest format, makes every earlier commit of its branch fail**: it is placed on
+the branch as `primer@branch-commits` says, read whole. The decision is
 `design@core@a-commit-message-is-a-document`. Run both checks bare, and never chain a command on a
 verdict that went through a pipe.
 

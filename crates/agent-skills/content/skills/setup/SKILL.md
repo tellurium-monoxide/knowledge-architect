@@ -162,9 +162,10 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
   statement the project keeps somewhere the primer's table does not name, such as its changelog, a
   register it declares, a directory with a convention of its own. The plans directory and the
   roadmap are the primer's rows, not the project's;
-- **the project's skill prefix**: its name and a hyphen, which names every project skill and agent.
-  A name that begins with `knowledge-architect-` is the installer's: the install deletes it. A
-  project whose name gives that prefix takes another.
+- **the project's skill prefix**: its name and a hyphen, which names everything of the project's
+  own in the directories the install writes into. A name that begins with `knowledge-architect-`
+  there is the installer's: the install deletes it. A project whose name gives that prefix takes
+  another.
 
 How the project's rows are written is
 `skill@knowledge-architect-agent-configuration@project-knowledge-rows`; the prefix and a project

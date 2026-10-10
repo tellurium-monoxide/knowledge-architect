@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-decision-recording
-description: MUST use before writing into a design home, whatever the activity, and when a design decision has been made or reversed — a choice about how the project or one of its Components is built, including anything a consumer of it may depend on — in order to decide whether it earns durable text at all (most implementation choices do not) and where that text lands. Covers when recording happens, the reversal check that comes before everything else, which Component owns it, the split between the design home, the rejected alternatives and history, where a head is written and how a slug is renamed, and the tripwires a premortem produces; what earns a head and how a head is shaped are the primer's section on design heads.
+description: MUST use before writing into a design home, whatever the activity, and when a design decision has been made or reversed — a choice about how the project or one of its Components is built, including anything a consumer of it may depend on — in order to decide whether it earns durable text at all (most implementation choices do not) and where that text lands. Covers when recording happens, the reversal check that comes before everything else, which Component owns it, the split between the design home, the rejected alternatives and history, where a head is written and how a slug is renamed, and when a tripwire the owner ruled on is written; what earns a head and how a head is shaped are the primer's section on design heads.
 ---
 
 # Recording a decision
@@ -10,7 +10,7 @@ loaded when the session started, and a recording comes late in it.
 
 Scope: turning a decision about **what we build** into durable text. Whether it earns durable text
 at all, when it is written, which Component owns it, what goes in the design home, what stays in
-history, and what the premortem leaves behind.
+history, and when a tripwire the owner ruled on is written.
 
 Not covered here: **having** the discussion (`skill@knowledge-architect-design`);
 **writing the spec or the milestone document** that carries a decision until its work lands
@@ -137,7 +137,7 @@ In the Component's design home. That is its `path@*@docs/design.md`, or, for a C
 outgrown one file, its `path@*@docs/design/` directory. In the directory shape the decision goes in the
 subdocument owning its subject, never in the directory's `README.md`, which is the head and the
 index. A new subdocument is linked from that index, `[title](file.md)`, the target relative to the
-README, conventionally one bullet per subdocument. `{{command}} check` refuses one that is not.
+README, conventionally one bullet per subdocument.
 
 **What a head holds and how it is shaped is `primer@design-heads`**: read it whole before writing
 a head. The template:
@@ -236,14 +236,19 @@ propose, **or when the decision it lost to leaves the design home** for a line b
 instruction it states: that line then names the alternative and the reason it lost, so a session
 that reopens the instruction still meets it.
 
-## Tripwires from a premortem {{slug:premortem-tripwires}}
+## Writing a tripwire the owner ruled on {{slug:ruled-tripwires}}
 
 %% The `T` label: `design@agent-skills@ruled-items-labelled`.
-A design discussion that runs a premortem ends with it, and the owner rules on which of its surviving causes
-become tripwires, each by the label, `T<n>`, it was put to the owner under. **A tripwire is written at harvest, with the decision it guards, and only on the
-owner's word.** It goes in the tripwires home of the Component that owns the guarded decision, so
-the decision's head exists before the tripwire that names it. Its shape and its lifecycle are
-`skill@knowledge-architect-issue-tracking`.
+%% Written with its decision: `design@agent-skills@premortem-tripwires-on-the-owners-word`.
+A design discussion that runs a premortem ends with it, and the owner rules on which of its
+surviving causes become tripwires, each by the label, `T<n>`, it was put to the owner under. **A
+tripwire is written only on the owner's word, and with the decision it guards**, whatever named
+it, a parked thread included: in the change that records that decision, which on the full path of
+`skill@knowledge-architect-design` is the harvest, or in a later change once that decision is
+recorded. It goes in the tripwires home of the Component that owns the guarded decision, so the
+decision's head exists before the tripwire that names it. A parked thread's tripwire whose ruling
+records no decision, as when the owner defers the question, is instead the trigger of a `deferred`
+issue. Its shape and its lifecycle are `skill@knowledge-architect-issue-tracking`.
 
 ## Before you finish {{slug:before-you-finish}}
 
