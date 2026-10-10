@@ -1580,7 +1580,8 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
 - **Before diagnosing anything as a problem, a session checks whether it is already recorded**,
   with the listing commands of the checker.
 - **Something met outside the task takes the first of four outcomes that applies.** If it bears on
-  the current work, stop and present it to the owner at the top of the turn, with a default. If its
+  the current work, present it to the owner at the top of the turn, with a default, and proceed on
+  the default unless the owner answers otherwise. If its
   fix is checkable from the diff alone, because it changes no behaviour, no decision and no test
   outcome, fix it in a commit of its own. If its `Why it matters` and its `What would close it` can
   be written, open an issue. Otherwise name it, with why it is dropped. A turn that met anything
@@ -1589,7 +1590,8 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   to create an open issue entry about it, but not fix it either, instead reporting it in
   conversation as a short oneliner", so every outcome leaves a record or a listed line. A fix under
   the second outcome needs no word of the owner's: "as long as it does passes the test you wrote, I
-  have no problem with that level of autonomous fix".
+  have no problem with that level of autonomous fix". A subagent that edits nothing reports each
+  item to the session that dispatched it, which routes it.
 
 ### Every rule on what a design head records and how lives in one section of the primer `##one-home-for-head-rules`
 

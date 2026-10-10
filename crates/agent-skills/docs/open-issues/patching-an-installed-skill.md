@@ -1,23 +1,40 @@
 ---
-kind: deferred
+kind: todo
 ---
 # A project cannot change one instruction of an installed skill
 
 ## Summary
 
 An installed skill is compared byte for byte with the version the project pins, so a project
-cannot edit it. A project adds to it through a skill of its own. A project whose need is to change
-or remove one instruction of an installed skill has no means, and may give up on the installed
-workflow altogether.
+cannot edit it. A project adds to it through a skill of its own, and the installed
+agent-configuration skill says such an addition "never contradicts" the installed text. A project
+whose need is to change or remove one instruction of an installed skill has no sanctioned means.
+This repository already sets three installed instructions aside in its root CLAUDE.md, so the need
+is met here, not only in an adopting project.
 
 ## Details
 
 ### What
 
-A means for a project to change an installed skill in one place and keep the rest: for instance a
-patch stored as a diff in the project, applied by the install and checked by the check, so that an
-upgrade either applies it again or reports that it no longer applies. Nothing about the shape is
-decided.
+The owner's leads, from the owner list of the first run of the agentic-workflow axis (F26): a
+project is allowed to supersede installed text, but this is not recommended. A supersession is
+documented in the root CLAUDE.md, either by holding the superseding instruction or by a table that
+maps every superseding instruction, and each says what is superseded, where the superseding
+instruction is, and why it is needed, concisely. For instance, a project's own `<project>-review`
+skill could hold instructions that supersede some of `skill@knowledge-architect-review`. The
+owner: "This practice should be allowed, but not recommended."
+
+The three supersessions this repository holds today, each ruled by the owner:
+
+- the project skill prefix `klarch-`, against the installed rule that the prefix is the project's
+  name and a hyphen, per `design@knowledge-architect@klarch-prefix`;
+- a retrospective's workflow file handled here rather than filed as an issue on GitHub, per
+  `design@knowledge-architect@retrospective-findings-stay-here`;
+- the agentic-workflow axis's findings on the installed text edited at their source, with no
+  upstream file, in `instructions@repository-skills`.
+
+An earlier lead, kept: a patch stored as a diff in the project, applied by the install and checked
+by the check, so that an upgrade either applies it again or reports that it no longer applies.
 
 ### Why it matters
 
@@ -25,15 +42,15 @@ decided.
 whose need is a contradiction is left two moves: report it to this repository, or declare
 `harness = []` and lose the installed workflow, the checks of `design@core@owned-namespace-check`
 and the overlay rule with it. That threatens `goal@knowledge-architect@any-project-can-adopt-it`.
-The retrospective asks about it at every session, per
+This repository's own three supersessions stand against the agent-configuration skill's "never
+contradicts it" as written, which the first run of the agentic-workflow axis reported. The
+retrospective asks about the need at every session, per
 `design@agent-skills@premortem-as-watch-points`.
 
-### Trigger
+### What would close it
 
-A retrospective's workflow file from a project that uses the workflow, filed as an issue on
-knowledge-architect's repository or received and analysed under `skill@klarch-retrospective-intake`,
-per `design@agent-skills@retrospective-destination`, names a session that needed to change or remove
-an instruction of an installed skill for its own project. A session of this repository does not meet
-it: here the installed text is edited at its source, and the repository follows the published
-version without deviation, so that its own sessions test it. The session that triages that report decides what the workflow
-changes, and this means is one of the answers it weighs.
+A design discussion under `skill@knowledge-architect-design` that decides the shape from the
+owner's leads, and its work landed: the agent-configuration skill and
+`design@agent-skills@overlay-by-separate-skills` say how a project supersedes installed text and
+where it documents each supersession, and this repository's root CLAUDE.md documents its three in
+that shape.

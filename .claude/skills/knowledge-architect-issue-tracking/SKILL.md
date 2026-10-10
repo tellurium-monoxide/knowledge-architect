@@ -29,7 +29,8 @@ decision is recorded and the tripwire is unreadable apart from it.
 
 **A check that can only be applied once unbuilt work is built is not a tripwire.** It is what that
 work must prove, and it belongs with the work's planning, under
-`skill@knowledge-architect-planning`. A tripwire is for a decision about code that exists.
+`skill@knowledge-architect-planning`. A tripwire is for a decision whose work exists, or that no
+work implements.
 
 ## What is outstanding, across every register `##outstanding-across-registers`
 
@@ -54,8 +55,9 @@ the one you happen to think of is not the check.
 
 ## Read before you diagnose `##read-before-diagnosing`
 
-**Before concluding that a behaviour is a new problem, list the issues of the anchor it appears
-in**, `cargo klarch issues <anchor>`, and read the entries whose title comes near. Diagnosing a
+**Before concluding that a behaviour is a new problem, list the issues and the tripwires of every
+anchor**, `cargo klarch issues` and `cargo klarch tripwires`, and read closely the entries of the anchor
+it appears in, `cargo klarch issues <anchor>`, and those whose title comes near. Diagnosing a
 recorded issue again costs a session and produces nothing. The same applies before attributing a
 measurement to a change.
 
@@ -174,8 +176,10 @@ names both repairs.
   a head.
 - Both registers hold statements that **leave**: an issue when it closes, a tripwire when it fires.
   The cost of the alternative lands in the worst place. Opening an entry is nearly always churn
-  inside a session that was doing something else and found a problem, and a duplicate check at that
-  moment is a tax on the one act this register exists to make cheap. Write what the entry needs.
+  inside a session that was doing something else and found a problem, and checking that no other
+  entry or head carries the same figure is a tax on the one act this register exists to make
+  cheap. List the entries as `skill@knowledge-architect-issue-tracking@read-before-diagnosing` says,
+  and write what the entry needs.
 
 Only `defect` carries a mandatory checklist, and only because that checklist is already written and
 already shared with the commit messages of fixes. The other kinds carry required fields, not a
@@ -323,7 +327,8 @@ and the length is not a reason to compress them.
 
 ## Reviews `##reviews-and-entries`
 
-A review produces `observation` and `question` entries in the affected anchor's `open-issues/`
-directory. The review document itself is a working artifact and is not a durable home. This is
-deliberately one mechanism rather than a separate review tracker with status tokens: three trackers
-need a script to answer "what is outstanding?", and then the script is the mechanism.
+A review's findings that stay open become entries in the affected anchor's `open-issues/`
+directory, each of the kind the table above gives it. The review document itself is a working
+artifact and is not a durable home. This is deliberately one mechanism rather than a separate
+review tracker with status tokens: three trackers need a script to answer "what is outstanding?",
+and then the script is the mechanism.

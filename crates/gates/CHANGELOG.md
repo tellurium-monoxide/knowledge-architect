@@ -107,6 +107,23 @@ subsection is omitted.
 - `agent-skills`, patch: an entry of the rejected alternatives leaves its file when it is reopened
   and chosen, when the owner rules that it fails every recording test, or when the decision it lost
   to leaves the design home and the text that keeps that decision's reason names the alternative.
+- `agent-skills`, patch: a milestone document points to the procedure of working a slice and adds
+  what its work needs, rather than restating the procedure.
+- `agent-skills`, patch: in a design discussion the agent reopens a closed thread by presenting a
+  material finding, and the thread closes again on the owner's word; a parked thread's tripwire
+  enters a tripwires home only on the owner's word.
+- `agent-skills`, patch: something met outside the task that bears on the work is presented to the
+  owner with a default, and the work proceeds on the default; a subagent that edits nothing
+  reports such items to the session that dispatched it.
+- `agent-skills`, patch: a setup run without the owner writes no goal.
+- `agent-skills`, patch: a review dispatches every axis of the review skill's table whose condition
+  holds, and those the activity's skill adds; every finding is repaired, opened as an issue, or
+  judged to need nothing.
+- `agent-skills`, patch: before diagnosing a problem, a session lists the issues and the tripwires
+  of every anchor.
+- `agent-skills`, patch: a project audit stops on the owner's judgement, and a pass whose count of
+  violations left does not fall goes to the owner as a question; a budget too small for the
+  agentic-workflow axis's dispatch is said to the owner.
 
 ## 0.5.0
 

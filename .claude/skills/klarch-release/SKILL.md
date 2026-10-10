@@ -15,6 +15,11 @@ repaired by a later commit; a version on crates.io can be yanked and never delet
 is reviewed and merged first, and published from main last, on the owner's word, per
 `design@knowledge-architect@publish-after-merge`.
 
+Not covered here: **a repair to a crate's code** found on the release branch,
+`skill@klarch-development`; **the changelog entries of each change**, which each branch writes, per
+root `CLAUDE.md`, section Git, point 1; **the review itself**, `skill@knowledge-architect-review`,
+which step 9 dispatches.
+
 ## The release branch `##release-branch`
 
 On a branch of its own, `release-<version>`, under the Git rules of the root `CLAUDE.md`:
@@ -109,7 +114,8 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
 crate it uploaded stays published.
 
 - **Nothing was uploaded**: delete the local tag with `git tag -d v<version>`, repair on a branch,
-  and release the same version again from step 10.
+  run steps 4 to 8 again on its head if the repair touched a crate, and release the same version
+  again from step 9.
 - **Some crates were uploaded**: run `cargo publish -p <crate>` for each crate still missing, from
   the same tagged commit. If that cannot succeed without a change to the code, the uploaded crates
   keep the version, and the next release is the next patch version for all three, per

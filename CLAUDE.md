@@ -15,7 +15,8 @@ The goals are `path@knowledge-architect@docs/goals.md`.
 an argument outright. One derived from a recorded decision binds it as a stated presumption, which
 a better argument can rebut. Recorded decisions were often argued before the code existed, so
 implementation is expected to prove some of them wrong: reversing one is an ordinary move, and
-`skill@knowledge-architect-decision-recording` owns what it costs.
+`skill@knowledge-architect-decision-recording` owns what it costs. This restates
+`primer@goals-bind`.
 
 The repository is a virtual workspace with five Components, none in a directory named after the
 project, per `design@knowledge-architect@no-component-directory-named-after-the-project`:
@@ -213,7 +214,7 @@ the primer's:
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
-| a decision about the published workflow: what the installed skills, agents and primer tell every adopting project | the agent-skills design home, `path@agent-skills@docs/design.md`; this repository follows the workflow as any adopting project does, and this file restates what it needs with a pointer there | the decision changes |
+| a decision about the published workflow: what the installed skills, agents and primer tell every adopting project | the agent-skills design home, `path@agent-skills@docs/design.md`; this repository follows the published workflow, with the departures this file states, and restates what it needs with a pointer there | the decision changes |
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md`; its crates.io page is a short `CRATES-IO.md` in the crate, named by `readme` in its Cargo.toml, which points to the README and to docs.rs, per `design@knowledge-architect@crates-io-page-file` | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
@@ -227,17 +228,19 @@ the primer's:
 could fit, pick one, say which you picked, and continue. A genuine gap means this table is
 incomplete. The table is a decision about the shape of the configuration, and that decision is the
 owner's. Each answer ends as a new row, so the fallback limits itself: if it fires often, the table
-is wrong.
+is wrong. This restates `skill@knowledge-architect-agent-configuration@root-claude-md-tables`.
 
 **A measurement is not a kind of statement. It is routed by what it serves.** A figure that
 supports a decision goes in that decision's head. One that characterises a defect or a question
 goes in that entry. A tripwire's firing threshold goes inside the tripwire. One that serves none of
-them goes in the commit message that took it.
+them goes in the commit message that took it. This restates `primer@where-knowledge-goes`.
 
 **Never record a number that will go stale, unless staleness is the point.** A figure carries the
 claim it supports, the command that re-takes it, and the direction that would reopen the argument.
 It does not carry the magnitude, which goes in the commit and cannot go stale there. A threshold, a
 count over a frozen corpus and a zero keep their digits, because in those the value _is_ the claim.
+An issue entry keeps its magnitudes, per the cold-reader standard of
+`skill@knowledge-architect-issue-tracking`.
 
 ### When to write a reference
 
@@ -289,13 +292,9 @@ anyone has checked it.
 
 - **Built intent**: the root's design home, and a Component's design home, are authority over the
   code until a divergence closes, per `primer@intent-and-claims`, read whole.
-- **A reason recorded at the code**: an inline comment saying why the code is shaped so, or the
-  message of the commit that argued it. It is intent at the scale of that code, and binds as a
-  presumption below the design home: a change that defeats it argues against that reason in its
-  own message, and where it conflicts with a design home, the head prevails, as in any divergence.
-  Before removing or reshaping code as unneeded, read its comment and the message of the commit
-  that introduced it (`git log -L`, `git blame`): absence from the design home is not evidence that
-  code is superfluous. This is a restatement; its home is `design@agent-skills@local-intent-binds`.
+- **A reason recorded at the code**, an inline comment or the message of the commit that argued
+  it, binds as a presumption below the design home, per `primer@intent-and-claims`, read whole
+  before removing or reshaping code as unneeded.
 - **A claim about the code as it stands**: an invariant in a scoped `CLAUDE.md`, a doc comment, a
   name, a return value, an open issue's diagnosis. This goes stale. Check it before relying on it.
 
@@ -391,16 +390,8 @@ not of what should be done.
 - **Do not spread non-conformance while working around it.** Starting from an existing document or
   entry copies its defects with it. Read what you copied against the instructions before extending
   it.
-- **Non-conformance met outside the task takes the first of the primer's four cases that
-  applies.** This is a restatement; its home is `design@agent-skills@primer-content`.
-  1. It bears on the current work: stop and present it to the owner at the top of the turn, with a
-     default.
-  2. Its fix is checkable from the diff alone, because it changes no behaviour, no decision and no
-     test outcome: fix it in a commit of its own.
-  3. Its `Why it matters` and its `What would close it` can be written: open an issue.
-  4. Otherwise: name it, with why it is dropped.
-
-  The turn ends with a "Met outside the task" section listing every item and its outcome.
+- **Non-conformance met outside the task takes the first case of `primer@met-outside-the-task`
+  that applies**, read whole, and the turn ends with its "Met outside the task" section.
 
 ## Verify mechanically `##verify-mechanically`
 
@@ -473,9 +464,10 @@ message.** The first is a restatement; its home is
 `design@agent-skills@staged-check-before-each-commit`. The range is the whole branch because this repository refuses citations of its
 branch's own commits by SHA, and `commits` sees a citation only of a commit in the range it judges,
 per `design@core@branch-shas-are-refused`; the checker-side fix is
-`issue@core@branch-sha-citations-are-judged-within-the-range-only`. A commit that fails either is
-repaired by an amend while it is the newest, and by a history edit after, both with a clean tree per
-`## Git` point 2. A branch about to merge owes all of them: one `cargo x gates --require-rebased`.
+`issue@core@branch-sha-citations-are-judged-within-the-range-only`. A failing staged check is
+repaired before the commit is made. A commit that fails `commits` is repaired by a new commit,
+folded into the failing one by a history edit with a clean tree, per `## Git` point 2. A branch
+about to merge owes all of them: one `cargo x gates --require-rebased`.
 CI runs them on every push to a ready pull request.
 
 ## Skills `##repository-skills`
@@ -485,8 +477,9 @@ the matching skill before doing that kind of work.
 
 **This repository installs its own skills**, with `cargo klarch install-agent-skills`, and
 commits them under .claude. The harness lists each installed skill with its description, so a
-session finds which applies there. An axis of a review that has an installed reviewer agent is
-dispatched as that agent, and any other axis as a fresh general-purpose subagent, per
+session finds which applies there. An axis of a review named by an agent, installed or the
+project's own, is dispatched as that agent, and any other axis as a fresh general-purpose
+subagent, per
 `skill@knowledge-architect-review`.
 
 **This repository's own skills and agents take the prefix `klarch-`**, not the project's name: a
@@ -595,8 +588,8 @@ computed, so no hand merge is needed and none is lost.
 4. **Work is reviewed before any merge to main.**
 
 - Use `skill@knowledge-architect-review` before the merge.
-- The axes come from the dispatching activity's own skill.
-- Critical findings are repaired before the merge.
+- The axes are every axis of the review skill's table whose condition holds, and those the
+  dispatching activity's own skill adds.
 - The commit that lands the repairs says what was reviewed and what was decided. Where every
   repair was folded, the message of the branch's last commit says it, reworded with a clean tree:
   a commit of its own would change no file, and the rebase merge drops it.

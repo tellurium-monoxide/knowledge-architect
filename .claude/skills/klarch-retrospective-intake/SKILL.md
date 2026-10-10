@@ -23,8 +23,9 @@ with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-
 ## What it takes `##what-it-takes`
 
 - **In scope: a retrospective's workflow file**, whatever project wrote it. It is named
-  `<date>-<project>-<subject>-klarch-workflow.md`, or `<date>-<project>-workflow.md` before that
-  name. It holds the findings on the installed skills and agents (W), on the checker (C), and the
+  `<date>-<project>-<subject>-klarch-workflow.md`, or, before that name,
+  `<date>-<project>-workflow.md` or `<date>-<project>-<subject>-workflow.md`. It holds the
+  findings on the installed skills and agents (W), on the checker (C), and the
   answers to the standing questions.
 - **In scope: this repository's own project file**, `<date>-knowledge-architect-<subject>.md`, or
   `<date>-knowledge-architect.md` before that name.
@@ -40,12 +41,13 @@ The findings of this repository's two files are handled here, never as an issue 
 arrives the same way once the owner hands it over.
 
 A finding is cited by its id and its file's stem, as "W3 of
-2026-10-07-thaum-mock-reduction-workflow", the form the installed retrospective skill gives.
+2026-10-07-thaum-mock-reduction-workflow", a file of the older form; the installed retrospective
+skill gives the form for its own files.
 
 ## Ground before judging any finding `##ground-before-judging`
 
 1. **Read the workflow file whole**, and the project's file if present.
-2. **Note the version the retrospective used**, from its Version section, and the main commit you
+2. **Note the version the retrospective used**, from the line that names it, and the main commit you
    analyse against: `git describe --tags origin/main`. A finding against an older version may
    already be repaired.
 3. **Search the standing entries with the received files as the work.** One search covers every

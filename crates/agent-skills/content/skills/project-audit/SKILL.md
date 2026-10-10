@@ -45,7 +45,7 @@ project, not a verdict on one branch.
   new rules.
 - **An adopting project's existing documents have moved** into the workflow's homes, as
   `skill@knowledge-architect-setup@existing-documentation` says: the milestone of the move ends by
-  running the design-record axis over what it wrote.
+  running the design-record axis over its whole corpus.
 
 An audit runs in a branch of its own, unless the owner gives it to another work's branch.
 
@@ -59,7 +59,8 @@ needs. The points hold for every axis; the dispatch is the axis's own, in its se
    scratch directory of its own.
 3. **Pre-commitments.** An axis that measures, one whose run yields a figure a conclusion rests on,
    states before the run which figure would show which conclusion, and the owner sees them before
-   the run. An axis that only applies rules owes none.
+   the run. An axis that only applies rules owes none, and the count of violations left per pass,
+   which point 8 reads, makes no axis one that measures.
 4. **Drafts.** Each agent writes its drafts in its scratch directory and edits nothing else.
    Results stay in the files: the session reads the drafts, not a summary of them.
 5. **The sort.** Read every draft whose proposed outcome is not "nothing" against what it cites and
@@ -79,9 +80,10 @@ needs. The points hold for every axis; the dispatch is the axis's own, in its se
    each also given the entries, the texts and the rules the owner ruled to keep, as a file in its
    scratch directory. A finding of the re-check that a reading confirms and that is not on the kept
    list is a violation left, whether a draft missed it or an edit made it: repair it or put it to
-   the owner. The re-check's drafts start the next pass, from point 5: passes repeat while the
-   violations left fall from one pass to the next, until the owner judges what is left small
-   enough.
+   the owner. The re-check's drafts start the next pass, from point 5. The run stops when the owner
+   judges what is left small enough. The count of violations left is expected to fall from one pass
+   to the next; a pass where it does not goes to the owner as a question, with the counts, and
+   starts no new pass on its own.
 9. **Review.** The audit's branch is reviewed under `skill@knowledge-architect-review`, on these
    axes: self-consistency, fidelity of relocation, routing of knowledge, decision recording,
    standing state, and the transcript review last.
@@ -184,9 +186,12 @@ sets; the checker's own behaviour, whose code is not in the corpus; the scoped `
 
 **The agent**: `agent@knowledge-architect-workflow-auditor`.
 
-**The dispatch**: each agent takes one lens, and a lens takes as many agents as its row says. Each
-lens is dispatched at least once; the count is the session's, within the budget the owner names,
-and the table's total is the default. Agents with the same lens find different things, so a
+**The dispatch**: each agent takes one lens, and a lens's row gives its default count. Each lens is
+dispatched at least once, and L2 keeps one agent per group, since a group no agent walks is not
+read. The count is the session's, within the budget the owner names, and the table's total is the
+default; a smaller budget drops the duplicates of the other lenses first. A budget too small for
+one agent per lens and per L2 group is said to the owner, who names more agents or the lenses to
+drop. Agents with the same lens find different things, so a
 duplicate adds coverage. There is no calibration sample: the sort reads every finding, and the
 re-check reads again. An activity walk's brief names one group of activities; a project's own skill
 is walked in the group of the activity it serves.
@@ -194,7 +199,7 @@ is walked in the group of the activity it serves.
 | lens | looks for | default agents |
 | --- | --- | --- |
 | L1 contradiction | two instructions that no single move satisfies; a term defined two ways | 3 |
-| L2 activity walk | one activity followed across files, the instructions that apply at each moment | 4, one per group: design, planning, decision recording and issue tracking; review and merge; audit and retrospective; setup, pin move, goal setting and agent configuration |
+| L2 activity walk | one activity followed across files, the instructions that apply at each moment | 4, one per group: design, planning, decision recording and issue tracking; development, review and merge; audit and retrospective; setup, pin move, goal setting and agent configuration |
 | L3 two readings | an instruction whose words allow two readings that lead to different acts | 2 |
 | L4 provable gap | a requirement the corpus states, and an input no text supplies | 2 |
 | L5 restatement | a restatement that drifted from its home, or that lost its pointer | 1 |
@@ -211,8 +216,8 @@ show whether the run converges.
 
 | outcome | the findings |
 | --- | --- |
-| applied in the branch | a rewording that changes no instruction, a two-reading instruction among them; a broken trigger whose target exists under another name; a pointer added to a restatement without one, or to a project text that repeats an installed one; a factual error; a drifted restatement brought back to its home, which converts it to a pointer when it is longer than one |
-| put to the owner, on the owner list | which side of a contradiction wins, a loop with no exit among them; a broken trigger or a two-reading instruction whose repair changes what agents are told; a provable gap, since filling it adds an instruction |
+| applied in the branch | a rewording that changes no instruction, a two-reading instruction among them where a design head or another instruction states the reading meant; a broken trigger whose target exists under another name; a pointer added to a restatement without one, or to a project text that repeats an installed one; a factual error; a drifted restatement brought back to its home, which converts it to a pointer when it is longer than one |
+| put to the owner, on the owner list | which side of a contradiction wins, a loop with no exit among them; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction |
 | an issue entry | a predicted gap; a finding the owner defers |
 
 **Sent upstream**: every finding on the installed text goes into one file, in the shape of the

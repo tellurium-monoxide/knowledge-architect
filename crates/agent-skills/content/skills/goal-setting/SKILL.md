@@ -12,7 +12,7 @@ Not covered here: **a decision about how something is built**, which is
 `skill@knowledge-architect-decision-recording`; **setting up the rest of a Component**,
 `skill@knowledge-architect-setup`.
 
-**The goals are the only statements assumed to come from the owner.** Every design decision binds
+**The goals are the only statements assumed to come from the owner**, per `primer@goals-bind`. Every design decision binds
 as a presumption, and a goal binds outright: a constraint derived from a goal rules a proposal out.
 That is why no goal is written that the owner did not rule on, and why an agent never edits a goal
 outside this skill.

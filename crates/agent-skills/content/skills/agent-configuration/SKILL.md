@@ -82,7 +82,8 @@ Decided in order; the first match wins.
 - **Name it by its activity, as a noun of one or two words in common usage** (planning, review,
   issue-tracking), never as an artifact the activity writes: the text names both, and a skill named
   like its artifact cannot be told from it. Give it the project's prefix: the project's name and a
-  hyphen, as in `<project>-development`. The directory name and the frontmatter `name` are equal.
+  hyphen, as in `<project>-development`; a name that begins with `knowledge-architect-` is the
+  installer's, and the install deletes it. The directory name and the frontmatter `name` are equal.
   The same prefix names the project's subagent definitions.
 %% The two rules below restate `design@core@section-homes-carry-slugs` and `design@core@harness-entity-names`.
 - **End every level-two heading of a skill, a subagent definition and the root `CLAUDE.md` with a
@@ -156,8 +157,6 @@ longer ships. In the same commit:
 - update the routing table: a row whose installed skill was renamed or removed changes or goes;
 - read each project skill against the installed skill it adds to, for an instruction that now
   contradicts it;
-- write into each open milestone document, afresh from the new `skill@knowledge-architect-planning`,
-  its restatement of the procedure for working a slice, whether it held one before or not;
 - run `{{command}} check`.
 
 ## Reviewing a configuration change {{slug:reviewing-a-change}}
