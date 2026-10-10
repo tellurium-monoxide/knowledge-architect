@@ -68,7 +68,8 @@ this shape" and the reply that opens "## Round 3"; "round 15" is the owner's mes
 "preflight-step approved; record T5, T6, apply AC5, AC6". "Round 16" is the owner's message that
 opens "Hmm, AC6 looks a bit too vague" and the reply that opens "## Round 4"; "round 17" is the
 owner's message "verdict-alignment-lens approved.", which came while the session applied the
-review repairs. The replies of rounds 12 to 14 call the
+review repairs; "round 18" is the owner's message "D23 to D27 approved, run the re-review". The
+replies of rounds 12 to 14 call the
 criteria of that discussion C1 to C6; they are the items `criterion@agentic-workflow-axis@c7` to
 `criterion@agentic-workflow-axis@c12`, in order. An extraction agent wrote the owner messages,
   the agent messages, the tables and the arguments verbatim to scratch; the session assembled this
@@ -360,8 +361,8 @@ Weighed, from the owner's words, round 1: "the budget should be around 15 subage
 one-run pass keeps 16 auditors by default, 17 with L8, and adds about 21 agents to a pass: a
 preflight, the verifiers, a dedup, a merge, a cross-check and a report. Round 12 stated "About 18
 more agents per pass", without the preflight, the merge and the report, and the owner approved
-`thread@agentic-workflow-axis@one-run-pass` with it; whether that word settles this criterion, which
-the word does not name, is D26, awaiting the owner. Until the owner rules, c6 is unmet.
+`thread@agentic-workflow-axis@one-run-pass` with it; the owner's word on D26, round 18,
+"D23 to D27 approved", marks this criterion unmet-and-accepted.
 
 ### Nothing is applied before the session's reading, and the owner's word where the outcome needs it `##c7`
 
@@ -2034,28 +2035,28 @@ cite it by its label.
   finding's lens, an obligation step 2 added to the auditor so that no finding met is lost and T4
   can count drift.
 - **D22**, dropped with AC6, which the owner declined in round 16.
-- **D23**, awaiting the owner, on `thread@agentic-workflow-axis@one-run-pass`, from the
+- **D23**, ruled, round 18, on `thread@agentic-workflow-axis@one-run-pass`, from the
   design-conformance review: AC5 observed whether the session acts between steps, an agent's
   conduct `design@agent-skills@synthetic-evidence-not-built` refuses to observe for accepting work.
   Default: AC5 observes only the run's mechanics, its steps completing in order with no restart,
   and pass 5 is real use, as D9 ruled the first run, its repairs landing in this repository.
-- **D24**, awaiting the owner, on `thread@agentic-workflow-axis@verifier-in-the-run`, from the
+- **D24**, ruled, round 18, on `thread@agentic-workflow-axis@verifier-in-the-run`, from the
   design-conformance review: a verifier briefed by the script's prompt would carry the axis's
   standard outside the axis's installed agent, the shape `design@agent-skills@audit-agent-per-axis`
   rejected for "one generic auditor agent". Default: the verifier is the workflow auditor itself,
   dispatched with a verify brief, its definition gaining a section on verifying another auditor's
   drafts; the rival is a verifier agent of its own.
-- **D25**, awaiting the owner, on `thread@agentic-workflow-axis@lens-table-in-the-script`, from the
+- **D25**, ruled, round 18, on `thread@agentic-workflow-axis@lens-table-in-the-script`, from the
   design-conformance review: D16 kept the cluster count and the repair agents per cause as defaults
   the session may vary, on `goal@agent-skills@installed-text-leaves-room-to-judge`, and the one-run
   pass's inputs gave no way to vary them. Default: `counts` also takes `clusters`, default 2, and
   `repairsPerCause`, default 1; a verifier per auditor stays fixed, since it is the auditor's
   pair, not a count.
-- **D26**, awaiting the owner, on criterion c6: the one-run pass adds about 21 agents, where round 12
+- **D26**, ruled, round 18, on criterion c6: the one-run pass adds about 21 agents, where round 12
   stated about 18 and the owner approved #one-run-pass with that figure. Default: the owner's word
   on #one-run-pass, read with its stated cost, accepts c6 as unmet-and-accepted, since c6 is
   weighed.
-- **D27**, awaiting the owner, on `thread@agentic-workflow-axis@lens-table-in-the-script`, from the
+- **D27**, ruled, round 18, on `thread@agentic-workflow-axis@lens-table-in-the-script`, from the
   cold-implementer review: the counts' edge cases. Default: a lens missing from `counts` takes its
   default; a count below 1 is refused; an L2 count below its four groups walks the first groups in
   the table's order, and the report names the groups left unwalked.
