@@ -129,7 +129,7 @@ git show <commit>^:<path of the document>                  # the document as it 
 it occurs, so it misses every revision.**
 
 When a decision was taken with no spec, on the in-change path of `skill@knowledge-architect-design`,
-its commit message carries the deliberation.
+the deliberation is where that path puts it.
 
 ## The current design `##current-design`
 

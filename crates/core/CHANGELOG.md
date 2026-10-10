@@ -195,6 +195,17 @@ subsection is omitted.
 - `agent-skills`, patch: the assembly of a plan document and the transcript reviewer count as the
   owner's a message the owner typed while the session worked; in a slice's work, the transcript
   reviewer runs once, at the harvest's review.
+- `agent-skills`, patch: a fifth pass of the agentic-workflow axis repairs its findings by cause:
+  a verifier marks a kept or a bears-on-ruling draft rather than refuting it, and its three
+  verdicts are defined; a kept finding takes the outcome nothing; each pass's record counts the
+  violations left; a finding that fits no kind of cause is a cause of its own; the saved workflow
+  points to the audit skill's section for the kinds of cause instead of copying them; the auditor
+  judges a restatement and a pointer by the primer's and the agent-configuration skill's standard;
+  on the in-change path an acceptance criterion is put to the owner and its ruling travels with the
+  deliberation, and a record no commit carries is the report to the owner; a label carried into a
+  second record keeps its number; the primer defines a heading as markdown's ATX heading; a subagent
+  is told to read from disk any file that changed after the session started, an install included;
+  several restatements in the installed skills and agents become pointers to their homes.
 
 ## 0.5.0
 

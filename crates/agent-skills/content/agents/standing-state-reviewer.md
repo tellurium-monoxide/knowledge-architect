@@ -79,15 +79,11 @@ available is deciding in advance which entries were worth reading.
 **Read every entry under a heading, not just the first.** A heading may carry two firing clauses, and
 a slug may be guarded from more than one direction. That is where a firing has been missed.
 
-A tripwire that has fired **leaves its home**. Delete it there and create the consequence, an
-issue file or a reopened decision. `skill@knowledge-architect-issue-tracking` owns the movement.
-**A fired-but-still-listed entry is the failure state.**
-
-One exception: **a tripwire guarding a standing guarantee is restated rather than deleted.** A
-tripwire is usually a one-shot hypothesis and firing consumes it. One guarding a guarantee that
-holds for the life of the project is not consumed by an instance of that guarantee being broken,
-because the guarantee is still owed after the repair. Restate it so it names the class rather than
-the instance, and record the instance as the issue.
+A tripwire that has fired **leaves its home**, and so does one whose decision was reversed or that
+another entry guarding the same decision absorbs. What replaces it, and the exception of a
+tripwire guarding a standing guarantee, are
+`skill@knowledge-architect-issue-tracking@movement-instruction`: read it whole before you report
+the repair. **A fired-but-still-listed entry is the failure state.**
 
 **Read every deferred trigger too.** A `deferred` issue waits for an event, named in its
 `### Trigger` subsection, and a trigger answers the same question as a tripwire's firing clause:
@@ -96,10 +92,6 @@ the trigger of each against the change, all of them, for the reason given above 
 trigger the change meets is a finding: name the issue and what in the change meets the trigger. By
 `skill@knowledge-architect-issue-tracking@trigger-test`, the occasion a trigger names includes the
 work the issue names, so the repair is that work in this change, or the owner's ruling.
-
-A tripwire whose decision was **reversed** is deleted outright. A tripwire already guarded by another
-entry against the same slug is **absorbed** into it, because one slug guarded from two places is one
-a reversal voids only half of.
 
 ## A landing plan document's acceptance criteria {{slug:landing-acceptance-criteria}}
 
@@ -118,22 +110,21 @@ either written, on the owner's word, or deleted.
 ## The predicate {{slug:standing-predicate}}
 
 **Did an open item lose its home?** An issue file deleted needs the work that closes it in the
-same change, because a fixed defect is deleted rather than marked resolved and the history of the
-fix belongs to its commit. An entry added needs its **kind** in its frontmatter and all three owed
-subsections: `What`, `Why it matters`, and `What would close it`, or, for a deferred entry,
-`Trigger` instead. The shape is mechanical; whether the third subsection names a closing condition
-a reader could act on is not. Without one the register only grows and nothing can be ranked.
+same change, per `skill@knowledge-architect-issue-tracking@movement-instruction`. An entry added
+has the shape of `skill@knowledge-architect-issue-tracking@issue-entry`: read it whole. The shape
+is mechanical; whether the third subsection names a closing condition a reader could act on is not.
 
-**Is any work listed in two places?** Work that is known and not designed is a `todo` or `deferred`
-issue. When the diff adds a plan document that schedules such work, the issue closes in the same
-change. An issue still open beside the plan document that schedules it is the failure.
+**Is any work listed in two places?** An issue still open beside the plan document that schedules
+it is the failure: the issue closes in the commit that adds the plan document, per
+`skill@knowledge-architect-planning@spec-or-milestone`.
 
 **Does a trigger the diff writes pass `skill@knowledge-architect-issue-tracking@trigger-test`?** Read
 it whole: it holds the test and the only two repairs of a trigger that fails it.
 
 **If a closed entry still held something live**, such as an instruction about working in that area
 or an uncertainty that survived the fix, that content is not an open issue and belongs in the owning
-document head or the nearest scoped `CLAUDE.md`, moved there **before** the entry was deleted.
+document head or the nearest scoped `CLAUDE.md`, moved there **before** the entry was deleted, per
+`skill@knowledge-architect-issue-tracking@movement-instruction`.
 
 ## Reporting {{slug:how-to-report}}
 

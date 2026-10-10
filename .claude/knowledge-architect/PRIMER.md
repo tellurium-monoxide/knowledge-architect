@@ -30,8 +30,10 @@ A premise the session supplied is the session's to check before the owner rules 
 **An item put to the owner under a label**, `Q<n>` or the prefix a skill gives it, **takes the
 next number of its prefix in the record the label reaches, from 1, and that number is never reused
 there.** That record is a plan document, a milestone's documents counting as one; a file; or the
-commit messages of one branch, counting as one. A label that reaches none is numbered within the
-message that puts it to the owner, wherever the item's ruling is kept.
+commit messages of one branch, counting as one. A label carried later with its item into another
+record, as a tripwire's into a tripwires home, keeps its number, and that record numbers nothing.
+A label that reaches none is numbered within the message that puts it to the owner, wherever the
+item's ruling is kept.
 
 ## Room to judge `##room-to-judge`
 
@@ -137,9 +139,10 @@ directory; an anchor's own directory is named from the anchor above it, as
 image `![alt](<path>)` included, is legal in a `README.md` or an `index.md` only, to a target under
 its own directory, its path under the same constraints as a `path` reference's; any other pointer is
 a backticked reference.
-A heading is a line that opens with `#` marks and holds text, with no list or block-quote marker before
-them; a line markdown reads as a heading in another shape, as a `---` right under a paragraph is,
-stops the check. The checker reads Markdown, and in Rust source the comments and every string
+A heading is a line markdown reads as an ATX heading: one to six `#` marks, at most three spaces
+in, then a space or a tab and text, with no list or block-quote marker before them; a line
+markdown reads as a heading in another shape, as a `---` right under a paragraph is, stops the
+check. The checker reads Markdown, and in Rust source the comments and every string
 literal that a `let`, a `const` or a `static` does not bind to a name, a function call's argument
 being never bound and a macro's body bound like the rest of the value; it reads each commit's
 message and tree through `cargo klarch commits`. A reference anywhere else is found by grep.

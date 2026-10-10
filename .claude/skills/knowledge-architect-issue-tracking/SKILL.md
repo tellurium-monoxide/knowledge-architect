@@ -124,7 +124,7 @@ needs in order to decide whether they can act.
 | `defect` | the **full cold-reader standard** below |
 | `observation` | something seen whose status as a defect is **not established**: it may be correct behaviour. The exact conditions it was seen under, and explicitly whether it reproduces: if it does, the reproduction as for a `defect`; if not, what would make it so |
 | `question` | the question, and the experiment, derivation or reading that would answer it |
-| `todo` | work known to be missing that nobody has scheduled and no event gates. Its closing condition is doing it. **If a spec or a milestone document schedules it, it is not a `todo`**: the document is the schedule, and two schedules drift. A row of the roadmap, docs/roadmap.md, orders a `todo` and schedules nothing, so the entry stays a `todo` |
+| `todo` | work known to be missing that nobody has scheduled and no event gates. Its closing condition is doing it. **If a spec or a milestone document schedules it, it is not a `todo`**, per `skill@knowledge-architect-planning@spec-or-milestone`: the document is the schedule, and two schedules drift. A row of the roadmap, docs/roadmap.md, orders a `todo` and schedules nothing, so the entry stays a `todo` |
 | `deferred` | what is missing, the consequence of leaving it, and the **trigger** that should make someone do it. The axis against `todo` is scheduling, not urgency: `deferred` waits for a named event, `todo` waits for someone |
 | `design` | the instances seen, the suspected mechanism in one sentence, and the re-entry point: the discussion at which it is raised again |
 

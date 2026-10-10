@@ -31,6 +31,9 @@ project, per `design@knowledge-architect@no-component-directory-named-after-the-
 
 ### Always
 
+For working prose, this list restates `skill@knowledge-architect-design@discussion-language`. Here
+it holds for every text a session writes, and the em-dash bullet is this file's own.
+
 - Use plain, direct technical English.
 - Write **short** sentences.
 - Use em dashes and semicolons sparingly in prose. They usually make a sentence longer than it
@@ -129,8 +132,8 @@ win.
   is a Component, a location or a plan, and no anchor wears a kind's name. The id is the entry's. A plan's item is cited from
   inside that plan only, per `design@core@plan-item-scope`. Examples:
   `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/tripwires.md`. A reference that resolves to nothing
-  is reported with the repair it needs, per `design@core@an-unresolved-reference-is-reported`: the kind is unknown, the anchor is unknown, the anchor
-  carries no register of that kind, or the id is not defined there. A reference of any other kind
+  is reported with the repair its failing segment needs, per
+  `design@core@an-unresolved-reference-is-reported`. A reference of any other kind
   that names no anchor is refused, including inside the file that defines the id.
 - **A skill, an agent, the primer and the root CLAUDE.md are cited with no anchor**, per
   `design@core@harness-kinds-cited-without-anchor`: `skill@<name>`, `skill@<name>@<slug>`,
@@ -199,14 +202,10 @@ win.
 
 ## Where knowledge goes `##where-knowledge-goes`
 
-**Every durable decision has exactly one home**, chosen by what it is about and when it stops
-being true. What is bound is the _why_ of the decision, the losing arguments, and the evidence the
-decision rests on. A second mention of a decision is a pointer, never a copy, because a restated
-decision starts drifting the moment it is written.
-
-**A directive is different: it is restated only when the restatement is no longer than a pointer
-to it.** The rule and its bounds are `primer@where-knowledge-goes`; read that section whole before
-restating a directive or replacing a restatement by a pointer.
+**Every durable decision has exactly one home, and a directive is restated only when the
+restatement is no longer than a pointer to it.** Both rules and their bounds are
+`primer@where-knowledge-goes`; read that section whole before restating a directive or replacing a
+restatement by a pointer.
 
 The workflow's rows of the knowledge table are in the primer, per
 `design@agent-skills@knowledge-table-home`. This repository's own rows, each refining or adding to
@@ -349,24 +348,17 @@ the work is where the false claims come from.
 ### Check whether it is already known
 
 Before diagnosing anything as a problem, or reporting one you met while doing something else, find
-out whether it is already recorded, per `primer@intent-and-claims`.
+out whether it is already recorded, per `primer@intent-and-claims`. The listings, every option they
+take, and why they and not a grep are the check, are
+`skill@knowledge-architect-issue-tracking@outstanding-across-registers`. This repository adds one:
 
 ```sh
-cargo klarch issues               # every issue entry in the repository, one row each
-cargo klarch issues <anchor>      # the entries of one Component or location
-cargo klarch issues <text>        # only the rows whose id or title holds that text
-cargo klarch issues --kind <kind> # only the entries of one kind
-cargo klarch tripwires            # every tripwire entry, and the decision each guards
-cargo klarch show <ref>           # one entry in full, and every reference to it
 ls docs/retrospective-reports/    # the retrospective analyses whose outcomes are not all carried out
 ```
 
-The issue and tripwire registers are spread over every Component and the agent-config location, so
-grepping the one you happen to think of is not the check. The three commands read the same entity
-table that `cargo klarch check` resolves against. A recorded entry usually says more than a fresh
-diagnosis will: the measurement already taken, what was ruled out, and often why the work was left
-undone on purpose. The `skill@knowledge-architect-issue-tracking` skill says what to do with what
-you find, either way.
+A recorded entry usually says more than a fresh diagnosis will: the measurement already taken, what
+was ruled out, and often why the work was left undone on purpose. The
+`skill@knowledge-architect-issue-tracking` skill says what to do with what you find, either way.
 
 ### Precedent is not authority
 
@@ -496,8 +488,8 @@ the checker's design home, `path@core@docs/design.md`, beside its README.
 ## Git `##git-workflow`
 
 Linear history, no merge commits, and no direct push to main. This section is a restatement. Its home is
-`design@knowledge-architect@git-flow`, except where a point names its own; the fold and revert
-procedures of point 2 and the review owed after a rebase in point 5 are this file's own.
+`design@knowledge-architect@git-flow`, except where a point or one of its bullets names another; the
+commands and procedures that carry those rules out are this file's own.
 
 1. **All work happens on a branch.**
 

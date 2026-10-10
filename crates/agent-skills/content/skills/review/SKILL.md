@@ -93,11 +93,12 @@ re-checking.
   about to merge, unless the axis names its own range: the diff and every commit message in it
   are the subject, and a reviewer given a branch name alone guesses the base.
 - **Name the files that carry the standard rather than restating it.** A subagent inherits the
-  session's snapshot of the root `CLAUDE.md`, and runs on its agent definition as the harness
-  registered it when the session started, so a session that has edited either is briefing from a
-  copy that no longer matches disk. Point at the file; do not paraphrase what it says. Where the
-  session edited it, tell the subagent to read it from disk and to follow the disk where its copy
-  differs.
+  session's snapshot of the root `CLAUDE.md` and of the primer it imports, and runs on its agent
+  definition as the harness registered it when the session started, so once any of them changes
+  on disk, by an edit or by an install, the session is briefing from a copy that no longer matches
+  disk. Point at the file; do not paraphrase what it says. Where the file changed on disk after
+  the session started, tell the subagent to read it from disk and to follow the disk where its
+  copy differs.
 - **The dispatcher does not defend the work.** Findings arrive as claims to check, not as attacks to
   answer. Verify each against the tree before relaying or acting on it; a reviewer can be wrong, and
   saying so requires the same reproduction the reviewer owed.
@@ -183,7 +184,8 @@ which may give them new SHAs; GitHub's rebase merge drops a commit that changes 
 - **A paragraph in the commit message** records the review: the message of the last repair
   commit, or, where no repair commit is left, the message of the branch's last commit, reworded
   with no uncommitted work in the tree. A record carried by a message rides on a commit that
-  changes a file: a commit of its own changes none, and the rebase merge drops it.
+  changes a file: a commit of its own changes none, and the rebase merge drops it. Where no
+  commit of the branch changes a file, the record is the report to the owner.
 
 **Where the project squashes a branch into one commit on merge**, the record of the review goes
 where the project keeps what survives the merge: the squashed commit's message, or the pull
