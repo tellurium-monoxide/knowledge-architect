@@ -2,8 +2,9 @@
 //! drift from what the directory holds.
 //!
 //! content/ mirrors the install layout under the owned namespace, with the prefix added on the
-//! way out. Any other file under content/ fails the build: a file the list would not ship has no
-//! reason to be in the package.
+//! way out. A saved workflow's declared name must equal its installed file's stem, since the
+//! harness calls it by that name. Any other file under content/ fails the build: a file the list
+//! would not ship has no reason to be in the package.
 //!
 //! A line of shipped text that is a snippet placeholder, `{{snippet:<file>}}`, is replaced with
 //! the file of that name under snippets/, so the text shipped is the text a workspace target
@@ -31,9 +32,10 @@ use std::path::{Path, PathBuf};
 // script has no test target of its own.
 #[path = "src/render.rs"]
 mod render;
-use render::{render_slugs, strip_comments};
+use render::{check_workflow_name, render_slugs, strip_comments};
 
-/// The prefix every installed skill directory and agent file carries in the project.
+/// The prefix every installed skill directory, agent file and workflow file carries in the
+/// project.
 const PREFIX: &str = "knowledge-architect-";
 
 /// What opens a snippet placeholder; `}}` closes it.
@@ -77,7 +79,7 @@ fn main() {
             let install = install_path(rel).unwrap_or_else(|| {
                 panic!(
                     "content/{} has no install path: content/ holds skills/<skill>/…, \
-                     agents/<agent>.md and PRIMER.md, and nothing else",
+                     agents/<agent>.md, workflows/<workflow>.js and PRIMER.md, and nothing else",
                     rel.display()
                 )
             });
@@ -97,6 +99,12 @@ fn main() {
         let rendered = out.join("rendered").join(install);
         std::fs::create_dir_all(rendered.parent().expect("an install path has a parent"))
             .expect("OUT_DIR is writable");
+        if let Some(stem) = install
+            .strip_prefix(".claude/workflows/")
+            .and_then(|f| f.strip_suffix(".js"))
+        {
+            check_workflow_name(&text, stem, file);
+        }
         let text = render_slugs(&strip_comments(&text, file), file);
         let text = substitute(&text, &mut substituted);
         std::fs::write(&rendered, snippets.render(&text, file)).expect("OUT_DIR is writable");
@@ -222,6 +230,10 @@ fn install_path(rel: &Path) -> Option<String> {
         }
         ["agents", agent] if agent.ends_with(".md") => {
             Some(format!(".claude/agents/{PREFIX}{agent}"))
+        }
+        // Claude Code reads saved workflows directly under .claude/workflows/, and no deeper.
+        ["workflows", workflow] if workflow.ends_with(".js") => {
+            Some(format!(".claude/workflows/{PREFIX}{workflow}"))
         }
         _ => None,
     }

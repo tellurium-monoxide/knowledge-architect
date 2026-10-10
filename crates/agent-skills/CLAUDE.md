@@ -6,6 +6,13 @@ This crate carries text, not behaviour; the core reads it to install and to chec
 entry the install path and the text, per `design@agent-skills@content-mirrors-the-install-layout`.
 A file under content/ that the layout does not map fails the build.
 
+**A saved workflow under `path@agent-skills@content/workflows/` is JavaScript, which the checker
+does not read**: a reference in it is checked by nobody, so it cites none. Its `meta` declares the
+installed file's stem as its `name`, which the build asserts. The harness runs the file's body as
+an async function, so a top-level `return` is legal there and `node --check` refuses it on the
+bare file: check it parses by wrapping the body in `async function body() {…}`, with `export`
+removed.
+
 **A change to content/ or snippets/ is installed in the same commit.** This repository installs its
 own skills, and its check compares each installed file with the shipped text byte for byte. After
 editing content/ or snippets/, run `cargo klarch install-agent-skills` and commit the installed copies under .claude

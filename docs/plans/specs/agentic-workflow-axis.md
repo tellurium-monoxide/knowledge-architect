@@ -23,8 +23,10 @@ leaves the repository in the commit that completes its harvest.
 - Every name it uses is defined in it, under Names or New names, or exists in the tree.
 - Where it marks a point as the owner's and the owner is absent, the work does not proceed on that
   point.
-- **The spec and its work land on one branch**, `agentic-workflow-audit-axis`. No step changes what
-  the per-commit gate checks: the work changes installed text and the record, not the checker.
+- **The spec and its work land on one branch**, `agentic-workflow-audit-axis`. One step changes the
+  checker: the installer's namespace gains saved workflows, which no earlier commit's tree holds,
+  and `commits` compares no installed file, so the per-commit gate judges every earlier commit as
+  before.
 - **The design audit** of `skill@knowledge-architect-planning@working-a-slice`, point 2, is owed when
   the work does not start in the session where the discussion converged, or when commits other than
   this spec's own land on main before the work starts.
@@ -107,8 +109,10 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   inputs in `args`; it calls `agent(prompt, opts)`, where `opts` may name a `schema` the agent's
   return must match and an `agentType`, `parallel()`, a barrier, and `pipeline()`; a top-level
   `return` gives its result. The tool runs only on an explicit opt-in, and a skill whose
-  instructions call it counts as one. Source: the tool's description and its authoring reference,
-  read in this session.
+  instructions call it counts as one, as does a request to run a named saved workflow. A **saved
+  workflow** is a script file directly under .claude/workflows/, run by the name its `meta`
+  declares; the harness lists it with the skills. Source: the tool's description and its
+  authoring reference, read in this session, and the probes of `argument@agentic-workflow-axis@a57`.
 - **the stages**: drafts, clusters and repairs, the three invocations of the workflow script.
 - **the owner's budget**: the number of agents the owner names when asking for the run; the lens
   table's total, 16, when the owner names none.
@@ -393,7 +397,8 @@ agnostic". The agent corrected the premise: no goal names a harness; `design@age
 reads `goal@agent-skills@installed-text-works-anywhere` more widely than its words. Arguments:
 `argument@agentic-workflow-axis@a52`, `argument@agentic-workflow-axis@a53`. Shape: Decided design,
 "The workflow script". Harvest: `design@agent-skills@audit-method` loses its "runs under any harness"
-argument; a head. Closed, round 8.
+argument; a head. Closed, round 8. Round 11: the script ships as a saved workflow, per
+`argument@agentic-workflow-axis@a57`.
 
 ### A pass whose repairs add more instructions than they remove goes to the owner with its net figure `##audit-net-growth`
 
@@ -788,6 +793,21 @@ The owner, on pass 2's owner list: "from my observation and experience working w
 workflow, for most of those items, agents were making the correct judgements already and going with
 these defaults you propose." Bears on `thread@agentic-workflow-axis@revisit-pass-2`.
 
+### A saved workflow is called by its declared name, from .claude/workflows/ alone `##a57`
+
+Round 11, owner and agent. Bears on `thread@agentic-workflow-axis@audit-harness`. The owner: "I
+think it would be best to deliver the workflow as a file directly in .claude/workflows/ (it would
+need to use the knowledge-architect prefix too, for namespacing)." Three probe files under
+.claude/workflows/, after a reload of the harness's skills: a file whose `meta` declares
+`probe-saved-workflow` ran by that name, its `args` passed through; the file `probe-file-name.js`,
+declaring `probe-meta-name`, ran as `probe-meta-name` and was "not found" as `probe-file-name`; a
+file one directory deeper was "not found". Saved workflows appear in the skill listing with their
+description. So the prefix namespaces a workflow only when its declared name carries it, and the
+file sits directly under the directory. A fenced block passed inline is read by the checker but
+lives in a skill as text no session needs to read; a saved workflow is run by name, with nothing to
+copy. The owner, on the proposal stating these consequences: "Agreed, proceed with the delivery as
+proposed".
+
 ## New names, in one place
 
 ```text
@@ -1064,16 +1084,21 @@ The finding classes and the tags stand.
 
 ### The workflow script
 
-`thread@agentic-workflow-axis@audit-harness`. The axis's section of the audit skill holds one script
-for the Workflow tool, in a fenced block, and says: where the harness offers that tool, the session
-passes the block to it inline; elsewhere it dispatches the same agents with the same prompts, in the
-same order, as the section's prose says. The prose is the method; the script is a means to run it.
+`thread@agentic-workflow-axis@audit-harness`. The script for the Workflow tool ships as a saved
+workflow: its source is `path@agent-skills@content/workflows/agentic-workflow-audit.js`, installed
+as .claude/workflows/knowledge-architect-agentic-workflow-audit.js, its `meta` declaring that stem
+as its name, per `argument@agentic-workflow-axis@a57`. The installer's namespace holds it, so the
+install writes and removes it and `check` compares it, as it does a skill or an agent. The axis's
+section names it and the `args` of each stage, and says: where the harness offers the tool, the
+session runs the saved workflow by name; elsewhere it dispatches the same agents with the same
+prompts, in the same order, as the section's prose says. The prose is the method; the script is a
+means to run it.
 
 **The agents**, per D16. The lens agents are `agent@knowledge-architect-workflow-auditor`, by
 `agentType`. The cluster and repair agents are general-purpose agents whose prompts are written in
-the script block, their one home: a prompt passed at dispatch is read from the skill as the session
-finds it, where an agent definition is the one the harness registered at the session's start. The
-prose path dispatches the same prompts, read from the block.
+the script, their one home, rather than in agent definitions, which are the copies the harness
+registered at the session's start. The prose path dispatches the same prompts, read from the
+script.
 
 **Inputs**, all in `args`, since a script reads no file: the commit audited; the stage; for drafts,
 one entry per lens agent with its lens, its L2 group where it has one, its scratch directory and its
@@ -1091,11 +1116,11 @@ method, before the stage.
 - **repairs**: the repair agents, in parallel, each writing its proposal and returning its path by
   schema. The session's confirmation follows.
 
-**Its text in a fenced block.** The checker reads a fenced block as prose: a backticked span in it is
-a reference candidate, so the script quotes its strings with single quotes, never with backticks.
-The build of content/ fails on a `%%` line in a fenced block and renders `{{…}}` placeholders, so the
-script holds neither. Step 4 checks it with `node --check` on the block wrapped in an async
-function, since a top-level `return` fails a bare check.
+**Its file.** The checker reads no JavaScript, so a reference in the script is checked by nobody,
+and it cites none. The build fails unless the declared name equals the installed stem. Its `meta` is
+a pure literal, which the tool requires, so its description is one string. It is checked with
+`node --check` on its body wrapped in an async function, since a top-level `return` fails a bare
+check.
 
 ## Mapping tables
 
@@ -1146,6 +1171,8 @@ function, since a top-level `return` fails a bare check.
   `thread@agentic-workflow-axis@audit-harness`: it fails in every other harness, and adds to
   `issue@core@configuration-for-several-agent-providers` a dependency no text-only skill has, for a
   gain the script beside the prose already gives.
+- **The script in a fenced block of the skill, passed to the tool inline**: lost to
+  `thread@agentic-workflow-axis@audit-harness`, on `argument@agentic-workflow-axis@a57`.
 - **A bound on words**: lost to `thread@agentic-workflow-axis@audit-net-growth`, on
   `argument@agentic-workflow-axis@a54`.
 - **No bound on a pass's growth**: lost to `thread@agentic-workflow-axis@audit-net-growth`: passes 1
@@ -1267,8 +1294,8 @@ CHANGELOG.md entries `design@knowledge-architect@changelog-entries` owes, then r
    found by the run amend the section or the agent in their own commits; a repair of a W finding is
    an edit of installed text. Judges AC3 and AC4. Fails alone on: the counts of AC4.
 4. **The repair by cause.** The axis's section rewritten per "The repair by cause" and "The
-   workflow script", the script in its fenced block; the workflow auditor's description names the
-   script's drafts stage. The script checked with `node --check`, wrapped as "The workflow script"
+   workflow script", the script shipped as a saved workflow; the workflow auditor's description
+   names its drafts stage. The script checked with `node --check`, wrapped as "The workflow script"
    says. Judges AC3. Fails alone on: a script that does not parse.
 5. **The repair of passes 2 and 3**, per round 10. The session sorts pass 3's drafts, which this
    session holds in its scratch directory, and writes the confirmed-findings file: pass 3's
@@ -1456,9 +1483,9 @@ auditor each state its reason, two texts. The harvest confirms each against the 
 | every other item of "Losing alternatives" | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit |
 | D12 | `design@knowledge-architect@retrospective-findings-stay-here` widened to an audit's findings on the installed text; its restatement in `instructions@repository-skills`, written at step 2 |
 | D15 | `design@agent-skills@ruled-items-labelled`, its `W` row widened |
-| `thread@agentic-workflow-axis@root-cause-repair` | a head, holding `thread@agentic-workflow-axis@audit-synthesis-phase`: two texts state it, the axis's prose and its script block |
+| `thread@agentic-workflow-axis@root-cause-repair` | a head, holding `thread@agentic-workflow-axis@audit-synthesis-phase`: two texts state it, the axis's prose and its saved workflow |
 | `thread@agentic-workflow-axis@audit-net-growth` | a head, per D20 |
-| `thread@agentic-workflow-axis@audit-harness` | `design@agent-skills@audit-method` loses "so it runs under any harness"; a head, by entry test 3, since it turns on the Workflow tool's behaviour |
+| `thread@agentic-workflow-axis@audit-harness` | `design@agent-skills@audit-method` loses "so it runs under any harness"; a head, by entry test 3, since it turns on the Workflow tool's behaviour. The saved workflow's place in the install layout and the namespace is recorded in `design@agent-skills@content-mirrors-the-install-layout` and `design@core@owned-namespace-check` by the change that built it |
 | `thread@agentic-workflow-axis@moment-homes` | a head, if step 5 lands a home |
 | `thread@agentic-workflow-axis@revisit-pass-2` | none: step 5's commits |
 | `issue@agent-skills@audit-axes-beyond-the-design-record` | rewritten to the axes it still holds; its open lesson, the owner's reading of a sample of the verdicts, stays, since this axis does not adopt it |

@@ -73,8 +73,15 @@ subsection is omitted.
   drafts its findings through seven lenses, each agent reading the whole corpus, and the findings on
   the installed text go into a file for the workflow's maintainers. The confirmed findings are
   grouped by cause and repaired by cause, a pass whose repairs add more instructions than they
-  remove goes to the owner with its net figure, and a script for Claude Code's Workflow tool runs
-  the stages where the tool is available.
+  remove goes to the owner with its net figure, and a saved workflow for Claude Code's Workflow
+  tool, `knowledge-architect-agentic-workflow-audit`, runs the stages where the tool is available.
+- `agent-skills`, minor: the shipped set holds saved workflows of Claude Code's Workflow tool,
+  installed as `.claude/workflows/knowledge-architect-<name>.js`; each declares its installed name
+  as the name the harness calls it by.
+- `checks`, minor: the installer's namespace holds every `.claude/workflows/knowledge-architect-<name>.js`:
+  `install-agent-skills` writes and removes those files, and `check` compares them byte for byte
+  with the shipped set, as it does the skills and agents. A project's own saved workflow takes a
+  name of its own.
 
 ### Workflow
 

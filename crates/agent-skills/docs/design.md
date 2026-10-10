@@ -20,11 +20,15 @@ which the build inlines there, a `%%` line is a comment the build removes, per
 `design@agent-skills@shipped-text-line-comments`, a delivery placeholder is a literal the build
 fills, and a placeholder `{{slug:<id>}}` ending a level-two heading is rendered into that heading's
 section slug, so content/ defines no section in this repository's walk and the installed copy does,
-per `design@core@installed-entities-from-the-tree`. A slug placeholder anywhere else fails the build. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, and the primer
-is `PRIMER.md`. The build script, `path@agent-skills@build.rs`, walks the directory, renders each
+per `design@core@installed-entities-from-the-tree`. A slug placeholder anywhere else fails the build. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, a saved workflow
+of Claude Code's Workflow tool is `workflows/<workflow>.js`, and the primer is `PRIMER.md`. The
+harness reads saved workflows directly under .claude/workflows/, no deeper, and calls each by the
+name its `meta` declares, never by its file's name, as a probe of Claude Code measured: so the
+build fails unless that name equals the installed file's stem, or the prefix of the file would
+namespace nothing. The build script, `path@agent-skills@build.rs`, walks the directory, renders each
 file, removing its comments, filling its delivery substitutions and inlining its snippets, and
 generates `FILES`, each entry the install path and the text. It adds the installer's prefix to each skill
-directory and agent file on the way out, so the installed names are the namespace of
+directory, agent file and workflow file on the way out, so the installed names are the namespace of
 `design@core@owned-namespace-check`. A file the layout does not map fails the build.
 
 The list is generated because a list written by hand drifts from the directory it lists, and the

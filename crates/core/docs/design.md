@@ -2111,8 +2111,8 @@ reads instructions that name the command it actually runs.
 
 `install-agent-skills` writes each file this version ships at its install path, rendered with the
 project's command, and deletes every file of the installer's namespace that the version does not
-ship. The namespace is the prefix `knowledge-architect-` among the skill directories and the agent
-files of `.claude/`, and the directory .claude/knowledge-architect/. A project's own skill takes
+ship. The namespace is the prefix `knowledge-architect-` among the skill directories, the agent
+files and the saved workflow files of `.claude/`, and the directory .claude/knowledge-architect/. A project's own skill takes
 a name of its own, so ownership is decided by a name, with no record and no history: a renamed
 skill shows as the old file to remove and the new one missing; one install repairs both, and the
 removal awaits staging like any deletion, which the check names until it is staged.
