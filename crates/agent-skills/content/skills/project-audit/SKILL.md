@@ -122,6 +122,8 @@ finding: applied, ruled by the owner under its label, opened as an issue with it
 need nothing. A figure the run measured goes there too. A finding whose only record is a scratch
 file, or a plan document that will leave, is lost when that file goes.
 
+%% The case of a run that changes no file follows
+%% `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
 A run that changes no file leaves no commit that changes a file, and a merge that drops such a
 commit, as a rebase merge does, would drop its record. Its record is then the report to the
 owner.
