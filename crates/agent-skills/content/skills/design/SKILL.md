@@ -11,8 +11,8 @@ Design by open, argued exchange: both parties propose, push back with
 arguments, and converge through rounds.
 **The discussion is fully symmetric; only the decision is not.**
 Both parties' proposals are held to one standard, stated in loop step 4.
-The asymmetry lives in decision authority alone: closure and reopening
-belong to the owner's word (see `skill@knowledge-architect-design@decision-authority`). **The owner** is the
+The asymmetry lives in decision authority alone: closure belongs to the
+owner's word (see `skill@knowledge-architect-design@decision-authority`). **The owner** is the
 person whose word closes a thread.
 
 Terms this skill defines and then uses as vocabulary:
@@ -94,9 +94,10 @@ It ends the argument, but it does not end your duties around it:
   TURN, not the decision's class: writing code that implements an
   irreversible plan is reversible, running the migration is not. Held
   work is named as held, with what it waits for; it is never silently
-  completed and never silently dropped. The thread stays CLOSED while the
-  finding is pending, with the finding noted on its ledger line; only
-  the owner's word actually reopens it. If no word has come by the
+  completed and never silently dropped. Presenting the finding reopens
+  the thread, with the finding noted on its ledger line; it closes again
+  on the owner's word, as any thread does, and until then the work goes
+  on under the default above. If no word has come by the
   next checkpoint — or the end of the current change, whichever comes
   first — the finding stays on the thread's ledger line, marked
   unacknowledged, and is carried into the plan document that
@@ -159,9 +160,12 @@ evidence bring, which nobody knows in advance.
   work that no longer lands in the change under way (it needs a branch
   of its own, several pull requests, or nobody has started it): the
   hand-off to planning of loop step 8. A decision that is cheap to
-  reverse and whose work comes later takes it too.
+  reverse and whose work comes later takes it too. A design session
+  opened at a design audit under `skill@knowledge-architect-planning@working-a-slice`
+  takes the full path, and its converged design is written into the plan
+  documents that exist, as that skill says: no new plan document is written.
 
-The four decide whether the premortem runs, never which path is taken.
+On the in-change path, the four decide whether the premortem runs; they never decide which path is taken.
 To decide, state what reversal touches, in nouns. The four: stored
 data that would have to be migrated; an interface other code or other
 people already consume; behavior users have adapted to, in the sense
@@ -346,7 +350,9 @@ each announced in the delta:
   Every parked thread names its tripwire AND its re-entry point: the
   event or checkpoint at which it is re-proposed. A parked thread
   missing either one is open. A tripwire with no re-entry point names
-  evidence nobody is scheduled to look for.
+  evidence nobody is scheduled to look for. A parked thread's tripwire
+  is named on the ledger; it enters a tripwires home only on the owner's
+  word, as every tripwire does.
   `superseded` is not a third case, though it is easily read as one:
   threads absorbed by a proposal close on the owner's word approving that
   proposal by name, and until it comes the absorbed threads keep their
@@ -368,7 +374,7 @@ decisions, and the directives and contracts of its `CLAUDE.md` and
 from a goal is binding: the goals are the owner's intent. A criterion
 derived from a recorded decision is binding as a stated presumption until
 the owner says otherwise, because a decision binds only as a presumption
-that a better argument may rebut.
+that a better argument may rebut, per `primer@goals-bind`.
 
 Each criterion carries a satisfaction line, and this is what the owner
 reads at convergence: **met**, naming the approved threads that meet
@@ -395,9 +401,9 @@ produced one — rather than silently carried.
 
 **Reopening — closed is not frozen.** This rule is the single owner
 of the novelty test. The owner reopens a closed thread by their word
-alone. You may only PROPOSE a reopening, with a new argument or new
-evidence named — the material-findings protocol (`skill@knowledge-architect-design@decision-authority`)
-owns the mechanics: the thread stays closed until the owner's word.
+alone. You reopen one with a new argument or new evidence named, as a
+material finding — the material-findings protocol (`skill@knowledge-architect-design@decision-authority`)
+owns the mechanics — and it closes again on the owner's word.
 The record arbitrates novelty: an alternative counts as
 argued-and-lost only when a recorded ruled-out alternative — a
 `ruled-out` thread of this discussion's ledger or of a plan document, or
@@ -520,7 +526,8 @@ choices whose option space genuinely is closed and consequence-free.
    doing closing work carries its provenance — measured (with the
    command that re-takes it), read in a named source, or assumed — and a thread may close over assumed
    claims only if each assumption is recorded as a tripwire on that
-   closure. In the other direction, reverse when the opposing
+   closure, or, where only the built code can check it, as an acceptance
+   criterion, as step 7 splits them. In the other direction, reverse when the opposing
    argument explains something your position cannot, or survives an
    objection your position fails — not merely because the owner
    insists. "Both have merits" with no synthesis proposal is a

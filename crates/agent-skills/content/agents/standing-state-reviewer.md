@@ -128,11 +128,8 @@ a reader could act on is not. Without one the register only grows and nothing ca
 issue. When the diff adds a plan document that schedules such work, the issue closes in the same
 change. An issue still open beside the plan document that schedules it is the failure.
 
-**A trigger names an occasion whose own work already includes the work the trigger names.** Otherwise
-it is a tax on a session doing something else, which finishes its own task and reports what it met
-rather than doing that work. The trigger fires, the session correctly declines, and nothing
-schedules the work. Enforcement does not rescue a failing trigger, it sharpens the failure into a
-session that has no legal move.
+**Does a trigger the diff writes pass `skill@knowledge-architect-issue-tracking@trigger-test`?** Read
+it whole: it holds the test and the only two repairs of a trigger that fails it.
 
 **If a closed entry still held something live**, such as an instruction about working in that area
 or an uncertainty that survived the fix, that content is not an open issue and belongs in the owning

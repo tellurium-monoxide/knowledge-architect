@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-review
-description: MUST use before merging anything to the main branch, and whenever an activity's own skill says a unit of its work is ready for review — how to send independent subagent reviewers at it, how to write a brief that cannot mislead them, and where their findings land. The axes to send are the dispatching activity's, and its skill names them.
+description: MUST use before merging anything to the main branch, and whenever an activity's own skill says a unit of its work is ready for review — how to send independent subagent reviewers at it, how to write a brief that cannot mislead them, and where their findings land. The axes to send are every axis of its table whose condition holds, and those the dispatching activity's skill adds.
 ---
 
 # Dispatching a review
@@ -116,8 +116,7 @@ re-checking.
 
 **Findings** become one of:
 
-- repairs, done on the branch before merge, if the defect is too large to consider the task
-  achieved;
+- repairs, done on the branch before merge;
 - issues, one file each in the affected anchor's issue directory
   (`skill@knowledge-architect-issue-tracking`);
 - nothing, where the finding is judged to need nothing, with the reason.

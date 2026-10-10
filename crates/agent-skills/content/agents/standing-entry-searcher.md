@@ -47,7 +47,8 @@ id. The reference of an issue entry is `issue@<anchor>@<id>`, and of a tripwire 
 `tripwire@<anchor>@<id>`.
 
 **The order is fixed, so that every search agent of one search takes the same slice**: the issue
-rows sorted by anchor, then by id; then the tripwire rows sorted by anchor, then by id. The issue
+rows sorted by anchor, then by id; then the tripwire rows sorted by anchor, then by id, each sort in
+byte order (`LC_ALL=C sort`), since other collations order hyphenated ids differently. The issue
 listing prints its rows by kind first, so always sort it. Your group is the rows at your first to
 your last position in that order, both included.
 

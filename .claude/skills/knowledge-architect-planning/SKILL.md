@@ -40,10 +40,10 @@ audit and at each landing.
 | **roadmap** | docs/roadmap.md at the project's root, optional: the order in which the owner wants known work done (`skill@knowledge-architect-planning@spec-or-milestone`) |
 | **transcript** | the harness's log of a session, on disk. It keeps the records from before a compaction |
 | **assembly** | writing a plan document from the discussion's transcript (`skill@knowledge-architect-planning@spec-contents`) |
-| **converged** | every proposal of the discussion is closed, and no binding criterion is unmet |
+| **converged** | convergence holds, as loop step 6 of `skill@knowledge-architect-design@discussion-loop` defines it |
 | **thread** | one proposal of the discussion, carrying a state; an approved thread is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
-| **acceptance criterion** | a check on a recorded decision that only the work's built code can apply |
+| **acceptance criterion** | a check on a decision of the plan, an approved thread, that only the work's built code can apply |
 | **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named, and the thread stays closed until the owner's word. The full protocol is `skill@knowledge-architect-design`, under Decision authority |
 | **audit** | the reading of a slice's entry, or of a spec, against the tree and the design homes before its work is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
@@ -156,8 +156,8 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 
 | section | holds |
 | --- | --- |
-| Status and audience | what the document is for; that it leaves when its work lands; that where it and a design home disagree, the design home wins; that every name it uses is defined in it or exists in the code; that where the owner's word is needed and the owner is absent, the work does not proceed on that point |
-| How the work is done | in a milestone document: `skill@knowledge-architect-planning@working-a-slice`, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
+| Status and audience | what the document is for; that it leaves when its work lands; that where it and a design home disagree on a point its section "What is already decided" does not list as reversed or rewritten, the design home wins; that every name it uses is defined in it or exists in the code; that where the owner's word is needed and the owner is absent, the work does not proceed on that point |
+| How the work is done | in a milestone document: a pointer to `skill@knowledge-architect-planning@working-a-slice`, with an instruction to read it whole before each slice, and any addition the milestone's work needs. In a spec: one line naming this skill |
 | Names | every project shorthand the document uses, expanded to the file, function or command it names |
 | What the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
 | What is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `cargo klarch show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step, slice or harvest that judges or updates each |
@@ -260,9 +260,9 @@ failure.** Every other test here serves that one.
   failure surfaces with one name.
 - **The last step consumes**: the measurements, the report, the harvest.
 - **One branch and one merge per slice**, each merged before the next slice begins, and reviewed
-  before the merge. A step is no unit of the history: how many commits it takes, and what else a
-  commit of the branch carries, such as a fix met outside the task, is the implementing session's
-  to judge.
+  before the merge. A step is no unit of the history: how many commits it takes, and what other
+  commits the branch carries, such as the commit of its own a fix met outside the task takes, is the
+  implementing session's to judge.
 - **A plan document whose work's first commit changes what the project's per-commit gate checks
   lands in a merge of its own, before that work.** The per-commit gate is the one that judges each
   commit of a branch, its tree and its message. On one branch, that gate as the work changes it would
@@ -338,8 +338,8 @@ default marked as the owner's to reset.
 
 ## Working a slice, and the work of a spec `##working-a-slice`
 
-The milestone document restates this procedure with a pointer to this skill, so a cold session
-finds it there. The work of a spec follows it too, as its last paragraph says.
+The milestone document points to this procedure, so a cold session finds it from there. The work
+of a spec follows it too, as its last paragraph says.
 
 1. **Ground**: the Component's `CLAUDE.md`, its design home, its rejected alternatives; then the
    milestone document entire, then the slice's spec. The issues and the tripwires, of every anchor,
@@ -485,7 +485,7 @@ This list is their one home; the reviewer reads it here.
 - every name the document uses is defined in the names sections or exists in the code;
 - every total function the code will need is a mapping table;
 - every fixture is expressible in the vocabulary that exists, or names its addition;
-- a milestone document carries the procedure of `skill@knowledge-architect-planning@working-a-slice`;
+- a milestone document points to `skill@knowledge-architect-planning@working-a-slice`;
 - every number is a measurement with its instrument, or a default marked as the owner's;
 - every premise a later step or change ends is stated with its guard;
 - every statement about the code names the file and the function, and its truth is the code-claims

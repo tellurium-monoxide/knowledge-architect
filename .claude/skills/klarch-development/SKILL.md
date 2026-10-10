@@ -38,10 +38,9 @@ A behaviour that looks like a new defect is often recorded: `cargo klarch issues
 `cargo klarch tripwires` list every entry. `path@knowledge-architect@docs/design.md` at the root
 holds only what binds every Component, so read it when the change crosses one.
 
-The primer's intent-and-claims rule governs how to read all of them. **Intent is authority, and the
-code is checked against it. A claim about the code as it stands goes stale, and is checked.** A
-divergence between a design document and the code is a defect in one of them. Say which, and open
-an entry in that Component's `path@*@docs/open-issues/`. It is not licence to follow the code.
+`primer@intent-and-claims` governs how to read all of them, read whole: intent is authority, and a
+divergence between a design document and the code is a defect in one of them, never licence to
+follow the code.
 
 ## The loop `##development-loop`
 
@@ -49,8 +48,9 @@ an entry in that Component's `path@*@docs/open-issues/`. It is not licence to fo
 2. **Write the tests, and show that they discriminate** (`skill@klarch-development@discriminating-tests`).
 3. **Implement.**
 4. **Gate** (`skill@klarch-development@development-gate`).
-5. **Commit.** The commit contract is root `CLAUDE.md`, section Git. A decision that clears the
-   recording threshold takes `skill@knowledge-architect-decision-recording` as well.
+5. **Commit.** The commit contract is root `CLAUDE.md`, section Git. A design decision made or
+   reversed while building takes `skill@knowledge-architect-decision-recording` as well, which
+   judges whether it earns durable text.
 6. **Review** (`skill@klarch-development@code-review-axes`), at any checkpoint where a coherent piece works, not only at the end. It follows
    the commit because a reviewer working on its own copy of the tree sees committed content only,
    so uncommitted work is reviewed by nobody. A repair the review asks for is a further commit,
@@ -76,7 +76,7 @@ lesser one:
   outcome.**
 
 **A mutation runs in a scratch worktree by default.** Reverting a hand-made mutation in the live
-tree with a restore has lost uncommitted work in thaum several times. Where the live tree is used
+tree with a restore can lose uncommitted work. Where the live tree is used
 anyway, the file is staged before the mutation, per root `CLAUDE.md`, section Git, so the revert
 does not depend on a restore. The worktree starts at HEAD, and the session's uncommitted work is
 brought into it, because the test under check is usually not committed yet. From the main tree's
@@ -149,8 +149,7 @@ the guard is the second kind, and the refusal is what carries the claim. If it a
 state, the guard is the third kind, whatever an argument about normal use says.
 
 **A mutation set chosen by the author of the tests is not enough.** The author mutates _the thing
-the claim is about_, and the survivors are adjacent to it: in thaum, two units of work passed their
-own mutation checks and an independent review found survivors in both within one pass. So the
+the claim is about_, and the survivors are adjacent to it, where an independent reviewer looks. So the
 adversarial review of `skill@klarch-development@code-review-axes` chooses its own mutations.
 
 ## The review axes for code `##code-review-axes`
@@ -186,8 +185,9 @@ only the branch's tip: its message and its tree. Run `cargo klarch check --stage
 and before each commit, and `cargo klarch commits origin/main..HEAD` after it: the whole branch, since a citation of an earlier
 commit of the branch by SHA is refused only when that commit is in the range judged, per
 `issue@core@branch-sha-citations-are-judged-within-the-range-only`; the check before the commit
-restates `design@agent-skills@staged-check-before-each-commit`. Amend the commit if either
-fails, with a clean tree; once later commits sit on top, the repair is a history edit. **A change to
+restates `design@agent-skills@staged-check-before-each-commit`. A failing staged check is
+repaired before the commit; a commit that fails `commits` is repaired by a new commit, folded into
+it by a history edit with a clean tree, per root `CLAUDE.md`, section Git, point 2. **A change to
 the core that makes a check stricter, or changes the manifest format, makes every earlier commit of
 its branch fail.** Put that change in the branch's first commit, with every fix the tree needs to
 pass it, or squash the branch to one commit before its review. The decision is

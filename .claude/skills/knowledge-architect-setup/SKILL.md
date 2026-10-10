@@ -31,8 +31,9 @@ skip-files = []
 exclude = []
 ```
 
-After the first install, `cargo klarch check` lists every document the project still owes, each with
-its repair. That list is this skill's work list.
+After the first install, `cargo klarch check` lists what the project still owes, each with its
+repair. That list is this skill's work list. A run reports the first phase that finds anything and
+judges no later phase, so the check runs again after each repair until it passes.
 
 The checker needs `git` 2.36 or newer, and a project inside a git repository. Building it needs a
 Rust toolchain, whatever the project's own language.
@@ -41,7 +42,8 @@ Rust toolchain, whatever the project's own language.
 behalf is shown to the owner first: the Components, the goals, the place of each existing document,
 and each choice below that changes the project's build or a file it already has. The owner rules;
 the agent proposes. The skill is built on an owner present to rule: a run without one, such as a
-trial, makes those choices itself.
+trial, makes those choices itself, except the goals, which only the owner states: such a run writes
+no goal, and leaves each goals home with no entry, awaiting the owner's.
 
 ## Pin the checker, and decide how it runs `##pin-the-checker`
 
@@ -159,6 +161,8 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
 - **the routing table**: one row per installed skill or agent that a project skill or agent adds to, as
   `| installed | project additions |`. It is empty until the project writes a skill of its own;
 - **the project's skill prefix**: its name and a hyphen, which names every project skill and agent.
+  A name that begins with `knowledge-architect-` is the installer's: the install deletes it. A
+  project whose name gives that prefix takes another.
 
 How the two tables are written is
 `skill@knowledge-architect-agent-configuration@root-claude-md-tables`; the prefix and a project
@@ -230,15 +234,16 @@ A project that already has documentation keeps it until its move is planned:
    rulings. The move is then planned work, under `skill@knowledge-architect-planning`, and runs as a
    milestone when the owner schedules it. Until then, the old documents and the new homes both
    exist, and the issue is what records that. The milestone ends by running the design-record axis
-   of `skill@knowledge-architect-project-audit@design-record-axis` over the design homes and the
-   rejected alternatives the move wrote.
+   of `skill@knowledge-architect-project-audit@design-record-axis` over its whole corpus, which then
+   holds what the move wrote.
 
 **A finding the check reports in an existing file is the owner's to rule**, since the setup does
 not move or rewrite that file. Show the owner the finding and its repair, each finding under a
 label, `Q<n>`, when there are several, such as a bare path
 rewritten as a reference. The owner rules between that repair and a
 `[walk] skip-files` row, with its reason beside it, that keeps the file out of the walk until its
-move.
+move. A file at the path of a register home, such as `path@*@docs/design.md`, has no such row: the check
+refuses a walk row over a register home, so its finding is repaired.
 
 Setting up stops at a conformant structure, the goals, and that issue.
 

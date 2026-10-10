@@ -36,7 +36,8 @@ to judge is never room to act against an instruction.
 - **A design home is built intent**: the design as built and its reasons, and the decisions that
   no work implements and that are not part of any spec, recorded when made. Design that is decided and not built is in a plan
   document until it lands. Check the code against a design home, never the other way. A divergence
-  is a defect in one of them: say which, open an issue, and stop. A design home can be wrong, and
+  is a defect in one of them: say which, open an issue, and stop relying on the diverging statement:
+  the task goes on where it does not rest on it. A design home can be wrong, and
   it still prevails over the code until the issue closes. It closes when the code changes to meet
   the head, or when the head is reversed under `skill@knowledge-architect-decision-recording`; it
   never closes by following the code. Work that goes on meanwhile, on the owner's word, builds on
@@ -62,7 +63,7 @@ Something met while doing other work takes the first of these that applies:
 
 | # | test | outcome |
 | --- | --- | --- |
-| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | stop and present it to the owner at the top of the turn, with a default |
+| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | present it to the owner at the top of the turn, with a default, and proceed on the default unless the owner answers otherwise |
 | 2 | its fix is checkable from the diff alone: it changes no behaviour, no decision and no test outcome (a typo, a stale pointer, wording that is now false, a broken link) | fix it, in a commit of its own |
 | 3 | its `Why it matters` and its `What would close it` can be written | open an issue entry (`skill@knowledge-architect-issue-tracking`) |
 | 4 | none of the above | name it, with why it is dropped |
@@ -70,6 +71,8 @@ Something met while doing other work takes the first of these that applies:
 **A turn that met anything outside its task ends with a section titled "Met outside the task"**,
 listing every item with its outcome: fixed (with the commit), issue opened (with its id), waiting
 for the owner's ruling, or dropped (with the reason). A mention inside other prose does not count.
+A subagent that edits nothing reports each item to the session that dispatched it, in the place its
+definition gives, and that session routes it by this table.
 
 ## Where knowledge goes `##where-knowledge-goes`
 
@@ -91,7 +94,7 @@ owner's decision.
 | how the project or a Component is built, and why | that Component's design home, `path@*@docs/design.md` or `path@*@docs/design/` | the design changes: the entry is rewritten in place |
 | the engineering alternative that lost, and why | that Component's `path@*@docs/rejected-alternatives.md` | it is reopened and chosen, the owner rules it fails every recording test, or the decision it lost to leaves the design home and the text that keeps that decision's reason names it; a reversal moves the old winner into it if it meets a recording test of `skill@knowledge-architect-decision-recording` |
 | what is outstanding: a defect, an unexplained observation, an open question, missing work | one file in the owning anchor's issue directory, `path@*@docs/open-issues/` in a Component | the issue closes |
-| evidence that would flip a recorded decision about code that exists | the owning Component's tripwires home, `path@*@docs/tripwires.md` or `path@*@docs/tripwires/` | it fires, or its decision is gone |
+| evidence that would flip a recorded decision whose work exists, or that no work implements | the owning Component's tripwires home, `path@*@docs/tripwires.md` or `path@*@docs/tripwires/` | it fires, or its decision is gone |
 | a contract or a trap that only a developer needs, true of the code as it stands | the scoped `CLAUDE.md` nearest the code | the contract changes or the trap is removed |
 | how a user can use a Component, and what to respect | its `README.md` | the contract changes |
 | directions about what to find where in a directory | a `README.md` in that directory | the directory's content changes |
@@ -116,7 +119,14 @@ names every entry it opens, closes, reverses or argues from. A reference whose e
 leave the text unaffected is not written. A reference is one backticked span,
 `<kind>@<anchor>@<id>`, naming the anchor that defines the entry, and it is live wherever it is
 prose, a fenced block included; an illustration that must not resolve writes a placeholder in angle
-brackets. The checker reads Markdown and Rust source; a reference anywhere else is found by grep.
+brackets. A span never crosses a line break: a line breaks before the span, not inside it. A skill
+or an agent is named by its reference, `skill@<name>` or `agent@<name>`, never by its bare name in
+backticks. A `path` reference names the deepest anchor that holds its target, with a plain path
+under it, no `..`, no `./` and no leading `/`, and ends with `/` exactly when the target is a
+directory. A heading is a line that opens with `#` marks, with no list or block-quote marker before
+them; a line markdown reads as a heading in another shape, as a `---` right under a paragraph is,
+stops the check. The checker reads Markdown and Rust source, and each commit's message and tree
+through `cargo klarch commits`; a reference anywhere else is found by grep.
 
 **A finding is repaired in a form the checker judges, never by moving the pointer into plain
 text**: the right anchor, `path@elsewhere@<path>` for a path the tree does not hold, a placeholder,
@@ -253,7 +263,7 @@ outline reads as decisions under level-two subjects. **Every level-three heading
 is an entry** and carries a slug: one without is a finding, so a heading that is section text sits
 at level two or four. Nowhere else: a slug at another heading level, in a table cell, at the head
 of a plain line, in the middle of a line or in a file that is not the design home defines nothing.
-`cargo klarch check` reports it as a misplaced definition, and every reference to it as dangling.
+`cargo klarch check` reports it as a misplaced definition; a reference to it resolves to nothing.
 The slug is an id in the grammar `[a-z0-9]+(-[a-z0-9]+)*`, unique in the design home.
 
 **When the decision was a thread of a design discussion, its slug is the thread's name**, unless
@@ -308,7 +318,8 @@ shows. A slug or a title that misdescribes its decision misinforms every reader,
 decision it names, so rename it even when that means rewriting every reference in the project.
 
 **A head that a change touches is brought to these rules in that change**: its title to the rule it
-argues, each decision it bundles to a head of its own, its ground to its argument. Where bringing it
+argues, each decision it bundles to a head of its own, its ground to its argument. Re-pointing a
+reference in a head does not touch it. Where bringing it
 to the rule would widen what the owner's words in it approved, as a title moved from the members
 the owner named to the rule, the change goes to the owner as one proposal, as a new member does.
 
