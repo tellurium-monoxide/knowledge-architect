@@ -41,8 +41,9 @@ leaves the repository in the commit that completes its harvest.
   the agent messages, the tables and the arguments verbatim to scratch; the session assembled this
   spec from that file and its own context.
 - **Labels.** The discussion used T1 to T4 and AC1 to AC4. No other discussion in the transcript
-  used either prefix. The tripwires home already holds T labels of other discussions; each
-  tripwire's text names its discussion, as theirs do.
+  used either prefix. The tripwires home already holds T labels of other discussions, each
+  opening "T<n> of the premortem of the discussion that made the decision"; the new ones take the
+  same form, and the decision each guards tells them apart.
 
 ## How the work is done
 
@@ -60,7 +61,7 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 - **the corpus of the axis**: every text the harness delivers to a session as an instruction, per
   `thread@agentic-workflow-axis@workflow-axis-corpus`.
 - **the workflow auditor**: the new installed agent, per New names.
-- **a lens**: one task an auditor is briefed with, L1 to L6, per
+- **a lens**: one task an auditor is briefed with, L1 to L7, per
   `thread@agentic-workflow-axis@workflow-axis-lenses`. The word is the agent's, round 1.
 - **a draft**: one auditor's file for one finding, per "The workflow auditor".
 - **a tag**: the side of a finding, `W` for the installed text, `P` for the project's own text, `I`
@@ -73,8 +74,8 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   re-check's drafts start the next pass. Today the skill uses the word in point 7 and point 9 and
   does not define it; step 1 adds it to the terms.
 - **the re-check**: fresh agents of the axis, dispatched as the axis's first dispatch was, after a
-  pass's edits. For this axis: the same lenses, the same count, the same groups of activities for
-  L2.
+  pass's edits. For this axis: the same lenses with the same count per lens as the first dispatch,
+  and the same groups of activities for L2.
 - **confirmed**: a finding that survives the session's reading at the sort.
 - **a violation left**, for this axis: a confirmed finding of a re-check that is not on the kept
   list. It is what the generic stop rule counts.
@@ -95,12 +96,12 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   8 (a split, a merge or a move of a head is drafted first, and each head a split, a rename or a
   merge creates is judged alone) and 9 (the re-check runs over the same groups) are specific to a
   corpus of entries. The method's preamble lets an axis's section adjust each point "where its
-  corpus needs", and point 2 lets an axis group otherwise; the head's title, the Terms table, the
+  corpus needs", and point 2 lets an axis hold several Components in a group; the head's title, the Terms table, the
   Scope paragraph, the Outcomes row "nothing", and "The record of a run" ("how many entries and
   groups, the calibration reading settled") state entries, groups and calibration for every audit.
 - The design-record auditor's description says "To dispatch it, follow
   `skill@knowledge-architect-project-audit@audit-method`", and so does the head
-  `design@agent-skills@audit-method`, in its first sentence.
+  `design@agent-skills@audit-method` names that section as the method's home, in its first sentence.
 - The audit skill has one axis section, `skill@knowledge-architect-project-audit@design-record-axis`.
 - `agent@knowledge-architect-design-record-auditor` restates the group arithmetic in its description.
 - `issue@agent-skills@audit-axes-beyond-the-design-record` lists the axes the owner named, among
@@ -115,7 +116,7 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   `path@gates@CLAUDE.md` and `path@xtask@CLAUDE.md` restate `design@gates@verdict-from-exit-codes`,
   a decision about code. Round 1 said all three restate workflow directives.
 - The agent-config issue register, `path@agent-config@open-issues/`, holds no entry; the issues
-  about the workflow are in the agent-skills register.
+  about the workflow are in the registers of several Components, agent-skills and core among them.
 
 ### The standing entries the work bears on
 
@@ -132,19 +133,21 @@ The grounding search of round 1 returned these, each read whole with `cargo klar
   never closed by citing an expectation set.
 - `tripwire@agent-skills@pointer-not-followed`: L5 repairs may turn restatements into pointers.
 - `issue@core@a-home-for-developer-contracts-outside-agent-configuration`: it supports leaving the
-  scoped CLAUDE.md files out of the corpus, and gains a line naming the three scoped restatements.
+  scoped CLAUDE.md files out of the corpus, and gains a line naming the one scoped restatement of workflow directives.
 - `issue@core@configuration-for-several-agent-providers`: the shipped text names the corpus without
   a provider's directory.
 - `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked`: the reason for AC3.
 - `tripwire@agent-skills@structure-rejection-overruled`: a provable gap the run proposes to fill
-  may be rejected by citing `design@agent-skills@capabilities-not-structure`; the sort of each pass
-  counts an overruled rejection against it.
+  may be rejected by citing `design@agent-skills@capabilities-not-structure`. The tripwire fires on a
+  review or a design discussion, which an audit's owner list is not; a rejection the owner overrules
+  on the list is still reported in that pass's commit message, for the retrospective that re-enters
+  the tripwire.
 - `tripwire@agent-skills@axis-not-run-at-a-pin-move`: the new axis is one a Migration entry may
   cite; see Later consequences.
 - `issue@agent-skills@expectation-sets-for-the-installed-skills`: most installed skills state no
   expectation set, so a finding about the owner's behaviour has no scope test there; the auditors
   report a finding about how the owner works as outside the axis.
-- `issue@agent-skills@a-reviewer-s-running-time-is-unbounded`: fifteen agents reading the whole
+- `issue@agent-skills@a-reviewer-s-running-time-is-unbounded`: sixteen agents reading the whole
   corpus may run long; the session asks an agent that has not returned for what it has, rather than
   waiting without bound.
 - Several issues are findings the first run will meet already recorded, and need nothing of this
@@ -176,27 +179,38 @@ The grounding search of round 1 returned these, each read whole with `cargo klar
 
 The design rests on these and does not argue them again:
 
-- `design@agent-skills@audit-is-an-activity`, `design@agent-skills@audit-outcomes`,
-  `design@agent-skills@audit-triggers`, `design@agent-skills@audit-agent-per-axis`,
+- `design@agent-skills@audit-triggers`, `design@agent-skills@audit-agent-per-axis`,
   `design@agent-skills@audit-repairs-the-whole-record`.
-- `design@agent-skills@additions-need-real-use` and `design@agent-skills@synthetic-evidence-not-built`,
-  read in round 1 and agreed by the owner, round 2: "Agreed on your readings of
-  additions-need-real-use and synthetic-evidence-not-built."
+- `design@agent-skills@synthetic-evidence-not-built`, read in round 1 and agreed by the owner, round
+  2: "Agreed on your readings of additions-need-real-use and synthetic-evidence-not-built.", and
+  read again for the first run per D2 and D9.
 - `design@agent-skills@capabilities-not-structure`, `design@agent-skills@restatement-size-test`,
   `design@agent-skills@expectation-set-bounds-scope`.
 
 The work rewrites two heads by its threads, three more per D4 to D6, and reads a sixth per D3:
 
-- `design@agent-skills@additions-need-real-use`, per D4: its list of findings provable by reading
-  names an instruction read two ways and a provable gap. Its citing texts are read at the harvest
-  with `cargo klarch show`, among them the restatement of the Necessity test in
-  `path@agent-skills@CLAUDE.md`.
-- `design@agent-skills@audit-outcomes`, per D5: an installed-text finding in a project that does not
-  publish the workflow is sent upstream.
+- `design@agent-skills@additions-need-real-use`, per D4 and D11: its list of findings provable by
+  reading names an instruction read two ways and a provable gap, and its first sentence, "Real use
+  originates an addition", is scoped to an addition about how an agent behaves. Its citing texts,
+  each read at the harvest against the rewritten head: the `%%` line of
+  `path@agent-skills@content/skills/design/SKILL.md`;
+  `issue@agent-skills@a-reviewer-s-running-time-is-unbounded`;
+  `issue@agent-skills@expectation-sets-for-the-installed-skills`; the heads
+  `design@agent-skills@expectation-set-bounds-scope`,
+  `design@agent-skills@standing-entries-searched-before-the-work`,
+  `design@agent-skills@audit-triggers`, `design@agent-skills@staged-check-before-each-commit` and
+  `design@agent-skills@staged-forms-for-a-partial-commit`;
+  `path@agent-config@skills/klarch-retrospective-intake/SKILL.md`; and the restatement of the
+  Necessity test in `path@agent-skills@CLAUDE.md`, which is rewritten with the head.
+- `design@agent-skills@audit-outcomes`, per D5 and D14: an installed-text finding in a project that
+  does not publish the workflow is sent upstream, and a predicted gap is an issue entry.
 - `design@agent-skills@audit-is-an-activity`, per D6: a corpus holds entries or texts, and the method
   is generic with a dispatch per axis.
 - `design@agent-skills@restatement-size-test` is not rewritten under D3's default: L5 is narrowed to
   meet it.
+- Per D12, `design@knowledge-architect@retrospective-findings-stay-here` gains the audit's findings
+  on the installed text, and the root CLAUDE.md's routing table its first row. Per D15,
+  `design@agent-skills@ruled-items-labelled` widens its `W` row to an audit's upstream file.
 
 The two rewritten by the threads:
 
@@ -208,7 +222,7 @@ The two rewritten by the threads:
   - `path@agent-skills@docs/rejected-alternatives.md`, "An audit method with no calibration and no
     re-check": rewritten at the harvest to name both heads it lost to, the generic method for the
     re-check and `design@agent-skills@design-record-axis` for the calibration, per Losing
-    alternatives. Its recorded reason holds two facts, the re-check finding what a pass missed and
+    alternatives. Its recorded reason holds two facts, the re-check finding what a pass missed or made and
     two agents reading one sample entry two ways; both stay.
   - `tripwire@agent-skills@audit-defaults-overruled`: its premise names "the calibration and the
     session's sort"; the new axis has no calibration, so the harvest rewrites the premise to the
@@ -250,10 +264,10 @@ Binding as a presumption, from `design@agent-skills@additions-need-real-use`. Me
 Binding as a presumption, from `design@agent-skills@audit-agent-per-axis`. Met by
 `thread@agentic-workflow-axis@workflow-auditor-agent`.
 
-### One pass costs about the owner's budget of 15 agents `##c6`
+### One pass costs about the owner's budget of 15 agents, in the owner's words `##c6`
 
 Weighed, from the owner's words, round 1: "the budget should be around 15 subagents I think." Met by
-`thread@agentic-workflow-axis@workflow-axis-lenses`.
+`thread@agentic-workflow-axis@workflow-axis-lenses`, whose default is 16 agents per D8.
 
 ## Threads
 
@@ -274,11 +288,11 @@ Arguments: `argument@agentic-workflow-axis@a4`, `argument@agentic-workflow-axis@
 `argument@agentic-workflow-axis@a13`, `argument@agentic-workflow-axis@a14`,
 `argument@agentic-workflow-axis@a15`, `argument@agentic-workflow-axis@a16`,
 `argument@agentic-workflow-axis@a20`, `argument@agentic-workflow-axis@a21`. Shape: Decided design,
-"The corpus". Harvest: a head, if it earns one; the line on the developer-contracts issue. Closed,
-round 2: "workflow-axis-corpus: approved." The default for the three scoped restatements was part of
+"The corpus". Harvest: a head, by entry test 2; the line on the developer-contracts issue. Closed,
+round 2: "workflow-axis-corpus: approved." The default for the scoped restatements was part of
 the thread as presented, and the agent's round-2 reply stated that the approval accepted it.
 
-### Every auditor reads the whole corpus, through one of six lenses, each lens dispatched at least once, with no calibration sample `##workflow-axis-lenses`
+### Every auditor reads the whole corpus, through one lens, each lens dispatched at least once, with no calibration sample `##workflow-axis-lenses`
 
 Arguments: `argument@agentic-workflow-axis@a2`, `argument@agentic-workflow-axis@a3`,
 `argument@agentic-workflow-axis@a7`, `argument@agentic-workflow-axis@a8`,
@@ -292,7 +306,7 @@ round 2: "workflow-axis-lenses: approved. This covers well what I had in mind."
 Arguments: `argument@agentic-workflow-axis@a9`, `argument@agentic-workflow-axis@a11`,
 `argument@agentic-workflow-axis@a12`, `argument@agentic-workflow-axis@a21`,
 `argument@agentic-workflow-axis@a26`. Shape: Decided design, "The finding standard". Harvest: a
-head, if it earns one; otherwise the skill's section and a `%%` line. Closed, round 2:
+head, by entry test 2. Closed, round 2:
 "workflow-axis-finding-standard approved."
 
 ### A finding is tagged by the side whose text changes, and an installed-text finding in a consumer goes upstream `##workflow-axis-outcomes`
@@ -532,7 +546,9 @@ reviews, and the first run's lessons reach the axis one merge later."
 ### The triggers head allows the run in another work's branch `##a33`
 
 Round 1, agent. Bears on `thread@agentic-workflow-axis@workflow-axis-first-run`.
-"`design@agent-skills@audit-triggers` lets you put the run into another work's branch."
+"`design@agent-skills@audit-triggers` lets you put the run into another work's branch." The
+permission is in the audit skill's `skill@knowledge-architect-project-audit@when-an-audit-runs`, not
+in that head.
 
 ### The owner's concern about too many published agents `##a34`
 
@@ -560,7 +576,7 @@ Round 2, agent, premortem cause 3. Bears on `thread@agentic-workflow-axis@workfl
 contradictions between files, which is the axis's main purpose. Today the corpus is 61,065 words. It
 will grow."
 
-### One agent with six lenses may flatten them `##a38`
+### One agent with all the lenses may flatten them `##a38`
 
 Round 2, agent, premortem cause 4. Bears on `thread@agentic-workflow-axis@workflow-auditor-agent`. "An
 agent briefed on L3 also reports L1 findings, the lenses converge on the same findings, and
@@ -697,7 +713,7 @@ one lens:
 | lens | looks for | default agents |
 | --- | --- | --- |
 | L1 contradiction | two instructions, in any files, that no single move satisfies; a term defined two ways | 3 |
-| L2 activity walk | one activity followed across files, listing at each moment the instructions that apply: two that conflict, a hand-off to something no text defines, a pointer to a section that does not exist, a loop with no exit | 4, one per group of activities: design, planning and building; review and merge; audit and retrospective; setup and pin move |
+| L2 activity walk | one activity followed across files, listing at each moment the instructions that apply: two that conflict, a hand-off to something no text defines, a pointer to a section that does not exist, a loop with no exit | 4, one per group of activities, per D13: design, planning, decision recording and issue tracking; review and merge; audit and retrospective; setup, pin move, goal setting and agent configuration |
 | L3 two readings | an instruction whose words allow two readings that lead to different acts | 2 |
 | L4 provable gap | per "The finding standard" | 2 |
 | L5 restatement | each restatement against its home: one that drifted from it, or one without its pointer, per D3 | 1 |
@@ -706,7 +722,8 @@ one lens:
 
 Each lens is dispatched at least once. The count is the session's, within the owner's budget, and the
 table's total, 16, is the stated default. An L2 agent's brief names its group of activities; two L2 agents
-are duplicates only when they share a group. The re-check dispatches the same table again. There is
+are duplicates only when they share a group. Each agent takes one lens; a lens takes as many agents as its row says. The re-check dispatches the
+same lenses with the same count per lens as the first dispatch. There is
 no calibration sample: the sort reads every finding, the duplicates of a lens add coverage, and the
 re-check reads again. A finding two agents report is merged and noted as such.
 
@@ -725,8 +742,9 @@ reading, since a finding is confirmed at the sort and the re-check reads again.
 ### The checker-rules lens
 
 `thread@agentic-workflow-axis@checker-rules-lens`. An L7 agent reads, beside the corpus, the
-checker's user documentation: its README for the version the project pins, and `klarch --help` with
-the help of each command; in the project that publishes the checker, also the checker's design home.
+checker's user documentation: its README for the version the project pins, which ships in the
+checker's package, and the help of the project's declared command with the help of each command. In
+this repository, per D12, the root CLAUDE.md also gives it the checker's design home.
 It lists every rule the checker enforces on what an agent writes, and reports:
 
 - a rule no installed text states: tag W, a provable gap, since it is a format the checker enforces;
@@ -777,13 +795,36 @@ text, P for the project's own text. A finding of the interaction of the two, I, 
 into its W side and its P side, each a finding with one outcome, as the retrospective writes an
 interaction finding in both its files.
 
-| | in a project that does not publish the workflow | in the project that publishes it |
-| --- | --- | --- |
-| W | never edited locally; sent upstream, per D5 | edited at its source, as P is |
-| P | applied, put to the owner, or an issue | the same |
+| tag | in the installed text |
+| --- | --- |
+| W | never edited in the project; sent upstream, per D5 |
+| P | applied, put to the owner, or an issue |
 
-The installed text says "the project that publishes the workflow" in words, naming no repository.
-Outcomes of a P finding, and of a W finding where the workflow is published:
+Per D12, the installed text holds no branch for the project that publishes the workflow. This
+repository's root CLAUDE.md gains a row of its routing table for the audit skill: here a W finding
+is edited at its source, as `design@knowledge-architect@retrospective-findings-stay-here` already
+says for a retrospective's findings, and takes the outcomes of a P finding. A finding on the
+checker's own behaviour, the retrospective's `C`, is outside the axis, since the checker's code is
+not in the corpus: it is an issue entry here, and in another project a finding of its next
+retrospective.
+
+Each lens target maps to a class, and each class to an outcome:
+
+| lens target | class | outcome |
+| --- | --- | --- |
+| two instructions no move satisfies; a term defined two ways | contradiction | owner list |
+| a hand-off or a pointer to something no text defines | broken trigger | applied when the target exists under another name; else owner list |
+| a loop with no exit | contradiction, between the instructions that form it | owner list |
+| a false claim about the checker, the harness or the tree | factual error | applied |
+| an instruction allowing two acts | two readings | applied when the repair changes no instruction; else owner list |
+| a requirement with an input no text supplies; a checker rule no installed text states | provable gap | owner list |
+| a restatement that drifted from its home | contradiction, with its home | applied, brought back to its home |
+| a restatement without its pointer | broken trigger | applied, the pointer added |
+| a project text duplicating an installed one word for word | restatement without its pointer, when no pointer stands beside it | applied |
+| a routing-table row that says the wrong thing | factual error | applied |
+| an agent might misjudge X | predicted gap | issue entry |
+
+Outcomes of a P finding, and in this repository of a W finding:
 
 - **applied**: a rewording that changes no instruction; a broken pointer; a factual error; a drifted
   restatement brought back to its home;
@@ -792,8 +833,9 @@ Outcomes of a P finding, and of a W finding where the workflow is published:
   provable gap;
 - **issue**: a predicted gap; a finding the owner defers.
 
-**Sent upstream**, per D5: the W findings of a run go into one file in the shape of the
-retrospective's workflow file, each numbered `W<n>`, written to the directory the retrospective uses
+**Sent upstream**, per D5 and D15: the W findings of a run go into one file in the shape of the
+retrospective's workflow file, each numbered `W<n>`: the version of the checker used, what was
+audited at which commit, and the findings, with no standing questions, written to the directory the retrospective uses
 and named `<YYYY-MM-DD>-<project>-workflow-audit-klarch-workflow.md`, under the rules of
 `skill@knowledge-architect-retrospective@two-files` and
 `skill@knowledge-architect-retrospective@what-becomes-of-files`: nothing leaves the machine before
@@ -803,8 +845,8 @@ the owner has read it.
 
 `thread@agentic-workflow-axis@workflow-auditor-agent`. One installed agent,
 `knowledge-architect-workflow-auditor`, tools Read, Grep, Glob, Bash, read-only in its body. Its
-frontmatter description says what it drafts and how it is dispatched: one agent per lens per the
-lens table of the axis's new section of the audit skill, all in parallel, each
+frontmatter description says what it drafts and how it is dispatched: each agent on one lens, as
+many per lens as the lens table of the axis's new section of the audit skill says, all in parallel, each
 brief naming the commit audited, the lens, for L2 the group of activities, a scratch directory of its
 own and, for a re-check, the kept list; then its drafts are read, never its summary alone; "Dispatch
 it; do not read it." Its body holds:
@@ -874,7 +916,9 @@ Empty: the work reads no external specification.
 Each cause was put to the owner in round 2 under its label; the owner, round 3: "record all four,
 apply the three acceptance criteria." The owner proposed AC4 in the same message; its wording is
 D1. T1's firing condition is reworded here from round 2's, since "its first" agent names no agent
-when agents are dispatched together; the cause it watches is unchanged.
+when agents are dispatched together; the cause it watches is unchanged. T2 and T4 count "in one
+pass" where round 2 said "in one run", since a run holds several passes. The bounds of T1 to T4
+are the ones round 2 put to the owner and the owner ruled to record.
 
 `thread@agentic-workflow-axis@checker-rules-lens` adds no cause of its own: an L7 agent reads more
 than the others, which T3 watches, and drafts that report rules the finding message already repairs
@@ -885,7 +929,7 @@ are weighed by the owner on the owner list and counted by T2 and AC4.
 | T1 | Duplicate agents add nothing | `thread@agentic-workflow-axis@workflow-axis-lenses` | tripwire. Fires when, in one run, for every lens dispatched more than once (two L2 agents count only when they share a group of activities), one of its agents alone reported every confirmed finding of that lens. Response: reopen the duplicate dispatch. Re-entry: the sort of each pass counts it, the first in this branch |
 | T2 | The drafts are mostly noise | `thread@agentic-workflow-axis@workflow-axis-finding-standard` | tripwire. Fires when, in one pass, more than half of the drafts fail the session's reading. Response: reopen the finding standard and the auditor's standard. Re-entry: the sort of each pass |
 | T3 | The corpus outgrows one agent's reading | `thread@agentic-workflow-axis@workflow-axis-corpus`, `thread@agentic-workflow-axis@workflow-axis-lenses` | tripwire. Fires when an auditor's return says it did not read every corpus file whole. Response: reopen how the corpus is shared out. Re-entry: the sort of each pass. Also AC1 |
-| T4 | One agent with six lenses flattens them | `thread@agentic-workflow-axis@workflow-auditor-agent` | tripwire. Fires when, in one pass, more than a third of one agent's drafts name a lens other than its brief's. Response: reopen one agent against one agent per lens. Re-entry: the sort of each pass |
+| T4 | One agent with all the lenses flattens them | `thread@agentic-workflow-axis@workflow-auditor-agent` | tripwire. Fires when, in one pass, more than a third of one agent's drafts name a lens other than its brief's. Response: reopen one agent against one agent per lens. Re-entry: the sort of each pass |
 | AC1 | (cause 3) | `thread@agentic-workflow-axis@workflow-axis-corpus` | acceptance criterion, `acceptance@agentic-workflow-axis@files-read-and-drafts-tagged` |
 | AC2 | The relocation loses a rule of the design-record method | `thread@agentic-workflow-axis@audit-method-per-axis` | acceptance criterion, `acceptance@agentic-workflow-axis@design-record-dispatch-kept` |
 | AC3 | Shipped text cites an entry of this repository | `thread@agentic-workflow-axis@workflow-auditor-agent` | acceptance criterion, `acceptance@agentic-workflow-axis@shipped-text-cites-no-entry` |
@@ -895,28 +939,32 @@ are weighed by the owner on the owner list and counted by T2 and AC4.
 
 ### Every auditor reads the whole corpus, and every draft names its lens and its tag `##files-read-and-drafts-tagged`
 
-AC1. Guards `thread@agentic-workflow-axis@workflow-axis-corpus`. Judged at step 3, on every return
-and every draft of the first run, read as an observation of real use per D2. Fires when a return
-omits a corpus file from its list of files read whole, or a draft has no lens or no tag. Response:
-reopen how the corpus is shared out, and repair the agent's return before the next pass.
+AC1. Per D10's default, withdrawn: its observable judges a new agent's report against its
+instructions, which `design@agent-skills@synthetic-evidence-not-built` refuses by name. T3 keeps
+watching the cause, on what an auditor's return says. Until the owner rules on D10, step 3 does not
+judge it.
 
 ### The design-record axis keeps every rule its method held `##design-record-dispatch-kept`
 
 AC2. Guards `thread@agentic-workflow-axis@audit-method-per-axis`. Judged at step 1, against the diff,
 row by row of the mapping table: every row of today's text is stated after the change, at the place
-the table gives. Fires when one is missing. Response: restore it before the next step.
+the table gives. The design-record auditor's body, which restates the groups and the sample, is read
+with it and stays true. Fires when one is missing. Response: restore it before the next step.
 
 ### The shipped text the branch writes cites no entry of this repository `##shipped-text-cites-no-entry`
 
 AC3. Guards `thread@agentic-workflow-axis@workflow-auditor-agent` and
 `thread@agentic-workflow-axis@audit-method-per-axis`. Judged at steps 1, 2 and 3, per D7, on every
-line the branch adds under `path@agent-skills@content/`. The instrument:
-`git diff origin/main -- crates/agent-skills/content | grep '^+' | grep -v '^+%%' | grep -E '(design|issue|tripwire|goal|spec|milestone)@'`
-prints nothing. Fires on a line it prints. Response: move it to a `%%` line or remove it.
+line the branch adds under `path@agent-skills@content/` and `path@agent-skills@snippets/`. The
+instrument:
+``git diff origin/main -- crates/agent-skills/content crates/agent-skills/snippets | grep '^+' | grep -v '^+%%' | grep -E '`(design|issue|tripwire|goal|spec|milestone)@[a-z0-9-]+@[a-z0-9]'``
+prints nothing. It matches a reference whose id starts with a letter or a digit, so a placeholder
+in angle brackets and a section of the design skill, `skill@knowledge-architect-design@<slug>`, do
+not match; over the whole shipped text at the spec's revision it prints nothing. Fires on a line it prints. Response: move it to a `%%` line or remove it.
 
 ### The confirmed findings and the severe ones fall from each pass to the next `##passes-fall`
 
-AC4, proposed by the owner in round 3; its wording is D1, awaiting the owner. Guards
+AC4, proposed by the owner in round 3; its wording is D1, ruled in round 4. Guards
 `thread@agentic-workflow-axis@workflow-axis-lenses` and
 `thread@agentic-workflow-axis@workflow-axis-finding-standard`. Judged at step 3, read as an
 observation of real use per D2. The instrument: the count of confirmed findings of each pass, and
@@ -931,7 +979,8 @@ owner's judgement. Response: before the merge, reopen
 
 Every step that changes the installed text, steps 1, 2 and 3, runs
 `cargo klarch install-agent-skills` and commits the installed copies with their source, passes the
-edit tests of `path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", and adds the
+edit tests of `path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", read with
+`design@agent-skills@additions-need-real-use` as D4 and D11 rewrite it, and adds the
 CHANGELOG.md entries `design@knowledge-architect@changelog-entries` owes, then runs
 `cargo x changelog`. Every commit runs `cargo klarch check --staged` before it and
 `cargo klarch commits origin/main..HEAD` after it.
@@ -943,18 +992,22 @@ CHANGELOG.md entries `design@knowledge-architect@changelog-entries` owes, then r
 2. **The axis and its agent.** The workflow auditor, per "The workflow auditor"; the axis's section
    of the audit skill, per "The corpus", "The lenses", "The finding standard" and "The outcomes"; the
    audit skill's frontmatter description and scope naming the axis; the generic Outcomes table gains
-   the row "sent upstream", per D5. The commit converts the spec's `planned` citations. Judges AC3.
+   the row "sent upstream", per D5; the root CLAUDE.md's routing-table row, per D12. The commit
+   converts the spec's `planned` citations, and writes the new agent's name in this spec as its
+   reference. Judges AC3.
    Fails alone on: an agent whose brief cannot be filled from the section, or a section that cannot be
    dispatched from.
 3. **The first run.** The axis runs on this repository under the skill, in this branch. Passes repeat
    as the generic method says. Each pass's commit message carries the counts AC4 reads and the
    observations T1 to T4 read. The owner list waits for the owner's answers. Lessons on the method
    found by the run amend the section or the agent in their own commits; a repair of a W finding is
-   an edit of installed text. Judges AC1, AC3 and AC4. Fails alone on: the counts of AC4.
+   an edit of installed text. Judges AC3 and AC4. Fails alone on: the counts of AC4.
 4. **The harvest.** The rows of "Harvest"; the spec deleted.
 
 The branch is reviewed once, before the merge, on the axes of the generic method's review, which
-include the decision-record, routing and standing-state axes the harvest owes.
+include the decision-record, routing and standing-state axes the harvest owes, and on spec
+conformity, which `skill@knowledge-architect-review@review-axes` owes to work a spec was written
+before.
 
 ## Order rationale
 
@@ -964,7 +1017,7 @@ include the decision-record, routing and standing-state axes the harvest owes.
 
 ## Defaults awaiting the owner
 
-None awaits the owner. D1 to D7 were ruled in round 4, on the review message: "All defaults
+D8 to D15 await the owner. D1 to D7 were ruled in round 4, on the review message: "All defaults
 approved." Each is kept below, marked as ruled, since the sections and the harvest rows it shaped
 cite it by its label.
 
@@ -1006,6 +1059,56 @@ cite it by its label.
   branch adds to shipped text, at steps 1, 2 and 3, with the instrument above, and counts only
   entries, not `path@*@<path>` paths.
 
+- **D8**, awaiting the owner, on `thread@agentic-workflow-axis@checker-rules-lens`, from the
+  transcript review: round 4 proposed "keep the default at 15 agents: L7 gets 2, and L5 drops from 2
+  to 1", and the counts sum to 16; the owner approved both statements. Default: 16, the counts as
+  approved, which "around 15" admits.
+- **D9**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-first-run`, from the
+  design-conformance review: `goal@knowledge-architect@the-workflow-improves-through-real-use` says
+  "No session is built to observe how agents follow its instructions: not to originate an edit, to
+  choose between shapes, or to accept a piece of work", and AC4 and the responses of T1 to T4 judge
+  the first run before the merge. D2 answered the head, not the goal. Default: the first run is real
+  use, an audit of this repository's workflow the owner asked for in round 1, "then self-apply it
+  for real practical testing", whose repairs land; its counts are observations of that use, and the
+  goal holds. A conflict with a goal is the owner's.
+- **D10**, awaiting the owner, on AC1, from the design-conformance review: AC1 judges a new agent's
+  report against its instructions, a case `design@agent-skills@synthetic-evidence-not-built` refuses
+  by name. Default: AC1 is withdrawn; T3 keeps watching its cause.
+- **D11**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-finding-standard`, from
+  the design-conformance and cold-implementer reviews: filling a provable gap adds an instruction
+  from a reading, against the first sentence of `design@agent-skills@additions-need-real-use`, "Real
+  use originates an addition", which D4 left as it was, and the goal it derives from. Default: the
+  head's first sentence is scoped to an addition about how an agent behaves, since its argument is
+  that predicted behaviour is unreliable evidence, and a provable gap predicts no behaviour: it is a
+  fact an act needs and no text gives. A fill still goes on the owner list. Step 3 applies the head
+  as D4 and D11 rewrite it.
+- **D12**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-outcomes` and
+  `thread@agentic-workflow-axis@checker-rules-lens`, from the design-conformance review: the shipped
+  text held a branch for the project that publishes the workflow and the checker, which only this
+  repository meets; the owner ruled such a branch out of the shipped text before: "I don't want to
+  cater too much to this use case in the installed files". Default: the shipped text holds none;
+  the root CLAUDE.md gains a routing-table row for the audit skill: here a W finding is edited at
+  its source, and L7 also reads `path@core@docs/design.md`.
+- **D13**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-lenses`, from the
+  cold-implementer review: the four L2 groups left decision recording, issue tracking, goal setting
+  and agent configuration in no group. Default: the groups are design, planning, decision recording
+  and issue tracking; review and merge; audit and retrospective; setup, pin move, goal setting and
+  agent configuration. A project's own skill is walked in the group of the activity it serves.
+- **D14**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-outcomes`, from the
+  transcript review: `design@agent-skills@audit-outcomes` routes a finding no case names to the
+  owner, and names no predicted gap; the outcomes thread sends it to an issue. Default: the head is
+  rewritten at the harvest to name a predicted gap among the issue entries, per
+  `design@agent-skills@additions-need-real-use`.
+- **D15**, awaiting the owner, on `thread@agentic-workflow-axis@workflow-axis-outcomes`, from the
+  design-conformance review: numbering the upstream findings `W<n>` uses the retrospective's prefix
+  for an audit's findings, and `design@agent-skills@ruled-items-labelled` lists `W` for "a
+  retrospective's findings". Default: its row widens to the findings on the installed workflow, in a
+  retrospective's file and in an audit's upstream file, since both go to the same receiver, which
+  cites each by its file's stem.
+- Listed, no ruling needed: a draft names a finding of another lens met on the way, with the
+  finding's lens, an obligation step 2 added to the auditor so that no finding met is lost and T4
+  can count drift.
+
 ## Harvest
 
 Every head lands in `path@agent-skills@docs/design.md`, unless the row says otherwise. The threads
@@ -1020,12 +1123,15 @@ auditor each state its reason, two texts. The harvest confirms each against the 
 | `thread@agentic-workflow-axis@workflow-axis-finding-standard` | a head; `design@agent-skills@additions-need-real-use` rewritten per D4 |
 | `thread@agentic-workflow-axis@workflow-axis-outcomes` | `design@agent-skills@audit-outcomes` rewritten per D5 |
 | `thread@agentic-workflow-axis@workflow-auditor-agent` | a head |
+| `thread@agentic-workflow-axis@checker-rules-lens` | within the head of `thread@agentic-workflow-axis@workflow-axis-lenses` |
 | `thread@agentic-workflow-axis@workflow-axis-first-run` | none: carried by the run's commits |
 | T1, T2, T3, T4 | `path@agent-skills@docs/tripwires.md`, each naming the head of the thread it stresses, with its label |
 | `tripwire@agent-skills@audit-defaults-overruled` | its premise rewritten to the sort, and the calibration where an axis has one |
 | AC1 to AC4 | reported in the landing commit; one that recurs is proposed as a tripwire |
 | "An audit method with no calibration and no re-check" | names both heads it lost to |
 | every other item of "Losing alternatives" | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit |
+| D12 | `design@knowledge-architect@retrospective-findings-stay-here` widened to an audit's findings on the installed text; the root CLAUDE.md's routing-table row, written at step 2 |
+| D15 | `design@agent-skills@ruled-items-labelled`, its `W` row widened |
 | `issue@agent-skills@audit-axes-beyond-the-design-record` | rewritten to the axes it still holds; its open lesson, the owner's reading of a sample of the verdicts, stays, since this axis does not adopt it |
 
 ## Later consequences
