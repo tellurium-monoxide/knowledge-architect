@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-project-audit
-description: MUST use when the owner asks to audit one aspect of the whole project rather than the work of one branch; when a pin move crosses a version whose changelog has a Migration entry citing an axis of this skill; and when an adopting project's existing documents have been moved into the workflow's homes. Covers what a project audit is, its method (the corpus, a dispatch each axis gives, drafts in files, the sort, one list for the owner, the application, a fresh re-check, the review), the outcome of each kind of finding, where the record of a run goes, and one section per axis, the first the design-record axis, which re-applies the rules on design heads and rejected alternatives to every entry.
+description: MUST use when the owner asks to audit one aspect of the whole project rather than the work of one branch; when a pin move crosses a version whose changelog has a Migration entry citing an axis of this skill; and when an adopting project's existing documents have been moved into the workflow's homes. Covers what a project audit is, its method (the corpus, a dispatch each axis gives, drafts in files, the sort, one list for the owner, the application, a fresh re-check, the review), the outcome of each kind of finding, where the record of a run goes, and one section per axis: the design-record axis, which re-applies the rules on design heads and rejected alternatives to every entry, and the agentic-workflow axis, which reads every instruction the harness delivers as one whole for instructions a session cannot follow.
 ---
 
 # Auditing a project
@@ -94,6 +94,7 @@ Every finding takes exactly one outcome. A finding that fits no named case goes 
 | --- | --- |
 | applied in the branch | the edits the axis's section lists as applied |
 | put to the owner, on the owner list | the edits the axis's section lists as the owner's; a verdict where a rule reads two ways; a conflict with a goal, which then follows `skill@knowledge-architect-goal-setting`; any finding no row names |
+| sent upstream | a finding on the installed text, which the project never edits: the axis's section says how |
 | an issue entry | a finding outside the axis, such as a statement false of the code when the axis does not read the code; work the owner approved that is too large for the branch; a finding the owner defers. The kind follows `skill@knowledge-architect-issue-tracking` |
 | nothing | the entry or the text conforms |
 
@@ -162,3 +163,62 @@ texts. A head found false of the code gets an issue entry, kind `defect`.
 
 A tripwire or an issue is edited only where an edit of the run makes it stale. An issue whose "What
 would close it" an edit of the run does is closed in that commit.
+
+## The agentic-workflow axis {{slug:agentic-workflow-axis}}
+
+**The corpus**: every text the harness delivers to a session as an instruction: the project's root
+`CLAUDE.md` and the primer it imports, the installed skills and agents, and the project's own
+skills and agents. The scoped `CLAUDE.md` files next to the code are not in it, nor are the
+registers. The workflow functions as a whole, and its main defect is two texts a session cannot both
+obey, so every agent reads the whole corpus.
+
+**The rules**: a session can follow every instruction. A finding is admitted when a reading confirms
+it, in the classes `agent@knowledge-architect-workflow-auditor` defines: a contradiction, a broken
+trigger, a factual error, two readings, a provable gap. A gap that only predicts what an agent would
+do is a predicted gap: it becomes an issue, never an edit, since an instruction about how an agent
+behaves is added on evidence from real use. A case no instruction covers and judgement can decide
+is no finding.
+
+**Not in this axis**: how the owner works, which the retrospective judges against the expectation
+sets; the checker's own behaviour, whose code is not in the corpus; the scoped `CLAUDE.md` files.
+
+**The agent**: `agent@knowledge-architect-workflow-auditor`.
+
+**The dispatch**: each agent takes one lens, and a lens takes as many agents as its row says. Each
+lens is dispatched at least once; the count is the session's, within the budget the owner names,
+and the table's total is the default. Agents with the same lens find different things, so a
+duplicate adds coverage. There is no calibration sample: the sort reads every finding, and the
+re-check reads again. An activity walk's brief names one group of activities; a project's own skill
+is walked in the group of the activity it serves.
+
+| lens | looks for | default agents |
+| --- | --- | --- |
+| L1 contradiction | two instructions that no single move satisfies; a term defined two ways | 3 |
+| L2 activity walk | one activity followed across files, the instructions that apply at each moment | 4, one per group: design, planning, decision recording and issue tracking; review and merge; audit and retrospective; setup, pin move, goal setting and agent configuration |
+| L3 two readings | an instruction whose words allow two readings that lead to different acts | 2 |
+| L4 provable gap | a requirement the corpus states, and an input no text supplies | 2 |
+| L5 restatement | a restatement that drifted from its home, or that lost its pointer | 1 |
+| L6 local against installed | the project's own text against the installed text | 2 |
+| L7 checker rules | each rule the checker enforces on what an agent writes, against the installed text alone | 2 |
+
+**The sort** merges a finding two agents report, and notes it. It splits a finding tagged `I` into
+its installed side and its project side, each a finding with one outcome. A violation left, at the
+re-check, is a finding a reading confirms that is not on the kept list. Each pass's commit message
+gives the count of confirmed findings and of those that went on the owner list, so that the passes
+show whether the run converges.
+
+**The outcomes of this axis**, for a finding on the project's own text:
+
+| outcome | the findings |
+| --- | --- |
+| applied in the branch | a rewording that changes no instruction, a two-reading instruction among them; a broken trigger whose target exists under another name; a pointer added to a restatement without one, or to a project text that repeats an installed one; a factual error; a drifted restatement brought back to its home, which converts it to a pointer when it is longer than one |
+| put to the owner, on the owner list | which side of a contradiction wins, a loop with no exit among them; a broken trigger or a two-reading instruction whose repair changes what agents are told; a provable gap, since filling it adds an instruction |
+| an issue entry | a predicted gap; a finding the owner defers |
+
+**Sent upstream**: every finding on the installed text goes into one file, in the shape of the
+retrospective's workflow file, each finding numbered `W<n>`: the version of the checker used, what
+was audited at which commit, and the findings, with no standing questions. It is named
+`<YYYY-MM-DD>-<project>-workflow-audit-klarch-workflow.md`, and handled as
+`skill@knowledge-architect-retrospective@two-files` and
+`skill@knowledge-architect-retrospective@what-becomes-of-files` say for that file: it is written
+outside the project, and nothing of it leaves the machine before the owner has read it.
