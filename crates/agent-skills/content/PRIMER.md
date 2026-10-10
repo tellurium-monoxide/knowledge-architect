@@ -36,8 +36,8 @@ to judge is never room to act against an instruction.
 - **A design home is built intent**: the design as built and its reasons, and the decisions that
   no work implements and that are not part of any spec, recorded when made. Design that is decided and not built is in a plan
   document until it lands. Check the code against a design home, never the other way. A divergence
-  is a defect in one of them: say which, open an issue, and stop relying on the diverging statement:
-  the task goes on where it does not rest on it. A design home can be wrong, and
+  is a defect in one of them: say which, open an issue, and hold the part of the task that rests on
+  the point in divergence; the rest of the task goes on. A design home can be wrong, and
   it still prevails over the code until the issue closes. It closes when the code changes to meet
   the head, or when the head is reversed under `skill@knowledge-architect-decision-recording`; it
   never closes by following the code. Work that goes on meanwhile, on the owner's word, builds on
@@ -71,8 +71,8 @@ Something met while doing other work takes the first of these that applies:
 **A turn that met anything outside its task ends with a section titled "Met outside the task"**,
 listing every item with its outcome: fixed (with the commit), issue opened (with its id), waiting
 for the owner's ruling, or dropped (with the reason). A mention inside other prose does not count.
-A subagent that edits nothing reports each item to the session that dispatched it, in the place its
-definition gives, and that session routes it by this table.
+A subagent that edits nothing reports each item at the end of its report, under a heading "Met
+outside the task", and the session that dispatched it routes each item by this table.
 
 ## Where knowledge goes {{slug:where-knowledge-goes}}
 
@@ -82,11 +82,12 @@ restated where it has to be delivered only when the restatement is no longer tha
 it**: a path, a file name, a command, a value, or one sentence. A directive sentence carries its
 pointer beside it, and where the two disagree the restatement is the defect. A directive longer
 than one sentence is delivered by a pointer to its home, with an instruction to read the home whole
-at that moment. More than one sentence of it is never restated: a partial copy drifts, and its
+at that moment, or by one of its sentences restated with its pointer beside it, where that one
+sentence is what the point of delivery needs. More than one sentence of it is never restated: a partial copy drifts, and its
 reader takes it for the whole. For installed text, the home a pointer names is installed text, a skill's section or the
 primer's, since installed text cites no entry of the project. An existing longer restatement is
 converted when a change edits what it says; re-pointing a reference in it does not count. Whether a directive is needed at a point of delivery is the
-owner's decision.
+owner's decision when it is disputed; a review does not report a delivery as a defect.
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
@@ -106,7 +107,7 @@ owner's decision.
 | **none of these, nor a row of the project's own** | **ask the owner before writing it anywhere** | the table gains the row |
 
 The project's root `CLAUDE.md` adds its own rows. **A measurement is routed by what it serves**:
-the head of the decision it supports, the entry of the defect it characterises, the tripwire whose
+the head of the decision it supports, the issue entry it characterises, the tripwire whose
 threshold it is, or else the commit message that took it.
 
 **A reference is written wherever the text would have to be revisited if the entry it names
@@ -123,7 +124,10 @@ brackets. A span never crosses a line break: a line breaks before the span, not 
 or an agent is named by its reference, `skill@<name>` or `agent@<name>`, never by its bare name in
 backticks. A `path` reference names the deepest anchor that holds its target, with a plain path
 under it, no `..`, no `./` and no leading `/`, and ends with `/` exactly when the target is a
-directory. A heading is a line that opens with `#` marks, with no list or block-quote marker before
+directory; an anchor's own directory is named from the anchor above it, as
+`path@<parent-anchor>@<dir>/`. A relative markdown link is legal in a `README.md` or an `index.md`
+only, to a target under its own directory with no `..`; any other pointer is a backticked
+reference. A heading is a line that opens with `#` marks and holds text, with no list or block-quote marker before
 them; a line markdown reads as a heading in another shape, as a `---` right under a paragraph is,
 stops the check. The checker reads Markdown and Rust source, and each commit's message and tree
 through `{{command}} commits`; a reference anywhere else is found by grep.
@@ -336,13 +340,13 @@ the owner named to the rule, the change goes to the owner as one proposal, as a 
   change whose design is not settled, to ground it and find out whether it is bounded work;
   keep-or-change about an existing design; a bug trend suggests the design is the problem.
 - `skill@knowledge-architect-planning`: a design discussion converged on its full path; a slice of a
-  milestone starts or lands; the work of a spec starts or lands.
+  milestone starts or lands; the work of a spec starts or lands; before editing the roadmap.
 - `skill@knowledge-architect-review`: before merging to the main branch, or when an
   activity's skill says its work is ready.
 - `skill@knowledge-architect-agent-configuration`: before editing a `CLAUDE.md`, a skill or an
   agent.
-- `skill@knowledge-architect-setup`: the project adopts the workflow, or a version upgrade is
-  installed.
+- `skill@knowledge-architect-setup`: the project adopts the workflow, or moves its pin of the
+  checker to another version.
 - `skill@knowledge-architect-goal-setting`: before writing or editing any goals home; a Component
   has no goal; the owner states or abandons a purpose; a decision conflicts with a goal.
 - `skill@knowledge-architect-project-audit`: the owner asks to audit one aspect of the whole

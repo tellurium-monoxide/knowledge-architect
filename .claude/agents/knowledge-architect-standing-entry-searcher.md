@@ -102,6 +102,9 @@ Read and judged unrelated:
 
 Commands run:
 - <each command, with its arguments>
+
+Met outside the task:
+- <each item, or none>
 ```
 
 **Every entry of your group appears in exactly one of the two lists.** The second list is

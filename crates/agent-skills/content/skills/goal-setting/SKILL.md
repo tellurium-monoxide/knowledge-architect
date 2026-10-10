@@ -31,7 +31,9 @@ on the owner's word.
 ## The shape of a goal entry {{slug:goal-entry-shape}}
 
 A level-two heading stating the goal as a sentence, its slug at the end, then one short paragraph:
-what the goal means, and **what would show it is met**.
+what the goal means, and **what would show it is met**. Every level-two heading of a goals home is a
+goal and carries a slug: the head that says what the home holds is prose under the level-one title,
+never a level-two section.
 
 ```markdown
 ## <The goal, stated as a sentence> `##<slug>`
@@ -89,7 +91,7 @@ is argued from one.
 4. **Ask the owner to read the draft in full, and to rule on each goal by its slug**: approved, or
    dropped. A goal with no ruling is neither written nor dropped: ask again for it by its slug. A
    goal the owner rewords is shown again in its new wording before it is written.
-5. Write the approved goals, exactly as approved, and nothing else.
+5. Write the approved goals, exactly as approved, and the home's head, and nothing else.
 
 %% A goal is intent about where the project should get to, so it constrains work from the moment it is
 %% written, met or not. The `todo` issue lists the gap between an unmet goal and the tree as

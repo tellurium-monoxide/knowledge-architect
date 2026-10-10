@@ -44,7 +44,8 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    `cargo klarch commits origin/main..HEAD` after: the whole branch, per root `CLAUDE.md`, section
    Verify mechanically, `design@agent-skills@staged-check-before-each-commit`, and
    `issue@core@branch-sha-citations-are-judged-within-the-range-only`.
-   Cargo refuses to package an uncommitted tree, so the commit comes before the next steps.
+   Cargo refuses to package an uncommitted tree, so the commit comes before the next steps. Then
+   push the branch and open a draft pull request, per root `CLAUDE.md`, section Git, point 1.
 4. **The shipped text cites no entry.** List every backticked span with an `@` in the installed
    copies, which hold the text as it ships, its `%%` comments removed and its placeholders filled,
    and read each one:
@@ -79,12 +80,12 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    ```
 7. **The package lists.** `cargo package --list -p <crate>` for each crate. Each lists its sources,
    its Cargo.toml, its README, its CRATES-IO.md, its licence files and its CHANGELOG.md, and agent-skills also its
-   build script and content/, per `design@knowledge-architect@package-include-whitelist`. The owner reads the lists.
+   build script, content/ and snippets/, per `design@knowledge-architect@package-include-whitelist`. The owner reads the lists.
 8. **The dry run.** `cargo publish --workspace --dry-run` passes, skips xtask, and orders
    agent-skills before the core, which depends on it. Its warnings "ignoring test `binary`" and
    "ignoring test `extension_api`" are expected: the whitelist keeps the tests out.
-9. **The gates and the review.** `cargo x gates --require-rebased`, then the push, the draft pull
-   request, and the review under `skill@knowledge-architect-review`. Its axes include
+9. **The gates and the review.** `cargo x gates --require-rebased`, then the push, and the review
+   under `skill@knowledge-architect-review`. Its axes include
    `agent@klarch-changelog-reviewer`, dispatched on `v<previous>..HEAD`: every change of the range
    has the entries the policy owes, each entry's class is right, and the version is their highest
    class. A repair is a new commit, or is folded per root `CLAUDE.md`, section Git, point 2, and
@@ -115,10 +116,13 @@ crate it uploaded stays published.
 
 - **Nothing was uploaded**: delete the local tag with `git tag -d v<version>`, repair on a branch,
   run steps 4 to 8 again on its head if the repair touched a crate, and release the same version
-  again from step 9.
+  again from step 9. The repair's changelog entries go in the `## <version>` section, which no
+  crate has shipped yet.
 - **Some crates were uploaded**: run `cargo publish -p <crate>` for each crate still missing, from
   the same tagged commit. If that cannot succeed without a change to the code, the uploaded crates
   keep the version, and the next release is the next patch version for all three, per
-  version-lockstep; the uploaded version is yanked only if it is broken.
+  `design@knowledge-architect@version-lockstep`; the uploaded version is yanked only if it is
+  broken. The tag `v<version>` is pushed all the same, since crates.io carries that version, and
+  the next release's `v<previous>` is it.
 - **In either case**, main's README status line is wrong until a repair lands, through a branch and a
   pull request like any other change.

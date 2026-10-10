@@ -1354,10 +1354,10 @@ more dispatch at each of those moments; what it buys is a reader of the record t
 author nor the implementing session is, which the two acceptance criteria above show the other
 reviews lacked.
 
-### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
+### Before every merge, the transcript reviewer runs alone and last, and not with the other axes `##transcript-review-last-before-merge`
 
-The installed review skill sends the transcript reviewer a last time before every merge to the main
-branch, after every other axis has run and its repairs are committed, over the whole branch and the
+The installed review skill sends the transcript reviewer before every merge to the main branch
+once, after every other axis has run and its repairs are committed, and not also in their batch, over the whole branch and the
 transcripts of every session that worked on it. The findings of the other axes reach the session as
 messages of its transcript, so only a reviewer reading it after their repairs can tell whether each
 was acted on durably, per `goal@knowledge-architect@design-is-recorded-with-its-arguments`. Its own

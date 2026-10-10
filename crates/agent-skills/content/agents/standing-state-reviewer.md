@@ -143,3 +143,5 @@ not fire is part of the result:
 this axis is the one re-entry point scheduled for every change, so a silent report cannot be told from a skipped
 one. **If the axis is clean, say so plainly.** Do not report style preferences, and do not review
 outside this axis.
+List what you met outside your axis under a heading "Met outside the task", for the dispatcher
+to route; do not review it.

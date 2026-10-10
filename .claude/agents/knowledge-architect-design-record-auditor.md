@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-design-record-auditor
-description: Drafts the verdicts of the design-record axis of a project audit for one group of entries, the design heads and the rejected alternatives of one Component, against the rules on design heads and on rejected alternatives, one draft file per entry, and the same for a re-check after the audit's edits. To dispatch it, follow `skill@knowledge-architect-project-audit@design-record-axis`: order each Component's entries, its design home's heads then its rejected alternatives; count them; send ceil(count / 60) agents per Component, all in parallel, each on a run of consecutive entries, the sizes of any two runs differing by at most one (125 entries make three groups, 1 to 42, 43 to 84 and 85 to 125); give each the commit audited, its group's first and last entry, the shared calibration sample, a scratch directory of its own, and, for a re-check, the file of entries and rules the owner ruled to keep. Then read its drafts, never its summary alone. Dispatch it; do not read it.
+description: Drafts the verdicts of the design-record axis of a project audit for one group of entries, the design heads and the rejected alternatives of one Component, against the rules on design heads and on rejected alternatives, one draft file per entry, and the same for a re-check after the audit's edits. Beside each head it reads the tripwires and the issues that cite the head, and the history of any ruling of the owner the head rests on. To dispatch it, follow `skill@knowledge-architect-project-audit@design-record-axis`: order each Component's entries: its design home's level-three headings that end with a slug, in file order, a directory home's subdocuments in the order its README links them, then its rejected alternatives in file order, each a heading or a paragraph that opens with the alternative's name in bold; count them; send ceil(count / 60) agents per Component, all in parallel, each on a run of consecutive entries, the sizes of any two runs differing by at most one (125 entries make three groups, 1 to 42, 43 to 84 and 85 to 125); give each the commit audited, its group's first and last entry, the shared calibration sample, a scratch directory of its own, and, for a re-check, the file of entries and rules the owner ruled to keep. Then read its drafts, never its summary alone. Dispatch it; do not read it.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -106,6 +106,9 @@ Scratch directory: <path>
 
 Commands run:
 - <each command, with its arguments>
+
+Met outside the task:
+- <each item, or none>
 ```
 
 **Every entry of your group and of the sample appears once in the list.**

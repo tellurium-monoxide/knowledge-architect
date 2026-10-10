@@ -75,16 +75,14 @@ happens to find is the one they act on. The fix is a pointer. **Count the homes 
 the nearest one.** A fact repeated in five places with a tripwire naming two of them leaves three
 asserting something false the day it fires.
 
-**A directive is bound by a size, not by that.** Per `primer@where-knowledge-goes`, read whole
-before judging one: a directive is restated at its point of delivery only when the restatement is
-no longer than a pointer to it, a path, a name, a command, a value or one sentence, and a directive
-sentence carries its pointer adjacent. **Never report such a restatement as a two-homes
-violation.** A restatement longer than one sentence, of a whole directive or of part of one, is a finding:
-the repair is a pointer to its home with an instruction to read the home whole. A restatement that
-*contradicts* its home is a finding, against the restatement, which is the defect. Whether a
-directive is needed at its point of delivery is a delivery decision and belongs to the owner. For an
-installed skill or agent, the home is installed text, since it is shipped to projects whose records
-it cannot reference.
+**A directive is bound by a size, not by that.** The size, what a restatement carries beside it,
+and which existing restatement a change owes a conversion are `primer@where-knowledge-goes`: read
+it whole before judging a restatement. **Never report a restatement the primer allows as a
+two-homes violation.** A restatement the primer does not allow is a finding, and its repair is the
+one the primer gives. A restatement that *contradicts* its home is a finding, against the
+restatement, which is the defect. Whether a directive is needed at its point of delivery is a
+delivery decision and belongs to the owner. For an installed skill or agent, the home is installed
+text, since it is shipped to projects whose records it cannot reference.
 
 **Does any pointer have to be followed before a session can act?** Ask it of each pointer out of an
 instruction: *could a session complete this activity correctly without opening this?* A pointer to an
@@ -124,3 +122,5 @@ Return findings, each naming the file and the exact reproduction, plus what the 
 returned. **If the axis is clean, say so plainly**: that is a real result, and a report padded to
 look productive costs the dispatcher a verification pass per invented finding. Do not report style
 preferences, and do not review outside this axis.
+List what you met outside your axis under a heading "Met outside the task", for the dispatcher
+to route; do not review it.

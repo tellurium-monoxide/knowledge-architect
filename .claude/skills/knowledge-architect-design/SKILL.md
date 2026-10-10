@@ -22,7 +22,8 @@ Terms this skill defines and then uses as vocabulary:
   It has to be backed by facts, proven with examples, drawings, snippets of code, references...
 - a **stall** is a move that repeats existing positions without a new
   argument or new evidence
-- a **tripwire** is named future evidence that would flip a verdict or a deferral
+- a **tripwire** is named future evidence that would flip a verdict; the event that would bring a
+  deferral back is its trigger
 - **open state** is what a project currently has outstanding:
   the entries of its issue registers and its tripwires homes.
   Differing from the decision record in that an item LEAVES it when it fires or closes
@@ -151,6 +152,9 @@ evidence bring, which nobody knows in advance.
   opened at a design audit under `skill@knowledge-architect-planning@working-a-slice`
   takes the full path, and its converged design is written into the plan
   documents that exist, as that skill says: no new plan document is written.
+  A choice among shapes stated in full, which
+  `skill@knowledge-architect-planning@working-a-slice` puts to the owner in
+  one message, ends at the owner's ruling, with no premortem.
 
 On the in-change path, the four decide whether the premortem runs; they never decide which path is taken.
 To decide, state what reversal touches, in nouns. The four: stored
@@ -338,8 +342,10 @@ each announced in the delta:
   event or checkpoint at which it is re-proposed. A parked thread
   missing either one is open. A tripwire with no re-entry point names
   evidence nobody is scheduled to look for. A parked thread's tripwire
-  is named on the ledger; it enters a tripwires home only on the owner's
-  word, as every tripwire does.
+  is named on the ledger, and is recorded only on the owner's word: in
+  the tripwires home when it guards a recorded decision, and otherwise
+  as the trigger of a `deferred` issue, under
+  `skill@knowledge-architect-issue-tracking`.
   `superseded` is not a third case, though it is easily read as one:
   threads absorbed by a proposal close on the owner's word approving that
   proposal by name, and until it comes the absorbed threads keep their
@@ -594,7 +600,8 @@ choices whose option space genuinely is closed and consequence-free.
    A tripwire the owner rules to record is written at the harvest of the decision
    it guards, in the tripwires home of the Component that owns that decision,
    under `skill@knowledge-architect-issue-tracking`: a tripwire names its decision's
-   design entry, so the entry exists first.
+   design entry, so the entry exists first. A tripwire on a decision that earned no head names, in
+   words, the site that records the decision, and is legal with no reference.
 
    Every tripwire, here and everywhere else, is recorded only on the
    owner's word, and meets the

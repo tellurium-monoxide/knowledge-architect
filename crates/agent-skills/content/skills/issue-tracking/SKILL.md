@@ -155,6 +155,9 @@ changing the kind of an entry, regenerate it and check in one command:
 {{command}} check --fix
 ```
 
+Delete an entry with `git rm`, or stage its deletion: the check reads git's listing, and a deletion
+it still lists stops the run in phase 2, before the index is written.
+
 `{{command}} index` writes the generated files alone, with no check.
 
 **A commit of part of the working tree** needs the index of what it commits, which differs from
@@ -226,7 +229,8 @@ Four parts:
 
 - **the decision it guards**, as a `design@<anchor>@<id>` reference in the heading or the body, so
   that a reversed decision dangles its tripwires mechanically, and `tripwires --guarding <ref>`
-  finds them. One guarding an instruction or a guarantee names what it can, and stays legal with no
+  finds them. One guarding an instruction, a guarantee, or a decision that earned no head names
+  what it can, the last naming in words the site that records it, and stays legal with no
   reference;
 - **the firing evidence**, meeting the falsifiability bar: an event, or a count crossing a bound,
   specific enough that both parties would agree it fired. "It gets slow" is not a tripwire;

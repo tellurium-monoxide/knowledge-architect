@@ -60,8 +60,9 @@ follow the code.
 ## Claims, and tests that discriminate `##discriminating-tests`
 
 **A unit of work is a list of claims, each with the test that could refute it.** A part with no
-claim is cost with no information. Where the work has a spec or a milestone, its steps present the
-claims, under `skill@knowledge-architect-planning`; this procedure does not depend on one existing.
+claim is cost with no information. Where the work is a slice of a milestone, its entry's Claims
+section presents them, under `skill@knowledge-architect-planning`; otherwise, a spec included, the
+session writes them, and this procedure does not depend on a plan document existing.
 
 **Every claim's test must be shown to fail against a plausible wrong implementation.** A test
 written first can still be written to the implementation its author already has in mind. It then
@@ -85,8 +86,8 @@ root, with `<name>` unique to the session so that no two sessions share a worktr
 ```sh
 git add --intent-to-add <each new file>              # new files then appear in the diff; nothing is lost
 git worktree add --detach .claude/worktrees/<name> HEAD
-git diff HEAD --binary | git -C .claude/worktrees/<name> apply
-git -C .claude/worktrees/<name> commit -qam "scratch: the work under check"
+git diff HEAD --binary | git -C .claude/worktrees/<name> apply --index
+git -C .claude/worktrees/<name> commit -qm "scratch: the work under check"
 ```
 
 Then, inside the worktree, run the commands below with `export CARGO_TARGET_DIR="$PWD/target"`.
@@ -186,8 +187,9 @@ and before each commit, and `cargo klarch commits origin/main..HEAD` after it: t
 commit of the branch by SHA is refused only when that commit is in the range judged, per
 `issue@core@branch-sha-citations-are-judged-within-the-range-only`; the check before the commit
 restates `design@agent-skills@staged-check-before-each-commit`. A failing staged check is
-repaired before the commit; a commit that fails `commits` is repaired by a new commit, folded into
-it by a history edit with a clean tree, per root `CLAUDE.md`, section Git, point 2. **A change to
+repaired before the commit; a commit whose tree fails `commits` is repaired by a new commit, folded
+into it by a history edit with a clean tree, and one whose message fails it by a reword, per root
+`CLAUDE.md`, section Git, point 2. **A change to
 the core that makes a check stricter, or changes the manifest format, makes every earlier commit of
 its branch fail.** Put that change in the branch's first commit, with every fix the tree needs to
 pass it, or squash the branch to one commit before its review. The decision is
