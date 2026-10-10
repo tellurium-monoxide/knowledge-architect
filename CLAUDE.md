@@ -527,30 +527,14 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   squashed before review. Review repairs are new commits after it, and each one passes. A repair
   that would leave an earlier commit failing, such as one that changes what the checker judges, is
   folded into the earliest commit it repairs instead, per point 2.
-- **The branch writes its CHANGELOG.md entries**, in the `Next release` section, for each change
-  that passes one of three tests, under the subsection of that test. A branch that finds no
+- **The branch writes its CHANGELOG.md entries**, in the `Next release` section, per
+  `design@knowledge-architect@the-branch-writes-its-changelog-entries`. A branch that finds no
   `Next release` section creates it above the newest released section. After editing it, run
   `cargo x changelog`, which writes the copy each published crate ships; a test fails while a copy
-  differs, per `design@knowledge-architect@the-changelog-ships-in-every-crate`. The three tests:
-  - **Migration**: a consumer must change something in its own files; one entry per thing, saying
-    what. Running the install of the agent skills again is never an entry. An entry that adds a
-    required document or home says it holds for mock projects too.
-  - **New features**: a consumer can start using something new.
-  - **Workflow**: a change to the installed skills that a person watching agent sessions would see:
-    a new or removed action, file, commit, pull-request shape or question. A rewording is not one.
-
-  An entry reads ``- `<surface>`, <class>: <what>``. The surface is one of `checks`, `cli`,
-  `manifest`, `library`, `agent-skills`, `gates`, and entries are sorted in that order. The class is
-  patch for a skill change or a code change that changes no check and no command, minor for a check
-  added or made stricter, even one a project must change its content to pass, or an addition that
-  changes nothing existing, major for a change to the documents and homes a project must carry, a
-  manifest that was valid and stops being accepted, or one that breaks a command or the library API.
-  A check, a command or an addition is one the published crates bring to a consuming project; a
-  test, a gate or an xtask subcommand of this repository, and a file shipped for reading alone, are
-  none. A change with no entry is at most a patch. This is a restatement; its homes are
-  `design@knowledge-architect@changelog-entries`,
-  `design@knowledge-architect@the-branch-writes-its-changelog-entries` and
-  `design@knowledge-architect@versioning-policy`.
+  differs, per `design@knowledge-architect@the-changelog-ships-in-every-crate`. Which change gets
+  an entry, under which subsection, in which shape and with which class are
+  `design@knowledge-architect@changelog-entries` and `design@knowledge-architect@versioning-policy`:
+  read both whole before writing an entry.
 
 2. **No operation that can lose content, committed or not.** Its home is
    `design@knowledge-architect@no-operation-loses-content`, and `design@knowledge-architect@git-flow`

@@ -81,7 +81,7 @@ needs.
    answered, in its source, as well as against its words: a verbatim answer to another question
    is not the owner's ground for this one.
 %% The `F` label: `design@agent-skills@ruled-items-labelled`.
-7. **The owner list.** One message: the items grouped by kind, each under a label, `F<n>`, with a
+7. **The owner list.** One message per pass: the items grouped by kind, each under a label, `F<n>`, with a
    default and the entry's words the item turns on. Apply nothing on the list before the owner
    answers. An item the owner defers becomes an issue entry.
 8. **Application.** Apply the edits, yourself or through agents dispatched on disjoint files. Read
@@ -93,7 +93,9 @@ needs.
    briefed as in point 5 and also given the entries and rules the owner ruled to keep, as a file in
    its scratch directory. A draft that finds a rule failed, and is not on the kept list, is a
    violation left, whether a draft missed it or an edit made it. Read each one against its entry,
-   then repair it or put it to the owner.
+   then repair it or put it to the owner. The re-check's drafts start the next pass, from point 6:
+   passes repeat while the violations left fall from one pass to the next, until the owner judges
+   what is left small enough.
 10. **Review.** The audit's branch is reviewed under `skill@knowledge-architect-review`, on these
     axes: self-consistency, fidelity of relocation, routing of knowledge, decision recording,
     standing state, and the transcript review last.
@@ -111,6 +113,9 @@ Every finding takes exactly one outcome. A finding that fits no named case goes 
 
 ## The record of a run {{slug:record-of-a-run}}
 
+%% The record is the commit messages, as a measurement is routed to the commit that took it; the
+%% rival, a report document, is the open question of
+%% `issue@agent-skills@audit-axes-beyond-the-design-record` for an axis whose fixes are code.
 **The commit messages are the record.** Each commit of a run says what was audited, at which
 commit, how many entries and groups, the calibration reading settled, and the outcome of every
 finding: applied, ruled by the owner under its label, opened as an issue with its id, or found to
@@ -126,20 +131,11 @@ owner.
 **The corpus**: every design head of every Component, and every entry of its rejected
 alternatives.
 
-**The order of a Component's entries**: its design home first, a directory-shaped home's
-subdocuments in the order its README links them, each head in file order; then its rejected
-alternatives in file order, each entry as the file shapes it, a heading or a paragraph that opens
-with the alternative's name in bold. `{{command}} model` prints every heading and slug definition
-with its file and line, which lists the heads.
+**The order of a Component's entries, and the inputs read beside each head**, are
+`agent@knowledge-architect-design-record-auditor`'s: read it whole before cutting the groups.
 
 **The rules**: every rule of `primer@design-heads` for a head, and every rule of
 `skill@knowledge-architect-decision-recording@losing-alternatives` for a rejected alternative.
-
-**The inputs**, for each head: every tripwire guarding it and every issue naming it, read with
-`{{command}} show <ref>`; and the history behind each citation of the owner, the commit messages
-that touch its slug and the plan documents that carried it, found as
-`skill@knowledge-architect-decision-recording@three-homes` shows. A verdict that a ground is or is
-not the owner's rests on that history, never on the head's text alone.
 
 **Not in this axis**: whether a head is true of the code, and the restatements of a head in other
 texts. A head found false of the code gets an issue entry, kind `defect`.

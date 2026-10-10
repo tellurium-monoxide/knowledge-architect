@@ -694,8 +694,8 @@ superseded thread that lost on its merits.
 
 A premortem's surviving causes become tripwires only where the owner rules that they should. Each
 is written at the harvest of the decision it guards, in the tripwires home of the Component that
-owns that decision, since a tripwire names its decision's head and a head exists from the landing
-of its work, per `design@agent-skills@design-home-is-built-intent`. Whether a
+owns that decision, since a tripwire names the decision or the instruction it guards and a head
+exists from the landing of its work, per `design@agent-skills@design-home-is-built-intent`. Whether a
 risk is worth watching is a weighing, and the weighing is the owner's, per
 `goal@knowledge-architect@the-owner-decides`.
 
@@ -1370,7 +1370,29 @@ A repair that would leave an earlier commit failing is folded, per
 `design@agent-skills@review-repair-appended-or-folded`.
 An additional commit that adds, removes or reverses a design head is reviewed by the
 decision-record axis at least, and the review ends with that review's repairs; any other is reviewed
-by no axis again, so the review ends.
+by no axis again, so the review ends, per
+`design@agent-skills@only-a-head-changing-repair-is-reviewed-again`.
+
+### A review repair that adds, removes or reverses a design head is reviewed again by the decision-record axis, and no other repair is `##only-a-head-changing-repair-is-reviewed-again`
+
+The installed review skill sends the decision-record axis at every repair commit that adds, removes
+or reverses a design head, whether it answers the transcript reviewer or any other axis. A repair
+made before the last transcript review is reviewed before it; a repair of the last transcript review
+is reviewed after it, and the review ends with that review's repairs. Any other repair is reviewed
+by no axis again: a rewording, and an argument, a mention or a reference added inside an existing
+head, included. One made before the last transcript review is still read by it, as every commit of
+the branch is. Without the record review, a head added, removed or reversed in answer to a review
+reaches the main branch with no review of its record, against
+`goal@knowledge-architect@design-is-recorded-with-its-arguments`: the last transcript review judges
+fidelity to the owner's rulings and not the record.
+
+The trigger is a whole head, which the diff shows: a heading with a slug that appears or
+disappears, or a reversal under `skill@knowledge-architect-decision-recording@reversal-check`. Each round of repairs then adds at most as
+many re-reviews as it adds, removes or reverses heads. A trigger on any repair that "makes a
+decision" lost: whether a rewording makes one is a judgement, and read wide it re-reviews repairs
+that only reword a head. The rival that sends every axis again at every repair lost on the same
+cost. A narrowing of an approved head that this trigger leaves out still goes to the owner, per
+`primer@design-heads`, and the last transcript review checks it against the owner's rulings.
 
 ### Subagents dispatched together each get a scratch directory of their own `##a-scratch-directory-per-subagent`
 
@@ -1453,15 +1475,6 @@ Most findings of the design-record axis are text edits, so they are applied at o
 stated: "For the axis we are discussing, I think the goal is usually immediate application. I don't
 think there is much reason to delay, since those are mostly text edits, unless some design entries
 have major, issues that bear on project goals for example."
-
-### The commit messages of an audit run are its record `##audit-record-in-commit-messages`
-
-The commit messages record what was audited, at which commit, the counts and each finding's outcome,
-as a measurement is routed to the commit that took it; a run that changes no file reports to the
-owner instead, since its commit would not reach the main branch, per
-`design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`. A report document, for
-an axis whose fixes are code, is `issue@agent-skills@audit-axes-beyond-the-design-record`'s
-question.
 
 ### An audit runs at the owner's request, at a pin move whose changelog cites its axis, and at the end of an adopting project's move of its documents `##audit-triggers`
 
