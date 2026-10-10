@@ -34,8 +34,10 @@ leaves the repository in the commit that completes its harvest.
   reply that opens "All seven threads are now closed by your word"; "round 3" is the owner's message
   that opens "record all four, apply the three acceptance criteria". The agent's reply to round 3
   worded AC4 on screen, but the transcript keeps only a one-line summary of it, so AC4's wording
-  is put to the owner as D1. "The review message" is the agent's message that opens "All four plan
-  reviews are in", which put D1 to D7 to the owner. An extraction agent wrote the owner messages,
+  is put to the owner as D1. "The review message" is the agent's message that opens "Two of my
+  premises were wrong", which put D1 to D7 to the owner. "Round 4" is the owner's reply to it, which
+  opens "All defaults approved." and proposes a lens, and the agent's reply that opens "D1 to D7 are
+  now ruled"; "round 5" is the owner's message "checker-rules-lens approved, go ahead". An extraction agent wrote the owner messages,
   the agent messages, the tables and the arguments verbatim to scratch; the session assembled this
   spec from that file and its own context.
 - **Labels.** The discussion used T1 to T4 and AC1 to AC4. No other discussion in the transcript
@@ -255,7 +257,8 @@ Weighed, from the owner's words, round 1: "the budget should be around 15 subage
 
 ## Threads
 
-Every thread was proposed by the agent in round 1 and approved by the owner in round 2.
+Every thread but #checker-rules-lens was proposed by the agent in round 1 and approved by the owner
+in round 2; #checker-rules-lens was proposed by the owner in round 4 and approved in round 5.
 
 ### The audit's method is generic, and each axis gives its own dispatch `##audit-method-per-axis`
 
@@ -305,6 +308,16 @@ Arguments: `argument@agentic-workflow-axis@a29`, `argument@agentic-workflow-axis
 head, if it earns one beside `design@agent-skills@audit-agent-per-axis`. Closed, round 2:
 "workflow-auditor-agent: agreed. I was worried about publishing too many agents and polluting the
 directory. I think this shape works."
+
+### An auditor starts from the checker's documented rules and reports each one the installed text does not deliver `##checker-rules-lens`
+
+Proposed by the owner in round 4, argued by the agent in its reply. Arguments:
+`argument@agentic-workflow-axis@a42`, `argument@agentic-workflow-axis@a43`,
+`argument@agentic-workflow-axis@a44`, `argument@agentic-workflow-axis@a45`,
+`argument@agentic-workflow-axis@a46`. It widens what an agent reads beside the corpus, which
+`thread@agentic-workflow-axis@workflow-axis-corpus` fixed, for L7 only. Shape: Decided design, "The
+checker-rules lens". Harvest: within the head of `thread@agentic-workflow-axis@workflow-axis-lenses`.
+Closed, round 5: "checker-rules-lens approved, go ahead".
 
 ### The axis's first run is in the branch that builds it `##workflow-axis-first-run`
 
@@ -573,6 +586,38 @@ axis. We ran it multiple times (3) and observed that the amount of returned find
 in both quantity and severity. I think this is important. If it does not, that means the audit is
 not pushing toward improvement."
 
+### Agents cannot work efficiently without knowing what the checker refuses and allows `##a42`
+
+Round 4, owner. Bears on `thread@agentic-workflow-axis@checker-rules-lens`. "is the checker behavior
+properly explained in the workflow ? Agents cannot work efficiently without knowing what the checker
+refuses and allows to write."
+
+### L4 starts from the corpus, and a rule no text mentions is invisible from there `##a43`
+
+Round 4, agent. Bears on `thread@agentic-workflow-axis@checker-rules-lens`. "L4 starts from the
+corpus: it finds a requirement the text states and checks whether the text gives its input. A
+checker rule that no text mentions at all is invisible from there. L7 starts from the checker and
+checks that each rule reaches the agent."
+
+### A project's restatement of the checker's rules would hide a gap of the installed text `##a44`
+
+Round 4, agent. Bears on `thread@agentic-workflow-axis@checker-rules-lens`. "our root CLAUDE.md
+restates most of the checker's rules in `instructions@mechanical-validation`, so if the lens read the
+whole corpus at once, every rule would look covered. Gaps in the installed text are therefore judged
+on the installed text alone."
+
+### A rule whose finding names its repair costs one round; one that shapes writing must be known first `##a45`
+
+Round 4, agent. Bears on `thread@agentic-workflow-axis@checker-rules-lens`. "A rule whose message
+names the repair costs one extra check-and-fix round when the agent breaks it. A rule that shapes how
+text is written from the start, such as the reference grammar, has to be known before writing."
+
+### The budget is kept at 15 by narrowing L5 `##a46`
+
+Round 4, agent. Bears on `thread@agentic-workflow-axis@checker-rules-lens` and
+`thread@agentic-workflow-axis@workflow-axis-lenses`. "L7 gets 2, and L5 drops from 2 to 1, since D3
+narrowed L5 to drifted restatements and missing pointers."
+
 ## New names, in one place
 
 ```text
@@ -582,7 +627,8 @@ agent           knowledge-architect-workflow-auditor
                   source  planned@agent-skills@content/agents/workflow-auditor.md
                   install planned@agent-config@agents/knowledge-architect-workflow-auditor.md
 lenses          L1 contradiction, L2 activity walk, L3 two readings, L4 provable gap,
-                L5 restatement, L6 local against installed   (in the agent and the section)
+                L5 restatement, L6 local against installed, L7 checker rules
+                                                              (in the agent and the section)
 tags            W, P, I                                       (in the agent and the section)
 ```
 
@@ -653,8 +699,9 @@ one lens:
 | L2 activity walk | one activity followed across files, listing at each moment the instructions that apply: two that conflict, a hand-off to something no text defines, a pointer to a section that does not exist, a loop with no exit | 4, one per group of activities: design, planning and building; review and merge; audit and retrospective; setup and pin move |
 | L3 two readings | an instruction whose words allow two readings that lead to different acts | 2 |
 | L4 provable gap | per "The finding standard" | 2 |
-| L5 restatement | each restatement against its home: one that drifted from it, or one without its pointer, per D3 | 2 |
+| L5 restatement | each restatement against its home: one that drifted from it, or one without its pointer, per D3 | 1 |
 | L6 local against installed | the project's own text against the installed text: a contradiction, a duplicate, a routing-table row that says the wrong thing | 2 |
+| L7 checker rules | per "The checker-rules lens" | 2 |
 
 Each lens is dispatched at least once. The count is the session's, within the owner's budget, and the
 table's 15 is the stated default. An L2 agent's brief names its group of activities; two L2 agents
@@ -673,6 +720,34 @@ and no re-check" does not cover this shape. Its recorded reason holds two facts:
 what each pass missed, and two agents read one shared sample entry two ways, where a method trusts
 one reading per entry. This axis keeps the re-check, gives no verdict per entry, and trusts no one
 reading, since a finding is confirmed at the sort and the re-check reads again.
+
+### The checker-rules lens
+
+`thread@agentic-workflow-axis@checker-rules-lens`. An L7 agent reads, beside the corpus, the
+checker's user documentation: its README for the version the project pins, and `klarch --help` with
+the help of each command; in the project that publishes the checker, also the checker's design home.
+It lists every rule the checker enforces on what an agent writes, and reports:
+
+- a rule no installed text states: tag W, a provable gap, since it is a format the checker enforces;
+- a rule only the project's own text states: tag W as well, since the installed text is all an
+  adopting project receives. The installed text is judged alone for this, so that a project text
+  restating the checker's rules, as this repository's root CLAUDE.md does in
+  `instructions@mechanical-validation`, does not hide a gap of the installed text;
+- a rule the corpus states wrongly: a factual error.
+
+Each draft says whether the checker's finding message for the rule names its repair. A rule whose
+message names the repair costs one check and one repair when it is broken; a rule that shapes how
+text is written from the start, such as the reference grammar, has to be known before writing.
+Which rules are explained ahead is the owner's, on the owner list, as a provable gap is per D4. Where
+an explanation goes, the primer or a skill, is judged at the sort under
+`design@agent-skills@primer-limit`.
+
+The nearest rival, the README given to L4, loses on `argument@agentic-workflow-axis@a43`: L4 starts
+from a requirement the corpus states, and a rule no text mentions is invisible from there.
+
+The checker's design home and README are 26,611 and 5,173 words, `wc -w` on
+`path@core@docs/design.md` and `path@core@README.md`, so an L7 agent here reads about 93,000 words;
+the published crate ships the README and no docs/, per the `include` list of `path@core@Cargo.toml`.
 
 ### The finding standard
 
@@ -800,6 +875,10 @@ apply the three acceptance criteria." The owner proposed AC4 in the same message
 D1. T1's firing condition is reworded here from round 2's, since "its first" agent names no agent
 when agents are dispatched together; the cause it watches is unchanged.
 
+`thread@agentic-workflow-axis@checker-rules-lens` adds no cause of its own: an L7 agent reads more
+than the others, which T3 watches, and drafts that report rules the finding message already repairs
+are weighed by the owner on the owner list and counted by T2 and AC4.
+
 | label | cause | thread stressed | verdict |
 | --- | --- | --- | --- |
 | T1 | Duplicate agents add nothing | `thread@agentic-workflow-axis@workflow-axis-lenses` | tripwire. Fires when, in one run, for every lens dispatched more than once (two L2 agents count only when they share a group of activities), one of its agents alone reported every confirmed finding of that lens. Response: reopen the duplicate dispatch. Re-entry: the sort of each pass counts it, the first in this branch |
@@ -884,23 +963,27 @@ include the decision-record, routing and standing-state axes the harvest owes.
 
 ## Defaults awaiting the owner
 
-- **D1**, on AC4, from the transcript review: the wording of AC4 shown in round 3 is not in the
+None awaits the owner. D1 to D7 were ruled in round 4, on the review message: "All defaults
+approved." Each is kept below, marked as ruled, since the sections and the harvest rows it shaped
+cite it by its label.
+
+- **D1**, ruled, on AC4, from the transcript review: the wording of AC4 shown in round 3 is not in the
   transcript, so the owner has not ruled on it. Default: the wording in "Acceptance criteria" above,
   which drops round 3's "at least three passes" and a fall at every pair, after the owner's ruling on
   the design-record axis's criterion: "I would not put such a rigid criterion. As long as we observe
   a "convergence", and the amount of leftover violations is small enough, I think that is good."
-- **D2**, on `thread@agentic-workflow-axis@workflow-axis-first-run`, from the design-conformance
+- **D2**, ruled, on `thread@agentic-workflow-axis@workflow-axis-first-run`, from the design-conformance
   review: `design@agent-skills@synthetic-evidence-not-built` refuses a run built "to accept a piece
   of work". Default: AC1 and AC4 are kept, read as observations of real use, since the first run is
   an audit of this repository's own workflow that the owner asked for, and the head admits "a
   misbehaviour observed in real use"; the same reading the owner ruled for the design-record axis's
   criterion.
-- **D3**, on `thread@agentic-workflow-axis@workflow-axis-lenses`, from the design-conformance review:
+- **D3**, ruled, on `thread@agentic-workflow-axis@workflow-axis-lenses`, from the design-conformance review:
   L5 as approved reports a restatement "longer than a pointer", and applying that at once is the
   sweep `design@agent-skills@restatement-size-test` rules out. Default: L5 reports a drifted
   restatement and a restatement without its pointer; a drifted one is repaired, which converts it to
   a pointer when it is longer than one; a restatement only longer than a pointer is no finding.
-- **D4**, on `thread@agentic-workflow-axis@workflow-axis-finding-standard`, from the
+- **D4**, ruled, on `thread@agentic-workflow-axis@workflow-axis-finding-standard`, from the
   design-conformance review: round 1 presented "instructions that can be read two ways" as fixable
   within `design@agent-skills@additions-need-real-use`, and the owner agreed to that reading. The
   head lists three classes, "a contradiction, a broken trigger, a factual error"; two readings and a
@@ -908,16 +991,16 @@ include the decision-record, routing and standing-state axes the harvest owes.
   its repair changes what agents are told, and the head is rewritten at the harvest to name them, as
   members its argument, a defect "provable by reading", covers. The standard gains the head's
   "broken trigger", which round 1 left out.
-- **D5**, on `thread@agentic-workflow-axis@workflow-axis-outcomes`, from the design-conformance and
+- **D5**, ruled, on `thread@agentic-workflow-axis@workflow-axis-outcomes`, from the design-conformance and
   cold-implementer reviews: the upstream file is an outcome `design@agent-skills@audit-outcomes`
   does not name, and an I finding with two outcomes breaks "Every finding takes exactly one outcome".
   Default: the generic Outcomes table gains "sent upstream", the head is rewritten at the harvest,
   and an I finding is split into its W and P sides at the sort.
-- **D6**, on `thread@agentic-workflow-axis@audit-method-per-axis`, from the design-conformance review:
+- **D6**, ruled, on `thread@agentic-workflow-axis@audit-method-per-axis`, from the design-conformance review:
   `design@agent-skills@audit-is-an-activity` says an audit "reads every entry of a corpus" and argues
   "the method is the same for every axis". Default: rewritten at the harvest to "every entry or text
   of a corpus" and "the method is generic, with a dispatch per axis".
-- **D7**, on AC3, from the transcript review: AC3 as approved covered "the new skill section and the
+- **D7**, ruled, on AC3, from the transcript review: AC3 as approved covered "the new skill section and the
   new agent"; step 1 and step 3's repairs also write shipped text. Default: AC3 judges every line the
   branch adds to shipped text, at steps 1, 2 and 3, with the instrument above, and counts only
   entries, not `path@*@<path>` paths.
