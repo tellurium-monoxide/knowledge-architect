@@ -11,12 +11,10 @@ and checked references. The workflow is a set of agent skills that the checker e
 into a project on request.
 The goals are `path@knowledge-architect@docs/goals.md`.
 
-**The goals bind the design outright; a recorded decision binds it only as a presumption.** A constraint derived from a goal binds
-an argument outright. One derived from a recorded decision binds it as a stated presumption, which
-a better argument can rebut. Recorded decisions were often argued before the code existed, so
+**The goals bind the design outright; a recorded decision binds it only as a presumption**, per
+`primer@goals-bind`, read whole. Recorded decisions were often argued before the code existed, so
 implementation is expected to prove some of them wrong: reversing one is an ordinary move, and
-`skill@knowledge-architect-decision-recording` owns what it costs. This restates
-`primer@goals-bind`.
+`skill@knowledge-architect-decision-recording` owns what it costs.
 
 The repository is a virtual workspace with five Components, none in a directory named after the
 project, per `design@knowledge-architect@no-component-directory-named-after-the-project`:
@@ -38,7 +36,8 @@ project, per `design@knowledge-architect@no-component-directory-named-after-the-
 - Use em dashes and semicolons sparingly in prose. They usually make a sentence longer than it
   should be.
 - Use precise technical terms instead of idioms and colloquialisms.
-- No metaphors, no aphorisms. The meaning is always carried explicitly.
+- No undefined metaphors, no aphorisms. The meaning is always carried explicitly: a metaphor that
+  names a defined concept, such as a tripwire, is vocabulary once defined.
 - Prefer explicit quantities, units and invariants over qualitative wording.
 - Readers are non-native speakers. Keep that in mind.
 
@@ -160,7 +159,8 @@ win.
     answers, nested `.gitignore` files included.
   - A relative markdown link, `[title](<path>)`, is a navigation row. It is legal in `README.md`
     and `index.md` files only, and it is resolved against the linking file's own directory, under
-    the same constraints. In every other file a pointer is a reference, per
+    the same kind claim and the same refusals of `..`, `./` and a leading `/`; the deepest-anchor
+    rule does not apply to it. In every other file a pointer is a reference, per
     `design@core@links-are-navigation-rows`.
 
 - **Which backticked spans are read as references**, per
@@ -223,14 +223,12 @@ the primer's:
 | a Component that maintains the repository rather than shipping in it | `tools/<name>/`, one directory per tool | the tool is retired |
 | the analysis of a retrospective's findings received by this repository, and the owner's ruling on each | one file per received file in `path@knowledge-architect@docs/retrospective-reports/`, per `design@knowledge-architect@committed-findings-analysis`, written under `skill@klarch-retrospective-intake` | the commit that carries out its last outcome, or a later commit of the same branch, deletes it |
 
-**The primer's last row is for a statement with no home, not for a choice between two.** When two rows
-could fit, pick one, say which you picked, and continue. A genuine gap means this table is
-incomplete. The table is a decision about the shape of the configuration, and that decision is the
-owner's. Each answer ends as a new row, so the fallback limits itself: if it fires often, the table
-is wrong. This restates `skill@knowledge-architect-agent-configuration@root-claude-md-tables`.
+**The primer's last row, ask the owner, is for a statement with no home, not for a choice between
+two**, per `skill@knowledge-architect-agent-configuration@root-claude-md-tables`, read whole before
+adding a row.
 
 **A measurement is not a kind of statement. It is routed by what it serves.** A figure that
-supports a decision goes in that decision's head. One that characterises a defect or a question
+supports a decision goes in that decision's head. One that characterises an issue entry
 goes in that entry. A tripwire's firing threshold goes inside the tripwire. One that serves none of
 them goes in the commit message that took it. This restates `primer@where-knowledge-goes`.
 
@@ -262,8 +260,9 @@ unaffected is decoration, and it costs a repair for nothing.
 | a commit message | every entry it opens, closes, reverses or argues from |
 | a restatement of a directive sentence | its home |
 
-A reference in prose is checked wherever it stands, a Rust comment and a fenced block included. So
-a comment in code that names an issue is reached when the issue closes. Never keep a hand-written
+A reference in prose is checked in Markdown and Rust source, a Rust comment and a fenced block
+included, per `primer@where-knowledge-goes`. So a Rust comment that names an issue is reached when
+the issue closes. Never keep a hand-written
 list of what references an entry: `show` computes it.
 
 ### Plan documents
@@ -351,7 +350,7 @@ the work is where the false claims come from.
 ### Check whether it is already known
 
 Before diagnosing anything as a problem, or reporting one you met while doing something else, find
-out whether it is already recorded.
+out whether it is already recorded, per `primer@intent-and-claims`.
 
 ```sh
 cargo klarch issues               # every issue entry in the repository, one row each
@@ -498,7 +497,7 @@ the checker's design home, `path@core@docs/design.md`, beside its README.
 
 | installed | project additions |
 | --- | --- |
-| `skill@knowledge-architect-review` | `skill@klarch-development`, which adds the adversarial axis; `skill@klarch-release`, which adds the changelog axis, `agent@klarch-changelog-reviewer` |
+| `skill@knowledge-architect-review` | `skill@klarch-development`, which adds the adversarial axis to a review it dispatches; `skill@klarch-release`, which adds the changelog axis, `agent@klarch-changelog-reviewer`, to the review of a release branch |
 
 `skill@klarch-retrospective-intake` adds to no installed skill; the harness lists each skill with
 its description.
@@ -506,7 +505,8 @@ its description.
 ## Git `##git-workflow`
 
 Linear history, no merge commits, and no direct push to main. This section is a restatement. Its home is
-`design@knowledge-architect@git-flow`, except where a point names its own.
+`design@knowledge-architect@git-flow`, except where a point names its own; the fold and revert
+procedures of point 2 and the review owed after a rebase in point 5 are this file's own.
 
 1. **All work happens on a branch.**
 
@@ -524,7 +524,9 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   squashed before review. Review repairs are new commits after it, and each one passes. A repair
   that would leave an earlier commit failing, such as one that changes what the checker judges, is
   folded into the earliest commit it repairs instead, per point 2.
-- **The branch writes its CHANGELOG.md entries**, in the `Next release` section, per
+- **The branch writes its CHANGELOG.md entries**, in the `Next release` section, except the repair
+  of a release that uploaded nothing, whose entries go in that version's section, per
+  `skill@klarch-release@failed-publish`; per
   `design@knowledge-architect@the-branch-writes-its-changelog-entries`. A branch that finds no
   `Next release` section creates it above the newest released section. After editing it, run
   `cargo x changelog`, which writes the copy each published crate ships; a test fails while a copy
@@ -552,8 +554,8 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   keeps the base, `git diff <old-head> HEAD` is empty. For a rebase onto a moved base, compare the
   branch's own delta instead: `git range-diff <old-base>..<old-head> <new-base>..HEAD` reports
   every commit carried over.
-- **To reword the message of a commit that is not the newest**, without an interactive rebase,
-  which the harness refuses: write a script that reads a message on stdin and writes the reworded
+- **To reword the message of a commit that is not the newest**, without a rebase that opens an
+  editor, which the harness refuses: write a script that reads a message on stdin and writes the reworded
   one, then run `git filter-branch -f --msg-filter '<script>' origin/main..HEAD` with a clean tree.
   Check that `git diff <old-head> HEAD` is empty, which shows no content was lost, and that
   `git range-diff origin/main..<old-head> origin/main..HEAD` marks with `!` each commit the reword
@@ -598,8 +600,9 @@ computed, so no hand merge is needed and none is lost.
   dispatching activity's own skill adds; at the merge, the activity whose work the branch holds is
   the dispatching one.
 - The commit that lands the repairs says what was reviewed and what was decided. Where no repair
-  commit is left, every repair folded or none made, the message of the branch's last commit says it, reworded with a clean tree:
-  a commit of its own would change no file, and the rebase merge drops it.
+  commit is left, every repair folded or none made, the message of the branch's last commit says
+  it, reworded with a clean tree, per `skill@knowledge-architect-review@what-review-leaves`: a
+  commit of its own would change no file, and the rebase merge drops it.
 - Every finding gets one of the outcomes of `skill@knowledge-architect-review@what-review-leaves`: repaired, opened as an
   issue entry per `skill@knowledge-architect-issue-tracking`, or judged to need nothing, with the
   reason.

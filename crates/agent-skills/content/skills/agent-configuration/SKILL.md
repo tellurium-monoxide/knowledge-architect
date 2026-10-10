@@ -83,8 +83,9 @@ Decided in order; the first match wins.
   issue-tracking), never as an artifact the activity writes: the text names both, and a skill named
   like its artifact cannot be told from it. Give it the project's prefix: the project's name and a
   hyphen, as in `<project>-development`; a name that begins with `knowledge-architect-` is the
-  installer's, and the install deletes it. The directory name and the frontmatter `name` are equal.
-  The same prefix names the project's subagent definitions.
+  installer's, and the install deletes it, so a project whose name gives that prefix takes another.
+  The directory name and the frontmatter `name` are equal. The same prefix names the project's
+  subagent definitions.
 %% The two rules below restate `design@core@section-homes-carry-slugs` and `design@core@harness-entity-names`.
 - **End every level-two heading of a skill, a subagent definition and the root `CLAUDE.md` with a
   slug**: two hashes and the id in backticks, the id naming the section's subject. It is what a
@@ -104,15 +105,13 @@ was scoped wrong before the description was written: fix the scope, not the word
 correct. The test is whether a single task can want all of them at once.
 
 **A skill is self-sufficient.** It holds every piece of knowledge its activity needs, such as a
-build command, a dispatch table or a common trap, even where it is stated elsewhere: restated where
-the restatement is no longer than a pointer, and otherwise by a pointer to a complete home read
-whole, per `primer@where-knowledge-goes`. It points only to **task material**, data that varies per
+build command, a dispatch table or a common trap, even where it is stated elsewhere, delivered as
+`primer@where-knowledge-goes` says. It points only to **task material**, data that varies per
 instance, to **a named prerequisite skill** or a section of the primer, one complete instruction
 rather than a fragment to reassemble. The test, per pointer: could a session complete this activity
-correctly without opening it? If not, the content is restated in the skill where it is no longer
-than a pointer, and otherwise the pointer names a complete home and asks for it to be read whole. What this guards against is
-dilution rather than length: each pointer is an extra read a session must remember, and the more
-there are, the less likely all are followed.
+correctly without opening it? If not, the content is delivered in the skill as that section says.
+What this guards against is dilution rather than length: each pointer is an extra read a session
+must remember, and the more there are, the less likely all are followed.
 
 ## The two tables of the root CLAUDE.md {{slug:root-claude-md-tables}}
 

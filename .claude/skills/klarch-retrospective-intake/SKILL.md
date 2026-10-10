@@ -25,7 +25,7 @@ with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-
 - **In scope: a retrospective's workflow file**, whatever project wrote it. It is named
   `<date>-<project>-<subject>-klarch-workflow.md`, or, before that name,
   `<date>-<project>-workflow.md` or `<date>-<project>-<subject>-workflow.md`. It holds the
-  findings on the installed skills and agents (W), on the checker (C), and the
+  findings on the installed skills, agents and primer (W), on the checker (C), and the
   answers to the standing questions.
 - **In scope: this repository's own project file**, `<date>-knowledge-architect-<subject>.md`, or
   `<date>-knowledge-architect.md` before that name.

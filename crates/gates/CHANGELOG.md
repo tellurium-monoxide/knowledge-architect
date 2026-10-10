@@ -138,6 +138,9 @@ subsection is omitted.
   are staged, before the check runs.
 - `agent-skills`, patch: a subagent that edits nothing lists what it met outside its task under a
   heading "Met outside the task" at the end of its report.
+- `agent-skills`, patch: the assembly of a plan document and the transcript reviewer count as the
+  owner's a message the owner typed while the session worked; in a slice's work, the transcript
+  reviewer runs once, at the harvest's review.
 
 ## 0.5.0
 

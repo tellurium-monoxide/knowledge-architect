@@ -267,9 +267,7 @@ The two kinds are coupled by movement, and that is what keeps both honest.
   usually a one-shot hypothesis, _if this happens, that decision was wrong_, and firing consumes it.
   A tripwire guarding a guarantee that holds for the life of the project is not consumed by one
   instance of it being broken: the guarantee is still owed after the repair. Restate it so it names
-  the _class_ rather than the instance, and record the instance as the issue. This has been observed:
-  a tripwire guarding untrusted input was deleted at its first firing, and the same class of defect
-  then recurred twice, both found by a review after the guard was gone.
+  the _class_ rather than the instance, and record the instance as the issue.
 - A tripwire whose decision is **reversed** is deleted outright.
 - A tripwire is **absorbed** when another entry already guards the same decision: fold its firing
   condition into that entry rather than leaving one decision guarded from two places, where a
@@ -321,8 +319,9 @@ as far as they exist:
   next edit, and **never commit hashes**: name the change instead;
 - the exact numbers measured: magnitudes, tolerances, counts, the parameter values that make the
   behaviour appear and disappear, not qualitative wording;
-- repository-relative paths to whatever reproduces it, and a snippet inline for anything not
-  committed. **An entry must never depend on a scratch directory**;
+- paths to whatever reproduces it, written as `path` references per
+  `primer@where-knowledge-goes`, and a snippet inline for anything not committed. **An entry must
+  never depend on a scratch directory**;
 - what was **ruled out and by what evidence**, so the next reader does not repeat the eliminations;
 - an explicit `assumption` or `not established` label on anything unverified.
 

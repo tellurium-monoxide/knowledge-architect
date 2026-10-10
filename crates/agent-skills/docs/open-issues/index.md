@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-18 entries
+19 entries
 
 | kind | title |
 | --- | --- |
@@ -19,6 +19,7 @@
 | todo | [Only the design and setup skills state what they expect of the owner](expectation-sets-for-the-installed-skills.md) |
 | todo | [A project cannot change one instruction of an installed skill](patching-an-installed-skill.md) |
 | todo | [Nothing checks mechanically that the shipped text cites no entry of this repository](shipped-text-citing-an-entry-is-unchecked.md) |
+| todo | [The next run of the agentic-workflow audit repairs by cause, and starts from pass 3's open findings](the-agentic-workflow-audit-s-next-run.md) |
 | todo | [The design skill's duty to bring back a material finding has no design head](the-material-finding-duty-has-no-head.md) |
 | todo | [The retrospective records no count of what a merged branch cost in review](the-retrospective-counts-no-review-cost.md) |
 | todo | [No check reads the setup skill's Cargo.toml, alias and CI blocks against the workspace](the-setup-section-s-toml-and-ci-blocks-are-unchecked.md) |
