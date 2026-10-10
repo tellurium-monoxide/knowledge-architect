@@ -210,7 +210,8 @@ The work rewrites two heads by its threads, three more per D4 to D6, and reads a
 - `design@agent-skills@restatement-size-test` is not rewritten under D3's default: L5 is narrowed to
   meet it.
 - Per D12, `design@knowledge-architect@retrospective-findings-stay-here` gains the audit's findings
-  on the installed text, and the root CLAUDE.md's routing table its first row. Per D15,
+  on the installed text, and its restatement in `instructions@repository-skills` says so; the
+  routing table, which holds only project skills and agents, stays empty. Per D15,
   `design@agent-skills@ruled-items-labelled` widens its `W` row to an audit's upstream file.
 
 The two rewritten by the threads:
@@ -642,8 +643,8 @@ default at 15; the counts it proposed, which the owner approved, sum to 16.
 skill section   skill@knowledge-architect-project-audit@agentic-workflow-axis
                   in path@agent-skills@content/skills/project-audit/SKILL.md, as {{slug:agentic-workflow-axis}}
 agent           knowledge-architect-workflow-auditor
-                  source  planned@agent-skills@content/agents/workflow-auditor.md
-                  install planned@agent-config@agents/knowledge-architect-workflow-auditor.md
+                  source  path@agent-skills@content/agents/workflow-auditor.md
+                  install path@agent-config@agents/knowledge-architect-workflow-auditor.md
 lenses          L1 contradiction, L2 activity walk, L3 two readings, L4 provable gap,
                 L5 restatement, L6 local against installed, L7 checker rules
                                                               (in the agent and the section)
@@ -802,7 +803,7 @@ interaction finding in both its files.
 | P | applied, put to the owner, or an issue |
 
 Per D12, the installed text holds no branch for the project that publishes the workflow. This
-repository's root CLAUDE.md gains a row of its routing table for the audit skill: here a W finding
+repository's root CLAUDE.md says, in `instructions@repository-skills`, that here a W finding
 is edited at its source, as `design@knowledge-architect@retrospective-findings-stay-here` already
 says for a retrospective's findings, and takes the outcomes of a P finding. A finding on the
 checker's own behaviour, the retrospective's `C`, is outside the axis, since the checker's code is
@@ -845,7 +846,7 @@ the owner has read it.
 ### The workflow auditor
 
 `thread@agentic-workflow-axis@workflow-auditor-agent`. One installed agent,
-`knowledge-architect-workflow-auditor`, tools Read, Grep, Glob, Bash, read-only in its body. Its
+`agent@knowledge-architect-workflow-auditor`, tools Read, Grep, Glob, Bash, read-only in its body. Its
 frontmatter description says what it drafts and how it is dispatched: each agent on one lens, as
 many per lens as the lens table of the axis's new section of the audit skill says, all in parallel, each
 brief naming the commit audited, the lens, for L2 the group of activities, a scratch directory of its
@@ -992,7 +993,7 @@ CHANGELOG.md entries `design@knowledge-architect@changelog-entries` owes, then r
 2. **The axis and its agent.** The workflow auditor, per "The workflow auditor"; the axis's section
    of the audit skill, per "The corpus", "The lenses", "The finding standard" and "The outcomes"; the
    audit skill's frontmatter description and scope naming the axis; the generic Outcomes table gains
-   the row "sent upstream", per D5; the root CLAUDE.md's routing-table row, per D12. The commit
+   the row "sent upstream", per D5; the sentences of `instructions@repository-skills`, per D12. The commit
    converts the spec's `planned` citations, and writes the new agent's name in this spec as its
    reference. Judges AC3.
    Fails alone on: an agent whose brief cannot be filled from the section, or a section that cannot be
@@ -1092,7 +1093,11 @@ cite it by its label.
   repository meets; the owner ruled such a branch out of the shipped text before: "I don't want to
   cater too much to this use case in the installed files". Default: the shipped text holds none;
   the root CLAUDE.md gains a routing-table row for the audit skill: here a W finding is edited at
-  its source, and L7 also reads `path@core@docs/design.md`.
+  its source, and L7 also reads `path@core@docs/design.md`. Corrected at step 2, the substance
+  unchanged: the routing table holds only a project skill or agent that adds to an installed one,
+  per `skill@knowledge-architect-agent-configuration@root-claude-md-tables`, so the two sentences
+  go beside the retrospective's in `instructions@repository-skills`, and the table stays empty;
+  listed to the owner.
 - **D13**, ruled, on `thread@agentic-workflow-axis@workflow-axis-lenses`, from the
   cold-implementer review: the four L2 groups left decision recording, issue tracking, goal setting
   and agent configuration in no group. Default: the groups are design, planning, decision recording
@@ -1134,7 +1139,7 @@ auditor each state its reason, two texts. The harvest confirms each against the 
 | AC1 to AC4 | reported in the landing commit; one that recurs is proposed as a tripwire |
 | "An audit method with no calibration and no re-check" | names both heads it lost to |
 | every other item of "Losing alternatives" | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit |
-| D12 | `design@knowledge-architect@retrospective-findings-stay-here` widened to an audit's findings on the installed text; the root CLAUDE.md's routing-table row, written at step 2 |
+| D12 | `design@knowledge-architect@retrospective-findings-stay-here` widened to an audit's findings on the installed text; its restatement in `instructions@repository-skills`, written at step 2 |
 | D15 | `design@agent-skills@ruled-items-labelled`, its `W` row widened |
 | `issue@agent-skills@audit-axes-beyond-the-design-record` | rewritten to the axes it still holds; its open lesson, the owner's reading of a sample of the verdicts, stays, since this axis does not adopt it |
 

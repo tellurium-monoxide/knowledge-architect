@@ -498,7 +498,11 @@ upstream, so the findings of both files of `skill@knowledge-architect-retrospect
 here, on the owner's word: handled, opened as entries in this repository's own issue registers, or
 closed with no change and the reason, never as an issue on GitHub. This is the owner's
 standing direction under that skill; its home is
-`design@knowledge-architect@retrospective-findings-stay-here`.
+`design@knowledge-architect@retrospective-findings-stay-here`. The findings of the
+agentic-workflow axis of `skill@knowledge-architect-project-audit` on the installed text stay here
+too: they are edited at their source, under `path@agent-skills@content/`, with the outcomes of a finding on
+the project's own text, and no upstream file is written. Its checker-rules auditors, L7, also read
+the checker's design home, `path@core@docs/design.md`, beside its README.
 
 **The routing table**: what this repository adds to an installed skill or agent. It holds no row.
 **This repository's own skills, `skill@klarch-development`, `skill@klarch-release` and
