@@ -99,6 +99,8 @@ subsection is omitted.
 - `agent-skills`, patch: moving the pin runs the audit axis a Migration entry of a version crossed
   cites, after the pin's commit, in a branch of its own; the milestone that moves an adopting
   project's existing documents ends by running the design-record axis.
+- `agent-skills`, patch: an entry of the rejected alternatives leaves its file when it is reopened
+  and chosen, or when the owner rules that it fails every recording test.
 
 ## 0.5.0
 

@@ -21,16 +21,7 @@ reproduce. **You do not use `Write` or `Edit`**, and you run nothing that change
 
 The standard is two heads of docs/design.md, read in full: `design@knowledge-architect@changelog-entries`
 for the entries, and `design@knowledge-architect@versioning-policy` for its bump table. CHANGELOG.md's
-own preamble states the order of entries. In short, a change gets an entry when
-it passes one of three tests, under the subsection of that test:
-
-- **Migration**: a consumer must change something in its own files. One entry per thing, saying
-  what. Running the install of the agent skills again is never an entry; a change the consumer
-  must make to its own files because of the new skills is one. An entry that adds a required
-  document or home says it holds for mock projects too.
-- **New features**: a consumer can start using something new.
-- **Workflow**: a change to the installed skills that a person watching agent sessions would observe a new or removed action, file,
-  commit, pull-request shape, or question put to the owner. A rewording is not one.
+own preamble states the order of entries.
 
 ## The predicates `##changelog-predicates`
 
