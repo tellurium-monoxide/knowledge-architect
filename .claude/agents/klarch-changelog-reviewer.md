@@ -1,6 +1,6 @@
 ---
 name: klarch-changelog-reviewer
-description: The changelog axis of the review of a release branch in this repository. Judges, over the release's range, whether CHANGELOG.md holds every entry the versioning policy owes, whether each entry's category, surface and bump class are right, whether the version follows the highest class, and whether any decision in the range is argued on the grounds that changing it later would be breaking. Dispatch it; do not read it.
+description: The changelog axis of the review of a release branch in this repository. Judges, over the release's range, whether CHANGELOG.md holds every entry the versioning policy owes, whether each entry's category, surface and bump class are right, whether the version follows the highest class, and whether any decision in the range is argued on the grounds that changing it later would be breaking.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -59,4 +59,4 @@ argument either way.
 Return findings, each with its evidence and the predicate it fails, and for a missing entry the
 entry you would write. **If the axis is clean, say so plainly.** Do not report style preferences.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher to
-route; do not review it.
+route, per `primer@met-outside-the-task`; do not review it.

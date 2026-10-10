@@ -47,6 +47,10 @@ subsection is omitted.
 - `agent-skills`, patch: the design homes and the rejected alternatives a project holds are brought
   to the rules of `primer@design-heads` and to its new entry test 2, by running the design-record
   axis, `skill@knowledge-architect-project-audit@design-record-axis`, after the pin moves.
+- `agent-skills`, patch: the decision-recording skill's section on a premortem's tripwires becomes
+  `skill@knowledge-architect-decision-recording@ruled-tripwires`, the one home of when and where any
+  tripwire the owner ruled on is written, a parked thread's included. A project's text that cites
+  the old section cites the new one.
 
 ### New features
 
@@ -135,10 +139,23 @@ subsection is omitted.
   violations left does not fall goes to the owner as a question; a budget too small for the
   agentic-workflow axis's dispatch is said to the owner.
 - `agent-skills`, patch: the review before a merge is the last review of a branch, whichever
-  activity's skill dispatched it, and there the transcript reviewer runs only alone and last; every
-  reviewer that runs a command of the checker or of a program the project builds gets a worktree
-  outside the project or under an ignored path; a change made in answer to a plan document's
+  activity's skill dispatched it, and there the transcript reviewer runs only alone and last; an
+  activity's skill may defer the transcript axis of an earlier review to it; every subagent that
+  judges a commit, a reviewer or an audit agent, gets a worktree detached at that commit, outside
+  the project or under an ignored path; a change made in answer to a plan document's
   review, a default included, is a repair, reviewed again only where it changes a design head.
+- `agent-skills`, patch: a pass of the agentic-workflow axis repairs the findings of the pass
+  before it by cause: planning's point 4 is a review of the work, and the harvest's review the review
+  before the merge; the root's restatements of committing on a branch become pointers to
+  `primer@branch-commits`; the agents' descriptions no longer say "Dispatch it; do not read it.";
+  the primer no longer gives the owner every decision on delivering a directive at a point; approved
+  bounded work whose work does not land in the change under way takes the full path to a spec; a
+  default awaiting the owner is built as written until the owner rules, at no fixed moment; a slice's
+  spec carries only the sections its slice fills; the agentic-workflow axis's corpus and the
+  installed files are defined by their property, the saved workflow included; a cause of the axis
+  goes on the owner list only where its repair needs the owner's word, and one whose findings are
+  all on the installed text is sent upstream; a restatement carries its pointer; the primer says a
+  macro inside a `let` is bound.
 - `agent-skills`, patch: what waits for an owner who has not ruled during the work of a plan
   document is stated once, at the opening of the planning skill's procedure for a slice: a listed
   default is built as written, a scope change waits for its ruling, and a load-bearing gap of the

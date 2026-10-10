@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-decision-record-reviewer
-description: The decision-record axis of a dispatched review. Judges the record a diff leaves in the design homes and the rejected alternatives — which decisions earned an entry, whether each head is rewritten in place and carries its standing argument, whether each alternative that lost is recorded with its slug, its marker and a checkable reason, whether a reversal did all it owes — and whether every name a commit message cites resolves. Dispatch it; do not read it.
+description: The decision-record axis of a dispatched review. Judges the record a diff leaves in the design homes and the rejected alternatives — which decisions earned an entry, whether each head is rewritten in place and carries its standing argument, whether each alternative that lost is recorded with its slug, its marker and a checkable reason, whether a reversal did all it owes — and whether every name a commit message cites resolves.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -82,7 +82,7 @@ comment at the code and in the message of the commit that introduced it. A diff 
 reshapes that code against the reason its comment states, or the introducing commit argued, without
 arguing against that reason in its own message, is a finding. Read the comment, and run
 `git log -L` or `git blame` on the removed lines for the introducing commit. Absence from the design
-home is not evidence that code is superfluous.
+home is not evidence that code is superfluous, per `primer@intent-and-claims`.
 
 **Was it recorded when its work landed?** A head written for work a plan document schedules and that
 has not landed is a hypothesis presented as a fact. A head must be true of the tree as it stands.
@@ -122,4 +122,4 @@ clean, say so plainly**: that is a real result, and a report padded to look prod
 dispatcher a verification pass per invented finding. Do not report style preferences, and do not
 review outside this axis.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
-to route; do not review it.
+to route, per `primer@met-outside-the-task`; do not review it.

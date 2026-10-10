@@ -109,10 +109,11 @@ The three subsections are the three fields every kind owes:
 `design@<anchor>@<id>`, and the goal it threatens, as `goal@<anchor>@<id>`, when it does directly.
 That is what lets `{{command}} show` on the decision list what is outstanding against it before it
 is reopened, and on the goal what stands between the project and it. A reference is a claim that
-the text is revisited when the entry it names changes. An entry that strains no recorded decision
-names none rather than the nearest one. The inverse holds in code: a guard, a workaround, a stub or
-a test that exists because of an entry names it, `issue@<anchor>@<id>`, in the comment at the site.
-Closing the entry then dangles the comment, and the site is revisited.
+the text is revisited when the entry it names changes, per `primer@where-knowledge-goes`. An entry
+that strains no recorded decision names none rather than the nearest one. The inverse holds in
+code: a guard, a workaround, a stub or a test that exists because of an entry names it,
+`issue@<anchor>@<id>`, in the comment at the site. Closing the entry then dangles the comment, and
+the site is revisited.
 
 **Every entry states its kind**, in the frontmatter. Without it, a missing section is ambiguous
 between "this kind has none" and "the author did not write one", and that is exactly what a reader
@@ -240,8 +241,8 @@ A tripwire is a level-two heading, and every level-two heading of a tripwires ho
 there with no slug is reported. A slug at another level, at the head of a plain line, or in the
 `README.md` of a directory-shaped home, defines nothing and is reported as misplaced.
 
-**A tripwire from a premortem is written on the owner's word only**, at the harvest of the decision
-it guards, per `skill@knowledge-architect-decision-recording`.
+When a tripwire is written, and on whose word, is
+`skill@knowledge-architect-decision-recording@ruled-tripwires`.
 
 One standing re-entry point: `agent@knowledge-architect-standing-state-reviewer` reads every
 tripwire home and every deferred trigger again, on the review axis whose whole subject they are. An
@@ -300,10 +301,10 @@ plain text, which takes it out of the check. A verbatim quotation of the owner t
 entry is left as it is, with a reference to the current entry beside it.
 
 **An entry that records a missing checked form** is what a pointer the checker cannot express is
-written beside, in plain text, as the primer says. Its `What` names the pointer's class and the
-form that would express it; its `What would close it` is that form shipping and every site that
-cites the entry converted to it. `{{command}} show` on the entry lists those sites. A gap of the
-checker itself is recorded this way in the project that meets it, in the issue directory of any of
+written beside, in plain text, as `primer@where-knowledge-goes` says. Its `What` names the
+pointer's class and the form that would express it; its `What would close it` is that form
+shipping and every site that cites the entry converted to it. `{{command}} show` on the entry
+lists those sites. A gap of the checker itself is recorded this way in the project that meets it, in the issue directory of any of
 its anchors, since `{{command}} show` lists the entry's sites wherever it sits, and is reported to
 the workflow's maintainers by the retrospective.
 

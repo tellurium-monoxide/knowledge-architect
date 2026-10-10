@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-retrospective
-description: MUST use once per session, at the first of these moments (deferred to the end of a task under way), to offer a retrospective to the owner - a branch the session worked on has merged into the main branch, a plan document has left, or the owner says the session is ending - and run it only if the owner accepts. Covers what the retrospective examines (the installed skills and agents, the project's own instructions, how the two interact, and the checker), the standing questions it always asks, the expectation sets that bound what counts as a defect of an installed skill, the two files it writes outside the project, and how each file reaches the project that must change.
+description: MUST use once per session, at the first of these moments (deferred to the end of a task under way), to offer a retrospective to the owner - a branch the session worked on has merged into the main branch, a plan document has left, or the owner says the session is ending - and run it only if the owner accepts. Covers what the retrospective examines (the installed files, the project's own instructions, how the two interact, and the checker), the standing questions it always asks, the expectation sets that bound what counts as a defect of an installed skill, the two files it writes outside the project, and how each file reaches the project that must change.
 ---
 
 # Retrospective
@@ -47,13 +47,13 @@ done instead.
 
 **Each finding is named by a letter and a number**, so that a fix, an issue or a commit can cite it
 by its id and the stem of its file (`skill@knowledge-architect-retrospective@two-files`), as "W3 of <date>-<project>-<subject>-klarch-workflow":
-**W** for the installed skills, agents and primer, **C** for the checker, **P** for the project's own
+**W** for the installed files, **C** for the checker, **P** for the project's own
 instructions. Numbers follow `primer@labelled-items`, so an id is unique within its file, and the
 stem makes the citation unique across retrospectives. An interaction
 finding whose fix may fall on either side goes in both files (`skill@knowledge-architect-retrospective@two-files`) and gets one id in each, each
 naming the other, since the two files may be read apart. The standing questions below take no id: they are answers, not findings.
 
-1. **The installed skills, agents and primer.**
+1. **The installed files.**
 2. **The project's own instructions**: its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own
    skills and agents.
 3. **How the two interact**: an installed instruction and a project instruction that contradicted
@@ -64,7 +64,7 @@ naming the other, since the two files may be read apart. The standing questions 
 
 **Always ask these standing questions**, and answer each with what the session shows:
 
-- Did this session need to change an installed skill or agent, and what for?
+- Did this session need to change an installed file, and what for?
 - Did this session, or one of its subagents, act as if a rule of the primer were absent? For each:
   the rule, who acted, and what they did.
 - Did this session miss something a project skill adds to an installed skill?
@@ -95,7 +95,7 @@ Each finding goes to the file of the project whose text or code must change:
 | file | holds |
 | --- | --- |
 | `<YYYY-MM-DD>-<project>-<subject>.md` | what the session did and the version it used, the findings on the project's own instructions, and the project's side of an interaction |
-| `<YYYY-MM-DD>-<project>-<subject>-klarch-workflow.md` | what the session did and the version it used, the findings on the installed skills, agents and primer and on the checker, the workflow's side of an interaction, and the answers to the standing questions |
+| `<YYYY-MM-DD>-<project>-<subject>-klarch-workflow.md` | what the session did and the version it used, the findings on the installed files and on the checker, the workflow's side of an interaction, and the answers to the standing questions |
 
 `<subject>` names the session's work in a few words, in lowercase joined by hyphens, such as
 `pin-move`. The session proposes it, and the owner may change it on reading the files. Before

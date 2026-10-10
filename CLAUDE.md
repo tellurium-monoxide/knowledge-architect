@@ -214,7 +214,7 @@ the primer's:
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
-| a decision about the published workflow: what the installed skills, agents and primer tell every adopting project | the agent-skills design home, `path@agent-skills@docs/design.md`; this repository follows the published workflow, with the departures this file states, and restates what it needs per `primer@where-knowledge-goes` | the decision changes |
+| a decision about the published workflow: what the installed text tells every adopting project | the agent-skills design home, `path@agent-skills@docs/design.md`; this repository follows the published workflow, with the departures this file states, and restates what it needs per `primer@where-knowledge-goes` | the decision changes |
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md`; its crates.io page is a short `CRATES-IO.md` in the crate, named by `readme` in its Cargo.toml, which points to the README and to docs.rs, per `design@knowledge-architect@crates-io-page-file` | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
@@ -467,8 +467,9 @@ CI runs them on every push to a ready pull request.
 
 ## Skills `##repository-skills`
 
-**A skill is one activity**: the scope over which a complete set of procedures makes sense. Read
-the matching skill before doing that kind of work.
+**A skill is one activity**: the scope over which a complete set of procedures makes sense, per
+`skill@knowledge-architect-agent-configuration@where-text-goes`. Read the matching skill before
+doing that kind of work.
 
 **This repository installs its own skills**, with `cargo klarch install-agent-skills`, and
 commits them under .claude. The harness lists each installed skill with its description, so a
@@ -501,19 +502,15 @@ procedures of point 2 and the review owed after a rebase in point 5 are this fil
 1. **All work happens on a branch.**
 
 - No exception by size or kind.
-- The branch covers the full work: design, implementation, review and fixes, cleanup.
 - Once it holds a first commit, the branch is pushed and a **draft** pull request is opened for
   it: `git push -u origin <branch>`, then `gh pr create --draft`. CI does not run on a draft.
 - **A commit is pushed only after `cargo klarch commits` has passed on it**: in a command of its
   own, or behind `&&` on the bare check. A push after `;`, or after a check whose output went
   through a pipe, runs whatever the check found. Its home is
   `design@knowledge-architect@push-after-the-commits-check`.
-- **Every commit of the branch must pass the check under the branch tip's checker.** The
-  `commits` gate judges each commit's tree with the tip's binary, and refuses a tree with no
-  manifest or with findings. So a step whose intermediate trees cannot pass lands as one commit,
-  squashed before review. Review repairs are new commits after it, and each one passes. A repair
-  that would leave an earlier commit failing, such as one that changes what the checker judges, is
-  folded into the earliest commit it repairs instead, per point 2.
+- **Every commit of the branch must pass the check under the branch tip's checker**, per
+  `primer@branch-commits`, read whole: where a change that sets what that checker requires goes
+  on the branch, and which repair is folded. A fold uses the procedure of point 2.
 - **The branch writes its CHANGELOG.md entries**, in the `Next release` section, per
   `design@knowledge-architect@the-branch-writes-its-changelog-entries`. A branch that finds no
   `Next release` section creates it above the newest released section. After editing it, run
@@ -557,10 +554,6 @@ procedures of point 2 and the review owed after a rebase in point 5 are this fil
 - **main's history is never rewritten.** It is the shared trunk. A pushed branch of your own may
   be rewritten and force-pushed, since origin holds the old head until then. A branch that a live
   worktree has checked out is rewritten only after that worktree is removed.
-- A repair from a review is a new commit, which edits no history. The exception is a repair that
-  would leave an earlier commit failing under the branch tip's checker: it is folded into the
-  earliest commit it repairs, with a clean tree, and the commit that records the review says what
-  was folded. Its home is `design@agent-skills@review-repair-appended-or-folded`.
 - To test a previous state of the project, create a worktree in a place where it pollutes
   nothing, such as the worktrees directory under .claude, which is ignored. Do not use
   `git stash` or another operation that can lose content. Remove the worktree and its branch once
@@ -585,10 +578,9 @@ computed, so no hand merge is needed and none is lost.
 - Use `skill@knowledge-architect-review` before the merge.
 - The axes are those `skill@knowledge-architect-review@review-axes` says the review before a
   merge owes.
-- The commit that lands the repairs says what was reviewed and what was decided. Where no repair
-  commit is left, every repair folded or none made, the message of the branch's last commit says
-  it, reworded with a clean tree, per `skill@knowledge-architect-review@what-review-leaves`: a
-  commit of its own would change no file, and the rebase merge drops it.
+- A repair, a repaired commit message and the record of the review land as
+  `skill@knowledge-architect-review@what-review-leaves` says, read whole, by the procedures of
+  point 2. The decision is `design@agent-skills@review-repair-appended-or-folded`.
 - Every finding gets one of the outcomes of `skill@knowledge-architect-review@what-review-leaves`: repaired, opened as an
   issue entry per `skill@knowledge-architect-issue-tracking`, or judged to need nothing, with the
   reason.
@@ -612,7 +604,7 @@ gh pr view <branch> --json isDraft,headRefOid    # isDraft false, headRefOid equ
 gh run list --commit $(git rev-parse HEAD) --json conclusion -q 'any(.[]; .conclusion == "success")'
                                                  # true: a run on that head succeeded
 gh pr merge <branch> --rebase --delete-branch
-git checkout main && git pull --ff-only && git branch -D <branch>
+git checkout main && git pull --ff-only
 ```
 
 - The draft flag is read here because a job skipped on a draft reports `skipped`, which GitHub
@@ -627,8 +619,8 @@ git checkout main && git pull --ff-only && git branch -D <branch>
   `design@core@branch-shas-are-refused`. Its homes are
   `design@knowledge-architect@no-branch-sha-is-cited` and
   `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
-- The local branch is deleted with `-D`: its commits are not ancestors of main, since their SHAs
-  differ.
+- A local branch that `--delete-branch` left, as one another worktree has checked out, is deleted
+  with `git branch -D <branch>`: its commits are not ancestors of main, since their SHAs differ.
 - A merge to main publishes nothing. A release is a separate procedure, per
   `design@knowledge-architect@publish-after-merge`.
 

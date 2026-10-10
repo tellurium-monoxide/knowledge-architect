@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-cold-implementer-reviewer
-description: The cold-implementer axis of a dispatched review of a plan document, a spec or a milestone document. Reads the document as the session that will implement its work, or a milestone's first slice, with no knowledge of the discussion that produced it, and reports every place where the document is not sufficient to act. Dispatch it; do not read it.
+description: The cold-implementer axis of a dispatched review of a plan document, a spec or a milestone document. Reads the document as the session that will implement its work, or a milestone's first slice, with no knowledge of the discussion that produced it, and reports every place where the document is not sufficient to act.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -68,4 +68,4 @@ Return the five lists and the readiness table, each item with the quoted sentenc
 and the reproduction. Say which files you read. **If the axis is clean, say so plainly.** Do not
 propose designs, do not report style preferences, and do not review outside this axis.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
-to route; do not review it.
+to route, per `primer@met-outside-the-task`; do not review it.

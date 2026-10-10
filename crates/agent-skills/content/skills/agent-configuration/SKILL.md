@@ -8,8 +8,8 @@ description: MUST use before adding or editing the project's root CLAUDE.md, a s
 Scope: the project's own agent configuration, the text an agent reads to work in this project.
 Its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own skills and its own subagent definitions.
 
-Not covered here: **the installed files**, the skills, agents and primer that
-`{{command}} install-agent-skills` writes. They are never edited by hand (`skill@knowledge-architect-agent-configuration@installed-files-never-edited`). **Where the argument
+Not covered here: **the installed files**, every file that `{{command}} install-agent-skills`
+writes. They are never edited by hand (`skill@knowledge-architect-agent-configuration@installed-files-never-edited`). **Where the argument
 for a decision about the configuration lands**: `skill@knowledge-architect-decision-recording`; this
 skill owns how to write the configuration, that one owns where the argument goes. **Setting the
 configuration up the first time**: `skill@knowledge-architect-setup`.
@@ -85,7 +85,7 @@ Decided in order; the first match wins.
   hyphen, as in `<project>-development`; a name that begins with `knowledge-architect-` is the
   installer's, and the install deletes it, so a project whose name gives that prefix takes another.
   The directory name and the frontmatter `name` are equal. The same prefix names the project's
-  subagent definitions.
+  other files in the directories the install writes into.
 %% The two rules below restate `design@core@section-homes-carry-slugs` and `design@core@harness-entity-names`.
 - **End every level-two heading of a skill, a subagent definition and the root `CLAUDE.md` with a
   slug**: two hashes and the id in backticks, the id naming the section's subject. It is what a
@@ -132,8 +132,8 @@ only repeats one is removed.
 
 ## Installed files are never edited {{slug:installed-files-never-edited}}
 
-An installed skill, agent or primer is compared byte for byte with the version the project pins, and
-the install overwrites it. **A change the project needs is a project skill or agent of its own**,
+An installed file is compared byte for byte with the version the project pins, and the install
+overwrites it. **A change the project needs is a project skill or agent of its own**,
 with its own name. It adds to the installed text: an extra step,
 an extra review axis, a convention of the project. It never contradicts it. Where it would have to
 contradict it, the installed text is wrong for this project: say so to the owner, who may report it
@@ -144,8 +144,8 @@ to the workflow's maintainers.
 `{{command}} install-agent-skills` writes the files the checker ships and removes the ones it no
 longer ships. When it changes any of them, in the same commit:
 
-- read the new primer's table against the project's rows, and raise any project row that now
-  restates or contradicts a primer row;
+- read the new primer's table against the project's rows, per
+  `skill@knowledge-architect-agent-configuration@project-knowledge-rows`, read whole;
 - read each project skill and agent against the installed text the install changed, for an
   instruction that now contradicts it;
 - stage the files the install removed, since a deletion git still lists stops the check;

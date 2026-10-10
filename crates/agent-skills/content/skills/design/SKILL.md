@@ -43,15 +43,13 @@ a requirement waiting to be extracted from the owner, because neither party
 knows it yet. It is discovered by proposing, arguing, and following
 the open threads.
 
-**This skill ends at convergence**, and, where the premortem runs, the
-premortem and the owner's rulings on its tripwires and acceptance
-criteria. Bounded work ends
-sooner, at the owner's word on its one proposal (`skill@knowledge-architect-design@bounded-work`), and takes
-neither of the two paths below. It writes no plan document and no record. On the full
-path, `skill@knowledge-architect-planning` writes the plan documents,
-in the same session (step 8); on the in-change path, a commit message
-carries the deliberation (`skill@knowledge-architect-design@decision-authority`). Either way, the decisions
-are recorded at the landing of the work that implements them.
+**This skill ends at convergence**, and, where the premortem runs, the premortem and the owner's
+rulings on its tripwires and acceptance criteria. Bounded work ends sooner, at the owner's word on
+its one proposal (`skill@knowledge-architect-design@bounded-work`). On the full path,
+`skill@knowledge-architect-planning` writes the plan documents, in the same session (step 8); on
+the in-change path, a commit message carries the deliberation
+(`skill@knowledge-architect-design@decision-authority`). Either way, the decisions are recorded at
+the landing of the work that implements them.
 
 ## Decision authority {{slug:decision-authority}}
 
@@ -355,10 +353,8 @@ each announced in the delta:
   event or checkpoint at which it is re-proposed. A parked thread
   missing either one is open. A tripwire with no re-entry point names
   evidence nobody is scheduled to look for. A parked thread's tripwire
-  is named on the ledger, and is recorded only on the owner's word: in
-  the tripwires home when it guards a recorded decision, and otherwise
-  as the trigger of a `deferred` issue, under
-  `skill@knowledge-architect-issue-tracking`.
+  is named on the ledger, and written as
+  `skill@knowledge-architect-decision-recording@ruled-tripwires` says.
   `superseded` is not a third case, though it is easily read as one:
   threads absorbed by a proposal close on the owner's word approving that
   proposal by name, and until it comes the absorbed threads keep their
@@ -532,9 +528,9 @@ choices whose option space genuinely is closed and consequence-free.
    same way agreeing with one you have not tested does. A factual claim
    doing closing work carries its provenance — measured (with the
    command that re-takes it), read in a named source, or assumed — and a thread may close over assumed
-   claims only if each assumption is recorded as a tripwire on that
+   claims only if each assumption is named as a tripwire on that
    closure, or, where only the built code can check it, as an acceptance
-   criterion, as step 7 splits them. In the other direction, reverse when the opposing
+   criterion, as step 7 splits and rules them. In the other direction, reverse when the opposing
    argument explains something your position cannot, or survives an
    objection your position fails — not merely because the owner
    insists. "Both have merits" with no synthesis proposal is a
@@ -614,14 +610,10 @@ choices whose option space genuinely is closed and consequence-free.
    tripwire's entry and the criterion's item keep that label in their
    text, so the ruling in the transcript is found from either.
    Some may be out of scope of the project, and the owner is the only judge of that.
-   A tripwire the owner rules to record is written at the harvest of the decision
-   it guards, in the tripwires home of the Component that owns that decision,
-   under `skill@knowledge-architect-issue-tracking`: a tripwire names its decision's
-   design entry, so the entry exists first. A tripwire on a decision that earned no head names, in
-   words, the site that records the decision, and is legal with no reference.
+   A tripwire the owner rules to record is written as
+   `skill@knowledge-architect-decision-recording@ruled-tripwires` says.
 
-   Every tripwire, here and everywhere else, is recorded only on the
-   owner's word, and meets the
+   Every tripwire, here and everywhere else, meets the
    falsifiability bar: evidence specific enough that both parties
    would agree it fired — an event, a count crossing a bound.
 

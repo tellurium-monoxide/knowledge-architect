@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-code-claims-reviewer
-description: The code-claims axis of a dispatched review of a plan document, a spec or a milestone document. Verifies every statement the document makes about the code as it stands against the tree, and reports each as confirmed, wrong or imprecise with the evidence. Dispatch it; do not read it.
+description: The code-claims axis of a dispatched review of a plan document, a spec or a milestone document. Verifies every statement the document makes about the code as it stands against the tree, and reports each as confirmed, wrong or imprecise with the evidence.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -64,4 +64,4 @@ as file, function and lines. Then the neighbours found. Count the verdicts by ki
 **If every claim is confirmed, say so plainly.** Do not propose designs, do not report style
 preferences, and do not review outside this axis.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
-to route; do not review it.
+to route, per `primer@met-outside-the-task`; do not review it.

@@ -1020,8 +1020,7 @@ the owner has read it.
 frontmatter description says what it drafts and how it is dispatched: each agent on one lens, as
 many per lens as the lens table of the axis's new section of the audit skill says, all in parallel, each
 brief naming the commit audited, the lens, for L2 the group of activities, a scratch directory of its
-own and, for a re-check, the kept list; then its drafts are read, never its summary alone; "Dispatch
-it; do not read it." Its body holds:
+own and, for a re-check, the kept list; then its drafts are read, never its summary alone. Its body holds:
 
 - the standard: it edits nothing; it writes only to its scratch directory; every quotation is copied
   from the file; every command listed was run;
@@ -1257,6 +1256,8 @@ owner's judgement. Response: before the merge, reopen
 | 1 | 54 | 27 | the pass-1 commit's message |
 | 2 | 70 | 30 | the pass-2 commit's message |
 | 3 | about 70 | about 35 | the pass-3 commit's message, from the auditors' returns before a full reading |
+| 3, read at step 5 | 48 | not counted | the step-5 commit's message: the open drafts confirmed by quotation and claim |
+| 4 | 36 | 9 | the pass-4 commit's message: 9 findings in the 9 causes that needed the owner's word |
 
 Neither count fell, so AC4 fired. During pass 2's sort the owner had written: "I think it would be
 very hard to find a proper way to score severity for comparison. But here, I'm not sure we should
@@ -1265,6 +1266,11 @@ consider AC4 triggered." The response was taken before the merge: the owner read
 threads of rounds 7 to 9 reopen the repair side of the method. The lenses and the finding standard
 stand, since the lenses found what the passes left, and the repairs made it. Per round 10, AC4 is
 judged again in this branch, at step 6: pass 4 against pass 3, whose drafts step 5 sorts.
+
+At step 6 both counts fell, 48 to 36 confirmed and about 35 to 9 to the owner list, so AC4 does not
+fire on pass 4. By the session's reading at the sort, about 19 of pass 4's findings are in text
+this branch wrote after pass 3: the repairs of step 5, the method of step 4 and the saved
+workflow's delivery.
 
 ## Implementation sequence
 

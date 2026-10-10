@@ -22,7 +22,7 @@ and `agent@knowledge-architect-standing-state-reviewer`; the plan-document revie
 `agent@knowledge-architect-cold-implementer-reviewer`,
 `agent@knowledge-architect-code-claims-reviewer` and
 `agent@knowledge-architect-design-conformance-reviewer`; and
-`agent@knowledge-architect-transcript-reviewer`, all dispatched rather than read), **recording**
+`agent@knowledge-architect-transcript-reviewer`), **recording**
 what a review changes (`skill@knowledge-architect-decision-recording`,
 `skill@knowledge-architect-issue-tracking`), and **auditing** one aspect of the whole project
 rather than a diff (`skill@knowledge-architect-project-audit`).
@@ -36,11 +36,11 @@ rather than a diff (`skill@knowledge-architect-project-audit`).
 | fidelity of relocation | where content moved, was anything lost? A reason dropped, a number changed, an argument compressed to an assertion | content was relocated, or forked from another source |
 | routing of knowledge | `agent@knowledge-architect-routing-reviewer` | a durable statement was added or moved |
 | decision recording | `agent@knowledge-architect-decision-record-reviewer`. If a plan document was written, hand it to this reviewer too | a decision was made, reversed or harvested |
-| standing state | `agent@knowledge-architect-standing-state-reviewer` | before every merge to the main branch, since it is the standing re-entry point of every tripwire and every deferred trigger |
+| standing state | `agent@knowledge-architect-standing-state-reviewer` | at the review before a merge, since it is the standing re-entry point of every tripwire and every deferred trigger |
 | cold implementer | `agent@knowledge-architect-cold-implementer-reviewer`: can a session that did not see the discussion act on the plan document | a spec or a milestone was written under `skill@knowledge-architect-planning`, or a decided shape in one revised; that skill names the moment |
 | code claims | `agent@knowledge-architect-code-claims-reviewer`: is every statement the plan document makes about existing code true of the tree | the same moment |
 | design conformance | `agent@knowledge-architect-design-conformance-reviewer`: does the plan document fit the project's goals, design heads and rejected alternatives | the same moment |
-| transcript | `agent@knowledge-architect-transcript-reviewer`: has everything the work's sessions established that must outlive them a durable outcome, and is no ruling of the owner misstated | the transcripts of the sessions that produced the work are available; at the review before a merge, only alone and last (below), not also with the other axes |
+| transcript | `agent@knowledge-architect-transcript-reviewer`: has everything the work's sessions established that must outlive them a durable outcome, and is no ruling of the owner misstated | the transcripts of the sessions that produced the work are available; at the review before a merge, alone and last (below), not also with the other axes; at an earlier review of the branch, only where the work is a plan document assembled from a transcript, in the batch |
 
 Each of these is conditional on the work. In other skills, more axes are added to this list, when
 the work has properties these axes do not reach. **A review owes every axis of this table whose
@@ -101,24 +101,25 @@ re-checking.
 - **The dispatcher does not defend the work.** Findings arrive as claims to check, not as attacks to
   answer. Verify each against the tree before relaying or acting on it; a reviewer can be wrong, and
   saying so requires the same reproduction the reviewer owed.
-- **Every reviewer that runs tests, a mutation, or any command of the checker or of a program the
-  project builds gets its own worktree, detached at the commit under review, never the live
-  tree.** A run in the live tree races the dispatcher's own edits, and a worktree that shares the
-  branch ref moves under the reviewer at the dispatcher's next commit. The shape is
+- **Every subagent that judges a commit, and runs tests, a mutation, or any command of the checker
+  or of a program the project builds, gets its own worktree, detached at that commit, never the
+  live tree**: a reviewer at the commit under review, an auditor at the commit audited. A run in
+  the live tree races the dispatcher's own edits, and a worktree that shares the branch ref moves
+  under the subagent at the dispatcher's next commit. The shape is
   `git worktree add --detach <path> <commit>`, at a path outside the project, or under a path its
   ignore rules cover, since the checker walks untracked files and stops on a nested repository,
-  and `git worktree remove <path>` once the review and the repairs are done. **The dispatcher names
-  each reviewer's path in its brief, distinct for each reviewer**, so reviewers dispatched together
-  never build inside one another's worktree. **It names a scratch directory too, distinct for each
-  subagent dispatched together**, reviewer or not, and a subagent that writes working files writes
-  them there only: subagents sharing one scratch directory overwrite one another's files. **The
-  reviewer's build output stays inside its worktree.** Unless every target is tied to its checkout, as the setup skill
-  shows, a build directory two checkouts share lets the live checkout run the reviewer's build,
-  which judges the live tree with the reviewer's code. Where every target is tied, a shared
-  directory costs a rebuild at each switch between the two checkouts instead. In a Rust project,
-  the reviewer sets `CARGO_TARGET_DIR` to a directory inside its worktree that the project's
-  ignore rules cover, such as its `target/`: a build directory git does not ignore is walked by
-  the checker, and a finding in any of its files fails the run.
+  and `git worktree remove <path>` once the subagent's findings have their outcomes. **The
+  dispatcher names each subagent's path in its brief, distinct for each subagent**, so subagents
+  dispatched together never build inside one another's worktree. **It names a scratch directory
+  too, distinct for each subagent dispatched together**, and a subagent that writes working files
+  writes them there only: subagents sharing one scratch directory overwrite one another's files.
+  **The subagent's build output stays inside its worktree.** Unless every target is tied to its
+  checkout, as the setup skill shows, a build directory two checkouts share lets the live checkout
+  run the subagent's build, which judges the live tree with the subagent's code. Where every
+  target is tied, a shared directory costs a rebuild at each switch between the two checkouts
+  instead. In a Rust project, the subagent sets `CARGO_TARGET_DIR` to a directory inside its
+  worktree that the project's ignore rules cover, such as its `target/`: a build directory git does
+  not ignore is walked by the checker, and a finding in any of its files fails the run.
 - **No reviewer edits the live tree, and none runs there an operation that can lose content**: no
   stash, no reset, no checkout of a path.
 
@@ -170,7 +171,7 @@ the reviewer finds misstated is the owner's, and is put to the owner.
 **Where the branch's commits reach the main branch as they are** (a fast-forward, or a rebase merge,
 which may give them new SHAs; GitHub's rebase merge drops a commit that changes no file):
 
-- **A repair made on the branch is a new commit, appended**, which edits no history, except one
+- **A repair of the branch's tree is a new commit, appended**, which edits no history, except one
   that `primer@branch-commits` folds into an earlier commit. Either way, the paragraph recording
   the review says what was repaired, and what was folded.
 - **A commit message carrying a mistake is repaired by amending** while it is the newest commit, and

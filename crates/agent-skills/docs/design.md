@@ -477,8 +477,8 @@ same reasoning. Only the design skill and the setup skill state a set so far:
 
 Every item the owner is asked to rule on by name, and which carries no slug when it is put to the
 owner, gets a label: a prefix of capital letters naming its kind, and a number. Numbers run from 1
-within each prefix, in order of appearance, and are never reused within the record that carries
-the ruling: the committed document the label reaches, a milestone's documents counting as one; a
+within each prefix, in order of appearance, and are never reused within the record the label
+reaches: the committed document, a milestone's documents counting as one; a
 file; or the commit messages of one branch, counting as one. A label that reaches none is numbered
 within the message that puts it to the owner. An item that gains a
 slug later keeps its label beside it. A label that reaches a committed document, even one that
@@ -1712,10 +1712,11 @@ contradict an installed one, the installed text is wrong for that project, and t
 it. A project that needs to change one instruction has no means yet:
 `issue@agent-skills@patching-an-installed-skill`.
 
-### A project's own skills and agents carry its name as a prefix `##skill-name-prefix`
+### A project's own files in the installer's directories carry its name as a prefix `##skill-name-prefix`
 
-A project skill or agent is named `<project>-<activity>`, the directory or file name equal to the
-frontmatter `name`, so it is told apart from an installed one and from another project's. A colon,
+A project skill, agent or saved workflow is named `<project>-<activity>`, the directory or file
+name equal to the frontmatter `name`, or to the `name` of a saved workflow's `meta`, so it is told
+apart from an installed one and from another project's. A colon,
 as in `<project>:<activity>`, is not used: a subagent's name cannot hold one, and a skill so named
 cannot be told apart from a plugin's.
 
