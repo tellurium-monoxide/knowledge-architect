@@ -79,8 +79,8 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 - **a violation left**, for this axis: a confirmed finding of a re-check that is not on the kept
   list. It is what the generic stop rule counts.
 - **severe**: a confirmed finding whose outcome is the owner list, whatever its class.
-- **the owner's budget**: the number of agents the owner names when asking for the run; 15 when the
-  owner names none.
+- **the owner's budget**: the number of agents the owner names when asking for the run; the lens
+  table's total, 16, when the owner names none.
 
 ## What the work is
 
@@ -616,7 +616,8 @@ text is written from the start, such as the reference grammar, has to be known b
 
 Round 4, agent. Bears on `thread@agentic-workflow-axis@checker-rules-lens` and
 `thread@agentic-workflow-axis@workflow-axis-lenses`. "L7 gets 2, and L5 drops from 2 to 1, since D3
-narrowed L5 to drifted restatements and missing pointers."
+narrowed L5 to drifted restatements and missing pointers." The same message said this kept the
+default at 15; the counts it proposed, which the owner approved, sum to 16.
 
 ## New names, in one place
 
@@ -704,7 +705,7 @@ one lens:
 | L7 checker rules | per "The checker-rules lens" | 2 |
 
 Each lens is dispatched at least once. The count is the session's, within the owner's budget, and the
-table's 15 is the stated default. An L2 agent's brief names its group of activities; two L2 agents
+table's total, 16, is the stated default. An L2 agent's brief names its group of activities; two L2 agents
 are duplicates only when they share a group. The re-check dispatches the same table again. There is
 no calibration sample: the sort reads every finding, the duplicates of a lens add coverage, and the
 re-check reads again. A finding two agents report is merged and noted as such.
