@@ -633,9 +633,9 @@ code reads the comment at that code, not a design home it would have to think to
 where the checker's reach ends: a reason that several sites must respect needs a home each site can
 cite, and a comment cannot be cited, while a policy no code and no text states, or an absence, has
 none; for agent-facing text, each text that states the instruction is one site, so a reason stated
-by one text lives beside its instruction. The earlier reading of test 2 for installed text failed: an
-audit counted two skills stating one decision as one site, and its clause "a policy with no code of
-its own" could be read to admit every decision about installed text, as the closed issue
+by one text lives beside its instruction. The rival reading, a policy with no code of its own as the
+case of installed text, fails: an audit counted two skills stating one decision as one site, and the
+clause could be read to admit every decision about installed text, as the closed issue
 what-a-site-is-for-installed-text-is-undefined records, found with
 `git log --diff-filter=D -- '*/what-a-site-is-for-installed-text-is-undefined.md'`. Test 1 covers
 every interface others consume, not only a type or a signature: a head about a grammar, a file
@@ -1431,9 +1431,14 @@ of one Component, each read by one agent that writes one draft per entry to a sc
 its own; a shared sample judged by every agent, where a difference that one reading of the rule's
 text settles is settled by the session before sorting, and a difference the rule's text admits both
 ways goes on the owner list; every draft that proposes a change read by the session against its
-entry and its history; one list for the owner, labelled `F<n>`; the edits applied and their diff
-read whole, each head a split, a rename or a merge creates judged alone against every rule; and a
-re-check by fresh agents over the same groups. A group holds one Component's entries, since a
+entry and its history; one list for the owner per pass, labelled `F<n>`; the edits applied and
+their diff read whole, each head a split, a rename or a merge creates judged alone against every
+rule; and a re-check by fresh agents over the same groups, whose drafts start the next pass. Passes
+repeat while the violations left fall from one pass to the next, until the owner judges what is
+left small enough. The stop rule is the owner's, given in place of a fixed threshold: "As long as we
+observe a "convergence", and the amount of leftover violations is small enough, I think that is
+good. If you ask an LLM to find a flaw or defect in something, it will nearly always find one IMO.
+Especialy if that something is prose and not code." A group holds one Component's entries, since a
 rejected alternative is judged against the head it lost to. The bound of 60 is the one
 `design@agent-skills@standing-entry-search-groups` argues for a standing entry; an auditor reads
 more per head, its tripwires, its issues and its history, and no measurement shows the bound right
@@ -1454,9 +1459,12 @@ taken from the answer to another question.
 Its corpus is every design head and every rejected alternative of every Component, and its rules
 are `primer@design-heads` and `skill@knowledge-architect-decision-recording@losing-alternatives`.
 Each head is read with the tripwires guarding it, the issues naming it and the history behind each
-citation of the owner, and the audit repairs a tripwire or an issue only where its own edit makes it
-stale. The owner narrowed the axis to that reading: "Reading the tripwires and issues related to design is important IMO, so that the audit
-on design takes them into account." The restatements of a head in other texts left the axis on the
+citation of the owner. The owner narrowed the axis to that reading: "Reading the tripwires and
+issues related to design is important IMO, so that the audit on design takes them into account."
+The audit repairs a tripwire or an issue only where its own edit makes it stale: the conformance of
+a tripwire or an issue to its own register's rules is the axis of that register, and a judgement of
+it here would read entries the decision record does not hold, while a stale one the audit's edit
+leaves is a defect of the audit itself. The restatements of a head in other texts left the axis on the
 owner's word: "It does not read the same thing at all." The truth of a head about the code is
 another axis too, since it reads the code rather than the decision record. A head the axis meets
 false of the code gets an issue. The axis is carried by `agent@knowledge-architect-design-record-auditor`.

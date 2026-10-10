@@ -89,7 +89,7 @@ owner's decision.
 | --- | --- | --- |
 | what the project, or one Component, is for, and what would show it achieved | that Component's goals home, `path@*@docs/goals.md` or `path@*@docs/goals/` (the project's root is a Component) | the owner abandons the goal |
 | how the project or a Component is built, and why | that Component's design home, `path@*@docs/design.md` or `path@*@docs/design/` | the design changes: the entry is rewritten in place |
-| the engineering alternative that lost, and why | that Component's `path@*@docs/rejected-alternatives.md` | it is reopened and chosen, or the owner rules it fails every recording test; a reversal moves the old winner into it if it meets a recording test of `skill@knowledge-architect-decision-recording` |
+| the engineering alternative that lost, and why | that Component's `path@*@docs/rejected-alternatives.md` | it is reopened and chosen, the owner rules it fails every recording test, or the decision it lost to leaves the design home and the text that keeps that decision's reason names it; a reversal moves the old winner into it if it meets a recording test of `skill@knowledge-architect-decision-recording` |
 | what is outstanding: a defect, an unexplained observation, an open question, missing work | one file in the owning anchor's issue directory, `path@*@docs/open-issues/` in a Component | the issue closes |
 | evidence that would flip a recorded decision about code that exists | the owning Component's tripwires home, `path@*@docs/tripwires.md` or `path@*@docs/tripwires/` | it fires, or its decision is gone |
 | a contract or a trap that only a developer needs, true of the code as it stands | the scoped `CLAUDE.md` nearest the code | the contract changes or the trap is removed |

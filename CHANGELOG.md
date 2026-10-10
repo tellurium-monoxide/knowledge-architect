@@ -100,7 +100,8 @@ subsection is omitted.
   cites, after the pin's commit, in a branch of its own; the milestone that moves an adopting
   project's existing documents ends by running the design-record axis.
 - `agent-skills`, patch: an entry of the rejected alternatives leaves its file when it is reopened
-  and chosen, or when the owner rules that it fails every recording test.
+  and chosen, when the owner rules that it fails every recording test, or when the decision it lost
+  to leaves the design home and the text that keeps that decision's reason names the alternative.
 
 ## 0.5.0
 

@@ -233,6 +233,11 @@ four tests.
 **A rejected alternative that is reopened, chosen and implemented moves out of the file.** The file
 must not describe as rejected a design the project now has.
 
+**An entry also leaves when the owner rules that it fails every recording test**, as an audit may
+propose, **or when the decision it lost to leaves the design home** for a line beside the
+instruction it states: that line then names the alternative and the reason it lost, so a session
+that reopens the instruction still meets it.
+
 ## Tripwires from a premortem {{slug:premortem-tripwires}}
 
 %% The `T` label: `design@agent-skills@ruled-items-labelled`.
