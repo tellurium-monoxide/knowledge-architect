@@ -6,7 +6,7 @@ kind: todo
 ## Summary
 
 The first run of `skill@knowledge-architect-project-audit@agentic-workflow-axis` on this repository
-stopped after pass 3, on the owner's judgement. Its three passes repaired findings one site at a
+stopped after pass 3, on the agent's proposal, which the owner approved. Its three passes repaired findings one site at a
 time, and about 25 of pass 3's findings were interactions between the rules passes 1 and 2 had
 added. The owner ruled that the axis repairs by cause instead, centralizes the instructions of one
 moment in one home, and runs a second phase of agents that cluster findings and propose repairs.
