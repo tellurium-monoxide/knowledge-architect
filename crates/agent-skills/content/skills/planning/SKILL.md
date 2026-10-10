@@ -177,7 +177,7 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 | Acceptance criteria | one item per criterion, ``### <criterion> `##<id>` ``, as `skill@knowledge-architect-planning@acceptance-criteria` says |
 | Implementation sequence | in a spec, its steps; in a milestone document, its slices, each linked to its spec, whose own steps it holds (`skill@knowledge-architect-planning@cutting-steps-and-slices`). Concise: what each builds and what it fails alone on |
 | Order rationale | one sentence per pair of adjacent steps or slices |
-| Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, labelled `D<n>`, with the thread it bears on, until the owner rules; and the label of each acceptance criterion awaiting the owner's word |
+| Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, labelled `D<n>`, with the thread it bears on, marked as ruled once the owner rules; and the label of each acceptance criterion awaiting the owner's word |
 | Harvest | what lands where and when. In a spec, its rows; in a milestone, each slice's row in that slice's spec, and the row of the milestone document itself in it |
 | Later consequences | what each later piece of work adds or replaces, so a later reader knows what was deliberately left |
 
@@ -247,8 +247,11 @@ subagent that reads every transcript file the discussion spans, a resumed sessio
 extracts the delta tables, the owner's messages verbatim and the arguments; the design skill's
 per-round delta is the draft it reads. A line is the owner's only when the harness marks it as the
 user's and it is neither text the harness injects (a line marked meta or of a non-human origin, a
-system reminder, a tool result, a subagent's report) nor a skill's text, except that the owner's
-answers to a question tool, which arrive as a tool result, are the owner's. Where one argument ends and the next begins is decided at
+system reminder, a tool result, a subagent's report) nor a skill's text, except two kinds of line
+that are the owner's: the owner's answers to a question tool, which arrive as a tool result, and a
+message the owner typed while the session worked, which arrives as a line whose `type` is
+`attachment`, whose `attachment.type` is `queued_command` and whose `attachment.origin.kind` is
+`human`, its text in `attachment.prompt`. Where one argument ends and the next begins is decided at
 assembly, and the transcript reviewer of `skill@knowledge-architect-planning@plan-reviews` checks that no argument was lost. The status section names the
 transcript files read, so that a reviewer reads the same ones. Each file is found by the
 discussion's opening message, never by a session identifier, as `skill@knowledge-architect-review`
@@ -414,7 +417,8 @@ of a spec follows it too, as its last paragraph says.
    as many commits as the session judges the work needs. The commits name how each claim's test was
    shown to fail against a wrong implementation, and say of any claim whose test cannot yet do so
    why not.
-4. **Review before the merge**, per `skill@knowledge-architect-review`. A repair is a further
+4. **Review before the merge**, per `skill@knowledge-architect-review`, on every axis but the
+   transcript reviewer, which runs once, at the harvest's review of point 6. A repair is a further
    commit, or folded where that skill says.
 5. **The report**: the landing commit reports on each acceptance criterion judged at this slice,
    by its identifier in plain text, beside a citation of the milestone document (`skill@knowledge-architect-planning@acceptance-criteria`).
@@ -476,7 +480,7 @@ skill lists, the blind brief included, on every axis of its table whose conditio
 these four:
 
 - `agent@knowledge-architect-cold-implementer-reviewer` reads the document as the implementer of its
-  work, or of a milestone's first step and reports every place where it cannot act: undefined names,
+  work, or of a milestone's first slice, and reports every place where it cannot act: undefined names,
   shapes without enough detail to write, procedure gaps, ambiguities, and what it would have to
   reconstruct from a conversation it did not see. It also applies the readiness checks below.
 - `agent@knowledge-architect-code-claims-reviewer` verifies every statement the document makes about
@@ -501,7 +505,8 @@ these four:
 before acting on it. A material finding is answered with a default, written into the sections it
 touches, and listed under the defaults awaiting the owner, with the thread it bears on and a label,
 `D<n>`, numbered from 1 across the document's revisions and never reused. The owner
-rules on each at the first audit, or at once if present, and a ruled default leaves the list. A finding
+rules on each at the first audit, or at once if present. A ruled default stays in that list, marked
+as ruled, with its label, since the sections it was written into cite it by its label. A finding
 that is a gap with one answer is applied in place. A finding that is wrong is dropped, with the
 reproduction that showed it wrong kept in the commit message. A scope change, a clause that widens or narrows
 a ruling or adds an obligation to it, is put to the owner, listed under the defaults awaiting the
@@ -524,8 +529,9 @@ This list is their one home; the reviewer reads it here.
 - every thread maps to a section and to a harvest home;
 - every text referencing a decision the work reverses or rewrites is named, with the step, slice or
   harvest that judges or updates it;
-- in a spec and a milestone document, every section of
-  `skill@knowledge-architect-planning@spec-contents` is present, and an empty one says so.
+- in a spec of specs/ and a milestone document, every section of
+  `skill@knowledge-architect-planning@spec-contents` is present, and an empty one says so; in a
+  slice's spec, the five sections of its entry.
 
 ## When a plan document leaves {{slug:plan-document-leaves}}
 

@@ -37,11 +37,11 @@ to judge is never room to act against an instruction.
   no work implements and that are not part of any spec, recorded when made. Design that is decided and not built is in a plan
   document until it lands. Check the code against a design home, never the other way. A divergence
   is a defect in one of them: say which, open an issue, and hold the part of the task that rests on
-  the point in divergence; the rest of the task goes on. A design home can be wrong, and
-  it still prevails over the code until the issue closes. It closes when the code changes to meet
-  the head, or when the head is reversed under `skill@knowledge-architect-decision-recording`; it
-  never closes by following the code. Work that goes on meanwhile, on the owner's word, builds on
-  the head.
+  the point in divergence until the owner's word; the rest of the task goes on. A design home can
+  be wrong, and it still prevails over the code until the issue closes. It closes when the code
+  changes to meet the head, or when the head is reversed under
+  `skill@knowledge-architect-decision-recording`; it never closes by following the code. Work on
+  that point that goes on meanwhile, on the owner's word, builds on the head.
 - **A reason recorded at the code** (an inline comment saying why the code is shaped so, or the
   message of the commit that argued it) is intent at the scale of that code. It binds as a
   presumption, below the design home: a change that defeats it argues against that reason in its
@@ -126,8 +126,9 @@ backticks. A `path` reference names the deepest anchor that holds its target, wi
 under it, no `..`, no `./` and no leading `/`, and ends with `/` exactly when the target is a
 directory; an anchor's own directory is named from the anchor above it, as
 `path@<parent-anchor>@<dir>/`. A relative markdown link is legal in a `README.md` or an `index.md`
-only, to a target under its own directory with no `..`; any other pointer is a backticked
-reference. A heading is a line that opens with `#` marks and holds text, with no list or block-quote marker before
+only, to a target under its own directory, its path under the same constraints as a `path`
+reference's; any other pointer is a backticked reference.
+A heading is a line that opens with `#` marks and holds text, with no list or block-quote marker before
 them; a line markdown reads as a heading in another shape, as a `---` right under a paragraph is,
 stops the check. The checker reads Markdown and Rust source, and each commit's message and tree
 through `{{command}} commits`; a reference anywhere else is found by grep.

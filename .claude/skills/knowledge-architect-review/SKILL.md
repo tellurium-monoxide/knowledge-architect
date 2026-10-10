@@ -111,8 +111,8 @@ re-checking.
   the reviewer sets `CARGO_TARGET_DIR` to a directory inside its worktree that the project's
   ignore rules cover, such as its `target/`: a build directory git does not ignore is walked by
   the checker, and a finding in any of its files fails the run.
-- **No reviewer edits the tree, and none runs an operation that can lose content**: no stash, no
-  reset, no checkout of a path.
+- **No reviewer edits the live tree, and none runs there an operation that can lose content**: no
+  stash, no reset, no checkout of a path.
 
 ## What a review leaves behind `##what-review-leaves`
 

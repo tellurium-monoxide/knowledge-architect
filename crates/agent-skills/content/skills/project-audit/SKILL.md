@@ -111,10 +111,11 @@ A finding outside the axis takes the first case of `primer@met-outside-the-task`
 %% rival, a report document, is the open question of
 %% `issue@agent-skills@audit-axes-beyond-the-design-record` for an axis whose fixes are code.
 **The commit messages are the record.** Each commit of a run says what was audited, at which
-commit, how it was dispatched, the calibration reading settled where the axis has one, and the
-outcome of every finding: applied, ruled by the owner under its label, opened as an issue with its
-id, or found to need nothing. A figure the run measured goes there too. A finding whose only record
-is a scratch file, or a plan document that will leave, is lost when that file goes.
+commit, named by its subject since a rebase merge gives the audit branch's commits new SHAs, how it
+was dispatched, the calibration reading settled where the axis has one, and the outcome of every
+finding: applied, ruled by the owner under its label, opened as an issue with its id, or found to
+need nothing. A figure the run measured goes there too. A finding whose only record is a scratch
+file, or a plan document that will leave, is lost when that file goes.
 
 %% The case of a run that changes no file follows
 %% `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.

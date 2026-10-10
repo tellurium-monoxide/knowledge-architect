@@ -90,6 +90,6 @@ no plan document schedules the work that would, open a `todo` issue for that wor
 - **A decision conflicts with a goal**, and the primer's rule sends the conflict to the owner. The
   goal prevails until the owner rules; if the ruling changes the goal, it changes through `skill@knowledge-architect-goal-setting@drawing-out-intent`.
 
-The goals ruled on in one session are written in one commit, whose message quotes each ruling. A
+The goals of one round of rulings are written in one commit, whose message quotes each ruling. A
 goal's removal and the repair of every reference it leaves dangling are one commit, so the commit
 passes the check.

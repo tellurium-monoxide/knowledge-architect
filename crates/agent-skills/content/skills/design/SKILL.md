@@ -257,7 +257,7 @@ the Component that will own the decision already holds it, with
 `{{command}} show design@<anchor>@<slug>`. In prose, write it plain with a
 `#` before it, as in #retention-window, never in backticks: a backticked
 span may be read by the checker as a reference. In the plan document the
-thread becomes an item, cited from inside that document only, per
+thread becomes an item, cited from inside its own plan only, per
 `skill@knowledge-architect-planning`. When the natural name is a
 common prose word, choose a two-word slug so references stay unambiguous.
 
@@ -721,7 +721,8 @@ the same exchange, plus:
   owner before deciding anything on its behalf. Do not treat
   "undocumented" as "disposable" in a project that documents nothing.
 
-Verdict record — the account step 8 hands off, specialized for a
+Verdict record — the account step 8 hands off on the full path, or
+the commit message carries on the in-change path, specialized for a
 keep-or-change verdict. Fill every slot. A decision that evaluates no
 incumbent design hands off under step 8 alone: it has no recurring
 failure to diagnose, so it has no Mechanism slot to fill, and this form
@@ -732,5 +733,7 @@ is not the shape for it.
   recurring failures
 - Tripwires: the specific evidence that would flip this verdict
 - Losing alternatives: what they were, and where the winner absorbs them
-- Recorded at: the plan document; at the harvest, the design entry of the
-  owning Component, when the verdict earns one
+- Recorded at: the plan document, or, for a verdict no work implements,
+  such as keep, the commit message of the in-change path; the design
+  entry of the owning Component, when the verdict earns one, at the
+  harvest or, on the in-change path, when the verdict is made
