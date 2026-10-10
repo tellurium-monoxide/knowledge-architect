@@ -121,3 +121,5 @@ Return findings, each naming the commit or the file and the exact reproduction. 
 clean, say so plainly**: that is a real result, and a report padded to look productive costs the
 dispatcher a verification pass per invented finding. Do not report style preferences, and do not
 review outside this axis.
+List what you met outside your axis under a heading "Met outside the task", for the dispatcher
+to route; do not review it.

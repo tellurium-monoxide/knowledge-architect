@@ -66,9 +66,9 @@ needs. The points hold for every axis; the dispatch is the axis's own, in its se
 5. **The sort.** Read every draft whose proposed outcome is not "nothing" against what it cites and
    the history it cites. Sort each finding into its outcome, under
    `skill@knowledge-architect-project-audit@outcomes`. A draft found wrong is corrected, and the same
-   agent's other drafts of the same kind are read again. Nothing an agent proposes is applied
-   before a reading confirms it. A quotation of the owner is confirmed against the question it
-   answered, in its source, as well as against its words: a verbatim answer to another question
+   agent's other drafts that the axis's section names are read again. Nothing an agent proposes is
+   applied before a reading confirms it. A quotation of the owner is confirmed against the question
+   it answered, in its source, as well as against its words: a verbatim answer to another question
    is not the owner's ground for this one.
 %% The `F` label: `design@agent-skills@ruled-items-labelled`.
 6. **The owner list.** One message per pass: the items grouped by kind, each under a label, `F<n>`, with a
@@ -78,15 +78,18 @@ needs. The points hold for every axis; the dispatch is the axis's own, in its se
    the whole diff before each commit.
 8. **The re-check.** Dispatch fresh agents of the axis, as its first dispatch was, after the edits,
    each also given the entries, the texts and the rules the owner ruled to keep, as a file in its
-   scratch directory. A finding of the re-check that a reading confirms and that is not on the kept
-   list is a violation left, whether a draft missed it or an edit made it: repair it or put it to
-   the owner. The re-check's drafts start the next pass, from point 5. The run stops when the owner
-   judges what is left small enough. The count of violations left is expected to fall from one pass
-   to the next; a pass where it does not goes to the owner as a question, with the counts, and
-   starts no new pass on its own.
-9. **Review.** The audit's branch is reviewed under `skill@knowledge-architect-review`, on these
-   axes: self-consistency, fidelity of relocation, routing of knowledge, decision recording,
-   standing state, and the transcript review last.
+   scratch directory. A finding of the re-check that a reading confirms, that is not on the kept
+   list, and that no issue entry of the run records, is a violation left, whether a draft missed it
+   or an edit made it: repair it or put it to the owner. The re-check's drafts start the next pass,
+   from point 5. The run stops when the owner judges what is left small enough. The violations left
+   then take their outcomes, as in points 5 to 7, and no re-check follows; one the owner does not
+   rule on becomes an issue entry, as a deferred item does. The count of violations left is expected
+   to fall from one pass to the next; a pass where it does not goes to the owner as a question,
+   with the counts, and starts no new pass on its own.
+9. **Review.** The audit's branch is reviewed under `skill@knowledge-architect-review`, on every
+   axis of its table whose condition holds, which include self-consistency, fidelity of
+   relocation, routing of knowledge, decision recording, standing state, and the transcript review
+   last.
 
 ## Outcomes {{slug:outcomes}}
 
@@ -97,8 +100,10 @@ Every finding takes exactly one outcome. A finding that fits no named case goes 
 | applied in the branch | the edits the axis's section lists as applied |
 | put to the owner, on the owner list | the edits the axis's section lists as the owner's; a verdict where a rule reads two ways; a conflict with a goal, which then follows `skill@knowledge-architect-goal-setting`; any finding no row names |
 | sent upstream | a finding on the installed text, which the project never edits: the axis's section says how |
-| an issue entry | a finding outside the axis, such as a statement false of the code when the axis does not read the code; work the owner approved that is too large for the branch; a finding the owner defers. The kind follows `skill@knowledge-architect-issue-tracking` |
+| an issue entry | a finding outside the axis that the primer's table routes to an issue, such as a statement false of the code when the axis does not read the code; work the owner approved that is too large for the branch; a finding the owner defers. The kind follows `skill@knowledge-architect-issue-tracking` |
 | nothing | the entry or the text conforms |
+
+A finding outside the axis takes the first case of `primer@met-outside-the-task` that applies.
 
 ## The record of a run {{slug:record-of-a-run}}
 
@@ -122,8 +127,9 @@ owner.
 **The corpus**: every design head of every Component, and every entry of its rejected
 alternatives.
 
-**The order of a Component's entries, and the inputs read beside each head**, are
-`agent@knowledge-architect-design-record-auditor`'s: read it whole before cutting the groups.
+**The order of a Component's entries, and the inputs read beside each head**, are in
+`agent@knowledge-architect-design-record-auditor`'s description, which the harness lists: cut the
+groups by that order.
 
 **The rules**: every rule of `primer@design-heads` for a head, and every rule of
 `skill@knowledge-architect-decision-recording@losing-alternatives` for a rejected alternative.
@@ -148,7 +154,8 @@ texts. A head found false of the code gets an issue entry, kind `defect`.
 - **The brief.** One agent per group writes one draft per entry. Its brief names the commit
   audited, its group's first and last entry, the sample's entries and its scratch directory.
 - **The sort** also reads a sample of the drafts that find their entry conforming, at least one per
-  group, and a draft found wrong sends the group's other drafts of the same kind back to a reading.
+  group, and a draft found wrong sends the same agent's other drafts that judge the same rule back
+  to a reading.
 - **Application.** A split, a merge or a move of a head is drafted first, like any other finding: a
   fold judged alone is the edit most often undone. Each head a split, a rename or a merge creates is
   then judged against every rule as an entry of its own, before the commit: moving text unchanged
@@ -179,7 +186,7 @@ it, in the classes `agent@knowledge-architect-workflow-auditor` defines: a contr
 trigger, a factual error, two readings, a provable gap. A gap that only predicts what an agent would
 do is a predicted gap: it becomes an issue, never an edit, since an instruction about how an agent
 behaves is added on evidence from real use. A case no instruction covers and judgement can decide
-is no finding.
+is no finding, per `primer@room-to-judge`.
 
 **Not in this axis**: how the owner works, which the retrospective judges against the expectation
 sets; the checker's own behaviour, whose code is not in the corpus; the scoped `CLAUDE.md` files.
@@ -207,10 +214,11 @@ is walked in the group of the activity it serves.
 | L7 checker rules | each rule the checker enforces on what an agent writes, against the installed text alone | 2 |
 
 **The sort** merges a finding two agents report, and notes it. It splits a finding tagged `I` into
-its installed side and its project side, each a finding with one outcome. A violation left, at the
-re-check, is a finding a reading confirms that is not on the kept list. Each pass's commit message
-gives the count of confirmed findings and of those that went on the owner list, so that the passes
-show whether the run converges.
+its installed side and its project side, each a finding with one outcome. A draft found wrong
+sends the same agent's other drafts of the same class back to a reading. A violation left, at the
+re-check, is a finding a reading confirms, that is not on the kept list, and that no issue entry of
+the run records. Each pass's commit message gives the count of confirmed findings and of those that
+went on the owner list, so that the passes show whether the run converges.
 
 **The outcomes of this axis**, for a finding on the project's own text:
 
@@ -220,9 +228,10 @@ show whether the run converges.
 | put to the owner, on the owner list | which side of a contradiction wins, a loop with no exit among them; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction |
 | an issue entry | a predicted gap; a finding the owner defers |
 
-**Sent upstream**: every finding on the installed text goes into one file, in the shape of the
-retrospective's workflow file, each finding numbered `W<n>`: the version of the checker used, what
-was audited at which commit, and the findings, with no standing questions. It is named
+**Sent upstream**: every finding on the installed text, over every pass of the run, goes into one
+file per run, written when the run stops, in the shape of the retrospective's workflow file, each
+finding numbered `W<n>`: the version of the checker used, what was audited at which commit, and the
+findings, with no standing questions. It is named
 `<YYYY-MM-DD>-<project>-workflow-audit-klarch-workflow.md`, and handled as
 `skill@knowledge-architect-retrospective@two-files` and
 `skill@knowledge-architect-retrospective@what-becomes-of-files` say for that file: it is written

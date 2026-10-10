@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-workflow-auditor
-description: Drafts the findings of the agentic-workflow axis of a project audit through one lens, reading the whole corpus of the axis, every text the harness delivers to a session as an instruction, for instructions a session cannot follow; one draft file per finding, and the same for a re-check after the audit's edits. To dispatch it, follow `skill@knowledge-architect-project-audit@agentic-workflow-axis`: send the agents of its lens table, each lens at least once and the count within the owner's budget, all in parallel; give each the commit audited, its lens, for the activity walk its group of activities, a scratch directory of its own, and, for a re-check, the file of entries, texts and rules the owner ruled to keep. Then read its drafts, never its summary alone. Dispatch it; do not read it.
+description: Drafts the findings of the agentic-workflow axis of a project audit through one lens, reading the whole corpus of the axis, every text the harness delivers to a session as an instruction, for instructions a session cannot follow; one draft file per finding, and the same for a re-check after the audit's edits. To dispatch it, follow `skill@knowledge-architect-project-audit@agentic-workflow-axis`: send the agents of its lens table, all in parallel: each lens at least once, L2 one agent per group of activities, and the count within the owner's budget, a budget too small for that being said to the owner; give each the commit audited, its lens, for the activity walk its group of activities, a scratch directory of its own, and, for a re-check, the file of entries, texts and rules the owner ruled to keep. Then read its drafts, never its summary alone. Dispatch it; do not read it.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -64,9 +64,9 @@ A finding is admitted when the session can confirm it by reading. Each class car
 - **a predicted gap**: "an agent might misjudge X". Draft it as such: it becomes an issue that
   states what a real session would have to show, never an edit.
 
-The installed text leaves room to judge on purpose. A case no instruction covers, where judgement
-can decide, is no finding. A finding about how the owner works is outside the axis: note it in your
-return, not as a draft.
+The installed text leaves room to judge on purpose, per `primer@room-to-judge`. A case no
+instruction covers, where judgement can decide, is no finding. A finding about how the owner works
+is outside the axis: note it in your return, under "Outside the axis", not as a draft.
 
 **The tag** says whose text must change: `W` for the installed skills, agents and primer, `P` for
 the project's own text, `I` for the interaction of the two, where the fix may fall on either side.
@@ -124,10 +124,13 @@ Drafts:
 - <file of the draft>: <lens>, <tag>, <class>; proposed outcome <outcome>
 
 Outside the axis:
-- <each note, or none>
+- <each note on how the owner works, or none>
 
 Commands run:
 - <each command, with its arguments>
+
+Met outside the task:
+- <each item, or none>
 ```
 
 If you could not read a file of the corpus whole, say so under the list of files, naming it.

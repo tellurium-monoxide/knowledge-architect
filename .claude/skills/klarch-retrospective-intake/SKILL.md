@@ -153,9 +153,9 @@ where `<stem>` is the received file's stem. The directory's README says what it 
   standing entries the search returned that bear on it.
 - **One section per finding or cluster**, headed by its ids and a short title, with a bullet per
   item of `skill@klarch-retrospective-intake@what-to-establish`, in prose. No table: the content of each item is too long to read in a cell.
-- **Every section that proposes an action ends with a `Default` line and an `Outcome` line**, the
-  latter left pending: a finding, a standing answer, a noted item, and a judgement on a standing
-  entry. A standing entry the file may meet gets a section of its own: a tripwire that may have
+- **Every section ends with a `Default` line and an `Outcome` line**, whatever it proposes, no
+  change included, the latter left pending: a finding, a standing answer, a noted item, and a
+  judgement on a standing entry. A standing entry the file may meet gets a section of its own: a tripwire that may have
   fired, a deferred trigger, a design issue's re-entry. Whether it fired, and its response, are the
   owner's to rule; the analysis proposes the judgement and its evidence.
 - **A span the checker would refuse is quoted in words.** A finding about a refused form tempts a

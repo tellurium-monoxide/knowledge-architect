@@ -79,3 +79,5 @@ conflict with a goal as **for the owner**: the dispatcher does not resolve it. T
 Components you read and the entries you ran `show` on. **If the document fits the record, say so
 plainly.** Do not propose designs, do not report style preferences, and do not review outside this
 axis.
+List what you met outside your axis under a heading "Met outside the task", for the dispatcher
+to route; do not review it.

@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-retrospective
-description: MUST use once per session, at the first of these moments, to offer a retrospective to the owner - a branch the session worked on has merged into the main branch, a plan document has left, or the owner says the session is ending - and run it only if the owner accepts. Covers what the retrospective examines (the installed skills and agents, the project's own instructions, how the two interact, and the checker), the standing questions it always asks, the expectation sets that bound what counts as a defect of an installed skill, the two files it writes outside the project, and how each file reaches the project that must change.
+description: MUST use once per session, at the first of these moments (deferred to the end of a task under way), to offer a retrospective to the owner - a branch the session worked on has merged into the main branch, a plan document has left, or the owner says the session is ending - and run it only if the owner accepts. Covers what the retrospective examines (the installed skills and agents, the project's own instructions, how the two interact, and the checker), the standing questions it always asks, the expectation sets that bound what counts as a defect of an installed skill, the two files it writes outside the project, and how each file reaches the project that must change.
 ---
 
 # Retrospective
@@ -20,8 +20,8 @@ Not covered here: **opening an issue entry in the project**,
 - a plan document has left the repository;
 - the owner says the session is ending.
 
-Offer it in one line, and run it only if the owner accepts. A declined retrospective is not offered
-again in that session.
+A moment that falls during a task defers the offer to the end of that task. Offer it in one line,
+and run it only if the owner accepts. A declined retrospective is not offered again in that session.
 
 ## What it examines `##what-it-examines`
 
@@ -42,18 +42,18 @@ subjects below, list what was **unclear** (it could be read two ways), **missing
 could not follow the workflow, or could not produce a document the checker accepts, without an
 instruction that does not exist), or **wrong** (following it produced a defect or a correction). A
 decision the session made by its own judgement where no instruction covers it is not missing: the
-installed text leaves that room on purpose. Each item quotes the instruction, says what happened when it was followed, and what was
+installed text leaves that room on purpose, per `primer@room-to-judge`. Each item quotes the instruction, says what happened when it was followed, and what was
 done instead.
 
 **Each finding is named by a letter and a number**, so that a fix, an issue or a commit can cite it
 by its id and the stem of its file (`skill@knowledge-architect-retrospective@two-files`), as "W3 of <date>-<project>-<subject>-klarch-workflow":
-**W** for the installed skills and agents, **C** for the checker, **P** for the project's own
+**W** for the installed skills, agents and primer, **C** for the checker, **P** for the project's own
 instructions. Numbers run from 1 within each letter, in order of appearance, so an id is unique
 within one file, and the stem makes the citation unique across retrospectives. An interaction
 finding whose fix may fall on either side goes in both files (`skill@knowledge-architect-retrospective@two-files`) and gets one id in each, each
 naming the other, since the two files may be read apart. The standing questions below take no id: they are answers, not findings.
 
-1. **The installed skills and agents.**
+1. **The installed skills, agents and primer.**
 2. **The project's own instructions**: its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own
    skills and agents.
 3. **How the two interact**: an installed instruction and a project instruction that contradicted
@@ -95,7 +95,7 @@ Each finding goes to the file of the project whose text or code must change:
 | file | holds |
 | --- | --- |
 | `<YYYY-MM-DD>-<project>-<subject>.md` | what the session did and the version it used, the findings on the project's own instructions, and the project's side of an interaction |
-| `<YYYY-MM-DD>-<project>-<subject>-klarch-workflow.md` | what the session did and the version it used, the findings on the installed skills and agents and on the checker, the workflow's side of an interaction, and the answers to the standing questions |
+| `<YYYY-MM-DD>-<project>-<subject>-klarch-workflow.md` | what the session did and the version it used, the findings on the installed skills, agents and primer and on the checker, the workflow's side of an interaction, and the answers to the standing questions |
 
 `<subject>` names the session's work in a few words, in lowercase joined by hyphens, such as
 `pin-move`. The session proposes it, and the owner may change it on reading the files. Before
@@ -176,7 +176,7 @@ defect of the skill (`skill@knowledge-architect-retrospective@what-it-examines`)
   only by the owner's word, and withholding it leaves the discussion parked rather than producing a
   wrong result.
 - **The owner accepts a methodology, not a script for every exchange.** Conduct outside what the
-  skill describes is the agent's judgement, not a gap to be filled.
+  skill describes is the agent's judgement, not a gap to be filled, per `primer@room-to-judge`.
 - **The project's design intent is discoverable, or the project is new.** The skill grounds itself in
   the goals, the design homes, the rejected alternatives, the README files, the open issues and the
   tripwires, or failing

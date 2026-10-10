@@ -124,6 +124,20 @@ subsection is omitted.
 - `agent-skills`, patch: a project audit stops on the owner's judgement, and a pass whose count of
   violations left does not fall goes to the owner as a question; a budget too small for the
   agentic-workflow axis's dispatch is said to the owner.
+- `agent-skills`, patch: before a merge, the transcript reviewer runs only alone and last; every
+  reviewer that runs a command of the checker gets a worktree outside the project or under an
+  ignored path; at the review before a merge, the activity whose work the branch holds is the
+  dispatching one; self-consistency is dispatched at every review.
+- `agent-skills`, patch: where the owner is absent, the work of a plan document proceeds on the
+  defaults it names, except a scope change.
+- `agent-skills`, patch: a retrospective whose moment falls during a task is offered when the task
+  ends.
+- `agent-skills`, patch: the move of an adopting project's existing documents starts under the
+  design skill, which hands it to planning.
+- `agent-skills`, patch: an issue entry is deleted with `git rm`, and the files an install removed
+  are staged, before the check runs.
+- `agent-skills`, patch: a subagent that edits nothing lists what it met outside its task under a
+  heading "Met outside the task" at the end of its report.
 
 ## 0.5.0
 

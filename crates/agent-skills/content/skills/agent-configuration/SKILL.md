@@ -129,11 +129,13 @@ than the entry. A project row may refine a row of the primer with what is the pr
 a README that is also its package's page on a registry; it never contradicts one, and a row that
 only repeats one is removed.
 
-**The routing table.** One row per installed skill or agent that a project skill or agent adds to:
+**The routing table.** One row per installed skill or agent that a project skill or agent adds to.
+A project skill or agent that adds a review axis to the axes of `skill@knowledge-architect-review`
+adds to it, and takes a row:
 
 | installed | project additions |
 | --- | --- |
-| `knowledge-architect-<installed skill>` | `<project>-<activity>` |
+| `skill@knowledge-architect-<installed skill>` | `skill@<project>-<activity>` |
 
 A project skill that adds to no installed one needs no row: its own description triggers it. When
 a project skill is added, renamed or removed, its row changes in the same commit.
@@ -157,6 +159,7 @@ longer ships. In the same commit:
 - update the routing table: a row whose installed skill was renamed or removed changes or goes;
 - read each project skill against the installed skill it adds to, for an instruction that now
   contradicts it;
+- stage the files the install removed, since a deletion git still lists stops the check;
 - run `{{command}} check`.
 
 ## Reviewing a configuration change {{slug:reviewing-a-change}}

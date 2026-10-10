@@ -116,7 +116,9 @@ registers = ["issue"]
 
 What the walk must not read is declared under `[walk]`, each row with its reason in a comment
 beside it: `skip-dirs` and `skip-files` for paths, `exclude` for another project kept inside this
-one. `[agents] harness` is absent for the default, the `claude` harness.
+one. A row names a path git tracks, spelled as git lists it: a path the ignore rules cover is
+already outside the walk, and a row naming it is a finding. `[agents] harness` is absent for the
+default, the `claude` harness.
 
 ## The documents each Component carries {{slug:component-documents}}
 
@@ -234,10 +236,12 @@ A project that already has documentation keeps it until its move is planned:
 3. **The owner rules** on the proposal, on each document by a label, `Q<n>`, given to it in the
    proposal. The issue below names each document by its path, not by the label.
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the
-   rulings. The move is then planned work, under `skill@knowledge-architect-planning`, and runs as a
-   milestone when the owner schedules it. Until then, the old documents and the new homes both
-   exist, and the issue is what records that. The milestone ends by running the design-record axis
-   of `skill@knowledge-architect-project-audit@design-record-axis` over its whole corpus, which then
+   rulings. The move is then planned work: when the owner schedules it, it starts under
+   `skill@knowledge-architect-design` as a requested change, with the issue as its grounding, and
+   its full path hands it to `skill@knowledge-architect-planning` as a milestone. Until then, the
+   old documents and the new homes both exist, and the issue is what records that. The milestone
+   ends by running the design-record axis of
+   `skill@knowledge-architect-project-audit@design-record-axis` over its whole corpus, which then
    holds what the move wrote.
 
 **A finding the check reports in an existing file is the owner's to rule**, since the setup does
@@ -245,8 +249,9 @@ not move or rewrite that file. Show the owner the finding and its repair, each f
 label, `Q<n>`, when there are several, such as a bare path
 rewritten as a reference. The owner rules between that repair and a
 `[walk] skip-files` row, with its reason beside it, that keeps the file out of the walk until its
-move. A file at the path of a register home, such as `path@*@docs/design.md`, has no such row: the check
-refuses a walk row over a register home, so its finding is repaired.
+move. A file at the path of a register home, such as `path@*@docs/design.md`, and the root
+`CLAUDE.md`, whose import of the primer the check reads, have no such row: the check refuses a walk
+row over either, so their findings are repaired.
 
 Setting up stops at a conformant structure, the goals, and that issue.
 
@@ -256,8 +261,9 @@ To move to another version:
 
 1. Edit the pin: both versions in the maintenance crate's `Cargo.toml`, the checker's and the
    gates library's, which move together, or the version of the local install; and
-   `[project] checker-version` in the manifest, which moves with them. Until all agree, every
-   command refuses, naming the two versions.
+   `[project] checker-version` in the manifest, which moves with them. Until the checker's version
+   and the manifest's pin agree, every command refuses, naming the two versions. Nothing compares
+   the gates library's version, so it is edited in the same change.
 2. Read the changelog of every version crossed. Any version but a patch may make a check
    stricter, a version may make one looser, and either changes what a test that pins findings
    sees; a major version may ask for a change to the project's layout. Each published crate ships its

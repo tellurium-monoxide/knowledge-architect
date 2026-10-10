@@ -126,3 +126,5 @@ Findings, each with:
 
 Then the count of the items you found with an outcome, by kind of item. State where you wrote the
 extraction, so the dispatcher can check it.
+List what you met outside your axis under a heading "Met outside the task", for the dispatcher
+to route; do not review it.
