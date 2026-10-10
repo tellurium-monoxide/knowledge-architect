@@ -45,9 +45,8 @@ The findings of this repository's two files are handled here, never as an issue 
 `design@knowledge-architect@retrospective-findings-stay-here`. A consumer's workflow file
 arrives the same way once the owner hands it over.
 
-A finding is cited by its id and its file's stem, as "W3 of
-2026-10-07-thaum-mock-reduction-workflow", a file of the older form; the installed retrospective
-skill gives the form for its own files.
+A finding is cited by its id and its file's stem, as "W3 of <date>-<project>-<subject>-workflow",
+a file of the older form; the installed retrospective skill gives the form for its own files.
 
 ## Ground before judging any finding `##ground-before-judging`
 

@@ -51,7 +51,7 @@ follow the code.
 3. **Implement.** A design decision met while building is routed by the backstop of
    `primer@design-heads`, at the moment it is met.
 4. **Gate** (`skill@klarch-development@development-gate`).
-5. **Commit.** The commit contract is root `CLAUDE.md`, section Git.
+5. **Commit.** The commit contract is `instructions@git-workflow`.
 6. **Review** (`skill@klarch-development@code-review-axes`), at any checkpoint where a coherent piece works, not only at the end. It follows
    the commit because a reviewer working on its own copy of the tree sees committed content only,
    so uncommitted work is reviewed by nobody. A repair the review asks for lands as
@@ -78,7 +78,7 @@ lesser one:
 
 **A mutation runs in a scratch worktree by default.** Reverting a hand-made mutation in the live
 tree with a restore can lose uncommitted work. Where the live tree is used
-anyway, the file is staged before the mutation, per root `CLAUDE.md`, section Git, so the revert
+anyway, the file is staged before the mutation, per `instructions@git-workflow`, so the revert
 does not depend on a restore. The worktree starts at HEAD, and the session's uncommitted work is
 brought into it, because the test under check is usually not committed yet. From the main tree's
 root, with `<name>` unique to the session so that no two sessions share a worktree:

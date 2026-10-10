@@ -260,8 +260,9 @@ is not in the staged tree, when the index holds an unmerged path, and when git c
 Under the `claude` agent harness, the default, the checker installs the agent skills, subagent
 definitions and a primer, and this command writes them into the project's `.claude/` directory,
 each rendered with the project's declared command. It removes every file of its own namespace the
-version does not ship: a skill directory or an agent file whose name starts with
-`knowledge-architect-`, and the directory .claude/knowledge-architect/. A project's own skill
+version does not ship: a skill directory, an agent file or a saved workflow file under
+.claude/workflows/ whose name starts with `knowledge-architect-`, and the directory
+.claude/knowledge-architect/. A project's own skill
 takes a name of its own, and the command never touches it. It never edits the root CLAUDE.md
 either: when the primer is shipped and the root CLAUDE.md does not import it, it says so, and the
 line to add is one holding exactly an at sign followed by .claude/knowledge-architect/PRIMER.md.

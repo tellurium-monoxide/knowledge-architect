@@ -275,9 +275,8 @@ and `design@agent-skills@plan-landing-is-not-tied-to-its-work`.
 
 ## Verify before relying on anything `##verify-before-relying`
 
-A document can describe the shape the code was committed at rather than the shape it has. Some of
-the core's documents were first written in another project, thaum; a figure measured there names
-thaum as its source.
+A document can describe the shape the code was committed at rather than the shape it has. A figure in
+the core's documents measured in another project, thaum, names thaum as its source.
 Confidence is not correlated with correctness: the more obvious a behaviour looks, the less likely
 anyone has checked it.
 
