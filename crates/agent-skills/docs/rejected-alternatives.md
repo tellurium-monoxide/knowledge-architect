@@ -199,3 +199,10 @@ candidate if a project's owner finds an audit's lists too long to read.
 brief must ask for. The head-rules sweep that preceded the audit skill ran that way, and the
 discussion that chose the agent recorded its result, in its argument a16 of the deleted spec
 design-record-audit: "Today's sweep drafts came out uneven where the brief was the only standard."
+
+**A routing table in the project's root `CLAUDE.md`, one row per installed skill or agent a project
+skill or agent adds to** — lost to `design@agent-skills@no-routing-table`. `live`. Every project
+skill is already listed with its description each session, and a review's added axes are owed
+through the dispatching activity's skill, so no row delivered anything those two did not. Its
+"adds to" had to be widened for each new kind of link, and the first agentic-workflow audit of this
+repository confirmed four findings that turned only on whether a row was owed.

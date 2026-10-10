@@ -280,7 +280,10 @@ statement false until a repair lands. The procedure is
 No operation can lose content, committed or not. Content is lost in two forms: an operation that
 removes uncommitted content from the working tree, which no commit holds, and a history edit that
 drops a commit no other reference holds. With a clean tree, editing the branch's own history is an
-ordinary move, bounded by verifying that nothing was lost.
+ordinary move, bounded by verifying that nothing was lost. The one exception is
+`git rebase --continue` on a rebase whose conflicts the tree now resolves: it resumes a history
+edit begun with a clean tree, and the uncommitted content it meets is the resolution, which the
+replayed commit records.
 
 ### A commit is pushed only after the commits check passed on it `##push-after-the-commits-check`
 
@@ -377,10 +380,10 @@ own issue registers, or closed with no change and the reason. An issue on GitHub
 place for what is open, beside the registers, against
 `goal@knowledge-architect@structure-and-workflow-work-together`.
 
-### Each finding of a received retrospective file gets an outcome the owner rules, in a committed analysis that leaves when its last outcome is carried out `##committed-findings-analysis`
+### Each finding of a received workflow file gets an outcome the owner rules, in a committed analysis that leaves when its last outcome is carried out `##committed-findings-analysis`
 
-A retrospective's workflow file that this repository receives, from its own sessions or from a
-project that uses the workflow, and the project file of this repository's own retrospective, are
+A workflow file that this repository receives, written by a retrospective or by a project audit's
+agentic-workflow axis, from its own sessions or from a project that uses the workflow, and the project file of this repository's own retrospective, are
 each analysed finding by finding under `skill@klarch-retrospective-intake`, and the analysis is a
 file of `path@knowledge-architect@docs/retrospective-reports/`, named by the received file's stem.
 Each finding gets one of three outcomes, ruled by the owner: handled now, opened as an issue, or no

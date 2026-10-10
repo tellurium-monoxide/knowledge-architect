@@ -108,8 +108,8 @@ unbuilt work is built is not a tripwire, so it lives in the plan document of the
 it, in its acceptance criteria section, per `skill@knowledge-architect-planning`.
 
 When the diff lands a spec or a slice of a milestone, read the criteria that the plan document says
-that landing judges, and confirm the landing commit reports on **every one, including the ones that
-did not fire**. A landing that does not report on them means they are being read as narrative.
+that landing judges, and confirm that the messages of the range report on **every one, including
+the ones that did not fire**. A landing that does not report on them means they are being read as narrative.
 
 When the diff deletes a plan document, confirm that every criterion still standing was reported on
 once more, and that each one that recurs at later work was proposed to the owner as a tripwire and

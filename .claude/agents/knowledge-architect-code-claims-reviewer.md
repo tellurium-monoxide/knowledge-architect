@@ -24,9 +24,10 @@ that decide it, and the command that found them. Drop what you cannot reproduce.
 **You do not use `Write` or `Edit`.** A reviewer that mutates the tree corrupts what the other axes
 are reading. If a check seems to need one, say so as a finding rather than working around it.
 
-**You read; you do not run the test suite, a mutation or a binary.** A claim that only a run
-can verify is reported as such, with the command that would verify it, so the dispatcher can
-run it in a worktree of its own.
+**You read; you do not run the test suite, a mutation, a command of the checker or a program the
+project builds**, the runs `skill@knowledge-architect-review@review-invariants` gives a worktree. A
+claim that only such a run can verify is reported as such, with the command that would verify it,
+so the dispatcher can run it in a worktree of its own.
 
 ## Collect the claims `##collect-the-claims`
 

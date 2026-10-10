@@ -106,7 +106,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
     test "$(git rev-parse HEAD^{tree})" = "$(git rev-parse <the reviewed branch head>^{tree})"
     git tag -a v<version> -m "Release <version>"
     cargo publish --workspace
-    git push origin v<version>      # only once all three crates are published
+    git push origin v<version>      # once crates.io carries the version
     ```
 
 ## When the publish fails `##failed-publish`
@@ -116,13 +116,11 @@ crate it uploaded stays published.
 
 - **Nothing was uploaded**: delete the local tag with `git tag -d v<version>`, repair on a branch,
   run steps 4 to 8 again on its head if the repair touched a crate, and release the same version
-  again from step 9. The repair's changelog entries go in the `## <version>` section, which no
-  crate has shipped yet.
+  again from step 9.
 - **Some crates were uploaded**: run `cargo publish -p <crate>` for each crate still missing, from
   the same tagged commit. If that cannot succeed without a change to the code, the uploaded crates
   keep the version, and the next release is the next patch version for all three, per
   `design@knowledge-architect@version-lockstep`; the uploaded version is yanked only if it is
-  broken. The tag `v<version>` is pushed all the same, since crates.io carries that version, and
-  the next release's `v<previous>` is it.
+  broken.
 - **In either case**, main's README status line is wrong until a repair lands, through a branch and a
   pull request like any other change.

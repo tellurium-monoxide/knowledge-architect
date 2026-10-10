@@ -34,9 +34,11 @@ Read the Component's own files first:
 - its `path@*@docs/open-issues/` and `path@*@docs/tripwires.md`, for what is outstanding and what
   would reopen a decision.
 
+Then read the root's design home, `path@knowledge-architect@docs/design.md`: it holds what binds
+every Component, so its heads bind a change inside one Component too.
+
 A behaviour that looks like a new defect is often recorded: `cargo klarch issues` and
-`cargo klarch tripwires` list every entry. `path@knowledge-architect@docs/design.md` at the root
-holds only what binds every Component, so read it when the change crosses one.
+`cargo klarch tripwires` list every entry.
 
 `primer@intent-and-claims` governs how to read all of them, read whole: intent is authority, and a
 divergence between a design document and the code is a defect in one of them, never licence to
@@ -46,11 +48,10 @@ follow the code.
 
 1. **Claims.** Take the unit of work's claims, each with the test that could refute it.
 2. **Write the tests, and show that they discriminate** (`skill@klarch-development@discriminating-tests`).
-3. **Implement.**
+3. **Implement.** A design decision met while building is routed by the backstop of
+   `primer@design-heads`, at the moment it is met.
 4. **Gate** (`skill@klarch-development@development-gate`).
-5. **Commit.** The commit contract is root `CLAUDE.md`, section Git. A design decision made or
-   reversed while building takes `skill@knowledge-architect-decision-recording` as well, which
-   judges whether it earns durable text.
+5. **Commit.** The commit contract is root `CLAUDE.md`, section Git.
 6. **Review** (`skill@klarch-development@code-review-axes`), at any checkpoint where a coherent piece works, not only at the end. It follows
    the commit because a reviewer working on its own copy of the tree sees committed content only,
    so uncommitted work is reviewed by nobody. A repair the review asks for is a further commit,
@@ -158,8 +159,8 @@ adversarial review of `skill@klarch-development@code-review-axes` chooses its ow
 **Dispatch when a coherent piece of code compiles, passes its tests, and does what its claims say**,
 and a defect found after the next piece is built on it would mean unbuilding both. That is the
 moment in this activity's terms; the list of such moments is open. Merging to main
-is not on this list, because it belongs to every activity, and root `CLAUDE.md`, section Git,
-carries it.
+is not on this list, because it belongs to every activity, and
+`skill@knowledge-architect-review@review-axes` says what its review owes.
 
 **How to dispatch is `skill@knowledge-architect-review`**: the invariants that make a finding worth
 acting on, how to write a brief, and where findings land. Read it before sending anything.

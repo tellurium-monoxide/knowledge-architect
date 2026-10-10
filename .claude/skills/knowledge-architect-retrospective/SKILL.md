@@ -48,8 +48,8 @@ done instead.
 **Each finding is named by a letter and a number**, so that a fix, an issue or a commit can cite it
 by its id and the stem of its file (`skill@knowledge-architect-retrospective@two-files`), as "W3 of <date>-<project>-<subject>-klarch-workflow":
 **W** for the installed skills, agents and primer, **C** for the checker, **P** for the project's own
-instructions. Numbers run from 1 within each letter, in order of appearance, so an id is unique
-within one file, and the stem makes the citation unique across retrospectives. An interaction
+instructions. Numbers follow `primer@labelled-items`, so an id is unique within its file, and the
+stem makes the citation unique across retrospectives. An interaction
 finding whose fix may fall on either side goes in both files (`skill@knowledge-architect-retrospective@two-files`) and gets one id in each, each
 naming the other, since the two files may be read apart. The standing questions below take no id: they are answers, not findings.
 

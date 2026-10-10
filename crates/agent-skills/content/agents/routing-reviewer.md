@@ -58,9 +58,10 @@ segment: a bare filename named in prose, a heading or
 a section title quoted from another document, a misspelt kind. A path-shaped span whose first
 segment the tree does not hold is silent too: a typo in that segment, a pointer into an ignored
 directory, a pointer written after its directory left. So is a `<word>#<id>` form whose id is no
-entry and whose word is no anchor, such as a copied slug whose entry has left. The checker reads Markdown and Rust
-source only, so a reference in a comment of another language is read by nobody but you. Those are
-yours to resolve by reading, and they are where this axis's real failures survive.
+entry and whose word is no anchor, such as a copied slug whose entry has left. A reference in a
+file or a part of a file the checker does not read, per `primer@where-knowledge-goes`, is read by
+nobody but you. Those are yours to resolve by reading, and they are where this axis's real
+failures survive.
 
 ## The predicates {{slug:routing-predicates}}
 
@@ -84,14 +85,9 @@ restatement, which is the defect. Whether a directive is needed at its point of 
 delivery decision and belongs to the owner. For an installed skill or agent, the home is installed
 text, since it is shipped to projects whose records it cannot reference.
 
-**Does any pointer have to be followed before a session can act?** Ask it of each pointer out of an
-instruction: *could a session complete this activity correctly without opening this?* A pointer to an
-argument, or to task material that varies per instance such as a figure or a layout, is fine. So is
-a named prerequisite skill, or a complete home the pointer asks to read whole, which is one complete
-instruction rather than a fragment to reassemble. A pointer into root `CLAUDE.md` or into the
-primer is free, since both already reach every session. A pointer to *part* of a directive the
-session must apply is the defect: the pointer names the whole home, or the part is restated where it
-is no longer than a pointer. `skill@knowledge-architect-agent-configuration` owns the test.
+**Does any pointer have to be followed before a session can act?** Judge each pointer out of an
+instruction by the test of `skill@knowledge-architect-agent-configuration@shaping-a-skill`, read
+whole.
 
 **Does a decision sit in the right Component?** Judge it by the three questions of
 `skill@knowledge-architect-decision-recording@owning-component`, read whole, and by its exception

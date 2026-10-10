@@ -58,9 +58,8 @@ change:
 - **Rewrite the head in place** (`skill@knowledge-architect-decision-recording@current-design`), and give the new statement its own slug when it is a new
   statement. Keep the old slug only where it still names the same decision. The slug and the
   title stay aligned with the full scope of the decision, per `primer@design-heads`, so rename it
-  even when that means rewriting every reference in the project. A rename is cheap, and the checker lists every reference it leaves dangling in the files it reads:
-  Markdown and Rust source. A reference in a comment of another language is not read, so grep for
-  the slug as well.
+  even when that means rewriting every reference in the project. A rename is cheap, and the checker lists every reference it leaves dangling in the files it
+  reads, per `primer@where-knowledge-goes`; grep for the slug as well, for the rest.
 - **Move the incumbent into the Component's rejected alternatives** (`skill@knowledge-architect-decision-recording@losing-alternatives`) with its reason and a
   validity marker, stated as strongly as it was originally made, if it meets one of the tests of `skill@knowledge-architect-decision-recording@losing-alternatives`.
 - **Argue it under `skill@knowledge-architect-design` first**, if it was not: a reversal contradicts
@@ -167,10 +166,10 @@ question is whether **a shape lost to an argument**.
 | --- | --- |
 | ruled out | judged by the tests below |
 | withdrawn with a defeating reason | the same as ruled out: its own proposer gave it up on an argument |
-| withdrawn with no defeating reason | the spec only. It carries no argument a later reader could test. |
-| superseded, when the absorbing thread carries its shape whole | the spec only |
+| withdrawn with no defeating reason | the deliberation only. It carries no argument a later reader could test. |
+| superseded, when the absorbing thread carries its shape whole | the deliberation only |
 | superseded, when a distinct shape lost | judged by the tests below, as a ruled-out thread |
-| a shape that lost, when the question produced no decision | the spec only. An entry names the decision it lost to, and there is none. If the question stays open, it is an issue under `skill@knowledge-architect-issue-tracking`. |
+| a shape that lost, when the question produced no decision | the deliberation only. An entry names the decision it lost to, and there is none. If the question stays open, it is an issue under `skill@knowledge-architect-issue-tracking`. |
 
 **An alternative earns an entry only if at least one of these holds:**
 
@@ -190,7 +189,8 @@ reconstructs needs no entry. Evidence does not, so an alternative refuted by mea
 Test 4 gives future design sessions the alternatives that were not chosen, so they can start from
 somewhere when the chosen one proves insufficient.
 
-An alternative meeting none of those stays in the spec and the commit message, and nowhere else.
+An alternative meeting none of those stays in the deliberation, where
+`skill@knowledge-architect-decision-recording@three-homes` keeps it, and nowhere else.
 
 **A losing alternative is not recorded to make sure it is never proposed again.** It is recorded
 so that the next time someone brings it to the table, the arguments that justified the rejection
@@ -219,9 +219,7 @@ reason.
 **`live` records that the reason held against the arguments seen, not that the question is shut.**
 A new argument or new evidence reopens any entry here at any time, and that is an ordinary move
 rather than a transgression.
-The record decides what counts as new: an alternative is argued-and-lost only where a recorded
-reason covers the discriminating fact. A reworded proposal that defeats or evades the recorded
-reason is new by definition.
+What counts as new is the record test of `skill@knowledge-architect-design@threads-and-states`.
 
 **Every entry states a reason a reader can check without leaving the entry, or points at where the
 reason is.** _"Refuted by measurement"_ satisfies neither: it asserts that a checkable reason exists

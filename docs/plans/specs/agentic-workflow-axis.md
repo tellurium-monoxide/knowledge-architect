@@ -239,8 +239,7 @@ The work rewrites two heads by its threads, three more per D4 to D6, and reads a
 - `design@agent-skills@restatement-size-test` is not rewritten under D3's default: L5 is narrowed to
   meet it.
 - Per D12, `design@knowledge-architect@retrospective-findings-stay-here` gains the audit's findings
-  on the installed text, and its restatement in `instructions@repository-skills` says so; the
-  routing table, which holds only project skills and agents, stays empty. Per D15,
+  on the installed text, and its restatement in `instructions@repository-skills` says so. Per D15,
   `design@agent-skills@ruled-items-labelled` widens its `W` row to an audit's upstream file.
 
 The two rewritten by the threads:
@@ -871,7 +870,7 @@ one lens:
 | L3 two readings | an instruction whose words allow two readings that lead to different acts | 2 |
 | L4 provable gap | per "The finding standard" | 2 |
 | L5 restatement | each restatement against its home: one that drifted from it, or one without its pointer, per D3 | 1 |
-| L6 local against installed | the project's own text against the installed text: a contradiction, a duplicate, a routing-table row that says the wrong thing | 2 |
+| L6 local against installed | the project's own text against the installed text: a contradiction, a duplicate | 2 |
 | L7 checker rules | per "The checker-rules lens" | 2 |
 
 Each lens is dispatched at least once. The count is the session's, within the owner's budget, and the
@@ -975,7 +974,6 @@ Each lens target maps to a class, and each class to an outcome:
 | a restatement that drifted from its home | contradiction, with its home | applied, brought back to its home |
 | a restatement without its pointer | broken trigger | applied, the pointer added |
 | a project text duplicating an installed one word for word | restatement without its pointer, when no pointer stands beside it | applied |
-| a routing-table row that says the wrong thing | factual error | applied |
 | an agent might misjudge X | predicted gap | issue entry |
 
 Outcomes of a P finding, and in this repository of a W finding:
@@ -1276,8 +1274,8 @@ CHANGELOG.md entries `design@knowledge-architect@changelog-entries` owes, then r
    session holds in its scratch directory, and writes the confirmed-findings file: pass 3's
    confirmed findings, and pass 2's additions per `thread@agentic-workflow-axis@revisit-pass-2`. The
    clusters and repairs stages run through the script; the owner list of causes waits for the
-   owner's answers; the repairs are applied. Its commit closes
-   `issue@agent-skills@the-agentic-workflow-audit-s-next-run`, whose work it does. Judges AC3.
+   owner's answers; the repairs are applied. Its commit closes the issue entry that held the next
+   run's inputs, whose work it does. Judges AC3.
    Fails alone on: a stage whose agents cannot do their brief from the section's prompts.
 6. **The fourth pass**, per round 10: the axis runs again on this repository through the script, all
    three stages, as real use before the merge. Its commit message carries the counts AC4 reads.
@@ -1378,10 +1376,10 @@ cite it by its label.
   cater too much to this use case in the installed files". Default: the shipped text holds none;
   the root CLAUDE.md gains a routing-table row for the audit skill: here a W finding is edited at
   its source, and L7 also reads `path@core@docs/design.md`. Corrected at step 2, the substance
-  unchanged: the routing table holds only a project skill or agent that adds to an installed one,
-  per `skill@knowledge-architect-agent-configuration@root-claude-md-tables`, so the two sentences
-  go beside the retrospective's in `instructions@repository-skills`, and the table stays empty;
-  listed to the owner.
+  unchanged: the routing table then held only a project skill or agent that adds to an installed
+  one, so the two sentences go beside the retrospective's in `instructions@repository-skills`, and
+  the table stays empty; listed to the owner. Step 5 removes the table, per
+  `design@agent-skills@no-routing-table`.
 - **D13**, ruled, on `thread@agentic-workflow-axis@workflow-axis-lenses`, from the
   cold-implementer review: the four L2 groups left decision recording, issue tracking, goal setting
   and agent configuration in no group. Default: the groups are design, planning, decision recording
