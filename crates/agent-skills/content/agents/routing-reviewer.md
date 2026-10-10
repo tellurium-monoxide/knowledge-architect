@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-routing-reviewer
-description: The knowledge-routing axis of a dispatched review. Judges whether a diff put each durable statement in its one home — the project's knowledge table, the argument-versus-directive split, references and path pointers, and whether a head is still present tense. Dispatch it; do not read it.
+description: The knowledge-routing axis of a dispatched review. Judges whether a diff put each durable statement in its one home — the project's knowledge table, the argument-versus-directive split, references and path pointers, and whether a head is still present tense.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -58,9 +58,10 @@ segment: a bare filename named in prose, a heading or
 a section title quoted from another document, a misspelt kind. A path-shaped span whose first
 segment the tree does not hold is silent too: a typo in that segment, a pointer into an ignored
 directory, a pointer written after its directory left. So is a `<word>#<id>` form whose id is no
-entry and whose word is no anchor, such as a copied slug whose entry has left. The checker reads Markdown and Rust
-source only, so a reference in a comment of another language is read by nobody but you. Those are
-yours to resolve by reading, and they are where this axis's real failures survive.
+entry and whose word is neither an anchor nor a kind, such as a copied slug whose entry has
+left. A reference in a file or a part of a file the checker does not read, per
+`primer@where-knowledge-goes`, is read by nobody but you. Those are yours to resolve by reading,
+and they are where this axis's real failures survive.
 
 ## The predicates {{slug:routing-predicates}}
 
@@ -75,25 +76,17 @@ happens to find is the one they act on. The fix is a pointer. **Count the homes 
 the nearest one.** A fact repeated in five places with a tripwire naming two of them leaves three
 asserting something false the day it fires.
 
-**A directive is bound by a size, not by that.** Per `primer@where-knowledge-goes`, read whole
-before judging one: a directive is restated at its point of delivery only when the restatement is
-no longer than a pointer to it, a path, a name, a command, a value or one sentence, and a directive
-sentence carries its pointer adjacent. **Never report such a restatement as a two-homes
-violation.** A restatement longer than one sentence, of a whole directive or of part of one, is a finding:
-the repair is a pointer to its home with an instruction to read the home whole. A restatement that
-*contradicts* its home is a finding, against the restatement, which is the defect. Whether a
-directive is needed at its point of delivery is a delivery decision and belongs to the owner. For an
-installed skill or agent, the home is installed text, since it is shipped to projects whose records
-it cannot reference.
+**A directive is bound by a size, not by that.** The size, what a restatement carries beside it,
+and which existing restatement a change owes a conversion are `primer@where-knowledge-goes`: read
+it whole before judging a restatement. **Never report a restatement the primer allows as a
+two-homes violation.** A restatement the primer does not allow is a finding, and its repair is the
+one the primer gives. A restatement that *contradicts* its home is a finding, against the
+restatement, which is the defect. For an installed skill or agent, the home is installed text,
+since it is shipped to projects whose records it cannot reference.
 
-**Does any pointer have to be followed before a session can act?** Ask it of each pointer out of an
-instruction: *could a session complete this activity correctly without opening this?* A pointer to an
-argument, or to task material that varies per instance such as a figure or a layout, is fine. So is
-a named prerequisite skill, or a complete home the pointer asks to read whole, which is one complete
-instruction rather than a fragment to reassemble. A pointer into root `CLAUDE.md` or into the
-primer is free, since both already reach every session. A pointer to *part* of a directive the
-session must apply is the defect: the pointer names the whole home, or the part is restated where it
-is no longer than a pointer. `skill@knowledge-architect-agent-configuration` owns the test.
+**Does any pointer have to be followed before a session can act?** Judge each pointer out of an
+instruction by the test of `skill@knowledge-architect-agent-configuration@shaping-a-skill`, read
+whole.
 
 **Does a decision sit in the right Component?** Judge it by the three questions of
 `skill@knowledge-architect-decision-recording@owning-component`, read whole, and by its exception
@@ -124,3 +117,5 @@ Return findings, each naming the file and the exact reproduction, plus what the 
 returned. **If the axis is clean, say so plainly**: that is a real result, and a report padded to
 look productive costs the dispatcher a verification pass per invented finding. Do not report style
 preferences, and do not review outside this axis.
+List what you met outside your axis under a heading "Met outside the task", for the dispatcher
+to route, per `primer@met-outside-the-task`; do not review it.

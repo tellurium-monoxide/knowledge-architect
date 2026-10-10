@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-agent-configuration
-description: MUST use before adding or editing the project's root CLAUDE.md, a scoped CLAUDE.md next to code, a project skill, or a project subagent definition, and after installing a new version of the workflow. Covers choosing between root, a skill, a scoped file and an agent; how a skill's scope and description are shaped; the content instructions; the project's rows of the knowledge table; the routing table that maps each installed skill to the project skills that add to it; and why an installed file is never edited.
+description: MUST use before adding or editing the project's root CLAUDE.md, a scoped CLAUDE.md next to code, a project skill, or a project subagent definition, and after an install that changes the installed files. Covers choosing between root, a skill, a scoped file and an agent; how a skill's scope and description are shaped; the content instructions; the project's rows of the knowledge table; and why an installed file is never edited.
 ---
 
 # Maintaining the agent configuration
@@ -8,8 +8,8 @@ description: MUST use before adding or editing the project's root CLAUDE.md, a s
 Scope: the project's own agent configuration, the text an agent reads to work in this project.
 Its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own skills and its own subagent definitions.
 
-Not covered here: **the installed files**, the skills, agents and primer that
-`cargo klarch install-agent-skills` writes. They are never edited by hand (`skill@knowledge-architect-agent-configuration@installed-files-never-edited`). **Where the argument
+Not covered here: **the installed files**, every file that `cargo klarch install-agent-skills`
+writes. They are never edited by hand (`skill@knowledge-architect-agent-configuration@installed-files-never-edited`). **Where the argument
 for a decision about the configuration lands**: `skill@knowledge-architect-decision-recording`; this
 skill owns how to write the configuration, that one owns where the argument goes. **Setting the
 configuration up the first time**: `skill@knowledge-architect-setup`.
@@ -53,7 +53,7 @@ reaches a session**.
 
 | place | when it reaches a session | what it holds |
 | --- | --- | --- |
-| root `CLAUDE.md` | every session, unconditionally | instructions that span all activities, the project's rows of the knowledge table, the routing table |
+| root `CLAUDE.md` | every session, unconditionally | instructions that span all activities, the project's rows of the knowledge table |
 | a skill | its description is listed every session; its body loads only when invoked | a procedure, and the knowledge shaped by a task. Length is nearly free, so a skill can be thorough |
 | a subagent definition | only when a subagent of that type is spawned, and then from its first token | a task only ever done by a subagent, such as a reviewer following a fixed standard |
 
@@ -82,8 +82,10 @@ Decided in order; the first match wins.
 - **Name it by its activity, as a noun of one or two words in common usage** (planning, review,
   issue-tracking), never as an artifact the activity writes: the text names both, and a skill named
   like its artifact cannot be told from it. Give it the project's prefix: the project's name and a
-  hyphen, as in `<project>-development`. The directory name and the frontmatter `name` are equal.
-  The same prefix names the project's subagent definitions.
+  hyphen, as in `<project>-development`; a name that begins with `knowledge-architect-` is the
+  installer's, and the install deletes it, so a project whose name gives that prefix takes another.
+  The directory name and the frontmatter `name` are equal. The same prefix names the project's
+  other files in the directories the install writes into.
 - **End every level-two heading of a skill, a subagent definition and the root `CLAUDE.md` with a
   slug**: two hashes and the id in backticks, the id naming the section's subject. It is what a
   reference such as `skill@<name>@<slug>` cites, and the check reports a heading without one. A
@@ -102,19 +104,19 @@ was scoped wrong before the description was written: fix the scope, not the word
 correct. The test is whether a single task can want all of them at once.
 
 **A skill is self-sufficient.** It holds every piece of knowledge its activity needs, such as a
-build command, a dispatch table or a common trap, even where it is stated elsewhere: restated where
-the restatement is no longer than a pointer, and otherwise by a pointer to a complete home read
-whole, per `primer@where-knowledge-goes`. It points only to **task material**, data that varies per
-instance, to **a named prerequisite skill** or a section of the primer, one complete instruction
-rather than a fragment to reassemble. The test, per pointer: could a session complete this activity
-correctly without opening it? If not, the content is restated in the skill where it is no longer
-than a pointer, and otherwise the pointer names a complete home and asks for it to be read whole. What this guards against is
-dilution rather than length: each pointer is an extra read a session must remember, and the more
-there are, the less likely all are followed.
+build command, a dispatch table or a common trap, even where it is stated elsewhere, delivered as
+`primer@where-knowledge-goes` says. **The test, per pointer: could a session complete this
+activity correctly without opening it?** If not, the content is delivered in the skill as that
+section says. A pointer passes when its target is not needed to act, as an argument is; when it
+varies per instance, as task material does; or when it is one complete instruction the session
+reads whole: a named prerequisite skill, a home the pointer asks to read whole, the primer or the
+root `CLAUDE.md`, which reach every session. What this guards against is dilution rather than
+length: each pointer is an extra read a session must remember, and the more there are, the less
+likely all are followed.
 
-## The two tables of the root CLAUDE.md `##root-claude-md-tables`
+## The project's rows of the knowledge table `##project-knowledge-rows`
 
-**The project's rows of the knowledge table.** The installed primer carries the workflow's own rows:
+The installed primer carries the workflow's own rows:
 where a goal, a decision, a losing alternative, an issue, a tripwire, a contract or a plan document
 goes. The project's root `CLAUDE.md` carries the rows that are the project's alone, under a heading
 of its own: its changelog, a register it declares, a directory with a convention of its own. The
@@ -127,36 +129,25 @@ than the entry. A project row may refine a row of the primer with what is the pr
 a README that is also its package's page on a registry; it never contradicts one, and a row that
 only repeats one is removed.
 
-**The routing table.** One row per installed skill or agent that a project skill or agent adds to:
-
-| installed | project additions |
-| --- | --- |
-| `knowledge-architect-<installed skill>` | `<project>-<activity>` |
-
-A project skill that adds to no installed one needs no row: its own description triggers it. When
-a project skill is added, renamed or removed, its row changes in the same commit.
-
 ## Installed files are never edited `##installed-files-never-edited`
 
-An installed skill, agent or primer is compared byte for byte with the version the project pins, and
-the install overwrites it. **A change the project needs is a project skill or agent of its own**,
-with its own name and its row in the routing table. It adds to the installed text: an extra step,
+An installed file is compared byte for byte with the version the project pins, and the install
+overwrites it. **A change the project needs is a project skill or agent of its own**,
+with its own name. It adds to the installed text: an extra step,
 an extra review axis, a convention of the project. It never contradicts it. Where it would have to
 contradict it, the installed text is wrong for this project: say so to the owner, who may report it
 to the workflow's maintainers.
 
-## After installing a new version `##after-installing`
+## After an install that changes the installed files `##after-installing`
 
-`cargo klarch install-agent-skills` writes the files the new version ships and removes the ones it no
-longer ships. In the same commit:
+`cargo klarch install-agent-skills` writes the files the checker ships and removes the ones it no
+longer ships. When it changes any of them, in the same commit:
 
-- read the new primer's table against the project's rows, and raise any project row that now
-  restates or contradicts a primer row;
-- update the routing table: a row whose installed skill was renamed or removed changes or goes;
-- read each project skill against the installed skill it adds to, for an instruction that now
-  contradicts it;
-- write into each open milestone document, afresh from the new `skill@knowledge-architect-planning`,
-  its restatement of the procedure for working a slice, whether it held one before or not;
+- read the new primer's table against the project's rows, per
+  `skill@knowledge-architect-agent-configuration@project-knowledge-rows`, read whole;
+- read each project skill and agent against the installed text the install changed, for an
+  instruction that now contradicts it;
+- stage the files the install removed, since a deletion git still lists stops the check;
 - run `cargo klarch check`.
 
 ## Reviewing a configuration change `##reviewing-a-change`

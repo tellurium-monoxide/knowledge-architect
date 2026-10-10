@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-design-conformance-reviewer
-description: The design-conformance axis of a dispatched review of a plan document, a spec or a milestone document. Reads the document against the project's record, the goals, the design heads and the rejected alternatives of every Component it touches, and reports every shape, acceptance criterion, default, step or harvest row that contradicts a goal, contradicts or widens a head the document does not list as reversed or rewritten, or brings back an alternative that lost. Dispatch it; do not read it.
+description: The design-conformance axis of a dispatched review of a plan document, a spec or a milestone document. Reads the document against the project's record, the goals, the design heads and the rejected alternatives of every Component it touches, and reports every shape, acceptance criterion, default, step or harvest row that contradicts a goal, contradicts or widens a head the document does not list as reversed or rewritten, or brings back an alternative that lost.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -63,8 +63,9 @@ Report each of these:
   excuse it. A plan decides new things on purpose; what you report is a departure from a recorded
   decision that the document does not say it makes.
 - **A rejected alternative brought back.** A shape, a default, a step or a harvest row that a
-  rejected-alternatives entry records as lost, without a reopening that the document records: a thread that names the entry and the new
-  argument that defeats its recorded reason.
+  rejected-alternatives entry records as lost, without a reopening that the document records: a
+  thread that names the entry and what makes it new by the record test of
+  `skill@knowledge-architect-design@threads-and-states`.
 - **An acceptance criterion whose observable the record rules out**: one that a goal or a head
   forbids building or running.
 
@@ -79,3 +80,5 @@ conflict with a goal as **for the owner**: the dispatcher does not resolve it. T
 Components you read and the entries you ran `show` on. **If the document fits the record, say so
 plainly.** Do not propose designs, do not report style preferences, and do not review outside this
 axis.
+List what you met outside your axis under a heading "Met outside the task", for the dispatcher
+to route, per `primer@met-outside-the-task`; do not review it.

@@ -296,7 +296,7 @@ skip-files = []
 exclude = []
 ```
 
-Then `klarch install-agent-skills` writes the skills, the agents and the primer, and an agent
+Then `klarch install-agent-skills` writes the skills, the agents, the saved workflows and the primer, and an agent
 session follows the installed setup skill from there. `klarch check` lists every document the
 project still owes, each with its repair.
 

@@ -51,8 +51,9 @@ pub(crate) const DEFAULT_COMMAND: &str = "klarch";
 pub(crate) const HARNESSES: [&str; 1] = ["claude"];
 
 /// The prefix that owns a namespace in a project's agent configuration, per
-/// `design@core@owned-namespace-check`. Every skill directory and agent file whose name starts
-/// with it, and every file under .claude/knowledge-architect/, belongs to the installer.
+/// `design@core@owned-namespace-check`. Every skill directory, agent file and saved workflow file
+/// whose name starts with it, and every file under .claude/knowledge-architect/, belongs to the
+/// installer.
 pub(crate) const OWNED_PREFIX: &str = "knowledge-architect-";
 
 /// The name of the built-in issue register, which is the one register that accepts a key.
@@ -1439,7 +1440,8 @@ impl Complaints<'_> {
 
 /// The installer's namespace under the `claude` harness: .claude/knowledge-architect/ and
 /// everything under it, a skill directory `.claude/skills/<OWNED_PREFIX>…/` and everything under
-/// it, and an agent file `.claude/agents/<OWNED_PREFIX>…`.
+/// it, an agent file `.claude/agents/<OWNED_PREFIX>…`, and a saved workflow file
+/// `.claude/workflows/<OWNED_PREFIX>…`.
 pub(crate) fn owned_path(rel: &Path) -> bool {
     // A path is bytes: a component that is not UTF-8 belongs to no name this tool writes, so the
     // whole path is outside the namespace rather than read with that component dropped.
@@ -1453,7 +1455,7 @@ pub(crate) fn owned_path(rel: &Path) -> bool {
     match parts.as_slice() {
         [".claude", "knowledge-architect", _, ..] => true,
         [".claude", "skills", dir, _, ..] => dir.starts_with(OWNED_PREFIX),
-        [".claude", "agents", file] => file.starts_with(OWNED_PREFIX),
+        [".claude", "agents" | "workflows", file] => file.starts_with(OWNED_PREFIX),
         _ => false,
     }
 }
@@ -1646,7 +1648,7 @@ pub(crate) mod tests {
         assert!(m.serves_claude());
     }
 
-    /// The claim: the namespace is the prefixed skill directories and agent files, and the
+    /// The claim: the namespace is the prefixed skill directories, agent files and workflow files, and the
     /// installer's own directory; a project's own skill and anything else are outside it.
     #[test]
     fn the_owned_namespace_is_named_by_its_prefix() {
@@ -1654,6 +1656,7 @@ pub(crate) mod tests {
             ".claude/skills/knowledge-architect-planning/SKILL.md",
             ".claude/skills/knowledge-architect-planning/notes/a.md",
             ".claude/agents/knowledge-architect-routing-reviewer.md",
+            ".claude/workflows/knowledge-architect-agentic-workflow-audit.js",
             ".claude/knowledge-architect/PRIMER.md",
         ] {
             assert!(owned_path(Path::new(owned)), "{owned}");
@@ -1666,6 +1669,8 @@ pub(crate) mod tests {
             ".claude/skills/project-knowledge-architect-x/SKILL.md",
             ".claude/agents/project-knowledge-architect-x.md",
             ".claude/agents/knowledge-architect-dir/nested.md",
+            ".claude/workflows/project-audit.js",
+            ".claude/workflows/knowledge-architect-dir/nested.js",
             "docs/knowledge-architect-x.md",
             "CLAUDE.md",
         ] {

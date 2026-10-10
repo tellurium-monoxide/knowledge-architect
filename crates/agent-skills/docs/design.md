@@ -20,11 +20,15 @@ which the build inlines there, a `%%` line is a comment the build removes, per
 `design@agent-skills@shipped-text-line-comments`, a delivery placeholder is a literal the build
 fills, and a placeholder `{{slug:<id>}}` ending a level-two heading is rendered into that heading's
 section slug, so content/ defines no section in this repository's walk and the installed copy does,
-per `design@core@installed-entities-from-the-tree`. A slug placeholder anywhere else fails the build. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, and the primer
-is `PRIMER.md`. The build script, `path@agent-skills@build.rs`, walks the directory, renders each
+per `design@core@installed-entities-from-the-tree`. A slug placeholder anywhere else fails the build. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, a saved workflow
+of Claude Code's Workflow tool is `workflows/<workflow>.js`, and the primer is `PRIMER.md`. The
+harness reads saved workflows directly under .claude/workflows/, no deeper, and calls each by the
+name its `meta` declares, never by its file's name, as a probe of Claude Code measured: so the
+build fails unless that name equals the installed file's stem, or the prefix of the file would
+namespace nothing. The build script, `path@agent-skills@build.rs`, walks the directory, renders each
 file, removing its comments, filling its delivery substitutions and inlining its snippets, and
 generates `FILES`, each entry the install path and the text. It adds the installer's prefix to each skill
-directory and agent file on the way out, so the installed names are the namespace of
+directory, agent file and workflow file on the way out, so the installed names are the namespace of
 `design@core@owned-namespace-check`. A file the layout does not map fails the build.
 
 The list is generated because a list written by hand drifts from the directory it lists, and the
@@ -473,8 +477,10 @@ same reasoning. Only the design skill and the setup skill state a set so far:
 
 Every item the owner is asked to rule on by name, and which carries no slug when it is put to the
 owner, gets a label: a prefix of capital letters naming its kind, and a number. Numbers run from 1
-within each prefix, in order of appearance, and are never reused within the record that carries
-the ruling: a discussion, a resumed session included, a file, or a message. An item that gains a
+within each prefix, in order of appearance, and are never reused within the record the label
+reaches: the committed document, a milestone's documents counting as one; a
+file; or the commit messages of one branch, counting as one. A label that reaches none is numbered
+within the message that puts it to the owner. An item that gains a
 slug later keeps its label beside it. A label that reaches a committed document, even one that
 leaves later, such as a plan document, takes a prefix of its own kind, distinct across the
 installed workflow. A label used only in the conversation reuses the common prefix `Q`. Every
@@ -497,8 +503,10 @@ and judged the pattern recurring: "this should cover everything that I have to r
 label that reaches no document reuses `Q`, on the owner's argument against "searching for unique
 letters, which will necessarily end up needing more letters than available". The structure passes
 `design@agent-skills@capabilities-not-structure`, since the owner named the lack and the label's
-scope follows the record that carries it. Each installed skill that asks for such rulings restates
-its own prefix where it asks.
+scope follows the record that carries it. The numbering is stated once, in `primer@labelled-items`,
+since labels are given in sessions of every activity and a range stated per skill drifted: three
+skills gave `T`, `AC` and `F` three different ranges. Each installed skill that asks for such
+rulings restates its own prefix where it asks.
 
 ### A design home holds built intent, and a plan document holds unbuilt intent `##design-home-is-built-intent`
 
@@ -1135,8 +1143,8 @@ reviewer alone, catches a conflict with the record, not a weighing.
 ### A plan document is committed before its reviews, which read that commit `##plan-reviewed-as-a-commit`
 
 The planning skill has a plan document's reviewers read its commit, not the working tree. The review
-skill names what a reviewer reads as a commit range and gives each reviewer that runs a binary a
-worktree detached at the commit under review; a document still uncommitted has neither, so the two
+skill names what a reviewer reads as a commit range and gives each reviewer that runs the tests,
+the checker or a program the project builds a worktree detached at the commit under review; a document still uncommitted has neither, so the two
 skills could not both be obeyed. A repair lands after the review, per
 `design@agent-skills@review-repair-appended-or-folded`.
 
@@ -1354,10 +1362,10 @@ more dispatch at each of those moments; what it buys is a reader of the record t
 author nor the implementing session is, which the two acceptance criteria above show the other
 reviews lacked.
 
-### The transcript reviewer runs once more, alone and last, before every merge `##transcript-review-last-before-merge`
+### Before every merge, the transcript reviewer runs alone and last, and not with the other axes `##transcript-review-last-before-merge`
 
-The installed review skill sends the transcript reviewer a last time before every merge to the main
-branch, after every other axis has run and its repairs are committed, over the whole branch and the
+The installed review skill sends the transcript reviewer before every merge to the main branch
+once, after every other axis has run and its repairs are committed, and not also in their batch, over the whole branch and the
 transcripts of every session that worked on it. The findings of the other axes reach the session as
 messages of its transcript, so only a reviewer reading it after their repairs can tell whether each
 was acted on durably, per `goal@knowledge-architect@design-is-recorded-with-its-arguments`. Its own
@@ -1490,7 +1498,7 @@ The owner's request is the main occasion. A version that changes the rules recor
 meet cites the axis that brings a project's record to them in its Migration entry, per
 `design@knowledge-architect@changelog-entries`, and `skill@knowledge-architect-setup@moving-the-pin`
 runs it after the pin's commit; `skill@knowledge-architect-setup@existing-documentation` runs the
-design-record axis at the end of the milestone that moves a project's documents into the homes. Each
+design-record axis at the end of the work that moves a project's documents into the homes. Each
 occasion is one whose own work needs the record read under the rules. The rival, a periodic run,
 has no evidence for a period, and `design@agent-skills@additions-need-real-use` asks for one.
 
@@ -1580,7 +1588,8 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
 - **Before diagnosing anything as a problem, a session checks whether it is already recorded**,
   with the listing commands of the checker.
 - **Something met outside the task takes the first of four outcomes that applies.** If it bears on
-  the current work, stop and present it to the owner at the top of the turn, with a default. If its
+  the current work, present it to the owner at the top of the turn, with a default, and proceed on
+  the default unless the owner answers otherwise. If its
   fix is checkable from the diff alone, because it changes no behaviour, no decision and no test
   outcome, fix it in a commit of its own. If its `Why it matters` and its `What would close it` can
   be written, open an issue. Otherwise name it, with why it is dropped. A turn that met anything
@@ -1589,7 +1598,16 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   to create an open issue entry about it, but not fix it either, instead reporting it in
   conversation as a short oneliner", so every outcome leaves a record or a listed line. A fix under
   the second outcome needs no word of the owner's: "as long as it does passes the test you wrote, I
-  have no problem with that level of autonomous fix".
+  have no problem with that level of autonomous fix". A subagent that edits nothing reports each
+  item to the session that dispatched it, which routes it.
+- **An item put to the owner under a label takes the next number of its prefix in the record that
+  keeps its ruling**, per `design@agent-skills@ruled-items-labelled`. Labels are given in sessions
+  of every activity, and no one skill is loaded in all of them.
+- **Every commit of a branch is judged by the checker at the branch's tip**, where the project's
+  gates run the commits check over the branch, so a change that sets what that checker requires
+  goes in the branch's first commit, and a repair that would leave an earlier commit failing is
+  folded into it. Every session commits, and the rule was delivered only by the skills that met
+  one case of it: planning for a plan document merged before its work, and review for a fold.
 
 ### Every rule on what a design head records and how lives in one section of the primer `##one-home-for-head-rules`
 
@@ -1668,13 +1686,20 @@ own row for it would only repeat the primer's, and is removed, per
 `design@agent-skills@knowledge-table-home`. A row each project declared lost: once the checker
 fixes the path, a declared one could name no other.
 
-### The routing table lists only what a project adds to an installed skill or agent `##routing-table-shape`
+### A project skill reaches a session through its own description and through the skill of the activity it serves, with no table mapping it to an installed skill `##no-routing-table`
 
-The project's root `CLAUDE.md` carries one row per installed skill or agent that a project skill or
-agent adds to, naming the additions. The setup skill writes the table, and the
-agent-configuration skill keeps it. It carries no "read it when" column: the harness already
-lists every skill with its description, and a copy of it would drift. A project skill that adds to
-no installed one needs no row.
+A project's root `CLAUDE.md` carries no table of which project skill adds to which installed one.
+Two mechanisms already deliver a project skill at its moment: the harness lists every skill with
+its description every session, and the description begins with MUST and names its symptom, per
+`skill@knowledge-architect-agent-configuration@shaping-a-skill`; and an axis a project adds to a
+review is owed through the skill of an activity whose work the review reads, per
+`skill@knowledge-architect-review@review-axes`. A table restates both, and its "adds to" is a fixed
+mapping between a project skill and an installed one, which each new kind of link between them
+must vary, against `design@agent-skills@capabilities-not-structure`. The fact that defeated it: in
+this repository's first agentic-workflow audit, no row of the table delivered anything the
+description or the dispatching skill did not, and every finding on the routing side turned on
+whether a row was owed. After an install that changes the installed files, each project skill and
+agent is read against the installed text that changed, not against a row.
 
 ### A project adds to the workflow through skills of its own, never by editing an installed one `##overlay-by-separate-skills`
 
@@ -1687,10 +1712,11 @@ contradict an installed one, the installed text is wrong for that project, and t
 it. A project that needs to change one instruction has no means yet:
 `issue@agent-skills@patching-an-installed-skill`.
 
-### A project's own skills and agents carry its name as a prefix `##skill-name-prefix`
+### A project's own files in the installer's directories carry its name as a prefix `##skill-name-prefix`
 
-A project skill or agent is named `<project>-<activity>`, the directory or file name equal to the
-frontmatter `name`, so it is told apart from an installed one and from another project's. A colon,
+A project skill, agent or saved workflow is named `<project>-<activity>`, the directory or file
+name equal to the frontmatter `name`, or to the `name` of a saved workflow's `meta`, so it is told
+apart from an installed one and from another project's. A colon,
 as in `<project>:<activity>`, is not used: a subagent's name cannot hold one, and a skill so named
 cannot be told apart from a plugin's.
 
@@ -1698,7 +1724,7 @@ cannot be told apart from a plugin's.
 
 For a project that already has documentation, the setup skill takes an inventory of it,
 proposes a destination for each document, takes the owner's rulings, and opens one `todo` issue for
-the move. The move itself is a milestone of its own, written under the planning skill. A migration
+the move. The move itself is planned work of its own, written under the planning skill. A migration
 is a decision with arguments of its own, such as which recorded decisions still hold, and it fits
 in one session only for a small project. The issue keeps the old documents beside the new homes
 listed as outstanding work, per `design@agent-skills@undesigned-work-is-an-issue`.
@@ -1858,7 +1884,7 @@ skill's addition was missed, and whether the session needed to write a reference
 backticks because no checked form expresses it. Each watches a decision whose
 failure would be seen in real sessions before any check could see it:
 `design@agent-skills@overlay-by-separate-skills`, the primer's delivery by an import line in
-`design@core@owned-namespace-check`, `design@agent-skills@routing-table-shape`, and
+`design@core@owned-namespace-check`, `design@agent-skills@no-routing-table`, and
 `design@agent-skills@plain-text-is-no-repair`. The last question is the
 one channel by which a gap of the checker met in a consumer project reaches this repository, since
 the consumer's own entry for it is not citable here. The primer question asks about behaviour, on

@@ -6,6 +6,14 @@ This crate carries text, not behaviour; the core reads it to install and to chec
 entry the install path and the text, per `design@agent-skills@content-mirrors-the-install-layout`.
 A file under content/ that the layout does not map fails the build.
 
+**A saved workflow under `path@agent-skills@content/workflows/` is JavaScript, which the checker
+does not read**: a reference in it is checked by nobody, so it cites none. Its `meta` declares the
+installed file's stem as its `name`, which the build asserts. The harness runs the file's body as
+an async function, so a top-level `return` is legal there and `node --check` refuses it on the
+bare file: check it parses by wrapping the body in `async function body() {…}`, with `export`
+removed. The build's passes run over it as over any shipped file: a `%%` line is removed, even
+inside a template literal, so a line of a prompt never opens with `%%`.
+
 **A change to content/ or snippets/ is installed in the same commit.** This repository installs its
 own skills, and its check compares each installed file with the shipped text byte for byte. After
 editing content/ or snippets/, run `cargo klarch install-agent-skills` and commit the installed copies under .claude
@@ -42,6 +50,15 @@ session needs and no installed skill delivers, per `design@agent-skills@primer-l
 restates a skill, or a convention of one project, does not go in it.
 
 ## Editing an installed skill or agent
+
+The text under `path@agent-skills@content/` is the source the install copies, not an installed
+file, and it is edited here by hand. It is written under
+`skill@knowledge-architect-agent-configuration`, read whole, as a project's own skill or agent is.
+Three parts of that skill concern a project's own names and the installed copies, and do not apply
+to this source: its scope sentence, the prefix rule of
+`skill@knowledge-architect-agent-configuration@shaping-a-skill`, since a shipped skill or agent is
+named with the installer's prefix, and
+`skill@knowledge-architect-agent-configuration@installed-files-never-edited`.
 
 An edit of an installed skill under `path@agent-skills@content/` passes the four tests below, in
 order; an edit of an installed agent passes the last three, since an agent never works with the

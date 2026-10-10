@@ -12,7 +12,7 @@ Not covered here: **a decision about how something is built**, which is
 `skill@knowledge-architect-decision-recording`; **setting up the rest of a Component**,
 `skill@knowledge-architect-setup`.
 
-**The goals are the only statements assumed to come from the owner.** Every design decision binds
+**The goals are the only statements assumed to come from the owner**, per `primer@goals-bind`. Every design decision binds
 as a presumption, and a goal binds outright: a constraint derived from a goal rules a proposal out.
 That is why no goal is written that the owner did not rule on, and why an agent never edits a goal
 outside this skill.
@@ -31,7 +31,9 @@ on the owner's word.
 ## The shape of a goal entry `##goal-entry-shape`
 
 A level-two heading stating the goal as a sentence, its slug at the end, then one short paragraph:
-what the goal means, and **what would show it is met**.
+what the goal means, and **what would show it is met**. Every level-two heading of a goals home is a
+goal and carries a slug: the head that says what the home holds is prose under the level-one title,
+never a level-two section.
 
 ```markdown
 ## <The goal, stated as a sentence> `##<slug>`
@@ -73,7 +75,7 @@ is argued from one.
 4. **Ask the owner to read the draft in full, and to rule on each goal by its slug**: approved, or
    dropped. A goal with no ruling is neither written nor dropped: ask again for it by its slug. A
    goal the owner rewords is shown again in its new wording before it is written.
-5. Write the approved goals, exactly as approved, and nothing else.
+5. Write the approved goals, exactly as approved, and the home's head, and nothing else.
 
 **A goal need not be met yet.** A goal is the owner's intent about where the project should get to,
 and it constrains future work and design from the moment it is written. When nothing fulfils it yet and
@@ -88,6 +90,6 @@ no plan document schedules the work that would, open a `todo` issue for that wor
 - **A decision conflicts with a goal**, and the primer's rule sends the conflict to the owner. The
   goal prevails until the owner rules; if the ruling changes the goal, it changes through `skill@knowledge-architect-goal-setting@drawing-out-intent`.
 
-The goals ruled on in one session are written in one commit, whose message quotes each ruling. A
+The goals of one round of rulings are written in one commit, whose message quotes each ruling. A
 goal's removal and the repair of every reference it leaves dangling are one commit, so the commit
 passes the check.

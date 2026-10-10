@@ -1,6 +1,6 @@
 # Retrospective reports
 
-This directory holds the analyses of the retrospective files this repository receives: one file
+This directory holds the analyses of the retrospective and audit files this repository receives: one file
 per received file, named by its stem. Each analysis checks every finding of that file
 against the tree, the registers, the goals and the design, proposes an action, and records the
 owner's ruling on it. The decision is `design@knowledge-architect@committed-findings-analysis`,

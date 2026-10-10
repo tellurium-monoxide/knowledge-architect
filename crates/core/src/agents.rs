@@ -125,6 +125,7 @@ pub(crate) fn install_into(
         ".claude",
         ".claude/skills",
         ".claude/agents",
+        ".claude/workflows",
         ".claude/knowledge-architect",
     ] {
         refuse_link(root, Path::new(rel))?;
@@ -235,6 +236,7 @@ pub(crate) fn apply(
         ".claude",
         ".claude/skills",
         ".claude/agents",
+        ".claude/workflows",
         ".claude/knowledge-architect",
     ] {
         refuse_link(root, Path::new(rel))?;
@@ -286,6 +288,7 @@ fn owned_on_disk(root: &Path) -> Result<Vec<PathBuf>, String> {
         ".claude/knowledge-architect",
         ".claude/skills",
         ".claude/agents",
+        ".claude/workflows",
     ] {
         files_under(root, Path::new(base), &mut out)?;
     }
@@ -581,6 +584,39 @@ mod tests {
             }
         );
         let _ = std::fs::remove_dir_all(&root);
+    }
+
+    /// The claim: an install writes a shipped workflow and removes a prefixed one the version does
+    /// not ship from .claude/workflows/, and leaves the project's own workflows there. Mutation: the
+    /// workflows directory left out of `owned_on_disk` keeps the old workflow.
+    #[test]
+    fn an_install_owns_the_prefixed_workflows_alone() {
+        let root = std::env::temp_dir().join(format!("ka-install-wf-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        let write = |rel: &str, text: &str| {
+            let p = root.join(rel);
+            std::fs::create_dir_all(p.parent().unwrap()).unwrap();
+            std::fs::write(p, text).unwrap();
+        };
+        write(".claude/workflows/knowledge-architect-old.js", "old");
+        write(".claude/workflows/project-own.js", "kept");
+        let shipped = vec![(
+            PathBuf::from(".claude/workflows/knowledge-architect-w.js"),
+            "fresh".to_string(),
+        )];
+        let done = install(&root, &shipped).expect("the install runs");
+        assert_eq!(
+            done.written,
+            vec![PathBuf::from(".claude/workflows/knowledge-architect-w.js")]
+        );
+        assert_eq!(
+            done.deleted,
+            vec![PathBuf::from(
+                ".claude/workflows/knowledge-architect-old.js"
+            )]
+        );
+        assert!(root.join(".claude/workflows/project-own.js").exists());
+        std::fs::remove_dir_all(&root).unwrap();
     }
 
     /// The claim: an install writes what is missing or differs, removes an unshipped file of the

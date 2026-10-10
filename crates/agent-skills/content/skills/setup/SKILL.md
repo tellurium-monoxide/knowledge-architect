@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-setup
-description: MUST use when a project adopts the knowledge-architect workflow, after the first install has run, and when a project moves its pin of the checker to another version. Covers how the checker is pinned and run, the declared command, the manifest and its Components, the documents and register homes each Component carries, the primer's import line, the project's rows of the knowledge table and its routing table, the project's skill prefix, the gates convention, what happens to the documentation the project already has, and, in a Rust project, the maintenance crate, its aliases, its gates and its continuous integration.
+description: MUST use when a project adopts the knowledge-architect workflow, after the first install has run, and when a project moves its pin of the checker to another version. Covers how the checker is pinned and run, the declared command, the manifest and its Components, the documents and register homes each Component carries, the primer's import line, the project's rows of the knowledge table, the project's skill prefix, the gates convention, what happens to the documentation the project already has, and, in a Rust project, the maintenance crate, its aliases, its gates and its continuous integration.
 ---
 
 # Setting up
@@ -31,8 +31,9 @@ skip-files = []
 exclude = []
 ```
 
-After the first install, `{{command}} check` lists every document the project still owes, each with
-its repair. That list is this skill's work list.
+After the first install, `{{command}} check` lists what the project still owes, each with its
+repair. That list is this skill's work list. A run reports the first phase that finds anything and
+judges no later phase, so the check runs again after each repair until it passes.
 
 The checker needs `git` 2.36 or newer, and a project inside a git repository. Building it needs a
 Rust toolchain, whatever the project's own language.
@@ -41,7 +42,8 @@ Rust toolchain, whatever the project's own language.
 behalf is shown to the owner first: the Components, the goals, the place of each existing document,
 and each choice below that changes the project's build or a file it already has. The owner rules;
 the agent proposes. The skill is built on an owner present to rule: a run without one, such as a
-trial, makes those choices itself.
+trial, makes those choices itself, except the goals, which only the owner states: such a run writes
+no goal, and leaves each goals home with no entry, awaiting the owner's.
 
 ## Pin the checker, and decide how it runs {{slug:pin-the-checker}}
 
@@ -114,7 +116,9 @@ registers = ["issue"]
 
 What the walk must not read is declared under `[walk]`, each row with its reason in a comment
 beside it: `skip-dirs` and `skip-files` for paths, `exclude` for another project kept inside this
-one. `[agents] harness` is absent for the default, the `claude` harness.
+one. A row names a path git tracks, spelled as git lists it: a path the ignore rules cover is
+already outside the walk, and a row naming it is a finding. `[agents] harness` is absent for the
+default, the `claude` harness.
 
 ## The documents each Component carries {{slug:component-documents}}
 
@@ -158,12 +162,13 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
   statement the project keeps somewhere the primer's table does not name, such as its changelog, a
   register it declares, a directory with a convention of its own. The plans directory and the
   roadmap are the primer's rows, not the project's;
-- **the routing table**: one row per installed skill or agent that a project skill or agent adds to, as
-  `| installed | project additions |`. It is empty until the project writes a skill of its own;
-- **the project's skill prefix**: its name and a hyphen, which names every project skill and agent.
+- **the project's skill prefix**: its name and a hyphen, which names everything of the project's
+  own in the directories the install writes into. A name that begins with `knowledge-architect-`
+  there is the installer's: the install deletes it. A project whose name gives that prefix takes
+  another.
 
-How the two tables are written is
-`skill@knowledge-architect-agent-configuration@root-claude-md-tables`; the prefix and a project
+How the project's rows are written is
+`skill@knowledge-architect-agent-configuration@project-knowledge-rows`; the prefix and a project
 skill are `skill@knowledge-architect-agent-configuration@shaping-a-skill`.
 
 **Every level-two heading of the root `CLAUDE.md`, and of each project skill and agent, ends with a
@@ -212,7 +217,8 @@ left to be done by hand.
 
 - `{{command}} check --fix` until it passes: it writes the installed files and the generated
   `index.md` files the check would report, then checks.
-- Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together.
+- Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together,
+  ordered on the branch as `primer@branch-commits` says, read whole.
 
 ## Existing documentation {{slug:existing-documentation}}
 
@@ -230,18 +236,22 @@ A project that already has documentation keeps it until its move is planned:
 3. **The owner rules** on the proposal, on each document by a label, `Q<n>`, given to it in the
    proposal. The issue below names each document by its path, not by the label.
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the
-   rulings. The move is then planned work, under `skill@knowledge-architect-planning`, and runs as a
-   milestone when the owner schedules it. Until then, the old documents and the new homes both
-   exist, and the issue is what records that. The milestone ends by running the design-record axis
-   of `skill@knowledge-architect-project-audit@design-record-axis` over the design homes and the
-   rejected alternatives the move wrote.
+   rulings. The move is then planned work: when the owner schedules it, it starts under
+   `skill@knowledge-architect-design` as a requested change, with the issue as its grounding, and
+   its full path hands it to `skill@knowledge-architect-planning`. Until then, the
+   old documents and the new homes both exist, and the issue is what records that. The move's
+   work ends by running the design-record axis of
+   `skill@knowledge-architect-project-audit@design-record-axis` over its whole corpus, which then
+   holds what the move wrote.
 
 **A finding the check reports in an existing file is the owner's to rule**, since the setup does
 not move or rewrite that file. Show the owner the finding and its repair, each finding under a
 label, `Q<n>`, when there are several, such as a bare path
 rewritten as a reference. The owner rules between that repair and a
 `[walk] skip-files` row, with its reason beside it, that keeps the file out of the walk until its
-move.
+move. A file at the path of a register home, such as `path@*@docs/design.md`, and the root
+`CLAUDE.md`, whose import of the primer the check reads, have no such row: the check refuses a walk
+row over either, so their findings are repaired.
 
 Setting up stops at a conformant structure, the goals, and that issue.
 
@@ -251,8 +261,9 @@ To move to another version:
 
 1. Edit the pin: both versions in the maintenance crate's `Cargo.toml`, the checker's and the
    gates library's, which move together, or the version of the local install; and
-   `[project] checker-version` in the manifest, which moves with them. Until all agree, every
-   command refuses, naming the two versions.
+   `[project] checker-version` in the manifest, which moves with them. Until the checker's version
+   and the manifest's pin agree, every command refuses, naming the two versions. Nothing compares
+   the gates library's version, so it is edited in the same change.
 2. Read the changelog of every version crossed. Any version but a patch may make a check
    stricter, a version may make one looser, and either changes what a test that pins findings
    sees; a major version may ask for a change to the project's layout. Each published crate ships its
@@ -265,8 +276,9 @@ To move to another version:
    `skill@knowledge-architect-agent-configuration` for what an upgrade owes the project's own
    configuration.
 4. Run the project's gates command of `skill@knowledge-architect-setup@setup-gates`, or, where it has none, `{{command}} check` and the
-   project's tests, and commit the pin, the installed files and the repairs together. A new
-   version can change what a command prints, which only the tests see.
+   project's tests, and commit the pin, the installed files and the repairs together, ordered on
+   the branch as `primer@branch-commits` says. A new version can change what a command prints,
+   which only the tests see.
 5. For each axis that step 2 listed, run it under `skill@knowledge-architect-project-audit`, after
    the pin's commit, in a branch of its own. Such an entry changes the rules the project's existing
    record must meet, and the audit brings that record to them.

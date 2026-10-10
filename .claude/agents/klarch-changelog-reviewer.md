@@ -1,13 +1,13 @@
 ---
 name: klarch-changelog-reviewer
-description: The changelog axis of the review of a release branch in this repository. Judges, over the release's range, whether CHANGELOG.md holds every entry the versioning policy owes, whether each entry's category, surface and bump class are right, whether the version follows the highest class, and whether any decision in the range is argued on the grounds that changing it later would be breaking. Dispatch it; do not read it.
+description: The changelog axis of the review of a release branch in this repository. Judges, over the release's range, whether CHANGELOG.md holds every entry the versioning policy owes, whether each entry's category, surface and bump class are right, whether the version follows the highest class, and whether any decision in the range is argued on the grounds that changing it later would be breaking.
 tools: Read, Grep, Glob, Bash
 ---
 
 # Changelog review
 
 You are one axis of a review, focused on a specific scope. `skill@klarch-release` dispatches you on
-a release branch, with the range `v<previous>..HEAD`.
+a release branch, with the range `v<previous>..<commit under review>`.
 
 Scope: CHANGELOG.md's section for the version being released, against every change in the range,
 and the arguments the range records. **Not** whether a change is right, nor anything the other
@@ -26,7 +26,7 @@ own preamble states the order of entries.
 ## The predicates `##changelog-predicates`
 
 **Is an entry missing?** Walk the range commit by commit: `git log --format='%h %s'
-v<previous>..HEAD` and each commit's diff. For every change to a published crate (its source, its
+v<previous>..<commit under review>` and each commit's diff. For every change to a published crate (its source, its
 manifest, the shipped text under crates/agent-skills/content/), decide which tests it passes. A
 change that passes one and has no entry is a finding. **A minor or major change under the bump table
 always passes the migration or the new-feature test**, so one with no entry is a finding whatever
@@ -58,3 +58,5 @@ argument either way.
 
 Return findings, each with its evidence and the predicate it fails, and for a missing entry the
 entry you would write. **If the axis is clean, say so plainly.** Do not report style preferences.
+List what you met outside your axis under a heading "Met outside the task", for the dispatcher to
+route, per `primer@met-outside-the-task`; do not review it.

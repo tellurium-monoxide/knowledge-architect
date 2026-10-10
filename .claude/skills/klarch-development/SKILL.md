@@ -15,9 +15,9 @@ of them.
 tests Rust. It passes over a workflow file without seeing it, so a session that follows this skill
 for one of those gets a green gate on an unverified change.
 
-- The installed skills, agents and primer under `path@agent-skills@content/` follow
-  `path@agent-skills@CLAUDE.md`, section "Editing an installed skill or agent", and
-  `skill@knowledge-architect-agent-configuration`.
+- The installed text, at its source under `path@agent-skills@content/`, follows
+  `path@agent-skills@CLAUDE.md`, section "Editing an installed skill or agent", read whole: it
+  says which skill it is written under.
 - This repository's own agent configuration is `skill@knowledge-architect-agent-configuration`.
 - A release is `skill@klarch-release`.
 
@@ -34,34 +34,35 @@ Read the Component's own files first:
 - its `path@*@docs/open-issues/` and `path@*@docs/tripwires.md`, for what is outstanding and what
   would reopen a decision.
 
-A behaviour that looks like a new defect is often recorded: `cargo klarch issues` and
-`cargo klarch tripwires` list every entry. `path@knowledge-architect@docs/design.md` at the root
-holds only what binds every Component, so read it when the change crosses one.
+Then read the root's design home, `path@knowledge-architect@docs/design.md`: it holds what binds
+every Component, so its heads bind a change inside one Component too.
 
-The primer's intent-and-claims rule governs how to read all of them. **Intent is authority, and the
-code is checked against it. A claim about the code as it stands goes stale, and is checked.** A
-divergence between a design document and the code is a defect in one of them. Say which, and open
-an entry in that Component's `path@*@docs/open-issues/`. It is not licence to follow the code.
+A behaviour that looks like a new defect is often recorded: `cargo klarch issues` and
+`cargo klarch tripwires` list every entry.
+
+`primer@intent-and-claims` governs how to read all of them, read whole: intent is authority, and a
+divergence between a design document and the code is a defect in one of them, never licence to
+follow the code.
 
 ## The loop `##development-loop`
 
 1. **Claims.** Take the unit of work's claims, each with the test that could refute it.
 2. **Write the tests, and show that they discriminate** (`skill@klarch-development@discriminating-tests`).
-3. **Implement.**
+3. **Implement.** A design decision met while building is routed by the backstop of
+   `primer@design-heads`, at the moment it is met.
 4. **Gate** (`skill@klarch-development@development-gate`).
-5. **Commit.** The commit contract is root `CLAUDE.md`, section Git. A decision that clears the
-   recording threshold takes `skill@knowledge-architect-decision-recording` as well.
+5. **Commit.** The commit contract is root `CLAUDE.md`, section Git.
 6. **Review** (`skill@klarch-development@code-review-axes`), at any checkpoint where a coherent piece works, not only at the end. It follows
    the commit because a reviewer working on its own copy of the tree sees committed content only,
-   so uncommitted work is reviewed by nobody. A repair the review asks for is a further commit,
-   unless it would leave an earlier commit failing under the branch tip's checker: it is then
-   folded into the earliest commit it repairs, per root `CLAUDE.md`, section Git, point 2.
+   so uncommitted work is reviewed by nobody. A repair the review asks for lands as
+   `skill@knowledge-architect-review@what-review-leaves` says.
 
 ## Claims, and tests that discriminate `##discriminating-tests`
 
 **A unit of work is a list of claims, each with the test that could refute it.** A part with no
-claim is cost with no information. Where the work has a spec or a milestone, its steps present the
-claims, under `skill@knowledge-architect-planning`; this procedure does not depend on one existing.
+claim is cost with no information. Where the work is a slice of a milestone, its entry's Claims
+section presents them, under `skill@knowledge-architect-planning`; otherwise, a spec included, the
+session writes them, and this procedure does not depend on a plan document existing.
 
 **Every claim's test must be shown to fail against a plausible wrong implementation.** A test
 written first can still be written to the implementation its author already has in mind. It then
@@ -76,7 +77,7 @@ lesser one:
   outcome.**
 
 **A mutation runs in a scratch worktree by default.** Reverting a hand-made mutation in the live
-tree with a restore has lost uncommitted work in thaum several times. Where the live tree is used
+tree with a restore can lose uncommitted work. Where the live tree is used
 anyway, the file is staged before the mutation, per root `CLAUDE.md`, section Git, so the revert
 does not depend on a restore. The worktree starts at HEAD, and the session's uncommitted work is
 brought into it, because the test under check is usually not committed yet. From the main tree's
@@ -85,8 +86,8 @@ root, with `<name>` unique to the session so that no two sessions share a worktr
 ```sh
 git add --intent-to-add <each new file>              # new files then appear in the diff; nothing is lost
 git worktree add --detach .claude/worktrees/<name> HEAD
-git diff HEAD --binary | git -C .claude/worktrees/<name> apply
-git -C .claude/worktrees/<name> commit -qam "scratch: the work under check"
+git diff HEAD --binary | git -C .claude/worktrees/<name> apply --index
+git -C .claude/worktrees/<name> commit -qm "scratch: the work under check"
 ```
 
 Then, inside the worktree, run the commands below with `export CARGO_TARGET_DIR="$PWD/target"`.
@@ -149,8 +150,7 @@ the guard is the second kind, and the refusal is what carries the claim. If it a
 state, the guard is the third kind, whatever an argument about normal use says.
 
 **A mutation set chosen by the author of the tests is not enough.** The author mutates _the thing
-the claim is about_, and the survivors are adjacent to it: in thaum, two units of work passed their
-own mutation checks and an independent review found survivors in both within one pass. So the
+the claim is about_, and the survivors are adjacent to it, where an independent reviewer looks. So the
 adversarial review of `skill@klarch-development@code-review-axes` chooses its own mutations.
 
 ## The review axes for code `##code-review-axes`
@@ -158,8 +158,8 @@ adversarial review of `skill@klarch-development@code-review-axes` chooses its ow
 **Dispatch when a coherent piece of code compiles, passes its tests, and does what its claims say**,
 and a defect found after the next piece is built on it would mean unbuilding both. That is the
 moment in this activity's terms; the list of such moments is open. Merging to main
-is not on this list, because it belongs to every activity, and root `CLAUDE.md`, section Git,
-carries it.
+is not on this list, because it belongs to every activity, and
+`skill@knowledge-architect-review@review-axes` says what its review owes.
 
 **How to dispatch is `skill@knowledge-architect-review`**: the invariants that make a finding worth
 acting on, how to write a brief, and where findings land. Read it before sending anything.
@@ -186,11 +186,10 @@ only the branch's tip: its message and its tree. Run `cargo klarch check --stage
 and before each commit, and `cargo klarch commits origin/main..HEAD` after it: the whole branch, since a citation of an earlier
 commit of the branch by SHA is refused only when that commit is in the range judged, per
 `issue@core@branch-sha-citations-are-judged-within-the-range-only`; the check before the commit
-restates `design@agent-skills@staged-check-before-each-commit`. Amend the commit if either
-fails, with a clean tree; once later commits sit on top, the repair is a history edit. **A change to
-the core that makes a check stricter, or changes the manifest format, makes every earlier commit of
-its branch fail.** Put that change in the branch's first commit, with every fix the tree needs to
-pass it, or squash the branch to one commit before its review. The decision is
+restates `design@agent-skills@staged-check-before-each-commit`. The repair of a failing
+check is `instructions@verify-mechanically`. **A change to the core that makes a check stricter,
+or changes the manifest format, makes every earlier commit of its branch fail**: it is placed on
+the branch as `primer@branch-commits` says, read whole. The decision is
 `design@core@a-commit-message-is-a-document`. Run both checks bare, and never chain a command on a
 verdict that went through a pipe.
 

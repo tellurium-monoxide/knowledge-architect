@@ -25,6 +25,14 @@ word it defeats, with a default chosen in view of the corrected premise, and pro
 unless the owner answers otherwise; a part of the work that cannot be undone waits for the answer.
 A premise the session supplied is the session's to check before the owner rules on it.
 
+## Items put to the owner under a label `##labelled-items`
+
+**An item put to the owner under a label**, `Q<n>` or the prefix a skill gives it, **takes the
+next number of its prefix in the record the label reaches, from 1, and that number is never reused
+there.** That record is a plan document, a milestone's documents counting as one; a file; or the
+commit messages of one branch, counting as one. A label that reaches none is numbered within the
+message that puts it to the owner, wherever the item's ruling is kept.
+
 ## Room to judge `##room-to-judge`
 
 **Where the installed text is silent, judge.** It leaves that room on purpose: it states the
@@ -36,11 +44,12 @@ to judge is never room to act against an instruction.
 - **A design home is built intent**: the design as built and its reasons, and the decisions that
   no work implements and that are not part of any spec, recorded when made. Design that is decided and not built is in a plan
   document until it lands. Check the code against a design home, never the other way. A divergence
-  is a defect in one of them: say which, open an issue, and stop. A design home can be wrong, and
-  it still prevails over the code until the issue closes. It closes when the code changes to meet
-  the head, or when the head is reversed under `skill@knowledge-architect-decision-recording`; it
-  never closes by following the code. Work that goes on meanwhile, on the owner's word, builds on
-  the head.
+  is a defect in one of them: say which, open an issue, and hold the part of the task that rests on
+  the point in divergence until the owner's word; the rest of the task goes on. A design home can
+  be wrong, and it still prevails over the code until the issue closes. It closes when the code
+  changes to meet the head, or when the head is reversed under
+  `skill@knowledge-architect-decision-recording`; it never closes by following the code. Work on
+  that point that goes on meanwhile, on the owner's word, builds on the head.
 - **A reason recorded at the code** (an inline comment saying why the code is shaped so, or the
   message of the commit that argued it) is intent at the scale of that code. It binds as a
   presumption, below the design home: a change that defeats it argues against that reason in its
@@ -62,7 +71,7 @@ Something met while doing other work takes the first of these that applies:
 
 | # | test | outcome |
 | --- | --- | --- |
-| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | stop and present it to the owner at the top of the turn, with a default |
+| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | present it to the owner at the top of the turn, with a default, and proceed on the default unless the owner answers otherwise |
 | 2 | its fix is checkable from the diff alone: it changes no behaviour, no decision and no test outcome (a typo, a stale pointer, wording that is now false, a broken link) | fix it, in a commit of its own |
 | 3 | its `Why it matters` and its `What would close it` can be written | open an issue entry (`skill@knowledge-architect-issue-tracking`) |
 | 4 | none of the above | name it, with why it is dropped |
@@ -70,6 +79,8 @@ Something met while doing other work takes the first of these that applies:
 **A turn that met anything outside its task ends with a section titled "Met outside the task"**,
 listing every item with its outcome: fixed (with the commit), issue opened (with its id), waiting
 for the owner's ruling, or dropped (with the reason). A mention inside other prose does not count.
+A subagent that edits nothing reports each item at the end of its report, under a heading "Met
+outside the task", and the session that dispatched it routes each item by this table.
 
 ## Where knowledge goes `##where-knowledge-goes`
 
@@ -79,11 +90,12 @@ restated where it has to be delivered only when the restatement is no longer tha
 it**: a path, a file name, a command, a value, or one sentence. A directive sentence carries its
 pointer beside it, and where the two disagree the restatement is the defect. A directive longer
 than one sentence is delivered by a pointer to its home, with an instruction to read the home whole
-at that moment. More than one sentence of it is never restated: a partial copy drifts, and its
-reader takes it for the whole. For installed text, the home a pointer names is installed text, a skill's section or the
-primer's, since installed text cites no entry of the project. An existing longer restatement is
-converted when a change edits what it says; re-pointing a reference in it does not count. Whether a directive is needed at a point of delivery is the
-owner's decision.
+at that moment, or by one of its sentences restated with its pointer beside it, where that one
+sentence is what the point of delivery needs. More than one sentence of it is never restated: a
+partial copy drifts, and its reader takes it for the whole. For installed text, the home a pointer
+names is installed text, a skill's section or the primer's, since installed text cites no entry of
+the project. An existing longer restatement is converted when a change edits what it says;
+re-pointing a reference in it does not count.
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
@@ -91,7 +103,7 @@ owner's decision.
 | how the project or a Component is built, and why | that Component's design home, `path@*@docs/design.md` or `path@*@docs/design/` | the design changes: the entry is rewritten in place |
 | the engineering alternative that lost, and why | that Component's `path@*@docs/rejected-alternatives.md` | it is reopened and chosen, the owner rules it fails every recording test, or the decision it lost to leaves the design home and the text that keeps that decision's reason names it; a reversal moves the old winner into it if it meets a recording test of `skill@knowledge-architect-decision-recording` |
 | what is outstanding: a defect, an unexplained observation, an open question, missing work | one file in the owning anchor's issue directory, `path@*@docs/open-issues/` in a Component | the issue closes |
-| evidence that would flip a recorded decision about code that exists | the owning Component's tripwires home, `path@*@docs/tripwires.md` or `path@*@docs/tripwires/` | it fires, or its decision is gone |
+| evidence that would flip a recorded decision whose work exists, or that no work implements | the owning Component's tripwires home, `path@*@docs/tripwires.md` or `path@*@docs/tripwires/` | it fires, or its decision is gone |
 | a contract or a trap that only a developer needs, true of the code as it stands | the scoped `CLAUDE.md` nearest the code | the contract changes or the trap is removed |
 | how a user can use a Component, and what to respect | its `README.md` | the contract changes |
 | directions about what to find where in a directory | a `README.md` in that directory | the directory's content changes |
@@ -103,7 +115,7 @@ owner's decision.
 | **none of these, nor a row of the project's own** | **ask the owner before writing it anywhere** | the table gains the row |
 
 The project's root `CLAUDE.md` adds its own rows. **A measurement is routed by what it serves**:
-the head of the decision it supports, the entry of the defect it characterises, the tripwire whose
+the head of the decision it supports, the issue entry it characterises, the tripwire whose
 threshold it is, or else the commit message that took it.
 
 **A reference is written wherever the text would have to be revisited if the entry it names
@@ -116,7 +128,21 @@ names every entry it opens, closes, reverses or argues from. A reference whose e
 leave the text unaffected is not written. A reference is one backticked span,
 `<kind>@<anchor>@<id>`, naming the anchor that defines the entry, and it is live wherever it is
 prose, a fenced block included; an illustration that must not resolve writes a placeholder in angle
-brackets. The checker reads Markdown and Rust source; a reference anywhere else is found by grep.
+brackets. A span never crosses a line break: a line breaks before the span, not inside it. A skill
+or an agent is named by its reference, `skill@<name>` or `agent@<name>`, never by its bare name in
+backticks. A `path` reference names the deepest anchor that holds its target, with a plain path
+under it, no `..`, no `./` and no leading `/`, and ends with `/` exactly when the target is a
+directory; an anchor's own directory is named from the anchor above it, as
+`path@<parent-anchor>@<dir>/`. A relative markdown link, in any of markdown's link shapes, an
+image `![alt](<path>)` included, is legal in a `README.md` or an `index.md` only, to a target under
+its own directory, its path under the same constraints as a `path` reference's; any other pointer is
+a backticked reference.
+A heading is a line that opens with `#` marks and holds text, with no list or block-quote marker before
+them; a line markdown reads as a heading in another shape, as a `---` right under a paragraph is,
+stops the check. The checker reads Markdown, and in Rust source the comments and every string
+literal that a `let`, a `const` or a `static` does not bind to a name, a function call's argument
+being never bound and a macro's body bound like the rest of the value; it reads each commit's
+message and tree through `cargo klarch commits`. A reference anywhere else is found by grep.
 
 **A finding is repaired in a form the checker judges, never by moving the pointer into plain
 text**: the right anchor, `path@elsewhere@<path>` for a path the tree does not hold, a placeholder,
@@ -125,6 +151,20 @@ backticks only beside a reference to an issue entry of this project that records
 A gap of the checker itself gets that entry in this project's own register, since a reference
 cannot reach another project. Text that is not in the checker's syntax, such as a commit named by
 its subject, a commit of another project or a description in words, is outside this rule.
+
+## Every commit of a branch is judged by the checker at its tip `##branch-commits`
+
+Where the project's gates run `cargo klarch commits` over a branch, as
+`skill@knowledge-architect-setup@setup-gates` recommends, that run is the **per-commit gate**: it
+judges every commit of the range, its message and its tree, with the checker the branch's tip
+runs, and a tree that holds no manifest or has a finding under that checker fails it. **A change
+that sets what the tip's checker requires of every tree, such as adding the manifest, moving the
+pin, or, in a project that builds the checker, a change to it under which a tree that passed
+before can fail, goes in the branch's first commit, with every fix the tree needs to pass it, or
+the branch is squashed to one commit before its review. A repair that would leave an earlier
+commit failing is folded into the earliest commit it repairs**,
+by a history edit with no uncommitted work in the tree, confirmed afterwards to have lost no
+content.
 
 ## Design heads `##design-heads`
 
@@ -158,12 +198,12 @@ records dozens per unit of work stops being readable and stops being ranked.
 4. **the owner confirms that it records the owner's own intent**: a ruling the owner gave that an
    agent could judge superfluous and reverse as a small fix, or an argument the owner made and wants
    kept so as not to restate it. The agent does not judge this. When a decision would earn a head
-   by this test alone, ask the owner, one numbered question per decision (Q1, Q2, …), several in
-   one message, each quoting the owner's words the decision rests on: do they record the owner's
-   intent, or were they an answer to the agent's proposal, or a hedged statement ("I think",
-   "maybe"), which is a position to argue under `skill@knowledge-architect-design`? The head quotes
-   the owner's words and the owner's answer. With no answer, the decision earns no head by this
-   test.
+   by this test alone, ask the owner, one question per decision, each under a label, `Q<n>`,
+   numbered as `primer@labelled-items` says, several in one message, each quoting the owner's words
+   the decision rests on: do they record the owner's intent, or were they an answer to the agent's
+   proposal, or a hedged statement ("I think", "maybe"), which is a position to argue under
+   `skill@knowledge-architect-design`? The head quotes the owner's words and the owner's answer.
+   With no answer, the decision earns no head by this test.
 
 Test 3 matters most in a project that implements a specification or leans on a tool's behaviour. A
 choice that turns on what the specification means, or on how the tool behaves, is expensive to get
@@ -253,7 +293,7 @@ outline reads as decisions under level-two subjects. **Every level-three heading
 is an entry** and carries a slug: one without is a finding, so a heading that is section text sits
 at level two or four. Nowhere else: a slug at another heading level, in a table cell, at the head
 of a plain line, in the middle of a line or in a file that is not the design home defines nothing.
-`cargo klarch check` reports it as a misplaced definition, and every reference to it as dangling.
+`cargo klarch check` reports it as a misplaced definition; a reference to it resolves to nothing.
 The slug is an id in the grammar `[a-z0-9]+(-[a-z0-9]+)*`, unique in the design home.
 
 **When the decision was a thread of a design discussion, its slug is the thread's name**, unless
@@ -308,7 +348,8 @@ shows. A slug or a title that misdescribes its decision misinforms every reader,
 decision it names, so rename it even when that means rewriting every reference in the project.
 
 **A head that a change touches is brought to these rules in that change**: its title to the rule it
-argues, each decision it bundles to a head of its own, its ground to its argument. Where bringing it
+argues, each decision it bundles to a head of its own, its ground to its argument. Re-pointing a
+reference in a head does not touch it. Where bringing it
 to the rule would widen what the owner's words in it approved, as a title moved from the members
 the owner named to the rule, the change goes to the owner as one proposal, as a new member does.
 
@@ -322,13 +363,13 @@ the owner named to the rule, the change goes to the owner as one proposal, as a 
   change whose design is not settled, to ground it and find out whether it is bounded work;
   keep-or-change about an existing design; a bug trend suggests the design is the problem.
 - `skill@knowledge-architect-planning`: a design discussion converged on its full path; a slice of a
-  milestone starts or lands; the work of a spec starts or lands.
+  milestone starts or lands; the work of a spec starts or lands; before editing the roadmap.
 - `skill@knowledge-architect-review`: before merging to the main branch, or when an
   activity's skill says its work is ready.
 - `skill@knowledge-architect-agent-configuration`: before editing a `CLAUDE.md`, a skill or an
   agent.
-- `skill@knowledge-architect-setup`: the project adopts the workflow, or a version upgrade is
-  installed.
+- `skill@knowledge-architect-setup`: the project adopts the workflow, or moves its pin of the
+  checker to another version.
 - `skill@knowledge-architect-goal-setting`: before writing or editing any goals home; a Component
   has no goal; the owner states or abandons a purpose; a decision conflicts with a goal.
 - `skill@knowledge-architect-project-audit`: the owner asks to audit one aspect of the whole
@@ -337,6 +378,4 @@ the owner named to the rule, the change goes to the owner as one proposal, as a 
 - `skill@knowledge-architect-retrospective`: once per session, offered when a branch the session
   worked on merges, a plan document leaves, or the session ends.
 
-A project's own skills add to these, and never replace them. Which project skill adds to which
-installed one is the routing table of the project's root `CLAUDE.md`. Read the installed skill and
-every skill the table lists beside it.
+A project's own skills add to these, and never replace them.

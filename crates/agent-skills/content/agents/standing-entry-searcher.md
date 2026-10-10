@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-standing-entry-searcher
-description: Searches one group of the project's issues and tripwires for the entries a piece of work bears on, and returns them as references with a reason each, at the grounding of a design discussion and at the design audit of a milestone slice or of a spec. To dispatch it, count the rows of `{{command}} issues` and of `{{command}} tripwires`, the header row excluded, a listing that prints only `(no entry)` counting 0; send ceil(count / 60) agents, all in parallel, each on a group of consecutive positions of the combined count, the sizes of any two groups differing by at most one (66 positions make two groups, 1 to 33 and 34 to 66); give each the work, the seeds (the decisions and goals the work names, or none), its group's first and last positions, and a scratch directory of its own. Then read every entry returned whole with `{{command}} show`, never from its reason line alone. Dispatch it; do not read it.
+description: Searches one group of the project's issues and tripwires for the entries a piece of work bears on, and returns them as references with a reason each, at the grounding of a design discussion and at the design audit of a milestone slice or of a spec. To dispatch it, count the rows of `{{command}} issues` and of `{{command}} tripwires`, the header rows excluded, a listing that prints only `(no entry)` counting 0; send ceil(count / 60) agents, all in parallel, each on a group of consecutive positions of the combined count, the sizes of any two groups differing by at most one (66 positions make two groups, 1 to 33 and 34 to 66); give each the work, the seeds (the decisions and goals the work names, or none), its group's first and last positions, and a scratch directory of its own. Then read every entry returned whole with `{{command}} show`, never from its reason line alone.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -47,7 +47,8 @@ id. The reference of an issue entry is `issue@<anchor>@<id>`, and of a tripwire 
 `tripwire@<anchor>@<id>`.
 
 **The order is fixed, so that every search agent of one search takes the same slice**: the issue
-rows sorted by anchor, then by id; then the tripwire rows sorted by anchor, then by id. The issue
+rows sorted by anchor, then by id; then the tripwire rows sorted by anchor, then by id, each sort in
+byte order (`LC_ALL=C sort`), since other collations order hyphenated ids differently. The issue
 listing prints its rows by kind first, so always sort it. Your group is the rows at your first to
 your last position in that order, both included.
 
@@ -101,6 +102,9 @@ Read and judged unrelated:
 
 Commands run:
 - <each command, with its arguments>
+
+Met outside the task:
+- <each item, or none>
 ```
 
 **Every entry of your group appears in exactly one of the two lists.** The second list is

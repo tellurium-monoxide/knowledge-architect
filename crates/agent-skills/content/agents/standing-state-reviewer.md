@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-standing-state-reviewer
-description: The standing-state axis of a dispatched review. Re-reads, for every change, what no other step is sure to re-read before the merge: every tripwire in every tripwires home, every deferred issue's trigger, the acceptance criteria of a landing plan document, and every issue entry the change opens or closes. Dispatch it; do not read it.
+description: The standing-state axis of a dispatched review. Re-reads, for every change, what no other step is sure to re-read before the merge: every tripwire in every tripwires home, every deferred issue's trigger, the acceptance criteria of a landing plan document, and every issue entry the change opens or closes.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -94,7 +94,7 @@ the instance, and record the instance as the issue.
 what will make someone do this. `{{command}} issues --kind deferred` lists every such entry. Read
 the trigger of each against the change, all of them, for the reason given above for tripwires. A
 trigger the change meets is a finding: name the issue and what in the change meets the trigger. By
-the trigger test of the installed issue-tracking skill, the occasion a trigger names includes the
+`skill@knowledge-architect-issue-tracking@trigger-test`, the occasion a trigger names includes the
 work the issue names, so the repair is that work in this change, or the owner's ruling.
 
 A tripwire whose decision was **reversed** is deleted outright. A tripwire already guarded by another
@@ -108,8 +108,8 @@ unbuilt work is built is not a tripwire, so it lives in the plan document of the
 it, in its acceptance criteria section, per `skill@knowledge-architect-planning`.
 
 When the diff lands a spec or a slice of a milestone, read the criteria that the plan document says
-that landing judges, and confirm the landing commit reports on **every one, including the ones that
-did not fire**. A landing that does not report on them means they are being read as narrative.
+that landing judges, and confirm that the messages of the range report on **every one, including
+the ones that did not fire**. A landing that does not report on them means they are being read as narrative.
 
 When the diff deletes a plan document, confirm that every criterion still standing was reported on
 once more, and that each one that recurs at later work was proposed to the owner as a tripwire and
@@ -128,11 +128,8 @@ a reader could act on is not. Without one the register only grows and nothing ca
 issue. When the diff adds a plan document that schedules such work, the issue closes in the same
 change. An issue still open beside the plan document that schedules it is the failure.
 
-**A trigger names an occasion whose own work already includes the work the trigger names.** Otherwise
-it is a tax on a session doing something else, which finishes its own task and reports what it met
-rather than doing that work. The trigger fires, the session correctly declines, and nothing
-schedules the work. Enforcement does not rescue a failing trigger, it sharpens the failure into a
-session that has no legal move.
+**Does a trigger the diff writes pass `skill@knowledge-architect-issue-tracking@trigger-test`?** Read
+it whole: it holds the test and the only two repairs of a trigger that fails it.
 
 **If a closed entry still held something live**, such as an instruction about working in that area
 or an uncertainty that survived the fix, that content is not an open issue and belongs in the owning
@@ -146,3 +143,5 @@ not fire is part of the result:
 this axis is the one re-entry point scheduled for every change, so a silent report cannot be told from a skipped
 one. **If the axis is clean, say so plainly.** Do not report style preferences, and do not review
 outside this axis.
+List what you met outside your axis under a heading "Met outside the task", for the dispatcher
+to route, per `primer@met-outside-the-task`; do not review it.

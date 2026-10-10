@@ -40,11 +40,11 @@ audit and at each landing.
 | **roadmap** | docs/roadmap.md at the project's root, optional: the order in which the owner wants known work done (`skill@knowledge-architect-planning@spec-or-milestone`) |
 | **transcript** | the harness's log of a session, on disk. It keeps the records from before a compaction |
 | **assembly** | writing a plan document from the discussion's transcript (`skill@knowledge-architect-planning@spec-contents`) |
-| **converged** | every proposal of the discussion is closed, and no binding criterion is unmet |
+| **converged** | convergence holds, as loop step 6 of `skill@knowledge-architect-design@discussion-loop` defines it |
 | **thread** | one proposal of the discussion, carrying a state; an approved thread is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
-| **acceptance criterion** | a check on a recorded decision that only the work's built code can apply |
-| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named, and the thread stays closed until the owner's word. The full protocol is `skill@knowledge-architect-design`, under Decision authority |
+| **acceptance criterion** | a check on a decision of the plan, an approved thread, that only the work's built code can apply |
+| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named; presenting it reopens the thread, which closes again on the owner's word, per `skill@knowledge-architect-design@decision-authority` |
 | **audit** | the reading of a slice's entry, or of a spec, against the tree and the design homes before its work is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
 
@@ -58,9 +58,6 @@ ledger, every thread with its state and its argument, lives in that conversation
 harness's transcript of it, which the assembly of `skill@knowledge-architect-planning@spec-contents` reads. A plan document written from memory in a
 later session is written from a summary, and a summary loses exactly the losing arguments and the
 conditions of each closure.
-
-A problem that arrived bounded, with a clear requirement and no open design question, has no
-converged discussion to plan from. This skill does not apply to it.
 
 ## A spec or a milestone `##spec-or-milestone`
 
@@ -85,11 +82,14 @@ is optional. Each row cites an issue entry, `issue@<anchor>@<id>`, or a whole pl
 `spec@plans@<id>` or `milestone@plans@<id>`, in the order the owner wants the work done. An
 unordered section may follow. The work stays in the issue register and the plans directory; the
 roadmap holds only its order. **The order is the owner's**: a row is added or moved on the owner's
-word. Two edits need no word, because the row keeps pointing at the same work:
+word. Three edits need no word, because the row keeps pointing at the same work, or that work is
+done:
 
 - the commit that adds a plan document closes the issue it schedules, and rewrites that issue's row
   to cite the plan document;
-- the commit that deletes a plan document removes its row: the work landed.
+- the commit that deletes a plan document removes its row: the work landed;
+- the commit that closes an issue with no plan document scheduling it removes its row: the work is
+  done.
 
 A row whose entry left without either edit dangles, and `cargo klarch check` reports it, so the order
 cannot go stale unnoticed. An illustration of the shape:
@@ -150,14 +150,16 @@ docs/plans/
 **Written for a session that did not witness the discussion.** That is the standard every section
 is held to, and the reviews of `skill@knowledge-architect-planning@plan-reviews` check it.
 
-**The sections are fixed: level-two headings with these titles, in this order.** `cargo klarch check`
-reports a section missing or out of order. A section with nothing to hold says so in one line
-rather than being omitted, so a reader can tell an empty section from a missing one.
+**The sections of a spec of specs/ and of a milestone document are fixed: level-two headings with
+these titles, in this order.** A slice's spec owes the five sections of its entry instead, and
+carries of the sections below only those its slice fills. `cargo klarch check` reports a section a
+document owes as missing or out of order. A section a document owes and has nothing to hold says
+so in one line rather than being omitted, so a reader can tell an empty section from a missing one.
 
 | section | holds |
 | --- | --- |
-| Status and audience | what the document is for; that it leaves when its work lands; that where it and a design home disagree, the design home wins; that every name it uses is defined in it or exists in the code; that where the owner's word is needed and the owner is absent, the work does not proceed on that point |
-| How the work is done | in a milestone document: `skill@knowledge-architect-planning@working-a-slice`, restated, with a pointer to this skill as its home. In a spec: one line naming this skill |
+| Status and audience | what the document is for; that it leaves when its work lands; that where it and a design home disagree on a point its section "What is already decided" does not list as reversed or rewritten, the design home wins; that every name it uses is defined in it or exists in the code; that where the owner's word is awaited, `skill@knowledge-architect-planning@working-a-slice` says what waits |
+| How the work is done | in a milestone document: a pointer to `skill@knowledge-architect-planning@working-a-slice`, with an instruction to read it whole before each slice, and any addition the milestone's work needs. In a spec: one line naming this skill |
 | Names | every project shorthand the document uses, expanded to the file, function or command it names |
 | What the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
 | What is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `cargo klarch show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step, slice or harvest that judges or updates each |
@@ -173,7 +175,7 @@ rather than being omitted, so a reader can tell an empty section from a missing 
 | Acceptance criteria | one item per criterion, ``### <criterion> `##<id>` ``, as `skill@knowledge-architect-planning@acceptance-criteria` says |
 | Implementation sequence | in a spec, its steps; in a milestone document, its slices, each linked to its spec, whose own steps it holds (`skill@knowledge-architect-planning@cutting-steps-and-slices`). Concise: what each builds and what it fails alone on |
 | Order rationale | one sentence per pair of adjacent steps or slices |
-| Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, labelled `D<n>`, with the thread it bears on, until the owner rules; and the label of each acceptance criterion awaiting the owner's word |
+| Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, labelled `D<n>`, with the thread it bears on, marked as ruled once the owner rules; and the label of each acceptance criterion awaiting the owner's word |
 | Harvest | what lands where and when. In a spec, its rows; in a milestone, each slice's row in that slice's spec, and the row of the milestone document itself in it |
 | Later consequences | what each later piece of work adds or replaces, so a later reader knows what was deliberately left |
 
@@ -220,8 +222,8 @@ sections is an item, and a slug anywhere else in a plan document defines nothing
 - An id is in the grammar `[a-z0-9]+(-[a-z0-9]+)*`. A thread keeps the slug the discussion minted.
   An argument is numbered `a1`, `a2`, …, in order of appearance and never reused, in one sequence
   across a milestone's README and its slice specs, which share one namespace.
-- An item is cited `<kind>@<plan>@<id>`, where the plan is the spec's id or the milestone's name,
-  and only from inside its own plan: the spec file, or the milestone's directory. From anywhere
+- An item is cited `<kind>@<plan>@<id>`, where the plan is a spec's id, or the milestone's name for
+  an item of the milestone document or of any of its slice specs, and only from inside its own plan: the spec file, or the milestone's directory. From anywhere
   else, a commit message and a design head included, the plan is cited whole, and an item is named
   in plain text with a hash sign, as #<id>. A slice is named the same way.
 
@@ -235,7 +237,10 @@ its proposer, its final state, the arguments on each side, the owner's rulings v
 round, and its relations. It is assembled from the transcript, not from memory. Dispatch a
 subagent that reads every transcript file the discussion spans, a resumed session included, and
 extracts the delta tables, the owner's messages verbatim and the arguments; the design skill's
-per-round delta is the draft it reads. Where one argument ends and the next begins is decided at
+per-round delta is the draft it reads. Its brief names
+`agent@knowledge-architect-transcript-reviewer@extract-transcripts`, read whole, for which lines
+it keeps and which it labels as the owner's: the transcript reviewer then checks the document
+against the same lines. Where one argument ends and the next begins is decided at
 assembly, and the transcript reviewer of `skill@knowledge-architect-planning@plan-reviews` checks that no argument was lost. The status section names the
 transcript files read, so that a reviewer reads the same ones. Each file is found by the
 discussion's opening message, never by a session identifier, as `skill@knowledge-architect-review`
@@ -260,14 +265,9 @@ failure.** Every other test here serves that one.
   failure surfaces with one name.
 - **The last step consumes**: the measurements, the report, the harvest.
 - **One branch and one merge per slice**, each merged before the next slice begins, and reviewed
-  before the merge. A step is no unit of the history: how many commits it takes, and what else a
-  commit of the branch carries, such as a fix met outside the task, is the implementing session's
-  to judge.
-- **A plan document whose work's first commit changes what the project's per-commit gate checks
-  lands in a merge of its own, before that work.** The per-commit gate is the one that judges each
-  commit of a branch, its tree and its message. On one branch, that gate as the work changes it would
-  judge the commit that added the document, whose tree predates the change. A change that only a
-  check of the working tree sees, and not the per-commit gate, does not count.
+  before the merge. A step is no unit of the history: how many commits it takes, and what other
+  commits the branch carries, such as the commit of its own a fix met outside the task takes, is the
+  implementing session's to judge.
 
 A slice's entry is five level-two sections, with these titles, in this order, and
 `cargo klarch check` reports one missing or out of order. Fixtures, where it applies, sits between
@@ -311,35 +311,40 @@ the decision it guards; listing "the reviews pass" in every plan document would 
 stand in for the specific criterion that is harder to find.
 
 **An acceptance criterion stands on the owner's word**, as a tripwire does. The owner rules on
-whether it is applied and on the decision its firing reopens; its observable is worded by the
-agent, and a rewording is listed to the owner at the end of the turn. It is put to the owner under
-a label, `AC<n>`, and the label continues the sequence of the discussion that produced the plan
-document, so the owner's ruling in the transcript finds it. A criterion first proposed after the
-premortem, at the assembly, by a review or at an audit, is written as an item of the acceptance
-criteria section marked as awaiting the owner, its label at the head of the item's text, and its
-label is listed under the defaults awaiting the owner. It is not judged before the ruling, and the
-work goes on without it: a landing reports it as not judged, awaiting the owner's word. One the
-owner declines, or that is still unruled when the document leaves, is deleted with the document.
-A criterion that gains its slug keeps its label beside it, in the item's text.
+whether it is applied and on the decision its firing reopens; its observable is worded by the agent,
+and a rewording is listed to the owner at the end of the turn. It is put to the owner under a label,
+`AC<n>`, numbered as `primer@labelled-items` says, so the owner's ruling in the transcript finds it.
+A criterion first proposed after the premortem, at the assembly, by a review or at an audit, is
+written as an item of the acceptance criteria section marked as awaiting the owner, its label at the
+head of the item's text, and its label is listed under the defaults awaiting the owner. It is not
+judged before the ruling, and the work goes on without it: a landing reports it as not judged,
+awaiting the owner's word. One the owner declines, or that is still unruled when the document
+leaves, is deleted with the document. A criterion that gains its slug keeps its label beside it, in
+the item's text.
 
 A number in a criterion is a threshold the owner sets. Until the owner has, it is written as a
 default marked as the owner's to reset.
 
-- **At each landing**, the landing commit reports on every criterion judged there, one line each,
-  naming it as #<id> beside a citation of the whole plan, since a commit message cites a plan only
-  whole: the decision guarded, fired or not, the evidence, the response taken.
+- **At each landing**, the messages of the commits that land it report on every criterion judged
+  there, one line each, naming it as #<id> beside a citation of the whole plan, since a commit
+  message cites a plan only whole: the decision guarded, fired or not, the evidence, the response
+  taken.
 - **A criterion that fires** leaves the document at once, as an issue entry or a reopened decision,
   under `skill@knowledge-architect-issue-tracking`.
-- **When the document leaves**, its last landing commit reports on every criterion once more. One
-  that did not fire and recurs at later work is proposed to the owner as a tripwire, and written on
-  the owner's word in the tripwires home of the Component that owns the guarded decision, naming
-  the harvested head, in the shape `skill@knowledge-architect-issue-tracking` gives. One that is
-  spent, or that the owner declines, is deleted with the document.
+- **When the document leaves**, the landing that deletes it reports on every criterion once more.
+  One that did not fire and recurs at later work is proposed to the owner as a tripwire, and written
+  on the owner's word as `skill@knowledge-architect-decision-recording@ruled-tripwires` says. One
+  that is spent, or that the owner declines, is deleted with the document.
 
 ## Working a slice, and the work of a spec `##working-a-slice`
 
-The milestone document restates this procedure with a pointer to this skill, so a cold session
-finds it there. The work of a spec follows it too, as its last paragraph says.
+The milestone document points to this procedure, so a cold session finds it from there. The work
+of a spec follows it too, as its last paragraph says.
+
+**Where the owner's word is awaited.** A default the plan documents list as awaiting the owner is
+built as they write it until the owner rules on it. A scope change listed there does not start
+before its ruling. A load-bearing gap of point 2 is not such a default, even where the message
+that puts it to the owner names one: it stops the slice.
 
 1. **Ground**: the Component's `CLAUDE.md`, its design home, its rejected alternatives; then the
    milestone document entire, then the slice's spec. The issues and the tripwires, of every anchor,
@@ -361,14 +366,12 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
    - **Applied in place.** The gap has one answer the document's decisions already imply, or is a
      choice among shapes the document rules out all but one of. Apply the answer in place, in the
      milestone document or the slice's spec, wherever the shape it changes is written. Commit the
-     amended documents alone, with a subject of the shape `The <slice> design audit, applied in
-     place: <n> gaps, none reopening a discussion`, and a message listing each finding: the gap, the
-     answer and the decision it follows from. Earlier audits are found with
-     `git log --grep='design audit'`.
+     amended documents alone, with a subject that names the slice's design audit in those words,
+     and a message listing each finding: the gap, the answer and the decision it follows from.
+     Earlier audits are found with `git log --grep='design audit'`.
      **An answer that widens or narrows a ruling of the owner, or adds an obligation to one, is a
      scope change even when it is the one answer the document implies.** It is applied with the
-     others, and also listed in the milestone document as a default awaiting the owner, who rules
-     on it at the audit; the implementation of that point does not start before the ruling.
+     others, and also listed in the milestone document as a default awaiting the owner.
    - **A change to the slices.** An audit that finds the work needs another slice, or a slice split
      or reordered, writes each new slice's spec with its harvest row, adds the slice to the
      implementation sequence and the order rationale, and moves into its spec the design it takes
@@ -382,11 +385,10 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
      - A choice among shapes that can be stated in full, each with its consequence, is put to the
        owner in one message, with a default; several such gaps go in one question, each under a
        label, `Q<n>`, since each is written in place as a thread with its slug. The slice's
-       documents exist, so the ruling is not left to a commit message as that path would leave
-       it: it is written in place in the
+       documents exist, so the ruling is not left to a commit message as the in-change path would
+       leave it: it is written in place in the
        milestone's documents by the rule of `skill@knowledge-architect-planning@spec-contents`, as a thread with the owner's words verbatim, like
-       the audit's other answers, and the audit's commit lists it among its gaps. It owes no new
-       review of `skill@knowledge-architect-planning@plan-reviews`, since it changes no decided shape.
+       the audit's other answers, and the audit's commit lists it among its gaps.
      - A gap that defeats a reason, a premise or a criterion an approved thread rests on needs the
        full session. Its converged design goes into the milestone's documents by the rule of `skill@knowledge-architect-planning@spec-contents`,
        and owes the reviews of `skill@knowledge-architect-planning@plan-reviews`.
@@ -396,10 +398,10 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
    as many commits as the session judges the work needs. The commits name how each claim's test was
    shown to fail against a wrong implementation, and say of any claim whose test cannot yet do so
    why not.
-4. **Review before the merge**, per `skill@knowledge-architect-review`. A repair is a further
-   commit, or folded where that skill says.
-5. **The report**: the landing commit reports on each acceptance criterion judged at this slice,
-   by its identifier in plain text, beside a citation of the milestone document (`skill@knowledge-architect-planning@acceptance-criteria`).
+4. **Review of the work**, per `skill@knowledge-architect-review`. A repair lands as
+   `skill@knowledge-architect-review@what-review-leaves` says.
+5. **The report** on each acceptance criterion judged at this slice, as
+   `skill@knowledge-architect-planning@acceptance-criteria` says.
 6. **The harvest**, per the harvest row of the slice's spec: the decisions and the losing
    alternatives under `skill@knowledge-architect-decision-recording`, then the tripwires and the
    issues under `skill@knowledge-architect-issue-tracking`. Read `primer@design-heads` again, whole,
@@ -407,12 +409,11 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
    pair included. The row names what is judged; the entry tests and the tests for a losing
    alternative decide whether each decision and each alternative earns an entry, and they govern
    where the two disagree: an item of the row the tests exclude is named in the harvest's commit,
-   with the test it fails. A tripwire names the head that harvested its
-   decision, so the head is written first. Where a design home is a directory, a new subdocument is
-   linked from its README. **The harvest is reviewed before the merge**, per
-   `skill@knowledge-architect-review`, on the decision-record, routing and standing-state axes, and
-   by the transcript reviewer where the transcripts are available: it writes the record those axes
-   judge, so the review of point 4 cannot see it.
+   with the test it fails. Where a design home is a directory, a new subdocument is
+   linked from its README. **The harvest's review is the review before the merge**, as
+   `skill@knowledge-architect-review@review-axes` defines it and says what it owes: the harvest
+   writes the record the decision-record, routing and standing-state axes judge, so the review of
+   point 4 cannot see it.
 7. **The slice's spec leaves** in the commit that completes its harvest, as in `skill@knowledge-architect-planning@plan-document-leaves`. What crosses slices stays in the
    milestone document, amended in place where the landing changed it.
 
@@ -424,32 +425,36 @@ finds it there. The work of a spec follows it too, as its last paragraph says.
   spec was written. Otherwise the session goes straight to the work, since the design was read
   against the tree as it stands;
 - point 3, the claims and checks of each step, in the commits the session judges right;
-- point 4, the review, once, before the merge;
-- points 5 and 6, the report and the harvest, in the commits that land the work, the harvest
-  reviewed before the merge;
+- point 4, the review of the work, once;
+- points 5 and 6, the report and the harvest, in the commits that land the work, the harvest's
+  review being the review before the merge;
 - point 7, the deletion of the spec, in the commit that completes its harvest, as in `skill@knowledge-architect-planning@plan-document-leaves`.
 
 Where a point names the milestone document or the slice's spec, the work of a spec reads the spec:
-its defaults, its threads, its harvest row, and an audit's commit subject of the shape `The <spec>
-design audit, applied in place: …`.
+its defaults, its threads, its harvest row, and the design audit its commit subject names.
 
 ## Reviews of a plan document `##plan-reviews`
 
 A plan document is committed first, on a branch of its own or on its work's branch, and that
-commit is what the reviewers read; a repair lands after it, as a further commit or folded where
-`skill@knowledge-architect-review` says. **It may be merged on its own, whatever the time of its
-work**: a plan document on the main branch keeps the work done meanwhile from drifting from it.
+commit is what the reviewers read; a repair lands as
+`skill@knowledge-architect-review@what-review-leaves` says. **It may be merged on its own,
+whatever the time of its work**: a plan document on the main branch keeps the work done meanwhile
+from drifting from it.
 **One whose work's first commit changes what the project's per-commit gate checks is merged
-before that work**, a spec as well as a milestone document: on one branch, that gate as the work
-changes it would judge the commit that added the document, whose tree predates the change. A
-change that only a check of the working tree sees does not count. It is read again after a revision that changes a decided shape (an
-audit applied in place is not one). Its reviewers are fresh, and did not witness the
+before that work**, a spec as well as a milestone document: on one branch,
+`primer@branch-commits` would put that commit before the document that plans it, or squash the
+two into one. A change that only a check of the working tree sees does not count. It is read
+again after a design session converges on a change to its decided design, as at a load-bearing gap
+of a design audit. A change made in answer to its review, a default written in included, is a
+repair, reviewed again only as `skill@knowledge-architect-review@what-review-leaves` says, and an
+audit applied in place is no revision. Its reviewers are fresh, and did not witness the
 discussion. **Fresh, never a fork**: a fork inherits the discussion and reads the document as its
 author. Dispatch them through `skill@knowledge-architect-review`, with the invariants that
-skill lists, the blind brief included:
+skill lists, the blind brief included, on every axis of its table whose condition holds, among them
+these four:
 
 - `agent@knowledge-architect-cold-implementer-reviewer` reads the document as the implementer of its
-  work, or of a milestone's first step and reports every place where it cannot act: undefined names,
+  work, or of a milestone's first slice, and reports every place where it cannot act: undefined names,
   shapes without enough detail to write, procedure gaps, ambiguities, and what it would have to
   reconstruct from a conversation it did not see. It also applies the readiness checks below.
 - `agent@knowledge-architect-code-claims-reviewer` verifies every statement the document makes about
@@ -462,8 +467,9 @@ skill lists, the blind brief included:
 - `agent@knowledge-architect-transcript-reviewer` reads the discussion's transcripts and checks that
   everything the discussion established that must outlive it is in the document or has another
   durable outcome, and that no ruling of the owner is recorded wider, narrower or in another state
-  than the owner gave it. Dispatch it on every assembled document, with the commit that adds the
-  document as its range, and name in its brief the transcript files the assembly read, each found
+  than the owner gave it. Dispatch it on every assembled document, in the batch or alone and last
+  as `skill@knowledge-architect-review@review-axes` says, and name in its brief the transcript
+  files the assembly read, each found
   by its opening message as the assembly says, with the
   message where the discussion begins in each. When no
   transcript exists, say so, and why, in the commit that adds the document.
@@ -471,13 +477,14 @@ skill lists, the blind brief included:
 **What their findings become.** Check each finding against the tree, or against the transcript,
 before acting on it. A material finding is answered with a default, written into the sections it
 touches, and listed under the defaults awaiting the owner, with the thread it bears on and a label,
-`D<n>`, numbered from 1 across the document's revisions and never reused. The owner
-rules on each at the first audit, or at once if present, and a ruled default leaves the list. A finding
-that is a gap with one answer is applied in place. A finding that is wrong is dropped, with the
-reproduction that showed it wrong kept in the commit message. A scope change, a clause that widens or narrows
-a ruling or adds an obligation to it, is put to the owner, listed under the defaults awaiting the
-owner. Detail the author added inside the scope of a ruling, and a wording better than the one the
-owner was shown, are no findings.
+`D<n>`, numbered as `primer@labelled-items` says. The owner rules on each as
+`skill@knowledge-architect-planning@working-a-slice` says. A ruled default stays in that list,
+marked as ruled, with its label, since the sections it was written into cite it by its label. A
+finding that is a gap with one answer is applied in place. A finding that is wrong is dropped, with
+the reproduction that showed it wrong kept in the commit message. A scope change, a clause that
+widens or narrows a ruling or adds an obligation to it, is put to the owner, listed under the
+defaults awaiting the owner. Detail the author added inside the scope of a ruling, and a wording
+better than the one the owner was shown, are no findings.
 
 **The readiness checks**, applied by the author before dispatch and by the cold implementer after.
 This list is their one home; the reviewer reads it here.
@@ -485,7 +492,7 @@ This list is their one home; the reviewer reads it here.
 - every name the document uses is defined in the names sections or exists in the code;
 - every total function the code will need is a mapping table;
 - every fixture is expressible in the vocabulary that exists, or names its addition;
-- a milestone document carries the procedure of `skill@knowledge-architect-planning@working-a-slice`;
+- a milestone document points to `skill@knowledge-architect-planning@working-a-slice`;
 - every number is a measurement with its instrument, or a default marked as the owner's;
 - every premise a later step or change ends is stated with its guard;
 - every statement about the code names the file and the function, and its truth is the code-claims
@@ -495,7 +502,8 @@ This list is their one home; the reviewer reads it here.
 - every thread maps to a section and to a harvest home;
 - every text referencing a decision the work reverses or rewrites is named, with the step, slice or
   harvest that judges or updates it;
-- every section of `skill@knowledge-architect-planning@spec-contents` is present, and an empty one says so.
+- every section the document owes by `skill@knowledge-architect-planning@spec-contents` is
+  present, and an empty one says so.
 
 ## When a plan document leaves `##plan-document-leaves`
 

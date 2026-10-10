@@ -29,7 +29,8 @@ decision is recorded and the tripwire is unreadable apart from it.
 
 **A check that can only be applied once unbuilt work is built is not a tripwire.** It is what that
 work must prove, and it belongs with the work's planning, under
-`skill@knowledge-architect-planning`. A tripwire is for a decision about code that exists.
+`skill@knowledge-architect-planning`. A tripwire is for a decision whose work exists, or that no
+work implements.
 
 ## What is outstanding, across every register {{slug:outstanding-across-registers}}
 
@@ -54,8 +55,9 @@ the one you happen to think of is not the check.
 
 ## Read before you diagnose {{slug:read-before-diagnosing}}
 
-**Before concluding that a behaviour is a new problem, list the issues of the anchor it appears
-in**, `{{command}} issues <anchor>`, and read the entries whose title comes near. Diagnosing a
+**Before concluding that a behaviour is a new problem, list the issues and the tripwires of every
+anchor**, `{{command}} issues` and `{{command}} tripwires`, and read closely the entries of the anchor
+it appears in, `{{command}} issues <anchor>`, and those whose title comes near. Diagnosing a
 recorded issue again costs a session and produces nothing. The same applies before attributing a
 measurement to a change.
 
@@ -107,12 +109,11 @@ The three subsections are the three fields every kind owes:
 `design@<anchor>@<id>`, and the goal it threatens, as `goal@<anchor>@<id>`, when it does directly.
 That is what lets `{{command}} show` on the decision list what is outstanding against it before it
 is reopened, and on the goal what stands between the project and it. A reference is a claim that
-the text is revisited when the entry it names changes. An entry that strains no recorded decision
-names none rather than the nearest one. The inverse holds in code: a guard, a workaround, a stub or
-a test that exists because of an entry names it, `issue@<anchor>@<id>`, in the comment at the site.
-Closing the entry then dangles the comment, and the site is revisited. The checker reads
-Markdown and Rust source only: a reference in a comment of another language is not read, and
-closing its entry needs a grep for the reference.
+the text is revisited when the entry it names changes, per `primer@where-knowledge-goes`. An entry
+that strains no recorded decision names none rather than the nearest one. The inverse holds in
+code: a guard, a workaround, a stub or a test that exists because of an entry names it,
+`issue@<anchor>@<id>`, in the comment at the site. Closing the entry then dangles the comment, and
+the site is revisited.
 
 **Every entry states its kind**, in the frontmatter. Without it, a missing section is ambiguous
 between "this kind has none" and "the author did not write one", and that is exactly what a reader
@@ -153,6 +154,9 @@ changing the kind of an entry, regenerate it and check in one command:
 {{command}} check --fix
 ```
 
+Delete an entry with `git rm`, or stage its deletion: the check reads git's listing, and a deletion
+it still lists stops the run in phase 2, before the index is written.
+
 `{{command}} index` writes the generated files alone, with no check.
 
 **A commit of part of the working tree** needs the index of what it commits, which differs from
@@ -174,8 +178,10 @@ names both repairs.
   a head.
 - Both registers hold statements that **leave**: an issue when it closes, a tripwire when it fires.
   The cost of the alternative lands in the worst place. Opening an entry is nearly always churn
-  inside a session that was doing something else and found a problem, and a duplicate check at that
-  moment is a tax on the one act this register exists to make cheap. Write what the entry needs.
+  inside a session that was doing something else and found a problem, and checking that no other
+  entry or head carries the same figure is a tax on the one act this register exists to make
+  cheap. List the entries as `skill@knowledge-architect-issue-tracking@read-before-diagnosing` says,
+  and write what the entry needs.
 
 Only `defect` carries a mandatory checklist, and only because that checklist is already written and
 already shared with the commit messages of fixes. The other kinds carry required fields, not a
@@ -222,7 +228,8 @@ Four parts:
 
 - **the decision it guards**, as a `design@<anchor>@<id>` reference in the heading or the body, so
   that a reversed decision dangles its tripwires mechanically, and `tripwires --guarding <ref>`
-  finds them. One guarding an instruction or a guarantee names what it can, and stays legal with no
+  finds them. One guarding an instruction, a guarantee, or a decision that earned no head names
+  what it can, the last naming in words the site that records it, and stays legal with no
   reference;
 - **the firing evidence**, meeting the falsifiability bar: an event, or a count crossing a bound,
   specific enough that both parties would agree it fired. "It gets slow" is not a tripwire;
@@ -234,8 +241,8 @@ A tripwire is a level-two heading, and every level-two heading of a tripwires ho
 there with no slug is reported. A slug at another level, at the head of a plain line, or in the
 `README.md` of a directory-shaped home, defines nothing and is reported as misplaced.
 
-**A tripwire from a premortem is written on the owner's word only**, at the harvest of the decision
-it guards, per `skill@knowledge-architect-decision-recording`.
+When a tripwire is written, and on whose word, is
+`skill@knowledge-architect-decision-recording@ruled-tripwires`.
 
 One standing re-entry point: `agent@knowledge-architect-standing-state-reviewer` reads every
 tripwire home and every deferred trigger again, on the review axis whose whole subject they are. An
@@ -259,9 +266,7 @@ The two kinds are coupled by movement, and that is what keeps both honest.
   usually a one-shot hypothesis, _if this happens, that decision was wrong_, and firing consumes it.
   A tripwire guarding a guarantee that holds for the life of the project is not consumed by one
   instance of it being broken: the guarantee is still owed after the repair. Restate it so it names
-  the _class_ rather than the instance, and record the instance as the issue. This has been observed:
-  a tripwire guarding untrusted input was deleted at its first firing, and the same class of defect
-  then recurred twice, both found by a review after the guard was gone.
+  the _class_ rather than the instance, and record the instance as the issue.
 - A tripwire whose decision is **reversed** is deleted outright.
 - A tripwire is **absorbed** when another entry already guards the same decision: fold its firing
   condition into that entry rather than leaving one decision guarded from two places, where a
@@ -296,10 +301,10 @@ plain text, which takes it out of the check. A verbatim quotation of the owner t
 entry is left as it is, with a reference to the current entry beside it.
 
 **An entry that records a missing checked form** is what a pointer the checker cannot express is
-written beside, in plain text, as the primer says. Its `What` names the pointer's class and the
-form that would express it; its `What would close it` is that form shipping and every site that
-cites the entry converted to it. `{{command}} show` on the entry lists those sites. A gap of the
-checker itself is recorded this way in the project that meets it, in the issue directory of any of
+written beside, in plain text, as `primer@where-knowledge-goes` says. Its `What` names the
+pointer's class and the form that would express it; its `What would close it` is that form
+shipping and every site that cites the entry converted to it. `{{command}} show` on the entry
+lists those sites. A gap of the checker itself is recorded this way in the project that meets it, in the issue directory of any of
 its anchors, since `{{command}} show` lists the entry's sites wherever it sits, and is reported to
 the workflow's maintainers by the retrospective.
 
@@ -313,8 +318,9 @@ as far as they exist:
   next edit, and **never commit hashes**: name the change instead;
 - the exact numbers measured: magnitudes, tolerances, counts, the parameter values that make the
   behaviour appear and disappear, not qualitative wording;
-- repository-relative paths to whatever reproduces it, and a snippet inline for anything not
-  committed. **An entry must never depend on a scratch directory**;
+- paths to whatever reproduces it, written as `path` references per
+  `primer@where-knowledge-goes`, and a snippet inline for anything not committed. **An entry must
+  never depend on a scratch directory**;
 - what was **ruled out and by what evidence**, so the next reader does not repeat the eliminations;
 - an explicit `assumption` or `not established` label on anything unverified.
 
@@ -323,7 +329,8 @@ and the length is not a reason to compress them.
 
 ## Reviews {{slug:reviews-and-entries}}
 
-A review produces `observation` and `question` entries in the affected anchor's `open-issues/`
-directory. The review document itself is a working artifact and is not a durable home. This is
-deliberately one mechanism rather than a separate review tracker with status tokens: three trackers
-need a script to answer "what is outstanding?", and then the script is the mechanism.
+A review's findings that stay open become entries in the affected anchor's `open-issues/`
+directory, each of the kind the table above gives it. The review document itself is a working
+artifact and is not a durable home. This is deliberately one mechanism rather than a separate
+review tracker with status tokens: three trackers need a script to answer "what is outstanding?",
+and then the script is the mechanism.

@@ -11,9 +11,8 @@ and checked references. The workflow is a set of agent skills that the checker e
 into a project on request.
 The goals are `path@knowledge-architect@docs/goals.md`.
 
-**The goals bind the design, and nothing else in it does.** A constraint derived from a goal binds
-an argument outright. One derived from a recorded decision binds it as a stated presumption, which
-a better argument can rebut. Recorded decisions were often argued before the code existed, so
+**The goals bind the design outright; a recorded decision binds it only as a presumption**, per
+`primer@goals-bind`, read whole. Recorded decisions were often argued before the code existed, so
 implementation is expected to prove some of them wrong: reversing one is an ordinary move, and
 `skill@knowledge-architect-decision-recording` owns what it costs.
 
@@ -37,7 +36,8 @@ project, per `design@knowledge-architect@no-component-directory-named-after-the-
 - Use em dashes and semicolons sparingly in prose. They usually make a sentence longer than it
   should be.
 - Use precise technical terms instead of idioms and colloquialisms.
-- No metaphors, no aphorisms. The meaning is always carried explicitly.
+- No undefined metaphors, no aphorisms. The meaning is always carried explicitly: a metaphor that
+  names a defined concept, such as a tripwire, is vocabulary once defined.
 - Prefer explicit quantities, units and invariants over qualitative wording.
 - Readers are non-native speakers. Keep that in mind.
 
@@ -159,7 +159,8 @@ win.
     answers, nested `.gitignore` files included.
   - A relative markdown link, `[title](<path>)`, is a navigation row. It is legal in `README.md`
     and `index.md` files only, and it is resolved against the linking file's own directory, under
-    the same constraints. In every other file a pointer is a reference, per
+    the same kind claim and the same refusals of `..`, `./` and a leading `/`; the deepest-anchor
+    rule does not apply to it. In every other file a pointer is a reference, per
     `design@core@links-are-navigation-rows`.
 
 - **Which backticked spans are read as references**, per
@@ -213,31 +214,30 @@ the primer's:
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
-| a decision about the published workflow: what the installed skills, agents and primer tell every adopting project | the agent-skills design home, `path@agent-skills@docs/design.md`; this repository follows the workflow as any adopting project does, and this file restates what it needs with a pointer there | the decision changes |
+| a decision about the published workflow: what the installed text tells every adopting project | the agent-skills design home, `path@agent-skills@docs/design.md`; this repository follows the published workflow, with the departures this file states, and restates what it needs per `primer@where-knowledge-goes` | the decision changes |
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md`; its crates.io page is a short `CRATES-IO.md` in the crate, named by `readme` in its Cargo.toml, which points to the README and to docs.rs, per `design@knowledge-architect@crates-io-page-file` | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
 | what a consumer must change, can start using, or will see agents do differently, per release | CHANGELOG.md at the root: one section per version, and the `Next release` section | a released section's content never changes; its structure may, and the `Next release` section may change at any time, per `design@knowledge-architect@changelog-entries` |
 | a finding established outside this project that a decision here leans on | `docs/grounding/<subject>.md` in the Component the decision belongs to | the source is superseded, or a better one lands |
 | a Component that maintains the repository rather than shipping in it | `tools/<name>/`, one directory per tool | the tool is retired |
-| the analysis of a retrospective's findings received by this repository, and the owner's ruling on each | one file per received file in `path@knowledge-architect@docs/retrospective-reports/`, per `design@knowledge-architect@committed-findings-analysis`, written under `skill@klarch-retrospective-intake` | the commit that carries out its last outcome, or a later commit of the same branch, deletes it |
-| **none of these, nor a row of the primer** | **ask, before writing it anywhere** | the table gains the row |
+| the analysis of the findings of a retrospective or an audit file received by this repository, and the owner's ruling on each | one file per received file in `path@knowledge-architect@docs/retrospective-reports/`, per `design@knowledge-architect@committed-findings-analysis`, written under `skill@klarch-retrospective-intake` | the commit that carries out its last outcome, or a later commit of the same branch, deletes it |
 
-**The last row is for a statement with no home, not for a choice between two.** When two rows
-could fit, pick one, say which you picked, and continue. A genuine gap means this table is
-incomplete. The table is a decision about the shape of the configuration, and that decision is the
-owner's. Each answer ends as a new row, so the fallback limits itself: if it fires often, the table
-is wrong.
+**The primer's last row, ask the owner, is for a statement with no home, not for a choice between
+two**, per `skill@knowledge-architect-agent-configuration@project-knowledge-rows`, read whole before
+adding a row.
 
 **A measurement is not a kind of statement. It is routed by what it serves.** A figure that
-supports a decision goes in that decision's head. One that characterises a defect or a question
+supports a decision goes in that decision's head. One that characterises an issue entry
 goes in that entry. A tripwire's firing threshold goes inside the tripwire. One that serves none of
-them goes in the commit message that took it.
+them goes in the commit message that took it. This restates `primer@where-knowledge-goes`.
 
 **Never record a number that will go stale, unless staleness is the point.** A figure carries the
 claim it supports, the command that re-takes it, and the direction that would reopen the argument.
 It does not carry the magnitude, which goes in the commit and cannot go stale there. A threshold, a
 count over a frozen corpus and a zero keep their digits, because in those the value _is_ the claim.
+An issue entry keeps its magnitudes, per the cold-reader standard of
+`skill@knowledge-architect-issue-tracking`.
 
 ### When to write a reference
 
@@ -260,22 +260,19 @@ unaffected is decoration, and it costs a repair for nothing.
 | a commit message | every entry it opens, closes, reverses or argues from |
 | a restatement of a directive sentence | its home |
 
-A reference in prose is checked wherever it stands, a Rust comment and a fenced block included. So
-a comment in code that names an issue is reached when the issue closes. Never keep a hand-written
+A reference in prose is checked in Markdown and Rust source, a Rust comment and a fenced block
+included, per `primer@where-knowledge-goes`. So a Rust comment that names an issue is reached when
+the issue closes. Never keep a hand-written
 list of what references an entry: `show` computes it.
 
 ### Plan documents
 
 `path@knowledge-architect@docs/plans/` is the plans directory, whose path the checker fixes, per
 `design@core@plans-dir-fixed`. It holds a README and two homes: specs/, one file per spec for the work of one PR, and milestones/, one directory per
-milestone for work across several PRs. A plan document lands in a pull request of its own or with
-its work, whatever the time of its work. A correction is applied in place, so a
-partial reading cannot mislead. A plan document is deleted in the commit that completes its last
-harvest, and that commit's message cites it by its kind. This is a restatement; its homes are
-`design@agent-skills@document-vocabulary`, `design@agent-skills@plan-document-leaves-at-landing`,
-and `design@agent-skills@plan-landing-is-not-tied-to-its-work`, and the procedure is the installed
-`skill@knowledge-architect-planning`, which also says when a plan document must land before its
-work.
+milestone for work across several PRs. How a plan document lands, is corrected and leaves is the
+installed `skill@knowledge-architect-planning`, read whole; its homes are
+`design@agent-skills@document-vocabulary`, `design@agent-skills@plan-document-leaves-at-landing`
+and `design@agent-skills@plan-landing-is-not-tied-to-its-work`.
 
 ## Verify before relying on anything `##verify-before-relying`
 
@@ -289,15 +286,12 @@ anyone has checked it.
 
 - **Built intent**: the root's design home, and a Component's design home, are authority over the
   code until a divergence closes, per `primer@intent-and-claims`, read whole.
-- **A reason recorded at the code**: an inline comment saying why the code is shaped so, or the
-  message of the commit that argued it. It is intent at the scale of that code, and binds as a
-  presumption below the design home: a change that defeats it argues against that reason in its
-  own message, and where it conflicts with a design home, the head prevails, as in any divergence.
-  Before removing or reshaping code as unneeded, read its comment and the message of the commit
-  that introduced it (`git log -L`, `git blame`): absence from the design home is not evidence that
-  code is superfluous. This is a restatement; its home is `design@agent-skills@local-intent-binds`.
+- **A reason recorded at the code**, an inline comment or the message of the commit that argued
+  it, binds as a presumption below the design home, per `primer@intent-and-claims`, read whole
+  before removing or reshaping code as unneeded.
 - **A claim about the code as it stands**: an invariant in a scoped `CLAUDE.md`, a doc comment, a
-  name, a return value, an open issue's diagnosis. This goes stale. Check it before relying on it.
+  name, a return value, an open issue's diagnosis. This goes stale. Check it before relying on it,
+  per `primer@intent-and-claims`.
 
 For the third class, before relying on how anything behaves (an API, a script, a file format, a
 test mechanism, an open issue's diagnosis; the list is illustrative, not a boundary):
@@ -320,9 +314,8 @@ test mechanism, an open issue's diagnosis; the list is illustrative, not a bound
 **Evidence here is textual and cheap**: a verbatim reading of a file, a measurement over a tree, a
 failing test. Build it rather than trading intuitions.
 
-**Before touching the code of a Component, ground in its own `path@*@CLAUDE.md`, its design home,
-`path@*@docs/open-issues/` and `path@*@docs/tripwires.md` first.** They are closer to the code than
-anything in the root's documents.
+**Before touching the code of a Component, ground first, per
+`skill@klarch-development@ground-before-editing`.**
 
 ### Verify a claim before writing it
 
@@ -339,7 +332,7 @@ down.** Check each of these against the tree at the moment you write the sentenc
 - **"This is fixed", "that entry is closed"**: diff it.
 
 **A commit message is a document for this purpose.** It is durable, and `cargo klarch commits`
-reads only its references. A measurement, a count or a claim about the tree in a message is checked
+reads only its pointers: its references, its paths, its skill names and its SHAs. A measurement, a count or a claim about the tree in a message is checked
 by nobody but you.
 
 **Before each commit, list every factual claim its message makes, and check each one.** A claim is
@@ -356,7 +349,7 @@ the work is where the false claims come from.
 ### Check whether it is already known
 
 Before diagnosing anything as a problem, or reporting one you met while doing something else, find
-out whether it is already recorded.
+out whether it is already recorded, per `primer@intent-and-claims`.
 
 ```sh
 cargo klarch issues               # every issue entry in the repository, one row each
@@ -391,16 +384,8 @@ not of what should be done.
 - **Do not spread non-conformance while working around it.** Starting from an existing document or
   entry copies its defects with it. Read what you copied against the instructions before extending
   it.
-- **Non-conformance met outside the task takes the first of the primer's four cases that
-  applies.** This is a restatement; its home is `design@agent-skills@primer-content`.
-  1. It bears on the current work: stop and present it to the owner at the top of the turn, with a
-     default.
-  2. Its fix is checkable from the diff alone, because it changes no behaviour, no decision and no
-     test outcome: fix it in a commit of its own.
-  3. Its `Why it matters` and its `What would close it` can be written: open an issue.
-  4. Otherwise: name it, with why it is dropped.
-
-  The turn ends with a "Met outside the task" section listing every item and its outcome.
+- **Non-conformance met outside the task takes the first case of `primer@met-outside-the-task`
+  that applies**, read whole, and the turn ends with its "Met outside the task" section.
 
 ## Verify mechanically `##verify-mechanically`
 
@@ -473,20 +458,24 @@ message.** The first is a restatement; its home is
 `design@agent-skills@staged-check-before-each-commit`. The range is the whole branch because this repository refuses citations of its
 branch's own commits by SHA, and `commits` sees a citation only of a commit in the range it judges,
 per `design@core@branch-shas-are-refused`; the checker-side fix is
-`issue@core@branch-sha-citations-are-judged-within-the-range-only`. A commit that fails either is
-repaired by an amend while it is the newest, and by a history edit after, both with a clean tree per
-`## Git` point 2. A branch about to merge owes all of them: one `cargo x gates --require-rebased`.
+`issue@core@branch-sha-citations-are-judged-within-the-range-only`. A failing staged check is
+repaired before the commit is made. A commit whose tree fails `commits` is repaired by a new
+commit, folded into the failing one by a history edit with a clean tree, and one whose message
+fails it by a reword, both per `## Git` point 2. A branch
+about to merge owes all of them: one `cargo x gates --require-rebased`.
 CI runs them on every push to a ready pull request.
 
 ## Skills `##repository-skills`
 
-**A skill is one activity**: the scope over which a complete set of procedures makes sense. Read
-the matching skill before doing that kind of work.
+**A skill is one activity**: the scope over which a complete set of procedures makes sense, per
+`skill@knowledge-architect-agent-configuration@where-text-goes`. Read the matching skill before
+doing that kind of work.
 
 **This repository installs its own skills**, with `cargo klarch install-agent-skills`, and
 commits them under .claude. The harness lists each installed skill with its description, so a
-session finds which applies there. An axis of a review that has an installed reviewer agent is
-dispatched as that agent, and any other axis as a fresh general-purpose subagent, per
+session finds which applies there. An axis of a review named by an agent, installed or the
+project's own, is dispatched as that agent, and any other axis as a fresh general-purpose
+subagent, per
 `skill@knowledge-architect-review`.
 
 **This repository's own skills and agents take the prefix `klarch-`**, not the project's name: a
@@ -498,35 +487,30 @@ upstream, so the findings of both files of `skill@knowledge-architect-retrospect
 here, on the owner's word: handled, opened as entries in this repository's own issue registers, or
 closed with no change and the reason, never as an issue on GitHub. This is the owner's
 standing direction under that skill; its home is
-`design@knowledge-architect@retrospective-findings-stay-here`.
-
-**The routing table**: what this repository adds to an installed skill or agent. It holds no row.
-**This repository's own skills, `skill@klarch-development`, `skill@klarch-release` and
-`skill@klarch-retrospective-intake`, add to no installed skill**, and its one agent,
-`agent@klarch-changelog-reviewer`, is dispatched by `skill@klarch-release`; the harness lists each
-with its description.
+`design@knowledge-architect@retrospective-findings-stay-here`. The findings of the
+agentic-workflow axis of `skill@knowledge-architect-project-audit` on the installed text stay here
+too: they are edited at their source, under `path@agent-skills@content/`, with the outcomes of a finding on
+the project's own text, and no upstream file is written. Its checker-rules auditors, L7, also read
+the checker's design home, `path@core@docs/design.md`, beside its README.
 
 ## Git `##git-workflow`
 
 Linear history, no merge commits, and no direct push to main. This section is a restatement. Its home is
-`design@knowledge-architect@git-flow`, except where a point names its own.
+`design@knowledge-architect@git-flow`, except where a point names its own; the fold and revert
+procedures of point 2 and the review owed after a rebase in point 5 are this file's own.
 
 1. **All work happens on a branch.**
 
 - No exception by size or kind.
-- The branch covers the full work: design, implementation, review and fixes, cleanup.
 - Once it holds a first commit, the branch is pushed and a **draft** pull request is opened for
   it: `git push -u origin <branch>`, then `gh pr create --draft`. CI does not run on a draft.
 - **A commit is pushed only after `cargo klarch commits` has passed on it**: in a command of its
   own, or behind `&&` on the bare check. A push after `;`, or after a check whose output went
   through a pipe, runs whatever the check found. Its home is
   `design@knowledge-architect@push-after-the-commits-check`.
-- **Every commit of the branch must pass the check under the branch tip's checker.** The
-  `commits` gate judges each commit's tree with the tip's binary, and refuses a tree with no
-  manifest or with findings. So a step whose intermediate trees cannot pass lands as one commit,
-  squashed before review. Review repairs are new commits after it, and each one passes. A repair
-  that would leave an earlier commit failing, such as one that changes what the checker judges, is
-  folded into the earliest commit it repairs instead, per point 2.
+- **Every commit of the branch must pass the check under the branch tip's checker**, per
+  `primer@branch-commits`, read whole: where a change that sets what that checker requires goes
+  on the branch, and which repair is folded. A fold uses the procedure of point 2.
 - **The branch writes its CHANGELOG.md entries**, in the `Next release` section, per
   `design@knowledge-architect@the-branch-writes-its-changelog-entries`. A branch that finds no
   `Next release` section creates it above the newest released section. After editing it, run
@@ -544,17 +528,18 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   the working tree, and a history edit that drops a commit no other reference holds.
 - **While uncommitted changes exist in the tree, run no operation that touches history or restores
   files.** Examples (non-exhaustive): `reset --hard`, `checkout -- <path>`, `restore`, `clean`,
-  `stash`, `commit --amend`, `rebase`.
+  `stash`, `commit --amend`, `rebase`. The one exception is `git rebase --continue` on a rebase
+  whose conflicts the tree now resolves, as point 3 does.
 - **Take extra care when applying a mutation that will need reverting.** Stage the file before
-  applying the mutation, for example, so the revert does not depend on a restore.
+  applying the mutation, so the revert does not depend on a restore.
 - **With a clean tree, editing the branch's own history is an ordinary move**: rewording or
   amending a commit message, squashing, rebasing. It is bounded by two verifications before the
   old head is dropped: that the tree was clean, and that no content was lost. For a rewrite that
   keeps the base, `git diff <old-head> HEAD` is empty. For a rebase onto a moved base, compare the
   branch's own delta instead: `git range-diff <old-base>..<old-head> <new-base>..HEAD` reports
   every commit carried over.
-- **To reword the message of a commit that is not the newest**, without an interactive rebase,
-  which the harness refuses: write a script that reads a message on stdin and writes the reworded
+- **To reword the message of a commit that is not the newest**, without a rebase that opens an
+  editor, which the harness refuses: write a script that reads a message on stdin and writes the reworded
   one, then run `git filter-branch -f --msg-filter '<script>' origin/main..HEAD` with a clean tree.
   Check that `git diff <old-head> HEAD` is empty, which shows no content was lost, and that
   `git range-diff origin/main..<old-head> origin/main..HEAD` marks with `!` each commit the reword
@@ -562,13 +547,13 @@ Linear history, no merge commits, and no direct push to main. This section is a 
   wrapped line or a quote, leaves the message as it was and the diff empty all the same. Run both
   checks before any push, then delete the backup refs, in any checkout:
   `git for-each-ref --format='%(refname)' refs/original/ | xargs -r -n1 git update-ref -d`.
+- **To fold a repair into an earlier commit**: commit the repair as `git commit --fixup=<commit>`,
+  then, with a clean tree, run `GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash origin/main`,
+  which needs no editor. Check that `git diff <old-head> HEAD` is empty and that the branch holds one
+  commit fewer; `git rebase --autosquash` without `-i` folds nothing and exits 0.
 - **main's history is never rewritten.** It is the shared trunk. A pushed branch of your own may
   be rewritten and force-pushed, since origin holds the old head until then. A branch that a live
   worktree has checked out is rewritten only after that worktree is removed.
-- A repair from a review is a new commit, which edits no history. The exception is a repair that
-  would leave an earlier commit failing under the branch tip's checker: it is folded into the
-  earliest commit it repairs, with a clean tree, and the commit that records the review says what
-  was folded. Its home is `design@agent-skills@review-repair-appended-or-folded`.
 - To test a previous state of the project, create a worktree in a place where it pollutes
   nothing, such as the worktrees directory under .claude, which is ignored. Do not use
   `git stash` or another operation that can lose content. Remove the worktree and its branch once
@@ -591,11 +576,11 @@ computed, so no hand merge is needed and none is lost.
 4. **Work is reviewed before any merge to main.**
 
 - Use `skill@knowledge-architect-review` before the merge.
-- The axes come from the dispatching activity's own skill.
-- Critical findings are repaired before the merge.
-- The commit that lands the repairs says what was reviewed and what was decided. Where every
-  repair was folded, the message of the branch's last commit says it, reworded with a clean tree:
-  a commit of its own would change no file, and the rebase merge drops it.
+- The axes are those `skill@knowledge-architect-review@review-axes` says the review before a
+  merge owes.
+- A repair, a repaired commit message and the record of the review land as
+  `skill@knowledge-architect-review@what-review-leaves` says, read whole, by the procedures of
+  point 2. The decision is `design@agent-skills@review-repair-appended-or-folded`.
 - Every finding gets one of the outcomes of `skill@knowledge-architect-review@what-review-leaves`: repaired, opened as an
   issue entry per `skill@knowledge-architect-issue-tracking`, or judged to need nothing, with the
   reason.
@@ -611,12 +596,15 @@ computed, so no hand merge is needed and none is lost.
 
 ```sh
 git fetch origin main
-git merge-base --is-ancestor origin/main HEAD    # still true, or go back to point 3
+git merge-base --is-ancestor origin/main HEAD    # still true, or go back to point 3; a line the
+                                                 # branch adds or removes that the rebase changed,
+                                                 # as `range-diff` shows, is reviewed as a repair is,
+                                                 # per `skill@knowledge-architect-review@what-review-leaves`
 gh pr view <branch> --json isDraft,headRefOid    # isDraft false, headRefOid equal to `git rev-parse HEAD`
 gh run list --commit $(git rev-parse HEAD) --json conclusion -q 'any(.[]; .conclusion == "success")'
                                                  # true: a run on that head succeeded
 gh pr merge <branch> --rebase --delete-branch
-git checkout main && git pull --ff-only && git branch -D <branch>
+git checkout main && git pull --ff-only
 ```
 
 - The draft flag is read here because a job skipped on a draft reports `skipped`, which GitHub
@@ -631,8 +619,8 @@ git checkout main && git pull --ff-only && git branch -D <branch>
   `design@core@branch-shas-are-refused`. Its homes are
   `design@knowledge-architect@no-branch-sha-is-cited` and
   `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
-- The local branch is deleted with `-D`: its commits are not ancestors of main, since their SHAs
-  differ.
+- A local branch that `--delete-branch` left, as one another worktree has checked out, is deleted
+  with `git branch -D <branch>`: its commits are not ancestors of main, since their SHAs differ.
 - A merge to main publishes nothing. A release is a separate procedure, per
   `design@knowledge-architect@publish-after-merge`.
 

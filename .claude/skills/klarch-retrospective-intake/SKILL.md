@@ -1,31 +1,37 @@
 ---
 name: klarch-retrospective-intake
-description: MUST use when the owner hands this session one or more retrospective files to act on — a `-klarch-workflow.md` file, or a `-workflow.md` file written before that name, from this repository or from a project that uses the workflow, or this repository's own project file — or asks what to do with the findings of a retrospective already run. Covers checking each finding against the tree as it stands, against the registers and the history, against the goals and the design, looking for a better fix than the one proposed, writing the analysis to a file, and offering the owner three outcomes per finding. Not for running a retrospective, nor for carrying out an outcome.
+description: MUST use when the owner hands this session one or more files of findings on the workflow to act on — a `-klarch-workflow.md` file, written by a retrospective or by a project audit, or a `-workflow.md` file written before that name, from this repository or from a project that uses the workflow, or this repository's own retrospective project file — or asks what to do with the findings of such a file already received; and while an outcome of an analysis in docs/retrospective-reports/ is carried out, for what the analysis file owes until it leaves. Covers checking each finding against the tree as it stands, against the registers and the history, against the goals and the design, looking for a better fix than the one proposed, writing the analysis to a file, offering the owner three outcomes per finding, and the life of the analysis after the ruling. Not for running a retrospective or an audit, nor for the work an outcome rules, which its route's skill covers.
 ---
 
 # Retrospective intake
 
-Scope: the analysis of the findings a retrospective sends to this repository, up to the owner's
-ruling on each. A retrospective is run by `skill@knowledge-architect-retrospective`, in this
-repository or in a project that uses the workflow, and its files land outside the project, in a
-directory the owner names. A later session receives them, and this skill is that session's
-procedure.
+Scope: the analysis of the findings a retrospective or a project audit sends to this repository,
+the owner's ruling on each, and the life of the analysis file until it leaves. A retrospective is
+run by `skill@knowledge-architect-retrospective`, and an audit's agentic-workflow axis by
+`skill@knowledge-architect-project-audit`, in this repository or in a project that uses the
+workflow, and their files land outside the project, in a directory the owner names. A later
+session receives them, and this skill is that session's procedure.
 
 Not covered here:
-- **running a retrospective**: `skill@knowledge-architect-retrospective`;
-- **carrying out an outcome**: an issue is opened under `skill@knowledge-architect-issue-tracking`;
-  a finding handled now is handled under the skill that item g of
-  `skill@klarch-retrospective-intake@what-to-establish` names for it.
+- **running a retrospective or an audit**: `skill@knowledge-architect-retrospective`,
+  `skill@knowledge-architect-project-audit`;
+- **the work an outcome rules**: an issue is opened under
+  `skill@knowledge-architect-issue-tracking`; a finding handled now is handled under the skill that
+  item g of `skill@klarch-retrospective-intake@what-to-establish` names for it. What the analysis
+  file owes meanwhile is `skill@klarch-retrospective-intake@after-the-ruling`.
 
 **This skill decides nothing.** It establishes the facts about each finding, proposes an action
 with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-decides`.
 
 ## What it takes `##what-it-takes`
 
-- **In scope: a retrospective's workflow file**, whatever project wrote it. It is named
-  `<date>-<project>-<subject>-klarch-workflow.md`, or `<date>-<project>-workflow.md` before that
-  name. It holds the findings on the installed skills and agents (W), on the checker (C), and the
-  answers to the standing questions.
+- **In scope: a workflow file**, the second file of
+  `skill@knowledge-architect-retrospective@two-files`, whatever project wrote it, and whether a
+  retrospective or the agentic-workflow axis of a project audit wrote it. It is named
+  `<date>-<project>-<subject>-klarch-workflow.md`, or, before that name,
+  `<date>-<project>-workflow.md` or `<date>-<project>-<subject>-workflow.md`. It holds the
+  findings on the installed files (W), and, from a retrospective, the
+  findings on the checker (C) and the answers to the standing questions.
 - **In scope: this repository's own project file**, `<date>-knowledge-architect-<subject>.md`, or
   `<date>-knowledge-architect.md` before that name.
   Its findings (P) are on this repository's own instructions, and the same checks apply to them.
@@ -40,12 +46,13 @@ The findings of this repository's two files are handled here, never as an issue 
 arrives the same way once the owner hands it over.
 
 A finding is cited by its id and its file's stem, as "W3 of
-2026-10-07-thaum-mock-reduction-workflow", the form the installed retrospective skill gives.
+2026-10-07-thaum-mock-reduction-workflow", a file of the older form; the installed retrospective
+skill gives the form for its own files.
 
 ## Ground before judging any finding `##ground-before-judging`
 
 1. **Read the workflow file whole**, and the project's file if present.
-2. **Note the version the retrospective used**, from its Version section, and the main commit you
+2. **Note the version the retrospective used**, from the line that names it, and the main commit you
    analyse against: `git describe --tags origin/main`. A finding against an older version may
    already be repaired.
 3. **Search the standing entries with the received files as the work.** One search covers every
@@ -84,8 +91,8 @@ Each item below is answered with its evidence. The order is a suggestion; the co
   or in wrapped prose is matched across a line break.
 - **c. Whether it is already recorded.** An issue or a tripwire, from the search of `skill@klarch-retrospective-intake@ground-before-judging`. A
   rejected alternative: read the rejected alternatives of the Component that owns the blamed text.
-  A proposed fix that already lost is not proposed again, unless the finding brings a fact the
-  recorded reason does not cover.
+  A proposed fix that already lost, by the record test of
+  `skill@knowledge-architect-design@threads-and-states`, is not proposed again.
 - **d. Its kind.**
   - **a defect of the text**: unclear (two readings), missing (the session needed an instruction
     that does not exist), or wrong (following it produced a defect or a correction);
@@ -115,13 +122,12 @@ Each item below is answered with its evidence. The order is a suggestion; the co
   - no change.
 
   A fix to an installed skill passes the four tests of the agent-skills `CLAUDE.md`, "Editing an
-  installed skill or agent": scope, necessity, kind, built intent. An addition needs an observation
-  from a real session, which the finding is, the owner's named lack, which the owner gives at the
-  ruling, and a one-sentence mechanism, which the analysis writes, per
-  `design@agent-skills@additions-need-real-use`.
+  installed skill or agent", read whole: scope, necessity, kind, built intent.
 - **g. Its route.** What handling it needs, which says what "now" would mean:
-  - a text edit whose design is settled: under `skill@knowledge-architect-agent-configuration`, and
-    for the installed text the agent-skills `CLAUDE.md`;
+  - a text edit whose design is settled: under `skill@knowledge-architect-agent-configuration` for
+    this repository's own configuration, and for the installed text, at its source under
+    `path@agent-skills@content/`, under the agent-skills `CLAUDE.md`, section "Editing an installed
+    skill or agent", read whole;
   - a decision, or one whose design is not settled: `skill@knowledge-architect-design`;
   - a change to the Rust source: `skill@klarch-development`;
   - an issue only, when the work is not to be done in this session;
@@ -151,9 +157,9 @@ where `<stem>` is the received file's stem. The directory's README says what it 
   standing entries the search returned that bear on it.
 - **One section per finding or cluster**, headed by its ids and a short title, with a bullet per
   item of `skill@klarch-retrospective-intake@what-to-establish`, in prose. No table: the content of each item is too long to read in a cell.
-- **Every section that proposes an action ends with a `Default` line and an `Outcome` line**, the
-  latter left pending: a finding, a standing answer, a noted item, and a judgement on a standing
-  entry. A standing entry the file may meet gets a section of its own: a tripwire that may have
+- **Every section ends with a `Default` line and an `Outcome` line**, whatever it proposes, no
+  change included, the latter left pending: a finding, a standing answer, a noted item, and a
+  judgement on a standing entry. A standing entry the file may meet gets a section of its own: a tripwire that may have
   fired, a deferred trigger, a design issue's re-entry. Whether it fired, and its response, are the
   owner's to rule; the analysis proposes the judgement and its evidence.
 - **A span the checker would refuse is quoted in words.** A finding about a refused form tempts a

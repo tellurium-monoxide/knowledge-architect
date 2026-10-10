@@ -11,8 +11,8 @@ Design by open, argued exchange: both parties propose, push back with
 arguments, and converge through rounds.
 **The discussion is fully symmetric; only the decision is not.**
 Both parties' proposals are held to one standard, stated in loop step 4.
-The asymmetry lives in decision authority alone: closure and reopening
-belong to the owner's word (see `skill@knowledge-architect-design@decision-authority`). **The owner** is the
+The asymmetry lives in decision authority alone: closure belongs to the
+owner's word (see `skill@knowledge-architect-design@decision-authority`). **The owner** is the
 person whose word closes a thread.
 
 Terms this skill defines and then uses as vocabulary:
@@ -22,7 +22,8 @@ Terms this skill defines and then uses as vocabulary:
   It has to be backed by facts, proven with examples, drawings, snippets of code, references...
 - a **stall** is a move that repeats existing positions without a new
   argument or new evidence
-- a **tripwire** is named future evidence that would flip a verdict or a deferral
+- a **tripwire** is named future evidence that would flip a verdict; the event that would bring a
+  deferral back is its trigger
 - **open state** is what a project currently has outstanding:
   the entries of its issue registers and its tripwires homes.
   Differing from the decision record in that an item LEAVES it when it fires or closes
@@ -42,15 +43,13 @@ a requirement waiting to be extracted from the owner, because neither party
 knows it yet. It is discovered by proposing, arguing, and following
 the open threads.
 
-**This skill ends at convergence**, and, where the premortem runs, the
-premortem and the owner's rulings on its tripwires and acceptance
-criteria. Bounded work ends
-sooner, at the owner's word on its one proposal (`skill@knowledge-architect-design@bounded-work`), and takes
-neither of the two paths below. It writes no plan document and no record. On the full
-path, the spec or the milestone is written by `skill@knowledge-architect-planning`,
-in the same session (step 8); on the in-change path, a commit message
-carries the deliberation (`skill@knowledge-architect-design@decision-authority`). Either way, the decisions
-are recorded at the landing of the work that implements them.
+**This skill ends at convergence**, and, where the premortem runs, the premortem and the owner's
+rulings on its tripwires and acceptance criteria. Bounded work ends sooner, at the owner's word on
+its one proposal (`skill@knowledge-architect-design@bounded-work`). On the full path,
+`skill@knowledge-architect-planning` writes the plan documents, in the same session (step 8); on
+the in-change path, a commit message carries the deliberation
+(`skill@knowledge-architect-design@decision-authority`). Either way, the decisions are recorded at
+the landing of the work that implements them.
 
 ## Decision authority `##decision-authority`
 
@@ -94,9 +93,10 @@ It ends the argument, but it does not end your duties around it:
   TURN, not the decision's class: writing code that implements an
   irreversible plan is reversible, running the migration is not. Held
   work is named as held, with what it waits for; it is never silently
-  completed and never silently dropped. The thread stays CLOSED while the
-  finding is pending, with the finding noted on its ledger line; only
-  the owner's word actually reopens it. If no word has come by the
+  completed and never silently dropped. Presenting the finding reopens
+  the thread, with the finding noted on its ledger line; it closes again
+  on the owner's word, as any thread does, and until then the work goes
+  on under the default above. If no word has come by the
   next checkpoint — or the end of the current change, whichever comes
   first — the finding stays on the thread's ledger line, marked
   unacknowledged, and is carried into the plan document that
@@ -146,9 +146,15 @@ evidence bring, which nobody knows in advance.
   work that no longer lands in the change under way (it needs a branch
   of its own, several pull requests, or nobody has started it): the
   hand-off to planning of loop step 8. A decision that is cheap to
-  reverse and whose work comes later takes it too.
+  reverse and whose work comes later takes it too. A design session
+  opened at a design audit under `skill@knowledge-architect-planning@working-a-slice`
+  takes the full path, and that skill says which plan documents its
+  converged design is written into.
+  A choice among shapes stated in full, which
+  `skill@knowledge-architect-planning@working-a-slice` puts to the owner in
+  one message, ends at the owner's ruling, with no premortem.
 
-The four decide whether the premortem runs, never which path is taken.
+On the in-change path, the four decide whether the premortem runs; they never decide which path is taken.
 To decide, state what reversal touches, in nouns. The four: stored
 data that would have to be migrated; an interface other code or other
 people already consume; behavior users have adapted to, in the sense
@@ -236,7 +242,7 @@ the Component that will own the decision already holds it, with
 `cargo klarch show design@<anchor>@<slug>`. In prose, write it plain with a
 `#` before it, as in #retention-window, never in backticks: a backticked
 span may be read by the checker as a reference. In the plan document the
-thread becomes an item, cited from inside that document only, per
+thread becomes an item, cited from inside its own plan only, per
 `skill@knowledge-architect-planning`. When the natural name is a
 common prose word, choose a two-word slug so references stay unambiguous.
 
@@ -333,7 +339,9 @@ each announced in the delta:
   Every parked thread names its tripwire AND its re-entry point: the
   event or checkpoint at which it is re-proposed. A parked thread
   missing either one is open. A tripwire with no re-entry point names
-  evidence nobody is scheduled to look for.
+  evidence nobody is scheduled to look for. A parked thread's tripwire
+  is named on the ledger, and written as
+  `skill@knowledge-architect-decision-recording@ruled-tripwires` says.
   `superseded` is not a third case, though it is easily read as one:
   threads absorbed by a proposal close on the owner's word approving that
   proposal by name, and until it comes the absorbed threads keep their
@@ -355,7 +363,7 @@ decisions, and the directives and contracts of its `CLAUDE.md` and
 from a goal is binding: the goals are the owner's intent. A criterion
 derived from a recorded decision is binding as a stated presumption until
 the owner says otherwise, because a decision binds only as a presumption
-that a better argument may rebut.
+that a better argument may rebut, per `primer@goals-bind`.
 
 Each criterion carries a satisfaction line, and this is what the owner
 reads at convergence: **met**, naming the approved threads that meet
@@ -382,14 +390,15 @@ produced one — rather than silently carried.
 
 **Reopening — closed is not frozen.** This rule is the single owner
 of the novelty test. The owner reopens a closed thread by their word
-alone. You may only PROPOSE a reopening, with a new argument or new
-evidence named — the material-findings protocol (`skill@knowledge-architect-design@decision-authority`)
-owns the mechanics: the thread stays closed until the owner's word.
+alone. You reopen one with a new argument or new evidence named, as a
+material finding — the material-findings protocol (`skill@knowledge-architect-design@decision-authority`)
+owns the mechanics — and it closes again on the owner's word.
 The record arbitrates novelty: an alternative counts as
-argued-and-lost only when a recorded ruled-out alternative — a
-`ruled-out` thread of this discussion's ledger or of a plan document, or
-an entry of a rejected alternatives home — or a `withdrawn` thread
-recorded with a defeating reason covers it. To
+argued-and-lost only when a recorded reason covers it: a `ruled-out`
+thread, or a `withdrawn` thread recorded with a defeating reason, of
+this discussion's ledger or of a deliberation kept where
+`skill@knowledge-architect-decision-recording@three-homes` says, or an
+entry of a rejected alternatives home. To
 decline surfacing a finding, cite that record; if no recorded reason
 covers the discriminating fact, the finding is new. A reworded
 proposal that defeats or evades the recorded reason is new by
@@ -506,8 +515,9 @@ choices whose option space genuinely is closed and consequence-free.
    same way agreeing with one you have not tested does. A factual claim
    doing closing work carries its provenance — measured (with the
    command that re-takes it), read in a named source, or assumed — and a thread may close over assumed
-   claims only if each assumption is recorded as a tripwire on that
-   closure. In the other direction, reverse when the opposing
+   claims only if each assumption is named as a tripwire on that
+   closure, or, where only the built code can check it, as an acceptance
+   criterion, as step 7 splits and rules them. In the other direction, reverse when the opposing
    argument explains something your position cannot, or survives an
    objection your position fails — not merely because the owner
    insists. "Both have merits" with no synthesis proposal is a
@@ -578,19 +588,16 @@ choices whose option space genuinely is closed and consequence-free.
    Ask the owner, for each tripwire, whether it is recorded, and for each
    acceptance criterion, whether it is applied, naming the decision its
    firing reopens. Put each under a label, `T<n>` for a tripwire and
-   `AC<n>` for an acceptance criterion, numbered from 1 in order of
-   appearance across the whole discussion, a resumed session included,
-   and never reused, so that the owner rules on each by its label. The
+   `AC<n>` for an acceptance criterion, numbered as
+   `primer@labelled-items` says, so that the owner rules on each by its
+   label. The
    tripwire's entry and the criterion's item keep that label in their
    text, so the ruling in the transcript is found from either.
    Some may be out of scope of the project, and the owner is the only judge of that.
-   A tripwire the owner rules to record is written at the harvest of the decision
-   it guards, in the tripwires home of the Component that owns that decision,
-   under `skill@knowledge-architect-issue-tracking`: a tripwire names its decision's
-   design entry, so the entry exists first.
+   A tripwire the owner rules to record is written as
+   `skill@knowledge-architect-decision-recording@ruled-tripwires` says.
 
-   Every tripwire, here and everywhere else, is recorded only on the
-   owner's word, and meets the
+   Every tripwire, here and everywhere else, meets the
    falsifiability bar: evidence specific enough that both parties
    would agree it fired — an event, a count crossing a bound.
 
@@ -612,9 +619,8 @@ choices whose option space genuinely is closed and consequence-free.
    premortem and the owner's rulings on its tripwires and acceptance
    criteria live in this
    conversation and in the harness's transcript of it. The planning
-   skill assembles them from the transcript into a spec, or a milestone
-   document and one spec per slice, before the session ends, and owns
-   their shape.
+   skill assembles them from the transcript into its plan documents,
+   before the session ends, and owns which ones and their shape.
    Each round's delta is the draft that assembly reads, so a delta is
    written whenever a round changes a state or a note. A plan document
    written from memory in a later session is written from a summary,
@@ -691,7 +697,8 @@ the same exchange, plus:
   owner before deciding anything on its behalf. Do not treat
   "undocumented" as "disposable" in a project that documents nothing.
 
-Verdict record — the account step 8 hands off, specialized for a
+Verdict record — the account step 8 hands off on the full path, or
+the commit message carries on the in-change path, specialized for a
 keep-or-change verdict. Fill every slot. A decision that evaluates no
 incumbent design hands off under step 8 alone: it has no recurring
 failure to diagnose, so it has no Mechanism slot to fill, and this form
@@ -702,5 +709,7 @@ is not the shape for it.
   recurring failures
 - Tripwires: the specific evidence that would flip this verdict
 - Losing alternatives: what they were, and where the winner absorbs them
-- Recorded at: the plan document; at the harvest, the design entry of the
-  owning Component, when the verdict earns one
+- Recorded at: the plan document, or, for a verdict no work implements,
+  such as keep, the commit message of the in-change path; the design
+  entry of the owning Component, when the verdict earns one, at the
+  harvest or, on the in-change path, when the verdict is made
