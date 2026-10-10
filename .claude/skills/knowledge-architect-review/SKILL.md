@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-review
-description: MUST use before merging anything to the main branch, and whenever an activity's own skill says a unit of its work is ready for review — how to send independent subagent reviewers at it, how to write a brief that cannot mislead them, and where their findings land. The axes to send are every axis of its table whose condition holds, and those the dispatching activity's skill adds.
+description: MUST use before merging anything to the main branch, and whenever an activity's own skill says a unit of its work is ready for review — how to send independent subagent reviewers at it, how to write a brief that cannot mislead them, and where their findings land. The axes to send are every axis of its table whose condition holds, and those the skill of each activity whose work it reviews adds.
 ---
 
 # Dispatching a review
@@ -13,8 +13,8 @@ names it: the project's development procedure says when a piece of code is ready
 `skill@knowledge-architect-planning` says when a plan document is, and
 `skill@knowledge-architect-agent-configuration` says when a configuration change is. Read your
 activity's skill for its moment. The one moment that belongs to no activity is **before merging
-anything to the main branch**. At that review, the activity whose work the branch holds is the
-dispatching one, so the axes its skill adds are owed.
+anything to the main branch**: `skill@knowledge-architect-review@review-axes` says what that
+review owes.
 
 Not covered here: **being** any of the reviewers (the record reviewers
 `agent@knowledge-architect-routing-reviewer`, `agent@knowledge-architect-decision-record-reviewer`
@@ -32,7 +32,7 @@ rather than a diff (`skill@knowledge-architect-project-audit`).
 | axis | what it does | applicable when |
 | --- | --- | --- |
 | spec conformity | does the work implement what was decided, item by item. If deviations happened during implementation, are they justified? | a spec or a milestone slice's spec was written before the work |
-| self-consistency | does the result contradict itself. Two instructions a reader cannot both obey, a pointer into content that is not there, a statement no longer true | always |
+| self-consistency | does the result contradict itself. Two instructions a reader cannot both obey, a pointer into content that is not there, a statement no longer true | nearly all the time |
 | fidelity of relocation | where content moved, was anything lost? A reason dropped, a number changed, an argument compressed to an assertion | content was relocated, or forked from another source |
 | routing of knowledge | `agent@knowledge-architect-routing-reviewer` | a durable statement was added or moved |
 | decision recording | `agent@knowledge-architect-decision-record-reviewer`. If a plan document was written, hand it to this reviewer too | a decision was made, reversed or harvested |
@@ -40,17 +40,22 @@ rather than a diff (`skill@knowledge-architect-project-audit`).
 | cold implementer | `agent@knowledge-architect-cold-implementer-reviewer`: can a session that did not see the discussion act on the plan document | a spec or a milestone was written under `skill@knowledge-architect-planning`, or a decided shape in one revised; that skill names the moment |
 | code claims | `agent@knowledge-architect-code-claims-reviewer`: is every statement the plan document makes about existing code true of the tree | the same moment |
 | design conformance | `agent@knowledge-architect-design-conformance-reviewer`: does the plan document fit the project's goals, design heads and rejected alternatives | the same moment |
-| transcript | `agent@knowledge-architect-transcript-reviewer`: has everything the work's sessions established that must outlive them a durable outcome, and is no ruling of the owner misstated | the transcripts of the sessions that produced the work are available; before a merge to the main branch, only alone and last (below), not also with the other axes |
+| transcript | `agent@knowledge-architect-transcript-reviewer`: has everything the work's sessions established that must outlive them a durable outcome, and is no ruling of the owner misstated | the transcripts of the sessions that produced the work are available; at the review before a merge, only alone and last (below), not also with the other axes |
 
 Each of these is conditional on the work. In other skills, more axes are added to this list, when
-the work has properties these axes do not reach. **An axis named by an agent is dispatched as that
-agent. An axis with no agent is dispatched as a fresh general-purpose subagent**, briefed with the
-axis's question as this table states it, the commit range, and the files that carry the standard. **An axis that applies and was not run is said,
+the work has properties these axes do not reach. **A review owes every axis of this table whose
+condition holds, and every axis that the skill of an activity whose work it reviews adds, where
+that axis's condition holds.** The review before a merge is the last review of a branch, after
+which only its own repairs land, whichever activity's skill dispatched it, such as the review of a
+plan document on a branch of its own; the work it reviews is the whole branch. **An axis named by
+an agent is dispatched as that agent. An axis with no agent is dispatched as a fresh
+general-purpose subagent**, briefed with the axis's question as this table states it, the commit range, and the files that carry the standard. **An axis that applies and was not run is said,
 with the reason, in the commit that records the review.**
 
-**Last, before every merge to the main branch, the transcript reviewer runs alone**:
-after every other axis has run and its repairs are committed, and once the owner has answered every
-ruling those repairs asked for, since an answer given after its extraction reads to it as missing. Its range is the whole branch,
+**Last, at the review before a merge, the transcript reviewer runs alone**:
+after every other axis has run, its repairs are committed and every item of their reports has its
+outcome under `skill@knowledge-architect-review@what-review-leaves`, since an answer of the owner
+given after its extraction reads to it as missing. Its range is the whole branch,
 `<main branch>..<head>`, and its brief names the transcripts of every session that worked on the
 branch, with the message where the branch's work begins in each. It is the one axis that can see whether the findings of the others were acted on, since
 their reports reach the session as messages of its transcript. Its repairs land as additional
@@ -88,15 +93,18 @@ re-checking.
   about to merge, unless the axis names its own range: the diff and every commit message in it
   are the subject, and a reviewer given a branch name alone guesses the base.
 - **Name the files that carry the standard rather than restating it.** A subagent inherits the
-  session's snapshot of the root `CLAUDE.md`, so a session that has just edited it is briefing from
-  a copy that no longer matches disk. Point at the file; do not paraphrase what it says.
+  session's snapshot of the root `CLAUDE.md`, and runs on its agent definition as the harness
+  registered it when the session started, so a session that has edited either is briefing from a
+  copy that no longer matches disk. Point at the file; do not paraphrase what it says. Where the
+  session edited it, tell the subagent to read it from disk and to follow the disk where its copy
+  differs.
 - **The dispatcher does not defend the work.** Findings arrive as claims to check, not as attacks to
   answer. Verify each against the tree before relaying or acting on it; a reviewer can be wrong, and
   saying so requires the same reproduction the reviewer owed.
-- **Every reviewer that runs tests, a mutation, or any command of the checker or another binary
-  gets its own worktree, detached at the commit under review, never the live tree.** A run in the
-  live tree races the dispatcher's own edits, and a worktree that shares the branch ref moves under
-  the reviewer at the dispatcher's next commit. The shape is
+- **Every reviewer that runs tests, a mutation, or any command of the checker or of a program the
+  project builds gets its own worktree, detached at the commit under review, never the live
+  tree.** A run in the live tree races the dispatcher's own edits, and a worktree that shares the
+  branch ref moves under the reviewer at the dispatcher's next commit. The shape is
   `git worktree add --detach <path> <commit>`, at a path outside the project, or under a path its
   ignore rules cover, since the checker walks untracked files and stops on a nested repository,
   and `git worktree remove <path>` once the review and the repairs are done. **The dispatcher names
@@ -145,8 +153,8 @@ message, each under a label, `Q<n>`, so the owner rules on each by its label; th
 review names each item by its content, not by the label. Where the dispatching skill gives such an
 item a label of its own, as the planning skill gives a plan document's defaults `D<n>`, that label
 is used instead. Where that skill writes such an item into its document as a default awaiting
-the owner, as planning does, that listing is how it is put to the owner, and the record of the
-review names it as awaiting the owner's word. **A defect that predates the
+the owner, as planning does, that listing puts it to the owner and is its outcome, a repair, and
+the record of the review names it as awaiting the owner's word. **A defect that predates the
 change** is routed by `primer@met-outside-the-task`: a fix checkable from the
 diff alone lands in a commit of its own, and the record of the review names that commit by its
 subject.
@@ -162,11 +170,9 @@ the reviewer finds misstated is the owner's, and is put to the owner.
 **Where the branch's commits reach the main branch as they are** (a fast-forward, or a rebase merge,
 which may give them new SHAs; GitHub's rebase merge drops a commit that changes no file):
 
-- **A repair made on the branch is a new commit, appended**, which edits no history. Where the
-  project requires every commit of a branch to pass checks the repair changes, an appended repair
-  leaves the earlier commits failing; it is then folded into the earliest commit it repairs, by a
-  history edit with no uncommitted work in the tree, confirmed afterwards to have lost no content.
-  Either way, the paragraph recording the review says what was repaired, and what was folded.
+- **A repair made on the branch is a new commit, appended**, which edits no history, except one
+  that `primer@branch-commits` folds into an earlier commit. Either way, the paragraph recording
+  the review says what was repaired, and what was folded.
 - **A commit message carrying a mistake is repaired by amending** while it is the newest commit, and
   by a history edit of the branch after that. Either only with no uncommitted work in the tree, and
   each confirmed afterwards to have lost no content: for an amend, that it changed no file. A

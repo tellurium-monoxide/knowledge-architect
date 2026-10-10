@@ -1,32 +1,37 @@
 ---
 name: klarch-retrospective-intake
-description: MUST use when the owner hands this session one or more retrospective files to act on — a `-klarch-workflow.md` file, or a `-workflow.md` file written before that name, from this repository or from a project that uses the workflow, or this repository's own project file — or asks what to do with the findings of a retrospective already run. Covers checking each finding against the tree as it stands, against the registers and the history, against the goals and the design, looking for a better fix than the one proposed, writing the analysis to a file, and offering the owner three outcomes per finding. Not for running a retrospective, nor for carrying out an outcome.
+description: MUST use when the owner hands this session one or more files of findings on the workflow to act on — a `-klarch-workflow.md` file, written by a retrospective or by a project audit, or a `-workflow.md` file written before that name, from this repository or from a project that uses the workflow, or this repository's own retrospective project file — or asks what to do with the findings of such a file already received; and while an outcome of an analysis in docs/retrospective-reports/ is carried out, for what the analysis file owes until it leaves. Covers checking each finding against the tree as it stands, against the registers and the history, against the goals and the design, looking for a better fix than the one proposed, writing the analysis to a file, offering the owner three outcomes per finding, and the life of the analysis after the ruling. Not for running a retrospective or an audit, nor for the work an outcome rules, which its route's skill covers.
 ---
 
 # Retrospective intake
 
-Scope: the analysis of the findings a retrospective sends to this repository, up to the owner's
-ruling on each. A retrospective is run by `skill@knowledge-architect-retrospective`, in this
-repository or in a project that uses the workflow, and its files land outside the project, in a
-directory the owner names. A later session receives them, and this skill is that session's
-procedure.
+Scope: the analysis of the findings a retrospective or a project audit sends to this repository,
+the owner's ruling on each, and the life of the analysis file until it leaves. A retrospective is
+run by `skill@knowledge-architect-retrospective`, and an audit's agentic-workflow axis by
+`skill@knowledge-architect-project-audit`, in this repository or in a project that uses the
+workflow, and their files land outside the project, in a directory the owner names. A later
+session receives them, and this skill is that session's procedure.
 
 Not covered here:
-- **running a retrospective**: `skill@knowledge-architect-retrospective`;
-- **carrying out an outcome**: an issue is opened under `skill@knowledge-architect-issue-tracking`;
-  a finding handled now is handled under the skill that item g of
-  `skill@klarch-retrospective-intake@what-to-establish` names for it.
+- **running a retrospective or an audit**: `skill@knowledge-architect-retrospective`,
+  `skill@knowledge-architect-project-audit`;
+- **the work an outcome rules**: an issue is opened under
+  `skill@knowledge-architect-issue-tracking`; a finding handled now is handled under the skill that
+  item g of `skill@klarch-retrospective-intake@what-to-establish` names for it. What the analysis
+  file owes meanwhile is `skill@klarch-retrospective-intake@after-the-ruling`.
 
 **This skill decides nothing.** It establishes the facts about each finding, proposes an action
 with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-decides`.
 
 ## What it takes `##what-it-takes`
 
-- **In scope: a retrospective's workflow file**, whatever project wrote it. It is named
+- **In scope: a workflow file**, the second file of
+  `skill@knowledge-architect-retrospective@two-files`, whatever project wrote it, and whether a
+  retrospective or the agentic-workflow axis of a project audit wrote it. It is named
   `<date>-<project>-<subject>-klarch-workflow.md`, or, before that name,
   `<date>-<project>-workflow.md` or `<date>-<project>-<subject>-workflow.md`. It holds the
-  findings on the installed skills, agents and primer (W), on the checker (C), and the
-  answers to the standing questions.
+  findings on the installed skills, agents and primer (W), and, from a retrospective, the
+  findings on the checker (C) and the answers to the standing questions.
 - **In scope: this repository's own project file**, `<date>-knowledge-architect-<subject>.md`, or
   `<date>-knowledge-architect.md` before that name.
   Its findings (P) are on this repository's own instructions, and the same checks apply to them.
@@ -86,8 +91,8 @@ Each item below is answered with its evidence. The order is a suggestion; the co
   or in wrapped prose is matched across a line break.
 - **c. Whether it is already recorded.** An issue or a tripwire, from the search of `skill@klarch-retrospective-intake@ground-before-judging`. A
   rejected alternative: read the rejected alternatives of the Component that owns the blamed text.
-  A proposed fix that already lost is not proposed again, unless the finding brings a fact the
-  recorded reason does not cover.
+  A proposed fix that already lost, by the record test of
+  `skill@knowledge-architect-design@threads-and-states`, is not proposed again.
 - **d. Its kind.**
   - **a defect of the text**: unclear (two readings), missing (the session needed an instruction
     that does not exist), or wrong (following it produced a defect or a correction);

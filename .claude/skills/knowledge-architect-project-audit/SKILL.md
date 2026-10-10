@@ -44,7 +44,7 @@ project, not a verdict on one branch.
   applies names the axis in its Migration entry, so a project brings its existing record to the
   new rules.
 - **An adopting project's existing documents have moved** into the workflow's homes, as
-  `skill@knowledge-architect-setup@existing-documentation` says: the milestone of the move ends by
+  `skill@knowledge-architect-setup@existing-documentation` says: the move's work ends by
   running the design-record axis over its whole corpus.
 
 An audit runs in a branch of its own, unless the owner gives it to another work's branch.
@@ -70,17 +70,20 @@ needs. The points hold for every axis; the dispatch is the axis's own, in its se
    applied before a reading confirms it. A quotation of the owner is confirmed against the question
    it answered, in its source, as well as against its words: a verbatim answer to another question
    is not the owner's ground for this one.
-6. **The owner list.** One message per pass: the items grouped by kind, each under a label, `F<n>`, with a
-   default and the words of the entry or the text the item turns on. Apply nothing on the list
+6. **The owner list.** One message per pass: the items grouped by kind, each under a label, `F<n>`,
+   numbered as `primer@labelled-items` says, with a default and the words of the entry or the text
+   the item turns on. Apply nothing on the list
    before the owner answers. An item the owner defers becomes an issue entry.
 7. **Application.** Apply the edits, yourself or through agents dispatched on disjoint files. Read
    the whole diff before each commit.
 8. **The re-check.** Dispatch fresh agents of the axis, as its first dispatch was, after the edits,
    each also given the entries, the texts and the rules the owner ruled to keep, as a file in its
-   scratch directory. A finding of the re-check that a reading confirms, that is not on the kept
-   list, and that no issue entry of the run records, is a violation left, whether a draft missed it
-   or an edit made it: repair it or put it to the owner. The re-check's drafts start the next pass,
-   from point 5. The run stops when the owner judges what is left small enough. The violations left
+   scratch directory, and briefed on the edited files that carry its standard as
+   `skill@knowledge-architect-review@review-invariants` says. A finding of the re-check that a
+   reading confirms, that is not on the kept list, and that no issue entry records, is a violation
+   left, whether a draft missed it or an edit made it: repair it or put it to the owner. The
+   re-check's drafts start the next pass, from point 5. The run stops when the owner judges what is
+   left small enough. The violations left
    then take their outcomes, as in points 5 to 7, and no re-check follows; one the owner does not
    rule on becomes an issue entry, as a deferred item does. The count of violations left is expected
    to fall from one pass to the next; a pass where it does not goes to the owner as a question,
@@ -100,7 +103,7 @@ Every finding takes exactly one outcome. A finding that fits no named case goes 
 | put to the owner, on the owner list | the edits the axis's section lists as the owner's; a verdict where a rule reads two ways; a conflict with a goal, which then follows `skill@knowledge-architect-goal-setting`; any finding no row names |
 | sent upstream | a finding on the installed text, which the project never edits: the axis's section says how |
 | an issue entry | a finding outside the axis that the primer's table routes to an issue, such as a statement false of the code when the axis does not read the code; work the owner approved that is too large for the branch; a finding the owner defers. The kind follows `skill@knowledge-architect-issue-tracking` |
-| nothing | the entry or the text conforms |
+| nothing | the entry or the text conforms; a finding an issue entry already records |
 
 A finding outside the axis takes the first case of `primer@met-outside-the-task` that applies.
 
@@ -179,7 +182,7 @@ obey, so every agent reads the whole corpus.
 **The rules**: a session can follow every instruction. A finding is admitted when a reading confirms
 it, in the classes `agent@knowledge-architect-workflow-auditor` defines: a contradiction, a broken
 trigger, a factual error, two readings, a provable gap. A gap that only predicts what an agent would
-do is a predicted gap: it becomes an issue, never an edit, since an instruction about how an agent
+do is a predicted gap, and is never repaired by an edit, since an instruction about how an agent
 behaves is added on evidence from real use. A case no instruction covers and judgement can decide
 is no finding, per `primer@room-to-judge`.
 
@@ -206,17 +209,15 @@ is walked in the group of the activity it serves.
 | L4 provable gap | a requirement the corpus states, and an input no text supplies | 2 |
 | L5 restatement | a restatement that drifted from its home, or that lost its pointer | 1 |
 | L6 local against installed | the project's own text against the installed text | 2 |
-| L7 checker rules | each rule the checker enforces on what an agent writes, against the installed text alone | 2 |
+| L7 checker rules | a checker rule the corpus states wrongly, or one the installed text leaves unstated whose finding message does not name its repair | 2 |
 
 **The sort** merges a finding two agents report, and notes it. It splits a finding tagged `I` into
 its installed side and its project side, each a finding with one outcome. A draft found wrong
 sends the same agent's other drafts of the same class back to a reading. It writes the
 confirmed-findings file in the run's scratch directory, the directory that holds every agent's
 own: one line per confirmed finding, an id the session gives it, its tag, and the path of its
-draft. A violation left, at the re-check, is a finding a reading confirms, that is not on the kept
-list, and that no issue entry of the run records. Each pass's commit message gives the count of
-confirmed findings and of those that went on the owner list, so that the passes show whether the
-run converges.
+draft. Each pass's commit message gives the count of confirmed findings and of those that went on
+the owner list, so that the passes show whether the run converges.
 
 **The repair by cause.** A finding is repaired at the cause that produced it, not at its site: a
 repair written for one finding adds a rule, and added rules interact at the next pass. Between the
@@ -260,16 +261,14 @@ after the pass, `wc -w` over the corpus's files.
 | put to the owner, on the owner list | which side of a contradiction wins, a loop with no exit among them; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction |
 | an issue entry | a predicted gap; a finding the owner defers |
 
-**Sent upstream**: every finding on the installed text, over every pass of the run, goes into one
-file per run, written when the run stops, in the shape of the retrospective's workflow file, each
-finding numbered `W<n>`: the version of the checker used, what was audited at which commit, and the
-findings, with no standing questions. It is named
-`<YYYY-MM-DD>-<project>-workflow-audit-klarch-workflow.md`, and handled as
-`skill@knowledge-architect-retrospective@two-files` and
-`skill@knowledge-architect-retrospective@what-becomes-of-files` say for that file: it is written
-outside the project, and nothing of it leaves the machine before the owner has read it. A cause
-whose findings are on both sides is repaired in two parts: its installed side is sent upstream, and
-its project side takes its outcome here.
+**Sent upstream**: every finding on the installed text, over every pass of the run, a predicted
+gap included, goes into one file per run, written when the run stops. That file is the workflow's
+file of `skill@knowledge-architect-retrospective@two-files`, named, written and handled as that
+section and `skill@knowledge-architect-retrospective@what-becomes-of-files` say, its subject
+naming the audit. It differs in its content only: what was audited at which commit in place of
+what the session did, each finding numbered `W<n>`, and no standing answers. A cause whose
+findings are on both sides is repaired in two parts: its installed side is sent upstream, and its
+project side takes its outcome here.
 
 **The workflow script.** Where the harness offers the Workflow tool, the session runs each stage of
 the pass by passing the script below to that tool inline, with its inputs in `args`; elsewhere it
@@ -277,7 +276,7 @@ dispatches the same agents with the same prompts, in the same order. The stages 
 invocation each, since a reading of the session sits between each two: `drafts`, then the sort;
 `clusters`, then the merge; `repairs`, then the confirmation. The cluster and repair prompts are
 written in the script and nowhere else: a prompt is read from this skill as the session finds it,
-where an agent's definition is the one the harness registered when the session started. Before
+and an agent's definition is not, per `skill@knowledge-architect-review@review-invariants`. Before
 the `drafts` stage of a re-check, the session writes the kept list into each agent's scratch
 directory, and names it in that agent's entry.
 
@@ -309,6 +308,9 @@ if (args.stage === 'drafts') {
     'Lens: ' + a.lens + (a.group ? ', group of activities: ' + a.group : ''),
     'Scratch directory: ' + a.scratch,
     a.kept ? 'Kept list, for this re-check: ' + a.kept : '',
+    'Your copies of your definition, knowledge-architect-workflow-auditor.md in the project agent ' +
+      'directory, and of the root CLAUDE.md may predate the edits of this session: read both from disk, ' +
+      'and follow the disk where your copy differs.',
   ]), { agentType: 'knowledge-architect-workflow-auditor', phase: 'drafts', label: a.lens })))
 }
 if (args.stage === 'clusters') {

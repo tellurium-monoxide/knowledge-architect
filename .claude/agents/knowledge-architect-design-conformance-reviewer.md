@@ -63,8 +63,9 @@ Report each of these:
   excuse it. A plan decides new things on purpose; what you report is a departure from a recorded
   decision that the document does not say it makes.
 - **A rejected alternative brought back.** A shape, a default, a step or a harvest row that a
-  rejected-alternatives entry records as lost, without a reopening that the document records: a thread that names the entry and the new
-  argument that defeats its recorded reason.
+  rejected-alternatives entry records as lost, without a reopening that the document records: a
+  thread that names the entry and what makes it new by the record test of
+  `skill@knowledge-architect-design@threads-and-states`.
 - **An acceptance criterion whose observable the record rules out**: one that a goal or a head
   forbids building or running.
 

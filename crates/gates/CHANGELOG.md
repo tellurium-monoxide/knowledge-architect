@@ -105,7 +105,7 @@ subsection is omitted.
   decision about agent-facing text, so a decision one text states has one site, and its reason
   lives beside the instruction rather than in a head.
 - `agent-skills`, patch: moving the pin runs the audit axis a Migration entry of a version crossed
-  cites, after the pin's commit, in a branch of its own; the milestone that moves an adopting
+  cites, after the pin's commit, in a branch of its own; the work that moves an adopting
   project's existing documents ends by running the design-record axis.
 - `agent-skills`, patch: an entry of the rejected alternatives leaves its file when it is reopened
   and chosen, when the owner rules that it fails every recording test, or when the decision it lost
@@ -120,19 +120,41 @@ subsection is omitted.
   reports such items to the session that dispatched it.
 - `agent-skills`, patch: a setup run without the owner writes no goal.
 - `agent-skills`, patch: a review dispatches every axis of the review skill's table whose condition
-  holds, and those the activity's skill adds; every finding is repaired, opened as an issue, or
+  holds, and those the skill of each activity whose work it reviews adds; every finding is repaired, opened as an issue, or
   judged to need nothing.
 - `agent-skills`, patch: before diagnosing a problem, a session lists the issues and the tripwires
   of every anchor.
 - `agent-skills`, patch: a project audit stops on the owner's judgement, and a pass whose count of
   violations left does not fall goes to the owner as a question; a budget too small for the
   agentic-workflow axis's dispatch is said to the owner.
-- `agent-skills`, patch: before a merge, the transcript reviewer runs only alone and last; every
-  reviewer that runs a command of the checker gets a worktree outside the project or under an
-  ignored path; at the review before a merge, the activity whose work the branch holds is the
-  dispatching one; self-consistency is dispatched at every review.
-- `agent-skills`, patch: where the owner is absent, the work of a plan document proceeds on the
-  defaults it names, except a scope change.
+- `agent-skills`, patch: the review before a merge is the last review of a branch, whichever
+  activity's skill dispatched it, and there the transcript reviewer runs only alone and last; every
+  reviewer that runs a command of the checker or of a program the project builds gets a worktree
+  outside the project or under an ignored path; a change made in answer to a plan document's
+  review, a default included, is a repair, reviewed again only where it changes a design head.
+- `agent-skills`, patch: what waits for an owner who has not ruled during the work of a plan
+  document is stated once, at the opening of the planning skill's procedure for a slice: a listed
+  default is built as written, a scope change waits for its ruling, and a load-bearing gap of the
+  design audit stops the slice.
+- `agent-skills`, patch: a new section of the primer, `primer@labelled-items`, numbers each label
+  put to the owner within the record that keeps its ruling: a plan document, a milestone's
+  documents, a file, or the commit messages of one branch; the skills that ask for rulings point to
+  it.
+- `agent-skills`, patch: a new section of the primer, `primer@branch-commits`, states that every
+  commit of a branch is judged by the checker at its tip, so a change that sets what that checker
+  requires goes in the branch's first commit, and a repair that would leave an earlier commit
+  failing is folded into it; planning, review and setup point to it, and a landing's report on its
+  acceptance criteria may span the landing's commits.
+- `agent-skills`, patch: the agent-configuration and setup skills no longer keep a routing table in
+  the root CLAUDE.md; a project skill reaches a session through its description, and a review's
+  added axes through the dispatching activity's skill. After an install that changes the installed
+  files, each project skill and agent is read against the installed text that changed. A project
+  may delete its routing table.
+- `agent-skills`, patch: the checker-rules lens of the agentic-workflow axis reports a rule no
+  installed sentence states only where the checker's finding message does not name the repair; the
+  re-check's auditors read the edited agent definition and root CLAUDE.md from disk; a finding an
+  issue entry already records takes the outcome nothing; the findings on the installed text go into
+  a file named as the retrospective's workflow file is.
 - `agent-skills`, patch: a retrospective whose moment falls during a task is offered when the task
   ends.
 - `agent-skills`, patch: the move of an adopting project's existing documents starts under the
@@ -190,7 +212,8 @@ subsection is omitted.
   put to the owner before its outcome is recorded; a defect a reviewer finds predating the change
   is routed by the primer's table of what is met outside the task, a fix checkable from the diff
   landing in a commit of its own that the review's record names; and the last transcript review
-  waits until the owner has answered every ruling the repairs asked for.
+  waits until every item of the other axes' reports has its outcome, a default listed in a plan
+  document having its outcome in that listing.
 - `agent-skills`, patch: the review of a slice or of a spec's work gives each finding one of the
   review skill's three outcomes, where the planning skill made every unrepaired finding an issue
   entry.

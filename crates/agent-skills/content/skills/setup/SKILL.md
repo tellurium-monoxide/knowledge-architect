@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-setup
-description: MUST use when a project adopts the knowledge-architect workflow, after the first install has run, and when a project moves its pin of the checker to another version. Covers how the checker is pinned and run, the declared command, the manifest and its Components, the documents and register homes each Component carries, the primer's import line, the project's rows of the knowledge table and its routing table, the project's skill prefix, the gates convention, what happens to the documentation the project already has, and, in a Rust project, the maintenance crate, its aliases, its gates and its continuous integration.
+description: MUST use when a project adopts the knowledge-architect workflow, after the first install has run, and when a project moves its pin of the checker to another version. Covers how the checker is pinned and run, the declared command, the manifest and its Components, the documents and register homes each Component carries, the primer's import line, the project's rows of the knowledge table, the project's skill prefix, the gates convention, what happens to the documentation the project already has, and, in a Rust project, the maintenance crate, its aliases, its gates and its continuous integration.
 ---
 
 # Setting up
@@ -162,14 +162,12 @@ The project's root `CLAUDE.md` holds, besides what the project already keeps the
   statement the project keeps somewhere the primer's table does not name, such as its changelog, a
   register it declares, a directory with a convention of its own. The plans directory and the
   roadmap are the primer's rows, not the project's;
-- **the routing table**: one row per installed skill or agent that a project skill or agent adds to, as
-  `| installed | project additions |`. It is empty until the project writes a skill of its own;
 - **the project's skill prefix**: its name and a hyphen, which names every project skill and agent.
   A name that begins with `knowledge-architect-` is the installer's: the install deletes it. A
   project whose name gives that prefix takes another.
 
-How the two tables are written is
-`skill@knowledge-architect-agent-configuration@root-claude-md-tables`; the prefix and a project
+How the project's rows are written is
+`skill@knowledge-architect-agent-configuration@project-knowledge-rows`; the prefix and a project
 skill are `skill@knowledge-architect-agent-configuration@shaping-a-skill`.
 
 **Every level-two heading of the root `CLAUDE.md`, and of each project skill and agent, ends with a
@@ -218,7 +216,8 @@ left to be done by hand.
 
 - `{{command}} check --fix` until it passes: it writes the installed files and the generated
   `index.md` files the check would report, then checks.
-- Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together.
+- Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together,
+  ordered on the branch as `primer@branch-commits` says, read whole.
 
 ## Existing documentation {{slug:existing-documentation}}
 
@@ -238,9 +237,9 @@ A project that already has documentation keeps it until its move is planned:
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the
    rulings. The move is then planned work: when the owner schedules it, it starts under
    `skill@knowledge-architect-design` as a requested change, with the issue as its grounding, and
-   its full path hands it to `skill@knowledge-architect-planning` as a milestone. Until then, the
-   old documents and the new homes both exist, and the issue is what records that. The milestone
-   ends by running the design-record axis of
+   its full path hands it to `skill@knowledge-architect-planning`. Until then, the
+   old documents and the new homes both exist, and the issue is what records that. The move's
+   work ends by running the design-record axis of
    `skill@knowledge-architect-project-audit@design-record-axis` over its whole corpus, which then
    holds what the move wrote.
 
@@ -276,8 +275,9 @@ To move to another version:
    `skill@knowledge-architect-agent-configuration` for what an upgrade owes the project's own
    configuration.
 4. Run the project's gates command of `skill@knowledge-architect-setup@setup-gates`, or, where it has none, `{{command}} check` and the
-   project's tests, and commit the pin, the installed files and the repairs together. A new
-   version can change what a command prints, which only the tests see.
+   project's tests, and commit the pin, the installed files and the repairs together, ordered on
+   the branch as `primer@branch-commits` says. A new version can change what a command prints,
+   which only the tests see.
 5. For each axis that step 2 listed, run it under `skill@knowledge-architect-project-audit`, after
    the pin's commit, in a branch of its own. Such an entry changes the rules the project's existing
    record must meet, and the audit brings that record to them.

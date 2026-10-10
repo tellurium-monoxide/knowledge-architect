@@ -25,6 +25,15 @@ word it defeats, with a default chosen in view of the corrected premise, and pro
 unless the owner answers otherwise; a part of the work that cannot be undone waits for the answer.
 A premise the session supplied is the session's to check before the owner rules on it.
 
+## Items put to the owner under a label {{slug:labelled-items}}
+
+%% The labels and their records: `design@agent-skills@ruled-items-labelled`.
+**An item put to the owner under a label**, `Q<n>` or the prefix a skill gives it, **takes the
+next number of its prefix in the record that will keep its ruling, from 1, and that number is never
+reused there.** The record is the document the label reaches: a plan document, a milestone's
+documents counting as one; a file; or the commit messages of one branch, counting as one. A label
+that reaches none is numbered within the message that puts it to the owner.
+
 ## Room to judge {{slug:room-to-judge}}
 
 **Where the installed text is silent, judge.** It leaves that room on purpose: it states the
@@ -87,7 +96,7 @@ sentence is what the point of delivery needs. More than one sentence of it is ne
 reader takes it for the whole. For installed text, the home a pointer names is installed text, a skill's section or the
 primer's, since installed text cites no entry of the project. An existing longer restatement is
 converted when a change edits what it says; re-pointing a reference in it does not count. Whether a directive is needed at a point of delivery is the
-owner's decision when it is disputed; a review does not report a delivery as a defect.
+owner's decision.
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
@@ -125,13 +134,16 @@ or an agent is named by its reference, `skill@<name>` or `agent@<name>`, never b
 backticks. A `path` reference names the deepest anchor that holds its target, with a plain path
 under it, no `..`, no `./` and no leading `/`, and ends with `/` exactly when the target is a
 directory; an anchor's own directory is named from the anchor above it, as
-`path@<parent-anchor>@<dir>/`. A relative markdown link is legal in a `README.md` or an `index.md`
-only, to a target under its own directory, its path under the same constraints as a `path`
-reference's; any other pointer is a backticked reference.
+`path@<parent-anchor>@<dir>/`. A relative markdown link, in any of markdown's link shapes, an
+image `![alt](<path>)` included, is legal in a `README.md` or an `index.md` only, to a target under
+its own directory, its path under the same constraints as a `path` reference's; any other pointer is
+a backticked reference.
 A heading is a line that opens with `#` marks and holds text, with no list or block-quote marker before
 them; a line markdown reads as a heading in another shape, as a `---` right under a paragraph is,
-stops the check. The checker reads Markdown and Rust source, and each commit's message and tree
-through `{{command}} commits`; a reference anywhere else is found by grep.
+stops the check. The checker reads Markdown, and in Rust source the comments and every string
+literal that a `let`, a `const` or a `static` does not bind to a name, a call's argument being never
+bound; it reads each commit's message and tree through `{{command}} commits`. A reference anywhere
+else is found by grep.
 
 **A finding is repaired in a form the checker judges, never by moving the pointer into plain
 text**: the right anchor, `path@elsewhere@<path>` for a path the tree does not hold, a placeholder,
@@ -140,6 +152,19 @@ backticks only beside a reference to an issue entry of this project that records
 A gap of the checker itself gets that entry in this project's own register, since a reference
 cannot reach another project. Text that is not in the checker's syntax, such as a commit named by
 its subject, a commit of another project or a description in words, is outside this rule.
+
+## Every commit of a branch is judged by the checker at its tip {{slug:branch-commits}}
+
+Where the project's gates run `{{command}} commits` over a branch, as
+`skill@knowledge-architect-setup@setup-gates` recommends, that run is the **per-commit gate**: it
+judges every commit of the range, its message and its tree, with the checker the branch's tip
+runs, and a tree that holds no manifest or has a finding under that checker fails it. **A change
+that sets what the tip's checker requires of every tree, such as adding the manifest, moving the
+pin, or changing the checker in a project that builds it, goes in the branch's first commit, with
+every fix the tree needs to pass it, or the branch is squashed to one commit before its review. A
+repair that would leave an earlier commit failing is folded into the earliest commit it repairs**,
+by a history edit with no uncommitted work in the tree, confirmed afterwards to have lost no
+content.
 
 ## Design heads {{slug:design-heads}}
 
@@ -356,6 +381,4 @@ the owner named to the rule, the change goes to the owner as one proposal, as a 
 - `skill@knowledge-architect-retrospective`: once per session, offered when a branch the session
   worked on merges, a plan document leaves, or the session ends.
 
-A project's own skills add to these, and never replace them. Which project skill adds to which
-installed one is the routing table of the project's root `CLAUDE.md`. Read the installed skill and
-every skill the table lists beside it.
+A project's own skills add to these, and never replace them.

@@ -61,8 +61,8 @@ A finding is admitted when the session can confirm it by reading. Each class car
 - **a provable gap**: a requirement of the corpus or of the checker, and an input to it that no
   text supplies and that judgement cannot derive, since it is a fact fixed elsewhere, such as a
   format the checker enforces, a name or a path, not a choice the agent could make;
-- **a predicted gap**: "an agent might misjudge X". Draft it as such: it becomes an issue that
-  states what a real session would have to show, never an edit.
+- **a predicted gap**: "an agent might misjudge X". Draft it as such, with what a real session
+  would have to show; it is never repaired by an edit.
 
 The installed text leaves room to judge on purpose, per `primer@room-to-judge`. A case no
 instruction covers, where judgement can decide, is no finding. A finding about how the owner works
@@ -88,14 +88,15 @@ too, and its draft names the finding's lens, not your brief's.
 - **L5 restatement.** Each restatement of a directive against its home: one that drifted from its
   home, or one without its pointer. A restatement that is only longer than a pointer is no finding.
 - **L6 local against installed.** The project's own text against the installed text: a
-  contradiction, a duplicate, a row of the routing table that says the wrong thing.
+  contradiction, a duplicate.
 - **L7 checker rules.** Read, beside the corpus, the checker's user documentation: its README for
   the version the project uses, which ships in the checker's package, and the help of
-  `cargo klarch` and of each of its commands. List every rule the checker enforces on what an agent writes. Report a
-  rule no installed text states, tag `W`, even when the project's own text states it: judge the
-  installed text alone for this, since it is all a project that adopts the workflow receives.
-  Report a rule the corpus states wrongly, as a factual error. In each draft, say whether the
-  checker's finding message for the rule names its repair.
+  `cargo klarch` and of each of its commands. Report a rule the corpus states wrongly, as a
+  factual error. Report a rule on what an agent writes that no installed text states only when
+  its finding message does not name its repair, tag `W`: a message that names it supplies the
+  input at the moment the rule is met. Judge the installed text alone for this, even when the
+  project's own text states the rule, since it is all a project that adopts the workflow
+  receives.
 
 ## Write one draft per finding `##write-a-draft`
 

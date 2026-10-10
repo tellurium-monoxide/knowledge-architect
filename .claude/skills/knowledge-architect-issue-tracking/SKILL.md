@@ -112,9 +112,7 @@ is reopened, and on the goal what stands between the project and it. A reference
 the text is revisited when the entry it names changes. An entry that strains no recorded decision
 names none rather than the nearest one. The inverse holds in code: a guard, a workaround, a stub or
 a test that exists because of an entry names it, `issue@<anchor>@<id>`, in the comment at the site.
-Closing the entry then dangles the comment, and the site is revisited. The checker reads
-Markdown and Rust source only: a reference in a comment of another language is not read, and
-closing its entry needs a grep for the reference.
+Closing the entry then dangles the comment, and the site is revisited.
 
 **Every entry states its kind**, in the frontmatter. Without it, a missing section is ambiguous
 between "this kind has none" and "the author did not write one", and that is exactly what a reader
