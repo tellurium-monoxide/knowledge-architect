@@ -141,39 +141,134 @@ pub(crate) fn render_slugs(text: &str, file: &Path) -> String {
 /// What opens a saved workflow's declaration; its `name` key follows inside the object.
 const WORKFLOW_META: &str = "export const meta = {";
 
-/// Panics unless the saved workflow `text` declares `name` as `expected`, its installed file's
-/// stem. Claude Code calls a saved workflow by its declared `name` and never by its file name, so
-/// a prefixed file whose declared name lacks the prefix would sit in the installer's namespace
-/// while it answers to a name a project's own workflow can take. The name is read as the first
-/// line of the declaration that opens with `name:`, holding one quoted string: the declaration is
-/// a literal the harness parses, so it holds no computed value.
+/// Panics unless the saved workflow `text` declares `name` once, as `expected`, its installed
+/// file's stem. Claude Code calls a saved workflow by its declared `name` and never by its file
+/// name, so a prefixed file whose declared name lacks the prefix would sit in the installer's
+/// namespace while it answers to a name a project's own workflow can take.
+///
+/// The declaration is a literal the harness parses, so its keys and values are literals too: the
+/// scan reads the keys of the object's own level alone, skipping strings, comments and nested
+/// objects and arrays, since a `name` key nested inside a value, in a comment or in a string is
+/// not the one the harness reads. A `name` given twice is refused, since JavaScript keeps the last
+/// and a reader takes the first.
 pub(crate) fn check_workflow_name(text: &str, expected: &str, file: &Path) {
     let site = file.display();
     let start = text
         .find(WORKFLOW_META)
         .unwrap_or_else(|| panic!("{site}: a saved workflow opens with `{WORKFLOW_META}`"));
-    let declaration = &text[start + WORKFLOW_META.len()..];
-    let declaration = &declaration[..declaration
-        .find(
-            "
-}",
+    let names = top_level_names(&text[start + WORKFLOW_META.len()..])
+        .unwrap_or_else(|why| panic!("{site}: the workflow's meta {why}"));
+    let [name] = names.as_slice() else {
+        panic!(
+            "{site}: the workflow's meta declares `name` {} times, and declares it once",
+            names.len()
         )
-        .unwrap_or(declaration.len())];
-    let name = declaration
-        .lines()
-        .find_map(|line| line.trim_start().strip_prefix("name:"))
-        .map(|rest| rest.trim().trim_end_matches(','))
-        .and_then(|quoted| {
-            ['\'', '"']
-                .iter()
-                .find_map(|q| quoted.strip_prefix(*q)?.strip_suffix(*q))
-        })
-        .unwrap_or_else(|| panic!("{site}: the workflow's meta declares no quoted `name`"));
+    };
     assert!(
         name == expected,
         "{site}: the workflow declares the name `{name}`, and is installed as `{expected}`: \
          the harness calls it by the declared name, so the two are equal"
     );
+}
+
+/// The value of every `name` key at the first level of the object whose body `body` opens,
+/// up to its closing brace, or why it cannot be read.
+fn top_level_names(body: &str) -> Result<Vec<String>, String> {
+    let chars: Vec<char> = body.chars().collect();
+    let mut names = Vec::new();
+    let mut depth = 1usize;
+    let mut i = 0;
+    while i < chars.len() {
+        let c = chars[i];
+        if c == '/' && chars.get(i + 1) == Some(&'/') {
+            while i < chars.len() && chars[i] != '\n' {
+                i += 1;
+            }
+        } else if c == '/' && chars.get(i + 1) == Some(&'*') {
+            i += 2;
+            while i < chars.len() && !(chars[i] == '*' && chars.get(i + 1) == Some(&'/')) {
+                i += 1;
+            }
+            i += 2;
+        } else if matches!(c, '\'' | '"' | '`') {
+            let (literal, end) = string_at(&chars, i)?;
+            i = end;
+            if depth == 1 && literal == "name" && colon_after(&chars, &mut i) {
+                names.push(value_at(&chars, &mut i)?);
+            }
+        } else if matches!(c, '{' | '[' | '(') {
+            depth += 1;
+            i += 1;
+        } else if matches!(c, '}' | ']' | ')') {
+            depth -= 1;
+            if depth == 0 {
+                return Ok(names);
+            }
+            i += 1;
+        } else if depth == 1 && (c.is_alphabetic() || c == '_' || c == '$') {
+            let from = i;
+            while i < chars.len()
+                && (chars[i].is_alphanumeric() || chars[i] == '_' || chars[i] == '$')
+            {
+                i += 1;
+            }
+            let word: String = chars[from..i].iter().collect();
+            if word == "name" && colon_after(&chars, &mut i) {
+                names.push(value_at(&chars, &mut i)?);
+            }
+        } else {
+            i += 1;
+        }
+    }
+    Err("is not closed".to_string())
+}
+
+/// Whether a `:` follows position `i` after spaces, moving `i` past it when it does.
+fn colon_after(chars: &[char], i: &mut usize) -> bool {
+    let mut j = *i;
+    while j < chars.len() && chars[j].is_whitespace() {
+        j += 1;
+    }
+    if chars.get(j) == Some(&':') {
+        *i = j + 1;
+        true
+    } else {
+        false
+    }
+}
+
+/// The quoted string that follows position `i` after spaces, `i` moved past it.
+fn value_at(chars: &[char], i: &mut usize) -> Result<String, String> {
+    while *i < chars.len() && chars[*i].is_whitespace() {
+        *i += 1;
+    }
+    if !matches!(chars.get(*i), Some('\'' | '"')) {
+        return Err("gives `name` a value that is no quoted string".to_string());
+    }
+    let (value, end) = string_at(chars, *i)?;
+    *i = end;
+    Ok(value)
+}
+
+/// The string literal opening at `at`, its escapes kept as written, and the position after it.
+fn string_at(chars: &[char], at: usize) -> Result<(String, usize), String> {
+    let quote = chars[at];
+    let mut i = at + 1;
+    let mut out = String::new();
+    while i < chars.len() {
+        match chars[i] {
+            '\\' => {
+                out.extend(chars.get(i..i + 2).unwrap_or(&chars[i..]));
+                i += 2;
+            }
+            c if c == quote => return Ok((out, i + 1)),
+            c => {
+                out.push(c);
+                i += 1;
+            }
+        }
+    }
+    Err("holds a string that is not closed".to_string())
 }
 
 /// The id grammar of the checker's entity table, `[a-z0-9]+(-[a-z0-9]+)*`, written out: this
@@ -338,9 +433,39 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "declares no quoted `name`")]
+    #[should_panic(expected = "declares `name` 0 times")]
     fn a_name_outside_the_declaration_is_not_read() {
         named("export const meta = {\n  description: 'd',\n}\nconst x = {\n  name: 'knowledge-architect-w',\n}\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "w.js: the workflow declares the name `w`")]
+    fn a_name_nested_in_a_value_is_not_read() {
+        named("export const meta = {\n  example: {\n    name: 'knowledge-architect-w',\n  },\n  name: 'w',\n}\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "declares `name` 2 times")]
+    fn a_name_given_twice_fails() {
+        named("export const meta = {\n  name: 'knowledge-architect-w',\n  name: 'w',\n}\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "declares `name` 0 times")]
+    fn a_name_after_a_one_line_meta_is_not_read() {
+        named("export const meta = { description: 'd' }\nconst x = {\n  name: 'knowledge-architect-w',\n}\n");
+    }
+
+    #[test]
+    #[should_panic(expected = "w.js: the workflow declares the name `w`")]
+    fn a_name_in_a_comment_or_a_string_is_not_read() {
+        named("export const meta = {\n  /* name: 'knowledge-architect-w' */\n  description: `a\nname: 'knowledge-architect-w'`,\n  name: 'w',\n}\n");
+    }
+
+    #[test]
+    fn a_name_on_the_opening_line_or_quoted_as_a_key_is_read() {
+        named("export const meta = { name: 'knowledge-architect-w', phases: [{ title: 'a' }] }\n");
+        named("export const meta = {\r\n  'name': \"knowledge-architect-w\", // the name\r\n}\r\n");
     }
 
     #[test]

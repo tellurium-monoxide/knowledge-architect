@@ -586,7 +586,6 @@ mod tests {
         let _ = std::fs::remove_dir_all(&root);
     }
 
-    /// The claim: an install writes what is missing or differs, removes an unshipped file of the
     /// The claim: an install writes a shipped workflow and removes a prefixed one the version does
     /// not ship from .claude/workflows/, and leaves the project's own workflows there. Mutation: the
     /// workflows directory left out of `owned_on_disk` keeps the old workflow.
@@ -620,6 +619,7 @@ mod tests {
         std::fs::remove_dir_all(&root).unwrap();
     }
 
+    /// The claim: an install writes what is missing or differs, removes an unshipped file of the
     /// namespace with its emptied skill directory, and touches nothing outside the namespace.
     #[test]
     fn an_install_writes_the_shipped_set_and_removes_the_rest_of_the_namespace() {
