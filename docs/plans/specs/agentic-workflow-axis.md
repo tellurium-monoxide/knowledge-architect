@@ -18,9 +18,7 @@ axis, and runs it on this repository. The work does eight things:
   after the run, the generic method takes that shape for every axis, the axis gains a lens that
   compares the review standards with the audit standards, and a fifth pass uses it, per "The
   one-run pass" and "The verdict-alignment lens";
-- AC4's firing on pass 5 is answered: the convergence count reads only the findings on text the
-  previous pass also read, a two-readings finding is repaired only where one of its acts is wrong,
-  each repair proposal is read against the corpus and the record before the owner rules, the
+- AC4's firing on pass 5 is answered: the convergence count reads only the findings on text the previous pass also read, each repair proposal is read against the corpus and the record before the owner rules, the
   verifiers read the tripwires, each pass of every axis commits its report, the retrospective
   intake shares the audit's repair standard, and a sixth pass uses all of it, per "The AC4
   response".
@@ -82,7 +80,7 @@ opens "Also look at the retrospective intake skill.", and the reply that opens "
 findings lead to repairs?"; "round 22" is the owner's message that opens "repair-needs-a-wrong-act:
 I think that's correct." and the reply that opens "## Round 3"; "round 23" is the owner's message
 "Agreed on the three defaults, every axis for the report" and the reply that opens "## Round 4";
-"round 24" is the owner's message "Table confirmed, T7 T8 AC7 approved, proceed". The
+"round 24" is the owner's message "Table confirmed, T7 T8 AC7 approved, proceed"; "round 25" is the owner's message that opens "D32 and D33 approved.", which answers the review message that opens "I applied the plan re-review of the AC4 response". The
 replies of rounds 12 to 14 call the
 criteria of that discussion C1 to C6; they are the items `criterion@agentic-workflow-axis@c7` to
 `criterion@agentic-workflow-axis@c12`, in order. An extraction agent wrote the owner messages,
@@ -146,11 +144,7 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
   also read, whose words are unchanged since the commit that pass audited; new text is text whose
   words changed after it, by that pass's repairs or by any other commit. A move, a reflow or a
   rename of a file leaves text old. Per `thread@agentic-workflow-axis@convergence-count-scope`.
-- **the wrong-act test**: a confirmed finding of two readings passes it when one of the two acts
-  its words allow is ruled out by another instruction, a design head or a goal; a finding of any
-  other class passes it always. Per `thread@agentic-workflow-axis@workflow-axis-finding-standard`.
-- **left to judgement**: the outcome of a confirmed finding that fails the wrong-act test, per
-  `thread@agentic-workflow-axis@repair-needs-a-wrong-act`.
+- **the wrong-act test**: a confirmed finding of two readings passes it when one of the two acts its words allow is ruled out by another instruction, a design head or a goal; a finding of any other class passes it always. Proposed in round 21; per D34, ruled in round 25, it decides no outcome, and is named here for the arguments and the measurement that use it.
 - **the record check**: the reading of a repair proposal against the design heads, the goals and
   the rejected alternatives its edits touch, per
   `thread@agentic-workflow-axis@repairs-read-against-the-record`.
@@ -338,14 +332,10 @@ The work rewrites two heads by its threads, three more per D4 to D6, and reads a
   on the installed text, and its restatement in `instructions@repository-skills` says so. Per D15,
   `design@agent-skills@ruled-items-labelled` widens its `W` row to an audit's upstream file.
 - Per "The AC4 response": `design@agent-skills@audit-method` counts, for its stop rule, the
-  violations left on old text; `design@agent-skills@audit-outcomes` gains the outcome left to
-  judgement; the `F` row of `design@agent-skills@ruled-items-labelled`, "the audit's commit
-  messages", names the audit report file instead. Each is rewritten at the harvest. The last is
-  cited by installed texts, each in a `%%` line, read at step 9 against the row as rewritten, and by
+  violations left on old text; the `F` row of `design@agent-skills@ruled-items-labelled`, "the audit's commit
+  messages", names the audit report file instead. Each is rewritten at the harvest. The second is cited by installed texts, each in a `%%` line, read at step 9 against the row as rewritten, and by
   two heads of `path@agent-skills@docs/design.md`, on the labels of acceptance criteria and on where
-  a label is delivered, read at the harvest; neither names the `F` row. `design@agent-skills@capabilities-not-structure` and
-  `design@knowledge-architect@committed-findings-analysis` are read and not rewritten: the first is
-  the ground of the wrong-act test, the second the shape the audit report file takes.
+  a label is delivered, read at the harvest; neither names the `F` row. `design@agent-skills@capabilities-not-structure` and `design@knowledge-architect@committed-findings-analysis` are read and not rewritten: the first is the ground of `argument@agentic-workflow-axis@a76`, the second the shape the audit report file takes.
 
 The two rewritten by the threads:
 
@@ -392,9 +382,7 @@ session's, passed to the run as the counts, per `thread@agentic-workflow-axis@le
 
 ### Only findings provable by reading lead to an edit `##c4`
 
-Binding as a presumption, from `design@agent-skills@additions-need-real-use`. Met by
-`thread@agentic-workflow-axis@workflow-axis-finding-standard`, which round 24 narrowed by the
-wrong-act test: a finding a reading confirms leads to an edit only where it passes that test.
+Binding as a presumption, from `design@agent-skills@additions-need-real-use`. Met by `thread@agentic-workflow-axis@workflow-axis-finding-standard`. Round 24 narrowed it by the wrong-act test; D34, ruled in round 25, undid the narrowing, since `goal@knowledge-architect@agents-get-a-complete-workflow` asks every instruction to be followed without guessing what it means.
 
 ### The axis has an installed agent of its own `##c5`
 
@@ -502,7 +490,7 @@ round 2: "workflow-axis-lenses: approved. This covers well what I had in mind." 
 the same argument. Closed again, round 24, by the owner's word on the checkpoint table, which held
 it as presumed-settled: "Table confirmed, T7 T8 AC7 approved, proceed".
 
-### A finding leads to an edit only when a reading confirms it and an act the text allows is wrong, and a predicted gap is an issue `##workflow-axis-finding-standard`
+### A finding leads to an edit only when a reading confirms it, and a predicted gap is an issue `##workflow-axis-finding-standard`
 
 Arguments: `argument@agentic-workflow-axis@a9`, `argument@agentic-workflow-axis@a11`,
 `argument@agentic-workflow-axis@a12`, `argument@agentic-workflow-axis@a21`,
@@ -514,8 +502,7 @@ head, by entry test 2. Closed, round 2:
 The agent proposed keeping it in round 20, on `argument@agentic-workflow-axis@a70`, and reversed
 that position in round 21, on `argument@agentic-workflow-axis@a76`, to the wrong-act test; round 22
 read the owner's approval of `thread@agentic-workflow-axis@repair-needs-a-wrong-act` as taking the
-test and marked the thread presumed-settled. Closed again, round 24, by the owner's word on the
-checkpoint table: "Table confirmed, T7 T8 AC7 approved, proceed".
+test and marked the thread presumed-settled. Closed again, round 24, by the owner's word on the checkpoint table: "Table confirmed, T7 T8 AC7 approved, proceed". The design-conformance re-review then found the test's outcome against `goal@knowledge-architect@agents-get-a-complete-workflow`, put to the owner as D34; round 25, the owner: "D34 and D35 defaults too.", so the goal prevails, the test decides no outcome, and the thread stands as round 2 approved it.
 
 ### A finding is tagged by the side whose text changes, and an installed-text finding in a consumer goes upstream `##workflow-axis-outcomes`
 
@@ -692,8 +679,7 @@ changed, and AC7, applied by the owner in round 24.
 
 Proposed by the agent in round 20. Arguments: `argument@agentic-workflow-axis@a68`,
 `argument@agentic-workflow-axis@a73`. Shape: Decided design, "The AC4 response". Harvest: a head with the thread's slug when an entry test passes, under `design@agent-skills@one-decision-per-head`, per its row in Harvest. Closed, round 21, the owner: "I agree with
-convergence-count-scope and repair-proposals-audited." Round 21 added that the step applies the
-wrong-act test to what it finds, and round 23 widened the step by
+convergence-count-scope and repair-proposals-audited." Round 21 added that the step applies the wrong-act test to what it finds, which D34 voided in round 25, and round 23 widened the step by
 `thread@agentic-workflow-axis@repairs-read-against-the-record`, on the owner's word there.
 
 ### A confirmed finding that fails the wrong-act test is left to judgement, on the owner's word, and joins the kept list `##repair-needs-a-wrong-act`
@@ -705,8 +691,7 @@ method, do all findings lead to repairs ? Under the "agents are left with room t
 `argument@agentic-workflow-axis@a76`, `argument@agentic-workflow-axis@a77`. Shape: Decided design,
 "The AC4 response". Harvest: `design@agent-skills@audit-outcomes` gains the outcome, and the head
 of `thread@agentic-workflow-axis@workflow-axis-finding-standard` holds the test. Closed, round 22,
-the owner: "repair-needs-a-wrong-act: I think that's correct." T7 guards it, recorded on the
-owner's word in round 24.
+the owner: "repair-needs-a-wrong-act: I think that's correct." T7 was to guard it, on the owner's word in round 24. Reopened by D34, a conflict with `goal@knowledge-architect@agents-get-a-complete-workflow` found by the design-conformance re-review; ruled out in round 25, the owner: "D34 and D35 defaults too." The goal prevails: a confirmed finding of two readings is repaired, so the outcome left to judgement applies to no class and is not built, and T7, whose decision is gone, is not recorded.
 
 ### The same step reads each repair proposal against the design heads, the goals and the rejected alternatives its edits touch `##repairs-read-against-the-record`
 
@@ -753,8 +738,7 @@ move to fit our audit method"; the answer is carried by
 `thread@agentic-workflow-axis@repairs-read-against-the-record` and
 `thread@agentic-workflow-axis@tripwires-read-by-the-audit`, and this thread kept its direction.
 Closed, round 24, by the owner's word on the checkpoint table, which held it as presumed-settled:
-"Table confirmed, T7 T8 AC7 approved, proceed". The premortem's cause 6 of round 23 converted into the clause
-that, in the intake, the act ruled out may be the one the session took.
+"Table confirmed, T7 T8 AC7 approved, proceed". The premortem's cause 6 of round 23 converted into a clause on the intake's use of the wrong-act test, which D34 voided in round 25. D35, ruled in round 25, put the record check in the shared section.
 
 ## Arguments
 
@@ -1420,14 +1404,13 @@ step files      verdicts.md, confirmed.md, grouping.md, causes.md, proposal.md, 
                 and each auditor's return, under the run's scratch directory
                                                               (in the agent and the section)
 tags            W, P, I                                       (in the agent and the section)
-marks           bears-on-tripwire, left-to-judgement          (in the script's verify prompt and the agent's verify section)
+mark            bears-on-tripwire                             (in the script's verify prompt and the agent's verify section)
 run input       previous                                      (in the script, beside commit)
 step            check, writing check.md beside each proposal.md; the preflight's tripwires.txt
                                                               (in the script)
 agent section   the workflow auditor's check brief            (in the agent; its slug chosen at step 9)
 skill section   "Repairs to agent-facing text", a new section of skill@knowledge-architect-project-audit
                   in path@agent-skills@content/skills/project-audit/SKILL.md, as {{slug:repair-standard}}
-outcome         left to judgement                             (in the repair-standard section and the axis's outcome table)
 directory       planned@knowledge-architect@docs/audit-reports/, one file per pass, <date>-<axis>-pass-<n>.md
                   and its README.md; the primer's row names docs/audit-reports/ for every project
 ```
@@ -1573,11 +1556,7 @@ A finding about how the owner works is outside the axis: the retrospective judge
 expectation set. The rival, every gap a finding to fill, fails `criterion@agentic-workflow-axis@c4`
 and `goal@agent-skills@installed-text-leaves-room-to-judge`.
 
-A confirmed finding leads to an edit only where it also passes the wrong-act test, per "The AC4
-response": a finding of two readings whose two acts no instruction, design head or goal rules out
-leaves room to judge, and is left to judgement. The rival, every confirmed finding repaired, which
-the method held until pass 5, lost on `argument@agentic-workflow-axis@a76`: each repair is new
-text, and the next pass finds defects in it.
+Every confirmed finding of these classes takes its outcome, a finding of two readings included where no text rules either act out. Round 21 proposed leaving such a finding to judgement, on `argument@agentic-workflow-axis@a76`, and the owner approved it in round 22; D34, ruled in round 25, reversed it, since `goal@knowledge-architect@agents-get-a-complete-workflow` asks that "Each instruction says what it asks plainly enough to follow without guessing what it means". The cost `argument@agentic-workflow-axis@a76` names stands: each repair is new text, which the convergence count and the proposal check of "The AC4 response" answer.
 
 ### The outcomes
 
@@ -1939,36 +1918,23 @@ The answer to AC4's firing on pass 5, per F95. Its threads were raised in rounds
   on old text that went on the owner list. AC4 reads the old-text counts from pass 6 on, and so does
   the tripwire D18 proposes, the clause the premortem's cause 2 of round 23 converted.
 
-**The wrong-act test and its outcome**, `thread@agentic-workflow-axis@workflow-axis-finding-standard`
-and `thread@agentic-workflow-axis@repair-needs-a-wrong-act`.
-
-- A draft of two readings names the two acts its words allow and the instruction, the design head
-  or the goal that rules one of them out, quoted, or says that none does. To find one, the auditor
-  may read the design homes and the goals homes, beside the corpus.
-- A verifier checks that claim, and marks `left-to-judgement` a finding where no text rules either
-  act out. The cross-check proposes for it the outcome left to judgement; the session decides it.
-- The axis's outcome table gains the row: left to judgement, a confirmed finding that fails the
-  wrong-act test. Such findings go on the owner list as one group, each with its two acts and the reason, the default keep. A finding left to judgement is counted apart and is not severe, since its default edits nothing. The outcome table's two rows that name a two-reading instruction, applied in the branch where a text states the reading meant and the owner list where its repair changes what agents are told, apply to a finding that passes the test. A finding the owner keeps enters the kept list of the next re-check, so
-  a verifier marks it kept there and it counts as no violation left.
-- The other classes pass the test always: no move satisfies a contradiction, a broken trigger, a
-  factual error or divergent verdicts, a provable gap's input is a fact no judgement derives, and a
-  restatement or a pointer its home does not allow fails a rule by itself.
+**No outcome left to judgement**, `thread@agentic-workflow-axis@repair-needs-a-wrong-act`, ruled
+out by D34 in round 25. A confirmed finding of two readings takes the outcomes the axis's table
+already gives: applied in the branch where a design head or another instruction states the reading
+meant, the owner list otherwise. The outcome table gains no row, the verifier no mark, and the
+finding standard no test.
 
 **The repair standard**, `thread@agentic-workflow-axis@intake-shares-the-repair-standard`. A new
 level-two section of the audit skill, "Repairs to agent-facing text", holds what any repair of an
-instruction found by reading or by real use is judged by: the wrong-act test and the outcome left to
-judgement; the repair by cause, moved from the axis's section, with its kinds of cause, its forms of
-repair, the definition of an instruction, the counts of instructions added and removed and the net
-growth stated to the owner first; and the record check below, with the nearest rival and the fact
-that decides it. The axis's section points to it. The intake points to it from two items:
-
-- item d, a defect of the text that is unclear (two readings), takes the wrong-act test; in the
-  intake, the act ruled out may be the one the reported session took, when it produced a defect or
-  a correction, since real use is the evidence that settles it, the clause the premortem's cause 6 of round 23
-  converted;
-- item f shapes the better fix by the section's rules, beside its four tests and its rivals, and the outcome "no change, with the reason" of `skill@klarch-retrospective-intake@analysis-and-ruling` names left to judgement among its reasons.
-
-The intake keeps its own evidence, its lapse kind and the owner's ruling on every finding.
+instruction found by reading or by real use is judged by: the repair by cause, moved from the axis's
+section, with its kinds of cause, its forms of repair, the definition of an instruction, the counts
+of instructions added and removed and the net growth stated to the owner first; and, per D35, the
+record check below, with the nearest rival and the fact that decides it. The axis's section points
+to it. The intake's item f shapes the better fix by the section's rules, beside its four tests and
+its rivals, and its items c and e, which already read the issues, the tripwires, the rejected
+alternatives and the decisions a fix would reverse, point to the section's record check for a fix's
+own reading against the record. The intake keeps its own evidence, its lapse kind and the owner's
+ruling on every finding.
 
 **The proposal check**, `thread@agentic-workflow-axis@repair-proposals-audited` and
 `thread@agentic-workflow-axis@repairs-read-against-the-record`. A new step of the run, `check`,
@@ -1976,11 +1942,10 @@ between the repairs and the cross-check, one agent per proposal, each starting w
 written. The agent is the workflow auditor under a check brief, a new section of its definition, as
 its verify brief is, so the axis's standard reaches the check from the agent's own text, per
 `design@agent-skills@audit-agent-per-axis` and D24; the script's prompt names the proposal, the
-corpus and the scratch directory. It reads the proposal's after-texts in the corpus through L1 and L3, applying the
-wrong-act test to what it finds, and against the record: the design heads that `cargo klarch show`
+corpus and the scratch directory. It reads the proposal's after-texts in the corpus through L1 and L3, and against the record: the design heads that `cargo klarch show`
 and a search of the design homes return for the behaviour the edited text describes, the goals, and
 the rejected alternatives of the Component that owns the text. It writes `check.md` beside the
-proposal: each contradiction and each two readings that passes the test, each head the repair would
+proposal: each contradiction and each two readings, each head the repair would
 reverse, each lost alternative it brings back, each goal it strains, with its quotation. The repair
 prompt also asks for the nearest rival to the repair and the fact that decides between them. The
 cross-check and the report read the checks, and the report gives each cause's check beside its
@@ -2150,13 +2115,7 @@ that step 7 rewrites, as it stands at the amendment's commit, and where it goes.
   `thread@agentic-workflow-axis@repair-proposals-audited`, on `argument@agentic-workflow-axis@a73`.
 - **The session reading every repair proposal's after-text through L1 and L3**: lost to
   `thread@agentic-workflow-axis@repair-proposals-audited`, on `argument@agentic-workflow-axis@a73`.
-- **Every confirmed finding repaired**: lost to
-  `thread@agentic-workflow-axis@workflow-axis-finding-standard`, on
-  `argument@agentic-workflow-axis@a76`.
-- **A finding that fails the wrong-act test dropped at admission, as no finding**: lost to
-  `thread@agentic-workflow-axis@repair-needs-a-wrong-act`, on `argument@agentic-workflow-axis@a77`.
-- **The session leaving a finding to judgement alone, reported in the commit message**: lost to
-  `thread@agentic-workflow-axis@repair-needs-a-wrong-act`, on `argument@agentic-workflow-axis@a77`.
+- **A confirmed finding of two readings left to judgement where no text rules either act out**, `thread@agentic-workflow-axis@repair-needs-a-wrong-act`, ruled out by D34 in round 25: lost to `thread@agentic-workflow-axis@workflow-axis-finding-standard` on `goal@knowledge-architect@agents-get-a-complete-workflow`, "Each instruction says what it asks plainly enough to follow without guessing what it means". Its own rivals, such a finding dropped at admission and the session leaving it alone, fall with it.
 - **The shared repair standard in `skill@knowledge-architect-agent-configuration@content-and-style`**:
   lost to `thread@agentic-workflow-axis@intake-shares-the-repair-standard`, on
   `argument@agentic-workflow-axis@a80`.
@@ -2224,12 +2183,12 @@ are weighed by the owner on the owner list and counted by T2 and AC4.
 | (cause 5 of round 14) | The merge agent draws a cause boundary wrongly, and one proposal mixes two mechanisms | `thread@agentic-workflow-axis@one-run-pass` | survives into a named clause: the session reads every proposal in full, per `thread@agentic-workflow-axis@session-verifies-the-report`, and the report lists the merge's choices |
 | (round 16) | L8 drafts pairs of standards that differ in wording and give one verdict | `thread@agentic-workflow-axis@verdict-alignment-lens` | survives into T2, which fires when more than half of a pass's drafts fail the reading |
 | AC4 | The audit does not push the workflow toward improvement | `thread@agentic-workflow-axis@workflow-axis-lenses`, `thread@agentic-workflow-axis@workflow-axis-finding-standard` | acceptance criterion, `acceptance@agentic-workflow-axis@passes-fall` |
-| T7 | The wrong-act test is applied loosely: a real defect is left to judgement, and a later real session fails on it (cause 1 of round 23) | `thread@agentic-workflow-axis@repair-needs-a-wrong-act`, `thread@agentic-workflow-axis@workflow-axis-finding-standard` | tripwire. Fires when a finding of a retrospective or an intake, with a real session behind it, blames an instruction an audit left to judgement. Response: reopen `thread@agentic-workflow-axis@workflow-axis-finding-standard`. Re-entry: each intake |
-| (cause 2 of round 23) | The test admits nearly everything, since an instruction that rules one act out can almost always be argued, and the old-text count still does not fall | `thread@agentic-workflow-axis@workflow-axis-finding-standard` | survives into AC4 and the tripwire D18 proposes, converted: both read the old-text count of `thread@agentic-workflow-axis@convergence-count-scope` |
+| T7, not recorded | The wrong-act test is applied loosely: a real defect is left to judgement, and a later real session fails on it (cause 1 of round 23) | `thread@agentic-workflow-axis@repair-needs-a-wrong-act`, `thread@agentic-workflow-axis@workflow-axis-finding-standard` | tripwire. Fires when a finding of a retrospective or an intake, with a real session behind it, blames an instruction an audit left to judgement. Response: reopen `thread@agentic-workflow-axis@workflow-axis-finding-standard`. Re-entry: each intake; approved in round 24, not recorded: D34 ruled out the thread it guards in round 25 |
+| (cause 2 of round 23) | The test admits nearly everything, since an instruction that rules one act out can almost always be argued, and the old-text count still does not fall | `thread@agentic-workflow-axis@workflow-axis-finding-standard` | survives into AC4 and the tripwire D18 proposes, converted: both read the old-text count of `thread@agentic-workflow-axis@convergence-count-scope`; the test itself decides no outcome per D34 |
 | AC7 | Old and new text are classified wrongly: a reflow, a move or a rename counts as new, old defects leave the convergence count, and the audit stops early (cause 3 of round 23) | `thread@agentic-workflow-axis@convergence-count-scope` | converted into the clause that a line is new text only where its words changed since the previous pass, and acceptance criterion `acceptance@agentic-workflow-axis@new-text-is-changed-text` |
 | T8 | The record check misses a head, since its search by behaviour is a judgement, and a repair reverses it unseen until the branch's review (cause 4 of round 23) | `thread@agentic-workflow-axis@repairs-read-against-the-record` | tripwire. Fires when the review of an audit's branch finds a repair that contradicts a design head, or brings back a rejected alternative, which the check of its proposal did not name. Response: reopen `thread@agentic-workflow-axis@repairs-read-against-the-record`, for where the record check runs. Re-entry: the review of each audit's branch |
 | (cause 5 of round 23) | A report file added and deleted within one branch is not in its diff, and a reviewer misses a ruling in it | `thread@agentic-workflow-axis@committed-audit-report` | converted: the review's brief names each report file by its path and the commit that holds it; the case joins `issue@agent-skills@the-transcript-reviewer-cannot-see-a-plan-document-its-range-deletes` at the harvest |
-| (cause 6 of round 23) | The intake leaves to judgement a finding where a real session's act produced a defect | `thread@agentic-workflow-axis@intake-shares-the-repair-standard` | converted: in the intake, the act ruled out may be the one the session took, when it produced a defect or a correction |
+| (cause 6 of round 23) | The intake leaves to judgement a finding where a real session's act produced a defect | `thread@agentic-workflow-axis@intake-shares-the-repair-standard` | converted: in the intake, the act ruled out may be the one the session took; voided by D34, since nothing is left to judgement |
 
 ## Acceptance criteria
 
@@ -2328,7 +2287,7 @@ branch review, in rounds 20 to 24, which reopened
 rather than the lenses: 30 of the 38 findings sit on words the branch wrote, 14 of them by step 7,
 per `argument@agentic-workflow-axis@a68`, so the counts of two passes were taken over two
 corpora. Its threads are "The AC4 response": the count reads old text from pass 6 on, and the
-wrong-act test and the proposal check reduce the new text a pass writes. Step 10 judges AC4 again,
+the proposal check reduces the defects in the new text a pass writes. Step 10 judges AC4 again,
 on pass 6.
 
 | pass | confirmed | severe, to the owner list | source |
@@ -2424,28 +2383,26 @@ CHANGELOG.md entries `design@knowledge-architect@changelog-entries` owes, then r
    response":
    - the audit skill: the generic method's point 8 and point 9 and "The record of an audit"; the new
      section "Repairs to agent-facing text", which receives the axis's "The repair by cause" and
-     states the wrong-act test, the outcome left to judgement and the record check; the
-     agentic-workflow axis's section pointing to it, its outcome table's new row, its `args` table
+     states the record check; the agentic-workflow axis's section pointing to it, its `args` table
      with `previous`, and its run's steps with `check`; the design-record axis's section, its
      classification and its report file;
-   - the workflow auditor: a two-readings draft's evidence, the design homes and the goals homes it
-     may read, the verify marks `left-to-judgement` and `bears-on-tripwire`, and the check brief of
+   - the workflow auditor: the verify mark `bears-on-tripwire`, and the check brief of
      "The proposal check", dispatched by the script as this agent;
    - the saved workflow: `previous`, the dedup's classification, the tripwires listing, the repair
      prompt's nearest rival, the `check` step, and the cross-check's and the report's reading of the
      checks, the classes and the marks;
    - the primer's row for docs/audit-reports/; this repository's directory with its README, and
      its root CLAUDE.md, per D32;
-   - the intake, `path@agent-config@skills/klarch-retrospective-intake/SKILL.md`, its items d and f and `skill@klarch-retrospective-intake@analysis-and-ruling`, per "The repair standard".
+   - the intake, `path@agent-config@skills/klarch-retrospective-intake/SKILL.md`, its items c, e and f, per "The repair standard".
 
       Also in step 9:
    - the script's sites that list the marks, the VERDICTS schema and its required keys, the verify
-     step's log line and the report's header counts, gain the new marks; its `meta.phases` and its
+     step's log line and the report's header counts, gain the new mark; its `meta.phases` and its
      comment on `args` gain `check` and `previous`;
    - the script's shared corpus text, "run no command of the checker", and the corpus sections of
-     the skill and the auditor, which keep the registers out of the corpus, say that an auditor
-     applying the wrong-act test and a check agent read the design homes, the goals homes and the
-     rejected alternatives beside the corpus, and run `cargo klarch show`, the command a project's
+     the skill and the auditor, which keep the registers out of the corpus, say that a check agent
+     reads the design homes, the goals homes and the
+     rejected alternatives beside the corpus, and runs `cargo klarch show`, the command a project's
      `{{command}}` names; the registers stay outside the corpus;
    - the preflight also saves the audit report files the history range added, from
      `git log -p --diff-filter=A` on docs/audit-reports/, and the verify brief names them, since a
@@ -2526,7 +2483,7 @@ finding on one of them is still drafted, and marked as kept or as known.
 
 ## Defaults awaiting the owner
 
-D32 to D35 await the owner. A default listed as awaiting is built as written until the owner rules, per `skill@knowledge-architect-planning@working-a-slice`; D34, a conflict with a goal, and D35, a scope change, are not built before their ruling. D16 to D21 were ruled in round 10, on the third review message: "I agree with
+None awaits the owner. D32 to D35 were ruled in round 25: "D32 and D33 approved. D34 and D35 defaults too." D16 to D21 were ruled in round 10, on the third review message: "I agree with
 your defaults, as long as they align with that plan.", the plan being steps 4 to 6; D17 is replaced
 by that plan. D1 to D7 were ruled in round 4, on the review message: "All defaults
 approved." D8 to D15 were ruled in round 6, on the re-review message, the agent's message that opens
@@ -2714,12 +2671,12 @@ cite it by its label.
   decided outcomes before the one-run pass; the head's argument concerns the standard an auditor
   judges drafts by, and no agent decides an outcome. The rival: the workflow auditor carries the
   outcome table in a cross-check section.
-- **D32**, awaiting the owner, on `thread@agentic-workflow-axis@committed-audit-report`, from the
+- **D32**, ruled, round 25, on `thread@agentic-workflow-axis@committed-audit-report`, from the
   author's judgement at assembly: in this repository, the root CLAUDE.md lists
   docs/retrospective-reports/ among the places a session looks for what is already known, since an
   analysis not yet deleted is outstanding work no register lists; an audit report file not yet
   deleted is the same. Default: step 9 adds docs/audit-reports/ beside it, in the same `ls` block.
-- **D33**, awaiting the owner, on `thread@agentic-workflow-axis@repair-proposals-audited`, from the
+- **D33**, ruled, round 25, on `thread@agentic-workflow-axis@repair-proposals-audited`, from the
   author's judgement at assembly: round 20 said of the check's findings, "Its findings would go
   back to that proposal's repair agent, so a repair is checked before it lands rather than one pass
   later." Inside the run, that is a revision agent per cause whose check reports a defect, up to
@@ -2727,7 +2684,7 @@ cite it by its label.
   the run does not revise; the report gives each check beside its proposal, and the session's
   verification sends a proposal back to a repair agent of its cause, briefed with the script's repair prompt, as the axis's section says, and with the check, so the repair is still checked before it lands. The rival: one
   revision in the run, its proposal not checked again.
-- **D34**, awaiting the owner, not built before the ruling, on
+- **D34**, ruled, round 25, on
   `thread@agentic-workflow-axis@repair-needs-a-wrong-act` and
   `thread@agentic-workflow-axis@workflow-axis-finding-standard`, from the design-conformance
   re-review: a conflict with a goal. `goal@knowledge-architect@agents-get-a-complete-workflow`
@@ -2743,7 +2700,7 @@ cite it by its label.
   response" is built. The rival: the owner restates the goal's sentence under
   `skill@knowledge-architect-goal-setting`, so that an instruction whose readings all lead to
   acceptable acts meets it, and the thread is built as approved.
-- **D35**, awaiting the owner, not built before the ruling, on
+- **D35**, ruled, round 25, on
   `thread@agentic-workflow-axis@intake-shares-the-repair-standard`, from the transcript re-review:
   a scope change. The checkpoint row the owner confirmed in round 24 named the intake's item d and
   item f, with the wrong-act test and the repair-by-cause rules. "The repair standard" also puts the
@@ -2752,8 +2709,7 @@ cite it by its label.
   are built: the record check is part of judging a repair's shape, the intake's items c and e
   already read the same record, so one home keeps one standard, as the owner asked in round 21; and
   "left to judgement" is the reason the test gives for no change. The rival: the shared section
-  holds the test and the repair by cause only, the record check stays in the axis's section, and
-  the intake's outcomes are unchanged.
+  holds the test and the repair by cause only, the record check stays in the axis's section, and the intake's outcomes are unchanged. With D34's default ruled in the same round, the intake's "no change" gains no reason, since nothing is left to judgement; the record check is built in the shared section.
 
 ## Harvest
 
@@ -2766,7 +2722,7 @@ auditor each state its reason, two texts. The harvest confirms each against the 
 | `thread@agentic-workflow-axis@audit-method-per-axis` | `design@agent-skills@audit-method` rewritten to the generic method; `design@agent-skills@design-record-axis` gains the dispatch and the argument for the bound of 60; `design@agent-skills@audit-is-an-activity` rewritten per D6 |
 | `thread@agentic-workflow-axis@workflow-axis-corpus` | a head; a line on `issue@core@a-home-for-developer-contracts-outside-agent-configuration` naming the restatement of the four edit tests in `path@agent-skills@CLAUDE.md` |
 | `thread@agentic-workflow-axis@workflow-axis-lenses` | a head |
-| `thread@agentic-workflow-axis@workflow-axis-finding-standard` | a head, holding the wrong-act test; `design@agent-skills@additions-need-real-use` rewritten per D4 |
+| `thread@agentic-workflow-axis@workflow-axis-finding-standard` | a head; `design@agent-skills@additions-need-real-use` rewritten per D4 |
 | `thread@agentic-workflow-axis@workflow-axis-outcomes` | `design@agent-skills@audit-outcomes` rewritten per D5 |
 | `thread@agentic-workflow-axis@workflow-auditor-agent` | a head |
 | `thread@agentic-workflow-axis@checker-rules-lens` | within the head of `thread@agentic-workflow-axis@workflow-axis-lenses` |
@@ -2787,12 +2743,12 @@ auditor each state its reason, two texts. The harvest confirms each against the 
 | T5, T6 | `path@agent-skills@docs/tripwires.md`, each naming the head that holds `thread@agentic-workflow-axis@verifier-in-the-run`, with its label |
 | AC5, AC7 | reported in the landing commit |
 | `thread@agentic-workflow-axis@convergence-count-scope` | `design@agent-skills@audit-method` rewritten: its stop rule reads the violations left on old text, the owner's quoted words kept; the tripwire of D18 reads the same count |
-| `thread@agentic-workflow-axis@repair-needs-a-wrong-act` | `design@agent-skills@audit-outcomes` gains the outcome left to judgement; the wrong-act test goes to the head of `thread@agentic-workflow-axis@workflow-axis-finding-standard`, whose row above it joins |
+| `thread@agentic-workflow-axis@repair-needs-a-wrong-act` | none, ruled out by D34; its losing alternative goes to `path@agent-skills@docs/rejected-alternatives.md` with the others |
 | `thread@agentic-workflow-axis@intake-shares-the-repair-standard` | a head with the thread's slug, by entry test 2: the audit skill's section "Repairs to agent-facing text" and the intake state it |
 | `thread@agentic-workflow-axis@repair-proposals-audited`, `thread@agentic-workflow-axis@repairs-read-against-the-record` | each judged by the entry tests and by `design@agent-skills@one-decision-per-head`: each loses to a nearest rival of its own, so each takes a head with its thread's slug when it passes an entry test, the saved workflow and the axis's section stating it, and the head of `thread@agentic-workflow-axis@root-cause-repair` points to them; a line beside its instruction when it passes none |
 | `thread@agentic-workflow-axis@tripwires-read-by-the-audit` | judged by the entry tests; a line beside its instruction when it passes none |
 | `thread@agentic-workflow-axis@committed-audit-report` | a head, by entry test 2: the primer's row and the audit skill state it; the `F` row of `design@agent-skills@ruled-items-labelled` names the audit report file; the case of a report file joins `issue@agent-skills@the-transcript-reviewer-cannot-see-a-plan-document-its-range-deletes` |
-| T7, T8 | `path@agent-skills@docs/tripwires.md`, T7 naming the heads of `thread@agentic-workflow-axis@repair-needs-a-wrong-act` and `thread@agentic-workflow-axis@workflow-axis-finding-standard`, T8 the head of `thread@agentic-workflow-axis@repairs-read-against-the-record`, each with its label |
+| T8 | `path@agent-skills@docs/tripwires.md`, naming the head of `thread@agentic-workflow-axis@repairs-read-against-the-record`, with its label; T7 is not recorded, per D34 |
 | `issue@agent-skills@audit-axes-beyond-the-design-record` | rewritten to the axes it still holds; its open lesson, the owner's reading of a sample of the verdicts, is adopted by this axis as the session's sample of refuted drafts, and stays for the axes that have not adopted it; its question of an audit report is answered for every axis by `thread@agentic-workflow-axis@committed-audit-report` |
 
 ## Later consequences
