@@ -84,8 +84,10 @@ following that documentation alone, without reading the source or asking the aut
 
 ## The workflow improves through real use `##the-workflow-improves-through-real-use`
 
-Real sessions are the test of the workflow. No session is built to observe how agents follow its
-instructions: not to originate an edit, to choose between shapes, or to accept a piece of work.
+Real use is the test of the workflow: a session that applies it inside a real project that already
+follows it, as part of a contribution submitted to that project, under the supervision of a person
+who contributes to the project or owns it. No mock task and no mock project is built to apply the
+workflow to, whether to originate an edit, to choose between shapes, or to accept a piece of work.
 The retrospective, and the owner's observations of real sessions, collect what was unclear,
 missing or wrong, and the owner decides what changes.
 
