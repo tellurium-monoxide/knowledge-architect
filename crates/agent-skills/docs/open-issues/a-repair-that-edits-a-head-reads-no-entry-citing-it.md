@@ -19,7 +19,7 @@ application of a repair, read the entries that cite each head it edits?
 The record check, as the installed skill states it: "Each repair is read against the record of
 what it edits before the owner rules on it: every goals home, the design heads that
 `cargo klarch show` and a search of the design homes return for the behaviour the edited text describes, and the
-rejected alternatives of the Component that owns the text." It names no issue directory and no
+rejected alternatives of each Component that owns an edited text." It names no issue directory and no
 tripwires home. The design-record axis reads "the tripwires guarding it, the issues naming it" for
 each head, per `design@agent-skills@design-record-axis`; the agentic-workflow axis has no such
 reading, and its corpus excludes the registers, per `design@agent-skills@repairs-read-against-the-record`.
