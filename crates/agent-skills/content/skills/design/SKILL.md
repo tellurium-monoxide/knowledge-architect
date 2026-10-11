@@ -36,7 +36,7 @@ Distinct from every one of these is the project's **decision record**:
 the design homes of its Components and their rejected alternatives,
 which the discussion grounds against and the harvest records into.
 A metaphor that names a defined concept is legitimate vocabulary after its
-definition; undefined metaphors are not (see `skill@knowledge-architect-design@discussion-language`).
+definition; undefined metaphors are not.
 
 This mode fits an OPEN solution space: what the feature needs is not
 a requirement waiting to be extracted from the owner, because neither party
@@ -80,7 +80,7 @@ It ends the argument, but it does not end your duties around it:
   at the top of the turn it appears in — before the delta, before the
   work: state it once with the discriminating fact, name the default
   ("unless you say otherwise, I build the decided shape"), and
-  proceed unless the word comes. Two cases defeat that default, both
+  proceed unless the word comes. Three cases defeat that default, all
   narrow. When the finding is that the DECIDED SHAPE CANNOT BE BUILT
   at all, there is nothing to proceed with: report it and stop,
   because a default would name work that does not exist. A finding
@@ -93,7 +93,9 @@ It ends the argument, but it does not end your duties around it:
   TURN, not the decision's class: writing code that implements an
   irreversible plan is reversible, running the migration is not. Held
   work is named as held, with what it waits for; it is never silently
-  completed and never silently dropped. Presenting the finding reopens
+  completed and never silently dropped. And at the design audit of a
+  slice or a spec, a load-bearing gap stops the work, as
+  `skill@knowledge-architect-planning@working-a-slice` says. Presenting the finding reopens
   the thread, with the finding noted on its ledger line; it closes again
   on the owner's word, as any thread does, and until then the work goes
   on under the default above. If no word has come by the
@@ -134,7 +136,7 @@ evidence bring, which nobody knows in advance.
 %% the decision. The rival, the reread at recording alone, per
 %% `design@agent-skills@primer-reread-before-recording`, leaves that grounding reading heads under a
 %% primer far back in the session. It rests on a prediction, not on a behaviour seen in a session,
-%% so it is an exception to `design@agent-skills@additions-need-real-use`.
+%% so it is an exception to `design@agent-skills@behaviour-additions-need-real-use`.
 - **The in-change path.** It is open when the decision lands in the
   change under way: its work, where that change began before the
   discussion opened, as an issue fix or a review repair does, or its
@@ -588,7 +590,9 @@ choices whose option space genuinely is closed and consequence-free.
    in place of closing open threads.
 
    When convergence can be proposed, prepare a premortem, unless the
-   in-change path skips it (`skill@knowledge-architect-design@decision-authority`). See below.
+   in-change path skips it or the session is a choice among shapes stated
+   in full (`skill@knowledge-architect-design@decision-authority` names
+   both). See below.
 
 7. **Premortem before convergence**: assume the design shipped and failed.
    Name the most plausible causes, each naming the approved thread it stresses.

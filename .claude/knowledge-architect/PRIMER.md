@@ -73,7 +73,7 @@ Something met while doing other work takes the first of these that applies:
 
 | # | test | outcome |
 | --- | --- | --- |
-| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | present it to the owner at the top of the turn, with a default, and proceed on the default unless the owner answers otherwise |
+| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | present it to the owner at the top of the turn, with a default, and proceed on the default unless the owner answers otherwise; a divergence between a design home and the code holds its part of the task instead, as `primer@intent-and-claims` says |
 | 2 | its fix is checkable from the diff alone: it changes no behaviour, no decision and no test outcome (a typo, a stale pointer, wording that is now false, a broken link) | fix it, in a commit of its own |
 | 3 | its `Why it matters` and its `What would close it` can be written | open an issue entry (`skill@knowledge-architect-issue-tracking`) |
 | 4 | none of the above | name it, with why it is dropped |
@@ -367,7 +367,9 @@ the owner named to the rule, the change goes to the owner as one proposal, as a 
   tripwire fires; work closes an entry.
 - `skill@knowledge-architect-design`: a design question has an open solution space; a requested
   change whose design is not settled, to ground it and find out whether it is bounded work;
-  keep-or-change about an existing design; a bug trend suggests the design is the problem.
+  keep-or-change about an existing design; a bug trend suggests the design is the problem; a
+  discussion is reverting to multiple-choice menus, minimal-solution defaults, or approval-seeking
+  closers.
 - `skill@knowledge-architect-planning`: a design discussion converged on its full path; a slice of a
   milestone starts or lands; the work of a spec starts or lands; before editing the roadmap.
 - `skill@knowledge-architect-review`: before merging to the main branch, or when an

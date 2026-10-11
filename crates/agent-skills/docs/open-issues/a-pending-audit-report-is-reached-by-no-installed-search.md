@@ -57,7 +57,7 @@ name it, and the fix site differs: it is the installed text, which reaches every
 
 Reported by the L2 and L4 lenses of the sixth pass, as a predicted gap. Not repaired by an edit,
 since an instruction about how an agent behaves is added on evidence from real use, per
-`design@agent-skills@additions-need-real-use`.
+`design@agent-skills@behaviour-additions-need-real-use`.
 
 ### Why it matters
 

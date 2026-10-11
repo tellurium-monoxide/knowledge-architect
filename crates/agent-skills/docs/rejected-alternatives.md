@@ -181,16 +181,16 @@ admitted forced; the count is re-taken by a fresh read-only audit of the heads a
 
 **An audit method with no calibration and no re-check** — lost to `design@agent-skills@audit-method`
 for the re-check, and to `design@agent-skills@design-record-axis` for the calibration. `live`. On
-the first run of the design-record axis on this repository, the re-check of each pass found
+the first audit of the design-record axis on this repository, the re-check of each pass found
 violations the pass had missed or made, and two agents read one shared sample entry two ways in two
-of the samples; a method that trusted one reading per entry would have left both. The run's
+of the samples; a method that trusted one reading per entry would have left both. The audit's
 commits, found with `git log --grep='design-record axis'`, carry the counts.
 
 **The repair of a head only when a change touches it** — lost to
 `design@agent-skills@audit-repairs-the-whole-record`. `live`. A repair on touch never reaches a
 head no change touches, so a project's record stays under the old rules after its migration. It
 costs the owner one proposal per head, at the moment a session already edits it, where a project
-audit puts every item of its owner list to the owner at once: the first run on this repository put
+audit puts every item of its owner list to the owner at once: the first audit on this repository put
 72 items to the owner over three passes. It is kept because a doubt remains on that cost to the
 owner's reading time, which `goal@knowledge-architect@the-owner-decides` spends, and it is the
 candidate if a project's owner finds an audit's lists too long to read.
@@ -219,9 +219,13 @@ agent's reading, and this alternative is a candidate if it does.
 **One workflow auditor agent per lens** — lost to `design@agent-skills@workflow-auditor-agent`.
 `live`. Each agent would repeat the axis's shared standard, the corpus, the finding standard, the
 tags and the draft's shape, which is about half of any one of them, and the owner did not want
-"publishing too many agents and polluting the directory". It is kept here because a doubt remains:
-whether one agent holding every lens drafts mostly under lenses other than its brief's, and this
-alternative is the candidate if it does.
+"publishing too many agents and polluting the directory". The concern it answers, one agent holding
+every lens drafting mostly under lenses other than its brief's, was counted over the drafts of the
+first agentic-workflow audit of this repository: more than a third of one agent's drafts named
+another lens at passes 1, 2 and 6. After the first, the owner kept one agent: "multiple agents
+reporting the same findings is a stronger proof of a problem." That count measures what the
+workflow auditor is told to do, since a finding of another lens met on the way is drafted under
+that lens, so no tripwire watches it.
 
 **One repair per finding, at its site** — lost to `design@agent-skills@root-cause-repair`. `live`.
 It lost to a measurement on the first agentic-workflow audit of this repository: passes 1 and 2
@@ -242,7 +246,7 @@ measurement over the files of pass 4 of the first agentic-workflow audit of this
 over each set: the sort read 63 drafts, 3,738 lines, confirmed 36 findings and refuted 3, each
 refutation one a verifier given the audit's commit messages can make; the merge read two
 groupings, 1,074 lines, and made two choices of boundary; the confirmation read 23 proposals, 4,030
-lines, and sent none back; the diff read before the commit, 1,290 lines, changed three wrapped
+lines, and sent none back, by the session's own account, which no file records; the diff read before the commit, 1,290 lines, changed three wrapped
 lines and one claim. The readings changed little and took the bulk of the session's context.
 
 **The session reading every draft again after the run** — lost to
@@ -272,7 +276,7 @@ and a file one directory deeper not found. A saved workflow is run by name with 
 where an inline block lives in the skill as text no session needs to read.
 
 **The plain count of confirmed findings, its fall judged pass by pass over its context** — lost to
-`design@agent-skills@audit-method`. `live`. It lost to a measurement: each of pass 5's 38 findings
+`design@agent-skills@convergence-count-scope`. `live`. It lost to a measurement: each of pass 5's 38 findings
 of the first agentic-workflow audit of this repository was classified by the commit that last wrote
 the words carrying its defect, with `git blame -w -C` and a check that the words are absent at the
 earlier commit. 8 sat on text the main branch held before the audit's branch, 16 on text the
@@ -284,8 +288,9 @@ hand.
 **Fewer auditors on the two-readings lens, or a narrower scope for it** — lost to
 `design@agent-skills@workflow-axis-lenses`. `live`. At pass 5 of the first agentic-workflow audit of
 this repository, the verifiers and the session confirmed 37 of 38 findings, each lens with more
-than one agent produced findings no other agent of that lens reported, and all 15 findings of the
-two-readings class were confirmed, 9 of them on text the audit's own branch had just written.
+than one agent produced findings no other agent of that lens reported, and 14 of the 15 findings of
+the two-readings class were confirmed, the session rejecting one, while 9 of the 15 sat on text the
+audit's own branch had just written.
 
 **Defects in the text a repair writes, left for the next pass to find** — lost to
 `design@agent-skills@repair-proposals-audited`. `live`. By the classification of pass 5 of the

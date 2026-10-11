@@ -20,9 +20,10 @@ directives that every session applies and that no skill delivers at the moment t
 title of `design@agent-skills@primer-limit` reads "The primer holds only what every session needs
 and no installed skill delivers". Both answer what the primer holds, and lose to the same rival, a
 primer that carries what a skill delivers. The body of `design@agent-skills@primer-content` then
-argues each directive: the goals rule, the owner's word bound by its premise, the room to judge, the
-intent-and-claims rule, the check before diagnosing, and the four outcomes of something met outside
-the task. At least one of them lost to a rival of its own, recorded in
+argues each directive, in eight bullets: the goals rule, the owner's word bound by its premise, the
+room to judge, the intent-and-claims rule, the check before diagnosing, the four outcomes of
+something met outside the task, the numbering of an item put to the owner under a label, and every
+commit of a branch judged by the checker at the branch's tip. At least one of them lost to a rival of its own, recorded in
 `path@agent-skills@docs/rejected-alternatives.md` as "Reporting a finding met outside the task
 without recording it".
 
@@ -40,7 +41,7 @@ quoting the owner there, and the run's re-checks left the bundle to this entry, 
 ### Why it matters
 
 A session that reverses or extends one directive cannot cite the decision it changes, since the
-head names six, and the rule of the primer's content has two homes that can drift, against
+head names eight, and the rule of the primer's content has two homes that can drift, against
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
 
 ### What would close it

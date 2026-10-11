@@ -19,7 +19,8 @@ Established by reading the code, not by a run:
   `Entities::defines_id` holds for its id.
 - `Entities::defines_id` in `path@core@src/entity.rs` is true for an id of any register whose kind
   is not a harness kind: design, goal, tripwire, issue, spec, milestone and the plan items.
-- The finding for `Observation::Retired(RetiredForm::SlugRef(span))` in the same file writes the
+- The finding for `Observation::Retired(RetiredForm::SlugRef(span))`, in `judge_part` in
+  `path@core@src/check/references.rs`, writes the
   fixed repair "write `design@<component>@<slug>`; the form with a `#` is no longer read as a
   reference".
 

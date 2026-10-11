@@ -180,8 +180,8 @@ that growth before any of them is applied.
 
 **The record check.** Each repair is read against the record of what it edits before the owner
 rules on it: every goals home, the design heads that `cargo klarch show` and a search of the design
-homes return for the behaviour the edited text describes, and the rejected alternatives of the
-Component that owns the text. The check names each head the repair would reverse, each rejected
+homes return for the behaviour the edited text describes, and the rejected alternatives of each
+Component that owns an edited text. The check names each head the repair would reverse, each rejected
 alternative it brings back and each goal it strains, with its quotation. A repair that reverses a head is a
 decision, recorded as `skill@knowledge-architect-decision-recording` says.
 
@@ -257,7 +257,7 @@ sets; the checker's own behaviour, whose code is not in the corpus; the scoped `
 
 **The agent**: `agent@knowledge-architect-workflow-auditor`.
 
-**The saved workflow**: `knowledge-architect-agentic-workflow-audit`. One run of it is one pass:
+**The saved workflow**: `knowledge-architect-agentic-workflow-audit`. One run of it covers one pass:
 a preflight sets up a worktree per auditor and the listings the agents read; the auditors draft,
 one per lens and count; one verifier per auditor tries to refute each draft; a dedup writes the
 confirmed-findings file, each finding classified as on old or new text; cluster agents group the

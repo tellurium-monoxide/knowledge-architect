@@ -24,7 +24,7 @@ in the README of the agent-skills component.
 
 `design@agent-skills@expectation-set-bounds-scope` makes the set the scope test for every edit of an
 installed skill. A skill without one has no test: every finding about the owner's behaviour reads as
-a gap, and its text can grow to absorb each one, which `design@agent-skills@additions-need-real-use`
+a gap, and its text can grow to absorb each one, which `design@agent-skills@behaviour-additions-need-real-use`
 exists to prevent.
 
 ### What would close it

@@ -229,7 +229,8 @@ if (jobs.length) {
   const trees = await agent(lines([
     'You set up the worktrees of the check step of one pass of the agentic-workflow axis of a ' +
       'project audit. From the project root, for each of these paths that is not already a ' +
-      'worktree, run git worktree add --detach <path> ' + args.commit + ', and report what failed: ' +
+      'worktree detached at ' + args.commit + ', run git worktree add --detach <path> ' + args.commit +
+      ', and report what failed: ' +
       jobs.map(checkTree).join(', ') + '.',
     'Edit nothing else. Return done true only if every command succeeded.',
   ]), { schema: DONE, phase: 'repairs', label: 'check worktrees' })

@@ -32,7 +32,8 @@ project, per `design@knowledge-architect@no-component-directory-named-after-the-
 ### Always
 
 For working prose, this list restates `skill@knowledge-architect-design@discussion-language`. Here
-it holds for every text a session writes, and the em-dash bullet is this file's own.
+it holds for every text a session writes. The em-dash bullet is this file's own, and the metaphor
+rule restates `skill@knowledge-architect-design@discussion-overview`, not that section.
 
 - Use plain, direct technical English.
 - Write **short** sentences.
@@ -226,10 +227,7 @@ the primer's:
 two**, per `skill@knowledge-architect-agent-configuration@project-knowledge-rows`, read whole before
 adding a row.
 
-**A measurement is not a kind of statement. It is routed by what it serves.** A figure that
-supports a decision goes in that decision's head. One that characterises an issue entry
-goes in that entry. A tripwire's firing threshold goes inside the tripwire. One that serves none of
-them goes in the commit message that took it. This restates `primer@where-knowledge-goes`.
+**A measurement is routed by what it serves, as `primer@where-knowledge-goes` says.**
 
 **Never record a number that will go stale, unless staleness is the point.** A figure carries the
 claim it supports, the command that re-takes it, and the direction that would reopen the argument.
@@ -474,18 +472,13 @@ subagent, per
 name beginning with `knowledge-architect-` is the installer's, and the install would delete it.
 This is a restatement; its home is `design@knowledge-architect@klarch-prefix`.
 
-**A retrospective's findings stay in this repository.** Here the project is also the workflow's
-upstream, so the findings of both files of `skill@knowledge-architect-retrospective` are handled
-here, on the owner's word: handled, opened as entries in this repository's own issue registers, or
-closed with no change and the reason, never as an issue on GitHub. This is the owner's
-standing direction under that skill; its home is
-`design@knowledge-architect@workflow-findings-stay-here`. The findings of the
-agentic-workflow axis of `skill@knowledge-architect-project-audit` on the installed text stay here
-too: they are edited at their source, under `path@agent-skills@content/`, with the outcomes of a finding on
-the project's own text, and no upstream file is written. Each repair of such a finding, its proposal
-and its check included, passes the four tests of `path@agent-skills@CLAUDE.md`, "Editing an
-installed skill or agent", read whole. Its checker-rules auditors, L7, also read
-the checker's design home, `path@core@docs/design.md`, beside its README.
+**The findings of both files of `skill@knowledge-architect-retrospective`, and those of the
+agentic-workflow axis of `skill@knowledge-architect-project-audit` on the installed text, are handled
+here as `design@knowledge-architect@workflow-findings-stay-here` says, read whole.** Each repair of
+an audit's finding on the installed text, its proposal and its check included, passes the tests of
+`path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", read whole, per that head. The
+audit's checker-rules auditors, L7, also read the checker's design home, `path@core@docs/design.md`,
+beside its README.
 
 ## Git `##git-workflow`
 

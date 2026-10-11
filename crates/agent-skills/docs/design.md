@@ -23,7 +23,9 @@ section slug, so content/ defines no section in this repository's walk and the i
 per `design@core@installed-entities-from-the-tree`. A slug placeholder anywhere else fails the build. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, a saved workflow
 of Claude Code's Workflow tool is `workflows/<workflow>.js`, and the primer is `PRIMER.md`. The
 harness reads saved workflows directly under .claude/workflows/, no deeper, and calls each by the
-name its `meta` declares, never by its file's name, as a probe of Claude Code measured: so the
+name its `meta` declares, never by its file's name, as a probe of Claude Code measured, which the
+message of the commit "The agentic-workflow axis's script ships as a saved workflow in the
+installer's namespace" records: so the
 build fails unless that name equals the installed file's stem, or the prefix of the file would
 namespace nothing. The build script, `path@agent-skills@build.rs`, walks the directory, renders each
 file, removing its comments, filling its delivery substitutions and inlining its snippets, and
@@ -360,7 +362,7 @@ Installed texts alone would leave a skill free to disagree with what the checker
 adopting project meets as a check that fails on a document the skill told it to write. A reason that passes no test goes in a
 `%%` comment at the instruction it explains, per `design@agent-skills@shipped-text-line-comments`.
 
-### An instruction about how an agent behaves is added to an installed skill or agent only on evidence from real use `##additions-need-real-use`
+### An instruction about how an agent behaves is added to an installed skill or agent only on evidence from real use `##behaviour-additions-need-real-use`
 
 A defect provable by reading is repaired on reading, and an instruction about how an agent behaves
 is added only on evidence from real use. Real use originates such an addition: a behaviour seen in
@@ -474,7 +476,7 @@ is a defect of an installed skill. The retrospective runs in the installing proj
 installed files and not this component's README, so a set the retrospective applies has to ship. A
 set inside the skill it bounds would be read on every use of that skill, and an agent reading it
 would check the owner against a list. The README restates each set for the owner, who is the one it
-describes. It works with `design@agent-skills@additions-need-real-use`: that entry says what evidence
+describes. It works with `design@agent-skills@behaviour-additions-need-real-use`: that entry says what evidence
 admits an addition, and this one says which gaps are worth admitting. In the designing-together
 repository, a rule for an abandoned discussion was argued, approved, written and reverted in one
 session, and four further review findings about the user's behaviour were queued behind it on the
@@ -824,7 +826,7 @@ named that move, and the session read it at no step.
 The occasions are those where design is discussed, so that an entry the work bears on costs a
 ruling before the work rather than rework after it, per
 `goal@knowledge-architect@agents-work-without-drift`. The evidence is real use, per
-`design@agent-skills@additions-need-real-use`: in thaum, the standing-state reviewer found, after
+`design@agent-skills@behaviour-additions-need-real-use`: in thaum, the standing-state reviewer found, after
 the work, issues the changes bore on and tripwires that had fired, especially in the slices of large
 milestones, and the repairs and decisions this forced could have been taken before the design and
 the implementation. The owner's account: the reviewer "is too often finding issues that are
@@ -1392,7 +1394,11 @@ The installed review skill sends the transcript reviewer before every merge to t
 once, after every other axis has run and its repairs are committed, and not also in their batch, over the whole branch and the
 transcripts of every session that worked on it. The findings of the other axes reach the session as
 messages of its transcript, so only a reviewer reading it after their repairs can tell whether each
-was acted on durably, per `goal@knowledge-architect@design-is-recorded-with-its-arguments`. Its own
+was acted on durably, per `goal@knowledge-architect@design-is-recorded-with-its-arguments`. A
+transcript reviewer sent in their batch as well would read the transcript before the owner answers
+the items the batch raises, and an answer of the owner given after its extraction reads to it as
+missing, as `skill@knowledge-architect-review@review-axes` says: its findings would report as
+missing what the last transcript review then finds answered. Its own
 repairs land as additional commits, as many as their kinds need: a repair that the primer routes to
 a commit of its own stays one, and nothing asks the dispatcher to merge them into a single commit.
 The additional commits are the owner's proposal: "I'd just replace "as a last commit" by "as an
@@ -1458,7 +1464,7 @@ and each axis gives only its corpus, its dispatch and its outcomes, per
 two heads no branch touches is read by no step of the workflow, against
 `goal@knowledge-architect@documentation-stays-consistent`.
 
-### An audit's method holds for every axis, each giving its own dispatch, and nothing its agents propose is applied before the session's reading, fresh agents re-checking each pass while the violations left on old text fall `##audit-method`
+### An audit's method holds for every axis, each giving its own dispatch, and nothing its agents propose is applied before the session's reading, fresh agents re-checking each pass while the violations left fall `##audit-method`
 
 The method of `skill@knowledge-architect-project-audit@audit-method` holds for every axis. An
 axis's section gives what varies: its corpus and what is read beside it, its dispatch, its drafts,
@@ -1473,17 +1479,33 @@ need the owner's word go on one list per pass, labelled `F<n>`, in the pass's re
 Fresh agents of the axis, dispatched as its first dispatch was and given the kept list, then
 re-check the result, and their findings start the next pass.
 
-Passes repeat while the violations left on old text fall from one pass to the next, until the owner
-judges what is left small enough. A violation left is a finding of a re-check that a reading
-confirms, that is on no kept list and that no issue entry records. It is on old text when the
-previous pass also read its words and no commit after the one that pass audited changed them; a
-move, a reflow or a rename leaves text old. A violation left on new text takes its outcome like any
-other, and decides nothing about convergence. A pass where the count on old text does not fall goes
-to the owner as a question, with the counts, and starts no pass on its own. The stop rule is the
-owner's, given in place of a fixed threshold: "As long as we observe a "convergence", and the
-amount of leftover violations is small enough, I think that is good. If you ask an LLM to find a
-flaw or defect in something, it will nearly always find one IMO. Especialy if that something is
-prose and not code."
+Passes repeat while the violations left fall from one pass to the next, until the owner judges what
+is left small enough. A violation left is a finding of a re-check that a reading confirms, that is
+on no kept list and that no issue entry records. Which of them the count reads is
+`design@agent-skills@convergence-count-scope`. A pass where that count does not fall goes to the
+owner as a question, with the counts, and starts no pass on its own. The stop rule is the owner's,
+given in place of a fixed threshold: "As long as we observe a "convergence", and the amount of
+leftover violations is small enough, I think that is good. If you ask an LLM to find a flaw or
+defect in something, it will nearly always find one IMO. Especialy if that something is prose and
+not code."
+
+The rival, a lighter method with no re-check, lost on real audits, whose commits
+`git log --grep='design-record axis'` finds: in the first audit of the design-record axis on this
+repository, the re-check of each pass found violations the pass had missed or made. The session's
+reading guards against a quotation of the owner verbatim but taken from the answer to another
+question, which that audit showed. The rival that keeps the design-record axis's groups and
+calibration sample in the method, a later axis adjusting them as an exception, would state a rule
+that one of two axes breaks whole: the agentic-workflow axis shares no corpus out, per
+`design@agent-skills@workflow-axis-lenses`. The groups and the sample are the design-record axis's
+dispatch, per `design@agent-skills@design-record-axis`.
+
+### The convergence count of an audit reads only the violations left on text the previous pass also read `##convergence-count-scope`
+
+A violation left is on old text when the previous pass also read its words and no commit after the
+one that pass audited changed them; a move, a reflow or a rename leaves text old. Any other is on
+new text, the previous pass's repairs among it. The stop rule of `design@agent-skills@audit-method`
+reads the count on old text. A violation left on new text takes its outcome like any other, and
+decides nothing about convergence. Each axis's section says how its findings are classified.
 
 The count reads old text because each pass's repairs write new text, and the agents find defects in
 new text at least as readily as in old. On the fifth pass of the agentic-workflow axis on this
@@ -1493,19 +1515,9 @@ at the commit audited, with the diffs read by hand where blame and the words dis
 document of that work holds the classification, and
 `git log --diff-filter=D --name-only -- docs/plans/` finds it. A count over the whole corpus then
 compares two corpora, and measures how much text the last pass wrote more than how much defect is
-left. Its rival, the plain count with its fall judged over its context, was argued by hand at each
-firing, with the same explanation each time. Dropping the count for the owner's judgement alone
-drops the convergence signal this rule reads.
-
-The rival, a lighter method with no re-check, lost on real runs, whose commits
-`git log --grep='design-record axis'` finds: in the first run of the design-record axis on this
-repository, the re-check of each pass found violations the pass had missed or made. The session's
-reading guards against a quotation of the owner verbatim but taken from the answer to another
-question, which that run showed. The rival that keeps the design-record axis's groups and
-calibration sample in the method, a later axis adjusting them as an exception, would state a rule
-that one of two axes breaks whole: the agentic-workflow axis shares no corpus out, per
-`design@agent-skills@workflow-axis-lenses`. The groups and the sample are the design-record axis's
-dispatch, per `design@agent-skills@design-record-axis`.
+left. The nearest rival, the plain count with its fall judged over its context, was argued by hand
+at each firing, with the same explanation each time. Dropping the count for the owner's judgement
+alone drops the convergence signal the stop rule reads.
 
 ### A pass of an axis with a saved workflow is one run of it, from its preflight to its report, and the session reads the report after the run, never between its steps `##one-run-pass`
 
@@ -1518,17 +1530,19 @@ their one home, per `design@agent-skills@audit-axis-runs-a-workflow`. Every step
 in the run's scratch directory, so the session can open any draft, grouping or proposal the report
 cites. The preflight sets the run up inside it, since the script names the auditors: a worktree of
 its own for each, as `skill@knowledge-architect-review@review-invariants` asks, and the listings
-the agents read. The report holds what the session needs to discuss each cause with the owner and
-act: the refuted drafts with their reasons, each cause with its findings, their quoted evidence and
-verdicts, its repair as edits before and after, its check and a proposed outcome, the paragraphs
-several repairs edit, a draft of the owner list, and what the run did not decide.
+the agents read. The cross-check and the report are one agent each, on the owner's word: "The cross
+check and the report should be one agent each (two total)." The report holds what the session needs
+to discuss each cause with the owner and act: the refuted drafts with their reasons, the run's
+counts and the instructions the repairs add and remove, each cause with its findings, their quoted
+evidence and verdicts, its repair as edits before and after, its check and a proposed outcome, the
+paragraphs several repairs edit, a draft of the owner list, and what the run did not decide.
 
 After the run the session verifies the report. It reads the report whole, every repair proposal in
 full, since the owner list goes out under its responsibility, every finding the report marks as
 plausible or as bearing on a ruling of the owner or on a tripwire, against its draft, and a sample
 of the refuted drafts. The sample is the session's to choose, on the owner's word: "Sample left to
 judgement". The owner list, the owner's word and the application follow. The run ends at its
-report, and the session applies the repairs the owner approves.
+report, and the application is the session's, per `design@agent-skills@apply-stays-with-the-session`.
 
 The shape is the owner's: "the main power of that tool is to organize multiple complex steps that
 produce a complete result (such as a report) which is as ready as possible for the main session to
@@ -1537,13 +1551,24 @@ and "verification by the session is indeed necessary, but not in the middle of t
 The nearest rival, the steps run as separate runs with a reading by the session between each, lost
 on the pass of the agentic-workflow axis that ran so: the session's sort refuted 3 drafts, each a
 refutation a verifier given the audit's earlier commit messages can make, its reading of 23 repair
-proposals sent none back, and the readings cost the session most of its context. The rival that
-has the session read every draft again after the run lost on the same measurement, since the
-verifier makes the refutations that sort made. The plan document of that work holds the
-measurement, and `git log --diff-filter=D --name-only -- docs/plans/` finds it. The rival that
-extends the run to a second saved workflow applying the approved repairs lost on the merges the
-application needs: at two passes, the agents that applied the repairs merged edits that several
-repairs made to one paragraph, against a tree that may have moved since the run.
+proposals sent none back, by the session's own account, which no file records, and the readings
+cost the session most of its context. The rival that has the session read every draft again after
+the run lost on the same measurement, since the verifier makes the refutations that sort made. The
+plan document of that work holds the measurement, and
+`git log --diff-filter=D --name-only -- docs/plans/` finds it.
+
+### The session applies the repairs the owner approves, and no saved workflow does `##apply-stays-with-the-session`
+
+A run of an axis's saved workflow ends at its report. The session applies the edits the owner
+approves, itself or through agents dispatched on disjoint files, and reads the whole diff before
+each commit, as `skill@knowledge-architect-project-audit@audit-method` says.
+
+The nearest rival, a second saved workflow that applies the approved repairs, lost on the merges
+the application needs. In the two applications that agents made on the agentic-workflow axis on
+this repository, the repair of passes 2 and 3 and that of pass 4, the applying agents merged edits
+that several repairs made to one paragraph, six times, three in each, by their reports, which no
+file records. A workflow would make those merges against a tree that may have moved since the run
+read it. Two applications are the evidence, so the decision is held loosely.
 
 ### An audit axis's steps live in a saved workflow of its own, their one home for any harness, and its section of the skill keeps what the session needs to verify the run's report `##audit-axis-runs-a-workflow`
 
@@ -1566,7 +1591,9 @@ file directly in .claude/workflows/ (it would need to use the knowledge-architec
 namespacing)."
 
 The argument turns on the behaviour of Claude Code's Workflow tool, read in its description and its
-authoring reference and measured by probes. The tool runs only on an explicit opt-in, such as the
+authoring reference and measured by probes, which the message of the commit "The agentic-workflow
+axis's script ships as a saved workflow in the installer's namespace" records. The tool runs only
+on an explicit opt-in, such as the
 owner invoking a skill whose instructions tell the session to call it, or asking for a saved
 workflow by name. A script reads no file and takes its inputs in `args`. A saved workflow runs by
 the name its `meta` declares, only from a file directly under the workflows directory, and the
@@ -1577,7 +1604,8 @@ that keeps the steps in prose beside the script, or in one markdown file per axi
 without the tool, keeps two homes for one moment, and one drifted: a repair prompt of the script
 narrowed what the skill's prose said, "the homes merged into one", to "the section of the skill
 that owns the moment". That the checker reads markdown and no JavaScript bears on references, and
-the script cites none. The rival of one workflow auditing every axis at once lost on the owner's
+the script cites none. A file per axis stays available for reading guidance that is not a step.
+The rival of one workflow auditing every axis at once lost on the owner's
 words: "it audits all axes of the project at once and produces a single report, which is too large
 of a scope".
 
@@ -1615,22 +1643,28 @@ evidence, and a commit that records rulings and changes no file is dropped by Gi
 `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file` measured. History grows
 by the report's size at each pass, and the tree by nothing once the file leaves.
 
-### A finding of an audit is applied in its branch, put to the owner, sent upstream or opened as an issue, and none is left to judgement `##audit-outcomes`
+### Every finding of an audit takes exactly one outcome of its axis's table, and none is left to judgement `##audit-outcomes`
 
-Every finding takes exactly one outcome. An edit that changes no ruling of the owner is applied in
-the audit's branch: a rewording, a tense, a reference, a split that moves no word of the owner, a
-rejected alternative repaired in place, a factual error, a pointer whose target exists under
-another name, a drifted restatement brought back to its home, an instruction read two ways reworded
-to the reading a design head or another instruction states. An approval cited as a head's ground is
-removed in the branch where the head stands on its argument, since its repair removes a false
-ground and widens nothing. A widening of what the owner's words approved, the removal of an entry,
-a ground that is the owner's words, which side of a contradiction wins, a rule that reads two ways
-where nothing recorded states the reading meant, a provable gap, a head in the wrong Component and
-a conflict with a goal go to the owner, per `goal@knowledge-architect@the-owner-decides`; any
-finding no case names goes there too. A finding outside the axis, a predicted gap, per
-`design@agent-skills@additions-need-real-use`, work too large for the branch, and a finding the
-owner defers each become an issue. A finding that an issue entry already records, or that is on the
-kept list, takes no action.
+Every finding takes exactly one outcome, from the generic table of
+`skill@knowledge-architect-project-audit@outcomes` as its axis's section fills it: applied in the
+branch, put to the owner, sent upstream, an issue entry, or nothing. An edit that changes no
+ruling of the owner is applied in the audit's branch: a rewording, a tense, a reference, a split
+that moves no word of the owner, a rejected alternative repaired in place, a factual error, a
+pointer whose target exists under another name, a drifted restatement brought back to its home, an
+instruction read two ways reworded to the reading a design head or another instruction states. An
+approval cited as a head's ground is removed in the branch where the head stands on its argument,
+since its repair removes a false ground and widens nothing. A widening of what the owner's words
+approved, the removal of an entry, a ground that is the owner's words, which side of a
+contradiction wins, a verdict where a rule reads two ways, a provable gap, a head in the wrong
+Component and a conflict with a goal go to the owner, per
+`goal@knowledge-architect@the-owner-decides`; any finding no case names goes there too. In the
+agentic-workflow axis, an instruction read two ways goes to the owner where nothing recorded states
+the reading meant, and is applied where a design head or another instruction states it. A predicted
+gap, per `design@agent-skills@behaviour-additions-need-real-use`, becomes an issue on the project's own text
+and is sent upstream on the installed text. Work too large for the branch and a finding the owner
+defers each become an issue. A finding outside the axis takes the first case of
+`primer@met-outside-the-task` that applies. A finding that an issue entry already records, or that
+is on the kept list, takes no action.
 
 A finding on the installed text is never edited in a project that installs it, per
 `skill@knowledge-architect-agent-configuration@installed-files-never-edited`. It is sent upstream,
@@ -1649,7 +1683,7 @@ confirms is read two ways is repaired, even where every act it allows is accepta
 instruction covers is left to judgement on purpose, and is no finding. The rival outcome, a finding
 of two readings left to judgement where no text rules either act out, leaves such an instruction
 standing against that goal. Its cost stands: each repair writes new text, which
-`design@agent-skills@audit-method` counts apart and `design@agent-skills@repair-proposals-audited`
+`design@agent-skills@convergence-count-scope` counts apart and `design@agent-skills@repair-proposals-audited`
 reads before the repair lands.
 
 Most findings of the design-record axis are text edits, so they are applied at once, as the owner
@@ -1680,7 +1714,8 @@ added to every group, whose verdicts are compared before any draft is sorted, a 
 reading of the rule's text settles being settled by the session, and one the text admits both ways
 going on the owner list; at the sort, a reading of at least one draft per group that finds its
 entry conforming;
-a split, a merge or a move drafted first, and each head it creates judged alone against every rule;
+a split, a merge or a move drafted first, and each head a split, a rename or a merge creates judged
+alone against every rule;
 and a re-check over the same groups, where the session classifies each finding at its sort, an
 entry being new text when a commit after the one the previous pass audited changed its words. The
 axis has no saved workflow yet, so the session runs this dispatch by hand, per
@@ -1689,12 +1724,12 @@ axis has no saved workflow yet, so the session runs this dispatch by hand, per
 A group holds one Component's entries, since a rejected alternative is judged against the head it
 lost to. The bound of 60 is the one `design@agent-skills@standing-entry-search-groups` argues for a
 standing entry; an auditor reads more per head, its tripwires, its issues and its history, and no
-measurement shows the bound right for that load, though the three passes of the axis's first run
+measurement shows the bound right for that load, though the three passes of the axis's first audit
 on this repository ran with it. Bounded groups keep each agent's reading whole on a large project.
-The sample exists because agents dispatched together do not read a rule alike: in that first run,
+The sample exists because agents dispatched together do not read a rule alike: in that first audit,
 two agents read one shared sample entry two ways in two of the samples, and a method that trusted
 one reading per entry would have left both. A head created by a split failed a rule read alone in
-that run too, so each created head is judged alone. The run's commits, found with
+that audit too, so each created head is judged alone. The audit's commits, found with
 `git log --grep='design-record axis'`, carry the counts.
 
 ### The agentic-workflow axis reads every text the harness delivers to a session as an instruction, and neither the scoped CLAUDE.md files nor the registers are in its corpus `##workflow-axis-corpus`
@@ -1742,8 +1777,8 @@ agents of one task as the design-record axis shares its own, loses on that argum
 contradiction across two files sent to different agents is found by neither. Cutting a lens's count
 or narrowing its scope lost on the fifth pass of the axis on this repository: the verifiers and the
 session confirmed 37 of its 38 findings, each lens with more than one agent produced findings no
-other agent of that lens reported, and the 15 findings of two readings, L3's class, were all
-confirmed, 9 of them on text written for the axis itself. The plan document of that work holds the
+other agent of that lens reported, and 14 of the 15 findings of two readings, L3's class, were
+confirmed, the session rejecting one, while 9 of the 15 sat on text written for the axis itself. The plan document of that work holds the
 measurement, and `git log --diff-filter=D --name-only -- docs/plans/` finds it. The count per lens
 rather than a total budget is the owner's: "it would probably be better to pass a list of count per
 lens, rather than a total budget (which needs to be dispatched by the script rather than by the
@@ -1770,7 +1805,13 @@ lens drafts such a pair, and none of the drafts of the axis's first four passes 
 standards count as a finding. The rival,
 the class with no lens of its own, loses on that.
 
-### The agentic-workflow axis admits a finding only when a reading confirms it, and a gap that only predicts what an agent would do becomes an issue, never an edit `##workflow-axis-finding-standard`
+L5 reads each restatement of a directive against its home, since the checker cannot compare
+prose. The restatements are in this axis on the owner's word, given when they were proposed for the
+design-record axis: "The restatement item, I find it weird to add it in this axis. It does not
+read the same thing at all. It would go in the "agentic workflow" axis mentionned in the issue,
+instead, IMO."
+
+### The agentic-workflow axis admits a finding only when a reading confirms it, and a gap that only predicts what an agent would do leads to no edit `##workflow-axis-finding-standard`
 
 A finding is admitted in a class whose evidence a reading checks: a contradiction, two instructions
 quoted and the moment both apply; a broken trigger, the instruction and the search that shows its
@@ -1779,13 +1820,14 @@ instruction and the two acts its words allow; a provable gap, a requirement and 
 no text supplies and judgement cannot derive, since it is a fact fixed elsewhere, such as a format
 the checker enforces, a name or a path, not a choice an agent could make; divergent verdicts, one
 text of the project and the sentence of each standard that judges it; and a restatement or a
-pointer its home does not allow. A predicted gap, "an agent might misjudge X", is an issue that
-states what a real session would have to show. A case no instruction covers, where judgement can
+pointer its home does not allow. A predicted gap, "an agent might misjudge X", leads to no edit:
+on the project's own text it is an issue that states what a real session would have to show, and
+on the installed text it is sent upstream, per `design@agent-skills@audit-outcomes`. A case no instruction covers, where judgement can
 decide, is no finding, per `primer@room-to-judge`. A finding about how the owner works is outside
 the axis: the retrospective judges it against an expectation set.
 `agent@knowledge-architect-workflow-auditor@what-a-finding-is` is the one home of the classes.
 
-The standard derives from `design@agent-skills@additions-need-real-use`: a defect provable by
+The standard derives from `design@agent-skills@behaviour-additions-need-real-use`: a defect provable by
 reading is repaired on reading, and an instruction about how an agent behaves is added only on
 evidence from real use. A divergent verdict needs a text of the project, since a written example is
 a synthetic scenario. The owner set the axis's aim: "most of the work should be about finding things
@@ -1868,16 +1910,24 @@ is a cause of its own. Each kind has its repair: the homes merged into one and t
 to it, the structure removed, the restatement brought back to a pointer, the narrow rule deleted and
 the case left to judgement. A repair adds an instruction only where none of these closes the cause,
 and says why. One repair is proposed per cause, never one per finding, and each finding takes the
-outcome of its cause's repair. `skill@knowledge-architect-project-audit@repair-standard` is the one
-home of the standard, which the audit reads, and each skill that names it, per
+outcome of its cause's repair. Outside the project that publishes the workflow, a cause whose
+findings are on both sides, the installed text and the project's own, is repaired in two parts: its
+findings on the installed text are sent upstream, per `design@agent-skills@audit-outcomes`, and
+those on the project's own text take the outcome of its repair's edits on that text.
+`skill@knowledge-architect-project-audit@repair-standard` is the one home of the standard, which the
+audit reads, and each skill that names it, per
 `design@agent-skills@intake-shares-the-repair-standard`.
 
 In the agentic-workflow axis a second phase of agents delivers it inside the run: cluster agents,
 two by default, group the confirmed findings by cause independently; a merge agent writes one
 causes file from their groupings and states each choice it made where they differ; and repair
 agents, one per cause by default, propose its repair, which
-`design@agent-skills@repair-proposals-audited` checks before the session reads it. The counts are
-the session's, passed to the run.
+`design@agent-skills@repair-proposals-audited` and `design@agent-skills@repairs-read-against-the-record`
+check before the session reads it. The counts are the session's, passed to the run. These agents
+judge no finding against the axis's standard, so they are general-purpose agents whose prompts are
+in the saved workflow, not briefs of the workflow auditor, since an agent's definition is the copy
+the harness registered when the session started. The rival, the workflow auditor gaining two more
+briefs, one to cluster and one to repair, loses on that.
 
 The direction is the owner's: "Indeed, as capabilities-not-structure records, adding instructions
 to handle corner cases is always more likely to give rise to incompatible interactions, simply due
@@ -1889,11 +1939,11 @@ phase, "the audit method for this axis should include a second pass of dispatchi
 time focused on classifying the issues and proposing fixes". `design@agent-skills@capabilities-not-structure`
 states the principle the repair applies: a conflict a structure causes is answered by removing
 structure rather than by adding a rule. The nearest rival, one repair per finding at its site, lost
-on the axis's own run on this repository: the repairs of its first two passes turned most findings
+on the axis's first audit on this repository: the repairs of its first two passes turned most findings
 into added rules, and its third pass found about 25 findings in the interactions of those rules, by
 the auditors' returns, which the message of the commit "[audit] Pass 3 of the agentic-workflow axis
 stops the run: the count did not fall, the repairs move to a method by cause" records. The rival of
-the second phase, the session grouping the findings alone, lost on the same run: the session's
+the second phase, the session grouping the findings alone, lost on the same audit: the session's
 sort dropped a finding and left a ruling of the owner off the next pass's kept list.
 
 ### A set of repairs that adds more instructions than it removes goes to the owner first, with its net count, and the word count is recorded beside it `##audit-net-growth`
@@ -1928,7 +1978,7 @@ back to a repair agent of its cause briefed with the script's repair prompt and 
 a repair is checked before it lands.
 
 Each pass's repairs write new text, and the next pass finds defects in it, per
-`design@agent-skills@audit-method`: of the fifth pass's 38 findings, 16 sat on text that the
+`design@agent-skills@convergence-count-scope`: of the fifth pass's 38 findings, 16 sat on text that the
 repairs of the earlier passes and the commits of the method by cause wrote. The nearest rival, those
 defects left for the next pass to find, costs a full pass to surface each. The rival of the session
 reading every proposal's new text through L1 and L3 moves those readings into the session, against
@@ -1971,7 +2021,7 @@ session, and the owner's ruling on every finding.
 
 The direction is the owner's: "I think it's important we ensure it analyzes findings and repairs on
 the same standard as our workflow." The evidence that admits a finding differs between the two: the
-intake has a real session behind each finding, as `design@agent-skills@additions-need-real-use`
+intake has a real session behind each finding, as `design@agent-skills@behaviour-additions-need-real-use`
 asks of an addition, and an audit never has one. The worth of a repair and its shape do not differ,
 since both decide edits to the same text at the same cost. The standard's home is installed text,
 since installed text points to no home of one project, and it is read where the worth is judged: at
@@ -1987,8 +2037,8 @@ meet cites the axis that brings a project's record to them in its Migration entr
 `design@knowledge-architect@changelog-entries`, and `skill@knowledge-architect-setup@moving-the-pin`
 runs it after the pin's commit; `skill@knowledge-architect-setup@existing-documentation` runs the
 design-record axis at the end of the work that moves a project's documents into the homes. Each
-occasion is one whose own work needs the record read under the rules. The rival, a periodic run,
-has no evidence for a period, and `design@agent-skills@additions-need-real-use` asks for one.
+occasion is one whose own work needs the record read under the rules. The rival, a periodic audit,
+has no evidence for a period, and `design@agent-skills@behaviour-additions-need-real-use` asks for one.
 
 ### Each audit axis has an installed agent of its own, which carries the axis's standard `##audit-agent-per-axis`
 
@@ -2077,8 +2127,11 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   with the listing commands of the checker.
 - **Something met outside the task takes the first of four outcomes that applies.** If it bears on
   the current work, present it to the owner at the top of the turn, with a default, and proceed on
-  the default unless the owner answers otherwise. If its
-  fix is checkable from the diff alone, because it changes no behaviour, no decision and no test
+  the default unless the owner answers otherwise. It proceeds as an owner's word whose premise
+  proved false does, per `primer@owner-word-premise`, and as the design skill does for a material
+  finding: an item met that bears on the work is often one of those two, and a stop beside them
+  would give a session two acts for one item, while the owner's answer still overrides the default.
+  If its fix is checkable from the diff alone, because it changes no behaviour, no decision and no test
   outcome, fix it in a commit of its own. If its `Why it matters` and its `What would close it` can
   be written, open an issue. Otherwise name it, with why it is dropped. A turn that met anything
   ends with a section listing every item and its outcome. A one-line mention inside a long report
@@ -2200,7 +2253,7 @@ contradict an installed one, the installed text is wrong for that project, and t
 it. A project that needs to change one instruction has no means yet:
 `issue@agent-skills@patching-an-installed-skill`.
 
-### A project's own files in the installer's directories carry its name as a prefix `##skill-name-prefix`
+### A project's own files in the installer's directories carry its name as a prefix `##project-name-prefix`
 
 A project skill, agent or saved workflow is named `<project>-<activity>`, the directory or file
 name equal to the frontmatter `name`, or to the `name` of a saved workflow's `meta`, so it is told
@@ -2260,7 +2313,7 @@ reason: the staged tree is the one the commit records, and a file left unstaged,
 in part, passes a check of the working tree and fails the commit's own, which the gates meet only
 before the merge.
 
-`design@agent-skills@additions-need-real-use` asks of an addition a behaviour seen in real use, or
+`design@agent-skills@behaviour-additions-need-real-use` asks of an addition a behaviour seen in real use, or
 asked for by the owner with the lack named. The setup recommendation has no named lack of its own,
 so it is an exception to that rule, argued on delivery: without it, no shipped text tells a session to check
 before a commit, so a command that judges the commit's tree is used only where a project's own
@@ -2274,7 +2327,7 @@ The issue-tracking and planning skills name `index --staged` and `check --staged
 part of the working tree. Both commands are the core's, `design@core@staged-tree-source` and
 `design@core@index-staged-write`. The staged tree is the one the commit records, and a change
 staged in part passes a check of the working tree and fails the commit's own.
-`design@agent-skills@additions-need-real-use` asks of an addition a behaviour seen in real use, or
+`design@agent-skills@behaviour-additions-need-real-use` asks of an addition a behaviour seen in real use, or
 asked for by the owner with the lack named. The owner asked for the delivery, "identify shipped
 workflow changes needed to deliver this new feature", and, on the refusal of `--fix` for a partial
 commit, named what a session does instead: "the recommended action would be to run check without
@@ -2323,7 +2376,7 @@ references exists, `issue@core@cross-project-references`.
 
 ### The installed skills do not mention a project whose name is the installer's namespace `##installed-text-omits-the-prefix-collision`
 
-The installed skills name a project's prefix rule, per `design@agent-skills@skill-name-prefix`,
+The installed skills name a project's prefix rule, per `design@agent-skills@project-name-prefix`,
 and say nothing of a project whose name is the installer's namespace. Outside this repository the
 collision is unlikely, and a rule for it in the shipped text would be read by every installing
 project. The owner: "The collision risk outside of this exact project is ridiculously small. This

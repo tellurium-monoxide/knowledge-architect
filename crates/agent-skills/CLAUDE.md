@@ -71,7 +71,7 @@ owner and has no expectation set. This is a restatement; its homes are the entri
    (`design@agent-skills@expectation-set-bounds-scope`).
 2. **Necessity.** A defect provable by reading is repaired on reading, and an instruction about how
    an agent behaves is added only on evidence from real use: read
-   `design@agent-skills@additions-need-real-use` whole.
+   `design@agent-skills@behaviour-additions-need-real-use` whole.
 3. **Kind.** A missing capability is worth text; a conformance rule only where the default is
    systematically wrong; a structure imposed on the work, such as a fixed mapping between a unit of
    the work and a unit of its record, only where the work needs it

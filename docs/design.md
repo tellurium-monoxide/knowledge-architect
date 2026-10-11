@@ -365,7 +365,7 @@ nothing.
 ### This repository's own skills and agents take the prefix klarch- `##klarch-prefix`
 
 This repository installs the workflow it ships, and a project's own skills carry the project's
-name as a prefix, per `design@agent-skills@skill-name-prefix`. Here that name is
+name as a prefix, per `design@agent-skills@project-name-prefix`. Here that name is
 `knowledge-architect`, which is the installer's namespace: a project skill named after it would be
 reported as unshipped by `design@core@owned-namespace-check`, and removed by the install. So this
 repository's own skills and agents take the prefix `klarch-`, the binary's name.
@@ -385,11 +385,16 @@ retrospective's workflow file, per `design@agent-skills@audit-outcomes`. Here th
 repository, so such a finding is edited at its source, under `path@agent-skills@content/`, with the
 outcomes of a finding on the project's own text, and no upstream file is written: the file would
 only carry the findings back to the session that found them. Each repair of such a finding, its
-proposal and its check included, is an edit of the installed text, so it passes the four tests
+proposal and its check included, is an edit of the installed text, so it passes the tests
 that `path@agent-skills@CLAUDE.md` gives every such edit. The installed text holds no branch for
 the project that publishes it, as the owner stated of this repository's use of the workflow for its
 own text: "I don't want to cater too much to this use case in the installed files". So the root
 `CLAUDE.md` states this case, in `instructions@repository-skills`.
+
+For the same reason, the root `CLAUDE.md` gives the auditors of the checker-rules lens, L7, the
+checker's design home, `path@core@docs/design.md`, beside its README. The installed lens names the
+README alone, since a project that installs the workflow holds no design home of the checker. Here
+the checker is built in the same tree, and its design home is where its rules are decided.
 
 ### Each finding of a received workflow file gets an outcome the owner rules, in a committed analysis that leaves when its last outcome is carried out `##committed-findings-analysis`
 

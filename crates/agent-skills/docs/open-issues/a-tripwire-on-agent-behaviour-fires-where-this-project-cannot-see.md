@@ -34,8 +34,13 @@ The instances, in `path@agent-skills@docs/tripwires.md`:
   per `design@agent-skills@premortem-as-watch-points`, is the one channel that carries such a gap
   to this repository.
 
-After those repairs, each tripwire of this Component re-enters at a retrospective or a
-standing-state review of this repository. The repairs moved the gap rather than closing it: the
+After those repairs, the re-entry point each tripwire of this Component names is one of these
+occasions of this repository, read in the `**Re-entry:**` line of each entry of
+`path@agent-skills@docs/tripwires.md`: a retrospective of one of its sessions; the standing-state
+review, or another axis of the review of a change, the decision-record review among them; a step of
+a session's own procedure, such as the session's verification of each pass's report of an audit;
+or, for `tripwire@agent-skills@search-missed-before-the-work`, the design discussion of this entry.
+Several name two of them. The repairs moved the gap rather than closing it: the
 installed retrospective skill opens no tripwires home, and runs only when the owner accepts it, so
 the tripwires whose evidence is in a session's transcript are read by no step of any procedure. The
 standing-state reviewer reads them, and has no transcript. One of them fired on the branch that

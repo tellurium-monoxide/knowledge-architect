@@ -213,8 +213,9 @@ left to be done by hand.
 
 ## Finish `##finish-setup`
 
-- `cargo klarch check --fix` until it passes: it writes the installed files and the generated
-  `index.md` files the check would report, then checks.
+- `cargo klarch check --fix` until it passes: it writes the installed files, then, once the first
+  three phases of the check find nothing, the generated `index.md` files the check would report,
+  then runs every check.
 - Commit the manifest, the documents, the installed files and the root `CLAUDE.md` together,
   ordered on the branch as `primer@branch-commits` says, read whole.
 

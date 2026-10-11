@@ -269,8 +269,7 @@ subsection is omitted.
   put to the owner before its outcome is recorded; a defect a reviewer finds predating the change
   is routed by the primer's table of what is met outside the task, a fix checkable from the diff
   landing in a commit of its own that the review's record names; and the last transcript review
-  waits until every item of the other axes' reports has its outcome, a default listed in a plan
-  document having its outcome in that listing.
+  waits until the owner has answered every ruling the repairs asked for.
 - `agent-skills`, patch: the review of a slice or of a spec's work gives each finding one of the
   review skill's three outcomes, where the planning skill made every unrepaired finding an issue
   entry.
