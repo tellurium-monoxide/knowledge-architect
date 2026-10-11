@@ -104,7 +104,8 @@ It ends the argument, but it does not end your duties around it:
   unacknowledged, and is carried into the plan document that
   `skill@knowledge-architect-planning` writes from the ledger, among its
   defaults awaiting the owner; on the in-change path below, into the
-  commit message that carries the deliberation. The ledger does not outlive
+  commit message that carries the deliberation. For convergence, such a
+  thread counts in its earlier closed state. The ledger does not outlive
   the discussion, and those do. It is not a fired tripwire. This is not
   approval-seeking: you are surfacing information
   that arrived after the closure. If the check surfaces nothing
