@@ -113,6 +113,7 @@ re-pointing a reference in it does not count.
 | what a caller must respect to use a type or a function | that item's doc comment | its contract changes |
 | why a piece of code is shaped the way it is, and where that holds | an inline comment at that code | that code changes |
 | work that is designed and not built: a spec or a milestone | the plans directory, docs/plans/ at the project's root: a spec in docs/plans/specs/, a milestone in docs/plans/milestones/ | the work lands |
+| the evidence of one pass of a project audit, and the owner's ruling on each of its items | one file per pass in docs/audit-reports/ at the project's root, as `skill@knowledge-architect-project-audit@record-of-an-audit` says | the commit that carries out its last outcome, or a later commit of the same branch, deletes it |
 | the order in which the owner wants known work done | docs/roadmap.md at the project's root, optional: each row cites an issue entry or a plan document | a row leaves when its plan document leaves, or when its issue closes with no plan document scheduling the work |
 | how to perform an activity | the owning skill | the procedure changes |
 | **none of these, nor a row of the project's own** | **ask the owner before writing it anywhere** | the table gains the row |

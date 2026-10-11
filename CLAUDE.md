@@ -349,10 +349,11 @@ the work is where the false claims come from.
 Before diagnosing anything as a problem, or reporting one you met while doing something else, find
 out whether it is already recorded, per `primer@intent-and-claims`. The listings, every option they
 take, and why they and not a grep are the check, are
-`skill@knowledge-architect-issue-tracking@outstanding-across-registers`. This repository adds one:
+`skill@knowledge-architect-issue-tracking@outstanding-across-registers`. This repository adds two:
 
 ```sh
 ls docs/retrospective-reports/    # the retrospective analyses whose outcomes are not all carried out
+ls docs/audit-reports/            # the audit report files whose outcomes are not all carried out
 ```
 
 A recorded entry usually says more than a fresh diagnosis will: the measurement already taken, what

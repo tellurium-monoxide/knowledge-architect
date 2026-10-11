@@ -30,8 +30,8 @@ The two texts:
 
 Met at the fifth pass of the agentic-workflow audit, reported by its L2 walk of the audit and
 retrospective activities. Two repairs of that pass filled provable gaps on installed text. On the
-owner's ruling, both were parked as issue entries instead of edits:
-`issue@agent-skills@an-audit-s-upstream-file-keeps-no-pass-s-findings` and
+owner's ruling, both were parked as issue entries instead of edits. One, on an upstream file that
+nothing fed from an earlier pass, closed when each pass came to commit a report file; the other is
 `issue@agent-skills@the-transcript-reviewer-cannot-see-a-plan-document-its-range-deletes`.
 
 ### Why it matters

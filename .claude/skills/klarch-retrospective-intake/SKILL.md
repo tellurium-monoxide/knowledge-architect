@@ -91,7 +91,9 @@ Each item below is answered with its evidence. The order is a suggestion; the co
 - **c. Whether it is already recorded.** An issue or a tripwire, from the search of `skill@klarch-retrospective-intake@ground-before-judging`. A
   rejected alternative: read the rejected alternatives of the Component that owns the blamed text.
   A proposed fix that already lost, by the record test of
-  `skill@knowledge-architect-design@threads-and-states`, is not proposed again.
+  `skill@knowledge-architect-design@threads-and-states`, is not proposed again. The fix item f
+  settles on is read against the record as the record check of
+  `skill@knowledge-architect-project-audit@repair-standard` says.
 - **d. Its kind.**
   - **a defect of the text**: unclear (two readings), missing (the session needed an instruction
     that does not exist), or wrong (following it produced a defect or a correction);
@@ -112,7 +114,7 @@ Each item below is answered with its evidence. The order is a suggestion; the co
   the fix: agent-skills for the installed text, core for the checker, the root or the agent-config
   location for this repository's own configuration. Whether the fix reverses a recorded decision,
   per `skill@knowledge-architect-decision-recording@reversal-check`: if it does, the fix is a reversal and goes
-  through that skill.
+  through that skill. The record check of item c names the heads it would reverse.
 - **f. A better fix.** Name the nearest rival to the fix the report proposes, and the fact that
   decides between them. Rivals worth looking for:
   - the same defect fixed at another site: the checker rather than the text, or the reverse;
@@ -120,7 +122,10 @@ Each item below is answered with its evidence. The order is a suggestion; the co
   - a fix where the instruction is delivered, rather than more instruction;
   - no change.
 
-  A fix to an installed skill passes the four tests of the agent-skills `CLAUDE.md`, "Editing an
+  The fix is shaped as `skill@knowledge-architect-project-audit@repair-standard` says, the audit's
+  standard for the same text: at the cause, removing before adding, its instructions counted, its
+  nearest rival named, and the net growth of the fixes stated to the owner first. A fix to an
+  installed skill passes the four tests of the agent-skills `CLAUDE.md`, "Editing an
   installed skill or agent", read whole: scope, necessity, kind, built intent.
 - **g. Its route.** What handling it needs, which says what "now" would mean:
   - a text edit whose design is settled: under `skill@knowledge-architect-agent-configuration` for

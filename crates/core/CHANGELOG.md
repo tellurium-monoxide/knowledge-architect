@@ -206,6 +206,16 @@ subsection is omitted.
   second record keeps its number; the primer defines a heading as markdown's ATX heading; a subagent
   is told to read from disk any file that changed after the session started, an install included;
   several restatements in the installed skills and agents become pointers to their homes.
+- `agent-skills`, patch: a project audit writes each pass's evidence and the owner's rulings to a
+  report file in docs/audit-reports/ at the project's root, a new row of the primer's table,
+  committed with its `Outcome` lines and deleted once its outcomes are carried out; the commit
+  messages keep the counts. An audit's convergence reads the violations left on text the previous
+  pass also read, those on text written since counted apart. The repair standard, the repair by
+  cause and a check of each repair against the design heads, the goals and the rejected
+  alternatives, has a section of its own,
+  `skill@knowledge-architect-project-audit@repair-standard`. The agentic-workflow axis's run checks
+  each repair proposal through the workflow auditor before its cross-check, and its verifiers read
+  the tripwires.
 
 ## 0.5.0
 
