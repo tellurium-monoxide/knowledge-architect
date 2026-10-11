@@ -1086,7 +1086,9 @@ before any of it is built. The move of an adopting project's existing documents 
 change, and it is planned work under the planning skill, per
 `design@agent-skills@adopting-existing-docs`. The cost is a spec, its plan reviews, its harvest and
 its deletion for every requested change that is not bounded, including one the converging session
-builds in one pull request. Widening the existing short path, rather than adding a path for one
+builds in one pull request, which strains the "fewer review rounds" of
+`goal@knowledge-architect@agents-get-a-complete-workflow`; the owner accepted that cost on the
+two readings put side by side. Widening the existing short path, rather than adding a path for one
 decision met during a task, is the owner's proposal, on the owner's argument: "The discussion
 starts with a single decision, but should not be bounded in threads or rounds IMO, because this depends only on
 what the grounding and investigation and experimentation brings to the table, and we cannot know
@@ -1616,7 +1618,8 @@ language and layout. A second provider stays a design target, per
 rival of a skill written for the Workflow tool alone fails in every other harness, for a gain the
 dispatch by hand already gives. The owner's weighing of the dependency: "After all, I use only
 Claude Code personally... I'm not really expecting anyone to start using this, outside of myself in
-more projects than thaum."
+more projects than thaum." The cost of shipping it: the saved workflow is listed in every session
+of every project that installs the workflow, one that never audits included.
 
 ### Each audit pass commits a report file holding its evidence and the owner's rulings, on every axis, and the file leaves once its outcomes are carried out `##committed-audit-report`
 
@@ -1841,7 +1844,9 @@ A confirmed finding of two readings is repaired even where both acts it allows a
 `design@agent-skills@audit-outcomes` says. The rival that left it to judgement where no text rules
 either act out would have left 6 of the 14 findings of two readings the session kept at the fifth
 pass, by a reading of each against the corpus, the design homes and the goals at the commit that
-pass audited.
+pass audited. The findings of a reading are worth their repairs: of the first pass, the owner
+observed "In the previous round, there were several of the findings that were likely to be the
+source of misbehavior I did observe."
 
 ### One installed agent carries the agentic-workflow axis's standard, its brief choosing its lens, or its role as a verifier or a checker `##workflow-auditor-agent`
 
@@ -1881,8 +1886,8 @@ and the record of the audit's earlier passes, their commit messages and their re
 can make the refutations that rest on the audit's history.
 
 One verifier per auditor reads the corpus once per auditor and sees that auditor's drafts together,
-so a draft found wrong sends the same auditor's other drafts of its class back to a reading within
-one agent. The nearest rival, one verifier per draft, reads the whole corpus once per draft: at the
+so the drafts that share a wrong draft's class are read by the same agent, against the same
+corpus, in one verify step. The nearest rival, one verifier per draft, reads the whole corpus once per draft: at the
 pass that measured it, 63 drafts against 16 auditors. Nothing a verifier passes is applied before
 the session's verification, per `design@agent-skills@one-run-pass`.
 

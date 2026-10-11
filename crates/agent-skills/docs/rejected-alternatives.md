@@ -222,7 +222,7 @@ tags and the draft's shape, which is about half of any one of them, and the owne
 "publishing too many agents and polluting the directory". The concern it answers, one agent holding
 every lens drafting mostly under lenses other than its brief's, was counted over the drafts of the
 first agentic-workflow audit of this repository: more than a third of one agent's drafts named
-another lens at passes 1, 2 and 6. After the first, the owner kept one agent: "multiple agents
+another lens at passes 1 to 3 and 6, passes 4 and 5 not counted. After the first, the owner kept one agent: "multiple agents
 reporting the same findings is a stronger proof of a problem." That count measures what the
 workflow auditor is told to do, since a finding of another lens met on the way is drafted under
 that lens, so no tripwire watches it.
