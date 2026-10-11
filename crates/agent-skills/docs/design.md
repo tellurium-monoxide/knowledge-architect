@@ -360,15 +360,25 @@ Installed texts alone would leave a skill free to disagree with what the checker
 adopting project meets as a check that fails on a document the skill told it to write. A reason that passes no test goes in a
 `%%` comment at the instruction it explains, per `design@agent-skills@shipped-text-line-comments`.
 
-### An instruction is added to an installed skill or agent only on evidence from real use `##additions-need-real-use`
+### An instruction about how an agent behaves is added to an installed skill or agent only on evidence from real use `##additions-need-real-use`
 
-Real use originates an addition: a behaviour seen in a real session, produced unprompted or asked
-for by the owner mid-session, with the owner naming what the session would have lacked without it,
-and a one-sentence statement of the mechanism that produced the need. An unprompted behaviour shows
-the gap, not the wording that fills it. A review finding originates an edit only where its defect
-is provable by reading: a contradiction, a broken trigger, a factual error. A finding that predicts
-a behaviour is parked as an issue, which states what a real session would have to show. Published
-literature and synthetic scenarios originate no edit, and no run is built to observe how an agent
+A defect provable by reading is repaired on reading, and an instruction about how an agent behaves
+is added only on evidence from real use. Real use originates such an addition: a behaviour seen in
+a real session, produced unprompted or asked for by the owner mid-session, with the owner naming
+what the session would have lacked without it, and a one-sentence statement of the mechanism that
+produced the need. An unprompted behaviour shows the gap, not the wording that fills it. A finding
+of a review or of an audit originates an edit only where its defect is provable by reading: a
+contradiction, a broken trigger, a factual error, an instruction whose words allow two acts, a
+provable gap, or divergent verdicts that a review standard and an audit standard give over one text
+of the project. A provable gap predicts no behaviour: it is an input that an act needs, that no text
+supplies and that judgement cannot derive, since it is a fact fixed elsewhere, such as a format the
+checker enforces, a name or a path. So a reading admits its fill, and the fill, which adds an
+instruction, goes to the owner, per `design@agent-skills@audit-outcomes`. The rule is scoped to an
+addition about how an agent behaves because its argument is that a predicted behaviour is
+unreliable evidence, and a fact that no text gives is no prediction. A finding that predicts a
+behaviour is parked as an issue, which states what a real session would have to show. Published
+literature and synthetic scenarios originate no edit, a written example of divergent verdicts
+among them, and no run is built to observe how an agent
 follows the workflow's instructions, per `design@agent-skills@synthetic-evidence-not-built`. The rule derives from
 `goal@knowledge-architect@the-workflow-improves-through-real-use`, which is stated for the whole
 workflow, so it covers every installed skill and every installed agent: a reviewer agent grows
@@ -491,8 +501,9 @@ distinct prefix is listed here, and an edit that adds one checks it against the 
 | `T` | tripwires put to the owner | a plan document's Premortem section |
 | `AC` | acceptance criteria put to the owner | a plan document's Premortem section and its defaults |
 | `D` | a plan document's defaults awaiting the owner | its "Defaults awaiting the owner" |
-| `W`, `C`, `P` | a retrospective's findings | the retrospective's files |
-| `F` | a project audit's findings put to the owner | the audit's commit messages |
+| `W` | the findings on the installed workflow: a retrospective's, and a project audit's sent upstream | the workflow's file of the retrospective, whose shape an audit's upstream file takes |
+| `C`, `P` | a retrospective's other findings | the retrospective's files |
+| `F` | a project audit's findings put to the owner | the audit report file of the pass |
 | `Q` | entry test 4's questions, and every label that stays in the conversation | none |
 
 The owner asked for it, from a premortem message that mixed causes, tripwires and findings: "it is
@@ -506,7 +517,11 @@ letters, which will necessarily end up needing more letters than available". The
 scope follows the record that carries it. The numbering is stated once, in `primer@labelled-items`,
 since labels are given in sessions of every activity and a range stated per skill drifted: three
 skills gave `T`, `AC` and `F` three different ranges. Each installed skill that asks for such
-rulings restates its own prefix where it asks.
+rulings restates its own prefix where it asks. A project audit's findings sent upstream reuse `W`:
+its upstream file takes the shape of the retrospective's workflow file and reaches the same
+receiver, which cites each finding by its id and its file's stem, so one prefix names one kind of
+finding in one kind of file. An `F` item is numbered within the audit report file of its pass,
+which holds the item and the owner's ruling on it, per `design@agent-skills@committed-audit-report`.
 
 ### A design home holds built intent, and a plan document holds unbuilt intent `##design-home-is-built-intent`
 
@@ -1431,47 +1446,218 @@ the instruction could not be obeyed together with the task.
 
 ### Reading a whole project on one aspect is an activity with an installed skill of its own, and a review stays the reading of a diff `##audit-is-an-activity`
 
-A project audit reads every entry of a corpus on one axis and brings what fails into line, under
-`skill@knowledge-architect-project-audit`, which holds the method, the outcomes and one section per
-axis. Its artifact is a repaired record across the project, where a review's is a verdict on one
-branch, so the two hold different standards: what a diff owes, and what the whole record owes. The
-nearest rival, a whole-project mode of the review skill, would hold both standards in one text. A
-skill per axis would restate the method in each, against
-`goal@agent-skills@one-skill-per-activity` while the method is the same for every axis. Every review
-reads a diff, so without an audit a drift between two heads no branch touches is read by no step
-of the workflow, against `goal@knowledge-architect@documentation-stays-consistent`.
+A project audit reads every entry or text of a corpus on one axis and brings what fails into line,
+under `skill@knowledge-architect-project-audit`, which holds the method, the outcomes, the standard
+a repair of agent-facing text is judged by, and one section per axis. Its artifact is a repaired
+record across the project, where a review's is a verdict on one branch, so the two hold different
+standards: what a diff owes, and what the whole record owes. The nearest rival, a whole-project
+mode of the review skill, would hold both standards in one text. A skill per axis would restate the
+method in each, against `goal@agent-skills@one-skill-per-activity`, while the method is generic
+and each axis gives only its corpus, its dispatch and its outcomes, per
+`design@agent-skills@audit-method`. Every review reads a diff, so without an audit a drift between
+two heads no branch touches is read by no step of the workflow, against
+`goal@knowledge-architect@documentation-stays-consistent`.
 
-### An audit is read in bounded groups by agents calibrated on a shared sample, and nothing they propose is applied before the session's reading and a fresh re-check `##audit-method`
+### An audit's method holds for every axis, each giving its own dispatch, and nothing its agents propose is applied before the session's reading, fresh agents re-checking each pass while the violations left on old text fall `##audit-method`
 
-The method of `skill@knowledge-architect-project-audit@audit-method`: groups of at most 60 entries
-of one Component, each read by one agent that writes one draft per entry to a scratch directory of
-its own; a shared sample judged by every agent, where a difference that one reading of the rule's
-text settles is settled by the session before sorting, and a difference the rule's text admits both
-ways goes on the owner list; every draft that proposes a change read by the session against its
-entry and its history; one list for the owner per pass, labelled `F<n>`; the edits applied and
-their diff read whole, each head a split, a rename or a merge creates judged alone against every
-rule; and a re-check by fresh agents over the same groups, whose drafts start the next pass. Passes
-repeat while the violations left fall from one pass to the next, until the owner judges what is
-left small enough. The stop rule is the owner's, given in place of a fixed threshold: "As long as we
-observe a "convergence", and the amount of leftover violations is small enough, I think that is
-good. If you ask an LLM to find a flaw or defect in something, it will nearly always find one IMO.
-Especialy if that something is prose and not code." A group holds one Component's entries, since a
-rejected alternative is judged against the head it lost to. The bound of 60 is the one
-`design@agent-skills@standing-entry-search-groups` argues for a standing entry; an auditor reads
-more per head, its tripwires, its issues and its history, and no measurement shows the bound right
-for that load, though the three passes of the first run ran with it. It rests on subagents alone,
-so it runs under any harness, per `goal@agent-skills@installed-text-works-anywhere`, and its bounded
-groups keep each agent's reading whole on a large project. Nothing an agent proposes is applied
-before a reading confirms it, per `design@agent-skills@synthetic-evidence-not-built`.
+The method of `skill@knowledge-architect-project-audit@audit-method` holds for every axis. An
+axis's section gives what varies: its corpus and what is read beside it, its dispatch, its drafts,
+its outcomes, and how its findings are classified as on old or new text. An axis with a saved
+workflow runs each pass as one run of it, per `design@agent-skills@one-run-pass`; an axis with none
+runs the method's points by hand. For both, each agent writes its drafts in a scratch directory of
+its own and edits nothing else, and nothing an agent proposes is applied before a reading by the
+session confirms it, per `design@agent-skills@synthetic-evidence-not-built`. A quotation of the
+owner is confirmed against the question it answered, as well as against its words. The items that
+need the owner's word go on one list per pass, labelled `F<n>`, in the pass's report file, per
+`design@agent-skills@committed-audit-report`. The edits are applied and their diff read whole.
+Fresh agents of the axis, dispatched as its first dispatch was and given the kept list, then
+re-check the result, and their findings start the next pass.
 
-The rival, a lighter method with no calibration and no re-check, lost on real runs, whose commits
+Passes repeat while the violations left on old text fall from one pass to the next, until the owner
+judges what is left small enough. A violation left is a finding of a re-check that a reading
+confirms, that is on no kept list and that no issue entry records. It is on old text when the
+previous pass also read its words and no commit after the one that pass audited changed them; a
+move, a reflow or a rename leaves text old. A violation left on new text takes its outcome like any
+other, and decides nothing about convergence. A pass where the count on old text does not fall goes
+to the owner as a question, with the counts, and starts no pass on its own. The stop rule is the
+owner's, given in place of a fixed threshold: "As long as we observe a "convergence", and the
+amount of leftover violations is small enough, I think that is good. If you ask an LLM to find a
+flaw or defect in something, it will nearly always find one IMO. Especialy if that something is
+prose and not code."
+
+The count reads old text because each pass's repairs write new text, and the agents find defects in
+new text at least as readily as in old. On the fifth pass of the agentic-workflow axis on this
+repository, 30 of its 38 findings sat on words the branch that built the axis had written, 14 of
+them by the change that made a pass one run, classified by `git blame -w -C` on each defect's line
+at the commit audited, with the diffs read by hand where blame and the words disagreed. The plan
+document of that work holds the classification, and
+`git log --diff-filter=D --name-only -- docs/plans/` finds it. A count over the whole corpus then
+compares two corpora, and measures how much text the last pass wrote more than how much defect is
+left. Its rival, the plain count with its fall judged over its context, was argued by hand at each
+firing, with the same explanation each time. Dropping the count for the owner's judgement alone
+drops the convergence signal this rule reads.
+
+The rival, a lighter method with no re-check, lost on real runs, whose commits
 `git log --grep='design-record axis'` finds: in the first run of the design-record axis on this
-repository, the re-check of each pass found what that pass missed, and two agents read one shared
-entry two ways in two of the samples. The method guards against two failure modes that run showed:
-a head created by a split that fails a rule read alone, and a quotation of the owner verbatim but
-taken from the answer to another question.
+repository, the re-check of each pass found violations the pass had missed or made. The session's
+reading guards against a quotation of the owner verbatim but taken from the answer to another
+question, which that run showed. The rival that keeps the design-record axis's groups and
+calibration sample in the method, a later axis adjusting them as an exception, would state a rule
+that one of two axes breaks whole: the agentic-workflow axis shares no corpus out, per
+`design@agent-skills@workflow-axis-lenses`. The groups and the sample are the design-record axis's
+dispatch, per `design@agent-skills@design-record-axis`.
 
-### The design-record axis re-applies the rules on design heads and on rejected alternatives to every entry, reading the tripwires and issues that bear on each head `##design-record-axis`
+### A pass of an axis with a saved workflow is one run of it, from its preflight to its report, and the session reads the report after the run, never between its steps `##one-run-pass`
+
+One run dispatches every agent of the pass and delivers one report, and the session reads nothing
+between its steps. For the agentic-workflow axis the steps are the preflight, the auditors' drafts,
+the verify step of `design@agent-skills@verifier-in-the-run`, the dedup into the confirmed
+findings, the cluster and the merge into causes, the repair proposals and their checks, per
+`design@agent-skills@root-cause-repair`, the cross-check, and the report; the saved workflow is
+their one home, per `design@agent-skills@audit-axis-runs-a-workflow`. Every step writes its files
+in the run's scratch directory, so the session can open any draft, grouping or proposal the report
+cites. The preflight sets the run up inside it, since the script names the auditors: a worktree of
+its own for each, as `skill@knowledge-architect-review@review-invariants` asks, and the listings
+the agents read. The report holds what the session needs to discuss each cause with the owner and
+act: the refuted drafts with their reasons, each cause with its findings, their quoted evidence and
+verdicts, its repair as edits before and after, its check and a proposed outcome, the paragraphs
+several repairs edit, a draft of the owner list, and what the run did not decide.
+
+After the run the session verifies the report. It reads the report whole, every repair proposal in
+full, since the owner list goes out under its responsibility, every finding the report marks as
+plausible or as bearing on a ruling of the owner or on a tripwire, against its draft, and a sample
+of the refuted drafts. The sample is the session's to choose, on the owner's word: "Sample left to
+judgement". The owner list, the owner's word and the application follow. The run ends at its
+report, and the session applies the repairs the owner approves.
+
+The shape is the owner's: "the main power of that tool is to organize multiple complex steps that
+produce a complete result (such as a report) which is as ready as possible for the main session to
+dicuss it with the owner, then act on it, while minimizing the burden placed on the main session",
+and "verification by the session is indeed necessary, but not in the middle of the workflow steps".
+The nearest rival, the steps run as separate runs with a reading by the session between each, lost
+on the pass of the agentic-workflow axis that ran so: the session's sort refuted 3 drafts, each a
+refutation a verifier given the audit's earlier commit messages can make, its reading of 23 repair
+proposals sent none back, and the readings cost the session most of its context. The rival that
+has the session read every draft again after the run lost on the same measurement, since the
+verifier makes the refutations that sort made. The plan document of that work holds the
+measurement, and `git log --diff-filter=D --name-only -- docs/plans/` finds it. The rival that
+extends the run to a second saved workflow applying the approved repairs lost on the merges the
+application needs: at two passes, the agents that applied the repairs merged edits that several
+repairs made to one paragraph, against a tree that may have moved since the run.
+
+### An audit axis's steps live in a saved workflow of its own, their one home for any harness, and its section of the skill keeps what the session needs to verify the run's report `##audit-axis-runs-a-workflow`
+
+An axis's saved workflow holds its dispatch, the prompts of its steps and their order, and covers
+that axis alone. It ships in the installer's namespace, and the harness runs it by the name its
+`meta` declares, per `design@agent-skills@content-mirrors-the-install-layout`. The axis's section
+of the audit skill names the workflow and the `args` it takes, and keeps what the session needs to
+verify a report and write the owner list: the axis's corpus, its rules and its outcome table. A
+session whose harness does not list the workflow dispatches its steps by hand, in the script's
+order, with the script's prompts, read from the script. The agentic-workflow axis has one,
+`knowledge-architect-agentic-workflow-audit`. The design-record axis has none yet, so it runs the
+method's points by hand, and its section keeps its dispatch until its workflow is designed, per
+`issue@agent-skills@the-design-record-axis-has-no-saved-workflow`.
+
+The shape is the owner's: "ultimately, I think it should become the generic shape of every audit
+axis, with every audit axis having its own dynamic workflow that produces a ready to discuss and act
+report. That would also make the project audit skill much more concise." The delivery as a file of
+the harness's directory is the owner's too: "I think it would be best to deliver the workflow as a
+file directly in .claude/workflows/ (it would need to use the knowledge-architect prefix too, for
+namespacing)."
+
+The argument turns on the behaviour of Claude Code's Workflow tool, read in its description and its
+authoring reference and measured by probes. The tool runs only on an explicit opt-in, such as the
+owner invoking a skill whose instructions tell the session to call it, or asking for a saved
+workflow by name. A script reads no file and takes its inputs in `args`. A saved workflow runs by
+the name its `meta` declares, only from a file directly under the workflows directory, and the
+harness lists it with the skills. So the order of the steps and every agent's inputs are fixed by
+the script and versioned with it, and the session copies nothing to run it; a script in a fenced
+block, passed to the tool inline, would sit in a skill as text no session needs to read. The rival
+that keeps the steps in prose beside the script, or in one markdown file per axis for a session
+without the tool, keeps two homes for one moment, and one drifted: a repair prompt of the script
+narrowed what the skill's prose said, "the homes merged into one", to "the section of the skill
+that owns the moment". That the checker reads markdown and no JavaScript bears on references, and
+the script cites none. The rival of one workflow auditing every axis at once lost on the owner's
+words: "it audits all axes of the project at once and produces a single report, which is too large
+of a scope".
+
+No goal binds the audit to a harness: `grep -il 'harness\|provider\|claude code'` over every goals
+home returns nothing, and `goal@agent-skills@installed-text-works-anywhere` names a project's
+language and layout. A second provider stays a design target, per
+`issue@core@configuration-for-several-agent-providers`, and the dispatch by hand keeps it open. The
+rival of a skill written for the Workflow tool alone fails in every other harness, for a gain the
+dispatch by hand already gives. The owner's weighing of the dependency: "After all, I use only
+Claude Code personally... I'm not really expecting anyone to start using this, outside of myself in
+more projects than thaum."
+
+### Each audit pass commits a report file holding its evidence and the owner's rulings, on every axis, and the file leaves once its outcomes are carried out `##committed-audit-report`
+
+The file is `docs/audit-reports/<YYYY-MM-DD>-<axis>-pass-<n>.md` at the project's root, the axis
+named by its section's slug, per `skill@knowledge-architect-project-audit@record-of-an-audit`. The
+session writes it after its reading of the pass: for an axis with a saved workflow, the run's
+report as its verification left it; for an axis with none, the drafts it read at the sort whose
+proposed outcome is not "nothing". The owner list closes it, each item ending with a `Default` line
+and an `Outcome` line, which the owner writes, or the session writes with the owner's words
+verbatim. The file is committed with every `Outcome` line before any edit of the pass is applied.
+The commit that carries out its last outcome, or a later commit of the same branch, deletes it, and
+its message names it by its path. Each pass's commit message keeps the counts and one line per
+outcome. The primer's knowledge table carries its row for every project, per
+`design@agent-skills@knowledge-table-home`. A review of the audit's branch is told each report file
+the branch added and deleted, with the commit that holds it, since a reviewer of the branch's tip
+does not see a file the branch deleted.
+
+The proposal is the owner's: "I think it might be a good thing for the audit report to be kept in
+history, committed somewhere (maybe docs/audit-reports) and deleted once acted upon, just like retro
+intake reports.", and so is its scope, every axis: "every axis for the report". A working file of the session is lost with its scratch directory, and the evidence of a pass, its
+drafts and their quoted texts, was needed after the pass, to classify its findings again as on old
+or new text. The nearest rival, the commit messages alone, keeps the outcomes and loses the
+evidence, and a commit that records rulings and changes no file is dropped by GitHub's rebase merge, as
+`design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file` measured. History grows
+by the report's size at each pass, and the tree by nothing once the file leaves.
+
+### A finding of an audit is applied in its branch, put to the owner, sent upstream or opened as an issue, and none is left to judgement `##audit-outcomes`
+
+Every finding takes exactly one outcome. An edit that changes no ruling of the owner is applied in
+the audit's branch: a rewording, a tense, a reference, a split that moves no word of the owner, a
+rejected alternative repaired in place, a factual error, a pointer whose target exists under
+another name, a drifted restatement brought back to its home, an instruction read two ways reworded
+to the reading a design head or another instruction states. An approval cited as a head's ground is
+removed in the branch where the head stands on its argument, since its repair removes a false
+ground and widens nothing. A widening of what the owner's words approved, the removal of an entry,
+a ground that is the owner's words, which side of a contradiction wins, a rule that reads two ways
+where nothing recorded states the reading meant, a provable gap, a head in the wrong Component and
+a conflict with a goal go to the owner, per `goal@knowledge-architect@the-owner-decides`; any
+finding no case names goes there too. A finding outside the axis, a predicted gap, per
+`design@agent-skills@additions-need-real-use`, work too large for the branch, and a finding the
+owner defers each become an issue. A finding that an issue entry already records, or that is on the
+kept list, takes no action.
+
+A finding on the installed text is never edited in a project that installs it, per
+`skill@knowledge-architect-agent-configuration@installed-files-never-edited`. It is sent upstream,
+in one file per audit, written when the audit stops from the report files of its passes, in the
+shape of the file in which a retrospective sends the workflow's findings, so it reaches the project
+that publishes the workflow by the same route, per `design@agent-skills@retrospective-destination`.
+A finding of the interaction of the installed text and the project's own is split into its side on
+each text, each side with one outcome, so a finding still takes exactly one. The installed text
+holds no branch for the project that publishes the workflow, which edits the installed text at its
+source by its own instructions.
+
+No outcome leaves a confirmed finding to judgement.
+`goal@knowledge-architect@agents-get-a-complete-workflow` asks that "Each instruction says what it
+asks plainly enough to follow without guessing what it means", so an instruction that a reading
+confirms is read two ways is repaired, even where every act it allows is acceptable. What no
+instruction covers is left to judgement on purpose, and is no finding. The rival outcome, a finding
+of two readings left to judgement where no text rules either act out, leaves such an instruction
+standing against that goal. Its cost stands: each repair writes new text, which
+`design@agent-skills@audit-method` counts apart and `design@agent-skills@repair-proposals-audited`
+reads before the repair lands.
+
+Most findings of the design-record axis are text edits, so they are applied at once, as the owner
+stated: "For the axis we are discussing, I think the goal is usually immediate application. I don't
+think there is much reason to delay, since those are mostly text edits, unless some design entries
+have major, issues that bear on project goals for example."
+
+### The design-record axis re-applies the rules on design heads and on rejected alternatives to every entry, in bounded groups calibrated on a shared sample, reading the tripwires and issues that bear on each head `##design-record-axis`
 
 Its corpus is every design head and every rejected alternative of every Component, and its rules
 are `primer@design-heads` and `skill@knowledge-architect-decision-recording@losing-alternatives`.
@@ -1486,20 +1672,313 @@ owner's word: "It does not read the same thing at all." The truth of a head abou
 another axis too, since it reads the code rather than the decision record. A head the axis meets
 false of the code gets an issue. The axis is carried by `agent@knowledge-architect-design-record-auditor`.
 
-### A finding of an audit is applied in its branch, put to the owner, or opened as an issue `##audit-outcomes`
+Its dispatch, which `skill@knowledge-architect-project-audit@design-record-axis` gives: the
+entries of each Component, in the order the auditor's description gives, cut into
+ceil(count / 60) groups of consecutive entries whose sizes differ by at most one, one agent per
+group writing one draft per entry; a shared sample of about five entries from different Components
+added to every group, whose verdicts are compared before any draft is sorted, a difference that one
+reading of the rule's text settles being settled by the session, and one the text admits both ways
+going on the owner list; at the sort, a reading of at least one draft per group that finds its
+entry conforming;
+a split, a merge or a move drafted first, and each head it creates judged alone against every rule;
+and a re-check over the same groups, where the session classifies each finding at its sort, an
+entry being new text when a commit after the one the previous pass audited changed its words. The
+axis has no saved workflow yet, so the session runs this dispatch by hand, per
+`design@agent-skills@audit-axis-runs-a-workflow`.
 
-An edit that changes no ruling of the owner is applied in the audit's branch: a rewording, a tense,
-a reference, a split that moves no word of the owner, a rejected alternative repaired in place. An
-approval cited as a head's ground is removed in the branch where the head stands on its argument,
-since its repair removes a false ground and widens nothing. A widening of what the owner's words
-approved, the removal of an entry, a ground that is the owner's words, a rule that reads two ways, a
-head in the wrong Component and a conflict with a goal go to the owner, per
-`goal@knowledge-architect@the-owner-decides`; any finding no case names goes there too. A finding
-outside the axis, work too large for the branch, or a finding the owner defers becomes an issue.
-Most findings of the design-record axis are text edits, so they are applied at once, as the owner
-stated: "For the axis we are discussing, I think the goal is usually immediate application. I don't
-think there is much reason to delay, since those are mostly text edits, unless some design entries
-have major, issues that bear on project goals for example."
+A group holds one Component's entries, since a rejected alternative is judged against the head it
+lost to. The bound of 60 is the one `design@agent-skills@standing-entry-search-groups` argues for a
+standing entry; an auditor reads more per head, its tripwires, its issues and its history, and no
+measurement shows the bound right for that load, though the three passes of the axis's first run
+on this repository ran with it. Bounded groups keep each agent's reading whole on a large project.
+The sample exists because agents dispatched together do not read a rule alike: in that first run,
+two agents read one shared sample entry two ways in two of the samples, and a method that trusted
+one reading per entry would have left both. A head created by a split failed a rule read alone in
+that run too, so each created head is judged alone. The run's commits, found with
+`git log --grep='design-record axis'`, carry the counts.
+
+### The agentic-workflow axis reads every text the harness delivers to a session as an instruction, and neither the scoped CLAUDE.md files nor the registers are in its corpus `##workflow-axis-corpus`
+
+The corpus is the project's root `CLAUDE.md` and the primer it imports, and every other text the
+harness delivers to a session as an instruction from the project's agent configuration directory,
+installed or the project's own. `agent@knowledge-architect-workflow-auditor@the-corpus` defines it,
+and the axis's section and the saved workflow point there. The definition names no provider's
+directory, so it holds for a second harness, per
+`issue@core@configuration-for-several-agent-providers`. The registers are records, not
+instructions: an auditor reads the issues listing so that a finding already recorded is marked with
+its reference rather than reported again. An auditor may run read-only commands to check what the
+corpus claims about the checker or the harness.
+
+The corpus is the owner's: "When I say "agentic workflow", what I mean here is root CLAUDE.md + the
+content of .claude/". So is the exclusion of the scoped `CLAUDE.md` files next to the code:
+"Scoped CLAUDE.md files are out of the agentic workflow. What they contain is not instructions to
+follow, it is more like developper documentation." `issue@core@a-home-for-developer-contracts-outside-agent-configuration`
+points the same way. The cost is that the one scoped restatement of workflow directives, the four
+edit tests of `path@agent-skills@CLAUDE.md`, is read against its homes by no audit. Every auditor
+reads the whole corpus, per `design@agent-skills@workflow-axis-lenses`, which rests on one agent
+being able to read it whole: `git ls-files CLAUDE.md .claude | grep -v open-issues | xargs wc -w`
+measures it, and an auditor's return that says it did not read every file whole reopens how the
+corpus is shared out.
+
+### Every auditor of the agentic-workflow axis reads the whole corpus through one lens, each lens dispatched at least once, with no calibration sample `##workflow-axis-lenses`
+
+A lens is one task: what an auditor looks for. The lenses built are L1 contradiction, L2 activity
+walk, L3 two readings, L4 provable gap, L5 restatement, L6 local against installed, L7 checker rules
+and L8 verdict alignment, and `agent@knowledge-architect-workflow-auditor@the-lenses` is the one
+home of what each looks for. Each lens is dispatched at least once, and the count per lens is the
+session's, passed to the run as `counts`. The saved workflow's lens table holds each lens's default
+count and L2's groups of activities, so the session writes no entry per agent. An L2 walker takes
+one group of activities, and two walkers are duplicates only when they share one. A finding two
+agents report is merged. There is no calibration sample: the agents give no verdict per entry, the
+duplicates of a lens add coverage, a verifier and the session read every finding, and the re-check
+reads again.
+
+The shape is the owner's: "the agentic workflow, which has to function as a whole and where each
+file cannot be considered independtly, and one of the main goals would be to find contradictions
+across different files", and "it would be more interesting to send subagents with varied goals and
+tasks, but each given the full content of the agentic workflow", duplicates included: "If there is
+room, the duplication can help finding more issues." The nearest rival, the corpus shared out among
+agents of one task as the design-record axis shares its own, loses on that argument: a
+contradiction across two files sent to different agents is found by neither. Cutting a lens's count
+or narrowing its scope lost on the fifth pass of the axis on this repository: the verifiers and the
+session confirmed 37 of its 38 findings, each lens with more than one agent produced findings no
+other agent of that lens reported, and the 15 findings of two readings, L3's class, were all
+confirmed, 9 of them on text written for the axis itself. The plan document of that work holds the
+measurement, and `git log --diff-filter=D --name-only -- docs/plans/` finds it. The count per lens
+rather than a total budget is the owner's: "it would probably be better to pass a list of count per
+lens, rather than a total budget (which needs to be dispatched by the script rather than by the
+judgement of the session)". The table lives in the script, since the agents' entries written by
+hand were a run's largest input and the source of its slips, which the owner judged "indeed quite
+error prone". A fixed count would be a structure another instruction needs to vary, against
+`goal@agent-skills@installed-text-leaves-room-to-judge`.
+
+Two lenses read beside the corpus. L7 starts from the checker's user documentation, its README for
+the version the project uses and the help of each command, and reports a rule the corpus states
+wrongly, and a rule on what an agent writes that no installed text states, when its finding message
+does not name its repair. It judges the installed text alone, since a project text restating the
+checker's rules would hide a gap the installed text leaves every adopting project. The owner raised
+it: "Agents cannot work efficiently without knowing what the checker refuses and allows to write."
+Its rival, the README given to L4, loses: L4 starts from a requirement the corpus states, and a rule
+no text mentions is invisible from there. A rule whose message names its repair costs one check and
+one repair when it is broken, while a rule that shapes writing from the start, such as the
+reference grammar, must be known before writing. L8 reads each pair of a review standard and an
+audit standard that judge one subject, side by side, for a text of the project that one reports as
+a finding and the other must not, the class of divergent verdicts. The owner proposed it: "it is
+quite important that the reviews and the audit axis are aligned together in what they consider
+findings." Two standards that no single session obeys together are no contradiction, so no other
+lens drafts such a pair, and none of the drafts of the axis's first four passes compared what two
+standards count as a finding. The rival,
+the class with no lens of its own, loses on that.
+
+### The agentic-workflow axis admits a finding only when a reading confirms it, and a gap that only predicts what an agent would do becomes an issue, never an edit `##workflow-axis-finding-standard`
+
+A finding is admitted in a class whose evidence a reading checks: a contradiction, two instructions
+quoted and the moment both apply; a broken trigger, the instruction and the search that shows its
+target absent; a factual error, the claim and the command that shows it false; two readings, the
+instruction and the two acts its words allow; a provable gap, a requirement and an input to it that
+no text supplies and judgement cannot derive, since it is a fact fixed elsewhere, such as a format
+the checker enforces, a name or a path, not a choice an agent could make; divergent verdicts, one
+text of the project and the sentence of each standard that judges it; and a restatement or a
+pointer its home does not allow. A predicted gap, "an agent might misjudge X", is an issue that
+states what a real session would have to show. A case no instruction covers, where judgement can
+decide, is no finding, per `primer@room-to-judge`. A finding about how the owner works is outside
+the axis: the retrospective judges it against an expectation set.
+`agent@knowledge-architect-workflow-auditor@what-a-finding-is` is the one home of the classes.
+
+The standard derives from `design@agent-skills@additions-need-real-use`: a defect provable by
+reading is repaired on reading, and an instruction about how an agent behaves is added only on
+evidence from real use. A divergent verdict needs a text of the project, since a written example is
+a synthetic scenario. The owner set the axis's aim: "most of the work should be about finding things
+that cannot be followed, or gaps where judgement is not enough (those have to follow the principle
+that some thing are left to agent's judgement, because we cannot cover every case that may arise,
+and it is better to keep instructions restricted to what is necessary for the workflow to function
+as intended globally)." The nearest rival, every gap a finding to fill, fails
+`goal@agent-skills@installed-text-leaves-room-to-judge`.
+
+A confirmed finding of two readings is repaired even where both acts it allows are acceptable, as
+`design@agent-skills@audit-outcomes` says. The rival that left it to judgement where no text rules
+either act out would have left 6 of the 14 findings of two readings the session kept at the fifth
+pass, by a reading of each against the corpus, the design homes and the goals at the commit that
+pass audited.
+
+### One installed agent carries the agentic-workflow axis's standard, its brief choosing its lens, or its role as a verifier or a checker `##workflow-auditor-agent`
+
+`agent@knowledge-architect-workflow-auditor` holds the standard every auditor of the axis follows:
+it edits nothing and writes only in its scratch directory, it copies every quotation from the file
+and lists only commands it ran, it reads the corpus whole, and it holds the finding classes, the
+tags, one draft per finding and its return. Its definition has one section per lens, and the brief
+names which is its task; a finding of another lens met on the way is drafted too, under the
+finding's lens. A verify brief makes it the verifier of another auditor's drafts, per
+`design@agent-skills@verifier-in-the-run`, and a check brief makes it the checker of one repair
+proposal, per `design@agent-skills@repair-proposals-audited`. So the standard reaches every agent
+that judges a finding of the axis from its definition's first token, per
+`design@agent-skills@audit-agent-per-axis`. The steps whose agents judge no finding against the
+standard, the dedup, the cluster, the merge, the repairs, the cross-check and the report, run
+general-purpose agents whose prompts are in the saved workflow. No agent of the run decides an
+outcome: the cross-check proposes one, and the session decides it.
+
+The nearest rival, one agent per lens, would repeat the standard shared by every lens, which is most
+of the definition, by `wc -l` over the definition and over its section on the lenses. The owner
+weighed the count of published agents: "I was worried about publishing too many agents and
+polluting the directory. I think this shape works." The rival of the verify brief, a verifier agent
+of its own, would carry the axis's standard outside the axis's agent, the shape
+`design@agent-skills@audit-agent-per-axis` rejects in one generic auditor.
+
+### One adversarial verifier per auditor tries to refute that auditor's drafts inside the run `##verifier-in-the-run`
+
+The verifier is the workflow auditor under a verify brief, per
+`design@agent-skills@workflow-auditor-agent`, in its auditor's worktree, and each auditor's drafts
+go to it as soon as the auditor returns. It checks every quotation against the tree, a quotation of
+the owner against the question it answered, and that the moment a draft describes exists. It marks
+known a draft whose finding an issue entry records, and kept a draft on the kept list. It marks a
+finding that a ruling's premise has proved false as bearing on that ruling, and leaves it to the
+session. It splits a finding of the interaction of the installed text and the project's own into
+its two sides. Its verdict per draft is verified, refuted or plausible, with a reason, and a refuted
+draft is kept with its reason, for the session's sample. It reads the kept list, the issues listing
+and the record of the audit's earlier passes, their commit messages and their report files, so it
+can make the refutations that rest on the audit's history.
+
+One verifier per auditor reads the corpus once per auditor and sees that auditor's drafts together,
+so a draft found wrong sends the same auditor's other drafts of its class back to a reading within
+one agent. The nearest rival, one verifier per draft, reads the whole corpus once per draft: at the
+pass that measured it, 63 drafts against 16 auditors. Nothing a verifier passes is applied before
+the session's verification, per `design@agent-skills@one-run-pass`.
+
+### A verifier of the agentic-workflow axis marks a finding that carries a tripwire's firing evidence, after reading the tripwire whole, and leaves the firing to the session `##tripwires-read-by-the-audit`
+
+The run's preflight saves the project's tripwires listing, and each verify brief names it. A
+verifier reads whole, with the checker's `show`, each tripwire whose guarded decision or subject the
+draft's finding touches, and marks a finding that carries its firing evidence, naming the tripwire.
+The cross-check and the report list the marked findings beside those bearing on a ruling, and the
+session judges whether each tripwire fired; a fired tripwire moves as
+`skill@knowledge-architect-issue-tracking@movement-instruction` says. The corpus excludes the
+registers, so without the mark no step of the axis reads a tripwire, and a tripwire whose evidence
+the audit holds has no reader. The nearest rival, a search of the standing entries at each pass,
+looks for the entries one piece of work bears on; an audit's work is the whole workflow, so the
+search would return most of the register of the installed text, while a verifier holds one finding
+at a time, the narrow question a tripwire's firing needs.
+
+### A finding of agent-facing text is repaired at the cause that produced it, not at its site `##root-cause-repair`
+
+A cause is one of four kinds: two homes for one moment, instructions about one moment or one kind of
+act stated in more than one text; a structure the work did not need, a fixed sequence, count or
+mapping that another instruction needs to vary; a restatement that drifted from its home; and a rule
+written for one interaction, a narrow rule where judgement already decides. A finding that fits none
+is a cause of its own. Each kind has its repair: the homes merged into one and the others pointing
+to it, the structure removed, the restatement brought back to a pointer, the narrow rule deleted and
+the case left to judgement. A repair adds an instruction only where none of these closes the cause,
+and says why. One repair is proposed per cause, never one per finding, and each finding takes the
+outcome of its cause's repair. `skill@knowledge-architect-project-audit@repair-standard` is the one
+home of the standard, which the audit reads, and each skill that names it, per
+`design@agent-skills@intake-shares-the-repair-standard`.
+
+In the agentic-workflow axis a second phase of agents delivers it inside the run: cluster agents,
+two by default, group the confirmed findings by cause independently; a merge agent writes one
+causes file from their groupings and states each choice it made where they differ; and repair
+agents, one per cause by default, propose its repair, which
+`design@agent-skills@repair-proposals-audited` checks before the session reads it. The counts are
+the session's, passed to the run.
+
+The direction is the owner's: "Indeed, as capabilities-not-structure records, adding instructions
+to handle corner cases is always more likely to give rise to incompatible interactions, simply due
+to the shear amount of rules. I think we might need to define a more thorough method to repair
+incompatible and contradicting instructions. Solving them locally, as the current audit method
+encourages, is not viable." So is one home per moment, "try to centralize instructions that pertain
+to the same moment or type of action (like we did for the decision record rules)", and the second
+phase, "the audit method for this axis should include a second pass of dispatching subagents, this
+time focused on classifying the issues and proposing fixes". `design@agent-skills@capabilities-not-structure`
+states the principle the repair applies: a conflict a structure causes is answered by removing
+structure rather than by adding a rule. The nearest rival, one repair per finding at its site, lost
+on the axis's own run on this repository: the repairs of its first two passes turned most findings
+into added rules, and its third pass found about 25 findings in the interactions of those rules, by
+the auditors' returns, which the message of the commit "[audit] Pass 3 of the agentic-workflow axis
+stops the run: the count did not fall, the repairs move to a method by cause" records. The rival of
+the second phase, the session grouping the findings alone, lost on the same run: the session's
+sort dropped a finding and left a ruling of the owner off the next pass's kept list.
+
+### A set of repairs that adds more instructions than it removes goes to the owner first, with its net count, and the word count is recorded beside it `##audit-net-growth`
+
+An instruction is a sentence that tells an agent to do, or not to do, an act at a moment; a
+rewording that makes an existing instruction's intent clearer adds none, whatever its length. Each
+repair proposal counts the instructions it adds and removes. When the repairs to be applied together
+add more than they remove, the owner is told so first, with the net figure, and rules on that growth
+before any of them is applied, as `skill@knowledge-architect-project-audit@repair-standard` says.
+Each pass of the agentic-workflow axis also gives the corpus's word count before and after in its
+commit message, for monitoring.
+
+The metric is the owner's: "I don't think word count is the correct metric here ... It should
+probably apply to "more instructions" rather than more words. Though monitoring net word count
+change produced by this process is still interesting, and should at least be done and recorded in
+commit messages of audit repairs." A bound on words loses on the owner's argument: "Repairing a
+sentence to make intent clearer may need adding words locally, and this should not need my ruling.
+The net growth is hard to account for before the fact, too." An instruction is countable from a
+proposal before the edit. No bound at all loses on the axis's first passes, whose repairs turned
+most findings into added rules that the next pass found interacting, per
+`design@agent-skills@root-cause-repair`.
+
+### A step of the run reads each repair proposal's new text for contradictions and two readings before the session reads it `##repair-proposals-audited`
+
+In the agentic-workflow axis's run a check step follows the repair proposals: one workflow auditor
+per proposal, under its check brief, in a worktree of its own, each starting when its proposal is
+written. It reads the proposal's text after its edits, in the corpus, through L1 and L3, for a
+contradiction or two readings that the new text creates with the rest, and writes its check beside
+the proposal. The cross-check and the report read the checks, and the report gives each beside its
+proposal. The run does not revise a proposal: the session's verification corrects it, or sends it
+back to a repair agent of its cause briefed with the script's repair prompt and with the check, so
+a repair is checked before it lands.
+
+Each pass's repairs write new text, and the next pass finds defects in it, per
+`design@agent-skills@audit-method`: of the fifth pass's 38 findings, 16 sat on text that the
+repairs of the earlier passes and the commits of the method by cause wrote. The nearest rival, those
+defects left for the next pass to find, costs a full pass to surface each. The rival of the session
+reading every proposal's new text through L1 and L3 moves those readings into the session, against
+the burden `design@agent-skills@one-run-pass` keeps from it. The step adds one agent per proposal
+to a pass.
+
+### Each repair of agent-facing text is read against the goals, the design heads and the rejected alternatives it touches before the owner rules on it `##repairs-read-against-the-record`
+
+The record check reads every goals home, the design heads that the checker's `show` and a search of
+the design homes return for the behaviour the edited text describes, and the rejected alternatives
+of the Component that owns the text. It names each head the repair would reverse, each rejected
+alternative it brings back and each goal it strains, with its quotation. A repair that reverses a
+head is a decision, recorded under `skill@knowledge-architect-decision-recording`.
+`skill@knowledge-architect-project-audit@repair-standard` states it, for the audit and for each
+skill that names that section. In the agentic-workflow axis's run the check of
+`design@agent-skills@repair-proposals-audited` makes it, reading those homes beside the corpus,
+which they stay outside, and every repair prompt names the nearest rival to its repair and the fact
+that decides between them.
+
+The corpus excludes the registers, so without the check no step of the run reads a design head, a
+goal or a rejected alternative, and a repair can bring back an alternative that already lost. This
+repository's intake of received findings read the same record for its fixes, and the owner asked
+the audit to learn from it: "Is there anything the intake skill did more thoroughly than our audit
+method and we could take a lesson from ?" The nearest rival, the check left to the session at the
+application, where `skill@knowledge-architect-agent-configuration@content-and-style` asks for it,
+comes after the owner's ruling, so the owner would rule on a repair without knowing that it reverses
+a head, against `goal@knowledge-architect@the-owner-decides`. The search by behaviour is a
+judgement, and a head it misses is found at the review of the audit's branch, which reads each
+repair against the design heads.
+
+### The audit and the intake of received findings judge a repair of agent-facing text by one installed standard `##intake-shares-the-repair-standard`
+
+`skill@knowledge-architect-project-audit@repair-standard` holds what a repair of an instruction is
+judged by: the repair by cause, the count of instructions and the net growth, and the record check.
+It applies in an audit, and at each step of a skill that names the section, whether a reading or a
+real session found the defect. `skill@klarch-retrospective-intake` names it at the step that shapes
+a finding's fix and reads it against the record, beside its own four tests and its rivals. The
+intake keeps its own evidence, a real session behind each finding, its kind for a lapse of the
+session, and the owner's ruling on every finding.
+
+The direction is the owner's: "I think it's important we ensure it analyzes findings and repairs on
+the same standard as our workflow." The evidence that admits a finding differs between the two: the
+intake has a real session behind each finding, as `design@agent-skills@additions-need-real-use`
+asks of an addition, and an audit never has one. The worth of a repair and its shape do not differ,
+since both decide edits to the same text at the same cost. The standard's home is installed text,
+since installed text points to no home of one project, and it is read where the worth is judged: at
+the session's verification of an audit's proposals and at the intake's step that shapes a fix,
+before any edit is written. The nearest rival, the shared standard in
+`skill@knowledge-architect-agent-configuration@content-and-style`, is read when an edit is written,
+after that judgement is made.
 
 ### An audit runs at the owner's request, at a pin move whose changelog cites its axis, and at the end of an adopting project's move of its documents `##audit-triggers`
 

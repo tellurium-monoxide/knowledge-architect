@@ -1,18 +1,16 @@
 ---
 kind: todo
 ---
-# The project audit has one axis, and the other axes the owner named have none
+# The project audit has two axes, and the other axes the owner named have none
 
 ## Summary
 
-`skill@knowledge-architect-project-audit` audits a whole project on one axis, the design record,
-per `design@agent-skills@audit-is-an-activity`. The other axes the owner named have no section, no
-agent and no designed outcome: design self-consistency, the alignment of the code with the design
-and the goals, and the consistency of the project's own agent workflows; and the session's
-additions, standing state as a whole, goal coverage and the restatements. An axis whose fixes are
-code may also need an output other than commit messages, an audit report, which the owner left "a
-question for later". This entry keeps those axes, the report question, and the lessons of the
-audits run by hand before the skill existed.
+`skill@knowledge-architect-project-audit` audits a whole project on two axes, the design record and
+the agentic workflow, per `design@agent-skills@audit-is-an-activity`. The other axes the owner named
+have no section, no agent and no designed outcome: design self-consistency, and the alignment of
+the code with the design and the goals; and the session's additions, standing state as a whole and
+goal coverage. This entry keeps those axes, and the lessons of the audits run by hand before the
+skill existed that no axis has yet adopted.
 
 ## Details
 
@@ -48,23 +46,18 @@ proposed", carried "by one or several subagents (maybe one per component)". As r
   This led the owner to a new entry test, recorded in
   `design@agent-skills@a-head-is-owed-by-an-entry-test`.
 
-**Axes the owner names**, a list to be completed and refined, the design-record axis aside:
+**Axes the owner names**, a list to be completed and refined, the design-record and
+agentic-workflow axes aside:
 
 - **design self-consistency**, of the design homes as a whole rather than of one branch;
 - **alignment of implementation with design and goals**: the code against the design homes, and
-  both against the goals;
-- **consistency of the project's own agent workflows**, its CLAUDE.md files and skills, combined
-  with the workflow the project installs. A lead from the owner for what it reads: an audit and a review that
-  share a subject are given compatible instructions for the verdicts they give. A comparison of the two
-  agents, made on that request after the first run, found
-  `agent@knowledge-architect-design-record-auditor` and
-  `agent@knowledge-architect-decision-record-reviewer` judging rejected alternatives by two
-  different restatements of one rule, one of which reported as a defect what the other must not;
-  the commit "The decision-record reviewer and the design-record auditor judge the record by the
-  same rules" aligned them. The owner placed the restatements of directives in this axis, each read
-  against its home, since the checker cannot compare prose: "The restatement item, I find it weird
-  to add it in this axis. It does not read the same thing at all. It would go in the "agentic
-  workflow" axis mentionned in the issue, instead, IMO."
+  both against the goals.
+
+The owner's third axis, the consistency of the project's own agent workflows combined with the
+workflow the project installs, is the agentic-workflow axis,
+`skill@knowledge-architect-project-audit@agentic-workflow-axis`. It took with it the restatements
+of directives, each read against its home, and the owner's lead that an audit and a review that
+share a subject are given compatible instructions for the verdicts they give.
 
 Additions of the session, for the discussion to judge:
 
@@ -93,22 +86,26 @@ plans directory finds it. Two lessons on method:
   subagents classed a ground taken from a goal differently and used different thresholds for a
   rewritten head, so its weekly counts carry that uncertainty.
 
-**Method.** The method these lessons led to is `design@agent-skills@audit-method`, approved for
-the design-record axis and as the generic shape to adjust for the others: "it might differ per
-axis. For now, we are only providing one axis, so we can adjust this generic shape later for the
-others. But I think your general shape should hold its ground for the other axis too." It holds
-bounded groups, a calibration sample, history read behind each
-ruling, and nothing applied before a reading confirms it. One lesson it does not adopt stays open
-here, for an axis to weigh: the owner's reading of a sample of the verdicts, since agents applying a
-test measure how agents read it, not whether it is right.
+**Method.** The method these lessons led to is `design@agent-skills@audit-method`, generic over the
+axes, each axis giving its own dispatch; the design-record axis keeps its bounded groups and its
+calibration sample, per `design@agent-skills@design-record-axis`. The owner, when the method was
+first approved for the design-record axis: "it might differ per axis. For now, we are only
+providing one axis, so we can adjust this generic shape later for the others. But I think your
+general shape should hold its ground for the other axis too." Each pass of every axis commits its
+report as a file the owner rules in, per `design@agent-skills@committed-audit-report`, so a new
+axis owes no decision on an audit report. One lesson stays open here, for each new axis to weigh:
+the owner's reading of a sample of the verdicts, since agents applying a test measure how agents
+read it, not whether it is right. The agentic-workflow axis adopted it as the session's sample of
+refuted drafts, read after the run; it stays open for every axis that has not adopted it.
 
 ### Why it matters
 
 `goal@knowledge-architect@documentation-stays-consistent` is met while the reviews keep the record
 consistent, and every review reads only what a diff touches. The design-record axis reads the
-decision record as a whole against the rules on its entries; a drift between two heads that no
-branch touches, between the code and a head no branch cites, between two skills, or between an
-issue and the tree as it stands, is still read by no step of the workflow.
+decision record as a whole against the rules on its entries, and the agentic-workflow axis reads
+every instruction the harness delivers as one whole; a drift between two heads that no branch
+touches, between the code and a head no branch cites, or between an issue and the tree as it
+stands, is still read by no step of the workflow.
 `goal@knowledge-architect@agents-work-without-drift` depends on the whole record, since agents
 ground on all of it.
 
@@ -116,5 +113,6 @@ ground on all of it.
 
 For each axis above, a design discussion under `skill@knowledge-architect-design` that decides
 whether it is offered, its corpus and its outcomes, and, if it is, its agent and its section of
-the audit skill, per `design@agent-skills@audit-agent-per-axis`; and, for an axis whose fixes are
-code, whether it leaves an audit report.
+the audit skill, per `design@agent-skills@audit-agent-per-axis`, and its saved workflow, which
+the owner wants for every axis, as
+`issue@agent-skills@the-design-record-axis-has-no-saved-workflow` records for the first axis.

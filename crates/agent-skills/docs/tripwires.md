@@ -252,11 +252,13 @@ directive restated wherever it is delivered, among the candidates.
 ## Guarding `design@agent-skills@audit-method`: the owner overrules the defaults of an audit's owner list `##audit-defaults-overruled`
 
 T6 of the premortem of the discussion that made the decision. The decision rests on the premise
-that the calibration and the session's sort give the owner defaults the owner mostly accepts, so
-the owner list costs a ruling per kind rather than a judgement per item.
+that the session's reading that produces the owner list's defaults, the sort of an axis with no
+saved workflow or the verification of a run's report, with the calibration where an axis has one,
+gives the owner defaults the owner mostly accepts, so the owner list costs a ruling per kind rather
+than a judgement per item.
 
-**Fires when:** in one run, the owner rules against the default on more than a quarter of the items
-of the owner list; the bound is the owner's to reset.
+**Fires when:** in one audit, the owner rules against the default on more than a quarter of the
+items of the owner list; the bound is the owner's to reset.
 **Response:** reopen `design@agent-skills@audit-method`.
 **Re-entry:** the session that receives the owner's answers to an owner list counts them; the
 standing-state review of the audit's branch reads it again.
@@ -282,3 +284,75 @@ audit edits.
 the branch changed, left false.
 **Response:** reopen `design@agent-skills@design-record-axis`.
 **Re-entry:** the standing-state review of every audit's branch.
+
+## Guarding `design@agent-skills@workflow-axis-lenses`: a duplicated lens adds nothing its first agent did not find `##duplicate-auditors-add-nothing`
+
+T1 of the premortem of the discussion that made the decision. The decision rests on the premise
+that a second agent on one lens finds what the others of that lens missed, so its cost buys
+coverage.
+
+**Fires when:** in one pass, for every lens dispatched more than once, one of its agents alone
+reported every confirmed finding of that lens. Two L2 agents count as one lens dispatched twice
+only when they share a group of activities.
+**Response:** reopen `design@agent-skills@workflow-axis-lenses` on the duplicate dispatch.
+**Re-entry:** the session's verification of each pass's report counts it.
+
+## Guarding `design@agent-skills@workflow-axis-finding-standard`: most drafts of a pass fail the reading `##audit-drafts-mostly-noise`
+
+T2 of the premortem of the discussion that made the decision. The decision rests on the premise
+that the finding standard keeps auditors from reporting predicted gaps as provable ones, and L8's
+auditors from reporting two standards that differ in wording and give one verdict, so the reading
+of a pass is not spent rejecting drafts.
+
+**Fires when:** in one pass, more than half of the drafts fail the reading. A draft the verifier
+refutes or the session rejects fails it; a draft marked kept or known is not counted.
+**Response:** reopen `design@agent-skills@workflow-axis-finding-standard` and the standard of
+`agent@knowledge-architect-workflow-auditor`.
+**Re-entry:** the session's verification of each pass's report.
+
+## Guarding `design@agent-skills@workflow-axis-corpus` and `design@agent-skills@workflow-axis-lenses`: an auditor does not read the whole corpus `##auditor-skips-part-of-the-corpus`
+
+T3 of the premortem of the discussion that made the decision. The decisions rest on the premise
+that one agent reads the whole corpus, every file whole, so that a contradiction between two files
+is in one agent's reading. The corpus grows with every skill and every repair.
+
+**Fires when:** an auditor's return says it did not read every file of the corpus whole.
+**Response:** reopen how the corpus is shared out among agents, in
+`design@agent-skills@workflow-axis-lenses`, with the corpus shared out among agents of one task
+among the candidates.
+**Re-entry:** the session's verification of each pass's report, which reads each auditor's saved
+return.
+
+## Guarding `design@agent-skills@verifier-in-the-run`: a verifier refutes a true finding `##verifier-refutes-a-true-finding`
+
+T5 of the premortem of the discussion that made the decision. The decision rests on the premise
+that the adversarial verifier refutes only drafts a reading refutes, since the session reads only a
+sample of the refuted drafts, chosen by its judgement.
+
+**Fires when:** in any pass, the session's sample of refuted drafts holds one that a reading
+confirms.
+**Response:** reopen `design@agent-skills@verifier-in-the-run`.
+**Re-entry:** the session's verification of every report.
+
+## Guarding `design@agent-skills@verifier-in-the-run`: the verifiers wave findings through `##verifiers-wave-findings-through`
+
+T6 of the premortem of the discussion that made the decision. The decision rests on the premise
+that the verifiers refute what a reading refutes, so that the session's verification after the run
+is not a second sort.
+
+**Fires when:** in one pass, the session rejects more than a quarter of a report's confirmed
+findings; the bound is the owner's to reset.
+**Response:** reopen `design@agent-skills@verifier-in-the-run`.
+**Re-entry:** the session's verification of every report.
+
+## Guarding `design@agent-skills@repairs-read-against-the-record`: a repair reverses a head or brings back a rejected alternative its check did not name `##record-check-misses-a-head`
+
+T8 of the premortem of the discussion that made the decision. The decision rests on the premise
+that the check of a repair proposal finds the heads its edits would reverse, although its search
+for the heads that describe a behaviour is a judgement.
+
+**Fires when:** the review of an audit's branch finds a repair that contradicts a design head, or
+brings back a rejected alternative, which the check of its proposal did not name.
+**Response:** reopen `design@agent-skills@repairs-read-against-the-record` on where the record
+check runs.
+**Re-entry:** the review of each audit's branch.

@@ -42,7 +42,7 @@ with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-
   the project's file is not, and the analysis is committed to a public repository.
 
 The findings of this repository's two files are handled here, never as an issue on GitHub, per
-`design@knowledge-architect@retrospective-findings-stay-here`. A consumer's workflow file
+`design@knowledge-architect@workflow-findings-stay-here`. A consumer's workflow file
 arrives the same way once the owner hands it over.
 
 A finding is cited by its id and its file's stem, as "W3 of <date>-<project>-<subject>-workflow",

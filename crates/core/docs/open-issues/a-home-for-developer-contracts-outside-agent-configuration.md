@@ -36,6 +36,12 @@ So the work is no longer only for a project without agents. It concerns every pr
 
 The investigation's report is the owner's. It is not in this repository. The root CLAUDE.md stays.
 
+The agentic-workflow axis of the project audit leaves the scoped CLAUDE.md files out of its corpus,
+as developer documentation rather than instructions, per `design@agent-skills@workflow-axis-corpus`.
+One of them restates workflow directives: `path@agent-skills@CLAUDE.md`, under "Editing an
+installed skill or agent", restates the four tests an edit of the installed text passes, and no
+audit reads that restatement against its homes. The new home decides where it goes.
+
 ### Why it matters
 
 It strains `design@core@agents-table`, which drops CLAUDE.md from the required documents under
