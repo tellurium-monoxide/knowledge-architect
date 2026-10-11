@@ -285,7 +285,7 @@ the branch changed, left false.
 **Response:** reopen `design@agent-skills@design-record-axis`.
 **Re-entry:** the standing-state review of every audit's branch.
 
-## Guarding `design@agent-skills@workflow-axis-lenses`: a duplicated lens adds nothing its first agent did not find `##duplicate-auditors-add-nothing`
+## Guarding `design@agent-skills@workflow-axis-lenses`: in a pass, one agent of each duplicated lens alone reports every confirmed finding of that lens `##duplicate-auditors-add-nothing`
 
 T1 of the premortem of the discussion that made the decision. The decision rests on the premise
 that a second agent on one lens finds what the others of that lens missed, so its cost buys
@@ -367,7 +367,7 @@ improvement, so that what a pass leaves falls from one pass to the next.
 **Fires when:** from one pass to the next of an audit, the violations left on old text do not
 fall, or the severe ones among them, those whose outcome is the owner list, do not fall while they
 are above zero. Old text is text the previous pass also read, whose words are unchanged since the
-commit it audited; a first pass is not counted.
+commit it audited, per `design@agent-skills@convergence-count-scope`; a first pass is not counted.
 **Response:** reopen `design@agent-skills@root-cause-repair`, with `design@agent-skills@workflow-axis-lenses`
 and `design@agent-skills@workflow-axis-finding-standard` among what is read again.
 **Re-entry:** the session that writes each pass's commit message, which gives the counts on old

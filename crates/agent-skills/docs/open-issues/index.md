@@ -1,9 +1,10 @@
 **Generated — do not edit.** `cargo klarch index`
 
-22 entries
+24 entries
 
 | kind | title |
 | --- | --- |
+| defect | [In an adopting project, a finding sent upstream is counted again as a violation left on old text at every later pass](an-upstream-finding-stays-in-every-later-old-text-count.md) |
 | deferred | [A plan document deleted in the commit that completes its harvest is absent from the tree of the acts that still need it](a-plan-document-deleted-at-its-harvest-is-unseen-by-the-acts-that-need-it.md) |
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | design | [The head on the primer's content restates the primer's limit and bundles the decision behind each directive](primer-content-bundles-each-directive-s-decision.md) |
@@ -11,6 +12,7 @@
 | question | [A design issue's re-entry point is read by no review](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |
 | question | [A pending audit report file is outstanding work that no installed search of what is already known reads](a-pending-audit-report-is-reached-by-no-installed-search.md) |
 | question | [A project that receives a retrospective's findings has no installed procedure to analyse them](a-received-retrospective-file-has-no-installed-analysis.md) |
+| question | [A repair of agent-facing text that edits a design head is not asked to keep true the issues and tripwires that cite the head](a-repair-that-edits-a-head-reads-no-entry-citing-it.md) |
 | question | [A reviewer that queues long work reports nothing until it is asked](a-reviewer-s-running-time-is-unbounded.md) |
 | question | [After a version upgrade, nothing re-reads a project's restatements of installed directives, a project skill whose activity an installed skill now covers, or the session's own copy of the new text, nor the agent types it adds](an-upgrade-re-reads-no-root-restatement.md) |
 | question | [The audit that ends the move of an adopting project's documents is stated where the move's sessions do not read](the-closing-audit-of-a-move-reaches-no-planning-text.md) |

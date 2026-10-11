@@ -92,4 +92,4 @@ since its title and body name the rules on design heads and on rejected alternat
 not a member recorded directly. Then either the three edits above, with the head gaining the
 section among the axis's rules, or the rival, with `design@agent-skills@audit-outcomes` losing the
 member. A provable gap on the installed text is filled by an edit on the owner's word, per
-`design@agent-skills@additions-need-real-use`.
+`design@agent-skills@behaviour-additions-need-real-use`.

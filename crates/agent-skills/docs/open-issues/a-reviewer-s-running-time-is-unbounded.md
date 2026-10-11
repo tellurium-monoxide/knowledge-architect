@@ -38,7 +38,7 @@ sessions show it recurs; they do not show how often.
 ### What would close it
 
 The owner's approval of a shape of addition to the review skill, under
-`design@agent-skills@additions-need-real-use`, and the addition made. The owner approved an
+`design@agent-skills@behaviour-additions-need-real-use`, and the addition made. The owner approved an
 addition after the second session, "report what is reproduced before queueing more", and then
 withdrew that approval as written: "I'm not fully satisfied with the solution written in there.
 This problem only affects adversarial code reviews and not the others, so it is a project specific

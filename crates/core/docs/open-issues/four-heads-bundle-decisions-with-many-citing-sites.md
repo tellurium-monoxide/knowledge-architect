@@ -8,7 +8,7 @@ kind: design
 Four heads of `path@core@docs/design.md` each hold two or more decisions whose nearest rivals
 differ, against `design@agent-skills@one-decision-per-head`. The first run of the design-record
 axis on this repository found them, and left them unsplit because each split must first read every
-site that cites the head, 20 to 31 sites per head, to re-point each one to the part it cites.
+site that cites the head, 23 to 33 sites per head, to re-point each one to the part it cites.
 
 ## Details
 
@@ -16,9 +16,11 @@ site that cites the head, 20 to 31 sites per head, to re-point each one to the p
 
 **The instances**, each with the decisions it bundles and the count of its citing sites. A count
 is the number of lines `cargo klarch show design@core@<slug>` lists under "referenced at",
-taken on the working tree of that run, after its other edits were applied.
+less the lines of this entry, taken again on the working tree of the branch of the first
+agentic-workflow audit of this repository, at its review. The counts grow as text cites the heads:
+the first run of the design-record axis counted 20, 23, 26 and 31.
 
-- `design@core@candidate-rule-and-retired-forms`, 20 citing sites. Its title is joined by "and"
+- `design@core@candidate-rule-and-retired-forms`, 23 citing sites. Its title is joined by "and"
   over three statements, and its body holds more, each with a nearest rival of its own:
   - the candidate rule and the silence of every other `@` span, against widening it to "any span
     with two `@`";
@@ -30,7 +32,7 @@ taken on the working tree of that run, after its other edits were applied.
   - the paragraph "A reference is live wherever it is prose, fenced blocks included, for every
     kind", against the rejected alternative "A fenced reference read as an illustration", which
     names this head as the one it lost to.
-- `design@core@every-path-names-its-anchor`, 23 citing sites, 7 of them in
+- `design@core@every-path-names-its-anchor`, 25 citing sites, 8 of them in
   `spec@plans@path-quickfixes`. Its title is joined by "and" over two decisions, and its body holds
   a third:
   - the path grammar, `path@<anchor>@<path>`, against the rejected alternatives "A bare
@@ -41,7 +43,7 @@ taken on the working tree of that run, after its other edits were applied.
   - the paragraph "The deepest anchor wins, and inside means a proper descendant", against naming
     a target from any ancestor anchor. Its argument, that relocating an anchor edits one manifest
     line, is not the grammar's.
-- `design@core@a-commit-message-is-a-document`, 26 citing sites, 8 of them in
+- `design@core@a-commit-message-is-a-document`, 28 citing sites, 8 of them in
   `path@core@src/cli/history.rs`. Its title states the first of five decisions:
   - a message is judged against its own commit's tree, against the working tree;
   - "One command judges messages, after the commit exists", against the rejected alternatives "A
@@ -57,7 +59,7 @@ taken on the working tree of that run, after its other edits were applied.
 
   `issue@core@a-contract-change-fails-every-earlier-commit-unexplained` cites the head for the
   third decision, and `issue@core@a-message-lint-is-deduplicated-in-one-tree-only` for the fourth.
-- `design@core@owned-namespace-check`, 31 citing sites. Its title is joined by "and" over two
+- `design@core@owned-namespace-check`, 33 citing sites. Its title is joined by "and" over two
   decisions whose arguments share no premise:
   - the installed agent files are committed, so that a session started from a fresh clone has
     them, which serves `goal@knowledge-architect@agents-get-a-complete-workflow`; its rival is

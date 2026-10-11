@@ -11,7 +11,7 @@ review reads, and a text written into the spec in the deleting commit enters no 
 acts still need the spec at that point: the transcript reviewer's search, the standing-state
 reviewer's reading of the criteria, the spec-conformity and fidelity-of-relocation axes, and a later
 `git log -G` for a thread-to-slug pair written into the harvest row. Cases 2 to 4 are predicted
-gaps, and case 1 a provable gap, which `design@agent-skills@additions-need-real-use` admits for the
+gaps, and case 1 a provable gap, which `design@agent-skills@behaviour-additions-need-real-use` admits for the
 owner list: no real session has shown any of them.
 
 ## Details
@@ -108,7 +108,7 @@ Any of these:
 - an intake of a retrospective's file, under `skill@klarch-retrospective-intake`, reads a real
   session in which one of the four cases occurred, a pair written at a harvest found by no
   `git log -G` included; deciding a repair of the installed text from real use is that occasion's
-  work, per `design@agent-skills@additions-need-real-use`.
+  work, per `design@agent-skills@behaviour-additions-need-real-use`.
 
 The repairs proposed, either one decided under `skill@knowledge-architect-design`:
 

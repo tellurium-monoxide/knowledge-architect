@@ -91,7 +91,7 @@ done:
 - the commit that closes an issue with no plan document scheduling it removes its row: the work is
   done.
 
-A row whose entry left without either edit dangles, and `cargo klarch check` reports it, so the order
+A row whose entry left without its edit above dangles, and `cargo klarch check` reports it, so the order
 cannot go stale unnoticed. An illustration of the shape:
 
 ```markdown
@@ -128,9 +128,10 @@ docs/plans/
 - The checker constructs the anchor `plans` at docs/plans/, one anchor per milestone directory and
   one per spec file. A file or a directory directly under docs/plans/ outside this layout is a
   finding, and so is a directory under milestones/ with no `README.md`. `cargo klarch index` writes
-  every `index.md`, and `cargo klarch check --fix` writes them and then checks. For a commit of part
-  of the working tree, `cargo klarch index --staged` writes them into git's index from what is
-  staged, and `cargo klarch check --staged` checks what the commit will record.
+  every `index.md`, and `cargo klarch check --fix` writes them once the first three phases of the
+  check find nothing, then runs every check. For a commit of part of the working tree,
+  `cargo klarch index --staged` writes them into git's index from what is staged, and
+  `cargo klarch check --staged` checks what the commit will record.
 - The milestone document links each slice's spec as a navigation row, `[<slice title>](<slice>.md)`.
   The checker resolves a relative link only in a `README.md` or an `index.md`, which is why the head
   is a README.
@@ -391,7 +392,9 @@ ruling, the slice stops instead of proceeding on the default that `primer@owner-
        documents exist, so the ruling is not left to a commit message as the in-change path would
        leave it: it is written in place in the
        milestone's documents by the rule of `skill@knowledge-architect-planning@spec-contents`, as a thread with the owner's words verbatim, like
-       the audit's other answers, and the audit's commit lists it among its gaps.
+       the audit's other answers, and the audit's commit lists it among its gaps. It is no
+       converged design session, so it owes no new review of
+       `skill@knowledge-architect-planning@plan-reviews`.
      - A gap that defeats a reason, a premise or a criterion an approved thread rests on needs the
        full session. Its converged design goes into the milestone's documents by the rule of `skill@knowledge-architect-planning@spec-contents`,
        and owes the reviews of `skill@knowledge-architect-planning@plan-reviews`.
@@ -480,8 +483,8 @@ these four:
 **What their findings become.** Check each finding against the tree, or against the transcript,
 before acting on it. A material finding is answered with a default, written into the sections it
 touches, and listed under the defaults awaiting the owner, with the thread it bears on and a label,
-`D<n>`, numbered as `primer@labelled-items` says. The owner rules on each as
-`skill@knowledge-architect-planning@working-a-slice` says. A ruled default stays in that list,
+`D<n>`, numbered as `primer@labelled-items` says. Until the owner rules on a default, it is built as
+written, as `skill@knowledge-architect-planning@working-a-slice` says. A ruled default stays in that list,
 marked as ruled, with its label, since the sections it was written into cite it by its label. A
 finding that is a gap with one answer is applied in place. A finding that is wrong is dropped, with
 the reproduction that showed it wrong kept in the commit message. A scope change, a clause that

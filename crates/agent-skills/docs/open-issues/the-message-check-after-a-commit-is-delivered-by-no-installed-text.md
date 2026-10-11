@@ -29,7 +29,7 @@ the first agentic-workflow audit, as a predicted gap.
 ### Why it matters
 
 `design@agent-skills@staged-check-before-each-commit` argued the tree half on delivery; the message
-half has no recorded lack, so under `design@agent-skills@additions-need-real-use` an addition waits
+half has no recorded lack, so under `design@agent-skills@behaviour-additions-need-real-use` an addition waits
 for one.
 
 ### What would close it

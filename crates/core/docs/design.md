@@ -1625,7 +1625,7 @@ text among what cites the skill, per `goal@core@records-reach-their-reader`.
 section's slug are silent, so the lint reports no span that is not a skill's or an agent's name.
 Whether such a name meets an ordinary word rests on the names: the installed ones carry the
 installer's prefix, and a project's own carry its prefix, per
-`design@agent-skills@skill-name-prefix`, which nothing checks yet, per
+`design@agent-skills@project-name-prefix`, which nothing checks yet, per
 `issue@core@tooling-for-project-skills`. A project skill named by an ordinary word makes every
 backticked use of that word a finding, and the repair is to rename the skill with the project's
 prefix. Re-take the false positives with `cargo klarch check` over
