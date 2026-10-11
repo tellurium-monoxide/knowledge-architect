@@ -49,8 +49,9 @@ axes the Migration entries cite, and each axis is dispatched as its agent,
 `agent@knowledge-architect-design-record-auditor` or `agent@knowledge-architect-workflow-auditor`.
 `skill@knowledge-architect-review@review-invariants` says a subagent "runs on its agent definition
 as the harness registered it when the session started". In the session that ran the install, an
-agent the install added may then have no registered type, and the design-record axis cuts its
-groups by an order that sits in its agent's description, "which the harness lists". The axis's
+agent the install added may then have no registered type, and the design-record axis's saved
+workflow lists the entries in the order its agent's section
+`agent@knowledge-architect-design-record-auditor@take-your-group` gives. The axis's
 fallback for a saved workflow the harness does not list,
 `skill@knowledge-architect-project-audit@audit-method`, dispatches the script's steps by hand, and
 those steps dispatch the workflow auditor's type too. One observation bears on the saved workflow,

@@ -45,7 +45,7 @@ The acts that need the spec after that point:
    `skill@knowledge-architect-review@review-axes` briefs an axis with no agent with "the commit
    range, and the files that carry the standard", the spec among them, and that file is absent at
    the tip. No text says to name it with the commit that holds it, as
-   `skill@knowledge-architect-project-audit@audit-method` point 9 does for an audit's report files.
+   `skill@knowledge-architect-project-audit@audit-method` point 5 does for an audit's report files.
    Reported by the L2 lens in the sixth pass of the agentic-workflow audit, as a predicted gap.
    Ruled out as a certain failure, by its verifier: the range's diff carries the deleted spec as
    removed lines, and `skill@knowledge-architect-planning@plan-document-leaves` gives
@@ -78,7 +78,7 @@ The deleting commit's diff removes the row as its parent held it, without the pa
 ever holds the pair.
 
 A file an audit's branch adds and deletes is the same structure for a report file; the audit
-skill's point 9 names each such file with its commit in the review's briefs.
+skill's point 5 names each such file with its commit in the review's briefs.
 
 ### Why it matters
 
