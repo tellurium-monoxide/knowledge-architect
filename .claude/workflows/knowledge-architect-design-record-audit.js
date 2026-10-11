@@ -279,30 +279,35 @@ const verifyBrief = (g) => lines([
   args.previous ? 'For this re-check, the commit the previous pass audited: ' + args.previous : '',
   FROM_DISK,
 ])
-const verdicts = (await parallel(groups.map((g) => () => agent(verifyBrief(g),
-  { agentType: AUDITOR, schema: VERDICTS, phase: 'verify', label: 'verify ' + g.label })
-  .then((v) => (v ? Object.assign({ label: g.label }, v) : null))))).filter(Boolean)
+const checkBrief = (label, k) => lines([
+  'Check brief.',
+  'Commit audited: ' + args.commit,
+  'Your worktree, detached at that commit: ' + at(args.worktrees, 'check-' + label + '-' + k),
+  'The group ' + label + ': its drafts in ' + at(args.scratch, label) + ', its verdicts in ' +
+    at(args.scratch, 'verify', label, 'verdicts.md'),
+  'Your directory: ' + at(args.scratch, 'check', label) + '; write check-' + k + '.md there.',
+  checkersPerGroup > 1 ? 'Other checkers judge the same heads; your check is one alternative.' : '',
+  FROM_DISK,
+])
+// Each group's verifier hands to its checkers as soon as it returns: for a group with a verified
+// finding that creates a head, checkersPerGroup auditors, whose checks are alternatives.
+const ks = Array.from({ length: checkersPerGroup }, (_, i) => i + 1)
+const results = (await pipeline(groups,
+  (g) => agent(verifyBrief(g), { agentType: AUDITOR, schema: VERDICTS, phase: 'verify', label: 'verify ' + g.label })
+    .then((v) => (v ? Object.assign({ label: g.label }, v) : null)),
+  (v, g) => (v && v.createdHeads > 0
+    ? parallel(ks.map((k) => () => agent(checkBrief(g.label, k),
+      { agentType: AUDITOR, schema: PATH, phase: 'check', label: 'check ' + g.label + '-' + k })))
+      .then((cs) => Object.assign({ checks: cs.filter(Boolean).length }, v))
+    : (v ? Object.assign({ checks: 0 }, v) : null)),
+)).filter(Boolean)
+const verdicts = results
 const sum = (k) => verdicts.reduce((t, v) => t + v[k], 0)
 log('verify: ' + verdicts.length + ' of ' + groups.length + ' groups verified; ' + sum('verified') +
   ' verified, ' + sum('refuted') + ' refuted, ' + sum('plausible') + ' plausible, ' +
   sum('bearsOnRuling') + ' bearing on a ruling, ' + sum('bearsOnTripwire') + ' bearing on a tripwire, ' +
-  sum('known') + ' known, ' + sum('kept') + ' kept, ' + sum('createdHeads') + ' creating heads')
-
-// Check: for each group with a finding that creates a head, checkersPerGroup auditors, alternatives.
-phase('check')
-const checkJobs = []
-for (const v of verdicts) if (v.createdHeads > 0) for (let k = 1; k <= checkersPerGroup; k++) checkJobs.push({ label: v.label, k })
-const checks = (await parallel(checkJobs.map((j) => () => agent(lines([
-  'Check brief.',
-  'Commit audited: ' + args.commit,
-  'Your worktree, detached at that commit: ' + at(args.worktrees, 'check-' + j.label + '-' + j.k),
-  'The group ' + j.label + ': its drafts in ' + at(args.scratch, j.label) + ', its verdicts in ' +
-    at(args.scratch, 'verify', j.label, 'verdicts.md'),
-  'Your directory: ' + at(args.scratch, 'check', j.label) + '; write check-' + j.k + '.md there.',
-  checkersPerGroup > 1 ? 'Other checkers judge the same heads; your check is one alternative.' : '',
-  FROM_DISK,
-]), { agentType: AUDITOR, schema: PATH, phase: 'check', label: 'check ' + j.label + '-' + j.k }))))
-  .filter(Boolean)
+  sum('known') + ' known, ' + sum('kept') + ' kept, ' + sum('createdHeads') + ' creating heads; ' +
+  sum('checks') + ' checks')
 
 // Cross-check.
 phase('cross-check')
@@ -366,6 +371,6 @@ return {
   report: report ? report.path : null,
   groups: groups.map((g) => g.label),
   verified: verdicts.length,
-  checks: checks.length,
+  checks: sum('checks'),
   gaps,
 }
