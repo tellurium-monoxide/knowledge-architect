@@ -281,7 +281,8 @@ that reading each head's tripwires and issues before judging it keeps them true 
 audit edits.
 
 **Fires when:** a review of an audit's branch finds a tripwire guarding, or an issue naming, a head
-the branch changed, left false.
+an edit of the design-record axis changed, left false. An edit of another axis that leaves one false
+is the subject of `issue@agent-skills@a-repair-that-edits-a-head-reads-no-entry-citing-it`.
 **Response:** reopen `design@agent-skills@design-record-axis`.
 **Re-entry:** the standing-state review of every audit's branch.
 

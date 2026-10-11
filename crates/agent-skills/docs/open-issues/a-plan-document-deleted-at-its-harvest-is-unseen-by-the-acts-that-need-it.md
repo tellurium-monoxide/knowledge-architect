@@ -12,7 +12,8 @@ acts still need the spec at that point: the transcript reviewer's search, the st
 reviewer's reading of the criteria, the spec-conformity and fidelity-of-relocation axes, and a later
 `git log -G` for a thread-to-slug pair written into the harvest row. Cases 2 to 4 are predicted
 gaps, and case 1 a provable gap, which `design@agent-skills@behaviour-additions-need-real-use` admits for the
-owner list: no real session has shown any of them.
+owner list: no real session has shown any of them. On the owner's ruling, case 1 stays parked here
+with the other three until their shared structural repair is designed.
 
 ## Details
 
