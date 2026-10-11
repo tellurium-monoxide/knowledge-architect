@@ -190,8 +190,8 @@ design skill.
 Components, the goals, the place of each existing document, and each
 choice that changes your project's build or a file it already has.
 A run without an owner, such as a trial, makes those choices itself,
-and a gap it reports in a choice it had to make alone is not a defect
-of the skill.
+except the goals, which it leaves for you to state, and a gap it
+reports in a choice it had to make alone is not a defect of the skill.
 
 ## Model requirements
 

@@ -98,7 +98,8 @@ sentence is what the point of delivery needs. More than one sentence of it is ne
 partial copy drifts, and its reader takes it for the whole. For installed text, the home a pointer
 names is installed text, a skill's section or the primer's, since installed text cites no entry of
 the project. An existing longer restatement is converted when a change edits what it says;
-re-pointing a reference in it does not count.
+re-pointing a reference in it does not count. Until then, its length alone is no defect, whenever
+it was written.
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
@@ -301,7 +302,8 @@ outline reads as decisions under level-two subjects. **Every level-three heading
 is an entry** and carries a slug: one without is a finding, so a heading that is section text sits
 at level two or four. Nowhere else: a slug at another heading level, in a table cell, at the head
 of a plain line, in the middle of a line or in a file that is not the design home defines nothing.
-`{{command}} check` reports it as a misplaced definition; a reference to it resolves to nothing.
+Outside a fenced block, `{{command}} check` reports it as a misplaced definition; a reference to it
+resolves to nothing.
 The slug is an id in the grammar `[a-z0-9]+(-[a-z0-9]+)*`, unique in the design home.
 
 **When the decision was a thread of a design discussion, its slug is the thread's name**, unless
@@ -375,7 +377,7 @@ the owner named to the rule, the change goes to the owner as one proposal, as a 
 - `skill@knowledge-architect-review`: before merging to the main branch, or when an
   activity's skill says its work is ready.
 - `skill@knowledge-architect-agent-configuration`: before editing a `CLAUDE.md`, a skill or an
-  agent.
+  agent; after an install that changes the installed files.
 - `skill@knowledge-architect-setup`: the project adopts the workflow, or moves its pin of the
   checker to another version.
 - `skill@knowledge-architect-goal-setting`: before writing or editing any goals home; a Component

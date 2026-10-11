@@ -37,8 +37,9 @@ Read the Component's own files first:
 Then read the root's design home, `path@knowledge-architect@docs/design.md`: it holds what binds
 every Component, so its heads bind a change inside one Component too.
 
-A behaviour that looks like a new defect is often recorded: `cargo klarch issues` and
-`cargo klarch tripwires` list every entry.
+A behaviour that looks like a new defect is often recorded: check it as
+`instructions@verify-before-relying` says, in its subsection "Check whether it is already known",
+read that subsection whole.
 
 `primer@intent-and-claims` governs how to read all of them, read whole: intent is authority, and a
 divergence between a design document and the code is a defect in one of them, never licence to

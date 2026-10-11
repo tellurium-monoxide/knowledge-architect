@@ -157,7 +157,8 @@ cargo klarch check --fix
 Delete an entry with `git rm`, or stage its deletion: the check reads git's listing, and a deletion
 it still lists stops the run in phase 2, before the index is written.
 
-`cargo klarch index` writes the generated files alone, with no check.
+`cargo klarch index` writes the generated files alone, without the check's last phase: like
+`cargo klarch check --fix`, it writes no generated file while the first three phases find anything.
 
 **A commit of part of the working tree** needs the index of what it commits, which differs from
 the working tree's when an unstaged change touches the same register. Stage the part, then:
@@ -239,7 +240,8 @@ Four parts:
 The slug is what `tripwire@<anchor>@<slug>` references name, and it follows the id grammar above.
 A tripwire is a level-two heading, and every level-two heading of a tripwires home is one: a heading
 there with no slug is reported. A slug at another level, at the head of a plain line, or in the
-`README.md` of a directory-shaped home, defines nothing and is reported as misplaced.
+`README.md` of a directory-shaped home, defines nothing, and outside a fenced block it is reported
+as misplaced.
 
 When a tripwire is written, and on whose word, is
 `skill@knowledge-architect-decision-recording@ruled-tripwires`.

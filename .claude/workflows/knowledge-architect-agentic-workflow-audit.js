@@ -10,7 +10,7 @@ export const meta = {
 // args: {
 //   commit      the commit audited
 //   scratch     the run's scratch directory; each step and each agent writes under it
-//   worktrees   the directory under which the preflight creates the worktrees
+//   worktrees   the directory under which the run creates the worktrees
 //   history     a git range whose commit messages and added report files record the earlier passes
 //   previous    optional: for a re-check, the commit the previous pass audited
 //   kept        optional: the path of the kept list, for a re-check
@@ -78,17 +78,24 @@ const reading = at(args.worktrees, 'reading')
 const preflightDir = at(args.scratch, 'preflight')
 if (unwalked.length) log('L2 groups left unwalked: ' + unwalked.join('; '))
 
-const CORPUS = 'The corpus is every text the harness delivers to a session as an instruction, ' +
-  'installed or the project own: the project root CLAUDE.md and the primer it imports, and every ' +
-  'other such text in the project agent configuration directory. Read it in the worktree ' +
-  reading + ', detached at commit ' + args.commit + ', every file whole. You edit nothing in the ' +
-  'project, run no command of the checker, and write only in the directory your brief names.'
+// The corpus is defined in the workflow auditor's section the-corpus, its one home.
+const CORPUS = 'The corpus is the one the section the-corpus of the agent definition ' +
+  'knowledge-architect-workflow-auditor defines: read that section whole first; the commands ' +
+  'that section gives an auditor are not yours. Read the corpus in the worktree ' + reading +
+  ', detached at commit ' + args.commit + ', every file whole. You edit nothing in the project, ' +
+  'run no command of the checker, and write only in the directory your brief names.'
 const SECTION = 'the section agentic-workflow-axis of the skill knowledge-architect-project-audit'
 // The cause, its kinds and the repair are stated in the skill's repair section, their one home.
 const KINDS = 'What a cause is, its four kinds, what becomes of a finding that fits none, and ' +
   'how a repair is shaped are stated in the section repair-standard of the skill ' +
   'knowledge-architect-project-audit; how the repair of a cause is proposed in this run is in ' +
   SECTION + '.'
+// The home of this line is the bullet of review-invariants, in the skill knowledge-architect-review,
+// that names the files a subagent's copy may predate: the definition, the root CLAUDE.md and the
+// primer it imports.
+const FROM_DISK = 'Your copies of your definition, of the root CLAUDE.md and of the primer it ' +
+  'imports may predate this session: read each in the worktree this brief names, and follow the ' +
+  'worktree where your copy differs.'
 
 // Preflight: the worktrees, the kept lists, the issues and tripwires listings and the history.
 if (!args.from) {
@@ -121,8 +128,7 @@ const draftBrief = (a) => lines([
   args.kept ? 'Kept list, for this re-check: ' + at(args.scratch, a.label, 'kept.md') : '',
   'Issues listing at that commit: ' + at(preflightDir, 'issues.txt'),
   'Also write your return, in its shape, to return.md in your scratch directory.',
-  'Your copies of your definition and of the root CLAUDE.md may predate this session: read both ' +
-    'in your worktree, and follow the worktree where your copy differs.',
+  FROM_DISK,
 ])
 const verifyBrief = (a) => lines([
   'Verify brief.',
@@ -136,8 +142,7 @@ const verifyBrief = (a) => lines([
   'Tripwires listing: ' + at(preflightDir, 'tripwires.txt'),
   'History of the audit earlier passes: ' + at(preflightDir, 'history.txt') + ', and their ' +
     'report files, with the owner\'s rulings: ' + at(preflightDir, 'reports.txt'),
-  'Your copies of your definition and of the root CLAUDE.md may predate this session: read both ' +
-    'in your worktree, and follow the worktree where your copy differs.',
+  FROM_DISK,
 ])
 const auditorOpts = (a, step) => ({ agentType: 'knowledge-architect-workflow-auditor', phase: step, label: step + ' ' + a.label })
 
@@ -217,6 +222,19 @@ log('causes: ' + causeIds.length)
 phase('repairs')
 const jobs = []
 for (const id of causeIds) for (let k = 1; k <= perCause; k++) jobs.push({ id, dir: at(args.scratch, 'repairs', perCause > 1 ? id + '-' + k : id) })
+// A check agent runs the checker, so each gets a worktree of its own, per review-invariants. The
+// preflight cannot create them: the jobs are known only now.
+const checkTree = (j) => at(args.worktrees, 'check-' + j.dir.split('/').pop())
+if (jobs.length) {
+  const trees = await agent(lines([
+    'You set up the worktrees of the check step of one pass of the agentic-workflow axis of a ' +
+      'project audit. From the project root, for each of these paths that is not already a ' +
+      'worktree, run git worktree add --detach <path> ' + args.commit + ', and report what failed: ' +
+      jobs.map(checkTree).join(', ') + '.',
+    'Edit nothing else. Return done true only if every command succeeded.',
+  ]), { schema: DONE, phase: 'repairs', label: 'check worktrees' })
+  if (!trees || !trees.done) throw new Error('check worktrees failed: ' + (trees ? trees.notes : 'no return'))
+}
 const repairPrompt = (j) => lines([
   'You propose the repair of one cause of findings of the agentic-workflow axis of a project ' +
     'audit, at commit ' + args.commit + '.',
@@ -234,11 +252,10 @@ const repairPrompt = (j) => lines([
 const checkBrief = (j, p) => lines([
   'Check brief.',
   'Commit audited: ' + args.commit,
-  'The worktree to read, detached at that commit: ' + reading,
+  'Your worktree, detached at that commit: ' + checkTree(j),
   'The proposal: ' + p.path + ', for the cause ' + j.id + ' of the causes file ' + causesFile,
   'Your directory: ' + j.dir,
-  'Your copies of your definition and of the root CLAUDE.md may predate this session: read both ' +
-    'in the worktree, and follow the worktree where your copy differs.',
+  FROM_DISK,
 ])
 // Each proposal goes to its check as soon as it is written.
 const proposals = (await pipeline(jobs,
@@ -276,8 +293,9 @@ const report = await agent(lines([
   'Write ' + at(args.scratch, 'report', 'report.md') + ' in six parts:',
   '1. the header: the commit audited, ' + args.commit + '; the agents of each step; the counts of ' +
     'drafts, verified, plausible, bearing on a ruling, bearing on a tripwire, known, kept, after ' +
-    'dedup and refuted; for a re-check, the confirmed findings and the severe ones on old text and ' +
-    'on new text; each ' +
+    'dedup and refuted; for a re-check, the counts the section record-of-an-audit of the skill ' +
+    'knowledge-architect-project-audit asks of a pass, the owner-list one as the cross-check ' +
+    'proposes it; each ' +
     'refuted draft with its reason; each auditor return that says a corpus file was not read whole;',
   '2. the figures: the run counts of findings and causes, and the instructions each proposal adds ' +
     'and removes;',

@@ -279,9 +279,10 @@ To move to another version:
    project's tests, and commit the pin, the installed files and the repairs together, ordered on
    the branch as `primer@branch-commits` says. A new version can change what a command prints,
    which only the tests see.
-5. For each axis that step 2 listed, run it under `skill@knowledge-architect-project-audit`, after
-   the pin's commit, in a branch of its own. Such an entry changes the rules the project's existing
-   record must meet, and the audit brings that record to them.
+5. For each axis that step 2 listed, run it under `skill@knowledge-architect-project-audit`, in a
+   branch of its own started from the main branch once the pin move has merged into it, so that
+   the audit's range holds the audit's work alone. Such an entry changes the rules the project's
+   existing record must meet, and the audit brings that record to them.
 
 ## In a Rust project {{slug:rust-project}}
 

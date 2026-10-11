@@ -8,8 +8,7 @@ axis, and runs it on this repository. The work does eight things:
 - the method of `skill@knowledge-architect-project-audit` becomes generic, and the dispatch of the
   design-record axis, its groups and its calibration sample, moves into that axis's section;
 - a new installed agent, the workflow auditor, holds the standard of the new axis;
-- a new section of the audit skill holds the axis: its corpus, its lenses, its finding standard and
-  its outcomes;
+- a new section of the audit skill holds the axis: its lenses, its finding standard and its outcomes, and points to the workflow auditor for its corpus;
 - the axis runs on this repository, in this branch, which judges AC4 and counts T1 to T4;
 - the axis repairs by cause, with a workflow script beside its prose, per "The repair by cause" and
   "The workflow script";
@@ -322,8 +321,7 @@ The work rewrites two heads by its threads, three more per D4 to D6, and reads a
   `design@agent-skills@staged-forms-for-a-partial-commit`;
   `issue@agent-skills@the-message-check-after-a-commit-is-delivered-by-no-installed-text`; `issue@agent-skills@an-audit-s-provable-gap-on-installed-text-against-real-use`, whose question, which of the head and the axis governs a provable gap on the installed text, the rewrite answers, so the harvest closes it when the rewritten head decides it; and the restatement of the
   Necessity test in `path@agent-skills@CLAUDE.md`, which is rewritten with the head.
-- `design@agent-skills@audit-outcomes`, per D5 and D14: an installed-text finding in a project that
-  does not publish the workflow is sent upstream, and a predicted gap is an issue entry.
+- `design@agent-skills@audit-outcomes`, per D5 and D14: an installed-text finding in a project that does not publish the workflow is sent upstream, unless an issue entry records it or the kept list holds it, and a predicted gap is an issue entry.
 - `design@agent-skills@audit-is-an-activity`, per D6: a corpus holds entries or texts, and the method
   is generic with a dispatch per axis.
 - `design@agent-skills@restatement-size-test` is not rewritten under D3's default: L5 is narrowed to
@@ -401,7 +399,7 @@ approved `thread@agentic-workflow-axis@one-run-pass` with the first and D26 with
 18: "D23 to D27 approved", which marks this criterion unmet-and-accepted.
 `thread@agentic-workflow-axis@repair-proposals-audited` adds one check agent per proposal, 16 at
 pass 5's 16 causes; round 20 put "about 16 more agents per pass at pass 5's size", and the owner
-approved the thread with that figure, round 21. The record check of
+approved the thread with that figure, round 21. Pass 6's F109, ruled on the owner's word "Go with the defaults.", adds one setup agent per pass, which creates the check step's worktrees. The record check of
 `thread@agentic-workflow-axis@repairs-read-against-the-record` and the mark of
 `thread@agentic-workflow-axis@tripwires-read-by-the-audit` add no agent.
 
@@ -721,7 +719,7 @@ like retro intake reports." Arguments: `argument@agentic-workflow-axis@a85`,
 by entry test 2, since the primer's table and the audit skill both state it; the `F` row of
 `design@agent-skills@ruled-items-labelled`; the rows of
 `issue@agent-skills@audit-axes-beyond-the-design-record` and
-`issue@agent-skills@the-transcript-reviewer-cannot-see-a-plan-document-its-range-deletes`. Round
+`issue@agent-skills@a-plan-document-deleted-at-its-harvest-is-unseen-by-the-acts-that-need-it`. Round
 22 asked whether it covers every axis or the agentic-workflow axis alone, with the default every
 axis; closed, round 23, the owner: "Agreed on the three defaults, every axis for the report". The
 premortem's cause 5 of round 23 converted into the clause that a review brief names each report file by its
@@ -1383,7 +1381,7 @@ pass5 directory", and round 20's classification needed that run's confirmed-find
 messages alone, holds the outcomes and not the evidence, and the analogous rival lost in
 `design@knowledge-architect@committed-findings-analysis`, since a commit that changes no file is
 dropped by the rebase merge. Pass 5's report is 16362 words, by `wc -w`: history grows by that
-much per pass, and the tree by nothing once the file leaves. Its risk: a file added and deleted within one branch is absent from the tree at the branch's tip, where a reviewer searches, a mechanism near the one `issue@agent-skills@the-transcript-reviewer-cannot-see-a-plan-document-its-range-deletes` records for a plan document.
+much per pass, and the tree by nothing once the file leaves. Its risk: a file added and deleted within one branch is absent from the tree at the branch's tip, where a reviewer searches, a mechanism near the one `issue@agent-skills@a-plan-document-deleted-at-its-harvest-is-unseen-by-the-acts-that-need-it` records for a plan document.
 
 ## New names, in one place
 
@@ -1567,7 +1565,7 @@ interaction finding in both its files.
 
 | tag | in the installed text |
 | --- | --- |
-| W | never edited in the project; sent upstream, per D5 |
+| W | never edited in the project; sent upstream, per D5, unless the row "nothing" names it |
 | P | applied, put to the owner, or an issue |
 
 Per D12, the installed text holds no branch for the project that publishes the workflow. This
@@ -1602,7 +1600,7 @@ Outcomes of a P finding, and in this repository of a W finding:
   provable gap;
 - **issue**: a predicted gap; a finding the owner defers.
 
-**Sent upstream**, per D5 and D15: the W findings of a run go into one file in the shape of the
+**Sent upstream**, per D5 and D15: the W findings of a run whose outcome is sent upstream go into one file in the shape of the
 retrospective's workflow file, each numbered `W<n>`: the version of the checker used, what was
 audited at which commit, and the findings, with no standing questions, written to the directory the retrospective uses
 and named `<YYYY-MM-DD>-<project>-workflow-audit-klarch-workflow.md`, under the rules of
@@ -1622,7 +1620,7 @@ own and, for a re-check, the kept list; then its drafts are read, never its summ
 - the standard: it edits nothing; it writes only to its scratch directory; every quotation is copied
   from the file; every command listed was run;
 - its brief, as above;
-- the corpus, named as the axis's section names it, every file read whole;
+- the corpus, which its own section defines and the axis's section points to, every file read whole;
 - `cargo klarch issues` run before drafting, a finding already recorded marked with its reference;
 - one section per lens, the brief naming which is its task; a finding of another lens met on the way
   is drafted too, and its draft names the finding's lens, not the brief's;
@@ -1762,8 +1760,7 @@ the session once the pass's findings have their outcomes, as the invariant says.
 verify brief, per D24, in its auditor's worktree, which the auditor has finished with, the pipeline
 handing over each auditor's drafts when it returns. It tries to refute each draft. It checks every
 quotation against the worktree; reads the kept list, the issues listing and the messages of the
-audit's earlier passes; refutes a draft whose finding the owner already ruled on, naming the
-commit; marks known a draft whose finding an issue entry records, naming the entry, and kept a draft
+audit's earlier passes; marks known a draft whose finding an issue entry records, naming the entry, and kept a draft
 on the kept list, both going on with their outcome under the axis's table; checks a quotation of
 the owner against the question it answered, in its source; checks that the moment the draft
 describes exists; and tests the finding's class against the auditor's definitions. A draft whose finding is that a
@@ -1909,7 +1906,7 @@ The answer to AC4's firing on pass 5, per F95. Its threads were raised in rounds
 - The agentic-workflow axis: the run takes a new argument, `previous`, the commit the previous pass
   audited, absent on a first pass. The dedup step classifies each confirmed finding: for each line
   that carries its defect, `git blame -w -C` at the commit audited; a line whose blamed commit is
-  not an ancestor of `previous` is new text only when its phrase, whitespace-normalised, is absent from every file of the corpus at `previous`, so a move within a file or between files, a reflow or a rename leaves it old, the clause the
+  not an ancestor of `previous` is new text only when the words on it that carry the defect, whitespace-normalised, are absent from every file of the corpus at `previous`, so a move within a file or between files, a reflow, a rename or an edit elsewhere in a line the previous pass read leaves it old, the clause the
   premortem's cause 3 of round 23 converted; a finding on an interaction of two texts takes the newer. The
   confirmed-findings file gives each finding's class with that evidence, and the report's header
   gives both counts.
@@ -1925,26 +1922,20 @@ meant, the owner list otherwise. The outcome table gains no row, the verifier no
 finding standard no test.
 
 **The repair standard**, `thread@agentic-workflow-axis@intake-shares-the-repair-standard`. A new
-level-two section of the audit skill, "Repairs to agent-facing text", holds what any repair of an
-instruction found by reading or by real use is judged by: the repair by cause, moved from the axis's
+level-two section of the audit skill, "Repairs to agent-facing text", holds what a repair of an instruction is judged by, in an audit and at each step of a skill that names the section, whether a reading or a real session found its defect: the repair by cause, moved from the axis's
 section, with its kinds of cause, its forms of repair, the definition of an instruction, the counts
 of instructions added and removed and the net growth stated to the owner first; and, per D35, the
 record check below, with the nearest rival and the fact that decides it. The axis's section points
-to it. The intake's item f shapes the better fix by the section's rules, beside its four tests and
-its rivals, and its items c and e, which already read the issues, the tripwires, the rejected
-alternatives and the decisions a fix would reverse, point to the section's record check for a fix's
-own reading against the record. The intake keeps its own evidence, its lapse kind and the owner's
+to it. The intake's item f shapes the better fix, and reads it against the record, by the section's rules, read whole, beside its four tests and its rivals; its item e points to item f for the heads a fix would reverse. Item c, which subagents may run before item f settles a fix, does not read the fix. The intake keeps its own evidence, its lapse kind and the owner's
 ruling on every finding.
 
 **The proposal check**, `thread@agentic-workflow-axis@repair-proposals-audited` and
 `thread@agentic-workflow-axis@repairs-read-against-the-record`. A new step of the run, `check`,
-between the repairs and the cross-check, one agent per proposal, each starting when its proposal is
-written. The agent is the workflow auditor under a check brief, a new section of its definition, as
+between the repairs and the cross-check, one agent per proposal, each starting when its proposal is written, each in a worktree of its own that a setup agent of the run creates once the causes are known. The agent is the workflow auditor under a check brief, a new section of its definition, as
 its verify brief is, so the axis's standard reaches the check from the agent's own text, per
 `design@agent-skills@audit-agent-per-axis` and D24; the script's prompt names the proposal, the
 corpus and the scratch directory. It reads the proposal's after-texts in the corpus through L1 and L3, and against the record: the design heads that `cargo klarch show`
-and a search of the design homes return for the behaviour the edited text describes, the goals, and
-the rejected alternatives of the Component that owns the text. It writes `check.md` beside the
+and a search of the design homes return for the behaviour the edited text describes, every goals home, and the rejected alternatives of the Component that owns the text. It writes `check.md` beside the
 proposal: each contradiction and each two readings, each head the repair would
 reverse, each lost alternative it brings back, each goal it strains, with its quotation. The repair
 prompt also asks for the nearest rival to the repair and the fact that decides between them. The
@@ -2187,7 +2178,7 @@ are weighed by the owner on the owner list and counted by T2 and AC4.
 | (cause 2 of round 23) | The test admits nearly everything, since an instruction that rules one act out can almost always be argued, and the old-text count still does not fall | `thread@agentic-workflow-axis@workflow-axis-finding-standard` | survives into AC4 and the tripwire D18 proposes, converted: both read the old-text count of `thread@agentic-workflow-axis@convergence-count-scope`; the test itself decides no outcome per D34 |
 | AC7 | Old and new text are classified wrongly: a reflow, a move or a rename counts as new, old defects leave the convergence count, and the audit stops early (cause 3 of round 23) | `thread@agentic-workflow-axis@convergence-count-scope` | converted into the clause that a line is new text only where its words changed since the previous pass, and acceptance criterion `acceptance@agentic-workflow-axis@new-text-is-changed-text` |
 | T8 | The record check misses a head, since its search by behaviour is a judgement, and a repair reverses it unseen until the branch's review (cause 4 of round 23) | `thread@agentic-workflow-axis@repairs-read-against-the-record` | tripwire. Fires when the review of an audit's branch finds a repair that contradicts a design head, or brings back a rejected alternative, which the check of its proposal did not name. Response: reopen `thread@agentic-workflow-axis@repairs-read-against-the-record`, for where the record check runs. Re-entry: the review of each audit's branch |
-| (cause 5 of round 23) | A report file added and deleted within one branch is not in its diff, and a reviewer misses a ruling in it | `thread@agentic-workflow-axis@committed-audit-report` | converted: the review's brief names each report file by its path and the commit that holds it; the case joins `issue@agent-skills@the-transcript-reviewer-cannot-see-a-plan-document-its-range-deletes` at the harvest |
+| (cause 5 of round 23) | A report file added and deleted within one branch is not in its diff, and a reviewer misses a ruling in it | `thread@agentic-workflow-axis@committed-audit-report` | converted: the review's brief names each report file by its path and the commit that holds it; the case joins `issue@agent-skills@a-plan-document-deleted-at-its-harvest-is-unseen-by-the-acts-that-need-it` at the harvest |
 | (cause 6 of round 23) | The intake leaves to judgement a finding where a real session's act produced a defect | `thread@agentic-workflow-axis@intake-shares-the-repair-standard` | converted: in the intake, the act ruled out may be the one the session took; voided by D34, since nothing is left to judgement |
 
 ## Acceptance criteria
@@ -2311,6 +2302,21 @@ audited: 8 pass and 7 fail. C3, C13, C24 and C25 fail because the reading meant 
 this spec, which leaves at the harvest; C4, C20 and C23 fail because no text states it. C23 is the
 finding the session rejected. Under the test, 6 of the 14 two-readings findings the session kept would have been left to judgement, which bears on D34.
 
+At step 10, pass 6, the first pass that classifies its findings, against pass 5's old-text counts:
+
+| pass | violations left on old text | severe among them | on new text | source |
+| --- | --- | --- | --- | --- |
+| 5 | 16 | 8 | not classified | the measurement above |
+| 6 | 21 | 7 | 15 | the pass-6 report file, F108, its findings re-classified by the words carrying each defect |
+
+AC4 fired on the violations left, which rose while the severe ones fell. AC7 fired: three findings
+the dedup step classified as new text carry words present at the commit pass 5 audited, since the
+step read the whole blamed line; F114 states the rule by the words carrying the defect, as AC7
+reads it, and pass 6's counts are taken by it. Eight of the 21 sit wholly on text the main branch
+held before this branch. The owner ruled F108's default, "Go with the defaults.": the audit stops
+after pass 6's application, by the stop rule of `design@agent-skills@audit-method`, and no pass 7
+runs.
+
 ## Implementation sequence
 
 Every step that changes the installed text, steps 1 to 10, runs
@@ -2393,7 +2399,7 @@ CHANGELOG.md entries `design@knowledge-architect@changelog-entries` owes, then r
      checks, the classes and the marks;
    - the primer's row for docs/audit-reports/; this repository's directory with its README, and
      its root CLAUDE.md, per D32;
-   - the intake, `path@agent-config@skills/klarch-retrospective-intake/SKILL.md`, its items c, e and f, per "The repair standard".
+   - the intake, `path@agent-config@skills/klarch-retrospective-intake/SKILL.md`, its items e and f, per "The repair standard".
 
       Also in step 9:
    - the script's sites that list the marks, the VERDICTS schema and its required keys, the verify
@@ -2748,7 +2754,7 @@ auditor each state its reason, two texts. The harvest confirms each against the 
 | `thread@agentic-workflow-axis@intake-shares-the-repair-standard` | a head with the thread's slug, by entry test 2: the audit skill's section "Repairs to agent-facing text" and the intake state it |
 | `thread@agentic-workflow-axis@repair-proposals-audited`, `thread@agentic-workflow-axis@repairs-read-against-the-record` | each judged by the entry tests and by `design@agent-skills@one-decision-per-head`: each loses to a nearest rival of its own, so each takes a head with its thread's slug when it passes an entry test, the saved workflow and the axis's section stating it, and the head of `thread@agentic-workflow-axis@root-cause-repair` points to them; a line beside its instruction when it passes none |
 | `thread@agentic-workflow-axis@tripwires-read-by-the-audit` | judged by the entry tests; a line beside its instruction when it passes none |
-| `thread@agentic-workflow-axis@committed-audit-report` | a head, by entry test 2: the primer's row and the audit skill state it; the `F` row of `design@agent-skills@ruled-items-labelled` names the audit report file; the case of a report file joins `issue@agent-skills@the-transcript-reviewer-cannot-see-a-plan-document-its-range-deletes` |
+| `thread@agentic-workflow-axis@committed-audit-report` | a head, by entry test 2: the primer's row and the audit skill state it; the `F` row of `design@agent-skills@ruled-items-labelled` names the audit report file; the case of a report file joins `issue@agent-skills@a-plan-document-deleted-at-its-harvest-is-unseen-by-the-acts-that-need-it` |
 | T8 | `path@agent-skills@docs/tripwires.md`, naming the head of `thread@agentic-workflow-axis@repairs-read-against-the-record`, with its label; T7 is not recorded, per D34 |
 | `issue@agent-skills@audit-axes-beyond-the-design-record` | rewritten to the axes it still holds; its open lesson, the owner's reading of a sample of the verdicts, is adopted by this axis as the session's sample of refuted drafts, and stays for the axes that have not adopted it; its question of an audit report is answered for every axis by `thread@agentic-workflow-axis@committed-audit-report` |
 

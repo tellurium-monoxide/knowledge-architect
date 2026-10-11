@@ -122,8 +122,8 @@ subsection is omitted.
   decision about agent-facing text, so a decision one text states has one site, and its reason
   lives beside the instruction rather than in a head.
 - `agent-skills`, patch: moving the pin runs the audit axis a Migration entry of a version crossed
-  cites, after the pin's commit, in a branch of its own; the work that moves an adopting
-  project's existing documents ends by running the design-record axis.
+  cites, in a branch of its own started from the main branch once the pin move has merged; the
+  work that moves an adopting project's existing documents ends by running the design-record axis.
 - `agent-skills`, patch: an entry of the rejected alternatives leaves its file when it is reopened
   and chosen, when the owner rules that it fails every recording test, or when the decision it lost
   to leaves the design home and the text that keeps that decision's reason names the alternative.
@@ -216,6 +216,13 @@ subsection is omitted.
   `skill@knowledge-architect-project-audit@repair-standard`. The agentic-workflow axis's run checks
   each repair proposal through the workflow auditor before its cross-check, and its verifiers read
   the tripwires.
+- `agent-skills`, patch: a requested change that is not bounded and whose work has not started
+  takes the full path and a plan document, even when one pull request builds it; the in-change path
+  is for a decision met in a change begun before its discussion, or for a decision no work
+  implements. What the planning skill says an acceptance criterion names applies to a plan
+  document's criteria only. A load-bearing gap of a design audit that defeats a premise of a ruling
+  stops the slice; the session does not proceed on the default the primer names. The audit a pin
+  move owes starts from the main branch once the pin move has merged.
 
 ## 0.5.0
 

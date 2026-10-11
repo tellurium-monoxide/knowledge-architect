@@ -1040,11 +1040,12 @@ it is unchecked text that a grep finds with no marker that it is stale. Either b
 too: the installed planning skill would have nothing to say where a document's work ends, against
 `goal@knowledge-architect@agents-get-a-complete-workflow`.
 
-### A discussion whose work lands in the change under way keeps its deliberation in that change's commit message `##in-change-path`
+### A discussion whose decision lands in a change begun before it keeps its deliberation in that change's commit message `##in-change-path`
 
 The design skill has two paths, which differ only in where the deliberation is kept until the
-harvest. The in-change path is open when the decision lands in the change under way: its work, or
-its record, for a decision recorded when it is made, per
+harvest. The in-change path is open when the decision lands in the change under way: its work,
+where that change began before the discussion opened, as an issue fix or a review repair does, or
+its record, whenever the discussion opened, for a decision recorded when it is made, per
 `design@agent-skills@design-home-is-built-intent`. It writes no plan document. The message of the
 commit that writes the decision's design entry, or that implements a decision that earns none,
 carries what a plan document would: every thread with its final state, the owner's words verbatim
@@ -1053,16 +1054,24 @@ premortem runs when reversal touches any of the four things the skill names: sto
 consumed interface, behaviour users have adapted to, and a decided thread that would reopen. The four never open the in-change path: a decision that is cheap to
 reverse and whose work comes later takes the full path, per
 `design@agent-skills@design-hands-off-to-planning`, as does any discussion that converges on work
-that does not land in the change under way. Decided and unbuilt intent then has one home, the plan
-document, per `design@agent-skills@design-home-is-built-intent`.
+that does not land in the change under way. A requested change that is not bounded, and whose work
+has not started when its discussion opens, takes the full path too, even when one pull request
+builds it. Decided and unbuilt intent then has one home, the plan document, per
+`design@agent-skills@design-home-is-built-intent`.
 
 A plan document exists to carry a decision from convergence to a landing that comes later, and to
-be reviewed before another session implements it. When the work lands in the change under way,
-neither applies, and requiring a spec would make every decision met during a task cost a plan
-document, which is what `design@agent-skills@new-or-reshaped-head-needs-design` must not cost to
-be followed. Widening the existing short path, rather than adding a path for one decision met
-during a task, is the owner's proposal, on the owner's argument: "The discussion starts with a
-single decision, but should not be bounded in threads or rounds IMO, because this depends only on
+be reviewed before its work is built. A decision met during a change begun before the discussion
+lands in work already under way, so neither applies, and requiring a spec would make every
+decision met during a task cost a plan document, which is what
+`design@agent-skills@new-or-reshaped-head-needs-design` must not cost to be followed. A requested
+change whose work has not started has all of that work ahead of it, and its plan can be reviewed
+before any of it is built. The move of an adopting project's existing documents starts as such a
+change, and it is planned work under the planning skill, per
+`design@agent-skills@adopting-existing-docs`. The cost is a spec, its plan reviews, its harvest and
+its deletion for every requested change that is not bounded, including one the converging session
+builds in one pull request. Widening the existing short path, rather than adding a path for one
+decision met during a task, is the owner's proposal, on the owner's argument: "The discussion
+starts with a single decision, but should not be bounded in threads or rounds IMO, because this depends only on
 what the grounding and investigation and experimentation brings to the table, and we cannot know
 about this in advance." The separate path bounded the discussion to one thread, against
 `design@agent-skills@structure-the-flow`. The cost is a long commit message when a discussion
