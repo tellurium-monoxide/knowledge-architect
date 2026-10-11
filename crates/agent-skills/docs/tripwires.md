@@ -356,3 +356,23 @@ brings back a rejected alternative, which the check of its proposal did not name
 **Response:** reopen `design@agent-skills@repairs-read-against-the-record` on where the record
 check runs.
 **Re-entry:** the review of each audit's branch.
+
+## Guarding `design@agent-skills@root-cause-repair`: an audit's passes do not converge `##audit-passes-do-not-converge`
+
+AC4 of the discussion that made the decision, proposed by the owner as an acceptance criterion and
+kept as a tripwire, on the owner's word, to watch future audits. The decision rests on the premise
+that repairing each cause rather than each finding makes an audit push the record toward
+improvement, so that what a pass leaves falls from one pass to the next.
+
+**Fires when:** from one pass to the next of an audit, the violations left on old text do not
+fall, or the severe ones among them, those whose outcome is the owner list, do not fall while they
+are above zero. Old text is text the previous pass also read, whose words are unchanged since the
+commit it audited; a first pass is not counted.
+**Response:** reopen `design@agent-skills@root-cause-repair`, with `design@agent-skills@workflow-axis-lenses`
+and `design@agent-skills@workflow-axis-finding-standard` among what is read again.
+**Re-entry:** the session that writes each pass's commit message, which gives the counts on old
+text; the standing-state review of the audit's branch.
+**Evidence when written:** in the first agentic-workflow audit of this repository, as an
+acceptance criterion, it fired at passes 1 to 3 and 5 on the plain counts, and at pass 6 on the
+old-text counts: 21 violations left against pass 5's 16, the severe ones falling from 8 to 7. The
+owner stopped the audit after pass 6's application.
