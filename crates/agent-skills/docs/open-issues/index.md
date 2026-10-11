@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-24 entries
+26 entries
 
 | kind | title |
 | --- | --- |
@@ -9,6 +9,7 @@
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | design | [The head on the primer's content restates the primer's limit and bundles the decision behind each directive](primer-content-bundles-each-directive-s-decision.md) |
 | design | [The workflow assumes one owner, unnamed, which a project with several contributors does not have](the-workflow-assumes-one-unnamed-owner.md) |
+| observation | [A reviewer subagent refused a write to the scratch file its brief named, and returned its findings as text](a-reviewer-cannot-write-the-file-its-brief-names.md) |
 | question | [A design issue's re-entry point is read by no review](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |
 | question | [A pending audit report file is outstanding work that no installed search of what is already known reads](a-pending-audit-report-is-reached-by-no-installed-search.md) |
 | question | [A project that receives a retrospective's findings has no installed procedure to analyse them](a-received-retrospective-file-has-no-installed-analysis.md) |
@@ -18,6 +19,7 @@
 | question | [The audit that ends the move of an adopting project's documents is stated where the move's sessions do not read](the-closing-audit-of-a-move-reaches-no-planning-text.md) |
 | question | [The installed text delivers the check of a commit's tree before the commit, and no check of its message after it](the-message-check-after-a-commit-is-delivered-by-no-installed-text.md) |
 | question | [Does the design skill's open-space test leave bounded work almost unreachable?](the-open-space-test-may-admit-every-problem.md) |
+| question | [Whether a session in Claude Code's default permission mode is asked for permission, or needs an allow rule, to run an installed saved workflow](whether-a-saved-workflow-run-needs-a-permission-rule.md) |
 | todo | [No installed skill says how a new Component is created](a-skill-for-creating-a-component.md) |
 | todo | [The project audit has two axes, and the other axes the owner named have none](audit-axes-beyond-the-design-record.md) |
 | todo | [Only the design and setup skills state what they expect of the owner](expectation-sets-for-the-installed-skills.md) |
