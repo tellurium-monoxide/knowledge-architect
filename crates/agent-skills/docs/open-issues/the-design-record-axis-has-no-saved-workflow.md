@@ -37,8 +37,8 @@ workflow's design must decide, at least:
 
 ### Why it matters
 
-The audit skill's method gives every axis the same shape, a decision recorded at the harvest of
-`spec@plans@agentic-workflow-axis` in `design@agent-skills@audit-method`, and the design-record
+The audit skill's method gives every axis the same shape, the decision
+`design@agent-skills@audit-axis-runs-a-workflow`, and the design-record
 axis is the one left on the manual points. Its sort is the session reading of every draft that the
 agentic-workflow axis's first run measured as costing a session most of its context.
 

@@ -91,6 +91,5 @@ since its title and body name the rules on design heads and on rejected alternat
 `primer@design-heads` holds no rule on the Component, so adding it is a change of the decision and
 not a member recorded directly. Then either the three edits above, with the head gaining the
 section among the axis's rules, or the rival, with `design@agent-skills@audit-outcomes` losing the
-member. Whether a provable gap on the installed text is filled by an edit at all is
-`issue@agent-skills@an-audit-s-provable-gap-on-installed-text-against-real-use`; the discussion
-reads that entry's state first.
+member. A provable gap on the installed text is filled by an edit on the owner's word, per
+`design@agent-skills@additions-need-real-use`.

@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-23 entries
+22 entries
 
 | kind | title |
 | --- | --- |
@@ -12,13 +12,12 @@
 | question | [A pending audit report file is outstanding work that no installed search of what is already known reads](a-pending-audit-report-is-reached-by-no-installed-search.md) |
 | question | [A project that receives a retrospective's findings has no installed procedure to analyse them](a-received-retrospective-file-has-no-installed-analysis.md) |
 | question | [A reviewer that queues long work reports nothing until it is asked](a-reviewer-s-running-time-is-unbounded.md) |
-| question | [An audit's provable gap on the installed text goes to the owner as an edit, while an addition to the installed text needs real use](an-audit-s-provable-gap-on-installed-text-against-real-use.md) |
 | question | [After a version upgrade, nothing re-reads a project's restatements of installed directives, a project skill whose activity an installed skill now covers, or the session's own copy of the new text, nor the agent types it adds](an-upgrade-re-reads-no-root-restatement.md) |
 | question | [The audit that ends the move of an adopting project's documents is stated where the move's sessions do not read](the-closing-audit-of-a-move-reaches-no-planning-text.md) |
 | question | [The installed text delivers the check of a commit's tree before the commit, and no check of its message after it](the-message-check-after-a-commit-is-delivered-by-no-installed-text.md) |
 | question | [Does the design skill's open-space test leave bounded work almost unreachable?](the-open-space-test-may-admit-every-problem.md) |
 | todo | [No installed skill says how a new Component is created](a-skill-for-creating-a-component.md) |
-| todo | [The project audit has one axis, and the other axes the owner named have none](audit-axes-beyond-the-design-record.md) |
+| todo | [The project audit has two axes, and the other axes the owner named have none](audit-axes-beyond-the-design-record.md) |
 | todo | [Only the design and setup skills state what they expect of the owner](expectation-sets-for-the-installed-skills.md) |
 | todo | [A project cannot change one instruction of an installed skill](patching-an-installed-skill.md) |
 | todo | [Nothing checks mechanically that the shipped text cites no entry of this repository](shipped-text-citing-an-entry-is-unchecked.md) |

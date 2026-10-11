@@ -319,14 +319,14 @@ The work rewrites two heads by its threads, three more per D4 to D6, and reads a
   `design@agent-skills@standing-entries-searched-before-the-work`,
   `design@agent-skills@audit-triggers`, `design@agent-skills@staged-check-before-each-commit` and
   `design@agent-skills@staged-forms-for-a-partial-commit`;
-  `issue@agent-skills@the-message-check-after-a-commit-is-delivered-by-no-installed-text`; `issue@agent-skills@an-audit-s-provable-gap-on-installed-text-against-real-use`, whose question, which of the head and the axis governs a provable gap on the installed text, the rewrite answers, so the harvest closes it when the rewritten head decides it; and the restatement of the
+  `issue@agent-skills@the-message-check-after-a-commit-is-delivered-by-no-installed-text`; the issue entry on an audit's provable gap on the installed text, whose question, which of the head and the axis governs a provable gap on the installed text, the rewrite answers, so the harvest closes it when the rewritten head decides it; and the restatement of the
   Necessity test in `path@agent-skills@CLAUDE.md`, which is rewritten with the head.
 - `design@agent-skills@audit-outcomes`, per D5 and D14: an installed-text finding in a project that does not publish the workflow is sent upstream, unless an issue entry records it or the kept list holds it, and a predicted gap is an issue entry.
 - `design@agent-skills@audit-is-an-activity`, per D6: a corpus holds entries or texts, and the method
   is generic with a dispatch per axis.
 - `design@agent-skills@restatement-size-test` is not rewritten under D3's default: L5 is narrowed to
   meet it.
-- Per D12, `design@knowledge-architect@retrospective-findings-stay-here` gains the audit's findings
+- Per D12, `design@knowledge-architect@workflow-findings-stay-here` gains the audit's findings
   on the installed text, and its restatement in `instructions@repository-skills` says so. Per D15,
   `design@agent-skills@ruled-items-labelled` widens its `W` row to an audit's upstream file.
 - Per "The AC4 response": `design@agent-skills@audit-method` counts, for its stop rule, the
@@ -1570,7 +1570,7 @@ interaction finding in both its files.
 
 Per D12, the installed text holds no branch for the project that publishes the workflow. This
 repository's root CLAUDE.md says, in `instructions@repository-skills`, that here a W finding
-is edited at its source, as `design@knowledge-architect@retrospective-findings-stay-here` already
+is edited at its source, as `design@knowledge-architect@workflow-findings-stay-here` already
 says for a retrospective's findings, and takes the outcomes of a P finding. A finding on the
 checker's own behaviour, the retrospective's `C`, is outside the axis, since the checker's code is
 not in the corpus: it is an issue entry here, and in another project a finding of its next
@@ -2739,7 +2739,7 @@ auditor each state its reason, two texts. The harvest confirms each against the 
 | AC1 to AC4 | reported in the landing commit; AC4 proposed to the owner as a tripwire, per D18 |
 | "An audit method with no calibration and no re-check" | names both heads it lost to |
 | every other item of "Losing alternatives" | `path@agent-skills@docs/rejected-alternatives.md`, each as the recording tests admit |
-| D12 | `design@knowledge-architect@retrospective-findings-stay-here` widened to an audit's findings on the installed text; its restatement in `instructions@repository-skills`, written at step 2 |
+| D12 | `design@knowledge-architect@workflow-findings-stay-here` widened to an audit's findings on the installed text; its restatement in `instructions@repository-skills`, written at step 2 |
 | D15 | `design@agent-skills@ruled-items-labelled`, its `W` row widened |
 | `thread@agentic-workflow-axis@root-cause-repair` | a head, holding `thread@agentic-workflow-axis@audit-synthesis-phase`: two texts state it, the axis's prose and its saved workflow |
 | `thread@agentic-workflow-axis@audit-net-growth` | a head, per D20 |

@@ -370,7 +370,7 @@ name as a prefix, per `design@agent-skills@skill-name-prefix`. Here that name is
 reported as unshipped by `design@core@owned-namespace-check`, and removed by the install. So this
 repository's own skills and agents take the prefix `klarch-`, the binary's name.
 
-### This repository's retrospective findings stay in this repository, never on GitHub `##retrospective-findings-stay-here`
+### This repository's retrospective findings, and its audits' findings on the installed text, stay in this repository, never on GitHub `##workflow-findings-stay-here`
 
 A retrospective writes one file for the project and one for the workflow, and the workflow's file
 becomes an issue on knowledge-architect's repository where the owner directs it there, per
@@ -379,6 +379,17 @@ directs the findings of both files to this repository: each is handled, opened a
 own issue registers, or closed with no change and the reason. An issue on GitHub would be a second
 place for what is open, beside the registers, against
 `goal@knowledge-architect@structure-and-workflow-work-together`.
+
+A project audit sends its findings on the installed text upstream, in a file of the shape of the
+retrospective's workflow file, per `design@agent-skills@audit-outcomes`. Here the upstream is this
+repository, so such a finding is edited at its source, under `path@agent-skills@content/`, with the
+outcomes of a finding on the project's own text, and no upstream file is written: the file would
+only carry the findings back to the session that found them. Each repair of such a finding, its
+proposal and its check included, is an edit of the installed text, so it passes the four tests
+that `path@agent-skills@CLAUDE.md` gives every such edit. The installed text holds no branch for
+the project that publishes it, as the owner stated of this repository's use of the workflow for its
+own text: "I don't want to cater too much to this use case in the installed files". So the root
+`CLAUDE.md` states this case, in `instructions@repository-skills`.
 
 ### Each finding of a received workflow file gets an outcome the owner rules, in a committed analysis that leaves when its last outcome is carried out `##committed-findings-analysis`
 

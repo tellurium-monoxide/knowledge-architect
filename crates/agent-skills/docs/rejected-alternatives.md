@@ -179,10 +179,11 @@ commit c282b00 found the instance stated as the rule in 27 of its 189 heads, and
 rewrites of such heads, with their slugs and tripwires renamed, that a member the argument already
 admitted forced; the count is re-taken by a fresh read-only audit of the heads at that commit.
 
-**An audit method with no calibration and no re-check** — lost to `design@agent-skills@audit-method`.
-`live`. On the first run of the design-record axis on this repository, the re-check of each pass
-found violations the pass had missed or made, and two agents read one shared sample entry two ways
-in two of the samples; a method that trusted one reading per entry would have left both. The run's
+**An audit method with no calibration and no re-check** — lost to `design@agent-skills@audit-method`
+for the re-check, and to `design@agent-skills@design-record-axis` for the calibration. `live`. On
+the first run of the design-record axis on this repository, the re-check of each pass found
+violations the pass had missed or made, and two agents read one shared sample entry two ways in two
+of the samples; a method that trusted one reading per entry would have left both. The run's
 commits, found with `git log --grep='design-record axis'`, carry the counts.
 
 **The repair of a head only when a change touches it** — lost to
@@ -206,3 +207,127 @@ skill is already listed with its description each session, and a review's added 
 through the dispatching activity's skill, so no row delivered anything those two did not. Its
 "adds to" had to be widened for each new kind of link, and the first agentic-workflow audit of this
 repository confirmed four findings that turned only on whether a row was owed.
+
+**The agentic-workflow axis's corpus shared out among agents of one task, as the design-record
+axis shares out its entries** — lost to `design@agent-skills@workflow-axis-lenses`. `live`. The
+workflow functions as a whole, and the axis exists mainly to find two instructions in different
+files that no single move satisfies; a contradiction across two files sent to different agents is
+found by neither. It is kept here because a doubt remains:
+`tripwire@agent-skills@auditor-skips-part-of-the-corpus` watches whether the corpus outgrows one
+agent's reading, and this alternative is a candidate if it does.
+
+**One workflow auditor agent per lens** — lost to `design@agent-skills@workflow-auditor-agent`.
+`live`. Each agent would repeat the axis's shared standard, the corpus, the finding standard, the
+tags and the draft's shape, which is about half of any one of them, and the owner did not want
+"publishing too many agents and polluting the directory". It is kept here because a doubt remains:
+whether one agent holding every lens drafts mostly under lenses other than its brief's, and this
+alternative is the candidate if it does.
+
+**One repair per finding, at its site** — lost to `design@agent-skills@root-cause-repair`. `live`.
+It lost to a measurement on the first agentic-workflow audit of this repository: passes 1 and 2
+repaired at their sites, 63 findings applied and 57 ruled by the owner, and the auditors' returns
+of pass 3 put about 25 of its findings in the interactions of the rules those repairs added, by the
+message of the pass-3 commit, "Pass 3 of the agentic-workflow axis stops the run: the count did not
+fall, the repairs move to a method by cause". `design@agent-skills@capabilities-not-structure`
+records the same effect from an earlier run.
+
+**No bound on how much a pass's repairs add** — lost to `design@agent-skills@audit-net-growth`.
+`live`. Passes 1 and 2 of the first agentic-workflow audit of this repository turned most of their
+findings into added rules, which the auditors of pass 3 then found interacting, about 25 findings
+by their returns, per the pass-3 commit named in the entry on one repair per finding.
+
+**Three runs of the audit's saved workflow per pass, the session reading the drafts, the groupings
+and the proposals between them** — lost to `design@agent-skills@one-run-pass`. `live`. It lost to a
+measurement over the files of pass 4 of the first agentic-workflow audit of this repository, `wc -l`
+over each set: the sort read 63 drafts, 3,738 lines, confirmed 36 findings and refuted 3, each
+refutation one a verifier given the audit's commit messages can make; the merge read two
+groupings, 1,074 lines, and made two choices of boundary; the confirmation read 23 proposals, 4,030
+lines, and sent none back; the diff read before the commit, 1,290 lines, changed three wrapped
+lines and one claim. The readings changed little and took the bulk of the session's context.
+
+**The session reading every draft again after the run** — lost to
+`design@agent-skills@one-run-pass`. `live`. In the sort of pass 4 of the first
+agentic-workflow audit of this repository, the session refuted 3 of 63 drafts: 2 mechanically, a
+kept item and a pair of texts one move satisfies, and 1 on the history of the audit, a pointer an
+earlier ruling had judged. An adversarial verifier given the kept list and the audit's commit
+messages makes all three. It is kept here because a doubt remains:
+`tripwire@agent-skills@verifier-refutes-a-true-finding` watches whether a verifier refutes a true
+finding the session's sample of refuted drafts does not meet, and this alternative is the candidate
+if it does.
+
+**One markdown file per audit axis holding the steps of the manual fallback** — lost to
+`design@agent-skills@audit-axis-runs-a-workflow`. `live`. It is a second home for the steps the saved
+workflow already holds, and pass 4 of the first agentic-workflow audit of this repository confirmed
+such a drift between the skill's prose and the script: the script's repair prompt had narrowed "the
+homes merged into one" to "the section of the skill that owns the moment", which F81 of the pass-4
+commit, "Pass 4 of the agentic-workflow axis, run through the saved workflow: 36 findings
+confirmed, 23 causes repaired", repaired.
+
+**The audit's workflow script kept in a fenced block of the skill, passed to the Workflow tool
+inline** — lost to `design@agent-skills@audit-axis-runs-a-workflow`. `live`. Probes of Claude Code's Workflow
+tool, three files under the harness's workflows directory after a reload, recorded in the message
+of the commit "The agentic-workflow axis's script ships as a saved workflow in the installer's
+namespace", showed a saved workflow run by the name its `meta` declares, its `args` passed through,
+and a file one directory deeper not found. A saved workflow is run by name with nothing to copy,
+where an inline block lives in the skill as text no session needs to read.
+
+**The plain count of confirmed findings, its fall judged pass by pass over its context** — lost to
+`design@agent-skills@audit-method`. `live`. It lost to a measurement: each of pass 5's 38 findings
+of the first agentic-workflow audit of this repository was classified by the commit that last wrote
+the words carrying its defect, with `git blame -w -C` and a check that the words are absent at the
+earlier commit. 8 sat on text the main branch held before the audit's branch, 16 on text the
+repairs of passes 1 to 4 and the commits of the method by cause wrote, and 14 on text the method's
+one-run rewrite wrote. The counts of two passes are taken over two different corpora, and each
+firing of the plain count, at passes 1 to 3 and at 5, was explained by the same churn, argued by
+hand.
+
+**Fewer auditors on the two-readings lens, or a narrower scope for it** — lost to
+`design@agent-skills@workflow-axis-lenses`. `live`. At pass 5 of the first agentic-workflow audit of
+this repository, the verifiers and the session confirmed 37 of 38 findings, each lens with more
+than one agent produced findings no other agent of that lens reported, and all 15 findings of the
+two-readings class were confirmed, 9 of them on text the audit's own branch had just written.
+
+**Defects in the text a repair writes, left for the next pass to find** — lost to
+`design@agent-skills@repair-proposals-audited`. `live`. By the classification of pass 5 of the
+first agentic-workflow audit of this repository, given in the entry on the plain count of
+confirmed findings, 16 of its 38 findings sat on text the repairs of the earlier passes and the
+method's commits had written, and each such finding cost a whole pass to surface.
+
+**A confirmed finding of two readings left to judgement where no text rules either act out** —
+lost to `design@agent-skills@workflow-axis-finding-standard`. `live`. It lost to
+`goal@knowledge-architect@agents-get-a-complete-workflow`: "Each instruction says what it asks
+plainly enough to follow without guessing what it means". An instruction a reading confirms is read
+two ways is covered by an instruction, so the goal leaves it to no judgement. Its own rivals, such
+a finding dropped at admission and the session leaving it alone, fall with it. It is kept here
+because a doubt remains on the cost: every repair is new text, and new text is where the next pass
+finds defects, as `design@agent-skills@capabilities-not-structure` records. Applied to pass 5 of
+the first agentic-workflow audit of this repository, the test it rested on, whether another
+instruction, a design head or a goal rules one of the two acts out, would have left 6 of the 14
+two-readings findings the session kept to judgement. It is the candidate if the owner restates the
+goal, under `skill@knowledge-architect-goal-setting`, so that an instruction whose readings all
+lead to acceptable acts meets it.
+
+**The check of a repair against the design heads, the goals and the rejected alternatives left to
+the session at the application** — lost to `design@agent-skills@repairs-read-against-the-record`.
+`live`. The application comes after the owner's ruling on the owner list, so the owner would rule
+on a repair without knowing it reverses a head. It is kept here because a doubt remains:
+`tripwire@agent-skills@record-check-misses-a-head` watches whether the check, whose search for the
+heads that describe a behaviour is a judgement, misses one, and where the check runs is then
+reopened.
+
+**The commit messages alone as the record of an audit's passes** — lost to
+`design@agent-skills@committed-audit-report`. `live`. A message holds the outcomes, not the
+evidence: the classification of pass 5's findings in the first agentic-workflow audit of this
+repository needed that run's confirmed-findings file and drafts, which only a scratch directory
+held. And a record carried by a message alone is lost when its commit changes no file, which the
+rebase merge drops, as `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`
+records from a probe repository.
+
+**Divergent verdicts between a review and an audit as a finding class with no lens of its own** —
+lost to `design@agent-skills@workflow-axis-lenses`. `live`. Over the drafts of passes 1 to 4 of
+the first agentic-workflow audit of this repository, the eight whose titles pair a review with an
+audit are about which axes review an audit's branch and when the transcript review runs; none
+compares what the two count as a finding. A deliberate comparison, made on the owner's request
+before that audit, had found the design-record auditor and the decision-record reviewer judging
+rejected alternatives by two restatements of one rule, which the commit "The decision-record
+reviewer and the design-record auditor judge the record by the same rules" aligned.
