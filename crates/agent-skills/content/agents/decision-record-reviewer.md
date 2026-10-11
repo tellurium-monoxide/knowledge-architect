@@ -105,8 +105,9 @@ judge it against every point of `skill@knowledge-architect-decision-recording@re
 whole. A reversal that leaves the old head standing is two homes for one question, with the old one
 still asserting what the new one denies.
 
-**Does a tripwire stand on the owner's word?** A tripwire a premortem or an acceptance criterion
-produced is written only where the owner ruled that it should be. A tripwire the diff adds with no
+**Does a tripwire stand on the owner's word?** Judge each tripwire the diff adds by
+`skill@knowledge-architect-decision-recording@ruled-tripwires`: whether the owner's word stands
+behind it, and whether it is written with the decision it guards. A tripwire the diff adds with no
 ruling recorded in the plan document or the commit message is a finding.
 
 **Does the commit cite anything that does not exist, or claim what it did not do?** Slugs, paths,

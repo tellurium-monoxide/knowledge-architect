@@ -41,10 +41,10 @@ project, not a verdict on one branch.
 
 - **The owner asks for one**, naming the axis. This is the main occasion.
 - **A pin move crosses a version whose changelog has a Migration entry citing an axis's section of
-  this skill.** The axis runs after the pin's commit, in a branch of its own, as
-  `skill@knowledge-architect-setup@moving-the-pin` says. A version that changes the rules an axis
-  applies names the axis in its Migration entry, so a project brings its existing record to the
-  new rules.
+  this skill.** The axis runs in a branch of its own started from the main branch once the pin
+  move has merged into it, as `skill@knowledge-architect-setup@moving-the-pin` says. A version
+  that changes the rules an axis applies names the axis in its Migration entry, so a project
+  brings its existing record to the new rules.
 - **An adopting project's existing documents have moved** into the workflow's homes, as
   `skill@knowledge-architect-setup@existing-documentation` says: the move's work ends by
   running the design-record axis over its whole corpus.
@@ -88,12 +88,12 @@ the script's prompts, read from the script.
 %% The `F` label: `design@agent-skills@ruled-items-labelled`.
 6. **The owner list.** The items of one pass, in the pass's report file of
    `skill@knowledge-architect-project-audit@record-of-an-audit`, grouped by kind, each under a
-   label, `F<n>`, numbered as `primer@labelled-items` says, with a default and the words of the
-   entry or the text the item turns on, and ending with a `Default` line and an `Outcome` line. One
-   message gives the owner the file's full path and one line per item, and proposes that the owner
-   rules by writing each `Outcome` line; a ruling given in the conversation is copied into the file
-   verbatim. Apply nothing on the list before the owner answers. An item the owner defers becomes
-   an issue entry.
+   label, `F<n>`, numbered as `primer@labelled-items` says with that file as its record, with a
+   default and the words of the entry or the text the item turns on, and ending with a `Default`
+   line and an `Outcome` line. One message gives the owner the file's full path and one line per
+   item, and proposes that the owner rules by writing each `Outcome` line; a ruling given in the
+   conversation is copied into the file verbatim. Apply nothing on the list before the owner
+   answers. An item the owner defers becomes an issue entry.
 7. **Application.** Apply the edits, yourself or through agents dispatched on disjoint files. Read
    the whole diff before each commit.
 8. **The re-check.** Dispatch fresh agents of the axis, as its first dispatch was, after the edits,
@@ -125,7 +125,7 @@ Every finding takes exactly one outcome. A finding that fits no named case goes 
 | --- | --- |
 | applied in the branch | the edits the axis's section lists as applied |
 | put to the owner, on the owner list | the edits the axis's section lists as the owner's; a verdict where a rule reads two ways; a conflict with a goal, which then follows `skill@knowledge-architect-goal-setting`; any finding no row names |
-| sent upstream | a finding on the installed text, which the project never edits: the axis's section says how |
+| sent upstream | a finding on the installed text that the row "nothing" does not name; the project never edits the installed text: the axis's section says how |
 | an issue entry | a finding outside the axis that the primer's table routes to an issue, such as a statement false of the code when the axis does not read the code; work the owner approved that is too large for the branch; a finding the owner defers. The kind follows `skill@knowledge-architect-issue-tracking` |
 | nothing | the entry or the text conforms; a finding an issue entry already records; a finding on the kept list |
 
@@ -136,27 +136,30 @@ A finding outside the axis takes the first case of `primer@met-outside-the-task`
 %% The report file takes the shape of the analysis of a received file: committed with its rulings,
 %% deleted once acted on, so history keeps both. Commit messages alone keep the outcomes and lose
 %% the evidence.
-**Each pass's report file holds its evidence and the owner's rulings, and the commit messages hold
-its counts.** The file is `docs/audit-reports/<YYYY-MM-DD>-<axis>-pass-<n>.md` at the project's
-root, the axis named by its section's slug. The session writes it after its reading of the pass:
-for an axis with a saved workflow, the run's report as the session's verification left it; for an
-axis with none, the drafts read at the sort, one section per finding with its evidence and its
-proposed edit. The owner list closes it, as point 6 says. A span the checker would refuse is quoted
-in words, since the file is checked like any other. The file is committed with its `Outcome` lines
-before the pass's edits are applied; the commit that carries out its last outcome, or a later
-commit of the same branch, deletes it, and its message names it by its path.
+**Each pass's report file holds its evidence and the owner's rulings, and the pass's commit
+message holds its counts.** The file is `docs/audit-reports/<YYYY-MM-DD>-<axis>-pass-<n>.md` at
+the project's root, the axis named by its section's slug. The session writes it after its reading
+of the pass: for an axis with a saved workflow, the run's report as the session's verification
+left it; for an axis with none, the drafts read at the sort, one section per finding with its
+evidence and its proposed edit. The owner list closes it, as point 6 says. A span the checker would
+refuse is quoted in words, since the file is checked like any other. The file and every commit
+message of the audit name a commit of the audit's branch by its subject, never by its SHA, since a
+rebase merge gives the branch's commits new SHAs. The file is committed once every `Outcome` line
+holds the owner's ruling, or, at the audit's stop, the issue entry point 8 gives an item the owner
+does not rule on, before any edit of the pass is applied; the commit that carries out its last
+outcome, or a later commit of the same branch, deletes it, and its message names it by its path.
 
-Each commit of an audit says what was audited, at which commit, named by its subject since a
-rebase merge gives the audit branch's commits new SHAs, how it was dispatched, the calibration
-reading settled where the axis has one, the outcome of each finding in a line, and the path of the
-pass's report file. A figure the audit measured goes there too, and each pass's message gives the
+The pass's commit is the one that applies its last edit, or the one that adds its report file
+where the pass applies none. Its message says what was audited, at which commit, how it was
+dispatched, the calibration reading settled where the axis has one, the outcome of each finding in
+a line, and the path of the pass's report file. A figure the audit measured goes there too, and the
 count of violations left on old text and on new text, as point 8 defines them, and of those on old
 text that went on the owner list, so that the passes show whether the audit converges.
 
 ## Repairs to agent-facing text {{slug:repair-standard}}
 
-What any repair of an instruction is judged by, whether a reading or a real session found its
-defect.
+What a repair of an instruction is judged by, in an audit, and at each step of a skill that names
+this section, whether a reading or a real session found its defect.
 
 **The repair by cause.** A finding is repaired at the cause that produced it, not at its site: a
 repair written for one finding adds a rule, and added rules interact at the next pass. A cause is
@@ -180,10 +183,10 @@ more instructions than they remove, the owner is told so first, with the net fig
 that growth before any of them is applied.
 
 **The record check.** Each repair is read against the record of what it edits before the owner
-rules on it: the design heads that `{{command}} show` and a search of the design homes return for
-the behaviour the edited text describes, the goals, and the rejected alternatives of the Component
-that owns the text. The check names each head the repair would reverse, each rejected alternative
-it brings back and each goal it strains, with its quotation. A repair that reverses a head is a
+rules on it: every goals home, the design heads that `{{command}} show` and a search of the design
+homes return for the behaviour the edited text describes, and the rejected alternatives of the
+Component that owns the text. The check names each head the repair would reverse, each rejected
+alternative it brings back and each goal it strains, with its quotation. A repair that reverses a head is a
 decision, recorded as `skill@knowledge-architect-decision-recording` says.
 
 ## The design-record axis {{slug:design-record-axis}}
@@ -241,11 +244,9 @@ A tripwire or an issue is edited only where an edit of the audit makes it stale.
 
 ## The agentic-workflow axis {{slug:agentic-workflow-axis}}
 
-**The corpus**: every text the harness delivers to a session as an instruction, installed or the
-project's own: the project's root `CLAUDE.md` and the primer it imports, and every other such text
-in the project's agent configuration directory. The scoped `CLAUDE.md` files next to the code are
-not in it, nor are the registers. The workflow functions as a whole, and its main defect is two
-texts a session cannot both obey, so every agent reads the whole corpus.
+**The corpus**: the one `agent@knowledge-architect-workflow-auditor@the-corpus` defines, read
+whole. The workflow functions as a whole, and its main defect is two texts a session cannot both
+obey, so every agent reads the whole corpus.
 
 **The rules**: a session can follow every instruction. A finding is admitted when a reading confirms
 it, in the classes `agent@knowledge-architect-workflow-auditor` defines: a contradiction, a broken
@@ -272,7 +273,7 @@ and their checks together; the report gathers all of it. Its `args`:
 | --- | --- |
 | `commit` | the commit audited |
 | `scratch` | the run's scratch directory, under which every step and agent writes |
-| `worktrees` | the directory under which the preflight creates the worktrees, outside the project or under a path its ignore rules cover |
+| `worktrees` | the directory under which the run creates the worktrees, outside the project or under a path its ignore rules cover |
 | `history` | a git range whose commit messages, and the report files it added, record the audit's earlier passes, for the verifiers |
 | `previous` | for a re-check, the commit the previous pass audited, against which each finding is classified as on old or new text |
 | `kept` | for a re-check, the path of the file of entries, texts and rules the owner ruled to keep |
@@ -290,20 +291,24 @@ walked in the group of the activity it serves.
 repair step proposes one repair per cause, never one per finding, and a draft's proposed repair is
 one of its inputs; where `counts` gives a cause several repair agents, their proposals are
 alternatives for that one repair. **The check**: one workflow auditor per proposal, under its check
-brief, reads the proposal's new text in the corpus through L1 and L3, makes the record check of
-that section, and writes its check beside the proposal. The session's verification reads each
-proposal with its check against its cause and the corpus, and corrects it or sends it back to a
-repair agent of its cause, briefed with the script's repair prompt and with the check.
+brief, `agent@knowledge-architect-workflow-auditor@check-a-proposal`, reads the proposal's new text
+in the corpus through L1 and L3, makes the record check of that section, and writes its check
+beside the proposal. The session's verification reads each proposal with its check against its
+cause and the corpus, and corrects it or sends it back to a repair agent of its cause, briefed with
+the script's repair prompt and with the check.
 
 **Old and new text**, for a re-check: for each line that carries a confirmed finding's defect, the
 dedup runs `git blame -w -C` at the commit audited. A line whose blamed commit is not an ancestor
-of `previous` is on new text only where its phrase, whitespace-normalised, is absent from every
-file of the corpus at `previous`; a finding on two texts takes the newer.
+of `previous` is on new text only where the words on it that carry the defect,
+whitespace-normalised, are absent from every file of the corpus at `previous`, so an edit elsewhere
+in a line the previous pass read leaves the finding on old text; a finding on two texts takes the
+newer.
 
 **The tripwires**: the preflight saves the output of `{{command}} tripwires` too, and a verifier
-marks `bears-on-tripwire` a finding that carries a tripwire's firing evidence, after reading that
-tripwire whole, without settling it. The session judges whether each fired, and a fired tripwire
-moves as `skill@knowledge-architect-issue-tracking@movement-instruction` says.
+marks `bears-on-tripwire` a finding that carries a tripwire's firing evidence, as
+`agent@knowledge-architect-workflow-auditor@verify-drafts` says, without settling it. The session
+judges whether each fired, and a fired tripwire moves as
+`skill@knowledge-architect-issue-tracking@movement-instruction` says.
 
 A cause's findings on the installed text are sent upstream, as below. Its findings on the
 project's own text take the outcome its repair's edits on that text take in the table below:
@@ -325,9 +330,9 @@ files.
 | put to the owner, on the owner list | which side of a contradiction wins, a loop with no exit among them; which standard wins, for divergent verdicts; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction |
 | an issue entry | a predicted gap; a finding the owner defers |
 
-**Sent upstream**: every finding on the installed text, over every pass of the audit, a predicted
-gap included, goes into one file per audit, written when the audit stops from the report files
-of its passes, which history keeps. That file is the
+**Sent upstream**: every finding whose outcome is sent upstream, over every pass of the audit, a
+predicted gap included, goes into one file per audit, written when the audit stops from the report
+files of its passes, which history keeps. That file is the
 workflow's file of `skill@knowledge-architect-retrospective@two-files`, named, written and handled
 as that section and `skill@knowledge-architect-retrospective@what-becomes-of-files` say, its
 subject naming the audit. It differs in its content only: what was audited at which commit in

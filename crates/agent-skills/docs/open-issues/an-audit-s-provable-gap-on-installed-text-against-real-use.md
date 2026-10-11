@@ -32,7 +32,8 @@ Met at the fifth pass of the agentic-workflow audit, reported by its L2 walk of 
 retrospective activities. Two repairs of that pass filled provable gaps on installed text. On the
 owner's ruling, both were parked as issue entries instead of edits. One, on an upstream file that
 nothing fed from an earlier pass, closed when each pass came to commit a report file; the other is
-`issue@agent-skills@the-transcript-reviewer-cannot-see-a-plan-document-its-range-deletes`.
+now case 1 of
+`issue@agent-skills@a-plan-document-deleted-at-its-harvest-is-unseen-by-the-acts-that-need-it`.
 
 ### Why it matters
 

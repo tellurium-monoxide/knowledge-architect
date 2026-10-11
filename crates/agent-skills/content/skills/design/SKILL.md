@@ -136,8 +136,9 @@ evidence bring, which nobody knows in advance.
 %% primer far back in the session. It rests on a prediction, not on a behaviour seen in a session,
 %% so it is an exception to `design@agent-skills@additions-need-real-use`.
 - **The in-change path.** It is open when the decision lands in the
-  change under way: its work, as when the decision was met during an
-  issue fix or a review repair, or its record, for a decision that no work
+  change under way: its work, where that change began before the
+  discussion opened, as an issue fix or a review repair does, or its
+  record, whenever the discussion opened, for a decision that no work
   implements and that is not part of any spec, which
   `skill@knowledge-architect-decision-recording@when-recording-happens` records when it is made. No
   plan document is written. Read `primer@design-heads` again, whole, before grounding. The deliberation goes in the message of the
@@ -639,12 +640,11 @@ choices whose option space genuinely is closed and consequence-free.
    criteria live in this
    conversation and in the harness's transcript of it. The planning
    skill assembles them from the transcript into its plan documents,
-   before the session ends, and owns which ones and their shape.
+   before the session ends, for the reason
+   `skill@knowledge-architect-planning@when-planning-starts` gives, and
+   owns which ones and their shape.
    Each round's delta is the draft that assembly reads, so a delta is
-   written whenever a round changes a state or a note. A plan document
-   written from memory in a later session is written from a summary,
-   and a summary loses the losing arguments and the conditions of each
-   closure.
+   written whenever a round changes a state or a note.
 
 The plan document and the decision record are not duplicates, and their
 relationship is fixed. The plan document is the full account of the
@@ -664,7 +664,7 @@ work implements and that is not part of any spec is recorded when it is made, pe
 `skill@knowledge-architect-decision-recording@when-recording-happens`. Findings made during
 planning or implementation surface through the material-findings
 protocol (`skill@knowledge-architect-design@decision-authority`), except a load-bearing gap found at a
-design audit, which stops that work under `skill@knowledge-architect-planning`.
+design audit, which stops that work as `skill@knowledge-architect-planning@working-a-slice` says.
 
 ## Keep-or-change (evaluating an incumbent design) {{slug:keep-or-change}}
 

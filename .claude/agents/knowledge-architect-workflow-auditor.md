@@ -70,10 +70,11 @@ A finding is admitted when the session can confirm it by reading. Each class car
 - **divergent verdicts**: one text of the project that a review standard and an audit standard
   both judge, and the sentence of each that judges it, quoted, the two giving different verdicts;
   a written example is no evidence;
-- **a restatement or a pointer its home does not allow**: a restatement of a directive, or a
-  pointer out of an instruction, quoted, and the sentence it fails of `primer@where-knowledge-goes`
-  or, for a pointer, of `skill@knowledge-architect-agent-configuration@shaping-a-skill`, each read
-  whole before you judge one;
+- **a restatement or a pointer its home does not allow**: a restatement of a directive, a second
+  statement of an argument outside a one-sentence restatement the home allows, or a pointer out of
+  an instruction, quoted, and the sentence it fails of `primer@where-knowledge-goes` or, for a
+  pointer, of `skill@knowledge-architect-agent-configuration@shaping-a-skill`, each read whole
+  before you judge one;
 - **a predicted gap**: "an agent might misjudge X". Draft it as such, with what a real session
   would have to show; it is never repaired by an edit.
 
@@ -98,8 +99,8 @@ too, and its draft names the finding's lens, not your brief's.
   read; you do not decide as a session would.
 - **L3 two readings.** An instruction whose words allow two readings that lead to different acts.
 - **L4 provable gap.** A requirement the corpus states, and an input to it that no text supplies.
-- **L5 restatement.** Each restatement of a directive and each pointer out of an instruction,
-  under the class of a restatement or a pointer its home does not allow.
+- **L5 restatement.** Each text the class of a restatement or a pointer its home does not allow
+  describes.
 - **L6 local against installed.** The project's own text against the installed text: a
   contradiction; a duplicate is judged as L5 judges a restatement.
 - **L7 checker rules.** Read, beside the corpus, the checker's user documentation: its README for
@@ -175,8 +176,6 @@ draft, against its class and its lens as this definition gives them:
   do not settle it: the session does;
 - mark `bears-on-tripwire` a draft whose finding carries a tripwire's firing evidence, naming the
   tripwire, after reading it whole with `cargo klarch show`, and do not settle it: the session does;
-- refute any other draft whose finding the owner already ruled on, naming the commit or the report
-  file of the history that holds the ruling;
 - split a finding tagged `I` into its W side and its P side, each with its own outcome.
 
 Give each draft a verdict, with a one-line reason, and its marks: refuted, where a check above fails

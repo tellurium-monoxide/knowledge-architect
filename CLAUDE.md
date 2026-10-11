@@ -118,9 +118,9 @@ win.
   - A slug is defined in its register's home, never in the `README.md` of a directory-shaped home.
   - Every heading at the register's level in its home carries a slug. One without is a finding. A
     heading at another level is section text.
-  - A slug anywhere else defines nothing and is reported as a misplaced definition: at a heading
-    of another level, in a table cell, at the head of a plain line, in the middle of a line, in a
-    file that is no register home and no section home of the harness, per
+  - A slug anywhere else defines nothing, and outside a fenced block it is reported as a misplaced
+    definition: at a heading of another level, in a table cell, at the head of a plain line, in the
+    middle of a line, in a file that is no register home and no section home of the harness, per
     `design@core@a-slug-elsewhere-defines-nothing` and `design@core@section-homes-carry-slugs`.
   - An id is defined once per register instance. Two definitions are a finding at each site.
   - An id matches `[a-z0-9]+(-[a-z0-9]+)*`. A file register's entry id is the file's basename.
@@ -482,7 +482,9 @@ standing direction under that skill; its home is
 `design@knowledge-architect@retrospective-findings-stay-here`. The findings of the
 agentic-workflow axis of `skill@knowledge-architect-project-audit` on the installed text stay here
 too: they are edited at their source, under `path@agent-skills@content/`, with the outcomes of a finding on
-the project's own text, and no upstream file is written. Its checker-rules auditors, L7, also read
+the project's own text, and no upstream file is written. Each repair of such a finding, its proposal
+and its check included, passes the four tests of `path@agent-skills@CLAUDE.md`, "Editing an
+installed skill or agent", read whole. Its checker-rules auditors, L7, also read
 the checker's design home, `path@core@docs/design.md`, beside its README.
 
 ## Git `##git-workflow`
@@ -540,9 +542,11 @@ commands and procedures that carry those rules out are this file's own.
   checks before any push, then delete the backup refs, in any checkout:
   `git for-each-ref --format='%(refname)' refs/original/ | xargs -r -n1 git update-ref -d`.
 - **To fold a repair into an earlier commit**: commit the repair as `git commit --fixup=<commit>`,
-  then, with a clean tree, run `GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash origin/main`,
-  which needs no editor. Check that `git diff <old-head> HEAD` is empty and that the branch holds one
-  commit fewer; `git rebase --autosquash` without `-i` folds nothing and exits 0.
+  then, with a clean tree, run
+  `GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash --keep-base origin/main`, which needs no
+  editor and keeps the branch's base even when `origin/main` has moved. Check that
+  `git diff <old-head> HEAD` is empty and that the branch holds one commit fewer;
+  `git rebase --autosquash` without `-i` folds nothing and exits 0.
 - **main's history is never rewritten.** It is the shared trunk. A pushed branch of your own may
   be rewritten and force-pushed, since origin holds the old head until then. A branch that a live
   worktree has checked out is rewritten only after that worktree is removed.
