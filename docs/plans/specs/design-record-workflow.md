@@ -38,7 +38,7 @@ leaves the repository in the commit that completes its harvest.
   each followed by the agent's reply: the reply to round 1 opened the threads, the reply to round 2
   showed the checkpoint and the premortem, and round 3 closed both. A fourth owner message, after
   the spec's first commit, ruled D1 to D3: "D1, D2 and D3 are accepted." The plan reviews that
-  followed raised D4, awaiting the owner.
+  followed raised D4, which the owner answered by rewording a goal.
 
 ## How the work is done
 
@@ -810,8 +810,8 @@ says, each guarding the head its thread lands in:
 ## Acceptance criteria
 
 Both read the closing pass, step 3, an audit of this repository's record whose repairs land on the
-branch; D4 puts to the owner whether they stand against
-`goal@knowledge-architect@the-workflow-improves-through-real-use`.
+branch, which is real use under `goal@knowledge-architect@the-workflow-improves-through-real-use`,
+per D4.
 
 ### On the closing pass, the preflight's entry count per Component equals a count the session takes independently `##entry-count-matches-the-tree`
 
@@ -887,14 +887,15 @@ group size for a concurrency cap, the barrier for a failed calibration.
   `design@agent-skills@audit-agent-per-axis` puts that standard in the auditor's definition.
 - **D3**, ruled accepted: the work is a spec, one branch and one pull request, the spec committed
   on the work's branch.
-- **D4**, AC1 and AC2, from the design-conformance review: both read how agents followed a step on
-  the closing pass, and `goal@knowledge-architect@the-workflow-improves-through-real-use` says "No
-  session is built to observe how agents follow its instructions: not to originate an edit, to
-  choose between shapes, or to accept a piece of work." Default: both stand. The closing pass is not
-  built to observe: it is an audit of this repository's record, whose findings are applied, and the
-  first real use of the workflow; AC1 and AC2 read what that real use shows, which
-  `design@agent-skills@synthetic-evidence-not-built` admits as "a misbehaviour observed in real
-  use". The rival: drop both, and leave the pass's report to the session's verification alone.
+- **D4**, AC1 and AC2, from the design-conformance review, ruled void: both read how agents
+  followed a step on the closing pass, against the wording of
+  `goal@knowledge-architect@the-workflow-improves-through-real-use` at the review, "No session is
+  built to observe how agents follow its instructions". The owner reworded the goal instead: "What
+  I consider "real use" of the workflow is applying it inside a **real** project that is already
+  following the workflow, as part of a real contribution to the project that will be submitted to
+  it, and under the supervision of a human who is a real contributor or owner of the project. What
+  I want to avoid is designing mock tasks and projects to apply the workflow to". The closing pass
+  is real use under that wording, and the conflict is gone.
 
 The owner ruled D1 to D3 in one message after the spec was first committed: "D1, D2 and D3 are
 accepted."
