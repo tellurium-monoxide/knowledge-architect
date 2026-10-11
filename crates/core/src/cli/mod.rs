@@ -58,7 +58,8 @@ pub enum Command {
     Index(IndexArgs),
     /// Every observation the walk produced: file, line, kind, value.
     Model,
-    /// Judge every commit message in a range, each against its own commit's tree.
+    /// Judge every commit of a range, its message and its tree, each message against its own
+    /// commit's tree.
     Commits(CommitsArgs),
     /// Write the agent files this version ships into the project, and remove the ones it no
     /// longer ships.
