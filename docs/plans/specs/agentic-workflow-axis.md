@@ -2409,9 +2409,10 @@ CHANGELOG.md entries `design@knowledge-architect@changelog-entries` owes, then r
      ruling of the owner is in them from pass 6 on;
    - the `%%` comment of "The record of an audit", which names the report document as an open
      question, is rewritten with the section;
-   - `issue@agent-skills@an-audit-s-upstream-file-keeps-no-pass-s-findings`, which rests on the
-     commit messages being the record, is judged against the audit report file: the file keeps each
-     pass's findings in history, so it may close, its commit saying why;
+   - the issue entry on an audit's upstream file that keeps no earlier pass's findings, which rests
+     on the commit messages being the record, is judged against the audit report file, which keeps
+     each pass's findings in history; step 9 closes it, and "Sent upstream" says the upstream file
+     is written from the passes' report files;
    - the root CLAUDE.md's sentence "This repository adds one:" becomes "adds two:", per D32.
 
    The `%%` lines that name `design@agent-skills@ruled-items-labelled` are read against its `F` row as the harvest rewrites it. The script checked with `node --check`. Judges AC3. Fails alone on: a

@@ -3,15 +3,16 @@ export const meta = {
   description: 'One pass of the agentic-workflow axis of a project audit, from its preflight to a report the session verifies',
   phases: [
     { title: 'preflight' }, { title: 'drafts' }, { title: 'verify' }, { title: 'dedup' },
-    { title: 'cluster' }, { title: 'merge' }, { title: 'repairs' }, { title: 'cross-check' },
-    { title: 'report' },
+    { title: 'cluster' }, { title: 'merge' }, { title: 'repairs' }, { title: 'check' },
+    { title: 'cross-check' }, { title: 'report' },
   ],
 }
 // args: {
 //   commit      the commit audited
 //   scratch     the run's scratch directory; each step and each agent writes under it
 //   worktrees   the directory under which the preflight creates the worktrees
-//   history     a git range whose commit messages record the audit's earlier passes
+//   history     a git range whose commit messages and added report files record the earlier passes
+//   previous    optional: for a re-check, the commit the previous pass audited
 //   kept        optional: the path of the kept list, for a re-check
 //   counts      optional: { L1 … L8, clusters, repairsPerCause }, each missing key taking its default
 //   from        optional: 'verify', 'cluster' or 'repairs', to restart from the files a run wrote
@@ -48,9 +49,9 @@ const VERDICTS = {
   properties: {
     path: { type: 'string' }, verified: { type: 'number' }, refuted: { type: 'number' },
     plausible: { type: 'number' }, bearsOnRuling: { type: 'number' },
-    known: { type: 'number' }, kept: { type: 'number' },
+    bearsOnTripwire: { type: 'number' }, known: { type: 'number' }, kept: { type: 'number' },
   },
-  required: ['path', 'verified', 'refuted', 'plausible', 'bearsOnRuling', 'known', 'kept'],
+  required: ['path', 'verified', 'refuted', 'plausible', 'bearsOnRuling', 'bearsOnTripwire', 'known', 'kept'],
 }
 const DONE = {
   type: 'object',
@@ -83,11 +84,13 @@ const CORPUS = 'The corpus is every text the harness delivers to a session as an
   reading + ', detached at commit ' + args.commit + ', every file whole. You edit nothing in the ' +
   'project, run no command of the checker, and write only in the directory your brief names.'
 const SECTION = 'the section agentic-workflow-axis of the skill knowledge-architect-project-audit'
-// The cause, its kinds and the repair per cause are stated in that section, their one home.
+// The cause, its kinds and the repair are stated in the skill's repair section, their one home.
 const KINDS = 'What a cause is, its four kinds, what becomes of a finding that fits none, and ' +
-  'how the repair of a cause is proposed are stated in ' + SECTION + '.'
+  'how a repair is shaped are stated in the section repair-standard of the skill ' +
+  'knowledge-architect-project-audit; how the repair of a cause is proposed in this run is in ' +
+  SECTION + '.'
 
-// Preflight: the worktrees, the kept lists, the issues listing and the history.
+// Preflight: the worktrees, the kept lists, the issues and tripwires listings and the history.
 if (!args.from) {
   phase('preflight')
   const pre = await agent(lines([
@@ -98,9 +101,13 @@ if (!args.from) {
     args.kept ? '- copy the kept list ' + args.kept + ' to kept.md in the directory ' +
       at(args.scratch, '<label>') + ' of each auditor label above, creating it;' : '',
     '- create ' + preflightDir + '; in the worktree ' + reading + ', run the checker command ' +
-      '{{command}} issues and save its output to ' + at(preflightDir, 'issues.txt') + ';',
+      '{{command}} issues and save its output to ' + at(preflightDir, 'issues.txt') + ', and ' +
+      '{{command}} tripwires to ' + at(preflightDir, 'tripwires.txt') + ';',
     '- save the messages of the commits of the range ' + args.history + ', with git log ' +
-      '--format="=== %h %s%n%n%b", to ' + at(preflightDir, 'history.txt') + '.',
+      '--format="=== %h %s%n%n%b", to ' + at(preflightDir, 'history.txt') + ';',
+    '- save the report files of earlier passes that the range added, with git log -p ' +
+      '--diff-filter=A --format="=== %h %s" ' + args.history + ' -- docs/audit-reports/, to ' +
+      at(preflightDir, 'reports.txt') + '.',
     'Edit nothing else. Return done true only if every command succeeded.',
   ]), { schema: DONE, phase: 'preflight', label: 'preflight' })
   if (!pre || !pre.done) throw new Error('preflight failed: ' + (pre ? pre.notes : 'no return'))
@@ -126,7 +133,9 @@ const verifyBrief = (a) => lines([
   'Your directory: ' + at(args.scratch, 'verify', a.label),
   args.kept ? 'Kept list: ' + at(args.scratch, a.label, 'kept.md') : '',
   'Issues listing: ' + at(preflightDir, 'issues.txt'),
-  'History of the audit earlier passes: ' + at(preflightDir, 'history.txt'),
+  'Tripwires listing: ' + at(preflightDir, 'tripwires.txt'),
+  'History of the audit earlier passes: ' + at(preflightDir, 'history.txt') + ', and their ' +
+    'report files, with the owner\'s rulings: ' + at(preflightDir, 'reports.txt'),
   'Your copies of your definition and of the root CLAUDE.md may predate this session: read both ' +
     'in your worktree, and follow the worktree where your copy differs.',
 ])
@@ -143,7 +152,8 @@ if (!args.from || args.from === 'verify') {
   const sum = (k) => ok.reduce((t, v) => t + v[k], 0)
   log('verify: ' + ok.length + ' of ' + auditors.length + ' auditors verified; ' + sum('verified') +
     ' verified, ' + sum('refuted') + ' refuted, ' + sum('plausible') + ' plausible, ' +
-    sum('bearsOnRuling') + ' bearing on a ruling, ' + sum('known') + ' known, ' + sum('kept') + ' kept')
+    sum('bearsOnRuling') + ' bearing on a ruling, ' + sum('bearsOnTripwire') + ' bearing on a tripwire, ' +
+    sum('known') + ' known, ' + sum('kept') + ' kept')
 }
 
 // Dedup: the confirmed-findings file.
@@ -157,6 +167,9 @@ if (!args.from || args.from === 'verify') {
       'merging the drafts that report one finding: its id, the id of the draft kept, as ' +
       '<auditor label>/<draft file name>; its tag; its verdict and marks; the path of its draft; ' +
       'the ids merged into it, and the shared defect in a few words.',
+    args.previous ? 'Classify each finding as on old or new text, as ' + SECTION + ' says under ' +
+      '"Old and new text", against the commit ' + args.previous + ', in the worktree ' + reading +
+      ', and add to its line its class and the commit and the command that decided it.' : '',
     'Return its path.',
   ]), { schema: PATH, phase: 'dedup', label: 'dedup' })
 }
@@ -204,18 +217,36 @@ log('causes: ' + causeIds.length)
 phase('repairs')
 const jobs = []
 for (const id of causeIds) for (let k = 1; k <= perCause; k++) jobs.push({ id, dir: at(args.scratch, 'repairs', perCause > 1 ? id + '-' + k : id) })
-const proposals = (await parallel(jobs.map((j) => () => agent(lines([
+const repairPrompt = (j) => lines([
   'You propose the repair of one cause of findings of the agentic-workflow axis of a project ' +
     'audit, at commit ' + args.commit + '.',
   CORPUS,
   'Read the cause ' + j.id + ' in the causes file ' + causesFile + ', every draft its findings ' +
     'name, and the corpus. ' + KINDS,
-  'Propose the repair of the cause as that section says. Where you add an instruction, say why ' +
-    'none of the forms of repair the section names closes the cause.',
+  'Propose the repair of the cause as those sections say. Where you add an instruction, say why ' +
+    'none of the forms of repair the repair section names closes the cause. Name the nearest rival to ' +
+    'your repair and the fact that decides between them.',
   'Write proposal.md in ' + j.dir + ': each edit as its file, the text before and the text after; ' +
     'the findings each edit closes; every instruction added and removed, quoted, and their two ' +
-    'counts; and any finding of the cause the repair does not close, with the reason. Return its path.',
-]), { schema: PATH, phase: 'repairs', label: j.id }).then((r) => (r ? Object.assign({ id: j.id }, r) : null))))).filter(Boolean)
+    'counts; the nearest rival; and any finding of the cause the repair does not close, with the ' +
+    'reason. Return its path.',
+])
+const checkBrief = (j, p) => lines([
+  'Check brief.',
+  'Commit audited: ' + args.commit,
+  'The worktree to read, detached at that commit: ' + reading,
+  'The proposal: ' + p.path + ', for the cause ' + j.id + ' of the causes file ' + causesFile,
+  'Your directory: ' + j.dir,
+  'Your copies of your definition and of the root CLAUDE.md may predate this session: read both ' +
+    'in the worktree, and follow the worktree where your copy differs.',
+])
+// Each proposal goes to its check as soon as it is written.
+const proposals = (await pipeline(jobs,
+  (j) => agent(repairPrompt(j), { schema: PATH, phase: 'repairs', label: j.id })
+    .then((r) => (r ? Object.assign({ id: j.id }, r) : null)),
+  (p, j) => (p ? agent(checkBrief(j, p), { agentType: 'knowledge-architect-workflow-auditor', schema: PATH,
+    phase: 'check', label: 'check ' + j.id }).then((c) => Object.assign({ check: c ? c.path : null }, p)) : null),
+)).filter(Boolean)
 
 // Cross-check.
 phase('cross-check')
@@ -224,12 +255,14 @@ await agent(lines([
   'You cross-check the repair proposals of one pass of the agentic-workflow axis of a project audit.',
   CORPUS,
   'Read the causes file ' + causesFile + ', every proposal (' + proposals.map((p) => p.path).join(', ') +
-    '), the confirmed-findings file ' + confirmed + ', and the axis outcome table in ' + SECTION + '.',
+    '), the check beside each, the confirmed-findings file ' + confirmed + ', and the axis outcome ' +
+    'table in ' + SECTION + '.',
   'Write ' + cross + ' with: every paragraph that the proposals of two or more causes edit, with ' +
     'the causes concerned; for each cause, the ' +
     'outcome you propose under the axis outcome table, with its reason, for the session to decide; ' +
     'and every finding marked bears-on-ruling, with the ruling quoted from its source and the ' +
-    'premise that may be false. Return its path.',
+    'premise that may be false; and every finding marked bears-on-tripwire, with the tripwire ' +
+    'and its firing evidence. Return its path.',
 ]), { schema: PATH, phase: 'cross-check', label: 'cross-check' })
 
 // Report.
@@ -238,19 +271,22 @@ const report = await agent(lines([
   'You write the report of one pass of the agentic-workflow axis of a project audit, for the ' +
     'session that verifies it and discusses it with the owner. Quote; do not summarise evidence.',
   'Read: every return.md and verdicts.md under ' + args.scratch + ', the confirmed-findings file ' +
-    confirmed + ', the causes file ' + causesFile + ', every proposal under ' +
+    confirmed + ', the causes file ' + causesFile + ', every proposal and check under ' +
     at(args.scratch, 'repairs') + ', and the cross-check ' + cross + '.',
   'Write ' + at(args.scratch, 'report', 'report.md') + ' in six parts:',
   '1. the header: the commit audited, ' + args.commit + '; the agents of each step; the counts of ' +
-    'drafts, verified, plausible, bearing on a ruling, known, kept, after dedup and refuted; each ' +
+    'drafts, verified, plausible, bearing on a ruling, bearing on a tripwire, known, kept, after ' +
+    'dedup and refuted; for a re-check, the confirmed findings and the severe ones on old text and ' +
+    'on new text; each ' +
     'refuted draft with its reason; each auditor return that says a corpus file was not read whole;',
   '2. the figures: the run counts of findings and causes, and the instructions each proposal adds ' +
     'and removes;',
   '3. one section per cause: its kind and its one-sentence mechanism; its findings, each with its ' +
     'quoted evidence, the verifier verdict and note, and its tag; the repair as edits before and ' +
-    'after, per file; the instructions it adds and removes, quoted; the outcome the cross-check ' +
-    'proposes, and the default; each finding marked bears-on-ruling, with the ruling quoted and ' +
-    'the premise that may be false;',
+    'after, per file; the instructions it adds and removes, quoted; the nearest rival; its check, ' +
+    'quoted; the outcome the cross-check proposes, and the default; each finding marked ' +
+    'bears-on-ruling, with the ruling quoted and the premise that may be false, and each marked ' +
+    'bears-on-tripwire, with the tripwire;',
   '4. the overlap map: each paragraph the proposals of several causes edit, and the causes concerned;',
   '5. the draft of the owner list, its labels left for the session to number;',
   '6. what the run did not decide: the merge choices, the plausible verdicts, the "Outside the ' +
@@ -265,5 +301,6 @@ return {
   verified: verdicts.filter(Boolean).length,
   causes: causeIds.length,
   proposals: proposals.length,
+  checks: proposals.filter((p) => p.check).length,
   unwalked,
 }

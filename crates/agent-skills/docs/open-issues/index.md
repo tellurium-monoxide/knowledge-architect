@@ -1,10 +1,9 @@
 **Generated — do not edit.** `cargo klarch index`
 
-22 entries
+21 entries
 
 | kind | title |
 | --- | --- |
-| deferred | [An audit's upstream file is written when the audit stops, and nothing keeps an earlier pass's findings on the installed text until then](an-audit-s-upstream-file-keeps-no-pass-s-findings.md) |
 | deferred | [The transcript reviewer cannot see a plan document that the branch it reviews deleted](the-transcript-reviewer-cannot-see-a-plan-document-its-range-deletes.md) |
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | design | [The head on the primer's content restates the primer's limit and bundles the decision behind each directive](primer-content-bundles-each-directive-s-decision.md) |
