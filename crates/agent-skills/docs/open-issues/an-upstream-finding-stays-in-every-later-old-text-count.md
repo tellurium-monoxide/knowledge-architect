@@ -28,7 +28,7 @@ The chain, in the installed `skill@knowledge-architect-project-audit`:
 - `skill@knowledge-architect-project-audit@agentic-workflow-axis`, its paragraph "Sent upstream":
   every such finding goes into one file per audit, "written when the audit stops". Nothing reaches
   the upstream project, and nothing changes in the installed text, while the audit runs.
-- `skill@knowledge-architect-project-audit@audit-method`, point 8: "A finding of the re-check that
+- `skill@knowledge-architect-project-audit@audit-method`, point 4: "A finding of the re-check that
   a reading confirms, that is not on the kept list, and that no issue entry records, is a violation
   left". The kept list holds "the entries, the texts and the rules the owner ruled to keep"; a
   finding sent upstream is not ruled kept, and its outcome is not an issue entry. Old text is "text
@@ -45,7 +45,7 @@ established: its agents are fresh, so a finding is re-found with some probabilit
 
 The reproduction, for an adopting project that installs this workflow: run the agentic-workflow
 axis on its corpus until one pass sends a finding upstream; the next pass's re-check, given the
-kept list point 8 names, confirms the same finding on the same installed words, and the pass's
+kept list point 4 names, confirms the same finding on the same installed words, and the pass's
 commit message counts it on old text.
 
 ### Why it matters
@@ -61,5 +61,5 @@ the method itself produced, and may stop an audit that was converging on the pro
 A decided way to count a finding sent upstream at later passes, recorded in the design homes and
 in the installed skill: either a finding sent upstream joins the kept list given to every later
 re-check, so it takes the outcome "nothing", or it is counted apart from the violations left on
-old text, as the findings on new text are. Its test: a reading of point 8 and of the axis's section
+old text, as the findings on new text are. Its test: a reading of point 4 and of the axis's section
 under which a finding sent upstream at one pass cannot enter the old-text count of the next.

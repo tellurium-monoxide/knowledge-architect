@@ -72,8 +72,14 @@ subsection is omitted.
 - `library`, minor: `extension::Tree` is `Clone` and `Copy`.
 - `agent-skills`, minor: `skill@knowledge-architect-project-audit` audits a whole project on one
   axis, as opposed to a review of a diff, and its first axis, the design-record axis, re-applies
-  the rules on design heads and on rejected alternatives to every entry; the agent
-  `agent@knowledge-architect-design-record-auditor` drafts its verdicts, one per entry. Its second
+  the rules on design heads, on the Component a head belongs to and on rejected alternatives to
+  every entry; the agent `agent@knowledge-architect-design-record-auditor` drafts its verdicts, one
+  per entry, in groups calibrated on a shared sample, and verifies another auditor's drafts. A pass
+  of that axis is one run of the saved workflow `knowledge-architect-design-record-audit`: it lists
+  the entries, cuts the groups, drafts, compares the sample's verdicts, verifies the drafts, checks
+  each head a proposed edit creates, maps the findings that touch one paragraph or one slug and
+  the tripwires and issues an edit would leave false, and writes a report the session verifies.
+  Its second
   axis, the agentic-workflow axis, reads every instruction the harness delivers, the root CLAUDE.md,
   the installed skills, agents and primer, and the project's own skills and agents, as one whole,
   for instructions a session cannot follow; the agent `agent@knowledge-architect-workflow-auditor`

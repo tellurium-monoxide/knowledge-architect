@@ -7,7 +7,7 @@ workflow, as the agentic-workflow axis has one, and brings the axis's section of
 to the generic shape of `design@agent-skills@audit-axis-runs-a-workflow`. The work does five
 things:
 
-- a saved workflow, `planned@agent-skills@content/workflows/design-record-audit.js`, runs one
+- a saved workflow, `path@agent-skills@content/workflows/design-record-audit.js`, runs one
   pass of the axis from its preflight to a report the session verifies: the entries enumerated and
   cut into groups by the script, one auditor per group, the calibration sample compared inside the
   run, one verifier per group, a check of every head a proposed split, merge, rename or move

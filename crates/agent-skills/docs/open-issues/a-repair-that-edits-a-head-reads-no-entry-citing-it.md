@@ -42,7 +42,7 @@ this entry.
 
 The question: should a repair that edits a design head read, before the owner rules on it or at
 its application, every issue entry and tripwire that `cargo klarch show` lists for the head, and
-keep each true? The reading that answers it: the audit method's points 7 and 8, the repair standard
+keep each true? The reading that answers it: the audit method's points 3 and 4, the repair standard
 and `skill@knowledge-architect-review@review-axes`, to find whether a step already owes this
 reading and was skipped, or whether no step owes it.
 
