@@ -21,7 +21,8 @@ leaves the repository in the commit that completes its harvest.
   spec.
 - Every name it uses is defined in it, under Names or New names, or exists in the tree.
 - Where the owner's word is awaited, `skill@knowledge-architect-planning@working-a-slice` says what
-  waits. Three defaults await it, D1 to D3, under "Defaults awaiting the owner".
+  waits. Three defaults were put to the owner, D1 to D3, under "Defaults awaiting the owner", and
+  the owner ruled on all three.
 - **The spec lands before its work, in a pull request of its own.** Its work starts only once
   `spec@plans@path-quickfixes` has landed and been harvested, since this work adds rows to the
   respellings that spec builds; the order rationale gives the reason.
@@ -324,8 +325,8 @@ literal anchor to a register home, and 76 `*` spans naming one, in this reposito
 in every adopting project's own documents. Satisfaction: met for every old form written as one span
 with no suffix, by `acceptance@register-references@fix-respells-every-old-form`. Unmet for a pair,
 which `--fix` turns into two identical spans that a writer collapses by hand, and for a span with a
-suffix, which a writer repairs by hand: unmet-and-accepted once the owner's word on D1 names this
-criterion.
+suffix, which a writer repairs by hand: unmet-and-accepted, on the owner's ruling on D1, which names
+this criterion.
 
 ## Threads
 
@@ -942,21 +943,20 @@ Steps 1 to 3 change what `cargo klarch commits` requires of every tree of the br
   suffixed span by hand in step 3, and the Migration entry of step 4 tells adopting projects to do
   the same. So the weighed criterion `criterion@register-references@migration-cost` is unmet for a
   pair and a suffixed span: the owner's word on D1 accepts that, naming the criterion. It narrows a
-  ruling of the owner, so it waits for the owner's word, and is built as written until then.
+  ruling of the owner. **Ruled: approved.** The owner, in a message after the review of this spec: "All three agreed, proceed".
 - **D2**, bears on `thread@register-references@path-to-a-home-is-reported`. The respelling of a home
   target under `*`, and the dropping of its trailing slash, change two exclusions of the respelling
   rule `spec@plans@path-quickfixes` defines, `argument@register-references@a27`. Default: the two
   exclusions stand for every other finding, and give way for the finding on a home target alone;
   the harvest rewrites the clauses that state them, in the heads that spec's harvest writes. It
-  changes a decision of another plan, so it waits for the owner's word, and is built as written
-  until then.
+  changes a decision of another plan. **Ruled: approved.** The owner, in a message after the review of this spec: "All three agreed, proceed".
 - **D3**, bears on `tripwire@core@fix-makes-a-choice`. Its firing clause exempts only the
   respellings `spec@plans@path-quickfixes` defines, and this spec proposes others, so it fired on
   this spec's proposal. Default: its clause is narrowed in this spec's branch to except the
   respellings `spec@plans@register-references` defines, citing it, as the movement instruction of
   `skill@knowledge-architect-issue-tracking` says for a reversal recorded only at a plan document's
   harvest; that spec's harvest deletes the entry as it already says. The edit of a tripwire's firing
-  clause waits for the owner's word, and is not made before it.
+  clause is made in this spec's branch. **Ruled: approved.** The owner, in a message after the review of this spec: "All three agreed, proceed".
 
 ## Harvest
 
