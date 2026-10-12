@@ -1,6 +1,6 @@
 ---
 name: klarch-release
-description: MUST use when the owner asks to publish a version of knowledge-architect to crates.io. Covers choosing the version, the changelog section, the checks of the shipped text before publishing, the package lists, the dry run, the review and merge that come before publishing, the owner's word at the moment of publishing, the tag and the publish, and what to do when a publish fails part-way.
+description: MUST use when the owner asks to publish a version of knowledge-architect to crates.io. Covers choosing the version, the changelog section, the checks of the shipped text before publishing, the package lists, the dry run, the review and merge that come before publishing, the owner's word to publish, the tag and the publish, and what to do when a publish fails part-way.
 ---
 
 # Release
@@ -29,8 +29,8 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    - the exact pin `knowledge-architect-agent-skills = { …, version = "=<version>" }` in
      crates/core/Cargo.toml;
    - Cargo.lock, which any cargo command rewrites for the four workspace packages;
-   - the status line: the opening sentence of `## Status` in the root README.md. Rewrite its
-     wording, not only the number.
+   - the status line: the opening sentence of `## Status` in the root README.md. Change the
+     number, and any other part of the sentence the release makes false.
 
    `git grep -n '<previous version>'` finds every site that still names the previous one. An
    example inside a skill, such as an xtask manifest's own version, is not a site.
@@ -82,7 +82,9 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    ```
 7. **The package lists.** `cargo package --list -p <crate>` for each crate. Each lists its sources,
    its Cargo.toml, its README, its CRATES-IO.md, its licence files and its CHANGELOG.md, and agent-skills also its
-   build script, content/ and snippets/, per `design@knowledge-architect@package-include-whitelist`. The owner reads the lists.
+   build script, content/ and snippets/, per `design@knowledge-architect@package-include-whitelist`. Compare each
+   list with these, and report to the owner every file the step does not name. The owner may read
+   the lists; the release does not wait for it.
 8. **The dry run.** `cargo publish --workspace --dry-run` passes, skips xtask, and orders
    agent-skills before the core, which depends on it. Its warnings "ignoring test `binary`" and
    "ignoring test `extension_api`" are expected: the whitelist keeps the tests out.
@@ -95,9 +97,14 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
 
 ## Merge, then publish `##merge-then-publish`
 
-10. **Merge** under the root `CLAUDE.md`'s merge predicate. From this moment until step 12, main's
+10. **Merge** under the root `CLAUDE.md`'s merge predicate. Before the merge, record the reviewed
+    head, `git rev-parse HEAD` on the branch, in the shell or the conversation: the merge deletes
+    every ref that names it, and step 12 compares with it. From the merge until step 12, main's
     README status line names a version that is not yet on crates.io.
-11. **The owner's word, given at that moment.** Without it, nothing is published. The owner is
+11. **The owner's word.** Without it, nothing is published. The word names the publish, and is
+    given after the review: once step 10's merge is done, or before it, conditioned on it. A word
+    given before the merge holds only for the tree reviewed, which step 12's comparison shows; a
+    general "proceed" that does not name the publish is no word to publish. The owner is
     logged in to crates.io in the shell the agent runs in, with `cargo login`, and the token never
     passes through the agent. The token needs the scopes publish-new and publish-update, and the
     account a verified email.
@@ -105,7 +112,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
 
     ```sh
     git checkout main && git pull --ff-only
-    test "$(git rev-parse HEAD^{tree})" = "$(git rev-parse <the reviewed branch head>^{tree})"
+    test "$(git rev-parse HEAD^{tree})" = "$(git rev-parse <the head recorded at step 10>^{tree})"
     git tag -a v<version> -m "Release <version>"
     cargo publish --workspace
     git push origin v<version>      # once crates.io carries the version

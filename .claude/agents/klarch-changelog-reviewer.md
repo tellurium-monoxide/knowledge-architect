@@ -38,7 +38,8 @@ such as its changelog, are at most a patch.
 **Is an entry wrong?** For each entry: the subsection matches the test it passes; its surface is
 the one the change touches; its class is the one the bump table gives; a migration entry says what
 the consumer changes; an entry describes the release's net effect, so a change reversed inside the
-range has no entry. Entries follow the order CHANGELOG.md's preamble states.
+range has no entry, and a change to something added inside the range is told by that addition's
+entry, not by one of its own. Entries follow the order CHANGELOG.md's preamble states.
 
 **Did a released section's content change?** A released section's content never changes; its
 structure may, per `design@knowledge-architect@changelog-section-fixed-at-release`. A skill's or
