@@ -251,11 +251,10 @@ directive restated wherever it is delivered, among the candidates.
 
 ## Guarding `design@agent-skills@audit-method`: the owner overrules the defaults of an audit's owner list `##audit-defaults-overruled`
 
-T6 of the premortem of the discussion that made the decision. The decision rests on the premise
-that the session's reading that produces the owner list's defaults, the sort of an axis with no
-saved workflow or the verification of a run's report, with the calibration where an axis has one,
-gives the owner defaults the owner mostly accepts, so the owner list costs a ruling per kind rather
-than a judgement per item.
+T6 of the premortem of the discussion that made the decision. The decision rests on the premise that
+the session's reading that produces the owner list's defaults, the verification of a run's report,
+with the calibration where an axis has one, gives the owner defaults the owner mostly accepts, so
+the owner list costs a ruling per kind rather than a judgement per item.
 
 **Fires when:** in one audit, the owner rules against the default on more than a quarter of the
 items of the owner list; the bound is the owner's to reset.
@@ -377,3 +376,66 @@ text; the standing-state review of the audit's branch.
 acceptance criterion, it fired at passes 1 to 3 and 5 on the plain counts, and at pass 6 on the
 old-text counts: 21 violations left against pass 5's 16, the severe ones falling from 8 to 7. The
 owner stopped the audit after pass 6's application.
+
+## Guarding `design@agent-skills@calibration-in-the-run`: the session rejects the calibration's readings `##calibration-reading-rejected`
+
+T1 of the premortem of the discussion that made the decision. The decision rests on the premise
+that the calibration agent proposes readings the session confirms, so that the session's
+confirmation is a check rather than a second calibration, and a wrong reading is not applied in
+every group.
+
+**Fires when:** in one audit, the session's verification rejects a reading the calibration agent
+proposed, in two passes.
+**Response:** reopen `design@agent-skills@calibration-in-the-run`, with the session settling the
+reading among the candidates.
+**Re-entry:** the session's verification of each report of the design-record axis.
+
+## Guarding `design@agent-skills@verifier-in-the-run`: a design-record verifier passes a wrong conforming draft `##conforming-draft-wrong`
+
+T2 of the premortem of the discussion that made the design-record axis's saved workflow. The
+decision rests on the premise that a design-record verifier's sample of the drafts that find their
+entry conforming is enough, so a violation a drafter missed does not wait a whole pass for the
+re-check.
+
+**Fires when:** in any pass, the session's own sample of conforming drafts holds one that a reading
+shows failing a rule, and that the report does not list among the drafts whose verdict it doubts.
+**Response:** reopen `design@agent-skills@verifier-in-the-run`, on how much of the conforming drafts
+a design-record verifier reads.
+**Re-entry:** the session's verification of each report of the design-record axis.
+
+## Guarding `design@agent-skills@one-run-pass`: the design-record cross-check misses an overlap `##overlap-missed`
+
+T3 of the premortem of the discussion that made the design-record axis's saved workflow. The
+decision rests on the premise that the cross-check maps every pair of findings that edit one
+paragraph or one slug, so the application meets no collision the report did not show.
+
+**Fires when:** during the application of a pass of the design-record axis, the session meets two
+findings that edit one paragraph or one slug, and the cross-check's overlap map does not list them.
+**Response:** reopen the design-record axis's cross-check, in `design@agent-skills@one-run-pass`.
+**Re-entry:** the application of each pass of the design-record axis.
+
+## Guarding `design@agent-skills@root-cause-repair` and `design@agent-skills@design-record-axis-dispatch`: one rule misread across groups outside the sample `##rule-misread-across-groups`
+
+T4 of the premortem of the discussion that made the design-record axis's saved workflow. The
+decisions rest on the premise that the design-record axis's findings need no grouping by cause,
+since the calibration sample catches a rule the auditors read apart.
+
+**Fires when:** in one pass, the session traces findings in at least three groups to one misreading
+of one rule, and the calibration did not catch it.
+**Response:** reopen the absence of a cause step for the design-record axis, in
+`design@agent-skills@root-cause-repair`, and how the sample is chosen, in
+`design@agent-skills@design-record-axis-dispatch`.
+**Re-entry:** the session's verification of each report of the design-record axis.
+
+## Guarding `design@agent-skills@design-record-axis`: the Component judgement is noisy `##component-judgement-noisy`
+
+T5 of the premortem of the discussion that made the design-record axis's saved workflow. The
+decision rests on the premise that the auditors' judgements of the Component a head sits in are
+mostly right, so the owner list does not grow by misfiled-head items the owner rejects.
+
+**Fires when:** in one pass, the session or the owner rejects more than half of the findings of a
+head in the wrong Component, on at least 4 such findings; the bounds are the owner's to reset.
+**Response:** reopen the Component judgement in `design@agent-skills@design-record-axis`.
+**Re-entry:** the session's verification of each report of the design-record axis, and the owner's
+ruling on its owner list.
+

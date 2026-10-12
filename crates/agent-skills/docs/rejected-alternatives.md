@@ -179,8 +179,9 @@ commit c282b00 found the instance stated as the rule in 27 of its 189 heads, and
 rewrites of such heads, with their slugs and tripwires renamed, that a member the argument already
 admitted forced; the count is re-taken by a fresh read-only audit of the heads at that commit.
 
-**An audit method with no calibration and no re-check** — lost to `design@agent-skills@audit-method`
-for the re-check, and to `design@agent-skills@design-record-axis` for the calibration. `live`. On
+**An audit method with no calibration and no re-check** — lost to
+`design@agent-skills@audit-passes-repeat-while-the-count-falls` for the re-check, and to
+`design@agent-skills@design-record-axis-dispatch` for the calibration. `live`. On
 the first audit of the design-record axis on this repository, the re-check of each pass found
 violations the pass had missed or made, and two agents read one shared sample entry two ways in two
 of the samples; a method that trusted one reading per entry would have left both. The audit's
@@ -336,3 +337,11 @@ compares what the two count as a finding. A deliberate comparison, made on the o
 before that audit, had found the design-record auditor and the decision-record reviewer judging
 rejected alternatives by two restatements of one rule, which the commit "The decision-record
 reviewer and the design-record auditor judge the record by the same rules" aligned.
+
+**The session settling each calibration reading of the design-record axis, and reading again the
+drafts it bears on** — lost to `design@agent-skills@calibration-in-the-run`. `live`. It puts a
+reading across every group back into the session, against `design@agent-skills@one-run-pass`. It
+is kept here because a doubt remains: `tripwire@agent-skills@calibration-reading-rejected` watches
+whether the session keeps rejecting the readings an agent proposes, and this alternative is the
+candidate if it does.
+

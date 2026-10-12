@@ -19,8 +19,9 @@ When the saved workflow was proposed as the axis's delivery, the session stated 
 its consequences: "Permission prompt (not established). Here the probes ran with no prompt, under
 auto mode. Whether a default-mode session gets a prompt or needs a `Workflow(<name>)` allow rule is
 not established." The owner approved the delivery on that statement. No later run tested it: every
-pass of the audit ran in the same mode. The installed audit skill and the setup skill name no
-permission for the workflow.
+pass of the audit ran in the same mode, and so did the first pass of the design-record axis through
+its own saved workflow, `knowledge-architect-design-record-audit`, which meets the same question.
+The installed audit skill and the setup skill name no permission for the workflow.
 
 ### Why it matters
 
