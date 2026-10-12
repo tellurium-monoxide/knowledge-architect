@@ -296,10 +296,16 @@ covers it" too widely; the design-conformance reviewer reads every plan document
 
 ### A head that a change touches is brought to the rules on heads in that change `##existing-heads-on-touch`
 
-A head that a change edits is brought, in that change, to the rules of `primer@design-heads`: its
-title to the rule it argues, each decision it bundles to a head of its own, its ground to its
+A head that a change touches is brought, in that change, to the rules of `primer@design-heads`:
+its title to the rule it argues, each decision it bundles to a head of its own, its ground to its
 argument. Where that would widen what the owner's words in it approved, as a title moved from the
 members the owner named to the rule, the change goes to the owner as one proposal.
+
+**Re-pointing a reference in a head does not touch it.** The edit states nothing new in the head,
+and a change that re-points references across the record, as a renamed entry or a migrated
+reference form does, would otherwise owe the repair of every head it passes through, which is a
+project audit's scope, not that change's. Adding a reference, or rewording a sentence, is more than
+re-pointing.
 
 The rules apply at the moment a session already reads and edits the head, so a head is repaired at
 the cost of one read. The whole record is repaired at once only by a project audit, on the
