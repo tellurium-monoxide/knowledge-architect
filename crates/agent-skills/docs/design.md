@@ -2488,10 +2488,10 @@ decision binds as a presumption, per `goal@knowledge-architect@the-owner-decides
 
 ### A retrospective is offered at a moment an event names, never at one the agent judges `##retro-trigger`
 
-The retrospective is offered when one of three events occurs: a pull request the session worked on
-has merged, a plan document has left, or the owner says the session is ending. It runs only if the
-owner accepts. A moment named by an event can be followed by any agent where "a moment it judges
-right" could not.
+The retrospective is offered when one of three events occurs: a branch the session worked on has
+merged into the main branch, a plan document has left, or the owner says the session is ending. It
+runs only if the owner accepts. A moment named by an event can be followed by any agent where "a
+moment it judges right" could not.
 
 ### A retrospective is offered at most once per session `##retro-offered-once`
 
