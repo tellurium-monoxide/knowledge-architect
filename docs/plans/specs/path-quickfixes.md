@@ -2,7 +2,9 @@
 
 ## Status and audience
 
-**On hold, for an undefined duration, on the owner's word.** No work of this spec starts, and no
+**On hold, for an undefined duration, on the owner's word.** Its line numbers name the tree at
+the commit each was written on, and later work has moved some; the design audit that starts its
+work takes each one again. No work of this spec starts, and no
 other work waits for it: a plan that would build on its respelling machinery builds without it, and
 no release waits for it. The owner: "the path-quickfixes spec will be clearly marked as on hold, so
 this does not happen again." and "And the quickfix spec should not blcok a release." Work taken up
@@ -13,7 +15,9 @@ within one limit: a fix rewrites the spelling of a reference whose target its sp
 and never chooses a target the span does not name. The work does four things:
 
 - `check --fix` gains respellings: five kinds of reference finding whose repair is determined by
-  the span and the tree are rewritten in place, and each rewrite is printed;
+  the span and the tree are rewritten in place, and each rewrite is printed; a sixth, a `path`
+  reference to a register's home, was added while this spec was on hold, per "The respelling of a
+  register's home";
 - a `path` citation of a skill's directory, of its `SKILL.md`, or of an agent's file is a new
   finding, and `--fix` respells it as `skill@<name>` or `agent@<name>`;
 - the finding on a backticked path that names no anchor asks which candidate of the tree was
@@ -111,6 +115,8 @@ Per `skill@knowledge-architect-planning@working-a-slice`, the work of a spec.
 - **the generated list**: the files `generated_list` in `path@core@src/cli/mod.rs`, line 750,
   returns.
 - **T1, T2, AC1 to AC4**: the labels the premortem put to the owner, kept in the items below.
+  **AC1 of the register-references work** is the label another discussion put to the owner,
+  carried here with its item.
 - **D1 to D8**: the defaults the reviews raised, under "Defaults awaiting the owner": D1 to D6
   ruled by the owner in round 5, D7 and D8 in round 6.
 

@@ -2006,6 +2006,27 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn a_location_named_register_is_refused_as_a_kind_name() {
+        // The claim, per `design@core@kind-names-refused-as-anchors`: `register` is a kind's
+        // name, so an anchor of that name would be shadowed in a reference's head.
+        let m = declaring_full(
+            "",
+            "[locations.register]\npath = \"notes\"\nregisters = [\"issue\"]\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let whats = whats(&m);
+        assert!(
+            whats
+                .iter()
+                .any(|w| w.contains("`register`, which is the name of a kind")),
+            "{whats:?}"
+        );
+    }
+
+    #[test]
     fn a_location_carrying_two_registers_at_one_directory_keeps_the_first_named() {
         let m = declaring_full(
             "",

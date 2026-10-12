@@ -129,8 +129,8 @@ pub(crate) fn judge_part(
                                 &mut out, &doc.rel, l.line, span, anchor, id, anchors, inputs,
                             );
                         } else if kind.is_register() {
-                            // Never through `table`: a register's home is no entity of the table,
-                            // and `table`'s repair would call `*` a word of the path kind alone.
+                            // Never through `table`: a register's home is no entity id of the
+                            // table, and `*` resolves under this kind, which `table` refuses.
                             register(&mut out, &doc.rel, l.line, span, anchor, id, anchors);
                         } else {
                             table(
@@ -190,9 +190,9 @@ pub(crate) fn judge_part(
                         l.line,
                         format!("`{span}` is shaped like a path and names no anchor"),
                         format!(
-                            "write `path@<anchor>@<path>`, `path@elsewhere@<path>` for a path \
-                             outside this tree, or `path@*@<path>` for every component's own \
-                             copy{planned}{}",
+                            "write `path@<anchor>@<path>`, `register@<anchor>@<register>` for a \
+                             register's home, `path@elsewhere@<path>` for a path outside this \
+                             tree, or `path@*@<path>` for every component's own copy{planned}{}",
                             if located {
                                 ". A reference names a file: drop the line number or the \
                                  fragment, and name the function or the heading in prose"
@@ -363,7 +363,8 @@ fn table(
             line,
             format!("`{span}` names `{anchor}`, which is no anchor of this project"),
             format!(
-                "anchor at one of {}; `*` and `{ESCAPE_ANCHOR}` serve the path kind alone",
+                "anchor at one of {}; `{ESCAPE_ANCHOR}` serves the path kind alone, and `*` the \
+                 path and register kinds",
                 anchors.listed()
             ),
         )),
@@ -460,13 +461,8 @@ fn harness(
     out.push(Finding::at(rel, line, what, action));
 }
 
-/// Why a path's shape is refused before any resolution, or `None` for a plain relative path.
-///
-/// An upward or explicit-current segment breaks when the referencing file moves, which is
-/// the failure the anchored grammar exists to remove, and a leading slash is outside the
-/// project's namespace.
 /// A `register` reference: the home an anchor keeps a register in, resolved against the anchors,
-/// whatever shape the home has, per `design@core@one-entity-table`.
+/// whatever shape the home has, per `design@core@register-home-reference`.
 ///
 /// Whether the home exists is not asked here: a missing home is `check::tree`'s finding, and the
 /// reference names what the manifest declares. Every refusal names the form that resolves.
@@ -512,6 +508,12 @@ pub(crate) fn register(
         ));
         return;
     }
+    // `*` resolves only for a register every component carries, so a repair offers it only then.
+    let every = if r.scope == Scope::Component {
+        ", or at `*` for every component's own home"
+    } else {
+        ""
+    };
     let carriers = || {
         anchors
             .all()
@@ -526,10 +528,7 @@ pub(crate) fn register(
             rel,
             line,
             format!("`{span}` names `{ESCAPE_ANCHOR}`, which serves the path kind alone"),
-            format!(
-                "anchor at one of {}, or at `*` for every component's own home",
-                carriers()
-            ),
+            format!("anchor at one of {}{every}", carriers()),
         )),
         entity::EVERY_ANCHOR => {
             if r.scope != Scope::Component {
@@ -547,10 +546,7 @@ pub(crate) fn register(
                     rel,
                     line,
                     format!("`{span}` names `{name}`, which is no anchor of this project"),
-                    format!(
-                        "anchor at one of {}, or at `*` for every component's own home",
-                        carriers()
-                    ),
+                    format!("anchor at one of {}{every}", carriers()),
                 )),
                 Some(a) if a.is_plan() => {
                     let form = if a.is_milestone() {
@@ -588,25 +584,33 @@ pub(crate) fn register(
 /// path and whether a suffix was there. Only the home-target test reads it: a suffix on any other
 /// `path` reference keeps the finding of the target it does not name.
 fn without_suffix(path: &str) -> (&str, bool) {
-    if let Some((p, frag)) = path.rsplit_once('#') {
-        let mut chars = frag.chars();
-        if chars.next().is_some_and(|c| c.is_ascii_alphabetic())
-            && chars.all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
-        {
-            return (p, true);
-        }
+    // A fragment is a heading anchor, which may open on a digit, as `#1-intro`; a line suffix is a
+    // number or a closed range. Each is stripped once, the fragment first and again last, so a span
+    // that carries both, in either order, loses both. An empty or open suffix is no suffix.
+    fn fragment(p: &str) -> Option<usize> {
+        let (head, frag) = p.rsplit_once('#')?;
+        let ok = !frag.is_empty()
+            && frag
+                .chars()
+                .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_');
+        ok.then_some(head.len())
     }
-    if let Some((p, num)) = path.rsplit_once(':') {
+    fn line(p: &str) -> Option<usize> {
+        let (head, num) = p.rsplit_once(':')?;
         let digits = |t: &str| !t.is_empty() && t.bytes().all(|b| b.is_ascii_digit());
-        let lines = match num.split_once('-') {
+        let ok = match num.split_once('-') {
             Some((a, b)) => digits(a) && digits(b),
             None => digits(num),
         };
-        if lines {
-            return (p, true);
+        ok.then_some(head.len())
+    }
+    let mut bare = path;
+    for strip in [fragment, line, fragment] {
+        if let Some(end) = strip(bare) {
+            bare = &bare[..end];
         }
     }
-    (path, false)
+    (bare, bare.len() != path.len())
 }
 
 /// The finding on a `path` reference to a register's home, per `design@core@path-to-a-home-is-reported`:
@@ -641,6 +645,11 @@ fn home_finding(
     )
 }
 
+/// Why a path's shape is refused before any resolution, or `None` for a plain relative path.
+///
+/// An upward or explicit-current segment breaks when the referencing file moves, which is
+/// the failure the anchored grammar exists to remove, and a leading slash is outside the
+/// project's namespace.
 fn refused(path: &str) -> Option<&'static str> {
     if path.starts_with('/') {
         return Some("a leading slash is outside the project's namespace");
@@ -681,6 +690,13 @@ fn path(
                 .iter()
                 .find(|a| inputs.present.contains(&a.path.join(trimmed)));
             if let Some(a) = resolving {
+                // A home is named by its own kind, so the repair names that form rather than
+                // a `path` the next run would report.
+                let (bare, suffix) = without_suffix(trimmed);
+                if let Some((keeper, r)) = anchors.home_target(Path::new(bare)) {
+                    out.push(home_finding(rel, line, span, &keeper.name, &r.name, suffix));
+                    return;
+                }
                 out.push(Finding::at(
                     rel,
                     line,
@@ -717,19 +733,17 @@ fn path(
                 ));
                 return;
             }
-            // The compiled-in required set is what the generic form usually names, and it
-            // is accepted whether or not any component carries the shape yet — the two
-            // shapes of each heading register are the case, where naming both is legitimate
-            // while only one is in use anywhere. The set carries its own kinds, so the
-            // trailing-slash claim is asserted here too.
+            // The compiled-in required set is accepted whether or not any component carries
+            // the file yet. Every name in it is a file, since a register's home was answered
+            // above, so the trailing-slash claim is asserted here too.
             if let Some(required_dir) = anchors.required_kind(trimmed) {
                 if claims_dir != required_dir {
                     out.push(Finding::at(
                         rel,
                         line,
                         format!("`{span}` claims the wrong kind for a required document"),
-                        "a register's directory home takes the trailing slash and the \
-                         document files take none; the slash is the kind claim",
+                        "a required document is a file and takes no trailing slash; the slash \
+                         is the kind claim",
                     ));
                 }
                 return;
@@ -816,7 +830,7 @@ fn anchored_target(
 ) -> Option<PathBuf> {
     let trimmed = path.trim_end_matches('/');
     let Some(a) = anchors.by_name(name) else {
-        // The two reserved words serve `path` alone, so a planned path's repair names the
+        // A planned path sits at one anchor, never at a reserved word, so its repair names the
         // declared anchors only.
         // A plan anchor carries no path kind, so it is no candidate for either kind.
         let names = anchors
@@ -972,8 +986,8 @@ fn planned(
                     line,
                     format!("`{span}` points into `{file}`, which exists"),
                     format!(
-                        "write `path@{anchor}@{file}`, and name the function or the heading in \
-                         prose"
+                        "write `{}`, and name the function or the heading in prose",
+                        converted(anchors, anchor, &a.path.join(file), file)
                     ),
                 ));
                 return;
@@ -999,10 +1013,22 @@ fn planned(
             line,
             format!("`{span}` now exists, at `{}`", target.display()),
             format!(
-                "write `path@{anchor}@{trimmed}{slash}`; the planned form names a path that does \
-                 not exist yet"
+                "write `{}`; the planned form names a path that does not exist yet",
+                converted(anchors, anchor, &target, &format!("{trimmed}{slash}"))
             ),
         ));
+    }
+}
+
+/// The form a planned path converts to once its target exists: the `register` form where the
+/// target is a register's home, per `design@core@path-to-a-home-is-reported`, else the `path`
+/// form at the planned anchor.
+fn converted(anchors: &Anchors, anchor: &str, target: &Path, path: &str) -> String {
+    match anchors.home_target(Path::new(
+        target.to_str().unwrap_or("").trim_end_matches('/'),
+    )) {
+        Some((keeper, r)) => format!("register@{}@{}", keeper.name, r.name),
+        None => format!("path@{anchor}@{path}"),
     }
 }
 
@@ -1023,8 +1049,8 @@ pub(crate) fn planned_target(
             line,
             format!("`{span}` gives a planned path the anchor `{anchor}`"),
             format!(
-                "anchor at the anchor that will hold the target; `*` and `{ESCAPE_ANCHOR}` serve \
-                 the path kind alone"
+                "anchor at the anchor that will hold the target; a planned path sits at one \
+                 anchor, never `*` or `{ESCAPE_ANCHOR}`"
             ),
         ));
     }
@@ -2278,8 +2304,9 @@ mod tests {
         // checked forms only, so no reading of it clears the finding by unbackticking the path.
         // The whole repair line is pinned, so an unchecked form offered in any words fails,
         // on the plain span and on both located ones.
-        let forms = "write `path@<anchor>@<path>`, `path@elsewhere@<path>` for a path outside \
-                     this tree, or `path@*@<path>` for every component's own copy";
+        let forms = "write `path@<anchor>@<path>`, `register@<anchor>@<register>` for a \
+                     register's home, `path@elsewhere@<path>` for a path outside this tree, or \
+                     `path@*@<path>` for every component's own copy";
         let located = ". A reference names a file: drop the line number or the fragment, and \
                        name the function or the heading in prose";
         let m = manifest();
@@ -2372,8 +2399,8 @@ mod tests {
         }
         // The repairs of the three anchor findings name only what a planned path accepts.
         let action = |f: &String| f.split_once("\n    → ").map(|(_, a)| a.to_string());
-        let reserved = "anchor at the anchor that will hold the target; `*` and `elsewhere` serve \
-                        the path kind alone";
+        let reserved = "anchor at the anchor that will hold the target; a planned path sits at \
+                        one anchor, never `*` or `elsewhere`";
         assert_eq!(action(&found[0]).as_deref(), Some(reserved));
         assert_eq!(action(&found[1]).as_deref(), Some(reserved));
         assert_eq!(
@@ -2492,8 +2519,9 @@ mod tests {
         assert_eq!(
             action,
             Some(
-                "write `path@<anchor>@<path>`, `path@elsewhere@<path>` for a path outside this \
-                 tree, or `path@*@<path>` for every component's own copy, or \
+                "write `path@<anchor>@<path>`, `register@<anchor>@<register>` for a register's \
+                 home, `path@elsewhere@<path>` for a path outside this tree, or `path@*@<path>` \
+                 for every component's own copy, or \
                  `planned@<anchor>@<path>` for a path the plan's work will create"
             )
         );
@@ -2910,7 +2938,13 @@ mod tests {
              [locations.notes]\npath = \"notes\"\nregisters = [\"issue\"]\n\n\
              [walk]\nskip-dirs = []\nskip-files = []\n";
         let m = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration");
-        let anchors = Anchors::of(&m, &[PathBuf::from("docs/plans/milestones/m/README.md")]);
+        let anchors = Anchors::of(
+            &m,
+            &[
+                PathBuf::from("docs/plans/milestones/m/README.md"),
+                PathBuf::from("docs/plans/specs/s.md"),
+            ],
+        );
         (m, anchors)
     }
 
@@ -2960,6 +2994,19 @@ mod tests {
         assert!(f.contains("a plan's own documents"), "{f}");
         let f = one("register@m@spec");
         assert!(f.contains("`milestone@plans@m`"), "{f}");
+        let f = one("register@s@design");
+        assert!(f.contains("`spec@plans@s`"), "{f}");
+        // The anchors a repair offers are the ones that resolve: no plan anchor, and `*` only
+        // for a register every component carries.
+        let f = one("register@nowhere@spec");
+        assert!(f.ends_with("anchor at one of plans"), "{f}");
+        let f = one("register@elsewhere@spec");
+        assert!(f.ends_with("anchor at one of plans"), "{f}");
+        let f = one("register@nowhere@design");
+        assert!(f.contains("or at `*`"), "{f}");
+        // An empty id names a register's name as the repair.
+        let f = one("register@a-part@");
+        assert!(f.contains("the register's name"), "{f}");
     }
 
     /// The claim: a register's name stays out of the entity table's ids, so a register name
@@ -3034,6 +3081,10 @@ mod tests {
                 found[0].contains(&format!("`{form}`")),
                 "{span}: {found:#?}"
             );
+            assert!(
+                found[0].contains("every component's home"),
+                "{span}: {found:#?}"
+            );
         }
     }
 
@@ -3082,6 +3133,8 @@ mod tests {
         for span in [
             "path@a-part@docs/design.md:12",
             "path@a-part@docs/design.md#a-heading",
+            "path@a-part@docs/design.md#1-intro",
+            "path@a-part@docs/design.md:3#a",
             "path@*@docs/goals.md:3-9",
         ] {
             let found = register_checked(&format!("See `{span}`.\n"));
@@ -3095,6 +3148,56 @@ mod tests {
         let found = register_checked("See `path@a-part@notes/a.md:12`.\n");
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(!found[0].contains("register@"), "{found:#?}");
+        // An open range or an empty suffix is no suffix: the path keeps it, and names no home.
+        for span in [
+            "path@a-part@docs/design.md:3-",
+            "path@a-part@docs/design.md#",
+        ] {
+            let found = register_checked(&format!("See `{span}`.\n"));
+            assert_eq!(found.len(), 1, "{span}: {found:#?}");
+            assert!(!found[0].contains("register@"), "{span}: {found:#?}");
+        }
+    }
+
+    /// The claim: a repair that converts a reference to an existing home names the `register`
+    /// form, so following it raises no second finding: a planned path that now exists, one that
+    /// points into an existing home, and the escape on a home this tree holds.
+    #[test]
+    fn a_repair_that_lands_on_a_home_names_the_register_form() {
+        let (_, anchors) = register_project();
+        let present: Vec<String> = ["parts/a-part/docs/goals.md", "docs/design.md"]
+            .iter()
+            .map(|p| p.to_string())
+            .collect();
+        for (at, text, form) in [
+            (
+                "docs/plans/specs/t.md",
+                "Creates `planned@a-part@docs/goals.md`.\n",
+                "`register@a-part@goal`",
+            ),
+            (
+                "docs/plans/specs/t.md",
+                "Edits `planned@a-part@docs/goals.md:4`.\n",
+                "`register@a-part@goal`",
+            ),
+            (
+                "prose/p.md",
+                "See `path@elsewhere@docs/design.md`.\n",
+                "`register@a-project@design`",
+            ),
+        ] {
+            let (found, _) = checked_under(vec![(at, text)], &present, &anchors);
+            assert_eq!(found.len(), 1, "{text}: {found:#?}");
+            assert!(found[0].contains(form), "{text}: {found:#?}");
+        }
+    }
+
+    /// The claim: the kind word is listed among the kinds a repair names.
+    #[test]
+    fn the_register_kind_is_listed_among_the_kinds() {
+        let (_, anchors) = register_project();
+        let listed = anchors.kinds_listed();
+        assert!(listed.split(", ").any(|k| k == "register"), "{listed}");
     }
 
     /// The claim: a `planned` path is not judged as a home target, and a plan document cited by

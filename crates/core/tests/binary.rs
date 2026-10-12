@@ -1020,7 +1020,8 @@ fn show_of_a_register_reference_prints_the_home_the_tree_holds() {
     let sandbox = Sandbox::new("show-register", "dirhome");
     sandbox.write(
         "docs/rejected-alternatives.md",
-        "# Rejected alternatives\n\nNone yet; the tripwires sit in `register@dirhome@tripwire`.\n",
+        "# Rejected alternatives\n\nNone yet; the tripwires sit in `register@dirhome@tripwire`.\n\n\
+         Every component's sit in `register@*@tripwire`.\n",
     );
 
     let (file, stderr, code) = sandbox.run(&["show", "register@dirhome@tripwire"]);
@@ -1028,6 +1029,15 @@ fn show_of_a_register_reference_prints_the_home_the_tree_holds() {
     assert!(file.contains("dirhome: docs/tripwires.md"), "{file}");
     assert!(file.contains("Heading"), "{file}");
     assert!(file.contains("docs/rejected-alternatives.md:3"), "{file}");
+    // A citation through `*` names this component's home too.
+    assert!(file.contains("docs/rejected-alternatives.md:5"), "{file}");
+    // One line per home of the anchor named, and under `*` one per component: never a
+    // location's or a plan anchor's.
+    assert!(!file.contains("plans:"), "{file}");
+    let (every, stderr, code) = sandbox.run(&["show", "register@*@design"]);
+    assert_eq!(code, 0, "{stderr}");
+    assert!(every.contains("dirhome: docs/design/"), "{every}");
+    assert!(!every.contains("plans:"), "{every}");
 
     let (dir, stderr, code) = sandbox.run(&["show", "register@dirhome@design"]);
     assert_eq!(code, 0, "{stderr}");

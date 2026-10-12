@@ -1019,7 +1019,19 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
         return Ok(ExitCode::FAILURE);
     }
 
-    let inbound = crate::records::inbound(&model, &anchors, &kind, anchor, id);
+    let mut inbound = crate::records::inbound(&model, &anchors, &kind, anchor, id);
+    // A component's home of a register is cited through `*` too, and a change of that home's
+    // shape concerns every such citation, so `show` lists them with the named ones.
+    if kind.is_register() && anchors.by_name(anchor).is_some_and(|a| a.is_component) {
+        inbound.extend(crate::records::inbound(
+            &model,
+            &anchors,
+            &kind,
+            crate::entity::EVERY_ANCHOR,
+            id,
+        ));
+        inbound.sort_by(|a, b| (&a.file, a.line).cmp(&(&b.file, b.line)));
+    }
     outln!();
     if inbound.is_empty() {
         outln!("referenced by nothing");
