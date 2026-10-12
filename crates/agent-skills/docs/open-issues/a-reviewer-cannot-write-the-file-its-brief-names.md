@@ -23,6 +23,14 @@ did the general-purpose agents that applied the audit's repairs earlier in the s
 refusal is not established as a property of every subagent: what decides it, the agent type, the
 wording of the brief or the harness version, is not established. Not reproduced on purpose.
 
+The same split recurred at the review before the merge of the branch that gave the design-record
+axis its saved workflow. The spec-conformity, self-consistency and fidelity-of-relocation
+reviewers, dispatched as general-purpose subagents, each reported the refusal. The routing,
+decision-record and standing-state reviewers, each dispatched as its installed agent, wrote their
+report files. In the same session, the general-purpose agents of that workflow's run wrote their
+files, and so did the general-purpose agents that applied the pass. Two observations now pair the
+refusal with a general-purpose reviewer, and none with an installed agent.
+
 ### Why it matters
 
 `skill@knowledge-architect-review@review-invariants` has the dispatcher name a scratch directory for

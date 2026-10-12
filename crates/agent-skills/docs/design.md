@@ -20,13 +20,15 @@ which the build inlines there, a `%%` line is a comment the build removes, per
 `design@agent-skills@shipped-text-line-comments`, a delivery placeholder is a literal the build
 fills, and a placeholder `{{slug:<id>}}` ending a level-two heading is rendered into that heading's
 section slug, so content/ defines no section in this repository's walk and the installed copy does,
-per `design@core@installed-entities-from-the-tree`. A slug placeholder anywhere else fails the build. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, a saved workflow
-of Claude Code's Workflow tool is `workflows/<workflow>.js`, and the primer is `PRIMER.md`; the
-build asserts a saved workflow's name, per
+per `design@core@installed-entities-from-the-tree`. A slug placeholder anywhere else fails the
+build. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, a saved
+workflow of Claude Code's Workflow tool is `workflows/<workflow>.js`, and the primer is `PRIMER.md`;
+the build asserts a saved workflow's name, per
 `design@agent-skills@saved-workflow-name-is-its-file-stem`. The build script,
-`path@agent-skills@build.rs`, walks the directory, renders each file, removing its comments, filling its delivery substitutions and inlining its snippets, and
-generates `FILES`, each entry the install path and the text. It adds the installer's prefix to each skill
-directory, agent file and workflow file on the way out, so the installed names are the namespace of
+`path@agent-skills@build.rs`, walks the directory, renders each file, removing its comments, filling
+its delivery substitutions and inlining its snippets, and generates `FILES`, each entry the install
+path and the text. It adds the installer's prefix to each skill directory, agent file and workflow
+file on the way out, so the installed names are the namespace of
 `design@core@owned-namespace-check`. A file the layout does not map fails the build.
 
 The list is generated because a list written by hand drifts from the directory it lists, and the
@@ -1493,11 +1495,12 @@ and how its findings are classified as on old or new text. Its dispatch, its dra
 of them are its saved workflow's, per `design@agent-skills@audit-axis-runs-a-workflow`, and each
 pass is one run of it, per `design@agent-skills@one-run-pass`. Each agent writes its drafts in a
 scratch directory of its own and edits nothing else, and nothing an agent proposes is applied before
-a reading confirms it, per `design@agent-skills@synthetic-evidence-not-built`. A quotation of the
-owner is confirmed against the question it answered, as well as against its words. The items that
-need the owner's word go on one list per pass, labelled `F<n>`, in the pass's report file, per
-`design@agent-skills@committed-audit-report`. The edits are applied and their diff read whole. How
-passes follow one another is `design@agent-skills@audit-passes-repeat-while-the-count-falls`.
+a reading by the session confirms it, per `design@agent-skills@synthetic-evidence-not-built`. A
+quotation of the owner is confirmed against the question it answered, as well as against its words.
+The items that need the owner's word go on one list per pass, labelled `F<n>`, in the pass's report
+file, per `design@agent-skills@committed-audit-report`. The edits are applied and their diff read
+whole. How passes follow one another is
+`design@agent-skills@audit-passes-repeat-while-the-count-falls`.
 
 The reading guards against a quotation of the owner verbatim but taken from the answer to another
 question, which the first audit of the design-record axis on this repository showed. The rival that
@@ -1559,11 +1562,12 @@ design-record axis they are the preflight, a setup agent, the auditors' drafts, 
 `design@agent-skills@calibration-in-the-run`, the verify step, the checks of
 `design@agent-skills@created-heads-checked-in-the-run`, the cross-check, and the report. Every step
 writes its files in the run's scratch directory, so the session can open any draft, grouping or
-proposal the report cites. The run sets itself up inside it: a worktree of its own for each agent,
-as `skill@knowledge-architect-review@review-invariants` asks, and the listings the agents read. The
-preflight creates them where the script names the agents from its own table; where the agents
-follow from what the preflight lists, as the design-record axis's groups do, a setup agent creates
-their worktrees once the script has cut them.
+proposal the report cites. The run sets itself up inside it: the listings the agents read, and a
+worktree of its own for each agent dispatched alongside others, as
+`skill@knowledge-architect-review@review-invariants` asks; an agent that runs after another may work
+in its worktree, as a verifier works in its auditor's. The preflight creates them where the script
+names the agents from its own table; where the agents follow from what the preflight lists, as the
+design-record axis's groups do, a setup agent creates their worktrees once the script has cut them.
 
 The cross-check and the report are one agent each, on the owner's word: "The cross check and the
 report should be one agent each (two total)." The cross-check maps the findings that edit one
@@ -1731,7 +1735,7 @@ stated: "For the axis we are discussing, I think the goal is usually immediate a
 think there is much reason to delay, since those are mostly text edits, unless some design entries
 have major, issues that bear on project goals for example."
 
-### The design-record axis re-applies the rules on design heads and on rejected alternatives to every entry, reading the tripwires and issues that bear on each head and judging neither them, the restatements nor the code `##design-record-axis`
+### The design-record axis re-applies to every entry the rules on design heads, on the Component a head sits in and on rejected alternatives, reading the tripwires and issues that bear on each head and judging neither them, the restatements nor the code `##design-record-axis`
 
 Its corpus is every design head and every rejected alternative of every Component. Its rules are
 `primer@design-heads` for a head, the questions of
@@ -1749,10 +1753,10 @@ another axis too, since it reads the code rather than the decision record. A hea
 false of the code gets an issue. The axis is carried by
 `agent@knowledge-architect-design-record-auditor`.
 
-The Component a head sits in is judged because the axis's outcomes put a head in the wrong
-Component on the owner list, and no other step reads it for a head no branch touches: the routing
-reviewer judges it only for a head a diff writes. The rival, that outcome removed, leaves a
-misfiled head unread until a change touches it.
+The Component a head sits in is judged because the axis's outcomes put a head in the wrong Component
+on the owner list, and no other step reads it for a head no branch touches: the routing reviewer,
+`agent@knowledge-architect-routing-reviewer@routing-predicates`, judges it only for a head a diff
+writes. The rival, that outcome removed, leaves a misfiled head unread until a change touches it.
 
 ### The design-record axis is dispatched in bounded groups calibrated on a shared sample `##design-record-axis-dispatch`
 
@@ -2012,7 +2016,8 @@ findings are on both sides, the installed text and the project's own, is repaire
 findings on the installed text are sent upstream, per `design@agent-skills@audit-outcomes`, and
 those on the project's own text take the outcome of its repair's edits on that text.
 `skill@knowledge-architect-project-audit@repair-standard` is the one home of the standard, which the
-audit reads, and each skill that names it.
+audit reads, and each skill that names it. It is installed text, since installed text points to no
+home of one project.
 
 In the agentic-workflow axis a second phase of agents delivers it inside the run: cluster agents,
 two by default, group the confirmed findings by cause independently; a merge agent writes one

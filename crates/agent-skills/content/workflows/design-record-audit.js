@@ -211,6 +211,8 @@ const sampleLines = sample.map((e) => '- ' + show(e) + ' (draft of record: group
 
 // Drafts, all groups in parallel; the calibration waits for every one.
 const gaps = []
+// Every step that fails or returns nothing, for the report's part 6.
+const failures = []
 if (!args.from) {
   phase('drafts')
   const draftBrief = (g) => lines([
@@ -234,6 +236,7 @@ if (!args.from) {
     .then((r) => ({ g, r }))))
   for (const x of drafted) {
     if (!x || !x.r) {
+      failures.push('the drafts of group ' + (x ? x.g.label : '(unknown)') + ' returned nothing')
       gaps.push((x ? x.g.label : 'a group') + ': no return')
       continue
     }
@@ -256,7 +259,10 @@ if (!args.from || args.from === 'calibration') {
     'Your directory: ' + at(args.scratch, 'calibration') + '; write calibration.md there.',
     FROM_DISK,
   ]), { agentType: AUDITOR, schema: CALIBRATED, phase: 'calibration', label: 'calibration' })
-  if (!cal) log('calibration returned nothing')
+  if (!cal) {
+    failures.push('the calibration returned nothing, so the verifiers had no calibration file')
+    log('calibration returned nothing')
+  }
 }
 
 // Verify: one auditor per group, each given the calibration.
@@ -294,11 +300,17 @@ const checkBrief = (label, k) => lines([
 const ks = Array.from({ length: checkersPerGroup }, (_, i) => i + 1)
 const results = (await pipeline(groups,
   (g) => agent(verifyBrief(g), { agentType: AUDITOR, schema: VERDICTS, phase: 'verify', label: 'verify ' + g.label })
-    .then((v) => (v ? Object.assign({ label: g.label }, v) : null)),
+    .then((v) => {
+    if (!v) failures.push('the verifier of group ' + g.label + ' returned nothing')
+    return v ? Object.assign({ label: g.label }, v) : null
+  }),
   (v, g) => (v && v.createdHeads > 0
     ? parallel(ks.map((k) => () => agent(checkBrief(g.label, k),
       { agentType: AUDITOR, schema: PATH, phase: 'check', label: 'check ' + g.label + '-' + k })))
-      .then((cs) => Object.assign({ checks: cs.filter(Boolean).length }, v))
+      .then((cs) => {
+        if (cs.some((c) => !c)) failures.push('a checker of group ' + g.label + ' returned nothing')
+        return Object.assign({ checks: cs.filter(Boolean).length }, v)
+      })
     : (v ? Object.assign({ checks: 0 }, v) : null)),
 )).filter(Boolean)
 const verdicts = results
@@ -331,6 +343,10 @@ await agent(lines([
     'with its reason, for the session to decide.',
   'Return its path.',
 ]), { schema: PATH, phase: 'cross-check', label: 'cross-check' })
+  .then((c) => {
+    if (!c) failures.push('the cross-check returned nothing')
+    return c
+  })
 
 // Report.
 phase('report')
@@ -362,8 +378,9 @@ const report = await agent(lines([
     'checks beside each head it creates;',
   '4. the overlap map and the stale entries;',
   '5. the draft of the owner list, grouped by kind, its labels left for the session to number;',
-  '6. what the run did not decide: the plausible verdicts, the "Outside the axis" and "Met outside ' +
-    'the task" notes of the returns, and every step that failed or returned nothing.',
+  '6. what the run did not decide: the plausible verdicts, the notes the drafts give of a head ' +
+    'false of the code, the "Met outside the task" notes of the returns, and every step that ' +
+    'failed or returned nothing' + (failures.length ? ', among them: ' + failures.join('; ') : '') + '.',
   'Return its path.',
 ]), { schema: PATH, phase: 'report', label: 'report' })
 

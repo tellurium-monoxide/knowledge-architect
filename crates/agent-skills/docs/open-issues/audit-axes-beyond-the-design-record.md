@@ -110,6 +110,9 @@ stands, is still read by no step of the workflow.
 `goal@knowledge-architect@agents-work-without-drift` depends on the whole record, since agents
 ground on all of it.
 
+The design record's self-consistency axis may reuse the design-record axis's preflight, which lists
+every entry of every Component in order, per `design@agent-skills@design-record-axis-dispatch`.
+
 ### What would close it
 
 For each axis above, a design discussion under `skill@knowledge-architect-design` that decides

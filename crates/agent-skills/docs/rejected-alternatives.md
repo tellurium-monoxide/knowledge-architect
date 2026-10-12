@@ -345,3 +345,15 @@ is kept here because a doubt remains: `tripwire@agent-skills@calibration-reading
 whether the session keeps rejecting the readings an agent proposes, and this alternative is the
 candidate if it does.
 
+**The agentic-workflow axis's cluster, merge and repair steps reused in the design-record axis's
+run** — lost to `design@agent-skills@root-cause-repair`. `live`. An edit of a head adds no
+instruction, so two edits interact only where they touch one paragraph or one slug, which the
+cross-check maps. It is kept here because a doubt remains:
+`tripwire@agent-skills@rule-misread-across-groups` watches whether one rule is misread across
+groups beyond the calibration sample, and this alternative is a candidate if it is.
+
+**The outcome "a head in the wrong Component" removed from the design-record axis, instead of the
+auditor judging it** — lost to `design@agent-skills@design-record-axis`. `live`. It leaves a
+misfiled head unread until a change touches it. It is kept here because a doubt remains:
+`tripwire@agent-skills@component-judgement-noisy` watches whether the auditors' judgements of a
+head's Component are mostly rejected, and this alternative is the candidate if they are.

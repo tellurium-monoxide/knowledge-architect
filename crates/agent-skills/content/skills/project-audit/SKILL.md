@@ -61,8 +61,12 @@ needs.
 delivers a report; the session reads nothing between its steps. The session then verifies the
 report as the axis's section says, and nothing an agent proposes is applied before a reading
 confirms it. Then come points 2 and 3 below, and the next run is the re-check of point 4; point 5
-follows once the audit stops. A session whose harness does not list the workflow dispatches its
-steps by hand, in the script's order, with the script's prompts, read from the script.
+follows once the audit stops. Before a run, the session writes the kept list, for a re-check, and
+names the history. A harness may list saved workflows only when a session starts, so a session that
+ran the install later may not see the workflow listed; a session whose harness does not list the
+workflow dispatches its steps by hand, in the script's order, with the script's prompts, read from
+the script. The run's worktrees are removed once the pass's findings have their outcomes, as
+`skill@knowledge-architect-review@review-invariants` says.
 
 1. **Pre-commitments.** An axis that measures, one whose audit yields a figure a conclusion rests
    on, states before the audit which figure would show which conclusion, and the owner sees them
@@ -89,11 +93,11 @@ steps by hand, in the script's order, with the script's prompts, read from the s
    any pass's findings do, and no re-check follows; one the owner does not rule on becomes an issue
    entry, as a deferred item does. **Each violation left is on old text or on new text**: old text
    is text the previous pass also read, whose words no commit changed after the commit that pass
-   audited, a move or a reflow leaving it old; new text is text a later commit wrote, the previous
-   pass's repairs among them. The axis's section says how its findings are classified. The count
-   on old text is expected to fall from one pass to the next; a pass where it does not goes to the
-   owner as a question, with the counts, and starts no new pass on its own. A violation left on new
-   text takes its outcome like any other, and decides nothing about convergence.
+   audited, a move, a reflow or a rename leaving it old; new text is text a later commit wrote, the
+   previous pass's repairs among them. The axis's section says how its findings are classified. The
+   count on old text is expected to fall from one pass to the next; a pass where it does not goes to
+   the owner as a question, with the counts, and starts no new pass on its own. A violation left on
+   new text takes its outcome like any other, and decides nothing about convergence.
 5. **Review.** Once the audit stops, the audit's branch is reviewed before its merge under
    `skill@knowledge-architect-review`, on the axes `skill@knowledge-architect-review@review-axes`
    says that review owes. Its briefs name each report file the audit's branch added and deleted,
@@ -223,7 +227,8 @@ beyond what the run checked is judged against every rule as an entry of its own,
 commit: moving text unchanged does not make the new head conform.
 
 **Old and new text**, for a re-check: an entry is on new text when a commit after the one the
-previous pass audited changed its words; the verifier classifies each finding.
+previous pass audited changed its words, a move, a reflow or a rename leaving it old; the verifier
+classifies each finding.
 
 **The outcomes of this axis:**
 
@@ -335,8 +340,3 @@ workflow's file of `skill@knowledge-architect-retrospective@two-files`, named, w
 as that section and `skill@knowledge-architect-retrospective@what-becomes-of-files` say, its
 subject naming the audit. It differs in its content only: what was audited at which commit in
 place of what the session did, each finding numbered `W<n>`, and no standing answers.
-
-**Before a run**: the session writes the kept list, for a re-check, and names the history. A harness
-may list saved workflows only when a session starts, so a session that ran the install later may
-not see the workflow listed. The worktrees are removed once the pass's findings have their
-outcomes, as `skill@knowledge-architect-review@review-invariants` says.

@@ -34,9 +34,10 @@ The pass's report file holds the item and its ruling, and
 
 ### Why it matters
 
-The rule shapes every head whose ground is the owner's, and every audit pass reads heads against
-it. `goal@knowledge-architect@the-owner-decides` is what the quotation serves: a later session can
-tell what the owner said from what an agent inferred.
+The rule shapes every head whose ground is the owner's, and every audit pass reads heads against it.
+Its decision is `design@agent-skills@head-ground-is-the-argument`, which this question would change.
+`goal@knowledge-architect@the-owner-decides` is what the quotation serves: a later session can tell
+what the owner said from what an agent inferred.
 
 ### What would close it
 
