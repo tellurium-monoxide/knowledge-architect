@@ -21,8 +21,8 @@ leaves the repository in the commit that completes its harvest.
   spec.
 - Every name it uses is defined in it, under Names or New names, or exists in the tree.
 - Where the owner's word is awaited, `skill@knowledge-architect-planning@working-a-slice` says what
-  waits. Five defaults were put to the owner, D1 to D5, under "Defaults awaiting the owner"; the
-  owner ruled on D1 to D3.
+  waits. Five defaults were put to the owner, D1 to D5, under "Defaults awaiting the owner", and
+  the owner ruled on all five.
 - **The spec lands before its work, in a pull request of its own.** Its work starts only once
   `spec@plans@path-quickfixes` has landed and been harvested, since this work adds rows to the
   respellings that spec builds; the order rationale gives the reason.
@@ -971,8 +971,7 @@ Steps 1 to 3 change what `cargo klarch commits` requires of every tree of the br
   `design@core@plan-document-kinds` refuses, so that `show` lists every citation. The premise the
   ruling was given on did not include this case. Default: a milestone anchor and a spec anchor are
   not anchors of the new form, and a reference with one is a finding that names the plan document's
-  form. It narrows a ruling of the owner, so it waits for the owner's word, and is built as written
-  until then. The review repair first presented this narrowing as a return to the approval, which it
+  form. It narrows a ruling of the owner. **Ruled: approved.** The owner, in a message after the transcript review of this spec: "Both defaults approved. Proceed". The review repair first presented this narrowing as a return to the approval, which it
   was not; the commit message that said so is reworded.
 - **D5**, bears on `thread@register-references@register-vocabulary`. The owner approved shape 1,
   which was proposed as one sentence in the primer that "rewrites nothing else". The decision-recording
@@ -980,8 +979,7 @@ Steps 1 to 3 change what `cargo klarch commits` requires of every tree of the br
   which would add a second line to the installed primer. Default: the primer gets the one sentence
   with its reason, and the losing shape 2 is kept in the message of the commit that writes it, where
   a session that reopens the sentence finds it with `git log -S`. It departs from that skill's
-  placement on the owner's scope, so it waits for the owner's word, and is built as written until
-  then.
+  placement on the owner's scope. **Ruled: approved.** The owner, in a message after the transcript review of this spec: "Both defaults approved. Proceed".
 
 ## Harvest
 
