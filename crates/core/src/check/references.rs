@@ -465,7 +465,9 @@ fn harness(
 /// whatever shape the home has, per `design@core@register-home-reference`.
 ///
 /// Whether the home exists is not asked here: a missing home is `check::tree`'s finding, and the
-/// reference names what the manifest declares. Every refusal names the form that resolves.
+/// reference names what the manifest declares. Every refusal names the form that resolves, so a
+/// repair lists the anchors that carry the register, not every anchor as `table` does: an anchor
+/// that does not carry it is one more refusal for a writer who follows the repair.
 pub(crate) fn register(
     out: &mut Vec<Finding>,
     rel: &Path,
