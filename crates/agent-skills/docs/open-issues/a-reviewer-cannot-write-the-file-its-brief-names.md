@@ -31,6 +31,15 @@ report files. In the same session, the general-purpose agents of that workflow's
 files, and so did the general-purpose agents that applied the pass. Two observations now pair the
 refusal with a general-purpose reviewer, and none with an installed agent.
 
+A third occurrence came from another project. The thaum project's retrospective of a roadmap
+revision, on knowledge-architect 0.5.0, reports one general-purpose subagent refused a write to its
+own scratch directory with "Subagents should return findings as text, not write report files",
+returning its full table as text instead, while other subagents of the same session wrote to their
+scratch directories. Three observations now pair the refusal with a general-purpose subagent, and
+none with an installed agent. In the session that took that report in, three general-purpose
+subagents wrote working files in their scratch directories without refusal; none was briefed to
+write a report file, so the closing test below was not run.
+
 ### Why it matters
 
 `skill@knowledge-architect-review@review-invariants` has the dispatcher name a scratch directory for

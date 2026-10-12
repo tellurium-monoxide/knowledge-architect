@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-31 entries
+33 entries
 
 | kind | title |
 | --- | --- |
@@ -16,7 +16,9 @@
 | deferred | [The citation regime could be offered by the core over any pinned text](citation-regime-over-any-pinned-text.md) |
 | deferred | [The agent configuration serves one provider's harness](configuration-for-several-agent-providers.md) |
 | deferred | [A project cannot reference an entry of another project](cross-project-references.md) |
+| design | [A plan item named as a plain `#<id>`, inside its plan or outside it, is read by no check](a-plain-hash-item-name-is-read-by-nothing.md) |
 | design | [Four core heads bundle decisions that lose to different rivals, and each has many citing sites](four-heads-bundle-decisions-with-many-citing-sites.md) |
+| design | [No checked form cites a level-three subsection or a numbered point inside a section of a skill, an agent or the primer](no-checked-form-cites-a-point-inside-a-section.md) |
 | design | [The choice of tree-sitter-rust as the Rust parser has no head, and two rejected alternatives lost to it](the-rust-parser-choice-has-no-head.md) |
 | observation | [A lint written twice on one line of a message is reported once or twice, by which tree holds it](a-message-lint-is-deduplicated-in-one-tree-only.md) |
 | observation | [Plain `check` under a sparse checkout reports every file outside the cone as an unstaged deletion](check-under-a-sparse-checkout-reports-every-file-outside-the-cone.md) |

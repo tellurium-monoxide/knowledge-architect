@@ -330,8 +330,9 @@ Analysed with W1 of 2026-10-08-thaum-roadmap-revision-klarch-workflow, in
     here, since in backticks each would cite a skill or an agent named `name`)", beside no issue
     entry. The other passage of that spec, at 559-560, describes the spans in words, which the
     primer puts outside the rule.
-- **Recorded.** No issue. `issue@agent-skills@quoting-the-owner-s-words-in-a-head` concerns where
-  the owner's words go in a head, not their syntax.
+- **Recorded.** No issue of a missing form. At the analysis, the entry now
+  `issue@agent-skills@the-place-of-the-owner-s-quotes-in-the-workflow` asked only where the owner's
+  words go in a head, not their syntax.
 - **Kind.** A missing form of the checker, and a non-conformance on main that only the missing
   issue can make conformant. Two sessions.
 - **Scope.** It serves `goal@knowledge-architect@the-owner-decides`: a ruling quoted inexactly is
@@ -347,8 +348,8 @@ Analysed with W1 of 2026-10-08-thaum-roadmap-revision-klarch-workflow, in
 - **Default:** open an issue, `todo`, in core; then the spec's passage cites it.
 - **Outcome:** IMO, the problem here is the other way around: I don't consider these owner quotes very valuable most of the  time, as long as attribution is correct. I do not want to provide this feature from the checker. The design question to ba recorded in the issue is instead, rethink the place and importance of owner quotes in the workflow. .
 - **Consequences, put to the owner after the ruling:** no core issue is opened;
-  `issue@agent-skills@quoting-the-owner-s-words-in-a-head`, which asks the same question for design
-  heads, is widened to the whole workflow, with K5 as its evidence; and the bare passage of
+  `issue@agent-skills@the-place-of-the-owner-s-quotes-in-the-workflow`, which asked the same question
+  for design heads, is widened to the whole workflow, with K5 as its evidence; and the bare passage of
   `spec@plans@path-quickfixes`, which no issue of a missing form can now make conformant, is
   rewritten in words, the attribution kept. The owner: "Agreed on both points, proceed".
 
