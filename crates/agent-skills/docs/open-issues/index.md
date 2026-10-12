@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-29 entries
+28 entries
 
 | kind | title |
 | --- | --- |
@@ -16,7 +16,6 @@
 | question | [A design issue's re-entry point is read by no review](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |
 | question | [A pending audit report file is outstanding work that no installed search of what is already known reads](a-pending-audit-report-is-reached-by-no-installed-search.md) |
 | question | [A project that receives a retrospective's findings has no installed procedure to analyse them](a-received-retrospective-file-has-no-installed-analysis.md) |
-| question | [A repair of agent-facing text that edits a design head is not asked to keep true the issues and tripwires that cite the head](a-repair-that-edits-a-head-reads-no-entry-citing-it.md) |
 | question | [A reviewer that queues long work reports nothing until it is asked](a-reviewer-s-running-time-is-unbounded.md) |
 | question | [After a version upgrade, nothing re-reads a project's restatements of installed directives, a project skill whose activity an installed skill now covers, or the session's own copy of the new text, nor the agent types it adds](an-upgrade-re-reads-no-root-restatement.md) |
 | question | [The audit that ends the move of an adopting project's documents is stated where the move's sessions do not read](the-closing-audit-of-a-move-reaches-no-planning-text.md) |
