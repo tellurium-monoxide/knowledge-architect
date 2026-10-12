@@ -23,10 +23,8 @@ with the change, or the check fails.
 reference to an entry of this repository passes here and would dangle in every installing project:
 the text cites no entry, per `design@agent-skills@shipped-text-cites-no-entry`, and nothing checks
 that yet, per `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked`. It names no
-Component and no convention of this repository; it writes a path every conforming project holds as
-`path@*@<path>` or `path@plans@<path>`, a register's home as `register@*@<register>` or
-`register@plans@<register>`, a path that varies by project and an illustration as a placeholder in
-angle brackets, and the project's command as the install placeholder. It may cite the shipped set's own skills, agents, primer and their sections,
+Component and no convention of this repository; it writes only the forms
+`design@agent-skills@shipped-text-cites-no-entry` admits, read whole, and the project's command as the install placeholder. It may cite the shipped set's own skills, agents, primer and their sections,
 `skill@<name>@<slug>`, which every project serving `claude` holds. A level-two heading under
 content/ ends with its section slug as a placeholder, `{{slug:<id>}}`, which the build renders. A skill names
 another installed skill by its installed name, which carries the installer's prefix.

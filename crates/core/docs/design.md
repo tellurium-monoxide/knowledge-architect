@@ -1257,7 +1257,8 @@ files under its instance directory, one per entry, per
 resolved against the survey, under the same anchors and with the candidate rule and segmentation
 the table's resolver applies to every kind, and `planned` with it, per
 `design@core@planned-path-form`. `register` names a register's home and is resolved against the
-anchors and the tree's listing in the same way, per `design@core@register-home-reference`. The
+anchors, under the same candidate rule and segmentation, per
+`design@core@register-home-reference`. The
 table lives in
 `path@core@src/entity.rs`, is built once per run from the model, and is what
 `check::references` resolves against.
@@ -1393,14 +1394,13 @@ not declared, and the repair lists the anchors; the anchor is declared and carri
 that kind, and the repair lists the anchors that do; an item of a plan is cited from outside that
 plan, and the repair names the whole document, per `design@core@plan-item-scope`; the anchor
 carries the register and does not define that id, and the reference is dangling. One finding for
-all five would send a reader to check the wrong segment of the pointer most of the time. Every
-anchor but a plan anchor carries `path`, and a component carries every component register, so the
-third way is reachable only by a location, declared or constructed by the tool. A kind resolved
-outside the table has ways of its own, each reported as the repair it needs: `path` and `planned`
-against the tree, per `design@core@every-path-names-its-anchor` and
+all five would send a reader to check the wrong segment of the pointer most of the time. The third
+way is reached by any anchor that does not carry the register: a location that does not declare
+it, or a component naming an opt-in register, as the `spec` register only the anchor `plans`
+carries. A kind resolved outside the table has ways of its own, each reported as the repair it
+needs: `path` and `planned` against the tree, per `design@core@every-path-names-its-anchor` and
 `design@core@planned-path-form`, and `register` against the anchors, per
-`design@core@register-home-reference`, under which a component that does not carry a register is
-the third way too.
+`design@core@register-home-reference`.
 
 **A reference that resolves to nothing is recorded and reported, never dropped.** The scanner
 could require a resolvable shape and see nothing without one, which needs no finding and no
@@ -1695,18 +1695,19 @@ dangling one. The anchors the tool constructs hold no copy the generic form name
 is cited by its kind.
 
 **Under any other kind the escape names nothing, and `*` names nothing but under `register`.** A
-`design@*@<id>` is reported as an unknown anchor, and the finding says the words serve `path`
-alone. The `planned` kind refuses them
+`design@*@<id>` is reported as an unknown anchor, and the finding says which kinds each word
+serves. The `planned` kind refuses them
 with a finding of its own, per `design@core@planned-path-form`. The manifest's resolution
 refuses a declared anchor wearing either word, and it is no anchor: every pointer at it
 would read as the reserved meaning.
 
 ### A register's home is cited by its own kind, `register@<anchor>@<register>`, which names the home in whichever shape it has `##register-home-reference`
 
-`register@<anchor>@<register>` names the home that the anchor keeps the register in. It is resolved
-against the anchors and the tree's listing, as `path` is resolved against the survey, and not
-against the entity table: no register's name becomes an entity id, so a register's name in
-backticks with a hash sign before it stays silent under `design@core@candidate-rule-and-retired-forms`.
+`register@<anchor>@<register>` names the home that the anchor keeps the register in. The check
+resolves it against the anchors, which the table's module holds, and asks nothing of the tree,
+since a missing home is the tree check's finding; `show` reads the tree's listing to print the
+home it holds. No register's name becomes an entity id, so a register's name in backticks with a
+hash sign before it stays silent under `design@core@candidate-rule-and-retired-forms`.
 
 - **The anchor** is a component, a declared location or the anchor `plans`, where it carries the
   register; `*` names every component's own home of a component-scoped register, per
@@ -1717,12 +1718,12 @@ backticks with a hash sign before it stays silent under `design@core@candidate-r
   its home is a plan's own documents, cited by the plan document's kind.
 - **Each refusal names the form that resolves**, per `design@core@finding-names-the-repair`.
 - **`show`** prints the home the tree holds, the file or the directory, with the register's shape,
-  then every site that cites it.
+  then every site that cites it, a citation of a component's home through `*` included.
 
 **The kind exists because a home has two shapes**, per `design@core@heading-register-two-shapes`.
 A `path` names one of them, so a home that outgrows one file dangles every `path` to it, against
 `goal@core@relocation-is-one-manifest-edit`, and a text that must hold in every project names both
-shapes. This reference names the register and lets the manifest and the tree say which shape it is.
+shapes, per `goal@agent-skills@installed-text-works-anywhere`. This reference names the register and lets the manifest and the tree say which shape it is.
 The nearest rival is a `path` that resolves to either shape; it loses on
 `design@core@trailing-slash-claims-directory`, since a path claims its target's kind, and a path
 that matches either shape asserts no claim and puts a special case into path resolution.
@@ -1791,8 +1792,9 @@ the manifest refuses a register of that name, as it refuses `path`.
 
 The kind claim sits in the span itself — greppable, visible to the reader, checkable — rather
 than inferred from what happens to exist. The claim is asserted as a fact in both directions, every
-required document is asserted to be a file rather than a directory wearing its name, and a
-heading register's two shapes are told apart by recorded kind.
+required document is asserted to be a file rather than a directory wearing its name. A register's
+home is no `path` target, so its two shapes take no claim: the `register` kind names either, per
+`design@core@path-to-a-home-is-reported`.
 
 ### A target the ignore rules cover is not asserted `##ignored-targets-are-not-asserted`
 

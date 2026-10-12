@@ -138,8 +138,8 @@ the deliberation is where that path puts it.
 
 ## The current design `##current-design`
 
-In the Component's design home. That is its `register@*@design`, or, for a Component whose design has
-outgrown one file, its `register@*@design` directory. In the directory shape the decision goes in the
+In the Component's design home, `register@*@design`: one file, or, for a Component whose design
+has outgrown one file, a directory. In the directory shape the decision goes in the
 subdocument owning its subject, never in the directory's `README.md`, which is the head and the
 index. A new subdocument is linked from that index, `[title](file.md)`, the target relative to the
 README, conventionally one bullet per subdocument.

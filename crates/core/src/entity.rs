@@ -46,9 +46,9 @@ pub(crate) const PATH_KIND: &str = "path";
 /// `design@core@planned-path-form`.
 pub(crate) const PLANNED_KIND: &str = "planned";
 
-/// The kind naming a register's home, `register@<anchor>@<register>`: resolved against the anchors
-/// and the tree's listing, not the table, per `design@core@one-entity-table`, so no register's
-/// name becomes an entity id.
+/// The kind naming a register's home, `register@<anchor>@<register>`: resolved against the
+/// anchors, never as an entry of the table, per `design@core@register-home-reference`, so no
+/// register's name becomes an entity id.
 pub(crate) const REGISTER_KIND: &str = "register";
 
 /// The kind of a skill of the harness, and of its sections.
@@ -833,7 +833,9 @@ pub(crate) fn candidate<'a>(span: &'a str, anchors: &Anchors) -> Candidate<'a> {
         // An empty id is most often a form named in prose, or, under a path kind, an anchor's
         // own directory, which has no spelling under its own name; each has a checked form to
         // name. The project root has no anchor above it, so the ancestor spelling excludes it.
-        let repair = if kind.takes_a_path() {
+        let repair = if kind.is_register() {
+            "write the register's name, as `register@<anchor>@design`"
+        } else if kind.takes_a_path() {
             "write the path: an illustration of a form writes it as a placeholder in angle \
              brackets, as `path@*@<path>`, and the directory of an anchor other than the root is \
              named from the anchor above it, as `path@<parent-anchor>@<dir>/`"

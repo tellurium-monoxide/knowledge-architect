@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-34 entries
+35 entries
 
 | kind | title |
 | --- | --- |
@@ -8,6 +8,7 @@
 | defect | [The finding for a required document missing at the root Component names a repair that does not apply to the root](a-missing-root-document-finding-names-a-repair-that-does-not-apply.md) |
 | defect | [A reference whose id carries a line suffix or a fragment is told to define its entry or repair its pointer, not to drop the suffix](a-reference-with-a-line-or-fragment-suffix-names-a-wrong-repair.md) |
 | defect | [A backticked span with an empty head and a slash is reported as malformed, which the candidate rule says is silent](a-span-with-an-empty-head-is-malformed-against-its-head.md) |
+| defect | [The finding on an escaped path that resolves names the first anchor that holds it, not the deepest](the-escape-finding-names-the-first-anchor-not-the-one-that-holds-the-target.md) |
 | defect | [The head on `index` credits the missing-directory refusal with a claim that the refusal does not hold](the-missing-directory-refusal-does-not-hold-the-no-loss-claim.md) |
 | defect | [The retired slug reference finding names a design reference as the repair, whatever register the id belongs to](the-retired-slug-finding-names-a-design-repair-for-every-register.md) |
 | defect | [The core's tests read the machine's git configuration, so a machine setting can fail a correct tree](the-tests-read-the-machine-s-git-configuration.md) |

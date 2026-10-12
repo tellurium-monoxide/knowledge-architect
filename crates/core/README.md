@@ -414,7 +414,8 @@ refused like one named `path`.
 `register@*@issue`, and names the home in whichever shape the tree holds, so a home that outgrows
 one file breaks no reference. The anchor is a component, a declared location or `plans`, or `*`
 for a component-scoped register. A `path` reference to a home, a heading register's file, its
-directory or that directory's `README.md`, or a file register's directory, is a finding whose
+directory or that directory's `README.md`, a file register's directory, or the `milestone`
+register's directory, is a finding whose
 repair names this form. A register named `register` is refused like one named `path`.
 
 **A plan's name reads as nothing else.** A milestone's name or a spec's id that is the name of a

@@ -126,17 +126,13 @@ win.
   - An id is defined once per register instance. Two definitions are a finding at each site.
   - An id matches `[a-z0-9]+(-[a-z0-9]+)*`. A file register's entry id is the file's basename.
 
-- **Every reference is one backticked span, `<kind>@<anchor>@<id>`**, per
-  `design@core@an-entity-belongs-to-its-anchor`. The kind is a register's name, `path`,
-  `planned` for a path a plan's work will create, per `design@core@planned-path-form`,
-  `register` for a register's home, per the bullet below it, or a harness kind, per the bullet
-  below. The anchor
-  is a Component, a location or a plan, and no anchor wears a kind's name. The id is the entry's. A plan's item is cited from
-  inside that plan only, per `design@core@plan-item-scope`. Examples:
-  `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/rejected-alternatives.md`. A reference that resolves to nothing
-  is reported with the repair its failing segment needs, per
-  `design@core@an-unresolved-reference-is-reported`. A reference of any other kind
-  that names no anchor is refused, including inside the file that defines the id.
+- **Every reference is one backticked span, `<kind>@<anchor>@<id>`**, naming the anchor that
+  defines the entry, per `design@core@an-entity-belongs-to-its-anchor` and
+  `design@core@one-entity-table`, read whole for the kinds and their resolution. Examples:
+  `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/rejected-alternatives.md`.
+- A plan's item is cited from inside that plan only, per `design@core@plan-item-scope`.
+- A reference that resolves to nothing is reported with the repair its failing segment needs, per
+  `design@core@an-unresolved-reference-is-reported`.
 - **A skill, an agent, the primer and the root CLAUDE.md are cited with no anchor**, per
   `design@core@harness-kinds-cited-without-anchor`: `skill@<name>`, `skill@<name>@<slug>`,
   `agent@<name>`, `agent@<name>@<slug>`, `primer@<slug>`, `instructions@<slug>`. Every level-two
@@ -155,13 +151,10 @@ win.
     location is named from that anchor, never from one above it. So relocating an anchor edits the
     manifest and no document. A file under crates/core is `path@core@<file>`, and one under .claude
     is `path@agent-config@<file>`.
-  - Two anchors are reserved under `path`, `*` serving `register` too, and the word `plans` names the anchor the tool
-    constructs, per `design@core@reserved-anchors` and `design@core@plans-is-a-reserved-anchor`. A plan document is cited by its kind,
-    `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<slice>`, never by its path.
-    `path@*@<path>` names every Component's own copy of a path, as in `path@*@docs/rejected-alternatives.md`.
-    `path@elsewhere@<path>` names a path that is deliberately not resolvable in this tree: another
-    project's layout, a deleted or hypothetical file. It is never checked for existence, and it is
-    refused when its target does resolve here.
+  - The anchor words `*` and `elsewhere`, and the anchor `plans` the tool constructs, are
+    reserved, per `design@core@reserved-anchors` and `design@core@plans-is-a-reserved-anchor`,
+    read whole. A plan document is cited by its kind, never by its path, per
+    `design@core@plan-document-kinds`.
   - A target the ignore rules cover is accepted without existence or kind assertions, per
     `design@core@ignored-targets-are-not-asserted`. The ignore rules are what `git check-ignore`
     answers, nested `.gitignore` files included.

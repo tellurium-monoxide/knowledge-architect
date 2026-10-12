@@ -58,8 +58,9 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
 
    A span is a reference candidate when its head before the first `@` is a kind or an anchor, per
    `design@core@candidate-rule-and-retired-forms`. Every candidate either carries a placeholder in
-   angle brackets, as in `goal@<anchor>@<id>`, is a path every conforming project holds,
-   `path@*@<path>` or `path@plans@<path>`, or cites the shipped set's own skills, agents, primer
+   angle brackets, as in `goal@<anchor>@<id>`, is a path or a register's home every conforming
+   project holds, `path@*@<path>`, `path@plans@<path>`, `register@*@<register>` or
+   `register@plans@<register>`, or cites the shipped set's own skills, agents, primer
    and sections, as `skill@<name>@<slug>` or `primer@<slug>`, which a test of the core resolves
    within the set. No candidate names an entry. This is done by hand until
    `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked` closes, per

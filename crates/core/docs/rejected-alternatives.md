@@ -485,9 +485,11 @@ file no longer matches the working tree, and `check --staged` fails until the fi
 **Checking the literal parts of a placeholder span** — lost to
 `design@core@candidate-rule-and-retired-forms`. `live`. A span such as one whose kind is literal
 and whose anchor and id are placeholders would be recorded, and its kind, its arity and a literal
-anchor checked. A census over the tracked Markdown and Rust files found 354 placeholder spans and no
-defect among them; the four spans such a check would report were two deliberate illustrations of
-an invalid form and two format strings of the checker's source. The cost was the escape an
+anchor checked. A census found no defect among the placeholder spans of the tracked Markdown and
+Rust files: a `grep -ohE` of backticked spans holding an `@` and an angle bracket over
+`git ls-files '*.md' '*.rs'`, each split on `@` and its kind, its segment count and a literal
+anchor tested; the spans such a check would report were deliberate illustrations of an invalid
+form and format strings of the checker's source. A defect found by that census reopens this. The cost was the escape an
 illustration needs, and the edit of a bundled head. A placeholder name fixed per kind lost too: the
 names carry meaning, as a milestone placeholder in a slice spec's anchor does.
 
@@ -496,7 +498,7 @@ names carry meaning, as a milestone placeholder in a slice spec's anchor does.
 recorded, so alone it makes the pointer silent; recorded as a reserved word, it is a second
 spelling of what `*` means, and a typo of it is another placeholder, silent where a typo of `*` is
 an unknown anchor. The owner kept `*` while still finding it "a bit confusing", which is the doubt
-this entry keeps.
+this entry keeps, against `goal@knowledge-architect@adoption-is-easy`.
 
 **`home` as the word of the kind naming a register's home** — lost to
 `design@core@register-home-reference`. `live`. It matched the documents' phrase "design home", and
@@ -508,6 +510,8 @@ slash, per `design@core@trailing-slash-claims-directory`; one that matches eithe
 claim and puts a special case into path resolution.
 
 **A `path` reference to a register's home accepted beside the `register` form** — lost to
-`design@core@path-to-a-home-is-reported`. `live`. It was the incumbent: the generic anchor accepted
-every shape of a component register's home. Kept legal, the path form keeps being written, and a
-home that changes shape dangles every one of them.
+`design@core@path-to-a-home-is-reported`. `live`. Under the generic anchor it accepted every shape
+of a component register's home, whether or not any component used that shape yet, so a text that
+must hold in every project could name both shapes and pass. The `register` form serves that need
+with one span. Kept legal, the path form keeps being written, and a home that changes shape
+dangles every one of them.
