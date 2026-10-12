@@ -1984,7 +1984,7 @@ pub(crate) mod tests {
 
     #[test]
     fn a_register_named_register_is_refused_as_a_reserved_kind() {
-        // The claim, per `spec@plans@register-references`: `register` is the kind naming a
+        // The claim, per `design@core@registers-are-declared`: `register` is the kind naming a
         // register's home, so a register of that name would never be reached by a reference.
         // Mutation checked: `REGISTER_KIND` removed from the refusal, which declares it.
         let m = declaring_full(

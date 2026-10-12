@@ -16,7 +16,8 @@ judge it.
 ### What
 
 A mechanical check that the shipped text, as it ships, holds no reference to an entry. A path every
-conforming project holds, `path@*@<path>` or `path@plans@<path>`, a reference to the shipped
+conforming project holds, `path@*@<path>` or `path@plans@<path>`, a register's home every
+conforming project holds, `register@*@<register>` or `register@plans@<register>`, a reference to the shipped
 set's own skills, agents, primer and sections, and a placeholder in angle brackets stay allowed,
 per `design@agent-skills@shipped-text-cites-no-entry`. The shipped set's own references are
 already judged, by a test of the core that requires each to resolve within the set; what stays
@@ -29,6 +30,13 @@ The owner's direction, when content/ was taken back into the walk: open an issue
 .claude, only on installed content, where the comments are already trimmed and thus no reference
 should be left)". So one shape is a declaration, in the manifest, of paths that must hold no
 reference to an entry, applied here to the installed copies. Its shape is not decided.
+
+A second candidate shape, from the design discussion of the register kind, where checking every
+placeholder span of the tree was ruled out: the same check also reads the placeholder spans of the
+shipped text, a span holding an angle bracket, and reports one whose literal kind is no kind, whose
+segment count is not its kind's, or whose literal anchor is not one every installing project holds.
+The tree's census found no defect among 354 placeholder spans, so this is a guard on the text that
+teaches every installing project the grammar, not a repair.
 
 ### Why it matters
 

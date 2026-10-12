@@ -1010,7 +1010,7 @@ fn show_prints_the_entry_and_what_points_at_it() {
     }
 }
 
-/// The claim (AC3 of `spec@plans@register-references`): `show` on a `register` reference prints
+/// The claim, per `design@core@register-home-reference`: `show` on a `register` reference prints
 /// the home the tree holds, a file for a heading home in one file and a directory for one split
 /// into a directory, with the register's shape, then every site that cites it; one the check
 /// refuses resolves to nothing with the check's finding. Mutation checked, and caught: the

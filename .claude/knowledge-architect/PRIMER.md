@@ -2,7 +2,10 @@
 
 This project keeps its design record with knowledge-architect. Its documents are checked by
 `cargo klarch check`: every reference between records resolves, every record has the shape its
-register declares, and every generated listing is current. This primer is installed, and the
+register declares, and every generated listing is current. A register is one kind of record, such
+as the design decisions or the issues, and its home is the file or the directory that stores its
+entries; the two words stay apart because a rule can need both, as "a slug is defined in its
+register's home". This primer is installed, and the
 project's root `CLAUDE.md` imports it. It holds what every session needs and no installed skill
 delivers. The project's own rules are in its root `CLAUDE.md`, beside this primer, and add to it.
 

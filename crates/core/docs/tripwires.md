@@ -216,9 +216,8 @@ about plan documents.
 **Fires when:** a fix is proposed for, or added to, `check --fix` whose bytes are not fully
 determined by the tree and the pinned version, or that writes or removes a file outside the
 installer's namespace and the generated list, other than by the respellings
-`spec@plans@path-quickfixes` defines, which reverse this head at that spec's harvest, and the
-respellings of a register's home that `spec@plans@register-references` adds to them. The harvest of
-`spec@plans@path-quickfixes` deletes this entry.
+`spec@plans@path-quickfixes` defines, the respelling of a register's home among them, which reverse
+this head at that spec's harvest. That harvest deletes this entry.
 **Response:** reopen `design@core@safe-fix-definition` before the fix is added, rather than widen
 what `--fix` does under its present argument.
 **Re-entry:** the standing-state review before every merge, and any change that adds a fix.
