@@ -260,9 +260,10 @@ every earlier delta carries it. Before using a slug, check that no entry of
 the Component that will own the decision already holds it, with
 `{{command}} show design@<anchor>@<slug>`. In prose, write it plain with a
 `#` before it, as in #retention-window, never in backticks: a backticked
-span may be read by the checker as a reference. In the plan document the
-thread becomes an item, cited from inside its own plan only, per
-`skill@knowledge-architect-planning`. When the natural name is a
+span may be read by the checker as a reference. That form is the
+discussion's. In the plan document the thread becomes an item, and the
+plan document cites its own items by their checked form, from inside its
+own plan only, per `skill@knowledge-architect-planning`. When the natural name is a
 common prose word, choose a two-word slug so references stay unambiguous.
 
 **Granularity.** Every proposal either party made is a thread. A
@@ -359,7 +360,8 @@ each announced in the delta:
   event or checkpoint at which it is re-proposed. A parked thread
   missing either one is open. A tripwire with no re-entry point names
   evidence nobody is scheduled to look for. A parked thread's tripwire
-  is named on the ledger, and written as
+  is named on the ledger, put to the owner under a label, `T<n>`, in the
+  premortem's sequence, and written as
   `skill@knowledge-architect-decision-recording@ruled-tripwires` says.
   `superseded` is not a third case, though it is easily read as one:
   threads absorbed by a proposal close on the owner's word approving that
