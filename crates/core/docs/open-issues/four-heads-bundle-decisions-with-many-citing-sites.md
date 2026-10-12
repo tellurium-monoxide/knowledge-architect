@@ -76,7 +76,7 @@ present tense. So both heads are a change's touched heads left short of
 **Suspected mechanism**: each head grew by appending a bold paragraph for a decision argued later
 in the same subject, and a citing site then cited the head for whichever paragraph it needed.
 
-**The re-entry point**: the next change that edits one of the four heads, in a branch other than
+**The re-entry point**: the next change that touches one of the four heads, in a branch other than
 the one that opened this entry, which `design@agent-skills@existing-heads-on-touch` brings to the
 rules on heads; or the next run of the design-record axis of
 `skill@knowledge-architect-project-audit`.
