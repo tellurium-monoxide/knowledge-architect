@@ -307,7 +307,7 @@ reference form does, would otherwise owe the repair of every head it passes thro
 project audit's scope, not that change's. Adding a reference, or rewording a sentence, is more than
 re-pointing.
 
-The rules apply at the moment a session already reads and edits the head, so a head is repaired at
+The rules apply at the moment a session already reads the head and changes what it says, so a head is repaired at
 the cost of one read. The whole record is repaired at once only by a project audit, on the
 occasions of `design@agent-skills@audit-triggers`, per
 `design@agent-skills@audit-repairs-the-whole-record`.
