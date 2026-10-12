@@ -125,7 +125,8 @@ subsection is omitted.
   reviewer reports a longer restatement, and the design skill's in-change path reads the section on
   design heads again before its grounding.
 - `agent-skills`, patch: entry test 2 counts each text that states an instruction as one site of a
-  decision about agent-facing text, a design head that restates it included, so a decision one text states has one site, and its reason
+  decision about agent-facing text, a design head that restates it included, other than the
+  decision's own, so a decision one text states has one site, and its reason
   lives beside the instruction rather than in a head.
 - `agent-skills`, patch: moving the pin runs the audit axis a Migration entry of a version crossed
   cites, in a branch of its own started from the main branch once the pin move has merged; the
@@ -242,6 +243,13 @@ subsection is omitted.
   or to a `todo` issue, before it leaves; a criterion found firing after a landing reported it is
   reported as fired at the next landing; an audit pass counts the owner's rulings against the
   default.
+- `agent-skills`, patch: a default awaiting the owner enters a design head only once ruled, and a
+  plan document leaves only once every such default is ruled; a recurring criterion is folded
+  into an existing tripwire that guards its decision; a fired tripwire whose reversal waits on a
+  plan document's harvest is narrowed to except that document's work; a milestone's own documents
+  re-point a leaving slice's citation with no question issue; a plan document cites its own items
+  by their checked form; a step whose trees cannot pass alone lands with the step that makes them
+  pass; a title brought to what its head argues is not reviewed again.
 
 ## 0.5.0
 

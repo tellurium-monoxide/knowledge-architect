@@ -110,15 +110,18 @@ impl Sandbox {
         self.git(&["-c", "core.excludesFile=/dev/null", "add", "-A"]);
     }
 
-    /// One git command in the copy, which must succeed.
+    /// One git command in the copy, not yet run, for a test that judges its exit itself.
     ///
-    /// **Every invocation carries an identity on its command line**, so no command a test runs
-    /// reads the machine's: every command that writes a commit, a merge or a rebase among them,
-    /// asks for one, and a test that
-    /// passed on a machine with an identity set would fail on a runner with none. It is written
-    /// to no configuration, for the reason `stage` gives.
-    fn git(&self, args: &[&str]) {
-        let out = Command::new("git")
+    /// **It carries the sandbox's identity, and no other**: `user.name` and `user.email` on its
+    /// command line, and the environment variables that would override them removed. A command
+    /// that writes a commit asks for an identity, a merge before it starts, and a test that passed
+    /// on a machine with an identity would otherwise fail on a runner with none; git also exports
+    /// `GIT_AUTHOR_NAME` and its kin to a commit hook, so a suite run from one would otherwise
+    /// commit under the hook's identity. The identity is written to no configuration file: a
+    /// command line reaches only the command it is given to.
+    fn git_command(&self, args: &[&str]) -> Command {
+        let mut command = Command::new("git");
+        command
             .args([
                 "-c",
                 "user.name=fixture",
@@ -126,9 +129,17 @@ impl Sandbox {
                 "user.email=fixture@example.invalid",
             ])
             .args(args)
-            .current_dir(&self.dir)
-            .output()
-            .expect("git runs");
+            .env_remove("GIT_AUTHOR_NAME")
+            .env_remove("GIT_AUTHOR_EMAIL")
+            .env_remove("GIT_COMMITTER_NAME")
+            .env_remove("GIT_COMMITTER_EMAIL")
+            .current_dir(&self.dir);
+        command
+    }
+
+    /// One git command in the copy, which must succeed, with the identity `git_command` gives.
+    fn git(&self, args: &[&str]) {
+        let out = self.git_command(args).output().expect("git runs");
         assert!(
             out.status.success(),
             "git {args:?} in the sandbox: {}",
@@ -3401,7 +3412,7 @@ fn a_sandbox_commit_carries_the_sandbox_identity() {
     );
 }
 
-/// Commit what the sandbox holds, with the identity `Sandbox::git` gives on the command line.
+/// Commit what the sandbox holds, with the identity `Sandbox::git_command` gives.
 fn commit_all(sandbox: &Sandbox, subject: &str) {
     sandbox.stage();
     sandbox.git(&["commit", "-qm", subject]);
@@ -3507,19 +3518,11 @@ fn check_staged_refuses_an_unmerged_index() {
     sandbox.git(&["checkout", "-q", &base]);
     sandbox.write("README.md", &format!("{readme}\nMain.\n"));
     commit_all(&sandbox, "main");
-    // The merge conflicts and exits 1; the index it leaves is the subject. It is given an identity,
-    // as every commit of these tests is, and its own output is kept for the assertion below.
-    let merge = Command::new("git")
-        .args([
-            "-c",
-            "user.name=fixture",
-            "-c",
-            "user.email=fixture@example.invalid",
-            "merge",
-            "-q",
-            "side",
-        ])
-        .current_dir(sandbox.path(""))
+    // The merge conflicts and exits 1; the index it leaves is the subject. It runs through
+    // `git_command`, which gives it the sandbox's identity, and its output is kept for the
+    // assertion below.
+    let merge = sandbox
+        .git_command(&["merge", "-q", "side"])
         .output()
         .expect("git runs");
     let unmerged = Command::new("git")

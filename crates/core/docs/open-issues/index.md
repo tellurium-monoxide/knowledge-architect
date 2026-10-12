@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-33 entries
+34 entries
 
 | kind | title |
 | --- | --- |
@@ -10,6 +10,7 @@
 | defect | [A backticked span with an empty head and a slash is reported as malformed, which the candidate rule says is silent](a-span-with-an-empty-head-is-malformed-against-its-head.md) |
 | defect | [The head on `index` credits the missing-directory refusal with a claim that the refusal does not hold](the-missing-directory-refusal-does-not-hold-the-no-loss-claim.md) |
 | defect | [The retired slug reference finding names a design reference as the repair, whatever register the id belongs to](the-retired-slug-finding-names-a-design-repair-for-every-register.md) |
+| defect | [The core's tests read the machine's git configuration, so a machine setting can fail a correct tree](the-tests-read-the-machine-s-git-configuration.md) |
 | deferred | [Nothing checks that a component states a goal](a-component-states-at-least-one-goal.md) |
 | deferred | [Developer contracts sit in scoped CLAUDE.md files, which reach agents unreliably and are not required without a harness](a-home-for-developer-contracts-outside-agent-configuration.md) |
 | deferred | [A submodule is a project of its own, or nothing, and the tool has no model for either](a-submodule-is-a-project-of-its-own.md) |

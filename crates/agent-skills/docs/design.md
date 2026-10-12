@@ -662,7 +662,8 @@ code reads the comment at that code, not a design home it would have to think to
 where the checker's reach ends: a reason that several sites must respect needs a home each site can
 cite, and a comment cannot be cited, while a policy no code and no text states, or an absence, has
 none; for agent-facing text, each text that states the instruction is one site, a design head
-that restates it included, so a reason stated by one text lives beside its instruction. A head that
+that restates it included, other than the decision's own, which would otherwise earn itself, so a
+reason stated by one text lives beside its instruction. A head that
 restates an instruction is read and acted on as the skill is, so the reason must reach it too; an
 audit that counted the skill alone moved a head to a `%%` line while a second head still stated its
 rule, and the head was restored. The rival reading, a policy with no code of its own as the
@@ -1341,7 +1342,10 @@ plan: does it still hold now that the leaving plan is built, accounting for devi
 unplanned happenings? The issue cites
 the citing plan, so it cannot outlive it, and its `Why it matters` cites what the leaving plan
 harvested, since that plan no longer exists. It is a `question` rather than a `todo` because the
-reading may find nothing to change. For a milestone, its next slice's audit reads it. The retiring
+reading may find nothing to change. For a milestone, its next slice's audit reads it. A milestone's
+own documents are one plan, per `design@core@plan-item-scope`, so its milestone document and its
+sibling slice specs re-point a citation of a leaving slice with no question: that audit already
+reads the milestone against what landed. The retiring
 session revisits nothing itself: a revisit at that moment would redesign the citing plan at a time
 chosen by another plan's landing, rather than at its own audit, where the owner rules on it as
 `goal@knowledge-architect@the-owner-decides` asks.

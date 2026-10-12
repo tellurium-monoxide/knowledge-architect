@@ -32,7 +32,8 @@ A decision that no work implements, such as a policy, and that is not part of an
 recorded when it is made: there is no implementing change to wait for. The second entry test of
 `primer@design-heads` admits it, as a decision that no code and no text of the project states.
 
-**A default awaiting the owner is built as written, and enters a design head once the owner rules
+**A default awaiting the owner is built as written, per
+`skill@knowledge-architect-planning@working-a-slice`, and enters a design head once the owner rules
 on it.** Until then it is no approved decision, and a head is read against the owner's approval
 before it is written, per `primer@design-heads`.
 

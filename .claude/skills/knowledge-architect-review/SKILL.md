@@ -149,7 +149,8 @@ whichever axis's finding it answers. A repair made before the last transcript re
 before it, and that transcript review then runs as `skill@knowledge-architect-review@review-axes` says; a repair of the last transcript review
 is reviewed after it, and the review ends with that review's repairs. Any other repair, a rewording
 or an argument, a mention or a reference added inside an existing head included, and a title
-brought to what its head's body already argues, is reviewed by no axis again; one made before the last transcript review is still read by it.
+brought to what its head's body already argues, is reviewed by no axis again; one made before the
+last transcript review is still read by it.
 
 **An item whose outcome turns on a ruling the owner has not given is put to the owner** before its
 outcome is recorded, and its outcome is then one of the three above. Several such items go in one

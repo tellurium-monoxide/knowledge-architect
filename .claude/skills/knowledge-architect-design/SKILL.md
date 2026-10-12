@@ -247,10 +247,11 @@ every earlier delta carries it. Before using a slug, check that no entry of
 the Component that will own the decision already holds it, with
 `cargo klarch show design@<anchor>@<slug>`. In prose, write it plain with a
 `#` before it, as in #retention-window, never in backticks: a backticked
-span may be read by the checker as a reference. That form is the
-discussion's. In the plan document the thread becomes an item, and the
-plan document cites its own items by their checked form, from inside its
-own plan only, per `skill@knowledge-architect-planning`. When the natural name is a
+span may be read by the checker as a reference. In the plan document the
+thread becomes an item, which the plan document cites by its checked form,
+from inside its own plan only, per `skill@knowledge-architect-planning`;
+the plain form stays there only in the harvest row's pair of a thread and
+its entry slug, which `primer@design-heads` states. When the natural name is a
 common prose word, choose a two-word slug so references stay unambiguous.
 
 **Granularity.** Every proposal either party made is a thread. A
