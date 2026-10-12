@@ -88,15 +88,16 @@ plans directory finds it. Two lessons on method:
 
 **Method.** The method these lessons led to is `design@agent-skills@audit-method`, generic over the
 axes, each axis giving its own dispatch; the design-record axis keeps its bounded groups and its
-calibration sample, per `design@agent-skills@design-record-axis`. The owner, when the method was
-first approved for the design-record axis: "it might differ per axis. For now, we are only
-providing one axis, so we can adjust this generic shape later for the others. But I think your
+calibration sample, per `design@agent-skills@design-record-axis-dispatch`. The owner, when the
+method was first approved for the design-record axis: "it might differ per axis. For now, we are
+only providing one axis, so we can adjust this generic shape later for the others. But I think your
 general shape should hold its ground for the other axis too." Each pass of every axis commits its
-report as a file the owner rules in, per `design@agent-skills@committed-audit-report`, so a new
-axis owes no decision on an audit report. One lesson stays open here, for each new axis to weigh:
-the owner's reading of a sample of the verdicts, since agents applying a test measure how agents
-read it, not whether it is right. The agentic-workflow axis adopted it as the session's sample of
-refuted drafts, read after the run; it stays open for every axis that has not adopted it.
+report as a file the owner rules in, per `design@agent-skills@committed-audit-report`, so a new axis
+owes no decision on an audit report. One lesson stays open here, for each new axis to weigh: the
+owner's reading of a sample of the verdicts, since agents applying a test measure how agents read
+it, not whether it is right. The agentic-workflow axis adopted it as the session's sample of refuted
+drafts, read after the run, and the design-record axis as its samples of refuted and of conforming
+drafts; it stays open for every axis that has not adopted it.
 
 ### Why it matters
 
@@ -113,6 +114,5 @@ ground on all of it.
 
 For each axis above, a design discussion under `skill@knowledge-architect-design` that decides
 whether it is offered, its corpus and its outcomes, and, if it is, its agent and its section of
-the audit skill, per `design@agent-skills@audit-agent-per-axis`, and its saved workflow, which
-the owner wants for every axis, as
-`issue@agent-skills@the-design-record-axis-has-no-saved-workflow` records for the first axis.
+the audit skill, per `design@agent-skills@audit-agent-per-axis`, and its saved workflow, per
+`design@agent-skills@audit-axis-runs-a-workflow`.

@@ -8,7 +8,7 @@ kind: defect
 In a project that installs the workflow, a finding of the agentic-workflow axis on the installed
 text is sent upstream and is not edited there. The installed text stays the same until a new
 version ships, so every later pass of the same audit can find it again, on text that is still old.
-Point 8 of `skill@knowledge-architect-project-audit@audit-method` counts it as a violation left on
+Point 4 of `skill@knowledge-architect-project-audit@audit-method` counts it as a violation left on
 old text, since it is on no kept list and no issue entry records it. The count on old text then
 cannot fall below the number of such findings, however well the project's own repairs converge.
 
@@ -50,11 +50,12 @@ commit message counts it on old text.
 
 ### Why it matters
 
-`design@agent-skills@audit-method` makes the fall of the count on old text the convergence signal
-that decides whether a pass follows, and `design@agent-skills@audit-outcomes` routes a finding on
-the installed text upstream, never to an edit in the project. Together they let a pass fail to
-converge on findings the project cannot repair, so the owner is asked about a non-convergence that
-the method itself produced, and may stop an audit that was converging on the project's own text.
+`design@agent-skills@audit-passes-repeat-while-the-count-falls` makes the fall of the count on old
+text the convergence signal that decides whether a pass follows, and
+`design@agent-skills@audit-outcomes` routes a finding on the installed text upstream, never to an
+edit in the project. Together they let a pass fail to converge on findings the project cannot
+repair, so the owner is asked about a non-convergence that the method itself produced, and may stop
+an audit that was converging on the project's own text.
 
 ### What would close it
 
