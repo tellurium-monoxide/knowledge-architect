@@ -30,7 +30,8 @@ pub fn run(args: &GatesArgs) -> ExitCode {
         Err(error) => return abort(&format!("no working directory: {error}")),
     };
     // The root is the nearest ancestor holding the checker's manifest, its name spelled by the
-    // core's constant, per `design@xtask@root-finder-uses-the-core-constant`.
+    // core's constant, so a rename of the manifest cannot leave xtask looking for the old one;
+    // the dependency on the core costs nothing, since the check gate builds it anyway.
     let Some(root) = project_root(&cwd, MANIFEST_NAME) else {
         return abort(&format!(
             "not inside the project: no ancestor holds {MANIFEST_NAME}"

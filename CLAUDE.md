@@ -194,7 +194,7 @@ win.
     `design@core@bare-skill-name-reported`. Write it as its reference, `skill@<name>` or
     `agent@<name>`, released sections of CHANGELOG.md included. Once the skill or the agent is
     deleted, a reference to it in a released section goes back to the bare name, per
-    `design@knowledge-architect@changelog-entries`.
+    `design@knowledge-architect@changelog-section-fixed-at-release`.
 
 - **A commit message is a document.** It is parsed as one markdown document, and every reference
   in it must resolve, against its own commit's tree or its first parent's, per
@@ -218,7 +218,7 @@ the primer's:
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md`; its crates.io page is a short `CRATES-IO.md` in the crate, named by `readme` in its Cargo.toml, which points to the README and to docs.rs, per `design@knowledge-architect@crates-io-page-file` | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
-| what a consumer must change, can start using, or will see agents do differently, per release | CHANGELOG.md at the root: one section per version, and the `Next release` section | a released section's content never changes; its structure may, and the `Next release` section may change at any time, per `design@knowledge-architect@changelog-entries` |
+| what a consumer must change, can start using, or will see agents do differently, per release | CHANGELOG.md at the root: one section per version, and the `Next release` section | a released section's content never changes; its structure may, and the `Next release` section may change at any time, per `design@knowledge-architect@changelog-section-fixed-at-release` |
 | a finding established outside this project that a decision here leans on | `docs/grounding/<subject>.md` in the Component the decision belongs to | the source is superseded, or a better one lands |
 | a Component that maintains the repository rather than shipping in it | `tools/<name>/`, one directory per tool | the tool is retired |
 | the analysis of the findings of a retrospective or an audit file received by this repository, and the owner's ruling on each | one file per received file in `path@knowledge-architect@docs/retrospective-reports/`, per `design@knowledge-architect@committed-findings-analysis`, written under `skill@klarch-retrospective-intake` | the commit that carries out its last outcome, or a later commit of the same branch, deletes it |
@@ -468,9 +468,10 @@ project's own, is dispatched as that agent, and any other axis as a fresh genera
 subagent, per
 `skill@knowledge-architect-review`.
 
-**This repository's own skills and agents take the prefix `klarch-`**, not the project's name: a
-name beginning with `knowledge-architect-` is the installer's, and the install would delete it.
-This is a restatement; its home is `design@knowledge-architect@klarch-prefix`.
+**This repository's own skills and agents take the prefix `klarch-`, the binary's name**, not the
+project's name: a name beginning with `knowledge-architect-` is the installer's namespace, so the
+checker reports such a skill as unshipped, per `design@core@owned-namespace-check`, and the install
+deletes it.
 
 **The findings of both files of `skill@knowledge-architect-retrospective`, and those of the
 agentic-workflow axis of `skill@knowledge-architect-project-audit` on the installed text, are handled
@@ -478,7 +479,8 @@ here as `design@knowledge-architect@workflow-findings-stay-here` says, read whol
 an audit's finding on the installed text, its proposal and its check included, passes the tests of
 `path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", read whole, per that head. The
 audit's checker-rules auditors, L7, also read the checker's design home, `path@core@docs/design.md`,
-beside its README.
+beside its README: the installed lens names the README alone, since an adopting project holds no
+design home of the checker, and here the checker's rules are decided in that home.
 
 ## Git `##git-workflow`
 

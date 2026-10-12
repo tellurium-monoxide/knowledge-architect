@@ -14,9 +14,8 @@ declaration, as `design@core@arguments-parse-through-clap` argues for the checke
 A subcommand is one module owning everything it is, plus one variant in `path@xtask@src/main.rs`'s
 command enum. Code is shared only when every subcommand needs it. What that admits today: the gates
 library's output helper `complain`, which `design@gates@one-spawn-helper` keeps in its process
-module; its `project_root`; and the core's `MANIFEST_NAME`, per
-`design@xtask@root-finder-uses-the-core-constant`. Adding a workflow adds its module and its
-variant and edits nothing else. This is what keeps later workflows independent of each other and
+module; its `project_root`; and the core's `MANIFEST_NAME`. Adding a workflow adds its module and
+its variant and edits nothing else. This is what keeps later workflows independent of each other and
 of `gates`.
 
 ### The gate list lives here, and CI runs it `##gates-list-primary-home`
@@ -51,12 +50,3 @@ job's step times re-take it, `gh run view <run id> --json jobs --jq '.jobs[].ste
 where the `gates` step holds every gate. A
 commit before the tip that does not compile passes CI, and is found only by whoever builds it
 later.
-
-### The root finder spells the manifest's name with the core's constant `##root-finder-uses-the-core-constant`
-
-A subcommand runs from the project root, found by walking up to the first directory holding the
-checker's manifest. xtask hands the gates library's `project_root` that name, and depends on the
-core for it, `MANIFEST_NAME`, so the file name is spelled in one place and a rename of the
-manifest cannot leave xtask looking for the old one. The subcommands that find the root today are
-gates and changelog. The cost is that building xtask builds the core, which the check gate builds
-anyway.

@@ -290,6 +290,7 @@ head depends on. **A reference is a claim that this head is revisited when that 
 so a reference whose entry's change would leave the head unaffected is not written. Never list what
 cites this head: `{{command}} show design@<component>@<slug>` computes it.
 
+%% Until a reference can name an entry of another project, `issue@core@cross-project-references`.
 A decision that relies on the checker of this workflow states that it relies on the checker
 working as intended. It cannot reference the checker's own decisions: a reference resolves only
 against the project that holds it.

@@ -239,7 +239,8 @@ that reopens the instruction still meets it.
 ## Writing a tripwire the owner ruled on {{slug:ruled-tripwires}}
 
 %% The `T` label: `design@agent-skills@ruled-items-labelled`.
-%% Written with its decision: `design@agent-skills@premortem-tripwires-on-the-owners-word`.
+%% On the owner's word: `design@agent-skills@premortem-tripwires-on-the-owners-word`.
+%% Written with its decision: `design@agent-skills@premortem-tripwire-written-at-harvest`.
 A design discussion that runs a premortem ends with it, and the owner rules on which of its
 surviving causes become tripwires, each by the label, `T<n>`, it was put to the owner under. **A
 tripwire is written only on the owner's word, and with the decision it guards**, whatever named

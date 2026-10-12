@@ -409,8 +409,9 @@ malformed one at the first invocation that reaches it, not at build time.
 
 A file the walk cannot read, a source the grammar cannot parse, and a source nested deeper than
 the walk goes all produce a finding naming the file. Silence would remove every citation in it
-from the walk while the run reported success, which is indistinguishable from a clean file and
-is the failure this tool exists to prevent.
+from the walk while the run reported success, which is indistinguishable from a clean file,
+against `goal@core@declared-instructions-are-checked`: a tree that passes the check conforms to all
+of it.
 
 **A file outside the walk is held to the same, for the question an extension asks of it.** An
 extension may assert that no unwalked file says something, as thaum's rules extension does of a rule
@@ -505,8 +506,9 @@ with git's own reason.
 ### A git invocation a verdict depends on that fails is exit 2 with git's reason, never an empty walk `##failed-git-is-exit-two`
 
 **No `git`, or no worktree, is exit 2 with the reason.** Never an empty walk: a project reported as
-holding no document is a run that checked nothing and said so as a clean verdict, which is the
-failure this tool exists to prevent. **Every invocation a verdict depends on fails that way** —
+holding no document is a run that checked nothing and said so as a clean verdict, against
+`goal@core@declared-instructions-are-checked`: a tree that passes the check conforms to all of it.
+**Every invocation a verdict depends on fails that way** —
 the listing, the tracked-and-ignored listing and the `check-ignore` batch — carrying git's own
 stderr, whatever the reason. The one invocation that degrades instead is `last_changed`, which
 fills a listing's convenience column and moves no verdict: where git answers nothing the column
@@ -607,7 +609,9 @@ the tip checker, and a second judge with `check`'s rules would give one tree two
 
 The rules over documents are compiled in and the manifest declares nothing about them, so
 conformance of a document means the same thing in every tree this tool checks. There is no flag, no
-list and no severity: a rule either holds over a document or the run fails.
+list and no severity: a rule either holds over a document or the run fails. The constraint derives
+from `goal@core@declared-instructions-are-checked`: a tree that passes the check conforms to all of
+it, and no project can hold part of it back.
 
 **A declared register adds obligations and removes none**, which is what keeps
 `design@core@registers-are-declared` inside this head rather than an exception to it. Declaring one
@@ -645,7 +649,9 @@ document but the anchor `plans`, per `design@core@plan-register`. A component th
 not an exception to `design@core@nothing-of-a-project-is-compiled-in`: the document list and
 the four built-in component registers in `manifest.rs` belong to no project, they are what the word
 _component_ means here. A project free to declare its own set would be conformant with whatever
-it declared, which is the same as being checked against nothing. The one declaration that changes
+it declared, which is the same as being checked against nothing, against
+`goal@core@declared-instructions-are-checked`: a tree that passes the check conforms to all of it,
+and no project can hold part of it back. The one declaration that changes
 the set is the agent harness, and it removes only the agent document. The flaw this leaves, that a
 developer's contracts lose their required home in a project without agents, is
 `issue@core@a-home-for-developer-contracts-outside-agent-configuration`.
@@ -664,8 +670,9 @@ row declares and nothing else, with its homes directly under its own path — a 
 directory is already documentation, where a component's is source code.
 
 **A location exists so that a directory outside every component can be cited.** Naming the
-directory gives every entry in it a reference and makes relocating it one manifest edit, which is
-what `design@core@every-path-names-its-anchor` buys everywhere else. What a location is instead of
+directory gives every entry in it a reference and makes relocating it one manifest edit, which
+`goal@core@relocation-is-one-manifest-edit` asks and `design@core@every-path-names-its-anchor`
+buys everywhere else. What a location is instead of
 is `path@core@docs/rejected-alternatives.md`.
 
 **A location's own registers are the only ones it carries**, and a skill or an agent of the
@@ -850,7 +857,7 @@ anchor and a compound id by the root anchor's name and one separator. The anchor
 file, which stays an entry of the `spec` register that holds it. Making every spec a directory was
 the rival; it reopens the decision that a spec is one file.
 
-### A plan document owes the sections of its kind, and a slice spec owes its own `##slice-spec-sections`
+### A plan document owes the sections of its kind, and a slice spec owes its own `##plan-document-sections-by-kind`
 
 A spec of specs/ and a milestone's README owe the plan sections, in order, with Arguments right
 after Threads, matched as the documents write them: Status and audience, How the work is done,
@@ -897,7 +904,8 @@ is `groups`. A key other than `groups` is a finding, a file with no `groups` is 
 
 A declaration that is wrong is a finding rather than a load failure, and it is absent from the
 configuration. A manifest that will not load reports nothing at all, and nothing at all is what
-a session reads as conformance. So `Manifest::parse` resolves the declaration into a
+a session reads as conformance, against `goal@core@declared-instructions-are-checked`: a tree that
+passes the check conforms to all of it. So `Manifest::parse` resolves the declaration into a
 configuration and a list of complaints, each in the shape a finding takes, and every complaint
 is the first phase of a run, per `design@core@phases-gate-the-report`. What a complaint is
 about is not in the configuration: a refused register is no register, a refused anchor is no
@@ -1060,18 +1068,26 @@ still listed, under its basename and an empty cell. A listing that hid what the 
 because a declaration disagreed would be a listing that stops listing, and the declaration is
 `check::registers`' to report.
 
-### A generated file's content is a function of the walked tree, so `index` writes it with no dry run `##generated-files-are-pure`
+### A generated file's content is a function of the walked tree `##generated-files-are-pure`
 
 No generated file holds hand-written bytes: not a file-register `index.md`, and not a file an
 extension generates. Each is what its generator returns over the model, which is what lets
 `path@core@src/check/generated.rs` verify one by regenerating into a `String` and
 comparing rather than by writing the file and reading it back.
 
-**Writing one destroys nothing**, so `cargo klarch index` takes no dry-run flag. Its one flag,
-`--staged`, chooses the tree and the destination, per `design@core@index-staged-write`. The dry run a write
-command normally owes exists because a write can lose something, and here it cannot: the worst a
-run can do is replace a file with what the tree says that file is. It writes only where the bytes
-differ, so running it to look moves not even an mtime, and it names each file it rewrote.
+**The purity is a property to preserve, not one to observe.** A generator that embedded a
+timestamp, a hostname, or anything the walk does not see would break both consequences at once: the
+check would report a file stale that nobody had changed, and `index` would rewrite on every run.
+
+### `index` takes no dry-run flag, since writing a generated file destroys nothing `##index-takes-no-dry-run`
+
+**Writing a generated file destroys nothing**, since its content is a function of the walked tree,
+per `design@core@generated-files-are-pure`, so `cargo klarch index` takes no dry-run flag. Its one
+flag, `--staged`, chooses the tree and the destination, per `design@core@index-staged-write`. The
+dry run a write command normally owes exists because a write can lose something, and here it
+cannot: the worst a run can do is replace a file with what the tree says that file is. It writes
+only where the bytes differ, so running it to look moves not even an mtime, and it names each file
+it rewrote.
 
 **That last claim is held by two refusals, not by the paths being generated.** `fs::write` follows
 a symlink and writes through it, so a generated path that is one would replace content this
@@ -1079,10 +1095,6 @@ command never produced; and a destination directory the manifest declares but th
 have is a manifest defect rather than something to create. Both are checked over **every**
 destination before any is written, so a run either refuses having written nothing or writes them
 all. Remove either check and the paragraph above stops being true.
-
-**The purity is a property to preserve, not one to observe.** A generator that embedded a
-timestamp, a hostname, or anything the walk does not see would break both consequences at once: the
-check would report a file stale that nobody had changed, and `index` would rewrite on every run.
 
 ### The writer and the `generated` check take the generated files from one list `##one-list-of-generated-files`
 
@@ -1191,7 +1203,7 @@ The test is what keeps `--fix` safe to run after every edit, which serves
 `goal@knowledge-architect@agents-work-without-drift`. `tripwire@core@fix-makes-a-choice` watches
 it.
 
-### `--fix` admits a repair only when it passes the safe-fix test `##fix-scope`
+### `--fix` applies only the kinds of repair added to it on purpose, each passing the safe-fix test `##fix-scope`
 
 `--fix` applies a repair only when it passes `design@core@safe-fix-definition`. Passing the test
 makes a repair admissible, not owed: each kind of repair `--fix` applies is a member added on
@@ -1386,8 +1398,9 @@ third way is reachable only by a location, declared or constructed by the tool.
 **A reference that resolves to nothing is recorded and reported, never dropped.** The scanner
 could require a resolvable shape and see nothing without one, which needs no finding and no
 migration. It would also mean every pointer written in an older form stops being checked with
-nothing saying so, and a silent false negative is the failure this tool exists to prevent. The
-candidate rule that bounds this is `design@core@candidate-rule-and-retired-forms`.
+nothing saying so. A silent false negative passes a tree that does not conform, against
+`goal@core@declared-instructions-are-checked`: a tree that passes the check conforms to all of it.
+The candidate rule that bounds this is `design@core@candidate-rule-and-retired-forms`.
 
 ### A backticked `@` span is a reference candidate when its head is a kind or an anchor, the retired slug reference stays a finding where it names something of this project, and every other `@` span is silent `##candidate-rule-and-retired-forms`
 
@@ -1586,10 +1599,11 @@ file moves. The id is everything after the second `@`, so a path may itself hold
 **The deepest anchor wins, and inside means a proper descendant.** A reference whose target
 sits inside another anchor is refused with the right anchor named. What this buys is the
 same property `design@core@an-entity-belongs-to-its-anchor` buys for every entity: relocating an
-anchor edits its one line of the project's `knowledge-architect.toml` and no document, and one fixed-string
-grep per anchor is an anchor's complete inbound-reference list. An anchor's own directory
-is the one target with no spelling under its own name, so it is named from an ancestor — a
-reference that names a location, which a move is expected to break.
+anchor edits its one line of the project's `knowledge-architect.toml` and no document, which
+`goal@core@relocation-is-one-manifest-edit` asks, and one fixed-string grep per anchor is an
+anchor's complete inbound-reference list. An anchor's own directory is the one target with no
+spelling under its own name, so it is named from an ancestor — a reference that names a
+location, which a move is expected to break.
 
 **A plan document is cited by its kind, never by its path**, per
 `design@core@plan-document-kinds`. A
@@ -1635,8 +1649,8 @@ reopens the exact match.
 
 **In a released section of CHANGELOG.md the name is written as its reference too**, and as the
 bare name again once the skill or the agent is deleted, per
-`design@knowledge-architect@changelog-entries`. That bare name names nothing in the table, so the
-lint leaves it silent.
+`design@knowledge-architect@changelog-section-fixed-at-release`. That bare name names nothing in
+the table, so the lint leaves it silent.
 
 The nearest rival is no lint, which keeps the silence this lint exists to end. A narrower lint,
 matching only names that carry a known prefix, would leave an unprefixed project skill's bare

@@ -19,8 +19,9 @@ reproduce. **You do not use `Write` or `Edit`**, and you run nothing that change
 
 ## The standard `##changelog-standard`
 
-The standard is two heads of docs/design.md, read in full: `design@knowledge-architect@changelog-entries`
-for the entries, and `design@knowledge-architect@versioning-policy` for its bump table. CHANGELOG.md's
+The standard is three heads of docs/design.md, read in full: `design@knowledge-architect@changelog-entries`
+for the entries, `design@knowledge-architect@changelog-section-fixed-at-release` for the released
+sections, and `design@knowledge-architect@versioning-policy` for its bump table. CHANGELOG.md's
 own preamble states the order of entries.
 
 ## The predicates `##changelog-predicates`
@@ -40,9 +41,9 @@ the consumer changes; an entry describes the release's net effect, so a change r
 range has no entry. Entries follow the order CHANGELOG.md's preamble states.
 
 **Did a released section's content change?** A released section's content never changes; its
-structure may, per `design@knowledge-architect@changelog-entries`. A skill's or an agent's name
-written as its reference, or written back as the bare name once the skill or the agent is deleted,
-is structure. Any other change to a statement of a released section is a finding.
+structure may, per `design@knowledge-architect@changelog-section-fixed-at-release`. A skill's or
+an agent's name written as its reference, or written back as the bare name once the skill or the
+agent is deleted, is structure. Any other change to a statement of a released section is a finding.
 
 **Is the version right?** It follows the highest class among the entries, a patch at least, under
 the policy's mapping onto Cargo's two positions while at 0.x.

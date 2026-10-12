@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-30 entries
+31 entries
 
 | kind | title |
 | --- | --- |
@@ -8,6 +8,7 @@
 | defect | [The finding for a required document missing at the root Component names a repair that does not apply to the root](a-missing-root-document-finding-names-a-repair-that-does-not-apply.md) |
 | defect | [A reference whose id carries a line suffix or a fragment is told to define its entry or repair its pointer, not to drop the suffix](a-reference-with-a-line-or-fragment-suffix-names-a-wrong-repair.md) |
 | defect | [A backticked span with an empty head and a slash is reported as malformed, which the candidate rule says is silent](a-span-with-an-empty-head-is-malformed-against-its-head.md) |
+| defect | [The head on `index` credits the missing-directory refusal with a claim that the refusal does not hold](the-missing-directory-refusal-does-not-hold-the-no-loss-claim.md) |
 | defect | [The retired slug reference finding names a design reference as the repair, whatever register the id belongs to](the-retired-slug-finding-names-a-design-repair-for-every-register.md) |
 | deferred | [Nothing checks that a component states a goal](a-component-states-at-least-one-goal.md) |
 | deferred | [Developer contracts sit in scoped CLAUDE.md files, which reach agents unreliably and are not required without a harness](a-home-for-developer-contracts-outside-agent-configuration.md) |
