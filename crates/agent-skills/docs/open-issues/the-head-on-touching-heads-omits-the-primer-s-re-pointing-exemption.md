@@ -21,12 +21,12 @@ head's repairs. Which of the two is the defect is not established.
   exemption.
 - The primer, in its section on how a head is shaped: "A head that a change touches is brought to
   these rules in that change [...] Re-pointing a reference in a head does not touch it."
-- Found by the self-consistency reviewer of the review of `spec@plans@register-references`, and
-  confirmed by the transcript reviewer of the same review. That spec relies on the primer's
-  exemption: its work re-points a reference inside `design@core@candidate-rule-and-retired-forms`
-  with `check --fix`, and states that this triggers none of the splits that
-  `issue@core@four-heads-bundle-decisions-with-many-citing-sites` owes at the next edit of that
-  head.
+- Found by the self-consistency reviewer of the review of the register-references spec, and
+  confirmed by the transcript reviewer of the same review. The work of that spec, which built
+  `design@core@path-to-a-home-is-reported`, relied on the primer's exemption: its migration
+  re-pointed a reference inside `design@core@candidate-rule-and-retired-forms`, and triggered none
+  of the splits that `issue@core@four-heads-bundle-decisions-with-many-citing-sites` owes at the
+  next edit of that head.
 
 ### Why it matters
 

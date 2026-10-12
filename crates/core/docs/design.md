@@ -885,8 +885,8 @@ register or an item register is refused whole, and so is any of their names in a
 `registers` list, and a
 component register whose home at the root would be the plans directory: the plans layout is the
 tool's, and a declaration that changes it changes nothing a project can rely on. A declared
-register named `path`, `planned` or a harness kind is refused too: a reference whose kind segment
-is that word never reaches the register. Setting `scope`, `shape`, `dir`, `level`, `sections` or `metadata` on a
+register named `path`, `planned`, `register` or a harness kind is refused too: a reference whose
+kind segment is that word never reaches the register. Setting `scope`, `shape`, `dir`, `level`, `sections` or `metadata` on a
 built-in is a finding, and the compiled value stands.
 
 **Declarations go in the manifest because its header promises that what is checked is said in one
@@ -1245,8 +1245,8 @@ reopened.
 
 ### Every citeable thing is an entity with a kind, an id, a definition site and, where its kind takes one, an anchor, held in one table built from the model, and every check that resolves a name reads that table `##one-entity-table`
 
-**A kind is a register's name, or `path`, or `planned`, or, under the `claude` harness, a harness
-kind**: `skill`, `agent`, `primer` or `instructions`, which is no register and takes no anchor, per
+**A kind is a register's name, or `path`, or `planned`, or `register`, or, under the `claude`
+harness, a harness kind**: `skill`, `agent`, `primer` or `instructions`, which is no register and takes no anchor, per
 `design@core@harness-kinds`. The ten built-in registers give the kinds `design`,
 `goal`, `tripwire`, `issue`, `spec`, `milestone`, `thread`, `argument`, `criterion` and
 `acceptance`, and a project's own declarations give the rest, so the kind set is
@@ -1256,7 +1256,9 @@ files under its instance directory, one per entry, per
 `design@core@a-file-register-is-a-directory-of-entries`. `path` is defined by the tree itself and is
 resolved against the survey, under the same anchors and with the candidate rule and segmentation
 the table's resolver applies to every kind, and `planned` with it, per
-`design@core@planned-path-form`. The table lives in
+`design@core@planned-path-form`. `register` names a register's home and is resolved against the
+anchors and the tree's listing in the same way, per `design@core@register-home-reference`. The
+table lives in
 `path@core@src/entity.rs`, is built once per run from the model, and is what
 `check::references` resolves against.
 
@@ -1393,7 +1395,12 @@ plan, and the repair names the whole document, per `design@core@plan-item-scope`
 carries the register and does not define that id, and the reference is dangling. One finding for
 all five would send a reader to check the wrong segment of the pointer most of the time. Every
 anchor but a plan anchor carries `path`, and a component carries every component register, so the
-third way is reachable only by a location, declared or constructed by the tool.
+third way is reachable only by a location, declared or constructed by the tool. A kind resolved
+outside the table has ways of its own, each reported as the repair it needs: `path` and `planned`
+against the tree, per `design@core@every-path-names-its-anchor` and
+`design@core@planned-path-form`, and `register` against the anchors, per
+`design@core@register-home-reference`, under which a component that does not carry a register is
+the third way too.
 
 **A reference that resolves to nothing is recorded and reported, never dropped.** The scanner
 could require a resolvable shape and see nothing without one, which needs no finding and no
@@ -1656,7 +1663,7 @@ The nearest rival is no lint, which keeps the silence this lint exists to end. A
 matching only names that carry a known prefix, would leave an unprefixed project skill's bare
 names silent, the same failure for those names, so the skill is renamed instead.
 
-### Under the `path` kind, the escape for a path this tree does not hold and `*` for every component's own copy are reserved anchor words `##reserved-anchors`
+### The escape for a path this tree does not hold, under `path`, and `*` for every component's own copy, under `path` and `register`, are reserved anchor words `##reserved-anchors`
 
 **The escape anchor** — the word elsewhere in anchor position, `path@elsewhere@<path>` — marks a
 path deliberately not resolvable here: a surveyed engine's layout, a deleted file a tracker
@@ -1676,20 +1683,79 @@ what removing the backticks costs, and that move is refused as a repair by
 `design@agent-skills@plain-text-is-no-repair`.
 
 **The generic anchor `*`**, `path@*@<path>`, marks each component's own copy of a path, as in
-`path@*@docs/rejected-alternatives.md` written with the kind in front. It is accepted when the path is one of the
-required document names in any of its shapes — the compiled documents, every heading register's
-file, directory and README, and every file register's directory, README and index, so naming a
-shape no component uses yet is legitimate — and otherwise when at least one component carries the
-path with the claimed kind. The required set is derived from the component-scoped registers
-rather than written out, so a project that declares one gets its homes in the set. A generic
-reference nothing resolves rots exactly like a dangling one. The anchors the tool constructs hold
-no copy the generic form names: what they hold is cited by its kind.
+`path@*@docs/rejected-alternatives.md`. It is accepted when the path is a required document name
+— a compiled document, or a file register's README or generated index — and otherwise when at
+least one component carries the path with the claimed kind. The file-register set is derived from
+the component-scoped registers rather than written out, so a project that declares one gets its
+names in the set. A register's home is no `path` target, per
+`design@core@path-to-a-home-is-reported`: `register@*@<register>` names every component's own home
+of a component-scoped register, in whichever shape each holds, per
+`design@core@register-home-reference`. A generic reference nothing resolves rots exactly like a
+dangling one. The anchors the tool constructs hold no copy the generic form names: what they hold
+is cited by its kind.
 
-**Under any other kind the two words of `path` name nothing.** A `design@*@<id>` is reported as an
-unknown anchor, and the finding says the words serve `path` alone. The `planned` kind refuses them
+**Under any other kind the escape names nothing, and `*` names nothing but under `register`.** A
+`design@*@<id>` is reported as an unknown anchor, and the finding says the words serve `path`
+alone. The `planned` kind refuses them
 with a finding of its own, per `design@core@planned-path-form`. The manifest's resolution
 refuses a declared anchor wearing either word, and it is no anchor: every pointer at it
 would read as the reserved meaning.
+
+### A register's home is cited by its own kind, `register@<anchor>@<register>`, which names the home in whichever shape it has `##register-home-reference`
+
+`register@<anchor>@<register>` names the home that the anchor keeps the register in. It is resolved
+against the anchors and the tree's listing, as `path` is resolved against the survey, and not
+against the entity table: no register's name becomes an entity id, so a register's name in
+backticks with a hash sign before it stays silent under `design@core@candidate-rule-and-retired-forms`.
+
+- **The anchor** is a component, a declared location or the anchor `plans`, where it carries the
+  register; `*` names every component's own home of a component-scoped register, per
+  `design@core@reserved-anchors`. A milestone or a spec anchor is no anchor of the form: a
+  milestone's `spec` home is the milestone's own directory, which `milestone@plans@<id>` already
+  names, and one document has one name, per `design@core@plan-document-kinds`.
+- **The id** is a register's name, built in or declared. An item register is no id of the form:
+  its home is a plan's own documents, cited by the plan document's kind.
+- **Each refusal names the form that resolves**, per `design@core@finding-names-the-repair`.
+- **`show`** prints the home the tree holds, the file or the directory, with the register's shape,
+  then every site that cites it.
+
+**The kind exists because a home has two shapes**, per `design@core@heading-register-two-shapes`.
+A `path` names one of them, so a home that outgrows one file dangles every `path` to it, against
+`goal@core@relocation-is-one-manifest-edit`, and a text that must hold in every project names both
+shapes. This reference names the register and lets the manifest and the tree say which shape it is.
+The nearest rival is a `path` that resolves to either shape; it loses on
+`design@core@trailing-slash-claims-directory`, since a path claims its target's kind, and a path
+that matches either shape asserts no claim and puts a special case into path resolution.
+
+**The kind's word is the owner's choice**: "I'd rather use register. home just reads weirdly." The
+rival word, `home`, matched the documents' phrase "design home" better and cost the same refusal of
+an anchor name. A kind's name is refused for every anchor, per
+`design@core@kind-names-refused-as-anchors`, and for a declared register, per
+`design@core@registers-are-declared`. The cost the form keeps: a reader outside the tool does not
+see the file a reference names, which `issue@core@the-documents-do-not-render-as-a-site` would turn
+into a link.
+
+### A `path` reference whose target is a register's home is a finding, whose repair names the `register` form `##path-to-a-home-is-reported`
+
+A home target is a heading register's file, its directory, or that directory's `README.md`, which
+is the home's head per `design@core@heading-register-two-shapes`; a file register's directory; the
+`milestone` register's directory. A file register's `README.md` and generated `index.md`, a
+subdocument and an entry are files inside a home, and stay `path` targets.
+
+- The finding is raised for a named anchor after the refusals of a refused shape and of a plan
+  document cited by its path, on the target resolved to the anchor that keeps the home, and in
+  place of the deeper-anchor finding: its repair names `register@<that anchor>@<register>`. Under
+  `*`, it is raised before the required set and any kind claim are judged, and names
+  `register@*@<register>`.
+- The kind claim and the existence of the target are not judged: the manifest decides whether a
+  path is a home, and either shape names the same register.
+- A line number or a fragment is stripped before the test, and the repair says to drop it.
+- A `planned` reference is not judged by it.
+
+**Both forms legal** loses to this finding: a writer keeps writing the `path`, and a home that
+changes shape then dangles every one of them, which `design@core@register-home-reference` exists to
+prevent, against `goal@core@relocation-is-one-manifest-edit`. The finding repairs nothing by itself:
+no fix of `check --fix` respells it.
 
 ### The word `plans` names the anchor the tool constructs at the plans directory, and no project may declare it `##plans-is-a-reserved-anchor`
 
@@ -2165,7 +2231,8 @@ of its own, routed from the project's CLAUDE.md.
 The four harness kinds, `skill`, `agent`, `primer` and `instructions`, exist under the `claude`
 harness alone, per `design@core@agents-table`. They are kinds, not registers: a register is what
 an anchor carries, and no anchor carries them and no project declares them, since the harness fixes
-where each lives. So they sit beside `path` and `planned`, the two kinds already no register. The
+where each lives. So they sit beside `path`, `planned` and `register`, the kinds already no
+register. The
 rival, built-in registers of a new shape carried by no anchor, would make every reader of a
 register handle a register with no carrier: the manifest's refusals, the index, the extension view.
 

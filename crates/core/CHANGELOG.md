@@ -8,6 +8,32 @@ subsection is omitted.
 
 ## Next release
 
+### Migration
+
+- `checks`, minor: a `path` reference whose target is a register's home is reported: a heading
+  register's file, its directory or that directory's `README.md`, a file register's directory, and
+  the plans directory's `specs/` and `milestones/`. A project writes it as
+  `register@<anchor>@<register>`, as `register@*@goal` for every Component's goals home; this holds
+  for mock projects too. The finding's repair names the form, and no `check --fix` writes it. A
+  file-or-directory pair in one sentence becomes one span, a span with a line number or a fragment
+  is repaired by hand, and a project's root CLAUDE.md that restates a home is among the sites. This
+  command rewrites the common forms in the files it is given:
+
+  ```sh
+  perl -pi -e 's{\x60path\@([^\@\x60]+)\@docs/(design|goals|tripwires)(?:\.md|/README\.md|/)?\x60}{"\x60register\@$1\@".{design=>"design",goals=>"goal",tripwires=>"tripwire"}->{$2}."\x60"}ge; s{\x60path\@([^\@\x60]+)\@docs/open-issues/?\x60}{\x60register\@$1\@issue\x60}g; s{\x60path\@plans\@(spec|milestone)s/?\x60}{\x60register\@plans\@$1\x60}g' <files>
+  ```
+
+- `manifest`, major: a register named `register`, and a Component, a location or a plan named
+  `register`, are refused. A project renames it.
+
+### New features
+
+- `checks`, minor: a register's home is cited `register@<anchor>@<register>`, at a Component, a
+  location, `plans`, or `*` for every Component's own; it names the home in whichever shape it has,
+  so a home that outgrows one file breaks no reference.
+- `cli`, minor: `show register@<anchor>@<register>` prints the home the tree holds, the register's
+  shape and every site that cites it.
+
 ### Workflow
 
 - `agent-skills`, patch: before finishing a change that edits a design head, whatever the edit,

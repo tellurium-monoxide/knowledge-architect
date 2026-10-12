@@ -100,7 +100,7 @@ core's `generated`, `registers` and `references`, each a module under
 `design@core@an-extension-plugs-in-through-phased-hooks`. `references` judges
 every `` `<kind>@<anchor>@<id>` `` reference against the entity table — a register kind against the
 entries its home defines, the `path` kind against the tree, the `planned` kind against its absence
-from the tree, and, under the `claude` harness, a skill, an agent, the primer and the root
+from the tree, the `register` kind against the anchors that carry the register, and, under the `claude` harness, a skill, an agent, the primer and the root
 CLAUDE.md, cited with no anchor as `skill@<name>@<slug>` — and reports the retired slug
 reference form and the unanchored path shape where either names something of this project, and
 a backticked bare name of a skill or an agent, per `design@core@bare-skill-name-reported`.
@@ -172,6 +172,8 @@ entity table, so what they print is what `check` resolves against.
   its inbound list includes the `planned` citations of the same path.
 - `planned@<anchor>@<path>` says whether the tree's listing holds the target yet, and lists the
   plans that cite it, with or without the trailing slash; one the check refuses resolves to nothing.
+- `register@<anchor>@<register>` prints the home the tree holds, the file or the directory, with
+  the register's shape, for each Component under `*`; one the check refuses resolves to nothing.
 
 **The two failures are different questions**: an argument that is not reference-shaped is exit 2
 with the grammar named, and a reference the grammar accepts that names nothing is exit 1.
@@ -407,6 +409,13 @@ plans directory only. Its anchor and path follow the rules of a `path` reference
 must not exist: once it does, the finding asks for `path@<anchor>@<path>`, which the change that
 creates the file writes. `*` and `elsewhere` are refused for it, and a register named `planned` is
 refused like one named `path`.
+
+**A register's home is cited `register@<anchor>@<register>`**, as `register@core@design` or
+`register@*@issue`, and names the home in whichever shape the tree holds, so a home that outgrows
+one file breaks no reference. The anchor is a component, a declared location or `plans`, or `*`
+for a component-scoped register. A `path` reference to a home, a heading register's file, its
+directory or that directory's `README.md`, or a file register's directory, is a finding whose
+repair names this form. A register named `register` is refused like one named `path`.
 
 **A plan's name reads as nothing else.** A milestone's name or a spec's id that is the name of a
 component, of a location or of `plans`, `elsewhere` or `*`, and one name used under both homes,

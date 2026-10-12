@@ -128,8 +128,9 @@ win.
 
 - **Every reference is one backticked span, `<kind>@<anchor>@<id>`**, per
   `design@core@an-entity-belongs-to-its-anchor`. The kind is a register's name, `path`,
-  `planned` for a path a plan's work will create, per `design@core@planned-path-form`, or a
-  harness kind, per the bullet below. The anchor
+  `planned` for a path a plan's work will create, per `design@core@planned-path-form`,
+  `register` for a register's home, per the bullet below it, or a harness kind, per the bullet
+  below. The anchor
   is a Component, a location or a plan, and no anchor wears a kind's name. The id is the entry's. A plan's item is cited from
   inside that plan only, per `design@core@plan-item-scope`. Examples:
   `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/rejected-alternatives.md`. A reference that resolves to nothing
@@ -142,6 +143,9 @@ win.
   heading of a skill, an agent, the primer and this file owes a slug, per
   `design@core@section-homes-carry-slugs`, and a skill's or an agent's frontmatter `name`, where
   one is set, equals its directory's or file's name, per `design@core@harness-entity-names`.
+- **A register's home is cited `register@<anchor>@<register>`, never by its path**, in whichever
+  shape it has, per `design@core@register-home-reference` and
+  `design@core@path-to-a-home-is-reported`: `register@core@design`, `register@*@tripwire`.
 
 - **Under the `path` kind, the id is a path under the anchor's directory**, and its target is
   checked to exist, per `design@core@every-path-names-its-anchor`.
@@ -151,7 +155,7 @@ win.
     location is named from that anchor, never from one above it. So relocating an anchor edits the
     manifest and no document. A file under crates/core is `path@core@<file>`, and one under .claude
     is `path@agent-config@<file>`.
-  - Two anchors are reserved under `path` alone, and the word `plans` names the anchor the tool
+  - Two anchors are reserved under `path`, `*` serving `register` too, and the word `plans` names the anchor the tool
     constructs, per `design@core@reserved-anchors` and `design@core@plans-is-a-reserved-anchor`. A plan document is cited by its kind,
     `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<slice>`, never by its path.
     `path@*@<path>` names every Component's own copy of a path, as in `path@*@docs/rejected-alternatives.md`.

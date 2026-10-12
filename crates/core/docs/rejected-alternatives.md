@@ -481,3 +481,33 @@ anything.
 **`index --staged` writing the staged rows into the working-tree file** — lost to
 `design@core@index-staged-write`. `live`. After it, plain `check` fails, since the working-tree
 file no longer matches the working tree, and `check --staged` fails until the file is staged.
+
+**Checking the literal parts of a placeholder span** — lost to
+`design@core@candidate-rule-and-retired-forms`. `live`. A span such as one whose kind is literal
+and whose anchor and id are placeholders would be recorded, and its kind, its arity and a literal
+anchor checked. A census over the tracked Markdown and Rust files found 354 placeholder spans and no
+defect among them; the four spans such a check would report were two deliberate illustrations of
+an invalid form and two format strings of the checker's source. The cost was the escape an
+illustration needs, and the edit of a bundled head. A placeholder name fixed per kind lost too: the
+names carry meaning, as a milestone placeholder in a slice spec's anchor does.
+
+**`<component>` in place of the generic anchor `*`** — lost to `design@core@reserved-anchors`.
+`live`. It reads to some writers as clearer than `*`. A span holding an angle bracket is not
+recorded, so alone it makes the pointer silent; recorded as a reserved word, it is a second
+spelling of what `*` means, and a typo of it is another placeholder, silent where a typo of `*` is
+an unknown anchor. The owner kept `*` while still finding it "a bit confusing", which is the doubt
+this entry keeps.
+
+**`home` as the word of the kind naming a register's home** — lost to
+`design@core@register-home-reference`. `live`. It matched the documents' phrase "design home", and
+cost the same refusal of an anchor name. The owner chose `register`.
+
+**A `path` that resolves to either shape of a heading register's home** — lost to
+`design@core@register-home-reference`. `live`. A path claims its target's kind by its trailing
+slash, per `design@core@trailing-slash-claims-directory`; one that matches either shape asserts no
+claim and puts a special case into path resolution.
+
+**A `path` reference to a register's home accepted beside the `register` form** — lost to
+`design@core@path-to-a-home-is-reported`. `live`. It was the incumbent: the generic anchor accepted
+every shape of a component register's home. Kept legal, the path form keeps being written, and a
+home that changes shape dangles every one of them.

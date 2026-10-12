@@ -3,11 +3,13 @@
 //!
 //! One grammar, `` `<kind>@<anchor>@<id>` ``, and one resolver. A reference to a table kind —
 //! `design`, `goal`, `tripwire` — is looked up in the table `entity::Entities` builds from the
-//! walk; a `path` reference is resolved against the survey under the same anchors. A reference
-//! that resolves to nothing is reported as the repair it needs, five ways: the kind position
-//! holds an anchor, the anchor is unknown, the anchor does not carry that register, an item of a
-//! plan is cited from outside it, or the id is not defined there. The argument is
-//! `design@core@an-unresolved-reference-is-reported`.
+//! walk; a `path` reference is resolved against the survey under the same anchors, and a
+//! `register` reference against the anchors that carry the register, per
+//! `design@core@register-home-reference`. A table reference that resolves to nothing is reported
+//! as the repair it needs, five ways: the kind position holds an anchor, the anchor is unknown, the
+//! anchor does not carry that register, an item of a plan is cited from outside it, or the id is
+//! not defined there; the kinds resolved outside the table have refusals of their own. The
+//! argument is `design@core@an-unresolved-reference-is-reported`.
 //!
 //! **Nothing that points into this project passes unregistered.** A span with no `@` that is
 //! shaped like a path, and whose first segment names a file or a directory of this tree, is
@@ -607,7 +609,7 @@ fn without_suffix(path: &str) -> (&str, bool) {
     (path, false)
 }
 
-/// The finding on a `path` reference to a register's home, per `spec@plans@register-references`:
+/// The finding on a `path` reference to a register's home, per `design@core@path-to-a-home-is-reported`:
 /// the home is named by the `register` kind, which survives a change of the home's shape.
 fn home_finding(
     rel: &Path,
@@ -3035,7 +3037,7 @@ mod tests {
         }
     }
 
-    /// The claim (AC2 of `spec@plans@register-references`): the README of a heading register's
+    /// The claim, per `design@core@path-to-a-home-is-reported`: the README of a heading register's
     /// directory is its home's head, and the README and index of a file or directory register's
     /// directory are files inside the home, which stay `path` references; so are a subdocument
     /// and an entry. Mutation checked, and caught: the `readme` comparison of `home_target` applied to

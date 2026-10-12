@@ -765,6 +765,35 @@ The reasons not given here are `argument@path-quickfixes@a8`.
 Nearest rival: no respelling, the head as it stands. It lost on `argument@path-quickfixes@a3`: each
 row's output is already computed or named by the check, and applying it changes no meaning.
 
+### The respelling of a register's home, added by the register-references work
+
+Added to this spec by the harvest of the register-references spec, on the owner's word, given
+while this spec was on hold: "We will build the spec we just designed, without anything related to
+quickfixes. Then, harvest it into either the project record or into the path quickfix spec." That
+work built the `register` kind, `design@core@register-home-reference`, and the finding on a `path`
+reference to a register's home, `design@core@path-to-a-home-is-reported`, and left this respelling
+to this spec.
+
+`--fix` respells each finding on a home target with no line number or fragment into the form its
+repair names: `register@<anchor>@<register>`, the anchor being the one the finding names, `*` kept
+as `*`; the trailing slash is dropped. Where a `..` or a `.` segment is normalized by the respellings
+above and the normalized target is a home target, the result is the new form, written in one step.
+Every home target respells; which paths are home targets is the head
+`design@core@path-to-a-home-is-reported`.
+
+The owner ruled on three defaults of that spec, which this subsection carries: "All three agreed,
+proceed".
+
+- **A span is respelled alone.** A file-or-directory pair in one sentence becomes two identical
+  spans, which `--fix` leaves: collapsing the pair edits bytes outside the spans, which a respelling
+  never does. A span with a line number or a fragment is not respelled. Both are repaired by hand.
+- **Two exclusions of "The respellings" give way for a home target alone**: the rule's "never to
+  `*`", since a home target under `*` names one entity, every component's own home of one register,
+  and the trailing slash that disagrees with the target's kind, since the new form claims no kind
+  and names the home in both shapes. Both stand for every other finding.
+- **The clause of `tripwire@core@fix-makes-a-choice` that exempts this spec's respellings** covers
+  this one, as one of them.
+
 ### The question form
 
 The finding on a raw path keeps its statement. Its repair lists the candidates as a question, and
@@ -966,6 +995,17 @@ a skill's directory other than its `SKILL.md`, and one to the skills directory i
 finding of the new check. Fires when either is reported. Response: reopen `thread@path-quickfixes@skill-cited-by-path` on
 what the check judges.
 
+### AC1 of the register-references work: `--fix` respells every home target written as one span with no suffix, and a second run writes nothing `##register-home-respelled`
+
+Kept by the owner in the design discussion of the register-references spec, under the label AC1
+there, and carried here with its label: "Keep none of the three tripwires, but keep the three AC.
+Proceed". Guards the respelling of "The respelling of a register's home". The observable that fires
+it: a test, on a `Sandbox` copy, plants each home target under a literal anchor, under `*`, inside a
+deeper anchor, with a wrong trailing slash, and as a pair; after `check --fix`, a planted home
+target remains, or a span is not the form its finding's repair names, or a second run respells
+anything. The pair is asserted to become two identical spans. Response: the respelling is repaired
+before the merge; if a home target cannot be respelled without choosing, the respelling reopens.
+
 ## Implementation sequence
 
 Steps 1 to 5 follow the project's development procedure, `skill@klarch-development`, and pass the
@@ -986,8 +1026,9 @@ harness, as `Sandbox::serve_claude` does; `check --fix` is never run inside `pla
    writes no document and prints what it prints today; every existing test of `--fix` passes.
    Fails alone on: a byte written outside a span, or a write over a changed file.
 2. **The path respellings**: the deeper anchor, `..` and `.`, the plan document by its path, the
-   retired `<anchor>@<path>`. Claims: AC2 for these rows; the shapes listed as not respelled are
-   not. Fails alone on: a respelled span still reported.
+   retired `<anchor>@<path>`, and a register's home, per "The respelling of a register's home".
+   Claims: AC2 for these rows, and AC1 of the register-references work for the last; the shapes
+   listed as not respelled are not. Fails alone on: a respelled span still reported.
 3. **The skill and agent citation.** The finding, judged from the entity table's sites, and its
    respelling. Before the commit that adds the finding, any `path` citation of a skill or an agent
    that stands in the tree is written as its reference in the branch's first commit, so that no
@@ -1125,7 +1166,8 @@ commit, with the test it fails.
 | the existing entries of `path@core@docs/rejected-alternatives.md` that cite a rewritten head | each read again; each still lost to its head as rewritten, or is edited to say so |
 | T1 | `register@core@tripwire`, guarding `design@core@fix-scope`, as the Premortem section words it |
 | T2 | `register@core@tripwire`, guarding the head that records the question form, as the Premortem section words it |
-| AC1 to AC4 | reported on at the landing; each spent, or proposed to the owner as a tripwire if it recurs |
+| AC1 to AC4, and AC1 of the register-references work | reported on at the landing; each spent, or proposed to the owner as a tripwire if it recurs |
+| the respelling of a register's home | `design@core@fix-scope` with the other respellings; the two exclusions that give way for a home target, in the head that states them |
 | this spec | deleted in the harvest's commit, cited as `spec@plans@path-quickfixes` |
 
 ## Later consequences

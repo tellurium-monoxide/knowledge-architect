@@ -84,17 +84,18 @@ it, so it names no Component and no convention of this repository, per
 workflow's own upstream repository, where a retrospective's findings on the workflow go, per
 `design@agent-skills@retrospective-destination`. It cites no entry: a reference to an entry resolves
 only against the tree it stands in, and no tree but this one holds this repository's entries. A path
-that every conforming project holds may be written as a reference: `register@*@goal` names
-each Component's own copy, required by `design@core@components-carry-the-same-documents`, and
-`path@plans@README.md` names a file of the one plans directory, whose path the checker fixes, per
-`design@core@plans-dir-fixed`. Either is true in every installing project, and it shows the syntax
-the checker enforces there. Writing a per-Component path in that syntax is the owner's proposal:
-"it promotes the same kind of syntax as what the checker enforces in projects holding the
-installed skills". The same argument holds of the plans directory's paths, since the checker fixes
-that directory's path. The checker accepts every shape of a required
-document, per `design@core@reserved-anchors`, so where the text names both shapes, both are
-references. A path that varies by project, and an illustration, are placeholders in
-angle brackets. The command a project runs is written as the placeholder that the install fills
+or a home that every conforming project holds may be written as a reference:
+`path@*@docs/rejected-alternatives.md` names each Component's own copy of a required document, per
+`design@core@components-carry-the-same-documents`; `register@*@goal` names each Component's own
+goals home, in whichever shape it has, per `design@core@register-home-reference`; and
+`path@plans@README.md` and `register@plans@spec` name a file and a home of the one plans directory,
+whose path the checker fixes, per `design@core@plans-dir-fixed`. Each is true in every installing
+project, and it shows the syntax the checker enforces there. Writing a per-Component path in that
+syntax is the owner's proposal: "it promotes the same kind of syntax as what the checker enforces
+in projects holding the installed skills". The same argument holds of the plans directory's paths
+and homes, since the checker fixes that directory's path, and of a home named by its register,
+since the checker refuses a home named by its path. A path that varies by project, and an
+illustration, are placeholders in angle brackets. The command a project runs is written as the placeholder that the install fills
 with the project's declared command, per `design@core@declared-command`.
 
 **The shipped set may cite its own skills, agents and primer, and their sections**, as
