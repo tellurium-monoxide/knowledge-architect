@@ -128,19 +128,19 @@ Every Component carries the same documents. `cargo klarch check` names each one 
 | --- | --- |
 | `README.md` | how a user uses the Component |
 | `CLAUDE.md` | the contracts and traps a developer needs, true of the code as it stands |
-| `path@*@docs/goals.md`, or `path@*@docs/goals/` with a `README.md` | what the Component is for: at least one goal, under `skill@knowledge-architect-goal-setting` |
-| `path@*@docs/design.md`, or `path@*@docs/design/` with a `README.md` | how it is built and why; it may hold no entry yet |
+| `register@*@goal`, one file, or a directory with a `README.md` | what the Component is for: at least one goal, under `skill@knowledge-architect-goal-setting` |
+| `register@*@design`, one file, or a directory with a `README.md` | how it is built and why; it may hold no entry yet |
 | `path@*@docs/rejected-alternatives.md` | what lost, and why; it may hold no entry yet |
-| `path@*@docs/tripwires.md`, or `path@*@docs/tripwires/` with a `README.md` | evidence that would flip a decision; it may hold no entry yet |
-| `path@*@docs/open-issues/` | one file per outstanding item, a hand-written `README.md` and an `index.md` that `cargo klarch index` generates |
+| `register@*@tripwire`, one file, or a directory with a `README.md` | evidence that would flip a decision; it may hold no entry yet |
+| `register@*@issue` | one file per outstanding item, a hand-written `README.md` and an `index.md` that `cargo klarch index` generates |
 
 **The root Component also carries the plans directory**, docs/plans/, whose path the checker fixes:
 
 | document | holds |
 | --- | --- |
 | `path@plans@README.md` | what the plans directory holds |
-| `path@plans@specs/`, with a `README.md` and an `index.md` | one file per spec; none until work is planned |
-| `path@plans@milestones/`, with a `README.md` and an `index.md` | one directory per milestone; none until work is planned |
+| `register@plans@spec`, with a `README.md` and an `index.md` | one file per spec; none until work is planned |
+| `register@plans@milestone`, with a `README.md` and an `index.md` | one directory per milestone; none until work is planned |
 
 `cargo klarch index` writes each `index.md`. A roadmap, docs/roadmap.md at the root, is optional:
 it is written when the owner wants known work ordered, under `skill@knowledge-architect-planning`.
@@ -247,7 +247,7 @@ not move or rewrite that file. Show the owner the finding and its repair, each f
 label, `Q<n>`, when there are several, such as a bare path
 rewritten as a reference. The owner rules between that repair and a
 `[walk] skip-files` row, with its reason beside it, that keeps the file out of the walk until its
-move. A file at the path of a register home, such as `path@*@docs/design.md`, and the root
+move. A file at the path of a register home, such as `register@*@design`, and the root
 `CLAUDE.md`, whose import of the primer the check reads, have no such row: the check refuses a walk
 row over either, so their findings are repaired.
 

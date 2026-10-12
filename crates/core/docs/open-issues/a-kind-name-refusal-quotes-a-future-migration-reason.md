@@ -15,7 +15,7 @@ is which of the two the head stands on.
 
 ### What
 
-The head, in `path@core@docs/design.md`, argues
+The head, in `register@core@design`, argues
 first: "A reference's head is read as a kind before it is read as an anchor, so an anchor named
 `design`, `path` or `skill` would be shadowed there, and the old form written with it would be
 misread." It then quotes: "The owner, on the question: "My ruling on this is that all kind names

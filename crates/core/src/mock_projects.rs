@@ -263,7 +263,7 @@ fn a_fenced_illustration_is_neither_a_definition_nor_a_reference_in_a_real_file(
             "goal@minimal@mock-goal".to_string(),
             "note@notes@a-note-the-location-keeps".to_string(),
             "path@notes@b.md".to_string(),
-            "path@notes@decisions.md".to_string(),
+            "register@notes@note".to_string(),
             "tripwire@minimal@mock-tripwire".to_string(),
         ]
     );

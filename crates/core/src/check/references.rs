@@ -23,7 +23,7 @@
 //! definitions are found while the table is built, and `check::foundation` reports them: where a
 //! definition may sit is a question about a register's shape.
 
-use crate::manifest::MANIFEST_NAME;
+use crate::manifest::{Scope, Shape, MANIFEST_NAME};
 use std::path::{Path, PathBuf};
 
 use crate::entity::{
@@ -126,6 +126,10 @@ pub(crate) fn judge_part(
                             planned(
                                 &mut out, &doc.rel, l.line, span, anchor, id, anchors, inputs,
                             );
+                        } else if kind.is_register() {
+                            // Never through `table`: a register's home is no entity of the table,
+                            // and `table`'s repair would call `*` a word of the path kind alone.
+                            register(&mut out, &doc.rel, l.line, span, anchor, id, anchors);
                         } else {
                             table(
                                 &mut out, &doc.rel, l.line, span, &kind, anchor, id, anchors,
@@ -459,6 +463,182 @@ fn harness(
 /// An upward or explicit-current segment breaks when the referencing file moves, which is
 /// the failure the anchored grammar exists to remove, and a leading slash is outside the
 /// project's namespace.
+/// A `register` reference: the home an anchor keeps a register in, resolved against the anchors,
+/// whatever shape the home has, per `design@core@one-entity-table`.
+///
+/// Whether the home exists is not asked here: a missing home is `check::tree`'s finding, and the
+/// reference names what the manifest declares. Every refusal names the form that resolves.
+pub(crate) fn register(
+    out: &mut Vec<Finding>,
+    rel: &Path,
+    line: u32,
+    span: &str,
+    anchor: &str,
+    id: &str,
+    anchors: &Anchors,
+) {
+    let registers = anchors.registers();
+    // An item register's home is a plan's own documents, so it has no home of its own to name,
+    // and neither has a plan anchor's register: both are cited by the plan document's kind.
+    let homed = || {
+        registers
+            .all()
+            .iter()
+            .filter(|r| r.shape != Shape::Section)
+            .map(|r| r.name.as_str())
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+    let Some(r) = registers.by_name(id) else {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` names `{id}`, which is no register of this project"),
+            format!("name one of {}", homed()),
+        ));
+        return;
+    };
+    if r.shape == Shape::Section {
+        out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` names the {id} register, whose home is a plan's own documents"),
+            format!(
+                "cite the plan document whole, as `spec@{PLANS_ANCHOR}@<id>` or \
+                 `milestone@{PLANS_ANCHOR}@<id>`"
+            ),
+        ));
+        return;
+    }
+    let carriers = || {
+        anchors
+            .all()
+            .iter()
+            .filter(|a| !a.is_plan() && a.registers.iter().any(|n| n == id))
+            .map(|a| a.name.as_str())
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+    match anchor {
+        ESCAPE_ANCHOR => out.push(Finding::at(
+            rel,
+            line,
+            format!("`{span}` names `{ESCAPE_ANCHOR}`, which serves the path kind alone"),
+            format!(
+                "anchor at one of {}, or at `*` for every component's own home",
+                carriers()
+            ),
+        )),
+        entity::EVERY_ANCHOR => {
+            if r.scope != Scope::Component {
+                out.push(Finding::at(
+                    rel,
+                    line,
+                    format!("`{span}` names `*`, and not every component carries a {id} register"),
+                    format!("anchor at one of {}", carriers()),
+                ));
+            }
+        }
+        name => {
+            match anchors.by_name(name) {
+                None => out.push(Finding::at(
+                    rel,
+                    line,
+                    format!("`{span}` names `{name}`, which is no anchor of this project"),
+                    format!(
+                        "anchor at one of {}, or at `*` for every component's own home",
+                        carriers()
+                    ),
+                )),
+                Some(a) if a.is_plan() => {
+                    let form = if a.is_milestone() {
+                        format!("milestone@{PLANS_ANCHOR}@{name}")
+                    } else {
+                        format!("spec@{PLANS_ANCHOR}@{name}")
+                    };
+                    out.push(Finding::at(
+                    rel,
+                    line,
+                    format!("`{span}` names the plan `{name}`, whose documents are cited by their kind"),
+                    format!(
+                        "cite it as `{form}`; a plan document has one name, so `show` finds every \
+                         citation of it"
+                    ),
+                ));
+                }
+                Some(a) if !a.registers.iter().any(|n| n == id) => out.push(Finding::at(
+                    rel,
+                    line,
+                    format!("`{span}` names `{name}`, which carries no {id} register"),
+                    format!(
+                        "the anchors that carry one: {}; the registers `{name}` carries: {}",
+                        carriers(),
+                        a.registers.join(", ")
+                    ),
+                )),
+                Some(_) => {}
+            }
+        }
+    }
+}
+
+/// A path written with a suffix, a line number `:<n>` or a fragment `#<anchor>`, split into the
+/// path and whether a suffix was there. Only the home-target test reads it: a suffix on any other
+/// `path` reference keeps the finding of the target it does not name.
+fn without_suffix(path: &str) -> (&str, bool) {
+    if let Some((p, frag)) = path.rsplit_once('#') {
+        let mut chars = frag.chars();
+        if chars.next().is_some_and(|c| c.is_ascii_alphabetic())
+            && chars.all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+        {
+            return (p, true);
+        }
+    }
+    if let Some((p, num)) = path.rsplit_once(':') {
+        let digits = |t: &str| !t.is_empty() && t.bytes().all(|b| b.is_ascii_digit());
+        let lines = match num.split_once('-') {
+            Some((a, b)) => digits(a) && digits(b),
+            None => digits(num),
+        };
+        if lines {
+            return (p, true);
+        }
+    }
+    (path, false)
+}
+
+/// The finding on a `path` reference to a register's home, per `spec@plans@register-references`:
+/// the home is named by the `register` kind, which survives a change of the home's shape.
+fn home_finding(
+    rel: &Path,
+    line: u32,
+    span: &str,
+    anchor: &str,
+    register: &str,
+    suffix: bool,
+) -> Finding {
+    let whose = if anchor == entity::EVERY_ANCHOR {
+        "every component's".to_string()
+    } else {
+        format!("`{anchor}`'s")
+    };
+    Finding::at(
+        rel,
+        line,
+        format!("`{span}` names {whose} home of the {register} register by its path"),
+        format!(
+            "write `register@{anchor}@{register}`, which names the home in either of its shapes, \
+             so a home that changes shape breaks no reference{}",
+            if suffix {
+                ". A reference names the home: drop the line number or the fragment, and name \
+                 the point inside it in prose"
+            } else {
+                ""
+            }
+        ),
+    )
+}
+
 fn refused(path: &str) -> Option<&'static str> {
     if path.starts_with('/') {
         return Some("a leading slash is outside the project's namespace");
@@ -517,6 +697,21 @@ fn path(
                     line,
                     format!("`{span}` is refused: {why}"),
                     "the generic form takes a plain component-relative path",
+                ));
+                return;
+            }
+            // A register's home is named by its own kind, before any kind claim or presence is
+            // judged: either shape of a home names the same register, and the manifest, not the
+            // listing, says which paths are homes.
+            let (bare, suffix) = without_suffix(path);
+            if let Some(r) = anchors.generic_home_target(bare.trim_end_matches('/')) {
+                out.push(home_finding(
+                    rel,
+                    line,
+                    span,
+                    entity::EVERY_ANCHOR,
+                    &r.name,
+                    suffix,
                 ));
                 return;
             }
@@ -697,6 +892,16 @@ fn anchored_target(
             ),
         ));
         return None;
+    }
+    // A register's home is named by its own kind, whichever anchor the path was written from:
+    // the finding names the anchor that keeps the home, so it replaces the deeper-anchor finding
+    // rather than following it. A `planned` path names no home: a home is a declared anchor's.
+    if !planned {
+        let (bare, suffix) = without_suffix(trimmed);
+        if let Some((keeper, r)) = anchors.home_target(&a.path.join(bare.trim_end_matches('/'))) {
+            out.push(home_finding(rel, line, span, &keeper.name, &r.name, suffix));
+            return None;
+        }
     }
     // The deepest anchor wins: a reference reaching inside another anchor breaks
     // when that anchor moves, and the anchor is what a move must not break. Inside
@@ -1897,11 +2102,11 @@ mod tests {
     #[test]
     fn the_generic_anchor_accepts_the_required_set_and_what_a_component_carries() {
         let m = manifest();
-        // A required document name passes with no component carrying it in the listing,
-        // and every heading register's shapes are in the accepted set.
-        let homes = "See `path@*@docs/design.md`, `path@*@docs/design/`, `path@*@docs/goals.md`, \
-                     `path@*@docs/goals/`, `path@*@docs/tripwires/README.md`.\n";
-        let (found, _) = checked(&m, homes, &tree());
+        // A required document name passes with no component carrying it in the listing. A
+        // register's home is not among them: the `register` kind names it.
+        let required = "See `path@*@README.md`, `path@*@docs/rejected-alternatives.md`, \
+                     `path@*@docs/open-issues/README.md`, `path@*@docs/open-issues/index.md`.\n";
+        let (found, _) = checked(&m, required, &tree());
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
         // A path one component carries passes; one nobody carries is reported.
         let (found, _) = checked(&m, "See `path@*@notes/real/a.md`.\n", &tree());
@@ -1975,10 +2180,10 @@ mod tests {
     #[test]
     fn a_required_name_still_carries_the_kind_claim() {
         let m = manifest();
-        let (found, _) = checked(&m, "See `path@*@docs/design.md/`.\n", &tree());
+        let (found, _) = checked(&m, "See `path@*@README.md/`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("wrong kind"), "{found:#?}");
-        let (found, _) = checked(&m, "See `path@*@docs/goals`.\n", &tree());
+        let (found, _) = checked(&m, "See `path@*@docs/open-issues/index.md/`.\n", &tree());
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("wrong kind"), "{found:#?}");
     }
@@ -2692,5 +2897,221 @@ mod tests {
             vec![],
         );
         assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+    }
+
+    // --- the register kind ------------------------------------------------------------
+
+    /// The manifest of the register tests: the root, one component, a location carrying
+    /// `issue`, and the plans anchor with one milestone.
+    fn register_project() -> (Manifest, Anchors) {
+        let text = "[project]\nchecker-version = \"fixture\"\nname = \"a-project\"\ncomponents = [\"parts/a-part\"]\n\n\
+             [locations.notes]\npath = \"notes\"\nregisters = [\"issue\"]\n\n\
+             [walk]\nskip-dirs = []\nskip-files = []\n";
+        let m = Manifest::parse(std::path::Path::new("/nowhere"), text).expect("a declaration");
+        let anchors = Anchors::of(&m, &[PathBuf::from("docs/plans/milestones/m/README.md")]);
+        (m, anchors)
+    }
+
+    /// The findings over one document at `prose/p.md`, in the register project.
+    fn register_checked(text: &str) -> Vec<String> {
+        let (_, anchors) = register_project();
+        checked_under(vec![("prose/p.md", text)], &[], &anchors).0
+    }
+
+    /// The claim: a `register` reference resolves for every anchor that carries the register with a
+    /// home of its own, the root, a component, a location, `plans` and `*`, whether or not the home
+    /// exists in either shape. Mutation checked, and caught: the `is_register` branch of `judge_part`
+    /// disabled, so the kind reaches `table`.
+    #[test]
+    fn a_register_reference_resolves_at_every_anchor_that_carries_the_register() {
+        let found = register_checked(
+            "`register@a-project@design`, `register@a-part@goal`, `register@notes@issue`, \
+             `register@plans@spec`, `register@plans@milestone`, `register@*@tripwire`, \
+             `register@*@issue`.\n",
+        );
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+    }
+
+    /// The claim: each way a `register` reference resolves to nothing is reported with the form
+    /// that resolves. Mutations checked, each alone and each caught: the `Section` refusal of
+    /// `register` disabled; the `scope` test under `*` disabled; the plan-anchor arm disabled.
+    #[test]
+    fn a_register_reference_that_resolves_to_nothing_names_the_form_that_does() {
+        let one = |span: &str| {
+            let found = register_checked(&format!("See `{span}`.\n"));
+            assert_eq!(found.len(), 1, "{span}: {found:#?}");
+            found.into_iter().next().unwrap()
+        };
+        let f = one("register@a-part@nothing");
+        assert!(f.contains("no register of this project"), "{f}");
+        assert!(f.contains("design") && !f.contains("thread"), "{f}");
+        let f = one("register@a-part@spec");
+        assert!(f.contains("carries no spec register"), "{f}");
+        assert!(f.contains("plans"), "{f}");
+        let f = one("register@nowhere@design");
+        assert!(f.contains("no anchor of this project"), "{f}");
+        let f = one("register@*@spec");
+        assert!(f.contains("not every component carries"), "{f}");
+        let f = one("register@elsewhere@design");
+        assert!(f.contains("serves the path kind alone"), "{f}");
+        let f = one("register@a-part@thread");
+        assert!(f.contains("a plan's own documents"), "{f}");
+        let f = one("register@m@spec");
+        assert!(f.contains("`milestone@plans@m`"), "{f}");
+    }
+
+    /// The claim: a register's name stays out of the entity table's ids, so a register name
+    /// backticked with a hash sign before it is no retired-form finding, while the kind word with a
+    /// hash sign is one, as any kind word is. A regression guard: the kind resolves outside the table
+    /// by construction, so no mutation of this change reaches `defines_id`.
+    #[test]
+    fn a_register_name_is_no_entity_id_and_the_kind_word_reads_as_a_kind() {
+        let found = register_checked("See `#design` and `#issue`.\n");
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+        let found = register_checked("See `register#design`.\n");
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("retired slug reference"), "{found:#?}");
+    }
+
+    // --- the finding on a home target -----------------------------------------------------
+
+    /// The claim: a `path` reference to a register's home is a finding whose repair is the
+    /// `register` form at the anchor that keeps the home, for each home target: a heading
+    /// register's file, directory and README, a file register's directory, the plans anchor's two
+    /// registers, from the anchor written or from an anchor above it, existing or not, with any
+    /// trailing slash. Mutations checked, each alone and each caught: the `readme` comparison removed
+    /// from `home_target`; the finding naming the anchor as written instead of the one that keeps
+    /// the home.
+    #[test]
+    fn a_path_to_a_register_home_names_the_register_form() {
+        let cases = [
+            ("path@a-part@docs/design.md", "register@a-part@design"),
+            ("path@a-part@docs/design/", "register@a-part@design"),
+            ("path@a-part@docs/design", "register@a-part@design"),
+            ("path@a-part@docs/goals/README.md", "register@a-part@goal"),
+            ("path@a-part@docs/open-issues/", "register@a-part@issue"),
+            (
+                "path@a-project@docs/tripwires.md/",
+                "register@a-project@tripwire",
+            ),
+            ("path@notes@open-issues/", "register@notes@issue"),
+            ("path@plans@specs/", "register@plans@spec"),
+            ("path@plans@milestones/", "register@plans@milestone"),
+            (
+                "path@a-project@parts/a-part/docs/design.md",
+                "register@a-part@design",
+            ),
+        ];
+        for (span, form) in cases {
+            let found = register_checked(&format!("See `{span}`.\n"));
+            assert_eq!(found.len(), 1, "{span}: {found:#?}");
+            assert!(found[0].contains("by its path"), "{span}: {found:#?}");
+            assert!(
+                found[0].contains(&format!("`{form}`")),
+                "{span}: {found:#?}"
+            );
+            assert!(!found[0].contains("line number"), "{span}: {found:#?}");
+        }
+    }
+
+    /// The claim: under `*`, a component register's home is the same finding, before the
+    /// required set or any kind claim is judged. Mutation checked, and caught: the
+    /// `generic_home_target` test removed from the `*` arm.
+    #[test]
+    fn a_generic_path_to_a_register_home_names_the_generic_register_form() {
+        for (span, form) in [
+            ("path@*@docs/design.md", "register@*@design"),
+            ("path@*@docs/design/", "register@*@design"),
+            ("path@*@docs/design.md/", "register@*@design"),
+            ("path@*@docs/tripwires/README.md", "register@*@tripwire"),
+            ("path@*@docs/open-issues/", "register@*@issue"),
+        ] {
+            let found = register_checked(&format!("See `{span}`.\n"));
+            assert_eq!(found.len(), 1, "{span}: {found:#?}");
+            assert!(
+                found[0].contains(&format!("`{form}`")),
+                "{span}: {found:#?}"
+            );
+        }
+    }
+
+    /// The claim (AC2 of `spec@plans@register-references`): the README of a heading register's
+    /// directory is its home's head, and the README and index of a file or directory register's
+    /// directory are files inside the home, which stay `path` references; so are a subdocument
+    /// and an entry. Mutation checked, and caught: the `readme` comparison of `home_target` applied to
+    /// every shape.
+    #[test]
+    fn a_readme_is_a_home_target_by_its_register_shape() {
+        let present: Vec<String> = [
+            "parts/a-part/docs/open-issues/README.md",
+            "parts/a-part/docs/open-issues/index.md",
+            "parts/a-part/docs/open-issues/an-entry.md",
+            "parts/a-part/docs/design/part.md",
+            "parts/a-part/docs/open-issues",
+            "parts/a-part/docs/design",
+            "parts/a-part/docs",
+            "parts/a-part",
+            "parts",
+            "docs/plans/specs/README.md",
+            "docs/plans/specs",
+            "docs/plans",
+            "docs",
+        ]
+        .iter()
+        .map(|p| p.to_string())
+        .collect();
+        let (_, anchors) = register_project();
+        let inside = "`path@a-part@docs/open-issues/README.md`, `path@a-part@docs/open-issues/index.md`, \
+                      `path@a-part@docs/open-issues/an-entry.md`, `path@a-part@docs/design/part.md`, \
+                      `path@plans@specs/README.md`, `path@*@docs/open-issues/README.md`.\n";
+        let (found, _) = checked_under(vec![("prose/p.md", inside)], &present, &anchors);
+        assert_eq!(found, Vec::<String>::new(), "{found:#?}");
+        let head = "`path@a-part@docs/design/README.md`.\n";
+        let (found, _) = checked_under(vec![("prose/p.md", head)], &present, &anchors);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("`register@a-part@design`"), "{found:#?}");
+    }
+
+    /// The claim: a home target written with a line number or a fragment gets the same finding,
+    /// whose repair also says to drop the suffix; a suffix on another path keeps its own finding.
+    /// Mutation checked, and caught: `without_suffix` returning the path unchanged.
+    #[test]
+    fn a_suffixed_home_target_is_named_and_told_to_drop_the_suffix() {
+        for span in [
+            "path@a-part@docs/design.md:12",
+            "path@a-part@docs/design.md#a-heading",
+            "path@*@docs/goals.md:3-9",
+        ] {
+            let found = register_checked(&format!("See `{span}`.\n"));
+            assert_eq!(found.len(), 1, "{span}: {found:#?}");
+            assert!(found[0].contains("register@"), "{span}: {found:#?}");
+            assert!(
+                found[0].contains("drop the line number"),
+                "{span}: {found:#?}"
+            );
+        }
+        let found = register_checked("See `path@a-part@notes/a.md:12`.\n");
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(!found[0].contains("register@"), "{found:#?}");
+    }
+
+    /// The claim: a `planned` path is not judged as a home target, and a plan document cited by
+    /// its path keeps the plan-document finding, which runs first. Mutation checked, and caught: the
+    /// `!planned` condition made always true.
+    #[test]
+    fn a_planned_path_and_a_plan_document_keep_their_own_findings() {
+        let (_, anchors) = register_project();
+        let (found, _) = checked_under(
+            vec![(
+                "docs/plans/specs/s.md",
+                "Creates `planned@a-part@docs/goals.md`.\n",
+            )],
+            &[],
+            &anchors,
+        );
+        assert!(found.iter().all(|f| !f.contains("register@")), "{found:#?}");
+        let found = register_checked("See `path@plans@milestones/m/`.\n");
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("`milestone@plans@m`"), "{found:#?}");
     }
 }

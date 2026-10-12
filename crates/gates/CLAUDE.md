@@ -1,7 +1,7 @@
 # Gates
 
 The library that runs a project's merge gates. What it does for a user is
-`path@gates@README.md`; why it is shaped this way is `path@gates@docs/design.md`.
+`path@gates@README.md`; why it is shaped this way is `register@gates@design`.
 
 **This file holds what is true of the code as it stands.**
 

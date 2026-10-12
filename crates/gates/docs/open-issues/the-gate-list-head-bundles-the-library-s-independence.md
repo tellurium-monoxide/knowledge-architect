@@ -16,7 +16,7 @@ cannot be written without its reason.
 ### What
 
 **The instance.** The body of `design@gates@a-project-holds-its-gate-list`, in
-`path@gates@docs/design.md`, holds two statements that answer different questions:
+`register@gates@design`, holds two statements that answer different questions:
 
 1. "The library runs the gates it is given and decides none of them", with `rust_project` as the
    recommended list. Its nearest rival is a library with a fixed list. Its argument is
@@ -28,7 +28,7 @@ cannot be written without its reason.
 
 Statement 2 is true of the code: `path@gates@Cargo.toml` declares clap as its only dependency, and
 `project_root` in `path@gates@src/process.rs` takes the marker's name as a parameter. Another
-Component relies on it: `design@core@installed-binary-version-check`, in `path@core@docs/design.md`,
+Component relies on it: `design@core@installed-binary-version-check`, in `register@core@design`,
 says a gate "starts a binary that makes the call, since the gates library depends on nothing of
 the checker", citing the gate-list head.
 

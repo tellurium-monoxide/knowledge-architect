@@ -849,12 +849,15 @@ fn resolve_registers(registers: &mut Registers, complaints: &mut Vec<Finding>) {
             ))
         } else if register.name == crate::entity::PATH_KIND
             || register.name == crate::entity::PLANNED_KIND
+            || register.name == crate::entity::REGISTER_KIND
         {
+            let what = if register.name == crate::entity::REGISTER_KIND {
+                "a register's home"
+            } else {
+                "a file or directory"
+            };
             Some((
-                format!(
-                    "`{}` is the reserved kind of a file or directory",
-                    register.name
-                ),
+                format!("`{}` is the reserved kind of {what}", register.name),
                 "rename the register; a reference whose kind segment is this word resolves \
                  against the tree and never reaches the register",
             ))
@@ -1977,6 +1980,29 @@ pub(crate) mod tests {
             "{whats:?}"
         );
         assert!(m.registers().by_name("planned").is_none());
+    }
+
+    #[test]
+    fn a_register_named_register_is_refused_as_a_reserved_kind() {
+        // The claim, per `spec@plans@register-references`: `register` is the kind naming a
+        // register's home, so a register of that name would never be reached by a reference.
+        // Mutation checked: `REGISTER_KIND` removed from the refusal, which declares it.
+        let m = declaring_full(
+            "",
+            "[registers.register]\nscope = \"opt-in\"\nshape = \"file\"\n\n",
+            "[]",
+            "[]",
+            "[]",
+            "[]",
+        );
+        let whats = whats(&m);
+        assert!(
+            whats
+                .iter()
+                .any(|w| w.contains("`register` is the reserved kind of a register's home")),
+            "{whats:?}"
+        );
+        assert!(m.registers().by_name("register").is_none());
     }
 
     #[test]

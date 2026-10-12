@@ -1,6 +1,6 @@
 # Rejected alternatives — agent skills
 
-The alternatives that lost to a decision of `path@agent-skills@docs/design.md`, or to a goal where
+The alternatives that lost to a decision of `register@agent-skills@design`, or to a goal where
 the owner ruled that the winning position needs no entry, each with what it lost to and why.
 
 **Recording every losing thread of a design discussion** — lost to

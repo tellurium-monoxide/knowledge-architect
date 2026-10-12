@@ -5,7 +5,7 @@ kind: design
 
 ## Summary
 
-The core parses Rust source with `tree-sitter-rust`. No head of `path@core@docs/design.md` records
+The core parses Rust source with `tree-sitter-rust`. No head of `register@core@design` records
 that choice. Two rejected alternatives that lost to it, "`syn` as the Rust parser" and
 "Rust-analyzer's syntax crate", name `design@core@grammars-not-prefixes` as the decision they lost
 to, and that head names no parser.

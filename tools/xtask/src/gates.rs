@@ -2,7 +2,7 @@
 //!
 //! The list below is the primary home of what this repository's gates are, per
 //! `design@xtask@gates-list-primary-home`. How they run is the library's,
-//! `path@gates@docs/design.md`.
+//! `register@gates@design`.
 
 use knowledge_architect::MANIFEST_NAME;
 use knowledge_architect_gates::GatesArgs;

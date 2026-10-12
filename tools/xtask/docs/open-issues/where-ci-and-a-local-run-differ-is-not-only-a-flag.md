@@ -14,7 +14,7 @@ The sentence holds of which gates run and how a run stops, and not of what the r
 
 ### What
 
-- The head, in `path@xtask@docs/design.md`: "**Where CI and a local run differ, the difference is
+- The head, in `register@xtask@design`: "**Where CI and a local run differ, the difference is
   a flag.**" It then lists `--locked`, `--fail-fast`, `--require-rebased` and `--full`.
 - The code, `path@gates@src/gates.rs`, function `under_actions`: it returns true when the
   environment variable `GITHUB_ACTIONS` is `true`. Its doc comment says two things follow: "a pipe

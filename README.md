@@ -12,7 +12,7 @@ It is built for projects developed mostly by AI agents, and has two parts that w
   project: setting up, writing goals, designing, planning, recording decisions, tracking open
   issues, reviewing, auditing the whole project on one aspect, and a retrospective.
 
-Why it exists, and what it aims for, is `path@knowledge-architect@docs/goals.md`.
+Why it exists, and what it aims for, is `register@knowledge-architect@goal`.
 
 ## Status
 

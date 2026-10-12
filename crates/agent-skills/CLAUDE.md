@@ -83,4 +83,4 @@ For the design skill, a finding about an intermediate table rather than the outc
 not worth text (`design@agent-skills@outcome-over-display`). A rewording needs no design entry
 (`design@agent-skills@instruction-record-is-minimal`).
 
-The decisions about the skills are `path@agent-skills@docs/design.md`.
+The decisions about the skills are `register@agent-skills@design`.

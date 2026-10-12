@@ -4,12 +4,12 @@ Recorded intent for the project as a whole: how the repository is laid out, how 
 versioned and released, and how work reaches main. Present tense, each decision carrying a slug,
 cited as `design@knowledge-architect@<slug>`. What lost to a decision here is
 `path@knowledge-architect@docs/rejected-alternatives.md`. The goals these decisions serve are
-`path@knowledge-architect@docs/goals.md`.
+`register@knowledge-architect@goal`.
 
 **What belongs here:** a decision that survives deleting any one component. How the checker works
-is `path@core@docs/design.md`; how the gates run is `path@gates@docs/design.md`, and this repository's own gates
-`path@xtask@docs/design.md`; how the agent
-skills are shaped is `path@agent-skills@docs/design.md`.
+is `register@core@design`; how the gates run is `register@gates@design`, and this repository's own gates
+`register@xtask@design`; how the agent
+skills are shaped is `register@agent-skills@design`.
 
 ## 1. Layout and packaging
 

@@ -1,6 +1,6 @@
 # Rejected alternatives — knowledge-architect
 
-The alternatives that lost to a decision of `path@knowledge-architect@docs/design.md`, each with
+The alternatives that lost to a decision of `register@knowledge-architect@design`, each with
 what it lost to and why. An entry stays while the argument that defeated it holds.
 
 **The checker's crate in crates/knowledge-architect** — lost to

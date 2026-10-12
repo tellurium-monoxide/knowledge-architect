@@ -6,7 +6,7 @@
 //! The project's `knowledge-architect.toml` declares what is checked, and nothing about a
 //! project is compiled in. The decisions behind the design, with their arguments, are in the
 //! repository, <https://github.com/tellurium-monoxide/knowledge-architect>, at
-//! `path@core@docs/design.md`.
+//! `register@core@design`.
 //!
 //! # Who uses this library
 //!

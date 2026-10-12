@@ -1,7 +1,7 @@
 # xtask
 
 Workflow automation. What it does and how to run it is `path@xtask@README.md`; why it is shaped
-this way is `path@xtask@docs/design.md`. The gates run through the published library,
+this way is `register@xtask@design`. The gates run through the published library,
 `path@gates@CLAUDE.md`, whose contracts hold for every gate this tool runs.
 
 **This file holds what is true of the code as it stands.**

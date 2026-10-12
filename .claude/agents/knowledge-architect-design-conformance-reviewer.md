@@ -36,8 +36,8 @@ Components and their directories.
 
 For each Component on the list, read whole:
 
-- its goals home, `path@*@docs/goals.md`, or the subdocuments of `path@*@docs/goals/`;
-- its design home, `path@*@docs/design.md`, or the subdocuments of `path@*@docs/design/`;
+- its goals home, `register@*@goal`, every subdocument included where it is a directory;
+- its design home, `register@*@design`, every subdocument included where it is a directory;
 - its `path@*@docs/rejected-alternatives.md`.
 
 Run `cargo klarch show <kind>@<anchor>@<id>` on every goal and every design entry the document cites,

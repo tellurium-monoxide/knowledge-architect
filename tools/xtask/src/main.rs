@@ -1,7 +1,7 @@
 //! Workflow automation for this repository. One subcommand per workflow.
 //!
 //! What each subcommand does and how to invoke it is `path@xtask@README.md`; why the tool is
-//! shaped this way is `path@xtask@docs/design.md`. Adding a subcommand is one module plus one
+//! shaped this way is `register@xtask@design`. Adding a subcommand is one module plus one
 //! variant below, per `design@xtask@one-module-per-subcommand`.
 
 mod changelog;

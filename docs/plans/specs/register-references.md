@@ -23,17 +23,16 @@ leaves the repository in the commit that completes its harvest.
 - Where the owner's word is awaited, `skill@knowledge-architect-planning@working-a-slice` says what
   waits. Five defaults were put to the owner, D1 to D5, under "Defaults awaiting the owner", and
   the owner ruled on all five.
-- **The spec lands before its work, in a pull request of its own.** Its work starts only once
-  `spec@plans@path-quickfixes` has landed and been harvested, since this work adds rows to the
-  respellings that spec builds; the order rationale gives the reason.
+- **The spec landed before its work, in a pull request of its own.** Its work was first ordered
+  after `spec@plans@path-quickfixes`, whose respelling machinery it would add rows to. That spec is
+  on hold for an undefined duration, and the owner, after the spec landed: "We will build the spec we just designed, without anything related to quickfixes. Then, harvest it into either the project record or into the path quickfix spec. And the path-quickfixes spec will be clearly marked as on hold, so this does not happen again." and "And the quickfix spec should not blcok a release." So this work builds everything but the
+  respelling, migrates this repository by a one-off script, and its harvest moves the respelling
+  and every item about it into `spec@plans@path-quickfixes`; this work's release does not wait for
+  that spec. Its design audit applied this amendment in place.
 - **The work starts with the design audit** of
   `skill@knowledge-architect-planning@working-a-slice` point 2, since it does not start in the session
-  where the discussion converged, and since `spec@plans@path-quickfixes` will have landed between.
-  That landing deletes `spec@plans@path-quickfixes`, so every citation of it here dangles then:
-  the session that deletes it removes each citation, as
-  `skill@knowledge-architect-planning@plan-document-leaves` says, and this spec's audit reads the
-  heads that spec's harvest wrote in their place. Every name this spec needs from it is defined
-  here, under Names.
+  where the discussion converged. Every name this spec needs from `spec@plans@path-quickfixes` is
+  defined here, under Names.
 - It was assembled from one transcript,
   `path@elsewhere@~/.claude/projects/-home-catA-tb266682-Documents-code-knowledge-architect/c074f629-1136-4498-aff3-f53ca6bff772.jsonl`.
   Find the file by its opening message, not by its name: the discussion begins at the owner's
@@ -140,7 +139,7 @@ or agent" of `path@agent-skills@CLAUDE.md`, read whole.
 - Tests pin today's acceptance of home targets: `the_generic_anchor_accepts_the_required_set_and_what_a_component_carries`
   and `a_required_name_still_carries_the_kind_claim` in `path@core@src/check/references.rs`, and
   `the_required_document_set_carries_each_shape_with_its_kind` in `path@core@src/entity.rs`.
-- The mock project `path@core@tests/projects/dirhome/` holds the old form `path@plans@specs/` in its
+- The mock project `path@core@tests/projects/dirhome/` holds the old form `register@plans@spec` in its
   milestone document, and `the_conformant_mocks_report_nothing_over_every_core_check` in
   `path@core@src/mock_projects.rs` asserts that it reports nothing. The manifest's `exclude` keeps
   the mock projects out of this repository's walk, so `--fix` run here does not reach it.
@@ -228,7 +227,7 @@ listed it at the commit this spec was written on. Re-run `show` at the design au
 - `design@core@an-unresolved-reference-is-reported` is rewritten at the harvest: it counts five ways
   a reference resolves to nothing, and says the third, an anchor carrying no register of the kind,
   is reachable only by a location. Under the new kind a Component can carry no such register, as for
-  `register@core@spec`, and the new kind adds refusals of its own. The head states the new kind's
+  `register@<component>@spec`, and the new kind adds refusals of its own. The head states the new kind's
   ways, or states that each kind's resolver gives its own.
 - `design@core@registers-are-declared` is rewritten at the harvest: its list of the names a declared
   register may not take, "`path`, `planned` or a harness kind", gains `register`. Its argument, "a
@@ -326,11 +325,12 @@ quotations no other escape. Satisfaction: met. Placeholder spans stay unrecorded
 
 Weighed. Measured at the discussion: 354 placeholder spans; about 70 `path` references with a
 literal anchor to a register home, and 76 `*` spans naming one, in this repository; the same forms
-in every adopting project's own documents. Satisfaction: met for every old form written as one span
-with no suffix, by `acceptance@register-references@fix-respells-every-old-form`. Unmet for a pair,
-which `--fix` turns into two identical spans that a writer collapses by hand, and for a span with a
-suffix, which a writer repairs by hand: unmet-and-accepted, on the owner's ruling on D1, which names
-this criterion.
+in every adopting project's own documents. Satisfaction: unmet-and-accepted. On the owner's ruling
+on D1, a pair and a suffixed span are repaired by hand. On the owner's later ruling that this work
+builds nothing related to the respelling, every old form in an adopting project is repaired by
+hand or by the project's own script until `spec@plans@path-quickfixes` lands its respelling; the
+CHANGELOG's Migration entry gives a mechanical recipe. In this repository, a one-off script
+repairs every single span.
 
 ## Threads
 
@@ -740,7 +740,10 @@ register's home; its repair names the new form. Which paths are home targets is 
 
 Nearest rival: both forms legal. It lost on `argument@register-references@a17`.
 
-### The respelling
+### The respelling, left to `spec@plans@path-quickfixes`
+
+Not built by this work, on the owner's ruling quoted under Status. It is kept here as decided, and
+the harvest moves it, with AC1 and D1 to D3, into `spec@plans@path-quickfixes`.
 
 `--fix` respells each finding on a home target with no suffix into the new form: the anchor written,
 `*` kept as `*`, or the deepest anchor where the target sat inside one; the register whose home the
@@ -766,18 +769,21 @@ session's.
 
 In this repository:
 
-- `--fix` respells every old form of the walk, in Markdown documents and Rust comments, the source
-  of the installed text under `path@agent-skills@content/` included. Its output lists every
-  respelled span with its file and line.
+- A one-off script, run once in the work's branch and not committed, rewrites every span the new
+  finding reports, in Markdown documents and Rust comments, the source of the installed text under
+  `path@agent-skills@content/` included: for each finding, the span at its file and line becomes
+  the form its repair names. The finding list is `cargo klarch check`'s output.
 - `cargo klarch install-agent-skills` rewrites the installed copies under .claude from that source.
 - Each pair is collapsed by hand, per D1. The instrument that finds them: a search for a line that
   holds one backticked `register` span twice, such as
   `git grep -nP '(\x60register@[^\x60]+\x60).*\1'`, where `\x60` is a backtick.
 - Each respelled span whose sentence illustrates the `path` grammar, rather than pointing at the
   home, is rewritten by hand to a `path` reference that is no home target, such as one naming a
-  Component's rejected alternatives. The respelled sites are those `--fix` listed; the root
-  CLAUDE.md and `design@core@reserved-anchors` hold such illustrations.
-- The mock project `path@core@tests/projects/dirhome/`, outside the walk, is edited by hand.
+  Component's rejected alternatives. The rewritten sites are those the finding list named; the
+  root CLAUDE.md, `design@core@reserved-anchors` and one issue entry's reproduction recipe hold such
+  illustrations.
+- The mock projects `path@core@tests/projects/dirhome/` and `path@core@tests/projects/minimal/`,
+  outside the walk, are edited by hand.
 - The Rust test-string fixtures that hold old forms are data, per
   `design@core@checker-source-literals-are-data`, and stay as they are, except where a test asserts
   the acceptance of a home target, which the work changes.
@@ -857,12 +863,14 @@ The owner's ruling, round 6: "Keep none of the three tripwires, but keep the thr
 ## Acceptance criteria
 
 The fixtures follow `path@core@CLAUDE.md`: a phase-4 defect is planted in the mock `planted`
-alone; `dirhome` is the conformance mock and reports nothing; `check --fix` is never run inside
-`planted`, so a test of `--fix` runs on a copy, through `Sandbox` in `path@core@tests/binary.rs`.
+alone, and a unit test of one check states its own documents and listing instead; `dirhome` is the
+conformance mock and reports nothing; a binary test runs on a copy, through `Sandbox` in
+`path@core@tests/binary.rs`.
 
 ### AC1: `--fix` respells every old form written as one span with no suffix, and a second run writes nothing `##fix-respells-every-old-form`
 
-Guards `thread@register-references@path-to-a-home-is-reported`. Judged at step 3. The observable
+Not judged by this work, which builds no respelling; the harvest moves it into
+`spec@plans@path-quickfixes`. Guards `thread@register-references@path-to-a-home-is-reported`. Judged at step 3. The observable
 that fires it: a test, on a `Sandbox` copy, plants each home-target row of the mapping table under a
 literal anchor, under `*`, inside a deeper anchor, with a wrong trailing slash, and as a pair; after
 `check --fix`, a planted old form remains, or a span is not the new form its row gives, or a second
@@ -875,15 +883,15 @@ agent.
 ### AC2: a heading register's README is a home target, a file register's is not `##readme-by-register-shape`
 
 Guards `thread@register-references@path-to-a-home-is-reported`. Judged at step 2. The observable: a
-test over `planted`; a `path` reference to the `README.md` of a heading register's directory home
+unit test of the references family over a stated listing; a `path` reference to the `README.md` of a heading register's directory home
 is not reported, or one to the `README.md` or the `index.md` of a file register's directory is
 reported. Response: the definition of a home target reopens.
 
 ### AC3: `show` resolves a `register` reference to its home `##show-resolves-a-register`
 
 Guards `thread@register-references@register-home-reference`. Judged at step 1. The observable: a
-test runs `show` on a `register` reference over a mock project with a file home and one with a
-directory home, `dirhome` being the latter; the output does not print the path of the home the tree
+test runs `show` on `register` references over `dirhome`, which holds a file home and a directory
+home; the output does not print the path of the home the tree
 holds and the register's shape, or omits a site that references it. Response: the thread's cost, a
 reader who cannot see the file, is unmet, and the thread reopens.
 
@@ -891,7 +899,7 @@ reader who cannot see the file, is unmet, and the thread reopens.
 
 Steps 1 to 3 change what `cargo klarch commits` requires of every tree of the branch, so per
 `primer@branch-commits` they land in the branch's first commit with every fix the tree needs, step
-3's migration included, or the branch is squashed to one commit before its review.
+3's migration and this audit's amendment included.
 
 1. **The kind, resolved and shown, with only this spec using it.** `Anchors::kind`, `is_kind_name`,
    `kinds_listed` and `resolve_registers` gain the word; `judge_part` sends it to `fn register`,
@@ -905,17 +913,17 @@ Steps 1 to 3 change what `cargo klarch commits` requires of every tree of the br
    arm of `fn path`, with the suffix stripped; `required_kind` stops accepting a home target and its
    doc comment says so; the three tests that pin today's acceptance are changed. Judges AC2. Fails
    alone on: which paths are home targets.
-3. **The respelling and the migration.** The rows added to the respellings; then "The migration".
-   Judges AC1. Fails alone on: a row that does not respell, or a respelled span that is still a
-   finding.
+3. **The migration.** "The migration", by the one-off script. Fails alone on: a span the finding
+   list names that is still a finding, or a quotation or an illustration the script rewrote.
 4. **The text.** The primer's vocabulary sentence; the root CLAUDE.md, whose
    `instructions@mechanical-validation` restates the kind list and the generic anchor's rule;
    `path@core@README.md`, its sections on `check`, on `show` and on the manifest's refusals;
    the rules of `path@agent-skills@CLAUDE.md` on the forms the shipped text may write; the CHANGELOG
    entries in `Next release`, then `cargo x changelog`. The entries: the new kind, under the
-   checker; the finding on a home target, with a Migration entry that says to run
-   `cargo klarch check --fix`, to collapse each pair and repair each suffixed span by hand, and that
-   a project's root CLAUDE.md restating a home is among the sites. Which subsections, which class,
+   checker; the finding on a home target, with a Migration entry that gives a mechanical recipe for
+   the common old forms, since no `--fix` respells them, says to collapse each pair and repair each
+   suffixed span by hand, and says that a project's root CLAUDE.md restating a home is among the
+   sites. Which subsections, which class,
    and whether the Migration entry cites an audit axis follow
    `design@knowledge-architect@changelog-entries` and `design@knowledge-architect@versioning-policy`,
    read whole by the implementing session.
@@ -923,14 +931,10 @@ Steps 1 to 3 change what `cargo klarch commits` requires of every tree of the br
 
 ## Order rationale
 
-- `spec@plans@path-quickfixes` lands before this work, because its respelling machinery is what
-  step 3 adds rows to, and its harvest rewrites the heads on what `--fix` may do that this work's
-  respellings must fit; built first here, the work would build a second machinery or contradict
-  those heads before they change.
 - The kind comes before the finding, because the finding's repair names the kind, and a repair that
   names a form the checker does not resolve sends the writer nowhere.
-- The finding comes before the respelling, because the respelling rewrites what the finding
-  reports, and AC1 asserts that no finding is left.
+- The finding comes before the migration, because the migration rewrites what the finding
+  reports, from the finding list.
 - The migration comes before the text, because step 4 edits documents that step 3's run has already
   respelled, so its own edits are written in the new form.
 - The text comes before the harvest, because the harvest's heads state the design as built, and the
@@ -990,7 +994,7 @@ the losing alternatives, and `skill@knowledge-architect-issue-tracking` for the 
 | --- | --- | --- |
 | `thread@register-references@register-home-reference`, with `thread@register-references@home-reference-anchors` as its parameter and `thread@register-references@register-home-kind-word` as its word, the owner's words its ground for the word | a new head of the core design home, slug `register-home-reference` | the harvest commit |
 | `thread@register-references@path-to-a-home-is-reported`, the finding alone | a new head of the core design home, slug `path-to-a-home-is-reported`, its title stating the finding | the harvest commit |
-| the respelling of a home target, with D2 as ruled | the heads `spec@plans@path-quickfixes` wrote on what `--fix` may do: the rows as members, the two exclusions rewritten | the harvest commit |
+| the respelling of a home target, AC1, and D1 to D3 as ruled, with the owner's words | `spec@plans@path-quickfixes`, as work of that spec: its respellings gain the rows, its two exclusions give way for a home target, its acceptance criteria gain AC1, and the clause of `tripwire@core@fix-makes-a-choice` that names this spec names that one alone | the harvest commit |
 | the kind list | the rewrites of `design@core@one-entity-table` and `design@core@harness-kinds` | the harvest commit |
 | the ways the new kind resolves to nothing | the rewrite of `design@core@an-unresolved-reference-is-reported` | the harvest commit |
 | the register name the manifest refuses | the rewrite of `design@core@registers-are-declared` | the harvest commit |

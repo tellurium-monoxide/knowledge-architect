@@ -101,7 +101,7 @@ stops at the first phase that produced anything, prints those findings, and open
 with the phase, the count and the phases not judged, so a stop is never mistaken for a pass;
 a clean run names every check it performed. The whole report stops: the per-document form,
 hiding only what an unread file could have defined, is three times the machinery for facts
-that mostly have no per-file scope, and `path@core@docs/tripwires.md` guards that choice.
+that mostly have no per-file scope, and `register@core@tripwire` guards that choice.
 
 **An extension prepares its tree when the last phase is reached**, so a run that stops earlier
 resolves no release and fetches nothing, whatever it would have judged. **A writer refuses over an incomplete model**: `index`
@@ -224,7 +224,7 @@ of the run comparable with the walk and the parse reopens caching the scan insid
 
 **An extension cannot add a kind to the entity table.** A reference kind is the core's, so an extension's
 subject cannot be cited as `<kind>@<anchor>@<id>`. Nothing needs that today, and
-`path@core@docs/tripwires.md` names the event that would.
+`register@core@tripwire` names the event that would.
 
 ### An extension claims the manifest tables it reads, and the core refuses a table nobody claims `##an-extension-claims-its-manifest-tables`
 
@@ -472,7 +472,7 @@ the strength of a working-tree state.
 
 **The summary block prints the walked-file count**, so two machines disagreeing about the walk is
 visible in the output rather than inferred from a finding list. The tripwire is in
-`path@core@docs/tripwires.md`.
+`register@core@tripwire`.
 
 **This is the working tree's walk, the one plain `check` reads.** `check --staged` and `commits`
 read a snapshot instead, from git objects alone, per `design@core@staged-tree-source` and
@@ -597,7 +597,7 @@ staged tree, lost because CI runs `check` on a checkout: a staged run that skips
 files passes a tree CI fails. Two reads stay the working tree's: the ignore rules a path reference
 asks, as for `commits`, and the version pin, compared before any command per
 `design@core@installed-binary-version-check`. The tripwire on a staged pass that CI then fails is
-in `path@core@docs/tripwires.md`.
+in `register@core@tripwire`.
 
 ### `check` judges no given commit's tree; `commits` does `##check-judges-no-given-commit`
 
@@ -687,7 +687,7 @@ in every respect but the one its layout fixes:
   among the anchors of its depth, so a declaration that collides with it is the one refused and
   its complaint names a declaration the project can change. It owes a `README.md` beside its two
   homes.
-- **One anchor per milestone**: each directory of `path@plans@milestones/` holding a file
+- **One anchor per milestone**: each directory of `register@plans@milestone` holding a file
   `README.md`, named by its basename, per `design@core@plan-document-kinds`. Its `spec` register
   has its home at the anchor's own path, so its slice specs sit beside the milestone
   document and are cited `spec@<milestone>@<slice>`, unique only inside the milestone. It carries
@@ -1012,7 +1012,7 @@ every offset the analysis returns is an offset into the file as written.
 An unknown kind is a finding naming the list, and adding one is a reviewed manifest diff. The kind
 decides which subsections the entry owes, so an unknown one would owe the wrong three in silence, which is what makes refusing it load-bearing
 rather than tidy. The open set is in `path@core@docs/rejected-alternatives.md`, and
-`path@core@docs/tripwires.md` guards the closing.
+`register@core@tripwire` guards the closing.
 
 ### A milestone entry is a directory, the register shape `Directory` `##milestone-entries-are-directories`
 
@@ -1416,7 +1416,7 @@ a harness kind takes the arities of `design@core@harness-kinds-cited-without-anc
 
 **The silence is bounded and named.** A typo inside the kind, `desing@<anchor>@<id>`, is silent under this
 rule, because widening it to "any span with two `@`" would report every email address with a
-plus tag. `path@core@docs/tripwires.md` guards the gap: a review finding a reference the scanner
+plus tag. `register@core@tripwire` guards the gap: a review finding a reference the scanner
 reported nothing for widens the rule to the shape found.
 
 **A span is one line.** A backticked span that opens on one line and closes on the next is a
@@ -1676,7 +1676,7 @@ what removing the backticks costs, and that move is refused as a repair by
 `design@agent-skills@plain-text-is-no-repair`.
 
 **The generic anchor `*`**, `path@*@<path>`, marks each component's own copy of a path, as in
-`path@*@docs/tripwires.md` written with the kind in front. It is accepted when the path is one of the
+`path@*@docs/rejected-alternatives.md` written with the kind in front. It is accepted when the path is one of the
 required document names in any of its shapes — the compiled documents, every heading register's
 file, directory and README, and every file register's directory, README and index, so naming a
 shape no component uses yet is legitimate — and otherwise when at least one component carries the

@@ -496,4 +496,4 @@ the directory of each Component a binary's libraries belong to, so that the stri
 the tool's own source are read as data. The decision is
 `design@core@nothing-of-a-project-is-compiled-in`.
 
-Read `path@core@docs/design.md` before changing how it works.
+Read `register@core@design` before changing how it works.
