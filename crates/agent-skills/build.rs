@@ -43,6 +43,9 @@ const SNIPPET: &str = "{{snippet:";
 
 /// Each placeholder and the literal it ships as. A row exists only for text that must ship
 /// verbatim and that the checker would misread; a sentence that can be rewritten is rewritten.
+/// The substitutions are the owner's proposal: they keep the shipped sentences from turning
+/// convoluted, as documented exceptions where the checker is avoided on purpose for the delivery of
+/// the installed text.
 const SUBSTITUTIONS: &[(&str, &str)] = &[
     // The primer's import line, which the root CLAUDE.md of a project holds alone on its line. Its
     // span has an empty head before the first `@`, which the checker reports as a malformed
