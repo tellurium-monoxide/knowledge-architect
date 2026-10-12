@@ -21,8 +21,8 @@ leaves the repository in the commit that completes its harvest.
   spec.
 - Every name it uses is defined in it, under Names or New names, or exists in the tree.
 - Where the owner's word is awaited, `skill@knowledge-architect-planning@working-a-slice` says what
-  waits. Three defaults were put to the owner, D1 to D3, under "Defaults awaiting the owner", and
-  the owner ruled on all three.
+  waits. Five defaults were put to the owner, D1 to D5, under "Defaults awaiting the owner"; the
+  owner ruled on D1 to D3.
 - **The spec lands before its work, in a pull request of its own.** Its work starts only once
   `spec@plans@path-quickfixes` has landed and been harvested, since this work adds rows to the
   respellings that spec builds; the order rationale gives the reason.
@@ -167,8 +167,9 @@ or agent" of `path@agent-skills@CLAUDE.md`, read whole.
 - **A milestone or a spec anchor in the new form.** A milestone's `spec` register has its home at
   the milestone's own directory, which `milestone@plans@<id>` already names, and one document with
   two names is what `design@core@plan-document-kinds` refuses. A spec anchor carries only item
-  registers. Neither is an anchor of the new form, and `thread@register-references@home-reference-anchors`
-  as approved names neither.
+  registers. Neither is an anchor of the new form, per D4. The rule the owner approved in
+  `thread@register-references@home-reference-anchors` admits a milestone for its `spec` register, so
+  this narrows that ruling.
 - **A rendered link for the new form.** `issue@core@the-documents-do-not-render-as-a-site` owns
   the rewrite of every reference into a link; this work gives that pass one more kind to resolve.
 
@@ -189,7 +190,10 @@ or agent" of `path@agent-skills@CLAUDE.md`, read whole.
   re-points one span inside this head's body, its pointer to the core tripwires home. Re-pointing a
   reference in a head does not touch it, per `primer@design-heads`, so the split that
   `issue@core@four-heads-bundle-decisions-with-many-citing-sites` owes at the next edit of this head
-  is not triggered.
+  is not triggered. `design@agent-skills@existing-heads-on-touch` names no such exemption, which
+  `issue@agent-skills@the-head-on-touching-heads-omits-the-primer-s-re-pointing-exemption` records;
+  the design audit reads that entry, and the split is part of this work if it closes against the
+  exemption.
 - `design@core@every-path-names-its-anchor`: the `path` grammar, the deepest-anchor rule, and the
   admission of `path@plans@<file>`. The finding on a home target is a head of its own, not a member
   of this head: this head is one of the bundles that
@@ -365,9 +369,11 @@ since it loses to another rival, a migration by hand. Also the rewrite of
 
 ### The anchors that admit the kind `##home-reference-anchors`
 
-Proposed by the agent, round 3, `argument@register-references@a18`: a Component, `*` for the
-component registers, a declared location, and `plans` for spec and milestone; the item registers
-excluded. Final state: approved. The owner, round 4: "home-reference-anchors: agreed." Shape: "The
+Proposed by the agent, round 3, `argument@register-references@a18`: "any anchor that carries the
+named register, and whose home for it is a file or a directory", with the examples a Component, `*`
+for the component registers, a declared location, and `plans` for spec and milestone; the item
+registers excluded. The rule admits a milestone anchor for its `spec` register, whose home is the
+milestone's directory; D4 narrows it. Final state: approved. The owner, round 4: "home-reference-anchors: agreed." Shape: "The
 new kind". Harvest: in the head of `thread@register-references@register-home-reference`, as the
 rule's parameter, and in the rewrite of `design@core@reserved-anchors`.
 
@@ -958,6 +964,25 @@ Steps 1 to 3 change what `cargo klarch commits` requires of every tree of the br
   harvest; that spec's harvest deletes the entry as it already says. The edit of a tripwire's firing
   clause is made in this spec's branch. **Ruled: approved.** The owner, in a message after the review of this spec: "All three agreed, proceed".
 
+- **D4**, bears on `thread@register-references@home-reference-anchors`. The rule the owner approved
+  in round 4, "any anchor that carries the named register, and whose home for it is a file or a
+  directory", admits a milestone anchor for its `spec` register. Its home is the milestone's own
+  directory, which `milestone@plans@<id>` already names: a second name for one document is what
+  `design@core@plan-document-kinds` refuses, so that `show` lists every citation. The premise the
+  ruling was given on did not include this case. Default: a milestone anchor and a spec anchor are
+  not anchors of the new form, and a reference with one is a finding that names the plan document's
+  form. It narrows a ruling of the owner, so it waits for the owner's word, and is built as written
+  until then. The review repair first presented this narrowing as a return to the approval, which it
+  was not; the commit message that said so is reworded.
+- **D5**, bears on `thread@register-references@register-vocabulary`. The owner approved shape 1,
+  which was proposed as one sentence in the primer that "rewrites nothing else". The decision-recording
+  skill keeps a losing alternative on "a line beside the instruction" when its decision has no head,
+  which would add a second line to the installed primer. Default: the primer gets the one sentence
+  with its reason, and the losing shape 2 is kept in the message of the commit that writes it, where
+  a session that reopens the sentence finds it with `git log -S`. It departs from that skill's
+  placement on the owner's scope, so it waits for the owner's word, and is built as written until
+  then.
+
 ## Harvest
 
 At the landing of step 5, under `skill@knowledge-architect-decision-recording` for the decisions and
@@ -973,7 +998,7 @@ the losing alternatives, and `skill@knowledge-architect-issue-tracking` for the 
 | the register name the manifest refuses | the rewrite of `design@core@registers-are-declared` | the harvest commit |
 | `*` under the new kind, and the generic `path` form's narrowed acceptance | the rewrite of `design@core@reserved-anchors` | the harvest commit |
 | the forms the shipped text may write | the rewrite of `design@agent-skills@shipped-text-cites-no-entry` | the harvest commit |
-| `thread@register-references@register-vocabulary` | the primer's sentence with its reason, written at step 4; the harvest judges by the entry tests whether the absence of a rewording earns a head, and keeps the losing shape 2 on a line beside the sentence where it earns none | step 4, and the harvest commit |
+| `thread@register-references@register-vocabulary` | the primer's one sentence with its reason, written at step 4; per D5, the losing shape 2 is kept in the message of the commit that writes the sentence, and no second line goes into the primer; the harvest judges by the entry tests whether the absence of a rewording earns a head | step 4, and the harvest commit |
 | `thread@register-references@placeholder-spans-checked` | the scoped form, into `issue@agent-skills@shipped-text-citing-an-entry-is-unchecked`; a rejected alternative of the core if the recording tests admit it | the harvest commit |
 | `thread@register-references@component-placeholder-anchor`, `home` as the kind word, and both forms legal | rejected alternatives of the core, each if the recording tests admit it | the harvest commit |
 | this spec | deleted | the harvest commit |
