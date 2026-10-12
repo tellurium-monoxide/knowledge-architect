@@ -125,7 +125,7 @@ subsection is omitted.
   reviewer reports a longer restatement, and the design skill's in-change path reads the section on
   design heads again before its grounding.
 - `agent-skills`, patch: entry test 2 counts each text that states an instruction as one site of a
-  decision about agent-facing text, so a decision one text states has one site, and its reason
+  decision about agent-facing text, a design head that restates it included, so a decision one text states has one site, and its reason
   lives beside the instruction rather than in a head.
 - `agent-skills`, patch: moving the pin runs the audit axis a Migration entry of a version crossed
   cites, in a branch of its own started from the main branch once the pin move has merged; the
@@ -229,6 +229,19 @@ subsection is omitted.
   document's criteria only. A load-bearing gap of a design audit that defeats a premise of a ruling
   stops the slice; the session does not proceed on the default the primer names. The audit a pin
   move owes starts from the main branch once the pin move has merged.
+- `agent-skills`, patch: a slice's design audit writes one line in its commit message for each
+  standing entry the search returned, with its outcome, one judged to bear on nothing included,
+  and a plan document assembled from a discussion lists the entries that discussion's search
+  returned, each with its outcome; where the slice's first change sets what the per-commit gate
+  requires, the audit's documents land in that change's commit.
+- `agent-skills`, patch: after the reviewers return, the dispatcher compares `git status --short` of
+  the live tree with its own changes, and puts anything else to the reviewer before touching it.
+- `agent-skills`, patch: a parked thread's tripwire is put to the owner under a `T<n>` label; a gap
+  of a plan review whose one answer widens or narrows a ruling goes to the owner as a scope change;
+  a plan document's later consequences move to the issue or plan document of the work they name,
+  or to a `todo` issue, before it leaves; a criterion found firing after a landing reported it is
+  reported as fired at the next landing; an audit pass counts the owner's rulings against the
+  default.
 
 ## 0.5.0
 

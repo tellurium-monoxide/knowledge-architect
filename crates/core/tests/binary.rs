@@ -111,8 +111,20 @@ impl Sandbox {
     }
 
     /// One git command in the copy, which must succeed.
+    ///
+    /// **Every invocation carries an identity on its command line**, so no command a test runs
+    /// reads the machine's: every command that writes a commit, a merge or a rebase among them,
+    /// asks for one, and a test that
+    /// passed on a machine with an identity set would fail on a runner with none. It is written
+    /// to no configuration, for the reason `stage` gives.
     fn git(&self, args: &[&str]) {
         let out = Command::new("git")
+            .args([
+                "-c",
+                "user.name=fixture",
+                "-c",
+                "user.email=fixture@example.invalid",
+            ])
             .args(args)
             .current_dir(&self.dir)
             .output()
@@ -3372,18 +3384,27 @@ fn a_bare_skill_name_is_silent_under_no_harness() {
     assert_eq!(code, 0, "{out}{err}");
 }
 
-/// Commit what the sandbox holds, with an identity given on the command line only.
+/// The claim: a commit made through `Sandbox::git` carries the sandbox's identity, not the
+/// machine's, so no test's git command depends on the identity of the machine it runs on.
+#[test]
+fn a_sandbox_commit_carries_the_sandbox_identity() {
+    let sandbox = Sandbox::new("sandbox-identity", "core");
+    sandbox.git(&["commit", "-qm", "identity"]);
+    let out = Command::new("git")
+        .args(["log", "-1", "--format=%an <%ae> %cn <%ce>"])
+        .current_dir(&sandbox.dir)
+        .output()
+        .expect("git runs");
+    assert_eq!(
+        String::from_utf8_lossy(&out.stdout).trim(),
+        "fixture <fixture@example.invalid> fixture <fixture@example.invalid>"
+    );
+}
+
+/// Commit what the sandbox holds, with the identity `Sandbox::git` gives on the command line.
 fn commit_all(sandbox: &Sandbox, subject: &str) {
     sandbox.stage();
-    sandbox.git(&[
-        "-c",
-        "user.name=fixture",
-        "-c",
-        "user.email=fixture@example.invalid",
-        "commit",
-        "-qm",
-        subject,
-    ]);
+    sandbox.git(&["commit", "-qm", subject]);
 }
 
 /// The line of a report that opens with `prefix`, or `None`.

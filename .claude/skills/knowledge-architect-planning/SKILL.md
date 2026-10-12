@@ -163,7 +163,7 @@ so in one line rather than being omitted, so a reader can tell an empty section 
 | How the work is done | in a milestone document: a pointer to `skill@knowledge-architect-planning@working-a-slice`, with an instruction to read it whole before each slice, and any addition the milestone's work needs. In a spec: one line naming this skill |
 | Names | every project shorthand the document uses, expanded to the file, function or command it names |
 | What the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
-| What is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `cargo klarch show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step, slice or harvest that judges or updates each |
+| What is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `cargo klarch show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step, slice or harvest that judges or updates each; and each standing entry the discussion's search returned, with its outcome: how it bears on the work, or that it bears on nothing |
 | Criteria | one item per criterion, ``### <criterion> `##<id>` ``: its kind, its source and its satisfaction |
 | Threads | one item per thread, ``### <resolution> `##<id>` ``: who proposed it and in which round, its final state, the arguments that moved it, the section that carries its shape, the durable home that will harvest it, and the owner's words that closed it, verbatim, with their round |
 | Arguments | one item per argument of the discussion, ``### <argument> `##a<n>` ``: its round, who gave it, the threads it bears on, and its key words verbatim |
@@ -265,6 +265,9 @@ failure.** Every other test here serves that one.
 - **A step touches at most one subsystem it did not build.** Two subsystems in one step are two
   failure surfaces with one name.
 - **The last step consumes**: the measurements, the report, the harvest.
+- **A step whose trees cannot pass the tip's checker alone** lands in the commit of the step that
+  makes them pass, per `primer@branch-commits`. The tests above still decide where the steps are
+  cut; the history only holds them together.
 - **One branch and one merge per slice**, each merged before the next slice begins, and reviewed
   before the merge. A step is no unit of the history: how many commits it takes, and what other
   commits the branch carries, such as the commit of its own a fix met outside the task takes, is the
@@ -333,10 +336,14 @@ default marked as the owner's to reset.
   message cites a plan only whole: the decision guarded, fired or not, the evidence, the response
   taken.
 - **A criterion that fires** leaves the document at once, as an issue entry or a reopened decision,
-  under `skill@knowledge-architect-issue-tracking`.
+  under `skill@knowledge-architect-issue-tracking`. A criterion is judged by its observable,
+  wherever the observation was made: one that a later review or test shows firing after a landing
+  reported it as not fired is reported as fired in the next landing commit, which names the earlier
+  report as superseded.
 - **When the document leaves**, the landing that deletes it reports on every criterion once more.
   One that did not fire and recurs at later work is proposed to the owner as a tripwire, and written
-  on the owner's word as `skill@knowledge-architect-decision-recording@ruled-tripwires` says. One
+  on the owner's word as `skill@knowledge-architect-decision-recording@ruled-tripwires` says, or,
+  where an entry already guards the same decision, folded into it as an absorbed tripwire is. One
   that is spent, or that the owner declines, is deleted with the document.
 
 ## Working a slice, and the work of a spec `##working-a-slice`
@@ -371,8 +378,12 @@ ruling, the slice stops instead of proceeding on the default that `primer@owner-
      choice among shapes the document rules out all but one of. Apply the answer in place, in the
      milestone document or the slice's spec, wherever the shape it changes is written. Commit the
      amended documents alone, with a subject that names the slice's design audit in those words,
-     and a message listing each finding: the gap, the answer and the decision it follows from.
-     Earlier audits are found with `git log --grep='design audit'`.
+     and a message listing each finding: the gap, the answer and the decision it follows from; and
+     one line for each entry the search returned, with its outcome, an entry judged to bear on
+     nothing in the slice included. Where the slice's first change sets what the per-commit gate
+     requires, per `primer@branch-commits`, the amended documents land in that change's commit
+     instead, and its message carries the audit's subject and list. Earlier audits are found with
+     `git log --grep='design audit'`.
      **An answer that widens or narrows a ruling of the owner, or adds an obligation to one, is a
      scope change even when it is the one answer the document implies.** It is applied with the
      others, and also listed in the milestone document as a default awaiting the owner.
@@ -489,7 +500,8 @@ marked as ruled, with its label, since the sections it was written into cite it 
 finding that is a gap with one answer is applied in place. A finding that is wrong is dropped, with
 the reproduction that showed it wrong kept in the commit message. A scope change, a clause that
 widens or narrows a ruling or adds an obligation to it, is put to the owner, listed under the
-defaults awaiting the owner. Detail the author added inside the scope of a ruling, and a wording
+defaults awaiting the owner. **A gap whose one answer widens or narrows a ruling of the owner, or
+adds an obligation to one, is a scope change**, as at the design audit. Detail the author added inside the scope of a ruling, and a wording
 better than the one the owner was shown, are no findings.
 
 **The readiness checks**, applied by the author before dispatch and by the cold implementer after.
@@ -522,20 +534,26 @@ milestone document leaves with the last slice. Before deleting:
 - every acceptance criterion has been reported on, and has become a tripwire or left (`skill@knowledge-architect-planning@acceptance-criteria`);
 - what the document established is in the design homes and the registers; what stayed a guess
   leaves with it;
+- each of its later consequences is in the issue entry or the plan document of the later work it
+  names, and in a `todo` issue opened for it where that work has neither;
 - its row of the roadmap, if it has one, is removed (`skill@knowledge-architect-planning@spec-or-milestone`).
 
-**A citation of the leaving document from another plan dangles.** The session that meets it, the
-one deleting the document or the one rebasing the citing plan's branch onto that deletion, does two
-things in one commit:
+**A citation of the leaving document from another plan document dangles.** The session that meets
+it, the one deleting the document or the one rebasing the citing document's branch onto that
+deletion, does two things in one commit:
 
-- it removes the citation from the citing plan;
+- it removes the citation from the citing document;
 - it opens a `question` issue in the root's issue register, under
-  `skill@knowledge-architect-issue-tracking`: does the citing plan still hold now that the leaving
-  plan is built, accounting for deviations or other unplanned happenings? It is answered by reading
-  the citing plan against what the leaving plan harvested. The
-  issue cites the citing plan, so it cannot outlive it, and its `Why it matters` cites the leaving
-  plan's harvested design entries, since the leaving plan no longer exists. For a milestone, its
-  next slice's audit reads the issue.
+  `skill@knowledge-architect-issue-tracking`: does the citing document still hold now that the
+  leaving document's work is built, accounting for deviations or other unplanned happenings? It is
+  answered by reading the citing document against what the leaving document harvested. The
+  issue cites the citing document, so it cannot outlive it, and its `Why it matters` cites the
+  leaving document's harvested design entries, since the leaving document no longer exists. For a
+  milestone, its next slice's audit reads the issue.
+
+A milestone's own documents are one plan: a slice spec that leaves is cited by its milestone
+document and its sibling specs by design, and they re-point or remove the citation with no
+`question` issue, since the next slice's audit already reads the milestone against what landed.
 
 Any other citation of the leaving document, from an issue, a design head or a `CLAUDE.md`, dangles
 too, and `cargo klarch check` reports it: the deleting commit repairs each, and an issue whose

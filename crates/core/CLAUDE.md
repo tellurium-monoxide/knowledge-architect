@@ -29,7 +29,10 @@ instead, from git objects, through
 changes, or one commit's tree, per `design@core@staged-tree-source`.
 
 **A test that copies a mock project runs `git init` and `git add -A` in the copy**, or the walk
-is empty and the test proves nothing; `Sandbox` in `path@core@tests/binary.rs` does it. Two
+is empty and the test proves nothing; `Sandbox` in `path@core@tests/binary.rs` does it. **A test
+never depends on the machine's git configuration, its identity included**: `Sandbox::git` gives
+every invocation an identity on its command line, and `Sandbox::stage` pins away the per-user
+ignore file, each writing nothing to the copy's configuration. Two
 consequences a test about ignore behaviour has to choose between, because the ignore rules act on
 untracked files alone:
 

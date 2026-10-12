@@ -39,6 +39,7 @@ locations, register instances and file entries. Report those counts as well as t
 defined count that grows while the reference count does not is an anchor nobody cites, and the
 reverse is a family of pointers about to dangle.
 
+%% The table below restates `design@core@an-unresolved-reference-is-reported`, `design@core@candidate-rule-and-retired-forms`, `design@core@every-path-names-its-anchor`, `design@core@trailing-slash-claims-directory`, `design@core@a-slug-elsewhere-defines-nothing` and `design@core@an-entry-is-a-heading-at-the-register-level`.
 | failure | what it actually means |
 | --- | --- |
 | `is referenced and` … `defines no` | a pointer into nothing: the anchor carries the register and no entry there has that id. Cheap to create and expensive to notice later. Define it where the decision is made, or point at the entry that exists. |
@@ -52,6 +53,7 @@ reverse is a family of pointers about to dangle.
 | `is also defined at` | one id defined twice in one register instance; usually a rename that left one behind. A reference must resolve to exactly one entity. |
 | `is linked from a file that is not a navigation home` | a relative markdown link in prose. A pointer in prose is a reference. |
 
+%% The paragraph below restates `design@core@candidate-rule-and-retired-forms`, `design@core@every-path-names-its-anchor` and `design@core@ignored-targets-are-not-asserted`.
 **What the checks cannot see.** Some backticked spans are silent: a bare filename named in
 prose, a heading or a section title quoted from another document, a misspelt kind. A path-shaped
 span whose first

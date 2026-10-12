@@ -661,12 +661,13 @@ but anything not argued in there has to be judged by the agents." The session th
 code reads the comment at that code, not a design home it would have to think to search. Test 2 is
 where the checker's reach ends: a reason that several sites must respect needs a home each site can
 cite, and a comment cannot be cited, while a policy no code and no text states, or an absence, has
-none; for agent-facing text, each text that states the instruction is one site, so a reason stated
-by one text lives beside its instruction. The rival reading, a policy with no code of its own as the
+none; for agent-facing text, each text that states the instruction is one site, a design head
+that restates it included, so a reason stated by one text lives beside its instruction. A head that
+restates an instruction is read and acted on as the skill is, so the reason must reach it too; an
+audit that counted the skill alone moved a head to a `%%` line while a second head still stated its
+rule, and the head was restored. The rival reading, a policy with no code of its own as the
 case of installed text, fails: an audit counted two skills stating one decision as one site, and the
-clause could be read to admit every decision about installed text, as the closed issue
-what-a-site-is-for-installed-text-is-undefined records, found with
-`git log --diff-filter=D -- '*/what-a-site-is-for-installed-text-is-undefined.md'`. Test 1 covers
+clause could be read to admit every decision about installed text. Test 1 covers
 every interface others consume, not only a type or a signature: a head about a grammar, a file
 format or a command binds every adopting project, and under a strict test 1 such a head enforced in
 one module would pass no test. Test 3 counts a tool's behaviour measured as well as documented: a

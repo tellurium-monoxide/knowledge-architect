@@ -135,7 +135,9 @@ where the pass applies none. Its message says what was audited, at which commit,
 dispatched, the calibration reading settled where the axis has one, the outcome of each finding in
 a line, and the path of the pass's report file. A figure the audit measured goes there too, and the
 count of violations left on old text and on new text, as point 4 defines them, and of those on old
-text that went on the owner list, so that the passes show whether the audit converges.
+text that went on the owner list, so that the passes show whether the audit converges. It counts
+too how many of the owner's rulings on the owner list went against the default, which a tripwire
+on the audit's method may read.
 
 ## Repairs to agent-facing text `##repair-standard`
 
