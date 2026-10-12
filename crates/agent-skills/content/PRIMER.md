@@ -197,7 +197,7 @@ records dozens per unit of work stops being readable and stops being ranked.
    be cited. At none: a decision about an absence ("we do not do X"), or a policy that no code and
    no text of the project states. For a decision about agent-facing text, a skill, an agent or a
    `CLAUDE.md`, each text that states the instruction is one site, a design head of the project
-   that restates it included: a decision stated by one text
+   that restates it included, other than the decision's own: a decision stated by one text
    has one site, and its reason lives in that text, beside the instruction; or
 %% In this repository, the place beside an instruction of the installed text is a `%%` line:
 %% `design@agent-skills@shipped-text-line-comments`.

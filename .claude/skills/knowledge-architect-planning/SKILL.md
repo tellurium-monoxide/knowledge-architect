@@ -267,7 +267,7 @@ failure.** Every other test here serves that one.
 - **The last step consumes**: the measurements, the report, the harvest.
 - **A step whose trees cannot pass the tip's checker alone** lands in the commit of the step that
   makes them pass, per `primer@branch-commits`. The tests above still decide where the steps are
-  cut; the history only holds them together.
+  cut; only their commits are joined.
 - **One branch and one merge per slice**, each merged before the next slice begins, and reviewed
   before the merge. A step is no unit of the history: how many commits it takes, and what other
   commits the branch carries, such as the commit of its own a fix met outside the task takes, is the
@@ -371,16 +371,18 @@ ruling, the slice stops instead of proceeding on the default that `primer@owner-
    document lists under "What is already decided" and the decisions and goals the slice's spec
    cites; for a spec, the spec is the work and its own "What is already decided" gives the seeds.
    Read whole, with `cargo klarch show`, every entry the search returns, and judge it against the
-   slice; never act on an entry from the reason the search gave. A firing found at the audit is
+   slice; never act on an entry from the reason the search gave. The audit's record gives one line
+   to each entry the search returned, with its outcome, an entry judged to bear on nothing in the
+   slice included: in the message of the audit's commit, or, where the audit applies nothing in
+   place, in the message of the slice's first commit. A firing found at the audit is
    ruled before the code is written, where one found only by the review of the harvest reopens the
    harvest. Sort each gap:
    - **Applied in place.** The gap has one answer the document's decisions already imply, or is a
      choice among shapes the document rules out all but one of. Apply the answer in place, in the
      milestone document or the slice's spec, wherever the shape it changes is written. Commit the
      amended documents alone, with a subject that names the slice's design audit in those words,
-     and a message listing each finding: the gap, the answer and the decision it follows from; and
-     one line for each entry the search returned, with its outcome, an entry judged to bear on
-     nothing in the slice included. Where the slice's first change sets what the per-commit gate
+     and a message listing each finding: the gap, the answer and the decision it follows from, and
+     the line of each returned entry. Where the slice's first change sets what the per-commit gate
      requires, per `primer@branch-commits`, the amended documents land in that change's commit
      instead, and its message carries the audit's subject and list. Earlier audits are found with
      `git log --grep='design audit'`.
@@ -501,8 +503,9 @@ finding that is a gap with one answer is applied in place. A finding that is wro
 the reproduction that showed it wrong kept in the commit message. A scope change, a clause that
 widens or narrows a ruling or adds an obligation to it, is put to the owner, listed under the
 defaults awaiting the owner. **A gap whose one answer widens or narrows a ruling of the owner, or
-adds an obligation to one, is a scope change**, as at the design audit. Detail the author added inside the scope of a ruling, and a wording
-better than the one the owner was shown, are no findings.
+adds an obligation to one, is a scope change**, as at the design audit. Detail the author added
+inside the scope of a ruling, and a wording better than the one the owner was shown, are no
+findings.
 
 **The readiness checks**, applied by the author before dispatch and by the cold implementer after.
 This list is their one home; the reviewer reads it here.
@@ -535,7 +538,9 @@ milestone document leaves with the last slice. Before deleting:
 - what the document established is in the design homes and the registers; what stayed a guess
   leaves with it;
 - each of its later consequences is in the issue entry or the plan document of the later work it
-  names, and in a `todo` issue opened for it where that work has neither;
+  names, or in a `todo` issue opened for it where that work has neither;
+- every default the document lists as awaiting the owner is ruled, since a design head records a
+  default only once the owner has ruled on it;
 - its row of the roadmap, if it has one, is removed (`skill@knowledge-architect-planning@spec-or-milestone`).
 
 **A citation of the leaving document from another plan document dangles.** The session that meets
@@ -551,8 +556,8 @@ deletion, does two things in one commit:
   leaving document's harvested design entries, since the leaving document no longer exists. For a
   milestone, its next slice's audit reads the issue.
 
-A milestone's own documents are one plan: a slice spec that leaves is cited by its milestone
-document and its sibling specs by design, and they re-point or remove the citation with no
+A milestone's own documents are one plan: where a slice spec that leaves is cited by its milestone
+document or its sibling specs, they re-point or remove the citation with no
 `question` issue, since the next slice's audit already reads the milestone against what landed.
 
 Any other citation of the leaving document, from an issue, a design head or a `CLAUDE.md`, dangles

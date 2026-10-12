@@ -48,7 +48,7 @@ shape of every entry file. The other two read the entity table and print every i
 every tripwire entry as a row; `issues <anchor>` narrows to one anchor, and
 `tripwires --guarding <ref>` to the entries naming one decision.
 
-%% The table below restates `design@core@components-carry-the-same-documents`, `design@core@heading-register-two-shapes` and `design@core@a-file-register-is-a-directory-of-entries`.
+%% The table below restates `design@core@components-carry-the-same-documents`, `design@core@heading-register-two-shapes`, `design@core@a-file-register-is-a-directory-of-entries`, `design@core@issue-kind-list-closed`, `design@core@groups-are-subdirectories` and `design@core@instance-options-beside-the-instance`.
 | failure | what it actually means |
 | --- | --- |
 | `the component` … `carries no` | a Component misses a required document. Create it. |

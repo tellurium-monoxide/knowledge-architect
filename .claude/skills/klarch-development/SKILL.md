@@ -104,7 +104,7 @@ cargo test -p <package>                # the baseline: it passes over the unmuta
 git diff --quiet && { echo "NOT APPLIED"; exit 1; }   # an empty diff tested nothing: stop
 git diff                               # shows the mutation alone: the record quotes its - and + lines
 cargo test -p <package> --no-run       # it compiles, or it proves nothing
-cargo test -p <package>                # a named test fails: caught; zero: SURVIVED
+cargo test -p <package> --no-fail-fast # the test under check fails: caught; it passes: SURVIVED
 ```
 
 **A mutation of the cargo configuration runs in a worktree outside the main tree**, such as one
@@ -121,10 +121,12 @@ shortening it.
   under check, or it passes over a tree that lacks the new test.
 - **The compile:** a mutant that does not compile also reads as caught, and the sites this check
   most often sends you to are the ones that do not compile.
-- **The test run:** its verdict is the result. A nonzero exit is a catch only when the output
-  names the test that failed: cargo exits nonzero too when `--test` names no test target, and
-  that run tested nothing. A zero exit is a survivor only when the output shows the test ran: a
-  filter that matches no test exits zero having run none.
+- **The test run:** its verdict is the result, read from the output for the test under check,
+  never from the exit code. Without `--no-fail-fast`, cargo stops at the first target with a
+  failure, so another target's test under check never runs. Cargo exits nonzero when `--test`
+  names no test target, and zero when a filter matches no test, and neither run tested anything.
+  A test binary that aborts, with no result line, catches the mutation in the test its message
+  names, and the tests after it did not run.
 
 **A recorded check that does not show the mutation applied establishes nothing.** It quotes the
 `-` and `+` lines `git diff` printed, the file and the function or type that holds them, and the

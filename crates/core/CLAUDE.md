@@ -29,10 +29,7 @@ instead, from git objects, through
 changes, or one commit's tree, per `design@core@staged-tree-source`.
 
 **A test that copies a mock project runs `git init` and `git add -A` in the copy**, or the walk
-is empty and the test proves nothing; `Sandbox` in `path@core@tests/binary.rs` does it. **A test
-never depends on the machine's git configuration, its identity included**: `Sandbox::git` gives
-every invocation an identity on its command line, and `Sandbox::stage` pins away the per-user
-ignore file, each writing nothing to the copy's configuration. Two
+is empty and the test proves nothing; `Sandbox` in `path@core@tests/binary.rs` does it. Two
 consequences a test about ignore behaviour has to choose between, because the ignore rules act on
 untracked files alone:
 
@@ -40,6 +37,11 @@ untracked files alone:
   the add never tracks it. `Sandbox::seeded` is that order.
 - for a file that must be **tracked and ignored**, stage it first and add the `.gitignore`
   after, so the add finds the file already in the index.
+
+**A test that runs git through `Sandbox` never depends on the machine's git identity**: `Sandbox::git_command`,
+which `Sandbox::git` runs, gives every invocation the sandbox's identity on its command line and
+removes the environment variables that would override it. Other machine configuration still
+reaches some helpers, per `issue@core@the-tests-read-the-machine-s-git-configuration`.
 
 A test that deletes or rewrites a fixture file after the first add stages again, or git's listing
 still names what the working tree no longer holds. The in-place tests under

@@ -46,8 +46,9 @@ change the earlier commits; the repair that works is found only by reasoning fro
 ### What would close it
 
 When two or more commits of a range fail on the same generated path, `commits` prints one summary
-line naming the path and the repair: fold the regenerated file into the earliest failing commit,
-or, where later commits change the file's inputs too, regenerate it at every failing commit.
-The line names no cause, per `design@core@finding-names-the-repair`: the repair is the same
-whatever left the file out of date. A test plants a range of three commits whose generator changes in the last, and asserts
-the summary line.
+line naming the path and the repair: regenerate the file at every failing commit, with a clean
+tree, and fold each regeneration into its commit. Where only the generator changed, every
+regeneration after the earliest leaves its commit as it was, so this one repair covers both cases
+above. The line names no cause, per `design@core@finding-names-the-repair`: the repair is the same
+whatever left the file out of date. A test plants a range of three commits whose generator changes
+in the last, and asserts the summary line.

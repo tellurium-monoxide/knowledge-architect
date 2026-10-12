@@ -45,8 +45,9 @@ The suspected mechanism, in one sentence: the falsifiability bar makes a firing 
 about the event and silent about its weight, so a procedure that fails a little fires as loudly as
 one that fails badly.
 
-Re-entry point: the design discussion that takes up this entry, which states the bound in the
-tripwire shape and puts each of the four tripwires to the owner, each having been written on the
+Re-entry point: the next change to the tripwire shape of the issue-tracking skill, or to any of
+the four tripwires above, or earlier on the owner's word. The discussion then states the bound in
+the shape and puts each of the four tripwires to the owner, each having been written on the
 owner's word.
 
 ### Why it matters

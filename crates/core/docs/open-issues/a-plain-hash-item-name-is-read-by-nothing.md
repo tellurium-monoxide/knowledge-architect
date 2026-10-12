@@ -40,8 +40,10 @@ The forms and checks as they stand:
   `design@core@plan-item-scope`, which refuses that form from outside the plan.
 - A backticked `#<id>` naming a defined entry, plan items included, is reported as the retired form,
   per `design@core@candidate-rule-and-retired-forms`. A plain one is not read.
-- The design skill's own `#<id>` rule for a discussion is repaired in the installed text
-  separately; that leaves the checker side.
+- The design skill now says the plan document cites its own items by their checked form. One
+  plain `#<thread>` inside a plan document is prescribed: `primer@design-heads` states the pair
+  `#<thread> → <entry slug>` in the plan document's harvest row, so a check of the inside case
+  admits that pair.
 
 The suspected mechanism, in one sentence: the one form the workflow prescribes for an item outside
 its plan is the one form the checker never reads, so its correctness rests on reviewers reading.
@@ -56,7 +58,8 @@ Two rivals already lost, and a design must answer both:
   notation, such as an issue number. A check limited to a plan document's own item ids, inside that
   document, does not meet that argument: its set of ids is the plan's own.
 
-Re-entry point: the design discussion that takes up this entry.
+Re-entry point: the next change to `design@core@candidate-rule-and-retired-forms` or to
+`design@core@plan-item-scope`, or earlier on the owner's word.
 
 ### Why it matters
 

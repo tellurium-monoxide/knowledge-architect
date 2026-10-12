@@ -21,7 +21,7 @@ start, and only a reviewer reading by hand found them.
 - Citations in words in the installed text, for example: "test 4 included" in
   `agent@knowledge-architect-decision-record-reviewer`; "A load-bearing gap of point 2" in
   `skill@knowledge-architect-planning@working-a-slice`; and "loop step" numbers across
-  `skill@knowledge-architect-design@discussion-loop`.
+  the design skill, citing the steps of `skill@knowledge-architect-design@discussion-loop`.
 - The case, this repository's agent-configuration-entities milestone: three citations in words
   went stale or were wrong from the start; a fidelity reviewer reading by hand found them.
 - The core's rejected alternative on register entries at level three concerns defining entries,
@@ -30,7 +30,8 @@ start, and only a reviewer reading by hand found them.
 The suspected mechanism, in one sentence: the citable unit is the level-two section, and the
 installed text argues and cross-refers at the level of a point inside one.
 
-Re-entry point: the design discussion that takes up this entry.
+Re-entry point: the next change to `design@core@harness-kinds-cited-without-anchor` or to
+`design@core@section-homes-carry-slugs`, or earlier on the owner's word.
 
 ### Why it matters
 

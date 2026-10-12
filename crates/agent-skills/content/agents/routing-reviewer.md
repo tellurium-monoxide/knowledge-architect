@@ -39,7 +39,7 @@ locations, register instances and file entries. Report those counts as well as t
 defined count that grows while the reference count does not is an anchor nobody cites, and the
 reverse is a family of pointers about to dangle.
 
-%% The table below restates `design@core@an-unresolved-reference-is-reported`, `design@core@candidate-rule-and-retired-forms`, `design@core@every-path-names-its-anchor`, `design@core@trailing-slash-claims-directory`, `design@core@a-slug-elsewhere-defines-nothing` and `design@core@an-entry-is-a-heading-at-the-register-level`.
+%% The table below restates `design@core@an-unresolved-reference-is-reported`, `design@core@candidate-rule-and-retired-forms`, `design@core@every-path-names-its-anchor`, `design@core@trailing-slash-claims-directory`, `design@core@a-slug-elsewhere-defines-nothing`, `design@core@an-entry-is-a-heading-at-the-register-level`, `design@core@an-entity-belongs-to-its-anchor` and `design@core@links-are-navigation-rows`.
 | failure | what it actually means |
 | --- | --- |
 | `is referenced and` … `defines no` | a pointer into nothing: the anchor carries the register and no entry there has that id. Cheap to create and expensive to notice later. Define it where the decision is made, or point at the entry that exists. |

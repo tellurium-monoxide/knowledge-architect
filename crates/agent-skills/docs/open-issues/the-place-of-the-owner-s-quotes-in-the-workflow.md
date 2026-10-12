@@ -9,8 +9,9 @@ The workflow quotes the owner's words verbatim in many records: a design head wh
 owner's, test 4 of the entry tests, plan documents, commit messages, retrospective analyses, and
 the audit checks that read a quotation against the question it answered. The owner holds these
 quotations of little value most of the time, as long as the attribution is correct, and asks that
-their place and importance in the workflow be rethought. The owner's words are hedged positions to
-argue, so the question is argued in a design discussion and not applied.
+their place and importance in the workflow be rethought. One part is ruled: the checker provides no
+form for quoting text that holds its syntax. The rest of the owner's words are hedged positions,
+so the place and weight of quotations is argued in a design discussion and not applied.
 
 ## Details
 
@@ -22,7 +23,8 @@ The owner's words, in the order given:
   F4: no need to quote my words, as long as attribution is correct." F2 asked to quote the owner's
   scope ruling in `design@knowledge-architect@versioning-policy`. F4 asked to quote the owner's
   request in `design@core@milestone-entries-are-directories`. Each now attributes the decision to
-  the owner without quoting.
+  the owner without quoting. The pass's report file held the item and its ruling, and
+  `git log --diff-filter=D --name-only -- docs/audit-reports/` finds it now that the file has left.
 - On the rule itself, at the same ruling: "I'm tempted to remove this rule too. It's not
   particularly relevant IMO. It is weird to keep those verbatim quotes in design heads anyway."
 - Ruling on the intake of the retrospectives of 2026-10-08 to 2026-10-10, on a finding that no
@@ -54,7 +56,8 @@ The suspected mechanism, in one sentence: the workflow treats the owner's exact 
 evidence of what the owner decided, where a correct attribution serves the same purpose in most
 records.
 
-Re-entry point: the design discussion that takes up this entry.
+Re-entry point: the next change to `design@agent-skills@head-ground-is-the-argument`, or to test 4
+of the entry tests, or earlier on the owner's word.
 
 ### Why it matters
 
