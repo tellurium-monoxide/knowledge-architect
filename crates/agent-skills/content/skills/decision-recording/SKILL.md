@@ -272,6 +272,12 @@ written: a site the change itself wrote counts, a skill or a restatement of the 
 included. A decision judged while its texts were still being written misses the second site the
 same change adds.
 
+Then, for each head the change edits, whatever the edit, run `{{command}} show` on it and read
+every text that cites it, and re-read the head's whole body, its argument included, against the
+change; repair in the change each text it leaves false. A reference is a claim that its text is
+revisited when the entry changes, and an edit that keeps the slug dangles no reference, so no check
+reports a citing text it made false.
+
 Then re-read what you wrote against the head you replaced: **rewriting argued text is where
 fidelity gets lost.** If you cannot restate a losing alternative as strongly as it was written, you
 have not understood it well enough to move it.
