@@ -2,13 +2,13 @@
 
 ## Status and audience
 
-**On hold, for an undefined duration, on the owner's word.** Its line numbers name the tree at
-the commit each was written on, and later work has moved some; the design audit that starts its
-work takes each one again. No work of this spec starts, and no
-other work waits for it: a plan that would build on its respelling machinery builds without it, and
-no release waits for it. The owner: "the path-quickfixes spec will be clearly marked as on hold, so
-this does not happen again." and "And the quickfix spec should not blcok a release." Work taken up
-while it is on hold, and planned to land in it, is added to it by that work's harvest.
+**On hold, for an undefined duration, on the owner's word.** No work of this spec starts, and no
+release waits for it. The owner: "the path-quickfixes spec will be clearly marked as on hold, so
+this does not happen again." and "And the quickfix spec should not blcok a release." The
+register-references work, ordered after this spec, was built without it on the owner's word, and
+its harvest added the respelling of a register's home to this spec. Its line numbers name the tree
+at the commit each was written on, and later work has moved some; the design audit that starts its
+work takes each one again.
 
 This spec is the plan of the work that lets `cargo klarch check --fix` edit hand-written documents,
 within one limit: a fix rewrites the spelling of a reference whose target its span already names,
