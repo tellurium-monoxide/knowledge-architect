@@ -44,16 +44,20 @@ The distillers are a closed set, `Distiller`: a project chooses one for each gat
 its own, so every distiller is tested here. A project that needs another distiller is a reason to
 add one to the library.
 
-### One spawn helper captures a child's two streams through two pipes `##one-spawn-helper`
+### The gates start every child through the library's one spawn helper, which a project's commands may use `##one-spawn-helper`
 
-`path@gates@src/process.rs` spawns a child, reads its stdout and stderr concurrently through two
-pipes into one buffer, optionally mirrors them live, and holds the best-effort output helpers
-every print goes through. The gates use it, and a project's own commands may: a new command calls
-it and never edits it. Reading both pipes concurrently is what prevents the deadlock where the
-child blocks writing a pipe nobody drains. Two pipes have none of the three losses a regular file
-shared by both streams showed: it lost output written through /dev/stdout and output of a
-descendant that outlives the child, and a killed run left the file behind to fail a later run, as
-the rejected alternative on it records.
+`path@gates@src/process.rs` spawns a child, captures its two streams into one buffer, optionally
+mirrors them live, and holds the best-effort output helpers every print goes through. The gates use
+it, and a project's own commands may: a new command calls it and never edits it.
+
+### A child's stdout and stderr are read concurrently through two pipes `##streams-through-two-pipes`
+
+The spawn helper, `design@gates@one-spawn-helper`, reads a child's stdout and stderr concurrently
+through two pipes into one buffer. Reading both pipes concurrently is what prevents the deadlock
+where the child blocks writing a pipe nobody drains. Two pipes have none of the three losses a
+regular file shared by both streams showed: it lost output written through /dev/stdout and output
+of a descendant that outlives the child, and a killed run left the file behind to fail a later run,
+as the rejected alternative on it records.
 
 ### Every gate runs; nothing fails fast by default `##gates-run-all`
 

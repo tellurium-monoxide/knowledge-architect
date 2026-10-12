@@ -236,7 +236,7 @@ and none can be created inside the walk.
 Running it to look therefore costs nothing, not even an mtime. **Whether a generated file is
 current is not this command's question** — that is `cargo klarch check`, whose `generated` check
 is a gate and names the first line at which the committed file and the regenerated one disagree.
-The two halves are `design@core@generated-files-are-pure` and `design@core@one-question-one-command`.
+The two halves are `design@core@index-takes-no-dry-run` and `design@core@one-question-one-command`.
 
 **`index --staged` writes into git's index instead, for a commit of part of the working tree**,
 per `design@core@index-staged-write`.
@@ -417,7 +417,7 @@ A tree that breaks this layout stops the run at phase 2, except a home's missing
 duplicated item stops it at phase 3, and a missing section is a finding of the last phase. The arguments are
 `design@core@plan-register`, `design@core@plans-split-dirs`, `design@core@plan-document-kinds`,
 `design@core@a-plan-name-reads-as-nothing-else`, `design@core@spec-file-is-an-anchor`,
-`design@core@slice-spec-sections`, `design@core@plan-items-by-section` and
+`design@core@plan-document-sections-by-kind`, `design@core@plan-items-by-section` and
 `design@core@plan-item-scope`.
 
 ## Commit messages

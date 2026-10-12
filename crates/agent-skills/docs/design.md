@@ -21,14 +21,10 @@ which the build inlines there, a `%%` line is a comment the build removes, per
 fills, and a placeholder `{{slug:<id>}}` ending a level-two heading is rendered into that heading's
 section slug, so content/ defines no section in this repository's walk and the installed copy does,
 per `design@core@installed-entities-from-the-tree`. A slug placeholder anywhere else fails the build. A skill is `skills/<skill>/` with its files, an agent is `agents/<agent>.md`, a saved workflow
-of Claude Code's Workflow tool is `workflows/<workflow>.js`, and the primer is `PRIMER.md`. The
-harness reads saved workflows directly under .claude/workflows/, no deeper, and calls each by the
-name its `meta` declares, never by its file's name, as a probe of Claude Code measured, which the
-message of the commit "The agentic-workflow axis's script ships as a saved workflow in the
-installer's namespace" records: so the
-build fails unless that name equals the installed file's stem, or the prefix of the file would
-namespace nothing. The build script, `path@agent-skills@build.rs`, walks the directory, renders each
-file, removing its comments, filling its delivery substitutions and inlining its snippets, and
+of Claude Code's Workflow tool is `workflows/<workflow>.js`, and the primer is `PRIMER.md`; the
+build asserts a saved workflow's name, per
+`design@agent-skills@saved-workflow-name-is-its-file-stem`. The build script,
+`path@agent-skills@build.rs`, walks the directory, renders each file, removing its comments, filling its delivery substitutions and inlining its snippets, and
 generates `FILES`, each entry the install path and the text. It adds the installer's prefix to each skill
 directory, agent file and workflow file on the way out, so the installed names are the namespace of
 `design@core@owned-namespace-check`. A file the layout does not map fails the build.
@@ -37,6 +33,15 @@ The list is generated because a list written by hand drifts from the directory i
 drift ships: a skill missing from the list is never installed, and nothing reports it. The core's
 test `every_shipped_file_is_installed_in_the_owned_namespace` holds the build script to the
 namespace, since an install path outside it would write a file the project owns.
+
+### A saved workflow's `meta` name equals its installed file's stem, which the build asserts `##saved-workflow-name-is-its-file-stem`
+
+The harness reads saved workflows directly under .claude/workflows/, no deeper, and calls each by
+the name its `meta` declares, never by its file's name, as a probe of Claude Code measured, which
+the message of the commit "The agentic-workflow axis's script ships as a saved workflow in the
+installer's namespace" records. So the build fails unless that name equals the installed file's
+stem, or the prefix the build adds to the file would namespace nothing, per
+`design@core@owned-namespace-check`.
 
 ### The shipped text carries comments for this repository, `%%` lines the build removes `##shipped-text-line-comments`
 
@@ -88,11 +93,7 @@ that directory's path. The checker accepts every shape of a required
 document, per `design@core@reserved-anchors`, so where the text names both shapes, both are
 references. A path that varies by project, and an illustration, are placeholders in
 angle brackets. The command a project runs is written as the placeholder that the install fills
-with the project's declared command, per `design@core@declared-command`. A literal the checker
-would misread is a delivery substitution, which the build fills. The owner's argument: "to avoid
-convoluted sentences (such as for the primer import line), the text could be applied using
-substitution at build or install time, as documented exceptions where we are avoiding the checker
-on purpose in order to facilitate delivery of the installed skills."
+with the project's declared command, per `design@core@declared-command`.
 
 **The shipped set may cite its own skills, agents and primer, and their sections**, as
 `skill@<name>@<slug>` or `primer@<slug>`: every project serving `claude` holds them, installed, and
@@ -340,7 +341,8 @@ instruction bought for display fidelity costs more rules than it saves. Together
 ## How the installed text changes
 
 The measurements and incidents these entries cite were taken in the designing-together repository,
-whose record is docs/decisions.md on its branch next.
+whose record is docs/decisions.md on its branch next. A figure is taken again from that record with
+`git show next:docs/decisions.md`, run in that repository.
 
 ### The record of the installed text keeps intent and coherence, not wording `##instruction-record-is-minimal`
 
@@ -717,12 +719,17 @@ superseded thread that lost on its merits.
 
 ### A premortem's cause becomes a tripwire only on the owner's word `##premortem-tripwires-on-the-owners-word`
 
-A premortem's surviving causes become tripwires only where the owner rules that they should. Each
-is written at the harvest of the decision it guards, in the tripwires home of the Component that
-owns that decision, since a tripwire names the decision or the instruction it guards and a head
-exists from the landing of its work, per `design@agent-skills@design-home-is-built-intent`. Whether a
-risk is worth watching is a weighing, and the weighing is the owner's, per
-`goal@knowledge-architect@the-owner-decides`.
+A premortem's surviving causes become tripwires only where the owner rules that they should.
+Whether a risk is worth watching is a weighing, and the weighing is the owner's, per
+`goal@knowledge-architect@the-owner-decides`. Where a ruled tripwire is written is
+`design@agent-skills@premortem-tripwire-written-at-harvest`.
+
+### A premortem's cause the owner ruled on is written at the harvest of the decision it guards, in the tripwires home of the Component that owns it `##premortem-tripwire-written-at-harvest`
+
+A premortem's cause the owner ruled a tripwire is written at the harvest of the decision it guards,
+in the tripwires home of the Component that owns that decision, since a tripwire names the decision
+or the instruction it guards and a head exists from the landing of its work, per
+`design@agent-skills@design-home-is-built-intent`.
 
 ### A tripwire's wording is the agent's, and the owner rules only on whether its cause is watched `##tripwire-wording-is-the-agents`
 
@@ -852,8 +859,9 @@ audits, which are the main moments when design gets discussed, and nothing shoul
 Every citeable thing has one reference form, `<kind>@<anchor>@<id>`, and two mechanisms of the
 checker give a reference its value. `cargo klarch show <ref>` prints every reference to an entry,
 so what depends on an entry is computed from the tree and never written by hand. An entry that is
-deleted or renamed dangles every reference to it, and `cargo klarch check` reports each one, so the
-repair list a change produces is the list of texts that depended on what changed. A reference is
+deleted or renamed dangles every reference to it, and `cargo klarch check` reports each one, per
+`design@core@an-unresolved-reference-is-reported`, so the repair list a change produces is the
+list of texts that depended on what changed. A reference is
 therefore a claim of dependence: this text is to be revisited when that entry is reversed, closed,
 fired, abandoned or renamed.
 
@@ -942,7 +950,8 @@ citation of a commit the checker judges is a branch commit's SHA, which
 
 The other exception is a deleted skill's or agent's reference in a released section of
 CHANGELOG.md: the section's content never changes, per
-`design@knowledge-architect@changelog-entries`, and nothing exists that a reference could cite.
+`design@knowledge-architect@changelog-section-fixed-at-release`, and nothing exists that a
+reference could cite.
 Its repair is the bare name, which `design@core@bare-skill-name-reported` leaves silent. It evades
 nothing, since no checked form remains that it could have used. The rival, rewriting the sentence
 as `design@agent-skills@a-past-sentence-is-rewritten` asks elsewhere, would change a released
@@ -1057,7 +1066,7 @@ it is unchecked text that a grep finds with no marker that it is stale. Either b
 too: the installed planning skill would have nothing to say where a document's work ends, against
 `goal@knowledge-architect@agents-get-a-complete-workflow`.
 
-### A discussion whose decision lands in a change begun before it keeps its deliberation in that change's commit message `##in-change-path`
+### A discussion whose decision lands in the change under way keeps its deliberation in that change's commit message `##in-change-path`
 
 The design skill has two paths, which differ only in where the deliberation is kept until the
 harvest. The in-change path is open when the decision lands in the change under way: its work,
@@ -1087,9 +1096,9 @@ change, and it is planned work under the planning skill, per
 `design@agent-skills@adopting-existing-docs`. The cost is a spec, its plan reviews, its harvest and
 its deletion for every requested change that is not bounded, including one the converging session
 builds in one pull request, which strains the "fewer review rounds" of
-`goal@knowledge-architect@agents-get-a-complete-workflow`; the owner accepted that cost on the
-two readings put side by side. Widening the existing short path, rather than adding a path for one
-decision met during a task, is the owner's proposal, on the owner's argument: "The discussion
+`goal@knowledge-architect@agents-get-a-complete-workflow`. Widening the existing short path, rather
+than adding a path for one decision met during a task, is the owner's proposal, on the owner's
+argument: "The discussion
 starts with a single decision, but should not be bounded in threads or rounds IMO, because this depends only on
 what the grounding and investigation and experimentation brings to the table, and we cannot know
 about this in advance." The separate path bounded the discussion to one thread, against
@@ -1269,7 +1278,11 @@ the rule is learned from a failure: a filter on text substrings once dropped one
 messages. It serves `goal@knowledge-architect@the-owner-decides`. The durability check serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`. The check of rulings has shown
 its worth: in the review of the change that installed the first skills, a reviewer briefed with it
-was the one of six to find a decision recorded narrower than the owner's approval.
+was the one of six to find a decision recorded narrower than the owner's approval. The milestone
+document of the v0.1 extraction holds that count, in its section on session B of step 5, and
+`git log --diff-filter=D --name-only -- docs/plans/` finds it; the message of the commit "[review]
+Six reviewers read PR 1: the hand-off rule, the shipped text and the record are corrected" records
+the review's six axes and its finding.
 
 ### A misstated ruling is critical only when it reverses the ruling, or changes what is built or a load-bearing decision `##misstated-ruling-rated-by-what-it-changes`
 
@@ -1377,7 +1390,9 @@ The design audit reads design homes, but not goals, and it is run by the session
 work, which may be the document's author, and skipped for a spec worked in the session that
 converged. Two acceptance criteria that
 `goal@knowledge-architect@the-workflow-improves-through-real-use` rules out each passed a plan
-document's three reviews in this repository. Its nearest rival, the decision-record reviewer
+document's three reviews in this repository. The deleted spec synthetic-evidence-and-plan-reviews
+holds both, as its instances 1 and 2, and `git log --diff-filter=D --name-only -- docs/plans/`
+finds it. The decision's nearest rival, the decision-record reviewer
 extended to plan documents, judges the record a diff writes and holds a plan's items as not
 decisions yet, so it would carry two questions with two yardsticks. The cold implementer, the other
 rival, asks whether the document can be acted on, and a document that contradicts a goal can. The
@@ -1400,18 +1415,22 @@ was acted on durably, per `goal@knowledge-architect@design-is-recorded-with-its-
 transcript reviewer sent in their batch as well would read the transcript before the owner answers
 the items the batch raises, and an answer of the owner given after its extraction reads to it as
 missing, as `skill@knowledge-architect-review@review-axes` says: its findings would report as
-missing what the last transcript review then finds answered. Its own
-repairs land as additional commits, as many as their kinds need: a repair that the primer routes to
-a commit of its own stays one, and nothing asks the dispatcher to merge them into a single commit.
-The additional commits are the owner's proposal: "I'd just replace "as a last commit" by "as an
-additional commit". This is simpler, it prevents any possible conflict, without exceptions and no
-need to check a condition."
-A repair that would leave an earlier commit failing is folded, per
-`design@agent-skills@review-repair-appended-or-folded`.
+missing what the last transcript review then finds answered. Its own repairs land as
+`design@agent-skills@transcript-review-repairs-are-additional-commits` says.
 An additional commit that adds, removes or reverses a design head is reviewed by the
 decision-record axis at least, and the review ends with that review's repairs; any other is reviewed
 by no axis again, so the review ends, per
 `design@agent-skills@only-a-head-changing-repair-is-reviewed-again`.
+
+### The last transcript review's repairs land as additional commits, as many as their kinds need `##transcript-review-repairs-are-additional-commits`
+
+The repairs of the last transcript review before a merge land as additional commits, as many as
+their kinds need: a repair that the primer routes to a commit of its own stays one, and nothing asks
+the dispatcher to merge them into a single commit. The additional commits are the owner's proposal:
+"I'd just replace "as a last commit" by "as an additional commit". This is simpler, it prevents any
+possible conflict, without exceptions and no need to check a condition."
+A repair that would leave an earlier commit failing is folded, per
+`design@agent-skills@review-repair-appended-or-folded`.
 
 ### A review repair that adds, removes or reverses a design head is reviewed again by the decision-record axis, and no other repair is `##only-a-head-changing-repair-is-reviewed-again`
 
@@ -1576,7 +1595,7 @@ read it. Two applications are the evidence, so the decision is held loosely.
 
 An axis's saved workflow holds its dispatch, the prompts of its steps and their order, and covers
 that axis alone. It ships in the installer's namespace, and the harness runs it by the name its
-`meta` declares, per `design@agent-skills@content-mirrors-the-install-layout`. The axis's section
+`meta` declares, per `design@agent-skills@saved-workflow-name-is-its-file-stem`. The axis's section
 of the audit skill names the workflow and the `args` it takes, and keeps what the session needs to
 verify a report and write the owner list: the axis's corpus, its rules and its outcome table. A
 session whose harness does not list the workflow dispatches its steps by hand, in the script's
@@ -1844,7 +1863,9 @@ A confirmed finding of two readings is repaired even where both acts it allows a
 `design@agent-skills@audit-outcomes` says. The rival that left it to judgement where no text rules
 either act out would have left 6 of the 14 findings of two readings the session kept at the fifth
 pass, by a reading of each against the corpus, the design homes and the goals at the commit that
-pass audited. The findings of a reading are worth their repairs: of the first pass, the owner
+pass audited. The plan document of that work, the deleted spec agentic-workflow-axis, holds the
+measurement, and `git log --diff-filter=D --name-only -- docs/plans/` finds it. The findings of a
+reading are worth their repairs: of the first pass, the owner
 observed "In the previous round, there were several of the findings that were likely to be the
 source of misbehavior I did observe."
 
@@ -1920,8 +1941,7 @@ findings are on both sides, the installed text and the project's own, is repaire
 findings on the installed text are sent upstream, per `design@agent-skills@audit-outcomes`, and
 those on the project's own text take the outcome of its repair's edits on that text.
 `skill@knowledge-architect-project-audit@repair-standard` is the one home of the standard, which the
-audit reads, and each skill that names it, per
-`design@agent-skills@intake-shares-the-repair-standard`.
+audit reads, and each skill that names it.
 
 In the agentic-workflow axis a second phase of agents delivers it inside the run: cluster agents,
 two by default, group the confirmed findings by cause independently; a merge agent writes one
@@ -2014,28 +2034,7 @@ a head, against `goal@knowledge-architect@the-owner-decides`. The search by beha
 judgement, and a head it misses is found at the review of the audit's branch, which reads each
 repair against the design heads.
 
-### The audit and the intake of received findings judge a repair of agent-facing text by one installed standard `##intake-shares-the-repair-standard`
-
-`skill@knowledge-architect-project-audit@repair-standard` holds what a repair of an instruction is
-judged by: the repair by cause, the count of instructions and the net growth, and the record check.
-It applies in an audit, and at each step of a skill that names the section, whether a reading or a
-real session found the defect. `skill@klarch-retrospective-intake` names it at the step that shapes
-a finding's fix and reads it against the record, beside its own four tests and its rivals. The
-intake keeps its own evidence, a real session behind each finding, its kind for a lapse of the
-session, and the owner's ruling on every finding.
-
-The direction is the owner's: "I think it's important we ensure it analyzes findings and repairs on
-the same standard as our workflow." The evidence that admits a finding differs between the two: the
-intake has a real session behind each finding, as `design@agent-skills@behaviour-additions-need-real-use`
-asks of an addition, and an audit never has one. The worth of a repair and its shape do not differ,
-since both decide edits to the same text at the same cost. The standard's home is installed text,
-since installed text points to no home of one project, and it is read where the worth is judged: at
-the session's verification of an audit's proposals and at the intake's step that shapes a fix,
-before any edit is written. The nearest rival, the shared standard in
-`skill@knowledge-architect-agent-configuration@content-and-style`, is read when an edit is written,
-after that judgement is made.
-
-### An audit runs at the owner's request, at a pin move whose changelog cites its axis, and at the end of an adopting project's move of its documents `##audit-triggers`
+### An audit runs on an occasion whose own work needs the record read under the rules, never on a period `##audit-triggers`
 
 The owner's request is the main occasion. A version that changes the rules recorded content must
 meet cites the axis that brings a project's record to them in its Migration entry, per
@@ -2152,8 +2151,8 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
 - **Every commit of a branch is judged by the checker at the branch's tip**, where the project's
   gates run the commits check over the branch, so a change that sets what that checker requires
   goes in the branch's first commit, and a repair that would leave an earlier commit failing is
-  folded into it. Every session commits, and the rule was delivered only by the skills that met
-  one case of it: planning for a plan document merged before its work, and review for a fold.
+  folded into it. Every session commits, and a skill meets only one case of it: planning a plan
+  document merged before its work, and review a fold.
 
 ### Every rule on what a design head records and how lives in one section of the primer `##one-home-for-head-rules`
 
@@ -2304,10 +2303,7 @@ non-zero when any fails, so a verdict is one exit code and nothing is read throu
 project with a maintenance crate it is a command of that crate, per `design@agent-skills@xtask-pins-checker`, run by
 the published gates library, per `design@gates@gates-crate`, so every adopting project with a maintenance crate runs
 the gates refined in this repository and in thaum. The gates a project owes are its own list, per
-`design@gates@a-project-holds-its-gate-list`. The setup skill proposes two goals for such a tool, for the owner's
-ruling: one command runs every check owed before a merge, and a task performed repeatedly becomes a
-command of the tool. The proposal is the owner's: "I would also recommend setting these two goals
-(with those wordings) in the project setting-up skill".
+`design@gates@a-project-holds-its-gate-list`.
 
 ### The setup skill recommends `check --staged` after staging and before each commit `##staged-check-before-each-commit`
 
@@ -2373,12 +2369,6 @@ is a Component's responsibility left unstated is one nobody is responsible for, 
 `goal@knowledge-architect@the-owner-decides`. Nothing checks it mechanically yet:
 `issue@core@a-component-states-at-least-one-goal`.
 
-### A decision that relies on the checker says so, and references none of its decisions `##relying-on-the-checker`
-
-A project cannot reference an entry of another project, so a decision that relies on the checker
-states that it relies on the checker working as intended. This holds until a form for such
-references exists, `issue@core@cross-project-references`.
-
 ### The installed skills do not mention a project whose name is the installer's namespace `##installed-text-omits-the-prefix-collision`
 
 The installed skills name a project's prefix rule, per `design@agent-skills@project-name-prefix`,
@@ -2415,20 +2405,27 @@ decision binds as a presumption, per `goal@knowledge-architect@the-owner-decides
 
 ## The retrospective
 
-### A retrospective is offered once per session, at a defined moment `##retro-trigger`
+### A retrospective is offered at a moment an event names, never at one the agent judges `##retro-trigger`
 
-The retrospective is offered once per session, at the first of three moments: a pull request the
-session worked on has merged, a plan document has left, or the owner says the session is ending.
-It runs only if the owner accepts. A moment named by an event can be followed by any agent where
-"a moment it judges right" could not, and offering it once keeps it from interrupting work.
+The retrospective is offered when one of three events occurs: a pull request the session worked on
+has merged, a plan document has left, or the owner says the session is ending. It runs only if the
+owner accepts. A moment named by an event can be followed by any agent where "a moment it judges
+right" could not.
+
+### A retrospective is offered at most once per session `##retro-offered-once`
+
+The retrospective is offered once per session, at the first of the moments
+`design@agent-skills@retro-trigger` names, and not again at a later one. Offering it once keeps it
+from interrupting work.
 
 ### A retrospective asks standing questions, each on the decisions it watches `##premortem-as-watch-points`
 
 Every retrospective asks whether the session needed to change an installed skill or agent, whether the
 session or one of its subagents acted as if a rule of the primer were absent, whether a project
 skill's addition was missed, and whether the session needed to write a reference or a path without
-backticks because no checked form expresses it. Each watches a decision whose
-failure would be seen in real sessions before any check could see it:
+backticks because no checked form expresses it. Real use is the test of the workflow, per
+`goal@knowledge-architect@the-workflow-improves-through-real-use`, and each question watches a
+decision whose failure would be seen in real sessions before any check could see it:
 `design@agent-skills@overlay-by-separate-skills`, the primer's delivery by an import line in
 `design@core@owned-namespace-check`, `design@agent-skills@no-routing-table`, and
 `design@agent-skills@plain-text-is-no-repair`. The last question is the

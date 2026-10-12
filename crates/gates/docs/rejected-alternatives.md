@@ -5,7 +5,7 @@ and why.
 
 ## Capturing a child's two streams through one regular file instead of two pipes
 
-Lost to `design@gates@one-spawn-helper`. `live`. Its one reason was a child that
+Lost to `design@gates@streams-through-two-pipes`. `live`. Its one reason was a child that
 refuses a pipe on stdout, which the checker's `check` did for a while, per the entry on that
 refusal in `path@core@docs/rejected-alternatives.md`; no child refuses one now. Its one gain
 is that both streams keep the order the child wrote them in. It was built, with the file in the

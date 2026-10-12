@@ -20,14 +20,6 @@ dropping an ignore rule makes the walk read more than it should and dropping a n
 read less, and both are silent. Git answers all three by construction, and the walked-file count
 over thaum's tree was identical under the two.
 
-**Skipping a commit whose tree fails, in `commits`** — lost to
-`design@core@a-commit-message-is-a-document`. `live`. A commit whose tree did
-not load or carried findings was named in the summary and judged no further, so the range could
-walk over commits older than a manifest migration, and over the commits of a branch before its
-tree went green. It loses because each skipped commit took its message out of the regime while the
-run exited 0, and the summary line was the only trace. The migration it served is done, and a
-branch that tightens the checker orders or squashes its commits instead.
-
 **`check` and `commits` refusing a pipe on stdout** — lost to
 `design@core@a-commit-message-is-a-document`. `live`. It was meant to stop
 `cargo klarch check | tail -n 10 && git commit`, which commits over a failing tree because
@@ -71,18 +63,6 @@ stop the no-network property the selection gave one run. What it bought was meas
 over thaum's tree against a references-only one, with the GNU time command, and the figures
 are in the message of the change that removed the selection. A full run of `cargo klarch check`
 over thaum's tree growing past a few seconds is what would reopen it.
-
-**Families named for the subjects that read them** — lost to
-`design@core@nothing-of-a-project-is-compiled-in`.
-`live`. No selection exists to name families for, and the reason it lost while one did holds
-against any that returns: nothing about a project is compiled into the tool, per
-`design@core@nothing-of-a-project-is-compiled-in`, and a subject's name inside the parser
-is exactly that project's knowledge, compiled in.
-
-**One family per invocation, instead of a set** — lost to `design@core@model-then-checks`.
-`live`. No selection exists, and the reason it lost while one did, from
-`design@core@model-then-checks`, holds against any that returns: the walk happens once per
-invocation, so a caller wanting five families would read every live document five times.
 
 **A per-document phase gate, hiding only what an unread file could have defined** — lost to
 `design@core@phases-gate-the-report`. `live`. It would let a citation finding in one file

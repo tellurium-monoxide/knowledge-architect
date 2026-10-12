@@ -23,7 +23,7 @@ The owner's direction for the prefix, when the bare-name lint's reliance on it w
 a check that asserts a project's skill names follow the `<project-name>` prefix rule. Maybe with the
 prefix being defined separately from project name in the manifest, to allow for what shortcuts
 (useful if the project has a long name, and needed here)." Needed here because this repository's
-own skills take the prefix `klarch-`, not its name, per `design@knowledge-architect@klarch-prefix`.
+own skills take the prefix `klarch-`, not its name, per `instructions@repository-skills`.
 A prefix declared in the manifest would also reach `design@agent-skills@project-name-prefix`, which
 names the prefix after the project. Open for that check's design session:
 

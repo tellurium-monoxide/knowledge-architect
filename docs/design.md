@@ -113,7 +113,8 @@ The table classes what the published crates do in a consuming project: the check
 over its tree, its commands, its manifest, the library APIs and the installed skills. A check, a
 command or an addition in the table is one of those. A change internal to this repository, such as
 a test, a gate or a subcommand of tools/xtask, is outside the table, and so is a file a crate ships
-for reading alone, such as its changelog: each is at most a patch.
+for reading alone, such as its changelog: each is at most a patch. The scope is the
+owner's ruling.
 
 | bump | when |
 | --- | --- |
@@ -153,10 +154,11 @@ A version stricter than a patch never reaches a project through a plain `cargo u
 project can therefore tell from the version alone whether moving to it may require work, per
 `goal@knowledge-architect@any-project-can-adopt-it`.
 
-### The changelog records what a consumer must plan for: one entry per change that passes a test, under released sections whose content never changes `##changelog-entries`
+### The changelog records what a consumer must plan for: one entry per change that passes a test `##changelog-entries`
 
-An entry of CHANGELOG.md is written for a consumer planning a move to the version. It exists when
-the change passes one of three tests, and sits under the subsection of that test:
+An entry of CHANGELOG.md is written for a consumer planning a move to the version, per
+`goal@knowledge-architect@any-project-can-adopt-it`. It exists when the change passes one of three
+tests, and sits under the subsection of that test:
 
 - **Migration**: one entry per thing a consumer must change in its own files, saying what.
   Running the install of the agent skills again is never an entry; a change the consumer must make
@@ -177,12 +179,14 @@ gates, since the version number alone cannot say which, and the bump class
 `design@knowledge-architect@versioning-policy` gives it. **A change with no entry is at most a
 patch**: every minor or major change passes the migration or the new-feature test. So the
 release's bump is the highest class among its entries, a patch at least, and a review of the
-release can tell a missing entry from a change that owes none.
+release can tell a missing entry from a change that owes none. An entry describes the release's net
+effect: a change reversed before the release has none.
+
+### A changelog section's content is fixed at its release `##changelog-section-fixed-at-release`
 
 CHANGELOG.md has one section per version, and one working section above them, `Next release`,
 which the release renames to its version. The working section may be reworded, restructured or
-pruned at any time, and a change reversed before the release leaves it, since the section describes
-the release's net effect. A released section's content never changes; its structure may.
+pruned at any time. A released section's content never changes; its structure may.
 
 **A skill's or an agent's name in a released section is structure.** Writing a bare name there as
 its reference, `skill@<name>` or `agent@<name>`, changes no statement of the section. The owner:
@@ -320,7 +324,7 @@ their verdict is a property of the toolchain as much as of the tree: on floating
 adding a clippy lint fails CI on a tree that passes locally, or the reverse, with no change in the
 diff. An upgrade is a one-line commit of that file, and the gates judge it like any other change.
 
-### Every build is tied to the checkout that builds it `##a-build-is-tied-to-its-checkout`
+### Every build that cargo starts inside a checkout is tied to that checkout `##a-build-is-tied-to-its-checkout`
 
 The `[env]` table of the cargo configuration sets `KNOWLEDGE_ARCHITECT_CHECKOUT` to the checkout's
 root, with `relative` and `force`. Every library root reads it with `option_env!`. A target of a
@@ -362,14 +366,6 @@ nothing.
 
 ## 4. This repository's agent configuration
 
-### This repository's own skills and agents take the prefix klarch- `##klarch-prefix`
-
-This repository installs the workflow it ships, and a project's own skills carry the project's
-name as a prefix, per `design@agent-skills@project-name-prefix`. Here that name is
-`knowledge-architect`, which is the installer's namespace: a project skill named after it would be
-reported as unshipped by `design@core@owned-namespace-check`, and removed by the install. So this
-repository's own skills and agents take the prefix `klarch-`, the binary's name.
-
 ### This repository's retrospective findings, and its audits' findings on the installed text, stay in this repository, never on GitHub `##workflow-findings-stay-here`
 
 A retrospective writes one file for the project and one for the workflow, and the workflow's file
@@ -390,11 +386,6 @@ that `path@agent-skills@CLAUDE.md` gives every such edit. The installed text hol
 the project that publishes it, as the owner stated of this repository's use of the workflow for its
 own text: "I don't want to cater too much to this use case in the installed files". So the root
 `CLAUDE.md` states this case, in `instructions@repository-skills`.
-
-For the same reason, the root `CLAUDE.md` gives the auditors of the checker-rules lens, L7, the
-checker's design home, `path@core@docs/design.md`, beside its README. The installed lens names the
-README alone, since a project that installs the workflow holds no design home of the checker. Here
-the checker is built in the same tree, and its design home is where its rules are decided.
 
 ### Each finding of a received workflow file gets an outcome the owner rules, in a committed analysis that leaves when its last outcome is carried out `##committed-findings-analysis`
 
@@ -417,9 +408,22 @@ on a file whose findings all end in no change: that commit changes no file, and 
 drops a commit that changes no file, per
 `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
 
-### An analysis of a received file names nothing of another project beyond what that file holds, and no path or design head of it `##analysis-names-nothing-of-another-project`
+### The intake of received findings judges a repair of agent-facing text by the installed audit's repair standard `##intake-shares-the-repair-standard`
 
-The repository is public and the workflow file is the one a retrospective writes to be
-publishable, so the analysis names nothing of another project beyond what its workflow file holds.
-It names no path or design head of that project either, which in the owner's words "is useless
-information here anyway": where a finding needs one, the analysis says it in words.
+`skill@klarch-retrospective-intake` judges a finding's fix by
+`skill@knowledge-architect-project-audit@repair-standard`: the repair by cause, the count of
+instructions and the net growth, and the record check. It names the section at the step that shapes
+a finding's fix and reads it against the record, beside its own four tests and its rivals. The
+intake keeps its own evidence, a real session behind each finding, its kind for a lapse of the
+session, and the owner's ruling on every finding.
+
+The direction is the owner's: "I think it's important we ensure it analyzes findings and repairs on
+the same standard as our workflow." The evidence that admits a finding differs between an audit and
+the intake: the intake has a real session behind each finding, as
+`design@agent-skills@behaviour-additions-need-real-use` asks of an addition, and an audit never has
+one. The worth of a repair and its shape do not differ, since both decide edits to the same text at
+the same cost. The standard has one home, the audit's section, per
+`design@agent-skills@root-cause-repair`, and the intake reads it where the worth is judged: at its
+step that shapes a fix, before any edit is written. The nearest rival, the shared standard in
+`skill@knowledge-architect-agent-configuration@content-and-style`, is read when an edit is written,
+after that judgement is made.

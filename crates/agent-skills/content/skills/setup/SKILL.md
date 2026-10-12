@@ -154,7 +154,8 @@ register home says it holds no entry yet. **Every Component states at least one 
 The project's root `CLAUDE.md` holds, besides what the project already keeps there:
 
 %% The import line is filled by a delivery substitution of the build, since the checker reads its
-%% span as a malformed reference, per `design@agent-skills@shipped-text-cites-no-entry`.
+%% span as a malformed reference; the reason is the comment of its row in
+%% `path@agent-skills@build.rs`.
 - **the primer's import line**, alone on its own line of prose, outside any code block:
   `{{primer-import}}`. The install never writes it, because the root
   `CLAUDE.md` belongs to the project; the check reports it missing until it is there;
@@ -193,6 +194,8 @@ staging and before each commit. It judges the tree the commit will record, HEAD'
 changes, so a file left unstaged or a change staged in part is caught before the commit exists,
 where the gates catch it only before the merge.
 
+%% The two goals and their wordings are the owner's proposal: "I would also recommend setting
+%% these two goals (with those wordings) in the project setting-up skill".
 A maintenance tool of that kind is a Component of its own, which serves the project rather than its
 consumers. Propose these two goals for it, under `skill@knowledge-architect-goal-setting`, for the
 owner's ruling like any draft:

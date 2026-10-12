@@ -67,7 +67,7 @@ group's return; not fired.
   sentence of 22: applied in the harvest commit of `spec@plans@design-record-workflow`, with
   whatever F19 and F20 rule.
 
-**Added to the owner list by the verification.** packed-1 22, `design@knowledge-architect@klarch-prefix`,
+**Added to the owner list by the verification.** packed-1 22, design@knowledge-architect@klarch-prefix,
 drafted as conforming and marked plausible by its verifier, fails every entry test under the
 primer's sentence "each text that states the instruction is one site: a decision stated by one text
 has one site": one text states it, the root `CLAUDE.md`. It is F21.
@@ -123,7 +123,7 @@ core-3 has no check: its verifier verified no split, merge, rename or move (its 
 
 | group | entries | first entry | last entry |
 | --- | --- | --- | --- |
-| packed-1 | 50 | `design@knowledge-architect@no-component-directory-named-after-the-project` | `design@xtask@root-finder-uses-the-core-constant` |
+| packed-1 | 50 | `design@knowledge-architect@no-component-directory-named-after-the-project` | design@xtask@root-finder-uses-the-core-constant |
 | core-1 | 58 | `design@core@nothing-of-a-project-is-compiled-in` | `design@core@milestone-entries-are-directories` |
 | core-2 | 58 | `design@core@a-file-register-index-is-rows` | rejected alternative "A reference with no component read as one inside its own component", crates/core/docs/rejected-alternatives.md |
 | core-3 | 58 | rejected alternative "A bare root-relative path form, with a targeted check on the collision cases", crates/core/docs/rejected-alternatives.md | rejected alternative "`index --staged` writing the staged rows into the working-tree file", crates/core/docs/rejected-alternatives.md |
@@ -423,7 +423,7 @@ without conforming."
 - Cross-check: core-1 33 and core-2 23 "both add `goal@core@relocation-is-one-manifest-edit` for the
   same property ... Apply them in one commit with one wording."
 
-**core-1 48, `design@core@slice-spec-sections`** (line 853), a rename
+**core-1 48, design@core@slice-spec-sections** (line 853), a rename
 
 - Rule failed: "How a head is shaped": "The slug and the title stay aligned with the full scope of
   the decision".
@@ -440,7 +440,7 @@ without conforming."
   after:
   > (level-three heading) A plan document owes the sections of its kind, and a slice spec owes its own (slug plan-document-sections-by-kind)
 
-  "And at crates/core/README.md:420, `design@core@slice-spec-sections` becomes
+  "And at crates/core/README.md:420, design@core@slice-spec-sections becomes
   design@core@plan-document-sections-by-kind."
 - Verifier: verified. "one citing site, crates/core/README.md:420; new slug unused (git grep)."
 - Check (check/core-1/check-1.md), created head `plan-document-sections-by-kind`: **conforms**, "with
@@ -1033,7 +1033,7 @@ conforming; two findings
 - Verifier: verified. "The edit removes no word of the owner".
 - Cross-check: "The CLAUDE.md edit goes through `skill@knowledge-architect-agent-configuration`."
 
-**packed-1 25, `design@knowledge-architect@analysis-names-nothing-of-another-project`**
+**packed-1 25, design@knowledge-architect@analysis-names-nothing-of-another-project**
 (docs/design.md:420)
 
 - Rule failed: "What earns a head": no entry test holds.
@@ -1114,7 +1114,7 @@ conforming; two findings
 
 #### Component xtask, tools/xtask/docs/design.md
 
-**packed-1 50, `design@xtask@root-finder-uses-the-core-constant`** (line 55)
+**packed-1 50, design@xtask@root-finder-uses-the-core-constant** (line 55)
 
 - Rule failed: "What earns a head": no entry test holds.
 - Evidence: the rule, "A reason is an argument against a rival someone could plausibly propose; a
@@ -1136,7 +1136,7 @@ conforming; two findings
   tools/xtask/src/gates.rs:32-33, before:
 
       // The root is the nearest ancestor holding the checker's manifest, its name spelled by the
-      // core's constant, per `design@xtask@root-finder-uses-the-core-constant`.
+      // core's constant, per design@xtask@root-finder-uses-the-core-constant.
 
   after:
 
@@ -1146,7 +1146,7 @@ conforming; two findings
 
   "The same comment is added above tools/xtask/src/changelog.rs:56." In
   `design@xtask@one-module-per-subcommand`, before "... its `project_root`; and the core's
-  `MANIFEST_NAME`, per `design@xtask@root-finder-uses-the-core-constant`. Adding a workflow ...", after
+  `MANIFEST_NAME`, per design@xtask@root-finder-uses-the-core-constant. Adding a workflow ...", after
   "... its `project_root`; and the core's `MANIFEST_NAME`. Adding a workflow ...".
 - Verifier: verified. "One flaw in the evidence: "a comment at each holds the reason" is false for
   tools/xtask/src/changelog.rs:56, which has no comment. The edit adds one".
@@ -1370,7 +1370,7 @@ conforming; two findings
 - Cross-check default: "the check's cut ... Apply it in the spec's harvest. The stale entries depend
   on the cut chosen (2.1)."
 
-**agent-skills-2 36, `design@agent-skills@intake-shares-the-repair-standard`** (line 2017), plausible
+**agent-skills-2 36, design@agent-skills@intake-shares-the-repair-standard** (line 2017), plausible
 
 - Rule failed: `skill@knowledge-architect-decision-recording@owning-component`.
 - Evidence: "The intake is `skill@klarch-retrospective-intake`, this repository's own skill". "The
@@ -1380,7 +1380,7 @@ conforming; two findings
 - Edit: the head moves to docs/design.md beside `design@knowledge-architect@committed-findings-analysis`,
   as "### The intake of received findings judges a repair of agent-facing text by the installed audit's
   repair standard (slug intake-shares-the-repair-standard)"; in `design@agent-skills@root-cause-repair`,
-  "and each skill that names it, per `design@agent-skills@intake-shares-the-repair-standard`" becomes
+  "and each skill that names it, per design@agent-skills@intake-shares-the-repair-standard" becomes
   "and each skill that names it".
 - Verifier: **plausible**. "the head also argues where the installed standard lives against the rival
   skill@knowledge-architect-agent-configuration@content-and-style, a decision about installed text that
@@ -1428,7 +1428,7 @@ conforming; two findings
   drop the count".
 - Cross-check default: "form B ..., since no test-4 answer is on record."
 
-**agent-skills-3 05, `design@agent-skills@relying-on-the-checker`** (line 2376)
+**agent-skills-3 05, design@agent-skills@relying-on-the-checker** (line 2376)
 
 - Rule failed: "What earns a head": no entry test holds.
 - Evidence: the head, "A project cannot reference an entry of another project, so a decision that
@@ -1440,7 +1440,7 @@ conforming; two findings
 - Edit: remove the head (lines 2376-2380); in crates/agent-skills/content/PRIMER.md, above line 293:
   "%% Until a reference can name an entry of another project, `issue@core@cross-project-references`.";
   crates/core/docs/open-issues/cross-project-references.md:28, "per
-  `design@agent-skills@relying-on-the-checker`" becomes "per `primer@design-heads`".
+  design@agent-skills@relying-on-the-checker" becomes "per `primer@design-heads`".
 - Verifier: verified. "the owner's words in bd93004's plan, "I doubt there is a real need to reference
   design decisions of another project", are hedged and about deferring the issue, not the interim
   rule; precedent F71 of 47765c0 verbatim".
@@ -1482,7 +1482,7 @@ Quoted from cross-check/cross-check.md, parts 1 and 2, whole. "as-1" is group ag
 | as-1 01 (split of `content-mirrors-the-install-layout`) and the check of as-1 01 | the created head `saved-workflow-name-is-its-file-stem` | The check finds the created head conforms except under reading 3, where it owes the re-take of the probe. That is the same reading as as-1 21: settle it once. |
 | core-1 18, core-1 23, core-2 19 | the same phrase, "the failure this tool exists to prevent", in three heads of crates/core/docs/design.md (lines 410-413, 507-509, 1386-1387) | Different paragraphs, but different goals for the same words: core-1 names `goal@core@declared-instructions-are-checked` ("A tree that passes the check conforms to all of it"); core-2 names `goal@core@documents-stay-current` ("Every reference resolves ..."). The core-1 verifier read 31, 32, 33 and 51 under the same rule. The session picks one goal for the phrase and uses it at all three sites. Default: `goal@core@declared-instructions-are-checked`, since each site argues against a silent pass, and a pass that hides an unchecked reference is a tree that passes without conforming. |
 | core-1 33 (`anchors-are-components-and-locations`) and core-2 23 (`every-path-names-its-anchor`) | both add `goal@core@relocation-is-one-manifest-edit` for the same property; 33's sentence also cites `design@core@every-path-names-its-anchor` | Different paragraphs, no conflict. Apply them in one commit with one wording. |
-| packed-1 35 (split of `design@gates@one-spawn-helper`) and packed-1 50 (removal of `design@xtask@root-finder-uses-the-core-constant`) | the paragraph of `design@xtask@one-module-per-subcommand` (tools/xtask/docs/design.md:13-19) | 50 deletes "per `design@xtask@root-finder-uses-the-core-constant`" from it. 35 keeps its reference "which `design@gates@one-spawn-helper` keeps in its process module", and stays true under the check's narrowed 35-A title. One editor for the paragraph. |
+| packed-1 35 (split of `design@gates@one-spawn-helper`) and packed-1 50 (removal of design@xtask@root-finder-uses-the-core-constant) | the paragraph of `design@xtask@one-module-per-subcommand` (tools/xtask/docs/design.md:13-19) | 50 deletes "per design@xtask@root-finder-uses-the-core-constant" from it. 35 keeps its reference "which `design@gates@one-spawn-helper` keeps in its process module", and stays true under the check's narrowed 35-A title. One editor for the paragraph. |
 | as-2 36 (move of `intake-shares-the-repair-standard` into docs/design.md), packed-1 23 (`workflow-findings-stay-here`, docs/design.md:373-397), packed-1 25 (removal of `analysis-names-nothing-of-another-project`, docs/design.md:420-425) | 36 writes the head "beside `design@knowledge-architect@committed-findings-analysis`" (docs/design.md:399), between the two other edits | No shared paragraph. All three concern this repository's intake of received findings, so if the owner removes 25 and moves 36, the moved head sits where 25's head was. One editor for docs/design.md. |
 | as-1 04 (removal of the delivery-substitution sentences from `shipped-text-cites-no-entry`) and as-1 01 | 04's default rests on the mention in `content-mirrors-the-install-layout`, "a delivery placeholder is a literal the build fills", staying | 01 keeps the layout's exceptions in the source head, so the mention stays. No conflict, as long as the edit of 01 is applied as drafted. |
 | as-2 42 (tense of `primer-content`) and core-2 23 (goal reference in `every-path-names-its-anchor`) | each edits a head whose bundle an open issue records (`issue@agent-skills@primer-content-bundles-each-directive-s-decision`, `issue@core@four-heads-bundle-decisions-with-many-citing-sites`) | Not between the two, but with `design@agent-skills@existing-heads-on-touch`: "A head that a change touches is brought to these rules in that change", and "Re-pointing a reference in a head does not touch it". Adding a reference or rewording a sentence is more than re-pointing. Both issues name the next run of this axis as a re-entry point. The issue on the four core heads already records the same case after the first run ("So both heads are a change's touched heads left short of `design@agent-skills@existing-heads-on-touch`"). The session decides: apply the edits and leave the bundles to the issues, as the first run did, or hold both edits until the splits. Default: apply, and say in the pass's commit message that the bundles stay with their issues. |
@@ -1491,7 +1491,7 @@ Quoted from cross-check/cross-check.md, parts 1 and 2, whole. "as-1" is group ag
 
 | rename | citing sites | edited by another finding? |
 | --- | --- | --- |
-| core-1 48: `design@core@slice-spec-sections` → design@core@plan-document-sections-by-kind | crates/core/README.md:420 only (`cargo klarch show`) | No. core-2 02 edits crates/core/README.md:239, a different section. The check adds a condition: the commit states the pair `#step-spec-sections → plan-document-sections-by-kind` and names the old slug. |
+| core-1 48: design@core@slice-spec-sections → design@core@plan-document-sections-by-kind | crates/core/README.md:420 only (`cargo klarch show`) | No. core-2 02 edits crates/core/README.md:239, a different section. The check adds a condition: the commit states the pair `#step-spec-sections → plan-document-sections-by-kind` and names the old slug. |
 | check of packed-1 09: the created slug `released-changelog-sections-keep-their-content` → `changelog-section-fixed-at-release` | the re-points draft 09 lists: CLAUDE.md:197 and :221, crates/core/docs/design.md:1638 (in `design@core@bare-skill-name-reported`), crates/agent-skills/docs/design.md:945 (in `design@agent-skills@plain-text-is-no-repair`), .claude/agents/klarch-changelog-reviewer.md:43 | No other finding edits these lines. packed-1 23 edits CLAUDE.md:479-481, a different paragraph. The two heads holding lines 1638 and 945 belong to core-2 and as-1, which judged them conforming. |
 | check of as-1 33: the created slug `ruled-tripwire-written-with-its-decision` → `premortem-tripwire-written-at-harvest` | the sites that need the created head (see 1.3) | No. |
 
@@ -1528,7 +1528,7 @@ root-finder-uses-the-core-constant, one-module-per-subcommand.
 
 | entry | head and finding | why it goes false | repair |
 | --- | --- | --- | --- |
-| `issue@core@cross-project-references`, line 28 | `relying-on-the-checker`, as-3 05 (removal) | it cites the removed head: "needs no pointer into the checker's design, per `design@agent-skills@relying-on-the-checker`" | as drafted: `per \primer@design-heads\`. The primer's section holds the sentence "A decision that relies on the checker of this workflow states that it relies on the checker working as intended". |
+| `issue@core@cross-project-references`, line 28 | `relying-on-the-checker`, as-3 05 (removal) | it cites the removed head: "needs no pointer into the checker's design, per design@agent-skills@relying-on-the-checker" | as drafted: `per \primer@design-heads\`. The primer's section holds the sentence "A decision that relies on the checker of this workflow states that it relies on the checker working as intended". |
 | `issue@agent-skills@an-upstream-finding-stays-in-every-later-old-text-count`, line 53 | `audit-method`, as-2 18 (split) | "`design@agent-skills@audit-method` makes the fall of the count on old text the convergence signal": that sentence moves to `audit-passes-repeat-while-the-count-falls` | re-point, as drafted. |
 | `tripwire@agent-skills@audit-edit-leaves-an-entry-stale` (tripwires.md:277-286) | `design-record-axis`, as-2 25 (split as drafted) | its heading guards `design@agent-skills@design-record-axis`, its premise is "reading each head's tripwires and issues before judging it", and its Response is "reopen `design@agent-skills@design-record-axis`": that reading moves to the new head | Re-point heading and Response, as drafted. Under the check's cut it stays true and is not edited. |
 | `issue@agent-skills@a-repair-that-edits-a-head-reads-no-entry-citing-it`, line 24 | `design-record-axis`, as-2 25 (split as drafted) | "The design-record axis reads "the tripwires guarding it, the issues naming it" for each head, per `design@agent-skills@design-record-axis`": that sentence moves to the new head | Draft 25 does not list this site. Re-point it to `design-record-axis-reads-tripwires-and-issues`. Under the check's cut it stays true. The spec's harvest row 168 also reads this sentence again. |
@@ -1622,7 +1622,7 @@ Outcome: no edit: the head already attributes the request to the owner, "The sha
 
 ### The removal of a head, or of a decision in a head, that fails every entry test
 
-**F5. `design@knowledge-architect@analysis-names-nothing-of-another-project`.** One text states it,
+**F5. design@knowledge-architect@analysis-names-nothing-of-another-project.** One text states it,
 `skill@klarch-retrospective-intake`. Test 4: is the owner's "is useless information here anyway"
 (4b1240e) a record of the owner's intent? The head comes from a pass-1 split the owner approved by
 default (3c4f97f, F22 to F29).
@@ -1631,7 +1631,7 @@ internals, which tell a reader of this repository nothing". If the owner answers
 head stays and quotes the answer.
 Outcome: the default. The owner: "Agreed on all defaults except F2 and F4: no need to quote my words, as long as attribution is correct."
 
-**F6. `design@xtask@root-finder-uses-the-core-constant`.** Its reason is that a copy of a name could
+**F6. design@xtask@root-finder-uses-the-core-constant.** Its reason is that a copy of a name could
 go stale, which test 2 excludes: "a name, a path or a value repeated for consistency is not one".
 xtask is never published; no test-4 answer is on record (bd93004).
 Default: remove the head (tools/xtask/docs/design.md:55-62); the reason goes to the comments at
@@ -1639,7 +1639,7 @@ tools/xtask/src/gates.rs:32-33 and above tools/xtask/src/changelog.rs:56; the re
 `design@xtask@one-module-per-subcommand` is removed.
 Outcome: the default. The owner: "Agreed on all defaults except F2 and F4: no need to quote my words, as long as attribution is correct."
 
-**F7. `design@agent-skills@relying-on-the-checker`.** One installed text states it,
+**F7. design@agent-skills@relying-on-the-checker.** One installed text states it,
 crates/agent-skills/content/PRIMER.md:293-295, with its reason beside it. No owner's words.
 Default: remove the head (crates/agent-skills/docs/design.md:2376-2380); add above PRIMER.md:293 "%%
 Until a reference can name an entry of another project, `issue@core@cross-project-references`.";
@@ -1699,7 +1699,7 @@ Outcome: the default. The owner: "Agreed on all defaults except F2 and F4: no ne
 
 ### A head in the wrong Component
 
-**F14. `design@agent-skills@intake-shares-the-repair-standard`** (plausible). "The audit and the intake
+**F14. design@agent-skills@intake-shares-the-repair-standard** (plausible). "The audit and the intake
 of received findings judge a repair of agent-facing text by one installed standard". The intake is
 this repository's own skill; the owner: "I think it's important we ensure it analyzes findings and
 repairs on the same standard as our workflow." The verifier's doubt: the head "also argues where the
@@ -1769,9 +1769,9 @@ Outcome: the default. The owner: "Agreed on all defaults except F2 and F4: no ne
 
 ### Added by the session's verification: a head that fails every entry test
 
-**F21. `design@knowledge-architect@klarch-prefix`.** One text states it: the root `CLAUDE.md`,
+**F21. design@knowledge-architect@klarch-prefix.** One text states it: the root `CLAUDE.md`,
 "This repository's own skills and agents take the prefix `klarch-`", with "This is a restatement;
-its home is `design@knowledge-architect@klarch-prefix`." The primer: "For a decision about
+its home is design@knowledge-architect@klarch-prefix." The primer: "For a decision about
 agent-facing text, a skill, an agent or a `CLAUDE.md`, each text that states the instruction is one
 site: a decision stated by one text has one site, and its reason lives in that text, beside the
 instruction". Test 1 fails, since no interface others consume changes; test 3 fails, since the

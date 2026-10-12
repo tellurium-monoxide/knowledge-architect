@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-26 entries
+27 entries
 
 | kind | title |
 | --- | --- |
@@ -8,6 +8,7 @@
 | deferred | [A plan document deleted in the commit that completes its harvest is absent from the tree of the acts that still need it](a-plan-document-deleted-at-its-harvest-is-unseen-by-the-acts-that-need-it.md) |
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | design | [The head on the primer's content restates the primer's limit and bundles the decision behind each directive](primer-content-bundles-each-directive-s-decision.md) |
+| design | [Whether a design head quotes the owner's words, or only attributes the decision to the owner](quoting-the-owner-s-words-in-a-head.md) |
 | design | [The workflow assumes one owner, unnamed, which a project with several contributors does not have](the-workflow-assumes-one-unnamed-owner.md) |
 | observation | [A reviewer subagent refused a write to the scratch file its brief named, and returned its findings as text](a-reviewer-cannot-write-the-file-its-brief-names.md) |
 | question | [A design issue's re-entry point is read by no review](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |

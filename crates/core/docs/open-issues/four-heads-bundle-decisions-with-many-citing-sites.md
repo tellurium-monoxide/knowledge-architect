@@ -50,9 +50,8 @@ the first run of the design-record axis counted 20, 23, 26 and 31.
     `commit-msg` hook judging each message before the commit exists" and "A `commit` subcommand
     that runs the checks and then `git commit`", both of which name this head;
   - "Every commit of the range is judged by the tip checker, and a tree that fails is a finding",
-    with "A branch that makes the checker stricter orders its commits for it", against the
-    rejected alternative "Skipping a commit whose tree fails, in `commits`" and against building
-    each commit's own checker;
+    with "A branch that makes the checker stricter orders its commits for it", against skipping a
+    commit whose tree fails and against building each commit's own checker;
   - "A message's references resolve against its commit's tree or its first parent's", against its
     own tree alone;
   - "`check` reads no range of history", against `check` judging the branch's messages.

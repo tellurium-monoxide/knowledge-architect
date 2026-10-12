@@ -6,7 +6,8 @@ kind: todo
 ## Summary
 
 The owner intends a mechanical checker for CHANGELOG.md, with a model of its sections and entries.
-Today the shape that `design@knowledge-architect@changelog-entries` and the preamble of
+Today the shape that `design@knowledge-architect@changelog-entries`,
+`design@knowledge-architect@changelog-section-fixed-at-release` and the preamble of
 `path@knowledge-architect@CHANGELOG.md` fix is checked only by
 `agent@klarch-changelog-reviewer`, once per release, by reading.
 
@@ -40,8 +41,9 @@ of the branch found it, before the release. Findings P2 and C2 of the retrospect
 
 A shape defect, a misspelt surface, a class outside the list or an entry out of order, is found
 today only by a subagent reading the file, at the release or when a branch's reviewers happen to, and a released section's content can
-change with nothing reporting it. It strains `design@knowledge-architect@changelog-entries`, whose
-rule on released sections has no mechanical guard, nor has the preamble's order of entries, against
+change with nothing reporting it. It strains
+`design@knowledge-architect@changelog-section-fixed-at-release`, whose rule on released sections
+has no mechanical guard, nor has the preamble's order of entries, against
 `goal@knowledge-architect@documentation-stays-consistent`.
 
 ### What would close it

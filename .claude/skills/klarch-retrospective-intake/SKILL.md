@@ -167,9 +167,9 @@ where `<stem>` is the received file's stem. The directory's README says what it 
 - **A span the checker would refuse is quoted in words.** A finding about a refused form tempts a
   quotation of that form, and the analysis then fails the check it reports on.
 - **Name nothing of the other project in detail**: none of its paths, none of its design heads,
-  none of its internals. Say it in words where the finding needs it, as "the project's design
-  home". This repository's paths and entries are written in the checked forms, since the file is
-  checked like any other.
+  none of its internals, which tell a reader of this repository nothing. Say it in words where
+  the finding needs it, as "the project's design home". This repository's paths and entries are
+  written in the checked forms, since the file is checked like any other.
 
 Then give the owner the full path of each file, and in the conversation one line per section:
 its ids, the proposal in a few words, and the default outcome. **Propose that the owner rules by

@@ -27,7 +27,7 @@ owner: "This practice should be allowed, but not recommended."
 The three supersessions this repository holds today, each ruled by the owner:
 
 - the project skill prefix `klarch-`, against the installed rule that the prefix is the project's
-  name and a hyphen, per `design@knowledge-architect@klarch-prefix`;
+  name and a hyphen, per `instructions@repository-skills`;
 - a retrospective's workflow file handled here rather than filed as an issue on GitHub, per
   `design@knowledge-architect@workflow-findings-stay-here`;
 - the agentic-workflow axis's findings on the installed text edited at their source, with no

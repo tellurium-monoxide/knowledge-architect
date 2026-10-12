@@ -688,7 +688,7 @@ fn untracked_note(
 
 /// Regenerate every generated index in place.
 ///
-/// **It writes only where the bytes differ**, per `design@core@generated-files-are-pure`: what a
+/// **It writes only where the bytes differ**, per `design@core@index-takes-no-dry-run`: what a
 /// generated file holds is a function of the walked tree, so rewriting an already current one
 /// moves nothing but its mtime, and running this to look must cost nothing. It takes no dry-run
 /// flag for the same reason — nothing here can lose content, so there is nothing for a dry run
@@ -824,7 +824,7 @@ fn check_destinations(
         }
         // `fs::write` follows a symlink and writes through it, so a generated path that is one
         // would replace whatever sits at the far end — which is the one way this command could
-        // destroy something it did not generate, and what `design@core@generated-files-are-pure`
+        // destroy something it did not generate, and what `design@core@index-takes-no-dry-run`
         // needs to be false for its claim to hold. The sibling tool refuses one for the same
         // reason, in `target_is_mutable`.
         if std::fs::symlink_metadata(&path).is_ok_and(|m| m.file_type().is_symlink()) {
