@@ -25,8 +25,11 @@ Instances seen:
   major row takes "a command change that breaks existing usage" without saying whether parsing the
   report is usage. The change was classed patch, with a changelog entry, on the owner's ruling
   below.
-- The two output additions that `issue@knowledge-architect@the-bump-table-has-no-row-for-a-looser-check`
-  records, classed minor and patch within one release.
+- Two lines added to a command's output in the 0.3.0 release, classed two ways. `check` gained a
+  note naming each file that holds a finding and that git does not track; it is classed `cli`,
+  minor, as an addition that changes nothing existing. The refusal of a foreign build, in
+  `path@core@src/build_origin.rs`, gained a line naming how to prevent it, and was left without
+  an entry, as a patch.
 - A consumer's extension tests asserted text the core prints, and the consumer's owner ruled
   mid-review that they assert none: W5 of 2026-10-07-thaum-mock-reduction-workflow. The checker
   crate's section "Testing an extension" said nothing of printed output; it now sends a test to the
@@ -71,9 +74,7 @@ no statement telling it not to.
 A design discussion under `skill@knowledge-architect-design` whose outcome is recorded: which parts
 of a command's output are stable, where users are told so, which data gets a machine-readable form
 or a library function, and the row of the versioning table each kind of change takes. That includes
-a line added to a command's output, which
-`issue@knowledge-architect@the-bump-table-has-no-row-for-a-looser-check` records and leaves to this
-entry.
+a line added to a command's output.
 
 ### Re-entry point
 

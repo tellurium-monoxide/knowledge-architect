@@ -118,7 +118,7 @@ owner's ruling.
 
 | bump | when |
 | --- | --- |
-| patch | skill changes; code changes that change no check and no command |
+| patch | skill changes; a check becomes looser; code changes that change no check and no command |
 | minor | a check becomes stricter, or a check is added, even when a project must change its content to pass it; additions that change nothing existing; command and manifest changes that only add |
 | major | a command change that breaks existing usage; a change to the documents and homes a project must carry; a manifest that was valid and stops being accepted; a breaking change to the library API |
 
@@ -130,6 +130,14 @@ argument, given in the ruling that a stricter check is minor.
   leave the minor row with no check in it, and two rows that overlap give a changelog entry no
   single class. The major row keeps the changes a project meets as a refusal of its shape: a
   required document or home, and a manifest that stops being accepted.
+- **A looser check is a patch.** The row is the owner's ruling: "a looser check should be
+  classified as a patch. Because it cannot give rise to a failure in a project who bumps the
+  version, so there is little to no reason to classify it higher." A check that reports less
+  fails no tree that passed. The one consumer it can fail is a test that pins findings of the
+  core's own checks, which the section "Testing an extension" of the core's crate documentation
+  advises against. Every project pins the checker exactly, so that consumer meets the change only
+  at an explicit pin move, and the Migration entry of
+  `design@knowledge-architect@changelog-entries` names the change for it.
 
 - **Under 0.x, Cargo has two positions.** A requirement "0.3" accepts 0.3.2 and refuses 0.4. So
   while at 0.x, major and minor both bump 0.MINOR, and patch bumps 0.x.PATCH.
@@ -165,7 +173,9 @@ tests, and sits under the subsection of that test:
   to its own files because of the new skills is one. An entry that adds a required document or
   home says it holds for every project the consumer's tests build, mock projects included: a
   consumer whose extension tests the checker over its own fixture projects otherwise meets the
-  change as failing tests. An entry for a change of the rules a project's recorded content must meet cites
+  change as failing tests. A check made looser is an entry, a patch, naming the check that
+  reports less: a consumer whose tests pin findings of the core's own checks must change them.
+  An entry for a change of the rules a project's recorded content must meet cites
   the audit axis that brings that content to them, as a reference to the axis's section of the
   audit skill, so the move of the pin runs it, per `design@agent-skills@audit-triggers`.
 - **New features**: something a consumer can start using, in one line; the documentation carries
