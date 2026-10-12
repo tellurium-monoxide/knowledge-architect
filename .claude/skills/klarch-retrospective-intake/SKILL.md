@@ -122,7 +122,8 @@ Each item below is answered with its evidence. The order is a suggestion; the co
 
   The fix is shaped, and read against the record, as
   `skill@knowledge-architect-project-audit@repair-standard` says, read whole: it is the audit's
-  standard for the same text. A fix to an
+  standard for the same text, per `design@knowledge-architect@intake-shares-the-repair-standard`. A
+  fix to an
   installed skill passes the four tests of the agent-skills `CLAUDE.md`, "Editing an
   installed skill or agent", read whole: scope, necessity, kind, built intent.
 - **g. Its route.** What handling it needs, which says what "now" would mean:

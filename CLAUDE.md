@@ -469,9 +469,9 @@ subagent, per
 `skill@knowledge-architect-review`.
 
 **This repository's own skills and agents take the prefix `klarch-`, the binary's name**, not the
-project's name: a name beginning with `knowledge-architect-` is the installer's namespace, so the
-checker reports such a skill as unshipped, per `design@core@owned-namespace-check`, and the install
-deletes it.
+project's name that `design@agent-skills@project-name-prefix` gives: a name beginning with
+`knowledge-architect-` is the installer's namespace, so the checker reports such a skill as
+unshipped, per `design@core@owned-namespace-check`, and the install deletes it.
 
 **The findings of both files of `skill@knowledge-architect-retrospective`, and those of the
 agentic-workflow axis of `skill@knowledge-architect-project-audit` on the installed text, are handled

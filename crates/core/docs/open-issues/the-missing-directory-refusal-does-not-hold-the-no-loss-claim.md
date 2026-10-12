@@ -27,15 +27,17 @@ destination before any is written, so a run either refuses having written nothin
 all. Remove either check and the paragraph above stops being true."
 
 The check agent of that pass raised it: "Without that check, `fs::write` into a missing directory
-fails partway through, and nothing is destroyed." Not yet established: what the writer in
-`path@core@src/cli/mod.rs` does on a missing directory without the refusal. Whether `fs::write`
-fails, or the code creates the directory first, decides it.
+fails partway through, and nothing is destroyed." The code confirms it. `check_destinations` in
+`path@core@src/cli/mod.rs` refuses a missing directory before any write. Its doc comment gives the
+reason: "A run that wrote one index and then failed on the next exited 2 — could not run — having
+already changed the tree". Nothing creates the directory, so without the refusal `fs::write` fails,
+and nothing is destroyed. The refusal holds the all-or-nothing write, not the no-loss claim.
 
 ### Why it matters
 
-A head that credits a claim to code that does not hold it misleads the session that edits that
-code. A session could remove the symlink refusal believing that the other refusal guards the same
-loss.
+`design@core@index-takes-no-dry-run` credits a claim to code that does not hold it, which misleads
+the session that edits that code. A session could remove the symlink refusal believing that the
+other refusal guards the same loss.
 
 ### What would close it
 

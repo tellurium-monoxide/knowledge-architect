@@ -160,7 +160,9 @@ draft of record is that of the group whose listed entries hold it; judge only th
 - Read a sample of the drafts that find their entry conforming, at least one, of your choosing.
   Where one is wrong, read again the same auditor's other drafts that judge the same rule.
 - For a re-check, the brief names the commit the previous pass audited: an entry is on new text
-  when `git diff <that commit> <commit audited>` changes its words, and on old text otherwise.
+  when a commit after it changed the entry's words, and on old text otherwise; a move, a reflow or
+  a rename leaves it old, so compare the entry's words at the two commits, not the lines
+  `git diff` shows.
 
 Give each draft a verdict, with a one-line reason, and its marks: refuted, where a check above fails
 it; verified, where a reading confirms its finding; plausible, where no reading confirms or refutes

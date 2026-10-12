@@ -174,6 +174,7 @@ written as bare plain text to clear a finding.
 **Response:** open a `defect` for the instance. At the second instance, reopen
 `design@agent-skills@plain-text-is-no-repair`, with a mechanical check for plain-text
 pointers among the candidates.
+**First instance:** `issue@agent-skills@an-audit-report-cites-the-heads-its-own-pass-removes`.
 **Re-entry:** the standing-state review, which reads every tripwire before a merge, and the
 retrospective's question on references written without backticks, which reads the session.
 
@@ -368,8 +369,9 @@ improvement, so that what a pass leaves falls from one pass to the next.
 fall, or the severe ones among them, those whose outcome is the owner list, do not fall while they
 are above zero. Old text is text the previous pass also read, whose words are unchanged since the
 commit it audited, per `design@agent-skills@convergence-count-scope`; a first pass is not counted.
-**Response:** reopen `design@agent-skills@root-cause-repair`, with `design@agent-skills@workflow-axis-lenses`
-and `design@agent-skills@workflow-axis-finding-standard` among what is read again.
+**Response:** reopen `design@agent-skills@root-cause-repair`, with `design@agent-skills@workflow-axis-lenses`,
+`design@agent-skills@workflow-axis-finding-standard` and
+`design@agent-skills@audit-passes-repeat-while-the-count-falls` among what is read again.
 **Re-entry:** the session that writes each pass's commit message, which gives the counts on old
 text; the standing-state review of the audit's branch.
 **Evidence when written:** in the first agentic-workflow audit of this repository, as an
@@ -402,6 +404,10 @@ shows failing a rule, and that the report does not list among the drafts whose v
 **Response:** reopen `design@agent-skills@verifier-in-the-run`, on how much of the conforming drafts
 a design-record verifier reads.
 **Re-entry:** the session's verification of each report of the design-record axis.
+**Evidence when written:** on the first pass of the design-record axis through its saved workflow
+on this repository, the session's sample held a wrong conforming draft that the drafter, the
+verifier and the cross-check had each flagged as doubtful; the clause leaves such a draft out, as
+the owner agreed with the rulings on that pass.
 
 ## Guarding `design@agent-skills@one-run-pass`: the design-record cross-check misses an overlap `##overlap-missed`
 
