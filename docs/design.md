@@ -194,7 +194,9 @@ gates, since the version number alone cannot say which, and the bump class
 patch**: every minor or major change passes the migration or the new-feature test. So the
 release's bump is the highest class among its entries, a patch at least, and a review of the
 release can tell a missing entry from a change that owes none. An entry describes the release's net
-effect: a change reversed before the release has none.
+effect: a change reversed before the release has none, and a change to something added since the
+last release, a skill, a section, a check or a command, edits the entry that announces that addition
+and writes none of its own.
 
 ### A changelog section's content is fixed at its release `##changelog-section-fixed-at-release`
 
@@ -253,8 +255,11 @@ migration is a present cost, named in the changelog's migration entries.
 
 A merge to main publishes nothing, and any number of merges land between two releases. A release
 is a branch like any other: reviewed, merged once CI passes on its head, and only then tagged and
-published from main's head, on the owner's word given at that moment, per
-`goal@knowledge-architect@the-owner-decides`. The order follows what can
+published from main's head, on the owner's word, per `goal@knowledge-architect@the-owner-decides`.
+The word names the publish and is given after the review; given before the merge, it holds for the
+tree the review judged, so the release compares main's tree with the reviewed head's before it
+publishes. Asking again after the merge would add a message and protect nothing that comparison
+does not. The order follows what can
 be undone. A mistake on main is repaired by a later commit, while a version published on crates.io
 can be yanked and never deleted, so the irreversible step comes last, after review and CI have
 judged exactly what it publishes, and the tag names a commit on main. The cost: main states the
