@@ -38,9 +38,9 @@ untracked files alone:
 - for a file that must be **tracked and ignored**, stage it first and add the `.gitignore`
   after, so the add finds the file already in the index.
 
-**A test that runs git through `Sandbox` never depends on the machine's git identity**: `Sandbox::git_command`,
-which `Sandbox::git` runs, gives every invocation the sandbox's identity on its command line and
-removes the environment variables that would override it. Other machine configuration still
+**A test that runs git through `Sandbox` never depends on the machine's git identity**:
+`Sandbox::git_command`, which `Sandbox::git` runs, gives every invocation the sandbox's identity on
+its command line and removes the environment variables that would override it. Other machine configuration still
 reaches some helpers, per `issue@core@the-tests-read-the-machine-s-git-configuration`.
 
 A test that deletes or rewrites a fixture file after the first add stages again, or git's listing

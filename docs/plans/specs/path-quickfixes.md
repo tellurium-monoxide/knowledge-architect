@@ -339,8 +339,8 @@ canditates could be shown in the proposed repair: "Did you mean to write one of 
 
 Proposed by the owner in round 1 as proposal (c): a path to a subagent or a skill is written in
 the reference form of a skill or an agent; shaped by the agent in the reply to round 1 as a new
-check, since such a citation is not a finding today. Approved. Arguments: `argument@path-quickfixes@a15`.
-Shape: Decided design, "The skill and agent citation". Harvest:
+check, since such a citation is not a finding today. Approved. Arguments:
+`argument@path-quickfixes@a15`. Shape: Decided design, "The skill and agent citation". Harvest:
 `design@core@harness-kinds-cited-without-anchor` and `design@core@every-path-names-its-anchor`. The
 owner's words, round 2: "skill-cited-by-path: approved."
 
