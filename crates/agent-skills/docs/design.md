@@ -84,7 +84,7 @@ it, so it names no Component and no convention of this repository, per
 workflow's own upstream repository, where a retrospective's findings on the workflow go, per
 `design@agent-skills@retrospective-destination`. It cites no entry: a reference to an entry resolves
 only against the tree it stands in, and no tree but this one holds this repository's entries. A path
-that every conforming project holds may be written as a reference: `path@*@docs/goals.md` names
+that every conforming project holds may be written as a reference: `register@*@goal` names
 each Component's own copy, required by `design@core@components-carry-the-same-documents`, and
 `path@plans@README.md` names a file of the one plans directory, whose path the checker fixes, per
 `design@core@plans-dir-fixed`. Either is true in every installing project, and it shows the syntax

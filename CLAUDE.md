@@ -9,7 +9,7 @@ A documentation checker and an agent workflow, shipped as Rust crates. The check
 project's documents stay consistent with its code and with each other, through declared registers
 and checked references. The workflow is a set of agent skills that the checker embeds and writes
 into a project on request.
-The goals are `path@knowledge-architect@docs/goals.md`.
+The goals are `register@knowledge-architect@goal`.
 
 **The goals bind the design outright; a recorded decision binds it only as a presumption**, per
 `primer@goals-bind`, read whole. Recorded decisions were often argued before the code existed, so
@@ -69,7 +69,7 @@ State the consequences of a request explicitly. Never assume the user has consid
 The project keeps a precise record of decisions, their arguments, the alternatives that lost, and
 what is still open. The checker verifies that record mechanically, and this repository is checked
 by its own checker. This section is a restatement. The decisions live in the core's design home,
-`path@core@docs/design.md`, under the heads named below, and where the two disagree those heads
+`register@core@design`, under the heads named below, and where the two disagree those heads
 win.
 
 - **The manifest is `path@knowledge-architect@knowledge-architect.toml`.** It declares the
@@ -101,10 +101,10 @@ win.
     it outgrows one file. The directory's `README.md` is the head: an introduction, and markdown
     links naming every subdocument, each target relative to the README. The entries sit in the
     subdocuments. Exactly one of the two shapes, never both, per
-    `design@core@heading-register-two-shapes`. So the design home is `path@*@docs/design.md` or
-    its directory, the goals home `path@*@docs/goals.md` or its directory, and the tripwires home
-    `path@*@docs/tripwires.md` or its directory. Each may hold no entry.
-  - The issue register's home is the directory `path@*@docs/open-issues/`: one file per entry, a
+    `design@core@heading-register-two-shapes`. So the design home is `register@*@design`, the
+    goals home `register@*@goal` and the tripwires home `register@*@tripwire`, each in either
+    shape. Each may hold no entry.
+  - The issue register's home is the directory `register@*@issue`: one file per entry, a
     hand-written `README.md` and a generated `index.md`, per
     `design@core@a-file-register-is-a-directory-of-entries`.
 
@@ -132,7 +132,7 @@ win.
   harness kind, per the bullet below. The anchor
   is a Component, a location or a plan, and no anchor wears a kind's name. The id is the entry's. A plan's item is cited from
   inside that plan only, per `design@core@plan-item-scope`. Examples:
-  `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/tripwires.md`. A reference that resolves to nothing
+  `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/rejected-alternatives.md`. A reference that resolves to nothing
   is reported with the repair its failing segment needs, per
   `design@core@an-unresolved-reference-is-reported`. A reference of any other kind
   that names no anchor is refused, including inside the file that defines the id.
@@ -154,7 +154,7 @@ win.
   - Two anchors are reserved under `path` alone, and the word `plans` names the anchor the tool
     constructs, per `design@core@reserved-anchors` and `design@core@plans-is-a-reserved-anchor`. A plan document is cited by its kind,
     `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<slice>`, never by its path.
-    `path@*@<path>` names every Component's own copy of a path, as in `path@*@docs/tripwires.md`.
+    `path@*@<path>` names every Component's own copy of a path, as in `path@*@docs/rejected-alternatives.md`.
     `path@elsewhere@<path>` names a path that is deliberately not resolvable in this tree: another
     project's layout, a deleted or hypothetical file. It is never checked for existence, and it is
     refused when its target does resolve here.
@@ -214,8 +214,8 @@ the primer's:
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
-| a decision about the published workflow: what the installed text tells every adopting project | the agent-skills design home, `path@agent-skills@docs/design.md`; this repository follows the published workflow, with the departures this file states, and restates what it needs per `primer@where-knowledge-goes` | the decision changes |
-| what is outstanding about the agent configuration itself | the agent-config location's issue directory, `path@agent-config@open-issues/` | the issue closes |
+| a decision about the published workflow: what the installed text tells every adopting project | the agent-skills design home, `register@agent-skills@design`; this repository follows the published workflow, with the departures this file states, and restates what it needs per `primer@where-knowledge-goes` | the decision changes |
+| what is outstanding about the agent configuration itself | the agent-config location's issue directory, `register@agent-config@issue` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md`; its crates.io page is a short `CRATES-IO.md` in the crate, named by `readme` in its Cargo.toml, which points to the README and to docs.rs, per `design@knowledge-architect@crates-io-page-file` | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
 | what a consumer must change, can start using, or will see agents do differently, per release | CHANGELOG.md at the root: one section per version, and the `Next release` section | a released section's content never changes; its structure may, and the `Next release` section may change at any time, per `design@knowledge-architect@changelog-section-fixed-at-release` |
@@ -480,7 +480,7 @@ agentic-workflow axis of `skill@knowledge-architect-project-audit` on the instal
 here as `design@knowledge-architect@workflow-findings-stay-here` says, read whole.** Each repair of
 an audit's finding on the installed text, its proposal and its check included, passes the tests of
 `path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", read whole, per that head. The
-audit's checker-rules auditors, L7, also read the checker's design home, `path@core@docs/design.md`,
+audit's checker-rules auditors, L7, also read the checker's design home, `register@core@design`,
 beside its README: the installed lens names the README alone, since an adopting project holds no
 design home of the checker, and here the checker's rules are decided in that home.
 

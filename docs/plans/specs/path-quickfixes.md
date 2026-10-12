@@ -133,7 +133,7 @@ What exists today at each site the work touches:
   `planned_target`.
 - **A `path` citation of a skill or an agent** is resolved as any path and accepted. None stands in
   the tree since this spec's branch: the three that stood on the main branch, in
-  `path@knowledge-architect@docs/design.md` and in two issue entries of agent-skills, were written
+  `register@knowledge-architect@design` and in two issue entries of agent-skills, were written
   as `skill@<name>` references by its commit "Three citations of a project skill by its file's
   path are written as the skill's reference". The entity table records each skill and each agent
   with one site, its file and line 1, in `section_home` of `path@core@src/entity.rs`, reached from
@@ -210,9 +210,9 @@ referencing each, on the main branch before this spec:
 
 | decision | texts referencing it | judged or updated at |
 | --- | --- | --- |
-| `design@core@safe-fix-definition`: reversed in its second clause, "it writes or removes only files of the installer's namespace or of the generated list"; restated as the principle with the respelling as its test | `path@core@README.md`, its section `check`; `design@core@finding-names-the-repair`, `design@core@index-staged-write` and `design@core@fix-scope`; `path@core@docs/tripwires.md`, the entry `tripwire@core@fix-makes-a-choice`; `path@core@src/cli/mod.rs` line 445 | step 1 for the README and the source; the harvest for the design home and the tripwires |
+| `design@core@safe-fix-definition`: reversed in its second clause, "it writes or removes only files of the installer's namespace or of the generated list"; restated as the principle with the respelling as its test | `path@core@README.md`, its section `check`; `design@core@finding-names-the-repair`, `design@core@index-staged-write` and `design@core@fix-scope`; `register@core@tripwire`, the entry `tripwire@core@fix-makes-a-choice`; `path@core@src/cli/mod.rs` line 445 | step 1 for the README and the source; the harvest for the design home and the tripwires |
 | `design@core@fix-scope`: gains the respellings; its title states the test that `design@core@safe-fix-definition` defines, so whether the two stay two heads or merge into one is put to the owner at this harvest | `path@core@src/agents.rs` line 181 | the harvest; the comment stays true where it names the installed files only |
-| `design@core@fix-refusal-mixed-state`: its sentence "`--fix` cannot lose unstaged content, since it writes only generated and installed files" is rewritten, and, per D1, its clause "The refusal is exit 2, or 1 where agent files were installed before it" becomes "exit 2, or 1 where any file was written before it" | `path@core@README.md`, its section `check`; `design@core@index-staged-write`, `design@core@check-fix-flag` and `design@core@fix-before-the-checks`; `path@core@docs/tripwires.md`, the entry `tripwire@core@fix-refusal-routed-around` | step 1 for the README; the harvest for the design home and the tripwires |
+| `design@core@fix-refusal-mixed-state`: its sentence "`--fix` cannot lose unstaged content, since it writes only generated and installed files" is rewritten, and, per D1, its clause "The refusal is exit 2, or 1 where agent files were installed before it" becomes "exit 2, or 1 where any file was written before it" | `path@core@README.md`, its section `check`; `design@core@index-staged-write`, `design@core@check-fix-flag` and `design@core@fix-before-the-checks`; `register@core@tripwire`, the entry `tripwire@core@fix-refusal-routed-around` | step 1 for the README; the harvest for the design home and the tripwires |
 | `design@core@fix-before-the-checks`, and the sentence of `design@core@phases-gate-the-report`, "having repaired before that gate only the installed files": the respellings join the order, per D1; the same sentence's "exits 1" stays, per D7. The other texts referencing `design@core@phases-gate-the-report` cite it for the gate itself, which the work keeps: `path@knowledge-architect@CLAUDE.md` line 468, `path@core@CLAUDE.md` line 90, `design@core@model-then-checks`, `design@core@an-extension-plugs-in-through-phased-hooks`, `design@core@tracked-and-ignored-is-a-finding`, `design@core@a-wrong-declaration-is-a-finding`, `design@core@index-staged-write`, `design@core@fix-before-the-checks`, `design@core@headings-open-with-hash-marks` and `design@core@owned-namespace-check`, `path@core@docs/rejected-alternatives.md` lines 74, 84, 90 and 96, `issue@core@installed-file-findings-belong-in-phase-four` line 20, and `tripwire@core@phases-gate-the-report-two`; `path@core@README.md`, its section `check`, restates the sentence and is updated | `path@core@README.md`, its section `check`; `design@core@model-then-checks` and `design@core@phases-gate-the-report`; `issue@core@installed-file-findings-belong-in-phase-four`, line 27; `path@core@src/cli/mod.rs` lines 445 and 542; `path@core@tests/binary.rs` line 3746 | step 1 for the README, the source and the test; the harvest for the design home and the issue |
 | `tripwire@core@fix-makes-a-choice`: it fired on the proposal this spec plans, per D4 | `design@core@safe-fix-definition` | per D4: its firing clause narrowed in this spec's branch, on the owner's word; deleted at the harvest |
 | `design@core@every-path-names-its-anchor`: gains the refusal of a `path` citation of a skill or an agent, and the question form of a raw path's repair | `path@knowledge-architect@CLAUDE.md` lines 142 and 180; `path@core@README.md`, its section `check`; `design@core@anchors-are-components-and-locations`, `design@core@plan-document-kinds`, `design@core@candidate-rule-and-retired-forms` and `design@core@a-commit-message-is-a-document`; `path@core@docs/rejected-alternatives.md` lines 117, 146, 180, 186, 362 and 371; `path@core@src/check/references.rs` line 14; `path@core@src/manifest.rs` line 971 | steps 3 and 5 for the source; step 6 for the README and the root CLAUDE.md; the harvest for the design home and the rejected alternatives |
@@ -1065,7 +1065,7 @@ approved in a sixth message, called round 6: "Agreed, those are small details."
 - **D2**, on `thread@path-quickfixes@same-anchor-inference`, from the transcript's coverage at assembly. The owner's word of
   round 4, "Keep all tripwires and AC", stands after a premortem that labelled T1 and T2, while the
   parked thread's tripwire stood in the checkpoint table with no label. The default: if the thread
-  is still parked at the harvest, its tripwire is recorded in `path@core@docs/tripwires.md`,
+  is still parked at the harvest, its tripwire is recorded in `register@core@tripwire`,
   guarding `design@core@safe-fix-definition`, as rewritten. The
   alternative: it leaves with this spec.
 - **D3**, on `thread@path-quickfixes@respelling-fixes`, a material finding of the decision-record and design-conformance
@@ -1117,8 +1117,8 @@ commit, with the test it fails.
 | the owner's direction of round 2 on this repository's own needs | per D5 |
 | every item of "Losing alternatives", the incumbent included | `path@core@docs/rejected-alternatives.md`, each as the recording tests admit |
 | the existing entries of `path@core@docs/rejected-alternatives.md` that cite a rewritten head | each read again; each still lost to its head as rewritten, or is edited to say so |
-| T1 | `path@core@docs/tripwires.md`, guarding `design@core@fix-scope`, as the Premortem section words it |
-| T2 | `path@core@docs/tripwires.md`, guarding the head that records the question form, as the Premortem section words it |
+| T1 | `register@core@tripwire`, guarding `design@core@fix-scope`, as the Premortem section words it |
+| T2 | `register@core@tripwire`, guarding the head that records the question form, as the Premortem section words it |
 | AC1 to AC4 | reported on at the landing; each spent, or proposed to the owner as a tripwire if it recurs |
 | this spec | deleted in the harvest's commit, cited as `spec@plans@path-quickfixes` |
 

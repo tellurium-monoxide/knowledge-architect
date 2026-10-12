@@ -31,10 +31,10 @@ Read the Component's own files first:
 - its `CLAUDE.md`, for the invariants and traps that hold of the code as it stands;
 - its design home, for the recorded intent;
 - its `path@*@docs/rejected-alternatives.md`, for what has already lost;
-- its `path@*@docs/open-issues/` and `path@*@docs/tripwires.md`, for what is outstanding and what
+- its `register@*@issue` and `register@*@tripwire`, for what is outstanding and what
   would reopen a decision.
 
-Then read the root's design home, `path@knowledge-architect@docs/design.md`: it holds what binds
+Then read the root's design home, `register@knowledge-architect@design`: it holds what binds
 every Component, so its heads bind a change inside one Component too.
 
 A behaviour that looks like a new defect is often recorded: check it as

@@ -63,8 +63,7 @@ registers it declares. Grepping the one you happen to think of is not the check.
 
 ## Re-read every tripwire and every deferred trigger `##reread-standing-entries`
 
-**Every Component carries a tripwires home, `path@*@docs/tripwires.md` or a `path@*@docs/tripwires/`
-directory.** A tripwire guards a recorded decision, and a decision lives in the Component it is
+**Every Component carries a tripwires home, `register@*@tripwire`, one file or a directory.** A tripwire guards a recorded decision, and a decision lives in the Component it is
 about, so its tripwire does too. `cargo klarch tripwires` lists every entry the tripwire homes
 define; that listing is what tells you which exist, rather than a count written anywhere. It lists entries,
 not homes: open every tripwires home as well, since an empty one does not appear in it. The `guarding` column names every reference

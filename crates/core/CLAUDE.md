@@ -111,4 +111,4 @@ it. A test that needs a private item is a unit test inside the crate, never a re
 `path@core@tests/extension_api.rs` uses the public paths alone, so an item it uses that the facade
 leaves out fails to compile there.
 
-Read `path@core@docs/design.md` before changing how it works.
+Read `register@core@design` before changing how it works.

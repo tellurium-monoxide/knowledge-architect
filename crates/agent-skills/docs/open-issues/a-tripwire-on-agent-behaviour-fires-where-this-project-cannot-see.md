@@ -14,7 +14,7 @@ reach it. Finding W2 of the retrospective of 2026-10-05.
 
 ### What
 
-The instances, in `path@agent-skills@docs/tripwires.md`:
+The instances, in `register@agent-skills@tripwire`:
 
 - The tripwires first recorded from the premortem of the decision now recorded as
   `design@agent-skills@new-or-reshaped-head-needs-design`, and of `design@agent-skills@in-change-path`,
@@ -36,7 +36,7 @@ The instances, in `path@agent-skills@docs/tripwires.md`:
 
 After those repairs, the re-entry point each tripwire of this Component names is one of these
 occasions of this repository, read in the `**Re-entry:**` line of each entry of
-`path@agent-skills@docs/tripwires.md`: a retrospective of one of its sessions; the standing-state
+`register@agent-skills@tripwire`: a retrospective of one of its sessions; the standing-state
 review, or another axis of the review of a change, the decision-record review among them; a step of
 a session's own procedure, such as the session's verification of each pass's report of an audit;
 or, for `tripwire@agent-skills@search-missed-before-the-work`, the design discussion of this entry.

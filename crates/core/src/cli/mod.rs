@@ -953,6 +953,57 @@ fn show(manifest: &Manifest, args: &ShowArgs, checker: &[&Path]) -> Result<ExitC
                 found = true;
             }
         }
+    } else if kind.is_register() {
+        // A register's home is the anchors' and the listing's, not the table's: the path the tree
+        // holds, in whichever shape, with the register's shape, or a word that the tree holds
+        // neither. `*` names every component's own home. A reference the check refuses resolves
+        // to nothing here either, with the check's own finding.
+        let mut refusals = Vec::new();
+        crate::check::references::register(
+            &mut refusals,
+            Path::new(""),
+            0,
+            reference,
+            anchor,
+            id,
+            &anchors,
+        );
+        if let Some(refusal) = refusals.first() {
+            outln!("{reference} resolves to nothing: {}", refusal.what);
+            outln!("  → {}", refusal.action);
+            return Ok(ExitCode::FAILURE);
+        }
+        let register = anchors
+            .registers()
+            .by_name(id)
+            .expect("the check resolved the register");
+        let listed = |p: &Path| model.listing().iter().any(|l| l == p || l.starts_with(p));
+        let homes: Vec<&crate::entity::Anchor> = anchors
+            .all()
+            .iter()
+            .filter(|a| {
+                if anchor == crate::entity::EVERY_ANCHOR {
+                    a.is_component
+                } else {
+                    a.name == anchor
+                }
+            })
+            .collect();
+        outln!("{reference}  the {id} register, shape {:?}", register.shape);
+        outln!();
+        for a in homes {
+            let home = a.home_of(register);
+            let file = home.file.clone();
+            let held = if register.shape == crate::manifest::Shape::Heading && listed(&file) {
+                file.display().to_string()
+            } else if listed(&home.dir) {
+                format!("{}/", home.dir.display())
+            } else {
+                "(the tree holds neither shape)".to_string()
+            };
+            outln!("{}: {held}", a.name);
+        }
+        found = true;
     } else if let Some(record) =
         crate::records::records(&model, &anchors, &Entities::build(&model, &anchors), &kind)
             .into_iter()

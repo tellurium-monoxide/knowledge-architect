@@ -2,7 +2,7 @@
 
 Evidence that would reopen a decision about the core checker itself. **A tripwire is not something
 to do**: it is a hypothesis about a future failure plus the response, and it leaves this file when it
-fires. What is outstanding about the tool is `path@core@docs/open-issues/` beside it.
+fires. What is outstanding about the tool is `register@core@issue` beside it.
 
 Entry shape and the movement instruction between the two files are
 `skill@knowledge-architect-issue-tracking`. The standing re-entry point is the standing-state

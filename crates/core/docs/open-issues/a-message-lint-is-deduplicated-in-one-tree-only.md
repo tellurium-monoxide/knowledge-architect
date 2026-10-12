@@ -27,7 +27,8 @@ Reproduced on a release build of the checker, from a clean checkout:
 1. `p1` = a commit made with `git commit-tree` from HEAD's tree plus a file `zzscratch/a.md`;
 2. `c` = a commit of HEAD's tree with parent `p1` and a message of four lines: a subject, a blank
    line, a line naming `zzscratch/a.md` twice, each in its own backticks, and a line naming the
-   root's goals home, `path@knowledge-architect@docs/goals.md`, twice as a bare path, each in its
+   root's rejected alternatives, `path@knowledge-architect@docs/rejected-alternatives.md`, twice
+   as a bare path, each in its
    own backticks;
 3. `klarch commits p1..c`.
 

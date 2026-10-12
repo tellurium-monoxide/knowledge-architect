@@ -1010,6 +1010,36 @@ fn show_prints_the_entry_and_what_points_at_it() {
     }
 }
 
+/// The claim (AC3 of `spec@plans@register-references`): `show` on a `register` reference prints
+/// the home the tree holds, a file for a heading home in one file and a directory for one split
+/// into a directory, with the register's shape, then every site that cites it; one the check
+/// refuses resolves to nothing with the check's finding. Mutation checked, and caught: the
+/// `listed(&file)` branch disabled.
+#[test]
+fn show_of_a_register_reference_prints_the_home_the_tree_holds() {
+    let sandbox = Sandbox::new("show-register", "dirhome");
+    sandbox.write(
+        "docs/rejected-alternatives.md",
+        "# Rejected alternatives\n\nNone yet; the tripwires sit in `register@dirhome@tripwire`.\n",
+    );
+
+    let (file, stderr, code) = sandbox.run(&["show", "register@dirhome@tripwire"]);
+    assert_eq!(code, 0, "{stderr}");
+    assert!(file.contains("dirhome: docs/tripwires.md"), "{file}");
+    assert!(file.contains("Heading"), "{file}");
+    assert!(file.contains("docs/rejected-alternatives.md:3"), "{file}");
+
+    let (dir, stderr, code) = sandbox.run(&["show", "register@dirhome@design"]);
+    assert_eq!(code, 0, "{stderr}");
+    assert!(dir.contains("dirhome: docs/design/"), "{dir}");
+    assert!(dir.contains("referenced by nothing"), "{dir}");
+
+    let (refused, _, code) = sandbox.run(&["show", "register@dirhome@spec"]);
+    assert_eq!(code, 1, "{refused}");
+    assert!(refused.contains("resolves to nothing"), "{refused}");
+    assert!(refused.contains("carries no spec register"), "{refused}");
+}
+
 /// The claim, per `design@core@planned-path-form`: `show` on a planned reference resolves whether
 /// or not the target exists, says which, and lists the plans that cite it, which are the sites a
 /// conversion edits.

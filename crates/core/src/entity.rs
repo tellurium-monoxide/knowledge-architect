@@ -5,8 +5,8 @@
 //! it. Before this table five checks held five notions of a name; the argument is
 //! `design@core@one-entity-table`.
 //!
-//! **A kind is a register's name, `path`, `planned`, or, under the `claude` harness, one of the
-//! four harness kinds.** Ten registers are compiled in and a project declares the rest, so the
+//! **A kind is a register's name, `path`, `planned`, `register`, or, under the `claude` harness,
+//! one of the four harness kinds.** Ten registers are compiled in and a project declares the rest, so the
 //! kind set is data rather than an enum — `path@core@src/manifest.rs` owns what a register is,
 //! and this module owns what naming one means. A harness kind, `skill`, `agent`, `primer` or
 //! `instructions`, is no register: no anchor carries it, and a reference to one names no anchor,
@@ -46,6 +46,11 @@ pub(crate) const PATH_KIND: &str = "path";
 /// `design@core@planned-path-form`.
 pub(crate) const PLANNED_KIND: &str = "planned";
 
+/// The kind naming a register's home, `register@<anchor>@<register>`: resolved against the anchors
+/// and the tree's listing, not the table, per `design@core@one-entity-table`, so no register's
+/// name becomes an entity id.
+pub(crate) const REGISTER_KIND: &str = "register";
+
 /// The kind of a skill of the harness, and of its sections.
 pub(crate) const SKILL_KIND: &str = "skill";
 
@@ -65,8 +70,8 @@ pub(crate) const HARNESS_KINDS: [&str; 4] =
 /// The path of the primer, as the installer writes it.
 const PRIMER_PATH: &str = ".claude/knowledge-architect/PRIMER.md";
 
-/// What a reference names, in its first segment: a register's name, `path`, `planned`, or a
-/// harness kind.
+/// What a reference names, in its first segment: a register's name, `path`, `planned`,
+/// `register`, or a harness kind.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct Kind(Arc<str>);
 
@@ -91,6 +96,15 @@ impl Kind {
 
     pub(crate) fn is_planned(&self) -> bool {
         &*self.0 == PLANNED_KIND
+    }
+
+    /// The kind naming a register's home.
+    pub(crate) fn register() -> Kind {
+        Kind::new(REGISTER_KIND)
+    }
+
+    pub(crate) fn is_register(&self) -> bool {
+        &*self.0 == REGISTER_KIND
     }
 
     /// Whether the id is a path under the anchor, rather than an entity's id: `path` and
@@ -140,7 +154,7 @@ pub(crate) fn is_reserved_anchor(word: &str) -> bool {
 }
 
 /// Whether a word is a kind's name in a project whose registers are `registers`: `path`,
-/// `planned`, a harness kind, whatever the harness, or a register's name.
+/// `planned`, `register`, a harness kind, whatever the harness, or a register's name.
 ///
 /// No anchor may wear one. The head of a reference is asked for a kind before an anchor, so an
 /// anchor named like a kind would be shadowed there, so every such name is refused for anything
@@ -149,6 +163,7 @@ pub(crate) fn is_reserved_anchor(word: &str) -> bool {
 pub(crate) fn is_kind_name(word: &str, registers: &Registers) -> bool {
     word == PATH_KIND
         || word == PLANNED_KIND
+        || word == REGISTER_KIND
         || HARNESS_KINDS.contains(&word)
         || registers.by_name(word).is_some()
 }
@@ -440,8 +455,8 @@ impl Anchors {
         &self.registers
     }
 
-    /// The kind a word names: a declared register, `path`, `planned`, or a harness kind where the
-    /// project serves the `claude` harness.
+    /// The kind a word names: a declared register, `path`, `planned`, `register`, or a harness
+    /// kind where the project serves the `claude` harness.
     ///
     /// Under no harness the four words name no kind, so a span headed by one is silent, as any
     /// span whose head is no kind and no anchor: the project has no agent configuration for it to
@@ -452,6 +467,9 @@ impl Anchors {
         }
         if word == PLANNED_KIND {
             return Some(Kind::planned());
+        }
+        if word == REGISTER_KIND {
+            return Some(Kind::register());
         }
         if self.harness && HARNESS_KINDS.contains(&word) {
             return Some(Kind::new(word));
@@ -469,6 +487,7 @@ impl Anchors {
             .collect();
         names.push(PATH_KIND);
         names.push(PLANNED_KIND);
+        names.push(REGISTER_KIND);
         if self.harness {
             names.extend(HARNESS_KINDS);
         }
@@ -559,32 +578,60 @@ impl Anchors {
         out
     }
 
-    /// Whether a component-relative path is a required document name in one of its shapes,
-    /// and whether that shape is a directory: what the generic anchor `path@*@<path>` accepts
-    /// whether or not any component carries it yet.
+    /// Whether a component-relative path is a required document name that the generic anchor
+    /// `path@*@<path>` accepts whether or not any component carries it yet, and whether it is a
+    /// directory.
     ///
-    /// The compiled-in document set, and every component register's homes: a heading
-    /// register's file, directory and README, and a file register's directory, README and
-    /// index. Naming a shape no component uses yet is legitimate.
+    /// The compiled-in document set, and a file register's README and generated index, which are
+    /// files inside a home rather than the home. A register's home itself is no `path` target at
+    /// all: [`Anchors::generic_home_target`] answers for it first, and the reference names it by
+    /// the `register` kind, per `design@core@reserved-anchors`.
     pub(crate) fn required_kind(&self, path: &str) -> Option<bool> {
         if COMPONENT_DOCUMENTS.contains(&path) {
             return Some(false);
         }
         for register in self.registers.component_scoped() {
             let dir = &register.dir;
-            if path == format!("docs/{dir}") {
-                return Some(true);
-            }
-            if path == format!("docs/{dir}/README.md") {
+            if register.shape != Shape::Heading
+                && (path == format!("docs/{dir}/README.md")
+                    || path == format!("docs/{dir}/index.md"))
+            {
                 return Some(false);
-            }
-            match register.shape {
-                Shape::Heading if path == format!("docs/{dir}.md") => return Some(false),
-                Shape::File if path == format!("docs/{dir}/index.md") => return Some(false),
-                _ => {}
             }
         }
         None
+    }
+
+    /// The anchor and the register whose home a project-relative target is, or `None`: a heading
+    /// register's file, its directory or that directory's README, which is the home's head; a file
+    /// or directory register's directory. A plan anchor's registers are cited by the plan
+    /// document's kind, and an item register's home is a plan's documents, so neither is a home
+    /// target.
+    ///
+    /// The target is compared as a path, so a trailing slash or a suffix is the caller's to strip.
+    pub(crate) fn home_target(&self, target: &Path) -> Option<(&Anchor, &Register)> {
+        self.instances()
+            .into_iter()
+            .filter(|(a, r, _)| !a.is_plan() && r.shape != Shape::Section)
+            .find(|(_, r, home)| match r.shape {
+                Shape::Heading => {
+                    target == home.file || target == home.dir || target == home.readme
+                }
+                _ => target == home.dir,
+            })
+            .map(|(a, r, _)| (a, r))
+    }
+
+    /// The component-scoped register whose home a component-relative path is, under the generic
+    /// anchor `*`, by the shapes [`Anchors::home_target`] reads.
+    pub(crate) fn generic_home_target(&self, path: &str) -> Option<&Register> {
+        self.registers.component_scoped().find(|r| {
+            let dir = &r.dir;
+            path == format!("docs/{dir}")
+                || (r.shape == Shape::Heading
+                    && (path == format!("docs/{dir}.md")
+                        || path == format!("docs/{dir}/README.md")))
+        })
     }
 }
 
@@ -743,7 +790,7 @@ pub(crate) enum Candidate<'a> {
 /// **Which spans are candidates.** The head — the text before the first `@` — is a known kind,
 /// a declared anchor or a reserved anchor; anything else is not a reference and is silent, so
 /// an email address or a git remote in backticks reports nothing. A typo inside the kind is
-/// silent for the same reason, which `path@core@docs/tripwires.md` guards.
+/// silent for the same reason, which `register@core@tripwire` guards.
 ///
 /// **Segmentation.** Every kind but `path` and `planned` takes exactly three segments; those two
 /// take an anchor and then everything after the second `@` as its id, so a path may hold an `@`.
@@ -2525,25 +2572,38 @@ mod tests {
 
     #[test]
     fn the_required_document_set_carries_each_shape_with_its_kind() {
-        // The compiled-in files, each heading register's file, directory and README, and the
-        // issue register's directory, README and index.
+        // The compiled-in files, and the issue register's README and index, which are files inside
+        // its home. A register's home itself is no required `path` target: the `register` kind
+        // names it. Mutation checked: the `shape != Shape::Heading` test removed, which accepts
+        // a heading register's README again.
         let a = anchors();
         assert_eq!(a.required_kind("README.md"), Some(false));
-        assert_eq!(a.required_kind("docs/tripwires.md"), Some(false));
-        assert_eq!(a.required_kind("docs/goals.md"), Some(false));
-        assert_eq!(a.required_kind("docs/goals"), Some(true));
-        assert_eq!(a.required_kind("docs/goals/README.md"), Some(false));
-        assert_eq!(a.required_kind("docs/design"), Some(true));
-        assert_eq!(a.required_kind("docs/open-issues"), Some(true));
+        assert_eq!(
+            a.required_kind("docs/rejected-alternatives.md"),
+            Some(false)
+        );
         assert_eq!(a.required_kind("docs/open-issues/README.md"), Some(false));
         assert_eq!(a.required_kind("docs/open-issues/index.md"), Some(false));
-        // The README of a heading register's directory home, which is the shape a component
-        // that has not split its home yet does not carry.
-        assert_eq!(a.required_kind("docs/tripwires/README.md"), Some(false));
-        assert_eq!(a.required_kind("docs/design/README.md"), Some(false));
-        // A file register has no single-file shape, so that name is not a required document.
+        for home in [
+            "docs/tripwires.md",
+            "docs/goals.md",
+            "docs/goals",
+            "docs/goals/README.md",
+            "docs/design",
+            "docs/open-issues",
+            "docs/tripwires/README.md",
+        ] {
+            assert_eq!(a.required_kind(home), None, "{home}");
+            assert!(a.generic_home_target(home).is_some(), "{home}");
+        }
+        // A file register has no single-file shape, and a subdocument is no home.
         assert_eq!(a.required_kind("docs/open-issues.md"), None);
+        assert!(a.generic_home_target("docs/open-issues.md").is_none());
+        assert!(a
+            .generic_home_target("docs/open-issues/README.md")
+            .is_none());
         assert_eq!(a.required_kind("docs/design/one.md"), None);
+        assert!(a.generic_home_target("docs/design/one.md").is_none());
         assert_eq!(a.required_kind("src/lib.rs"), None);
     }
 

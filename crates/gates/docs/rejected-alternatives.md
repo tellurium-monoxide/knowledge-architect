@@ -1,6 +1,6 @@
 # Gates — rejected alternatives
 
-The alternatives that lost to a decision of `path@gates@docs/design.md`, each with what it lost to
+The alternatives that lost to a decision of `register@gates@design`, each with what it lost to
 and why.
 
 ## Capturing a child's two streams through one regular file instead of two pipes

@@ -94,7 +94,7 @@ impl Invocation {
             // takes an untracked live document out of every check on one clone and not on
             // another. What still decides the walk is the tree's own ignore files and git's
             // per-clone exclude file, which git offers no way to pin; the tripwire in
-            // `path@core@docs/tripwires.md` guards what remains. The decision is
+            // `register@core@tripwire` guards what remains. The decision is
             // `design@core@per-user-ignore-file-pinned`.
             .args(["-c", "core.excludesFile=/dev/null"])
             .args(&self.args)

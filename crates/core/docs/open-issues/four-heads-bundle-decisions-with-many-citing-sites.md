@@ -5,7 +5,7 @@ kind: design
 
 ## Summary
 
-Four heads of `path@core@docs/design.md` each hold two or more decisions whose nearest rivals
+Four heads of `register@core@design` each hold two or more decisions whose nearest rivals
 differ, against `design@agent-skills@one-decision-per-head`. The first run of the design-record
 axis on this repository found them, and left them unsplit because each split must first read every
 site that cites the head, 23 to 33 sites per head, to re-point each one to the part it cites.

@@ -1,8 +1,8 @@
 # Goals — the core checker
 
 What the core checker is for, as its share of the project's goals,
-`path@knowledge-architect@docs/goals.md`. A goal is met or unmet, where a decision about how the
-checker is built is won or lost and lives in `path@core@docs/design.md`. A goal stays here while
+`register@knowledge-architect@goal`. A goal is met or unmet, where a decision about how the
+checker is built is won or lost and lives in `register@core@design`. A goal stays here while
 it is met, and leaves only when the owner abandons it.
 
 ## The project's documents stay tidy and do not grow stale `##documents-stay-current`
