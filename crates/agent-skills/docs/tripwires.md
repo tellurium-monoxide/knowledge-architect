@@ -282,8 +282,8 @@ audit edits.
 
 **Fires when:** a review of an audit's branch finds a tripwire guarding, or an issue naming, a head
 an edit of the design-record axis changed, left false. An edit of another axis that leaves one false
-is a miss of the closing step of `skill@knowledge-architect-decision-recording@before-you-finish`,
-which reads every text citing each head a change edits.
+is a miss of the step of `skill@knowledge-architect-decision-recording@before-you-finish` that
+reads every text citing each head a change edits.
 **Response:** reopen `design@agent-skills@design-record-axis`.
 **Re-entry:** the standing-state review of every audit's branch.
 

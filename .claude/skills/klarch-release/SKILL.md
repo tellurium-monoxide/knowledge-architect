@@ -98,13 +98,13 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
 ## Merge, then publish `##merge-then-publish`
 
 10. **Merge** under the root `CLAUDE.md`'s merge predicate. Before the merge, record the reviewed
-    head, `git rev-parse HEAD` on the branch, in the shell or the conversation: the merge deletes
-    every ref that names it, and step 12 compares with it. From the merge until step 12, main's
+    head, `git rev-parse HEAD` on the branch, in the conversation, since a shell variable may not
+    outlive the command that set it: the merge deletes every ref that names it, and step 12
+    compares with it. From the merge until step 12, main's
     README status line names a version that is not yet on crates.io.
-11. **The owner's word.** Without it, nothing is published. The word names the publish, and is
-    given after the review: once step 10's merge is done, or before it, conditioned on it. A word
-    given before the merge holds only for the tree reviewed, which step 12's comparison shows; a
-    general "proceed" that does not name the publish is no word to publish. The owner is
+11. **The owner's word.** Without it, nothing is published. The word names the publish and is
+    given after the review, after the merge or before it, holding then for the tree reviewed, which
+    step 12's comparison shows, per `design@knowledge-architect@publish-after-merge`. The owner is
     logged in to crates.io in the shell the agent runs in, with `cargo login`, and the token never
     passes through the agent. The token needs the scopes publish-new and publish-update, and the
     account a verified email.
