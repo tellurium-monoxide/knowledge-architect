@@ -34,10 +34,10 @@ refusal with a general-purpose reviewer, and none with an installed agent.
 ### Why it matters
 
 `skill@knowledge-architect-review@review-invariants` has the dispatcher name a scratch directory for
-each subagent, and the project-audit skill's drafts and reports live in files the session reads
-rather than in a summary, per `design@agent-skills@audit-method`. A reviewer whose report comes back
-only as a message leaves the session no file to read again, and a long report can be cut short in
-the message.
+each subagent, and the project-audit skill's drafts and reports live in files the session can open,
+per `design@agent-skills@one-run-pass`, each agent writing in a scratch directory of its own, per
+`design@agent-skills@audit-method`. A reviewer whose report comes back only as a message leaves the
+session no file to read again, and a long report can be cut short in the message.
 
 ### What would close it
 
