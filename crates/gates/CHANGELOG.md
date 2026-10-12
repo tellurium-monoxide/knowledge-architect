@@ -6,6 +6,14 @@ class is `design@knowledge-architect@changelog-entries`. Inside a subsection, en
 surface, in the order `checks`, `cli`, `manifest`, `library`, `agent-skills`, `gates`; an empty
 subsection is omitted.
 
+## Next release
+
+### Workflow
+
+- `agent-skills`, patch: before finishing a change that edits a design head, whatever the edit,
+  the decision-recording skill runs `show` on the head, reads every text that cites it, and
+  re-reads the head's whole body against the change.
+
 ## 0.6.0
 
 ### Migration
