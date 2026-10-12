@@ -2095,7 +2095,7 @@ to a pass.
 
 The record check reads every goals home, the design heads that the checker's `show` and a search of
 the design homes return for the behaviour the edited text describes, and the rejected alternatives
-of the Component that owns the text. It names each head the repair would reverse, each rejected
+of each Component that owns an edited text. It names each head the repair would reverse, each rejected
 alternative it brings back and each goal it strains, with its quotation. A repair that reverses a
 head is a decision, recorded under `skill@knowledge-architect-decision-recording`.
 `skill@knowledge-architect-project-audit@repair-standard` states it, for the audit and for each
