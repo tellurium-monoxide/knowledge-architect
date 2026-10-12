@@ -17,10 +17,19 @@ subsection is omitted.
 - `checks`, minor: a project skill's directory and a project agent's file are named in lower-case
   words joined by hyphens, and a frontmatter `name`, where one is set, equals that name. A
   skill's directory is not `synced`, nor begins `anthropic-skills`, which the harness does not
-  load.
+  load. A project renames a skill's directory, an agent's file or a frontmatter `name` that breaks
+  one of these rules.
 - `checks`, minor: under the `claude` harness, a backticked span that is exactly the name of a
   skill or an agent, installed or the project's own, is reported. A project writes it as the
   reference, `skill@<name>` or `agent@<name>`; this holds for mock projects serving `claude` too.
+- `checks`, minor: the installer's namespace holds every
+  `.claude/workflows/knowledge-architect-<name>.js`: `install-agent-skills` writes and removes
+  those files, and `check` compares them byte for byte with the shipped set, as it does the skills
+  and agents. A project renames its own saved workflow of such a name.
+- `checks`, patch: under the `claude` harness, a slug at a level-two heading of the root
+  CLAUDE.md, of a project skill or of a project agent is no longer reported as a misplaced
+  definition; it defines a section. A project whose tests pin the misplaced-definition findings of
+  the core's checks removes those it expected there.
 - `cli`, major: `check --fix` refuses, exit 2, or 1 where it already installed agent files, when
   the index differs from HEAD and a generated file it would write differs from the one the staged
   tree needs, or when the staged tree's generated files cannot be computed, and it refuses
@@ -41,7 +50,8 @@ subsection is omitted.
 - `agent-skills`, patch: the installed skills and agents no longer number their sections, and cite
   each other's sections by reference, as `skill@<name>@<slug>`. A project's own text that cites a
   section of an installed skill or agent by its number cites it by its reference instead.
-- `agent-skills`, patch: the decision-recording skill's section entry-tests leaves it; its content
+- `agent-skills`, patch: the decision-recording skill's section "Does it earn a document entry at
+  all?" leaves it; its content
   is in the primer's new section on design heads. A project's text that cites that section of the
   skill cites `primer@design-heads` instead.
 - `agent-skills`, patch: the design homes and the rejected alternatives a project holds are brought
@@ -51,9 +61,6 @@ subsection is omitted.
   `skill@knowledge-architect-decision-recording@ruled-tripwires`, the one home of when and where any
   tripwire the owner ruled on is written, a parked thread's included. A project's text that cites
   the old section cites the new one.
-- `agent-skills`, patch: the project-audit skill's section `record-of-a-run` becomes
-  `skill@knowledge-architect-project-audit@record-of-an-audit`, since a run is now one pass of an
-  axis's saved workflow. A project's text that cites the old section cites the new one.
 
 ### New features
 
@@ -62,15 +69,13 @@ subsection is omitted.
   `skill@<name>@<slug>`, `agent@<name>`, `agent@<name>@<slug>`, `primer@<slug>` and
   `instructions@<slug>`. Each resolves against the installed copies and the project's own files,
   and `show` prints each.
-- `checks`, minor: a slug at a level-two heading of a project skill or agent defines a section, where
-  it was reported as a misplaced definition.
 - `cli`, minor: `check --staged` judges the tree git's index would commit, HEAD's tree with the
   staged changes, by `check`'s rules, and prints a `tree: staged` line; it says when nothing is
   staged.
 - `cli`, minor: `index --staged` writes the generated files the staged tree needs into git's index,
   and touches no working-tree file, for a commit of part of the working tree.
 - `library`, minor: `extension::Tree` is `Clone` and `Copy`.
-- `agent-skills`, minor: `skill@knowledge-architect-project-audit` audits a whole project on one
+- `agent-skills`, patch: `skill@knowledge-architect-project-audit` audits a whole project on one
   axis, as opposed to a review of a diff, and its first axis, the design-record axis, re-applies
   the rules on design heads, on the Component a head belongs to and on rejected alternatives to
   every entry; the agent `agent@knowledge-architect-design-record-auditor` drafts its verdicts, one
@@ -91,13 +96,9 @@ subsection is omitted.
   Code's Workflow tool, `knowledge-architect-agentic-workflow-audit`: it drafts, verifies the drafts
   adversarially, clusters the findings by cause, proposes the repairs and writes a report the
   session verifies before the owner list; a session without the tool runs its steps by hand.
-- `agent-skills`, minor: the shipped set holds saved workflows of Claude Code's Workflow tool,
+- `agent-skills`, patch: the shipped set holds saved workflows of Claude Code's Workflow tool,
   installed as `.claude/workflows/knowledge-architect-<name>.js`; each declares its installed name
   as the name the harness calls it by.
-- `checks`, minor: the installer's namespace holds every `.claude/workflows/knowledge-architect-<name>.js`:
-  `install-agent-skills` writes and removes those files, and `check` compares them byte for byte
-  with the shipped set, as it does the skills and agents. A project's own saved workflow takes a
-  name of its own.
 
 ### Workflow
 
@@ -146,27 +147,25 @@ subsection is omitted.
 - `agent-skills`, patch: a review dispatches every axis of the review skill's table whose condition
   holds, and those the skill of each activity whose work it reviews adds; every finding is repaired, opened as an issue, or
   judged to need nothing.
+- `agent-skills`, patch: a divergence between a design home and the code no longer stops the task:
+  it holds only the part of the task that rests on the diverging point until the owner's word, and
+  the rest of the task goes on.
 - `agent-skills`, patch: before diagnosing a problem, a session lists the issues and the tripwires
   of every anchor.
-- `agent-skills`, patch: a project audit stops on the owner's judgement, and a pass whose count of
-  violations left does not fall goes to the owner as a question.
 - `agent-skills`, patch: the review before a merge is the last review of a branch, whichever
   activity's skill dispatched it, and there the transcript reviewer runs only alone and last; an
   activity's skill may defer the transcript axis of an earlier review to it; every subagent that
   judges a commit, a reviewer or an audit agent, gets a worktree detached at that commit, outside
   the project or under an ignored path; a change made in answer to a plan document's
   review, a default included, is a repair, reviewed again only where it changes a design head.
-- `agent-skills`, patch: a pass of the agentic-workflow axis repairs the findings of the pass
-  before it by cause: planning's point 4 is a review of the work, and the harvest's review the review
+- `agent-skills`, patch: planning's point 4 is a review of the work, and the harvest's review the review
   before the merge; the root's restatements of committing on a branch become pointers to
   `primer@branch-commits`; the agents' descriptions no longer say "Dispatch it; do not read it.";
   the primer no longer gives the owner every decision on delivering a directive at a point; approved
   bounded work whose work does not land in the change under way takes the full path to a spec; a
   default awaiting the owner is built as written until the owner rules, at no fixed moment; a slice's
-  spec carries only the sections its slice fills; the agentic-workflow axis's corpus and the
-  installed files are defined by their property, the saved workflow included; a cause of the axis
-  goes on the owner list only where its repair needs the owner's word, and one whose findings are
-  all on the installed text is sent upstream; a restatement carries its pointer; the primer says a
+  spec carries only the sections its slice fills; the installed files are defined by their
+  property; a restatement carries its pointer; the primer says a
   macro inside a `let` is bound.
 - `agent-skills`, patch: what waits for an owner who has not ruled during the work of a plan
   document is stated once, at the opening of the planning skill's procedure for a slice: a listed
@@ -186,11 +185,6 @@ subsection is omitted.
   added axes through the dispatching activity's skill. After an install that changes the installed
   files, each project skill and agent is read against the installed text that changed. A project
   may delete its routing table.
-- `agent-skills`, patch: the checker-rules lens of the agentic-workflow axis reports a rule no
-  installed sentence states only where the checker's finding message does not name the repair; the
-  re-check's auditors read the edited agent definition and root CLAUDE.md from disk; a finding an
-  issue entry already records takes the outcome nothing; the findings on the installed text go into
-  a file named as the retrospective's workflow file is.
 - `agent-skills`, patch: a retrospective whose moment falls during a task is offered when the task
   ends.
 - `agent-skills`, patch: the move of an adopting project's existing documents starts under the
@@ -202,34 +196,20 @@ subsection is omitted.
 - `agent-skills`, patch: the assembly of a plan document and the transcript reviewer count as the
   owner's a message the owner typed while the session worked; in a slice's work, the transcript
   reviewer runs once, at the harvest's review.
-- `agent-skills`, patch: a fifth pass of the agentic-workflow axis repairs its findings by cause:
-  a verifier marks a kept or a bears-on-ruling draft rather than refuting it, and its three
-  verdicts are defined; a kept finding takes the outcome nothing; each pass's record counts the
-  violations left; a finding that fits no kind of cause is a cause of its own; the saved workflow
-  points to the audit skill's section for the kinds of cause instead of copying them; the auditor
-  judges a restatement and a pointer by the primer's and the agent-configuration skill's standard;
-  on the in-change path an acceptance criterion is put to the owner and its ruling travels with the
+- `agent-skills`, patch: on the in-change path an acceptance criterion is put to the owner and its ruling travels with the
   deliberation, and a record no commit carries is the report to the owner; a label carried into a
   second record keeps its number; the primer defines a heading as markdown's ATX heading; a subagent
   is told to read from disk any file that changed after the session started, an install included;
   several restatements in the installed skills and agents become pointers to their homes.
-- `agent-skills`, patch: a project audit writes each pass's evidence and the owner's rulings to a
-  report file in docs/audit-reports/ at the project's root, a new row of the primer's table,
-  committed with its `Outcome` lines and deleted once its outcomes are carried out; the commit
-  messages keep the counts. An audit's convergence reads the violations left on text the previous
-  pass also read, those on text written since counted apart. The repair standard, the repair by
-  cause and a check of each repair against the design heads, the goals and the rejected
-  alternatives, has a section of its own,
-  `skill@knowledge-architect-project-audit@repair-standard`. The agentic-workflow axis's run checks
-  each repair proposal through the workflow auditor before its cross-check, and its verifiers read
-  the tripwires.
+- `agent-skills`, patch: the primer's table gains a row: the evidence of one pass of a project
+  audit, and the owner's ruling on each of its items, go to one report file per pass in
+  docs/audit-reports/ at the project's root, deleted once its outcomes are carried out.
 - `agent-skills`, patch: a requested change that is not bounded and whose work has not started
   takes the full path and a plan document, even when one pull request builds it; the in-change path
   is for a decision met in a change begun before its discussion, or for a decision no work
   implements. What the planning skill says an acceptance criterion names applies to a plan
   document's criteria only. A load-bearing gap of a design audit that defeats a premise of a ruling
-  stops the slice; the session does not proceed on the default the primer names. The audit a pin
-  move owes starts from the main branch once the pin move has merged.
+  stops the slice; the session does not proceed on the default the primer names.
 - `agent-skills`, patch: a slice's design audit writes one line in its commit message for each
   standing entry the search returned, with its outcome, one judged to bear on nothing included,
   and a plan document assembled from a discussion lists the entries that discussion's search
@@ -241,8 +221,7 @@ subsection is omitted.
   of a plan review whose one answer widens or narrows a ruling goes to the owner as a scope change;
   a plan document's later consequences move to the issue or plan document of the work they name,
   or to a `todo` issue, before it leaves; a criterion found firing after a landing reported it is
-  reported as fired at the next landing; an audit pass counts the owner's rulings against the
-  default.
+  reported as fired at the next landing.
 - `agent-skills`, patch: a default awaiting the owner enters a design head only once ruled, and a
   plan document leaves only once every such default is ruled; a recurring criterion is folded
   into an existing tripwire that guards its decision; a fired tripwire whose reversal waits on a
