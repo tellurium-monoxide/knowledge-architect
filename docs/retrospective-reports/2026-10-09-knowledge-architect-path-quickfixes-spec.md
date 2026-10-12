@@ -26,7 +26,7 @@ one that quotes the owner's words bare is the non-conformance K5 repairs.
 
 - **Default:** open an issue, `todo`, in core, with K5; then the spec's passage cites it.
 - **Outcome:** as ruled in C5 of the agent-configuration-entities analysis: no checked form is
-  provided; `issue@agent-skills@quoting-the-owner-s-words-in-a-head` is widened to the place and
+  provided; `issue@agent-skills@the-place-of-the-owner-s-quotes-in-the-workflow` is widened to the place and
   importance of the owner's quotes in the workflow; the spec's bare passage is rewritten in words.
   The owner: "Agreed on both points, proceed".
 
