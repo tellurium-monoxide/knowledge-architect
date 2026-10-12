@@ -122,23 +122,25 @@ owner's ruling.
 | minor | a check becomes stricter, or a check is added, even when a project must change its content to pass it; additions that change nothing existing; command and manifest changes that only add |
 | major | a command change that breaks existing usage; a change to the documents and homes a project must carry; a manifest that was valid and stops being accepted; a breaking change to the library API |
 
-The table is the owner's scheme. The bullets below refine it, and the first is the owner's
-argument, given in the ruling that a stricter check is minor.
+The table is the owner's scheme. The bullets below refine it. The first is the owner's argument,
+given in the ruling that a stricter check is minor, and the second quotes the owner's ruling that
+a looser check is a patch.
 
 - **A stricter check is minor even when it requires a content change.** Every stricter check may
   require a content change in some project, so a major row that took every content change would
   leave the minor row with no check in it, and two rows that overlap give a changelog entry no
   single class. The major row keeps the changes a project meets as a refusal of its shape: a
   required document or home, and a manifest that stops being accepted.
-- **A looser check is a patch.** The row is the owner's ruling: "a looser check should be
+- **A looser check is a patch.** The row is the owner's: "IMO, a looser check should be
   classified as a patch. Because it cannot give rise to a failure in a project who bumps the
-  version, so there is little to no reason to classify it higher." A check that reports less
-  fails no tree that passed. The one consumer it can fail is a test that pins findings of the
-  core's own checks, which the section "Testing an extension" of the core's crate documentation
-  advises against. Every project pins the checker exactly, so that consumer meets the change only
-  at an explicit pin move, and the Migration entry of
-  `design@knowledge-architect@changelog-entries` names the change for it.
-
+  version, so there is little to no reason to classify it higher." Told that a looser check would
+  then get no changelog entry, the owner ruled: "go ahead with the default, patch with a Migration
+  entry". A check that reports less fails no tree that passed. The one consumer it can fail is a
+  test that pins findings of the core's own checks, which the section "Testing an extension" of
+  the core's crate documentation advises against. Every project pins the checker exactly, per
+  `design@agent-skills@exact-pin`, so that consumer meets the change only at an explicit pin move,
+  and the Migration entry of `design@knowledge-architect@changelog-entries` names the change for
+  it.
 - **Under 0.x, Cargo has two positions.** A requirement "0.3" accepts 0.3.2 and refuses 0.4. So
   while at 0.x, major and minor both bump 0.MINOR, and patch bumps 0.x.PATCH.
 - **The library API is a surface of its own.** A breaking change there makes an extension fail to
@@ -152,14 +154,16 @@ argument, given in the ruling that a stricter check is minor.
 - **Size does not make a major.** A major that sometimes means "breaking" and sometimes means
   "large" stops being read as "breaking".
 - **A patch can bring a finding.** A skill change is a patch, and after it a project's installed
-  files differ from the new text until it runs the install. A project that pins the checker
-  exactly meets this only when it moves the pin.
+  files differ from the new text until it runs the install. A project meets this only when it
+  moves its pin.
 - Which change gets a CHANGELOG.md entry, and with which class, is
   `design@knowledge-architect@changelog-entries`.
 
 A version stricter than a patch never reaches a project through a plain `cargo update` while at
 0.x, and a release that changes only skill text publishes all three crates with identical code. A
-project can therefore tell from the version alone whether moving to it may require work, per
+project can therefore tell from the version alone whether moving to it may make a check stricter,
+refuse its layout or its manifest, or break its extension's build. The Migration entries of every
+version crossed, a patch's included, say what else it must change, per
 `goal@knowledge-architect@any-project-can-adopt-it`.
 
 ### The changelog records what a consumer must plan for: one entry per change that passes a test `##changelog-entries`

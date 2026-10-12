@@ -328,8 +328,8 @@ and `extension::Resolution`. Every other public enum and struct is exhaustive on
 - **The attribute's gain is the library's:** a variant added to an enum without it is a breaking
   change under Rust's semver rules. Under 0.x that gain is nil, because major and minor both
   bump 0.MINOR, per `design@knowledge-architect@versioning-policy`. Every variant now foreseen
-  comes with a change that already bumps 0.MINOR: a check change, a new command, a new run
-  mode.
+  comes with a change that already bumps 0.MINOR: a stricter or added check, a new command, a
+  new run mode.
 - So the attribute goes only where no consumer can usefully match or build a literal: a binary
   hands a `Command` to `cli::run` unmatched, `Inputs` comes from `Gathered`, and an extension
   fills the two reports from `Default`, which the attribute allows.
