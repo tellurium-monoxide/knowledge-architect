@@ -52,7 +52,8 @@ Answer with precise content, not vague or ambiguous descriptions.
 - For prose, a verbatim is better than a reformulation.
 - For code, an example or a snippet is better than a description of the effect.
 
-Verify every claim you present to the user, per `### Verify a claim before writing it` below.
+Verify every claim you present to the user, per the subsection "Verify a claim before writing it" of
+`instructions@verify-before-relying`.
 
 State the consequences of a request explicitly. Never assume the user has considered all of them.
 
@@ -548,8 +549,8 @@ commands and procedures that carry those rules out are this file's own.
   nothing, such as the worktrees directory under .claude, which is ignored. Do not use
   `git stash` or another operation that can lose content. Remove the worktree and its branch once
   done.
-- **Confirm that what you committed is what you wrote** before moving on. A reverted file is a
-  file that once passed.
+- **Confirm that what you committed is what you wrote** before moving on. A file reverted to an
+  earlier state passes every check it passed then, so only this comparison finds it.
 
 3. **The branch is rebased on main before review and merge.** GitHub's ruleset refuses to merge a
    pull request whose branch is behind main; the local check below finds it earlier.
