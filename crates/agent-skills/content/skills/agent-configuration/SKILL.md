@@ -43,9 +43,9 @@ unit is a sentence, or a clause when only part of a sentence fails.
   worked".
 - **A duplicate inside one text fails while its twin stays.** A text is read whole once it is
   loaded, so a second statement of the same act adds none. The finding names the copy that stays:
-  the one in the section whose subject it is. A text imported into another, as the primer into the
-  root `CLAUDE.md`, is one text with it, since both are loaded together, and the primer's copy is
-  the one that stays. Across other texts, `primer@where-knowledge-goes` decides.
+  the one in the section whose subject it is. The primer and the root `CLAUDE.md` that imports it
+  are one text, since both are loaded together, and the primer's copy is the one that stays. Across
+  other texts, `primer@where-knowledge-goes` decides.
 - **A lead, a transition or an emphasis** fails when the statements it introduces or stresses
   already carry every act. A heading is structure, not a statement.
 - **A remark about the text itself** fails unless it tells a reader where to look or what to edit:

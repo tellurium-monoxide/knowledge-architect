@@ -97,9 +97,8 @@ This section is a restatement. The decisions live in the core's design home,
 
 - **An entry of a heading register is a heading at the register's level, ending with its slug**,
   per `design@core@an-entry-is-a-heading-at-the-register-level`.
-  - The shape is ``### The statement `##<slug>` ``: the statement first and the slug last, with no
-    bold and no em dash between them, so that a document outline reads as a list of decisions, per
-    `design@core@statement-precedes-the-slug`.
+  - An entry of every heading register is shaped as `primer@design-heads` shapes a design head,
+    the statement first and the slug last, per `design@core@statement-precedes-the-slug`.
   - Goal and tripwire entries sit at level two. A plan's item sits at level three, and the
     level-two section above it gives its kind, per `design@core@plan-items-by-section`.
   - The `README.md` of a directory-shaped home defines no slug.
@@ -150,8 +149,7 @@ This section is a restatement. The decisions live in the core's design home,
   - A span with no space whose head before the first `@` is a kind or an anchor is a candidate.
     Any other span holding an `@`, such as an email address or a git remote, is silent. A typo
     inside the kind is silent too.
-  - Every kind of reference is live. A placeholder in angle brackets is not a candidate. In the
-    checker's own source every literal is data, bound or not, per
+  - A placeholder in angle brackets is not a candidate. In the checker's own source every literal is data, bound or not, per
     `design@core@checker-source-literals-are-data`.
   - Two retired forms are reported, not ignored: `<anchor>@<path>` with no kind, and a backticked
     `<word>#<id>` or `#<id>` whose id is an entry here, or whose word is an anchor or a kind. Any
@@ -159,8 +157,9 @@ This section is a restatement. The decisions live in the core's design home,
     `design@core@candidate-rule-and-retired-forms`.
   - A backticked span of path characters with two or more segments and no `@` is reported as a
     path to anchor when its first segment names a file or a directory that the tree's listing
-    holds, per `design@core@every-path-names-its-anchor`. Write it as a `path` reference, or, in a
-    plan document, as `planned@<anchor>@<path>` for a path its work will create. A span naming
+    holds, per `design@core@every-path-names-its-anchor`. Write it in a form the primer's repair
+    rule in `primer@where-knowledge-goes` lists, or, in a plan document, as
+    `planned@<anchor>@<path>` for a path its work will create. A span naming
     nothing here, such as `origin/main` or `application/json`, is silent, and so is a one-segment
     span, which is a name rather than a path.
   - The one-segment span that is exactly the name of a skill or an agent is reported, per
@@ -175,7 +174,8 @@ This section is a restatement. The decisions live in the core's design home,
 
 ## Where knowledge goes `##where-knowledge-goes`
 
-This repository's own rows, each refining or adding to the primer's:
+This repository's own rows, each refining or adding to the primer's, per
+`design@agent-skills@knowledge-table-home`:
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
@@ -199,18 +199,6 @@ count over a frozen corpus and a zero keep their digits, because in those the va
 An issue entry keeps its magnitudes, per the cold-reader standard of
 `skill@knowledge-architect-issue-tracking`.
 
-### When to write a reference
-
-This is a restatement. Its home is `design@agent-skills@a-reference-claims-a-revisit`.
-
-An entry changes when it is reversed, closed, fired, abandoned or renamed. `cargo klarch show <ref>`
-prints every reference to an entry, so what depends on an entry is computed and never listed by
-hand. A deleted or renamed entry dangles every reference to it, and `cargo klarch check` reports
-each one, so the repair list is the list of texts that depended on it. An unneeded reference costs
-a repair for nothing.
-
-An issue entry writes its references under `Why it matters`.
-
 ### Plan documents
 
 `path@knowledge-architect@docs/plans/` is the plans directory, whose path the checker fixes, per
@@ -227,9 +215,9 @@ the core's documents measured in another project, thaum, names thaum as its sour
 Confidence is not correlated with correctness: the more obvious a behaviour looks, the less likely
 anyone has checked it.
 
-A claim about the code as it stands goes stale, per `primer@intent-and-claims`. Before relying on
-how anything behaves (an API, a script, a file format, a test mechanism, an open issue's diagnosis;
-the list is illustrative, not a boundary):
+Before relying on a claim about how anything behaves, per `primer@intent-and-claims` (an API, a
+script, a file format, a test mechanism, an open issue's diagnosis; the list is illustrative, not a
+boundary):
 
 - Names, doc comments and prose are leads to check, never evidence.
 - **Follow the whole path, not the entry point**: what calls it, what it returns on success _and_
@@ -282,8 +270,8 @@ the work is where the false claims come from.
 
 ### Check whether it is already known
 
-Before reporting a problem you met while doing something else, find out whether it is already
-recorded, per `primer@intent-and-claims`. The listings, every option they
+Before diagnosing anything as a problem, or reporting one you met while doing something else, find
+out whether it is already recorded, per `primer@intent-and-claims`. The listings, every option they
 take, and why they and not a grep are the check, are
 `skill@knowledge-architect-issue-tracking@outstanding-across-registers`. This repository adds two:
 

@@ -7,8 +7,10 @@ kind: question
 
 The agent-configuration skill's steps after an install read the primer's knowledge table against
 the project's rows, and each project skill and agent against the installed text the install
-changed. None reads the sentences of the project's root CLAUDE.md that restate an installed directive
-with a pointer beside it. After an upgrade that rewords such a directive, the restatement can
+changed. None reads the sentences of the project's root CLAUDE.md that restate a directive of an
+installed skill with a pointer beside it. A root sentence that restates the primer is a duplicate
+inside one text, which
+`skill@knowledge-architect-agent-configuration@admission-standard` deletes. After an upgrade that rewords such a directive, the restatement can
 disagree with its home and no step looks. This is a prediction: no real session has shown it.
 
 ## Details

@@ -41,9 +41,10 @@ subsection is omitted.
 - `agent-skills`, patch: every statement of a project's own agent-facing text, its `CLAUDE.md`
   files, skills and agents included, meets the need test of
   `skill@knowledge-architect-agent-configuration@admission-standard`, and an instruction about how
-  an agent behaves is added to it only on evidence from real use. The agentic-workflow axis of the
-  project audit, `skill@knowledge-architect-project-audit@agentic-workflow-axis`, brings a
-  project's text to it.
+  an agent behaves is added to it only on evidence from real use. The primer and the root
+  `CLAUDE.md` that imports it are one text, so a root sentence that the primer states too fails as
+  a duplicate, and the primer's copy stays. The agentic-workflow axis of the project audit,
+  `skill@knowledge-architect-project-audit@agentic-workflow-axis`, brings a project's text to it.
 
 ### New features
 
