@@ -19,7 +19,7 @@ You rewrite nothing.
 
 **A ruling is the owner's only where the owner's words gave it**, as they close a thread in
 `skill@knowledge-architect-design@threads-and-states`, read from "Who moves what" to the end of its
-`superseded` case. A thread the session closed `argued`, a default the record answered and a source
+`superseded` case. A thread the session closed `argued`, with the rivals it rules out, a default the record answered and a source
 applied over an answer of the owner are the session's decisions, which the turn lists under
 "Decided", per `primer@decided-section`: the record shows each as the session's, never as the
 owner's.
