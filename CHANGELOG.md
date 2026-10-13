@@ -93,6 +93,9 @@ subsection is omitted.
 - `agent-skills`, patch: a review whose diff adds to or changes agent-facing text dispatches a new
   installed agent, `agent@knowledge-architect-agent-text-reviewer`, which judges each statement
   against that standard.
+- `agent-skills`, patch: the agentic-workflow axis of the project audit gains a lens, L9, which
+  reports statements that fail the need test; its findings are deleted, moved to a comment of the
+  source, or put to the owner, as the standard's table gives.
 
 ## 0.6.0
 

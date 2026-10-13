@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-workflow-auditor
-description: Drafts the findings of the agentic-workflow axis of a project audit through one lens, reading the whole corpus of the axis, every text the harness delivers to a session as an instruction, for instructions a session cannot follow; one draft file per finding, and the same for a re-check after the audit's edits. Briefed to verify, it tries to refute another auditor's drafts instead; briefed to check, it reads one repair proposal's new text and the record it touches. The axis's saved workflow dispatches it, for its drafts, its verify and its check steps, as `skill@knowledge-architect-project-audit@agentic-workflow-axis` says; a session without the workflow dispatches it as the workflow's steps do: each lens at least once, the counts per lens the session's, a scratch directory and a worktree of its own for each, as `skill@knowledge-architect-review@review-invariants` says.
+description: Drafts the findings of the agentic-workflow axis of a project audit through one lens, reading the whole corpus of the axis, every text the harness delivers to a session as an instruction, for instructions a session cannot follow and statements no act needs; one draft file per finding, and the same for a re-check after the audit's edits. Briefed to verify, it tries to refute another auditor's drafts instead; briefed to check, it reads one repair proposal's new text and the record it touches. The axis's saved workflow dispatches it, for its drafts, its verify and its check steps, as `skill@knowledge-architect-project-audit@agentic-workflow-axis` says; a session without the workflow dispatches it as the workflow's steps do: each lens at least once, the counts per lens the session's, a scratch directory and a worktree of its own for each, as `skill@knowledge-architect-review@review-invariants` says.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -23,7 +23,7 @@ its path and line, and every command you list is one you ran.
 
 - **The commit audited, and your worktree, detached at it.** Read the tree, and run every
   command, in your worktree, with any build output inside it.
-- **Your lens**: one of L1 to L8 below, and for L2 your group of activities.
+- **Your lens**: one of L1 to L9 below, and for L2 your group of activities.
 - **Your scratch directory**: the one place you write your files.
 - **For a re-check only**: a file of the entries, texts and rules the owner ruled to keep. A
   finding on one of them is still drafted, and marked as kept.
@@ -75,6 +75,10 @@ A finding is admitted when the session can confirm it by reading. Each class car
   an instruction, quoted, and the sentence it fails of `primer@where-knowledge-goes` or, for a
   pointer, of `skill@knowledge-architect-agent-configuration@shaping-a-skill`, each read whole
   before you judge one;
+- **an unneeded statement**: a statement that fails the need test of
+  `skill@knowledge-architect-agent-configuration@admission-standard`, read whole before you judge
+  one: quoted, with the act you tried; for a duplicate, both copies and the copy that stays; and
+  the outcome the standard's table gives it;
 - **a predicted gap**: "an agent might misjudge X". Draft it as such, with what a real session
   would have to show; it is never repaired by an edit.
 
@@ -118,8 +122,11 @@ too, and its draft names the finding's lens, not your brief's.
   auditor, on design heads and rejected alternatives; the routing reviewer and this agent's L5,
   on restatements and pointers; the review's self-consistency axis and L1, on contradictions;
   the standing-state reviewer and the audits' reading of tripwires and issues; the review skill's
-  outcomes and the audit's outcome table. Judge every audit agent the corpus holds, not only this
-  one.
+  outcomes and the audit's outcome table; the agent-facing-text reviewer and L9, on whether a
+  statement is needed. Judge every audit agent the corpus holds, not only this one.
+- **L9 need test.** Each statement of the corpus against the need test of
+  `skill@knowledge-architect-agent-configuration@admission-standard`, read whole: report an unneeded
+  statement.
 
 ## Write one draft per finding `##write-a-draft`
 

@@ -14,7 +14,7 @@ export const meta = {
 //   history     a git range whose commit messages and added report files record the earlier passes
 //   previous    optional: for a re-check, the commit the previous pass audited
 //   kept        optional: the path of the kept list, for a re-check
-//   counts      optional: { L1 … L8, clusters, repairsPerCause }, each missing key taking its default
+//   counts      optional: { L1 … L9, clusters, repairsPerCause }, each missing key taking its default
 //   from        optional: 'verify', 'cluster' or 'repairs', to restart from the files a run wrote
 // }
 // The lens table. What each lens looks for is in the workflow auditor's definition, its one home.
@@ -34,6 +34,7 @@ const LENSES = [
   { id: 'L6', name: 'local against installed', count: 2 },
   { id: 'L7', name: 'checker rules', count: 2 },
   { id: 'L8', name: 'verdict alignment', count: 1 },
+  { id: 'L9', name: 'need test', count: 2 },
 ]
 const counts = args.counts || {}
 const at = (...parts) => parts.join('/')

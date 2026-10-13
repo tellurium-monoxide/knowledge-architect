@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-project-audit
-description: MUST use when the owner asks to audit one aspect of the whole project rather than the work of one branch; when a pin move crosses a version whose changelog has a Migration entry citing an axis of this skill; and when an adopting project's existing documents have been moved into the workflow's homes. Covers what a project audit is, its method (an axis's saved workflow, whose one run per pass delivers a report the session verifies; then one list for the owner, the application, the re-check, the review), the outcome of each kind of finding, where the record of an audit goes, and one section per axis: the design-record axis, which re-applies the rules on design heads and rejected alternatives to every entry, and the agentic-workflow axis, which reads every instruction the harness delivers as one whole for instructions a session cannot follow.
+description: MUST use when the owner asks to audit one aspect of the whole project rather than the work of one branch; when a pin move crosses a version whose changelog has a Migration entry citing an axis of this skill; and when an adopting project's existing documents have been moved into the workflow's homes. Covers what a project audit is, its method (an axis's saved workflow, whose one run per pass delivers a report the session verifies; then one list for the owner, the application, the re-check, the review), the outcome of each kind of finding, where the record of an audit goes, and one section per axis: the design-record axis, which re-applies the rules on design heads and rejected alternatives to every entry, and the agentic-workflow axis, which reads every instruction the harness delivers as one whole for instructions a session cannot follow and statements no act needs.
 ---
 
 # Auditing a project
@@ -216,10 +216,10 @@ A tripwire or an issue is edited only where an edit of the audit makes it stale.
 whole. The workflow functions as a whole, and its main defect is two texts a session cannot both
 obey, so every agent reads the whole corpus.
 
-**The rules**: a session can follow every instruction. A finding is admitted when a reading confirms
-it, in the classes `agent@knowledge-architect-workflow-auditor` defines: a contradiction, a broken
-trigger, a factual error, two readings, a provable gap, divergent verdicts, a restatement or a
-pointer its home does not allow. A gap that only predicts
+**The rules**: a session can follow every instruction, and needs every statement. A finding is
+admitted when a reading confirms it, in the classes `agent@knowledge-architect-workflow-auditor`
+defines: a contradiction, a broken trigger, a factual error, two readings, a provable gap, divergent
+verdicts, a restatement or a pointer its home does not allow, an unneeded statement. A gap that only predicts
 what an agent would do is a predicted gap, and is never repaired by an edit, since an instruction about how an agent
 behaves is added on evidence from real use. A case no instruction covers and judgement can decide
 is no finding, per `primer@room-to-judge`.
@@ -245,12 +245,12 @@ and their checks together; the report gathers all of it. Its `args`:
 | `history` | a git range whose commit messages, and the report files it added, record the audit's earlier passes, for the verifiers |
 | `previous` | for a re-check, the commit the previous pass audited, against which each finding is classified as on old or new text |
 | `kept` | for a re-check, the path of the file of entries, texts and rules the owner ruled to keep |
-| `counts` | optional: the auditors per lens, keyed L1 to L8, `clusters` and `repairsPerCause`; a key left out takes its default, written in the script |
+| `counts` | optional: the auditors per lens, keyed L1 to L9, `clusters` and `repairsPerCause`; a key left out takes its default, written in the script |
 | `from` | optional: `verify`, `cluster` or `repairs`, to restart a run from the files it already wrote |
 
 **The lenses**, each described in `agent@knowledge-architect-workflow-auditor@the-lenses`: L1
 contradiction, L2 activity walk, L3 two readings, L4 provable gap, L5 restatement, L6 local against
-installed, L7 checker rules, L8 verdict alignment. Each lens is dispatched at least once; L2's walkers
+installed, L7 checker rules, L8 verdict alignment, L9 need test. Each lens is dispatched at least once; L2's walkers
 take its groups of activities in turn, and a group no walker takes is named in the report. Agents
 with the same lens find different things, so a duplicate adds coverage. A project's own skill is
 walked in the group of the activity it serves.
@@ -298,8 +298,8 @@ files.
 
 | outcome | the findings |
 | --- | --- |
-| applied in the branch | a contradiction that a design head, a goal or a source settles, repaired to the side it settles; a rewording that changes no instruction, a two-reading instruction among them where a design head or another instruction states the reading meant; a broken trigger whose target exists under another name; a pointer added to a restatement without one, or to a project text that repeats an installed one; a factual error; a restatement whose content drifted from its home, brought back to it, becoming a pointer when it is longer than one sentence, since the repair edits what it says |
-| put to the owner, on the owner list | which side of a contradiction wins where no design head, goal or source settles it, a loop with no exit among them; which standard wins, for divergent verdicts; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction |
+| applied in the branch | a contradiction that a design head, a goal or a source settles, repaired to the side it settles; a rewording that changes no instruction, a two-reading instruction among them where a design head or another instruction states the reading meant; a broken trigger whose target exists under another name; a pointer added to a restatement without one, or to a project text that repeats an installed one; a factual error; a restatement whose content drifted from its home, brought back to it, becoming a pointer when it is longer than one sentence, since the repair edits what it says; an unneeded statement that carries no instruction, deleted, or that is maintainer-only, moved to a comment of the source, as the table of `skill@knowledge-architect-agent-configuration@admission-standard` gives |
+| put to the owner, on the owner list | which side of a contradiction wins where no design head, goal or source settles it, a loop with no exit among them; which standard wins, for divergent verdicts; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction; an unneeded statement that is an instruction whose act no agent performs |
 | an issue entry | a predicted gap; a finding the owner defers |
 
 **Sent upstream**: every finding whose outcome is sent upstream, over every pass of the audit, a
