@@ -18,8 +18,8 @@ rebase. Does the rule hold for a project that merges otherwise, and on what reas
 In a project that merges with a merge commit, or fast-forwards, a branch's commits keep their SHAs
 on the main branch, so the stated reason is false there. The instruction itself, naming a commit by
 its subject, is followable in any project. Two census agents of the design discussion on what
-enters agent-facing text reported it independently. This repository merges by rebase, per its root
-`CLAUDE.md`, so the reason holds here. Not established: how the adopting projects known today
+enters agent-facing text reported it independently. This repository merges by rebase, per
+`design@knowledge-architect@git-flow`, so the reason holds here. Not established: how the adopting projects known today
 merge.
 
 ### Why it matters
