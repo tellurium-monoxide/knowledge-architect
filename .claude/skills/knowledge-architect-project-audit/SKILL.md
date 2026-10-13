@@ -84,7 +84,7 @@ script. The run's worktrees are removed once the pass's findings have their outc
    audited. A finding of the re-check that a
    reading confirms, that is not on the kept list, and that no issue entry records, is a violation
    left, whether a draft missed it or an edit made it: repair it or put it to the owner. The
-   re-check gets its findings as the axis's shape says. The audit stops when
+   re-check gets its findings as the axis's section says. The audit stops when
    the owner judges what is left small enough. The violations left then take their outcomes, as
    any pass's findings do, and no re-check follows; one the owner does not rule on becomes an issue
    entry, as a deferred item does. **Each violation left is on old text or on new text**: old text
