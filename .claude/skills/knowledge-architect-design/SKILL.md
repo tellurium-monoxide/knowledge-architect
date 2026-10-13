@@ -51,7 +51,8 @@ built on its default (`skill@knowledge-architect-design@bounded-work`). On the f
 `skill@knowledge-architect-planning` writes the plan documents, in the same session (step 8); on
 the in-change path, a commit message carries the deliberation
 (`skill@knowledge-architect-design@decision-authority`). Either way, the decisions are recorded at
-the landing of the work that implements them.
+the landing of the work that implements them, and a decision that no work implements and that is not
+part of any spec when it is made, per `skill@knowledge-architect-decision-recording@when-recording-happens`.
 
 ## Decision authority `##decision-authority`
 
@@ -313,7 +314,7 @@ table is presented for contest ("contest any of these"), one batch
 confirmation over the whole ledger — never a per-item ratification
 questionnaire.
 
-**Who moves what.** You may move threads freely between open states.
+**Who moves what.** You may move threads freely between the open states of a thread.
 The owner's explicit word moves a thread into a closed state — a word
 given during the discussion ("drop the polling idea") counts;
 no particular phrasing is required. Their word closes what it names:
