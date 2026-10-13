@@ -7,9 +7,9 @@ kind: todo
 
 The retrospective file
 `path@elsewhere@~/Documents/retrospectives/2026-10-13-thaum-slice-numbers-merge-klarch-workflow.md`
-holds five findings on the installed workflow, W1 to W5. The owner had W1 and W2 handled by a design
-discussion instead of an intake, `milestone@plans@owner-authority`. W3, W4 and W5 have had no
-analysis and no ruling. This entry keeps them until an intake takes them up.
+holds five findings on the installed workflow, W1 to W5. W1 and W2 were handled by a design discussion
+and its milestone instead of an intake, on the owner's word; that work has landed. W3, W4 and W5
+have had no analysis and no ruling. This entry keeps them until an intake takes them up.
 
 ## Details
 
@@ -42,7 +42,7 @@ unclear, missing or wrong, "and the owner decides what changes". These three fin
 real session, and the owner has decided nothing on them. And
 `design@knowledge-architect@committed-findings-analysis` asks a committed analysis for every
 received file, which this one lacks. Without this entry, nothing in the tree
-records them once the milestone document leaves.
+records them.
 
 ### What would close it
 
