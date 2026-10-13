@@ -147,9 +147,9 @@ standing entries included. The work is bounded when it reverses no recorded deci
 decision it makes fails the entry tests, per `design@agent-skills@a-head-is-owed-by-an-entry-test`,
 and no second defensible shape survives the nearest-rival test. The skill then sends one message,
 the proposal with its nearest rival, the strongest open reading set aside, the consequences and the
-default, and builds the default: the owner's answer stops or redirects it, and an argument in the
-reply returns the work to the loop. The
-commit that implements it carries the proposal and the owner's answer, attributed, per
+default, which it builds, per `design@agent-skills@derived-decision-proceeds-on-default`; an
+argument in the reply returns the work to the loop. The commit that implements it carries the
+proposal and, if one came, the owner's answer, attributed, per
 `design@agent-skills@attribution-replaces-quotation`. The skill's
 description reaches a session before it starts a requested change whose design is not settled.
 
@@ -159,11 +159,7 @@ grounding gives bounded work the search for standing entries that no step gave i
 entry tests at classification keeps a head from being written for a decision that earns none. The nearest rival, a separate installed skill for
 bounded problems, would repeat the grounding to classify at all; it is in the rejected
 alternatives. A bounded path names no skill outside the installed set, per
-`design@agent-skills@no-external-handoff`. Building the default without a wait serves
-`goal@knowledge-architect@the-owner-decides`, under which the record settles what bounded work
-decides, since a bounded proposal holds no fork, and the owner, told in the one message, overrules
-it at any time; the nearest rival, the wait for the owner's word, sent the owner defaults the record
-answered.
+`design@agent-skills@no-external-handoff`.
 
 ### The design skill is written for frontier-tier models only `##frontier-tier-only`
 
@@ -814,8 +810,8 @@ one shape stands, each rival out by a named fact or binding constraint, and the 
 rivals `ruled-out`, naming the fact. Both show in the next delta and in the checkpoint, where the
 owner contests or overrules them, and the turn lists them under "Decided", per
 `design@agent-skills@decisions-reported-to-the-owner`. A fork, two or more shapes that meet every
-binding constraint with no fact defeating either, closes on the owner's word, as a fork does
-everywhere, per `design@agent-skills@questions-go-to-their-authority`. A cost alone makes no fork.
+binding constraint with no fact defeating either, closes on the owner's word, as every question
+`design@agent-skills@questions-go-to-their-authority` reserves to the owner does. A cost alone makes no fork.
 The discussion stays an exchange: the owner proposes designs, the agent fills and argues them, and
 either side's shape can win.
 
@@ -828,10 +824,27 @@ though not always, the better design coming at times from the agent or from a fu
 truly thinks that the discussion format drives the improvement and the quality of a design. The nearest
 rival, every thread closing on its argument, gives up that exchange where it matters, at a fork. A
 second rival, the owner closing any thread whose choice weighs a cost, closes every thread on the
-owner's word, since every choice has a cost. The design skill already gave a tie to the owner and
-said that no fork remains where no rival stands; this decision joins the second to closure. The
+owner's word, since nearly every choice has a cost or can be made to have one. The rule is the
+design skill's tie for the owner at loop step 5 and its "no fork where no rival stands", joined to
+closure. The
 risk, a session judging a rival defeated on a weak argument, is what the checkpoint's contest and
 `tripwire@agent-skills@argued-closure-reopened` watch.
+
+### Bounded work, and a default the record answers, are built on their default without waiting for the owner's word `##derived-decision-proceeds-on-default`
+
+The bounded path's one message names its default, which the session builds: the owner's answer
+stops or redirects it, and a part that cannot be undone waits for the owner's word, per
+`skill@knowledge-architect-design@bounded-work`. A default whose every premise comes from the
+record, a measurement or a source is the session's decision in the same way, and the turn lists it
+under "Decided", per `design@agent-skills@decisions-reported-to-the-owner`.
+
+It serves `goal@knowledge-architect@the-owner-decides`, under which the record settles what such a
+default decides, a bounded proposal holding no fork, while the owner, told in the one message,
+overrules it at any time. The nearest rival, the wait for the owner's word, sends the owner defaults
+the record answers: the owner reported such defaults put to the owner before the recorded design
+heads were read, so that the owner pointed the agent to the heads. It is a delivery of
+`design@agent-skills@questions-go-to-their-authority` for the bounded path, and a head of its own
+because its rival, the wait, is another than that head's.
 
 ### A design thread's slug becomes its entry's slug `##thread-slug-is-entry-id`
 
@@ -1167,8 +1180,9 @@ where that change began before the discussion opened, as an issue fix or a revie
 its record, whenever the discussion opened, for a decision recorded when it is made, per
 `design@agent-skills@design-home-is-built-intent`. It writes no plan document. The message of the
 commit that writes the decision's design entry, or that implements a decision that earns none,
-carries what a plan document would: every thread with its final state, the owner's ruling on each
-closure, attributed per `design@agent-skills@attribution-replaces-quotation`, the rivals that lost with their reasons, and the rulings on tripwires. The
+carries what a plan document would: every thread with its final state, the ground of each
+closure, the owner's ruling attributed per `design@agent-skills@attribution-replaces-quotation` or
+the argument of a thread closed `argued`, the rivals that lost with their reasons, and the rulings on tripwires. The
 premortem runs when reversal touches any of the four things the skill names: stored data, a
 consumed interface, behaviour users have adapted to, and a decided thread that would reopen. The four never open the in-change path: a decision that is cheap to
 reverse and whose work comes later takes the full path, per

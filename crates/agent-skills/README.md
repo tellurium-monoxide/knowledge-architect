@@ -147,7 +147,7 @@ least able to recover from.
 
 **You are the person who can decide what is yours.** A fork, a goal, a
 contradiction no argument resolves, a fact only you hold and an action
-that cannot be undone route to you; the rest the assistant answers from
+that cannot be undone route to you, per `primer@question-authority`; the rest the assistant answers from
 the record, a measurement or a source, and tells you. If the real authority is someone not in the conversation, the
 discussion converges on a verdict nobody present can act on.
 

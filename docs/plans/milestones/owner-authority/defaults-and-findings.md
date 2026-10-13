@@ -71,7 +71,7 @@ None beyond the milestone's.
 
 | what | where | when |
 | --- | --- | --- |
-| #derived-decision-proceeds-on-default, for defaults | the head of #questions-go-to-their-authority gains its deliveries in planning and review | this slice |
+| #derived-decision-proceeds-on-default, for defaults | `design@agent-skills@derived-decision-proceeds-on-default`, written at slice 3, gains its deliveries in planning and review | this slice |
 | `design@agent-skills@ruled-items-labelled`, its `D` row | rewritten | this slice |
 | `design@agent-skills@audit-outcomes`, `design@agent-skills@adopting-existing-docs` | rewritten in place | this slice |
 | this spec, and the milestone document | deleted | the commit that completes this harvest |
