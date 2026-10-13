@@ -34,6 +34,20 @@ was four days, so they separate no bootstrap from a steady state; that is what t
 for. Re-take them with `git log --format=%s` over the range, counting subjects that open with
 `[review]`.
 
+Two sessions reported their review cost without the counts, as impressions the counts would test:
+
+- the owner-authority milestone, one design discussion and five pull requests: 37 review agents;
+  13 of the 30 commit subjects from the milestone document's commit, "The owner-authority
+  milestone: a question goes to the authority that answers it, and the owner rules at a fork", to
+  the last commit of its last slice, "[review] Repairs from the transcript review of slice 4: the
+  review skill's label sentence, and the owner's report kept with its hedges", open with
+  `[review]`. Three extra rounds were each forced by a repair that touched a head before the
+  transcript review could run. Its retrospective proposes measuring before letting the
+  decision-record review of a head repair run in the transcript review's batch.
+- a slice in thaum, on knowledge-architect 0.6.0: one finding of the decision-record axis cost
+  three reviews of that axis, through `design@agent-skills@existing-heads-on-touch`, a split
+  touching a second head that was then found bundled.
+
 ### Why it matters
 
 Without the counts, `goal@knowledge-architect@agents-get-a-complete-workflow` cannot be shown met
