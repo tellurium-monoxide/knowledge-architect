@@ -90,6 +90,9 @@ subsection is omitted.
   retrospective's proposal or a skill moving text included, applies one standard: it names, for
   each statement, the act an agent would do differently without it, and deletes a statement for
   which none exists, such as a narration of where an instruction came from.
+- `agent-skills`, patch: a review whose diff adds to or changes agent-facing text dispatches a new
+  installed agent, `agent@knowledge-architect-agent-text-reviewer`, which judges each statement
+  against that standard.
 
 ## 0.6.0
 
