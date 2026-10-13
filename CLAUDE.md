@@ -540,7 +540,7 @@ commands and procedures that carry those rules out are this file's own.
   `GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash --keep-base origin/main`, which needs no
   editor and keeps the branch's base even when `origin/main` has moved. Check that
   `git diff <old-head> HEAD` is empty and that the branch holds one commit fewer;
-  `git rebase --autosquash` without `-i` folds nothing and exits 0.
+  before git 2.44, `git rebase --autosquash` without `-i` folds nothing and exits 0.
 - **main's history is never rewritten.** It is the shared trunk. A pushed branch of your own may
   be rewritten and force-pushed, since origin holds the old head until then. A branch that a live
   worktree has checked out is rewritten only after that worktree is removed.
