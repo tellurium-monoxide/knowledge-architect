@@ -1038,10 +1038,11 @@ can contest.
   `design@agent-skills@audit-net-growth` stand.
 - **D4, ruled R8: approved, as built.** A divergence between a design home and the code is routed
   by the authority section: where the head stands, the code is the defect, and the session fixes it
-  or opens an issue, the work building on the head; where reversing the head is a fork, or the
-  head's ground is the owner's, it goes to the owner, and the part of the task that rests on the
-  point waits for that answer. The first draft held the part on both routes; the owner was shown
-  the narrowing at the review before slice 1's merge. Slice 1 writes it into `primer@intent-and-claims`
+  or opens an issue, the work building on the head; where the session finds the head's argument
+  defeated, the head's reversal goes to the design skill, and to the owner where it is a fork or the
+  head's ground is the owner's, and the part of the task that rests on the point waits for that
+  answer. The first draft held the part where the head stands too; the owner was shown that it holds
+  only where the argument is found defeated, at the review before slice 1's merge. Slice 1 writes it into `primer@intent-and-claims`
   and `design@agent-skills@divergence-routed-by-its-authority`. It bears on G1.
 - **D12, ruled R6: approved.** G2's "contradiction it finds" reads as a contradiction no source or argument resolves,
   as G1 and the authority section say. An owner's answer on a reading that a source contradicts is

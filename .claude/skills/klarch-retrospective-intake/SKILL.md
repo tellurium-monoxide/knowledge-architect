@@ -21,7 +21,9 @@ Not covered here:
   file owes meanwhile is `skill@klarch-retrospective-intake@after-the-ruling`.
 
 **This skill decides nothing.** It establishes the facts about each finding, proposes an action
-with its argument, and the owner rules, per `goal@knowledge-architect@the-owner-decides`.
+with its argument, and the owner rules, per
+`goal@knowledge-architect@the-workflow-improves-through-real-use`, under which the owner decides what
+real use changes in the workflow.
 
 ## What it takes `##what-it-takes`
 

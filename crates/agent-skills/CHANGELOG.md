@@ -48,8 +48,9 @@ subsection is omitted.
   premise proves false, or a contradiction met outside the task, holds the part of the work that
   rests on it until the owner answers, instead of proceeding on a default. A divergence between a
   design head and the code holds nothing where the head stands: the code is fixed or an issue
-  opened, and the work builds on the head; it goes to the owner, holding its part, only where
-  reversing the head is a fork or the head rests on the owner's words. A turn that decided
+  opened, and the work builds on the head; it holds its part only where the head's argument is
+  found defeated, while the head's reversal is decided, by the owner where it is a fork or the head
+  rests on the owner's words. A turn that decided
   something the owner could have decided ends with a "Decided" section.
 
 ## 0.6.0

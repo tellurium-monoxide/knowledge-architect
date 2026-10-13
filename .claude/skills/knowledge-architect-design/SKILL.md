@@ -99,7 +99,8 @@ It ends the argument, but it does not end your duties around it:
   work is named as held, with what it waits for; it is never silently
   completed and never silently dropped. And at the design audit of a
   slice or a spec, a load-bearing gap stops the work, as
-  `skill@knowledge-architect-planning@working-a-slice` says. Presenting the finding reopens
+  `skill@knowledge-architect-planning@working-a-slice` says, whatever
+  the other cases would hold or let proceed. Presenting the finding reopens
   the thread, with the finding noted on its ledger line; it closes again
   on the owner's word, as any thread does, and until then the work goes
   on under the default above. If no word has come by the

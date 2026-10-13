@@ -46,7 +46,9 @@ mapping table:
 `path@agent-skills@content/skills/project-audit/SKILL.md`,
 `path@agent-skills@content/skills/setup/SKILL.md`, each whole;
 `design@agent-skills@audit-outcomes`, `design@agent-skills@audit-method`,
-`design@agent-skills@design-record-axis`, `design@agent-skills@adopting-existing-docs`;
+`design@agent-skills@design-record-axis`, `design@agent-skills@adopting-existing-docs`,
+`design@agent-skills@retiring-plan-opens-issue`, which argues "where the owner rules on it" from
+`goal@knowledge-architect@the-owner-decides`;
 `tripwire@agent-skills@audit-defaults-overruled`, `tripwire@agent-skills@structure-rejection-overruled`,
 `tripwire@agent-skills@a-head-verdict-is-overruled`.
 
