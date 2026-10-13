@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-31 entries
+32 entries
 
 | kind | title |
 | --- | --- |
@@ -24,6 +24,7 @@
 | question | [The design-record auditor's return names two verdict vocabularies](the-design-record-auditor-s-return-names-two-verdict-vocabularies.md) |
 | question | [The installed text delivers the check of a commit's tree before the commit, and no check of its message after it](the-message-check-after-a-commit-is-delivered-by-no-installed-text.md) |
 | question | [Does the design skill's open-space test leave bounded work almost unreachable?](the-open-space-test-may-admit-every-problem.md) |
+| question | [The primer's paragraph on a divergence between a head and the code reads two ways on the work that goes on meanwhile](the-primer-s-divergence-paragraph-reads-two-ways-on-work-that-goes-on.md) |
 | question | [Whether a session in Claude Code's default permission mode is asked for permission, or needs an allow rule, to run an installed saved workflow](whether-a-saved-workflow-run-needs-a-permission-rule.md) |
 | todo | [A design discussion's proposals are read against the heads they may contradict only after the plan document is written](a-proposal-is-read-against-the-heads-only-after-the-plan-is-written.md) |
 | todo | [No installed skill says how a new Component is created](a-skill-for-creating-a-component.md) |

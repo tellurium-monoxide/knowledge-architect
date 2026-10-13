@@ -16,7 +16,7 @@ tree builds a binary from the staged text and passes.
 
 ### What
 
-Reproduction, on the branch agent-text-admission, as observed:
+Reproduction, as observed in this repository with checker version 0.6.0:
 
 1. Edit three files of `path@agent-skills@content/` (two skills and one agent) and run
    `cargo klarch install-agent-skills`, which rewrites the three installed copies under .claude.
@@ -43,10 +43,9 @@ meets this, since its binary's shipped text does not move with its working tree.
 clean checkout of the staged tree". On a clean checkout of this staged tree the comparison passes,
 so the staged check reports a finding that the checkout does not have: the reverse of
 `tripwire@core@staged-pass-fails-the-checkout`, which watches a staged pass that a checkout fails.
-The root `CLAUDE.md` asks that a failing staged check be repaired before the commit, so a session
-that commits edits of several installed texts one by one meets a finding it cannot repair except
-by staging everything, against `goal@knowledge-architect@documentation-stays-consistent`, whose
-tools must say what a commit will record.
+This repository's root `CLAUDE.md`, `instructions@verify-mechanically`, asks that a failing staged
+check be repaired before the commit, so a session that commits edits of several
+installed texts one by one meets a finding it cannot repair except by staging them all at once.
 
 ### What would close it
 
