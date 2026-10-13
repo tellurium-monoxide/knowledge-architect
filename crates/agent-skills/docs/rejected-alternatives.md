@@ -36,7 +36,9 @@ Simplifying for a cheaper model is a change that will be proposed again.
 **A delegated state, under which the owner hands a decision to the agent within a stated boundary,
 or a note recording that judgement was handed over** — lost to
 `goal@knowledge-architect@the-owner-decides`. `live`. A word that hands judgement over is an
-approval like any other, as is approving every default on a quick read. The state was decided and
+approval like any other, as is approving every default on a quick read. A session decides what the
+record and its sources settle by the rule of `primer@question-authority`, which every session
+applies, never by a grant, and the goal keeps an action that cannot be undone with the owner. The state was decided and
 reversed in one revision of designing-together, after five of that revision's eight blocking review
 findings fell on it: inside a grant, a correction whose own action could not be undone ran with no
 word from the owner.
