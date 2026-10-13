@@ -330,9 +330,9 @@ by nobody but you.
 
 **Before each commit, list every factual claim its message makes, and check each one.** A claim is
 a count, a search and its result, a section or line number, the name of a file, a slug or a commit,
-a quotation of the owner, or a statement that something exists, was searched, was found or
-changed. Beside each, write the command or the file that checks it, then run it or open it against
-the tree the commit holds, and a quotation against the transcript. A claim that no check supports
+a quotation or an attribution of the owner, or a statement that something exists, was searched,
+was found or changed. Beside each, write the command or the file that checks it, then run it or open
+it against the tree the commit holds, and a quotation or an attribution against the transcript. A claim that no check supports
 is removed, or labelled as an assumption. A search for a phrase is run so that it matches across a
 line break, since wrapped prose splits a phrase over two lines. Writing the message from memory of
 the work is where the false claims come from.
