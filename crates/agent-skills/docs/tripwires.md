@@ -490,3 +490,17 @@ are owed, with the rejected alternative that quotes the owner in a head whose gr
 among the candidates.
 **Re-entry:** the transcript review of each change, which reads the owner's words in the transcript
 against the record.
+
+## Guarding `design@agent-skills@owner-rules-at-a-fork`: threads closed on their argument are reopened by the owner `##argued-closure-reopened`
+
+T1 of the premortem of the discussion that made the decision. The decision rests on the premise
+that a session tells a rival defeated by a named fact from a rival that survives, so that what it
+closes `argued` is what the owner would not have decided otherwise.
+
+**Fires when:** in one discussion, the owner reopens 2 or more threads closed `argued`, saying a
+rival was not defeated.
+**Response:** reopen `design@agent-skills@owner-rules-at-a-fork` on what defeats a rival, with the
+rejected alternative that closes every thread on its argument, and the one that sends a cost to the
+owner, among the candidates.
+**Re-entry:** the retrospective of that session, with the limit
+`issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` names.

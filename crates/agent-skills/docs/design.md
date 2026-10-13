@@ -147,7 +147,8 @@ standing entries included. The work is bounded when it reverses no recorded deci
 decision it makes fails the entry tests, per `design@agent-skills@a-head-is-owed-by-an-entry-test`,
 and no second defensible shape survives the nearest-rival test. The skill then sends one message,
 the proposal with its nearest rival, the strongest open reading set aside, the consequences and the
-default, and waits for the owner's word; an argument in the reply returns the work to the loop. The
+default, and builds the default: the owner's answer stops or redirects it, and an argument in the
+reply returns the work to the loop. The
 commit that implements it carries the proposal and the owner's answer, attributed, per
 `design@agent-skills@attribution-replaces-quotation`. The skill's
 description reaches a session before it starts a requested change whose design is not settled.
@@ -158,8 +159,11 @@ grounding gives bounded work the search for standing entries that no step gave i
 entry tests at classification keeps a head from being written for a decision that earns none. The nearest rival, a separate installed skill for
 bounded problems, would repeat the grounding to classify at all; it is in the rejected
 alternatives. A bounded path names no skill outside the installed set, per
-`design@agent-skills@no-external-handoff`, and serves `goal@knowledge-architect@the-owner-decides`:
-the owner rules on every proposal.
+`design@agent-skills@no-external-handoff`. Building the default without a wait serves
+`goal@knowledge-architect@the-owner-decides`, under which the record settles what bounded work
+decides, since a bounded proposal holds no fork, and the owner, told in the one message, overrules
+it at any time; the nearest rival, the wait for the owner's word, sent the owner defaults the record
+answered.
 
 ### The design skill is written for frontier-tier models only `##frontier-tier-only`
 
@@ -177,8 +181,9 @@ the closed set, and dropped open threads between rounds.
 
 ### The design skill structures how a discussion is conducted, never what or how much is proposed `##structure-the-flow`
 
-The skill fixes the flow: proposals are argued, threads carry states, and closure waits for the
-owner's word. It never fixes what may be proposed. The failure it was written against is the
+The skill fixes the flow: proposals are argued, threads carry states, a fork waits for the owner's
+word and a thread with one shape standing closes on its argument, per
+`design@agent-skills@owner-rules-at-a-fork`. It never fixes what may be proposed. The failure it was written against is the
 solution quota: a mode that asks for two or three options gets two or three, and where one shape
 applies, the others are fabricated to fill the count. A fabricated alternative makes a real
 proposal appear to have won a contest that never happened, and spends the round that could have
@@ -188,12 +193,12 @@ specifies what must be proposed, rather than how a proposal is argued and tracke
 this entry.
 
 No bound is set on how much is proposed either: on the number of threads, of proposals, or of
-rounds. The ground is the owner's: "a bound on what and how much the design skill may propose must
-NOT be added, as it would go against the core idea of the 'open design discussion' that the skill
-tries to encourage". Answering a proposed path that would bound a discussion to one decision met
-during a task, the owner said: "The discussion starts with a single decision, but should not be
-bounded in threads or rounds IMO, because this depends only on what the grounding and investigation
-and experimentation brings to the table, and we cannot know about this in advance." A bound fixed before the discussion decides its size
+rounds. The ground is the owner's: the owner ruled that a bound on what and how much the design
+skill may propose must not be added, since it would go against the core idea of the open design
+discussion the skill tries to encourage. Answering a proposed path that would bound a discussion to
+one decision met during a task, the owner argued, as the owner's opinion, that a discussion that
+starts with one decision should be bounded in neither threads nor rounds, since its size depends
+only on what grounding, investigation and experiment bring, which nobody knows in advance. A bound fixed before the discussion decides its size
 before its content. A path chosen by the cost of reversal, or by where the work lands, changes where the
 deliberation is kept, never how large the discussion may grow.
 
@@ -802,6 +807,32 @@ the wording would make every repair of a tripwire a question to the owner, again
 goals and the record leave open, which a tripwire's wording is not. The rival, a change to a
 tripwire's firing evidence treated as a material finding, puts each such repair back to the owner.
 
+### A fork closes on the owner's word, and a thread with one shape standing closes on its argument `##owner-rules-at-a-fork`
+
+`skill@knowledge-architect-design@threads-and-states` closes a thread in the state `argued` when
+one shape stands, each rival out by a named fact or binding constraint, and the session closes the
+rivals `ruled-out`, naming the fact. Both show in the next delta and in the checkpoint, where the
+owner contests or overrules them, and the turn lists them under "Decided", per
+`design@agent-skills@decisions-reported-to-the-owner`. A fork, two or more shapes that meet every
+binding constraint with no fact defeating either, closes on the owner's word, as a fork does
+everywhere, per `design@agent-skills@questions-go-to-their-authority`. A cost alone makes no fork.
+The discussion stays an exchange: the owner proposes designs, the agent fills and argues them, and
+either side's shape can win.
+
+It serves `goal@knowledge-architect@agents-work-without-drift`, under which the owner does not
+answer what the record already answers, and `goal@knowledge-architect@the-owner-decides`, which
+keeps a fork with the owner. The discussion form is the owner's intent: the owner observed that,
+most of the time, the owner's rough designs end up a better direction than the agent's proposals,
+the agent mostly refining them, arguing the smaller items under them and measuring their cost,
+though not always, the better design coming at times from the agent or from a fusion of both; and the owner
+truly thinks that the discussion format drives the improvement and the quality of a design. The nearest
+rival, every thread closing on its argument, gives up that exchange where it matters, at a fork. A
+second rival, the owner closing any thread whose choice weighs a cost, closes every thread on the
+owner's word, since every choice has a cost. The design skill already gave a tie to the owner and
+said that no fork remains where no rival stands; this decision joins the second to closure. The
+risk, a session judging a rival defeated on a weak argument, is what the checkpoint's contest and
+`tripwire@agent-skills@argued-closure-reopened` watch.
+
 ### A design thread's slug becomes its entry's slug `##thread-slug-is-entry-id`
 
 A thread of a design discussion is named by a slug minted in the entry-id grammar and checked for
@@ -809,7 +840,7 @@ a collision with the entries of the Component before it is used. In discussion p
 plain, with a hash sign before it, never as a backticked span, which the checker reports as the
 retired slug form once an entry carries that slug, per
 `design@core@candidate-rule-and-retired-forms`. When
-the thread is approved and its decision earns an entry, the entry's heading ends with the same
+the thread is approved, or closed `argued`, and its decision earns an entry, the entry's heading ends with the same
 slug, except in the case below, so the spec, the commit messages and the design home name the decision with one identifier.
 In the plan document the thread is an item, a level-three heading ending with the same slug under
 the Threads section, cited from inside that document only, per `design@core@plan-items-by-section`.
