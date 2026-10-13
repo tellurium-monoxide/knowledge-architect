@@ -27,6 +27,9 @@ Per "Attribution replaces quotation" and "An answer keeps its authority" in the 
   `tripwire@agent-skills@ruling-lost-in-assembly`, `tripwire@agent-skills@ruling-lost-in-change`,
   `tripwire@agent-skills@head-created-without-deliberation` reread and reworded where "the owner's
   words" counts quotations.
+- **D19**: the approval clause of `primer@design-heads` and of
+  `design@agent-skills@head-ground-is-the-argument`, "which the owner approves where the reversal is
+  a fork".
 - **What slice 1 wrote**: its heads and T2 and T3, converted.
 - **CHANGELOG.md `Next release`**: a Migration entry naming the design-record axis, per D9.
 

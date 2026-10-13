@@ -560,6 +560,20 @@ head. Without that, a session that must keep working would build on whichever
 side it met first, and a divergence would close silently in the code's favour, against
 `goal@knowledge-architect@agents-work-without-drift`.
 
+### A divergence between a head and the code goes to the owner only where reversing the head is a fork or its ground is the owner's `##divergence-routed-by-its-authority`
+
+`primer@intent-and-claims` routes a divergence by the authority that settles it, per
+`design@agent-skills@questions-go-to-their-authority`. Where the head stands, its argument or the
+owner's ground undefeated, the code is the defect: the session fixes it or opens an issue, and the
+work builds on the head. Where the session finds the head's argument defeated, the head's reversal
+goes to the design skill, and to the owner where it is a fork or the head's ground is the owner's;
+the part of the task that rests on the point waits for that answer.
+
+It serves `goal@knowledge-architect@the-owner-decides`, which gives the session what the argument
+from the record settles. The nearest rival, every divergence holding its part of the task until the
+owner's word, sends the owner a question the record answers wherever the head stands, since a design
+home is built intent the code is checked against.
+
 ### A reason recorded at the code binds as intent at its scale, below the design home `##local-intent-binds`
 
 The primer's intent-and-claims rule has three classes. A design home is authority. A reason recorded
@@ -733,8 +747,9 @@ superseded thread that lost on its merits.
 ### A premortem's cause becomes a tripwire only on the owner's word `##premortem-tripwires-on-the-owners-word`
 
 A premortem's surviving causes become tripwires only where the owner rules that they should.
-Whether a risk is worth watching is a weighing, and the weighing is the owner's, per
-`goal@knowledge-architect@the-owner-decides`. Where a ruled tripwire is written is
+Whether a risk is worth watching is a fork: watching it and not watching it both meet every binding
+constraint, and they trade the cost of watching against the risk, which no goal or decision ranks,
+so it is the owner's, per `goal@knowledge-architect@the-owner-decides`. Where a ruled tripwire is written is
 `design@agent-skills@premortem-tripwire-written-at-harvest`.
 
 ### A premortem's cause the owner ruled on is written at the harvest of the decision it guards, in the tripwires home of the Component that owns it `##premortem-tripwire-written-at-harvest`
@@ -1180,8 +1195,9 @@ proposed later, at the assembly, by a review or at an audit, is written marked a
 owner, with its label under the plan document's defaults, and is not judged before the ruling; the
 work goes on without it, and one never ruled leaves with the document.
 
-A criterion's response reopens a decision, and choosing the observable that may reopen a decision
-is a weighing, which is the owner's, per `goal@knowledge-architect@the-owner-decides`. The owner
+A criterion's response reopens a decision, and choosing whether to watch with it is a fork, which is
+the owner's, per `goal@knowledge-architect@the-owner-decides`: applying it and not applying it both
+meet every binding constraint, and they trade the cost of the check against the risk. The owner
 sets a criterion's threshold, and a tripwire, the same check for built work, stands on the owner's
 word, per `design@agent-skills@premortem-tripwires-on-the-owners-word`, so a criterion's application
 stands on the same word as its threshold and as a tripwire. The wording stays the agent's, as a
@@ -1259,9 +1275,10 @@ undesigned work, which needs a routing rule and hides one of them from the issue
 
 ### The roadmap's order is the owner's `##roadmap-order-is-the-owners`
 
-A row of the roadmap is added or moved on the owner's word, since ordering work is a weighing, per
+A row of the roadmap is added or moved on the owner's word, since ordering known work is a fork: no
+goal or decision ranks one piece of it over another, so the order is the owner's, per
 `goal@knowledge-architect@the-owner-decides`. The rival, any session ordering the work, would make
-the order a session's weighing. The two edits that keep a row pointing at the same work, rewriting
+the order a session's choice where no argument settles it. The two edits that keep a row pointing at the same work, rewriting
 the row of an issue a new plan document closes and removing the row of a plan document that
 leaves, need no word, per `design@agent-skills@roadmap-orders-issues`.
 

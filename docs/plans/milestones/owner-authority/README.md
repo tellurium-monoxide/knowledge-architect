@@ -26,7 +26,8 @@ that I want to handle". The discussion begins at that message and ends at the ow
 opens "Drop T5, keep the other tripwires." This document was assembled from that transcript.
 Rounds are numbered by the owner's messages, R0 the opening one to R5 the last of the discussion;
 R6 is the owner's message after the reviews of this document, "D12, D17, D13, D15 approved.", and
-R7 the owner's ruling on D18, during slice 1. The log holds R5 twice: the first copy lacks its last
+R7 the owner's ruling on D18, during slice 1, and R8 the owner's ruling on D1 to D4, D14, D16 and
+D19, at slice 1's review before its merge: "All defaults shown here are approved, proceed." The log holds R5 twice: the first copy lacks its last
 paragraph, and no reply lies between the two. The complete copy, the second, is R5.
 
 ## How the work is done
@@ -169,7 +170,7 @@ slice that judges or updates each citing text:
 | `design@agent-skills@primer-content` | gains pointers to the authority section and to the "Decided" section; the premise directive scoped; case 1 of the item met outside the task follows G2, which reverses its argument "a stop beside them would give a session two acts for one item" for a contradiction; each directive slice 1 changes leaves for a head of its own, per `primer@design-heads` on a head a change touches | 1 | `issue@agent-skills@primer-content-bundles-each-directive-s-decision`, which stays open for the directives slice 1 does not touch; `issue@agent-skills@the-material-finding-duty-has-no-head`; `path@agent-skills@docs/rejected-alternatives.md` |
 | `design@agent-skills@ruled-items-labelled` | the home of the label rule: a label numbers what was put to the owner, never what decided; its `D` row, at slice 4: a default the record or a source answers takes no label | 1, and 4 | the primer and 7 skills under `path@agent-skills@content/` (decision-recording, design, planning, project-audit, retrospective, review, setup); `design@agent-skills@primer-content`; `design@agent-skills@acceptance-criteria-on-the-owners-word` |
 | `design@agent-skills@tripwire-wording-is-the-agents` | its end-of-turn listing joins the "Decided" section; its paraphrase of the old G3 follows G3 | 1 | `design@agent-skills@acceptance-criteria-on-the-owners-word` |
-| `design@agent-skills@head-prevails-over-diverging-code`, and the hold of `primer@intent-and-claims` | per D4 | 1 | `design@agent-skills@local-intent-binds` |
+| `design@agent-skills@head-prevails-over-diverging-code`, and the hold of `primer@intent-and-claims` | per D4, with its statement in `design@agent-skills@divergence-routed-by-its-authority` | 1 | `design@agent-skills@local-intent-binds` |
 | `design@agent-skills@head-ground-is-the-argument` | the ground is attributed, not quoted | 2 | `design@agent-skills@standing-argument-in-head`, `design@agent-skills@unargued-approval-is-argued`, `tripwire@agent-skills@owner-intent-stripped`, `issue@core@a-kind-name-refusal-quotes-a-future-migration-reason`, `path@agent-skills@docs/rejected-alternatives.md` |
 | `design@agent-skills@a-head-is-owed-by-an-entry-test` | test 4 attributes | 2 | the 12 heads, issues, tripwires and files `cargo klarch show` lists, read at slice 2's audit |
 | `design@agent-skills@standing-argument-in-head`, `design@agent-skills@extension-follows-the-ground`, `design@agent-skills@existing-heads-on-touch`, `design@agent-skills@instruction-record-is-minimal`, `design@agent-skills@new-or-reshaped-head-needs-design`, `design@agent-skills@a-past-sentence-is-rewritten`, `design@agent-skills@verifier-in-the-run` | quotation becomes attribution | 2 | each one's `show` list, read at slice 2's audit |
@@ -1024,24 +1025,24 @@ Each default awaiting the owner is built as written until the owner rules on it.
 reused. The ones the record answers are listed after these, as decisions of this document the owner
 can contest.
 
-- **D1.** Whether a premortem cause is watched, and whether an acceptance criterion is applied,
+- **D1, ruled R8: approved.** Whether a premortem cause is watched, and whether an acceptance criterion is applied,
   stays on the owner's word. Choosing to watch or not is a fork: both shapes meet every binding
   constraint, and they trade the cost of watching against the risk. The owner changed both outcomes
   in R5. `design@agent-skills@premortem-tripwires-on-the-owners-word` and
   `design@agent-skills@acceptance-criteria-on-the-owners-word` stand.
-- **D2.** The roadmap's order stays the owner's: no goal ranks one piece of work over another.
+- **D2, ruled R8: approved.** The roadmap's order stays the owner's: no goal ranks one piece of work over another.
   `design@agent-skills@roadmap-order-is-the-owners` stands.
-- **D3.** When an audit's passes stop, and a repair set that adds more instructions than it removes,
+- **D3, ruled R8: approved.** When an audit's passes stop, and a repair set that adds more instructions than it removes,
   stay with the owner, as forks of cost.
   `design@agent-skills@audit-passes-repeat-while-the-count-falls` and
   `design@agent-skills@audit-net-growth` stand.
-- **D4.** A divergence between a design home and the code is routed by the authority section: where
-  the head stands on its argument, the code is the defect, and the session fixes it or opens an
-  issue; where reversing the head is a fork, or the head's ground is the owner's, it goes to the
-  owner. The part of the task that rests on the divergence waits until it is resolved, by either
-  route. Slice 1 rewrites the hold of `primer@intent-and-claims` and
-  `design@agent-skills@head-prevails-over-diverging-code` to say so. It bears on G1, whose four
-  kinds hold no divergence as such.
+- **D4, ruled R8: approved, as built.** A divergence between a design home and the code is routed
+  by the authority section: where the head stands, the code is the defect, and the session fixes it
+  or opens an issue, the work building on the head; where reversing the head is a fork, or the
+  head's ground is the owner's, it goes to the owner, and the part of the task that rests on the
+  point waits for that answer. The first draft held the part on both routes; the owner was shown
+  the narrowing at the review before slice 1's merge. Slice 1 writes it into `primer@intent-and-claims`
+  and `design@agent-skills@divergence-routed-by-its-authority`. It bears on G1.
 - **D12, ruled R6: approved.** G2's "contradiction it finds" reads as a contradiction no source or argument resolves,
   as G1 and the authority section say. An owner's answer on a reading that a source contradicts is
   then no contradiction: the source answers it, per #specification-outranks-an-owner-answer. A
@@ -1060,7 +1061,7 @@ can contest.
   1 and slice 4, since a release would ship the texts that disagree; publishing is on the owner's
   word anyway, per `design@knowledge-architect@publish-after-merge`. It bears on criterion
   #no-contradiction.
-- **D14.** The intake of a received workflow file, here, and an agentic-workflow audit's findings on
+- **D14, ruled R8: approved.** The intake of a received workflow file, here, and an agentic-workflow audit's findings on
   the installed text, stay with the owner:
   `goal@knowledge-architect@the-workflow-improves-through-real-use` says "the owner decides what
   changes". `skill@klarch-retrospective-intake`,
@@ -1072,7 +1073,7 @@ can contest.
   `skill@klarch-retrospective-intake`. Without it, nothing in the tree records them once this
   document leaves. No analysis file is written now, on the owner's direction in R0 quoted under
   "Outside the work". It bears on D14.
-- **D16.** The slices run in the order of "Implementation sequence": attribution second, where the
+- **D16, ruled R8: approved.** The slices run in the order of "Implementation sequence": attribution second, where the
   reply to R4 (a80) had it last, and the "Decided" section in slice 1, as a primer directive. The
   reason is in "Order rationale". The owner agreed "on the milestone path" in R5 with the earlier
   order in view.
@@ -1091,6 +1092,13 @@ can contest.
   weighing the owner made", in the authority section, and G1's list gains the same member. The list
   is the owner's approved wording, so nothing was written before the owner's word; the owner
   approved it in R7, "D18: agreed on the proposal.", and slice 1 writes it. It bears on #questions-go-to-their-authority and #owner-decides-goal-wording.
+
+- **D19, ruled R8: approved.** `primer@design-heads` says a head that stands on its argument "is
+  reversed by a better argument, which the owner then approves", where D4 and the authority section
+  send a reversal to the owner only at a fork or where the head's ground is the owner's. The
+  approval clause becomes "which the owner approves where the reversal is a fork", in that section
+  and in `design@agent-skills@head-ground-is-the-argument`. Slice 2 builds it, since it rewrites
+  both. It bears on #owner-rules-at-a-fork.
 
 **Answered by the record**, each a decision of this document the owner can contest:
 

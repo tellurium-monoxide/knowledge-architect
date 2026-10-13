@@ -413,7 +413,8 @@ agentic-workflow axis, from its own sessions or from a project that uses the wor
 each analysed finding by finding under `skill@klarch-retrospective-intake`, and the analysis is a
 file of `path@knowledge-architect@docs/retrospective-reports/`, named by the received file's stem.
 Each finding gets one of three outcomes, ruled by the owner: handled now, opened as an issue, or no
-change with the reason, per `goal@knowledge-architect@the-owner-decides`. The analysis is committed
+change with the reason, per `goal@knowledge-architect@the-workflow-improves-through-real-use`, under
+which the owner decides what real use changes in the workflow. The analysis is committed
 with the owner's ruling on each finding, the issues it rules are opened next, the findings handled
 now are handled, and the commit that carries out its last outcome, or a later commit of the same
 branch, deletes it. A finding handled now that grows into a design discussion has its outcome
