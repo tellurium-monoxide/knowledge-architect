@@ -65,8 +65,8 @@ awaited", which names the default of `primer@owner-word-premise`.
 
 - Until slices 3 and 4 land, the design, planning and review skills still send to the owner
   questions the authority section gives the session. The guard is D13's rank sentence, in the
-  authority section, which every session reads; and no version is published before slice 4, per
-  the milestone document's "How the work is done".
+  authority section, which every session reads, and D13's clause that no version is published
+  before slice 4.
 - The heads and tripwires this slice's harvest writes follow the quotation rule in force; slice 2
   converts them.
 
