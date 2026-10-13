@@ -23,8 +23,8 @@ bounded.
 
 ### Why it matters
 
-`design@agent-skills@bounded-path-in-design` exists so that bounded work costs one proposal and the
-owner's word. A classification that almost never finds work bounded sends it to a discussion each
+`design@agent-skills@bounded-path-in-design` exists so that bounded work costs one proposal, built on
+its default. A classification that almost never finds work bounded sends it to a discussion each
 time, the cost the path was decided to remove. It is the opposite failure to
 `tripwire@agent-skills@a-shortcut-decision-earns-a-head`, which watches work wrongly classified as
 bounded.

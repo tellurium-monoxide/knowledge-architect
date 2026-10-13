@@ -25,9 +25,10 @@ by its opening message, "There is a retrospective at
 that I want to handle". The discussion begins at that message and ends at the owner's message that
 opens "Drop T5, keep the other tripwires." This document was assembled from that transcript.
 Rounds are numbered by the owner's messages, R0 the opening one to R5 the last of the discussion;
-R6 is the owner's message after the reviews of this document, "D12, D17, D13, D15 approved.", and
-R7 the owner's ruling on D18, during slice 1, and R8 the owner's ruling on D1 to D4, D14, D16 and
-D19, at slice 1's review before its merge: "All defaults shown here are approved, proceed." The log holds R5 twice: the first copy lacks its last
+R6 is the owner's message after the reviews of this document, "D12, D17, D13, D15 approved."; R7
+the owner's ruling on D18, during slice 1; R8 the owner's ruling on D1 to D4, D14, D16 and D19, at
+slice 1's review before its merge, "All defaults shown here are approved, proceed."; and R9 the
+owner's ruling on D20, after slice 2's merge, "Agreed on D20, proceed". The log holds R5 twice: the first copy lacks its last
 paragraph, and no reply lies between the two. The complete copy, the second, is R5.
 
 ## How the work is done
@@ -366,7 +367,7 @@ G3, the met-sentence as approved:
 ### Durable records attribute a decision to the owner instead of quoting the owner `##attribution-replaces-quotation`
 
 - **Proposed:** the agent, reply to R0. **States:** new; approved R1; reopened at slice 2's review
-  by the material finding D20, its default built, awaiting the owner's word.
+  by the material finding D20, its default built, and closed again on the default, R9.
 - **Arguments:** a8, a16, a30, a76.
 - **Closed by:** R1: "attribution-replaces-quotation: yes, I'm for it."
 - **Shape:** "Decided design". **Harvest:** a head of its own, slug its thread's, slice 2, with
@@ -1005,7 +1006,7 @@ None. The one proposed, AC1, was not applied, R5.
 2. Attribution, landed: the ground and test 4 attribute; the transcript reviewer's ruling check
    scoped; the recording rules of commit messages and the plan record; the reviewers and auditors
    that check quotations; the tripwires that count quotations; D19.
-3. [Design skill](design-skill.md): the fork, the state `argued`, the bounded path's default, the
+3. Design skill, landed: the fork, the state `argued`, the bounded path's default, the
    decision-authority wording, step 3, the expectation set, the texts that count closures.
 4. [Defaults and findings](defaults-and-findings.md): planning's and review's defaults, the
    audit's common owner list, setup's destinations.
@@ -1102,7 +1103,7 @@ can contest.
   and in `design@agent-skills@head-ground-is-the-argument`. Slice 2 builds it, since it rewrites
   both. It bears on #owner-rules-at-a-fork.
 
-- **D20.** A material finding of slice 2's review: the attributions the harvest first wrote dropped
+- **D20, ruled R9: approved.** A material finding of slice 2's review: the attributions the harvest first wrote dropped
   the scope or the hedges of the owner's words in five heads, and the history holds a paraphrase of
   the owner in `design@agent-skills@transcript-reviewer-agent` that a quotation had to replace. It
   defeats a premise of #attribution-replaces-quotation, that an attribution states what the owner
@@ -1110,6 +1111,17 @@ can contest.
   of the words, `primer@design-heads` says so, and the head names the paraphrase as the risk T4
   watches. Alternative: a head whose ground is the owner's words keeps them verbatim, and only
   approvals and rulings are attributed. It bears on #attribution-replaces-quotation.
+
+- **D21.** The design skill's expectation set, in `skill@knowledge-architect-retrospective@expectation-sets`
+  and restated in `path@agent-skills@README.md`, states assumptions about the owner, which are the
+  owner's to state, item by item, per `issue@agent-skills@expectation-sets-for-the-installed-skills`.
+  Slice 3 rewords three of its items to follow #owner-rules-at-a-fork and #derived-decision-proceeds-on-default:
+  "Given bounded work, it sends one proposal and builds its default; the owner's answer stops or
+  redirects it"; "The owner gives the word that closes a fork", the agent closing a thread whose
+  rivals lost to a named fact and showing it for contest; and "The owner is the person who can
+  decide what is the owner's", a fork, a goal, a contradiction no argument resolves, a fact only the
+  owner holds and an action that cannot be undone. Default, built: the three as worded. It bears on
+  #owner-rules-at-a-fork.
 
 **Answered by the record**, each a decision of this document the owner can contest:
 
