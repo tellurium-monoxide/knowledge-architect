@@ -52,7 +52,7 @@ whose proposal weighs this finding's own, a guard delivered at the push.
 - **h. The proposal.** The design discussion of the push guard also weighs delivering the
   claim-list rule at each commit.
 - **Default**: handle now, in the same design discussion as the push and commit cluster.
-- **Outcome** This is normal behavior. The reviews are there for that. If there was a real solution to this, no review would ever be needed... Maybe the scratch file solution would help. OK for the short design session.
+- **Outcome**: no change, after the short design session the owner asked for. The owner, closing it: "claim-list-no-change". Before it, in the file: This is normal behavior. The reviews are there for that. If there was a real solution to this, no review would ever be needed... Maybe the scratch file solution would help. OK for the short design session.
 
 ## P3. No route for a received file the owner sends in part to a design discussion
 
