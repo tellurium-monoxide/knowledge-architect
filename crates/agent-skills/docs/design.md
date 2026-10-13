@@ -1039,21 +1039,21 @@ ruling before the work rather than rework after it, per
 `design@agent-skills@behaviour-additions-need-real-use`: in thaum, the standing-state reviewer found, after
 the work, issues the changes bore on and tripwires that had fired, especially in the slices of large
 milestones, and the repairs and decisions this forced could have been taken before the design and
-the implementation. The owner's account: the reviewer "is too often finding issues that are
-impacted by the changes or triggered tripwires that bear on the design 'after the work', especially
-on large work that is part of big milestones in thaum". The audit reads every issue kind because those late
+the implementation. The owner's account is that the reviewer too often finds, after the work,
+issues the changes bear on or tripwires that fired and bear on the design, especially on large work
+within big milestones in thaum. The audit reads every issue kind because those late
 findings included issues the changes touched, not only fired tripwires. The slices of thaum whose
 reviews found such entries had their audits before the installed planning skill told an audit to
 read the tripwires and the deferred issues, and the reviews of the two slices audited after it
 found no entry missed. The
-owner judged the earlier work comparable, "Pre 0.2.0 was not that different from right before our
-work.", so the evidence stands; a stream of audits that read the standing entries in the session
+owner judged the work before 0.2.0 not that different from the work just before the change, so the
+evidence stands; a stream of audits that read the standing entries in the session
 and miss none would weaken it. A search at the reviews of
 a plan document lost to a second search when convergence is proposed, before the premortem: those
 reviews run only where a discussion wrote a plan document, and a search at convergence covers a
 decision taken in the change under way too. The search at convergence is parked, with a tripwire.
-The occasions are the owner's: the search "should at least run at design grounding and step
-audits, which are the main moments when design gets discussed, and nothing should be missed."
+The occasions are the owner's: the search runs at least at a design discussion's grounding and at
+the audits of a plan's steps, the main moments design is discussed, and should miss nothing.
 
 ## How documents point at each other
 
@@ -1138,9 +1138,9 @@ when the form ships. A generic checked opt-out marker lost too: one marker fits 
 it becomes the cheap silence `design@core@reserved-anchors` refuses, while a gap concrete enough to
 name is closed by shipping its own form.
 
-The scope is the checker's syntax, the owner's proposal: "The rule was supposed to be about plain
-text that is copying the checker syntax but omitting backticks to avoid it. I think this would be a
-better scope." It lets a writer tell from each span alone whether the exception
+The scope is the checker's syntax, the owner's proposal: the rule was meant for plain text that
+copies the checker's syntax but omits the backticks to avoid the check, which the owner thought a
+better scope. It lets a writer tell from each span alone whether the exception
 applies, per `goal@knowledge-architect@agents-get-a-complete-workflow`: every sentence names
 something, and a scope of "any pointer" would ask for an issue entry beside every mention of a
 thing outside the project. The evasion the exception exists to stop is a reference or a path with its
@@ -1154,7 +1154,7 @@ entities of a tree, per `design@core@one-entity-table`, and a commit is none of 
 citation of a commit the checker judges is a branch commit's SHA, which
 `design@core@branch-shas-are-refused` refuses.
 
-The other exception is a deleted skill's or agent's reference in a released section of
+The second exception is a deleted skill's or agent's reference in a released section of
 CHANGELOG.md: the section's content never changes, per
 `design@knowledge-architect@changelog-section-fixed-at-release`, and nothing exists that a
 reference could cite.
@@ -1163,20 +1163,24 @@ nothing, since no checked form remains that it could have used. The rival, rewri
 as `design@agent-skills@a-past-sentence-is-rewritten` asks elsewhere, would change a released
 section's content.
 
-The third exception is an entry that the tree of a record of a deliberation does not hold, removed
-or renamed by the work the record carries, or still to be created by it, named there by its bare
-slug in backticks. A record of a deliberation is where
-`design@agent-skills@attribution-replaces-quotation` keeps the deliberation, a plan document or a
-committed file that leaves once its outcomes are carried out, and a commit message. The exception
+The third exception is an entry that the tree of a record of a deliberation does not hold, nor, for
+a commit message, its first parent's, removed or renamed by the work the record carries, or still to
+be created by it, named there by its bare slug in backticks. A record of a deliberation is where the deliberation is kept, per
+`skill@knowledge-architect-decision-recording@three-homes`: a plan document, a committed file that
+leaves once its outcomes are carried out, and a commit message. The exception
 is the owner's proposal: for such an entry the checker has nothing left to check, and what this
 head refuses is avoiding the check on a live entry, which leaves dangling references and makes
 grounding less efficient. It evades nothing, as the changelog exception does not: no entry remains,
 or none exists yet, that a checked form could cite, and a one-segment span is silent, per
-`design@core@candidate-rule-and-retired-forms`. The owner chose the form among three, and the scope:
+`design@core@candidate-rule-and-retired-forms`. The owner chose the form among three, the bare slug
+in backticks, the bare slug in plain text and the full reference with its backticks removed, and the
+scope:
 records of a deliberation only, since every other document states current reality, where a
 sentence naming an absent entry is rewritten, per `design@agent-skills@a-past-sentence-is-rewritten`.
-The other two forms lost: a description in words, which the owner judged confusing to every reader,
-and the full reference with its backticks removed, which is the evasion this head refuses. A
+The full reference with its backticks removed is the evasion this head refuses. The bare slug in
+plain text, the owner's first proposal, gave way to the owner's choice of the backticked slug. A
+description in words, the form the audit report's issue proposed, the owner judged confusing to
+every reader. A
 checked form for an entry still to be created, as `design@core@planned-path-form` is for a path,
 lost too: a plan document and a committed file leave with or before the branch that creates the
 entry, so such a check would fire on a file about to be deleted; a commit message is judged against
@@ -1392,7 +1396,8 @@ reopens. The agent words its observable, and lists a rewording in the turn's "De
 The design skill asks for the ruling at the premortem, beside the tripwires. A criterion first
 proposed later, at the assembly, by a review or at an audit, is written marked as awaiting the
 owner, with its label under the plan document's defaults, and is not judged before the ruling; the
-work goes on without it, and one never ruled leaves with the document.
+work goes on without it, and the branch that carries it merges once the owner has ruled on it, as
+any default put to the owner, per `design@agent-skills@default-ruled-before-merge`.
 
 A criterion's response reopens a decision, and choosing whether to watch with it is a fork, which is
 the owner's, per `goal@knowledge-architect@the-owner-decides`: applying it and not applying it both
@@ -1831,8 +1836,8 @@ in its worktree, as a verifier works in its auditor's. The preflight creates the
 names the agents from its own table; where the agents follow from what the preflight lists, as the
 design-record axis's groups do, a setup agent creates their worktrees once the script has cut them.
 
-The cross-check and the report are one agent each, on the owner's word: "The cross check and the
-report should be one agent each (two total)." The cross-check maps the findings that edit one
+The cross-check and the report are one agent each, two in all, on the owner's word. The cross-check
+maps the findings that edit one
 paragraph or one slug, and proposes each finding's outcome for the session to decide; in the
 design-record axis it also lists each tripwire and issue an edit would leave false, read whole. The
 report quotes what the session needs to discuss each finding with the owner and act: the refuted
@@ -1845,18 +1850,18 @@ since the owner list goes out under its responsibility: the report whole, every 
 marks as plausible or as bearing on a ruling of the owner or on a tripwire, against its draft, and
 a sample of the refuted drafts, with what the axis adds: every repair proposal in full for the
 agentic-workflow axis; the calibration's readings, every check and a sample of the conforming drafts
-for the design-record axis. The samples are the session's to choose, on the owner's word: "Sample
-left to judgement". The owner list, the owner's word and the application follow. The run ends at
+for the design-record axis. The samples are the session's to choose, on the owner's word that
+leaves the sample to judgement. The owner list, the owner's word and the application follow. The run ends at
 its report, and the application is the session's, per
 `design@agent-skills@apply-stays-with-the-session`. The design-record axis then runs its workflow
 once more on the application, in the mode `application`, per
-`design@agent-skills@created-heads-checked-in-the-run`: the owner's ruling and the session's
+`design@agent-skills@application-judged-by-diff`: the owner's ruling and the session's
 application sit between the two runs, so no single run can hold both.
 
-The shape is the owner's: "the main power of that tool is to organize multiple complex steps that
-produce a complete result (such as a report) which is as ready as possible for the main session to
-dicuss it with the owner, then act on it, while minimizing the burden placed on the main session",
-and "verification by the session is indeed necessary, but not in the middle of the workflow steps".
+The shape is the owner's: the main power of a saved workflow is to organize several complex steps
+into one complete result, such as a report, as ready as possible for the main session to discuss
+with the owner and then act on, with the least burden on the main session; and verification by the
+session is necessary, but not in the middle of the workflow's steps.
 The nearest rival, the steps run as separate runs with a reading by the session between each, lost
 on the pass of the agentic-workflow axis that ran so: the session's sort refuted 3 drafts, each a
 refutation a verifier given the audit's earlier commit messages can make, its reading of 23 repair
@@ -2073,7 +2078,7 @@ reading bears on, the load the group bound exists to avoid; the barrier costs th
 slowest auditor. A verifier sees one group only, so it cannot replace the sample: the sample's
 readings differ between groups, not inside one.
 
-### Each head a proposed split, merge, rename, retitle or move would create is judged alone inside the run, before the owner rules, and every entry the application changes is judged after it `##created-heads-checked-in-the-run`
+### Each head a proposed split, merge, rename, retitle or move would create is judged alone inside the run, before the owner rules `##created-heads-checked-in-the-run`
 
 In the design-record axis's run, for each group whose verified findings propose a split, a merge, a
 rename, a retitle or a move, a design-record auditor under its check brief judges each head the edit
@@ -2081,32 +2086,38 @@ would create, or the head under its new title, alone against every rule of `prim
 and the edit against the auditor's failure modes of an edit. One checker per group is the default,
 and the count is the session's, passed to the run.
 
-After the owner's ruling, the session commits its application and runs the same saved workflow on
-it, in its mode `application`: one design-record auditor per group, under an application brief,
-judges every head and rejected alternative whose text the application changed, a retitle and a body
-edit included and a re-pointed reference alone left out, against every rule, its change against the
-failure modes of an edit and the owner's ruling it carries out, and each tripwire and issue that
-cites a changed head, clause by clause, against the head that now holds what each clause guards. The
-session repairs what the report names and folds the repairs into the pass's commit.
-
 A head created by a split failed a rule read alone in the axis's first audit on this repository,
-and moving text unchanged does not make the new head conform. The rival, that judgement made at
-the application, comes after the owner's ruling, so the owner would rule on a head nobody had
+and moving text unchanged does not make the new head conform. The rival, that judgement made only
+at the application, comes after the owner's ruling, so the owner would rule on a head nobody had
 judged alone. One checker per group reads the rules once for every created head of the group, where
 one per proposal reads them once per head. A retitle is judged with them, since the owner rules on
 its new title as on a created head.
 
-The application is judged too, since it writes text the run never read: the edits of the owner's
-rulings, a check's repair, and every entry a split or a retitle touches. In the first pass of the
-axis in thaum, on knowledge-architect 0.6.0, the application touched about 200 heads and entries;
-four auditors judging every changed entry found 19 failures the run's checks could not see, among
-them a retitle that made a title true of a recorded rival and an attribution wider than the owner's
-argument, and the standing-state review found two tripwires the application left false while they
-still resolved. The rivals lost. The session judging alone does not read about 200 entries against
-every rule within one context. The re-check of the audit method runs only when a pass follows, and
-not when the owner stops the audit. A dispatch by hand from the skill puts a step outside the saved
-workflow, against `design@agent-skills@audit-axis-runs-a-workflow`. The cross-check's reading of
-tripwires runs before the application, and can only predict what the edits will do.
+### Every entry an audit's application changes is judged after the application, in a second run of the axis's saved workflow `##application-judged-by-diff`
+
+After the owner's ruling, the session commits its application of a pass of the design-record axis
+and runs the axis's saved workflow on it, in its mode `application`: one design-record auditor per
+group, under an application brief, judges every head and rejected alternative whose text the
+application changed, a retitle and a body edit included and a re-pointed reference alone left out,
+against every rule, its change against the failure modes of an edit and the owner's ruling it
+carries out, and each tripwire and issue that cites a changed head, clause by clause, against the
+head that now holds what each clause guards. The session repairs what a reading confirms of the
+report and folds the repairs into the pass's commit.
+
+The application writes text the run never read: the edits of the owner's rulings, a check's repair,
+and every entry a split or a retitle touches. In the first pass of the axis in thaum, on
+knowledge-architect 0.6.0, the application touched about 200 heads and entries; four auditors
+judging every changed entry found 19 failures the run's checks could not see, among them a retitle
+that made a title true of a recorded rival and an attribution wider than the owner's argument, and
+the standing-state review found two tripwires the application left false while they still resolved.
+The rivals lost. The session judging alone does not read about 200 entries against every rule
+within one context. The re-check of the audit method runs only when a pass follows, and not when
+the owner stops the audit. The standing-state review before the merge reads the tripwires and the
+issues against the change, not each changed entry against every rule. A dispatch by hand from the
+skill puts a step outside the saved workflow, against
+`design@agent-skills@audit-axis-runs-a-workflow`. The cross-check's reading of tripwires runs
+before the application, and can only predict what the edits will do. The run judges and applies
+nothing, so `design@agent-skills@apply-stays-with-the-session` holds.
 
 ### The agentic-workflow axis reads every text the harness delivers to a session as an instruction, and neither the scoped CLAUDE.md files nor the registers are in its corpus `##workflow-axis-corpus`
 

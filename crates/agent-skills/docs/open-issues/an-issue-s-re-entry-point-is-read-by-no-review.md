@@ -54,7 +54,9 @@ registers exist to avoid. It threatens `goal@knowledge-architect@agents-work-wit
 
 ### What would close it
 
-A decision on whether the standing-state reviewer reads the re-entry point of every design issue
-against the change, and, if it does, how it finds the re-entry point when the subsection has no
-fixed name. Or the owner rules that a design issue's re-entry is a discussion, which no change can
-meet, and the decision is recorded in the head above.
+A decision between the two answers, recorded in the head above: the standing-state reviewer reads
+the re-entry point of every entry that carries one against the change, with how it finds the
+re-entry point when the subsection has no fixed name; or a re-entry point is allowed only where the
+issue-tracking skill gives one, a `design` entry's, and the reviewer reads those. Or the owner rules
+that a re-entry is a discussion, which no change can meet, and the decision is recorded in that
+head.

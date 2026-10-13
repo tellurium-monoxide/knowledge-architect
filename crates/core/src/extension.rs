@@ -7,11 +7,11 @@
 //! core itself knows no extension.
 //!
 //! **Two levels.** An [`Extension`] is configured once per manifest, and prepares one
-//! [`Prepared`] per tree it judges. One run can configure it more than once: every command
-//! configures it over the working tree's manifest, and a command that judges a tree git holds,
-//! `commits`, `check --staged`, `index --staged` and `check --fix`, configures it again over that
-//! tree's own manifest, once per commit for `commits`. So keep nothing from one configuration to
-//! the next.
+//! [`Prepared`] per tree it judges, because `commits` judges several trees in one run and a
+//! message is judged against what its own commit's tree holds. One run can configure it more than
+//! once: every command configures it over the working tree's manifest, and a command that judges a
+//! tree git holds, `commits`, `check --staged`, `index --staged` and `check --fix`, configures it
+//! again over each such tree's own manifest. So keep nothing from one configuration to the next.
 
 use std::collections::BTreeMap;
 use std::io;

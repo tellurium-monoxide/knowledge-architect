@@ -74,7 +74,7 @@ change:
   describes the behaviour without naming it is the one a slug grep misses. A sentence about the
   past that named the old slug is rewritten to state the present, or removed, never retargeted and
   never turned into plain text, as `skill@knowledge-architect-issue-tracking` says of a deleted
-  entry; a verbatim quotation of the owner is left as it is, with a reference to the current entry
+  entry, a record of a deliberation naming it as `primer@where-knowledge-goes` says; a verbatim quotation of the owner is left as it is, with a reference to the current entry
   beside it.
 - **Close the issue entry that asked the question**, in this commit rather than a later one, and
   rewrite whatever half of it survives rather than deleting the whole.
@@ -266,7 +266,8 @@ revisited when the entry changes, and an edit that keeps the slug dangles no ref
 reports a citing text it made false.
 
 Then, for each attribution of the owner the change writes, read the owner's words beside it, from
-the plan document or the transcript, and check that it keeps their scope and every hedge.
+the plan document or the transcript, and check that it keeps their scope and every hedge, as
+`primer@design-heads` asks.
 
 Then re-read what you wrote against the head you replaced: **rewriting argued text is where
 fidelity gets lost.** If you cannot restate a losing alternative as strongly as it was written, you

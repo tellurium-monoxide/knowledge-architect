@@ -108,8 +108,9 @@ subsection is omitted.
   be created by it, by its bare slug in backticks, instead of a description in words; the audit's
   report file does so for the entries its pass removes, renames or creates.
 - `agent-skills`, patch: a branch that builds a default put to the owner merges once the owner has
-  ruled on it; the session puts every default still open to the owner by the merge at the latest,
-  and the work goes on with the default meanwhile.
+  ruled on it, an acceptance criterion awaiting the owner included; the session puts every default
+  still open to the owner by the merge at the latest, and the work goes on with the default
+  meanwhile.
 - `agent-skills`, patch: the design-record axis of the project audit judges the session's
   application of a pass in a second run of its saved workflow, `from` set to `application` and
   `applied` to the application's commit: every head and rejected alternative the application

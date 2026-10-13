@@ -29,7 +29,9 @@ if (!(checkersPerGroup >= 1)) throw new Error('checkersPerGroup: at least 1')
 if (args.from && args.from !== 'calibration' && args.from !== 'verify' && args.from !== 'application') {
   throw new Error('from: calibration, verify or application')
 }
-if (args.from === 'application' && !args.applied) throw new Error('applied: the commit of the application')
+if (args.from === 'application' && !(args.commit && args.applied)) {
+  throw new Error('commit and applied: the commit audited and the commit of the application')
+}
 const at = (...parts) => parts.join('/')
 const lines = (xs) => xs.filter(Boolean).join('\n')
 const AUDITOR = 'knowledge-architect-design-record-auditor'
@@ -175,7 +177,7 @@ if (args.from === 'application') {
   const jgroups = cut(pre.components)
   if (!jgroups.length) {
     log('the application changed no entry')
-    return { report: null, groups: [], failing: 0 }
+    return { report: null, groups: [], failing: 0, gaps: [] }
   }
   phase('setup')
   const setup = await agent(lines([
@@ -205,10 +207,22 @@ if (args.from === 'application') {
   ]), { agentType: AUDITOR, schema: JUDGED, phase: 'judge', label: 'judge ' + g.label })
     .then((r) => {
       if (!r) jfailures.push('the judge of group ' + g.label + ' returned nothing')
-      return r
+      return { g, r }
     })))
-  const failing = judged.filter(Boolean).reduce((t, r) => t + r.judged.filter((j) => j.verdict === 'fails').length, 0)
-  log('judge: ' + jgroups.length + ' groups, ' + failing + ' entries failing')
+  // An entry a judge leaves out of its return is judged by nobody, so it is named, as the drafts'
+  // gaps are, rather than read as conforming.
+  const jgaps = []
+  for (const x of judged) {
+    if (!x || !x.r) {
+      jgaps.push((x ? x.g.label : 'a group') + ': no return')
+      continue
+    }
+    const got = new Set(x.r.judged.map((j) => j.entry))
+    for (const e of x.g.entries) if (!got.has(id(e))) jgaps.push(x.g.label + ': ' + show(e))
+  }
+  const failing = judged.filter((x) => x && x.r).reduce((t, x) => t + x.r.judged.filter((j) => j.verdict === 'fails').length, 0)
+  log('judge: ' + jgroups.length + ' groups, ' + failing + ' entries failing' +
+    (jgaps.length ? '; entries missing from a return: ' + jgaps.join('; ') : ''))
   phase('report')
   const jreport = await agent(lines([
     'You write the report of the judgement of an application of one pass of the design-record ' +
@@ -217,11 +231,12 @@ if (args.from === 'application') {
     'Read every file under ' + dir + ' that the judges wrote.',
     'Write ' + at(dir, 'report.md') + ': per failing entry, the rule or the failure mode of an edit ' +
       'it fails, the words quoted, the tripwire or issue it leaves false, and the repair the judge ' +
-      'proposes; then the counts of entries judged and failing, and every step that returned ' +
-      'nothing' + (jfailures.length ? ', among them: ' + jfailures.join('; ') : '') + '.',
+      'proposes; then the counts of entries judged and failing, each entry missing from a return, ' +
+      'which nobody judged' + (jgaps.length ? ': ' + jgaps.join('; ') : '') + ', and every step that ' +
+      'returned nothing' + (jfailures.length ? ', among them: ' + jfailures.join('; ') : '') + '.',
     'Return its path.',
   ]), { schema: PATH, phase: 'report', label: 'report' })
-  return { report: jreport ? jreport.path : null, groups: jgroups.map((g) => g.label), failing }
+  return { report: jreport ? jreport.path : null, groups: jgroups.map((g) => g.label), failing, gaps: jgaps }
 }
 
 let groups = []

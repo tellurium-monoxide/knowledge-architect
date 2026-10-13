@@ -6,7 +6,7 @@
 - **Version used**: the published checker, pinned at 0.6.0.
 - **Analysed against**: main at `v0.6.0-75-g5fca230`.
 - **Standing entries that bear on it**: from the one search over the 83 issues and 58 tripwires:
-  - `issue@agent-skills@a-design-issue-s-re-entry-point-is-read-by-no-review`, the gap W6 widens;
+  - `a-design-issue-s-re-entry-point-is-read-by-no-review`, the gap W6 widens;
   - `issue@agent-skills@the-retrospective-counts-no-review-cost`, which W4's cost bears on;
   - `issue@core@finding-texts-are-not-audited-for-a-needless-cause`, near C1;
   - the tripwires judged together in the last section.
@@ -153,7 +153,7 @@ a head does not touch it."
   `deferred` issues, listed with `{{command}} issues --kind deferred`. The kinds table of
   `skill@knowledge-architect-issue-tracking@issue-entry` gives a re-entry point to `design` only.
 - **c. Whether it is already recorded.** In part:
-  `issue@agent-skills@a-design-issue-s-re-entry-point-is-read-by-no-review` asks whether the reviewer
+  `a-design-issue-s-re-entry-point-is-read-by-no-review` asks whether the reviewer
   reads the re-entry point of every `design` issue. W6 is the same gap for any kind that carries a
   re-entry clause, and the first real instance: the entry's own case was a trial of the search
   agent.
