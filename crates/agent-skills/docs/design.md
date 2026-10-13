@@ -1168,9 +1168,10 @@ a commit message, its first parent's, removed or renamed by the work the record 
 be created by it, named there by its bare slug in backticks. A record of a deliberation is where the deliberation is kept: a plan document
 or a commit message, per `skill@knowledge-architect-decision-recording@three-homes`, and a committed
 file that leaves once its outcomes are carried out, per `primer@design-heads`. The exception
-is the owner's proposal: for such an entry the checker has nothing left to check, and what this
-head refuses is avoiding the check on a live entry, which leaves dangling references and makes
-grounding less efficient. It evades nothing, as the changelog exception does not: no entry remains,
+for an entry the work removes or is still to create is the owner's proposal: for such an entry the
+checker has nothing left to check, and what this head refuses is avoiding the check on a live
+entry, which leaves dangling references and makes grounding less efficient. A renamed entry's old
+slug is in the same case, since nothing resolves it once the rename lands. It evades nothing, as the changelog exception does not: no entry remains,
 or none exists yet, that a checked form could cite, and a one-segment span is silent, per
 `design@core@candidate-rule-and-retired-forms`. The owner chose the form among three, the bare slug
 in backticks, the bare slug in plain text and the full reference with its backticks removed, and the
@@ -1188,8 +1189,8 @@ its own commit's tree, where the check would assert only that the entry is absen
 reads again; and the form would need a grammar of its own in the core.
 A renamed entry still exists, under its new slug, so its old slug carries beside it the reference
 to the live entry, the shape a quotation of the owner naming a renamed entry already takes, per
-`design@agent-skills@a-past-sentence-is-rewritten`, on the owner's word: the old slug alone would
-leave a reader no checked way to the entry it names.
+`design@agent-skills@a-past-sentence-is-rewritten`: the old slug alone would leave a reader no
+checked way to the entry it names.
 
 The set of exceptions is closed: each lets a finding clear without a checked form,
 so another one weakens the check, and is argued as a change of this decision.
