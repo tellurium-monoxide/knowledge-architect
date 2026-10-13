@@ -2,21 +2,16 @@
 
 @.claude/knowledge-architect/PRIMER.md
 
-The line above imports the installed primer of the workflow: its directives. This file adds what
-is this repository's own.
-
 A documentation checker and an agent workflow, shipped as Rust crates. The checker verifies that a
 project's documents stay consistent with its code and with each other, through declared registers
 and checked references. The workflow is a set of agent skills that the checker embeds and writes
 into a project on request.
 The goals are `register@knowledge-architect@goal`.
 
-**The goals bind the design outright; a recorded decision binds it only as a presumption**, per
-`primer@goals-bind`, read whole. Recorded decisions were often argued before the code existed, so
-implementation is expected to prove some of them wrong: reversing one is an ordinary move, and
-`skill@knowledge-architect-decision-recording` owns what it costs.
+Recorded decisions were often argued before the code existed, so implementation is expected to
+prove some of them wrong.
 
-The repository is a virtual workspace with five Components, none in a directory named after the
+The repository is a virtual workspace with Components, none in a directory named after the
 project, per `design@knowledge-architect@no-component-directory-named-after-the-project`:
 
 | Component | directory | what it is |
@@ -57,8 +52,7 @@ State the consequences of a request explicitly. Never assume the user has consid
 ### When writing into durable files in the project
 
 - Prefer lists and tables over long prose paragraphs when listing different items.
-- **Current reality only**: no dates in a head, no changelogs outside CHANGELOG.md, no "formerly
-  known as".
+- **Current reality only**: no changelogs outside CHANGELOG.md, no "formerly known as".
 
 ## Mechanical validation of documents `##mechanical-validation`
 
@@ -71,8 +65,7 @@ This section is a restatement. The decisions live in the core's design home,
   `"self"`, which the checker accepts only in the tree it is built from, per
 `design@core@checked-sentinel-values`, so no version is pinned here.
 
-- A **register** is one kind of recorded thing together with its storage. Ten are built in.
-  Every Component carries four of them: `design`, `goal` and `tripwire` are **heading
+- Every Component carries four built-in registers: `design`, `goal` and `tripwire` are **heading
   registers**: their entries are headings carrying a slug. `issue` is a **file register**: its
   entries are one file each. Two more, `spec` and `milestone`, hold plan documents and are
   carried by the anchor `plans`, per `design@core@plan-register`. The last four, `thread`,
@@ -96,11 +89,10 @@ This section is a restatement. The decisions live in the core's design home,
     it outgrows one file. The directory's `README.md` is the head: an introduction, and markdown
     links naming every subdocument, each target relative to the README. The entries sit in the
     subdocuments. Exactly one of the two shapes, never both, per
-    `design@core@heading-register-two-shapes`. So the design home is `register@*@design`, the
-    goals home `register@*@goal` and the tripwires home `register@*@tripwire`, each in either
-    shape. Each may hold no entry.
-  - The issue register's home is the directory `register@*@issue`: one file per entry, a
-    hand-written `README.md` and a generated `index.md`, per
+    `design@core@heading-register-two-shapes`. Each heading register's home takes either shape,
+    and may hold no entry.
+  - The issue register's home is the directory `register@*@issue`, with a hand-written
+    `README.md` and a generated `index.md`, per
     `design@core@a-file-register-is-a-directory-of-entries`.
 
 - **An entry of a heading register is a heading at the register's level, ending with its slug**,
@@ -108,10 +100,9 @@ This section is a restatement. The decisions live in the core's design home,
   - The shape is ``### The statement `##<slug>` ``: the statement first and the slug last, with no
     bold and no em dash between them, so that a document outline reads as a list of decisions, per
     `design@core@statement-precedes-the-slug`.
-  - Design entries sit at level three. Goal and tripwire entries sit at level two. A plan's item
-    sits at level three, and the level-two section above it gives its kind, per
-    `design@core@plan-items-by-section`.
-  - A slug is defined in its register's home, never in the `README.md` of a directory-shaped home.
+  - Goal and tripwire entries sit at level two. A plan's item sits at level three, and the
+    level-two section above it gives its kind, per `design@core@plan-items-by-section`.
+  - The `README.md` of a directory-shaped home defines no slug.
   - Every heading at the register's level in its home carries a slug. One without is a finding. A
     heading at another level is section text.
   - A slug anywhere else defines nothing, and outside a fenced block it is reported as a misplaced
@@ -121,10 +112,9 @@ This section is a restatement. The decisions live in the core's design home,
   - An id is defined once per register instance. Two definitions are a finding at each site.
   - An id matches `[a-z0-9]+(-[a-z0-9]+)*`. A file register's entry id is the file's basename.
 
-- **Every reference is one backticked span, `<kind>@<anchor>@<id>`**, naming the anchor that
-  defines the entry, per `design@core@an-entity-belongs-to-its-anchor` and
-  `design@core@one-entity-table`, read whole for the kinds and their resolution. Examples:
-  `design@core@reserved-anchors`, `design@gates@gates-run-all`, `path@core@docs/rejected-alternatives.md`.
+- The kinds of reference and their resolution are `design@core@an-entity-belongs-to-its-anchor`
+  and `design@core@one-entity-table`, read whole. Examples: `design@core@reserved-anchors`,
+  `design@gates@gates-run-all`, `path@core@docs/rejected-alternatives.md`.
 - A plan's item is cited from inside that plan only, per `design@core@plan-item-scope`.
 - A reference that resolves to nothing is reported with the repair its failing segment needs, per
   `design@core@an-unresolved-reference-is-reported`.
@@ -140,12 +130,10 @@ This section is a restatement. The decisions live in the core's design home,
 
 - **Under the `path` kind, the id is a path under the anchor's directory**, and its target is
   checked to exist, per `design@core@every-path-names-its-anchor`.
-  - A trailing `/` claims the target is a directory. Its absence claims a file. The checker asserts
-    the claim, per `design@core@trailing-slash-claims-directory`.
-  - No `..`, no `./`, no leading `/`. The deepest anchor wins: a target inside a Component or a
-    location is named from that anchor, never from one above it. So relocating an anchor edits the
-    manifest and no document. A file under crates/core is `path@core@<file>`, and one under .claude
-    is `path@agent-config@<file>`.
+  - The checker asserts that a target is a directory exactly when its trailing `/` claims so, per
+    `design@core@trailing-slash-claims-directory`.
+  - Under the deepest-anchor rule, relocating an anchor edits the manifest and no document. A file
+    under crates/core is `path@core@<file>`, and one under .claude is `path@agent-config@<file>`.
   - The anchor words `*` and `elsewhere`, and the anchor `plans` the tool constructs, are
     reserved, per `design@core@reserved-anchors` and `design@core@plans-is-a-reserved-anchor`,
     read whole. A plan document is cited by its kind, never by its path, per
@@ -153,10 +141,8 @@ This section is a restatement. The decisions live in the core's design home,
   - A target the ignore rules cover is accepted without existence or kind assertions, per
     `design@core@ignored-targets-are-not-asserted`. The ignore rules are what `git check-ignore`
     answers, nested `.gitignore` files included.
-  - A relative markdown link, `[title](<path>)`, is a navigation row. It is legal in `README.md`
-    and `index.md` files only, and it is resolved against the linking file's own directory, under
-    the same kind claim and the same refusals of `..`, `./` and a leading `/`; the deepest-anchor
-    rule does not apply to it. In every other file a pointer is a reference, per
+  - A relative markdown link, `[title](<path>)`, is a navigation row. It is resolved against the
+    linking file's own directory, and the deepest-anchor rule does not apply to it, per
     `design@core@links-are-navigation-rows`.
 
 - **Which backticked spans are read as references**, per
@@ -164,11 +150,8 @@ This section is a restatement. The decisions live in the core's design home,
   - A span with no space whose head before the first `@` is a kind or an anchor is a candidate.
     Any other span holding an `@`, such as an email address or a git remote, is silent. A typo
     inside the kind is silent too.
-  - **A reference is live wherever it is prose, in Markdown and in Rust source, a Rust comment
-    and fenced blocks included, for every kind.** An
-    illustration that must not resolve writes a placeholder in angle brackets, as in
-    `<kind>@<anchor>@<id>`, which is not a candidate. A string literal bound to a name in Rust
-    yields no reference. In the checker's own source every literal is data, bound or not, per
+  - Every kind of reference is live. A placeholder in angle brackets is not a candidate. In the
+    checker's own source every literal is data, bound or not, per
     `design@core@checker-source-literals-are-data`.
   - Two retired forms are reported, not ignored: `<anchor>@<path>` with no kind, and a backticked
     `<word>#<id>` or `#<id>` whose id is an entry here, or whose word is an anchor or a kind. Any
@@ -176,18 +159,14 @@ This section is a restatement. The decisions live in the core's design home,
     `design@core@candidate-rule-and-retired-forms`.
   - A backticked span of path characters with two or more segments and no `@` is reported as a
     path to anchor when its first segment names a file or a directory that the tree's listing
-    holds, per `design@core@every-path-names-its-anchor`. Write it as a `path` reference, or as
-    `path@elsewhere@<path>` for a path this tree does not hold, or, in a plan document, as
-    `planned@<anchor>@<path>` for a path its work will create, never in plain text, except beside
-    a reference to an issue entry that records the missing form, per
-    `design@agent-skills@plain-text-is-no-repair`. A span naming nothing here, such as
-    `origin/main` or `application/json`, is silent, and so is a one-segment span, which is a name
-    rather than a path.
+    holds, per `design@core@every-path-names-its-anchor`. Write it as a `path` reference, or, in a
+    plan document, as `planned@<anchor>@<path>` for a path its work will create. A span naming
+    nothing here, such as `origin/main` or `application/json`, is silent, and so is a one-segment
+    span, which is a name rather than a path.
   - The one-segment span that is exactly the name of a skill or an agent is reported, per
-    `design@core@bare-skill-name-reported`. Write it as its reference, `skill@<name>` or
-    `agent@<name>`, released sections of CHANGELOG.md included. Once the skill or the agent is
-    deleted, a reference to it in a released section goes back to the bare name, per
-    `design@knowledge-architect@changelog-section-fixed-at-release`.
+    `design@core@bare-skill-name-reported`, released sections of CHANGELOG.md included. Once the
+    skill or the agent is deleted, a reference to it in a released section goes back to the bare
+    name, per `design@knowledge-architect@changelog-section-fixed-at-release`.
 
 - **A commit message is a document.** It is parsed as one markdown document, and every reference
   in it must resolve, against its own commit's tree or its first parent's, per
@@ -196,18 +175,11 @@ This section is a restatement. The decisions live in the core's design home,
 
 ## Where knowledge goes `##where-knowledge-goes`
 
-**Every durable decision has exactly one home, and a directive is restated only when the
-restatement is no longer than a pointer to it.** Both rules and their bounds are
-`primer@where-knowledge-goes`; read that section whole before restating a directive or replacing a
-restatement by a pointer.
-
-The workflow's rows of the knowledge table are in the primer, per
-`design@agent-skills@knowledge-table-home`. This repository's own rows, each refining or adding to
-the primer's:
+This repository's own rows, each refining or adding to the primer's:
 
 | the statement is about | home | it leaves when |
 | --- | --- | --- |
-| a decision about the published workflow: what the installed text tells every adopting project | the agent-skills design home, `register@agent-skills@design`; this repository follows the published workflow, with the departures this file states, and restates what it needs per `primer@where-knowledge-goes` | the decision changes |
+| a decision about the published workflow: what the installed text tells every adopting project | the agent-skills design home, `register@agent-skills@design`; this repository follows the published workflow, with the departures this file states | the decision changes |
 | what is outstanding about the agent configuration itself | the agent-config location's issue directory, `register@agent-config@issue` | the issue closes |
 | how a user can use a published crate, beyond the primer's README row | its `path@*@README.md`; its crates.io page is a short `CRATES-IO.md` in the crate, named by `readme` in its Cargo.toml, which points to the README and to docs.rs, per `design@knowledge-architect@crates-io-page-file` | the contract changes |
 | the description of a crate's library API | the crate-level documentation of its lib.rs, which docs.rs renders | its contract changes |
@@ -220,8 +192,6 @@ the primer's:
 two**, per `skill@knowledge-architect-agent-configuration@project-knowledge-rows`, read whole before
 adding a row.
 
-**A measurement is routed by what it serves, as `primer@where-knowledge-goes` says.**
-
 **Never record a number that will go stale, unless staleness is the point.** A figure carries the
 claim it supports, the command that re-takes it, and the direction that would reopen the argument.
 It does not carry the magnitude, which goes in the commit and cannot go stale there. A threshold, a
@@ -233,24 +203,13 @@ An issue entry keeps its magnitudes, per the cold-reader standard of
 
 This is a restatement. Its home is `design@agent-skills@a-reference-claims-a-revisit`.
 
-**Write a reference wherever the text would have to be revisited if the entry it names changed**:
-reversed, closed, fired, abandoned or renamed. `cargo klarch show <ref>` prints every reference to
-an entry, so what depends on an entry is computed and never listed by hand. A deleted or renamed
-entry dangles every reference to it, and `cargo klarch check` reports each one, so the repair list
-is the list of texts that depended on it. A reference that the entry's change would leave
-unaffected is decoration, and it costs a repair for nothing.
+An entry changes when it is reversed, closed, fired, abandoned or renamed. `cargo klarch show <ref>`
+prints every reference to an entry, so what depends on an entry is computed and never listed by
+hand. A deleted or renamed entry dangles every reference to it, and `cargo klarch check` reports
+each one, so the repair list is the list of texts that depended on it. An unneeded reference costs
+a repair for nothing.
 
-| the text | names |
-| --- | --- |
-| a design head | the goal its argument derives a constraint from, a decision of another Component it depends on |
-| an issue entry, under `Why it matters` | the decision it strains, and the goal it threatens when it does directly |
-| a guard, a workaround, a stub or a test that pins behaviour an open entry describes | the issue it exists because of, in the comment at the site |
-| a tripwire | the decision it guards |
-| a rejected alternative | the decision it lost to |
-| a commit message | every entry it opens, closes, reverses or argues from |
-| a restatement of a directive sentence | its home |
-
-A Rust comment that names an issue is reached when the issue closes.
+An issue entry writes its references under `Why it matters`.
 
 ### Plan documents
 
@@ -268,20 +227,11 @@ the core's documents measured in another project, thaum, names thaum as its sour
 Confidence is not correlated with correctness: the more obvious a behaviour looks, the less likely
 anyone has checked it.
 
-- **Built intent**: the root's design home, and a Component's design home, are authority over the
-  code until a divergence closes, per `primer@intent-and-claims`, read whole.
-- **A reason recorded at the code**, an inline comment or the message of the commit that argued
-  it, binds as a presumption below the design home, per `primer@intent-and-claims`, read whole
-  before removing or reshaping code as unneeded.
-- **A claim about the code as it stands**: an invariant in a scoped `CLAUDE.md`, a doc comment, a
-  name, a return value, an open issue's diagnosis. This goes stale. Check it before relying on it,
-  per `primer@intent-and-claims`.
+A claim about the code as it stands goes stale, per `primer@intent-and-claims`. Before relying on
+how anything behaves (an API, a script, a file format, a test mechanism, an open issue's diagnosis;
+the list is illustrative, not a boundary):
 
-For the third class, before relying on how anything behaves (an API, a script, a file format, a
-test mechanism, an open issue's diagnosis; the list is illustrative, not a boundary):
-
-- **Establish it from the implementation, or from a run you observe.** Names, doc comments and
-  prose are leads to check, never evidence.
+- Names, doc comments and prose are leads to check, never evidence.
 - **Follow the whole path, not the entry point**: what calls it, what it returns on success _and_
   on failure, and what the caller does with that.
 - **One confirming case does not establish a convention.** Widen the check whenever the answer
@@ -332,8 +282,8 @@ the work is where the false claims come from.
 
 ### Check whether it is already known
 
-Before diagnosing anything as a problem, or reporting one you met while doing something else, find
-out whether it is already recorded, per `primer@intent-and-claims`. The listings, every option they
+Before reporting a problem you met while doing something else, find out whether it is already
+recorded, per `primer@intent-and-claims`. The listings, every option they
 take, and why they and not a grep are the check, are
 `skill@knowledge-architect-issue-tracking@outstanding-across-registers`. This repository adds two:
 
@@ -361,8 +311,6 @@ not of what should be done.
 - **Do not spread non-conformance while working around it.** Starting from an existing document or
   entry copies its defects with it. Read what you copied against the instructions before extending
   it.
-- **Non-conformance met outside the task takes the first case of `primer@met-outside-the-task`
-  that applies**, read whole, and the turn ends with its "Met outside the task" section.
 
 ## Verify mechanically `##verify-mechanically`
 
@@ -436,9 +384,8 @@ pointers.** The staged check is a restatement; its home is
 repository refuses citations of its branch's own commits by SHA, and `commits` sees a citation only
 of a commit in the range it judges, per `design@core@branch-shas-are-refused`; the checker-side fix
 is `issue@core@branch-sha-citations-are-judged-within-the-range-only`. A failing staged check is
-repaired before the commit is made. A commit whose tree fails `commits` is repaired by a new commit,
-folded into the failing one by a history edit with a clean tree, and one whose message fails it by a
-reword, both per `## Git` point 2. A branch about to merge owes all of them: one
+repaired before the commit is made. A commit whose message fails `commits` is repaired by a reword,
+per `## Git` point 2. A branch about to merge owes all of them: one
 `cargo x gates --require-rebased`.
 
 ## Skills `##repository-skills`
@@ -484,9 +431,8 @@ commands and procedures that carry those rules out are this file's own.
   own, or behind `&&` on the bare check. A push after `;`, or after a check whose output went
   through a pipe, runs whatever the check found. Its home is
   `design@knowledge-architect@push-after-the-commits-check`.
-- **Every commit of the branch must pass the check under the branch tip's checker**, per
-  `primer@branch-commits`, read whole: where a change that sets what that checker requires goes
-  on the branch, and which repair is folded. A fold uses the procedure of point 2.
+- A repair folded into an earlier commit, per `primer@branch-commits`, uses the procedure of
+  point 2.
 - **The branch writes its CHANGELOG.md entries**, in the `Next release` section, per
   `design@knowledge-architect@the-branch-writes-its-changelog-entries`. A branch that finds no
   `Next release` section creates it above the newest released section. After editing it, run
