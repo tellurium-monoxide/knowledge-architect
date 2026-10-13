@@ -997,8 +997,9 @@ None. The one proposed, AC1, was not applied, R5.
 
 ## Implementation sequence
 
-1. [Goals and primer](goals-and-primer.md): G1, G2, G3; the authority section; the premise
-   procedure scoped; the label rule; the "Decided" section; the hold on a divergence.
+1. Goals and primer, landed: G1, G2, G3; the authority section; the premise procedure scoped; the
+   label rule; the "Decided" section; the hold on a divergence; the design skill's material finding
+   holding a defeated premise's part.
 2. [Attribution](attribution.md): the ground and test 4 attribute; the transcript reviewer's
    ruling check scoped; the recording rules of plan documents, commit messages and audits; the
    reviewers and auditors that check quotations; the tripwires that count quotations.

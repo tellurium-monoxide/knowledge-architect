@@ -506,8 +506,10 @@ file; or the commit messages of one branch, counting as one. A label that reache
 within the message that puts it to the owner. An item that gains a
 slug later keeps its label beside it. A label that reaches a committed document, even one that
 leaves later, such as a plan document, takes a prefix of its own kind, distinct across the
-installed workflow. A label used only in the conversation reuses the common prefix `Q`. Every
-distinct prefix is listed here, and an edit that adds one checks it against the list:
+installed workflow. A label used only in the conversation reuses the common prefix `Q`. A label
+numbers what was put to the owner; it never names what decided, and an answer keeps the authority
+that answered it, per `design@agent-skills@answer-keeps-its-authority`. Every distinct prefix is
+listed here, and an edit that adds one checks it against the list:
 
 | prefix | items | the committed document it reaches |
 | --- | --- | --- |
@@ -553,8 +555,12 @@ structure the checker reads, per `design@core@plan-register`. This serves
 
 A head can be wrong, and while it
 diverges from the code it still prevails: the divergence closes when the code meets the head or when
-the head is reversed, never by following the code, and work that goes on meanwhile, on the owner's
-word, builds on the head. Without that, a session that must keep working would build on whichever
+the head is reversed, never by following the code, and work that goes on meanwhile builds on the
+head. Where the head's argument stands, the code is the defect, and the session fixes it or opens
+an issue. Where the session finds the argument defeated, the reversal goes to the design skill, and
+to the owner where it is a fork or the head's ground is the owner's, per
+`design@agent-skills@questions-go-to-their-authority`; the part of the task that rests on the point
+waits for that answer. Without that, a session that must keep working would build on whichever
 side it met first, and a divergence would close silently in the code's favour, against
 `goal@knowledge-architect@agents-work-without-drift`.
 
@@ -747,10 +753,11 @@ or the instruction it guards and a head exists from the landing of its work, per
 The owner's word on a premortem's cause, per `design@agent-skills@premortem-tripwires-on-the-owners-word`,
 records that the cause is watched. The tripwire's firing evidence, response and re-entry point are
 reworded when it is written, or on a review finding, on the agent's judgement, and each change is
-listed to the owner at the end of the turn. A tripwire that watches another cause is a new one, and
-needs the owner's word. A ruling that bound the wording would make every repair of a tripwire a
-question to the owner, against `goal@knowledge-architect@agents-work-without-drift`, which asks for
-the owner to rule on decisions rather than to supervise their wording. The rival, a change to a
+listed in the turn's "Decided" section, per `design@agent-skills@decisions-reported-to-the-owner`.
+A tripwire that watches another cause is a new one, and needs the owner's word. A ruling that bound
+the wording would make every repair of a tripwire a question to the owner, against
+`goal@knowledge-architect@agents-work-without-drift`, under which the owner rules only on what the
+goals and the record leave open, which a tripwire's wording is not. The rival, a change to a
 tripwire's firing evidence treated as a material finding, puts each such repair back to the owner.
 
 ### A design thread's slug becomes its entry's slug `##thread-slug-is-entry-id`
@@ -1171,14 +1178,15 @@ are born together.
 ### An acceptance criterion stands on the owner's word, as a tripwire does `##acceptance-criteria-on-the-owners-word`
 
 The owner rules on whether an acceptance criterion is applied, and on the decision its firing
-reopens. The agent words its observable, and lists a rewording to the owner at the end of the turn.
+reopens. The agent words its observable, and lists a rewording in the turn's "Decided" section.
 The design skill asks for the ruling at the premortem, beside the tripwires. A criterion first
 proposed later, at the assembly, by a review or at an audit, is written marked as awaiting the
 owner, with its label under the plan document's defaults, and is not judged before the ruling; the
 work goes on without it, and one never ruled leaves with the document.
 
-A criterion's response reopens a decision, and choosing the observable that may reopen a decision
-is a weighing, which is the owner's, per `goal@knowledge-architect@the-owner-decides`. The owner
+A criterion's response reopens a decision, and choosing whether to watch with it is a fork, which is
+the owner's, per `goal@knowledge-architect@the-owner-decides`: applying it and not applying it both
+meet every binding constraint, and they trade the cost of the check against the risk. The owner
 sets a criterion's threshold, and a tripwire, the same check for built work, stands on the owner's
 word, per `design@agent-skills@premortem-tripwires-on-the-owners-word`, so a criterion's application
 stands on the same word as its threshold and as a tripwire. The wording stays the agent's, as a
@@ -2199,19 +2207,11 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   work grows. When a decision conflicts with a goal, the likely cause is that the owner missed the
   conflict: the goal prevails, and the conflict goes to the owner, per
   `goal@knowledge-architect@the-owner-decides`.
-- **A word of the owner holds only as far as its premise.** When its premise, the owner's or one
-  the session supplied, proves false, the corrected premise goes to the owner with a default chosen
-  in view of it, and the session proceeds on the default unless the owner answers otherwise, holding
-  any part that cannot be undone. The design skill holds the same duty for a closed thread,
-  and reaches only a session that has loaded it, where a word of the owner can arrive in any
-  session, which is the content test of `design@agent-skills@primer-limit`. It arrived twice
-  outside a discussion: in a review repair, where the design skill is not loaded, and at the fourth
-  entry test of `design@agent-skills@a-head-is-owed-by-an-entry-test`, so a rule beside that test
-  would miss the first case. The second was answered on a premise the session supplied, that the
-  decision failed the first three tests, when the same change had made the second pass; so a premise
-  the session supplies is the session's to check before the owner rules on it. A word acted on past
-  its premise records a decision the owner did not make, per
-  `goal@knowledge-architect@the-owner-decides`.
+- **A question goes to the authority that answers it**, per
+  `design@agent-skills@questions-go-to-their-authority`: every session meets questions, and a skill
+  that routes them reaches only the sessions that load it.
+- **A word of the owner holds only as far as its premise, and an answer on a reading gives way to
+  its source**, per `design@agent-skills@owner-word-holds-as-far-as-its-premise`.
 - **Where the installed text is silent, a session judges**, since the installed text leaves that
   room on purpose, per `goal@agent-skills@installed-text-leaves-room-to-judge`; room to judge is
   never room to act against an instruction. Every session meets a situation no instruction covers,
@@ -2222,30 +2222,127 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
   code it explains is removed, and the third is verified before it is relied on.
 - **Before diagnosing anything as a problem, a session checks whether it is already recorded**,
   with the listing commands of the checker.
-- **Something met outside the task takes the first of four outcomes that applies.** If it bears on
-  the current work, present it to the owner at the top of the turn, with a default, and proceed on
-  the default unless the owner answers otherwise. It proceeds as an owner's word whose premise
-  proved false does, per `primer@owner-word-premise`, and as the design skill does for a material
-  finding: an item met that bears on the work is often one of those two, and a stop beside them
-  would give a session two acts for one item, while the owner's answer still overrides the default.
-  If its fix is checkable from the diff alone, because it changes no behaviour, no decision and no test
-  outcome, fix it in a commit of its own. If its `Why it matters` and its `What would close it` can
-  be written, open an issue. Otherwise name it, with why it is dropped. A turn that met anything
-  ends with a section listing every item and its outcome. A one-line mention inside a long report
-  is easy to miss: the owner saw an agent "would find a fairly small issue, decide it was too small
-  to create an open issue entry about it, but not fix it either, instead reporting it in
-  conversation as a short oneliner", so every outcome leaves a record or a listed line. A fix under
-  the second outcome needs no word of the owner's: "as long as it does passes the test you wrote, I
-  have no problem with that level of autonomous fix". A subagent that edits nothing reports each
-  item to the session that dispatched it, which routes it.
+- **Something met outside the task takes the first of four outcomes that applies**, per
+  `design@agent-skills@met-outside-the-task-outcomes`.
+- **A turn that decided something the owner could have decided ends with a "Decided" section**, per
+  `design@agent-skills@decisions-reported-to-the-owner`.
 - **An item put to the owner under a label takes the next number of its prefix in the record the
-  label reaches**, per `design@agent-skills@ruled-items-labelled`. Labels are given in sessions
-  of every activity, and no one skill is loaded in all of them.
+  label reaches**, per `design@agent-skills@ruled-items-labelled`, and an answer keeps the
+  authority that answered it, per `design@agent-skills@answer-keeps-its-authority`. Labels are given
+  and answers recorded in sessions of every activity, and no one skill is loaded in all of them.
 - **Every commit of a branch is judged by the checker at the branch's tip**, where the project's
   gates run the commits check over the branch, so a change that sets what that checker requires
   goes in the branch's first commit, and a repair that would leave an earlier commit failing is
   folded into it. Every session commits, and a skill meets only one case of it: planning a plan
   document merged before its work, and review a fold.
+
+### A question is answered by its authority, and the owner answers only what no authority settles `##questions-go-to-their-authority`
+
+`primer@question-authority` routes each question to what answers it: what a specification the
+project implements says, to its text; what the code or a tool does, to a measurement; what follows
+from the goals and the recorded decisions, to the argument from them. The session answers those
+itself, cites the source and tells the owner. The owner answers a goal to set or change, a
+contradiction no argument resolves, an action that cannot be undone, and a fork: two or more shapes
+that meet every binding constraint with no fact defeating either. A cost alone makes no fork, since
+a shape that fails a goal or loses to a fact is out whatever it would save. The section prevails
+over an installed instruction that sends to the owner a question it gives the session, as a goal
+prevails over a decision. Which further actions a project reserves to its owner is the project's
+to state.
+
+It serves `goal@knowledge-architect@the-owner-decides`, which gives the owner what the goals and
+the record leave open, and `goal@knowledge-architect@agents-work-without-drift`, which asks that the
+owner not answer what the record already answers. The mechanism it removes: with the owner as the
+only authority a session could defer to, every question went to the owner and every answer came
+back recorded as a ruling. In thaum, which implements a published rules text, at least three of
+the eleven questions one session put to the owner were answered by the rules, and in this
+repository the owner reported defaults "answerable by reading the recorded design heads" put to the
+owner first. The nearest rival, a sentence that gives an external specification alone a rank above
+the owner's word, loses on that second instance: the mechanism runs in a project that implements
+no specification. A second rival, sending to the owner every choice that weighs a cost, sends every
+choice, since every choice has a cost. The rank sentence holds because an edit of a skill can bring
+back a routing to the owner, and with it no session meets two instructions it cannot both obey. The
+owner set the kinds the owner answers, in a design discussion recorded by
+`milestone@plans@owner-authority`, and that a merge is no action that cannot be undone and is the
+project's to reserve.
+
+### An answer of the owner on a reading or a fact is recorded with its source, never as the owner's ruling `##answer-keeps-its-authority`
+
+`primer@labelled-items` states it beside the label rule of
+`design@agent-skills@ruled-items-labelled`: an answer of the owner on a question that a source, a
+measurement or the record answers is recorded as a reading or a fact, with its source. Where the
+source leaves the point open and the owner chose, the record says the owner chose among the
+readings the source permits.
+
+It serves `goal@knowledge-architect@the-owner-decides`, under which a decision the owner made is
+recorded as the owner's and every other decision on its own ground. An answer recorded as a ruling
+weighs on every later session as the owner's intent: the owner observed that "questioning them is
+either discouraged, or gets put to me even when the answer is obvious". The nearest rival, leaving
+the recording rules as they are since fewer such questions reach the owner under
+`design@agent-skills@questions-go-to-their-authority`, loses because a question still reaches the
+owner by mistake: in thaum, one went to the owner through a definition the session had not looked
+up, and its answer became "the owner's ruling" in every later text.
+
+### A word of the owner holds only as far as its premise, and an answer on a reading gives way to its source `##owner-word-holds-as-far-as-its-premise`
+
+`primer@owner-word-premise` holds three rules. A ruling does not rule on the case where its
+premise is false, and a premise the session supplied is the session's to check before the owner
+rules on it. An answer of the owner on a reading or a fact that the source or a measurement
+contradicts gives way to the source at once, the owner told, and a part of the work that cannot be
+undone waits. A ruling on intent, a word on a question `primer@question-authority` reserves to the
+owner, whose premise proves false is a contradiction: the corrected premise goes to the owner, and
+the part of the work that rests on it waits, the rest going on. Whether a project follows a
+specification is the project's goal or decision, and a departure from one is a scope decision the
+project states, never inferred from an answer to a reading question.
+
+The three rules sit in one section because the second and the third are the first's two cases,
+split by the authority of the question, per `tripwire@agent-skills@split-rule-from-exception`. The
+hold derives from `goal@knowledge-architect@the-owner-s-word-is-verified`. The source rule's nearest
+rival, putting the owner's answer back to the owner with the source's reading as the default, is
+what thaum built first: it still asked, offered an option the specification forbids, and two of
+thaum's reviewers found it contradicted the specification's authority. The directive sits in the
+primer since a word of the owner can arrive in any session: it arrived twice outside a discussion,
+in a review repair and at the fourth entry test of `design@agent-skills@a-head-is-owed-by-an-entry-test`,
+the second on a premise the session supplied, that the decision failed the first three tests, when
+the same change had made the second pass. A word acted on past its premise records a decision the
+owner did not make, against `goal@knowledge-architect@the-owner-decides`.
+
+### Something met outside the task takes the first of four outcomes, routed by its authority, and the turn lists every item `##met-outside-the-task-outcomes`
+
+`primer@met-outside-the-task` gives four outcomes, the first that applies. An item that bears on
+the work is routed by `primer@question-authority`: what a source, a measurement or the record
+answers, the session decides and reports; a fork or a goal goes to the owner with a default the
+work proceeds on; a contradiction, or an action that cannot be undone, holds the part of the work
+that rests on it, as a contradiction does wherever it is met, per
+`goal@knowledge-architect@the-owner-s-word-is-verified`, and as `primer@owner-word-premise` and the
+design skill's material finding say. A fix checkable from the diff alone lands in a commit of its
+own; an item whose `Why it matters` and `What would close it` can be written is opened as an
+issue; any other is named, with why it is dropped. A turn that met anything ends with a section
+listing every item and its outcome, and a subagent that edits nothing reports each item to the
+session that dispatched it, which routes it.
+
+A one-line mention inside a long report is easy to miss: the owner saw an agent "would find a
+fairly small issue, decide it was too small to create an open issue entry about it, but not fix it
+either, instead reporting it in conversation as a short oneliner", so every outcome leaves a record
+or a listed line. A fix under the second outcome needs no word of the owner's: "as long as it does
+passes the test you wrote, I have no problem with that level of autonomous fix". The directive sits
+in the primer since every session meets something outside its task.
+
+### A turn that decided what the owner could have decided ends with a Decided section `##decisions-reported-to-the-owner`
+
+`primer@decided-section`: a turn in which the session decided something the owner could have
+decided ends with a section titled "Decided", one line per decision with its ground, before "Met
+outside the task" where both are owed. A design thread closed on its argument, a default the record
+answered, a source applied over an answer of the owner and a rewording of a tripwire's clauses are
+such decisions; an implementation choice a commit message records is not. A subagent reports its
+decisions under the same title, and the dispatching session carries them into its own.
+
+It serves `goal@knowledge-architect@the-owner-decides`, under which the owner is informed of every
+decision and can overrule any of them, now that
+`design@agent-skills@questions-go-to-their-authority` gives the session decisions the owner used to
+be asked. The nearest rival, the commit messages and the pull request, loses because a decision
+made and reverted within one session reaches no commit, while the owner reads the turn. An
+implementation choice is left out because a list of every choice would hide the few the owner could
+have made. The directive sits in the primer since a session of any activity makes such decisions.
 
 ### Every rule on what a design head records and how lives in one section of the primer `##one-home-for-head-rules`
 

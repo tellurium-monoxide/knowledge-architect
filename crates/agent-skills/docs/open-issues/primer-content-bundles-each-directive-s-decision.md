@@ -23,9 +23,12 @@ primer that carries what a skill delivers. The body of `design@agent-skills@prim
 argues each directive, in eight bullets: the goals rule, the owner's word bound by its premise, the
 room to judge, the intent-and-claims rule, the check before diagnosing, the four outcomes of
 something met outside the task, the numbering of an item put to the owner under a label, and every
-commit of a branch judged by the checker at the branch's tip. At least one of them lost to a rival of its own, recorded in
+commit of a branch judged by the checker at the branch's tip. Four directives now have heads of
+their own, which the head points to: the routing of a question by its authority, the owner's word
+bound by its premise, the outcomes of something met outside the task, and the "Decided" section;
+the third of them lost to a rival of its own, recorded in
 `path@agent-skills@docs/rejected-alternatives.md` as "Reporting a finding met outside the task
-without recording it".
+without recording it", which now names its own head. The other directives stay bundled.
 
 **Suspected mechanism**: the head listed its members in its title, and moving the title to its rule
 made it the rule another head already states, while the members' own decisions stayed bundled.
