@@ -25,8 +25,8 @@ by its opening message, "There is a retrospective at
 that I want to handle". The discussion begins at that message and ends at the owner's message that
 opens "Drop T5, keep the other tripwires." This document was assembled from that transcript.
 Rounds are numbered by the owner's messages, R0 the opening one to R5 the last of the discussion;
-R6 is the owner's message after the reviews of this document, "D12, D17, D13, D15 approved." The log holds R5
-twice: the first copy lacks its last paragraph, and no reply lies between the two. The complete
+R6 is the owner's message after the reviews of this document, "D12, D17, D13, D15 approved." The
+log holds R5 twice: the first copy lacks its last paragraph, and no reply lies between the two. The complete
 copy, the second, is R5.
 
 ## How the work is done
@@ -1075,10 +1075,21 @@ can contest.
   reply to R4 (a80) had it last, and the "Decided" section in slice 1, as a primer directive. The
   reason is in "Order rationale". The owner agreed "on the milestone path" in R5 with the earlier
   order in view.
-- **D17, ruled R6: approved, as written.** G1 is written as approved, seven sentences, though
+- **D17, ruled R6: approved, as written.** G1 is written as approved, six sentences, though
   `skill@knowledge-architect-goal-setting@goal-entry-shape` asks for "two to four sentences": the
   owner approved its wording verbatim, and every sentence states a part of the goal. The rival is a
   shortened G1, put to the owner before slice 1.
+
+- **D18.** The authority section lists what the owner answers: a goal, a contradiction no argument
+  resolves, an action that cannot be undone, and a fork. It leaves out a fact only the owner holds:
+  the owner's intent, a plan, a weighing the owner made, the project's users. The primer itself
+  asks the owner such questions, at entry test 4 of `primer@design-heads` and in its ground "a
+  premise only the owner can state", and `primer@owner-word-premise` defines a ruling on intent by
+  that list, so an answer to test 4 is no ruling on intent and no procedure covers its failed
+  premise. Proposed: the list gains "a fact only the owner holds, such as an intent, a plan or a
+  weighing the owner made", in the authority section, and G1's list gains the same member. The list
+  is the owner's approved wording, so nothing is written before the owner's word; the rest of slice
+  1 goes on. It bears on #questions-go-to-their-authority and #owner-decides-goal-wording.
 
 **Answered by the record**, each a decision of this document the owner can contest:
 

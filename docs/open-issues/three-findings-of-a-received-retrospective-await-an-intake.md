@@ -40,7 +40,9 @@ The file names each finding's proposal; this entry does not restate them.
 
 `goal@knowledge-architect@the-workflow-improves-through-real-use` collects what real sessions found
 unclear, missing or wrong, "and the owner decides what changes". These three findings come from a
-real session, and the owner has decided nothing on them. Without this entry, nothing in the tree
+real session, and the owner has decided nothing on them. And
+`design@knowledge-architect@committed-findings-analysis` asks a committed analysis for every
+received file, which this one lacks. Without this entry, nothing in the tree
 records them once the milestone document leaves.
 
 ### What would close it

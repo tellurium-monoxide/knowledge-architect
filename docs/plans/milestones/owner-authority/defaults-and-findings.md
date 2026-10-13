@@ -24,6 +24,9 @@ mapping table:
   axis's owner list keeps a head in the wrong Component, per `design@agent-skills@design-record-axis`;
   the agentic-workflow axis's owner list is unchanged, per D14. The stop of passes and net growth
   stay with the owner, per D3.
+- `skill@knowledge-architect-review@what-review-leaves`, its "Each outcome is reported to the owner,
+  in the record of the review and at the end of the turn": the end of the turn is the turn's
+  "Decided" section, per `primer@decided-section`.
 - `skill@knowledge-architect-setup`: the destination of an existing document, per D5.
 - CHANGELOG.md `Next release`: a Workflow entry for each question these skills stop putting to the
   owner.
