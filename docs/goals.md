@@ -16,13 +16,14 @@ owner's intent: an agent may propose wording, and the owner decides it.
 
 ## Agents work productively and autonomously without drifting from the owners' design intent `##agents-work-without-drift`
 
-The project as a whole, the workflow and the checker, lets AI agents carry more of a project's
-work with less supervision, while what they build stays within the design the owners recorded. The
+The project as a whole, the workflow and the checker, lets AI agents carry more of a project's work
+with less supervision, while what they build stays within the design the owners recorded. The
 checker exists mostly for this: it reports where the documents and the code drift from the recorded
 design, and it makes keeping that design current cheap. Nearly every other goal of the project
-serves this one. It is met while agents carry work from design to merge with the owner ruling on decisions
-rather than correcting drift, and a departure from the recorded design is caught by a check or a
-review before it merges.
+serves this one. It is met while agents carry work from design to merge with the owner ruling only
+on what the goals and the record leave open, rather than correcting drift or answering what the
+record already answers, and a departure from the recorded design is caught by a check or a review
+before it merges.
 
 ## The documentation records the design, with the intent and the arguments behind it `##design-is-recorded-with-its-arguments`
 
@@ -57,11 +58,25 @@ nothing cited is missing and that the declared structure holds. Its commands lis
 entries a review must read. Development driven by agents changes code faster than review alone can
 follow, so the reviews need these tools to keep up.
 
-## The owner decides, and the record shows the owner's decisions `##the-owner-decides`
+## The owner decides what the goals and the record leave open, is informed of every other decision, and can overrule any of them `##the-owner-decides`
 
-Goals and decisions belong to the project's owner. The workflow makes an agent argue its
-proposals, state their consequences, and record the owner's rulings. An agent never substitutes
-its own judgement for a ruling.
+The owner states the project's intent in its goals. Agents decide what the argument from the goals,
+the record and the sources the project follows settles, and record each such decision on that
+ground. What that leaves open is the owner's: a choice between shapes that all survive the
+argument, a contradiction no argument resolves, a goal to set or change, and an action that cannot
+be undone, such as a publication. A decision the owner made is recorded as the owner's. The owner
+is informed of every decision, and can overrule any of them, at any time and for any reason. It is
+met while the owner rules only on what is theirs, and learns of every other decision from the
+record and the reports.
+
+## Agents verify the owner's word before acting on it, and build nothing on a contradiction `##the-owner-s-word-is-verified`
+
+An agent following the workflow takes no word of the owner as granted. Before acting on it, the
+agent checks its premises against the goals, the record, the code and the sources the project
+follows. A contradiction it finds that no source or argument resolves goes to the owner, and the
+part of the work that rests on it waits for the owner's answer; the rest goes on. This holds in
+every activity, not only in a design discussion. It is met while no work is built on a word of the
+owner whose premise a check would have shown false.
 
 ## Any project can adopt it, and a new project is the primary target `##any-project-can-adopt-it`
 
